@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13196" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
         <development version="8000" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13196"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -24,12 +24,12 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window title="ReplayGain Scan Results" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="rgScanResults" animationBehavior="default" id="QvC-M9-y7g">
+        <window title="ReplayGain Scan Results" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="rgScanResults" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="514" height="270"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
-            <view key="contentView" wantsLayer="YES" misplaced="YES" id="EiT-Mj-1SZ">
+            <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="514" height="270"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
@@ -85,7 +85,7 @@ Gw
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         </tableColumn>
-                                        <tableColumn identifier="" width="72" minWidth="10" maxWidth="3.4028234663852886e+38" id="1y3-iP-Yin">
+                                        <tableColumn width="72" minWidth="10" maxWidth="3.4028234663852886e+38" id="1y3-iP-Yin">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Status">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -111,7 +111,7 @@ Gw
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         </tableColumn>
-                                        <tableColumn identifier="" width="61" minWidth="10" maxWidth="3.4028234663852886e+38" id="wLD-yD-SRC">
+                                        <tableColumn width="61" minWidth="10" maxWidth="3.4028234663852886e+38" id="wLD-yD-SRC">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Track Gain">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -124,7 +124,7 @@ Gw
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         </tableColumn>
-                                        <tableColumn identifier="" width="69" minWidth="10" maxWidth="3.4028234663852886e+38" id="TA3-bG-hAN">
+                                        <tableColumn width="69" minWidth="10" maxWidth="3.4028234663852886e+38" id="TA3-bG-hAN">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Album Peak">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -137,7 +137,7 @@ Gw
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         </tableColumn>
-                                        <tableColumn identifier="" width="68" minWidth="10" maxWidth="3.4028234663852886e+38" id="nqb-uF-Ips">
+                                        <tableColumn width="68" minWidth="10" maxWidth="3.4028234663852886e+38" id="nqb-uF-Ips">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Track Peak">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -167,7 +167,7 @@ Gw
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" id="toH-ij-CDV">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="toH-ij-CDV">
                         <rect key="frame" x="18" y="20" width="258" height="17"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" placeholderString="" usesSingleLineMode="YES" id="NfH-yE-P2R">
@@ -180,7 +180,7 @@ Gw
             </view>
             <point key="canvasLocation" x="256" y="146"/>
         </window>
-        <window title="ReplayGain Scan Progress" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="rgScannerProgress" animationBehavior="default" id="33e-Up-b2S" customClass="NSPanel">
+        <window title="ReplayGain Scan Progress" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="rgScannerProgress" animationBehavior="default" id="33e-Up-b2S" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="139" y="81" width="458" height="114"/>
@@ -239,17 +239,17 @@ Gw
             </view>
             <point key="canvasLocation" x="104" y="430"/>
         </window>
-        <window title="Updating File Tags Progress" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="rgUpdateTagsProgress" animationBehavior="default" id="58P-2Y-0vx" userLabel="Updating File Tags Progress" customClass="NSPanel">
+        <window title="Updating File Tags Progress" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="rgUpdateTagsProgress" animationBehavior="default" id="58P-2Y-0vx" userLabel="Updating File Tags Progress" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="139" y="81" width="458" height="114"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <value key="minSize" type="size" width="458" height="84"/>
-            <view key="contentView" misplaced="YES" id="8RD-aU-eYD">
+            <view key="contentView" id="8RD-aU-eYD">
                 <rect key="frame" x="0.0" y="0.0" width="458" height="114"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" id="OFF-cK-ipi">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="OFF-cK-ipi">
                         <rect key="frame" x="18" y="77" width="79" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Current File:" id="bEh-Fd-uYw">
@@ -258,7 +258,7 @@ Gw
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField verticalHuggingPriority="750" misplaced="YES" id="bWG-QU-3cd">
+                    <textField verticalHuggingPriority="750" id="bWG-QU-3cd">
                         <rect key="frame" x="103" y="74" width="335" height="22"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" lineBreakMode="truncatingHead" allowsUndo="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="ZeM-uj-zdF">
@@ -267,11 +267,11 @@ Gw
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <progressIndicator wantsLayer="YES" misplaced="YES" maxValue="100" style="bar" id="KWM-z6-n5p">
+                    <progressIndicator wantsLayer="YES" maxValue="100" style="bar" id="KWM-z6-n5p">
                         <rect key="frame" x="20" y="47" width="418" height="20"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     </progressIndicator>
-                    <button verticalHuggingPriority="750" misplaced="YES" id="aj1-d4-2kA">
+                    <button verticalHuggingPriority="750" id="aj1-d4-2kA">
                         <rect key="frame" x="362" y="13" width="82" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="TYc-bi-Dna">
@@ -285,7 +285,7 @@ Gw
                             <action selector="updateTagsCancelAction:" target="-2" id="K4E-IM-pYo"/>
                         </connections>
                     </button>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" id="Sd6-FP-vUK">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Sd6-FP-vUK">
                         <rect key="frame" x="18" y="22" width="345" height="17"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" placeholderString="" usesSingleLineMode="YES" id="6t7-h6-qLX">
