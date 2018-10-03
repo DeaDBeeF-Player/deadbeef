@@ -1,33 +1,82 @@
 import Foundation
 import Cocoa
 
-protocol Scriptable {
-    func getScript() -> String
+struct ScriptableData {
+    var type : String
+    var name : String?
+    var value : String?
+    var items : [Scriptable]?
 }
 
-protocol ScriptableFactory {
-    static func create(id : String) -> Scriptable
+@objc protocol Scriptable {
+//    func data() -> ScriptableData?
+    func getScript() -> UnsafePointer<Int8>?
+
+    static func create (type: String) -> Scriptable
 }
 
-class DSPNode : Scriptable {
-    let script : String
-    init (script: String) {
-        self.script = script
+@objc(DSPPreset)
+class DSPPreset : NSObject, Scriptable {
+    var plugin : UnsafePointer<DB_dsp_t>
+    var _data : ScriptableData?
+    func data() -> ScriptableData? {
+        return _data;
     }
-    func getScript () -> String {
-        return script
+
+    func getScript() -> UnsafePointer<Int8>? {
+        return ""
+    }
+
+    init (plugin:UnsafePointer<DB_dsp_t>) {
+        self.plugin = plugin
+    }
+
+    static func create (type: String) -> Scriptable {
+        if let p = plug_get_dsp_for_id(type) {
+            return DSPNode (plugin: p)
+        }
+        return DummyNode.create(type:type)
     }
 }
 
-class DSPNodeFactory : ScriptableFactory {
-    static func create (id : String) -> Scriptable {
-        let plug = plug_get_dsp_for_id (id);
-        let script = plug!.pointee.configdialog!
-        let data = Data(bytes: script, count: Int(strlen(script)))
-        return DSPNode(script: String(data: data, encoding: String.Encoding.utf8)!)
+@objc(DSPNode)
+class DSPNode : NSObject, Scriptable {
+    var plugin : UnsafePointer<DB_dsp_t>
+    var _data : ScriptableData?
+    func data() -> ScriptableData? {
+        return _data;
+    }
+
+    func getScript() -> UnsafePointer<Int8>? {
+        return plugin.pointee.configdialog
+    }
+
+    init (plugin:UnsafePointer<DB_dsp_t>) {
+        self.plugin = plugin
+    }
+
+    static func create (type: String) -> Scriptable {
+        if let p = plug_get_dsp_for_id(type) {
+            return DSPNode (plugin: p)
+        }
+        return DummyNode.create(type:type)
     }
 }
 
+@objc(DummyNode)
+class DummyNode : NSObject, Scriptable {
+    var type: String
+    init (type: String) {
+        self.type = type
+    }
+    func getScript() -> UnsafePointer<Int8>? {
+        return nil
+    }
+    static func create (type: String) -> Scriptable
+    {
+        return DummyNode (type:type);
+    }
+}
 
 
 // One item of a preset

@@ -1,4 +1,5 @@
 #import "ItemListViewController.h"
+#import "deadbeef-Swift.h"
 
 @interface ItemListViewController ()
 
@@ -6,6 +7,7 @@
 
 @implementation ItemListViewController {
     settings_property_t *_prop;
+    NSObject<Scriptable> *_scriptable; // DSPPreset
 }
 
 - (void)viewDidLoad {
@@ -15,6 +17,10 @@
 - (id)initWithProp:(settings_property_t *)prop {
     self = [super initWithNibName:@"ScriptableItemList" bundle:nil];
     _prop = prop;
+    Class c = NSClassFromString([NSString stringWithUTF8String:prop->itemlist_type]);
+    if (c) {
+        _scriptable = [(Scriptable.class)c create:_prop->];
+    }
     return self;
 }
 
