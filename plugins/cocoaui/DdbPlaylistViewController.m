@@ -614,7 +614,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect {
-    [[NSColor colorWithCalibratedWhite:0.3f alpha:0.3f] set];
+    [[NSColor controlTextColor] set];
     [NSBezierPath fillRect:NSMakeRect(rect.origin.x + rect.size.width - 1, rect.origin.y+3,1,rect.size.height-6)];
 
     [[NSString stringWithUTF8String:_columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y+1, rect.size.width-6, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
