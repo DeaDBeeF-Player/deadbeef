@@ -46,14 +46,6 @@ extern DB_functions_t *deadbeef;
 
     NSRect _closeTabButtonRect;
     BOOL _closeTabCapture;
-
-    NSImage *_tabLeft;
-    NSImage *_tabFill;
-    NSImage *_tabRight;
-    NSImage *_tabUnselLeft;
-    NSImage *_tabUnselFill;
-    NSImage *_tabUnselRight;
-    NSImage *_tabBottomFill;
 }
 @end
 
@@ -67,6 +59,7 @@ static int tabs_left_margin = 4;
 static int tab_vert_padding = 1;
 static int min_tab_size = 80;
 static int max_tab_size = 200;
+static int close_btn_right_offs = 16;
 #define arrow_widget_width ([self frame].size.height)
 
 - (id)initWithFrame:(NSRect)frame
@@ -77,16 +70,6 @@ static int max_tab_size = 200;
         _dragging = -1;
         _tab_clicked = -1;
         
-        _tabLeft = [NSImage imageNamed:@"tab_left"];
-        _tabFill = [NSImage imageNamed:@"tab_fill"];
-        _tabRight = [NSImage imageNamed:@"tab_right"];
-
-        _tabUnselLeft = [NSImage imageNamed:@"tab_unsel_left"];
-        _tabUnselFill = [NSImage imageNamed:@"tab_unsel_fill"];
-        _tabUnselRight = [NSImage imageNamed:@"tab_unsel_right"];
-
-        _tabBottomFill = [NSImage imageNamed:@"tab_bottom_fill"];
-
         _scrollLeftBtn = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, frame.size.height, frame.size.height-6)];
         [_scrollLeftBtn setBordered:NO];
         [_scrollLeftBtn setImage:[NSImage imageNamed:NSImageNameGoLeftTemplate]];
@@ -259,25 +242,63 @@ plt_get_title_wrapper (int plt) {
 }
 
 - (void)drawTab:(int)idx area:(NSRect)area selected:(BOOL)sel {
-    NSImage *tleft = sel ? _tabLeft : _tabUnselLeft;
-    NSImage *tright = sel ? _tabRight : _tabUnselRight;
-    NSImage *tfill = sel ? _tabFill : _tabUnselFill;
+    [[NSGraphicsContext currentContext] saveGraphicsState];
 
-    area.origin.y+=1;
+    NSRect tabRect = area;
+
+#if 0
+    // curved tabs
+    NSBezierPath *tab = [NSBezierPath bezierPath];
+    NSPoint pt = tabRect.origin;
+    pt.y += 0.5;
+
+    [tab moveToPoint:pt]; // origin
+
+    pt.x += 2;
+    pt.y += 2;
+    [tab curveToPoint:pt controlPoint1:NSMakePoint(pt.x, pt.y-2) controlPoint2:NSMakePoint(pt.x, pt.y+2)];
+    pt.y += tabRect.size.height - (sel ? 8 : 10);
+    [tab lineToPoint:pt];
+    pt.x += 2;
+    pt.y += 2;
+    [tab curveToPoint:pt controlPoint1:NSMakePoint(pt.x-1, pt.y) controlPoint2:NSMakePoint(pt.x+1, pt.y)];
+    pt.x += tabRect.size.width-9;
+    [tab lineToPoint:pt];
+    pt.x += 2;
+    pt.y -= 2;
+    [tab curveToPoint:pt controlPoint1:NSMakePoint(pt.x, pt.y-1) controlPoint2:NSMakePoint(pt.x, pt.y+1)];
+    pt.y = tabRect.origin.y+3.5;
+    [tab lineToPoint:pt];
+    pt.x += 2;
+    pt.y -= 2;
+    [tab curveToPoint:pt controlPoint1:NSMakePoint(pt.x-2, pt.y) controlPoint2:NSMakePoint(pt.x+2, pt.y)];
+    [tab closePath];
+    [[[NSColor controlBackgroundColor] shadowWithLevel:sel?0.2:0.3] set];
+    [tab fill];
+    [[[NSColor controlBackgroundColor] shadowWithLevel:0.5] set];
+    [tab stroke];
+#endif
+
+    // rectangular tabs
+    tabRect.origin.x += 0.5;
+    tabRect.origin.y -= 1.5;
+    tabRect.size.height++;
+
+    NSBezierPath *tab = [NSBezierPath bezierPathWithRect:tabRect];
+
+    if (sel) {
+        [[[self window] backgroundColor] set];
+    }
+    else {
+        [[[[self window] backgroundColor] shadowWithLevel:0.1] set];
+    }
+    [tab fill];
+    [[[NSColor tertiaryLabelColor] shadowWithLevel:0.3] set];
+    //[[[[self window] backgroundColor] shadowWithLevel:0.5] set];
+    [tab stroke];
+
+    // tab title
     int textoffs = sel ? 1 : 0;
-
-    [tleft drawAtPoint:area.origin fromRect:NSMakeRect(0,0,[tleft size].width,[tleft size].height) operation:NSCompositeSourceOver fraction:1];
-    
-    NSGraphicsContext *gc = [NSGraphicsContext currentContext];
-    [gc saveGraphicsState];
-    [[NSColor colorWithPatternImage:tfill] set];
-    NSPoint convPt = [self convertPoint:NSMakePoint(0, area.origin.y) fromView:self];
-    [gc setPatternPhase:convPt];
-    [NSBezierPath fillRect:NSMakeRect(area.origin.x + [tleft size].width, area.origin.y + ([tleft size].height-[tfill size].height), area.size.width-[tleft size].width-[tright size].width, [tleft size].height)];
-    [gc restoreGraphicsState];
-
-
-    [tright drawAtPoint:NSMakePoint(area.origin.x+area.size.width-[tleft size].width, area.origin.y) fromRect:NSMakeRect(0,0,[_tabRight size].width,[tright size].height) operation:NSCompositeSourceOver fraction:1];
 
     NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [textStyle setAlignment:NSLeftTextAlignment];
@@ -292,20 +313,15 @@ plt_get_title_wrapper (int plt) {
 
     NSString *tab_title = plt_get_title_wrapper (idx);
 
-    [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + text_vert_offset + textoffs - 11, area.size.width - (text_left_padding + text_right_padding - 1), area.size.height) withAttributes:attrs];
+    [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + text_vert_offset + textoffs - 10, area.size.width - (text_left_padding + text_right_padding - 1), area.size.height) withAttributes:attrs];
 
-    NSPoint from = NSMakePoint(area.origin.x + area.size.width - tab_overlap_size - 8+0.5, area.origin.y + 8+0.5);
+    // close button
+    NSPoint from = NSMakePoint(area.origin.x + area.size.width - tab_overlap_size - close_btn_right_offs + 0.5, area.origin.y + 8+0.5);
     NSPoint to = from;
     to.x+=8;
     to.y+=8;
-    NSRect atRect;
-    atRect.origin = from;
-    atRect.size = NSMakeSize(8, 8);
+    NSRect atRect = [self getTabCloseRect:area];
     if (NSPointInRect (_lastMouseCoord, atRect)) {
-        atRect.origin.x -= 2;
-        atRect.origin.y -= 2;
-        atRect.size.width += 4;
-        atRect.size.height += 4;
         NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:atRect xRadius:1 yRadius:1];
         [[NSColor controlShadowColor] set];
         [path fill];
@@ -313,6 +329,7 @@ plt_get_title_wrapper (int plt) {
     [[NSColor controlTextColor] set];
     [NSBezierPath strokeLineFromPoint: from toPoint: to ];
     [NSBezierPath strokeLineFromPoint: NSMakePoint(from.x, to.y) toPoint: NSMakePoint(to.x, from.y) ];
+    [[NSGraphicsContext currentContext] restoreGraphicsState];
 }
 
 - (void)clipTabArea {
@@ -325,16 +342,13 @@ plt_get_title_wrapper (int plt) {
 
     int h = a.height;
 
-    tab_overlap_size = (h-4)/2;
+    tab_overlap_size = 0;//(h-4)/2;
     text_right_padding = h - 3 + 5;
 }
 
 - (void)drawRect:(NSRect)dirtyRect
 {
     [super drawRect:dirtyRect];
-    [[NSColor windowBackgroundColor] set];
-    [NSBezierPath fillRect:[self bounds]];
-
     int cnt = deadbeef->plt_get_count ();
     int hscroll = _hscrollpos;
     
@@ -408,16 +422,6 @@ plt_get_title_wrapper (int plt) {
     if ([self needArrows]) {
         [[NSGraphicsContext currentContext] restoreGraphicsState];
     }
-
-    NSGraphicsContext *gc = [NSGraphicsContext currentContext];
-    [gc saveGraphicsState];
-    [[NSColor colorWithPatternImage:_tabBottomFill] set];
-    int offs = -1;
-    NSPoint convPt = [self convertPoint:NSMakePoint(0,offs) fromView:nil];
-    [gc setPatternPhase:convPt];
-    [NSBezierPath fillRect:NSMakeRect(0, offs, [self bounds].size.width, [_tabBottomFill size].height)];
-    [gc restoreGraphicsState];
-    
 
     if ([self needArrows]) {
         [[NSGraphicsContext currentContext] saveGraphicsState];
@@ -564,6 +568,16 @@ plt_get_title_wrapper (int plt) {
     }
 }
 
+-(NSRect)getTabCloseRect:(NSRect)area {
+    NSPoint from = NSMakePoint(area.origin.x + area.size.width - tab_overlap_size - close_btn_right_offs + 0.5, area.origin.y + 8+0.5);
+    NSRect atRect;
+    atRect.origin = from;
+    atRect.origin.x -= 2;
+    atRect.origin.y -= 2;
+    atRect.size = NSMakeSize(12, 12);
+    return atRect;
+}
+
 - (BOOL)handleClickedTabCloseRect {
     int hscroll = _hscrollpos;
     if ([self needArrows]) {
@@ -577,7 +591,8 @@ plt_get_title_wrapper (int plt) {
     }
     int w = [self getTabWith:_tab_clicked];
     NSRect area = NSMakeRect(x, tab_vert_padding, w, [self bounds].size.height);
-    NSRect atRect = NSMakeRect(area.origin.x + area.size.width - tab_overlap_size - 8, area.origin.y + 6, 8, 8 + 4);
+
+    NSRect atRect = [self getTabCloseRect:area];
 
     if (!NSPointInRect(_lastMouseCoord, atRect)) {
         return NO;
@@ -800,6 +815,10 @@ plt_get_title_wrapper (int plt) {
         }
         [self setNeedsDisplay:YES];
     }
+}
+
+- (BOOL)mouseDownCanMoveWindow {
+    return NO;
 }
 
 -(void)mouseMovedHandler {
