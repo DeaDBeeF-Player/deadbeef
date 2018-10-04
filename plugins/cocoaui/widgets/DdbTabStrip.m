@@ -55,7 +55,7 @@ static int text_left_padding = 15;
 static int text_right_padding = 0; // calculated from widget height
 static int text_vert_offset = 3;
 static int tab_overlap_size = 0; // approximately widget_height/2
-static int tabs_left_margin = 4;
+static int tabs_left_margin = 0;
 static int tab_vert_padding = 1;
 static int min_tab_size = 80;
 static int max_tab_size = 200;
@@ -280,22 +280,25 @@ plt_get_title_wrapper (int plt) {
 #endif
 
     // rectangular tabs
-    tabRect.origin.x += 0.5;
-    tabRect.origin.y -= 1.5;
     tabRect.size.height++;
 
-    NSBezierPath *tab = [NSBezierPath bezierPathWithRect:tabRect];
-
-    if (sel) {
-        [[[self window] backgroundColor] set];
+    if (!sel) {
+        [[[NSColor blackColor] colorWithAlphaComponent:0.2] set];
+        NSRect rc = tabRect;
+        rc.size.width -= 1;
+        NSBezierPath *tab = [NSBezierPath bezierPathWithRect:rc];
+        [tab fill];
     }
-    else {
-        [[[[self window] backgroundColor] shadowWithLevel:0.1] set];
+    NSColor *clr = [_hiddenVertLine borderColor];
+    [[clr colorWithAlphaComponent:0.5] set];
+    NSBezierPath *line = [NSBezierPath bezierPath];
+    [line moveToPoint:NSMakePoint(tabRect.origin.x + tabRect.size.width-0.5, tabRect.origin.y-1.5)];
+    [line lineToPoint:NSMakePoint(tabRect.origin.x + tabRect.size.width-0.5, tabRect.origin.y+tabRect.size.height-1)];
+    if (sel && _dragging >= 0) {
+        [line moveToPoint:NSMakePoint(tabRect.origin.x-0.5, tabRect.origin.y-1.5)];
+        [line lineToPoint:NSMakePoint(tabRect.origin.x-0.5, tabRect.origin.y+tabRect.size.height-1)];
     }
-    [tab fill];
-    [[[NSColor tertiaryLabelColor] shadowWithLevel:0.3] set];
-    //[[[[self window] backgroundColor] shadowWithLevel:0.5] set];
-    [tab stroke];
+    [line stroke];
 
     // tab title
     int textoffs = sel ? 1 : 0;
@@ -323,7 +326,7 @@ plt_get_title_wrapper (int plt) {
     NSRect atRect = [self getTabCloseRect:area];
     if (NSPointInRect (_lastMouseCoord, atRect)) {
         NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:atRect xRadius:1 yRadius:1];
-        [[NSColor controlShadowColor] set];
+        [[[NSColor controlTextColor] colorWithAlphaComponent:0.2] set];
         [path fill];
     }
     [[NSColor controlTextColor] set];
@@ -344,6 +347,11 @@ plt_get_title_wrapper (int plt) {
 
     tab_overlap_size = 0;//(h-4)/2;
     text_right_padding = h - 3 + 5;
+}
+
+- (NSRect)getTabRect:(int)xPos tabWidth:(int)tabWidth tabHeight:(int)tabHeight {
+    return NSMakeRect(xPos, tab_vert_padding, tabWidth, tabHeight);
+
 }
 
 - (void)drawRect:(NSRect)dirtyRect
@@ -391,54 +399,24 @@ plt_get_title_wrapper (int plt) {
         }
     }
     
-    x = -hscroll + tabs_left_margin;
-
+    [[NSGraphicsContext currentContext] saveGraphicsState];
     if ([self needArrows]) {
-        [[NSGraphicsContext currentContext] saveGraphicsState];
         [self clipTabArea];
     }
 
-    // draw tabs on the left
-    int c = tab_selected == -1 ? cnt : tab_selected;
-    for (idx = 0; idx < c; idx++) {
-        w = widths[idx];
-        NSRect area = NSMakeRect(x, tab_vert_padding, w, [self bounds].size.height);
-        [self drawTab:idx area:area selected:NO];
-        x += w - tab_overlap_size;
-    }
-    // draw tabs on the right
-    if (tab_selected != -1 && tab_selected != cnt-1) {
-        x = -hscroll + tabs_left_margin;
-        for (idx = 0; idx < cnt; idx++) {
-            x += widths[idx] - tab_overlap_size;
-        }
-        for (idx = cnt-1; idx > tab_selected; idx--) {
-            w = widths[idx];
-            x -= w - tab_overlap_size;
-            NSRect area = NSMakeRect(x, tab_vert_padding, w, [self bounds].size.height);
-            [self drawTab:idx area:area selected:NO];
-        }
-    }
-    if ([self needArrows]) {
-        [[NSGraphicsContext currentContext] restoreGraphicsState];
-    }
-
-    if ([self needArrows]) {
-        [[NSGraphicsContext currentContext] saveGraphicsState];
-        [self clipTabArea];
-    }
-
+    // draw selected
     // calc position for drawin selected tab
     x = -hscroll;
     for (idx = 0; idx < tab_selected; idx++) {
         x += widths[idx] - tab_overlap_size;
     }
     x += tabs_left_margin;
-    // draw selected
+    NSRect selectedTabRect;
     if (_dragging < 0 || _prepare || tab_selected != _dragging) {
         idx = tab_selected;
         w = widths[tab_selected];
-        [self drawTab:idx area:NSMakeRect(x, tab_vert_padding, w, [self bounds].size.height) selected:YES];
+        selectedTabRect = [self getTabRect:x tabWidth:w tabHeight:[self bounds].size.height];
+        [self drawTab:idx area:selectedTabRect selected:YES];
     }
     else {
         need_draw_moving = 1;
@@ -454,7 +432,19 @@ plt_get_title_wrapper (int plt) {
                 }
                 if (w > 0) {
                     // ***** draw dragging tab here *****
-                    [self drawTab:tab_selected area:NSMakeRect(x, tab_vert_padding, w, [self bounds].size.height) selected:YES];
+                    selectedTabRect = [self getTabRect:x tabWidth:w tabHeight:[self bounds].size.height];
+                    [self drawTab:tab_selected area:selectedTabRect selected:YES];
+
+                    NSBezierPath *clipPath = [NSBezierPath bezierPath];
+
+                    if (selectedTabRect.origin.x > 0) {
+                        NSRect clipLeft = NSMakeRect(0, 0, selectedTabRect.origin.x, selectedTabRect.size.height);
+                        [clipPath appendBezierPathWithRect:clipLeft];
+                    }
+                    int xx = selectedTabRect.origin.x+selectedTabRect.size.width;
+                    NSRect clipRight = NSMakeRect(xx, 0, self.bounds.size.width - xx, selectedTabRect.size.height);
+                    [clipPath appendBezierPathWithRect:clipRight];
+                    [clipPath setClip];
                 }
                 int undercursor = [self tabUnderCursor:_lastMouseCoord.x];
                 if (undercursor == _dragging) {
@@ -465,9 +455,40 @@ plt_get_title_wrapper (int plt) {
             x += w - tab_overlap_size;
         }
     }
+
+    x = -hscroll + tabs_left_margin;
+
+    // draw tabs on the left
+    int c = tab_selected == -1 ? cnt : tab_selected;
+    for (idx = 0; idx < c; idx++) {
+        w = widths[idx];
+        NSRect area = [self getTabRect:x tabWidth:w tabHeight:[self bounds].size.height];
+        [self drawTab:idx area:area selected:NO];
+        x += w - tab_overlap_size;
+    }
+    // draw tabs on the right
+    if (tab_selected != -1 && tab_selected != cnt-1) {
+        x = -hscroll + tabs_left_margin;
+        for (idx = 0; idx < cnt; idx++) {
+            x += widths[idx] - tab_overlap_size;
+        }
+        for (idx = cnt-1; idx > tab_selected; idx--) {
+            w = widths[idx];
+            x -= w - tab_overlap_size;
+            NSRect area = [self getTabRect:x tabWidth:w tabHeight:[self bounds].size.height];
+            [self drawTab:idx area:area selected:NO];
+        }
+    }
     if ([self needArrows]) {
         [[NSGraphicsContext currentContext] restoreGraphicsState];
     }
+
+    if ([self needArrows]) {
+        [[NSGraphicsContext currentContext] saveGraphicsState];
+        [self clipTabArea];
+    }
+
+    [[NSGraphicsContext currentContext] restoreGraphicsState];
 }
 
 -(NSRect)tabRectForIndex:(int)tab {

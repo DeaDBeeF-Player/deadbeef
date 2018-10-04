@@ -25,4 +25,5 @@
 
 @interface DdbTabStrip : DdbWidget
 - (int)clickedTab;
+@property (weak) IBOutlet NSBox *hiddenVertLine;
 @end
