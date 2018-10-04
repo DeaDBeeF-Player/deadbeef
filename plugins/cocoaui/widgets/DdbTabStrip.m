@@ -288,15 +288,15 @@ plt_get_title_wrapper (int plt) {
     [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
 
     NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize]];
-    NSDictionary *attrs = [NSDictionary dictionaryWithObjectsAndKeys
-                           : textStyle, NSParagraphStyleAttributeName
-                           ,font , NSFontAttributeName
-                           , nil];
+    NSDictionary *attrs = @{
+        NSParagraphStyleAttributeName: textStyle,
+        NSFontAttributeName:font,
+        NSForegroundColorAttributeName:[NSColor controlTextColor]
+    };
 
     NSString *tab_title = plt_get_title_wrapper (idx);
 
     [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + text_vert_offset + textoffs - 11, area.size.width - (text_left_padding + text_right_padding - 1), area.size.height) withAttributes:attrs];
-//    [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + text_vert_offset - 6 + textoffs, area.size.width - (text_left_padding + text_right_padding - 1), area.size.height) withAttributes:attrs];
 
     NSImage *img = _closeTabBtnImage;
 
