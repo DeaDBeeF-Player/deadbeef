@@ -268,7 +268,6 @@
 		2D0A002819C390E9006F7462 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
 		2D0E02E71E26703D00D3D8E6 /* libflaclib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */; };
 		2D0E02EA1E26706300D3D8E6 /* libogglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
-		2D0EE6971B86685C00487FA1 /* tabCloseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2D0EE6961B86685C00487FA1 /* tabCloseTemplate.pdf */; };
 		2D0F90C21CCFF094003FA197 /* Tagging.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F90C11CCFF094003FA197 /* Tagging.m */; };
 		2D10DFFD1B98350D00A2D465 /* resampler_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D10DFFB1B9834FD00A2D465 /* resampler_sse2.c */; };
 		2D11D3C41B9DC69C00C7C731 /* ay8912.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D11D3BD1B9DC69C00C7C731 /* ay8912.c */; };
@@ -2949,7 +2948,6 @@
 		2D0835991D4F4DB600A5C643 /* cdumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cdumb.h; path = plugins/dumb/cdumb.h; sourceTree = "<group>"; };
 		2D0A002519C390E9006F7462 /* tf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tf.c; sourceTree = "<group>"; };
 		2D0A002619C390E9006F7462 /* tf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tf.h; sourceTree = "<group>"; };
-		2D0EE6961B86685C00487FA1 /* tabCloseTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = tabCloseTemplate.pdf; path = images/tabs/tabCloseTemplate.pdf; sourceTree = "<group>"; };
 		2D0F90C11CCFF094003FA197 /* Tagging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tagging.m; sourceTree = "<group>"; };
 		2D10DFFB1B9834FD00A2D465 /* resampler_sse2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = resampler_sse2.c; path = "plugins/dumb/dumb-kode54/src/helpers/resampler_sse2.c"; sourceTree = "<group>"; };
 		2D11D3B91B9DC67100C7C731 /* vtx.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = vtx.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7296,7 +7294,6 @@
 		2DB10B6819B908510054A6AB /* tabs */ = {
 			isa = PBXGroup;
 			children = (
-				2D0EE6961B86685C00487FA1 /* tabCloseTemplate.pdf */,
 				2DB10B8D19B90BE90054A6AB /* tab_right.png */,
 				2DB10B8E19B90BE90054A6AB /* tab_right@2x.png */,
 				2DB10B6919B9085A0054A6AB /* tab_bottom_fill.png */,
@@ -11378,7 +11375,6 @@
 				2DB10B8319B908630054A6AB /* tab_fill.png in Resources */,
 				4D32FA0019A63644000FFDE0 /* ffap.dylib in Resources */,
 				2DB10B8419B908630054A6AB /* tab_fill@2x.png in Resources */,
-				2D0EE6971B86685C00487FA1 /* tabCloseTemplate.pdf in Resources */,
 				4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */,
 				4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */,
 				2DBEE69519B4EB0900A60609 /* sb_front_cap_left@2x.png in Resources */,

@@ -54,8 +54,6 @@ extern DB_functions_t *deadbeef;
     NSImage *_tabUnselFill;
     NSImage *_tabUnselRight;
     NSImage *_tabBottomFill;
-
-    NSImage *_closeTabBtnImage;
 }
 @end
 
@@ -108,8 +106,6 @@ static int max_tab_size = 200;
         [_scrollRightBtn setTarget:self];
         [_scrollRightBtn setAction:@selector(scrollRight)];
         [self addSubview:_scrollRightBtn];
-
-        _closeTabBtnImage = [NSImage imageNamed:@"tabCloseTemplate"];
 
         _lastMouseCoord.x = -100000;
         _pointedTab = -1;
@@ -298,15 +294,25 @@ plt_get_title_wrapper (int plt) {
 
     [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + text_vert_offset + textoffs - 11, area.size.width - (text_left_padding + text_right_padding - 1), area.size.height) withAttributes:attrs];
 
-    NSImage *img = _closeTabBtnImage;
-
-    NSRect rect = NSMakeRect (0, 0, [img size].width, [img size].height);
-    NSRect atRect = NSMakeRect(area.origin.x + area.size.width - tab_overlap_size - 8, area.origin.y + 8, 8, 8);
-    if (_pointedTab == idx && _closeTabCapture) {
-        _closeTabButtonRect = atRect;
+    NSPoint from = NSMakePoint(area.origin.x + area.size.width - tab_overlap_size - 8+0.5, area.origin.y + 8+0.5);
+    NSPoint to = from;
+    to.x+=8;
+    to.y+=8;
+    NSRect atRect;
+    atRect.origin = from;
+    atRect.size = NSMakeSize(8, 8);
+    if (NSPointInRect (_lastMouseCoord, atRect)) {
+        atRect.origin.x -= 2;
+        atRect.origin.y -= 2;
+        atRect.size.width += 4;
+        atRect.size.height += 4;
+        NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:atRect xRadius:1 yRadius:1];
+        [[NSColor controlShadowColor] set];
+        [path fill];
     }
-    float fraction = NSPointInRect (_lastMouseCoord, atRect) ? 1 : 0.3;
-    [img drawInRect:atRect fromRect:rect operation:NSCompositeSourceOver fraction:fraction];
+    [[NSColor controlTextColor] set];
+    [NSBezierPath strokeLineFromPoint: from toPoint: to ];
+    [NSBezierPath strokeLineFromPoint: NSMakePoint(from.x, to.y) toPoint: NSMakePoint(to.x, from.y) ];
 }
 
 - (void)clipTabArea {
