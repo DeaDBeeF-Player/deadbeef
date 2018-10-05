@@ -181,7 +181,6 @@ int grouptitleheight = 22;
 
     NSRect rect = [self bounds];
     [[NSColor lightGrayColor] set];
-    [NSBezierPath fillRect:NSMakeRect(rect.origin.x, rect.origin.y+rect.size.height-1,rect.size.width,1)];
     [NSBezierPath fillRect:NSMakeRect(rect.origin.x, 0,rect.size.width,1)];
 
     NSGradient *gr = [[NSGradient alloc] initWithColorsAndLocations:

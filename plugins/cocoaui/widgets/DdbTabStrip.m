@@ -53,7 +53,7 @@ extern DB_functions_t *deadbeef;
 
 static int text_left_padding = 15;
 static int text_right_padding = 0; // calculated from widget height
-static int text_vert_offset = 3;
+static int text_vert_offset = 4;
 static int tab_overlap_size = 0; // approximately widget_height/2
 static int tabs_left_margin = 0;
 static int tab_vert_padding = 1;
@@ -246,44 +246,11 @@ plt_get_title_wrapper (int plt) {
 
     NSRect tabRect = area;
 
-#if 0
-    // curved tabs
-    NSBezierPath *tab = [NSBezierPath bezierPath];
-    NSPoint pt = tabRect.origin;
-    pt.y += 0.5;
-
-    [tab moveToPoint:pt]; // origin
-
-    pt.x += 2;
-    pt.y += 2;
-    [tab curveToPoint:pt controlPoint1:NSMakePoint(pt.x, pt.y-2) controlPoint2:NSMakePoint(pt.x, pt.y+2)];
-    pt.y += tabRect.size.height - (sel ? 8 : 10);
-    [tab lineToPoint:pt];
-    pt.x += 2;
-    pt.y += 2;
-    [tab curveToPoint:pt controlPoint1:NSMakePoint(pt.x-1, pt.y) controlPoint2:NSMakePoint(pt.x+1, pt.y)];
-    pt.x += tabRect.size.width-9;
-    [tab lineToPoint:pt];
-    pt.x += 2;
-    pt.y -= 2;
-    [tab curveToPoint:pt controlPoint1:NSMakePoint(pt.x, pt.y-1) controlPoint2:NSMakePoint(pt.x, pt.y+1)];
-    pt.y = tabRect.origin.y+3.5;
-    [tab lineToPoint:pt];
-    pt.x += 2;
-    pt.y -= 2;
-    [tab curveToPoint:pt controlPoint1:NSMakePoint(pt.x-2, pt.y) controlPoint2:NSMakePoint(pt.x+2, pt.y)];
-    [tab closePath];
-    [[[NSColor controlBackgroundColor] shadowWithLevel:sel?0.2:0.3] set];
-    [tab fill];
-    [[[NSColor controlBackgroundColor] shadowWithLevel:0.5] set];
-    [tab stroke];
-#endif
-
     // rectangular tabs
     tabRect.size.height++;
 
     if (!sel) {
-        [[[NSColor blackColor] colorWithAlphaComponent:0.2] set];
+        [[[NSColor blackColor] colorWithAlphaComponent:0.1] set];
         NSRect rc = tabRect;
         rc.size.width -= 1;
         NSBezierPath *tab = [NSBezierPath bezierPathWithRect:rc];
@@ -307,7 +274,7 @@ plt_get_title_wrapper (int plt) {
     [textStyle setAlignment:NSLeftTextAlignment];
     [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
 
-    NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize]];
+    NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize] weight:NSFontWeightSemibold];
     NSDictionary *attrs = @{
         NSParagraphStyleAttributeName: textStyle,
         NSFontAttributeName:font,
