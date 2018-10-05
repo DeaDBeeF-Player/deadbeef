@@ -615,9 +615,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect {
     [[NSColor controlTextColor] set];
-    [NSBezierPath fillRect:NSMakeRect(rect.origin.x + rect.size.width - 1, rect.origin.y+3,1,rect.size.height-6)];
-
-    [[NSString stringWithUTF8String:_columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y+1, rect.size.width-6, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
+    [[NSString stringWithUTF8String:_columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y-2, rect.size.width-6, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
 }
 
 - (void)drawCell:(int)idx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused {
