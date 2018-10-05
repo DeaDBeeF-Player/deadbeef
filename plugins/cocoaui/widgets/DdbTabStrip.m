@@ -243,6 +243,7 @@ plt_get_title_wrapper (int plt) {
 
 - (void)drawTab:(int)idx area:(NSRect)area selected:(BOOL)sel {
     [[NSGraphicsContext currentContext] saveGraphicsState];
+    [NSBezierPath setDefaultLineWidth:1];
 
     NSRect tabRect = area;
 
@@ -286,17 +287,20 @@ plt_get_title_wrapper (int plt) {
     [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + text_vert_offset + textoffs - 10, area.size.width - (text_left_padding + text_right_padding - 1), area.size.height) withAttributes:attrs];
 
     // close button
-    NSPoint from = NSMakePoint(area.origin.x + area.size.width - tab_overlap_size - close_btn_right_offs + 0.5, area.origin.y + 8+0.5);
+    NSRect atRect = [self getTabCloseRect:area];
+    NSPoint from = atRect.origin;
+    from.x += 2;
+    from.y += 2;
     NSPoint to = from;
     to.x+=8;
     to.y+=8;
-    NSRect atRect = [self getTabCloseRect:area];
     if (NSPointInRect (_lastMouseCoord, atRect)) {
         NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:atRect xRadius:1 yRadius:1];
         [[[NSColor controlTextColor] colorWithAlphaComponent:0.2] set];
         [path fill];
     }
     [[NSColor controlTextColor] set];
+    [NSBezierPath setDefaultLineWidth:2];
     [NSBezierPath strokeLineFromPoint: from toPoint: to ];
     [NSBezierPath strokeLineFromPoint: NSMakePoint(from.x, to.y) toPoint: NSMakePoint(to.x, from.y) ];
     [[NSGraphicsContext currentContext] restoreGraphicsState];
@@ -557,7 +561,7 @@ plt_get_title_wrapper (int plt) {
 }
 
 -(NSRect)getTabCloseRect:(NSRect)area {
-    NSPoint from = NSMakePoint(area.origin.x + area.size.width - tab_overlap_size - close_btn_right_offs + 0.5, area.origin.y + 8+0.5);
+    NSPoint from = NSMakePoint(area.origin.x + area.size.width - tab_overlap_size - close_btn_right_offs + 0.5, area.origin.y + 7.5);
     NSRect atRect;
     atRect.origin = from;
     atRect.origin.x -= 2;
