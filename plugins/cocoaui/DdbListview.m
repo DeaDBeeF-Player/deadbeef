@@ -166,7 +166,9 @@ int grouptitleheight = 22;
     _dragging = -1;
     _sizing = -1;
     _separatorColor = [[NSColor headerColor] colorWithAlphaComponent:0.5];
-
+    NSTrackingAreaOptions options = NSTrackingInVisibleRect | NSTrackingCursorUpdate | NSTrackingMouseMoved | NSTrackingActiveInActiveApp;
+    NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:self.bounds options:options owner:self userInfo:nil];
+    [self addTrackingArea:area];
     return self;
 }
 
@@ -176,8 +178,6 @@ int grouptitleheight = 22;
 
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
-
-//    [self updateCursorRects];
 
     NSScrollView *sv = [listview.contentView enclosingScrollView];
     NSRect rc = [sv documentVisibleRect];
@@ -223,23 +223,34 @@ int grouptitleheight = 22;
 
 }
 
-- (void)updateCursorRects {
-    [self resetCursorRects];
+- (void)mouseMoved:(NSEvent *)event {
+    [self cursorUpdate:event];
+}
 
+- (void)cursorUpdate:(NSEvent *)event
+{
+    id <DdbListviewDelegate> delegate = [listview delegate];
     NSScrollView *sv = [listview.contentView enclosingScrollView];
     NSRect rc = [sv documentVisibleRect];
-
     int x = -rc.origin.x;
-    id <DdbListviewDelegate> delegate = [listview delegate];
-
+    int idx = 0;
+    NSPoint pt = [self convertPoint:[event locationInWindow] fromView:self];
     for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
-
         x += w;
-
-        [self addCursorRect:NSMakeRect(x-3, 0, 6, [self bounds].size.height) cursor:[NSCursor resizeLeftRightCursor]];
-
+        if (fabs(pt.x-x) < 5) {
+            if (idx == 0) {
+                [[NSCursor resizeRightCursor] set];
+            }
+            else {
+                [[NSCursor resizeLeftRightCursor] set];
+            }
+            return;
+        }
+        idx++;
     }
+    [[NSCursor arrowCursor] set];
+
 }
 
 - (void)mouseDown:(NSEvent *)theEvent {
@@ -255,10 +266,11 @@ int grouptitleheight = 22;
     _sizing = [delegate invalidColumn];
     _prepare = YES;
 
+    int idx = 0;
     for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
 
-        if (CGRectContainsPoint(NSMakeRect(x+3, 0, w-6, [self bounds].size.height), convPt)) {
+        if ((idx == 0 || convPt.x - x > 5) && convPt.x < x + w - 5) {
             _drag_delta = 0;
             _dragging = col;
             _dragPt = convPt;
@@ -269,7 +281,7 @@ int grouptitleheight = 22;
 
         x += w;
 
-        if (CGRectContainsPoint (NSMakeRect(x-3, 0, 6, [self bounds].size.height), convPt)) {
+        if (fabs(convPt.x - x) < 5) {
             _sizing = col;
             _dragPt = convPt;
             _orig_col_width = [delegate columnWidth:col];
