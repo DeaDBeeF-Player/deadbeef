@@ -339,6 +339,7 @@ enum playback_mode_t {
 
 #if (DDB_API_LEVEL >= 8)
 // playlist change info, used in the DB_EV_PLAYLISTCHANGED p1 argument
+// NOTE: these events can only be sent individually, and can't be ORed.
 enum ddb_playlist_change_t {
     DDB_PLAYLIST_CHANGE_CONTENT, // this is the most generic one, will work for the cases when p1 was omitted (0)
     DDB_PLAYLIST_CHANGE_CREATED,

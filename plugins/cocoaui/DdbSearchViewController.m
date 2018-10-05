@@ -62,7 +62,8 @@ extern DB_functions_t *deadbeef;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         deadbeef->plt_search_process (plt, [val UTF8String]);
-        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION | DDB_PLAYLIST_CHANGE_SEARCHRESULT, 0);
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SEARCHRESULT, 0);
         deadbeef->plt_unref (plt);
         DdbSearchWidget *pltWidget = (DdbSearchWidget *)[self view];
         deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, (uintptr_t)[pltWidget listview], PL_MAIN, 0);
@@ -79,7 +80,8 @@ extern DB_functions_t *deadbeef;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         deadbeef->plt_search_reset (plt);
-        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION | DDB_PLAYLIST_CHANGE_SEARCHRESULT, 0);
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SEARCHRESULT, 0);
         deadbeef->plt_unref (plt);
     }
     [_entry setStringValue:@""];
