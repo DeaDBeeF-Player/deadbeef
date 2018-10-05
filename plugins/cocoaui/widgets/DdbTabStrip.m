@@ -70,7 +70,7 @@ static int close_btn_right_offs = 16;
         _dragging = -1;
         _tab_clicked = -1;
         
-        _scrollLeftBtn = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, frame.size.height, frame.size.height-6)];
+        _scrollLeftBtn = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, frame.size.height, frame.size.height)];
         [_scrollLeftBtn setBordered:NO];
         [_scrollLeftBtn setImage:[NSImage imageNamed:NSImageNameGoLeftTemplate]];
         [[_scrollLeftBtn cell] setImageScaling:NSImageScaleProportionallyDown];
@@ -80,7 +80,7 @@ static int close_btn_right_offs = 16;
         [_scrollLeftBtn setAction:@selector(scrollLeft)];
         [self addSubview:_scrollLeftBtn];
 
-        _scrollRightBtn = [[NSButton alloc] initWithFrame:NSMakeRect(frame.size.width-frame.size.height, 0, frame.size.height, frame.size.height-6)];
+        _scrollRightBtn = [[NSButton alloc] initWithFrame:NSMakeRect(frame.size.width-frame.size.height, 0, frame.size.height, frame.size.height)];
         [_scrollRightBtn setBordered:NO];
         [_scrollRightBtn setImage:[NSImage imageNamed:NSImageNameGoRightTemplate]];
         [[_scrollRightBtn cell] setImageScaling:NSImageScaleProportionallyDown];
