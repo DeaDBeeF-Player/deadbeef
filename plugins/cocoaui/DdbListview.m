@@ -193,14 +193,14 @@ int grouptitleheight = 22;
     for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
 
+        NSRect colRect = NSMakeRect(x, 0, w, [self frame].size.height);
         if (_dragging != col) {
-            NSRect colRect = NSMakeRect(x, 0, w, [self frame].size.height);
             if (CGRectIntersectsRect(dirtyRect, colRect)) {
                 [delegate drawColumnHeader:col inRect:colRect];
-                [_separatorColor set];
-                [NSBezierPath fillRect:NSMakeRect(colRect.origin.x + colRect.size.width - 1, colRect.origin.y+3,1,colRect.size.height-6)];
             }
         }
+        [_separatorColor set];
+        [NSBezierPath fillRect:NSMakeRect(colRect.origin.x + colRect.size.width - 1, colRect.origin.y+3,1,colRect.size.height-6)];
         x += w;
     }
 
@@ -213,9 +213,13 @@ int grouptitleheight = 22;
             cx = _drag_col_pos + _drag_delta;
             NSRect colRect = NSMakeRect(cx, 1, w, [self frame].size.height-2);
             if (CGRectIntersectsRect(dirtyRect, colRect)) {
+                [[[NSColor whiteColor] colorWithAlphaComponent:0.4] set];
+                [NSBezierPath fillRect:colRect];
+
                 [delegate drawColumnHeader:col inRect:colRect];
                 [_separatorColor set];
-                [NSBezierPath fillRect:NSMakeRect(colRect.origin.x + colRect.size.width - 1, colRect.origin.y+3,1,colRect.size.height-6)];
+                [NSBezierPath fillRect:NSMakeRect(colRect.origin.x, colRect.origin.y,1,colRect.size.height)];
+                [NSBezierPath fillRect:NSMakeRect(colRect.origin.x + colRect.size.width - 1, colRect.origin.y,1,colRect.size.height)];
             }
         }
         x += w;
