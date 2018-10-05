@@ -346,7 +346,7 @@ int grouptitleheight = 22;
 
             [delegate setColumnWidth:w forColumn:_sizing];
             [listview updateContentFrame];
-            [listview setNeedsDisplay:YES];
+            [listview.contentView setNeedsDisplay:YES];
             [self setNeedsDisplay:YES];
 
             rc = [sv documentVisibleRect];
