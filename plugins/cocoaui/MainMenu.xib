@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <development version="8000" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -421,6 +420,38 @@ CA
                         </items>
                     </menu>
                 </menuItem>
+                <menuItem title="View" id="7JV-XM-Tho">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="View" id="mGh-4N-gZF">
+                        <items>
+                            <menuItem title="Show Toolbar" keyEquivalent="t" id="cPI-ve-dVE">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="toggleToolbarShown:" target="-1" id="tUK-Ak-rY6"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Customize Toolbar…" id="c4o-YB-zf7">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="runToolbarCustomizationPalette:" target="-1" id="CKF-2g-Uba"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="gYQ-7K-TiA"/>
+                            <menuItem title="Show Sidebar" keyEquivalent="s" id="152-Sn-dTn">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="toggleSourceList:" target="-1" id="gdH-3c-hpI"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Enter Full Screen" keyEquivalent="f" id="kaJ-52-5So">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="toggleFullScreen:" target="-1" id="E5l-9A-pd9"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
                 <menuItem title="Playback" id="nWk-4q-3Vm">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Playback" id="YAz-yR-8od">
@@ -623,6 +654,7 @@ CA
             <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSApplicationIcon" id="oCk-eR-mPP"/>
+            <point key="canvasLocation" x="474" y="66"/>
         </imageView>
         <window title="Add Location" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="0MP-Eo-f3S" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
@@ -795,7 +827,7 @@ Gw
                     </button>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="236.5" y="268"/>
+            <point key="canvasLocation" x="445" y="272"/>
         </window>
         <menu autoenablesItems="NO" id="891-Kp-BFs">
             <items>
