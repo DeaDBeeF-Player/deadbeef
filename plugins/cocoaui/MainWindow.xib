@@ -380,11 +380,11 @@ Gw
             <point key="canvasLocation" x="486" y="279.5"/>
         </window>
         <customView id="d3W-U7-VFA" customClass="DdbTabStrip">
-            <rect key="frame" x="0.0" y="0.0" width="1086" height="26"/>
+            <rect key="frame" x="0.0" y="0.0" width="1086" height="24"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
             <subviews>
                 <box hidden="YES" horizontalHuggingPriority="750" boxType="separator" id="qy6-ht-rWK">
-                    <rect key="frame" x="685" y="-35" width="5" height="96"/>
+                    <rect key="frame" x="685" y="-37" width="5" height="96"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </box>
             </subviews>
