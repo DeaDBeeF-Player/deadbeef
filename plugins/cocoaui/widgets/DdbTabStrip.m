@@ -295,15 +295,15 @@ plt_get_title_wrapper (int plt) {
         to.y+=8;
         if (NSPointInRect (_lastMouseCoord, atRect)) {
             NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:atRect xRadius:1 yRadius:1];
-            [[[NSColor controlTextColor] colorWithAlphaComponent:0.2] set];
+            [[[NSColor controlTextColor] colorWithAlphaComponent:_closeTabCapture?0.4:0.2] set];
             [path fill];
         }
         [[NSColor controlTextColor] set];
         [NSBezierPath setDefaultLineWidth:2];
         [NSBezierPath strokeLineFromPoint: from toPoint: to ];
         [NSBezierPath strokeLineFromPoint: NSMakePoint(from.x, to.y) toPoint: NSMakePoint(to.x, from.y) ];
-        [[NSGraphicsContext currentContext] restoreGraphicsState];
     }
+    [[NSGraphicsContext currentContext] restoreGraphicsState];
 }
 
 - (void)clipTabArea {
@@ -538,9 +538,12 @@ plt_get_title_wrapper (int plt) {
 }
 
 -(void)updatePointedTab:(int)tab {
-    if (tab != _pointedTab) {
+    if (!_closeTabCapture && tab != _pointedTab) {
         _pointedTab = tab;
         [self setNeedsDisplay:YES];
+    }
+    else if (_closeTabCapture) {
+        [self setNeedsDisplayInRect:_closeTabButtonRect];
     }
 }
 
@@ -593,7 +596,6 @@ plt_get_title_wrapper (int plt) {
         return NO;
     }
 
-    atRect.size.height -= 4;
     _closeTabButtonRect = atRect;
     _closeTabCapture = YES;
     [self setNeedsDisplayInRect:atRect];
