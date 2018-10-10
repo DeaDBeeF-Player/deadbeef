@@ -6,6 +6,9 @@
 - (void)setValueForKey:(NSString *)key value:(NSString *)value;
 - (int)count;
 - (NSString *)keyForIndex:(int)index;
+- (NSArray<NSString *> *)getItemTypes;
+- (NSString *)getItemNameWithType:(NSString *)type;
+- (void)addItemWithType:(NSString *)type;
 @end
 
 @interface PluginConfigurationValueAccessorConfig : NSObject<PluginConfigurationValueAccessor>
@@ -17,7 +20,7 @@
 
 @interface PluginConfigurationViewController : NSViewController
 
-- (void)initPluginConfiguration:(const char *)config accessor:(NSObject<PluginConfigurationValueAccessor> *)accessor;
+- (void)initPluginConfiguration:(const char *)config accessor:(id<PluginConfigurationValueAccessor>)accessor;
 - (void)savePluginConfiguration;
 - (void)resetPluginConfigToDefaults;
 

@@ -29,6 +29,44 @@ import Cocoa
         return true
     }
 
+    func getItemTypes () -> [String] {
+        var list : [String] = []
+        let plugins = plug_get_dsp_list ()
+
+        var i : Int = 0;
+        while let p = plugins?[i]?.pointee {
+            let data = Data(bytes: p.plugin.id, count: Int(strlen(p.plugin.id)))
+            list.append(String(data: data, encoding: String.Encoding.utf8)!)
+            i += 1
+        }
+
+        return list;
+    }
+
+    func getItemName (type: String) -> String {
+        if let p = plug_get_for_id(type) {
+            let data = Data(bytes: p.pointee.name, count: Int(strlen(p.pointee.name)))
+            return String(data: data, encoding: String.Encoding.utf8)!
+        }
+        return "null";
+    }
+
+    func addItem (type: String) {
+        let items : [[String:Any]] = []
+
+        if var presetItems = presetMgr.data[0]["items"] as? [[String:Any]] {
+            let node : [String:Any] = [
+                "name" : getItemName(type: type),
+                "type" : type,
+                // NOTE: it should be assumed, that when an expected item is not in this list - the default value needs to be used
+                "items" : items
+            ]
+            presetItems.append(node)
+            presetMgr.data[0]["items"] = presetItems
+        }
+    }
+
+
     // PresetSerializer
 
     func load() throws {

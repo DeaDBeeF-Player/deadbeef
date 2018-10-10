@@ -170,6 +170,15 @@ protocol PresetManagerDelegate {
 
     // Return true if the item needs to be saved
     func isSaveable (index: Int) -> Bool
+
+    // Return all item types, e.g. dsp plugin ids
+    func getItemTypes () -> [String]
+
+    // Returns name for type
+    func getItemName (type: String) -> String
+
+    // Add new item
+    func addItem (type: String)
 }
 
 protocol PresetSerializer {
@@ -255,7 +264,6 @@ class PresetManager : NSObject {
         }
         let str = String(data: data, encoding: String.Encoding.utf8)
         return str!
-//        return "{\"type\":\"m2s\", \"items\":[{ \"name\":0, \"value\": 1 },{ \"name\":0, \"value\": 1 }]}";
     }
 
     @objc func savePreset(index : Int, itemIndex : Int) -> String {
@@ -269,6 +277,7 @@ class PresetManager : NSObject {
         let str = String(data: data, encoding: String.Encoding.utf8)
         return str!
     }
+
     @objc func loadPreset(index : Int, fromString : String) {
         // ...
     }
@@ -284,6 +293,26 @@ class PresetManager : NSObject {
         conf_set_int ("\(domain).\(context)", Int32(selectedPreset))
     }
 
+    @objc func getItemTypes () -> [String] {
+        guard let d = delegate else {
+            return []
+        }
+        return d.getItemTypes()
+    }
+
+    @objc func getItemName (type: String) -> String {
+        guard let d = delegate else {
+            return "null"
+        }
+        return d.getItemName(type:type)
+    }
+
+    @objc func addItem (type: String) {
+        guard let d = delegate else {
+            return
+        }
+        d.addItem(type:type)
+    }
     /*
     @objc public func initSelectorPopUpButton (_ btn : NSPopUpButton) {
         for d in data {

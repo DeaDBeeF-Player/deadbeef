@@ -54,12 +54,24 @@
 - (NSString *)keyForIndex:(int)index {
     return [NSString stringWithFormat:@"%d", index];
 }
+
+- (NSArray<NSString *> *)getItemTypes {
+    return [_presetMgr getItemTypes];
+}
+
+- (NSString *)getItemNameWithType:(NSString *)type {
+    return [_presetMgr getItemNameWithType:type];
+}
+
+- (void)addItemWithType:(NSString *)type {
+    [_presetMgr addItemWithType:type];
+}
 @end
 
 @interface PluginConfigurationViewController () {
     NSMutableArray *_bindings;
     settings_data_t _settingsData;
-    NSObject<PluginConfigurationValueAccessor> *_accessor;
+    id<PluginConfigurationValueAccessor> _accessor;
 }
 
 @end
@@ -71,7 +83,7 @@
     // Do view setup here.
 }
 
-- (void)initPluginConfiguration:(const char *)config accessor:(NSObject<PluginConfigurationValueAccessor> *)accessor {
+- (void)initPluginConfiguration:(const char *)config accessor:(id<PluginConfigurationValueAccessor>)accessor {
     _accessor = accessor;
     NSView *view = [self view];
     _bindings = [[NSMutableArray alloc] init];

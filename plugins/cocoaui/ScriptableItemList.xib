@@ -78,7 +78,7 @@
                         <segments>
                             <segment image="NSAddTemplate"/>
                             <segment image="NSRemoveTemplate" tag="1"/>
-                            <segment image="NSActionTemplate"/>
+                            <segment image="NSActionTemplate" tag="3"/>
                         </segments>
                     </segmentedCell>
                     <connections>

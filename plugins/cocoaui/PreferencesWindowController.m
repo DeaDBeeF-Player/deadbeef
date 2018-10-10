@@ -58,7 +58,8 @@ extern DB_functions_t *deadbeef;
     // So list = accessor.items[0]
     // Then each node must be loaded using list[index]
     static const char *config = "property \"DSP Plugins\" itemlist<DSPNode> dspconfig 0;";
-    [_dspPresetViewController initPluginConfiguration:config accessor:[[PluginConfigurationValueAccessorPreset alloc] initWithPresetManager:[_dspPresetController presetMgr] presetIndex:0]];
+    id<PluginConfigurationValueAccessor> accessor = [[PluginConfigurationValueAccessorPreset alloc] initWithPresetManager:[_dspPresetController presetMgr] presetIndex:0];
+    [_dspPresetViewController initPluginConfiguration:config accessor:accessor];
 
     [self initPluginList];
 
@@ -244,97 +245,6 @@ extern DB_functions_t *deadbeef;
 - (IBAction)pluginsAction:(id)sender {
     [self switchToView:_pluginsView];
 }
-
-- (NSMenu *)getDSPMenu {
-    NSMenu *menu = [[NSMenu alloc] initWithTitle:@"DspChainMenu"];
-    [menu setDelegate:(id<NSMenuDelegate>)self];
-    [menu setAutoenablesItems:NO];
-
-    DB_dsp_t **plugins = deadbeef->plug_get_dsp_list ();
-
-    for (int i = 0; plugins[i]; i++) {
-        [[menu insertItemWithTitle:[NSString stringWithUTF8String:plugins[i]->plugin.name] action:@selector(addDspNode:) keyEquivalent:@"" atIndex:i] setTarget:self];
-    }
-
-    return menu;
-}
-
-#if 0
-- (void)addDspNode:(id)sender {
-    NSMenuItem *item = sender;
-    const char *name = [[item title] UTF8String];
-    DB_dsp_t **plugins = deadbeef->plug_get_dsp_list ();
-
-    for (int i = 0; plugins[i]; i++) {
-        if (!strcmp (plugins[i]->plugin.name, name))
-        {
-            [_dspPresetController addItemWithId:[NSString stringWithUTF8String: plugins[i]->plugin.id]];
-            [_dspList reloadData];
-            break;
-        }
-    }
-}
-
-- (IBAction)dspAddAction:(id)sender {
-    NSMenu *menu = [self getDSPMenu];
-    [NSMenu popUpContextMenu:menu withEvent:[NSApp currentEvent] forView:sender];
-}
-
-- (IBAction)dspRemoveAction:(id)sender {
-    NSInteger index = [_dspList selectedRow];
-    if (index < 0) {
-        return;
-    }
-
-    [_dspPresetController removeItemWithIndex:index];
-    [_dspList reloadData];
-
-    if (index >= [_dspList numberOfRows]) {
-        index--;
-    }
-    if (index >= 0) {
-        [_dspList selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
-    }
-}
-
-
-// needs to go to swift presetmgr
-- (IBAction)dspConfigureAction:(id)sender {
-    NSInteger index = [_dspList selectedRow];
-    if (index < 0) {
-        return;
-    }
-    [_dspPresetController.presetMgr configureWithPresetIndex:-1 subItemIndex:index sheet: _dspConfigPanel parentWindow:[self window] viewController:_dspConfigViewController];
-}
-
-// FIXME: where is this used?
-- (IBAction)dspConfigResetAction:(id)sender {
-    [_dspConfigViewController resetPluginConfigToDefaults];
-//    [_dspChainDataSource apply];
-}
-
-- (IBAction)dspChainAction:(id)sender {
-    NSInteger selectedSegment = [sender selectedSegment];
-
-    switch (selectedSegment) {
-    case 0:
-        [self dspAddAction:sender];
-        break;
-    case 1:
-        [self dspRemoveAction:sender];
-        break;
-    case 2:
-        [self dspConfigureAction:sender];
-        break;
-    }
-}
-
-- (IBAction)dspSaveAction:(id)sender {
-}
-
-- (IBAction)dspLoadAction:(id)sender {
-}
-#endif
 
 - (IBAction)networkEditContentTypeMapping:(id)sender {
 }

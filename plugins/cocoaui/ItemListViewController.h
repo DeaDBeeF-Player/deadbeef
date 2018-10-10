@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (weak) IBOutlet NSTableView *tableView;
 - (IBAction)buttonBarAction:(id)sender;
-- (id)initWithProp:(settings_property_t *)prop accessor:(NSObject<PluginConfigurationValueAccessor> *)accessor;
+- (id)initWithProp:(settings_property_t *)prop accessor:(id<PluginConfigurationValueAccessor>)accessor;
 
 
 @end
