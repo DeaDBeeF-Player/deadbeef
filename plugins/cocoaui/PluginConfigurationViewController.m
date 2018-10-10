@@ -27,7 +27,7 @@
 }
 @end
 
-@implementation PluginConfigurationValueAccessorDSP {
+@implementation PluginConfigurationValueAccessorPreset {
     PresetManager *_presetMgr;
     int _presetIndex;
 }
@@ -40,19 +40,19 @@
 }
 
 - (NSString *)getValueForKey:(NSString *)key def:(NSString *)def {
-    return @"{\"type\":\"m2s\", \"items\":[{ \"name\":0, \"value\": 1 },{ \"name\":0, \"value\": 1 }]}";
+    return [_presetMgr savePresetWithIndex:_presetIndex itemIndex:[key integerValue]];
 }
 
 - (void)setValueForKey:(NSString *)key value:(NSString *)value {
-    // FIXME
+    [_presetMgr loadPresetWithIndex:[key intValue] fromString:value];
 }
 
 - (int)count {
-    return 5;
+    return (int)[_presetMgr presetItemCountWithPresetIndex:_presetIndex];
 }
 
 - (NSString *)keyForIndex:(int)index {
-    return @"0";
+    return [NSString stringWithFormat:@"%d", index];
 }
 @end
 

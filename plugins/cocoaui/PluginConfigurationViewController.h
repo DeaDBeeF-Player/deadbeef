@@ -11,7 +11,7 @@
 @interface PluginConfigurationValueAccessorConfig : NSObject<PluginConfigurationValueAccessor>
 @end
 
-@interface PluginConfigurationValueAccessorDSP : NSObject<PluginConfigurationValueAccessor>
+@interface PluginConfigurationValueAccessorPreset : NSObject<PluginConfigurationValueAccessor>
 - (id)initWithPresetManager:(id)presetMgr presetIndex:(int)presetIndex;
 @end
 

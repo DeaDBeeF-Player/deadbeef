@@ -51,14 +51,14 @@ extern DB_functions_t *deadbeef;
     NSError *error;
     _dspPresetController = [DSPPresetController createWithContext:@"main" error:&error];
 
-    [_dspPresetController.presetMgr initSelectorPopUpButton:_dspPresetSelectorButton];
+//    [_dspPresetController.presetMgr initSelectorPopUpButton:_dspPresetSelectorButton];
 
     // Make a list of the dsp nodes in CURRENT dsp preset (index 0)
     // What this means, is that a list of DSPNodes is created, which is represented with accessor.items[0]
     // So list = accessor.items[0]
     // Then each node must be loaded using list[index]
     static const char *config = "property \"DSP Plugins\" itemlist<DSPNode> dspconfig 0;";
-    [_dspPresetViewController initPluginConfiguration:config accessor:[[PluginConfigurationValueAccessorDSP alloc] initWithPresetManager:_dspPresetController presetIndex:0]];
+    [_dspPresetViewController initPluginConfiguration:config accessor:[[PluginConfigurationValueAccessorPreset alloc] initWithPresetManager:[_dspPresetController presetMgr] presetIndex:0]];
 
     [self initPluginList];
 

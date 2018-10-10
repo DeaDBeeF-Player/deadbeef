@@ -15,7 +15,46 @@ protocol Scriptable {
     func getScript() -> String?
     @objc func displayName() -> String
     @objc func load (data: NSDictionary)
+}
 
+@objc(ScriptableKeyValue)
+class ScriptableKeyValue : NSObject, Scriptable {
+    var _data : ScriptableData
+
+    init(_ type: String) {
+        _data = ScriptableData(type:type, name:nil, value:nil, items:nil)
+    }
+
+    @objc static func create (type: String) -> Scriptable {
+        return ScriptableKeyValue(type)
+    }
+
+    func getScript() -> String? {
+        return nil
+    }
+
+    @objc func displayName() -> String {
+        return ""
+    }
+
+    @objc func load (data: NSDictionary) {
+        if let n = data.value(forKey: "name") as? String {
+            _data.name = n;
+        }
+        else if let n = data.value(forKey: "name") as? Int {
+            _data.name = String(n);
+        }
+
+        if let v = data.value(forKey: "value") as? String {
+            _data.value = v;
+        }
+        else if let v = data.value(forKey: "value") as? Int {
+            _data.value = String(v);
+        }
+        else if let v = data.value(forKey: "value") as? Float {
+            _data.value = String(v);
+        }
+    }
 }
 
 @objc(DSPPreset)
@@ -38,10 +77,13 @@ class DSPPreset : NSObject, Scriptable {
         if let p = plug_get_dsp_for_id(type) {
             return DSPNode (plugin: p)
         }
-        return DummyNode.create(type:type)
+        return DummyNode.create(type:"<Missing \(type)>")
     }
     @objc func displayName() -> String {
-        return "";
+        if let n = _data?.name {
+            return n
+        }
+        return "null"
     }
     @objc func load (data: NSDictionary) {
     }
@@ -78,8 +120,24 @@ class DSPNode : NSObject, Scriptable {
         return _displayName
     }
 
-    @objc func load (data: NSDictionary) {
+
+    func loadItems(data: NSDictionary) -> [Scriptable]? {
+        var items : [Scriptable]?;
+        if let itemsList = data.value(forKey:"items") as? [NSDictionary] {
+            items = []
+            for i in itemsList {
+                let it = ScriptableKeyValue.create(type:"")
+                it.load(data:i);
+                items!.append(it)
+            }
+        }
+        return items
     }
+
+    @objc func load (data: NSDictionary) {
+        _data = ScriptableData(type: data.value(forKey: "type") as! String, name: data.value(forKey: "name") as? String, value:nil, items: loadItems(data:data))
+    }
+
 }
 
 @objc(DummyNode)
@@ -104,39 +162,9 @@ class DummyNode : NSObject, Scriptable {
     }
 }
 
-
-// One item of a preset
-struct PresetSubItem {
-    init (id: String) {
-        self.id = id
-        self.enabled = false
-        parameters = [:]
-    }
-    var id : String
-    var enabled : Bool
-    var parameters : [String : String]
-}
-
-// The whole preset
-struct PresetData {
-    init (name: String) {
-        self.name = name
-    }
-    // The preset name
-    var name : String
-
-    // List of preset sub items, for multi-level case like dsp preset;
-    // for the rest of the cases (flat presets) gonna be a single-item list
-    var subItems : [PresetSubItem]?
-
-    // optional dictionary of additional things, like read-only flags etc
-    var extraProperties : [String:Any]?
-}
+// preset manager
 
 protocol PresetManagerDelegate {
-    // For when the names need to be reformatted before display
-    func getDisplayName (index: Int) throws -> String?
-
     // Return true if the item can be edited
     func isEditable (index: Int) -> Bool
 
@@ -165,9 +193,9 @@ class PresetSerializerJSON : PresetSerializer {
     }
 }
 
-@objc class PresetManager : NSObject {
-    var currentPreset : PresetData
-    var data : [PresetData]
+@objc
+class PresetManager : NSObject {
+    var data : [[String:Any]]
     var domain : String
     var context : String
     var delegate : PresetManagerDelegate?
@@ -189,16 +217,60 @@ class PresetSerializerJSON : PresetSerializer {
         self.delegate = delegate
         self.serializer = serializer
         data = []
-        currentPreset = PresetData(name:"Current")
-        selectedPreset = Int(conf_get_int("\(domain).\(context)", -1))
     }
 
     func load() throws {
         try serializer.load()
+        selectedPreset = Int(conf_get_int("\(domain).\(context)", 0))
+        selectedPreset += 1;
+
+        if (selectedPreset < 0) {
+            selectedPreset = 0;
+        }
+        else if (selectedPreset >= data.count) {
+            selectedPreset = data.count-1;
+        }
     }
 
     func save() throws {
         try serializer.save()
+    }
+
+    @objc func presetCount() -> Int {
+        return data.count - 1;
+    }
+
+    @objc func presetItemCount(presetIndex:Int) -> Int {
+        let preset = data[presetIndex];
+        guard let items = preset["items"] as? [[String:Any]] else {
+            return 0
+        }
+        return items.count
+    }
+
+    @objc func savePreset(index : Int) -> String {
+        let preset = data[index];
+        guard let data = try? JSONSerialization.data(withJSONObject: preset, options: []) else {
+            return ""
+        }
+        let str = String(data: data, encoding: String.Encoding.utf8)
+        return str!
+//        return "{\"type\":\"m2s\", \"items\":[{ \"name\":0, \"value\": 1 },{ \"name\":0, \"value\": 1 }]}";
+    }
+
+    @objc func savePreset(index : Int, itemIndex : Int) -> String {
+        let preset = data[index];
+        guard let items = preset["items"] as? [[String:Any]] else {
+            return ""
+        }
+        guard let data = try? JSONSerialization.data(withJSONObject: items[itemIndex], options: []) else {
+            return ""
+        }
+        let str = String(data: data, encoding: String.Encoding.utf8)
+        return str!
+    }
+    @objc func loadPreset(index : Int, fromString : String) {
+        // ...
     }
 
     func save(presetIndex:Int) throws {
@@ -212,6 +284,7 @@ class PresetSerializerJSON : PresetSerializer {
         conf_set_int ("\(domain).\(context)", Int32(selectedPreset))
     }
 
+    /*
     @objc public func initSelectorPopUpButton (_ btn : NSPopUpButton) {
         for d in data {
             btn.addItem(withTitle: d.name)
@@ -220,12 +293,11 @@ class PresetSerializerJSON : PresetSerializer {
         btn.target = self
     }
 
-    /*
     @objc public func configure (presetIndex: Int, subItemIndex:Int, sheet:NSWindow, parentWindow:NSWindow, viewController:PluginConfigurationViewController) {
         let p = presetIndex == -1 ? currentPreset : data[presetIndex];
         let plug = plug_get_dsp_for_id (p.subItems![subItemIndex].id)
 
-        let accessor = PluginConfigurationValueAccessorDSP.init(presetManager: self, presetIndex: Int32(presetIndex), subItemIndex: Int32(subItemIndex))
+        let accessor = PluginConfigurationValueAccessorPreset.init(presetManager: self, presetIndex: Int32(presetIndex), subItemIndex: Int32(subItemIndex))
         
         viewController.initPluginConfiguration(plug!.pointee.configdialog, accessor: accessor)
 
