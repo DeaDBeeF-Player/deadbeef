@@ -975,7 +975,8 @@ int grouptitleheight = 22;
 }
 
 - (void)windowDidBecomeKey:(id)sender {
-    [self setNeedsDisplay:YES];
+    [self.headerView setNeedsDisplay:YES];
+    [self.contentView setNeedsDisplay:YES];
 }
 
 
