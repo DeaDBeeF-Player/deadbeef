@@ -62,14 +62,21 @@ extern DB_functions_t *deadbeef;
 - (void)windowDidLoad {
     [super windowDidLoad];
 
+    // add tab strip to the window titlebar
+    NSTitlebarAccessoryViewController* vc = [[NSTitlebarAccessoryViewController alloc] init];
+
+    vc.view = _tabStrip;
+    vc.fullScreenMinHeight = [_tabStrip bounds].size.height;
+    vc.layoutAttribute = NSLayoutAttributeBottom;
+
+    [self.window addTitlebarAccessoryViewController:vc];
+
     _updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
     [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];
 }
 
 // update status bar and window title
 static char sb_text[512];
-static char sbitrate[20] = "";
-static struct timeval last_br_update;
 
 #define _(x) x
 
