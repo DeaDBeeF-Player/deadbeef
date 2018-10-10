@@ -37,6 +37,8 @@ settings_data_free (settings_data_t *settings_data) {
             free (settings_data->props[i].key);
         if (settings_data->props[i].title)
             free (settings_data->props[i].title);
+        if (settings_data->props[i].itemlist_type)
+            free (settings_data->props[i].itemlist_type);
     }
     memset (settings_data, 0, sizeof (settings_data_t));
 }
@@ -74,6 +76,7 @@ settings_data_init (settings_data_t *settings_data, const char *layout) {
             break;
         }
         const char *type_ptr = script;
+
         char type[MAX_TOKEN];
         script = gettoken_warn_eof (script, type);
         if (!script) {
@@ -138,8 +141,14 @@ settings_data_init (settings_data_t *settings_data, const char *layout) {
             settings_data->props[settings_data->nprops-1].select_options = script;
         }
         else if (!strncmp (type, "itemlist<", 9)) {
+            char *p = strchr (type, '>');
+            if (!p) {
+                break;
+            }
             settings_data_add_property (settings_data, PROP_ITEMLIST, key, labeltext, def);
-            settings_data->props[settings_data->nprops-1].itemlist_type = type+9;
+            settings_data->props[settings_data->nprops-1].itemlist_type = malloc (p-type+1);
+            memcpy (settings_data->props[settings_data->nprops-1].itemlist_type, type+9, p-type-9);
+            settings_data->props[settings_data->nprops-1].itemlist_type[p-type-9] = 0;
         }
         else {
             // skip unknown/useless stuff

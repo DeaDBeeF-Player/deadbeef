@@ -18,30 +18,41 @@
     messagepump_push (DB_EV_CONFIGCHANGED, 0, 0, 0);
     conf_save();
 }
+- (int)count {
+    return -1;
+}
+
+- (NSString *)keyForIndex:(int)index {
+    return nil;
+}
 @end
 
 @implementation PluginConfigurationValueAccessorDSP {
     PresetManager *_presetMgr;
     int _presetIndex;
-    int _subItemIndex;
 }
 
-- (id)initWithPresetManager:(PresetManager*)presetMgr presetIndex:(int)presetIndex subItemIndex:(int)subItemIndex {
+- (id)initWithPresetManager:(PresetManager*)presetMgr presetIndex:(int)presetIndex {
     self = [super init];
     _presetMgr = presetMgr;
     _presetIndex = presetIndex;
-    _subItemIndex = subItemIndex;
     return self;
 }
 
 - (NSString *)getValueForKey:(NSString *)key def:(NSString *)def {
-    char val[1000];
-    // FIXME
-    return [NSString stringWithUTF8String:val];
+    return @"{\"type\":\"m2s\", \"items\":[{ \"name\":0, \"value\": 1 },{ \"name\":0, \"value\": 1 }]}";
 }
 
 - (void)setValueForKey:(NSString *)key value:(NSString *)value {
     // FIXME
+}
+
+- (int)count {
+    return 5;
+}
+
+- (NSString *)keyForIndex:(int)index {
+    return @"0";
 }
 @end
 
@@ -286,7 +297,7 @@
             case PROP_ITEMLIST:
             {
                 // This should add a proper list view with a backing VC, with add/remove/edit buttons attached to it
-                ItemListViewController *vc = [[ItemListViewController alloc] initWithProp:&_settingsData.props[i]];
+                ItemListViewController *vc = [[ItemListViewController alloc] initWithProp:&_settingsData.props[i] accessor:accessor];
                 [_bindings addObject:@{@"sender":vc,
                                        @"propname":propname,
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]

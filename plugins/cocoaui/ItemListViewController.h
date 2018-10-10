@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "PluginConfigurationViewController.h"
 #include "../../shared/pluginsettings.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -15,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (weak) IBOutlet NSTableView *tableView;
 - (IBAction)buttonBarAction:(id)sender;
-- (id)initWithProp:(settings_property_t *)prop;
+- (id)initWithProp:(settings_property_t *)prop accessor:(NSObject<PluginConfigurationValueAccessor> *)accessor;
 
 
 @end

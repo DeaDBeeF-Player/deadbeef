@@ -46,13 +46,11 @@ typedef struct {
     char *title;
     char *def;
 
-    union {
-        // for "select": list separated with spaces, ends with ';'
-        // for vscale, hscale, spinbtn: contents of the [] markers, ends with ']'
-        const char *select_options;
-        // always ends with >, e.g. "DSPPreset>"
-        const char *itemlist_type;
-    };
+    // for "select": list separated with spaces, ends with ';'
+    // for vscale, hscale, spinbtn: contents of the [] markers, ends with ']'
+    const char *select_options;
+    // always ends with >, e.g. "DSPPreset>"
+    char *itemlist_type;
 } settings_property_t;
 
 typedef struct {

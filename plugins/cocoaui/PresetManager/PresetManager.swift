@@ -8,11 +8,14 @@ struct ScriptableData {
     var items : [Scriptable]?
 }
 
-@objc protocol Scriptable {
-//    func data() -> ScriptableData?
-    func getScript() -> UnsafePointer<Int8>?
+@objc(Scriptable)
+protocol Scriptable {
+    @objc static func create (type: String) -> Scriptable
 
-    static func create (type: String) -> Scriptable
+    func getScript() -> String?
+    @objc func displayName() -> String
+    @objc func load (data: NSDictionary)
+
 }
 
 @objc(DSPPreset)
@@ -23,7 +26,7 @@ class DSPPreset : NSObject, Scriptable {
         return _data;
     }
 
-    func getScript() -> UnsafePointer<Int8>? {
+    func getScript() -> String? {
         return ""
     }
 
@@ -37,29 +40,45 @@ class DSPPreset : NSObject, Scriptable {
         }
         return DummyNode.create(type:type)
     }
+    @objc func displayName() -> String {
+        return "";
+    }
+    @objc func load (data: NSDictionary) {
+    }
 }
 
 @objc(DSPNode)
 class DSPNode : NSObject, Scriptable {
     var plugin : UnsafePointer<DB_dsp_t>
+    var _displayName : String
     var _data : ScriptableData?
     func data() -> ScriptableData? {
         return _data;
     }
 
-    func getScript() -> UnsafePointer<Int8>? {
-        return plugin.pointee.configdialog
+    func getScript() -> String? {
+        let data = Data(bytes: plugin.pointee.configdialog, count: Int(strlen(plugin.pointee.configdialog)))
+        return String(data: data, encoding: String.Encoding.utf8)
     }
 
     init (plugin:UnsafePointer<DB_dsp_t>) {
         self.plugin = plugin
+        let data = Data(bytes: plugin.pointee.plugin.name, count: Int(strlen(plugin.pointee.plugin.name)))
+        _displayName = String(data: data, encoding: String.Encoding.utf8)!
     }
 
-    static func create (type: String) -> Scriptable {
+    @objc static func create (type: String) -> Scriptable {
         if let p = plug_get_dsp_for_id(type) {
             return DSPNode (plugin: p)
         }
         return DummyNode.create(type:type)
+    }
+
+    @objc func displayName() -> String {
+        return _displayName
+    }
+
+    @objc func load (data: NSDictionary) {
     }
 }
 
@@ -69,12 +88,19 @@ class DummyNode : NSObject, Scriptable {
     init (type: String) {
         self.type = type
     }
-    func getScript() -> UnsafePointer<Int8>? {
+    func getScript() -> String? {
         return nil
     }
     static func create (type: String) -> Scriptable
     {
         return DummyNode (type:type);
+    }
+
+    @objc func displayName() -> String {
+        return type
+    }
+
+    @objc func load (data: NSDictionary) {
     }
 }
 
@@ -194,6 +220,7 @@ class PresetSerializerJSON : PresetSerializer {
         btn.target = self
     }
 
+    /*
     @objc public func configure (presetIndex: Int, subItemIndex:Int, sheet:NSWindow, parentWindow:NSWindow, viewController:PluginConfigurationViewController) {
         let p = presetIndex == -1 ? currentPreset : data[presetIndex];
         let plug = plug_get_dsp_for_id (p.subItems![subItemIndex].id)
@@ -206,7 +233,7 @@ class PresetSerializerJSON : PresetSerializer {
         self.sheet = sheet
         NSApp.beginSheet(sheet, modalFor: parentWindow, modalDelegate: self, didEnd: #selector(didEndDspConfigPanel(sheet:returnCode:contextInfo:)), contextInfo: nil)
         
-    }
+    }*/
 
     @objc func didEndDspConfigPanel(sheet:NSWindow, returnCode:NSInteger, contextInfo:UnsafeMutableRawPointer!) {
         sheet.orderOut(parentWindow)
