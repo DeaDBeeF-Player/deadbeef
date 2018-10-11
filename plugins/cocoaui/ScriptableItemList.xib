@@ -8,6 +8,8 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="ItemListViewController">
             <connections>
+                <outlet property="itemConfigViewController" destination="dg8-ok-yCD" id="Xyv-0g-Cnq"/>
+                <outlet property="itemConfigurationPanel" destination="9ek-4l-p87" id="Qxn-j8-1nR"/>
                 <outlet property="tableView" destination="vlv-Ug-XhB" id="2ir-7H-hYr"/>
                 <outlet property="view" destination="HIN-4r-Cid" id="txt-GG-SNx"/>
             </connections>
@@ -88,6 +90,73 @@
             </subviews>
             <point key="canvasLocation" x="761" y="485"/>
         </customView>
+        <viewController id="dg8-ok-yCD" userLabel="Item Config View Controller" customClass="PluginConfigurationViewController">
+            <connections>
+                <outlet property="view" destination="qlA-i3-tPj" id="Q85-6p-WeX"/>
+            </connections>
+        </viewController>
+        <window title="DSP Configuration" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="9ek-4l-p87" userLabel="Item Configuration Panel" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="167" y="107" width="591" height="300"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
+            <value key="minSize" type="size" width="541" height="259"/>
+            <view key="contentView" id="N12-HV-dau">
+                <rect key="frame" x="0.0" y="0.0" width="591" height="300"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BP9-Na-7A0">
+                        <rect key="frame" x="20" y="61" width="551" height="219"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <clipView key="contentView" ambiguous="YES" id="buC-54-f6Q">
+                            <rect key="frame" x="1" y="1" width="549" height="217"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qlA-i3-tPj">
+                                    <rect key="frame" x="0.0" y="0.0" width="549" height="217"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="deviceWhite"/>
+                        </clipView>
+                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="XDE-WY-PGH">
+                            <rect key="frame" x="1" y="203" width="534" height="15"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="g8a-Cg-riK">
+                            <rect key="frame" x="535" y="1" width="15" height="202"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                    </scrollView>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1iI-Kl-YDe">
+                        <rect key="frame" x="499" y="13" width="75" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="exR-TY-5Hc">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="closeAction:" target="-2" id="zyy-VY-6gz"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dME-D5-skA">
+                        <rect key="frame" x="356" y="13" width="143" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="push" title="Reset to defaults" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="euv-Pv-vle">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="resetAction:" target="-2" id="ye0-d3-00K"/>
+                        </connections>
+                    </button>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="1308" y="502"/>
+        </window>
     </objects>
     <resources>
         <image name="NSActionTemplate" width="14" height="14"/>

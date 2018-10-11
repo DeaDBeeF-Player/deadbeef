@@ -36,16 +36,25 @@
 
 - (NSString *)getValueForKey:(NSString *)key def:(NSString *)def {
     NSArray *items = [_scriptable getItems];
-    int index = [key intValue];
-
-    NSString *v = [items[index] getValue];
-    return v;
+    for (id<Scriptable> item in items) {
+        if ([[item getName] isEqualToString:key]) {
+            return [item getValue];
+        }
+    }
+    return def;
 }
 
 - (void)setValueForKey:(NSString *)key value:(NSString *)value {
     NSArray *items = [_scriptable getItems];
-    int index = [key intValue];
-    [items[index] setValue:value];
+    for (id<Scriptable> item in items) {
+        if ([[item getName] isEqualToString:key]) {
+            [item setValue:value];
+            return;
+        }
+    }
+    id<Scriptable> newItem = [_scriptable addItemWithType:[_scriptable getItemTypes][0]];
+    [newItem setName:key];
+    [newItem setValue:value];
 }
 
 

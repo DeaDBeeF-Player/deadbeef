@@ -14,10 +14,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ItemListViewController : NSViewController<NSTableViewDelegate, NSTableViewDataSource>
 
+@property (strong) IBOutlet PluginConfigurationViewController *itemConfigViewController;
+@property (strong) IBOutlet NSPanel *itemConfigurationPanel;
+
 @property (weak) IBOutlet NSTableView *tableView;
 - (IBAction)buttonBarAction:(id)sender;
 - (id)initWithProp:(settings_property_t *)prop scriptable:(id)scriptable;
 
+- (IBAction)closeAction:(id)sender;
+- (IBAction)resetAction:(id)sender;
 
 @end
 

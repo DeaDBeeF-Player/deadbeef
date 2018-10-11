@@ -22,6 +22,14 @@
     return self;
 }
 
+- (IBAction)closeAction:(id)sender {
+    [_itemConfigurationPanel orderOut:[[self view] window]];
+}
+
+- (IBAction)resetAction:(id)sender {
+    [_itemConfigViewController resetPluginConfigToDefaults];
+}
+
 - (IBAction)buttonBarAction:(id)sender {
     NSInteger seg = [sender selectedSegment];
     switch (seg) {
@@ -46,9 +54,30 @@
                 [_scriptable removeItemWithIndex:index];
                 [_tableView reloadData];
             }
+            break;
         }
-            
+        case 2:
+        {
+            NSInteger index = [_tableView selectedRow];
+            if (index >= 0) {
+                [self configureAction:index];
+            }
+            break;
+        }
     }
+}
+
+- (void)configureAction:(NSInteger)index {
+    //@objc public func configure (presetIndex: Int, subItemIndex:Int, sheet:NSWindow, parentWindow:NSWindow, viewController:PluginConfigurationViewController) {
+    id<Scriptable> item = [_scriptable getItems][index];
+    PluginConfigurationScriptableBackend *accessor = [[PluginConfigurationScriptableBackend alloc] initWithScriptable:item];
+
+    [_itemConfigViewController initPluginConfiguration:[[item getScript] UTF8String] accessor:accessor];
+
+    NSWindow *window = [[self view] window];
+    [window beginSheet:_itemConfigurationPanel completionHandler:^(NSModalResponse returnCode) {
+        [_itemConfigurationPanel orderOut:window];
+    }];
 }
 
 - (void)addItemAction:(id)sender {
@@ -56,72 +85,9 @@
     NSInteger index = [[item menu] indexOfItem:item];
     NSArray<NSString *> *types = [_scriptable getItemTypes];
 
-    [_scriptable addItemWithType:types[index]];
+    (void)[_scriptable addItemWithType:types[index]];
     [_tableView reloadData];
 }
-
-
-#if 0
-- (IBAction)dspAddAction:(id)sender {
-    NSMenu *menu = [self getDSPMenu];
-    [NSMenu popUpContextMenu:menu withEvent:[NSApp currentEvent] forView:sender];
-}
-
-- (IBAction)dspRemoveAction:(id)sender {
-    NSInteger index = [_dspList selectedRow];
-    if (index < 0) {
-        return;
-    }
-
-    [_dspPresetController removeItemWithIndex:index];
-    [_dspList reloadData];
-
-    if (index >= [_dspList numberOfRows]) {
-        index--;
-    }
-    if (index >= 0) {
-        [_dspList selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
-    }
-}
-
-
-// needs to go to swift presetmgr
-- (IBAction)dspConfigureAction:(id)sender {
-    NSInteger index = [_dspList selectedRow];
-    if (index < 0) {
-        return;
-    }
-    [_dspPresetController.presetMgr configureWithPresetIndex:-1 subItemIndex:index sheet: _dspConfigPanel parentWindow:[self window] viewController:_dspConfigViewController];
-}
-
-// FIXME: where is this used?
-- (IBAction)dspConfigResetAction:(id)sender {
-    [_dspConfigViewController resetPluginConfigToDefaults];
-    //    [_dspChainDataSource apply];
-}
-
-- (IBAction)dspChainAction:(id)sender {
-    NSInteger selectedSegment = [sender selectedSegment];
-
-    switch (selectedSegment) {
-        case 0:
-            [self dspAddAction:sender];
-            break;
-        case 1:
-            [self dspRemoveAction:sender];
-            break;
-        case 2:
-            [self dspConfigureAction:sender];
-            break;
-    }
-}
-
-- (IBAction)dspSaveAction:(id)sender {
-}
-
-- (IBAction)dspLoadAction:(id)sender {
-}
-#endif
 
 // NSTableViewDataSource
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView {

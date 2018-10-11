@@ -37,7 +37,7 @@ protocol Scriptable {
     @objc func save () -> [String:Any]
 
     // add/remove items
-    @objc func addItem (type: String)
+    @objc func addItem (type: String) -> Scriptable?
     @objc func removeItem (index: Int)
 
     // data access
@@ -157,13 +157,14 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
         return ret;
     }
 
-    @objc func addItem (type: String) {
+    @objc func addItem (type: String) -> Scriptable? {
         guard let c = getItemClass() as? Scriptable.Type else {
-            return
+            return nil
         }
 
         let item = c.create (type:type)
         data.items.append (item)
+        return item
     }
 
     @objc func removeItem (index: Int) {
