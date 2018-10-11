@@ -29,48 +29,10 @@ import Cocoa
         return true
     }
 
-    func getItemTypes () -> [String] {
-        var list : [String] = []
-        let plugins = plug_get_dsp_list ()
-
-        var i : Int = 0;
-        while let p = plugins?[i]?.pointee {
-            let data = Data(bytes: p.plugin.id, count: Int(strlen(p.plugin.id)))
-            list.append(String(data: data, encoding: String.Encoding.utf8)!)
-            i += 1
-        }
-
-        return list;
-    }
-
-    func getItemName (type: String) -> String {
-        if let p = plug_get_for_id(type) {
-            let data = Data(bytes: p.pointee.name, count: Int(strlen(p.pointee.name)))
-            return String(data: data, encoding: String.Encoding.utf8)!
-        }
-        return "null";
-    }
-
-    func addItem (type: String) {
-        let items : [[String:Any]] = []
-
-        if var presetItems = presetMgr.data[0]["items"] as? [[String:Any]] {
-            let node : [String:Any] = [
-                "name" : getItemName(type: type),
-                "type" : type,
-                // NOTE: it should be assumed, that when an expected item is not in this list - the default value needs to be used
-                "items" : items
-            ]
-            presetItems.append(node)
-            presetMgr.data[0]["items"] = presetItems
-        }
-    }
-
-
     // PresetSerializer
 
     func load() throws {
-        if (presetMgr.data.count != 0) {
+        if (presetMgr.data.items.count != 0) {
             throw DSPPresetControllerError.AlreadyLoaded
         }
         let conpath_u8 = plug_get_system_dir (Int32(DDB_SYS_DIR_CONFIG.rawValue))
@@ -80,7 +42,9 @@ import Cocoa
 
         // load current preset
         if let preset = try loadPreset(name: "current", fname: confpath + "/dspconfig", hasEnabledFlag: true) {
-            presetMgr.data.append(preset)
+            let dsppreset = DSPPreset.create(type:"dsppreset")
+            dsppreset.load (data:preset)
+            presetMgr.data.items.append(dsppreset)
         }
 
         // find all txt files in the folder
@@ -90,7 +54,9 @@ import Cocoa
                 if (element.hasSuffix(".txt")) {
                     // Can't use the original dsp preset parser, since it loads stuff into actual objects instead of a dict
                     if let preset = try loadPreset(name: String(element[..<element.index(element.endIndex, offsetBy: -4)]), fname: str+"/"+element, hasEnabledFlag: false) {
-                        presetMgr.data.append(preset)
+                        let dsppreset = DSPPreset.create(type:"dsppreset")
+                        dsppreset.load (data:preset)
+                        presetMgr.data.items.append(dsppreset)
                     }
                 }
             }
@@ -165,7 +131,7 @@ import Cocoa
             var items : [[String:Any]] = [];
             while (l < lines.count && lines[l] != "}") {
                 line = lines[l].trimmingCharacters(in: .whitespaces)
-                items.append([String(idx):line])
+                items.append(["name":String(idx),"value":line])
                 l = l+1
                 idx = idx+1
             }

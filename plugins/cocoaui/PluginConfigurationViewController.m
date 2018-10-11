@@ -18,37 +18,43 @@
     messagepump_push (DB_EV_CONFIGCHANGED, 0, 0, 0);
     conf_save();
 }
-- (int)count {
-    return -1;
-}
-
-- (NSString *)keyForIndex:(int)index {
-    return nil;
-}
 @end
 
-@implementation PluginConfigurationValueAccessorPreset {
-    PresetManager *_presetMgr;
-    int _presetIndex;
+@implementation PluginConfigurationScriptableBackend {
+    id<Scriptable> _scriptable;
 }
 
-- (id)initWithPresetManager:(PresetManager*)presetMgr presetIndex:(int)presetIndex {
+- (id)initWithScriptable:(id<Scriptable>)scriptable {
     self = [super init];
-    _presetMgr = presetMgr;
-    _presetIndex = presetIndex;
+    _scriptable = scriptable;
     return self;
 }
 
+// FIXME: figure out how to do this without JSON serialization?
 - (NSString *)getValueForKey:(NSString *)key def:(NSString *)def {
-    return [_presetMgr savePresetWithIndex:_presetIndex itemIndex:[key integerValue]];
+    NSArray *items = [_scriptable getItems];
+    int index = [key intValue];
+
+    NSDictionary<NSString *,id> * _Nullable dict = [items[index] save];
+    NSError *err = nil;
+    NSData *dt = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&err];
+    NSString *json = [[NSString alloc] initWithData:dt encoding:NSUTF8StringEncoding];
+    return json;
 }
 
 - (void)setValueForKey:(NSString *)key value:(NSString *)value {
-    [_presetMgr loadPresetWithIndex:[key intValue] fromString:value];
+    NSData *data = [value dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *err = nil;
+    NSDictionary<NSString *,id> * _Nullable dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:&err];
+    if (!dict) {
+        NSLog (@"error parsing column config, error: %@\n", [err localizedDescription]);
+        return;
+    }
+    [_scriptable loadWithData:dict];
 }
 
 - (int)count {
-    return (int)[_presetMgr presetItemCountWithPresetIndex:_presetIndex];
+    return (int)[[_scriptable getItems] count];
 }
 
 - (NSString *)keyForIndex:(int)index {
@@ -56,15 +62,15 @@
 }
 
 - (NSArray<NSString *> *)getItemTypes {
-    return [_presetMgr getItemTypes];
+    return [_scriptable getItemTypes];
 }
 
 - (NSString *)getItemNameWithType:(NSString *)type {
-    return [_presetMgr getItemNameWithType:type];
+    return [_scriptable getItemNameWithType:type];
 }
 
 - (void)addItemWithType:(NSString *)type {
-    [_presetMgr addItemWithType:type];
+    [_scriptable addItemWithType:type];
 }
 @end
 

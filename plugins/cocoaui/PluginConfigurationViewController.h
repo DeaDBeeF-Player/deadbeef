@@ -2,8 +2,10 @@
 #include "../../deadbeef.h"
 
 @protocol PluginConfigurationValueAccessor
+@required
 - (NSString *)getValueForKey:(NSString *)key def:(NSString *)def;
 - (void)setValueForKey:(NSString *)key value:(NSString *)value;
+@optional
 - (int)count;
 - (NSString *)keyForIndex:(int)index;
 - (NSArray<NSString *> *)getItemTypes;
@@ -14,8 +16,9 @@
 @interface PluginConfigurationValueAccessorConfig : NSObject<PluginConfigurationValueAccessor>
 @end
 
-@interface PluginConfigurationValueAccessorPreset : NSObject<PluginConfigurationValueAccessor>
-- (id)initWithPresetManager:(id)presetMgr presetIndex:(int)presetIndex;
+@interface PluginConfigurationScriptableBackend : NSObject<PluginConfigurationValueAccessor>
+// FIXME: can't import deadbeef-Swift.h here
+- (id)initWithScriptable:(id)scriptable;
 @end
 
 @interface PluginConfigurationViewController : NSViewController
