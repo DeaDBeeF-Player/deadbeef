@@ -40,6 +40,12 @@ protocol Scriptable {
     @objc func addItem (type: String)
     @objc func removeItem (index: Int)
 
+    // data access
+    @objc func getName() -> String?
+    @objc func setName(_ name:String?)
+    @objc func getValue() -> String?
+    @objc func setValue(_ value:String?)
+    @objc func getType() -> String
     @objc func getItems() -> [Scriptable]
 }
 
@@ -61,6 +67,22 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
 
     @objc func getItems() -> [Scriptable] {
         return data.items
+    }
+
+    @objc func getName() -> String? {
+        return data.name
+    }
+    @objc func setName(_ name:String?) {
+        data.name = name
+    }
+    @objc func getValue() -> String? {
+        return data.value
+    }
+    @objc func setValue(_ value:String?) {
+        data.value = value
+    }
+    @objc func getType() -> String {
+        return data.type
     }
 
     @objc func getItemClass () -> AnyClass? {

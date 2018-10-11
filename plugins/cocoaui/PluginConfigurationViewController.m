@@ -30,48 +30,25 @@
     return self;
 }
 
-// FIXME: figure out how to do this without JSON serialization?
+- (id)getScriptable {
+    return _scriptable;
+}
+
 - (NSString *)getValueForKey:(NSString *)key def:(NSString *)def {
     NSArray *items = [_scriptable getItems];
     int index = [key intValue];
 
-    NSDictionary<NSString *,id> * _Nullable dict = [items[index] save];
-    NSError *err = nil;
-    NSData *dt = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&err];
-    NSString *json = [[NSString alloc] initWithData:dt encoding:NSUTF8StringEncoding];
-    return json;
+    NSString *v = [items[index] getValue];
+    return v;
 }
 
 - (void)setValueForKey:(NSString *)key value:(NSString *)value {
-    NSData *data = [value dataUsingEncoding:NSUTF8StringEncoding];
-    NSError *err = nil;
-    NSDictionary<NSString *,id> * _Nullable dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:&err];
-    if (!dict) {
-        NSLog (@"error parsing column config, error: %@\n", [err localizedDescription]);
-        return;
-    }
-    [_scriptable loadWithData:dict];
+    NSArray *items = [_scriptable getItems];
+    int index = [key intValue];
+    [items[index] setValue:value];
 }
 
-- (int)count {
-    return (int)[[_scriptable getItems] count];
-}
 
-- (NSString *)keyForIndex:(int)index {
-    return [NSString stringWithFormat:@"%d", index];
-}
-
-- (NSArray<NSString *> *)getItemTypes {
-    return [_scriptable getItemTypes];
-}
-
-- (NSString *)getItemNameWithType:(NSString *)type {
-    return [_scriptable getItemNameWithType:type];
-}
-
-- (void)addItemWithType:(NSString *)type {
-    [_scriptable addItemWithType:type];
-}
 @end
 
 @interface PluginConfigurationViewController () {
@@ -315,7 +292,7 @@
             case PROP_ITEMLIST:
             {
                 // This should add a proper list view with a backing VC, with add/remove/edit buttons attached to it
-                ItemListViewController *vc = [[ItemListViewController alloc] initWithProp:&_settingsData.props[i] accessor:accessor];
+                ItemListViewController *vc = [[ItemListViewController alloc] initWithProp:&_settingsData.props[i] scriptable:[accessor getScriptable]];
                 [_bindings addObject:@{@"sender":vc,
                                        @"propname":propname,
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]

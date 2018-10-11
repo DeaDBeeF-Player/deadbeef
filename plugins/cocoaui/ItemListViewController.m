@@ -7,68 +7,45 @@
 
 @implementation ItemListViewController {
     settings_property_t *_prop;
-    NSMutableArray< id<Scriptable> > *_items;
-    id<PluginConfigurationValueAccessor> _accessor;
+    id<Scriptable> _scriptable;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
 }
 
-- (id)initWithProp:(settings_property_t *)prop accessor:(id<PluginConfigurationValueAccessor>)accessor {
+- (id)initWithProp:(settings_property_t *)prop scriptable:(id<Scriptable>)scriptable {
     self = [super initWithNibName:@"ScriptableItemList" bundle:nil];
     _prop = prop;
-    _accessor = accessor;
-
-    [self fetchItems];
+    _scriptable = scriptable;
 
     return self;
 }
-
-- (void) fetchItems {
-    int cnt = [_accessor count];
-    _items = [[NSMutableArray alloc] initWithCapacity:cnt];
-    for (int i = 0; i < cnt; i++) {
-        NSString *key = [_accessor keyForIndex:i];
-        NSString *val = [_accessor getValueForKey:key def:nil];
-
-        // value is JSON: {type:string, items:list}
-        NSData *data = [val dataUsingEncoding:NSUTF8StringEncoding];
-
-        NSError *err = nil;
-        NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&err];
-
-        if (!json) {
-            NSLog (@"Failed to parse plugin list item json, error: %@\n", [err localizedDescription]);
-            return;
-        }
-
-        __typeof([NSObject<Scriptable> class]) c = NSClassFromString([NSString stringWithUTF8String:_prop->itemlist_type]);
-
-        if (c) {
-            NSString *type = json[@"type"];
-            id<Scriptable> item = [c createWithType:type];
-            [item loadWithData:json];
-            [_items addObject:item];
-        }
-    }}
 
 - (IBAction)buttonBarAction:(id)sender {
     NSInteger seg = [sender selectedSegment];
     switch (seg) {
         case 0: // add
         {
-            NSArray<NSString *> *types = [_accessor getItemTypes];
+            NSArray<NSString *> *types = [_scriptable getItemTypes];
             NSMenu *menu = [[NSMenu alloc] initWithTitle:@"DspChainMenu"];
             [menu setDelegate:(id<NSMenuDelegate>)self];
             [menu setAutoenablesItems:NO];
             int i = 0;
             for (NSString *type in types) {
-                NSString *title = [_accessor getItemNameWithType:type];
+                NSString *title = [_scriptable getItemNameWithType:type];
                 [[menu insertItemWithTitle:title action:@selector(addItemAction:) keyEquivalent:@"" atIndex:i++] setTarget:self];
             }
             [NSMenu popUpContextMenu:menu withEvent:[NSApp currentEvent] forView:sender];
             break;
+        }
+        case 1:
+        {
+            NSInteger index = [_tableView selectedRow];
+            if (index >= 0) {
+                [_scriptable removeItemWithIndex:index];
+                [_tableView reloadData];
+            }
         }
             
     }
@@ -77,10 +54,9 @@
 - (void)addItemAction:(id)sender {
     NSMenuItem *item = sender;
     NSInteger index = [[item menu] indexOfItem:item];
-    NSArray<NSString *> *types = [_accessor getItemTypes];
+    NSArray<NSString *> *types = [_scriptable getItemTypes];
 
-    [_accessor addItemWithType:types[index]];
-    [self fetchItems];
+    [_scriptable addItemWithType:types[index]];
     [_tableView reloadData];
 }
 
@@ -149,11 +125,11 @@
 
 // NSTableViewDataSource
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView {
-    return [_items count];
+    return [[_scriptable getItems] count];
 }
 
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
-    return [_items[rowIndex] displayName];
+    return [[_scriptable getItems][rowIndex] displayName];
 }
 
 @end

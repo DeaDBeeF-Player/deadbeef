@@ -6,11 +6,7 @@
 - (NSString *)getValueForKey:(NSString *)key def:(NSString *)def;
 - (void)setValueForKey:(NSString *)key value:(NSString *)value;
 @optional
-- (int)count;
-- (NSString *)keyForIndex:(int)index;
-- (NSArray<NSString *> *)getItemTypes;
-- (NSString *)getItemNameWithType:(NSString *)type;
-- (void)addItemWithType:(NSString *)type;
+- (id)getScriptable;
 @end
 
 @interface PluginConfigurationValueAccessorConfig : NSObject<PluginConfigurationValueAccessor>
