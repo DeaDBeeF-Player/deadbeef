@@ -119,7 +119,7 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
                 if let t = item["type"] as? String{
                     type = t
                 }
-                let it = getItemClass()?.create (type) ?? DummyNode.create (type)!
+                let it = getItemClass()?.create (type) ?? MissingNode.create (type)!
                 it.load (data:item);
                 self.data.items.append(it);
             }
@@ -156,7 +156,7 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
             return nil
         }
 
-        let item = c.create (type) ?? DummyNode.create (type)!
+        let item = c.create (type) ?? MissingNode.create (type)!
         data.items.append (item)
         return item
     }
@@ -261,7 +261,7 @@ class DSPNode : ScriptableBase, Scriptable {
 }
 
 @objc(DummyNode)
-class DummyNode : ScriptableBase, Scriptable {
+class MissingNode : ScriptableBase, Scriptable {
     override func getItemClass() -> AnyClass? {
         return ScriptableKeyValue.self
     }
@@ -271,11 +271,11 @@ class DummyNode : ScriptableBase, Scriptable {
     }
     static func create (_ type: String) -> Scriptable?
     {
-        return DummyNode (type);
+        return MissingNode (type);
     }
 
     @objc func displayName() -> String {
-        return data.type
+        return "Missing <\(data.type)>"
     }
 
 }
