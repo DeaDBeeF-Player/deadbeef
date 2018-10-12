@@ -32,7 +32,7 @@ import Cocoa
     // PresetSerializer
 
     func load() throws {
-        if (presetMgr.data.items.count != 0) {
+        if (presetMgr.items.count != 0) {
             throw DSPPresetControllerError.AlreadyLoaded
         }
         let conpath_u8 = plug_get_system_dir (Int32(DDB_SYS_DIR_CONFIG.rawValue))
@@ -46,7 +46,7 @@ import Cocoa
         do {
             if let preset = try loadPreset(name: "current", fname: confpath + "/dspconfig", hasEnabledFlag: true) {
                 dsppreset.load (data:preset)
-                presetMgr.data.items.append(dsppreset)
+                presetMgr.items.append(dsppreset)
             }
         }
         catch _ {
@@ -63,7 +63,7 @@ import Cocoa
                     if let preset = try loadPreset(name: String(element[..<element.index(element.endIndex, offsetBy: -4)]), fname: str+"/"+element, hasEnabledFlag: false) {
                         let dsppreset = DSPPreset.create("dsppreset")!
                         dsppreset.load (data:preset)
-                        presetMgr.data.items.append(dsppreset)
+                        presetMgr.items.append(dsppreset)
                     }
                 }
             }

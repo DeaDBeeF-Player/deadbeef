@@ -1,18 +1,6 @@
 import Foundation
 import Cocoa
 
-struct ScriptableData {
-    var type : String
-    var name : String?
-    var value : String?
-    var items : [Scriptable]
-
-    init(_ type:String) {
-        self.type = type
-        items = []
-    }
-}
-
 @objc(Scriptable)
 protocol Scriptable {
     // create a scriptable with specified type
@@ -33,6 +21,9 @@ protocol Scriptable {
     @objc func displayName() -> String
 
     // serialization
+    @objc func loadFromJsonString (_ jsonString: String)
+    @objc func saveToJsonString () -> String
+
     @objc func load (data: [String:Any]?)
     @objc func save () -> [String:Any]
 
@@ -51,10 +42,14 @@ protocol Scriptable {
 
 @objc
 class ScriptableBase : NSObject { // implementation of some Scriptable methods, for all subclasses
-    var data : ScriptableData
+    var type : String
+    var name : String?
+    var value : String?
+    var items : [Scriptable]
 
     init(_ type: String) {
-        data = ScriptableData(type)
+        self.type = type
+        self.items = []
     }
 
     @objc func getItemTypes () -> [String] {
@@ -66,27 +61,34 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
     }
 
     @objc func getItems() -> [Scriptable] {
-        return data.items
+        return self.items
     }
 
     @objc func getName() -> String? {
-        return data.name
+        return self.name
     }
     @objc func setName(_ name:String?) {
-        data.name = name
+        self.name = name
     }
     @objc func getValue() -> String? {
-        return data.value
+        return self.value
     }
     @objc func setValue(_ value:String?) {
-        data.value = value
+        self.value = value
     }
     @objc func getType() -> String {
-        return data.type
+        return self.type
     }
 
     @objc func getItemClass () -> AnyClass? {
         return nil
+    }
+
+    @objc func loadFromJsonString (_ jsonString: String) {
+    }
+
+    @objc func saveToJsonString () -> String {
+        return "stub"
     }
 
     @objc func load (data: [String:Any]?) {
@@ -96,20 +98,20 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
 
         // name and value
         if let n = d["name"] as? String {
-            self.data.name = n;
+            self.name = n;
         }
         else if let n = d["name"] as? Int {
-            self.data.name = String(n);
+            self.name = String(n);
         }
 
         if let v = d["value"] as? String {
-            self.data.value = v;
+            self.value = v;
         }
         else if let v = d["value"] as? Int {
-            self.data.value = String(v);
+            self.value = String(v);
         }
         else if let v = d["value"] as? Float {
-            self.data.value = String(v);
+            self.value = String(v);
         }
 
         // items
@@ -121,7 +123,7 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
                 }
                 let it = getItemClass()?.create (type) ?? MissingNode.create (type)!
                 it.load (data:item);
-                self.data.items.append(it);
+                self.items.append(it);
             }
         }
     }
@@ -130,17 +132,17 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
         var items : [[String:Any]] = []
         var ret : [String:Any] =
         [
-            "type":data.type,
+            "type":self.type,
         ]
 
-        if let n = data.name {
+        if let n = self.name {
             ret["name"] = n
         }
-        if let v = data.value {
+        if let v = self.value {
             ret["value"] = v
         }
 
-        for item in data.items {
+        for item in self.items {
             let i = item.save ()
             items.append(i)
         }
@@ -157,15 +159,14 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
         }
 
         let item = c.create (type) ?? MissingNode.create (type)!
-        data.items.append (item)
+        self.items.append (item)
         return item
     }
 
     @objc func removeItem (index: Int) {
-        data.items.remove(at: index)
+        self.items.remove(at: index)
     }
 }
-
 
 @objc(ScriptableKeyValue)
 class ScriptableKeyValue : ScriptableBase, Scriptable {
@@ -198,7 +199,7 @@ class DSPPreset : ScriptableBase, Scriptable {
     }
 
     @objc func displayName() -> String {
-        if let n = data.name {
+        if let n = self.name {
             return n
         }
         return ""
@@ -275,7 +276,7 @@ class MissingNode : ScriptableBase, Scriptable {
     }
 
     @objc func displayName() -> String {
-        return "Missing <\(data.type)>"
+        return "Missing <\(self.type)>"
     }
 
 }
@@ -366,8 +367,8 @@ class PresetManager : ScriptableBase, Scriptable {
         if (selectedPreset < 0) {
             selectedPreset = 0;
         }
-        else if (selectedPreset >= data.items.count) {
-            selectedPreset = data.items.count-1;
+        else if (selectedPreset >= self.items.count) {
+            selectedPreset = self.items.count-1;
         }
     }
 }
