@@ -41,10 +41,17 @@ import Cocoa
         let str = confpath + "/presets/dsp"
 
         // load current preset
-        if let preset = try loadPreset(name: "current", fname: confpath + "/dspconfig", hasEnabledFlag: true) {
-            let dsppreset = DSPPreset.create(type:"dsppreset")
-            dsppreset.load (data:preset)
-            presetMgr.data.items.append(dsppreset)
+        let dsppreset = DSPPreset.create("dsppreset")!
+
+        do {
+            if let preset = try loadPreset(name: "current", fname: confpath + "/dspconfig", hasEnabledFlag: true) {
+                dsppreset.load (data:preset)
+                presetMgr.data.items.append(dsppreset)
+            }
+        }
+        catch _ {
+            // default preset is not present, which is technically a problem,
+            // but needs to be a supported case for tests
         }
 
         // find all txt files in the folder
@@ -54,7 +61,7 @@ import Cocoa
                 if (element.hasSuffix(".txt")) {
                     // Can't use the original dsp preset parser, since it loads stuff into actual objects instead of a dict
                     if let preset = try loadPreset(name: String(element[..<element.index(element.endIndex, offsetBy: -4)]), fname: str+"/"+element, hasEnabledFlag: false) {
-                        let dsppreset = DSPPreset.create(type:"dsppreset")
+                        let dsppreset = DSPPreset.create("dsppreset")!
                         dsppreset.load (data:preset)
                         presetMgr.data.items.append(dsppreset)
                     }

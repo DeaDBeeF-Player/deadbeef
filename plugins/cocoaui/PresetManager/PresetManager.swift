@@ -17,7 +17,7 @@ struct ScriptableData {
 protocol Scriptable {
     // create a scriptable with specified type
     // e.g. PresetManager.create ("DSP") would create a DSP Preset Manager
-    @objc static func create (type: String) -> Scriptable
+    @objc static func create (_ type: String) -> Scriptable?
 
     // enumeration / factory
     @objc func getItemTypes () -> [String]
@@ -119,15 +119,9 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
                 if let t = item["type"] as? String{
                     type = t
                 }
-                if let it = getItemClass()?.create (type:type) {
-                    it.load (data:item);
-                    self.data.items.append(it);
-                }
-                else {
-                    let it = DummyNode.create (type:type)
-                    it.load (data:item);
-                    self.data.items.append(it);
-                }
+                let it = getItemClass()?.create (type) ?? DummyNode.create (type)!
+                it.load (data:item);
+                self.data.items.append(it);
             }
         }
     }
@@ -162,7 +156,7 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
             return nil
         }
 
-        let item = c.create (type:type)
+        let item = c.create (type) ?? DummyNode.create (type)!
         data.items.append (item)
         return item
     }
@@ -175,7 +169,7 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
 
 @objc(ScriptableKeyValue)
 class ScriptableKeyValue : ScriptableBase, Scriptable {
-    @objc static func create (type: String) -> Scriptable {
+    @objc static func create (_ type: String) -> Scriptable? {
         return ScriptableKeyValue(type)
     }
 
@@ -199,7 +193,7 @@ class DSPPreset : ScriptableBase, Scriptable {
         return "property \"DSP Nodes\" itemlist<DSPNode> items 0;" // display only the list of items
     }
 
-    static func create (type: String) -> Scriptable {
+    static func create (_ type: String) -> Scriptable? {
         return DSPPreset(type)
     }
 
@@ -254,11 +248,11 @@ class DSPNode : ScriptableBase, Scriptable {
         super.init(type)
     }
 
-    @objc static func create (type: String) -> Scriptable {
+    @objc static func create (_ type: String) -> Scriptable? {
         if let p = plug_get_dsp_for_id(type) {
             return DSPNode (type:type, plugin: p)
         }
-        return DummyNode.create(type:"Missing <\(type)>")
+        return nil
     }
 
     @objc func displayName() -> String {
@@ -275,7 +269,7 @@ class DummyNode : ScriptableBase, Scriptable {
     func getScript() -> String? {
         return nil
     }
-    static func create (type: String) -> Scriptable
+    static func create (_ type: String) -> Scriptable?
     {
         return DummyNode (type);
     }
@@ -336,7 +330,7 @@ class PresetManager : ScriptableBase, Scriptable {
     }
 
     // Scriptable API
-    static func create(type: String) -> Scriptable {
+    static func create(_ type: String) -> Scriptable? {
         // FIXME: delegate
         return PresetManager.init (domain:type, context:"context", delegate:nil, serializer:PresetSerializerJSON())
     }
@@ -376,51 +370,5 @@ class PresetManager : ScriptableBase, Scriptable {
             selectedPreset = data.items.count-1;
         }
     }
-
-    /*
-    // UI code needs to call that when a preset was selected by the user.
-    // If no preset is selected, pass -1
-    @objc func presetSelected (sender:NSPopUpButton) {
-        selectedPreset = sender.indexOfSelectedItem
-        conf_set_int ("\(domain).\(context)", Int32(selectedPreset))
-    }
-
-    @objc public func initSelectorPopUpButton (_ btn : NSPopUpButton) {
-        for d in data {
-            btn.addItem(withTitle: d.name)
-        }
-        btn.action = #selector(presetSelected(sender:))
-        btn.target = self
-    }
-
-    @objc public func configure (presetIndex: Int, subItemIndex:Int, sheet:NSWindow, parentWindow:NSWindow, viewController:PluginConfigurationViewController) {
-        let p = presetIndex == -1 ? currentPreset : data[presetIndex];
-        let plug = plug_get_dsp_for_id (p.subItems![subItemIndex].id)
-
-        let accessor = PluginConfigurationValueAccessorPreset.init(presetManager: self, presetIndex: Int32(presetIndex), subItemIndex: Int32(subItemIndex))
-        
-        viewController.initPluginConfiguration(plug!.pointee.configdialog, accessor: accessor)
-
-        self.parentWindow = parentWindow
-        self.sheet = sheet
-        NSApp.beginSheet(sheet, modalFor: parentWindow, modalDelegate: self, didEnd: #selector(didEndDspConfigPanel(sheet:returnCode:contextInfo:)), contextInfo: nil)
-        
-    }
-
-    @objc func didEndDspConfigPanel(sheet:NSWindow, returnCode:NSInteger, contextInfo:UnsafeMutableRawPointer!) {
-        sheet.orderOut(parentWindow)
-    }
-
-    @objc func dspConfigCancelAction(sender:Any?) {
-        // FIXME
-        // [NSApp endSheet:_dspConfigPanel returnCode:NSCancelButton];
-    }
-
-    @objc func dspConfigOkAction(sender:Any?) {
-        // FIXME
-        // [NSApp endSheet:_dspConfigPanel returnCode:NSOKButton];
-    }
-*/
-
 }
 
