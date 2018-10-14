@@ -1,6 +1,6 @@
 title File Move (mv)
 ext 
-encoder 
+encoder mv %i %o
 method 2
 id3v2_version 0
 tag_id3v2 0
