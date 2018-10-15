@@ -28,15 +28,15 @@ import Cocoa
 
     // PresetManagerDelegate
 
-    func hasCurrent() -> Bool {
+    func presetManager(_ presetManager:PresetManager, isEditable index: Int) -> Bool {
         return true
     }
 
-    func isEditable(index: Int) -> Bool {
+    func presetManager(_ presetManager:PresetManager, isSaveable index: Int) -> Bool {
         return true
     }
 
-    func isSaveable(index: Int) -> Bool {
+    func presetManagerHasCurrentPreset (_ presetManager:PresetManager) -> Bool {
         return true
     }
 

@@ -329,15 +329,15 @@ class MissingNode : ScriptableBase, Scriptable {
 }
 
 // preset manager
-
 protocol PresetManagerDelegate {
     // Return true if the item can be edited
-    func isEditable (index: Int) -> Bool
+    func presetManager(_ presetManager:PresetManager, isEditable index: Int) -> Bool
 
     // Return true if the item needs to be saved
-    func isSaveable (index: Int) -> Bool
+    func presetManager(_ presetManager:PresetManager, isSaveable index: Int) -> Bool
 
-    func hasCurrent () -> Bool
+    // Return true if this preset manager contains "current" item at index 0, which needs to be excluded in some cases
+    func presetManagerHasCurrentPreset (_ presetManager:PresetManager) -> Bool
 }
 
 protocol PresetSerializer {
@@ -394,7 +394,7 @@ class PresetManager : ScriptableBase, Scriptable {
     }
 
     func hasCurrent () -> Bool {
-        return delegate?.hasCurrent() ?? false
+        return delegate?.presetManagerHasCurrentPreset(self) ?? false
     }
 
     // preset domain is the whole system name, e.g. "dsp" or "encoder"
