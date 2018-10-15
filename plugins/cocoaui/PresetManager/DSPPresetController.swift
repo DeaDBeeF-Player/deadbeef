@@ -1,7 +1,7 @@
 import Foundation
 import Cocoa
 
-@objc class DSPPresetController : NSObject, PresetManagerDelegate, PresetSerializer, NSTableViewDataSource {
+@objc class DSPPresetController : NSObject, PresetManagerDelegate, PresetSerializer {
     enum DSPPresetControllerError : Error {
         case InvalidPreset
         case AlreadyLoaded
@@ -15,8 +15,8 @@ import Cocoa
 
     init(context:String) throws {
         super.init()
-        presetMgr = PresetManager(domain: "dsp", context: context, delegate: self, serializer: self)
-        try presetMgr.load()
+        presetMgr = PresetManager(domain: "dsp", parent:nil, context: context, delegate: self, serializer: self)
+        presetMgr.load()
     }
 
     // PresetManagerDelegate
@@ -41,11 +41,14 @@ import Cocoa
         let str = confpath + "/presets/dsp"
 
         // load current preset
-        let dsppreset = DSPPreset.create("dsppreset")!
+        let dsppreset = DSPPreset.create("dsppreset", parent:presetMgr) as! DSPPreset
+
+        let fname = confpath + "/dspconfig"
 
         do {
-            if let preset = try loadPreset(name: "current", fname: confpath + "/dspconfig", hasEnabledFlag: true) {
-                dsppreset.load (data:preset)
+            if let preset = try loadPreset(name: "current", fname: fname, hasEnabledFlag: true) {
+                dsppreset.isCurrent = true
+                dsppreset.loadFromDictionary (preset)
                 presetMgr.items.append(dsppreset)
             }
         }
@@ -53,6 +56,7 @@ import Cocoa
             // default preset is not present, which is technically a problem,
             // but needs to be a supported case for tests
         }
+        dsppreset.savePath = fname
 
         // find all txt files in the folder
         let fileManager = FileManager.default
@@ -61,8 +65,8 @@ import Cocoa
                 if (element.hasSuffix(".txt")) {
                     // Can't use the original dsp preset parser, since it loads stuff into actual objects instead of a dict
                     if let preset = try loadPreset(name: String(element[..<element.index(element.endIndex, offsetBy: -4)]), fname: str+"/"+element, hasEnabledFlag: false) {
-                        let dsppreset = DSPPreset.create("dsppreset")!
-                        dsppreset.load (data:preset)
+                        let dsppreset = DSPPreset.create("dsppreset", parent:presetMgr)!
+                        dsppreset.loadFromDictionary (preset)
                         presetMgr.items.append(dsppreset)
                     }
                 }

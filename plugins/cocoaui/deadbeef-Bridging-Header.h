@@ -9,6 +9,8 @@
 #include "../../plugins.h"
 #include "../../common.h"
 #include "../../logger.h"
+#include "presetutil.h"
+
 #import "PluginConfigurationViewController.h"
 
 static void set_dbconfdir (const char *value) {
@@ -19,3 +21,4 @@ static DB_dsp_t *
 plug_get_dsp_for_id (const char *id) {
     return (DB_dsp_t *)plug_get_for_id (id);
 }
+

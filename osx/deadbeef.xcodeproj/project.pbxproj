@@ -1520,6 +1520,7 @@
 		4D046CE51EA9F8C300B80B2E /* gmewrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D046CE31EA9F8C300B80B2E /* gmewrap.h */; };
 		4D0B0CEE20162D95004162DA /* FormatConversion.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D0B0CED20162D95004162DA /* FormatConversion.m */; };
 		4D12805F2062994F0015BDE8 /* HelpWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D12805E2062994F0015BDE8 /* HelpWindowController.swift */; };
+		4D152B582174B52C0073FBC9 /* presetutil.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D152B572174B52C0073FBC9 /* presetutil.m */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
 		4D1B4A8F1837EC49003E6066 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
 		4D1B51681837F655003E6066 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51671837F655003E6066 /* AudioUnit.framework */; };
@@ -4215,6 +4216,8 @@
 		4D12805D2062994F0015BDE8 /* deadbeef-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "deadbeef-Bridging-Header.h"; sourceTree = "<group>"; };
 		4D12805E2062994F0015BDE8 /* HelpWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpWindowController.swift; sourceTree = "<group>"; };
 		4D13B5192140154900CA7AE4 /* PresetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PresetManager.swift; path = PresetManager/PresetManager.swift; sourceTree = "<group>"; };
+		4D152B572174B52C0073FBC9 /* presetutil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = presetutil.m; sourceTree = "<group>"; };
+		4D152B662174B5900073FBC9 /* presetutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = presetutil.h; sourceTree = "<group>"; };
 		4D1B3E7A18379829003E6066 /* deadbeef.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deadbeef.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D1B3E7D18379829003E6066 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4D1B3E8018379829003E6066 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -8480,6 +8483,8 @@
 				4D12805D2062994F0015BDE8 /* deadbeef-Bridging-Header.h */,
 				4DF1D620215196DA0060D01B /* ItemListViewController.h */,
 				4DF1D621215196DA0060D01B /* ItemListViewController.m */,
+				4D152B572174B52C0073FBC9 /* presetutil.m */,
+				4D152B662174B5900073FBC9 /* presetutil.h */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -12539,6 +12544,7 @@
 				2D5773A21D084E5A00F61BD1 /* MediaKeyController.m in Sources */,
 				2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* DdbSearchViewController.m in Sources */,
+				4D152B582174B52C0073FBC9 /* presetutil.m in Sources */,
 				4D9272C621414BF400E7B4D0 /* PresetManager.swift in Sources */,
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
 				2D71C26B1DC88E5C00247CEF /* DSPChainDataSource.m in Sources */,

@@ -194,7 +194,7 @@ streamer_dsp_chain_load (const char *fname) {
         }
         ddb_dsp_context_t *ctx = plug->open ();
         if (!ctx) {
-            fprintf (stderr, "streamer_dsp_chain_load: failed to open ctxance of plugin %s\n", temp);
+            fprintf (stderr, "streamer_dsp_chain_load: failed to open instance of plugin %s\n", temp);
             goto error;
         }
 

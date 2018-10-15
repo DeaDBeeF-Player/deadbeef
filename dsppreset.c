@@ -72,7 +72,7 @@ dsp_preset_load (const char *fname, ddb_dsp_context_t **head) {
         }
         ddb_dsp_context_t *ctx = plug->open ();
         if (!ctx) {
-            fprintf (stderr, "ddb_dsp_preset_load: failed to open ctxance of plugin %s\n", temp);
+            fprintf (stderr, "ddb_dsp_preset_load: failed to open instance of plugin %s\n", temp);
             goto error;
         }
 

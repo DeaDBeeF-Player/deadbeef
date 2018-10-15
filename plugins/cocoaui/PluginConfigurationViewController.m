@@ -49,12 +49,14 @@
     for (id<Scriptable> item in items) {
         if ([[item getName] isEqualToString:key]) {
             [item setValue:value];
+            [[_scriptable getParent] save];
             return;
         }
     }
     id<Scriptable> newItem = [_scriptable addItemWithType:[_scriptable getItemTypes][0]];
     [newItem setName:key];
     [newItem setValue:value];
+    [[_scriptable getParent] save];
 }
 
 

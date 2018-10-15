@@ -35,6 +35,10 @@ dsp_reset (void);
 int
 streamer_dsp_chain_save (void);
 
+// this is a special preset format, for current configuration, which has `enabled` flag
+int
+streamer_dsp_chain_save_internal (const char *fname, ddb_dsp_context_t *chain);
+
 void
 dsp_chain_free (ddb_dsp_context_t *dsp_chain);
 
