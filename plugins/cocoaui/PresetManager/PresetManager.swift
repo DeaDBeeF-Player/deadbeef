@@ -148,9 +148,14 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
                 if let t = item["type"] as? String{
                     type = t
                 }
-                let it = getItemClass()?.create (type, parent: self as? Scriptable) ?? MissingNode.create (type, parent: self as? Scriptable)!
-                it.loadFromDictionary (item)
-                self._items.append(it)
+
+                // This class is a hack, providing default implementation for Scriptable protocol, in a way compatible with objc
+                // Therefore, we have to force downcast to Scriptable here, and this causes unconditional warning.
+                let scriptableSelf = self as! Scriptable
+                if let it = getItemClass()?.create (type, parent: scriptableSelf) ?? MissingNode.create (type, parent: scriptableSelf) {
+                    it.loadFromDictionary (item)
+                    self._items.append(it)
+                }
             }
         }
     }
