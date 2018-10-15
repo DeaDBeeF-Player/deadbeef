@@ -42,6 +42,10 @@ extern DB_functions_t *deadbeef;
     settings_data_free (&_settingsData);
 }
 
+- (void)awakeFromNib {
+//    [_managedObjectContext setPersistentStoreCoordinator:nil];
+}
+
 - (void)windowDidLoad {
     [super windowDidLoad];
 
@@ -52,9 +56,11 @@ extern DB_functions_t *deadbeef;
     _dspPresetController = [DSPPresetController createWithContext:@"main" error:&error];
 
     // FIXME: refresh when scriptable changes
-    for (id<Scriptable> item in [[_dspPresetController presetMgr] getItems]) {
-        [_dspPresetSelectorButton addItemWithTitle:[item displayName]];
-    }
+//    _presetSelectorArrayController.content = [[_dspPresetController presetMgr] getItems];
+
+//    for (id<Scriptable> item in [[_dspPresetController presetMgr] getItems]) {
+//        [_dspPresetSelectorButton addItemWithTitle:[item displayName]];
+//    }
 
     // Make a list of the dsp nodes in CURRENT dsp preset (index 0)
     // What this means, is that a list of DSPNodes is created, which is represented with accessor.items[0]

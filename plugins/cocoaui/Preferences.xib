@@ -284,6 +284,9 @@
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" id="2lc-az-fdP"/>
                     </popUpButtonCell>
+                    <connections>
+                        <binding destination="1Pm-mg-NhZ" name="contentValues" keyPath="arrangedObjects.name" id="8Ap-Qu-uqW"/>
+                    </connections>
                 </popUpButton>
                 <customView id="DqK-ga-DUF">
                     <rect key="frame" x="20" y="49" width="428" height="153"/>
@@ -908,7 +911,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES"/>
                     <clipView key="contentView" id="Qwb-Aj-8az">
                         <rect key="frame" x="1" y="1" width="197" height="309"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" alternatingRowBackgroundColors="YES" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" autosaveName="" id="oDJ-0h-H53">
                                 <rect key="frame" x="0.0" y="0.0" width="197" height="309"/>
@@ -967,7 +970,7 @@
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <clipView key="contentView" drawsBackground="NO" id="Lle-Gh-L94">
                                             <rect key="frame" x="1" y="1" width="398" height="229"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="RAU-kc-ZWb">
                                                     <rect key="frame" x="0.0" y="0.0" width="398" height="229"/>
@@ -1071,7 +1074,7 @@
                                         <rect key="frame" x="17" y="17" width="414.5" height="261"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <clipView key="contentView" drawsBackground="NO" id="kGi-v7-aYF">
-                                            <rect key="frame" x="1" y="1" width="398" height="259"/>
+                                            <rect key="frame" x="1" y="1" width="397.5" height="259"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="8p1-kz-NZ1">
@@ -1079,7 +1082,7 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                    <size key="minSize" width="398" height="259"/>
+                                                    <size key="minSize" width="397.5" height="259"/>
                                                     <size key="maxSize" width="463" height="10000000"/>
                                                     <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 </textView>
@@ -1166,6 +1169,12 @@
                 <outlet property="view" destination="DqK-ga-DUF" id="Ugv-QJ-cdY"/>
             </connections>
         </viewController>
+        <arrayController mode="entity" entityName="displayName" editable="NO" automaticallyPreparesContent="YES" id="1Pm-mg-NhZ">
+            <connections>
+                <outlet property="managedObjectContext" destination="WId-bH-SnL" id="vnz-59-BFa"/>
+            </connections>
+        </arrayController>
+        <managedObjectContext id="WId-bH-SnL"/>
     </objects>
     <resources>
         <image name="NSAdvanced" width="128" height="128"/>

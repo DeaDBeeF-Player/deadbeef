@@ -38,7 +38,7 @@
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
-                                        <tableColumn editable="NO" width="226" minWidth="40" maxWidth="1000" id="O7v-uk-1c6">
+                                        <tableColumn identifier="Title" editable="NO" width="226" minWidth="40" maxWidth="1000" id="O7v-uk-1c6">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -58,11 +58,15 @@
                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZuI-Zd-vQA">
                                                             <rect key="frame" x="0.0" y="0.0" width="226" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                            <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" placeholderString="Placeholder Title" usesSingleLineMode="YES" id="fjT-xn-xtI">
+                                                            <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" placeholderString="Placeholder Title" usesSingleLineMode="YES" id="fjT-xn-xtI">
                                                                 <font key="font" metaFont="system"/>
                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                             </textFieldCell>
+                                                            <connections>
+                                                                <action selector="valueChanged:" target="-2" id="fSV-K5-P27"/>
+                                                                <outlet property="delegate" destination="-2" id="Fov-yT-G6E"/>
+                                                            </connections>
                                                         </textField>
                                                     </subviews>
                                                     <connections>

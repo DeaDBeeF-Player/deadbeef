@@ -16,7 +16,7 @@ import Cocoa
 
     init(context:String) throws {
         super.init()
-        presetMgr = PresetManager(domain: "dsp", parent:nil, context: context, delegate: self, serializer: self)
+        presetMgr = PresetManager(domain: "DSP", parent:nil, context: context, delegate: self, serializer: self)
         presetMgr.load()
         presetMgrWindow = PresetManagerWindowController(windowNibName:NSNib.Name(rawValue: "PresetManager"))
         presetMgrWindow.setPresetMgr (presetMgr)

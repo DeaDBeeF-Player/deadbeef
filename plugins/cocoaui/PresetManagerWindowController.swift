@@ -1,6 +1,6 @@
 import Cocoa
 
-class PresetManagerWindowController: NSWindowController, NSTableViewDelegate, NSTableViewDataSource {
+class PresetManagerWindowController: NSWindowController, NSTableViewDelegate, NSTableViewDataSource, NSTextFieldDelegate {
 
     var presetMgr : PresetManager!
     @IBOutlet weak var presetList: NSTableView!
@@ -46,6 +46,15 @@ class PresetManagerWindowController: NSWindowController, NSTableViewDelegate, NS
 
     func tableView(_ tableView: NSTableView, didRemove rowView: NSTableRowView, forRow row: Int) {
         presetMgr.removeItem(index: row)
+    }
+
+    @IBAction func valueChanged(_ sender: NSView) {
+        var row = presetList.row(for: sender)
+
+        if (presetMgr.hasCurrent()) {
+            row += 1
+        }
+        presetMgr.getItems()[row].setName((sender as? NSTextField)?.stringValue ?? "")
     }
 
     @IBAction func buttonBarAction(_ sender: NSSegmentedControl) {

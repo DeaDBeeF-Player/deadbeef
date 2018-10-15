@@ -193,7 +193,8 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
     }
 
     @objc func addItem (type: String) -> Scriptable? {
-        guard let c = getItemClass() as? Scriptable.Type else {
+        let itemClass : AnyClass? = getItemClass()
+        guard let c = itemClass as? Scriptable.Type else {
             return nil
         }
 
@@ -368,8 +369,6 @@ class PresetSerializerJSON : PresetSerializer {
 
 @objc
 class PresetManager : ScriptableBase, Scriptable {
-    let itemType : String // e.g. DSPNode
-
     var domain : String
     var context : String
     var delegate : PresetManagerDelegate?
@@ -381,11 +380,11 @@ class PresetManager : ScriptableBase, Scriptable {
 
 
     override func getItemClass() -> AnyClass? {
-        return NSClassFromString("\(itemType)Preset")
+        return NSClassFromString("\(domain)Preset")
     }
 
     override func getItemTypes () -> [String] {
-        return ["DSPPreset"]
+        return [domain]
     }
 
         // Scriptable API
@@ -395,7 +394,7 @@ class PresetManager : ScriptableBase, Scriptable {
     }
 
     func getScript() -> String? {
-        return "property \"\(domain) Items\" itemlist<\(itemType)> items 0;" // display only the list of items
+        return "property \"\(domain) Items\" itemlist<\(domain)Preset> items 0;" // display only the list of items
     }
 
     func displayName() -> String {
@@ -413,7 +412,6 @@ class PresetManager : ScriptableBase, Scriptable {
     }
 
     init (domain:String, parent: Scriptable?, context:String, delegate:PresetManagerDelegate?, serializer:PresetSerializer) {
-        self.itemType = domain+"Node"
         self.domain = domain
         self.context = context
         self.delegate = delegate

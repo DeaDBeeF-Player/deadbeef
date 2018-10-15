@@ -83,6 +83,9 @@
 
 
 @property (weak) IBOutlet NSPopUpButton *dspPresetSelectorButton;
+@property (strong) IBOutlet NSArrayController *presetSelectorArrayController;
+@property (strong) IBOutlet NSManagedObjectContext *managedObjectContext;
+
 
 // GUI misc properties
 @property (unsafe_unretained) IBOutlet NSButton *enable_shift_jis_detection;
