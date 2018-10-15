@@ -124,33 +124,33 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
 
         // name
         if let n = d["name"] as? String {
-            self._name = n;
+            self._name = n
         }
         else if let n = d["name"] as? Int {
-            self._name = String(n);
+            self._name = String(n)
         }
 
         // value
         if let v = d["value"] as? String {
-            self._value = v;
+            self._value = v
         }
         else if let v = d["value"] as? Int {
-            self._value = String(v);
+            self._value = String(v)
         }
         else if let v = d["value"] as? Float {
-            self._value = String(v);
+            self._value = String(v)
         }
 
         // items
         if let items = d["items"] as? [[String:Any]] {
             for item in items {
-                var type = "null";
+                var type = "null"
                 if let t = item["type"] as? String{
                     type = t
                 }
-                let it = getItemClass()?.create (type, parent: self as! Scriptable) ?? MissingNode.create (type, parent: self as! Scriptable)!
-                it.loadFromDictionary (item);
-                self._items.append(it);
+                let it = getItemClass()?.create (type, parent: self as? Scriptable) ?? MissingNode.create (type, parent: self as? Scriptable)!
+                it.loadFromDictionary (item)
+                self._items.append(it)
             }
         }
     }
@@ -178,7 +178,7 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
             ret["items"] = items
         }
 
-        return ret;
+        return ret
     }
 
     @objc func load () {
@@ -253,14 +253,14 @@ class DSPPreset : ScriptableBase, Scriptable {
         var list : [String] = []
         let plugins = plug_get_dsp_list ()
 
-        var i : Int = 0;
+        var i : Int = 0
         while let p = plugins?[i]?.pointee {
             let data = Data(bytes: p.plugin.id, count: Int(strlen(p.plugin.id)))
             list.append(String(data: data, encoding: String.Encoding.utf8)!)
             i += 1
         }
 
-        return list;
+        return list
     }
 
     override func getItemName (type: String) -> String {
@@ -268,7 +268,7 @@ class DSPPreset : ScriptableBase, Scriptable {
             let data = Data(bytes: p.pointee.name, count: Int(strlen(p.pointee.name)))
             return String(data: data, encoding: String.Encoding.utf8)!
         }
-        return "null";
+        return "null"
     }
 
     override func save () {
@@ -320,7 +320,7 @@ class MissingNode : ScriptableBase, Scriptable {
     }
     static func create (_ type: String, parent: Scriptable?) -> Scriptable?
     {
-        return MissingNode (type, parent:parent);
+        return MissingNode (type, parent:parent)
     }
 
     @objc func displayName() -> String {
@@ -361,7 +361,7 @@ class PresetSerializerJSON : PresetSerializer {
 
 @objc
 class PresetManager : ScriptableBase, Scriptable {
-    let itemType : String; // e.g. DSPNode
+    let itemType : String // e.g. DSPNode
 
     var domain : String
     var context : String
@@ -398,7 +398,7 @@ class PresetManager : ScriptableBase, Scriptable {
     }
 
     init (domain:String, parent: Scriptable?, context:String, delegate:PresetManagerDelegate?, serializer:PresetSerializer) {
-        self.itemType = domain+"Node";
+        self.itemType = domain+"Node"
         self.domain = domain
         self.context = context
         self.delegate = delegate
@@ -413,13 +413,13 @@ class PresetManager : ScriptableBase, Scriptable {
         catch _ {
         }
         selectedPreset = Int(conf_get_int("\(domain).\(context)", 0))
-        selectedPreset += 1;
+        selectedPreset += 1
 
         if (selectedPreset < 0) {
-            selectedPreset = 0;
+            selectedPreset = 0
         }
         else if (selectedPreset >= self._items.count) {
-            selectedPreset = self._items.count-1;
+            selectedPreset = self._items.count-1
         }
     }
 
@@ -430,13 +430,13 @@ class PresetManager : ScriptableBase, Scriptable {
         catch _ {
         }
         selectedPreset = Int(conf_get_int("\(domain).\(context)", 0))
-        selectedPreset += 1;
+        selectedPreset += 1
 
         if (selectedPreset < 0) {
-            selectedPreset = 0;
+            selectedPreset = 0
         }
         else if (selectedPreset >= self._items.count) {
-            selectedPreset = self._items.count-1;
+            selectedPreset = self._items.count-1
         }
     }
 }

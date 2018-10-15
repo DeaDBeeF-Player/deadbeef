@@ -139,7 +139,7 @@ import Cocoa
             }
             var idx = 0
 
-            var items : [[String:Any]] = [];
+            var items : [[String:Any]] = []
             while (l < lines.count && lines[l] != "}") {
                 line = lines[l].trimmingCharacters(in: .whitespaces)
                 items.append(["name":String(idx),"value":line])
@@ -154,7 +154,7 @@ import Cocoa
             l = l+1
             nodes.append (node)
         }
-        preset["items"] = nodes;
+        preset["items"] = nodes
         return preset
     }
 
