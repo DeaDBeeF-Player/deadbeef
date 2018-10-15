@@ -51,6 +51,10 @@ extern DB_functions_t *deadbeef;
     NSError *error;
     _dspPresetController = [DSPPresetController createWithContext:@"main" error:&error];
 
+    for (id<Scriptable> item in [[_dspPresetController presetMgr] getItems]) {
+        [_dspPresetSelectorButton addItemWithTitle:[item displayName]];
+    }
+
 //    [_dspPresetController.presetMgr initSelectorPopUpButton:_dspPresetSelectorButton];
 
     // Make a list of the dsp nodes in CURRENT dsp preset (index 0)

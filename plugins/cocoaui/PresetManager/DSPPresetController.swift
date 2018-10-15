@@ -46,7 +46,7 @@ import Cocoa
         let fname = confpath + "/dspconfig"
 
         do {
-            if let preset = try loadPreset(name: "current", fname: fname, hasEnabledFlag: true) {
+            if let preset = try loadPreset(name: "Custom", fname: fname, hasEnabledFlag: true) {
                 dsppreset.isCurrent = true
                 dsppreset.loadFromDictionary (preset)
                 presetMgr._items.append(dsppreset)
@@ -79,35 +79,6 @@ import Cocoa
 
     func save(presetIndex:Int) throws {
     }
-
-    /*
-    // NSTableViewDataSource
-    func numberOfRows(in:NSTableView) -> Int {
-        return presetMgr.data[0].subItems!.count
-    }
-
-    func tableView(_ tableView: NSTableView,
-                   objectValueFor tableColumn: NSTableColumn?,
-                   row: Int) -> Any? {
-        let id = presetMgr.data[0].subItems![row].id
-        if let plug = plug_get_for_id(id) {
-            let name = plug.pointee.name!
-            let data = Data(bytes: name, count: Int(strlen(name)))
-            return String(data: data, encoding: String.Encoding.utf8)
-        }
-        else {
-            return "<missing plugin>"
-        }
-    }
-    // ui utilities
-    @objc func addItem (id: String) {
-        presetMgr.data[0].subItems?.append(PresetSubItem(id:id))
-    }
-
-    @objc func removeItem (index: Int) {
-        presetMgr.data[0].subItems?.remove(at: index)
-    }
-     */
 
     // internal
 
