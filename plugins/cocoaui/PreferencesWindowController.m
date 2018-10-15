@@ -51,11 +51,10 @@ extern DB_functions_t *deadbeef;
     NSError *error;
     _dspPresetController = [DSPPresetController createWithContext:@"main" error:&error];
 
+    // FIXME: refresh when scriptable changes
     for (id<Scriptable> item in [[_dspPresetController presetMgr] getItems]) {
         [_dspPresetSelectorButton addItemWithTitle:[item displayName]];
     }
-
-//    [_dspPresetController.presetMgr initSelectorPopUpButton:_dspPresetSelectorButton];
 
     // Make a list of the dsp nodes in CURRENT dsp preset (index 0)
     // What this means, is that a list of DSPNodes is created, which is represented with accessor.items[0]
@@ -127,11 +126,6 @@ extern DB_functions_t *deadbeef;
     [_ignore_archives setState: deadbeef->conf_get_int ("ignore_archives", 1) ? NSOnState : NSOffState];
     [_stop_after_current_reset setState: deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0) ? NSOnState : NSOffState];
     [_stop_after_album_reset setState: deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0) ? NSOnState : NSOffState];
-
-    // dsp
-// FIXME
-//    [_dspList setDataSource:(id<NSTableViewDataSource>)_dspPresetController];
-
 
     // gui/misc -> player
     [_enable_shift_jis_detection setState: deadbeef->conf_get_int ("junk.enable_shift_jis_detection", 0) ? NSOnState : NSOffState];

@@ -8,6 +8,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PresetManagerWindowController">
             <connections>
+                <outlet property="presetList" destination="6vr-ZO-e5Z" id="5oX-1v-1EU"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="e04-1C-ELO"/>
             </connections>
         </customObject>
@@ -17,7 +18,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="925" y="556" width="756" height="300"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
             <value key="minSize" type="size" width="700" height="300"/>
             <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="756" height="300"/>
@@ -30,7 +31,7 @@
                             <rect key="frame" x="1" y="1" width="229" height="239"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" id="6vr-ZO-e5Z">
+                                <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" id="6vr-ZO-e5Z">
                                     <rect key="frame" x="0.0" y="0.0" width="229" height="239"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
@@ -43,12 +44,32 @@
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                             </tableHeaderCell>
-                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" usesSingleLineMode="YES" id="lzX-JE-3Em">
+                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" identifier="Title" title="Text Cell" usesSingleLineMode="YES" id="lzX-JE-3Em">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                            <prototypeCellViews>
+                                                <tableCellView identifier="Title" id="aEs-Pr-Q4P">
+                                                    <rect key="frame" x="1" y="1" width="226" height="17"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <subviews>
+                                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZuI-Zd-vQA">
+                                                            <rect key="frame" x="0.0" y="0.0" width="226" height="17"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                                            <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" placeholderString="Placeholder Title" usesSingleLineMode="YES" id="fjT-xn-xtI">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                        </textField>
+                                                    </subviews>
+                                                    <connections>
+                                                        <outlet property="textField" destination="ZuI-Zd-vQA" id="YTC-ui-8gT"/>
+                                                    </connections>
+                                                </tableCellView>
+                                            </prototypeCellViews>
                                         </tableColumn>
                                     </tableColumns>
                                     <connections>
@@ -85,6 +106,9 @@
                                 <segment image="NSRemoveTemplate" tag="1"/>
                             </segments>
                         </segmentedCell>
+                        <connections>
+                            <action selector="buttonBarAction:" target="-2" id="9wh-GD-cog"/>
+                        </connections>
                     </segmentedControl>
                     <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JTo-By-Dma">
                         <rect key="frame" x="259" y="20" width="477" height="260"/>

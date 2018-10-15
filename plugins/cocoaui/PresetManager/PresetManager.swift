@@ -384,7 +384,11 @@ class PresetManager : ScriptableBase, Scriptable {
         return NSClassFromString("\(itemType)Preset")
     }
 
-    // Scriptable API
+    override func getItemTypes () -> [String] {
+        return ["DSPPreset"]
+    }
+
+        // Scriptable API
     static func create(_ type: String, parent: Scriptable?) -> Scriptable? {
         // FIXME: delegate
         return PresetManager.init (domain:type, parent:parent, context:"context", delegate:nil, serializer:PresetSerializerJSON())
