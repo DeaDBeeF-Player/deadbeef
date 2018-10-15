@@ -53,6 +53,7 @@
             if (index >= 0) {
                 [_scriptable removeItemWithIndex:index];
                 [_tableView reloadData];
+                [_scriptable save];
             }
             break;
         }
@@ -87,6 +88,7 @@
 
     (void)[_scriptable addItemWithType:types[index]];
     [_tableView reloadData];
+    [_scriptable save];
 }
 
 // NSTableViewDataSource

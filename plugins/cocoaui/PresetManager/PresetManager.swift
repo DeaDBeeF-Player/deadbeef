@@ -51,18 +51,18 @@ protocol Scriptable {
 
 @objc
 class ScriptableBase : NSObject { // implementation of some Scriptable methods, for all subclasses
-    var parent : Scriptable?
-    var enabled : Bool
-    var type : String
-    var name : String?
-    var value : String?
-    var items : [Scriptable]
+    var _parent : Scriptable?
+    var _enabled : Bool
+    var _type : String
+    var _name : String?
+    var _value : String?
+    var _items : [Scriptable]
 
     init(_ type: String, parent: Scriptable?) {
-        self.parent = parent
-        self.enabled = true
-        self.type = type
-        self.items = []
+        self._parent = parent
+        self._enabled = true
+        self._type = type
+        self._items = []
     }
 
     @objc func getItemTypes () -> [String] {
@@ -74,33 +74,33 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
     }
 
     @objc func getItems() -> [Scriptable] {
-        return self.items
+        return self._items
     }
 
     @objc func getParent() -> Scriptable? {
-        return parent
+        return _parent
     }
 
     @objc func getEnabled() -> Bool {
-        return enabled
+        return _enabled
     }
     @objc func setEnabled(_ enabled:Bool) {
-        self.enabled = enabled
+        self._enabled = enabled
     }
     @objc func getName() -> String? {
-        return self.name
+        return self._name
     }
     @objc func setName(_ name:String?) {
-        self.name = name
+        self._name = name
     }
     @objc func getValue() -> String? {
-        return self.value
+        return self._value
     }
     @objc func setValue(_ value:String?) {
-        self.value = value
+        self._value = value
     }
     @objc func getType() -> String {
-        return self.type
+        return self._type
     }
 
     @objc func getItemClass () -> AnyClass? {
@@ -120,25 +120,25 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
         }
 
         // enabled
-        self.enabled = d["enabled"] as? Bool ?? true
+        self._enabled = d["enabled"] as? Bool ?? true
 
         // name
         if let n = d["name"] as? String {
-            self.name = n;
+            self._name = n;
         }
         else if let n = d["name"] as? Int {
-            self.name = String(n);
+            self._name = String(n);
         }
 
         // value
         if let v = d["value"] as? String {
-            self.value = v;
+            self._value = v;
         }
         else if let v = d["value"] as? Int {
-            self.value = String(v);
+            self._value = String(v);
         }
         else if let v = d["value"] as? Float {
-            self.value = String(v);
+            self._value = String(v);
         }
 
         // items
@@ -150,7 +150,7 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
                 }
                 let it = getItemClass()?.create (type, parent: self as! Scriptable) ?? MissingNode.create (type, parent: self as! Scriptable)!
                 it.loadFromDictionary (item);
-                self.items.append(it);
+                self._items.append(it);
             }
         }
     }
@@ -159,18 +159,18 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
         var items : [[String:Any]] = []
         var ret : [String:Any] =
         [
-            "type":self.type,
+            "type":self._type,
         ]
 
-        ret["enabled"] = self.enabled
-        if let n = self.name {
+        ret["enabled"] = self._enabled
+        if let n = self._name {
             ret["name"] = n
         }
-        if let v = self.value {
+        if let v = self._value {
             ret["value"] = v
         }
 
-        for item in self.items {
+        for item in self._items {
             let i = item.saveToDictionary ()
             items.append(i)
         }
@@ -194,12 +194,12 @@ class ScriptableBase : NSObject { // implementation of some Scriptable methods, 
 
         let parent = self as! Scriptable
         let item = c.create (type, parent:parent) ?? MissingNode.create (type, parent:parent)!
-        self.items.append (item)
+        self._items.append (item)
         return item
     }
 
     @objc func removeItem (index: Int) {
-        self.items.remove(at: index)
+        self._items.remove(at: index)
     }
 }
 
@@ -243,7 +243,7 @@ class DSPPreset : ScriptableBase, Scriptable {
     }
 
     @objc func displayName() -> String {
-        if let n = self.name {
+        if let n = self._name {
             return n
         }
         return ""
@@ -324,7 +324,7 @@ class MissingNode : ScriptableBase, Scriptable {
     }
 
     @objc func displayName() -> String {
-        return "Missing <\(self.type)>"
+        return "Missing <\(self._type)>"
     }
 }
 
@@ -418,8 +418,8 @@ class PresetManager : ScriptableBase, Scriptable {
         if (selectedPreset < 0) {
             selectedPreset = 0;
         }
-        else if (selectedPreset >= self.items.count) {
-            selectedPreset = self.items.count-1;
+        else if (selectedPreset >= self._items.count) {
+            selectedPreset = self._items.count-1;
         }
     }
 
@@ -435,8 +435,8 @@ class PresetManager : ScriptableBase, Scriptable {
         if (selectedPreset < 0) {
             selectedPreset = 0;
         }
-        else if (selectedPreset >= self.items.count) {
-            selectedPreset = self.items.count-1;
+        else if (selectedPreset >= self._items.count) {
+            selectedPreset = self._items.count-1;
         }
     }
 }

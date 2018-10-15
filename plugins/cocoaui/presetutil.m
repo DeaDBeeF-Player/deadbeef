@@ -19,6 +19,10 @@ util_dsp_preset_save (DSPPreset *preset) {
 
         BOOL canReuseChain = YES;
         for (id<Scriptable> item in items) {
+            if (!node) {
+                canReuseChain = NO;
+                break;
+            }
             const char *type = [[item getType] UTF8String];
 
             if (strcmp (node->plugin->plugin.id, type)) {
@@ -26,6 +30,10 @@ util_dsp_preset_save (DSPPreset *preset) {
                 break;
             }
             node = node->next;
+        }
+
+        if (node) {
+            canReuseChain = NO;
         }
 
         if (canReuseChain) {

@@ -1520,7 +1520,6 @@
 		4D046CE51EA9F8C300B80B2E /* gmewrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D046CE31EA9F8C300B80B2E /* gmewrap.h */; };
 		4D0B0CEE20162D95004162DA /* FormatConversion.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D0B0CED20162D95004162DA /* FormatConversion.m */; };
 		4D12805F2062994F0015BDE8 /* HelpWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D12805E2062994F0015BDE8 /* HelpWindowController.swift */; };
-		4D152B582174B52C0073FBC9 /* presetutil.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D152B572174B52C0073FBC9 /* presetutil.m */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
 		4D1B4A8F1837EC49003E6066 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
 		4D1B51681837F655003E6066 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51671837F655003E6066 /* AudioUnit.framework */; };
@@ -1707,6 +1706,8 @@
 		4D52B5061F14F34C00048305 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D52B5041F14F34C00048305 /* file.cpp */; };
 		4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D62C0C61E4C9ACA005F9482 /* streamreader.h */; };
 		4D66DBA11F6181C400BFF76B /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D66DBA01F6181C400BFF76B /* AudioToolbox.framework */; };
+		4D7247462174D0F6008977BA /* presetutil.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D152B572174B52C0073FBC9 /* presetutil.m */; };
+		4D7247472174D0F7008977BA /* presetutil.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D152B572174B52C0073FBC9 /* presetutil.m */; };
 		4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */; };
 		4D9272C521414BA900E7B4D0 /* PresetManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9272C421414BA900E7B4D0 /* PresetManagerTest.swift */; };
 		4D9272C621414BF400E7B4D0 /* PresetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D13B5192140154900CA7AE4 /* PresetManager.swift */; };
@@ -12385,6 +12386,7 @@
 				2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */,
 				4D9272C921414BF500E7B4D0 /* DSPPresetController.swift in Sources */,
 				2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */,
+				4D7247472174D0F7008977BA /* presetutil.m in Sources */,
 				2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */,
 				2D0F90C21CCFF094003FA197 /* Tagging.m in Sources */,
 				2DA66ECE1EDF501000E20989 /* fakein.c in Sources */,
@@ -12544,7 +12546,7 @@
 				2D5773A21D084E5A00F61BD1 /* MediaKeyController.m in Sources */,
 				2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* DdbSearchViewController.m in Sources */,
-				4D152B582174B52C0073FBC9 /* presetutil.m in Sources */,
+				4D7247462174D0F6008977BA /* presetutil.m in Sources */,
 				4D9272C621414BF400E7B4D0 /* PresetManager.swift in Sources */,
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
 				2D71C26B1DC88E5C00247CEF /* DSPChainDataSource.m in Sources */,
@@ -15390,6 +15392,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "deadbeef-Swift.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
@@ -15419,6 +15422,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "deadbeef-Swift.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
