@@ -1951,6 +1951,8 @@
 		4DA72BED1838EAAB00A98C62 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BE61838EAAB00A98C62 /* main.m */; };
 		4DAF343F19B75FF500EE96ED /* ddb_dumb.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */; };
 		4DC96E701E4CC9670093CFD3 /* dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DC96E6E1E4CC9670093CFD3 /* dsp.h */; };
+		4DD734912174E55000E9683C /* PresetManager.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DD734902174E55000E9683C /* PresetManager.xib */; };
+		4DD734A22174E73700E9683C /* PresetManagerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DD734A12174E73700E9683C /* PresetManagerWindowController.swift */; };
 		4DE28473205BE0B20023063E /* HelpViewer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DE28470205BE0B20023063E /* HelpViewer.xib */; };
 		4DF1D622215196DA0060D01B /* ItemListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DF1D620215196DA0060D01B /* ItemListViewController.h */; };
 		4DF1D623215196DA0060D01B /* ItemListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF1D621215196DA0060D01B /* ItemListViewController.m */; };
@@ -4701,6 +4703,8 @@
 		4DA72BE61838EAAB00A98C62 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4DC96E6D1E4CC9670093CFD3 /* dsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsp.c; sourceTree = "<group>"; };
 		4DC96E6E1E4CC9670093CFD3 /* dsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsp.h; sourceTree = "<group>"; };
+		4DD734902174E55000E9683C /* PresetManager.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PresetManager.xib; sourceTree = "<group>"; };
+		4DD734A12174E73700E9683C /* PresetManagerWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetManagerWindowController.swift; sourceTree = "<group>"; };
 		4DE28470205BE0B20023063E /* HelpViewer.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HelpViewer.xib; sourceTree = "<group>"; };
 		4DF1D620215196DA0060D01B /* ItemListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ItemListViewController.h; sourceTree = "<group>"; };
 		4DF1D621215196DA0060D01B /* ItemListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ItemListViewController.m; sourceTree = "<group>"; };
@@ -6192,6 +6196,7 @@
 				2D1A56391D9FF9A4005E5CDD /* ReplayGain.xib */,
 				4DE28470205BE0B20023063E /* HelpViewer.xib */,
 				4DF1D6242151A33F0060D01B /* ScriptableItemList.xib */,
+				4DD734902174E55000E9683C /* PresetManager.xib */,
 			);
 			name = XIB;
 			sourceTree = "<group>";
@@ -8486,6 +8491,7 @@
 				4DF1D621215196DA0060D01B /* ItemListViewController.m */,
 				4D152B572174B52C0073FBC9 /* presetutil.m */,
 				4D152B662174B5900073FBC9 /* presetutil.h */,
+				4DD734A12174E73700E9683C /* PresetManagerWindowController.swift */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -11252,6 +11258,7 @@
 				2D6530E41CE79F4E00163808 /* adplug.dylib in Resources */,
 				2D026DA81CAC5C7600E27961 /* ffmpeg.dylib in Resources */,
 				2D8DA07A1C97184B0044CC15 /* psf.dylib in Resources */,
+				4DD734912174E55000E9683C /* PresetManager.xib in Resources */,
 				07765E531C2856DF00F5F4BC /* mms.dylib in Resources */,
 				07765D8C1C279CB300F5F4BC /* ddb_shn.dylib in Resources */,
 				070220D71C275F2900FC9AF9 /* dca.dylib in Resources */,
@@ -12549,6 +12556,7 @@
 				2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* DdbSearchViewController.m in Sources */,
 				4D7247462174D0F6008977BA /* presetutil.m in Sources */,
+				4DD734A22174E73700E9683C /* PresetManagerWindowController.swift in Sources */,
 				4D9272C621414BF400E7B4D0 /* PresetManager.swift in Sources */,
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
 				2D71C26B1DC88E5C00247CEF /* DSPChainDataSource.m in Sources */,

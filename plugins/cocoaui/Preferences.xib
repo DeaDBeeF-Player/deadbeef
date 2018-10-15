@@ -296,6 +296,9 @@
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <action selector="viewDSPPresetManagerAction:" target="-2" id="mZt-XZ-OcN"/>
+                    </connections>
                 </button>
             </subviews>
             <point key="canvasLocation" x="295" y="523"/>

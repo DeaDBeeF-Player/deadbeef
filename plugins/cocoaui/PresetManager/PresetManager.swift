@@ -336,6 +336,8 @@ protocol PresetManagerDelegate {
 
     // Return true if the item needs to be saved
     func isSaveable (index: Int) -> Bool
+
+    func hasCurrent () -> Bool
 }
 
 protocol PresetSerializer {
@@ -389,6 +391,10 @@ class PresetManager : ScriptableBase, Scriptable {
 
     func displayName() -> String {
         return "\(domain) Preset Manager"
+    }
+
+    func hasCurrent () -> Bool {
+        return delegate?.hasCurrent() ?? false
     }
 
     // preset domain is the whole system name, e.g. "dsp" or "encoder"

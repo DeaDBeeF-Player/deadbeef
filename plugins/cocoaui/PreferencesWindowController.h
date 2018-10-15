@@ -78,15 +78,9 @@
 
 - (IBAction)stopAfterCurrentAlbumResetAction:(id)sender;
 
-// dsp properties
-@property (strong) IBOutlet NSPanel *dspConfigPanel;
-//@property (unsafe_unretained) IBOutlet NSScrollView *dspConfigView;
-@property (strong) IBOutlet PluginConfigurationViewController *dspConfigViewController;
-
-
 @property (strong) IBOutlet PluginConfigurationViewController *dspPresetViewController;
-- (IBAction)dspConfigOkAction:(id)sender;
-- (IBAction)dspConfigResetAction:(id)sender;
+- (IBAction)viewDSPPresetManagerAction:(id)sender;
+
 
 @property (weak) IBOutlet NSPopUpButton *dspPresetSelectorButton;
 

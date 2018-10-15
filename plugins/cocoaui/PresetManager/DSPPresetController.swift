@@ -2,12 +2,13 @@ import Foundation
 import Cocoa
 
 @objc class DSPPresetController : NSObject, PresetManagerDelegate, PresetSerializer {
+    var presetMgrWindow : PresetManagerWindowController!
+    @objc var presetMgr : PresetManager!
+
     enum DSPPresetControllerError : Error {
         case InvalidPreset
         case AlreadyLoaded
     }
-
-    @objc var presetMgr : PresetManager!
 
     @objc class func create(context:String) throws -> DSPPresetController {
         return try DSPPresetController(context:context)
@@ -17,9 +18,19 @@ import Cocoa
         super.init()
         presetMgr = PresetManager(domain: "dsp", parent:nil, context: context, delegate: self, serializer: self)
         presetMgr.load()
+        presetMgrWindow = PresetManagerWindowController(windowNibName:NSNib.Name(rawValue: "PresetManager"))
+        presetMgrWindow.setPresetMgr (presetMgr)
+    }
+
+    @objc func viewPresetManager () {
+        presetMgrWindow.showWindow(nil)
     }
 
     // PresetManagerDelegate
+
+    func hasCurrent() -> Bool {
+        return true
+    }
 
     func isEditable(index: Int) -> Bool {
         return true

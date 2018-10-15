@@ -392,4 +392,7 @@ extern DB_functions_t *deadbeef;
     deadbeef->conf_save ();
 }
 
+- (IBAction)viewDSPPresetManagerAction:(id)sender {
+    [_dspPresetController viewPresetManager];
+}
 @end
