@@ -11023,7 +11023,7 @@
 					4D1B3E7918379829003E6066 = {
 						DevelopmentTeam = F69NGENSKX;
 						LastSwiftMigration = 0920;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 					4D52B4CD1F14F0FD00048305 = {
 						CreatedOnToolsVersion = 8.3.3;
@@ -15800,7 +15800,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = F69NGENSKX;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -15844,7 +15844,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = F69NGENSKX;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
