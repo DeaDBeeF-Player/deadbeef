@@ -9,10 +9,53 @@
 
 void
 util_dsp_preset_save (DSPPreset *preset) {
+    NSArray<id<Scriptable>> *items = [preset getItems];
+
+    if (preset.isCurrent) {
+        // check if interactive update is possible, without resetting the whole thing
+        // NOTE: this is completely non-threadsafe!
+        ddb_dsp_context_t *c = NULL;
+        ddb_dsp_context_t *node = c = streamer_get_dsp_chain ();
+
+        BOOL canReuseChain = YES;
+        for (id<Scriptable> item in items) {
+            const char *type = [[item getType] UTF8String];
+
+            if (strcmp (node->plugin->plugin.id, type)) {
+                canReuseChain = NO;
+                break;
+            }
+            node = node->next;
+        }
+
+        if (canReuseChain) {
+            // apply to current chain
+            node = c;
+
+            for (id<Scriptable> item in items) {
+                DB_dsp_t *plug = node->plugin;
+                int enabled = [item getEnabled];
+                if (plug->num_params) {
+                    for (id<Scriptable> param in [item getItems]) {
+                        int index = [[param getName] intValue];
+                        NSString *value = [param getValue];
+                        if (index >= 0 && index < plug->num_params()) {
+                            plug->set_param (node, index, [value UTF8String]);
+                        }
+                    }
+                }
+                node->enabled = enabled;
+
+                node = node->next;
+            }
+
+            messagepump_push (DB_EV_DSPCHAINCHANGED, 0, 0, 0);
+            return;
+        }
+    }
+
     ddb_dsp_context_t *chain = NULL;
     ddb_dsp_context_t *tail = NULL;
-
-    NSArray<id<Scriptable>> *items = [preset getItems];
     for (id<Scriptable> item in items) {
         int enabled = [item getEnabled];
 
