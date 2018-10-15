@@ -35,6 +35,7 @@
                 <outlet property="listview_bold_selected_text" destination="Dkf-Gh-jgm" id="vHO-5f-HPb"/>
                 <outlet property="listview_italic_current_text" destination="2mI-5E-ghQ" id="QKw-VD-RPP"/>
                 <outlet property="listview_italic_selected_text" destination="Ju6-JL-SK6" id="RxW-cT-Is1"/>
+                <outlet property="managedObjectContext" destination="UpZ-WY-IGm" id="65F-VQ-wLr"/>
                 <outlet property="mmb_delete_playlist" destination="mQR-r2-hgB" id="I1Y-hc-8Vs"/>
                 <outlet property="name_playlist_from_folder" destination="va0-Vc-fXe" id="EAm-pp-vao"/>
                 <outlet property="networkView" destination="JAw-ar-I3a" id="1is-US-XFb"/>
@@ -56,6 +57,7 @@
                 <outlet property="pluginUnselectedText" destination="Oe9-ps-NvQ" id="alq-55-LVG"/>
                 <outlet property="pluginVersion" destination="wDm-op-PV2" id="yb0-S2-7T0"/>
                 <outlet property="pluginsView" destination="ZNh-3b-s1L" id="ZWj-HZ-tLL"/>
+                <outlet property="presetSelectorArrayController" destination="1Pm-mg-NhZ" id="SZt-ZO-eFA"/>
                 <outlet property="refresh_rate" destination="vtf-8S-vYr" id="1dI-0B-TIp"/>
                 <outlet property="replaygain_preamp_with_rg" destination="doY-fg-OdJ" id="bLJ-cW-gCS"/>
                 <outlet property="replaygain_preamp_with_rg_label" destination="Wti-8Z-bgW" id="KUU-8O-o93"/>
@@ -285,7 +287,7 @@
                         <menu key="menu" id="2lc-az-fdP"/>
                     </popUpButtonCell>
                     <connections>
-                        <binding destination="1Pm-mg-NhZ" name="contentValues" keyPath="arrangedObjects.name" id="8Ap-Qu-uqW"/>
+                        <binding destination="1Pm-mg-NhZ" name="contentValues" keyPath="arrangedObjects.name" id="yjw-04-Lae"/>
                     </connections>
                 </popUpButton>
                 <customView id="DqK-ga-DUF">
@@ -1171,10 +1173,11 @@
         </viewController>
         <arrayController mode="entity" entityName="displayName" editable="NO" automaticallyPreparesContent="YES" id="1Pm-mg-NhZ">
             <connections>
-                <outlet property="managedObjectContext" destination="WId-bH-SnL" id="vnz-59-BFa"/>
+                <outlet property="managedObjectContext" destination="UpZ-WY-IGm" id="sz3-Q1-ful"/>
             </connections>
         </arrayController>
-        <managedObjectContext id="WId-bH-SnL"/>
+        <managedObjectContext id="UpZ-WY-IGm"/>
+        <userDefaultsController representsSharedInstance="YES" id="Qaa-7q-CMo"/>
     </objects>
     <resources>
         <image name="NSAdvanced" width="128" height="128"/>

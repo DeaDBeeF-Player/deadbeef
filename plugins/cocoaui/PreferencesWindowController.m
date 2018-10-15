@@ -43,7 +43,6 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)awakeFromNib {
-//    [_managedObjectContext setPersistentStoreCoordinator:nil];
 }
 
 - (void)windowDidLoad {
@@ -56,7 +55,7 @@ extern DB_functions_t *deadbeef;
     _dspPresetController = [DSPPresetController createWithContext:@"main" error:&error];
 
     // FIXME: refresh when scriptable changes
-//    _presetSelectorArrayController.content = [[_dspPresetController presetMgr] getItems];
+    _presetSelectorArrayController.content = [[_dspPresetController presetMgr] getItems];
 
 //    for (id<Scriptable> item in [[_dspPresetController presetMgr] getItems]) {
 //        [_dspPresetSelectorButton addItemWithTitle:[item displayName]];
