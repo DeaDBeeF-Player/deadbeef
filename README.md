@@ -21,7 +21,7 @@ Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy develo
 ### Linux, BSD and similar (GTK/*NIX version)
 
 * Install git, GCC toolchain, then clone the repo
-* Install autoconf, automake, libtool, intltool, autopoint
+* Install autoconf, automake, libtool, intltool, autopoint, libjansson-dev
 * Run ```./autogen.sh``` to bootstrap
 * Read the generated INSTALL file and ```./configure --help``` for instructions
 * See the README file for more information
