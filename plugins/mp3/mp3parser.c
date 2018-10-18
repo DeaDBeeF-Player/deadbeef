@@ -25,6 +25,7 @@
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <math.h>
 
 extern DB_functions_t *deadbeef;
 
@@ -524,12 +525,12 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 offs += res;
 
                 // for streaming tracks -- approximate duration
-                if (seek_to_sample == -1 && fsize > 0 && offs - startoffs > 10000 && info->is_streaming) {
+                if (seek_to_sample == -1 && fsize > 0 && offs - startoffs > 50000 && (info->is_streaming || (flags&MP3_PARSE_ESTIMATE_DURATION))) {
                     if (!info->valid_packets) {
                         goto error;
                     }
 
-                    info->avg_packetlength /= info->valid_packets;
+                    info->avg_packetlength = floor (info->avg_packetlength/info->valid_packets);
                     info->avg_samples_per_frame /= info->valid_packets;
                     info->npackets = (fsize - startoffs - endoffs) / info->avg_packetlength;
                     info->totalsamples = info->npackets * info->avg_samples_per_frame;
@@ -546,6 +547,11 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     }
 
 end:
+
+    if (!info->avg_packetlength && info->npackets > 0) {
+        info->avg_samples_per_frame /= info->npackets;
+        info->avg_packetlength /= info->npackets;
+    }
 
     if (fsize >= 0) {
         info->delay += 529;

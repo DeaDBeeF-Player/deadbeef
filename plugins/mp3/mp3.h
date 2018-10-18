@@ -50,6 +50,7 @@ typedef struct {
     int64_t endsample;
 
     mp3info_t mp3info;
+    uint32_t mp3flags; // extra flags to pass to mp3parser
 
     int64_t currentsample;
     int64_t skipsamples; // how many samples to skip after seek, usually "seek_sample - mp3info.pcmsample"

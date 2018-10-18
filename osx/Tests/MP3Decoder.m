@@ -100,5 +100,34 @@ extern DB_functions_t *deadbeef;
     [self runMp3TwoPieceTestWithBackend:1]; // libmad
 }
 
+- (void)test_FiniteVBRNetworkStream_DecodesFullAmountOfSamples {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/mp3parser/vbr_rhytm_30sec.mp3", dbplugindir);
+
+    deadbeef->conf_set_int ("mp3.backend", 0);
+
+    playlist_t *plt = plt_alloc ("testplt");
+
+    DB_playItem_t *it = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, path, NULL, NULL, NULL);
+
+    DB_decoder_t *dec = (DB_decoder_t *)deadbeef->plug_get_for_id ("stdmpg");
+
+    DB_fileinfo_t *fi = dec->open (1<<31); // indicate with a flag to decode in streaming mode (internal flag)
+    dec->init (fi, it);
+
+    size_t size = 1024751 * 4;
+    char *buffer = malloc (size*2);
+
+    int res = dec->read (fi, buffer, (int)size*2);
+
+    free (buffer);
+
+    dec->free (fi);
+
+    deadbeef->plt_unref ((ddb_playlist_t *)plt);
+
+    XCTAssertEqual(res/4, size/4);
+}
+
 
 @end

@@ -29,6 +29,7 @@
 
 enum {
     MP3_PARSE_FULLSCAN = 1,
+    MP3_PARSE_ESTIMATE_DURATION = 2,
 };
 
 // vbrmethod constants

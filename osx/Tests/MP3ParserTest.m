@@ -141,4 +141,34 @@
     XCTAssertEqual(info.padding, 0);
 }
 
+- (void)test_FiniteCBRNetworkStream_ReportsAccurateDuration {
+    mp3info_t info;
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/mp3parser/cbr_rhytm_30sec.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    int64_t fsize = vfs_fgetlength(fp);
+    int res = mp3_parse_file (&info, MP3_PARSE_ESTIMATE_DURATION, fp, fsize, 0, 0, -1);
+    XCTAssert (!res);
+    XCTAssertEqual(info.have_xing_header, 0);
+    XCTAssertEqual(info.ref_packet.samplerate, 32000);
+    XCTAssertEqual(info.totalsamples, 1023624+576+1080);
+    XCTAssertEqual(info.npackets, 890);
+    XCTAssertLessThan(info.valid_packets, info.npackets);
+}
+
+- (void)test_FiniteVBRNetworkStream_ReportsApproximateDuration {
+    mp3info_t info;
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/mp3parser/vbr_rhytm_30sec.mp3", dbplugindir);
+    DB_FILE *fp = vfs_fopen (path);
+    int64_t fsize = vfs_fgetlength(fp);
+    int res = mp3_parse_file (&info, MP3_PARSE_ESTIMATE_DURATION, fp, fsize, 0, 0, -1);
+    XCTAssert (!res);
+    XCTAssertEqual(info.have_xing_header, 0);
+    XCTAssertEqual(info.ref_packet.samplerate, 32000);
+    XCTAssertEqualWithAccuracy(info.totalsamples, 1023624+576+1080, 2000);
+    XCTAssertEqualWithAccuracy(info.npackets, 890, 10);
+    XCTAssertLessThan(info.valid_packets, info.npackets);
+}
+
 @end

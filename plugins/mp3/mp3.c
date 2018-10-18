@@ -69,7 +69,7 @@ cmp3_seek_stream (DB_fileinfo_t *_info, int sample) {
 #endif
 
     mp3info_t mp3info;
-    int res = mp3_parse_file(&mp3info, 0, info->file, deadbeef->fgetlength(info->file), info->startoffs, info->endoffs, sample);
+    int res = mp3_parse_file(&mp3info, info->mp3flags, info->file, deadbeef->fgetlength(info->file), info->startoffs, info->endoffs, sample);
 
     if (!res) {
         deadbeef->fseek (info->file, mp3info.packet_offs, SEEK_SET);
@@ -102,6 +102,10 @@ cmp3_open (uint32_t hints) {
 #endif
     {
         info->want_16bit = 1;
+    }
+
+    if (hints & (1<<31)) {
+        info->mp3flags |= MP3_PARSE_ESTIMATE_DURATION;
     }
     return _info;
 }
@@ -237,12 +241,12 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     deadbeef->pl_item_ref (it);
     info->it = it;
     info->info.readpos = 0;
-    if (!info->file->vfs->is_streaming ()) {
+    if (!info->file->vfs->is_streaming () && !(info->mp3flags & MP3_PARSE_ESTIMATE_DURATION)) {
         deadbeef->junk_get_tag_offsets (info->file, &info->startoffs, &info->endoffs);
         if (info->startoffs > 0) {
             trace ("mp3: skipping %d(%xH) bytes of junk\n", info->startoffs, info->endoffs);
         }
-        int res = mp3_parse_file(&info->mp3info, 0, info->file, deadbeef->fgetlength(info->file), info->startoffs, info->endoffs, -1);
+        int res = mp3_parse_file(&info->mp3info, info->mp3flags, info->file, deadbeef->fgetlength(info->file), info->startoffs, info->endoffs, -1);
         if (res < 0) {
             trace ("mp3: cmp3_init: initial mp3_parse_file failed\n");
             return -1;
@@ -268,10 +272,10 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
     }
     else {
-        info->startoffs = deadbeef->junk_get_leading_size(info->file);
+        info->startoffs = (uint32_t)deadbeef->junk_get_leading_size(info->file);
         deadbeef->fset_track (info->file, it);
         deadbeef->pl_add_meta (it, "title", NULL);
-        int res = mp3_parse_file(&info->mp3info, 0, info->file, deadbeef->fgetlength(info->file), info->startoffs, 0, -1);
+        int res = mp3_parse_file(&info->mp3info, info->mp3flags, info->file, deadbeef->fgetlength(info->file), info->startoffs, 0, -1);
         if (res < 0) {
             trace ("mp3: cmp3_init: initial mp3_parse_file failed\n");
             return -1;
@@ -297,6 +301,16 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
         if (info->mp3info.totalsamples >= 0) {
             info->endsample = info->mp3info.totalsamples - 1;
+            ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
+            int64_t totalsamples = info->mp3info.totalsamples - info->mp3info.delay - info->mp3info.padding;
+            deadbeef->plt_set_item_duration (plt, it, (float)((double)totalsamples/info->mp3info.ref_packet.samplerate));
+            if (plt) {
+                deadbeef->plt_unref (plt);
+            }
+            info->startsample = info->mp3info.delay;
+            info->endsample = info->mp3info.totalsamples-info->mp3info.padding-1;
+// FIXME: is this needed?
+//            deadbeef->fseek (info->file, info->mp3info.packet_offs, SEEK_SET);
         }
         else {
             info->endsample = -1;
@@ -498,8 +512,14 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
         return -1;
     }
 
+    sample += info->startsample;
+    if (sample > info->endsample) {
+        sample = (int)info->endsample;
+    }
+
+
 // {{{ handle net streaming case
-    if (info->file->vfs->is_streaming ()) {
+    if (info->file->vfs->is_streaming () || (info->mp3flags & MP3_PARSE_ESTIMATE_DURATION)) {
         if (info->mp3info.totalsamples > 0 && info->mp3info.avg_samples_per_frame > 0 && info->mp3info.avg_packetlength > 0) { // that means seekable remote stream, like podcast
             trace ("seeking is possible!\n");
 
@@ -509,29 +529,25 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
             int64_t frm = sample / info->mp3info.avg_samples_per_frame;
             r = deadbeef->fseek (info->file, frm * info->mp3info.avg_packetlength + info->startoffs, SEEK_SET);
 
-            if (!r) {
-                info->skipsamples = (int)(sample - frm * info->mp3info.avg_samples_per_frame);
-
-                info->currentsample = sample;
-                _info->readpos = (float)(info->currentsample - info->startsample) / info->mp3info.ref_packet.samplerate;
-
-                info->dec->free (info);
-                info->decoded_samples_remaining = 0;
-                info->dec->init (info);
-                return 0;
+            if (r < 0) {
+                trace ("seek failed!\n");
+                return -1;
             }
-            trace ("seek failed!\n");
-            return -1;
+
+            info->skipsamples = (int)(sample - frm * info->mp3info.avg_samples_per_frame);
+
+            info->currentsample = sample;
+            _info->readpos = (float)(info->currentsample - info->startsample) / info->mp3info.ref_packet.samplerate;
+
+            info->dec->free (info);
+            info->decoded_samples_remaining = 0;
+            info->dec->init (info);
+            return 0;
         }
         trace ("seek is impossible (avg_samples_per_frame=%d, avg_packetlength=%f)!\n", info->mp3info.avg_samples_per_frame, info->mp3info.avg_packetlength);
         return 0;
     }
 // }}}
-
-    sample += info->startsample;
-    if (sample > info->endsample) {
-        sample = (int)info->endsample;
-    }
 
     info->bytes_to_decode = 0;
     info->decoded_samples_remaining = 0;
@@ -589,7 +605,13 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     mp3info_t mp3info;
 
-    int res = mp3_parse_file(&mp3info, 0, fp, deadbeef->fgetlength(fp), start, end, -1);
+    uint64_t fsize = deadbeef->fgetlength(fp);
+    uint32_t mp3flags = 0;
+    if (fp->vfs->is_streaming () && fsize >= 0) {
+        mp3flags = MP3_PARSE_ESTIMATE_DURATION;
+    }
+
+    int res = mp3_parse_file(&mp3info, mp3flags, fp, fsize, start, end, -1);
 
     if (res < 0) {
         trace ("mp3: mp3_parse_file returned error\n");
