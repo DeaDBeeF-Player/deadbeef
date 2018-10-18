@@ -60,22 +60,28 @@ le_int16 (int16_t in, unsigned char *out) {
     out[1] = pin[0];
     out[0] = pin[1];
 #endif
+
+
 }
 
-// SLDB support costs ~1M!!!
-// current hvsc sldb size is ~35k songs
-#define SLDB_MAX_SONGS 40000
-// ~50k subsongs in current sldb
-#define SLDB_POOL_SIZE 55000
+// NOTE: we know that current SLDB is larger than that, but we want the code to go into realloc path
+#define SLDB_PREALLOC_ITEMS 50000
+#define SLDB_PREALLOC_LENGTHS SLDB_PREALLOC_ITEMS
 typedef struct {
-    uint8_t sldb_digests[SLDB_MAX_SONGS][16];
-    int16_t sldb_pool[SLDB_POOL_SIZE];
-    int sldb_poolmark;
-    int16_t *sldb_lengths[SLDB_MAX_SONGS];
-    int sldb_size;
-} sldb_t;
+    uint8_t digest[16];
+    size_t lengths_offset;
+    uint16_t subsongs;
+} sldb_item_t;
+
+static sldb_item_t *sldb;
+static size_t sldb_allocated_size;
+static size_t sldb_count;
+
+static uint16_t *sldb_lengths;
+static size_t sldb_lengths_allocated_size;
+static size_t sldb_lengths_count;
+
 static int sldb_loaded;
-static sldb_t *sldb;
 static int sldb_disable;
 
 static int chip_voices = 0xff;
@@ -119,13 +125,15 @@ sldb_load()
     }
 
     if (!sldb) {
-        sldb = (sldb_t *)malloc (sizeof (sldb_t));
-        memset (sldb, 0, sizeof (sldb_t));
+        sldb = (sldb_item_t *)calloc (sizeof(sldb_item_t), SLDB_PREALLOC_ITEMS);
+        sldb_allocated_size = SLDB_PREALLOC_ITEMS;
+        sldb_lengths = (uint16_t *)calloc (sizeof (uint16_t), SLDB_PREALLOC_LENGTHS);
+        sldb_lengths_allocated_size = SLDB_PREALLOC_LENGTHS;
     }
     while (fgets (str, 1024, fp) == str) {
-        if (sldb->sldb_size >= SLDB_MAX_SONGS) {
-            trace ("sldb loader ran out of memory.\n");
-            break;
+        if (sldb_count >= sldb_allocated_size) {
+            sldb_allocated_size += 10000;
+            sldb = (sldb_item_t *)realloc (sldb, sldb_allocated_size * sizeof (sldb_item_t));
         }
         line++;
         if (str[0] == ';') {
@@ -174,17 +182,6 @@ sldb_load()
             trace ("bad md5 (sz=%d, line=%d)\n", sz, line);
             continue; // bad song md5
         }
-//        else {
-//            trace ("digest: ");
-//            for (int j = 0; j < 16; j++) {
-//                trace ("%02x", (int)digest[j]);
-//            }
-//            trace ("\n");
-//            exit (0);
-//        }
-        memcpy (sldb->sldb_digests[sldb->sldb_size], digest, 16);
-        sldb->sldb_lengths[sldb->sldb_size] = &sldb->sldb_pool[sldb->sldb_poolmark];
-        sldb->sldb_size++;
         // check '=' sign
         if (*p != '=') {
             continue; // no '=' sign
@@ -193,7 +190,10 @@ sldb_load()
         if (!(*p)) {
             continue; // unexpected eol
         }
-        int subsong = 0;
+
+        memcpy (sldb[sldb_count].digest, digest, 16);
+        sldb[sldb_count].lengths_offset = sldb_lengths_count;
+
         while (*p >= ' ') {
             // read subsong lengths until eol
             char timestamp[7]; // up to MMM:SS
@@ -202,7 +202,7 @@ sldb_load()
                 timestamp[sz++] = *p;
                 p++;
             }
-            if (sz < 4 || sz == 6 && *p > ' ' && *p != '(') {
+            if (sz < 4 || (sz == 6 && *p > ' ' && *p != '(')) {
                 break; // bad timestamp
             }
             timestamp[sz] = 0;
@@ -227,14 +227,14 @@ sldb_load()
                 //trace ("subsong %d, time %s:%s\n", subsong, minute, second);
                 time = atoi (minute) * 60 + atoi (second);
             }
-            if (sldb->sldb_poolmark >= SLDB_POOL_SIZE) {
-                trace ("sldb ran out of memory\n");
-                goto fail;
+
+            if (sldb_lengths_count >= sldb_lengths_allocated_size) {
+                sldb_lengths_allocated_size += 10000;
+                sldb_lengths = (uint16_t *)realloc (sldb_lengths, sizeof (uint16_t) * sldb_lengths_allocated_size);
             }
-            
-            sldb->sldb_lengths[sldb->sldb_size-1][subsong] = time;
-            sldb->sldb_poolmark++;
-            subsong++;
+
+            sldb_lengths[sldb_lengths_count++] = time;
+            sldb[sldb_count].subsongs++;
 
             // prepare for next timestamp
             if (*p == '(') {
@@ -254,6 +254,7 @@ sldb_load()
                 break; // eol
             }
         }
+        sldb_count++;
     }
 
 fail:
@@ -268,8 +269,8 @@ sldb_find (const uint8_t *digest) {
         trace ("sldb not loaded\n");
         return -1;
     }
-    for (int i = 0; i < sldb->sldb_size; i++) {
-        if (!memcmp (digest, sldb->sldb_digests[i], 16)) {
+    for (int i = 0; i < sldb_count; i++) {
+        if (!memcmp (digest, sldb[i].digest, 16)) {
             return i;
         }
     }
@@ -570,17 +571,11 @@ csid_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             }
 
             float length = deadbeef->conf_get_float ("sid.defaultlength", 180);
-            if (sldb_loaded) {
-                if (song >= 0 && sldb->sldb_lengths[song][s] >= 0) {
-                    length = sldb->sldb_lengths[song][s];
+            if (sldb_loaded && song >= 0 && s < sldb[song].subsongs) {
+                uint16_t l = sldb_lengths[sldb[song].lengths_offset+s];
+                if (l >= 0) {
+                    length = l;
                 }
-                //        if (song < 0) {
-                //            trace ("song %s not found in db, md5: ", fname);
-                //            for (int j = 0; j < 16; j++) {
-                //                trace ("%02x", (int)sig[j]);
-                //            }
-                //            trace ("\n");
-                //        }
             }
             deadbeef->plt_set_item_duration (plt, it, length);
             deadbeef->pl_add_meta (it, ":FILETYPE", "SID");
