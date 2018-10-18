@@ -75,6 +75,7 @@ static size_t sldb_lengths_count;
 
 static int sldb_loaded;
 static int sldb_disable;
+static int sldb_legacy;
 
 static int chip_voices = 0xff;
 static int chip_voices_changed = 0;
@@ -99,6 +100,12 @@ sldb_load()
         return;
     }
     sldb_loaded = 1;
+
+    const char *ext = conf_hvsc_path + strlen (conf_hvsc_path) - 4;
+    if (!strcmp (ext, ".txt")) {
+        sldb_legacy = 1;
+    }
+
     const char *fname = conf_hvsc_path;
     FILE *fp = fopen (fname, "r");
     if (!fp) {
@@ -434,9 +441,16 @@ find_hvsc_path_from_fname (const char *fname) {
             strcpy (conf_hvsc_path, fname);
             char *p;
             while ((p = strrchr (conf_hvsc_path, '/'))) {
-                strcpy (p, "/DOCUMENTS/Songlengths.txt");
                 struct stat st;
+                strcpy (p, "/DOCUMENTS/Songlengths.md5");
                 int err = stat (conf_hvsc_path, &st);
+                if (!err && (st.st_mode & S_IFREG)) {
+                    deadbeef->conf_set_str ("hvsc_path", conf_hvsc_path);
+                    deadbeef->conf_save ();
+                    break;
+                }
+                strcpy (p, "/DOCUMENTS/Songlengths.txt");
+                err = stat (conf_hvsc_path, &st);
                 if (!err && (st.st_mode & S_IFREG)) {
                     deadbeef->conf_set_str ("hvsc_path", conf_hvsc_path);
                     deadbeef->conf_save ();
@@ -462,57 +476,31 @@ csid_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("subtunes: %d\n", tunes);
     uint8_t sig[16];
     unsigned char tmp[2];
-#if 1
     trace ("calculating md5\n");
     DB_md5_t md5;
     deadbeef->md5_init (&md5);
-    deadbeef->md5_append (&md5, (const uint8_t *)tune->cache.get () + tune->fileOffset, tune->getInfo ().c64dataLen);
-    le_int16 (tune->getInfo ().initAddr, tmp);
-    deadbeef->md5_append (&md5, tmp, 2);
-    le_int16 (tune->getInfo ().playAddr, tmp);
-    deadbeef->md5_append (&md5, tmp, 2);
-    le_int16 (tune->getInfo ().songs, tmp);
-    deadbeef->md5_append (&md5, tmp, 2);
-    for (int s = 1; s <= tunes; s++)
-    {
-        tune->selectSong (s);
-        // songspeed is uint8_t, so no need for byteswap
-        deadbeef->md5_append (&md5, &tune->getInfo ().songSpeed, 1);
-    }
-    if (tune->getInfo ().clockSpeed == SIDTUNE_CLOCK_NTSC) {
-        deadbeef->md5_append (&md5, &tune->getInfo ().clockSpeed, sizeof (tune->getInfo ().clockSpeed));
-    }
-    deadbeef->md5_finish (&md5, sig);
-#else
-    // md5 calc from libsidplay2
-    MD5 myMD5;
-    myMD5.append ((const char *)tune->cache.get() + tune->fileOffset, tune->getInfo ().c64dataLen);
-    // Include INIT and PLAY address.
-    endian_little16 (tmp,tune->getInfo ().initAddr);
-    myMD5.append    (tmp,sizeof(tmp));
-    endian_little16 (tmp,tune->getInfo ().playAddr);
-    myMD5.append    (tmp,sizeof(tmp));
-    // Include number of songs.
-    endian_little16 (tmp,tune->getInfo ().songs);
-    myMD5.append    (tmp,sizeof(tmp));
-    {
-        // Include song speed for each song.
-        for (uint_least16_t s = 1; s <= tune->getInfo ().songs; s++)
+    if (sldb_legacy) {
+        deadbeef->md5_append (&md5, (const uint8_t *)tune->cache.get () + tune->fileOffset, tune->getInfo ().c64dataLen);
+        le_int16 (tune->getInfo ().initAddr, tmp);
+        deadbeef->md5_append (&md5, tmp, 2);
+        le_int16 (tune->getInfo ().playAddr, tmp);
+        deadbeef->md5_append (&md5, tmp, 2);
+        le_int16 (tune->getInfo ().songs, tmp);
+        deadbeef->md5_append (&md5, tmp, 2);
+        for (int s = 1; s <= tunes; s++)
         {
             tune->selectSong (s);
-            myMD5.append (&tune->getInfo ().songSpeed,1);
+            // songspeed is uint8_t, so no need for byteswap
+            deadbeef->md5_append (&md5, &tune->getInfo ().songSpeed, 1);
+        }
+        if (tune->getInfo ().clockSpeed == SIDTUNE_CLOCK_NTSC) {
+            deadbeef->md5_append (&md5, &tune->getInfo ().clockSpeed, sizeof (tune->getInfo ().clockSpeed));
         }
     }
-    // Deal with PSID v2NG clock speed flags: Let only NTSC
-    // clock speed change the MD5 fingerprint. That way the
-    // fingerprint of a PAL-speed sidtune in PSID v1, v2, and
-    // PSID v2NG format is the same.
-    if (tune->getInfo ().clockSpeed == SIDTUNE_CLOCK_NTSC) {
-        myMD5.append (&tune->getInfo ().clockSpeed,sizeof(tune->getInfo ().clockSpeed));
+    else {
+        deadbeef->md5_append (&md5, (const uint8_t *)tune->cache.get (), tune->getInfo ().dataFileLen);
     }
-    myMD5.finish ();
-    memcpy (sig, myMD5.getDigest (), 16);
-#endif
+    deadbeef->md5_finish (&md5, sig);
 
     int song = -1;
     if (sldb_loaded) {

@@ -21,7 +21,7 @@
 static const char *exts[] = { "sid", NULL };
 static const char settings_dlg[] =
     "property \"Enable HVSC Songlength DB\" checkbox hvsc_enable 0;\n"
-    "property \"Songlengths.txt (from HVSC)\" file hvsc_path \"\";\n"
+    "property \"Full path to Songlengths.md5/.txt\" file hvsc_path \"\";\n"
     "property \"Samplerate\" entry sid.samplerate 44100;\n"
     "property \"Bits per sample\" select[2] sid.bps 0 16 8;\n"
     "property \"Mono synth\" checkbox sid.mono 0;\n"
