@@ -52,16 +52,8 @@ typedef struct {
 
 static inline void
 le_int16 (int16_t in, unsigned char *out) {
-    char *pin = (char *)&in;
-#if !WORDS_BIGENDIAN
-    out[0] = pin[0];
-    out[1] = pin[1];
-#else
-    out[1] = pin[0];
-    out[0] = pin[1];
-#endif
-
-
+    out[0] = in&0xff;
+    out[1] = (in&0xff00)>>8;
 }
 
 // NOTE: we know that current SLDB is larger than that, but we want the code to go into realloc path
