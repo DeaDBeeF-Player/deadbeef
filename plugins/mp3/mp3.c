@@ -290,30 +290,17 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         cmp3_set_extra_properties (it, &info->mp3info, 1);
 
         ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
+        info->startsample = info->mp3info.delay;
         if (info->mp3info.totalsamples >= 0) {
             deadbeef->plt_set_item_duration (plt, it, (float)((double)info->mp3info.totalsamples/info->mp3info.ref_packet.samplerate));
+            info->endsample = info->mp3info.totalsamples-info->mp3info.padding-1;
         }
         else {
             deadbeef->plt_set_item_duration (plt, it, -1);
+            info->endsample = -1;
         }
         if (plt) {
             deadbeef->plt_unref (plt);
-        }
-        if (info->mp3info.totalsamples >= 0) {
-            info->endsample = info->mp3info.totalsamples - 1;
-            ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
-            int64_t totalsamples = info->mp3info.totalsamples - info->mp3info.delay - info->mp3info.padding;
-            deadbeef->plt_set_item_duration (plt, it, (float)((double)totalsamples/info->mp3info.ref_packet.samplerate));
-            if (plt) {
-                deadbeef->plt_unref (plt);
-            }
-            info->startsample = info->mp3info.delay;
-            info->endsample = info->mp3info.totalsamples-info->mp3info.padding-1;
-// FIXME: is this needed?
-//            deadbeef->fseek (info->file, info->mp3info.packet_offs, SEEK_SET);
-        }
-        else {
-            info->endsample = -1;
         }
         info->skipsamples = 0;
         info->currentsample = info->mp3info.pcmsample;
@@ -339,9 +326,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     info->dec->init (info);
-    if (!info->file->vfs->is_streaming ()) {
-        plugin.seek_sample (_info, 0);
-    }
+    plugin.seek_sample (_info, 0);
     return 0;
 }
 
