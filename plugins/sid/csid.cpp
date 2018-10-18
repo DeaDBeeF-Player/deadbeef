@@ -589,6 +589,19 @@ csid_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     return after;
 }
 
+static void
+sldb_free (void) {
+    free (sldb);
+    sldb = NULL;
+    sldb_allocated_size = 0;
+    sldb_count = 0;
+    free (sldb_lengths);
+    sldb_lengths = NULL;
+    sldb_lengths_allocated_size = 0;
+    sldb_lengths_count = 0;
+    sldb_loaded = 0;
+}
+
 static int
 sid_configchanged (void) {
     conf_hvsc_enable = deadbeef->conf_get_int ("hvsc_enable", 0);
@@ -598,11 +611,7 @@ sid_configchanged (void) {
     }
 
     // pick up new sldb filename in case it was changed
-    if (sldb) {
-        free (sldb);
-        sldb = NULL;
-        sldb_loaded = 0;
-    }
+    sldb_free ();
 
     if (chip_voices != deadbeef->conf_get_int ("chip.voices", 0xff)) {
         chip_voices_changed = 1;
@@ -629,11 +638,7 @@ csid_start (void) {
 
 int
 csid_stop (void) {
-    if (sldb) {
-        free (sldb);
-        sldb = NULL;
-    }
-    sldb_loaded = 0;
+    sldb_free();
     return 0;
 }
 
