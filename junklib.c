@@ -1877,7 +1877,7 @@ junk_id3v2_find (DB_FILE *fp, int *psize) {
         return -1;
     }
     uint8_t header[10];
-    int pos = deadbeef->ftell (fp);
+    int64_t pos = deadbeef->ftell (fp);
     if (pos == -1) {
         trace ("junk_id3v2_find: ftell error\n");
         return -1;
@@ -1907,23 +1907,23 @@ junk_id3v2_find (DB_FILE *fp, int *psize) {
 int
 junk_get_leading_size_stdio (FILE *fp) {
     uint8_t header[10];
-    int pos = ftell (fp);
+    size_t pos = ftell (fp);
     if (fread (header, 1, 10, fp) != 10) {
         fseek (fp, pos, SEEK_SET);
-        return -1; // too short
+        return 0; // too short
     }
     fseek (fp, pos, SEEK_SET);
     if (strncmp (header, "ID3", 3)) {
-        return -1; // no tag
+        return 0; // no tag
     }
     uint8_t flags = header[5];
     if (flags & 15) {
-        return -1; // unsupported
+        return 0; // unsupported
     }
     int footerpresent = (flags & (1<<4)) ? 1 : 0;
     // check for bad size
     if ((header[9] & 0x80) || (header[8] & 0x80) || (header[7] & 0x80) || (header[6] & 0x80)) {
-        return -1; // bad header
+        return 0; // bad header
     }
     uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
     //trace ("junklib: leading junk size %d\n", size);
@@ -1937,23 +1937,23 @@ junk_get_leading_size (DB_FILE *fp) {
     if (deadbeef->fread (header, 1, 10, fp) != 10) {
         deadbeef->fseek (fp, pos, SEEK_SET);
         trace ("junk_get_leading_size: file is too short\n");
-        return -1; // too short
+        return 0; // too short
     }
     deadbeef->fseek (fp, pos, SEEK_SET);
     if (strncmp (header, "ID3", 3)) {
         trace ("junk_get_leading_size: no id3v2 found\n");
-        return -1; // no tag
+        return 0; // no tag
     }
     uint8_t flags = header[5];
     if (flags & 15) {
         trace ("unsupported flags in id3v2\n");
-        return -1; // unsupported
+        return 0; // unsupported
     }
     int footerpresent = (flags & (1<<4)) ? 1 : 0;
     // check for bad size
     if ((header[9] & 0x80) || (header[8] & 0x80) || (header[7] & 0x80) || (header[6] & 0x80)) {
         trace ("bad header in id3v2\n");
-        return -1; // bad header
+        return 0; // bad header
     }
     uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
     //trace ("junklib: leading junk size %d\n", size);
