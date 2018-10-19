@@ -614,10 +614,8 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect {
-    [[NSColor colorWithCalibratedWhite:0.3f alpha:0.3f] set];
-    [NSBezierPath fillRect:NSMakeRect(rect.origin.x + rect.size.width - 1, rect.origin.y+3,1,rect.size.height-6)];
-
-    [[NSString stringWithUTF8String:_columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y+1, rect.size.width-6, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
+    [[NSColor controlTextColor] set];
+    [[NSString stringWithUTF8String:_columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y-2, rect.size.width-6, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
 }
 
 - (void)drawCell:(int)idx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused {
@@ -1003,7 +1001,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         }
             break;
         case DB_EV_PLAYLISTCHANGED: {
-            if (!p1 || (p1 & DDB_PLAYLIST_CHANGE_SEARCHRESULT)) {
+            if (!p1 || (p1 == DDB_PLAYLIST_CHANGE_SEARCHRESULT)) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [listview reloadData];
                 });

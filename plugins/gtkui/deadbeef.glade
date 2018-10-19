@@ -461,7 +461,7 @@
 		  <child>
 		    <widget class="GtkMenuItem" id="Order">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Order</property>
+		      <property name="label" translatable="yes">Shuffle</property>
 		      <property name="use_underline">True</property>
 
 		      <child>
@@ -470,7 +470,7 @@
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="order_linear">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Linear</property>
+			      <property name="label" translatable="yes">Off</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
 			      <signal name="activate" handler="on_order_linear_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
@@ -480,7 +480,7 @@
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="order_shuffle">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Shuffle tracks</property>
+                  <property name="label" translatable="yes">Tracks</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
 			      <property name="group">order_linear</property>
@@ -491,7 +491,7 @@
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="order_shuffle_albums">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Shuffle albums</property>
+			      <property name="label" translatable="yes">Albums</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
 			      <property name="group">order_linear</property>
@@ -502,7 +502,7 @@
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="order_random">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Random</property>
+			      <property name="label" translatable="yes">Random Tracks</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
 			      <property name="group">order_linear</property>
@@ -517,7 +517,7 @@
 		  <child>
 		    <widget class="GtkMenuItem" id="Looping">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Looping</property>
+		      <property name="label" translatable="yes">Repeat</property>
 		      <property name="use_underline">True</property>
 
 		      <child>
@@ -526,7 +526,7 @@
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="loop_all">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Loop all</property>
+			      <property name="label" translatable="yes">All Tracks</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
 			      <signal name="activate" handler="on_loop_all_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
@@ -536,7 +536,7 @@
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="loop_single">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Loop single song</property>
+			      <property name="label" translatable="yes">One Track</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
 			      <property name="group">loop_all</property>
@@ -547,7 +547,7 @@
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="loop_disable">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Don't loop</property>
+			      <property name="label" translatable="yes">Off</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
 			      <property name="group">loop_all</property>
