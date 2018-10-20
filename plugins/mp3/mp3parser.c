@@ -497,7 +497,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                             offs += res;
                             continue;
                         }
-                        else {
+                        else if (flags & MP3_PARSE_FULLSCAN) {
                             // reset counters for full scan
                             info->pcmsample = 0;
                             info->delay = 0;
