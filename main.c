@@ -459,6 +459,64 @@ add_paths(const char *paths, int len, int queue, char *sendback, int sbsize) {
     return 0;
 }
 
+#ifndef __MINGW32__
+int db_socket_set_unix (struct sockaddr_in *remote, int *len) {
+    int s;
+    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+        perror("socket");
+        exit(1);
+    }
+
+    memset (&remote, 0, sizeof (remote));
+    remote.sun_family = AF_UNIX;
+
+#if USE_ABSTRACT_SOCKET_NAME
+    memcpy (remote.sun_path, server_id, sizeof (server_id));
+    len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
+#else
+    char *socketdirenv = getenv ("DDB_SOCKET_DIR");
+    snprintf (remote.sun_path, sizeof (remote.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
+    *len = offsetof(struct sockaddr_un, sun_path) + strlen (remote.sun_path);
+#endif
+    return s;
+}
+#endif // __MINGW32__
+
+int db_socket_set_inet (struct sockaddr_in *remote, int *len) {
+    #ifdef __MINGW32__
+    // initiate winsock
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0)
+        fprintf(stderr, "Error with WSAStartup(), WinSock startup failed.\n");
+    else
+        fprintf(stderr, "WinSock init ok, library version %d.%d\n", HIBYTE(wsaData.wVersion), LOBYTE(wsaData.wVersion));
+    #endif
+
+    int s;
+    if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror("socket");
+        exit(1);
+    }
+
+    memset (remote, 0, sizeof (*remote));
+
+    remote->sin_family      = AF_INET;
+    remote->sin_addr.s_addr = inet_addr("127.0.0.1");
+    remote->sin_port        = htons(DEFAULT_LISTENING_PORT);
+
+    *len = sizeof(*remote);
+
+    return s;
+}
+
+void db_socket_close (int s) {
+    #ifdef __MINGW32__
+    closesocket (s);
+    #else
+    close (s);
+    #endif
+}
+
 #ifdef __MINGW32__
 static struct sockaddr_in srv_local;
 static struct sockaddr_in srv_remote;
@@ -472,19 +530,25 @@ static unsigned srv_socket;
 static char server_id[] = "\0deadbeefplayer";
 #endif
 
-int
-server_start (void) {
-    int len;
-
-    fprintf (stderr, "server_start\n");
-#ifdef __MINGW32__
+int db_srv_socket_start_inet (/*struct sockaddr_in *remote, int *len*/) {
     srv_socket = socket (AF_INET, SOCK_STREAM, 0);
     unsigned long flags = 1;
     if (ioctlsocket(srv_socket, FIONBIO, &flags) == SOCKET_ERROR) {
         perror ("ioctlsocket FIONBIO");
         return -1;
     }
-#else
+
+    memset (&srv_local, 0, sizeof (srv_local));
+
+    srv_local.sin_family      = AF_INET;
+    srv_local.sin_addr.s_addr = INADDR_ANY;
+    srv_local.sin_port        = htons(DEFAULT_LISTENING_PORT);
+
+    return sizeof(srv_local);
+}
+
+#ifndef __MINGW32__
+int db_srv_socket_start_unix (/*struct sockaddr_un *remote, int *len*/) {
     srv_socket = socket (AF_UNIX, SOCK_STREAM, 0);
     int flags;
     flags = fcntl (srv_socket, F_GETFL,0);
@@ -496,18 +560,12 @@ server_start (void) {
         perror ("fcntl F_SETFL");
         return -1;
     }
-#endif
+
     memset (&srv_local, 0, sizeof (srv_local));
 
-#ifdef __MINGW32__
-    srv_local.sin_family      = AF_INET;
-    srv_local.sin_addr.s_addr = INADDR_ANY;
-    srv_local.sin_port        = htons(DEFAULT_LISTENING_PORT);
-
-    len = sizeof(srv_local);
-#else
     srv_local.sun_family = AF_UNIX;
 
+    int len;
 #if USE_ABSTRACT_SOCKET_NAME
     memcpy (srv_local.sun_path, server_id, sizeof (server_id));
     len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
@@ -519,7 +577,25 @@ server_start (void) {
     }
     len = offsetof(struct sockaddr_un, sun_path) + strlen (srv_local.sun_path);
 #endif
-#endif /* __MINGW32__ */
+    return len;
+}
+#endif // __MINGW32__
+
+int
+server_start (void) {
+    int len;
+
+    fprintf (stderr, "server_start\n");
+
+    #ifdef __MINGW32__
+    len = db_srv_socket_start_inet ();
+    #else
+    len = db_srv_socket_start_unix ();
+    #endif
+
+    if (len == -1) {
+        return -1;
+    }
 
     if (bind(srv_socket, (struct sockaddr *)&srv_local, len) < 0) {
         perror ("bind");
@@ -536,7 +612,7 @@ server_start (void) {
 void
 server_close (void) {
     if (srv_socket) {
-        close (srv_socket);
+        db_socket_close (srv_socket);
         srv_socket = 0;
     }
 }
@@ -608,11 +684,7 @@ server_update (void) {
         else {
             send (s2, "", 1, 0);
         }
-        #ifdef __MINGW32__
-        closesocket (s2);
-        #else
-        close(s2);
-        #endif
+        db_socket_close(s2);
 
         if (buf) {
             free(buf);
@@ -911,59 +983,6 @@ mainloop_thread (void *ctx) {
     return;
 }
 
-int db_socket_init () {
-    #ifdef __MINGW32__
-    WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0)
-        fprintf(stderr, "Error with WSAStartup(), WinSock startup failed.\n");
-    else
-        fprintf(stderr, "WinSock init ok, library version %d.%d\n", HIBYTE(wsaData.wVersion), LOBYTE(wsaData.wVersion));
-    #endif
-
-    return 0;
-}
-
-#ifndef __MINGW32__
-int db_socket_set_unix (struct sockaddr_in *remote, int *len) {
-    int s;
-    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        perror("socket");
-        exit(1);
-    }
-
-    memset (&remote, 0, sizeof (remote));
-    remote.sun_family = AF_UNIX;
-
-#if USE_ABSTRACT_SOCKET_NAME
-    memcpy (remote.sun_path, server_id, sizeof (server_id));
-    len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
-#else
-    char *socketdirenv = getenv ("DDB_SOCKET_DIR");
-    snprintf (remote.sun_path, sizeof (remote.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
-    *len = offsetof(struct sockaddr_un, sun_path) + strlen (remote.sun_path);
-#endif
-    return s;
-}
-#endif // __MINGW32__
-
-int db_socket_set_inet (struct sockaddr_in *remote, int *len) {
-    int s;
-    if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-        perror("socket");
-        exit(1);
-    }
-
-    memset (remote, 0, sizeof (*remote));
-
-    remote->sin_family      = AF_INET;
-    remote->sin_addr.s_addr = inet_addr("127.0.0.1");
-    remote->sin_port        = htons(DEFAULT_LISTENING_PORT);
-
-    *len = sizeof(*remote);
-
-    return s;
-}
-
 int
 main (int argc, char *argv[]) {
     ddb_logger_init ();
@@ -1050,8 +1069,6 @@ main (int argc, char *argv[]) {
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-main", 0, 0, 0, 0);
 #endif
-
-    db_socket_init ();
 
     char *homedir = getenv (HOMEDIR);
     if (!homedir) {
@@ -1216,7 +1233,6 @@ main (int argc, char *argv[]) {
     struct sockaddr_un remote;
     s = db_socket_set_unix (&remote, &len);
 #endif
-
     if (connect(s, (struct sockaddr *)&remote, len) == 0) {
         // pass args to remote and exit
         if (send(s, cmdline, size, 0) == -1) {
@@ -1249,13 +1265,13 @@ main (int argc, char *argv[]) {
         if (out) {
             free (out);
         }
-        close (s);
+        db_socket_close (s);
         exit (0);
     }
 //    else {
 //        perror ("INFO: failed to connect to existing session:");
 //    }
-    close(s);
+    db_socket_close(s);
 
     // become a server
     if (server_start () < 0) {
