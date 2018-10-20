@@ -98,6 +98,7 @@ project "mp3"
    files {
        "plugins/mp3/mp3.h",
        "plugins/mp3/mp3.c",
+       "plugins/mp3/mp3parser.c"
    }
    if mp3_v["libmpg123"] then
       files {
@@ -744,6 +745,7 @@ project "resources_windows"
         "{MKDIR} bin/%{cfg.buildcfg}/doc",
         "{MKDIR} bin/%{cfg.buildcfg}/share/themes bin/%{cfg.buildcfg}/share/icons",
         "{MKDIR} bin/%{cfg.buildcfg}/config",
+        "{MKDIR} bin/%{cfg.buildcfg}/lib",
         "{COPY} ChangeLog help.txt COPYING.GPLv2 COPYING.LGPLv2.1 about.txt translators.txt  bin/%{cfg.buildcfg}/doc/",
         -- translations
         "{MKDIR} bin/%{cfg.buildcfg}/locale",
