@@ -35,6 +35,11 @@ Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy develo
 * Get the output: ```osx/build/Release/deadbeef.app```
 * OR open the osx/deadbeef.xcodeproj in XCode, and build/run from there
 
+### Windows (msys2 premake5 compile)
+
+* ```premake5.exe --file=premake5-win.lua --os=linux gmake```
+* ```make config=debug_windows```
+
 ### Windows (msys2)
 
 * Install msys2
@@ -70,6 +75,7 @@ Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy develo
 * `make`
 * Run `./scripts/windows_install.sh".`
 * Your build will be located in `build` folder.
+
 
 ----
 
