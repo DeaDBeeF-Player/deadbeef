@@ -541,7 +541,7 @@ void
 plt_set_curr (playlist_t *plt) {
     LOCK;
     if (plt != playlist) {
-        playlist = plt;
+        playlist = plt ? plt : &dummy_playlist;
         if (!plt_loading) {
             messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
             conf_set_int ("playlist.current", plt_get_curr_idx ());
