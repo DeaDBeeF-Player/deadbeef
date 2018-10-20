@@ -67,13 +67,14 @@ typedef struct {
     char *conv_buf;
     int conv_buf_size;
 
+    char input[READBUFFER]; // input buffer, for MPEG data
+
     union {
 #ifdef USE_LIBMAD
         struct {
             struct mad_stream mad_stream;
             struct mad_frame mad_frame;
             struct mad_synth mad_synth;
-            char input[READBUFFER]; // input buffer, for MPEG data
             int input_remaining_bytes;
         };
 #endif
