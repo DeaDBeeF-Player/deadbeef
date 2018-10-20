@@ -154,8 +154,8 @@ stdio_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     f->offs += ret;
     ret = ret / size;
 #endif
-#endif
     return ret;
+#endif
 }
 
 static int
