@@ -534,7 +534,6 @@ static char server_id[] = "\0deadbeefplayer";
 int db_srv_socket_start_unix (/*struct sockaddr_un *remote, int *len*/) {
     srv_socket = socket (AF_UNIX, SOCK_STREAM, 0);
 
-
     memset (&srv_local, 0, sizeof (srv_local));
 
     srv_local.sun_family = AF_UNIX;
@@ -991,6 +990,7 @@ main (int argc, char *argv[]) {
 #endif
 
     #ifdef __MINGW32__
+    // overwrite argv[0] with correctly encoded path
     argv[0] = argv0_windows (argv);
     #endif
     if (!realpath (argv[0], dbinstalldir)) {
