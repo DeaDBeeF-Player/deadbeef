@@ -923,6 +923,47 @@ int db_socket_init () {
     return 0;
 }
 
+#ifndef __MINGW32__
+int db_socket_set_unix (struct sockaddr_in *remote, int *len) {
+    int s;
+    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+        perror("socket");
+        exit(1);
+    }
+
+    memset (&remote, 0, sizeof (remote));
+    remote.sun_family = AF_UNIX;
+
+#if USE_ABSTRACT_SOCKET_NAME
+    memcpy (remote.sun_path, server_id, sizeof (server_id));
+    len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
+#else
+    char *socketdirenv = getenv ("DDB_SOCKET_DIR");
+    snprintf (remote.sun_path, sizeof (remote.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
+    *len = offsetof(struct sockaddr_un, sun_path) + strlen (remote.sun_path);
+#endif
+    return s;
+}
+#endif // __MINGW32__
+
+int db_socket_set_inet (struct sockaddr_in *remote, int *len) {
+    int s;
+    if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror("socket");
+        exit(1);
+    }
+
+    memset (remote, 0, sizeof (*remote));
+
+    remote->sin_family      = AF_INET;
+    remote->sin_addr.s_addr = inet_addr("127.0.0.1");
+    remote->sin_port        = htons(DEFAULT_LISTENING_PORT);
+
+    *len = sizeof(*remote);
+
+    return s;
+}
+
 int
 main (int argc, char *argv[]) {
     ddb_logger_init ();
@@ -1170,34 +1211,12 @@ main (int argc, char *argv[]) {
     unsigned int len;
 #ifdef __MINGW32__
     struct sockaddr_in remote;
-    if ((s = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
+    s = db_socket_set_inet (&remote, &len);
 #else
     struct sockaddr_un remote;
-    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+    s = db_socket_set_unix (&remote, &len);
 #endif
-        perror("socket");
-        exit(1);
-    }
 
-    memset (&remote, 0, sizeof (remote));
-#ifdef __MINGW32__
-    remote.sin_family      = AF_INET;
-    remote.sin_addr.s_addr = inet_addr("127.0.0.1");
-    remote.sin_port        = htons(DEFAULT_LISTENING_PORT);
-
-    len = sizeof(remote);
-#else
-    remote.sun_family = AF_UNIX;
-
-#if USE_ABSTRACT_SOCKET_NAME
-    memcpy (remote.sun_path, server_id, sizeof (server_id));
-    len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
-#else
-    char *socketdirenv = getenv ("DDB_SOCKET_DIR");
-    snprintf (remote.sun_path, sizeof (remote.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
-    len = offsetof(struct sockaddr_un, sun_path) + strlen (remote.sun_path);
-#endif
-#endif /* __MINGW32__ */
     if (connect(s, (struct sockaddr *)&remote, len) == 0) {
         // pass args to remote and exit
         if (send(s, cmdline, size, 0) == -1) {
