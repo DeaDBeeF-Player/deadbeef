@@ -35,41 +35,22 @@ Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy develo
 * Get the output: ```osx/build/Release/deadbeef.app```
 * OR open the osx/deadbeef.xcodeproj in XCode, and build/run from there
 
-### Windows (msys2)
+### Windows
 
-* Install msys2
+* Install 64-bit version of [msys2](https://www.msys2.org/)
+* [premake5](https://premake.github.io/download.html) is also needed
 * Get needed dependencies: 
-	```pacman -S mingw-w64-x86_64-libzip pkgconfig mingw-w64-x86_64-dlfcn mingw-w64-x86_64-libtool mingw-w64-x86_64-gcc git automake autogen autoconf gettext gettext-devel libtool make m4 tar xz intltool```
-* Get some packages for plugins:
-	```pacman -S mingw-w64-x86_64-gtk3 mingw-w64-x86_64-gtk2 mingw-w64-x86_64-mpg123 mingw-w64-x86_64-flac```
-* Other packages:
-	```pacman -S mingw-w64-x86_64-libsamplerate mingw-w64-x86_64-curl mingw-w64-x86_64-faad2 mingw-w64-x86_64-ffmpeg mingw-w64-x86_64-opusfile-0.8-1```
-* Install jansson or get compiled lib from https://github.com/kuba160/deadbeef-w64-deps
-   If you're compiling, make sure you are using mingw shell (run mingwXX.exe), if you don't want to compile it self:
-   ```git clone https://github.com/kuba160/deadbeef-w64-deps && cd deadbeef-w64-deps && make jansson-install```
-* Optionally, install other dependencies for plugins which you want to compile.
-* Switch to mingw shell (run mingwXX.exe)
+	```pacman -S mingw-w64-x86_64-libzip mingw-w64-x86_64-pkg-config pkgconfig mingw-w64-x86_64-dlfcn mingw-w64-x86_64-libtool mingw-w64-x86_64-gcc git automake autogen autoconf gettext gettext-devel libtool make m4 tar xz intltool```
+* Get a basic set of libraries for necessary plugins:
+	```pacman -S mingw-w64-x86_64-jansson mingw-w64-x86_64-gtk3 mingw-w64-x86_64-gtk2 mingw-w64-x86_64-mpg123 mingw-w64-x86_64-flac mingw-w64-x86_64-portaudio```
+* Some packages for other plugins (not all may be working through):
+	```mingw-w64-x86_64-libsamplerate mingw-w64-x86_64-curl mingw-w64-x86_64-faad2 mingw-w64-x86_64-ffmpeg mingw-w64-x86_64-opusfile-0.8-1```
+* Ensure that you are in mingw64 shell (run mingw64.exe)
 * Run ```./autogen.sh``` to bootstrap
-* Run `./scripts/configure_windows.sh`
-* `make`
-* Run `./scripts/windows_install.sh".`
-* Your build will be located in `build` folder.
-
-### Windows (Debian/Ubuntu mingw32 cross-compile)
-
-* Steps below assume compiling 64-bit version
-* Install checkinstall, gcc-mingw-w64-x86_64 and mingw-w64-x86_64-dev packages `sudo apt install checkinstall gcc-mingw-w64-x86_64 mingw-w64-x86_64-dev`
-* Install precompiled libs from https://github.com/kuba160/deadbeef-w64-deps
-```git clone https://github.com/kuba160/deadbeef-w64-deps && cd deadbeef-w64-deps && make jansson-checkinstall``` Use `jansson-install` if you don't have `checkinstall`
-
-  OR
-  Install jansson manually. Additionally you will need to get dll files needed for stand-alone build because Debian/Ubuntu does not include them. The program will however compile fine.
-* Optionally, install other dependencies for plugins which you want to compile.
-* Run ```./autogen.sh``` to bootstrap
-* Run `PKG_CONFIG_LIBDIR=/usr/x86_64-w64-mingw32/lib/pkgconfig ./scripts/configure_windows.sh --host=x86_64-w64-mingw32`
-* `make`
-* Run `./scripts/windows_install.sh".`
-* Your build will be located in `build` folder.
+* From deadbeef main directory run ```premake5.exe --file=premake5-win.lua --os=linux gmake``` using your corresponding path to ```premake5.exe```
+* Compile with ```make config=debug_windows``` (debug version) or ```make config=release_windows``` (strip/normal version)
+* Binaries will be placed in ```bin/debug``` or ```bin/release```
+* GTK3 uses [Windows-10](https://github.com/B00merang-Project/Windows-10) theme and [Windows-10-Icons](https://github.com/B00merang-Artwork/Windows-10) by default. If they are not in msys2 tree, then they must be placed manually in ```share/icons``` and ```share/themes```. Eventually you can change theme by editing ```etc/gtk-3.0/settings.ini``` file.
 
 ----
 
