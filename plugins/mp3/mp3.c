@@ -121,8 +121,8 @@ cmp3_set_extra_properties (DB_playItem_t *it, mp3info_t *mp3info, int fake) {
     else {
         deadbeef->pl_replace_meta (it, ":FILE_SIZE", "∞");
     }
-    if (mp3info->ref_packet.bitrate > 0) {
-        snprintf (s, sizeof (s), "%d", mp3info->ref_packet.bitrate/1000);
+    if (mp3info->avg_bitrate > 0) {
+        snprintf (s, sizeof (s), "%d", (int)(mp3info->avg_bitrate/1000));
         deadbeef->pl_replace_meta (it, ":BITRATE", s);
     }
     snprintf (s, sizeof (s), "%d", mp3info->ref_packet.nchannels);

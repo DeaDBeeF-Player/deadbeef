@@ -72,8 +72,10 @@ typedef struct {
     int vbr_type;
 
     // FIXME: these fields should be filled/used only for network streams of finite length
-    float avg_packetlength;
-    int avg_samples_per_frame;
+    double avg_packetlength;
+    int64_t avg_samples_per_frame;
+    int64_t avg_bitrate;
+
     int is_streaming;
 
     int delay;
@@ -83,6 +85,7 @@ typedef struct {
     uint32_t lame_musiclength; // file size from beginning of LAME info packet until the last byte of packet with audio, as encoded by Lame
 
     uint64_t fsize;
+    uint64_t datasize;
 
     // intermediates
     mp3packet_t prev_packet;

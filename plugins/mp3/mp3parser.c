@@ -334,6 +334,7 @@ _process_packet (mp3info_t *info, mp3packet_t *packet, int64_t seek_to_sample) {
 
     info->avg_packetlength += packet->packetlength;
     info->avg_samples_per_frame += packet->samples_per_frame;
+    info->avg_bitrate += packet->bitrate;
 
     if (seek_to_sample == 0) {
         int ch = info->ref_packet.nchannels;
@@ -365,6 +366,8 @@ _packet_same_fmt (mp3packet_t *ref_packet, mp3packet_t *packet) {
 int
 mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int startoffs, int endoffs, int64_t seek_to_sample) {
     memset (info, 0, sizeof (mp3info_t));
+    info->fsize = fsize;
+    info->datasize = fsize-startoffs-endoffs;
 
     if (seek_to_sample > 0) {
         // add 9 extra packets to fill bit-reservoir
@@ -494,9 +497,6 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                             offs += res;
                             continue;
                         }
-                        else if (!(flags & MP3_PARSE_FULLSCAN)) {
-                            goto end;
-                        }
                         else {
                             // reset counters for full scan
                             info->pcmsample = 0;
@@ -519,6 +519,14 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                     memcpy (&info->prev_packet, &packet, sizeof (packet));
                 }
 
+                // Even if we already got everything we need from lame header,
+                // we still need to fetch a few packets to get averages right.
+                // 200 packets give a pretty accurate value, and correspond
+                // to less than 40KB or data
+                if (info->have_xing_header && !(flags & MP3_PARSE_FULLSCAN) && info->npackets > 200) {
+                    goto end;
+                }
+
                 assert (remaining >= res);
                 remaining -= res;
                 bufptr += res;
@@ -533,10 +541,11 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                     info->avg_packetlength = floor (info->avg_packetlength/info->valid_packets);
                     info->avg_samples_per_frame /= info->valid_packets;
                     info->npackets = (fsize - startoffs - endoffs) / info->avg_packetlength;
+                    info->avg_bitrate /= info->valid_packets;
                     info->totalsamples = info->npackets * info->avg_samples_per_frame;
                     info->have_duration = 1;
 
-                    goto end;
+                    goto end_noaverages;
                 }
             }
         }
@@ -547,11 +556,13 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     }
 
 end:
-
-    if (!info->avg_packetlength && info->npackets > 0) {
+    if (info->npackets > 0) {
         info->avg_samples_per_frame /= info->npackets;
         info->avg_packetlength /= info->npackets;
+        info->avg_bitrate /= info->npackets;
     }
+
+end_noaverages:
 
     if (fsize >= 0) {
         info->delay += 529;
