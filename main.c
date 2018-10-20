@@ -48,7 +48,7 @@
 #include <sys/types.h>
 #ifdef __MINGW32__
 #include <winsock2.h>
-#define DEFAULT_LISTENING_PORT    48879
+#define DEFAULT_LISTENING_PORT 48879
 #else
 #include <sys/socket.h>
 #include <sys/select.h>
@@ -78,9 +78,9 @@
 #include "tf.h"
 #include "logger.h"
 
-#ifdef __MINGW32__
-#include <shlwapi.h>
-#endif
+//#ifdef __MINGW32__
+//#include <shlwapi.h>
+//#endif
 
 #ifndef PREFIX
 #error PREFIX must be defined
