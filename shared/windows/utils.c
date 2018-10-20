@@ -80,18 +80,20 @@ int path_short(char * path_in, char * path_out, int len) {
     return iconv2_ret;
 }
 
+char argv0[PATH_MAX];
+
+// returns true, ASCII encoded, executable location
 char *argv0_windows (char * argv[]) {
     wchar_t argv_win[PATH_MAX];
     GetModuleFileNameW(NULL,argv_win,PATH_MAX);
     int argv_win_len = wcslen(argv_win);
-    // feel sorry, this boy is not getting freed :(
-    char * argv0 = malloc (argv_win_len*2+2);
-    if (argv0) {
-        int ret = win_charset_conv ((char *) argv_win, (wcslen(argv_win)+1)*2, argv0, argv_win_len*2+2, "WCHAR_T", "UTF-8");
-        if (ret == -1) {
-            return argv[0];
-        }
-        path_short (argv0, argv0, argv_win_len*2+2);
+
+
+    int ret = win_charset_conv ((char *) argv_win, (wcslen(argv_win)+1)*2, argv0, PATH_MAX, "WCHAR_T", "UTF-8");
+    if (ret == -1) {
+        return argv[0];
     }
+
+    path_short (argv0, argv0, argv_win_len*2+2);
     return argv0;
 }
