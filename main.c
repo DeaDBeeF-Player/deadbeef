@@ -30,9 +30,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#ifdef __MINGW32__
-#undef __STRICT_ANSI__ /* this will make stdlib.h declare the prototype for '_fullpath' */
-#endif
 #include <stdlib.h>
 #include <stddef.h>
 #include <time.h>
@@ -84,19 +81,14 @@
 #ifdef __MINGW32__
 #include <shlwapi.h>
 #endif
-#include "deadbeef.h"
 
 #ifndef PREFIX
 #error PREFIX must be defined
 #endif
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
-
-
 #ifdef HAVE_COCOAUI
 #define SYS_CONFIG_DIR "Library/Preferences"
-#elif defined __MINGW32__
+#elif defined(__MINGW32__)
 #define SYS_CONFIG_DIR "AppData/Roaming"
 #else
 #define SYS_CONFIG_DIR ".config"
@@ -175,12 +167,13 @@ prepare_command_line (int argc, char *argv[], int *size) {
         // if argument is a filename, try to resolve it
         char resolved[PATH_MAX];
         char *arg;
-        #ifdef __MINGW32__
-        realpath (argv[i], resolved);
-        if ((!strncmp ("--", argv[i], 2) && !seen_ddash) || !PathFileExists(resolved) ) {
-        #else
+        //#ifdef __MINGW32__
+        // Not sure what this fixes, seems fine without
+        //realpath (argv[i], resolved);
+        //if ((!strncmp ("--", argv[i], 2) && !seen_ddash) || !PathFileExists(resolved) ) {
+        //#else
         if ((!strncmp ("--", argv[i], 2) && !seen_ddash) || !realpath (argv[i], resolved)) {
-        #endif
+        //#endif
             arg = argv[i];
         }
         else {
