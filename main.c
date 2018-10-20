@@ -911,6 +911,18 @@ mainloop_thread (void *ctx) {
     return;
 }
 
+int db_socket_init () {
+    #ifdef __MINGW32__
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0)
+        fprintf(stderr, "Error with WSAStartup(), WinSock startup failed.\n");
+    else
+        fprintf(stderr, "WinSock init ok, library version %d.%d\n", HIBYTE(wsaData.wVersion), LOBYTE(wsaData.wVersion));
+    #endif
+
+    return 0;
+}
+
 int
 main (int argc, char *argv[]) {
     ddb_logger_init ();
@@ -997,13 +1009,8 @@ main (int argc, char *argv[]) {
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-main", 0, 0, 0, 0);
 #endif
-#ifdef __MINGW32__
-    WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0)
-        fprintf(stderr, "Error with WSAStartup(), WinSock startup failed.\n");
-    else
-        fprintf(stderr, "WinSock init ok, library version %d.%d\n", HIBYTE(wsaData.wVersion), LOBYTE(wsaData.wVersion));
-#endif
+
+    db_socket_init ();
 
     char *homedir = getenv (HOMEDIR);
     if (!homedir) {
