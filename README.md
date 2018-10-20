@@ -50,6 +50,7 @@ Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy develo
 * From deadbeef main directory run ```premake5.exe --file=premake5-win.lua --os=linux gmake``` using your corresponding path to ```premake5.exe```
 * Compile with ```make config=debug_windows``` (debug version) or ```make config=release_windows``` (strip/normal version)
 * Binaries will be placed in ```bin/debug``` or ```bin/release```
+* GTK3 uses [Windows-10](https://github.com/B00merang-Project/Windows-10) theme and [Windows-10-Icons](https://github.com/B00merang-Artwork/Windows-10) by default. If they are not in msys2 tree, then they must be placed manually in ```share/icons``` and ```share/themes```. Eventually you can change theme by editing ```etc/gtk-3.0/settings.ini``` file.
 
 ----
 
