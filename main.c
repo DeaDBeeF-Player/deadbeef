@@ -459,6 +459,40 @@ add_paths(const char *paths, int len, int queue, char *sendback, int sbsize) {
     return 0;
 }
 
+int db_socket_init_inet () {
+#ifdef __MINGW32__
+    // initiate winsock
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0) {
+        fprintf(stderr, "Error with WSAStartup(), WinSock startup failed.\n");
+        return -1;
+    }
+    else {
+        fprintf(stderr, "WinSock init ok, library version %d.%d\n", HIBYTE(wsaData.wVersion), LOBYTE(wsaData.wVersion));
+    }
+#endif
+
+    return 0;
+}
+
+int db_socket_set_inet (struct sockaddr_in *remote, int *len) {
+    int s;
+    if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror("socket");
+        exit(1);
+    }
+
+    memset (remote, 0, sizeof (*remote));
+
+    remote->sin_family      = AF_INET;
+    remote->sin_addr.s_addr = inet_addr("127.0.0.1");
+    remote->sin_port        = htons(DEFAULT_LISTENING_PORT);
+
+    *len = sizeof(*remote);
+
+    return s;
+}
+
 #ifndef __MINGW32__
 int db_socket_set_unix (struct sockaddr_in *remote, int *len) {
     int s;
@@ -482,39 +516,12 @@ int db_socket_set_unix (struct sockaddr_in *remote, int *len) {
 }
 #endif // __MINGW32__
 
-int db_socket_set_inet (struct sockaddr_in *remote, int *len) {
-    #ifdef __MINGW32__
-    // initiate winsock
-    WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0)
-        fprintf(stderr, "Error with WSAStartup(), WinSock startup failed.\n");
-    else
-        fprintf(stderr, "WinSock init ok, library version %d.%d\n", HIBYTE(wsaData.wVersion), LOBYTE(wsaData.wVersion));
-    #endif
-
-    int s;
-    if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-        perror("socket");
-        exit(1);
-    }
-
-    memset (remote, 0, sizeof (*remote));
-
-    remote->sin_family      = AF_INET;
-    remote->sin_addr.s_addr = inet_addr("127.0.0.1");
-    remote->sin_port        = htons(DEFAULT_LISTENING_PORT);
-
-    *len = sizeof(*remote);
-
-    return s;
-}
-
 void db_socket_close (int s) {
-    #ifdef __MINGW32__
+#ifdef __MINGW32__
     closesocket (s);
-    #else
+#else
     close (s);
-    #endif
+#endif
 }
 
 #ifdef __MINGW32__
@@ -530,36 +537,10 @@ static unsigned srv_socket;
 static char server_id[] = "\0deadbeefplayer";
 #endif
 
-int db_srv_socket_start_inet (/*struct sockaddr_in *remote, int *len*/) {
-    srv_socket = socket (AF_INET, SOCK_STREAM, 0);
-    unsigned long flags = 1;
-    if (ioctlsocket(srv_socket, FIONBIO, &flags) == SOCKET_ERROR) {
-        perror ("ioctlsocket FIONBIO");
-        return -1;
-    }
-
-    memset (&srv_local, 0, sizeof (srv_local));
-
-    srv_local.sin_family      = AF_INET;
-    srv_local.sin_addr.s_addr = INADDR_ANY;
-    srv_local.sin_port        = htons(DEFAULT_LISTENING_PORT);
-
-    return sizeof(srv_local);
-}
-
 #ifndef __MINGW32__
 int db_srv_socket_start_unix (/*struct sockaddr_un *remote, int *len*/) {
     srv_socket = socket (AF_UNIX, SOCK_STREAM, 0);
-    int flags;
-    flags = fcntl (srv_socket, F_GETFL,0);
-    if (flags == -1) {
-        perror ("fcntl F_GETFL");
-        return -1;
-    }
-    if (fcntl(srv_socket, F_SETFL, flags | O_NONBLOCK) < 0) {
-        perror ("fcntl F_SETFL");
-        return -1;
-    }
+
 
     memset (&srv_local, 0, sizeof (srv_local));
 
@@ -587,11 +568,28 @@ server_start (void) {
 
     fprintf (stderr, "server_start\n");
 
-    #ifdef __MINGW32__
-    len = db_srv_socket_start_inet ();
-    #else
+#ifdef __MINGW32__
+    srv_socket = db_socket_set_inet (&srv_local, &len);
+
+    unsigned long flags = 1;
+    if (ioctlsocket(srv_socket, FIONBIO, &flags) == SOCKET_ERROR) {
+        perror ("ioctlsocket FIONBIO");
+        return -1;
+    }
+#else
     len = db_srv_socket_start_unix ();
-    #endif
+
+    int flags;
+    flags = fcntl (srv_socket, F_GETFL,0);
+    if (flags == -1) {
+        perror ("fcntl F_GETFL");
+        return -1;
+    }
+    if (fcntl(srv_socket, F_SETFL, flags | O_NONBLOCK) < 0) {
+        perror ("fcntl F_SETFL");
+        return -1;
+    }
+#endif
 
     if (len == -1) {
         return -1;
@@ -1228,6 +1226,9 @@ main (int argc, char *argv[]) {
     unsigned int len;
 #ifdef __MINGW32__
     struct sockaddr_in remote;
+    if (db_socket_init_inet() < 0) {
+        exit (-1);
+    }
     s = db_socket_set_inet (&remote, &len);
 #else
     struct sockaddr_un remote;
