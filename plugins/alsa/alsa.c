@@ -450,6 +450,7 @@ palsa_setformat (ddb_waveformat_t *fmt) {
         trace ("palsa_setformat: impossible to set requested format\n");
         // even if it failed -- copy the format
         memcpy (&plugin.fmt, &requested_fmt, sizeof (ddb_waveformat_t));
+        UNLOCK;
         return -1;
     }
     trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
