@@ -87,7 +87,11 @@ preferences_fill_soundcards (void) {
     deadbeef->conf_unlock ();
 
     if (output_device_names) {
-        g_slist_free_full (output_device_names, g_free);
+        for (GSList *dev = output_device_names; dev; dev = dev->next) {
+            g_free (dev->data);
+            dev->data = NULL;
+        }
+        g_slist_free (output_device_names);
         output_device_names = NULL;
     }
     output_device_names = g_slist_append (output_device_names, g_strdup ("default"));
