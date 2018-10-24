@@ -523,7 +523,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 // we still need to fetch a few packets to get averages right.
                 // 200 packets give a pretty accurate value, and correspond
                 // to less than 40KB or data
-                if (info->have_xing_header && !(flags & MP3_PARSE_FULLSCAN) && info->npackets > 200) {
+                if (info->have_xing_header && !(flags & MP3_PARSE_FULLSCAN) && info->npackets >= 200) {
                     goto end;
                 }
 
@@ -542,7 +542,12 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                     info->avg_samples_per_frame /= info->valid_packets;
                     info->npackets = (fsize - startoffs - endoffs) / info->avg_packetlength;
                     info->avg_bitrate /= info->valid_packets;
-                    info->totalsamples = info->npackets * info->avg_samples_per_frame;
+                    if (info->have_xing_header) {
+                        info->npackets--;
+                    }
+                    else {
+                        info->totalsamples = info->npackets * info->avg_samples_per_frame;
+                    }
                     info->have_duration = 1;
 
                     goto end_noaverages;
@@ -560,6 +565,12 @@ end:
         info->avg_samples_per_frame /= info->npackets;
         info->avg_packetlength /= info->npackets;
         info->avg_bitrate /= info->npackets;
+        if (offs < fsize-endoffs && info->avg_packetlength != 0) {
+            info->npackets = (fsize - startoffs - endoffs) / info->avg_packetlength;
+            if (info->have_xing_header) {
+                info->npackets--;
+            }
+        }
     }
 
 end_noaverages:
