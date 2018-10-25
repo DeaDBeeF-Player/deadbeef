@@ -181,6 +181,8 @@ off_t oggedit_write_opus_metadata(DB_FILE *in, const char *fname, const off_t of
             res = opus_serial;
             goto cleanup;
         }
+        fclose (out);
+        out = NULL;
         if (rename(tempname, fname)) {
             res = OGGEDIT_RENAME_FAILED;
             goto cleanup;
