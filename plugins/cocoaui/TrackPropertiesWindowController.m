@@ -741,6 +741,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (void)didEndEditValuePanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+    self.modified = YES;
     [_editValuePanel orderOut:self];
 }
 
