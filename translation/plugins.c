@@ -373,9 +373,9 @@ _("Send MusicBrainz ID");
 _("Submit tracks shorter than 30 seconds (not recommended)");
 // plugins/mono2stereo/mono2stereo.c
 // xgettext:no-c-format
-_("Left mix:");
+_("Left mix");
 // xgettext:no-c-format
-_("Right mix:");
+_("Right mix");
 // plugins/mp3/mp3.c
 // xgettext:no-c-format
 _("Force 16 bit output");
@@ -426,7 +426,7 @@ _("Swap audio bytes (toggle if all you hear is static)");
 // xgettext:no-c-format
 _("Enable HVSC Songlength DB");
 // xgettext:no-c-format
-_("Songlengths.txt (from HVSC)");
+_("Full path to Songlengths.md5/.txt");
 // xgettext:no-c-format
 _("Bits per sample");
 // xgettext:no-c-format
@@ -477,6 +477,9 @@ _("10 kHz");
 _("14 kHz");
 // xgettext:no-c-format
 _("20 kHz");
+// plugins/vfs_curl/vfs_curl.c
+// xgettext:no-c-format
+_("Enable logging");
 // plugins/wildmidi/wildmidiplug.c
 // xgettext:no-c-format
 _("Timidity++ bank configuration file");

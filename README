@@ -27,8 +27,8 @@ full list of dependencies is below.
 most of them are optional, which means deadbeef will build and run without them, but to make it useful - you'd probably need at least GTK UI plugin and some audio codecs built.
 
     libsamplerate: for dsp_libsrc plugin (resampler)
-    gtk+-2.0 >= 2.12 (+ gthread, + glib): GTK+ 2.0 user interface
-    gtk+-3.0 >= 3.00 (+ gthread, + glib): GTK+ 3.0 user interface
+    gtk+-2.0 >= 2.16 (+ gthread, + glib): GTK+ 2.0 user interface
+    gtk+-3.0 >= 3.10 (+ gthread, + glib): GTK+ 3.0 user interface
     jansson: mandatory for both gtk2 and gtk3 UIs, used for column configuration loading
     alsa-lib: ALSA support
     libvorbis and libogg: for ogg vorbis plugin, and for ogg container metadata in other formats, such as OggFlac

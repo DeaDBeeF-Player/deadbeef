@@ -139,7 +139,8 @@ update_vorbis_comments (DB_playItem_t *it, OggVorbis_File *vorbis_file, const in
                 !replaygain_tag(it, DDB_REPLAYGAIN_ALBUMPEAK, tag, value) &&
                 !replaygain_tag(it, DDB_REPLAYGAIN_TRACKGAIN, tag, value) &&
                 !replaygain_tag(it, DDB_REPLAYGAIN_TRACKPEAK, tag, value)
-                && strcasecmp (tag, "METADATA_BLOCK_PICTURE")) {
+                && strcasecmp (tag, "METADATA_BLOCK_PICTURE")
+                && *value) {
                     deadbeef->pl_append_meta(it, oggedit_map_tag(tag, "tag2meta"), value);
             }
         }

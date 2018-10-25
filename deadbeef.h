@@ -71,7 +71,7 @@ extern "C" {
 // that there's a better replacement in the newer deadbeef versions.
 
 // api version history:
-// 1.10 -- trunk
+// 1.10 -- deadbeef-1.8.0
 // 1.9 -- deadbeef-0.7.2
 // 1.8 -- deadbeef-0.7.0
 // 1.7 -- deadbeef-0.6.2
@@ -346,8 +346,13 @@ enum ddb_playlist_change_t {
     DDB_PLAYLIST_CHANGE_DELETED,
     DDB_PLAYLIST_CHANGE_POSITION,
     DDB_PLAYLIST_CHANGE_TITLE,
-    DDB_PLAYLIST_CHANGE_SELECTION, // `ctx` is assumed to be a unique ID of the event sender (e.g. a UI view pointer which caused the selection change),
-                                   // but should not be expected to point to a specific type.
+    // When handling DDB_PLAYLIST_CHANGE_SELECTION,
+    // `ctx` is assumed to be a unique ID of the event sender,
+    // for example a UI view pointer which caused the selection change,
+    // but it should not be expected to point to a specific type.
+    // This is used to filter the events when they hit the same
+    // view which sent them.
+    DDB_PLAYLIST_CHANGE_SELECTION,
     DDB_PLAYLIST_CHANGE_SEARCHRESULT,
     DDB_PLAYLIST_CHANGE_PLAYQUEUE,
 };
@@ -426,13 +431,14 @@ enum {
 
     // since 1.5
 #if (DDB_API_LEVEL >= 5)
-    // Use DB_EV_PLAYLISTCHANGED with DDB_PLAYLIST_CHANGE_SELECTION instead.
-    DB_EV_SELCHANGED = 22, // DB_EV_SELCHANGED is obsolete and isn't emitted; DB_EV_PLAYLISTCHANGED with DDB_PLAYLIST_CHANGE_SELECTION should be used instead.
+    // DB_EV_SELCHANGED is obsolete and isn't emitted; DB_EV_PLAYLISTCHANGED with DDB_PLAYLIST_CHANGE_SELECTION should be used instead.
+    DB_EV_SELCHANGED = 22,
     DB_EV_PLUGINSLOADED = 23, // after all plugins have been loaded and connected
 #endif
 
 #if (DDB_API_LEVEL >= 8)
-    DB_EV_FOCUS_SELECTION = 24, // tell playlist viewer to focus on selection
+    // A caller sends this event, to ask playlist viewer(s) to focus on selected track.
+    DB_EV_FOCUS_SELECTION = 24, 
 #endif
 
     // -----------------
@@ -466,11 +472,15 @@ enum {
 // preset columns, working using IDs
 // DON'T add new ids in range 2-7, they are reserved for backwards compatibility
 enum pl_column_t {
+#if (DDB_API_LEVEL >= 10)
     DB_COLUMN_STANDARD = -1,
+#endif
     DB_COLUMN_FILENUMBER = 0,
     DB_COLUMN_PLAYING = 1,
     DB_COLUMN_ALBUM_ART = 8,
+#if (DDB_API_LEVEL >= 10)
     DB_COLUMN_CUSTOM = 9
+#endif
 };
 
 // replaygain constants
@@ -634,7 +644,7 @@ typedef struct {
 
 #if (DDB_API_LEVEL >= 10)
     // Return value, is set to non-zero if text was <<<dimmed>>> or >>>brightened<<<
-    // This is helpful to determine whether text needs to be searched for the corresponding esc sequences
+    // It's used to determine whether the text needs to be searched for the corresponding esc sequences
     int dimmed;
 #endif
 } ddb_tf_context_t;
@@ -840,9 +850,12 @@ typedef struct {
     DB_playItem_t * (*plt_get_item_for_idx) (ddb_playlist_t *playlist, int idx, int iter);
     void (*plt_move_items) (ddb_playlist_t *to, int iter, ddb_playlist_t *from, DB_playItem_t *drop_before, uint32_t *indexes, int count);
     void (*plt_copy_items) (ddb_playlist_t *to, int iter, ddb_playlist_t * from, DB_playItem_t *before, uint32_t *indices, int cnt);
+
+    // Empty the PL_SEARCH list, and mark the previous results as unselected.
     void (*plt_search_reset) (ddb_playlist_t *plt);
 
-    // find the specified text in playlist, and select the results
+    // Find the specified text in playlist, and populate the PL_SEARCH linked
+    // list. The results are also marked as selected.
     void (*plt_search_process) (ddb_playlist_t *plt, const char *text);
 
     // sort using the title formatting v1 (deprecated)
@@ -1048,7 +1061,8 @@ typedef struct {
     void (*junk_apev2_free) (DB_apev2_tag_t *tag);
     int (*junk_apev2_write) (FILE *fp, DB_apev2_tag_t *tag, int write_header, int write_footer);
 
-    // can only return a positive offset to a tag, or 0
+    // Returns an offset to the audio packets, after ID3v2 and APEv2 tags.a
+    // Only positive values or can be returned.
     int (*junk_get_leading_size) (DB_FILE *fp);
     int (*junk_get_leading_size_stdio) (FILE *fp);
 
@@ -1348,7 +1362,7 @@ typedef struct {
     // Same as log but uses va_list
     void (*vlog) (const char *fmt, va_list ap);
 
-    // Custom log viewers, for use in e.g. UI plugins
+    // Custom log viewers, for use in UI plugins and similar
     void (*log_viewer_register) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx), void *ctx);
     void (*log_viewer_unregister) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx), void *ctx);
 
@@ -1522,10 +1536,10 @@ typedef struct DB_plugin_action_s {
 
 #if (DDB_API_LEVEL >= 10)
 enum {
-    // Tells the system that the plugin has logging enabled
+    // Tells the system to capture the logs from this plugin.
     DDB_PLUGIN_FLAG_LOGGING = 1,
 
-    // Tells the system that the plugin supports replaygain, and streamer should not do it
+    // Tells the system that the plugin supports replaygain, and streamer should not do it.
     DDB_PLUGIN_FLAG_REPLAYGAIN = 2,
 };
 #endif

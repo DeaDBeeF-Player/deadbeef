@@ -1712,15 +1712,15 @@
 		4D6CF18D20EB788A00811034 /* MP3Decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6CF18C20EB788A00811034 /* MP3Decoder.m */; };
 		4D6CF18E20EB7A9900811034 /* mp3parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D8FEDCE20EA54D4008EB080 /* mp3parser.c */; };
 		4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */; };
+		4D8FEDCF20EA54D4008EB080 /* mp3parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D8FEDC020EA54D3008EB080 /* mp3parser.h */; };
+		4D8FEDD020EA54D4008EB080 /* mp3parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D8FEDCE20EA54D4008EB080 /* mp3parser.c */; };
+		4D90AAFF20EA5CA500D13537 /* DDBTestInitializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D90AAFE20EA5CA500D13537 /* DDBTestInitializer.m */; };
 		4D9272C521414BA900E7B4D0 /* PresetManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9272C421414BA900E7B4D0 /* PresetManagerTest.swift */; };
 		4D9272C621414BF400E7B4D0 /* PresetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D13B5192140154900CA7AE4 /* PresetManager.swift */; };
 		4D9272C721414BF400E7B4D0 /* DSPPresetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9272B521411B6600E7B4D0 /* DSPPresetController.swift */; };
 		4D9272C821414BF500E7B4D0 /* PresetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D13B5192140154900CA7AE4 /* PresetManager.swift */; };
 		4D9272C921414BF500E7B4D0 /* DSPPresetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9272B521411B6600E7B4D0 /* DSPPresetController.swift */; };
 		4D9272D0214156E300E7B4D0 /* PresetManagerData in Resources */ = {isa = PBXBuildFile; fileRef = 4D9272CF214156E300E7B4D0 /* PresetManagerData */; };
-		4D8FEDCF20EA54D4008EB080 /* mp3parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D8FEDC020EA54D3008EB080 /* mp3parser.h */; };
-		4D8FEDD020EA54D4008EB080 /* mp3parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D8FEDCE20EA54D4008EB080 /* mp3parser.c */; };
-		4D90AAFF20EA5CA500D13537 /* DDBTestInitializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D90AAFE20EA5CA500D13537 /* DDBTestInitializer.m */; };
 		4D9BF4001FE134200032B6CF /* libopusfile.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C629E1FDEC51000D83CEF /* libopusfile.dylib */; };
 		4D9C5B0E1FDEBAFC00D83CEF /* opus.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C5AEF1FDEBAAE00D83CEF /* opus.dylib */; };
 		4D9C5B0F1FDEBAFC00D83CEF /* libopuslib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C5B051FDEBACC00D83CEF /* libopuslib.dylib */; };
@@ -1956,6 +1956,7 @@
 		4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BE51838EAAB00A98C62 /* Images.xcassets */; };
 		4DA72BED1838EAAB00A98C62 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BE61838EAAB00A98C62 /* main.m */; };
 		4DAF343F19B75FF500EE96ED /* ddb_dumb.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */; };
+		4DC416FE2180919D0056133E /* PlaylistTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC416FD2180919D0056133E /* PlaylistTest.m */; };
 		4DC96E701E4CC9670093CFD3 /* dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DC96E6E1E4CC9670093CFD3 /* dsp.h */; };
 		4DE28473205BE0B20023063E /* HelpViewer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DE28470205BE0B20023063E /* HelpViewer.xib */; };
 		8374A47E1B8946A800C6A572 /* ChipMapper.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374A3671B8946A800C6A572 /* ChipMapper.c */; };
@@ -4479,13 +4480,13 @@
 		4D6CF17D20EB783900811034 /* MP3ParserTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MP3ParserTest.m; sourceTree = "<group>"; };
 		4D6CF18C20EB788A00811034 /* MP3Decoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MP3Decoder.m; sourceTree = "<group>"; };
 		4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnplayTemplate.pdf; path = images/btnplayTemplate.pdf; sourceTree = "<group>"; };
-		4D9272B521411B6600E7B4D0 /* DSPPresetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DSPPresetController.swift; path = PresetManager/DSPPresetController.swift; sourceTree = "<group>"; };
-		4D9272C421414BA900E7B4D0 /* PresetManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetManagerTest.swift; sourceTree = "<group>"; };
-		4D9272CF214156E300E7B4D0 /* PresetManagerData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = PresetManagerData; sourceTree = "<group>"; };
 		4D8FEDC020EA54D3008EB080 /* mp3parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp3parser.h; path = plugins/mp3/mp3parser.h; sourceTree = "<group>"; };
 		4D8FEDCE20EA54D4008EB080 /* mp3parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp3parser.c; path = plugins/mp3/mp3parser.c; sourceTree = "<group>"; };
 		4D90AAF020EA5CA400D13537 /* DDBTestInitializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDBTestInitializer.h; sourceTree = "<group>"; };
 		4D90AAFE20EA5CA500D13537 /* DDBTestInitializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDBTestInitializer.m; sourceTree = "<group>"; };
+		4D9272B521411B6600E7B4D0 /* DSPPresetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DSPPresetController.swift; path = PresetManager/DSPPresetController.swift; sourceTree = "<group>"; };
+		4D9272C421414BA900E7B4D0 /* PresetManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetManagerTest.swift; sourceTree = "<group>"; };
+		4D9272CF214156E300E7B4D0 /* PresetManagerData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = PresetManagerData; sourceTree = "<group>"; };
 		4D9C5AEF1FDEBAAE00D83CEF /* opus.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = opus.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D9C5B051FDEBACC00D83CEF /* libopuslib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libopuslib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D9C60281FDEBCF500D83CEF /* opus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opus.h; sourceTree = "<group>"; };
@@ -4715,6 +4716,7 @@
 		4DA72BDF1838EAAB00A98C62 /* deadbeef-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "deadbeef-Prefix.pch"; sourceTree = "<group>"; };
 		4DA72BE51838EAAB00A98C62 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		4DA72BE61838EAAB00A98C62 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		4DC416FD2180919D0056133E /* PlaylistTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistTest.m; sourceTree = "<group>"; };
 		4DC96E6D1E4CC9670093CFD3 /* dsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsp.c; sourceTree = "<group>"; };
 		4DC96E6E1E4CC9670093CFD3 /* dsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsp.h; sourceTree = "<group>"; };
 		4DE28470205BE0B20023063E /* HelpViewer.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HelpViewer.xib; sourceTree = "<group>"; };
@@ -7245,6 +7247,7 @@
 				4D0B0CED20162D95004162DA /* FormatConversion.m */,
 				4D9272C421414BA900E7B4D0 /* PresetManagerTest.swift */,
 				4D6CF18C20EB788A00811034 /* MP3Decoder.m */,
+				4DC416FD2180919D0056133E /* PlaylistTest.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -12417,6 +12420,7 @@
 				2D7F38031B2858AC00692A7B /* Junklib.m in Sources */,
 				4D9272C821414BF500E7B4D0 /* PresetManager.swift in Sources */,
 				4D0B0CEE20162D95004162DA /* FormatConversion.m in Sources */,
+				4DC416FE2180919D0056133E /* PlaylistTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
