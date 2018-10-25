@@ -366,10 +366,17 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("calling sf_open_virtual\n");
     info.ctx = sf_open_virtual (&vfs, SFM_READ, &inf, &info);
     if (!info.ctx) {
-        trace ("sndfile: sf_open failed\n");
+        trace ("sndfile: sf_open failed for %s\n", fname);
         deadbeef->fclose (info.file);
         return NULL;
     }
+
+    if (inf.samplerate == 0) {
+        trace ("sndfile: invalid samplerate 0 in file %s\n", fname);
+        deadbeef->fclose (info.file);
+        return NULL;
+    }
+
     trace ("calling sf_open_virtual ok\n");
     int64_t totalsamples = inf.frames;
     int samplerate = inf.samplerate;
@@ -422,9 +429,11 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->pl_add_meta (it, ":CHANNELS", s);
     snprintf (s, sizeof (s), "%d", samplerate);
     deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
-    int br = (int)roundf(fsize / duration * 8 / 1000);
-    snprintf (s, sizeof (s), "%d", br);
-    deadbeef->pl_add_meta (it, ":BITRATE", s);
+    if (duration > 0) {
+        int br = (int)roundf(fsize / duration * 8 / 1000);
+        snprintf (s, sizeof (s), "%d", br);
+        deadbeef->pl_add_meta (it, ":BITRATE", s);
+    }
 
     // sndfile subformats
     const char *subformats[] = {
