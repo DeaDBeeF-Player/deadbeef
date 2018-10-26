@@ -465,6 +465,8 @@ add_paths(const char *paths, int len, int queue, char *sendback, int sbsize) {
 static char server_id[] = "\0deadbeefplayer";
 #endif
 
+static unsigned srv_socket;
+
 #ifdef USE_INET_SOCKET
 static struct sockaddr_in srv_local;
 static struct sockaddr_in srv_remote;
