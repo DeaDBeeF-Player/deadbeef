@@ -46,15 +46,24 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/types.h>
-#ifdef __MINGW32__
-#include <winsock2.h>
+
+// #define USE_INET_SOCKET
 #define DEFAULT_LISTENING_PORT 48879
+
+#ifdef __MINGW32__
+#define USE_INET_SOCKET
+#include <winsock2.h>
 #else
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <sys/un.h>
 #include <sys/errno.h>
+#ifdef USE_INET_SOCKET
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #endif
+#endif
+
 #include <sys/fcntl.h>
 #include <signal.h>
 #ifdef __GLIBC__
@@ -452,6 +461,16 @@ add_paths(const char *paths, int len, int queue, char *sendback, int sbsize) {
     return 0;
 }
 
+#if USE_ABSTRACT_SOCKET_NAME
+static char server_id[] = "\0deadbeefplayer";
+#endif
+
+static unsigned srv_socket;
+
+#ifdef USE_INET_SOCKET
+static struct sockaddr_in srv_local;
+static struct sockaddr_in srv_remote;
+
 int db_socket_init_inet () {
 #ifdef __MINGW32__
     // initiate winsock
@@ -486,28 +505,31 @@ int db_socket_set_inet (struct sockaddr_in *remote, int *len) {
     return s;
 }
 
-#ifndef __MINGW32__
-int db_socket_set_unix (struct sockaddr_in *remote, int *len) {
+#else
+static struct sockaddr_un srv_local;
+static struct sockaddr_un srv_remote;
+
+int db_socket_set_unix (struct sockaddr_un *remote, int *len) {
     int s;
     if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
         perror("socket");
         exit(1);
     }
 
-    memset (&remote, 0, sizeof (remote));
-    remote.sun_family = AF_UNIX;
+    memset (remote, 0, sizeof (remote));
+    remote->sun_family = AF_UNIX;
 
 #if USE_ABSTRACT_SOCKET_NAME
-    memcpy (remote.sun_path, server_id, sizeof (server_id));
-    len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
+    memcpy (remote->sun_path, server_id, sizeof (server_id));
+    *len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
 #else
     char *socketdirenv = getenv ("DDB_SOCKET_DIR");
-    snprintf (remote.sun_path, sizeof (remote.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
-    *len = offsetof(struct sockaddr_un, sun_path) + strlen (remote.sun_path);
+    snprintf (remote->sun_path, sizeof (remote->sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
+    *len = offsetof(struct sockaddr_un, sun_path) + strlen (remote->sun_path);
 #endif
     return s;
 }
-#endif // __MINGW32__
+#endif
 
 void db_socket_close (int s) {
 #ifdef __MINGW32__
@@ -517,59 +539,30 @@ void db_socket_close (int s) {
 #endif
 }
 
-#ifdef __MINGW32__
-static struct sockaddr_in srv_local;
-static struct sockaddr_in srv_remote;
-#else
-static struct sockaddr_un srv_local;
-static struct sockaddr_un srv_remote;
-#endif
-static unsigned srv_socket;
-
-#if USE_ABSTRACT_SOCKET_NAME
-static char server_id[] = "\0deadbeefplayer";
-#endif
-
-#ifndef __MINGW32__
-int db_srv_socket_start_unix (/*struct sockaddr_un *remote, int *len*/) {
-    srv_socket = socket (AF_UNIX, SOCK_STREAM, 0);
-
-    memset (&srv_local, 0, sizeof (srv_local));
-
-    srv_local.sun_family = AF_UNIX;
-
-    int len;
-#if USE_ABSTRACT_SOCKET_NAME
-    memcpy (srv_local.sun_path, server_id, sizeof (server_id));
-    len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
-#else
-    char *socketdirenv = getenv ("DDB_SOCKET_DIR");
-    snprintf (srv_local.sun_path, sizeof (srv_local.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
-    if (unlink(srv_local.sun_path) < 0) {
-        perror ("INFO: unlink socket");
-    }
-    len = offsetof(struct sockaddr_un, sun_path) + strlen (srv_local.sun_path);
-#endif
-    return len;
-}
-#endif // __MINGW32__
-
 int
 server_start (void) {
     int len;
 
     fprintf (stderr, "server_start\n");
 
-#ifdef __MINGW32__
+#ifdef USE_INET_SOCKET
     srv_socket = db_socket_set_inet (&srv_local, &len);
 
+#ifdef __MINGW32__
     unsigned long flags = 1;
     if (ioctlsocket(srv_socket, FIONBIO, &flags) == SOCKET_ERROR) {
         perror ("ioctlsocket FIONBIO");
         return -1;
     }
+#endif
 #else
-    len = db_srv_socket_start_unix ();
+    srv_socket = db_socket_set_unix (&srv_local, &len);
+#ifndef USE_ABSTRACT_SOCKET_NAME
+    if (unlink(srv_local.sun_path) < 0) {
+        perror ("INFO: unlink socket");
+    }
+    len = offsetof(struct sockaddr_un, sun_path) + strlen (srv_local.sun_path);
+#endif
 
     int flags;
     flags = fcntl (srv_socket, F_GETFL,0);
@@ -1217,7 +1210,7 @@ main (int argc, char *argv[]) {
     // try to connect to remote player
     int s;
     unsigned int len;
-#ifdef __MINGW32__
+#ifdef USE_INET_SOCKET
     struct sockaddr_in remote;
     if (db_socket_init_inet() < 0) {
         exit (-1);
