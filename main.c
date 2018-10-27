@@ -476,11 +476,11 @@ int db_socket_init_inet () {
     // initiate winsock
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0) {
-        fprintf(stderr, "Error with WSAStartup(), WinSock startup failed.\n");
+        trace_err ("Error with WSAStartup(), WinSock startup failed.\n");
         return -1;
     }
     else {
-        fprintf(stderr, "WinSock init ok, library version %d.%d\n", HIBYTE(wsaData.wVersion), LOBYTE(wsaData.wVersion));
+        trace ("WinSock init ok, library version %d.%d\n", HIBYTE(wsaData.wVersion), LOBYTE(wsaData.wVersion));
     }
 #endif
 
@@ -543,7 +543,7 @@ int
 server_start (void) {
     int len;
 
-    fprintf (stderr, "server_start\n");
+    trace ("server_start\n");
 
 #ifdef USE_INET_SOCKET
     srv_socket = db_socket_set_inet (&srv_local, &len);
@@ -1132,7 +1132,7 @@ main (int argc, char *argv[]) {
     if (env_plugin_dir) {
         strncpy (dbplugindir, env_plugin_dir, sizeof(dbplugindir));
         if (dbplugindir[sizeof(dbplugindir) - 1] != 0) {
-            fprintf (stderr, "fatal: plugin path is too long: %s\n", env_plugin_dir);
+            trace_err ("fatal: plugin path is too long: %s\n", env_plugin_dir);
             return -1;
         }
     }
@@ -1167,7 +1167,7 @@ main (int argc, char *argv[]) {
     }
     else {
         if (snprintf (dbdocdir, sizeof (dbdocdir), "%s", DOCDIR) > sizeof (dbdocdir)) {
-            fprintf (stderr, "fatal: install path is too long: %s\n", dbinstalldir);
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
         if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/share/deadbeef/pixmaps", PREFIX) > sizeof (dbpixmapdir)) {
