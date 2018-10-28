@@ -280,7 +280,7 @@ void
 ddb_listview_clear_sort (DdbListview *listview);
 
 int
-ddb_listview_get_row_pos (DdbListview *listview, int row_idx);
+ddb_listview_get_row_pos (DdbListview *listview, int row_idx, int *accumulated_title_height);
 
 void
 ddb_listview_groupcheck (DdbListview *listview);
