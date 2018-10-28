@@ -914,7 +914,7 @@ popup_menu_position_func (GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gp
     }
     if (it) {
         // get Y position
-        *y = ddb_listview_get_row_pos (lv, idx) + winy;
+        *y = ddb_listview_get_row_pos (lv, idx, NULL) + winy;
         lv->binding->unref (it);
     }
     else {
@@ -1443,7 +1443,7 @@ list_handle_keypress (DdbListview *ps, int keyval, int state, int iter) {
     if (state & GDK_SHIFT_MASK) {
         if (cursor != prev) {
             int newscroll = ps->scrollpos;
-            int cursor_scroll = ddb_listview_get_row_pos (ps, cursor);
+            int cursor_scroll = ddb_listview_get_row_pos (ps, cursor, NULL);
             if (cursor_scroll < ps->scrollpos) {
                 newscroll = cursor_scroll;
             }
