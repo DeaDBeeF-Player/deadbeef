@@ -76,6 +76,10 @@
 #define DEBUG_LOCKING 0
 #define DETECT_PL_LOCK_RC 0
 
+#if DETECT_PL_LOCK_RC
+#include <pthread.h>
+#endif
+
 // file format revision history
 // 1.1->1.2 changelog:
 //    added flags field
@@ -3366,6 +3370,9 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
                         value += len+1;
                     } while (value < end);
                     *((char *)m->value-1) = match;
+                    if (match > 0) {
+                        break;
+                    }
                 }
             }
         }
