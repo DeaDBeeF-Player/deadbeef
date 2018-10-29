@@ -23,7 +23,6 @@
 
 #include "../../deadbeef.h"
 #include <AudioUnit/AudioUnit.h>
-#include <CoreAudio/CoreAudio.h>
 #include <AudioToolbox/AudioToolbox.h>
 
 static DB_functions_t *deadbeef;
@@ -54,7 +53,12 @@ ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const A
 
 static int
 ca_free (void);
-
+static int
+ca_init (void);
+static int
+ca_play (void);
+static int
+ca_pause (void);
 
 static UInt32
 GetNumberAvailableNominalSampleRateRanges()
@@ -186,6 +190,22 @@ error:
     return res;
 }
 
+OSStatus callbackFunction(AudioObjectID inObjectID,
+                          UInt32 inNumberAddresses,
+                          const AudioObjectPropertyAddress inAddresses[],
+                          void *inClientData) {
+    int st = state;
+    ca_free ();
+    ca_init ();
+    if (st == OUTPUT_STATE_PLAYING) {
+        ca_play();
+    }
+    else if (st == OUTPUT_STATE_PAUSED) {
+        ca_pause();
+    }
+    return noErr;
+}
+
 static int
 ca_init (void) {
     OSStatus err;
@@ -256,6 +276,15 @@ ca_init (void) {
     }
 
     ca_fmtchanged(device_id, 1, &theAddress, NULL);
+
+    AudioObjectPropertyAddress outputDeviceAddress = {
+        kAudioHardwarePropertyDefaultOutputDevice,
+        kAudioObjectPropertyScopeGlobal,
+        kAudioObjectPropertyElementMaster
+    };
+    AudioObjectAddPropertyListener(kAudioObjectSystemObject,
+                                   &outputDeviceAddress,
+                                   &callbackFunction, nil);
 
     state = OUTPUT_STATE_STOPPED;
 
