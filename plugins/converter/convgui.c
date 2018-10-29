@@ -1149,6 +1149,12 @@ on_encoder_preset_copy (GtkButton *button, gpointer user_data)
         return;
     }
     converter_plugin->encoder_preset_copy (current_ctx->current_encoder_preset, p);
+    // FIXME: this is a hack to prevent deleting the original preset after
+    // copying. Needs a proper fix.
+    if (current_ctx->current_encoder_preset->title) {
+        free (current_ctx->current_encoder_preset->title);
+        current_ctx->current_encoder_preset->title = NULL;
+    }
 
     if (GTK_RESPONSE_OK == edit_encoder_preset (_("Add new encoder"), toplevel)) {
         converter_plugin->encoder_preset_append (current_ctx->current_encoder_preset);
@@ -1507,6 +1513,12 @@ edit_dsp_preset (const char *title, GtkWidget *toplevel, ddb_dsp_preset_t *orig)
             }
 
             if (!err) {
+                if (current_ctx->current_dsp_preset->title && strcmp (title, current_ctx->current_dsp_preset->title)) {
+                    char path[1024];
+                    if (snprintf (path, sizeof (path), "%s/presets/dsp/%s.txt", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG), current_ctx->current_dsp_preset->title) > 0) {
+                        unlink (path);
+                    }
+                }
                 if (current_ctx->current_dsp_preset->title) {
                     free (current_ctx->current_dsp_preset->title);
                 }
@@ -1616,6 +1628,13 @@ on_dsp_preset_copy (GtkButton *button, gpointer user_data)
         return;
     }
     converter_plugin->dsp_preset_copy (current_ctx->current_dsp_preset, p);
+
+    // FIXME: this is a hack to prevent deleting the original preset after
+    // copying. Needs a proper fix.
+    if (current_ctx->current_dsp_preset->title) {
+        free (current_ctx->current_dsp_preset->title);
+        current_ctx->current_dsp_preset->title = NULL;
+    }
 
     if (GTK_RESPONSE_OK == edit_dsp_preset (_("New DSP Preset"), toplevel, NULL)) {
         converter_plugin->dsp_preset_append (current_ctx->current_dsp_preset);
