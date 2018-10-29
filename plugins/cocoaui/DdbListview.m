@@ -1058,6 +1058,7 @@ int grouptitleheight = 22;
 
     _grouptitle_height = grouptitleheight;
 
+    deadbeef->pl_lock ();
     int idx = 0;
     DdbListviewRow_t it = [_delegate firstRow];
     while (it != [_delegate invalidRow]) {
@@ -1095,6 +1096,7 @@ int grouptitleheight = 22;
         it = next;
         idx++;
     }
+    deadbeef->pl_unlock ();
     if (it != [_delegate invalidRow]) {
         [_delegate unrefRow:it];
     }
