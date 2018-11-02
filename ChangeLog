@@ -1,4 +1,17 @@
 version 1.8.0
+	added Opus support
+	added ReplayGain Scanner
+	added proper tracks+cue support (in cooperation with wdlkmpx)
+	added/improved MP4 tag reading and writing
+	added loading embedded album art from MP4 files
+	added File Copy and File Move converter presets
+	added Log Window displaying error information from various sources (in cooperation with Saivert)
+	improved replaygain configuration and runtime behavior
+	fixed replaygain support in Converter
+	improved reading, storing and editing multi-value tag fields
+	added GBS support to Game_Music_Emu (kode54)
+	added SGC support to Game_Music_Emu
+	fixed clipping prevention for mp3, replaygain is applied before clipping
 	fixed vfz_zip handling of colons in filenames
 	fixed wma decoding precision error
 	fixed issues with playing very short files
@@ -6,29 +19,19 @@ version 1.8.0
 	UI splitter proportional resizing (cboxdoerfer)
 	added to title formatting: $num, %_path_raw%, %_playlist_name%, $replace, $upper, $lower, %playback_bitrate%, $repeat, $insert, $len, <<<>>>, >>><<<, $pad, $pad_right (saivert)
 	added support for dim and bright text in playlist columns (saivert)
-	added/improved MP4 tag editing
-	added loading embedded album art from MP4 files
 	improved detecting GTK theme colors for custom widgets
-	added support for reading, storing and editing multi-value tag fields
 	added new multiline tag editing dialog for individual values
 	added Copy&Paste in playlist (cboxdoerfer)
 	added localization support for plugin UI
 	added Drag'n'drop support from deadbeef to other applications (cboxdoerfer)
-	fixed ogg file tagging issues (kode54)
+	fixed a number of ogg file tagging issues (kode54)
 	fixed multiple crash bugs in AdPlug plugin
 	added UMX module support, ported from foo_dumb
 	updated Game_Music_Emu and VGMplay (kode54)
-	added Log Window displaying error information from various sources (in cooperation with Saivert)
-	added File Copy and File Move converter presets
 	added an option to Converter, to copy the files if the format doesn't change
-	fixed clipping prevention for mp3, replaygain is applied before clipping
-	added GBS support to Game_Music_Emu (kode54)
-	added "By Playback Order" source mode for replaygain
-	added ReplayGain Scanner
 	added a configuration option `gtkui.start_hidden`, to start the player with hidden main window (Radics Péter)
 	added a converter option to retag the files after copying
-	fixed transferring replaygain info to the converted files
-	added a context menu action for duplicate a playlist (Alex Couture-Beil)
+	added a context menu action for duplicating playlists (Alex Couture-Beil)
 	fixed a number of fadeout issues in Game_Music_Emu
 	fixed musepack seeking issue
 	fixed loading album covers from ID3v2.2
@@ -36,7 +39,6 @@ version 1.8.0
 	improved large file support with many internal values converted to use 64 bits for sample counts
 	use title formatting for displaying status bar text
 	added %seltime% title formatting value, for displaying playback time of selected tracks (Thomas Ross)
-	added SGC file format support to Game_Music_Emu
 	added reading SONGWRITER field from cue sheets (wdlkmpx)
 	added playlist group spacing configuration (saivert)
 	improved mp3 USLT lyrics support (in copperation with Ignat Loskutov)
@@ -45,7 +47,6 @@ version 1.8.0
 	added hotkey actions for add/remove/toggle in playqueue (Jakub Wasylków)
 	added --volume command line option (Saivert)
 	improved ISRC and subindex handling in CUE (wdlkmpx)
-	added proper tracks+cue support (in cooperation with wdlkmpx)
 	added hotkey actions to move selected tracks up/down (Jakub Wasylków)
 	fixed memory access bugs in config handling and supereq (github/tsowa)
 	added charset detection based on the whole ID3v2 tag content
@@ -54,11 +55,10 @@ version 1.8.0
 	removed fast scanning mp3 option, since it was too inaccurate
 	improved detection of PSF files, to disambiguate them against other files which use the same extension
 	added Edit In Place and Crop options to the track properties menu
-	added Opus support
 	fixed WildMidi playback of some MID files playing more than 1024 simultaneous notes
 	fixed playing stereo APE files with single-channel silence
 	added wavpack version 5 support with DSD
-	fixed performance issue when reading AdPlug's hsc files
+	fixed performance issue when reading AdPlug's HSC files
 	fixed loading audio files from GVFS volumes
 	fixed handling of cuesheets in zip files
 	fixed writing tags into tiny ogg files
