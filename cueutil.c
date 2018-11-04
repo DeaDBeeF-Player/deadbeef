@@ -831,6 +831,11 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
                     _set_last_item_region (plt, cue.prev, cue.origin, cue.numsamples, cue.samplerate);
                 }
             }
+
+            if (cue.last_round) {
+                break;
+            }
+
             pl_cue_reset_per_track_fields(cue.cuefields);
             pl_get_value_from_cue (cue.p + 6, sizeof (cue.cuefields[CUE_FIELD_TRACK]), cue.cuefields[CUE_FIELD_TRACK]);
             cue.have_track = 1;
