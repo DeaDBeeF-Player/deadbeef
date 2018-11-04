@@ -527,6 +527,11 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                     goto end;
                 }
 
+                // Handle infinite streams
+                if (fsize < 0 && info->npackets >= 20) {
+                    goto end;
+                }
+
                 assert (remaining >= res);
                 remaining -= res;
                 bufptr += res;
