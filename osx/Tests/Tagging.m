@@ -401,8 +401,8 @@
 
     playItem_t *it = plt_insert_file2(0, plt, NULL, path, NULL, NULL, NULL);
 
+    XCTAssertEqualWithAccuracy(it->_duration, 1.04489791f, 0.0001f);
     plt_unref (plt);
-    XCTAssert(fabs (it->_duration - 1.04489791f) < 0.0001f);
 }
 
 - (void)test_ShortMP3WithApev2_ScansCorrectSize {
@@ -413,8 +413,8 @@
 
     playItem_t *it = plt_insert_file2(0, plt, NULL, path, NULL, NULL, NULL);
 
+    XCTAssertEqualWithAccuracy(it->_duration, 1.04489791f, 0.0001f);
     plt_unref (plt);
-    XCTAssert(fabs (it->_duration - 1.04489791f) < 0.0001f);
 }
 
 - (void)test_ShortMP3WithId3v1AndApev2_ScansCorrectSize {
@@ -425,8 +425,8 @@
 
     playItem_t *it = plt_insert_file2(0, plt, NULL, path, NULL, NULL, NULL);
 
+    XCTAssertEqualWithAccuracy(it->_duration, 1.04489791f, 0.0001f);
     plt_unref (plt);
-    XCTAssert(fabs (it->_duration - 1.04489791f) < 0.0001f);
 }
 
 @end
