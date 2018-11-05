@@ -4,6 +4,7 @@
 2. Make sure current directory is the root of the repo
 3. Run once: `./tools/docker-build/docker-bootstrap.sh`
 4. For each build: `./tools/docker-build/docker-build.sh`
+5. Find build artifacts in docker-artifacts folder
 
 To speed up the builds, make sure to download and unpack static-deps. Otherwise, docker-build.sh will do that automatically for each build.
 

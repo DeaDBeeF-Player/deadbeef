@@ -115,7 +115,6 @@ static const char *frame_mapping[] = {
     "INITIAL_KEY", "TKEY", "TKEY", "TKE", NULL,
     "LANGUAGES", "TLAN", "TLAN", "TLA", NULL,
     "LENGTH", "TLEN", "TLEN", "TLE", NULL,
-    "LYRICS", "USLT", "USLT", "ULT", NULL,
     "MEDIA_TYPE", "TMED", "TMED", "TMT", NULL,
     "ORIGINAL_ALBUM_TITLE", "TOAL", "TOAL", "TOT", NULL,
     "ORIGINAL_FILENAME", "TOFN", "TOFN", "TOF", NULL,
@@ -1878,7 +1877,7 @@ junk_id3v2_find (DB_FILE *fp, int *psize) {
         return -1;
     }
     uint8_t header[10];
-    int pos = deadbeef->ftell (fp);
+    int64_t pos = deadbeef->ftell (fp);
     if (pos == -1) {
         trace ("junk_id3v2_find: ftell error\n");
         return -1;
@@ -1908,23 +1907,23 @@ junk_id3v2_find (DB_FILE *fp, int *psize) {
 int
 junk_get_leading_size_stdio (FILE *fp) {
     uint8_t header[10];
-    int pos = ftell (fp);
+    size_t pos = ftell (fp);
     if (fread (header, 1, 10, fp) != 10) {
         fseek (fp, pos, SEEK_SET);
-        return -1; // too short
+        return 0; // too short
     }
     fseek (fp, pos, SEEK_SET);
     if (strncmp (header, "ID3", 3)) {
-        return -1; // no tag
+        return 0; // no tag
     }
     uint8_t flags = header[5];
     if (flags & 15) {
-        return -1; // unsupported
+        return 0; // unsupported
     }
     int footerpresent = (flags & (1<<4)) ? 1 : 0;
     // check for bad size
     if ((header[9] & 0x80) || (header[8] & 0x80) || (header[7] & 0x80) || (header[6] & 0x80)) {
-        return -1; // bad header
+        return 0; // bad header
     }
     uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
     //trace ("junklib: leading junk size %d\n", size);
@@ -1938,23 +1937,23 @@ junk_get_leading_size (DB_FILE *fp) {
     if (deadbeef->fread (header, 1, 10, fp) != 10) {
         deadbeef->fseek (fp, pos, SEEK_SET);
         trace ("junk_get_leading_size: file is too short\n");
-        return -1; // too short
+        return 0; // too short
     }
     deadbeef->fseek (fp, pos, SEEK_SET);
     if (strncmp (header, "ID3", 3)) {
         trace ("junk_get_leading_size: no id3v2 found\n");
-        return -1; // no tag
+        return 0; // no tag
     }
     uint8_t flags = header[5];
     if (flags & 15) {
         trace ("unsupported flags in id3v2\n");
-        return -1; // unsupported
+        return 0; // unsupported
     }
     int footerpresent = (flags & (1<<4)) ? 1 : 0;
     // check for bad size
     if ((header[9] & 0x80) || (header[8] & 0x80) || (header[7] & 0x80) || (header[6] & 0x80)) {
         trace ("bad header in id3v2\n");
-        return -1; // bad header
+        return 0; // bad header
     }
     uint32_t size = (header[9] << 0) | (header[8] << 7) | (header[7] << 14) | (header[6] << 21);
     //trace ("junklib: leading junk size %d\n", size);
@@ -2148,18 +2147,6 @@ _id3v2_append_combined_text_frame_from_meta (DB_id3v2_tag_t *id3v2, const char *
     else {
         assert (0);
     }
-    if (!strcmp (key, "USLT")) { // add the language code
-        const char *new_value = malloc (4 + out_size);
-        if (new_value) {
-            memcpy (new_value, "XXX", 4);
-            memcpy (new_value + 4, tag_value, out_size);
-            if (needs_free) {
-                free ((char*) tag_value);
-            }
-            tag_value = new_value;
-            needs_free = 1;
-        }
-    }
     junk_id3v2_add_text_frame2 (id3v2, key, tag_value, out_size);
 
     if (needs_free) {
@@ -2168,8 +2155,8 @@ _id3v2_append_combined_text_frame_from_meta (DB_id3v2_tag_t *id3v2, const char *
 }
 
 DB_id3v2_frame_t *
-junk_id3v2_add_comment_frame (DB_id3v2_tag_t *tag, const char *lang, const char *descr, const char *value) {
-    trace ("junklib: setting 2.3 COMM frame lang=%s, descr='%s', data='%s'\n", lang, descr, value);
+junk_id3v2_add_comment_frame (DB_id3v2_tag_t *tag, const char *frame_id, const char *lang, const char *descr, const char *value) {
+    trace ("junklib: setting 2.3 %s frame lang=%s, descr='%s', data='%s'\n", frame_id, lang, descr, value);
 
     // make a frame
     size_t descrlen = strlen (descr);
@@ -2218,7 +2205,7 @@ junk_id3v2_add_comment_frame (DB_id3v2_tag_t *tag, const char *lang, const char 
     trace ("calculated frame size = %d\n", l + 4);
     DB_id3v2_frame_t *f = malloc (l + 4 + sizeof (DB_id3v2_frame_t));
     memset (f, 0, sizeof (DB_id3v2_frame_t));
-    strcpy (f->id, "COMM");
+    strcpy (f->id, frame_id);
     // flags are all zero
     f->size = l + 4;
     f->data[0] = enc; // encoding=utf8
@@ -2439,7 +2426,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
 
 
         if (!simplecopy && !text) {
-            if (!strcmp (f24->id, "COMM")) {
+            if (!strcmp (f24->id, "COMM") || !strcmp (f24->id, "USLT")) {
                 uint8_t enc = f24->data[0];
                 char lang[4] = {f24->data[1], f24->data[2], f24->data[3], 0};
                 trace ("COMM enc is: %d\n", (int)enc);
@@ -2462,7 +2449,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
                     else {
                         *value = 0;
                         value++;
-                        f23 = junk_id3v2_add_comment_frame (tag23, lang, descr, value);
+                        f23 = junk_id3v2_add_comment_frame (tag23, f24->id, lang, descr, value);
                         if (f23) {
                             tail = f23;
                             f23 = NULL;
@@ -3087,11 +3074,11 @@ junk_id3v2_convert_apev2_to_24 (DB_apev2_tag_t *ape, DB_id3v2_tag_t *tag24) {
     };
 
     const char *comm_frames[] = {
-        "Comment", "EAN/UPC", "ISBN", "Catalog", "LC", "Publicationright", "Record Location", "Related", "Abstract", "Bibliography", NULL
+        "Comment", "Unsynced lyrics", "EAN/UPC", "ISBN", "Catalog", "LC", "Publicationright", "Record Location", "Related", "Abstract", "Bibliography", NULL
     };
 
     // FIXME: additional frames: File->WOAF 
-    // converted to COMM: Comment, EAN/UPC, ISBN, Catalog, LC, Publicationright, Record Location, Related, Abstract, Bibliography
+    // converted to COMM: Comment, Unsynced Lyrics, EAN/UPC, ISBN, Catalog, LC, Publicationright, Record Location, Related, Abstract, Bibliography
     // "Debut album" is discarded
     // "Index" is discarded
     // "Introplay" is discarded
@@ -3124,10 +3111,13 @@ junk_id3v2_convert_apev2_to_24 (DB_apev2_tag_t *ape, DB_id3v2_tag_t *tag24) {
                     memcpy (str, f_ape->data, f_ape->size);
                     str[f_ape->size] = 0;
                     if (!strcasecmp (f_ape->key, "Comment")) {
-                        junk_id3v2_add_comment_frame (tag24, "eng", "", str);
+                        junk_id3v2_add_comment_frame (tag24, "COMM", "eng", "", str);
+                    }
+                    else if (!strcasecmp (f_ape->key, "Unsynced Lyrics")) {
+                        junk_id3v2_add_comment_frame (tag24, "USLT", "eng", "", str);
                     }
                     else {
-                        junk_id3v2_add_comment_frame (tag24, "eng", comm_frames[i], str);
+                        junk_id3v2_add_comment_frame (tag24, "COMM", "eng", comm_frames[i], str);
                     }
                     break;
                 }
@@ -3638,7 +3628,7 @@ junk_append_meta (const char *old, const char *new) {
 }
 
 int
-junk_load_comm_frame (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
+junk_load_comm_frame (int version_major, const char *field_name, playItem_t *it, uint8_t *readptr, int synched_size) {
     uint8_t enc = readptr[0];
     char lang[4] = {readptr[1], readptr[2], readptr[3], 0};
     trace ("COMM enc: %d\n", (int)enc);
@@ -3682,15 +3672,16 @@ junk_load_comm_frame (int version_major, playItem_t *it, uint8_t *readptr, int s
     int l = strlen (comment);
     uint8_t bom[] = { 0xEF, 0xBB, 0xBF };
     if (l >= 3 && !memcmp (comment, bom, 3)) {
-        pl_append_meta (it, "comment", comment+3);
+        pl_append_meta (it, field_name, comment+3);
     }
     else {
-        pl_append_meta (it, "comment", comment);
+        pl_append_meta (it, field_name, comment);
     }
 
     free (descr);
     return 0;
 }
+
 
 /* Parse RVA2 tag */
 /* Currently only supports tags wich set master volume and are labeled "track"
@@ -3979,11 +3970,6 @@ junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, D
                         else if (!strcmp (frameid, "TCON")) {
                             junk_id3v2_add_genre (it, text);
                         }
-                        else if (!strcmp (frameid, "USLT")) {
-                            if (!strcmp (text, "XXX")) { // as we discard the language code, make sure we can restore it back
-                                pl_append_meta_full (it, frame_mapping[f+MAP_DDB], text+4, text_size-4+1);
-                            }
-                        }
                         else {
                             if (version_major == 3 && _is_multivalue_field (frame_mapping[f+MAP_DDB])) {
                                 _split_multivalue (text, text_size+1);
@@ -4012,7 +3998,15 @@ junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, D
                 return -1;
             }
 
-            return junk_load_comm_frame (version_major, it, readptr, synched_size);
+            return junk_load_comm_frame (version_major, "comment", it, readptr, synched_size);
+        }
+        else if (!strcmp (frameid, "USLT")) {
+            if (synched_size < 4) {
+                trace ("COMM frame is too short, skipped\n");
+                return -1;
+            }
+
+            return junk_load_comm_frame (version_major, "UNSYNCED LYRICS", it, readptr, synched_size);
         }
         else if (it && !strcmp (frameid, "RVA2")) {
             if (synched_size < 5) {
@@ -4061,11 +4055,6 @@ junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, D
                         else if (!strcmp (frameid, "TCO")) {
                             junk_id3v2_add_genre (it, text);
                         }
-                        else if (!strcmp (frameid, "ULT")) {
-                            if (!strcmp (text, "XXX")) { // as we discard the language code, make sure we can restore it back
-                                pl_append_meta_full (it, frame_mapping[f+MAP_DDB], text+4, text_size-4+1);
-                            }
-                        }
                         else {
                             if (_is_multivalue_field (frame_mapping[f+MAP_DDB])) {
                                 _split_multivalue (text, text_size);
@@ -4087,7 +4076,13 @@ junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, D
             if (synched_size < 6) {
                 return -1;
             }
-            return junk_load_comm_frame (version_major, it, readptr, synched_size);
+            return junk_load_comm_frame (version_major, "comment", it, readptr, synched_size);
+        }
+        else if (!strcmp (frameid, "ULT")) {
+            if (synched_size < 6) {
+                return -1;
+            }
+            return junk_load_comm_frame (version_major, "unsynced lyrics", it, readptr, synched_size);
         }
         else if (it && !strcmp (frameid, "TXX")) {
             if (synched_size < 2) {
@@ -4671,7 +4666,13 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             junk_id3v2_remove_frames (&id3v2, "COMM");
             const char *val = pl_find_meta (it, "comment");
             if (val && *val) {
-                junk_id3v2_add_comment_frame (&id3v2, "eng", "", val);
+                junk_id3v2_add_comment_frame (&id3v2, "COMM", "eng", "", val);
+            }
+            // USLT
+            junk_id3v2_remove_frames (&id3v2, "USLT");
+            val = pl_find_meta (it, "unsynced lyrics");
+            if (val && *val) {
+                junk_id3v2_add_comment_frame (&id3v2, "USLT", "eng", "", val);
             }
             // UFID
             junk_id3v2_remove_ufid_frames (&id3v2, "UFID", "http://musicbrainz.org");
@@ -4710,6 +4711,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             }
             if (!frame_mapping[i]
                     && strcasecmp (meta->key, "comment")
+                    && strcasecmp (meta->key, "unsynced lyrics")
                     && strcasecmp (meta->key, "track")
                     && strcasecmp (meta->key, "numtracks")
                     && strcasecmp (meta->key, "disc")
@@ -4982,9 +4984,7 @@ error:
         free (buffer);
     }
     if (!err) {
-        pl_lock ();
         rename (tmppath, fname);
-        pl_unlock ();
     }
     else {
         unlink (tmppath);

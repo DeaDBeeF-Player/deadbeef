@@ -71,7 +71,7 @@ extern "C" {
 // that there's a better replacement in the newer deadbeef versions.
 
 // api version history:
-// 1.10 -- trunk
+// 1.10 -- deadbeef-1.8.0
 // 1.9 -- deadbeef-0.7.2
 // 1.8 -- deadbeef-0.7.0
 // 1.7 -- deadbeef-0.6.2
@@ -191,7 +191,7 @@ extern "C" {
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 0)
-#define DEPRECATED DDB_DEPRECATED
+#define DEPRECATED DDB_DEPRECATED("since deadbeef API 1.0")
 #else
 #define DEPRECATED
 #endif
@@ -339,12 +339,19 @@ enum playback_mode_t {
 
 #if (DDB_API_LEVEL >= 8)
 // playlist change info, used in the DB_EV_PLAYLISTCHANGED p1 argument
+// NOTE: these events can only be sent individually, and can't be ORed.
 enum ddb_playlist_change_t {
     DDB_PLAYLIST_CHANGE_CONTENT, // this is the most generic one, will work for the cases when p1 was omitted (0)
     DDB_PLAYLIST_CHANGE_CREATED,
     DDB_PLAYLIST_CHANGE_DELETED,
     DDB_PLAYLIST_CHANGE_POSITION,
     DDB_PLAYLIST_CHANGE_TITLE,
+    // When handling DDB_PLAYLIST_CHANGE_SELECTION,
+    // `ctx` is assumed to be a unique ID of the event sender,
+    // for example a UI view pointer which caused the selection change,
+    // but it should not be expected to point to a specific type.
+    // This is used to filter the events when they hit the same
+    // view which sent them.
     DDB_PLAYLIST_CHANGE_SELECTION,
     DDB_PLAYLIST_CHANGE_SEARCHRESULT,
     DDB_PLAYLIST_CHANGE_PLAYQUEUE,
@@ -424,18 +431,21 @@ enum {
 
     // since 1.5
 #if (DDB_API_LEVEL >= 5)
-    DB_EV_SELCHANGED = 22, // selection changed in playlist p1 iter p2, ctx should be a pointer to playlist viewer instance, which caused the change, or NULL
+    // DB_EV_SELCHANGED is obsolete and isn't emitted; DB_EV_PLAYLISTCHANGED with DDB_PLAYLIST_CHANGE_SELECTION should be used instead.
+    DB_EV_SELCHANGED = 22,
     DB_EV_PLUGINSLOADED = 23, // after all plugins have been loaded and connected
 #endif
 
 #if (DDB_API_LEVEL >= 8)
-    DB_EV_FOCUS_SELECTION = 24, // tell playlist viewer to focus on selection
+    // A caller sends this event, to ask playlist viewer(s) to focus on selected track.
+    DB_EV_FOCUS_SELECTION = 24, 
 #endif
 
     // -----------------
     // structured events
 
-    DB_EV_FIRST = 1000,
+    DB_EV_FIRST = 1000, // this is not an event id by itself, but used for checking which events are structured (>=DB_EV_FIRST)
+
     DB_EV_SONGCHANGED = 1000, // current song changed from one to another, ctx=ddb_event_trackchange_t
     DB_EV_SONGSTARTED = 1001, // song started playing, ctx=ddb_event_track_t
     DB_EV_SONGFINISHED = 1002, // song finished playing, ctx=ddb_event_track_t
@@ -462,11 +472,15 @@ enum {
 // preset columns, working using IDs
 // DON'T add new ids in range 2-7, they are reserved for backwards compatibility
 enum pl_column_t {
+#if (DDB_API_LEVEL >= 10)
     DB_COLUMN_STANDARD = -1,
+#endif
     DB_COLUMN_FILENUMBER = 0,
     DB_COLUMN_PLAYING = 1,
     DB_COLUMN_ALBUM_ART = 8,
+#if (DDB_API_LEVEL >= 10)
     DB_COLUMN_CUSTOM = 9
+#endif
 };
 
 // replaygain constants
@@ -630,7 +644,7 @@ typedef struct {
 
 #if (DDB_API_LEVEL >= 10)
     // Return value, is set to non-zero if text was <<<dimmed>>> or >>>brightened<<<
-    // This is helpful to determine whether text needs to be searched for the corresponding esc sequences
+    // It's used to determine whether the text needs to be searched for the corresponding esc sequences
     int dimmed;
 #endif
 } ddb_tf_context_t;
@@ -693,14 +707,16 @@ typedef struct {
     // system folders
     // normally functions will return standard folders derived from --prefix
     // portable version will return pathes specified in comments below
+    // DEPRECATED IN API LEVEL 8, use get_system_dir instead
     const char *(*get_config_dir) (void) DEPRECATED_18; // installdir/config | $XDG_CONFIG_HOME/.config/deadbeef
     const char *(*get_prefix) (void) DEPRECATED_18; // installdir | PREFIX
     const char *(*get_doc_dir) (void) DEPRECATED_18; // installdir/doc | DOCDIR
     const char *(*get_plugin_dir) (void) DEPRECATED_18; // installdir/plugins | LIBDIR/deadbeef
     const char *(*get_pixmap_dir) (void) DEPRECATED_18; // installdir/pixmaps | PREFIX "/share/deadbeef/pixmaps"
 
-    // process control
-    void (*quit) (void);
+    // This function is not implemented, and should not be called. A remnant
+    // from old API before 0.5.0.
+    void (*do_not_call) (void) DEPRECATED;
 
     // threading
     intptr_t (*thread_start) (void (*fn)(void *ctx), void *ctx);
@@ -834,9 +850,12 @@ typedef struct {
     DB_playItem_t * (*plt_get_item_for_idx) (ddb_playlist_t *playlist, int idx, int iter);
     void (*plt_move_items) (ddb_playlist_t *to, int iter, ddb_playlist_t *from, DB_playItem_t *drop_before, uint32_t *indexes, int count);
     void (*plt_copy_items) (ddb_playlist_t *to, int iter, ddb_playlist_t * from, DB_playItem_t *before, uint32_t *indices, int cnt);
+
+    // Empty the PL_SEARCH list, and mark the previous results as unselected.
     void (*plt_search_reset) (ddb_playlist_t *plt);
 
-    // find the specified text in playlist, and select the results
+    // Find the specified text in playlist, and populate the PL_SEARCH linked
+    // list. The results are also marked as selected.
     void (*plt_search_process) (ddb_playlist_t *plt, const char *text);
 
     // sort using the title formatting v1 (deprecated)
@@ -1041,8 +1060,12 @@ typedef struct {
     DB_apev2_frame_t * (*junk_apev2_add_text_frame) (DB_apev2_tag_t *tag, const char *frame_id, const char *value);
     void (*junk_apev2_free) (DB_apev2_tag_t *tag);
     int (*junk_apev2_write) (FILE *fp, DB_apev2_tag_t *tag, int write_header, int write_footer);
+
+    // Returns an offset to the audio packets, after ID3v2 and APEv2 tags.a
+    // Only positive values or can be returned.
     int (*junk_get_leading_size) (DB_FILE *fp);
     int (*junk_get_leading_size_stdio) (FILE *fp);
+
     void (*junk_copy) (DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last);
     const char * (*junk_detect_charset) (const char *s);
     int (*junk_recode) (const char *in, int inlen, char *out, int outlen, const char *cs);
@@ -1128,7 +1151,8 @@ typedef struct {
     const char * (*metacache_add_string) (const char *str);
     void (*metacache_remove_string) (const char *str);
 
-    // ref/unref do nothing, please don't use, they're left for compatibility
+    // increase/decrease reference count for a string in metadata cache, such as
+    // the ones returned by pl_find_meta
     void (*metacache_ref) (const char *str);
     void (*metacache_unref) (const char *str);
 
@@ -1338,7 +1362,7 @@ typedef struct {
     // Same as log but uses va_list
     void (*vlog) (const char *fmt, va_list ap);
 
-    // Custom log viewers, for use in e.g. UI plugins
+    // Custom log viewers, for use in UI plugins and similar
     void (*log_viewer_register) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx), void *ctx);
     void (*log_viewer_unregister) (void (*callback)(struct DB_plugin_s *plugin, uint32_t layers, const char *text, void *ctx), void *ctx);
 
@@ -1512,10 +1536,10 @@ typedef struct DB_plugin_action_s {
 
 #if (DDB_API_LEVEL >= 10)
 enum {
-    // Tells the system that the plugin has logging enabled
+    // Tells the system to capture the logs from this plugin.
     DDB_PLUGIN_FLAG_LOGGING = 1,
 
-    // Tells the system that the plugin supports replaygain, and streamer should not do it
+    // Tells the system that the plugin supports replaygain, and streamer should not do it.
     DDB_PLUGIN_FLAG_REPLAYGAIN = 2,
 };
 #endif

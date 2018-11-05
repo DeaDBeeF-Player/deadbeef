@@ -86,6 +86,45 @@ extern DB_functions_t *deadbeef;
 }
 @end
 
+@interface MultipleFieldsTableData : NSObject<NSTableViewDataSource, NSTableViewDelegate> {
+    @public NSArray<NSString *> *_items;
+    @public NSMutableArray<NSString *> *_fields;
+}
+@end
+
+@implementation MultipleFieldsTableData
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
+    return [_fields count];
+}
+
+- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
+    NSUserInterfaceItemIdentifier ident = [tableColumn identifier];
+    NSTableCellView *view = [tableView makeViewWithIdentifier:ident owner:self];
+    NSTextField *textView = [view textField];
+    if ([ident isEqualToString:@"Index"]) {
+        [textView setStringValue:[NSString stringWithFormat:@"%d", (int)row+1]];
+    }
+    else if ([ident isEqualToString:@"Item"]) {
+        [textView setStringValue:_items[row]];
+    }
+    else if ([ident isEqualToString:@"Field"]) {
+        [textView setFormatter:[[SingleLineFormatter alloc] init]];
+        [textView setStringValue:_fields[row]];
+        [textView setTarget:self];
+        [textView setAction:@selector(fieldEditedAction:)];
+        [textView setIdentifier:[NSString stringWithFormat:@"%d", (int)row]];
+    }
+    return view;
+}
+
+- (void)fieldEditedAction:(NSTextField *)sender {
+    NSString *value = [sender stringValue];
+    int row = [[sender identifier] intValue];
+    _fields[row] = value;
+    // FIXME: add modified flag
+}
+@end
+
 
 @interface TrackPropertiesWindowController () {
     int _iter;
@@ -96,6 +135,7 @@ extern DB_functions_t *deadbeef;
     NSMutableArray *_propstore;
     BOOL _progress_aborted;
     BOOL _close_after_writing;
+    MultipleFieldsTableData *_multipleFieldsTableData;
 }
 
 @end
@@ -153,29 +193,38 @@ extern DB_functions_t *deadbeef;
 
 // NOTE: add_field gets called once for each unique key (e.g. Artist or Album),
 // which means it will usually contain 10-20 fields
-void
+static void
 add_field (NSMutableArray *store, const char *key, const char *title, int is_prop, DB_playItem_t **tracks, int numtracks) {
-    // get value to edit
-    const char *mult = is_prop ? "" : "[Multiple values] ";
-    char val[5000]; // FIXME: this should be a dynamic buffer, to be able to hold any value
-    size_t ml = strlen (mult);
-    memcpy (val, mult, ml+1);
-    int n = trkproperties_get_field_value (val + ml, (int)(sizeof (val) - ml), key, tracks, numtracks);
 
-    if (!is_prop) {
-        if (n) {
-            [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:val], @"value", [NSString stringWithUTF8String:key], @"key", [NSNumber numberWithInt: (n ? 1 : 0)], @"n", nil]];
+    // get all values for each key, convert from 0-separated to '; '-separated, and put into NSArray
+    NSMutableArray<NSString *> *values = [[NSMutableArray alloc] init];
+    deadbeef->pl_lock ();
+    for (int i = 0; i < numtracks; i++) {
+        NSString *value = @"";
+        DB_metaInfo_t *meta = deadbeef->pl_meta_for_key (tracks[i], key);
+        if (meta && meta->valuesize == 1) {
+            meta = NULL;
         }
-        else {
-            deadbeef->pl_lock ();
-            [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:val+ml], @"value", [NSString stringWithUTF8String:key], @"key", [NSNumber numberWithInt: (n ? 1 : 0)], @"n", nil]];
-            deadbeef->pl_unlock ();
+
+        if (meta) {
+            const char *p = meta->value;
+            const char *end = p + meta->valuesize;
+
+            while (p < end) {
+                value = [value stringByAppendingString:[NSString stringWithUTF8String:p]];
+                p += strlen (p) + 1;
+                if (p < end) {
+                    value = [value stringByAppendingString:@";"];
+                }
+            }
         }
+        [values addObject:value];
     }
-    else {
-        [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:(n ? val : val + ml)], @"value", nil]];
-    }
+    deadbeef->pl_unlock ();
+
+    [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:key], @"key", values, @"values", nil]];
 }
+
 
 - (void)fillMeta {
     [_store removeAllObjects];
@@ -313,16 +362,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
 
     if([[aTableColumn identifier] isEqualToString:@"value"]){
-
         [aCell setFormatter:[[SingleLineFormatter alloc] init]];
-
-        NSDictionary *dict = store[rowIndex];
-        if (rowIndex == [aTableView editedRow] && [[aTableView tableColumns] indexOfObject:aTableColumn] == [aTableView editedColumn]) {
-            NSNumber *n = dict[@"n"];
-            if (n && [n integerValue] != 0) {
-                [aCell setFormatter:[[NullFormatter alloc] init]];
-            }
-        }
     }
 }
 
@@ -337,7 +377,20 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         return title;
     }
     else if ([[aTableColumn identifier] isEqualToString:@"value"]) {
-        return store[rowIndex][@"value"];
+        NSMutableArray<NSString *> *values = store[rowIndex][@"values"];
+        // get uniq values
+        NSArray *uniq = [[NSOrderedSet orderedSetWithArray:values] array];
+        NSInteger n = [uniq count];
+
+        NSString *val = n > 1 ? @"[Multiple Values] " : @"";
+        for (int i = 0; i < [uniq count]; i++) {
+            val = [val stringByAppendingString:uniq[i]];
+            if (i < [uniq count] - 1) {
+                val = [val stringByAppendingString:@"; "];
+            }
+        }
+
+        return val;
     }
     return nil;
 }
@@ -349,40 +402,38 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
 
     NSMutableDictionary *dict = store[rowIndex];
-    if ([dict[@"value"] isNotEqualTo:anObject]) {
-        dict[@"value"] = anObject;
-        if (dict[@"n"]) {
-            dict[@"n"] = [NSNumber numberWithInt:0];
+
+    NSMutableArray<NSString *> *values = dict[@"values"];
+    for (int i = 0; i < [values count]; i++) {
+        if ([values[i] isNotEqualTo:anObject]) {
+            values[i] = anObject;
+            self.modified = YES;
         }
-        self.modified = YES;
     }
 }
 
 - (void)setMetadataForSelectedTracks:(NSDictionary *)dict {
-    // skip "multiple values"
-    NSString *n = dict[@"n"];
-    if (n && [n intValue] != 0)
-        return;
-
     const char *skey = [dict[@"key"] UTF8String];
-    NSString *value = dict[@"value"];
-    NSArray *components = [value componentsSeparatedByString:@";"];
-
-    NSMutableArray *transformedValues = [[NSMutableArray alloc] init];
-    for (NSString *val in components) {
-        NSInteger i = 0;
-        while ((i < [val length])
-               && [[NSCharacterSet whitespaceCharacterSet] characterIsMember:[val characterAtIndex:i]]) {
-            i++;
-        }
-        // whitespace-only?
-        if (i > 0 && i == [val length]-1) {
-            continue;
-        }
-        [transformedValues addObject: (i == 0 ? val : [val substringFromIndex:i])];
-    }
+    NSMutableArray<NSString *> *values = dict[@"values"];
 
     for (int i = 0; i < _numtracks; i++) {
+        NSString *value = values[i];
+        NSArray *components = [value componentsSeparatedByString:@";"];
+
+        NSMutableArray *transformedValues = [[NSMutableArray alloc] init];
+        for (NSString *val in components) {
+            NSInteger i = 0;
+            while ((i < [val length])
+                   && [[NSCharacterSet whitespaceCharacterSet] characterIsMember:[val characterAtIndex:i]]) {
+                i++;
+            }
+            // whitespace-only?
+            if (i > 0 && i == [val length]-1) {
+                continue;
+            }
+            [transformedValues addObject: (i == 0 ? val : [val substringFromIndex:i])];
+        }
+
         deadbeef->pl_delete_meta (_tracks[i], skey);
         for (NSString *val in transformedValues) {
             if ([val length]) {
@@ -690,14 +741,11 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (void)didEndEditValuePanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+    self.modified = YES;
     [_editValuePanel orderOut:self];
 }
 
 - (IBAction)editValueAction:(id)sender {
-    if (_numtracks != 1) {
-        return; // TODO: multiple track editing support
-    }
-
     NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
     if ([ind count] != 1) {
         return; // multiple fields can't be edited at the same time
@@ -705,9 +753,59 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
     NSInteger idx = [ind firstIndex];
 
+    if (_numtracks != 1) {
+        NSString *key = _store[idx][@"key"];
+        [_multiValueFieldName setStringValue: [key uppercaseString]];
+
+        NSMutableArray<NSString *> *fields = [[NSMutableArray alloc] init];
+        NSMutableArray<NSString *> *items = [[NSMutableArray alloc] init];
+
+        deadbeef->pl_lock ();
+
+        char *item_tf = deadbeef->tf_compile ("%title%[ // %track artist%]");
+
+        ddb_tf_context_t ctx;
+        memset (&ctx, 0, sizeof (ctx));
+
+        ctx._size = sizeof (ctx);
+        ctx.plt = NULL;
+        ctx.idx = -1;
+        ctx.id = -1;
+
+        fields = _store[idx][@"values"];
+
+        for (int i = 0; i < _numtracks; i++) {
+            char item[1000];
+            ctx.it = _tracks[i];
+            deadbeef->tf_eval(&ctx, item_tf, item, sizeof (item));
+            [items addObject:[NSString stringWithUTF8String:item]];
+        }
+        deadbeef->pl_unlock ();
+        deadbeef->tf_free (item_tf);
+
+        _multipleFieldsTableData = [[MultipleFieldsTableData alloc] init];
+        _multipleFieldsTableData->_fields = [[NSMutableArray alloc] initWithArray:fields copyItems:NO];
+        _multipleFieldsTableData->_items = items;
+        [_multiValueTableView setDelegate:_multipleFieldsTableData];
+        [_multiValueTableView setDataSource:_multipleFieldsTableData];
+        [self.window beginSheet:_editMultipleValuesPanel completionHandler:^(NSModalResponse returnCode) {
+            if (returnCode == NSModalResponseOK) {
+                if ([[[_multiValueTabView selectedTabViewItem] identifier] isEqualToString:@"singleValue"]) {
+                    [self setSameValuesForIndex:(int)idx value:[[_multiValueSingle textStorage] string]];
+                }
+                else {
+                    for (int i = 0; i < _numtracks; i++) {
+                        _store[idx][@"values"] = [[NSMutableArray alloc] initWithArray:_multipleFieldsTableData->_fields copyItems:NO];
+                    }
+                }
+                self.modified = YES;
+            }
+        }];
+        return;
+    }
 
     [_fieldName setStringValue: [_store[idx][@"key"] uppercaseString]];
-    [_fieldValue setString: _store[idx][@"value"]];
+    [_fieldValue setString: _store[idx][@"values"][0]];
 
     [NSApp beginSheet:_editValuePanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndEditValuePanel:returnCode:contextInfo:) contextInfo:nil];
 }
@@ -730,8 +828,8 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 - (IBAction)okEditValuePanelAction:(id)sender {
     NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
     NSInteger idx = [ind firstIndex];
-    if (![_store[idx][@"value"] isEqualToString:[_fieldValue string]]) {
-        _store[idx][@"value"] = [_fieldValue string];
+    if (![_store[idx][@"values"][0] isEqualToString:[_fieldValue string]]) {
+        _store[idx][@"values"][0] = [_fieldValue string];
         [_metadataTableView reloadData];
         self.modified = YES;
     }
@@ -739,11 +837,18 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     [NSApp endSheet:_editValuePanel];
 }
 
+- (void)setSameValuesForIndex:(int)idx value:(NSString *)value {
+    NSMutableArray<NSString *> *values = _store[idx][@"values"];
+    for (int i = 0; i < [values count]; i++) {
+        values[i] = value;
+    }
+}
+
 - (IBAction)editRemoveAction:(id)sender {
     NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
 
     [ind enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        _store[idx][@"value"] = @"";
+        [self setSameValuesForIndex:(int)idx value:@""];
         self.modified = YES;
     }];
 
@@ -757,7 +862,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
     for (int i = 0; i < [_store count]; i++) {
         if (![ind containsIndex:i]) {
-            _store[i][@"value"] = @"";
+            [self setSameValuesForIndex:i value:@""];
             self.modified = YES;
         }
     }
@@ -772,7 +877,10 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
     for (int i = 0; i < [_store count]; i++) {
         if ([ind containsIndex:i]) {
-            _store[i][@"value"] = [_store[i][@"value"] uppercaseString];
+            NSMutableArray<NSString *> *values = _store[i][@"values"];
+            for (int n = 0; n < [values count]; n++) {
+                values[n] =  [values[n] uppercaseString];
+            }
             self.modified = YES;
         }
     }
@@ -814,4 +922,22 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     [NSApp endSheet:_addFieldPanel];
 
 }
+
+- (IBAction)cancelEditMultipleValuesPanel:(id)sender {
+    [self.window endSheet:_editMultipleValuesPanel returnCode:NSModalResponseCancel];
+}
+
+- (IBAction)okEditMultipleValuesAction:(id)sender {
+    NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
+    NSInteger idx = [ind firstIndex];
+
+    _modified = YES;
+
+    _store[idx][@"values"] = [[NSMutableArray alloc] initWithArray: _multipleFieldsTableData->_fields copyItems:NO];
+
+    [_metadataTableView reloadData];
+
+    [self.window endSheet:_editMultipleValuesPanel returnCode:NSModalResponseOK];
+}
+
 @end

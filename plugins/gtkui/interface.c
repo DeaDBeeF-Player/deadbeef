@@ -354,26 +354,26 @@ create_mainwin (void)
   gtk_container_add (GTK_CONTAINER (Order_menu), order_random);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_random), TRUE);
 
-  Looping = gtk_menu_item_new_with_mnemonic (_("Looping"));
+  Looping = gtk_menu_item_new_with_mnemonic (_("Repeat"));
   gtk_widget_show (Looping);
   gtk_container_add (GTK_CONTAINER (Playback_menu), Looping);
 
   Looping_menu = gtk_menu_new ();
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (Looping), Looping_menu);
 
-  loop_all = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, _("Loop all"));
+  loop_all = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, _("All Tracks"));
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_all));
   gtk_widget_show (loop_all);
   gtk_container_add (GTK_CONTAINER (Looping_menu), loop_all);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_all), TRUE);
 
-  loop_single = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, _("Loop single song"));
+  loop_single = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, _("One Track"));
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_single));
   gtk_widget_show (loop_single);
   gtk_container_add (GTK_CONTAINER (Looping_menu), loop_single);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_single), TRUE);
 
-  loop_disable = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, _("Don't loop"));
+  loop_disable = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, _("Off"));
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_disable));
   gtk_widget_show (loop_disable);
   gtk_container_add (GTK_CONTAINER (Looping_menu), loop_disable);

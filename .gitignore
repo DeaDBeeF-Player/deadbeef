@@ -74,7 +74,6 @@ messages.mo
 plugins/libmp4ff/libmp4ff.a
 plugins/libparser/libparser.a
 xcuserdata
-xcshareddata
 plugins/liboggedit/liboggedit.a
 testrun.sh
 tools/pluginfo/i686

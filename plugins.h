@@ -109,11 +109,8 @@ plug_activate (DB_plugin_t *plug, int activate);
 DB_output_t *
 plug_get_output (void);
 
-void
-plug_reinit_sound (void);
-
 int
-plug_select_output (void);
+plug_reinit_sound (void);
 
 void
 plug_set_output (DB_output_t *out);

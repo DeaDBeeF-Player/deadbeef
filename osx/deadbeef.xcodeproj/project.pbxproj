@@ -268,7 +268,6 @@
 		2D0A002819C390E9006F7462 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
 		2D0E02E71E26703D00D3D8E6 /* libflaclib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */; };
 		2D0E02EA1E26706300D3D8E6 /* libogglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
-		2D0EE6971B86685C00487FA1 /* tabCloseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2D0EE6961B86685C00487FA1 /* tabCloseTemplate.pdf */; };
 		2D0F90C21CCFF094003FA197 /* TaggingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F90C11CCFF094003FA197 /* TaggingTests.m */; };
 		2D10DFFD1B98350D00A2D465 /* resampler_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D10DFFB1B9834FD00A2D465 /* resampler_sse2.c */; };
 		2D11D3C41B9DC69C00C7C731 /* ay8912.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D11D3BD1B9DC69C00C7C731 /* ay8912.c */; };
@@ -1459,20 +1458,6 @@
 		2DACBB241A40CEB100CCF401 /* mp3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; };
 		2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */; };
 		2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */; };
-		2DB10B8119B908630054A6AB /* tab_bottom_fill.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6919B9085A0054A6AB /* tab_bottom_fill.png */; };
-		2DB10B8219B908630054A6AB /* tab_bottom_fill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6A19B9085A0054A6AB /* tab_bottom_fill@2x.png */; };
-		2DB10B8319B908630054A6AB /* tab_fill.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6B19B9085A0054A6AB /* tab_fill.png */; };
-		2DB10B8419B908630054A6AB /* tab_fill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6C19B9085A0054A6AB /* tab_fill@2x.png */; };
-		2DB10B8519B908630054A6AB /* tab_left.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6D19B9085A0054A6AB /* tab_left.png */; };
-		2DB10B8619B908630054A6AB /* tab_left@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6E19B9085A0054A6AB /* tab_left@2x.png */; };
-		2DB10B8719B908630054A6AB /* tab_unsel_fill.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B6F19B9085A0054A6AB /* tab_unsel_fill.png */; };
-		2DB10B8819B908630054A6AB /* tab_unsel_fill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B7019B9085A0054A6AB /* tab_unsel_fill@2x.png */; };
-		2DB10B8919B908630054A6AB /* tab_unsel_left.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B7119B9085A0054A6AB /* tab_unsel_left.png */; };
-		2DB10B8A19B908630054A6AB /* tab_unsel_left@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B7219B9085A0054A6AB /* tab_unsel_left@2x.png */; };
-		2DB10B8B19B908630054A6AB /* tab_unsel_right.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B7319B9085A0054A6AB /* tab_unsel_right.png */; };
-		2DB10B8C19B908630054A6AB /* tab_unsel_right@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B7419B9085A0054A6AB /* tab_unsel_right@2x.png */; };
-		2DB10B8F19B90BE90054A6AB /* tab_right.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B8D19B90BE90054A6AB /* tab_right.png */; };
-		2DB10B9019B90BE90054A6AB /* tab_right@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DB10B8E19B90BE90054A6AB /* tab_right@2x.png */; };
 		2DB2253C1D4F2F9500776E31 /* umr.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB225331D4F2F9500776E31 /* umr.h */; };
 		2DB2253D1D4F2F9500776E31 /* unmo3.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB225341D4F2F9500776E31 /* unmo3.h */; };
 		2DB2253E1D4F2F9500776E31 /* unrealfmt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DB225351D4F2F9500776E31 /* unrealfmt.cpp */; };
@@ -1495,18 +1480,6 @@
 		2DB96AA519ABB50300E318A8 /* src_zoh.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB96A9A19ABB50300E318A8 /* src_zoh.c */; };
 		2DB96AA819ABB52200E318A8 /* dsp_libsrc.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DB96A8019ABB47C00E318A8 /* dsp_libsrc.dylib */; };
 		2DB96AAB19ABB53200E318A8 /* libsamplerate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DB96A8A19ABB4C600E318A8 /* libsamplerate.a */; };
-		2DBEE68E19B4EB0900A60609 /* sb_back_cap_left.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68219B4EB0800A60609 /* sb_back_cap_left.png */; };
-		2DBEE68F19B4EB0900A60609 /* sb_back_cap_left@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68319B4EB0800A60609 /* sb_back_cap_left@2x.png */; };
-		2DBEE69019B4EB0900A60609 /* sb_back_cap_right.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68419B4EB0800A60609 /* sb_back_cap_right.png */; };
-		2DBEE69119B4EB0900A60609 /* sb_back_cap_right@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68519B4EB0800A60609 /* sb_back_cap_right@2x.png */; };
-		2DBEE69219B4EB0900A60609 /* sb_back_filler.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68619B4EB0800A60609 /* sb_back_filler.png */; };
-		2DBEE69319B4EB0900A60609 /* sb_back_filler@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68719B4EB0800A60609 /* sb_back_filler@2x.png */; };
-		2DBEE69419B4EB0900A60609 /* sb_front_cap_left.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68819B4EB0800A60609 /* sb_front_cap_left.png */; };
-		2DBEE69519B4EB0900A60609 /* sb_front_cap_left@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68919B4EB0800A60609 /* sb_front_cap_left@2x.png */; };
-		2DBEE69619B4EB0900A60609 /* sb_front_cap_right.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68A19B4EB0900A60609 /* sb_front_cap_right.png */; };
-		2DBEE69719B4EB0900A60609 /* sb_front_cap_right@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68B19B4EB0900A60609 /* sb_front_cap_right@2x.png */; };
-		2DBEE69819B4EB0900A60609 /* sb_front_filler.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68C19B4EB0900A60609 /* sb_front_filler.png */; };
-		2DBEE69919B4EB0900A60609 /* sb_front_filler@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DBEE68D19B4EB0900A60609 /* sb_front_filler@2x.png */; };
 		2DC4199E1B90540A007E3026 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DC4199D1B90540A007E3026 /* Carbon.framework */; };
 		2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC80A8E1A9222F800C9397F /* TrackProperties.xib */; };
 		2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
@@ -1517,9 +1490,9 @@
 		2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCF73B21A952F8900495740 /* PreferencesWindowController.h */; };
 		2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DCF73B31A952F8900495740 /* PreferencesWindowController.m */; };
 		2DCF90901E12FA2D008D7B08 /* mp4parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D24B6991E0E77A10059B1AE /* mp4parser.c */; };
+		2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2DD5262E2062F1DF002609C5 /* help-cocoa.txt */; };
 		2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */; };
 		2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */; };
-		2DD6D0A819AE6288009308A5 /* knobTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */; };
 		2DD877A31C370C7100CC94FB /* ferror68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD877A21C370C7100CC94FB /* ferror68.c */; };
 		2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */; };
 		2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */; };
@@ -1569,6 +1542,7 @@
 		4D046CE41EA9F8C300B80B2E /* gmewrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D046CE21EA9F8C300B80B2E /* gmewrap.cpp */; };
 		4D046CE51EA9F8C300B80B2E /* gmewrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D046CE31EA9F8C300B80B2E /* gmewrap.h */; };
 		4D0B0CEE20162D95004162DA /* FormatConversion.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D0B0CED20162D95004162DA /* FormatConversion.m */; };
+		4D12805F2062994F0015BDE8 /* HelpWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D12805E2062994F0015BDE8 /* HelpWindowController.swift */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
 		4D1B4A8F1837EC49003E6066 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
 		4D1B51681837F655003E6066 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51671837F655003E6066 /* AudioUnit.framework */; };
@@ -1632,11 +1606,6 @@
 		4D32F9D519A630F8000FFDE0 /* stream_encoder_framing.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9C019A630F8000FFDE0 /* stream_encoder_framing.c */; };
 		4D32F9D619A630F8000FFDE0 /* stream_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9C119A630F8000FFDE0 /* stream_encoder.c */; };
 		4D32F9D719A630F8000FFDE0 /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9C219A630F8000FFDE0 /* window.c */; };
-		4D32F9DE19A6310C000FFDE0 /* bitreader_asm.nasm in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9D819A6310C000FFDE0 /* bitreader_asm.nasm */; };
-		4D32F9DF19A6310C000FFDE0 /* cpu_asm.nasm in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9D919A6310C000FFDE0 /* cpu_asm.nasm */; };
-		4D32F9E019A6310C000FFDE0 /* fixed_asm.nasm in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9DA19A6310C000FFDE0 /* fixed_asm.nasm */; };
-		4D32F9E119A6310C000FFDE0 /* lpc_asm.nasm in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9DB19A6310C000FFDE0 /* lpc_asm.nasm */; };
-		4D32F9E319A6310C000FFDE0 /* stream_encoder_asm.nasm in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9DD19A6310C000FFDE0 /* stream_encoder_asm.nasm */; };
 		4D32F9F519A63518000FFDE0 /* dsputil_yasm.asm in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9F319A63518000FFDE0 /* dsputil_yasm.asm */; };
 		4D32F9F619A63518000FFDE0 /* ffap.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D32F9F419A63518000FFDE0 /* ffap.c */; };
 		4D32FA0019A63644000FFDE0 /* ffap.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32F9EA19A63441000FFDE0 /* ffap.dylib */; };
@@ -1745,7 +1714,6 @@
 		4D44E70319B7539C00F780FC /* sampbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F819B7539C00F780FC /* sampbuf.c */; };
 		4D44E70419B7539C00F780FC /* silence.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F919B7539C00F780FC /* silence.c */; };
 		4D44E70519B7539C00F780FC /* stdfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6FA19B7539C00F780FC /* stdfile.c */; };
-		4D52B4DF1F14F11A00048305 /* v2m.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D52B4CE1F14F0FD00048305 /* v2m.dylib */; };
 		4D52B4F31F14F29D00048305 /* libv2.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D52B4E41F14F29D00048305 /* libv2.h */; };
 		4D52B4F41F14F29D00048305 /* phonemtab.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D52B4E51F14F29D00048305 /* phonemtab.h */; };
 		4D52B4F51F14F29D00048305 /* sounddef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D52B4E61F14F29D00048305 /* sounddef.h */; };
@@ -1761,7 +1729,19 @@
 		4D52B5061F14F34C00048305 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D52B5041F14F34C00048305 /* file.cpp */; };
 		4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D62C0C61E4C9ACA005F9482 /* streamreader.h */; };
 		4D66DBA11F6181C400BFF76B /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D66DBA01F6181C400BFF76B /* AudioToolbox.framework */; };
+		4D6CF18B20EB783900811034 /* MP3ParserTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6CF17D20EB783900811034 /* MP3ParserTest.m */; };
+		4D6CF18D20EB788A00811034 /* MP3Decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6CF18C20EB788A00811034 /* MP3Decoder.m */; };
+		4D6CF18E20EB7A9900811034 /* mp3parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D8FEDCE20EA54D4008EB080 /* mp3parser.c */; };
 		4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */; };
+		4D8FEDCF20EA54D4008EB080 /* mp3parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D8FEDC020EA54D3008EB080 /* mp3parser.h */; };
+		4D8FEDD020EA54D4008EB080 /* mp3parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D8FEDCE20EA54D4008EB080 /* mp3parser.c */; };
+		4D90AAFF20EA5CA500D13537 /* DDBTestInitializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D90AAFE20EA5CA500D13537 /* DDBTestInitializer.m */; };
+		4D9272C521414BA900E7B4D0 /* PresetManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9272C421414BA900E7B4D0 /* PresetManagerTest.swift */; };
+		4D9272C621414BF400E7B4D0 /* PresetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D13B5192140154900CA7AE4 /* PresetManager.swift */; };
+		4D9272C721414BF400E7B4D0 /* DSPPresetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9272B521411B6600E7B4D0 /* DSPPresetController.swift */; };
+		4D9272C821414BF500E7B4D0 /* PresetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D13B5192140154900CA7AE4 /* PresetManager.swift */; };
+		4D9272C921414BF500E7B4D0 /* DSPPresetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9272B521411B6600E7B4D0 /* DSPPresetController.swift */; };
+		4D9272D0214156E300E7B4D0 /* PresetManagerData in Resources */ = {isa = PBXBuildFile; fileRef = 4D9272CF214156E300E7B4D0 /* PresetManagerData */; };
 		4D9BF4001FE134200032B6CF /* libopusfile.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C629E1FDEC51000D83CEF /* libopusfile.dylib */; };
 		4D9C5B0E1FDEBAFC00D83CEF /* opus.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C5AEF1FDEBAAE00D83CEF /* opus.dylib */; };
 		4D9C5B0F1FDEBAFC00D83CEF /* libopuslib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C5B051FDEBACC00D83CEF /* libopuslib.dylib */; };
@@ -1997,7 +1977,9 @@
 		4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BE51838EAAB00A98C62 /* Images.xcassets */; };
 		4DA72BED1838EAAB00A98C62 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BE61838EAAB00A98C62 /* main.m */; };
 		4DAF343F19B75FF500EE96ED /* ddb_dumb.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */; };
+		4DC416FE2180919D0056133E /* PlaylistTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC416FD2180919D0056133E /* PlaylistTest.m */; };
 		4DC96E701E4CC9670093CFD3 /* dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DC96E6E1E4CC9670093CFD3 /* dsp.h */; };
+		4DE28473205BE0B20023063E /* HelpViewer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DE28470205BE0B20023063E /* HelpViewer.xib */; };
 		8374A47E1B8946A800C6A572 /* ChipMapper.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374A3671B8946A800C6A572 /* ChipMapper.c */; };
 		8374A47F1B8946A800C6A572 /* ChipMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374A3681B8946A800C6A572 /* ChipMapper.h */; };
 		8374A4811B8946A800C6A572 /* 2151intf.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374A36B1B8946A800C6A572 /* 2151intf.c */; };
@@ -2690,12 +2672,12 @@
 			remoteGlobalIDString = 4D44E66D19B7530A00F780FC;
 			remoteInfo = dumb;
 		};
-		4D52B4E01F14F12600048305 /* PBXContainerItemProxy */ = {
+		4D6CF18F20EB82B200811034 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 4D52B4CD1F14F0FD00048305;
-			remoteInfo = v2m;
+			remoteGlobalIDString = 4D32FA4F19A64577000FFDE0;
+			remoteInfo = mp3;
 		};
 		4D9C5B091FDEBADC00D83CEF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2995,7 +2977,6 @@
 		2D0835991D4F4DB600A5C643 /* cdumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cdumb.h; path = plugins/dumb/cdumb.h; sourceTree = "<group>"; };
 		2D0A002519C390E9006F7462 /* tf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tf.c; sourceTree = "<group>"; };
 		2D0A002619C390E9006F7462 /* tf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tf.h; sourceTree = "<group>"; };
-		2D0EE6961B86685C00487FA1 /* tabCloseTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = tabCloseTemplate.pdf; path = images/tabs/tabCloseTemplate.pdf; sourceTree = "<group>"; };
 		2D0F90C11CCFF094003FA197 /* TaggingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaggingTests.m; sourceTree = "<group>"; };
 		2D10DFFB1B9834FD00A2D465 /* resampler_sse2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = resampler_sse2.c; path = "plugins/dumb/dumb-kode54/src/helpers/resampler_sse2.c"; sourceTree = "<group>"; };
 		2D11D3B91B9DC67100C7C731 /* vtx.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = vtx.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4208,20 +4189,6 @@
 		2DAA4C131AAF88FF00519559 /* TitleFormattingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TitleFormattingTests.m; sourceTree = "<group>"; };
 		2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesWindowController.h; sourceTree = "<group>"; };
 		2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrackPropertiesWindowController.m; sourceTree = "<group>"; };
-		2DB10B6919B9085A0054A6AB /* tab_bottom_fill.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_bottom_fill.png; path = images/tabs/tab_bottom_fill.png; sourceTree = "<group>"; };
-		2DB10B6A19B9085A0054A6AB /* tab_bottom_fill@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "tab_bottom_fill@2x.png"; path = "images/tabs/tab_bottom_fill@2x.png"; sourceTree = "<group>"; };
-		2DB10B6B19B9085A0054A6AB /* tab_fill.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_fill.png; path = images/tabs/tab_fill.png; sourceTree = "<group>"; };
-		2DB10B6C19B9085A0054A6AB /* tab_fill@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "tab_fill@2x.png"; path = "images/tabs/tab_fill@2x.png"; sourceTree = "<group>"; };
-		2DB10B6D19B9085A0054A6AB /* tab_left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_left.png; path = images/tabs/tab_left.png; sourceTree = "<group>"; };
-		2DB10B6E19B9085A0054A6AB /* tab_left@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "tab_left@2x.png"; path = "images/tabs/tab_left@2x.png"; sourceTree = "<group>"; };
-		2DB10B6F19B9085A0054A6AB /* tab_unsel_fill.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_unsel_fill.png; path = images/tabs/tab_unsel_fill.png; sourceTree = "<group>"; };
-		2DB10B7019B9085A0054A6AB /* tab_unsel_fill@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "tab_unsel_fill@2x.png"; path = "images/tabs/tab_unsel_fill@2x.png"; sourceTree = "<group>"; };
-		2DB10B7119B9085A0054A6AB /* tab_unsel_left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_unsel_left.png; path = images/tabs/tab_unsel_left.png; sourceTree = "<group>"; };
-		2DB10B7219B9085A0054A6AB /* tab_unsel_left@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "tab_unsel_left@2x.png"; path = "images/tabs/tab_unsel_left@2x.png"; sourceTree = "<group>"; };
-		2DB10B7319B9085A0054A6AB /* tab_unsel_right.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_unsel_right.png; path = images/tabs/tab_unsel_right.png; sourceTree = "<group>"; };
-		2DB10B7419B9085A0054A6AB /* tab_unsel_right@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "tab_unsel_right@2x.png"; path = "images/tabs/tab_unsel_right@2x.png"; sourceTree = "<group>"; };
-		2DB10B8D19B90BE90054A6AB /* tab_right.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_right.png; path = images/tabs/tab_right.png; sourceTree = "<group>"; };
-		2DB10B8E19B90BE90054A6AB /* tab_right@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "tab_right@2x.png"; path = "images/tabs/tab_right@2x.png"; sourceTree = "<group>"; };
 		2DB225331D4F2F9500776E31 /* umr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = umr.h; path = plugins/dumb/umr.h; sourceTree = "<group>"; };
 		2DB225341D4F2F9500776E31 /* unmo3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unmo3.h; path = plugins/dumb/unmo3.h; sourceTree = "<group>"; };
 		2DB225351D4F2F9500776E31 /* unrealfmt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unrealfmt.cpp; path = plugins/dumb/unrealfmt.cpp; sourceTree = "<group>"; };
@@ -4244,18 +4211,6 @@
 		2DB96A9819ABB50300E318A8 /* src_linear.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src_linear.c; path = "deps/libsamplerate-0.1.8/src/src_linear.c"; sourceTree = "<group>"; };
 		2DB96A9919ABB50300E318A8 /* src_sinc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src_sinc.c; path = "deps/libsamplerate-0.1.8/src/src_sinc.c"; sourceTree = "<group>"; };
 		2DB96A9A19ABB50300E318A8 /* src_zoh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src_zoh.c; path = "deps/libsamplerate-0.1.8/src/src_zoh.c"; sourceTree = "<group>"; };
-		2DBEE68219B4EB0800A60609 /* sb_back_cap_left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = sb_back_cap_left.png; path = images/seekbar/sb_back_cap_left.png; sourceTree = "<group>"; };
-		2DBEE68319B4EB0800A60609 /* sb_back_cap_left@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sb_back_cap_left@2x.png"; path = "images/seekbar/sb_back_cap_left@2x.png"; sourceTree = "<group>"; };
-		2DBEE68419B4EB0800A60609 /* sb_back_cap_right.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = sb_back_cap_right.png; path = images/seekbar/sb_back_cap_right.png; sourceTree = "<group>"; };
-		2DBEE68519B4EB0800A60609 /* sb_back_cap_right@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sb_back_cap_right@2x.png"; path = "images/seekbar/sb_back_cap_right@2x.png"; sourceTree = "<group>"; };
-		2DBEE68619B4EB0800A60609 /* sb_back_filler.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = sb_back_filler.png; path = images/seekbar/sb_back_filler.png; sourceTree = "<group>"; };
-		2DBEE68719B4EB0800A60609 /* sb_back_filler@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sb_back_filler@2x.png"; path = "images/seekbar/sb_back_filler@2x.png"; sourceTree = "<group>"; };
-		2DBEE68819B4EB0800A60609 /* sb_front_cap_left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = sb_front_cap_left.png; path = images/seekbar/sb_front_cap_left.png; sourceTree = "<group>"; };
-		2DBEE68919B4EB0800A60609 /* sb_front_cap_left@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sb_front_cap_left@2x.png"; path = "images/seekbar/sb_front_cap_left@2x.png"; sourceTree = "<group>"; };
-		2DBEE68A19B4EB0900A60609 /* sb_front_cap_right.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = sb_front_cap_right.png; path = images/seekbar/sb_front_cap_right.png; sourceTree = "<group>"; };
-		2DBEE68B19B4EB0900A60609 /* sb_front_cap_right@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sb_front_cap_right@2x.png"; path = "images/seekbar/sb_front_cap_right@2x.png"; sourceTree = "<group>"; };
-		2DBEE68C19B4EB0900A60609 /* sb_front_filler.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = sb_front_filler.png; path = images/seekbar/sb_front_filler.png; sourceTree = "<group>"; };
-		2DBEE68D19B4EB0900A60609 /* sb_front_filler@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sb_front_filler@2x.png"; path = "images/seekbar/sb_front_filler@2x.png"; sourceTree = "<group>"; };
 		2DC4199D1B90540A007E3026 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		2DC80A8E1A9222F800C9397F /* TrackProperties.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackProperties.xib; sourceTree = "<group>"; };
 		2DCB281419E86162008E9DF6 /* m3u.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = m3u.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4276,9 +4231,9 @@
 		2DCD78D319A665CA00EA50FA /* deadbeef.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deadbeef.png; sourceTree = "<group>"; };
 		2DCF73B21A952F8900495740 /* PreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowController.h; sourceTree = "<group>"; };
 		2DCF73B31A952F8900495740 /* PreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesWindowController.m; sourceTree = "<group>"; };
+		2DD5262E2062F1DF002609C5 /* help-cocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "help-cocoa.txt"; sourceTree = "<group>"; };
 		2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbSeekBar.h; sourceTree = "<group>"; };
 		2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbSeekBar.m; sourceTree = "<group>"; };
-		2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = knobTemplate.pdf; path = images/knobTemplate.pdf; sourceTree = "<group>"; };
 		2DD877A21C370C7100CC94FB /* ferror68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ferror68.c; sourceTree = "<group>"; };
 		2DD9EF0419A5089F00189344 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoautil.h; sourceTree = "<group>"; };
 		2DD9EF0519A5089F00189344 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoautil.m; sourceTree = "<group>"; };
@@ -4317,6 +4272,9 @@
 		4D046CE21EA9F8C300B80B2E /* gmewrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gmewrap.cpp; path = plugins/gme/gmewrap.cpp; sourceTree = "<group>"; };
 		4D046CE31EA9F8C300B80B2E /* gmewrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gmewrap.h; path = plugins/gme/gmewrap.h; sourceTree = "<group>"; };
 		4D0B0CED20162D95004162DA /* FormatConversion.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FormatConversion.m; sourceTree = "<group>"; };
+		4D12805D2062994F0015BDE8 /* deadbeef-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "deadbeef-Bridging-Header.h"; sourceTree = "<group>"; };
+		4D12805E2062994F0015BDE8 /* HelpWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpWindowController.swift; sourceTree = "<group>"; };
+		4D13B5192140154900CA7AE4 /* PresetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PresetManager.swift; path = PresetManager/PresetManager.swift; sourceTree = "<group>"; };
 		4D1B3E7A18379829003E6066 /* deadbeef.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deadbeef.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D1B3E7D18379829003E6066 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4D1B3E8018379829003E6066 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -4439,11 +4397,6 @@
 		4D32F9C019A630F8000FFDE0 /* stream_encoder_framing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream_encoder_framing.c; path = "deps/flac-1.3.0/src/libFLAC/stream_encoder_framing.c"; sourceTree = "<group>"; };
 		4D32F9C119A630F8000FFDE0 /* stream_encoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream_encoder.c; path = "deps/flac-1.3.0/src/libFLAC/stream_encoder.c"; sourceTree = "<group>"; };
 		4D32F9C219A630F8000FFDE0 /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = window.c; path = "deps/flac-1.3.0/src/libFLAC/window.c"; sourceTree = "<group>"; };
-		4D32F9D819A6310C000FFDE0 /* bitreader_asm.nasm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.nasm; name = bitreader_asm.nasm; path = "deps/flac-1.3.0/src/libFLAC/ia32/bitreader_asm.nasm"; sourceTree = "<group>"; };
-		4D32F9D919A6310C000FFDE0 /* cpu_asm.nasm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.nasm; name = cpu_asm.nasm; path = "deps/flac-1.3.0/src/libFLAC/ia32/cpu_asm.nasm"; sourceTree = "<group>"; };
-		4D32F9DA19A6310C000FFDE0 /* fixed_asm.nasm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.nasm; name = fixed_asm.nasm; path = "deps/flac-1.3.0/src/libFLAC/ia32/fixed_asm.nasm"; sourceTree = "<group>"; };
-		4D32F9DB19A6310C000FFDE0 /* lpc_asm.nasm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.nasm; name = lpc_asm.nasm; path = "deps/flac-1.3.0/src/libFLAC/ia32/lpc_asm.nasm"; sourceTree = "<group>"; };
-		4D32F9DD19A6310C000FFDE0 /* stream_encoder_asm.nasm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.nasm; name = stream_encoder_asm.nasm; path = "deps/flac-1.3.0/src/libFLAC/ia32/stream_encoder_asm.nasm"; sourceTree = "<group>"; };
 		4D32F9EA19A63441000FFDE0 /* ffap.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ffap.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D32F9F319A63518000FFDE0 /* dsputil_yasm.asm */ = {isa = PBXFileReference; explicitFileType = sourcecode.asm; fileEncoding = 4; name = dsputil_yasm.asm; path = ../plugins/ffap/dsputil_yasm.asm; sourceTree = "<group>"; };
 		4D32F9F419A63518000FFDE0 /* ffap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ffap.c; path = ../plugins/ffap/ffap.c; sourceTree = "<group>"; };
@@ -4569,7 +4522,16 @@
 		4D62C0C51E4C9ACA005F9482 /* streamreader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = streamreader.c; sourceTree = "<group>"; };
 		4D62C0C61E4C9ACA005F9482 /* streamreader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = streamreader.h; sourceTree = "<group>"; };
 		4D66DBA01F6181C400BFF76B /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		4D6CF17D20EB783900811034 /* MP3ParserTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MP3ParserTest.m; sourceTree = "<group>"; };
+		4D6CF18C20EB788A00811034 /* MP3Decoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MP3Decoder.m; sourceTree = "<group>"; };
 		4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnplayTemplate.pdf; path = images/btnplayTemplate.pdf; sourceTree = "<group>"; };
+		4D8FEDC020EA54D3008EB080 /* mp3parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp3parser.h; path = plugins/mp3/mp3parser.h; sourceTree = "<group>"; };
+		4D8FEDCE20EA54D4008EB080 /* mp3parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp3parser.c; path = plugins/mp3/mp3parser.c; sourceTree = "<group>"; };
+		4D90AAF020EA5CA400D13537 /* DDBTestInitializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDBTestInitializer.h; sourceTree = "<group>"; };
+		4D90AAFE20EA5CA500D13537 /* DDBTestInitializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDBTestInitializer.m; sourceTree = "<group>"; };
+		4D9272B521411B6600E7B4D0 /* DSPPresetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DSPPresetController.swift; path = PresetManager/DSPPresetController.swift; sourceTree = "<group>"; };
+		4D9272C421414BA900E7B4D0 /* PresetManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetManagerTest.swift; sourceTree = "<group>"; };
+		4D9272CF214156E300E7B4D0 /* PresetManagerData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = PresetManagerData; sourceTree = "<group>"; };
 		4D9C5AEF1FDEBAAE00D83CEF /* opus.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = opus.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D9C5B051FDEBACC00D83CEF /* libopuslib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libopuslib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D9C60281FDEBCF500D83CEF /* opus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opus.h; sourceTree = "<group>"; };
@@ -4799,8 +4761,10 @@
 		4DA72BDF1838EAAB00A98C62 /* deadbeef-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "deadbeef-Prefix.pch"; sourceTree = "<group>"; };
 		4DA72BE51838EAAB00A98C62 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		4DA72BE61838EAAB00A98C62 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		4DC416FD2180919D0056133E /* PlaylistTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistTest.m; sourceTree = "<group>"; };
 		4DC96E6D1E4CC9670093CFD3 /* dsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsp.c; sourceTree = "<group>"; };
 		4DC96E6E1E4CC9670093CFD3 /* dsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsp.h; sourceTree = "<group>"; };
+		4DE28470205BE0B20023063E /* HelpViewer.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HelpViewer.xib; sourceTree = "<group>"; };
 		8374A3671B8946A800C6A572 /* ChipMapper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ChipMapper.c; sourceTree = "<group>"; };
 		8374A3681B8946A800C6A572 /* ChipMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChipMapper.h; sourceTree = "<group>"; };
 		8374A36B1B8946A800C6A572 /* 2151intf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 2151intf.c; sourceTree = "<group>"; };
@@ -6313,6 +6277,7 @@
 				2D2351271B13922400A62936 /* Converter.xib */,
 				2D49856E1D5CF0E900E4D985 /* Log.xib */,
 				2D1A56391D9FF9A4005E5CDD /* ReplayGain.xib */,
+				4DE28470205BE0B20023063E /* HelpViewer.xib */,
 			);
 			name = XIB;
 			sourceTree = "<group>";
@@ -7340,16 +7305,21 @@
 				2D0F90C11CCFF094003FA197 /* TaggingTests.m */,
 				2D7492861CCFFE7700D3A59E /* TestData */,
 				2DAA4C0A1AAF88DE00519559 /* Supporting Files */,
+				4D9272CF214156E300E7B4D0 /* PresetManagerData */,
 				2D7492861CCFFE7700D3A59E /* TestData */,
 				2DAA4C0A1AAF88DE00519559 /* Supporting Files */,
 				2DE7A8FA1CA493CE00318A9F /* Cuesheet.m */,
 				4D31BECD1E9FB194001D1B89 /* ResamplerTest.m */,
 				2DA66EC71EDF4EF800E20989 /* StreamerTest.m */,
+				4D6CF17D20EB783900811034 /* MP3ParserTest.m */,
 				2DA66EC91EDF4F2C00E20989 /* fakeout.c */,
 				2DA66ECA1EDF4F2C00E20989 /* fakeout.h */,
 				2DA66ECC1EDF501000E20989 /* fakein.c */,
 				2DA66ECD1EDF501000E20989 /* fakein.h */,
 				4D0B0CED20162D95004162DA /* FormatConversion.m */,
+				4D9272C421414BA900E7B4D0 /* PresetManagerTest.swift */,
+				4D6CF18C20EB788A00811034 /* MP3Decoder.m */,
+				4DC416FD2180919D0056133E /* PlaylistTest.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -7357,32 +7327,12 @@
 		2DAA4C0A1AAF88DE00519559 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				4D90AAF020EA5CA400D13537 /* DDBTestInitializer.h */,
+				4D90AAFE20EA5CA500D13537 /* DDBTestInitializer.m */,
 				2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */,
 				2DAA4C0B1AAF88DE00519559 /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		2DB10B6819B908510054A6AB /* tabs */ = {
-			isa = PBXGroup;
-			children = (
-				2D0EE6961B86685C00487FA1 /* tabCloseTemplate.pdf */,
-				2DB10B8D19B90BE90054A6AB /* tab_right.png */,
-				2DB10B8E19B90BE90054A6AB /* tab_right@2x.png */,
-				2DB10B6919B9085A0054A6AB /* tab_bottom_fill.png */,
-				2DB10B6A19B9085A0054A6AB /* tab_bottom_fill@2x.png */,
-				2DB10B6B19B9085A0054A6AB /* tab_fill.png */,
-				2DB10B6C19B9085A0054A6AB /* tab_fill@2x.png */,
-				2DB10B6D19B9085A0054A6AB /* tab_left.png */,
-				2DB10B6E19B9085A0054A6AB /* tab_left@2x.png */,
-				2DB10B6F19B9085A0054A6AB /* tab_unsel_fill.png */,
-				2DB10B7019B9085A0054A6AB /* tab_unsel_fill@2x.png */,
-				2DB10B7119B9085A0054A6AB /* tab_unsel_left.png */,
-				2DB10B7219B9085A0054A6AB /* tab_unsel_left@2x.png */,
-				2DB10B7319B9085A0054A6AB /* tab_unsel_right.png */,
-				2DB10B7419B9085A0054A6AB /* tab_unsel_right@2x.png */,
-			);
-			name = tabs;
 			sourceTree = "<group>";
 		};
 		2DB96A7619ABB3E500E318A8 /* dsp_libsrc */ = {
@@ -7412,25 +7362,6 @@
 				2DB96A9A19ABB50300E318A8 /* src_zoh.c */,
 			);
 			name = libsamplerate;
-			sourceTree = "<group>";
-		};
-		2DBEE66919B4E95600A60609 /* seekbar */ = {
-			isa = PBXGroup;
-			children = (
-				2DBEE68219B4EB0800A60609 /* sb_back_cap_left.png */,
-				2DBEE68319B4EB0800A60609 /* sb_back_cap_left@2x.png */,
-				2DBEE68419B4EB0800A60609 /* sb_back_cap_right.png */,
-				2DBEE68519B4EB0800A60609 /* sb_back_cap_right@2x.png */,
-				2DBEE68619B4EB0800A60609 /* sb_back_filler.png */,
-				2DBEE68719B4EB0800A60609 /* sb_back_filler@2x.png */,
-				2DBEE68819B4EB0800A60609 /* sb_front_cap_left.png */,
-				2DBEE68919B4EB0800A60609 /* sb_front_cap_left@2x.png */,
-				2DBEE68A19B4EB0900A60609 /* sb_front_cap_right.png */,
-				2DBEE68B19B4EB0900A60609 /* sb_front_cap_right@2x.png */,
-				2DBEE68C19B4EB0900A60609 /* sb_front_filler.png */,
-				2DBEE68D19B4EB0900A60609 /* sb_front_filler@2x.png */,
-			);
-			name = seekbar;
 			sourceTree = "<group>";
 		};
 		2DCB281819E8616E008E9DF6 /* m3u */ = {
@@ -7707,6 +7638,15 @@
 				2D4739B11F10ECBF008B95A3 /* psfmain.c */,
 			);
 			name = psf;
+			sourceTree = "<group>";
+		};
+		4D13B50B2140151700CA7AE4 /* PresetManager */ = {
+			isa = PBXGroup;
+			children = (
+				4D13B5192140154900CA7AE4 /* PresetManager.swift */,
+				4D9272B521411B6600E7B4D0 /* DSPPresetController.swift */,
+			);
+			name = PresetManager;
 			sourceTree = "<group>";
 		};
 		4D1B3E7118379829003E6066 = {
@@ -8020,9 +7960,6 @@
 		4D2362B218395D0300C9E818 /* images */ = {
 			isa = PBXGroup;
 			children = (
-				2DB10B6819B908510054A6AB /* tabs */,
-				2DBEE66919B4E95600A60609 /* seekbar */,
-				2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */,
 				4D2A6C9D183BC29400AC6BF5 /* btnnextTemplate.pdf */,
 				4D2A6C9E183BC29400AC6BF5 /* btnpauseTemplate.pdf */,
 				4D2A6C9F183BC29400AC6BF5 /* btnprevTemplate.pdf */,
@@ -8068,11 +8005,6 @@
 				4D32F9C019A630F8000FFDE0 /* stream_encoder_framing.c */,
 				4D32F9C119A630F8000FFDE0 /* stream_encoder.c */,
 				4D32F9C219A630F8000FFDE0 /* window.c */,
-				4D32F9D819A6310C000FFDE0 /* bitreader_asm.nasm */,
-				4D32F9D919A6310C000FFDE0 /* cpu_asm.nasm */,
-				4D32F9DA19A6310C000FFDE0 /* fixed_asm.nasm */,
-				4D32F9DB19A6310C000FFDE0 /* lpc_asm.nasm */,
-				4D32F9DD19A6310C000FFDE0 /* stream_encoder_asm.nasm */,
 			);
 			name = libFLAC;
 			path = osx;
@@ -8132,6 +8064,8 @@
 				2D6EC2A41A42068F00DD1C72 /* mp3_mad.h */,
 				2D6EC2A91A4210D800DD1C72 /* mp3_mpg123.c */,
 				2D6EC2AA1A4210D800DD1C72 /* mp3_mpg123.h */,
+				4D8FEDCE20EA54D4008EB080 /* mp3parser.c */,
+				4D8FEDC020EA54D3008EB080 /* mp3parser.h */,
 			);
 			name = mp3;
 			sourceTree = "<group>";
@@ -8599,6 +8533,8 @@
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
+				4D13B50B2140151700CA7AE4 /* PresetManager */,
+				2DD5262E2062F1DF002609C5 /* help-cocoa.txt */,
 				2D6202AF1B90800A00594746 /* XIB */,
 				2DE1D3DF19B11286009B5BC6 /* widgets */,
 				4D2362B218395D0300C9E818 /* images */,
@@ -8641,6 +8577,8 @@
 				2D6FCDBD1DD26867003FCDE2 /* PluginConfigurationViewController.m */,
 				2D6FCDC01DD277CD003FCDE2 /* DSPPresetListDataSource.h */,
 				2D6FCDC11DD277CD003FCDE2 /* DSPPresetListDataSource.m */,
+				4D12805E2062994F0015BDE8 /* HelpWindowController.swift */,
+				4D12805D2062994F0015BDE8 /* deadbeef-Bridging-Header.h */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -9827,6 +9765,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D8FEDCF20EA54D4008EB080 /* mp3parser.h in Headers */,
 				2D51999C1A436FD100670717 /* config.h in Headers */,
 				2D6EC2AF1A42120100DD1C72 /* mp3.h in Headers */,
 				2D6EC2B21A42121100DD1C72 /* mp3_mpg123.h in Headers */,
@@ -10717,6 +10656,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				4D6CF19020EB82B200811034 /* PBXTargetDependency */,
 				2D01D7EC1AB2221E00BCD3C4 /* PBXTargetDependency */,
 			);
 			name = Tests;
@@ -10856,7 +10796,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				4D52B4E11F14F12600048305 /* PBXTargetDependency */,
 				2DF16CB51DCB62F4007D7F05 /* PBXTargetDependency */,
 				2D1DC09B1DCB3A1000441A08 /* PBXTargetDependency */,
 				2D27AEF01D9D876E00842D76 /* PBXTargetDependency */,
@@ -11181,6 +11120,7 @@
 					};
 					2DAA4C071AAF88DE00519559 = {
 						CreatedOnToolsVersion = 6.1.1;
+						LastSwiftMigration = 0940;
 					};
 					2DCB281319E86162008E9DF6 = {
 						CreatedOnToolsVersion = 6.0.1;
@@ -11197,6 +11137,9 @@
 					};
 					2DFD50941C9715B800961D19 = {
 						CreatedOnToolsVersion = 6.2;
+					};
+					4D1B3E7918379829003E6066 = {
+						LastSwiftMigration = 0920;
 					};
 					4D52B4CD1F14F0FD00048305 = {
 						CreatedOnToolsVersion = 8.3.3;
@@ -11394,6 +11337,7 @@
 				2D74926E1CCFF9AE00D3A59E /* gme.dylib in Resources */,
 				2D74926F1CCFF9AE00D3A59E /* ddb_dumb.dylib in Resources */,
 				2D7492701CCFF9AE00D3A59E /* sid.dylib in Resources */,
+				4D9272D0214156E300E7B4D0 /* PresetManagerData in Resources */,
 				2D7492711CCFF9AE00D3A59E /* vfs_curl.dylib in Resources */,
 				2D7492721CCFF9AE00D3A59E /* m3u.dylib in Resources */,
 				2D7492731CCFF9AE00D3A59E /* alac.dylib in Resources */,
@@ -11468,58 +11412,31 @@
 				2D93DC571AADFEEF003D2D8D /* README in Resources */,
 				2D22F75E19E138B3009C631E /* sid.dylib in Resources */,
 				2D828E5419E5679800EE874F /* Search.xib in Resources */,
-				2DB10B8919B908630054A6AB /* tab_unsel_left.png in Resources */,
 				4DAF343F19B75FF500EE96ED /* ddb_dumb.dylib in Resources */,
 				2D2A14BA19B6485200AD1EB7 /* gme.dylib in Resources */,
-				2DBEE69619B4EB0900A60609 /* sb_front_cap_right.png in Resources */,
 				2DB96AA819ABB52200E318A8 /* dsp_libsrc.dylib in Resources */,
-				2DB10B8B19B908630054A6AB /* tab_unsel_right.png in Resources */,
 				2D3EBD9D1A9379BD00E5E255 /* Preferences.xib in Resources */,
 				4D32FA6B19A647B5000FFDE0 /* flac.dylib in Resources */,
-				2DB10B8319B908630054A6AB /* tab_fill.png in Resources */,
 				4D32FA0019A63644000FFDE0 /* ffap.dylib in Resources */,
-				2DB10B8419B908630054A6AB /* tab_fill@2x.png in Resources */,
-				2D0EE6971B86685C00487FA1 /* tabCloseTemplate.pdf in Resources */,
 				4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */,
 				4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */,
-				2DBEE69519B4EB0900A60609 /* sb_front_cap_left@2x.png in Resources */,
-				2DBEE69419B4EB0900A60609 /* sb_front_cap_left.png in Resources */,
-				2DBEE68E19B4EB0900A60609 /* sb_back_cap_left.png in Resources */,
-				2DB10B8619B908630054A6AB /* tab_left@2x.png in Resources */,
-				2DBEE69919B4EB0900A60609 /* sb_front_filler@2x.png in Resources */,
-				2DBEE69119B4EB0900A60609 /* sb_back_cap_right@2x.png in Resources */,
+				4DE28473205BE0B20023063E /* HelpViewer.xib in Resources */,
 				2D2351281B13922400A62936 /* Converter.xib in Resources */,
-				2DD6D0A819AE6288009308A5 /* knobTemplate.pdf in Resources */,
 				4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */,
 				4D2A6CA4183BC29400AC6BF5 /* btnstopTemplate.pdf in Resources */,
-				2DB10B8819B908630054A6AB /* tab_unsel_fill@2x.png in Resources */,
-				2DB10B8A19B908630054A6AB /* tab_unsel_left@2x.png in Resources */,
 				2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */,
-				2DBEE69319B4EB0900A60609 /* sb_back_filler@2x.png in Resources */,
 				2D49856F1D5CF0E900E4D985 /* Log.xib in Resources */,
 				4D2A6CA1183BC29400AC6BF5 /* btnnextTemplate.pdf in Resources */,
-				2DB10B8719B908630054A6AB /* tab_unsel_fill.png in Resources */,
-				2DBEE69719B4EB0900A60609 /* sb_front_cap_right@2x.png in Resources */,
-				2DB10B8519B908630054A6AB /* tab_left.png in Resources */,
-				2DBEE69219B4EB0900A60609 /* sb_back_filler.png in Resources */,
-				2DBEE68F19B4EB0900A60609 /* sb_back_cap_left@2x.png in Resources */,
-				2DB10B8F19B90BE90054A6AB /* tab_right.png in Resources */,
 				4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */,
 				2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */,
-				2DBEE69019B4EB0900A60609 /* sb_back_cap_right.png in Resources */,
-				2DB10B8219B908630054A6AB /* tab_bottom_fill@2x.png in Resources */,
 				2D1A563A1D9FF9A4005E5CDD /* ReplayGain.xib in Resources */,
-				2DBEE69819B4EB0900A60609 /* sb_front_filler.png in Resources */,
-				2DB10B8C19B908630054A6AB /* tab_unsel_right@2x.png in Resources */,
-				2DB10B9019B90BE90054A6AB /* tab_right@2x.png in Resources */,
-				2DB10B8119B908630054A6AB /* tab_bottom_fill.png in Resources */,
 				2DF622BB1B335FF100C70C7D /* convpresets in Resources */,
 				2D28F0501C283C4B004A6E7B /* aac.dylib in Resources */,
-				4D52B4DF1F14F11A00048305 /* v2m.dylib in Resources */,
 				4D9C5B0E1FDEBAFC00D83CEF /* opus.dylib in Resources */,
 				2D8BA3521E2672BF001D5708 /* libogglib.dylib in Resources */,
 				4D9BF4001FE134200032B6CF /* libopusfile.dylib in Resources */,
 				2D5B51221FF43FC8000AD484 /* liboggedit.dylib in Resources */,
+				2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12609,17 +12526,29 @@
 				2D5F88F51E12F94300A7DA8D /* MP4ParserTests.m in Sources */,
 				2DE7A8FB1CA493CE00318A9F /* CuesheetTests.m in Sources */,
 				2DCF90901E12FA2D008D7B08 /* mp4parser.c in Sources */,
+				4D6CF18E20EB7A9900811034 /* mp3parser.c in Sources */,
+				2DE7A8FB1CA493CE00318A9F /* Cuesheet.m in Sources */,
+				4D6CF18D20EB788A00811034 /* MP3Decoder.m in Sources */,
+				4D90AAFF20EA5CA500D13537 /* DDBTestInitializer.m in Sources */,
 				2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */,
+				4D9272C921414BF500E7B4D0 /* DSPPresetController.swift in Sources */,
 				2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */,
 				2D14E0541E14170E009870E6 /* mp4tagutil.c in Sources */,
 				2D0F90C21CCFF094003FA197 /* TaggingTests.m in Sources */,
 				2DAA4C141AAF88FF00519559 /* TitleFormattingTests.m in Sources */,
 				2D7F38031B2858AC00692A7B /* JunklibTests.m in Sources */,
+				4D6CF18B20EB783900811034 /* MP3ParserTest.m in Sources */,
 				2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */,
 				2DA66ECE1EDF501000E20989 /* fakein.c in Sources */,
 				2DA66EC81EDF4EF800E20989 /* StreamerTest.m in Sources */,
 				4D31BECE1E9FB194001D1B89 /* ResamplerTest.m in Sources */,
+				2DAA4C141AAF88FF00519559 /* TitleFormatting.m in Sources */,
+				4D9272C521414BA900E7B4D0 /* PresetManagerTest.swift in Sources */,
+				4D31BECE1E9FB194001D1B89 /* ResamplerTest.m in Sources */,
+				2D7F38031B2858AC00692A7B /* Junklib.m in Sources */,
+				4D9272C821414BF500E7B4D0 /* PresetManager.swift in Sources */,
 				4D0B0CEE20162D95004162DA /* FormatConversion.m in Sources */,
+				4DC416FE2180919D0056133E /* PlaylistTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12770,10 +12699,13 @@
 				2D5773A21D084E5A00F61BD1 /* MediaKeyController.m in Sources */,
 				2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* DdbSearchViewController.m in Sources */,
+				4D9272C621414BF400E7B4D0 /* PresetManager.swift in Sources */,
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
 				2D71C26B1DC88E5C00247CEF /* DSPChainDataSource.m in Sources */,
 				2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */,
+				4D9272C721414BF400E7B4D0 /* DSPPresetController.swift in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
+				4D12805F2062994F0015BDE8 /* HelpWindowController.swift in Sources */,
 				2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */,
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,
 				2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */,
@@ -12791,25 +12723,20 @@
 				4D32F9D019A630F8000FFDE0 /* ogg_decoder_aspect.c in Sources */,
 				4D32F9C919A630F8000FFDE0 /* float.c in Sources */,
 				4D32F9D319A630F8000FFDE0 /* ogg_mapping.c in Sources */,
-				4D32F9DF19A6310C000FFDE0 /* cpu_asm.nasm in Sources */,
 				4D32F9D719A630F8000FFDE0 /* window.c in Sources */,
 				4D32F9C819A630F8000FFDE0 /* fixed.c in Sources */,
 				4D32F9D419A630F8000FFDE0 /* stream_decoder.c in Sources */,
 				4D32F9CA19A630F8000FFDE0 /* format.c in Sources */,
 				4D32F9C519A630F8000FFDE0 /* bitwriter.c in Sources */,
 				4D32F9D519A630F8000FFDE0 /* stream_encoder_framing.c in Sources */,
-				4D32F9DE19A6310C000FFDE0 /* bitreader_asm.nasm in Sources */,
-				4D32F9E319A6310C000FFDE0 /* stream_encoder_asm.nasm in Sources */,
 				4D32F9D619A630F8000FFDE0 /* stream_encoder.c in Sources */,
 				4D32F9C419A630F8000FFDE0 /* bitreader.c in Sources */,
 				4D32F9C619A630F8000FFDE0 /* cpu.c in Sources */,
 				4D32F9D119A630F8000FFDE0 /* ogg_encoder_aspect.c in Sources */,
 				4D32F9CE19A630F8000FFDE0 /* metadata_iterators.c in Sources */,
 				4D32F9D219A630F8000FFDE0 /* ogg_helper.c in Sources */,
-				4D32F9E119A6310C000FFDE0 /* lpc_asm.nasm in Sources */,
 				4D32F9CC19A630F8000FFDE0 /* md5.c in Sources */,
 				4D32F9CB19A630F8000FFDE0 /* lpc.c in Sources */,
-				4D32F9E019A6310C000FFDE0 /* fixed_asm.nasm in Sources */,
 				4D32F9CF19A630F8000FFDE0 /* metadata_object.c in Sources */,
 				4D32F9CD19A630F8000FFDE0 /* memory.c in Sources */,
 				4D32F9C319A630F8000FFDE0 /* bitmath.c in Sources */,
@@ -12849,6 +12776,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D32FA5619A645CA000FFDE0 /* mp3.c in Sources */,
+				4D8FEDD020EA54D4008EB080 /* mp3parser.c in Sources */,
 				2D6EC2B11A42120E00DD1C72 /* mp3_mpg123.c in Sources */,
 				2D6EC2C21A422E8200DD1C72 /* mp3_mad.c in Sources */,
 			);
@@ -13435,10 +13363,10 @@
 			target = 4D44E66D19B7530A00F780FC /* ddb_dumb */;
 			targetProxy = 4D44E70619B753AD00F780FC /* PBXContainerItemProxy */;
 		};
-		4D52B4E11F14F12600048305 /* PBXTargetDependency */ = {
+		4D6CF19020EB82B200811034 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4D52B4CD1F14F0FD00048305 /* v2m */;
-			targetProxy = 4D52B4E01F14F12600048305 /* PBXContainerItemProxy */;
+			target = 4D32FA4F19A64577000FFDE0 /* mp3 */;
+			targetProxy = 4D6CF18F20EB82B200811034 /* PBXContainerItemProxy */;
 		};
 		4D9C5B0A1FDEBADC00D83CEF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -13502,7 +13430,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/wma",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13523,7 +13451,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/wma",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13543,7 +13471,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/wma",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13564,7 +13492,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/wma",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13589,7 +13517,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/wma",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13611,7 +13539,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/wma",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13636,7 +13564,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/wma",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13658,7 +13586,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/wma",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13683,7 +13611,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/musepack",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13705,7 +13633,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/musepack",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13727,7 +13655,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/musepack",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13749,7 +13677,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/musepack",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13774,7 +13702,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13796,7 +13724,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13815,7 +13743,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13835,7 +13763,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13860,7 +13788,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/mms",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13882,7 +13810,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/mms",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -13908,7 +13836,7 @@
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -13936,7 +13864,7 @@
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -13969,7 +13897,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/deps/ffmpeg/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -13998,7 +13926,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/deps/ffmpeg/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14025,7 +13953,7 @@
 					"\"$(SRCROOT)/deps/libsndfile-1.0.25/src\"",
 				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -14048,7 +13976,7 @@
 					"\"$(SRCROOT)/deps/libsndfile-1.0.25/src\"",
 				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -14137,7 +14065,7 @@
 					"PACKAGE_NAME=\\\"libsndfile\\\"",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -14227,7 +14155,7 @@
 					"PACKAGE_NAME=\\\"libsndfile\\\"",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -14247,7 +14175,7 @@
 					"$(inherited)",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14265,7 +14193,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_PREFIX = "";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14294,7 +14222,7 @@
 					"$(inherited)",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14318,7 +14246,7 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14329,7 +14257,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
-				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -14351,7 +14279,7 @@
 					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include/sidplay/builders\"",
 					"\"$(SRCROOT)/../plugins/sid/sidplay-libs\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -14361,7 +14289,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
-				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -14383,7 +14311,7 @@
 					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include/sidplay/builders\"",
 					"\"$(SRCROOT)/../plugins/sid/sidplay-libs\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -14393,7 +14321,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
-				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -14409,7 +14337,7 @@
 					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include\"",
 					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include/sidplay/builders\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -14419,7 +14347,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
-				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -14435,7 +14363,7 @@
 					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include\"",
 					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include/sidplay/builders\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -14457,7 +14385,7 @@
 					"$(inherited)",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -14475,7 +14403,7 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -14552,7 +14480,7 @@
 					"$(inherited)",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14576,7 +14504,7 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14606,7 +14534,7 @@
 					"\"$(SRCROOT)/../plugins/fdk/libPCMutils/include\"",
 					"\"$(SRCROOT)/../plugins/fdk/libSYS/include\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14637,7 +14565,7 @@
 					"\"$(SRCROOT)/../plugins/fdk/libPCMutils/include\"",
 					"\"$(SRCROOT)/../plugins/fdk/libSYS/include\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14662,7 +14590,7 @@
 					"\"$(SRCROOT)/deps/faad2-2.7/include\"",
 					"\"$(SRCROOT)/deps/faad2-2.7/libfaad\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14688,7 +14616,7 @@
 					"\"$(SRCROOT)/deps/faad2-2.7/include\"",
 					"\"$(SRCROOT)/deps/faad2-2.7/libfaad\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14699,7 +14627,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
-				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -14717,7 +14645,7 @@
 					"$(SRCROOT)/../plugins/gme/game-music-emu-0.6pre",
 					"$(SRCROOT)/../plugins/gme/game-music-emu-0.6pre/gme",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USE_HEADERMAP = NO;
 			};
@@ -14727,7 +14655,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
-				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -14745,7 +14673,7 @@
 					"$(SRCROOT)/../plugins/gme/game-music-emu-0.6pre",
 					"$(SRCROOT)/../plugins/gme/game-music-emu-0.6pre/gme",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USE_HEADERMAP = NO;
 			};
@@ -14764,7 +14692,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INSTALL_PATH = "@executable_path/../Resources";
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14785,7 +14713,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INSTALL_PATH = "@executable_path/../Resources";
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14811,7 +14739,7 @@
 					"$(inherited)",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14832,7 +14760,7 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14863,7 +14791,7 @@
 					"\"$(SRCROOT)/deps/libzip-1.0.1/lib\"",
 					"\"$(SRCROOT)/deps/libzip-1.0.1/xcode\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14889,7 +14817,7 @@
 					"\"$(SRCROOT)/deps/libzip-1.0.1/lib\"",
 					"\"$(SRCROOT)/deps/libzip-1.0.1/xcode\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14908,7 +14836,7 @@
 					"$(inherited)",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -14922,7 +14850,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_PREFIX = "";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -14957,7 +14885,7 @@
 					"$(inherited)",
 					/Users/waker/prj/deadbeef/plugins/artwork/.libs,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -14994,7 +14922,7 @@
 					"$(inherited)",
 					/Users/waker/prj/deadbeef/plugins/artwork/.libs,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -15018,7 +14946,7 @@
 					"$(inherited)",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -15037,7 +14965,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -15066,7 +14994,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/libpng-1.6.21\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -15095,7 +15023,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/libpng-1.6.21\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -15116,7 +15044,7 @@
 					"VERSION=\\\"1.2\\\"",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -15138,7 +15066,7 @@
 					"VERSION=\\\"1.2\\\"",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -15167,7 +15095,7 @@
 				INSTALL_PATH = "@executable_path/../Resources";
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -15191,7 +15119,7 @@
 				INSTALL_PATH = "@executable_path/../Resources";
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -15221,7 +15149,7 @@
 				INSTALL_PATH = "@executable_path/../Resources";
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -15247,7 +15175,7 @@
 				INSTALL_PATH = "@executable_path/../Resources";
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -15274,7 +15202,7 @@
 					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
 				);
 				LD_DYLIB_INSTALL_NAME = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -15298,7 +15226,7 @@
 					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
 				);
 				LD_DYLIB_INSTALL_NAME = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -15325,7 +15253,7 @@
 				INSTALL_PATH = "@executable_path/../Resources";
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -15349,7 +15277,7 @@
 				INSTALL_PATH = "@executable_path/../Resources";
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -15366,7 +15294,7 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "USE_TAGGING=1";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = alac;
 			};
@@ -15383,7 +15311,7 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "USE_TAGGING=1";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = alac;
 			};
@@ -15415,7 +15343,7 @@
 					"\"$(SRCROOT)/deps/mpg123-1.21.0/ports/Xcode\"",
 				);
 				LD_DYLIB_INSTALL_NAME = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
@@ -15448,7 +15376,7 @@
 					"\"$(SRCROOT)/deps/mpg123-1.21.0/ports/Xcode\"",
 				);
 				LD_DYLIB_INSTALL_NAME = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
@@ -15504,7 +15432,7 @@
 					"$(inherited)",
 					/Users/waker/prj/deadbeef/dial68/.libs,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
@@ -15561,7 +15489,7 @@
 					"$(inherited)",
 					/Users/waker/prj/deadbeef/dial68/.libs,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
@@ -15590,7 +15518,7 @@
 				);
 				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -15619,7 +15547,7 @@
 				);
 				LD_DYLIB_INSTALL_NAME = "";
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -15640,7 +15568,7 @@
 					"$(inherited)",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -15657,7 +15585,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_PREFIX = "";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -15684,9 +15612,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -15710,9 +15641,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -15728,7 +15661,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/deps/libsamplerate-0.1.8/src",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -15744,7 +15677,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/deps/libsamplerate-0.1.8/src",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -15760,7 +15693,7 @@
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				LD_DYLIB_INSTALL_NAME = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -15772,7 +15705,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				LD_DYLIB_INSTALL_NAME = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -15788,7 +15721,7 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_SYS_SYSLIMITS_H;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -15805,7 +15738,7 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_SYS_SYSLIMITS_H;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -15832,7 +15765,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/WavPack-5.1.0/include\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -15861,7 +15794,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/WavPack-5.1.0/include\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -15887,7 +15820,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = USE_OOURA;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -15912,7 +15845,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = USE_OOURA;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -15933,7 +15866,7 @@
 					"WILDMIDILIB_VERSION='\"0.2.2\"'",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -15954,7 +15887,7 @@
 					"WILDMIDILIB_VERSION='\"0.2.2\"'",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -15971,7 +15904,7 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "HAS_PSXCPU=1";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -15990,7 +15923,7 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "HAS_PSXCPU=1";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -16077,7 +16010,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_MODULES = NO;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "../plugins/cocoaui/deadbeef-Prefix.pch";
@@ -16089,7 +16022,6 @@
 					"PREFIX=\\\"donotuse\\\"",
 					"LIBDIR=\\\"donotuse\\\"",
 					"DOCDIR=\\\"donotuse\\\"",
-					"VERSION=\\\"devel\\\"",
 					"HAVE_LOG2=1",
 					"OSX_APPBUNDLE=1",
 					"DISABLE_MM_KEY_GRABBER=1",
@@ -16102,10 +16034,14 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				INFOPLIST_FILE = "../plugins/cocoaui/deadbeef-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
+				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -16114,7 +16050,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_MODULES = NO;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "../plugins/cocoaui/deadbeef-Prefix.pch";
@@ -16126,7 +16062,6 @@
 					"PREFIX=\\\"donotuse\\\"",
 					"LIBDIR=\\\"donotuse\\\"",
 					"DOCDIR=\\\"donotuse\\\"",
-					"VERSION=\\\"devel\\\"",
 					"HAVE_LOG2=1",
 					"OSX_APPBUNDLE=1",
 				);
@@ -16138,11 +16073,14 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				INFOPLIST_FILE = "../plugins/cocoaui/deadbeef-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
+				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
+				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -16169,7 +16107,7 @@
 				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = YES;
 			};
@@ -16196,7 +16134,7 @@
 				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -16218,7 +16156,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -16237,7 +16175,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -16259,7 +16197,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -16280,7 +16218,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -16302,7 +16240,7 @@
 					"\"$(SRCROOT)/mpg123\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -16323,7 +16261,7 @@
 					"\"$(SRCROOT)/mpg123\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -16344,7 +16282,7 @@
 					"$(SRCROOT)/deps/flac-1.3.0/include",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -16360,7 +16298,7 @@
 					"$(SRCROOT)/deps/flac-1.3.0/include",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -16378,7 +16316,7 @@
 					"$(SRCROOT)/../plugins/dumb/dumb-kode54/include",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -16395,7 +16333,7 @@
 					"$(SRCROOT)/../plugins/dumb/dumb-kode54/include",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -16420,7 +16358,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "RONAN=1";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -16446,7 +16384,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "RONAN=1";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -16493,7 +16431,7 @@
 					"\"$(SRCROOT)/deps/opusfile-0.9/include\"",
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -16535,7 +16473,7 @@
 					"\"$(SRCROOT)/deps/opusfile-0.9/include\"",
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

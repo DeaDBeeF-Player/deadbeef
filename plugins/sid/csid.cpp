@@ -29,6 +29,7 @@
 // #include "sidplay/sidendian.h"
 
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 #include "csid.h"
 
 extern DB_decoder_t sid_plugin;
@@ -51,31 +52,30 @@ typedef struct {
 
 static inline void
 le_int16 (int16_t in, unsigned char *out) {
-    char *pin = (char *)&in;
-#if !WORDS_BIGENDIAN
-    out[0] = pin[0];
-    out[1] = pin[1];
-#else
-    out[1] = pin[0];
-    out[0] = pin[1];
-#endif
+    out[0] = in&0xff;
+    out[1] = (in&0xff00)>>8;
 }
 
-// SLDB support costs ~1M!!!
-// current hvsc sldb size is ~35k songs
-#define SLDB_MAX_SONGS 40000
-// ~50k subsongs in current sldb
-#define SLDB_POOL_SIZE 55000
+// NOTE: we know that current SLDB is larger than that, but we want the code to go into realloc path
+#define SLDB_PREALLOC_ITEMS 50000
+#define SLDB_PREALLOC_LENGTHS SLDB_PREALLOC_ITEMS
 typedef struct {
-    uint8_t sldb_digests[SLDB_MAX_SONGS][16];
-    int16_t sldb_pool[SLDB_POOL_SIZE];
-    int sldb_poolmark;
-    int16_t *sldb_lengths[SLDB_MAX_SONGS];
-    int sldb_size;
-} sldb_t;
+    uint8_t digest[16];
+    size_t lengths_offset;
+    uint16_t subsongs;
+} sldb_item_t;
+
+static sldb_item_t *sldb;
+static size_t sldb_allocated_size;
+static size_t sldb_count;
+
+static uint16_t *sldb_lengths;
+static size_t sldb_lengths_allocated_size;
+static size_t sldb_lengths_count;
+
 static int sldb_loaded;
-static sldb_t *sldb;
 static int sldb_disable;
+static int sldb_legacy;
 
 static int chip_voices = 0xff;
 static int chip_voices_changed = 0;
@@ -100,6 +100,12 @@ sldb_load()
         return;
     }
     sldb_loaded = 1;
+
+    const char *ext = conf_hvsc_path + strlen (conf_hvsc_path) - 4;
+    if (!strcmp (ext, ".txt")) {
+        sldb_legacy = 1;
+    }
+
     const char *fname = conf_hvsc_path;
     FILE *fp = fopen (fname, "r");
     if (!fp) {
@@ -118,13 +124,15 @@ sldb_load()
     }
 
     if (!sldb) {
-        sldb = (sldb_t *)malloc (sizeof (sldb_t));
-        memset (sldb, 0, sizeof (sldb_t));
+        sldb = (sldb_item_t *)calloc (sizeof(sldb_item_t), SLDB_PREALLOC_ITEMS);
+        sldb_allocated_size = SLDB_PREALLOC_ITEMS;
+        sldb_lengths = (uint16_t *)calloc (sizeof (uint16_t), SLDB_PREALLOC_LENGTHS);
+        sldb_lengths_allocated_size = SLDB_PREALLOC_LENGTHS;
     }
     while (fgets (str, 1024, fp) == str) {
-        if (sldb->sldb_size >= SLDB_MAX_SONGS) {
-            trace ("sldb loader ran out of memory.\n");
-            break;
+        if (sldb_count >= sldb_allocated_size) {
+            sldb_allocated_size += 10000;
+            sldb = (sldb_item_t *)realloc (sldb, sldb_allocated_size * sizeof (sldb_item_t));
         }
         line++;
         if (str[0] == ';') {
@@ -173,17 +181,6 @@ sldb_load()
             trace ("bad md5 (sz=%d, line=%d)\n", sz, line);
             continue; // bad song md5
         }
-//        else {
-//            trace ("digest: ");
-//            for (int j = 0; j < 16; j++) {
-//                trace ("%02x", (int)digest[j]);
-//            }
-//            trace ("\n");
-//            exit (0);
-//        }
-        memcpy (sldb->sldb_digests[sldb->sldb_size], digest, 16);
-        sldb->sldb_lengths[sldb->sldb_size] = &sldb->sldb_pool[sldb->sldb_poolmark];
-        sldb->sldb_size++;
         // check '=' sign
         if (*p != '=') {
             continue; // no '=' sign
@@ -192,7 +189,10 @@ sldb_load()
         if (!(*p)) {
             continue; // unexpected eol
         }
-        int subsong = 0;
+
+        memcpy (sldb[sldb_count].digest, digest, 16);
+        sldb[sldb_count].lengths_offset = sldb_lengths_count;
+
         while (*p >= ' ') {
             // read subsong lengths until eol
             char timestamp[7]; // up to MMM:SS
@@ -201,7 +201,7 @@ sldb_load()
                 timestamp[sz++] = *p;
                 p++;
             }
-            if (sz < 4 || sz == 6 && *p > ' ' && *p != '(') {
+            if (sz < 4 || (sz == 6 && *p > ' ' && *p != '(')) {
                 break; // bad timestamp
             }
             timestamp[sz] = 0;
@@ -226,14 +226,14 @@ sldb_load()
                 //trace ("subsong %d, time %s:%s\n", subsong, minute, second);
                 time = atoi (minute) * 60 + atoi (second);
             }
-            if (sldb->sldb_poolmark >= SLDB_POOL_SIZE) {
-                trace ("sldb ran out of memory\n");
-                goto fail;
+
+            if (sldb_lengths_count >= sldb_lengths_allocated_size) {
+                sldb_lengths_allocated_size += 10000;
+                sldb_lengths = (uint16_t *)realloc (sldb_lengths, sizeof (uint16_t) * sldb_lengths_allocated_size);
             }
-            
-            sldb->sldb_lengths[sldb->sldb_size-1][subsong] = time;
-            sldb->sldb_poolmark++;
-            subsong++;
+
+            sldb_lengths[sldb_lengths_count++] = time;
+            sldb[sldb_count].subsongs++;
 
             // prepare for next timestamp
             if (*p == '(') {
@@ -253,6 +253,7 @@ sldb_load()
                 break; // eol
             }
         }
+        sldb_count++;
     }
 
 fail:
@@ -267,8 +268,8 @@ sldb_find (const uint8_t *digest) {
         trace ("sldb not loaded\n");
         return -1;
     }
-    for (int i = 0; i < sldb->sldb_size; i++) {
-        if (!memcmp (digest, sldb->sldb_digests[i], 16)) {
+    for (int i = 0; i < sldb_count; i++) {
+        if (!memcmp (digest, sldb[i].digest, 16)) {
             return i;
         }
     }
@@ -303,8 +304,9 @@ csid_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     // libsidplay crashes if file doesn't exist
     // so i have to check it here
     deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    DB_FILE *fp = deadbeef->fopen (uri);
     if (!fp ){
         return -1;
     }
@@ -439,9 +441,16 @@ find_hvsc_path_from_fname (const char *fname) {
             strcpy (conf_hvsc_path, fname);
             char *p;
             while ((p = strrchr (conf_hvsc_path, '/'))) {
-                strcpy (p, "/DOCUMENTS/Songlengths.txt");
                 struct stat st;
+                strcpy (p, "/DOCUMENTS/Songlengths.md5");
                 int err = stat (conf_hvsc_path, &st);
+                if (!err && (st.st_mode & S_IFREG)) {
+                    deadbeef->conf_set_str ("hvsc_path", conf_hvsc_path);
+                    deadbeef->conf_save ();
+                    break;
+                }
+                strcpy (p, "/DOCUMENTS/Songlengths.txt");
+                err = stat (conf_hvsc_path, &st);
                 if (!err && (st.st_mode & S_IFREG)) {
                     deadbeef->conf_set_str ("hvsc_path", conf_hvsc_path);
                     deadbeef->conf_save ();
@@ -467,57 +476,31 @@ csid_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("subtunes: %d\n", tunes);
     uint8_t sig[16];
     unsigned char tmp[2];
-#if 1
     trace ("calculating md5\n");
     DB_md5_t md5;
     deadbeef->md5_init (&md5);
-    deadbeef->md5_append (&md5, (const uint8_t *)tune->cache.get () + tune->fileOffset, tune->getInfo ().c64dataLen);
-    le_int16 (tune->getInfo ().initAddr, tmp);
-    deadbeef->md5_append (&md5, tmp, 2);
-    le_int16 (tune->getInfo ().playAddr, tmp);
-    deadbeef->md5_append (&md5, tmp, 2);
-    le_int16 (tune->getInfo ().songs, tmp);
-    deadbeef->md5_append (&md5, tmp, 2);
-    for (int s = 1; s <= tunes; s++)
-    {
-        tune->selectSong (s);
-        // songspeed is uint8_t, so no need for byteswap
-        deadbeef->md5_append (&md5, &tune->getInfo ().songSpeed, 1);
-    }
-    if (tune->getInfo ().clockSpeed == SIDTUNE_CLOCK_NTSC) {
-        deadbeef->md5_append (&md5, &tune->getInfo ().clockSpeed, sizeof (tune->getInfo ().clockSpeed));
-    }
-    deadbeef->md5_finish (&md5, sig);
-#else
-    // md5 calc from libsidplay2
-    MD5 myMD5;
-    myMD5.append ((const char *)tune->cache.get() + tune->fileOffset, tune->getInfo ().c64dataLen);
-    // Include INIT and PLAY address.
-    endian_little16 (tmp,tune->getInfo ().initAddr);
-    myMD5.append    (tmp,sizeof(tmp));
-    endian_little16 (tmp,tune->getInfo ().playAddr);
-    myMD5.append    (tmp,sizeof(tmp));
-    // Include number of songs.
-    endian_little16 (tmp,tune->getInfo ().songs);
-    myMD5.append    (tmp,sizeof(tmp));
-    {
-        // Include song speed for each song.
-        for (uint_least16_t s = 1; s <= tune->getInfo ().songs; s++)
+    if (sldb_legacy) {
+        deadbeef->md5_append (&md5, (const uint8_t *)tune->cache.get () + tune->fileOffset, tune->getInfo ().c64dataLen);
+        le_int16 (tune->getInfo ().initAddr, tmp);
+        deadbeef->md5_append (&md5, tmp, 2);
+        le_int16 (tune->getInfo ().playAddr, tmp);
+        deadbeef->md5_append (&md5, tmp, 2);
+        le_int16 (tune->getInfo ().songs, tmp);
+        deadbeef->md5_append (&md5, tmp, 2);
+        for (int s = 1; s <= tunes; s++)
         {
             tune->selectSong (s);
-            myMD5.append (&tune->getInfo ().songSpeed,1);
+            // songspeed is uint8_t, so no need for byteswap
+            deadbeef->md5_append (&md5, &tune->getInfo ().songSpeed, 1);
+        }
+        if (tune->getInfo ().clockSpeed == SIDTUNE_CLOCK_NTSC) {
+            deadbeef->md5_append (&md5, &tune->getInfo ().clockSpeed, sizeof (tune->getInfo ().clockSpeed));
         }
     }
-    // Deal with PSID v2NG clock speed flags: Let only NTSC
-    // clock speed change the MD5 fingerprint. That way the
-    // fingerprint of a PAL-speed sidtune in PSID v1, v2, and
-    // PSID v2NG format is the same.
-    if (tune->getInfo ().clockSpeed == SIDTUNE_CLOCK_NTSC) {
-        myMD5.append (&tune->getInfo ().clockSpeed,sizeof(tune->getInfo ().clockSpeed));
+    else {
+        deadbeef->md5_append (&md5, (const uint8_t *)tune->cache.get (), tune->getInfo ().dataFileLen);
     }
-    myMD5.finish ();
-    memcpy (sig, myMD5.getDigest (), 16);
-#endif
+    deadbeef->md5_finish (&md5, sig);
 
     int song = -1;
     if (sldb_loaded) {
@@ -568,17 +551,11 @@ csid_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             }
 
             float length = deadbeef->conf_get_float ("sid.defaultlength", 180);
-            if (sldb_loaded) {
-                if (song >= 0 && sldb->sldb_lengths[song][s] >= 0) {
-                    length = sldb->sldb_lengths[song][s];
+            if (sldb_loaded && song >= 0 && s < sldb[song].subsongs) {
+                uint16_t l = sldb_lengths[sldb[song].lengths_offset+s];
+                if (l >= 0) {
+                    length = l;
                 }
-                //        if (song < 0) {
-                //            trace ("song %s not found in db, md5: ", fname);
-                //            for (int j = 0; j < 16; j++) {
-                //                trace ("%02x", (int)sig[j]);
-                //            }
-                //            trace ("\n");
-                //        }
             }
             deadbeef->plt_set_item_duration (plt, it, length);
             deadbeef->pl_add_meta (it, ":FILETYPE", "SID");
@@ -592,6 +569,19 @@ csid_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     return after;
 }
 
+static void
+sldb_free (void) {
+    free (sldb);
+    sldb = NULL;
+    sldb_allocated_size = 0;
+    sldb_count = 0;
+    free (sldb_lengths);
+    sldb_lengths = NULL;
+    sldb_lengths_allocated_size = 0;
+    sldb_lengths_count = 0;
+    sldb_loaded = 0;
+}
+
 static int
 sid_configchanged (void) {
     conf_hvsc_enable = deadbeef->conf_get_int ("hvsc_enable", 0);
@@ -601,11 +591,7 @@ sid_configchanged (void) {
     }
 
     // pick up new sldb filename in case it was changed
-    if (sldb) {
-        free (sldb);
-        sldb = NULL;
-        sldb_loaded = 0;
-    }
+    sldb_free ();
 
     if (chip_voices != deadbeef->conf_get_int ("chip.voices", 0xff)) {
         chip_voices_changed = 1;
@@ -632,11 +618,7 @@ csid_start (void) {
 
 int
 csid_stop (void) {
-    if (sldb) {
-        free (sldb);
-        sldb = NULL;
-    }
-    sldb_loaded = 0;
+    sldb_free();
     return 0;
 }
 

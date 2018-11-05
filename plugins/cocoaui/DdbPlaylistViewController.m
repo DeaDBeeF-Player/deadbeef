@@ -614,10 +614,8 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect {
-    [[NSColor colorWithCalibratedWhite:0.3f alpha:0.3f] set];
-    [NSBezierPath fillRect:NSMakeRect(rect.origin.x + rect.size.width - 1, rect.origin.y+3,1,rect.size.height-6)];
-
-    [[NSString stringWithUTF8String:_columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y+1, rect.size.width-6, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
+    [[NSColor controlTextColor] set];
+    [[NSString stringWithUTF8String:_columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y-2, rect.size.width-6, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
 }
 
 - (void)drawCell:(int)idx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused {
@@ -859,7 +857,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 
 - (void)selectionChanged:(DdbListviewRow_t)row {
     DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)[self view];
-    deadbeef->sendmessage (DB_EV_SELCHANGED, (uintptr_t)[pltWidget listview], deadbeef->plt_get_curr_idx (), [self playlistIter]);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, (uintptr_t)[pltWidget listview], DDB_PLAYLIST_CHANGE_SELECTION, 0);
 }
 
 - (int)selectedCount {
@@ -1003,10 +1001,17 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         }
             break;
         case DB_EV_PLAYLISTCHANGED: {
-            if (!p1 || (p1 & DDB_PLAYLIST_CHANGE_SEARCHRESULT)) {
+            if (!p1 || (p1 == DDB_PLAYLIST_CHANGE_SEARCHRESULT)) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [listview reloadData];
                 });
+            }
+            else if (p1 == DDB_PLAYLIST_CHANGE_SELECTION) {
+                if (ctx != (uintptr_t)listview) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [listview reloadData];
+                    });
+                }
             }
         }
             break;
@@ -1022,6 +1027,13 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
                 DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
                 if (it) {
                     ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
+
+                    if (!plt) {
+                        deadbeef->pl_item_unref (it);
+                        deadbeef->pl_unlock ();
+                        return;
+                    }
+
                     ddb_playlist_t *prev_plt = deadbeef->plt_get_curr ();
 
                     if (prev_plt != plt) {
@@ -1047,14 +1059,6 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [listview reloadData];
             });
-        }
-            break;
-        case DB_EV_SELCHANGED: {
-            if (ctx != (uintptr_t)listview) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [listview reloadData];
-                });
-            }
         }
             break;
         case DB_EV_FOCUS_SELECTION: {
@@ -1217,17 +1221,43 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
--(void)externalDropItems:(NSArray *)paths after:(DdbListviewRow_t)after {
+-(void)externalDropItems:(NSArray *)paths after:(DdbListviewRow_t)_after {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (!deadbeef->plt_add_files_begin (plt, 0)) {
         dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
         dispatch_async(aQueue, ^{
+            DB_playItem_t *first = NULL;
+            DB_playItem_t *after = (DB_playItem_t *)_after;
             for( int i = 0; i < [paths count]; i++ )
             {
                 NSString* path = [paths objectAtIndex:i];
                 if (path) {
-                    deadbeef->plt_insert_file2 (0, plt, (ddb_playItem_t *)after, [path UTF8String], NULL, NULL, NULL);
+                    int abort = 0;
+                    const char *fname = [path UTF8String];
+                    DB_playItem_t *inserted = deadbeef->plt_insert_dir2 (0, plt, after, fname, &abort, NULL, NULL);
+                    if (!inserted && !abort) {
+                        inserted = deadbeef->plt_insert_file2 (0, plt, after, fname, &abort, NULL, NULL);
+                        if (!inserted && !abort) {
+                            inserted = deadbeef->plt_load2 (0, plt, after, fname, &abort, NULL, NULL);
+                        }
+                    }
+
+                    if (inserted) {
+                        if (!first) {
+                            first = inserted;
+                        }
+                        if (after) {
+                            deadbeef->pl_item_unref (after);
+                        }
+                        after = inserted;
+                        deadbeef->pl_item_ref (after);
+
+                        // TODO: set cursor to the first dropped item
+                    }
                 }
+            }
+            if (after) {
+                deadbeef->pl_item_unref (after);
             }
             deadbeef->plt_add_files_end (plt, 0);
             deadbeef->plt_unref (plt);
@@ -1236,6 +1266,9 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         });
     }
     else {
+        if (_after) {
+            deadbeef->pl_item_unref ((DB_playItem_t *)_after);
+        }
         deadbeef->plt_unref (plt);
     }
 }

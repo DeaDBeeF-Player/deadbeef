@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include "../../strdupa.h"
 
 #include "decomp.h"
 
@@ -97,8 +98,9 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     alacplug_info_t *info = (alacplug_info_t *)_info;
 
     deadbeef->pl_lock ();
-    info->file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    info->file = deadbeef->fopen (uri);
     if (!info->file) {
         return -1;
     }

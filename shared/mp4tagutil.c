@@ -26,8 +26,10 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <assert.h>
+#include <stdlib.h>
 #include "mp4tagutil.h"
 #include "mp4parser.h"
+#include "../strdupa.h"
 
 #ifndef __linux__
 #define off64_t off_t

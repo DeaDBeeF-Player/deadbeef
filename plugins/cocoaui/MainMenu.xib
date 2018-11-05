@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
         <development version="8000" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -421,6 +421,38 @@ CA
                         </items>
                     </menu>
                 </menuItem>
+                <menuItem title="View" id="7JV-XM-Tho">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="View" id="mGh-4N-gZF">
+                        <items>
+                            <menuItem title="Show Toolbar" keyEquivalent="t" id="cPI-ve-dVE">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="toggleToolbarShown:" target="-1" id="tUK-Ak-rY6"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Customize Toolbar…" id="c4o-YB-zf7">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="runToolbarCustomizationPalette:" target="-1" id="CKF-2g-Uba"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="gYQ-7K-TiA"/>
+                            <menuItem title="Show Sidebar" keyEquivalent="s" id="152-Sn-dTn">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="toggleSourceList:" target="-1" id="gdH-3c-hpI"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Enter Full Screen" keyEquivalent="f" id="kaJ-52-5So">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="toggleFullScreen:" target="-1" id="E5l-9A-pd9"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
                 <menuItem title="Playback" id="nWk-4q-3Vm">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Playback" id="YAz-yR-8od">
@@ -456,54 +488,54 @@ CA
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="tq9-BM-QKT"/>
-                            <menuItem title="Order" id="Wn7-u2-yeB">
+                            <menuItem title="Shuffle" id="Wn7-u2-yeB" userLabel="Shuffle">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Order" id="G3x-ph-nNM">
+                                <menu key="submenu" title="Shuffle" id="G3x-ph-nNM">
                                     <items>
-                                        <menuItem title="Linear" id="utp-dm-oO6">
+                                        <menuItem title="Off" id="utp-dm-oO6">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="orderLinearAction:" target="494" id="Crk-dE-m2G"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Random" id="1U2-JB-RUf">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="orderRandomAction:" target="494" id="K2k-Xb-dOg"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Shuffle" id="15S-fQ-PaL">
+                                        <menuItem title="Tracks" id="15S-fQ-PaL">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="orderShuffleAction:" target="494" id="R9c-1f-Ijt"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Shuffle Albums" id="bea-Bv-Vnd">
+                                        <menuItem title="Albums" id="bea-Bv-Vnd">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="orderShuffleAlbumsAction:" target="494" id="81W-qf-E8B"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Random Tracks" id="1U2-JB-RUf">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="orderRandomAction:" target="494" id="K2k-Xb-dOg"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>
-                            <menuItem title="Looping" id="WRj-L0-KH1">
+                            <menuItem title="Repeat" id="WRj-L0-KH1" userLabel="Repeat">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Looping" id="ueK-AN-0Ma">
+                                <menu key="submenu" title="Repeat" id="ueK-AN-0Ma">
                                     <items>
-                                        <menuItem title="Don't Loop" id="pGf-UH-jjg">
+                                        <menuItem title="Off" id="pGf-UH-jjg">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="loopNoneAction:" target="494" id="JJp-mM-SPl"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Loop All" id="bp3-Nw-TaR">
+                                        <menuItem title="All Tracks" id="bp3-Nw-TaR">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="loopAllAction:" target="494" id="BLS-Cg-hXv"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Loop Single" id="V06-6E-L7R">
+                                        <menuItem title="One Track" id="V06-6E-L7R">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="loopSingleAction:" target="494" id="xig-B5-rBb"/>
@@ -577,13 +609,13 @@ CA
                         </items>
                     </menu>
                 </menuItem>
-                <menuItem title="Help" id="490">
+                <menuItem title="Help" id="37X-cO-hio" userLabel="Help">
                     <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="Help" systemMenu="help" id="491">
+                    <menu key="submenu" title="Help" id="3qw-u3-kCU">
                         <items>
-                            <menuItem title="deadbeef Help" keyEquivalent="?" id="492">
+                            <menuItem title="Deadbeef Help" keyEquivalent="?" id="BqJ-ib-iBJ">
                                 <connections>
-                                    <action selector="showHelp:" target="-1" id="493"/>
+                                    <action selector="showHelp:" target="494" id="sxX-T5-mOw"/>
                                 </connections>
                             </menuItem>
                         </items>
@@ -623,28 +655,29 @@ CA
             <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSApplicationIcon" id="oCk-eR-mPP"/>
+            <point key="canvasLocation" x="474" y="66"/>
         </imageView>
-        <window title="Add Location" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="0MP-Eo-f3S" customClass="NSPanel">
+        <window title="Add Location" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="0MP-Eo-f3S" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="167" y="107" width="364" height="93"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1028"/>
             <value key="minSize" type="size" width="364" height="85"/>
             <value key="maxSize" type="size" width="2000" height="86"/>
-            <view key="contentView" misplaced="YES" id="KVu-0k-T7v">
+            <view key="contentView" id="KVu-0k-T7v">
                 <rect key="frame" x="0.0" y="0.0" width="364" height="93"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <textField verticalHuggingPriority="750" misplaced="YES" id="zwG-eG-LI0">
+                    <textField verticalHuggingPriority="750" id="zwG-eG-LI0">
                         <rect key="frame" x="80" y="54" width="264" height="19"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Type URL here" drawsBackground="YES" id="Kzo-Mq-Xge">
                             <font key="font" metaFont="smallSystem"/>
-                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <button verticalHuggingPriority="750" misplaced="YES" id="tbg-Xz-zrg">
+                    <button verticalHuggingPriority="750" id="tbg-Xz-zrg">
                         <rect key="frame" x="285" y="13" width="65" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="push" title="Add" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5Z9-gq-28j">
@@ -658,7 +691,7 @@ DQ
                             <action selector="addLocationOKAction:" target="494" id="qKS-bm-D0p"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" misplaced="YES" id="3lN-OA-OLp">
+                    <button verticalHuggingPriority="750" id="3lN-OA-OLp">
                         <rect key="frame" x="203" y="13" width="82" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hNd-lG-bSZ">
@@ -672,7 +705,7 @@ Gw
                             <action selector="addLocationCancelAction:" target="494" id="XfK-15-vXl"/>
                         </connections>
                     </button>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" id="NZ5-DV-Tvf">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="NZ5-DV-Tvf">
                         <rect key="frame" x="18" y="57" width="56" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Location" id="riD-Kj-ER4">
@@ -685,7 +718,7 @@ Gw
             </view>
             <point key="canvasLocation" x="-137" y="304.5"/>
         </window>
-        <window title="Adding files..." allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="h34-jZ-Lmi">
+        <window title="Adding files..." allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="h34-jZ-Lmi">
             <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="163" y="199" width="368" height="32"/>
@@ -721,7 +754,7 @@ Gw
             </view>
             <point key="canvasLocation" x="95" y="17"/>
         </window>
-        <window title="Custom Sort" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="vHm-fI-UgZ" customClass="NSPanel">
+        <window title="Custom Sort" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="vHm-fI-UgZ" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="167" y="107" width="327" height="120"/>
@@ -745,7 +778,7 @@ Gw
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="Ic1-Yv-SKM">
                             <font key="font" metaFont="system"/>
-                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
@@ -795,7 +828,7 @@ Gw
                     </button>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="236.5" y="268"/>
+            <point key="canvasLocation" x="445" y="272"/>
         </window>
         <menu autoenablesItems="NO" id="891-Kp-BFs">
             <items>

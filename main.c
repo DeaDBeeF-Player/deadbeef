@@ -34,6 +34,7 @@
 #include <stddef.h>
 #include <time.h>
 #include <locale.h>
+#include <sys/time.h>
 #ifdef __linux__
 #include <sys/prctl.h>
 #endif
@@ -213,7 +214,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             if (parg >= pend) {
                 const char *errtext = "--nowplaying expects format argument";
                 if (sendback) {
-                    snprintf (sendback, sbsize, "error %s\n", errtext);
+                    snprintf (sendback, sbsize, "\2%s\n", errtext);
                     return 0;
                 }
                 else {
@@ -231,7 +232,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 strcpy (out, "nothing");
             }
             if (sendback) {
-                snprintf (sendback, sbsize, "nowplaying %s", out);
+                snprintf (sendback, sbsize, "\1%s", out);
             }
             else {
                 fwrite (out, 1, strlen (out), stdout);
@@ -244,7 +245,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             if (parg >= pend) {
                 const char *errtext = "--nowplaying-tf expects format argument";
                 if (sendback) {
-                    snprintf (sendback, sbsize, "error %s\n", errtext);
+                    snprintf (sendback, sbsize, "\2%s\n", errtext);
                     return 0;
                 }
                 else {
@@ -270,7 +271,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 pl_item_unref (curr);
             }
             if (sendback) {
-                snprintf (sendback, sbsize, "nowplaying %s", out);
+                snprintf (sendback, sbsize, "\1%s", out);
             }
             else {
                 fwrite (out, 1, strlen (out), stdout);
@@ -347,7 +348,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 }
             }
             if (sendback) {
-                snprintf (sendback, sbsize, "volume %.0f%% (%.2f dB)", deadbeef->volume_get_db() * 2 + 100 , deadbeef->volume_get_db());
+                snprintf (sendback, sbsize, "\1%.0f%% (%.2f dB)", deadbeef->volume_get_db() * 2 + 100 , deadbeef->volume_get_db());
             }
             return 0;
         }
@@ -601,12 +602,19 @@ save_resume_state (void) {
     DB_output_t *output = plug_get_output ();
     float playpos = -1;
     int playtrack = -1;
-    int playlist = streamer_get_current_playlist ();
+    int playlist = -1;
+    playlist_t *plt = pl_get_playlist (trk);
     int paused = (output->state () == OUTPUT_STATE_PAUSED);
-    if (trk && playlist >= 0) {
-        playtrack = str_get_idx_of (trk);
+    if (trk && plt) {
+        playlist = plt_get_idx_of(plt);
+        playtrack = plt_get_item_idx(plt, trk, PL_MAIN);
         playpos = streamer_get_playpos ();
         pl_item_unref (trk);
+    }
+
+    if (plt) {
+        plt_unref (plt);
+        plt = NULL;
     }
 
     conf_set_float ("resume.position", playpos);
@@ -636,7 +644,6 @@ player_mainloop (void) {
                 switch (msg) {
                 case DB_EV_REINIT_SOUND:
                     plug_reinit_sound ();
-                    streamer_reset (1);
                     conf_save ();
                     break;
                 case DB_EV_TERMINATE:
@@ -704,7 +711,7 @@ player_mainloop (void) {
             }
         }
         if (term) {
-            return;
+            break;
         }
         messagepump_wait ();
     }
@@ -752,6 +759,7 @@ restore_resume_state (void) {
         int paused = conf_get_int ("resume.paused", 0);
         trace ("resume: track %d pos %f playlist %d\n", track, pos, plt);
         if (plt >= 0 && track >= 0 && pos >= 0) {
+            plt_set_curr_idx(plt);
             streamer_set_current_playlist (plt);
             streamer_yield ();
             streamer_set_nextsong (track, paused);
@@ -780,6 +788,18 @@ main_cleanup_and_quit (void) {
     DB_output_t *output = plug_get_output ();
     output->stop ();
     streamer_free ();
+
+    // drain main message queue
+    uint32_t msg;
+    uintptr_t ctx;
+    uint32_t p1;
+    uint32_t p2;
+    while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
+        if (msg >= DB_EV_FIRST && ctx) {
+            messagepump_event_free ((ddb_event_t *)ctx);
+        }
+    }
+
     output->free ();
 
     // terminate server and wait for completion
@@ -910,6 +930,10 @@ main (int argc, char *argv[]) {
     }
     bind_textdomain_codeset (PACKAGE, "UTF-8");
     textdomain (PACKAGE);
+#endif
+
+#ifndef VERSION
+#define VERSION "devel"
 #endif
 
     trace ("starting deadbeef " VERSION "%s%s\n", staticlink ? " [static]" : "", portable ? " [portable]" : "");
@@ -1060,11 +1084,11 @@ main (int argc, char *argv[]) {
         }
     }
 
-    trace ("installdir: %s\n", dbinstalldir);
-    trace ("confdir: %s\n", confdir);
-    trace ("docdir: %s\n", dbdocdir);
-    trace ("plugindir: %s\n", dbplugindir);
-    trace ("pixmapdir: %s\n", dbpixmapdir);
+//    trace ("installdir: %s\n", dbinstalldir);
+//    trace ("confdir: %s\n", confdir);
+//    trace ("docdir: %s\n", dbdocdir);
+//    trace ("plugindir: %s\n", dbplugindir);
+//    trace ("pixmapdir: %s\n", dbpixmapdir);
 
     mkdir (dbconfdir, 0755);
 
@@ -1108,14 +1132,12 @@ main (int argc, char *argv[]) {
         }
         else {
             // check if that's nowplaying response
-            const char np[] = "nowplaying ";
-            const char err[] = "error ";
-            if (!strncmp (out, np, sizeof (np)-1)) {
-                const char *prn = &out[sizeof (np)-1];
+            if (*out == '\1') {
+                const char *prn = out + 1;
                 fwrite (prn, 1, strlen (prn), stdout);
             }
-            else if (!strncmp (out, err, sizeof (err)-1)) {
-                const char *prn = &out[sizeof (err)-1];
+            else if (*out == '\2') {
+                const char *prn = out + 1;
                 trace_err ("%s", prn);
             }
             else if (sz > 0 && out[0]) {
@@ -1162,7 +1184,6 @@ main (int argc, char *argv[]) {
         exit (-1);
     }
     pl_load_all ();
-    plt_set_curr_idx (conf_get_int ("playlist.current", 0));
 
     // execute server commands in local context
     int noloadpl = 0;
@@ -1194,6 +1215,7 @@ main (int argc, char *argv[]) {
 
     if (!noloadpl) {
         restore_resume_state ();
+        plt_set_curr_idx (conf_get_int ("playlist.current", 0));
     }
 
     server_tid = thread_start (server_loop, NULL);

@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 #include "aac_parser.h"
 
 #include "mp4ff.h"
@@ -289,8 +290,9 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     aac_info_t *info = (aac_info_t *)_info;
 
     deadbeef->pl_lock ();
-    info->file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    info->file = deadbeef->fopen (uri);
     if (!info->file) {
         return -1;
     }

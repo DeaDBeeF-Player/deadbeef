@@ -161,9 +161,9 @@ main_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, i
 }
 
 static void
-main_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height)
+main_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height, int group_depth)
 {
-    pl_common_draw_group_title (listview, drawable, it, PL_MAIN, x, y, width, height);
+    pl_common_draw_group_title (listview, drawable, it, PL_MAIN, x, y, width, height, group_depth);
 }
 
 static DdbListviewBinding main_binding = {
@@ -211,7 +211,7 @@ void
 main_playlist_init (GtkWidget *widget) {
     // make listview widget and bind it to data
     DdbListview *listview = DDB_LISTVIEW(widget);
-    pl_common_set_group_format (listview, "gtkui.playlist.group_by_tf");
+    pl_common_set_group_format (listview, "gtkui.playlist.group_by_tf", "gtkui.playlist.group_artwork_level", "gtkui.playlist.subgroup_title_padding");
     main_binding.ref = (void (*) (DdbListviewIter))deadbeef->pl_item_ref;
     main_binding.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
     main_binding.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;

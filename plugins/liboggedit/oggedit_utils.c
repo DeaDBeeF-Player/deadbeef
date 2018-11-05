@@ -56,6 +56,7 @@ uint8_t *oggedit_vorbis_channel_map(const unsigned channel_count)
     }
 }
 
+// FIXME: oggedit_map_tag expects key to be writable, and uppercases it in-place, returning the result
 const char *oggedit_map_tag(char *key, const char *in_or_out)
 {
     typedef struct {

@@ -3,7 +3,7 @@ AC_INIT([deadbeef], [devel])
 
 AC_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE([1.11 dist-bzip2 tar-ustar silent-rules subdir-objects])
+AM_INIT_AUTOMAKE([1.11 dist-bzip2 tar-ustar silent-rules subdir-objects no-dependencies])
 AM_SILENT_RULES([yes])
 AM_MAINTAINER_MODE()
 
@@ -228,14 +228,6 @@ AS_IF([test "${enable_gtk3}" = "yes"], [
        PKG_CHECK_MODULES(GTK3_DEPS, gtk+-3.0 >= 3.0 gthread-2.0 glib-2.0 gio-2.0, HAVE_GTK3=yes, HAVE_GTK3=no)
     ])
     AC_PATH_PROG([GLIB_COMPILE_RESOURCES], [glib-compile-resources])
-dnl    AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
-dnl    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
-    if test "$OS_OSX" = "yes"; then
-        PKG_CHECK_MODULES(GTK_MAC, gtk-mac-integration)
-        AC_SUBST(GTK_MAC_LIBS)
-        AC_SUBST(GTK_MAC_CFLAGS)
-    fi
-
     ], [
     HAVE_GTK3=no
 ])
@@ -344,7 +336,7 @@ AS_IF([test "${have_iconv}" = "yes"], [
     AC_DEFINE(HAVE_LIBICONV,1,[Use libiconv instead of glibc iconv])
 ])
 
-AX_CHECK_COMPILER_FLAGS(-msse2, HAVE_SSE2=1, [])
+AX_CHECK_COMPILER_FLAGS(-msse2, HAVE_SSE2=1, [], -Werror)
 AS_IF([test "${HAVE_SSE2}"], [
     AC_DEFINE(HAVE_SSE2,1,[Support SSE2 instructions])
 ])
@@ -352,7 +344,7 @@ AS_IF([test "${HAVE_SSE2}"], [
 dnl curl lib
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_CURL=yes
-    CURL_LIBS="../../$LIB/lib/libcurl.a -lrt"
+    CURL_LIBS="-lpthread -lrt ../../$LIB/lib/libcurl.a ../../$LIB/lib/libz.a"
     CURL_CFLAGS="-I../../$LIB/include"
     AC_SUBST(CURL_LIBS)
     AC_SUBST(CURL_CFLAGS)
@@ -511,10 +503,6 @@ dnl vfs_curl plugin
 AS_IF([test "${enable_vfs_curl}" != "no"], [
     AS_IF([test "${HAVE_CURL}" = "yes"], [
         HAVE_VFS_CURL=yes
-        VFS_CURL_LIBS="$CURL_LIBS"
-        AC_SUBST(VFS_CURL_LIBS)
-        VFS_CURL_CFLAGS="$CURL_CFLAGS"
-        AC_SUBST(VFS_CURL_CFLAGS)
     ])
 ])
 

@@ -109,7 +109,6 @@ static int
 fakein_read (DB_fileinfo_t *_info, char *bytes, int size) {
     fakein_info_t *info = (fakein_info_t *)_info;
 
-// uncomment to simulate slow streamer
     usleep (_sleep);
 
     int samplesize = _info->fmt.bps / 8 * _info->fmt.channels;

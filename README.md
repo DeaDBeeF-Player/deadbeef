@@ -18,10 +18,9 @@ Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy develo
 
 ## Compiling
 
-The following instructions assume that commands are executed in deadbeef repository folder.
-
 ### Linux, BSD and similar (GTK/*NIX version)
 
+* Install git, GCC toolchain, then clone the repo
 * Install autoconf, automake, libtool, intltool, autopoint
 * Run ```./autogen.sh``` to bootstrap
 * Read the generated INSTALL file and ```./configure --help``` for instructions
@@ -29,15 +28,13 @@ The following instructions assume that commands are executed in deadbeef reposit
 
 ### OS X (COCOA version)
 
-* Fetch the dependencies: ```git submodule update --init```
-* Install XCode
-* Install [Yasm](http://rudix.org/packages/yasm.html)
+* Install XCode, and run `sudo xcode-select --install`; This would also get you git etc
+* Clone the deadbeef repo, and fetch the dependencies: ```git submodule update --init```
+* Install [Yasm](https://yasm.tortall.net/Download.html) -- unpack the source, then run `./configure && make -j8 && sudo make install`
 * Run ```xcodebuild -project osx/deadbeef.xcodeproj -target deadbeef -configuration Release```
 * Get the output: ```osx/build/Release/deadbeef.app```
 * OR open the osx/deadbeef.xcodeproj in XCode, and build/run from there
 
 ----
 
-[![Support via Gratipay](https://cdn.rawgit.com/gratipay/gratipay-badge/2.3.0/dist/gratipay.png)](https://gratipay.com/deadbeef/)
-
-[More ways to support](http://deadbeef.sourceforge.net/support.html)
+[Support this project development](http://deadbeef.sourceforge.net/support.html)

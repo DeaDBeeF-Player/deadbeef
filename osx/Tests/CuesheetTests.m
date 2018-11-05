@@ -23,7 +23,6 @@
 
 #import <XCTest/XCTest.h>
 #include "playlist.h"
-#include "logger.h"
 
 @interface Cuesheet : XCTestCase
 
@@ -34,14 +33,9 @@
 - (void)setUp {
     [super setUp];
 
-    ddb_logger_init ();
-    pl_init ();
 }
 
 - (void)tearDown {
-    pl_free ();
-    ddb_logger_free ();
-
     [super tearDown];
 }
 

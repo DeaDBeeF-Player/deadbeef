@@ -229,6 +229,9 @@ send_songfinished (playItem_t *trk) {
 
 static void
 send_trackchanged (playItem_t *from, playItem_t *to) {
+    if (from == to) {
+        return;
+    }
     ddb_event_trackchange_t *event = (ddb_event_trackchange_t *)messagepump_event_alloc (DB_EV_SONGCHANGED);
     event->playtime = playtime;
     event->started_timestamp = started_timestamp;
@@ -487,6 +490,7 @@ get_next_track (playItem_t *curr) {
     }
 
     if (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) { // shuffle
+        playItem_t *it = NULL;
         if (!curr || pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS) {
             // find minimal notplayed
             playItem_t *pmin = NULL; // notplayed minimum
@@ -498,7 +502,7 @@ get_next_track (playItem_t *curr) {
                     pmin = i;
                 }
             }
-            playItem_t *it = pmin;
+            it = pmin;
             if (!it) {
                 // all songs played, reshuffle and try again
                 if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
@@ -509,11 +513,6 @@ get_next_track (playItem_t *curr) {
                 pl_unlock ();
                 return NULL;
             }
-            // plt_reshuffle doesn't add ref
-            pl_item_ref (it);
-
-            pl_unlock ();
-            return it;
         }
         else {
             // find minimal notplayed above current
@@ -527,7 +526,7 @@ get_next_track (playItem_t *curr) {
                     pmin = i;
                 }
             }
-            playItem_t *it = pmin;
+            it = pmin;
             if (!it) {
                 // all songs played, reshuffle and try again
                 if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
@@ -541,11 +540,21 @@ get_next_track (playItem_t *curr) {
                 pl_unlock ();
                 return NULL;
             }
-            // plt_reshuffle doesn't add ref
-            pl_item_ref (it);
-            pl_unlock ();
-            return it;
         }
+        // prevent repeating the same track after reshuffle
+        if (it == curr) {
+            if (it->next[PL_MAIN]) {
+                it = it->next[PL_MAIN];
+            }
+            else if (plt->head[PL_MAIN] && plt->head[PL_MAIN] != it) {
+                it = plt->head[PL_MAIN];
+            }
+        }
+
+        // plt_reshuffle doesn't add ref
+        pl_item_ref (it);
+        pl_unlock ();
+        return it;
     }
     else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
         playItem_t *it = NULL;
@@ -935,6 +944,15 @@ stream_track (playItem_t *it, int startpaused) {
             vfs_fclose (fp);
             fp = NULL;
             streamer_file = NULL;
+            if (!startpaused) {
+                // failed to play the track, ask for the next one
+                streamer_play_failed (it);
+            }
+
+            pl_lock ();
+            trace_err ("Failed to play track: %s\n", pl_find_meta(it, ":URI"));
+            pl_unlock ();
+
             err = -1;
             goto error;
         }
@@ -1339,8 +1357,6 @@ _update_buffering_state () {
 static void
 handle_track_change (playItem_t *track) {
     // next track started
-    update_stop_after_current ();
-
     if (playing_track) {
         send_songfinished (playing_track);
         playpos = 0;
@@ -1412,19 +1428,19 @@ streamer_set_output_format (ddb_waveformat_t *fmt) {
 }
 
 void
-streamer_thread (void *ctx) {
+streamer_thread (void *unused) {
 #if defined(__linux__) && !defined(ANDROID)
     prctl (PR_SET_NAME, "deadbeef-stream", 0, 0, 0, 0);
 #endif
 
+    uint32_t id;
+    uintptr_t ctx;
+    uint32_t p1, p2;
     while (!streaming_terminate) {
         struct timeval tm1;
         DB_output_t *output = plug_get_output ();
         gettimeofday (&tm1, NULL);
 
-        uint32_t id;
-        uintptr_t ctx;
-        uint32_t p1, p2;
         while (!handler_pop (handler, &id, &ctx, &p1, &p2)) {
             switch (id) {
             case STR_EV_PLAY_TRACK_IDX:
@@ -1531,8 +1547,14 @@ streamer_thread (void *ctx) {
                     stop = 1;
                 }
                 else {
-                    if (stop_after_album_check (playing_track, block->track)) {
+                    playItem_t *next = get_next_track(playing_track);
+
+                    if (stop_after_album_check (playing_track, next)) {
                         stop = 1;
+                    }
+
+                    if (next) {
+                        pl_item_unref (next);
                     }
                 }
             }
@@ -1547,6 +1569,9 @@ streamer_thread (void *ctx) {
         }
 
     }
+
+    // drain event queue
+    while (!handler_pop (handler, &id, &ctx, &p1, &p2));
 
     // stop streaming song
     if (fileinfo) {
@@ -1678,8 +1703,11 @@ static int
 process_output_block (streamblock_t *block, char *bytes) {
     DB_output_t *output = plug_get_output ();
 
-    // handle change of track, or start of a new track
-    if (block->last || block->track != playing_track || (playing_track && last_played != playing_track)) {
+    // handle change of track
+    if (block->last) {
+        update_stop_after_current ();
+    }
+    if (block->first) {
         handle_track_change (block->track);
     }
 
@@ -1815,7 +1843,7 @@ streamer_apply_soft_volume (char *bytes, int sz) {
             if (ivolume != 1000) {
                 int third = bytesread/3;
                 for (int i = 0; i < third; i++) {
-                    int32_t sample = ((unsigned char)stream[0]) | ((unsigned char)stream[1]<<8) | (((signed char)stream[2])<<16);
+                    int32_t sample = ((unsigned char)stream[0]) | ((unsigned char)stream[1]<<8) | ((signed char)stream[2]<<16);
                     int32_t newsample = (int32_t)((int64_t)sample * ivolume / 1000);
                     stream[0] = (newsample&0x0000ff);
                     stream[1] = (newsample&0x00ff00)>>8;
@@ -2501,4 +2529,43 @@ streamer_yield (void) {
     while (handler_hasmessages(handler)) {
         usleep(50000);
     }
+}
+
+void
+streamer_set_output (DB_output_t *output) {
+    printf ("streamer_set_output\n");
+    if (mutex) {
+        streamer_lock ();
+    }
+    DB_output_t *prev = plug_get_output ();
+    int state = OUTPUT_STATE_STOPPED;
+
+    ddb_waveformat_t fmt = {0};
+    if (prev) {
+        state = prev->state ();
+        memcpy (&fmt, &prev->fmt, sizeof (ddb_waveformat_t));
+        prev->free ();
+    }
+    plug_set_output (output);
+
+    if (fmt.channels) {
+        output->setformat (&fmt);
+    }
+
+    int res = 0;
+    if (state == OUTPUT_STATE_PLAYING) {
+        res = output->play ();
+    }
+    else if (state == OUTPUT_STATE_PAUSED) {
+        res = output->pause ();
+    }
+
+    if (res < 0) {
+        trace_err ("failed to init sound output\n");
+        streamer_set_nextsong (-1, 0);
+    }
+    if (mutex) {
+        streamer_unlock ();
+    }
+    messagepump_push (DB_EV_OUTPUTCHANGED, 0, 0, 0);
 }

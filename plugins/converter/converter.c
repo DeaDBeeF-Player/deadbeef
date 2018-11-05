@@ -770,7 +770,12 @@ get_output_path_int (DB_playItem_t *it, ddb_playlist_t *plt, const char *outfold
         snprintf (out+l, sz-l, "%s.%s", fname, encoder_preset->ext);
     }
     else {
-        snprintf (out+l, sz-l, "%s", fname);
+        // get original file ext
+        const char *ext = strrchr (uri, '.');
+        if (!ext) {
+            ext = "";
+        }
+        snprintf (out+l, sz-l, "%s%s", fname, ext);
     }
     //trace ("converter output file is '%s'\n", out);
 }
