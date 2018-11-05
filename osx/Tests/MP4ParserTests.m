@@ -26,33 +26,9 @@
     NSString *resPath = [[NSBundle bundleForClass:[self class]] resourcePath];
     const char *str = [resPath UTF8String];
     strcpy (dbplugindir, str);
-
-#if 0
-    NSString *resPath = [[NSBundle bundleForClass:[self class]] resourcePath];
-    const char *str = [resPath UTF8String];
-    strcpy (dbplugindir, str);
-
-    ddb_logger_init ();
-    conf_init ();
-    conf_enable_saving (0);
-
-    pl_init ();
-    if (plug_load_all ()) { // required to add files to playlist from commandline
-        exit (-1);
-    }
-#endif
-    pl_init ();
 }
 
 - (void)tearDown {
-#if 0
-    plug_disconnect_all ();
-    plug_unload_all ();
-    pl_free ();
-    conf_free ();
-    ddb_logger_free ();
-#endif
-    pl_free ();
     [super tearDown];
 }
 
