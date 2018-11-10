@@ -721,7 +721,7 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
     cue.cue_file_dir = cue_file_dir;
 
     cue_file_dir[0] = 0;
-    const char *slash = strrchr (fname, DIR_SEPARATOR);
+    const char *slash = strrchr (fname, '/');
 
     if (slash && slash > fname) {
         strncat (cue_file_dir, fname, slash - fname);

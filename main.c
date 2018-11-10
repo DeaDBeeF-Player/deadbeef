@@ -989,7 +989,7 @@ main (int argc, char *argv[]) {
     if (!realpath (argv[0], dbinstalldir)) {
         strcpy (dbinstalldir, argv[0]);
     }
-    char *e = strrchr (dbinstalldir, DIR_SEPARATOR);
+    char *e = strrchr (dbinstalldir, '/');
     if (e) {
         *e = 0;
     }

@@ -38,14 +38,12 @@
 
 // specific directories
 #ifdef __MINGW32__
-#define DIR_SEPARATOR '\\'
 #define HOMEDIR "USERPROFILE"
 #define LOCALDIR "XDG_LOCAL_HOME"
 #define CONFIGDIR "APPDATA"
 #define CACHEDIR "LOCALAPPDATA"
 #define RUNTIMEDIR "NORUNTIMEDIR"
 #else
-#define DIR_SEPARATOR '/'
 #define HOMEDIR "HOME"
 #define LOCALDIR "XDG_LOCAL_HOME"
 #define CONFIGDIR "XDG_CONFIG_HOME"
