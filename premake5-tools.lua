@@ -165,6 +165,7 @@ function option (name, ...)
    		end
    	else
    		-- disabled
+        options_dic[name] = "no"
    		return nil
 	end
 	--print ("a = "..a)

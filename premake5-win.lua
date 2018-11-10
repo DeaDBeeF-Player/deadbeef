@@ -15,6 +15,19 @@ if nls() then
   defines {"PACKAGE=\"deadbeef\""}
 end
 
+newoption {
+  trigger = "standard",
+  description = "compile deadbeef with standard set of plugins for windows",
+}
+if _OPTIONS["standard"] ~= nil then
+  _OPTIONS["plugin-artwork"] = "disabled"
+  _OPTIONS["plugin-converter"] = "disabled"
+  _OPTIONS["plugin-converter_gtk2"] = "disabled"
+  _OPTIONS["plugin-converter_gtk3"] = "disabled"
+  _OPTIONS["plugin-ffmpeg"] = "disabled"
+  _OPTIONS["plugin-wildmidi"] = "disabled"
+end
+
 defines {"HAVE_ICONV"}
 
 filter "configurations:debug or debug32"
@@ -582,6 +595,32 @@ project "converter_gtk2"
    }
 
    pkgconfig ("gtk+-2.0")
+   -- links { "gtk-x11-2.0", "pango-1.0", "cairo", "gdk-x11-2.0", "gdk_pixbuf-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
+
+   filter "configurations:debug32 or release32"
+       includedirs { "static-deps/lib-x86-32/gtk-2.16.0/include/**", "static-deps/lib-x86-32/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
+       libdirs { "static-deps/lib-x86-32/gtk-2.16.0/lib", "static-deps/lib-x86-32/gtk-2.16.0/lib/**" }
+
+   filter "configurations:release or debug"
+       includedirs { "static-deps/lib-x86-64/gtk-2.16.0/include/**", "static-deps/lib-x86-64/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
+       libdirs { "static-deps/lib-x86-64/gtk-2.16.0/lib", "static-deps/lib-x86-64/gtk-2.16.0/lib/**" }
+end
+
+if option ("plugin-converter_gtk3", "gtk+-3.0") then
+project "converter_gtk3"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/converter/convgui.c",
+       "plugins/converter/callbacks.c",
+       "plugins/converter/interface.c",
+       "plugins/converter/support.c",
+   }
+
+   pkgconfig ("gtk+-3.0")
    -- links { "gtk-x11-2.0", "pango-1.0", "cairo", "gdk-x11-2.0", "gdk_pixbuf-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
 
    filter "configurations:debug32 or release32"
