@@ -1,4 +1,5 @@
 #include <string.h>
+#include <shlwapi.h>
 
 // backend selection (only one, first recommended)
 #define WIN_CHARSET_CONV_WIN
@@ -58,9 +59,8 @@ win_charset_conv (const void *in, int inlen, void *out, int outlen, const char *
 }
 #endif
 
-
 // path_short converts path to DOS path (8.3 naming, ASCII)
-int path_short(char * path_in, char * path_out, int len) {
+int path_short(const char * path_in, char * path_out, int len) {
     // ensure correct slashes
     char in_c[strlen(path_in)+1];
     strcpy (in_c, path_in);
@@ -80,20 +80,95 @@ int path_short(char * path_in, char * path_out, int len) {
     return iconv2_ret;
 }
 
-char argv0[PATH_MAX];
+unsigned char path_long_last_path_exists;
 
-// returns true, ASCII encoded, executable location
-char *argv0_windows (char * argv[]) {
-    wchar_t argv_win[PATH_MAX];
-    GetModuleFileNameW(NULL,argv_win,PATH_MAX);
-    int argv_win_len = wcslen(argv_win);
+// path_long converts ...
+int path_long(const char * path_in, char * path_out, int len) {
+    // ensure correct slashes
+    char in_c[strlen(path_in)+1];
+    strcpy (in_c, path_in);
+    {
+        char * slash = in_c;
+        while (slash = strchr(slash, '/'))
+            *slash = '\\';
+    }
+    // convert to wchar_t
+    wchar_t in_w[strlen(in_c) * 2 + 1];
+    int iconv_ret = win_charset_conv (in_c, strlen(in_c) + 1, (char *) in_w, strlen(in_c) * 2 + 1, "UTF-8", "WCHAR_T");
+    // convert path to longpath
+    wchar_t out_w[PATH_MAX/*strlen(in_c)*/];
+    int win_ret = GetLongPathNameW (in_w, out_w, 256);
+
+    // convert to absolute path
+    wchar_t abs_path_w[PATH_MAX*2];
+    _wfullpath(abs_path_w, out_w, PATH_MAX*2);
 
 
-    int ret = win_charset_conv ((char *) argv_win, (wcslen(argv_win)+1)*2, argv0, PATH_MAX, "WCHAR_T", "UTF-8");
-    if (ret == -1) {
-        return argv[0];
+    // convert to UTF-8 :D
+    int iconv2_ret = win_charset_conv ((char *) abs_path_w, wcslen(abs_path_w)*2 + 2, (char *) path_out, len, "WCHAR_T", "UTF-8");
+
+    // check if file exists in reality
+    if (!PathFileExistsW(abs_path_w)) {
+        path_long_last_path_exists = 0;
+    }
+    else {
+        path_long_last_path_exists = 1;
+    }
+    return iconv2_ret;
+}
+
+unsigned char first_call = 1;
+
+// realpath windows implementation
+char *realpath (const char *path, char *resolved_path) {
+    char *out_p;
+
+    // documentation states that we have to alloc memory if resolved_path is NULL
+    if (!resolved_path) {
+        out_p = malloc (PATH_MAX);
+    }
+    else {
+        out_p = resolved_path;
+    }
+    if (!out_p)
+        return NULL;
+
+    int ret;
+    // This function is called first in main() to get main dir path.
+    // To ensure that plugins will load sucessfully, we need to return DOS path (as it is ASCII-only)
+    if (first_call) {
+        // load file path
+        wchar_t argv_win[PATH_MAX];
+        GetModuleFileNameW(NULL,argv_win,PATH_MAX);
+        int argv_win_len = wcslen(argv_win);
+        // convert to utf8
+        ret = win_charset_conv ((char *) argv_win, (wcslen(argv_win)+1)*2, out_p, PATH_MAX, "WCHAR_T", "UTF-8");
+        // convert to DOS path
+        path_short (out_p, out_p, PATH_MAX);
+        first_call = 0;
+        path_long_last_path_exists = 1;
+    }
+    else {
+        // use path_long which will use GetLongPathName to resolve path
+        ret = path_long (path, out_p, PATH_MAX);
     }
 
-    path_short (argv0, argv0, argv_win_len*2+2);
-    return argv0;
-}
+    // fail if getting resolved path fails or if the path does not exist
+    if (ret <= 0 || path_long_last_path_exists == 0) {
+        // free if we allocated memory
+        if (!resolved_path) {
+            free (out_p);
+        }
+        return NULL;
+    }
+
+    // replace backslashes with normal slashes
+    {
+        char *slash_p = out_p;
+        while (slash_p = strchr(slash_p, '\\')) {
+            *slash_p = '/';
+        }
+    }
+    return out_p;
+ }
+ 

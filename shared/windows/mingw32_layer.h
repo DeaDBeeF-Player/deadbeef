@@ -17,7 +17,6 @@
 
 // Most of these values come from Elio's port, these values should be checked if they are still needed
 
-#define realpath(X,Y) _fullpath(Y,X,PATH_MAX)
 #undef  EWOULDBLOCK
 #define EWOULDBLOCK   EAGAIN
 #define SHUT_WR       1
@@ -113,8 +112,9 @@ char *strcasestr(const char *, const char *);
 int win_charset_conv (const void *in, int inlen, void *out, int outlen, const char *cs_in, const char *cs_out);
 
 // convert path to DOS path (8.3 naming, ASCII)
-int path_short(char * path_in, char * path_out, int len);
+int path_short(const char * path_in, char * path_out, int len);
 
-// TODO description
-char * argv0_windows (char * argv[]);
+// realpath implementation
+char *realpath (const char *path, char *resolved_path);
+
 #endif

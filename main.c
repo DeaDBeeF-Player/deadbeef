@@ -982,10 +982,6 @@ main (int argc, char *argv[]) {
     portable_full = 1;
 #endif
 
-    #ifdef __MINGW32__
-    // overwrite argv[0] with correctly encoded path
-    argv[0] = argv0_windows (argv);
-    #endif
     if (!realpath (argv[0], dbinstalldir)) {
         strcpy (dbinstalldir, argv[0]);
     }
