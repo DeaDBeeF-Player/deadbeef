@@ -959,12 +959,21 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
     }
     eol++;
 
-    // WINDOWS FIX: gtkui will call this function with file path starting with '/' (possibly indicating 'root' directory)
-    // example: "file:///E:/test.flac" -> "/E:/test.flac"
-    // in comparsion to linux systems, decoders on windows don't like this string starting with '/'
-    // we remove it here and hopefully we do not break anything
     #ifdef __MINGW32__
-    if (fname[0] == '/') {
+    // replace backslashes with normal slashes
+    char fname_conv[strlen(fname)+1];
+    if (strchr(fname, '\\')) {
+        trace ("plt_insert_file_int: backslash(es) detected: %s\n", fname);
+        strcpy (fname_conv, fname);
+        char *slash_p = fname_conv;
+        while (slash_p = strchr(slash_p, '\\')) {
+            *slash_p = '/';
+            slash_p++;
+        }
+        fname = fname_conv;
+    }
+    // path should start with "X:/", not "/X:/" to avoid file opening problems
+    if (fname[0] == '/' && isalpha(fname[1]) && fname[2] == ':') {
         fname++;
     }
     #endif
@@ -1120,6 +1129,25 @@ _get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *v
             }
         }
     }
+
+    #ifdef __MINGW32__
+    if (fullname && strchr(fullname, '\\')) {
+        char *slash_p = fullname;
+        while (slash_p = strchr(slash_p, '\\')) {
+            *slash_p = '/';
+            slash_p++;
+        }
+        trace ("_get_fullname_and_dir backslash(es) found, converted: %s\n", fullname);
+    }
+    if (dir && strchr(dir, '\\')) {
+        char *slash_p = dir;
+        while (slash_p = strchr(slash_p, '\\')) {
+            *slash_p = '/';
+            slash_p++;
+        }
+        trace ("_get_fullname_and_dir backslash(es) found, converted: %s\n", dir);
+    }
+    #endif
 }
 
 static playItem_t *
@@ -1128,12 +1156,21 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         dirname += 7;
     }
 
-    // WINDOWS FIX: gtkui will call this function with file path starting with '/' (possibly indicating 'root' directory)
-    // example: "file:///E:/test.flac" -> "/E:/test.flac"
-    // in comparsion to linux systems, decoders on windows don't like this string starting with '/'
-    // we remove it here and hopefully we do not break anything
     #ifdef __MINGW32__
-    if (dirname[0] == '/') {
+    // replace backslashes with normal slashes
+    char dirname_conv[strlen(dirname)+1];
+    if (strchr(dirname, '\\')) {
+        trace ("plt_insert_dir_int: backslash(es) detected: %s\n", dirname);
+        strcpy (dirname_conv, dirname);
+        char *slash_p = dirname_conv;
+        while (slash_p = strchr(slash_p, '\\')) {
+            *slash_p = '/';
+            slash_p++;
+        }
+        dirname = dirname_conv;
+    }
+    // path should start with "X:/", not "/X:/" to avoid file opening problems
+    if (dirname[0] == '/' && isalpha(dirname[1]) && dirname[2] == ':') {
         dirname++;
     }
     #endif
