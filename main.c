@@ -87,10 +87,6 @@
 #include "tf.h"
 #include "logger.h"
 
-//#ifdef __MINGW32__
-//#include <shlwapi.h>
-//#endif
-
 #ifndef PREFIX
 #error PREFIX must be defined
 #endif
@@ -176,13 +172,7 @@ prepare_command_line (int argc, char *argv[], int *size) {
         // if argument is a filename, try to resolve it
         char resolved[PATH_MAX];
         char *arg;
-        //#ifdef __MINGW32__
-        // Not sure what this fixes, seems fine without
-        //realpath (argv[i], resolved);
-        //if ((!strncmp ("--", argv[i], 2) && !seen_ddash) || !PathFileExists(resolved) ) {
-        //#else
         if ((!strncmp ("--", argv[i], 2) && !seen_ddash) || !realpath (argv[i], resolved)) {
-        //#endif
             arg = argv[i];
         }
         else {
