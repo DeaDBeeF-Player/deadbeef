@@ -82,7 +82,7 @@ int path_short(const char * path_in, char * path_out, int len) {
 
 unsigned char path_long_last_path_exists;
 
-// path_long converts ...
+// path_long expands given path
 int path_long(const char * path_in, char * path_out, int len) {
     // ensure correct slashes
     char in_c[strlen(path_in)+1];
