@@ -43,7 +43,7 @@
 #define CONFIGDIR "APPDATA"
 #define CACHEDIR "LOCALAPPDATA"
 #define RUNTIMEDIR "NORUNTIMEDIR"
-// used in plugins.c
+// used in plugins.c (%s is home directory, %d is arch bit number)
 #define LOCAL_PLUGINS_DIR "%s/AppData/Roaming/deadbeef/plugins"
 #define LOCAL_ARCH_PLUGINS_DIR "%s/AppData/Roaming/deadbeef/plugins%d"
 #else
@@ -52,7 +52,7 @@
 #define CONFIGDIR "XDG_CONFIG_HOME"
 #define CACHEDIR "XDG_CACHE_HOME"
 #define RUNTIMEDIR "XDG_RUNTIME_DIR"
-// used in plugins.c
+// used in plugins.c (%s is home directory, %d is arch bit number)
 #define LOCAL_PLUGINS_DIR "%s/.local/lib/deadbeef"
 #define LOCAL_ARCH_PLUGINS_DIR "%s/.local/lib%d/deadbeef"
 #endif

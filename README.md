@@ -47,10 +47,10 @@ Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy develo
 	```mingw-w64-x86_64-libsamplerate mingw-w64-x86_64-curl mingw-w64-x86_64-faad2 mingw-w64-x86_64-ffmpeg mingw-w64-x86_64-opusfile-0.8-1```
 * Ensure that you are in mingw64 shell (run mingw64.exe)
 * Run ```./autogen.sh``` to bootstrap
-* From deadbeef main directory run ```premake5.exe --file=premake5-win.lua --os=linux gmake``` using your corresponding path to ```premake5.exe```
+* From deadbeef main directory run ```premake5.exe --file=premake5-win.lua --os=linux gmake --standard``` using your corresponding path to ```premake5.exe```
 * Compile with ```make config=debug_windows``` (debug version) or ```make config=release_windows``` (strip/normal version)
 * Binaries will be placed in ```bin/debug``` or ```bin/release```
-* GTK3 uses [Windows-10](https://github.com/B00merang-Project/Windows-10) theme and [Windows-10-Icons](https://github.com/B00merang-Artwork/Windows-10) by default. If they are not in msys2 tree, then they must be placed manually in ```share/icons``` and ```share/themes```. Eventually you can change theme by editing ```etc/gtk-3.0/settings.ini``` file.
+* GTK3 uses [Windows-10](https://github.com/B00merang-Project/Windows-10) theme and [Windows-10-Icons](https://github.com/B00merang-Artwork/Windows-10) by default. If they are not in msys2 tree, then they must be placed manually in ```share/icons``` and ```share/themes```. Eventually you get different theme and set it in ```etc/gtk-3.0/settings.ini``` file.
 
 ----
 
