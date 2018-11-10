@@ -1,7 +1,7 @@
 workspace "deadbeef"
    configurations { "debug", "release", "debug32", "release32" }
-   platforms { "Linux", "Windows" }
-   defaultplatform "Linux"
+   platforms { "Windows" }
+   defaultplatform "Windows"
 defines {
     "VERSION=\"devel\"",
     "_GNU_SOURCE",
@@ -48,7 +48,6 @@ filter "system:Windows"
   links { "ws2_32", "psapi", "shlwapi", "iconv", "libwin", "dl"}
 
 project "libwin"
-   removeplatforms { "Linux" }
    kind "StaticLib"
    language "C"
    targetdir "bin/%{cfg.buildcfg}/"
@@ -294,22 +293,6 @@ project "hotkeys"
        links { "X11" }
 end
 
-if option ("plugin-alsa", "alsa") then
-project "alsa"
-   removeplatforms { "Windows" }
-   kind "SharedLib"
-   language "C"
-   targetdir "bin/%{cfg.buildcfg}/plugins"
-   targetprefix ""
-
-   files {
-       "plugins/alsa/*.h",
-       "plugins/alsa/*.c",
-   }
-
-   links { "asound" }
-end
-
 if option ("plugin-dsp_libsrc", "samplerate") then
 project "dsp_libsrc"
    kind "SharedLib"
@@ -322,22 +305,6 @@ project "dsp_libsrc"
    }
 
    links { "samplerate" }
-end
-
-if option ("plugin-pulse", "libpulse-simple") then
-project "pulse"
-   removeplatforms { "Windows" }
-   kind "SharedLib"
-   language "C"
-   targetdir "bin/%{cfg.buildcfg}/plugins"
-   targetprefix ""
-
-   files {
-       "plugins/pulse/*.h",
-       "plugins/pulse/*.c",
-   }
-
-   links { "pulse-simple" }
 end
 
 if option ("plugin-portaudio", "portaudio-2.0") then
