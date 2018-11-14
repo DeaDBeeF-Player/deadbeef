@@ -785,8 +785,8 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
             // If FILE is immediately followed by TRACK, that next TRACK is from the new FILE
             if (field == CUE_FIELD_TRACK
                 && _is_audio_track(cue.cuefields[CUE_FIELD_TRACK])) {
-                if (plt_process_cue_track (plt, &cue)) {
-                    break;
+                if (plt_process_cue_track (plt, &cue) < 0) {
+                    goto error;
                 }
             }
             if (cue.prev) {
@@ -824,7 +824,9 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
         else if (field == CUE_FIELD_TRACK) {
             if (cue.origin && cue.have_track) {
                 if (_is_audio_track(cue.cuefields[CUE_FIELD_TRACK])) {
-                    plt_process_cue_track (plt, &cue);
+                    if (plt_process_cue_track (plt, &cue) < 0) {
+                        goto error;
+                    }
                 }
                 else if (cue.prev && cue.last_round) {
                     // set duration for last item
