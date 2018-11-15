@@ -1308,7 +1308,7 @@ groups_changed (DdbListview *listview, const char *format)
         free (fmt->format);
         free (fmt->bytecode);
         free (fmt);
-        fmt = fmt->next;
+        fmt = next_fmt;
     }
     listview->group_formats = NULL;
     char *esc_format = parser_escape_string (format);
