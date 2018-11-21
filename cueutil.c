@@ -674,6 +674,9 @@ plt_process_cue_track (playlist_t *plt, cueparser_t *cue) {
     if (cue->prev) {
         // knowing the startsample of the current track,
         // now it's possible to calculate startsample and duration of the previous one.
+        if (cue->currsample >= cue->numsamples) {
+            return -1;
+        }
         pl_item_set_endsample (cue->prev, cue->currsample - 1);
         plt_set_item_duration (plt, cue->prev, (float)(cue->currsample - pl_item_get_startsample (cue->prev)) / cue->samplerate);
     }
@@ -686,14 +689,11 @@ plt_process_cue_track (playlist_t *plt, cueparser_t *cue) {
 
     pl_cue_set_track_field_values(it, cue);
 
-    int64_t startsample_it = pl_item_get_startsample (it);
-    int64_t startsample_org = pl_item_get_startsample (cue->origin);
-    int64_t endsample_it = pl_item_get_endsample (it);
-    if ((startsample_it-startsample_org) >= cue->numsamples || (endsample_it-startsample_org) >= cue->numsamples) {
-        return -1;
-    }
     if (cue->last_round) {
-        _set_last_item_region (plt, it, cue->origin, cue->numsamples, cue->samplerate);
+        int res = _set_last_item_region (plt, it, cue->origin, cue->numsamples, cue->samplerate);
+        if (res < 0) {
+            return res;
+        }
     }
     cue->cuetracks[cue->ntracks++] = it;
 
@@ -708,6 +708,7 @@ _is_audio_track (const char *track) {
 
 playItem_t *
 plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *fname, playItem_t *embedded_origin, int64_t embedded_numsamples, int embedded_samplerate, const uint8_t *buffer, int sz, const char *dirname, struct dirent **namelist, int n) {
+    playItem_t *result = NULL;
     cueparser_t cue;
     memset (&cue, 0, sizeof (cue));
 
@@ -858,6 +859,8 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
         after = NULL;
     }
 
+    result = after;
+
 error:
     for (int i = 0; i < cue.ntracks; i++) {
         pl_item_unref (cue.cuetracks[i]);
@@ -865,6 +868,6 @@ error:
     if (cue.temp_plt) {
         plt_free (cue.temp_plt);
     }
-    return after;
+    return result;
 }
 

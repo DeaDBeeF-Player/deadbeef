@@ -23,6 +23,7 @@
 
 #import <XCTest/XCTest.h>
 #include "playlist.h"
+#include "../../common.h"
 
 @interface Cuesheet : XCTestCase
 
@@ -58,6 +59,21 @@
     int cnt = plt_get_item_count(plt, PL_MAIN);
 
     XCTAssert(cnt == 3, @"The actual output is: %d", cnt);
+
+    plt_free (plt);
+}
+
+- (void)test_BogusEmbeddedImageCueInSingleTrack_ReturnsSingleTrackWithCorrectMeta {
+    playlist_t *plt = plt_alloc("test");
+
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/bogus_emb_cue.mp3", dbplugindir);
+
+    playItem_t *it = plt_insert_file2(0, plt, NULL, path, NULL, NULL, NULL);
+
+    XCTAssertEqual(plt_get_item_count(plt, PL_MAIN), 1);
+    XCTAssertEqual(strcmp (pl_find_meta (it, "title"), "TrackTitle2"), 0);
+    XCTAssertEqual(strcmp (pl_find_meta (it, "track"), "2"), 0);
 
     plt_free (plt);
 }
