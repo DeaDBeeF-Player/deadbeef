@@ -444,6 +444,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (void)writeMetaWorker {
+    NSMutableSet *fileset = [[NSMutableSet alloc] init];
     for (int t = 0; t < _numtracks; t++) {
         if (_progress_aborted) {
             break;
@@ -456,19 +457,20 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
             strncpy (decoder_id, dec, sizeof (decoder_id));
         }
         int match = track && dec;
+        NSString *uri = [NSString stringWithUTF8String:deadbeef->pl_find_meta (track, ":URI")];
         deadbeef->pl_unlock ();
         if (match) {
             int is_subtrack = deadbeef->pl_get_item_flags (track) & DDB_IS_SUBTRACK;
             if (is_subtrack) {
-                continue;
+                if ([fileset containsObject:uri]) {
+                    continue;
+                }
+                [fileset addObject:uri];
             }
             // update progress
             deadbeef->pl_item_ref (track);
             dispatch_async(dispatch_get_main_queue(), ^{
-                deadbeef->pl_lock ();
-                NSString *path = [NSString stringWithUTF8String:deadbeef->pl_find_meta_raw (track, ":URI")];
-                deadbeef->pl_unlock ();
-                [_currentTrackPath setStringValue:path];
+                [_currentTrackPath setStringValue:uri];
                 deadbeef->pl_item_unref (track);
             });
             // find decoder
