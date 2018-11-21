@@ -2289,6 +2289,28 @@ play_next (int dir) {
 
     playItem_t *next = dir > 0 ? get_next_track(origin) : get_prev_track(origin);
 
+    // possibly need a reshuffle
+    if (!next && streamer_playlist->count[PL_MAIN] != 0) {
+        int pl_loop_mode = conf_get_int ("playback.loop", 0);
+
+        if (pl_loop_mode == PLAYBACK_MODE_NOLOOP) {
+            plt_reshuffle (streamer_playlist, dir > 0 ? &next : NULL, dir < 0 ? &next : NULL);
+            if (next && dir < 0) {
+                // mark all songs as played except the current one
+                playItem_t *it = streamer_playlist->head[PL_MAIN];
+                while (it) {
+                    if (it != next) {
+                        it->played = 1;
+                    }
+                    it = it->next[PL_MAIN];
+                }
+            }
+            if (next) {
+                pl_item_ref (next);
+            }
+        }
+    }
+
     if (!next) {
         output->stop ();
         _handle_playback_stopped ();
