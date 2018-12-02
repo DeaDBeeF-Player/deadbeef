@@ -1195,6 +1195,25 @@ scan_local_path (char *mask, const char *cache_path, const char *local_path, con
     return -1;
 }
 
+static void
+extract_relative_path_from_mask (const char *mask, const char *local_path, char *trimmed_mask, char *full_local_path)
+{
+    strcpy (trimmed_mask, mask);
+    strcpy (full_local_path, local_path);
+
+    if (!mask[0] || mask[0] == '/' || mask[strlen (mask)-1] == '/')
+        return;
+
+    const char *end_of_path_in_mask = strrchr (mask, '/');
+    if (end_of_path_in_mask == NULL)
+        return;
+
+    if (full_local_path[strlen (full_local_path)-1] != '/')
+        strcat (full_local_path, "/");
+    strncat (full_local_path, mask, (size_t)(end_of_path_in_mask - mask));
+    strcpy (trimmed_mask, end_of_path_in_mask+1);
+}
+
 static int
 local_image_file (const char *cache_path, const char *local_path, const char *uri, DB_vfs_t *vfsplug)
 {
@@ -1212,7 +1231,25 @@ local_image_file (const char *cache_path, const char *local_path, const char *ur
     }
 
     for (char *mask = filemask; mask < filemask_end; mask += strlen (mask)+1) {
-        if (mask[0] && !scan_local_path (mask, cache_path, local_path, uri, vfsplug)) {
+        if (!mask[0])
+            continue;
+
+        int is_found = 0;
+        if (strrchr (mask, '/')) {
+            char *trimmed_mask = (char *)malloc (strlen (mask) + 1);
+            char *full_local_path = (char *)malloc (strlen (local_path) + strlen (mask) + 1);
+
+            extract_relative_path_from_mask (mask, local_path, trimmed_mask, full_local_path);
+            is_found = !scan_local_path (trimmed_mask, cache_path, full_local_path, uri, vfsplug);
+
+            free (trimmed_mask);
+            free (full_local_path);
+        }
+        else {
+            is_found = !scan_local_path (mask, cache_path, local_path, uri, vfsplug);
+        }
+
+        if (is_found) {
             return 0;
         }
     }
