@@ -1214,10 +1214,10 @@ cflac_write_metadata (DB_playItem_t *it) {
     }
 
     static const char *tag_rg_names[] = {
-        "replaygain_album_gain",
-        "replaygain_album_peak",
-        "replaygain_track_gain",
-        "replaygain_track_peak",
+        "REPLAYGAIN_ALBUM_GAIN",
+        "REPLAYGAIN_ALBUM_PEAK",
+        "REPLAYGAIN_TRACK_GAIN",
+        "REPLAYGAIN_TRACK_PEAK",
         NULL
     };
 
@@ -1235,7 +1235,17 @@ cflac_write_metadata (DB_playItem_t *it) {
         if (deadbeef->pl_find_meta (it, ddb_internal_rg_keys[n])) {
             float value = deadbeef->pl_get_item_replaygain (it, n);
             char s[100];
-            snprintf (s, sizeof (s), "%s=%f", tag_rg_names[n], value);
+            // https://wiki.hydrogenaud.io/index.php?title=ReplayGain_2.0_specification#Metadata_format
+            switch (n) {
+            case DDB_REPLAYGAIN_ALBUMGAIN:
+            case DDB_REPLAYGAIN_TRACKGAIN:
+                snprintf (s, sizeof (s), "%s=%.2f dB", tag_rg_names[n], value);
+                break;
+            case DDB_REPLAYGAIN_ALBUMPEAK:
+            case DDB_REPLAYGAIN_TRACKPEAK:
+                snprintf (s, sizeof (s), "%s=%.6f", tag_rg_names[n], value);
+                break;
+            }
             FLAC__StreamMetadata_VorbisComment_Entry ent = {
                 .length = (FLAC__uint32)strlen (s),
                 .entry = (FLAC__byte*)s
