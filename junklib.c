@@ -149,10 +149,10 @@ static const char *frame_mapping[] = {
 
 // replaygain key names in both id3v2.3+ TXX and APEv2
 static const char *tag_rg_names[] = {
-    "replaygain_album_gain",
-    "replaygain_album_peak",
-    "replaygain_track_gain",
-    "replaygain_track_peak",
+    "REPLAYGAIN_ALBUM_GAIN",
+    "REPLAYGAIN_ALBUM_PEAK",
+    "REPLAYGAIN_TRACK_GAIN",
+    "REPLAYGAIN_TRACK_PEAK",
     NULL
 };
 
@@ -4778,7 +4778,17 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             if (pl_find_meta (it, ddb_internal_rg_keys[n])) {
                 float value = pl_get_item_replaygain (it, n);
                 char s[100];
-                snprintf (s, sizeof (s), "%f", value);
+                // https://wiki.hydrogenaud.io/index.php?title=ReplayGain_2.0_specification#Metadata_format
+                switch (n) {
+                case DDB_REPLAYGAIN_ALBUMGAIN:
+                case DDB_REPLAYGAIN_TRACKGAIN:
+                    snprintf (s, sizeof (s), "%.2f dB", value);
+                    break;
+                case DDB_REPLAYGAIN_ALBUMPEAK:
+                case DDB_REPLAYGAIN_TRACKPEAK:
+                    snprintf (s, sizeof (s), "%.6f", value);
+                    break;
+                }
                 junk_id3v2_add_txxx_frame (&id3v2, tag_rg_names[n], s, strlen (s));
             }
         }
@@ -4913,7 +4923,17 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             if (pl_find_meta (it, ddb_internal_rg_keys[0])) {
                 float value = pl_get_item_replaygain (it, n);
                 char s[100];
-                snprintf (s, sizeof (s), "%f", value);
+                // https://wiki.hydrogenaud.io/index.php?title=ReplayGain_2.0_specification#Metadata_format
+                switch (n) {
+                case DDB_REPLAYGAIN_ALBUMGAIN:
+                case DDB_REPLAYGAIN_TRACKGAIN:
+                    snprintf (s, sizeof (s), "%.2f dB", value);
+                    break;
+                case DDB_REPLAYGAIN_ALBUMPEAK:
+                case DDB_REPLAYGAIN_TRACKPEAK:
+                    snprintf (s, sizeof (s), "%.6f", value);
+                    break;
+                }
                 junk_apev2_add_text_frame (&apev2, tag_rg_names[n], s);
             }
         }
