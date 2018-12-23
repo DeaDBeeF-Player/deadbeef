@@ -100,6 +100,7 @@ typedef struct {
     int64_t numsamples;
     int samplerate;
     playItem_t *origin; // current unsplit track, loaded from last FILE
+    int first_track; // set to 1 immediately after loading a FILE, reset to 0 after processing first track
     const char *dec; // decoder of the origin
     const char *filetype; // filetype of the origin
     playItem_t *prev; // previous added track
@@ -649,14 +650,8 @@ _load_nextfile (cueparser_t *cue) {
             }
         }
     }
+    cue->first_track = 1;
 
-    // copy metadata from embedded tags
-    uint32_t f = pl_get_item_flags (cue->origin);
-    f |= DDB_TAG_CUESHEET | DDB_IS_SUBTRACK;
-    if (cue->embedded_origin) {
-        f |= DDB_HAS_EMBEDDED_CUESHEET;
-    }
-    pl_set_item_flags (cue->origin, f);
     return 0;
 }
 
@@ -695,6 +690,20 @@ plt_process_cue_track (playlist_t *plt, cueparser_t *cue) {
             return res;
         }
     }
+
+    uint32_t f = pl_get_item_flags (cue->origin);
+    f |= DDB_TAG_CUESHEET;
+    if (!cue->first_track) {
+        // First track in a FILE is not a subtrack, but subsequent tracks are.
+        // That's necessary to be able to write tags to tracks+cue albums.
+        f |= DDB_IS_SUBTRACK;
+    }
+    cue->first_track = 0;
+    if (cue->embedded_origin) {
+        f |= DDB_HAS_EMBEDDED_CUESHEET;
+    }
+    pl_set_item_flags (it, f);
+
     cue->cuetracks[cue->ntracks++] = it;
 
     cue->prev = it;
