@@ -1004,7 +1004,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
                             d.plt = (ddb_playlist_t *)playlist;
                             d.track = (ddb_playItem_t *)inserted;
                             for (ddb_fileadd_listener_t *l = file_add_listeners; l; l = l->next) {
-                                if (l->callback (&d, l->user_data) < 0) {
+                                if (pabort && l->callback (&d, l->user_data) < 0) {
                                     *pabort = 1;
                                     break;
                                 }
