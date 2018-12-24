@@ -433,6 +433,11 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 goto error;
             }
 
+            // prevent misdetected garbage packets to be used as ref_packet
+            if (info->npackets == 1) {
+                info->npackets = 0;
+            }
+
             // bad packet in the stream, try to resync
             memset (&info->prev_packet, 0, sizeof (mp3packet_t));
             info->packet_offs = -1;
