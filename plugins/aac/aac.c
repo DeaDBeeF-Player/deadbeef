@@ -409,9 +409,6 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
         trace ("found aac stream (junk: %d, offs: %d)\n", info->junk, offs);
 
-        _info->fmt.channels = channels;
-        _info->fmt.samplerate = samplerate;
-
         trace ("NeAACDecOpen for raw stream\n");
         info->dec = NeAACDecOpen ();
 
@@ -454,11 +451,11 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     char s[100];
-    deadbeef->pl_add_meta (it, ":BPS", "16");
-    snprintf (s, sizeof (s), "%d", channels);
-    deadbeef->pl_add_meta (it, ":CHANNELS", s);
-    snprintf (s, sizeof (s), "%d", samplerate);
-    deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
+    deadbeef->pl_replace_meta (it, ":BPS", "16");
+    snprintf (s, sizeof (s), "%d", _info->fmt.channels);
+    deadbeef->pl_replace_meta (it, ":CHANNELS", s);
+    snprintf (s, sizeof (s), "%d", _info->fmt.samplerate);
+    deadbeef->pl_replace_meta (it, ":SAMPLERATE", s);
 
     trace ("totalsamples: %d, endsample: %d, samples-from-duration: %d, samplerate %d, channels %d\n", (int)totalsamples, (int)info->endsample, (int)deadbeef->pl_get_item_duration (it)*44100, _info->fmt.samplerate, _info->fmt.channels);
 
