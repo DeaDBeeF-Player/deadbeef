@@ -385,10 +385,11 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
                 int sz = fp->metadata_size;
                 fp->metadata_size = fp->metadata_have_size = 0;
                 if (http_parse_shoutcast_meta (fp, fp->metadata, sz) < 0) {
-                    trace ("vfs_curl: got invalid icy metadata block\n");
-                    http_stream_reset (fp);
-                    fp->status = STATUS_SEEK;
-                    return 0;
+                    fp->metadata_size = 0;
+                    fp->metadata_have_size = 0;
+                    fp->wait_meta = 0;
+                    fp->icy_metaint = 0;
+                    break;
                 }
             }
         }
@@ -401,8 +402,14 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
             avail -= res1;
             ptr += res1;
             uint32_t sz = (uint32_t)(*((uint8_t *)ptr)) * 16;
-            if (sz > 1024) {
+            if (sz > MAX_METADATA) {
                 trace ("metadata size %d is too large\n", sz);
+                ptr += sz;
+                fp->metadata_size = 0;
+                fp->metadata_have_size = 0;
+                fp->wait_meta = 0;
+                fp->icy_metaint = 0;
+                break;
             }
             //assert (sz < MAX_METADATA);
             ptr ++;
@@ -539,6 +546,11 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
             //printf ("icy-metaint: %d\n", atoi (value));
             fp->icy_metaint = atoi (value);
             fp->wait_meta = fp->icy_metaint; 
+        }
+
+        // for icy streams, reset length
+        if (!strncasecmp (key, "icy-", 4)) {
+            fp->length = -1;
         }
     }
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
