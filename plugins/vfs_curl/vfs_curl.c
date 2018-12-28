@@ -334,6 +334,8 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
         if (fp->icyheader) {
             if (fp->nheaderpackets > 10) {
                 fprintf (stderr, "vfs_curl: warning: seems like stream has unterminated ICY headers\n");
+                fp->icy_metaint = 0;
+                fp->wait_meta = 0;
                 fp->gotheader = 1;
             }
             else {
@@ -347,6 +349,9 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
                 }
                 else {
                     fp->gotheader = 1;
+                    if (fp->wait_meta > 0) {
+                        ptr += size*nmemb - avail;
+                    }
                 }
             }
         }
