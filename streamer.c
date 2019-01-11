@@ -2158,7 +2158,6 @@ _play_track (playItem_t *it, int startpaused) {
     output->stop ();
     streamer_reset(1);
     streamer_is_buffering = 1;
-    streamer_set_playing_track(NULL);
     streamer_set_buffering_track (it);
     handle_track_change (it);
     if (!stream_track(it, startpaused)) {

@@ -540,19 +540,15 @@ lastfm_songstarted (ddb_event_track_t *ev, uintptr_t data) {
 }
 
 static int
-lastfm_songchanged (ddb_event_trackchange_t *ev, uintptr_t data) {
+lastfm_songfinished (ddb_event_track_t *ev, uintptr_t data) {
     if (!deadbeef->conf_get_int ("lastfm.enable", 0)) {
         return 0;
     }
-    // previous track must exist
-    if (!ev->from) {
-        return 0;
-    }
-    trace ("lfm songfinished %s\n", deadbeef->pl_find_meta (ev->from, ":URI"));
+    trace ("lfm songfinished %s\n", deadbeef->pl_find_meta (ev->track, ":URI"));
 #if !LFM_IGNORE_RULES
     // check submission rules
     // duration/playtime must be >= 30 sec
-    float dur = deadbeef->pl_get_item_duration (ev->from);
+    float dur = deadbeef->pl_get_item_duration (ev->track);
     if (dur < 30 && ev->playtime < 30) {
         // the lastfm.send_tiny_tracks option can override this rule
         // only if the track played fully, and has determined duration
@@ -569,10 +565,10 @@ lastfm_songchanged (ddb_event_trackchange_t *ev, uintptr_t data) {
 
 #endif
 
-    if (!deadbeef->pl_meta_exists (ev->from, "artist")
-            || !deadbeef->pl_meta_exists (ev->from, "title")
+    if (!deadbeef->pl_meta_exists (ev->track, "artist")
+            || !deadbeef->pl_meta_exists (ev->track, "title")
        ) {
-        trace ("lfm: not enough metadata for submission, artist=%s, title=%s, album=%s\n", deadbeef->pl_find_meta (ev->from, "artist"), deadbeef->pl_find_meta (ev->from, "title"), deadbeef->pl_find_meta (ev->from, "album"));
+        trace ("lfm: not enough metadata for submission, artist=%s, title=%s, album=%s\n", deadbeef->pl_find_meta (ev->track, "artist"), deadbeef->pl_find_meta (ev->track, "title"), deadbeef->pl_find_meta (ev->track, "album"));
         return 0;
     }
     deadbeef->mutex_lock (lfm_mutex);
@@ -580,10 +576,10 @@ lastfm_songchanged (ddb_event_trackchange_t *ev, uintptr_t data) {
     for (int i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
         if (!lfm_subm_queue[i].it) {
             trace ("lfm: song is now in queue for submission\n");
-            lfm_subm_queue[i].it = ev->from;
+            lfm_subm_queue[i].it = ev->track;
             lfm_subm_queue[i].started_timestamp = ev->started_timestamp;
             lfm_subm_queue[i].playtime = ev->playtime;
-            deadbeef->pl_item_ref (ev->from);
+            deadbeef->pl_item_ref (ev->track);
             break;
         }
     }
@@ -758,8 +754,8 @@ lfm_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     case DB_EV_SONGSTARTED:
         lastfm_songstarted ((ddb_event_track_t *)ctx, 0);
         break;
-    case DB_EV_SONGCHANGED:
-        lastfm_songchanged ((ddb_event_trackchange_t *)ctx, 0);
+    case DB_EV_SONGFINISHED:
+        lastfm_songfinished ((ddb_event_track_t *)ctx, 0);
         break;
     }
     return 0;
