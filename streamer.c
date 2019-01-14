@@ -1456,12 +1456,7 @@ streamer_thread (void *unused) {
                 play_next (-1);
                 break;
             case STR_EV_RAND:
-                {
-                    playItem_t *next = get_random_track();
-                    streamer_reset(1);
-                    handle_track_change (playing_track, next);
-                    stream_track(next, 0);
-                }
+                play_next (0);
                 break;
             case STR_EV_SEEK:
                 streamer_seek_real(*((float *)&p1));
@@ -2298,7 +2293,16 @@ play_next (int dir) {
         origin = last_played;
     }
 
-    playItem_t *next = dir > 0 ? get_next_track(origin) : get_prev_track(origin);
+    playItem_t *next = NULL;
+    if (dir > 0) {
+        next = get_next_track (origin);
+    }
+    else if (dir < 0) {
+        next = get_next_track (origin);
+    }
+    else {
+        next = get_random_track ();
+    }
 
     // possibly need a reshuffle
     if (!next && streamer_playlist->count[PL_MAIN] != 0) {
