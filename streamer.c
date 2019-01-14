@@ -2165,6 +2165,7 @@ _play_track (playItem_t *it, int startpaused) {
 
     if (prev) {
         pl_item_unref (prev);
+        prev = NULL;
     }
 
     if (!stream_track(it, startpaused)) {
