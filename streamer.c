@@ -1355,14 +1355,14 @@ _update_buffering_state () {
 }
 
 static void
-handle_track_change (playItem_t *track) {
+handle_track_change (playItem_t *from, playItem_t *track) {
     // next track started
-    if (playing_track) {
-        send_songfinished (playing_track);
+    if (from) {
+        send_songfinished (from);
         playpos = 0;
     }
 
-    streamer_start_playback (playing_track, track);
+    streamer_start_playback (from, track);
 
     // only reset playpos/bitrate if track changing to another,
     // otherwise the track is the first one, and playpos is pre-set
@@ -1459,7 +1459,7 @@ streamer_thread (void *unused) {
                 {
                     playItem_t *next = get_random_track();
                     streamer_reset(1);
-                    handle_track_change (next);
+                    handle_track_change (playing_track, next);
                     stream_track(next, 0);
                 }
                 break;
@@ -1708,7 +1708,7 @@ process_output_block (streamblock_t *block, char *bytes) {
         update_stop_after_current ();
     }
     if (block->first) {
-        handle_track_change (block->track);
+        handle_track_change (playing_track, block->track);
     }
 
     // A block with 0 size is a valid block, and needs to be processed as usual (code above this line).
@@ -2158,9 +2158,20 @@ _play_track (playItem_t *it, int startpaused) {
     output->stop ();
     streamer_reset(1);
     streamer_is_buffering = 1;
+
+    playItem_t *prev = playing_track;
+    if (prev) {
+        pl_item_ref (prev);
+    }
+
     streamer_set_playing_track(NULL);
     streamer_set_buffering_track (it);
-    handle_track_change (it);
+    handle_track_change (prev, it);
+
+    if (prev) {
+        pl_item_unref (prev);
+    }
+
     if (!stream_track(it, startpaused)) {
         playpos = 0;
         playtime = 0;
