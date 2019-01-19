@@ -37,7 +37,7 @@ extern DB_functions_t *deadbeef;
 #define MAX_SAMPLERATE 48000
 #define MIN_PACKET_LENGTH (MIN_PACKET_SAMPLES / 8 * MIN_BITRATE*1000 / MAX_SAMPLERATE)
 #define MAX_PACKET_LENGTH 1441
-#define MAX_INVALID_BYTES 10000
+#define MAX_INVALID_BYTES 1000000
 
 static const int vertbl[] = {3, -1, 2, 1}; // 3 is 2.5
 static const int ltbl[] = { -1, 3, 2, 1 };
