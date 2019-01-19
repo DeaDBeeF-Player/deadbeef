@@ -2299,7 +2299,7 @@ play_next (int dir) {
         next = get_next_track (origin);
     }
     else if (dir < 0) {
-        next = get_next_track (origin);
+        next = get_prev_track (origin);
     }
     else {
         next = get_random_track ();
