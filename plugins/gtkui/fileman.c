@@ -301,14 +301,12 @@ gtkui_receive_fm_drop (DB_playItem_t *before, char *mem, int length) {
     deadbeef->thread_detach (tid);
 }
 
-#if defined __MINGW32__ && GTK_CHECK_VERSION(3,20,0)
-#define USE_GTK_NATIVE_FILE_CHOOSER
-#endif
-
-#ifdef USE_GTK_NATIVE_FILE_CHOOSER
-#if !GTK_CHECK_VERSION(3,20,0)
-#undef USE_GTK_NATIVE_FILE_CHOOSER
-#endif
+#if GTK_CHECK_VERSION(3,20,0)
+#    ifdef __MINGW32__
+#        define USE_GTK_NATIVE_FILE_CHOOSER
+#    endif
+#else // Make sure that native file chooser is off for GTK2
+#    undef USE_GTK_NATIVE_FILE_CHOOSER
 #endif
 
 #ifdef USE_GTK_NATIVE_FILE_CHOOSER
