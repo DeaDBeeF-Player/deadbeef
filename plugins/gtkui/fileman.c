@@ -601,14 +601,14 @@ show_file_chooser (const gchar          *title,
 {
     GtkFileChooserAction action;
     switch (type) {
-        case GTKUI_FILECHOOSER_OPENFOLDER:
+    case GTKUI_FILECHOOSER_OPENFOLDER:
         action = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
         break;
-        case GTKUI_FILECHOOSER_OPENFILE:
-        case GTKUI_FILECHOOSER_LOADPLAYLIST:
+    case GTKUI_FILECHOOSER_OPENFILE:
+    case GTKUI_FILECHOOSER_LOADPLAYLIST:
         action = GTK_FILE_CHOOSER_ACTION_OPEN;
         break;
-        case GTKUI_FILECHOOSER_SAVEPLAYLIST:
+    case GTKUI_FILECHOOSER_SAVEPLAYLIST:
         action = GTK_FILE_CHOOSER_ACTION_SAVE;
         break;
     }
@@ -616,13 +616,13 @@ show_file_chooser (const gchar          *title,
     GtkFileChooser *dlg = get_file_chooser(title, action, select_multiple);
 
     switch (type) {
-        case GTKUI_FILECHOOSER_OPENFILE:
+    case GTKUI_FILECHOOSER_OPENFILE:
         set_file_filter (dlg, NULL);
         break;
-        case GTKUI_FILECHOOSER_LOADPLAYLIST:
+    case GTKUI_FILECHOOSER_LOADPLAYLIST:
         set_file_filter_loadplaylist(dlg);
         break;
-        case GTKUI_FILECHOOSER_SAVEPLAYLIST:
+    case GTKUI_FILECHOOSER_SAVEPLAYLIST:
         gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dlg), TRUE);
         gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dlg), "untitled.dbpl");
         set_file_filter_saveplaylist(dlg);
@@ -631,12 +631,12 @@ show_file_chooser (const gchar          *title,
 
     const char *conf_lastdir;
     switch (type) {
-        case GTKUI_FILECHOOSER_OPENFOLDER:
-        case GTKUI_FILECHOOSER_OPENFILE:
+    case GTKUI_FILECHOOSER_OPENFOLDER:
+    case GTKUI_FILECHOOSER_OPENFILE:
         conf_lastdir = "filechooser.lastdir";
         break;
-        case GTKUI_FILECHOOSER_LOADPLAYLIST:
-        case GTKUI_FILECHOOSER_SAVEPLAYLIST:
+    case GTKUI_FILECHOOSER_LOADPLAYLIST:
+    case GTKUI_FILECHOOSER_SAVEPLAYLIST:
         conf_lastdir = "filechooser.playlist.lastdir";
         break;
     }
