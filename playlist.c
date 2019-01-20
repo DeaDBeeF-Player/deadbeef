@@ -972,7 +972,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         }
         fname = fname_conv;
     }
-    // path should start with "X:/", not "/X:/" to avoid file opening problems
+    // path should start with "X:/", not "/X:/", fixing to avoid file opening problems
     if (fname[0] == '/' && isalpha(fname[1]) && fname[2] == ':') {
         fname++;
     }
@@ -1169,7 +1169,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         }
         dirname = dirname_conv;
     }
-    // path should start with "X:/", not "/X:/" to avoid file opening problems
+    // path should start with "X:/", not "/X:/", fixing to avoid file opening problems
     if (dirname[0] == '/' && isalpha(dirname[1]) && dirname[2] == ':') {
         dirname++;
     }
@@ -1197,6 +1197,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
     if (vfs && vfs->scandir) {
         n = vfs->scandir (dirname, &namelist, NULL, dirent_alphasort);
         // we can't rely on vfs plugins to set d_type
+        // windows: missing dirent[]->d_type
         #ifndef __MINGW32__
         for (int i = 0; i < n; i++) {
             namelist[i]->d_type = DT_REG;
@@ -1219,6 +1220,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
 
     for (int i = 0; i < n; i++) {
         // no hidden files
+        // windows: missing dirent[]->d_type
         #ifdef __MINGW32__
         if (namelist[i]->d_name[0] == '.') {
         #else
