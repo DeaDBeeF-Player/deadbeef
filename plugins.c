@@ -77,6 +77,8 @@ DB_plugin_t main_plugin = {
 
 #if defined(HAVE_COCOAUI) || defined(OSX_APPBUNDLE)
 #define PLUGINEXT ".dylib"
+#elif defined __MINGW32__
+#define PLUGINEXT ".dll"
 #else
 #define PLUGINEXT ".so"
 #endif
@@ -986,7 +988,7 @@ plug_load_all (void) {
     const char *plugins_dirs[] = { dirname, !res ? libpath : NULL, NULL };
 #else
 #ifndef ANDROID
-    char *xdg_local_home = getenv ("XDG_LOCAL_HOME");
+    char *xdg_local_home = getenv (LOCALDIR);
     char xdg_plugin_dir[1024];
     char xdg_plugin_dir_explicit_arch[1024];
 
@@ -994,7 +996,7 @@ plug_load_all (void) {
         strncpy (xdg_plugin_dir, xdg_local_home, sizeof (xdg_plugin_dir));
         xdg_plugin_dir[sizeof(xdg_plugin_dir)-1] = 0;
     } else {
-        char *homedir = getenv ("HOME");
+        char *homedir = getenv (HOMEDIR);
 
         if (!homedir) {
             trace_err ("plug_load_all: warning: unable to find home directory\n");
@@ -1004,12 +1006,19 @@ plug_load_all (void) {
             // multilib support:
             // 1. load from lib$ARCH if present
             // 2. load from lib if present
-            int written = snprintf (xdg_plugin_dir, sizeof (xdg_plugin_dir), "%s/.local/lib/deadbeef", homedir);
+            int written = snprintf (xdg_plugin_dir, sizeof (xdg_plugin_dir), LOCAL_PLUGINS_DIR, homedir);
             if (written > sizeof (xdg_plugin_dir)) {
                 trace_err ("warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
                 xdg_plugin_dir[0] = 0;
             }
-            written = snprintf (xdg_plugin_dir_explicit_arch, sizeof (xdg_plugin_dir_explicit_arch), "%s/.local/lib%d/deadbeef", homedir, (int)(sizeof (long) * 8));
+#ifdef __x86_64__
+#define ARCH_BITS 64
+#elif defined(__i386__)
+#define ARCH_BITS 32
+#else
+#define ARCH_BITS (int)(sizeof (long) * 8)
+#endif
+            written = snprintf (xdg_plugin_dir_explicit_arch, sizeof (xdg_plugin_dir_explicit_arch), LOCAL_ARCH_PLUGINS_DIR, homedir, ARCH_BITS);
             if (written > sizeof (xdg_plugin_dir_explicit_arch)) {
                 trace_err ("warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
                 xdg_plugin_dir_explicit_arch[0] = 0;

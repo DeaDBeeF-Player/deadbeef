@@ -82,7 +82,7 @@ conf_load (void) {
     char fname[l + sizeof(configfile)];
     memcpy (fname, dbconfdir, l);
     memcpy (fname + l, configfile, sizeof (configfile));
-    FILE *fp = fopen (fname, "rt");
+    FILE *fp = fopen (fname, "rb");
     if (!fp) {
         // we're not logging the error when config could not be loaded -- it's the first run
         fp = fopen (fname, "w+b");
@@ -177,7 +177,7 @@ conf_save (void) {
 
     conf_lock ();
     changed = 0;
-    fp = fopen (tempfile, "w+t");
+    fp = fopen (tempfile, "w+b");
     if (!fp) {
         trace_err ("failed to open config file %s for writing\n", tempfile);
         conf_unlock ();
