@@ -425,7 +425,6 @@
 		2D28F0EC1C283CAD004A6E7B /* kbd_win.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D28F0831C283CAC004A6E7B /* kbd_win.h */; };
 		2D28F0ED1C283CAD004A6E7B /* lt_predict.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D28F0891C283CAC004A6E7B /* lt_predict.c */; };
 		2D28F0EE1C283CAD004A6E7B /* lt_predict.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D28F08A1C283CAC004A6E7B /* lt_predict.h */; };
-		2D28F0EF1C283CAD004A6E7B /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 2D28F08B1C283CAC004A6E7B /* Makefile */; };
 		2D28F0F01C283CAD004A6E7B /* mdct.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D28F08D1C283CAC004A6E7B /* mdct.c */; };
 		2D28F0F11C283CAD004A6E7B /* mdct.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D28F08E1C283CAC004A6E7B /* mdct.h */; };
 		2D28F0F21C283CAD004A6E7B /* mdct_tab.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D28F08F1C283CAC004A6E7B /* mdct_tab.h */; };
@@ -1685,10 +1684,7 @@
 		4D44E6FB19B7539C00F780FC /* barray.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F019B7539C00F780FC /* barray.c */; };
 		4D44E6FC19B7539C00F780FC /* clickrem.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F119B7539C00F780FC /* clickrem.c */; };
 		4D44E6FD19B7539C00F780FC /* memfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F219B7539C00F780FC /* memfile.c */; };
-		4D44E6FE19B7539C00F780FC /* resamp2.inc in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F319B7539C00F780FC /* resamp2.inc */; };
-		4D44E6FF19B7539C00F780FC /* resamp3.inc in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F419B7539C00F780FC /* resamp3.inc */; };
 		4D44E70019B7539C00F780FC /* resample.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F519B7539C00F780FC /* resample.c */; };
-		4D44E70119B7539C00F780FC /* resample.inc in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F619B7539C00F780FC /* resample.inc */; };
 		4D44E70219B7539C00F780FC /* riff.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F719B7539C00F780FC /* riff.c */; };
 		4D44E70319B7539C00F780FC /* sampbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F819B7539C00F780FC /* sampbuf.c */; };
 		4D44E70419B7539C00F780FC /* silence.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D44E6F919B7539C00F780FC /* silence.c */; };
@@ -3092,8 +3088,6 @@
 		2D28F0831C283CAC004A6E7B /* kbd_win.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kbd_win.h; sourceTree = "<group>"; };
 		2D28F0891C283CAC004A6E7B /* lt_predict.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lt_predict.c; sourceTree = "<group>"; };
 		2D28F08A1C283CAC004A6E7B /* lt_predict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lt_predict.h; sourceTree = "<group>"; };
-		2D28F08B1C283CAC004A6E7B /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		2D28F08C1C283CAC004A6E7B /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		2D28F08D1C283CAC004A6E7B /* mdct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mdct.c; sourceTree = "<group>"; };
 		2D28F08E1C283CAC004A6E7B /* mdct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mdct.h; sourceTree = "<group>"; };
 		2D28F08F1C283CAC004A6E7B /* mdct_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mdct_tab.h; sourceTree = "<group>"; };
@@ -5870,8 +5864,6 @@
 				2D28F0831C283CAC004A6E7B /* kbd_win.h */,
 				2D28F0891C283CAC004A6E7B /* lt_predict.c */,
 				2D28F08A1C283CAC004A6E7B /* lt_predict.h */,
-				2D28F08B1C283CAC004A6E7B /* Makefile */,
-				2D28F08C1C283CAC004A6E7B /* Makefile.am */,
 				2D28F08D1C283CAC004A6E7B /* mdct.c */,
 				2D28F08E1C283CAC004A6E7B /* mdct.h */,
 				2D28F08F1C283CAC004A6E7B /* mdct_tab.h */,
@@ -11017,7 +11009,7 @@
 					};
 					2DAA4C071AAF88DE00519559 = {
 						CreatedOnToolsVersion = 6.1.1;
-						LastSwiftMigration = 0940;
+						LastSwiftMigration = "";
 					};
 					2DCB281319E86162008E9DF6 = {
 						CreatedOnToolsVersion = 6.0.1;
@@ -11036,7 +11028,7 @@
 						CreatedOnToolsVersion = 6.2;
 					};
 					4D1B3E7918379829003E6066 = {
-						LastSwiftMigration = 0920;
+						LastSwiftMigration = "";
 					};
 					4D52B4CD1F14F0FD00048305 = {
 						CreatedOnToolsVersion = 8.3.3;
@@ -11725,7 +11717,6 @@
 				2D28F0EA1C283CAD004A6E7B /* is.c in Sources */,
 				2D28F0E11C283CAC004A6E7B /* filtbank.c in Sources */,
 				2D28F11A1C283CAD004A6E7B /* specrec.c in Sources */,
-				2D28F0EF1C283CAD004A6E7B /* Makefile in Sources */,
 				2D28F0C61C283CAC004A6E7B /* bits.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12678,7 +12669,6 @@
 				4D44E6C519B7538F00F780FC /* itunload.c in Sources */,
 				4D44E6ED19B7538F00F780FC /* readxm.c in Sources */,
 				4D44E70319B7539C00F780FC /* sampbuf.c in Sources */,
-				4D44E6FE19B7539C00F780FC /* resamp2.inc in Sources */,
 				4D44E6EA19B7538F00F780FC /* reads3m2.c in Sources */,
 				4D44E68719B7533B00F780FC /* readduh.c in Sources */,
 				4D44E6EB19B7538F00F780FC /* readstm.c in Sources */,
@@ -12686,7 +12676,6 @@
 				4D44E6E919B7538F00F780FC /* reads3m.c in Sources */,
 				4D44E6C219B7538F00F780FC /* itread.c in Sources */,
 				4D44E6CA19B7538F00F780FC /* loadmod.c in Sources */,
-				4D44E6FF19B7539C00F780FC /* resamp3.inc in Sources */,
 				83D1CC9C1B77060C0063DA75 /* loadokt.c in Sources */,
 				83D1CC891B7705D80063DA75 /* lpc.c in Sources */,
 				4D44E6D519B7538F00F780FC /* loadriff2.c in Sources */,
@@ -12754,7 +12743,6 @@
 				83D1CCA31B77060C0063DA75 /* readokt2.c in Sources */,
 				4D44E6C919B7538F00F780FC /* loadasy2.c in Sources */,
 				4D44E6CF19B7538F00F780FC /* loadoldpsm2.c in Sources */,
-				4D44E70119B7539C00F780FC /* resample.inc in Sources */,
 				4D44E68119B7533B00F780FC /* duhlen.c in Sources */,
 				4D44E6DB19B7538F00F780FC /* loadxm2.c in Sources */,
 			);
@@ -15422,7 +15410,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -15450,7 +15439,8 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -15846,7 +15836,8 @@
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
 				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.2;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -15885,7 +15876,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
 				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
-				SWIFT_VERSION = 4.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.2;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
