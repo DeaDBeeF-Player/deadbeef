@@ -119,7 +119,16 @@ plt_get_title_wrapper (int plt) {
 
 - (int)getTabWith:(int)tab {
     NSString *title = plt_get_title_wrapper (tab);
-    NSSize sz = [title sizeWithAttributes:@{}];
+
+    NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize] weight:NSFontWeightSemibold];
+    NSDictionary *attrs = @{
+                            NSParagraphStyleAttributeName: textStyle,
+                            NSFontAttributeName:font,
+                            NSForegroundColorAttributeName:[NSColor controlTextColor]
+                            };
+
+    NSSize sz = [title sizeWithAttributes:attrs];
     sz.width += text_left_padding + text_right_padding;
     if (sz.width < min_tab_size) {
         sz.width = min_tab_size;
@@ -273,7 +282,7 @@ plt_get_title_wrapper (int plt) {
     [textStyle setAlignment:NSLeftTextAlignment];
     [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
 
-    NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize] weight:NSFontWeightSemibold];
+    NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize] weight:sel?NSFontWeightSemibold:NSFontWeightMedium];
     NSDictionary *attrs = @{
         NSParagraphStyleAttributeName: textStyle,
         NSFontAttributeName:font,
