@@ -147,7 +147,6 @@ create_mainwin (void)
   separator2 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator2);
   gtk_container_add (GTK_CONTAINER (File_menu), separator2);
-  gtk_widget_set_sensitive (separator2, FALSE);
 
   add_files = gtk_image_menu_item_new_with_mnemonic (_("Add file(s)"));
   gtk_widget_show (add_files);
@@ -172,7 +171,6 @@ create_mainwin (void)
   separatormenuitem1 = gtk_separator_menu_item_new ();
   gtk_widget_show (separatormenuitem1);
   gtk_container_add (GTK_CONTAINER (File_menu), separatormenuitem1);
-  gtk_widget_set_sensitive (separatormenuitem1, FALSE);
 
   new_playlist1 = gtk_menu_item_new_with_mnemonic (_("New playlist"));
   gtk_widget_show (new_playlist1);
@@ -189,7 +187,6 @@ create_mainwin (void)
   separator8 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator8);
   gtk_container_add (GTK_CONTAINER (File_menu), separator8);
-  gtk_widget_set_sensitive (separator8, FALSE);
 
   quit = gtk_image_menu_item_new_with_mnemonic (_("_Quit"));
   gtk_widget_show (quit);
@@ -287,7 +284,6 @@ create_mainwin (void)
   separator5 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator5);
   gtk_container_add (GTK_CONTAINER (Edit_menu), separator5);
-  gtk_widget_set_sensitive (separator5, FALSE);
 
   preferences = gtk_menu_item_new_with_mnemonic (_("Preferences"));
   gtk_widget_show (preferences);
@@ -323,32 +319,32 @@ create_mainwin (void)
   Playback_menu = gtk_menu_new ();
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (Playback), Playback_menu);
 
-  Order = gtk_menu_item_new_with_mnemonic (_("Order"));
+  Order = gtk_menu_item_new_with_mnemonic (_("Shuffle"));
   gtk_widget_show (Order);
   gtk_container_add (GTK_CONTAINER (Playback_menu), Order);
 
   Order_menu = gtk_menu_new ();
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (Order), Order_menu);
 
-  order_linear = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Linear"));
+  order_linear = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Off"));
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_linear));
   gtk_widget_show (order_linear);
   gtk_container_add (GTK_CONTAINER (Order_menu), order_linear);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_linear), TRUE);
 
-  order_shuffle = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Shuffle tracks"));
+  order_shuffle = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Tracks"));
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_shuffle));
   gtk_widget_show (order_shuffle);
   gtk_container_add (GTK_CONTAINER (Order_menu), order_shuffle);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_shuffle), TRUE);
 
-  order_shuffle_albums = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Shuffle albums"));
+  order_shuffle_albums = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Albums"));
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_shuffle_albums));
   gtk_widget_show (order_shuffle_albums);
   gtk_container_add (GTK_CONTAINER (Order_menu), order_shuffle_albums);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_shuffle_albums), TRUE);
 
-  order_random = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Random"));
+  order_random = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Random Tracks"));
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_random));
   gtk_widget_show (order_random);
   gtk_container_add (GTK_CONTAINER (Order_menu), order_random);
@@ -399,7 +395,6 @@ create_mainwin (void)
   separator11 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator11);
   gtk_container_add (GTK_CONTAINER (Playback_menu), separator11);
-  gtk_widget_set_sensitive (separator11, FALSE);
 
   jump_to_current_track1 = gtk_menu_item_new_with_mnemonic (_("Jump to current track"));
   gtk_widget_show (jump_to_current_track1);
@@ -427,7 +422,6 @@ create_mainwin (void)
   separator10 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator10);
   gtk_container_add (GTK_CONTAINER (Help_menu), separator10);
-  gtk_widget_set_sensitive (separator10, FALSE);
 
   gpl1 = gtk_menu_item_new_with_mnemonic (_("_GPLv2"));
   gtk_widget_show (gpl1);
@@ -440,7 +434,6 @@ create_mainwin (void)
   separator9 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator9);
   gtk_container_add (GTK_CONTAINER (Help_menu), separator9);
-  gtk_widget_set_sensitive (separator9, FALSE);
 
   about1 = gtk_image_menu_item_new_with_mnemonic (_("_About"));
   gtk_widget_show (about1);
