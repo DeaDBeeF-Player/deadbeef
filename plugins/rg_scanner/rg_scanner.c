@@ -29,6 +29,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "../../deadbeef.h"
 #include "ebur128/ebur128.h"
@@ -195,7 +196,6 @@ rg_calc_thread(void *ctx) {
             // calculate track loudness
             double loudness = st->settings->ref_loudness;
             ebur128_loudness_global (st->gain_state[st->track_index], &loudness);
-
             /*
              * EBUR128 sets the target level to -23 LUFS = 84dB
              * -> -23 - loudness = track gain to get to 84dB
@@ -203,7 +203,9 @@ rg_calc_thread(void *ctx) {
              * The old implementation of RG used 89dB, most people still use that
              * -> the above + (loudness - 84) = track gain to get to 89dB (or user specified)
              */
-            st->settings->results[st->track_index].track_gain = -23 - loudness + st->settings->ref_loudness - 84;
+            if (loudness != -HUGE_VAL) {
+                st->settings->results[st->track_index].track_gain = -23 - loudness + st->settings->ref_loudness - 84;
+            }
         }
     }
 
