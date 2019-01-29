@@ -480,7 +480,7 @@
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="order_shuffle">
 			      <property name="visible">True</property>
-                  <property name="label" translatable="yes">Tracks</property>
+			      <property name="label" translatable="yes">Tracks</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
 			      <property name="group">order_linear</property>
