@@ -30,9 +30,8 @@ case "$TRAVIS_OS_NAME" in
         #echo gem install xcpretty ...
         #gem install xcpretty 1> /dev/null 2> /dev/null || exit 1
         git submodule update --init || exit 1
-        #xcodebuild -project osx/deadbeef.xcodeproj -target deadbeef -configuration Release | xcpretty ; test ${PIPESTATUS[0]} -eq 0 || exit 1
-        xcodebuild -project osx/deadbeef.xcodeproj -target deadbeef -configuration Release | awk '{ if (length($0) < 300) print }' ; test ${PIPESTATUS[0]} -eq 0 || exit 1
-        xcodebuild test -project osx/deadbeef.xcodeproj -scheme deadbeef-release -configuration Release | awk '{ if (length($0) < 300) print }' ; test ${PIPESTATUS[0]} -eq 0 || exit 1
+        xcodebuild -project osx/deadbeef.xcodeproj -target deadbeef -configuration Release -quiet | xcpretty ; test ${PIPESTATUS[0]} -eq 0 || exit 1
+        xcodebuild test -project osx/deadbeef.xcodeproj -scheme deadbeef -configuration Release -quiet | xcpretty ; test ${PIPESTATUS[0]} -eq 0 || exit 1
         VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
         cd osx/build/Release
         zip -r deadbeef-$VERSION-osx-x86_64.zip deadbeef.app || exit 1
