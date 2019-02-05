@@ -838,6 +838,8 @@ static DB_fileinfo_t *dec_open (DB_decoder_t *dec, uint32_t hints, playItem_t *i
 
 static playItem_t *first_failed_track;
 
+// handle "first failed track" logic,
+// and initialize dummy fileinfo for handling track switching for the tracks which can't be played
 static void
 streamer_play_failed (playItem_t *failed_track) {
     streamer_lock();
@@ -856,15 +858,37 @@ streamer_play_failed (playItem_t *failed_track) {
 
     if (failed_track) {
         set_last_played (failed_track);
-        handler_push (handler, STR_EV_NEXT, 0, 0, 0);
+        // the track has failed to be played,
+        // but we want to send it down to streamreader for proper track switching etc.
+        fileinfo = calloc(sizeof (DB_fileinfo_t), 1);
+        fileinfo_file = NULL;
+        new_fileinfo = NULL;
+        new_fileinfo_file = NULL;
+        if (streaming_track) {
+            pl_item_unref (streaming_track);
+        }
+        streaming_track = failed_track;
+        if (streaming_track) {
+            pl_item_ref (streaming_track);
+        }
     }
     streamer_unlock();
+}
+
+static void
+fileinfo_free (DB_fileinfo_t *fileinfo) {
+    if (fileinfo->plugin) {
+        fileinfo->plugin->free (fileinfo);
+    }
+    else {
+        free (fileinfo);
+    }
 }
 
 static int
 stream_track (playItem_t *it, int startpaused) {
     if (fileinfo) {
-        fileinfo->plugin->free (fileinfo);
+        fileinfo_free (fileinfo);
         fileinfo = NULL;
         fileinfo_file = NULL;
     }
@@ -945,15 +969,16 @@ stream_track (playItem_t *it, int startpaused) {
             fp = NULL;
             streamer_file = NULL;
             if (!startpaused) {
-                // failed to play the track, ask for the next one
                 streamer_play_failed (it);
+            }
+            else {
+                err = -1;
             }
 
             pl_lock ();
             trace_err ("Failed to play track: %s\n", pl_find_meta(it, ":URI"));
             pl_unlock ();
 
-            err = -1;
             goto error;
         }
         trace ("got content-type: %s\n", ct);
@@ -1117,10 +1142,11 @@ m3u_error:
             trace_err ("No suitable decoder found for stream %s of content-type %s\n", pl_find_meta (playing_track, ":URI"), cct);
 
             if (!startpaused) {
-                // failed to play the track, ask for the next one
                 streamer_play_failed (it);
             }
-            err = -1;
+            else {
+                err = -1;
+            }
             goto error;
         }
 
@@ -1171,15 +1197,16 @@ m3u_error:
             streamer_set_playing_track (NULL);
 
             if (!startpaused) {
-                // failed to play the track, ask for the next one
                 streamer_play_failed (it);
+            }
+            else {
+                err = -1;
             }
 
             pl_lock ();
             trace_err ("Failed to play track: %s\n", pl_find_meta(it, ":URI"));
             pl_unlock ();
 
-            err = -1;
             goto error;
         }
 
@@ -1570,7 +1597,7 @@ streamer_thread (void *unused) {
 
     // stop streaming song
     if (fileinfo) {
-        fileinfo->plugin->free (fileinfo);
+        fileinfo_free (fileinfo);
         fileinfo = NULL;
         fileinfo_file = NULL;
     }
