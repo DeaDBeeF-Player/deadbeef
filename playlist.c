@@ -2142,7 +2142,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
                 char value[l+1];
                 int res = (int)fread (value, 1, l, fp);
                 if (res != l) {
-                    trace ("read error: requested %d, got %d\n", l, res);
+                    trace ("playlist read error: requested %d, got %d\n", l, res);
                     goto load_fail;
                 }
                 value[l] = 0;
@@ -2200,7 +2200,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
                 char value[l+1];
                 int res = (int)fread (value, 1, l, fp);
                 if (res != l) {
-                    trace ("read error: requested %d, got %d\n", l, res);
+                    trace ("playlist read error: requested %d, got %d\n", l, res);
                     goto load_fail;
                 }
                 value[l] = 0;
@@ -2218,7 +2218,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
     }
     return last_added;
 load_fail:
-    fprintf (stderr, "playlist load fail (%s)!\n", fname);
+    trace ("playlist load fail (%s)!\n", fname);
     if (fp) {
         fclose (fp);
     }
