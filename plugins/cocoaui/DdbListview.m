@@ -571,8 +571,6 @@ int grouptitleheight = 22;
 
     DdbListviewGroup_t *grp = [listview groups];
 
-    NSScrollView *sv = [self enclosingScrollView];
-
     int clip_y = dirtyRect.origin.y;
     int clip_h = dirtyRect.size.height;
 
@@ -627,7 +625,7 @@ int grouptitleheight = 22;
 
                 if (it == cursor_it) {
                     [[NSGraphicsContext currentContext] saveGraphicsState];
-                    NSRect rect = NSMakeRect(_frame.origin.x+0.5, yy+0.5, _frame.size.width-1, rowheight-1);
+                    NSRect rect = NSMakeRect(self.frame.origin.x+0.5, yy+0.5, self.frame.size.width-1, rowheight-1);
                     [NSBezierPath setDefaultLineWidth:1.f];
                     [[NSColor textColor] set];
                     [NSBezierPath strokeRect:rect];
@@ -1389,7 +1387,7 @@ int grouptitleheight = 22;
 - (void)listMouseDragged:(NSEvent *)event {
     NSPoint pt = [contentView convertPoint:[event locationInWindow] fromView:nil];
     if (_dragwait) {
-        if (abs (_lastpos.x - pt.x) > 3 || abs (_lastpos.y - pt.y) > 3) {
+        if (fabs (_lastpos.x - pt.x) > 3 || fabs (_lastpos.y - pt.y) > 3) {
             // begin dnd
             NSPasteboard *pboard;
 
@@ -1401,9 +1399,9 @@ int grouptitleheight = 22;
             DdbListviewLocalDragDropHolder *data = [[DdbListviewLocalDragDropHolder alloc] initWithSelectedPlaylistItems:plt];
             deadbeef->plt_unref (plt);
             [pboard declareTypes:[NSArray arrayWithObject:ddbPlaylistItemsUTIType]  owner:self];
+            [pboard clearContents];
             if (![pboard writeObjects:[NSArray arrayWithObject:data]])
                 NSLog(@"Unable to write to pasteboard.");
-//            [pboard setData:[@"Hello" dataUsingEncoding:NSASCIIStringEncoding] forType:NSStringPboardType];
 
             NSImage *img = [NSImage imageNamed:NSImageNameMultipleDocuments];
 
