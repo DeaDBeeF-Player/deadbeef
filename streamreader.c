@@ -93,6 +93,17 @@ streamreader_configchanged (void) {
 
 int
 streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t *fileinfo, uint64_t mutex) {
+    if (!fileinfo->plugin) {
+        // return dummy block for a failed track
+        mutex_lock (mutex);
+        block->size = 0;
+        block->first = 1;
+        block->last = 1;
+        pl_item_ref (track);
+        block->track = track;
+        _firstblock = 1;
+        return 0;
+    }
     // clip size to max possible, with current sample format
     int size = BLOCK_SIZE;
     int samplesize = fileinfo->fmt.channels * (fileinfo->fmt.bps>>3);
