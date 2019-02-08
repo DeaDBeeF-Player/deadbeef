@@ -51,6 +51,12 @@ extern DB_functions_t *deadbeef;
     DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
     [[view listview] cleanup];
     [self clearGrouping];
+
+    // don't wait for an automatic autorelease,
+    // this would cause deadbeef's track refcount checker to run before the objects are really released
+    @autoreleasepool {
+        _trkProperties = nil;
+    }
 }
 
 - (void)menuAddColumn:(id)sender {
