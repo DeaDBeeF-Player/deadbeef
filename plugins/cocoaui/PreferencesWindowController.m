@@ -47,6 +47,11 @@ extern DB_functions_t *deadbeef;
 - (void)windowDidLoad {
     [super windowDidLoad];
 
+    // dsp
+    _dspChainDataSource = [[DSPChainDataSource alloc] initWithChain:deadbeef->streamer_get_dsp_chain () domain:@"preferences"];
+    _dspList.dataSource = _dspChainDataSource;
+    [_dspList registerForDraggedTypes: [NSArray arrayWithObjects: _dspChainDataSource.dspNodeDraggedItemType, nil]];
+
     _toolbar.delegate = self;
     [_toolbar setSelectedItemIdentifier:@"Playback"];
 
@@ -115,10 +120,6 @@ extern DB_functions_t *deadbeef;
     [_ignore_archives setState: deadbeef->conf_get_int ("ignore_archives", 1) ? NSOnState : NSOffState];
     [_stop_after_current_reset setState: deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0) ? NSOnState : NSOffState];
     [_stop_after_album_reset setState: deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0) ? NSOnState : NSOffState];
-
-    // dsp
-    _dspChainDataSource = [[DSPChainDataSource alloc] initWithChain:deadbeef->streamer_get_dsp_chain ()];
-    _dspList.dataSource = _dspChainDataSource;
 
 
     // gui/misc -> player

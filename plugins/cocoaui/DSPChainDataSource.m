@@ -45,8 +45,9 @@ dsp_chain_clone (ddb_dsp_context_t *source_chain) {
     _chain = NULL;
 }
 
-- (DSPChainDataSource *)initWithChain:(ddb_dsp_context_t *)chain {
+- (DSPChainDataSource *)initWithChain:(ddb_dsp_context_t *)chain domain:(NSString *)domain {
     self = [super init];
+    self.dspNodeDraggedItemType = [@"deadbeef.dspnode." stringByAppendingString:domain];
 
     _chain = dsp_chain_clone(chain);
 
@@ -130,6 +131,79 @@ dsp_chain_clone (ddb_dsp_context_t *source_chain) {
 
 - (void)apply {
     deadbeef->streamer_set_dsp_chain (_chain);
+}
+
+#pragma mark - Drag & Drop
+
+- (id <NSPasteboardWriting>)tableView:(NSTableView *)tableView pasteboardWriterForRow:(NSInteger)row {
+    NSString *identifier = [NSString stringWithFormat:@"%d", (int)row];
+
+    NSPasteboardItem *pboardItem = [[NSPasteboardItem alloc] init];
+    [pboardItem setString:identifier forType: self.dspNodeDraggedItemType];
+
+    return pboardItem;
+}
+
+
+- (NSDragOperation)tableView:(NSTableView *)tableView validateDrop:(id<NSDraggingInfo>)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)dropOperation {
+
+    BOOL canDrag = row >= 0;
+
+    if (canDrag) {
+        return NSDragOperationMove;
+    }else {
+        return NSDragOperationNone;
+    }
+}
+
+
+- (BOOL)tableView:(NSTableView *)tableView acceptDrop:(id<NSDraggingInfo>)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)dropOperation {
+
+    NSPasteboard *p = [info draggingPasteboard];
+    NSInteger sourceRow = [[p stringForType:self.dspNodeDraggedItemType] intValue];
+
+    if (sourceRow == row || sourceRow >= [self numberOfRowsInTableView:tableView] || sourceRow < 0) {
+        return NO;
+    }
+
+    // fetch and remove list item
+    if (row > sourceRow) {
+        row--;
+    }
+    ddb_dsp_context_t *node = _chain;
+    ddb_dsp_context_t *prev = NULL;
+    while (--sourceRow >= 0 && node) {
+        prev = node;
+        node = node->next;
+    }
+
+    if (prev) {
+        prev->next = node->next;
+    }
+    else {
+        _chain = node->next;
+    }
+    node->next = NULL;
+
+    // reinsert the node at new position
+    prev = NULL;
+    ddb_dsp_context_t *at = _chain;
+    while (--row >= 0 && at) {
+        prev = at;
+        at = at->next;
+    }
+    if (prev) {
+        prev->next = node;
+        node->next = at;
+    }
+    else {
+        node->next = _chain;
+        _chain = node;
+    }
+
+    [self apply];
+
+    return YES;
 }
 
 @end
