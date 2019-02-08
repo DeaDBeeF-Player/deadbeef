@@ -119,7 +119,6 @@ extern DB_functions_t *deadbeef;
 - (void)menuRemoveColumn:(id)sender {
     if (_menuColumn >= 0) {
         [self removeColumnAtIndex:_menuColumn];
-        [[self view] setNeedsDisplay:YES];
         [self columnsChanged];
     }
 }
@@ -128,7 +127,9 @@ extern DB_functions_t *deadbeef;
     _pin_groups = [sender state] == NSOnState ? 0 : 1;
     [sender setState:_pin_groups?NSOnState:NSOffState];
     deadbeef->conf_set_int ([self pinGroupsConfStr], _pin_groups);
-    [[self view] setNeedsDisplay:YES];
+    DdbPlaylistWidget *pw = (DdbPlaylistWidget *)self.view;
+    DdbListview *lv = pw.listview;
+    [lv.contentView setNeedsDisplay:YES];
 }
 
 - (void)clearGrouping {
@@ -215,7 +216,6 @@ extern DB_functions_t *deadbeef;
     }
 
     [self initColumn:idx withTitle:[[_addColumnTitle stringValue] UTF8String]  withId:(int)type withSize:_columns[idx].size withFormat:[[_addColumnFormat stringValue] UTF8String] withAlignment:(int)[_addColumnAlignment indexOfSelectedItem] withSetColor:[_addColumnSetColor state] == NSOnState withColor:rgba];
-    [[self view] setNeedsDisplay:YES];
     [self columnsChanged];
 }
 
@@ -572,6 +572,11 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)columnsChanged {
+    DdbPlaylistWidget *pw = (DdbPlaylistWidget *)self.view;
+    DdbListview *lv = pw.listview;
+    [lv.headerView setNeedsDisplay:YES];
+    [lv.contentView setNeedsDisplay:YES];
+
     NSMutableArray *columns = [[NSMutableArray alloc] initWithCapacity:_ncolumns];
     for (int i = 0; i < _ncolumns; i++) {
         uint8_t *col = _columns[i].text_color;
