@@ -339,7 +339,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)awakeFromNib {
     DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
-    [view setDelegate:(id<DdbListviewDelegate>)self];
+    view.delegate = self;
     [self initContent];
 
     [self setupPlaylist:[view listview]];
@@ -400,7 +400,7 @@ extern DB_functions_t *deadbeef;
 - (NSMenu *)contextMenuForColumn:(DdbListviewCol_t)col withEvent:(NSEvent*)theEvent forView:(NSView *)view {
     _menuColumn = (int)col;
     NSMenu *menu = [[NSMenu alloc] initWithTitle:@"ColumnMenu"];
-    [menu setDelegate:(id<NSMenuDelegate>)self];
+    menu.delegate = self;
     [menu setAutoenablesItems:NO];
     [[menu insertItemWithTitle:@"Add Column" action:@selector(menuAddColumn:) keyEquivalent:@"" atIndex:0] setTarget:self];
     if (col != -1) {
@@ -413,7 +413,7 @@ extern DB_functions_t *deadbeef;
         [menu insertItem:[NSMenuItem separatorItem] atIndex:4];
 
         NSMenu *groupBy = [[NSMenu alloc] initWithTitle:@"Group By"];
-        [groupBy setDelegate:(id<NSMenuDelegate>)self];
+        groupBy.delegate = self;
         [groupBy setAutoenablesItems:NO];
 
         [[groupBy insertItemWithTitle:@"None" action:@selector(menuGroupByNone:) keyEquivalent:@"" atIndex:0] setTarget:self];
@@ -1359,7 +1359,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     [[theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
 
     NSMenu *rgMenu = [[NSMenu alloc] initWithTitle:@"ReplayGain"];
-    [rgMenu setDelegate:(id<NSMenuDelegate>)self];
+    rgMenu.delegate = self;
     [rgMenu setAutoenablesItems:NO];
 
     BOOL __block has_rg_info = NO;

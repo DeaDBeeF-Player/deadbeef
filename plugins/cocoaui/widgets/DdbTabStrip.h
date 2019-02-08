@@ -23,7 +23,7 @@
 
 #import "DdbWidget.h"
 
-@interface DdbTabStrip : DdbWidget
+@interface DdbTabStrip : DdbWidget<NSMenuDelegate>
 - (int)clickedTab;
 @property (weak) IBOutlet NSBox *hiddenVertLine;
 @end

@@ -23,7 +23,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface DdbWidget : NSView
+@interface DdbWidget : NSView<NSMenuDelegate>
 
 @property NSString *widgetType;
 @property UInt32 widgetFlags;

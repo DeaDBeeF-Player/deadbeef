@@ -47,7 +47,7 @@ extern DB_functions_t *deadbeef;
 - (void)windowDidLoad {
     [super windowDidLoad];
 
-    [_toolbar setDelegate:(id<NSToolbarDelegate>)self];
+    _toolbar.delegate = self;
     [_toolbar setSelectedItemIdentifier:@"Playback"];
 
     NSError *error;
@@ -84,8 +84,8 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)initPluginList {
-    [_pluginList setDataSource:(id<NSTableViewDataSource>)self];
-    [_pluginList setDelegate:(id<NSTableViewDelegate>)self];
+    _pluginList.dataSource = self;
+    _pluginList.delegate = self;
     [self setPluginInfo:-1];
 }
 
@@ -118,7 +118,7 @@ extern DB_functions_t *deadbeef;
 
     // dsp
     _dspChainDataSource = [[DSPChainDataSource alloc] initWithChain:deadbeef->streamer_get_dsp_chain ()];
-    [_dspList setDataSource:(id<NSTableViewDataSource>)_dspChainDataSource];
+    _dspList.dataSource = _dspChainDataSource;
 
 
     // gui/misc -> player
@@ -242,7 +242,7 @@ extern DB_functions_t *deadbeef;
 
 - (NSMenu *)getDSPMenu {
     NSMenu *menu = [[NSMenu alloc] initWithTitle:@"DspChainMenu"];
-    [menu setDelegate:(id<NSMenuDelegate>)self];
+    menu.delegate = self;
     [menu setAutoenablesItems:NO];
 
     DB_dsp_t **plugins = deadbeef->plug_get_dsp_list ();

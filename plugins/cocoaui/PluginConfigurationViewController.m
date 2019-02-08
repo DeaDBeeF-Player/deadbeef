@@ -129,7 +129,7 @@ extern DB_functions_t *deadbeef;
                                        @"propname":propname,
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
                                        }];
-                [tf setDelegate:(id<NSTextFieldDelegate>)self];
+                tf.delegate = self;
                 break;
             }
             case PROP_CHECKBOX:
@@ -209,7 +209,7 @@ extern DB_functions_t *deadbeef;
                 [slider setTarget:self];
                 [slider setAction:@selector(valueChanged:)];
 
-                [valueedit setDelegate:(id<NSTextFieldDelegate>)self];
+                valueedit.delegate = self;
 
                 [view addSubview:slider];
                 [view addSubview:valueedit];

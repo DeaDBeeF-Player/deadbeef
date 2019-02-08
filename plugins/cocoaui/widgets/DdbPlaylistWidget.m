@@ -45,9 +45,15 @@ extern DB_functions_t *deadbeef;
     return self;
 }
 
+@synthesize delegate = _delegate;
+
+- (id<DdbListviewDelegate>)delegate {
+    return _delegate;
+}
+
 - (void)setDelegate:(id<DdbListviewDelegate>)delegate {
     _delegate = delegate;
-    [_listview setDelegate:(id<DdbListviewDelegate>)delegate];
+    _listview.delegate = delegate;
 }
 
 

@@ -693,7 +693,7 @@ plt_get_title_wrapper (int plt) {
         && (theEvent.buttonNumber == 1
             || (theEvent.buttonNumber == 0 && (theEvent.modifierFlags & NSControlKeyMask)))) {
         NSMenu *menu = [[NSMenu alloc] initWithTitle:@"TabMenu"];
-        [menu setDelegate:(id<NSMenuDelegate>)self];
+        menu.delegate = self;
         [menu setAutoenablesItems:NO];
         [[menu insertItemWithTitle:@"Add New Playlist" action:@selector(addNewPlaylist:) keyEquivalent:@"" atIndex:0] setTarget:self];
         if (_tab_clicked != -1) {

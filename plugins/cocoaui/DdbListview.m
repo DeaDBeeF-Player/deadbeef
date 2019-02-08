@@ -896,7 +896,6 @@ int grouptitleheight = 22;
 @end
 
 @implementation DdbListview {
-    id<DdbListviewDelegate> _delegate;
     DdbListviewGroup_t *_groups;
     int _grouptitle_height;
     int groups_build_idx;
@@ -989,7 +988,7 @@ int grouptitleheight = 22;
 
     NSScrollView *sv = [contentView enclosingScrollView];
     NSRect vis = [sv documentVisibleRect];
-    if ([(NSObject *)_delegate respondsToSelector:@selector(scrollChanged:)]) {
+    if ([_delegate respondsToSelector:@selector(scrollChanged:)]) {
         [_delegate scrollChanged:vis.origin.y];
     }
 }
@@ -1721,14 +1720,6 @@ int grouptitleheight = 22;
     NSScrollView *sv = [contentView enclosingScrollView];
     NSRect vis = [sv documentVisibleRect];
     [contentView scrollPoint:NSMakePoint(vis.origin.x, scroll)];
-}
-
-- (id<DdbListviewDelegate>)delegate {
-    return _delegate;
-}
-
-- (void)setDelegate:(id<DdbListviewDelegate>)delegate {
-    _delegate = delegate;
 }
 
 @end

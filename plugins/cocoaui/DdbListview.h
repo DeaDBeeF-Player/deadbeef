@@ -35,7 +35,7 @@ typedef struct DdbListviewGroup_s {
     struct DdbListviewGroup_s *next;
 } DdbListviewGroup_t;
 
-@protocol DdbListviewDelegate
+@protocol DdbListviewDelegate<NSObject>
 - (void)lock;
 - (void)unlock;
 - (int)columnCount;
@@ -88,9 +88,8 @@ typedef struct DdbListviewGroup_s {
 @property (readonly) int fullheight;
 @property (readwrite) NSPoint lastpos;
 @property (readwrite) int shift_sel_anchor;
+@property (weak,nonatomic) id<DdbListviewDelegate> delegate;
 
-- (id<DdbListviewDelegate>)delegate;
-- (void)setDelegate:(id<DdbListviewDelegate>)delegate;
 - (void)reloadData;
 - (void)groupCheck;
 - (int)pickPoint:(int)y group:(DdbListviewGroup_t **)group groupIndex:(int *)group_idx index:(int *)global_idx;

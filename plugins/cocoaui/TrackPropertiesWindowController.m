@@ -167,14 +167,14 @@ extern DB_functions_t *deadbeef;
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    [[self window] setDelegate:(id<NSWindowDelegate>)self];
+    self.window.delegate = self;
 
     _store = [[NSMutableArray alloc] init];
     _propstore = [[NSMutableArray alloc] init];
     [self fill];
-    [_metadataTableView setDataSource:(id<NSTableViewDataSource>)self];
-    [_propertiesTableView setDataSource:(id<NSTableViewDataSource>)self];
-    [_metadataTableView setDelegate:(id<NSTableViewDelegate>)self];
+    _metadataTableView.dataSource = self;
+    _propertiesTableView.dataSource = self;
+    _metadataTableView.delegate = self;
     [_metadataTableView reloadData];
     [_propertiesTableView reloadData];
 }
@@ -788,8 +788,8 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         _multipleFieldsTableData = [[MultipleFieldsTableData alloc] init];
         _multipleFieldsTableData->_fields = [[NSMutableArray alloc] initWithArray:fields copyItems:NO];
         _multipleFieldsTableData->_items = items;
-        [_multiValueTableView setDelegate:_multipleFieldsTableData];
-        [_multiValueTableView setDataSource:_multipleFieldsTableData];
+        _multiValueTableView.delegate = _multipleFieldsTableData;
+        _multiValueTableView.dataSource = _multipleFieldsTableData;
         [self.window beginSheet:_editMultipleValuesPanel completionHandler:^(NSModalResponse returnCode) {
             if (returnCode == NSModalResponseOK) {
                 if ([[[_multiValueTabView selectedTabViewItem] identifier] isEqualToString:@"singleValue"]) {
