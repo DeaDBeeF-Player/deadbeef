@@ -77,10 +77,10 @@ dsp_chain_clone (ddb_dsp_context_t *source_chain) {
     return [NSString stringWithUTF8String:node->plugin->plugin.name];
 }
 
-- (void)addItem:(DB_dsp_t *)plugin {
+- (void)addItem:(DB_dsp_t *)plugin atIndex:(NSInteger)index {
     ddb_dsp_context_t *node = _chain;
     ddb_dsp_context_t *tail = NULL;
-    while (node) {
+    while (node && --index >= 0) {
         tail = node;
         node = node->next;
     }
@@ -93,10 +93,11 @@ dsp_chain_clone (ddb_dsp_context_t *source_chain) {
     else {
         _chain = inst;
     }
+    inst->next = node;
     deadbeef->streamer_set_dsp_chain (_chain);
 }
 
-- (void)removeItemAtIndex:(int)index {
+- (void)removeItemAtIndex:(NSInteger)index {
     ddb_dsp_context_t *node = _chain;
     ddb_dsp_context_t *prev = NULL;
     while (index > 0 && node) {
@@ -118,7 +119,7 @@ dsp_chain_clone (ddb_dsp_context_t *source_chain) {
     deadbeef->streamer_set_dsp_chain (_chain);
 }
 
-- (ddb_dsp_context_t *)getItemAtIndex:(int)index {
+- (ddb_dsp_context_t *)getItemAtIndex:(NSInteger)index {
     ddb_dsp_context_t *node = _chain;
     while (index > 0 && node) {
         node = node->next;

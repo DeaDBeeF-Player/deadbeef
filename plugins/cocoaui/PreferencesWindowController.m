@@ -260,15 +260,19 @@ extern DB_functions_t *deadbeef;
     DB_dsp_t **plugins = deadbeef->plug_get_dsp_list ();
 
     for (int i = 0; plugins[i]; i++) {
-        if (!strcmp (plugins[i]->plugin.name, name))
-        {
+        if (!strcmp (plugins[i]->plugin.name, name)) {
             id<NSTableViewDataSource> ds = _dspChainDataSource;
-            [_dspChainDataSource addItem:plugins[i]];
             NSInteger cnt = [ds numberOfRowsInTableView:_dspList];
-            NSIndexSet *is = [[NSIndexSet alloc] initWithIndex:cnt-1];
+            NSInteger index = [_dspList selectedRow];
+            if (index < 0) {
+                index = cnt;
+            }
+
+            NSIndexSet *is = [[NSIndexSet alloc] initWithIndex:index];
             [_dspList beginUpdates];
             [_dspList insertRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideDown];
             [_dspList endUpdates];
+            [_dspChainDataSource addItem:plugins[i] atIndex:index];
             [_dspList selectRowIndexes:is byExtendingSelection:NO];
             break;
         }
@@ -399,7 +403,7 @@ extern DB_functions_t *deadbeef;
 }
 
 // data source for plugin list
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView {
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView {
     DB_plugin_t **p = deadbeef->plug_get_list();
     int cnt;
     for (cnt = 0; p[cnt]; cnt++);
@@ -407,7 +411,7 @@ extern DB_functions_t *deadbeef;
     return cnt;
 }
 
-- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex {
+- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
     DB_plugin_t **p = deadbeef->plug_get_list();
 
     return [NSString stringWithUTF8String: p[rowIndex]->name];
