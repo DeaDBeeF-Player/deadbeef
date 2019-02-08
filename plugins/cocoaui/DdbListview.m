@@ -1652,32 +1652,27 @@ int grouptitleheight = 22;
         [_delegate unrefRow:row];
     }
 
-    BOOL need_redraw = YES;
     if (!noscroll) {
-        if ([self setScrollForPos:[self getRowPos:cursor]]) {
-            need_redraw = NO;
-        }
+        [self setScrollForPos:[self getRowPos:cursor]];
     }
-    if (need_redraw) {
-        [contentView setNeedsDisplay:YES];
-    }
+    [contentView setNeedsDisplay:YES];
 }
 
+// returns YES if scroll has occured as result of changing the cursor position
 - (BOOL)setScrollForPos:(int)pos {
     NSScrollView *sv = [contentView enclosingScrollView];
     NSRect vis = [sv documentVisibleRect];
     int scrollpos = vis.origin.y;
-    int cursor_scroll = pos;
     int newscroll = scrollpos;
 
-    if (![_delegate pinGroups] && cursor_scroll < scrollpos) {
-        newscroll = cursor_scroll;
+    if (![_delegate pinGroups] && pos < scrollpos) {
+        newscroll = pos;
     }
-    else if ([_delegate pinGroups] && cursor_scroll < scrollpos + _grouptitle_height) {
-        newscroll = cursor_scroll - _grouptitle_height;
+    else if ([_delegate pinGroups] && pos < scrollpos + _grouptitle_height) {
+        newscroll = pos - _grouptitle_height;
     }
-    else if (cursor_scroll + rowheight >= scrollpos + vis.size.height) {
-        newscroll = cursor_scroll + rowheight - vis.size.height + 1;
+    else if (pos + rowheight >= scrollpos + vis.size.height) {
+        newscroll = pos + rowheight - vis.size.height;
         if (newscroll < 0) {
             newscroll = 0;
         }
