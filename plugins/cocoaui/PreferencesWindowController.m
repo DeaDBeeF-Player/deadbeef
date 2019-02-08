@@ -262,8 +262,14 @@ extern DB_functions_t *deadbeef;
     for (int i = 0; plugins[i]; i++) {
         if (!strcmp (plugins[i]->plugin.name, name))
         {
+            id<NSTableViewDataSource> ds = _dspChainDataSource;
             [_dspChainDataSource addItem:plugins[i]];
-            [_dspList reloadData];
+            NSInteger cnt = [ds numberOfRowsInTableView:_dspList];
+            NSIndexSet *is = [[NSIndexSet alloc] initWithIndex:cnt-1];
+            [_dspList beginUpdates];
+            [_dspList insertRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideDown];
+            [_dspList endUpdates];
+            [_dspList selectRowIndexes:is byExtendingSelection:NO];
             break;
         }
     }
@@ -280,8 +286,11 @@ extern DB_functions_t *deadbeef;
         return;
     }
 
+    [_dspList beginUpdates];
+    NSIndexSet *is = [[NSIndexSet alloc] initWithIndex:index];
+    [_dspList removeRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideUp];
+    [_dspList endUpdates];
     [_dspChainDataSource removeItemAtIndex:(int)index];
-    [_dspList reloadData];
 
     if (index >= [_dspList numberOfRows]) {
         index--;
