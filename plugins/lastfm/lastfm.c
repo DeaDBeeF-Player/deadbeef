@@ -37,6 +37,12 @@ static DB_functions_t *deadbeef;
 #define SCROBBLER_URL_LFM "http://post.audioscrobbler.com"
 #define SCROBBLER_URL_LIBRE "http://turtle.libre.fm"
 
+#ifdef __MINGW32__
+#define LOOKUP_URL_FORMAT "cmd /c start http://www.last.fm/music/%s/_/%s"
+#else
+#define LOOKUP_URL_FORMAT "xdg-open 'http://www.last.fm/music/%s/_/%s' &"
+#endif
+
 static char lfm_user[100];
 static char lfm_pass[100];
 
@@ -846,7 +852,7 @@ lfm_action_lookup (DB_plugin_action_t *action, int ctx)
         goto out;
     }
 
-    if (-1 == asprintf (&command, "xdg-open 'http://www.last.fm/music/%s/_/%s' &", eartist, etitle)) {
+    if (-1 == asprintf (&command, LOOKUP_URL_FORMAT, eartist, etitle)) {
         goto out;
     }
 
