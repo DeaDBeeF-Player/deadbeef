@@ -761,6 +761,21 @@ project "nullout"
    }
 end
 
+if option ("plugin-lastfm") then
+project "lastfm"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/lastfm/*.h",
+       "plugins/lastfm/*.c"
+   }
+   pkgconfig ("libcurl")
+end
+
+
 project "translations"
    kind "Utility"
    language "C"
