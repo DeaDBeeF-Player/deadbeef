@@ -215,7 +215,7 @@ wildmidi_load (DB_functions_t *api) {
     return DB_PLUGIN (&wmidi_plugin);
 }
 
-static const char *exts[] = { "mid",NULL };
+static const char *exts[] = { "mid","midi",NULL };
 
 static const char settings_dlg[] =
     "property \"Timidity++ bank configuration file\" file wildmidi.config \"" DEFAULT_TIMIDITY_CONFIG "\";\n"
