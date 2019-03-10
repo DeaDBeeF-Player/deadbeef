@@ -117,26 +117,19 @@ plt_get_title_wrapper (int plt) {
     return [NSString stringWithUTF8String:buffer];
 }
 
-- (int)getTabWith:(int)tab {
+- (int)getTabWidth:(int)tab {
+    int w = 0;
     NSString *title = plt_get_title_wrapper (tab);
-
-    NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-    NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize] weight:NSFontWeightSemibold];
-    NSDictionary *attrs = @{
-                            NSParagraphStyleAttributeName: textStyle,
-                            NSFontAttributeName:font,
-                            NSForegroundColorAttributeName:[NSColor controlTextColor]
-                            };
-
-    NSSize sz = [title sizeWithAttributes:attrs];
-    sz.width += text_left_padding + text_right_padding;
-    if (sz.width < min_tab_size) {
-        sz.width = min_tab_size;
+    NSSize sz = [title sizeWithAttributes:nil];
+    w = sz.width;
+    w += text_left_padding + text_right_padding;
+    if (w < min_tab_size) {
+        w = min_tab_size;
     }
-    else if (sz.width > max_tab_size) {
-        sz.width = max_tab_size;
+    else if (w > max_tab_size) {
+        w = max_tab_size;
     }
-    return sz.width;
+    return w;
 }
 
 - (void)recalculateNeedArrows {
@@ -146,7 +139,7 @@ plt_get_title_wrapper (int plt) {
     int w = 0;
     NSRect a = [self bounds];
     for (int idx = 0; idx < cnt; idx++) {
-        w += [self getTabWith:idx] - tab_overlap_size;
+        w += [self getTabWidth:idx] - tab_overlap_size;
         if (w >= a.size.width) {
             _needArrows = YES;
             break;
@@ -171,7 +164,7 @@ plt_get_title_wrapper (int plt) {
     int fullwidth = 0;
     int cnt = deadbeef->plt_get_count ();
     for (int idx = 0; idx < cnt; idx++) {
-        int tab_w = [self getTabWith:idx];
+        int tab_w = [self getTabWidth:idx];
         if (idx == cnt-1) {
             tab_w += 3;
         }
@@ -197,7 +190,7 @@ plt_get_title_wrapper (int plt) {
     NSSize a = [self bounds].size;
     int boundary = a.width - arrow_widget_width*2 + _hscrollpos;
     for (int idx = 0; idx < cnt; idx++) {
-        int tab_w = [self getTabWith:idx];
+        int tab_w = [self getTabWidth:idx];
         if (idx == cnt-1) {
             tab_w += 3;
         }
@@ -231,7 +224,7 @@ plt_get_title_wrapper (int plt) {
             int w = 0;
             int cnt = deadbeef->plt_get_count ();
             for (int idx = 0; idx < cnt; idx++) {
-                w += [self getTabWith:idx] - tab_overlap_size;
+                w += [self getTabWidth:idx] - tab_overlap_size;
             }
             w += tab_overlap_size + 3;
             if (_hscrollpos > w - (a.width - arrow_widget_width*2)) {
@@ -293,6 +286,8 @@ plt_get_title_wrapper (int plt) {
 
     [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + text_vert_offset + textoffs - 10, area.size.width - (text_left_padding + text_right_padding - 1), area.size.height) withAttributes:attrs];
 
+    [[NSGraphicsContext currentContext] restoreGraphicsState];
+
     // close button
     if (idx == _pointedTab && _dragging == -1) {
         NSRect atRect = [self getTabCloseRect:area];
@@ -312,7 +307,6 @@ plt_get_title_wrapper (int plt) {
         [NSBezierPath strokeLineFromPoint: from toPoint: to ];
         [NSBezierPath strokeLineFromPoint: NSMakePoint(from.x, to.y) toPoint: NSMakePoint(to.x, from.y) ];
     }
-    [[NSGraphicsContext currentContext] restoreGraphicsState];
 }
 
 - (void)clipTabArea {
@@ -367,16 +361,7 @@ plt_get_title_wrapper (int plt) {
     int idx;
     int widths[cnt];
     for (idx = 0; idx < cnt; idx++) {
-        NSString *title = plt_get_title_wrapper (idx);
-        NSSize sz = [title sizeWithAttributes:nil];
-        widths[idx] = sz.width;
-        widths[idx] += text_left_padding + text_right_padding;
-        if (widths[idx] < min_tab_size) {
-            widths[idx] = min_tab_size;
-        }
-        else if (widths[idx] > max_tab_size) {
-            widths[idx] = max_tab_size;
-        }
+        widths[idx] = [self getTabWidth:idx];
     }
     
     [[NSGraphicsContext currentContext] saveGraphicsState];
@@ -462,13 +447,6 @@ plt_get_title_wrapper (int plt) {
     if ([self needArrows]) {
         [[NSGraphicsContext currentContext] restoreGraphicsState];
     }
-
-    if ([self needArrows]) {
-        [[NSGraphicsContext currentContext] saveGraphicsState];
-        [self clipTabArea];
-    }
-
-    [[NSGraphicsContext currentContext] restoreGraphicsState];
 }
 
 -(NSRect)tabRectForIndex:(int)tab {
@@ -547,7 +525,7 @@ plt_get_title_wrapper (int plt) {
 }
 
 -(void)updatePointedTab:(int)tab {
-    if (!_closeTabCapture && tab != _pointedTab) {
+    if (!_closeTabCapture) {
         _pointedTab = tab;
         [self setNeedsDisplay:YES];
     }
@@ -593,13 +571,14 @@ plt_get_title_wrapper (int plt) {
     int x = -hscroll + tabs_left_margin;
     int idx;
     for (idx = 0; idx < _tab_clicked; idx++) {
-        int width = [self getTabWith:idx];
+        int width = [self getTabWidth:idx];
         x += width - tab_overlap_size;
     }
-    int w = [self getTabWith:_tab_clicked];
-    NSRect area = NSMakeRect(x, tab_vert_padding, w, [self bounds].size.height);
+    int w = [self getTabWidth:_tab_clicked];
 
-    NSRect atRect = [self getTabCloseRect:area];
+    NSRect tabRect = [self getTabRect:x tabWidth:w tabHeight:[self bounds].size.height];
+
+    NSRect atRect = [self getTabCloseRect:tabRect];
 
     if (!NSPointInRect(_lastMouseCoord, atRect)) {
         return NO;
@@ -655,7 +634,7 @@ plt_get_title_wrapper (int plt) {
         int x = -hscroll + tabs_left_margin;
         int idx;
         for (idx = 0; idx < _tab_clicked; idx++) {
-            int width = [self getTabWith:idx];
+            int width = [self getTabWidth:idx];
             x += width - tab_overlap_size;
         }
 
@@ -797,9 +776,9 @@ plt_get_title_wrapper (int plt) {
         int x = -hscroll + tabs_left_margin;
         int inspos = -1;
         int cnt = deadbeef->plt_get_count ();
-        int dw = [self getTabWith:_dragging] - tab_overlap_size;
+        int dw = [self getTabWidth:_dragging] - tab_overlap_size;
         for (idx = 0; idx < cnt; idx++) {
-            int width = [self getTabWith:idx] - tab_overlap_size;
+            int width = [self getTabWidth:idx] - tab_overlap_size;
 
             if (idx < _dragging && _movepos <= x + width/2) {
                 inspos = idx;
