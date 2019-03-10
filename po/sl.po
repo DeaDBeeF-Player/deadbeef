@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Slovenian (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/sl/)\n"
@@ -386,9 +386,8 @@ msgid "_Playback"
 msgstr "Pre_dvajanje"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "Premešaj skladbe"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
@@ -396,33 +395,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "Skladba"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "Album"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "Število skladb"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "Število skladb"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "Skladba"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -2536,14 +2530,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "Levo"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "Desno"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2771,9 +2765,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "Omogočeno"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3452,9 +3446,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "Predvajanje"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3517,57 +3510,3 @@ msgstr ""
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr ""
-
-#~ msgid "Linear"
-#~ msgstr "Zaporedno"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "Premešaj skladbe"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "Premešaj albume"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlengths.txt (HVSC)"
-
-#~ msgid "Looping"
-#~ msgstr "Ponavljanje"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "Strežnik PulseAudio"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Najdi na Last.fm"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "Sprosti napravo, če je predvajanje zaustavljeno"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "Začasna rešitev napake v hitrosti vzorčenja za OSS4"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "Hitrost osveževanja predpomnilnika (v urah)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "Maska datotek z naslovnicami"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "Pridobi z Last.fm"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "Pridobi z Albumart.org"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "Uporabi protokol CDDB namesto HTTP"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "Kakovost prevzorčenja (0 ... 2, večje je boljše)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "Bitov na vzorec (8 ali 16)"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "Ciljna hitrost vzorčenja"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr "Samodejna hitrost vzorčenja (prepiše ciljno hitrost vzorčenja)"

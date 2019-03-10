@@ -8,13 +8,14 @@
 # Hiunn-hué <hiunnhue108@ymail.com>, 2015-2016
 # PCMan <pcman.tw@gmail.com>, 2010
 # Julian Lai <laichiaheng@outlook.com>, 2015-2017
+# Louis Chen <louistw@uab.edu>, 2019
 # PCMan <pcman.tw@gmail.com>, 2010
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/deadbeef-player/"
 "deadbeef-player/language/zh_TW/)\n"
@@ -393,9 +394,8 @@ msgid "_Playback"
 msgstr "播放(_P)"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "調亂歌曲"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
@@ -403,33 +403,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "歌曲"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "專輯"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "總歌曲數"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "總歌曲數"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "單一曲目"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -1970,9 +1965,9 @@ msgid "Internal DUMB volume (0..128)"
 msgstr ""
 
 #: ../translation/plugins.c:106
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Volume ramping"
-msgstr "音量列"
+msgstr ""
 
 #: ../translation/plugins.c:110
 #, no-c-format
@@ -2165,7 +2160,7 @@ msgstr ""
 #: ../translation/plugins.c:201
 #, no-c-format
 msgid "Remove Track(s) From Playlist"
-msgstr ""
+msgstr "將曲目自播放清單中移除"
 
 #: ../translation/plugins.c:203
 #, no-c-format
@@ -2265,52 +2260,52 @@ msgstr ""
 #: ../translation/plugins.c:246
 #, no-c-format
 msgid "Skip to"
-msgstr ""
+msgstr "跳至"
 
 #: ../translation/plugins.c:248
 #, no-c-format
 msgid "Previous genre"
-msgstr ""
+msgstr "上一個種類"
 
 #: ../translation/plugins.c:250
 #, no-c-format
 msgid "Previous composer"
-msgstr ""
+msgstr "上一個作曲"
 
 #: ../translation/plugins.c:252
 #, no-c-format
 msgid "Previous artist"
-msgstr ""
+msgstr "上一個藝人"
 
 #: ../translation/plugins.c:254
 #, no-c-format
 msgid "Previous album"
-msgstr ""
+msgstr "上一張專輯"
 
 #: ../translation/plugins.c:256
 #, no-c-format
 msgid "Next genre"
-msgstr ""
+msgstr "下一個種類"
 
 #: ../translation/plugins.c:258
 #, no-c-format
 msgid "Next composer"
-msgstr ""
+msgstr "下一個作曲"
 
 #: ../translation/plugins.c:260
 #, no-c-format
 msgid "Next artist"
-msgstr ""
+msgstr "下一個藝人"
 
 #: ../translation/plugins.c:262
 #, no-c-format
 msgid "Next album"
-msgstr ""
+msgstr "下一張專輯"
 
 #: ../translation/plugins.c:264
 #, no-c-format
 msgid "Next Playlist"
-msgstr ""
+msgstr "下一個播放清單"
 
 #: ../translation/plugins.c:266
 #, no-c-format
@@ -2430,7 +2425,7 @@ msgstr ""
 #: ../translation/plugins.c:316
 #, no-c-format
 msgid "Toggle Mute"
-msgstr ""
+msgstr "切換靜音"
 
 #: ../translation/plugins.c:326
 #, no-c-format
@@ -2440,37 +2435,37 @@ msgstr ""
 #: ../translation/plugins.c:328
 #, no-c-format
 msgid "Play\\/Pause"
-msgstr ""
+msgstr "播放/暫停"
 
 #: ../translation/plugins.c:332
 #, no-c-format
 msgid "Seek 1s Forward"
-msgstr ""
+msgstr "快進 1 秒"
 
 #: ../translation/plugins.c:334
 #, no-c-format
 msgid "Seek 1s Backward"
-msgstr ""
+msgstr "倒回 1 秒"
 
 #: ../translation/plugins.c:336
 #, no-c-format
 msgid "Seek 5s Forward"
-msgstr ""
+msgstr "快進 5 秒"
 
 #: ../translation/plugins.c:338
 #, no-c-format
 msgid "Seek 5s Backward"
-msgstr ""
+msgstr "倒回 5 秒"
 
 #: ../translation/plugins.c:340
 #, no-c-format
 msgid "Seek 1% Forward"
-msgstr ""
+msgstr "快進 1%"
 
 #: ../translation/plugins.c:342
 #, no-c-format
 msgid "Seek 1% Backward"
-msgstr ""
+msgstr "倒回 1%"
 
 #: ../translation/plugins.c:344
 #, no-c-format
@@ -2550,14 +2545,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "左"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "右"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2785,9 +2780,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "開啟環繞音效"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3411,7 +3406,7 @@ msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1669
 msgid "Remove Tab"
-msgstr ""
+msgstr "移除分頁"
 
 #: ../plugins/gtkui/widgets.c:1676 ../plugins/gtkui/widgets.c:1856
 msgid "Add New Tab"
@@ -3483,9 +3478,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "正在播放"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3543,74 +3537,8 @@ msgstr ""
 
 #: ../plugins/gtkui/rg.c:321
 msgid "File not found"
-msgstr ""
+msgstr "找不到檔案"
 
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
-msgstr ""
-
-#~ msgid "Linear"
-#~ msgstr "線性"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "調亂歌曲"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "調亂專輯"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlengths.txt (來自 HVSC)"
-
-#~ msgid "Looping"
-#~ msgstr "循環播放"
-
-#~ msgid "Loop all"
-#~ msgstr "全部循環"
-
-#~ msgid "Loop single song"
-#~ msgstr "單曲循環"
-
-#~ msgid "Don't loop"
-#~ msgstr "不要循環播放"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "PulseAudio 伺服器"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "在 Last.fm 查看"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "停止時釋出裝置"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "OSS4 取樣率問題臨時解決辦法"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "快取更新間隔 (小時)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "本機封面檔案遮罩"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "由 last.fm 取得"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "由 albumart.org 取得"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "優先使用 CDDB 協定而非 HTTP"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "重取樣品質 (0..2，越高越好)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "取樣位元 (8 或 16)"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "目標取樣率"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr "自動取樣率（優先於「目標取樣率」）"
-
-#~ msgid "Disable gapless playback (faster scanning)"
-#~ msgstr "取消無間斷播放（掃瞄更快速）"
+msgstr "無效的檔案"

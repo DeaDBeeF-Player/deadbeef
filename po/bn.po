@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Bengali (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/bn/)\n"
@@ -396,33 +396,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "ট্র্যাক"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "অ্যালবাম"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "এলোমেলো"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "ট্র্যাক"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "ট্র্যাক"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -2527,14 +2522,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "বাম"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "ডান"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2762,9 +2757,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "সক্রিয়"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3437,9 +3432,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "চলছে"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3502,9 +3496,3 @@ msgstr ""
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr ""
-
-#~ msgid "Linear"
-#~ msgstr "রৈখিক"
-
-#~ msgid "Looping"
-#~ msgstr "পুনরাবৃত্তি হচ্ছে"

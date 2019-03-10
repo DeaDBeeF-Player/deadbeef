@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Galician (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/gl/)\n"
@@ -390,9 +390,8 @@ msgid "_Playback"
 msgstr "_Reproducir"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "Barallar pistas"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
@@ -400,33 +399,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "Pista"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "Álbum"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "Total de pistas"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "Total de pistas"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "Pistas únicas"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -1992,9 +1986,9 @@ msgid "Internal DUMB volume (0..128)"
 msgstr ""
 
 #: ../translation/plugins.c:106
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Volume ramping"
-msgstr "Barra de volume"
+msgstr ""
 
 #: ../translation/plugins.c:110
 #, no-c-format
@@ -2573,14 +2567,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "Esquerda"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "Dereita"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2808,9 +2802,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "Activar son envolvente"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3517,9 +3511,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "Reproducindo"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3582,71 +3575,3 @@ msgstr ""
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr ""
-
-#~ msgid "Linear"
-#~ msgstr "Lineal"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "Barallar pistas"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "Barallar álbums"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlengths.txt (para HVSC)"
-
-#~ msgid "Looping"
-#~ msgstr "Repetir"
-
-#~ msgid "Loop all"
-#~ msgstr "Repetir todas"
-
-#~ msgid "Loop single song"
-#~ msgstr "Repetir canción"
-
-#~ msgid "Don't loop"
-#~ msgstr "Non repetir"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "Servidor PulseAudio"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Buscar en Last.fm"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "Liberar o dispositivo cando está detido:"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "Solución de erros de mostraxe OSS4"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "Período de actualización (hr)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "Máscara de portada local"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "Obter en Last.fm"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "Obter en albumart.org"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "Preferir o protocolo CDDB ao HTTP"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "Calidade de sobremostraxe (0..2, maior é mellor)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "Bits por mostra (8 ou 16)"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "Destino da mostraxe"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr ""
-#~ "Frecuencia de mostraxe automática (substitúe a frecuencia de mostraxe "
-#~ "final)"
-
-#~ msgid "Disable gapless playback (faster scanning)"
-#~ msgstr "Desactivar a reprodución sen pausas (escaneo máis rápido)"

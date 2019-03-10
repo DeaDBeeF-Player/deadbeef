@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Kazakh (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/kk/)\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
 #: ../plugins/gtkui/callbacks.c:351
 #, c-format
@@ -389,9 +389,8 @@ msgid "_Playback"
 msgstr "О_йнату"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "Тректерді араластыру"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
@@ -399,33 +398,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "Трек"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "Альбом"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "Жалпы трек саны"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "Жалпы трек саны"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "Дара тректер"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -1969,9 +1963,9 @@ msgid "Internal DUMB volume (0..128)"
 msgstr ""
 
 #: ../translation/plugins.c:106
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Volume ramping"
-msgstr "Дыбыс жолағы"
+msgstr ""
 
 #: ../translation/plugins.c:110
 #, no-c-format
@@ -2549,14 +2543,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "Сол жақ"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "Оң жақ"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2784,9 +2778,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "Surround іске қосу"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3488,9 +3482,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "Ойналуда"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3553,69 +3546,3 @@ msgstr ""
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr ""
-
-#~ msgid "Linear"
-#~ msgstr "Қалыпты"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "Тректерді араластыру"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "Альбомдарды араластыру"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlengths.txt (HVSC-дан)"
-
-#~ msgid "Looping"
-#~ msgstr "Қайталау"
-
-#~ msgid "Loop all"
-#~ msgstr "Барлығын қайталау"
-
-#~ msgid "Loop single song"
-#~ msgstr "Бір тректі қайталау"
-
-#~ msgid "Don't loop"
-#~ msgstr "Қайталамау"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "PulseAudio сервері"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Last.fm ішінен іздеу"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "Тоқтатылған кезде дыбыс құрылғысын босату"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "OSS4 үшін дискреттеу жиілігінің қатесіне түзету"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "Кэш жаңарту мерзімі (сағ)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "Жергілікті мұқаба үшін файл маскасы"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "last.fm сайтынан алу"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "albumart.org сайтынан алу"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "HTTP алдында CDDB хаттамасын таңдау"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "Қайта дискретизация сапасы (0..2, жоғарырақ - жақсырақ)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "Разрядтылығы (8 не 16)"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "Мақсаттың дискреттеу жиілігі"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr "Дискреттеудің автожиілігі (дискреттеу жиілігін қайта анықтайды)"
-
-#~ msgid "Disable gapless playback (faster scanning)"
-#~ msgstr "Үзіліссіз ойнатуды сөндіру (скандауды жылдамдатады)"

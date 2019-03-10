@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:46+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/uk/)\n"
@@ -23,8 +23,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != "
+"11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % "
+"100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || "
+"(n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
 
 #: ../plugins/gtkui/callbacks.c:351
 #, c-format
@@ -395,9 +397,8 @@ msgid "_Playback"
 msgstr "_Програвання"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "Перемішати треки"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
@@ -405,33 +406,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "Трек"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "Альбом"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "Всіх треків"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "Всіх треків"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "Один Трек"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -2004,9 +2000,9 @@ msgid "Internal DUMB volume (0..128)"
 msgstr ""
 
 #: ../translation/plugins.c:106
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Volume ramping"
-msgstr "Панель гучності"
+msgstr ""
 
 #: ../translation/plugins.c:110
 #, no-c-format
@@ -2584,14 +2580,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "По лівому краю"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "По правому краю"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2819,9 +2815,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "Увімкнути оточення"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3534,9 +3530,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "Програвання"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3599,70 +3594,3 @@ msgstr "Файл не знайдено"
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr "Файл не підтримується"
-
-#~ msgid "Linear"
-#~ msgstr "Одне за одним"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "Перемішати треки"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "Перемішати альбоми"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlengths.txt (з HVSC)"
-
-#~ msgid "Looping"
-#~ msgstr "Повторювати"
-
-#~ msgid "Loop all"
-#~ msgstr "Повторювати все"
-
-#~ msgid "Loop single song"
-#~ msgstr "Повторювати одну пісню"
-
-#~ msgid "Don't loop"
-#~ msgstr "Не повторювати"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "Сервер PulseAudio"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Шукати на Last.fm"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "Вивільняти пристрій під час зупинки"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "Помилка OSS4 samplerate"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "Період оновлення кешу (год.)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "Маска файлу для локальних обкладинок"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "Отримати з last.fm"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "Отримати з albumart.org"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "Використовувати CDDB замість HTTP"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "Якість передискретизації (0..2, більше-краще)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "Біт на зразок (8 або 16)"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "Частота дискретизації"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr ""
-#~ "Автоматична частота дискретизації (перевизначає Частоту дискретизації)"
-
-#~ msgid "Disable gapless playback (faster scanning)"
-#~ msgstr "Вимкнути \"безшовне\" програвання (прискорить сканування)"

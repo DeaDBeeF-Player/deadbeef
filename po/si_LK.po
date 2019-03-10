@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Sinhala (Sri Lanka) (http://www.transifex.com/deadbeef-player/"
 "deadbeef-player/language/si_LK/)\n"
@@ -387,9 +387,8 @@ msgid "_Playback"
 msgstr "නැවත ධාවනය _P"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "ගීත කලවම් කරන්න"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
@@ -397,33 +396,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "ගීතය"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "ඇල්බමය"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "සම්පූර්ණ ගීත ගණන"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "සම්පූර්ණ ගීත ගණන"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "තනි ගීත"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -2542,14 +2536,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "වම"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "දකුණ"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2777,9 +2771,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "ශබ්දය වටෙන්ම ඇසීම සක්‍රීය කරන්න"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3489,9 +3483,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "වාදනය වෙමින් පවතී"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3554,69 +3547,3 @@ msgstr ""
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr ""
-
-#~ msgid "Linear"
-#~ msgstr "රේඛීය"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "ගීත කලවම් කරන්න"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "ඇල්බම කලවම් කරන්න"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlengths.txt (HVSC මඟින්)"
-
-#~ msgid "Looping"
-#~ msgstr "නැවත නැවත ධාවනය කිරීම"
-
-#~ msgid "Loop all"
-#~ msgstr "සියලු ගීත නැවත නැවත ධාවනය කරන්න"
-
-#~ msgid "Loop single song"
-#~ msgstr "ගීය නැවත නැවත ධාවනය කරන්න"
-
-#~ msgid "Don't loop"
-#~ msgstr "නැවත නැවත ධාවනය නොකරන්න"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "PulseAudio සර්වරය"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Last.fm හි බලන්න"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "ධාවනය නවතා ඇති අතරේ උපාංගය නිදහස් කරන්න"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "OSS4 සාම්පල අනුපාතික දෝෂය මඟහැරයන්න"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "තාවකාලික මතක යාවත්කාලීන කාලාවර්තය (පැය)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "ගොනු සඳහා පරිගණකයේ පවතින කවරයක් යොදන්න"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "last.fm හරහා ලබා ගන්න"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "albumart.org හරහා ලබා ගන්න"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "CDDB ප්‍රොටොකෝලය HTTP හරහා ඉදිරිපත් කරන්න"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "නැවත සාම්පල කිරීමේ ගුණත්වය (0..2, වඩා වැඩිනම් හොඳයි)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "සාම්පලයකට ඇති බිට් ගණන (8 හෝ 16)"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "ඉලක්ක සාම්පල අනුපාතිකය"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr "ස්වයංක්‍රීය Samplerate (ඉලක්ක Samplerate සංශෝධනය කරයි)"
-
-#~ msgid "Disable gapless playback (faster scanning)"
-#~ msgstr "ගීත අතර නැවතීමක් නොමැතිව ධාවනය වීම අක්‍රීය කරන්න (ඉක්මන් පරිලෝකනය)"

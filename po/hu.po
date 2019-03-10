@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Hungarian (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/hu/)\n"
@@ -390,9 +390,8 @@ msgid "_Playback"
 msgstr "_Lejátszás"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "Számok keverése"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
@@ -400,33 +399,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "Sáv"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "Album"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "Összes sáv"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "Összes sáv"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "Egyedi számok"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -1968,9 +1962,9 @@ msgid "Internal DUMB volume (0..128)"
 msgstr ""
 
 #: ../translation/plugins.c:106
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Volume ramping"
-msgstr "Hangerő sáv"
+msgstr ""
 
 #: ../translation/plugins.c:110
 #, no-c-format
@@ -2548,14 +2542,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "Balra"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "Jobbra"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2783,9 +2777,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "Surround engedélyezése"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3467,9 +3461,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "Lejátszás"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3532,69 +3525,3 @@ msgstr ""
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr ""
-
-#~ msgid "Linear"
-#~ msgstr "Lineáris"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "Számok keverése"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "Albumok keverése"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlengths.txt (HVSC)"
-
-#~ msgid "Looping"
-#~ msgstr "Ismétlés"
-
-#~ msgid "Loop all"
-#~ msgstr "Mindet ismétli"
-
-#~ msgid "Loop single song"
-#~ msgstr "Egyetlen dal ismétlése"
-
-#~ msgid "Don't loop"
-#~ msgstr "Nincs ismétlés"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "PulseAudio szerver"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Keresés a Last.fm-en"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "Eszköz felszabadítása amíg megállított a lejátszás"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "OSS4 mintavételezési ráta bug megoldása"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "Átmeneti tár frissítési periódus (óra)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "Helyi borító fájl maszk"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "Olvasás a last.fm-ről"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "Olvasás az albumart.org-ról"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "CDDB protokoll HTTP felett előnyben részesítése"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "Újramintavételezés minősége (0..2, a nagyobb a jobb)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "Bitek száma mintánként (8 / 16)"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "Cél mintavételezési rátája"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr "Automatikus mintavételezi ráta (minden beállítást felülír)"
-
-#~ msgid "Disable gapless playback (faster scanning)"
-#~ msgstr "Szünetmentes (gapless) lejátszás tiltása (gyorsabb keresés)"

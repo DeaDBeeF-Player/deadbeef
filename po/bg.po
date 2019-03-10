@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Kiril Kirilov <cybercop_montana@abv.bg>, 2015-2017
+# Kiril Kirilov <cybercop_montana@abv.bg>, 2015-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Bulgarian (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/bg/)\n"
@@ -389,9 +389,8 @@ msgid "_Playback"
 msgstr "_Изпълнява се"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "Разбъркване на песни"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
@@ -399,33 +398,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "Име на файла"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "Албум"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "Всички песни"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "Всички песни"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "Една песен"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -733,6 +727,7 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:2074 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "\"Stop after current album\" option will switch off after triggering"
 msgstr ""
+"Опцията \"Спиране след текущия албум\" ще се изключи след задействането"
 
 #: ../plugins/gtkui/interface.c:2078 ../plugins/gtkui/deadbeef.glade.h:112
 #: ../translation/plugins.c:163
@@ -825,7 +820,7 @@ msgstr "Авто-оразмеряване на колоните по разме�
 
 #: ../plugins/gtkui/interface.c:2271 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Group spacing:"
-msgstr ""
+msgstr "Разстояние между групите:"
 
 #: ../plugins/gtkui/interface.c:2281 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "pixels"
@@ -1252,7 +1247,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:5393 ../plugins/gtkui/deadbeef.glade.h:232
 msgid "Update File Tags"
-msgstr ""
+msgstr "Актуализиране на маркерите на файловете"
 
 #: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:650
 msgid "Artist / Album"
@@ -1636,6 +1631,9 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
+"По ред на изпълнение\n"
+"Песен\n"
+"Албум"
 
 #: ../plugins/gtkui/deadbeef.glade.h:98
 msgid ""
@@ -1754,12 +1752,12 @@ msgstr "Предпочитана дължина на периода"
 #: ../translation/plugins.c:15
 #, no-c-format
 msgid "Refresh cover art"
-msgstr ""
+msgstr "Опресни картинката на обложката"
 
 #: ../translation/plugins.c:17
 #, no-c-format
 msgid "Cache update period (in hours, 0=never)"
-msgstr ""
+msgstr "Период на обновяване на кеша (в часове, 0=никога)"
 
 #: ../translation/plugins.c:19
 #, no-c-format
@@ -1774,47 +1772,47 @@ msgstr "Извличане от местна папка"
 #: ../translation/plugins.c:23
 #, no-c-format
 msgid "Fetch from Last.fm"
-msgstr ""
+msgstr "Извличане от Last.fm"
 
 #: ../translation/plugins.c:25
 #, no-c-format
 msgid "Fetch from MusicBrainz"
-msgstr ""
+msgstr "Извличане от MusicBrainz"
 
 #: ../translation/plugins.c:27
 #, no-c-format
 msgid "Fetch from Albumart.org"
-msgstr ""
+msgstr "Извличане от Albumart.org"
 
 #: ../translation/plugins.c:29
 #, no-c-format
 msgid "Fetch from World of Spectrum (AY files only)"
-msgstr ""
+msgstr "Извличане от World of Spectrum (само AY файлове)"
 
 #: ../translation/plugins.c:31
 #, no-c-format
 msgid "When no artwork is found"
-msgstr ""
+msgstr "Когато не е намерено изображение"
 
 #: ../translation/plugins.c:33
 #, no-c-format
 msgid "leave blank"
-msgstr ""
+msgstr "остави празно"
 
 #: ../translation/plugins.c:35
 #, no-c-format
 msgid "use DeaDBeeF default cover"
-msgstr ""
+msgstr "използвай стандартната обложка на DeaDBeeF"
 
 #: ../translation/plugins.c:37
 #, no-c-format
 msgid "display custom image"
-msgstr ""
+msgstr "покажи изображение по подразбиране"
 
 #: ../translation/plugins.c:39
 #, no-c-format
 msgid "Custom image path"
-msgstr ""
+msgstr "Път до изображението по подразбиране"
 
 #: ../translation/plugins.c:41
 #, no-c-format
@@ -1825,38 +1823,38 @@ msgstr "Оразмеряване на обложката към по-дълга�
 #: ../translation/plugins.c:44
 #, no-c-format
 msgid "Disable disk cache"
-msgstr ""
+msgstr "Изключи кеширането на диска"
 
 #: ../translation/plugins.c:46
 #, no-c-format
 msgid "Save extracted covers to music folders"
-msgstr ""
+msgstr "Запази извлечените обложки в папките с музика"
 
 #: ../translation/plugins.c:48
 #, no-c-format
 msgid "Local file mask"
-msgstr ""
+msgstr "Маска на локален файл"
 
 #: ../translation/plugins.c:50
 #, no-c-format
 msgid "Artwork folders"
-msgstr ""
+msgstr "Папки с изображение"
 
 #. plugins/cdda/cdda.c
 #: ../translation/plugins.c:53
 #, no-c-format
 msgid "CD drive to load"
-msgstr ""
+msgstr "CD устройство за зареждане"
 
 #: ../translation/plugins.c:55
 #, no-c-format
 msgid "Audio CD Drive"
-msgstr ""
+msgstr "Аудио CD устройство"
 
 #: ../translation/plugins.c:57
 #, no-c-format
 msgid "File"
-msgstr ""
+msgstr "Файл"
 
 #: ../translation/plugins.c:59
 #, no-c-format
@@ -1886,7 +1884,7 @@ msgstr "CDDB номер на порт (пр: \"888\")"
 #: ../translation/plugins.c:69
 #, no-c-format
 msgid "Use CDDB protocol"
-msgstr ""
+msgstr "Използвай CDDB протокол"
 
 #: ../translation/plugins.c:71
 #, no-c-format
@@ -1896,37 +1894,37 @@ msgstr "Прилагане на поддръжка за NRG изображени
 #: ../translation/plugins.c:73
 #, no-c-format
 msgid "Drive speed for normal playback"
-msgstr ""
+msgstr "Скорост на устройството за нормално изпълнение"
 
 #: ../translation/plugins.c:75
 #, no-c-format
 msgid "1x"
-msgstr ""
+msgstr "1x"
 
 #: ../translation/plugins.c:77
 #, no-c-format
 msgid "2x"
-msgstr ""
+msgstr "2x"
 
 #: ../translation/plugins.c:79
 #, no-c-format
 msgid "4x"
-msgstr ""
+msgstr "4x"
 
 #: ../translation/plugins.c:81
 #, no-c-format
 msgid "8x"
-msgstr ""
+msgstr "8x"
 
 #: ../translation/plugins.c:83
 #, no-c-format
 msgid "16x"
-msgstr ""
+msgstr "16x"
 
 #: ../translation/plugins.c:85
 #, no-c-format
 msgid "Max"
-msgstr ""
+msgstr "Макс"
 
 #: ../translation/plugins.c:87
 #, no-c-format
@@ -1959,7 +1957,7 @@ msgstr "Качество / Алгоритъм"
 #: ../translation/plugins.c:100
 #, no-c-format
 msgid "Resampling quality (0..5, higher is better)"
-msgstr ""
+msgstr "Промяна на качеството (0..5, по висока стойност е по- добро)"
 
 #: ../translation/plugins.c:102
 #, no-c-format
@@ -1972,9 +1970,9 @@ msgid "Internal DUMB volume (0..128)"
 msgstr ""
 
 #: ../translation/plugins.c:106
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Volume ramping"
-msgstr "Лента с устройства"
+msgstr ""
 
 #: ../translation/plugins.c:110
 #, no-c-format
@@ -2552,14 +2550,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "Ляво"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "Дясно"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2787,9 +2785,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "Разреши съраунд"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3476,9 +3474,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "Изпълнява се"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3541,67 +3538,3 @@ msgstr "Файла не е намерен"
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr "Невалиден файл"
-
-#~ msgid "Linear"
-#~ msgstr "Линейно"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "Разбъркване на песни"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "Разбъркване на албуми"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlenghts.txt (от HVSC)"
-
-#~ msgid "Looping"
-#~ msgstr "Повтаряемост"
-
-#~ msgid "Loop all"
-#~ msgstr "Повтаряне на всички"
-
-#~ msgid "Loop single song"
-#~ msgstr "Повтаряне на една песен"
-
-#~ msgid "Don't loop"
-#~ msgstr "Да не се повтаря"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "Сървър на PulseAudio"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Свързване към Last.fm"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "Освободи устройство след спиране"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "Решение за OSS4 бъг"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "Период за обновяване на кеш (часове)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "Маска за обложка от файл"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "Извличане от last.fm"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "Извличане от albumart.org"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "Предпочита се CDDB протокол пред HTTP"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "Подобряване на качеството (от 0 до 2, по-голямото е по-добро)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "Части за период (8 или 16)"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "Честота на резултатния файл"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr ""
-#~ "Автоматична честота (презаписва зададената честота на резултатния файл)"

@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Czech (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/cs/)\n"
@@ -19,7 +19,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n "
+"<= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
 
 #: ../plugins/gtkui/callbacks.c:351
 #, c-format
@@ -390,9 +391,8 @@ msgid "_Playback"
 msgstr "_Přehrát"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "Promísit skladby"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
@@ -400,33 +400,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "Skladba"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "Album"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "Celkem stop"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "Celkem stop"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "Jednotlivé skladby"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -2548,14 +2543,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "Vlevo"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "Vpravo"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2783,9 +2778,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "Povolit prostorový zvuk"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3484,9 +3479,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "Přehrávání"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3549,70 +3543,3 @@ msgstr ""
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr ""
-
-#~ msgid "Linear"
-#~ msgstr "Lineárně"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "Promísit skladby"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "Náhodná alba"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlengths.txt (z HVSC)"
-
-#~ msgid "Looping"
-#~ msgstr "Opakování"
-
-#~ msgid "Loop all"
-#~ msgstr "Opakovat vše"
-
-#~ msgid "Loop single song"
-#~ msgstr "Opakovat jednotlivou skladbu"
-
-#~ msgid "Don't loop"
-#~ msgstr "Neopakovat"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "Server PulseAudio"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Vyhledat na Last.fm"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "Při zastavení uvolnit zařízení"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "Obcházení chyb vzorkovací frekvence OSS4"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "Perioda aktualizace vyrovnávací paměti (hod)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "Maska místního souboru s obalem"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "Získat z Last.fm"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "Získat z albumart.org"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "Upřednostnit protokol CDDB před HTTP"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "Převzorkovat kvalitu (0..2, vyšší je lepší)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "Bitů na vzorek (8 or 16)"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "Cílová vzorkovací frekvence"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr ""
-#~ "Automatická vzorkovací frekvence (přepíše cílovou vzorkovací frekvenci)"
-
-#~ msgid "Disable gapless playback (faster scanning)"
-#~ msgstr "Zakázat přehrávání bez přerušení (rychlejší skenování)"

@@ -3,6 +3,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Mattia Fussi <mattia.fussi@gmail.com>, 2018
 # Mattia Marculli <jumpingtia@gmail.com>, 2015
 # Rosario <oirasor@inventati.org>, 2016
 # Rosario <oirasor@inventati.org>, 2016
@@ -12,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Italian (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/it/)\n"
@@ -392,9 +393,8 @@ msgid "_Playback"
 msgstr "_Riproduzione"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "Tracce casuali"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
@@ -402,33 +402,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "Traccia"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "Album"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "Casuale"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "Traccia"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "Traccia"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -1153,7 +1148,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:4638 ../plugins/gtkui/deadbeef.glade.h:210
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Ripristina predefiniti"
 
 #: ../plugins/gtkui/interface.c:4733 ../plugins/gtkui/deadbeef.glade.h:211
 msgid "Content-Type:"
@@ -1181,7 +1176,7 @@ msgstr "Etichetta:"
 
 #: ../plugins/gtkui/interface.c:4946 ../plugins/gtkui/deadbeef.glade.h:217
 msgid "Select action"
-msgstr ""
+msgstr "Seleziona azione"
 
 #: ../plugins/gtkui/interface.c:5030 ../plugins/gtkui/deadbeef.glade.h:218
 msgid ""
@@ -1197,19 +1192,19 @@ msgstr ""
 #: ../plugins/shellexecui/shellexec.glade.h:5
 #, no-c-format
 msgid "Edit"
-msgstr ""
+msgstr "Modifica"
 
 #: ../plugins/gtkui/interface.c:5090 ../plugins/gtkui/deadbeef.glade.h:220
 msgid "Edit (in place)"
-msgstr ""
+msgstr "Modifica (sul posto)"
 
 #: ../plugins/gtkui/interface.c:5102 ../plugins/gtkui/deadbeef.glade.h:221
 msgid "Add new field..."
-msgstr ""
+msgstr "Aggiungi nuovo campo..."
 
 #: ../plugins/gtkui/interface.c:5150 ../plugins/gtkui/deadbeef.glade.h:222
 msgid "Edit Value"
-msgstr ""
+msgstr "Modifica Valore"
 
 #: ../plugins/gtkui/interface.c:5163 ../plugins/gtkui/deadbeef.glade.h:223
 msgid "Field name:"
@@ -1225,7 +1220,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:5260 ../plugins/gtkui/deadbeef.glade.h:226
 msgid "Clear"
-msgstr ""
+msgstr "Pulisci"
 
 #: ../plugins/gtkui/interface.c:5297 ../plugins/gtkui/deadbeef.glade.h:227
 msgid "ReplayGain Scan Progress"
@@ -1233,17 +1228,17 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:5308 ../plugins/gtkui/deadbeef.glade.h:228
 msgid "Current File:"
-msgstr ""
+msgstr "File Corrente"
 
 #: ../plugins/gtkui/interface.c:5326 ../plugins/gtkui/interface.c:5386
 #: ../plugins/gtkui/deadbeef.glade.h:229 ../plugins/gtkui/rg.c:313
 msgid "Status"
-msgstr ""
+msgstr "Stato"
 
 #: ../plugins/gtkui/interface.c:5333 ../plugins/gtkui/interface.c:5397
 #: ../plugins/gtkui/deadbeef.glade.h:230
 msgid "Cancel"
-msgstr ""
+msgstr "Annulla"
 
 #: ../plugins/gtkui/interface.c:5365 ../plugins/gtkui/deadbeef.glade.h:231
 msgid "ReplayGain Scan Results"
@@ -1285,7 +1280,7 @@ msgstr "Artista - Album"
 
 #: ../plugins/gtkui/plcommon.c:94
 msgid "Year"
-msgstr ""
+msgstr "Anno"
 
 #: ../plugins/gtkui/plcommon.c:96 ../translation/extra.c:8
 msgid "Track Number"
@@ -1301,12 +1296,12 @@ msgstr "Codec"
 
 #: ../plugins/gtkui/plcommon.c:99
 msgid "Bitrate"
-msgstr ""
+msgstr "Bitrate"
 
 #: ../plugins/gtkui/plcommon.c:936 ../plugins/gtkui/plcommon.c:1045
 #: ../plugins/gtkui/pltmenu.c:427
 msgid "_Paste"
-msgstr ""
+msgstr "_Incolla"
 
 #: ../plugins/gtkui/plcommon.c:990 ../translation/plugins.c:306
 #, no-c-format
@@ -1380,7 +1375,7 @@ msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:462
 msgid "Are you sure you want to continue without saving?"
-msgstr ""
+msgstr "Sei sicuro di continuare senza salvare?"
 
 #: ../plugins/gtkui/progress.c:62
 msgid "Adding files..."
@@ -1423,15 +1418,15 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:620
 msgid "Writing tags..."
-msgstr ""
+msgstr "Scrittura tag..."
 
 #: ../plugins/gtkui/trkproperties.c:875
 msgid "Field name"
-msgstr ""
+msgstr "Nome campo"
 
 #: ../plugins/gtkui/trkproperties.c:878
 msgid "Name:"
-msgstr ""
+msgstr "Nome:"
 
 #: ../plugins/gtkui/trkproperties.c:890
 msgid "Field names must not start with : or _"
@@ -1662,35 +1657,35 @@ msgstr ""
 
 #: ../translation/extra.c:3
 msgid "Track Title"
-msgstr ""
+msgstr "Titolo Traccia"
 
 #: ../translation/extra.c:4
 msgid "Performer"
-msgstr ""
+msgstr "Artista"
 
 #: ../translation/extra.c:9
 msgid "Total Tracks"
-msgstr ""
+msgstr "Tracce Totali"
 
 #: ../translation/extra.c:10
 msgid "Genre"
-msgstr ""
+msgstr "Genere"
 
 #: ../translation/extra.c:11
 msgid "Composer"
-msgstr ""
+msgstr "Compositore"
 
 #: ../translation/extra.c:12
 msgid "Disc Number"
-msgstr ""
+msgstr "Numero Disco"
 
 #: ../translation/extra.c:13
 msgid "Total Discs"
-msgstr ""
+msgstr "Dischi Totali"
 
 #: ../translation/extra.c:14
 msgid "Comment"
-msgstr ""
+msgstr "Commento"
 
 #: ../translation/extra.c:15
 msgid "Encoder / Vendor"
@@ -1698,7 +1693,7 @@ msgstr ""
 
 #: ../translation/extra.c:17
 msgid "Location"
-msgstr ""
+msgstr "Locazione"
 
 #: ../translation/extra.c:18
 msgid "Subtrack Index"
@@ -1721,13 +1716,13 @@ msgstr ""
 #: ../translation/plugins.c:5
 #, no-c-format
 msgid "Enable surround"
-msgstr ""
+msgstr "Abilita surround"
 
 #. plugins/alsa/alsa.c
 #: ../translation/plugins.c:8
 #, no-c-format
 msgid "Use ALSA resampling"
-msgstr ""
+msgstr "Usa resampling ALSA"
 
 #: ../translation/plugins.c:10
 #, no-c-format
@@ -1743,7 +1738,7 @@ msgstr ""
 #: ../translation/plugins.c:15
 #, no-c-format
 msgid "Refresh cover art"
-msgstr ""
+msgstr "Aggiorna copertina"
 
 #: ../translation/plugins.c:17
 #, no-c-format
@@ -1788,7 +1783,7 @@ msgstr ""
 #: ../translation/plugins.c:33
 #, no-c-format
 msgid "leave blank"
-msgstr ""
+msgstr "Lascia vuoto"
 
 #: ../translation/plugins.c:35
 #, no-c-format
@@ -1961,9 +1956,9 @@ msgid "Internal DUMB volume (0..128)"
 msgstr ""
 
 #: ../translation/plugins.c:106
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Volume ramping"
-msgstr "Livello volume"
+msgstr ""
 
 #: ../translation/plugins.c:110
 #, no-c-format
@@ -2541,14 +2536,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "Sinistra"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "Destra"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2776,9 +2771,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "Abilita"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3451,9 +3446,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "Riproduzione"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3516,24 +3510,3 @@ msgstr ""
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr ""
-
-#~ msgid "Linear"
-#~ msgstr "Lineare"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "Tracce casuali"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "Album casuali"
-
-#~ msgid "Looping"
-#~ msgstr "Looping"
-
-#~ msgid "Loop all"
-#~ msgstr "Ripeti tutto "
-
-#~ msgid "Loop single song"
-#~ msgstr "Ripeti canzona singola"
-
-#~ msgid "Don't loop"
-#~ msgstr "Non ripetere"

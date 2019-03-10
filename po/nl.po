@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/nl/)\n"
@@ -389,9 +389,8 @@ msgid "_Playback"
 msgstr "_Afspelen"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "Sporen schuffelen"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
@@ -399,33 +398,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "Spoor"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "Album"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "Totaal aantal sporen"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "Totaal aantal sporen"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "Spoor"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -2539,14 +2533,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "Links"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "Rechts"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2775,9 +2769,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "Inschakelen"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3464,9 +3458,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "Aan het afspelen"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3529,57 +3522,3 @@ msgstr ""
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr ""
-
-#~ msgid "Linear"
-#~ msgstr "Lineair"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "Sporen schuffelen"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "Albums schuffelen"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlengths.txt (vanuit HVSC)"
-
-#~ msgid "Looping"
-#~ msgstr "Herhalend"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "PulseAudio-server"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Zoek het op, op Last.fm"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "Geef apparaat vrij wanneer gestopt"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "Stoplap voor OSS4 samplerate-fout"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "Periode voor bijwerken opslag (uur)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "Plaatselijk masker voor hoesbestand"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "Haal op van Last.fm"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "Haal op van albumart.org"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "Verkies CDDB-protocol boven HTTP"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "Resampling-kwaliteit (0..2, hoger is beter)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "Bits per sample (8 of 16)"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "Doel-samplerate"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr "Automatische Samplerate (negeert Doel-Samplerate)"

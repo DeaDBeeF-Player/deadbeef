@@ -6,10 +6,12 @@
 # Grzegorz Gibas <amigib@gmail.com>, 2010
 # Jakub Wasylków <kuba_160@protonmail.com>, 2017
 # Jakub Wasylków <kuba_160@protonmail.com>, 2017
-# Jakub Wasylków <kuba_160@protonmail.com>, 2017-2018
+# Jakub Wasylków <kuba_160@protonmail.com>, 2017-2019
 # Łukasz Jasiński <alvarus@alvarus.org>, 2010
+# Marcin Mikołajczak <me@m4sk.in>, 2016
 # Marcin Mikołajczak <m4sk1n@vivaldi.net>, 2016
-# Marcin Mikołajczak <m4sk1n@vivaldi.net>, 2016
+# Marcin Mikołajczak <me@m4sk.in>, 2016
+# Marcin Mikołajczak <me@m4sk.in>, 2016
 # Mateusz Łukasik <mati75@linuxmint.pl>, 2013-2014
 # Mateusz Łukasik <mati75@linuxmint.pl>, 2013
 # Mer_lin <solardes@poczta.fm>, 2014
@@ -26,9 +28,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-08 17:47+0000\n"
-"Last-Translator: Jakub Wasylków <kuba_160@protonmail.com>\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
+"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/pl/)\n"
 "Language: pl\n"
@@ -408,43 +410,37 @@ msgid "_Playback"
 msgstr "Odtwarzanie"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "Tasuj ścieżki"
+msgstr "Tasuj"
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
 msgid "Off"
-msgstr ""
+msgstr "Wyłączone"
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "Numer utworu"
+msgstr "Ścieżki"
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "Album"
+msgstr "Albumy"
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "Ilość utworów"
+msgstr "Losowe ścieżki"
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
-msgstr ""
+msgstr "Powtarzanie"
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "Ilość utworów"
+msgstr "Wszystkie ścieżki"
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "Pojedyncze ścieżki"
+msgstr "Jedna ścieżka"
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -2020,19 +2016,19 @@ msgid "Internal DUMB volume (0..128)"
 msgstr "Wewnętrzna głośność DUMB (0..128)"
 
 #: ../translation/plugins.c:106
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Volume ramping"
-msgstr "Zwiększ głośność"
+msgstr "Rampowanie głośności"
 
 #: ../translation/plugins.c:110
 #, no-c-format
 msgid "On/Off Only"
-msgstr ""
+msgstr "Tylko włącz/wyłącz"
 
 #: ../translation/plugins.c:112
 #, no-c-format
 msgid "Full"
-msgstr ""
+msgstr "Pełne"
 
 #. plugins/ffmpeg/ffmpeg.c
 #: ../translation/plugins.c:115
@@ -2600,14 +2596,14 @@ msgstr "Wyślij ścieżki krótsze niż 30 sekund (nie zalecane)"
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "Lewy miks:"
+msgstr "Lewy miks"
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "Prawy miks:"
+msgstr "Prawy miks"
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2660,7 +2656,7 @@ msgstr "Odtwarzaj po podwójnym kliknięciu"
 #: ../translation/plugins.c:407
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
-msgstr ""
+msgstr "Serwer PulseAudio (domyślnie: zostaw puste)"
 
 #. plugins/sc68/in_sc68.c
 #: ../translation/plugins.c:410
@@ -2709,7 +2705,7 @@ msgstr "Aktywuj bazę długości utworów HVSC"
 #: ../translation/plugins.c:429
 #, no-c-format
 msgid "Full path to Songlengths.md5/.txt"
-msgstr ""
+msgstr "Pełna ścieżka do Songlengths.md5/.txt"
 
 #: ../translation/plugins.c:431
 #, no-c-format
@@ -2835,9 +2831,9 @@ msgstr "20 kHz"
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "Włącz dźwięk przestrzenny"
+msgstr "Włącz logowanie"
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3541,16 +3537,15 @@ msgstr "Duplikuj playlistę"
 
 #: ../plugins/pltbrowser/pltbrowser.c:177
 msgid " (paused)"
-msgstr ""
+msgstr "(wstrzymane)"
 
 #: ../plugins/pltbrowser/pltbrowser.c:180
 msgid " (stopped)"
-msgstr ""
+msgstr "(zatrzymane)"
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "Odtwarzanie"
+msgstr "(odtwarzane)"
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3613,106 +3608,3 @@ msgstr "Nie znaleziono pliku"
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr "Plik nieprawidłowy"
-
-#~ msgid "Linear"
-#~ msgstr "Liniowa"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "Tasuj ścieżki"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "Tasuj albumy"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlengths.txt (z HVSC)"
-
-#~ msgid "Looping"
-#~ msgstr "Powtarzanie"
-
-#~ msgid "Loop all"
-#~ msgstr "Zapętl wszystko"
-
-#~ msgid "Loop single song"
-#~ msgstr "Zapętl pojedynczą piosenkę "
-
-#~ msgid "Don't loop"
-#~ msgstr "Nie zapętlaj"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "Serwer PulseAudio"
-
-#~ msgid "Emulate track change events (for scrobbling)"
-#~ msgstr "Emuluj wydarzenia zmiany utworu (dla scrobblowania) "
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Wyszukuj na Last.fm"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "Zwolnij urządzenie po zatrzymaniu"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "Obejście buga częstotliwości próbkowania OSS4"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "Okres aktualizacji pamięci podręcznej (h)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "Wzór plików okładek:"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "Pozyskuj z serwisu last.fm"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "Pozyskuj z serwisu albumart.org"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "Preferuj protokół CDDB zamiast HTTP"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "Jakość przepróbkowywania (0..2, wyższa jest lepsza)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "Bitów na próbkę (8 lub 16)"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "Docelowa częstotliwość próbkowania"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr ""
-#~ "Automatyczna częstotliwość próbkowania (zastępuje Docelową częstotliwość "
-#~ "próbkowania)"
-
-#~ msgid "Disable gapless playback (faster scanning)"
-#~ msgstr "Wyłącz odtwarzanie bez przerw (szybsze skanowanie)"
-
-#~ msgid "Volume Level"
-#~ msgstr "Poziom głośności"
-
-#~ msgid "Tempo Change (%)"
-#~ msgstr "Zmiana tempa (%)"
-
-#~ msgid "Pitch Change (semi-tones)"
-#~ msgstr "Zmiana wysokości tonu (półtony)"
-
-#~ msgid "Playback Rate Change (%)"
-#~ msgstr "Szybkość odtwarzania (%)"
-
-#~ msgid "Absolute Samplerate (overrides Rate Change if nonzero)"
-#~ msgstr ""
-#~ "Absolutna częstotliwość próbkowania (zastępuje Szybkość odtwarzania jeśli "
-#~ "nie jest zero)"
-
-#~ msgid "Use AA Filter"
-#~ msgstr "Użyj filtru AA"
-
-#~ msgid "AA Filter Length"
-#~ msgstr "Długość filtru AA"
-
-#~ msgid "Use Quickseek"
-#~ msgstr "Użyj Quickseek"
-
-#~ msgid "Time Stretch Sequence Length (ms)"
-#~ msgstr "Długość sekwencji rozciągnięcia czasowego (ms)"
-
-#~ msgid "Time Stretch Seek Window Length (ms)"
-#~ msgstr "Długość okna rozciągnięcia czasowego (ms)"

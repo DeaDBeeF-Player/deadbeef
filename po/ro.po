@@ -8,15 +8,16 @@
 # Cristian Alexe <cristian.alexe@outlook.com>, 2017
 # Daniel <danny3@tutanota.com>, 2016
 # Daniel <danny3@tutanota.com>, 2016,2018
-# Mișu Moldovan <dumol@l10n.ro>, 2014,2016
+# Dumitru Moldovan <dumol@gnome.org>, 2014,2016
+# Dumitru Moldovan <dumol@gnome.org>, 2014,2016
 # Mișu Moldovan <dumol@xfce.org>, 2012
 # Arthur Țițeică <arthur.titeica@gmail.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Romanian (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/ro/)\n"
@@ -397,9 +398,8 @@ msgid "_Playback"
 msgstr "_Redare"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "Piese amestecate"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
@@ -407,33 +407,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "Piesă"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "Album"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "Număr de piese"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "Număr de piese"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "Piese unice"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -1993,9 +1988,9 @@ msgid "Internal DUMB volume (0..128)"
 msgstr ""
 
 #: ../translation/plugins.c:106
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Volume ramping"
-msgstr "Bară de volum"
+msgstr ""
 
 #: ../translation/plugins.c:110
 #, no-c-format
@@ -2573,14 +2568,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "Stânga"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "Dreapta"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2808,9 +2803,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "Activare surround"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3515,9 +3510,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "În redare"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3580,69 +3574,3 @@ msgstr "Fișierul nu a fost găsit"
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr "Fișierul nu este valid"
-
-#~ msgid "Linear"
-#~ msgstr "Liniară"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "Piese amestecate"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "Albume amestecate"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlengths.txt (din HVSC)"
-
-#~ msgid "Looping"
-#~ msgstr "Repetare"
-
-#~ msgid "Loop all"
-#~ msgstr "Repetare pentru listă"
-
-#~ msgid "Loop single song"
-#~ msgstr "Repetare pentru piesa actuală"
-
-#~ msgid "Don't loop"
-#~ msgstr "Fără repetare"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "Servitor PulseAudio"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Căutare pe Last.fm"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "Eliberează dispozitivul la oprirea redării"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "Soluție alternativă pentru problema ratei de eșantionare OSS4"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "Perioadă de actualizare pentru cache (ore)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "Mască pentru fișierele local cu coperte"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "Extrage de la Last.fm"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "Extrage de la albumart.org"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "Preferă protocolul CDDB înaintea HTTP"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "Calitatea reeșantionării (0-2, 2 e calitate maximă)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "Biți per eșantion (8 sau 16)"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "Rată de eșantionare țintă"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr "Rată de eșantionare automată (suprascrie rata țintă)"
-
-#~ msgid "Disable gapless playback (faster scanning)"
-#~ msgstr "Dezactivează redarea continuă (scanare mai rapidă)"

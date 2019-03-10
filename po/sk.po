@@ -3,15 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# helix84 <helix84@centrum.sk>, 2010
-# helix84 <helix84@centrum.sk>, 2010
+# Ivan Masár <helix84@centrum.sk>, 2010
+# Igor Stefanko <citro33@zoznam.sk>, 2019
+# Ivan Masár <helix84@centrum.sk>, 2010
 # Jakub Záhorák <zagoslav@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Slovak (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/sk/)\n"
@@ -19,7 +20,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n "
+">= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
 
 #: ../plugins/gtkui/callbacks.c:351
 #, c-format
@@ -34,7 +36,7 @@ msgstr "Záznam zmien DeaDBeeF %s"
 #: ../plugins/gtkui/callbacks.c:624
 #, c-format
 msgid "DeaDBeeF Translators"
-msgstr ""
+msgstr "Prekladatelia DeaDBeeF"
 
 #: ../plugins/gtkui/callbacks.c:635 ../plugins/gtkui/interface.c:969
 #: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:159
@@ -101,7 +103,7 @@ msgstr "Znulovať pásma"
 #: ../plugins/gtkui/eq.c:398 ../plugins/converter/interface.c:852
 #: ../plugins/converter/converter.glade.h:55
 msgid "Presets"
-msgstr ""
+msgstr "Predvoľby"
 
 #: ../plugins/gtkui/gtkui.c:165 ../tf.c:1833
 #, c-format
@@ -127,22 +129,22 @@ msgstr "Nový zoznam stôp (%d)"
 #: ../plugins/gtkui/gtkui.c:730
 #, c-format
 msgid "Copy of %s"
-msgstr ""
+msgstr "Kópia %s"
 
 #: ../plugins/gtkui/gtkui.c:733
 #, c-format
 msgid "Copy of %s (%d)"
-msgstr ""
+msgstr "Kópia %s (%d)"
 
 #. register widget types
 #: ../plugins/gtkui/gtkui.c:1214
 msgid "Playlist with tabs"
-msgstr ""
+msgstr "Playlist v záložkách"
 
 #: ../plugins/gtkui/gtkui.c:1215 ../plugins/gtkui/interface.c:2285
 #: ../plugins/gtkui/interface.c:2730 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Playlist"
-msgstr ""
+msgstr "Palylist"
 
 #: ../plugins/gtkui/gtkui.c:1218
 msgid "Splitter (top and bottom)"
@@ -154,7 +156,7 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:1221
 msgid "Tabs"
-msgstr ""
+msgstr "Záložky"
 
 #: ../plugins/gtkui/gtkui.c:1222
 msgid "Playlist tabs"
@@ -162,7 +164,7 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:1223
 msgid "Selection properties"
-msgstr ""
+msgstr "Vlastnosti výberu"
 
 #: ../plugins/gtkui/gtkui.c:1224
 msgid "Album art display"
@@ -397,33 +399,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "Stopa"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "Album"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "Náhodné"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "Stopa"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "Stopa"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -2529,14 +2526,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "Vľavo"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "Vpravo"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2764,9 +2761,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "Zapnúť"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3439,9 +3436,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "Hrá"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3504,12 +3500,3 @@ msgstr ""
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr ""
-
-#~ msgid "Linear"
-#~ msgstr "Lineárne"
-
-#~ msgid "Looping"
-#~ msgstr "Opakovať"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Vyhladať na Last.fm"

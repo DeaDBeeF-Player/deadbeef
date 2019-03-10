@@ -19,12 +19,13 @@
 # Roony Alvarez <legion1978@gmail.com>, 2013
 # Matías Alejandro Aguilar Peiró <matias.a.aguilar@gmail.com>, 2017
 # Roony Alvarez <legion1978@gmail.com>, 2013
+# Toni Estévez <toni.estevez@gmail.com>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/es/)\n"
@@ -404,9 +405,8 @@ msgid "_Playback"
 msgstr "_Reproducción"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "Barajar pistas"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
@@ -414,33 +414,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "Pista"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "Álbum"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "Total de pistas"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "Total de pistas"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "Pistas individuales"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -647,23 +642,23 @@ msgstr "Siempre convertir el audio de 16 bits a 24 bits"
 
 #: ../plugins/gtkui/interface.c:1852 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Target samplerate:"
-msgstr ""
+msgstr "Tasa de muestreo de destino"
 
 #: ../plugins/gtkui/interface.c:1885 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "For multiples of 48KHz (96K, 192K, ...):"
-msgstr ""
+msgstr "Para múltiplos de 48 KHz (96 K, 192 K...):"
 
 #: ../plugins/gtkui/interface.c:1904 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "For multiples of 44.1KHz (88.2K, 176.4K, ...):"
-msgstr ""
+msgstr "Para múltiplos de 44.1 KHz (88.2 K, 176.4K...):"
 
 #: ../plugins/gtkui/interface.c:1919 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Based on input samplerate"
-msgstr ""
+msgstr "Basado en la tasa de muestreo de entrada"
 
 #: ../plugins/gtkui/interface.c:1923 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Override samplerate"
-msgstr ""
+msgstr "Remplazar la tasa de muestreo"
 
 #: ../plugins/gtkui/interface.c:1927 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Sound"
@@ -1801,12 +1796,12 @@ msgstr "Tamaño preferido del periodo"
 #: ../translation/plugins.c:15
 #, no-c-format
 msgid "Refresh cover art"
-msgstr ""
+msgstr "Actualizar la portada"
 
 #: ../translation/plugins.c:17
 #, no-c-format
 msgid "Cache update period (in hours, 0=never)"
-msgstr ""
+msgstr "Período de actualización de la caché (en horas, 0 = nunca)"
 
 #: ../translation/plugins.c:19
 #, no-c-format
@@ -1821,47 +1816,47 @@ msgstr "Obtener de carpeta local"
 #: ../translation/plugins.c:23
 #, no-c-format
 msgid "Fetch from Last.fm"
-msgstr ""
+msgstr "Obtener de Last.fm"
 
 #: ../translation/plugins.c:25
 #, no-c-format
 msgid "Fetch from MusicBrainz"
-msgstr ""
+msgstr "Obtener de MusicBrainz"
 
 #: ../translation/plugins.c:27
 #, no-c-format
 msgid "Fetch from Albumart.org"
-msgstr ""
+msgstr "Obtener de Albumart.org"
 
 #: ../translation/plugins.c:29
 #, no-c-format
 msgid "Fetch from World of Spectrum (AY files only)"
-msgstr ""
+msgstr "Obtener de World of Spectrum (solo archivos AY)"
 
 #: ../translation/plugins.c:31
 #, no-c-format
 msgid "When no artwork is found"
-msgstr ""
+msgstr "Cuando no se encuentra una ilustración"
 
 #: ../translation/plugins.c:33
 #, no-c-format
 msgid "leave blank"
-msgstr ""
+msgstr "dejar en blanco"
 
 #: ../translation/plugins.c:35
 #, no-c-format
 msgid "use DeaDBeeF default cover"
-msgstr ""
+msgstr "usar la portada por defecto de DeaDBeeF"
 
 #: ../translation/plugins.c:37
 #, no-c-format
 msgid "display custom image"
-msgstr ""
+msgstr "mostrar una imagen personalizada"
 
 #: ../translation/plugins.c:39
 #, no-c-format
 msgid "Custom image path"
-msgstr ""
+msgstr "Ruta de la imagen personalizada"
 
 #: ../translation/plugins.c:41
 #, no-c-format
@@ -1872,38 +1867,38 @@ msgstr "Escalar gráfico hacia el lado largo"
 #: ../translation/plugins.c:44
 #, no-c-format
 msgid "Disable disk cache"
-msgstr ""
+msgstr "Desactivar la caché de disco"
 
 #: ../translation/plugins.c:46
 #, no-c-format
 msgid "Save extracted covers to music folders"
-msgstr ""
+msgstr "Guardar las portadas extraídas en las carpetas de música"
 
 #: ../translation/plugins.c:48
 #, no-c-format
 msgid "Local file mask"
-msgstr ""
+msgstr "Máscara de archivo local"
 
 #: ../translation/plugins.c:50
 #, no-c-format
 msgid "Artwork folders"
-msgstr ""
+msgstr "Carpetas de ilustraciones"
 
 #. plugins/cdda/cdda.c
 #: ../translation/plugins.c:53
 #, no-c-format
 msgid "CD drive to load"
-msgstr ""
+msgstr "Unidad de CD para cargar"
 
 #: ../translation/plugins.c:55
 #, no-c-format
 msgid "Audio CD Drive"
-msgstr ""
+msgstr "Unidad de CD de audio"
 
 #: ../translation/plugins.c:57
 #, no-c-format
 msgid "File"
-msgstr ""
+msgstr "Archivo"
 
 #: ../translation/plugins.c:59
 #, no-c-format
@@ -1933,7 +1928,7 @@ msgstr "Número de puerto CDDB (ej.: '888')"
 #: ../translation/plugins.c:69
 #, no-c-format
 msgid "Use CDDB protocol"
-msgstr ""
+msgstr "Usar el protocolo CDDB"
 
 #: ../translation/plugins.c:71
 #, no-c-format
@@ -1943,42 +1938,42 @@ msgstr "Habilitar soporte a imágenes NRG"
 #: ../translation/plugins.c:73
 #, no-c-format
 msgid "Drive speed for normal playback"
-msgstr ""
+msgstr "Velocidad de la unidad para una reproducción normal"
 
 #: ../translation/plugins.c:75
 #, no-c-format
 msgid "1x"
-msgstr ""
+msgstr "1x"
 
 #: ../translation/plugins.c:77
 #, no-c-format
 msgid "2x"
-msgstr ""
+msgstr "2x"
 
 #: ../translation/plugins.c:79
 #, no-c-format
 msgid "4x"
-msgstr ""
+msgstr "4x"
 
 #: ../translation/plugins.c:81
 #, no-c-format
 msgid "8x"
-msgstr ""
+msgstr "8x"
 
 #: ../translation/plugins.c:83
 #, no-c-format
 msgid "16x"
-msgstr ""
+msgstr "16x"
 
 #: ../translation/plugins.c:85
 #, no-c-format
 msgid "Max"
-msgstr ""
+msgstr "Máx."
 
 #: ../translation/plugins.c:87
 #, no-c-format
 msgid "Use cdparanoia error correction when ripping"
-msgstr ""
+msgstr "Usar la corrección de errores de cdparanoia durante la extracción"
 
 #. plugins/converter/convgui.c
 #: ../translation/plugins.c:90
@@ -1990,12 +1985,12 @@ msgstr "Convertir"
 #: ../translation/plugins.c:93
 #, no-c-format
 msgid "Autodetect samplerate from output device"
-msgstr ""
+msgstr "Detección automática de la tasa de muestreo del dispositivo de salida"
 
 #: ../translation/plugins.c:95
 #, no-c-format
 msgid "Set samplerate directly"
-msgstr ""
+msgstr "Definir la tasa de muestreo directamente"
 
 #: ../translation/plugins.c:97
 #, no-c-format
@@ -2006,7 +2001,7 @@ msgstr "Calidad/algoritmo"
 #: ../translation/plugins.c:100
 #, no-c-format
 msgid "Resampling quality (0..5, higher is better)"
-msgstr ""
+msgstr "Calidad del remuestreo (0..5, 5 = la mejor)"
 
 #: ../translation/plugins.c:102
 #, no-c-format
@@ -2016,28 +2011,28 @@ msgstr "Salida de 8 bits (predeterminada: 16)"
 #: ../translation/plugins.c:104
 #, no-c-format
 msgid "Internal DUMB volume (0..128)"
-msgstr ""
+msgstr "Volumen DUMB interno (0..128)"
 
 #: ../translation/plugins.c:106
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Volume ramping"
-msgstr "Barra de volumen"
+msgstr "Aumento de volumen"
 
 #: ../translation/plugins.c:110
 #, no-c-format
 msgid "On/Off Only"
-msgstr ""
+msgstr "Solo encendido/apagado"
 
 #: ../translation/plugins.c:112
 #, no-c-format
 msgid "Full"
-msgstr ""
+msgstr "Completo"
 
 #. plugins/ffmpeg/ffmpeg.c
 #: ../translation/plugins.c:115
 #, no-c-format
 msgid "Use all extensions supported by ffmpeg"
-msgstr ""
+msgstr "Utilice todas las extensiones compatibles con ffmpeg"
 
 #: ../translation/plugins.c:117
 #, no-c-format
@@ -2063,163 +2058,163 @@ msgstr "Repetir n veces (si está disponible)"
 #: ../translation/plugins.c:126
 #, no-c-format
 msgid "ColecoVision BIOS (for SGC file format)"
-msgstr ""
+msgstr "ColecoVision BIOS (para el formato de archivo SGC)"
 
 #. plugins/gtkui/gtkui.c
 #: ../translation/plugins.c:129
 #, no-c-format
 msgid "ReplayGain"
-msgstr ""
+msgstr "ReplayGain"
 
 #: ../translation/plugins.c:131
 #, no-c-format
 msgid "Remove ReplayGain Information"
-msgstr ""
+msgstr "Eliminar la información de ReplayGain"
 
 #: ../translation/plugins.c:133
 #, no-c-format
 msgid "Scan Selection As Albums (By Tags)"
-msgstr ""
+msgstr "Escanear la selección como álbumes (por etiquetas)"
 
 #: ../translation/plugins.c:135
 #, no-c-format
 msgid "Scan Selection As Single Album"
-msgstr ""
+msgstr "Analizar la selección como un solo álbum"
 
 #: ../translation/plugins.c:137
 #, no-c-format
 msgid "Scan Per-file Track Gain"
-msgstr ""
+msgstr "Analizar la ganancia de pista por archivo"
 
 #: ../translation/plugins.c:141
 #, no-c-format
 msgid "Deselect All"
-msgstr ""
+msgstr "Deseleccionar todo"
 
 #: ../translation/plugins.c:143
 #, no-c-format
 msgid "Select All"
-msgstr ""
+msgstr "Seleccionar todo"
 
 #: ../translation/plugins.c:149
 #, no-c-format
 msgid "Add Location"
-msgstr ""
+msgstr "Añadir una ubicación"
 
 #: ../translation/plugins.c:151
 #, no-c-format
 msgid "Add Folder(s)"
-msgstr ""
+msgstr "Añadir carpetas"
 
 #: ../translation/plugins.c:153
 #, no-c-format
 msgid "Add File(s)"
-msgstr ""
+msgstr "Añadir archivos"
 
 #: ../translation/plugins.c:155
 #, no-c-format
 msgid "Open File(s)"
-msgstr ""
+msgstr "Abrir archivos"
 
 #: ../translation/plugins.c:161
 #, no-c-format
 msgid "Show Help Page"
-msgstr ""
+msgstr "Mostrar la página de ayuda"
 
 #: ../translation/plugins.c:165
 #, no-c-format
 msgid "Cycle Playback Looping Mode"
-msgstr ""
+msgstr "Modo de la reproducción en bucle"
 
 #: ../translation/plugins.c:167
 #, no-c-format
 msgid "Playback Looping - Don't loop"
-msgstr ""
+msgstr "Reproducción en bucle: no repetir"
 
 #: ../translation/plugins.c:169
 #, no-c-format
 msgid "Playback Looping - Single track"
-msgstr ""
+msgstr "Reproducción en bucle: repetir una sola pista"
 
 #: ../translation/plugins.c:171
 #, no-c-format
 msgid "Playback Looping - All"
-msgstr ""
+msgstr "Reproducción en bucle: repetir todo"
 
 #: ../translation/plugins.c:173
 #, no-c-format
 msgid "Cycle Playback Order"
-msgstr ""
+msgstr "Orden de reproducción"
 
 #: ../translation/plugins.c:175
 #, no-c-format
 msgid "Playback Order - Random"
-msgstr ""
+msgstr "Orden de reproducción: aleatorio"
 
 #: ../translation/plugins.c:177
 #, no-c-format
 msgid "Playback Order - Shuffle albums"
-msgstr ""
+msgstr "Orden de reproducción: mezclar álbumes"
 
 #: ../translation/plugins.c:179
 #, no-c-format
 msgid "Playback Order - Shuffle tracks"
-msgstr ""
+msgstr "Orden de reproducción: mezclar pistas"
 
 #: ../translation/plugins.c:181
 #, no-c-format
 msgid "Playback Order - Linear"
-msgstr ""
+msgstr "Orden de reproducción: lineal"
 
 #: ../translation/plugins.c:183
 #, no-c-format
 msgid "Toggle Cursor Follows Playback"
-msgstr ""
+msgstr "El cursor sigue la reproducción"
 
 #: ../translation/plugins.c:185
 #, no-c-format
 msgid "Toggle Scroll Follows Playback"
-msgstr ""
+msgstr "El desplazamiento sigue la reproducción"
 
 #: ../translation/plugins.c:187
 #, no-c-format
 msgid "View"
-msgstr ""
+msgstr "Ver"
 
 #: ../translation/plugins.c:189
 #, no-c-format
 msgid "Show\\/Hide menu"
-msgstr ""
+msgstr "Mostrar\\/ocultar el menú"
 
 #: ../translation/plugins.c:191
 #, no-c-format
 msgid "Show\\/Hide statusbar"
-msgstr ""
+msgstr "Mostrar\\/ocultar la barra de estado"
 
 #: ../translation/plugins.c:193
 #, no-c-format
 msgid "Toggle Design Mode"
-msgstr ""
+msgstr "Alternar el modo de diseño"
 
 #: ../translation/plugins.c:197
 #, no-c-format
 msgid "Sort Custom"
-msgstr ""
+msgstr "Ordenación personalizada"
 
 #: ../translation/plugins.c:199
 #, no-c-format
 msgid "Crop Selected"
-msgstr ""
+msgstr "Recortar la selección"
 
 #: ../translation/plugins.c:201
 #, no-c-format
 msgid "Remove Track(s) From Playlist"
-msgstr ""
+msgstr "Eliminar pistas de la lista de reproducción"
 
 #: ../translation/plugins.c:203
 #, no-c-format
 msgid "Save Playlist"
-msgstr ""
+msgstr "Guardar la lista de reproducción"
 
 #: ../translation/plugins.c:205 ../plugins/gtkui/actionhandlers.c:740
 #, no-c-format
@@ -2229,47 +2224,47 @@ msgstr "Cargar lista de reproducción"
 #: ../translation/plugins.c:207
 #, no-c-format
 msgid "Remove Current Playlist"
-msgstr ""
+msgstr "Eliminar la lista de reproducción actual"
 
 #: ../translation/plugins.c:211
 #, no-c-format
 msgid "Show\\/Hide Equalizer"
-msgstr ""
+msgstr "Mostrar\\/ocultar el ecualizador"
 
 #: ../translation/plugins.c:213
 #, no-c-format
 msgid "Hide Equalizer"
-msgstr ""
+msgstr "Ocultar el ecualizador"
 
 #: ../translation/plugins.c:215
 #, no-c-format
 msgid "Show Equalizer"
-msgstr ""
+msgstr "Mostrar el ecualizador"
 
 #: ../translation/plugins.c:217
 #, no-c-format
 msgid "Show\\/Hide Player Window"
-msgstr ""
+msgstr "Mostrar\\/ocultar la ventana del reproductor"
 
 #: ../translation/plugins.c:219
 #, no-c-format
 msgid "Hide Player Window"
-msgstr ""
+msgstr "Ocultar la ventana del reproductor"
 
 #: ../translation/plugins.c:221
 #, no-c-format
 msgid "Show Player Window"
-msgstr ""
+msgstr "Mostrar la ventana del reproductor"
 
 #: ../translation/plugins.c:223
 #, no-c-format
 msgid "Find"
-msgstr ""
+msgstr "Buscar"
 
 #: ../translation/plugins.c:225
 #, no-c-format
 msgid "Show\\/Hide Log window"
-msgstr ""
+msgstr "Mostrar\\/ocultar la ventana del registro"
 
 #: ../translation/plugins.c:227
 #, no-c-format
@@ -2301,16 +2296,17 @@ msgstr ""
 #, no-c-format
 msgid "Use unicode chars instead of images for track state"
 msgstr ""
+"Usar caracteres unicode en lugar de imágenes para el estado de la pista"
 
 #: ../translation/plugins.c:239
 #, no-c-format
 msgid "Disable seekbar overlay text"
-msgstr ""
+msgstr "Desactivar el texto superpuesto de la barra de búsqueda"
 
 #: ../translation/plugins.c:244
 #, no-c-format
 msgid "Jump To Currently Playing Track"
-msgstr ""
+msgstr "Saltar a la pista que se está reproduciendo"
 
 #: ../translation/plugins.c:246
 #, no-c-format
@@ -2360,122 +2356,122 @@ msgstr "Siguiente álbum"
 #: ../translation/plugins.c:264
 #, no-c-format
 msgid "Next Playlist"
-msgstr ""
+msgstr "Lista de reproducción siguiente"
 
 #: ../translation/plugins.c:266
 #, no-c-format
 msgid "Prev Playlist"
-msgstr ""
+msgstr "Lista de reproducción anterior"
 
 #: ../translation/plugins.c:268
 #, no-c-format
 msgid "Switch To Playlist 10"
-msgstr ""
+msgstr "Cambiar a la lista de reproducción 10"
 
 #: ../translation/plugins.c:270
 #, no-c-format
 msgid "Switch To Playlist 9"
-msgstr ""
+msgstr "Cambiar a la lista de reproducción 9"
 
 #: ../translation/plugins.c:272
 #, no-c-format
 msgid "Switch To Playlist 8"
-msgstr ""
+msgstr "Cambiar a la lista de reproducción 8"
 
 #: ../translation/plugins.c:274
 #, no-c-format
 msgid "Switch To Playlist 7"
-msgstr ""
+msgstr "Cambiar a la lista de reproducción 7"
 
 #: ../translation/plugins.c:276
 #, no-c-format
 msgid "Switch To Playlist 6"
-msgstr ""
+msgstr "Cambiar a la lista de reproducción 6"
 
 #: ../translation/plugins.c:278
 #, no-c-format
 msgid "Switch To Playlist 5"
-msgstr ""
+msgstr "Cambiar a la lista de reproducción 5"
 
 #: ../translation/plugins.c:280
 #, no-c-format
 msgid "Switch To Playlist 4"
-msgstr ""
+msgstr "Cambiar a la lista de reproducción 4"
 
 #: ../translation/plugins.c:282
 #, no-c-format
 msgid "Switch To Playlist 3"
-msgstr ""
+msgstr "Cambiar a la lista de reproducción 3"
 
 #: ../translation/plugins.c:284
 #, no-c-format
 msgid "Switch To Playlist 2"
-msgstr ""
+msgstr "Cambiar a la lista de reproducción 2"
 
 #: ../translation/plugins.c:286
 #, no-c-format
 msgid "Switch To Playlist 1"
-msgstr ""
+msgstr "Cambiar a la lista de reproducción 1"
 
 #: ../translation/plugins.c:288
 #, no-c-format
 msgid "Sort Randomize"
-msgstr ""
+msgstr "Ordenar aleatoriamente"
 
 #: ../translation/plugins.c:290
 #, no-c-format
 msgid "Sort By Date"
-msgstr ""
+msgstr "Ordenar por fecha"
 
 #: ../translation/plugins.c:292
 #, no-c-format
 msgid "Sort By Artist"
-msgstr ""
+msgstr "Ordenar por artista"
 
 #: ../translation/plugins.c:294
 #, no-c-format
 msgid "Sort By Album"
-msgstr ""
+msgstr "Ordenar por álbum"
 
 #: ../translation/plugins.c:296
 #, no-c-format
 msgid "Sort By Track Number"
-msgstr ""
+msgstr "Ordenar por número de pista"
 
 #: ../translation/plugins.c:298
 #, no-c-format
 msgid "Sort By Title"
-msgstr ""
+msgstr "Ordenar por título"
 
 #: ../translation/plugins.c:300
 #, no-c-format
 msgid "Invert Selection"
-msgstr ""
+msgstr "Invertir la selección"
 
 #: ../translation/plugins.c:302
 #, no-c-format
 msgid "Clear Playlist"
-msgstr ""
+msgstr "Limpiar la lista de reproducción"
 
 #: ../translation/plugins.c:308
 #, no-c-format
 msgid "Toggle In Playback Queue"
-msgstr ""
+msgstr "Alternar en la cola de reproducción"
 
 #: ../translation/plugins.c:310
 #, no-c-format
 msgid "Move"
-msgstr ""
+msgstr "Mover"
 
 #: ../translation/plugins.c:312
 #, no-c-format
 msgid "Move Tracks Down"
-msgstr ""
+msgstr "Mover pistas hacia abajo"
 
 #: ../translation/plugins.c:314
 #, no-c-format
 msgid "Move Tracks Up"
-msgstr ""
+msgstr "Mover pistas hacia arriba"
 
 #: ../translation/plugins.c:316
 #, no-c-format
@@ -2600,14 +2596,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "Izquierda"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "Derecha"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2649,7 +2645,7 @@ msgstr "Dispositivo de archivo"
 #: ../translation/plugins.c:402
 #, no-c-format
 msgid "Highlight current playlist"
-msgstr ""
+msgstr "Resaltar la lista de reproducción actual"
 
 #: ../translation/plugins.c:404
 #, no-c-format
@@ -2747,98 +2743,98 @@ msgstr ""
 #: ../translation/plugins.c:445
 #, no-c-format
 msgid "55 Hz"
-msgstr ""
+msgstr "55 Hz"
 
 #: ../translation/plugins.c:447
 #, no-c-format
 msgid "77 Hz"
-msgstr ""
+msgstr "77 Hz"
 
 #: ../translation/plugins.c:449
 #, no-c-format
 msgid "110 Hz"
-msgstr ""
+msgstr "110 Hz"
 
 #: ../translation/plugins.c:451
 #, no-c-format
 msgid "156 Hz"
-msgstr ""
+msgstr "156 Hz"
 
 #: ../translation/plugins.c:453
 #, no-c-format
 msgid "220 Hz"
-msgstr ""
+msgstr "220 Hz"
 
 #: ../translation/plugins.c:455
 #, no-c-format
 msgid "311 Hz"
-msgstr ""
+msgstr "311 Hz"
 
 #: ../translation/plugins.c:457
 #, no-c-format
 msgid "440 Hz"
-msgstr ""
+msgstr "440 Hz"
 
 #: ../translation/plugins.c:459
 #, no-c-format
 msgid "622 Hz"
-msgstr ""
+msgstr "622 Hz"
 
 #: ../translation/plugins.c:461
 #, no-c-format
 msgid "880 Hz"
-msgstr ""
+msgstr "880 Hz"
 
 #: ../translation/plugins.c:463
 #, no-c-format
 msgid "1.2 kHz"
-msgstr ""
+msgstr "1.2 kHz"
 
 #: ../translation/plugins.c:465
 #, no-c-format
 msgid "1.8 kHz"
-msgstr ""
+msgstr "1.8 kHz"
 
 #: ../translation/plugins.c:467
 #, no-c-format
 msgid "2.5 kHz"
-msgstr ""
+msgstr "2.5 kHz"
 
 #: ../translation/plugins.c:469
 #, no-c-format
 msgid "3.5 kHz"
-msgstr ""
+msgstr "3.5 kHz"
 
 #: ../translation/plugins.c:471
 #, no-c-format
 msgid "5 kHz"
-msgstr ""
+msgstr "5 kHz"
 
 #: ../translation/plugins.c:473
 #, no-c-format
 msgid "7 kHz"
-msgstr ""
+msgstr "7 kHz"
 
 #: ../translation/plugins.c:475
 #, no-c-format
 msgid "10 kHz"
-msgstr ""
+msgstr "10 kHz"
 
 #: ../translation/plugins.c:477
 #, no-c-format
 msgid "14 kHz"
-msgstr ""
+msgstr "14 kHz"
 
 #: ../translation/plugins.c:479
 #, no-c-format
 msgid "20 kHz"
-msgstr ""
+msgstr "20 kHz"
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "Activar el sonido envolvente"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3545,9 +3541,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "Reproduciendo"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3610,69 +3605,3 @@ msgstr "Archivo no encontrado"
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr "Archivo inválido"
-
-#~ msgid "Linear"
-#~ msgstr "Lineal"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "Barajar pistas"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "Barajar álbumes"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlengths.txt (de HVSC)"
-
-#~ msgid "Looping"
-#~ msgstr "Repetir"
-
-#~ msgid "Loop all"
-#~ msgstr "Repetir todo"
-
-#~ msgid "Loop single song"
-#~ msgstr "Repetir una sola canción"
-
-#~ msgid "Don't loop"
-#~ msgstr "No repetir"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "Servidor PulseAudio"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Buscar en Last.fm"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "Liberar el dispositivo al detener"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "Solución para error de muestreo de OSS4"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "Periodo de actualización de la cache (hr)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "Máscara de archivo para portada local"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "Obtener de Last.fm"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "Obtener de albumart.org"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "Preferir protocolo CDDB sobre HTTP"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "Calidad de remuestreo (0..2, superior es mejor)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "Bits por muestra (8 o 16)"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "Tasa de muestreo de destino"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr "Muestreo automático (anula la tasa de muestreo de destino)"
-
-#~ msgid "Disable gapless playback (faster scanning)"
-#~ msgstr "Desactivar la reproducción sin pausas (análisis más rápido)"

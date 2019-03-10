@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Uighur (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/ug/)\n"
@@ -385,9 +385,8 @@ msgid "_Playback"
 msgstr "قوي(_P)"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "نەغمىنى تەرتىپسىز قويۇش"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
@@ -395,33 +394,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "نەغمە"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "ئالبوم"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "جەمئىي نەغمە"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "جەمئىي نەغمە"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "نەغمە"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -2535,14 +2529,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "سول"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "ئوڭ"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2771,9 +2765,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "ئىناۋەتلىك"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3458,9 +3452,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "قويۇۋاتىدۇ"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3523,57 +3516,3 @@ msgstr ""
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr ""
-
-#~ msgid "Linear"
-#~ msgstr "سىزىقلىق"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "نەغمىنى تەرتىپسىز قويۇش"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "ئالبومنى تەرتىپسىز قويۇش"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlengths.txt ( HVSC نىڭدىن )"
-
-#~ msgid "Looping"
-#~ msgstr "قايتىلاۋاتىدۇ"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "PulseAudio مۇلازىمېتىرى"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "ئىزدەش (Last.fm) دىن"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "توختىغاندا ئۈسكىنىنى قويۇۋېتىش"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "OSS4 ئەۋرىشكىلەش نىسبىتىدىكى كەمتۈكلەرنى تۈزىتىش"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "غەملەك يېڭىلاش ئىنتېرۋالى(سائەت)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "يەرلىك مۇقاۋا ھۆججەت ماسكىسى"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "last.fm دىن ئېلىش"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "albumart.org دىن ئېلىش"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "HTTP نى ئەمەس CDDB كېلىشىمىنى ئالدىن ئويلىشىش"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "ئەۋرىشكىلەش سۈپىتى (0..2, چوڭ بولسا ياخشى)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "ھەر بىر ئەۋرىشكىدىكى بىت سانى(8 ياكى 16)"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "نىشان ئەۋرىشكە تېزلىكى"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr "ئاپتوماتىك ئەۋرىشكە تېزلىكى (‹نىشان ئەۋرىشكە تېزلىكى›نى قاپلىنىدۇ)"

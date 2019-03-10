@@ -7,15 +7,15 @@
 # Henrique P. Machado <hpmachado@gnome.org>, 2010
 # secipolla <secipolla@gmail.com>, 2010
 # secipolla <secipolla@gmail.com>, 2010
-# Yuri Somacal, 2016
+# Yuri Somacal, 2016,2018
 # Yuri Somacal, 2016,2018
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:46+0000\n"
-"Last-Translator: Yuri Somacal\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
+"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/deadbeef-player/"
 "deadbeef-player/language/pt_BR/)\n"
 "Language: pt_BR\n"
@@ -394,9 +394,8 @@ msgid "_Playback"
 msgstr "_Reprodução"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "Embaralhar faixas"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
@@ -404,33 +403,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "Faixa"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "Álbum"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "Total de faixas"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "Total de faixas"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "Faixa"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -1965,9 +1959,9 @@ msgid "Internal DUMB volume (0..128)"
 msgstr ""
 
 #: ../translation/plugins.c:106
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Volume ramping"
-msgstr "Barra de volume"
+msgstr ""
 
 #: ../translation/plugins.c:110
 #, no-c-format
@@ -2545,14 +2539,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "Esquerda"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "Direita"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2780,9 +2774,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "Habilitar surround"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3469,9 +3463,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "Em reprodução"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3534,66 +3527,3 @@ msgstr ""
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr ""
-
-#~ msgid "Linear"
-#~ msgstr "Linear"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "Embaralhar faixas"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "Embaralhar álbuns"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlengths.txt (da HVSC)"
-
-#~ msgid "Looping"
-#~ msgstr "Repetição"
-
-#~ msgid "Loop all"
-#~ msgstr "Repetir tudo"
-
-#~ msgid "Loop single song"
-#~ msgstr "Repetir uma faixa"
-
-#~ msgid "Don't loop"
-#~ msgstr "Não repetir"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "Servidor PulseAudio"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Procurar no Last.fm"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "Liberar dispositivo quando parado"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "Contornar falha da taxa de amostragem do OSS4"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "Período para atualização do cache (h)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "Máscara de arquivo de capa local"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "Buscar no last.fm"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "Buscar no albumart.org"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "Preferir protocolo CDDB ao HTTP"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "Qualidade de reamostragem (0..2, maior é melhor)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "Bits por amostra (8 ou 16)"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "Taxa de amostragem alvo"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr "Taxa de amostragem automática (sobrepuja a taxa de amostragem alvo)"

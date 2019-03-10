@@ -5,12 +5,14 @@
 # Translators:
 # Jay Alexander Fleming <tito.nehru.naser@gmail.com>, 2010
 # Jay Alexander Fleming <tito.nehru.naser@gmail.com>, 2010
+# Todor Grigoriadis <todor@gmx.co.in>, 2018
+# Todor Grigoriadis <todor@gmx.co.in>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Serbian (Latin) (http://www.transifex.com/deadbeef-player/"
 "deadbeef-player/language/sr%40latin/)\n"
@@ -101,7 +103,7 @@ msgstr "Područja na nulu"
 #: ../plugins/gtkui/eq.c:398 ../plugins/converter/interface.c:852
 #: ../plugins/converter/converter.glade.h:55
 msgid "Presets"
-msgstr ""
+msgstr "Početne postavke"
 
 #: ../plugins/gtkui/gtkui.c:165 ../tf.c:1833
 #, c-format
@@ -127,87 +129,87 @@ msgstr "Nova lista (%d)"
 #: ../plugins/gtkui/gtkui.c:730
 #, c-format
 msgid "Copy of %s"
-msgstr ""
+msgstr "Kopija od %s"
 
 #: ../plugins/gtkui/gtkui.c:733
 #, c-format
 msgid "Copy of %s (%d)"
-msgstr ""
+msgstr "Kopija od %s (%d)"
 
 #. register widget types
 #: ../plugins/gtkui/gtkui.c:1214
 msgid "Playlist with tabs"
-msgstr ""
+msgstr "Plejlista sa tabovima"
 
 #: ../plugins/gtkui/gtkui.c:1215 ../plugins/gtkui/interface.c:2285
 #: ../plugins/gtkui/interface.c:2730 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Playlist"
-msgstr ""
+msgstr "Plejlista"
 
 #: ../plugins/gtkui/gtkui.c:1218
 msgid "Splitter (top and bottom)"
-msgstr ""
+msgstr "Spliter (gornji i donji)"
 
 #: ../plugins/gtkui/gtkui.c:1219
 msgid "Splitter (left and right)"
-msgstr ""
+msgstr "Spliter (levi i desni)"
 
 #: ../plugins/gtkui/gtkui.c:1221
 msgid "Tabs"
-msgstr ""
+msgstr "Tabovi"
 
 #: ../plugins/gtkui/gtkui.c:1222
 msgid "Playlist tabs"
-msgstr ""
+msgstr "Tabovi u plejlisti"
 
 #: ../plugins/gtkui/gtkui.c:1223
 msgid "Selection properties"
-msgstr ""
+msgstr "Osobine izabranih"
 
 #: ../plugins/gtkui/gtkui.c:1224
 msgid "Album art display"
-msgstr ""
+msgstr "Prikaz omota albuma"
 
 #: ../plugins/gtkui/gtkui.c:1225
 msgid "Scope"
-msgstr ""
+msgstr "Opseg"
 
 #: ../plugins/gtkui/gtkui.c:1226
 msgid "Spectrum"
-msgstr ""
+msgstr "Spektrum"
 
 #: ../plugins/gtkui/gtkui.c:1227
 msgid "HBox"
-msgstr ""
+msgstr "HBox"
 
 #: ../plugins/gtkui/gtkui.c:1228
 msgid "VBox"
-msgstr ""
+msgstr "VBox"
 
 #: ../plugins/gtkui/gtkui.c:1229 ../plugins/gtkui/widgets.c:3851
 #: ../plugins/gtkui/widgets.c:3938
 msgid "Button"
-msgstr ""
+msgstr "Dugme"
 
 #: ../plugins/gtkui/gtkui.c:1230
 msgid "Seekbar"
-msgstr ""
+msgstr "Traka za pretragu"
 
 #: ../plugins/gtkui/gtkui.c:1231
 msgid "Playback controls"
-msgstr ""
+msgstr "Kontrole reprodukcije"
 
 #: ../plugins/gtkui/gtkui.c:1232
 msgid "Volume bar"
-msgstr ""
+msgstr "Traka za jačinu zvuka"
 
 #: ../plugins/gtkui/gtkui.c:1233
 msgid "Chiptune voices"
-msgstr ""
+msgstr "Chiptune glasovi"
 
 #: ../plugins/gtkui/gtkui.c:1234
 msgid "Log viewer"
-msgstr ""
+msgstr "Pregled evidencije"
 
 #: ../plugins/gtkui/gtkui.c:1455
 msgid "Failed while reading help file"
@@ -222,10 +224,12 @@ msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
+"Program trenutno obavlja pozadinske odredbe. Ako izađete sada, odredbe će "
+"biti prekinute ili otkazane. To se može rezultirati gubitkom podataka."
 
 #: ../plugins/gtkui/gtkui.c:1480
 msgid "Do you still want to quit?"
-msgstr ""
+msgstr "Da li još uvek želite izaći?"
 
 #: ../plugins/gtkui/gtkui.c:1481 ../plugins/gtkui/prefwin.c:463
 #: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1080
@@ -314,7 +318,7 @@ msgstr "_Traži"
 
 #: ../plugins/gtkui/interface.c:249 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Sort by"
-msgstr ""
+msgstr "Sortirano po"
 
 #: ../plugins/gtkui/interface.c:256 ../plugins/gtkui/mainplaylist.c:233
 #: ../plugins/gtkui/plcommon.c:93 ../plugins/gtkui/prefwin.c:439
@@ -328,7 +332,7 @@ msgstr "Naslov"
 
 #: ../plugins/gtkui/interface.c:260 ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Track number"
-msgstr ""
+msgstr "Broj numere"
 
 #: ../plugins/gtkui/interface.c:264 ../plugins/gtkui/interface.c:1965
 #: ../plugins/gtkui/plcommon.c:92 ../plugins/gtkui/deadbeef.glade.h:22
@@ -377,11 +381,11 @@ msgstr "Ekvilajzer"
 
 #: ../plugins/gtkui/interface.c:307 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Design mode"
-msgstr ""
+msgstr "Dizajnerski režim"
 
 #: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Log"
-msgstr ""
+msgstr "Evidencija"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "_Playback"
@@ -397,33 +401,28 @@ msgid "Off"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
-msgstr "Pesma"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
-msgstr "Album"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "Ukupno pesmama"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "Ukupno pesmama"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "Pesma"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -435,11 +434,11 @@ msgstr "Pokazivač prati reprodukciju pesama"
 
 #: ../plugins/gtkui/interface.c:387 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current track"
-msgstr ""
+msgstr "Zaustavi posle trenutne numere"
 
 #: ../plugins/gtkui/interface.c:391 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Stop after current album"
-msgstr ""
+msgstr "Zaustavi posle trenutnog albuma"
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "Jump to current track"
@@ -526,11 +525,11 @@ msgstr "Osobine pesme"
 
 #: ../plugins/gtkui/interface.c:1060 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Location:"
-msgstr ""
+msgstr "Lokacija:"
 
 #: ../plugins/gtkui/interface.c:1101 ../plugins/gtkui/deadbeef.glade.h:65
 msgid "Settings"
-msgstr ""
+msgstr "Podešavanja"
 
 #: ../plugins/gtkui/interface.c:1127 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "_Apply"
@@ -573,11 +572,11 @@ msgstr "Format:"
 
 #: ../plugins/gtkui/interface.c:1382 ../plugins/gtkui/deadbeef.glade.h:76
 msgid "Sort format:"
-msgstr ""
+msgstr "Sortiraj po formatu:"
 
 #: ../plugins/gtkui/interface.c:1391 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "(if non-empty)"
-msgstr ""
+msgstr "(ako nije prazno)"
 
 #: ../plugins/gtkui/interface.c:1399 ../plugins/gtkui/deadbeef.glade.h:78
 msgid "Alignment:"
@@ -593,12 +592,12 @@ msgstr "Desno"
 
 #: ../plugins/gtkui/interface.c:1409
 msgid "Center"
-msgstr ""
+msgstr "Središno"
 
 #: ../plugins/gtkui/interface.c:1415 ../plugins/gtkui/interface.c:4841
 #: ../plugins/gtkui/deadbeef.glade.h:82
 msgid "Text color:"
-msgstr ""
+msgstr "Boja teksta:"
 
 #: ../plugins/gtkui/interface.c:1444 ../plugins/gtkui/interface.c:3721
 #: ../plugins/gtkui/interface.c:3852 ../plugins/gtkui/interface.c:3982
@@ -622,15 +621,15 @@ msgstr "Izlazni uređaj"
 
 #: ../plugins/gtkui/interface.c:1827 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Always convert 8 bit audio to 16 bit"
-msgstr ""
+msgstr "Zvučni zapis od 8-bita uvek konvertuj u 16-bita "
 
 #: ../plugins/gtkui/interface.c:1831 ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Always convert 16 bit audio to 24 bit"
-msgstr ""
+msgstr "Zvučni zapis od 16-bita uvek konvertuj u 24-bita"
 
 #: ../plugins/gtkui/interface.c:1852 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Target samplerate:"
-msgstr ""
+msgstr "Frekvencijski opseg"
 
 #: ../plugins/gtkui/interface.c:1885 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "For multiples of 48KHz (96K, 192K, ...):"
@@ -642,11 +641,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1919 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Based on input samplerate"
-msgstr ""
+msgstr "Bazirano na izabranom frekvencijskom opsegu"
 
 #: ../plugins/gtkui/interface.c:1923 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Override samplerate"
-msgstr ""
+msgstr "Pregazi frekvencijski opseg"
 
 #: ../plugins/gtkui/interface.c:1927 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Sound"
@@ -658,7 +657,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1963
 msgid "By playback order"
-msgstr ""
+msgstr "Po redu reprodukcije"
 
 #: ../plugins/gtkui/interface.c:1964
 msgid "Track"
@@ -666,7 +665,7 @@ msgstr "Pesma"
 
 #: ../plugins/gtkui/interface.c:1971 ../plugins/gtkui/deadbeef.glade.h:97
 msgid "Processing:"
-msgstr ""
+msgstr "Procesiranje:"
 
 #: ../plugins/gtkui/interface.c:1980 ../plugins/gtkui/plcommon.c:1841
 #: ../translation/plugins.c:108 ../plugins/gtkui/widgets.c:3948
@@ -689,12 +688,12 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:1996 ../plugins/gtkui/interface.c:2030
 #: ../plugins/gtkui/deadbeef.glade.h:102
 msgid "-12 dB"
-msgstr ""
+msgstr "-12 dB"
 
 #: ../plugins/gtkui/interface.c:2006 ../plugins/gtkui/interface.c:2040
 #: ../plugins/gtkui/deadbeef.glade.h:103
 msgid "+12 dB"
-msgstr ""
+msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:2010 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Preamp with RG info:"
@@ -719,7 +718,7 @@ msgstr "Vrati prethodnu sesiju pri pokretanju"
 
 #: ../plugins/gtkui/interface.c:2066 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Don't add from archives when adding folders"
-msgstr ""
+msgstr "Ne učitavaj datoteke iz arhiva prilikom dodavanja direktorijuma"
 
 #: ../plugins/gtkui/interface.c:2070 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "\"Stop after current track\" option will switch off after triggering"
@@ -751,7 +750,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2150 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "DSP"
-msgstr ""
+msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2164 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Close minimizes to tray"
@@ -763,15 +762,15 @@ msgstr "Ne prikazuj ikonu u obaveštajnoj zoni"
 
 #: ../plugins/gtkui/interface.c:2172 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
-msgstr ""
+msgstr "Omogući Japansku „SHIFT-JIS detekciju i snimanje"
 
 #: ../plugins/gtkui/interface.c:2176 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "Omogući Rusku CP1251 detekciju i snimanje"
 
 #: ../plugins/gtkui/interface.c:2180 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "Omogući Kinesku CP936 detekciju i snimanje"
 
 #: ../plugins/gtkui/interface.c:2188 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Interface refresh rate (times per second):"
@@ -795,26 +794,26 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2242 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Player"
-msgstr ""
+msgstr "Muzički program"
 
 #. plugins/pltbrowser/pltbrowser.c
 #: ../plugins/gtkui/interface.c:2251 ../plugins/gtkui/deadbeef.glade.h:128
 #: ../translation/plugins.c:400
 #, no-c-format
 msgid "Close playlists with middle mouse button"
-msgstr ""
+msgstr "Zatvori plejliste sa srednjim klikom"
 
 #: ../plugins/gtkui/interface.c:2255 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr ""
+msgstr "Sakri \"Ukloni sa diska\" iz kontekstualnog menija"
 
 #: ../plugins/gtkui/interface.c:2259 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Auto-name playlists when adding a single folder"
-msgstr ""
+msgstr "Automatski imenuj plejlistu kada se dodaje jedan direktorijum"
 
 #: ../plugins/gtkui/interface.c:2263 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Auto-resize columns to fit the window"
-msgstr ""
+msgstr "Automatski podesi veličinu koluma kako bi odgovarale prozoru "
 
 #: ../plugins/gtkui/interface.c:2271 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Group spacing:"
@@ -822,7 +821,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2281 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "pixels"
-msgstr ""
+msgstr "pikseli"
 
 #: ../plugins/gtkui/interface.c:2289 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "GUI/Misc"
@@ -851,39 +850,39 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2377 ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Dark:"
-msgstr ""
+msgstr "Tamno:"
 
 #: ../plugins/gtkui/interface.c:2390 ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Light:"
-msgstr ""
+msgstr "Svetlo:"
 
 #: ../plugins/gtkui/interface.c:2403 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Middle:"
-msgstr ""
+msgstr "Srednje:"
 
 #: ../plugins/gtkui/interface.c:2410 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Text:"
-msgstr ""
+msgstr "Tekst:"
 
 #: ../plugins/gtkui/interface.c:2435 ../plugins/gtkui/interface.c:2449
 #: ../plugins/gtkui/interface.c:2706 ../plugins/gtkui/interface.c:2712
 #: ../plugins/gtkui/deadbeef.glade.h:145
 msgid "Bold"
-msgstr ""
+msgstr "Podebljano"
 
 #: ../plugins/gtkui/interface.c:2439 ../plugins/gtkui/interface.c:2453
 #: ../plugins/gtkui/interface.c:2718 ../plugins/gtkui/interface.c:2724
 #: ../plugins/gtkui/deadbeef.glade.h:146
 msgid "Italic"
-msgstr ""
+msgstr "Italik"
 
 #: ../plugins/gtkui/interface.c:2463 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "Playing text:"
-msgstr ""
+msgstr "Tekst reprodukcije:"
 
 #: ../plugins/gtkui/interface.c:2470 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Selected text:"
-msgstr ""
+msgstr "Izabrani tekst:"
 
 #: ../plugins/gtkui/interface.c:2483 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "Tab strip"
@@ -896,7 +895,7 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:2530 ../plugins/gtkui/interface.c:2692
 #: ../plugins/gtkui/deadbeef.glade.h:151
 msgid "Playing track:"
-msgstr ""
+msgstr "Puštena numera:"
 
 #: ../plugins/gtkui/interface.c:2543 ../plugins/gtkui/interface.c:2699
 #: ../plugins/gtkui/deadbeef.glade.h:152
@@ -905,7 +904,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2556 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "Columns:"
-msgstr ""
+msgstr "Kolume:"
 
 #: ../plugins/gtkui/interface.c:2575 ../plugins/gtkui/deadbeef.glade.h:154
 msgid "Group header:"
@@ -917,7 +916,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2625 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "Even:"
-msgstr ""
+msgstr "Jednaki:"
 
 #: ../plugins/gtkui/interface.c:2632 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "Odd:"
@@ -937,7 +936,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2682 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "Override (loses GTK treeview theming, but speeds up rendering)"
-msgstr ""
+msgstr "Pregazi (gubi se podrazumevana GTK tema, ali se ubrzava prikaz)"
 
 #: ../plugins/gtkui/interface.c:2734 ../plugins/gtkui/deadbeef.glade.h:162
 msgid "Appearance"
@@ -1157,7 +1156,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:4814 ../plugins/gtkui/deadbeef.glade.h:213
 msgid "Button properties"
-msgstr ""
+msgstr "Osobine dugmeta"
 
 #: ../plugins/gtkui/interface.c:4829 ../plugins/gtkui/deadbeef.glade.h:214
 msgid "Color:"
@@ -2532,14 +2531,14 @@ msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "Levo"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "Desno"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
@@ -2767,9 +2766,9 @@ msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "Omogući"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
@@ -3442,9 +3441,8 @@ msgid " (stopped)"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "Reprodukuje se"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3507,36 +3505,3 @@ msgstr ""
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr ""
-
-#~ msgid "Linear"
-#~ msgstr "Linijski"
-
-#~ msgid "Looping"
-#~ msgstr "Ponavljanje"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "PulseAudio zvučni server"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Pogledaj na Last.fm stranici"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "Oslobodi uređaj nakon završene reprodukcije"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "Period osvežavanja privremene memorije (časova)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "Ime datoteka sadrži reči"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "Preuzmi sa Last.fm stranica"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "Preuzmi sa albumart.org"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "Najradije koristi CDDB protokol"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "Kvalitet promene frekvencije uzorkovanja (0..2, više je bolje)"

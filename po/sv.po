@@ -4,6 +4,7 @@
 #
 # Translators:
 # Jonatan Nyberg, 2017
+# Jonatan Nyberg, 2018-2019
 # Jonatan Nyberg, 2017-2018
 # Martin Bagge <brother@bsnet.se>, 2010
 # Martin Bagge <brother@bsnet.se>, 2010
@@ -11,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 21:02+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Swedish (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/sv/)\n"
@@ -391,43 +392,37 @@ msgid "_Playback"
 msgstr "_Uppspelning"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
-#, fuzzy
 msgid "Shuffle"
-msgstr "Blanda spår"
+msgstr "Blanda"
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
 msgid "Off"
-msgstr ""
+msgstr "Av"
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Tracks"
 msgstr "Spår"
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Albums"
 msgstr "Album"
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
-#, fuzzy
 msgid "Random Tracks"
-msgstr "Totala spår"
+msgstr "Slumpmässiga spår"
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
-msgstr ""
+msgstr "Upprepa"
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "All Tracks"
-msgstr "Totala spår"
+msgstr "Alla spår"
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "One Track"
-msgstr "Singelspår"
+msgstr "Ett spår"
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -634,23 +629,23 @@ msgstr "Konvertera alltid 16 bitars ljud till 24 bitar"
 
 #: ../plugins/gtkui/interface.c:1852 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Target samplerate:"
-msgstr ""
+msgstr "Målets samplingshastiget:"
 
 #: ../plugins/gtkui/interface.c:1885 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "For multiples of 48KHz (96K, 192K, ...):"
-msgstr ""
+msgstr "För multiplar av 48KHz (96K, 192K, ...):"
 
 #: ../plugins/gtkui/interface.c:1904 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "For multiples of 44.1KHz (88.2K, 176.4K, ...):"
-msgstr ""
+msgstr "För multiplar av 44.1KHz (88.2K, 176.4K, ...):"
 
 #: ../plugins/gtkui/interface.c:1919 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Based on input samplerate"
-msgstr ""
+msgstr "Baserat på inmatnings samplingshastighet"
 
 #: ../plugins/gtkui/interface.c:1923 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Override samplerate"
-msgstr ""
+msgstr "Åsidosätt samplingshastighet"
 
 #: ../plugins/gtkui/interface.c:1927 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Sound"
@@ -840,7 +835,7 @@ msgstr "Överbrygga"
 
 #: ../plugins/gtkui/interface.c:2313 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Bars"
-msgstr ""
+msgstr "Staplar"
 
 #: ../plugins/gtkui/interface.c:2320 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Background (EQ)"
@@ -1158,7 +1153,7 @@ msgstr "Återställ till standardinställningar"
 
 #: ../plugins/gtkui/interface.c:4733 ../plugins/gtkui/deadbeef.glade.h:211
 msgid "Content-Type:"
-msgstr ""
+msgstr "Innehållstyp:"
 
 #: ../plugins/gtkui/interface.c:4746 ../plugins/gtkui/deadbeef.glade.h:212
 msgid "Plugins:"
@@ -1230,7 +1225,7 @@ msgstr "Rensa"
 
 #: ../plugins/gtkui/interface.c:5297 ../plugins/gtkui/deadbeef.glade.h:227
 msgid "ReplayGain Scan Progress"
-msgstr ""
+msgstr "ReplayGain-skanningsresultat"
 
 #: ../plugins/gtkui/interface.c:5308 ../plugins/gtkui/deadbeef.glade.h:228
 msgid "Current File:"
@@ -1248,7 +1243,7 @@ msgstr "Avbryt"
 
 #: ../plugins/gtkui/interface.c:5365 ../plugins/gtkui/deadbeef.glade.h:231
 msgid "ReplayGain Scan Results"
-msgstr ""
+msgstr "ReplayGain-skanningsresultat"
 
 #: ../plugins/gtkui/interface.c:5393 ../plugins/gtkui/deadbeef.glade.h:232
 msgid "Update File Tags"
@@ -1270,7 +1265,7 @@ msgstr "Längd"
 
 #: ../plugins/gtkui/plcommon.c:87
 msgid "Item Index"
-msgstr ""
+msgstr "Artikelindex"
 
 #: ../plugins/gtkui/plcommon.c:88 ../plugins/pltbrowser/pltbrowser.c:412
 msgid "Playing"
@@ -1445,7 +1440,7 @@ msgstr "Kan inte lägga till fält"
 
 #: ../plugins/gtkui/trkproperties.c:929
 msgid "Field with such name already exists, please try different name."
-msgstr ""
+msgstr "Fält med sådant namn finns redan, försök med annat namn."
 
 #: ../main.c:104
 #, c-format
@@ -1548,6 +1543,8 @@ msgid ""
 "                      example: --nowplaying \"%%a - %%t\" should print "
 "\"artist - title\"\n"
 msgstr ""
+"                      exempel: --nowplaying \"%%a - %%t\" ska skriva ut "
+"\"artist - titel\"\n"
 
 #: ../main.c:124
 #, c-format
@@ -1727,7 +1724,7 @@ msgstr "Inbäddat körschema"
 #: ../translation/plugins.c:3
 #, no-c-format
 msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr ""
+msgstr "Föredra Ken emu över Satoh (surround kommer inte att fungera)"
 
 #: ../translation/plugins.c:5
 #, no-c-format
@@ -1738,7 +1735,7 @@ msgstr "Aktivera surround"
 #: ../translation/plugins.c:8
 #, no-c-format
 msgid "Use ALSA resampling"
-msgstr ""
+msgstr "Använd ALSA-omsampling"
 
 #: ../translation/plugins.c:10
 #, no-c-format
@@ -1754,12 +1751,12 @@ msgstr "Föredragen periodstorlek"
 #: ../translation/plugins.c:15
 #, no-c-format
 msgid "Refresh cover art"
-msgstr ""
+msgstr "Uppdatera omslag"
 
 #: ../translation/plugins.c:17
 #, no-c-format
 msgid "Cache update period (in hours, 0=never)"
-msgstr ""
+msgstr "Cache uppdateringsperiod (i timmar, 0=aldrig)"
 
 #: ../translation/plugins.c:19
 #, no-c-format
@@ -1774,63 +1771,63 @@ msgstr "Hämta från den lokala mappen"
 #: ../translation/plugins.c:23
 #, no-c-format
 msgid "Fetch from Last.fm"
-msgstr ""
+msgstr "Hämta från Last.fm"
 
 #: ../translation/plugins.c:25
 #, no-c-format
 msgid "Fetch from MusicBrainz"
-msgstr ""
+msgstr "Hämta från MusicBrainz"
 
 #: ../translation/plugins.c:27
 #, no-c-format
 msgid "Fetch from Albumart.org"
-msgstr ""
+msgstr "Hämta från Albumart.org"
 
 #: ../translation/plugins.c:29
 #, no-c-format
 msgid "Fetch from World of Spectrum (AY files only)"
-msgstr ""
+msgstr "Hämta från World of Spectrum (endast AY-filer)"
 
 #: ../translation/plugins.c:31
 #, no-c-format
 msgid "When no artwork is found"
-msgstr ""
+msgstr "När inget omslag finns"
 
 #: ../translation/plugins.c:33
 #, no-c-format
 msgid "leave blank"
-msgstr ""
+msgstr "lämna tom"
 
 #: ../translation/plugins.c:35
 #, no-c-format
 msgid "use DeaDBeeF default cover"
-msgstr ""
+msgstr "använd DeaDBeeF-standardomslag"
 
 #: ../translation/plugins.c:37
 #, no-c-format
 msgid "display custom image"
-msgstr ""
+msgstr "visa anpassad bild"
 
 #: ../translation/plugins.c:39
 #, no-c-format
 msgid "Custom image path"
-msgstr ""
+msgstr "Anpassad bildsökväg"
 
 #: ../translation/plugins.c:41
 #, no-c-format
 msgid "Scale artwork towards longer side"
-msgstr ""
+msgstr "Skala omslag mot längre sida"
 
 #. plugins/artwork/artwork.c
 #: ../translation/plugins.c:44
 #, no-c-format
 msgid "Disable disk cache"
-msgstr ""
+msgstr "Inaktivera diskcache"
 
 #: ../translation/plugins.c:46
 #, no-c-format
 msgid "Save extracted covers to music folders"
-msgstr ""
+msgstr "Spara extraherade omslag till musikmappar"
 
 #: ../translation/plugins.c:48
 #, no-c-format
@@ -1846,17 +1843,17 @@ msgstr ""
 #: ../translation/plugins.c:53
 #, no-c-format
 msgid "CD drive to load"
-msgstr ""
+msgstr "CD-enhet att läsa in"
 
 #: ../translation/plugins.c:55
 #, no-c-format
 msgid "Audio CD Drive"
-msgstr ""
+msgstr "Ljud CD-enhet"
 
 #: ../translation/plugins.c:57
 #, no-c-format
 msgid "File"
-msgstr ""
+msgstr "Arkiv"
 
 #: ../translation/plugins.c:59
 #, no-c-format
@@ -1886,7 +1883,7 @@ msgstr "CDDB-portnummer (t.ex. '888')"
 #: ../translation/plugins.c:69
 #, no-c-format
 msgid "Use CDDB protocol"
-msgstr ""
+msgstr "Använd CDDB-protokoll"
 
 #: ../translation/plugins.c:71
 #, no-c-format
@@ -1896,42 +1893,42 @@ msgstr "Aktivera NRG bildstöd"
 #: ../translation/plugins.c:73
 #, no-c-format
 msgid "Drive speed for normal playback"
-msgstr ""
+msgstr "Diskhastighet för normal uppspelning"
 
 #: ../translation/plugins.c:75
 #, no-c-format
 msgid "1x"
-msgstr ""
+msgstr "1x"
 
 #: ../translation/plugins.c:77
 #, no-c-format
 msgid "2x"
-msgstr ""
+msgstr "2x"
 
 #: ../translation/plugins.c:79
 #, no-c-format
 msgid "4x"
-msgstr ""
+msgstr "4x"
 
 #: ../translation/plugins.c:81
 #, no-c-format
 msgid "8x"
-msgstr ""
+msgstr "8x"
 
 #: ../translation/plugins.c:83
 #, no-c-format
 msgid "16x"
-msgstr ""
+msgstr "16x"
 
 #: ../translation/plugins.c:85
 #, no-c-format
 msgid "Max"
-msgstr ""
+msgstr "Max"
 
 #: ../translation/plugins.c:87
 #, no-c-format
 msgid "Use cdparanoia error correction when ripping"
-msgstr ""
+msgstr "Använd cdparanoia felkorrigering när du rippar"
 
 #. plugins/converter/convgui.c
 #: ../translation/plugins.c:90
@@ -1943,12 +1940,12 @@ msgstr "Konvertera"
 #: ../translation/plugins.c:93
 #, no-c-format
 msgid "Autodetect samplerate from output device"
-msgstr ""
+msgstr "Detektera automatiskt samplingshastighet från utmatningsenhet"
 
 #: ../translation/plugins.c:95
 #, no-c-format
 msgid "Set samplerate directly"
-msgstr ""
+msgstr "Ange samplingshastighet direkt"
 
 #: ../translation/plugins.c:97
 #, no-c-format
@@ -1959,7 +1956,7 @@ msgstr "Kvalitet / Algoritm"
 #: ../translation/plugins.c:100
 #, no-c-format
 msgid "Resampling quality (0..5, higher is better)"
-msgstr ""
+msgstr "Åstersampling kvalitet (0..5, högre är bättre)"
 
 #: ../translation/plugins.c:102
 #, no-c-format
@@ -1969,33 +1966,33 @@ msgstr "8-bitars utgång (standard är 16)"
 #: ../translation/plugins.c:104
 #, no-c-format
 msgid "Internal DUMB volume (0..128)"
-msgstr ""
+msgstr "Intern DUMB-volym (0..128)"
 
 #: ../translation/plugins.c:106
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Volume ramping"
-msgstr "Volymfält"
+msgstr ""
 
 #: ../translation/plugins.c:110
 #, no-c-format
 msgid "On/Off Only"
-msgstr ""
+msgstr "På/Av endast"
 
 #: ../translation/plugins.c:112
 #, no-c-format
 msgid "Full"
-msgstr ""
+msgstr "Full"
 
 #. plugins/ffmpeg/ffmpeg.c
 #: ../translation/plugins.c:115
 #, no-c-format
 msgid "Use all extensions supported by ffmpeg"
-msgstr ""
+msgstr "Använd alla tillägg som stöds av ffmpeg"
 
 #: ../translation/plugins.c:117
 #, no-c-format
 msgid "File Extensions (separate with ';')"
-msgstr ""
+msgstr "Filtillägg (separade med ';')"
 
 #. plugins/gme/cgme.c
 #: ../translation/plugins.c:120
@@ -2016,28 +2013,28 @@ msgstr ""
 #: ../translation/plugins.c:126
 #, no-c-format
 msgid "ColecoVision BIOS (for SGC file format)"
-msgstr ""
+msgstr "ColecoVision BIOS (för SGC-filformat)"
 
 #. plugins/gtkui/gtkui.c
 #: ../translation/plugins.c:129
 #, no-c-format
 msgid "ReplayGain"
-msgstr ""
+msgstr "ReplayGain"
 
 #: ../translation/plugins.c:131
 #, no-c-format
 msgid "Remove ReplayGain Information"
-msgstr ""
+msgstr "Ta bort ReplayGain-information"
 
 #: ../translation/plugins.c:133
 #, no-c-format
 msgid "Scan Selection As Albums (By Tags)"
-msgstr ""
+msgstr "Skanna urval som album (efter etiketter)"
 
 #: ../translation/plugins.c:135
 #, no-c-format
 msgid "Scan Selection As Single Album"
-msgstr ""
+msgstr "Skanna urval som ett enskilda album"
 
 #: ../translation/plugins.c:137
 #, no-c-format
@@ -2047,37 +2044,37 @@ msgstr ""
 #: ../translation/plugins.c:141
 #, no-c-format
 msgid "Deselect All"
-msgstr ""
+msgstr "Välj inga"
 
 #: ../translation/plugins.c:143
 #, no-c-format
 msgid "Select All"
-msgstr ""
+msgstr "Välj alla"
 
 #: ../translation/plugins.c:149
 #, no-c-format
 msgid "Add Location"
-msgstr ""
+msgstr "Lägg till plats"
 
 #: ../translation/plugins.c:151
 #, no-c-format
 msgid "Add Folder(s)"
-msgstr ""
+msgstr "Lägg till mapp(ar)"
 
 #: ../translation/plugins.c:153
 #, no-c-format
 msgid "Add File(s)"
-msgstr ""
+msgstr "Lägg till fil(er)"
 
 #: ../translation/plugins.c:155
 #, no-c-format
 msgid "Open File(s)"
-msgstr ""
+msgstr "Öppna fil(er)"
 
 #: ../translation/plugins.c:161
 #, no-c-format
 msgid "Show Help Page"
-msgstr ""
+msgstr "Visa hjälpsida"
 
 #: ../translation/plugins.c:165
 #, no-c-format
@@ -2107,22 +2104,22 @@ msgstr ""
 #: ../translation/plugins.c:175
 #, no-c-format
 msgid "Playback Order - Random"
-msgstr ""
+msgstr "Uppspelningsordning - Slumpmässig"
 
 #: ../translation/plugins.c:177
 #, no-c-format
 msgid "Playback Order - Shuffle albums"
-msgstr ""
+msgstr "Uppspelningsordning - Blanda album"
 
 #: ../translation/plugins.c:179
 #, no-c-format
 msgid "Playback Order - Shuffle tracks"
-msgstr ""
+msgstr "Uppspelningsordning - Blanda spår"
 
 #: ../translation/plugins.c:181
 #, no-c-format
 msgid "Playback Order - Linear"
-msgstr ""
+msgstr "Uppspelningsordning - Linjär"
 
 #: ../translation/plugins.c:183
 #, no-c-format
@@ -2137,42 +2134,42 @@ msgstr ""
 #: ../translation/plugins.c:187
 #, no-c-format
 msgid "View"
-msgstr ""
+msgstr "Visa"
 
 #: ../translation/plugins.c:189
 #, no-c-format
 msgid "Show\\/Hide menu"
-msgstr ""
+msgstr "Visa\\/Dölj menu"
 
 #: ../translation/plugins.c:191
 #, no-c-format
 msgid "Show\\/Hide statusbar"
-msgstr ""
+msgstr "Visa\\/Dölj statusfält"
 
 #: ../translation/plugins.c:193
 #, no-c-format
 msgid "Toggle Design Mode"
-msgstr ""
+msgstr "Växla designläge"
 
 #: ../translation/plugins.c:197
 #, no-c-format
 msgid "Sort Custom"
-msgstr ""
+msgstr "Ange anpassad"
 
 #: ../translation/plugins.c:199
 #, no-c-format
 msgid "Crop Selected"
-msgstr ""
+msgstr "Beskär valda"
 
 #: ../translation/plugins.c:201
 #, no-c-format
 msgid "Remove Track(s) From Playlist"
-msgstr ""
+msgstr "Ta bort spår från spellistan"
 
 #: ../translation/plugins.c:203
 #, no-c-format
 msgid "Save Playlist"
-msgstr ""
+msgstr "Spara spellista"
 
 #: ../translation/plugins.c:205 ../plugins/gtkui/actionhandlers.c:740
 #, no-c-format
@@ -2182,47 +2179,47 @@ msgstr "Läs in spellista"
 #: ../translation/plugins.c:207
 #, no-c-format
 msgid "Remove Current Playlist"
-msgstr ""
+msgstr "Ta bort aktuell spellista"
 
 #: ../translation/plugins.c:211
 #, no-c-format
 msgid "Show\\/Hide Equalizer"
-msgstr ""
+msgstr "Visa\\/Dölj Equalizer"
 
 #: ../translation/plugins.c:213
 #, no-c-format
 msgid "Hide Equalizer"
-msgstr ""
+msgstr "Dölj Equalizer"
 
 #: ../translation/plugins.c:215
 #, no-c-format
 msgid "Show Equalizer"
-msgstr ""
+msgstr "Visa Equalizer"
 
 #: ../translation/plugins.c:217
 #, no-c-format
 msgid "Show\\/Hide Player Window"
-msgstr ""
+msgstr "Visa\\/Dölj spelarfönster"
 
 #: ../translation/plugins.c:219
 #, no-c-format
 msgid "Hide Player Window"
-msgstr ""
+msgstr "Dölj spelarfönster"
 
 #: ../translation/plugins.c:221
 #, no-c-format
 msgid "Show Player Window"
-msgstr ""
+msgstr "Visa spelarfönster"
 
 #: ../translation/plugins.c:223
 #, no-c-format
 msgid "Find"
-msgstr ""
+msgstr "Hitta"
 
 #: ../translation/plugins.c:225
 #, no-c-format
 msgid "Show\\/Hide Log window"
-msgstr ""
+msgstr "Visa\\/Dölj loggfönster"
 
 #: ../translation/plugins.c:227
 #, no-c-format
@@ -2232,7 +2229,7 @@ msgstr "Fråga innan radering av filer från disk"
 #: ../translation/plugins.c:229
 #, no-c-format
 msgid "Status icon volume control sensitivity"
-msgstr ""
+msgstr "Statusikon volymkontroll känslighet"
 
 #: ../translation/plugins.c:231
 #, no-c-format
@@ -2262,7 +2259,7 @@ msgstr ""
 #: ../translation/plugins.c:244
 #, no-c-format
 msgid "Jump To Currently Playing Track"
-msgstr ""
+msgstr "Hoppa till nuvarande spår"
 
 #: ../translation/plugins.c:246
 #, no-c-format
@@ -2312,208 +2309,208 @@ msgstr "Nästa album"
 #: ../translation/plugins.c:264
 #, no-c-format
 msgid "Next Playlist"
-msgstr ""
+msgstr "Nästa spellista"
 
 #: ../translation/plugins.c:266
 #, no-c-format
 msgid "Prev Playlist"
-msgstr ""
+msgstr "Föregående spellista"
 
 #: ../translation/plugins.c:268
 #, no-c-format
 msgid "Switch To Playlist 10"
-msgstr ""
+msgstr "Byt till spellista 10"
 
 #: ../translation/plugins.c:270
 #, no-c-format
 msgid "Switch To Playlist 9"
-msgstr ""
+msgstr "Byt till spellista 9"
 
 #: ../translation/plugins.c:272
 #, no-c-format
 msgid "Switch To Playlist 8"
-msgstr ""
+msgstr "Byt till spellista 8"
 
 #: ../translation/plugins.c:274
 #, no-c-format
 msgid "Switch To Playlist 7"
-msgstr ""
+msgstr "Byt till spellista 7"
 
 #: ../translation/plugins.c:276
 #, no-c-format
 msgid "Switch To Playlist 6"
-msgstr ""
+msgstr "Byt till spellista 6"
 
 #: ../translation/plugins.c:278
 #, no-c-format
 msgid "Switch To Playlist 5"
-msgstr ""
+msgstr "Byt till spellista 5"
 
 #: ../translation/plugins.c:280
 #, no-c-format
 msgid "Switch To Playlist 4"
-msgstr ""
+msgstr "Byt till spellista 4"
 
 #: ../translation/plugins.c:282
 #, no-c-format
 msgid "Switch To Playlist 3"
-msgstr ""
+msgstr "Byt till spellista 3"
 
 #: ../translation/plugins.c:284
 #, no-c-format
 msgid "Switch To Playlist 2"
-msgstr ""
+msgstr "Byt till spellista 2"
 
 #: ../translation/plugins.c:286
 #, no-c-format
 msgid "Switch To Playlist 1"
-msgstr ""
+msgstr "Byt till spellista 1"
 
 #: ../translation/plugins.c:288
 #, no-c-format
 msgid "Sort Randomize"
-msgstr ""
+msgstr "Sortera blandat"
 
 #: ../translation/plugins.c:290
 #, no-c-format
 msgid "Sort By Date"
-msgstr ""
+msgstr "Sortera efter datum"
 
 #: ../translation/plugins.c:292
 #, no-c-format
 msgid "Sort By Artist"
-msgstr ""
+msgstr "Sortera efter artist"
 
 #: ../translation/plugins.c:294
 #, no-c-format
 msgid "Sort By Album"
-msgstr ""
+msgstr "Sortera efter album"
 
 #: ../translation/plugins.c:296
 #, no-c-format
 msgid "Sort By Track Number"
-msgstr ""
+msgstr "Sortera efter spårnummer"
 
 #: ../translation/plugins.c:298
 #, no-c-format
 msgid "Sort By Title"
-msgstr ""
+msgstr "Sortera efter titel"
 
 #: ../translation/plugins.c:300
 #, no-c-format
 msgid "Invert Selection"
-msgstr ""
+msgstr "Invertera val"
 
 #: ../translation/plugins.c:302
 #, no-c-format
 msgid "Clear Playlist"
-msgstr ""
+msgstr "Rensa spellista"
 
 #: ../translation/plugins.c:308
 #, no-c-format
 msgid "Toggle In Playback Queue"
-msgstr ""
+msgstr "Växla i uppspelningskö"
 
 #: ../translation/plugins.c:310
 #, no-c-format
 msgid "Move"
-msgstr ""
+msgstr "Flytta"
 
 #: ../translation/plugins.c:312
 #, no-c-format
 msgid "Move Tracks Down"
-msgstr ""
+msgstr "Flytta spår ner"
 
 #: ../translation/plugins.c:314
 #, no-c-format
 msgid "Move Tracks Up"
-msgstr ""
+msgstr "Flytta spår upp"
 
 #: ../translation/plugins.c:316
 #, no-c-format
 msgid "Toggle Mute"
-msgstr ""
+msgstr "Växla tyst"
 
 #: ../translation/plugins.c:326
 #, no-c-format
 msgid "Toggle Pause"
-msgstr ""
+msgstr "Växla pausa"
 
 #: ../translation/plugins.c:328
 #, no-c-format
 msgid "Play\\/Pause"
-msgstr ""
+msgstr "Spela\\/Pausa"
 
 #: ../translation/plugins.c:332
 #, no-c-format
 msgid "Seek 1s Forward"
-msgstr ""
+msgstr "Sök 1s framåt"
 
 #: ../translation/plugins.c:334
 #, no-c-format
 msgid "Seek 1s Backward"
-msgstr ""
+msgstr "Sök 1s bakåt"
 
 #: ../translation/plugins.c:336
 #, no-c-format
 msgid "Seek 5s Forward"
-msgstr ""
+msgstr "Sök 5s framåt"
 
 #: ../translation/plugins.c:338
 #, no-c-format
 msgid "Seek 5s Backward"
-msgstr ""
+msgstr "Sök 5s bakåt"
 
 #: ../translation/plugins.c:340
 #, no-c-format
 msgid "Seek 1% Forward"
-msgstr ""
+msgstr "Sök 1% framåt"
 
 #: ../translation/plugins.c:342
 #, no-c-format
 msgid "Seek 1% Backward"
-msgstr ""
+msgstr "Sök 1% bakåt"
 
 #: ../translation/plugins.c:344
 #, no-c-format
 msgid "Seek 5% Forward"
-msgstr ""
+msgstr "Sök 5% framåt"
 
 #: ../translation/plugins.c:346
 #, no-c-format
 msgid "Seek 5% Backward"
-msgstr ""
+msgstr "Sök 5% bakåt"
 
 #: ../translation/plugins.c:348
 #, no-c-format
 msgid "Volume Up"
-msgstr ""
+msgstr "Volym upp"
 
 #: ../translation/plugins.c:350
 #, no-c-format
 msgid "Volume Down"
-msgstr ""
+msgstr "Volym ner"
 
 #: ../translation/plugins.c:352
 #, no-c-format
 msgid "Toggle Stop After Current Track"
-msgstr ""
+msgstr "Växla stopp efter aktuellt spår"
 
 #: ../translation/plugins.c:354
 #, no-c-format
 msgid "Toggle Stop After Current Album"
-msgstr ""
+msgstr "Växla stopp efter aktuellt album"
 
 #. plugins/lastfm/lastfm.c
 #: ../translation/plugins.c:357
 #, no-c-format
 msgid "Lookup On Last.fm"
-msgstr ""
+msgstr "Slå upp på Last.fm"
 
 #: ../translation/plugins.c:359
 #, no-c-format
 msgid "Enable scrobbler"
-msgstr ""
+msgstr "Aktivera scrobbler"
 
 #: ../translation/plugins.c:361
 #, no-c-format
@@ -2533,7 +2530,7 @@ msgstr "Lösenord"
 #: ../translation/plugins.c:367
 #, no-c-format
 msgid "Scrobble URL"
-msgstr ""
+msgstr "Scrobble-webbadress"
 
 #: ../translation/plugins.c:369
 #, no-c-format
@@ -2543,34 +2540,34 @@ msgstr "Föredra Album artist över Artist-fältet"
 #: ../translation/plugins.c:371
 #, no-c-format
 msgid "Send MusicBrainz ID"
-msgstr ""
+msgstr "Skicka MusicBrainz-ID"
 
 #: ../translation/plugins.c:373
 #, no-c-format
 msgid "Submit tracks shorter than 30 seconds (not recommended)"
-msgstr ""
+msgstr "Skicka spår kortare än 30 sekunder (rekommenderas inte)"
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Left mix"
-msgstr "Vänster"
+msgstr ""
 
 #: ../translation/plugins.c:378
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Right mix"
-msgstr "Höger"
+msgstr ""
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
 #, no-c-format
 msgid "Force 16 bit output"
-msgstr ""
+msgstr "Tvinga 16 bit utgång"
 
 #: ../translation/plugins.c:383
 #, no-c-format
 msgid "Backend"
-msgstr ""
+msgstr "Bakände"
 
 #: ../translation/plugins.c:388
 #, no-c-format
@@ -2606,19 +2603,19 @@ msgstr ""
 #: ../translation/plugins.c:404
 #, no-c-format
 msgid "Play on double-click"
-msgstr ""
+msgstr "Spela på dubbelklick"
 
 #. plugins/pulse/pulse.c
 #: ../translation/plugins.c:407
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
-msgstr ""
+msgstr "PulseAudio-server (lämna tom för standard)"
 
 #. plugins/sc68/in_sc68.c
 #: ../translation/plugins.c:410
 #, no-c-format
 msgid "Default song length (in minutes)"
-msgstr ""
+msgstr "Standard låtlängd (i minuter)"
 
 #: ../translation/plugins.c:412
 #, no-c-format
@@ -2628,7 +2625,7 @@ msgstr "Samplingshastighet"
 #: ../translation/plugins.c:414
 #, no-c-format
 msgid "Skip when shorter than (sec)"
-msgstr ""
+msgstr "Hoppa över när kortare än (sek)"
 
 #. plugins/shellexecui/shellexecui.c
 #: ../translation/plugins.c:417
@@ -2671,7 +2668,7 @@ msgstr ""
 #: ../translation/plugins.c:433
 #, no-c-format
 msgid "Mono synth"
-msgstr ""
+msgstr "Mono-synth"
 
 #: ../translation/plugins.c:435
 #, no-c-format
@@ -2682,12 +2679,12 @@ msgstr "Standard låtlängd (sek)"
 #: ../translation/plugins.c:438
 #, no-c-format
 msgid "Device"
-msgstr ""
+msgstr "Enhet"
 
 #: ../translation/plugins.c:440
 #, no-c-format
 msgid "Buffer size (ms)"
-msgstr ""
+msgstr "Buffertstorlek (ms)"
 
 #. plugins/supereq/supereq.c
 #: ../translation/plugins.c:443
@@ -2698,104 +2695,104 @@ msgstr ""
 #: ../translation/plugins.c:445
 #, no-c-format
 msgid "55 Hz"
-msgstr ""
+msgstr "55 Hz"
 
 #: ../translation/plugins.c:447
 #, no-c-format
 msgid "77 Hz"
-msgstr ""
+msgstr "77 Hz"
 
 #: ../translation/plugins.c:449
 #, no-c-format
 msgid "110 Hz"
-msgstr ""
+msgstr "110 Hz"
 
 #: ../translation/plugins.c:451
 #, no-c-format
 msgid "156 Hz"
-msgstr ""
+msgstr "156 Hz"
 
 #: ../translation/plugins.c:453
 #, no-c-format
 msgid "220 Hz"
-msgstr ""
+msgstr "220 Hz"
 
 #: ../translation/plugins.c:455
 #, no-c-format
 msgid "311 Hz"
-msgstr ""
+msgstr "311 Hz"
 
 #: ../translation/plugins.c:457
 #, no-c-format
 msgid "440 Hz"
-msgstr ""
+msgstr "440 Hz"
 
 #: ../translation/plugins.c:459
 #, no-c-format
 msgid "622 Hz"
-msgstr ""
+msgstr "622 Hz"
 
 #: ../translation/plugins.c:461
 #, no-c-format
 msgid "880 Hz"
-msgstr ""
+msgstr "880 Hz"
 
 #: ../translation/plugins.c:463
 #, no-c-format
 msgid "1.2 kHz"
-msgstr ""
+msgstr "1.2 kHz"
 
 #: ../translation/plugins.c:465
 #, no-c-format
 msgid "1.8 kHz"
-msgstr ""
+msgstr "1.8 kHz"
 
 #: ../translation/plugins.c:467
 #, no-c-format
 msgid "2.5 kHz"
-msgstr ""
+msgstr "2.5 kHz"
 
 #: ../translation/plugins.c:469
 #, no-c-format
 msgid "3.5 kHz"
-msgstr ""
+msgstr "3.5 kHz"
 
 #: ../translation/plugins.c:471
 #, no-c-format
 msgid "5 kHz"
-msgstr ""
+msgstr "5 kHz"
 
 #: ../translation/plugins.c:473
 #, no-c-format
 msgid "7 kHz"
-msgstr ""
+msgstr "7 kHz"
 
 #: ../translation/plugins.c:475
 #, no-c-format
 msgid "10 kHz"
-msgstr ""
+msgstr "10 kHz"
 
 #: ../translation/plugins.c:477
 #, no-c-format
 msgid "14 kHz"
-msgstr ""
+msgstr "14 kHz"
 
 #: ../translation/plugins.c:479
 #, no-c-format
 msgid "20 kHz"
-msgstr ""
+msgstr "20 kHz"
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:482
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable logging"
-msgstr "Aktivera surround"
+msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:485
 #, no-c-format
 msgid "Timidity++ bank configuration file"
-msgstr ""
+msgstr "Timidity++ bankkonfigurationsfil"
 
 #: ../plugins/converter/convgui.c:91
 #, c-format
@@ -2828,17 +2825,20 @@ msgstr "Välj katalog..."
 
 #: ../plugins/converter/convgui.c:958
 msgid "Failed to save encoder preset"
-msgstr ""
+msgstr "Det gick inte att spara kodad förinställd"
 
 #: ../plugins/converter/convgui.c:960 ../plugins/converter/convgui.c:1531
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr ""
+"Kontrollera förinställda mappbehörigheter, försök att välja annan titel, "
+"eller frigöra lite diskutrymme"
 
 #: ../plugins/converter/convgui.c:960 ../plugins/converter/convgui.c:1531
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr ""
+"Förinställd med samma namn finns redan. Försök att välja en annan titel."
 
 #: ../plugins/converter/convgui.c:961 ../plugins/converter/convgui.c:1532
 #: ../plugins/gtkui/ctmapping.c:202 ../plugins/gtkui/ctmapping.c:230
@@ -2856,7 +2856,7 @@ msgstr "Redigera kodare"
 
 #: ../plugins/converter/convgui.c:1077 ../plugins/converter/convgui.c:1673
 msgid "Remove preset"
-msgstr ""
+msgstr "Ta bort förinställda"
 
 #: ../plugins/converter/convgui.c:1079 ../plugins/converter/convgui.c:1675
 msgid "This action will delete the selected preset. Are you sure?"
@@ -2904,12 +2904,12 @@ msgstr "Bevara mappstruktur"
 #: ../plugins/converter/interface.c:128
 #: ../plugins/converter/converter.glade.h:4
 msgid "Copy if the format is not changing"
-msgstr ""
+msgstr "Kopiera om formatet inte ändras"
 
 #: ../plugins/converter/interface.c:132
 #: ../plugins/converter/converter.glade.h:5
 msgid "Re-tag after copy"
-msgstr ""
+msgstr "Återtagga efter kopiering"
 
 #: ../plugins/converter/interface.c:140
 #: ../plugins/converter/converter.glade.h:6
@@ -2937,7 +2937,7 @@ msgstr ""
 #: ../plugins/converter/interface.c:211
 #: ../plugins/converter/converter.glade.h:12
 msgid "Number of threads:"
-msgstr ""
+msgstr "Antal trådar:"
 
 #: ../plugins/converter/interface.c:224
 #: ../plugins/converter/converter.glade.h:13
@@ -2998,7 +2998,7 @@ msgstr ""
 #: ../plugins/converter/interface.c:433
 #: ../plugins/converter/converter.glade.h:27
 msgid "Output file extension:"
-msgstr ""
+msgstr "Filändelse för utgång:"
 
 #: ../plugins/converter/interface.c:440
 #: ../plugins/converter/converter.glade.h:28
@@ -3204,12 +3204,12 @@ msgstr "Fungerar på lokala filer."
 #: ../plugins/shellexecui/interface.c:223
 #: ../plugins/shellexecui/shellexec.glade.h:21
 msgid "Remote"
-msgstr ""
+msgstr "Fjärr"
 
 #: ../plugins/shellexecui/interface.c:226
 #: ../plugins/shellexecui/shellexec.glade.h:20
 msgid "Works on remote files (e.g. http:// streams)"
-msgstr ""
+msgstr "Fungerar på fjärrfiler (t.ex. http://-strömmar)"
 
 #: ../plugins/shellexecui/interface.c:228
 #: ../plugins/shellexecui/shellexec.glade.h:23
@@ -3219,7 +3219,7 @@ msgstr "Generisk (huvudmeny)"
 #: ../plugins/shellexecui/interface.c:231
 #: ../plugins/shellexecui/shellexec.glade.h:22
 msgid "Item should appear in the main menu"
-msgstr ""
+msgstr "Objektet ska visas i huvudmenyn"
 
 #: ../plugins/shellexecui/interface.c:233
 #: ../plugins/shellexecui/shellexec.glade.h:24
@@ -3264,7 +3264,7 @@ msgstr "Ogiltiga värden"
 
 #: ../plugins/gtkui/actionhandlers.c:116
 msgid "Supported sound formats"
-msgstr ""
+msgstr "Ljudformat som stöds"
 
 #: ../plugins/gtkui/actionhandlers.c:127
 msgid "All files (*)"
@@ -3310,11 +3310,11 @@ msgstr "Spara spellista som"
 
 #: ../plugins/gtkui/actionhandlers.c:800
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr ""
+msgstr "DeaDBeeF-spellistsfiler ( *.dbpl)"
 
 #: ../plugins/gtkui/ctmapping.c:129
 msgid "Content-Type"
-msgstr ""
+msgstr "Innehållstyp"
 
 #: ../plugins/gtkui/ctmapping.c:199
 msgid "Invalid value(s)."
@@ -3362,7 +3362,7 @@ msgstr "Klistra in"
 
 #: ../plugins/gtkui/widgets.c:1013
 msgid "Multiple widgets of this type are not supported"
-msgstr ""
+msgstr "Flera gränssnittskomponenter av denna typ stöds inte"
 
 #: ../plugins/gtkui/widgets.c:1272
 msgid "Proportional Sizing"
@@ -3407,7 +3407,7 @@ msgstr "Flytta fliken till höger"
 #: ../plugins/gtkui/widgets.c:2346 ../plugins/gtkui/widgets.c:2524
 #: ../plugins/pltbrowser/pltbrowser.c:881
 msgid "Show Column Headers"
-msgstr ""
+msgstr "Visa kolumnrubriker"
 
 #: ../plugins/gtkui/widgets.c:3570
 msgid "Expand Box by 1 Item"
@@ -3455,16 +3455,15 @@ msgstr "Duplicera spellista"
 
 #: ../plugins/pltbrowser/pltbrowser.c:177
 msgid " (paused)"
-msgstr ""
+msgstr " (pausad)"
 
 #: ../plugins/pltbrowser/pltbrowser.c:180
 msgid " (stopped)"
-msgstr ""
+msgstr " (stoppad)"
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
-#, fuzzy
 msgid " (playing)"
-msgstr "Spelar"
+msgstr " (spelar)"
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3474,7 +3473,7 @@ msgstr "%dd %d:%02d:%02d"
 #: ../plugins/pltbrowser/pltbrowser.c:413
 #: ../plugins/pltbrowser/pltbrowser.c:934
 msgid "Items"
-msgstr ""
+msgstr "Objekt"
 
 #: ../plugins/pltbrowser/pltbrowser.c:925 ../plugins/gtkui/rg.c:312
 msgid "Name"
@@ -3498,7 +3497,7 @@ msgstr "stereo"
 
 #: ../plugins/gtkui/rg.c:284
 msgid "Updating File Tags Progress"
-msgstr ""
+msgstr "Uppdaterar filtaggar förlopp"
 
 #: ../plugins/gtkui/rg.c:314
 msgid "Album Gain"
@@ -3518,7 +3517,7 @@ msgstr ""
 
 #: ../plugins/gtkui/rg.c:320
 msgid "Success"
-msgstr ""
+msgstr "Lyckades"
 
 #: ../plugins/gtkui/rg.c:321
 msgid "File not found"
@@ -3527,51 +3526,3 @@ msgstr "Filen hittades inte"
 #: ../plugins/gtkui/rg.c:322
 msgid "Invalid file"
 msgstr "Ogiltig fil"
-
-#~ msgid "Linear"
-#~ msgstr "Linjär"
-
-#~ msgid "Shuffle tracks"
-#~ msgstr "Blanda spår"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "Blanda album"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlengths.txt (från HVSC)"
-
-#~ msgid "Looping"
-#~ msgstr "Upprepning"
-
-#~ msgid "Loop all"
-#~ msgstr "Upprepa alla"
-
-#~ msgid "Loop single song"
-#~ msgstr "Upprepa enskild låt"
-
-#~ msgid "Don't loop"
-#~ msgstr "Upprepa inte"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "PulseAudio-server"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Slå upp på Last.fm"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "Frigör enhet vid stopp"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "Uppdateringsperiod för cache (timmar)"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "Hämta från last.fm"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "Hämta från albumart.org"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "Föredra CDDB-protokoll över HTTP"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "Omsamplingskvalitet (0..2, högre är bättre)"
