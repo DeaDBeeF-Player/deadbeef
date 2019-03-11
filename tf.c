@@ -1839,6 +1839,26 @@ format_playback_time (char *out, int outlen, float t) {
     return len;
 }
 
+// Get the bounds of %tracknumber% and %track number% from "track" metadata.
+// This is everything till the end of the string or till the first slash (to
+// extract from "current/total"), with stripped whitespace.
+static void tracknumber_bounds(const char *s, const char **start, const char **end) {
+    while (isspace (*s)) {
+        ++s;
+    }
+
+    *start = s;
+    *end = s;
+
+    while (*s && *s != '/') {
+        if (!isspace (*s)) {
+            *end = s + 1;
+        }
+
+        ++s;
+    }
+}
+
 static int
 tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int outlen, int *bool_out, int fail_on_undef) {
     playItem_t *it = (playItem_t *)ctx->it;
@@ -1955,15 +1975,24 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 else if (!strcmp (name, "tracknumber")) {
                     const char *v = pl_find_meta_raw (it, "track");
                     if (v) {
-                        const char *p = v;
-                        while (*p) {
-                            if (!isdigit (*p)) {
-                                break;
-                            }
-                            p++;
+                        // Add a leading 0 if the string consists of a single
+                        // digit (possibly with leading and trailing whitespace).
+                        // Otherwise, leave it as is, allowing track numbers
+                        // from vinyl rips that are prefixed with a side letter,
+                        // such as A01 and B02.
+                        const char *start;
+                        const char *end;
+                        tracknumber_bounds (v, &start, &end);
+
+                        if (end - start == 1 && isdigit (*start)) {
+                            int len = snprintf_clip (out, outlen, "%02d", atoi(start));
+                            out += len;
+                            outlen -= len;
+                            skip_out = 1;
                         }
-                        if (p > v) {
-                            int len = snprintf_clip (out, outlen, "%02d", atoi(v));
+                        else {
+                            const int len = min ((int)(end - start), outlen);
+                            memcpy(out, v, len);
                             out += len;
                             outlen -= len;
                             skip_out = 1;
@@ -2006,19 +2035,16 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 else if (!strcmp (name, "track number")) {
                     const char *v = pl_find_meta_raw (it, "track");
                     if (v) {
-                        const char *p = v;
-                        while (*p) {
-                            if (!isdigit (*p)) {
-                                break;
-                            }
-                            p++;
-                        }
-                        if (p > v) {
-                            int len = snprintf_clip (out, outlen, "%d", atoi(v));
-                            out += len;
-                            outlen -= len;
-                            skip_out = 1;
-                        }
+                        const char *start;
+                        const char *end;
+                        int len;
+                        tracknumber_bounds (v, &start, &end);
+
+                        len = min ((int)(end - start), outlen);
+                        memcpy(out, v, len);
+                        out += len;
+                        outlen -= len;
+                        skip_out = 1;
                     }
                 }
                 else if (!strcmp (name, "date")) {
