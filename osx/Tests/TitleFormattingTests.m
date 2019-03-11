@@ -1102,14 +1102,36 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
 }
 
-// this should not normally happen if the metadata was loaded correctly
-// but older playlists can have this
-- (void)test_Track_Number_SingleDigitWithTotalTracks_ReturnsNonZeroPaddedTrackNumber {
-    pl_replace_meta (it, "track", "5/7");
+- (void)test_Track_Number_NonNumerical_ReturnsUnmodified {
+    pl_replace_meta (it, "track", "A01");
     char *bc = tf_compile("%track number%");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp (buffer, "A01"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Track_Number_PaddingZero_ReturnsUnmodified {
+    pl_replace_meta (it, "track", "001");
+    char *bc = tf_compile("%track number%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "001"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_TrackNumber_SingleDigit_PaddingZeroAdded {
+    pl_replace_meta (it, "track", "1");
+    char *bc = tf_compile("%tracknumber%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "01"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_TrackNumber_PaddingZero_ReturnsUnmodified {
+    pl_replace_meta (it, "track", "001");
+    char *bc = tf_compile("%tracknumber%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "001"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_Length_DoesntGetPaddedWithSpace {

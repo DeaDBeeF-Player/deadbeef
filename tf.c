@@ -1962,11 +1962,14 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                             }
                             p++;
                         }
-                        if (p > v) {
+                        if (p > v && *p == 0 && p-v == 1) {
                             int len = snprintf_clip (out, outlen, "%02d", atoi(v));
                             out += len;
                             outlen -= len;
                             skip_out = 1;
+                        }
+                        else {
+                            val = v;
                         }
                     }
                 }
@@ -2006,19 +2009,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 else if (!strcmp (name, "track number")) {
                     const char *v = pl_find_meta_raw (it, "track");
                     if (v) {
-                        const char *p = v;
-                        while (*p) {
-                            if (!isdigit (*p)) {
-                                break;
-                            }
-                            p++;
-                        }
-                        if (p > v) {
-                            int len = snprintf_clip (out, outlen, "%d", atoi(v));
-                            out += len;
-                            outlen -= len;
-                            skip_out = 1;
-                        }
+                        val = v;
                     }
                 }
                 else if (!strcmp (name, "date")) {
