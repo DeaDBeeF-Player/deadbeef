@@ -1,14 +1,14 @@
+include "premake5-tools.lua"
+
 workspace "deadbeef"
    configurations { "debug", "release", "debug32", "release32" }
    platforms { "Windows" }
    defaultplatform "Windows"
 defines {
-    "VERSION=\"devel\"",
+    "VERSION=\"" .. get_version() .. "\"",
     "_GNU_SOURCE",
     "HAVE_LOG2=1"
 }
-
-include "premake5-tools.lua"
 
 if nls() then
   defines {"ENABLE_NLS"}

@@ -251,3 +251,11 @@ function print_options ()
 
     end
 end
+
+function get_version ()
+	fp = io.open ("PORTABLE_VERSION","r")
+	io.input (fp)
+	local ver = io.read()
+	io.close (fp)
+	return ver
+end
