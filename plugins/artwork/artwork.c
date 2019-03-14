@@ -1978,6 +1978,19 @@ fetcher_thread (void *none)
 
             ddb_cover_query_t *info = queue->callbacks->info;
 
+            if (!info->track) {
+                deadbeef->mutex_lock (queue_mutex);
+                cover_query_t *query = query_pop ();
+                deadbeef->mutex_unlock (queue_mutex);
+
+                send_query_callbacks (query->callbacks, NULL);
+                query_free (query);
+
+                /* Look for what to do next */
+                deadbeef->mutex_lock (queue_mutex);
+                continue;
+            }
+
             /* Process this query, hopefully writing a file into cache */
             ddb_cover_info_t *cover = calloc (sizeof (ddb_cover_info_t), 1);
 
