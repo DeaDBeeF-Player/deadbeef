@@ -801,7 +801,16 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 
     NSSize size = [image size];
 
-    [image drawInRect:NSMakeRect(art_x, ypos, art_width, size.height / (size.width / art_width))];
+    int render_width = art_width;
+    int render_height = size.height / (size.width / art_width);
+    if (render_height > art_height) {
+        ypos = min_y;
+        render_width = size.width / (size.height / art_height);
+        render_height = art_height;
+        art_x = (width - render_width) / 2;
+    }
+
+    [image drawInRect:NSMakeRect(art_x, ypos, render_width, render_height)];
 }
 
 - (void)selectRow:(DdbListviewRow_t)row withState:(BOOL)state {
