@@ -106,22 +106,16 @@ get_avail_samplerates(void)
 
 static int
 get_best_samplerate (int samplerate) {
-    // score1 = modulo -- 0 is best
-    // score2 = denominator -- 1 is perfect match
-    // score3 = distance
-
-    int64_t highscore = 0;
+    int64_t nearest = 0;
     int64_t index = -1;
 
     for (int i = 0; i < num_avail_samplerates; i++) {
-        int64_t modulo = samplerate % avail_samplerates[i]; // 20 bit
-        int64_t denominator = samplerate / avail_samplerates[i]; // 7 bit
-        int64_t dist = abs(samplerate - avail_samplerates[i]); // 20 bit
+        int64_t dist = avail_samplerates[i] - samplerate;
 
-        int64_t score = (modulo<<27) | (denominator<<20) | dist;
-
-        if (index == -1 || score < highscore) {
-            highscore = score;
+        if (index == -1
+            || llabs(dist) < llabs(dist)
+            || (nearest < 0 && dist >= 0 && avail_samplerates[i]>=samplerate)) {
+            nearest = dist;
             index = i;
         }
     }
