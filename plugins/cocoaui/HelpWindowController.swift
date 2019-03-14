@@ -13,7 +13,7 @@ class HelpWindowController: NSWindowController {
             do {
                 let content = try String(contentsOf: path, encoding: .utf8)
                 if let textStorage = textView.textStorage {
-                    textStorage.setAttributedString(NSAttributedString(string: content))
+                    textStorage.setAttributedString(NSAttributedString(string: content, attributes: [NSAttributedString.Key.foregroundColor : NSColor.controlTextColor]))
                     textView.setSelectedRange(NSMakeRange(0, 0))
                 }
             }

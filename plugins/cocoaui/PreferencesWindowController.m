@@ -399,6 +399,8 @@ extern DB_functions_t *deadbeef;
     }
 
     [_pluginVersion setStringValue:version];
+    NSAttributedString *str = [[NSAttributedString alloc] initWithString:description attributes:@{NSForegroundColorAttributeName:[NSColor controlTextColor]}];
+    [[_pluginDescription textStorage] setAttributedString:str];
     [_pluginDescription setString:description];
     [_pluginLicense setString:license];
 }
