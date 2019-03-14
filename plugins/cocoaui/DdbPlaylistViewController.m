@@ -805,8 +805,8 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     int render_height = size.height / (size.width / art_width);
     if (render_height > art_height) {
         ypos = min_y;
-        render_width = size.width / (size.height / art_height);
-        render_height = art_height;
+        render_width = size.width / (size.height / (grp_next_y - min_y));
+        render_height = (grp_next_y - min_y);
         art_x = (width - render_width) / 2;
     }
 
