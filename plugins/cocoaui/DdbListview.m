@@ -352,6 +352,7 @@ int grouptitleheight = 22;
             rc = [sv documentVisibleRect];
             scroll += rc.origin.x;
             _dragPt.x -= scroll;
+            [listview reloadData];
         }
     }
     else if (_dragging != [delegate invalidColumn]) {
@@ -546,6 +547,7 @@ int grouptitleheight = 22;
                 [delegate drawAlbumArtForGroup:grp groupIndex:groupIndex inColumn:col isPinnedGroup:isPinnedGroup nextGroupCoord:grp_next_y xPos:x yPos:y viewportY:viewportY width:w height:grp->height];
             }
         }
+        x += w;
     }
 }
 
