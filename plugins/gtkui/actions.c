@@ -170,7 +170,7 @@ add_mainmenu_actions (void)
                 {
                     GtkWidget *newitem;
 
-                    newitem = gtk_menu_item_new_with_mnemonic (ptr);
+                    newitem = gtk_menu_item_new_with_mnemonic (_(ptr));
                     gtk_widget_show (newitem);
 
                     //If we add new submenu in main bar, add it before 'Help'
