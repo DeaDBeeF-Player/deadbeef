@@ -810,15 +810,16 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         [image drawInRect:NSMakeRect(art_x, ypos, art_width, h)];
     }
     else {
-        CGFloat w = size.width / (size.height / art_height);
         plt_col_info_t *c = &_columns[(int)col];
+        CGFloat h = art_width;
+        CGFloat w = size.width / (size.height / h);
         if (c->alignment == 1) {
             art_x += art_width/2 - w/2;
         }
         else if (c->alignment == 2) {
             art_x += art_width-w;
         }
-        [image drawInRect:NSMakeRect(art_x, ypos, w, art_height)];
+        [image drawInRect:NSMakeRect(art_x, ypos, w, h)];
     }
 }
 
