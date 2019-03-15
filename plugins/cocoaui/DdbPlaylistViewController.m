@@ -77,7 +77,7 @@ extern DB_functions_t *deadbeef;
         [_addColumnType selectItemAtIndex: 10];
         [_addColumnFormat setEnabled:YES];
         [_addColumnFormat setStringValue:@""];
-        [_addColumnAlignment setIntValue:0];
+        [_addColumnAlignment selectItemAtIndex:0];
         [_addColumnSetColor setState:NSOffState];
         [_addColumnColor setEnabled:NO];
         [_addColumnColor setColor:[NSColor blackColor]];
@@ -99,7 +99,7 @@ extern DB_functions_t *deadbeef;
         [_addColumnType selectItemAtIndex: type];
         [_addColumnFormat setEnabled:type == 10];
         [_addColumnFormat setStringValue:[NSString stringWithUTF8String:_columns[colIdx].format]];
-        [_addColumnAlignment setIntValue:_columns[colIdx].alignment];
+        [_addColumnAlignment selectItemAtIndex:(NSInteger)_columns[colIdx].alignment];
         [_addColumnSetColor setState:_columns[colIdx].set_text_color];
         [_addColumnColor setEnabled:_columns[colIdx].set_text_color];
         uint8_t *c = _columns[colIdx].text_color;
@@ -387,6 +387,7 @@ extern DB_functions_t *deadbeef;
     _columns[idx].title = strdup (title);
     _columns[idx].format = format ? strdup (format) : NULL;
     _columns[idx].size = size;
+    _columns[idx].alignment = alignment;
     if (format) {
         _columns[idx].bytecode = deadbeef->tf_compile (format);
     }
@@ -805,11 +806,18 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     NSSize size = [image size];
     if (size.width >= size.height) {
         CGFloat h = size.height / (size.width / art_width);
+//        ypos += art_height/2 - h/2;
         [image drawInRect:NSMakeRect(art_x, ypos, art_width, h)];
     }
     else {
         CGFloat w = size.width / (size.height / art_height);
-        art_x += art_width/2 - w/2;
+        plt_col_info_t *c = &_columns[(int)col];
+        if (c->alignment == 1) {
+            art_x += art_width/2 - w/2;
+        }
+        else if (c->alignment == 2) {
+            art_x += art_width-w;
+        }
         [image drawInRect:NSMakeRect(art_x, ypos, w, art_height)];
     }
 }
