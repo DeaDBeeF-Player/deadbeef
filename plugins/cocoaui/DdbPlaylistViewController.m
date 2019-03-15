@@ -31,6 +31,8 @@
 #include "rg_scanner.h"
 
 #define CELL_HPADDING 4
+#define ART_PADDING_HORZ 8
+#define ART_PADDING_VERT 0
 
 extern DB_functions_t *deadbeef;
 
@@ -546,6 +548,10 @@ extern DB_functions_t *deadbeef;
     return _columns[col].size;
 }
 
+- (int)columnGroupHeight:(DdbListviewCol_t)col {
+    return _columns[col].size - ART_PADDING_HORZ*2;
+}
+
 - (void)setColumnWidth:(int)width forColumn:(DdbListviewCol_t)col {
     _columns[col].size = width;
 }
@@ -758,9 +764,6 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     free (info);
 }
 
-#define ART_PADDING_HORZ 8
-#define ART_PADDING_VERT 0
-
 - (void)drawAlbumArtForGroup:(DdbListviewGroup_t *)grp
                   groupIndex:(int)groupIndex
                   inColumn:(DdbListviewCol_t)col
@@ -784,7 +787,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     }
 
     int art_width = width - ART_PADDING_HORZ * 2;
-    int art_height = height - ART_PADDING_VERT * 2;
+    int art_height = height - ART_PADDING_VERT * 2 - listview.grouptitle_height;
 
     if (art_width < 8 || art_height < 8 || !it) {
         return;
@@ -800,8 +803,15 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     }
 
     NSSize size = [image size];
-
-    [image drawInRect:NSMakeRect(art_x, ypos, art_width, size.height / (size.width / art_width))];
+    if (size.width >= size.height) {
+        CGFloat h = size.height / (size.width / art_width);
+        [image drawInRect:NSMakeRect(art_x, ypos, art_width, h)];
+    }
+    else {
+        CGFloat w = size.width / (size.height / art_height);
+        art_x += art_width/2 - w/2;
+        [image drawInRect:NSMakeRect(art_x, ypos, w, art_height)];
+    }
 }
 
 - (void)selectRow:(DdbListviewRow_t)row withState:(BOOL)state {

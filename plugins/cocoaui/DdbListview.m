@@ -1050,7 +1050,7 @@ int grouptitleheight = 22;
     int min_height= 0;
     for (DdbListviewCol_t c = [_delegate firstColumn]; c != [_delegate invalidColumn]; c = [_delegate nextColumn:c]) {
         if ([_delegate columnMinHeight:c] && [_delegate columnWidth:c] > min_height) {
-            min_height = [_delegate columnWidth:c];
+            min_height = [_delegate columnGroupHeight:c];
         }
         _fullwidth += [_delegate columnWidth:c];
     }

@@ -49,6 +49,7 @@ typedef struct DdbListviewGroup_s {
 - (int)columnWidth:(DdbListviewCol_t)col;
 - (void)setColumnWidth:(int)width forColumn:(DdbListviewCol_t)col;
 - (int)columnMinHeight:(DdbListviewCol_t)col;
+- (int)columnGroupHeight:(DdbListviewCol_t)col;
 - (void)moveColumn:(DdbListviewCol_t)col to:(DdbListviewCol_t)to;
 - (void)columnsChanged;
 - (NSMenu *)contextMenuForColumn:(DdbListviewCol_t)col withEvent:(NSEvent*)theEvent forView:(NSView *)view;
