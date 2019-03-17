@@ -245,6 +245,104 @@ tf_func_strcmp (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const 
     return !res;
 }
 
+static int
+tf_prefix_helper (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef, int swap) {
+    if (argc == 0) {
+        return -1;
+    }
+
+    const char *arg = args;
+    int bool_out = 0;
+    int i;
+
+    char str[1000];
+    int len;
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], str, sizeof (str), fail_on_undef);
+    arg += arglens[0];
+
+    int prefix_count;
+    size_t buffer_size;
+    if (argc == 1) {
+        prefix_count = 2;
+        buffer_size = 0;
+    }
+    else {
+        prefix_count = argc - 1;
+        buffer_size = 2000;
+    }
+
+    const char *prefixes[prefix_count];
+    int prefix_lengths[prefix_count];
+    char buf[buffer_size];
+
+    if (argc == 1) {
+        prefixes[0] = "A";
+        prefix_lengths[0] = 1;
+        prefixes[1] = "The";
+        prefix_lengths[1] = 3;
+    }
+    else {
+        char *ptr = buf;
+        for (i = 0; i < prefix_count; ++i) {
+            prefixes[i] = ptr;
+            TF_EVAL_CHECK (prefix_lengths[i], ctx, arg, arglens[i+1], ptr, (int)(buf+buffer_size-ptr), fail_on_undef);
+            ptr += prefix_lengths[i]+1;
+            arg += arglens[i+1];
+        }
+    }
+
+    for (i = 0; i < prefix_count; i++) {
+        if (prefix_lengths[i] + 1 > len) {
+            continue;
+        }
+
+        if (!strncasecmp(str, prefixes[i], prefix_lengths[i]) && str[prefix_lengths[i]] == ' ') {
+            int stripped_length = len - prefix_lengths[i] - 1;
+            int new_len;
+            if (swap) {
+                new_len = len + 1;
+            }
+            else {
+                new_len = stripped_length;
+            }
+
+            if (new_len > outlen) {
+                return -1;
+            }
+
+            memcpy(out, str + prefix_lengths[i] + 1, stripped_length);
+
+            if (swap) {
+                out[stripped_length] = ',';
+                out[stripped_length+1] = ' ';
+                memcpy(out+stripped_length+2, str, prefix_lengths[i]);
+            }
+
+            return new_len;
+        }
+    }
+
+    if (len > outlen) {
+        return -1;
+    }
+
+    memcpy(out, str, len);
+
+    return len;
+}
+
+// $stripprefix(str,...) strips a list of prefixes from a string. If no prefixes are supplied, 'A' and 'The' are used.
+int
+tf_func_stripprefix (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    return tf_prefix_helper (ctx, argc, arglens, args, out, outlen, fail_on_undef, 0);
+}
+
+// $swapprefix(str,...) moves a list of prefixes to the end of a string. If no prefixes are supplied, 'A' and 'The' are used.
+int
+tf_func_swapprefix (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    return tf_prefix_helper (ctx, argc, arglens, args, out, outlen, fail_on_undef, 1);
+}
+
 // $upper(str) converts a string to uppercase
 int
 tf_func_upper (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
@@ -1755,6 +1853,8 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "fix_eol", tf_func_fix_eol },
     { "hex", tf_func_hex },
     { "strcmp", tf_func_strcmp },
+    { "stripprefix", tf_func_stripprefix },
+    { "swapprefix", tf_func_swapprefix },
     { "upper", tf_func_upper },
     { "lower", tf_func_lower },
     { "num", tf_func_num },
