@@ -1743,4 +1743,109 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "ЁЁЁЁЁАБВГД"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_StripPrefix_NoArgs_Fail {
+    char *bc = tf_compile("$stripprefix()");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_StripPrefix_NoArticle_PassThrough {
+    char *bc = tf_compile("$stripprefix(Hello)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_StripPrefix_JoinedA_PassThrough {
+    char *bc = tf_compile("$stripprefix(AA)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "AA"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_StripPrefix_JoinedThe_PassThrough {
+    char *bc = tf_compile("$stripprefix(TheThe)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "TheThe"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_StripPrefix_MultipleA_OneStripped {
+    char *bc = tf_compile("$stripprefix(A A)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "A"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_StripPrefix_MultipleThe_OneStripped {
+    char *bc = tf_compile("$stripprefix(The The)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "The"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_StripPrefix_MultipleSpaces_AllSpacesSkipped {
+    char *bc = tf_compile("$stripprefix(A  Word)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, " Word"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_StripPrefix_CustomPrefixList_PrefixStripped {
+    char *bc = tf_compile("$stripprefix(Some Word,The,A,Some,Word)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Word"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_SwapPrefix_NoArticle_PassThrough {
+    char *bc = tf_compile("$swapprefix(Hello)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_SwapPrefix_JoinedA_PassThrough {
+    char *bc = tf_compile("$swapprefix(AA)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "AA"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_SwapPrefix_JoinedThe_PassThrough {
+    char *bc = tf_compile("$swapprefix(TheThe)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "TheThe"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_SwapPrefix_MultipleA_CommaAdded {
+    char *bc = tf_compile("$swapprefix(A A)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "A, A"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_SwapPrefix_MultipleThe_CommaAdded {
+    char *bc = tf_compile("$swapprefix(The The)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "The, The"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_SwapPrefix_MultipleSpaces_SpacePreservedWithComma {
+    char *bc = tf_compile("$swapprefix(A  Word)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, " Word, A"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_SwapPrefix_CustomPrefixList_PrefixSwapped {
+    char *bc = tf_compile("$swapprefix(Some Word,The,A,Some,Word)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Word, Some"), @"The actual output is: %s", buffer);
+}
+
 @end
