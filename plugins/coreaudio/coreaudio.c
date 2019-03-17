@@ -113,7 +113,7 @@ get_best_samplerate (int samplerate) {
         int64_t dist = avail_samplerates[i] - samplerate;
 
         if (index == -1
-            || llabs(dist) < llabs(dist)
+            || llabs(dist) < llabs(nearest)
             || (nearest < 0 && dist >= 0 && avail_samplerates[i]>=samplerate)) {
             nearest = dist;
             index = i;
