@@ -657,6 +657,8 @@
 		2D49856F1D5CF0E900E4D985 /* Log.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D49856E1D5CF0E900E4D985 /* Log.xib */; };
 		2D49857F1D5CF13F00E4D985 /* LogWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D49857D1D5CF13F00E4D985 /* LogWindowController.h */; };
 		2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D49857E1D5CF13F00E4D985 /* LogWindowController.m */; };
+		2D4A9459223EFC1700199551 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
+		2D4A9468223EFC6700199551 /* CoreAudioTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4A9467223EFC6700199551 /* CoreAudioTests.m */; };
 		2D5121C61B01DEFD009F6410 /* sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D642EAD1AE9152E00FC1F7B /* sort.c */; };
 		2D51999C1A436FD100670717 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D51999A1A436FD100670717 /* config.h */; };
 		2D51999D1A436FD100670717 /* mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D51999B1A436FD100670717 /* mpg123.h */; };
@@ -3305,6 +3307,7 @@
 		2D49856E1D5CF0E900E4D985 /* Log.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Log.xib; sourceTree = "<group>"; };
 		2D49857D1D5CF13F00E4D985 /* LogWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogWindowController.h; sourceTree = "<group>"; };
 		2D49857E1D5CF13F00E4D985 /* LogWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogWindowController.m; sourceTree = "<group>"; };
+		2D4A9467223EFC6700199551 /* CoreAudioTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CoreAudioTests.m; sourceTree = "<group>"; };
 		2D4BEAEB1CA49EEC007ADB0A /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
 		2D51999A1A436FD100670717 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = "osx/deps/mpg123-1.21.0/ports/Xcode/config.h"; sourceTree = "<group>"; };
 		2D51999B1A436FD100670717 /* mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpg123.h; path = "osx/deps/mpg123-1.21.0/ports/Xcode/mpg123.h"; sourceTree = "<group>"; };
@@ -7240,6 +7243,7 @@
 				4D9272C421414BA900E7B4D0 /* PresetManagerTest.swift */,
 				4D6CF18C20EB788A00811034 /* MP3DecoderTests.m */,
 				4DC416FD2180919D0056133E /* PlaylistTests.m */,
+				2D4A9467223EFC6700199551 /* CoreAudioTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -12404,9 +12408,11 @@
 				2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */,
 				2D0F90C21CCFF094003FA197 /* TaggingTests.m in Sources */,
 				2DA66ECE1EDF501000E20989 /* fakein.c in Sources */,
+				2D4A9459223EFC1700199551 /* coreaudio.c in Sources */,
 				2DA66EC81EDF4EF800E20989 /* StreamerTests.m in Sources */,
 				2DAA4C141AAF88FF00519559 /* TitleFormattingTests.m in Sources */,
 				4D9272C521414BA900E7B4D0 /* PresetManagerTest.swift in Sources */,
+				2D4A9468223EFC6700199551 /* CoreAudioTests.m in Sources */,
 				4D31BECE1E9FB194001D1B89 /* ResamplerTests.m in Sources */,
 				2D7F38031B2858AC00692A7B /* JunklibTests.m in Sources */,
 				4D9272C821414BF500E7B4D0 /* PresetManager.swift in Sources */,

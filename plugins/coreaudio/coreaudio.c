@@ -104,18 +104,19 @@ get_avail_samplerates(void)
     }
 }
 
-static int
-get_best_samplerate (int samplerate) {
+int
+get_best_samplerate (int samplerate, int *avail_samplerates, int count) {
     int64_t nearest = 0;
-    int64_t index = -1;
+    int index = -1;
 
-    for (int i = 0; i < num_avail_samplerates; i++) {
-        int64_t dist = avail_samplerates[i] - samplerate;
+    for (int i = 0; i < count; i++) {
+        // score is based on distance and modulo, with slightly more weight put on distance
+        int64_t dist = llabs(avail_samplerates[i] - samplerate);
+        int64_t mod = samplerate > avail_samplerates[i] ? (samplerate % avail_samplerates[i]) : (avail_samplerates[i] % samplerate);
+        int64_t score = dist*2+mod;
 
-        if (index == -1
-            || llabs(dist) < llabs(dist)
-            || (nearest < 0 && dist >= 0 && avail_samplerates[i]>=samplerate)) {
-            nearest = dist;
+        if (index == -1 || score < nearest) {
+            nearest = score;
             index = i;
         }
     }
@@ -130,7 +131,7 @@ ca_apply_format (void) {
     UInt32 sz;
     deadbeef->mutex_lock (mutex);
     if (req_format.mSampleRate > 0) {
-        req_format.mSampleRate = get_best_samplerate (req_format.mSampleRate);
+        req_format.mSampleRate = get_best_samplerate (req_format.mSampleRate, avail_samplerates, num_avail_samplerates);
 
         // setting nominal samplerate doesn't work in most cases, and requires some timing trickery
 #if 0
