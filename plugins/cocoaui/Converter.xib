@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <development version="8000" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -340,12 +339,13 @@ Gw
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" id="m6m-PK-Wst">
-                        <rect key="frame" x="368" y="266" width="14" height="17"/>
+                        <rect key="frame" x="368" y="266" width="12" height="10"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="btnBrowseTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="b4X-OD-1ep">
+                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="btnBrowseTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="b4X-OD-1ep">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <color key="contentTintColor" red="0.29803921568627451" green="0.29803921568627451" blue="0.29803921568627451" alpha="0.5036386986301371" colorSpace="custom" customColorSpace="sRGB"/>
                         <connections>
                             <action selector="openOutputFolderAction:" target="-2" id="KFG-tH-xLI"/>
                         </connections>
@@ -390,7 +390,7 @@ Gw
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="NhZ-Cb-sDJ">
                             <rect key="frame" x="1" y="1" width="181" height="266"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" id="dQ0-cs-T2a">
                                     <rect key="frame" x="0.0" y="0.0" width="181" height="266"/>
@@ -1045,6 +1045,6 @@ Gw
         <image name="NSListViewTemplate" width="14" height="10"/>
         <image name="NSRemoveTemplate" width="11" height="11"/>
         <image name="NSStopProgressTemplate" width="11" height="11"/>
-        <image name="btnBrowseTemplate" width="54" height="49"/>
+        <image name="btnBrowseTemplate" width="12" height="10"/>
     </resources>
 </document>
