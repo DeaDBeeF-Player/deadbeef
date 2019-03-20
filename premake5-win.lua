@@ -696,6 +696,40 @@ project "wildmidi_plugin"
    links { "m" }
 end
 
+if option ("plugin-musepack") then
+project "musepack_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "musepack"
+   files {
+       "plugins/musepack/musepack.c",
+       "plugins/musepack/huffman.c",
+       "plugins/musepack/mpc_bits_reader.c",
+       "plugins/musepack/mpc_decoder.c",
+       "plugins/musepack/mpc_demux.c",
+       "plugins/musepack/mpc_reader.c",
+       "plugins/musepack/requant.c",
+       "plugins/musepack/streaminfo.c",
+       "plugins/musepack/synth_filter.c",
+       "plugins/musepack/crc32.c",
+       "plugins/musepack/decoder.h",
+       "plugins/musepack/huffman.h",
+       "plugins/musepack/internal.h",
+       "plugins/musepack/mpc_bits_reader.h",
+       "plugins/musepack/mpc/mpcdec.h",
+       "plugins/musepack/mpcdec_math.h",
+       "plugins/musepack/mpc/reader.h",
+       "plugins/musepack/requant.h",
+       "plugins/musepack/mpc/streaminfo.h",
+       "plugins/musepack/mpc/mpc_types.h",
+       "plugins/musepack/mpc/minimax.h"
+   }
+   includedirs { "plugins/musepack" }
+   links { "m" }
+end
+
 if option ("plugin-artwork", "libjpeg libpng zlib flac ogg") then
 project "artwork_plugin"
    kind "SharedLib"
