@@ -1,11 +1,13 @@
 -- pkgconfig functions
 
+-- Add libs to project based on pkgconfig
 function pkgconfig (pkgname)
   links { pkgconfig_libs (pkgname) }
   includedirs { pkgconfig_includedirs (pkgname) }
   libdirs { pkgconfig_libdirs (pkgname) }
 end
 
+-- Returns true if package is installed
 function pkgconfig_check (pkgname)
   command = "pkg-config " .. pkgname
   returnval = os.outputof (command)
@@ -18,6 +20,7 @@ function pkgconfig_check (pkgname)
   end
 end
 
+-- Returns dirs to include for pkgname
 function pkgconfig_includedirs (pkgname)
   command = "pkg-config --cflags-only-I " .. pkgname
   returnval = os.outputof (command)
@@ -33,6 +36,7 @@ function pkgconfig_includedirs (pkgname)
   return tab2
 end
 
+-- Returns dirs to libs for pkgname
 function pkgconfig_libdirs (pkgname)
   command = "pkg-config --libs-only-L " .. pkgname
   returnval = os.outputof (command)
@@ -48,6 +52,7 @@ function pkgconfig_libdirs (pkgname)
   return tab2
 end
 
+-- Returns libs for pkgname
 function pkgconfig_libs (pkgname)
   command = "pkg-config --libs-only-l " .. pkgname
   returnval = os.outputof (command)
@@ -65,8 +70,22 @@ function pkgconfig_libs (pkgname)
   return tab2
 end
 
--- common options
+-- Common options
 local nls_value = nil
+
+-- Skip checks option
+newoption {
+	trigger = "skip-checks",
+	description = "omit all library checks",
+}
+
+-- Skip checks if help is being shown
+if _OPTIONS["help"] ~= nil then
+	_OPTIONS["skip-checks"] = true
+end
+
+
+-- nls() adds option for choosing nls and returns true if it got enabled
 function nls ()
 	if nls_value == nil then
 		newoption {
@@ -88,19 +107,17 @@ function nls ()
 	end
 end
 
-newoption {
-	trigger = "skip-checks",
-	description = "omit all library checks",
-}
+-- Option functions
 
-if _OPTIONS["help"] ~= nil then
-	_OPTIONS["skip-checks"] = true
-end
-
--- option functions
+-- Array (dictonary) that stores options and its value (for example 'option' -> 'yes')
 options_dic = {};
+
+-- Missing packages list
 local options_pkgs_missing = {}
-function add_option (name)
+
+-- add_option(name) simply adds option for 'name'
+local function add_option (name)
+	-- strip 'plugin-' from beginning and make a = 'plugname plugin'
 	local a = string.gsub(name, "plugin%-", "")
 	if a ~= name then
 		a = a .. " plugin"
@@ -118,6 +135,9 @@ function add_option (name)
 	}
 end
 
+-- Option function
+-- Adds option to argument and checks for libraries
+-- Returns true if both argument and libraries are satisfied
 function option (name, ...)
 	add_option (name)
 	-- if not disabled check for libs
@@ -172,55 +192,7 @@ function option (name, ...)
 	return a
 end
 
-function option_nofail (name, ...)
-	add_option (name)
-	-- if not disabled check for libs
-	local a = {}
-	local b = 0;
-	if  _OPTIONS[name] ~= "disabled" then
-		-- for each set
-		for j,v in ipairs({...}) do
-		    parts = string.explode(v, " ")
-		    local set = 1
-		    -- for each package
-		    for i, v in ipairs(parts) do
-		    	if pkgconfig_check (v) == nil then
-			   		print("\27[93m" .. "pkg-config did not found package " .. v .. " required by " ..  name .. "\27[39m")
-			   		set = 0
-			   		a[v] = false
-			   	else
-			   		a[v] = true
-			   	end
-		    end
-		    --print (set)
-		    if set ~= 0 then
-		    	b = b + 1
-		    end
-	    end
-		if _OPTIONS[name] == "enabled" and set == 0 then
-			print ("\27[93m" .. "pkg-config did not found package " .. v .. " required by " ..  name .. "\27[39m")
-   		end
-   		if b == 0 then
-   			a = nil
-   		end
-	end
-	--print ("a = "..a)
-	return a
-end
-
-function dump(o)
-   if type(o) == 'table' then
-      local s = '{ '
-      for k,v in pairs(o) do
-         if type(k) ~= 'number' then k = '"'..k..'"' end
-         s = s .. '['..k..'] = ' .. dump(v) .. ','
-      end
-      return s .. '} '
-   else
-      return tostring(o)
-   end
-end
-
+-- Prints out summary of options and their states
 function print_options ()
 	if _OPTIONS["skip-checks"] ~= nil then
   		return true
@@ -252,6 +224,7 @@ function print_options ()
     end
 end
 
+-- Returns deadbeef version which is stored in ./PORTABLE_VERSION
 function get_version ()
 	fp = io.open ("PORTABLE_VERSION","r")
 	io.input (fp)
