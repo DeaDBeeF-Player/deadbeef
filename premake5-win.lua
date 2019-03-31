@@ -565,7 +565,7 @@ project "m3u"
    }
 end
 
-if option ("plugin-vfs_curl") then
+if option ("plugin-vfs_curl", "libcurl") then
 project "vfs_curl"
    kind "SharedLib"
    language "C"
@@ -795,7 +795,7 @@ project "nullout"
    }
 end
 
-if option ("plugin-lastfm") then
+if option ("plugin-lastfm", "libcurl") then
 project "lastfm"
    kind "SharedLib"
    language "C"
