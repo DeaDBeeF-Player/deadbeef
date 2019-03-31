@@ -130,6 +130,17 @@ project "mp3"
    end
 end
 
+-- no pkgconfig for libfaad, do checking manually
+if _OPTIONS["plugin-aac"] == "auto" or _OPTIONS["plugin-aac"] == nil then
+  -- hard-coded :(
+  if os.outputof("ls /mingw64/include/neaacdec.h") == nil  then
+    print ("\27[93m" .. "neaacdec.h not found in \"/mingw64/include/\", run premake5 with \"--plugin-aac=enabled\" to force enable aac plugin" ..  "\27[39m")
+    _OPTIONS["plugin-aac"] = "disabled"
+  else
+    _OPTIONS["plugin-aac"] = "enabled"
+  end
+end
+
 if option ("plugin-aac") then
 project "aac_plugin"
    kind "SharedLib"
