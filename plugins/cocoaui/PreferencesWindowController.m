@@ -269,7 +269,7 @@ extern DB_functions_t *deadbeef;
                 index = cnt;
             }
 
-            NSIndexSet *is = [[NSIndexSet alloc] initWithIndex:index];
+            NSIndexSet *is = [NSIndexSet indexSetWithIndex:index];
             [_dspList beginUpdates];
             [_dspList insertRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideDown];
             [_dspList endUpdates];
@@ -292,7 +292,7 @@ extern DB_functions_t *deadbeef;
     }
 
     [_dspList beginUpdates];
-    NSIndexSet *is = [[NSIndexSet alloc] initWithIndex:index];
+    NSIndexSet *is = [NSIndexSet indexSetWithIndex:index];
     [_dspList removeRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideUp];
     [_dspList endUpdates];
     [_dspChainDataSource removeItemAtIndex:(int)index];
