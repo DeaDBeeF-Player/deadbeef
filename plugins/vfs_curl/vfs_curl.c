@@ -1011,6 +1011,12 @@ http_get_content_type (DB_FILE *stream) {
     while (fp->status != STATUS_FINISHED && fp->status != STATUS_ABORTED && !fp->gotheader) {
         usleep (3000);
     }
+
+    if (!fp->content_type && fp->icyheader) {
+        // assume mp3
+        return "audio/mpeg";
+    }
+
     return fp->content_type;
 }
 
