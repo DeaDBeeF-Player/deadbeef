@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Charles Monzat <c.monzat@laposte.net>, 2018-2019
+# Charles Monzat <c.monzat@laposte.net>, 2014,2017-2019
 # Charles Monzat <superboa@hotmail.fr>, 2014-2018
 # Charles Monzat <c.monzat@laposte.net>, 2017
 # Charles Monzat <c.monzat@laposte.net>, 2017
@@ -19,9 +19,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-10 12:44+0100\n"
-"PO-Revision-Date: 2019-02-08 08:32+0000\n"
-"Last-Translator: Charles Monzat <c.monzat@laposte.net>\n"
+"POT-Creation-Date: 2019-03-10 12:49+0100\n"
+"PO-Revision-Date: 2019-03-10 11:47+0000\n"
+"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: French (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/fr/)\n"
 "Language: fr\n"
@@ -47,8 +47,8 @@ msgstr "Traducteurs de DeaDBeeF"
 
 #: ../plugins/gtkui/callbacks.c:635 ../plugins/gtkui/interface.c:969
 #: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:159
-#: ../plugins/converter/convgui.c:1762 ../plugins/converter/convgui.c:1770
-#: ../plugins/gtkui/actionhandlers.c:297
+#: ../plugins/converter/convgui.c:1781 ../plugins/converter/convgui.c:1789
+#: ../plugins/gtkui/actionhandlers.c:473
 #, no-c-format
 msgid "Help"
 msgstr "Aide"
@@ -241,7 +241,7 @@ msgstr "Voulez-vous toujours quitter ?"
 
 #: ../plugins/gtkui/gtkui.c:1481 ../plugins/gtkui/prefwin.c:463
 #: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1080
-#: ../plugins/converter/convgui.c:1657 ../plugins/gtkui/actionhandlers.c:377
+#: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:553
 msgid "Warning"
 msgstr "Avertissement"
 
@@ -307,7 +307,7 @@ msgid "Selection"
 msgstr "Sélection"
 
 #: ../plugins/gtkui/interface.c:233 ../plugins/gtkui/interface.c:5094
-#: ../plugins/gtkui/plcommon.c:1074 ../plugins/gtkui/deadbeef.glade.h:16
+#: ../plugins/gtkui/plcommon.c:1072 ../plugins/gtkui/deadbeef.glade.h:16
 #: ../plugins/converter/interface.c:676
 #: ../plugins/converter/converter.glade.h:51
 #: ../plugins/shellexecui/interface.c:66
@@ -329,9 +329,9 @@ msgid "Sort by"
 msgstr "Classer par"
 
 #: ../plugins/gtkui/interface.c:256 ../plugins/gtkui/mainplaylist.c:233
-#: ../plugins/gtkui/plcommon.c:95 ../plugins/gtkui/prefwin.c:439
+#: ../plugins/gtkui/plcommon.c:93 ../plugins/gtkui/prefwin.c:439
 #: ../plugins/gtkui/search.c:652 ../plugins/gtkui/deadbeef.glade.h:20
-#: ../plugins/converter/convgui.c:1178 ../plugins/converter/convgui.c:1733
+#: ../plugins/converter/convgui.c:1184 ../plugins/converter/convgui.c:1752
 #: ../plugins/converter/interface.c:653
 #: ../plugins/converter/converter.glade.h:48
 #: ../plugins/shellexecui/shellexecui.c:324
@@ -343,14 +343,14 @@ msgid "Track number"
 msgstr "Numéro de piste"
 
 #: ../plugins/gtkui/interface.c:264 ../plugins/gtkui/interface.c:1965
-#: ../plugins/gtkui/plcommon.c:94 ../plugins/gtkui/deadbeef.glade.h:22
+#: ../plugins/gtkui/plcommon.c:92 ../plugins/gtkui/deadbeef.glade.h:22
 #: ../translation/extra.c:6
 msgid "Album"
 msgstr "Album"
 
 #. Track properties dialog
-#: ../plugins/gtkui/interface.c:268 ../plugins/gtkui/plcommon.c:93
-#: ../plugins/gtkui/plcommon.c:1913 ../plugins/gtkui/deadbeef.glade.h:23
+#: ../plugins/gtkui/interface.c:268 ../plugins/gtkui/plcommon.c:91
+#: ../plugins/gtkui/plcommon.c:1849 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:2
 msgid "Artist"
 msgstr "Artiste"
@@ -364,8 +364,8 @@ msgstr "Date"
 msgid "Random"
 msgstr "Aléatoire"
 
-#: ../plugins/gtkui/interface.c:280 ../plugins/gtkui/plcommon.c:102
-#: ../plugins/gtkui/plcommon.c:1917 ../plugins/gtkui/deadbeef.glade.h:26
+#: ../plugins/gtkui/interface.c:280 ../plugins/gtkui/plcommon.c:100
+#: ../plugins/gtkui/plcommon.c:1853 ../plugins/gtkui/deadbeef.glade.h:26
 msgid "Custom"
 msgstr "Personnalisé"
 
@@ -525,7 +525,7 @@ msgstr "À propos"
 msgid "Quit"
 msgstr "Quitter"
 
-#: ../plugins/gtkui/interface.c:1042 ../plugins/gtkui/plcommon.c:1230
+#: ../plugins/gtkui/interface.c:1042 ../plugins/gtkui/plcommon.c:1228
 #: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:157
 #, no-c-format
 msgid "Track Properties"
@@ -675,7 +675,7 @@ msgstr "Piste"
 msgid "Processing:"
 msgstr "Traitement :"
 
-#: ../plugins/gtkui/interface.c:1980 ../plugins/gtkui/plcommon.c:1905
+#: ../plugins/gtkui/interface.c:1980 ../plugins/gtkui/plcommon.c:1841
 #: ../translation/plugins.c:108 ../plugins/gtkui/widgets.c:3948
 #, no-c-format
 msgid "None"
@@ -1055,7 +1055,7 @@ msgid "URL:"
 msgstr "URL :"
 
 #: ../plugins/gtkui/interface.c:3822 ../plugins/gtkui/interface.c:5008
-#: ../plugins/gtkui/interface.c:5036 ../plugins/gtkui/plcommon.c:1217
+#: ../plugins/gtkui/interface.c:5036 ../plugins/gtkui/plcommon.c:1215
 #: ../plugins/gtkui/deadbeef.glade.h:187
 msgid "Set Custom Title"
 msgstr "Définir un titre personnalisé"
@@ -1091,7 +1091,7 @@ msgid "Select DSP Plugin"
 msgstr "Choisir le greffon DSP"
 
 #: ../plugins/gtkui/interface.c:4166 ../plugins/gtkui/deadbeef.glade.h:195
-#: ../plugins/converter/convgui.c:1482 ../plugins/converter/interface.c:797
+#: ../plugins/converter/convgui.c:1488 ../plugins/converter/interface.c:797
 #: ../plugins/gtkui/dspconfig.c:144 ../plugins/converter/converter.glade.h:54
 msgid "Plugin"
 msgstr "Greffon"
@@ -1281,103 +1281,103 @@ msgstr "Artiste / Album"
 msgid "Track No"
 msgstr "Piste"
 
-#: ../plugins/gtkui/mainplaylist.c:234 ../plugins/gtkui/plcommon.c:97
+#: ../plugins/gtkui/mainplaylist.c:234 ../plugins/gtkui/plcommon.c:95
 #: ../plugins/gtkui/search.c:653 ../plugins/pltbrowser/pltbrowser.c:414
 #: ../plugins/pltbrowser/pltbrowser.c:939
 msgid "Duration"
 msgstr "Durée"
 
-#: ../plugins/gtkui/plcommon.c:89
+#: ../plugins/gtkui/plcommon.c:87
 msgid "Item Index"
 msgstr "Index de l’élément"
 
-#: ../plugins/gtkui/plcommon.c:90 ../plugins/pltbrowser/pltbrowser.c:412
+#: ../plugins/gtkui/plcommon.c:88 ../plugins/pltbrowser/pltbrowser.c:412
 msgid "Playing"
 msgstr "Lecture"
 
-#: ../plugins/gtkui/plcommon.c:91
+#: ../plugins/gtkui/plcommon.c:89
 msgid "Album Art"
 msgstr "Couverture de l’album"
 
-#: ../plugins/gtkui/plcommon.c:92
+#: ../plugins/gtkui/plcommon.c:90
 msgid "Artist - Album"
 msgstr "Artiste - Album"
 
-#: ../plugins/gtkui/plcommon.c:96
+#: ../plugins/gtkui/plcommon.c:94
 msgid "Year"
 msgstr "Année"
 
-#: ../plugins/gtkui/plcommon.c:98 ../translation/extra.c:8
+#: ../plugins/gtkui/plcommon.c:96 ../translation/extra.c:8
 msgid "Track Number"
 msgstr "Numéro de piste"
 
-#: ../plugins/gtkui/plcommon.c:99 ../translation/extra.c:5
+#: ../plugins/gtkui/plcommon.c:97 ../translation/extra.c:5
 msgid "Band / Album Artist"
 msgstr "Groupe / Artiste de l’album"
 
-#: ../plugins/gtkui/plcommon.c:100 ../translation/extra.c:21
+#: ../plugins/gtkui/plcommon.c:98 ../translation/extra.c:21
 msgid "Codec"
 msgstr "Codec"
 
-#: ../plugins/gtkui/plcommon.c:101
+#: ../plugins/gtkui/plcommon.c:99
 msgid "Bitrate"
 msgstr "Débit binaire"
 
-#: ../plugins/gtkui/plcommon.c:938 ../plugins/gtkui/plcommon.c:1047
+#: ../plugins/gtkui/plcommon.c:936 ../plugins/gtkui/plcommon.c:1045
 #: ../plugins/gtkui/pltmenu.c:427
 msgid "_Paste"
 msgstr "C_oller"
 
-#: ../plugins/gtkui/plcommon.c:992 ../translation/plugins.c:306
+#: ../plugins/gtkui/plcommon.c:990 ../translation/plugins.c:306
 #, no-c-format
 msgid "Add To Playback Queue"
 msgstr "Ajouter à la file d’attente de lecture"
 
-#: ../plugins/gtkui/plcommon.c:996 ../translation/plugins.c:304
+#: ../plugins/gtkui/plcommon.c:994 ../translation/plugins.c:304
 #, no-c-format
 msgid "Remove From Playback Queue"
 msgstr "Supprimer de la file d’attente de lecture"
 
 #. plugins/hotkeys/hotkeys.c
-#: ../plugins/gtkui/plcommon.c:1018 ../translation/plugins.c:242
+#: ../plugins/gtkui/plcommon.c:1016 ../translation/plugins.c:242
 #, no-c-format
 msgid "Reload Metadata"
 msgstr "Recharger les métadonnées"
 
-#: ../plugins/gtkui/plcommon.c:1027 ../plugins/gtkui/pltmenu.c:403
+#: ../plugins/gtkui/plcommon.c:1025 ../plugins/gtkui/pltmenu.c:403
 msgid "Cu_t"
 msgstr "_Couper"
 
-#: ../plugins/gtkui/plcommon.c:1037 ../plugins/gtkui/pltmenu.c:415
+#: ../plugins/gtkui/plcommon.c:1035 ../plugins/gtkui/pltmenu.c:415
 msgid "_Copy"
 msgstr "Co_pier"
 
-#: ../plugins/gtkui/plcommon.c:1081 ../translation/plugins.c:147
+#: ../plugins/gtkui/plcommon.c:1079 ../translation/plugins.c:147
 #, no-c-format
 msgid "Remove From Disk"
 msgstr "Supprimer du disque"
 
-#: ../plugins/gtkui/plcommon.c:1728 ../plugins/gtkui/plcommon.c:1870
+#: ../plugins/gtkui/plcommon.c:1664 ../plugins/gtkui/plcommon.c:1806
 msgid "Add column"
 msgstr "Ajouter une colonne"
 
-#: ../plugins/gtkui/plcommon.c:1770 ../plugins/gtkui/plcommon.c:1874
+#: ../plugins/gtkui/plcommon.c:1706 ../plugins/gtkui/plcommon.c:1810
 msgid "Edit column"
 msgstr "Éditer la colonne"
 
-#: ../plugins/gtkui/plcommon.c:1878
+#: ../plugins/gtkui/plcommon.c:1814
 msgid "Remove column"
 msgstr "Supprimer la colonne"
 
-#: ../plugins/gtkui/plcommon.c:1893
+#: ../plugins/gtkui/plcommon.c:1829
 msgid "Pin groups when scrolling"
 msgstr "Épingler les groupes lors du défilement"
 
-#: ../plugins/gtkui/plcommon.c:1898
+#: ../plugins/gtkui/plcommon.c:1834
 msgid "Group by"
 msgstr "Grouper par"
 
-#: ../plugins/gtkui/plcommon.c:1909
+#: ../plugins/gtkui/plcommon.c:1845
 msgid "Artist/Date/Album"
 msgstr "Artiste/Date/Album"
 
@@ -1469,52 +1469,52 @@ msgstr ""
 "Un champ contenant le même nom existe déjà, merci d’utiliser un nom "
 "différent."
 
-#: ../main.c:120
+#: ../main.c:104
 #, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
 msgstr "Utilisation : deadbeef [options] [--] [fichier(s)]\n"
 
-#: ../main.c:121
+#: ../main.c:105
 #, c-format
 msgid "Options:\n"
 msgstr "Options :\n"
 
-#: ../main.c:122
+#: ../main.c:106
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
 msgstr "   --help  ou  -h     Affiche l’aide (ce message) et quitte\n"
 
-#: ../main.c:123
+#: ../main.c:107
 #, c-format
 msgid "   --quit             Quit player\n"
 msgstr "   --quit             Ferme le lecteur\n"
 
-#: ../main.c:124
+#: ../main.c:108
 #, c-format
 msgid "   --version          Print version info and exit\n"
 msgstr "   --version          Affiche les informations de version et quitte\n"
 
-#: ../main.c:125
+#: ../main.c:109
 #, c-format
 msgid "   --play             Start playback\n"
 msgstr "   --play             Démarre la lecture\n"
 
-#: ../main.c:126
+#: ../main.c:110
 #, c-format
 msgid "   --stop             Stop playback\n"
 msgstr "   --stop             Arrête la lecture\n"
 
-#: ../main.c:127
+#: ../main.c:111
 #, c-format
 msgid "   --pause            Pause playback\n"
 msgstr "   --pause            Suspend la lecture\n"
 
-#: ../main.c:128
+#: ../main.c:112
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
 msgstr "   --toggle-pause     Bascule sur pause\n"
 
-#: ../main.c:129
+#: ../main.c:113
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
@@ -1522,28 +1522,28 @@ msgstr ""
 "   --play-pause       Démarre la lecture si elle est arrêtée, sinon bascule "
 "sur pause\n"
 
-#: ../main.c:130
+#: ../main.c:114
 #, c-format
 msgid "   --next             Next song in playlist\n"
 msgstr "   --next             Piste suivante dans la liste de lecture\n"
 
-#: ../main.c:131
+#: ../main.c:115
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
 msgstr "   --prev             Musique précédente dans la liste de lecture\n"
 
-#: ../main.c:132
+#: ../main.c:116
 #, c-format
 msgid "   --random           Random song in playlist\n"
 msgstr "   --random           Musique aléatoire dans la liste de lecture\n"
 
-#: ../main.c:133
+#: ../main.c:117
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
 msgstr ""
 "   --queue            Ajoute le ou les fichiers dans la liste existante\n"
 
-#: ../main.c:134
+#: ../main.c:118
 #, c-format
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
@@ -1551,12 +1551,12 @@ msgstr ""
 "...--gui PLUGIN       Indique le greffon d’interface à utiliser, « GTK2 » "
 "par défaut\n"
 
-#: ../main.c:135
+#: ../main.c:119
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
 msgstr "   --nowplaying FMT   Envoie le nom de la piste formatée dans stdout\n"
 
-#: ../main.c:136
+#: ../main.c:120
 #, c-format
 msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
@@ -1568,7 +1568,7 @@ msgstr ""
 "[c]ommentaire,\n"
 "                      copy[r]ight, [e]écoulé\n"
 
-#: ../main.c:139
+#: ../main.c:123
 #, c-format
 msgid ""
 "                      example: --nowplaying \"%%a - %%t\" should print "
@@ -1577,17 +1577,17 @@ msgstr ""
 "                      ex : --nowplaying \"%%a - %%t\" affiche « artiste - "
 "titre »\n"
 
-#: ../main.c:140
+#: ../main.c:124
 #, c-format
 msgid "                      for more info, see %s\n"
 msgstr "pour plus d’informations, voir %s\n"
 
-#: ../main.c:141
+#: ../main.c:125
 #, c-format
 msgid "                      NOTE: --nowplaying is deprecated.\n"
 msgstr "                      NOTE : --nowplaying est obsolète.\n"
 
-#: ../main.c:142
+#: ../main.c:126
 #, c-format
 msgid ""
 "   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
@@ -1596,7 +1596,7 @@ msgstr ""
 "   --nowplaying-tf FMT  Envoie le nom de la piste formatée dans stdout, "
 "utilisant le nouveau formatage de titre\n"
 
-#: ../main.c:143
+#: ../main.c:127
 #, c-format
 msgid ""
 "                      FMT syntax: http://github.com/DeaDBeeF-Player/deadbeef/"
@@ -1605,7 +1605,7 @@ msgstr ""
 "                      Syntaxe FMT : http://github.com/DeaDBeeF-Player/"
 "deadbeef/wiki/Title-formatting-2.0\n"
 
-#: ../main.c:144
+#: ../main.c:128
 #, c-format
 msgid ""
 "                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
@@ -1616,13 +1616,13 @@ msgstr ""
 "\n"
 "\n"
 
-#: ../main.c:145
+#: ../main.c:129
 #, c-format
 msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
 msgstr ""
 "   --volume [NUM]     Affiche ou définit le niveau sonore de deadbeef.\n"
 
-#: ../main.c:146
+#: ../main.c:130
 #, c-format
 msgid ""
 "                      The NUM parameter can be specified in percents (if no "
@@ -1631,28 +1631,28 @@ msgstr ""
 "                      Le paramètre NUM peut être spécifié en pourcentage (si "
 "aucun suffixe) ou en dB [-50, 0].\n"
 
-#: ../main.c:147
+#: ../main.c:131
 #, c-format
 msgid "                      Examples: --volume 80 or --volume -20dB\n"
 msgstr "                      Exemples : --volume 80 ou --volume -20 dB\n"
 
-#: ../playlist.c:486 ../playlist.c:2315
+#: ../playlist.c:486 ../playlist.c:2250
 msgid "Default"
 msgstr "Par défaut"
 
-#: ../playlist.c:2980
+#: ../playlist.c:2915
 msgid "Mono"
 msgstr "Mono"
 
-#: ../playlist.c:2980
+#: ../playlist.c:2915
 msgid "Stereo"
 msgstr "Stéréo"
 
-#: ../playlist.c:3498
+#: ../playlist.c:3433
 msgid "Yes"
 msgstr "Oui"
 
-#: ../playlist.c:3498
+#: ../playlist.c:3433
 msgid "No"
 msgstr "Non"
 
@@ -2219,7 +2219,7 @@ msgstr "Supprimer la ou les pistes de la liste de lecture"
 msgid "Save Playlist"
 msgstr "Enregistrer la liste de lecture"
 
-#: ../translation/plugins.c:205 ../plugins/gtkui/actionhandlers.c:539
+#: ../translation/plugins.c:205 ../plugins/gtkui/actionhandlers.c:740
 #, no-c-format
 msgid "Load Playlist"
 msgstr "Charger une liste de lecture"
@@ -2879,7 +2879,7 @@ msgstr "Sélectionner un dossier…"
 msgid "Failed to save encoder preset"
 msgstr "Impossible d’enregistrer le préréglage du codeur"
 
-#: ../plugins/converter/convgui.c:960 ../plugins/converter/convgui.c:1519
+#: ../plugins/converter/convgui.c:960 ../plugins/converter/convgui.c:1531
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
@@ -2887,18 +2887,18 @@ msgstr ""
 "Vérifier les permissions du dossier de préréglage, choisissez un nom "
 "différent, ou libérer de l’espace disque"
 
-#: ../plugins/converter/convgui.c:960 ../plugins/converter/convgui.c:1519
+#: ../plugins/converter/convgui.c:960 ../plugins/converter/convgui.c:1531
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr ""
 "Un préréglage avec le même nom existe déjà. Essayez avec un nom différent."
 
-#: ../plugins/converter/convgui.c:961 ../plugins/converter/convgui.c:1520
+#: ../plugins/converter/convgui.c:961 ../plugins/converter/convgui.c:1532
 #: ../plugins/gtkui/ctmapping.c:202 ../plugins/gtkui/ctmapping.c:230
 #: ../plugins/gtkui/ctmapping.c:262
 msgid "Error"
 msgstr "Erreur"
 
-#: ../plugins/converter/convgui.c:1015 ../plugins/converter/convgui.c:1153
+#: ../plugins/converter/convgui.c:1015 ../plugins/converter/convgui.c:1159
 msgid "Add new encoder"
 msgstr "Ajouter un nouveau codeur"
 
@@ -2906,35 +2906,35 @@ msgstr "Ajouter un nouveau codeur"
 msgid "Edit encoder"
 msgstr "Éditer le codeur"
 
-#: ../plugins/converter/convgui.c:1077 ../plugins/converter/convgui.c:1654
+#: ../plugins/converter/convgui.c:1077 ../plugins/converter/convgui.c:1673
 msgid "Remove preset"
 msgstr "Supprimer le préréglage"
 
-#: ../plugins/converter/convgui.c:1079 ../plugins/converter/convgui.c:1656
+#: ../plugins/converter/convgui.c:1079 ../plugins/converter/convgui.c:1675
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr "Cette action va supprimer le préréglage sélectionné. Continuer ?"
 
-#: ../plugins/converter/convgui.c:1168
+#: ../plugins/converter/convgui.c:1174
 msgid "Encoders"
 msgstr "Codeurs"
 
-#: ../plugins/converter/convgui.c:1243 ../plugins/gtkui/dspconfig.c:191
+#: ../plugins/converter/convgui.c:1249 ../plugins/gtkui/dspconfig.c:191
 msgid "Add plugin to DSP chain"
 msgstr "Ajouter le greffon à la chaîne DSP"
 
-#: ../plugins/converter/convgui.c:1518
+#: ../plugins/converter/convgui.c:1530
 msgid "Failed to save DSP preset"
 msgstr "Impossible d’enregistrer le préréglage DSP"
 
-#: ../plugins/converter/convgui.c:1582 ../plugins/converter/convgui.c:1620
+#: ../plugins/converter/convgui.c:1594 ../plugins/converter/convgui.c:1639
 msgid "New DSP Preset"
 msgstr "Nouveau préréglage DSP"
 
-#: ../plugins/converter/convgui.c:1704
+#: ../plugins/converter/convgui.c:1723
 msgid "Edit DSP Preset"
 msgstr "Éditer le préréglage DSP"
 
-#: ../plugins/converter/convgui.c:1724
+#: ../plugins/converter/convgui.c:1743
 msgid "DSP Presets"
 msgstr "Préréglages DSP"
 
@@ -3160,36 +3160,6 @@ msgstr "Ajouter"
 msgid "Couldn't find pixmap file: %s"
 msgstr "Impossible de trouver le fichier pixmap : %s"
 
-#: ../plugins/gtkui/fileman.c:316 ../plugins/gtkui/fileman.c:410
-msgid "Supported sound formats"
-msgstr "Formats audio supportés"
-
-#: ../plugins/gtkui/fileman.c:344 ../plugins/gtkui/fileman.c:421
-msgid "All files (*)"
-msgstr "Tous les fichiers (*)"
-
-#: ../plugins/gtkui/fileman.c:455 ../plugins/gtkui/fileman.c:499
-#, fuzzy
-msgid "Supported playlist formats"
-msgstr "Formats audio supportés"
-
-#: ../plugins/gtkui/fileman.c:462
-#, fuzzy
-msgid "All files"
-msgstr "Tous les fichiers (*)"
-
-#: ../plugins/gtkui/fileman.c:505
-msgid "Other files (*)"
-msgstr "Autres fichiers (*)"
-
-#: ../plugins/gtkui/fileman.c:516
-msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr "Fichiers de liste de lecture DeaDBeeF (*.dbpl)"
-
-#: ../plugins/gtkui/fileman.c:560
-msgid "Follow symlinks"
-msgstr "Suivre les liens symboliques"
-
 #: ../plugins/converter/converter.glade.h:14
 msgid ""
 "Keep source format\n"
@@ -3372,27 +3342,39 @@ msgstr "La commande de l’interface ne doit pas être vide.\n"
 msgid "Invalid Values"
 msgstr "Valeurs non valides"
 
-#: ../plugins/gtkui/actionhandlers.c:52
+#: ../plugins/gtkui/actionhandlers.c:116
+msgid "Supported sound formats"
+msgstr "Formats audio supportés"
+
+#: ../plugins/gtkui/actionhandlers.c:127
+msgid "All files (*)"
+msgstr "Tous les fichiers (*)"
+
+#: ../plugins/gtkui/actionhandlers.c:135
 msgid "Open file(s)..."
 msgstr "Ouvrir un ou des fichiers…"
 
-#: ../plugins/gtkui/actionhandlers.c:67
+#: ../plugins/gtkui/actionhandlers.c:174
 msgid "Add file(s) to playlist..."
 msgstr "Ajouter un ou des fichiers à la liste de lecture…"
 
-#: ../plugins/gtkui/actionhandlers.c:82
+#: ../plugins/gtkui/actionhandlers.c:220
 msgid "Add folder(s) to playlist..."
 msgstr "Ajouter un ou des dossiers à la liste de lecture…"
 
-#: ../plugins/gtkui/actionhandlers.c:296
+#: ../plugins/gtkui/actionhandlers.c:225
+msgid "Follow symlinks"
+msgstr "Suivre les liens symboliques"
+
+#: ../plugins/gtkui/actionhandlers.c:472
 msgid "help.txt"
 msgstr "aide.txt"
 
-#: ../plugins/gtkui/actionhandlers.c:375
+#: ../plugins/gtkui/actionhandlers.c:551
 msgid "Delete files from disk"
 msgstr "Supprimer les fichiers du disque"
 
-#: ../plugins/gtkui/actionhandlers.c:376
+#: ../plugins/gtkui/actionhandlers.c:552
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
@@ -3400,9 +3382,17 @@ msgstr ""
 "Les fichiers seront perdus. Procéder ?\n"
 "(Ce dialogue peut être désactivé dans les paramètres du greffon GTKUI)"
 
-#: ../plugins/gtkui/actionhandlers.c:561
+#: ../plugins/gtkui/actionhandlers.c:755
+msgid "Other files (*)"
+msgstr "Autres fichiers (*)"
+
+#: ../plugins/gtkui/actionhandlers.c:789
 msgid "Save Playlist As"
 msgstr "Enregistrer la liste de lecture sous"
+
+#: ../plugins/gtkui/actionhandlers.c:800
+msgid "DeaDBeeF playlist files (*.dbpl)"
+msgstr "Fichiers de liste de lecture DeaDBeeF (*.dbpl)"
 
 #: ../plugins/gtkui/ctmapping.c:129
 msgid "Content-Type"
