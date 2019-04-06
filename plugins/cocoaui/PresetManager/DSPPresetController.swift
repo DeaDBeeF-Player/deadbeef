@@ -53,7 +53,7 @@ import Cocoa
     func load() throws {
         var presets : [PresetData] = []
         let fname = plug_get_system_dir (Int32(DDB_SYS_DIR_CONFIG.rawValue))
-        let data = Data(bytes: fname!, count: Int(strlen(fname)))
+        let data = Data(bytes: fname!, count: Int(strlen(fname!)))
         let str = String(data: data, encoding: String.Encoding.utf8)! + "/presets/dsp"
 
         // find all txt files in the folder
