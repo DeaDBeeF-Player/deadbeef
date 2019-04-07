@@ -924,7 +924,6 @@ stream_track (playItem_t *it, int startpaused) {
         paused_stream = is_remote_stream (it);
     }
 
-
     if (!it || paused_stream) {
         goto success;
     }
