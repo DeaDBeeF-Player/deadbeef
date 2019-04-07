@@ -32,7 +32,7 @@ Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy develo
 * Clone the deadbeef repo, and fetch the dependencies: ```git submodule update --init```
 * Install [Yasm](https://yasm.tortall.net/Download.html) -- unpack the source, then run `./configure && make -j8 && sudo make install`
 * Run ```xcodebuild -project osx/deadbeef.xcodeproj -target deadbeef -configuration Release```
-* Get the output: ```osx/build/Release/deadbeef.app```
+* Get the output: ```osx/build/Release/DeaDBeeF.app```
 * OR open the osx/deadbeef.xcodeproj in XCode, and build/run from there
 
 ### Windows
