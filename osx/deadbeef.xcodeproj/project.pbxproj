@@ -4227,7 +4227,7 @@
 		4D12805D2062994F0015BDE8 /* deadbeef-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "deadbeef-Bridging-Header.h"; sourceTree = "<group>"; };
 		4D12805E2062994F0015BDE8 /* HelpWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpWindowController.swift; sourceTree = "<group>"; };
 		4D13B5192140154900CA7AE4 /* PresetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PresetManager.swift; path = PresetManager/PresetManager.swift; sourceTree = "<group>"; };
-		4D1B3E7A18379829003E6066 /* deadbeef.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deadbeef.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D1B3E7A18379829003E6066 /* DeaDBeeF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeaDBeeF.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D1B3E7D18379829003E6066 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4D1B3E8018379829003E6066 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		4D1B3E8118379829003E6066 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -7589,7 +7589,7 @@
 		4D1B3E7B18379829003E6066 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4D1B3E7A18379829003E6066 /* deadbeef.app */,
+				4D1B3E7A18379829003E6066 /* DeaDBeeF.app */,
 				4D32F9A719A63094000FFDE0 /* libflaclib.dylib */,
 				4D32F9EA19A63441000FFDE0 /* ffap.dylib */,
 				4D32FA1519A6448A000FFDE0 /* libmad.a */,
@@ -10681,9 +10681,9 @@
 			productReference = 2DFD50951C9715B800961D19 /* psf.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		4D1B3E7918379829003E6066 /* deadbeef */ = {
+		4D1B3E7918379829003E6066 /* DeaDBeeF */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4D1B3EAB18379829003E6066 /* Build configuration list for PBXNativeTarget "deadbeef" */;
+			buildConfigurationList = 4D1B3EAB18379829003E6066 /* Build configuration list for PBXNativeTarget "DeaDBeeF" */;
 			buildPhases = (
 				4D1B3E7618379829003E6066 /* Sources */,
 				4D1B3E7718379829003E6066 /* Frameworks */,
@@ -10730,9 +10730,9 @@
 				2D88EA101B2AF7240072FD43 /* PBXTargetDependency */,
 				4D9C5B0D1FDEBAF100D83CEF /* PBXTargetDependency */,
 			);
-			name = deadbeef;
+			name = DeaDBeeF;
 			productName = deadbeef;
-			productReference = 4D1B3E7A18379829003E6066 /* deadbeef.app */;
+			productReference = 4D1B3E7A18379829003E6066 /* DeaDBeeF.app */;
 			productType = "com.apple.product-type.application";
 		};
 		4D32F9A619A63094000FFDE0 /* flaclib */ = {
@@ -11057,6 +11057,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -11071,7 +11072,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				4D1B3E7918379829003E6066 /* deadbeef */,
+				4D1B3E7918379829003E6066 /* DeaDBeeF */,
 				2D01D7C91AB2216900BCD3C4 /* ddbcore */,
 				4D32F9A619A63094000FFDE0 /* flaclib */,
 				4D32F9E919A63441000FFDE0 /* ffap */,
@@ -16918,7 +16919,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4D1B3EAB18379829003E6066 /* Build configuration list for PBXNativeTarget "deadbeef" */ = {
+		4D1B3EAB18379829003E6066 /* Build configuration list for PBXNativeTarget "DeaDBeeF" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4D1B3EAC18379829003E6066 /* Debug */,
