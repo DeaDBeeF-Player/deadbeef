@@ -2992,7 +2992,7 @@ tf_import_legacy (const char *fmt, char *out, int outsize) {
                 if (*e == '@') {
                     char nm[100];
                     size_t l = e-fmt-1;
-                    l = min (l, sizeof (nm)-1);
+                    l = min (l, sizeof (nm)-3);
                     strncpy (nm+1, fmt+1, l);
                     nm[l+2] = 0;
                     nm[0] = '%';
