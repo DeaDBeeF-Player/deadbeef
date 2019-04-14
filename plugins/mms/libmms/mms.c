@@ -1147,7 +1147,7 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, in
     return NULL;
 
   /* FIXME: needs proper error-signalling work */
-  this = (mms_t*) malloc (sizeof (mms_t));
+  this = (mms_t*) calloc (1, sizeof (mms_t));
 
   this->url             = strdup (url);
   this->s               = -1;
