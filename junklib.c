@@ -998,6 +998,10 @@ can_be_chinese (const uint8_t *str, int sz) {
 
 static int
 can_be_shift_jis (const unsigned char *str, int size) {
+    if (!size) {
+        return 0;
+    }
+
     unsigned char out[size*4];
 
     if (size < 2) {
@@ -3740,7 +3744,7 @@ static int junk_id3v2_load_rva2 (int version_major, playItem_t *it, uint8_t *rea
 }
 
 int
-junk_id3v2_load_ufid (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
+junk_id3v2_load_ufid (int version_major, playItem_t *it, uint8_t *readptr, unsigned synched_size) {
     char *owner = readptr;
     while (*readptr && synched_size > 0) {
         readptr++;
@@ -4131,6 +4135,10 @@ junk_id3v2_set_metadata (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, const char *
 
 int
 junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
+    int err = -1;
+    if (!tag_store) {
+        return -1;
+    }
     DB_id3v2_frame_t *tail = NULL;
     if (!fp) {
         trace ("bad call to junk_id3v2_read!\n");
@@ -4170,13 +4178,12 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
     if (size == 0) {
         return -1;
     }
-    if (tag_store) {
-        tag_store->version[0] = version_major;
-        tag_store->version[1] = version_minor;
-        tag_store->flags = flags;
-        // remove unsync flag
-        tag_store->flags &= ~ (1<<7);
-    }
+
+    tag_store->version[0] = version_major;
+    tag_store->version[1] = version_minor;
+    tag_store->flags = flags;
+    // remove unsync flag
+    tag_store->flags &= ~ (1<<7);
 
     uint8_t *tag = malloc (size);
     if (!tag) {
@@ -4198,7 +4205,6 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
         }
         readptr += sz;
     }
-    int err = -1;
     while (readptr - tag <= size - 4 && *readptr) {
         if (version_major == 3 || version_major == 4) {
             trace ("pos %d of %d\n", readptr - tag, size);
