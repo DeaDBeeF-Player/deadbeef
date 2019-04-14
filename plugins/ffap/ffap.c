@@ -564,9 +564,11 @@ ape_read_header(DB_FILE *fp, APEContext *ape)
     ape->frames[0].nblocks = ape->blocksperframe;
     ape->frames[0].skip    = 0;
     for (i = 1; i < ape->totalframes; i++) {
-        ape->frames[i].pos      = ape->seektable[i]; //ape->frames[i-1].pos + ape->blocksperframe;
+        if (ape->seektablelength > 0) {
+            ape->frames[i].pos = ape->seektable[i];
+        }
         ape->frames[i].nblocks  = ape->blocksperframe;
-        ape->frames[i - 1].size = ape->frames[i].pos - ape->frames[i - 1].pos;
+        ape->frames[i - 1].size = (int)(ape->frames[i].pos - ape->frames[i - 1].pos);
         ape->frames[i].skip     = (ape->frames[i].pos - ape->frames[0].pos) & 3;
     }
     ape->frames[ape->totalframes - 1].size    = ape->finalframeblocks * 4;
