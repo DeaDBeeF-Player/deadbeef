@@ -262,6 +262,8 @@ tf_prefix_helper (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, cons
 
     int prefix_count;
     size_t buffer_size;
+    char *buf = NULL;
+
     if (argc == 1) {
         prefix_count = 2;
         buffer_size = 0;
@@ -269,11 +271,11 @@ tf_prefix_helper (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, cons
     else {
         prefix_count = argc - 1;
         buffer_size = 2000;
+        buf = alloca(buffer_size);
     }
 
     const char *prefixes[prefix_count];
     int prefix_lengths[prefix_count];
-    char buf[buffer_size];
 
     if (argc == 1) {
         prefixes[0] = "A";
