@@ -372,7 +372,7 @@ plt_get_title_wrapper (int plt) {
     // draw selected
     // calc position for drawin selected tab
     x = -hscroll;
-    for (idx = 0; idx < tab_selected; idx++) {
+    for (idx = 0; idx < tab_selected && idx < cnt; idx++) {
         x += widths[idx] - tab_overlap_size;
     }
     x += tabs_left_margin;
