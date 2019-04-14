@@ -1242,7 +1242,7 @@ fail:
 }
 
 static int get_media_packet (mms_io_t *io, mmsh_t *this) {
-  int ret, len = 0;
+  int ret = ERROR, len = 0;
 
   if (get_chunk_header(io, this) == SUCCESS) {
     switch (this->chunk_type) {
