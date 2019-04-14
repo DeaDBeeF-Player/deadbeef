@@ -1312,6 +1312,12 @@ streamer_notify_order_changed_real (int prev_order, int new_order);
 
 static void
 streamer_seek_real (float seekpos) {
+    // Some fileinfos can exist without plugin bound to them,
+    // for example when a track failed to play.
+    // Don't attempt seeking in them.
+    if (!fileinfo->plugin) {
+        return;
+    }
     float seek = seekpos;
     playItem_t *track = playing_track;
     if (!playing_track) {
