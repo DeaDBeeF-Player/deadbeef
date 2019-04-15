@@ -629,7 +629,6 @@ WM_BufferFile (const char *filename, unsigned long int *size) {
 		if (buffer_file == NULL) {
 			WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_MEM, NULL, errno);
 			WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_LOAD, filename, errno);
-			free(buffer_file);
 			return NULL;
 		}
 		memmove((buffer_file + strlen(buffer_dir)), buffer_file, strlen(buffer_file)+1);
