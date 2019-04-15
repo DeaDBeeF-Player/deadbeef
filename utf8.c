@@ -764,18 +764,15 @@ utfcasestr (const char *s1, const char *s2) {
             const char *next;
             u8_nextchar (p1, &i1);
             u8_nextchar (p2, &i2);
-            int l1 = u8_tolower (p1, i1, lw1);
-            int l2 = u8_tolower (p2, i2, lw2);
-            //fprintf (stderr, "comparing %s to %s\n", lw1, lw2);
+            u8_tolower (p1, i1, lw1);
+            u8_tolower (p2, i2, lw2);
             if (strcmp (lw1, lw2)) {
-                //fprintf (stderr, "fail\n");
                 break;
             }
             p1 += i1;
             p2 += i2;
         }
         if (*p2 == 0) {
-            //fprintf (stderr, "%s found in %s\n", s2, s1);
             return p1;
         }
         int32_t i = 0;
