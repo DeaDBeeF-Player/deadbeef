@@ -46,7 +46,13 @@ extern DB_functions_t *deadbeef;
 
     NSRect _closeTabButtonRect;
     BOOL _closeTabCapture;
+
+    NSDictionary *_titleAttributes;
+    NSDictionary *_titleAttributesSelected;
 }
+
+@property (nonatomic,readonly) NSDictionary *titleAttributes;
+@property (nonatomic,readonly) NSDictionary *titleAttributesSelected;
 @end
 
 @implementation DdbTabStrip
@@ -61,6 +67,38 @@ static int min_tab_size = 80;
 static int max_tab_size = 200;
 static int close_btn_right_offs = 16;
 #define arrow_widget_width ([self frame].size.height)
+
+- (NSDictionary *)titleAttributes {
+    if (!_titleAttributes) {
+        NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+        [textStyle setAlignment:NSLeftTextAlignment];
+        [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
+
+        NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize] weight:NSFontWeightMedium];
+        _titleAttributes = @{
+                                NSParagraphStyleAttributeName: textStyle,
+                                NSFontAttributeName:font,
+                                NSForegroundColorAttributeName:[NSColor controlTextColor]
+                                };
+    }
+    return _titleAttributes;
+}
+
+- (NSDictionary *)titleAttributesSelected {
+    if (!_titleAttributesSelected) {
+        NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+        [textStyle setAlignment:NSLeftTextAlignment];
+        [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
+
+        NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize] weight:NSFontWeightSemibold];
+        _titleAttributesSelected = @{
+                             NSParagraphStyleAttributeName: textStyle,
+                             NSFontAttributeName:font,
+                             NSForegroundColorAttributeName:[NSColor controlTextColor]
+                             };
+    }
+    return _titleAttributesSelected;
+}
 
 - (id)initWithFrame:(NSRect)frame
 {
@@ -118,10 +156,10 @@ plt_get_title_wrapper (int plt) {
 }
 
 - (int)getTabWidth:(int)tab {
-    int w = 0;
+    int selected = deadbeef->plt_get_curr_idx ();
     NSString *title = plt_get_title_wrapper (tab);
-    NSSize sz = [title sizeWithAttributes:nil];
-    w = sz.width;
+    NSSize sz = [title sizeWithAttributes:(tab == selected ? self.titleAttributesSelected : self.titleAttributes)];
+    int w = sz.width;
     w += text_left_padding + text_right_padding;
     if (w < min_tab_size) {
         w = min_tab_size;
@@ -271,16 +309,7 @@ plt_get_title_wrapper (int plt) {
     // tab title
     int textoffs = sel ? 1 : 0;
 
-    NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-    [textStyle setAlignment:NSLeftTextAlignment];
-    [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-
-    NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize] weight:sel?NSFontWeightSemibold:NSFontWeightMedium];
-    NSDictionary *attrs = @{
-        NSParagraphStyleAttributeName: textStyle,
-        NSFontAttributeName:font,
-        NSForegroundColorAttributeName:[NSColor controlTextColor]
-    };
+    NSDictionary *attrs = sel ? self.titleAttributesSelected : self.titleAttributes;
 
     NSString *tab_title = plt_get_title_wrapper (idx);
 
@@ -453,16 +482,7 @@ plt_get_title_wrapper (int plt) {
     int width = 0;
     int cnt = deadbeef->plt_get_count ();
     for (int idx = 0; idx < cnt; idx++) {
-        NSString *title = plt_get_title_wrapper (idx);
-        NSSize sz = [title sizeWithAttributes:@{}];
-        int w = sz.width;
-        w += text_left_padding + text_right_padding;
-        if (w < min_tab_size) {
-            w = min_tab_size;
-        }
-        else if (w > max_tab_size) {
-            w = max_tab_size;
-        }
+        int w = [self getTabWidth:tab];
         if (idx == tab) {
             return NSMakeRect(width - _hscrollpos + ([self needArrows] ? arrow_widget_width : 0), 0, w, [self frame].size.height);
         }
@@ -480,20 +500,13 @@ plt_get_title_wrapper (int plt) {
     if (need_arrows && (x < arrow_widget_width || x >= [self frame].size.width - arrow_widget_width)) {
         return -1;
     }
+
     int idx;
     int cnt = deadbeef->plt_get_count ();
     int fw = tabs_left_margin - hscroll;
     for (idx = 0; idx < cnt; idx++) {
-        NSString *title = plt_get_title_wrapper (idx);
-        NSSize ex = [title sizeWithAttributes:@{}];
-        ex.width += text_left_padding + text_right_padding;
-        if (ex.width < min_tab_size) {
-            ex.width = min_tab_size;
-        }
-        else if (ex.width > max_tab_size) {
-            ex.width = max_tab_size;
-        }
-        fw += ex.width;
+        int w = [self getTabWidth:idx];
+        fw += w;
         fw -= tab_overlap_size;
         if (fw > x) {
             return idx;
@@ -673,13 +686,14 @@ plt_get_title_wrapper (int plt) {
             || (theEvent.buttonNumber == 0 && (theEvent.modifierFlags & NSControlKeyMask)))) {
         NSMenu *menu = [[NSMenu alloc] initWithTitle:@"TabMenu"];
         menu.delegate = self;
-        [menu setAutoenablesItems:NO];
+        [menu setAutoenablesItems:YES];
         [[menu insertItemWithTitle:@"Add New Playlist" action:@selector(addNewPlaylist:) keyEquivalent:@"" atIndex:0] setTarget:self];
         if (_tab_clicked != -1) {
             [[menu insertItemWithTitle:@"Close Playlist" action:@selector(closePlaylist:) keyEquivalent:@"" atIndex:0] setTarget:self];
 
             // ignore the warning, the message is sent to 1st responder, which will be the mainwincontroller in this case
-            [menu insertItemWithTitle:@"Rename Playlist" action:@selector(renamePlaylistAction:) keyEquivalent:@"" atIndex:0];
+            NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:@"Rename Playlist" action:@selector(renamePlaylistAction:) keyEquivalent:@""];
+            [menu insertItem:item atIndex:0];
         }
         return menu;
     }
@@ -810,9 +824,9 @@ plt_get_title_wrapper (int plt) {
     if (tab >= 0) {
         NSString *s = plt_get_title_wrapper (tab);
 
-        NSSize sz = [s sizeWithAttributes:@{}];
-        sz.width += text_left_padding + text_right_padding;
-        if (sz.width > max_tab_size) {
+        int width = [self getTabWidth:tab];
+        width += text_left_padding + text_right_padding;
+        if (width > max_tab_size) {
             [self setToolTip:s];
         }
         else {
@@ -876,6 +890,36 @@ plt_get_title_wrapper (int plt) {
 
 - (int)clickedTab {
     return _tab_clicked;
+}
+
+- (IBAction)renamePlaylistAction:(id)sender {
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (_tab_clicked);
+    int l = deadbeef->plt_get_title (plt, NULL, 0);
+    char buf[l+1];
+    deadbeef->plt_get_title (plt, buf, (int)sizeof buf);
+    deadbeef->plt_unref (plt);
+    [_renamePlaylistTitle setStringValue:[NSString stringWithUTF8String:buf]];
+    [NSApp beginSheet:self.renamePlaylistWindow modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndRenamePlaylist:returnCode:contextInfo:) contextInfo:nil];
+}
+
+- (void)didEndRenamePlaylist:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
+{
+    [sheet orderOut:self];
+
+    if (returnCode == NSOKButton) {
+        ddb_playlist_t *plt = deadbeef->plt_get_for_idx (_tab_clicked);
+        deadbeef->plt_set_title (plt, [[_renamePlaylistTitle stringValue] UTF8String]);
+        deadbeef->plt_save_config (plt);
+        deadbeef->plt_unref (plt);
+    }
+}
+
+- (IBAction)renamePlaylistCancelAction:(id)sender {
+    [NSApp endSheet:self.renamePlaylistWindow returnCode:NSCancelButton];
+}
+
+- (IBAction)renamePlaylistOKAction:(id)sender {
+    [NSApp endSheet:self.renamePlaylistWindow returnCode:NSOKButton];
 }
 
 @end
