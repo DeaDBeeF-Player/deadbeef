@@ -147,7 +147,8 @@ plt_sort_random (playlist_t *playlist, int iter) {
     const int playlist_count = playlist->count[iter];
     playItem_t **array = calloc (playlist_count, sizeof (playItem_t *));
     int idx = 0;
-    for (playItem_t *it = playlist->head[iter]; it; it = it->next[iter], idx++) {
+    int count = 0;
+    for (playItem_t *it = playlist->head[iter]; it; it = it->next[iter], idx++, count++) {
         array[idx] = it;
     }
 
@@ -165,7 +166,7 @@ plt_sort_random (playlist_t *playlist, int iter) {
 
     playItem_t *prev = NULL;
     playlist->head[iter] = 0;
-    for (idx = 0; idx < playlist->count[iter]; idx++) {
+    for (idx = 0; idx < count; idx++) {
         playItem_t *it = array[idx];
         if (it->prev[iter]) {
             it->prev[iter] = prev;
