@@ -1315,7 +1315,7 @@ streamer_seek_real (float seekpos) {
     // Some fileinfos can exist without plugin bound to them,
     // for example when a track failed to play.
     // Don't attempt seeking in them.
-    if (!fileinfo->plugin) {
+    if (!fileinfo || !fileinfo->plugin) {
         return;
     }
     float seek = seekpos;
