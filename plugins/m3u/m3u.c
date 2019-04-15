@@ -243,7 +243,10 @@ pls_insert_file (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, c
     DB_playItem_t *it = NULL;
     const char *slash = NULL;
 
-    if (strrchr (uri, '/')) {
+    // is it relative path?
+    int isrelative = uri[0] != '/' || strncmp (uri, "../", 2);
+
+    if (!isrelative && strrchr (uri, '/')) {
         trace ("pls: inserting from uri: %s\n", uri);
         it = deadbeef->plt_insert_file2 (0, plt, after, uri, pabort, cb, user_data);
     }
