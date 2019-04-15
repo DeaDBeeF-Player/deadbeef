@@ -169,6 +169,7 @@ update_vorbis_comments (DB_playItem_t *it, OggOpusFile *opusfile, const int trac
             ) {
             // skip the ignored RG fields, and the picture
             if (_is_replaygain_tag (it, tag) || !strcasecmp (tag, "METADATA_BLOCK_PICTURE")) {
+                free (tag);
                 continue;
             }
             *value++ = '\0';
