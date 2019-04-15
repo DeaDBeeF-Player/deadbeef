@@ -1971,12 +1971,13 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 code++;
                 size--;
                 uint16_t *arglens = NULL;
-                if (*code) {
+                char numargs = *code;
+                if (numargs) {
                     // copy arg lengths, to make sure they're aligned
-                    arglens = alloca (*code * sizeof (uint16_t));
-                    memcpy (arglens, code+1, *code * sizeof (uint16_t));
+                    arglens = alloca (numargs * sizeof (uint16_t));
+                    memcpy (arglens, code+1, numargs * sizeof (uint16_t));
                 };
-                int res = func (ctx, code[0], arglens, code+1+code[0]*sizeof (uint16_t), out, outlen, fail_on_undef);
+                int res = func (ctx, numargs, arglens, code+1+numargs*sizeof (uint16_t), out, outlen, fail_on_undef);
                 if (res == -1) {
                     return -1;
                 }
@@ -1991,8 +1992,8 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 out += res;
                 outlen -= res;
 
-                int blocksize = 1 + code[0]*2;
-                for (int i = 0; i < code[0]; i++) {
+                int blocksize = 1 + numargs*2;
+                for (int i = 0; i < numargs; i++) {
                     blocksize += arglens[i];
                 }
                 code += blocksize;
@@ -2094,7 +2095,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                             const char *end = strrchr (start, '.');
                             if (end) {
                                 int n = (int)(end-start);
-                                n = min ((int)(end-start), outlen);
+                                n = min (n, outlen);
                                 n = u8_strnbcpy (out, start, n);
                                 outlen -= n;
                                 out += n;
