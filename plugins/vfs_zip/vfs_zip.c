@@ -114,8 +114,6 @@ vfs_zip_open (const char *fname) {
         return NULL;
     }
 
-    fname = colon;
-
     struct zip_file *zf = zip_fopen_index (z, st.index, 0);
     if (!zf) {
         zip_close (z);
