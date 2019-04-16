@@ -44,7 +44,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)awakeFromNib {
     DdbSearchWidget *view = (DdbSearchWidget *)[self view];
-    [view setDelegate:(id<DdbListviewDelegate>)self];
+    view.delegate = self;
     [self initContent];
 }
 

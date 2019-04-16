@@ -1224,7 +1224,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="uSY-oD-soz">
                             <rect key="frame" x="1" y="1" width="549" height="217"/>
-                            <autoresizingMask key="autoresizingMask"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <view id="LIK-8h-N20">
                                     <rect key="frame" x="0.0" y="0.0" width="549" height="217"/>

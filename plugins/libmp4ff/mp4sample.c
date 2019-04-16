@@ -121,7 +121,9 @@ static int32_t mp4ff_sample_to_offset(const mp4ff_t *f, const int32_t track, con
 {
     int32_t chunk, chunk_sample, chunk_offset1, chunk_offset2;
 
-    mp4ff_chunk_of_sample(f, track, sample, &chunk_sample, &chunk);
+    if (mp4ff_chunk_of_sample(f, track, sample, &chunk_sample, &chunk) < 0) {
+        return -1;
+    }
 
     chunk_offset1 = mp4ff_chunk_to_offset(f, track, chunk);
     chunk_offset2 = chunk_offset1 + mp4ff_sample_range_size(f, track, chunk_sample, sample);

@@ -99,7 +99,6 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
         block->size = 0;
         block->first = 1;
         block->last = 1;
-        pl_item_ref (track);
         block->track = track;
         _firstblock = 1;
         return 0;
@@ -137,7 +136,6 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
     block->pos = 0;
     block->size = rb;
     memcpy (&block->fmt, &fileinfo->fmt, sizeof (ddb_waveformat_t));
-    pl_item_ref (track);
     block->track = track;
 
     int input_does_rg = fileinfo->plugin->plugin.flags & DDB_PLUGIN_FLAG_REPLAYGAIN;
@@ -195,7 +193,6 @@ void
 streamreader_next_block (void) {
     if (block_data) {
         block_data->pos = -1;
-        pl_item_unref (block_data->track);
         block_data->track = NULL;
         block_data->queued = 0;
 
@@ -221,7 +218,6 @@ streamreader_reset (void) {
     while (b) {
         b->pos = -1;
         if (b->track) {
-            pl_item_unref (b->track);
             b->track = NULL;
         }
         b->queued = 0;

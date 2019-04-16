@@ -51,7 +51,7 @@
         [menu insertItemWithTitle:@"Cut" action:@selector(widgetCut:) keyEquivalent:@"" atIndex:2];
         [menu insertItemWithTitle:@"Copy" action:@selector(widgetCopy:) keyEquivalent:@"" atIndex:3];
         [menu insertItemWithTitle:@"Paste" action:@selector(widgetPaste:) keyEquivalent:@"" atIndex:4];
-        [menu setDelegate:(id<NSMenuDelegate>)self];
+        menu.delegate = self;
         [self setMenu:menu];
 #endif
     }

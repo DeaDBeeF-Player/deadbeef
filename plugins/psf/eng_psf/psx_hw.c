@@ -1991,6 +1991,8 @@ void psx_iop_call(mips_cpu_context *cpu, uint32 pc, uint32 callnum)
 	union cpuinfo mipsinfo;
 	int i;
 
+	memset (out, 0, sizeof (out));
+
 //	printf("IOP call @ %08x\n", pc);
 
 	// prefetch parameters

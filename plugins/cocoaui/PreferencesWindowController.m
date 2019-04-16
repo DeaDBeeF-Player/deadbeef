@@ -47,7 +47,12 @@ extern DB_functions_t *deadbeef;
 - (void)windowDidLoad {
     [super windowDidLoad];
 
-    [_toolbar setDelegate:(id<NSToolbarDelegate>)self];
+    // dsp
+    _dspChainDataSource = [[DSPChainDataSource alloc] initWithChain:deadbeef->streamer_get_dsp_chain () domain:@"preferences"];
+    _dspList.dataSource = _dspChainDataSource;
+    [_dspList registerForDraggedTypes: [NSArray arrayWithObjects: _dspChainDataSource.dspNodeDraggedItemType, nil]];
+
+    _toolbar.delegate = self;
     [_toolbar setSelectedItemIdentifier:@"Playback"];
 
     NSError *error;
@@ -84,8 +89,8 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)initPluginList {
-    [_pluginList setDataSource:(id<NSTableViewDataSource>)self];
-    [_pluginList setDelegate:(id<NSTableViewDelegate>)self];
+    _pluginList.dataSource = self;
+    _pluginList.delegate = self;
     [self setPluginInfo:-1];
 }
 
@@ -115,10 +120,6 @@ extern DB_functions_t *deadbeef;
     [_ignore_archives setState: deadbeef->conf_get_int ("ignore_archives", 1) ? NSOnState : NSOffState];
     [_stop_after_current_reset setState: deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0) ? NSOnState : NSOffState];
     [_stop_after_album_reset setState: deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0) ? NSOnState : NSOffState];
-
-    // dsp
-    _dspChainDataSource = [[DSPChainDataSource alloc] initWithChain:deadbeef->streamer_get_dsp_chain ()];
-    [_dspList setDataSource:(id<NSTableViewDataSource>)_dspChainDataSource];
 
 
     // gui/misc -> player
@@ -242,7 +243,7 @@ extern DB_functions_t *deadbeef;
 
 - (NSMenu *)getDSPMenu {
     NSMenu *menu = [[NSMenu alloc] initWithTitle:@"DspChainMenu"];
-    [menu setDelegate:(id<NSMenuDelegate>)self];
+    menu.delegate = self;
     [menu setAutoenablesItems:NO];
 
     DB_dsp_t **plugins = deadbeef->plug_get_dsp_list ();
@@ -260,10 +261,20 @@ extern DB_functions_t *deadbeef;
     DB_dsp_t **plugins = deadbeef->plug_get_dsp_list ();
 
     for (int i = 0; plugins[i]; i++) {
-        if (!strcmp (plugins[i]->plugin.name, name))
-        {
-            [_dspChainDataSource addItem:plugins[i]];
-            [_dspList reloadData];
+        if (!strcmp (plugins[i]->plugin.name, name)) {
+            id<NSTableViewDataSource> ds = _dspChainDataSource;
+            NSInteger cnt = [ds numberOfRowsInTableView:_dspList];
+            NSInteger index = [_dspList selectedRow];
+            if (index < 0) {
+                index = cnt;
+            }
+
+            NSIndexSet *is = [NSIndexSet indexSetWithIndex:index];
+            [_dspList beginUpdates];
+            [_dspList insertRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideDown];
+            [_dspList endUpdates];
+            [_dspChainDataSource addItem:plugins[i] atIndex:index];
+            [_dspList selectRowIndexes:is byExtendingSelection:NO];
             break;
         }
     }
@@ -280,8 +291,11 @@ extern DB_functions_t *deadbeef;
         return;
     }
 
+    [_dspList beginUpdates];
+    NSIndexSet *is = [NSIndexSet indexSetWithIndex:index];
+    [_dspList removeRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideUp];
+    [_dspList endUpdates];
     [_dspChainDataSource removeItemAtIndex:(int)index];
-    [_dspList reloadData];
 
     if (index >= [_dspList numberOfRows]) {
         index--;
@@ -385,12 +399,14 @@ extern DB_functions_t *deadbeef;
     }
 
     [_pluginVersion setStringValue:version];
+    NSAttributedString *str = [[NSAttributedString alloc] initWithString:description attributes:@{NSForegroundColorAttributeName:[NSColor controlTextColor]}];
+    [[_pluginDescription textStorage] setAttributedString:str];
     [_pluginDescription setString:description];
     [_pluginLicense setString:license];
 }
 
 // data source for plugin list
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView {
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView {
     DB_plugin_t **p = deadbeef->plug_get_list();
     int cnt;
     for (cnt = 0; p[cnt]; cnt++);
@@ -398,7 +414,7 @@ extern DB_functions_t *deadbeef;
     return cnt;
 }
 
-- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex {
+- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
     DB_plugin_t **p = deadbeef->plug_get_list();
 
     return [NSString stringWithUTF8String: p[rowIndex]->name];

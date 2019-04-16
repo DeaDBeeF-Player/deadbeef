@@ -36,6 +36,27 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
+// specific directories
+#ifdef __MINGW32__
+#define HOMEDIR "USERPROFILE"
+#define LOCALDIR "XDG_LOCAL_HOME"
+#define CONFIGDIR "APPDATA"
+#define CACHEDIR "LOCALAPPDATA"
+#define RUNTIMEDIR "NORUNTIMEDIR"
+// used in plugins.c (%s is home directory, %d is arch bit number)
+#define LOCAL_PLUGINS_DIR "%s/AppData/Roaming/deadbeef/plugins"
+#define LOCAL_ARCH_PLUGINS_DIR "%s/AppData/Roaming/deadbeef/plugins%d"
+#else
+#define HOMEDIR "HOME"
+#define LOCALDIR "XDG_LOCAL_HOME"
+#define CONFIGDIR "XDG_CONFIG_HOME"
+#define CACHEDIR "XDG_CACHE_HOME"
+#define RUNTIMEDIR "XDG_RUNTIME_DIR"
+// used in plugins.c (%s is home directory, %d is arch bit number)
+#define LOCAL_PLUGINS_DIR "%s/.local/lib/deadbeef"
+#define LOCAL_ARCH_PLUGINS_DIR "%s/.local/lib%d/deadbeef"
+#endif
+
 // those are defined in main.c
 extern char confdir[PATH_MAX]; // $HOME/.config
 extern char dbconfdir[PATH_MAX]; // $HOME/.config/deadbeef

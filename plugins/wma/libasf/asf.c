@@ -215,7 +215,7 @@ int asf_read_packet(uint8_t** audiobuf, int* audiobufsize, int* packetlength,
         bufsize = 0;
     }
     if (bufsize == 0) {
-        buf = NULL;
+        return -1;
     }
 
     bufsize = length;
@@ -413,7 +413,7 @@ int asf_get_timestamp(int *duration, DB_FILE *fp)
 /*entry point for seeks*/
 int asf_seek(int ms, asf_waveformatex_t* wfx, DB_FILE *fp, int64_t first_frame_offset, int *skip_ms)
 {
-    int time, duration, delta, temp, count=0;
+    int time, duration=0, delta, temp, count=0;
 
     /*estimate packet number from bitrate*/
     int64_t datasize = deadbeef->fgetlength (fp) - first_frame_offset;

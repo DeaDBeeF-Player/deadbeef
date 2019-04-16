@@ -28,7 +28,7 @@
 #define DEFAULT_TITLEBAR_PLAYING_VALUE "%artist% - %title% - DeaDBeeF-%_deadbeef_version%"
 #define DEFAULT_TITLEBAR_STOPPED_VALUE "DeaDBeeF-%_deadbeef_version%"
 
-@interface PreferencesWindowController : NSWindowController
+@interface PreferencesWindowController : NSWindowController<NSToolbarDelegate,NSTableViewDelegate,NSTableViewDataSource,NSMenuDelegate>
 @property (strong) IBOutlet NSView *playbackView;
 @property (strong) IBOutlet NSView *dspView;
 @property (strong) IBOutlet NSView *guiView;

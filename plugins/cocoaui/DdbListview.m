@@ -352,6 +352,7 @@ int grouptitleheight = 22;
             rc = [sv documentVisibleRect];
             scroll += rc.origin.x;
             _dragPt.x -= scroll;
+            [listview reloadData];
         }
     }
     else if (_dragging != [delegate invalidColumn]) {
@@ -546,6 +547,7 @@ int grouptitleheight = 22;
                 [delegate drawAlbumArtForGroup:grp groupIndex:groupIndex inColumn:col isPinnedGroup:isPinnedGroup nextGroupCoord:grp_next_y xPos:x yPos:y viewportY:viewportY width:w height:grp->height];
             }
         }
+        x += w;
     }
 }
 
@@ -896,7 +898,6 @@ int grouptitleheight = 22;
 @end
 
 @implementation DdbListview {
-    id<DdbListviewDelegate> _delegate;
     DdbListviewGroup_t *_groups;
     int _grouptitle_height;
     int groups_build_idx;
@@ -989,7 +990,7 @@ int grouptitleheight = 22;
 
     NSScrollView *sv = [contentView enclosingScrollView];
     NSRect vis = [sv documentVisibleRect];
-    if ([(NSObject *)_delegate respondsToSelector:@selector(scrollChanged:)]) {
+    if ([_delegate respondsToSelector:@selector(scrollChanged:)]) {
         [_delegate scrollChanged:vis.origin.y];
     }
 }
@@ -1049,7 +1050,7 @@ int grouptitleheight = 22;
     int min_height= 0;
     for (DdbListviewCol_t c = [_delegate firstColumn]; c != [_delegate invalidColumn]; c = [_delegate nextColumn:c]) {
         if ([_delegate columnMinHeight:c] && [_delegate columnWidth:c] > min_height) {
-            min_height = [_delegate columnWidth:c];
+            min_height = [_delegate columnGroupHeight:c];
         }
         _fullwidth += [_delegate columnWidth:c];
     }
@@ -1653,32 +1654,27 @@ int grouptitleheight = 22;
         [_delegate unrefRow:row];
     }
 
-    BOOL need_redraw = YES;
     if (!noscroll) {
-        if ([self setScrollForPos:[self getRowPos:cursor]]) {
-            need_redraw = NO;
-        }
+        [self setScrollForPos:[self getRowPos:cursor]];
     }
-    if (need_redraw) {
-        [contentView setNeedsDisplay:YES];
-    }
+    [contentView setNeedsDisplay:YES];
 }
 
+// returns YES if scroll has occured as result of changing the cursor position
 - (BOOL)setScrollForPos:(int)pos {
     NSScrollView *sv = [contentView enclosingScrollView];
     NSRect vis = [sv documentVisibleRect];
     int scrollpos = vis.origin.y;
-    int cursor_scroll = pos;
     int newscroll = scrollpos;
 
-    if (![_delegate pinGroups] && cursor_scroll < scrollpos) {
-        newscroll = cursor_scroll;
+    if (![_delegate pinGroups] && pos < scrollpos) {
+        newscroll = pos;
     }
-    else if ([_delegate pinGroups] && cursor_scroll < scrollpos + _grouptitle_height) {
-        newscroll = cursor_scroll - _grouptitle_height;
+    else if ([_delegate pinGroups] && pos < scrollpos + _grouptitle_height) {
+        newscroll = pos - _grouptitle_height;
     }
-    else if (cursor_scroll + rowheight >= scrollpos + vis.size.height) {
-        newscroll = cursor_scroll + rowheight - vis.size.height + 1;
+    else if (pos + rowheight >= scrollpos + vis.size.height) {
+        newscroll = pos + rowheight - vis.size.height;
         if (newscroll < 0) {
             newscroll = 0;
         }
@@ -1721,14 +1717,6 @@ int grouptitleheight = 22;
     NSScrollView *sv = [contentView enclosingScrollView];
     NSRect vis = [sv documentVisibleRect];
     [contentView scrollPoint:NSMakePoint(vis.origin.x, scroll)];
-}
-
-- (id<DdbListviewDelegate>)delegate {
-    return _delegate;
-}
-
-- (void)setDelegate:(id<DdbListviewDelegate>)delegate {
-    _delegate = delegate;
 }
 
 @end

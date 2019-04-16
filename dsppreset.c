@@ -46,7 +46,7 @@ dsp_preset_load (const char *fname, ddb_dsp_context_t **head) {
         return -1;
     }
     int err = 1;
-    FILE *fp = fopen (fname, "rt");
+    FILE *fp = fopen (fname, "rb");
     if (!fp) {
         return -1;
     }
@@ -122,7 +122,7 @@ error:
 
 int
 dsp_preset_save (const char *path, ddb_dsp_context_t *head) {
-    FILE *fp = fopen (path, "w+t");
+    FILE *fp = fopen (path, "w+b");
     if (!fp) {
         return -1;
     }

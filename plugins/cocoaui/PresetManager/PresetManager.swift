@@ -27,7 +27,7 @@ struct PresetData {
     var extraProperties : [String:Any]?
 }
 
-protocol PresetManagerDelegate {
+protocol PresetManagerDelegate: class {
     // For when the names need to be reformatted before display
     func getDisplayName (index: Int) throws -> String?
 
@@ -67,7 +67,7 @@ class PresetSerializerJSON : PresetSerializer {
     var data : [PresetData]
     var domain : String
     var context : String
-    var delegate : PresetManagerDelegate?
+    weak var delegate : PresetManagerDelegate?
     var serializer : PresetSerializer
 
     var selectedPreset : Int = -1

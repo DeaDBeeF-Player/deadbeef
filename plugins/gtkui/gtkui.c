@@ -401,14 +401,27 @@ gtkui_titlebar_tf_init (void) {
     deadbeef->conf_get_str ("gtkui.titlebar_stopped_tf", gtkui_default_titlebar_stopped, fmt, sizeof (fmt));
     titlebar_stopped_bc = deadbeef->tf_compile (fmt);
 
-    const char statusbar_tf_with_seltime[] = "$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length% | %selection_playback_time% selection playtime";
-    const char statusbar_tf[] = "$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length%";
+    static const char statusbar_tf_with_seltime_fmt[] = "$if2($strcmp(%%ispaused%%,),%s | )$if2($upper(%%codec%%),-) |[ %%playback_bitrate%% kbps |][ %%samplerate%%Hz |][ %%:BPS%% %s |][ %%channels%% |] %%playback_time%% / %%length%% | %%selection_playback_time%% %s";
 
-    const char statusbar_stopped_tf_with_seltime[] = "Stopped | %selection_playback_time% selection playtime";
-    const char statusbar_stopped_tf[] = "Stopped";
+    static const char statusbar_tf_fmt[] = "$if2($strcmp(%%ispaused%%,),%s | )$if2($upper(%%codec%%),-) |[ %%playback_bitrate%% kbps |][ %%samplerate%%Hz |][ %%:BPS%% %s |][ %%channels%% |] %%playback_time%% / %%length%%";
 
-    statusbar_bc = deadbeef->tf_compile (deadbeef->conf_get_int ("gtkui.statusbar_seltime", 0) ? statusbar_tf_with_seltime : statusbar_tf);
-    statusbar_stopped_bc = deadbeef->tf_compile (deadbeef->conf_get_int ("gtkui.statusbar_seltime", 0) ? statusbar_stopped_tf_with_seltime : statusbar_stopped_tf);
+    const char statusbar_stopped_tf_with_seltime_fmt[] = "%s | %%selection_playback_time%% %s";
+    const char statusbar_stopped_tf_fmt[] = "%s";
+
+    char statusbar_tf[1024];
+    char statusbar_stopped_tf[1024];
+
+    if (deadbeef->conf_get_int ("gtkui.statusbar_seltime", 0)) {
+        snprintf (statusbar_tf, sizeof (statusbar_tf), statusbar_tf_with_seltime_fmt, _("Paused"), _("bit"), _("selection playtime"));
+        snprintf (statusbar_stopped_tf, sizeof (statusbar_stopped_tf), statusbar_stopped_tf_with_seltime_fmt, _("Stopped"), _("selection playtime"));
+    }
+    else {
+        snprintf (statusbar_tf, sizeof (statusbar_tf), statusbar_tf_fmt, _("Paused"), _("bit"));
+        snprintf (statusbar_stopped_tf, sizeof (statusbar_stopped_tf), statusbar_stopped_tf_fmt, _("Stopped"));
+    }
+
+    statusbar_bc = deadbeef->tf_compile (statusbar_tf);
+    statusbar_stopped_bc = deadbeef->tf_compile (statusbar_stopped_tf);
 }
 
 void

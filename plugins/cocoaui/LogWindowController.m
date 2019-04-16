@@ -32,7 +32,7 @@
 }
 
 - (void)appendText:(NSString *)text {
-    NSAttributedString* attr = [[NSAttributedString alloc] initWithString:text];
+    NSAttributedString* attr = [[NSAttributedString alloc] initWithString:text attributes:@{NSForegroundColorAttributeName:[NSColor controlTextColor]}];
 
     NSRect visibleRect = [_clipView documentVisibleRect];
     NSRect docRect = [_textView frame];
@@ -49,7 +49,7 @@
 }
 
 - (IBAction)clearAction:(id)sender {
-    _textView.string = @"";
+    [_textView.textStorage setAttributedString: [[NSAttributedString alloc] initWithString:@"" attributes:@{NSForegroundColorAttributeName:[NSColor controlTextColor]}]];
 }
 
 @end

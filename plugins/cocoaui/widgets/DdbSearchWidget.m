@@ -29,13 +29,19 @@ extern DB_functions_t *deadbeef;
 
 @implementation DdbSearchWidget
 
+@synthesize delegate = _delegate;
+
+- (id<DdbListviewDelegate>)delegate {
+    return _delegate;
+}
+
 - (void)setDelegate:(id<DdbListviewDelegate>) delegate {
     _delegate = delegate;
-    [_listview setDelegate:delegate];
+    _listview.delegate = delegate;
 }
 
 - (int)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
-    return [(DdbPlaylistViewController *)_delegate handleListviewMessage:_listview id:_id ctx:ctx p1:p1 p2:p2];
+    return _delegate ? [(DdbPlaylistViewController *)_delegate handleListviewMessage:_listview id:_id ctx:ctx p1:p1 p2:p2] : 0;
 }
 
 @end

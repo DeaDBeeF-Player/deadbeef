@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <development version="8000" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -11,8 +10,6 @@
             <connections>
                 <outlet property="buttonBar" destination="Q6A-xH-8bl" id="xdh-C7-jri"/>
                 <outlet property="playlistViewController" destination="9vD-D4-Hkc" id="q5O-bp-H6s"/>
-                <outlet property="renamePlaylistTitle" destination="4P3-F1-I64" id="hi5-uA-cY0"/>
-                <outlet property="renamePlaylistWindow" destination="dIi-bq-ybp" id="NYy-p3-ckT"/>
                 <outlet property="seekBar" destination="cFf-VJ-YO5" id="20Z-bb-Rt3"/>
                 <outlet property="statusBar" destination="Rek-dI-lyl" id="6Pu-H7-aOK"/>
                 <outlet property="tabStrip" destination="d3W-U7-VFA" id="Muq-bp-ETV"/>
@@ -22,7 +19,7 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window title="DeaDBeeF" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="mainwin" animationBehavior="default" id="zZI-9s-62b">
+        <window title="DeaDBeeF" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="mainwin" animationBehavior="default" tabbingMode="disallowed" id="zZI-9s-62b">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="507" height="168"/>
@@ -359,7 +356,7 @@ DQ
 </string>
                         </buttonCell>
                         <connections>
-                            <action selector="renamePlaylistOKAction:" target="-2" id="Zwa-PF-ZJi"/>
+                            <action selector="renamePlaylistOKAction:" target="d3W-U7-VFA" id="h4q-1v-Mbj"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" id="sfe-Nq-Txm">
@@ -373,7 +370,7 @@ Gw
 </string>
                         </buttonCell>
                         <connections>
-                            <action selector="renamePlaylistCancelAction:" target="-2" id="JGw-hi-nRg"/>
+                            <action selector="renamePlaylistCancelAction:" target="d3W-U7-VFA" id="sQU-Pg-egb"/>
                         </connections>
                     </button>
                 </subviews>
@@ -391,6 +388,8 @@ Gw
             </subviews>
             <connections>
                 <outlet property="hiddenVertLine" destination="qy6-ht-rWK" id="073-oD-WLB"/>
+                <outlet property="renamePlaylistTitle" destination="4P3-F1-I64" id="JrO-ly-Xx1"/>
+                <outlet property="renamePlaylistWindow" destination="dIi-bq-ybp" id="4cE-fC-a64"/>
             </connections>
             <point key="canvasLocation" x="-150" y="154"/>
         </customView>

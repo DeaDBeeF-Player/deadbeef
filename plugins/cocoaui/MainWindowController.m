@@ -235,36 +235,6 @@ static char sb_text[512];
     }
 }
 
-- (IBAction)renamePlaylistAction:(id)sender {
-    ddb_playlist_t *plt = deadbeef->plt_get_for_idx ([_tabStrip clickedTab]);
-    int l = deadbeef->plt_get_title (plt, NULL, 0);
-    char buf[l+1];
-    deadbeef->plt_get_title (plt, buf, (int)sizeof buf);
-    deadbeef->plt_unref (plt);
-    [_renamePlaylistTitle setStringValue:[NSString stringWithUTF8String:buf]];
-    [NSApp beginSheet:self.renamePlaylistWindow modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndRenamePlaylist:returnCode:contextInfo:) contextInfo:nil];
-}
-
-- (void)didEndRenamePlaylist:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    [sheet orderOut:self];
-
-    if (returnCode == NSOKButton) {
-        ddb_playlist_t *plt = deadbeef->plt_get_for_idx ([_tabStrip clickedTab]);
-        deadbeef->plt_set_title (plt, [[_renamePlaylistTitle stringValue] UTF8String]);
-        deadbeef->plt_save_config (plt);
-        deadbeef->plt_unref (plt);
-    }
-}
-
-- (IBAction)renamePlaylistCancelAction:(id)sender {
-    [NSApp endSheet:self.renamePlaylistWindow returnCode:NSCancelButton];
-}
-
-- (IBAction)renamePlaylistOKAction:(id)sender {
-    [NSApp endSheet:self.renamePlaylistWindow returnCode:NSOKButton];
-}
-
 - (void)updateVolumeBar {
     float range = -deadbeef->volume_get_min_db ();
     int vol = (deadbeef->volume_get_db () + range) / range * 100;

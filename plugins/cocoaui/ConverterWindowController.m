@@ -221,10 +221,11 @@ static NSMutableArray *g_converterControllers;
     
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     _converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id ("converter");
-    [_encoderPresetsTableView setDataSource:(id<NSTableViewDataSource>)self];
-    [_encoderPresetsTableView setDelegate:(id<NSTableViewDelegate>)self];
+
+    _encoderPresetsTableView.dataSource = self;
+    _encoderPresetsTableView.delegate = self;
     [self initializeWidgets];
-    [self.window setDelegate:(id<NSWindowDelegate>)self];
+    self.window.delegate = self;
 }
 
 - (IBAction)progressCancelAction:(id)sender {

@@ -23,7 +23,6 @@
 
 #include "../../deadbeef.h"
 #include <AudioUnit/AudioUnit.h>
-#include <CoreAudio/CoreAudio.h>
 #include <AudioToolbox/AudioToolbox.h>
 
 static DB_functions_t *deadbeef;
@@ -54,7 +53,12 @@ ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const A
 
 static int
 ca_free (void);
-
+static int
+ca_init (void);
+static int
+ca_play (void);
+static int
+ca_pause (void);
 
 static UInt32
 GetNumberAvailableNominalSampleRateRanges()
@@ -100,24 +104,19 @@ get_avail_samplerates(void)
     }
 }
 
-static int
-get_best_samplerate (int samplerate) {
-    // score1 = modulo -- 0 is best
-    // score2 = denominator -- 1 is perfect match
-    // score3 = distance
+int
+get_best_samplerate (int samplerate, int *avail_samplerates, int count) {
+    int64_t nearest = 0;
+    int index = -1;
 
-    int64_t highscore = 0;
-    int64_t index = -1;
+    for (int i = 0; i < count; i++) {
+        // score is based on distance and modulo, with slightly more weight put on distance
+        int64_t dist = llabs(avail_samplerates[i] - samplerate);
+        int64_t mod = samplerate > avail_samplerates[i] ? (samplerate % avail_samplerates[i]) : (avail_samplerates[i] % samplerate);
+        int64_t score = dist*2+mod;
 
-    for (int i = 0; i < num_avail_samplerates; i++) {
-        int64_t modulo = samplerate % avail_samplerates[i]; // 20 bit
-        int64_t denominator = samplerate / avail_samplerates[i]; // 7 bit
-        int64_t dist = abs(samplerate - avail_samplerates[i]); // 20 bit
-
-        int64_t score = (modulo<<27) | (denominator<<20) | dist;
-
-        if (index == -1 || score < highscore) {
-            highscore = score;
+        if (index == -1 || score < nearest) {
+            nearest = score;
             index = i;
         }
     }
@@ -132,7 +131,7 @@ ca_apply_format (void) {
     UInt32 sz;
     deadbeef->mutex_lock (mutex);
     if (req_format.mSampleRate > 0) {
-        req_format.mSampleRate = get_best_samplerate (req_format.mSampleRate);
+        req_format.mSampleRate = get_best_samplerate (req_format.mSampleRate, avail_samplerates, num_avail_samplerates);
 
         // setting nominal samplerate doesn't work in most cases, and requires some timing trickery
 #if 0
@@ -184,6 +183,22 @@ ca_apply_format (void) {
 error:
     deadbeef->mutex_unlock (mutex);
     return res;
+}
+
+OSStatus callbackFunction(AudioObjectID inObjectID,
+                          UInt32 inNumberAddresses,
+                          const AudioObjectPropertyAddress inAddresses[],
+                          void *inClientData) {
+    int st = state;
+    ca_free ();
+    ca_init ();
+    if (st == OUTPUT_STATE_PLAYING) {
+        ca_play();
+    }
+    else if (st == OUTPUT_STATE_PAUSED) {
+        ca_pause();
+    }
+    return noErr;
 }
 
 static int
@@ -256,6 +271,15 @@ ca_init (void) {
     }
 
     ca_fmtchanged(device_id, 1, &theAddress, NULL);
+
+    AudioObjectPropertyAddress outputDeviceAddress = {
+        kAudioHardwarePropertyDefaultOutputDevice,
+        kAudioObjectPropertyScopeGlobal,
+        kAudioObjectPropertyElementMaster
+    };
+    AudioObjectAddPropertyListener(kAudioObjectSystemObject,
+                                   &outputDeviceAddress,
+                                   &callbackFunction, nil);
 
     state = OUTPUT_STATE_STOPPED;
 

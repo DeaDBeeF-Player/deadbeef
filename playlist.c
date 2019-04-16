@@ -459,6 +459,12 @@ plt_remove (int plt) {
         prev = p;
         p = p->next;
     }
+
+    if (!p) {
+        UNLOCK;
+        return;
+    }
+
     streamer_notify_playlist_deleted (p);
     if (!plt_loading) {
         // move files (will decrease number of files by 1)
@@ -724,6 +730,11 @@ plt_move (int from, int to) {
         p = p->next;
     }
 
+    if (!pfrom) {
+        UNLOCK;
+        return;
+    }
+
     // shift files to fill the gap
     for (int i = from; i < playlists_count-1; i++) {
         char path2[PATH_MAX];
@@ -792,7 +803,6 @@ plt_move (int from, int to) {
                 pfrom->next = next;
                 break;
             }
-            prev = p;
             p = p->next;
         }
     }
@@ -963,6 +973,25 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
     }
     eol++;
 
+    #ifdef __MINGW32__
+    // replace backslashes with normal slashes
+    char fname_conv[strlen(fname)+1];
+    if (strchr(fname, '\\')) {
+        trace ("plt_insert_file_int: backslash(es) detected: %s\n", fname);
+        strcpy (fname_conv, fname);
+        char *slash_p = fname_conv;
+        while (slash_p = strchr(slash_p, '\\')) {
+            *slash_p = '/';
+            slash_p++;
+        }
+        fname = fname_conv;
+    }
+    // path should start with "X:/", not "/X:/", fixing to avoid file opening problems
+    if (fname[0] == '/' && isalpha(fname[1]) && fname[2] == ':') {
+        fname++;
+    }
+    #endif
+
     // handle cue files
     if (!strcasecmp (eol, "cue")) {
         playItem_t *inserted = plt_load_cue_file(playlist, after, fname, NULL, NULL, 0);
@@ -1114,6 +1143,25 @@ _get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *v
             }
         }
     }
+
+    #ifdef __MINGW32__
+    if (fullname && strchr(fullname, '\\')) {
+        char *slash_p = fullname;
+        while (slash_p = strchr(slash_p, '\\')) {
+            *slash_p = '/';
+            slash_p++;
+        }
+        trace ("_get_fullname_and_dir backslash(es) found, converted: %s\n", fullname);
+    }
+    if (dir && strchr(dir, '\\')) {
+        char *slash_p = dir;
+        while (slash_p = strchr(slash_p, '\\')) {
+            *slash_p = '/';
+            slash_p++;
+        }
+        trace ("_get_fullname_and_dir backslash(es) found, converted: %s\n", dir);
+    }
+    #endif
 }
 
 static playItem_t *
@@ -1121,6 +1169,25 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
     if (!strncmp (dirname, "file://", 7)) {
         dirname += 7;
     }
+
+    #ifdef __MINGW32__
+    // replace backslashes with normal slashes
+    char dirname_conv[strlen(dirname)+1];
+    if (strchr(dirname, '\\')) {
+        trace ("plt_insert_dir_int: backslash(es) detected: %s\n", dirname);
+        strcpy (dirname_conv, dirname);
+        char *slash_p = dirname_conv;
+        while (slash_p = strchr(slash_p, '\\')) {
+            *slash_p = '/';
+            slash_p++;
+        }
+        dirname = dirname_conv;
+    }
+    // path should start with "X:/", not "/X:/", fixing to avoid file opening problems
+    if (dirname[0] == '/' && isalpha(dirname[1]) && dirname[2] == ':') {
+        dirname++;
+    }
+    #endif
 
     if (!playlist->follow_symlinks && !vfs) {
         struct stat buf;
@@ -1144,9 +1211,12 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
     if (vfs && vfs->scandir) {
         n = vfs->scandir (dirname, &namelist, NULL, dirent_alphasort);
         // we can't rely on vfs plugins to set d_type
+        // windows: missing dirent[]->d_type
+        #ifndef __MINGW32__
         for (int i = 0; i < n; i++) {
             namelist[i]->d_type = DT_REG;
         }
+        #endif
     }
     else {
         n = scandir (dirname, &namelist, NULL, dirent_alphasort);
@@ -1164,7 +1234,12 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
 
     for (int i = 0; i < n; i++) {
         // no hidden files
+        // windows: missing dirent[]->d_type
+        #ifdef __MINGW32__
+        if (namelist[i]->d_name[0] == '.') {
+        #else
         if (namelist[i]->d_name[0] == '.' || (namelist[i]->d_type != DT_REG && namelist[i]->d_type != DT_UNKNOWN)) {
+        #endif
             continue;
         }
 

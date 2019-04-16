@@ -38,7 +38,7 @@
 #ifdef __linux__
 #include <sys/prctl.h>
 #endif
-#ifndef __linux__
+#if !defined(__linux__) && !defined(_POSIX_C_SOURCE)
 #define _POSIX_C_SOURCE 1
 #endif
 #include <limits.h>
@@ -46,11 +46,25 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/types.h>
+
+// #define USE_INET_SOCKET
+#define DEFAULT_LISTENING_PORT 48879
+
+#ifdef __MINGW32__
+#define USE_INET_SOCKET
+#include <winsock2.h>
+#else
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <sys/un.h>
-#include <sys/fcntl.h>
 #include <sys/errno.h>
+#ifdef USE_INET_SOCKET
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#endif
+#endif
+
+#include <sys/fcntl.h>
 #include <signal.h>
 #ifdef __GLIBC__
 #include <execinfo.h>
@@ -79,6 +93,8 @@
 
 #ifdef HAVE_COCOAUI
 #define SYS_CONFIG_DIR "Library/Preferences"
+#elif defined(__MINGW32__)
+#define SYS_CONFIG_DIR "AppData/Roaming"
 #else
 #define SYS_CONFIG_DIR ".config"
 #endif
@@ -435,18 +451,109 @@ add_paths(const char *paths, int len, int queue, char *sendback, int sbsize) {
     return 0;
 }
 
-static struct sockaddr_un srv_local;
-static struct sockaddr_un srv_remote;
-static unsigned srv_socket;
-
 #if USE_ABSTRACT_SOCKET_NAME
 static char server_id[] = "\0deadbeefplayer";
 #endif
 
+static unsigned srv_socket;
+
+#ifdef USE_INET_SOCKET
+static struct sockaddr_in srv_local;
+static struct sockaddr_in srv_remote;
+
+int db_socket_init_inet () {
+#ifdef __MINGW32__
+    // initiate winsock
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0) {
+        trace_err ("Error with WSAStartup(), WinSock startup failed.\n");
+        return -1;
+    }
+    else {
+        trace ("WinSock init ok, library version %d.%d\n", HIBYTE(wsaData.wVersion), LOBYTE(wsaData.wVersion));
+    }
+#endif
+
+    return 0;
+}
+
+int db_socket_set_inet (struct sockaddr_in *remote, int *len) {
+    int s;
+    if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror("socket");
+        exit(1);
+    }
+
+    memset (remote, 0, sizeof (*remote));
+
+    remote->sin_family      = AF_INET;
+    remote->sin_addr.s_addr = inet_addr("127.0.0.1");
+    remote->sin_port        = htons(DEFAULT_LISTENING_PORT);
+
+    *len = sizeof(*remote);
+
+    return s;
+}
+
+#else
+static struct sockaddr_un srv_local;
+static struct sockaddr_un srv_remote;
+
+int db_socket_set_unix (struct sockaddr_un *remote, int *len) {
+    int s;
+    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+        perror("socket");
+        exit(1);
+    }
+
+    memset (remote, 0, sizeof (remote));
+    remote->sun_family = AF_UNIX;
+
+#if USE_ABSTRACT_SOCKET_NAME
+    memcpy (remote->sun_path, server_id, sizeof (server_id));
+    *len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
+#else
+    char *socketdirenv = getenv ("DDB_SOCKET_DIR");
+    snprintf (remote->sun_path, sizeof (remote->sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
+    *len = offsetof(struct sockaddr_un, sun_path) + strlen (remote->sun_path);
+#endif
+    return s;
+}
+#endif
+
+void db_socket_close (int s) {
+#ifdef __MINGW32__
+    closesocket (s);
+#else
+    close (s);
+#endif
+}
+
 int
 server_start (void) {
+    int len;
+
     trace ("server_start\n");
-    srv_socket = socket (AF_UNIX, SOCK_STREAM, 0);
+
+#ifdef USE_INET_SOCKET
+    srv_socket = db_socket_set_inet (&srv_local, &len);
+
+#ifdef __MINGW32__
+    unsigned long flags = 1;
+    if (ioctlsocket(srv_socket, FIONBIO, &flags) == SOCKET_ERROR) {
+        perror ("ioctlsocket FIONBIO");
+        return -1;
+    }
+#endif
+#else
+    srv_socket = db_socket_set_unix (&srv_local, &len);
+#ifndef USE_ABSTRACT_SOCKET_NAME
+    if (unlink(srv_local.sun_path) < 0) {
+        perror ("INFO: unlink socket");
+    }
+    len = offsetof(struct sockaddr_un, sun_path) + strlen (srv_local.sun_path);
+#endif
+
     int flags;
     flags = fcntl (srv_socket, F_GETFL,0);
     if (flags == -1) {
@@ -457,20 +564,11 @@ server_start (void) {
         perror ("fcntl F_SETFL");
         return -1;
     }
-    memset (&srv_local, 0, sizeof (srv_local));
-    srv_local.sun_family = AF_UNIX;
-
-#if USE_ABSTRACT_SOCKET_NAME
-    memcpy (srv_local.sun_path, server_id, sizeof (server_id));
-    unsigned int len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
-#else
-    char *socketdirenv = getenv ("DDB_SOCKET_DIR");
-    snprintf (srv_local.sun_path, sizeof (srv_local.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbruntimedir);
-    if (unlink(srv_local.sun_path) < 0) {
-        perror ("INFO: unlink socket");
-    }
-    unsigned int len = (unsigned int)(offsetof(struct sockaddr_un, sun_path) + strlen (srv_local.sun_path));
 #endif
+
+    if (len == -1) {
+        return -1;
+    }
 
     if (bind(srv_socket, (struct sockaddr *)&srv_local, len) < 0) {
         perror ("bind");
@@ -487,7 +585,7 @@ server_start (void) {
 void
 server_close (void) {
     if (srv_socket) {
-        close (srv_socket);
+        db_socket_close (srv_socket);
         srv_socket = 0;
     }
 }
@@ -559,7 +657,7 @@ server_update (void) {
         else {
             send (s2, "", 1, 0);
         }
-        close(s2);
+        db_socket_close(s2);
 
         if (buf) {
             free(buf);
@@ -942,7 +1040,7 @@ main (int argc, char *argv[]) {
     prctl (PR_SET_NAME, "deadbeef-main", 0, 0, 0, 0);
 #endif
 
-    char *homedir = getenv ("HOME");
+    char *homedir = getenv (HOMEDIR);
     if (!homedir) {
         trace_err ("unable to find home directory. stopping.\n");
         return -1;
@@ -957,7 +1055,7 @@ main (int argc, char *argv[]) {
         strcpy (dbconfdir, confdir);
     }
     else {
-        char *xdg_conf_dir = getenv ("XDG_CONFIG_HOME");
+        char *xdg_conf_dir = getenv (CONFIGDIR);
         if (xdg_conf_dir) {
             if (snprintf (confdir, sizeof (confdir), "%s", xdg_conf_dir) > sizeof (confdir)) {
                 trace_err ("fatal: XDG_CONFIG_HOME value is too long: %s\n", xdg_conf_dir);
@@ -986,7 +1084,7 @@ main (int argc, char *argv[]) {
         }
     }
     else {
-        const char *xdg_cache = getenv ("XDG_CACHE_HOME");
+        const char *xdg_cache = getenv (CACHEDIR);
         if (xdg_cache) {
             if (snprintf (dbcachedir, sizeof (dbcachedir), "%s/deadbeef/", xdg_cache) > sizeof (dbcachedir)) {
                 trace_err ("fatal: cache path is too long: %s\n", dbcachedir);
@@ -1002,7 +1100,7 @@ main (int argc, char *argv[]) {
     }
 
     // Get runtime directory
-    const char *xdg_runtime = getenv ("XDG_RUNTIME_DIR");
+    const char *xdg_runtime = getenv (RUNTIMEDIR);
     if (xdg_runtime)
     {
         if (snprintf(dbruntimedir, sizeof (dbruntimedir), "%s/deadbeef/", xdg_runtime) >= sizeof (dbruntimedir)) {
@@ -1020,7 +1118,7 @@ main (int argc, char *argv[]) {
     if (env_plugin_dir) {
         strncpy (dbplugindir, env_plugin_dir, sizeof(dbplugindir));
         if (dbplugindir[sizeof(dbplugindir) - 1] != 0) {
-            fprintf (stderr, "fatal: plugin path is too long: %s\n", env_plugin_dir);
+            trace_err ("fatal: plugin path is too long: %s\n", env_plugin_dir);
             return -1;
         }
     }
@@ -1055,7 +1153,7 @@ main (int argc, char *argv[]) {
     }
     else {
         if (snprintf (dbdocdir, sizeof (dbdocdir), "%s", DOCDIR) > sizeof (dbdocdir)) {
-            fprintf (stderr, "fatal: install path is too long: %s\n", dbinstalldir);
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
         if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/share/deadbeef/pixmaps", PREFIX) > sizeof (dbpixmapdir)) {
@@ -1098,22 +1196,15 @@ main (int argc, char *argv[]) {
     // try to connect to remote player
     int s;
     unsigned int len;
-    struct sockaddr_un remote;
-
-    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        perror("socket");
-        exit(1);
+#ifdef USE_INET_SOCKET
+    struct sockaddr_in remote;
+    if (db_socket_init_inet() < 0) {
+        exit (-1);
     }
-
-    memset (&remote, 0, sizeof (remote));
-    remote.sun_family = AF_UNIX;
-#if USE_ABSTRACT_SOCKET_NAME
-    memcpy (remote.sun_path, server_id, sizeof (server_id));
-    len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
+    s = db_socket_set_inet (&remote, &len);
 #else
-    char *socketdirenv = getenv ("DDB_SOCKET_DIR");
-    snprintf (remote.sun_path, sizeof (remote.sun_path), "%s/socket", socketdirenv ? socketdirenv : dbruntimedir);
-    len = (unsigned int)(offsetof(struct sockaddr_un, sun_path) + strlen (remote.sun_path));
+    struct sockaddr_un remote;
+    s = db_socket_set_unix (&remote, &len);
 #endif
     if (connect(s, (struct sockaddr *)&remote, len) == 0) {
         // pass args to remote and exit
@@ -1147,13 +1238,13 @@ main (int argc, char *argv[]) {
         if (out) {
             free (out);
         }
-        close (s);
+        db_socket_close (s);
         exit (0);
     }
 //    else {
 //        perror ("INFO: failed to connect to existing session:");
 //    }
-    close(s);
+    db_socket_close(s);
 
     // become a server
     if (server_start () < 0) {

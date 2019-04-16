@@ -138,7 +138,7 @@ static int ifdopen(vfs68_t * vfs)
   imode |= _O_BINARY;
 #endif
 
-  isf->fd = open(isf->name, imode);
+  isf->fd = open(isf->name, imode, 0644);
   return -(isf->fd == -1);
 }
 

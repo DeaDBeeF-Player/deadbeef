@@ -331,7 +331,7 @@ pl_find_meta (playItem_t *it, const char *key) {
 
     m = it->meta;
     while (m) {
-        if (!strcasecmp (key, m->key)) {
+        if (key && !strcasecmp (key, m->key)) {
             return m->value;
         }
         m = m->next;

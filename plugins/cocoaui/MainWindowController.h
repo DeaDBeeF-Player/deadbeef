@@ -41,12 +41,6 @@
 @property (unsafe_unretained) IBOutlet NSSegmentedControl *buttonBar;
 
 - (IBAction)tbClicked:(id)sender;
-@property (strong) IBOutlet NSPanel *renamePlaylistWindow;
-@property (unsafe_unretained) IBOutlet NSTextField *renamePlaylistTitle;
-- (IBAction)renamePlaylistCancelAction:(id)sender;
-- (IBAction)renamePlaylistOKAction:(id)sender;
-
-- (IBAction)renamePlaylistAction:(id)sender;
 
 - (void)updateVolumeBar;
 - (void)updateTitleBarConfig;
