@@ -1806,6 +1806,29 @@ process_query (const char *filepath, const char *album, const char *artist, ddb_
 
     int islocal = deadbeef->is_local_file (filepath);
 
+    if (artwork_enable_local && islocal) {
+        char *fname_copy = strdup (filepath);
+        if (fname_copy) {
+            char *vfs_fname = vfs_path (fname_copy);
+            if (vfs_fname) {
+                /* Search inside scannable VFS containers */
+                DB_vfs_t *plugin = scandir_plug (vfs_fname);
+                if (plugin && !local_image_file (vfs_fname, fname_copy, plugin, cover)) {
+                    free (fname_copy);
+                    return 1;
+                }
+            }
+
+            /* Search in file directory */
+            if (!local_image_file (dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL, cover)) {
+                free (fname_copy);
+                return 1;
+            }
+
+            free (fname_copy);
+        }
+    }
+
     if (artwork_enable_embedded && islocal) {
 #ifdef USE_METAFLAC
         // try to load embedded from flac metadata
@@ -1834,29 +1857,6 @@ process_query (const char *filepath, const char *album, const char *artist, ddb_
             return 1;
         }
 #endif
-    }
-
-    if (artwork_enable_local && islocal) {
-        char *fname_copy = strdup (filepath);
-        if (fname_copy) {
-            char *vfs_fname = vfs_path (fname_copy);
-            if (vfs_fname) {
-                /* Search inside scannable VFS containers */
-                DB_vfs_t *plugin = scandir_plug (vfs_fname);
-                if (plugin && !local_image_file (vfs_fname, fname_copy, plugin, cover)) {
-                    free (fname_copy);
-                    return 1;
-                }
-            }
-
-            /* Search in file directory */
-            if (!local_image_file (dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL, cover)) {
-                free (fname_copy);
-                return 1;
-            }
-
-            free (fname_copy);
-        }
     }
 
     if (!cache_path) {
