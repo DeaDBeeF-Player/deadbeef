@@ -489,9 +489,12 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
                     gtk_range_set_inverted (GTK_RANGE (prop), TRUE);
                 }
                 gtk_range_set_value (GTK_RANGE (prop), (gdouble)atof (value));
-                gtk_scale_set_value_pos (GTK_SCALE (prop), GTK_POS_RIGHT);
+                gtk_scale_set_value_pos (GTK_SCALE (prop), vertical?GTK_POS_BOTTOM:GTK_POS_RIGHT);
             }
             label = gtk_label_new (_(labeltext));
+            if (vertical) {
+                gtk_label_set_angle(GTK_LABEL(label), 270);
+            }
             gtk_widget_show (label);
             g_signal_connect (G_OBJECT (prop), "value-changed", G_CALLBACK (prop_changed), win);
             gtk_widget_show (prop);
@@ -522,7 +525,7 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
             g_object_set_data (G_OBJECT (win), key, prop);
         }
         if (cont) {
-            gtk_box_pack_start (GTK_BOX (widgets[ncurr]), cont, FALSE, FALSE, 0);
+            gtk_box_pack_start (GTK_BOX (widgets[ncurr]), cont, FALSE, TRUE, 0);
         }
     }
 
