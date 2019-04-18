@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Alexey Yakovenko <wakeroid@gmail.com>, 2013-2014,2016-2018
+# Alexey Yakovenko <wakeroid@gmail.com>, 2013-2014,2016-2019
 # AlexL <loginov.alex.valer@gmail.com>, 2016-2019
 # Andrei Stepanov, 2014
 # Andrei Stepanov <adem4ik@gmail.com>, 2014
@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-16 20:14+0200\n"
-"PO-Revision-Date: 2019-03-10 11:47+0000\n"
+"POT-Creation-Date: 2019-04-18 16:40+0200\n"
+"PO-Revision-Date: 2019-04-18 14:39+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/ru/)\n"
@@ -121,23 +121,20 @@ msgid "%d days %d:%02d:%02d"
 msgstr "%d дней %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:415 ../plugins/gtkui/gtkui.c:419
-#, fuzzy
 msgid "Paused"
-msgstr "Пауза"
+msgstr "Приостановлено"
 
 #: ../plugins/gtkui/gtkui.c:415 ../plugins/gtkui/gtkui.c:419
 msgid "bit"
-msgstr ""
+msgstr "бит"
 
 #: ../plugins/gtkui/gtkui.c:415 ../plugins/gtkui/gtkui.c:416
-#, fuzzy
 msgid "selection playtime"
-msgstr "Свойства выделенного"
+msgstr "время воспроизведения выделенного"
 
 #: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
-#, fuzzy
 msgid "Stopped"
-msgstr "Стоп"
+msgstr "Остановлено"
 
 #: ../plugins/gtkui/gtkui.c:683 ../translation/plugins.c:209
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
@@ -1847,7 +1844,7 @@ msgstr "Получать из Albumart.org"
 #: ../translation/plugins.c:29
 #, no-c-format
 msgid "Fetch from World of Spectrum (AY files only)"
-msgstr "Получать из Мирового спектрального анализатора (только файлы AY)"
+msgstr "Получать из World of Spectrum (только файлы AY)"
 
 #: ../translation/plugins.c:31
 #, no-c-format
@@ -1872,7 +1869,7 @@ msgstr "отображать пользовательское изображен
 #: ../translation/plugins.c:39
 #, no-c-format
 msgid "Custom image path"
-msgstr "Путь для пользовательского изображения"
+msgstr "Путь к пользовательскому изображению"
 
 #: ../translation/plugins.c:41
 #, no-c-format
@@ -1883,7 +1880,7 @@ msgstr "Масштабировать обложку относительно б�
 #: ../translation/plugins.c:44
 #, no-c-format
 msgid "Disable disk cache"
-msgstr "Отключить кеш диска"
+msgstr "Отключить дисковый кеш"
 
 #: ../translation/plugins.c:46
 #, no-c-format
@@ -1893,7 +1890,7 @@ msgstr "Сохранять извлечённые обложки в папки �
 #: ../translation/plugins.c:48
 #, no-c-format
 msgid "Local file mask"
-msgstr "Маска для локального файла"
+msgstr "Использовать CD-привод"
 
 #: ../translation/plugins.c:50
 #, no-c-format
@@ -1989,7 +1986,7 @@ msgstr "Максимум"
 #: ../translation/plugins.c:87
 #, no-c-format
 msgid "Use cdparanoia error correction when ripping"
-msgstr "Использовать коррекцию ошибок cdparanoia при разрыве"
+msgstr "Использовать коррекцию ошибок cdparanoia во время рипа"
 
 #. plugins/converter/convgui.c
 #: ../translation/plugins.c:90
@@ -2027,12 +2024,12 @@ msgstr "8-битный вывод (по-умолчанию 16)"
 #: ../translation/plugins.c:104
 #, no-c-format
 msgid "Internal DUMB volume (0..128)"
-msgstr "Внутренний объём DUMB (0..128)"
+msgstr "Внутренняя громкость DUMB (0..128)"
 
 #: ../translation/plugins.c:106
 #, no-c-format
 msgid "Volume ramping"
-msgstr "Увеличение громкости"
+msgstr "Интерполяция громкости"
 
 #: ../translation/plugins.c:110
 #, no-c-format
@@ -2140,7 +2137,7 @@ msgstr "Показать страницу справки"
 #: ../translation/plugins.c:165
 #, no-c-format
 msgid "Cycle Playback Looping Mode"
-msgstr "Циклический режим циклического воспроизведения"
+msgstr "Следующий режим повтора"
 
 #: ../translation/plugins.c:167
 #, no-c-format
@@ -2566,7 +2563,7 @@ msgstr "Остановить после текущего альбома"
 #: ../translation/plugins.c:357
 #, no-c-format
 msgid "Lookup On Last.fm"
-msgstr "Показать на Last.fm"
+msgstr "Найти на Last.fm"
 
 #: ../translation/plugins.c:359
 #, no-c-format
@@ -2601,12 +2598,12 @@ msgstr "Предпочитать поле \"Исполнитель Альбом�
 #: ../translation/plugins.c:371
 #, no-c-format
 msgid "Send MusicBrainz ID"
-msgstr "Отправить MusicBrainz ID"
+msgstr "Отправлять MusicBrainz ID"
 
 #: ../translation/plugins.c:373
 #, no-c-format
 msgid "Submit tracks shorter than 30 seconds (not recommended)"
-msgstr "Разместить треки менее 30 секунд (не рекомендуется)"
+msgstr "Отправлять треки короче 30 секунд (не рекомендуется)"
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:376
@@ -2623,12 +2620,12 @@ msgstr "Правый микс"
 #: ../translation/plugins.c:381
 #, no-c-format
 msgid "Force 16 bit output"
-msgstr "Принудительный 16-разрядный выход"
+msgstr "16-разрядный вывод принудительно"
 
 #: ../translation/plugins.c:383
 #, no-c-format
 msgid "Backend"
-msgstr "Внутренний интерфейс"
+msgstr "Бэкенд"
 
 #: ../translation/plugins.c:388
 #, no-c-format
@@ -2664,13 +2661,13 @@ msgstr "Подсветить текущий плейлист"
 #: ../translation/plugins.c:404
 #, no-c-format
 msgid "Play on double-click"
-msgstr "Воспроизводить на двойной щелчок"
+msgstr "Воспроизводить по двойному щелчку"
 
 #. plugins/pulse/pulse.c
 #: ../translation/plugins.c:407
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
-msgstr "Сервер PulseAudio (оставьте пустым по-умолчанию)"
+msgstr "Сервер PulseAudio (оставьте пустым для автоопределения)"
 
 #. plugins/sc68/in_sc68.c
 #: ../translation/plugins.c:410
@@ -3177,14 +3174,12 @@ msgid "All files (*)"
 msgstr "Все файлы (*)"
 
 #: ../plugins/gtkui/fileman.c:455 ../plugins/gtkui/fileman.c:499
-#, fuzzy
 msgid "Supported playlist formats"
-msgstr "Поддерживаемые звуковые форматы"
+msgstr "Поддерживаемые форматы плейлистов"
 
 #: ../plugins/gtkui/fileman.c:462
-#, fuzzy
 msgid "All files"
-msgstr "Все файлы (*)"
+msgstr "Все файлы"
 
 #: ../plugins/gtkui/fileman.c:505
 msgid "Other files (*)"
