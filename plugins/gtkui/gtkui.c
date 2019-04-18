@@ -1697,7 +1697,7 @@ static DB_plugin_action_t action_show_help = {
 };
 
 static DB_plugin_action_t action_playback_loop_cycle = {
-    .title = "Playback/Cycle Playback Looping Mode",
+    .title = "Playback/Cycle Repeat Mode",
     .name = "loop_cycle",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_loop_cycle_handler,
@@ -1705,7 +1705,7 @@ static DB_plugin_action_t action_playback_loop_cycle = {
 };
 
 static DB_plugin_action_t action_playback_loop_off = {
-    .title = "Playback/Playback Looping - Don't loop",
+    .title = "Playback/Repeat - Off",
     .name = "loop_off",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_loop_off_handler,
@@ -1713,7 +1713,7 @@ static DB_plugin_action_t action_playback_loop_off = {
 };
 
 static DB_plugin_action_t action_playback_loop_single = {
-    .title = "Playback/Playback Looping - Single track",
+    .title = "Playback/Repeat - Single Track",
     .name = "loop_track",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_loop_single_handler,
@@ -1721,7 +1721,7 @@ static DB_plugin_action_t action_playback_loop_single = {
 };
 
 static DB_plugin_action_t action_playback_loop_all = {
-    .title = "Playback/Playback Looping - All",
+    .title = "Playback/Repeat - All",
     .name = "loop_all",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_loop_all_handler,
@@ -1729,7 +1729,7 @@ static DB_plugin_action_t action_playback_loop_all = {
 };
 
 static DB_plugin_action_t action_playback_order_cycle = {
-    .title = "Playback/Cycle Playback Order",
+    .title = "Playback/Cycle Shuffle Mode",
     .name = "order_cycle",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_cycle_handler,
@@ -1737,7 +1737,7 @@ static DB_plugin_action_t action_playback_order_cycle = {
 };
 
 static DB_plugin_action_t action_playback_order_random = {
-    .title = "Playback/Playback Order - Random",
+    .title = "Playback/Shuffle - Random Tracks",
     .name = "order_random",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_random_handler,
@@ -1745,7 +1745,7 @@ static DB_plugin_action_t action_playback_order_random = {
 };
 
 static DB_plugin_action_t action_playback_order_shuffle_albums = {
-    .title = "Playback/Playback Order - Shuffle albums",
+    .title = "Playback/Shuffle - Albums",
     .name = "order_shuffle_albums",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_shuffle_albums_handler,
@@ -1753,7 +1753,7 @@ static DB_plugin_action_t action_playback_order_shuffle_albums = {
 };
 
 static DB_plugin_action_t action_playback_order_shuffle = {
-    .title = "Playback/Playback Order - Shuffle tracks",
+    .title = "Playback/Shuffle - Tracks",
     .name = "order_shuffle",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_shuffle_handler,
@@ -1761,7 +1761,7 @@ static DB_plugin_action_t action_playback_order_shuffle = {
 };
 
 static DB_plugin_action_t action_playback_order_linear = {
-    .title = "Playback/Playback Order - Linear",
+    .title = "Playback/Shuffle - Off",
     .name = "order_linear",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_linear_handler,
