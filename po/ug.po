@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-18 16:40+0200\n"
-"PO-Revision-Date: 2019-03-10 11:47+0000\n"
+"POT-Creation-Date: 2019-04-18 18:38+0200\n"
+"PO-Revision-Date: 2019-04-18 16:36+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Uighur (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/ug/)\n"
@@ -110,139 +110,141 @@ msgstr "1 كۈن %d:%02d:%02d"
 msgid "%d days %d:%02d:%02d"
 msgstr "%d كۈن %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:415 ../plugins/gtkui/gtkui.c:419
-#, fuzzy
-msgid "Paused"
-msgstr "ۋاقىتلىق توختا"
-
-#: ../plugins/gtkui/gtkui.c:415 ../plugins/gtkui/gtkui.c:419
-msgid "bit"
-msgstr ""
-
-#: ../plugins/gtkui/gtkui.c:415 ../plugins/gtkui/gtkui.c:416
-msgid "selection playtime"
+#: ../plugins/gtkui/gtkui.c:212
+msgid "total playtime"
 msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
-#, fuzzy
-msgid "Stopped"
-msgstr "توختا"
+msgid "Paused"
+msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:683 ../translation/plugins.c:209
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
+msgid "bit"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:417
+msgid "selection playtime"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:417 ../plugins/gtkui/gtkui.c:421
+msgid "Stopped"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:684 ../translation/plugins.c:209
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
 #, no-c-format
 msgid "New Playlist"
 msgstr "يېڭى قويۇش تىزىمى"
 
-#: ../plugins/gtkui/gtkui.c:686 ../plugins/pltbrowser/pltbrowser.c:75
+#: ../plugins/gtkui/gtkui.c:687 ../plugins/pltbrowser/pltbrowser.c:75
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "يېڭى قويۇش تىزىمى(%d)"
 
-#: ../plugins/gtkui/gtkui.c:743
+#: ../plugins/gtkui/gtkui.c:744
 #, c-format
 msgid "Copy of %s"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:746
+#: ../plugins/gtkui/gtkui.c:747
 #, c-format
 msgid "Copy of %s (%d)"
 msgstr ""
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1227
+#: ../plugins/gtkui/gtkui.c:1228
 msgid "Playlist with tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1228 ../plugins/gtkui/interface.c:2285
+#: ../plugins/gtkui/gtkui.c:1229 ../plugins/gtkui/interface.c:2285
 #: ../plugins/gtkui/interface.c:2730 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1231
+#: ../plugins/gtkui/gtkui.c:1232
 msgid "Splitter (top and bottom)"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1232
+#: ../plugins/gtkui/gtkui.c:1233
 msgid "Splitter (left and right)"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1234
+#: ../plugins/gtkui/gtkui.c:1235
 msgid "Tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1235
+#: ../plugins/gtkui/gtkui.c:1236
 msgid "Playlist tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1236
+#: ../plugins/gtkui/gtkui.c:1237
 msgid "Selection properties"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1237
+#: ../plugins/gtkui/gtkui.c:1238
 msgid "Album art display"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1238
+#: ../plugins/gtkui/gtkui.c:1239
 msgid "Scope"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1239
+#: ../plugins/gtkui/gtkui.c:1240
 msgid "Spectrum"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1240
+#: ../plugins/gtkui/gtkui.c:1241
 msgid "HBox"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1241
+#: ../plugins/gtkui/gtkui.c:1242
 msgid "VBox"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1242 ../plugins/gtkui/widgets.c:3851
+#: ../plugins/gtkui/gtkui.c:1243 ../plugins/gtkui/widgets.c:3851
 #: ../plugins/gtkui/widgets.c:3938
 msgid "Button"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1243
+#: ../plugins/gtkui/gtkui.c:1244
 msgid "Seekbar"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1244
+#: ../plugins/gtkui/gtkui.c:1245
 msgid "Playback controls"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1245
+#: ../plugins/gtkui/gtkui.c:1246
 msgid "Volume bar"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1246
+#: ../plugins/gtkui/gtkui.c:1247
 msgid "Chiptune voices"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1247
+#: ../plugins/gtkui/gtkui.c:1248
 msgid "Log viewer"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1468
+#: ../plugins/gtkui/gtkui.c:1469
 msgid "Failed while reading help file"
 msgstr "ياردەم ھۆججىتىنى ئوقۇۋاتقاندا مەغلۇپ بولدى"
 
-#: ../plugins/gtkui/gtkui.c:1478
+#: ../plugins/gtkui/gtkui.c:1479
 msgid "Failed to load help file"
 msgstr "ياردەم ھۆججىتىنى ئوقۇش مەغلۇپ بولدى."
 
-#: ../plugins/gtkui/gtkui.c:1491
+#: ../plugins/gtkui/gtkui.c:1492
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1493
+#: ../plugins/gtkui/gtkui.c:1494
 msgid "Do you still want to quit?"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1494 ../plugins/gtkui/prefwin.c:463
+#: ../plugins/gtkui/gtkui.c:1495 ../plugins/gtkui/prefwin.c:463
 #: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1080
 #: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:377
 msgid "Warning"
@@ -2076,47 +2078,47 @@ msgstr ""
 
 #: ../translation/plugins.c:165
 #, no-c-format
-msgid "Cycle Playback Looping Mode"
+msgid "Cycle Repeat Mode"
 msgstr ""
 
 #: ../translation/plugins.c:167
 #, no-c-format
-msgid "Playback Looping - Don't loop"
+msgid "Repeat - Off"
 msgstr ""
 
 #: ../translation/plugins.c:169
 #, no-c-format
-msgid "Playback Looping - Single track"
+msgid "Repeat - Single Track"
 msgstr ""
 
 #: ../translation/plugins.c:171
 #, no-c-format
-msgid "Playback Looping - All"
+msgid "Repeat - All"
 msgstr ""
 
 #: ../translation/plugins.c:173
 #, no-c-format
-msgid "Cycle Playback Order"
+msgid "Cycle Shuffle Mode"
 msgstr ""
 
 #: ../translation/plugins.c:175
 #, no-c-format
-msgid "Playback Order - Random"
+msgid "Shuffle - Random Tracks"
 msgstr ""
 
 #: ../translation/plugins.c:177
 #, no-c-format
-msgid "Playback Order - Shuffle albums"
+msgid "Shuffle - Albums"
 msgstr ""
 
 #: ../translation/plugins.c:179
 #, no-c-format
-msgid "Playback Order - Shuffle tracks"
+msgid "Shuffle - Tracks"
 msgstr ""
 
 #: ../translation/plugins.c:181
 #, no-c-format
-msgid "Playback Order - Linear"
+msgid "Shuffle - Off"
 msgstr ""
 
 #: ../translation/plugins.c:183
@@ -2603,192 +2605,212 @@ msgstr ""
 msgid "Play on double-click"
 msgstr ""
 
-#. plugins/pulse/pulse.c
+#. plugins/portaudio/portaudio.c
 #: ../translation/plugins.c:407
+#, no-c-format
+msgid "Buffer size (-1 to use optimal value choosen by portaudio)"
+msgstr ""
+
+#: ../translation/plugins.c:409
+#, no-c-format
+msgid "Device name encoding"
+msgstr ""
+
+#: ../translation/plugins.c:411
+#, no-c-format
+msgid "ASCII / UTF-8"
+msgstr ""
+
+#: ../translation/plugins.c:413
+#, no-c-format
+msgid "cp1250"
+msgstr ""
+
+#: ../translation/plugins.c:415
+#, no-c-format
+msgid "Defined below"
+msgstr ""
+
+#: ../translation/plugins.c:417
+#, no-c-format
+msgid "Custom device name encoding"
+msgstr ""
+
+#. plugins/pulse/pulse.c
+#: ../translation/plugins.c:420
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
 msgstr ""
 
 #. plugins/sc68/in_sc68.c
-#: ../translation/plugins.c:410
+#: ../translation/plugins.c:423
 #, no-c-format
 msgid "Default song length (in minutes)"
 msgstr ""
 
-#: ../translation/plugins.c:412
+#: ../translation/plugins.c:425
 #, no-c-format
 msgid "Samplerate"
 msgstr "ئەۋرىشكە تېزلىكى"
 
-#: ../translation/plugins.c:414
+#: ../translation/plugins.c:427
 #, no-c-format
 msgid "Skip when shorter than (sec)"
 msgstr ""
 
 #. plugins/shellexecui/shellexecui.c
-#: ../translation/plugins.c:417
+#: ../translation/plugins.c:430
 #, no-c-format
 msgid "Configure Custom Shell Commands"
 msgstr ""
 
 #. plugins/shn/shn.c
-#: ../translation/plugins.c:420
+#: ../translation/plugins.c:433
 #, no-c-format
 msgid "Relative seek table path"
 msgstr "نىسپىي ئىزدەش جەدۋىلىنىڭ يولى"
 
-#: ../translation/plugins.c:422
+#: ../translation/plugins.c:435
 #, no-c-format
 msgid "Absolute seek table path"
 msgstr "مۇتلەق ئىزدەش جەدۋىلىنىڭ يولى"
 
-#: ../translation/plugins.c:424
+#: ../translation/plugins.c:437
 #, no-c-format
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr ""
 "ئۈن بايتلىرىنى ئالماشتۇرۇش (ئەگەر ئۆزگىرىش بولمىسا ئەسلىگە كەلتۈرسە بولىدۇ)"
 
 #. plugins/sid/plugin.c
-#: ../translation/plugins.c:427
+#: ../translation/plugins.c:440
 #, no-c-format
 msgid "Enable HVSC Songlength DB"
 msgstr "ئىناۋەتلىك قىلىش(HVSC Songlength DB نى)"
 
-#: ../translation/plugins.c:429
+#: ../translation/plugins.c:442
 #, no-c-format
 msgid "Full path to Songlengths.md5/.txt"
 msgstr ""
 
-#: ../translation/plugins.c:431
+#: ../translation/plugins.c:444
 #, no-c-format
 msgid "Bits per sample"
 msgstr ""
 
-#: ../translation/plugins.c:433
+#: ../translation/plugins.c:446
 #, no-c-format
 msgid "Mono synth"
 msgstr ""
 
-#: ../translation/plugins.c:435
+#: ../translation/plugins.c:448
 #, no-c-format
 msgid "Default song length (sec)"
 msgstr "كۆڭۈلدىكى ناخشا ئۇزۇنلۇقى (سېكۇنت)"
 
-#. plugins/sndio/sndio.c
-#: ../translation/plugins.c:438
-#, no-c-format
-msgid "Device"
-msgstr ""
-
-#: ../translation/plugins.c:440
-#, no-c-format
-msgid "Buffer size (ms)"
-msgstr ""
-
 #. plugins/supereq/supereq.c
-#: ../translation/plugins.c:443
+#: ../translation/plugins.c:451
 #, no-c-format
 msgid "Preamp"
 msgstr ""
 
-#: ../translation/plugins.c:445
+#: ../translation/plugins.c:453
 #, no-c-format
 msgid "55 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:447
+#: ../translation/plugins.c:455
 #, no-c-format
 msgid "77 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:449
+#: ../translation/plugins.c:457
 #, no-c-format
 msgid "110 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:451
+#: ../translation/plugins.c:459
 #, no-c-format
 msgid "156 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:453
+#: ../translation/plugins.c:461
 #, no-c-format
 msgid "220 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:455
+#: ../translation/plugins.c:463
 #, no-c-format
 msgid "311 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:457
+#: ../translation/plugins.c:465
 #, no-c-format
 msgid "440 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:459
+#: ../translation/plugins.c:467
 #, no-c-format
 msgid "622 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:461
+#: ../translation/plugins.c:469
 #, no-c-format
 msgid "880 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:463
+#: ../translation/plugins.c:471
 #, no-c-format
 msgid "1.2 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:465
+#: ../translation/plugins.c:473
 #, no-c-format
 msgid "1.8 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:467
+#: ../translation/plugins.c:475
 #, no-c-format
 msgid "2.5 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:469
+#: ../translation/plugins.c:477
 #, no-c-format
 msgid "3.5 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:471
+#: ../translation/plugins.c:479
 #, no-c-format
 msgid "5 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:473
+#: ../translation/plugins.c:481
 #, no-c-format
 msgid "7 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:475
+#: ../translation/plugins.c:483
 #, no-c-format
 msgid "10 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:477
+#: ../translation/plugins.c:485
 #, no-c-format
 msgid "14 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:479
+#: ../translation/plugins.c:487
 #, no-c-format
 msgid "20 kHz"
 msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
-#: ../translation/plugins.c:482
+#: ../translation/plugins.c:490
 #, no-c-format
 msgid "Enable logging"
 msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
-#: ../translation/plugins.c:485
+#: ../translation/plugins.c:493
 #, no-c-format
 msgid "Timidity++ bank configuration file"
 msgstr "Timidity++ بانكا سەپلىمە ھۆججىتى"
@@ -3116,9 +3138,8 @@ msgid "Supported playlist formats"
 msgstr ""
 
 #: ../plugins/gtkui/fileman.c:462
-#, fuzzy
 msgid "All files"
-msgstr "ھۆججەت(لەر)نى قوشۇش"
+msgstr ""
 
 #: ../plugins/gtkui/fileman.c:505
 msgid "Other files (*)"

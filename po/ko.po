@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-10 12:44+0100\n"
-"PO-Revision-Date: 2019-03-10 11:47+0000\n"
+"POT-Creation-Date: 2019-04-18 18:35+0200\n"
+"PO-Revision-Date: 2019-04-18 16:36+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/deadbeef-player/deadbeef-player/language/ko/)\n"
 "MIME-Version: 1.0\n"
@@ -35,7 +35,7 @@ msgstr "DeaDBeeF \t번역자들"
 
 #: ../plugins/gtkui/callbacks.c:635 ../plugins/gtkui/interface.c:969
 #: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:159
-#: ../plugins/converter/convgui.c:1762 ../plugins/converter/convgui.c:1770
+#: ../plugins/converter/convgui.c:1781 ../plugins/converter/convgui.c:1789
 #: ../plugins/gtkui/actionhandlers.c:297
 #, no-c-format
 msgid "Help"
@@ -100,133 +100,153 @@ msgstr "밴드를 전부 0으로"
 msgid "Presets"
 msgstr "프리셋"
 
-#: ../plugins/gtkui/gtkui.c:165 ../tf.c:1833
+#: ../plugins/gtkui/gtkui.c:165 ../tf.c:1935
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1일 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:168 ../tf.c:1836
+#: ../plugins/gtkui/gtkui.c:168 ../tf.c:1938
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d 날짜 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:670 ../translation/plugins.c:209
+#: ../plugins/gtkui/gtkui.c:212
+msgid "total playtime"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
+msgid "Paused"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
+msgid "bit"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:417
+msgid "selection playtime"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:417 ../plugins/gtkui/gtkui.c:421
+msgid "Stopped"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:684 ../translation/plugins.c:209
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
 #, no-c-format
 msgid "New Playlist"
 msgstr "새 재생목록"
 
-#: ../plugins/gtkui/gtkui.c:673 ../plugins/pltbrowser/pltbrowser.c:75
+#: ../plugins/gtkui/gtkui.c:687 ../plugins/pltbrowser/pltbrowser.c:75
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "새 재생목록 (%d)"
 
-#: ../plugins/gtkui/gtkui.c:730
+#: ../plugins/gtkui/gtkui.c:744
 #, c-format
 msgid "Copy of %s"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:733
+#: ../plugins/gtkui/gtkui.c:747
 #, c-format
 msgid "Copy of %s (%d)"
 msgstr ""
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1214
+#: ../plugins/gtkui/gtkui.c:1228
 msgid "Playlist with tabs"
 msgstr "탭으로 표시된 재생목록"
 
-#: ../plugins/gtkui/gtkui.c:1215 ../plugins/gtkui/interface.c:2285
+#: ../plugins/gtkui/gtkui.c:1229 ../plugins/gtkui/interface.c:2285
 #: ../plugins/gtkui/interface.c:2730 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Playlist"
 msgstr "재생목록"
 
-#: ../plugins/gtkui/gtkui.c:1218
+#: ../plugins/gtkui/gtkui.c:1232
 msgid "Splitter (top and bottom)"
 msgstr "분할(위/아래로)"
 
-#: ../plugins/gtkui/gtkui.c:1219
+#: ../plugins/gtkui/gtkui.c:1233
 msgid "Splitter (left and right)"
 msgstr "분할(양쪽으로)"
 
-#: ../plugins/gtkui/gtkui.c:1221
+#: ../plugins/gtkui/gtkui.c:1235
 msgid "Tabs"
 msgstr "탭"
 
-#: ../plugins/gtkui/gtkui.c:1222
+#: ../plugins/gtkui/gtkui.c:1236
 msgid "Playlist tabs"
 msgstr "재생목록 탭"
 
-#: ../plugins/gtkui/gtkui.c:1223
+#: ../plugins/gtkui/gtkui.c:1237
 msgid "Selection properties"
 msgstr "선택한 곡의 정보"
 
-#: ../plugins/gtkui/gtkui.c:1224
+#: ../plugins/gtkui/gtkui.c:1238
 msgid "Album art display"
 msgstr "앨범아트 표시"
 
-#: ../plugins/gtkui/gtkui.c:1225
+#: ../plugins/gtkui/gtkui.c:1239
 msgid "Scope"
 msgstr "스코프"
 
-#: ../plugins/gtkui/gtkui.c:1226
+#: ../plugins/gtkui/gtkui.c:1240
 msgid "Spectrum"
 msgstr "스펙트럼"
 
-#: ../plugins/gtkui/gtkui.c:1227
+#: ../plugins/gtkui/gtkui.c:1241
 msgid "HBox"
 msgstr "가로영역"
 
-#: ../plugins/gtkui/gtkui.c:1228
+#: ../plugins/gtkui/gtkui.c:1242
 msgid "VBox"
 msgstr "세로영역"
 
-#: ../plugins/gtkui/gtkui.c:1229 ../plugins/gtkui/widgets.c:3851
+#: ../plugins/gtkui/gtkui.c:1243 ../plugins/gtkui/widgets.c:3851
 #: ../plugins/gtkui/widgets.c:3938
 msgid "Button"
 msgstr "바닥정렬"
 
-#: ../plugins/gtkui/gtkui.c:1230
+#: ../plugins/gtkui/gtkui.c:1244
 msgid "Seekbar"
 msgstr "진행막대"
 
-#: ../plugins/gtkui/gtkui.c:1231
+#: ../plugins/gtkui/gtkui.c:1245
 msgid "Playback controls"
 msgstr "재생 컨트롤"
 
-#: ../plugins/gtkui/gtkui.c:1232
+#: ../plugins/gtkui/gtkui.c:1246
 msgid "Volume bar"
 msgstr "소리크기 조절"
 
-#: ../plugins/gtkui/gtkui.c:1233
+#: ../plugins/gtkui/gtkui.c:1247
 msgid "Chiptune voices"
 msgstr "FM 신디사이저"
 
-#: ../plugins/gtkui/gtkui.c:1234
+#: ../plugins/gtkui/gtkui.c:1248
 msgid "Log viewer"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1455
+#: ../plugins/gtkui/gtkui.c:1469
 msgid "Failed while reading help file"
 msgstr "도움말을 읽을 수 없습니다"
 
-#: ../plugins/gtkui/gtkui.c:1465
+#: ../plugins/gtkui/gtkui.c:1479
 msgid "Failed to load help file"
 msgstr "도움말을 가져올 수 없습니다"
 
-#: ../plugins/gtkui/gtkui.c:1478
+#: ../plugins/gtkui/gtkui.c:1492
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks"
 " will be cancelled or interrupted. This may result in data loss."
 msgstr "DeadBeeF가 백그라운드에서 실행 중입니다. 만약 지금 프로그램을 중지하신다면 데이터를 잃을 수도 있습니다"
 
-#: ../plugins/gtkui/gtkui.c:1480
+#: ../plugins/gtkui/gtkui.c:1494
 msgid "Do you still want to quit?"
 msgstr "중지하시겠습니까?"
 
-#: ../plugins/gtkui/gtkui.c:1481 ../plugins/gtkui/prefwin.c:463
+#: ../plugins/gtkui/gtkui.c:1495 ../plugins/gtkui/prefwin.c:463
 #: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1080
-#: ../plugins/converter/convgui.c:1657 ../plugins/gtkui/actionhandlers.c:377
+#: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:377
 msgid "Warning"
 msgstr "경고"
 
@@ -316,7 +336,7 @@ msgstr "정렬"
 #: ../plugins/gtkui/interface.c:256 ../plugins/gtkui/mainplaylist.c:233
 #: ../plugins/gtkui/plcommon.c:95 ../plugins/gtkui/prefwin.c:439
 #: ../plugins/gtkui/search.c:652 ../plugins/gtkui/deadbeef.glade.h:20
-#: ../plugins/converter/convgui.c:1178 ../plugins/converter/convgui.c:1733
+#: ../plugins/converter/convgui.c:1184 ../plugins/converter/convgui.c:1752
 #: ../plugins/converter/interface.c:653
 #: ../plugins/converter/converter.glade.h:48
 #: ../plugins/shellexecui/shellexecui.c:324
@@ -1064,7 +1084,7 @@ msgid "Select DSP Plugin"
 msgstr "DSP 플러그인 선택"
 
 #: ../plugins/gtkui/interface.c:4166 ../plugins/gtkui/deadbeef.glade.h:195
-#: ../plugins/converter/convgui.c:1482 ../plugins/converter/interface.c:797
+#: ../plugins/converter/convgui.c:1488 ../plugins/converter/interface.c:797
 #: ../plugins/gtkui/dspconfig.c:144 ../plugins/converter/converter.glade.h:54
 msgid "Plugin"
 msgstr "플러그인"
@@ -1572,23 +1592,23 @@ msgstr ""
 msgid "                      Examples: --volume 80 or --volume -20dB\n"
 msgstr ""
 
-#: ../playlist.c:486 ../playlist.c:2315
+#: ../playlist.c:492 ../playlist.c:2325
 msgid "Default"
 msgstr "기본"
 
-#: ../playlist.c:2980
+#: ../playlist.c:2990
 msgid "Mono"
 msgstr "모노"
 
-#: ../playlist.c:2980
+#: ../playlist.c:2990
 msgid "Stereo"
 msgstr "스테레오"
 
-#: ../playlist.c:3498
+#: ../playlist.c:3508
 msgid "Yes"
 msgstr "예"
 
-#: ../playlist.c:3498
+#: ../playlist.c:3508
 msgid "No"
 msgstr "아니오"
 
@@ -2043,47 +2063,47 @@ msgstr ""
 
 #: ../translation/plugins.c:165
 #, no-c-format
-msgid "Cycle Playback Looping Mode"
+msgid "Cycle Repeat Mode"
 msgstr ""
 
 #: ../translation/plugins.c:167
 #, no-c-format
-msgid "Playback Looping - Don't loop"
+msgid "Repeat - Off"
 msgstr ""
 
 #: ../translation/plugins.c:169
 #, no-c-format
-msgid "Playback Looping - Single track"
+msgid "Repeat - Single Track"
 msgstr ""
 
 #: ../translation/plugins.c:171
 #, no-c-format
-msgid "Playback Looping - All"
+msgid "Repeat - All"
 msgstr ""
 
 #: ../translation/plugins.c:173
 #, no-c-format
-msgid "Cycle Playback Order"
+msgid "Cycle Shuffle Mode"
 msgstr ""
 
 #: ../translation/plugins.c:175
 #, no-c-format
-msgid "Playback Order - Random"
+msgid "Shuffle - Random Tracks"
 msgstr ""
 
 #: ../translation/plugins.c:177
 #, no-c-format
-msgid "Playback Order - Shuffle albums"
+msgid "Shuffle - Albums"
 msgstr ""
 
 #: ../translation/plugins.c:179
 #, no-c-format
-msgid "Playback Order - Shuffle tracks"
+msgid "Shuffle - Tracks"
 msgstr ""
 
 #: ../translation/plugins.c:181
 #, no-c-format
-msgid "Playback Order - Linear"
+msgid "Shuffle - Off"
 msgstr ""
 
 #: ../translation/plugins.c:183
@@ -2570,191 +2590,211 @@ msgstr ""
 msgid "Play on double-click"
 msgstr ""
 
-#. plugins/pulse/pulse.c
+#. plugins/portaudio/portaudio.c
 #: ../translation/plugins.c:407
+#, no-c-format
+msgid "Buffer size (-1 to use optimal value choosen by portaudio)"
+msgstr ""
+
+#: ../translation/plugins.c:409
+#, no-c-format
+msgid "Device name encoding"
+msgstr ""
+
+#: ../translation/plugins.c:411
+#, no-c-format
+msgid "ASCII / UTF-8"
+msgstr ""
+
+#: ../translation/plugins.c:413
+#, no-c-format
+msgid "cp1250"
+msgstr ""
+
+#: ../translation/plugins.c:415
+#, no-c-format
+msgid "Defined below"
+msgstr ""
+
+#: ../translation/plugins.c:417
+#, no-c-format
+msgid "Custom device name encoding"
+msgstr ""
+
+#. plugins/pulse/pulse.c
+#: ../translation/plugins.c:420
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
 msgstr ""
 
 #. plugins/sc68/in_sc68.c
-#: ../translation/plugins.c:410
+#: ../translation/plugins.c:423
 #, no-c-format
 msgid "Default song length (in minutes)"
 msgstr ""
 
-#: ../translation/plugins.c:412
+#: ../translation/plugins.c:425
 #, no-c-format
 msgid "Samplerate"
 msgstr "샘플레이트"
 
-#: ../translation/plugins.c:414
+#: ../translation/plugins.c:427
 #, no-c-format
 msgid "Skip when shorter than (sec)"
 msgstr ""
 
 #. plugins/shellexecui/shellexecui.c
-#: ../translation/plugins.c:417
+#: ../translation/plugins.c:430
 #, no-c-format
 msgid "Configure Custom Shell Commands"
 msgstr "사용자 정의 셸 명령 설정"
 
 #. plugins/shn/shn.c
-#: ../translation/plugins.c:420
+#: ../translation/plugins.c:433
 #, no-c-format
 msgid "Relative seek table path"
 msgstr "Relative seek table path"
 
-#: ../translation/plugins.c:422
+#: ../translation/plugins.c:435
 #, no-c-format
 msgid "Absolute seek table path"
 msgstr "Absolute seek table path"
 
-#: ../translation/plugins.c:424
+#: ../translation/plugins.c:437
 #, no-c-format
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr "Swap audio bytes (toggle if all you hear is static)"
 
 #. plugins/sid/plugin.c
-#: ../translation/plugins.c:427
+#: ../translation/plugins.c:440
 #, no-c-format
 msgid "Enable HVSC Songlength DB"
 msgstr "Enable HVSC Songlength DB"
 
-#: ../translation/plugins.c:429
+#: ../translation/plugins.c:442
 #, no-c-format
 msgid "Full path to Songlengths.md5/.txt"
 msgstr ""
 
-#: ../translation/plugins.c:431
+#: ../translation/plugins.c:444
 #, no-c-format
 msgid "Bits per sample"
 msgstr ""
 
-#: ../translation/plugins.c:433
+#: ../translation/plugins.c:446
 #, no-c-format
 msgid "Mono synth"
 msgstr ""
 
-#: ../translation/plugins.c:435
+#: ../translation/plugins.c:448
 #, no-c-format
 msgid "Default song length (sec)"
 msgstr "Default song length (sec)"
 
-#. plugins/sndio/sndio.c
-#: ../translation/plugins.c:438
-#, no-c-format
-msgid "Device"
-msgstr ""
-
-#: ../translation/plugins.c:440
-#, no-c-format
-msgid "Buffer size (ms)"
-msgstr ""
-
 #. plugins/supereq/supereq.c
-#: ../translation/plugins.c:443
+#: ../translation/plugins.c:451
 #, no-c-format
 msgid "Preamp"
 msgstr ""
 
-#: ../translation/plugins.c:445
+#: ../translation/plugins.c:453
 #, no-c-format
 msgid "55 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:447
+#: ../translation/plugins.c:455
 #, no-c-format
 msgid "77 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:449
+#: ../translation/plugins.c:457
 #, no-c-format
 msgid "110 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:451
+#: ../translation/plugins.c:459
 #, no-c-format
 msgid "156 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:453
+#: ../translation/plugins.c:461
 #, no-c-format
 msgid "220 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:455
+#: ../translation/plugins.c:463
 #, no-c-format
 msgid "311 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:457
+#: ../translation/plugins.c:465
 #, no-c-format
 msgid "440 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:459
+#: ../translation/plugins.c:467
 #, no-c-format
 msgid "622 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:461
+#: ../translation/plugins.c:469
 #, no-c-format
 msgid "880 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:463
+#: ../translation/plugins.c:471
 #, no-c-format
 msgid "1.2 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:465
+#: ../translation/plugins.c:473
 #, no-c-format
 msgid "1.8 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:467
+#: ../translation/plugins.c:475
 #, no-c-format
 msgid "2.5 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:469
+#: ../translation/plugins.c:477
 #, no-c-format
 msgid "3.5 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:471
+#: ../translation/plugins.c:479
 #, no-c-format
 msgid "5 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:473
+#: ../translation/plugins.c:481
 #, no-c-format
 msgid "7 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:475
+#: ../translation/plugins.c:483
 #, no-c-format
 msgid "10 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:477
+#: ../translation/plugins.c:485
 #, no-c-format
 msgid "14 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:479
+#: ../translation/plugins.c:487
 #, no-c-format
 msgid "20 kHz"
 msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
-#: ../translation/plugins.c:482
+#: ../translation/plugins.c:490
 #, no-c-format
 msgid "Enable logging"
 msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
-#: ../translation/plugins.c:485
+#: ../translation/plugins.c:493
 #, no-c-format
 msgid "Timidity++ bank configuration file"
 msgstr "Timidity++ 뱅크설정 파일"
@@ -2792,23 +2832,23 @@ msgstr "폴더를 선택하세요..."
 msgid "Failed to save encoder preset"
 msgstr "인코더 프리셋을 저장할 수 없습니다."
 
-#: ../plugins/converter/convgui.c:960 ../plugins/converter/convgui.c:1519
+#: ../plugins/converter/convgui.c:960 ../plugins/converter/convgui.c:1531
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr "프리셋 폴더의 권한을 살펴보시거나, 다른 이름으로 저장하세요디스크 용량도 살펴보세요"
 
-#: ../plugins/converter/convgui.c:960 ../plugins/converter/convgui.c:1519
+#: ../plugins/converter/convgui.c:960 ../plugins/converter/convgui.c:1531
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr "같은 이름의 프리셋이 있습니다. 다른 이름을 선택하세요."
 
-#: ../plugins/converter/convgui.c:961 ../plugins/converter/convgui.c:1520
+#: ../plugins/converter/convgui.c:961 ../plugins/converter/convgui.c:1532
 #: ../plugins/gtkui/ctmapping.c:202 ../plugins/gtkui/ctmapping.c:230
 #: ../plugins/gtkui/ctmapping.c:262
 msgid "Error"
 msgstr "에러"
 
-#: ../plugins/converter/convgui.c:1015 ../plugins/converter/convgui.c:1153
+#: ../plugins/converter/convgui.c:1015 ../plugins/converter/convgui.c:1159
 msgid "Add new encoder"
 msgstr "새 인코더 추가"
 
@@ -2816,35 +2856,35 @@ msgstr "새 인코더 추가"
 msgid "Edit encoder"
 msgstr "인코더 편집"
 
-#: ../plugins/converter/convgui.c:1077 ../plugins/converter/convgui.c:1654
+#: ../plugins/converter/convgui.c:1077 ../plugins/converter/convgui.c:1673
 msgid "Remove preset"
 msgstr "프리셋 제거"
 
-#: ../plugins/converter/convgui.c:1079 ../plugins/converter/convgui.c:1656
+#: ../plugins/converter/convgui.c:1079 ../plugins/converter/convgui.c:1675
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr "선택된 프리셋을 지웁니다. 계속할까요?"
 
-#: ../plugins/converter/convgui.c:1168
+#: ../plugins/converter/convgui.c:1174
 msgid "Encoders"
 msgstr "인코더"
 
-#: ../plugins/converter/convgui.c:1243 ../plugins/gtkui/dspconfig.c:191
+#: ../plugins/converter/convgui.c:1249 ../plugins/gtkui/dspconfig.c:191
 msgid "Add plugin to DSP chain"
 msgstr "DSP 체인에 플러그인 추가"
 
-#: ../plugins/converter/convgui.c:1518
+#: ../plugins/converter/convgui.c:1530
 msgid "Failed to save DSP preset"
 msgstr "DSP 프리셋 저장 실패"
 
-#: ../plugins/converter/convgui.c:1582 ../plugins/converter/convgui.c:1620
+#: ../plugins/converter/convgui.c:1594 ../plugins/converter/convgui.c:1639
 msgid "New DSP Preset"
 msgstr "새 DSP 프리셋"
 
-#: ../plugins/converter/convgui.c:1704
+#: ../plugins/converter/convgui.c:1723
 msgid "Edit DSP Preset"
 msgstr "DSP 프리셋 편집"
 
-#: ../plugins/converter/convgui.c:1724
+#: ../plugins/converter/convgui.c:1743
 msgid "DSP Presets"
 msgstr "DSP 프리셋"
 
@@ -3456,11 +3496,11 @@ msgstr "♫"
 msgid "Playlist browser"
 msgstr "재생목록 찾아보기"
 
-#: ../tf.c:1525
+#: ../tf.c:1625
 msgid "mono"
 msgstr "모노"
 
-#: ../tf.c:1528 ../tf.c:1532
+#: ../tf.c:1628 ../tf.c:1632
 msgid "stereo"
 msgstr "스테레오"
 

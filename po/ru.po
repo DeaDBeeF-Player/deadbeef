@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-18 16:40+0200\n"
-"PO-Revision-Date: 2019-04-18 14:39+0000\n"
+"POT-Creation-Date: 2019-04-18 18:38+0200\n"
+"PO-Revision-Date: 2019-04-18 16:36+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/ru/)\n"
@@ -120,127 +120,131 @@ msgstr "1 день %d:%02d:%02d"
 msgid "%d days %d:%02d:%02d"
 msgstr "%d дней %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:415 ../plugins/gtkui/gtkui.c:419
+#: ../plugins/gtkui/gtkui.c:212
+msgid "total playtime"
+msgstr "общее время воспр."
+
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
 msgid "Paused"
 msgstr "Приостановлено"
 
-#: ../plugins/gtkui/gtkui.c:415 ../plugins/gtkui/gtkui.c:419
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
 msgid "bit"
 msgstr "бит"
 
-#: ../plugins/gtkui/gtkui.c:415 ../plugins/gtkui/gtkui.c:416
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:417
 msgid "selection playtime"
-msgstr "время воспроизведения выделенного"
+msgstr "время воспр. выделенного"
 
-#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
+#: ../plugins/gtkui/gtkui.c:417 ../plugins/gtkui/gtkui.c:421
 msgid "Stopped"
 msgstr "Остановлено"
 
-#: ../plugins/gtkui/gtkui.c:683 ../translation/plugins.c:209
+#: ../plugins/gtkui/gtkui.c:684 ../translation/plugins.c:209
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
 #, no-c-format
 msgid "New Playlist"
 msgstr "Новый плейлист"
 
-#: ../plugins/gtkui/gtkui.c:686 ../plugins/pltbrowser/pltbrowser.c:75
+#: ../plugins/gtkui/gtkui.c:687 ../plugins/pltbrowser/pltbrowser.c:75
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Новый плейлист (%d)"
 
-#: ../plugins/gtkui/gtkui.c:743
+#: ../plugins/gtkui/gtkui.c:744
 #, c-format
 msgid "Copy of %s"
 msgstr "Копия %s"
 
-#: ../plugins/gtkui/gtkui.c:746
+#: ../plugins/gtkui/gtkui.c:747
 #, c-format
 msgid "Copy of %s (%d)"
 msgstr "Копия %s (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1227
+#: ../plugins/gtkui/gtkui.c:1228
 msgid "Playlist with tabs"
 msgstr "Плейлист с вкладками"
 
-#: ../plugins/gtkui/gtkui.c:1228 ../plugins/gtkui/interface.c:2285
+#: ../plugins/gtkui/gtkui.c:1229 ../plugins/gtkui/interface.c:2285
 #: ../plugins/gtkui/interface.c:2730 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Playlist"
 msgstr "Плейлист"
 
-#: ../plugins/gtkui/gtkui.c:1231
+#: ../plugins/gtkui/gtkui.c:1232
 msgid "Splitter (top and bottom)"
 msgstr "Разделитель (верх и низ)"
 
-#: ../plugins/gtkui/gtkui.c:1232
+#: ../plugins/gtkui/gtkui.c:1233
 msgid "Splitter (left and right)"
 msgstr "Разделитель (лево и право)"
 
-#: ../plugins/gtkui/gtkui.c:1234
+#: ../plugins/gtkui/gtkui.c:1235
 msgid "Tabs"
 msgstr "Вкладки"
 
-#: ../plugins/gtkui/gtkui.c:1235
+#: ../plugins/gtkui/gtkui.c:1236
 msgid "Playlist tabs"
 msgstr "Вкладки плейлистов"
 
-#: ../plugins/gtkui/gtkui.c:1236
+#: ../plugins/gtkui/gtkui.c:1237
 msgid "Selection properties"
 msgstr "Свойства выделенного"
 
-#: ../plugins/gtkui/gtkui.c:1237
+#: ../plugins/gtkui/gtkui.c:1238
 msgid "Album art display"
 msgstr "Отображение обложки альбома"
 
-#: ../plugins/gtkui/gtkui.c:1238
+#: ../plugins/gtkui/gtkui.c:1239
 msgid "Scope"
 msgstr "Scope"
 
-#: ../plugins/gtkui/gtkui.c:1239
+#: ../plugins/gtkui/gtkui.c:1240
 msgid "Spectrum"
 msgstr "Спектральный анализатор"
 
-#: ../plugins/gtkui/gtkui.c:1240
+#: ../plugins/gtkui/gtkui.c:1241
 msgid "HBox"
 msgstr "HBox"
 
-#: ../plugins/gtkui/gtkui.c:1241
+#: ../plugins/gtkui/gtkui.c:1242
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:1242 ../plugins/gtkui/widgets.c:3851
+#: ../plugins/gtkui/gtkui.c:1243 ../plugins/gtkui/widgets.c:3851
 #: ../plugins/gtkui/widgets.c:3938
 msgid "Button"
 msgstr "Кнопка"
 
-#: ../plugins/gtkui/gtkui.c:1243
+#: ../plugins/gtkui/gtkui.c:1244
 msgid "Seekbar"
 msgstr "Полоса перемотки"
 
-#: ../plugins/gtkui/gtkui.c:1244
+#: ../plugins/gtkui/gtkui.c:1245
 msgid "Playback controls"
 msgstr "Элементы управления проигрыванием"
 
-#: ../plugins/gtkui/gtkui.c:1245
+#: ../plugins/gtkui/gtkui.c:1246
 msgid "Volume bar"
 msgstr "Регулятор громкости"
 
-#: ../plugins/gtkui/gtkui.c:1246
+#: ../plugins/gtkui/gtkui.c:1247
 msgid "Chiptune voices"
 msgstr "Управление каналами chiptunes"
 
-#: ../plugins/gtkui/gtkui.c:1247
+#: ../plugins/gtkui/gtkui.c:1248
 msgid "Log viewer"
 msgstr "Просмотр лога"
 
-#: ../plugins/gtkui/gtkui.c:1468
+#: ../plugins/gtkui/gtkui.c:1469
 msgid "Failed while reading help file"
 msgstr "Не удалось прочитать файл справки"
 
-#: ../plugins/gtkui/gtkui.c:1478
+#: ../plugins/gtkui/gtkui.c:1479
 msgid "Failed to load help file"
 msgstr "Не удалось загрузить файл справки"
 
-#: ../plugins/gtkui/gtkui.c:1491
+#: ../plugins/gtkui/gtkui.c:1492
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
@@ -249,11 +253,11 @@ msgstr ""
 "его сейчас, задачи могут быть отменены или прерваны. Это может привести к "
 "потере данных."
 
-#: ../plugins/gtkui/gtkui.c:1493
+#: ../plugins/gtkui/gtkui.c:1494
 msgid "Do you still want to quit?"
 msgstr "Вы все еще хотите выйти?"
 
-#: ../plugins/gtkui/gtkui.c:1494 ../plugins/gtkui/prefwin.c:463
+#: ../plugins/gtkui/gtkui.c:1495 ../plugins/gtkui/prefwin.c:463
 #: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1080
 #: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:377
 msgid "Warning"
@@ -2136,48 +2140,48 @@ msgstr "Показать страницу справки"
 
 #: ../translation/plugins.c:165
 #, no-c-format
-msgid "Cycle Playback Looping Mode"
-msgstr "Следующий режим повтора"
+msgid "Cycle Repeat Mode"
+msgstr ""
 
 #: ../translation/plugins.c:167
 #, no-c-format
-msgid "Playback Looping - Don't loop"
-msgstr "Циклическое воспроизведение - Не зацикливать"
+msgid "Repeat - Off"
+msgstr ""
 
 #: ../translation/plugins.c:169
 #, no-c-format
-msgid "Playback Looping - Single track"
-msgstr "Циклическое воспроизведение - Простой трек"
+msgid "Repeat - Single Track"
+msgstr ""
 
 #: ../translation/plugins.c:171
 #, no-c-format
-msgid "Playback Looping - All"
-msgstr "Циклическое воспроизведение - Все"
+msgid "Repeat - All"
+msgstr ""
 
 #: ../translation/plugins.c:173
 #, no-c-format
-msgid "Cycle Playback Order"
-msgstr "Порядок циклического воспроизведения"
+msgid "Cycle Shuffle Mode"
+msgstr ""
 
 #: ../translation/plugins.c:175
 #, no-c-format
-msgid "Playback Order - Random"
-msgstr "Порядок воспроизведения - Случайный"
+msgid "Shuffle - Random Tracks"
+msgstr ""
 
 #: ../translation/plugins.c:177
 #, no-c-format
-msgid "Playback Order - Shuffle albums"
-msgstr "Порядок воспроизведения - Перемешивать альбомы"
+msgid "Shuffle - Albums"
+msgstr ""
 
 #: ../translation/plugins.c:179
 #, no-c-format
-msgid "Playback Order - Shuffle tracks"
-msgstr "Порядок воспроизведения - Перемешивать дорожки"
+msgid "Shuffle - Tracks"
+msgstr ""
 
 #: ../translation/plugins.c:181
 #, no-c-format
-msgid "Playback Order - Linear"
-msgstr "Порядок воспроизведения - Линейный"
+msgid "Shuffle - Off"
+msgstr ""
 
 #: ../translation/plugins.c:183
 #, no-c-format
@@ -2663,191 +2667,211 @@ msgstr "Подсветить текущий плейлист"
 msgid "Play on double-click"
 msgstr "Воспроизводить по двойному щелчку"
 
-#. plugins/pulse/pulse.c
+#. plugins/portaudio/portaudio.c
 #: ../translation/plugins.c:407
+#, no-c-format
+msgid "Buffer size (-1 to use optimal value choosen by portaudio)"
+msgstr ""
+
+#: ../translation/plugins.c:409
+#, no-c-format
+msgid "Device name encoding"
+msgstr ""
+
+#: ../translation/plugins.c:411
+#, no-c-format
+msgid "ASCII / UTF-8"
+msgstr ""
+
+#: ../translation/plugins.c:413
+#, no-c-format
+msgid "cp1250"
+msgstr ""
+
+#: ../translation/plugins.c:415
+#, no-c-format
+msgid "Defined below"
+msgstr ""
+
+#: ../translation/plugins.c:417
+#, no-c-format
+msgid "Custom device name encoding"
+msgstr ""
+
+#. plugins/pulse/pulse.c
+#: ../translation/plugins.c:420
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
 msgstr "Сервер PulseAudio (оставьте пустым для автоопределения)"
 
 #. plugins/sc68/in_sc68.c
-#: ../translation/plugins.c:410
+#: ../translation/plugins.c:423
 #, no-c-format
 msgid "Default song length (in minutes)"
 msgstr "Длина песни по умолчанию (в минутах)"
 
-#: ../translation/plugins.c:412
+#: ../translation/plugins.c:425
 #, no-c-format
 msgid "Samplerate"
 msgstr "Частота дискретизации"
 
-#: ../translation/plugins.c:414
+#: ../translation/plugins.c:427
 #, no-c-format
 msgid "Skip when shorter than (sec)"
 msgstr "Пропустить, когда короче чем (сек)"
 
 #. plugins/shellexecui/shellexecui.c
-#: ../translation/plugins.c:417
+#: ../translation/plugins.c:430
 #, no-c-format
 msgid "Configure Custom Shell Commands"
 msgstr "Настройка собственных шелл-команд"
 
 #. plugins/shn/shn.c
-#: ../translation/plugins.c:420
+#: ../translation/plugins.c:433
 #, no-c-format
 msgid "Relative seek table path"
 msgstr "Относительный путь таблицы поиска"
 
-#: ../translation/plugins.c:422
+#: ../translation/plugins.c:435
 #, no-c-format
 msgid "Absolute seek table path"
 msgstr "Абсолютный путь таблицы поиска"
 
-#: ../translation/plugins.c:424
+#: ../translation/plugins.c:437
 #, no-c-format
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr "Переставить местами аудио байты"
 
 #. plugins/sid/plugin.c
-#: ../translation/plugins.c:427
+#: ../translation/plugins.c:440
 #, no-c-format
 msgid "Enable HVSC Songlength DB"
 msgstr "Включить HVSC Songlength DB"
 
-#: ../translation/plugins.c:429
+#: ../translation/plugins.c:442
 #, no-c-format
 msgid "Full path to Songlengths.md5/.txt"
 msgstr "Полный путь к Songlengths.md5/.txt"
 
-#: ../translation/plugins.c:431
+#: ../translation/plugins.c:444
 #, no-c-format
 msgid "Bits per sample"
 msgstr "Разрядность"
 
-#: ../translation/plugins.c:433
+#: ../translation/plugins.c:446
 #, no-c-format
 msgid "Mono synth"
 msgstr "Моно-синтезатор"
 
-#: ../translation/plugins.c:435
+#: ../translation/plugins.c:448
 #, no-c-format
 msgid "Default song length (sec)"
 msgstr "Длина дорожки по умолчанию (сек)"
 
-#. plugins/sndio/sndio.c
-#: ../translation/plugins.c:438
-#, no-c-format
-msgid "Device"
-msgstr "Устройство"
-
-#: ../translation/plugins.c:440
-#, no-c-format
-msgid "Buffer size (ms)"
-msgstr "Размер буфера (мс)"
-
 #. plugins/supereq/supereq.c
-#: ../translation/plugins.c:443
+#: ../translation/plugins.c:451
 #, no-c-format
 msgid "Preamp"
 msgstr "Предусиление"
 
-#: ../translation/plugins.c:445
+#: ../translation/plugins.c:453
 #, no-c-format
 msgid "55 Hz"
 msgstr "55 Гц"
 
-#: ../translation/plugins.c:447
+#: ../translation/plugins.c:455
 #, no-c-format
 msgid "77 Hz"
 msgstr "77 Гц"
 
-#: ../translation/plugins.c:449
+#: ../translation/plugins.c:457
 #, no-c-format
 msgid "110 Hz"
 msgstr "110 Гц"
 
-#: ../translation/plugins.c:451
+#: ../translation/plugins.c:459
 #, no-c-format
 msgid "156 Hz"
 msgstr "156 Гц"
 
-#: ../translation/plugins.c:453
+#: ../translation/plugins.c:461
 #, no-c-format
 msgid "220 Hz"
 msgstr "220 Гц"
 
-#: ../translation/plugins.c:455
+#: ../translation/plugins.c:463
 #, no-c-format
 msgid "311 Hz"
 msgstr "311 Гц"
 
-#: ../translation/plugins.c:457
+#: ../translation/plugins.c:465
 #, no-c-format
 msgid "440 Hz"
 msgstr "440 Гц"
 
-#: ../translation/plugins.c:459
+#: ../translation/plugins.c:467
 #, no-c-format
 msgid "622 Hz"
 msgstr "622 Гц"
 
-#: ../translation/plugins.c:461
+#: ../translation/plugins.c:469
 #, no-c-format
 msgid "880 Hz"
 msgstr "880 Гц"
 
-#: ../translation/plugins.c:463
+#: ../translation/plugins.c:471
 #, no-c-format
 msgid "1.2 kHz"
 msgstr "1.2 кГц"
 
-#: ../translation/plugins.c:465
+#: ../translation/plugins.c:473
 #, no-c-format
 msgid "1.8 kHz"
 msgstr "1.8 кГц"
 
-#: ../translation/plugins.c:467
+#: ../translation/plugins.c:475
 #, no-c-format
 msgid "2.5 kHz"
 msgstr "2.5 кГц"
 
-#: ../translation/plugins.c:469
+#: ../translation/plugins.c:477
 #, no-c-format
 msgid "3.5 kHz"
 msgstr "3.5 кГц"
 
-#: ../translation/plugins.c:471
+#: ../translation/plugins.c:479
 #, no-c-format
 msgid "5 kHz"
 msgstr "5 кГц"
 
-#: ../translation/plugins.c:473
+#: ../translation/plugins.c:481
 #, no-c-format
 msgid "7 kHz"
 msgstr "7 кГц"
 
-#: ../translation/plugins.c:475
+#: ../translation/plugins.c:483
 #, no-c-format
 msgid "10 kHz"
 msgstr "10 кГц"
 
-#: ../translation/plugins.c:477
+#: ../translation/plugins.c:485
 #, no-c-format
 msgid "14 kHz"
 msgstr "14 кГц"
 
-#: ../translation/plugins.c:479
+#: ../translation/plugins.c:487
 #, no-c-format
 msgid "20 kHz"
 msgstr "20 кГц"
 
 #. plugins/vfs_curl/vfs_curl.c
-#: ../translation/plugins.c:482
+#: ../translation/plugins.c:490
 #, no-c-format
 msgid "Enable logging"
 msgstr "Включить журналирование"
 
 #. plugins/wildmidi/wildmidiplug.c
-#: ../translation/plugins.c:485
+#: ../translation/plugins.c:493
 #, no-c-format
 msgid "Timidity++ bank configuration file"
 msgstr "Файл конфигурации для банка Timidity++"
