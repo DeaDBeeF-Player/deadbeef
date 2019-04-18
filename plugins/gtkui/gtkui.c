@@ -205,10 +205,11 @@ update_songinfo (gpointer unused) {
     deadbeef->tf_eval (&ctx, bc, buffer, sizeof (buffer));
     snprintf (sbtext_new,
               sizeof (sbtext_new),
-              "%s | %d tracks | %s total playtime",
+              "%s | %d tracks | %s %s",
               buffer,
               deadbeef->pl_getcount (PL_MAIN),
-              totaltime_str);
+              totaltime_str,
+              _("total playtime"));
 
     if (strcmp (sbtext_new, sb_text)) {
         strcpy (sb_text, sbtext_new);
