@@ -35,6 +35,7 @@ extern DB_functions_t *deadbeef;
     DSPChainDataSource *_dspChainDataSource;
     DSPPresetController *_dspPresetController;
 }
+@property (weak) IBOutlet NSPopUpButton *outputPluginsPopupButton;
 
 @property NSMutableArray<NSString *> *audioDevices;
 @property (weak) IBOutlet NSPopUpButton *audioDevicesPopupButton;
@@ -69,7 +70,22 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
 
     [self setInitialValues];
 
-    // sound devices
+    // output plugins
+
+    NSInteger index = 0;
+    [self.outputPluginsPopupButton removeAllItems];
+
+    char curplug[200];
+    deadbeef->conf_get_str ("output_plugin", "coreaudio", curplug, sizeof (curplug));
+    DB_output_t **o = deadbeef->plug_get_output_list ();
+    for (index = 0; o[index]; index++) {
+        [self.outputPluginsPopupButton addItemWithTitle:[NSString stringWithUTF8String:o[index]->plugin.name]];
+        if (!strcmp (o[index]->plugin.id, curplug)) {
+            [self.outputPluginsPopupButton selectItemAtIndex:index];
+        }
+    }
+
+    // audio devices
     self.audioDevices = [[NSMutableArray alloc] init];
     DB_output_t *output = deadbeef->get_output ();
     if (output->enum_soundcards) {
@@ -79,7 +95,7 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     char curdev[200];
     deadbeef->conf_get_str ("coreaudio.device", "", curdev, sizeof (curdev));
     [self.audioDevicesPopupButton removeAllItems];
-    NSInteger index = 0;
+    index = 0;
     for (NSString *dev in self.audioDevices) {
         [self.audioDevicesPopupButton addItemWithTitle:dev];
         if (!strcmp ([dev UTF8String], curdev)) {
@@ -97,9 +113,17 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
 
 #pragma mark - Playback
 
+- (IBAction)outputPluginAction:(id)sender {
+    DB_output_t **o = deadbeef->plug_get_output_list ();
+    deadbeef->conf_set_str ("output_plugin", o[[self.outputPluginsPopupButton indexOfSelectedItem]]->plugin.id);
+    deadbeef->conf_save ();
+    deadbeef->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
+}
+
 - (IBAction)playbackDeviceAction:(NSPopUpButton *)sender {
     NSString *title = [[sender selectedItem] title];
     deadbeef->conf_set_str ("coreaudio.device", [title UTF8String]);
+    deadbeef->conf_save ();
     deadbeef->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
 }
 

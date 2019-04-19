@@ -49,6 +49,7 @@
                 <outlet property="network_proxy_port" destination="wfu-s2-awP" id="lQy-80-5WQ"/>
                 <outlet property="network_proxy_type" destination="ouZ-vc-Cmz" id="K2f-lD-EZQ"/>
                 <outlet property="network_proxy_username" destination="6Sy-4E-ddK" id="ucd-hh-lCX"/>
+                <outlet property="outputPluginsPopupButton" destination="WGI-Tr-J4c" id="k81-dq-NYf"/>
                 <outlet property="override_bar_colors" destination="KCh-ey-ibq" id="i0u-b3-pMw"/>
                 <outlet property="override_playlist_colors" destination="xaR-5U-yt4" id="kff-f4-3XY"/>
                 <outlet property="playbackView" destination="Zmc-ua-enY" id="oGy-nE-FiQ"/>
@@ -1291,11 +1292,38 @@ Gw
         </viewController>
         <customObject id="ASJ-FT-ifo" customClass="DSPPresetListDataSource"/>
         <customView id="UtU-5A-sPy" userLabel="Sound View">
-            <rect key="frame" x="0.0" y="0.0" width="476" height="228"/>
+            <rect key="frame" x="0.0" y="0.0" width="476" height="217"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="389-ic-PQa">
+                    <rect key="frame" x="18" y="178" width="88" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="Output Plugin" id="0Ww-cL-OsE">
+                        <font key="font" usesAppearanceFont="YES"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" id="WGI-Tr-J4c">
+                    <rect key="frame" x="110" y="173" width="349" height="25"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="p1w-yP-M4A" id="fJ1-UJ-dTa">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="soW-Kc-Bpg">
+                            <items>
+                                <menuItem title="Item 1" state="on" id="p1w-yP-M4A"/>
+                                <menuItem title="Item 2" id="3bD-7C-F1k"/>
+                                <menuItem title="Item 3" id="gRr-Ae-YZX"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="outputPluginAction:" target="-2" id="rWn-dQ-Lrg"/>
+                    </connections>
+                </popUpButton>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="l0R-EK-reQ">
-                    <rect key="frame" x="18" y="191" width="91" height="17"/>
+                    <rect key="frame" x="19" y="151" width="91" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                     <textFieldCell key="cell" lineBreakMode="clipping" title="Output Device" id="9hn-Ic-Cwd">
                         <font key="font" usesAppearanceFont="YES"/>
@@ -1304,7 +1332,7 @@ Gw
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" id="0ET-qW-1ss">
-                    <rect key="frame" x="113" y="186" width="346" height="25"/>
+                    <rect key="frame" x="114" y="146" width="346" height="25"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="ubD-td-1uR" id="Y8g-eD-4BE">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -1321,45 +1349,20 @@ Gw
                         <action selector="playbackDeviceAction:" target="-2" id="MHA-xY-Gzt"/>
                     </connections>
                 </popUpButton>
-                <button verticalHuggingPriority="750" id="klk-sC-qFu">
-                    <rect key="frame" x="18" y="167" width="312" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Always convert 8 bit audio to 16 bit" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="RUp-5E-9gV">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                </button>
-                <button verticalHuggingPriority="750" id="3Bt-mH-8FU">
-                    <rect key="frame" x="18" y="147" width="243" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Always convert 16 bit audio to 24 bit" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="KRR-7V-6tB">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                </button>
                 <box verticalHuggingPriority="750" boxType="separator" id="dAy-8r-6bC">
-                    <rect key="frame" x="11" y="138" width="453" height="5"/>
+                    <rect key="frame" x="12" y="138" width="453" height="5"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                 </box>
                 <button verticalHuggingPriority="750" id="Lkp-Xx-fTd">
-                    <rect key="frame" x="18" y="116" width="147" height="18"/>
+                    <rect key="frame" x="19" y="116" width="147" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Override Samplerate" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="zuf-lv-2OS">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                 </button>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="kev-Ar-D1H">
-                    <rect key="frame" x="30" y="93" width="115" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" lineBreakMode="clipping" title="Target Samplerate" id="ULG-Yu-8aS">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
                 <button verticalHuggingPriority="750" id="OHq-bQ-a2N">
-                    <rect key="frame" x="42" y="69" width="184" height="18"/>
+                    <rect key="frame" x="43" y="69" width="184" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Based on input samplerate" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="3g2-4L-t6H">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -1367,7 +1370,7 @@ Gw
                     </buttonCell>
                 </button>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="CiA-bx-OlM">
-                    <rect key="frame" x="58" y="46" width="222" height="17"/>
+                    <rect key="frame" x="59" y="46" width="222" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                     <textFieldCell key="cell" lineBreakMode="clipping" title="For multiples of 48 kHz (96, 192, …)" id="tA5-pH-SS3">
                         <font key="font" metaFont="system"/>
@@ -1376,7 +1379,7 @@ Gw
                     </textFieldCell>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="VdO-R5-ZVn">
-                    <rect key="frame" x="58" y="21" width="252" height="17"/>
+                    <rect key="frame" x="59" y="21" width="252" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                     <textFieldCell key="cell" lineBreakMode="clipping" title="For multiples of 44.1 kHz (88.2, 176.4, …)" id="nwz-Pi-GKV">
                         <font key="font" metaFont="system"/>
@@ -1385,7 +1388,7 @@ Gw
                     </textFieldCell>
                 </textField>
                 <comboBox verticalHuggingPriority="750" id="ePT-oo-DxM">
-                    <rect key="frame" x="151" y="88" width="308" height="26"/>
+                    <rect key="frame" x="156" y="88" width="304" height="26"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="vBl-I0-kUV">
                         <font key="font" metaFont="system"/>
@@ -1399,7 +1402,7 @@ Gw
                     </comboBoxCell>
                 </comboBox>
                 <comboBox verticalHuggingPriority="750" id="QMc-6H-dXh">
-                    <rect key="frame" x="286" y="41" width="173" height="26"/>
+                    <rect key="frame" x="287" y="41" width="173" height="26"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="lXs-G0-KQa">
                         <font key="font" metaFont="system"/>
@@ -1413,7 +1416,7 @@ Gw
                     </comboBoxCell>
                 </comboBox>
                 <comboBox verticalHuggingPriority="750" id="jJg-qS-P3q">
-                    <rect key="frame" x="316" y="16" width="143" height="26"/>
+                    <rect key="frame" x="317" y="16" width="143" height="26"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="dO3-gd-CbM">
                         <font key="font" metaFont="system"/>
@@ -1426,8 +1429,17 @@ Gw
                         </objectValues>
                     </comboBoxCell>
                 </comboBox>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="kev-Ar-D1H">
+                    <rect key="frame" x="35" y="93" width="115" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="Target Samplerate" id="ULG-Yu-8aS">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
             </subviews>
-            <point key="canvasLocation" x="-352" y="144"/>
+            <point key="canvasLocation" x="-470" y="65.5"/>
         </customView>
     </objects>
     <resources>
