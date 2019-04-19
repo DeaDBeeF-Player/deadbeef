@@ -1637,14 +1637,20 @@
 		2DE3B8092269BF3100AFF9AE /* namedicons.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B6912269BB4300AFF9AE /* namedicons.c */; };
 		2DE3B80A2269BF3100AFF9AE /* widgets.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B6952269BB4300AFF9AE /* widgets.c */; };
 		2DE3B80B2269BF3100AFF9AE /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B6962269BB4300AFF9AE /* support.h */; };
-		2DE3B8122269C07300AFF9AE /* parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B80D2269C07300AFF9AE /* parser.h */; };
-		2DE3B8132269C07300AFF9AE /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B8102269C07300AFF9AE /* parser.c */; };
 		2DE3B8142269C0A400AFF9AE /* trkproperties_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */; };
 		2DE3B8152269C0A400AFF9AE /* trkproperties_shared.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D92D0551CD513AA00CD53F0 /* trkproperties_shared.h */; };
 		2DE3B8162269C0A400AFF9AE /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D93DC521AADFEEF003D2D8D /* pluginsettings.c */; };
 		2DE3B8172269C0A400AFF9AE /* pluginsettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D93DC531AADFEEF003D2D8D /* pluginsettings.h */; };
 		2DE3B81E2269C0EA00AFF9AE /* utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B49E81837EC49003E6066 /* utf8.c */; };
 		2DE3B8292269C62F00AFF9AE /* pixmaps in Resources */ = {isa = PBXBuildFile; fileRef = 2DE3B8282269C62F00AFF9AE /* pixmaps */; };
+		2DE3B85E2269CA1500AFF9AE /* actionhandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B8422269CA1500AFF9AE /* actionhandlers.h */; };
+		2DE3B8622269CA1500AFF9AE /* hotkeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B8482269CA1500AFF9AE /* hotkeys.h */; };
+		2DE3B8642269CA1500AFF9AE /* actionhandlers.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B84C2269CA1500AFF9AE /* actionhandlers.c */; };
+		2DE3B8652269CA1500AFF9AE /* hotkeys.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B84F2269CA1500AFF9AE /* hotkeys.c */; };
+		2DE3B86A2269CA1500AFF9AE /* keysyms.inc in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B85D2269CA1500AFF9AE /* keysyms.inc */; };
+		2DE3B86D2269CA5400AFF9AE /* hotkeys.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */; };
+		2DE3B86E2269CA9800AFF9AE /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
+		2DE3B86F2269CAEA00AFF9AE /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
 		2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */; };
 		2DE7A8FB1CA493CE00318A9F /* CuesheetTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7A8FA1CA493CE00318A9F /* CuesheetTests.m */; };
 		2DE92F561BAFFBEE00F37154 /* wavpack.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */; };
@@ -2970,6 +2976,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2DE3B7B82269BC3500AFF9AE;
 			remoteInfo = gtkui;
+		};
+		2DE3B86B2269CA4D00AFF9AE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DE3B82F2269C9FB00AFF9AE;
+			remoteInfo = hotkeys;
 		};
 		2DE92F541BAFFBE100F37154 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -4682,9 +4695,14 @@
 		2DE3B6952269BB4300AFF9AE /* widgets.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = widgets.c; sourceTree = "<group>"; };
 		2DE3B6962269BB4300AFF9AE /* support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = support.h; sourceTree = "<group>"; };
 		2DE3B7B92269BC3500AFF9AE /* ddb_gui_GTK3.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ddb_gui_GTK3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		2DE3B80D2269C07300AFF9AE /* parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parser.h; sourceTree = "<group>"; };
-		2DE3B8102269C07300AFF9AE /* parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parser.c; sourceTree = "<group>"; };
 		2DE3B8282269C62F00AFF9AE /* pixmaps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = pixmaps; path = ../../pixmaps; sourceTree = "<group>"; };
+		2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = hotkeys.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DE3B8422269CA1500AFF9AE /* actionhandlers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = actionhandlers.h; sourceTree = "<group>"; };
+		2DE3B8482269CA1500AFF9AE /* hotkeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hotkeys.h; sourceTree = "<group>"; };
+		2DE3B84B2269CA1500AFF9AE /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		2DE3B84C2269CA1500AFF9AE /* actionhandlers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = actionhandlers.c; sourceTree = "<group>"; };
+		2DE3B84F2269CA1500AFF9AE /* hotkeys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hotkeys.c; sourceTree = "<group>"; };
+		2DE3B85D2269CA1500AFF9AE /* keysyms.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = keysyms.inc; sourceTree = "<group>"; };
 		2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = bufferingTemplate.pdf; path = images/bufferingTemplate.pdf; sourceTree = "<group>"; };
 		2DE7A8FA1CA493CE00318A9F /* CuesheetTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CuesheetTests.m; sourceTree = "<group>"; };
 		2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wavpack.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5751,6 +5769,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2DE3B7B72269BC3500AFF9AE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DE3B82E2269C9FB00AFF9AE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -7976,7 +8001,6 @@
 			isa = PBXGroup;
 			children = (
 				2DE3B8282269C62F00AFF9AE /* pixmaps */,
-				2DE3B80C2269C07300AFF9AE /* libparser */,
 				2DE3B5782269BB4300AFF9AE /* eq.c */,
 				2DE3B57A2269BB4300AFF9AE /* progress.h */,
 				2DE3B57D2269BB4300AFF9AE /* ddblistview.c */,
@@ -8058,14 +8082,18 @@
 			path = plugins/gtkui;
 			sourceTree = "<group>";
 		};
-		2DE3B80C2269C07300AFF9AE /* libparser */ = {
+		2DE3B8412269CA1500AFF9AE /* hotkeys */ = {
 			isa = PBXGroup;
 			children = (
-				2DE3B80D2269C07300AFF9AE /* parser.h */,
-				2DE3B8102269C07300AFF9AE /* parser.c */,
+				2DE3B8422269CA1500AFF9AE /* actionhandlers.h */,
+				2DE3B8482269CA1500AFF9AE /* hotkeys.h */,
+				2DE3B84B2269CA1500AFF9AE /* COPYING */,
+				2DE3B84C2269CA1500AFF9AE /* actionhandlers.c */,
+				2DE3B84F2269CA1500AFF9AE /* hotkeys.c */,
+				2DE3B85D2269CA1500AFF9AE /* keysyms.inc */,
 			);
-			name = libparser;
-			path = ../libparser;
+			name = hotkeys;
+			path = plugins/hotkeys;
 			sourceTree = "<group>";
 		};
 		2DE92F331BAFFB7700F37154 /* wavpack */ = {
@@ -8254,6 +8282,7 @@
 				4D9C629E1FDEC51000D83CEF /* libopusfile.dylib */,
 				2D48DC5B2269B731002CACFD /* DeaDBeeF GTK3.app */,
 				2DE3B7B92269BC3500AFF9AE /* ddb_gui_GTK3.dylib */,
+				2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -8421,6 +8450,7 @@
 				2D91772E1A0E892F004BC222 /* alac */,
 				4DEE38461838E6450022D2B7 /* cocoaui */,
 				2DE3B5772269BB4300AFF9AE /* gtkui */,
+				2DE3B8412269CA1500AFF9AE /* hotkeys */,
 				2D2351221B138F1700A62936 /* converter */,
 				4D1B515C1837F59F003E6066 /* coreaudio */,
 				2DA249A219E71FF100E34920 /* curl */,
@@ -10228,7 +10258,15 @@
 				2DE3B7DE2269BF3100AFF9AE /* ddbvolumebar.h in Headers */,
 				2DE3B7FF2269BF3100AFF9AE /* dspconfig.h in Headers */,
 				2DE3B7E52269BF3100AFF9AE /* retina.h in Headers */,
-				2DE3B8122269C07300AFF9AE /* parser.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DE3B82C2269C9FB00AFF9AE /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DE3B8622269CA1500AFF9AE /* hotkeys.h in Headers */,
+				2DE3B85E2269CA1500AFF9AE /* actionhandlers.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10976,6 +11014,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DE3B86C2269CA4D00AFF9AE /* PBXTargetDependency */,
 				2DE3B7BE2269BC5700AFF9AE /* PBXTargetDependency */,
 				2D48DB842269B731002CACFD /* PBXTargetDependency */,
 				2D48DB862269B731002CACFD /* PBXTargetDependency */,
@@ -11352,6 +11391,23 @@
 			name = ddb_gui_GTK3;
 			productName = gtkui;
 			productReference = 2DE3B7B92269BC3500AFF9AE /* ddb_gui_GTK3.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		2DE3B82F2269C9FB00AFF9AE /* hotkeys */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DE3B8402269C9FC00AFF9AE /* Build configuration list for PBXNativeTarget "hotkeys" */;
+			buildPhases = (
+				2DE3B82C2269C9FB00AFF9AE /* Headers */,
+				2DE3B82D2269C9FB00AFF9AE /* Sources */,
+				2DE3B82E2269C9FB00AFF9AE /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = hotkeys;
+			productName = hotkeys;
+			productReference = 2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		2DE92F2E1BAFFB4F00F37154 /* wavpack */ = {
@@ -11764,6 +11820,11 @@
 						DevelopmentTeam = F69NGENSKX;
 						ProvisioningStyle = Automatic;
 					};
+					2DE3B82F2269C9FB00AFF9AE = {
+						CreatedOnToolsVersion = 10.2;
+						DevelopmentTeam = F69NGENSKX;
+						ProvisioningStyle = Automatic;
+					};
 					2DE92F2E1BAFFB4F00F37154 = {
 						CreatedOnToolsVersion = 6.2;
 					};
@@ -11878,6 +11939,7 @@
 				4D9C5AEE1FDEBAAE00D83CEF /* opus */,
 				4D9C5B041FDEBACC00D83CEF /* opuslib */,
 				4D9C629D1FDEC51000D83CEF /* opusfile */,
+				2DE3B82F2269C9FB00AFF9AE /* hotkeys */,
 			);
 		};
 /* End PBXProject section */
@@ -11960,6 +12022,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DE3B86D2269CA5400AFF9AE /* hotkeys.dylib in Resources */,
 				2DE3B7BF2269BCAB00AFF9AE /* ddb_gui_GTK3.dylib in Resources */,
 				2D48DBF72269B731002CACFD /* libvorbislib.dylib in Resources */,
 				2DE3B5762269B80900AFF9AE /* Images.xcassets in Resources */,
@@ -13301,14 +13364,25 @@
 				2DE3B7C82269BF1300AFF9AE /* ddb_splitter.c in Sources */,
 				2DE3B7E62269BF3100AFF9AE /* tfimport.c in Sources */,
 				2DE3B7F42269BF3100AFF9AE /* mainplaylist.c in Sources */,
+				2DE3B86F2269CAEA00AFF9AE /* parser.c in Sources */,
 				2DE3B7F32269BF3100AFF9AE /* progress.c in Sources */,
 				2DE3B7DD2269BF3100AFF9AE /* dspconfig.c in Sources */,
 				2DE3B80A2269BF3100AFF9AE /* widgets.c in Sources */,
 				2DE3B7D92269BF1700AFF9AE /* pluginconf.c in Sources */,
 				2DE3B8072269BF3100AFF9AE /* retina.m in Sources */,
 				2DE3B7EA2269BF3100AFF9AE /* trkproperties.c in Sources */,
-				2DE3B8132269C07300AFF9AE /* parser.c in Sources */,
 				2DE3B7CB2269BF1300AFF9AE /* ctmapping.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DE3B82D2269C9FB00AFF9AE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DE3B86A2269CA1500AFF9AE /* keysyms.inc in Sources */,
+				2DE3B8642269CA1500AFF9AE /* actionhandlers.c in Sources */,
+				2DE3B86E2269CA9800AFF9AE /* parser.c in Sources */,
+				2DE3B8652269CA1500AFF9AE /* hotkeys.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14222,6 +14296,11 @@
 			isa = PBXTargetDependency;
 			target = 2DE3B7B82269BC3500AFF9AE /* ddb_gui_GTK3 */;
 			targetProxy = 2DE3B7BD2269BC5700AFF9AE /* PBXContainerItemProxy */;
+		};
+		2DE3B86C2269CA4D00AFF9AE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DE3B82F2269C9FB00AFF9AE /* hotkeys */;
+			targetProxy = 2DE3B86B2269CA4D00AFF9AE /* PBXContainerItemProxy */;
 		};
 		2DE92F551BAFFBE100F37154 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -16864,6 +16943,93 @@
 			};
 			name = Release;
 		};
+		2DE3B8312269C9FC00AFF9AE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = F69NGENSKX;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		2DE3B8322269C9FC00AFF9AE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = F69NGENSKX;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 		2DE92F301BAFFB4F00F37154 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -18208,6 +18374,15 @@
 			buildConfigurations = (
 				2DE3B7BB2269BC3500AFF9AE /* Debug */,
 				2DE3B7BC2269BC3500AFF9AE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DE3B8402269C9FC00AFF9AE /* Build configuration list for PBXNativeTarget "hotkeys" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DE3B8312269C9FC00AFF9AE /* Debug */,
+				2DE3B8322269C9FC00AFF9AE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
