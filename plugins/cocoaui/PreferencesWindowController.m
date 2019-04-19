@@ -79,6 +79,14 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
 
     [self setInitialValues];
 
+    // toolbar
+    _toolbar.delegate = self;
+    [_toolbar setSelectedItemIdentifier:@"Sound"];
+
+    [self switchToView:_soundView];
+}
+
+- (void)initializeAudioTab {
     // output plugins
 
     NSInteger index = 0;
@@ -122,12 +130,11 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     self.multiplesOf48ComboBox.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("streamer.samplerate_mult_48", "48000")];
     self.multiplesOf44ComboBox.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("streamer.samplerate_mult_44", "44100")];
     [self validateAudioSettingsViews];
+}
 
-    // toolbar
-    _toolbar.delegate = self;
-    [_toolbar setSelectedItemIdentifier:@"Sound"];
-
-    [self switchToView:_soundView];
+- (void)showWindow:(id)sender {
+    [super showWindow:sender];
+    [self initializeAudioTab];
 }
 
 #pragma mark - Playback
