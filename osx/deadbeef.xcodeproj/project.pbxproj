@@ -1651,6 +1651,10 @@
 		2DE3B86D2269CA5400AFF9AE /* hotkeys.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */; };
 		2DE3B86E2269CA9800AFF9AE /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
 		2DE3B86F2269CAEA00AFF9AE /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
+		2DE3B88F2269F6BA00AFF9AE /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B87D2269F6B900AFF9AE /* support.c */; };
+		2DE3B8902269F6BA00AFF9AE /* pltbrowser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B87E2269F6B900AFF9AE /* pltbrowser.c */; };
+		2DE3B8932269F6BA00AFF9AE /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B88C2269F6B900AFF9AE /* support.h */; };
+		2DE3B8962269F6D900AFF9AE /* pltbrowser_gtk3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE3B8742269F68B00AFF9AE /* pltbrowser_gtk3.dylib */; };
 		2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */; };
 		2DE7A8FB1CA493CE00318A9F /* CuesheetTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7A8FA1CA493CE00318A9F /* CuesheetTests.m */; };
 		2DE92F561BAFFBEE00F37154 /* wavpack.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */; };
@@ -2983,6 +2987,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2DE3B82F2269C9FB00AFF9AE;
 			remoteInfo = hotkeys;
+		};
+		2DE3B8942269F6D200AFF9AE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DE3B8732269F68B00AFF9AE;
+			remoteInfo = pltbrowser;
 		};
 		2DE92F541BAFFBE100F37154 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -4703,6 +4714,10 @@
 		2DE3B84C2269CA1500AFF9AE /* actionhandlers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = actionhandlers.c; sourceTree = "<group>"; };
 		2DE3B84F2269CA1500AFF9AE /* hotkeys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hotkeys.c; sourceTree = "<group>"; };
 		2DE3B85D2269CA1500AFF9AE /* keysyms.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = keysyms.inc; sourceTree = "<group>"; };
+		2DE3B8742269F68B00AFF9AE /* pltbrowser_gtk3.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = pltbrowser_gtk3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DE3B87D2269F6B900AFF9AE /* support.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = support.c; sourceTree = "<group>"; };
+		2DE3B87E2269F6B900AFF9AE /* pltbrowser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pltbrowser.c; sourceTree = "<group>"; };
+		2DE3B88C2269F6B900AFF9AE /* support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = support.h; sourceTree = "<group>"; };
 		2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = bufferingTemplate.pdf; path = images/bufferingTemplate.pdf; sourceTree = "<group>"; };
 		2DE7A8FA1CA493CE00318A9F /* CuesheetTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CuesheetTests.m; sourceTree = "<group>"; };
 		2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wavpack.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5776,6 +5791,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2DE3B82E2269C9FB00AFF9AE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DE3B8722269F68B00AFF9AE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -8096,6 +8118,17 @@
 			path = plugins/hotkeys;
 			sourceTree = "<group>";
 		};
+		2DE3B8782269F6B900AFF9AE /* pltbrowser */ = {
+			isa = PBXGroup;
+			children = (
+				2DE3B87D2269F6B900AFF9AE /* support.c */,
+				2DE3B87E2269F6B900AFF9AE /* pltbrowser.c */,
+				2DE3B88C2269F6B900AFF9AE /* support.h */,
+			);
+			name = pltbrowser;
+			path = plugins/pltbrowser;
+			sourceTree = "<group>";
+		};
 		2DE92F331BAFFB7700F37154 /* wavpack */ = {
 			isa = PBXGroup;
 			children = (
@@ -8283,6 +8316,7 @@
 				2D48DC5B2269B731002CACFD /* DeaDBeeF GTK3.app */,
 				2DE3B7B92269BC3500AFF9AE /* ddb_gui_GTK3.dylib */,
 				2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */,
+				2DE3B8742269F68B00AFF9AE /* pltbrowser_gtk3.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -8450,6 +8484,7 @@
 				2D91772E1A0E892F004BC222 /* alac */,
 				4DEE38461838E6450022D2B7 /* cocoaui */,
 				2DE3B5772269BB4300AFF9AE /* gtkui */,
+				2DE3B8782269F6B900AFF9AE /* pltbrowser */,
 				2DE3B8412269CA1500AFF9AE /* hotkeys */,
 				2D2351221B138F1700A62936 /* converter */,
 				4D1B515C1837F59F003E6066 /* coreaudio */,
@@ -10270,6 +10305,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DE3B8702269F68B00AFF9AE /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DE3B8932269F6BA00AFF9AE /* support.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DE92F2D1BAFFB4F00F37154 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -11014,6 +11057,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DE3B8952269F6D200AFF9AE /* PBXTargetDependency */,
 				2DE3B86C2269CA4D00AFF9AE /* PBXTargetDependency */,
 				2DE3B7BE2269BC5700AFF9AE /* PBXTargetDependency */,
 				2D48DB842269B731002CACFD /* PBXTargetDependency */,
@@ -11408,6 +11452,23 @@
 			name = hotkeys;
 			productName = hotkeys;
 			productReference = 2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		2DE3B8732269F68B00AFF9AE /* pltbrowser_gtk3 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DE3B8752269F68C00AFF9AE /* Build configuration list for PBXNativeTarget "pltbrowser_gtk3" */;
+			buildPhases = (
+				2DE3B8702269F68B00AFF9AE /* Headers */,
+				2DE3B8712269F68B00AFF9AE /* Sources */,
+				2DE3B8722269F68B00AFF9AE /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = pltbrowser_gtk3;
+			productName = pltbrowser;
+			productReference = 2DE3B8742269F68B00AFF9AE /* pltbrowser_gtk3.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		2DE92F2E1BAFFB4F00F37154 /* wavpack */ = {
@@ -11825,6 +11886,11 @@
 						DevelopmentTeam = F69NGENSKX;
 						ProvisioningStyle = Automatic;
 					};
+					2DE3B8732269F68B00AFF9AE = {
+						CreatedOnToolsVersion = 10.2;
+						DevelopmentTeam = F69NGENSKX;
+						ProvisioningStyle = Automatic;
+					};
 					2DE92F2E1BAFFB4F00F37154 = {
 						CreatedOnToolsVersion = 6.2;
 					};
@@ -11940,6 +12006,7 @@
 				4D9C5B041FDEBACC00D83CEF /* opuslib */,
 				4D9C629D1FDEC51000D83CEF /* opusfile */,
 				2DE3B82F2269C9FB00AFF9AE /* hotkeys */,
+				2DE3B8732269F68B00AFF9AE /* pltbrowser_gtk3 */,
 			);
 		};
 /* End PBXProject section */
@@ -12022,6 +12089,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DE3B8962269F6D900AFF9AE /* pltbrowser_gtk3.dylib in Resources */,
 				2DE3B86D2269CA5400AFF9AE /* hotkeys.dylib in Resources */,
 				2DE3B7BF2269BCAB00AFF9AE /* ddb_gui_GTK3.dylib in Resources */,
 				2D48DBF72269B731002CACFD /* libvorbislib.dylib in Resources */,
@@ -13386,6 +13454,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DE3B8712269F68B00AFF9AE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DE3B8902269F6BA00AFF9AE /* pltbrowser.c in Sources */,
+				2DE3B88F2269F6BA00AFF9AE /* support.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DE92F2B1BAFFB4F00F37154 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -14301,6 +14378,11 @@
 			isa = PBXTargetDependency;
 			target = 2DE3B82F2269C9FB00AFF9AE /* hotkeys */;
 			targetProxy = 2DE3B86B2269CA4D00AFF9AE /* PBXContainerItemProxy */;
+		};
+		2DE3B8952269F6D200AFF9AE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DE3B8732269F68B00AFF9AE /* pltbrowser_gtk3 */;
+			targetProxy = 2DE3B8942269F6D200AFF9AE /* PBXContainerItemProxy */;
 		};
 		2DE92F551BAFFBE100F37154 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -17030,6 +17112,197 @@
 			};
 			name = Release;
 		};
+		2DE3B8762269F68C00AFF9AE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = F69NGENSKX;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"/usr/local/Cellar/gtk+3/3.24.8/include/gtk-3.0",
+					"/usr/local/Cellar/glib/2.60.1/include/gio-unix-2.0",
+					/usr/local/Cellar/cairo/1.16.0/include/cairo,
+					/usr/local/Cellar/libepoxy/1.5.3/include,
+					"/usr/local/Cellar/pango/1.42.4_1/include/pango-1.0",
+					/usr/local/Cellar/harfbuzz/2.4.0_1/include/harfbuzz,
+					/usr/local/Cellar/graphite2/1.3.13/include,
+					"/usr/local/Cellar/pango/1.42.4_1/include/pango-1.0",
+					/usr/local/Cellar/fribidi/1.0.5/include/fribidi,
+					"/usr/local/Cellar/atk/2.32.0/include/atk-1.0",
+					/usr/local/Cellar/cairo/1.16.0/include/cairo,
+					"/usr/local/Cellar/pixman/0.38.4/include/pixman-1",
+					/usr/local/Cellar/fontconfig/2.13.1/include,
+					/usr/local/opt/freetype/include/freetype2,
+					/usr/local/Cellar/libpng/1.6.37/include/libpng16,
+					"/usr/local/Cellar/gdk-pixbuf/2.38.1/include/gdk-pixbuf-2.0",
+					/usr/local/Cellar/glib/2.60.1/include,
+					"/usr/local/Cellar/libffi/3.2.1/lib/libffi-3.2.1/include",
+					"/usr/local/Cellar/glib/2.60.1/include/glib-2.0",
+					"/usr/local/Cellar/glib/2.60.1/lib/glib-2.0/include",
+					/usr/local/opt/gettext/include,
+					/usr/local/Cellar/pcre/8.43/include,
+					/usr/local/Cellar/jansson/2.12/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"/usr/local/Cellar/gtk+3/3.24.8/lib",
+					/usr/local/Cellar/pango/1.42.4_1/lib,
+					/usr/local/Cellar/atk/2.32.0/lib,
+					/usr/local/Cellar/cairo/1.16.0/lib,
+					"/usr/local/Cellar/gdk-pixbuf/2.38.1/lib",
+					/usr/local/Cellar/glib/2.60.1/lib,
+					/usr/local/opt/gettext/lib,
+					/usr/local/Cellar/jansson/2.12/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = (
+					"-lgtk-3",
+					"-lgdk-3",
+					"-lpangocairo-1.0",
+					"-lpango-1.0",
+					"-latk-1.0",
+					"-lcairo-gobject",
+					"-lcairo",
+					"-lgdk_pixbuf-2.0",
+					"-lgio-2.0",
+					"-lgobject-2.0",
+					"-lglib-2.0",
+					"-lintl",
+					"-ljansson",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		2DE3B8772269F68C00AFF9AE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = F69NGENSKX;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"/usr/local/Cellar/gtk+3/3.24.8/include/gtk-3.0",
+					"/usr/local/Cellar/glib/2.60.1/include/gio-unix-2.0",
+					/usr/local/Cellar/cairo/1.16.0/include/cairo,
+					/usr/local/Cellar/libepoxy/1.5.3/include,
+					"/usr/local/Cellar/pango/1.42.4_1/include/pango-1.0",
+					/usr/local/Cellar/harfbuzz/2.4.0_1/include/harfbuzz,
+					/usr/local/Cellar/graphite2/1.3.13/include,
+					"/usr/local/Cellar/pango/1.42.4_1/include/pango-1.0",
+					/usr/local/Cellar/fribidi/1.0.5/include/fribidi,
+					"/usr/local/Cellar/atk/2.32.0/include/atk-1.0",
+					/usr/local/Cellar/cairo/1.16.0/include/cairo,
+					"/usr/local/Cellar/pixman/0.38.4/include/pixman-1",
+					/usr/local/Cellar/fontconfig/2.13.1/include,
+					/usr/local/opt/freetype/include/freetype2,
+					/usr/local/Cellar/libpng/1.6.37/include/libpng16,
+					"/usr/local/Cellar/gdk-pixbuf/2.38.1/include/gdk-pixbuf-2.0",
+					/usr/local/Cellar/glib/2.60.1/include,
+					"/usr/local/Cellar/libffi/3.2.1/lib/libffi-3.2.1/include",
+					"/usr/local/Cellar/glib/2.60.1/include/glib-2.0",
+					"/usr/local/Cellar/glib/2.60.1/lib/glib-2.0/include",
+					/usr/local/opt/gettext/include,
+					/usr/local/Cellar/pcre/8.43/include,
+					/usr/local/Cellar/jansson/2.12/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"/usr/local/Cellar/gtk+3/3.24.8/lib",
+					/usr/local/Cellar/pango/1.42.4_1/lib,
+					/usr/local/Cellar/atk/2.32.0/lib,
+					/usr/local/Cellar/cairo/1.16.0/lib,
+					"/usr/local/Cellar/gdk-pixbuf/2.38.1/lib",
+					/usr/local/Cellar/glib/2.60.1/lib,
+					/usr/local/opt/gettext/lib,
+					/usr/local/Cellar/jansson/2.12/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = (
+					"-lgtk-3",
+					"-lgdk-3",
+					"-lpangocairo-1.0",
+					"-lpango-1.0",
+					"-latk-1.0",
+					"-lcairo-gobject",
+					"-lcairo",
+					"-lgdk_pixbuf-2.0",
+					"-lgio-2.0",
+					"-lgobject-2.0",
+					"-lglib-2.0",
+					"-lintl",
+					"-ljansson",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 		2DE92F301BAFFB4F00F37154 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -18383,6 +18656,15 @@
 			buildConfigurations = (
 				2DE3B8312269C9FC00AFF9AE /* Debug */,
 				2DE3B8322269C9FC00AFF9AE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DE3B8752269F68C00AFF9AE /* Build configuration list for PBXNativeTarget "pltbrowser_gtk3" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DE3B8762269F68C00AFF9AE /* Debug */,
+				2DE3B8772269F68C00AFF9AE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
