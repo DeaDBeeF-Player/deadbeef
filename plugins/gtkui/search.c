@@ -305,6 +305,7 @@ playlistswitch_cb (void) {
     if (listview) {
         ddb_listview_list_setup(listview, 0);
     }
+    return FALSE;
 }
 
 int

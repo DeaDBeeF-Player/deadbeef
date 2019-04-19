@@ -1142,6 +1142,16 @@ main (int argc, char *argv[]) {
 
     // Get doc and pixmaps dirs
     if (portable) {
+#ifdef OSX_APPBUNDLE
+        if (snprintf (dbdocdir, sizeof (dbdocdir), "%s/doc", dbplugindir) > sizeof (dbdocdir)) {
+            trace_err ("fatal: install path is too long: %s\n", dbplugindir);
+            return -1;
+        }
+        if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/pixmaps", dbplugindir) > sizeof (dbpixmapdir)) {
+            trace_err ("fatal: install path is too long: %s\n", dbplugindir);
+            return -1;
+        }
+#else
         if (snprintf (dbdocdir, sizeof (dbdocdir), "%s/doc", dbinstalldir) > sizeof (dbdocdir)) {
             trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
@@ -1150,6 +1160,7 @@ main (int argc, char *argv[]) {
             trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
+#endif
     }
     else {
         if (snprintf (dbdocdir, sizeof (dbdocdir), "%s", DOCDIR) > sizeof (dbdocdir)) {
