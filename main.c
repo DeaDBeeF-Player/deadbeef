@@ -80,7 +80,7 @@
 #include "plugins.h"
 #include "common.h"
 #include "junklib.h"
-#ifdef HAVE_COCOAUI
+#ifdef OSX_APPBUNDLE
 #include "cocoautil.h"
 #endif
 #include "playqueue.h"
@@ -91,7 +91,7 @@
 #error PREFIX must be defined
 #endif
 
-#ifdef HAVE_COCOAUI
+#ifdef OSX_APPBUNDLE
 #define SYS_CONFIG_DIR "Library/Preferences"
 #elif defined(__MINGW32__)
 #define SYS_CONFIG_DIR "AppData/Roaming"
@@ -1123,7 +1123,7 @@ main (int argc, char *argv[]) {
         }
     }
     else if (portable) {
-#ifdef HAVE_COCOAUI
+#ifdef OSX_APPBUNDLE
         cocoautil_get_resources_path (dbplugindir, sizeof (dbplugindir));
 #else
         if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/plugins", dbinstalldir) > sizeof (dbplugindir)) {

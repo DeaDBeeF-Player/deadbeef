@@ -877,7 +877,7 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
         {
             // skip hidden files and fallback plugins
             while (namelist[i]->d_name[0] != '.'
-#if !defined(ANDROID) && !defined(HAVE_COCOAUI)
+#if !defined(ANDROID) && !defined(OSX_APPBUNDLE)
                     && !strstr (namelist[i]->d_name, ".fallback.")
 #elif !defined(ANDROID)
                     && !strstr (namelist[i]->d_name, "libdeadbeef")
@@ -1367,7 +1367,7 @@ static DB_output_t *
 _select_output_plugin (void) {
 #ifndef ANDROID
     char outplugname[100];
-#ifdef HAVE_COCOAUI
+#ifdef OSX_APPBUNDLE
     conf_get_str ("output_plugin", "CoreAudio", outplugname, sizeof (outplugname));
 #else
     conf_get_str ("output_plugin", "ALSA output plugin", outplugname, sizeof (outplugname));
