@@ -39,6 +39,9 @@ extern DB_functions_t *deadbeef;
 
 @property NSMutableArray<NSString *> *audioDevices;
 @property (weak) IBOutlet NSPopUpButton *audioDevicesPopupButton;
+@property (weak) IBOutlet NSTextField *targetSamplerateLabel;
+@property (weak) IBOutlet NSTextField *multiplesOf48Label;
+@property (weak) IBOutlet NSTextField *multiplesOf44Label;
 
 @property (weak) IBOutlet NSButton *overrideSamplerateCheckbox;
 @property (weak) IBOutlet NSComboBox *targetSamplerateComboBox;
@@ -116,6 +119,7 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     self.basedOnInputSamplerateCheckbox.state = deadbeef->conf_get_int ("streamer.use_dependent_samplerate", 0) ? NSControlStateValueOn : NSControlStateValueOff;
     self.multiplesOf48ComboBox.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("streamer.samplerate_mult_48", "48000")];
     self.multiplesOf44ComboBox.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("streamer.samplerate_mult_44", "44100")];
+    [self validateAudioSettingsViews];
 
     // toolbar
     _toolbar.delegate = self;
@@ -125,6 +129,22 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
 }
 
 #pragma mark - Playback
+
+- (void)validateAudioSettingsViews {
+    BOOL override = deadbeef->conf_get_int ("streamer.override_samplerate", 0) ? YES : NO;
+    BOOL useDependent = deadbeef->conf_get_int ("streamer.use_dependent_samplerate", 0) ? YES : NO;
+
+    self.targetSamplerateLabel.enabled = override;
+    self.targetSamplerateComboBox.enabled = override;
+
+    self.basedOnInputSamplerateCheckbox.enabled = override;
+
+    self.multiplesOf48Label.enabled = override && useDependent;
+    self.multiplesOf48ComboBox.enabled = override && useDependent;
+
+    self.multiplesOf44Label.enabled = override && useDependent;
+    self.multiplesOf44ComboBox.enabled = override && useDependent;
+}
 
 - (IBAction)outputPluginAction:(id)sender {
     DB_output_t **o = deadbeef->plug_get_output_list ();
@@ -141,6 +161,7 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
 - (IBAction)overrideSamplerateAction:(NSButton *)sender {
     deadbeef->conf_set_int ("streamer.override_samplerate", sender.state == NSControlStateValueOn ? 1 : 0);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    [self validateAudioSettingsViews];
 }
 
 static int
@@ -163,6 +184,7 @@ clamp_samplerate (int val) {
 - (IBAction)basedOnInputSamplerateAction:(NSButton *)sender {
     deadbeef->conf_set_int ("streamer.use_dependent_samplerate", sender.state == NSControlStateValueOn ? 1 : 0);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    [self validateAudioSettingsViews];
 }
 
 - (IBAction)multiplesOf48Action:(NSComboBox *)sender {

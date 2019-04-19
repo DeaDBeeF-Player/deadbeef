@@ -42,7 +42,9 @@
                 <outlet property="listview_italic_selected_text" destination="Ju6-JL-SK6" id="RxW-cT-Is1"/>
                 <outlet property="mmb_delete_playlist" destination="mQR-r2-hgB" id="I1Y-hc-8Vs"/>
                 <outlet property="multiplesOf44ComboBox" destination="DZJ-up-vkC" id="KMV-Id-EuE"/>
+                <outlet property="multiplesOf44Label" destination="VdO-R5-ZVn" id="Jq6-lI-Fil"/>
                 <outlet property="multiplesOf48ComboBox" destination="xIv-0C-D3P" id="s7P-rJ-5cq"/>
+                <outlet property="multiplesOf48Label" destination="CiA-bx-OlM" id="fhB-7A-RWO"/>
                 <outlet property="name_playlist_from_folder" destination="va0-Vc-fXe" id="EAm-pp-vao"/>
                 <outlet property="networkView" destination="JAw-ar-I3a" id="1is-US-XFb"/>
                 <outlet property="network_http_user_agent" destination="wfB-Ny-gfZ" id="k6M-Wd-tfu"/>
@@ -77,6 +79,7 @@
                 <outlet property="stop_after_album_reset" destination="Ypp-Lr-7tH" id="yD2-9S-R4p"/>
                 <outlet property="stop_after_current_reset" destination="vaP-mG-6h4" id="9ha-5S-KCv"/>
                 <outlet property="targetSamplerateComboBox" destination="ePT-oo-DxM" id="TSl-Sq-6Ur"/>
+                <outlet property="targetSamplerateLabel" destination="kev-Ar-D1H" id="WvY-iB-sAy"/>
                 <outlet property="titlebar_playing" destination="pSK-4V-QiQ" id="HHk-oD-wV8"/>
                 <outlet property="titlebar_stopped" destination="usM-X5-aNf" id="kTP-nC-Pic"/>
                 <outlet property="toolbar" destination="b4X-86-Cex" id="1AX-xy-fdb"/>
@@ -1381,25 +1384,25 @@ Gw
                     </connections>
                 </button>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="CiA-bx-OlM">
-                    <rect key="frame" x="59" y="46" width="222" height="17"/>
+                    <rect key="frame" x="61" y="46" width="222" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" lineBreakMode="clipping" title="For multiples of 48 kHz (96, 192, …)" id="tA5-pH-SS3">
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="For multiples of 48 kHz (96, 192, …)" drawsBackground="YES" id="tA5-pH-SS3">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                     </textFieldCell>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="VdO-R5-ZVn">
-                    <rect key="frame" x="59" y="21" width="252" height="17"/>
+                    <rect key="frame" x="61" y="21" width="252" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" lineBreakMode="clipping" title="For multiples of 44.1 kHz (88.2, 176.4, …)" id="nwz-Pi-GKV">
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="For multiples of 44.1 kHz (88.2, 176.4, …)" drawsBackground="YES" id="nwz-Pi-GKV">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                     </textFieldCell>
                 </textField>
                 <comboBox verticalHuggingPriority="750" id="ePT-oo-DxM">
-                    <rect key="frame" x="156" y="88" width="304" height="26"/>
+                    <rect key="frame" x="160" y="88" width="300" height="26"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="vBl-I0-kUV">
                         <font key="font" metaFont="system"/>
@@ -1419,7 +1422,7 @@ Gw
                     </connections>
                 </comboBox>
                 <comboBox verticalHuggingPriority="750" id="xIv-0C-D3P">
-                    <rect key="frame" x="287" y="41" width="172" height="26"/>
+                    <rect key="frame" x="291" y="41" width="168" height="26"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="QJM-v7-gmh">
                         <font key="font" metaFont="system"/>
@@ -1439,16 +1442,16 @@ Gw
                     </connections>
                 </comboBox>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="kev-Ar-D1H">
-                    <rect key="frame" x="35" y="93" width="115" height="17"/>
+                    <rect key="frame" x="37" y="93" width="115" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" lineBreakMode="clipping" title="Target Samplerate" id="ULG-Yu-8aS">
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="Target Samplerate" drawsBackground="YES" id="ULG-Yu-8aS">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                     </textFieldCell>
                 </textField>
                 <comboBox verticalHuggingPriority="750" id="DZJ-up-vkC">
-                    <rect key="frame" x="317" y="16" width="142" height="26"/>
+                    <rect key="frame" x="321" y="16" width="138" height="26"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="Qzu-T6-MU2">
                         <font key="font" metaFont="system"/>
