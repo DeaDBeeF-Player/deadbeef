@@ -153,6 +153,7 @@ static struct timeval last_br_update;
 
 static void
 format_timestr (char *buf, int sz, float time) {
+    time = roundf(time);
     int daystotal = (int)time / (3600*24);
     int hourtotal = ((int)time / 3600) % 24;
     int mintotal = ((int)time/60) % 60;
