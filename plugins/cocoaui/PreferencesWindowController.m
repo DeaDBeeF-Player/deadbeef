@@ -40,6 +40,12 @@ extern DB_functions_t *deadbeef;
 @property NSMutableArray<NSString *> *audioDevices;
 @property (weak) IBOutlet NSPopUpButton *audioDevicesPopupButton;
 
+@property (weak) IBOutlet NSButton *overrideSamplerateCheckbox;
+@property (weak) IBOutlet NSComboBox *targetSamplerateComboBox;
+@property (weak) IBOutlet NSButton *basedOnInputSamplerateCheckbox;
+@property (weak) IBOutlet NSComboBox *multiplesOf48ComboBox;
+@property (weak) IBOutlet NSComboBox *multiplesOf44ComboBox;
+
 @end
 
 @implementation PreferencesWindowController
@@ -104,6 +110,13 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
         index++;
     }
 
+    self.overrideSamplerateCheckbox.state = deadbeef->conf_get_int ("streamer.override_samplerate", 0) ? NSControlStateValueOn : NSControlStateValueOff;
+    self.targetSamplerateComboBox.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("streamer.samplerate", "44100")];
+
+    self.basedOnInputSamplerateCheckbox.state = deadbeef->conf_get_int ("streamer.use_dependent_samplerate", 0) ? NSControlStateValueOn : NSControlStateValueOff;
+    self.multiplesOf48ComboBox.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("streamer.samplerate_mult_48", "48000")];
+    self.multiplesOf44ComboBox.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("streamer.samplerate_mult_44", "44100")];
+
     // toolbar
     _toolbar.delegate = self;
     [_toolbar setSelectedItemIdentifier:@"Sound"];
@@ -116,17 +129,53 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
 - (IBAction)outputPluginAction:(id)sender {
     DB_output_t **o = deadbeef->plug_get_output_list ();
     deadbeef->conf_set_str ("output_plugin", o[[self.outputPluginsPopupButton indexOfSelectedItem]]->plugin.id);
-    deadbeef->conf_save ();
     deadbeef->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
 }
 
 - (IBAction)playbackDeviceAction:(NSPopUpButton *)sender {
     NSString *title = [[sender selectedItem] title];
     deadbeef->conf_set_str ("coreaudio.device", [title UTF8String]);
-    deadbeef->conf_save ();
     deadbeef->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
 }
 
+- (IBAction)overrideSamplerateAction:(NSButton *)sender {
+    deadbeef->conf_set_int ("streamer.override_samplerate", sender.state == NSControlStateValueOn ? 1 : 0);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+static int
+clamp_samplerate (int val) {
+    if (val < 8000) {
+        return 8000;
+    }
+    else if (val > 768000) {
+        return 768000;
+    }
+    return val;
+}
+
+- (IBAction)targetSamplerateAction:(NSComboBox *)sender {
+    int samplerate = clamp_samplerate ((int)[sender integerValue]);
+    deadbeef->conf_set_int ("streamer.samplerate", samplerate);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)basedOnInputSamplerateAction:(NSButton *)sender {
+    deadbeef->conf_set_int ("streamer.use_dependent_samplerate", sender.state == NSControlStateValueOn ? 1 : 0);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)multiplesOf48Action:(NSComboBox *)sender {
+    int samplerate = clamp_samplerate ((int)[sender integerValue]);
+    deadbeef->conf_set_int ("streamer.samplerate_mult_48", samplerate);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)multiplesOf44Action:(NSComboBox *)sender {
+    int samplerate = clamp_samplerate ((int)[sender integerValue]);
+    deadbeef->conf_set_int ("streamer.samplerate_mult_44", samplerate);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
 
 #pragma mark - Unsorted
 
@@ -432,7 +481,6 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
 - (IBAction)pluginConfResetDefaults:(id)sender {
     [_pluginConfViewController resetPluginConfigToDefaults];
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (void)initPluginConfiguration:(NSInteger)idx {
@@ -505,7 +553,6 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     deadbeef->conf_set_float ("replaygain.preamp_with_rg", value);
     [self updateRGLabels];
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (IBAction)replaygain_preamp_without_rg_action:(id)sender {
@@ -513,14 +560,12 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     deadbeef->conf_set_float ("replaygain.preamp_without_rg", value);
     [self updateRGLabels];
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (IBAction)replaygain_source_mode_action:(id)sender {
     NSInteger idx = [_replaygain_source_mode indexOfSelectedItem];
     deadbeef->conf_set_int ("replaygain.source_mode", (int)idx);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (IBAction)replaygain_processing_action:(id)sender {
@@ -538,31 +583,26 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
 
     deadbeef->conf_set_int ("replaygain.processing_flags", flags);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (IBAction)ignoreArchivesAction:(id)sender {
     deadbeef->conf_set_int ("ignore_archives", [_ignore_archives state] == NSOnState);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (IBAction)resumeLastSessionAction:(id)sender {
     deadbeef->conf_set_int ("resume_last_session", [_resume_last_session state] == NSOnState);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (IBAction)stopAfterCurrentResetAction:(id)sender {
     deadbeef->conf_set_int ("playlist.stop_after_current_reset", [_stop_after_current_reset state] == NSOnState);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (IBAction)stopAfterCurrentAlbumResetAction:(id)sender {
     deadbeef->conf_set_int ("playlist.stop_after_album_reset", [_stop_after_album_reset state] == NSOnState);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 @end

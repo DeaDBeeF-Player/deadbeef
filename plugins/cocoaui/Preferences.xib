@@ -11,6 +11,7 @@
                 <outlet property="appearanceView" destination="Psg-tn-Uc3" id="XJ4-XU-dNz"/>
                 <outlet property="audioDevicesPopupButton" destination="0ET-qW-1ss" id="YwC-6z-B39"/>
                 <outlet property="autoresize_columns" destination="pt4-Vh-haG" id="ltv-Y2-Vr9"/>
+                <outlet property="basedOnInputSamplerateCheckbox" destination="OHq-bQ-a2N" id="kOa-IW-a5I"/>
                 <outlet property="cli_add_playlist_name" destination="ySk-s8-tM7" id="NfI-d6-Jw3"/>
                 <outlet property="cli_add_to_specific_playlist" destination="Rqu-qW-OA7" id="dxQ-dK-H94"/>
                 <outlet property="color_bar_background" destination="tgF-mM-RL5" id="yba-27-MhO"/>
@@ -40,6 +41,8 @@
                 <outlet property="listview_italic_current_text" destination="2mI-5E-ghQ" id="QKw-VD-RPP"/>
                 <outlet property="listview_italic_selected_text" destination="Ju6-JL-SK6" id="RxW-cT-Is1"/>
                 <outlet property="mmb_delete_playlist" destination="mQR-r2-hgB" id="I1Y-hc-8Vs"/>
+                <outlet property="multiplesOf44ComboBox" destination="DZJ-up-vkC" id="KMV-Id-EuE"/>
+                <outlet property="multiplesOf48ComboBox" destination="xIv-0C-D3P" id="s7P-rJ-5cq"/>
                 <outlet property="name_playlist_from_folder" destination="va0-Vc-fXe" id="EAm-pp-vao"/>
                 <outlet property="networkView" destination="JAw-ar-I3a" id="1is-US-XFb"/>
                 <outlet property="network_http_user_agent" destination="wfB-Ny-gfZ" id="k6M-Wd-tfu"/>
@@ -50,6 +53,7 @@
                 <outlet property="network_proxy_type" destination="ouZ-vc-Cmz" id="K2f-lD-EZQ"/>
                 <outlet property="network_proxy_username" destination="6Sy-4E-ddK" id="ucd-hh-lCX"/>
                 <outlet property="outputPluginsPopupButton" destination="WGI-Tr-J4c" id="k81-dq-NYf"/>
+                <outlet property="overrideSamplerateCheckbox" destination="Lkp-Xx-fTd" id="scj-fp-ThS"/>
                 <outlet property="override_bar_colors" destination="KCh-ey-ibq" id="i0u-b3-pMw"/>
                 <outlet property="override_playlist_colors" destination="xaR-5U-yt4" id="kff-f4-3XY"/>
                 <outlet property="playbackView" destination="Zmc-ua-enY" id="oGy-nE-FiQ"/>
@@ -72,6 +76,7 @@
                 <outlet property="soundView" destination="UtU-5A-sPy" id="g3t-rQ-fMb"/>
                 <outlet property="stop_after_album_reset" destination="Ypp-Lr-7tH" id="yD2-9S-R4p"/>
                 <outlet property="stop_after_current_reset" destination="vaP-mG-6h4" id="9ha-5S-KCv"/>
+                <outlet property="targetSamplerateComboBox" destination="ePT-oo-DxM" id="TSl-Sq-6Ur"/>
                 <outlet property="titlebar_playing" destination="pSK-4V-QiQ" id="HHk-oD-wV8"/>
                 <outlet property="titlebar_stopped" destination="usM-X5-aNf" id="kTP-nC-Pic"/>
                 <outlet property="toolbar" destination="b4X-86-Cex" id="1AX-xy-fdb"/>
@@ -1360,6 +1365,9 @@ Gw
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <action selector="overrideSamplerateAction:" target="-2" id="jaF-3E-mzQ"/>
+                    </connections>
                 </button>
                 <button verticalHuggingPriority="750" id="OHq-bQ-a2N">
                     <rect key="frame" x="43" y="69" width="184" height="18"/>
@@ -1368,6 +1376,9 @@ Gw
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <action selector="basedOnInputSamplerateAction:" target="-2" id="QXZ-5m-sov"/>
+                    </connections>
                 </button>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="CiA-bx-OlM">
                     <rect key="frame" x="59" y="46" width="222" height="17"/>
@@ -1395,39 +1406,37 @@ Gw
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         <objectValues>
-                            <string>Item 1</string>
-                            <string>Item 2</string>
-                            <string>Item 3</string>
+                            <string>44100</string>
+                            <string>48000</string>
+                            <string>88200</string>
+                            <string>96000</string>
+                            <string>176400</string>
+                            <string>192000</string>
                         </objectValues>
                     </comboBoxCell>
+                    <connections>
+                        <action selector="targetSamplerateAction:" target="-2" id="AZo-6Z-2hg"/>
+                    </connections>
                 </comboBox>
-                <comboBox verticalHuggingPriority="750" id="QMc-6H-dXh">
-                    <rect key="frame" x="287" y="41" width="173" height="26"/>
+                <comboBox verticalHuggingPriority="750" id="xIv-0C-D3P">
+                    <rect key="frame" x="287" y="41" width="172" height="26"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="lXs-G0-KQa">
+                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="QJM-v7-gmh">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         <objectValues>
-                            <string>Item 1</string>
-                            <string>Item 2</string>
-                            <string>Item 3</string>
+                            <string>44100</string>
+                            <string>48000</string>
+                            <string>88200</string>
+                            <string>96000</string>
+                            <string>176400</string>
+                            <string>192000</string>
                         </objectValues>
                     </comboBoxCell>
-                </comboBox>
-                <comboBox verticalHuggingPriority="750" id="jJg-qS-P3q">
-                    <rect key="frame" x="317" y="16" width="143" height="26"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="dO3-gd-CbM">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        <objectValues>
-                            <string>Item 1</string>
-                            <string>Item 2</string>
-                            <string>Item 3</string>
-                        </objectValues>
-                    </comboBoxCell>
+                    <connections>
+                        <action selector="multiplesOf48Action:" target="-2" id="MCL-0K-K4W"/>
+                    </connections>
                 </comboBox>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="kev-Ar-D1H">
                     <rect key="frame" x="35" y="93" width="115" height="17"/>
@@ -1438,6 +1447,26 @@ Gw
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <comboBox verticalHuggingPriority="750" id="DZJ-up-vkC">
+                    <rect key="frame" x="317" y="16" width="142" height="26"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="Qzu-T6-MU2">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        <objectValues>
+                            <string>44100</string>
+                            <string>48000</string>
+                            <string>88200</string>
+                            <string>96000</string>
+                            <string>176400</string>
+                            <string>192000</string>
+                        </objectValues>
+                    </comboBoxCell>
+                    <connections>
+                        <action selector="multiplesOf44Action:" target="-2" id="6AJ-TL-huC"/>
+                    </connections>
+                </comboBox>
             </subviews>
             <point key="canvasLocation" x="-470" y="65.5"/>
         </customView>
