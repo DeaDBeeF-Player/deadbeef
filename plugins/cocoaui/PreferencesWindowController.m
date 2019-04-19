@@ -104,7 +104,9 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     char curdev[200];
     deadbeef->conf_get_str ("coreaudio.device", "", curdev, sizeof (curdev));
     [self.audioDevicesPopupButton removeAllItems];
-    index = 0;
+    [self.audioDevicesPopupButton addItemWithTitle:@"Default Output"];
+    [self.audioDevicesPopupButton selectItemAtIndex:0];
+    index = 1;
     for (NSString *dev in self.audioDevices) {
         [self.audioDevicesPopupButton addItemWithTitle:dev];
         if (!strcmp ([dev UTF8String], curdev)) {
