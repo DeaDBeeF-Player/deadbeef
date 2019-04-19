@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <development version="8000" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowController">
             <connections>
                 <outlet property="appearanceView" destination="Psg-tn-Uc3" id="XJ4-XU-dNz"/>
+                <outlet property="audioDevicesPopupButton" destination="0ET-qW-1ss" id="YwC-6z-B39"/>
                 <outlet property="autoresize_columns" destination="pt4-Vh-haG" id="ltv-Y2-Vr9"/>
                 <outlet property="cli_add_playlist_name" destination="ySk-s8-tM7" id="NfI-d6-Jw3"/>
                 <outlet property="cli_add_to_specific_playlist" destination="Rqu-qW-OA7" id="dxQ-dK-H94"/>
@@ -68,6 +68,7 @@
                 <outlet property="replaygain_processing" destination="e5T-zU-ucH" id="FWK-qZ-djC"/>
                 <outlet property="replaygain_source_mode" destination="mOO-He-DOr" id="ABZ-2f-UBV"/>
                 <outlet property="resume_last_session" destination="elV-fL-38G" id="6PW-Yt-0Fk"/>
+                <outlet property="soundView" destination="UtU-5A-sPy" id="g3t-rQ-fMb"/>
                 <outlet property="stop_after_album_reset" destination="Ypp-Lr-7tH" id="yD2-9S-R4p"/>
                 <outlet property="stop_after_current_reset" destination="vaP-mG-6h4" id="9ha-5S-KCv"/>
                 <outlet property="titlebar_playing" destination="pSK-4V-QiQ" id="HHk-oD-wV8"/>
@@ -1124,7 +1125,7 @@
                                         <rect key="frame" x="17" y="17" width="414.5" height="261"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <clipView key="contentView" drawsBackground="NO" id="kGi-v7-aYF">
-                                            <rect key="frame" x="1" y="1" width="398" height="259"/>
+                                            <rect key="frame" x="1" y="1" width="397.5" height="259"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="8p1-kz-NZ1">
@@ -1132,7 +1133,7 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                    <size key="minSize" width="398" height="259"/>
+                                                    <size key="minSize" width="397.5" height="259"/>
                                                     <size key="maxSize" width="463" height="10000000"/>
                                                     <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 </textView>
@@ -1197,12 +1198,19 @@
                             <action selector="playbackAction:" target="-2" id="0Mk-dD-GyA"/>
                         </connections>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="A86E1DAF-08F0-4BE4-AFBC-9C662848DBA1" explicitItemIdentifier="Sound" label="Sound" paletteLabel="Sound" tag="-1" image="NSTouchBarAudioOutputVolumeHighTemplate" id="Ae6-BH-0s5">
+                        <size key="minSize" width="23" height="30"/>
+                        <size key="maxSize" width="23" height="30"/>
+                        <connections>
+                            <action selector="soundAction:" target="-2" id="qlL-bv-tG4"/>
+                        </connections>
+                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
+                    <toolbarItem reference="Ae6-BH-0s5"/>
                     <toolbarItem reference="SxW-Uj-tLS"/>
                     <toolbarItem reference="7pd-zb-0Gw"/>
                     <toolbarItem reference="wT9-7a-ELU"/>
-                    <toolbarItem reference="uEs-n6-F9h"/>
                     <toolbarItem reference="m7u-Kv-WdW"/>
                     <toolbarItem reference="mxa-vX-uKR"/>
                 </defaultToolbarItems>
@@ -1282,16 +1290,156 @@ Gw
             </connections>
         </viewController>
         <customObject id="ASJ-FT-ifo" customClass="DSPPresetListDataSource"/>
+        <customView id="UtU-5A-sPy" userLabel="Sound View">
+            <rect key="frame" x="0.0" y="0.0" width="476" height="228"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="l0R-EK-reQ">
+                    <rect key="frame" x="18" y="191" width="91" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="Output Device" id="9hn-Ic-Cwd">
+                        <font key="font" usesAppearanceFont="YES"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" id="0ET-qW-1ss">
+                    <rect key="frame" x="113" y="186" width="346" height="25"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="ubD-td-1uR" id="Y8g-eD-4BE">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="IBa-jO-ZD7">
+                            <items>
+                                <menuItem title="Item 1" state="on" id="ubD-td-1uR"/>
+                                <menuItem title="Item 2" id="mNd-Oy-cJ1"/>
+                                <menuItem title="Item 3" id="7Na-Y4-z3n"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="playbackDeviceAction:" target="-2" id="MHA-xY-Gzt"/>
+                    </connections>
+                </popUpButton>
+                <button verticalHuggingPriority="750" id="klk-sC-qFu">
+                    <rect key="frame" x="18" y="167" width="312" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Always convert 8 bit audio to 16 bit" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="RUp-5E-9gV">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                </button>
+                <button verticalHuggingPriority="750" id="3Bt-mH-8FU">
+                    <rect key="frame" x="18" y="147" width="243" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Always convert 16 bit audio to 24 bit" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="KRR-7V-6tB">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                </button>
+                <box verticalHuggingPriority="750" boxType="separator" id="dAy-8r-6bC">
+                    <rect key="frame" x="11" y="138" width="453" height="5"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                </box>
+                <button verticalHuggingPriority="750" id="Lkp-Xx-fTd">
+                    <rect key="frame" x="18" y="116" width="147" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Override Samplerate" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="zuf-lv-2OS">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                </button>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="kev-Ar-D1H">
+                    <rect key="frame" x="30" y="93" width="115" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="Target Samplerate" id="ULG-Yu-8aS">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button verticalHuggingPriority="750" id="OHq-bQ-a2N">
+                    <rect key="frame" x="42" y="69" width="184" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Based on input samplerate" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="3g2-4L-t6H">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                </button>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="CiA-bx-OlM">
+                    <rect key="frame" x="58" y="46" width="222" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="For multiples of 48 kHz (96, 192, …)" id="tA5-pH-SS3">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="VdO-R5-ZVn">
+                    <rect key="frame" x="58" y="21" width="252" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="For multiples of 44.1 kHz (88.2, 176.4, …)" id="nwz-Pi-GKV">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <comboBox verticalHuggingPriority="750" id="ePT-oo-DxM">
+                    <rect key="frame" x="151" y="88" width="308" height="26"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="vBl-I0-kUV">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        <objectValues>
+                            <string>Item 1</string>
+                            <string>Item 2</string>
+                            <string>Item 3</string>
+                        </objectValues>
+                    </comboBoxCell>
+                </comboBox>
+                <comboBox verticalHuggingPriority="750" id="QMc-6H-dXh">
+                    <rect key="frame" x="286" y="41" width="173" height="26"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="lXs-G0-KQa">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        <objectValues>
+                            <string>Item 1</string>
+                            <string>Item 2</string>
+                            <string>Item 3</string>
+                        </objectValues>
+                    </comboBoxCell>
+                </comboBox>
+                <comboBox verticalHuggingPriority="750" id="jJg-qS-P3q">
+                    <rect key="frame" x="316" y="16" width="143" height="26"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="dO3-gd-CbM">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        <objectValues>
+                            <string>Item 1</string>
+                            <string>Item 2</string>
+                            <string>Item 3</string>
+                        </objectValues>
+                    </comboBoxCell>
+                </comboBox>
+            </subviews>
+            <point key="canvasLocation" x="-352" y="144"/>
+        </customView>
     </objects>
     <resources>
         <image name="NSActionTemplate" width="14" height="14"/>
         <image name="NSAddTemplate" width="11" height="11"/>
-        <image name="NSAdvanced" width="128" height="128"/>
-        <image name="NSColorPanel" width="128" height="128"/>
-        <image name="NSNetwork" width="128" height="128"/>
-        <image name="NSPreferencesGeneral" width="128" height="128"/>
+        <image name="NSAdvanced" width="32" height="32"/>
+        <image name="NSColorPanel" width="32" height="32"/>
+        <image name="NSNetwork" width="32" height="32"/>
+        <image name="NSPreferencesGeneral" width="32" height="32"/>
         <image name="NSRemoveTemplate" width="11" height="11"/>
         <image name="NSStatusAvailable" width="16" height="16"/>
+        <image name="NSTouchBarAudioOutputVolumeHighTemplate" width="23" height="30"/>
         <image name="btnplayTemplate" width="75" height="75"/>
     </resources>
 </document>

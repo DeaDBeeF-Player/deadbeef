@@ -36,12 +36,22 @@ extern DB_functions_t *deadbeef;
     DSPPresetController *_dspPresetController;
 }
 
+@property NSMutableArray<NSString *> *audioDevices;
+@property (weak) IBOutlet NSPopUpButton *audioDevicesPopupButton;
+
 @end
 
 @implementation PreferencesWindowController
 
 - (void)dealloc {
     settings_data_free (&_settingsData);
+}
+
+static void
+ca_enum_callback (const char *s, const char *d, void *userdata) {
+    NSMutableArray<NSString *> *devices = (__bridge NSMutableArray<NSString *> *)userdata;
+
+    [devices addObject:[NSString stringWithUTF8String:s]];
 }
 
 - (void)windowDidLoad {
@@ -51,21 +61,50 @@ extern DB_functions_t *deadbeef;
     _dspChainDataSource = [[DSPChainDataSource alloc] initWithChain:deadbeef->streamer_get_dsp_chain () domain:@"preferences"];
     _dspList.dataSource = _dspChainDataSource;
     [_dspList registerForDraggedTypes: [NSArray arrayWithObjects: _dspChainDataSource.dspNodeDraggedItemType, nil]];
-
-    _toolbar.delegate = self;
-    [_toolbar setSelectedItemIdentifier:@"Playback"];
-
     NSError *error;
     _dspPresetController = [DSPPresetController createWithContext:@"main" error:&error];
-
     [_dspPresetController.presetMgr createSelectorUIWithContainer:_dspPresetSelectorContainer];
 
     [self initPluginList];
 
     [self setInitialValues];
 
-    [self switchToView:_playbackView];
+    // sound devices
+    self.audioDevices = [[NSMutableArray alloc] init];
+    DB_output_t *output = deadbeef->get_output ();
+    if (output->enum_soundcards) {
+        output->enum_soundcards (ca_enum_callback, (__bridge void *)(self.audioDevices));
+    }
+
+    char curdev[200];
+    deadbeef->conf_get_str ("coreaudio.device", "", curdev, sizeof (curdev));
+    [self.audioDevicesPopupButton removeAllItems];
+    NSInteger index = 0;
+    for (NSString *dev in self.audioDevices) {
+        [self.audioDevicesPopupButton addItemWithTitle:dev];
+        if (!strcmp ([dev UTF8String], curdev)) {
+            [self.audioDevicesPopupButton selectItemAtIndex:index];
+        }
+        index++;
+    }
+
+    // toolbar
+    _toolbar.delegate = self;
+    [_toolbar setSelectedItemIdentifier:@"Sound"];
+
+    [self switchToView:_soundView];
 }
+
+#pragma mark - Playback
+
+- (IBAction)playbackDeviceAction:(NSPopUpButton *)sender {
+    NSString *title = [[sender selectedItem] title];
+    deadbeef->conf_set_str ("coreaudio.device", [title UTF8String]);
+    deadbeef->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
+}
+
+
+#pragma mark - Unsorted
 
 - (NSString *)cfgFormattedColorForName:(NSString *)colorName {
     NSColorList *clist = [NSColorList colorListNamed:@"System"];
@@ -197,10 +236,12 @@ extern DB_functions_t *deadbeef;
 
 - (NSArray *)toolbarSelectableItemIdentifiers: (NSToolbar *)toolbar;
 {
-    return [NSArray arrayWithObjects:@"Playback",
+    return [NSArray arrayWithObjects:
+            @"Sound",
+            @"Playback",
             @"DSP",
             @"GUI",
-            @"Appearance",
+//            @"Appearance",
             @"Network",
             @"Plugins",
             nil];
@@ -215,6 +256,10 @@ extern DB_functions_t *deadbeef;
     rc.origin.y = oldFrame.origin.y + oldFrame.size.height - rc.size.height;
     [[self window] setContentView:view];
     [[self window] setFrame:rc display:YES animate:YES];
+}
+
+- (IBAction)soundAction:(id)sender {
+    [self switchToView:_soundView];
 }
 
 - (IBAction)playbackAction:(id)sender {
