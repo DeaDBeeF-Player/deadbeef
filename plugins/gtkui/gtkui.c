@@ -147,9 +147,6 @@ gtkpl_free (DdbListview *pl) {
 // update status bar and window title
 static int sb_context_id = -1;
 static char sb_text[512];
-static float last_songpos = -1;
-static char sbitrate[20] = "";
-static struct timeval last_br_update;
 
 static void
 format_timestr (char *buf, int sz, float time) {
