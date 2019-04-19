@@ -84,12 +84,12 @@ static char sb_text[512];
     DB_output_t *output = deadbeef->get_output ();
     char sbtext_new[512] = "-";
     
-    float pl_totaltime = deadbeef->pl_get_totaltime ();
+    float pl_totaltime = roundf(deadbeef->pl_get_totaltime ());
     int daystotal = (int)pl_totaltime / (3600*24);
     int hourtotal = ((int)pl_totaltime / 3600) % 24;
     int mintotal = ((int)pl_totaltime/60) % 60;
     int sectotal = ((int)pl_totaltime) % 60;
-    
+
     char totaltime_str[512] = "";
     if (daystotal == 0) {
         snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
