@@ -2065,33 +2065,31 @@ get_fetcher_preferences (void)
 
     artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
     artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
-    if (artwork_enable_local) {
-        deadbeef->conf_lock ();
-        const char *new_artwork_filemask = deadbeef->conf_get_str_fast ("artwork.filemask", NULL);
-        if (!new_artwork_filemask || !new_artwork_filemask[0]) {
-            new_artwork_filemask = DEFAULT_FILEMASK;
-        }
-        if (!strings_equal (artwork_filemask, new_artwork_filemask)) {
-            char *old_artwork_filemask = artwork_filemask;
-            artwork_filemask = strdup (new_artwork_filemask);
-            if (old_artwork_filemask) {
-                free (old_artwork_filemask);
-            }
-        }
-
-        const char *new_artwork_folders = deadbeef->conf_get_str_fast ("artwork.folders", NULL);
-        if (!new_artwork_folders || !new_artwork_folders[0]) {
-            new_artwork_folders = DEFAULT_FOLDERS;
-        }
-        if (!strings_equal (artwork_folders, new_artwork_folders)) {
-            char *old_artwork_folders = artwork_folders;
-            artwork_folders = strdup (new_artwork_folders);
-            if (old_artwork_folders) {
-                free (old_artwork_folders);
-            }
-        }
-        deadbeef->conf_unlock ();
+    deadbeef->conf_lock ();
+    const char *new_artwork_filemask = deadbeef->conf_get_str_fast ("artwork.filemask", NULL);
+    if (!new_artwork_filemask || !new_artwork_filemask[0]) {
+        new_artwork_filemask = DEFAULT_FILEMASK;
     }
+    if (!strings_equal (artwork_filemask, new_artwork_filemask)) {
+        char *old_artwork_filemask = artwork_filemask;
+        artwork_filemask = strdup (new_artwork_filemask);
+        if (old_artwork_filemask) {
+            free (old_artwork_filemask);
+        }
+    }
+
+    const char *new_artwork_folders = deadbeef->conf_get_str_fast ("artwork.folders", NULL);
+    if (!new_artwork_folders || !new_artwork_folders[0]) {
+        new_artwork_folders = DEFAULT_FOLDERS;
+    }
+    if (!strings_equal (artwork_folders, new_artwork_folders)) {
+        char *old_artwork_folders = artwork_folders;
+        artwork_folders = strdup (new_artwork_folders);
+        if (old_artwork_folders) {
+            free (old_artwork_folders);
+        }
+    }
+    deadbeef->conf_unlock ();
 #ifdef USE_VFS_CURL
     artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
     artwork_enable_mb = deadbeef->conf_get_int ("artwork.enable_musicbrainz", 0);
