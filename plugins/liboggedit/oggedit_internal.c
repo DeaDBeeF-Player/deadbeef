@@ -438,13 +438,11 @@ ogg_packet *fill_vc_packet(const char *magic, const size_t magic_length, const c
     if (oggpack_writecheck(&opb))
         return NULL;
 
-    if (op) {
-        memset(op, '\0', sizeof(*op));
-        op->bytes = oggpack_bytes(&opb);
-        op->packet = malloc(op->bytes);
-        if (op->packet) {
-            memcpy(op->packet, oggpack_get_buffer(&opb), op->bytes);
-        }
+    memset(op, '\0', sizeof(*op));
+    op->bytes = oggpack_bytes(&opb);
+    op->packet = malloc(op->bytes);
+    if (op->packet) {
+        memcpy(op->packet, oggpack_get_buffer(&opb), op->bytes);
     }
     oggpack_writeclear(&opb);
 
