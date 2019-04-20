@@ -567,6 +567,9 @@ pl_configchanged (void);
 DB_metaInfo_t *
 pl_meta_for_key (playItem_t *it, const char *key);
 
+DB_metaInfo_t *
+pl_meta_for_key_with_override (playItem_t *it, const char *key);
+
 void
 pl_meta_free_values (DB_metaInfo_t *meta);
 

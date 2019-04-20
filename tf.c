@@ -1874,7 +1874,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
 
 static const char *
 _tf_get_combined_value (playItem_t *it, const char *key, int *needs_free) {
-    DB_metaInfo_t *meta = pl_meta_for_key (it, key);
+    DB_metaInfo_t *meta = pl_meta_for_key_with_override (it, key);
 
     if (!meta) {
         *needs_free = 0;
