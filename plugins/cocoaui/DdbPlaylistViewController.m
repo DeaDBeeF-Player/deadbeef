@@ -210,7 +210,7 @@ extern DB_functions_t *deadbeef;
         [_addColumnFormat setStringValue:@"%length%"];
         break;
     case 8: // track number
-        [_addColumnFormat setStringValue:@"%track number%"];
+        [_addColumnFormat setStringValue:@"%tracknumber%"];
         break;
     case 9: // album artist
         [_addColumnFormat setStringValue:@"$if(%album artist%,%album artist%,Unknown Artist)"];
