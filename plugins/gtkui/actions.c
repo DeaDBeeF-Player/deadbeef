@@ -145,9 +145,9 @@ add_mainmenu_actions (void)
                     gtk_widget_show (actionitem);
 
                     /* Here we have special cases for different submenus */
-                    if (0 == strcmp ("File", prev_title))
+                    if (prev_title && 0 == strcmp ("File", prev_title))
                         gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 5);
-                    else if (0 == strcmp ("Edit", prev_title))
+                    else if (prev_title && 0 == strcmp ("Edit", prev_title))
                         gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 7);
                     else {
                         gtk_container_add (GTK_CONTAINER (current), actionitem);

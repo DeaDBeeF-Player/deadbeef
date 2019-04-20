@@ -1580,7 +1580,7 @@ on_move_tab_left_activate (GtkMenuItem *menuitem, gpointer user_data) {
     int i = 0;
     ddb_gtkui_widget_t *newchild = NULL;
     ddb_gtkui_widget_t *prev = NULL;
-    char *title;
+    char *title = NULL;
     for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++) {
         if (i == w->clicked_page) {
             char buf[20000] = "";

@@ -166,7 +166,7 @@ void
 gtkui_run_preferences_dlg (void);
 
 int
-gtkui_get_gui_refresh_rate ();
+gtkui_get_gui_refresh_rate (void);
 
 void
 gtkui_titlebar_tf_init (void);

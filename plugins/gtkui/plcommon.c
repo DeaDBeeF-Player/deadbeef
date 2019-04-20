@@ -412,7 +412,7 @@ convert_escapetext_to_pango_attrlist (char *text, float *fg, float *bg, float *h
     PangoAttrList *lst = pango_attr_list_new ();
     char *pin = text;
     int x,y,a=0;
-    PangoAttribute *attr;
+    PangoAttribute *attr = NULL;
     int index=0;
     while (*pin) {
         int pos=0;
@@ -421,10 +421,10 @@ convert_escapetext_to_pango_attrlist (char *text, float *fg, float *bg, float *h
             memmove(pin, pin+pos, strlen(pin+pos)+1);
             a += y;
 
-            if (a == 0) {
+            if (attr && a == 0) {
                 attr->end_index = index+1;
                 pango_attr_list_insert (lst, attr);
-            } else if (y >= 1 && y <= 3) {
+            } else if (a != 0 && y >= 1 && y <= 3) {
                 const float blend[] = {.50f, .25f, 0};
                 int r = CHANNEL_BLENDR(highlight[0], fg[0], blend[y-1]) * 65535;
                 int g = CHANNEL_BLENDR(highlight[1], fg[1], blend[y-1]) * 65535;
@@ -432,7 +432,7 @@ convert_escapetext_to_pango_attrlist (char *text, float *fg, float *bg, float *h
 
                 attr = pango_attr_foreground_new (r, g, b);
                 attr->start_index = index;
-            } else if (y >= -3 && y <= -1) {
+            } else if (a != 0 && y >= -3 && y <= -1) {
                 const float blend[] = {.30f, .60f, .80f};
                 int r = CHANNEL_BLENDR(fg[0], bg[0], blend[-y-1]) * 65535;
                 int g = CHANNEL_BLENDR(fg[1], bg[1], blend[-y-1]) * 65535;
@@ -474,7 +474,7 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
     }
     else if (it) {
         char text[1024] = "";
-        int is_dimmed;
+        int is_dimmed = 0;
         if (it == playing_track && info->id == DB_COLUMN_PLAYING) {
             int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
             int buffering = !deadbeef->streamer_ok_to_read (-1);
