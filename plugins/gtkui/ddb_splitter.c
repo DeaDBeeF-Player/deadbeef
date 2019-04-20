@@ -491,10 +491,12 @@ update_drag (DdbSplitter *splitter)
     gtk_widget_get_allocation (GTK_WIDGET (splitter), &a);
     if (size != splitter->priv->child1_size) {
         if (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL) {
-            ddb_splitter_set_proportion (splitter, CLAMP ((float)size/a.width, 0.0f, 1.0f));
+            float gripsize = (float)splitter->priv->handle_pos.width/a.width;
+            ddb_splitter_set_proportion (splitter, CLAMP ((float)size/a.width, gripsize, 1-gripsize*2));
         }
         else {
-            ddb_splitter_set_proportion (splitter, CLAMP ((float)size/a.height, 0.0f, 1.0f));
+            float gripsize = (float)splitter->priv->handle_pos.height/a.height;
+            ddb_splitter_set_proportion (splitter, CLAMP ((float)size/a.height, gripsize, 1-gripsize*2));
         }
     }
 }
