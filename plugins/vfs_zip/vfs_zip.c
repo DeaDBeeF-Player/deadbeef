@@ -294,7 +294,7 @@ vfs_zip_scandir (const char *dir, struct dirent ***namelist, int (*selector) (co
         struct dirent entry;
         strncpy(entry.d_name, nm, sizeof(entry.d_name)-1);
         entry.d_name[sizeof(entry.d_name)-1] = '\0';
-        if (!selector || selector && selector(&entry)) {
+        if (!selector || selector(&entry)) {
             (*namelist)[num_files] = calloc(1, sizeof(struct dirent));
             strcpy((*namelist)[num_files]->d_name, entry.d_name);
             num_files++;
