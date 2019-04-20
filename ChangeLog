@@ -8,6 +8,10 @@ version 1.8.1
 	Removed the unmaintained sndio plugin
 	Fixed localization of status bar
 	Added experimental subgrouping support in playlist, via using `|||` separator for each subsequent nested group, when using Group by -> Custom (by ToadKing)
+	Changed supereq DSP configuration to be more compact horizontally and to have more slider precision
+	Updated Repeat and Shuffle hotkey names to match the menus
+	Fixed rounding bug of total playtime in statusbar
+	Fixed design mode splitter handles dragging beyond the window edges
 
 version 1.8.0
 	added Opus support
