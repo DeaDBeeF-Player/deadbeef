@@ -620,6 +620,7 @@ action_move_tracks_up_handler (DB_plugin_action_t *act, int ctx) {
         if (it_count) {
             int i = 0;
             uint32_t indexes[it_count];
+            memset (indexes, 0, sizeof (indexes));
 
             it = deadbeef->plt_get_first (plt, PL_MAIN);
             while (it) {
@@ -673,6 +674,7 @@ action_move_tracks_down_handler (DB_plugin_action_t *act, int ctx) {
         if (it_count) {
             int i = 0;
             uint32_t indexes[it_count];
+            memset (indexes, 0, sizeof (indexes));
 
             it = deadbeef->plt_get_first (plt, PL_MAIN);
             while (it) {
