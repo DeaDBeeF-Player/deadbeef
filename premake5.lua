@@ -13,7 +13,7 @@ filter "configurations:debug or debug32"
   symbols "On"
 
 filter "configurations:debug or release"
-  buildoptions { "-fPIC" }
+  buildoptions { "-fPIC", "-std=c99" }
   includedirs { "plugins/libmp4ff", "static-deps/lib-x86-64/include/x86_64-linux-gnu", "static-deps/lib-x86-64/include"  }
   libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib" }
 

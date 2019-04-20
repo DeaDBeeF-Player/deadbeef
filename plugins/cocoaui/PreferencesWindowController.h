@@ -29,6 +29,7 @@
 #define DEFAULT_TITLEBAR_STOPPED_VALUE "DeaDBeeF-%_deadbeef_version%"
 
 @interface PreferencesWindowController : NSWindowController<NSToolbarDelegate,NSTableViewDelegate,NSTableViewDataSource,NSMenuDelegate>
+@property (strong) IBOutlet NSView *soundView;
 @property (strong) IBOutlet NSView *playbackView;
 @property (strong) IBOutlet NSView *dspView;
 @property (strong) IBOutlet NSView *guiView;
@@ -37,6 +38,7 @@
 @property (strong) IBOutlet NSView *pluginsView;
 @property (unsafe_unretained) IBOutlet NSToolbar *toolbar;
 
+- (IBAction)soundAction:(id)sender;
 - (IBAction)playbackAction:(id)sender;
 - (IBAction)appearanceAction:(id)sender;
 - (IBAction)dspAction:(id)sender;

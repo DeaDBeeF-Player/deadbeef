@@ -3344,6 +3344,7 @@ w_spectrum_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         }
         break;
     }
+    return 0;
 }
 
 ddb_gtkui_widget_t *

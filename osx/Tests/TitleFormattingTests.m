@@ -36,6 +36,7 @@ static int fake_out_state (void) {
 }
 
 static DB_output_t fake_out = {
+    .plugin.id = "fake_out",
     .plugin.name = "fake_out",
     .state = fake_out_state,
 };

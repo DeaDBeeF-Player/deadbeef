@@ -207,7 +207,7 @@ gtkui_run_preferences_dlg (void) {
     // output plugin selection
     combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_output_plugin"));
 
-    const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", "ALSA output plugin");
+    const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", "alsa");
     DB_output_t **out_plugs = deadbeef->plug_get_output_list ();
     for (int i = 0; out_plugs[i]; i++) {
         gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), out_plugs[i]->plugin.name);
@@ -505,7 +505,7 @@ on_pref_output_plugin_changed          (GtkComboBox     *combobox,
     DB_output_t *new = NULL;
 
     deadbeef->conf_lock ();
-    const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", "ALSA output plugin");
+    const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", "alsa");
     for (int i = 0; out_plugs[i]; i++) {
         if (!strcmp (out_plugs[i]->plugin.name, outplugname)) {
             prev = out_plugs[i];

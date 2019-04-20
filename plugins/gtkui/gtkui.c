@@ -147,12 +147,10 @@ gtkpl_free (DdbListview *pl) {
 // update status bar and window title
 static int sb_context_id = -1;
 static char sb_text[512];
-static float last_songpos = -1;
-static char sbitrate[20] = "";
-static struct timeval last_br_update;
 
 static void
 format_timestr (char *buf, int sz, float time) {
+    time = roundf(time);
     int daystotal = (int)time / (3600*24);
     int hourtotal = ((int)time / 3600) % 24;
     int mintotal = ((int)time/60) % 60;
@@ -1395,14 +1393,9 @@ gtkui_thread (void *ctx) {
     prctl (PR_SET_NAME, "deadbeef-gtkui", 0, 0, 0, 0);
 #endif
 
-    int argc = 2;
+    int argc = 1;
     const char **argv = alloca (sizeof (char *) * argc);
     argv[0] = "deadbeef";
-    argv[1] = "--sync";
-    //argv[1] = "--g-fatal-warnings";
-    if (!deadbeef->conf_get_int ("gtkui.sync", 0)) {
-        argc = 1;
-    }
 
     gtk_disable_setlocale ();
     add_pixmap_directory (deadbeef->get_system_dir(DDB_SYS_DIR_PIXMAP));
@@ -1963,7 +1956,6 @@ static const char settings_dlg[] =
     "property \"Ask confirmation to delete files from disk\" checkbox gtkui.delete_files_ask 1;\n"
     "property \"Status icon volume control sensitivity\" entry gtkui.tray_volume_sensitivity 1;\n"
     "property \"Custom status icon\" entry gtkui.custom_tray_icon \"" TRAY_ICON "\" ;\n"
-    "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.sync 0;\n"
     "property \"Add separators between plugin context menu items\" checkbox gtkui.action_separators 0;\n"
     "property \"Use unicode chars instead of images for track state\" checkbox gtkui.unicode_playstate 0;\n"
     "property \"Disable seekbar overlay text\" checkbox gtkui.disable_seekbar_overlay 0;\n"
