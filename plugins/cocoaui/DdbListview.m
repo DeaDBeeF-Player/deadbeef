@@ -929,17 +929,17 @@ int grouptitleheight = 22;
     self = [super initWithFrame:rect];
     if (self) {
         groups_build_idx = -1;
-        DdbListHeaderView *thv = [[DdbListHeaderView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, headerheight)];
-        [thv setAutoresizingMask:NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewMaxYMargin];
+        DdbListHeaderView *thv = [[DdbListHeaderView alloc] initWithFrame:NSMakeRect(0, rect.size.height-headerheight, rect.size.width, headerheight)];
+        [thv setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin];
         [self addSubview:thv];
         [thv setListView:self];
         headerView = thv;
 
-        NSScrollView *sv = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, headerheight, rect.size.width, rect.size.height-headerheight)];
+        NSScrollView *sv = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, rect.size.height-headerheight)];
         [self addSubview:sv];
 
         NSSize size = [sv contentSize];
-        NSRect lcvrect = NSMakeRect(0, 0, size.width, size.height-16);
+        NSRect lcvrect = NSMakeRect(0, 0, size.width, size.height-headerheight);
         DdbListContentView *lcv = [[DdbListContentView alloc] initWithFrame:lcvrect];
         [lcv setAutoresizingMask:NSViewWidthSizable];
         [lcv setListView:self];
@@ -950,7 +950,7 @@ int grouptitleheight = 22;
         [sv setHasVerticalScroller:YES];
         [sv setHasHorizontalScroller:YES];
         [sv setAutohidesScrollers:YES];
-        [sv setAutoresizingMask:NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewHeightSizable|NSViewMaxYMargin];
+        [sv setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin|NSViewHeightSizable];
         [sv.contentView setCopiesOnScroll:NO];
 
         NSView *synchronizedContentView = [sv contentView];
@@ -993,10 +993,6 @@ int grouptitleheight = 22;
     if ([_delegate respondsToSelector:@selector(scrollChanged:)]) {
         [_delegate scrollChanged:vis.origin.y];
     }
-}
-
-- (BOOL)isFlipped {
-    return YES;
 }
 
 - (void)freeGroups {
