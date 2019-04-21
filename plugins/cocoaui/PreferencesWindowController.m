@@ -86,6 +86,40 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     [self switchToView:_soundView];
 }
 
+- (void)outputDeviceChanged {
+    [self initAudioDeviceList];
+}
+
+- (void)initAudioDeviceList {
+    [self.audioDevicesPopupButton removeAllItems];
+
+    self.audioDevices = [[NSMutableArray alloc] init];
+    DB_output_t *output = deadbeef->get_output ();
+    if (!output->enum_soundcards) {
+        self.audioDevicesPopupButton.enabled = NO;
+        return;
+    }
+
+    self.audioDevicesPopupButton.enabled = YES;
+
+    output->enum_soundcards (ca_enum_callback, (__bridge void *)(self.audioDevices));
+
+    NSString *conf_name = [[NSString stringWithUTF8String:output->plugin.id] stringByAppendingString:@"_soundcard"];
+    char curdev[200];
+    deadbeef->conf_get_str ([conf_name UTF8String], "", curdev, sizeof (curdev));
+    [self.audioDevicesPopupButton removeAllItems];
+    [self.audioDevicesPopupButton addItemWithTitle:@"Default Output"];
+    [self.audioDevicesPopupButton selectItemAtIndex:0];
+    NSInteger index = 1;
+    for (NSString *dev in self.audioDevices) {
+        [self.audioDevicesPopupButton addItemWithTitle:dev];
+        if (!strcmp ([dev UTF8String], curdev)) {
+            [self.audioDevicesPopupButton selectItemAtIndex:index];
+        }
+        index++;
+    }
+}
+
 - (void)initializeAudioTab {
     // output plugins
 
@@ -103,25 +137,7 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     }
 
     // audio devices
-    self.audioDevices = [[NSMutableArray alloc] init];
-    DB_output_t *output = deadbeef->get_output ();
-    if (output->enum_soundcards) {
-        output->enum_soundcards (ca_enum_callback, (__bridge void *)(self.audioDevices));
-    }
-
-    char curdev[200];
-    deadbeef->conf_get_str ("coreaudio.device", "", curdev, sizeof (curdev));
-    [self.audioDevicesPopupButton removeAllItems];
-    [self.audioDevicesPopupButton addItemWithTitle:@"Default Output"];
-    [self.audioDevicesPopupButton selectItemAtIndex:0];
-    index = 1;
-    for (NSString *dev in self.audioDevices) {
-        [self.audioDevicesPopupButton addItemWithTitle:dev];
-        if (!strcmp ([dev UTF8String], curdev)) {
-            [self.audioDevicesPopupButton selectItemAtIndex:index];
-        }
-        index++;
-    }
+    [self initAudioDeviceList];
 
     self.overrideSamplerateCheckbox.state = deadbeef->conf_get_int ("streamer.override_samplerate", 0) ? NSControlStateValueOn : NSControlStateValueOff;
     self.targetSamplerateComboBox.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("streamer.samplerate", "44100")];
@@ -163,7 +179,9 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
 
 - (IBAction)playbackDeviceAction:(NSPopUpButton *)sender {
     NSString *title = [[sender selectedItem] title];
-    deadbeef->conf_set_str ("coreaudio.device", [title UTF8String]);
+    DB_output_t *output = deadbeef->get_output ();
+    NSString *dev = [[NSString stringWithUTF8String:output->plugin.id] stringByAppendingString:@"_soundcard"];
+    deadbeef->conf_set_str ([dev UTF8String], [title UTF8String]);
     deadbeef->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
 }
 

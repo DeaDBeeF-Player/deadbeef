@@ -158,9 +158,9 @@
 
 @property (strong) IBOutlet PluginConfigurationViewController *pluginConfViewController;
 
-
-
 - (IBAction)pluginOpenWebsite:(id)sender;
 - (IBAction)pluginConfResetDefaults:(id)sender;
+
+- (void)outputDeviceChanged;
 
 @end

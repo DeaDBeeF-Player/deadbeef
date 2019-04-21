@@ -1315,16 +1315,10 @@ Gw
                 <popUpButton verticalHuggingPriority="750" id="WGI-Tr-J4c">
                     <rect key="frame" x="110" y="173" width="349" height="25"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="p1w-yP-M4A" id="fJ1-UJ-dTa">
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="fJ1-UJ-dTa">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
-                        <menu key="menu" id="soW-Kc-Bpg">
-                            <items>
-                                <menuItem title="Item 1" state="on" id="p1w-yP-M4A"/>
-                                <menuItem title="Item 2" id="3bD-7C-F1k"/>
-                                <menuItem title="Item 3" id="gRr-Ae-YZX"/>
-                            </items>
-                        </menu>
+                        <menu key="menu" id="soW-Kc-Bpg"/>
                     </popUpButtonCell>
                     <connections>
                         <action selector="outputPluginAction:" target="-2" id="rWn-dQ-Lrg"/>
@@ -1342,16 +1336,10 @@ Gw
                 <popUpButton verticalHuggingPriority="750" id="0ET-qW-1ss">
                     <rect key="frame" x="114" y="146" width="346" height="25"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="ubD-td-1uR" id="Y8g-eD-4BE">
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Y8g-eD-4BE">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
-                        <menu key="menu" id="IBa-jO-ZD7">
-                            <items>
-                                <menuItem title="Item 1" state="on" id="ubD-td-1uR"/>
-                                <menuItem title="Item 2" id="mNd-Oy-cJ1"/>
-                                <menuItem title="Item 3" id="7Na-Y4-z3n"/>
-                            </items>
-                        </menu>
+                        <menu key="menu" id="IBa-jO-ZD7"/>
                     </popUpButtonCell>
                     <connections>
                         <action selector="playbackDeviceAction:" target="-2" id="MHA-xY-Gzt"/>

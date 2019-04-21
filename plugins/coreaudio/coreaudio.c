@@ -206,7 +206,7 @@ ca_get_deviceid (void) {
     device_id = -1;
 
     char newdev[100];
-    deadbeef->conf_get_str ("coreaudio.device", "", newdev, sizeof (newdev));
+    deadbeef->conf_get_str ("coreaudio_soundcard", "", newdev, sizeof (newdev));
 
     AudioObjectPropertyAddress propertyAddress = {
         kAudioHardwarePropertyDevices,
