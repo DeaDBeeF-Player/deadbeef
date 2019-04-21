@@ -25,7 +25,7 @@
                 <outlet property="color_listview_selected_text" destination="Rhn-mE-OBT" id="hSC-Ge-MS3"/>
                 <outlet property="color_listview_text" destination="RuD-hX-F2n" id="bIl-YI-gyG"/>
                 <outlet property="dspConfigPanel" destination="KZ2-z5-gK4" id="zno-tA-8TW"/>
-                <outlet property="dspConfigViewController" destination="ze1-2I-ayd" id="Vf1-Pf-99Y"/>
+                <outlet property="dspConfigViewController" destination="cdy-98-WIk" id="cAL-Pm-DhD"/>
                 <outlet property="dspList" destination="lHr-gY-cwb" id="YuW-ad-G45"/>
                 <outlet property="dspPresetListDataSource" destination="ASJ-FT-ifo" id="aW8-Tf-sWm"/>
                 <outlet property="dspPresetSelectorContainer" destination="7EN-x3-aU8" id="0OS-0y-wss"/>
@@ -1288,12 +1288,7 @@ Gw
             </view>
             <point key="canvasLocation" x="-326" y="757"/>
         </window>
-        <viewController id="ze1-2I-ayd" customClass="PluginConfigurationViewController">
-            <connections>
-                <outlet property="view" destination="Q0a-Lt-Ngu" id="2vS-5i-bHq"/>
-            </connections>
-        </viewController>
-        <viewController id="MIg-N1-ie7" customClass="PluginConfigurationViewController">
+        <viewController id="MIg-N1-ie7" customClass="PropertySheetViewController">
             <connections>
                 <outlet property="view" destination="Oef-pD-hfw" id="0Uc-7j-d5f"/>
             </connections>
@@ -1461,6 +1456,11 @@ Gw
             </subviews>
             <point key="canvasLocation" x="-470" y="65.5"/>
         </customView>
+        <viewController id="cdy-98-WIk" userLabel="Dsp Config Property Sheet View Controller" customClass="PropertySheetViewController">
+            <connections>
+                <outlet property="view" destination="Q0a-Lt-Ngu" id="yWJ-Ky-WfR"/>
+            </connections>
+        </viewController>
     </objects>
     <resources>
         <image name="NSActionTemplate" width="14" height="14"/>

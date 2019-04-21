@@ -24,9 +24,72 @@
 #import "PreferencesWindowController.h"
 #import "DSPChainDataSource.h"
 #import "DSPPresetListDataSource.h"
-#import "deadbeef-Swift.h"
+#import "DeaDBeeF-Swift.h"
 #include "deadbeef.h"
 #include "pluginsettings.h"
+
+extern DB_functions_t *deadbeef;
+
+@interface DSPConfigPropertySheetDataSource : NSObject<PropertySheetDataSource> {
+    ddb_dsp_context_t *_dsp;
+}
+@property (weak) DSPChainDataSource *dspChainDataSource;
+@end
+
+@implementation DSPConfigPropertySheetDataSource
+- (instancetype)initWithDspChain:(DSPChainDataSource *)dataSource nodeIndex:(NSInteger)index {
+    self = [super init];
+    self.dspChainDataSource = dataSource;
+    _dsp = [self.dspChainDataSource getItemAtIndex:index];
+    return self;
+}
+
+- (NSString *)propertySheet:(PropertySheetViewController *)vc configForItem:(id)item {
+    return [NSString stringWithUTF8String:_dsp->plugin->configdialog];
+}
+
+- (NSString *)propertySheet:(PropertySheetViewController *)vc valueForKey:(NSString *)key def:(NSString *)def item:(id)item {
+    int idx = [key intValue];
+    char str[100];
+    _dsp->plugin->get_param(_dsp, idx, str, sizeof (str));
+    return [NSString stringWithUTF8String:str];
+}
+
+- (void)propertySheet:(PropertySheetViewController *)vc setValue:(NSString *)value forKey:(NSString *)key item:(id)item {
+    int idx = [key intValue];
+    _dsp->plugin->set_param(_dsp, idx, [value UTF8String]);
+    [self.dspChainDataSource apply];
+}
+@end
+
+@interface PluginConfigPropertySheetDataSource : NSObject<PropertySheetDataSource> {
+    DB_plugin_t *_plugin;
+}
+@end
+
+@implementation PluginConfigPropertySheetDataSource
+- (instancetype)initWithPlugin:(DB_plugin_t *)plugin {
+    self = [super init];
+    _plugin = plugin;
+    return self;
+}
+
+- (NSString *)propertySheet:(PropertySheetViewController *)vc configForItem:(id)item {
+    return _plugin->configdialog ? [NSString stringWithUTF8String:_plugin->configdialog] : nil;
+}
+
+- (NSString *)propertySheet:(PropertySheetViewController *)vc valueForKey:(NSString *)key def:(NSString *)def item:(id)item {
+    char str[200];
+    deadbeef->conf_get_str ([key UTF8String], [def UTF8String], str, sizeof (str));
+    return [NSString stringWithUTF8String:str];
+}
+
+- (void)propertySheet:(PropertySheetViewController *)vc setValue:(NSString *)value forKey:(NSString *)key item:(id)item {
+    deadbeef->conf_set_str ([key UTF8String], [value UTF8String]);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+@end
+
 
 extern DB_functions_t *deadbeef;
 
@@ -35,6 +98,10 @@ extern DB_functions_t *deadbeef;
     DSPChainDataSource *_dspChainDataSource;
     DSPPresetController *_dspPresetController;
 }
+
+@property DSPConfigPropertySheetDataSource *dspPropertySheetDataSource;
+@property PluginConfigPropertySheetDataSource *pluginPropertySheetDataSource;
+
 @property (weak) IBOutlet NSPopUpButton *outputPluginsPopupButton;
 
 @property NSMutableArray<NSString *> *audioDevices;
@@ -477,8 +544,9 @@ clamp_samplerate (int val) {
     if (index < 0) {
         return;
     }
-    ddb_dsp_context_t *dsp = [_dspChainDataSource getItemAtIndex:(int)index];
-    [_dspConfigViewController initPluginConfiguration:dsp->plugin->configdialog dsp:dsp];
+    self.dspPropertySheetDataSource = [[DSPConfigPropertySheetDataSource alloc] initWithDspChain:_dspChainDataSource nodeIndex:index];
+
+    _dspConfigViewController.dataSource = self.dspPropertySheetDataSource;
     [NSApp beginSheet:_dspConfigPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndDspConfigPanel:returnCode:contextInfo:) contextInfo:nil];
 }
 
@@ -495,7 +563,7 @@ clamp_samplerate (int val) {
 }
 
 - (IBAction)dspConfigResetAction:(id)sender {
-    [_dspConfigViewController resetPluginConfigToDefaults];
+    [_dspConfigViewController reset];
     [_dspChainDataSource apply];
 }
 
@@ -528,16 +596,16 @@ clamp_samplerate (int val) {
 }
 
 - (IBAction)pluginConfResetDefaults:(id)sender {
-    [_pluginConfViewController resetPluginConfigToDefaults];
+    [_pluginConfViewController reset];
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 - (void)initPluginConfiguration:(NSInteger)idx {
     DB_plugin_t *p = deadbeef->plug_get_list()[idx];
     
-    const char *config = p->configdialog;
-    
-    [_pluginConfViewController initPluginConfiguration:config dsp:NULL];
+    self.pluginPropertySheetDataSource = [[PluginConfigPropertySheetDataSource alloc] initWithPlugin:p];
+
+    _pluginConfViewController.dataSource = self.pluginPropertySheetDataSource;
 }
 
 - (void)setPluginInfo:(NSInteger)idx {
