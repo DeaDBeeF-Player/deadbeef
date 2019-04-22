@@ -2420,6 +2420,7 @@ streamer_notify_playlist_deleted (playlist_t *plt) {
 
 void
 streamer_set_dsp_chain (ddb_dsp_context_t *chain) {
+    streamer_lock ();
     ddb_dsp_context_t *new_chain = NULL;
     ddb_dsp_context_t *tail = NULL;
     while (chain) {
@@ -2433,7 +2434,7 @@ streamer_set_dsp_chain (ddb_dsp_context_t *chain) {
         }
         chain = chain->next;
     }
-
+    streamer_unlock ();
     handler_push (handler, STR_EV_SET_DSP_CHAIN, (uintptr_t)new_chain, 0, 0);
 }
 
