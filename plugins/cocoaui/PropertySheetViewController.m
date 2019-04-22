@@ -182,7 +182,12 @@
                 lbl.cell.truncatesLastVisibleLine = YES;
                 lbl.cell.scrollable = NO;
                 lbl.cell.wraps = NO;
-                lbl.cell.lineBreakMode = NSLineBreakByTruncatingTail;
+                if (_autoAlignLabels) {
+                    lbl.cell.lineBreakMode = NSLineBreakByClipping;
+                }
+                else {
+                    lbl.cell.lineBreakMode = NSLineBreakByTruncatingTail;
+                }
 
                 [lbl setFont:fontLabel];
 
