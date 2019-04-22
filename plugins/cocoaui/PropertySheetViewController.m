@@ -13,6 +13,8 @@
 @property NSInteger contentFontSize;
 @property NSInteger topMargin;
 @property BOOL autoAlignLabels;
+@property NSInteger labelFixedWidth;
+@property NSInteger sliderLabelWidth;
 @end
 
 @implementation PropertySheetViewController
@@ -25,6 +27,8 @@
     _contentFontSize = [NSFont systemFontSize];
     _topMargin = 0;
     _autoAlignLabels = NO;
+    _labelFixedWidth = 76;
+    _sliderLabelWidth = 76;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(projectDataItemChanged:) name:@"ProjectDataItemChanged" object:nil];
 }
@@ -78,7 +82,7 @@
         have_settings = NO;
     }
 
-    int label_width = 76;
+    NSInteger label_width = _labelFixedWidth;
     int padding = 4;
     int unit_spacing = 4;
     NSInteger unit_h = _contentFontSize + 11;
@@ -148,7 +152,6 @@
                 // resize label to fit content
                 [[lbl cell] setLineBreakMode:NSLineBreakByClipping];
                 calculated_label_w = [[lbl cell] cellSizeForBounds:lbl.bounds].width;
-//                [lbl setFrameSize:NSMakeSize(label_w, unit_h)];
                 [lbl setFrame:NSMakeRect(padding+label_width-calculated_label_w, y+3, calculated_label_w, unit_h-6)];
                 [lbl setAutoresizingMask:NSViewMinYMargin];
 
@@ -222,7 +225,7 @@
             case PROP_SLIDER:
             {
                 int w = sz.width-label_width - padding*3;
-                NSRect frame = NSMakeRect(label_width+padding*2, y+3, w - 36, unit_h-3);
+                NSRect frame = NSMakeRect(label_width+padding*2, y+3, w - _sliderLabelWidth-4, unit_h-3);
                 NSSlider *slider = [[NSSlider alloc] initWithFrame:frame];
                 [slider setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin];
                 const char *opts = _settingsData.props[i].select_options;
@@ -245,7 +248,7 @@
                     [slider setFloatValue:[value floatValue]];
                 }
 
-                NSRect frame2 = NSMakeRect(label_width+padding*2 + w - 32, y+3, 32, unit_h-3);
+                NSRect frame2 = NSMakeRect(label_width+padding*2 + w - _sliderLabelWidth - 4, y+3, _sliderLabelWidth, unit_h-3);
                 NSTextField *valueedit = [[NSTextField alloc] initWithFrame:frame2];
                 [valueedit setFont:fontContent];
                 [valueedit setAutoresizingMask:NSViewMinYMargin|NSViewMinXMargin];
