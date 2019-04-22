@@ -9,17 +9,23 @@
     NSMutableArray *_bindings;
     settings_data_t _settingsData;
 }
+@property NSInteger labelFontSize;
+@property NSInteger contentFontSize;
+@property NSInteger topMargin;
+@property BOOL autoAlignLabels;
 @end
 
 @implementation PropertySheetViewController
 
-- (void)loadView {
-    self.view = [[NSView alloc] init];
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
+
     // Do view setup here.
+    _labelFontSize = [NSFont systemFontSize];
+    _contentFontSize = [NSFont systemFontSize];
+    _topMargin = 0;
+    _autoAlignLabels = NO;
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(projectDataItemChanged:) name:@"ProjectDataItemChanged" object:nil];
 }
 
@@ -75,8 +81,8 @@
     int label_width = 76;
     int padding = 4;
     int unit_spacing = 4;
-    int unit_h = 22;
-    int h = _settingsData.nprops * (unit_h + unit_spacing) + unit_h - 4;
+    NSInteger unit_h = _contentFontSize + 11;
+    NSInteger h = _settingsData.nprops * (unit_h + unit_spacing) + _topMargin;
     NSSize sz;
 
     if ([view isKindOfClass:[NSScrollView class]]) {
@@ -110,10 +116,10 @@
         return;
     }
 
-    NSFont *fontLabel = [NSFont systemFontOfSize:10 weight:NSFontWeightRegular];
-    NSFont *fontContent = [NSFont systemFontOfSize:11 weight:NSFontWeightRegular];
+    NSFont *fontLabel = [NSFont systemFontOfSize:_labelFontSize weight:NSFontWeightRegular];
+    NSFont *fontContent = [NSFont systemFontOfSize:_contentFontSize weight:NSFontWeightRegular];
 
-    int y = h - (unit_h + unit_spacing) - unit_h + 4;
+    NSInteger y = h - (unit_h + unit_spacing) - _topMargin;
     for (int i = 0; i < _settingsData.nprops; i++) {
 
         int calculated_label_w = 0;
