@@ -94,7 +94,12 @@
         NSScrollView *scrollView = (NSScrollView *)view;
         view = [scrollView documentView];
         NSRect rc = view.frame;
-        rc.size.height = h;
+        if (_settingsData.nprops) {
+            rc.size.height = h;
+        }
+        else {
+            rc.size.height = [scrollView contentView].frame.size.height;
+        }
         view.frame = rc;
 
         sz = [scrollView contentSize];
