@@ -32,6 +32,7 @@ extern DB_functions_t *deadbeef;
 
 @interface DSPConfigPropertySheetDataSource : NSObject<PropertySheetDataSource> {
     ddb_dsp_context_t *_dsp;
+    BOOL _multipleChanges;
 }
 @property (weak) DSPChainDataSource *dspChainDataSource;
 @end
@@ -58,12 +59,24 @@ extern DB_functions_t *deadbeef;
 - (void)propertySheet:(PropertySheetViewController *)vc setValue:(NSString *)value forKey:(NSString *)key item:(id)item {
     int idx = [key intValue];
     _dsp->plugin->set_param(_dsp, idx, [value UTF8String]);
+    if (!_multipleChanges) {
+        [self.dspChainDataSource apply];
+    }
+}
+
+- (void)propertySheetBeginChanges {
+    _multipleChanges = YES;
+}
+
+- (void)propertySheetCommitChanges {
     [self.dspChainDataSource apply];
+    _multipleChanges = NO;
 }
 @end
 
 @interface PluginConfigPropertySheetDataSource : NSObject<PropertySheetDataSource> {
     DB_plugin_t *_plugin;
+    BOOL _multipleChanges;
 }
 @end
 
@@ -86,8 +99,20 @@ extern DB_functions_t *deadbeef;
 
 - (void)propertySheet:(PropertySheetViewController *)vc setValue:(NSString *)value forKey:(NSString *)key item:(id)item {
     deadbeef->conf_set_str ([key UTF8String], [value UTF8String]);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    if (!_multipleChanges) {
+        deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    }
 }
+
+- (void)propertySheetBeginChanges {
+    _multipleChanges = YES;
+}
+
+- (void)propertySheetCommitChanges {
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    _multipleChanges = NO;
+}
+
 @end
 
 
@@ -564,7 +589,6 @@ clamp_samplerate (int val) {
 
 - (IBAction)dspConfigResetAction:(id)sender {
     [_dspConfigViewController reset];
-    [_dspChainDataSource apply];
 }
 
 - (IBAction)dspChainAction:(id)sender {
@@ -597,7 +621,6 @@ clamp_samplerate (int val) {
 
 - (IBAction)pluginConfResetDefaults:(id)sender {
     [_pluginConfViewController reset];
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 - (void)initPluginConfiguration:(NSInteger)idx {

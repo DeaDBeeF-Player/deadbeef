@@ -12,6 +12,8 @@
 - (id)propertySheet:(PropertySheetViewController *)vc subItemWithIndex:(NSInteger)index item:(id)item;
 - (NSInteger)propertySheet:(PropertySheetViewController *)vc subItemCount:(id)item;
 - (void)propertySheet:(PropertySheetViewController *)vc enumerateItemsOfType:(NSString *)type block:(BOOL (^)(id item))block;
+- (void)propertySheetBeginChanges;
+- (void)propertySheetCommitChanges;
 @end
 
 @interface PropertySheetViewController : NSViewController<NSTextFieldDelegate>

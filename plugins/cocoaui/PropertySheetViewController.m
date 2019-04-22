@@ -398,6 +398,7 @@
 }
 
 - (void)save {
+    [self.dataSource propertySheetBeginChanges];
     for (NSDictionary *binding in _bindings) {
         if (binding[@"sender"] && binding[@"propname"]) {
             id sender = binding[@"sender"];
@@ -414,6 +415,7 @@
             [self.dataSource propertySheet:self setValue:value forKey:binding[@"propname"] item:self.item];
         }
     }
+    [self.dataSource propertySheetCommitChanges];
 }
 
 - (void)reset {
