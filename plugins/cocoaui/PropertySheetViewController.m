@@ -76,21 +76,15 @@
     int padding = 4;
     int unit_spacing = 4;
     int unit_h = 22;
-    int h = _settingsData.nprops * (unit_h + unit_spacing);
+    int h = _settingsData.nprops * (unit_h + unit_spacing) + unit_h - 4;
     NSSize sz;
 
     if ([view isKindOfClass:[NSScrollView class]]) {
         NSScrollView *scrollView = (NSScrollView *)view;
         view = [scrollView documentView];
-        sz = [scrollView contentSize];
-        if (h < sz.height) {
-            h = sz.height;
-        }
-        NSRect frame = [view frame];
-        [view setFrame:NSMakeRect(0, 0, frame.size.width, h)];
-        NSPoint pt = NSMakePoint(0.0, [[scrollView documentView]
-                                       bounds].size.height);
-        [[scrollView documentView] scrollPoint:pt];
+        NSRect rc = view.frame;
+        rc.size.height = h;
+        view.frame = rc;
 
         sz = [scrollView contentSize];
     }
@@ -119,7 +113,7 @@
     NSFont *fontLabel = [NSFont systemFontOfSize:10 weight:NSFontWeightRegular];
     NSFont *fontContent = [NSFont systemFontOfSize:11 weight:NSFontWeightRegular];
 
-    int y = h - (unit_h + unit_spacing) - unit_h - 4 + 8;
+    int y = h - (unit_h + unit_spacing) - unit_h + 4;
     for (int i = 0; i < _settingsData.nprops; i++) {
 
         int calculated_label_w = 0;

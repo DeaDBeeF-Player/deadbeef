@@ -653,6 +653,8 @@
 		2D4459FC1C04F30E00230939 /* vfs_zip.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D4458D91C04F1C000230939 /* vfs_zip.dylib */; };
 		2D448A841D5C5C6500B43F12 /* logger.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D448A821D5C5C6500B43F12 /* logger.c */; };
 		2D448A851D5C5C6500B43F12 /* logger.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D448A831D5C5C6500B43F12 /* logger.h */; };
+		2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D46221B226DBA57003997E9 /* FlippedClipView.h */; };
+		2D46221E226DBA57003997E9 /* FlippedClipView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D46221C226DBA57003997E9 /* FlippedClipView.m */; };
 		2D4739B21F10ECBF008B95A3 /* psfmain.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D4739B11F10ECBF008B95A3 /* psfmain.c */; };
 		2D48DBD62269B731002CACFD /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
 		2D48DBE42269B731002CACFD /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47481837EC47003E6066 /* plugins.c */; };
@@ -3735,6 +3737,8 @@
 		2D4459D21C04F28800230939 /* libzip.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libzip.xcodeproj; path = "osx/deps/libzip-1.0.1/xcode/libzip.xcodeproj"; sourceTree = "<group>"; };
 		2D448A821D5C5C6500B43F12 /* logger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = logger.c; sourceTree = "<group>"; };
 		2D448A831D5C5C6500B43F12 /* logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logger.h; sourceTree = "<group>"; };
+		2D46221B226DBA57003997E9 /* FlippedClipView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlippedClipView.h; sourceTree = "<group>"; };
+		2D46221C226DBA57003997E9 /* FlippedClipView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FlippedClipView.m; sourceTree = "<group>"; };
 		2D4739B11F10ECBF008B95A3 /* psfmain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = psfmain.c; path = plugins/psf/psfmain.c; sourceTree = "<group>"; };
 		2D48DC5B2269B731002CACFD /* DeaDBeeF GTK3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DeaDBeeF GTK3.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D48DC5C2269B732002CACFD /* DeaDBeeF GTK3.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "DeaDBeeF GTK3.plist"; path = "/Users/waker/prj/deadbeef/osx/DeaDBeeF GTK3.plist"; sourceTree = "<absolute>"; };
@@ -6732,6 +6736,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		2D46220D226DBA2A003997E9 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				2D46221B226DBA57003997E9 /* FlippedClipView.h */,
+				2D46221C226DBA57003997E9 /* FlippedClipView.m */,
+				2D986140226C815F00BAACB1 /* BrowseButton.h */,
+				2D986141226C816000BAACB1 /* BrowseButton.m */,
+			);
+			name = Utility;
+			sourceTree = "<group>";
+		};
 		2D5423B51DCB38BC00ACBDEB /* mono2stereo */ = {
 			isa = PBXGroup;
 			children = (
@@ -9132,6 +9147,7 @@
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
+				2D46220D226DBA2A003997E9 /* Utility */,
 				4D13B50B2140151700CA7AE4 /* PresetManager */,
 				2DD5262E2062F1DF002609C5 /* help-cocoa.txt */,
 				2D6202AF1B90800A00594746 /* XIB */,
@@ -9178,8 +9194,6 @@
 				4D12805D2062994F0015BDE8 /* deadbeef-Bridging-Header.h */,
 				2D98612F226C814000BAACB1 /* PropertySheetViewController.h */,
 				2D98613D226C814000BAACB1 /* PropertySheetViewController.m */,
-				2D986140226C815F00BAACB1 /* BrowseButton.h */,
-				2D986141226C816000BAACB1 /* BrowseButton.m */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -10604,6 +10618,7 @@
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
 				2D06B39D19D056BC0041BE86 /* DdbPlaylistWidget.h in Headers */,
+				2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */,
 				2D5773A31D084E5A00F61BD1 /* MediaKeyController.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* DdbSearchViewController.h in Headers */,
 				2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */,
@@ -13577,6 +13592,7 @@
 				2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */,
 				2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */,
 				2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */,
+				2D46221E226DBA57003997E9 /* FlippedClipView.m in Sources */,
 				2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
