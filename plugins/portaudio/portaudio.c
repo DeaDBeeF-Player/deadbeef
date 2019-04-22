@@ -583,7 +583,7 @@ portaudio_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 }
 
 static const char settings_dlg[] =
-    "property \"Buffer size (-1 to use optimal value choosen by portaudio)\" entry portaudio.buffer " DEFAULT_BUFFER_SIZE_STR ";\n"
+    "property \"Buffer size (-1 to use optimal value chosen by portaudio)\" entry portaudio.buffer " DEFAULT_BUFFER_SIZE_STR ";\n"
 #ifdef __MINGW32__
     "property \"Device name encoding\" select[3] portaudio.devenc_list 0 \"ASCII / UTF-8\" cp1250 \"Defined below\";\n"
     "property \"Custom device name encoding\" entry portaudio.devenc_custom \"\";\n"
