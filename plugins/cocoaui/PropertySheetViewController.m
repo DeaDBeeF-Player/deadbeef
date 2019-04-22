@@ -15,6 +15,7 @@
 @property BOOL autoAlignLabels;
 @property NSInteger labelFixedWidth;
 @property NSInteger sliderLabelWidth;
+@property NSInteger unitSpacing;
 @end
 
 @implementation PropertySheetViewController
@@ -29,6 +30,7 @@
     _autoAlignLabels = NO;
     _labelFixedWidth = 76;
     _sliderLabelWidth = 76;
+    _unitSpacing = 8;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(projectDataItemChanged:) name:@"ProjectDataItemChanged" object:nil];
 }
@@ -84,9 +86,8 @@
 
     NSInteger label_width = _labelFixedWidth;
     int padding = 4;
-    int unit_spacing = 4;
     NSInteger unit_h = _contentFontSize + 11;
-    NSInteger h = _settingsData.nprops * (unit_h + unit_spacing) + _topMargin;
+    NSInteger h = _settingsData.nprops * (unit_h + _unitSpacing) + _topMargin;
     NSSize sz;
 
     if ([view isKindOfClass:[NSScrollView class]]) {
@@ -123,7 +124,7 @@
     NSFont *fontLabel = [NSFont systemFontOfSize:_labelFontSize weight:NSFontWeightRegular];
     NSFont *fontContent = [NSFont systemFontOfSize:_contentFontSize weight:NSFontWeightRegular];
 
-    NSInteger y = h - (unit_h + unit_spacing) - _topMargin;
+    NSInteger y = h - (unit_h + _unitSpacing) - _topMargin;
     for (int i = 0; i < _settingsData.nprops; i++) {
 
         int calculated_label_w = 0;
@@ -354,7 +355,7 @@
                 [view addSubview:popUpButton];
                 break;            }
         }
-        y -= unit_h + unit_spacing;
+        y -= unit_h + _unitSpacing;
     }
 }
 
