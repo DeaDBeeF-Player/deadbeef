@@ -259,7 +259,7 @@
             case PROP_SLIDER:
             {
                 int w = sz.width-label_width - padding*3;
-                NSRect frame = NSMakeRect(label_width+padding*2, y+3, w - _sliderLabelWidth-4, unit_h-3);
+                NSRect frame = NSMakeRect(label_width+padding*2, y+3, w - _sliderLabelWidth-8, unit_h-3);
                 NSSlider *slider = [[NSSlider alloc] initWithFrame:frame];
                 [slider setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin];
                 const char *opts = _settingsData.props[i].select_options;
