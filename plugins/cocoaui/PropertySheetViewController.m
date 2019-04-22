@@ -27,7 +27,7 @@
     _labelFontSize = [NSFont systemFontSize];
     _contentFontSize = [NSFont systemFontSize];
     _topMargin = 0;
-    _autoAlignLabels = NO;
+    _autoAlignLabels = YES;
     _labelFixedWidth = 76;
     _sliderLabelWidth = 76;
     _unitSpacing = 8;
@@ -123,6 +123,39 @@
 
     NSFont *fontLabel = [NSFont systemFontOfSize:_labelFontSize weight:NSFontWeightRegular];
     NSFont *fontContent = [NSFont systemFontOfSize:_contentFontSize weight:NSFontWeightRegular];
+
+    if (_autoAlignLabels) {
+        label_width = 0;
+        NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+        [textStyle setAlignment:NSLeftTextAlignment];
+        [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
+
+        NSDictionary *attrs = @{
+                             NSParagraphStyleAttributeName: textStyle,
+                             NSFontAttributeName:fontLabel
+                             };
+        for (int i = 0; i < _settingsData.nprops; i++) {
+            // set label
+            switch (_settingsData.props[i].type) {
+                case PROP_ENTRY:
+                case PROP_PASSWORD:
+                case PROP_SELECT:
+                case PROP_SLIDER:
+                case PROP_FILE:
+                case PROP_DIR:
+                case PROP_ITEMLIST:
+                case PROP_ITEMSELECT: {
+                    NSString *title = [NSString stringWithUTF8String:_settingsData.props[i].title];
+                    NSSize size = [title sizeWithAttributes:attrs];
+                    if (size.width > label_width) {
+                        label_width = size.width;
+                    }
+                    break;
+                }
+            }
+        }
+        label_width += 10;
+    }
 
     NSInteger y = h - (unit_h + _unitSpacing) - _topMargin;
     for (int i = 0; i < _settingsData.nprops; i++) {
