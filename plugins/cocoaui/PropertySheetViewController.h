@@ -21,7 +21,14 @@
 @property (weak,nonatomic) IBOutlet id<PropertySheetDataSource> dataSource;
 @property (weak) IBOutlet id item;
 
-- (void)save;
+@property NSInteger labelFontSize;
+@property NSInteger contentFontSize;
+@property NSInteger topMargin;
+@property BOOL autoAlignLabels;
+@property NSInteger labelFixedWidth;
+@property NSInteger sliderLabelWidth;
+@property NSInteger unitSpacing;
+
 - (void)reset;
 
 @end

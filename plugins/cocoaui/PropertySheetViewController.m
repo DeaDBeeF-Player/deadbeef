@@ -9,13 +9,6 @@
     NSMutableArray *_bindings;
     settings_data_t _settingsData;
 }
-@property NSInteger labelFontSize;
-@property NSInteger contentFontSize;
-@property NSInteger topMargin;
-@property BOOL autoAlignLabels;
-@property NSInteger labelFixedWidth;
-@property NSInteger sliderLabelWidth;
-@property NSInteger unitSpacing;
 @end
 
 @implementation PropertySheetViewController
@@ -179,17 +172,21 @@
             case PROP_ITEMSELECT:
             {
                 NSTextField *lbl = [[NSTextField alloc] initWithFrame:NSMakeRect(padding, y+3, label_width, unit_h-6)];
-                [lbl setStringValue:[NSString stringWithUTF8String:_settingsData.props[i].title]];
+                NSString *title = [NSString stringWithUTF8String:_settingsData.props[i].title];
+                [lbl setStringValue:title];
                 [lbl setBezeled:NO];
                 [lbl setDrawsBackground:NO];
                 [lbl setEditable:NO];
                 [lbl setSelectable:NO];
-
+                [lbl setToolTip:title];
+                lbl.cell.truncatesLastVisibleLine = YES;
+                lbl.cell.scrollable = NO;
+                lbl.cell.wraps = NO;
+                lbl.cell.lineBreakMode = NSLineBreakByTruncatingTail;
 
                 [lbl setFont:fontLabel];
 
                 // resize label to fit content
-                [[lbl cell] setLineBreakMode:NSLineBreakByClipping];
                 calculated_label_w = [[lbl cell] cellSizeForBounds:lbl.bounds].width;
                 [lbl setFrame:NSMakeRect(padding+label_width-calculated_label_w, y+3, calculated_label_w, unit_h-6)];
                 [lbl setAutoresizingMask:NSViewMinYMargin];

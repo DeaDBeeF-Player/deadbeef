@@ -628,6 +628,11 @@ clamp_samplerate (int val) {
     
     self.pluginPropertySheetDataSource = [[PluginConfigPropertySheetDataSource alloc] initWithPlugin:p];
 
+    _pluginConfViewController.labelFontSize = 10;
+    _pluginConfViewController.contentFontSize = 11;
+    _pluginConfViewController.unitSpacing = 4;
+    _pluginConfViewController.autoAlignLabels = NO;
+    _pluginConfViewController.labelFixedWidth = 120;
     _pluginConfViewController.dataSource = self.pluginPropertySheetDataSource;
 }
 
