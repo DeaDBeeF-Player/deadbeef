@@ -281,6 +281,14 @@
 		2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11E8AF1AA0E3DD00A67A20 /* MainWindowController.h */; };
 		2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D11E8B01AA0E3DD00A67A20 /* MainWindowController.m */; };
 		2D11E8B41AA0E3DD00A67A20 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D11E8B11AA0E3DD00A67A20 /* MainWindow.xib */; };
+		2D135EE0226DFEB100BAAE84 /* Scriptable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D135EDE226DFEB100BAAE84 /* Scriptable.h */; };
+		2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D135EE7226E38AF00BAAE84 /* scriptable.h */; };
+		2D135EF0226E47AA00BAAE84 /* scriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EE8226E38AF00BAAE84 /* scriptable.c */; };
+		2D135EF1226E47AA00BAAE84 /* scriptable_dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D135EEB226E428C00BAAE84 /* scriptable_dsp.h */; };
+		2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EEC226E428C00BAAE84 /* scriptable_dsp.c */; };
+		2D135EF4226E47CE00BAAE84 /* SciptableTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EF3226E47CE00BAAE84 /* SciptableTests.m */; };
+		2D135EFD226E4E1900BAAE84 /* scriptable_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EFA226E4E1600BAAE84 /* scriptable_encoder.c */; };
+		2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D135EF9226E4E1600BAAE84 /* scriptable_encoder.h */; };
 		2D17F8461AB3391A00AF2853 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D17F8451AB3391A00AF2853 /* MainMenu.xib */; };
 		2D1A563A1D9FF9A4005E5CDD /* ReplayGain.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D1A56391D9FF9A4005E5CDD /* ReplayGain.xib */; };
 		2D1A564A1D9FFB10005E5CDD /* ReplayGainScannerController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1A56481D9FFB10005E5CDD /* ReplayGainScannerController.h */; };
@@ -3380,6 +3388,15 @@
 		2D11E8AF1AA0E3DD00A67A20 /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
 		2D11E8B01AA0E3DD00A67A20 /* MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWindowController.m; sourceTree = "<group>"; };
 		2D11E8B11AA0E3DD00A67A20 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
+		2D135EDE226DFEB100BAAE84 /* Scriptable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Scriptable.h; sourceTree = "<group>"; };
+		2D135EDF226DFEB100BAAE84 /* Scriptable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Scriptable.m; sourceTree = "<group>"; };
+		2D135EE7226E38AF00BAAE84 /* scriptable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable.h; sourceTree = "<group>"; };
+		2D135EE8226E38AF00BAAE84 /* scriptable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable.c; sourceTree = "<group>"; };
+		2D135EEB226E428C00BAAE84 /* scriptable_dsp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable_dsp.h; sourceTree = "<group>"; };
+		2D135EEC226E428C00BAAE84 /* scriptable_dsp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable_dsp.c; sourceTree = "<group>"; };
+		2D135EF3226E47CE00BAAE84 /* SciptableTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SciptableTests.m; sourceTree = "<group>"; };
+		2D135EF9226E4E1600BAAE84 /* scriptable_encoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable_encoder.h; sourceTree = "<group>"; };
+		2D135EFA226E4E1600BAAE84 /* scriptable_encoder.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable_encoder.c; sourceTree = "<group>"; };
 		2D17F8451AB3391A00AF2853 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		2D1A56391D9FF9A4005E5CDD /* ReplayGain.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ReplayGain.xib; sourceTree = "<group>"; };
 		2D1A56481D9FFB10005E5CDD /* ReplayGainScannerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayGainScannerController.h; sourceTree = "<group>"; };
@@ -6259,6 +6276,19 @@
 			name = vtx;
 			sourceTree = "<group>";
 		};
+		2D135EE6226E388E00BAAE84 /* scriptable */ = {
+			isa = PBXGroup;
+			children = (
+				2D135EE7226E38AF00BAAE84 /* scriptable.h */,
+				2D135EE8226E38AF00BAAE84 /* scriptable.c */,
+				2D135EEB226E428C00BAAE84 /* scriptable_dsp.h */,
+				2D135EEC226E428C00BAAE84 /* scriptable_dsp.c */,
+				2D135EF9226E4E1600BAAE84 /* scriptable_encoder.h */,
+				2D135EFA226E4E1600BAAE84 /* scriptable_encoder.c */,
+			);
+			path = scriptable;
+			sourceTree = "<group>";
+		};
 		2D22F5AB19E13621009C631E /* sid */ = {
 			isa = PBXGroup;
 			children = (
@@ -7818,6 +7848,7 @@
 				4D6CF18C20EB788A00811034 /* MP3DecoderTests.m */,
 				4DC416FD2180919D0056133E /* PlaylistTests.m */,
 				2D4A9467223EFC6700199551 /* CoreAudioTests.m */,
+				2D135EF3226E47CE00BAAE84 /* SciptableTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -8253,6 +8284,8 @@
 			children = (
 				4D13B5192140154900CA7AE4 /* PresetManager.swift */,
 				4D9272B521411B6600E7B4D0 /* DSPPresetController.swift */,
+				2D135EDE226DFEB100BAAE84 /* Scriptable.h */,
+				2D135EDF226DFEB100BAAE84 /* Scriptable.m */,
 			);
 			name = PresetManager;
 			sourceTree = "<group>";
@@ -8392,6 +8425,7 @@
 		4D1B3EB31837EC44003E6066 /* deadbeef */ = {
 			isa = PBXGroup;
 			children = (
+				2D135EE6226E388E00BAAE84 /* scriptable */,
 				2D93DC511AADFEEF003D2D8D /* shared */,
 				4D1B3ED71837EC44003E6066 /* ConvertUTF */,
 				4D1B3F861837EC44003E6066 /* md5 */,
@@ -9496,7 +9530,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D4020901F27BD7200D4EA4F /* cueutil.h in Headers */,
+				2D135EF1226E47AA00BAAE84 /* scriptable_dsp.h in Headers */,
 				2D448A851D5C5C6500B43F12 /* logger.h in Headers */,
+				2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */,
+				2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10622,6 +10659,7 @@
 				2D5773A31D084E5A00F61BD1 /* MediaKeyController.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* DdbSearchViewController.h in Headers */,
 				2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */,
+				2D135EE0226DFEB100BAAE84 /* Scriptable.h in Headers */,
 				2D49857F1D5CF13F00E4D985 /* LogWindowController.h in Headers */,
 				2D98613E226C814100BAACB1 /* PropertySheetViewController.h in Headers */,
 				2D642EB01AE9152E00FC1F7B /* sort.h in Headers */,
@@ -12399,6 +12437,7 @@
 				2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */,
 				2D01D7E41AB2219C00BCD3C4 /* utf8.c in Sources */,
 				2D01D7D11AB2219C00BCD3C4 /* playqueue.c in Sources */,
+				2D135EFD226E4E1900BAAE84 /* scriptable_encoder.c in Sources */,
 				2D01D7DB1AB2219C00BCD3C4 /* playlist.c in Sources */,
 				2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */,
 				2D5121C61B01DEFD009F6410 /* sort.c in Sources */,
@@ -12412,12 +12451,14 @@
 				2D01D7DA1AB2219C00BCD3C4 /* metacache.c in Sources */,
 				2D01D7D41AB2219C00BCD3C4 /* conf.c in Sources */,
 				2D01D7D61AB2219C00BCD3C4 /* fft.c in Sources */,
+				2D135EF0226E47AA00BAAE84 /* scriptable.c in Sources */,
 				2D01D7E31AB2219C00BCD3C4 /* threading_pthread.c in Sources */,
 				2D01D7DF1AB2219C00BCD3C4 /* premix.c in Sources */,
 				2D01D7DC1AB2219C00BCD3C4 /* plmeta.c in Sources */,
 				2D01D7D51AB2219C00BCD3C4 /* dsppreset.c in Sources */,
 				2D01D7E01AB2219C00BCD3C4 /* replaygain.c in Sources */,
 				2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */,
+				2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */,
 				2D40208F1F27BD7200D4EA4F /* cueutil.c in Sources */,
 				2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */,
 				2D7DE4A61E64CD7700AA0F83 /* dsp.c in Sources */,
@@ -13377,6 +13418,7 @@
 				2DA66ECE1EDF501000E20989 /* fakein.c in Sources */,
 				2D4A9459223EFC1700199551 /* coreaudio.c in Sources */,
 				2DA66EC81EDF4EF800E20989 /* StreamerTests.m in Sources */,
+				2D135EF4226E47CE00BAAE84 /* SciptableTests.m in Sources */,
 				2DAA4C141AAF88FF00519559 /* TitleFormattingTests.m in Sources */,
 				4D9272C521414BA900E7B4D0 /* PresetManagerTest.swift in Sources */,
 				2D4A9468223EFC6700199551 /* CoreAudioTests.m in Sources */,

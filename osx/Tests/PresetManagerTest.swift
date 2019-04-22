@@ -29,7 +29,7 @@ class PresetManagerTest: XCTestCase {
         var ctl : DSPPresetController?;
         XCTAssertNoThrow(ctl = try DSPPresetController(context:"test"))
         XCTAssertEqual(ctl?.presetMgr.data.count, 1)
-        XCTAssertEqual(ctl?.presetMgr.data[0].name, "mypreset")
+        XCTAssertEqual(ctl?.presetMgr.data[0].name, "dsppreset")
         XCTAssertEqual(ctl?.presetMgr.data[0].subItems?.count, 3)
         XCTAssertEqual(ctl?.presetMgr.data[0].subItems?[0].id, "supereq")
         XCTAssertEqual(ctl?.presetMgr.data[0].subItems?[1].id, "SRC")
