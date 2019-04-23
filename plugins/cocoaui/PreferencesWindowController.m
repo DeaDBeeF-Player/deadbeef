@@ -47,7 +47,7 @@ extern DB_functions_t *deadbeef;
 
 - (NSString *)propertySheet:(PropertySheetViewController *)vc configForItem:(id)item {
     const char *config = scriptableItemPropertyValueForKey(_dsp, "configDialog");
-    return [NSString stringWithUTF8String:config];
+    return config ? [NSString stringWithUTF8String:config] : nil;
 }
 
 - (NSString *)propertySheet:(PropertySheetViewController *)vc valueForKey:(NSString *)key def:(NSString *)def item:(id)item {
@@ -499,6 +499,8 @@ clamp_samplerate (int val) {
     [self switchToView:_pluginsView];
 }
 
+#pragma mark - DSP Tab
+
 - (NSMenu *)getDSPMenu {
     NSMenu *menu = [[NSMenu alloc] initWithTitle:@"DspChainMenu"];
     menu.delegate = self;
@@ -507,7 +509,9 @@ clamp_samplerate (int val) {
     DB_dsp_t **plugins = deadbeef->plug_get_dsp_list ();
 
     for (int i = 0; plugins[i]; i++) {
-        [[menu insertItemWithTitle:[NSString stringWithUTF8String:plugins[i]->plugin.name] action:@selector(addDspNode:) keyEquivalent:@"" atIndex:i] setTarget:self];
+        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:plugins[i]->plugin.name] action:@selector(addDspNode:) keyEquivalent:@""];
+        item.tag = i;
+        [menu addItem:item];
     }
 
     return menu;
@@ -515,9 +519,10 @@ clamp_samplerate (int val) {
 
 - (void)addDspNode:(id)sender {
     NSMenuItem *item = sender;
-    const char *name = [[item title] UTF8String];
 
-    scriptableItem_t *node = scriptableItemCreateItemOfType(scriptableDspRoot (), name);
+    DB_dsp_t **plugins = deadbeef->plug_get_dsp_list ();
+
+    scriptableItem_t *node = scriptableItemCreateItemOfType(scriptableDspRoot (), plugins[item.tag]->plugin.id);
 
     id<NSTableViewDataSource> ds = _dspChainDataSource;
     NSInteger cnt = [ds numberOfRowsInTableView:_dspList];
@@ -529,8 +534,8 @@ clamp_samplerate (int val) {
     NSIndexSet *is = [NSIndexSet indexSetWithIndex:index];
     [_dspList beginUpdates];
     [_dspList insertRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideDown];
-    [_dspList endUpdates];
     [_dspChainDataSource insertItem:node atIndex:index];
+    [_dspList endUpdates];
     [_dspList selectRowIndexes:is byExtendingSelection:NO];
 }
 

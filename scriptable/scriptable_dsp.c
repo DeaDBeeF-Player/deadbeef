@@ -100,6 +100,7 @@ scriptableDspCreateItemOfType (const char *type) {
     else {
         char missing[200];
         snprintf (missing, sizeof (missing), "<%s>", type);
+        scriptableItemSetPropertyValueForKey(item, missing, "name");
     }
 
     return item;
