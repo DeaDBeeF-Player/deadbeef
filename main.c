@@ -45,7 +45,6 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <sys/types.h>
 
 // #define USE_INET_SOCKET
 #define DEFAULT_LISTENING_PORT 48879
@@ -86,6 +85,9 @@
 #include "playqueue.h"
 #include "tf.h"
 #include "logger.h"
+#include "scriptable/scriptable.h"
+#include "scriptable/scriptable_dsp.h"
+#include "scriptable/scriptable_encoder.h"
 
 #ifndef PREFIX
 #error PREFIX must be defined
@@ -1305,10 +1307,9 @@ main (int argc, char *argv[]) {
 
     free (cmdline);
 
-#if 0
-    signal (SIGTERM, sigterm_handler);
-    atexit (atexit_handler); // helps to save in simple cases
-#endif
+    scriptableInit();
+    scriptableDspLoadPresets();
+    scriptableEncoderLoadPresets();
 
     streamer_init ();
 

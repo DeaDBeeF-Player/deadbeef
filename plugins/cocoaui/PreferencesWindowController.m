@@ -31,7 +31,7 @@
 extern DB_functions_t *deadbeef;
 
 @interface DSPConfigPropertySheetDataSource : NSObject<PropertySheetDataSource> {
-    ddb_dsp_context_t *_dsp;
+    scriptableItem_t *_dsp;
     BOOL _multipleChanges;
 }
 @property (weak) DSPChainDataSource *dspChainDataSource;
@@ -41,24 +41,22 @@ extern DB_functions_t *deadbeef;
 - (instancetype)initWithDspChain:(DSPChainDataSource *)dataSource nodeIndex:(NSInteger)index {
     self = [super init];
     self.dspChainDataSource = dataSource;
-    _dsp = [self.dspChainDataSource getItemAtIndex:index];
+    _dsp = [self.dspChainDataSource itemAtIndex:index];
     return self;
 }
 
 - (NSString *)propertySheet:(PropertySheetViewController *)vc configForItem:(id)item {
-    return [NSString stringWithUTF8String:_dsp->plugin->configdialog];
+    const char *config = scriptableItemPropertyValueForKey(_dsp, "configDialog");
+    return [NSString stringWithUTF8String:config];
 }
 
 - (NSString *)propertySheet:(PropertySheetViewController *)vc valueForKey:(NSString *)key def:(NSString *)def item:(id)item {
-    int idx = [key intValue];
-    char str[100];
-    _dsp->plugin->get_param(_dsp, idx, str, sizeof (str));
-    return [NSString stringWithUTF8String:str];
+    const char *value = scriptableItemPropertyValueForKey(_dsp, [key UTF8String]);
+    return [NSString stringWithUTF8String:value];
 }
 
 - (void)propertySheet:(PropertySheetViewController *)vc setValue:(NSString *)value forKey:(NSString *)key item:(id)item {
-    int idx = [key intValue];
-    _dsp->plugin->set_param(_dsp, idx, [value UTF8String]);
+    scriptableItemSetPropertyValueForKey(_dsp, [value UTF8String], [key UTF8String]);
     if (!_multipleChanges) {
         [self.dspChainDataSource apply];
     }
@@ -160,7 +158,8 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     [super windowDidLoad];
 
     // dsp
-    _dspChainDataSource = [[DSPChainDataSource alloc] initWithChain:deadbeef->streamer_get_dsp_chain () domain:@"preferences"];
+    scriptableItem_t *chain = scriptableDspConfigFromDspChain (deadbeef->streamer_get_dsp_chain ());
+    _dspChainDataSource = [[DSPChainDataSource alloc] initWithChain:chain domain:@"preferences"];
     _dspList.dataSource = _dspChainDataSource;
     [_dspList registerForDraggedTypes: [NSArray arrayWithObjects: _dspChainDataSource.dspNodeDraggedItemType, nil]];
     NSError *error;
@@ -517,26 +516,22 @@ clamp_samplerate (int val) {
 - (void)addDspNode:(id)sender {
     NSMenuItem *item = sender;
     const char *name = [[item title] UTF8String];
-    DB_dsp_t **plugins = deadbeef->plug_get_dsp_list ();
 
-    for (int i = 0; plugins[i]; i++) {
-        if (!strcmp (plugins[i]->plugin.name, name)) {
-            id<NSTableViewDataSource> ds = _dspChainDataSource;
-            NSInteger cnt = [ds numberOfRowsInTableView:_dspList];
-            NSInteger index = [_dspList selectedRow];
-            if (index < 0) {
-                index = cnt;
-            }
+    scriptableItem_t *node = scriptableItemCreateItemOfType(scriptableDspRoot (), name);
 
-            NSIndexSet *is = [NSIndexSet indexSetWithIndex:index];
-            [_dspList beginUpdates];
-            [_dspList insertRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideDown];
-            [_dspList endUpdates];
-            [_dspChainDataSource addItem:plugins[i] atIndex:index];
-            [_dspList selectRowIndexes:is byExtendingSelection:NO];
-            break;
-        }
+    id<NSTableViewDataSource> ds = _dspChainDataSource;
+    NSInteger cnt = [ds numberOfRowsInTableView:_dspList];
+    NSInteger index = [_dspList selectedRow];
+    if (index < 0) {
+        index = cnt;
     }
+
+    NSIndexSet *is = [NSIndexSet indexSetWithIndex:index];
+    [_dspList beginUpdates];
+    [_dspList insertRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideDown];
+    [_dspList endUpdates];
+    [_dspChainDataSource insertItem:node atIndex:index];
+    [_dspList selectRowIndexes:is byExtendingSelection:NO];
 }
 
 - (IBAction)dspAddAction:(id)sender {

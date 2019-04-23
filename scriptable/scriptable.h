@@ -16,14 +16,12 @@ typedef struct scriptableItem_s {
     struct scriptableItem_s *next;
     keyValuePair_t *properties;
 
-    char *configDialog;
-
     struct scriptableItem_s *parent;
     struct scriptableItem_s *children;
     struct scriptableItem_s *childrenTail;
 
     stringListItem_t (*subItemTypes)(struct scriptableItem_s *item);
-    struct scriptableItem_s *(*createSubItemOfType)(struct scriptableItem_s *item, const char *type);
+    struct scriptableItem_s *(*createItemOfType)(const char *type);
     void (*free)(struct scriptableItem_s *item);
 } scriptableItem_t;
 
@@ -33,8 +31,11 @@ scriptableItemAlloc (void);
 void
 scriptableItemFree (scriptableItem_t *item);
 
-int
+unsigned int
 scriptableItemNumChildren (scriptableItem_t *item);
+
+scriptableItem_t *
+scriptableItemChildAtIndex (scriptableItem_t *item, unsigned int index);
 
 int
 scriptableItemIndexOfChild (scriptableItem_t *item, scriptableItem_t *child);
@@ -43,10 +44,13 @@ scriptableItem_t *
 scriptableItemSubItemForName (scriptableItem_t *item, const char *name);
 
 scriptableItem_t *
-scriptableItemCreateSubItemOfType (scriptableItem_t *item, const char *type);
+scriptableItemCreateItemOfType (scriptableItem_t *item, const char *type);
 
 void
 scriptableItemAddSubItem (scriptableItem_t *item, scriptableItem_t *subItem);
+
+void
+scriptableItemInsertSubItemAtIndex (scriptableItem_t *item, scriptableItem_t *subItem, unsigned int insertPosition);
 
 void
 scriptableItemRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subItem);

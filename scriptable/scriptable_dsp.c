@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
-#include "../deadbeef.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -79,7 +78,31 @@ error:
         fclose (fp);
     }
     return err;
+}
 
+static scriptableItem_t *
+scriptableDspCreateItemOfType (const char *type) {
+    scriptableItem_t *item = scriptableItemAlloc();
+    scriptableItemSetPropertyValueForKey(item, type, "pluginId");
+
+    const char *name = NULL;
+    DB_dsp_t **dsps = deadbeef->plug_get_dsp_list ();
+    for (int i = 0; dsps[i]; i++) {
+        if (!strcmp (dsps[i]->plugin.id, type)) {
+            name = dsps[i]->plugin.name;
+            scriptableItemSetPropertyValueForKey(item, dsps[i]->configdialog, "configDialog");
+            break;
+        }
+    }
+    if (name) {
+        scriptableItemSetPropertyValueForKey(item, name, "name");
+    }
+    else {
+        char missing[200];
+        snprintf (missing, sizeof (missing), "<%s>", type);
+    }
+
+    return item;
 }
 
 scriptableItem_t *
@@ -87,6 +110,7 @@ scriptableDspRoot (void) {
     scriptableItem_t *dspRoot = scriptableItemSubItemForName (scriptableRoot(), "DSPPresets");
     if (!dspRoot) {
         dspRoot = scriptableItemAlloc();
+        dspRoot->createItemOfType = scriptableDspCreateItemOfType;
         scriptableItemSetPropertyValueForKey(dspRoot, "DSPPresets", "name");
         scriptableItemAddSubItem(scriptableRoot(), dspRoot);
     }
@@ -113,4 +137,40 @@ scriptableDspLoadPresets (void) {
         }
         free (namelist);
     }
+}
+
+scriptableItem_t *
+scriptableDspNodeItemFromDspContext (ddb_dsp_context_t *context) {
+    scriptableItem_t *node = scriptableItemAlloc();
+    scriptableItemSetPropertyValueForKey(node, context->plugin->plugin.id, "pluginId");
+    scriptableItemSetPropertyValueForKey(node, context->plugin->plugin.name, "name");
+    if (context->plugin->configdialog) {
+        scriptableItemSetPropertyValueForKey(node, context->plugin->configdialog, "configDialog");
+    }
+
+    if (context->plugin->num_params) {
+        for (int i = 0; i < context->plugin->num_params (); i++) {
+            char key[100];
+            char value[100];
+            snprintf (key, sizeof (key), "%d", i);
+            context->plugin->get_param(context, i, value, sizeof (value));
+            scriptableItemSetPropertyValueForKey(node, value, key);
+        }
+    }
+    scriptableItemSetPropertyValueForKey(node, context->enabled ? "1" : "0", "enabled");
+
+    return node;
+}
+
+scriptableItem_t *
+scriptableDspConfigFromDspChain (ddb_dsp_context_t *chain) {
+    scriptableItem_t *config = scriptableItemAlloc();
+
+    while (chain) {
+        scriptableItem_t *node = scriptableDspNodeItemFromDspContext (chain);
+        scriptableItemAddSubItem(config, node);
+        chain = chain->next;
+    }
+
+    return config;
 }

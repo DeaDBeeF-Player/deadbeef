@@ -1,6 +1,7 @@
 #include "scriptable.h"
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 static scriptableItem_t *rootNode;
 
@@ -43,17 +44,25 @@ scriptableItemFree (scriptableItem_t *item) {
     }
     item->children = NULL;
 
-    free (item->configDialog);
-    item->configDialog = NULL;
-
     free (item);
 }
 
-int
+unsigned int
 scriptableItemNumChildren (scriptableItem_t *item) {
-    int i = 0;
+    unsigned int i = 0;
     for (scriptableItem_t *c = item->children; c; i++, c = c->next);
     return i;
+}
+
+scriptableItem_t *
+scriptableItemChildAtIndex (scriptableItem_t *item, unsigned int index) {
+    int i = 0;
+    for (scriptableItem_t *c = item->children; c; i++, c = c->next) {
+        if (i == index) {
+            return c;
+        }
+    }
+    return NULL;
 }
 
 int
@@ -81,11 +90,11 @@ scriptableItemSubItemForName (scriptableItem_t *item, const char *name) {
 
 
 scriptableItem_t *
-scriptableItemCreateSubItemOfType (scriptableItem_t *item, const char *type) {
-    if (!item->createSubItemOfType) {
+scriptableItemCreateItemOfType (scriptableItem_t *item, const char *type) {
+    if (!item->createItemOfType) {
         return NULL;
     }
-    return item->createSubItemOfType (item, type);
+    return item->createItemOfType (type);
 }
 
 void
@@ -97,6 +106,31 @@ scriptableItemAddSubItem (scriptableItem_t *item, scriptableItem_t *subItem) {
         item->children = subItem;
     }
     item->childrenTail = subItem;
+}
+
+void
+scriptableItemInsertSubItemAtIndex (scriptableItem_t *item, scriptableItem_t *subItem, unsigned int insertPosition) {
+    unsigned int pos = 0;
+    scriptableItem_t *prev = NULL;
+    for (scriptableItem_t *c = item->children; c; pos++, prev = c, c = c->next) {
+        if (pos == insertPosition) {
+            break;
+        }
+    }
+
+    assert (pos == insertPosition && "Invalid insertPosition");
+
+    scriptableItem_t *next = prev ? prev->next : item->children;
+    if (prev) {
+        prev->next = subItem;
+    }
+    else {
+        item->children = subItem;
+    }
+    subItem->next = next;
+    if (item->childrenTail == prev) {
+        item->childrenTail = subItem;
+    }
 }
 
 void
