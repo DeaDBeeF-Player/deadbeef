@@ -692,7 +692,6 @@ _ddb_splitter_fix_proportion (DdbSplitter *splitter, gfloat proportion) {
     float pos = proportion * (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL ? a.width : a.height);
 
     gint n1, n2;
-#define TEST 1
 #if !GTK_CHECK_VERSION(3,0,0)
     GtkRequisition r1, r2;
     gtk_widget_size_request (splitter->priv->child1, &r1);
