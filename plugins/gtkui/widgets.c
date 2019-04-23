@@ -100,6 +100,7 @@ typedef struct {
     // size of second child
     int size2;
     float ratio;
+    int got_ratio;
     int locked;
 } w_splitter_t;
 
@@ -1190,6 +1191,7 @@ w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) 
     if (strcmp (type, "vsplitter") && strcmp (type, "hsplitter")) {
         return NULL;
     }
+
     char key[MAX_TOKEN], val[MAX_TOKEN];
     for (;;) {
         get_keyvalue (s,key,val);
@@ -1199,6 +1201,7 @@ w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) 
         }
         else if (!strcmp (key, "ratio")) {
             ((w_splitter_t *)w)->ratio = atof (val);
+            ((w_splitter_t *)w)->got_ratio = 1;
         }
         else if (!strcmp (key, "pos")) {
             ((w_splitter_t *)w)->size1 = atoi (val);
@@ -1353,7 +1356,19 @@ void
 w_splitter_init (ddb_gtkui_widget_t *base) {
     w_splitter_t *w = (w_splitter_t *)base;
 
-    ddb_splitter_set_proportion (DDB_SPLITTER (w->box), w->ratio);
+    if (!w->got_ratio) { // migration from pre-1.8
+        GtkAllocation a;
+        gtk_widget_get_allocation(w->box, &a);
+        if (w->size1 > 0) {
+            w->locked = DDB_SPLITTER_SIZE_MODE_LOCK_C1;
+        }
+        else if (w->size2 > 0) {
+            w->locked = DDB_SPLITTER_SIZE_MODE_LOCK_C2;
+        }
+    }
+    else {
+        ddb_splitter_set_proportion (DDB_SPLITTER (w->box), w->ratio);
+    }
     ddb_splitter_set_size_mode (DDB_SPLITTER (w->box), w->locked);
     if (w->locked == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
         ddb_splitter_set_child1_size (DDB_SPLITTER (w->box), w->size1);
