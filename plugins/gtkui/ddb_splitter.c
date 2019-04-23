@@ -691,43 +691,29 @@ _ddb_splitter_fix_proportion (DdbSplitter *splitter, gfloat proportion) {
     gtk_widget_get_allocation (GTK_WIDGET (splitter), &a);
     float pos = proportion * (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL ? a.width : a.height);
 
-    gint n1, n2;
-#if !GTK_CHECK_VERSION(3,0,0)
     GtkRequisition r1, r2;
+#if !GTK_CHECK_VERSION(3,0,0)
     gtk_widget_size_request (splitter->priv->child1, &r1);
     gtk_widget_size_request (splitter->priv->child2, &r2);
 #else
-    gint s1, s2;
+    gtk_widget_get_preferred_size(splitter->priv->child1, NULL, &r1);
+    gtk_widget_get_preferred_size(splitter->priv->child2, NULL, &r2);
 #endif
 
     if (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL) {
-#if !GTK_CHECK_VERSION(3,0,0)
-        n1 = r1.width;
-        n2 = r2.width;
-#else
-        gtk_widget_get_preferred_width (splitter->priv->child1, &s1, &n1);
-        gtk_widget_get_preferred_width (splitter->priv->child1, &s2, &n2);
-#endif
-        if (pos > a.width - n2) {
-            pos = a.width - n2;
+        if (pos > a.width - r2.width) {
+            pos = a.width - r2.width;
         }
-        if (pos < n1) {
-            pos = n1;
+        if (pos < r1.width) {
+            pos = r1.width;
         }
     }
     else {
-#if !GTK_CHECK_VERSION(3,0,0)
-        n1 = r1.height;
-        n2 = r2.height;
-#else
-        gtk_widget_get_preferred_height (splitter->priv->child1, &s1, &n1);
-        gtk_widget_get_preferred_height (splitter->priv->child1, &s2, &n2);
-#endif
-        if (pos > a.height - n2) {
-            pos = a.height - n2;
+        if (pos > a.height - r2.height) {
+            pos = a.height - r2.height;
         }
-        if (pos < n1) {
-            pos = n1;
+        if (pos < r1.height) {
+            pos = r1.height;
         }
     }
 
