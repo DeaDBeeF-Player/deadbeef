@@ -1683,6 +1683,10 @@
 		2DF1ED6A1DAA376B00E23298 /* alac.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF1ED681DAA376B00E23298 /* alac.c */; };
 		2DF55C292270F415002C44DC /* ScriptableSelectViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF55C272270F415002C44DC /* ScriptableSelectViewController.h */; };
 		2DF55C2A2270F415002C44DC /* ScriptableSelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF55C282270F415002C44DC /* ScriptableSelectViewController.m */; };
+		2DF55C3F2270FCB9002C44DC /* ScriptableNodeEditorViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF55C3D2270FCB9002C44DC /* ScriptableNodeEditorViewController.h */; };
+		2DF55C402270FCB9002C44DC /* ScriptableNodeEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF55C3E2270FCB9002C44DC /* ScriptableNodeEditorViewController.m */; };
+		2DF55C432270FF7E002C44DC /* ScriptablePropertySheetDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF55C412270FF7E002C44DC /* ScriptablePropertySheetDataSource.h */; };
+		2DF55C442270FF7E002C44DC /* ScriptablePropertySheetDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF55C422270FF7E002C44DC /* ScriptablePropertySheetDataSource.m */; };
 		2DF622BB1B335FF100C70C7D /* convpresets in Resources */ = {isa = PBXBuildFile; fileRef = 2DF622B81B335DF400C70C7D /* convpresets */; };
 		2DF9304F1AB817310030C0CA /* wildmidi_lib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF9304A1AB817310030C0CA /* wildmidi_lib.h */; };
 		2DF930511AB817310030C0CA /* wildmidi_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304D1AB817310030C0CA /* wildmidi_lib.c */; };
@@ -4757,6 +4761,11 @@
 		2DF1ED681DAA376B00E23298 /* alac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = alac.c; path = plugins/alac/alac.c; sourceTree = "<group>"; };
 		2DF55C272270F415002C44DC /* ScriptableSelectViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableSelectViewController.h; sourceTree = "<group>"; };
 		2DF55C282270F415002C44DC /* ScriptableSelectViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptableSelectViewController.m; sourceTree = "<group>"; };
+		2DF55C3D2270FCB9002C44DC /* ScriptableNodeEditorViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableNodeEditorViewController.h; sourceTree = "<group>"; };
+		2DF55C3E2270FCB9002C44DC /* ScriptableNodeEditorViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptableNodeEditorViewController.m; sourceTree = "<group>"; };
+		2DF55C412270FF7E002C44DC /* ScriptablePropertySheetDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptablePropertySheetDataSource.h; sourceTree = "<group>"; };
+		2DF55C422270FF7E002C44DC /* ScriptablePropertySheetDataSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptablePropertySheetDataSource.m; sourceTree = "<group>"; };
+		2DF55C452271006D002C44DC /* ScriptableItemDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableItemDelegate.h; sourceTree = "<group>"; };
 		2DF622B81B335DF400C70C7D /* convpresets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = convpresets; path = plugins/converter/convpresets; sourceTree = "<group>"; };
 		2DF930441AB816DC0030C0CA /* wildmidi.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wildmidi.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DF9304A1AB817310030C0CA /* wildmidi_lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wildmidi_lib.h; sourceTree = "<group>"; };
@@ -9229,6 +9238,11 @@
 				2D98613D226C814000BAACB1 /* PropertySheetViewController.m */,
 				2DF55C272270F415002C44DC /* ScriptableSelectViewController.h */,
 				2DF55C282270F415002C44DC /* ScriptableSelectViewController.m */,
+				2DF55C3D2270FCB9002C44DC /* ScriptableNodeEditorViewController.h */,
+				2DF55C3E2270FCB9002C44DC /* ScriptableNodeEditorViewController.m */,
+				2DF55C412270FF7E002C44DC /* ScriptablePropertySheetDataSource.h */,
+				2DF55C422270FF7E002C44DC /* ScriptablePropertySheetDataSource.m */,
+				2DF55C452271006D002C44DC /* ScriptableItemDelegate.h */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -10630,6 +10644,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4DC96E701E4CC9670093CFD3 /* dsp.h in Headers */,
+				2DF55C3F2270FCB9002C44DC /* ScriptableNodeEditorViewController.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
 				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
 				2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */,
@@ -10653,6 +10668,7 @@
 				2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */,
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
 				2D6FCDC21DD277CD003FCDE2 /* DSPPresetListDataSource.h in Headers */,
+				2DF55C432270FF7E002C44DC /* ScriptablePropertySheetDataSource.h in Headers */,
 				2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
@@ -13632,6 +13648,7 @@
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
 				2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
+				2DF55C402270FCB9002C44DC /* ScriptableNodeEditorViewController.m in Sources */,
 				2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */,
 				2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */,
 				2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */,
@@ -13657,6 +13674,7 @@
 				2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */,
 				4D9272C721414BF400E7B4D0 /* DSPPresetController.swift in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
+				2DF55C442270FF7E002C44DC /* ScriptablePropertySheetDataSource.m in Sources */,
 				4D12805F2062994F0015BDE8 /* HelpWindowController.swift in Sources */,
 				2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */,
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,

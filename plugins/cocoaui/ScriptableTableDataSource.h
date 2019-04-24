@@ -1,13 +1,7 @@
 #import <Foundation/Foundation.h>
 #include "../../deadbeef.h"
 #include "scriptable_dsp.h"
-
-@class ScriptableTableDataSource;
-
-@protocol ScriptableItemDelegate
-@optional
-- (void)scriptableItemChanged:(scriptableItem_t *)scriptable;
-@end
+#import "ScriptableItemDelegate.h"
 
 @interface ScriptableTableDataSource : NSObject<NSTableViewDataSource>
 @property NSString *pasteboardItemIdentifier;
