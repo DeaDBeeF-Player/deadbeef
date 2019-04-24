@@ -2433,7 +2433,6 @@ streamer_set_dsp_chain (ddb_dsp_context_t *chain) {
         }
         chain = chain->next;
     }
-
     handler_push (handler, STR_EV_SET_DSP_CHAIN, (uintptr_t)new_chain, 0, 0);
 }
 
