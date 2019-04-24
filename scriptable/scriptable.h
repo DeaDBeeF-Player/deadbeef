@@ -23,6 +23,7 @@ typedef struct scriptableItem_s {
     stringListItem_t (*subItemTypes)(struct scriptableItem_s *item);
     struct scriptableItem_s *(*createItemOfType)(const char *type);
     void (*free)(struct scriptableItem_s *item);
+    void (*save)(struct scriptableItem_s *item);
 } scriptableItem_t;
 
 scriptableItem_t *
@@ -30,6 +31,9 @@ scriptableItemAlloc (void);
 
 void
 scriptableItemFree (scriptableItem_t *item);
+
+void
+scriptableItemSave (scriptableItem_t *item);
 
 unsigned int
 scriptableItemNumChildren (scriptableItem_t *item);

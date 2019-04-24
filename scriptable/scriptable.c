@@ -23,6 +23,13 @@ scriptableItemAlloc (void) {
 }
 
 void
+scriptableItemSave (scriptableItem_t *item) {
+    if (item->save) {
+        item->save (item);
+    }
+}
+
+void
 scriptableItemFree (scriptableItem_t *item) {
     if (item->free) {
         item->free (item);

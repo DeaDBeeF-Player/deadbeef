@@ -1,59 +1,56 @@
-#import "ScriptableManagerTableDataSource.h"
+#import "ScriptableTableDataSource.h"
 #include "deadbeef.h"
 #include "../../scriptable/scriptable.h"
 
 extern DB_functions_t *deadbeef;
 
-// FIXME: implement Save in scriptableItem, instead of directly calling streamer_set_dsp_chain
-@implementation ScriptableManagerTableDataSource {
-    scriptableItem_t *_chain;
-}
+@implementation ScriptableTableDataSource
 
 - (void)dealloc {
-    if (_chain) {
-        scriptableItemFree (_chain);
-        _chain = NULL;
+    if (_scriptable) {
+        scriptableItemFree (_scriptable);
+        _scriptable = NULL;
     }
 }
 
-- (ScriptableManagerTableDataSource *)initWithChain:(scriptableItem_t *)chain pasteboardItemIdentifier:(NSString *)identifier {
+- (ScriptableTableDataSource *)initWithScriptable:(scriptableItem_t *)scriptable pasteboardItemIdentifier:(NSString *)identifier {
     self = [super init];
     self.pasteboardItemIdentifier = identifier;
 
-    _chain = chain;
+    _scriptable = scriptable;
     return self;
 }
 
 - (void)insertItem:(scriptableItem_t *)item atIndex:(NSInteger)index {
-    scriptableItemInsertSubItemAtIndex(_chain, item, (unsigned int)index);
-    // FIXME    deadbeef->streamer_set_dsp_chain (_chain);
+    scriptableItemInsertSubItemAtIndex(_scriptable, item, (unsigned int)index);
+    [self.delegate scriptableTableDataSourceChanged:self];
 }
 
 - (void)removeItemAtIndex:(NSInteger)index {
-    scriptableItem_t *item = scriptableItemChildAtIndex(_chain, (unsigned int)index);
+    scriptableItem_t *item = scriptableItemChildAtIndex(_scriptable, (unsigned int)index);
     if (item) {
-        scriptableItemRemoveSubItem(_chain, item);
+        scriptableItemRemoveSubItem(_scriptable, item);
         scriptableItemFree (item);
     }
-    // FIXME    deadbeef->streamer_set_dsp_chain (_chain);
+    [self.delegate scriptableTableDataSourceChanged:self];
 }
 
 - (scriptableItem_t *)itemAtIndex:(NSInteger)index {
-    return scriptableItemChildAtIndex(_chain, (unsigned int)index);
+    return scriptableItemChildAtIndex(_scriptable, (unsigned int)index);
 }
 
 - (void)apply {
-    // FIXME    deadbeef->streamer_set_dsp_chain (_chain);
+    [self.delegate scriptableTableDataSourceChanged:self];
 }
 
 
 #pragma mark - NSTableViewDataSource
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
-    return scriptableItemNumChildren (_chain);
+    return scriptableItemNumChildren (_scriptable);
 }
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-    scriptableItem_t *node = scriptableItemChildAtIndex(_chain, (unsigned int)row);
+    scriptableItem_t *node = scriptableItemChildAtIndex(_scriptable, (unsigned int)row);
     const char *name = scriptableItemPropertyValueForKey(node, "name");
     return [NSString stringWithUTF8String:name];
 }
@@ -94,12 +91,12 @@ extern DB_functions_t *deadbeef;
         row--;
     }
 
-    scriptableItem_t *node = scriptableItemChildAtIndex(_chain, (unsigned int)sourceRow);
-    scriptableItemRemoveSubItem(_chain, node);
+    scriptableItem_t *node = scriptableItemChildAtIndex(_scriptable, (unsigned int)sourceRow);
+    scriptableItemRemoveSubItem(_scriptable, node);
 
 
     // reinsert the node at new position
-    scriptableItemInsertSubItemAtIndex (_chain, node, (unsigned int)row);
+    scriptableItemInsertSubItemAtIndex (_scriptable, node, (unsigned int)row);
 
     [self apply];
 

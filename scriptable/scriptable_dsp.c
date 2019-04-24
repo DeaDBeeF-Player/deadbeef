@@ -163,6 +163,44 @@ scriptableDspNodeItemFromDspContext (ddb_dsp_context_t *context) {
     return node;
 }
 
+ddb_dsp_context_t *
+scriptableDspConfigToDspChain (scriptableItem_t *item) {
+    ddb_dsp_context_t *head = NULL;
+    ddb_dsp_context_t *tail = NULL;
+    scriptableItem_t *c;
+    for (c = item->children; c; c = c->next) {
+        const char *pluginId = scriptableItemPropertyValueForKey(c, "pluginId");
+        DB_plugin_t *plugin = deadbeef->plug_get_for_id (pluginId);
+        if (plugin->type != DB_PLUGIN_DSP) {
+            break;
+        }
+        DB_dsp_t *dsp = (DB_dsp_t *)plugin;
+        ddb_dsp_context_t *ctx = dsp->open ();
+        if (dsp->num_params) {
+            int n = dsp->num_params();
+            for (int i = 0; i < n; i++) {
+                char key[10];
+                snprintf (key, sizeof (key), "%d", i);
+                const char *value = scriptableItemPropertyValueForKey(c, key);
+                dsp->set_param (ctx, i, value ? value : "");
+            }
+        }
+        if (tail) {
+            tail->next = ctx;
+        }
+        else {
+            head = ctx;
+        }
+        tail = ctx;
+    }
+
+    if (c && head) {
+        deadbeef->dsp_preset_free (head);
+        return NULL;
+    }
+    return head;
+}
+
 scriptableItem_t *
 scriptableDspConfigFromDspChain (ddb_dsp_context_t *chain) {
     scriptableItem_t *config = scriptableItemAlloc();

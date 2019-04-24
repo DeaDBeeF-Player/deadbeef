@@ -2420,7 +2420,7 @@ streamer_notify_playlist_deleted (playlist_t *plt) {
 
 void
 streamer_set_dsp_chain (ddb_dsp_context_t *chain) {
-    streamer_lock ();
+    streamer_lock (); // FIXME: supereq is not threadsafe, and can free some static variables
     ddb_dsp_context_t *new_chain = NULL;
     ddb_dsp_context_t *tail = NULL;
     while (chain) {

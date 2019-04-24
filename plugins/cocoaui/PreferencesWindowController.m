@@ -22,7 +22,7 @@
 */
 
 #import "PreferencesWindowController.h"
-#import "ScriptableManagerTableDataSource.h"
+#import "ScriptableTableDataSource.h"
 #import "DSPPresetListDataSource.h"
 #import "DeaDBeeF-Swift.h"
 #include "deadbeef.h"
@@ -34,11 +34,11 @@ extern DB_functions_t *deadbeef;
     scriptableItem_t *_dsp;
     BOOL _multipleChanges;
 }
-@property (weak) ScriptableManagerTableDataSource *dspChainDataSource;
+@property (weak) ScriptableTableDataSource *dspChainDataSource;
 @end
 
 @implementation DSPConfigPropertySheetDataSource
-- (instancetype)initWithDspChain:(ScriptableManagerTableDataSource *)dataSource nodeIndex:(NSInteger)index {
+- (instancetype)initWithDspChain:(ScriptableTableDataSource *)dataSource nodeIndex:(NSInteger)index {
     self = [super init];
     self.dspChainDataSource = dataSource;
     _dsp = [self.dspChainDataSource itemAtIndex:index];
@@ -118,7 +118,7 @@ extern DB_functions_t *deadbeef;
 
 @interface PreferencesWindowController () {
     settings_data_t _settingsData;
-    ScriptableManagerTableDataSource *_dspChainDataSource;
+    ScriptableTableDataSource *_dspChainDataSource;
     DSPPresetController *_dspPresetController;
 }
 
@@ -159,7 +159,8 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
 
     // dsp
     scriptableItem_t *chain = scriptableDspConfigFromDspChain (deadbeef->streamer_get_dsp_chain ());
-    _dspChainDataSource = [[ScriptableManagerTableDataSource alloc] initWithChain:chain pasteboardItemIdentifier:@"deadbeef.dspnode.preferences"];
+    _dspChainDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:chain pasteboardItemIdentifier:@"deadbeef.dspnode.preferences"];
+    _dspChainDataSource.delegate = self;
     _dspList.dataSource = _dspChainDataSource;
     [_dspList registerForDraggedTypes: [NSArray arrayWithObjects: _dspChainDataSource.pasteboardItemIdentifier, nil]];
     NSError *error;
@@ -175,6 +176,14 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     [_toolbar setSelectedItemIdentifier:@"Sound"];
 
     [self switchToView:_soundView];
+}
+
+#pragma mark - ScriptableTableDataSourceDelegate
+
+- (void)scriptableTableDataSourceChanged:(ScriptableTableDataSource *)dataSource {
+    ddb_dsp_context_t *chain = scriptableDspConfigToDspChain (dataSource.scriptable);
+    deadbeef->streamer_set_dsp_chain (chain);
+    deadbeef->dsp_preset_free (chain);
 }
 
 - (void)outputDeviceChanged {
