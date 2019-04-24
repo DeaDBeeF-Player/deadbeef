@@ -24,6 +24,14 @@ extern "C" {
 #endif
 
 typedef float REAL;
+
+typedef struct {
+    int ipsize;
+    int wsize;
+    int *ip;
+    REAL *w;
+} FFTCTX;
+
 typedef struct {
     REAL *lires,*lires1,*lires2;
     REAL *irest;
@@ -38,6 +46,8 @@ typedef struct {
     int channels;
     int enable;
     int fft_bits;
+    FFTCTX fftctx;
+    float hm1, hm2;
 } SuperEqState;
 
 void *paramlist_alloc (void);
