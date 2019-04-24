@@ -292,7 +292,7 @@
                 </textField>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7EN-x3-aU8">
                     <rect key="frame" x="101" y="17" width="347" height="28"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wB2-nl-rwo">
                     <rect key="frame" x="20" y="53" width="428" height="149"/>
