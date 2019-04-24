@@ -1307,9 +1307,13 @@ main (int argc, char *argv[]) {
 
     free (cmdline);
 
+
+#ifdef OSX_APPBUNDLE
+    // work in progress API, doesn't compile outside of xcode yet
     scriptableInit();
     scriptableDspLoadPresets();
     scriptableEncoderLoadPresets();
+#endif
 
     streamer_init ();
 
