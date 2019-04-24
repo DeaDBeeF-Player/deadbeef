@@ -52,8 +52,7 @@ extern DB_functions_t *deadbeef;
 }
 
 
-#pragma mark - DSP Tab
-
+// FIXME: needs to query preset manager for the list of names / ids
 - (NSMenu *)getDSPMenu {
     NSMenu *menu = [[NSMenu alloc] initWithTitle:@"DspChainMenu"];
     menu.delegate = self;
