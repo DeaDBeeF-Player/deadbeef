@@ -22,7 +22,7 @@
 */
 
 #import "PreferencesWindowController.h"
-#import "DSPChainDataSource.h"
+#import "ScriptableManagerTableDataSource.h"
 #import "DSPPresetListDataSource.h"
 #import "DeaDBeeF-Swift.h"
 #include "deadbeef.h"
@@ -34,11 +34,11 @@ extern DB_functions_t *deadbeef;
     scriptableItem_t *_dsp;
     BOOL _multipleChanges;
 }
-@property (weak) DSPChainDataSource *dspChainDataSource;
+@property (weak) ScriptableManagerTableDataSource *dspChainDataSource;
 @end
 
 @implementation DSPConfigPropertySheetDataSource
-- (instancetype)initWithDspChain:(DSPChainDataSource *)dataSource nodeIndex:(NSInteger)index {
+- (instancetype)initWithDspChain:(ScriptableManagerTableDataSource *)dataSource nodeIndex:(NSInteger)index {
     self = [super init];
     self.dspChainDataSource = dataSource;
     _dsp = [self.dspChainDataSource itemAtIndex:index];
@@ -118,7 +118,7 @@ extern DB_functions_t *deadbeef;
 
 @interface PreferencesWindowController () {
     settings_data_t _settingsData;
-    DSPChainDataSource *_dspChainDataSource;
+    ScriptableManagerTableDataSource *_dspChainDataSource;
     DSPPresetController *_dspPresetController;
 }
 
@@ -159,9 +159,9 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
 
     // dsp
     scriptableItem_t *chain = scriptableDspConfigFromDspChain (deadbeef->streamer_get_dsp_chain ());
-    _dspChainDataSource = [[DSPChainDataSource alloc] initWithChain:chain domain:@"preferences"];
+    _dspChainDataSource = [[ScriptableManagerTableDataSource alloc] initWithChain:chain pasteboardItemIdentifier:@"deadbeef.dspnode.preferences"];
     _dspList.dataSource = _dspChainDataSource;
-    [_dspList registerForDraggedTypes: [NSArray arrayWithObjects: _dspChainDataSource.dspNodeDraggedItemType, nil]];
+    [_dspList registerForDraggedTypes: [NSArray arrayWithObjects: _dspChainDataSource.pasteboardItemIdentifier, nil]];
     NSError *error;
     _dspPresetController = [DSPPresetController createWithContext:@"main" error:&error];
     [_dspPresetController.presetMgr createSelectorUIWithContainer:_dspPresetSelectorContainer];

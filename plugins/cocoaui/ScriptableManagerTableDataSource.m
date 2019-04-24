@@ -1,10 +1,11 @@
-#import "DSPChainDataSource.h"
+#import "ScriptableManagerTableDataSource.h"
 #include "deadbeef.h"
-#include "scriptable_dsp.h"
+#include "../../scriptable/scriptable.h"
 
 extern DB_functions_t *deadbeef;
 
-@implementation DSPChainDataSource {
+// FIXME: implement Save in scriptableItem, instead of directly calling streamer_set_dsp_chain
+@implementation ScriptableManagerTableDataSource {
     scriptableItem_t *_chain;
 }
 
@@ -15,9 +16,9 @@ extern DB_functions_t *deadbeef;
     }
 }
 
-- (DSPChainDataSource *)initWithChain:(scriptableItem_t *)chain domain:(NSString *)domain {
+- (ScriptableManagerTableDataSource *)initWithChain:(scriptableItem_t *)chain pasteboardItemIdentifier:(NSString *)identifier {
     self = [super init];
-    self.dspNodeDraggedItemType = [@"deadbeef.dspnode." stringByAppendingString:domain];
+    self.pasteboardItemIdentifier = identifier;
 
     _chain = chain;
     return self;
@@ -63,7 +64,7 @@ extern DB_functions_t *deadbeef;
     NSString *identifier = [NSString stringWithFormat:@"%d", (int)row];
 
     NSPasteboardItem *pboardItem = [[NSPasteboardItem alloc] init];
-    [pboardItem setString:identifier forType: self.dspNodeDraggedItemType];
+    [pboardItem setString:identifier forType: self.pasteboardItemIdentifier];
 
     return pboardItem;
 }
@@ -82,7 +83,7 @@ extern DB_functions_t *deadbeef;
 - (BOOL)tableView:(NSTableView *)tableView acceptDrop:(id<NSDraggingInfo>)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)dropOperation {
 
     NSPasteboard *p = [info draggingPasteboard];
-    NSInteger sourceRow = [[p stringForType:self.dspNodeDraggedItemType] intValue];
+    NSInteger sourceRow = [[p stringForType:self.pasteboardItemIdentifier] intValue];
 
     if (sourceRow == row || sourceRow >= [self numberOfRowsInTableView:tableView] || sourceRow < 0) {
         return NO;

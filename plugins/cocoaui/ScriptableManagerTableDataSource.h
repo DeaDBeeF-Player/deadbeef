@@ -2,10 +2,10 @@
 #include "../../deadbeef.h"
 #include "scriptable_dsp.h"
 
-@interface DSPChainDataSource : NSObject<NSTableViewDataSource>
-@property NSString *dspNodeDraggedItemType;
+@interface ScriptableManagerTableDataSource : NSObject<NSTableViewDataSource>
+@property NSString *pasteboardItemIdentifier;
 
-- (DSPChainDataSource *)initWithChain:(scriptableItem_t *)dspChain domain:(NSString *)domain;
+- (ScriptableManagerTableDataSource *)initWithChain:(scriptableItem_t *)dspChain pasteboardItemIdentifier:(NSString *)identifier;
 - (void)insertItem:(scriptableItem_t *)item atIndex:(NSInteger)index;
 - (void)removeItemAtIndex:(NSInteger)index;
 - (scriptableItem_t *)itemAtIndex:(NSInteger)index;

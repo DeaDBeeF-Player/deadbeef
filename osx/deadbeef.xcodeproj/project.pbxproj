@@ -1217,8 +1217,8 @@
 		2D6FCDC21DD277CD003FCDE2 /* DSPPresetListDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6FCDC01DD277CD003FCDE2 /* DSPPresetListDataSource.h */; };
 		2D6FCDC31DD277CD003FCDE2 /* DSPPresetListDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6FCDC11DD277CD003FCDE2 /* DSPPresetListDataSource.m */; };
 		2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D713FFC1A5D7D5900EFF139 /* playqueue.h */; };
-		2D71C26A1DC88E5C00247CEF /* DSPChainDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D71C2681DC88E5C00247CEF /* DSPChainDataSource.h */; };
-		2D71C26B1DC88E5C00247CEF /* DSPChainDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D71C2691DC88E5C00247CEF /* DSPChainDataSource.m */; };
+		2D71C26A1DC88E5C00247CEF /* ScriptableManagerTableDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D71C2681DC88E5C00247CEF /* ScriptableManagerTableDataSource.h */; };
+		2D71C26B1DC88E5C00247CEF /* ScriptableManagerTableDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D71C2691DC88E5C00247CEF /* ScriptableManagerTableDataSource.m */; };
 		2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */; };
 		2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */; };
 		2D72AE5E1CFE1F7500103AAE /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D72AE5D1CFE1F7500103AAE /* ImageIO.framework */; };
@@ -4291,8 +4291,8 @@
 		2D6FCDC11DD277CD003FCDE2 /* DSPPresetListDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSPPresetListDataSource.m; sourceTree = "<group>"; };
 		2D713FFB1A5D7D5900EFF139 /* playqueue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = playqueue.c; sourceTree = "<group>"; };
 		2D713FFC1A5D7D5900EFF139 /* playqueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playqueue.h; sourceTree = "<group>"; };
-		2D71C2681DC88E5C00247CEF /* DSPChainDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSPChainDataSource.h; sourceTree = "<group>"; };
-		2D71C2691DC88E5C00247CEF /* DSPChainDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSPChainDataSource.m; sourceTree = "<group>"; };
+		2D71C2681DC88E5C00247CEF /* ScriptableManagerTableDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptableManagerTableDataSource.h; sourceTree = "<group>"; };
+		2D71C2691DC88E5C00247CEF /* ScriptableManagerTableDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScriptableManagerTableDataSource.m; sourceTree = "<group>"; };
 		2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbPlaylistViewController.h; sourceTree = "<group>"; };
 		2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbPlaylistViewController.m; sourceTree = "<group>"; };
 		2D72AE5D1CFE1F7500103AAE /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
@@ -9220,8 +9220,8 @@
 				2D49857E1D5CF13F00E4D985 /* LogWindowController.m */,
 				2D1A56481D9FFB10005E5CDD /* ReplayGainScannerController.h */,
 				2D1A56491D9FFB10005E5CDD /* ReplayGainScannerController.m */,
-				2D71C2681DC88E5C00247CEF /* DSPChainDataSource.h */,
-				2D71C2691DC88E5C00247CEF /* DSPChainDataSource.m */,
+				2D71C2681DC88E5C00247CEF /* ScriptableManagerTableDataSource.h */,
+				2D71C2691DC88E5C00247CEF /* ScriptableManagerTableDataSource.m */,
 				2D6FCDC01DD277CD003FCDE2 /* DSPPresetListDataSource.h */,
 				2D6FCDC11DD277CD003FCDE2 /* DSPPresetListDataSource.m */,
 				4D12805E2062994F0015BDE8 /* HelpWindowController.swift */,
@@ -10647,7 +10647,7 @@
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
 				2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */,
 				2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */,
-				2D71C26A1DC88E5C00247CEF /* DSPChainDataSource.h in Headers */,
+				2D71C26A1DC88E5C00247CEF /* ScriptableManagerTableDataSource.h in Headers */,
 				2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */,
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
 				2D6FCDC21DD277CD003FCDE2 /* DSPPresetListDataSource.h in Headers */,
@@ -13651,7 +13651,7 @@
 				2D828E5C19E56B4D00EE874F /* DdbSearchViewController.m in Sources */,
 				4D9272C621414BF400E7B4D0 /* PresetManager.swift in Sources */,
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
-				2D71C26B1DC88E5C00247CEF /* DSPChainDataSource.m in Sources */,
+				2D71C26B1DC88E5C00247CEF /* ScriptableManagerTableDataSource.m in Sources */,
 				2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */,
 				4D9272C721414BF400E7B4D0 /* DSPPresetController.swift in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
