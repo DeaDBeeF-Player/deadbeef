@@ -3,6 +3,7 @@
 #include <limits.h>
 #include <string.h>
 #include "../deadbeef.h"
+#include "strdupa.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -22,9 +23,7 @@ scandir_preset_filter (const struct dirent *ent) {
 
 
 static int
-scriptableItemLoadEncoderPreset (scriptableItem_t *preset, const char *fname) {
-    char path[PATH_MAX];
-    snprintf (path, sizeof (path), "%s/presets/encoders/%s", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG), fname);
+scriptableItemLoadEncoderPreset (scriptableItem_t *preset, const char *name, const char *path) {
     int err = -1;
     FILE *fp = fopen (path, "rt");
     if (!fp) {
@@ -50,6 +49,9 @@ scriptableItemLoadEncoderPreset (scriptableItem_t *preset, const char *fname) {
         char *item = sp + 1;
 
         scriptableItemSetPropertyValueForKey(preset, item, str);
+        if (!strcmp (str, "title")) {
+            scriptableItemSetPropertyValueForKey(preset, item, "name");
+        }
     }
 
     err = 0;
@@ -98,7 +100,7 @@ scriptableEncoderLoadPresets (void) {
             if (snprintf (s, sizeof (s), "%s/%s", path, namelist[i]->d_name) > 0){
 
                 scriptableItem_t *preset = scriptableItemAlloc();
-                if (scriptableItemLoadEncoderPreset (preset, namelist[i]->d_name)) {
+                if (scriptableItemLoadEncoderPreset (preset, namelist[i]->d_name, s)) {
                     scriptableItemFree (preset);
                 }
                 else {

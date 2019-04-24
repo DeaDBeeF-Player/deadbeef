@@ -24,6 +24,7 @@
 #import "PreferencesWindowController.h"
 #import "ScriptableTableDataSource.h"
 #import "DSPPresetListDataSource.h"
+#import "ScriptableSelectViewController.h"
 #import "DeaDBeeF-Swift.h"
 #include "deadbeef.h"
 #include "pluginsettings.h"
@@ -118,10 +119,13 @@ extern DB_functions_t *deadbeef;
 @interface PreferencesWindowController () {
     settings_data_t _settingsData;
     ScriptableTableDataSource *_dspChainDataSource;
-    DSPPresetController *_dspPresetController;
+//    DSPPresetController *_dspPresetController;
 }
 
 @property ScriptablePropertySheetDataSource *dspPropertySheetDataSource;
+@property (strong) IBOutlet ScriptableSelectViewController *dspSelectViewController;
+
+
 @property PluginConfigPropertySheetDataSource *pluginPropertySheetDataSource;
 
 @property (weak) IBOutlet NSPopUpButton *outputPluginsPopupButton;
@@ -162,9 +166,13 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     _dspChainDataSource.delegate = self;
     _dspList.dataSource = _dspChainDataSource;
     [_dspList registerForDraggedTypes: [NSArray arrayWithObjects: _dspChainDataSource.pasteboardItemIdentifier, nil]];
-    NSError *error;
-    _dspPresetController = [DSPPresetController createWithContext:@"main" error:&error];
-    [_dspPresetController.presetMgr createSelectorUIWithContainer:_dspPresetSelectorContainer];
+
+//    NSError *error;
+//    _dspPresetController = [DSPPresetController createWithContext:@"main" error:&error];
+//    [_dspPresetController.presetMgr createSelectorUIWithContainer:_dspPresetSelectorContainer];
+
+    self.dspSelectViewController.view.frame = _dspPresetSelectorContainer.bounds;
+    [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
 
     [self initPluginList];
 
@@ -253,6 +261,7 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
 - (void)showWindow:(id)sender {
     [super showWindow:sender];
     [self initializeAudioTab];
+    [self.dspSelectViewController setScriptable:scriptableDspRoot()];
 }
 
 #pragma mark - Playback
