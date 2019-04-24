@@ -30,35 +30,34 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface DSPConfigPropertySheetDataSource : NSObject<PropertySheetDataSource> {
-    scriptableItem_t *_dsp;
+@interface ScriptablePropertySheetDataSource : NSObject<PropertySheetDataSource> {
+    scriptableItem_t *_scriptable;
     BOOL _multipleChanges;
 }
-@property (weak) ScriptableTableDataSource *dspChainDataSource;
+@property (weak) NSObject<ScriptableItemDelegate> *delegate;
 @end
 
-@implementation DSPConfigPropertySheetDataSource
-- (instancetype)initWithDspChain:(ScriptableTableDataSource *)dataSource nodeIndex:(NSInteger)index {
+@implementation ScriptablePropertySheetDataSource
+- (instancetype)initWithScriptable:(scriptableItem_t *)scriptable {
     self = [super init];
-    self.dspChainDataSource = dataSource;
-    _dsp = [self.dspChainDataSource itemAtIndex:index];
+    _scriptable = scriptable;
     return self;
 }
 
 - (NSString *)propertySheet:(PropertySheetViewController *)vc configForItem:(id)item {
-    const char *config = scriptableItemPropertyValueForKey(_dsp, "configDialog");
+    const char *config = scriptableItemPropertyValueForKey(_scriptable, "configDialog");
     return config ? [NSString stringWithUTF8String:config] : nil;
 }
 
 - (NSString *)propertySheet:(PropertySheetViewController *)vc valueForKey:(NSString *)key def:(NSString *)def item:(id)item {
-    const char *value = scriptableItemPropertyValueForKey(_dsp, [key UTF8String]);
-    return [NSString stringWithUTF8String:value];
+    const char *value = scriptableItemPropertyValueForKey(_scriptable, [key UTF8String]);
+    return value ? [NSString stringWithUTF8String:value] : def;
 }
 
 - (void)propertySheet:(PropertySheetViewController *)vc setValue:(NSString *)value forKey:(NSString *)key item:(id)item {
-    scriptableItemSetPropertyValueForKey(_dsp, [value UTF8String], [key UTF8String]);
+    scriptableItemSetPropertyValueForKey(_scriptable, [value UTF8String], [key UTF8String]);
     if (!_multipleChanges) {
-        [self.dspChainDataSource apply];
+        [self.delegate scriptableItemChanged:_scriptable];
     }
 }
 
@@ -67,7 +66,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)propertySheetCommitChanges {
-    [self.dspChainDataSource apply];
+    [self.delegate scriptableItemChanged:_scriptable];
     _multipleChanges = NO;
 }
 @end
@@ -122,7 +121,7 @@ extern DB_functions_t *deadbeef;
     DSPPresetController *_dspPresetController;
 }
 
-@property DSPConfigPropertySheetDataSource *dspPropertySheetDataSource;
+@property ScriptablePropertySheetDataSource *dspPropertySheetDataSource;
 @property PluginConfigPropertySheetDataSource *pluginPropertySheetDataSource;
 
 @property (weak) IBOutlet NSPopUpButton *outputPluginsPopupButton;
@@ -178,12 +177,15 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     [self switchToView:_soundView];
 }
 
-#pragma mark - ScriptableTableDataSourceDelegate
+#pragma mark - ScriptableItemDelegate
 
-- (void)scriptableTableDataSourceChanged:(ScriptableTableDataSource *)dataSource {
-    ddb_dsp_context_t *chain = scriptableDspConfigToDspChain (dataSource.scriptable);
-    deadbeef->streamer_set_dsp_chain (chain);
-    deadbeef->dsp_preset_free (chain);
+- (void)scriptableItemChanged:(scriptableItem_t *)scriptable {
+    if (scriptable == _dspChainDataSource.scriptable
+        || scriptableItemIndexOfChild(_dspChainDataSource.scriptable, scriptable) >= 0) {
+        ddb_dsp_context_t *chain = scriptableDspConfigToDspChain (_dspChainDataSource.scriptable);
+        deadbeef->streamer_set_dsp_chain (chain);
+        deadbeef->dsp_preset_free (chain);
+    }
 }
 
 - (void)outputDeviceChanged {
@@ -578,7 +580,9 @@ clamp_samplerate (int val) {
     if (index < 0) {
         return;
     }
-    self.dspPropertySheetDataSource = [[DSPConfigPropertySheetDataSource alloc] initWithDspChain:_dspChainDataSource nodeIndex:index];
+    scriptableItem_t *item = scriptableItemChildAtIndex(_dspChainDataSource.scriptable, (unsigned int)index);
+    self.dspPropertySheetDataSource = [[ScriptablePropertySheetDataSource alloc] initWithScriptable:item];
+    self.dspPropertySheetDataSource.delegate = self;
 
     _dspConfigViewController.dataSource = self.dspPropertySheetDataSource;
     [NSApp beginSheet:_dspConfigPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndDspConfigPanel:returnCode:contextInfo:) contextInfo:nil];

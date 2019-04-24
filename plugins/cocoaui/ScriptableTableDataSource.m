@@ -23,7 +23,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)insertItem:(scriptableItem_t *)item atIndex:(NSInteger)index {
     scriptableItemInsertSubItemAtIndex(_scriptable, item, (unsigned int)index);
-    [self.delegate scriptableTableDataSourceChanged:self];
+    [self.delegate scriptableItemChanged:_scriptable];
 }
 
 - (void)removeItemAtIndex:(NSInteger)index {
@@ -32,17 +32,12 @@ extern DB_functions_t *deadbeef;
         scriptableItemRemoveSubItem(_scriptable, item);
         scriptableItemFree (item);
     }
-    [self.delegate scriptableTableDataSourceChanged:self];
+    [self.delegate scriptableItemChanged:_scriptable];
 }
 
 - (scriptableItem_t *)itemAtIndex:(NSInteger)index {
     return scriptableItemChildAtIndex(_scriptable, (unsigned int)index);
 }
-
-- (void)apply {
-    [self.delegate scriptableTableDataSourceChanged:self];
-}
-
 
 #pragma mark - NSTableViewDataSource
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
@@ -98,7 +93,7 @@ extern DB_functions_t *deadbeef;
     // reinsert the node at new position
     scriptableItemInsertSubItemAtIndex (_scriptable, node, (unsigned int)row);
 
-    [self apply];
+    [self.delegate scriptableItemChanged:_scriptable];
 
     return YES;
 }
