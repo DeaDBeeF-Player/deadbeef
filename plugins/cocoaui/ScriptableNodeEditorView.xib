@@ -18,7 +18,7 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="qcl-7l-m6v" userLabel="Scriptable Node Editor">
             <rect key="frame" x="0.0" y="0.0" width="503" height="127"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mAN-ij-kos">
                     <rect key="frame" x="0.0" y="20" width="503" height="107"/>
