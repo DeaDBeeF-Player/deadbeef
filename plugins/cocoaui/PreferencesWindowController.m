@@ -83,6 +83,7 @@ extern DB_functions_t *deadbeef;
 @property (strong) IBOutlet ScriptableSelectViewController *dspSelectViewController;
 
 @property ScriptableTableDataSource *dspChainDataSource;
+@property ScriptableTableDataSource *dspPresetsDataSource;
 @property (weak) IBOutlet NSView *dspNodeEditorContainer;
 @property ScriptableNodeEditorViewController *dspNodeEditorViewController;
 
@@ -122,17 +123,22 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     [super windowDidLoad];
 
     // dsp
+    scriptableItem_t *chain = scriptableDspConfigFromDspChain (deadbeef->streamer_get_dsp_chain ());
+    self.dspChainDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:chain pasteboardItemIdentifier:@"deadbeef.dspnode.preferences"];
+
+    self.dspPresetsDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:scriptableDspRoot() pasteboardItemIdentifier:@"deadbeef.dsppreset.preferences"];
+
+    // preset list and browse button
     self.dspSelectViewController = [[ScriptableSelectViewController alloc] initWithNibName:@"ScriptableSelectView" bundle:nil];
+    self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
+    self.dspSelectViewController.delegate = self;
     self.dspSelectViewController.view.frame = _dspPresetSelectorContainer.bounds;
     [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
 
+    // current dsp chain node list / editor
     self.dspNodeEditorViewController = [[ScriptableNodeEditorViewController alloc] initWithNibName:@"ScriptableNodeEditorView" bundle:nil];
-
-    scriptableItem_t *chain = scriptableDspConfigFromDspChain (deadbeef->streamer_get_dsp_chain ());
-    self.dspChainDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:chain pasteboardItemIdentifier:@"deadbeef.dspnode.preferences"];
     self.dspNodeEditorViewController.dataSource = self.dspChainDataSource;
     self.dspNodeEditorViewController.delegate = self;
-
     self.dspNodeEditorViewController.view.frame = _dspNodeEditorContainer.bounds;
     [_dspNodeEditorContainer addSubview:self.dspNodeEditorViewController.view];
 
