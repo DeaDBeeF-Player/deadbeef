@@ -6,6 +6,12 @@
 
 extern DB_functions_t *deadbeef;
 
+static scriptableStringListItem_t *
+scriptableDspChainItemNames (scriptableItem_t *item);
+
+static scriptableStringListItem_t *
+scriptableDspChainItemTypes (scriptableItem_t *item);
+
 static int
 dirent_alphasort (const struct dirent **a, const struct dirent **b) {
     return strcmp ((*a)->d_name, (*b)->d_name);
@@ -81,7 +87,7 @@ error:
 }
 
 static scriptableItem_t *
-scriptableDspCreateItemOfType (const char *type) {
+scriptableDspCreateItemOfType (struct scriptableItem_s *root, const char *type) {
     scriptableItem_t *item = scriptableItemAlloc();
     scriptableItemSetPropertyValueForKey(item, type, "pluginId");
 
@@ -120,12 +126,43 @@ scriptableDspPresetItemTypes (scriptableItem_t *item) {
     return s;
 }
 
+static scriptableItem_t *
+scriptableDspCreatePreset (scriptableItem_t *root, const char *type) {
+    char name[100] = "New DSP Preset";
+    int i;
+    const int MAX_ATTEMPTS = 100;
+    for (i = 1; i < MAX_ATTEMPTS; i++) {
+        scriptableItem_t *c = NULL;
+        for (c = root->children; c; c = c->next) {
+            const char *cname = scriptableItemPropertyValueForKey(c, "name");
+            if (!strcasecmp (name, cname)) {
+                break;
+            }
+        }
+        if (!c) {
+            break;
+        }
+        snprintf (name, sizeof (name), "New DSP Preset %02d", i);
+    }
+    if (i == MAX_ATTEMPTS) {
+        return NULL;
+    }
+
+    scriptableItem_t *item = scriptableItemAlloc();
+    scriptableItemSetPropertyValueForKey(item, name, "name");
+    item->factoryItemNames = scriptableDspChainItemNames;
+    item->factoryItemTypes = scriptableDspChainItemTypes;
+    item->createItemOfType = scriptableDspCreateItemOfType;
+
+    return item;
+}
+
 scriptableItem_t *
 scriptableDspRoot (void) {
     scriptableItem_t *dspRoot = scriptableItemSubItemForName (scriptableRoot(), "DSPPresets");
     if (!dspRoot) {
         dspRoot = scriptableItemAlloc();
-        dspRoot->createItemOfType = scriptableDspCreateItemOfType;
+        dspRoot->createItemOfType = scriptableDspCreatePreset;
         scriptableItemSetPropertyValueForKey(dspRoot, "DSPPresets", "name");
         scriptableItemAddSubItem(scriptableRoot(), dspRoot);
         dspRoot->factoryItemNames = scriptableDspPresetItemNames;
@@ -268,6 +305,7 @@ scriptableDspConfigFromDspChain (ddb_dsp_context_t *chain) {
 
     config->factoryItemNames = scriptableDspChainItemNames;
     config->factoryItemTypes = scriptableDspChainItemTypes;
+    config->createItemOfType = scriptableDspCreateItemOfType;
 
     return config;
 }

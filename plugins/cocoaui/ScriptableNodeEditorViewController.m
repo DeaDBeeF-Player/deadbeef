@@ -82,7 +82,7 @@
     }
 
     if (t) {
-        scriptableItem_t *node = scriptableItemCreateItemOfType(scriptableDspRoot (), t->str);
+        scriptableItem_t *node = scriptableItemCreateItemOfType(self.dataSource.scriptable, t->str);
         id<NSTableViewDataSource> ds = _dataSource;
         NSInteger cnt = [ds numberOfRowsInTableView:_nodeList];
         NSInteger index = [_nodeList selectedRow];

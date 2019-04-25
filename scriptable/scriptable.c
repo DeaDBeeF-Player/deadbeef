@@ -121,7 +121,7 @@ scriptableItemCreateItemOfType (scriptableItem_t *item, const char *type) {
     if (!item->createItemOfType) {
         return NULL;
     }
-    return item->createItemOfType (type);
+    return item->createItemOfType (item, type);
 }
 
 void

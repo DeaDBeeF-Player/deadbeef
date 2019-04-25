@@ -28,6 +28,7 @@
 #import "DeaDBeeF-Swift.h"
 #include "deadbeef.h"
 #include "pluginsettings.h"
+#include "scriptable_dsp.h"
 
 extern DB_functions_t *deadbeef;
 

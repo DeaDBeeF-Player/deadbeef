@@ -22,7 +22,7 @@ typedef struct scriptableItem_s {
 
     scriptableStringListItem_t *(*factoryItemNames)(struct scriptableItem_s *item);
     scriptableStringListItem_t *(*factoryItemTypes)(struct scriptableItem_s *item);
-    struct scriptableItem_s *(*createItemOfType)(const char *type);
+    struct scriptableItem_s *(*createItemOfType)(struct scriptableItem_s *item, const char *type);
     void (*free)(struct scriptableItem_s *item);
     void (*save)(struct scriptableItem_s *item);
 } scriptableItem_t;

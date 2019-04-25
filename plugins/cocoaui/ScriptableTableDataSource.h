@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 #include "../../deadbeef.h"
-#include "scriptable_dsp.h"
+#include "scriptable.h"
 #import "ScriptableItemDelegate.h"
 
 @interface ScriptableTableDataSource : NSObject<NSTableViewDataSource>
