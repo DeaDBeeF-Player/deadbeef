@@ -78,7 +78,7 @@
                         </segments>
                     </segmentedCell>
                     <connections>
-                        <action selector="dspChainAction:" target="-2" id="deq-ME-85t"/>
+                        <action selector="segmentedControlAction:" target="-2" id="deq-ME-85t"/>
                     </connections>
                 </segmentedControl>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iJH-de-0tb">
@@ -136,7 +136,7 @@ Gw
 </string>
                         </buttonCell>
                         <connections>
-                            <action selector="dspConfigOkAction:" target="-2" id="sPk-cb-d3N"/>
+                            <action selector="configOkAction:" target="-2" id="sPk-cb-d3N"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y6m-T7-vjz">
@@ -147,7 +147,7 @@ Gw
                             <font key="font" metaFont="system"/>
                         </buttonCell>
                         <connections>
-                            <action selector="dspConfigResetAction:" target="-2" id="Yk3-qQ-dcv"/>
+                            <action selector="configResetAction:" target="-2" id="Yk3-qQ-dcv"/>
                         </connections>
                     </button>
                 </subviews>

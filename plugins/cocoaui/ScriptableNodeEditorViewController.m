@@ -9,9 +9,6 @@
 #import "ScriptableNodeEditorViewController.h"
 #import "PropertySheetViewController.h"
 #import "ScriptablePropertySheetDataSource.h"
-#include "deadbeef.h"
-
-extern DB_functions_t *deadbeef;
 
 @interface ScriptableNodeEditorViewController () <ScriptableItemDelegate,NSMenuDelegate>
 
@@ -53,7 +50,7 @@ extern DB_functions_t *deadbeef;
     NSInteger index = 0;
     scriptableStringListItem_t *n = names;
     while (n) {
-        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:n->str] action:@selector(addDspNode:) keyEquivalent:@""];
+        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:n->str] action:@selector(createNode:) keyEquivalent:@""];
         item.tag = index;
         [menu addItem:item];
         n = n->next;
@@ -65,10 +62,10 @@ extern DB_functions_t *deadbeef;
     return menu;
 }
 
-- (void)addDspNode:(id)sender {
+- (void)createNode:(id)sender {
     NSMenuItem *item = sender;
 
-    scriptableStringListItem_t *types = scriptableItemFactoryItemNames (self.dataSource.scriptable);
+    scriptableStringListItem_t *types = scriptableItemFactoryItemTypes (self.dataSource.scriptable);
     if (!types) {
         return;
     }
@@ -104,14 +101,14 @@ extern DB_functions_t *deadbeef;
     scriptableStringListFree (types);
 }
 
-- (IBAction)dspAddAction:(id)sender {
+- (IBAction)addAction:(id)sender {
     NSMenu *menu = [self getCreateItemMenu];
     if (menu) {
         [NSMenu popUpContextMenu:menu withEvent:[NSApp currentEvent] forView:sender];
     }
 }
 
-- (IBAction)dspRemoveAction:(id)sender {
+- (IBAction)removeAction:(id)sender {
     NSInteger index = [_nodeList selectedRow];
     if (index < 0) {
         return;
@@ -131,7 +128,7 @@ extern DB_functions_t *deadbeef;
     }
 }
 
-- (IBAction)dspConfigureAction:(id)sender {
+- (IBAction)configureAction:(id)sender {
     NSInteger index = [_nodeList selectedRow];
     if (index < 0) {
         return;
@@ -141,45 +138,45 @@ extern DB_functions_t *deadbeef;
     self.propertiesDataSource.delegate = self;
 
     _propertiesViewController.dataSource = self.propertiesDataSource;
-    [NSApp beginSheet:_propertiesPanel modalForWindow:self.view.window modalDelegate:self didEndSelector:@selector(didEndDspConfigPanel:returnCode:contextInfo:) contextInfo:nil];
+    [NSApp beginSheet:_propertiesPanel modalForWindow:self.view.window modalDelegate:self didEndSelector:@selector(didEndConfigPanel:returnCode:contextInfo:) contextInfo:nil];
 }
 
-- (void)didEndDspConfigPanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+- (void)didEndConfigPanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
     [_propertiesPanel orderOut:self];
 }
 
-- (IBAction)dspConfigCancelAction:(id)sender {
+- (IBAction)configCancelAction:(id)sender {
     [NSApp endSheet:_propertiesPanel returnCode:NSCancelButton];
 }
 
-- (IBAction)dspConfigOkAction:(id)sender {
+- (IBAction)configOkAction:(id)sender {
     [NSApp endSheet:_propertiesPanel returnCode:NSOKButton];
 }
 
-- (IBAction)dspConfigResetAction:(id)sender {
+- (IBAction)configResetAction:(id)sender {
     [_propertiesViewController reset];
 }
 
-- (IBAction)dspChainAction:(id)sender {
+- (IBAction)segmentedControlAction:(id)sender {
     NSInteger selectedSegment = [sender selectedSegment];
 
     switch (selectedSegment) {
         case 0:
-            [self dspAddAction:sender];
+            [self addAction:sender];
             break;
         case 1:
-            [self dspRemoveAction:sender];
+            [self removeAction:sender];
             break;
         case 2:
-            [self dspConfigureAction:sender];
+            [self configureAction:sender];
             break;
     }
 }
 
-- (IBAction)dspSaveAction:(id)sender {
+- (IBAction)saveAction:(id)sender {
 }
 
-- (IBAction)dspLoadAction:(id)sender {
+- (IBAction)loadAction:(id)sender {
 }
 
 @end
