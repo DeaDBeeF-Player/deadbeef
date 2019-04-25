@@ -83,7 +83,7 @@ extern DB_functions_t *deadbeef;
 @property (strong) IBOutlet ScriptableSelectViewController *dspSelectViewController;
 
 @property (weak) IBOutlet NSView *dspNodeEditorContainer;
-@property (strong) IBOutlet ScriptableNodeEditorViewController *dspNodeEditorViewController;
+@property ScriptableNodeEditorViewController *dspNodeEditorViewController;
 
 
 @property PluginConfigPropertySheetDataSource *pluginPropertySheetDataSource;
@@ -124,6 +124,8 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     self.dspSelectViewController.view.frame = _dspPresetSelectorContainer.bounds;
     [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
 
+
+    self.dspNodeEditorViewController = [[ScriptableNodeEditorViewController alloc] initWithNibName:@"ScriptableNodeEditorView" bundle:nil];
     self.dspNodeEditorViewController.view.frame = _dspNodeEditorContainer.bounds;
     [_dspNodeEditorContainer addSubview:self.dspNodeEditorViewController.view];
 

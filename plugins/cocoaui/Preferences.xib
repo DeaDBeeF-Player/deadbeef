@@ -25,8 +25,6 @@
                 <outlet property="color_listview_selected_text" destination="Rhn-mE-OBT" id="hSC-Ge-MS3"/>
                 <outlet property="color_listview_text" destination="RuD-hX-F2n" id="bIl-YI-gyG"/>
                 <outlet property="dspNodeEditorContainer" destination="wB2-nl-rwo" id="lEQ-Dd-QuK"/>
-                <outlet property="dspNodeEditorViewController" destination="2C7-r9-7k4" id="SvT-MY-AAh"/>
-                <outlet property="dspPresetListDataSource" destination="ASJ-FT-ifo" id="aW8-Tf-sWm"/>
                 <outlet property="dspPresetSelectorContainer" destination="7EN-x3-aU8" id="0OS-0y-wss"/>
                 <outlet property="dspSelectViewController" destination="XcS-LG-fzc" id="jRA-44-2o7"/>
                 <outlet property="dspView" destination="FgU-f9-bru" id="lA3-wb-KlQ"/>
@@ -1161,74 +1159,11 @@
             </toolbar>
             <point key="canvasLocation" x="303.5" y="-67"/>
         </window>
-        <window title="DSP Configuration" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="KZ2-z5-gK4" customClass="NSPanel">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="167" y="107" width="591" height="300"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
-            <value key="minSize" type="size" width="541" height="259"/>
-            <view key="contentView" id="DMX-q8-CSa">
-                <rect key="frame" x="0.0" y="0.0" width="591" height="300"/>
-                <autoresizingMask key="autoresizingMask"/>
-                <subviews>
-                    <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q0a-Lt-Ngu">
-                        <rect key="frame" x="20" y="61" width="551" height="219"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <clipView key="contentView" ambiguous="YES" id="uSY-oD-soz" customClass="FlippedClipView">
-                            <rect key="frame" x="1" y="1" width="549" height="217"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            <subviews>
-                                <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LIK-8h-N20">
-                                    <rect key="frame" x="0.0" y="0.0" width="549" height="217"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                </view>
-                            </subviews>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="deviceWhite"/>
-                        </clipView>
-                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="2aV-BN-Kf9">
-                            <rect key="frame" x="1" y="203" width="534" height="15"/>
-                            <autoresizingMask key="autoresizingMask"/>
-                        </scroller>
-                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="jjB-tF-AmN">
-                            <rect key="frame" x="535" y="1" width="15" height="202"/>
-                            <autoresizingMask key="autoresizingMask"/>
-                        </scroller>
-                    </scrollView>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L3W-p1-piB">
-                        <rect key="frame" x="499" y="13" width="75" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="f8p-hn-MkL">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-Gw
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="dspConfigOkAction:" target="2C7-r9-7k4" id="UZe-X9-LAl"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4gX-Ix-h4v">
-                        <rect key="frame" x="356" y="13" width="143" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="push" title="Reset to defaults" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="j6T-6W-KcH">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="dspConfigResetAction:" target="2C7-r9-7k4" id="eQ7-IV-YRb"/>
-                        </connections>
-                    </button>
-                </subviews>
-            </view>
-            <point key="canvasLocation" x="-326" y="757"/>
-        </window>
         <viewController id="MIg-N1-ie7" customClass="PropertySheetViewController">
             <connections>
                 <outlet property="view" destination="Oef-pD-hfw" id="0Uc-7j-d5f"/>
             </connections>
         </viewController>
-        <customObject id="ASJ-FT-ifo" customClass="DSPPresetListDataSource"/>
         <customView id="UtU-5A-sPy" userLabel="Sound View">
             <rect key="frame" x="0.0" y="0.0" width="476" height="217"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1391,11 +1326,6 @@ Gw
             </subviews>
             <point key="canvasLocation" x="-470" y="65.5"/>
         </customView>
-        <viewController id="cdy-98-WIk" userLabel="Dsp Config Property Sheet View Controller" customClass="PropertySheetViewController">
-            <connections>
-                <outlet property="view" destination="Q0a-Lt-Ngu" id="yWJ-Ky-WfR"/>
-            </connections>
-        </viewController>
         <customView id="XUM-I6-xzb" userLabel="Scriptable Selector">
             <rect key="frame" x="0.0" y="0.0" width="253" height="21"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1445,100 +1375,13 @@ Gw
                 <outlet property="view" destination="XUM-I6-xzb" id="r6g-md-DYi"/>
             </connections>
         </viewController>
-        <customView id="B7m-0O-n9a" userLabel="Scriptable Node Editor">
-            <rect key="frame" x="0.0" y="0.0" width="503" height="127"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <subviews>
-                <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pEk-Lq-6rq">
-                    <rect key="frame" x="0.0" y="20" width="503" height="107"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                    <clipView key="contentView" ambiguous="YES" id="pYe-aN-aI8">
-                        <rect key="frame" x="1" y="1" width="501" height="105"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" id="aUb-7B-fQ1">
-                                <rect key="frame" x="0.0" y="0.0" width="501" height="105"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <size key="intercellSpacing" width="3" height="2"/>
-                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
-                                <tableColumns>
-                                    <tableColumn editable="NO" width="498" minWidth="40" maxWidth="1000" id="yJM-Pk-qLY">
-                                        <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
-                                            <font key="font" metaFont="smallSystem"/>
-                                            <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
-                                        </tableHeaderCell>
-                                        <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" usesSingleLineMode="YES" id="SZh-Tg-2qZ">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                        <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
-                                    </tableColumn>
-                                </tableColumns>
-                            </tableView>
-                        </subviews>
-                    </clipView>
-                    <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="g83-L8-ULQ">
-                        <rect key="frame" x="1" y="108" width="205" height="15"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </scroller>
-                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="LpH-4m-1al">
-                        <rect key="frame" x="224" y="17" width="15" height="102"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </scroller>
-                </scrollView>
-                <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rdc-NT-kuI">
-                    <rect key="frame" x="0.0" y="-1" width="88" height="23"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="momentary" id="RgH-Fx-Zp4">
-                        <font key="font" metaFont="system"/>
-                        <segments>
-                            <segment image="NSAddTemplate">
-                                <nil key="label"/>
-                            </segment>
-                            <segment image="NSRemoveTemplate" tag="1">
-                                <nil key="label"/>
-                            </segment>
-                            <segment image="NSActionTemplate">
-                                <nil key="label"/>
-                            </segment>
-                        </segments>
-                    </segmentedCell>
-                    <connections>
-                        <action selector="dspChainAction:" target="2C7-r9-7k4" id="06E-kc-gk9"/>
-                    </connections>
-                </segmentedControl>
-                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="U7W-wW-Y2J">
-                    <rect key="frame" x="85" y="-1" width="418" height="23"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                    <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" refusesFirstResponder="YES" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="U1B-7b-qZg">
-                        <behavior key="behavior" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                </button>
-            </subviews>
-            <point key="canvasLocation" x="338" y="239"/>
-        </customView>
-        <viewController id="2C7-r9-7k4" userLabel="DSP Node Editor View Controller" customClass="ScriptableNodeEditorViewController">
-            <connections>
-                <outlet property="dspConfigPanel" destination="KZ2-z5-gK4" id="rW4-j2-8sv"/>
-                <outlet property="dspConfigViewController" destination="cdy-98-WIk" id="3FF-lu-Ark"/>
-                <outlet property="dspList" destination="aUb-7B-fQ1" id="w3e-Rn-2Ub"/>
-                <outlet property="view" destination="B7m-0O-n9a" id="g8r-F4-8Q4"/>
-            </connections>
-        </viewController>
     </objects>
     <resources>
-        <image name="NSActionTemplate" width="14" height="14"/>
-        <image name="NSAddTemplate" width="11" height="11"/>
         <image name="NSAdvanced" width="32" height="32"/>
         <image name="NSColorPanel" width="32" height="32"/>
         <image name="NSListViewTemplate" width="14" height="10"/>
         <image name="NSNetwork" width="32" height="32"/>
         <image name="NSPreferencesGeneral" width="32" height="32"/>
-        <image name="NSRemoveTemplate" width="11" height="11"/>
         <image name="NSStatusAvailable" width="16" height="16"/>
         <image name="NSTouchBarAudioOutputVolumeHighTemplate" width="23" height="30"/>
         <image name="btnplayTemplate" width="75" height="75"/>
