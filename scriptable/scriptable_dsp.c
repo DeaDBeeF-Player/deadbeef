@@ -153,6 +153,7 @@ scriptableDspCreatePreset (scriptableItem_t *root, const char *type) {
     item->factoryItemNames = scriptableDspChainItemNames;
     item->factoryItemTypes = scriptableDspChainItemTypes;
     item->createItemOfType = scriptableDspCreateItemOfType;
+    item->isList = 1;
 
     return item;
 }
@@ -167,6 +168,7 @@ scriptableDspRoot (void) {
         scriptableItemAddSubItem(scriptableRoot(), dspRoot);
         dspRoot->factoryItemNames = scriptableDspPresetItemNames;
         dspRoot->factoryItemTypes = scriptableDspPresetItemTypes;
+        dspRoot->isList = 1;
     }
     return dspRoot;
 }
@@ -302,7 +304,7 @@ scriptableDspConfigFromDspChain (ddb_dsp_context_t *chain) {
         chain = chain->next;
     }
 
-
+    config->isList = 1;
     config->factoryItemNames = scriptableDspChainItemNames;
     config->factoryItemTypes = scriptableDspChainItemTypes;
     config->createItemOfType = scriptableDspCreateItemOfType;

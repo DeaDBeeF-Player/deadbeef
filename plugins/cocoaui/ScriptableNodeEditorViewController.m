@@ -9,6 +9,7 @@
 #import "ScriptableNodeEditorViewController.h"
 #import "PropertySheetViewController.h"
 #import "ScriptablePropertySheetDataSource.h"
+#import "ScriptableNodeEditorWindowController.h"
 
 @interface ScriptableNodeEditorViewController () <ScriptableItemDelegate,NSMenuDelegate>
 
@@ -16,6 +17,11 @@
 @property (strong) IBOutlet NSPanel *propertiesPanel;
 @property (strong) IBOutlet PropertySheetViewController *propertiesViewController;
 @property ScriptablePropertySheetDataSource *propertiesDataSource;
+
+// for recursion
+@property ScriptableNodeEditorWindowController *nodeEditorWindowController;
+@property ScriptableTableDataSource *nodeDataSource;
+
 
 @end
 
@@ -134,11 +140,26 @@
         return;
     }
     scriptableItem_t *item = scriptableItemChildAtIndex(_dataSource.scriptable, (unsigned int)index);
-    self.propertiesDataSource = [[ScriptablePropertySheetDataSource alloc] initWithScriptable:item];
-    self.propertiesDataSource.delegate = self;
 
-    _propertiesViewController.dataSource = self.propertiesDataSource;
-    [NSApp beginSheet:_propertiesPanel modalForWindow:self.view.window modalDelegate:self didEndSelector:@selector(didEndConfigPanel:returnCode:contextInfo:) contextInfo:nil];
+    if (item->isList) {
+        // recurse!
+        if (!self.nodeEditorWindowController) {
+            self.nodeEditorWindowController = [[ScriptableNodeEditorWindowController alloc] initWithWindowNibName:@"ScriptableNodeEditorWindow"];
+            self.nodeDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:item pasteboardItemIdentifier:@"test"]; // FIXME: generate unique item ID for the list
+            self.nodeEditorWindowController.dataSource = self.nodeDataSource;
+            self.nodeEditorWindowController.delegate = self.delegate;
+            self.nodeEditorWindowController.window.title = [NSString stringWithUTF8String:scriptableItemPropertyValueForKey(item, "name")]; // preset name
+        }
+        [self.nodeEditorWindowController showWindow:nil];
+
+    }
+    else {
+        self.propertiesDataSource = [[ScriptablePropertySheetDataSource alloc] initWithScriptable:item];
+        self.propertiesDataSource.delegate = self;
+
+        _propertiesViewController.dataSource = self.propertiesDataSource;
+        [NSApp beginSheet:_propertiesPanel modalForWindow:self.view.window modalDelegate:self didEndSelector:@selector(didEndConfigPanel:returnCode:contextInfo:) contextInfo:nil];
+    }
 }
 
 - (void)didEndConfigPanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {

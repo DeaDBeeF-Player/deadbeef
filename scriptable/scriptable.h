@@ -20,6 +20,8 @@ typedef struct scriptableItem_s {
     struct scriptableItem_s *children;
     struct scriptableItem_s *childrenTail;
 
+    int isList; // for example, dsp preset, or dsp chain
+
     scriptableStringListItem_t *(*factoryItemNames)(struct scriptableItem_s *item);
     scriptableStringListItem_t *(*factoryItemTypes)(struct scriptableItem_s *item);
     struct scriptableItem_s *(*createItemOfType)(struct scriptableItem_s *item, const char *type);
