@@ -131,6 +131,7 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     scriptableItem_t *chain = scriptableDspConfigFromDspChain (deadbeef->streamer_get_dsp_chain ());
     self.dspChainDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:chain pasteboardItemIdentifier:@"deadbeef.dspnode.preferences"];
     self.dspNodeEditorViewController.dataSource = self.dspChainDataSource;
+    self.dspNodeEditorViewController.delegate = self;
 
     self.dspNodeEditorViewController.view.frame = _dspNodeEditorContainer.bounds;
     [_dspNodeEditorContainer addSubview:self.dspNodeEditorViewController.view];
@@ -144,6 +145,16 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     [_toolbar setSelectedItemIdentifier:@"Sound"];
 
     [self switchToView:_soundView];
+}
+
+#pragma mark - ScriptableItemDelegate
+- (void)scriptableItemChanged:(scriptableItem_t *)scriptable {
+    if (scriptable == self.dspChainDataSource.scriptable
+        || scriptableItemIndexOfChild(self.dspChainDataSource.scriptable, scriptable) >= 0) {
+        ddb_dsp_context_t *chain = scriptableDspConfigToDspChain (self.dspChainDataSource.scriptable);
+        deadbeef->streamer_set_dsp_chain (chain);
+        deadbeef->dsp_preset_free (chain);
+    }
 }
 
 - (void)outputDeviceChanged {

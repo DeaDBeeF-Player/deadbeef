@@ -36,12 +36,7 @@ extern DB_functions_t *deadbeef;
 #pragma mark - ScriptableItemDelegate
 
 - (void)scriptableItemChanged:(scriptableItem_t *)scriptable {
-    if (scriptable == _dataSource.scriptable
-        || scriptableItemIndexOfChild(_dataSource.scriptable, scriptable) >= 0) {
-        ddb_dsp_context_t *chain = scriptableDspConfigToDspChain (_dataSource.scriptable);
-        deadbeef->streamer_set_dsp_chain (chain);
-        deadbeef->dsp_preset_free (chain);
-    }
+    [self.delegate scriptableItemChanged:scriptable];
 }
 
 

@@ -8,12 +8,14 @@
 
 #import <Cocoa/Cocoa.h>
 #import "ScriptableTableDataSource.h"
+#import "ScriptableItemDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ScriptableNodeEditorViewController : NSViewController
 
 @property (weak) ScriptableTableDataSource *dataSource;
+@property (weak) NSObject<ScriptableItemDelegate> *delegate;
 
 @end
 
