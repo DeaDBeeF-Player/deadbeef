@@ -8,22 +8,17 @@
 
 #import "ScriptableNodeEditorViewController.h"
 #import "PropertySheetViewController.h"
-#import "ScriptableTableDataSource.h"
 #import "ScriptablePropertySheetDataSource.h"
 #include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
 
 @interface ScriptableNodeEditorViewController () <ScriptableItemDelegate,NSMenuDelegate>
-@property (unsafe_unretained) IBOutlet NSTableView *dspList;
-// dsp properties
-@property (strong) IBOutlet NSPanel *dspConfigPanel;
-@property (strong) IBOutlet PropertySheetViewController *dspConfigViewController;
-@property ScriptableTableDataSource *dspChainDataSource;
-@property ScriptablePropertySheetDataSource *dspPropertySheetDataSource;
 
-
-- (IBAction)dspChainAction:(id)sender;
+@property (unsafe_unretained) IBOutlet NSTableView *nodeList;
+@property (strong) IBOutlet NSPanel *propertiesPanel;
+@property (strong) IBOutlet PropertySheetViewController *propertiesViewController;
+@property ScriptablePropertySheetDataSource *propertiesDataSource;
 
 @end
 
@@ -31,21 +26,19 @@ extern DB_functions_t *deadbeef;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do view setup here.
 
-    scriptableItem_t *chain = scriptableDspConfigFromDspChain (deadbeef->streamer_get_dsp_chain ());
-    _dspChainDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:chain pasteboardItemIdentifier:@"deadbeef.dspnode.preferences"];
-    _dspChainDataSource.delegate = self;
-    _dspList.dataSource = _dspChainDataSource;
-    [_dspList registerForDraggedTypes: [NSArray arrayWithObjects: _dspChainDataSource.pasteboardItemIdentifier, nil]];
+    // Do view setup here.
+    self.dataSource.delegate = self;
+    _nodeList.dataSource = self.dataSource;
+    [_nodeList registerForDraggedTypes: [NSArray arrayWithObjects: _dataSource.pasteboardItemIdentifier, nil]];
 }
 
 #pragma mark - ScriptableItemDelegate
 
 - (void)scriptableItemChanged:(scriptableItem_t *)scriptable {
-    if (scriptable == _dspChainDataSource.scriptable
-        || scriptableItemIndexOfChild(_dspChainDataSource.scriptable, scriptable) >= 0) {
-        ddb_dsp_context_t *chain = scriptableDspConfigToDspChain (_dspChainDataSource.scriptable);
+    if (scriptable == _dataSource.scriptable
+        || scriptableItemIndexOfChild(_dataSource.scriptable, scriptable) >= 0) {
+        ddb_dsp_context_t *chain = scriptableDspConfigToDspChain (_dataSource.scriptable);
         deadbeef->streamer_set_dsp_chain (chain);
         deadbeef->dsp_preset_free (chain);
     }
@@ -76,19 +69,19 @@ extern DB_functions_t *deadbeef;
 
     scriptableItem_t *node = scriptableItemCreateItemOfType(scriptableDspRoot (), plugins[item.tag]->plugin.id);
 
-    id<NSTableViewDataSource> ds = _dspChainDataSource;
-    NSInteger cnt = [ds numberOfRowsInTableView:_dspList];
-    NSInteger index = [_dspList selectedRow];
+    id<NSTableViewDataSource> ds = _dataSource;
+    NSInteger cnt = [ds numberOfRowsInTableView:_nodeList];
+    NSInteger index = [_nodeList selectedRow];
     if (index < 0) {
         index = cnt;
     }
 
     NSIndexSet *is = [NSIndexSet indexSetWithIndex:index];
-    [_dspList beginUpdates];
-    [_dspList insertRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideDown];
-    [_dspChainDataSource insertItem:node atIndex:index];
-    [_dspList endUpdates];
-    [_dspList selectRowIndexes:is byExtendingSelection:NO];
+    [_nodeList beginUpdates];
+    [_nodeList insertRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideDown];
+    [_dataSource insertItem:node atIndex:index];
+    [_nodeList endUpdates];
+    [_nodeList selectRowIndexes:is byExtendingSelection:NO];
 }
 
 - (IBAction)dspAddAction:(id)sender {
@@ -97,52 +90,52 @@ extern DB_functions_t *deadbeef;
 }
 
 - (IBAction)dspRemoveAction:(id)sender {
-    NSInteger index = [_dspList selectedRow];
+    NSInteger index = [_nodeList selectedRow];
     if (index < 0) {
         return;
     }
 
-    [_dspList beginUpdates];
+    [_nodeList beginUpdates];
     NSIndexSet *is = [NSIndexSet indexSetWithIndex:index];
-    [_dspList removeRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideUp];
-    [_dspList endUpdates];
-    [_dspChainDataSource removeItemAtIndex:(int)index];
+    [_nodeList removeRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideUp];
+    [_nodeList endUpdates];
+    [_dataSource removeItemAtIndex:(int)index];
 
-    if (index >= [_dspList numberOfRows]) {
+    if (index >= [_nodeList numberOfRows]) {
         index--;
     }
     if (index >= 0) {
-        [_dspList selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
+        [_nodeList selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
     }
 }
 
 - (IBAction)dspConfigureAction:(id)sender {
-    NSInteger index = [_dspList selectedRow];
+    NSInteger index = [_nodeList selectedRow];
     if (index < 0) {
         return;
     }
-    scriptableItem_t *item = scriptableItemChildAtIndex(_dspChainDataSource.scriptable, (unsigned int)index);
-    self.dspPropertySheetDataSource = [[ScriptablePropertySheetDataSource alloc] initWithScriptable:item];
-    self.dspPropertySheetDataSource.delegate = self;
+    scriptableItem_t *item = scriptableItemChildAtIndex(_dataSource.scriptable, (unsigned int)index);
+    self.propertiesDataSource = [[ScriptablePropertySheetDataSource alloc] initWithScriptable:item];
+    self.propertiesDataSource.delegate = self;
 
-    _dspConfigViewController.dataSource = self.dspPropertySheetDataSource;
-    [NSApp beginSheet:_dspConfigPanel modalForWindow:self.view.window modalDelegate:self didEndSelector:@selector(didEndDspConfigPanel:returnCode:contextInfo:) contextInfo:nil];
+    _propertiesViewController.dataSource = self.propertiesDataSource;
+    [NSApp beginSheet:_propertiesPanel modalForWindow:self.view.window modalDelegate:self didEndSelector:@selector(didEndDspConfigPanel:returnCode:contextInfo:) contextInfo:nil];
 }
 
 - (void)didEndDspConfigPanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    [_dspConfigPanel orderOut:self];
+    [_propertiesPanel orderOut:self];
 }
 
 - (IBAction)dspConfigCancelAction:(id)sender {
-    [NSApp endSheet:_dspConfigPanel returnCode:NSCancelButton];
+    [NSApp endSheet:_propertiesPanel returnCode:NSCancelButton];
 }
 
 - (IBAction)dspConfigOkAction:(id)sender {
-    [NSApp endSheet:_dspConfigPanel returnCode:NSOKButton];
+    [NSApp endSheet:_propertiesPanel returnCode:NSOKButton];
 }
 
 - (IBAction)dspConfigResetAction:(id)sender {
-    [_dspConfigViewController reset];
+    [_propertiesViewController reset];
 }
 
 - (IBAction)dspChainAction:(id)sender {

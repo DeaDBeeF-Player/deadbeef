@@ -7,10 +7,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "ScriptableTableDataSource.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ScriptableNodeEditorViewController : NSViewController
+
+@property (weak) ScriptableTableDataSource *dataSource;
 
 @end
 

@@ -7,11 +7,12 @@
 //
 
 #import "ScriptableSelectViewController.h"
+#import "ScriptableNodeEditorWindowController.h"
 
 @interface ScriptableSelectViewController ()
 @property (weak) IBOutlet NSPopUpButton *nameList;
 @property (weak) IBOutlet NSButton *browseButton;
-
+@property ScriptableNodeEditorWindowController *nodeEditorWindowController;
 @end
 
 @implementation ScriptableSelectViewController
@@ -35,6 +36,11 @@
 }
 
 - (IBAction)browseButtonAction:(id)sender {
+    if (!self.nodeEditorWindowController) {
+        self.nodeEditorWindowController = [[ScriptableNodeEditorWindowController alloc] initWithWindowNibName:@"ScriptableNodeEditorWindow"];
+        self.nodeEditorWindowController.window.title = @"DSP Presets"; // FIXME hardcoded title
+    }
+    [self.nodeEditorWindowController showWindow:nil];
 }
 
 @end

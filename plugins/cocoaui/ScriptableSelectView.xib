@@ -29,6 +29,9 @@
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <action selector="browseButtonAction:" target="-2" id="NZK-BF-ewq"/>
+                    </connections>
                 </button>
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OWt-wo-dQc">
                     <rect key="frame" x="-2" y="-3" width="218" height="25"/>
@@ -40,6 +43,9 @@
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" id="qaF-kb-n9l"/>
                     </popUpButtonCell>
+                    <connections>
+                        <action selector="nameSelectedAction:" target="-2" id="Psp-We-EeE"/>
+                    </connections>
                 </popUpButton>
             </subviews>
             <constraints>

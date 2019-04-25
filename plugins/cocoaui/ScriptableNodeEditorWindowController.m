@@ -7,8 +7,12 @@
 //
 
 #import "ScriptableNodeEditorWindowController.h"
+#import "ScriptableNodeEditorViewController.h"
 
 @interface ScriptableNodeEditorWindowController ()
+@property (weak) IBOutlet NSView *nodeEditorViewContainer;
+
+@property ScriptableNodeEditorViewController *nodeEditorViewController;
 
 @end
 
@@ -18,6 +22,11 @@
     [super windowDidLoad];
     
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
+
+    self.nodeEditorViewController = [[ScriptableNodeEditorViewController alloc] initWithNibName:@"ScriptableNodeEditorView" bundle:nil];
+    self.nodeEditorViewController.view.frame = self.nodeEditorViewContainer.bounds;
+    [self.nodeEditorViewContainer addSubview:self.nodeEditorViewController.view];
+
 }
 
 @end

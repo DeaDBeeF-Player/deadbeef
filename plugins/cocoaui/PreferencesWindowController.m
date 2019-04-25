@@ -82,6 +82,7 @@ extern DB_functions_t *deadbeef;
 
 @property (strong) IBOutlet ScriptableSelectViewController *dspSelectViewController;
 
+@property ScriptableTableDataSource *dspChainDataSource;
 @property (weak) IBOutlet NSView *dspNodeEditorContainer;
 @property ScriptableNodeEditorViewController *dspNodeEditorViewController;
 
@@ -126,6 +127,11 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
 
     self.dspNodeEditorViewController = [[ScriptableNodeEditorViewController alloc] initWithNibName:@"ScriptableNodeEditorView" bundle:nil];
+
+    scriptableItem_t *chain = scriptableDspConfigFromDspChain (deadbeef->streamer_get_dsp_chain ());
+    self.dspChainDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:chain pasteboardItemIdentifier:@"deadbeef.dspnode.preferences"];
+    self.dspNodeEditorViewController.dataSource = self.dspChainDataSource;
+
     self.dspNodeEditorViewController.view.frame = _dspNodeEditorContainer.bounds;
     [_dspNodeEditorContainer addSubview:self.dspNodeEditorViewController.view];
 

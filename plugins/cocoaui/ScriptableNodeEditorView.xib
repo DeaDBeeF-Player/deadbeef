@@ -8,9 +8,9 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="ScriptableNodeEditorViewController">
             <connections>
-                <outlet property="dspConfigPanel" destination="DmZ-5J-Htc" id="a4K-ur-hsR"/>
-                <outlet property="dspConfigViewController" destination="Pnv-33-o5j" id="PCp-1f-fGC"/>
-                <outlet property="dspList" destination="6kF-fI-yim" id="1CZ-Sm-h41"/>
+                <outlet property="nodeList" destination="6kF-fI-yim" id="1CZ-Sm-h41"/>
+                <outlet property="propertiesPanel" destination="DmZ-5J-Htc" id="a4K-ur-hsR"/>
+                <outlet property="propertiesViewController" destination="Pnv-33-o5j" id="PCp-1f-fGC"/>
                 <outlet property="view" destination="qcl-7l-m6v" id="iEb-Yw-WkH"/>
             </connections>
         </customObject>

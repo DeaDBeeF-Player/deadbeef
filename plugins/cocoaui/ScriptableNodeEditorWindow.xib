@@ -8,6 +8,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="ScriptableNodeEditorWindowController">
             <connections>
+                <outlet property="nodeEditorViewContainer" destination="dNu-zN-5QY" id="ZfP-eb-7vU"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="kXv-WI-ogc"/>
             </connections>
         </customObject>
@@ -16,13 +17,20 @@
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="393" height="300"/>
+            <rect key="contentRect" x="196" y="240" width="364" height="209"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
+            <value key="minSize" type="size" width="364" height="209"/>
             <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="393" height="300"/>
+                <rect key="frame" x="0.0" y="0.0" width="364" height="209"/>
                 <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dNu-zN-5QY">
+                        <rect key="frame" x="20" y="20" width="324" height="169"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    </customView>
+                </subviews>
             </view>
-            <point key="canvasLocation" x="95.5" y="162"/>
+            <point key="canvasLocation" x="81" y="116.5"/>
         </window>
     </objects>
 </document>
