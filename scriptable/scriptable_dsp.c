@@ -106,6 +106,20 @@ scriptableDspCreateItemOfType (const char *type) {
     return item;
 }
 
+static scriptableStringListItem_t *
+scriptableDspPresetItemNames (scriptableItem_t *item) {
+    scriptableStringListItem_t *s = scriptableStringListItemAlloc();
+    s->str = strdup ("DSP Preset");
+    return s;
+}
+
+static scriptableStringListItem_t *
+scriptableDspPresetItemTypes (scriptableItem_t *item) {
+    scriptableStringListItem_t *s = scriptableStringListItemAlloc();
+    s->str = strdup ("DSPPreset");
+    return s;
+}
+
 scriptableItem_t *
 scriptableDspRoot (void) {
     scriptableItem_t *dspRoot = scriptableItemSubItemForName (scriptableRoot(), "DSPPresets");
@@ -114,6 +128,8 @@ scriptableDspRoot (void) {
         dspRoot->createItemOfType = scriptableDspCreateItemOfType;
         scriptableItemSetPropertyValueForKey(dspRoot, "DSPPresets", "name");
         scriptableItemAddSubItem(scriptableRoot(), dspRoot);
+        dspRoot->factoryItemNames = scriptableDspPresetItemNames;
+        dspRoot->factoryItemTypes = scriptableDspPresetItemTypes;
     }
     return dspRoot;
 }
@@ -201,6 +217,44 @@ scriptableDspConfigToDspChain (scriptableItem_t *item) {
     return head;
 }
 
+static scriptableStringListItem_t *
+scriptableDspChainItemNames (scriptableItem_t *item) {
+    scriptableStringListItem_t *head = NULL;
+    scriptableStringListItem_t *tail = NULL;
+    DB_dsp_t **plugs = deadbeef->plug_get_dsp_list ();
+    for (int i = 0; plugs[i]; i++) {
+        scriptableStringListItem_t *s = scriptableStringListItemAlloc();
+        s->str = strdup (plugs[i]->plugin.name);
+        if (tail) {
+            tail->next = s;
+        }
+        else {
+            head = s;
+        }
+        tail = s;
+    }
+    return head;
+}
+
+static scriptableStringListItem_t *
+scriptableDspChainItemTypes (scriptableItem_t *item) {
+    scriptableStringListItem_t *head = NULL;
+    scriptableStringListItem_t *tail = NULL;
+    DB_dsp_t **plugs = deadbeef->plug_get_dsp_list ();
+    for (int i = 0; plugs[i]; i++) {
+        scriptableStringListItem_t *s = scriptableStringListItemAlloc();
+        s->str = strdup (plugs[i]->plugin.id);
+        if (tail) {
+            tail->next = s;
+        }
+        else {
+            head = s;
+        }
+        tail = s;
+    }
+    return head;
+}
+
 scriptableItem_t *
 scriptableDspConfigFromDspChain (ddb_dsp_context_t *chain) {
     scriptableItem_t *config = scriptableItemAlloc();
@@ -210,6 +264,10 @@ scriptableDspConfigFromDspChain (ddb_dsp_context_t *chain) {
         scriptableItemAddSubItem(config, node);
         chain = chain->next;
     }
+
+
+    config->factoryItemNames = scriptableDspChainItemNames;
+    config->factoryItemTypes = scriptableDspChainItemTypes;
 
     return config;
 }

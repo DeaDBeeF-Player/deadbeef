@@ -40,19 +40,27 @@ extern DB_functions_t *deadbeef;
 }
 
 
-// FIXME: needs to query preset manager for the list of names / ids
-- (NSMenu *)getDSPMenu {
-    NSMenu *menu = [[NSMenu alloc] initWithTitle:@"DspChainMenu"];
+- (NSMenu *)getCreateItemMenu {
+    scriptableStringListItem_t *names = scriptableItemFactoryItemNames (self.dataSource.scriptable);
+    if (!names) {
+        return NULL;
+    }
+
+    NSMenu *menu = [[NSMenu alloc] init];
     menu.delegate = self;
     [menu setAutoenablesItems:NO];
 
-    DB_dsp_t **plugins = deadbeef->plug_get_dsp_list ();
-
-    for (int i = 0; plugins[i]; i++) {
-        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:plugins[i]->plugin.name] action:@selector(addDspNode:) keyEquivalent:@""];
-        item.tag = i;
+    NSInteger index = 0;
+    scriptableStringListItem_t *n = names;
+    while (n) {
+        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:n->str] action:@selector(addDspNode:) keyEquivalent:@""];
+        item.tag = index;
         [menu addItem:item];
+        n = n->next;
+        index++;
     }
+
+    scriptableStringListFree(names);
 
     return menu;
 }
@@ -60,28 +68,47 @@ extern DB_functions_t *deadbeef;
 - (void)addDspNode:(id)sender {
     NSMenuItem *item = sender;
 
-    DB_dsp_t **plugins = deadbeef->plug_get_dsp_list ();
-
-    scriptableItem_t *node = scriptableItemCreateItemOfType(scriptableDspRoot (), plugins[item.tag]->plugin.id);
-
-    id<NSTableViewDataSource> ds = _dataSource;
-    NSInteger cnt = [ds numberOfRowsInTableView:_nodeList];
-    NSInteger index = [_nodeList selectedRow];
-    if (index < 0) {
-        index = cnt;
+    scriptableStringListItem_t *types = scriptableItemFactoryItemNames (self.dataSource.scriptable);
+    if (!types) {
+        return;
     }
 
-    NSIndexSet *is = [NSIndexSet indexSetWithIndex:index];
-    [_nodeList beginUpdates];
-    [_nodeList insertRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideDown];
-    [_dataSource insertItem:node atIndex:index];
-    [_nodeList endUpdates];
-    [_nodeList selectRowIndexes:is byExtendingSelection:NO];
+    NSInteger index = 0;//= item.tag;
+
+    scriptableStringListItem_t *t = types;
+    while (t) {
+        if (index == item.tag) {
+            break;
+        }
+        t = t->next;
+        index++;
+    }
+
+    if (t) {
+        scriptableItem_t *node = scriptableItemCreateItemOfType(scriptableDspRoot (), t->str);
+        id<NSTableViewDataSource> ds = _dataSource;
+        NSInteger cnt = [ds numberOfRowsInTableView:_nodeList];
+        NSInteger index = [_nodeList selectedRow];
+        if (index < 0) {
+            index = cnt;
+        }
+
+        NSIndexSet *is = [NSIndexSet indexSetWithIndex:index];
+        [_nodeList beginUpdates];
+        [_nodeList insertRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideDown];
+        [_dataSource insertItem:node atIndex:index];
+        [_nodeList endUpdates];
+        [_nodeList selectRowIndexes:is byExtendingSelection:NO];
+    }
+
+    scriptableStringListFree (types);
 }
 
 - (IBAction)dspAddAction:(id)sender {
-    NSMenu *menu = [self getDSPMenu];
-    [NSMenu popUpContextMenu:menu withEvent:[NSApp currentEvent] forView:sender];
+    NSMenu *menu = [self getCreateItemMenu];
+    if (menu) {
+        [NSMenu popUpContextMenu:menu withEvent:[NSApp currentEvent] forView:sender];
+    }
 }
 
 - (IBAction)dspRemoveAction:(id)sender {

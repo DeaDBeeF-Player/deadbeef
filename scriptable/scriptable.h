@@ -9,8 +9,8 @@ typedef struct keyValue_s {
 
 typedef struct stringListItem_s {
     struct stringListItem_s *next;
-    const char *str;
-} stringListItem_t;
+    char *str;
+} scriptableStringListItem_t;
 
 typedef struct scriptableItem_s {
     struct scriptableItem_s *next;
@@ -20,7 +20,8 @@ typedef struct scriptableItem_s {
     struct scriptableItem_s *children;
     struct scriptableItem_s *childrenTail;
 
-    stringListItem_t (*subItemTypes)(struct scriptableItem_s *item);
+    scriptableStringListItem_t *(*factoryItemNames)(struct scriptableItem_s *item);
+    scriptableStringListItem_t *(*factoryItemTypes)(struct scriptableItem_s *item);
     struct scriptableItem_s *(*createItemOfType)(const char *type);
     void (*free)(struct scriptableItem_s *item);
     void (*save)(struct scriptableItem_s *item);
@@ -31,6 +32,15 @@ scriptableItemAlloc (void);
 
 void
 scriptableItemFree (scriptableItem_t *item);
+
+scriptableStringListItem_t *
+scriptableStringListItemAlloc (void);
+
+void
+scriptableStringListItemFree (scriptableStringListItem_t *item);
+
+void
+scriptableStringListFree (scriptableStringListItem_t *list);
 
 void
 scriptableItemSave (scriptableItem_t *item);
@@ -64,6 +74,12 @@ scriptableItemPropertyValueForKey (scriptableItem_t *item, const char *key);
 
 void
 scriptableItemSetPropertyValueForKey (scriptableItem_t *item, const char *value, const char *key);
+
+scriptableStringListItem_t *
+scriptableItemFactoryItemNames (struct scriptableItem_s *item);
+
+scriptableStringListItem_t *
+scriptableItemFactoryItemTypes (struct scriptableItem_s *item);
 
 void
 scriptableInit (void);

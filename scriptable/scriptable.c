@@ -29,6 +29,26 @@ scriptableItemSave (scriptableItem_t *item) {
     }
 }
 
+scriptableStringListItem_t *
+scriptableStringListItemAlloc (void) {
+    return calloc (1, sizeof (scriptableStringListItem_t));
+}
+
+void
+scriptableStringListItemFree (scriptableStringListItem_t *item) {
+    free (item->str);
+    free (item);
+}
+
+void
+scriptableStringListFree (scriptableStringListItem_t *list) {
+    while (list) {
+        scriptableStringListItem_t *next = list->next;
+        scriptableStringListItemFree (list);
+        list = next;
+    }
+}
+
 void
 scriptableItemFree (scriptableItem_t *item) {
     if (item->free) {
@@ -199,6 +219,22 @@ scriptableItemSetPropertyValueForKey (scriptableItem_t *item, const char *value,
         p->next = item->properties;
         item->properties = p;
     }
+}
+
+scriptableStringListItem_t *
+scriptableItemFactoryItemNames (struct scriptableItem_s *item) {
+    if (!item->factoryItemNames) {
+        return NULL;
+    }
+    return item->factoryItemNames (item);
+}
+
+scriptableStringListItem_t *
+scriptableItemFactoryItemTypes (struct scriptableItem_s *item) {
+    if (!item->factoryItemTypes) {
+        return NULL;
+    }
+    return item->factoryItemTypes (item);
 }
 
 void
