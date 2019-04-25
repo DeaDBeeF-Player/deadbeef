@@ -1293,7 +1293,7 @@ error:
 }
 
 static const char configdialog[] =
-    "property \"Ignore bad header  errors\" checkbox flac.ignore_bad_header_errors 0;\n"
+    "property \"Ignore bad header errors\" checkbox flac.ignore_bad_header_errors 0;\n"
     "property \"Ignore unparsable stream errors\" checkbox flac.ignore_unparsable_stream_errors 0;\n"
 ;
 
