@@ -26,7 +26,6 @@
                 <outlet property="color_listview_text" destination="RuD-hX-F2n" id="bIl-YI-gyG"/>
                 <outlet property="dspNodeEditorContainer" destination="wB2-nl-rwo" id="lEQ-Dd-QuK"/>
                 <outlet property="dspPresetSelectorContainer" destination="7EN-x3-aU8" id="0OS-0y-wss"/>
-                <outlet property="dspSelectViewController" destination="XcS-LG-fzc" id="jRA-44-2o7"/>
                 <outlet property="dspView" destination="FgU-f9-bru" id="lA3-wb-KlQ"/>
                 <outlet property="enable_cp1251_detection" destination="nXp-DV-5XR" id="1Gk-V1-leH"/>
                 <outlet property="enable_cp936_detection" destination="0RD-fs-B31" id="OyU-uP-RMb"/>
@@ -1326,60 +1325,10 @@
             </subviews>
             <point key="canvasLocation" x="-470" y="65.5"/>
         </customView>
-        <customView id="XUM-I6-xzb" userLabel="Scriptable Selector">
-            <rect key="frame" x="0.0" y="0.0" width="253" height="21"/>
-            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-            <subviews>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UEz-fu-4DF">
-                    <rect key="frame" x="221" y="0.0" width="32" height="21"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="21" id="Hos-cy-Fcx"/>
-                        <constraint firstAttribute="width" constant="32" id="Hxf-nu-9Dt"/>
-                    </constraints>
-                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="NSListViewTemplate" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="AaP-gs-isA">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="browseButtonAction:" target="XcS-LG-fzc" id="qU2-UZ-BNJ"/>
-                    </connections>
-                </button>
-                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uWp-gc-ciV">
-                    <rect key="frame" x="-2" y="-3" width="218" height="25"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="21" id="DVa-N1-wHh"/>
-                    </constraints>
-                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="ser-zg-7Dp">
-                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
-                        <menu key="menu" id="YzU-69-O3n"/>
-                        <connections>
-                            <action selector="nameSelectedAction:" target="XcS-LG-fzc" id="GRM-gl-32r"/>
-                        </connections>
-                    </popUpButtonCell>
-                </popUpButton>
-            </subviews>
-            <constraints>
-                <constraint firstItem="UEz-fu-4DF" firstAttribute="leading" secondItem="uWp-gc-ciV" secondAttribute="trailing" constant="8" id="EUc-Kl-0Rl"/>
-                <constraint firstItem="uWp-gc-ciV" firstAttribute="leading" secondItem="XUM-I6-xzb" secondAttribute="leading" id="IIu-bU-ZSD"/>
-                <constraint firstAttribute="trailing" secondItem="UEz-fu-4DF" secondAttribute="trailing" id="ad1-8E-0ZH"/>
-                <constraint firstItem="UEz-fu-4DF" firstAttribute="centerY" secondItem="XUM-I6-xzb" secondAttribute="centerY" id="sgp-rH-pXf"/>
-                <constraint firstItem="uWp-gc-ciV" firstAttribute="centerY" secondItem="XUM-I6-xzb" secondAttribute="centerY" id="u10-H6-XKS"/>
-            </constraints>
-            <point key="canvasLocation" x="441" y="370"/>
-        </customView>
-        <viewController id="XcS-LG-fzc" userLabel="DSP Preset Select View Controller" customClass="ScriptableSelectViewController">
-            <connections>
-                <outlet property="browseButton" destination="UEz-fu-4DF" id="9bM-E9-lV5"/>
-                <outlet property="nameList" destination="uWp-gc-ciV" id="xzY-Vf-YU5"/>
-                <outlet property="view" destination="XUM-I6-xzb" id="r6g-md-DYi"/>
-            </connections>
-        </viewController>
     </objects>
     <resources>
         <image name="NSAdvanced" width="32" height="32"/>
         <image name="NSColorPanel" width="32" height="32"/>
-        <image name="NSListViewTemplate" width="14" height="10"/>
         <image name="NSNetwork" width="32" height="32"/>
         <image name="NSPreferencesGeneral" width="32" height="32"/>
         <image name="NSStatusAvailable" width="16" height="16"/>

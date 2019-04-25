@@ -1060,6 +1060,7 @@
 		2D651D17227227C300375AE2 /* ScriptableNodeEditorWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D651D15227227C300375AE2 /* ScriptableNodeEditorWindowController.h */; };
 		2D651D18227227C300375AE2 /* ScriptableNodeEditorWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D651D16227227C300375AE2 /* ScriptableNodeEditorWindowController.m */; };
 		2D651D1A227227FA00375AE2 /* ScriptableNodeEditorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D651D19227227FA00375AE2 /* ScriptableNodeEditorView.xib */; };
+		2D651D1C22722AD200375AE2 /* ScriptableSelectView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D651D1B22722AD200375AE2 /* ScriptableSelectView.xib */; };
 		2D6530641CE79ED400163808 /* a2m.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D652FDF1CE79ED400163808 /* a2m.cpp */; };
 		2D6530651CE79ED400163808 /* a2m.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D652FE01CE79ED400163808 /* a2m.h */; };
 		2D6530661CE79ED400163808 /* adl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D652FE11CE79ED400163808 /* adl.cpp */; };
@@ -3978,6 +3979,7 @@
 		2D651D15227227C300375AE2 /* ScriptableNodeEditorWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableNodeEditorWindowController.h; sourceTree = "<group>"; };
 		2D651D16227227C300375AE2 /* ScriptableNodeEditorWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptableNodeEditorWindowController.m; sourceTree = "<group>"; };
 		2D651D19227227FA00375AE2 /* ScriptableNodeEditorView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScriptableNodeEditorView.xib; sourceTree = "<group>"; };
+		2D651D1B22722AD200375AE2 /* ScriptableSelectView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScriptableSelectView.xib; sourceTree = "<group>"; };
 		2D652FCB1CE79E8500163808 /* adplug.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = adplug.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D652FDF1CE79ED400163808 /* a2m.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = a2m.cpp; sourceTree = "<group>"; };
 		2D652FE01CE79ED400163808 /* a2m.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = a2m.h; sourceTree = "<group>"; };
@@ -6819,6 +6821,7 @@
 				4DE28470205BE0B20023063E /* HelpViewer.xib */,
 				2D651D06227227A000375AE2 /* ScriptableNodeEditorWindow.xib */,
 				2D651D19227227FA00375AE2 /* ScriptableNodeEditorView.xib */,
+				2D651D1B22722AD200375AE2 /* ScriptableSelectView.xib */,
 			);
 			name = XIB;
 			sourceTree = "<group>";
@@ -12327,6 +12330,7 @@
 				2D8BA3521E2672BF001D5708 /* libogglib.dylib in Resources */,
 				4D9BF4001FE134200032B6CF /* libopusfile.dylib in Resources */,
 				2D651D07227227A000375AE2 /* ScriptableNodeEditorWindow.xib in Resources */,
+				2D651D1C22722AD200375AE2 /* ScriptableSelectView.xib in Resources */,
 				2D5B51221FF43FC8000AD484 /* liboggedit.dylib in Resources */,
 				2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */,
 			);

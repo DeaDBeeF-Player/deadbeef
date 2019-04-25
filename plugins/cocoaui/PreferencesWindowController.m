@@ -121,9 +121,9 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     [super windowDidLoad];
 
     // dsp
+    self.dspSelectViewController = [[ScriptableSelectViewController alloc] initWithNibName:@"ScriptableSelectView" bundle:nil];
     self.dspSelectViewController.view.frame = _dspPresetSelectorContainer.bounds;
     [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
-
 
     self.dspNodeEditorViewController = [[ScriptableNodeEditorViewController alloc] initWithNibName:@"ScriptableNodeEditorView" bundle:nil];
     self.dspNodeEditorViewController.view.frame = _dspNodeEditorContainer.bounds;
