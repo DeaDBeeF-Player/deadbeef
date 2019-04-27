@@ -354,9 +354,10 @@ cover_draw_cairo (GdkPixbuf *pixbuf, int x, int min_y, int max_y, int width, int
 
 static void
 cover_draw_anything (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr, void *user_data) {
+    int max_dimension = max(width, height);
     GdkPixbuf *pixbuf = get_cover_art(it, -1, -1, NULL, NULL);
     if (!pixbuf) {
-        pixbuf = get_cover_art(it, width, width, cover_invalidate, user_data);
+        pixbuf = get_cover_art(it, max_dimension, max_dimension, cover_invalidate, user_data);
     }
     if (pixbuf) {
         cover_draw_cairo(pixbuf, x, min_y, max_y, width, height, cr, CAIRO_FILTER_FAST);
@@ -366,7 +367,8 @@ cover_draw_anything (DB_playItem_t *it, int x, int min_y, int max_y, int width, 
 
 static void
 cover_draw_exact (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr, void *user_data) {
-    GdkPixbuf *pixbuf = get_cover_art(it, width, width, cover_invalidate, user_data);
+    int max_dimension = max(width, height);
+    GdkPixbuf *pixbuf = get_cover_art(it, max_dimension, max_dimension, cover_invalidate, user_data);
     if (!pixbuf) {
         pixbuf = get_cover_art(it, -1, -1, NULL, NULL);
     }
