@@ -12,6 +12,10 @@ version 1.8.1
 	Updated Repeat and Shuffle hotkey names to match the menus
 	Fixed rounding bug of total playtime in statusbar
 	Fixed design mode splitter handles dragging beyond the window edges
+	Fixed setting album art size based on larger dimension (by ToadKing)
+	Fixed regression causing custom layouts with splitters look wrong
+	Added FLAC plugin option to ignore corrupted stream errors
+	Fixed supereq reentrancy bug, potentially causing crash after changing audio output configuration
 
 version 1.8.0
 	added Opus support
