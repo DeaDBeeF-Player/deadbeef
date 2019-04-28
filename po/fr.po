@@ -20,8 +20,8 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-04-18 18:38+0200\n"
-"PO-Revision-Date: 2019-04-18 16:36+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2019-04-26 10:59+0000\n"
+"Last-Translator: Charles Monzat <c.monzat@laposte.net>\n"
 "Language-Team: French (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/fr/)\n"
 "Language: fr\n"
@@ -124,7 +124,7 @@ msgstr "%d jours %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:212
 msgid "total playtime"
-msgstr ""
+msgstr "de temps d’écoute total"
 
 #: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
 msgid "Paused"
@@ -132,7 +132,7 @@ msgstr "En pause"
 
 #: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
 msgid "bit"
-msgstr ""
+msgstr "bits"
 
 #: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:417
 msgid "selection playtime"
@@ -140,7 +140,7 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:417 ../plugins/gtkui/gtkui.c:421
 msgid "Stopped"
-msgstr ""
+msgstr "Arrêté"
 
 #: ../plugins/gtkui/gtkui.c:684 ../translation/plugins.c:209
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
@@ -2680,6 +2680,7 @@ msgstr "Démarrer la lecture avec un double-clic"
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value choosen by portaudio)"
 msgstr ""
+"Taille du tampon (-1 pour utiliser la valeur optimale choisie par portaudio)"
 
 #: ../translation/plugins.c:409
 #, no-c-format
@@ -3202,7 +3203,7 @@ msgstr "Impossible de trouver le fichier pixmap : %s"
 
 #: ../plugins/gtkui/fileman.c:316 ../plugins/gtkui/fileman.c:410
 msgid "Supported sound formats"
-msgstr "Formats audio supportés"
+msgstr "Formats audio pris en charge"
 
 #: ../plugins/gtkui/fileman.c:344 ../plugins/gtkui/fileman.c:421
 msgid "All files (*)"
@@ -3210,11 +3211,11 @@ msgstr "Tous les fichiers (*)"
 
 #: ../plugins/gtkui/fileman.c:455 ../plugins/gtkui/fileman.c:499
 msgid "Supported playlist formats"
-msgstr ""
+msgstr "Formats de liste de lecture pris en charge"
 
 #: ../plugins/gtkui/fileman.c:462
 msgid "All files"
-msgstr ""
+msgstr "Tous les fichiers"
 
 #: ../plugins/gtkui/fileman.c:505
 msgid "Other files (*)"

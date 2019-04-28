@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-04-18 18:38+0200\n"
-"PO-Revision-Date: 2019-04-18 16:36+0000\n"
+"PO-Revision-Date: 2019-04-18 18:38+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/ru/)\n"
@@ -2141,47 +2141,47 @@ msgstr "Показать страницу справки"
 #: ../translation/plugins.c:165
 #, no-c-format
 msgid "Cycle Repeat Mode"
-msgstr ""
+msgstr "Следующий режим повтора"
 
 #: ../translation/plugins.c:167
 #, no-c-format
 msgid "Repeat - Off"
-msgstr ""
+msgstr "Повтор - выкл"
 
 #: ../translation/plugins.c:169
 #, no-c-format
 msgid "Repeat - Single Track"
-msgstr ""
+msgstr "Повтор - одиночный трек"
 
 #: ../translation/plugins.c:171
 #, no-c-format
 msgid "Repeat - All"
-msgstr ""
+msgstr "Повтор - все"
 
 #: ../translation/plugins.c:173
 #, no-c-format
 msgid "Cycle Shuffle Mode"
-msgstr ""
+msgstr "Следующий режим перемешивания"
 
 #: ../translation/plugins.c:175
 #, no-c-format
 msgid "Shuffle - Random Tracks"
-msgstr ""
+msgstr "Перемешивание - Случайные треки"
 
 #: ../translation/plugins.c:177
 #, no-c-format
 msgid "Shuffle - Albums"
-msgstr ""
+msgstr "Перемешивание - Альбомы"
 
 #: ../translation/plugins.c:179
 #, no-c-format
 msgid "Shuffle - Tracks"
-msgstr ""
+msgstr "Перемешивание - треки"
 
 #: ../translation/plugins.c:181
 #, no-c-format
 msgid "Shuffle - Off"
-msgstr ""
+msgstr "Перемешивание - выкл"
 
 #: ../translation/plugins.c:183
 #, no-c-format
@@ -2671,32 +2671,32 @@ msgstr "Воспроизводить по двойному щелчку"
 #: ../translation/plugins.c:407
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value choosen by portaudio)"
-msgstr ""
+msgstr "Размер буфера (-1 оптимальное значение выбранное portaudio)"
 
 #: ../translation/plugins.c:409
 #, no-c-format
 msgid "Device name encoding"
-msgstr ""
+msgstr "Кодировка имени устройства"
 
 #: ../translation/plugins.c:411
 #, no-c-format
 msgid "ASCII / UTF-8"
-msgstr ""
+msgstr "ASCII / UTF-8"
 
 #: ../translation/plugins.c:413
 #, no-c-format
 msgid "cp1250"
-msgstr ""
+msgstr "cp1250"
 
 #: ../translation/plugins.c:415
 #, no-c-format
 msgid "Defined below"
-msgstr ""
+msgstr "Определено ниже"
 
 #: ../translation/plugins.c:417
 #, no-c-format
 msgid "Custom device name encoding"
-msgstr ""
+msgstr "Кодировка имени устройства определенная пользователем"
 
 #. plugins/pulse/pulse.c
 #: ../translation/plugins.c:420

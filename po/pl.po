@@ -29,8 +29,8 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-04-18 18:38+0200\n"
-"PO-Revision-Date: 2019-04-18 16:36+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2019-04-27 11:50+0000\n"
+"Last-Translator: Jakub Wasylków <kuba_160@protonmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/pl/)\n"
 "Language: pl\n"
@@ -135,7 +135,7 @@ msgstr "%d dni %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:212
 msgid "total playtime"
-msgstr ""
+msgstr "całkowity czas odtwarzania"
 
 #: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
 msgid "Paused"
@@ -2146,47 +2146,47 @@ msgstr "Wyświetl pomoc"
 #: ../translation/plugins.c:165
 #, no-c-format
 msgid "Cycle Repeat Mode"
-msgstr ""
+msgstr "Przełącz tryb powtarzania"
 
 #: ../translation/plugins.c:167
 #, no-c-format
 msgid "Repeat - Off"
-msgstr ""
+msgstr "Powtarzanie - Wyłączone"
 
 #: ../translation/plugins.c:169
 #, no-c-format
 msgid "Repeat - Single Track"
-msgstr ""
+msgstr "Powtarzanie - Pojedyncza ścieżka"
 
 #: ../translation/plugins.c:171
 #, no-c-format
 msgid "Repeat - All"
-msgstr ""
+msgstr "Powtarzanie - Wszystko"
 
 #: ../translation/plugins.c:173
 #, no-c-format
 msgid "Cycle Shuffle Mode"
-msgstr ""
+msgstr "Przełącz tryb tasowania"
 
 #: ../translation/plugins.c:175
 #, no-c-format
 msgid "Shuffle - Random Tracks"
-msgstr ""
+msgstr "Tasowanie - Losowe ścieżki"
 
 #: ../translation/plugins.c:177
 #, no-c-format
 msgid "Shuffle - Albums"
-msgstr ""
+msgstr "Tasowanie - Albumy"
 
 #: ../translation/plugins.c:179
 #, no-c-format
 msgid "Shuffle - Tracks"
-msgstr ""
+msgstr "Tasowanie - Ścieżki"
 
 #: ../translation/plugins.c:181
 #, no-c-format
 msgid "Shuffle - Off"
-msgstr ""
+msgstr "Tasowanie - Wyłączone"
 
 #: ../translation/plugins.c:183
 #, no-c-format
@@ -2676,32 +2676,32 @@ msgstr "Odtwarzaj po podwójnym kliknięciu"
 #: ../translation/plugins.c:407
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value choosen by portaudio)"
-msgstr ""
+msgstr "Rozmiar buforu (-1 dla optymalnej wartości wybranej przez portaudio)"
 
 #: ../translation/plugins.c:409
 #, no-c-format
 msgid "Device name encoding"
-msgstr ""
+msgstr "Zestaw znaków dla nazw urządzeń"
 
 #: ../translation/plugins.c:411
 #, no-c-format
 msgid "ASCII / UTF-8"
-msgstr ""
+msgstr "ASCII / UTF-8"
 
 #: ../translation/plugins.c:413
 #, no-c-format
 msgid "cp1250"
-msgstr ""
+msgstr "cp1250"
 
 #: ../translation/plugins.c:415
 #, no-c-format
 msgid "Defined below"
-msgstr ""
+msgstr "Zdefiniowane poniżej"
 
 #: ../translation/plugins.c:417
 #, no-c-format
 msgid "Custom device name encoding"
-msgstr ""
+msgstr "Własny zestaw znaków dla nazw urządzeń"
 
 #. plugins/pulse/pulse.c
 #: ../translation/plugins.c:420

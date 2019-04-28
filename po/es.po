@@ -14,6 +14,7 @@
 # depaz <depazzz@gmail.com>, 2010
 # Eder Dureaux <1mmolationstayhc@gmail.com>, 2017
 # Charlesles, 2016-2017
+# Fito JB, 2013
 # Fitoschido, 2013
 # Hugo Florentino <sysadmin@cips.cu>, 2010
 # Roony Alvarez <legion1978@gmail.com>, 2013

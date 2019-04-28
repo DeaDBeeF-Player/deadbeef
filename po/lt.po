@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-04-18 18:38+0200\n"
-"PO-Revision-Date: 2019-04-18 16:36+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2019-04-22 16:43+0000\n"
+"Last-Translator: Moo\n"
 "Language-Team: Lithuanian (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/lt/)\n"
 "Language: lt\n"
@@ -118,7 +118,7 @@ msgstr "%d dienos %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:212
 msgid "total playtime"
-msgstr ""
+msgstr "bendras atkūrimo laikas"
 
 #: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
 msgid "Paused"
@@ -2127,47 +2127,47 @@ msgstr "Rodyti žinyno puslapį"
 #: ../translation/plugins.c:165
 #, no-c-format
 msgid "Cycle Repeat Mode"
-msgstr ""
+msgstr "Perjunginėti kartojimo veikseną"
 
 #: ../translation/plugins.c:167
 #, no-c-format
 msgid "Repeat - Off"
-msgstr ""
+msgstr "Kartoti - Išjungta"
 
 #: ../translation/plugins.c:169
 #, no-c-format
 msgid "Repeat - Single Track"
-msgstr ""
+msgstr "Kartoti - Vieną takelį"
 
 #: ../translation/plugins.c:171
 #, no-c-format
 msgid "Repeat - All"
-msgstr ""
+msgstr "Kartoti - Visus"
 
 #: ../translation/plugins.c:173
 #, no-c-format
 msgid "Cycle Shuffle Mode"
-msgstr ""
+msgstr "Perjunginėti maišymo veikseną"
 
 #: ../translation/plugins.c:175
 #, no-c-format
 msgid "Shuffle - Random Tracks"
-msgstr ""
+msgstr "Maišyti - Atsitiktinius takelius"
 
 #: ../translation/plugins.c:177
 #, no-c-format
 msgid "Shuffle - Albums"
-msgstr ""
+msgstr "Maišyti - Albumus"
 
 #: ../translation/plugins.c:179
 #, no-c-format
 msgid "Shuffle - Tracks"
-msgstr ""
+msgstr "Maišyti - Takelius"
 
 #: ../translation/plugins.c:181
 #, no-c-format
 msgid "Shuffle - Off"
-msgstr ""
+msgstr "Maišyti - Išjungta"
 
 #: ../translation/plugins.c:183
 #, no-c-format
@@ -2658,31 +2658,32 @@ msgstr "Dukart spustelėjus, pradėti atkūrimą"
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value choosen by portaudio)"
 msgstr ""
+"Buferio dydis (-1, kad būtų naudojama optimali portaudio pasirinkta reikšmė)"
 
 #: ../translation/plugins.c:409
 #, no-c-format
 msgid "Device name encoding"
-msgstr ""
+msgstr "Įrenginių pavadinimų koduotė"
 
 #: ../translation/plugins.c:411
 #, no-c-format
 msgid "ASCII / UTF-8"
-msgstr ""
+msgstr "ASCII / UTF-8"
 
 #: ../translation/plugins.c:413
 #, no-c-format
 msgid "cp1250"
-msgstr ""
+msgstr "cp1250"
 
 #: ../translation/plugins.c:415
 #, no-c-format
 msgid "Defined below"
-msgstr ""
+msgstr "Apibrėžta žemiau"
 
 #: ../translation/plugins.c:417
 #, no-c-format
 msgid "Custom device name encoding"
-msgstr ""
+msgstr "Tinkinta įrenginių pavadinimų koduotė"
 
 #. plugins/pulse/pulse.c
 #: ../translation/plugins.c:420
