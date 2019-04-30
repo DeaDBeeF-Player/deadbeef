@@ -8,6 +8,7 @@ version 1.8.1
 	Removed the unmaintained sndio plugin
 	Fixed localization of status bar
 	Added experimental subgrouping support in playlist, via using `|||` separator for each subsequent nested group, when using Group by -> Custom (by ToadKing)
+	Added new title formatting functions `$stripprefix` and `$swapprefix` (by ToadKing)
 	Changed supereq DSP configuration to be more compact horizontally and to have more slider precision
 	Updated Repeat and Shuffle hotkey names to match the menus
 	Fixed rounding bug of total playtime in statusbar
@@ -16,6 +17,8 @@ version 1.8.1
 	Fixed regression causing custom layouts with splitters look wrong
 	Added FLAC plugin option to ignore corrupted stream errors
 	Fixed supereq reentrancy bug, potentially causing crash after changing audio output configuration
+	Fixed reloading replaygain info
+	Fixed writing replaygain info to APEv2 tags
 
 version 1.8.0
 	added Opus support
