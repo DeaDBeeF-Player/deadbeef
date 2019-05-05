@@ -479,19 +479,6 @@ get_next_track (playItem_t *curr) {
 
     int pl_loop_mode = conf_get_int ("playback.loop", 0);
 
-    if (pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // song finished, loop mode is "loop 1 track"
-        int r = str_get_idx_of (curr);
-        pl_unlock ();
-        if (r == -1) {
-            return NULL; // track is not in current playlist
-        }
-        else {
-            pl_item_ref (curr);
-            return curr;
-        }
-        return 0;
-    }
-
     if (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) { // shuffle
         playItem_t *it = NULL;
         if (!curr || pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS) {
@@ -1301,7 +1288,17 @@ update_stop_after_current (void) {
 
 static void
 streamer_next (void) {
-    playItem_t *next = get_next_track (streaming_track);
+    playItem_t *next = NULL;
+    if (playing_track) {
+        int pl_loop_mode = conf_get_int ("playback.loop", 0);
+        if (pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // song finished, loop mode is "loop 1 track"
+            next = playing_track;
+            pl_item_ref (next);
+        }
+    }
+    else {
+        next = get_next_track (streaming_track);
+    }
     stream_track (next, 0);
     if (next) {
         pl_item_unref (next);
