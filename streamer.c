@@ -1296,7 +1296,7 @@ streamer_next (void) {
             pl_item_ref (next);
         }
     }
-    else {
+    if (!next) {
         next = get_next_track (streaming_track);
     }
     stream_track (next, 0);
