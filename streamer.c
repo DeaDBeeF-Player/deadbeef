@@ -1196,8 +1196,6 @@ m3u_error:
             trace ("no decoder in playitem!\n");
             it->played = 1;
 
-            streamer_set_playing_track (NULL);
-
             if (!startpaused) {
                 streamer_play_failed (it);
             }
