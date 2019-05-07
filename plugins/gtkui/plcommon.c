@@ -141,9 +141,15 @@ pl_common_init(void)
 void
 pl_common_free (void)
 {
-    g_object_unref(play16_pixbuf);
-    g_object_unref(pause16_pixbuf);
-    g_object_unref(buffering16_pixbuf);
+    if (play16_pixbuf) {
+        g_object_unref(play16_pixbuf);
+    }
+    if (pause16_pixbuf) {
+        g_object_unref(pause16_pixbuf);
+    }
+    if (buffering16_pixbuf) {
+        g_object_unref(buffering16_pixbuf);
+    }
 }
 
 static col_info_t *
@@ -468,9 +474,12 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
         else {
             pixbuf = buffering16_pixbuf;
         }
-        gdk_cairo_set_source_pixbuf (cr, pixbuf, x + width/2 - 8, y + height/2 - 8);
-        cairo_rectangle (cr, x + width/2 - 8, y + height/2 - 8, 16, 16);
-        cairo_fill (cr);
+
+        if (pixbuf) {
+            gdk_cairo_set_source_pixbuf (cr, pixbuf, x + width/2 - 8, y + height/2 - 8);
+            cairo_rectangle (cr, x + width/2 - 8, y + height/2 - 8, 16, 16);
+            cairo_fill (cr);
+        }
     }
     else if (it) {
         char text[1024] = "";
