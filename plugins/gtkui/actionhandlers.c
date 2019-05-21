@@ -389,6 +389,10 @@ action_delete_from_disk_handler_cb (void *data) {
     }
     deadbeef->pl_lock ();
 
+    // Saving the current song index
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    int index_old = deadbeef->pl_get_idx_of (it);
+
     if (ctx == DDB_ACTION_CTX_SELECTION) {
         DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
         while (it) {
@@ -444,6 +448,22 @@ action_delete_from_disk_handler_cb (void *data) {
     deadbeef->plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+
+    // Play the next song if necessary or stop playback when the end of the playlist is reached.
+    int state = deadbeef->get_output ()->state ();
+    if (index_old != -1 && state == OUTPUT_STATE_PLAYING) {
+        it = deadbeef->streamer_get_playing_track ();
+        int index_new = deadbeef->pl_get_idx_of (it);
+        int playlist_items = deadbeef->pl_getcount (PL_MAIN);
+
+        if (index_new == -1 && index_old >= playlist_items || playlist_items <= 0) {
+            deadbeef->sendmessage (DB_EV_STOP, 0, 0, 0);
+        }
+        else {
+            deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
+        }
+    }
+
     return FALSE;
 }
 
