@@ -51,6 +51,10 @@
 
 #define SUBGROUP_DELIMITER "|||"
 
+#if !GTK_CHECK_VERSION(3,22,0)
+#define gtk_menu_popup_at_pointer(menu,trigger_event) gtk_menu_popup(menu, NULL, NULL, NULL, NULL, 3, gtk_get_current_event_time())
+#endif
+
 typedef struct {
     int id;
     char *format;
@@ -965,7 +969,7 @@ list_empty_region_context_menu (DdbListview *listview) {
             G_CALLBACK (on_paste_activate),
             NULL);
 
-    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL/*popup_menu_position_func*/, listview, 0, gtk_get_current_event_time());
+    gtk_menu_popup_at_pointer (GTK_MENU (playlist_menu), NULL);
 }
 
 void
@@ -1275,7 +1279,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
             G_CALLBACK (properties_activate),
             NULL);
 
-    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL/*popup_menu_position_func*/, listview, 0, gtk_get_current_event_time());
+    gtk_menu_popup_at_pointer (GTK_MENU (playlist_menu), NULL);
 }
 
 static char *
@@ -1967,7 +1971,7 @@ pl_common_header_context_menu (DdbListview *ps, int column) {
     g_object_set_data (G_OBJECT (menu), "ps", ps);
     g_object_set_data (G_OBJECT (menu), "column", GINT_TO_POINTER (column));
 
-    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
+    gtk_menu_popup_at_pointer (GTK_MENU (menu), NULL);
 }
 
 void
