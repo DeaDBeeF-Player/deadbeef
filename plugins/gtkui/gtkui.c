@@ -801,9 +801,6 @@ add_mainmenu_actions_cb (void *data) {
 }
 
 int
-gtkui_thread (void *ctx);
-
-int
 gtkui_plt_add_dir (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
 int
@@ -1387,34 +1384,6 @@ gtkui_mainwin_free(void) {
 
 }
 
-int
-gtkui_thread (void *ctx) {
-#ifdef __linux__
-    prctl (PR_SET_NAME, "deadbeef-gtkui", 0, 0, 0, 0);
-#endif
-
-    int argc = 1;
-    const char **argv = alloca (sizeof (char *) * argc);
-    argv[0] = "deadbeef";
-
-    gtk_disable_setlocale ();
-    add_pixmap_directory (deadbeef->get_system_dir(DDB_SYS_DIR_PIXMAP));
-
-#if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
-    gapp = deadbeef_app_new ();
-    g_application_run ( G_APPLICATION (gapp), argc, (char**)argv);
-    g_object_unref (gapp);
-#else
-    gtk_init (&argc, (char ***)&argv);
-
-    gtkui_mainwin_init ();
-    gtk_main ();
-    gtkui_mainwin_free ();
-#endif
-
-    return 0;
-}
-
 gboolean
 gtkui_set_progress_text_idle (gpointer data) {
     char *text = (char *)data;
@@ -1531,7 +1500,24 @@ gtkui_start (void) {
 
     import_legacy_tf ("playlist.group_by", "gtkui.playlist.group_by_tf");
 
-    gtkui_thread (NULL);
+    int argc = 1;
+    const char **argv = alloca (sizeof (char *) * argc);
+    argv[0] = "deadbeef";
+
+    gtk_disable_setlocale ();
+    add_pixmap_directory (deadbeef->get_system_dir(DDB_SYS_DIR_PIXMAP));
+
+#if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
+    gapp = deadbeef_app_new ();
+    g_application_run ( G_APPLICATION (gapp), argc, (char**)argv);
+    g_object_unref (gapp);
+#else
+    gtk_init (&argc, (char ***)&argv);
+
+    gtkui_mainwin_init ();
+    gtk_main ();
+    gtkui_mainwin_free ();
+#endif
 
     return 0;
 }
