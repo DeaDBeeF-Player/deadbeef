@@ -10542,7 +10542,7 @@ Descending</property>
 </widget>
 
 <widget class="GtkWindow" id="rg_scan_progress">
-  <property name="width_request">440</property>
+  <property name="width_request">550</property>
   <property name="visible">True</property>
   <property name="title" translatable="yes">ReplayGain Scan Progress</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
@@ -10695,7 +10695,7 @@ Descending</property>
 </widget>
 
 <widget class="GtkWindow" id="rg_scan_results">
-  <property name="width_request">550</property>
+  <property name="width_request">900</property>
   <property name="height_request">350</property>
   <property name="visible">True</property>
   <property name="title" translatable="yes">ReplayGain Scan Results</property>
