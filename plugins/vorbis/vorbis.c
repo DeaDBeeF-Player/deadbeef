@@ -438,7 +438,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
     /* Don't read past the end of a sub-track */
     int samples_to_read = bytes_to_read / sizeof(float) / _info->fmt.channels;
     int64_t endsample = deadbeef->pl_item_get_endsample (info->it);
-    if (endsample >= 0) {
+    if (endsample > 0) {
         const ogg_int64_t samples_left = endsample - ov_pcm_tell(&info->vorbis_file);
         if (samples_left < samples_to_read) {
             samples_to_read = (int)samples_left;

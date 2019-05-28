@@ -402,7 +402,7 @@ opusdec_read (DB_fileinfo_t *_info, char *bytes, int size) {
     // Don't read past the end of a sub-track
     int samples_to_read = size / sizeof(float) / _info->fmt.channels;
     int64_t endsample = deadbeef->pl_item_get_endsample (info->it);
-    if (endsample >= 0) {
+    if (endsample > 0) {
         opus_int64 samples_left = endsample - op_pcm_tell (info->opusfile);
         if (samples_left < samples_to_read) {
             samples_to_read = (int)samples_left;
