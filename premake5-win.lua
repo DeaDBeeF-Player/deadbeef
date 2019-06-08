@@ -108,7 +108,8 @@ end
    links { "m", "pthread", "dl"}
    filter "system:Windows"
       files {
-        "icons/deadbeef-icon.rc"
+        "icons/deadbeef-icon.rc",
+        "shared/windows/Resources.rc"
       }
 
 local mp3_v = option ("plugin-mp3", "libmpg123", "mad")
