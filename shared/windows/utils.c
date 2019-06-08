@@ -144,7 +144,7 @@ char *realpath (const char *path, char *resolved_path) {
         // convert to utf8
         ret = win_charset_conv ((char *) argv_win, (wcslen(argv_win)+1)*2, out_p, PATH_MAX, "WCHAR_T", "UTF-8");
 
-        // Set current directory on windows to fix dlopen not finding files even absolute path is given o_O
+        // Set current directory, so that windows can find libraries needed to load plugins
         {
             char out_scd[strlen(out_p)];
             strcpy (out_scd, out_p);
