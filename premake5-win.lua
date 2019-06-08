@@ -77,8 +77,17 @@ project "libwin"
    links {"dl"}
    removelinks {"libwin"}
 
+newoption {
+    trigger = "debug-console",
+    description = "Run deadbeef in console for debug output",
+  }
+
 project "deadbeef"
+if (_OPTIONS["debug-console"]) then
+   kind "ConsoleApp"
+else
    kind "WindowedApp"
+end
    language "C"
    targetdir "bin/%{cfg.buildcfg}"
 
