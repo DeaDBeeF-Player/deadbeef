@@ -19,13 +19,16 @@ newoption {
   trigger = "standard",
   description = "compile deadbeef with standard set of plugins for windows",
 }
+
 if _OPTIONS["standard"] ~= nil then
-  _OPTIONS["plugin-artwork"] = "disabled"
-  _OPTIONS["plugin-converter"] = "disabled"
-  _OPTIONS["plugin-converter_gtk2"] = "disabled"
-  _OPTIONS["plugin-converter_gtk3"] = "disabled"
-  _OPTIONS["plugin-ffmpeg"] = "disabled"
-  _OPTIONS["plugin-wildmidi"] = "disabled"
+  plugins_to_disable = {"plugin-artwork", "plugin-converter", "plugin-converter_gtk2",
+                        "plugin-converter_gtk3","plugin-ffmpeg","plugin-waveout",
+                        "plugin-wildmidi" }
+  for i,v in ipairs(plugins_to_disable) do
+    if _OPTIONS[v] == nil then
+      _OPTIONS[v] = "disabled"
+    end
+  end
 end
 
 defines {"HAVE_ICONV"}
