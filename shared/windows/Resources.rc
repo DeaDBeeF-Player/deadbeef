@@ -1,0 +1,24 @@
+#include "winver.h"
+
+VS_VERSION_INFO VERSIONINFO
+    FILEVERSION    1,0,0,0
+    PRODUCTVERSION 1,0,0,0
+{
+    BLOCK "StringFileInfo"
+    {
+        BLOCK "040904E4"
+        {
+            VALUE "CompanyName",        "\0"
+            VALUE "FileDescription",    "DeaDBeeF Player\0"
+            VALUE "FileVersion",        "1.0.0.0\0"
+            VALUE "LegalCopyright",     "\0"
+            VALUE "OriginalFilename",   "deadbeef.exe\0"
+            VALUE "ProductName",        "DeaDBeeF\0"
+            VALUE "ProductVersion",     "1.0.0.0\0"
+        }
+    }
+    BLOCK "VarFileInfo"
+    {
+        VALUE "Translation", 0x409, 1200
+    }
+}
