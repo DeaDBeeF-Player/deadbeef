@@ -357,6 +357,20 @@ project "portaudio"
    pkgconfig ("portaudio-2.0")
 end
 
+if option ("plugin-waveout") then
+project "waveout"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/waveout/*.h",
+       "plugins/waveout/*.c",
+   }
+   links {"winmm", "ksuser"}
+end
+
 if option ("plugin-gtk2", "gtk+-2.0 jansson") then
 project "ddb_gui_GTK2"
    kind "SharedLib"
