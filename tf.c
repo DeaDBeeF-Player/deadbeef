@@ -262,6 +262,8 @@ tf_prefix_helper (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, cons
 
     int prefix_count;
     size_t buffer_size;
+    char *buf = NULL;
+
     if (argc == 1) {
         prefix_count = 2;
         buffer_size = 0;
@@ -269,11 +271,11 @@ tf_prefix_helper (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, cons
     else {
         prefix_count = argc - 1;
         buffer_size = 2000;
+        buf = alloca(buffer_size);
     }
 
     const char *prefixes[prefix_count];
     int prefix_lengths[prefix_count];
-    char buf[buffer_size];
 
     if (argc == 1) {
         prefixes[0] = "A";
@@ -1872,7 +1874,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
 
 static const char *
 _tf_get_combined_value (playItem_t *it, const char *key, int *needs_free) {
-    DB_metaInfo_t *meta = pl_meta_for_key (it, key);
+    DB_metaInfo_t *meta = pl_meta_for_key_with_override (it, key);
 
     if (!meta) {
         *needs_free = 0;
@@ -1969,12 +1971,13 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 code++;
                 size--;
                 uint16_t *arglens = NULL;
-                if (*code) {
+                char numargs = *code;
+                if (numargs) {
                     // copy arg lengths, to make sure they're aligned
-                    arglens = alloca (*code * sizeof (uint16_t));
-                    memcpy (arglens, code+1, *code * sizeof (uint16_t));
+                    arglens = alloca (numargs * sizeof (uint16_t));
+                    memcpy (arglens, code+1, numargs * sizeof (uint16_t));
                 };
-                int res = func (ctx, code[0], arglens, code+1+code[0]*sizeof (uint16_t), out, outlen, fail_on_undef);
+                int res = func (ctx, numargs, arglens, code+1+numargs*sizeof (uint16_t), out, outlen, fail_on_undef);
                 if (res == -1) {
                     return -1;
                 }
@@ -1989,8 +1992,8 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 out += res;
                 outlen -= res;
 
-                int blocksize = 1 + code[0]*2;
-                for (int i = 0; i < code[0]; i++) {
+                int blocksize = 1 + numargs*2;
+                for (int i = 0; i < numargs; i++) {
                     blocksize += arglens[i];
                 }
                 code += blocksize;
@@ -2092,7 +2095,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                             const char *end = strrchr (start, '.');
                             if (end) {
                                 int n = (int)(end-start);
-                                n = min ((int)(end-start), outlen);
+                                n = min (n, outlen);
                                 n = u8_strnbcpy (out, start, n);
                                 outlen -= n;
                                 out += n;
@@ -2992,7 +2995,7 @@ tf_import_legacy (const char *fmt, char *out, int outsize) {
                 if (*e == '@') {
                     char nm[100];
                     size_t l = e-fmt-1;
-                    l = min (l, sizeof (nm)-1);
+                    l = min (l, sizeof (nm)-3);
                     strncpy (nm+1, fmt+1, l);
                     nm[l+2] = 0;
                     nm[0] = '%';

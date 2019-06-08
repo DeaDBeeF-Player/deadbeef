@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "4D1B3E7918379829003E6066"
-               BuildableName = "deadbeef.app"
-               BlueprintName = "deadbeef"
+               BuildableName = "DeaDBeeF.app"
+               BlueprintName = "DeaDBeeF"
                ReferencedContainer = "container:deadbeef.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -43,8 +43,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4D1B3E7918379829003E6066"
-            BuildableName = "deadbeef.app"
-            BlueprintName = "deadbeef"
+            BuildableName = "DeaDBeeF.app"
+            BlueprintName = "DeaDBeeF"
             ReferencedContainer = "container:deadbeef.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -66,8 +66,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4D1B3E7918379829003E6066"
-            BuildableName = "deadbeef.app"
-            BlueprintName = "deadbeef"
+            BuildableName = "DeaDBeeF.app"
+            BlueprintName = "DeaDBeeF"
             ReferencedContainer = "container:deadbeef.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -85,8 +85,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4D1B3E7918379829003E6066"
-            BuildableName = "deadbeef.app"
-            BlueprintName = "deadbeef"
+            BuildableName = "DeaDBeeF.app"
+            BlueprintName = "DeaDBeeF"
             ReferencedContainer = "container:deadbeef.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

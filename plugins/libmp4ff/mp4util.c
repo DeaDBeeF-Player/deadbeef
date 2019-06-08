@@ -62,13 +62,12 @@ int32_t mp4ff_write_int32(mp4ff_t *f,const uint32_t data)
 {
 	uint32_t result;
     uint32_t a, b, c, d;
-    int8_t temp[4];
+    const uint8_t *temp = (const int8_t *)&data;
     
-    *(uint32_t*)temp = data;
-    a = (uint8_t)temp[0];
-    b = (uint8_t)temp[1];
-    c = (uint8_t)temp[2];
-    d = (uint8_t)temp[3];
+    a = temp[0];
+    b = temp[1];
+    c = temp[2];
+    d = temp[3];
 
     result = (a<<24) | (b<<16) | (c<<8) | d;
 

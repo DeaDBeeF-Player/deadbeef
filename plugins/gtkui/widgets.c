@@ -100,6 +100,7 @@ typedef struct {
     // size of second child
     int size2;
     float ratio;
+    int got_ratio;
     int locked;
 } w_splitter_t;
 
@@ -1190,21 +1191,24 @@ w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) 
     if (strcmp (type, "vsplitter") && strcmp (type, "hsplitter")) {
         return NULL;
     }
+
     char key[MAX_TOKEN], val[MAX_TOKEN];
     for (;;) {
         get_keyvalue (s,key,val);
+        w_splitter_t *sp = (w_splitter_t *)w;
 
         if (!strcmp (key, "locked")) {
-            ((w_splitter_t *)w)->locked = atoi (val);
+            sp->locked = atoi (val);
         }
         else if (!strcmp (key, "ratio")) {
-            ((w_splitter_t *)w)->ratio = atof (val);
+            sp->ratio = atof (val);
+            sp->got_ratio = 1;
         }
         else if (!strcmp (key, "pos")) {
-            ((w_splitter_t *)w)->size1 = atoi (val);
+            sp->size1 = atoi (val);
         }
         else if (!strcmp (key, "size2")) {
-            ((w_splitter_t *)w)->size2 = atoi (val);
+            sp->size2 = atoi (val);
         }
     }
 
@@ -1353,7 +1357,19 @@ void
 w_splitter_init (ddb_gtkui_widget_t *base) {
     w_splitter_t *w = (w_splitter_t *)base;
 
-    ddb_splitter_set_proportion (DDB_SPLITTER (w->box), w->ratio);
+    if (!w->got_ratio) { // migration from pre-1.8
+        GtkAllocation a;
+        gtk_widget_get_allocation(w->box, &a);
+        if (w->size1 > 0) {
+            w->locked = DDB_SPLITTER_SIZE_MODE_LOCK_C1;
+        }
+        else if (w->size2 > 0) {
+            w->locked = DDB_SPLITTER_SIZE_MODE_LOCK_C2;
+        }
+    }
+    else {
+        ddb_splitter_set_proportion (DDB_SPLITTER (w->box), w->ratio);
+    }
     ddb_splitter_set_size_mode (DDB_SPLITTER (w->box), w->locked);
     if (w->locked == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
         ddb_splitter_set_child1_size (DDB_SPLITTER (w->box), w->size1);
@@ -1580,7 +1596,7 @@ on_move_tab_left_activate (GtkMenuItem *menuitem, gpointer user_data) {
     int i = 0;
     ddb_gtkui_widget_t *newchild = NULL;
     ddb_gtkui_widget_t *prev = NULL;
-    char *title;
+    char *title = NULL;
     for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++) {
         if (i == w->clicked_page) {
             char buf[20000] = "";
@@ -3344,6 +3360,7 @@ w_spectrum_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         }
         break;
     }
+    return 0;
 }
 
 ddb_gtkui_widget_t *

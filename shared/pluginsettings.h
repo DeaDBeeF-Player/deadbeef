@@ -35,8 +35,11 @@ enum {
     PROP_PASSWORD,
     PROP_CHECKBOX,
     PROP_FILE,
+    PROP_DIR,
     PROP_SELECT,
     PROP_SLIDER, // hscale, vscale, spinbtn
+    PROP_ITEMLIST, // abstract list of items, with a type: List<Type>
+    PROP_ITEMSELECT,
 };
 
 typedef struct {
@@ -48,6 +51,8 @@ typedef struct {
     // for "select": list separated with spaces, ends with ';'
     // for vscale, hscale, spinbtn: contents of the [] markers, ends with ']'
     const char *select_options;
+    // always ends with >, e.g. "DSPPreset>"
+    char *itemlist_type;
 } settings_property_t;
 
 typedef struct {

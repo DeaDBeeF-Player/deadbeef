@@ -399,8 +399,6 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     int64_t offs = startoffs;
     int64_t fileoffs = startoffs;
 
-    int eof = 0;
-
     int prev_br = -1;
     int vbr = 0;
 
@@ -408,7 +406,6 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
         int64_t readsize = 4; // fe ff + frame header
         if (fsize > 0 && offs + readsize >= fsize) {
             readsize = fsize - offs;
-            eof = 1;
         }
 
         if (readsize <= 0) {

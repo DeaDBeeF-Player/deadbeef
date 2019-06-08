@@ -14,49 +14,14 @@ Comment[zh_TW]=聆聽音樂
 Icon=deadbeef
 Exec=deadbeef %F
 Terminal=false
-Actions=Play;Pause;Stop;Next;Prev
-MimeType=application/ogg;audio/x-vorbis+ogg;application/x-ogg;audio/mp3;audio/prs.sid;audio/x-flac;audio/mpeg;audio/x-mpeg;audio/x-mod;audio/x-it;audio/x-s3m;audio/x-xm;audio/x-mpegurl;audio/x-scpls;
+Actions=Play;Pause;Stop;Next;Prev;
+MimeType=application/ogg;audio/x-vorbis+ogg;application/x-ogg;audio/mp3;audio/prs.sid;audio/x-flac;audio/mpeg;audio/x-mpeg;audio/x-mod;audio/x-it;audio/x-s3m;audio/x-xm;audio/x-mpegurl;audio/x-scpls;application/x-cue;
 Categories=Audio;AudioVideo;Player;GTK;
-Keywords=Sound;Music;Audio;Player;Musicplayer;MP3
-Keywords[zh_TW]=Sound;Music;Audio;Player;Musicplayer;MP3;音樂;音樂播放器;播放器;音訊
+Keywords=Sound;Music;Audio;Player;Musicplayer;MP3;
+Keywords[zh_TW]=Sound;Music;Audio;Player;Musicplayer;MP3;音樂;音樂播放器;播放器;音訊;
 
-X-Ayatana-Desktop-Shortcuts=Play;Pause;Stop;Next;Prev
+X-Ayatana-Desktop-Shortcuts=Play;Pause;Stop;Next;Prev;
 X-PulseAudio-Properties=media.role=music
-
-[Play Shortcut Group]
-Name=Play
-Name[zh_CN]=播放
-Name[zh_TW]=播放
-Exec=deadbeef --play
-TargetEnvironment=Unity
-
-[Pause Shortcut Group]
-Name=Pause
-Name[zh_CN]=暂停
-Name[zh_TW]=暫停
-Exec=deadbeef --pause
-TargetEnvironment=Unity
-
-[Stop Shortcut Group]
-Name=Stop
-Name[zh_CN]=停止
-Name[zh_TW]=停止
-Exec=deadbeef --stop
-TargetEnvironment=Unity
-
-[Next Shortcut Group]
-Name=Next
-Name[zh_CN]=下一首
-Name[zh_TW]=下一首
-Exec=deadbeef --next
-TargetEnvironment=Unity
-
-[Prev Shortcut Group]
-Name=Prev
-Name[zh_CN]=上一首
-Name[zh_TW]=上一首
-Exec=deadbeef --prev
-TargetEnvironment=Unity
 
 [Desktop Action Play]
 Name=Play

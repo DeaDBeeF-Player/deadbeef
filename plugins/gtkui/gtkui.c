@@ -147,12 +147,10 @@ gtkpl_free (DdbListview *pl) {
 // update status bar and window title
 static int sb_context_id = -1;
 static char sb_text[512];
-static float last_songpos = -1;
-static char sbitrate[20] = "";
-static struct timeval last_br_update;
 
 static void
 format_timestr (char *buf, int sz, float time) {
+    time = roundf(time);
     int daystotal = (int)time / (3600*24);
     int hourtotal = ((int)time / 3600) % 24;
     int mintotal = ((int)time/60) % 60;
@@ -205,10 +203,11 @@ update_songinfo (gpointer unused) {
     deadbeef->tf_eval (&ctx, bc, buffer, sizeof (buffer));
     snprintf (sbtext_new,
               sizeof (sbtext_new),
-              "%s | %d tracks | %s total playtime",
+              "%s | %d tracks | %s %s",
               buffer,
               deadbeef->pl_getcount (PL_MAIN),
-              totaltime_str);
+              totaltime_str,
+              _("total playtime"));
 
     if (strcmp (sbtext_new, sb_text)) {
         strcpy (sb_text, sbtext_new);
@@ -401,14 +400,27 @@ gtkui_titlebar_tf_init (void) {
     deadbeef->conf_get_str ("gtkui.titlebar_stopped_tf", gtkui_default_titlebar_stopped, fmt, sizeof (fmt));
     titlebar_stopped_bc = deadbeef->tf_compile (fmt);
 
-    const char statusbar_tf_with_seltime[] = "$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length% | %selection_playback_time% selection playtime";
-    const char statusbar_tf[] = "$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length%";
+    static const char statusbar_tf_with_seltime_fmt[] = "$if2($strcmp(%%ispaused%%,),%s | )$if2($upper(%%codec%%),-) |[ %%playback_bitrate%% kbps |][ %%samplerate%%Hz |][ %%:BPS%% %s |][ %%channels%% |] %%playback_time%% / %%length%% | %%selection_playback_time%% %s";
 
-    const char statusbar_stopped_tf_with_seltime[] = "Stopped | %selection_playback_time% selection playtime";
-    const char statusbar_stopped_tf[] = "Stopped";
+    static const char statusbar_tf_fmt[] = "$if2($strcmp(%%ispaused%%,),%s | )$if2($upper(%%codec%%),-) |[ %%playback_bitrate%% kbps |][ %%samplerate%%Hz |][ %%:BPS%% %s |][ %%channels%% |] %%playback_time%% / %%length%%";
 
-    statusbar_bc = deadbeef->tf_compile (deadbeef->conf_get_int ("gtkui.statusbar_seltime", 0) ? statusbar_tf_with_seltime : statusbar_tf);
-    statusbar_stopped_bc = deadbeef->tf_compile (deadbeef->conf_get_int ("gtkui.statusbar_seltime", 0) ? statusbar_stopped_tf_with_seltime : statusbar_stopped_tf);
+    const char statusbar_stopped_tf_with_seltime_fmt[] = "%s | %%selection_playback_time%% %s";
+    const char statusbar_stopped_tf_fmt[] = "%s";
+
+    char statusbar_tf[1024];
+    char statusbar_stopped_tf[1024];
+
+    if (deadbeef->conf_get_int ("gtkui.statusbar_seltime", 0)) {
+        snprintf (statusbar_tf, sizeof (statusbar_tf), statusbar_tf_with_seltime_fmt, _("Paused"), _("bit"), _("selection playtime"));
+        snprintf (statusbar_stopped_tf, sizeof (statusbar_stopped_tf), statusbar_stopped_tf_with_seltime_fmt, _("Stopped"), _("selection playtime"));
+    }
+    else {
+        snprintf (statusbar_tf, sizeof (statusbar_tf), statusbar_tf_fmt, _("Paused"), _("bit"));
+        snprintf (statusbar_stopped_tf, sizeof (statusbar_stopped_tf), statusbar_stopped_tf_fmt, _("Stopped"));
+    }
+
+    statusbar_bc = deadbeef->tf_compile (statusbar_tf);
+    statusbar_stopped_bc = deadbeef->tf_compile (statusbar_stopped_tf);
 }
 
 void
@@ -787,9 +799,6 @@ add_mainmenu_actions_cb (void *data) {
     add_mainmenu_actions ();
     return FALSE;
 }
-
-int
-gtkui_thread (void *ctx);
 
 int
 gtkui_plt_add_dir (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
@@ -1375,39 +1384,6 @@ gtkui_mainwin_free(void) {
 
 }
 
-int
-gtkui_thread (void *ctx) {
-#ifdef __linux__
-    prctl (PR_SET_NAME, "deadbeef-gtkui", 0, 0, 0, 0);
-#endif
-
-    int argc = 2;
-    const char **argv = alloca (sizeof (char *) * argc);
-    argv[0] = "deadbeef";
-    argv[1] = "--sync";
-    //argv[1] = "--g-fatal-warnings";
-    if (!deadbeef->conf_get_int ("gtkui.sync", 0)) {
-        argc = 1;
-    }
-
-    gtk_disable_setlocale ();
-    add_pixmap_directory (deadbeef->get_system_dir(DDB_SYS_DIR_PIXMAP));
-
-#if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
-    gapp = deadbeef_app_new ();
-    g_application_run ( G_APPLICATION (gapp), argc, (char**)argv);
-    g_object_unref (gapp);
-#else
-    gtk_init (&argc, (char ***)&argv);
-
-    gtkui_mainwin_init ();
-    gtk_main ();
-    gtkui_mainwin_free ();
-#endif
-
-    return 0;
-}
-
 gboolean
 gtkui_set_progress_text_idle (gpointer data) {
     char *text = (char *)data;
@@ -1524,7 +1500,24 @@ gtkui_start (void) {
 
     import_legacy_tf ("playlist.group_by", "gtkui.playlist.group_by_tf");
 
-    gtkui_thread (NULL);
+    int argc = 1;
+    const char **argv = alloca (sizeof (char *) * argc);
+    argv[0] = "deadbeef";
+
+    gtk_disable_setlocale ();
+    add_pixmap_directory (deadbeef->get_system_dir(DDB_SYS_DIR_PIXMAP));
+
+#if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
+    gapp = deadbeef_app_new ();
+    g_application_run ( G_APPLICATION (gapp), argc, (char**)argv);
+    g_object_unref (gapp);
+#else
+    gtk_init (&argc, (char ***)&argv);
+
+    gtkui_mainwin_init ();
+    gtk_main ();
+    gtkui_mainwin_free ();
+#endif
 
     return 0;
 }
@@ -1683,7 +1676,7 @@ static DB_plugin_action_t action_show_help = {
 };
 
 static DB_plugin_action_t action_playback_loop_cycle = {
-    .title = "Playback/Cycle Playback Looping Mode",
+    .title = "Playback/Cycle Repeat Mode",
     .name = "loop_cycle",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_loop_cycle_handler,
@@ -1691,7 +1684,7 @@ static DB_plugin_action_t action_playback_loop_cycle = {
 };
 
 static DB_plugin_action_t action_playback_loop_off = {
-    .title = "Playback/Playback Looping - Don't loop",
+    .title = "Playback/Repeat - Off",
     .name = "loop_off",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_loop_off_handler,
@@ -1699,7 +1692,7 @@ static DB_plugin_action_t action_playback_loop_off = {
 };
 
 static DB_plugin_action_t action_playback_loop_single = {
-    .title = "Playback/Playback Looping - Single track",
+    .title = "Playback/Repeat - Single Track",
     .name = "loop_track",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_loop_single_handler,
@@ -1707,7 +1700,7 @@ static DB_plugin_action_t action_playback_loop_single = {
 };
 
 static DB_plugin_action_t action_playback_loop_all = {
-    .title = "Playback/Playback Looping - All",
+    .title = "Playback/Repeat - All",
     .name = "loop_all",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_loop_all_handler,
@@ -1715,7 +1708,7 @@ static DB_plugin_action_t action_playback_loop_all = {
 };
 
 static DB_plugin_action_t action_playback_order_cycle = {
-    .title = "Playback/Cycle Playback Order",
+    .title = "Playback/Cycle Shuffle Mode",
     .name = "order_cycle",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_cycle_handler,
@@ -1723,7 +1716,7 @@ static DB_plugin_action_t action_playback_order_cycle = {
 };
 
 static DB_plugin_action_t action_playback_order_random = {
-    .title = "Playback/Playback Order - Random",
+    .title = "Playback/Shuffle - Random Tracks",
     .name = "order_random",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_random_handler,
@@ -1731,7 +1724,7 @@ static DB_plugin_action_t action_playback_order_random = {
 };
 
 static DB_plugin_action_t action_playback_order_shuffle_albums = {
-    .title = "Playback/Playback Order - Shuffle albums",
+    .title = "Playback/Shuffle - Albums",
     .name = "order_shuffle_albums",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_shuffle_albums_handler,
@@ -1739,7 +1732,7 @@ static DB_plugin_action_t action_playback_order_shuffle_albums = {
 };
 
 static DB_plugin_action_t action_playback_order_shuffle = {
-    .title = "Playback/Playback Order - Shuffle tracks",
+    .title = "Playback/Shuffle - Tracks",
     .name = "order_shuffle",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_shuffle_handler,
@@ -1747,7 +1740,7 @@ static DB_plugin_action_t action_playback_order_shuffle = {
 };
 
 static DB_plugin_action_t action_playback_order_linear = {
-    .title = "Playback/Playback Order - Linear",
+    .title = "Playback/Shuffle - Off",
     .name = "order_linear",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_linear_handler,
@@ -1949,7 +1942,6 @@ static const char settings_dlg[] =
     "property \"Ask confirmation to delete files from disk\" checkbox gtkui.delete_files_ask 1;\n"
     "property \"Status icon volume control sensitivity\" entry gtkui.tray_volume_sensitivity 1;\n"
     "property \"Custom status icon\" entry gtkui.custom_tray_icon \"" TRAY_ICON "\" ;\n"
-    "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.sync 0;\n"
     "property \"Add separators between plugin context menu items\" checkbox gtkui.action_separators 0;\n"
     "property \"Use unicode chars instead of images for track state\" checkbox gtkui.unicode_playstate 0;\n"
     "property \"Disable seekbar overlay text\" checkbox gtkui.disable_seekbar_overlay 0;\n"

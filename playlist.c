@@ -459,6 +459,12 @@ plt_remove (int plt) {
         prev = p;
         p = p->next;
     }
+
+    if (!p) {
+        UNLOCK;
+        return;
+    }
+
     streamer_notify_playlist_deleted (p);
     if (!plt_loading) {
         // move files (will decrease number of files by 1)
@@ -724,6 +730,11 @@ plt_move (int from, int to) {
         p = p->next;
     }
 
+    if (!pfrom) {
+        UNLOCK;
+        return;
+    }
+
     // shift files to fill the gap
     for (int i = from; i < playlists_count-1; i++) {
         char path2[PATH_MAX];
@@ -792,7 +803,6 @@ plt_move (int from, int to) {
                 pfrom->next = next;
                 break;
             }
-            prev = p;
             p = p->next;
         }
     }

@@ -96,7 +96,6 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             }
             else if (read_extm3u) {
                 if (end - p >= 8 && !strncmp (p, "#EXTINF:", 8)) {
-                    length = -1;
                     memset (title, 0, sizeof (title));
                     memset (artist, 0, sizeof (artist));
                     p += 8;
@@ -244,7 +243,10 @@ pls_insert_file (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, c
     DB_playItem_t *it = NULL;
     const char *slash = NULL;
 
-    if (strrchr (uri, '/')) {
+    // is it relative path?
+    int isrelative = uri[0] != '/' || strncmp (uri, "../", 2);
+
+    if (!isrelative && strrchr (uri, '/')) {
         trace ("pls: inserting from uri: %s\n", uri);
         it = deadbeef->plt_insert_file2 (0, plt, after, uri, pabort, cb, user_data);
     }
@@ -274,7 +276,6 @@ pls_insert_file (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, c
 static DB_playItem_t *
 load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
     trace ("load_pls %s\n", fname);
-    const char *slash = strrchr (fname, '/');
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         trace ("failed to open file %s\n", fname);
@@ -357,7 +358,7 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             uri[n] = 0;
             trace ("uri: %s\n", uri);
             trace ("uri%d=%s\n", idx, uri);
-            p = ++e;
+            e++;
         }
         else if (!strncasecmp (p, "title", 5)) {
             int idx = atoi (p + 5);
@@ -396,7 +397,7 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             memcpy (title, p, n);
             title[n] = 0;
             trace ("title%d=%s\n", idx, title);
-            p = ++e;
+            e++;
         }
         else if (!strncasecmp (p, "length", 6)) {
             int idx = atoi (p + 6);

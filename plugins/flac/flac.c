@@ -243,11 +243,22 @@ static void
 cflac_error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data) {
     DB_fileinfo_t *_info = (DB_fileinfo_t *)client_data;
     flac_info_t *info = (flac_info_t *)_info;
-    if (status != FLAC__STREAM_DECODER_ERROR_STATUS_LOST_SYNC
-            && status != FLAC__STREAM_DECODER_ERROR_STATUS_FRAME_CRC_MISMATCH) {
-        trace ("cflac: got error callback: %s\n", FLAC__StreamDecoderErrorStatusString[status]);
-        info->flac_critical_error = 1;
+    if (status == FLAC__STREAM_DECODER_ERROR_STATUS_LOST_SYNC
+        || status == FLAC__STREAM_DECODER_ERROR_STATUS_FRAME_CRC_MISMATCH) {
+        return;
     }
+
+    if (status == FLAC__STREAM_DECODER_ERROR_STATUS_BAD_HEADER
+        && deadbeef->conf_get_int ("flac.ignore_bad_header_errors", 0)) {
+        return;
+    }
+
+    if (status == FLAC__STREAM_DECODER_ERROR_STATUS_UNPARSEABLE_STREAM
+        && deadbeef->conf_get_int ("flac.ignore_unparsable_stream_errors", 0)) {
+        return;
+    }
+    trace ("cflac: got error callback: %s\n", FLAC__StreamDecoderErrorStatusString[status]);
+    info->flac_critical_error = 1;
 }
 
 static void
@@ -1281,6 +1292,12 @@ error:
     return err;
 }
 
+static const char configdialog[] =
+    "property \"Ignore bad header errors\" checkbox flac.ignore_bad_header_errors 0;\n"
+    "property \"Ignore unparsable stream errors\" checkbox flac.ignore_unparsable_stream_errors 0;\n"
+;
+
+
 static const char *exts[] = { "flac", "oga", NULL };
 
 // define plugin interface
@@ -1325,6 +1342,7 @@ static DB_decoder_t plugin = {
         "SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
+    .plugin.configdialog = configdialog,
     .open = cflac_open,
     .open2 = cflac_open2,
     .init = cflac_init,

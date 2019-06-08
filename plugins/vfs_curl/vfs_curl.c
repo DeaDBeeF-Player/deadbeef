@@ -229,19 +229,19 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                     const char *orig_artist = deadbeef->pl_find_meta (fp->track, "artist");
 
                     if (!orig_title || strcasecmp (orig_title, tit)) {
-                        vfs_curl_set_meta (fp->track, "title", tit);
+                        vfs_curl_set_meta (fp->track, "!title", tit);
                         songstarted = 1;
                     }
                     if (!orig_artist || strcasecmp (orig_artist, title)) {
-                        vfs_curl_set_meta (fp->track, "artist", title);
+                        vfs_curl_set_meta (fp->track, "!artist", title);
                         songstarted = 1;
                     }
                 }
                 else {
                     const char *orig_title = deadbeef->pl_find_meta (fp->track, "title");
                     if (!orig_title || strcasecmp (orig_title, title)) {
-                        deadbeef->pl_delete_meta (fp->track, "artist");
-                        vfs_curl_set_meta (fp->track, "title", title);
+                        deadbeef->pl_delete_meta (fp->track, "!artist");
+                        vfs_curl_set_meta (fp->track, "!title", title);
                         songstarted = 1;
                     }
                 }
@@ -537,7 +537,7 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
         }
         else if (!strcasecmp (key, "icy-name")) {
             if (fp->track) {
-                vfs_curl_set_meta (fp->track, "album", value);
+                vfs_curl_set_meta (fp->track, "title", value);
                 refresh_playlist = 1;
             }
         }
@@ -551,6 +551,12 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
             //printf ("icy-metaint: %d\n", atoi (value));
             fp->icy_metaint = atoi (value);
             fp->wait_meta = fp->icy_metaint; 
+        }
+        else if (!strcasecmp (key, "icy-url")) {
+            if (fp->track) {
+                vfs_curl_set_meta (fp->track, "url", value);
+                refresh_playlist = 1;
+            }
         }
 
         // for icy streams, reset length

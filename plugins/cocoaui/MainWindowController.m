@@ -84,12 +84,12 @@ static char sb_text[512];
     DB_output_t *output = deadbeef->get_output ();
     char sbtext_new[512] = "-";
     
-    float pl_totaltime = deadbeef->pl_get_totaltime ();
+    float pl_totaltime = roundf(deadbeef->pl_get_totaltime ());
     int daystotal = (int)pl_totaltime / (3600*24);
     int hourtotal = ((int)pl_totaltime / 3600) % 24;
     int mintotal = ((int)pl_totaltime/60) % 60;
     int sectotal = ((int)pl_totaltime) % 60;
-    
+
     char totaltime_str[512] = "";
     if (daystotal == 0) {
         snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
@@ -233,36 +233,6 @@ static char sb_text[512];
     if (idx != -1) {
         deadbeef->plt_remove (idx);
     }
-}
-
-- (IBAction)renamePlaylistAction:(id)sender {
-    ddb_playlist_t *plt = deadbeef->plt_get_for_idx ([_tabStrip clickedTab]);
-    int l = deadbeef->plt_get_title (plt, NULL, 0);
-    char buf[l+1];
-    deadbeef->plt_get_title (plt, buf, (int)sizeof buf);
-    deadbeef->plt_unref (plt);
-    [_renamePlaylistTitle setStringValue:[NSString stringWithUTF8String:buf]];
-    [NSApp beginSheet:self.renamePlaylistWindow modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndRenamePlaylist:returnCode:contextInfo:) contextInfo:nil];
-}
-
-- (void)didEndRenamePlaylist:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    [sheet orderOut:self];
-
-    if (returnCode == NSOKButton) {
-        ddb_playlist_t *plt = deadbeef->plt_get_for_idx ([_tabStrip clickedTab]);
-        deadbeef->plt_set_title (plt, [[_renamePlaylistTitle stringValue] UTF8String]);
-        deadbeef->plt_save_config (plt);
-        deadbeef->plt_unref (plt);
-    }
-}
-
-- (IBAction)renamePlaylistCancelAction:(id)sender {
-    [NSApp endSheet:self.renamePlaylistWindow returnCode:NSCancelButton];
-}
-
-- (IBAction)renamePlaylistOKAction:(id)sender {
-    [NSApp endSheet:self.renamePlaylistWindow returnCode:NSOKButton];
 }
 
 - (void)updateVolumeBar {

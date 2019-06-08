@@ -1736,6 +1736,29 @@ process_query (const cover_query_t *query)
         }
     }
 
+    if (artwork_enable_local && deadbeef->is_local_file (query->fname)) {
+        char *fname_copy = strdup (query->fname);
+        if (fname_copy) {
+            char *vfs_fname = vfs_path (fname_copy);
+            if (vfs_fname) {
+                /* Search inside scannable VFS containers */
+                DB_vfs_t *plugin = scandir_plug (vfs_fname);
+                if (plugin && !local_image_file (cache_path, vfs_fname, fname_copy, plugin)) {
+                    free (fname_copy);
+                    return 1;
+                }
+            }
+
+            /* Search in file directory */
+            if (!local_image_file (cache_path, dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL)) {
+                free (fname_copy);
+                return 1;
+            }
+
+            free (fname_copy);
+        }
+    }
+
     if (artwork_enable_embedded && deadbeef->is_local_file (query->fname)) {
 #ifdef USE_METAFLAC
         // try to load embedded from flac metadata
@@ -1761,29 +1784,6 @@ process_query (const cover_query_t *query)
         trace ("trying to load artwork from mp4 tag for %s\n", query->fname);
         if (!mp4_extract_art (query->fname, cache_path)) {
             return 1;
-        }
-    }
-
-    if (artwork_enable_local && deadbeef->is_local_file (query->fname)) {
-        char *fname_copy = strdup (query->fname);
-        if (fname_copy) {
-            char *vfs_fname = vfs_path (fname_copy);
-            if (vfs_fname) {
-                /* Search inside scannable VFS containers */
-                DB_vfs_t *plugin = scandir_plug (vfs_fname);
-                if (plugin && !local_image_file (cache_path, vfs_fname, fname_copy, plugin)) {
-                    free (fname_copy);
-                    return 1;
-                }
-            }
-
-            /* Search in file directory */
-            if (!local_image_file (cache_path, dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL)) {
-                free (fname_copy);
-                return 1;
-            }
-
-            free (fname_copy);
         }
     }
 

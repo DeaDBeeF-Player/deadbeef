@@ -81,7 +81,7 @@
 
     // foreground
 
-    rc.size.width = (int)(rc.size.width * _value / ([self maxValue] - [self minValue]));
+    rc.size.width = (int)(rc.size.width * self.doubleValue / ([self maxValue] - [self minValue]));
     rc.size.height -= 2;
     rc.origin.y += 1;
     NSWindow *window = [controlView window];

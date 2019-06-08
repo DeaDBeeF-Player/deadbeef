@@ -97,6 +97,12 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, 
     [_mainWindow updateVolumeBar];
 }
 
+- (void)outputDeviceChanged {
+    if (_prefWindow && _prefWindow.window.visible) {
+        [_prefWindow outputDeviceChanged];
+    }
+}
+
 - (void)configChanged
 {
     id order_items[] = {
@@ -682,6 +688,9 @@ main_cleanup_and_quit (void);
     }
     else if (_id == DB_EV_VOLUMECHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(volumeChanged) withObject:nil waitUntilDone:NO];
+    }
+    else if (_id == DB_EV_OUTPUTCHANGED) {
+        [g_appDelegate performSelectorOnMainThread:@selector(outputDeviceChanged) withObject:nil waitUntilDone:NO];
     }
 
     return 0;
