@@ -100,7 +100,6 @@ typedef struct {
     // size of second child
     int size2;
     float ratio;
-    int got_ratio;
     int locked;
 } w_splitter_t;
 
@@ -1192,17 +1191,26 @@ w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) 
         return NULL;
     }
 
+    w_splitter_t *sp = (w_splitter_t *)w;
+
+    int got_ratio = 0;
+
     char key[MAX_TOKEN], val[MAX_TOKEN];
     for (;;) {
         get_keyvalue (s,key,val);
-        w_splitter_t *sp = (w_splitter_t *)w;
 
         if (!strcmp (key, "locked")) {
             sp->locked = atoi (val);
         }
         else if (!strcmp (key, "ratio")) {
             sp->ratio = atof (val);
-            sp->got_ratio = 1;
+            if (sp->ratio < 0) {
+                sp->ratio = 0;
+            }
+            if (sp->ratio > 1) {
+                sp->ratio = 1;
+            }
+            got_ratio = 1;
         }
         else if (!strcmp (key, "pos")) {
             sp->size1 = atoi (val);
@@ -1210,6 +1218,10 @@ w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) 
         else if (!strcmp (key, "size2")) {
             sp->size2 = atoi (val);
         }
+    }
+
+    if (!got_ratio) {
+        sp->ratio = 0.5;
     }
 
     return s;
@@ -1357,19 +1369,7 @@ void
 w_splitter_init (ddb_gtkui_widget_t *base) {
     w_splitter_t *w = (w_splitter_t *)base;
 
-    if (!w->got_ratio) { // migration from pre-1.8
-        GtkAllocation a;
-        gtk_widget_get_allocation(w->box, &a);
-        if (w->size1 > 0) {
-            w->locked = DDB_SPLITTER_SIZE_MODE_LOCK_C1;
-        }
-        else if (w->size2 > 0) {
-            w->locked = DDB_SPLITTER_SIZE_MODE_LOCK_C2;
-        }
-    }
-    else {
-        ddb_splitter_set_proportion (DDB_SPLITTER (w->box), w->ratio);
-    }
+    ddb_splitter_set_proportion (DDB_SPLITTER (w->box), w->ratio);
     ddb_splitter_set_size_mode (DDB_SPLITTER (w->box), w->locked);
     if (w->locked == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
         ddb_splitter_set_child1_size (DDB_SPLITTER (w->box), w->size1);
