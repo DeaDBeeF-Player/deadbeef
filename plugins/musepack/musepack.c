@@ -362,24 +362,6 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int64_t totalsamples = mpc_streaminfo_get_length_samples (&si);
     double dur = mpc_streaminfo_get_length (&si);
 
-    // replay gain
-    float gain_title = 0.f;
-    float gain_album = 0.f;
-    float peak_title = 1.f;
-    float peak_album = 1.f;
-    if (si.gain_title != 0) {
-        gain_title = 64.82-si.gain_title/256.0;
-    }
-    if (si.gain_album != 0) {
-        gain_album = 64.82-si.gain_album/256.0;
-    }
-    if (si.peak_title != 0) {
-        peak_title = pow (10, si.peak_title / (20.0 * 256.0)) / (1<<15);
-    }
-    if (si.peak_album != 0) {
-        peak_album = pow (10, si.peak_album / (20.0 * 256.0)) / (1<<15);
-    }
-
     // chapters
     int nchapters = mpc_demux_chap_nb (demux);
     DB_playItem_t *prev = NULL;
@@ -393,17 +375,6 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             deadbeef->pl_set_meta_int (it, ":TRACKNUM", i);
             deadbeef->pl_item_set_startsample (it, ch->sample);
             deadbeef->pl_item_set_endsample (it, totalsamples-1);
-            float gain = gain_title, peak = peak_title;
-            if (ch->gain != 0) {
-                gain = 64.82-ch->gain/256.0;
-            }
-            if (ch->peak != 0) {
-                peak = pow (10, ch->peak / (20.0 * 256.0)) / (1<<15);
-            }
-            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, gain_album);
-            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, peak_album);
-            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, gain_title);
-            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, peak_title);
             if (!prev) {
                 meta = deadbeef->pl_item_alloc ();
                 /*int apeerr = */deadbeef->junk_apev2_read (meta, fp);
@@ -450,10 +421,6 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->plt_set_item_duration (plt, it, dur);
 
     /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
-    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, gain_album);
-    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, peak_album);
-    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, gain_title);
-    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, peak_title);
 
     deadbeef->fclose (fp);
 
