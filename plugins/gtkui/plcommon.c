@@ -167,17 +167,11 @@ create_col_info (DdbListview *listview, int id) {
     return info;
 }
 
-static gboolean
-coverart_release_cb (void *user_data) {
+static void
+coverart_release (void *user_data) {
     col_info_t *info = user_data;
     g_object_unref(info->listview->list);
     free(user_data);
-    return FALSE;
-}
-
-static void
-coverart_release (void *user_data) {
-    g_idle_add(coverart_release_cb, user_data);
 }
 
 void
