@@ -121,10 +121,20 @@ cmp3_set_extra_properties (DB_playItem_t *it, mp3info_t *mp3info, int fake) {
     else {
         deadbeef->pl_replace_meta (it, ":FILE_SIZE", "∞");
     }
-    if (mp3info->avg_bitrate > 0) {
+
+
+    if (mp3info->datasize >= 0 && mp3info->have_duration) {
+        // bitrate from file size
+        double dur = (double)deadbeef->pl_get_item_duration (it);
+        int bitrate = mp3info->datasize * 8 / dur / 1000;
+        snprintf (s, sizeof (s), "%d", bitrate);
+        deadbeef->pl_replace_meta (it, ":BITRATE", s);
+    }
+    else if (mp3info->avg_bitrate > 0) {
         snprintf (s, sizeof (s), "%d", (int)(mp3info->avg_bitrate/1000));
         deadbeef->pl_replace_meta (it, ":BITRATE", s);
     }
+
     snprintf (s, sizeof (s), "%d", mp3info->ref_packet.nchannels);
     deadbeef->pl_replace_meta (it, ":CHANNELS", s);
     snprintf (s, sizeof (s), "%d", mp3info->ref_packet.samplerate);
@@ -287,8 +297,6 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             return -1;
         }
 
-        cmp3_set_extra_properties (it, &info->mp3info, 1);
-
         ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
         info->startsample = info->mp3info.delay;
         if (info->mp3info.totalsamples >= 0) {
@@ -299,6 +307,9 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             deadbeef->plt_set_item_duration (plt, it, -1);
             info->endsample = -1;
         }
+
+        cmp3_set_extra_properties (it, &info->mp3info, 1);
+
         if (plt) {
             deadbeef->plt_unref (plt);
         }
@@ -617,9 +628,10 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->pl_set_meta_int (it, ":MP3_DELAY", mp3info.delay);
     deadbeef->pl_set_meta_int (it, ":MP3_PADDING", mp3info.padding);
 
+    deadbeef->plt_set_item_duration (plt, it, (float)((double)mp3info.totalsamples/mp3info.ref_packet.samplerate));
+
     cmp3_set_extra_properties (it, &mp3info, 0);
 
-    deadbeef->plt_set_item_duration (plt, it, (float)((double)mp3info.totalsamples/mp3info.ref_packet.samplerate));
     deadbeef->fclose (fp);
 
     DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, mp3info.totalsamples-mp3info.delay-mp3info.padding, mp3info.ref_packet.samplerate);
