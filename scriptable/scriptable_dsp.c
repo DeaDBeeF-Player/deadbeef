@@ -1,8 +1,10 @@
 #include "scriptable_dsp.h"
+#include "pluginsettings.h"
 #include <dirent.h>
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <assert.h>
 
 extern DB_functions_t *deadbeef;
 
@@ -230,15 +232,36 @@ scriptableDspConfigToDspChain (scriptableItem_t *item) {
             break;
         }
         DB_dsp_t *dsp = (DB_dsp_t *)plugin;
+
         ddb_dsp_context_t *ctx = dsp->open ();
         if (dsp->num_params) {
+            settings_data_t dt;
+            memset (&dt, 0, sizeof (dt));
+            if (dsp->configdialog) {
+                settings_data_init (&dt, dsp->configdialog);
+            }
+
             int n = dsp->num_params();
             for (int i = 0; i < n; i++) {
                 char key[10];
                 snprintf (key, sizeof (key), "%d", i);
                 const char *value = scriptableItemPropertyValueForKey(c, key);
-                dsp->set_param (ctx, i, value ? value : "");
+                if (!value) {
+                    for (int p = 0; p < dt.nprops; p++) {
+                        if (atoi(dt.props[p].key) == i) {
+                            value = dt.props[p].def;
+                            break;
+                        }
+                    }
+                }
+                assert (value);
+                dsp->set_param (ctx, i, value);
             }
+
+            if (dsp->configdialog) {
+                settings_data_free(&dt);
+            }
+
         }
         if (tail) {
             tail->next = ctx;
