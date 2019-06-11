@@ -683,7 +683,51 @@ ddb_splitter_unmap (GtkWidget *widget)
     GTK_WIDGET_CLASS (ddb_splitter_parent_class)->unmap (widget);
 }
 
+// Prevent panes from getting smaller than the underlying widget's natural size,
+// with priority on left/top pane.
+static gfloat
+_ddb_splitter_fix_proportion (DdbSplitter *splitter, gfloat proportion) {
+    GtkAllocation a;
+    gtk_widget_get_allocation (GTK_WIDGET (splitter), &a);
+    if (a.x < 0 || a.y < 0) {
+        return proportion;
+    }
+    float pos = proportion * (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL ? a.width : a.height);
+
+    GtkRequisition r1, r2;
 #if !GTK_CHECK_VERSION(3,0,0)
+    gtk_widget_size_request (splitter->priv->child1, &r1);
+    gtk_widget_size_request (splitter->priv->child2, &r2);
+#else
+    gtk_widget_get_preferred_size(splitter->priv->child1, NULL, &r1);
+    gtk_widget_get_preferred_size(splitter->priv->child2, NULL, &r2);
+#endif
+
+    if (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL) {
+        if (pos > a.width - r2.width) {
+            pos = a.width - r2.width;
+        }
+        if (pos < r1.width) {
+            pos = r1.width;
+        }
+    }
+    else {
+        if (pos > a.height - r2.height) {
+            pos = a.height - r2.height;
+        }
+        if (pos < r1.height) {
+            pos = r1.height;
+        }
+    }
+
+    if (pos < 0 || pos >= a.width) {
+        return proportion;
+    }
+    return pos / (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL ? a.width : a.height);
+}
+
+#if !GTK_CHECK_VERSION(3,0,0)
+
 static void
 ddb_splitter_size_request (GtkWidget      *widget,
         GtkRequisition *requisition)
@@ -745,7 +789,7 @@ ddb_splitter_get_preferred_size (GtkWidget *widget,
     gint child2_nat = 0;
 
     if (ddb_splitter_is_child_visible (splitter, 0)) {
-        func_get_preferred_size (splitter->priv->child1, &child1_min, &child2_nat);
+        func_get_preferred_size (splitter->priv->child1, &child1_min, &child1_nat);
     }
     if (ddb_splitter_is_child_visible (splitter, 1)) {
         func_get_preferred_size (splitter->priv->child2, &child2_min, &child2_nat);
@@ -910,7 +954,7 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *a_con)
             gtk_widget_size_allocate (sp_priv->child1, &a_c1);
             sp_priv->child1_size = a_c1.width;
             if (sp_priv->size_mode != DDB_SPLITTER_SIZE_MODE_PROP) {
-                sp_priv->proportion = CLAMP ((float)a_c1.width/con_width, 0.0f, 1.0f);
+                sp_priv->proportion = _ddb_splitter_fix_proportion (splitter, CLAMP ((float)a_c1.width/con_width, 0.0f, 1.0f));
             }
             sp_priv->handle_pos.x = a_con->x + sp_priv->child1_size + border_width;
             sp_priv->handle_pos.y = a_con->y + border_width;
@@ -952,7 +996,7 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *a_con)
             gtk_widget_size_allocate (sp_priv->child1, &a_c1);
             sp_priv->child1_size = a_c1.height;
             if (sp_priv->size_mode != DDB_SPLITTER_SIZE_MODE_PROP) {
-                sp_priv->proportion = CLAMP ((float)a_c1.height/con_height, 0.0f, 1.0f);
+                sp_priv->proportion = _ddb_splitter_fix_proportion (splitter, CLAMP ((float)a_c1.height/con_height, 0.0f, 1.0f));
             }
             sp_priv->handle_pos.x = a_con->x + border_width;
             sp_priv->handle_pos.y = a_con->y + sp_priv->child1_size + border_width;
@@ -1027,6 +1071,8 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *a_con)
                     handle_size);
         }
     }
+
+    splitter->priv->proportion = _ddb_splitter_fix_proportion(splitter, splitter->priv->proportion);
 
     g_object_freeze_notify (G_OBJECT (splitter));
     if (sp_priv->proportion != old_proportion) {
@@ -1264,6 +1310,9 @@ ddb_splitter_set_proportion (DdbSplitter *splitter, gfloat proportion)
     if (splitter->priv->size_mode == DDB_SPLITTER_SIZE_MODE_PROP
            && G_LIKELY (splitter->priv->proportion != proportion))
     {
+
+        proportion = _ddb_splitter_fix_proportion (splitter, proportion);
+
         splitter->priv->proportion = proportion;
         gtk_widget_queue_resize (GTK_WIDGET (splitter));
         g_object_notify (G_OBJECT (splitter), "proportion");

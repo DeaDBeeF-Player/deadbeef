@@ -51,6 +51,10 @@
 
 #define SUBGROUP_DELIMITER "|||"
 
+#if !GTK_CHECK_VERSION(3,22,0)
+#define gtk_menu_popup_at_pointer(menu,trigger_event) gtk_menu_popup(menu, NULL, NULL, NULL, NULL, 3, gtk_get_current_event_time())
+#endif
+
 typedef struct {
     int id;
     char *format;
@@ -141,9 +145,15 @@ pl_common_init(void)
 void
 pl_common_free (void)
 {
-    g_object_unref(play16_pixbuf);
-    g_object_unref(pause16_pixbuf);
-    g_object_unref(buffering16_pixbuf);
+    if (play16_pixbuf) {
+        g_object_unref(play16_pixbuf);
+    }
+    if (pause16_pixbuf) {
+        g_object_unref(pause16_pixbuf);
+    }
+    if (buffering16_pixbuf) {
+        g_object_unref(buffering16_pixbuf);
+    }
 }
 
 static col_info_t *
@@ -356,7 +366,7 @@ static void
 cover_draw_anything (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr, void *user_data) {
     GdkPixbuf *pixbuf = get_cover_art(it, -1, -1, NULL, NULL);
     if (!pixbuf) {
-        pixbuf = get_cover_art(it, width, width, cover_invalidate, user_data);
+        pixbuf = get_cover_art(it, width, height, cover_invalidate, user_data);
     }
     if (pixbuf) {
         cover_draw_cairo(pixbuf, x, min_y, max_y, width, height, cr, CAIRO_FILTER_FAST);
@@ -366,7 +376,7 @@ cover_draw_anything (DB_playItem_t *it, int x, int min_y, int max_y, int width, 
 
 static void
 cover_draw_exact (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr, void *user_data) {
-    GdkPixbuf *pixbuf = get_cover_art(it, width, width, cover_invalidate, user_data);
+    GdkPixbuf *pixbuf = get_cover_art(it, width, height, cover_invalidate, user_data);
     if (!pixbuf) {
         pixbuf = get_cover_art(it, -1, -1, NULL, NULL);
     }
@@ -468,9 +478,12 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
         else {
             pixbuf = buffering16_pixbuf;
         }
-        gdk_cairo_set_source_pixbuf (cr, pixbuf, x + width/2 - 8, y + height/2 - 8);
-        cairo_rectangle (cr, x + width/2 - 8, y + height/2 - 8, 16, 16);
-        cairo_fill (cr);
+
+        if (pixbuf) {
+            gdk_cairo_set_source_pixbuf (cr, pixbuf, x + width/2 - 8, y + height/2 - 8);
+            cairo_rectangle (cr, x + width/2 - 8, y + height/2 - 8, 16, 16);
+            cairo_fill (cr);
+        }
     }
     else if (it) {
         char text[1024] = "";
@@ -956,7 +969,7 @@ list_empty_region_context_menu (DdbListview *listview) {
             G_CALLBACK (on_paste_activate),
             NULL);
 
-    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL/*popup_menu_position_func*/, listview, 0, gtk_get_current_event_time());
+    gtk_menu_popup_at_pointer (GTK_MENU (playlist_menu), NULL);
 }
 
 void
@@ -1266,7 +1279,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
             G_CALLBACK (properties_activate),
             NULL);
 
-    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL/*popup_menu_position_func*/, listview, 0, gtk_get_current_event_time());
+    gtk_menu_popup_at_pointer (GTK_MENU (playlist_menu), NULL);
 }
 
 static char *
@@ -1958,7 +1971,7 @@ pl_common_header_context_menu (DdbListview *ps, int column) {
     g_object_set_data (G_OBJECT (menu), "ps", ps);
     g_object_set_data (G_OBJECT (menu), "column", GINT_TO_POINTER (column));
 
-    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
+    gtk_menu_popup_at_pointer (GTK_MENU (menu), NULL);
 }
 
 void

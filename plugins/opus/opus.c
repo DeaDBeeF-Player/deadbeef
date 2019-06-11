@@ -42,7 +42,6 @@ typedef struct {
     OggOpusFile *opusfile;
     uint8_t *channelmap;
 
-    int is_subtrack;
     int cur_bit_stream;
 
     int set_bitrate;
@@ -316,7 +315,6 @@ opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         opusdec_seek_sample (_info, 0);
     }
 
-    info->is_subtrack = deadbeef->pl_get_item_flags(it) & DDB_IS_SUBTRACK;
     deadbeef->pl_replace_meta (it, "!FILETYPE", "Ogg Opus");
     deadbeef->pl_set_meta_int (it, ":CHANNELS", head->channel_count);
 
@@ -403,8 +401,9 @@ opusdec_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
     // Don't read past the end of a sub-track
     int samples_to_read = size / sizeof(float) / _info->fmt.channels;
-    if (info->is_subtrack) {
-        opus_int64 samples_left = deadbeef->pl_item_get_endsample (info->it) - op_pcm_tell (info->opusfile);
+    int64_t endsample = deadbeef->pl_item_get_endsample (info->it);
+    if (endsample > 0) {
+        opus_int64 samples_left = endsample - op_pcm_tell (info->opusfile);
         if (samples_left < samples_to_read) {
             samples_to_read = (int)samples_left;
             size = samples_to_read * sizeof(float) * _info->fmt.channels;

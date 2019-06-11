@@ -1,14 +1,14 @@
+include "premake5-tools.lua"
+
 workspace "deadbeef"
    configurations { "debug", "release", "debug32", "release32" }
    platforms { "Windows" }
    defaultplatform "Windows"
 defines {
-    "VERSION=\"devel\"",
+    "VERSION=\"" .. get_version() .. "\"",
     "_GNU_SOURCE",
     "HAVE_LOG2=1"
 }
-
-include "premake5-tools.lua"
 
 if nls() then
   defines {"ENABLE_NLS"}
@@ -19,13 +19,16 @@ newoption {
   trigger = "standard",
   description = "compile deadbeef with standard set of plugins for windows",
 }
+
 if _OPTIONS["standard"] ~= nil then
-  _OPTIONS["plugin-artwork"] = "disabled"
-  _OPTIONS["plugin-converter"] = "disabled"
-  _OPTIONS["plugin-converter_gtk2"] = "disabled"
-  _OPTIONS["plugin-converter_gtk3"] = "disabled"
-  _OPTIONS["plugin-ffmpeg"] = "disabled"
-  _OPTIONS["plugin-wildmidi"] = "disabled"
+  plugins_to_disable = {"plugin-artwork", "plugin-converter", "plugin-converter_gtk2",
+                        "plugin-converter_gtk3","plugin-ffmpeg","plugin-waveout",
+                        "plugin-wildmidi" }
+  for i,v in ipairs(plugins_to_disable) do
+    if _OPTIONS[v] == nil then
+      _OPTIONS[v] = "disabled"
+    end
+  end
 end
 
 defines {"HAVE_ICONV"}
@@ -77,8 +80,17 @@ project "libwin"
    links {"dl"}
    removelinks {"libwin"}
 
+newoption {
+    trigger = "debug-console",
+    description = "Run deadbeef in console for debug output",
+  }
+
 project "deadbeef"
+if (_OPTIONS["debug-console"]) then
+   kind "ConsoleApp"
+else
    kind "WindowedApp"
+end
    language "C"
    targetdir "bin/%{cfg.buildcfg}"
 
@@ -96,7 +108,8 @@ project "deadbeef"
    links { "m", "pthread", "dl"}
    filter "system:Windows"
       files {
-        "icons/deadbeef-icon.rc"
+        "icons/deadbeef-icon.rc",
+        "shared/windows/Resources.rc"
       }
 
 local mp3_v = option ("plugin-mp3", "libmpg123", "mad")
@@ -128,6 +141,17 @@ project "mp3"
       defines { "USE_LIBMAD=1" }
       links { "mad" }
    end
+end
+
+-- no pkgconfig for libfaad, do checking manually
+if _OPTIONS["plugin-aac"] == "auto" or _OPTIONS["plugin-aac"] == nil then
+  -- hard-coded :(
+  if os.outputof("ls /mingw64/include/neaacdec.h") == nil  then
+    print ("\27[93m" .. "neaacdec.h not found in \"/mingw64/include/\", run premake5 with \"--plugin-aac=enabled\" to force enable aac plugin" ..  "\27[39m")
+    _OPTIONS["plugin-aac"] = "disabled"
+  else
+    _OPTIONS["plugin-aac"] = "enabled"
+  end
 end
 
 if option ("plugin-aac") then
@@ -332,6 +356,20 @@ project "portaudio"
        "plugins/portaudio/*.c",
    }
    pkgconfig ("portaudio-2.0")
+end
+
+if option ("plugin-waveout") then
+project "waveout"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/waveout/*.h",
+       "plugins/waveout/*.c",
+   }
+   links {"winmm", "ksuser"}
 end
 
 if option ("plugin-gtk2", "gtk+-2.0 jansson") then
@@ -565,7 +603,7 @@ project "m3u"
    }
 end
 
-if option ("plugin-vfs_curl") then
+if option ("plugin-vfs_curl", "libcurl") then
 project "vfs_curl"
    kind "SharedLib"
    language "C"
@@ -696,6 +734,40 @@ project "wildmidi_plugin"
    links { "m" }
 end
 
+if option ("plugin-musepack") then
+project "musepack_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "musepack"
+   files {
+       "plugins/musepack/musepack.c",
+       "plugins/musepack/huffman.c",
+       "plugins/musepack/mpc_bits_reader.c",
+       "plugins/musepack/mpc_decoder.c",
+       "plugins/musepack/mpc_demux.c",
+       "plugins/musepack/mpc_reader.c",
+       "plugins/musepack/requant.c",
+       "plugins/musepack/streaminfo.c",
+       "plugins/musepack/synth_filter.c",
+       "plugins/musepack/crc32.c",
+       "plugins/musepack/decoder.h",
+       "plugins/musepack/huffman.h",
+       "plugins/musepack/internal.h",
+       "plugins/musepack/mpc_bits_reader.h",
+       "plugins/musepack/mpc/mpcdec.h",
+       "plugins/musepack/mpcdec_math.h",
+       "plugins/musepack/mpc/reader.h",
+       "plugins/musepack/requant.h",
+       "plugins/musepack/mpc/streaminfo.h",
+       "plugins/musepack/mpc/mpc_types.h",
+       "plugins/musepack/mpc/minimax.h"
+   }
+   includedirs { "plugins/musepack" }
+   links { "m" }
+end
+
 if option ("plugin-artwork", "libjpeg libpng zlib flac ogg") then
 project "artwork_plugin"
    kind "SharedLib"
@@ -761,6 +833,21 @@ project "nullout"
    }
 end
 
+if option ("plugin-lastfm", "libcurl") then
+project "lastfm"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/lastfm/*.h",
+       "plugins/lastfm/*.c"
+   }
+   pkgconfig ("libcurl")
+end
+
+
 project "translations"
    kind "Utility"
    language "C"
@@ -817,7 +904,8 @@ project "resources_windows"
         -- Windows-10 theme and icons can be obtained from https://github.com/B00merang-Project/Windows-10 and https://github.com/B00merang-Project/Windows-10-Icons)
         "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/icons/Windows-10-Icons bin/%{cfg.buildcfg}/share/icons/ 2>>/dev/null ; cp -r $$i/share/themes/Windows-10 bin/%{cfg.buildcfg}/share/themes/ 2>>/dev/null ); done; true",
         -- Adwaita still needed for some icons
-        "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/icons/Adwaita bin/%{cfg.buildcfg}/share/icons/ 2>>/dev/null); done; true",
+		-- UPDATE: not anymore
+        -- "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/icons/Adwaita bin/%{cfg.buildcfg}/share/icons/ 2>>/dev/null); done; true",
         "echo \"output_plugin PortAudio output plugin\" > bin/%{cfg.buildcfg}/config/config",
         "echo \"gui_plugin GTK3\" >> bin/%{cfg.buildcfg}/config/config"
     }

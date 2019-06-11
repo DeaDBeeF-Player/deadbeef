@@ -446,6 +446,14 @@ pl_delete_all_meta (playItem_t *it) {
         }
         m = next;
     }
+
+    // delete replaygain fields
+    extern const char *ddb_internal_rg_keys[];
+    pl_delete_meta(it, ddb_internal_rg_keys[DDB_REPLAYGAIN_ALBUMGAIN]);
+    pl_delete_meta(it, ddb_internal_rg_keys[DDB_REPLAYGAIN_ALBUMPEAK]);
+    pl_delete_meta(it, ddb_internal_rg_keys[DDB_REPLAYGAIN_TRACKGAIN]);
+    pl_delete_meta(it, ddb_internal_rg_keys[DDB_REPLAYGAIN_TRACKPEAK]);
+
     uint32_t f = pl_get_item_flags (it);
     f &= ~DDB_TAG_MASK;
     pl_set_item_flags (it, f);

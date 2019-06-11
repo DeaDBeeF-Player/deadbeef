@@ -143,10 +143,23 @@ char *realpath (const char *path, char *resolved_path) {
         int argv_win_len = wcslen(argv_win);
         // convert to utf8
         ret = win_charset_conv ((char *) argv_win, (wcslen(argv_win)+1)*2, out_p, PATH_MAX, "WCHAR_T", "UTF-8");
+
+        // Set current directory, so that windows can find libraries needed to load plugins
+        {
+            char out_scd[strlen(out_p)];
+            strcpy (out_scd, out_p);
+            char *ll = strrchr (out_scd, '\\');
+            if (ll) {
+                *ll = 0;
+            }
+            SetCurrentDirectory(out_scd);
+        }
+
         // convert to DOS path
         path_short (out_p, out_p, PATH_MAX);
         first_call = 0;
         path_long_last_path_exists = 1;
+
     }
     else {
         // use path_long which will use GetLongPathName to resolve path

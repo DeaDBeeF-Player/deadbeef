@@ -394,7 +394,11 @@ static int
 portaudio_pause (void) {
     trace ("portaudio_pause\n");
     if (state == OUTPUT_STATE_STOPPED) {
-        return -1;
+        // If option 'Resume previous session on startup' is enabled deadbeef will call:
+        // portaudio_stop() and portaudio_pause() (no portaudio_play()).
+        // If it's the case we should just set the state and do the main job later.
+        state = OUTPUT_STATE_PAUSED;
+        return 0;
     }
     PaError err;
     err = Pa_AbortStream (stream);
@@ -625,12 +629,14 @@ static DB_output_t plugin = {
     .plugin.api_vmajor = 1,
     .plugin.api_vminor = 10,
     .plugin.version_major = 1,
-    .plugin.version_minor = 4,
+    .plugin.version_minor = 5,
     .plugin.type = DB_PLUGIN_OUTPUT,
     .plugin.id = "portaudio",
     .plugin.name = "PortAudio output plugin",
     .plugin.descr = "This plugin plays audio using PortAudio library.\n"
     "\n"
+    "Changes in version 1.5:\n"
+    "    * Fixed issues when resuming previous session.\n"
     "Changes in version 1.4:\n"
     "    * Fix device enumeration when ASCII used.\n"
     "    * Invalid characters will be discarded.\n"

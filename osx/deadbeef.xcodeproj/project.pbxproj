@@ -1562,6 +1562,7 @@
 		2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCF73B21A952F8900495740 /* PreferencesWindowController.h */; };
 		2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DCF73B31A952F8900495740 /* PreferencesWindowController.m */; };
 		2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2DD5262E2062F1DF002609C5 /* help-cocoa.txt */; };
+		2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
 		2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */; };
 		2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */; };
 		2DD877A31C370C7100CC94FB /* ferror68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD877A21C370C7100CC94FB /* ferror68.c */; };
@@ -12204,6 +12205,7 @@
 				2D48DC222269B731002CACFD /* ffap.dylib in Resources */,
 				2D48DC2F2269B731002CACFD /* convpresets in Resources */,
 				2D48DC302269B731002CACFD /* aac.dylib in Resources */,
+				2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */,
 				2D48DC312269B731002CACFD /* opus.dylib in Resources */,
 				2D48DC322269B731002CACFD /* libogglib.dylib in Resources */,
 				2D48DC332269B731002CACFD /* libopusfile.dylib in Resources */,

@@ -1190,22 +1190,38 @@ w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) 
     if (strcmp (type, "vsplitter") && strcmp (type, "hsplitter")) {
         return NULL;
     }
+
+    w_splitter_t *sp = (w_splitter_t *)w;
+
+    int got_ratio = 0;
+
     char key[MAX_TOKEN], val[MAX_TOKEN];
     for (;;) {
         get_keyvalue (s,key,val);
 
         if (!strcmp (key, "locked")) {
-            ((w_splitter_t *)w)->locked = atoi (val);
+            sp->locked = atoi (val);
         }
         else if (!strcmp (key, "ratio")) {
-            ((w_splitter_t *)w)->ratio = atof (val);
+            sp->ratio = atof (val);
+            if (sp->ratio < 0) {
+                sp->ratio = 0;
+            }
+            if (sp->ratio > 1) {
+                sp->ratio = 1;
+            }
+            got_ratio = 1;
         }
         else if (!strcmp (key, "pos")) {
-            ((w_splitter_t *)w)->size1 = atoi (val);
+            sp->size1 = atoi (val);
         }
         else if (!strcmp (key, "size2")) {
-            ((w_splitter_t *)w)->size2 = atoi (val);
+            sp->size2 = atoi (val);
         }
+    }
+
+    if (!got_ratio) {
+        sp->ratio = 0.5;
     }
 
     return s;
