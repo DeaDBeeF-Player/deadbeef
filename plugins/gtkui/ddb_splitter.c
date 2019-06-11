@@ -689,6 +689,9 @@ static gfloat
 _ddb_splitter_fix_proportion (DdbSplitter *splitter, gfloat proportion) {
     GtkAllocation a;
     gtk_widget_get_allocation (GTK_WIDGET (splitter), &a);
+    if (a.x < 0 || a.y < 0) {
+        return proportion;
+    }
     float pos = proportion * (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL ? a.width : a.height);
 
     GtkRequisition r1, r2;
