@@ -734,6 +734,8 @@
 		2D51999D1A436FD100670717 /* mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D51999B1A436FD100670717 /* mpg123.h */; };
 		2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D524C071B245AE00018C4FA /* DdbTitleFormattingHelpButton.h */; };
 		2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D524C081B245AE00018C4FA /* DdbTitleFormattingHelpButton.m */; };
+		2D54915722B1711E000FE7E3 /* HelpWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D54915522B1711E000FE7E3 /* HelpWindowController.h */; };
+		2D54915822B1711E000FE7E3 /* HelpWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D54915622B1711E000FE7E3 /* HelpWindowController.m */; };
 		2D565B0C1A40BCE200CE1F5D /* abi_align.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565A831A40BCE200CE1F5D /* abi_align.h */; };
 		2D565B0E1A40BCE200CE1F5D /* compat.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D565A851A40BCE200CE1F5D /* compat.c */; };
 		2D565B0F1A40BCE200CE1F5D /* compat.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565A861A40BCE200CE1F5D /* compat.h */; };
@@ -1700,7 +1702,6 @@
 		4D046CE41EA9F8C300B80B2E /* gmewrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D046CE21EA9F8C300B80B2E /* gmewrap.cpp */; };
 		4D046CE51EA9F8C300B80B2E /* gmewrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D046CE31EA9F8C300B80B2E /* gmewrap.h */; };
 		4D0B0CEE20162D95004162DA /* FormatConversionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D0B0CED20162D95004162DA /* FormatConversionTests.m */; };
-		4D12805F2062994F0015BDE8 /* HelpWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D12805E2062994F0015BDE8 /* HelpWindowController.swift */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
 		4D1B4A8F1837EC49003E6066 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
 		4D1B51681837F655003E6066 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51671837F655003E6066 /* AudioUnit.framework */; };
@@ -3771,6 +3772,8 @@
 		2D524C071B245AE00018C4FA /* DdbTitleFormattingHelpButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbTitleFormattingHelpButton.h; sourceTree = "<group>"; };
 		2D524C081B245AE00018C4FA /* DdbTitleFormattingHelpButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbTitleFormattingHelpButton.m; sourceTree = "<group>"; };
 		2D5423B61DCB38D600ACBDEB /* mono2stereo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mono2stereo.c; path = plugins/mono2stereo/mono2stereo.c; sourceTree = "<group>"; };
+		2D54915522B1711E000FE7E3 /* HelpWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HelpWindowController.h; sourceTree = "<group>"; };
+		2D54915622B1711E000FE7E3 /* HelpWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HelpWindowController.m; sourceTree = "<group>"; };
 		2D565A831A40BCE200CE1F5D /* abi_align.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = abi_align.h; path = "osx/deps/mpg123-1.21.0/src/libmpg123/abi_align.h"; sourceTree = "<group>"; };
 		2D565A851A40BCE200CE1F5D /* compat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = compat.c; path = "osx/deps/mpg123-1.21.0/src/libmpg123/compat.c"; sourceTree = "<group>"; };
 		2D565A861A40BCE200CE1F5D /* compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = compat.h; path = "osx/deps/mpg123-1.21.0/src/libmpg123/compat.h"; sourceTree = "<group>"; };
@@ -4782,8 +4785,6 @@
 		4D046CE21EA9F8C300B80B2E /* gmewrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gmewrap.cpp; path = plugins/gme/gmewrap.cpp; sourceTree = "<group>"; };
 		4D046CE31EA9F8C300B80B2E /* gmewrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gmewrap.h; path = plugins/gme/gmewrap.h; sourceTree = "<group>"; };
 		4D0B0CED20162D95004162DA /* FormatConversionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FormatConversionTests.m; sourceTree = "<group>"; };
-		4D12805D2062994F0015BDE8 /* deadbeef-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "deadbeef-Bridging-Header.h"; sourceTree = "<group>"; };
-		4D12805E2062994F0015BDE8 /* HelpWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpWindowController.swift; sourceTree = "<group>"; };
 		4D1B3E7A18379829003E6066 /* DeaDBeeF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeaDBeeF.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D1B3E7D18379829003E6066 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4D1B3E8018379829003E6066 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -9221,8 +9222,6 @@
 				2D1A56491D9FFB10005E5CDD /* ReplayGainScannerController.m */,
 				2D71C2681DC88E5C00247CEF /* ScriptableTableDataSource.h */,
 				2D71C2691DC88E5C00247CEF /* ScriptableTableDataSource.m */,
-				4D12805E2062994F0015BDE8 /* HelpWindowController.swift */,
-				4D12805D2062994F0015BDE8 /* deadbeef-Bridging-Header.h */,
 				2D98612F226C814000BAACB1 /* PropertySheetViewController.h */,
 				2D98613D226C814000BAACB1 /* PropertySheetViewController.m */,
 				2DF55C272270F415002C44DC /* ScriptableSelectViewController.h */,
@@ -9234,6 +9233,8 @@
 				2DF55C452271006D002C44DC /* ScriptableItemDelegate.h */,
 				2D651D15227227C300375AE2 /* ScriptableNodeEditorWindowController.h */,
 				2D651D16227227C300375AE2 /* ScriptableNodeEditorWindowController.m */,
+				2D54915522B1711E000FE7E3 /* HelpWindowController.h */,
+				2D54915622B1711E000FE7E3 /* HelpWindowController.m */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -10655,6 +10656,7 @@
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
 				2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */,
 				2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */,
+				2D54915722B1711E000FE7E3 /* HelpWindowController.h in Headers */,
 				2DF55C292270F415002C44DC /* ScriptableSelectViewController.h in Headers */,
 				2D71C26A1DC88E5C00247CEF /* ScriptableTableDataSource.h in Headers */,
 				2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */,
@@ -13665,12 +13667,12 @@
 				2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
 				2DF55C442270FF7E002C44DC /* ScriptablePropertySheetDataSource.m in Sources */,
-				4D12805F2062994F0015BDE8 /* HelpWindowController.swift in Sources */,
 				2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */,
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,
 				2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */,
 				2D828E5819E567C800EE874F /* DdbSearchWidget.m in Sources */,
 				2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */,
+				2D54915822B1711E000FE7E3 /* HelpWindowController.m in Sources */,
 				2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */,
 				2D986143226C816000BAACB1 /* BrowseButton.m in Sources */,
 			);
@@ -15942,10 +15944,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
-				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.2;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -15983,9 +15981,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
-				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.2;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -16781,7 +16776,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.2;
@@ -16811,7 +16806,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.2;
 			};
@@ -17675,10 +17670,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
-				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.2;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -17717,9 +17708,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
-				SWIFT_OBJC_BRIDGING_HEADER = "../plugins/cocoaui/deadbeef-Bridging-Header.h";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.2;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
