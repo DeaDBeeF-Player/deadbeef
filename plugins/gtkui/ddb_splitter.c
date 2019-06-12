@@ -692,6 +692,7 @@ _ddb_splitter_fix_proportion (DdbSplitter *splitter, gfloat proportion) {
     if (a.x < 0 || a.y < 0) {
         return proportion;
     }
+
     float pos = proportion * (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL ? a.width : a.height);
 
     GtkRequisition r1, r2;
@@ -720,8 +721,11 @@ _ddb_splitter_fix_proportion (DdbSplitter *splitter, gfloat proportion) {
         }
     }
 
-    if (pos < 0 || pos >= a.width) {
-        return proportion;
+    if (pos < 0) {
+        pos = 0;
+    }
+    else if (pos >= a.width - splitter->priv->handle_size) {
+        pos = a.width - splitter->priv->handle_size;
     }
     return pos / (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL ? a.width : a.height);
 }
@@ -853,12 +857,13 @@ ddb_splitter_get_preferred_height_for_width (GtkWidget *widget,
 #endif
 
 static gint
-ddb_splitter_child2_size_calc (DdbSplitterPrivate *sp_priv,
+ddb_splitter_child2_size_calc (DdbSplitter *splitter,
                                gint num_visible_children,
                                gboolean c1_visible,
                                gint con_size,
                                gint handle_size)
 {
+    DdbSplitterPrivate *sp_priv = splitter->priv;
     gint size = 0;
     if (sp_priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C2) {
         // child 2 locked, use saved size
@@ -882,12 +887,13 @@ ddb_splitter_child2_size_calc (DdbSplitterPrivate *sp_priv,
 }
 
 static gint
-ddb_splitter_child1_size_calc (DdbSplitterPrivate *sp_priv,
+ddb_splitter_child1_size_calc (DdbSplitter *splitter,
                                gint num_visible_children,
                                gboolean c2_visible,
                                gint con_size,
                                gint handle_size)
 {
+    DdbSplitterPrivate *sp_priv = splitter->priv;
     gint size = 0;
     if (sp_priv->size_mode == DDB_SPLITTER_SIZE_MODE_LOCK_C1) {
         // child 1 locked, use saved size
@@ -904,7 +910,8 @@ ddb_splitter_child1_size_calc (DdbSplitterPrivate *sp_priv,
         }
         else {
             // two children visible and proportional scaling is active
-            size = ceilf (con_size * sp_priv->proportion);
+            float p = _ddb_splitter_fix_proportion(splitter, sp_priv->proportion);
+            size = ceilf (con_size * p);
         }
     }
     return size;
@@ -918,7 +925,7 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *a_con)
     GtkWidget *c1 = sp_priv->child1;
     GtkWidget *c2 = sp_priv->child2;
 
-    gfloat old_proportion = sp_priv->proportion;
+    gfloat old_proportion = _ddb_splitter_fix_proportion(splitter, sp_priv->proportion);
 
     gint border_width = gtk_container_get_border_width (GTK_CONTAINER (splitter));
     gtk_widget_set_allocation (widget, a_con);
@@ -940,7 +947,7 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *a_con)
             // use full height in horitzontal splitter
             a_c1.height = MAX (1, con_height);
 
-            gint width = ddb_splitter_child1_size_calc (sp_priv,
+            gint width = ddb_splitter_child1_size_calc (splitter,
                                                         num_visible_children,
                                                         c2_visible,
                                                         con_width,
@@ -952,7 +959,7 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *a_con)
             gtk_widget_size_allocate (sp_priv->child1, &a_c1);
             sp_priv->child1_size = a_c1.width;
             if (sp_priv->size_mode != DDB_SPLITTER_SIZE_MODE_PROP) {
-                sp_priv->proportion = _ddb_splitter_fix_proportion (splitter, CLAMP ((float)a_c1.width/con_width, 0.0f, 1.0f));
+                sp_priv->proportion = CLAMP ((float)a_c1.width/con_width, 0.0f, 1.0f);
             }
             sp_priv->handle_pos.x = a_con->x + sp_priv->child1_size + border_width;
             sp_priv->handle_pos.y = a_con->y + border_width;
@@ -963,7 +970,7 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *a_con)
         if (c2_visible) {
             // use full height in horitzontal splitter
             a_c2.height = MAX (1, con_height);
-            gint width = ddb_splitter_child2_size_calc (sp_priv,
+            gint width = ddb_splitter_child2_size_calc (splitter,
                                                         num_visible_children,
                                                         c1_visible,
                                                         con_width,
@@ -981,7 +988,7 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *a_con)
             // use full width in vertical splitter
             a_c1.width = MAX (1, con_width);
 
-            gint height = ddb_splitter_child1_size_calc (sp_priv,
+            gint height = ddb_splitter_child1_size_calc (splitter,
                                                          num_visible_children,
                                                          c2_visible,
                                                          con_height,
@@ -994,7 +1001,7 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *a_con)
             gtk_widget_size_allocate (sp_priv->child1, &a_c1);
             sp_priv->child1_size = a_c1.height;
             if (sp_priv->size_mode != DDB_SPLITTER_SIZE_MODE_PROP) {
-                sp_priv->proportion = _ddb_splitter_fix_proportion (splitter, CLAMP ((float)a_c1.height/con_height, 0.0f, 1.0f));
+                sp_priv->proportion = CLAMP ((float)a_c1.height/con_height, 0.0f, 1.0f);
             }
             sp_priv->handle_pos.x = a_con->x + border_width;
             sp_priv->handle_pos.y = a_con->y + sp_priv->child1_size + border_width;
@@ -1006,7 +1013,7 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *a_con)
             // use full width in vertical splitter
             a_c2.width = MAX (1, con_width);
 
-            gint height = ddb_splitter_child2_size_calc (sp_priv,
+            gint height = ddb_splitter_child2_size_calc (splitter,
                                                          num_visible_children,
                                                          c1_visible,
                                                          con_height,
@@ -1069,8 +1076,6 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *a_con)
                     handle_size);
         }
     }
-
-    splitter->priv->proportion = _ddb_splitter_fix_proportion(splitter, splitter->priv->proportion);
 
     g_object_freeze_notify (G_OBJECT (splitter));
     if (sp_priv->proportion != old_proportion) {
@@ -1308,9 +1313,6 @@ ddb_splitter_set_proportion (DdbSplitter *splitter, gfloat proportion)
     if (splitter->priv->size_mode == DDB_SPLITTER_SIZE_MODE_PROP
            && G_LIKELY (splitter->priv->proportion != proportion))
     {
-
-        proportion = _ddb_splitter_fix_proportion (splitter, proportion);
-
         splitter->priv->proportion = proportion;
         gtk_widget_queue_resize (GTK_WIDGET (splitter));
         g_object_notify (G_OBJECT (splitter), "proportion");
