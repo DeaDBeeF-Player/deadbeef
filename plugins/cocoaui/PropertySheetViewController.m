@@ -192,7 +192,7 @@
                 [lbl setFont:fontLabel];
 
                 // resize label to fit content
-                calculated_label_w = [[lbl cell] cellSizeForBounds:lbl.bounds].width;
+                calculated_label_w = [[lbl cell] cellSizeForBounds:lbl.bounds].width+1;
                 [lbl setFrame:NSMakeRect(padding+label_width-calculated_label_w, y+3, calculated_label_w, unit_h-6)];
                 [lbl setAutoresizingMask:NSViewMinYMargin];
 
@@ -233,6 +233,7 @@
                     BrowseButton *btn = [[BrowseButton alloc] initWithFrame:NSMakeRect(label_width+padding*3+w, y+unit_h/2-5, 12, 10)];
                     [btn setAutoresizingMask:NSViewMinYMargin|NSViewMinXMargin];
                     btn.isDir = _settingsData.props[i].type == PROP_DIR;
+                    btn.initialPath = value;
                     btn.fileSelectedBlock = ^(NSString * _Nonnull path) {
                         tf.stringValue = path;
                         [self valueChanged:tf];

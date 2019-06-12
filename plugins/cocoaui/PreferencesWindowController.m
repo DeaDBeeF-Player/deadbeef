@@ -25,7 +25,6 @@
 #import "ScriptableTableDataSource.h"
 #import "ScriptableSelectViewController.h"
 #import "ScriptableNodeEditorViewController.h"
-#import "DeaDBeeF-Swift.h"
 #include "deadbeef.h"
 #include "pluginsettings.h"
 #include "scriptable_dsp.h"

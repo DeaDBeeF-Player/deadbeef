@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property BOOL isDir;
 @property (nonatomic, copy, nullable) void (^fileSelectedBlock)(NSString *path);
+@property NSString *initialPath;
 
 @end
 
