@@ -711,6 +711,9 @@ _ddb_splitter_fix_proportion (DdbSplitter *splitter, gfloat proportion) {
         if (pos < r1.width) {
             pos = r1.width;
         }
+        if (pos >= a.width - splitter->priv->handle_size) {
+            pos = a.width - splitter->priv->handle_size;
+        }
     }
     else {
         if (pos > a.height - r2.height) {
@@ -719,14 +722,15 @@ _ddb_splitter_fix_proportion (DdbSplitter *splitter, gfloat proportion) {
         if (pos < r1.height) {
             pos = r1.height;
         }
+        if (pos >= a.height - splitter->priv->handle_size) {
+            pos = a.height - splitter->priv->handle_size;
+        }
     }
 
     if (pos < 0) {
         pos = 0;
     }
-    else if (pos >= a.width - splitter->priv->handle_size) {
-        pos = a.width - splitter->priv->handle_size;
-    }
+
     return pos / (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL ? a.width : a.height);
 }
 
