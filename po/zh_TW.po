@@ -5,7 +5,7 @@
 # Translators:
 # BrLi <rainman59118@gmail.com>, 2013
 # BrLi <rainman59118@gmail.com>, 2013
-# Hiunn-hué <hiunnhue108@ymail.com>, 2015-2016
+# Hiunn-hué <hiunnhue108@ymail.com>, 2015-2016,2019
 # PCMan <pcman.tw@gmail.com>, 2010
 # Julian Lai <laichiaheng@outlook.com>, 2015-2017
 # Louis Chen <louistw@uab.edu>, 2019
@@ -14,9 +14,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-18 18:38+0200\n"
-"PO-Revision-Date: 2019-04-18 16:36+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2019-06-23 20:03+0200\n"
+"PO-Revision-Date: 2019-05-05 16:26+0000\n"
+"Last-Translator: Hiunn-hué <hiunnhue108@ymail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/deadbeef-player/"
 "deadbeef-player/language/zh_TW/)\n"
 "Language: zh_TW\n"
@@ -38,7 +38,7 @@ msgstr "DeaDBeeF %s ChangeLog"
 #: ../plugins/gtkui/callbacks.c:624
 #, c-format
 msgid "DeaDBeeF Translators"
-msgstr "DeaDBeeF 翻譯者"
+msgstr "DeaDBeeF 譯者"
 
 #: ../plugins/gtkui/callbacks.c:635 ../plugins/gtkui/interface.c:969
 #: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:159
@@ -107,141 +107,141 @@ msgstr "頻帶歸零"
 msgid "Presets"
 msgstr "預設值"
 
-#: ../plugins/gtkui/gtkui.c:165 ../tf.c:1935
+#: ../plugins/gtkui/gtkui.c:163 ../tf.c:1935
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 天 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:168 ../tf.c:1938
+#: ../plugins/gtkui/gtkui.c:166 ../tf.c:1938
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d 天 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:212
+#: ../plugins/gtkui/gtkui.c:210
 msgid "total playtime"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
+#: ../plugins/gtkui/gtkui.c:414 ../plugins/gtkui/gtkui.c:418
 msgid "Paused"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
+#: ../plugins/gtkui/gtkui.c:414 ../plugins/gtkui/gtkui.c:418
 msgid "bit"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:417
+#: ../plugins/gtkui/gtkui.c:414 ../plugins/gtkui/gtkui.c:415
 msgid "selection playtime"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:417 ../plugins/gtkui/gtkui.c:421
+#: ../plugins/gtkui/gtkui.c:415 ../plugins/gtkui/gtkui.c:419
 msgid "Stopped"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:684 ../translation/plugins.c:209
+#: ../plugins/gtkui/gtkui.c:682 ../translation/plugins.c:209
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
 #, no-c-format
 msgid "New Playlist"
 msgstr "新播放清單"
 
-#: ../plugins/gtkui/gtkui.c:687 ../plugins/pltbrowser/pltbrowser.c:75
+#: ../plugins/gtkui/gtkui.c:685 ../plugins/pltbrowser/pltbrowser.c:75
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "新播放清單 (%d)"
 
-#: ../plugins/gtkui/gtkui.c:744
+#: ../plugins/gtkui/gtkui.c:742
 #, c-format
 msgid "Copy of %s"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:747
+#: ../plugins/gtkui/gtkui.c:745
 #, c-format
 msgid "Copy of %s (%d)"
 msgstr ""
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1228
+#: ../plugins/gtkui/gtkui.c:1226
 msgid "Playlist with tabs"
 msgstr "播放清單 (含分頁)"
 
-#: ../plugins/gtkui/gtkui.c:1229 ../plugins/gtkui/interface.c:2285
+#: ../plugins/gtkui/gtkui.c:1227 ../plugins/gtkui/interface.c:2285
 #: ../plugins/gtkui/interface.c:2730 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Playlist"
 msgstr "播放清單"
 
-#: ../plugins/gtkui/gtkui.c:1232
+#: ../plugins/gtkui/gtkui.c:1230
 msgid "Splitter (top and bottom)"
 msgstr "分隔線 (上與下)"
 
-#: ../plugins/gtkui/gtkui.c:1233
+#: ../plugins/gtkui/gtkui.c:1231
 msgid "Splitter (left and right)"
 msgstr "分隔線 (左與右)"
 
-#: ../plugins/gtkui/gtkui.c:1235
+#: ../plugins/gtkui/gtkui.c:1233
 msgid "Tabs"
 msgstr "分頁"
 
-#: ../plugins/gtkui/gtkui.c:1236
+#: ../plugins/gtkui/gtkui.c:1234
 msgid "Playlist tabs"
 msgstr "播放清單分頁"
 
-#: ../plugins/gtkui/gtkui.c:1237
+#: ../plugins/gtkui/gtkui.c:1235
 msgid "Selection properties"
 msgstr "歌曲屬性"
 
-#: ../plugins/gtkui/gtkui.c:1238
+#: ../plugins/gtkui/gtkui.c:1236
 msgid "Album art display"
 msgstr "顯示專輯封面"
 
-#: ../plugins/gtkui/gtkui.c:1239
+#: ../plugins/gtkui/gtkui.c:1237
 msgid "Scope"
 msgstr "示波器"
 
-#: ../plugins/gtkui/gtkui.c:1240
+#: ../plugins/gtkui/gtkui.c:1238
 msgid "Spectrum"
 msgstr "頻譜"
 
-#: ../plugins/gtkui/gtkui.c:1241
+#: ../plugins/gtkui/gtkui.c:1239
 msgid "HBox"
 msgstr "HBox"
 
-#: ../plugins/gtkui/gtkui.c:1242
+#: ../plugins/gtkui/gtkui.c:1240
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:1243 ../plugins/gtkui/widgets.c:3851
-#: ../plugins/gtkui/widgets.c:3938
+#: ../plugins/gtkui/gtkui.c:1241 ../plugins/gtkui/widgets.c:3868
+#: ../plugins/gtkui/widgets.c:3955
 msgid "Button"
 msgstr "按鈕"
 
-#: ../plugins/gtkui/gtkui.c:1244
+#: ../plugins/gtkui/gtkui.c:1242
 msgid "Seekbar"
 msgstr "進度列"
 
-#: ../plugins/gtkui/gtkui.c:1245
+#: ../plugins/gtkui/gtkui.c:1243
 msgid "Playback controls"
 msgstr "播放控制按鈕"
 
-#: ../plugins/gtkui/gtkui.c:1246
+#: ../plugins/gtkui/gtkui.c:1244
 msgid "Volume bar"
 msgstr "音量列"
 
-#: ../plugins/gtkui/gtkui.c:1247
+#: ../plugins/gtkui/gtkui.c:1245
 msgid "Chiptune voices"
 msgstr "電子合成音"
 
-#: ../plugins/gtkui/gtkui.c:1248
+#: ../plugins/gtkui/gtkui.c:1246
 msgid "Log viewer"
 msgstr "日誌檢視器"
 
-#: ../plugins/gtkui/gtkui.c:1469
+#: ../plugins/gtkui/gtkui.c:1462
 msgid "Failed while reading help file"
 msgstr "未能讀取說明檔案"
 
-#: ../plugins/gtkui/gtkui.c:1479
+#: ../plugins/gtkui/gtkui.c:1472
 msgid "Failed to load help file"
 msgstr "未能載入說明檔案"
 
-#: ../plugins/gtkui/gtkui.c:1492
+#: ../plugins/gtkui/gtkui.c:1485
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
@@ -249,11 +249,11 @@ msgstr ""
 "播放器正在背景執行中。如果您現在退出，程式將會被取消或中斷。這可能導致資料遺"
 "失。"
 
-#: ../plugins/gtkui/gtkui.c:1494
+#: ../plugins/gtkui/gtkui.c:1487
 msgid "Do you still want to quit?"
 msgstr "仍然要退出？"
 
-#: ../plugins/gtkui/gtkui.c:1495 ../plugins/gtkui/prefwin.c:463
+#: ../plugins/gtkui/gtkui.c:1488 ../plugins/gtkui/prefwin.c:463
 #: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1080
 #: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:377
 msgid "Warning"
@@ -321,7 +321,7 @@ msgid "Selection"
 msgstr "選取"
 
 #: ../plugins/gtkui/interface.c:233 ../plugins/gtkui/interface.c:5094
-#: ../plugins/gtkui/plcommon.c:1074 ../plugins/gtkui/deadbeef.glade.h:16
+#: ../plugins/gtkui/plcommon.c:1076 ../plugins/gtkui/deadbeef.glade.h:16
 #: ../plugins/converter/interface.c:676
 #: ../plugins/converter/converter.glade.h:51
 #: ../plugins/shellexecui/interface.c:66
@@ -344,7 +344,7 @@ msgstr "排序依據"
 
 #: ../plugins/gtkui/interface.c:256 ../plugins/gtkui/mainplaylist.c:233
 #: ../plugins/gtkui/plcommon.c:95 ../plugins/gtkui/prefwin.c:439
-#: ../plugins/gtkui/search.c:652 ../plugins/gtkui/deadbeef.glade.h:20
+#: ../plugins/gtkui/search.c:653 ../plugins/gtkui/deadbeef.glade.h:20
 #: ../plugins/converter/convgui.c:1184 ../plugins/converter/convgui.c:1752
 #: ../plugins/converter/interface.c:653
 #: ../plugins/converter/converter.glade.h:48
@@ -364,7 +364,7 @@ msgstr "專輯"
 
 #. Track properties dialog
 #: ../plugins/gtkui/interface.c:268 ../plugins/gtkui/plcommon.c:93
-#: ../plugins/gtkui/plcommon.c:1913 ../plugins/gtkui/deadbeef.glade.h:23
+#: ../plugins/gtkui/plcommon.c:1915 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:2
 msgid "Artist"
 msgstr "藝人"
@@ -379,7 +379,7 @@ msgid "Random"
 msgstr "隨機"
 
 #: ../plugins/gtkui/interface.c:280 ../plugins/gtkui/plcommon.c:102
-#: ../plugins/gtkui/plcommon.c:1917 ../plugins/gtkui/deadbeef.glade.h:26
+#: ../plugins/gtkui/plcommon.c:1919 ../plugins/gtkui/deadbeef.glade.h:26
 msgid "Custom"
 msgstr "自訂"
 
@@ -415,20 +415,20 @@ msgstr "播放(_P)"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
 msgid "Shuffle"
-msgstr ""
+msgstr "<br>"
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
 msgid "Off"
-msgstr ""
+msgstr "<br>"
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Tracks"
-msgstr ""
+msgstr "<br>"
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Albums"
-msgstr ""
+msgstr "<br>"
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Random Tracks"
@@ -436,15 +436,15 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
-msgstr ""
+msgstr "重複播放"
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
 msgid "All Tracks"
-msgstr ""
+msgstr "全部"
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
 msgid "One Track"
-msgstr ""
+msgstr "單一曲目"
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -539,7 +539,7 @@ msgstr "關於"
 msgid "Quit"
 msgstr "結束"
 
-#: ../plugins/gtkui/interface.c:1042 ../plugins/gtkui/plcommon.c:1230
+#: ../plugins/gtkui/interface.c:1042 ../plugins/gtkui/plcommon.c:1232
 #: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:157
 #, no-c-format
 msgid "Track Properties"
@@ -574,7 +574,7 @@ msgstr "屬性"
 #: ../plugins/gtkui/deadbeef.glade.h:72 ../plugins/converter/interface.c:418
 #: ../plugins/converter/converter.glade.h:25
 #: ../plugins/shellexecui/interface.c:163
-#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1550
+#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1566
 #: ../plugins/gtkui/pltmenu.c:66
 msgid "Title:"
 msgstr "名稱："
@@ -651,7 +651,7 @@ msgstr "總是將 16 位元音訊轉為 24 位元"
 
 #: ../plugins/gtkui/interface.c:1852 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Target samplerate:"
-msgstr ""
+msgstr "目標取樣率："
 
 #: ../plugins/gtkui/interface.c:1885 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "For multiples of 48KHz (96K, 192K, ...):"
@@ -667,7 +667,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1923 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Override samplerate"
-msgstr ""
+msgstr "覆蓋取樣率"
 
 #: ../plugins/gtkui/interface.c:1927 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Sound"
@@ -689,8 +689,8 @@ msgstr "歌曲"
 msgid "Processing:"
 msgstr "運行方式："
 
-#: ../plugins/gtkui/interface.c:1980 ../plugins/gtkui/plcommon.c:1905
-#: ../translation/plugins.c:108 ../plugins/gtkui/widgets.c:3948
+#: ../plugins/gtkui/interface.c:1980 ../plugins/gtkui/plcommon.c:1907
+#: ../translation/plugins.c:108 ../plugins/gtkui/widgets.c:3965
 #, no-c-format
 msgid "None"
 msgstr "無"
@@ -1060,7 +1060,7 @@ msgid "URL:"
 msgstr "網址："
 
 #: ../plugins/gtkui/interface.c:3822 ../plugins/gtkui/interface.c:5008
-#: ../plugins/gtkui/interface.c:5036 ../plugins/gtkui/plcommon.c:1217
+#: ../plugins/gtkui/interface.c:5036 ../plugins/gtkui/plcommon.c:1219
 #: ../plugins/gtkui/deadbeef.glade.h:187
 msgid "Set Custom Title"
 msgstr "自訂標題"
@@ -1271,17 +1271,17 @@ msgstr ""
 msgid "Update File Tags"
 msgstr ""
 
-#: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:650
+#: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:651
 msgid "Artist / Album"
 msgstr "藝人 / 專輯"
 
-#: ../plugins/gtkui/mainplaylist.c:232 ../plugins/gtkui/search.c:651
+#: ../plugins/gtkui/mainplaylist.c:232 ../plugins/gtkui/search.c:652
 msgid "Track No"
 msgstr "歌曲編號"
 
 #: ../plugins/gtkui/mainplaylist.c:234 ../plugins/gtkui/plcommon.c:97
-#: ../plugins/gtkui/search.c:653 ../plugins/pltbrowser/pltbrowser.c:414
-#: ../plugins/pltbrowser/pltbrowser.c:939
+#: ../plugins/gtkui/search.c:654 ../plugins/pltbrowser/pltbrowser.c:414
+#: ../plugins/pltbrowser/pltbrowser.c:941
 msgid "Duration"
 msgstr "長度"
 
@@ -1321,61 +1321,61 @@ msgstr "編碼解碼器"
 msgid "Bitrate"
 msgstr "位元率"
 
-#: ../plugins/gtkui/plcommon.c:938 ../plugins/gtkui/plcommon.c:1047
+#: ../plugins/gtkui/plcommon.c:940 ../plugins/gtkui/plcommon.c:1049
 #: ../plugins/gtkui/pltmenu.c:427
 msgid "_Paste"
 msgstr "貼上（_P）"
 
-#: ../plugins/gtkui/plcommon.c:992 ../translation/plugins.c:306
+#: ../plugins/gtkui/plcommon.c:994 ../translation/plugins.c:306
 #, no-c-format
 msgid "Add To Playback Queue"
 msgstr "加入至播放佇列"
 
-#: ../plugins/gtkui/plcommon.c:996 ../translation/plugins.c:304
+#: ../plugins/gtkui/plcommon.c:998 ../translation/plugins.c:304
 #, no-c-format
 msgid "Remove From Playback Queue"
 msgstr "自播放佇列移除"
 
 #. plugins/hotkeys/hotkeys.c
-#: ../plugins/gtkui/plcommon.c:1018 ../translation/plugins.c:242
+#: ../plugins/gtkui/plcommon.c:1020 ../translation/plugins.c:242
 #, no-c-format
 msgid "Reload Metadata"
 msgstr "重整音樂資料"
 
-#: ../plugins/gtkui/plcommon.c:1027 ../plugins/gtkui/pltmenu.c:403
+#: ../plugins/gtkui/plcommon.c:1029 ../plugins/gtkui/pltmenu.c:403
 msgid "Cu_t"
 msgstr "剪下（T）"
 
-#: ../plugins/gtkui/plcommon.c:1037 ../plugins/gtkui/pltmenu.c:415
+#: ../plugins/gtkui/plcommon.c:1039 ../plugins/gtkui/pltmenu.c:415
 msgid "_Copy"
 msgstr "複製（_C）"
 
-#: ../plugins/gtkui/plcommon.c:1081 ../translation/plugins.c:147
+#: ../plugins/gtkui/plcommon.c:1083 ../translation/plugins.c:147
 #, no-c-format
 msgid "Remove From Disk"
 msgstr "自硬碟中移除"
 
-#: ../plugins/gtkui/plcommon.c:1728 ../plugins/gtkui/plcommon.c:1870
+#: ../plugins/gtkui/plcommon.c:1730 ../plugins/gtkui/plcommon.c:1872
 msgid "Add column"
 msgstr "加入欄位"
 
-#: ../plugins/gtkui/plcommon.c:1770 ../plugins/gtkui/plcommon.c:1874
+#: ../plugins/gtkui/plcommon.c:1772 ../plugins/gtkui/plcommon.c:1876
 msgid "Edit column"
 msgstr "編輯欄位"
 
-#: ../plugins/gtkui/plcommon.c:1878
+#: ../plugins/gtkui/plcommon.c:1880
 msgid "Remove column"
 msgstr "移除欄位"
 
-#: ../plugins/gtkui/plcommon.c:1893
+#: ../plugins/gtkui/plcommon.c:1895
 msgid "Pin groups when scrolling"
 msgstr "當滾動頁面時鎖定群組"
 
-#: ../plugins/gtkui/plcommon.c:1898
+#: ../plugins/gtkui/plcommon.c:1900
 msgid "Group by"
 msgstr "分組根據："
 
-#: ../plugins/gtkui/plcommon.c:1909
+#: ../plugins/gtkui/plcommon.c:1911
 msgid "Artist/Date/Album"
 msgstr "藝人/日期/專輯"
 
@@ -1408,7 +1408,7 @@ msgstr "正在加入檔案..."
 msgid "Initializing..."
 msgstr "正在初始化..."
 
-#: ../plugins/gtkui/search.c:658
+#: ../plugins/gtkui/search.c:659
 msgid "Search [(%list_total% results)]"
 msgstr "尋找 [(共%list_total% 項結果)]"
 
@@ -1426,12 +1426,12 @@ msgid "[Multiple values] "
 msgstr "[多重值] "
 
 #: ../plugins/gtkui/trkproperties.c:376 ../plugins/gtkui/trkproperties.c:391
-#: ../plugins/gtkui/widgets.c:2565
+#: ../plugins/gtkui/widgets.c:2581
 msgid "Key"
 msgstr "按鍵"
 
 #: ../plugins/gtkui/trkproperties.c:377 ../plugins/gtkui/trkproperties.c:392
-#: ../plugins/gtkui/widgets.c:2567
+#: ../plugins/gtkui/widgets.c:2583
 msgid "Value"
 msgstr "值"
 
@@ -3428,76 +3428,76 @@ msgstr "貼上"
 msgid "Multiple widgets of this type are not supported"
 msgstr "此類型的元件不能重複使用"
 
-#: ../plugins/gtkui/widgets.c:1272
+#: ../plugins/gtkui/widgets.c:1288
 msgid "Proportional Sizing"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1284
+#: ../plugins/gtkui/widgets.c:1300
 msgid "Lock Top Pane Height"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1287
+#: ../plugins/gtkui/widgets.c:1303
 msgid "Lock Left Pane Width"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1300
+#: ../plugins/gtkui/widgets.c:1316
 msgid "Lock Bottom Pane Height"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1303
+#: ../plugins/gtkui/widgets.c:1319
 msgid "Lock Right Pane Width"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1547 ../plugins/gtkui/widgets.c:1662
+#: ../plugins/gtkui/widgets.c:1563 ../plugins/gtkui/widgets.c:1678
 msgid "Rename Tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1669
+#: ../plugins/gtkui/widgets.c:1685
 msgid "Remove Tab"
 msgstr "移除分頁"
 
-#: ../plugins/gtkui/widgets.c:1676 ../plugins/gtkui/widgets.c:1856
+#: ../plugins/gtkui/widgets.c:1692 ../plugins/gtkui/widgets.c:1872
 msgid "Add New Tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1685
+#: ../plugins/gtkui/widgets.c:1701
 msgid "Move Tab Left"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1692
+#: ../plugins/gtkui/widgets.c:1708
 msgid "Move Tab Right"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2346 ../plugins/gtkui/widgets.c:2524
-#: ../plugins/pltbrowser/pltbrowser.c:881
+#: ../plugins/gtkui/widgets.c:2362 ../plugins/gtkui/widgets.c:2540
+#: ../plugins/pltbrowser/pltbrowser.c:883
 msgid "Show Column Headers"
 msgstr "顯示欄位名稱"
 
-#: ../plugins/gtkui/widgets.c:3570
+#: ../plugins/gtkui/widgets.c:3587
 msgid "Expand Box by 1 Item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3575
+#: ../plugins/gtkui/widgets.c:3592
 msgid "Shrink Box by 1 Item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3580
+#: ../plugins/gtkui/widgets.c:3597
 msgid "Homogeneous"
 msgstr "同性質"
 
-#: ../plugins/gtkui/widgets.c:3620
+#: ../plugins/gtkui/widgets.c:3637
 msgid "Expand"
 msgstr "擴充"
 
-#: ../plugins/gtkui/widgets.c:3628
+#: ../plugins/gtkui/widgets.c:3645
 msgid "Fill"
 msgstr "填入"
 
-#: ../plugins/gtkui/widgets.c:4028
+#: ../plugins/gtkui/widgets.c:4045
 msgid "Configure Button"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4307
+#: ../plugins/gtkui/widgets.c:4324
 msgid "Voices:"
 msgstr "聲音："
 
@@ -3535,19 +3535,19 @@ msgid "%dd %d:%02d:%02d"
 msgstr "%d 天 %d:%02d:%02d"
 
 #: ../plugins/pltbrowser/pltbrowser.c:413
-#: ../plugins/pltbrowser/pltbrowser.c:934
+#: ../plugins/pltbrowser/pltbrowser.c:936
 msgid "Items"
 msgstr "項目"
 
-#: ../plugins/pltbrowser/pltbrowser.c:925 ../plugins/gtkui/rg.c:312
+#: ../plugins/pltbrowser/pltbrowser.c:927 ../plugins/gtkui/rg.c:312
 msgid "Name"
 msgstr "名稱"
 
-#: ../plugins/pltbrowser/pltbrowser.c:928
+#: ../plugins/pltbrowser/pltbrowser.c:930
 msgid "♫"
 msgstr "♫"
 
-#: ../plugins/pltbrowser/pltbrowser.c:986
+#: ../plugins/pltbrowser/pltbrowser.c:988
 msgid "Playlist browser"
 msgstr "播放清單概覽"
 
