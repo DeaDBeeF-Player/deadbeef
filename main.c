@@ -145,8 +145,9 @@ print_help (void) {
     fprintf (stdout, _("                      FMT syntax: http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"));
     fprintf (stdout, _("                      example: --nowplaying-tf \"%%artist%% - %%title%%\" should print \"artist - title\"\n"));
     fprintf (stdout, _("   --volume [NUM]     Print or set deadbeef volume level.\n"));
-    fprintf (stdout, _("                      The NUM parameter can be specified in percents (if no suffix) or dB [-50, 0].\n"));
-    fprintf (stdout, _("                      Examples: --volume 80 or --volume -20dB\n"));
+    fprintf (stdout, _("                      The NUM parameter can be specified in percents (absolute value or increment/decrement)\n"));
+    fprintf (stdout, _("                      or in dB [-50, 0] (if with suffix).\n"));
+    fprintf (stdout, _("                      Examples: --volume 80, --volume +10, --volume -5 or --volume -20dB\n"));
 #ifdef ENABLE_NLS
     bind_textdomain_codeset (PACKAGE, "UTF-8");
 #endif
@@ -356,13 +357,14 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             parg++;
 
             if (parg < pend) {
-                int pct;
                 char *end;
-                pct = strtol (parg, &end, 10);
+                const int pct = strtol (parg, &end, 10);
                 if (!strcasecmp(end, "db")) {
                     deadbeef->volume_set_db (pct);
                 } else {
-                    deadbeef->volume_set_db ((pct/100.0 * 50) - 50);
+                    const char is_increment = (parg[0] == '-' || parg[0] == '+');
+                    const float new_volume = is_increment ? deadbeef->volume_get_db() * 2 + 100 + pct : pct;
+                    deadbeef->volume_set_db ((new_volume/100.0 * 50) - 50);
                 }
             }
             if (sendback) {
