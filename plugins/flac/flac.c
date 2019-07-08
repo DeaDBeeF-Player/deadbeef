@@ -609,6 +609,7 @@ static const char *metainfo[] = {
     "COPYRIGHT", "copyright",
     "ORIGINALDATE","original_release_time",
     "ORIGINALYEAR","original_release_year",
+    "ALBUMARTIST", "ALBUM ARTIST",
     NULL
 };
 
