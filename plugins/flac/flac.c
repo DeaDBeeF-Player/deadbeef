@@ -1090,6 +1090,7 @@ error:
 
     return err;
 }
+
 #if USE_OGGEDIT
 int
 cflac_write_metadata_ogg (DB_playItem_t *it, FLAC__StreamMetadata_VorbisComment *vc)
@@ -1112,6 +1113,7 @@ cflac_write_metadata_ogg (DB_playItem_t *it, FLAC__StreamMetadata_VorbisComment 
     return 0;
 }
 #endif
+
 int
 cflac_write_metadata (DB_playItem_t *it) {
     int err = -1;
@@ -1159,6 +1161,7 @@ cflac_write_metadata (DB_playItem_t *it) {
     } while (FLAC__metadata_iterator_next (iter));
 
     if (data) {
+        // delete existing fields
         FLAC__StreamMetadata_VorbisComment *vc = &data->data.vorbis_comment;
         int vc_comments = vc->num_comments;
         for (int i = 0; i < vc_comments; i++) {
@@ -1197,16 +1200,9 @@ cflac_write_metadata (DB_playItem_t *it) {
         }
         const char *val = m->value;
         if (val && *val) {
-            while (val) {
-                const char *next = strchr (val, '\n');
-                size_t l;
-                if (next) {
-                    l = next - val;
-                    next++;
-                }
-                else {
-                    l = strlen (val);
-                }
+            const char *end = val + m->valuesize;
+            while (val < end) {
+                size_t l = strlen (val);
                 if (l > 0) {
                     char s[100+l+1];
                     int n = snprintf (s, sizeof (s), "%s=", metainfo[i] ? metainfo[i] : m->key);
@@ -1218,7 +1214,7 @@ cflac_write_metadata (DB_playItem_t *it) {
                     };
                     FLAC__metadata_object_vorbiscomment_append_comment (data, ent, 1);
                 }
-                val = next;
+                val += l+1;
             }
         }
         m = m->next;
