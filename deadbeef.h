@@ -588,7 +588,8 @@ enum {
     DDB_TF_CONTEXT_NO_DYNAMIC = 4, // skip dynamic fields (%playback_time%)
 // since 1.9
 #if (DDB_API_LEVEL >= 9)
-    // Don't convert linebreaks to semicolons
+    // By default, non-printable characters will be replaced with underscores.
+    // In multiline mode, they stay as they are in the input.
     DDB_TF_CONTEXT_MULTILINE = 8,
 #endif
 // since 1.10
