@@ -1,3 +1,9 @@
+version 1.8.2
+	Volume control from command line supports increment syntax (by eauno1re@github)
+	Fixed writing multi-value fields into FLAC tags
+	Map ALBUMARTIST field to ALBUM ARTIST field in FLAC
+	Fixed sound output plugin selection bug in GTK UI
+
 version 1.8.1
 	Fixed audio freeze while sorting
 	Fixed crash when resuming playback of a file that's been deleted
