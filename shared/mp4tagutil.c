@@ -117,23 +117,30 @@ mp4tagutil_find_udta (mp4p_atom_t *moov, mp4p_atom_t **pmeta, mp4p_atom_t **pils
     mp4p_atom_t *meta = NULL;
     mp4p_atom_t *ilst = NULL;
     // find an existing udta with \0\0\0\0 mdir appl handler
-    mp4p_atom_t *udta = moov->subatoms;
+    mp4p_atom_t *udta = mp4p_atom_find (moov, "moov/udta");
     while (udta) {
+        if (mp4p_atom_type_compare (udta, "udta")) {
+            udta = udta->next;
+            continue;
+        }
         // there can be multiple meta atoms
         mp4p_atom_t *subatom = udta->subatoms;
         while (subatom) {
             // check each meta subatom
-            if (mp4p_atom_type_compare (udta, "meta")) {
+            if (mp4p_atom_type_compare (subatom, "meta")) {
+                meta = hdlr = ilst = NULL;
+                subatom = subatom->next;
                 continue;
             }
             hdlr = mp4p_atom_find(subatom, "meta/hdlr");
             if (hdlr) {
                 mp4p_hdlr_t *hdlr_data = hdlr->data;
-                if (mp4p_fourcc_compare (hdlr_data->component_subtype, "mdir")
-                    && mp4p_fourcc_compare(hdlr_data->component_manufacturer, "appl")) {
+                if (!mp4p_fourcc_compare (hdlr_data->component_subtype, "mdir")
+                    && !mp4p_fourcc_compare(hdlr_data->component_manufacturer, "appl")) {
                     ilst = mp4p_atom_find(subatom, "meta/ilst");
-                    meta = subatom;
-                    break;
+                    *pmeta = meta;
+                    *pilst = ilst;
+                    return udta;
                 }
             }
             meta = hdlr = ilst = NULL;
@@ -141,9 +148,9 @@ mp4tagutil_find_udta (mp4p_atom_t *moov, mp4p_atom_t **pmeta, mp4p_atom_t **pils
         }
         udta = udta->next;
     }
-    *pmeta = meta;
-    *pilst = ilst;
-    return udta;
+    *pmeta = NULL;
+    *pilst = NULL;
+    return NULL;
 }
 
 // FIXME: much of this code should be moved to mp4parser lib when finalized
