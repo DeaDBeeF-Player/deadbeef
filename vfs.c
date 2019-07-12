@@ -109,6 +109,10 @@ vfs_fclose (DB_FILE *stream) {
 
 size_t
 vfs_fread (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
+    if (!size || !nmemb) {
+        return 0;
+    }
+
     if (!can_use_file (stream)) {
         return 0;
     }
