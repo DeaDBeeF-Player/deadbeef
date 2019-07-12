@@ -437,14 +437,12 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
 
     /* Don't read past the end of a sub-track */
     int samples_to_read = bytes_to_read / sizeof(float) / _info->fmt.channels;
-    if (deadbeef->pl_get_item_flags(info->it) & DDB_IS_SUBTRACK) {
-        int64_t endsample = deadbeef->pl_item_get_endsample (info->it);
-        if (endsample >= 0) {
-            const ogg_int64_t samples_left = endsample - ov_pcm_tell(&info->vorbis_file);
-            if (samples_left < samples_to_read) {
-                samples_to_read = (int)samples_left;
-                bytes_to_read = samples_to_read * sizeof(float) * _info->fmt.channels;
-            }
+    int64_t endsample = deadbeef->pl_item_get_endsample (info->it);
+    if (endsample > 0) {
+        const ogg_int64_t samples_left = endsample - ov_pcm_tell(&info->vorbis_file);
+        if (samples_left < samples_to_read) {
+            samples_to_read = (int)samples_left;
+            bytes_to_read = samples_to_read * sizeof(float) * _info->fmt.channels;
         }
     }
 
@@ -731,7 +729,17 @@ tags_list(DB_playItem_t *it, OggVorbis_File *vorbis_file)
         if (deadbeef->pl_find_meta (it, ddb_internal_rg_keys[n])) {
             float value = deadbeef->pl_get_item_replaygain (it, n);
             char s[100];
-            snprintf (s, sizeof (s), "%f", value);
+            // https://wiki.hydrogenaud.io/index.php?title=ReplayGain_2.0_specification#Metadata_format
+            switch (n) {
+            case DDB_REPLAYGAIN_ALBUMGAIN:
+            case DDB_REPLAYGAIN_TRACKGAIN:
+                snprintf (s, sizeof (s), "%.2f dB", value);
+                break;
+            case DDB_REPLAYGAIN_ALBUMPEAK:
+            case DDB_REPLAYGAIN_TRACKPEAK:
+                snprintf (s, sizeof (s), "%.6f", value);
+                break;
+            }
             split_tag (tags, tag_rg_names[n], s, (int)strlen (s)+1);
         }
     }

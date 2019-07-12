@@ -418,6 +418,15 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.channels = 8;
     }
 
+    char s[100];
+    deadbeef->pl_replace_meta (it, ":BPS", "16");
+    snprintf (s, sizeof (s), "%d", _info->fmt.channels);
+    deadbeef->pl_replace_meta (it, ":CHANNELS", s);
+    snprintf (s, sizeof (s), "%d", _info->fmt.samplerate);
+    deadbeef->pl_replace_meta (it, ":SAMPLERATE", s);
+
+    trace ("totalsamples: %d, endsample: %d, samples-from-duration: %d, samplerate %d, channels %d\n", (int)totalsamples, (int)info->endsample, (int)deadbeef->pl_get_item_duration (it)*44100, _info->fmt.samplerate, _info->fmt.channels);
+
     for (int i = 0; i < _info->fmt.channels; i++) {
         _info->fmt.channelmask |= 1 << i;
     }

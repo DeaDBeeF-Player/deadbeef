@@ -936,7 +936,7 @@ ddb_listview_list_render_subgroup (DdbListview *listview, cairo_t *cr, GdkRectan
         int grp_next_y = grp_y + grp->height;
         if (current_group_depth == listview->artwork_subgroup_level) {
             // draw album art
-            int min_y;
+            int min_y = 0;
             if (is_pinned) {
                 if (grp->group_label_visible) {
                     min_y = min(title_height+pin_offset, grp_next_y);
@@ -1337,7 +1337,7 @@ ddb_listview_build_drag_uri_list (DdbListview *ps)
 
             gboolean is_local_file = FALSE;
             gboolean is_uri_scheme = FALSE;
-            if (path && path[0] == '/') {
+            if (path[0] == '/') {
                 is_local_file = TRUE;
             }
             else if (!strncasecmp (path, "file://", 7)) {
@@ -2512,6 +2512,11 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr, int x1, int x2) {
             c = c->next;
         }
 
+        if (!c) {
+            draw_end (&ps->hdrctx);
+            return;
+        }
+
         // Mark the position where the dragged column used to be with an indented/active/dark position
         int xx = x - 2; // Where the divider line is
         int w = c->width + 2;
@@ -2599,6 +2604,12 @@ ddb_listview_update_scroll_ref_point_subgroup (DdbListview *ps, DdbListviewGroup
         grp_y += grp->height;
         abs_idx += grp->num_items;
         grp = grp->next;
+    }
+
+    if (!grp) {
+        ps->ref_point = 0;
+        ps->ref_point_offset = 0;
+        return;
     }
 
     int grp_content_pos = grp_y + (grp->group_label_visible ? ps->grouptitle_height : 0);
@@ -2856,19 +2867,21 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
         gdk_window_set_cursor (gtk_widget_get_window (widget), ps->cursor_drag);
         DdbListviewColumn *c = ps->columns;
         for (int i = 0; c && i < ps->header_dragging; c = c->next, i++);
-        int left = event->x - ps->header_dragpt[0] + ps->hscrollpos;
-        int right = left + c->width;
-        DdbListviewColumn *cc = ps->columns;
-        for (int xx = 0, ii = 0; cc; xx += cc->width, cc = cc->next, ii++) {
-            if (ps->header_dragging > ii && left < xx + cc->width/2 || ps->header_dragging < ii && right > xx + cc->width/2) {
-                ddb_listview_column_move (ps, c, ii);
-                ps->header_dragging = ii;
-                gtk_widget_queue_draw (ps->list);
-                break;
+        if (c) {
+            int left = event->x - ps->header_dragpt[0] + ps->hscrollpos;
+            int right = left + c->width;
+            DdbListviewColumn *cc = ps->columns;
+            for (int xx = 0, ii = 0; cc; xx += cc->width, cc = cc->next, ii++) {
+                if (ps->header_dragging > ii && left < xx + cc->width/2 || ps->header_dragging < ii && right > xx + cc->width/2) {
+                    ddb_listview_column_move (ps, c, ii);
+                    ps->header_dragging = ii;
+                    gtk_widget_queue_draw (ps->list);
+                    break;
+                }
             }
+            ps->col_movepos = left;
+            gtk_widget_queue_draw (ps->header);
         }
-        ps->col_movepos = left;
-        gtk_widget_queue_draw (ps->header);
     }
     else if (ps->header_sizing >= 0) {
         int x = -ps->hscrollpos;

@@ -229,19 +229,19 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                     const char *orig_artist = deadbeef->pl_find_meta (fp->track, "artist");
 
                     if (!orig_title || strcasecmp (orig_title, tit)) {
-                        vfs_curl_set_meta (fp->track, "title", tit);
+                        vfs_curl_set_meta (fp->track, "!title", tit);
                         songstarted = 1;
                     }
                     if (!orig_artist || strcasecmp (orig_artist, title)) {
-                        vfs_curl_set_meta (fp->track, "artist", title);
+                        vfs_curl_set_meta (fp->track, "!artist", title);
                         songstarted = 1;
                     }
                 }
                 else {
                     const char *orig_title = deadbeef->pl_find_meta (fp->track, "title");
                     if (!orig_title || strcasecmp (orig_title, title)) {
-                        deadbeef->pl_delete_meta (fp->track, "artist");
-                        vfs_curl_set_meta (fp->track, "title", title);
+                        deadbeef->pl_delete_meta (fp->track, "!artist");
+                        vfs_curl_set_meta (fp->track, "!title", title);
                         songstarted = 1;
                     }
                 }
@@ -334,6 +334,8 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
         if (fp->icyheader) {
             if (fp->nheaderpackets > 10) {
                 fprintf (stderr, "vfs_curl: warning: seems like stream has unterminated ICY headers\n");
+                fp->icy_metaint = 0;
+                fp->wait_meta = 0;
                 fp->gotheader = 1;
             }
             else {
@@ -347,6 +349,9 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
                 }
                 else {
                     fp->gotheader = 1;
+                    if (fp->wait_meta > 0) {
+                        ptr += size*nmemb - avail;
+                    }
                 }
             }
         }
@@ -385,10 +390,11 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
                 int sz = fp->metadata_size;
                 fp->metadata_size = fp->metadata_have_size = 0;
                 if (http_parse_shoutcast_meta (fp, fp->metadata, sz) < 0) {
-                    trace ("vfs_curl: got invalid icy metadata block\n");
-                    http_stream_reset (fp);
-                    fp->status = STATUS_SEEK;
-                    return 0;
+                    fp->metadata_size = 0;
+                    fp->metadata_have_size = 0;
+                    fp->wait_meta = 0;
+                    fp->icy_metaint = 0;
+                    break;
                 }
             }
         }
@@ -401,8 +407,14 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
             avail -= res1;
             ptr += res1;
             uint32_t sz = (uint32_t)(*((uint8_t *)ptr)) * 16;
-            if (sz > 1024) {
+            if (sz > MAX_METADATA) {
                 trace ("metadata size %d is too large\n", sz);
+                ptr += sz;
+                fp->metadata_size = 0;
+                fp->metadata_have_size = 0;
+                fp->wait_meta = 0;
+                fp->icy_metaint = 0;
+                break;
             }
             //assert (sz < MAX_METADATA);
             ptr ++;
@@ -525,7 +537,7 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
         }
         else if (!strcasecmp (key, "icy-name")) {
             if (fp->track) {
-                vfs_curl_set_meta (fp->track, "album", value);
+                vfs_curl_set_meta (fp->track, "title", value);
                 refresh_playlist = 1;
             }
         }
@@ -539,6 +551,17 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
             //printf ("icy-metaint: %d\n", atoi (value));
             fp->icy_metaint = atoi (value);
             fp->wait_meta = fp->icy_metaint; 
+        }
+        else if (!strcasecmp (key, "icy-url")) {
+            if (fp->track) {
+                vfs_curl_set_meta (fp->track, "url", value);
+                refresh_playlist = 1;
+            }
+        }
+
+        // for icy streams, reset length
+        if (!strncasecmp (key, "icy-", 4)) {
+            fp->length = -1;
         }
     }
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -994,6 +1017,12 @@ http_get_content_type (DB_FILE *stream) {
     while (fp->status != STATUS_FINISHED && fp->status != STATUS_ABORTED && !fp->gotheader) {
         usleep (3000);
     }
+
+    if (!fp->content_type && fp->icyheader) {
+        // assume mp3
+        return "audio/mpeg";
+    }
+
     return fp->content_type;
 }
 

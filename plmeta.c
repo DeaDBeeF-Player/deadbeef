@@ -34,6 +34,28 @@
 #define LOCK {pl_lock();}
 #define UNLOCK {pl_unlock();}
 
+DB_metaInfo_t *
+pl_meta_for_key_with_override (playItem_t *it, const char *key) {
+    pl_ensure_lock ();
+    DB_metaInfo_t *m = it->meta;
+
+    // try to find an override
+    while (m) {
+        if (m->key[0] == '!' && !strcasecmp (key, m->key+1)) {
+            return m;
+        }
+        m = m->next;
+    }
+
+    m = it->meta;
+    while (m) {
+        if (key && !strcasecmp (key, m->key)) {
+            return m;
+        }
+        m = m->next;
+    }
+    return NULL;}
+
 
 DB_metaInfo_t *
 pl_meta_for_key (playItem_t *it, const char *key) {
@@ -331,7 +353,7 @@ pl_find_meta (playItem_t *it, const char *key) {
 
     m = it->meta;
     while (m) {
-        if (!strcasecmp (key, m->key)) {
+        if (key && !strcasecmp (key, m->key)) {
             return m->value;
         }
         m = m->next;
@@ -424,6 +446,14 @@ pl_delete_all_meta (playItem_t *it) {
         }
         m = next;
     }
+
+    // delete replaygain fields
+    extern const char *ddb_internal_rg_keys[];
+    pl_delete_meta(it, ddb_internal_rg_keys[DDB_REPLAYGAIN_ALBUMGAIN]);
+    pl_delete_meta(it, ddb_internal_rg_keys[DDB_REPLAYGAIN_ALBUMPEAK]);
+    pl_delete_meta(it, ddb_internal_rg_keys[DDB_REPLAYGAIN_TRACKGAIN]);
+    pl_delete_meta(it, ddb_internal_rg_keys[DDB_REPLAYGAIN_TRACKPEAK]);
+
     uint32_t f = pl_get_item_flags (it);
     f &= ~DDB_TAG_MASK;
     pl_set_item_flags (it, f);

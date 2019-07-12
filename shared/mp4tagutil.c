@@ -275,10 +275,10 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     }
 
     static const char *tag_rg_names[] = {
-        "replaygain_album_gain",
-        "replaygain_album_peak",
-        "replaygain_track_gain",
-        "replaygain_track_peak",
+        "REPLAYGAIN_ALBUM_GAIN",
+        "REPLAYGAIN_ALBUM_PEAK",
+        "REPLAYGAIN_TRACK_GAIN",
+        "REPLAYGAIN_TRACK_PEAK",
         NULL
     };
 
@@ -296,7 +296,17 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
         if (deadbeef->pl_find_meta (it, ddb_internal_rg_keys[n])) {
             float value = deadbeef->pl_get_item_replaygain (it, n);
             char s[100];
-            snprintf (s, sizeof (s), "%f", value);
+            // https://wiki.hydrogenaud.io/index.php?title=ReplayGain_2.0_specification#Metadata_format
+            switch (n) {
+            case DDB_REPLAYGAIN_ALBUMGAIN:
+            case DDB_REPLAYGAIN_TRACKGAIN:
+                snprintf (s, sizeof (s), "%.2f dB", value);
+                break;
+            case DDB_REPLAYGAIN_ALBUMPEAK:
+            case DDB_REPLAYGAIN_TRACKPEAK:
+                snprintf (s, sizeof (s), "%.6f", value);
+                break;
+            }
             mp4p_ilst_append_custom(ilst, tag_rg_names[n], s);
         }
     }

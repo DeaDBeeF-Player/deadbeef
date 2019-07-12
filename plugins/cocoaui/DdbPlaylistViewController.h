@@ -39,7 +39,7 @@ typedef struct {
     char *bytecode;
 } plt_col_info_t;
 
-@interface DdbPlaylistViewController : NSViewController {
+@interface DdbPlaylistViewController : NSViewController<DdbListviewDelegate,NSMenuDelegate> {
     plt_col_info_t _columns[PLT_MAX_COLUMNS];
     int _ncolumns;
     int _menuColumn;

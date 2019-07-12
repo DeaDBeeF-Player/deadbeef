@@ -162,23 +162,23 @@ _("Show Help Page");
 // xgettext:no-c-format
 _("Playback");
 // xgettext:no-c-format
-_("Cycle Playback Looping Mode");
+_("Cycle Repeat Mode");
 // xgettext:no-c-format
-_("Playback Looping - Don't loop");
+_("Repeat - Off");
 // xgettext:no-c-format
-_("Playback Looping - Single track");
+_("Repeat - Single Track");
 // xgettext:no-c-format
-_("Playback Looping - All");
+_("Repeat - All");
 // xgettext:no-c-format
-_("Cycle Playback Order");
+_("Cycle Shuffle Mode");
 // xgettext:no-c-format
-_("Playback Order - Random");
+_("Shuffle - Random Tracks");
 // xgettext:no-c-format
-_("Playback Order - Shuffle albums");
+_("Shuffle - Albums");
 // xgettext:no-c-format
-_("Playback Order - Shuffle tracks");
+_("Shuffle - Tracks");
 // xgettext:no-c-format
-_("Playback Order - Linear");
+_("Shuffle - Off");
 // xgettext:no-c-format
 _("Toggle Cursor Follows Playback");
 // xgettext:no-c-format
@@ -402,6 +402,19 @@ _("Close playlists with middle mouse button");
 _("Highlight current playlist");
 // xgettext:no-c-format
 _("Play on double-click");
+// plugins/portaudio/portaudio.c
+// xgettext:no-c-format
+_("Buffer size (-1 to use optimal value choosen by portaudio)");
+// xgettext:no-c-format
+_("Device name encoding");
+// xgettext:no-c-format
+_("ASCII / UTF-8");
+// xgettext:no-c-format
+_("cp1250");
+// xgettext:no-c-format
+_("Defined below");
+// xgettext:no-c-format
+_("Custom device name encoding");
 // plugins/pulse/pulse.c
 // xgettext:no-c-format
 _("PulseAudio server (leave empty for default)");
@@ -433,11 +446,6 @@ _("Bits per sample");
 _("Mono synth");
 // xgettext:no-c-format
 _("Default song length (sec)");
-// plugins/sndio/sndio.c
-// xgettext:no-c-format
-_("Device");
-// xgettext:no-c-format
-_("Buffer size (ms)");
 // plugins/supereq/supereq.c
 // xgettext:no-c-format
 _("Preamp");

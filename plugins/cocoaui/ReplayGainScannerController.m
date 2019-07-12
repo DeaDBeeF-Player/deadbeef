@@ -137,7 +137,7 @@ static NSMutableArray *g_rgControllers;
         return;
     }
 
-    [self.window setDelegate:(id<NSWindowDelegate> _Nullable)self];
+    self.window.delegate = self;
     [self.window setIsVisible:YES];
     [self.window makeKeyWindow];
 
@@ -279,7 +279,7 @@ static NSMutableArray *g_rgControllers;
 
     [NSApp endSheet:_scanProgressWindow];
     [_scanProgressWindow orderOut:self];
-    [_resultsTableView setDataSource:(id<NSTableViewDataSource>)self];
+    _resultsTableView.dataSource = self;
     [_resultsTableView reloadData];
 }
 

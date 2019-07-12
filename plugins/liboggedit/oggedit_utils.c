@@ -63,7 +63,7 @@ const char *oggedit_map_tag(char *key, const char *in_or_out)
         const char *tag;
         const char *meta;
     } key_t;
-    const key_t keys[] = {
+    static const key_t keys[] = {
         /* Permanent named tags in DeaDBeef */
 //        {.tag = "ARTIST",         .meta = "artist"},
 //        {.tag = "TITLE",          .meta = "title"},
@@ -104,7 +104,7 @@ const char *oggedit_map_tag(char *key, const char *in_or_out)
 //        {.tag = "ENCODED-BY",     .meta = "Encoded-by"},
 //        {.tag = "ENCODING",       .meta = "Encoding"},
         /* Other tags */
-//        {.tag = "ALBUMARTIST",    .meta = "Albumartist"},
+        {.tag = "ALBUMARTIST",    .meta = "Album Artist"},
 //        {.tag = "ALBUM ARTIST",   .meta = "Album artist"},
 //        {.tag = "BAND",           .meta = "Band"},
 //        {.tag = "COMPILATION",    .meta = "Compilation"},

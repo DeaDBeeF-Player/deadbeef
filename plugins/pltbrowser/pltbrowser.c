@@ -745,6 +745,7 @@ on_pltbrowser_drag_begin_event          (GtkWidget       *widget,
                                         gpointer user_data)
 {
     drag_row_active = TRUE;
+    return FALSE;
 }
 
 static gboolean
@@ -756,6 +757,7 @@ on_pltbrowser_drag_end_event          (GtkWidget       *widget,
                                         gpointer user_data)
 {
     drag_row_active = FALSE;
+    return FALSE;
 }
 
 static gboolean

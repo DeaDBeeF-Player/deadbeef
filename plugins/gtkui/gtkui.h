@@ -166,7 +166,7 @@ void
 gtkui_run_preferences_dlg (void);
 
 int
-gtkui_get_gui_refresh_rate ();
+gtkui_get_gui_refresh_rate (void);
 
 void
 gtkui_titlebar_tf_init (void);
@@ -183,4 +183,15 @@ gtkui_mainwin_init(void);
 void
 gtkui_mainwin_free(void);
 
+enum GtkuiFileChooserType {
+    GTKUI_FILECHOOSER_OPENFILE,
+    GTKUI_FILECHOOSER_OPENFOLDER,
+    GTKUI_FILECHOOSER_LOADPLAYLIST,
+    GTKUI_FILECHOOSER_SAVEPLAYLIST
+};
+
+GSList *
+show_file_chooser (const gchar          *title,
+                   enum GtkuiFileChooserType type,
+                   gboolean             select_multiple);
 #endif

@@ -815,6 +815,9 @@ static int wma_decode_block(WMADecodeContext *s)
     int n, v, a, ch, code, bsize;
     int coef_nb_bits, total_gain;
     int nb_coefs[MAX_CHANNELS];
+
+    memset (nb_coefs, 0, sizeof (nb_coefs));
+
     fixed32 mdct_norm;
 
     /*DEBUGF("***decode_block: %d  (%d samples of %d in frame)\n",  s->block_num, s->block_len, s->frame_len);*/

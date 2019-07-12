@@ -352,6 +352,7 @@ int grouptitleheight = 22;
             rc = [sv documentVisibleRect];
             scroll += rc.origin.x;
             _dragPt.x -= scroll;
+            [listview reloadData];
         }
     }
     else if (_dragging != [delegate invalidColumn]) {
@@ -546,6 +547,7 @@ int grouptitleheight = 22;
                 [delegate drawAlbumArtForGroup:grp groupIndex:groupIndex inColumn:col isPinnedGroup:isPinnedGroup nextGroupCoord:grp_next_y xPos:x yPos:y viewportY:viewportY width:w height:grp->height];
             }
         }
+        x += w;
     }
 }
 
@@ -570,8 +572,6 @@ int grouptitleheight = 22;
     [listview groupCheck];
 
     DdbListviewGroup_t *grp = [listview groups];
-
-    NSScrollView *sv = [self enclosingScrollView];
 
     int clip_y = dirtyRect.origin.y;
     int clip_h = dirtyRect.size.height;
@@ -627,7 +627,7 @@ int grouptitleheight = 22;
 
                 if (it == cursor_it) {
                     [[NSGraphicsContext currentContext] saveGraphicsState];
-                    NSRect rect = NSMakeRect(_frame.origin.x+0.5, yy+0.5, _frame.size.width-1, rowheight-1);
+                    NSRect rect = NSMakeRect(self.frame.origin.x+0.5, yy+0.5, self.frame.size.width-1, rowheight-1);
                     [NSBezierPath setDefaultLineWidth:1.f];
                     [[NSColor textColor] set];
                     [NSBezierPath strokeRect:rect];
@@ -898,7 +898,6 @@ int grouptitleheight = 22;
 @end
 
 @implementation DdbListview {
-    id<DdbListviewDelegate> _delegate;
     DdbListviewGroup_t *_groups;
     int _grouptitle_height;
     int groups_build_idx;
@@ -930,17 +929,17 @@ int grouptitleheight = 22;
     self = [super initWithFrame:rect];
     if (self) {
         groups_build_idx = -1;
-        DdbListHeaderView *thv = [[DdbListHeaderView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, headerheight)];
-        [thv setAutoresizingMask:NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewMaxYMargin];
+        DdbListHeaderView *thv = [[DdbListHeaderView alloc] initWithFrame:NSMakeRect(0, rect.size.height-headerheight, rect.size.width, headerheight)];
+        [thv setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin];
         [self addSubview:thv];
         [thv setListView:self];
         headerView = thv;
 
-        NSScrollView *sv = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, headerheight, rect.size.width, rect.size.height-headerheight)];
+        NSScrollView *sv = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, rect.size.height-headerheight)];
         [self addSubview:sv];
 
         NSSize size = [sv contentSize];
-        NSRect lcvrect = NSMakeRect(0, 0, size.width, size.height-16);
+        NSRect lcvrect = NSMakeRect(0, 0, size.width, size.height-headerheight);
         DdbListContentView *lcv = [[DdbListContentView alloc] initWithFrame:lcvrect];
         [lcv setAutoresizingMask:NSViewWidthSizable];
         [lcv setListView:self];
@@ -951,7 +950,7 @@ int grouptitleheight = 22;
         [sv setHasVerticalScroller:YES];
         [sv setHasHorizontalScroller:YES];
         [sv setAutohidesScrollers:YES];
-        [sv setAutoresizingMask:NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewHeightSizable|NSViewMaxYMargin];
+        [sv setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin|NSViewHeightSizable];
         [sv.contentView setCopiesOnScroll:NO];
 
         NSView *synchronizedContentView = [sv contentView];
@@ -991,13 +990,9 @@ int grouptitleheight = 22;
 
     NSScrollView *sv = [contentView enclosingScrollView];
     NSRect vis = [sv documentVisibleRect];
-    if ([(NSObject *)_delegate respondsToSelector:@selector(scrollChanged:)]) {
+    if ([_delegate respondsToSelector:@selector(scrollChanged:)]) {
         [_delegate scrollChanged:vis.origin.y];
     }
-}
-
-- (BOOL)isFlipped {
-    return YES;
 }
 
 - (void)freeGroups {
@@ -1051,7 +1046,7 @@ int grouptitleheight = 22;
     int min_height= 0;
     for (DdbListviewCol_t c = [_delegate firstColumn]; c != [_delegate invalidColumn]; c = [_delegate nextColumn:c]) {
         if ([_delegate columnMinHeight:c] && [_delegate columnWidth:c] > min_height) {
-            min_height = [_delegate columnWidth:c];
+            min_height = [_delegate columnGroupHeight:c];
         }
         _fullwidth += [_delegate columnWidth:c];
     }
@@ -1389,7 +1384,7 @@ int grouptitleheight = 22;
 - (void)listMouseDragged:(NSEvent *)event {
     NSPoint pt = [contentView convertPoint:[event locationInWindow] fromView:nil];
     if (_dragwait) {
-        if (abs (_lastpos.x - pt.x) > 3 || abs (_lastpos.y - pt.y) > 3) {
+        if (fabs (_lastpos.x - pt.x) > 3 || fabs (_lastpos.y - pt.y) > 3) {
             // begin dnd
             NSPasteboard *pboard;
 
@@ -1401,9 +1396,9 @@ int grouptitleheight = 22;
             DdbListviewLocalDragDropHolder *data = [[DdbListviewLocalDragDropHolder alloc] initWithSelectedPlaylistItems:plt];
             deadbeef->plt_unref (plt);
             [pboard declareTypes:[NSArray arrayWithObject:ddbPlaylistItemsUTIType]  owner:self];
+            [pboard clearContents];
             if (![pboard writeObjects:[NSArray arrayWithObject:data]])
                 NSLog(@"Unable to write to pasteboard.");
-//            [pboard setData:[@"Hello" dataUsingEncoding:NSASCIIStringEncoding] forType:NSStringPboardType];
 
             NSImage *img = [NSImage imageNamed:NSImageNameMultipleDocuments];
 
@@ -1655,32 +1650,27 @@ int grouptitleheight = 22;
         [_delegate unrefRow:row];
     }
 
-    BOOL need_redraw = YES;
     if (!noscroll) {
-        if ([self setScrollForPos:[self getRowPos:cursor]]) {
-            need_redraw = NO;
-        }
+        [self setScrollForPos:[self getRowPos:cursor]];
     }
-    if (need_redraw) {
-        [contentView setNeedsDisplay:YES];
-    }
+    [contentView setNeedsDisplay:YES];
 }
 
+// returns YES if scroll has occured as result of changing the cursor position
 - (BOOL)setScrollForPos:(int)pos {
     NSScrollView *sv = [contentView enclosingScrollView];
     NSRect vis = [sv documentVisibleRect];
     int scrollpos = vis.origin.y;
-    int cursor_scroll = pos;
     int newscroll = scrollpos;
 
-    if (![_delegate pinGroups] && cursor_scroll < scrollpos) {
-        newscroll = cursor_scroll;
+    if (![_delegate pinGroups] && pos < scrollpos) {
+        newscroll = pos;
     }
-    else if ([_delegate pinGroups] && cursor_scroll < scrollpos + _grouptitle_height) {
-        newscroll = cursor_scroll - _grouptitle_height;
+    else if ([_delegate pinGroups] && pos < scrollpos + _grouptitle_height) {
+        newscroll = pos - _grouptitle_height;
     }
-    else if (cursor_scroll + rowheight >= scrollpos + vis.size.height) {
-        newscroll = cursor_scroll + rowheight - vis.size.height + 1;
+    else if (pos + rowheight >= scrollpos + vis.size.height) {
+        newscroll = pos + rowheight - vis.size.height;
         if (newscroll < 0) {
             newscroll = 0;
         }
@@ -1723,14 +1713,6 @@ int grouptitleheight = 22;
     NSScrollView *sv = [contentView enclosingScrollView];
     NSRect vis = [sv documentVisibleRect];
     [contentView scrollPoint:NSMakePoint(vis.origin.x, scroll)];
-}
-
-- (id<DdbListviewDelegate>)delegate {
-    return _delegate;
-}
-
-- (void)setDelegate:(id<DdbListviewDelegate>)delegate {
-    _delegate = delegate;
 }
 
 @end

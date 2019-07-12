@@ -22,19 +22,87 @@
 */
 
 #import "PreferencesWindowController.h"
-#import "DSPChainDataSource.h"
-#import "DSPPresetListDataSource.h"
-#import "deadbeef-Swift.h"
+#import "ScriptableTableDataSource.h"
+#import "ScriptableSelectViewController.h"
+#import "ScriptableNodeEditorViewController.h"
 #include "deadbeef.h"
 #include "pluginsettings.h"
+#include "scriptable_dsp.h"
+
+extern DB_functions_t *deadbeef;
+
+
+@interface PluginConfigPropertySheetDataSource : NSObject<PropertySheetDataSource> {
+    DB_plugin_t *_plugin;
+    BOOL _multipleChanges;
+}
+@end
+
+@implementation PluginConfigPropertySheetDataSource
+- (instancetype)initWithPlugin:(DB_plugin_t *)plugin {
+    self = [super init];
+    _plugin = plugin;
+    return self;
+}
+
+- (NSString *)propertySheet:(PropertySheetViewController *)vc configForItem:(id)item {
+    return _plugin->configdialog ? [NSString stringWithUTF8String:_plugin->configdialog] : nil;
+}
+
+- (NSString *)propertySheet:(PropertySheetViewController *)vc valueForKey:(NSString *)key def:(NSString *)def item:(id)item {
+    char str[200];
+    deadbeef->conf_get_str ([key UTF8String], [def UTF8String], str, sizeof (str));
+    return [NSString stringWithUTF8String:str];
+}
+
+- (void)propertySheet:(PropertySheetViewController *)vc setValue:(NSString *)value forKey:(NSString *)key item:(id)item {
+    deadbeef->conf_set_str ([key UTF8String], [value UTF8String]);
+    if (!_multipleChanges) {
+        deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    }
+}
+
+- (void)propertySheetBeginChanges {
+    _multipleChanges = YES;
+}
+
+- (void)propertySheetCommitChanges {
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    _multipleChanges = NO;
+}
+
+@end
+
 
 extern DB_functions_t *deadbeef;
 
 @interface PreferencesWindowController () {
     settings_data_t _settingsData;
-    DSPChainDataSource *_dspChainDataSource;
-    DSPPresetController *_dspPresetController;
 }
+
+@property (strong) IBOutlet ScriptableSelectViewController *dspSelectViewController;
+
+@property ScriptableTableDataSource *dspChainDataSource;
+@property ScriptableTableDataSource *dspPresetsDataSource;
+@property (weak) IBOutlet NSView *dspNodeEditorContainer;
+@property ScriptableNodeEditorViewController *dspNodeEditorViewController;
+
+
+@property PluginConfigPropertySheetDataSource *pluginPropertySheetDataSource;
+
+@property (weak) IBOutlet NSPopUpButton *outputPluginsPopupButton;
+
+@property NSMutableArray<NSString *> *audioDevices;
+@property (weak) IBOutlet NSPopUpButton *audioDevicesPopupButton;
+@property (weak) IBOutlet NSTextField *targetSamplerateLabel;
+@property (weak) IBOutlet NSTextField *multiplesOf48Label;
+@property (weak) IBOutlet NSTextField *multiplesOf44Label;
+
+@property (weak) IBOutlet NSButton *overrideSamplerateCheckbox;
+@property (weak) IBOutlet NSComboBox *targetSamplerateComboBox;
+@property (weak) IBOutlet NSButton *basedOnInputSamplerateCheckbox;
+@property (weak) IBOutlet NSComboBox *multiplesOf48ComboBox;
+@property (weak) IBOutlet NSComboBox *multiplesOf44ComboBox;
 
 @end
 
@@ -44,23 +112,199 @@ extern DB_functions_t *deadbeef;
     settings_data_free (&_settingsData);
 }
 
+static void
+ca_enum_callback (const char *s, const char *d, void *userdata) {
+    NSMutableArray<NSString *> *devices = (__bridge NSMutableArray<NSString *> *)userdata;
+
+    [devices addObject:[NSString stringWithUTF8String:s]];
+}
+
 - (void)windowDidLoad {
     [super windowDidLoad];
 
-    [_toolbar setDelegate:(id<NSToolbarDelegate>)self];
-    [_toolbar setSelectedItemIdentifier:@"Playback"];
+    // dsp
+    scriptableItem_t *chain = scriptableDspConfigFromDspChain (deadbeef->streamer_get_dsp_chain ());
+    self.dspChainDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:chain pasteboardItemIdentifier:@"deadbeef.dspnode.preferences"];
 
-    NSError *error;
-    _dspPresetController = [DSPPresetController createWithContext:@"main" error:&error];
+    self.dspPresetsDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:scriptableDspRoot() pasteboardItemIdentifier:@"deadbeef.dsppreset.preferences"];
 
-    [_dspPresetController.presetMgr createSelectorUIWithContainer:_dspPresetSelectorContainer];
+    // preset list and browse button
+    self.dspSelectViewController = [[ScriptableSelectViewController alloc] initWithNibName:@"ScriptableSelectView" bundle:nil];
+    self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
+    self.dspSelectViewController.delegate = self;
+    self.dspSelectViewController.view.frame = _dspPresetSelectorContainer.bounds;
+    [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
+
+    // current dsp chain node list / editor
+    self.dspNodeEditorViewController = [[ScriptableNodeEditorViewController alloc] initWithNibName:@"ScriptableNodeEditorView" bundle:nil];
+    self.dspNodeEditorViewController.dataSource = self.dspChainDataSource;
+    self.dspNodeEditorViewController.delegate = self;
+    self.dspNodeEditorViewController.view.frame = _dspNodeEditorContainer.bounds;
+    [_dspNodeEditorContainer addSubview:self.dspNodeEditorViewController.view];
 
     [self initPluginList];
 
     [self setInitialValues];
 
-    [self switchToView:_playbackView];
+    // toolbar
+    _toolbar.delegate = self;
+    [_toolbar setSelectedItemIdentifier:@"Sound"];
+
+    [self switchToView:_soundView];
 }
+
+#pragma mark - ScriptableItemDelegate
+- (void)scriptableItemChanged:(scriptableItem_t *)scriptable {
+    if (scriptable == self.dspChainDataSource.scriptable
+        || scriptableItemIndexOfChild(self.dspChainDataSource.scriptable, scriptable) >= 0) {
+        ddb_dsp_context_t *chain = scriptableDspConfigToDspChain (self.dspChainDataSource.scriptable);
+        deadbeef->streamer_set_dsp_chain (chain);
+        deadbeef->dsp_preset_free (chain);
+    }
+}
+
+- (void)outputDeviceChanged {
+    [self initAudioDeviceList];
+}
+
+- (void)initAudioDeviceList {
+    [self.audioDevicesPopupButton removeAllItems];
+
+    self.audioDevices = [[NSMutableArray alloc] init];
+    DB_output_t *output = deadbeef->get_output ();
+    if (!output->enum_soundcards) {
+        self.audioDevicesPopupButton.enabled = NO;
+        return;
+    }
+
+    self.audioDevicesPopupButton.enabled = YES;
+
+    output->enum_soundcards (ca_enum_callback, (__bridge void *)(self.audioDevices));
+
+    NSString *conf_name = [[NSString stringWithUTF8String:output->plugin.id] stringByAppendingString:@"_soundcard"];
+    char curdev[200];
+    deadbeef->conf_get_str ([conf_name UTF8String], "", curdev, sizeof (curdev));
+    [self.audioDevicesPopupButton removeAllItems];
+    [self.audioDevicesPopupButton addItemWithTitle:@"System Default"];
+    [self.audioDevicesPopupButton selectItemAtIndex:0];
+    NSInteger index = 1;
+    for (NSString *dev in self.audioDevices) {
+        [self.audioDevicesPopupButton addItemWithTitle:dev];
+        if (!strcmp ([dev UTF8String], curdev)) {
+            [self.audioDevicesPopupButton selectItemAtIndex:index];
+        }
+        index++;
+    }
+}
+
+- (void)initializeAudioTab {
+    // output plugins
+
+    NSInteger index = 0;
+    [self.outputPluginsPopupButton removeAllItems];
+
+    char curplug[200];
+    deadbeef->conf_get_str ("output_plugin", "coreaudio", curplug, sizeof (curplug));
+    DB_output_t **o = deadbeef->plug_get_output_list ();
+    for (index = 0; o[index]; index++) {
+        [self.outputPluginsPopupButton addItemWithTitle:[NSString stringWithUTF8String:o[index]->plugin.name]];
+        if (!strcmp (o[index]->plugin.id, curplug)) {
+            [self.outputPluginsPopupButton selectItemAtIndex:index];
+        }
+    }
+
+    // audio devices
+    [self initAudioDeviceList];
+
+    self.overrideSamplerateCheckbox.state = deadbeef->conf_get_int ("streamer.override_samplerate", 0) ? NSControlStateValueOn : NSControlStateValueOff;
+    self.targetSamplerateComboBox.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("streamer.samplerate", "44100")];
+
+    self.basedOnInputSamplerateCheckbox.state = deadbeef->conf_get_int ("streamer.use_dependent_samplerate", 0) ? NSControlStateValueOn : NSControlStateValueOff;
+    self.multiplesOf48ComboBox.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("streamer.samplerate_mult_48", "48000")];
+    self.multiplesOf44ComboBox.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("streamer.samplerate_mult_44", "44100")];
+    [self validateAudioSettingsViews];
+}
+
+- (void)showWindow:(id)sender {
+    [super showWindow:sender];
+    [self initializeAudioTab];
+    [self.dspSelectViewController setScriptable:scriptableDspRoot()];
+}
+
+#pragma mark - Playback
+
+- (void)validateAudioSettingsViews {
+    BOOL override = deadbeef->conf_get_int ("streamer.override_samplerate", 0) ? YES : NO;
+    BOOL useDependent = deadbeef->conf_get_int ("streamer.use_dependent_samplerate", 0) ? YES : NO;
+
+    self.targetSamplerateLabel.enabled = override;
+    self.targetSamplerateComboBox.enabled = override;
+
+    self.basedOnInputSamplerateCheckbox.enabled = override;
+
+    self.multiplesOf48Label.enabled = override && useDependent;
+    self.multiplesOf48ComboBox.enabled = override && useDependent;
+
+    self.multiplesOf44Label.enabled = override && useDependent;
+    self.multiplesOf44ComboBox.enabled = override && useDependent;
+}
+
+- (IBAction)outputPluginAction:(id)sender {
+    DB_output_t **o = deadbeef->plug_get_output_list ();
+    deadbeef->conf_set_str ("output_plugin", o[[self.outputPluginsPopupButton indexOfSelectedItem]]->plugin.id);
+    deadbeef->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
+}
+
+- (IBAction)playbackDeviceAction:(NSPopUpButton *)sender {
+    NSString *title = [[sender selectedItem] title];
+    DB_output_t *output = deadbeef->get_output ();
+    NSString *dev = [[NSString stringWithUTF8String:output->plugin.id] stringByAppendingString:@"_soundcard"];
+    deadbeef->conf_set_str ([dev UTF8String], [title UTF8String]);
+    deadbeef->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
+}
+
+- (IBAction)overrideSamplerateAction:(NSButton *)sender {
+    deadbeef->conf_set_int ("streamer.override_samplerate", sender.state == NSControlStateValueOn ? 1 : 0);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    [self validateAudioSettingsViews];
+}
+
+static int
+clamp_samplerate (int val) {
+    if (val < 8000) {
+        return 8000;
+    }
+    else if (val > 768000) {
+        return 768000;
+    }
+    return val;
+}
+
+- (IBAction)targetSamplerateAction:(NSComboBox *)sender {
+    int samplerate = clamp_samplerate ((int)[sender integerValue]);
+    deadbeef->conf_set_int ("streamer.samplerate", samplerate);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)basedOnInputSamplerateAction:(NSButton *)sender {
+    deadbeef->conf_set_int ("streamer.use_dependent_samplerate", sender.state == NSControlStateValueOn ? 1 : 0);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    [self validateAudioSettingsViews];
+}
+
+- (IBAction)multiplesOf48Action:(NSComboBox *)sender {
+    int samplerate = clamp_samplerate ((int)[sender integerValue]);
+    deadbeef->conf_set_int ("streamer.samplerate_mult_48", samplerate);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)multiplesOf44Action:(NSComboBox *)sender {
+    int samplerate = clamp_samplerate ((int)[sender integerValue]);
+    deadbeef->conf_set_int ("streamer.samplerate_mult_44", samplerate);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+#pragma mark - Unsorted
 
 - (NSString *)cfgFormattedColorForName:(NSString *)colorName {
     NSColorList *clist = [NSColorList colorListNamed:@"System"];
@@ -84,8 +328,8 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)initPluginList {
-    [_pluginList setDataSource:(id<NSTableViewDataSource>)self];
-    [_pluginList setDelegate:(id<NSTableViewDelegate>)self];
+    _pluginList.dataSource = self;
+    _pluginList.delegate = self;
     [self setPluginInfo:-1];
 }
 
@@ -115,10 +359,6 @@ extern DB_functions_t *deadbeef;
     [_ignore_archives setState: deadbeef->conf_get_int ("ignore_archives", 1) ? NSOnState : NSOffState];
     [_stop_after_current_reset setState: deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0) ? NSOnState : NSOffState];
     [_stop_after_album_reset setState: deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0) ? NSOnState : NSOffState];
-
-    // dsp
-    _dspChainDataSource = [[DSPChainDataSource alloc] initWithChain:deadbeef->streamer_get_dsp_chain ()];
-    [_dspList setDataSource:(id<NSTableViewDataSource>)_dspChainDataSource];
 
 
     // gui/misc -> player
@@ -196,10 +436,12 @@ extern DB_functions_t *deadbeef;
 
 - (NSArray *)toolbarSelectableItemIdentifiers: (NSToolbar *)toolbar;
 {
-    return [NSArray arrayWithObjects:@"Playback",
+    return [NSArray arrayWithObjects:
+            @"Sound",
+            @"Playback",
             @"DSP",
             @"GUI",
-            @"Appearance",
+//            @"Appearance",
             @"Network",
             @"Plugins",
             nil];
@@ -214,6 +456,10 @@ extern DB_functions_t *deadbeef;
     rc.origin.y = oldFrame.origin.y + oldFrame.size.height - rc.size.height;
     [[self window] setContentView:view];
     [[self window] setFrame:rc display:YES animate:YES];
+}
+
+- (IBAction)soundAction:(id)sender {
+    [self switchToView:_soundView];
 }
 
 - (IBAction)playbackAction:(id)sender {
@@ -240,105 +486,6 @@ extern DB_functions_t *deadbeef;
     [self switchToView:_pluginsView];
 }
 
-- (NSMenu *)getDSPMenu {
-    NSMenu *menu = [[NSMenu alloc] initWithTitle:@"DspChainMenu"];
-    [menu setDelegate:(id<NSMenuDelegate>)self];
-    [menu setAutoenablesItems:NO];
-
-    DB_dsp_t **plugins = deadbeef->plug_get_dsp_list ();
-
-    for (int i = 0; plugins[i]; i++) {
-        [[menu insertItemWithTitle:[NSString stringWithUTF8String:plugins[i]->plugin.name] action:@selector(addDspNode:) keyEquivalent:@"" atIndex:i] setTarget:self];
-    }
-
-    return menu;
-}
-
-- (void)addDspNode:(id)sender {
-    NSMenuItem *item = sender;
-    const char *name = [[item title] UTF8String];
-    DB_dsp_t **plugins = deadbeef->plug_get_dsp_list ();
-
-    for (int i = 0; plugins[i]; i++) {
-        if (!strcmp (plugins[i]->plugin.name, name))
-        {
-            [_dspChainDataSource addItem:plugins[i]];
-            [_dspList reloadData];
-            break;
-        }
-    }
-}
-
-- (IBAction)dspAddAction:(id)sender {
-    NSMenu *menu = [self getDSPMenu];
-    [NSMenu popUpContextMenu:menu withEvent:[NSApp currentEvent] forView:sender];
-}
-
-- (IBAction)dspRemoveAction:(id)sender {
-    NSInteger index = [_dspList selectedRow];
-    if (index < 0) {
-        return;
-    }
-
-    [_dspChainDataSource removeItemAtIndex:(int)index];
-    [_dspList reloadData];
-
-    if (index >= [_dspList numberOfRows]) {
-        index--;
-    }
-    if (index >= 0) {
-        [_dspList selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
-    }
-}
-
-- (IBAction)dspConfigureAction:(id)sender {
-    NSInteger index = [_dspList selectedRow];
-    if (index < 0) {
-        return;
-    }
-    ddb_dsp_context_t *dsp = [_dspChainDataSource getItemAtIndex:(int)index];
-    [_dspConfigViewController initPluginConfiguration:dsp->plugin->configdialog dsp:dsp];
-    [NSApp beginSheet:_dspConfigPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndDspConfigPanel:returnCode:contextInfo:) contextInfo:nil];
-}
-
-- (void)didEndDspConfigPanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    [_dspConfigPanel orderOut:self];
-}
-
-- (IBAction)dspConfigCancelAction:(id)sender {
-    [NSApp endSheet:_dspConfigPanel returnCode:NSCancelButton];
-}
-
-- (IBAction)dspConfigOkAction:(id)sender {
-    [NSApp endSheet:_dspConfigPanel returnCode:NSOKButton];
-}
-
-- (IBAction)dspConfigResetAction:(id)sender {
-    [_dspConfigViewController resetPluginConfigToDefaults];
-    [_dspChainDataSource apply];
-}
-
-- (IBAction)dspChainAction:(id)sender {
-    NSInteger selectedSegment = [sender selectedSegment];
-
-    switch (selectedSegment) {
-    case 0:
-        [self dspAddAction:sender];
-        break;
-    case 1:
-        [self dspRemoveAction:sender];
-        break;
-    case 2:
-        [self dspConfigureAction:sender];
-        break;
-    }
-}
-
-- (IBAction)dspSaveAction:(id)sender {
-}
-
-- (IBAction)dspLoadAction:(id)sender {
-}
 
 - (IBAction)networkEditContentTypeMapping:(id)sender {
 }
@@ -347,17 +494,20 @@ extern DB_functions_t *deadbeef;
 }
 
 - (IBAction)pluginConfResetDefaults:(id)sender {
-    [_pluginConfViewController resetPluginConfigToDefaults];
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
+    [_pluginConfViewController reset];
 }
 
 - (void)initPluginConfiguration:(NSInteger)idx {
     DB_plugin_t *p = deadbeef->plug_get_list()[idx];
     
-    const char *config = p->configdialog;
-    
-    [_pluginConfViewController initPluginConfiguration:config dsp:NULL];
+    self.pluginPropertySheetDataSource = [[PluginConfigPropertySheetDataSource alloc] initWithPlugin:p];
+
+    _pluginConfViewController.labelFontSize = 10;
+    _pluginConfViewController.contentFontSize = 11;
+    _pluginConfViewController.unitSpacing = 4;
+    _pluginConfViewController.autoAlignLabels = NO;
+    _pluginConfViewController.labelFixedWidth = 120;
+    _pluginConfViewController.dataSource = self.pluginPropertySheetDataSource;
 }
 
 - (void)setPluginInfo:(NSInteger)idx {
@@ -385,12 +535,14 @@ extern DB_functions_t *deadbeef;
     }
 
     [_pluginVersion setStringValue:version];
+    NSAttributedString *str = [[NSAttributedString alloc] initWithString:description attributes:@{NSForegroundColorAttributeName:[NSColor controlTextColor]}];
+    [[_pluginDescription textStorage] setAttributedString:str];
     [_pluginDescription setString:description];
     [_pluginLicense setString:license];
 }
 
 // data source for plugin list
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView {
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView {
     DB_plugin_t **p = deadbeef->plug_get_list();
     int cnt;
     for (cnt = 0; p[cnt]; cnt++);
@@ -398,7 +550,7 @@ extern DB_functions_t *deadbeef;
     return cnt;
 }
 
-- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex {
+- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
     DB_plugin_t **p = deadbeef->plug_get_list();
 
     return [NSString stringWithUTF8String: p[rowIndex]->name];
@@ -420,7 +572,6 @@ extern DB_functions_t *deadbeef;
     deadbeef->conf_set_float ("replaygain.preamp_with_rg", value);
     [self updateRGLabels];
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (IBAction)replaygain_preamp_without_rg_action:(id)sender {
@@ -428,14 +579,12 @@ extern DB_functions_t *deadbeef;
     deadbeef->conf_set_float ("replaygain.preamp_without_rg", value);
     [self updateRGLabels];
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (IBAction)replaygain_source_mode_action:(id)sender {
     NSInteger idx = [_replaygain_source_mode indexOfSelectedItem];
     deadbeef->conf_set_int ("replaygain.source_mode", (int)idx);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (IBAction)replaygain_processing_action:(id)sender {
@@ -453,31 +602,26 @@ extern DB_functions_t *deadbeef;
 
     deadbeef->conf_set_int ("replaygain.processing_flags", flags);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (IBAction)ignoreArchivesAction:(id)sender {
     deadbeef->conf_set_int ("ignore_archives", [_ignore_archives state] == NSOnState);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (IBAction)resumeLastSessionAction:(id)sender {
     deadbeef->conf_set_int ("resume_last_session", [_resume_last_session state] == NSOnState);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (IBAction)stopAfterCurrentResetAction:(id)sender {
     deadbeef->conf_set_int ("playlist.stop_after_current_reset", [_stop_after_current_reset state] == NSOnState);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (IBAction)stopAfterCurrentAlbumResetAction:(id)sender {
     deadbeef->conf_set_int ("playlist.stop_after_album_reset", [_stop_after_album_reset state] == NSOnState);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 @end

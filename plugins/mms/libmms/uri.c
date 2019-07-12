@@ -152,6 +152,7 @@ static int split_user_passwd(const char* in, char** user, char** passwd)
   if(!*passwd) {
     free (tmp);
     free (*user);
+    *user = 0;
     return 0;
   }
 
@@ -685,7 +686,7 @@ gnet_uri_get_string (const GURI* uri)
   }
 
   if (uri->scheme) {
-      int n = snprintf (buffer, n, "%s:", uri->scheme);
+      int n = snprintf (buffer, 1024, "%s:", uri->scheme);
       buffer += n;
       remaining -= n;
       if (remaining < 10) {

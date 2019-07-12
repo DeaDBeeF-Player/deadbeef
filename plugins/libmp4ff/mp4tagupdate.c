@@ -180,8 +180,6 @@ void * membuffer_detach(membuffer * buf)
 
 	ret = realloc(buf->data,buf->written);
 	
-	if (ret == 0) free(buf->data);
-
 	buf->data = 0;
 	buf->error = 1;
 	

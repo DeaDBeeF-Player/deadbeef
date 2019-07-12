@@ -23,12 +23,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@protocol ConverterWindowDelegate
-- (void)converterFinished:(id)instance withResult:(int)result;
-@end
-
-
-@interface ConverterWindowController : NSWindowController
+@interface ConverterWindowController : NSWindowController<NSWindowDelegate,NSTableViewDataSource,NSTableViewDelegate>
 
 @property (unsafe_unretained) IBOutlet NSTextField *outputFolder;
 @property (unsafe_unretained) IBOutlet NSButton *writeToSourceFolder;

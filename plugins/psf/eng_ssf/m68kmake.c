@@ -978,13 +978,14 @@ void process_opcode_handlers(void)
 	FILE* output_file;
 	char func_name[MAX_LINE_LENGTH+1];
 	char oper_name[MAX_LINE_LENGTH+1];
-	int  oper_size;
+	int  oper_size = 0;
 	char oper_spec_proc[MAX_LINE_LENGTH+1];
 	char oper_spec_ea[MAX_LINE_LENGTH+1];
 	opcode_struct* opinfo;
 	replace_struct* replace = malloc(sizeof(replace_struct));
 	body_struct* body = malloc(sizeof(body_struct));
 
+	memset (oper_name, 0, sizeof (oper_name));
 
 	output_file = g_ops_ac_file;
 

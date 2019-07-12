@@ -31,6 +31,8 @@
 #include "rg_scanner.h"
 
 #define CELL_HPADDING 4
+#define ART_PADDING_HORZ 8
+#define ART_PADDING_VERT 0
 
 extern DB_functions_t *deadbeef;
 
@@ -51,6 +53,12 @@ extern DB_functions_t *deadbeef;
     DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
     [[view listview] cleanup];
     [self clearGrouping];
+
+    // don't wait for an automatic autorelease,
+    // this would cause deadbeef's track refcount checker to run before the objects are really released
+    @autoreleasepool {
+        _trkProperties = nil;
+    }
 }
 
 - (void)menuAddColumn:(id)sender {
@@ -69,7 +77,7 @@ extern DB_functions_t *deadbeef;
         [_addColumnType selectItemAtIndex: 10];
         [_addColumnFormat setEnabled:YES];
         [_addColumnFormat setStringValue:@""];
-        [_addColumnAlignment setIntValue:0];
+        [_addColumnAlignment selectItemAtIndex:0];
         [_addColumnSetColor setState:NSOffState];
         [_addColumnColor setEnabled:NO];
         [_addColumnColor setColor:[NSColor blackColor]];
@@ -91,7 +99,7 @@ extern DB_functions_t *deadbeef;
         [_addColumnType selectItemAtIndex: type];
         [_addColumnFormat setEnabled:type == 10];
         [_addColumnFormat setStringValue:[NSString stringWithUTF8String:_columns[colIdx].format]];
-        [_addColumnAlignment setIntValue:_columns[colIdx].alignment];
+        [_addColumnAlignment selectItemAtIndex:(NSInteger)_columns[colIdx].alignment];
         [_addColumnSetColor setState:_columns[colIdx].set_text_color];
         [_addColumnColor setEnabled:_columns[colIdx].set_text_color];
         uint8_t *c = _columns[colIdx].text_color;
@@ -113,7 +121,6 @@ extern DB_functions_t *deadbeef;
 - (void)menuRemoveColumn:(id)sender {
     if (_menuColumn >= 0) {
         [self removeColumnAtIndex:_menuColumn];
-        [[self view] setNeedsDisplay:YES];
         [self columnsChanged];
     }
 }
@@ -122,7 +129,9 @@ extern DB_functions_t *deadbeef;
     _pin_groups = [sender state] == NSOnState ? 0 : 1;
     [sender setState:_pin_groups?NSOnState:NSOffState];
     deadbeef->conf_set_int ([self pinGroupsConfStr], _pin_groups);
-    [[self view] setNeedsDisplay:YES];
+    DdbPlaylistWidget *pw = (DdbPlaylistWidget *)self.view;
+    DdbListview *lv = pw.listview;
+    [lv.contentView setNeedsDisplay:YES];
 }
 
 - (void)clearGrouping {
@@ -201,7 +210,7 @@ extern DB_functions_t *deadbeef;
         [_addColumnFormat setStringValue:@"%length%"];
         break;
     case 8: // track number
-        [_addColumnFormat setStringValue:@"%track number%"];
+        [_addColumnFormat setStringValue:@"%tracknumber%"];
         break;
     case 9: // album artist
         [_addColumnFormat setStringValue:@"$if(%album artist%,%album artist%,Unknown Artist)"];
@@ -209,7 +218,6 @@ extern DB_functions_t *deadbeef;
     }
 
     [self initColumn:idx withTitle:[[_addColumnTitle stringValue] UTF8String]  withId:(int)type withSize:_columns[idx].size withFormat:[[_addColumnFormat stringValue] UTF8String] withAlignment:(int)[_addColumnAlignment indexOfSelectedItem] withSetColor:[_addColumnSetColor state] == NSOnState withColor:rgba];
-    [[self view] setNeedsDisplay:YES];
     [self columnsChanged];
 }
 
@@ -339,7 +347,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)awakeFromNib {
     DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
-    [view setDelegate:(id<DdbListviewDelegate>)self];
+    view.delegate = self;
     [self initContent];
 
     [self setupPlaylist:[view listview]];
@@ -379,6 +387,7 @@ extern DB_functions_t *deadbeef;
     _columns[idx].title = strdup (title);
     _columns[idx].format = format ? strdup (format) : NULL;
     _columns[idx].size = size;
+    _columns[idx].alignment = alignment;
     if (format) {
         _columns[idx].bytecode = deadbeef->tf_compile (format);
     }
@@ -400,7 +409,7 @@ extern DB_functions_t *deadbeef;
 - (NSMenu *)contextMenuForColumn:(DdbListviewCol_t)col withEvent:(NSEvent*)theEvent forView:(NSView *)view {
     _menuColumn = (int)col;
     NSMenu *menu = [[NSMenu alloc] initWithTitle:@"ColumnMenu"];
-    [menu setDelegate:(id<NSMenuDelegate>)self];
+    menu.delegate = self;
     [menu setAutoenablesItems:NO];
     [[menu insertItemWithTitle:@"Add Column" action:@selector(menuAddColumn:) keyEquivalent:@"" atIndex:0] setTarget:self];
     if (col != -1) {
@@ -413,7 +422,7 @@ extern DB_functions_t *deadbeef;
         [menu insertItem:[NSMenuItem separatorItem] atIndex:4];
 
         NSMenu *groupBy = [[NSMenu alloc] initWithTitle:@"Group By"];
-        [groupBy setDelegate:(id<NSMenuDelegate>)self];
+        groupBy.delegate = self;
         [groupBy setAutoenablesItems:NO];
 
         [[groupBy insertItemWithTitle:@"None" action:@selector(menuGroupByNone:) keyEquivalent:@"" atIndex:0] setTarget:self];
@@ -540,6 +549,10 @@ extern DB_functions_t *deadbeef;
     return _columns[col].size;
 }
 
+- (int)columnGroupHeight:(DdbListviewCol_t)col {
+    return _columns[col].size - ART_PADDING_HORZ*2;
+}
+
 - (void)setColumnWidth:(int)width forColumn:(DdbListviewCol_t)col {
     _columns[col].size = width;
 }
@@ -566,6 +579,11 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)columnsChanged {
+    DdbPlaylistWidget *pw = (DdbPlaylistWidget *)self.view;
+    DdbListview *lv = pw.listview;
+    [lv.headerView setNeedsDisplay:YES];
+    [lv.contentView setNeedsDisplay:YES];
+
     NSMutableArray *columns = [[NSMutableArray alloc] initWithCapacity:_ncolumns];
     for (int i = 0; i < _ncolumns; i++) {
         uint8_t *col = _columns[i].text_color;
@@ -747,9 +765,6 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     free (info);
 }
 
-#define ART_PADDING_HORZ 8
-#define ART_PADDING_VERT 0
-
 - (void)drawAlbumArtForGroup:(DdbListviewGroup_t *)grp
                   groupIndex:(int)groupIndex
                   inColumn:(DdbListviewCol_t)col
@@ -773,7 +788,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     }
 
     int art_width = width - ART_PADDING_HORZ * 2;
-    int art_height = height - ART_PADDING_VERT * 2;
+    int art_height = height - ART_PADDING_VERT * 2 - listview.grouptitle_height;
 
     if (art_width < 8 || art_height < 8 || !it) {
         return;
@@ -789,8 +804,23 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     }
 
     NSSize size = [image size];
-
-    [image drawInRect:NSMakeRect(art_x, ypos, art_width, size.height / (size.width / art_width))];
+    if (size.width >= size.height) {
+        CGFloat h = size.height / (size.width / art_width);
+//        ypos += art_height/2 - h/2;
+        [image drawInRect:NSMakeRect(art_x, ypos, art_width, h)];
+    }
+    else {
+        plt_col_info_t *c = &_columns[(int)col];
+        CGFloat h = art_width;
+        CGFloat w = size.width / (size.height / h);
+        if (c->alignment == 1) {
+            art_x += art_width/2 - w/2;
+        }
+        else if (c->alignment == 2) {
+            art_x += art_width-w;
+        }
+        [image drawInRect:NSMakeRect(art_x, ypos, w, h)];
+    }
 }
 
 - (void)selectRow:(DdbListviewRow_t)row withState:(BOOL)state {
@@ -1359,7 +1389,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     [[theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
 
     NSMenu *rgMenu = [[NSMenu alloc] initWithTitle:@"ReplayGain"];
-    [rgMenu setDelegate:(id<NSMenuDelegate>)self];
+    rgMenu.delegate = self;
     [rgMenu setAutoenablesItems:NO];
 
     BOOL __block has_rg_info = NO;

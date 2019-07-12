@@ -24,9 +24,8 @@
 #import "DdbListview.h"
 
 @interface DdbPlaylistWidget : DdbWidget {
-    id<DdbListviewDelegate> _delegate;
     DdbListview *_listview;
 }
-- (void)setDelegate:(id<DdbListviewDelegate>)delegate;
+@property (weak,nonatomic) id<DdbListviewDelegate> delegate;
 @property (readonly) DdbListview *listview;
 @end

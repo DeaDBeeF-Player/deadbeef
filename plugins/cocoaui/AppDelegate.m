@@ -29,7 +29,7 @@
 #import "DdbShared.h"
 #import "MediaKeyController.h"
 #import "LogWindowController.h"
-#import "deadbeef-Swift.h"
+#import "HelpWindowController.h"
 #include "conf.h"
 #include "streamer.h"
 #include "junklib.h"
@@ -95,6 +95,12 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, 
 
 - (void)volumeChanged {
     [_mainWindow updateVolumeBar];
+}
+
+- (void)outputDeviceChanged {
+    if (_prefWindow && _prefWindow.window.visible) {
+        [_prefWindow outputDeviceChanged];
+    }
 }
 
 - (void)configChanged
@@ -682,6 +688,9 @@ main_cleanup_and_quit (void);
     }
     else if (_id == DB_EV_VOLUMECHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(volumeChanged) withObject:nil waitUntilDone:NO];
+    }
+    else if (_id == DB_EV_OUTPUTCHANGED) {
+        [g_appDelegate performSelectorOnMainThread:@selector(outputDeviceChanged) withObject:nil waitUntilDone:NO];
     }
 
     return 0;

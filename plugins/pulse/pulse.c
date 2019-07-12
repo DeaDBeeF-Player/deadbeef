@@ -37,8 +37,7 @@
 #include <assert.h>
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stdout, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
 static DB_output_t plugin;
 DB_functions_t * deadbeef;
@@ -180,7 +179,6 @@ static int pulse_setformat (ddb_waveformat_t *fmt)
         return 0;
     }
 
-    pa_simple_flush (s, NULL);
     pulse_free ();
     pulse_init ();
     int res = 0;
@@ -280,6 +278,7 @@ static void pulse_thread(void *context)
     prctl(PR_SET_NAME, "deadbeef-pulse", 0, 0, 0, 0);
 #endif
 
+    trace ("pulse thread started \n");
     while (!pulse_terminate)
     {
         if (state != OUTPUT_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1))
@@ -324,6 +323,7 @@ static void pulse_thread(void *context)
     state = OUTPUT_STATE_STOPPED;
     if (s)
     {
+        pa_simple_drain (s, NULL);
         pa_simple_free(s);
         s = NULL;
     }
@@ -371,6 +371,7 @@ static DB_output_t plugin =
     .plugin.version_major = 0,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_OUTPUT,
+//    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .plugin.id = "pulseaudio",
     .plugin.name = "PulseAudio output plugin",
     .plugin.descr = "At the moment of this writing, PulseAudio seems to be very unstable in many (or most) GNU/Linux distributions.\nIf you experience problems - please try switching to ALSA or OSS output.\nIf that doesn't help - please uninstall PulseAudio from your system, and try ALSA or OSS again.\nThanks for understanding",
