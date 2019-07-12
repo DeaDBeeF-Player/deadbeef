@@ -327,7 +327,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (info->mp4) {
         int ntracks = mp4ff_total_tracks (info->mp4);
         for (int i = 0; i < ntracks; i++) {
-            if (mp4ff_get_track_type (info->mp4, i) != TRACK_AUDIO) {
+            if (mp4ff_get_track_type (info->mp4, i) != TRACK_AUDIO_AAC) {
                 continue;
             }
             int res = mp4_track_get_info (info->mp4, i, &duration, &samplerate, &channels, &totalsamples, &info->mp4framesize);
@@ -882,7 +882,7 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             int ntracks = mp4ff_total_tracks (mp4);
             int i;
             for (i = 0; i < ntracks; i++) {
-                if (mp4ff_get_track_type (mp4, i) != TRACK_AUDIO) {
+                if (mp4ff_get_track_type (mp4, i) != TRACK_AUDIO_AAC) {
                     continue;
                 }
                 int mp4framesize;
