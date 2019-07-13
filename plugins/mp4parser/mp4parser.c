@@ -393,7 +393,7 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     uint32_t flag = meta->version_flags & 0xff;
 
     if (flag == 0) {
-        meta->values = calloc (meta->data_size / 2, 1);
+        meta->values = calloc (meta->data_size / 2, sizeof (uint16_t));
         for (int i = 0; i < meta->data_size/2; i++) {
             meta->values[i] = READ_UINT16(fp);
         }
