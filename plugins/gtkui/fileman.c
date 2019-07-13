@@ -642,11 +642,9 @@ show_file_chooser (const gchar          *title,
     }
 
     // restore folder
-    /* Windows: setting current folder for native filechooser here breaks restoring dirs, without it it still works fine?
     deadbeef->conf_lock ();
     gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast (conf_lastdir, ""));
     deadbeef->conf_unlock ();
-    */
 
     int response = run_file_chooser(dlg);
 
