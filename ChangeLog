@@ -3,6 +3,9 @@ version 1.8.2
 	Fixed writing multi-value fields into FLAC tags
 	Map ALBUMARTIST field to ALBUM ARTIST field in FLAC
 	Fixed sound output plugin selection bug in GTK UI
+	Fixed crash when opening files of 0 size
+	Fixed UI freeze when nullout plugin is selected
+	Fixed a regression in restoring the last selected folder in GTK file chooser
 
 version 1.8.1
 	Fixed audio freeze while sorting
