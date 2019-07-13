@@ -982,6 +982,8 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             return NULL;
         }
     }
+
+    // If mp4 is not detected, try raw aac
     int res = aac_probe (fp, &duration, &samplerate, &channels, &totalsamples);
     if (res == -1) {
         deadbeef->fclose (fp);
