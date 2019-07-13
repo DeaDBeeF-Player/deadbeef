@@ -928,7 +928,7 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                     deadbeef->pl_add_meta (it, ":BITRATE", s);
 
                     // embedded chapters
-                    deadbeef->pl_lock (); // FIXME: is it needed?
+                    deadbeef->pl_lock (); // FIXME: the lock can be eliminated, if subtracks are first appended "locally", and only appended to the real playlist at the end
                     if (chapters && num_chapters > 0) {
                         DB_playItem_t *cue = aac_insert_with_chapters (plt, after, it, chapters, num_chapters, totalsamples, samplerate);
                         for (int n = 0; n < num_chapters; n++) {
