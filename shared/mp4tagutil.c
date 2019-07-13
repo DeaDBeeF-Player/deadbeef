@@ -372,7 +372,7 @@ mp4_write_metadata (DB_playItem_t *it) {
 
     mp4p_atom_t *mp4file = mp4p_open(file);
 
-#if 0 // skipping junk is unsupported yet with file callbacks (junklib can't read using this interface -- a VFS wrapper needed?
+#if 0 // FIXME: skipping junk is unsupported yet with file callbacks (junklib can't read using this interface -- a VFS wrapper needed?
     int junk = deadbeef->junk_get_leading_size (fp);
     if (junk >= 0) {
         deadbeef->fseek (fp, junk, SEEK_SET);
