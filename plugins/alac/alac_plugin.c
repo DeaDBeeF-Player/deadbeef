@@ -159,7 +159,7 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     mp4p_atom_t *stsz_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl/stsz");
     mp4p_stsz_t *stsz = stsz_atom->data;
-    // FIXME: use stsz->number_of_entries
+
     info->mp4samples = stsz->number_of_entries;
 
     _info->fmt.samplerate = samplerate;

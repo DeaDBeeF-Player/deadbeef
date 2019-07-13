@@ -36,8 +36,7 @@ mp4p_atom_free_list (mp4p_atom_t *atom) {
 
 int
 mp4p_fourcc_compare (const char *value1, const char *value2) {
-    // FIXME: should be case-insensitive
-    return memcmp (value1, value2, 4);
+    return strncasecmp (value1, value2, 4);
 }
 
 int
@@ -325,20 +324,20 @@ _load_custom_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     uint32_t mean_size = READ_UINT32(fp);
     char mean_type[4];
     READ_BUF(fp, mean_type, 4);
-    if (memcmp (mean_type, "mean", 4)) {
+    if (strncasecmp (mean_type, "mean", 4)) {
         return -1;
     }
     READ_COMMON_HEADER();
     char *mean_data = malloc (mean_size - 12);
     READ_BUF(fp, mean_data, mean_size - 12);
-    if (memcmp (mean_data, "com.apple.iTunes", 16)) {
+    if (strncasecmp (mean_data, "com.apple.iTunes", 16)) {
         return -1;
     }
 
     uint32_t name_size = READ_UINT32(fp);
     char name_type[4];
     READ_BUF(fp, name_type, 4);
-    if (memcmp (name_type, "name", 4)) {
+    if (strncasecmp (name_type, "name", 4)) {
         return -1;
     }
 
@@ -350,7 +349,7 @@ _load_custom_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     uint32_t data_size = READ_UINT32(fp);
     char data_type[4];
     READ_BUF(fp, data_type, 4);
-    if (memcmp (data_type, "data", 4)) {
+    if (strncasecmp (data_type, "data", 4)) {
         return -1;
     }
 
@@ -379,7 +378,7 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     uint32_t size = READ_UINT32(fp);
     char data[4];
     READ_BUF(fp, data, 4);
-    if (memcmp (data, "data", 4)) {
+    if (strncasecmp (data, "data", 4)) {
         return -1;
     }
     atom->to_buffer = _meta_write;
@@ -400,7 +399,7 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
         }
     }
     else if (flag == 1) {
-        if (meta->data_size > 255 && memcmp (atom->type, COPYRIGHT_SYM "lyr", 4)) {
+        if (meta->data_size > 255 && strncasecmp (atom->type, COPYRIGHT_SYM "lyr", 4)) {
             return -1;
         }
         meta->text = calloc (meta->data_size+1, 1);
@@ -951,7 +950,7 @@ mp4p_atom_find (mp4p_atom_t *root, const char *path) {
 
     mp4p_atom_t *a = root;
     while (a) {
-        if (!memcmp (a->type, path, 4)) {
+        if (!strncasecmp (a->type, path, 4)) {
             printf ("found: ");
             _dbg_print_atom (a);
             break;
