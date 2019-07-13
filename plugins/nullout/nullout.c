@@ -157,6 +157,7 @@ pnull_thread (void *context) {
         
         char buf[4096];
         pnull_callback (buf, 1024);
+        usleep(1);
     }
 }
 
