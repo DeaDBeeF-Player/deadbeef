@@ -671,64 +671,83 @@ typedef struct {
     int32_t endsample;
 } aac_chapter_t;
 
-#if 0 // !!
 static aac_chapter_t *
-aac_load_itunes_chapters (mp4ff_t *mp4, /* out */ int *num_chapters, int samplerate) {
+aac_load_itunes_chapters (aac_info_t *info, mp4p_chap_t *chap, /* out */ int *num_chapters, int samplerate) {
     *num_chapters = 0;
-    int i_entry_count = mp4ff_chap_get_num_tracks (mp4);
-    int i_tracks = mp4ff_total_tracks (mp4);
-    int i, j;
-    for( i = 0; i < i_entry_count; i++ )
+
+    mp4p_atom_t *mp4 = info->mp4file;
+
+    for (int i = 0; i < chap->count; i++)
     {
-        for( j = 0; j < i_tracks; j++ )
-        {
-            if(mp4ff_chap_get_track_id (mp4, i)  == mp4ff_get_track_id (mp4, j) &&
-                    mp4ff_get_track_type (mp4, j) == TRACK_TEXT) {
-                break;
+        mp4p_atom_t *text_atom = NULL;
+        mp4p_atom_t *trak_atom = mp4p_atom_find(mp4, "moov/trak");
+        while (trak_atom) {
+            text_atom = NULL;
+            if (!mp4p_atom_type_compare(trak_atom, "trak")) {
+                text_atom = mp4p_atom_find(trak_atom, "trak/mdia/minf/stbl/stsd/text");
+                mp4p_atom_t *tkhd_atom = mp4p_atom_find(trak_atom, "trak/tkhd");
+                if (text_atom && tkhd_atom) {
+                    mp4p_tkhd_t *tkhd = tkhd_atom->data;
+                    if (tkhd->track_id == chap->track_id[i]) {
+                        break;
+                    }
+                }
             }
+            trak_atom = trak_atom->next;
         }
-        if( j < i_tracks )
+
+        if (!text_atom) {
+            continue;
+        }
+
+        mp4p_atom_t *stts_atom = mp4p_atom_find(trak_atom, "trak/mdia/minf/stbl/stts");
+        mp4p_atom_t *mdhd_atom = mp4p_atom_find(trak_atom, "trak/mdia/mdhd");
+        mp4p_atom_t *stbl_atom = mp4p_atom_find(trak_atom, "trak/mdia/minf/stbl");
+        if (!stts_atom || !mdhd_atom || !stbl_atom) {
+            continue;
+        }
+
+        mp4p_mdhd_t *mdhd = mdhd_atom->data;
+
+        uint64_t sample_count = mp4p_stts_total_num_samples (stts_atom);
+
+        aac_chapter_t *chapters = malloc (sizeof (aac_chapter_t) * sample_count);
+        memset (chapters, 0, sizeof (aac_chapter_t) * sample_count);
+        *num_chapters = 0;
+
+        int64_t total_dur = 0;
+        int64_t curr_sample = 0;
+        for (int sample = 0; sample < sample_count; sample++)
         {
-            int i_sample_count = mp4ff_num_samples (mp4, j);
-            int i_sample;
+            int32_t dur = (int64_t)1000 * mp4p_stts_sample_duration(stts_atom, sample) / mdhd->time_scale; // milliseconds
+            total_dur += dur;
+            unsigned char *buffer = NULL;
+            uint32_t buffer_size = 0;
 
-            aac_chapter_t *chapters = malloc (sizeof (aac_chapter_t) * i_sample_count);
-            memset (chapters, 0, sizeof (aac_chapter_t) * i_sample_count);
-            *num_chapters = 0;
+            uint64_t offs = mp4p_sample_offset (stbl_atom, sample);
+            UINT size = mp4p_sample_size (stbl_atom, sample);
 
-            int64_t total_dur = 0;
-            int64_t curr_sample = 0;
-            for( i_sample = 0; i_sample < i_sample_count; i_sample++ )
-            {
-                int32_t dur = (int64_t)1000 * mp4ff_get_sample_duration (mp4, j, i_sample) / mp4ff_time_scale (mp4, j); // milliseconds
-                total_dur += dur;
-                unsigned char *buffer = NULL;
-                uint32_t buffer_size = 0;
-
-                int rc = mp4ff_read_sample (mp4, j, i_sample, &buffer, &buffer_size);
-
-                if (rc == 0 || !buffer) {
-                    continue;
-                }
-                int len = (buffer[0] << 8) | buffer[1];
-                len = min (len, buffer_size - 2);
-                if (len > 0) {
-                    chapters[*num_chapters].title = strndup ((const char *)&buffer[2], len);
-                }
-                chapters[*num_chapters].startsample = (int)curr_sample;
-                curr_sample += (int64_t)dur * samplerate / 1000.f;
-                chapters[*num_chapters].endsample = (int)curr_sample - 1;
-                if (buffer) {
-                    free (buffer);
-                }
-                (*num_chapters)++;
+            buffer = malloc (size);
+            deadbeef->fseek (info->file, offs+info->junk, SEEK_SET);
+            if (size != deadbeef->fread (buffer, 1, size, info->file)) {
+                free (buffer);
+                continue;
             }
-            return chapters;
+            int len = (buffer[0] << 8) | buffer[1];
+            len = min (len, buffer_size - 2);
+            if (len > 0) {
+                chapters[*num_chapters].title = strndup ((const char *)&buffer[2], len);
+            }
+            chapters[*num_chapters].startsample = (int)curr_sample;
+            curr_sample += (int64_t)dur * samplerate / 1000.f;
+            chapters[*num_chapters].endsample = (int)curr_sample - 1;
+            free (buffer);
+            (*num_chapters)++;
         }
+        return chapters;
     }
     return NULL;
 }
-#endif
 
 static DB_playItem_t *
 aac_insert_with_chapters (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, aac_chapter_t *chapters, int num_chapters, int64_t totalsamples, int samplerate) {
@@ -847,7 +866,6 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     (void)deadbeef->junk_id3v1_read (it, fp);
 
     int64_t fsize = deadbeef->fgetlength (fp);
-    deadbeef->fclose (fp);
 
     char s[100];
     snprintf (s, sizeof (s), "%lld", fsize);
@@ -863,11 +881,15 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
 
     int num_chapters = 0;
     aac_chapter_t *chapters = NULL;
-#if 0 // !!
-    if (mp4ff_chap_get_num_tracks(mp4) > 0) {
-        chapters = aac_load_itunes_chapters (mp4, &num_chapters, samplerate);
+
+    mp4p_atom_t *chap_atom = mp4p_atom_find(info.trak, "trak/tref/chap");
+    if (chap_atom) {
+        mp4p_chap_t *chap = chap_atom->data;
+        if (chap->count > 0) {
+            chapters = aac_load_itunes_chapters (&info, chap, &num_chapters, samplerate);
+        }
     }
-#endif
+    deadbeef->fclose (fp);
 
     // embedded chapters
     deadbeef->pl_lock (); // FIXME: the lock can be eliminated, if subtracks are first appended "locally", and only appended to the real playlist at the end
