@@ -378,6 +378,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
     if (!alac) {
         deadbeef->fclose (fp);
+        mp4p_atom_free_list(info.mp4file);
         return NULL;
     }
 
@@ -431,7 +432,6 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             mp4p_atom_free_list(info.mp4file);
             deadbeef->pl_item_unref (it);
             deadbeef->pl_item_unref (cue);
-            deadbeef->pl_unlock ();
             return cue;
         }
     }
