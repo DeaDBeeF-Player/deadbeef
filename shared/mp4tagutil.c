@@ -426,72 +426,69 @@ mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
 
         if (!strcasecmp (name, "replaygain_track_gain")) {
             deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (meta->text));
-            continue;
         }
         else if (!strcasecmp (name, "replaygain_album_gain")) {
             deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (meta->text));
-            continue;
         }
         else if (!strcasecmp (name, "replaygain_track_peak")) {
             deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (meta->text));
-            continue;
         }
         else if (!strcasecmp (name, "replaygain_album_peak")) {
             deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (meta->text));
-            continue;
         }
-
-        for (int i = 0; _mp4_atom_map[i]; i += 2) {
-            if (!strcasecmp (name, _mp4_atom_map[i])) {
-                if (meta->text) {
-                    deadbeef->pl_append_meta (it, _mp4_atom_map[i+1], meta->text);
-                }
-                else if (meta->values) {
-                    if (!memcmp (meta_atom->type, "trkn", 4)) {
-                        if (meta->data_size >= 6) { // leading + idx + total
-                            uint16_t track = meta->values[1];
-                            uint16_t total = meta->values[2];
+        else {
+            for (int i = 0; _mp4_atom_map[i]; i += 2) {
+                if (!strcasecmp (name, _mp4_atom_map[i])) {
+                    if (meta->text) {
+                        deadbeef->pl_append_meta (it, _mp4_atom_map[i+1], meta->text);
+                    }
+                    else if (meta->values) {
+                        if (!memcmp (meta_atom->type, "trkn", 4)) {
+                            if (meta->data_size >= 6) { // leading + idx + total
+                                uint16_t track = meta->values[1];
+                                uint16_t total = meta->values[2];
+                                char s[10];
+                                if (track) {
+                                    snprintf (s, sizeof (s), "%d", (int)track);
+                                    deadbeef->pl_replace_meta (it, "track", s);
+                                }
+                                if (total) {
+                                    snprintf (s, sizeof (s), "%d", (int)total);
+                                    deadbeef->pl_replace_meta (it, "numtracks", s);
+                                }
+                            }
+                        }
+                        else if (!memcmp (meta_atom->type, "disk", 4)) {
+                            if (meta->data_size >= 6) { // leading + idx + total
+                                uint16_t track = meta->values[1];
+                                uint16_t total = meta->values[2];
+                                char s[10];
+                                if (track) {
+                                    snprintf (s, sizeof (s), "%d", (int)track);
+                                    deadbeef->pl_replace_meta (it, "disc", s);
+                                }
+                                if (total) {
+                                    snprintf (s, sizeof (s), "%d", (int)total);
+                                    deadbeef->pl_replace_meta (it, "numdiscs", s);
+                                }
+                            }
+                        }
+                        else if (!strcmp (_mp4_atom_map[i+1], "genre")) {
+                            if (meta->values[0]) {
+                                const char *genre = mp4p_genre_name_for_index(meta->values[0]);
+                                if (genre) {
+                                    deadbeef->pl_replace_meta (it, _mp4_atom_map[i+1], genre);
+                                }
+                            }
+                        }
+                        else {
                             char s[10];
-                            if (track) {
-                                snprintf (s, sizeof (s), "%d", (int)track);
-                                deadbeef->pl_replace_meta (it, "track", s);
-                            }
-                            if (total) {
-                                snprintf (s, sizeof (s), "%d", (int)total);
-                                deadbeef->pl_replace_meta (it, "numtracks", s);
-                            }
+                            snprintf (s, sizeof (s), "%d", (int)meta->values[0]);
+                            deadbeef->pl_replace_meta (it, _mp4_atom_map[i+1], s);
                         }
                     }
-                    else if (!memcmp (meta_atom->type, "disk", 4)) {
-                        if (meta->data_size >= 6) { // leading + idx + total
-                            uint16_t track = meta->values[1];
-                            uint16_t total = meta->values[2];
-                            char s[10];
-                            if (track) {
-                                snprintf (s, sizeof (s), "%d", (int)track);
-                                deadbeef->pl_replace_meta (it, "disc", s);
-                            }
-                            if (total) {
-                                snprintf (s, sizeof (s), "%d", (int)total);
-                                deadbeef->pl_replace_meta (it, "numdiscs", s);
-                            }
-                        }
-                    }
-                    else if (!strcmp (_mp4_atom_map[i+1], "genre")) {
-                        if (meta->values[0]) {
-                            const char *genre = mp4p_genre_name_for_index(meta->values[0]);
-                            if (genre) {
-                                deadbeef->pl_replace_meta (it, _mp4_atom_map[i+1], genre);
-                            }
-                        }
-                    }
-                    else {
-                        char s[10];
-                        snprintf (s, sizeof (s), "%d", (int)meta->values[0]);
-                        deadbeef->pl_replace_meta (it, _mp4_atom_map[i+1], s);
-                    }
+                    break;
                 }
-                break;
             }
         }
         meta_atom = meta_atom->next;
