@@ -205,6 +205,12 @@ typedef struct {
     uint16_t *values;
 } mp4p_meta_t;
 
+typedef struct {
+    uint8_t nchapters;
+    char    **name;
+    int64_t  *start;
+} mp4p_chpl_t;
+
 void
 mp4p_atom_free (mp4p_atom_t *atom);
 

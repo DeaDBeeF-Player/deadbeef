@@ -431,6 +431,84 @@ _read_esds_tag_size (mp4p_file_callbacks_t *fp, uint32_t *retval) {
     return 0;
 }
 
+static void
+_mp4p_chpl_free (void *data) {
+    mp4p_chpl_t *chpl = data;
+    for (int i = 0; i < chpl->nchapters; i++) {
+        free (chpl->name[i]);
+    }
+    free (chpl->name);
+    free (chpl->start);
+    free (data);
+}
+
+// FIXME: untested
+static int32_t
+_load_chpl_atom(mp4p_atom_t *atom, mp4p_file_callbacks_t *fp)
+{
+    READ_COMMON_HEADER();
+
+    mp4p_chpl_t *chpl = calloc (sizeof (mp4p_chpl_t), 1);
+    atom->data = chpl;
+    atom->free = _mp4p_chpl_free;
+    int i;
+    int i_read = atom->size;
+
+    chpl->nchapters = READ_UINT8(fp);
+    i_read -= 5;
+
+    chpl->name = calloc (sizeof (char *), chpl->nchapters);
+    chpl->start = calloc (sizeof (int64_t), chpl->nchapters);
+    for( i = 0; i < chpl->nchapters; i++ )
+    {
+        uint64_t i_start;
+        uint8_t i_len;
+        int i_copy;
+        i_start = READ_UINT64(fp);
+        i_read -= 8;
+        i_len = READ_UINT8(fp);
+        i_read -= 1;
+
+        chpl->name[i] = malloc( i_len + 1 );
+
+        i_copy = i_len < i_read ? i_len : i_read;
+        if( i_copy > 0 ) {
+            READ_BUF(fp, chpl->name[i], i_copy)
+        }
+        chpl->name[i][i_copy] = '\0';
+        chpl->start[i] = i_start;
+
+        i_read -= i_copy;
+    }
+    // FIXME: convert to qsort
+    /* Bubble sort by increasing start date */
+    do
+    {
+        for( i = 0; i < chpl->nchapters - 1; i++ )
+        {
+            if( chpl->start[i] > chpl->start[i+1] )
+            {
+                char *psz = chpl->name[i+1];
+                int64_t i64 = chpl->start[i+1];
+
+                chpl->name[i+1] = chpl->name[i];
+                chpl->start[i+1] = chpl->start[i];
+
+                chpl->name[i] = psz;
+                chpl->start[i] = i64;
+
+                i = -1;
+                break;
+            }
+        }
+    } while( i == -1 );
+
+    return 0;
+
+error:
+    return -1;
+}
+
 // The function may return -1 on parser failures,
 // but this should not be considered a critical failure.
 int
@@ -814,6 +892,9 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     }
     else if (parent_atom && !mp4p_atom_type_compare(parent_atom, "ilst")) {
         return _load_metadata_atom (atom, fp);
+    }
+    else if (!mp4p_atom_type_compare (atom, "chpl")) {
+        _load_chpl_atom (atom, fp);
     }
     else {
         _dbg_print_indent ();
