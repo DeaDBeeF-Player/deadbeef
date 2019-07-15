@@ -211,6 +211,11 @@ typedef struct {
     int64_t  *start;
 } mp4p_chpl_t;
 
+typedef struct {
+    uint32_t count;
+    uint32_t *track_id;
+} mp4p_chap_t;
+
 void
 mp4p_atom_free (mp4p_atom_t *atom);
 

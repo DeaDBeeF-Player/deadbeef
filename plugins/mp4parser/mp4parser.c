@@ -509,6 +509,35 @@ error:
     return -1;
 }
 
+void
+_mp4p_chap_free (void *data) {
+    mp4p_chap_t *chap = data;
+    free (chap->track_id);
+    free (chap);
+}
+
+static int
+_load_chap_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
+    mp4p_chap_t *chap = calloc (sizeof (mp4p_chap_t), 1);
+    atom->data = chap;
+    atom->free = _mp4p_chap_free;
+
+    chap->track_id = NULL;
+    chap->count = (atom->size-8)/ sizeof(uint32_t);
+    if (chap->count > 0) {
+        chap->track_id = calloc (chap->count, sizeof(uint32_t));
+    }
+    if (chap->track_id == NULL)
+        return -1;
+
+    for (int i = 0; i < chap->count; i++)
+    {
+        chap->track_id[i] = READ_UINT32(fp);
+    }
+
+    return 0;
+}
+
 // The function may return -1 on parser failures,
 // but this should not be considered a critical failure.
 int
@@ -895,6 +924,9 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     }
     else if (!mp4p_atom_type_compare (atom, "chpl")) {
         _load_chpl_atom (atom, fp);
+    }
+    else if (!mp4p_atom_type_compare (atom, "chap")) {
+        _load_chap_atom (atom, fp);
     }
     else {
         _dbg_print_indent ();
