@@ -60,9 +60,11 @@ _dbg_print_indent (void) {
 
 static void
 _dbg_print_atom (mp4p_atom_t *atom) {
+#if 0
     _dbg_print_indent();
     _dbg_print_fourcc(atom->type);
     printf ("\n");
+#endif
 }
 
 static int
@@ -1045,6 +1047,10 @@ mp4p_open (mp4p_file_callbacks_t *callbacks) {
         if (!atom) {
             break;
         }
+        if (!atom->subatoms) {
+            mp4p_atom_free(atom);
+            return NULL;
+        }
         if (!head) {
             head = tail = atom;
         }
@@ -1066,7 +1072,6 @@ mp4p_atom_find (mp4p_atom_t *root, const char *path) {
     mp4p_atom_t *a = root;
     while (a) {
         if (!strncasecmp (a->type, path, 4)) {
-            printf ("found: ");
             _dbg_print_atom (a);
             break;
         }
@@ -1151,6 +1156,10 @@ mp4p_sample_offset (mp4p_atom_t *stbl_atom, uint32_t sample) {
     mp4p_atom_t *stco_atom = mp4p_atom_find(stbl_atom, "stbl/co64");
     if (!stco_atom) {
         stco_atom = mp4p_atom_find(stbl_atom, "stbl/stco");
+    }
+
+    if (!stco_atom) {
+        return 0;
     }
 
     mp4p_stco_t *stco = stco_atom->data;
