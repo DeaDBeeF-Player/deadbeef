@@ -128,7 +128,7 @@ _read_uint32 (mp4p_file_callbacks_t *fp, uint32_t *value) {
     if (4 != fp->read (fp, csize, 4)) {
         return -1;
     }
-    *value = csize[3] | (csize[2]<<8) | (csize[1]<<16) | (csize[0]<<24);
+    *value = (uint32_t)csize[3] | ((uint32_t)csize[2]<<8) | ((uint32_t)csize[1]<<16) | ((uint32_t)csize[0]<<24);
     return 0;
 }
 
