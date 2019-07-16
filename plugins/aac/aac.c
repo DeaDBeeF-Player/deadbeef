@@ -852,7 +852,6 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
         info.trak = info.trak->next;
     }
     if (!aac) {
-        deadbeef->fclose (fp);
         mp4p_atom_free_list(info.mp4file);
         *after = NULL;
         return -1; // mp4 without aac
@@ -867,13 +866,11 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     uint8_t *asc = (uint8_t *)esds->asc;
     if (aacDecoder_ConfigRaw(info.dec, &asc, &esds->asc_size) != AAC_DEC_OK) {
         mp4p_atom_free_list(info.mp4file);
-        deadbeef->fclose (fp);
         return -1;
     }
 
     if (_mp4_get_samplerate(&info) < 0) {
         mp4p_atom_free_list(info.mp4file);
-        deadbeef->fclose (fp);
         aacDecoder_Close(info.dec);
         return -1;
     }
@@ -925,7 +922,6 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
             chapters = aac_load_itunes_chapters (&info, chap, &num_chapters, info.info.fmt.samplerate);
         }
     }
-    deadbeef->fclose (fp);
 
     // embedded chapters
     deadbeef->pl_lock (); // FIXME: the lock can be eliminated, if subtracks are first appended "locally", and only appended to the real playlist at the end
@@ -987,6 +983,7 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     if (!fp->vfs->is_streaming ()) {
         int res = _mp4_insert(&after, fname, fp, plt);
         if (res == 0 || !after) {
+            deadbeef->fclose (fp);
             return after;
         }
     }
