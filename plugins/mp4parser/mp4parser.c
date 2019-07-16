@@ -78,7 +78,9 @@ _load_subatoms (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
             atom->subatoms = tail = c;
         }
         else {
-            tail->next = c;
+            if (tail) {
+                tail->next = c;
+            }
             tail = c;
         }
     }
@@ -747,7 +749,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         }
     }
     else if (!mp4p_atom_type_compare(atom, "dref")) {
-        mp4p_stco_t *dref = calloc (sizeof (mp4p_dref_t), 1);
+        mp4p_dref_t *dref = calloc (sizeof (mp4p_dref_t), 1);
         atom->data = dref;
         atom->free = free;
 

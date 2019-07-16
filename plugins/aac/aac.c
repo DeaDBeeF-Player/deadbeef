@@ -98,10 +98,8 @@ typedef struct {
 // allocate codec control structure
 static DB_fileinfo_t *
 aac_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (aac_info_t));
-    aac_info_t *info = (aac_info_t *)_info;
-    memset (info, 0, sizeof (aac_info_t));
-    return _info;
+    aac_info_t *info = calloc (sizeof (aac_info_t), 1);
+    return (DB_fileinfo_t *)info;
 }
 
 static int64_t
