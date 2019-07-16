@@ -480,6 +480,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             mp4p_atom_t *stbl_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl");
             uint64_t offs = mp4p_sample_offset (stbl_atom, info->mp4sample);
             UINT size = mp4p_sample_size (stbl_atom, info->mp4sample);
+            printf ("%08X %d\n", (int)offs, size);
 
             mp4packet = malloc (size);
             deadbeef->fseek (info->file, offs+info->junk, SEEK_SET);
@@ -491,8 +492,8 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
             info->mp4sample++;
 
-            UINT consumed = size;
-            AAC_DECODER_ERROR err = aacDecoder_Fill(info->dec, &mp4packet, &size, &consumed);
+            UINT valid = size;
+            AAC_DECODER_ERROR err = aacDecoder_Fill(info->dec, &mp4packet, &size, &valid);
 
             if (err != AAC_DEC_OK) {
                 goto error;
@@ -852,7 +853,6 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     }
     if (!aac) {
         mp4p_atom_free_list(info.mp4file);
-        *after = NULL;
         return -1; // mp4 without aac
     }
 
@@ -981,7 +981,7 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
     if (!fp->vfs->is_streaming ()) {
         int res = _mp4_insert(&after, fname, fp, plt);
-        if (res == 0 || !after) {
+        if (res == 0) {
             deadbeef->fclose (fp);
             return after;
         }
