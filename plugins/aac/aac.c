@@ -211,6 +211,23 @@ aac_probe (DB_FILE *fp, float *duration, int *samplerate, int *channels, int64_t
     return 0;
 }
 
+static int
+_mp4_get_samplerate (aac_info_t *info) {
+    CStreamInfo* stream_info = aacDecoder_GetStreamInfo(info->dec);
+    if (stream_info->extSamplingRate) {
+        info->info.fmt.samplerate = stream_info->extSamplingRate;
+    }
+    else if (stream_info->sampleRate) {
+        info->info.fmt.samplerate = stream_info->sampleRate;
+    }
+    else if (stream_info->aacSampleRate) {
+        info->info.fmt.samplerate = stream_info->aacSampleRate;
+    }
+    else {
+        return -1;
+    }
+    return 0;
+}
 
 static int
 aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
@@ -284,7 +301,9 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             return -1;
         }
 
-        _info->fmt.samplerate = aac->sample_rate;
+        if (_mp4_get_samplerate (info) < 0) {
+            return -1;
+        }
         _info->fmt.channels = aac->channel_count;
     }
     else {
@@ -798,6 +817,7 @@ aac_insert_with_chapters (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem
     return after;
 }
 
+
 static int
 _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_t *plt) {
     mp4p_atom_t *mp4 = NULL;
@@ -839,8 +859,26 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     }
 
     // get audio format: samplerate, bps, channels
-    int samplerate = aac->sample_rate;
-    //            int bps = aac->bps;
+    mp4p_atom_t *esds_atom = mp4p_atom_find (info.trak, "trak/mdia/minf/stbl/stsd/mp4a/esds");
+    mp4p_esds_t *esds = esds_atom->data;
+
+    info.dec = aacDecoder_Open (TT_MP4_RAW, 1);
+
+    uint8_t *asc = (uint8_t *)esds->asc;
+    if (aacDecoder_ConfigRaw(info.dec, &asc, &esds->asc_size) != AAC_DEC_OK) {
+        mp4p_atom_free_list(info.mp4file);
+        deadbeef->fclose (fp);
+        return -1;
+    }
+
+    if (_mp4_get_samplerate(&info) < 0) {
+        mp4p_atom_free_list(info.mp4file);
+        deadbeef->fclose (fp);
+        aacDecoder_Close(info.dec);
+        return -1;
+    }
+    aacDecoder_Close(info.dec);
+
     int channels = aac->channel_count;
     int64_t totalsamples = 0;
 
@@ -849,7 +887,7 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     mp4p_mdhd_t *mdhd = mdhd_atom->data;
 
     uint64_t total_sample_duration = mp4p_stts_total_sample_duration (stts_atom);
-    totalsamples = total_sample_duration * samplerate / mdhd->time_scale;
+    totalsamples = total_sample_duration * info.info.fmt.samplerate / mdhd->time_scale;
     duration = total_sample_duration / (float)mdhd->time_scale;
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
@@ -871,7 +909,7 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     deadbeef->pl_add_meta (it, ":BPS", "16");
     snprintf (s, sizeof (s), "%d", channels);
     deadbeef->pl_add_meta (it, ":CHANNELS", s);
-    snprintf (s, sizeof (s), "%d", samplerate);
+    snprintf (s, sizeof (s), "%d", info.info.fmt.samplerate);
     deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
     int br = (int)roundf(fsize / duration * 8 / 1000);
     snprintf (s, sizeof (s), "%d", br);
@@ -884,7 +922,7 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     if (chap_atom) {
         mp4p_chap_t *chap = chap_atom->data;
         if (chap->count > 0) {
-            chapters = aac_load_itunes_chapters (&info, chap, &num_chapters, samplerate);
+            chapters = aac_load_itunes_chapters (&info, chap, &num_chapters, info.info.fmt.samplerate);
         }
     }
     deadbeef->fclose (fp);
@@ -892,7 +930,7 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     // embedded chapters
     deadbeef->pl_lock (); // FIXME: the lock can be eliminated, if subtracks are first appended "locally", and only appended to the real playlist at the end
     if (chapters && num_chapters > 0) {
-        DB_playItem_t *cue = aac_insert_with_chapters (plt, *after, it, chapters, num_chapters, totalsamples, samplerate);
+        DB_playItem_t *cue = aac_insert_with_chapters (plt, *after, it, chapters, num_chapters, totalsamples, info.info.fmt.samplerate);
         for (int n = 0; n < num_chapters; n++) {
             if (chapters[n].title) {
                 free (chapters[n].title);
@@ -915,7 +953,7 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     DB_playItem_t *cue = NULL;
 
     if (cuesheet) {
-        cue = deadbeef->plt_insert_cue_from_buffer (plt, *after, it, (const uint8_t *)cuesheet, (int)strlen (cuesheet), (int)totalsamples, samplerate);
+        cue = deadbeef->plt_insert_cue_from_buffer (plt, *after, it, (const uint8_t *)cuesheet, (int)strlen (cuesheet), (int)totalsamples, info.info.fmt.samplerate);
         if (cue) {
             mp4p_atom_free_list(info.mp4file);
             deadbeef->pl_item_unref (it);
@@ -925,7 +963,7 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
         }
     }
 
-    cue  = deadbeef->plt_insert_cue (plt, *after, it, (int)totalsamples, samplerate);
+    cue  = deadbeef->plt_insert_cue (plt, *after, it, (int)totalsamples, info.info.fmt.samplerate);
     if (cue) {
         deadbeef->pl_item_unref (it);
         deadbeef->pl_item_unref (cue);
