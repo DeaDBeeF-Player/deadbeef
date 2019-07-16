@@ -500,7 +500,6 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
         else {
             uint8_t *packet = info->buffer;
-            UINT packet_size;
             size_t n = deadbeef->fread (packet, 1, 2, info->file);
             if (n != 2) {
                 goto error;
@@ -520,7 +519,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
 
             info->num_errors=0;
-            packet_size = ((packet[3] & 0x03) << 11) | (packet[4] << 3) | (packet[5] >> 5);
+            UINT packet_size = ((packet[3] & 0x03) << 11) | (packet[4] << 3) | (packet[5] >> 5);
             n = deadbeef->fread(packet + 7, 1, packet_size - 7, info->file);
             if (n != packet_size - 7) {
                 goto error;
@@ -533,7 +532,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             consumed = info->remaining-valid;
         }
 
-        AAC_DECODER_ERROR err = aacDecoder_DecodeFrame(info->dec, (short *)info->out_buffer, OUT_BUFFER_SIZE, 0);
+        AAC_DECODER_ERROR err = aacDecoder_DecodeFrame(info->dec, (short *)info->out_buffer, OUT_BUFFER_SIZE/sizeof(short), 0);
 
         if (mp4packet) {
             free (mp4packet);
