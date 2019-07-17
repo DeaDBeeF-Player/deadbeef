@@ -115,6 +115,11 @@ get_best_samplerate (int samplerate, int *avail_samplerates, int count) {
         int64_t mod = samplerate > avail_samplerates[i] ? (samplerate % avail_samplerates[i]) : (avail_samplerates[i] % samplerate);
         int64_t score = dist*2+mod;
 
+        // upscaling is generally better than downscaling
+        if (avail_samplerates[i] < samplerate) {
+            score *= 2;
+        }
+
         if (index == -1 || score < nearest) {
             nearest = score;
             index = i;

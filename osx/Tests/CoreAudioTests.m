@@ -28,6 +28,12 @@ static int samplerates_low[5] = {
     48000
 };
 
+static int samplerates_16_48[2] = {
+    16000,
+    48000,
+};
+
+
 int
 get_best_samplerate (int samplerate, int *avail_samplerates, int count);
 
@@ -118,6 +124,11 @@ get_best_samplerate (int samplerate, int *avail_samplerates, int count);
 - (void)test_Input8khz_LowOutput48khz {
     int sr = get_best_samplerate(8000, samplerates_low, 5);
     XCTAssertEqual(8000, sr);
+}
+
+- (void)test_Input32khz_16_48_Output48khz {
+    int sr = get_best_samplerate(32000, samplerates_16_48, 2);
+    XCTAssertEqual(48000, sr);
 }
 
 
