@@ -62,7 +62,11 @@ bool CdmoLoader::load(const char *filename, const CFileProvider &fp)
       delete unpacker;
       return false;
   }
-  f = fp.open(filename); if(!f) return false;
+  f = fp.open(filename);
+  if(!f) {
+    delete unpacker;
+    return false;
+  }
 
   f->readString((char *)chkhdr, 16);
 

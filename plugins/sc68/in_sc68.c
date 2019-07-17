@@ -49,10 +49,8 @@ static const char * exts[] = { "sndh", "snd", "sc68", NULL };
 // allocate codec control structure
 static DB_fileinfo_t *
 in_sc68_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (in_sc68_info_t));
-    in_sc68_info_t *info = (in_sc68_info_t *)_info;
-    memset (info, 0, sizeof (in_sc68_info_t));
-    return _info;
+    in_sc68_info_t *info = calloc (sizeof (in_sc68_info_t), 1);
+    return &info->info;
 }
 
 // prepare to decode the track, fill in mandatory plugin fields

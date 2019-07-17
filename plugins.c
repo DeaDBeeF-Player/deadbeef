@@ -639,6 +639,7 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
                     dlclose (p->handle);
                 }
                 free (p);
+                break;
             }
             else {
                 trace_err ("found copy of plugin \"%s\" (%s), but newer version is already loaded\n", plugin_api->id, plugin_api->name)

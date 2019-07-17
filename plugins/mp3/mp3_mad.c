@@ -223,7 +223,6 @@ mp3_mad_decode_next_packet (mp3_info_t *info) {
             }
             if (bytesread < size) {
                 // end of file
-                size -= bytesread;
                 bytes += bytesread;
             }
             bytesread += info->input_remaining_bytes;

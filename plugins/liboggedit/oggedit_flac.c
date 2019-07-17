@@ -59,7 +59,7 @@ static void clear_header_list(ogg_packet **headers)
 
 static ogg_packet **headers_alloc(ogg_packet **headers, const size_t packets)
 {
-    ogg_packet **new_headers = realloc(headers, (packets+2) * sizeof(headers));
+    ogg_packet **new_headers = realloc(headers, (packets+2) * sizeof(ogg_packet *));
     if (!new_headers) {
         clear_header_list(headers);
         return NULL;

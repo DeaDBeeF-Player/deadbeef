@@ -65,11 +65,9 @@ cdumb_startrenderer (DB_fileinfo_t *_info);
 
 static DB_fileinfo_t *
 cdumb_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (dumb_info_t));
-    dumb_info_t *info = (dumb_info_t *)_info;
-    memset (_info, 0, sizeof (dumb_info_t));
+    dumb_info_t *info = calloc (sizeof (dumb_info_t), 1);
     info->can_loop = hints & DDB_DECODER_HINT_CAN_LOOP;
-    return _info;
+    return &info->info;
 }
 
 static int

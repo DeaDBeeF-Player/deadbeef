@@ -278,9 +278,8 @@ sldb_find (const uint8_t *digest) {
 
 DB_fileinfo_t *
 csid_open (uint32_t hints) {
-    DB_fileinfo_t *_info = (DB_fileinfo_t *)malloc (sizeof (sid_info_t));
-    memset (_info, 0, sizeof (sid_info_t));
-    return _info;
+    sid_info_t *info = (sid_info_t *)calloc (sizeof (sid_info_t), 1);
+    return &info->info;
 }
 
 static void

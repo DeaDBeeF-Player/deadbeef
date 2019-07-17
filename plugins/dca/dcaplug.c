@@ -398,7 +398,8 @@ dts_open_wav (DB_FILE *fp, wavfmt_t *fmt, int64_t *totalsamples) {
 
 static DB_fileinfo_t *
 dts_open (uint32_t hints) {
-    return calloc (1, sizeof (ddb_dca_state_t));
+    ddb_dca_state_t *info = calloc (1, sizeof (ddb_dca_state_t));
+    return &info->info;
 }
 
 static int

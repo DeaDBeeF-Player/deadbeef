@@ -71,10 +71,8 @@ shn_config shn_cfg;
 
 DB_fileinfo_t *
 shn_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (shn_fileinfo_t));
-    shn_fileinfo_t *info = (shn_fileinfo_t *)_info;
-    memset (info, 0, sizeof (shn_fileinfo_t));
-    return _info;
+    shn_fileinfo_t *info = calloc (sizeof (shn_fileinfo_t), 1);
+    return &info->info;
 }
 
 int
@@ -917,8 +915,6 @@ shn_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int v2err = deadbeef->junk_id3v2_read (it, tmp_file->vars.fd);
     int v1err = deadbeef->junk_id3v1_read (it, tmp_file->vars.fd);
 
-	shn_unload(tmp_file);
-
     char s[100];
     snprintf (s, sizeof (s), "%lld", fsize);
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
@@ -932,6 +928,8 @@ shn_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     snprintf (s, sizeof (s), "%d", br);
     deadbeef->pl_add_meta (it, ":BITRATE", s);
     deadbeef->pl_add_meta (it, "title", NULL);
+
+    shn_unload(tmp_file);
 
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);

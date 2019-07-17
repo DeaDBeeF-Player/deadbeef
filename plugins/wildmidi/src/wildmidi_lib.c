@@ -625,7 +625,7 @@ WM_BufferFile (const char *filename, unsigned long int *size) {
 			buffer_dir[strlen(buffer_dir)+1] = '\0';
 			buffer_dir[strlen(buffer_dir)] = '/';
 		}
-		buffer_file = realloc(buffer_file,(strlen(buffer_file) + strlen(buffer_dir) + 1));
+		buffer_file = reallocf(buffer_file,(strlen(buffer_file) + strlen(buffer_dir) + 1));
 		if (buffer_file == NULL) {
 			WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_MEM, NULL, errno);
 			WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_LOAD, filename, errno);

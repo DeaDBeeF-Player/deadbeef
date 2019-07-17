@@ -68,17 +68,17 @@ bool CcffLoader::load(const char *filename, const CFileProvider &fp)
       if (!unpacker->unpack(packed_module,module))
 	{
 	  delete unpacker;
-	  delete packed_module;
-	  delete module;
+	  delete[] packed_module;
+	  delete[] module;
 	  return false;
 	}
 
       delete unpacker;
-      delete packed_module;
+      delete[] packed_module;
 
       if (memcmp(&module[0x5E1],"CUD-FM-File - SEND A POSTCARD -",31))
 	{
-	  delete module;
+	  delete[] module;
 	  return false;
 	}
     }

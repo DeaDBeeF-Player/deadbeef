@@ -95,8 +95,8 @@ opus_file_open(DB_FILE *fp)
 
 static DB_fileinfo_t *
 opusdec_open (uint32_t hints) {
-    DB_fileinfo_t *_info = calloc (sizeof (opusdec_info_t), 1);
-    return _info;
+    opusdec_info_t *info = calloc (sizeof (opusdec_info_t), 1);
+    return &info->info;
 }
 
 static DB_fileinfo_t *

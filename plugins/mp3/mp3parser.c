@@ -304,7 +304,6 @@ _check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int dat
 
         // musiclen
         info->lame_musiclength = extract_i32 (data);
-        data += 4;
     }
 
     return 0;

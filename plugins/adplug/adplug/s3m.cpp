@@ -70,6 +70,9 @@ bool Cs3mPlayer::load(const char *filename, const CFileProvider &fp)
     s3mheader		*checkhead;
     bool			adlibins=false;
 
+    memset (insptr, 0, sizeof (insptr));
+    memset (pattptr, 0, sizeof (pattptr));
+
     // file validation section
     checkhead = new s3mheader;
     load_header(f, checkhead);
