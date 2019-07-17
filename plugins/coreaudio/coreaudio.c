@@ -117,7 +117,7 @@ get_best_samplerate (int samplerate, int *avail_samplerates, int count) {
 
         // upscaling is generally better than downscaling
         if (avail_samplerates[i] < samplerate) {
-            score *= 2;
+            score *= 100;
         }
 
         if (index == -1 || score < nearest) {

@@ -131,5 +131,15 @@ get_best_samplerate (int samplerate, int *avail_samplerates, int count);
     XCTAssertEqual(48000, sr);
 }
 
+- (void)test_Input17khz_16_48_Output48khz {
+    int sr = get_best_samplerate(17000, samplerates_16_48, 2);
+    XCTAssertEqual(48000, sr);
+}
+
+- (void)test_Input16_1khz_16_48_Output48khz {
+    int sr = get_best_samplerate(16100, samplerates_16_48, 2);
+    XCTAssertEqual(16000, sr);
+}
+
 
 @end
