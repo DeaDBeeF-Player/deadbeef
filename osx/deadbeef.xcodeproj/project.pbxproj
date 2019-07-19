@@ -4774,7 +4774,7 @@
 		2DF622B81B335DF400C70C7D /* convpresets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = convpresets; path = plugins/converter/convpresets; sourceTree = "<group>"; };
 		2DF930441AB816DC0030C0CA /* wildmidi.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wildmidi.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DF9304A1AB817310030C0CA /* wildmidi_lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wildmidi_lib.h; sourceTree = "<group>"; };
-		2DF9304D1AB817310030C0CA /* wildmidi_lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wildmidi_lib.c; sourceTree = "<group>"; };
+		2DF9304D1AB817310030C0CA /* wildmidi_lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wildmidi_lib.c; sourceTree = "<group>"; usesTabs = 1; };
 		2DF9304E1AB817310030C0CA /* wildmidiplug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wildmidiplug.c; path = plugins/wildmidi/wildmidiplug.c; sourceTree = "<group>"; };
 		2DFA31E81AAF351800792053 /* mos6510c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mos6510c.h; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/cycle_based/mos6510c.h"; sourceTree = "<group>"; };
 		2DFA31E91AAF351800792053 /* mos6510c.i */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c.preprocessed; name = mos6510c.i; path = "plugins/sid/sidplay-libs/libsidplay/src/mos6510/cycle_based/mos6510c.i"; sourceTree = "<group>"; };
