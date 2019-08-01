@@ -88,6 +88,8 @@ struct cddb_thread_params
 {
     DB_playItem_t **items;
     cddb_disc_t *disc;
+    int got_cdtext;
+    int prefer_cdtext;
 };
 
 static cddb_disc_t *
@@ -421,8 +423,12 @@ cleanup_thread_params (struct cddb_thread_params *params)
 }
 
 static void
-replace_meta(DB_playItem_t *it, const char *key, const char *value)
+replace_meta(struct cddb_thread_params *params, DB_playItem_t *it, const char *key, const char *value)
 {
+    if (params && params->got_cdtext && deadbeef->pl_find_meta (it, key) && params->prefer_cdtext) {
+        return;
+    }
+
     if (value) {
         deadbeef->pl_replace_meta(it, key, value);
     }
@@ -432,18 +438,18 @@ replace_meta(DB_playItem_t *it, const char *key, const char *value)
 }
 
 static void
-write_metadata(DB_playItem_t *it, const cddb_disc_t *disc, const char *num_tracks)
+write_metadata(struct cddb_thread_params *params, DB_playItem_t *it, const cddb_disc_t *disc, const char *num_tracks)
 {
     const int track_nr = deadbeef->pl_find_meta_int(it, "track", 0);
     cddb_track_t *track = cddb_disc_get_track(disc, track_nr-1);
 
-    replace_meta(it, "artist", cddb_disc_get_artist(disc));
-    replace_meta(it, "title", cddb_track_get_title(track));
-    replace_meta(it, "album", cddb_disc_get_title(disc));
-    replace_meta(it, "genre", cddb_disc_get_genre(disc));
+    replace_meta(params, it, "artist", cddb_disc_get_artist(disc));
+    replace_meta(params, it, "title", cddb_track_get_title(track));
+    replace_meta(params, it, "album", cddb_disc_get_title(disc));
+    replace_meta(params, it, "genre", cddb_disc_get_genre(disc));
     const unsigned int year = cddb_disc_get_year(disc);
     year ? deadbeef->pl_set_meta_int(it, "year", year) : deadbeef->pl_delete_meta(it, "year");
-    replace_meta(it, "numtracks", num_tracks);
+    replace_meta(params, it, "numtracks", num_tracks);
 
     ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc(DB_EV_TRACKINFOCHANGED);
     ev->track = it;
@@ -472,7 +478,7 @@ cddb_thread (void *params_void)
     snprintf(num_tracks, sizeof(num_tracks), "%02d", track_count);
     for (size_t i = 0; params->items[i]; i++) {
         deadbeef->pl_add_meta(params->items[i], CDDB_IDS_TAG, disc_list);
-        write_metadata(params->items[i], params->disc, num_tracks);
+        write_metadata(params, params->items[i], params->disc, num_tracks);
     }
 
     cleanup_thread_params(params);
@@ -521,8 +527,9 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
 
     // some versions of cdio does not convert strings to UTF-8 as documented
     if (album) {
-        const char * album_charset = deadbeef->junk_detect_charset (album);
-        if (album_charset != NULL) {
+        const char *album_charset = deadbeef->junk_detect_charset (album);
+        char *album_converted = NULL;
+        if (album_charset) {
             trace ( "cdda: album field using %s charset, converting\n",album_charset);
             char *album_converted = malloc (strlen(album) * 4);
             if (album_converted) {
@@ -530,15 +537,16 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
                 album = album_converted;
             }
         }
-        replace_meta(item, "album", album);
-        if (album_charset) {
-            free (album);
-            album = NULL;
+        replace_meta(NULL, item, "album", album);
+        if (album_converted) {
+            free (album_converted);
+            album = album_converted = NULL;
         }
     }
 
     if (artist) {
-        const char * artist_charset = deadbeef->junk_detect_charset (artist);
+        const char *artist_charset = deadbeef->junk_detect_charset (artist);
+        char *artist_converted = NULL;
         if (artist_charset != NULL) {
             trace ( "cdda: artist field using %s charset, converting\n",artist_charset);
             char *artist_converted = malloc (strlen(artist) * 4);
@@ -547,11 +555,11 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
                 artist = artist_converted;
             }
         }
-        replace_meta(item, "artist", artist);
+        replace_meta(NULL, item, "artist", artist);
 
         if (artist_charset) {
-            free (artist);
-            artist = NULL;
+            free (artist_converted);
+            artist = artist_converted = NULL;
         }
     }
 
@@ -596,18 +604,21 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
         if (field) {
             // convert to UTF-8 if not UTF-8 already
             const char *text_charset = deadbeef->junk_detect_charset (text);
+            char *text_converted = NULL;
             if (text_charset != NULL) {
                 trace ("cdda: text field using %s charset, converting\n",text_charset);
-                char *text_converted = malloc (strlen(text) * 4);
+                text_converted = malloc (strlen(text) * 4);
                 if (text_converted) {
                     deadbeef->junk_iconv (field, strlen(text), text_converted, strlen(text)*4, text_charset, "UTF-8");
                     text = text_converted;
                 }
             }
             trace("%s: %s\n", field, text);
-            replace_meta(item, field, text);
-            if (text && text_charset != NULL)
-                free (text);
+            replace_meta(NULL, item, field, text);
+            if (text_converted && text_charset != NULL) {
+                free (text_converted);
+                text = text_converted = NULL;
+            }
         }
     }
 }
@@ -643,16 +654,16 @@ insert_track (ddb_playlist_t *plt, DB_playItem_t *after, const char* path, const
         const float sector_count = cdio_get_track_sec_count(cdio, track_nr);
         deadbeef->plt_set_item_duration(plt, it, sector_count / 75);
 
-        char title[12];
-        sprintf(title, "CD Track %02d", track_nr);
+        char title[50];
+        snprintf(title, sizeof (title), "CD Track %02d", track_nr);
         deadbeef->pl_add_meta(it, "title", title);
 
         char track[4];
-        sprintf(track, "%02d", track_nr);
+        snprintf(track, sizeof (track), "%02d", track_nr);
         deadbeef->pl_add_meta(it, "track", track);
 
         char discid_string[10];
-        sprintf(discid_string, "%08x", discid);
+        snprintf(discid_string, sizeof (discid_string), "%08x", discid);
         deadbeef->pl_add_meta(it, CDDB_DISCID_TAG, discid_string);
 
         it = deadbeef->plt_insert_item(plt, after, it);
@@ -700,7 +711,9 @@ insert_disc (ddb_playlist_t *plt, DB_playItem_t *after, const char *path, const 
         const int got_cdtext = read_disc_cdtext(cdio, p->items, tracks);
         const int prefer_cdtext = deadbeef->conf_get_int("cdda.prefer_cdtext", DEFAULT_PREFER_CDTEXT);
         const int enable_cddb = deadbeef->conf_get_int("cdda.freedb.enable", DEFAULT_USE_CDDB);
-        if (!(got_cdtext && prefer_cdtext) && enable_cddb) {
+        p->got_cdtext = got_cdtext;
+        p->prefer_cdtext = prefer_cdtext;
+        if (enable_cddb) {
             trace("cdda: querying freedb...\n");
             tid = deadbeef->thread_start(cddb_thread, p);
             if (tid) {
@@ -812,7 +825,7 @@ get_param (const char *key, char *value, int len, const char *def)
     return;
 }
 
-#define DRIVE_COMBO_SCRIPT\
+#define DRIVE_COMBO_SCRIPT \
 "property box vbox[1] hmg expand fill border=10 height=250;"\
 "property box hbox[1] hmg height=-1;"\
 "property \"CD drive to load\" select[%u] cdda.drive_device 0"
@@ -838,7 +851,7 @@ cda_action_add_cd (DB_plugin_action_t *act, int ctx)
 
         char *layout = malloc(device_combo_length);
         if (layout) {
-            sprintf(layout, DRIVE_COMBO_SCRIPT, device_count);
+            snprintf(layout, device_combo_length, DRIVE_COMBO_SCRIPT, (unsigned)device_count);
             for (char **device = device_list; *device; device++) {
                 strcat(layout, " ");
                 strcat(layout, *device);
@@ -940,7 +953,8 @@ load_cddb_data (ddb_playlist_t *plt, cddb_disc_t *disc, const size_t disc_num)
     snprintf(num_tracks, sizeof(num_tracks), "%02d", track_count);
     do {
         if (deadbeef->pl_is_selected(it)) {
-            write_metadata(it, disc, num_tracks);
+            // FIXME: Reloading from cddb can't combine cdtext with cddb data
+            write_metadata(NULL, it, disc, num_tracks);
         }
         deadbeef->pl_item_unref(it);
         it = deadbeef->pl_get_next(it, PL_MAIN);
