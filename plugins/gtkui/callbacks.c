@@ -667,6 +667,7 @@ on_sort_by_title_activate              (GtkMenuItem     *menuitem,
     deadbeef->plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    deadbeef->conf_set_str ("gtkui.last_used_sortby_format", "%title%");
 }
 
 
@@ -680,6 +681,7 @@ on_sort_by_track_nr_activate           (GtkMenuItem     *menuitem,
     deadbeef->plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    deadbeef->conf_set_str ("gtkui.last_used_sortby_format", "%tracknumber%");
 }
 
 
@@ -693,6 +695,7 @@ on_sort_by_album_activate              (GtkMenuItem     *menuitem,
     deadbeef->plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    deadbeef->conf_set_str ("gtkui.last_used_sortby_format", "%album%");
 }
 
 
@@ -706,6 +709,7 @@ on_sort_by_artist_activate             (GtkMenuItem     *menuitem,
     deadbeef->plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    deadbeef->conf_set_str ("gtkui.last_used_sortby_format", "%artist%");
 }
 
 
@@ -718,6 +722,7 @@ on_sort_by_date_activate               (GtkMenuItem     *menuitem,
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    deadbeef->conf_set_str ("gtkui.last_used_sortby_format", "%year%");
 }
 
 
@@ -731,6 +736,7 @@ on_sort_by_random_activate               (GtkMenuItem     *menuitem,
     deadbeef->plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    deadbeef->conf_set_str ("gtkui.last_used_sortby_format", "%random%");
 }
 
 

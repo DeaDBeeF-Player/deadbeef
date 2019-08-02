@@ -678,6 +678,7 @@ action_sort_custom_handler_cb (void *data) {
         deadbeef->plt_unref (plt);
 
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+        deadbeef->conf_set_str ("gtkui.last_used_sortby_format", "%custom%");
     }
 
     gtk_widget_destroy (dlg);

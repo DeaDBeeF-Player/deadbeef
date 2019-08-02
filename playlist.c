@@ -3812,6 +3812,30 @@ plt_add_files_end (playlist_t *plt, int visibility) {
         l->callback_end (&d, l->user_data);
     }
     background_job_decrement ();
+    
+    // Autosort playlist
+    int autosort_enabled = deadbeef->conf_get_int ("gtkui.autosort_enabled", 0);
+    if (autosort_enabled == 1){
+
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        const char *last_format = deadbeef->conf_get_str_fast ("gtkui.last_used_sortby_format", "None");
+        const char *formats = "%album% %artist% %title% %tracknumber% %year%";
+
+        if (strstr (formats, last_format) != NULL){
+            deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, last_format, DDB_SORT_ASCENDING);
+        } else if (strcmp(last_format, "%random%") == 0){
+            deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM);
+        } else if (strcmp(last_format, "%custom%") == 0) {
+            int order = deadbeef->conf_get_int ("gtkui.sortby_order", 0);
+            const char *fmt = deadbeef->conf_get_str_fast ("gtkui.sortby_fmt_v2", "");
+            deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, fmt, order == 0 ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
+        }
+
+        deadbeef->plt_save_config (plt);
+        deadbeef->plt_unref (plt);
+
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    }
 }
 
 void
