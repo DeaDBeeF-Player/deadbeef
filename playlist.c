@@ -66,6 +66,7 @@
 #include "strdupa.h"
 #include "tf.h"
 #include "playqueue.h"
+#include "sort.h"
 
 #include "cueutil.h"
 
@@ -3812,7 +3813,10 @@ plt_add_files_end (playlist_t *plt, int visibility) {
         l->callback_end (&d, l->user_data);
     }
     background_job_decrement ();
+    
+    plt_autosort (plt);
 }
+
 
 void
 plt_deselect_all (playlist_t *playlist) {
