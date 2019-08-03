@@ -115,6 +115,21 @@ on_copy_playlist1_activate        (GtkMenuItem     *menuitem,
 }
 
 static void
+on_autosort_toggled (GtkMenuItem     *menuitem,
+                    gpointer         user_data)
+{
+    if (pltmenu_idx < 0) {
+        return;
+    }
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+    if (plt) {
+        int value = deadbeef->plt_find_meta_int (plt, "autosort_enabled", 0);
+        deadbeef->plt_set_meta_int (plt, "autosort_enabled", value == 0 ? 1 : 0);
+        deadbeef->plt_unref (plt);
+    }
+}
+
+static void
 on_actionitem_activate (GtkMenuItem     *menuitem,
                            DB_plugin_action_t *action)
 {
@@ -355,6 +370,7 @@ gtkui_create_pltmenu (int plt_idx) {
     GtkWidget *remove_playlist1;
     GtkWidget *add_new_playlist1;
     GtkWidget *copy_playlist1;
+    GtkWidget *autosort;
     GtkWidget *separator11;
     GtkWidget *cut;
     GtkWidget *cut_image;
@@ -395,6 +411,12 @@ gtkui_create_pltmenu (int plt_idx) {
     gtk_widget_show (copy_playlist1);
     gtk_container_add (GTK_CONTAINER (plmenu), copy_playlist1);
 
+    int autosort_enabled = deadbeef->plt_find_meta_int (deadbeef->plt_get_curr (), "autosort_enabled", 0);
+    autosort = gtk_check_menu_item_new_with_label ("Sort playlist");
+    gtk_check_menu_item_set_active (autosort, autosort_enabled);
+    gtk_widget_show (autosort);
+    gtk_container_add (GTK_CONTAINER (plmenu), autosort);
+    
     separator11 = gtk_separator_menu_item_new ();
     gtk_widget_show (separator11);
     gtk_container_add (GTK_CONTAINER (plmenu), separator11);
@@ -453,6 +475,9 @@ gtkui_create_pltmenu (int plt_idx) {
             NULL);
     g_signal_connect ((gpointer) add_new_playlist1, "activate",
             G_CALLBACK (on_add_new_playlist1_activate),
+            NULL);
+    g_signal_connect ((gpointer) autosort, "toggled",
+            G_CALLBACK (on_autosort_toggled),
             NULL);
     g_signal_connect ((gpointer) copy_playlist1, "activate",
             G_CALLBACK (on_copy_playlist1_activate),
