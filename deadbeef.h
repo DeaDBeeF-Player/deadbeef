@@ -1067,7 +1067,10 @@ typedef struct {
     int (*junk_get_leading_size) (DB_FILE *fp);
     int (*junk_get_leading_size_stdio) (FILE *fp);
 
-    void (*junk_copy) (DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last);
+    // This is an API bug that was introduced during 0.7.0 development cycle.
+    // The function was accidentally removed from the codebase, so this pointer is always NULL.
+    void (*do_not_call2) (DB_playItem_t *, DB_playItem_t *, DB_playItem_t *);
+
     const char * (*junk_detect_charset) (const char *s);
     int (*junk_recode) (const char *in, int inlen, char *out, int outlen, const char *cs);
     int (*junk_iconv) (const char *in, int inlen, char *out, int outlen, const char *cs_in, const char *cs_out);
