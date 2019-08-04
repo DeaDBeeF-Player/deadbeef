@@ -411,7 +411,7 @@ gtkui_create_pltmenu (int plt_idx) {
     gtk_widget_show (copy_playlist1);
     gtk_container_add (GTK_CONTAINER (plmenu), copy_playlist1);
 
-    int autosort_enabled = deadbeef->plt_find_meta_int (deadbeef->plt_get_curr (), "autosort_enabled", 0);
+    int autosort_enabled = deadbeef->plt_find_meta_int (deadbeef->plt_get_for_idx (pltmenu_idx), "autosort_enabled", 0);
     autosort = gtk_check_menu_item_new_with_label ("Sort playlist");
     gtk_check_menu_item_set_active (autosort, autosort_enabled);
     gtk_widget_show (autosort);
