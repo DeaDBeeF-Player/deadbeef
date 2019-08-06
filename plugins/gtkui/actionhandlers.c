@@ -678,7 +678,7 @@ action_sort_custom_handler_cb (void *data) {
         deadbeef->plt_unref (plt);
 
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-        deadbeef->plt_replace_meta (plt, "last_used_sortby_format", "%custom%");
+        deadbeef->plt_set_meta_int (plt, "autosort_mode", 6);
         deadbeef->plt_replace_meta (plt, "sortby_fmt_v2", fmt);
         deadbeef->plt_set_meta_int (plt, "sortby_order", order);
     }

@@ -3816,35 +3816,32 @@ plt_add_files_end (playlist_t *plt, int visibility) {
     plt_autosort (plt);
 }
 
-void
+static void
 plt_autosort (playlist_t *plt) {
-    int autosort_enabled = deadbeef->plt_find_meta_int (plt, "autosort_enabled", 0);
+    int autosort_enabled = plt_find_meta_int (plt, "autosort_enabled", 0);
     if (autosort_enabled != 1) {
         return;
     }
 
-    const char *last_format = deadbeef->plt_find_meta (plt, "last_used_sortby_format");
-    if (last_format == NULL) {
-        return;
+    int autosort_mode = plt_find_meta_int (plt, "autosort_mode", 0);
+    if (autosort_mode <= 4) {
+        const char *formats[5] = {"%title%", "%tracknumber%", "%album%", "%artist%", "%year%"};
+        plt_sort_v2 (plt, PL_MAIN, -1, formats[autosort_mode], DDB_SORT_ASCENDING);
     }
-    const char *formats = "%album% %artist% %title% %tracknumber% %year%";
-    if (strstr (formats, last_format) != NULL) {
-        deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, last_format, DDB_SORT_ASCENDING);
+    else if (autosort_mode == 5) {
+        plt_sort_v2 (plt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM);
     }
-    else if (strcmp (last_format, "%random%") == 0) {
-         deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM);
-    }
-    else if (strcmp (last_format, "%custom%") == 0) {
-        int order = deadbeef->plt_find_meta_int (plt, "sortby_order", 0);
-        const char *fmt = deadbeef->plt_find_meta (plt, "sortby_fmt_v2");
+    else if (autosort_mode == 6) {
+        int order = plt_find_meta_int (plt, "sortby_order", 0);
+        const char *fmt = plt_find_meta (plt, "sortby_fmt_v2");
         if (fmt == NULL) {
             return;
         }
-        deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, fmt, order == 0 ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
+        plt_sort_v2 (plt, PL_MAIN, -1, fmt, order == 0 ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
     }
 
-    deadbeef->plt_save_config (plt);
-    deadbeef->plt_unref (plt);
+    plt_save_config (plt);
+    plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }

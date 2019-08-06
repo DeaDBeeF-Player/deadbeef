@@ -667,7 +667,7 @@ on_sort_by_title_activate              (GtkMenuItem     *menuitem,
     deadbeef->plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    deadbeef->plt_replace_meta (plt, "last_used_sortby_format", "%title%");
+    deadbeef->plt_set_meta_int (plt, "autosort_mode", 0);
 }
 
 
@@ -681,7 +681,7 @@ on_sort_by_track_nr_activate           (GtkMenuItem     *menuitem,
     deadbeef->plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    deadbeef->plt_replace_meta (plt, "last_used_sortby_format", "%tracknumber%");
+    deadbeef->plt_set_meta_int (plt, "autosort_mode", 1);
 }
 
 
@@ -695,7 +695,7 @@ on_sort_by_album_activate              (GtkMenuItem     *menuitem,
     deadbeef->plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    deadbeef->plt_replace_meta (plt, "last_used_sortby_format", "%album%");
+    deadbeef->plt_set_meta_int (plt, "autosort_mode", 2);
 }
 
 
@@ -709,7 +709,7 @@ on_sort_by_artist_activate             (GtkMenuItem     *menuitem,
     deadbeef->plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    deadbeef->plt_replace_meta (plt, "last_used_sortby_format", "%artist%");
+    deadbeef->plt_set_meta_int (plt, "autosort_mode", 3);
 }
 
 
@@ -722,7 +722,7 @@ on_sort_by_date_activate               (GtkMenuItem     *menuitem,
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    deadbeef->plt_replace_meta (plt, "last_used_sortby_format", "%year%");
+    deadbeef->plt_set_meta_int (plt, "autosort_mode", 4);
 }
 
 
@@ -736,7 +736,7 @@ on_sort_by_random_activate               (GtkMenuItem     *menuitem,
     deadbeef->plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    deadbeef->plt_replace_meta (plt, "last_used_sortby_format", "%random%");
+    deadbeef->plt_set_meta_int (plt, "autosort_mode", 5);
 }
 
 
