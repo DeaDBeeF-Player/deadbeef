@@ -3813,31 +3813,27 @@ plt_add_files_end (playlist_t *plt, int visibility) {
     }
     background_job_decrement ();
     
-    plt_autosort (plt);
+    plt_autosort (plt, d.plt);
 }
 
 static void
-plt_autosort (playlist_t *plt) {
+plt_autosort (playlist_t *plt, ddb_playlist_t *ddbplt) {
     int autosort_enabled = plt_find_meta_int (plt, "autosort_enabled", 0);
     if (autosort_enabled != 1) {
         return;
     }
 
-    int autosort_mode = plt_find_meta_int (plt, "autosort_mode", 0);
-    if (autosort_mode <= 4) {
-        const char *formats[5] = {"%title%", "%tracknumber%", "%album%", "%artist%", "%year%"};
-        plt_sort_v2 (plt, PL_MAIN, -1, formats[autosort_mode], DDB_SORT_ASCENDING);
-    }
-    else if (autosort_mode == 5) {
-        plt_sort_v2 (plt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM);
-    }
-    else if (autosort_mode == 6) {
-        int order = plt_find_meta_int (plt, "sortby_order", 0);
-        const char *fmt = plt_find_meta (plt, "sortby_fmt_v2");
+    const char *autosort_mode = plt_find_meta (plt, "autosort_mode");
+    if (strcmp (autosort_mode, "tf") == 0) {
+        int order = plt_find_meta_int (plt, "autosort_ascending", 0);
+        const char *fmt = plt_find_meta (plt, "autosort_tf");
         if (fmt == NULL) {
             return;
         }
-        plt_sort_v2 (plt, PL_MAIN, -1, fmt, order == 0 ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
+        deadbeef->plt_sort_v2 (ddbplt, PL_MAIN, -1, fmt, order == 0 ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
+    }
+    else if (strcmp (autosort_mode, "random") == 0) {
+        deadbeef->plt_sort_v2 (ddbplt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM);
     }
 
     plt_save_config (plt);

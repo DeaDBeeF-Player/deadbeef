@@ -541,7 +541,7 @@ void
 plt_add_files_end (playlist_t *plt, int visibility);
 
 static void
-plt_autosort (playlist_t *plt);
+plt_autosort (playlist_t *plt, ddb_playlist_t *ddbplt);
 
 void
 plt_deselect_all (playlist_t *plt);
