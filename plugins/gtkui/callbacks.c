@@ -667,9 +667,9 @@ on_sort_by_title_activate              (GtkMenuItem     *menuitem,
     deadbeef->plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    deadbeef->plt_replace_meta (plt, "autosort_tf", "%title%");
-    deadbeef->plt_replace_meta (plt, "autosort_mode", "tf");
-    deadbeef->plt_set_meta_int (plt, "autosort_ascending", 0);
+    plt_replace_meta (plt, "autosort_tf", "%title%");
+    plt_replace_meta (plt, "autosort_mode", "tf");
+    plt_set_meta_int (plt, "autosort_ascending", 0);
 }
 
 
@@ -683,9 +683,9 @@ on_sort_by_track_nr_activate           (GtkMenuItem     *menuitem,
     deadbeef->plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    deadbeef->plt_replace_meta (plt, "autosort_tf", "%tracknumber%");
-    deadbeef->plt_replace_meta (plt, "autosort_mode", "tf");
-    deadbeef->plt_set_meta_int (plt, "autosort_ascending", 0);
+    plt_replace_meta (plt, "autosort_tf", "%tracknumber%");
+    plt_replace_meta (plt, "autosort_mode", "tf");
+    plt_set_meta_int (plt, "autosort_ascending", 0);
 }
 
 
@@ -699,9 +699,9 @@ on_sort_by_album_activate              (GtkMenuItem     *menuitem,
     deadbeef->plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    deadbeef->plt_replace_meta (plt, "autosort_tf", "%album%");
-    deadbeef->plt_replace_meta (plt, "autosort_mode", "tf");
-    deadbeef->plt_set_meta_int (plt, "autosort_ascending", 0);
+    plt_replace_meta (plt, "autosort_tf", "%album%");
+    plt_replace_meta (plt, "autosort_mode", "tf");
+    plt_set_meta_int (plt, "autosort_ascending", 0);
 }
 
 
@@ -715,9 +715,9 @@ on_sort_by_artist_activate             (GtkMenuItem     *menuitem,
     deadbeef->plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    deadbeef->plt_replace_meta (plt, "autosort_tf", "%artist%");
-    deadbeef->plt_replace_meta (plt, "autosort_mode", "tf");
-    deadbeef->plt_set_meta_int (plt, "autosort_ascending", 0);
+    plt_replace_meta (plt, "autosort_tf", "%artist%");
+    plt_replace_meta (plt, "autosort_mode", "tf");
+    plt_set_meta_int (plt, "autosort_ascending", 0);
 }
 
 
@@ -730,9 +730,9 @@ on_sort_by_date_activate               (GtkMenuItem     *menuitem,
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    deadbeef->plt_replace_meta (plt, "autosort_tf", "%year%");
-    deadbeef->plt_replace_meta (plt, "autosort_mode", "tf");
-    deadbeef->plt_set_meta_int (plt, "autosort_ascending", 0);
+    plt_replace_meta (plt, "autosort_tf", "%year%");
+    plt_replace_meta (plt, "autosort_mode", "tf");
+    plt_set_meta_int (plt, "autosort_ascending", 0);
 }
 
 
@@ -746,7 +746,7 @@ on_sort_by_random_activate               (GtkMenuItem     *menuitem,
     deadbeef->plt_unref (plt);
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    deadbeef->plt_replace_meta (plt, "autosort_mode", "random");
+    plt_replace_meta (plt, "autosort_mode", "random");
 }
 
 

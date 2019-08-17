@@ -3813,11 +3813,11 @@ plt_add_files_end (playlist_t *plt, int visibility) {
     }
     background_job_decrement ();
     
-    plt_autosort (plt, d.plt);
+    plt_autosort (plt);
 }
 
 static void
-plt_autosort (playlist_t *plt, ddb_playlist_t *ddbplt) {
+plt_autosort (playlist_t *plt) {
     int autosort_enabled = plt_find_meta_int (plt, "autosort_enabled", 0);
     if (autosort_enabled != 1) {
         return;
@@ -3830,10 +3830,10 @@ plt_autosort (playlist_t *plt, ddb_playlist_t *ddbplt) {
         if (fmt == NULL) {
             return;
         }
-        deadbeef->plt_sort_v2 (ddbplt, PL_MAIN, -1, fmt, order == 0 ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
+        plt_sort_v2 (plt, PL_MAIN, -1, fmt, order == 0 ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
     }
     else if (strcmp (autosort_mode, "random") == 0) {
-        deadbeef->plt_sort_v2 (ddbplt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM);
+        plt_sort_v2 (plt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM);
     }
 
     plt_save_config (plt);
