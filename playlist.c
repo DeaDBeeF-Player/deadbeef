@@ -3830,10 +3830,10 @@ plt_autosort (playlist_t *plt) {
         if (fmt == NULL) {
             return;
         }
-        plt_sort_v2 (plt, PL_MAIN, -1, fmt, order == 0 ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
+        deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, fmt, order == 0 ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
     }
     else if (strcmp (autosort_mode, "random") == 0) {
-        plt_sort_v2 (plt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM);
+        deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM);
     }
 
     plt_save_config (plt);
