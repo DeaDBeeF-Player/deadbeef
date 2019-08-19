@@ -881,7 +881,7 @@ void device_reset_nesapu(void* chip)
 	info->APU.dpcm.memory = MemPtr;
 	apu_dpcmreset(&info->APU.dpcm);
 	
-	for (CurReg = 0x00; CurReg < 0x18; CurReg ++)
+	for (CurReg = 0x00; CurReg < 0x17; CurReg ++)
 		apu_write(info, CurReg, 0x00);
 	
 	apu_write(info, 0x15, 0x00);

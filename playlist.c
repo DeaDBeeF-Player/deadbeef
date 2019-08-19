@@ -1114,7 +1114,7 @@ _get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *v
         snprintf (fullname, sz, "%s/%s", stripped_dirname, d_name);
         if (dir) {
             *dir = 0;
-            strncat (dir, stripped_dirname, dirsz);
+            strncat (dir, stripped_dirname, dirsz - 1);
         }
     }
     else {
@@ -1125,21 +1125,15 @@ _get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *v
         if (sch && strncmp (sch, d_name, strlen (sch))) {
             snprintf (fullname, sz, "%s%s:%s", sch, dirname, d_name);
             if (dir) {
-                *dir = 0;
-                size_t n = strlen (fullname) - strlen (d_name);
-                if (n > dirsz) {
-                    n = dirsz;
-                }
-                strncat (dir, fullname, n);
-                dir[n] = 0;
+                snprintf (dir, dirsz, "%s%s:", sch, dirname);
             }
         }
         else {
             *fullname = 0;
-            strncat (fullname, d_name, sz);
+            strncat (fullname, d_name, sz - 1);
             if (dir) {
                 *dir = 0;
-                strncat (dir, dirname, dirsz);
+                strncat (dir, dirname, dirsz - 1);
             }
         }
     }
