@@ -2535,6 +2535,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
 
     while (size) {
         if (*code) {
+            // Plain text
             int len = u8_charcpy (out, code, outlen);
             if (len == 0) {
                 break;
@@ -2545,9 +2546,11 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
             outlen -= len;
         }
         else {
+            // Start of special block
             code++;
             size--;
             if (*code == 1) {
+                // Function call
                 code++;
                 size--;
                 tf_func_ptr_t func = tf_funcs[*code].func;
@@ -2560,7 +2563,17 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     arglens = alloca (numargs * sizeof (uint16_t));
                     memcpy (arglens, code+1, numargs * sizeof (uint16_t));
                 };
-                int res = func (ctx, numargs, arglens, code+1+numargs*sizeof (uint16_t), out, outlen, fail_on_undef);
+                int res;
+                if (outlen < 512) {
+                    // Try to ensure we always have some sane buffer size for our functions.
+                    char tmp[1024];
+                    res = func (ctx, numargs, arglens, code+1+numargs*sizeof (uint16_t), tmp, sizeof(tmp) - 1, fail_on_undef);
+                    if (res > 0) {
+                        strncpy(out, tmp, outlen);
+                    }
+                } else {
+                    res = func (ctx, numargs, arglens, code+1+numargs*sizeof (uint16_t), out, outlen, fail_on_undef);
+                }
                 if (res == -1) {
                     return -1;
                 }
@@ -2583,6 +2596,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 size -= blocksize;
             }
             else if (*code == 2) {
+                // Meta field
                 code++;
                 size--;
                 uint8_t len = *code;
