@@ -540,9 +540,6 @@ plt_add_files_begin (playlist_t *plt, int visibility);
 void
 plt_add_files_end (playlist_t *plt, int visibility);
 
-static void
-plt_autosort (playlist_t *plt);
-
 void
 plt_deselect_all (playlist_t *plt);
 

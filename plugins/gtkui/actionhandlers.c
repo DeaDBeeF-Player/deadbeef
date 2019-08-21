@@ -678,9 +678,9 @@ action_sort_custom_handler_cb (void *data) {
         deadbeef->plt_unref (plt);
 
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-        plt_replace_meta (plt, "autosort_mode", "tf");
-        plt_replace_meta (plt, "autosort_tf", fmt);
-        plt_set_meta_int (plt, "autosort_ascending", order);
+        deadbeef->plt_replace_meta (plt, "autosort_mode", "tf");
+        deadbeef->plt_replace_meta (plt, "autosort_tf", fmt);
+        deadbeef->plt_set_meta_int (plt, "autosort_ascending", order);
     }
 
     gtk_widget_destroy (dlg);

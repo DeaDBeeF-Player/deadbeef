@@ -28,6 +28,8 @@
 #include "utf8.h"
 #include "sort.h"
 #include "tf.h"
+#include "pltmeta.h"
+#include "messagepump.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -357,3 +359,28 @@ sort_track_array (playlist_t *playlist, playItem_t **tracks, int num_tracks, con
     pl_unlock ();
 }
 
+void
+plt_autosort (playlist_t *plt) {
+    int autosort_enabled = plt_find_meta_int (plt, "autosort_enabled", 0);
+    if (autosort_enabled != 1) {
+        return;
+    }
+
+    const char *autosort_mode = plt_find_meta (plt, "autosort_mode");
+    if (strcmp (autosort_mode, "tf") == 0) {
+        int order = plt_find_meta_int (plt, "autosort_ascending", 0);
+        const char *fmt = plt_find_meta (plt, "autosort_tf");
+        if (fmt == NULL) {
+            return;
+        }
+        plt_sort_v2 (plt, PL_MAIN, -1, fmt, order == 0 ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
+    }
+    else if (strcmp (autosort_mode, "random") == 0) {
+        plt_sort_v2 (plt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM);
+    }
+
+    plt_save_config (plt);
+    plt_unref (plt);
+
+    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+}
