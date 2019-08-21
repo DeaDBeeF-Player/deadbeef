@@ -66,6 +66,7 @@
 #include "strdupa.h"
 #include "tf.h"
 #include "playqueue.h"
+#include "sort.h"
 
 #include "cueutil.h"
 
