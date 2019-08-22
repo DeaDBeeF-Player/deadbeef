@@ -2563,17 +2563,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     arglens = alloca (numargs * sizeof (uint16_t));
                     memcpy (arglens, code+1, numargs * sizeof (uint16_t));
                 };
-                int res;
-                if (outlen < 512) {
-                    // Try to ensure we always have some sane buffer size for our functions.
-                    char tmp[1024];
-                    res = func (ctx, numargs, arglens, code+1+numargs*sizeof (uint16_t), tmp, sizeof(tmp) - 1, fail_on_undef);
-                    if (res > 0) {
-                        strncpy(out, tmp, outlen);
-                    }
-                } else {
-                    res = func (ctx, numargs, arglens, code+1+numargs*sizeof (uint16_t), out, outlen, fail_on_undef);
-                }
+                int res = func (ctx, numargs, arglens, code+1+numargs*sizeof (uint16_t), out, outlen, fail_on_undef);
                 if (res == -1) {
                     return -1;
                 }
