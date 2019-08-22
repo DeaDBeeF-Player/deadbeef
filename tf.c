@@ -61,7 +61,7 @@
 #include "gettext.h"
 #include "plugins.h"
 #include "junklib.h"
-#include "wcwidth.h"
+#include "external/wcwidth/wcwidth.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
