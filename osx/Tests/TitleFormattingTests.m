@@ -1849,4 +1849,374 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "Word, Some"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_StricmpEqual_ReturnsYes {
+    char *bc = tf_compile("$if($stricmp(AbCd,AbCd),YES)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "YES"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_StricmpUnequal_ReturnsEmpty {
+    char *bc = tf_compile("$if($stricmp(AbCd,EfGh),YES)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_StricmpEqualWithDifferentCase_ReturnsYES {
+    char *bc = tf_compile("$if($stricmp(ABCD,abcd),YES)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "YES"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Len2AsciiChars_ReturnsNumberOfChars {
+    char *bc = tf_compile("$len2(ABCDE)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Len2UnicodeSingleWidthChars_ReturnsNumberOfChars {
+    char *bc = tf_compile("$len2(АБВГД)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Len2UnicodeDoubleWidthChars_ReturnsNumberOfCharsDoubled {
+    char *bc = tf_compile("$len2(全形)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "4"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ShortestFirst_ReturnsFirst {
+    char *bc = tf_compile("$shortest(1,22,333)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "1"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ShortestLast_ReturnsLast {
+    char *bc = tf_compile("$shortest(333,22,1)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "1"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ShortestMid_ReturnsMid {
+    char *bc = tf_compile("$shortest(333,1,22)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "1"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LongestFirst_ReturnsFirst {
+    char *bc = tf_compile("$longest(333,22,1)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "333"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LongestLast_ReturnsLast {
+    char *bc = tf_compile("$longest(1,22,333)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "333"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LongestMid_ReturnsMid {
+    char *bc = tf_compile("$longest(1,333,22)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "333"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LongerFirst_ReturnsFirst {
+    char *bc = tf_compile("$longer(22,1)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "22"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_LongerSecond_ReturnsSecond {
+    char *bc = tf_compile("$longer(1,22)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "22"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadcutStrLonger_ReturnsHeadOfStr {
+    char *bc = tf_compile("$padcut(Hello,3)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hel"), @"The actual output is: %s", buffer);
+}
+
+
+- (void)test_PadcutStrShorter_ReturnsPaddedStr {
+    char *bc = tf_compile("$padcut(Hello,8)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hello   "), @"The actual output is: %s", buffer);
+}
+
+
+- (void)test_PadcutStrCharLonger_ReturnsHeadOfStr {
+    char *bc = tf_compile("$padcut(Hello,3,x)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hel"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadcutStrCharShorter_ReturnsPaddedStr {
+    char *bc = tf_compile("$padcut(Hello,8,x)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Helloxxx"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadcutRightStrLonger_ReturnsHeadOfStr {
+    char *bc = tf_compile("$padcut_right(Hello,3)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hel"), @"The actual output is: %s", buffer);
+}
+
+
+- (void)test_PadcutRightStrShorter_ReturnsPaddedStr {
+    char *bc = tf_compile("$padcut_right(Hello,8)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "   Hello"), @"The actual output is: %s", buffer);
+}
+
+
+- (void)test_PadcutRightStrCharLonger_ReturnsHeadOfStr {
+    char *bc = tf_compile("$padcut_right(Hello,3,x)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "Hel"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_PadcutRightStrCharShorter_ReturnsPaddedStr {
+    char *bc = tf_compile("$padcut_right(Hello,8,x)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "xxxHello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ProgressPos0Range100Len10_ReturnsBar10CharsWithKnobAt0 {
+    char *bc = tf_compile("$progress(0,100,10,x,=)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "x========="), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ProgressPos100Range100Len10_ReturnsBar10CharsWithKnobAt9 {
+    char *bc = tf_compile("$progress(100,100,10,x,=)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "=========x"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ProgressPos50Range100Len10_ReturnsBar10CharsWithKnobAt5 {
+    char *bc = tf_compile("$progress(50,100,10,x,=)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "=====x===="), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ProgressRange0_ReturnsEmpty {
+    char *bc = tf_compile("$progress(5,0,10,x,=)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ProgressLen0_ReturnsEmpty {
+    char *bc = tf_compile("$progress(5,100,0,x,=)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ProgressCharEmpty_ReturnsEmpty {
+    char *bc = tf_compile("$progress(5,100,0,x,)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ProgressKnobEmpty_ReturnsEmpty {
+    char *bc = tf_compile("$progress(5,100,0,,=)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ProgressRangeEmpty_ReturnsEmpty {
+    char *bc = tf_compile("$progress(5,,0,x,=)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_ProgressAllArgsEmpty_ReturnsEmpty {
+    char *bc = tf_compile("$progress(,,,,)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Progress2Pos0Range100Len10_ReturnsBar10CharsWithKnobAt0 {
+    char *bc = tf_compile("$progress2(0,100,10,x,=)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "=========="), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Progress2Pos100Range100Len10_ReturnsBar10CharsWithKnobAt9 {
+    char *bc = tf_compile("$progress2(100,100,10,x,=)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "xxxxxxxxxx"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Progress2Pos50Range100Len10_ReturnsBar10CharsWithKnobAt5 {
+    char *bc = tf_compile("$progress2(50,100,10,x,=)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "xxxxx====="), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Progress2Range0_ReturnsEmpty {
+    char *bc = tf_compile("$progress2(5,0,10,x,=)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Progress2Len0_ReturnsEmpty {
+    char *bc = tf_compile("$progress2(5,100,0,x,=)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Progress2CharEmpty_ReturnsEmpty {
+    char *bc = tf_compile("$progress2(5,100,0,x,)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Progress2KnobEmpty_ReturnsEmpty {
+    char *bc = tf_compile("$progress2(5,100,0,,=)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Progress2RangeEmpty_ReturnsEmpty {
+    char *bc = tf_compile("$progress2(5,,0,x,=)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Progress2AllArgsEmpty_ReturnsEmpty {
+    char *bc = tf_compile("$progress2(,,,,)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Right5Chars_ReturnsLast5Chars {
+    char *bc = tf_compile("$right(ABCDE12345,5)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "12345"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Right5CharsShortStr_ReturnsWholeStr {
+    char *bc = tf_compile("$right(ABC,5)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "ABC"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Roman1_ReturnsI {
+    char *bc = tf_compile("$roman(1)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "I"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Roman5_ReturnsV {
+    char *bc = tf_compile("$roman(5)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "V"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Roman10_ReturnsX {
+    char *bc = tf_compile("$roman(10)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "X"), @"The actual output is: %s", buffer);
+}
+
+
+- (void)test_Roman100500_Returns_C_D {
+    char *bc = tf_compile("$roman(100500)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "(C)D"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Roman51880_Returns_L_MDCCCLXXX {
+    char *bc = tf_compile("$roman(51880)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "(L)MDCCCLXXX"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Rot13DeaDBeeF12345_ReturnsQrnQOrrS12345 {
+    char *bc = tf_compile("$rot13(DeaDBeeF12345)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "QrnQOrrS12345"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_StrchrDeaDBeeF_B_Returns5 {
+    char *bc = tf_compile("$strchr(DeaDBeeF,B)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_StrchrDeaDBeeF_R_ReturnsEmpty {
+    char *bc = tf_compile("$strchr(DeaDBeeF,R)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_StrrchrDeaDBeeF_B_Returns4 {
+    char *bc = tf_compile("$strrchr(DeaDBeeF,D)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "4"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_StrrchrDeaDBeeF_R_ReturnsEmpty {
+    char *bc = tf_compile("$strrchr(DeaDBeeF,R)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+
 @end
