@@ -197,7 +197,7 @@ tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
         break;
     default:
         // tf_eval_int expects outlen to not include the terminating zero
-        l = tf_eval_int (ctx, code, codelen, out, outlen - 1, &bool_out, 0);
+        TF_EVAL_CHECK(l, ctx, code, codelen, out, outlen - 1, 0);
         break;
     }
 
