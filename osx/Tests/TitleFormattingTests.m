@@ -2218,5 +2218,13 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
 
+- (void)test_Complex_Sane {
+    pl_replace_meta (it, "path", "/media/Icy/Music/Long/Folder/Structure/2019.01.01 [Meta1] Meta2 [Meta3] Meta4 [Meta5] Meta6 [Meta7] Meta8 [Meta9]/some_reasonably_long_path.flac");
+    char *bc = tf_compile("$substr($directory(%path%,1),1,$sub($strstr($directory(%path%,1),' ['),1))");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free(bc);
+    XCTAssert(!strcmp (buffer, "2019.01.01"), @"The actual output is: %s", buffer);
+}
+
 
 @end
