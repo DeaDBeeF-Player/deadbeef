@@ -2169,18 +2169,18 @@ static DB_output_t fake_out = {
 }
 
 
-- (void)test_Roman100500_Returns_C_D {
+- (void)test_Roman100500_ReturnsEmpty {
     char *bc = tf_compile("$roman(100500)");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert(!strcmp (buffer, "(C)D"), @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
 
-- (void)test_Roman51880_Returns_L_MDCCCLXXX {
+- (void)test_Roman51880_Returns_MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMDCCCLXXX {
     char *bc = tf_compile("$roman(51880)");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert(!strcmp (buffer, "(L)MDCCCLXXX"), @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp (buffer, "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMDCCCLXXX"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_Rot13DeaDBeeF12345_ReturnsQrnQOrrS12345 {
@@ -2197,11 +2197,11 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "5"), @"The actual output is: %s", buffer);
 }
 
-- (void)test_StrchrDeaDBeeF_R_ReturnsEmpty {
+- (void)test_StrchrDeaDBeeF_R_Returns0 {
     char *bc = tf_compile("$strchr(DeaDBeeF,R)");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp (buffer, "0"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_StrrchrDeaDBeeF_B_Returns4 {
@@ -2211,11 +2211,11 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "4"), @"The actual output is: %s", buffer);
 }
 
-- (void)test_StrrchrDeaDBeeF_R_ReturnsEmpty {
+- (void)test_StrrchrDeaDBeeF_R_Returns0 {
     char *bc = tf_compile("$strrchr(DeaDBeeF,R)");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+    XCTAssert(!strcmp (buffer, "0"), @"The actual output is: %s", buffer);
 }
 
 
