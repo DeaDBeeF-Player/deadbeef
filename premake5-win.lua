@@ -863,7 +863,7 @@ project "resources"
     postbuildcommands {
         "{MKDIR} bin/%{cfg.buildcfg}/pixmaps",
         "{COPY} icons/32x32/deadbeef.png bin/%{cfg.buildcfg}",
-        "{COPY} pixmaps/*.png pixmaps/*.svg bin/%{cfg.buildcfg}/pixmaps/",
+        "{COPY} pixmaps/*.png bin/%{cfg.buildcfg}/pixmaps/",
         "{MKDIR} bin/%{cfg.buildcfg}/plugins/convpresets",
         "{COPY} plugins/converter/convpresets bin/%{cfg.buildcfg}/plugins/",
     }
