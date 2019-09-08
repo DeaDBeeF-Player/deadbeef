@@ -79,6 +79,30 @@ project "aac_plugin"
    defines { "USE_MP4FF=1", "USE_TAGGING=1" }
    links { "faad" }
 
+project "alac_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "alac"
+
+   files {
+       "plugins/alac/alac_plugin.c",
+       "plugins/alac/alac.c",
+       "plugins/alac/decomp.h",
+       "plugins/alac/demux.c",
+       "plugins/alac/demux.h",
+       "plugins/alac/stream.c",
+       "plugins/alac/stream.h",
+       "shared/mp4tagutil.h",
+       "shared/mp4tagutil.c",
+       "plugins/libmp4ff/*.h",
+       "plugins/libmp4ff/*.c"
+   }
+
+   defines { "USE_MP4FF=1", "USE_TAGGING=1" }
+   links { "faad" }
+
 project "flac_plugin"
    kind "SharedLib"
    language "C"
