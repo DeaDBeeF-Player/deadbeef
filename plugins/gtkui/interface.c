@@ -147,6 +147,7 @@ create_mainwin (void)
   separator2 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator2);
   gtk_container_add (GTK_CONTAINER (File_menu), separator2);
+  gtk_widget_set_sensitive (separator2, FALSE);
 
   add_files = gtk_image_menu_item_new_with_mnemonic (_("Add file(s)"));
   gtk_widget_show (add_files);
@@ -171,6 +172,7 @@ create_mainwin (void)
   separatormenuitem1 = gtk_separator_menu_item_new ();
   gtk_widget_show (separatormenuitem1);
   gtk_container_add (GTK_CONTAINER (File_menu), separatormenuitem1);
+  gtk_widget_set_sensitive (separatormenuitem1, FALSE);
 
   new_playlist1 = gtk_menu_item_new_with_mnemonic (_("New playlist"));
   gtk_widget_show (new_playlist1);
@@ -187,6 +189,7 @@ create_mainwin (void)
   separator8 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator8);
   gtk_container_add (GTK_CONTAINER (File_menu), separator8);
+  gtk_widget_set_sensitive (separator8, FALSE);
 
   quit = gtk_image_menu_item_new_with_mnemonic (_("_Quit"));
   gtk_widget_show (quit);
@@ -284,6 +287,7 @@ create_mainwin (void)
   separator5 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator5);
   gtk_container_add (GTK_CONTAINER (Edit_menu), separator5);
+  gtk_widget_set_sensitive (separator5, FALSE);
 
   preferences = gtk_menu_item_new_with_mnemonic (_("Preferences"));
   gtk_widget_show (preferences);
@@ -395,6 +399,7 @@ create_mainwin (void)
   separator11 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator11);
   gtk_container_add (GTK_CONTAINER (Playback_menu), separator11);
+  gtk_widget_set_sensitive (separator11, FALSE);
 
   jump_to_current_track1 = gtk_menu_item_new_with_mnemonic (_("Jump to current track"));
   gtk_widget_show (jump_to_current_track1);
@@ -422,6 +427,7 @@ create_mainwin (void)
   separator10 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator10);
   gtk_container_add (GTK_CONTAINER (Help_menu), separator10);
+  gtk_widget_set_sensitive (separator10, FALSE);
 
   gpl1 = gtk_menu_item_new_with_mnemonic (_("_GPLv2"));
   gtk_widget_show (gpl1);
@@ -434,6 +440,7 @@ create_mainwin (void)
   separator9 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator9);
   gtk_container_add (GTK_CONTAINER (Help_menu), separator9);
+  gtk_widget_set_sensitive (separator9, FALSE);
 
   about1 = gtk_image_menu_item_new_with_mnemonic (_("_About"));
   gtk_widget_show (about1);
@@ -1595,6 +1602,7 @@ create_prefwin (void)
   GtkWidget *label110;
   GtkWidget *notebook5;
   GtkWidget *vbox9;
+  GtkWidget *minimize_on_startup;
   GtkWidget *pref_close_send_to_tray;
   GtkWidget *hide_tray_icon;
   GtkWidget *enable_shift_jis_recoding;
@@ -2160,6 +2168,10 @@ create_prefwin (void)
   gtk_widget_show (vbox9);
   gtk_container_add (GTK_CONTAINER (notebook5), vbox9);
   gtk_container_set_border_width (GTK_CONTAINER (vbox9), 12);
+
+  minimize_on_startup = gtk_check_button_new_with_mnemonic (_("Minimize to tray on startup"));
+  gtk_widget_show (minimize_on_startup);
+  gtk_box_pack_start (GTK_BOX (vbox9), minimize_on_startup, FALSE, FALSE, 0);
 
   pref_close_send_to_tray = gtk_check_button_new_with_mnemonic (_("Close minimizes to tray"));
   gtk_widget_show (pref_close_send_to_tray);
@@ -3172,6 +3184,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) dsp_preset_load, "clicked",
                     G_CALLBACK (on_dsp_preset_load_clicked),
                     NULL);
+  g_signal_connect ((gpointer) minimize_on_startup, "clicked",
+                    G_CALLBACK (on_minimize_on_startup_clicked),
+                    NULL);
   g_signal_connect ((gpointer) pref_close_send_to_tray, "clicked",
                     G_CALLBACK (on_pref_close_send_to_tray_clicked),
                     NULL);
@@ -3463,6 +3478,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label110, "label110");
   GLADE_HOOKUP_OBJECT (prefwin, notebook5, "notebook5");
   GLADE_HOOKUP_OBJECT (prefwin, vbox9, "vbox9");
+  GLADE_HOOKUP_OBJECT (prefwin, minimize_on_startup, "minimize_on_startup");
   GLADE_HOOKUP_OBJECT (prefwin, pref_close_send_to_tray, "pref_close_send_to_tray");
   GLADE_HOOKUP_OBJECT (prefwin, hide_tray_icon, "hide_tray_icon");
   GLADE_HOOKUP_OBJECT (prefwin, enable_shift_jis_recoding, "enable_shift_jis_recoding");
@@ -5293,7 +5309,7 @@ create_rg_scan_progress (void)
   GtkWidget *rg_scan_progress_cancel;
 
   rg_scan_progress = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_widget_set_size_request (rg_scan_progress, 440, -1);
+  gtk_widget_set_size_request (rg_scan_progress, 650, -1);
   gtk_window_set_title (GTK_WINDOW (rg_scan_progress), _("ReplayGain Scan Progress"));
 
   vbox50 = gtk_vbox_new (FALSE, 8);
@@ -5361,7 +5377,7 @@ create_rg_scan_results (void)
   GtkWidget *rg_scan_results_cancel;
 
   rg_scan_results = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_widget_set_size_request (rg_scan_results, 550, 350);
+  gtk_widget_set_size_request (rg_scan_results, 1000, 350);
   gtk_window_set_title (GTK_WINDOW (rg_scan_results), _("ReplayGain Scan Results"));
 
   vbox51 = gtk_vbox_new (FALSE, 8);

@@ -264,9 +264,11 @@ w_free (void) {
     }
     w_creators = NULL;
 
-    w_remove (NULL, rootwidget);
-    w_destroy (rootwidget);
-    rootwidget = NULL;
+    if (rootwidget != NULL) {
+        w_remove (NULL, rootwidget);
+        w_destroy (rootwidget);
+        rootwidget = NULL;
+    }
 }
 
 ddb_gtkui_widget_t *
@@ -666,6 +668,8 @@ save_widget_to_string (char *str, int sz, ddb_gtkui_widget_t *w) {
 
 void
 w_save (void) {
+    if (rootwidget == NULL) return;
+    
     char buf[20000] = "";
     save_widget_to_string (buf, sizeof (buf), rootwidget->children);
     deadbeef->conf_set_str (DDB_GTKUI_CONF_LAYOUT, buf);
