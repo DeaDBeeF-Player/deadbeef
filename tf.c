@@ -2346,9 +2346,19 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     const char *v = pl_find_meta_raw (it, ":URI");
 
                     if (v) {
-                        if (v[0] == '/') {
+                        #ifdef _WIN32
+                        int is_absolute = (isalpha (v[0]) && v[1] == ':' && v[2] == '/');
+                        #else
+                        int is_absolute = (v[0] == '/');
+                        #endif
+
+                        if (is_absolute) {
                             // This is an absolute path, just prepend proper prefix
+                            #ifdef _WIN32
+                            const char prefix[] = "file:///";
+                            #else
                             const char prefix[] = "file://";
+                            #endif
                             tf_append_out (&out, &outlen, prefix, sizeof (prefix) - 1);
                             tf_append_out (&out, &outlen, v, strlen (v));
                         }
