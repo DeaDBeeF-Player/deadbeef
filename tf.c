@@ -2343,7 +2343,40 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     }
                 }
                 else if (!strcmp (name, "_path_raw")) {
-                    val = pl_find_meta_raw (it, ":URI");
+                    const char *v = pl_find_meta_raw (it, ":URI");
+
+                    if (v) {
+                        if (v[0] == '/') {
+                            // This is an absolute path, just prepend proper prefix
+                            const char prefix[] = "file://";
+                            tf_append_out (&out, &outlen, prefix, sizeof (prefix) - 1);
+                            tf_append_out (&out, &outlen, v, strlen (v));
+                        }
+                        else {
+                            int is_uri = 1;
+
+                            for (const char *p = v; p; p++) {
+                                if (!strncmp (p, "://", 3)) {
+                                    break;
+                                }
+
+                                if (!isalpha (*p)) {
+                                    is_uri = 0;
+                                    break;
+                                }
+                            }
+
+                            if (is_uri) {
+                                // This is already a URI, just copy as is
+                                tf_append_out (&out, &outlen, v, strlen (v));
+                            }
+                            else {
+                                // Relative paths are considered invalid
+                            }
+                        }
+
+                        skip_out = 1;
+                    }
                 }
                 else if (!strcmp (name, "path")) {
                     val = pl_find_meta_raw (it, ":URI");
