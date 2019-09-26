@@ -1087,6 +1087,14 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "0:00"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_PlaybackTime_OutputsPlaybackTimeMs {
+    streamer_set_playing_track (it);
+    char *bc = tf_compile("%playback_time_ms%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "0:00.000"), @"The actual output is: %s", buffer);
+}
+
 - (void)test_NoDynamicFlag_SkipsDynamicFields {
     char *bc = tf_compile("header|%playback_time%|footer");
     ctx.flags |= DDB_TF_CONTEXT_NO_DYNAMIC;

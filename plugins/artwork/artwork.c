@@ -906,9 +906,9 @@ scale_file (const char *in, const char *out, int img_size)
         unlink (out);
     }
 #endif
-#endif
     cache_unlock ();
     return err;
+#endif
 }
 #endif
 

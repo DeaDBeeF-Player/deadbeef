@@ -120,7 +120,7 @@ if (res < 0) { *out = 0; return -1; }
 static playItem_t empty_track;
 // empty playlist is used when ctx.plt is null
 static playlist_t empty_playlist;
-// empty code is used when "code" argumen is null
+// empty code is used when "code" argument is null
 static char empty_code[4] = {0};
 
 static int
@@ -2611,7 +2611,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 int skip_out = 0;
 
                 // temp vars used for strcmp optimizations
-                int tmp_a = 0, tmp_b = 0, tmp_c = 0, tmp_d = 0;
+                int tmp_a = 0, tmp_b = 0, tmp_c = 0, tmp_d = 0, tmp_e = 0;
 
                 if (!strcmp (name, aa_fields[0])) {
                     for (int i = 0; !val && aa_fields[i]; i++) {
@@ -2772,7 +2772,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 else if (!strcmp (name, "replaygain_track_peak")) {
                     val = pl_find_meta_raw (it, ":REPLAYGAIN_TRACKPEAK");
                 }
-                else if ((tmp_a = !strcmp (name, "playback_time")) || (tmp_b = !strcmp (name, "playback_time_seconds")) || (tmp_c = !strcmp (name, "playback_time_remaining")) || (tmp_d = !strcmp (name, "playback_time_remaining_seconds"))) {
+                else if ((tmp_a = !strcmp (name, "playback_time")) || (tmp_b = !strcmp (name, "playback_time_seconds")) || (tmp_c = !strcmp (name, "playback_time_remaining")) || (tmp_d = !strcmp (name, "playback_time_remaining_seconds")) || (tmp_e = !strcmp (name, "playback_time_ms"))) {
                     playItem_t *playing = streamer_get_playing_track ();
                     if (it && playing == it && !(ctx->flags & DDB_TF_CONTEXT_NO_DYNAMIC)) {
                         float t = streamer_get_playpos ();
@@ -2782,15 +2782,25 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                         }
                         if (t >= 0) {
                             int len = 0;
-                            if (tmp_a || tmp_c) {
+                            if (tmp_a || tmp_c || tmp_e) {
                                 int hr = t/3600;
                                 int mn = (t-hr*3600)/60;
                                 int sc = t-hr*3600-mn*60;
-                                if (hr) {
-                                    len = snprintf_clip (out, outlen, "%d:%02d:%02d", hr, mn, sc);
-                                }
-                                else {
-                                    len = snprintf_clip (out, outlen, "%d:%02d", mn, sc);
+                                if (tmp_e) {
+                                    int ms = (t-hr*3600-mn*60-sc)*1000;
+                                    if (hr) {
+                                        len = snprintf_clip (out, outlen, "%d:%02d:%02d.%03d", hr, mn, sc, ms);
+                                    }
+                                    else {
+                                        len = snprintf_clip (out, outlen, "%d:%02d.%03d", mn, sc, ms);
+                                    }
+                                } else {
+                                    if (hr) {
+                                        len = snprintf_clip (out, outlen, "%d:%02d:%02d", hr, mn, sc);
+                                    }
+                                    else {
+                                        len = snprintf_clip (out, outlen, "%d:%02d", mn, sc);
+                                    }
                                 }
                             }
                             else if (tmp_b || tmp_d) {
@@ -2801,7 +2811,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                             skip_out = 1;
                             // notify the caller about update interval
                             if (!ctx->update || (ctx->update > 1000)) {
-                                ctx->update = 1000;
+                                ctx->update = tmp_e ? 100 : 1000;
                             }
                         }
                     }

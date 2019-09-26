@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-10 12:49+0100\n"
-"PO-Revision-Date: 2019-03-10 11:47+0000\n"
+"POT-Creation-Date: 2019-06-23 20:03+0200\n"
+"PO-Revision-Date: 2019-04-18 16:36+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Vietnamese (http://www.transifex.com/deadbeef-player/deadbeef-"
 "player/language/vi/)\n"
@@ -44,7 +44,7 @@ msgstr "DeaDBeeF Dịch giả"
 #: ../plugins/gtkui/callbacks.c:635 ../plugins/gtkui/interface.c:969
 #: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:159
 #: ../plugins/converter/convgui.c:1781 ../plugins/converter/convgui.c:1789
-#: ../plugins/gtkui/actionhandlers.c:473
+#: ../plugins/gtkui/actionhandlers.c:297
 #, no-c-format
 msgid "Help"
 msgstr "Trợ giúp"
@@ -108,121 +108,141 @@ msgstr "Bands Về 0"
 msgid "Presets"
 msgstr "Presets"
 
-#: ../plugins/gtkui/gtkui.c:165 ../tf.c:1833
+#: ../plugins/gtkui/gtkui.c:163 ../tf.c:1935
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 ngày %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:168 ../tf.c:1836
+#: ../plugins/gtkui/gtkui.c:166 ../tf.c:1938
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d ngày %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:670 ../translation/plugins.c:209
+#: ../plugins/gtkui/gtkui.c:210
+msgid "total playtime"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:414 ../plugins/gtkui/gtkui.c:418
+msgid "Paused"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:414 ../plugins/gtkui/gtkui.c:418
+msgid "bit"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:414 ../plugins/gtkui/gtkui.c:415
+msgid "selection playtime"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:415 ../plugins/gtkui/gtkui.c:419
+msgid "Stopped"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:682 ../translation/plugins.c:209
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
 #, no-c-format
 msgid "New Playlist"
 msgstr "Playlist Mới"
 
-#: ../plugins/gtkui/gtkui.c:673 ../plugins/pltbrowser/pltbrowser.c:75
+#: ../plugins/gtkui/gtkui.c:685 ../plugins/pltbrowser/pltbrowser.c:75
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Playlist Mới (%d)"
 
-#: ../plugins/gtkui/gtkui.c:730
+#: ../plugins/gtkui/gtkui.c:742
 #, c-format
 msgid "Copy of %s"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:733
+#: ../plugins/gtkui/gtkui.c:745
 #, c-format
 msgid "Copy of %s (%d)"
 msgstr ""
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1214
+#: ../plugins/gtkui/gtkui.c:1226
 msgid "Playlist with tabs"
 msgstr "Danh sách phát dạng tab"
 
-#: ../plugins/gtkui/gtkui.c:1215 ../plugins/gtkui/interface.c:2285
+#: ../plugins/gtkui/gtkui.c:1227 ../plugins/gtkui/interface.c:2285
 #: ../plugins/gtkui/interface.c:2730 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Playlist"
 msgstr "Danh sách phát"
 
-#: ../plugins/gtkui/gtkui.c:1218
+#: ../plugins/gtkui/gtkui.c:1230
 msgid "Splitter (top and bottom)"
 msgstr "Ngăn đôi (trên và dưới cùng)"
 
-#: ../plugins/gtkui/gtkui.c:1219
+#: ../plugins/gtkui/gtkui.c:1231
 msgid "Splitter (left and right)"
 msgstr "Ngăn đôi (trái và phải)"
 
-#: ../plugins/gtkui/gtkui.c:1221
+#: ../plugins/gtkui/gtkui.c:1233
 msgid "Tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1222
+#: ../plugins/gtkui/gtkui.c:1234
 msgid "Playlist tabs"
 msgstr "Danh sách phát dạng tab"
 
-#: ../plugins/gtkui/gtkui.c:1223
+#: ../plugins/gtkui/gtkui.c:1235
 msgid "Selection properties"
 msgstr "Thuộc tính lựa chọn"
 
-#: ../plugins/gtkui/gtkui.c:1224
+#: ../plugins/gtkui/gtkui.c:1236
 msgid "Album art display"
 msgstr "Hiển thị album nghệ thuật"
 
-#: ../plugins/gtkui/gtkui.c:1225
+#: ../plugins/gtkui/gtkui.c:1237
 msgid "Scope"
 msgstr "Phạm vi"
 
-#: ../plugins/gtkui/gtkui.c:1226
+#: ../plugins/gtkui/gtkui.c:1238
 msgid "Spectrum"
 msgstr "Phổ tần"
 
-#: ../plugins/gtkui/gtkui.c:1227
+#: ../plugins/gtkui/gtkui.c:1239
 msgid "HBox"
 msgstr "HBox"
 
-#: ../plugins/gtkui/gtkui.c:1228
+#: ../plugins/gtkui/gtkui.c:1240
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:1229 ../plugins/gtkui/widgets.c:3851
-#: ../plugins/gtkui/widgets.c:3938
+#: ../plugins/gtkui/gtkui.c:1241 ../plugins/gtkui/widgets.c:3868
+#: ../plugins/gtkui/widgets.c:3955
 msgid "Button"
 msgstr "Nút"
 
-#: ../plugins/gtkui/gtkui.c:1230
+#: ../plugins/gtkui/gtkui.c:1242
 msgid "Seekbar"
 msgstr "Thanh trượt"
 
-#: ../plugins/gtkui/gtkui.c:1231
+#: ../plugins/gtkui/gtkui.c:1243
 msgid "Playback controls"
 msgstr "Điều khiển phát lại"
 
-#: ../plugins/gtkui/gtkui.c:1232
+#: ../plugins/gtkui/gtkui.c:1244
 msgid "Volume bar"
 msgstr "Thanh âm lượng"
 
-#: ../plugins/gtkui/gtkui.c:1233
+#: ../plugins/gtkui/gtkui.c:1245
 msgid "Chiptune voices"
 msgstr "Giọng điện tử"
 
-#: ../plugins/gtkui/gtkui.c:1234
+#: ../plugins/gtkui/gtkui.c:1246
 msgid "Log viewer"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1455
+#: ../plugins/gtkui/gtkui.c:1462
 msgid "Failed while reading help file"
 msgstr "Lỗi trong khi đọc tập tin trợ giúp"
 
-#: ../plugins/gtkui/gtkui.c:1465
+#: ../plugins/gtkui/gtkui.c:1472
 msgid "Failed to load help file"
 msgstr "Không thể đọc tập tin trợ giúp"
 
-#: ../plugins/gtkui/gtkui.c:1478
+#: ../plugins/gtkui/gtkui.c:1485
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
@@ -231,13 +251,13 @@ msgstr ""
 "này sẽ bị hủy bỏ hoặc gián đoạn. Điều này có thể dẫn tới việc mất mát dữ "
 "liệu."
 
-#: ../plugins/gtkui/gtkui.c:1480
+#: ../plugins/gtkui/gtkui.c:1487
 msgid "Do you still want to quit?"
 msgstr "Bạn vẫn muốn thoát?"
 
-#: ../plugins/gtkui/gtkui.c:1481 ../plugins/gtkui/prefwin.c:463
+#: ../plugins/gtkui/gtkui.c:1488 ../plugins/gtkui/prefwin.c:463
 #: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1080
-#: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:553
+#: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:377
 msgid "Warning"
 msgstr "Cảnh báo"
 
@@ -303,7 +323,7 @@ msgid "Selection"
 msgstr "Lựa chọn"
 
 #: ../plugins/gtkui/interface.c:233 ../plugins/gtkui/interface.c:5094
-#: ../plugins/gtkui/plcommon.c:1072 ../plugins/gtkui/deadbeef.glade.h:16
+#: ../plugins/gtkui/plcommon.c:1076 ../plugins/gtkui/deadbeef.glade.h:16
 #: ../plugins/converter/interface.c:676
 #: ../plugins/converter/converter.glade.h:51
 #: ../plugins/shellexecui/interface.c:66
@@ -325,8 +345,8 @@ msgid "Sort by"
 msgstr "Sắp xếp theo"
 
 #: ../plugins/gtkui/interface.c:256 ../plugins/gtkui/mainplaylist.c:233
-#: ../plugins/gtkui/plcommon.c:93 ../plugins/gtkui/prefwin.c:439
-#: ../plugins/gtkui/search.c:652 ../plugins/gtkui/deadbeef.glade.h:20
+#: ../plugins/gtkui/plcommon.c:95 ../plugins/gtkui/prefwin.c:439
+#: ../plugins/gtkui/search.c:653 ../plugins/gtkui/deadbeef.glade.h:20
 #: ../plugins/converter/convgui.c:1184 ../plugins/converter/convgui.c:1752
 #: ../plugins/converter/interface.c:653
 #: ../plugins/converter/converter.glade.h:48
@@ -339,14 +359,14 @@ msgid "Track number"
 msgstr "Thứ tự bài"
 
 #: ../plugins/gtkui/interface.c:264 ../plugins/gtkui/interface.c:1965
-#: ../plugins/gtkui/plcommon.c:92 ../plugins/gtkui/deadbeef.glade.h:22
+#: ../plugins/gtkui/plcommon.c:94 ../plugins/gtkui/deadbeef.glade.h:22
 #: ../translation/extra.c:6
 msgid "Album"
 msgstr "Album"
 
 #. Track properties dialog
-#: ../plugins/gtkui/interface.c:268 ../plugins/gtkui/plcommon.c:91
-#: ../plugins/gtkui/plcommon.c:1849 ../plugins/gtkui/deadbeef.glade.h:23
+#: ../plugins/gtkui/interface.c:268 ../plugins/gtkui/plcommon.c:93
+#: ../plugins/gtkui/plcommon.c:1915 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:2
 msgid "Artist"
 msgstr "Nghệ sĩ"
@@ -360,8 +380,8 @@ msgstr "Ngày"
 msgid "Random"
 msgstr "Ngẫu nhiên"
 
-#: ../plugins/gtkui/interface.c:280 ../plugins/gtkui/plcommon.c:100
-#: ../plugins/gtkui/plcommon.c:1853 ../plugins/gtkui/deadbeef.glade.h:26
+#: ../plugins/gtkui/interface.c:280 ../plugins/gtkui/plcommon.c:102
+#: ../plugins/gtkui/plcommon.c:1919 ../plugins/gtkui/deadbeef.glade.h:26
 msgid "Custom"
 msgstr "Tùy chọn"
 
@@ -521,7 +541,7 @@ msgstr "Thông tin"
 msgid "Quit"
 msgstr "Thoát"
 
-#: ../plugins/gtkui/interface.c:1042 ../plugins/gtkui/plcommon.c:1228
+#: ../plugins/gtkui/interface.c:1042 ../plugins/gtkui/plcommon.c:1232
 #: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:157
 #, no-c-format
 msgid "Track Properties"
@@ -556,7 +576,7 @@ msgstr "Thuộc tính"
 #: ../plugins/gtkui/deadbeef.glade.h:72 ../plugins/converter/interface.c:418
 #: ../plugins/converter/converter.glade.h:25
 #: ../plugins/shellexecui/interface.c:163
-#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1550
+#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1566
 #: ../plugins/gtkui/pltmenu.c:66
 msgid "Title:"
 msgstr "Tiêu đề:"
@@ -671,8 +691,8 @@ msgstr "Bài"
 msgid "Processing:"
 msgstr "đang tiến hành:"
 
-#: ../plugins/gtkui/interface.c:1980 ../plugins/gtkui/plcommon.c:1841
-#: ../translation/plugins.c:108 ../plugins/gtkui/widgets.c:3948
+#: ../plugins/gtkui/interface.c:1980 ../plugins/gtkui/plcommon.c:1907
+#: ../translation/plugins.c:108 ../plugins/gtkui/widgets.c:3965
 #, no-c-format
 msgid "None"
 msgstr "Không"
@@ -1039,7 +1059,7 @@ msgid "URL:"
 msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3822 ../plugins/gtkui/interface.c:5008
-#: ../plugins/gtkui/interface.c:5036 ../plugins/gtkui/plcommon.c:1215
+#: ../plugins/gtkui/interface.c:5036 ../plugins/gtkui/plcommon.c:1219
 #: ../plugins/gtkui/deadbeef.glade.h:187
 msgid "Set Custom Title"
 msgstr ""
@@ -1247,111 +1267,111 @@ msgstr ""
 msgid "Update File Tags"
 msgstr ""
 
-#: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:650
+#: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:651
 msgid "Artist / Album"
 msgstr "Nghệ sĩ / Album"
 
-#: ../plugins/gtkui/mainplaylist.c:232 ../plugins/gtkui/search.c:651
+#: ../plugins/gtkui/mainplaylist.c:232 ../plugins/gtkui/search.c:652
 msgid "Track No"
 msgstr "Bài Số"
 
-#: ../plugins/gtkui/mainplaylist.c:234 ../plugins/gtkui/plcommon.c:95
-#: ../plugins/gtkui/search.c:653 ../plugins/pltbrowser/pltbrowser.c:414
-#: ../plugins/pltbrowser/pltbrowser.c:939
+#: ../plugins/gtkui/mainplaylist.c:234 ../plugins/gtkui/plcommon.c:97
+#: ../plugins/gtkui/search.c:654 ../plugins/pltbrowser/pltbrowser.c:414
+#: ../plugins/pltbrowser/pltbrowser.c:941
 msgid "Duration"
 msgstr "Thời lượng"
 
-#: ../plugins/gtkui/plcommon.c:87
+#: ../plugins/gtkui/plcommon.c:89
 msgid "Item Index"
 msgstr "Item Index"
 
-#: ../plugins/gtkui/plcommon.c:88 ../plugins/pltbrowser/pltbrowser.c:412
+#: ../plugins/gtkui/plcommon.c:90 ../plugins/pltbrowser/pltbrowser.c:412
 msgid "Playing"
 msgstr "Đang phát"
 
-#: ../plugins/gtkui/plcommon.c:89
+#: ../plugins/gtkui/plcommon.c:91
 msgid "Album Art"
 msgstr "Bìa Album"
 
-#: ../plugins/gtkui/plcommon.c:90
+#: ../plugins/gtkui/plcommon.c:92
 msgid "Artist - Album"
 msgstr "Nghệ sĩ - Album"
 
-#: ../plugins/gtkui/plcommon.c:94
+#: ../plugins/gtkui/plcommon.c:96
 msgid "Year"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:96 ../translation/extra.c:8
+#: ../plugins/gtkui/plcommon.c:98 ../translation/extra.c:8
 msgid "Track Number"
 msgstr "Thứ Tự Bài Hát"
 
-#: ../plugins/gtkui/plcommon.c:97 ../translation/extra.c:5
+#: ../plugins/gtkui/plcommon.c:99 ../translation/extra.c:5
 msgid "Band / Album Artist"
 msgstr "Nhóm / Nghệ sĩ"
 
-#: ../plugins/gtkui/plcommon.c:98 ../translation/extra.c:21
+#: ../plugins/gtkui/plcommon.c:100 ../translation/extra.c:21
 msgid "Codec"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:99
+#: ../plugins/gtkui/plcommon.c:101
 msgid "Bitrate"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:936 ../plugins/gtkui/plcommon.c:1045
+#: ../plugins/gtkui/plcommon.c:940 ../plugins/gtkui/plcommon.c:1049
 #: ../plugins/gtkui/pltmenu.c:427
 msgid "_Paste"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:990 ../translation/plugins.c:306
+#: ../plugins/gtkui/plcommon.c:994 ../translation/plugins.c:306
 #, no-c-format
 msgid "Add To Playback Queue"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:994 ../translation/plugins.c:304
+#: ../plugins/gtkui/plcommon.c:998 ../translation/plugins.c:304
 #, no-c-format
 msgid "Remove From Playback Queue"
 msgstr ""
 
 #. plugins/hotkeys/hotkeys.c
-#: ../plugins/gtkui/plcommon.c:1016 ../translation/plugins.c:242
+#: ../plugins/gtkui/plcommon.c:1020 ../translation/plugins.c:242
 #, no-c-format
 msgid "Reload Metadata"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:1025 ../plugins/gtkui/pltmenu.c:403
+#: ../plugins/gtkui/plcommon.c:1029 ../plugins/gtkui/pltmenu.c:403
 msgid "Cu_t"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:1035 ../plugins/gtkui/pltmenu.c:415
+#: ../plugins/gtkui/plcommon.c:1039 ../plugins/gtkui/pltmenu.c:415
 msgid "_Copy"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:1079 ../translation/plugins.c:147
+#: ../plugins/gtkui/plcommon.c:1083 ../translation/plugins.c:147
 #, no-c-format
 msgid "Remove From Disk"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:1664 ../plugins/gtkui/plcommon.c:1806
+#: ../plugins/gtkui/plcommon.c:1730 ../plugins/gtkui/plcommon.c:1872
 msgid "Add column"
 msgstr "Thêm cột"
 
-#: ../plugins/gtkui/plcommon.c:1706 ../plugins/gtkui/plcommon.c:1810
+#: ../plugins/gtkui/plcommon.c:1772 ../plugins/gtkui/plcommon.c:1876
 msgid "Edit column"
 msgstr "Sửa cột"
 
-#: ../plugins/gtkui/plcommon.c:1814
+#: ../plugins/gtkui/plcommon.c:1880
 msgid "Remove column"
 msgstr "Xóa cột"
 
-#: ../plugins/gtkui/plcommon.c:1829
+#: ../plugins/gtkui/plcommon.c:1895
 msgid "Pin groups when scrolling"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:1834
+#: ../plugins/gtkui/plcommon.c:1900
 msgid "Group by"
 msgstr "Nhóm bởi"
 
-#: ../plugins/gtkui/plcommon.c:1845
+#: ../plugins/gtkui/plcommon.c:1911
 msgid "Artist/Date/Album"
 msgstr "Nghệ sĩ/Ngày/Album"
 
@@ -1384,7 +1404,7 @@ msgstr "Thêm tập tin..."
 msgid "Initializing..."
 msgstr "Đang khởi tạo..."
 
-#: ../plugins/gtkui/search.c:658
+#: ../plugins/gtkui/search.c:659
 msgid "Search [(%list_total% results)]"
 msgstr ""
 
@@ -1402,12 +1422,12 @@ msgid "[Multiple values] "
 msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:376 ../plugins/gtkui/trkproperties.c:391
-#: ../plugins/gtkui/widgets.c:2565
+#: ../plugins/gtkui/widgets.c:2581
 msgid "Key"
 msgstr "Phím tắt"
 
 #: ../plugins/gtkui/trkproperties.c:377 ../plugins/gtkui/trkproperties.c:392
-#: ../plugins/gtkui/widgets.c:2567
+#: ../plugins/gtkui/widgets.c:2583
 msgid "Value"
 msgstr "Giá trị"
 
@@ -1439,89 +1459,89 @@ msgstr ""
 msgid "Field with such name already exists, please try different name."
 msgstr ""
 
-#: ../main.c:104
+#: ../main.c:120
 #, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
 msgstr ""
 
-#: ../main.c:105
+#: ../main.c:121
 #, c-format
 msgid "Options:\n"
 msgstr ""
 
-#: ../main.c:106
+#: ../main.c:122
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
 msgstr ""
 
-#: ../main.c:107
+#: ../main.c:123
 #, c-format
 msgid "   --quit             Quit player\n"
 msgstr ""
 
-#: ../main.c:108
+#: ../main.c:124
 #, c-format
 msgid "   --version          Print version info and exit\n"
 msgstr ""
 
-#: ../main.c:109
+#: ../main.c:125
 #, c-format
 msgid "   --play             Start playback\n"
 msgstr ""
 
-#: ../main.c:110
+#: ../main.c:126
 #, c-format
 msgid "   --stop             Stop playback\n"
 msgstr ""
 
-#: ../main.c:111
+#: ../main.c:127
 #, c-format
 msgid "   --pause            Pause playback\n"
 msgstr ""
 
-#: ../main.c:112
+#: ../main.c:128
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
 msgstr ""
 
-#: ../main.c:113
+#: ../main.c:129
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
 msgstr ""
 
-#: ../main.c:114
+#: ../main.c:130
 #, c-format
 msgid "   --next             Next song in playlist\n"
 msgstr ""
 
-#: ../main.c:115
+#: ../main.c:131
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
 msgstr ""
 
-#: ../main.c:116
+#: ../main.c:132
 #, c-format
 msgid "   --random           Random song in playlist\n"
 msgstr ""
 
-#: ../main.c:117
+#: ../main.c:133
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
 msgstr ""
 
-#: ../main.c:118
+#: ../main.c:134
 #, c-format
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
 msgstr ""
 
-#: ../main.c:119
+#: ../main.c:135
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
 msgstr ""
 
-#: ../main.c:120
+#: ../main.c:136
 #, c-format
 msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
@@ -1529,78 +1549,78 @@ msgid ""
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
 
-#: ../main.c:123
+#: ../main.c:139
 #, c-format
 msgid ""
 "                      example: --nowplaying \"%%a - %%t\" should print "
 "\"artist - title\"\n"
 msgstr ""
 
-#: ../main.c:124
+#: ../main.c:140
 #, c-format
 msgid "                      for more info, see %s\n"
 msgstr ""
 
-#: ../main.c:125
+#: ../main.c:141
 #, c-format
 msgid "                      NOTE: --nowplaying is deprecated.\n"
 msgstr ""
 
-#: ../main.c:126
+#: ../main.c:142
 #, c-format
 msgid ""
 "   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
 "title formatting\n"
 msgstr ""
 
-#: ../main.c:127
+#: ../main.c:143
 #, c-format
 msgid ""
 "                      FMT syntax: http://github.com/DeaDBeeF-Player/deadbeef/"
 "wiki/Title-formatting-2.0\n"
 msgstr ""
 
-#: ../main.c:128
+#: ../main.c:144
 #, c-format
 msgid ""
 "                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
 "should print \"artist - title\"\n"
 msgstr ""
 
-#: ../main.c:129
+#: ../main.c:145
 #, c-format
 msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
 msgstr ""
 
-#: ../main.c:130
+#: ../main.c:146
 #, c-format
 msgid ""
 "                      The NUM parameter can be specified in percents (if no "
 "suffix) or dB [-50, 0].\n"
 msgstr ""
 
-#: ../main.c:131
+#: ../main.c:147
 #, c-format
 msgid "                      Examples: --volume 80 or --volume -20dB\n"
 msgstr ""
 
-#: ../playlist.c:486 ../playlist.c:2250
+#: ../playlist.c:492 ../playlist.c:2325
 msgid "Default"
 msgstr "Mặc định"
 
-#: ../playlist.c:2915
+#: ../playlist.c:2990
 msgid "Mono"
 msgstr "Mono"
 
-#: ../playlist.c:2915
+#: ../playlist.c:2990
 msgid "Stereo"
 msgstr "Stereo"
 
-#: ../playlist.c:3433
+#: ../playlist.c:3508
 msgid "Yes"
 msgstr "Có"
 
-#: ../playlist.c:3433
+#: ../playlist.c:3508
 msgid "No"
 msgstr "Không"
 
@@ -2055,47 +2075,47 @@ msgstr ""
 
 #: ../translation/plugins.c:165
 #, no-c-format
-msgid "Cycle Playback Looping Mode"
+msgid "Cycle Repeat Mode"
 msgstr ""
 
 #: ../translation/plugins.c:167
 #, no-c-format
-msgid "Playback Looping - Don't loop"
+msgid "Repeat - Off"
 msgstr ""
 
 #: ../translation/plugins.c:169
 #, no-c-format
-msgid "Playback Looping - Single track"
+msgid "Repeat - Single Track"
 msgstr ""
 
 #: ../translation/plugins.c:171
 #, no-c-format
-msgid "Playback Looping - All"
+msgid "Repeat - All"
 msgstr ""
 
 #: ../translation/plugins.c:173
 #, no-c-format
-msgid "Cycle Playback Order"
+msgid "Cycle Shuffle Mode"
 msgstr ""
 
 #: ../translation/plugins.c:175
 #, no-c-format
-msgid "Playback Order - Random"
+msgid "Shuffle - Random Tracks"
 msgstr ""
 
 #: ../translation/plugins.c:177
 #, no-c-format
-msgid "Playback Order - Shuffle albums"
+msgid "Shuffle - Albums"
 msgstr ""
 
 #: ../translation/plugins.c:179
 #, no-c-format
-msgid "Playback Order - Shuffle tracks"
+msgid "Shuffle - Tracks"
 msgstr ""
 
 #: ../translation/plugins.c:181
 #, no-c-format
-msgid "Playback Order - Linear"
+msgid "Shuffle - Off"
 msgstr ""
 
 #: ../translation/plugins.c:183
@@ -2148,7 +2168,7 @@ msgstr ""
 msgid "Save Playlist"
 msgstr ""
 
-#: ../translation/plugins.c:205 ../plugins/gtkui/actionhandlers.c:740
+#: ../translation/plugins.c:205 ../plugins/gtkui/actionhandlers.c:539
 #, no-c-format
 msgid "Load Playlist"
 msgstr ""
@@ -2582,191 +2602,211 @@ msgstr ""
 msgid "Play on double-click"
 msgstr ""
 
-#. plugins/pulse/pulse.c
+#. plugins/portaudio/portaudio.c
 #: ../translation/plugins.c:407
+#, no-c-format
+msgid "Buffer size (-1 to use optimal value choosen by portaudio)"
+msgstr ""
+
+#: ../translation/plugins.c:409
+#, no-c-format
+msgid "Device name encoding"
+msgstr ""
+
+#: ../translation/plugins.c:411
+#, no-c-format
+msgid "ASCII / UTF-8"
+msgstr ""
+
+#: ../translation/plugins.c:413
+#, no-c-format
+msgid "cp1250"
+msgstr ""
+
+#: ../translation/plugins.c:415
+#, no-c-format
+msgid "Defined below"
+msgstr ""
+
+#: ../translation/plugins.c:417
+#, no-c-format
+msgid "Custom device name encoding"
+msgstr ""
+
+#. plugins/pulse/pulse.c
+#: ../translation/plugins.c:420
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
 msgstr ""
 
 #. plugins/sc68/in_sc68.c
-#: ../translation/plugins.c:410
+#: ../translation/plugins.c:423
 #, no-c-format
 msgid "Default song length (in minutes)"
 msgstr ""
 
-#: ../translation/plugins.c:412
+#: ../translation/plugins.c:425
 #, no-c-format
 msgid "Samplerate"
 msgstr ""
 
-#: ../translation/plugins.c:414
+#: ../translation/plugins.c:427
 #, no-c-format
 msgid "Skip when shorter than (sec)"
 msgstr ""
 
 #. plugins/shellexecui/shellexecui.c
-#: ../translation/plugins.c:417
+#: ../translation/plugins.c:430
 #, no-c-format
 msgid "Configure Custom Shell Commands"
 msgstr ""
 
 #. plugins/shn/shn.c
-#: ../translation/plugins.c:420
+#: ../translation/plugins.c:433
 #, no-c-format
 msgid "Relative seek table path"
 msgstr ""
 
-#: ../translation/plugins.c:422
+#: ../translation/plugins.c:435
 #, no-c-format
 msgid "Absolute seek table path"
 msgstr ""
 
-#: ../translation/plugins.c:424
+#: ../translation/plugins.c:437
 #, no-c-format
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr ""
 
 #. plugins/sid/plugin.c
-#: ../translation/plugins.c:427
+#: ../translation/plugins.c:440
 #, no-c-format
 msgid "Enable HVSC Songlength DB"
 msgstr ""
 
-#: ../translation/plugins.c:429
+#: ../translation/plugins.c:442
 #, no-c-format
 msgid "Full path to Songlengths.md5/.txt"
 msgstr ""
 
-#: ../translation/plugins.c:431
+#: ../translation/plugins.c:444
 #, no-c-format
 msgid "Bits per sample"
 msgstr ""
 
-#: ../translation/plugins.c:433
+#: ../translation/plugins.c:446
 #, no-c-format
 msgid "Mono synth"
 msgstr ""
 
-#: ../translation/plugins.c:435
+#: ../translation/plugins.c:448
 #, no-c-format
 msgid "Default song length (sec)"
 msgstr ""
 
-#. plugins/sndio/sndio.c
-#: ../translation/plugins.c:438
-#, no-c-format
-msgid "Device"
-msgstr ""
-
-#: ../translation/plugins.c:440
-#, no-c-format
-msgid "Buffer size (ms)"
-msgstr ""
-
 #. plugins/supereq/supereq.c
-#: ../translation/plugins.c:443
+#: ../translation/plugins.c:451
 #, no-c-format
 msgid "Preamp"
 msgstr ""
 
-#: ../translation/plugins.c:445
+#: ../translation/plugins.c:453
 #, no-c-format
 msgid "55 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:447
+#: ../translation/plugins.c:455
 #, no-c-format
 msgid "77 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:449
+#: ../translation/plugins.c:457
 #, no-c-format
 msgid "110 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:451
+#: ../translation/plugins.c:459
 #, no-c-format
 msgid "156 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:453
+#: ../translation/plugins.c:461
 #, no-c-format
 msgid "220 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:455
+#: ../translation/plugins.c:463
 #, no-c-format
 msgid "311 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:457
+#: ../translation/plugins.c:465
 #, no-c-format
 msgid "440 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:459
+#: ../translation/plugins.c:467
 #, no-c-format
 msgid "622 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:461
+#: ../translation/plugins.c:469
 #, no-c-format
 msgid "880 Hz"
 msgstr ""
 
-#: ../translation/plugins.c:463
+#: ../translation/plugins.c:471
 #, no-c-format
 msgid "1.2 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:465
+#: ../translation/plugins.c:473
 #, no-c-format
 msgid "1.8 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:467
+#: ../translation/plugins.c:475
 #, no-c-format
 msgid "2.5 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:469
+#: ../translation/plugins.c:477
 #, no-c-format
 msgid "3.5 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:471
+#: ../translation/plugins.c:479
 #, no-c-format
 msgid "5 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:473
+#: ../translation/plugins.c:481
 #, no-c-format
 msgid "7 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:475
+#: ../translation/plugins.c:483
 #, no-c-format
 msgid "10 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:477
+#: ../translation/plugins.c:485
 #, no-c-format
 msgid "14 kHz"
 msgstr ""
 
-#: ../translation/plugins.c:479
+#: ../translation/plugins.c:487
 #, no-c-format
 msgid "20 kHz"
 msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
-#: ../translation/plugins.c:482
+#: ../translation/plugins.c:490
 #, no-c-format
 msgid "Enable logging"
 msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
-#: ../translation/plugins.c:485
+#: ../translation/plugins.c:493
 #, no-c-format
 msgid "Timidity++ bank configuration file"
 msgstr ""
@@ -3075,6 +3115,34 @@ msgstr "Thêm"
 msgid "Couldn't find pixmap file: %s"
 msgstr ""
 
+#: ../plugins/gtkui/fileman.c:316 ../plugins/gtkui/fileman.c:410
+msgid "Supported sound formats"
+msgstr ""
+
+#: ../plugins/gtkui/fileman.c:344 ../plugins/gtkui/fileman.c:421
+msgid "All files (*)"
+msgstr ""
+
+#: ../plugins/gtkui/fileman.c:455 ../plugins/gtkui/fileman.c:499
+msgid "Supported playlist formats"
+msgstr ""
+
+#: ../plugins/gtkui/fileman.c:462
+msgid "All files"
+msgstr ""
+
+#: ../plugins/gtkui/fileman.c:505
+msgid "Other files (*)"
+msgstr ""
+
+#: ../plugins/gtkui/fileman.c:516
+msgid "DeaDBeeF playlist files (*.dbpl)"
+msgstr ""
+
+#: ../plugins/gtkui/fileman.c:560
+msgid "Follow symlinks"
+msgstr ""
+
 #: ../plugins/converter/converter.glade.h:14
 msgid ""
 "Keep source format\n"
@@ -3236,54 +3304,34 @@ msgstr ""
 msgid "Invalid Values"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:116
-msgid "Supported sound formats"
-msgstr ""
-
-#: ../plugins/gtkui/actionhandlers.c:127
-msgid "All files (*)"
-msgstr ""
-
-#: ../plugins/gtkui/actionhandlers.c:135
+#: ../plugins/gtkui/actionhandlers.c:52
 msgid "Open file(s)..."
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:174
+#: ../plugins/gtkui/actionhandlers.c:67
 msgid "Add file(s) to playlist..."
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:220
+#: ../plugins/gtkui/actionhandlers.c:82
 msgid "Add folder(s) to playlist..."
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:225
-msgid "Follow symlinks"
-msgstr ""
-
-#: ../plugins/gtkui/actionhandlers.c:472
+#: ../plugins/gtkui/actionhandlers.c:296
 msgid "help.txt"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:551
+#: ../plugins/gtkui/actionhandlers.c:375
 msgid "Delete files from disk"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:552
+#: ../plugins/gtkui/actionhandlers.c:376
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:755
-msgid "Other files (*)"
-msgstr ""
-
-#: ../plugins/gtkui/actionhandlers.c:789
+#: ../plugins/gtkui/actionhandlers.c:561
 msgid "Save Playlist As"
-msgstr ""
-
-#: ../plugins/gtkui/actionhandlers.c:800
-msgid "DeaDBeeF playlist files (*.dbpl)"
 msgstr ""
 
 #: ../plugins/gtkui/ctmapping.c:129
@@ -3338,76 +3386,76 @@ msgstr ""
 msgid "Multiple widgets of this type are not supported"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1272
+#: ../plugins/gtkui/widgets.c:1288
 msgid "Proportional Sizing"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1284
+#: ../plugins/gtkui/widgets.c:1300
 msgid "Lock Top Pane Height"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1287
+#: ../plugins/gtkui/widgets.c:1303
 msgid "Lock Left Pane Width"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1300
+#: ../plugins/gtkui/widgets.c:1316
 msgid "Lock Bottom Pane Height"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1303
+#: ../plugins/gtkui/widgets.c:1319
 msgid "Lock Right Pane Width"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1547 ../plugins/gtkui/widgets.c:1662
+#: ../plugins/gtkui/widgets.c:1563 ../plugins/gtkui/widgets.c:1678
 msgid "Rename Tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1669
+#: ../plugins/gtkui/widgets.c:1685
 msgid "Remove Tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1676 ../plugins/gtkui/widgets.c:1856
+#: ../plugins/gtkui/widgets.c:1692 ../plugins/gtkui/widgets.c:1872
 msgid "Add New Tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1685
+#: ../plugins/gtkui/widgets.c:1701
 msgid "Move Tab Left"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1692
+#: ../plugins/gtkui/widgets.c:1708
 msgid "Move Tab Right"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2346 ../plugins/gtkui/widgets.c:2524
-#: ../plugins/pltbrowser/pltbrowser.c:881
+#: ../plugins/gtkui/widgets.c:2362 ../plugins/gtkui/widgets.c:2540
+#: ../plugins/pltbrowser/pltbrowser.c:883
 msgid "Show Column Headers"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3570
+#: ../plugins/gtkui/widgets.c:3587
 msgid "Expand Box by 1 Item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3575
+#: ../plugins/gtkui/widgets.c:3592
 msgid "Shrink Box by 1 Item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3580
+#: ../plugins/gtkui/widgets.c:3597
 msgid "Homogeneous"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3620
+#: ../plugins/gtkui/widgets.c:3637
 msgid "Expand"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3628
+#: ../plugins/gtkui/widgets.c:3645
 msgid "Fill"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4028
+#: ../plugins/gtkui/widgets.c:4045
 msgid "Configure Button"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4307
+#: ../plugins/gtkui/widgets.c:4324
 msgid "Voices:"
 msgstr ""
 
@@ -3445,27 +3493,27 @@ msgid "%dd %d:%02d:%02d"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:413
-#: ../plugins/pltbrowser/pltbrowser.c:934
+#: ../plugins/pltbrowser/pltbrowser.c:936
 msgid "Items"
 msgstr ""
 
-#: ../plugins/pltbrowser/pltbrowser.c:925 ../plugins/gtkui/rg.c:312
+#: ../plugins/pltbrowser/pltbrowser.c:927 ../plugins/gtkui/rg.c:312
 msgid "Name"
 msgstr ""
 
-#: ../plugins/pltbrowser/pltbrowser.c:928
+#: ../plugins/pltbrowser/pltbrowser.c:930
 msgid "♫"
 msgstr ""
 
-#: ../plugins/pltbrowser/pltbrowser.c:986
+#: ../plugins/pltbrowser/pltbrowser.c:988
 msgid "Playlist browser"
 msgstr ""
 
-#: ../tf.c:1525
+#: ../tf.c:1625
 msgid "mono"
 msgstr ""
 
-#: ../tf.c:1528 ../tf.c:1532
+#: ../tf.c:1628 ../tf.c:1632
 msgid "stereo"
 msgstr ""
 
