@@ -1500,8 +1500,10 @@ tf_func_substr(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const c
     // Convert to a 0-based offset
     from -= 1;
 
-    TF_EVAL_CHECK(len, ctx, args + arglens[0] + arglens[1], arglens[2], str, sizeof(str) - 1, fail_on_undef);
-    int to = atoi(str);
+    char *temp = malloc (outlen);
+    TF_EVAL_CHECK(len, ctx, args + arglens[0] + arglens[1], arglens[2], temp, outlen, fail_on_undef);
+    int to = atoi(temp);
+    free (temp);
     if (to <= 0) {
         // If we don't want anything, finish early
         return 0;
