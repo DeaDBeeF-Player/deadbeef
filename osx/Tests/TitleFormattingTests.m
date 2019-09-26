@@ -2234,5 +2234,56 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "2019.01.01"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_Tab_ProducesTabChar {
+    ctx.flags = DDB_TF_CONTEXT_MULTILINE;
+    char *bc = tf_compile("$tab()");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "\t"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Tab5_Produces5TabChars {
+    ctx.flags = DDB_TF_CONTEXT_MULTILINE;
+    char *bc = tf_compile("$tab(5)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "\t\t\t\t\t"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_TrimNoLeadingTrailingSpaces_ReturnsOriginal {
+    char *bc = tf_compile("$trim(hello)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "hello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_TrimLeadingSpaces_ReturnsTrimmedString {
+    char *bc = tf_compile("$trim(   hello)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "hello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_TrimTrailingSpaces_ReturnsTrimmedString {
+    char *bc = tf_compile("$trim(hello   )");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "hello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_TrimLeadingAndTrailingSpaces_ReturnsTrimmedString {
+    char *bc = tf_compile("$trim(    hello   )");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "hello"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_TrimLeadingAndTrailingSpacesWithTabs_ReturnsTrimmedToTabsString {
+    ctx.flags = DDB_TF_CONTEXT_MULTILINE;
+    char *bc = tf_compile("$trim( \t   hello  \t )");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "\t   hello  \t"), @"The actual output is: %s", buffer);
+}
 
 @end
