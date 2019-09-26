@@ -2224,7 +2224,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                             skip_out = 1;
                             // notify the caller about update interval
                             if (!ctx->update || (ctx->update > 1000)) {
-                                ctx->update = 1000;
+                                ctx->update = tmp_e ? 100 : 1000;
                             }
                         }
                     }
