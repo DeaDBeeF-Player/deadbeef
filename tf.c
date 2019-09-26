@@ -197,7 +197,7 @@ tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
         break;
     default:
         // tf_eval_int expects outlen to not include the terminating zero
-        l = tf_eval_int (ctx, code, codelen, out, outlen - 1, &bool_out, 0);
+        TF_EVAL_CHECK(l, ctx, code, codelen, out, outlen - 1, 0);
         break;
     }
 
@@ -1181,8 +1181,11 @@ tf_func_progress_impl(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, 
 
     TF_EVAL_CHECK(len, ctx, argpos, arglens[1], out, outlen - 1, fail_on_undef);
     range = atoi(out);
-    if (range <= 0) {
+    if (range < 0) {
         return -1;
+    }
+    if (range == 0) {
+        range = 1;
     }
     argpos += arglens[1];
 
