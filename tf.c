@@ -100,7 +100,7 @@ if (res < 0) { *out = 0; return -1; }
 static playItem_t empty_track;
 // empty playlist is used when ctx.plt is null
 static playlist_t empty_playlist;
-// empty code is used when "code" argumen is null
+// empty code is used when "code" argument is null
 static char empty_code[4] = {0};
 
 static int
