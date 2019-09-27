@@ -362,6 +362,7 @@ on_trayicon_popup_menu (GtkWidget       *widget,
 
 static gboolean
 activate_cb (gpointer nothing) {
+    if (w_get_rootwidget () == NULL) init_widget_layout ();
     gtk_widget_show (mainwin);
     gtk_window_present (GTK_WINDOW (mainwin));
     return FALSE;
