@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-23 20:03+0200\n"
-"PO-Revision-Date: 2019-09-28 06:48+0000\n"
+"PO-Revision-Date: 2019-09-30 18:10+0000\n"
 "Last-Translator: Julian Lai <laichiaheng@outlook.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/deadbeef-player/deadbeef-player/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
@@ -259,11 +259,11 @@ msgstr "警告"
 
 #: ../plugins/gtkui/interface.c:132 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
-msgstr "檔案（_F）"
+msgstr "檔案 (_F)"
 
 #: ../plugins/gtkui/interface.c:139 ../plugins/gtkui/deadbeef.glade.h:2
 msgid "_Open file(s)"
-msgstr "開啟檔案（_O）"
+msgstr "開啟檔案 (_O)"
 
 #: ../plugins/gtkui/interface.c:151 ../plugins/gtkui/deadbeef.glade.h:3
 msgid "Add file(s)"
@@ -292,15 +292,15 @@ msgstr "儲存播放清單"
 
 #: ../plugins/gtkui/interface.c:191 ../plugins/gtkui/deadbeef.glade.h:9
 msgid "_Quit"
-msgstr "結束（_Q）"
+msgstr "結束 (_Q)"
 
 #: ../plugins/gtkui/interface.c:199 ../plugins/gtkui/deadbeef.glade.h:10
 msgid "_Edit"
-msgstr "編輯（_E）"
+msgstr "編輯 (_E)"
 
 #: ../plugins/gtkui/interface.c:206 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "_Clear"
-msgstr "清除（_C）"
+msgstr "清除 (_C)"
 
 #: ../plugins/gtkui/interface.c:214 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Select all"
@@ -334,7 +334,7 @@ msgstr "剪裁"
 
 #: ../plugins/gtkui/interface.c:245 ../plugins/gtkui/deadbeef.glade.h:18
 msgid "_Find"
-msgstr "尋找（_F）"
+msgstr "尋找 (_F)"
 
 #: ../plugins/gtkui/interface.c:249 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Sort by"
@@ -389,7 +389,7 @@ msgstr "偏好設定"
 
 #: ../plugins/gtkui/interface.c:292 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "_View"
-msgstr "檢視（_V）"
+msgstr "檢視 (_V)"
 
 #: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:29
 msgid "Status bar"
@@ -409,7 +409,7 @@ msgstr "日誌"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "_Playback"
-msgstr "播放（_P）"
+msgstr "播放 (_P)"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
 msgid "Shuffle"
@@ -467,11 +467,11 @@ msgstr "跳至當前曲目"
 #: ../plugins/gtkui/interface.c:403 ../plugins/gtkui/interface.c:410
 #: ../plugins/gtkui/deadbeef.glade.h:47
 msgid "_Help"
-msgstr "說明（_H）"
+msgstr "說明 (_H)"
 
 #: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:48
 msgid "_ChangeLog"
-msgstr "更新日誌（_C）"
+msgstr "更新日誌 (_C)"
 
 #: ../plugins/gtkui/interface.c:426 ../plugins/gtkui/deadbeef.glade.h:49
 msgid "_GPLv2"
@@ -483,11 +483,11 @@ msgstr "_LGPLv2.1"
 
 #: ../plugins/gtkui/interface.c:438 ../plugins/gtkui/deadbeef.glade.h:51
 msgid "_About"
-msgstr "關於(_A)"
+msgstr "關於 (_A)"
 
 #: ../plugins/gtkui/interface.c:446 ../plugins/gtkui/deadbeef.glade.h:52
 msgid "_Translators"
-msgstr "翻譯者(_T)"
+msgstr "翻譯者 (_T)"
 
 #: ../plugins/gtkui/interface.c:715 ../plugins/gtkui/deadbeef.glade.h:53
 msgid "Search"
@@ -553,12 +553,12 @@ msgstr "設定"
 
 #: ../plugins/gtkui/interface.c:1127 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "_Apply"
-msgstr "套用(_A)"
+msgstr "套用 (_A)"
 
 #: ../plugins/gtkui/interface.c:1148 ../plugins/gtkui/interface.c:1194
 #: ../plugins/gtkui/deadbeef.glade.h:67
 msgid "_Close"
-msgstr "關閉(_C)"
+msgstr "關閉 (_C)"
 
 #: ../plugins/gtkui/interface.c:1152 ../plugins/gtkui/deadbeef.glade.h:68
 msgid "Metadata"
@@ -623,13 +623,13 @@ msgstr "字體色彩："
 #: ../plugins/gtkui/interface.c:3852 ../plugins/gtkui/interface.c:3982
 #: ../plugins/gtkui/deadbeef.glade.h:70
 msgid "_Cancel"
-msgstr "取消(_C)"
+msgstr "取消 (_C)"
 
 #: ../plugins/gtkui/interface.c:1465 ../plugins/gtkui/interface.c:3742
 #: ../plugins/gtkui/interface.c:3873 ../plugins/gtkui/interface.c:4003
 #: ../plugins/gtkui/deadbeef.glade.h:71
 msgid "_OK"
-msgstr "確定(_O)"
+msgstr "確定 (_O)"
 
 #: ../plugins/gtkui/interface.c:1805 ../plugins/gtkui/deadbeef.glade.h:83
 msgid "Output plugin:"
@@ -765,7 +765,7 @@ msgstr "DSP 連鎖預設值"
 
 #: ../plugins/gtkui/interface.c:2146 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "_Load"
-msgstr "載入(_L)"
+msgstr "載入 (_L)"
 
 #: ../plugins/gtkui/interface.c:2150 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "DSP"
@@ -1030,7 +1030,7 @@ msgstr "請按「套用」儲存你的設定，\n或按「還原」恢復原本�
 
 #: ../plugins/gtkui/interface.c:2965 ../plugins/gtkui/deadbeef.glade.h:181
 msgid "_Defaults"
-msgstr "預設(_D)"
+msgstr "預設 (_D)"
 
 #: ../plugins/gtkui/interface.c:2969 ../plugins/gtkui/deadbeef.glade.h:182
 msgid "Hotkeys"
@@ -1316,7 +1316,7 @@ msgstr "位元率"
 #: ../plugins/gtkui/plcommon.c:940 ../plugins/gtkui/plcommon.c:1049
 #: ../plugins/gtkui/pltmenu.c:427
 msgid "_Paste"
-msgstr "貼上（_P）"
+msgstr "貼上 (_P)"
 
 #: ../plugins/gtkui/plcommon.c:994 ../translation/plugins.c:306
 #, no-c-format
@@ -1336,11 +1336,11 @@ msgstr "重整音樂資料"
 
 #: ../plugins/gtkui/plcommon.c:1029 ../plugins/gtkui/pltmenu.c:403
 msgid "Cu_t"
-msgstr "剪下（T）"
+msgstr "剪下 (_T)"
 
 #: ../plugins/gtkui/plcommon.c:1039 ../plugins/gtkui/pltmenu.c:415
 msgid "_Copy"
-msgstr "複製（_C）"
+msgstr "複製 (_C)"
 
 #: ../plugins/gtkui/plcommon.c:1083 ../translation/plugins.c:147
 #, no-c-format
@@ -2026,7 +2026,7 @@ msgstr "將掃描選取項目視為專輯（依標籤）"
 #: ../translation/plugins.c:135
 #, no-c-format
 msgid "Scan Selection As Single Album"
-msgstr "將掃描選取項目視為專輯（依標籤）"
+msgstr "將掃描選取項目視為專輯"
 
 #: ../translation/plugins.c:137
 #, no-c-format
