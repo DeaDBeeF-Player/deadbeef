@@ -186,8 +186,8 @@ wait_until_stopped (void) {
 - (void)test_Play2TracksNoLoop_Sends2SongChanged {
     playlist_t *plt = plt_alloc ("testplt");
     // create two test fake tracks
-    DB_playItem_t *_sinewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "sine.fake", NULL, NULL, NULL);
-    DB_playItem_t *_squarewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, _sinewave, "square.fake", NULL, NULL, NULL);
+    DB_playItem_t *_sinewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "/sine.fake", NULL, NULL, NULL);
+    DB_playItem_t *_squarewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, _sinewave, "/square.fake", NULL, NULL, NULL);
 
     plt_set_curr (plt);
 
@@ -232,8 +232,8 @@ static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
 
     playlist_t *plt = plt_alloc ("testplt");
     // create two test fake tracks
-    switchtest_tracks[0] = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "sine.fake", NULL, NULL, NULL);
-    switchtest_tracks[1] = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, switchtest_tracks[0], "square.fake", NULL, NULL, NULL);
+    switchtest_tracks[0] = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "/sine.fake", NULL, NULL, NULL);
+    switchtest_tracks[1] = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, switchtest_tracks[0], "/square.fake", NULL, NULL, NULL);
 
     plt_set_curr (plt);
 
