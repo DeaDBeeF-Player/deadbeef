@@ -169,6 +169,8 @@ format_timestr (char *buf, int sz, float time) {
 
 static gboolean
 update_songinfo (gpointer unused) {
+    if (w_get_rootwidget() == NULL) return FALSE;
+ 
     int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
     if (!gtk_widget_get_visible (mainwin) || iconified) {
         return FALSE;
@@ -302,11 +304,6 @@ show_traymenu (void) {
     g_idle_add (show_traymenu_cb, NULL);
 }
 
-static gboolean
-mainwin_hide_cb (gpointer data) {
-    gtk_widget_hide (mainwin);
-    return FALSE;
-}
 
 void
 mainwin_toggle_visible (void) {
@@ -315,6 +312,8 @@ mainwin_toggle_visible (void) {
         gtk_widget_hide (mainwin);
     }
     else {
+        if (w_get_rootwidget() == NULL) init_widget_layout ();
+      
         wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0);
         if (iconified) {
             gtk_window_deiconify (GTK_WINDOW(mainwin));
@@ -363,6 +362,7 @@ on_trayicon_popup_menu (GtkWidget       *widget,
 
 static gboolean
 activate_cb (gpointer nothing) {
+    if (w_get_rootwidget () == NULL) init_widget_layout ();
     gtk_widget_show (mainwin);
     gtk_window_present (GTK_WINDOW (mainwin));
     return FALSE;
@@ -1324,10 +1324,12 @@ gtkui_mainwin_init(void) {
         window_init_hooks[i].callback (window_init_hooks[i].userdata);
     }
     wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0);
-    gtk_widget_show (mainwin);
 
-    init_widget_layout ();
-
+    if (!deadbeef->conf_get_int ("gtkui.start_hidden", 0)) {
+        gtk_widget_show (mainwin);
+        init_widget_layout ();
+    }
+    
     gtkui_set_titlebar (NULL);
 
     fileadded_listener_id = deadbeef->listen_file_added (gtkui_add_file_info_cb, NULL);
@@ -1343,10 +1345,6 @@ gtkui_mainwin_init(void) {
 #ifdef __APPLE__
     gtkui_is_retina = is_retina (mainwin);
 #endif
-
-    if (deadbeef->conf_get_int ("gtkui.start_hidden", 0)) {
-        g_idle_add (mainwin_hide_cb, NULL);
-    }
 }
 
 void
