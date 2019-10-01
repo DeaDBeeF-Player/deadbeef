@@ -2945,7 +2945,50 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     }
                 }
                 else if (!strcmp (name, "_path_raw")) {
-                    val = pl_find_meta_raw (it, ":URI");
+                    const char *v = pl_find_meta_raw (it, ":URI");
+
+                    if (v) {
+                        #ifdef _WIN32
+                        int is_absolute = (isalpha (v[0]) && v[1] == ':' && v[2] == '/');
+                        #else
+                        int is_absolute = (v[0] == '/');
+                        #endif
+
+                        if (is_absolute) {
+                            // This is an absolute path, just prepend proper prefix
+                            #ifdef _WIN32
+                            const char prefix[] = "file:///";
+                            #else
+                            const char prefix[] = "file://";
+                            #endif
+                            tf_append_out (&out, &outlen, prefix, sizeof (prefix) - 1);
+                            tf_append_out (&out, &outlen, v, strlen (v));
+                        }
+                        else {
+                            int is_uri = 1;
+
+                            for (const char *p = v; p; p++) {
+                                if (!strncmp (p, "://", 3)) {
+                                    break;
+                                }
+
+                                if (!isalpha (*p)) {
+                                    is_uri = 0;
+                                    break;
+                                }
+                            }
+
+                            if (is_uri) {
+                                // This is already a URI, just copy as is
+                                tf_append_out (&out, &outlen, v, strlen (v));
+                            }
+                            else {
+                                // Relative paths are considered invalid
+                            }
+                        }
+
+                        skip_out = 1;
+                    }
                 }
                 else if (!strcmp (name, "path")) {
                     val = pl_find_meta_raw (it, ":URI");

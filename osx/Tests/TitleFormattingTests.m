@@ -1349,6 +1349,30 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "file:///home/user/filename.mp3"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_RawPathWithHttpUriScheme_ReturnUnStripped {
+    pl_replace_meta (it, ":URI", "http://example.com/filename.mp3");
+    char *bc = tf_compile("%_path_raw%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "http://example.com/filename.mp3"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_RawPathAbsolutePath_ReturnsExpected {
+    pl_replace_meta (it, ":URI", "/path/to/filename.mp3");
+    char *bc = tf_compile("%_path_raw%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "file:///path/to/filename.mp3"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_RawPathRelativePath_ReturnsEmpty {
+    pl_replace_meta (it, ":URI", "relative/path/to/filename.mp3");
+    char *bc = tf_compile("%_path_raw%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
 - (void)test_PlaylistName_ReturnsPlaylistName {
     char *bc = tf_compile("%_playlist_name%");
     playlist_t plt = {
@@ -1469,6 +1493,14 @@ static DB_output_t fake_out = {
 - (void)test_PathWithNullUri_ReturnsEmpty {
     pl_delete_meta (it, ":URI");
     char *bc = tf_compile("%path%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_RawPathWithNullUri_ReturnsEmpty {
+    pl_delete_meta (it, ":URI");
+    char *bc = tf_compile("%_path_raw%");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
