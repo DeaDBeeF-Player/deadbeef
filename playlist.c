@@ -3133,17 +3133,17 @@ float
 plt_get_selection_playback_time (playlist_t *playlist) {
     LOCK;
 
-    if (!playlist->recalc_seltime) {
-        float t = playlist->seltime;
-        UNLOCK;
-        return t;
-    }
-
     float t = 0;
+    
+    if (!playlist->recalc_seltime) {
+        t = playlist->seltime;
+        UNLOCK;
+        return roundf(t);
+    }
 
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         if (it->selected){
-            t += it->_duration;
+            t += roundf(it->_duration);
         }
     }
 
