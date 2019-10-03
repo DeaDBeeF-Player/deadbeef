@@ -509,6 +509,28 @@
 			      <signal name="activate" handler="on_order_random_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
 			    </widget>
 			  </child>
+
+			  <child>
+			    <widget class="GtkRadioMenuItem" id="order_artist">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Keep Artist</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">True</property>
+			      <property name="group">order_linear</property>
+			      <signal name="activate" handler="on_order_artist_activate" last_modification_time="Sat, 21 Sep 2019 13:52:01 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkRadioMenuItem" id="order_top_rated">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Top Rated Tracks</property>
+			      <property name="use_underline">True</property>
+			      <property name="active">True</property>
+			      <property name="group">order_linear</property>
+			      <signal name="activate" handler="on_order_top_rated_activate" last_modification_time="Sat, 21 Sep 2019 13:52:01 GMT"/>
+			    </widget>
+			  </child>
 			</widget>
 		      </child>
 		    </widget>

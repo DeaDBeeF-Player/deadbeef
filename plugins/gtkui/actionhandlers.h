@@ -193,6 +193,12 @@ int
 action_playback_loop_all_handler(DB_plugin_action_t *act, int ctx);
 
 int
+action_playback_order_top_rated_handler(DB_plugin_action_t *act, int ctx);
+
+int
+action_playback_order_artist_handler(DB_plugin_action_t *act, int ctx);
+
+int
 action_playback_order_random_handler(DB_plugin_action_t *act, int ctx);
 
 int

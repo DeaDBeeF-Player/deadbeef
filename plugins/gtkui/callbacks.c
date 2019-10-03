@@ -266,6 +266,22 @@ on_order_random_activate               (GtkMenuItem     *menuitem,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
+void
+on_order_artist_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_ARTIST);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_order_top_rated_activate             (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_TOP_RATED);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
 
 void
 on_loop_all_activate                   (GtkMenuItem     *menuitem,

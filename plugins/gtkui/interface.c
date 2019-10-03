@@ -88,6 +88,8 @@ create_mainwin (void)
   GtkWidget *order_shuffle;
   GtkWidget *order_shuffle_albums;
   GtkWidget *order_random;
+  GtkWidget *order_artist;
+  GtkWidget *order_top_rated;
   GtkWidget *Looping;
   GtkWidget *Looping_menu;
   GSList *loop_all_group = NULL;
@@ -354,6 +356,18 @@ create_mainwin (void)
   gtk_container_add (GTK_CONTAINER (Order_menu), order_random);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_random), TRUE);
 
+  order_artist = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Keep Artist"));
+  order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_artist));
+  gtk_widget_show (order_artist);
+  gtk_container_add (GTK_CONTAINER (Order_menu), order_artist);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_artist), TRUE);
+
+  order_top_rated = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Top Rated Tracks"));
+  order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_top_rated));
+  gtk_widget_show (order_top_rated);
+  gtk_container_add (GTK_CONTAINER (Order_menu), order_top_rated);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_top_rated), TRUE);
+
   Looping = gtk_menu_item_new_with_mnemonic (_("Repeat"));
   gtk_widget_show (Looping);
   gtk_container_add (GTK_CONTAINER (Playback_menu), Looping);
@@ -577,6 +591,12 @@ create_mainwin (void)
   g_signal_connect ((gpointer) order_random, "activate",
                     G_CALLBACK (on_order_random_activate),
                     NULL);
+  g_signal_connect ((gpointer) order_artist, "activate",
+                    G_CALLBACK (on_order_artist_activate),
+                    NULL);
+  g_signal_connect ((gpointer) order_top_rated, "activate",
+                    G_CALLBACK (on_order_top_rated_activate),
+                    NULL);
   g_signal_connect ((gpointer) loop_all, "activate",
                     G_CALLBACK (on_loop_all_activate),
                     NULL);
@@ -679,6 +699,8 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, order_shuffle, "order_shuffle");
   GLADE_HOOKUP_OBJECT (mainwin, order_shuffle_albums, "order_shuffle_albums");
   GLADE_HOOKUP_OBJECT (mainwin, order_random, "order_random");
+  GLADE_HOOKUP_OBJECT (mainwin, order_artist, "order_artist");
+  GLADE_HOOKUP_OBJECT (mainwin, order_top_rated, "order_top_rated");
   GLADE_HOOKUP_OBJECT (mainwin, Looping, "Looping");
   GLADE_HOOKUP_OBJECT (mainwin, Looping_menu, "Looping_menu");
   GLADE_HOOKUP_OBJECT (mainwin, loop_all, "loop_all");

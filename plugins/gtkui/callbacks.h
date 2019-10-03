@@ -1415,3 +1415,11 @@ on_checkbutton_dependent_sr_toggled    (GtkToggleButton *togglebutton,
 void
 on_minimize_on_startup_clicked         (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_order_artist_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_order_top_rated_activate            (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

@@ -426,6 +426,7 @@ stop_after_album_check (playItem_t *cur, playItem_t *next) {
     return 1;
 }
 
+
 static playItem_t *
 get_random_track (void) {
     if (!streamer_playlist) {
@@ -449,6 +450,122 @@ get_random_track (void) {
     }
 
     return plt_get_item_for_idx (plt, r, PL_MAIN);
+}
+
+
+static playItem_t *
+get_random_top_rated_track (playItem_t *curr) {
+    playItem_t *rnd = get_random_track ();
+    if (!rnd) {
+        return NULL;
+    }
+
+    /// Search the next 3+ rated track
+    playItem_t *it = NULL;
+    for (playItem_t *i = rnd; i; i = i->next[PL_MAIN]) {
+        if (i != curr && pl_find_meta_int (i, "rating", 0) >= 3) {
+            it = i;
+            break;
+        }
+    }
+    if (!it) {
+        for (playItem_t *i = rnd; i; i = i->prev[PL_MAIN]) {
+            if (i != curr && pl_find_meta_int (i, "rating", 0) >= 3) {
+                it = i;
+                break;
+            }
+        }
+    }
+    pl_item_unref (rnd);
+
+    if (!it) {
+        return NULL;
+    }
+    return it;
+}
+
+static playItem_t *
+get_next_same_artist_track (playItem_t *curr) {
+    if (!streamer_playlist) {
+        playlist_t *plt = plt_get_curr ();
+        streamer_set_streamer_playlist (plt);
+        plt_unref (plt);
+    }
+    playlist_t *plt = streamer_playlist;
+    int cnt = plt->count[PL_MAIN];
+    if (!cnt) {
+        trace ("empty playlist\n");
+        return NULL;
+    }
+
+    playItem_t *it = NULL;
+    const char *meta = pl_find_meta_raw (curr, "artist");
+    if (meta == NULL) {
+        return NULL;
+    }
+
+    for (playItem_t *i = curr; i; i = i->next[PL_MAIN]) {
+        if (i == curr || pl_find_meta_raw (i, "artist") != meta) {
+            continue;
+        }
+        it = i;
+        break;
+    }
+    if (!it) {
+        for (playItem_t *i = plt->head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
+            if (pl_find_meta_raw (i, "artist") != meta) {
+                continue;
+            }
+            it = i;
+            break;
+        }
+    }
+    if (!it) {
+        return NULL;
+    }
+    return it;
+}
+
+static playItem_t *
+get_prev_same_artist_track (playItem_t *curr) {
+    if (!streamer_playlist) {
+        playlist_t *plt = plt_get_curr ();
+        streamer_set_streamer_playlist (plt);
+        plt_unref (plt);
+    }
+    playlist_t *plt = streamer_playlist;
+    int cnt = plt->count[PL_MAIN];
+    if (!cnt) {
+        trace ("empty playlist\n");
+        return NULL;
+    }
+
+    playItem_t *it = NULL;
+    const char *meta = pl_find_meta_raw (curr, "artist");
+    if (meta == NULL) {
+        return NULL;
+    }
+
+    for (playItem_t *i = curr; i; i = i->prev[PL_MAIN]) {
+        if (i == curr || pl_find_meta_raw (i, "artist") != meta) {
+            continue;
+        }
+        it = i;
+        break;
+    }
+    if (!it) {
+        for (playItem_t *i = plt->tail[PL_MAIN]; i; i = i->prev[PL_MAIN]) {
+            if (pl_find_meta_raw (i, "artist") != meta) {
+                continue;
+            }
+            it = i;
+            break;
+        }
+    }
+    if (!it) {
+        return NULL;
+    }
+    return it;
 }
 
 static playItem_t *
@@ -573,6 +690,29 @@ get_next_track (playItem_t *curr) {
         pl_unlock ();
         return get_random_track ();
     }
+    else if (pl_order == PLAYBACK_ORDER_TOP_RATED || pl_order == PLAYBACK_ORDER_ARTIST) { // top rated tracks & keep artist
+        if (!curr) {
+            playItem_t *it = plt->head[PL_MAIN];
+            pl_item_ref(it);
+            pl_unlock ();
+            return it;
+        }
+
+        playItem_t *it = NULL;
+        if (pl_order == PLAYBACK_ORDER_TOP_RATED) {
+            it = get_random_top_rated_track (curr);
+        }
+        else {
+            it = get_next_same_artist_track (curr);
+        }
+        if (!it) {
+            pl_unlock ();
+            return NULL;
+        }
+        pl_item_ref (it);
+        pl_unlock ();
+        return it;
+    }
     pl_unlock ();
     return NULL;
 }
@@ -580,7 +720,7 @@ get_next_track (playItem_t *curr) {
 static playItem_t *
 get_prev_track (playItem_t *curr) {
     pl_lock ();
-    
+
     // check if prev song is in this playlist
     if (-1 == str_get_idx_of (curr)) {
         curr = NULL;
@@ -591,7 +731,7 @@ get_prev_track (playItem_t *curr) {
         streamer_set_streamer_playlist (plt);
         plt_unref (plt);
     }
-    
+
     playlist_t *plt = streamer_playlist;
 
     if (!plt->head[PL_MAIN]) {
@@ -667,6 +807,29 @@ get_prev_track (playItem_t *curr) {
     else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
         pl_unlock();
         return get_random_track();
+    }
+    else if (pl_order == PLAYBACK_ORDER_TOP_RATED || pl_order == PLAYBACK_ORDER_ARTIST) { // top rated tracks & keep artist
+        if (!curr) {
+            playItem_t *it = plt->head[PL_MAIN];
+            pl_item_ref(it);
+            pl_unlock ();
+            return it;
+        }
+
+        playItem_t *it = NULL;
+        if (pl_order == PLAYBACK_ORDER_TOP_RATED) {
+            it = get_random_top_rated_track (curr);
+        }
+        else {
+            it = get_prev_same_artist_track (curr);
+        }
+        if (!it) {
+            pl_unlock ();
+            return NULL;
+        }
+        pl_item_ref (it);
+        pl_unlock ();
+        return it;
     }
     pl_unlock ();
     return NULL;

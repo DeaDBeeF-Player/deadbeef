@@ -583,7 +583,7 @@ gtkui_on_configchanged (void *data) {
     const char *w;
 
     // order
-    const char *orderwidgets[4] = { "order_linear", "order_shuffle", "order_random", "order_shuffle_albums" };
+    const char *orderwidgets[6] = { "order_linear", "order_shuffle", "order_random", "order_shuffle_albums", "order_artist", "order_top_rated" };
     w = orderwidgets[deadbeef->conf_get_int ("playback.order", PLAYBACK_ORDER_LINEAR)];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
 
@@ -1711,6 +1711,22 @@ static DB_plugin_action_t action_playback_order_cycle = {
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_cycle_handler,
     .next = &action_playback_loop_all
+};
+
+static DB_plugin_action_t action_playback_order_top_rated = {
+    .title = "Playback/Shuffle - Top Rated Tracks",
+    .name = "order_top_rated",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_playback_order_top_rated_handler,
+    .next = &action_playback_order_cycle
+};
+
+static DB_plugin_action_t action_playback_order_artist = {
+    .title = "Playback/Shuffle - Keep Artist",
+    .name = "order_artist",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_playback_order_artist_handler,
+    .next = &action_playback_order_cycle
 };
 
 static DB_plugin_action_t action_playback_order_random = {

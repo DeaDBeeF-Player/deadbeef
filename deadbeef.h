@@ -328,6 +328,8 @@ enum playback_order_t {
     PLAYBACK_ORDER_SHUFFLE_TRACKS = 1,
     PLAYBACK_ORDER_RANDOM = 2,
     PLAYBACK_ORDER_SHUFFLE_ALBUMS = 3,
+    PLAYBACK_ORDER_ARTIST = 4,
+    PLAYBACK_ORDER_TOP_RATED = 5,
 };
 
 // playback modes
