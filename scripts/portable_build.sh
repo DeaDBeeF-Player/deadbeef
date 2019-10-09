@@ -7,7 +7,8 @@ export CXX=$AP/apgcc
 
 export APBUILD_STATIC_LIBGCC=1
 
-./autogen.sh
+# ./autogen.sh
+autoreconf --install --force
 
 ./configure --enable-staticlink --enable-portable --disable-artwork-imlib2
 sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool

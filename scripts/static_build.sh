@@ -49,7 +49,8 @@ export CC=$AP/apgcc
 export CXX=$AP/apgcc
 export OBJC=$AP/apgcc
 
-./autogen.sh || exit 1
+#./autogen.sh || exit 1
+autoreconf --install --force || exit 1
 
 ./configure CFLAGS="$CFLAGS -O3 -D_FORTIFY_SOURCE=0" CXXFLAGS="$CXXFLAGS -O3 -D_FORTIFY_SOURCE=0" LDFLAGS="$LDFLAGS" $CONFIGURE_FLAGS --enable-staticlink --disable-artwork-imlib2 --prefix=/opt/deadbeef || exit 1
 sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
