@@ -24,6 +24,7 @@
 
   Alexey Yakovenko waker@users.sourceforge.net
 */
+#include <ctype.h>
 #include <dirent.h>
 #include <dlfcn.h>
 #include <assert.h>
@@ -1473,6 +1474,9 @@ plug_is_local_file (const char *fname) {
 
     const char *f = fname;
     for (; *f; f++) {
+        if (*f != ':' && !isalpha (*f)) {
+            break;
+        }
         if (!strncmp (f, "://", 3)) {
             DB_vfs_t **plug = plug_get_vfs_list ();
             for (int i = 0; plug[i]; i++) {
@@ -1490,6 +1494,42 @@ plug_is_local_file (const char *fname) {
     }
 
     return 1;
+}
+
+int
+plug_is_relative_path (const char *fname) {
+    // file url?
+    if (!strncasecmp (fname, "file://", 7)) {
+        return fname[7] != '/';
+    }
+
+    // other url?
+    const char *f = fname;
+    for (; *f; f++) {
+        if (*f != ':' && !isalpha (*f)) {
+            break; // not a URL
+        }
+        if (!strncmp (f, "://", 3)) {
+            return 0; // some URL
+        }
+    }
+
+
+#ifndef _WIN32
+    // path starts with a '/'?
+    if (*fname != '/') {
+#else
+    // path starts with a disk drive?
+    if (strlen (fname) > 3
+        && isalpha(fname[0])
+        && fname[1] == ':'
+        && (fname[2] == '\\' || fname[2] == '//')
+        && (fname[3] != '\\' && fname[3] != '//')) {
+#endif
+        return 1;
+    }
+
+    return 0;
 }
 
 void

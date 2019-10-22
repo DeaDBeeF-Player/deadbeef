@@ -133,6 +133,9 @@ plug_get_for_id (const char *id);
 int
 plug_is_local_file (const char *fname);
 
+int
+plug_is_relative_path (const char *fname);
+
 const char **
 plug_get_gui_names (void);
 

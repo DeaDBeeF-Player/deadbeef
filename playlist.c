@@ -870,23 +870,6 @@ fileadd_filter_test (ddb_file_found_data_t *data) {
     return 0;
 }
 
-static int
-is_relative_path (const char *fname) {
-#ifndef _WIN32
-    if (*fname != '/') {
-#else
-    if (strlen (fname) > 3
-        && isalpha(fname[0])
-        && fname[1] == ':'
-        && (fname[2] == '\\' || fname[2] == '//')
-        && (fname[3] != '\\' && fname[3] != '//')) {
-#endif
-        return 1;
-    }
-
-    return 0;
-}
-
 static playItem_t *
 plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     if (!fname || !(*fname)) {
@@ -985,7 +968,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
     }
 
     // now that it's known we're not dealing with URL, check if it's a relative path
-    if (is_relative_path (fname)) {
+    if (plug_is_relative_path (fname)) {
         return NULL;
     }
 
@@ -1187,7 +1170,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         dirname += 7;
     }
 
-    if (is_relative_path (dirname)) {
+    if (plug_is_relative_path (dirname)) {
         return NULL;
     }
 

@@ -10,6 +10,7 @@
 #include "deadbeef.h"
 #include "../../common.h"
 #include "playlist.h"
+#include "plugins.h"
 
 @interface PlaylistTest : XCTestCase
 
@@ -57,6 +58,46 @@
     XCTAssertTrue(plt->head[PL_MAIN]->selected);
 
     plt_unref (plt);
+}
+
+- (void)test_IsRelativePath_AbsolutePath_False {
+    int res = plug_is_relative_path ("/path");
+    XCTAssertFalse(res);
+}
+
+- (void)test_IsRelativePath_AbsolutePathWithUriScheme_False {
+    int res = plug_is_relative_path ("file:///path");
+    XCTAssertFalse(res);
+}
+
+- (void)test_IsRelativePath_RelativePathWithUriScheme_True {
+    int res = plug_is_relative_path ("file://path");
+    XCTAssertTrue(res);
+}
+
+- (void)test_IsRelativePath_VFSPath_False {
+    int res = plug_is_relative_path ("zip://path");
+    XCTAssertFalse(res);
+}
+
+- (void)test_IsRelativePath_HTTPPath_False {
+    int res = plug_is_relative_path ("http://path");
+    XCTAssertFalse(res);
+}
+
+- (void)test_IsRelativePath_RelativePath_True {
+    int res = plug_is_relative_path ("path");
+    XCTAssertTrue(res);
+}
+
+- (void)test_IsRelativePath_RelativeWithFoldersPath_True {
+    int res = plug_is_relative_path ("path/filename");
+    XCTAssertTrue(res);
+}
+
+- (void)test_IsRelativePath_WeirdPath_True {
+    int res = plug_is_relative_path ("something:something");
+    XCTAssertTrue(res);
 }
 
 @end
