@@ -1520,11 +1520,11 @@ plug_is_relative_path (const char *fname) {
     if (*fname != '/') {
 #else
     // path starts with a disk drive?
-    if (strlen (fname) > 3
-        && isalpha(fname[0])
-        && fname[1] == ':'
-        && (fname[2] == '\\' || fname[2] == '//')
-        && (fname[3] != '\\' && fname[3] != '//')) {
+    if (strlen (fname) < 3
+        || !isalpha(fname[0])
+        || fname[1] != ':'
+        || !(fname[2] == '\\' || fname[2] == '//')
+        || !(fname[3] != '\\' && fname[3] != '//')) {
 #endif
         return 1;
     }
