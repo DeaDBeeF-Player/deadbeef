@@ -304,6 +304,13 @@ show_traymenu (void) {
     g_idle_add (show_traymenu_cb, NULL);
 }
 
+#if GTK_CHECK_VERSION(3,0,0)
+static gboolean
+mainwin_hide_cb (gpointer data) {
+     gtk_widget_hide (mainwin);
+     return FALSE;
+ }
+#endif
 
 void
 mainwin_toggle_visible (void) {
@@ -362,7 +369,8 @@ on_trayicon_popup_menu (GtkWidget       *widget,
 
 static gboolean
 activate_cb (gpointer nothing) {
-    if (w_get_rootwidget () == NULL) init_widget_layout ();
+    if (w_get_rootwidget() == NULL) init_widget_layout ();
+    wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0);
     gtk_widget_show (mainwin);
     gtk_window_present (GTK_WINDOW (mainwin));
     return FALSE;
@@ -1244,12 +1252,27 @@ gtkui_mainwin_init(void) {
 
     mainwin = create_mainwin ();
 
-#if GTK_CHECK_VERSION(3,10,0)
-#if USE_GTK_APPLICATION
-    // This must be called before window is shown
-    gtk_application_add_window ( GTK_APPLICATION (gapp), GTK_WINDOW (mainwin));
+#if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
+     // This must be called before window is shown
+     gtk_application_add_window ( GTK_APPLICATION (gapp), GTK_WINDOW (mainwin));
 #endif
-#endif
+
+   wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0); 
+    
+#if GTK_CHECK_VERSION(3,0,0)
+    init_widget_layout ();
+    gtk_widget_set_events (GTK_WIDGET (mainwin), gtk_widget_get_events (GTK_WIDGET (mainwin)) | GDK_SCROLL_MASK);
+    //gtk_widget_show (mainwin);
+    
+    if (deadbeef->conf_get_int ("gtkui.start_hidden", 0)) {
+        g_idle_add (mainwin_hide_cb, NULL);
+    }
+#elif GTK_CHECK_VERSION(2,16,0)
+    if (!deadbeef->conf_get_int ("gtkui.start_hidden", 0)) {
+        init_widget_layout ();
+        gtk_widget_show (mainwin);
+    }
+#endif 
 
     logwindow = gtkui_create_log_window();
     deadbeef->log_viewer_register (logwindow_logger_callback, logwindow);
@@ -1268,9 +1291,6 @@ gtkui_mainwin_init(void) {
         deadbeef->conf_set_int ("hotkeys_created", 1);
         deadbeef->conf_save ();
     }
-#if GTK_CHECK_VERSION(3,0,0)
-    gtk_widget_set_events (GTK_WIDGET (mainwin), gtk_widget_get_events (GTK_WIDGET (mainwin)) | GDK_SCROLL_MASK);
-#endif
 
     pl_common_init();
 
@@ -1284,7 +1304,6 @@ gtkui_mainwin_init(void) {
         snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_system_dir(DDB_SYS_DIR_PREFIX));
         gtk_window_set_icon_from_file (GTK_WINDOW (mainwin), iconpath, NULL);
     }
-
 
     gtkui_on_configchanged (NULL);
 
@@ -1323,13 +1342,6 @@ gtkui_mainwin_init(void) {
     for (int i = 0; i < window_init_hooks_count; i++) {
         window_init_hooks[i].callback (window_init_hooks[i].userdata);
     }
-    wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0);
-
-    if (!deadbeef->conf_get_int ("gtkui.start_hidden", 0)) {
-        gtk_widget_show (mainwin);
-        init_widget_layout ();
-    }
-    
     gtkui_set_titlebar (NULL);
 
     fileadded_listener_id = deadbeef->listen_file_added (gtkui_add_file_info_cb, NULL);
