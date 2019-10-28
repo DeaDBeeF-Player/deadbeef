@@ -21,6 +21,8 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+int
+action_scan_all_tracks_without_Rg_handler (struct DB_plugin_action_s *action, int ctx);
 
 int
 action_rg_scan_per_file_handler (struct DB_plugin_action_s *action, int ctx);

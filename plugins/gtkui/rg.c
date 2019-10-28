@@ -674,3 +674,47 @@ action_rg_remove_info_handler (struct DB_plugin_action_s *action, int ctx) {
 
     return 0;
 }
+
+int
+action_scan_all_tracks_without_Rg_handler (struct DB_plugin_action_s *action, int ctx) {
+  int count = 0;
+    DB_playItem_t **tracks = NULL;
+
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (!plt) {
+        return 0;
+    }
+
+    ddb_replaygain_settings_t s;
+    s._size = sizeof (ddb_replaygain_settings_t);
+
+    deadbeef->pl_lock ();
+    int tc = deadbeef->plt_get_item_count (plt, PL_MAIN);
+    tracks = calloc (tc, sizeof (DB_playItem_t *));
+
+    DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+    while (it) {
+        const char *uri = deadbeef->pl_find_meta (it, ":URI");
+
+        if (deadbeef->is_local_file (uri)) {
+            deadbeef->replaygain_init_settings (&s, it);
+            if (!s.has_track_gain) {
+                tracks[count++] = it;
+                deadbeef->pl_item_ref (it);
+            }
+        }
+
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+
+    deadbeef->pl_unlock ();
+    deadbeef->plt_unref (plt);
+
+    if (count > 0) {
+         runScanner (DDB_RG_SCAN_MODE_TRACK, tracks, count);
+    }
+
+    return 0;
+}
