@@ -22,7 +22,7 @@
 */
 
 int
-action_scan_all_tracks_without_Rg_handler (struct DB_plugin_action_s *action, int ctx);
+action_scan_all_tracks_without_rg_handler (struct DB_plugin_action_s *action, int ctx);
 
 int
 action_rg_scan_per_file_handler (struct DB_plugin_action_s *action, int ctx);

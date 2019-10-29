@@ -676,8 +676,8 @@ action_rg_remove_info_handler (struct DB_plugin_action_s *action, int ctx) {
 }
 
 int
-action_scan_all_tracks_without_Rg_handler (struct DB_plugin_action_s *action, int ctx) {
-  int count = 0;
+action_scan_all_tracks_without_rg_handler (struct DB_plugin_action_s *action, int ctx) {
+    int count = 0;
     DB_playItem_t **tracks = NULL;
 
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
