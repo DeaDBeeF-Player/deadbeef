@@ -689,9 +689,14 @@ action_scan_all_tracks_without_rg_handler (struct DB_plugin_action_s *action, in
     s._size = sizeof (ddb_replaygain_settings_t);
 
     deadbeef->pl_lock ();
-    int tc = deadbeef->plt_get_item_count (plt, PL_MAIN);
-    tracks = calloc (tc, sizeof (DB_playItem_t *));
 
+    int tc = deadbeef->plt_get_item_count (plt, PL_MAIN);
+    if (!tc) {
+        deadbeef->pl_unlock ();
+        return 0;
+    }
+    tracks = calloc (tc, sizeof (DB_playItem_t *));
+ 
     DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
     while (it) {
         const char *uri = deadbeef->pl_find_meta (it, ":URI");
