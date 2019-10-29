@@ -956,7 +956,7 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
 
                 if (!gui_scan) {
                     if (0 != load_plugin (plugdir, d_name, (int)l)) {
-                        trace_err ("plugin %s not found or failed to load\n", d_name);
+                        trace ("plugin %s not found or failed to load\n", d_name);
                     }
                 }
                 break;
