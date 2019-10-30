@@ -79,7 +79,7 @@ _log_internal (DB_plugin_t *plugin, uint32_t layers, const char *text) {
             *init_buffer_ptr = 0;
         }
     }
-    if (init_buffer && (layers == DDB_LOG_LAYER_INFO)) {
+    if (init_buffer_info && (layers == DDB_LOG_LAYER_INFO)) {
         if (init_buffer_info_ptr - init_buffer_info + len + 1 < INIT_BUFFER_SIZE) {
             memcpy (init_buffer_info_ptr, text, len);
             init_buffer_info_ptr += len;
