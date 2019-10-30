@@ -1604,12 +1604,20 @@ static DB_plugin_action_t action_rg_scan_per_file = {
     .next = &action_rg_scan_selection_as_album
 };
 
+static DB_plugin_action_t action_scan_all_tracks_without_rg = {
+    .title = "ReplayGain/Scan Per-file Track Gain If Not Scanned",
+    .name = "scan_all_tracks_without_Rg",
+    .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_ADD_MENU,
+    .callback2 = action_scan_all_tracks_without_rg_handler ,
+    .next = &action_rg_scan_per_file
+};
+
 static DB_plugin_action_t action_deselect_all = {
     .title = "Edit/Deselect All",
     .name = "deselect_all",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_deselect_all_handler,
-    .next = &action_rg_scan_per_file
+    .next = &action_scan_all_tracks_without_rg
 };
 
 static DB_plugin_action_t action_select_all = {
