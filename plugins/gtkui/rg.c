@@ -489,6 +489,7 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount, int on
         int tc = deadbeef->plt_getselcount (plt);
         if (!tc) {
             deadbeef->pl_unlock ();
+            deadbeef->plt_unref (plt);
             return NULL;
         }
         tracks = calloc (tc, sizeof (DB_playItem_t *));
@@ -521,6 +522,7 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount, int on
         int tc = deadbeef->plt_get_item_count (plt, PL_MAIN);
         if (!tc) {
             deadbeef->pl_unlock ();
+            deadbeef->plt_unref (plt);
             return NULL;
         }
         tracks = calloc (tc, sizeof (DB_playItem_t *));
@@ -693,6 +695,7 @@ action_scan_all_tracks_without_rg_handler (struct DB_plugin_action_s *action, in
     int tc = deadbeef->plt_get_item_count (plt, PL_MAIN);
     if (!tc) {
         deadbeef->pl_unlock ();
+        deadbeef->plt_unref (plt);
         return 0;
     }
     tracks = calloc (tc, sizeof (DB_playItem_t *));
