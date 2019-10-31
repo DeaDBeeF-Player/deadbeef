@@ -45,13 +45,13 @@ enum {
 
 typedef struct {
     uint64_t offs;
-    int ver;
-    int samplerate;
-    int bitrate;
-    int nchannels;
-    int samples_per_frame;
-    int layer;
-    int packetlength;
+    unsigned ver;
+    unsigned samplerate;
+    unsigned bitrate;
+    unsigned nchannels;
+    unsigned samples_per_frame;
+    unsigned layer;
+    unsigned packetlength;
 } mp3packet_t;
 
 typedef struct {

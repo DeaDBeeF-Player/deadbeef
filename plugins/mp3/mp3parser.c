@@ -66,6 +66,8 @@ static const int brtable[5][16] = {
 #define TOC_FLAG        0x0004
 #define VBR_SCALE_FLAG  0x0008
 
+// -1 recoverable failure
+// -2 freeformat (bitrate=0) stream detected
 static int
 _parse_packet (mp3packet_t * restrict packet, uint8_t * restrict fb) {
     memset (packet, 0, sizeof (mp3packet_t));
@@ -124,6 +126,9 @@ _parse_packet (mp3packet_t * restrict packet, uint8_t * restrict fb) {
     }
     else {
         idx = packet->layer == 1 ? 3 : 4;
+    }
+    if (packet->bitrate == 0) {
+        return -2; // freeformat not supported
     }
     packet->bitrate = brtable[idx][packet->bitrate];
     if (packet->bitrate <= 0) {
@@ -424,6 +429,9 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
 
         int res = _parse_packet (&packet, fhdr);
         if (res < 0 || (info->npackets && !_packet_same_fmt (&info->ref_packet, &packet))) {
+            if (res == -2 && info->valid_packets == 0) {
+                goto error; // ignore freeformat streams
+            }
             // bail if a valid packet could not be found at the start of stream
             if (!info->valid_packets && offs - startoffs > MAX_INVALID_BYTES) {
                 goto error;
