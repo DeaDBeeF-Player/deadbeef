@@ -2036,7 +2036,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
     }
     FILE *fp = fopen (fname, "rb");
     if (!fp) {
-        trace ("plt_load: failed to open %s\n", fname);
+//        trace ("plt_load: failed to open %s\n", fname);
         return NULL;
     }
 
@@ -2047,25 +2047,25 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
     playItem_t *it = NULL;
     char magic[4];
     if (fread (magic, 1, 4, fp) != 4) {
-        trace ("failed to read magic\n");
+//        trace ("failed to read magic\n");
         goto load_fail;
     }
     if (strncmp (magic, "DBPL", 4)) {
-        trace ("bad signature\n");
+//        trace ("bad signature\n");
         goto load_fail;
     }
     if (fread (&majorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
     if (majorver != PLAYLIST_MAJOR_VER) {
-        trace ("bad majorver=%d\n", majorver);
+//        trace ("bad majorver=%d\n", majorver);
         goto load_fail;
     }
     if (fread (&minorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
     if (minorver < 1) {
-        trace ("bad minorver=%d\n", minorver);
+//        trace ("bad minorver=%d\n", minorver);
         goto load_fail;
     }
     uint32_t cnt;
@@ -2221,7 +2221,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
                 char value[l+1];
                 int res = (int)fread (value, 1, l, fp);
                 if (res != l) {
-                    trace ("playlist read error: requested %d, got %d\n", l, res);
+//                    trace ("playlist read error: requested %d, got %d\n", l, res);
                     goto load_fail;
                 }
                 value[l] = 0;
@@ -2279,7 +2279,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
                 char value[l+1];
                 int res = (int)fread (value, 1, l, fp);
                 if (res != l) {
-                    trace ("playlist read error: requested %d, got %d\n", l, res);
+//                    trace ("playlist read error: requested %d, got %d\n", l, res);
                     goto load_fail;
                 }
                 value[l] = 0;
@@ -2297,7 +2297,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
     }
     return last_added;
 load_fail:
-    trace ("playlist load fail (%s)!\n", fname);
+//    trace ("playlist load fail (%s)!\n", fname);
     if (fp) {
         fclose (fp);
     }
