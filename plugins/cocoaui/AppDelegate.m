@@ -215,7 +215,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     }
 
     if (deadbeef->have_background_jobs ()) {
-        NSAlert *alert = [[NSAlert alloc] init];
+        NSAlert *alert = [NSAlert new];
         alert.messageText = @"Do you really want to quit now?";
         alert.informativeText = @"DeaDBeeF is currently running background tasks. If you quit now, the tasks will be cancelled or interrupted. This may result in data loss.";
         [alert addButtonWithTitle:@"No"];
@@ -805,7 +805,7 @@ main_cleanup_and_quit (void);
 
     NSString *message = @"Supported file types: .dbpl";
 
-    NSMutableArray *types = [[NSMutableArray alloc] init];
+    NSMutableArray *types = [NSMutableArray new];
     [types addObject:@"dbpl"];
 
     DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();

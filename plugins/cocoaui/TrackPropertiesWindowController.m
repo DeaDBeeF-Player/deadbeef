@@ -108,7 +108,7 @@ extern DB_functions_t *deadbeef;
         textView.stringValue = _items[row];
     }
     else if ([ident isEqualToString:@"Field"]) {
-        textView.formatter = [[SingleLineFormatter alloc] init];
+        textView.formatter = [SingleLineFormatter new];
         textView.stringValue = _fields[row];
         textView.target = self;
         textView.action = @selector(fieldEditedAction:);
@@ -169,8 +169,8 @@ extern DB_functions_t *deadbeef;
     [super windowDidLoad];
     self.window.delegate = self;
 
-    _store = [[NSMutableArray alloc] init];
-    _propstore = [[NSMutableArray alloc] init];
+    _store = [NSMutableArray new];
+    _propstore = [NSMutableArray new];
     [self fill];
     _metadataTableView.dataSource = self;
     _propertiesTableView.dataSource = self;
@@ -197,7 +197,7 @@ static void
 add_field (NSMutableArray *store, const char *key, const char *title, int is_prop, DB_playItem_t **tracks, int numtracks) {
 
     // get all values for each key, convert from 0-separated to '; '-separated, and put into NSArray
-    NSMutableArray<NSString *> *values = [[NSMutableArray alloc] init];
+    NSMutableArray<NSString *> *values = [NSMutableArray new];
     deadbeef->pl_lock ();
     for (int i = 0; i < numtracks; i++) {
         NSString *value = @"";
@@ -362,7 +362,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
 
     if([[aTableColumn identifier] isEqualToString:@"value"]){
-        ((NSTextFieldCell *)aCell).formatter = [[SingleLineFormatter alloc] init];
+        ((NSTextFieldCell *)aCell).formatter = [SingleLineFormatter new];
     }
 }
 
@@ -420,7 +420,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         NSString *value = values[i];
         NSArray *components = [value componentsSeparatedByString:@";"];
 
-        NSMutableArray *transformedValues = [[NSMutableArray alloc] init];
+        NSMutableArray *transformedValues = [NSMutableArray new];
         for (NSString *val in components) {
             NSInteger i = 0;
             while ((i < [val length])
@@ -444,7 +444,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (void)writeMetaWorker {
-    NSMutableSet *fileset = [[NSMutableSet alloc] init];
+    NSMutableSet *fileset = [NSMutableSet new];
     for (int t = 0; t < _numtracks; t++) {
         if (_progress_aborted) {
             break;
@@ -564,7 +564,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
 - (BOOL)windowShouldClose:(id)sender {
     if (self.modified) {
-        NSAlert *alert = [[NSAlert alloc] init];
+        NSAlert *alert = [NSAlert new];
         [alert addButtonWithTitle:@"Yes"];
         [alert addButtonWithTitle:@"No"];
         [alert addButtonWithTitle:@"Cancel"];
@@ -759,8 +759,8 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         NSString *key = _store[idx][@"key"];
         _multiValueFieldName.stringValue =  [key uppercaseString];
 
-        NSMutableArray<NSString *> *fields = [[NSMutableArray alloc] init];
-        NSMutableArray<NSString *> *items = [[NSMutableArray alloc] init];
+        NSMutableArray<NSString *> *fields = [NSMutableArray new];
+        NSMutableArray<NSString *> *items = [NSMutableArray new];
 
         deadbeef->pl_lock ();
 
@@ -785,7 +785,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         deadbeef->pl_unlock ();
         deadbeef->tf_free (item_tf);
 
-        _multipleFieldsTableData = [[MultipleFieldsTableData alloc] init];
+        _multipleFieldsTableData = [MultipleFieldsTableData new];
         _multipleFieldsTableData->_fields = [[NSMutableArray alloc] initWithArray:fields copyItems:NO];
         _multipleFieldsTableData->_items = items;
         _multiValueTableView.delegate = _multipleFieldsTableData;

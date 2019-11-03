@@ -659,7 +659,7 @@ static NSMutableArray *g_converterControllers;
     }
 
     if (!encoder_preset) {
-        NSAlert *alert = [[NSAlert alloc] init];
+        NSAlert *alert = [NSAlert new];
         [alert addButtonWithTitle:@"OK"];
         alert.messageText = @"Encoder is not selected.";
         alert.informativeText = @"Please select one of the encoders from the list.";
@@ -818,9 +818,9 @@ static NSMutableArray *g_converterControllers;
 }
 
 - (NSInteger)overwritePrompt:(NSString *)path {
-    _overwritePromptCondition = [[NSCondition alloc] init];
+    _overwritePromptCondition = [NSCondition new];
     dispatch_sync(dispatch_get_main_queue(), ^{
-        NSAlert *alert = [[NSAlert alloc] init];
+        NSAlert *alert = [NSAlert new];
         [alert addButtonWithTitle:@"No"];
         [alert addButtonWithTitle:@"Yes"];
         [alert addButtonWithTitle:@"Cancel"];
@@ -851,7 +851,7 @@ static NSMutableArray *g_converterControllers;
     ConverterWindowController *conv = [[ConverterWindowController alloc] initWithWindowNibName:@"Converter"];
 
     if (!g_converterControllers) {
-        g_converterControllers = [[NSMutableArray alloc] init];
+        g_converterControllers = [NSMutableArray new];
     }
     [g_converterControllers addObject:conv];
     [conv run:DDB_ACTION_CTX_SELECTION];

@@ -55,7 +55,7 @@ extern DB_functions_t *deadbeef;
 - (id <NSPasteboardWriting>)tableView:(NSTableView *)tableView pasteboardWriterForRow:(NSInteger)row {
     NSString *identifier = [NSString stringWithFormat:@"%d", (int)row];
 
-    NSPasteboardItem *pboardItem = [[NSPasteboardItem alloc] init];
+    NSPasteboardItem *pboardItem = [NSPasteboardItem new];
     [pboardItem setString:identifier forType: self.pasteboardItemIdentifier];
 
     return pboardItem;

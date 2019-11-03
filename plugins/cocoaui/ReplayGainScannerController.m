@@ -78,7 +78,7 @@ static NSMutableArray *g_rgControllers;
 
     [ctl runScanner:mode forTracks:tracks count:count];
     if (!g_rgControllers) {
-        g_rgControllers = [[NSMutableArray alloc] init];
+        g_rgControllers = [NSMutableArray new];
     }
     [g_rgControllers addObject:ctl];
     return ctl;
@@ -91,7 +91,7 @@ static NSMutableArray *g_rgControllers;
 
     [ctl removeRgTagsFromTracks:tracks count:count];
     if (!g_rgControllers) {
-        g_rgControllers = [[NSMutableArray alloc] init];
+        g_rgControllers = [NSMutableArray new];
     }
     [g_rgControllers addObject:ctl];
     return ctl;

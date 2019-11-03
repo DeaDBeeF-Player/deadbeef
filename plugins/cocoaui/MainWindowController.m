@@ -63,7 +63,7 @@ extern DB_functions_t *deadbeef;
     [super windowDidLoad];
 
     // add tab strip to the window titlebar
-    NSTitlebarAccessoryViewController* vc = [[NSTitlebarAccessoryViewController alloc] init];
+    NSTitlebarAccessoryViewController* vc = [NSTitlebarAccessoryViewController new];
 
     vc.view = _tabStrip;
     vc.fullScreenMinHeight = _tabStrip.bounds.size.height;

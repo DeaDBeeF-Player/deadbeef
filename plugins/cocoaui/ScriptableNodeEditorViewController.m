@@ -49,7 +49,7 @@
         return NULL;
     }
 
-    NSMenu *menu = [[NSMenu alloc] init];
+    NSMenu *menu = [NSMenu new];
     menu.delegate = self;
     menu.autoenablesItems = NO;
 

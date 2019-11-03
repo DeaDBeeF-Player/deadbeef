@@ -67,7 +67,7 @@
 - (void)setDataSource:(id<PropertySheetDataSource>)dataSource {
     _dataSource = dataSource;
     NSView *view = self.view;
-    _bindings = [[NSMutableArray alloc] init];
+    _bindings = [NSMutableArray new];
 
     settings_data_free (&_settingsData);
 

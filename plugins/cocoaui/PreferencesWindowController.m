@@ -170,7 +170,7 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
 - (void)initAudioDeviceList {
     [self.audioDevicesPopupButton removeAllItems];
 
-    self.audioDevices = [[NSMutableArray alloc] init];
+    self.audioDevices = [NSMutableArray new];
     DB_output_t *output = deadbeef->get_output ();
     if (!output->enum_soundcards) {
         self.audioDevicesPopupButton.enabled = NO;
