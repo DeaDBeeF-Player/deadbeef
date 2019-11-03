@@ -167,17 +167,11 @@ create_col_info (DdbListview *listview, int id) {
     return info;
 }
 
-static gboolean
-coverart_release_cb (void *user_data) {
+static void
+coverart_release (void *user_data) {
     col_info_t *info = user_data;
     g_object_unref(info->listview->list);
     free(user_data);
-    return FALSE;
-}
-
-static void
-coverart_release (void *user_data) {
-    g_idle_add(coverart_release_cb, user_data);
 }
 
 void
@@ -1553,9 +1547,9 @@ on_group_by_custom_activate            (GtkMenuItem     *menuitem,
     DdbListviewGroupFormat *fmt = listview->group_formats;
     while (fmt) {
         if (format[0] != 0) {
-            strncat(format, SUBGROUP_DELIMITER, sizeof(format));
+            strncat(format, SUBGROUP_DELIMITER, sizeof(format) - 1);
         }
-        strncat(format, fmt->format, sizeof(format));
+        strncat(format, fmt->format, sizeof(format) - 1);
         fmt = fmt->next;
     }
     gtk_entry_set_text (GTK_ENTRY (entry), format);

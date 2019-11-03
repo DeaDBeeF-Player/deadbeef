@@ -211,7 +211,7 @@ int u8_charnum(char *s, int32_t offset)
     return charnum;
 }
 
-/* number of characters */
+/* number of characters, not including a null terminator */
 int u8_strlen(char *s)
 {
     int32_t count = 0;
@@ -241,6 +241,7 @@ uint32_t u8_nextchar(const char *s, int32_t *i)
 }
 
 /* copies num_chars characters from src to dest, return bytes written */
+/* returns the number of bytes copied, not counting a null terminator, which is always written */
 int u8_strncpy (char *dest, const char* src, int num_chars)
 {
     const char *s = src;
@@ -257,6 +258,8 @@ int u8_strncpy (char *dest, const char* src, int num_chars)
     return num_bytes;
 }
 
+/* copies as many characters from src as would not exceed num_bytes in the destination */
+/* returns the number of bytes copied, not counting a null terminator, which is not written */
 int u8_strnbcpy (char *dest, const char* src, int num_bytes) {
     int32_t prev_index = 0;
     int32_t index = 0;
@@ -275,6 +278,8 @@ int u8_strnbcpy (char *dest, const char* src, int num_bytes) {
     return nb - num_bytes;
 }
 
+/* copies a character from src to dest provided it does not exceed num_bytes */
+/* returns the number of bytes copied, not counting a null terminator, which is not written */
 int u8_charcpy (char *dest, const char *src, int num_bytes) {
     int32_t index = 0;
     u8_inc (src, &index);

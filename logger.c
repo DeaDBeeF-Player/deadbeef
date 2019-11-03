@@ -46,6 +46,9 @@ static uint64_t _mutex;
 static char *init_buffer;
 static char *init_buffer_ptr;
 
+static char *init_buffer_info;
+static char *init_buffer_info_ptr;
+
 
 #ifdef ANDROID
 #include <android/log.h>
@@ -76,6 +79,13 @@ _log_internal (DB_plugin_t *plugin, uint32_t layers, const char *text) {
             *init_buffer_ptr = 0;
         }
     }
+    if (init_buffer_info && (layers == DDB_LOG_LAYER_INFO)) {
+        if (init_buffer_info_ptr - init_buffer_info + len + 1 < INIT_BUFFER_SIZE) {
+            memcpy (init_buffer_info_ptr, text, len);
+            init_buffer_info_ptr += len;
+            *init_buffer_info_ptr = 0;
+        }
+    }
     mutex_unlock(_mutex);
 }
 
@@ -99,6 +109,8 @@ ddb_logger_init (void) {
     }
     init_buffer = calloc(1, INIT_BUFFER_SIZE);
     init_buffer_ptr = init_buffer;
+    init_buffer_info = calloc(1, INIT_BUFFER_SIZE);
+    init_buffer_info_ptr = init_buffer_info;
     return 0;
 }
 
@@ -108,6 +120,10 @@ ddb_logger_stop_buffering (void) {
     if (init_buffer) {
         free (init_buffer);
         init_buffer = init_buffer_ptr = NULL;
+    }
+    if (init_buffer_info) {
+        free (init_buffer_info);
+        init_buffer_info = init_buffer_info_ptr = NULL;
     }
     mutex_unlock (_mutex);
 }
@@ -194,10 +210,17 @@ ddb_log_viewer_register (void (*callback)(DB_plugin_t *plugin, uint32_t layers, 
 
     if (init_buffer) {
         if (*init_buffer) {
-            callback (NULL, 0, init_buffer, ctx);
+            callback (NULL, DDB_LOG_LAYER_DEFAULT, init_buffer, ctx);
         }
-        ddb_logger_stop_buffering ();
     }
+
+    if (init_buffer_info) {
+        if (*init_buffer_info) {
+            callback (NULL, DDB_LOG_LAYER_INFO, init_buffer_info, ctx);
+        }
+    }
+
+    ddb_logger_stop_buffering ();
 
     mutex_unlock(_mutex);
 }

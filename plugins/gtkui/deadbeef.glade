@@ -3715,6 +3715,26 @@ Only prevent clipping</property>
 		  <property name="spacing">8</property>
 
 		  <child>
+		    <widget class="GtkCheckButton" id="minimize_on_startup">
+		      <property name="visible">True</property>
+		      <property name="can_focus">True</property>
+		      <property name="label" translatable="yes">Minimize to tray on startup</property>
+		      <property name="use_underline">True</property>
+		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <property name="focus_on_click">True</property>
+		      <property name="active">False</property>
+		      <property name="inconsistent">False</property>
+		      <property name="draw_indicator">True</property>
+		      <signal name="clicked" handler="on_minimize_on_startup_clicked" last_modification_time="Sun, 11 Aug 2019 13:06:16 GMT"/>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">False</property>
+		      <property name="fill">False</property>
+		    </packing>
+		  </child>
+
+		  <child>
 		    <widget class="GtkCheckButton" id="pref_close_send_to_tray">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
@@ -10542,7 +10562,7 @@ Descending</property>
 </widget>
 
 <widget class="GtkWindow" id="rg_scan_progress">
-  <property name="width_request">440</property>
+  <property name="width_request">650</property>
   <property name="visible">True</property>
   <property name="title" translatable="yes">ReplayGain Scan Progress</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
@@ -10695,7 +10715,7 @@ Descending</property>
 </widget>
 
 <widget class="GtkWindow" id="rg_scan_results">
-  <property name="width_request">550</property>
+  <property name="width_request">1000</property>
   <property name="height_request">350</property>
   <property name="visible">True</property>
   <property name="title" translatable="yes">ReplayGain Scan Results</property>

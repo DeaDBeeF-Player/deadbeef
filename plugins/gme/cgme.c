@@ -105,7 +105,7 @@ read_gzfile (const char *fname, char **buffer, int *size) {
             // and mkstemp is considered insecure,
             // so just make the name manually.
             // This is as insecure as mkstemp, but (hopefully) won't be bugged by static analyzers
-            snprintf (tmpnm, sizeof (tmpnm), "%s/ddbgme%03d.vgz", tmp);
+            snprintf (tmpnm, sizeof (tmpnm), "%s/ddbgme%03d.vgz", tmp, idx);
             fd = open (tmpnm, O_RDWR|O_CREAT|O_TRUNC);
 #else
             snprintf (tmpnm, sizeof (tmpnm), "%s/ddbgmeXXXXXX.vgz", tmp);

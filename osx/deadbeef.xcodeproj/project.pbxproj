@@ -817,6 +817,8 @@
 		2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D60108C1A9CDF06000136AF /* SearchWindowController.m */; };
 		2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */; };
 		2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */; };
+		2D61F1AC230D1D0F0045D366 /* wcwidth.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D61F19D230D1D0F0045D366 /* wcwidth.h */; };
+		2D61F1AD230D1D0F0045D366 /* wcwidth.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D61F19E230D1D0F0045D366 /* wcwidth.c */; };
 		2D621FCA1CD92CCA00EB6D22 /* albumartorg.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D621FA51CD92CC500EB6D22 /* albumartorg.c */; };
 		2D621FCB1CD92CCA00EB6D22 /* albumartorg.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D621FA61CD92CC500EB6D22 /* albumartorg.h */; };
 		2D621FCD1CD92CCA00EB6D22 /* artwork.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D621FA91CD92CC500EB6D22 /* artwork.c */; };
@@ -3855,6 +3857,8 @@
 		2D60108C1A9CDF06000136AF /* SearchWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchWindowController.m; sourceTree = "<group>"; };
 		2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbTabStrip.h; path = widgets/DdbTabStrip.h; sourceTree = "<group>"; };
 		2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbTabStrip.m; path = widgets/DdbTabStrip.m; sourceTree = "<group>"; };
+		2D61F19D230D1D0F0045D366 /* wcwidth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wcwidth.h; sourceTree = "<group>"; };
+		2D61F19E230D1D0F0045D366 /* wcwidth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wcwidth.c; sourceTree = "<group>"; };
 		2D621F831CD92C9000EB6D22 /* artwork.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = artwork.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D621FA51CD92CC500EB6D22 /* albumartorg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = albumartorg.c; sourceTree = "<group>"; };
 		2D621FA61CD92CC500EB6D22 /* albumartorg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = albumartorg.h; sourceTree = "<group>"; };
@@ -6803,6 +6807,23 @@
 			name = lastfm;
 			sourceTree = "<group>";
 		};
+		2D61F19B230D1D0F0045D366 /* external */ = {
+			isa = PBXGroup;
+			children = (
+				2D61F19C230D1D0F0045D366 /* wcwidth */,
+			);
+			path = external;
+			sourceTree = "<group>";
+		};
+		2D61F19C230D1D0F0045D366 /* wcwidth */ = {
+			isa = PBXGroup;
+			children = (
+				2D61F19D230D1D0F0045D366 /* wcwidth.h */,
+				2D61F19E230D1D0F0045D366 /* wcwidth.c */,
+			);
+			path = wcwidth;
+			sourceTree = "<group>";
+		};
 		2D6202AF1B90800A00594746 /* XIB */ = {
 			isa = PBXGroup;
 			children = (
@@ -8426,6 +8447,7 @@
 		4D1B3EB31837EC44003E6066 /* deadbeef */ = {
 			isa = PBXGroup;
 			children = (
+				2D61F19B230D1D0F0045D366 /* external */,
 				2D135EE6226E388E00BAAE84 /* scriptable */,
 				2D93DC511AADFEEF003D2D8D /* shared */,
 				4D1B3ED71837EC44003E6066 /* ConvertUTF */,
@@ -9541,6 +9563,7 @@
 				2D448A851D5C5C6500B43F12 /* logger.h in Headers */,
 				2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */,
 				2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */,
+				2D61F1AC230D1D0F0045D366 /* wcwidth.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12450,6 +12473,7 @@
 				2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */,
 				2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */,
 				2D01D7E41AB2219C00BCD3C4 /* utf8.c in Sources */,
+				2D61F1AD230D1D0F0045D366 /* wcwidth.c in Sources */,
 				2D01D7D11AB2219C00BCD3C4 /* playqueue.c in Sources */,
 				2D135EFD226E4E1900BAAE84 /* scriptable_encoder.c in Sources */,
 				2D01D7DB1AB2219C00BCD3C4 /* playlist.c in Sources */,

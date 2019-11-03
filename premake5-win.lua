@@ -101,6 +101,8 @@ end
        "md5/*.c",
        "plugins/libparser/*.h",
        "plugins/libparser/*.c",
+       "external/wcwidth/wcwidth.c",
+       "external/wcwidth/wcwidth.h"
        -- "ConvertUTF/*.h",
        -- "ConvertUTF/*.c"
    }

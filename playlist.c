@@ -66,6 +66,7 @@
 #include "strdupa.h"
 #include "tf.h"
 #include "playqueue.h"
+#include "sort.h"
 
 #include "cueutil.h"
 
@@ -966,6 +967,11 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         fname += 7;
     }
 
+    // now that it's known we're not dealing with URL, check if it's a relative path
+    if (plug_is_relative_path (fname)) {
+        return NULL;
+    }
+
     // detect decoder
     const char *eol = strrchr (fname, '.');
     if (!eol) {
@@ -1114,7 +1120,7 @@ _get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *v
         snprintf (fullname, sz, "%s/%s", stripped_dirname, d_name);
         if (dir) {
             *dir = 0;
-            strncat (dir, stripped_dirname, dirsz);
+            strncat (dir, stripped_dirname, dirsz - 1);
         }
     }
     else {
@@ -1125,21 +1131,15 @@ _get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *v
         if (sch && strncmp (sch, d_name, strlen (sch))) {
             snprintf (fullname, sz, "%s%s:%s", sch, dirname, d_name);
             if (dir) {
-                *dir = 0;
-                size_t n = strlen (fullname) - strlen (d_name);
-                if (n > dirsz) {
-                    n = dirsz;
-                }
-                strncat (dir, fullname, n);
-                dir[n] = 0;
+                snprintf (dir, dirsz, "%s%s:", sch, dirname);
             }
         }
         else {
             *fullname = 0;
-            strncat (fullname, d_name, sz);
+            strncat (fullname, d_name, sz - 1);
             if (dir) {
                 *dir = 0;
-                strncat (dir, dirname, dirsz);
+                strncat (dir, dirname, dirsz - 1);
             }
         }
     }
@@ -1168,6 +1168,10 @@ static playItem_t *
 plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     if (!strncmp (dirname, "file://", 7)) {
         dirname += 7;
+    }
+
+    if (plug_is_relative_path (dirname)) {
+        return NULL;
     }
 
     #ifdef __MINGW32__
@@ -2032,7 +2036,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
     }
     FILE *fp = fopen (fname, "rb");
     if (!fp) {
-        trace ("plt_load: failed to open %s\n", fname);
+//        trace ("plt_load: failed to open %s\n", fname);
         return NULL;
     }
 
@@ -2043,25 +2047,25 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
     playItem_t *it = NULL;
     char magic[4];
     if (fread (magic, 1, 4, fp) != 4) {
-        trace ("failed to read magic\n");
+//        trace ("failed to read magic\n");
         goto load_fail;
     }
     if (strncmp (magic, "DBPL", 4)) {
-        trace ("bad signature\n");
+//        trace ("bad signature\n");
         goto load_fail;
     }
     if (fread (&majorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
     if (majorver != PLAYLIST_MAJOR_VER) {
-        trace ("bad majorver=%d\n", majorver);
+//        trace ("bad majorver=%d\n", majorver);
         goto load_fail;
     }
     if (fread (&minorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
     if (minorver < 1) {
-        trace ("bad minorver=%d\n", minorver);
+//        trace ("bad minorver=%d\n", minorver);
         goto load_fail;
     }
     uint32_t cnt;
@@ -2217,7 +2221,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
                 char value[l+1];
                 int res = (int)fread (value, 1, l, fp);
                 if (res != l) {
-                    trace ("playlist read error: requested %d, got %d\n", l, res);
+//                    trace ("playlist read error: requested %d, got %d\n", l, res);
                     goto load_fail;
                 }
                 value[l] = 0;
@@ -2275,7 +2279,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
                 char value[l+1];
                 int res = (int)fread (value, 1, l, fp);
                 if (res != l) {
-                    trace ("playlist read error: requested %d, got %d\n", l, res);
+//                    trace ("playlist read error: requested %d, got %d\n", l, res);
                     goto load_fail;
                 }
                 value[l] = 0;
@@ -2293,7 +2297,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
     }
     return last_added;
 load_fail:
-    trace ("playlist load fail (%s)!\n", fname);
+//    trace ("playlist load fail (%s)!\n", fname);
     if (fp) {
         fclose (fp);
     }
@@ -3112,17 +3116,17 @@ float
 plt_get_selection_playback_time (playlist_t *playlist) {
     LOCK;
 
-    if (!playlist->recalc_seltime) {
-        float t = playlist->seltime;
-        UNLOCK;
-        return t;
-    }
-
     float t = 0;
+    
+    if (!playlist->recalc_seltime) {
+        t = playlist->seltime;
+        UNLOCK;
+        return roundf(t);
+    }
 
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         if (it->selected){
-            t += it->_duration;
+            t += roundf(it->_duration);
         }
     }
 
@@ -3812,7 +3816,10 @@ plt_add_files_end (playlist_t *plt, int visibility) {
         l->callback_end (&d, l->user_data);
     }
     background_job_decrement ();
+    
+    plt_autosort (plt);
 }
+
 
 void
 plt_deselect_all (playlist_t *playlist) {

@@ -37,6 +37,10 @@
 extern DB_functions_t *deadbeef;
 
 @interface DdbPlaylistViewController()
+
+@property (nonatomic, strong) NSTimer *playPosUpdateTimer;
+@property (nonatomic, assign) DB_playItem_t *playPosUpdateTrack;
+
 @end
 
 @implementation DdbPlaylistViewController {
@@ -53,6 +57,16 @@ extern DB_functions_t *deadbeef;
     DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
     [[view listview] cleanup];
     [self clearGrouping];
+
+    if (self.playPosUpdateTimer) {
+        [self.playPosUpdateTimer invalidate];
+        self.playPosUpdateTimer = nil;
+    }
+
+    if (self.playPosUpdateTrack) {
+        deadbeef->pl_item_unref (self.playPosUpdateTrack);
+        self.playPosUpdateTrack = NULL;
+    }
 
     // don't wait for an automatic autorelease,
     // this would cause deadbeef's track refcount checker to run before the objects are really released
@@ -715,6 +729,32 @@ extern DB_functions_t *deadbeef;
             [[NSString stringWithUTF8String:text] drawInRect:rect withAttributes:sel?_cellSelectedTextAttrsDictionary:_cellTextAttrsDictionary];
         }
 
+        if (ctx.update > 0) {
+            if (self.playPosUpdateTimer) {
+                [self.playPosUpdateTimer invalidate];
+            }
+            if (self.playPosUpdateTrack) {
+                deadbeef->pl_item_unref (self.playPosUpdateTrack);
+                self.playPosUpdateTrack = NULL;
+            }
+            self.playPosUpdateTrack = deadbeef->pl_get_for_idx_and_iter (ctx.idx, [self playlistIter]);
+
+            self.playPosUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:ctx.update/1000.0 repeats:NO block:^(NSTimer * _Nonnull timer) {
+                ddb_playlist_t *curr = deadbeef->plt_get_curr ();
+                DB_playItem_t *trk = deadbeef->pl_get_for_idx_and_iter (ctx.idx, [self playlistIter]);
+
+                if (ctx.plt == curr && trk == self.playPosUpdateTrack) {
+                    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
+                    [[view listview] drawRow:idx];
+                }
+                if (trk) {
+                    deadbeef->pl_item_unref (trk);
+                }
+                if (curr) {
+                    deadbeef->plt_unref (curr);
+                }
+            }];
+        }
         if (ctx.plt) {
             deadbeef->plt_unref (ctx.plt);
         }
