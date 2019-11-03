@@ -52,7 +52,7 @@
         [menu insertItemWithTitle:@"Copy" action:@selector(widgetCopy:) keyEquivalent:@"" atIndex:3];
         [menu insertItemWithTitle:@"Paste" action:@selector(widgetPaste:) keyEquivalent:@"" atIndex:4];
         menu.delegate = self;
-        [self setMenu:menu];
+        self.menu = menu;
 #endif
     }
     return self;

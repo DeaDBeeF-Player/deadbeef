@@ -138,7 +138,7 @@ static NSMutableArray *g_rgControllers;
     }
 
     self.window.delegate = self;
-    [self.window setIsVisible:YES];
+    self.window.isVisible = YES;
     [self.window makeKeyWindow];
 
     [NSApp beginSheet: _scanProgressWindow
@@ -185,8 +185,8 @@ static NSMutableArray *g_rgControllers;
     _rg_settings.tracks = tracks;
     _rg_settings.num_tracks = count;
 
-    [self window]; // access main window to make sure the NIB is loaded
-    [_updateTagsProgressWindow setIsVisible:YES];
+    self.window; // access main window to make sure the NIB is loaded
+    _updateTagsProgressWindow.isVisible = YES;
     _abortTagWriting = NO;
 
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
@@ -201,8 +201,8 @@ static NSMutableArray *g_rgControllers;
                 deadbeef->pl_lock ();
                 NSString *path = [NSString stringWithUTF8String:deadbeef->pl_find_meta_raw (_rg_settings.tracks[i], ":URI")];
                 deadbeef->pl_unlock ();
-                [_updateTagsProgressText setStringValue:path];
-                [_updateTagsProgressIndicator setDoubleValue:(double)i/_rg_settings.num_tracks*100];
+                _updateTagsProgressText.stringValue = path;
+                _updateTagsProgressIndicator.doubleValue = (double)i/_rg_settings.num_tracks*100;
             });
         }
         // FIXME: the tracks in the list might be from other playlist(s)
@@ -244,8 +244,8 @@ static NSMutableArray *g_rgControllers;
     deadbeef->pl_lock ();
     const char *uri = deadbeef->pl_find_meta (_rg_settings.tracks[current], ":URI");
 
-    [_progressText setStringValue:[NSString stringWithUTF8String:uri]];
-    [_progressIndicator setDoubleValue:(double)current/_rg_settings.num_tracks*100];
+    _progressText.stringValue = [NSString stringWithUTF8String:uri];
+    _progressIndicator.doubleValue = (double)current/_rg_settings.num_tracks*100;
 
     struct timeval tv;
     gettimeofday (&tv, NULL);
@@ -260,10 +260,10 @@ static NSMutableArray *g_rgControllers;
         NSString *elapsed = [self formatTime:timePassed extraPrecise:NO];
         NSString *estimated = [self formatTime:est extraPrecise:NO];
 
-        [_statusLabel setStringValue:[NSString stringWithFormat:@"Time elapsed: %@, estimated: %@, speed: %0.2fx", elapsed, estimated, speed]];
+        _statusLabel.stringValue = [NSString stringWithFormat:@"Time elapsed: %@, estimated: %@, speed: %0.2fx", elapsed, estimated, speed];
     }
     else {
-        [_statusLabel setStringValue:@""];
+        _statusLabel.stringValue = @"";
     }
 
     deadbeef->pl_unlock ();
@@ -275,7 +275,7 @@ static NSMutableArray *g_rgControllers;
     float timePassed = (tv.tv_sec-_rg_start_tv.tv_sec) + (tv.tv_usec - _rg_start_tv.tv_usec) / 1000000.f;
     NSString *elapsed = [self formatTime:timePassed extraPrecise:YES];
     float speed = [self getScanSpeed:_rg_settings.cd_samples_processed overTime:timePassed];
-    [_resultStatusLabel setStringValue:[NSString stringWithFormat:@"Calculated in: %@, speed: %0.2fx", elapsed, speed]];
+    _resultStatusLabel.stringValue = [NSString stringWithFormat:@"Calculated in: %@, speed: %0.2fx", elapsed, speed];
 
     [NSApp endSheet:_scanProgressWindow];
     [_scanProgressWindow orderOut:self];
@@ -303,8 +303,8 @@ static NSMutableArray *g_rgControllers;
                 NSString *path = [NSString stringWithUTF8String:deadbeef->pl_find_meta_raw (_rg_settings.tracks[i], ":URI")];
                 deadbeef->pl_unlock ();
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [_updateTagsProgressText setStringValue:path];
-                    [_updateTagsProgressIndicator setDoubleValue:(double)i/_rg_settings.num_tracks*100];
+                    _updateTagsProgressText.stringValue = path;
+                    _updateTagsProgressIndicator.doubleValue = (double)i/_rg_settings.num_tracks*100;
                 });
 
                 uint32_t flags = (1<<DDB_REPLAYGAIN_TRACKGAIN)|(1<<DDB_REPLAYGAIN_TRACKPEAK);

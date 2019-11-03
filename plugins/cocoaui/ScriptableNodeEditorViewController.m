@@ -51,7 +51,7 @@
 
     NSMenu *menu = [[NSMenu alloc] init];
     menu.delegate = self;
-    [menu setAutoenablesItems:NO];
+    menu.autoenablesItems = NO;
 
     NSInteger index = 0;
     scriptableStringListItem_t *n = names;
