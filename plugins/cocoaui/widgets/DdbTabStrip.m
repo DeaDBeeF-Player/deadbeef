@@ -237,14 +237,14 @@ plt_get_title_wrapper (int plt) {
                 [self setScrollPos:w];
                 deadbeef->conf_set_int ("cocoaui.tabscroll", _hscrollpos);
                 if (redraw) {
-                    [self setNeedsDisplay:YES];
+                    self.needsDisplay = YES;
                 }
             }
             else if (w + tab_w >= boundary) {
                 [self setScrollPos:_hscrollpos + (w + tab_w) - boundary];
                 deadbeef->conf_set_int ("cocoaui.tabscroll", _hscrollpos);
                 if (redraw) {
-                    [self setNeedsDisplay:YES];
+                    self.needsDisplay = YES;
                 }
             }
             break;
@@ -540,7 +540,7 @@ plt_get_title_wrapper (int plt) {
 -(void)updatePointedTab:(int)tab {
     if (!_closeTabCapture) {
         _pointedTab = tab;
-        [self setNeedsDisplay:YES];
+        self.needsDisplay = YES;
     }
     else if (_closeTabCapture) {
         [self setNeedsDisplayInRect:_closeTabButtonRect];
@@ -730,7 +730,7 @@ plt_get_title_wrapper (int plt) {
             if (dragged != -1) {
                 [self updatePointedTab:dragged];
             }
-            [self setNeedsDisplay:YES];
+            self.needsDisplay = YES;
         }
         if (_closeTabCapture) {
             _closeTabCapture = NO;
@@ -811,7 +811,7 @@ plt_get_title_wrapper (int plt) {
             _dragging = inspos;
             deadbeef->conf_set_int ("playlist.current", _dragging);
         }
-        [self setNeedsDisplay:YES];
+        self.needsDisplay = YES;
     }
 }
 
@@ -849,7 +849,7 @@ plt_get_title_wrapper (int plt) {
     _lastMouseCoord.x = -100000;
     if (_pointedTab != -1) {
         [self updatePointedTab:-1];
-        [self setNeedsDisplay:YES];
+        self.needsDisplay = YES;
     }
 
 }
@@ -877,10 +877,10 @@ plt_get_title_wrapper (int plt) {
             switch (_id) {
             case DB_EV_PLAYLISTSWITCHED:
                 [self performSelectorOnMainThread:@selector(handleResizeNotification) withObject:nil waitUntilDone:NO];
-                [self setNeedsDisplay:YES];
+                self.needsDisplay = YES;
                 break;
             case DB_EV_PLAYLISTCHANGED:
-                [self setNeedsDisplay:YES];
+                self.needsDisplay = YES;
                 break;
             }
         });

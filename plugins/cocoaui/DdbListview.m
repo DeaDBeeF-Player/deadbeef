@@ -345,7 +345,7 @@ int grouptitleheight = 22;
             [delegate setColumnWidth:w forColumn:_sizing];
             [listview updateContentFrame];
             [listview.contentView setNeedsDisplay:YES];
-            [self setNeedsDisplay:YES];
+            self.needsDisplay = YES;
 
             rc = [sv documentVisibleRect];
             scroll += rc.origin.x;
@@ -386,7 +386,7 @@ int grouptitleheight = 22;
             [listview reloadData];
         }
         else {
-            [self setNeedsDisplay:YES];
+            self.needsDisplay = YES;
         }
     }
 }
@@ -456,7 +456,7 @@ int grouptitleheight = 22;
 - (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)sender {
 
     _lastDragLocation = [self convertPoint:[sender draggingLocation] fromView:nil];
-    [self setNeedsDisplay:YES];
+    self.needsDisplay = YES;
 
     return NSDragOperationCopy;
 }
@@ -464,7 +464,7 @@ int grouptitleheight = 22;
 - (void)draggingExited:(id<NSDraggingInfo>)sender {
 
     _draggingInView = NO;
-    [self setNeedsDisplay:YES];
+    self.needsDisplay = YES;
 }
 
 
