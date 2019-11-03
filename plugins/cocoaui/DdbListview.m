@@ -314,16 +314,14 @@ int grouptitleheight = 22;
             break;
         }
         [delegate sortColumn:_dragging withOrder:_sortOrder-1];
-        [listview setNeedsDisplay:YES];
     }
     else if (_dragging != [delegate invalidColumn] || _sizing != [delegate invalidColumn]) {
         [delegate columnsChanged];
         [listview updateContentFrame];
-        [listview setNeedsDisplay:YES];
     }
     _dragging = [delegate invalidColumn];
     _sizing = [delegate invalidColumn];
-    [self setNeedsDisplay:YES];
+    listview.contentView.needsDisplay = YES;
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent {
