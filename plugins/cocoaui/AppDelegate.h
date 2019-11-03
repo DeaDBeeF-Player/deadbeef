@@ -57,8 +57,6 @@
 - (IBAction)toggleDescendingSortOrderAction:(id)sender;
 @property (unsafe_unretained) IBOutlet NSMenuItem *descendingSortMode;
 
-@property (unsafe_unretained) IBOutlet NSImageView *dockTileView;
-
 - (IBAction)openPrefWindow:(id)sender;
 
 // file menu

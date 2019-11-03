@@ -263,9 +263,6 @@ main_cleanup_and_quit (void);
 #endif
 
     [self updateDockNowPlaying];
-    [NSApp dockTile].contentView =  _dockTileView;
-//    [NSApp dockTile].badgeLabel = @"Hello";
-    [[NSApp dockTile] display];
 
     deadbeef->log_viewer_register (_cocoaui_logger_callback, NULL);
 }
