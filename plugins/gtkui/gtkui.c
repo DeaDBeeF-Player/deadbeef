@@ -1262,8 +1262,7 @@ gtkui_mainwin_init(void) {
 #if GTK_CHECK_VERSION(3,0,0)
     init_widget_layout ();
     gtk_widget_set_events (GTK_WIDGET (mainwin), gtk_widget_get_events (GTK_WIDGET (mainwin)) | GDK_SCROLL_MASK);
-    //gtk_widget_show (mainwin);
-    
+
     if (deadbeef->conf_get_int ("gtkui.start_hidden", 0)) {
         g_idle_add (mainwin_hide_cb, NULL);
     }
@@ -1355,7 +1354,8 @@ gtkui_mainwin_init(void) {
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 
 #ifdef __APPLE__
-    gtkui_is_retina = is_retina (mainwin);
+    // FIXME: causes a crash because of start_hidden feature
+//    gtkui_is_retina = is_retina (mainwin);
 #endif
 }
 
