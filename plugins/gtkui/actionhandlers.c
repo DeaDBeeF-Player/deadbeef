@@ -439,6 +439,7 @@ action_delete_from_disk_handler_cb (void *data) {
             }
             deadbeef->pl_item_unref (it);
         }
+        deadbeef->pl_save_current ();
     }
     deadbeef->pl_unlock ();
     deadbeef->plt_unref (plt);
