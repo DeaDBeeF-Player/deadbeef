@@ -782,7 +782,13 @@ typedef struct {
     int (*plt_get_title) (ddb_playlist_t *plt, char *buffer, int bufsize);
     int (*plt_set_title) (ddb_playlist_t *plt, const char *title);
 
-    // increments modification index
+    // Increments modification index.
+    // This would mark playlist as "dirty" -- meaning it needs to be saved when `pl_save_all` is called.
+    // The flag is reset as soon as playlist is saved.
+    // This is called automatically when playlists are created / cleared / removed, and when items are added/removed to them.
+    // However, other changes -- like changing track metadata -- would not call this function.
+    // You need to call it yourself, to make sure the playlist gets saved on exit.
+    // It doesn't need to be called if you save the playlist via direct call to `plt_save_*`, or `pl_save_current`
     void (*plt_modified) (ddb_playlist_t *handle);
 
     // returns modication index
