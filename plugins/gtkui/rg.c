@@ -594,6 +594,12 @@ action_rg_scan_per_file_handler (struct DB_plugin_action_s *action, int ctx) {
         return 0;
     }
 
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
+
     runScanner (DDB_RG_SCAN_MODE_TRACK, tracks, count);
     return 0;
 }
@@ -607,6 +613,12 @@ action_rg_scan_selection_as_albums_handler (struct DB_plugin_action_s *action, i
         return 0;
     }
 
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
+
     runScanner (DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS, tracks, count);
     return 0;
 }
@@ -618,6 +630,12 @@ action_rg_scan_selection_as_album_handler (struct DB_plugin_action_s *action, in
 
     if (!tracks) {
         return 0;
+    }
+
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
     }
 
     runScanner (DDB_RG_SCAN_MODE_SINGLE_ALBUM, tracks, count);
@@ -640,8 +658,8 @@ _remove_rg_tags (void *ctx) {
 
         g_idle_add (_setUpdateProgress, dt);
     }
-    // FIXME: the tracks in the list might be from other playlist(s)
-    deadbeef->pl_save_current ();
+
+    deadbeef->pl_save_all ();
     deadbeef->background_job_decrement ();
 
     g_idle_add (_ctl_dismiss_cb, ctl);
@@ -658,6 +676,12 @@ action_rg_remove_info_handler (struct DB_plugin_action_s *action, int ctx) {
 
     if (!tracks) {
         return 0;
+    }
+
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
     }
 
     deadbeef->background_job_increment ();
@@ -718,10 +742,15 @@ action_scan_all_tracks_without_rg_handler (struct DB_plugin_action_s *action, in
     }
 
     deadbeef->pl_unlock ();
+
+    if (count > 0) {
+         deadbeef->plt_modified (plt);
+    }
+
     deadbeef->plt_unref (plt);
 
     if (count > 0) {
-         runScanner (DDB_RG_SCAN_MODE_TRACK, tracks, count);
+        runScanner (DDB_RG_SCAN_MODE_TRACK, tracks, count);
     }
 
     return 0;
