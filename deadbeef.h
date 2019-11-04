@@ -953,6 +953,8 @@ typedef struct {
     int (*pl_save_current) (void);
 
     // save all playlists
+    // Remember to call `plt_modified` on playlists which need saving.
+    // See more information near the `plt_modified` declaration
     int (*pl_save_all) (void);
 
     // select all tracks in current playlist
