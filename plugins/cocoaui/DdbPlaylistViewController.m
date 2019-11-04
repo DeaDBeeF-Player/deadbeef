@@ -1354,9 +1354,15 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 - (void)rgRemove:(id)sender {
     int count;
     DB_playItem_t **tracks = [self getSelectedTracksForRg:&count withRgTags:YES];
-    if (tracks) {
-        [ReplayGainScannerController removeRgTagsFromTracks:tracks count:count];
+    if (!tracks) {
+        return;
     }
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
+    [ReplayGainScannerController removeRgTagsFromTracks:tracks count:count];
 }
 
 - (void)rgScanAlbum:(id)sender {
@@ -1417,9 +1423,15 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 - (void)rgScan:(int)mode {
     int count;
     DB_playItem_t **tracks = [self getSelectedTracksForRg:&count withRgTags:NO];
-    if (tracks) {
-        [ReplayGainScannerController runScanner:mode forTracks:tracks count:count];
+    if (!tracks) {
+        return;
     }
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
+    [ReplayGainScannerController runScanner:mode forTracks:tracks count:count];
 }
 
 - (NSMenu *)contextMenuForEvent:(NSEvent *)event forView:(NSView *)view {

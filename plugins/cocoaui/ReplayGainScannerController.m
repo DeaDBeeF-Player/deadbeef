@@ -185,7 +185,7 @@ static NSMutableArray *g_rgControllers;
     _rg_settings.tracks = tracks;
     _rg_settings.num_tracks = count;
 
-    self.window; // access main window to make sure the NIB is loaded
+    (void)self.window; // access main window to make sure the NIB is loaded
     _updateTagsProgressWindow.isVisible = YES;
     _abortTagWriting = NO;
 
@@ -205,8 +205,7 @@ static NSMutableArray *g_rgControllers;
                 _updateTagsProgressIndicator.doubleValue = (double)i/_rg_settings.num_tracks*100;
             });
         }
-        // FIXME: the tracks in the list might be from other playlist(s)
-        deadbeef->pl_save_current();
+        deadbeef->pl_save_all ();
         deadbeef->background_job_decrement ();
         dispatch_async(dispatch_get_main_queue(), ^{
             [_updateTagsProgressWindow close];
@@ -333,12 +332,12 @@ static NSMutableArray *g_rgControllers;
 }
 
 // NSTableViewDataSource
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
 {
     return _rg_settings.num_tracks;
 }
 
-- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex {
+- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
     DB_playItem_t *it = _rg_settings.tracks[rowIndex];
     NSUInteger colIdx = [[aTableView tableColumns] indexOfObject:aTableColumn];
 
