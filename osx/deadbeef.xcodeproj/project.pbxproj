@@ -808,8 +808,6 @@
 		2D565B911A40BCE200CE1F5D /* true.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565B0B1A40BCE200CE1F5D /* true.h */; };
 		2D565B961A40C05200CE1F5D /* mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565B951A40C05200CE1F5D /* mpg123.h */; };
 		2D565B9A1A40C15B00CE1F5D /* libmpg123.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D917E781A4046FE00C3EB44 /* libmpg123.a */; };
-		2D5773A21D084E5A00F61BD1 /* MediaKeyController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5773A01D084E5A00F61BD1 /* MediaKeyController.m */; };
-		2D5773A31D084E5A00F61BD1 /* MediaKeyController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5773A11D084E5A00F61BD1 /* MediaKeyController.h */; };
 		2D5B51221FF43FC8000AD484 /* liboggedit.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.dylib */; };
 		2D5D21461A4033FF001D5A79 /* lastfm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5D21451A4033FF001D5A79 /* lastfm.c */; };
 		2D5D214C1A403428001D5A79 /* lastfm.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D5D21401A4033B0001D5A79 /* lastfm.dylib */; };
@@ -1522,6 +1520,8 @@
 		2DA24BA019E7254F00E34920 /* vtls.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA24B8819E7254F00E34920 /* vtls.h */; };
 		2DA24BA319E72A2500E34920 /* vfs_curl.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA24B4B19E724C200E34920 /* vfs_curl.dylib */; };
 		2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */; };
+		2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA372192370B854005E64A3 /* NowPlayable.h */; };
+		2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA3721A2370B854005E64A3 /* NowPlayable.m */; };
 		2DA66EC81EDF4EF800E20989 /* StreamerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66EC71EDF4EF800E20989 /* StreamerTests.m */; };
 		2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66EC91EDF4F2C00E20989 /* fakeout.c */; };
 		2DA66ECE1EDF501000E20989 /* fakein.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66ECC1EDF501000E20989 /* fakein.c */; };
@@ -2324,6 +2324,8 @@
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
 			fileType = sourcecode.asm;
+			inputFiles = (
+			);
 			isEditable = 1;
 			outputFiles = (
 				"${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o",
@@ -2334,6 +2336,8 @@
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
 			fileType = sourcecode.nasm;
+			inputFiles = (
+			);
 			isEditable = 1;
 			outputFiles = (
 			);
@@ -3849,8 +3853,6 @@
 		2D565B0A1A40BCE200CE1F5D /* testcpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testcpu.c; path = "osx/deps/mpg123-1.21.0/src/libmpg123/testcpu.c"; sourceTree = "<group>"; };
 		2D565B0B1A40BCE200CE1F5D /* true.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = true.h; path = "osx/deps/mpg123-1.21.0/src/libmpg123/true.h"; sourceTree = "<group>"; };
 		2D565B951A40C05200CE1F5D /* mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpg123.h; path = osx/mpg123/mpg123.h; sourceTree = "<group>"; };
-		2D5773A01D084E5A00F61BD1 /* MediaKeyController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaKeyController.m; sourceTree = "<group>"; };
-		2D5773A11D084E5A00F61BD1 /* MediaKeyController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeyController.h; sourceTree = "<group>"; };
 		2D5D21401A4033B0001D5A79 /* lastfm.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = lastfm.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D5D21451A4033FF001D5A79 /* lastfm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lastfm.c; path = plugins/lastfm/lastfm.c; sourceTree = "<group>"; };
 		2D60108B1A9CDF06000136AF /* SearchWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchWindowController.h; sourceTree = "<group>"; };
@@ -4594,6 +4596,8 @@
 		2DA24B8719E7254F00E34920 /* vtls.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vtls.c; sourceTree = "<group>"; };
 		2DA24B8819E7254F00E34920 /* vtls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vtls.h; sourceTree = "<group>"; };
 		2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = u8_uc_map.h; sourceTree = "<group>"; };
+		2DA372192370B854005E64A3 /* NowPlayable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NowPlayable.h; path = NowPlayable/NowPlayable.h; sourceTree = "<group>"; };
+		2DA3721A2370B854005E64A3 /* NowPlayable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = NowPlayable.m; path = NowPlayable/NowPlayable.m; sourceTree = "<group>"; };
 		2DA66EC71EDF4EF800E20989 /* StreamerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamerTests.m; sourceTree = "<group>"; };
 		2DA66EC91EDF4F2C00E20989 /* fakeout.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fakeout.c; sourceTree = "<group>"; };
 		2DA66ECA1EDF4F2C00E20989 /* fakeout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fakeout.h; sourceTree = "<group>"; };
@@ -7860,6 +7864,15 @@
 			path = "osx/deps/curl-7.38.0/lib/vtls";
 			sourceTree = "<group>";
 		};
+		2DA3720B2370B7C3005E64A3 /* NowPlayable */ = {
+			isa = PBXGroup;
+			children = (
+				2DA372192370B854005E64A3 /* NowPlayable.h */,
+				2DA3721A2370B854005E64A3 /* NowPlayable.m */,
+			);
+			name = NowPlayable;
+			sourceTree = "<group>";
+		};
 		2DAA4C091AAF88DE00519559 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -9204,6 +9217,7 @@
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
+				2DA3720B2370B7C3005E64A3 /* NowPlayable */,
 				2D46220D226DBA2A003997E9 /* Utility */,
 				2DD5262E2062F1DF002609C5 /* help-cocoa.txt */,
 				2D6202AF1B90800A00594746 /* XIB */,
@@ -9234,8 +9248,6 @@
 				2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */,
 				2D6D81ED1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h */,
 				2D6D81EE1CCF9E0B00028788 /* DdbTableViewRightClickActivate.m */,
-				2D5773A01D084E5A00F61BD1 /* MediaKeyController.m */,
-				2D5773A11D084E5A00F61BD1 /* MediaKeyController.h */,
 				2D8D96AC1D10904A00A5C7E6 /* CoverManager.h */,
 				2D8D96AD1D10904A00A5C7E6 /* CoverManager.m */,
 				2D49857D1D5CF13F00E4D985 /* LogWindowController.h */,
@@ -10659,6 +10671,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4DC96E701E4CC9670093CFD3 /* dsp.h in Headers */,
+				2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */,
 				2DF55C3F2270FCB9002C44DC /* ScriptableNodeEditorViewController.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
 				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
@@ -10690,7 +10703,6 @@
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
 				2D06B39D19D056BC0041BE86 /* DdbPlaylistWidget.h in Headers */,
 				2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */,
-				2D5773A31D084E5A00F61BD1 /* MediaKeyController.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* DdbSearchViewController.h in Headers */,
 				2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */,
 				2D49857F1D5CF13F00E4D985 /* LogWindowController.h in Headers */,
@@ -13683,7 +13695,7 @@
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
 				2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */,
 				2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */,
-				2D5773A21D084E5A00F61BD1 /* MediaKeyController.m in Sources */,
+				2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */,
 				2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* DdbSearchViewController.m in Sources */,
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
@@ -17829,7 +17841,7 @@
 				INFOPLIST_FILE = "../plugins/cocoaui/deadbeef-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -17867,7 +17879,7 @@
 				INFOPLIST_FILE = "../plugins/cocoaui/deadbeef-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";

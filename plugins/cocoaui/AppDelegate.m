@@ -27,7 +27,7 @@
 #import "DdbPlaylistViewController.h"
 #import "ReplayGainScannerController.h"
 #import "DdbShared.h"
-#import "MediaKeyController.h"
+#import "NowPlayable.h"
 #import "LogWindowController.h"
 #import "HelpWindowController.h"
 #include "conf.h"
@@ -41,6 +41,13 @@
 extern DB_functions_t *deadbeef;
 
 extern BOOL g_CanQuit;
+
+@interface AppDelegate ()
+
+@property NowPlayable *nowPlayable;
+
+@end
+
 @implementation AppDelegate {
     PreferencesWindowController *_prefWindow;
     SearchWindowController *_searchWindow;
@@ -88,9 +95,6 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, 
 
 - (void)dealloc {
     deadbeef->log_viewer_unregister (_cocoaui_logger_callback, NULL);
-#if !DISABLE_MM_KEY_GRABBER
-    ungrabMediaKeys ();
-#endif
 }
 
 - (void)volumeChanged {
@@ -259,7 +263,7 @@ main_cleanup_and_quit (void);
     g_appDelegate = self;
 
 #if !DISABLE_MM_KEY_GRABBER
-    grabMediaKeys ();
+    self.nowPlayable = [NowPlayable new];
 #endif
 
     [self updateDockNowPlaying];
