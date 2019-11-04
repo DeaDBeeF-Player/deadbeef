@@ -267,8 +267,7 @@ typedef struct DB_metaInfo_s {
 #endif
 } DB_metaInfo_t;
 
-// FIXME: that needs to be in separate plugin
-
+/// These flags should be used with `junk_rewrite_tags`
 #define JUNK_STRIP_ID3V2 1
 #define JUNK_STRIP_APEV2 2
 #define JUNK_STRIP_ID3V1 4
