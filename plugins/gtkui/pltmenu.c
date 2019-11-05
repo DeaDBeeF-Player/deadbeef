@@ -424,6 +424,9 @@ gtkui_create_pltmenu (int plt_idx) {
     gtk_check_menu_item_set_active (autosort, autosort_enabled);
     gtk_widget_show (autosort);
     gtk_container_add (GTK_CONTAINER (plmenu), autosort);
+    if (pltmenu_idx == -1) {
+        gtk_widget_set_sensitive (autosort, FALSE);
+    }
     
     separator11 = gtk_separator_menu_item_new ();
     gtk_widget_show (separator11);
