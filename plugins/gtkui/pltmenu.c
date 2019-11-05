@@ -111,6 +111,7 @@ on_copy_playlist1_activate        (GtkMenuItem     *menuitem,
         if (playlist != -1) {
             gtkui_playlist_set_curr (playlist);
         }
+        deadbeef->plt_unref (plt);
     }
 }
 
