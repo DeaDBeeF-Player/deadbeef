@@ -134,13 +134,13 @@ int
 plug_is_local_file (const char *fname);
 
 int
-is_relative_path_and_not_url_posix (const char *path_or_url);
+is_relative_path_posix (const char *path_or_url);
 
 int
-is_relative_path_and_not_url_win32 (const char *path_or_url);
+is_relative_path_win32 (const char *path_or_url);
 
 int
-is_relative_path_and_not_url (const char *path_or_url);
+is_relative_path (const char *path_or_url);
 
 const char **
 plug_get_gui_names (void);

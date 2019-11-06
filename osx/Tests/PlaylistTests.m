@@ -63,94 +63,94 @@
 #pragma mark - IsRelativePathPosix
 
 - (void)test_IsRelativePathPosix_AbsolutePath_False {
-    int res = is_relative_path_and_not_url_posix ("/path");
+    int res = is_relative_path_posix ("/path");
     XCTAssertFalse(res);
 }
 
 - (void)test_IsRelativePathPosix_AbsolutePathWithUriScheme_False {
-    int res = is_relative_path_and_not_url_posix ("file:///path");
+    int res = is_relative_path_posix ("file:///path");
     XCTAssertFalse(res);
 }
 
 - (void)test_IsRelativePathPosix_RelativePathWithUriScheme_True {
-    int res = is_relative_path_and_not_url_posix ("file://path");
+    int res = is_relative_path_posix ("file://path");
     XCTAssertTrue(res);
 }
 
 - (void)test_IsRelativePathPosix_VFSPath_False {
-    int res = is_relative_path_and_not_url_posix ("zip://path");
+    int res = is_relative_path_posix ("zip://path");
     XCTAssertFalse(res);
 }
 
 - (void)test_IsRelativePathPosix_HTTPPath_False {
-    int res = is_relative_path_and_not_url_posix ("http://path");
+    int res = is_relative_path_posix ("http://path");
     XCTAssertFalse(res);
 }
 
 - (void)test_IsRelativePathPosix_RelativePath_True {
-    int res = is_relative_path_and_not_url_posix ("path");
+    int res = is_relative_path_posix ("path");
     XCTAssertTrue(res);
 }
 
 - (void)test_IsRelativePathPosix_RelativeWithFoldersPath_True {
-    int res = is_relative_path_and_not_url_posix ("path/filename");
+    int res = is_relative_path_posix ("path/filename");
     XCTAssertTrue(res);
 }
 
 - (void)test_IsRelativePathPosix_WeirdPath_True {
-    int res = is_relative_path_and_not_url_posix ("something:something");
+    int res = is_relative_path_posix ("something:something");
     XCTAssertTrue(res);
 }
 
 #pragma mark - IsRelativePathWin32
 
 - (void)test_IsRelativePathWin32_AbsolutePath_False {
-    int res = is_relative_path_and_not_url_win32 ("z:\\path");
+    int res = is_relative_path_win32 ("z:\\path");
     XCTAssertFalse(res);
 }
 
 - (void)test_IsRelativePathWin32_AbsolutePathWithUriScheme_False {
-    int res = is_relative_path_and_not_url_win32 ("file://z:\\path");
+    int res = is_relative_path_win32 ("file://z:\\path");
     XCTAssertFalse(res);
 }
 
 - (void)test_IsRelativePathWin32_AbsolutePathForwardSlash_False {
-    int res = is_relative_path_and_not_url_win32 ("z:/path");
+    int res = is_relative_path_win32 ("z:/path");
     XCTAssertFalse(res);
 }
 
 - (void)test_IsRelativePathWin32_AbsolutePathForwardSlashWithUriScheme_False {
-    int res = is_relative_path_and_not_url_win32 ("file://z:/path");
+    int res = is_relative_path_win32 ("file://z:/path");
     XCTAssertFalse(res);
 }
 
 - (void)test_IsRelativePathWin32_RelativePathWithUriScheme_True {
-    int res = is_relative_path_and_not_url_win32 ("file://path");
+    int res = is_relative_path_win32 ("file://path");
     XCTAssertTrue(res);
 }
 
 - (void)test_IsRelativePathWin32_VFSPath_False {
-    int res = is_relative_path_and_not_url_win32 ("zip://path");
+    int res = is_relative_path_win32 ("zip://path");
     XCTAssertFalse(res);
 }
 
 - (void)test_IsRelativePathWin32_HTTPPath_False {
-    int res = is_relative_path_and_not_url_win32 ("http://path");
+    int res = is_relative_path_win32 ("http://path");
     XCTAssertFalse(res);
 }
 
 - (void)test_IsRelativePathWin32_RelativePath_True {
-    int res = is_relative_path_and_not_url_win32 ("path");
+    int res = is_relative_path_win32 ("path");
     XCTAssertTrue(res);
 }
 
 - (void)test_IsRelativePathWin32_RelativeWithFoldersPath_True {
-    int res = is_relative_path_and_not_url_win32 ("path/filename");
+    int res = is_relative_path_win32 ("path/filename");
     XCTAssertTrue(res);
 }
 
 - (void)test_IsRelativePathWin32_WeirdPath_True {
-    int res = is_relative_path_and_not_url_win32 ("something:something");
+    int res = is_relative_path_win32 ("something:something");
     XCTAssertTrue(res);
 }
 

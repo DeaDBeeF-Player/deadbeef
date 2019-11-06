@@ -968,7 +968,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
     }
 
     // now that it's known we're not dealing with URL, check if it's a relative path
-    if (is_relative_path_and_not_url (fname)) {
+    if (is_relative_path (fname)) {
         return NULL;
     }
 
@@ -1170,7 +1170,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         dirname += 7;
     }
 
-    if (is_relative_path_and_not_url (dirname)) {
+    if (is_relative_path (dirname)) {
         return NULL;
     }
 

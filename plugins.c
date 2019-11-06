@@ -1510,7 +1510,7 @@ static int is_url (const char *path_or_url) {
 }
 
 int
-is_relative_path_and_not_url_posix (const char *path_or_url) {
+is_relative_path_posix (const char *path_or_url) {
     // file url?
     if (!strncasecmp (path_or_url, "file://", 7)) {
         path_or_url += 7;
@@ -1526,7 +1526,7 @@ is_relative_path_and_not_url_posix (const char *path_or_url) {
 }
 
 int
-is_relative_path_and_not_url_win32 (const char *path_or_url) {
+is_relative_path_win32 (const char *path_or_url) {
     // file url?
     if (!strncasecmp (path_or_url, "file://", 7)) {
         path_or_url += 7;
@@ -1548,13 +1548,13 @@ is_relative_path_and_not_url_win32 (const char *path_or_url) {
 
 #ifndef _WIN32
 int
-is_relative_path_and_not_url (const char *path_or_url) {
-    return is_relative_path_and_not_url_posix (path_or_url);
+is_relative_path (const char *path_or_url) {
+    return is_relative_path_posix (path_or_url);
 }
 #else
 int
-is_relative_path_and_not_url (const char *path_or_url) {
-    return is_relative_path_and_not_url_win32 (path_or_url);
+is_relative_path (const char *path_or_url) {
+    return is_relative_path_win32 (path_or_url);
 }
 #endif
 
