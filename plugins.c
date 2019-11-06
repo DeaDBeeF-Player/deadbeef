@@ -1538,12 +1538,18 @@ is_relative_path_win32 (const char *path_or_url) {
         }
     }
 
-    // path starts with a disk drive?
-    return (strlen (path_or_url) < 3
-            || !isalpha(path_or_url[0])
-            || path_or_url[1] != ':'
-            || !(path_or_url[2] == '\\' || path_or_url[2] == '/')
-            || !(path_or_url[3] != '\\' && path_or_url[3] != '/'));
+    // absolute paths start with "C:\" (or any other letter)
+    // UNC paths can also be absolute (starting with "\\")
+    // NOTE: this test won't cover \\? relative path and absolute path starting with "\"
+    if (strlen (path_or_url) >= 3) {
+        if (isalpha(path_or_url[0]) && path_or_url[1] == ':' && (path_or_url[2] == '\\' || path_or_url[2] == '/')) {
+            return 0;
+        }
+        else if (path_or_url[0] == '\\' && path_or_url[1] == '\\') {
+            return 0;
+        }
+    }
+    return 1;
 }
 
 #ifndef _WIN32

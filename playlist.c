@@ -967,18 +967,6 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         fname += 7;
     }
 
-    // now that it's known we're not dealing with URL, check if it's a relative path
-    if (is_relative_path (fname)) {
-        return NULL;
-    }
-
-    // detect decoder
-    const char *eol = strrchr (fname, '.');
-    if (!eol) {
-        return NULL;
-    }
-    eol++;
-
     #ifdef __MINGW32__
     // replace backslashes with normal slashes
     char fname_conv[strlen(fname)+1];
@@ -997,6 +985,18 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         fname++;
     }
     #endif
+
+    // now that it's known we're not dealing with URL, check if it's a relative path
+    if (is_relative_path (fname)) {
+        return NULL;
+    }
+
+    // detect decoder
+    const char *eol = strrchr (fname, '.');
+    if (!eol) {
+        return NULL;
+    }
+    eol++;
 
     // handle cue files
     if (!strcasecmp (eol, "cue")) {
@@ -1170,10 +1170,6 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         dirname += 7;
     }
 
-    if (is_relative_path (dirname)) {
-        return NULL;
-    }
-
     #ifdef __MINGW32__
     // replace backslashes with normal slashes
     char dirname_conv[strlen(dirname)+1];
@@ -1192,6 +1188,10 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         dirname++;
     }
     #endif
+
+    if (is_relative_path (dirname)) {
+        return NULL;
+    }
 
     if (!playlist->follow_symlinks && !vfs) {
         struct stat buf;
