@@ -26,6 +26,9 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <math.h>
+#include <sys/time.h>
+
+//#define PERFORMANCE_STATS 1
 
 extern DB_functions_t *deadbeef;
 
@@ -372,6 +375,12 @@ _packet_same_fmt (mp3packet_t *ref_packet, mp3packet_t *packet) {
 
 int
 mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int startoffs, int endoffs, int64_t seek_to_sample) {
+#if PERFORMANCE_STATS
+    struct timeval start_tv;
+    struct timeval end_tv;
+    gettimeofday (&start_tv, NULL);
+#endif
+
     memset (info, 0, sizeof (mp3info_t));
     info->fsize = fsize;
     info->datasize = fsize-startoffs-endoffs;
@@ -387,6 +396,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     int err = -1;
 
     deadbeef->fseek (fp, startoffs, SEEK_SET);
+    info->num_seeks++;
 
     if (fsize > 0) {
         fsize -= endoffs;
@@ -420,11 +430,14 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
 
         if (fileoffs != offs) {
             deadbeef->fseek (fp, offs, SEEK_SET);
+            info->num_seeks++;
             fileoffs = offs;
         }
         if (deadbeef->fread (fhdr, 1, readsize, fp) != readsize) {
             goto error;
         }
+        info->num_reads++;
+        info->bytes_read += readsize;
         fileoffs += readsize;
 
         int res = _parse_packet (&packet, fhdr);
@@ -481,6 +494,9 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 if (deadbeef->fread (xinghdr, 1, sizeof (xinghdr), fp) != sizeof (xinghdr)) {
                     return -1;
                 }
+                info->num_reads++;
+                info->bytes_read += sizeof (xinghdr);
+
                 fileoffs += sizeof (xinghdr);
                 int xingres = _check_xing_header (info, &packet, xinghdr, (int)sizeof (xinghdr));
                 if (!xingres) {
@@ -527,7 +543,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
             // we still need to fetch a few packets to get averages right.
             // 200 packets give a pretty accurate value, and correspond
             // to less than 40KB or data
-            if (info->have_xing_header && !(flags & MP3_PARSE_FULLSCAN) && info->npackets >= 200) {
+            if (info->have_xing_header && seek_to_sample < 0 && !(flags & MP3_PARSE_FULLSCAN) && info->npackets >= 200) {
                 goto end;
             }
             // Calculate CBR duration from file size
@@ -601,5 +617,10 @@ end_noaverages:
     }
     err = 0;
 error:
+#if PERFORMANCE_STATS
+    gettimeofday (&end_tv, NULL);
+    float elapsed = (end_tv.tv_sec-start_tv.tv_sec) + (end_tv.tv_usec - start_tv.tv_usec) / 1000000.f;
+    printf ("mp3 stats:\nSeeks: %llu\nReads: %llu\nBytes: %llu\nTime: %f sec", info->num_seeks, info->num_reads, info->bytes_read, elapsed);
+#endif
     return err;
 }
