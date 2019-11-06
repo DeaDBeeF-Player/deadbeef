@@ -1496,41 +1496,67 @@ plug_is_local_file (const char *fname) {
     return 1;
 }
 
-int
-plug_is_relative_path (const char *fname) {
-    // file url?
-    if (!strncasecmp (fname, "file://", 7)) {
-        return fname[7] != '/';
-    }
-
-    // other url?
-    const char *f = fname;
+static int is_url (const char *path_or_url) {
+    const char *f = path_or_url;
     for (; *f; f++) {
         if (*f != ':' && !isalpha (*f)) {
             break; // not a URL
         }
         if (!strncmp (f, "://", 3)) {
-            return 0; // some URL
+            return 1; // some URL
+        }
+    }
+    return 0;
+}
+
+int
+is_relative_path_and_not_url_posix (const char *path_or_url) {
+    // file url?
+    if (!strncasecmp (path_or_url, "file://", 7)) {
+        path_or_url += 7;
+    }
+
+    // other url?
+    if (is_url (path_or_url)) {
+        return 0;
+    }
+
+    // path starts with a '/'?
+    return *path_or_url != '/';
+}
+
+int
+is_relative_path_and_not_url_win32 (const char *path_or_url) {
+    // file url?
+    if (!strncasecmp (path_or_url, "file://", 7)) {
+        path_or_url += 7;
+    }
+    else {
+        // other url?
+        if (is_url (path_or_url)) {
+            return 0;
         }
     }
 
+    // path starts with a disk drive?
+    return (strlen (path_or_url) < 3
+            || !isalpha(path_or_url[0])
+            || path_or_url[1] != ':'
+            || !(path_or_url[2] == '\\' || path_or_url[2] == '/')
+            || !(path_or_url[3] != '\\' && path_or_url[3] != '/'));
+}
 
 #ifndef _WIN32
-    // path starts with a '/'?
-    if (*fname != '/') {
-#else
-    // path starts with a disk drive?
-    if (strlen (fname) < 3
-        || !isalpha(fname[0])
-        || fname[1] != ':'
-        || !(fname[2] == '\\' || fname[2] == '//')
-        || !(fname[3] != '\\' && fname[3] != '//')) {
-#endif
-        return 1;
-    }
-
-    return 0;
+int
+is_relative_path_and_not_url (const char *path_or_url) {
+    return is_relative_path_and_not_url_posix (path_or_url);
 }
+#else
+int
+is_relative_path_and_not_url (const char *path_or_url) {
+    return is_relative_path_and_not_url_win32 (path_or_url);
+}
+#endif
 
 void
 background_job_increment (void) {
