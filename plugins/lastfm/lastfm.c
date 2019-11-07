@@ -34,8 +34,8 @@ static DB_misc_t plugin;
 static DB_functions_t *deadbeef;
 
 #define LFM_CLIENTID "ddb"
-#define SCROBBLER_URL_LFM "http://post.audioscrobbler.com"
-#define SCROBBLER_URL_LIBRE "http://turtle.libre.fm"
+#define SCROBBLER_URL_LFM "https://post.audioscrobbler.com"
+#define SCROBBLER_URL_LIBRE "https://turtle.libre.fm"
 
 #ifdef __MINGW32__
 #define LOOKUP_URL_FORMAT "cmd /c start http://www.last.fm/music/%s/_/%s"
@@ -133,6 +133,7 @@ curl_req_send (const char *req, const char *post) {
         return -1;
     }
     curl_easy_setopt(curl, CURLOPT_URL, req);
+    curl_easy_setopt(curl, CURLUSESSL_CONTROL, req);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, lastfm_curl_res);
     memset(lfm_err, 0, sizeof(lfm_err));
     curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, lfm_err);
