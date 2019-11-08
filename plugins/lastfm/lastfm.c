@@ -133,7 +133,7 @@ curl_req_send (const char *req, const char *post) {
         return -1;
     }
     curl_easy_setopt(curl, CURLOPT_URL, req);
-    curl_easy_setopt(curl, CURLUSESSL_CONTROL, req);
+    curl_easy_setopt(curl, CURLUSESSL_ALL, req);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, lastfm_curl_res);
     memset(lfm_err, 0, sizeof(lfm_err));
     curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, lfm_err);
