@@ -41,7 +41,6 @@ enum {
     STR_EV_SET_CURR_PLT, // streamer_set_current_playlist
     STR_EV_DSP_RELOAD, // reload dsp settings
     STR_EV_SET_DSP_CHAIN, // set new dsp chain
-    STR_EV_SHUFFLE_CHANGED, // tell the streamer that shuffle has changed, p1=new
 };
 
 int
