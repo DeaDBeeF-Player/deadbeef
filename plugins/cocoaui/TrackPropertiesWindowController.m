@@ -567,22 +567,21 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         [alert addButtonWithTitle:@"Cancel"];
         alert.messageText = @"Save changes?";
         alert.alertStyle = NSAlertStyleWarning;
-        [alert beginSheetModalForWindow:self.window modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:nil];
+
+        [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+            if (returnCode == NSAlertFirstButtonReturn) {
+                _close_after_writing = YES;
+                [self applyTrackPropertiesAction:alert];
+            }
+            else if (returnCode == NSAlertSecondButtonReturn){
+                self.modified = NO;
+                [self.window close];
+            }
+        }];
+
         return NO;
     }
     return YES;
-}
-
-- (void)alertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode
-        contextInfo:(void *)contextInfo {
-    if (returnCode == NSAlertFirstButtonReturn) {
-        _close_after_writing = YES;
-        [self applyTrackPropertiesAction:alert];
-    }
-    else if (returnCode == NSAlertSecondButtonReturn){
-        self.modified = NO;
-        [self.window close];
-    }
 }
 
 // FIXME: move to its own windowcontroller
@@ -887,33 +886,32 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     _addFieldName.stringValue =  @"";
     _addFieldAlreadyExists.hidden =  YES;
 
-    [NSApp beginSheet:_addFieldPanel modalForWindow:self.window modalDelegate:self didEndSelector:@selector(didEndCreateFieldPanel:returnCode:contextInfo:) contextInfo:nil];
-}
+    [self.window beginSheet:_addFieldPanel completionHandler:^(NSModalResponse returnCode) {
+        if (returnCode != NSModalResponseOK) {
+            return;
+        }
+        const char *key = [[_addFieldName stringValue] UTF8String];
+        for (int i = 0; i < [_store count]; i++) {
+            if (!strcasecmp(key, [_store [i][@"key"] UTF8String])) {
+                _addFieldAlreadyExists.hidden =  NO;
+                return;
+            }
+        }
 
-- (void)didEndCreateFieldPanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    [_addFieldPanel orderOut:self];
+        char title[strlen(key)+3];
+        snprintf (title, sizeof (title), "<%s>", key);
+        add_field (_store, key, title, 0, _tracks, _numtracks);
+        self.modified = YES;
+        [_metadataTableView reloadData];
+    }];
 }
 
 - (IBAction)cancelAddFieldPanelAction:(id)sender {
-    [NSApp endSheet:_addFieldPanel];
+    [self.window endSheet:_addFieldPanel returnCode:NSModalResponseCancel];
 }
 
 - (IBAction)okAddFieldPanelAction:(id)sender {
-    const char *key = [[_addFieldName stringValue] UTF8String];
-    for (int i = 0; i < [_store count]; i++) {
-        if (!strcasecmp(key, [_store [i][@"key"] UTF8String])) {
-            _addFieldAlreadyExists.hidden =  NO;
-            return;
-        }
-    }
-
-    char title[strlen(key)+3];
-    snprintf (title, sizeof (title), "<%s>", key);
-    add_field (_store, key, title, 0, _tracks, _numtracks);
-    self.modified = YES;
-    [_metadataTableView reloadData];
-    [NSApp endSheet:_addFieldPanel];
-
+    [self.window endSheet:_addFieldPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)cancelEditMultipleValuesPanel:(id)sender {
