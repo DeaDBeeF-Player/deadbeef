@@ -431,7 +431,7 @@ enum {
     DB_EV_PAUSE = 6, // pause playback
     DB_EV_PLAY_RANDOM = 7, // play random track
     DB_EV_TERMINATE = 8, // must be sent to player thread to terminate
-    DB_EV_PLAYLIST_REFRESH = 9, // [DEPRECATED IN API LEVEL 8, use DB_EV_PLAYLISTCHANGED instead] save and redraw current playlist
+    DB_EV_PLAYLIST_REFRESH DEPRECATED_18 = 9, // [use DB_EV_PLAYLISTCHANGED instead]
     DB_EV_REINIT_SOUND = 10, // reinitialize sound output with current output_plugin config value
     DB_EV_CONFIGCHANGED = 11, // one or more config options were changed
     DB_EV_TOGGLE_PAUSE = 12,
@@ -1519,21 +1519,21 @@ enum {
     // Indicates that this action can work when multiple tracks are selected
     DB_ACTION_MULTIPLE_TRACKS = 1 << 2,
 
-    // Different name for DB_ACTION_MULTIPLE_TRACKS, DEPRECATED in API 1.5
-    DB_ACTION_ALLOW_MULTIPLE_TRACKS = 1 << 2,
+    // Use DB_ACTION_MULTIPLE_TRACKS instead
+    DB_ACTION_ALLOW_MULTIPLE_TRACKS DEPRECATED_15 = 1 << 2,
 
-    // DEPRECATED in API 1.5, ignored in callback2
+    // Ignored in callback2
     // Action will get the track list by itself, instead of getting the list as argument.
     // This is the default behavior when using callback2
-    DB_ACTION_CAN_MULTIPLE_TRACKS = 1 << 3,
+    DB_ACTION_CAN_MULTIPLE_TRACKS DEPRECATED_15 = 1 << 3,
 
     // Action is inactive
     DB_ACTION_DISABLED = 1 << 4,
 
 #if (DDB_API_LEVEL >= 2)
-    // DEPRECATED in API 1.5, ignored in callback2
+    // Ignored in callback2
     // Action for the playlist (tab)
-    DB_ACTION_PLAYLIST = (1 << 5),
+    DB_ACTION_PLAYLIST DEPRECATED_15 = (1 << 5),
 #endif
 
 #if (DDB_API_LEVEL >= 5)
@@ -1572,10 +1572,9 @@ typedef struct DB_plugin_action_s {
     const char *title;
     const char *name;
     uint32_t flags;
-    // the use of "callback" is deprecated,
-    // only use it if the code must be compatible with API 1.4
+    // Only use it if the code must be compatible with API 1.4,
     // otherwise switch to callback2
-    DB_plugin_action_callback_t callback;
+    DB_plugin_action_callback_t callback DEPRECATED_14;
     struct DB_plugin_action_s *next;
 #if (DDB_API_LEVEL >= 5)
     DB_plugin_action_callback2_t callback2;
