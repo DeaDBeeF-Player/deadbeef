@@ -249,8 +249,8 @@ send_trackchanged (playItem_t *from, playItem_t *to) {
     messagepump_push_event ((ddb_event_t *)event, 0, 0);
 }
 
-static void
-set_last_played (playItem_t *track) {
+void
+streamer_set_last_played (playItem_t *track) {
     if (last_played) {
         pl_item_unref (last_played);
     }
@@ -273,7 +273,7 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
     if (playing_track) {
         playing_track->played = 1;
 
-        set_last_played (playing_track);
+        streamer_set_last_played (playing_track);
 
         playItem_t *qnext = playqueue_getnext();
         if (qnext == playing_track) {
@@ -551,6 +551,9 @@ get_next_track (playItem_t *curr) {
         if (curr) {
             it = curr->next[PL_MAIN];
         }
+        else {
+            it = plt->head[PL_MAIN];
+        }
         if (!it) {
             trace ("streamer_move_nextsong: was last track\n");
             if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) {
@@ -582,7 +585,7 @@ get_prev_track (playItem_t *curr) {
     pl_lock ();
     
     // check if prev song is in this playlist
-    if (-1 == str_get_idx_of (curr)) {
+    if (curr && -1 == str_get_idx_of (curr)) {
         curr = NULL;
     }
 
@@ -655,6 +658,9 @@ get_prev_track (playItem_t *curr) {
         playItem_t *it = NULL;
         if (curr) {
             it = curr->prev[PL_MAIN];
+        }
+        else {
+            it = plt->tail[PL_MAIN];
         }
         if (!it) {
             pl_unlock ();
@@ -847,7 +853,7 @@ streamer_play_failed (playItem_t *failed_track) {
     }
 
     if (failed_track) {
-        set_last_played (failed_track);
+        streamer_set_last_played (failed_track);
         // the track has failed to be played,
         // but we want to send it down to streamreader for proper track switching etc.
         fileinfo = calloc(sizeof (DB_fileinfo_t), 1);
@@ -2312,11 +2318,8 @@ play_current (void) {
     }
 }
 
-static void
-play_next (int dir) {
-    DB_output_t *output = plug_get_output ();
-    streamer_reset(1);
-
+playItem_t *
+streamer_get_next_track_with_direction (int dir) {
     playItem_t *origin = NULL;
     if (buffering_track) {
         origin = buffering_track;
@@ -2360,8 +2363,18 @@ play_next (int dir) {
             }
         }
     }
+    return next;
+}
+
+static void
+play_next (int dir) {
+    DB_output_t *output = plug_get_output ();
+    streamer_reset(1);
+
+    playItem_t *next = streamer_get_next_track_with_direction (dir);
 
     if (!next) {
+        streamer_set_last_played (NULL);
         output->stop ();
         _handle_playback_stopped ();
         return;

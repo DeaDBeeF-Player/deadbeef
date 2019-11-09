@@ -66,6 +66,13 @@ streamer_unlock (void);
 void
 streamer_set_nextsong (int song, int startpaused);
 
+// returns next track according to repeat and shuffle settings, with specified direction
+playItem_t *
+streamer_get_next_track_with_direction (int dir);
+
+void
+streamer_set_last_played (playItem_t *track);
+
 void
 streamer_set_seek (float pos);
 

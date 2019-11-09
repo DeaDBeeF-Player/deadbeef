@@ -272,5 +272,4 @@ static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
     XCTAssert (count_played = 2);
 }
 
-
 @end

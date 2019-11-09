@@ -1,5 +1,5 @@
 //
-//  PlaylistTest.m
+//  PlaylistTests.m
 //  Tests
 //
 //  Created by Oleksiy Yakovenko on 24/10/2018.
@@ -10,13 +10,15 @@
 #include "deadbeef.h"
 #include "../../common.h"
 #include "playlist.h"
+#include "streamer.h"
 #include "plugins.h"
+#include "conf.h"
 
-@interface PlaylistTest : XCTestCase
+@interface PlaylistTests : XCTestCase
 
 @end
 
-@implementation PlaylistTest
+@implementation PlaylistTests
 
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -153,5 +155,95 @@
     int res = is_relative_path_win32 ("something:something");
     XCTAssertTrue(res);
 }
+
+
+- (playlist_t *)setupGetNextTrackTest {
+    conf_set_int ("playback.loop", PLAYBACK_MODE_NOLOOP);
+    pl_set_order (PLAYBACK_ORDER_LINEAR);
+    playlist_t *plt = plt_alloc ("testplt");
+
+    playItem_t *it1 = pl_item_alloc();
+    playItem_t *it2 = pl_item_alloc();
+    playItem_t *it3 = pl_item_alloc();
+
+    plt_insert_item (plt, NULL, it1);
+    plt_insert_item (plt, it1, it2);
+    plt_insert_item (plt, it2, it3);
+
+    plt_set_curr (plt);
+    streamer_set_streamer_playlist (plt);
+
+    pl_item_unref (it1);
+    pl_item_unref (it2);
+    pl_item_unref (it3);
+
+    return plt;
+}
+
+- (void)teardownGetNextTrackTest {
+    plt_set_curr(NULL);
+}
+
+- (void)test_GetNextTrackWithDirectionBackwards_RepeatOffShuffleOffNoCurrent_Last {
+    [self setupGetNextTrackTest];
+
+    streamer_set_last_played (NULL);
+
+    playItem_t *it = streamer_get_next_track_with_direction (-1);
+
+    playlist_t *plt = plt_get_curr();
+
+    XCTAssertEqual(it, plt->tail[PL_MAIN]);
+
+    plt_unref (plt);
+
+    if (it) {
+        pl_item_unref (it);
+    }
+
+    [self teardownGetNextTrackTest];
+}
+
+- (void)test_GetNextTrackWithDirectionBackwards_RepeatOffShuffleOffCurrentFirst_Null {
+    [self setupGetNextTrackTest];
+
+    playlist_t *plt = plt_get_curr();
+
+    streamer_set_last_played (plt->head[PL_MAIN]);
+
+    plt_unref (plt);
+
+    playItem_t *it = streamer_get_next_track_with_direction (-1);
+
+    XCTAssertEqual(it, NULL);
+
+    if (it) {
+        pl_item_unref (it);
+    }
+
+    [self teardownGetNextTrackTest];
+}
+
+- (void)test_GetNextTrackWithDirectionForward_RepeatOffShuffleOffCurrentNull_First {
+    [self setupGetNextTrackTest];
+
+    playlist_t *plt = plt_get_curr();
+
+    streamer_set_last_played (NULL);
+
+    plt_unref (plt);
+
+    playItem_t *it = streamer_get_next_track_with_direction (1);
+
+    XCTAssertEqual(it, plt->head[PL_MAIN]);
+
+    if (it) {
+        pl_item_unref (it);
+    }
+
+    [self teardownGetNextTrackTest];
+}
+
+
 
 @end
