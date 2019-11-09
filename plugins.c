@@ -61,6 +61,7 @@
 #include "sort.h"
 #include "logger.h"
 #include "replaygain.h"
+#include "playmodes.h"
 #ifdef __APPLE__
 #include "cocoautil.h"
 #endif
@@ -501,6 +502,10 @@ static DB_functions_t deadbeef_api = {
 
     .plt_is_loading_cue = (int (*)(ddb_playlist_t *))plt_is_loading_cue,
 
+    .streamer_set_shuffle = streamer_set_shuffle,
+    .streamer_get_shuffle = streamer_get_shuffle,
+    .streamer_set_repeat = streamer_set_repeat,
+    .streamer_get_repeat = streamer_get_repeat,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -827,7 +832,7 @@ load_gui_plugin (const char **plugdirs) {
             trace ("found selected GUI plugin: %s\n", g_gui_names[i]);
             for (int n = 0; plugdirs[n]; n++) {
                 snprintf (name, sizeof (name), "ddb_gui_%s" PLUGINEXT, conf_gui_plug);
-                if (!load_plugin (plugdirs[n], name, strlen (name))) {
+                if (!load_plugin (plugdirs[n], name, (int)strlen (name))) {
                     return 0;
                 }
             }
@@ -840,7 +845,7 @@ load_gui_plugin (const char **plugdirs) {
     for (int i = 0; g_gui_names[i]; i++) {
         for (int n = 0; plugdirs[n]; n++) {
             snprintf (name, sizeof (name), "ddb_gui_%s" PLUGINEXT, g_gui_names[i]);
-            if (!load_plugin (plugdirs[n], name, strlen (name))) {
+            if (!load_plugin (plugdirs[n], name, (int)strlen (name))) {
                 return 0;
             }
             else {

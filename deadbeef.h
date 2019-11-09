@@ -95,7 +95,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 10
+#define DB_API_VERSION_MINOR 11
 
 #if defined(__clang__)
 
@@ -128,6 +128,12 @@ extern "C" {
 
 #ifndef DDB_API_LEVEL
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 11)
+#define DEPRECATED_111 DDB_DEPRECATED("since deadbeef API 1.11")
+#else
+#define DEPRECATED_111
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 10)
@@ -255,6 +261,7 @@ typedef struct DB_playItem_s {
 typedef ddb_playItem_t DB_playItem_t;
 
 typedef struct {
+    char unused; // to shut up C++ warning
 } ddb_playlist_t;
 
 typedef struct DB_metaInfo_s {
@@ -322,7 +329,7 @@ enum output_state_t {
 };
 
 // playback order
-enum playback_order_t {
+enum playback_order_t DEPRECATED_111 {
     PLAYBACK_ORDER_LINEAR = 0,
     PLAYBACK_ORDER_SHUFFLE_TRACKS = 1,
     PLAYBACK_ORDER_RANDOM = 2,
@@ -330,11 +337,28 @@ enum playback_order_t {
 };
 
 // playback modes
-enum playback_mode_t {
+enum playback_mode_t DEPRECATED_111 {
     PLAYBACK_MODE_LOOP_ALL = 0, // loop playlist
     PLAYBACK_MODE_NOLOOP = 1, // don't loop
     PLAYBACK_MODE_LOOP_SINGLE = 2, // loop single track
 };
+
+#if (DDB_API_LEVEL >= 11)
+
+typedef enum ddb_shuffle_e {
+    DDB_SHUFFLE_OFF = 0,
+    DDB_SHUFFLE_TRACKS = 1,
+    DDB_SHUFFLE_RANDOM = 2,
+    DDB_SHUFFLE_ALBUMS = 3,
+} ddb_shuffle_t;
+
+typedef enum ddb_repeat_e {
+    DDB_REPEAT_ALL = 0,
+    DDB_REPEAT_OFF = 1,
+    DDB_REPEAT_SINGLE = 2,
+} ddb_repeat_t;
+
+#endif
 
 #if (DDB_API_LEVEL >= 8)
 // playlist change info, used in the DB_EV_PLAYLISTCHANGED p1 argument
@@ -1460,6 +1484,19 @@ typedef struct {
     // returns 1 to tell that cuesheet is being loaded now.
     // this should be called by plugins to prevent running cuesheet code at a wrong time.
     int (*plt_is_loading_cue) (ddb_playlist_t *plt);
+#endif
+
+// since 1.11
+#if (DDB_API_LEVEL >= 11)
+    // Set and get shuffle / repeat modes.
+
+    void (*streamer_set_shuffle) (ddb_shuffle_t shuffle);
+
+    ddb_shuffle_t (*streamer_get_shuffle) (void);
+
+    void (*streamer_set_repeat) (ddb_repeat_t repeat);
+
+    ddb_repeat_t (*streamer_get_repeat) (void);
 #endif
 } DB_functions_t;
 

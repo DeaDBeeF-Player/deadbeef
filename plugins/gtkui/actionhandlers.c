@@ -835,18 +835,18 @@ action_playback_order_linear_handler(DB_plugin_action_t *act, int ctx) {
 
 gboolean
 action_playback_order_cycle_handler_cb (void *data) {
-    int ord = deadbeef->conf_get_int ("playback.order", PLAYBACK_ORDER_LINEAR);
-    switch (ord) {
-    case PLAYBACK_ORDER_LINEAR:
+    int shuffle = deadbeef->streamer_get_shuffle ();
+    switch (shuffle) {
+    case DDB_SHUFFLE_OFF:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_shuffle")), 1);
         break;
-    case PLAYBACK_ORDER_SHUFFLE_TRACKS:
+    case DDB_SHUFFLE_TRACKS:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_shuffle_albums")), 1);
         break;
-    case PLAYBACK_ORDER_SHUFFLE_ALBUMS:
+    case DDB_SHUFFLE_ALBUMS:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_random")), 1);
         break;
-    case PLAYBACK_ORDER_RANDOM:
+    case DDB_SHUFFLE_RANDOM:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_linear")), 1);
         break;
     }
@@ -861,15 +861,15 @@ action_playback_order_cycle_handler(DB_plugin_action_t *act, int ctx) {
 
 gboolean
 action_playback_loop_cycle_handler_cb (void *data) {
-    int ord = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL);
-    switch (ord) {
-    case PLAYBACK_MODE_LOOP_ALL:
+    int repeat = deadbeef->streamer_get_repeat ();
+    switch (repeat) {
+    case DDB_REPEAT_ALL:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_single")), 1);
         break;
-    case PLAYBACK_MODE_LOOP_SINGLE:
+    case DDB_REPEAT_SINGLE:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_disable")), 1);
         break;
-    case PLAYBACK_MODE_NOLOOP:
+    case DDB_REPEAT_OFF:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_all")), 1);
         break;
     }

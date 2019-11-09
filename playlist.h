@@ -469,10 +469,7 @@ void
 pl_delete_metadata (playItem_t *it, struct DB_metaInfo_s *meta);
 
 void
-pl_set_order (int order);
-
-int
-pl_get_order (void);
+pl_reshuffle_all (void);
 
 playlist_t *
 pl_get_playlist (playItem_t *it);

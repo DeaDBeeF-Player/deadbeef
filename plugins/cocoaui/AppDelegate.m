@@ -109,7 +109,7 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, 
 
 - (void)configChanged
 {
-    NSMenuItem *order_items[] = {
+    NSMenuItem *shuffle_items[] = {
         _orderLinear,
         _orderShuffle,
         _orderRandom,
@@ -117,21 +117,21 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, 
         nil
     };
     
-    int order = deadbeef->conf_get_int ("playback.order", PLAYBACK_ORDER_LINEAR);
-    for (int i = 0; order_items[i]; i++) {
-        order_items[i].state = i==order?NSOnState:NSOffState;
+    ddb_shuffle_t shuffle = deadbeef->streamer_get_shuffle ();
+    for (int i = 0; shuffle_items[i]; i++) {
+        shuffle_items[i].state = i==shuffle?NSOnState:NSOffState;
     }
     
-    NSMenuItem *loop_items[] = {
+    NSMenuItem *repeat_items[] = {
         _loopAll,
         _loopNone,
         _loopSingle,
         nil
     };
     
-    int loop = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL);
-    for (int i = 0; loop_items[i]; i++) {
-        loop_items[i].state = i==loop?NSOnState:NSOffState;
+    ddb_repeat_t repeat = deadbeef->streamer_get_repeat ();
+    for (int i = 0; repeat_items[i]; i++) {
+        repeat_items[i].state = i==repeat?NSOnState:NSOffState;
     }
     
     _scrollFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)?NSOnState:NSOffState;
@@ -552,38 +552,31 @@ main_cleanup_and_quit (void);
 }
 
 - (IBAction)orderLinearAction:(id)sender {
-    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_LINEAR);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_shuffle (DDB_SHUFFLE_OFF);
 }
 
 - (IBAction)orderRandomAction:(id)sender {
-    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_RANDOM);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_shuffle (DDB_SHUFFLE_RANDOM);
 }
 
 - (IBAction)orderShuffleAction:(id)sender {
-    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_SHUFFLE_TRACKS);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_shuffle (DDB_SHUFFLE_TRACKS);
 }
 
 - (IBAction)orderShuffleAlbumsAction:(id)sender {
-    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_SHUFFLE_ALBUMS);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_shuffle (DDB_SHUFFLE_ALBUMS);
 }
 
 - (IBAction)loopAllAction:(id)sender {
-    deadbeef->conf_set_int ("playback.loop", 0);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_repeat (DDB_REPEAT_ALL);
 }
 
 - (IBAction)loopNoneAction:(id)sender {
-    deadbeef->conf_set_int ("playback.loop", 1);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_repeat (DDB_REPEAT_OFF);
 }
 
 - (IBAction)loopSingleAction:(id)sender {
-    deadbeef->conf_set_int ("playback.loop", 2);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_repeat (DDB_REPEAT_SINGLE);
 }
 
 - (IBAction)centerSelectionInVisibleArea:(id)sender {

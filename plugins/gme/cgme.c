@@ -481,7 +481,7 @@ static int
 cgme_start (void) {
     conf_fadeout = deadbeef->conf_get_int ("gme.fadeout", 10);
     conf_loopcount = deadbeef->conf_get_int ("gme.loopcount", 2);
-    conf_play_forever = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL) == PLAYBACK_MODE_LOOP_SINGLE;
+    conf_play_forever = deadbeef->streamer_get_repeat () == DDB_REPEAT_SINGLE;
     return 0;
 }
 
@@ -538,7 +538,7 @@ cgme_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     case DB_EV_CONFIGCHANGED:
         conf_fadeout = deadbeef->conf_get_int ("gme.fadeout", 10);
         conf_loopcount = deadbeef->conf_get_int ("gme.loopcount", 2);
-        conf_play_forever = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL) == PLAYBACK_MODE_LOOP_SINGLE;
+        conf_play_forever = deadbeef->streamer_get_repeat () == DDB_REPEAT_SINGLE;
         if (chip_voices != deadbeef->conf_get_int ("chip.voices", 0xff)) {
             chip_voices_changed = 1;
         }

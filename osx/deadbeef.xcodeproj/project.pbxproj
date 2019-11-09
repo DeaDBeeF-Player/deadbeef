@@ -267,6 +267,8 @@
 		2D08359A1D4F4DB600A5C643 /* cdumb.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0835991D4F4DB600A5C643 /* cdumb.h */; };
 		2D0A002819C390E9006F7462 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
 		2D0A6B0B2376E12200252E6D /* TrackSwitchingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A6B0A2376E12200252E6D /* TrackSwitchingTests.m */; };
+		2D0A6B1B237718DA00252E6D /* playmodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A6B19237718DA00252E6D /* playmodes.h */; };
+		2D0A6B1D23771B3300252E6D /* playmodes.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A6B1A237718DA00252E6D /* playmodes.c */; };
 		2D0E02E71E26703D00D3D8E6 /* libflaclib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */; };
 		2D0E02EA1E26706300D3D8E6 /* libogglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
 		2D0F90C21CCFF094003FA197 /* TaggingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F90C11CCFF094003FA197 /* TaggingTests.m */; };
@@ -3388,6 +3390,8 @@
 		2D0A002519C390E9006F7462 /* tf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tf.c; sourceTree = "<group>"; };
 		2D0A002619C390E9006F7462 /* tf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tf.h; sourceTree = "<group>"; };
 		2D0A6B0A2376E12200252E6D /* TrackSwitchingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackSwitchingTests.m; sourceTree = "<group>"; };
+		2D0A6B19237718DA00252E6D /* playmodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = playmodes.h; sourceTree = "<group>"; };
+		2D0A6B1A237718DA00252E6D /* playmodes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = playmodes.c; sourceTree = "<group>"; };
 		2D0F90C11CCFF094003FA197 /* TaggingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaggingTests.m; sourceTree = "<group>"; };
 		2D10DFFB1B9834FD00A2D465 /* resampler_sse2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = resampler_sse2.c; path = "plugins/dumb/dumb-kode54/src/helpers/resampler_sse2.c"; sourceTree = "<group>"; };
 		2D11D3B91B9DC67100C7C731 /* vtx.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = vtx.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8532,6 +8536,8 @@
 				4DC96E6E1E4CC9670093CFD3 /* dsp.h */,
 				2D40208D1F27BD7200D4EA4F /* cueutil.c */,
 				2D40208E1F27BD7200D4EA4F /* cueutil.h */,
+				2D0A6B19237718DA00252E6D /* playmodes.h */,
+				2D0A6B1A237718DA00252E6D /* playmodes.c */,
 			);
 			name = deadbeef;
 			path = ..;
@@ -10704,6 +10710,7 @@
 				2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
+				2D0A6B1B237718DA00252E6D /* playmodes.h in Headers */,
 				2D06B39D19D056BC0041BE86 /* DdbPlaylistWidget.h in Headers */,
 				2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* DdbSearchViewController.h in Headers */,
@@ -12480,6 +12487,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D0A6B1D23771B3300252E6D /* playmodes.c in Sources */,
 				2D01D7F21AB223CC00BCD3C4 /* parser.c in Sources */,
 				2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */,
 				2D01D7DD1AB2219C00BCD3C4 /* pltmeta.c in Sources */,

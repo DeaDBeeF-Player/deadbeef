@@ -52,6 +52,7 @@
 #include "playqueue.h"
 #include "streamreader.h"
 #include "dsp.h"
+#include "playmodes.h"
 
 #ifdef trace
 #undef trace
@@ -176,7 +177,7 @@ static void
 play_current (void);
 
 static void
-play_next (int dir);
+play_next (int dir, ddb_shuffle_t shuffle, ddb_repeat_t repeat);
 
 static void
 streamer_set_current_playlist_real (int plt);
@@ -199,13 +200,13 @@ streamer_abort_files (void) {
     trace ("%p %p %p\n", file, newfile, strfile);
 
     if (file) {
-        deadbeef->fabort (file);
+        vfs_fabort (file);
     }
     if (newfile) {
-        deadbeef->fabort (newfile);
+        vfs_fabort (newfile);
     }
     if (strfile) {
-        deadbeef->fabort (strfile);
+        vfs_fabort (strfile);
     }
 
 }
@@ -382,7 +383,7 @@ stop_after_album_check (playItem_t *cur, playItem_t *next) {
         if (conf_get_int ("playlist.stop_after_album_reset", 0)) {
             conf_set_int ("playlist.stop_after_album", 0);
             stop_after_album = 0;
-            deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+            messagepump_push (DB_EV_CONFIGCHANGED, 0, 0, 0);
         }
         return 1;
     }
@@ -420,7 +421,7 @@ stop_after_album_check (playItem_t *cur, playItem_t *next) {
     if (conf_get_int ("playlist.stop_after_album_reset", 0)) {
         conf_set_int ("playlist.stop_after_album", 0);
         stop_after_album = 0;
-        deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+        messagepump_push (DB_EV_CONFIGCHANGED, 0, 0, 0);
     }
 
     return 1;
@@ -452,7 +453,7 @@ get_random_track (void) {
 }
 
 static playItem_t *
-get_next_track (playItem_t *curr) {
+get_next_track (playItem_t *curr, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
     pl_lock ();
     if (!streamer_playlist) {
         playlist_t *plt = plt_get_curr ();
@@ -475,13 +476,9 @@ get_next_track (playItem_t *curr) {
         return NULL; // empty playlist
     }
 
-    int pl_order = pl_get_order ();
-
-    int pl_loop_mode = conf_get_int ("playback.loop", 0);
-
-    if (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) { // shuffle
+    if (shuffle == DDB_SHUFFLE_TRACKS || shuffle == DDB_SHUFFLE_ALBUMS) { // shuffle
         playItem_t *it = NULL;
-        if (!curr || pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS) {
+        if (!curr || shuffle == DDB_SHUFFLE_TRACKS) {
             // find minimal notplayed
             playItem_t *pmin = NULL; // notplayed minimum
             for (playItem_t *i = plt->head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
@@ -495,7 +492,7 @@ get_next_track (playItem_t *curr) {
             it = pmin;
             if (!it) {
                 // all songs played, reshuffle and try again
-                if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
+                if (repeat == DDB_REPEAT_ALL) { // loop
                     plt_reshuffle (streamer_playlist, &it, NULL);
                 }
             }
@@ -519,7 +516,7 @@ get_next_track (playItem_t *curr) {
             it = pmin;
             if (!it) {
                 // all songs played, reshuffle and try again
-                if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
+                if (repeat == DDB_REPEAT_ALL) { // loop
                     trace ("all songs played! reshuffle\n");
                     plt_reshuffle (streamer_playlist, &it, NULL);
                 }
@@ -546,7 +543,7 @@ get_next_track (playItem_t *curr) {
         pl_unlock ();
         return it;
     }
-    else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
+    else if (shuffle == DDB_SHUFFLE_OFF) { // linear
         playItem_t *it = NULL;
         if (curr) {
             it = curr->next[PL_MAIN];
@@ -556,7 +553,7 @@ get_next_track (playItem_t *curr) {
         }
         if (!it) {
             trace ("streamer_move_nextsong: was last track\n");
-            if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) {
+            if (repeat == DDB_REPEAT_ALL) {
                 it = plt->head[PL_MAIN];
             }
             else {
@@ -572,7 +569,7 @@ get_next_track (playItem_t *curr) {
         pl_unlock ();
         return it;
     }
-    else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
+    else if (shuffle == DDB_SHUFFLE_RANDOM) { // random
         pl_unlock ();
         return get_random_track ();
     }
@@ -581,7 +578,7 @@ get_next_track (playItem_t *curr) {
 }
 
 static playItem_t *
-get_prev_track (playItem_t *curr) {
+get_prev_track (playItem_t *curr, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
     pl_lock ();
     
     // check if prev song is in this playlist
@@ -601,9 +598,7 @@ get_prev_track (playItem_t *curr) {
         pl_unlock ();
         return NULL;
     }
-    int pl_order = conf_get_int ("playback.order", 0);
-    int pl_loop_mode = conf_get_int ("playback.loop", 0);
-    if (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) { // shuffle
+    if (shuffle == DDB_SHUFFLE_TRACKS || shuffle == DDB_SHUFFLE_ALBUMS) { // shuffle
         if (!curr) {
             playItem_t *it = plt->head[PL_MAIN];
             pl_item_ref(it);
@@ -628,7 +623,7 @@ get_prev_track (playItem_t *curr) {
                 }
             }
 
-            if (pmax && pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
+            if (pmax && shuffle == DDB_SHUFFLE_ALBUMS) {
                 while (pmax && pmax->next[PL_MAIN] && pmax->next[PL_MAIN]->played && pmax->shufflerating == pmax->next[PL_MAIN]->shufflerating) {
                     pmax = pmax->next[PL_MAIN];
                 }
@@ -637,7 +632,7 @@ get_prev_track (playItem_t *curr) {
             playItem_t *it = pmax;
             if (!it) {
                 // that means 1st in playlist, take amax
-                if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) {
+                if (repeat == DDB_REPEAT_ALL) {
                     if (!amax) {
                         plt_reshuffle (streamer_playlist, NULL, &amax);
                     }
@@ -654,7 +649,7 @@ get_prev_track (playItem_t *curr) {
             return it;
         }
     }
-    else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
+    else if (shuffle == DDB_SHUFFLE_OFF) { // linear
         playItem_t *it = NULL;
         if (curr) {
             it = curr->prev[PL_MAIN];
@@ -670,7 +665,7 @@ get_prev_track (playItem_t *curr) {
         pl_unlock ();
         return it;
     }
-    else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
+    else if (shuffle == DDB_SHUFFLE_RANDOM) { // random
         pl_unlock();
         return get_random_track();
     }
@@ -1288,22 +1283,21 @@ update_stop_after_current (void) {
     if (conf_get_int ("playlist.stop_after_current_reset", 0)) {
         conf_set_int ("playlist.stop_after_current", 0);
         stop_after_current = 0;
-        deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+        messagepump_push (DB_EV_CONFIGCHANGED, 0, 0, 0);
     }
 }
 
 static void
-streamer_next (void) {
+streamer_next (ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
     playItem_t *next = NULL;
     if (playing_track) {
-        int pl_loop_mode = conf_get_int ("playback.loop", 0);
-        if (pl_loop_mode == PLAYBACK_MODE_LOOP_SINGLE) { // song finished, loop mode is "loop 1 track"
+        if (repeat == DDB_REPEAT_SINGLE) { // song finished, loop mode is "loop 1 track"
             next = playing_track;
             pl_item_ref (next);
         }
     }
     if (!next) {
-        next = get_next_track (streaming_track);
+        next = get_next_track (streaming_track, shuffle, repeat);
     }
     stream_track (next, 0);
     if (next) {
@@ -1312,7 +1306,7 @@ streamer_next (void) {
 }
 
 static void
-streamer_notify_order_changed_real (int prev_order, int new_order);
+streamer_shuffle_changed (ddb_shuffle_t prev, ddb_shuffle_t shuffle);
 
 static void
 streamer_seek_real (float seekpos) {
@@ -1469,6 +1463,9 @@ streamer_thread (void *unused) {
     prctl (PR_SET_NAME, "deadbeef-stream", 0, 0, 0, 0);
 #endif
 
+    ddb_shuffle_t shuffle = -1;
+    ddb_repeat_t repeat = -1;
+
     uint32_t id;
     uintptr_t ctx;
     uint32_t p1, p2;
@@ -1486,13 +1483,13 @@ streamer_thread (void *unused) {
                 play_current ();
                 break;
             case STR_EV_NEXT:
-                play_next (1);
+                play_next (1, shuffle, repeat);
                 break;
             case STR_EV_PREV:
-                play_next (-1);
+                play_next (-1, shuffle, repeat);
                 break;
             case STR_EV_RAND:
-                play_next (0);
+                play_next (0, shuffle, repeat);
                 break;
             case STR_EV_SEEK:
                 streamer_seek_real(*((float *)&p1));
@@ -1506,13 +1503,19 @@ streamer_thread (void *unused) {
             case STR_EV_SET_DSP_CHAIN:
                 streamer_set_dsp_chain_real ((ddb_dsp_context_t *)ctx);
                 break;
-            case STR_EV_ORDER_CHANGED:
-                streamer_notify_order_changed_real(p1, p2);
-                break;
             }
         }
 
-        if (output->state () == OUTPUT_STATE_STOPPED) {
+        ddb_shuffle_t new_shuffle = streamer_get_shuffle ();
+        repeat = streamer_get_repeat ();
+
+        if (new_shuffle != shuffle) {
+            pl_reshuffle_all ();
+            streamer_shuffle_changed (shuffle, new_shuffle);
+            shuffle = new_shuffle;
+        }
+
+        if (output && output->state () == OUTPUT_STATE_STOPPED) {
             if (!handler_hasmessages (handler)) {
                 usleep (50000);
             }
@@ -1578,7 +1581,7 @@ streamer_thread (void *unused) {
                     stop = 1;
                 }
                 else {
-                    playItem_t *next = get_next_track(playing_track);
+                    playItem_t *next = get_next_track(playing_track, shuffle, repeat);
 
                     if (stop_after_album_check (playing_track, next)) {
                         stop = 1;
@@ -1592,7 +1595,7 @@ streamer_thread (void *unused) {
 
             // next track
             if (!stop) {
-                streamer_next ();
+                streamer_next (shuffle, repeat);
             }
             else {
                 stream_track(NULL, 0);
@@ -1638,12 +1641,11 @@ streamer_init (void) {
     wdl_mutex = mutex_create ();
 
     streamreader_init();
-    pl_set_order (conf_get_int ("playback.order", 0));
 
     streamer_dsp_init ();
 
     ctmap_init_mutex ();
-    deadbeef->conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, conf_network_ctmapping, sizeof (conf_network_ctmapping));
+    conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, conf_network_ctmapping, sizeof (conf_network_ctmapping));
     ctmap_init ();
 
     streamer_tid = thread_start (streamer_thread, NULL);
@@ -2113,7 +2115,14 @@ clamp_samplerate (int val) {
 void
 streamer_configchanged (void) {
     streamer_lock ();
-    pl_set_order (conf_get_int ("playback.order", 0));
+
+    ddb_shuffle_t shuffle = conf_get_int ("playback.order", DDB_SHUFFLE_OFF);
+    ddb_repeat_t repeat = conf_get_int ("playback.loop", DDB_REPEAT_OFF);
+
+    // legacy handling, in case repeat/shuffle values change via config directly
+    streamer_set_shuffle (shuffle);
+    streamer_set_repeat (repeat);
+
     if (playing_track) {
         playing_track->played = 1;
     }
@@ -2137,7 +2146,7 @@ streamer_configchanged (void) {
     stop_after_album = conf_get_int ("playlist.stop_after_album", 0);
 
     char mapstr[2048];
-    deadbeef->conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, mapstr, sizeof (mapstr));
+    conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, mapstr, sizeof (mapstr));
     if (strcmp (mapstr, conf_network_ctmapping)) {
         ctmap_init ();
     }
@@ -2331,7 +2340,7 @@ play_current (void) {
 }
 
 playItem_t *
-streamer_get_next_track_with_direction (int dir) {
+streamer_get_next_track_with_direction (int dir, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
     playItem_t *origin = NULL;
     if (buffering_track) {
         origin = buffering_track;
@@ -2342,10 +2351,10 @@ streamer_get_next_track_with_direction (int dir) {
 
     playItem_t *next = NULL;
     if (dir > 0) {
-        next = get_next_track (origin);
+        next = get_next_track (origin, shuffle, repeat);
     }
     else if (dir < 0) {
-        next = get_prev_track (origin);
+        next = get_prev_track (origin, shuffle, repeat);
     }
     else {
         next = get_random_track ();
@@ -2353,11 +2362,11 @@ streamer_get_next_track_with_direction (int dir) {
 
     // possibly need a reshuffle
     if (!next && streamer_playlist->count[PL_MAIN] != 0) {
-        int pl_loop_mode = conf_get_int ("playback.loop", 0);
-        int pl_order = conf_get_int ("playback.order", 0);
+        int pl_loop_mode = conf_get_int ("playback.loop", DDB_REPEAT_OFF);
+        int pl_order = conf_get_int ("playback.order", DDB_SHUFFLE_OFF);
 
-        if (pl_loop_mode == PLAYBACK_MODE_NOLOOP) {
-            if (pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS || pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS) {
+        if (pl_loop_mode == DDB_REPEAT_OFF) {
+            if (pl_order == DDB_SHUFFLE_ALBUMS || pl_order == DDB_SHUFFLE_TRACKS) {
                 plt_reshuffle (streamer_playlist, dir > 0 ? &next : NULL, dir < 0 ? &next : NULL);
                 if (next && dir < 0) {
                     // mark all songs as played except the current one
@@ -2379,11 +2388,11 @@ streamer_get_next_track_with_direction (int dir) {
 }
 
 static void
-play_next (int dir) {
+play_next (int dir, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
     DB_output_t *output = plug_get_output ();
     streamer_reset(1);
 
-    playItem_t *next = streamer_get_next_track_with_direction (dir);
+    playItem_t *next = streamer_get_next_track_with_direction (dir, shuffle, repeat);
 
     if (!next) {
         streamer_set_last_played (NULL);
@@ -2478,8 +2487,9 @@ _streamer_mark_album_played_up_to (playItem_t *item) {
 }
 
 static void
-streamer_notify_order_changed_real (int prev_order, int new_order) {
-    if (prev_order != PLAYBACK_ORDER_SHUFFLE_ALBUMS && new_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
+streamer_shuffle_changed (ddb_shuffle_t prev, ddb_shuffle_t shuffle) {
+    if (prev != DDB_SHUFFLE_ALBUMS && shuffle == DDB_SHUFFLE_ALBUMS) {
+
         streamer_lock ();
 
         playItem_t *curr = playing_track;
@@ -2489,11 +2499,6 @@ streamer_notify_order_changed_real (int prev_order, int new_order) {
 
         streamer_unlock ();
     }
-}
-
-void
-streamer_notify_order_changed (int prev_order, int new_order) {
-    handler_push (handler, STR_EV_ORDER_CHANGED, 0, prev_order, new_order);
 }
 
 void

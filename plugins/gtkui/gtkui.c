@@ -592,12 +592,12 @@ gtkui_on_configchanged (void *data) {
 
     // order
     const char *orderwidgets[4] = { "order_linear", "order_shuffle", "order_random", "order_shuffle_albums" };
-    w = orderwidgets[deadbeef->conf_get_int ("playback.order", PLAYBACK_ORDER_LINEAR)];
+    w = orderwidgets[deadbeef->streamer_get_shuffle ()];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
 
     // looping
     const char *loopingwidgets[3] = { "loop_all", "loop_disable", "loop_single" };
-    w = loopingwidgets[deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL)];
+    w = loopingwidgets[deadbeef->streamer_get_repeat ()];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
 
     // scroll follows playback

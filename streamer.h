@@ -41,7 +41,7 @@ enum {
     STR_EV_SET_CURR_PLT, // streamer_set_current_playlist
     STR_EV_DSP_RELOAD, // reload dsp settings
     STR_EV_SET_DSP_CHAIN, // set new dsp chain
-    STR_EV_ORDER_CHANGED, // tell the streamer that playback order has changed, p1=old, p2=new
+    STR_EV_SHUFFLE_CHANGED, // tell the streamer that shuffle has changed, p1=new
 };
 
 int
@@ -71,7 +71,7 @@ streamer_get_current_track_to_play (playlist_t *plt);
 
 // returns next track according to repeat and shuffle settings, with specified direction
 playItem_t *
-streamer_get_next_track_with_direction (int dir);
+streamer_get_next_track_with_direction (int dir, ddb_shuffle_t shuffle, ddb_repeat_t repeat);
 
 void
 streamer_set_last_played (playItem_t *track);
@@ -150,9 +150,6 @@ streamer_dsp_refresh (void);
 
 int
 streamer_dsp_chain_save (void);
-
-void
-streamer_notify_order_changed (int prev_order, int new_order);
 
 void
 audio_get_waveform_data (int type, float *data);

@@ -32,6 +32,7 @@
 #include "messagepump.h"
 #include "fakein.h"
 #include "fakeout.h"
+#include "playmodes.h"
 
 static int count_played;
 
@@ -167,7 +168,7 @@ wait_until_stopped (void) {
 
     streamer_init ();
 
-    conf_set_int ("playback.loop", PLAYBACK_MODE_NOLOOP);
+    streamer_set_repeat(DDB_REPEAT_OFF);
     count_played = 0;
 
     _mainloop_tid = thread_start (mainloop, NULL);
@@ -228,7 +229,7 @@ static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
 
 - (void)test_SwitchBetweenTracks_DoesNotJumpBackToPrevious {
     // for this test, we want "loop single" mode, to make sure first track is playing when we start the 2nd one.
-    conf_set_int ("playback.loop", PLAYBACK_MODE_LOOP_SINGLE);
+    streamer_set_repeat(DDB_REPEAT_SINGLE);
 
     playlist_t *plt = plt_alloc ("testplt");
     // create two test fake tracks

@@ -9,8 +9,10 @@
 #import <XCTest/XCTest.h>
 #include "deadbeef.h"
 #include "../../common.h"
-#include "streamer.h"
 #include "conf.h"
+#include "playlist.h"
+#include "streamer.h"
+#include "playmodes.h"
 
 @interface TrackSwitchingTests : XCTestCase
 
@@ -19,8 +21,8 @@
 @implementation TrackSwitchingTests
 
 - (void)setUp {
-    conf_set_int ("playback.loop", PLAYBACK_MODE_NOLOOP);
-    pl_set_order (PLAYBACK_ORDER_LINEAR);
+    streamer_set_repeat (DDB_REPEAT_OFF);
+    streamer_set_shuffle (DDB_SHUFFLE_OFF);
     playlist_t *plt = plt_alloc ("testplt");
 
     playItem_t *it1 = pl_item_alloc();
@@ -48,7 +50,7 @@
 - (void)test_GetNextTrackWithDirectionBackwards_RepeatOffShuffleOffNoCurrent_Last {
     streamer_set_last_played (NULL);
 
-    playItem_t *it = streamer_get_next_track_with_direction (-1);
+    playItem_t *it = streamer_get_next_track_with_direction (-1, DDB_SHUFFLE_OFF, DDB_REPEAT_OFF);
 
     playlist_t *plt = plt_get_curr();
 
@@ -66,7 +68,7 @@
 
     streamer_set_last_played (plt->head[PL_MAIN]);
 
-    playItem_t *it = streamer_get_next_track_with_direction (-1);
+    playItem_t *it = streamer_get_next_track_with_direction (-1, DDB_SHUFFLE_OFF, DDB_REPEAT_OFF);
 
     XCTAssertEqual(it, NULL);
 
@@ -82,7 +84,7 @@
 
     streamer_set_last_played (NULL);
 
-    playItem_t *it = streamer_get_next_track_with_direction (1);
+    playItem_t *it = streamer_get_next_track_with_direction (1, DDB_SHUFFLE_OFF, DDB_REPEAT_OFF);
 
     XCTAssertEqual(it, plt->head[PL_MAIN]);
 
