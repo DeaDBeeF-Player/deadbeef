@@ -77,12 +77,26 @@ extern DB_functions_t *deadbeef;
 
 - (void)menuAddColumn:(id)sender {
     [self initAddColumnSheet:-1];
-    [NSApp beginSheet:self.addColumnPanel modalForWindow:[self.view window]  modalDelegate:self didEndSelector:@selector(didEndAddColumn:returnCode:contextInfo:) contextInfo:nil];
+    [self.view.window beginSheet:self.addColumnPanel completionHandler:^(NSModalResponse returnCode) {
+        if (returnCode == NSModalResponseOK) {
+            int idx = [self insertColumn:_menuColumn];
+            if (idx >= 0) {
+                [self updateColumn:idx];
+            }
+        }
+    }];
 }
 
 - (void)menuEditColumn:(id)sender {
     [self initAddColumnSheet:_menuColumn];
-    [NSApp beginSheet:self.addColumnPanel modalForWindow:[self.view window]  modalDelegate:self didEndSelector:@selector(didEndEditColumn:returnCode:contextInfo:) contextInfo:nil];
+    [self.view.window beginSheet:self.addColumnPanel completionHandler:^(NSModalResponse returnCode) {
+        if (returnCode == NSModalResponseOK) {
+            int idx = _menuColumn;
+            if (idx >= 0) {
+                [self updateColumn:idx];
+            }
+        }
+    }];
 }
 
 - (void)initAddColumnSheet:(int)colIdx {
@@ -233,30 +247,6 @@ extern DB_functions_t *deadbeef;
 
     [self initColumn:idx withTitle:[[_addColumnTitle stringValue] UTF8String]  withId:(int)type withSize:_columns[idx].size withFormat:[[_addColumnFormat stringValue] UTF8String] withAlignment:(int)[_addColumnAlignment indexOfSelectedItem] withSetColor:_addColumnSetColor.state == NSOnState withColor:rgba];
     [self columnsChanged];
-}
-
-- (void)didEndAddColumn:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    [sheet orderOut:self];
-
-    if (returnCode == NSModalResponseOK) {
-        int idx = [self insertColumn:_menuColumn];
-        if (idx >= 0) {
-            [self updateColumn:idx];
-        }
-    }
-}
-
-- (void)didEndEditColumn:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    [sheet orderOut:self];
-
-    if (returnCode == NSModalResponseOK) {
-        int idx = _menuColumn;
-        if (idx >= 0) {
-            [self updateColumn:idx];
-        }
-    }
 }
 
 - (IBAction)addColumnCancel:(id)sender {
