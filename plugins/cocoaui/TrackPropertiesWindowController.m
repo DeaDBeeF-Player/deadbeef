@@ -546,16 +546,13 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
     _progress_aborted = NO;
 
-    [NSApp beginSheet:_progressPanel modalForWindow:self.window modalDelegate:self didEndSelector:@selector(progressPanelDidEnd:returnCode:contextInfo:) contextInfo:nil];
+    [self.window beginSheet:_progressPanel completionHandler:^(NSModalResponse returnCode) {
+    }];
 
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
         [self writeMetaWorker];
     });
-}
-
-- (void)progressPanelDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    [sheet orderOut:self];
 }
 
 - (IBAction)cancelWritingAction:(id)sender {
