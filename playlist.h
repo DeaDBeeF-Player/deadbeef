@@ -67,8 +67,8 @@ typedef struct playlist_s {
     int count[2];
     float totaltime;
     float seltime;
-    int modification_idx;
-    int last_save_modification_idx;
+    int modification_idx; // this value gets incremented each time playlist changes, and requires to be saved
+    int last_save_modification_idx; // a value of modification_idx at the time when the playlist was saved last time
     playItem_t *head[PL_MAX_ITERATORS]; // head of linked list
     playItem_t *tail[PL_MAX_ITERATORS]; // tail of linked list
     int current_row[PL_MAX_ITERATORS]; // current row (cursor)

@@ -1713,7 +1713,7 @@ pl_crop_selected (void) {
 int
 plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     LOCK;
-    plt->modification_idx = plt->last_save_modification_idx;
+    plt->last_save_modification_idx = plt->modification_idx;
     const char *ext = strrchr (fname, '.');
     if (ext) {
         DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();
