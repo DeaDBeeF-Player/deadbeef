@@ -93,6 +93,8 @@
     }
 }
 
+#pragma mark - Get Current Track
+
 - (void)test_GetCurrentTrackToPlay_NoCursor_First {
     playlist_t *plt = plt_get_curr();
     plt->current_row[PL_MAIN] = -1;
@@ -109,8 +111,6 @@
         pl_item_unref (it);
     }
 }
-
-#pragma mark - Get Current Track
 
 - (void)test_GetCurrentTrackToPlay_Cursor0_First {
     playlist_t *plt = plt_get_curr();
