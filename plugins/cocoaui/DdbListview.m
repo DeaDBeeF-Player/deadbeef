@@ -412,9 +412,9 @@ int grouptitleheight = 22;
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)event {
-    if ((event.type == NSRightMouseDown || event.type == NSLeftMouseDown)
+    if ((event.type == NSEventTypeRightMouseDown || event.type == NSEventTypeLeftMouseDown)
         && (event.buttonNumber == 1
-        || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask)))) {
+        || (event.buttonNumber == 0 && (event.modifierFlags & NSEventModifierFlagControl)))) {
         id <DdbListviewDelegate> delegate = [listview delegate];
         DdbListviewCol_t col = [self columnIndexForCoord:[event locationInWindow]];
         return [delegate contextMenuForColumn:col withEvent:event forView:self];
@@ -741,9 +741,9 @@ int grouptitleheight = 22;
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)event {
-    if ((event.type == NSRightMouseDown || event.type == NSLeftMouseDown)
+    if ((event.type == NSEventTypeRightMouseDown || event.type == NSEventTypeLeftMouseDown)
         && (event.buttonNumber == 1
-        || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask))))
+            || (event.buttonNumber == 0 && (event.modifierFlags & NSEventModifierFlagControl))))
     {
         if (event.buttonNumber == 0) {
             // ctrl+click blocks the mouseDown handler, do it now
@@ -808,10 +808,10 @@ int grouptitleheight = 22;
     }
 
     // single selection
-    if (event.buttonNumber != 0 || !(event.modifierFlags & (NSCommandKeyMask|NSShiftKeyMask))) {
+    if (event.buttonNumber != 0 || !(event.modifierFlags & (NSEventModifierFlagCommand|NSEventModifierFlagShift))) {
         [listview clickSelection:convPt grp:grp grp_index:grp_index sel:sel dnd:YES button:1];
     }
-    else if (event.buttonNumber == 0 && (event.modifierFlags & NSCommandKeyMask)) {
+    else if (event.buttonNumber == 0 && (event.modifierFlags & NSEventModifierFlagCommand)) {
         // toggle selection
         if (sel != -1) {
             DdbListviewRow_t it = [delegate rowForIndex:sel];
@@ -823,7 +823,7 @@ int grouptitleheight = 22;
             }
         }
     }
-    else if (event.buttonNumber == 0 && (event.modifierFlags & NSShiftKeyMask)) {
+    else if (event.buttonNumber == 0 && (event.modifierFlags & NSEventModifierFlagShift)) {
         // select range
         int cursor = sel;
         if (cursor == -1) {
@@ -1595,7 +1595,7 @@ int grouptitleheight = 22;
                 return;
         }
 
-        if ([theEvent modifierFlags] & NSShiftKeyMask) {
+        if ([theEvent modifierFlags] & NSEventModifierFlagShift) {
             if (cursor != prev) {
                 _delegate.cursor = cursor;
                 self.scrollForPos = [self rowPosForIndex:cursor];

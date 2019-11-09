@@ -239,7 +239,7 @@ extern DB_functions_t *deadbeef;
 {
     [sheet orderOut:self];
 
-    if (returnCode == NSOKButton) {
+    if (returnCode == NSModalResponseOK) {
         int idx = [self insertColumn:_menuColumn];
         if (idx >= 0) {
             [self updateColumn:idx];
@@ -251,7 +251,7 @@ extern DB_functions_t *deadbeef;
 {
     [sheet orderOut:self];
 
-    if (returnCode == NSOKButton) {
+    if (returnCode == NSModalResponseOK) {
         int idx = _menuColumn;
         if (idx >= 0) {
             [self updateColumn:idx];
@@ -260,11 +260,11 @@ extern DB_functions_t *deadbeef;
 }
 
 - (IBAction)addColumnCancel:(id)sender {
-    [NSApp endSheet:self.addColumnPanel returnCode:NSCancelButton];
+    [NSApp endSheet:self.addColumnPanel returnCode:NSModalResponseCancel];
 }
 
 - (IBAction)addColumnOK:(id)sender {
-    [NSApp endSheet:self.addColumnPanel returnCode:NSOKButton];
+    [NSApp endSheet:self.addColumnPanel returnCode:NSModalResponseOK];
 }
 
 #define DEFAULT_COLUMNS "[{\"title\":\"Playing\", \"id\":\"1\", \"format\":\"%playstatus%\", \"size\":\"50\"}, {\"title\":\"Artist / Album\", \"format\":\"$if(%album artist%,%album artist%,Unknown Artist)[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track number%\", \"size\":\"50\"}, {\"title\":\"Title / Track Artist\", \"format\":\"%title%[ // %track artist%]\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
@@ -304,7 +304,7 @@ extern DB_functions_t *deadbeef;
 
     NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
 
-    textStyle.alignment = NSLeftTextAlignment;
+    textStyle.alignment = NSTextAlignmentLeft;
     textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
     _colTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont smallSystemFontSize]], NSFontAttributeName
@@ -313,7 +313,7 @@ extern DB_functions_t *deadbeef;
                                , textStyle, NSParagraphStyleAttributeName
                                , nil];
 
-    textStyle.alignment = NSLeftTextAlignment;
+    textStyle.alignment = NSTextAlignmentLeft;
     textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
 

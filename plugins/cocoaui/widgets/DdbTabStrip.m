@@ -71,7 +71,7 @@ static int close_btn_right_offs = 16;
 - (NSDictionary *)titleAttributes {
     if (!_titleAttributes) {
         NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        textStyle.alignment = NSLeftTextAlignment;
+        textStyle.alignment = NSTextAlignmentLeft;
         textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
         NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize] weight:NSFontWeightMedium];
@@ -87,7 +87,7 @@ static int close_btn_right_offs = 16;
 - (NSDictionary *)titleAttributesSelected {
     if (!_titleAttributesSelected) {
         NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        textStyle.alignment = NSLeftTextAlignment;
+        textStyle.alignment = NSTextAlignmentLeft;
         textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
         NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize] weight:NSFontWeightSemibold];
@@ -607,7 +607,7 @@ plt_get_title_wrapper (int plt) {
     NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
     _lastMouseCoord = coord;
     _tab_clicked = [self tabUnderCursor:coord.x];
-    if (event.type == NSLeftMouseDown) {
+    if (event.type == NSEventTypeLeftMouseDown) {
         if ([self needArrows]) {
             NSSize a = self.bounds.size;
             if (coord.x < arrow_widget_width || coord.x >= a.width - arrow_widget_width) {
@@ -681,9 +681,9 @@ plt_get_title_wrapper (int plt) {
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent {
     NSPoint coord = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     _tab_clicked = [self tabUnderCursor:coord.x];
-    if ((theEvent.type == NSRightMouseDown || theEvent.type == NSLeftMouseDown)
+    if ((theEvent.type == NSEventTypeRightMouseDown || theEvent.type == NSEventTypeLeftMouseDown)
         && (theEvent.buttonNumber == 1
-            || (theEvent.buttonNumber == 0 && (theEvent.modifierFlags & NSControlKeyMask)))) {
+            || (theEvent.buttonNumber == 0 && (theEvent.modifierFlags & NSEventModifierFlagControl)))) {
         NSMenu *menu = [[NSMenu alloc] initWithTitle:@"TabMenu"];
         menu.delegate = self;
         menu.autoenablesItems = YES;
@@ -703,7 +703,7 @@ plt_get_title_wrapper (int plt) {
 -(void)otherMouseDown:(NSEvent *)event {
     NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
     _tab_clicked = [self tabUnderCursor:coord.x];
-    if (event.type == NSOtherMouseDown) {
+    if (event.type == NSEventTypeOtherMouseDown) {
         if (_tab_clicked == -1) {
             // new tab
             int playlist = cocoaui_add_new_playlist ();
@@ -722,7 +722,7 @@ plt_get_title_wrapper (int plt) {
 
 -(void)mouseUp:(NSEvent *)event
 {
-    if (event.type == NSLeftMouseUp) {
+    if (event.type == NSEventTypeLeftMouseUp) {
         if (_prepare || _dragging >= 0) {
             int dragged = _dragging;
             _dragging = -1;
@@ -906,7 +906,7 @@ plt_get_title_wrapper (int plt) {
 {
     [sheet orderOut:self];
 
-    if (returnCode == NSOKButton) {
+    if (returnCode == NSModalResponseOK) {
         ddb_playlist_t *plt = deadbeef->plt_get_for_idx (_tab_clicked);
         deadbeef->plt_set_title (plt, [[_renamePlaylistTitle stringValue] UTF8String]);
         deadbeef->plt_save_config (plt);
@@ -915,11 +915,11 @@ plt_get_title_wrapper (int plt) {
 }
 
 - (IBAction)renamePlaylistCancelAction:(id)sender {
-    [NSApp endSheet:self.renamePlaylistWindow returnCode:NSCancelButton];
+    [NSApp endSheet:self.renamePlaylistWindow returnCode:NSModalResponseCancel];
 }
 
 - (IBAction)renamePlaylistOKAction:(id)sender {
-    [NSApp endSheet:self.renamePlaylistWindow returnCode:NSOKButton];
+    [NSApp endSheet:self.renamePlaylistWindow returnCode:NSModalResponseOK];
 }
 
 @end

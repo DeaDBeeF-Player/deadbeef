@@ -569,7 +569,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         [alert addButtonWithTitle:@"No"];
         [alert addButtonWithTitle:@"Cancel"];
         alert.messageText = @"Save changes?";
-        alert.alertStyle = NSWarningAlertStyle;
+        alert.alertStyle = NSAlertStyleWarning;
         [alert beginSheetModalForWindow:self.window modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:nil];
         return NO;
     }
@@ -658,7 +658,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (IBAction)tagWriterSettingsCloseAction:(id)sender {
-    [NSApp endSheet:_tagWriterSettingsPanel returnCode:NSOKButton];
+    [NSApp endSheet:_tagWriterSettingsPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)mp3WriteID3v2Action:(NSButton *)sender {

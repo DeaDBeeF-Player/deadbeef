@@ -614,11 +614,11 @@ static NSMutableArray *g_converterControllers;
 }
 
 - (IBAction)closeEncoderPresetsAction:(id)sender {
-    [NSApp endSheet:_encoderPresetsPanel returnCode:NSOKButton];
+    [NSApp endSheet:_encoderPresetsPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)closeDSPPresetsAction:(id)sender {
-    [NSApp endSheet:_dspPresetsPanel returnCode:NSOKButton];
+    [NSApp endSheet:_dspPresetsPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)okAction:(id)sender {
@@ -663,7 +663,7 @@ static NSMutableArray *g_converterControllers;
         [alert addButtonWithTitle:@"OK"];
         alert.messageText = @"Encoder is not selected.";
         alert.informativeText = @"Please select one of the encoders from the list.";
-        alert.alertStyle = NSCriticalAlertStyle;
+        alert.alertStyle = NSAlertStyleCritical;
         [alert beginSheetModalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
 
         return;
@@ -826,7 +826,7 @@ static NSMutableArray *g_converterControllers;
         [alert addButtonWithTitle:@"Cancel"];
         alert.messageText = @"The file already exists. Overwrite?";
         alert.informativeText = path;
-        alert.alertStyle = NSCriticalAlertStyle;
+        alert.alertStyle = NSAlertStyleCritical;
 
         [alert beginSheetModalForWindow:_progressPanel modalDelegate:self didEndSelector:@selector(alertDidEndOverwritePrompt:returnCode:contextInfo:) contextInfo:nil];
     });

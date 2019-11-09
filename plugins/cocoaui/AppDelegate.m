@@ -359,7 +359,7 @@ main_cleanup_and_quit (void);
     openDlg.canChooseFiles = YES;
     openDlg.allowsMultipleSelection = YES;
     openDlg.canChooseDirectories = NO;
-    if ( [openDlg runModal] == NSOKButton )
+    if ( [openDlg runModal] == NSModalResponseOK )
     {
         NSArray* files = [openDlg URLs];
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -405,7 +405,7 @@ main_cleanup_and_quit (void);
     openDlg.canChooseFiles = NO;
     openDlg.allowsMultipleSelection = YES;
     openDlg.canChooseDirectories = YES;
-    if ( [openDlg runModal] == NSOKButton )
+    if ( [openDlg runModal] == NSModalResponseOK )
     {
         NSArray* files = [openDlg URLs];
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -524,18 +524,18 @@ main_cleanup_and_quit (void);
     deadbeef->conf_set_int ("cocoaui.sort_desc", state == NSOnState ? 1 : 0);
     deadbeef->conf_set_str ("cocoaui.custom_sort_tf", [[_customSortEntry stringValue] UTF8String]);
 
-    if (returnCode == NSOKButton) {
+    if (returnCode == NSModalResponseOK) {
         [self sortPlaylistByTF:[[_customSortEntry stringValue] UTF8String]];
     }
     deadbeef->conf_save ();
 }
 
 - (IBAction)customSortOKAction:(id)sender {
-    [NSApp endSheet:_customSortPanel returnCode:NSOKButton];
+    [NSApp endSheet:_customSortPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)customSortCancelAction:(id)sender {
-    [NSApp endSheet:_customSortPanel returnCode:NSOKButton];
+    [NSApp endSheet:_customSortPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)toggleDescendingSortOrderAction:(id)sender {
@@ -771,7 +771,7 @@ main_cleanup_and_quit (void);
     openDlg.canChooseFiles = YES;
     openDlg.allowsMultipleSelection = YES;
     openDlg.canChooseDirectories = NO;
-    if ([openDlg runModal] == NSOKButton)
+    if ([openDlg runModal] == NSModalResponseOK)
     {
         NSArray* files = [openDlg URLs];
         if ([files count] < 1) {
@@ -825,7 +825,7 @@ main_cleanup_and_quit (void);
     panel.allowedFileTypes = types;
     panel.allowsOtherFileTypes = NO;
 
-    if ([panel runModal] == NSOKButton) {
+    if ([panel runModal] == NSModalResponseOK) {
         NSString *fname = [[panel URL] path];
         if (fname) {
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();

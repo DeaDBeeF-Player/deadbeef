@@ -167,11 +167,11 @@
 }
 
 - (IBAction)configCancelAction:(id)sender {
-    [NSApp endSheet:_propertiesPanel returnCode:NSCancelButton];
+    [NSApp endSheet:_propertiesPanel returnCode:NSModalResponseCancel];
 }
 
 - (IBAction)configOkAction:(id)sender {
-    [NSApp endSheet:_propertiesPanel returnCode:NSOKButton];
+    [NSApp endSheet:_propertiesPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)configResetAction:(id)sender {

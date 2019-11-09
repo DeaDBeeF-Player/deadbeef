@@ -12042,10 +12042,9 @@
 			};
 			buildConfigurationList = 4D1B3E7518379829003E6066 /* Build configuration list for PBXProject "deadbeef" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 			);
