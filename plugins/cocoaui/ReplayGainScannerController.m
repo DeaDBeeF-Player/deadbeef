@@ -141,11 +141,8 @@ static NSMutableArray *g_rgControllers;
     self.window.isVisible = YES;
     [self.window makeKeyWindow];
 
-    [NSApp beginSheet: _scanProgressWindow
-       modalForWindow: self.window
-        modalDelegate: self
-       didEndSelector: nil
-          contextInfo: nil];
+    [self.window beginSheet:_scanProgressWindow completionHandler:^(NSModalResponse returnCode) {
+    }];
 
     memset (&_rg_settings, 0, sizeof (ddb_rg_scanner_settings_t));
     _rg_settings._size = sizeof (ddb_rg_scanner_settings_t);
@@ -276,18 +273,14 @@ static NSMutableArray *g_rgControllers;
     float speed = [self getScanSpeed:_rg_settings.cd_samples_processed overTime:timePassed];
     _resultStatusLabel.stringValue = [NSString stringWithFormat:@"Calculated in: %@, speed: %0.2fx", elapsed, speed];
 
-    [NSApp endSheet:_scanProgressWindow];
-    [_scanProgressWindow orderOut:self];
+    [self.window endSheet:_scanProgressWindow returnCode:NSModalResponseOK];
     _resultsTableView.dataSource = self;
     [_resultsTableView reloadData];
 }
 
 - (IBAction)updateFileTagsAction:(id)sender {
-    [NSApp beginSheet: _updateTagsProgressWindow
-       modalForWindow: self.window
-        modalDelegate: self
-       didEndSelector: nil
-          contextInfo: nil];
+    [self.window beginSheet:_updateTagsProgressWindow completionHandler:^(NSModalResponse returnCode) {
+    }];
 
     _abortTagWriting = NO;
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
@@ -316,8 +309,7 @@ static NSMutableArray *g_rgControllers;
         deadbeef->pl_save_all ();
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            [NSApp endSheet:_updateTagsProgressWindow];
-            [_updateTagsProgressWindow orderOut:self];
+            [self.window endSheet:_updateTagsProgressWindow returnCode:NSModalResponseOK];
             [self dismissController:self];
         });
     });
