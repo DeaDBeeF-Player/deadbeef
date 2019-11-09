@@ -329,18 +329,18 @@ enum output_state_t {
 };
 
 // playback order
-enum playback_order_t DEPRECATED_111 {
-    PLAYBACK_ORDER_LINEAR = 0,
-    PLAYBACK_ORDER_SHUFFLE_TRACKS = 1,
-    PLAYBACK_ORDER_RANDOM = 2,
-    PLAYBACK_ORDER_SHUFFLE_ALBUMS = 3,
+enum playback_order_t {
+    PLAYBACK_ORDER_LINEAR = 0 DEPRECATED_111,
+    PLAYBACK_ORDER_SHUFFLE_TRACKS = 1 DEPRECATED_111,
+    PLAYBACK_ORDER_RANDOM = 2 DEPRECATED_111,
+    PLAYBACK_ORDER_SHUFFLE_ALBUMS = 3 DEPRECATED_111,
 };
 
 // playback modes
-enum playback_mode_t DEPRECATED_111 {
-    PLAYBACK_MODE_LOOP_ALL = 0, // loop playlist
-    PLAYBACK_MODE_NOLOOP = 1, // don't loop
-    PLAYBACK_MODE_LOOP_SINGLE = 2, // loop single track
+enum playback_mode_t {
+    PLAYBACK_MODE_LOOP_ALL = 0 DEPRECATED_111, // loop playlist
+    PLAYBACK_MODE_NOLOOP = 1 DEPRECATED_111, // don't loop
+    PLAYBACK_MODE_LOOP_SINGLE = 2 DEPRECATED_111, // loop single track
 };
 
 #if (DDB_API_LEVEL >= 11)
