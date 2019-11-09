@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15400" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <development version="9000" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15400"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -622,6 +621,7 @@ CA
                     </menu>
                 </menuItem>
             </items>
+            <point key="canvasLocation" x="139" y="139"/>
         </menu>
         <customObject id="494" customClass="AppDelegate">
             <connections>
@@ -665,7 +665,7 @@ CA
                         <rect key="frame" x="80" y="54" width="264" height="19"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Type URL here" drawsBackground="YES" id="Kzo-Mq-Xge">
-                            <font key="font" metaFont="message" size="11"/>
+                            <font key="font" metaFont="menu" size="11"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -714,27 +714,27 @@ Gw
         <window title="Adding files..." allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="h34-jZ-Lmi">
             <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="163" y="199" width="368" height="32"/>
+            <rect key="contentRect" x="163" y="199" width="368" height="68"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
             <view key="contentView" id="UsQ-WG-CU4">
-                <rect key="frame" x="0.0" y="0.0" width="368" height="32"/>
+                <rect key="frame" x="0.0" y="0.0" width="368" height="68"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="541-M0-bI8">
-                        <rect key="frame" x="5" y="8" width="333" height="16"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <rect key="frame" x="8" y="38" width="353" height="21"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" lineBreakMode="truncatingHead" allowsUndo="NO" sendsActionOnEndEditing="YES" borderStyle="bezel" usesSingleLineMode="YES" id="8PK-Uo-vxc">
-                            <font key="font" metaFont="miniSystem"/>
+                            <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h1r-wo-zgG">
-                        <rect key="frame" x="341" y="6" width="21" height="19"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="NSStopProgressTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7Az-8Q-v62">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                            <font key="font" metaFont="systemBold" size="12"/>
+                        <rect key="frame" x="285" y="2" width="82" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7Az-8Q-v62">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
                             <string key="keyEquivalent" base64-UTF8="YES">
 Gw
 </string>
@@ -745,7 +745,7 @@ Gw
                     </button>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="95" y="17"/>
+            <point key="canvasLocation" x="95" y="35"/>
         </window>
         <window title="Custom Sort" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="vHm-fI-UgZ" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
@@ -860,7 +860,4 @@ Gw
         </menu>
         <userDefaultsController representsSharedInstance="YES" id="16v-aV-PG8"/>
     </objects>
-    <resources>
-        <image name="NSStopProgressTemplate" width="11" height="11"/>
-    </resources>
 </document>

@@ -153,14 +153,15 @@ static int fileadd_cancelled = 0;
 static void fileadd_begin (ddb_fileadd_data_t *data, void *user_data) {
     fileadd_cancelled = 0;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [NSApp beginSheet:g_appDelegate.addFilesWindow modalForWindow:[[g_appDelegate mainWindow] window] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+        [g_appDelegate.mainWindow.window beginSheet:g_appDelegate.addFilesWindow completionHandler:^(NSModalResponse returnCode) {
+
+        }];
     });
 }
 
 static void fileadd_end (ddb_fileadd_data_t *data, void *user_data) {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [g_appDelegate.addFilesWindow orderOut:g_appDelegate];
-        [NSApp endSheet:g_appDelegate.addFilesWindow];
+        [g_appDelegate.mainWindow.window endSheet:g_appDelegate.addFilesWindow returnCode:NSModalResponseOK];
         [[[g_appDelegate mainWindow] window] makeKeyAndOrderFront:g_appDelegate];
     });
 }
