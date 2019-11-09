@@ -513,29 +513,26 @@ main_cleanup_and_quit (void);
     _customSortEntry.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.custom_sort_tf", "")];
     deadbeef->pl_unlock ();
     _customSortDescending.state = deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSOnState : NSOffState;
-    [NSApp beginSheet:_customSortPanel modalForWindow:_mainWindow.window modalDelegate:self didEndSelector:@selector(didEndCustomSort:returnCode:contextInfo:) contextInfo:nil];
+    [_mainWindow.window beginSheet:_customSortPanel completionHandler:^(NSModalResponse returnCode) {
+        NSInteger state = _customSortDescending.state;
+        _descendingSortMode.state =  state;
+        deadbeef->conf_set_int ("cocoaui.sort_desc", state == NSOnState ? 1 : 0);
+        deadbeef->conf_set_str ("cocoaui.custom_sort_tf", [[_customSortEntry stringValue] UTF8String]);
 
-}
+        if (returnCode == NSModalResponseOK) {
+            [self sortPlaylistByTF:[[_customSortEntry stringValue] UTF8String]];
+        }
+        deadbeef->conf_save ();
+    }];
 
-- (void)didEndCustomSort:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    [sheet orderOut:self];
-    NSInteger state = _customSortDescending.state;
-    _descendingSortMode.state =  state;
-    deadbeef->conf_set_int ("cocoaui.sort_desc", state == NSOnState ? 1 : 0);
-    deadbeef->conf_set_str ("cocoaui.custom_sort_tf", [[_customSortEntry stringValue] UTF8String]);
-
-    if (returnCode == NSModalResponseOK) {
-        [self sortPlaylistByTF:[[_customSortEntry stringValue] UTF8String]];
-    }
-    deadbeef->conf_save ();
 }
 
 - (IBAction)customSortOKAction:(id)sender {
-    [NSApp endSheet:_customSortPanel returnCode:NSModalResponseOK];
+    [_mainWindow.window endSheet:_customSortPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)customSortCancelAction:(id)sender {
-    [NSApp endSheet:_customSortPanel returnCode:NSModalResponseOK];
+    [_mainWindow.window endSheet:_customSortPanel returnCode:NSModalResponseCancel];
 }
 
 - (IBAction)toggleDescendingSortOrderAction:(id)sender {
