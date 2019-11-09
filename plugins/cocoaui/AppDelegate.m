@@ -433,37 +433,37 @@ main_cleanup_and_quit (void);
 
 - (IBAction)addLocationAction:(id)sender {
     _addLocationTextField.stringValue = @"";
-    [NSApp beginSheet:_addLocationPanel modalForWindow:_mainWindow.window modalDelegate:nil didEndSelector:nil contextInfo:nil];
+    [_mainWindow.window beginSheet:_addLocationPanel completionHandler:^(NSModalResponse returnCode) {
+        if (returnCode == NSModalResponseOK) {
+            NSString *text = [_addLocationTextField stringValue];
+
+            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            if (!deadbeef->plt_add_files_begin (plt, 0)) {
+                dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+                dispatch_async(aQueue, ^{
+                    DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
+                    deadbeef->plt_insert_file2 (0, plt, tail, [text UTF8String], NULL, NULL, NULL);
+                    if (tail) {
+                        deadbeef->pl_item_unref (tail);
+                    }
+                    deadbeef->plt_add_files_end (plt, 0);
+                    deadbeef->plt_unref (plt);
+                    deadbeef->pl_save_current ();
+                });
+            }
+            else {
+                deadbeef->plt_unref (plt);
+            }
+        }
+    }];
 }
 
 - (IBAction)addLocationOKAction:(id)sender {
-    NSString *text = [_addLocationTextField stringValue];
-
-    [_addLocationPanel orderOut:self];
-    [NSApp endSheet:_addLocationPanel];
-
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (!deadbeef->plt_add_files_begin (plt, 0)) {
-        dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        dispatch_async(aQueue, ^{
-            DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
-            deadbeef->plt_insert_file2 (0, plt, tail, [text UTF8String], NULL, NULL, NULL);
-            if (tail) {
-                deadbeef->pl_item_unref (tail);
-            }
-            deadbeef->plt_add_files_end (plt, 0);
-            deadbeef->plt_unref (plt);
-            deadbeef->pl_save_current ();
-        });
-    }
-    else {
-        deadbeef->plt_unref (plt);
-    }
+    [_mainWindow.window endSheet:_addLocationPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)addLocationCancelAction:(id)sender {
-    [_addLocationPanel orderOut:self];
-    [NSApp endSheet:_addLocationPanel];
+    [_mainWindow.window endSheet:_addLocationPanel returnCode:NSModalResponseCancel];
 }
 
 - (IBAction)clearAction:(id)sender {

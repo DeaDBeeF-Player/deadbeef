@@ -627,7 +627,8 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     _wvStripAPEv2.state = wv_strip_apev2;
     _wvStripID3v1.state = wv_strip_id3v1;
 
-    [NSApp beginSheet:_tagWriterSettingsPanel modalForWindow:self.window modalDelegate:self didEndSelector:@selector(didEndTagWriterSettings:returnCode:contextInfo:) contextInfo:nil];
+    [self.window beginSheet:_tagWriterSettingsPanel completionHandler:^(NSModalResponse returnCode) {
+    }];
 }
 
 - (IBAction)reloadTrackPropertiesAction:(id)sender {
@@ -649,10 +650,6 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     [self close];
 }
 
-
-- (void)didEndTagWriterSettings:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    [_tagWriterSettingsPanel orderOut:self];
-}
 
 - (IBAction)tagWriterSettingsCloseAction:(id)sender {
     [NSApp endSheet:_tagWriterSettingsPanel returnCode:NSModalResponseOK];
@@ -739,11 +736,6 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     deadbeef->conf_save ();
 }
 
-- (void)didEndEditValuePanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    self.modified = YES;
-    [_editValuePanel orderOut:self];
-}
-
 - (IBAction)editValueAction:(id)sender {
     NSIndexSet *ind = [_metadataTableView selectedRowIndexes];
     if ([ind count] != 1) {
@@ -806,7 +798,9 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     _fieldName.stringValue =  [_store[idx][@"key"] uppercaseString];
     _fieldValue.string =  _store[idx][@"values"][0];
 
-    [NSApp beginSheet:_editValuePanel modalForWindow:self.window modalDelegate:self didEndSelector:@selector(didEndEditValuePanel:returnCode:contextInfo:) contextInfo:nil];
+    [self.window beginSheet:_editValuePanel completionHandler:^(NSModalResponse returnCode) {
+        self.modified = YES;
+    }];
 }
 
 - (IBAction)editInPlaceAction:(id)sender {
