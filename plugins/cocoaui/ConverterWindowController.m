@@ -375,14 +375,10 @@ static NSMutableArray *g_converterControllers;
 
 // encoder presets sheet
 - (IBAction)editEncoderPresetsAction:(id)sender {
-    [NSApp beginSheet:_encoderPresetsPanel modalForWindow:self.window modalDelegate:self didEndSelector:@selector(didEndEncoderPresetList:returnCode:contextInfo:) contextInfo:nil];
+    [self.window beginSheet:_encoderPresetsPanel completionHandler:^(NSModalResponse returnCode) {
+        [self fillEncoderPresets];
+    }];
 }
-
-- (void)didEndEncoderPresetList:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    [_encoderPresetsPanel orderOut:self];
-    [self fillEncoderPresets];
-}
-
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
 {
@@ -606,19 +602,16 @@ static NSMutableArray *g_converterControllers;
 
 // dsp presets sheet
 - (IBAction)editDSPPresetsAction:(id)sender {
-    [NSApp beginSheet:_dspPresetsPanel modalForWindow:self.window modalDelegate:self didEndSelector:@selector(didEndDSPPresetList:returnCode:contextInfo:) contextInfo:nil];
-}
-
-- (void)didEndDSPPresetList:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    [_dspPresetsPanel orderOut:self];
+    [self.window beginSheet:_dspPresetsPanel completionHandler:^(NSModalResponse returnCode) {
+    }];
 }
 
 - (IBAction)closeEncoderPresetsAction:(id)sender {
-    [NSApp endSheet:_encoderPresetsPanel returnCode:NSModalResponseOK];
+    [self.window endSheet:_encoderPresetsPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)closeDSPPresetsAction:(id)sender {
-    [NSApp endSheet:_dspPresetsPanel returnCode:NSModalResponseOK];
+    [self.window endSheet:_dspPresetsPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)okAction:(id)sender {
@@ -664,7 +657,8 @@ static NSMutableArray *g_converterControllers;
         alert.messageText = @"Encoder is not selected.";
         alert.informativeText = @"Please select one of the encoders from the list.";
         alert.alertStyle = NSAlertStyleCritical;
-        [alert beginSheetModalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
+        [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+        }];
 
         return;
     }
@@ -828,7 +822,12 @@ static NSMutableArray *g_converterControllers;
         alert.informativeText = path;
         alert.alertStyle = NSAlertStyleCritical;
 
-        [alert beginSheetModalForWindow:_progressPanel modalDelegate:self didEndSelector:@selector(alertDidEndOverwritePrompt:returnCode:contextInfo:) contextInfo:nil];
+        [alert beginSheetModalForWindow:_progressPanel completionHandler:^(NSModalResponse returnCode) {
+            [_overwritePromptCondition lock];
+            _overwritePromptResult = returnCode;
+            [_overwritePromptCondition signal];
+            [_overwritePromptCondition unlock];
+        }];
     });
 
     [_overwritePromptCondition lock];
@@ -836,15 +835,6 @@ static NSMutableArray *g_converterControllers;
     [_overwritePromptCondition unlock];
     _overwritePromptCondition = nil;
     return _overwritePromptResult;
-}
-
-- (void)alertDidEndOverwritePrompt:(NSAlert *)alert returnCode:(NSInteger)returnCode
-        contextInfo:(void *)contextInfo {
-
-    [_overwritePromptCondition lock];
-    _overwritePromptResult = returnCode;
-    [_overwritePromptCondition signal];
-    [_overwritePromptCondition unlock];
 }
 
 + (void)runConverter:(int)ctx {
