@@ -899,19 +899,14 @@ plt_get_title_wrapper (int plt) {
     deadbeef->plt_get_title (plt, buf, (int)sizeof buf);
     deadbeef->plt_unref (plt);
     _renamePlaylistTitle.stringValue = [NSString stringWithUTF8String:buf];
-    [NSApp beginSheet:self.renamePlaylistWindow modalForWindow:self.window modalDelegate:self didEndSelector:@selector(didEndRenamePlaylist:returnCode:contextInfo:) contextInfo:nil];
-}
-
-- (void)didEndRenamePlaylist:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    [sheet orderOut:self];
-
-    if (returnCode == NSModalResponseOK) {
-        ddb_playlist_t *plt = deadbeef->plt_get_for_idx (_tab_clicked);
-        deadbeef->plt_set_title (plt, [[_renamePlaylistTitle stringValue] UTF8String]);
-        deadbeef->plt_save_config (plt);
-        deadbeef->plt_unref (plt);
-    }
+    [self.window beginSheet:self.renamePlaylistWindow completionHandler:^(NSModalResponse returnCode) {
+        if (returnCode == NSModalResponseOK) {
+            ddb_playlist_t *plt = deadbeef->plt_get_for_idx (_tab_clicked);
+            deadbeef->plt_set_title (plt, [[_renamePlaylistTitle stringValue] UTF8String]);
+            deadbeef->plt_save_config (plt);
+            deadbeef->plt_unref (plt);
+        }
+    }];
 }
 
 - (IBAction)renamePlaylistCancelAction:(id)sender {
