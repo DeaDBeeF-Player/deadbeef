@@ -211,11 +211,11 @@
 
     streamer_set_last_played (plt->head[PL_MAIN]);
 
-    plt_unref (plt);
-
     playItem_t *it = streamer_get_next_track_with_direction (-1);
 
     XCTAssertEqual(it, NULL);
+
+    plt_unref (plt);
 
     if (it) {
         pl_item_unref (it);
@@ -231,11 +231,11 @@
 
     streamer_set_last_played (NULL);
 
-    plt_unref (plt);
-
     playItem_t *it = streamer_get_next_track_with_direction (1);
 
     XCTAssertEqual(it, plt->head[PL_MAIN]);
+
+    plt_unref (plt);
 
     if (it) {
         pl_item_unref (it);
@@ -244,6 +244,68 @@
     [self teardownGetNextTrackTest];
 }
 
+- (void)test_GetCurrentTrackToPlay_NoCursor_First {
+    [self setupGetNextTrackTest];
+
+    playlist_t *plt = plt_get_curr();
+    plt->current_row[PL_MAIN] = -1;
+
+    streamer_set_last_played (NULL);
+
+    playItem_t *it = streamer_get_current_track_to_play(plt);
+
+    XCTAssertEqual(it, plt->head[PL_MAIN]);
+
+    plt_unref (plt);
+
+    if (it) {
+        pl_item_unref (it);
+    }
+
+    [self teardownGetNextTrackTest];
+}
+
+- (void)test_GetCurrentTrackToPlay_Cursor0_First {
+    [self setupGetNextTrackTest];
+
+    playlist_t *plt = plt_get_curr();
+    plt->current_row[PL_MAIN] = 0;
+
+    streamer_set_last_played (NULL);
+
+    playItem_t *it = streamer_get_current_track_to_play(plt);
+
+    XCTAssertEqual(it, plt->head[PL_MAIN]);
+
+    plt_unref (plt);
+
+    if (it) {
+        pl_item_unref (it);
+    }
+
+    [self teardownGetNextTrackTest];
+}
+
+- (void)test_GetCurrentTrackToPlay_Cursor1_Second {
+    [self setupGetNextTrackTest];
+
+    playlist_t *plt = plt_get_curr();
+    plt->current_row[PL_MAIN] = 1;
+
+    streamer_set_last_played (NULL);
+
+    playItem_t *it = streamer_get_current_track_to_play(plt);
+
+    XCTAssertEqual(it, plt->head[PL_MAIN]->next[PL_MAIN]);
+
+    plt_unref (plt);
+
+    if (it) {
+        pl_item_unref (it);
+    }
+
+    [self teardownGetNextTrackTest];
+}
 
 
 @end

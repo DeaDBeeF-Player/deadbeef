@@ -2273,6 +2273,23 @@ error:
     streamer_unlock();
 }
 
+playItem_t *
+streamer_get_current_track_to_play (playlist_t *plt) {
+    int idx = plt->current_row[PL_MAIN];
+    if (plt->current_row[PL_MAIN] == -1 && plt->count[PL_MAIN]) {
+        idx = 0;
+    }
+
+    playItem_t *it = NULL;
+
+    if (idx >= 0) {
+        // currently selected track in current playlist
+        it = plt_get_item_for_idx (plt, idx, PL_MAIN);
+    }
+
+    return it;
+}
+
 // if a track is playing: restart
 // if a track is paused: unpause
 // if no track is playing: do what comes first:
@@ -2281,7 +2298,6 @@ error:
 //     stop playback
 static void
 play_current (void) {
-    playlist_t *plt = plt_get_curr ();
     DB_output_t *output = plug_get_output ();
     if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
         // restart if network stream
@@ -2295,27 +2311,18 @@ play_current (void) {
         return;
     }
 
-    int idx = plt->current_row[PL_MAIN];
-    if (plt->current_row[PL_MAIN] == -1 && plt->count[PL_MAIN]) {
-        idx = 0;
-    }
+    playlist_t *plt = plt_get_curr ();
+    playItem_t *it = streamer_get_current_track_to_play(plt);
 
-
-    if (idx >= 0) {
-        // play currently selected track in current playlist
-        streamer_reset(1);
-
-        playItem_t *next = plt_get_item_for_idx (plt, idx, PL_MAIN);
-
-        if (next) {
-            pl_lock ();
-            if (plt != streamer_playlist) {
-                streamer_set_streamer_playlist (plt);
-            }
-            pl_unlock ();
-            _play_track(next, 0);
-            pl_item_unref (next);
+    streamer_reset(1);
+    if (it) {
+        pl_lock ();
+        if (plt != streamer_playlist) {
+            streamer_set_streamer_playlist (plt);
         }
+        pl_unlock ();
+        _play_track(it, 0);
+        pl_item_unref (it);
     }
 
     if (plt) {
