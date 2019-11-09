@@ -2292,16 +2292,20 @@ play_current (void) {
         // unpause currently paused track
         output->unpause ();
         messagepump_push (DB_EV_PAUSED, 0, 0, 0);
+        return;
     }
-    else if (plt->current_row[PL_MAIN] != -1) {
+
+    int idx = plt->current_row[PL_MAIN];
+    if (plt->current_row[PL_MAIN] == -1 && plt->count[PL_MAIN]) {
+        idx = 0;
+    }
+
+
+    if (idx >= 0) {
         // play currently selected track in current playlist
         streamer_reset(1);
 
-        playItem_t *next = NULL;
-        int idx = plt->current_row[PL_MAIN];
-        if (idx >= 0) {
-            next = plt_get_item_for_idx (plt, idx, PL_MAIN);
-        }
+        playItem_t *next = plt_get_item_for_idx (plt, idx, PL_MAIN);
 
         if (next) {
             pl_lock ();
@@ -2313,6 +2317,7 @@ play_current (void) {
             pl_item_unref (next);
         }
     }
+
     if (plt) {
         plt_unref (plt);
     }
