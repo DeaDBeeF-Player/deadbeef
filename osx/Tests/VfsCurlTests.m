@@ -58,7 +58,7 @@ extern DB_functions_t *deadbeef;
     XCTAssertEqual (_file->gotheader, 1);
 }
 
-- (void)test_HandleIcyHeaders_IcyHeaderDataFollowedBuOtherData_OnlyHeaderIsConsumed {
+- (void)test_HandleIcyHeaders_IcyHeaderDataFollowedByOtherData_OnlyHeaderIsConsumed {
     char *data = "ICY 200 OK\r\n\r\nData";
     size_t consumed = vfs_curl_handle_icy_headers (strlen(data), _file, data);
     XCTAssertEqual (consumed, strlen(data)-4);
