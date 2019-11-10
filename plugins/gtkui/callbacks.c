@@ -237,8 +237,7 @@ void
 on_order_linear_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_LINEAR);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_shuffle (DDB_SHUFFLE_OFF);
 }
 
 
@@ -246,24 +245,21 @@ void
 on_order_shuffle_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_SHUFFLE_TRACKS);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_shuffle (DDB_SHUFFLE_TRACKS);
 }
 
 void
 on_order_shuffle_albums_activate       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_SHUFFLE_ALBUMS);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_shuffle (DDB_SHUFFLE_ALBUMS);
 }
 
 void
 on_order_random_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_RANDOM);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_shuffle (DDB_SHUFFLE_RANDOM);
 }
 
 
@@ -271,8 +267,7 @@ void
 on_loop_all_activate                   (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_int ("playback.loop", 0);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_repeat (DDB_REPEAT_ALL);
 }
 
 
@@ -280,8 +275,7 @@ void
 on_loop_single_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_int ("playback.loop", 2);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_repeat (DDB_REPEAT_SINGLE);
 }
 
 
@@ -289,8 +283,7 @@ void
 on_loop_disable_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_int ("playback.loop", 1);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_repeat (DDB_REPEAT_OFF);
 }
 
 gboolean

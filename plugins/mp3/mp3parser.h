@@ -91,6 +91,11 @@ typedef struct {
     mp3packet_t prev_packet;
 
     int checked_xing_header;
+
+    // read statistics
+    uint64_t num_seeks;
+    uint64_t num_reads;
+    uint64_t bytes_read;
 } mp3info_t;
 
 // Params:

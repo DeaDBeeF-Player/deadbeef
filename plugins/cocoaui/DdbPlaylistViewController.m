@@ -54,7 +54,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)cleanup {
-    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
+    DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
     [[view listview] cleanup];
     [self clearGrouping];
 
@@ -77,27 +77,41 @@ extern DB_functions_t *deadbeef;
 
 - (void)menuAddColumn:(id)sender {
     [self initAddColumnSheet:-1];
-    [NSApp beginSheet:self.addColumnPanel modalForWindow:[[self view] window]  modalDelegate:self didEndSelector:@selector(didEndAddColumn:returnCode:contextInfo:) contextInfo:nil];
+    [self.view.window beginSheet:self.addColumnPanel completionHandler:^(NSModalResponse returnCode) {
+        if (returnCode == NSModalResponseOK) {
+            int idx = [self insertColumn:_menuColumn];
+            if (idx >= 0) {
+                [self updateColumn:idx];
+            }
+        }
+    }];
 }
 
 - (void)menuEditColumn:(id)sender {
     [self initAddColumnSheet:_menuColumn];
-    [NSApp beginSheet:self.addColumnPanel modalForWindow:[[self view] window]  modalDelegate:self didEndSelector:@selector(didEndEditColumn:returnCode:contextInfo:) contextInfo:nil];
+    [self.view.window beginSheet:self.addColumnPanel completionHandler:^(NSModalResponse returnCode) {
+        if (returnCode == NSModalResponseOK) {
+            int idx = _menuColumn;
+            if (idx >= 0) {
+                [self updateColumn:idx];
+            }
+        }
+    }];
 }
 
 - (void)initAddColumnSheet:(int)colIdx {
     if (colIdx == -1) {
-        [_addColumnTitle setStringValue:@""];
+        _addColumnTitle.stringValue = @"";
         [_addColumnType selectItemAtIndex: 10];
-        [_addColumnFormat setEnabled:YES];
-        [_addColumnFormat setStringValue:@""];
+        _addColumnFormat.enabled = YES;
+        _addColumnFormat.stringValue = @"";
         [_addColumnAlignment selectItemAtIndex:0];
-        [_addColumnSetColor setState:NSOffState];
-        [_addColumnColor setEnabled:NO];
-        [_addColumnColor setColor:[NSColor blackColor]];
+        _addColumnSetColor.state = NSOffState;
+        _addColumnColor.enabled = NO;
+        _addColumnColor.color = NSColor.blackColor;
     }
     else {
-        [_addColumnTitle setStringValue:[NSString stringWithUTF8String:_columns[colIdx].title]];
+        _addColumnTitle.stringValue = [NSString stringWithUTF8String:_columns[colIdx].title];
         int type = 10; // custom
         switch (_columns[colIdx].type) {
         case DB_COLUMN_FILENUMBER:
@@ -111,25 +125,25 @@ extern DB_functions_t *deadbeef;
             break;
         }
         [_addColumnType selectItemAtIndex: type];
-        [_addColumnFormat setEnabled:type == 10];
-        [_addColumnFormat setStringValue:[NSString stringWithUTF8String:_columns[colIdx].format]];
+        _addColumnFormat.enabled = type == 10;
+        _addColumnFormat.stringValue = [NSString stringWithUTF8String:_columns[colIdx].format];
         [_addColumnAlignment selectItemAtIndex:(NSInteger)_columns[colIdx].alignment];
-        [_addColumnSetColor setState:_columns[colIdx].set_text_color];
-        [_addColumnColor setEnabled:_columns[colIdx].set_text_color];
+        _addColumnSetColor.state = _columns[colIdx].set_text_color;
+        _addColumnColor.enabled = _columns[colIdx].set_text_color;
         uint8_t *c = _columns[colIdx].text_color;
-        [[NSColorPanel sharedColorPanel] setShowsAlpha:YES];
-        [_addColumnColor setColor:[NSColor colorWithDeviceRed:c[0]/255.f green:c[1]/255.f blue:c[2]/255.f alpha:c[3]/255.f]];
+        [NSColorPanel sharedColorPanel].showsAlpha = YES;
+        _addColumnColor.color = [NSColor colorWithDeviceRed:c[0]/255.f green:c[1]/255.f blue:c[2]/255.f alpha:c[3]/255.f];
     }
 }
 
 - (IBAction)addColumnTypeChanged:(id)sender {
     BOOL isCustom = [_addColumnType indexOfSelectedItem] == 10;
-    [_addColumnFormat setEnabled: isCustom];
-    [_addColumnTitle setStringValue:[[_addColumnType selectedItem] title]];
+    _addColumnFormat.enabled =  isCustom;
+    _addColumnTitle.stringValue = [[_addColumnType selectedItem] title];
 }
 
-- (IBAction)addColumnSetColorChanged:(id)sender {
-    [_addColumnColor setEnabled:[sender state] == NSOnState];
+- (IBAction)addColumnSetColorChanged:(NSButton *)sender {
+    _addColumnColor.enabled = sender.state == NSOnState;
 }
 
 - (void)menuRemoveColumn:(id)sender {
@@ -139,13 +153,13 @@ extern DB_functions_t *deadbeef;
     }
 }
 
-- (void)menuTogglePinGroups:(id)sender {
-    _pin_groups = [sender state] == NSOnState ? 0 : 1;
-    [sender setState:_pin_groups?NSOnState:NSOffState];
+- (void)menuTogglePinGroups:(NSButton *)sender {
+    _pin_groups = sender.state == NSOnState ? 0 : 1;
+    sender.state = _pin_groups?NSOnState:NSOffState;
     deadbeef->conf_set_int ([self pinGroupsConfStr], _pin_groups);
     DdbPlaylistWidget *pw = (DdbPlaylistWidget *)self.view;
     DdbListview *lv = pw.listview;
-    [lv.contentView setNeedsDisplay:YES];
+    lv.contentView.needsDisplay = YES;
 }
 
 - (void)clearGrouping {
@@ -162,7 +176,7 @@ extern DB_functions_t *deadbeef;
 - (void)menuGroupByNone:(id)sender {
     [self clearGrouping];
     deadbeef->conf_remove_items ([self groupByConfStr]);
-    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
+    DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
     [[view listview] reloadData];
 }
 
@@ -170,7 +184,7 @@ extern DB_functions_t *deadbeef;
     [self clearGrouping];
     _group_str = strdup ("%album artist% - ['['%year%']' ]%album%");
     deadbeef->conf_set_str ([self groupByConfStr], _group_str);
-    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
+    DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
     [[view listview] reloadData];
 }
 
@@ -178,7 +192,7 @@ extern DB_functions_t *deadbeef;
     [self clearGrouping];
     _group_str = strdup ("%artist%");
     deadbeef->conf_set_str ([self groupByConfStr], _group_str);
-    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
+    DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
     [[view listview] reloadData];
 }
 
@@ -209,62 +223,38 @@ extern DB_functions_t *deadbeef;
         type = DB_COLUMN_ALBUM_ART;
         break;
     case 3: // artist / album
-        [_addColumnFormat setStringValue:@"$if(%album artist%,%album artist%,Unknown Artist)[ - %album%]"];
+        _addColumnFormat.stringValue = @"$if(%album artist%,%album artist%,Unknown Artist)[ - %album%]";
         break;
     case 4: // artist
-        [_addColumnFormat setStringValue:@"$if(%artist%,%artist%,Unknown Artist)"];
+        _addColumnFormat.stringValue = @"$if(%artist%,%artist%,Unknown Artist)";
         break;
     case 5: // album
-        [_addColumnFormat setStringValue:@"%album%"];
+        _addColumnFormat.stringValue = @"%album%";
         break;
     case 6: // title / track artist
-        [_addColumnFormat setStringValue:@"%title%[ // %track artist%]"];
+        _addColumnFormat.stringValue = @"%title%[ // %track artist%]";
         break;
     case 7: // duration
-        [_addColumnFormat setStringValue:@"%length%"];
+        _addColumnFormat.stringValue = @"%length%";
         break;
     case 8: // track number
-        [_addColumnFormat setStringValue:@"%tracknumber%"];
+        _addColumnFormat.stringValue = @"%tracknumber%";
         break;
     case 9: // album artist
-        [_addColumnFormat setStringValue:@"$if(%album artist%,%album artist%,Unknown Artist)"];
+        _addColumnFormat.stringValue = @"$if(%album artist%,%album artist%,Unknown Artist)";
         break;
     }
 
-    [self initColumn:idx withTitle:[[_addColumnTitle stringValue] UTF8String]  withId:(int)type withSize:_columns[idx].size withFormat:[[_addColumnFormat stringValue] UTF8String] withAlignment:(int)[_addColumnAlignment indexOfSelectedItem] withSetColor:[_addColumnSetColor state] == NSOnState withColor:rgba];
+    [self initColumn:idx withTitle:[[_addColumnTitle stringValue] UTF8String]  withId:(int)type withSize:_columns[idx].size withFormat:[[_addColumnFormat stringValue] UTF8String] withAlignment:(int)[_addColumnAlignment indexOfSelectedItem] withSetColor:_addColumnSetColor.state == NSOnState withColor:rgba];
     [self columnsChanged];
 }
 
-- (void)didEndAddColumn:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    [sheet orderOut:self];
-
-    if (returnCode == NSOKButton) {
-        int idx = [self insertColumn:_menuColumn];
-        if (idx >= 0) {
-            [self updateColumn:idx];
-        }
-    }
-}
-
-- (void)didEndEditColumn:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    [sheet orderOut:self];
-
-    if (returnCode == NSOKButton) {
-        int idx = _menuColumn;
-        if (idx >= 0) {
-            [self updateColumn:idx];
-        }
-    }
-}
-
 - (IBAction)addColumnCancel:(id)sender {
-    [NSApp endSheet:self.addColumnPanel returnCode:NSCancelButton];
+    [NSApp endSheet:self.addColumnPanel returnCode:NSModalResponseCancel];
 }
 
 - (IBAction)addColumnOK:(id)sender {
-    [NSApp endSheet:self.addColumnPanel returnCode:NSOKButton];
+    [NSApp endSheet:self.addColumnPanel returnCode:NSModalResponseOK];
 }
 
 #define DEFAULT_COLUMNS "[{\"title\":\"Playing\", \"id\":\"1\", \"format\":\"%playstatus%\", \"size\":\"50\"}, {\"title\":\"Artist / Album\", \"format\":\"$if(%album artist%,%album artist%,Unknown Artist)[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track number%\", \"size\":\"50\"}, {\"title\":\"Title / Track Artist\", \"format\":\"%title%[ // %track artist%]\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
@@ -295,26 +285,26 @@ extern DB_functions_t *deadbeef;
         [self loadColumns:json];
     }
     _playTpl = [NSImage imageNamed:@"btnplayTemplate.pdf"];
-    [_playTpl setFlipped:YES];
+    _playTpl.flipped = YES;
     _pauseTpl = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
-    [_pauseTpl setFlipped:YES];
+    _pauseTpl.flipped = YES;
     _bufTpl = [NSImage imageNamed:@"bufferingTemplate.pdf"];
-    [_bufTpl setFlipped:YES];
+    _bufTpl.flipped = YES;
 
 
     NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
 
-    [textStyle setAlignment:NSLeftTextAlignment];
-    [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
+    textStyle.alignment = NSTextAlignmentLeft;
+    textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
     _colTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont smallSystemFontSize]], NSFontAttributeName
                                , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                               , [NSColor controlTextColor], NSForegroundColorAttributeName
+                               , NSColor.controlTextColor, NSForegroundColorAttributeName
                                , textStyle, NSParagraphStyleAttributeName
                                , nil];
 
-    [textStyle setAlignment:NSLeftTextAlignment];
-    [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
+    textStyle.alignment = NSTextAlignmentLeft;
+    textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
 
     int rowheight = 18;
@@ -322,20 +312,20 @@ extern DB_functions_t *deadbeef;
     _groupTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
                                  [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
                                  , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                                 , [NSColor controlTextColor], NSForegroundColorAttributeName
+                                 , NSColor.controlTextColor, NSForegroundColorAttributeName
                                  , textStyle, NSParagraphStyleAttributeName
                                  , nil];
 
     _cellTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
                                 [NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
                                 , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                                , [NSColor controlTextColor], NSForegroundColorAttributeName
+                                , NSColor.controlTextColor, NSForegroundColorAttributeName
                                 , textStyle, NSParagraphStyleAttributeName
                                 , nil];
 
     _cellSelectedTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
                                         , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                                        , [NSColor alternateSelectedControlTextColor], NSForegroundColorAttributeName
+                                        , NSColor.alternateSelectedControlTextColor, NSForegroundColorAttributeName
                                         , textStyle, NSParagraphStyleAttributeName
                                         , nil];
 
@@ -360,7 +350,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)awakeFromNib {
-    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
+    DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
     view.delegate = self;
     [self initContent];
 
@@ -424,28 +414,28 @@ extern DB_functions_t *deadbeef;
     _menuColumn = (int)col;
     NSMenu *menu = [[NSMenu alloc] initWithTitle:@"ColumnMenu"];
     menu.delegate = self;
-    [menu setAutoenablesItems:NO];
-    [[menu insertItemWithTitle:@"Add Column" action:@selector(menuAddColumn:) keyEquivalent:@"" atIndex:0] setTarget:self];
+    menu.autoenablesItems = NO;
+    [menu insertItemWithTitle:@"Add Column" action:@selector(menuAddColumn:) keyEquivalent:@"" atIndex:0].target = self;
     if (col != -1) {
-        [[menu insertItemWithTitle:@"Edit Column" action:@selector(menuEditColumn:) keyEquivalent:@"" atIndex:1] setTarget:self];
-        [[menu insertItemWithTitle:@"Remove Column" action:@selector(menuRemoveColumn:) keyEquivalent:@"" atIndex:2] setTarget:self];
+        [menu insertItemWithTitle:@"Edit Column" action:@selector(menuEditColumn:) keyEquivalent:@"" atIndex:1].target = self;
+        [menu insertItemWithTitle:@"Remove Column" action:@selector(menuRemoveColumn:) keyEquivalent:@"" atIndex:2].target = self;
         NSMenuItem *item = [menu insertItemWithTitle:@"Pin Groups When Scrolling" action:@selector(menuTogglePinGroups:) keyEquivalent:@"" atIndex:3];
-        [item setState:_pin_groups?NSOnState:NSOffState];
-        [item setTarget:self];
+        item.state = _pin_groups?NSOnState:NSOffState;
+        item.target = self;
 
         [menu insertItem:[NSMenuItem separatorItem] atIndex:4];
 
         NSMenu *groupBy = [[NSMenu alloc] initWithTitle:@"Group By"];
         groupBy.delegate = self;
-        [groupBy setAutoenablesItems:NO];
+        groupBy.autoenablesItems = NO;
 
-        [[groupBy insertItemWithTitle:@"None" action:@selector(menuGroupByNone:) keyEquivalent:@"" atIndex:0] setTarget:self];
-        [[groupBy insertItemWithTitle:@"Artist/Date/Album" action:@selector(menuGroupByArtistDateAlbum:) keyEquivalent:@"" atIndex:1] setTarget:self];
-        [[groupBy insertItemWithTitle:@"Artist" action:@selector(menuGroupByArtist:) keyEquivalent:@"" atIndex:2] setTarget:self];
+        [groupBy insertItemWithTitle:@"None" action:@selector(menuGroupByNone:) keyEquivalent:@"" atIndex:0].target = self;
+        [groupBy insertItemWithTitle:@"Artist/Date/Album" action:@selector(menuGroupByArtistDateAlbum:) keyEquivalent:@"" atIndex:1].target = self;
+        [groupBy insertItemWithTitle:@"Artist" action:@selector(menuGroupByArtist:) keyEquivalent:@"" atIndex:2].target = self;
         [groupBy insertItemWithTitle:@"Custom" action:@selector(menuGroupByCustom:) keyEquivalent:@"" atIndex:3];
 
         NSMenuItem *groupByItem = [[NSMenuItem alloc] initWithTitle:@"Group By" action:nil keyEquivalent:@""];
-        [groupByItem setSubmenu:groupBy];
+        groupByItem.submenu = groupBy;
         [menu insertItem:groupByItem atIndex:5];
     }
 
@@ -595,8 +585,8 @@ extern DB_functions_t *deadbeef;
 - (void)columnsChanged {
     DdbPlaylistWidget *pw = (DdbPlaylistWidget *)self.view;
     DdbListview *lv = pw.listview;
-    [lv.headerView setNeedsDisplay:YES];
-    [lv.contentView setNeedsDisplay:YES];
+    lv.headerView.needsDisplay = YES;
+    lv.contentView.needsDisplay = YES;
 
     NSMutableArray *columns = [[NSMutableArray alloc] initWithCapacity:_ncolumns];
     for (int i = 0; i < _ncolumns; i++) {
@@ -646,7 +636,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect {
-    [[NSColor controlTextColor] set];
+    [NSColor.controlTextColor set];
     [[NSString stringWithUTF8String:_columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y-2, rect.size.width-6, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
 }
 
@@ -654,11 +644,11 @@ extern DB_functions_t *deadbeef;
     int sel = deadbeef->pl_is_selected((DB_playItem_t *)row);
     if (sel) {
         if (focused) {
-            [[NSColor alternateSelectedControlColor] set];
+            [NSColor.alternateSelectedControlColor set];
             [NSBezierPath fillRect:rect];
         }
         else {
-            [[NSColor controlShadowColor] set];
+            [NSColor.controlShadowColor set];
             [NSBezierPath fillRect:rect];
         }
     }
@@ -683,7 +673,7 @@ extern DB_functions_t *deadbeef;
             img = _bufTpl;
         }
 
-        NSColor *imgColor = sel ? [NSColor alternateSelectedControlTextColor] : [NSColor controlTextColor];
+        NSColor *imgColor = sel ? NSColor.alternateSelectedControlTextColor : NSColor.controlTextColor;
 
         CGContextRef c = [[NSGraphicsContext currentContext] graphicsPort];
         CGContextSaveGState(c);
@@ -744,7 +734,7 @@ extern DB_functions_t *deadbeef;
                 DB_playItem_t *trk = deadbeef->pl_get_for_idx_and_iter (ctx.idx, [self playlistIter]);
 
                 if (ctx.plt == curr && trk == self.playPosUpdateTrack) {
-                    DdbPlaylistWidget *view = (DdbPlaylistWidget *)[self view];
+                    DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
                     [[view listview] drawRow:idx];
                 }
                 if (trk) {
@@ -799,7 +789,7 @@ typedef struct {
 static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     cover_avail_info_t *info = user_data;
     DdbPlaylistViewController *ctl = (__bridge_transfer DdbPlaylistViewController *)info->ctl;
-    DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)[ctl view];
+    DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)ctl.view;
     DdbListview *listview = [pltWidget listview];
     [listview drawGroup:info->grp];
     free (info);
@@ -815,7 +805,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
                  viewportY:(int)viewportY
                      width:(int)width
                     height:(int)height {
-    DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)[self view];
+    DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)self.view;
     DdbListview *listview = [pltWidget listview];
     DB_playItem_t *it = (DB_playItem_t *)grp->head;
     cover_avail_info_t *inf = calloc (sizeof (cover_avail_info_t), 1);
@@ -926,7 +916,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 }
 
 - (void)selectionChanged:(DdbListviewRow_t)row {
-    DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)[self view];
+    DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)self.view;
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, (uintptr_t)[pltWidget listview], DDB_PLAYLIST_CHANGE_SELECTION, 0);
 }
 
@@ -998,7 +988,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 
         [listview reloadData];
         deadbeef->pl_unlock ();
-        [listview setVScroll:scroll];
+        listview.vScroll = scroll;
     }
 }
 
@@ -1176,7 +1166,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         _trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
     }
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    [_trkProperties setPlaylist: plt];
+    _trkProperties.playlist =  plt;
     deadbeef->plt_unref (plt);
     [_trkProperties fill];
     [_trkProperties showWindow:self];
@@ -1354,9 +1344,15 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 - (void)rgRemove:(id)sender {
     int count;
     DB_playItem_t **tracks = [self getSelectedTracksForRg:&count withRgTags:YES];
-    if (tracks) {
-        [ReplayGainScannerController removeRgTagsFromTracks:tracks count:count];
+    if (!tracks) {
+        return;
     }
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
+    [ReplayGainScannerController removeRgTagsFromTracks:tracks count:count];
 }
 
 - (void)rgScanAlbum:(id)sender {
@@ -1417,20 +1413,26 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 - (void)rgScan:(int)mode {
     int count;
     DB_playItem_t **tracks = [self getSelectedTracksForRg:&count withRgTags:NO];
-    if (tracks) {
-        [ReplayGainScannerController runScanner:mode forTracks:tracks count:count];
+    if (!tracks) {
+        return;
     }
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
+    [ReplayGainScannerController runScanner:mode forTracks:tracks count:count];
 }
 
 - (NSMenu *)contextMenuForEvent:(NSEvent *)event forView:(NSView *)view {
     NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
     BOOL enabled = [self selectedCount] != 0;
 
-    [[theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+    [theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0].enabled = enabled;
 
     NSMenu *rgMenu = [[NSMenu alloc] initWithTitle:@"ReplayGain"];
     rgMenu.delegate = self;
-    [rgMenu setAutoenablesItems:NO];
+    rgMenu.autoenablesItems = NO;
 
     BOOL __block has_rg_info = NO;
     BOOL __block can_be_rg_scanned = NO;
@@ -1455,28 +1457,28 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         } forIter:PL_MAIN];
     }
 
-    [[rgMenu insertItemWithTitle:@"Scan Per-file Track Gain" action:@selector(rgScanTracks:) keyEquivalent:@"" atIndex:0]  setEnabled:can_be_rg_scanned];
-    [[rgMenu insertItemWithTitle:@"Scan Selection As Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@"" atIndex:1] setEnabled:can_be_rg_scanned];
-    [[rgMenu insertItemWithTitle:@"Scan Selection As Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@"" atIndex:2] setEnabled:can_be_rg_scanned];
-    [[rgMenu insertItemWithTitle:@"Remove ReplayGain Information" action:@selector(rgRemove:) keyEquivalent:@"" atIndex:3] setEnabled:has_rg_info];
+    [rgMenu insertItemWithTitle:@"Scan Per-file Track Gain" action:@selector(rgScanTracks:) keyEquivalent:@"" atIndex:0].enabled = can_be_rg_scanned;
+    [rgMenu insertItemWithTitle:@"Scan Selection As Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@"" atIndex:1].enabled = can_be_rg_scanned;
+    [rgMenu insertItemWithTitle:@"Scan Selection As Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@"" atIndex:2].enabled = can_be_rg_scanned;
+    [rgMenu insertItemWithTitle:@"Remove ReplayGain Information" action:@selector(rgRemove:) keyEquivalent:@"" atIndex:3].enabled = has_rg_info;
 
     NSMenuItem *rgMenuItem = [[NSMenuItem alloc] initWithTitle:@"ReplayGain" action:nil keyEquivalent:@""];
-    [rgMenuItem setEnabled:enabled];
-    [rgMenuItem setSubmenu:rgMenu];
+    rgMenuItem.enabled = enabled;
+    rgMenuItem.submenu = rgMenu;
     [theMenu insertItem:rgMenuItem atIndex:0];
 
-    [[theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+    [theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0].enabled = enabled;
 
     // FIXME: should be added via plugin action
-    [[theMenu insertItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+    [theMenu insertItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@"" atIndex:0].enabled = enabled;
 
     [theMenu insertItem:[NSMenuItem separatorItem] atIndex:0];
 
-    [[theMenu insertItemWithTitle:@"Remove From Playback Queue" action:@selector(removeFromPlaybackQueue) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+    [theMenu insertItemWithTitle:@"Remove From Playback Queue" action:@selector(removeFromPlaybackQueue) keyEquivalent:@"" atIndex:0].enabled = enabled;
 
-    [[theMenu insertItemWithTitle:@"Add To Playback Queue" action:@selector(addToPlaybackQueue) keyEquivalent:@"" atIndex:0] setEnabled:enabled];
+    [theMenu insertItemWithTitle:@"Add To Playback Queue" action:@selector(addToPlaybackQueue) keyEquivalent:@"" atIndex:0].enabled = enabled;
 
-    [theMenu setAutoenablesItems:NO];
+    theMenu.autoenablesItems = NO;
 
     return theMenu;
 }

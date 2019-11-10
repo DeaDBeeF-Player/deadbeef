@@ -239,7 +239,7 @@ cdumb_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         conf_resampling_quality = deadbeef->conf_get_int ("dumb.resampling_quality", 4);
         conf_ramping_style = deadbeef->conf_get_int ("dumb.volume_ramping", 2);
         conf_global_volume = deadbeef->conf_get_int ("dumb.globalvolume", 64);
-        conf_play_forever = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL) == PLAYBACK_MODE_LOOP_SINGLE;
+        conf_play_forever = deadbeef->streamer_get_repeat () == DDB_REPEAT_SINGLE;
         break;
     }
     return 0;
@@ -444,7 +444,7 @@ cdumb_start (void) {
     conf_resampling_quality = deadbeef->conf_get_int ("dumb.resampling_quality", 4);
     conf_ramping_style = deadbeef->conf_get_int ("dumb.volume_ramping", 2);
     conf_global_volume = deadbeef->conf_get_int ("dumb.globalvolume", 64);
-    conf_play_forever = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL) == PLAYBACK_MODE_LOOP_SINGLE;
+    conf_play_forever = deadbeef->streamer_get_repeat () == DDB_REPEAT_SINGLE;
     return 0;
 }
 

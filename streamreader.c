@@ -93,22 +93,19 @@ streamreader_configchanged (void) {
 
 int
 streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t *fileinfo, uint64_t mutex) {
+    int size = BLOCK_SIZE;
     if (!fileinfo->plugin) {
         // return dummy block for a failed track
-        mutex_lock (mutex);
-        block->size = 0;
-        block->first = 1;
-        block->last = 1;
-        block->track = track;
         _firstblock = 1;
-        return 0;
+        size = 0;
     }
-    // clip size to max possible, with current sample format
-    int size = BLOCK_SIZE;
-    int samplesize = fileinfo->fmt.channels * (fileinfo->fmt.bps>>3);
-    int mod = size % samplesize;
-    if (mod) {
-        size -= mod;
+    else {
+        int samplesize = fileinfo->fmt.channels * (fileinfo->fmt.bps>>3);
+        // clip size to max possible, with current sample format
+        int mod = size % samplesize;
+        if (mod) {
+            size -= mod;
+        }
     }
 
     // replaygain settings
@@ -123,10 +120,12 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
 
     // NOTE: streamer_set_bitrate may be called during decoder->read, and set immediated bitrate of the block
     curr_block_bitrate = -1;
-    int rb = fileinfo->plugin->read (fileinfo, block->buf, size);
-
-    if (rb < 0) {
-        return -1;
+    int rb;
+    if (size > 0) {
+        rb = fileinfo->plugin->read (fileinfo, block->buf, size);
+    }
+    else {
+        rb = -1;
     }
 
     mutex_lock (mutex);
@@ -134,13 +133,22 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
     block->bitrate = curr_block_bitrate;
 
     block->pos = 0;
-    block->size = rb;
+    if (rb >= 0) {
+        block->size = rb;
+    }
+    else {
+        // this handles both a failed dummy track,
+        // and an interrupted corrupt stream.
+        block->size = 0;
+    }
     memcpy (&block->fmt, &fileinfo->fmt, sizeof (ddb_waveformat_t));
     block->track = track;
 
-    int input_does_rg = fileinfo->plugin->plugin.flags & DDB_PLUGIN_FLAG_REPLAYGAIN;
-    if (!input_does_rg) {
-        replaygain_apply (&fileinfo->fmt, block->buf, block->size);
+    if (size > 0) {
+        int input_does_rg = fileinfo->plugin->plugin.flags & DDB_PLUGIN_FLAG_REPLAYGAIN;
+        if (!input_does_rg) {
+            replaygain_apply (&fileinfo->fmt, block->buf, block->size);
+        }
     }
 
     if (_firstblock) {

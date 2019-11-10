@@ -26,11 +26,12 @@
 */
 #include <string.h>
 #include <stdlib.h>
-#include "playlist.h"
+#include "streamer.h"
 #include "volume.h"
 #include "replaygain.h"
 #include "conf.h"
 #include "common.h"
+#include "playmodes.h"
 
 static ddb_replaygain_settings_t current_settings;
 
@@ -132,8 +133,8 @@ _get_source_mode (int mode) {
     if (mode != DDB_RG_SOURCE_MODE_PLAYBACK_ORDER) {
         return mode;
     }
-    int order = pl_get_order ();
-    if (order == PLAYBACK_ORDER_SHUFFLE_ALBUMS || order == PLAYBACK_ORDER_LINEAR) {
+    ddb_shuffle_t shuffle = streamer_get_shuffle ();
+    if (shuffle == DDB_SHUFFLE_ALBUMS || shuffle == DDB_SHUFFLE_OFF) {
         return DDB_RG_SOURCE_MODE_ALBUM;
     }
     else {

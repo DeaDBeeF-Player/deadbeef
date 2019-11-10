@@ -54,7 +54,7 @@
                 NSString *value = [self.dataSource propertySheet:self valueForKey:key def:def item:self.item];
                 if ([ctl isKindOfClass:[NSPopUpButton class]]) {
                     NSPopUpButton *pb = (NSPopUpButton *)ctl;
-                    [pb setTitle:value];
+                    pb.title = value;
                 }
                 else {
                     ctl.stringValue = value;
@@ -66,8 +66,8 @@
 
 - (void)setDataSource:(id<PropertySheetDataSource>)dataSource {
     _dataSource = dataSource;
-    NSView *view = [self view];
-    _bindings = [[NSMutableArray alloc] init];
+    NSView *view = self.view;
+    _bindings = [NSMutableArray new];
 
     settings_data_free (&_settingsData);
 
@@ -98,7 +98,7 @@
         sz = [scrollView contentSize];
     }
     else {
-        sz = [view frame].size;
+        sz = view.frame.size;
         h = sz.height;
     }
 
@@ -108,13 +108,13 @@
 
     if (!have_settings) {
         NSTextField *lbl = [[NSTextField alloc] initWithFrame:NSMakeRect(0, sz.height/2 - unit_h/2, sz.width, unit_h)];
-        [lbl setStringValue:@"No properties available"];
-        [lbl setAlignment:NSTextAlignmentCenter];
-        [lbl setBezeled:NO];
-        [lbl setDrawsBackground:NO];
-        [lbl setEditable:NO];
-        [lbl setSelectable:NO];
-        [lbl setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin|NSViewMaxYMargin];
+        lbl.stringValue = @"No properties available";
+        lbl.alignment = NSTextAlignmentCenter;
+        lbl.bezeled = NO;
+        lbl.drawsBackground = NO;
+        lbl.editable = NO;
+        lbl.selectable = NO;
+        lbl.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin|NSViewMaxYMargin;
         [view addSubview:lbl];
         return;
     }
@@ -125,8 +125,8 @@
     if (_autoAlignLabels) {
         label_width = 0;
         NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        [textStyle setAlignment:NSLeftTextAlignment];
-        [textStyle setLineBreakMode:NSLineBreakByTruncatingTail];
+        textStyle.alignment = NSLeftTextAlignment;
+        textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
         NSDictionary *attrs = @{
                              NSParagraphStyleAttributeName: textStyle,
@@ -173,12 +173,12 @@
             {
                 NSTextField *lbl = [[NSTextField alloc] initWithFrame:NSMakeRect(padding, y+3, label_width, unit_h-6)];
                 NSString *title = [NSString stringWithUTF8String:_settingsData.props[i].title];
-                [lbl setStringValue:title];
-                [lbl setBezeled:NO];
-                [lbl setDrawsBackground:NO];
-                [lbl setEditable:NO];
-                [lbl setSelectable:NO];
-                [lbl setToolTip:title];
+                lbl.stringValue = title;
+                lbl.bezeled = NO;
+                lbl.drawsBackground = NO;
+                lbl.editable = NO;
+                lbl.selectable = NO;
+                lbl.toolTip = title;
                 lbl.cell.truncatesLastVisibleLine = YES;
                 lbl.cell.scrollable = NO;
                 lbl.cell.wraps = NO;
@@ -189,12 +189,12 @@
                     lbl.cell.lineBreakMode = NSLineBreakByTruncatingTail;
                 }
 
-                [lbl setFont:fontLabel];
+                lbl.font = fontLabel;
 
                 // resize label to fit content
                 calculated_label_w = [[lbl cell] cellSizeForBounds:lbl.bounds].width+1;
-                [lbl setFrame:NSMakeRect(padding+label_width-calculated_label_w, y+3, calculated_label_w, unit_h-6)];
-                [lbl setAutoresizingMask:NSViewMinYMargin];
+                lbl.frame = NSMakeRect(padding+label_width-calculated_label_w, y+3, calculated_label_w, unit_h-6);
+                lbl.autoresizingMask = NSViewMinYMargin;
 
                 [view addSubview:lbl];
             }
@@ -217,10 +217,10 @@
                 }
                 NSRect frame = NSMakeRect(label_width+padding*2, y+3, w, unit_h-3);
                 NSTextField *tf = _settingsData.props[i].type == PROP_PASSWORD ? [[NSSecureTextField alloc] initWithFrame:frame] : [[NSTextField alloc] initWithFrame:frame];
-                [tf setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin];
-                [tf setFont:fontContent];
-                [tf setUsesSingleLineMode:YES];
-                [tf setStringValue:value];
+                tf.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin;
+                tf.font = fontContent;
+                tf.usesSingleLineMode = YES;
+                tf.stringValue = value;
                 [view addSubview:tf];
                 [_bindings addObject:@{@"sender":tf,
                                        @"propname":propname,
@@ -231,7 +231,7 @@
 
                 if (_settingsData.props[i].type == PROP_FILE || _settingsData.props[i].type == PROP_DIR) {
                     BrowseButton *btn = [[BrowseButton alloc] initWithFrame:NSMakeRect(label_width+padding*3+w, y+unit_h/2-5, 12, 10)];
-                    [btn setAutoresizingMask:NSViewMinYMargin|NSViewMinXMargin];
+                    btn.autoresizingMask = NSViewMinYMargin|NSViewMinXMargin;
                     btn.isDir = _settingsData.props[i].type == PROP_DIR;
                     btn.initialPath = value;
                     btn.fileSelectedBlock = ^(NSString * _Nonnull path) {
@@ -247,11 +247,11 @@
             {
                 NSRect frame = NSMakeRect(label_width+padding*2, y+3, sz.width-label_width - padding*3, unit_h-3);
                 NSButton *checkbox = [[NSButton alloc] initWithFrame:frame];
-                [checkbox setButtonType:NSButtonTypeSwitch];
-                [checkbox setTitle:[NSString stringWithUTF8String:_settingsData.props[i].title]];
-                [checkbox setState:[value intValue] ? NSControlStateValueOn : NSControlStateValueOff];
-                [checkbox setFont:fontContent];
-                [checkbox setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin];
+                checkbox.buttonType = NSButtonTypeSwitch;
+                checkbox.title = [NSString stringWithUTF8String:_settingsData.props[i].title];
+                checkbox.state = [value intValue] ? NSControlStateValueOn : NSControlStateValueOff;
+                checkbox.font = fontContent;
+                checkbox.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin;
                 [view addSubview:checkbox];
 
                 [_bindings addObject:@{@"sender":checkbox,
@@ -259,8 +259,8 @@
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
                                        }];
 
-                [checkbox setTarget:self];
-                [checkbox setAction:@selector(valueChanged:)];
+                checkbox.target = self;
+                checkbox.action = @selector(valueChanged:);
 
                 break;
             }
@@ -269,33 +269,33 @@
                 int w = sz.width-label_width - padding*3;
                 NSRect frame = NSMakeRect(label_width+padding*2, y+3, w - _sliderLabelWidth-8, unit_h-3);
                 NSSlider *slider = [[NSSlider alloc] initWithFrame:frame];
-                [slider setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin];
+                slider.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin;
                 const char *opts = _settingsData.props[i].select_options;
                 float min, max, step;
                 sscanf (opts, "%f,%f,%f", &min, &max, &step);
 
                 if (min > max) {
-                    [slider setMinValue:max];
-                    [slider setMaxValue:min];
+                    slider.minValue = max;
+                    slider.maxValue = min;
                 }
                 else {
-                    [slider setMinValue:min];
-                    [slider setMaxValue:max];
+                    slider.minValue = min;
+                    slider.maxValue = max;
                 }
-                [slider setContinuous:YES];
+                slider.continuous = YES;
                 if (step == 1) {
-                    [slider setIntValue:[value intValue]];
+                    slider.intValue = [value intValue];
                 }
                 else {
-                    [slider setFloatValue:[value floatValue]];
+                    slider.floatValue = [value floatValue];
                 }
 
                 NSRect frame2 = NSMakeRect(label_width+padding*2 + w - _sliderLabelWidth - 4, y+3, _sliderLabelWidth, unit_h-3);
                 NSTextField *valueedit = [[NSTextField alloc] initWithFrame:frame2];
-                [valueedit setFont:fontContent];
-                [valueedit setAutoresizingMask:NSViewMinYMargin|NSViewMinXMargin];
-                [valueedit setStringValue:value];
-                [valueedit setEditable:YES];
+                valueedit.font = fontContent;
+                valueedit.autoresizingMask = NSViewMinYMargin|NSViewMinXMargin;
+                valueedit.stringValue = value;
+                valueedit.editable = YES;
 
                 [_bindings addObject:@{@"sender":slider,
                                        @"propname":propname,
@@ -311,10 +311,10 @@
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
                                        }];
 
-                [slider setTarget:self];
-                [slider setAction:@selector(valueChanged:)];
+                slider.target = self;
+                slider.action = @selector(valueChanged:);
 
-                [valueedit setDelegate:(id<NSTextFieldDelegate>)self];
+                valueedit.delegate = (id<NSTextFieldDelegate>)self;
 
                 [view addSubview:slider];
                 [view addSubview:valueedit];
@@ -324,8 +324,8 @@
             {
                 NSRect frame = NSMakeRect(label_width+padding*2, y, sz.width-label_width - padding*2 - padding, unit_h);
                 NSPopUpButton *popUpButton = [[NSPopUpButton alloc] initWithFrame:frame];
-                [popUpButton setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin];
-                [popUpButton setFont:fontContent];
+                popUpButton.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin;
+                popUpButton.font = fontContent;
 
                 char token[MAX_TOKEN];
                 const char *script = _settingsData.props[i].select_options;
@@ -344,8 +344,8 @@
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
                                        }];
 
-                [popUpButton setTarget:self];
-                [popUpButton setAction:@selector(valueChanged:)];
+                popUpButton.target = self;
+                popUpButton.action = @selector(valueChanged:);
 
                 [view addSubview:popUpButton];
                 break;
@@ -361,9 +361,9 @@
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
                                        }];
                 NSRect frame = NSMakeRect(0, 0, sz.width, sz.height);
-                [[vc view] setFrame:frame];
-                [view addSubview:[vc view]];
-                [[vc view] setAutoresizingMask:NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewMinYMargin|NSViewHeightSizable|NSViewMaxYMargin];
+                vc.view.frame = frame;
+                [view addSubview:vc.view];
+                vc.view.autoresizingMask = NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewMinYMargin|NSViewHeightSizable|NSViewMaxYMargin;
                 break;
             }
 #endif
@@ -371,7 +371,7 @@
             {
                 NSRect frame = NSMakeRect(label_width+padding*2, y, sz.width-label_width - padding*2 - padding, unit_h);
                 NSPopUpButton *popUpButton = [[NSPopUpButton alloc] initWithFrame:frame];
-                [popUpButton setFont:fontContent];
+                popUpButton.font = fontContent;
 
                 [popUpButton addItemWithTitle:@""];
 
@@ -389,9 +389,9 @@
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
                                        }];
 
-                [popUpButton setTarget:self];
-                [popUpButton setAction:@selector(valueChanged:)];
-                [popUpButton setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin];
+                popUpButton.target = self;
+                popUpButton.action = @selector(valueChanged:);
+                popUpButton.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin;
 
                 [view addSubview:popUpButton];
                 break;            }
@@ -424,9 +424,9 @@
 - (void)reset {
     for (NSDictionary *binding in _bindings) {
         if (binding[@"sender"] && binding[@"default"]) {
-            id sender = binding[@"sender"];
+            NSControl *sender = binding[@"sender"];
             if ([sender isKindOfClass:[NSPopUpButton class]]) {
-                [sender selectItemAtIndex:[binding[@"default"] intValue]];
+                [((NSPopUpButton *)sender) selectItemAtIndex:[binding[@"default"] intValue]];
             }
 #if 0
             else if ([sender isKindOfClass:[ItemListViewController class]]) {
@@ -434,7 +434,7 @@
             }
 #endif
             else {
-                [sender setStringValue:binding[@"default"]];
+                sender.stringValue = binding[@"default"];
             }
         }
     }
@@ -453,10 +453,10 @@
             // synchronize dependent widgets, e.g. slider with its textfield
             if (binding[@"valueview"]) {
                 if (binding[@"isInteger"] && [binding[@"isInteger"] boolValue]) {
-                    [binding[@"valueview"] setStringValue:[@([sender integerValue]) stringValue]];
+                    ((NSControl *)binding[@"valueview"]).stringValue = [@([sender integerValue]) stringValue];
                 }
                 else {
-                    [binding[@"valueview"] setStringValue:[sender stringValue]];
+                    ((NSControl *)binding[@"valueview"]).stringValue = [sender stringValue];
                 }
             }
 

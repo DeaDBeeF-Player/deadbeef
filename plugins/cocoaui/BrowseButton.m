@@ -35,7 +35,7 @@
     panel.directoryURL = [NSURL fileURLWithPath:self.initialPath];
 
     // Display the panel attached to the document's window.
-    [panel beginSheetModalForWindow:[self window] completionHandler:^(NSInteger result){
+    [panel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result){
         if (result == NSModalResponseOK && self.fileSelectedBlock) {
             NSURL * url = [panel URL];
             self.fileSelectedBlock([url path]);

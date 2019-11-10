@@ -77,16 +77,16 @@ static NSMutableArray *g_converterControllers;
         out_folder = getenv("HOME");
     }
 
-    [_outputFolder setStringValue:[NSString stringWithUTF8String:out_folder]];
-    [_outputFileName setStringValue:[NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("converter.output_file", "")]];
-    [_preserveFolderStructure setState:deadbeef->conf_get_int ("converter.preserve_folder_structure", 0) ? NSOnState : NSOffState];
-    [_bypassSameFormat setState:deadbeef->conf_get_int ("converter.bypass_same_format", 0)];
-    [_retagAfterCopy setState:deadbeef->conf_get_int ("converter.retag_after_copy", 0)];
+    _outputFolder.stringValue = [NSString stringWithUTF8String:out_folder];
+    _outputFileName.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("converter.output_file", "")];
+    _preserveFolderStructure.state = deadbeef->conf_get_int ("converter.preserve_folder_structure", 0) ? NSOnState : NSOffState;
+    _bypassSameFormat.state = deadbeef->conf_get_int ("converter.bypass_same_format", 0);
+    _retagAfterCopy.state = deadbeef->conf_get_int ("converter.retag_after_copy", 0);
 
     int write_to_source_folder = deadbeef->conf_get_int ("converter.write_to_source_folder", 0);
-    [_writeToSourceFolder setState:write_to_source_folder ? NSOnState : NSOffState];
-    [_outputFolder setEnabled:!write_to_source_folder];
-    [_preserveFolderStructure setEnabled:!write_to_source_folder];
+    _writeToSourceFolder.state = write_to_source_folder ? NSOnState : NSOffState;
+    _outputFolder.enabled = !write_to_source_folder;
+    _preserveFolderStructure.enabled = !write_to_source_folder;
 
     [_fileExistsAction selectItemAtIndex:deadbeef->conf_get_int ("converter.overwrite_action", 0)];
     deadbeef->conf_unlock ();
@@ -130,19 +130,19 @@ static NSMutableArray *g_converterControllers;
 
 - (IBAction)preserveFolderStructureChanged:(id)sender {
     [self updateFilenamesPreview];
-    deadbeef->conf_set_int ("converter.preserve_folder_structure", [_preserveFolderStructure state] == NSOnState);
+    deadbeef->conf_set_int ("converter.preserve_folder_structure", _preserveFolderStructure.state == NSOnState);
     deadbeef->conf_save ();
 }
 
 - (IBAction)bypassSameFormatChanged:(id)sender {
-    deadbeef->conf_set_int ("converter.bypass_same_format", [_bypassSameFormat state] == NSOnState);
+    deadbeef->conf_set_int ("converter.bypass_same_format", _bypassSameFormat.state == NSOnState);
     deadbeef->conf_save ();
 
-    [_retagAfterCopy setEnabled:[_bypassSameFormat state] == NSOnState];
+    _retagAfterCopy.enabled = _bypassSameFormat.state == NSOnState;
 }
 
 - (IBAction)retagAfterCopyChanged:(id)sender {
-    deadbeef->conf_set_int ("converter.retag_after_copy", [_retagAfterCopy state] == NSOnState);
+    deadbeef->conf_set_int ("converter.retag_after_copy", _retagAfterCopy.state == NSOnState);
     deadbeef->conf_save ();
 }
 
@@ -171,13 +171,13 @@ static NSMutableArray *g_converterControllers;
         if (it) {
             char outpath[PATH_MAX];
 
-            _converter_plugin->get_output_path2 (it, _convert_playlist, [[_outputFolder stringValue] UTF8String], [outfile UTF8String], encoder_preset, [_preserveFolderStructure state] == NSOnState, "", [_writeToSourceFolder state] == NSOnState, outpath, sizeof (outpath));
+            _converter_plugin->get_output_path2 (it, _convert_playlist, [[_outputFolder stringValue] UTF8String], [outfile UTF8String], encoder_preset, _preserveFolderStructure.state == NSOnState, "", _writeToSourceFolder.state == NSOnState, outpath, sizeof (outpath));
 
             [convert_items_preview addObject:[NSString stringWithUTF8String:outpath]];
         }
     }
 
-    [_filenamePreviewController setContent:convert_items_preview];
+    _filenamePreviewController.content = convert_items_preview;
 }
 
 - (IBAction)outputPathChanged:(id)sender {
@@ -186,13 +186,13 @@ static NSMutableArray *g_converterControllers;
     deadbeef->conf_save ();
 }
 
-- (IBAction)writeToSourceFolderChanged:(id)sender {
+- (IBAction)writeToSourceFolderChanged:(NSButton *)sender {
     [self updateFilenamesPreview];
-    int active = [sender state] == NSOnState;
+    int active = sender.state == NSOnState;
     deadbeef->conf_set_int ("converter.write_to_source_folder", active);
     deadbeef->conf_save ();
-    [_outputFolder setEnabled:!active];
-    [_preserveFolderStructure setEnabled:!active];
+    _outputFolder.enabled = !active;
+    _preserveFolderStructure.enabled = !active;
 }
 
 
@@ -264,7 +264,7 @@ static NSMutableArray *g_converterControllers;
         [self initializeWidgets];
     }
     [self showWindow:self];
-    [[self window] makeKeyWindow];
+    [self.window makeKeyWindow];
 
     // reinit everything
     [self reset];
@@ -347,7 +347,7 @@ static NSMutableArray *g_converterControllers;
 }
 
 - (IBAction)cancelAction:(id)sender {
-    [[self window] close];
+    [self.window close];
 }
 
 - (void)windowWillClose:(NSNotification *)notification {
@@ -359,32 +359,28 @@ static NSMutableArray *g_converterControllers;
 - (IBAction)openOutputFolderAction:(id)sender {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
 
-    [panel setCanChooseDirectories:YES];
-    [panel setCanChooseFiles:NO];
-    [panel setAllowsMultipleSelection:NO];
-    [panel setMessage:@"Choose output folder"];
+    panel.canChooseDirectories = YES;
+    panel.canChooseFiles = NO;
+    panel.allowsMultipleSelection = NO;
+    panel.message = @"Choose output folder";
 
     // Display the panel attached to the document's window.
-    [panel beginSheetModalForWindow:[self window] completionHandler:^(NSInteger result){
+    [panel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result){
         if (result == NSFileHandlingPanelOKButton) {
             NSURL * url = [panel URL];
-            [_outputFolder setStringValue: [url path]];
+            _outputFolder.stringValue =  [url path];
         }
     }];
 }
 
 // encoder presets sheet
 - (IBAction)editEncoderPresetsAction:(id)sender {
-    [NSApp beginSheet:_encoderPresetsPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndEncoderPresetList:returnCode:contextInfo:) contextInfo:nil];
+    [self.window beginSheet:_encoderPresetsPanel completionHandler:^(NSModalResponse returnCode) {
+        [self fillEncoderPresets];
+    }];
 }
 
-- (void)didEndEncoderPresetList:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    [_encoderPresetsPanel orderOut:self];
-    [self fillEncoderPresets];
-}
-
-
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
 {
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_list ();
     int cnt = 0;
@@ -395,7 +391,7 @@ static NSMutableArray *g_converterControllers;
     return cnt;
 }
 
-- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex {
+- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_list ();
     int i = 0;
     while (p && i < rowIndex) {
@@ -479,7 +475,7 @@ static NSMutableArray *g_converterControllers;
 
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
-    [self setPresetInfo:[_encoderPresetsTableView selectedRow]];
+    self.presetInfo = [_encoderPresetsTableView selectedRow];
 }
 
 - (void)setPresetInfo:(NSInteger)idx {
@@ -493,23 +489,23 @@ static NSMutableArray *g_converterControllers;
         if (p->tag_oggvorbis ^ [[self encoderPresetOggVorbisTag] state]) { [[self encoderPresetOggVorbisTag] setNextState]; };
         if (p->tag_mp4 ^ [[self encoderPresetMP4Tag] state] ) { [[self encoderPresetMP4Tag] setNextState]; };
 
-        [[self encoderPresetOutputFileExtension] setStringValue: [NSString stringWithFormat:@"%s", p->ext] ];
-        [[self encoderPresetCommandLine] setStringValue: [NSString stringWithFormat:@"%s", p->encoder] ];
+        [self encoderPresetOutputFileExtension].stringValue =  [NSString stringWithFormat:@"%s", p->ext] ;
+        [self encoderPresetCommandLine].stringValue =  [NSString stringWithFormat:@"%s", p->encoder] ;
 
         [[self encoderPresetExecutionMethod] selectItemAtIndex:(p->method)];
         [[self encoderPresetID3v2TagVersion] selectItemAtIndex:(p->id3v2_version)];
 
         BOOL enabled = !(p->readonly);
-        [[self encoderPresetOutputFileExtension] setEnabled: enabled ];
-        [[self encoderPresetCommandLine] setEnabled: enabled ];
-        [[self encoderPresetExecutionMethod] setEnabled: enabled ];
-        [[self encoderPresetID3v2TagVersion] setEnabled: enabled ];
-        [[self encoderPresetApeTag] setEnabled: enabled ];
-        [[self encoderPresetFlacTag] setEnabled: enabled ];
-        [[self encoderPresetOggVorbisTag] setEnabled: enabled ];
-        [[self encoderPresetID3v1Tag] setEnabled: enabled ];
-        [[self encoderPresetID3v2Tag] setEnabled: enabled ];
-        [[self encoderPresetMP4Tag] setEnabled: enabled ];
+        [self encoderPresetOutputFileExtension].enabled =  enabled ;
+        [self encoderPresetCommandLine].enabled =  enabled ;
+        [self encoderPresetExecutionMethod].enabled =  enabled ;
+        [self encoderPresetID3v2TagVersion].enabled =  enabled ;
+        [self encoderPresetApeTag].enabled =  enabled ;
+        [self encoderPresetFlacTag].enabled =  enabled ;
+        [self encoderPresetOggVorbisTag].enabled =  enabled ;
+        [self encoderPresetID3v1Tag].enabled =  enabled ;
+        [self encoderPresetID3v2Tag].enabled =  enabled ;
+        [self encoderPresetMP4Tag].enabled =  enabled ;
     }
 }
 
@@ -549,56 +545,56 @@ static NSMutableArray *g_converterControllers;
     }
 }
 
-- (IBAction)encoderPresetApeTagChangedAction:(id)sender {
+- (IBAction)encoderPresetApeTagChangedAction:(NSButton *)sender {
     int idx = (int)[_encoderPresetsTableView selectedRow];
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
-        p->tag_apev2 = [sender state];
+        p->tag_apev2 = sender.state == NSOnState;
         _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
-- (IBAction)encoderPresetFlacTagChangedAction:(id)sender {
+- (IBAction)encoderPresetFlacTagChangedAction:(NSButton *)sender {
     int idx = (int)[_encoderPresetsTableView selectedRow];
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
-        p->tag_flac = [sender state];
+        p->tag_flac = sender.state == NSOnState;
         _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
-- (IBAction)encoderPresetOggVorbisTagChangedAction:(id)sender {
+- (IBAction)encoderPresetOggVorbisTagChangedAction:(NSButton *)sender {
     int idx = (int)[_encoderPresetsTableView selectedRow];
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
-        p->tag_oggvorbis = [sender state];
+        p->tag_oggvorbis = sender.state == NSOnState;
         _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
-- (IBAction)encoderPresetID3v1TagChangedAction:(id)sender {
+- (IBAction)encoderPresetID3v1TagChangedAction:(NSButton *)sender {
     int idx = (int)[_encoderPresetsTableView selectedRow];
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
-        p->tag_id3v1 = [sender state];
+        p->tag_id3v1 = sender.state == NSOnState;
         _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
-- (IBAction)encoderPresetID3v2TagChangedAction:(id)sender {
+- (IBAction)encoderPresetID3v2TagChangedAction:(NSButton *)sender {
     int idx = (int)[_encoderPresetsTableView selectedRow];
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
-        p->tag_id3v2 = [sender state];
+        p->tag_id3v2 = sender.state == NSOnState;
         _converter_plugin->encoder_preset_save (p, 1);
     }
 }
 
-- (IBAction)encoderPresetMP4TagChangedAction:(id)sender {
+- (IBAction)encoderPresetMP4TagChangedAction:(NSButton *)sender {
     int idx = (int)[_encoderPresetsTableView selectedRow];
     ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
     if(p) {
-        p->tag_mp4 = [sender state];
+        p->tag_mp4 = sender.state == NSOnState;
         _converter_plugin->encoder_preset_save (p, 1);
     }
 }
@@ -606,19 +602,16 @@ static NSMutableArray *g_converterControllers;
 
 // dsp presets sheet
 - (IBAction)editDSPPresetsAction:(id)sender {
-    [NSApp beginSheet:_dspPresetsPanel modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndDSPPresetList:returnCode:contextInfo:) contextInfo:nil];
-}
-
-- (void)didEndDSPPresetList:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    [_dspPresetsPanel orderOut:self];
+    [self.window beginSheet:_dspPresetsPanel completionHandler:^(NSModalResponse returnCode) {
+    }];
 }
 
 - (IBAction)closeEncoderPresetsAction:(id)sender {
-    [NSApp endSheet:_encoderPresetsPanel returnCode:NSOKButton];
+    [self.window endSheet:_encoderPresetsPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)closeDSPPresetsAction:(id)sender {
-    [NSApp endSheet:_dspPresetsPanel returnCode:NSOKButton];
+    [self.window endSheet:_dspPresetsPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)okAction:(id)sender {
@@ -630,9 +623,9 @@ static NSMutableArray *g_converterControllers;
         _outfile = default_format;
     }
 
-    _preserve_folder_structure = [_preserveFolderStructure state] == NSOnState;
+    _preserve_folder_structure = _preserveFolderStructure.state == NSOnState;
 
-    _write_to_source_folder = [_writeToSourceFolder state] == NSOnState;
+    _write_to_source_folder = _writeToSourceFolder.state == NSOnState;
 
     _overwrite_action = (int)[_fileExistsAction indexOfSelectedItem];
 
@@ -659,12 +652,13 @@ static NSMutableArray *g_converterControllers;
     }
 
     if (!encoder_preset) {
-        NSAlert *alert = [[NSAlert alloc] init];
+        NSAlert *alert = [NSAlert new];
         [alert addButtonWithTitle:@"OK"];
-        [alert setMessageText:@"Encoder is not selected."];
-        [alert setInformativeText:@"Please select one of the encoders from the list."];
-        [alert setAlertStyle:NSCriticalAlertStyle];
-        [alert beginSheetModalForWindow:[self window] modalDelegate:self didEndSelector:nil contextInfo:nil];
+        alert.messageText = @"Encoder is not selected.";
+        alert.informativeText = @"Please select one of the encoders from the list.";
+        alert.alertStyle = NSAlertStyleCritical;
+        [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+        }];
 
         return;
     }
@@ -687,20 +681,20 @@ static NSMutableArray *g_converterControllers;
     }
 
     _cancelled = NO;
-    [[self window] setIsVisible:NO];
+    self.window.isVisible = NO;
 
-    [_progressText setStringValue:@""];
-    [_progressOutText setStringValue:@""];
-    [_progressNumeric setStringValue:@""];
-    [_progressBar setMinValue:0];
-    [_progressBar setMaxValue:_convert_items_count-1];
-    [_progressBar setDoubleValue:0];
-    [_progressPanel setIsVisible:YES];
+    _progressText.stringValue = @"";
+    _progressOutText.stringValue = @"";
+    _progressNumeric.stringValue = @"";
+    _progressBar.minValue = 0;
+    _progressBar.maxValue = _convert_items_count-1;
+    _progressBar.doubleValue = 0;
+    _progressPanel.isVisible = YES;
 
     _working = YES;
 
-    _bypassSameFormatState = [_bypassSameFormat state];
-    _retagAfterCopyState = [_retagAfterCopy state];
+    _bypassSameFormatState = _bypassSameFormat.state;
+    _retagAfterCopyState = _retagAfterCopy.state;
 
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
@@ -765,10 +759,10 @@ static NSMutableArray *g_converterControllers;
         NSString *nsoutpath = [NSString stringWithUTF8String:outpath];
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            [_progressBar setDoubleValue:n];
-            [_progressText setStringValue:text];
-            [_progressOutText setStringValue:nsoutpath];
-            [_progressNumeric setStringValue:[NSString stringWithFormat:@"%d/%d", n+1, _convert_items_count]];
+            _progressBar.doubleValue = n;
+            _progressText.stringValue = text;
+            _progressOutText.stringValue = nsoutpath;
+            _progressNumeric.stringValue = [NSString stringWithFormat:@"%d/%d", n+1, _convert_items_count];
         });
 
         int skip = 0;
@@ -818,17 +812,22 @@ static NSMutableArray *g_converterControllers;
 }
 
 - (NSInteger)overwritePrompt:(NSString *)path {
-    _overwritePromptCondition = [[NSCondition alloc] init];
+    _overwritePromptCondition = [NSCondition new];
     dispatch_sync(dispatch_get_main_queue(), ^{
-        NSAlert *alert = [[NSAlert alloc] init];
+        NSAlert *alert = [NSAlert new];
         [alert addButtonWithTitle:@"No"];
         [alert addButtonWithTitle:@"Yes"];
         [alert addButtonWithTitle:@"Cancel"];
-        [alert setMessageText:@"The file already exists. Overwrite?"];
-        [alert setInformativeText:path];
-        [alert setAlertStyle:NSCriticalAlertStyle];
+        alert.messageText = @"The file already exists. Overwrite?";
+        alert.informativeText = path;
+        alert.alertStyle = NSAlertStyleCritical;
 
-        [alert beginSheetModalForWindow:_progressPanel modalDelegate:self didEndSelector:@selector(alertDidEndOverwritePrompt:returnCode:contextInfo:) contextInfo:nil];
+        [alert beginSheetModalForWindow:_progressPanel completionHandler:^(NSModalResponse returnCode) {
+            [_overwritePromptCondition lock];
+            _overwritePromptResult = returnCode;
+            [_overwritePromptCondition signal];
+            [_overwritePromptCondition unlock];
+        }];
     });
 
     [_overwritePromptCondition lock];
@@ -838,20 +837,11 @@ static NSMutableArray *g_converterControllers;
     return _overwritePromptResult;
 }
 
-- (void)alertDidEndOverwritePrompt:(NSAlert *)alert returnCode:(NSInteger)returnCode
-        contextInfo:(void *)contextInfo {
-
-    [_overwritePromptCondition lock];
-    _overwritePromptResult = returnCode;
-    [_overwritePromptCondition signal];
-    [_overwritePromptCondition unlock];
-}
-
 + (void)runConverter:(int)ctx {
     ConverterWindowController *conv = [[ConverterWindowController alloc] initWithWindowNibName:@"Converter"];
 
     if (!g_converterControllers) {
-        g_converterControllers = [[NSMutableArray alloc] init];
+        g_converterControllers = [NSMutableArray new];
     }
     [g_converterControllers addObject:conv];
     [conv run:DDB_ACTION_CTX_SELECTION];

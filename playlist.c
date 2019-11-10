@@ -67,8 +67,8 @@
 #include "tf.h"
 #include "playqueue.h"
 #include "sort.h"
-
 #include "cueutil.h"
+#include "playmodes.h"
 
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
@@ -118,8 +118,6 @@ static playlist_t dummy_playlist = {
     .refc = 1
 };
 
-static int pl_order = -1; // mirrors "playback.order" config variable
-
 static int no_remove_notify;
 
 static playlist_t *addfiles_playlist; // current playlist for adding files/folders; set in pl_add_files_begin
@@ -154,22 +152,10 @@ typedef struct ddb_fileadd_beginend_listener_s {
 static ddb_fileadd_beginend_listener_t *file_add_beginend_listeners;
 
 void
-pl_set_order (int order) {
-    int prev_order = pl_order;
-
-    if (pl_order != order) {
-        pl_order = order;
-        for (playlist_t *plt = playlists_head; plt; plt = plt->next) {
-            plt_reshuffle (plt, NULL, NULL);
-        }
+pl_reshuffle_all (void) {
+    for (playlist_t *plt = playlists_head; plt; plt = plt->next) {
+        plt_reshuffle (plt, NULL, NULL);
     }
-
-    streamer_notify_order_changed (prev_order, pl_order);
-}
-
-int
-pl_get_order (void) {
-    return pl_order;
 }
 
 int
@@ -967,18 +953,6 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         fname += 7;
     }
 
-    // now that it's known we're not dealing with URL, check if it's a relative path
-    if (plug_is_relative_path (fname)) {
-        return NULL;
-    }
-
-    // detect decoder
-    const char *eol = strrchr (fname, '.');
-    if (!eol) {
-        return NULL;
-    }
-    eol++;
-
     #ifdef __MINGW32__
     // replace backslashes with normal slashes
     char fname_conv[strlen(fname)+1];
@@ -997,6 +971,18 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         fname++;
     }
     #endif
+
+    // now that it's known we're not dealing with URL, check if it's a relative path
+    if (is_relative_path (fname)) {
+        return NULL;
+    }
+
+    // detect decoder
+    const char *eol = strrchr (fname, '.');
+    if (!eol) {
+        return NULL;
+    }
+    eol++;
 
     // handle cue files
     if (!strcasecmp (eol, "cue")) {
@@ -1170,10 +1156,6 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         dirname += 7;
     }
 
-    if (plug_is_relative_path (dirname)) {
-        return NULL;
-    }
-
     #ifdef __MINGW32__
     // replace backslashes with normal slashes
     char dirname_conv[strlen(dirname)+1];
@@ -1192,6 +1174,10 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         dirname++;
     }
     #endif
+
+    if (is_relative_path (dirname)) {
+        return NULL;
+    }
 
     if (!playlist->follow_symlinks && !vfs) {
         struct stat buf;
@@ -1569,7 +1555,7 @@ plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
             prev_aa = pl_find_meta_raw (prev, "albumartist");
         }
     }
-    if (pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS && prev && pl_find_meta_raw (prev, "album") == pl_find_meta_raw (it, "album") && ((aa && prev_aa && aa == prev_aa) || pl_find_meta_raw (prev, "artist") == pl_find_meta_raw (it, "artist"))) {
+    if (streamer_get_shuffle () == DDB_SHUFFLE_ALBUMS && prev && pl_find_meta_raw (prev, "album") == pl_find_meta_raw (it, "album") && ((aa && prev_aa && aa == prev_aa) || pl_find_meta_raw (prev, "artist") == pl_find_meta_raw (it, "artist"))) {
         it->shufflerating = prev->shufflerating;
     }
     else {
@@ -1727,7 +1713,7 @@ pl_crop_selected (void) {
 int
 plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     LOCK;
-    plt->last_save_modification_idx = plt->last_save_modification_idx;
+    plt->last_save_modification_idx = plt->modification_idx;
     const char *ext = strrchr (fname, '.');
     if (ext) {
         DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();
@@ -2418,7 +2404,7 @@ plt_reshuffle (playlist_t *playlist, playItem_t **ppmin, playItem_t **ppmax) {
         if (!new_aa) {
             new_aa = pl_find_meta_raw (it, "albumartist");
         }
-        if (pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS && prev && alb == pl_find_meta_raw (it, "album") && ((aa && new_aa && aa == new_aa) || art == pl_find_meta_raw (it, "artist"))) {
+        if (streamer_get_shuffle () == DDB_SHUFFLE_ALBUMS && prev && alb == pl_find_meta_raw (it, "album") && ((aa && new_aa && aa == new_aa) || art == pl_find_meta_raw (it, "artist"))) {
             it->shufflerating = prev->shufflerating;
         }
         else {

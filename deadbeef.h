@@ -95,7 +95,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 10
+#define DB_API_VERSION_MINOR 11
 
 #if defined(__clang__)
 
@@ -114,10 +114,12 @@ extern "C" {
 
     #endif
 
-    #if __GNUC_PREREQ(4,5)
+    // Deprecating of enum values requires GCC 6+.
+    // Older GCC can still be used to build.
+    #if __GNUC_PREREQ(6,0)
     #   define DDB_DEPRECATED(x) __attribute__ ((deprecated(x)))
     #else
-    #   define DDB_DEPRECATED(x) __attribute__ ((deprecated))
+    #   define DDB_DEPRECATED(x)
     #endif
 
 #else
@@ -128,6 +130,12 @@ extern "C" {
 
 #ifndef DDB_API_LEVEL
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 11)
+#define DEPRECATED_111 DDB_DEPRECATED("since deadbeef API 1.11")
+#else
+#define DEPRECATED_111
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 10)
@@ -255,6 +263,7 @@ typedef struct DB_playItem_s {
 typedef ddb_playItem_t DB_playItem_t;
 
 typedef struct {
+    char unused; // to shut up C++ warning
 } ddb_playlist_t;
 
 typedef struct DB_metaInfo_s {
@@ -267,8 +276,7 @@ typedef struct DB_metaInfo_s {
 #endif
 } DB_metaInfo_t;
 
-// FIXME: that needs to be in separate plugin
-
+/// These flags should be used with `junk_rewrite_tags`
 #define JUNK_STRIP_ID3V2 1
 #define JUNK_STRIP_APEV2 2
 #define JUNK_STRIP_ID3V1 4
@@ -324,18 +332,35 @@ enum output_state_t {
 
 // playback order
 enum playback_order_t {
-    PLAYBACK_ORDER_LINEAR = 0,
-    PLAYBACK_ORDER_SHUFFLE_TRACKS = 1,
-    PLAYBACK_ORDER_RANDOM = 2,
-    PLAYBACK_ORDER_SHUFFLE_ALBUMS = 3,
+    PLAYBACK_ORDER_LINEAR DEPRECATED_111 = 0,
+    PLAYBACK_ORDER_SHUFFLE_TRACKS DEPRECATED_111 = 1,
+    PLAYBACK_ORDER_RANDOM DEPRECATED_111 = 2,
+    PLAYBACK_ORDER_SHUFFLE_ALBUMS DEPRECATED_111 = 3,
 };
 
 // playback modes
 enum playback_mode_t {
-    PLAYBACK_MODE_LOOP_ALL = 0, // loop playlist
-    PLAYBACK_MODE_NOLOOP = 1, // don't loop
-    PLAYBACK_MODE_LOOP_SINGLE = 2, // loop single track
+    PLAYBACK_MODE_LOOP_ALL DEPRECATED_111 = 0, // loop playlist
+    PLAYBACK_MODE_NOLOOP DEPRECATED_111 = 1, // don't loop
+    PLAYBACK_MODE_LOOP_SINGLE DEPRECATED_111 = 2, // loop single track
 };
+
+#if (DDB_API_LEVEL >= 11)
+
+typedef enum ddb_shuffle_e {
+    DDB_SHUFFLE_OFF = 0,
+    DDB_SHUFFLE_TRACKS = 1,
+    DDB_SHUFFLE_RANDOM = 2,
+    DDB_SHUFFLE_ALBUMS = 3,
+} ddb_shuffle_t;
+
+typedef enum ddb_repeat_e {
+    DDB_REPEAT_ALL = 0,
+    DDB_REPEAT_OFF = 1,
+    DDB_REPEAT_SINGLE = 2,
+} ddb_repeat_t;
+
+#endif
 
 #if (DDB_API_LEVEL >= 8)
 // playlist change info, used in the DB_EV_PLAYLISTCHANGED p1 argument
@@ -408,7 +433,7 @@ enum {
     DB_EV_PAUSE = 6, // pause playback
     DB_EV_PLAY_RANDOM = 7, // play random track
     DB_EV_TERMINATE = 8, // must be sent to player thread to terminate
-    DB_EV_PLAYLIST_REFRESH = 9, // [DEPRECATED IN API LEVEL 8, use DB_EV_PLAYLISTCHANGED instead] save and redraw current playlist
+    DB_EV_PLAYLIST_REFRESH DEPRECATED_18 = 9, // [use DB_EV_PLAYLISTCHANGED instead]
     DB_EV_REINIT_SOUND = 10, // reinitialize sound output with current output_plugin config value
     DB_EV_CONFIGCHANGED = 11, // one or more config options were changed
     DB_EV_TOGGLE_PAUSE = 12,
@@ -782,7 +807,13 @@ typedef struct {
     int (*plt_get_title) (ddb_playlist_t *plt, char *buffer, int bufsize);
     int (*plt_set_title) (ddb_playlist_t *plt, const char *title);
 
-    // increments modification index
+    // Increments modification index.
+    // This would mark playlist as "dirty" -- meaning it needs to be saved when `pl_save_all` is called.
+    // The flag is reset as soon as playlist is saved.
+    // This is called automatically when playlists are created / cleared / removed, and when items are added/removed to them.
+    // However, other changes -- like changing track metadata -- would not call this function.
+    // You need to call it yourself, to make sure the playlist gets saved on exit.
+    // It doesn't need to be called if you save the playlist via direct call to `plt_save_*`, or `pl_save_current`
     void (*plt_modified) (ddb_playlist_t *handle);
 
     // returns modication index
@@ -947,6 +978,8 @@ typedef struct {
     int (*pl_save_current) (void);
 
     // save all playlists
+    // Remember to call `plt_modified` on playlists which need saving.
+    // See more information near the `plt_modified` declaration
     int (*pl_save_all) (void);
 
     // select all tracks in current playlist
@@ -1454,6 +1487,19 @@ typedef struct {
     // this should be called by plugins to prevent running cuesheet code at a wrong time.
     int (*plt_is_loading_cue) (ddb_playlist_t *plt);
 #endif
+
+// since 1.11
+#if (DDB_API_LEVEL >= 11)
+    // Set and get shuffle / repeat modes.
+
+    void (*streamer_set_shuffle) (ddb_shuffle_t shuffle);
+
+    ddb_shuffle_t (*streamer_get_shuffle) (void);
+
+    void (*streamer_set_repeat) (ddb_repeat_t repeat);
+
+    ddb_repeat_t (*streamer_get_repeat) (void);
+#endif
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this
@@ -1475,21 +1521,21 @@ enum {
     // Indicates that this action can work when multiple tracks are selected
     DB_ACTION_MULTIPLE_TRACKS = 1 << 2,
 
-    // Different name for DB_ACTION_MULTIPLE_TRACKS, DEPRECATED in API 1.5
-    DB_ACTION_ALLOW_MULTIPLE_TRACKS = 1 << 2,
+    // Use DB_ACTION_MULTIPLE_TRACKS instead
+    DB_ACTION_ALLOW_MULTIPLE_TRACKS DEPRECATED_15 = 1 << 2,
 
-    // DEPRECATED in API 1.5, ignored in callback2
+    // Ignored in callback2
     // Action will get the track list by itself, instead of getting the list as argument.
     // This is the default behavior when using callback2
-    DB_ACTION_CAN_MULTIPLE_TRACKS = 1 << 3,
+    DB_ACTION_CAN_MULTIPLE_TRACKS DEPRECATED_15 = 1 << 3,
 
     // Action is inactive
     DB_ACTION_DISABLED = 1 << 4,
 
 #if (DDB_API_LEVEL >= 2)
-    // DEPRECATED in API 1.5, ignored in callback2
+    // Ignored in callback2
     // Action for the playlist (tab)
-    DB_ACTION_PLAYLIST = (1 << 5),
+    DB_ACTION_PLAYLIST DEPRECATED_15 = (1 << 5),
 #endif
 
 #if (DDB_API_LEVEL >= 5)
@@ -1528,10 +1574,9 @@ typedef struct DB_plugin_action_s {
     const char *title;
     const char *name;
     uint32_t flags;
-    // the use of "callback" is deprecated,
-    // only use it if the code must be compatible with API 1.4
+    // Only use it if the code must be compatible with API 1.4,
     // otherwise switch to callback2
-    DB_plugin_action_callback_t callback;
+    DB_plugin_action_callback_t callback DEPRECATED_14;
     struct DB_plugin_action_s *next;
 #if (DDB_API_LEVEL >= 5)
     DB_plugin_action_callback2_t callback2;

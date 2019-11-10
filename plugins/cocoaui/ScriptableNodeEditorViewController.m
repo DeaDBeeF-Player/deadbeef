@@ -49,9 +49,9 @@
         return NULL;
     }
 
-    NSMenu *menu = [[NSMenu alloc] init];
+    NSMenu *menu = [NSMenu new];
     menu.delegate = self;
-    [menu setAutoenablesItems:NO];
+    menu.autoenablesItems = NO;
 
     NSInteger index = 0;
     scriptableStringListItem_t *n = names;
@@ -158,20 +158,17 @@
         self.propertiesDataSource.delegate = self;
 
         _propertiesViewController.dataSource = self.propertiesDataSource;
-        [NSApp beginSheet:_propertiesPanel modalForWindow:self.view.window modalDelegate:self didEndSelector:@selector(didEndConfigPanel:returnCode:contextInfo:) contextInfo:nil];
+        [self.view.window beginSheet:_propertiesPanel completionHandler:^(NSModalResponse returnCode) {
+        }];
     }
 }
 
-- (void)didEndConfigPanel:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    [_propertiesPanel orderOut:self];
-}
-
 - (IBAction)configCancelAction:(id)sender {
-    [NSApp endSheet:_propertiesPanel returnCode:NSCancelButton];
+    [NSApp endSheet:_propertiesPanel returnCode:NSModalResponseCancel];
 }
 
 - (IBAction)configOkAction:(id)sender {
-    [NSApp endSheet:_propertiesPanel returnCode:NSOKButton];
+    [NSApp endSheet:_propertiesPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)configResetAction:(id)sender {

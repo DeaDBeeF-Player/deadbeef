@@ -48,7 +48,8 @@ deadbeef_SOURCES =\
 	playqueue.c playqueue.h\
 	sort.c sort.h\
 	logger.c logger.h\
-	external/wcwidth/wcwidth.c external/wcwidth/wcwidth.h
+	external/wcwidth/wcwidth.c external/wcwidth/wcwidth.h\
+	playmodes.c playmodes.h
 	
 #	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
 

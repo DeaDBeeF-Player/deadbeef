@@ -111,6 +111,7 @@ on_copy_playlist1_activate        (GtkMenuItem     *menuitem,
         if (playlist != -1) {
             gtkui_playlist_set_curr (playlist);
         }
+        deadbeef->plt_unref (plt);
     }
 }
 
@@ -411,11 +412,21 @@ gtkui_create_pltmenu (int plt_idx) {
     gtk_widget_show (copy_playlist1);
     gtk_container_add (GTK_CONTAINER (plmenu), copy_playlist1);
 
-    int autosort_enabled = deadbeef->plt_find_meta_int (deadbeef->plt_get_for_idx (pltmenu_idx), "autosort_enabled", 0);
+    int autosort_enabled = 0;
+    if (pltmenu_idx >= 0) {
+        ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+        if (plt) {
+            autosort_enabled = deadbeef->plt_find_meta_int (plt, "autosort_enabled", 0);
+            deadbeef->plt_unref (plt);
+        }
+    }
     autosort = gtk_check_menu_item_new_with_label (_("Enable Autosort"));
     gtk_check_menu_item_set_active (autosort, autosort_enabled);
     gtk_widget_show (autosort);
     gtk_container_add (GTK_CONTAINER (plmenu), autosort);
+    if (pltmenu_idx == -1) {
+        gtk_widget_set_sensitive (autosort, FALSE);
+    }
     
     separator11 = gtk_separator_menu_item_new ();
     gtk_widget_show (separator11);

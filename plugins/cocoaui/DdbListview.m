@@ -165,7 +165,7 @@ int grouptitleheight = 22;
     self = [super initWithFrame:rect];
     _dragging = -1;
     _sizing = -1;
-    _separatorColor = [[NSColor headerColor] colorWithAlphaComponent:0.5];
+    _separatorColor = [NSColor.headerColor colorWithAlphaComponent:0.5];
     NSTrackingAreaOptions options = NSTrackingInVisibleRect | NSTrackingCursorUpdate | NSTrackingMouseMoved | NSTrackingActiveInActiveApp;
     NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:self.bounds options:options owner:self userInfo:nil];
     [self addTrackingArea:area];
@@ -182,7 +182,7 @@ int grouptitleheight = 22;
     NSScrollView *sv = [listview.contentView enclosingScrollView];
     NSRect rc = [sv documentVisibleRect];
 
-    NSRect rect = [self bounds];
+    NSRect rect = self.bounds;
 
     [_separatorColor set];
     [NSBezierPath fillRect:NSMakeRect(rect.origin.x, 0,rect.size.width,1)];
@@ -193,7 +193,7 @@ int grouptitleheight = 22;
     for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
 
-        NSRect colRect = NSMakeRect(x, 0, w, [self frame].size.height);
+        NSRect colRect = NSMakeRect(x, 0, w, self.frame.size.height);
         if (_dragging != col) {
             if (CGRectIntersectsRect(dirtyRect, colRect)) {
                 [delegate drawColumnHeader:col inRect:colRect];
@@ -211,9 +211,9 @@ int grouptitleheight = 22;
         int cx = x;
         if (_dragging == col) {
             cx = _drag_col_pos + _drag_delta;
-            NSRect colRect = NSMakeRect(cx, 1, w, [self frame].size.height-2);
+            NSRect colRect = NSMakeRect(cx, 1, w, self.frame.size.height-2);
             if (CGRectIntersectsRect(dirtyRect, colRect)) {
-                [[[NSColor whiteColor] colorWithAlphaComponent:0.4] set];
+                [[NSColor.whiteColor colorWithAlphaComponent:0.4] set];
                 [NSBezierPath fillRect:colRect];
 
                 [delegate drawColumnHeader:col inRect:colRect];
@@ -279,7 +279,7 @@ int grouptitleheight = 22;
             _dragging = col;
             _dragPt = convPt;
             _drag_col_pos = x;
-            [listview setNeedsDisplay:YES];
+            listview.needsDisplay = YES;
             break;
         }
 
@@ -314,16 +314,14 @@ int grouptitleheight = 22;
             break;
         }
         [delegate sortColumn:_dragging withOrder:_sortOrder-1];
-        [listview setNeedsDisplay:YES];
     }
     else if (_dragging != [delegate invalidColumn] || _sizing != [delegate invalidColumn]) {
         [delegate columnsChanged];
         [listview updateContentFrame];
-        [listview setNeedsDisplay:YES];
     }
     _dragging = [delegate invalidColumn];
     _sizing = [delegate invalidColumn];
-    [self setNeedsDisplay:YES];
+    listview.contentView.needsDisplay = YES;
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent {
@@ -346,8 +344,8 @@ int grouptitleheight = 22;
 
             [delegate setColumnWidth:w forColumn:_sizing];
             [listview updateContentFrame];
-            [listview.contentView setNeedsDisplay:YES];
-            [self setNeedsDisplay:YES];
+            listview.contentView.needsDisplay = YES;
+            self.needsDisplay = YES;
 
             rc = [sv documentVisibleRect];
             scroll += rc.origin.x;
@@ -388,7 +386,7 @@ int grouptitleheight = 22;
             [listview reloadData];
         }
         else {
-            [self setNeedsDisplay:YES];
+            self.needsDisplay = YES;
         }
     }
 }
@@ -404,7 +402,7 @@ int grouptitleheight = 22;
     for (col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
 
-        if (CGRectContainsPoint(NSMakeRect(x, 0, w, [self bounds].size.height), convPt)) {
+        if (CGRectContainsPoint(NSMakeRect(x, 0, w, self.bounds.size.height), convPt)) {
             break;
         }
 
@@ -414,9 +412,9 @@ int grouptitleheight = 22;
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)event {
-    if ((event.type == NSRightMouseDown || event.type == NSLeftMouseDown)
+    if ((event.type == NSEventTypeRightMouseDown || event.type == NSEventTypeLeftMouseDown)
         && (event.buttonNumber == 1
-        || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask)))) {
+        || (event.buttonNumber == 0 && (event.modifierFlags & NSEventModifierFlagControl)))) {
         id <DdbListviewDelegate> delegate = [listview delegate];
         DdbListviewCol_t col = [self columnIndexForCoord:[event locationInWindow]];
         return [delegate contextMenuForColumn:col withEvent:event forView:self];
@@ -458,7 +456,7 @@ int grouptitleheight = 22;
 - (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)sender {
 
     _lastDragLocation = [self convertPoint:[sender draggingLocation] fromView:nil];
-    [self setNeedsDisplay:YES];
+    self.needsDisplay = YES;
 
     return NSDragOperationCopy;
 }
@@ -466,7 +464,7 @@ int grouptitleheight = 22;
 - (void)draggingExited:(id<NSDraggingInfo>)sender {
 
     _draggingInView = NO;
-    [self setNeedsDisplay:YES];
+    self.needsDisplay = YES;
 }
 
 
@@ -540,7 +538,7 @@ int grouptitleheight = 22;
         int w = [listview.delegate columnWidth:col];
 
         if ([listview.delegate isAlbumArtColumn:col] && x + w > clip.origin.x) {
-            NSColor *clr = [[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:0];
+            NSColor *clr = [NSColor.controlAlternatingRowBackgroundColors objectAtIndex:0];
             [clr set];
             [NSBezierPath fillRect:NSMakeRect (x, y, w, grp_next_y - y)];
             if (title_height > 0) {
@@ -560,8 +558,8 @@ int grouptitleheight = 22;
         yyline -= (indicatorLineWith / 2.f );
     }
     [[NSGraphicsContext currentContext] saveGraphicsState];
-    [NSBezierPath setDefaultLineWidth: indicatorLineWith];
-    [[NSColor alternateSelectedControlColor] set];
+    NSBezierPath.defaultLineWidth =  indicatorLineWith;
+    [NSColor.alternateSelectedControlColor set];
     [NSBezierPath strokeLineFromPoint: NSMakePoint(dirtyRect.origin.x, yyline) toPoint: NSMakePoint( dirtyRect.origin.x + dirtyRect.size.width, yyline ) ];
     [[NSGraphicsContext currentContext] restoreGraphicsState];
 }
@@ -596,7 +594,7 @@ int grouptitleheight = 22;
 
     int title_height = [listview grouptitle_height];
 
-    BOOL focused = [[self window] isKeyWindow];
+    BOOL focused = [self.window isKeyWindow];
 
     while (grp && grp_y < clip_y + clip_h) {
         DdbListviewRow_t it = grp->head;
@@ -608,7 +606,7 @@ int grouptitleheight = 22;
 
             if (yy + rowheight >= clip_y) {
                 // draw row
-                NSColor *clr = [[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:ii % 2];
+                NSColor *clr = [NSColor.controlAlternatingRowBackgroundColors objectAtIndex:ii % 2];
                 [clr set];
                 [NSBezierPath fillRect:NSMakeRect(dirtyRect.origin.x, yy, dirtyRect.size.width, rowheight)];
 
@@ -628,8 +626,8 @@ int grouptitleheight = 22;
                 if (it == cursor_it) {
                     [[NSGraphicsContext currentContext] saveGraphicsState];
                     NSRect rect = NSMakeRect(self.frame.origin.x+0.5, yy+0.5, self.frame.size.width-1, rowheight-1);
-                    [NSBezierPath setDefaultLineWidth:1.f];
-                    [[NSColor textColor] set];
+                    NSBezierPath.defaultLineWidth = 1.f;
+                    [NSColor.textColor set];
                     [NSBezierPath strokeRect:rect];
                     [[NSGraphicsContext currentContext] restoreGraphicsState];
                 }
@@ -664,11 +662,11 @@ int grouptitleheight = 22;
         if (pin_grp == grp && clip_y-dirtyRect.origin.y <= title_height) {
             // draw pinned group title
             // scrollx, 0, total_width, min(title_height, grp_next_y)
-            NSRect groupRect = NSMakeRect(0, dirtyRect.origin.y, [self frame].size.width, min (title_height, grp_next_y));
-            NSColor *clr = [[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:0];
+            NSRect groupRect = NSMakeRect(0, dirtyRect.origin.y, self.frame.size.width, min (title_height, grp_next_y));
+            NSColor *clr = [NSColor.controlAlternatingRowBackgroundColors objectAtIndex:0];
             [clr set];
 #if DEBUG_DRAW_GROUP_TITLES
-            [[NSColor redColor] set];
+            [NSColor.redColor set];
 #endif
 
             [NSBezierPath fillRect:groupRect];
@@ -683,11 +681,11 @@ int grouptitleheight = 22;
             // draw normal group title
             if (title_height > 0) {
                 // scrollx, grp_y, total_width, title_height
-                NSRect groupRect = NSMakeRect(0, grp_y, [self frame].size.width, title_height);
-                NSColor *clr = [[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:0];
+                NSRect groupRect = NSMakeRect(0, grp_y, self.frame.size.width, title_height);
+                NSColor *clr = [NSColor.controlAlternatingRowBackgroundColors objectAtIndex:0];
                 [clr set];
 #if DEBUG_DRAW_GROUP_TITLES
-                [[NSColor greenColor] set];
+                [NSColor.greenColor set];
 #endif
                 [NSBezierPath fillRect:groupRect];
                 [delegate drawGroupTitle:grp->head inRect:groupRect];
@@ -720,7 +718,7 @@ int grouptitleheight = 22;
         int ii = [listview.delegate rowCount]+1;
         while (y < dirtyRect.origin.y + dirtyRect.size.height) {
             if (y + rowheight >= dirtyRect.origin.y) {
-                NSColor *clr = [[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:ii % 2];
+                NSColor *clr = [NSColor.controlAlternatingRowBackgroundColors objectAtIndex:ii % 2];
                 [clr set];
                 [NSBezierPath fillRect:NSMakeRect(dirtyRect.origin.x, y, dirtyRect.size.width, rowheight)];
             }
@@ -743,9 +741,9 @@ int grouptitleheight = 22;
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)event {
-    if ((event.type == NSRightMouseDown || event.type == NSLeftMouseDown)
+    if ((event.type == NSEventTypeRightMouseDown || event.type == NSEventTypeLeftMouseDown)
         && (event.buttonNumber == 1
-        || (event.buttonNumber == 0 && (event.modifierFlags & NSControlKeyMask))))
+            || (event.buttonNumber == 0 && (event.modifierFlags & NSEventModifierFlagControl))))
     {
         if (event.buttonNumber == 0) {
             // ctrl+click blocks the mouseDown handler, do it now
@@ -764,7 +762,7 @@ int grouptitleheight = 22;
 }
 
 - (void)mouseDown:(NSEvent *)event {
-    [[self window] makeFirstResponder:listview];
+    [self.window makeFirstResponder:listview];
 
     [listview groupCheck];
 
@@ -800,7 +798,7 @@ int grouptitleheight = 22;
         //     sel -= grp_index;
         // }
 
-        [delegate setCursor:sel];
+        delegate.cursor = sel;
         DdbListviewRow_t it = [delegate rowForIndex:sel];
         if (it) {
             [listview drawRow:sel];
@@ -810,10 +808,10 @@ int grouptitleheight = 22;
     }
 
     // single selection
-    if (event.buttonNumber != 0 || !(event.modifierFlags & (NSCommandKeyMask|NSShiftKeyMask))) {
+    if (event.buttonNumber != 0 || !(event.modifierFlags & (NSEventModifierFlagCommand|NSEventModifierFlagShift))) {
         [listview clickSelection:convPt grp:grp grp_index:grp_index sel:sel dnd:YES button:1];
     }
-    else if (event.buttonNumber == 0 && (event.modifierFlags & NSCommandKeyMask)) {
+    else if (event.buttonNumber == 0 && (event.modifierFlags & NSEventModifierFlagCommand)) {
         // toggle selection
         if (sel != -1) {
             DdbListviewRow_t it = [delegate rowForIndex:sel];
@@ -825,7 +823,7 @@ int grouptitleheight = 22;
             }
         }
     }
-    else if (event.buttonNumber == 0 && (event.modifierFlags & NSShiftKeyMask)) {
+    else if (event.buttonNumber == 0 && (event.modifierFlags & NSEventModifierFlagShift)) {
         // select range
         int cursor = sel;
         if (cursor == -1) {
@@ -930,9 +928,9 @@ int grouptitleheight = 22;
     if (self) {
         groups_build_idx = -1;
         DdbListHeaderView *thv = [[DdbListHeaderView alloc] initWithFrame:NSMakeRect(0, rect.size.height-headerheight, rect.size.width, headerheight)];
-        [thv setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin];
+        thv.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin;
         [self addSubview:thv];
-        [thv setListView:self];
+        thv.listView = self;
         headerView = thv;
 
         NSScrollView *sv = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, rect.size.height-headerheight)];
@@ -941,20 +939,20 @@ int grouptitleheight = 22;
         NSSize size = [sv contentSize];
         NSRect lcvrect = NSMakeRect(0, 0, size.width, size.height-headerheight);
         DdbListContentView *lcv = [[DdbListContentView alloc] initWithFrame:lcvrect];
-        [lcv setAutoresizingMask:NSViewWidthSizable];
-        [lcv setListView:self];
+        lcv.autoresizingMask = NSViewWidthSizable;
+        lcv.listView = self;
         contentView = lcv;
 
-        [sv setDocumentView:lcv];
+        sv.documentView = lcv;
 
-        [sv setHasVerticalScroller:YES];
-        [sv setHasHorizontalScroller:YES];
-        [sv setAutohidesScrollers:YES];
-        [sv setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin|NSViewHeightSizable];
-        [sv.contentView setCopiesOnScroll:NO];
+        sv.hasVerticalScroller = YES;
+        sv.hasHorizontalScroller = YES;
+        sv.autohidesScrollers = YES;
+        sv.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin|NSViewHeightSizable;
+        sv.contentView.copiesOnScroll = NO;
 
         NSView *synchronizedContentView = [sv contentView];
-        [synchronizedContentView setPostsBoundsChangedNotifications:YES];
+        synchronizedContentView.postsBoundsChangedNotifications = YES;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(scrollChanged:) name:NSViewBoundsDidChangeNotification object:synchronizedContentView];
 
         [sv addObserver:self forKeyPath:@"frameSize" options:0 context:NULL];
@@ -964,18 +962,18 @@ int grouptitleheight = 22;
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(windowDidBecomeKey:)
                                                      name:NSWindowDidBecomeKeyNotification
-                                                   object:[self window]];
+                                                   object:self.window];
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(windowDidBecomeKey:)
                                                      name:NSWindowDidResignKeyNotification
-                                                   object:[self window]];
+                                                   object:self.window];
     }
     return self;
 }
 
 - (void)windowDidBecomeKey:(id)sender {
-    [self.headerView setNeedsDisplay:YES];
-    [self.contentView setNeedsDisplay:YES];
+    self.headerView.needsDisplay = YES;
+    self.contentView.needsDisplay = YES;
 }
 
 
@@ -986,7 +984,7 @@ int grouptitleheight = 22;
 }
 
 - (void)scrollChanged:(id)notification {
-    [self.headerView setNeedsDisplay:YES];
+    self.headerView.needsDisplay = YES;
 
     NSScrollView *sv = [contentView enclosingScrollView];
     NSRect vis = [sv documentVisibleRect];
@@ -1014,7 +1012,7 @@ int grouptitleheight = 22;
 
     NSScrollView *sv = [contentView enclosingScrollView];
     NSSize size = [sv contentSize];
-    NSRect frame = [contentView frame];
+    NSRect frame = contentView.frame;
     if (_fullwidth > size.width) {
         frame.size.width = _fullwidth;
     }
@@ -1027,7 +1025,7 @@ int grouptitleheight = 22;
     else {
         frame.size.height = size.height;
     }
-    [contentView setFrame:frame];
+    contentView.frame = frame;
 }
 
 // must be called from within pl_lock
@@ -1112,7 +1110,7 @@ int grouptitleheight = 22;
 
 - (void)reloadData {
     [self initGroups];
-    [self.contentView setNeedsDisplay:YES];
+    self.contentView.needsDisplay = YES;
 }
 
 - (int)pickPoint:(int)y group:(DdbListviewGroup_t **)group groupIndex:(int *)group_idx index:(int *)global_idx {
@@ -1198,7 +1196,7 @@ int grouptitleheight = 22;
         return;
     }
 
-    if (rect.origin.y > [contentView bounds].origin.y + [contentView bounds].size.height) {
+    if (rect.origin.y > contentView.bounds.origin.y + contentView.bounds.size.height) {
         return;
     }
 
@@ -1207,7 +1205,7 @@ int grouptitleheight = 22;
     rect.origin.x = vis.origin.x;
     rect.size.width = vis.size.width;
 
-    [contentView setNeedsDisplayInRect:rect];
+    contentView.needsDisplayInRect = rect;
 }
 
 - (void)drawGroup:(int)idx {
@@ -1227,7 +1225,7 @@ int grouptitleheight = 22;
             }
             rect.origin.x = vis.origin.x;
             rect.size.width = vis.size.width;*/
-            [contentView setNeedsDisplayInRect:rect];
+            contentView.needsDisplayInRect = rect;
             break;
         }
         i++;
@@ -1303,7 +1301,7 @@ int grouptitleheight = 22;
         {
             // reset selection, and set it to single item
             [self selectSingle:sel];
-            [contentView setNeedsDisplay:YES];
+            contentView.needsDisplay = YES;
             if (dnd) {
                 _areaselect = 1;
                 _areaselect_y = pt.y;
@@ -1343,10 +1341,10 @@ int grouptitleheight = 22;
         NSPoint convPt = [contentView convertPoint:[event locationInWindow] fromView:nil];
         if (![self pickPoint:convPt.y group:&grp groupIndex:&grp_index index:&sel]) {
             [self selectSingle:sel];
-            [contentView setNeedsDisplay:YES];
+            contentView.needsDisplay = YES;
         }
         else {
-            [_delegate setCursor:-1];
+            _delegate.cursor = -1;
             DdbListviewRow_t it = [_delegate firstRow];
             int idx = 0;
             while (it != [_delegate invalidRow]) {
@@ -1456,7 +1454,7 @@ int grouptitleheight = 22;
         }
         int prev = [_delegate cursor];
         if (sel != -1) {
-            [_delegate setCursor:sel];
+            _delegate.cursor = sel;
         }
         {
             // select range of items
@@ -1514,7 +1512,7 @@ int grouptitleheight = 22;
                 [_delegate unrefRow:it];
             }
             if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
-                [contentView setNeedsDisplay:YES];
+                contentView.needsDisplay = YES;
                 [_delegate selectionChanged:it]; // that means "selection changed a lot, redraw everything
             }
             _area_selection_start = start;
@@ -1597,10 +1595,10 @@ int grouptitleheight = 22;
                 return;
         }
 
-        if ([theEvent modifierFlags] & NSShiftKeyMask) {
+        if ([theEvent modifierFlags] & NSEventModifierFlagShift) {
             if (cursor != prev) {
-                [_delegate setCursor:cursor];
-                [self setScrollForPos:[self getRowPos:cursor]];
+                _delegate.cursor = cursor;
+                self.scrollForPos = [self rowPosForIndex:cursor];
                 // select all between shift_sel_anchor and deadbeef->pl_get_cursor (ps->iterator)
                 int start = min (cursor, _shift_sel_anchor);
                 int end = max (cursor, _shift_sel_anchor);
@@ -1640,7 +1638,7 @@ int grouptitleheight = 22;
 }
 
 - (void)setCursor:(int)cursor noscroll:(BOOL)noscroll {
-    [_delegate setCursor:cursor];
+    _delegate.cursor = cursor;
 
     DdbListviewRow_t row = [_delegate rowForIndex:cursor];
     if (row != [_delegate invalidRow] && ![_delegate rowSelected:row]) {
@@ -1651,9 +1649,9 @@ int grouptitleheight = 22;
     }
 
     if (!noscroll) {
-        [self setScrollForPos:[self getRowPos:cursor]];
+        self.scrollForPos = [self rowPosForIndex:cursor];
     }
-    [contentView setNeedsDisplay:YES];
+    contentView.needsDisplay = YES;
 }
 
 // returns YES if scroll has occured as result of changing the cursor position
@@ -1682,7 +1680,7 @@ int grouptitleheight = 22;
     return NO;
 }
 
-- (int)getRowPos:(int)row_idx {
+- (int)rowPosForIndex:(int)row_idx {
     int y = 0;
     int idx = 0;
     [self groupCheck];
@@ -1700,7 +1698,7 @@ int grouptitleheight = 22;
 }
 
 - (void)scrollToRowWithIndex:(int)idx {
-    int pos = [self getRowPos:idx];
+    int pos = [self rowPosForIndex:idx];
     NSScrollView *sv = [contentView enclosingScrollView];
     NSRect vis = [sv documentVisibleRect];
 

@@ -52,7 +52,7 @@
         [menu insertItemWithTitle:@"Copy" action:@selector(widgetCopy:) keyEquivalent:@"" atIndex:3];
         [menu insertItemWithTitle:@"Paste" action:@selector(widgetPaste:) keyEquivalent:@"" atIndex:4];
         menu.delegate = self;
-        [self setMenu:menu];
+        self.menu = menu;
 #endif
     }
     return self;
@@ -77,14 +77,14 @@
 {
     return;
     self.inDesignMode = YES;
-    [self setNeedsDisplay:YES];
+    self.needsDisplay = YES;
 }
 
 - (void)menuDidClose:(NSMenu *)menu
 {
     return;
     self.inDesignMode = NO;
-    [self setNeedsDisplay:YES];
+    self.needsDisplay = YES;
 }
 
 - (int)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {

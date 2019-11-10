@@ -28,7 +28,7 @@
 }
 
 -(void)setNeedsDisplayInRect:(NSRect)invalidRect{
-    [super setNeedsDisplayInRect:[self bounds]];
+    super.needsDisplayInRect = self.bounds;
 }
 
 - (BOOL)dragging {
@@ -77,19 +77,19 @@
     NSPoint convPt = [controlView convertPoint:NSMakePoint(0,y) fromView:nil];
     NSGraphicsContext *gc = [NSGraphicsContext currentContext];
     [gc saveGraphicsState];
-    [gc setPatternPhase:convPt];
+    gc.patternPhase = convPt;
 
     // foreground
 
     rc.size.width = (int)(rc.size.width * self.doubleValue / ([self maxValue] - [self minValue]));
     rc.size.height -= 2;
     rc.origin.y += 1;
-    NSWindow *window = [controlView window];
-    if ([window isKeyWindow]) {
-        [[NSColor keyboardFocusIndicatorColor] set];
+    NSWindow *window = controlView.window;
+    if (window.isKeyWindow) {
+        [NSColor.keyboardFocusIndicatorColor set];
     }
     else {
-        [[NSColor controlShadowColor] set];
+        [NSColor.controlShadowColor set];
     }
     [NSBezierPath fillRect:rc];
 

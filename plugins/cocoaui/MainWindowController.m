@@ -63,10 +63,10 @@ extern DB_functions_t *deadbeef;
     [super windowDidLoad];
 
     // add tab strip to the window titlebar
-    NSTitlebarAccessoryViewController* vc = [[NSTitlebarAccessoryViewController alloc] init];
+    NSTitlebarAccessoryViewController* vc = [NSTitlebarAccessoryViewController new];
 
     vc.view = _tabStrip;
-    vc.fullScreenMinHeight = [_tabStrip bounds].size.height;
+    vc.fullScreenMinHeight = _tabStrip.bounds.size.height;
     vc.layoutAttribute = NSLayoutAttributeBottom;
 
     [self.window addTitlebarAccessoryViewController:vc];
@@ -120,7 +120,7 @@ static char sb_text[512];
     
     if (strcmp (sbtext_new, sb_text)) {
         strcpy (sb_text, sbtext_new);
-        [[self statusBar] setStringValue:[NSString stringWithUTF8String:sb_text]];
+        [self statusBar].stringValue = [NSString stringWithUTF8String:sb_text];
     }
     
     if (track) {
@@ -148,7 +148,7 @@ static char sb_text[512];
         int cmp =(int)(perc*4000);
         if (cmp != _prevSeekBarPos) {
             _prevSeekBarPos = cmp;
-            [_seekBar setFloatValue:perc];
+            _seekBar.floatValue = perc;
         }
     }
 
@@ -156,14 +156,14 @@ static char sb_text[512];
     if (!trk || dur < 0) {
         st = NO;
     }
-    if ([_seekBar isEnabled] != st) {
-        [_seekBar setEnabled:st];
+    if (_seekBar.isEnabled != st) {
+        _seekBar.enabled = st;
     }
 }
 
 - (void)frameUpdate:(id)userData
 {
-    if (![[self window] isVisible]) {
+    if (![self.window isVisible]) {
         return;
     }
 
@@ -191,7 +191,7 @@ static char sb_text[512];
     }
 }
 
-- (IBAction)volumeBarAction:(id)sender {
+- (IBAction)volumeBarAction:(NSControl *)sender {
     float range = -deadbeef->volume_get_min_db ();
     float volume = [(NSSlider*)sender floatValue] / 100.f * range - range;
     if (volume < -range) {
@@ -203,7 +203,7 @@ static char sb_text[512];
 
     deadbeef->volume_set_db (volume);
     int db = volume;
-    [sender setToolTip:[NSString stringWithFormat:@"%s%ddB", db < 0 ? "" : "+", db]];
+    sender.toolTip = [NSString stringWithFormat:@"%s%ddB", db < 0 ? "" : "+", db];
 }
 
 - (IBAction)tbClicked:(id)sender {
@@ -238,7 +238,7 @@ static char sb_text[512];
 - (void)updateVolumeBar {
     float range = -deadbeef->volume_get_min_db ();
     int vol = (deadbeef->volume_get_db () + range) / range * 100;
-    [[self volumeBar] setFloatValue:vol];
+    [self volumeBar].floatValue = vol;
 }
 
 - (void)freeTitleBarConfig {
@@ -290,7 +290,7 @@ static char sb_text[512];
         deadbeef->pl_item_unref (ctx.it);
     }
 
-    [[self window] setTitle:[NSString stringWithUTF8String:buffer]];
+    self.window.title = [NSString stringWithUTF8String:buffer];
 }
 
 @end

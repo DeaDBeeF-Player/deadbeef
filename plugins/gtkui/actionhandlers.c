@@ -213,6 +213,8 @@ action_hide_mainwin_handler (struct DB_plugin_action_s *action, int ctx) {
     return 0;
 }
 
+// FIXME: this functionality was supposed to be enabled in 0.7.0, but was forgotten
+#ifndef DISABLE_CUSTOM_TITLE
 static void
 on_toggle_set_custom_title (GtkToggleButton *togglebutton, gpointer user_data) {
     gboolean active = gtk_toggle_button_get_active (togglebutton);
@@ -223,6 +225,7 @@ on_toggle_set_custom_title (GtkToggleButton *togglebutton, gpointer user_data) {
 
     deadbeef->conf_save ();
 }
+#endif
 
 gboolean
 action_add_location_handler_cb (void *user_data) {
@@ -260,8 +263,8 @@ action_add_location_handler_cb (void *user_data) {
                 ddb_playlist_t *plt = deadbeef->plt_get_curr ();
                 if (!deadbeef->plt_add_files_begin (plt, 0)) {
                     DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
-                    DB_playItem_t *it = deadbeef->plt_insert_file2 (0, plt, tail, text, NULL, NULL, NULL);
 #ifndef DISABLE_CUSTOM_TITLE
+                    DB_playItem_t *it = deadbeef->plt_insert_file2 (0, plt, tail, text, NULL, NULL, NULL);
                     if (it && deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
                         deadbeef->pl_replace_meta (it, ":CUSTOM_TITLE", gtk_entry_get_text (GTK_ENTRY (ct)));
                     }
@@ -334,7 +337,6 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, int ctx) {
         deadbeef->plt_unref (plt_curr);
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        int success = 0;
         deadbeef->pl_lock ();
         DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
         if (it) {
@@ -343,7 +345,7 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, int ctx) {
                 int idx = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
                 if (idx != -1) {
                     deadbeef->plt_remove_item (plt, it);
-                    deadbeef->pl_save_current ();
+                    deadbeef->plt_save_config (plt);
                     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
                 }
                 deadbeef->plt_unref (plt);
@@ -357,7 +359,7 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, int ctx) {
 
 void
 delete_and_remove_track (const char *uri, ddb_playlist_t *plt, ddb_playItem_t *it) {
-    int res = unlink (uri);
+    (void)unlink (uri);
 
     // check if file exists
     struct stat buf;
@@ -401,11 +403,12 @@ action_delete_from_disk_handler_cb (void *data) {
             it = next;
         }
 
-        deadbeef->pl_save_current ();
+        deadbeef->plt_save_config (plt);
     }
     else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
         DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
         while (it) {
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->is_local_file (uri)) {
                 delete_and_remove_track (uri, plt, it);
@@ -420,12 +423,11 @@ action_delete_from_disk_handler_cb (void *data) {
 //                    gtk_widget_destroy (dlg);
 //                }
             }
-            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             deadbeef->pl_item_unref (it);
             it = next;
         }
 
-        deadbeef->pl_save_current ();
+        deadbeef->plt_save_config (plt);
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
         DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
@@ -439,6 +441,7 @@ action_delete_from_disk_handler_cb (void *data) {
             }
             deadbeef->pl_item_unref (it);
         }
+        deadbeef->plt_save_config (plt);
     }
     deadbeef->pl_unlock ();
     deadbeef->plt_unref (plt);
@@ -524,7 +527,7 @@ load_playlist_thread (void *data) {
         if (!deadbeef->plt_add_files_begin (plt, 0)) {
             deadbeef->plt_clear (plt);
             int abort = 0;
-            DB_playItem_t *it = deadbeef->plt_load2 (0, plt, NULL, fname, &abort, NULL, NULL);
+            (void)deadbeef->plt_load2 (0, plt, NULL, fname, &abort, NULL, NULL);
             deadbeef->plt_save_config (plt);
             deadbeef->plt_add_files_end (plt, 0);
         }
@@ -832,18 +835,18 @@ action_playback_order_linear_handler(DB_plugin_action_t *act, int ctx) {
 
 gboolean
 action_playback_order_cycle_handler_cb (void *data) {
-    int ord = deadbeef->conf_get_int ("playback.order", PLAYBACK_ORDER_LINEAR);
-    switch (ord) {
-    case PLAYBACK_ORDER_LINEAR:
+    int shuffle = deadbeef->streamer_get_shuffle ();
+    switch (shuffle) {
+    case DDB_SHUFFLE_OFF:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_shuffle")), 1);
         break;
-    case PLAYBACK_ORDER_SHUFFLE_TRACKS:
+    case DDB_SHUFFLE_TRACKS:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_shuffle_albums")), 1);
         break;
-    case PLAYBACK_ORDER_SHUFFLE_ALBUMS:
+    case DDB_SHUFFLE_ALBUMS:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_random")), 1);
         break;
-    case PLAYBACK_ORDER_RANDOM:
+    case DDB_SHUFFLE_RANDOM:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_linear")), 1);
         break;
     }
@@ -858,15 +861,15 @@ action_playback_order_cycle_handler(DB_plugin_action_t *act, int ctx) {
 
 gboolean
 action_playback_loop_cycle_handler_cb (void *data) {
-    int ord = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL);
-    switch (ord) {
-    case PLAYBACK_MODE_LOOP_ALL:
+    int repeat = deadbeef->streamer_get_repeat ();
+    switch (repeat) {
+    case DDB_REPEAT_ALL:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_single")), 1);
         break;
-    case PLAYBACK_MODE_LOOP_SINGLE:
+    case DDB_REPEAT_SINGLE:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_disable")), 1);
         break;
-    case PLAYBACK_MODE_NOLOOP:
+    case DDB_REPEAT_OFF:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_all")), 1);
         break;
     }
