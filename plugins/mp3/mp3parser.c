@@ -41,6 +41,7 @@ extern DB_functions_t *deadbeef;
 #define MIN_PACKET_LENGTH (MIN_PACKET_SAMPLES / 8 * MIN_BITRATE*1000 / MAX_SAMPLERATE)
 #define MAX_PACKET_LENGTH 1441
 #define MAX_INVALID_BYTES 1000000
+#define MAX_INVALID_BYTES_STREAM 1000
 
 static const int vertbl[] = {3, -1, 2, 1}; // 3 is 2.5
 static const int ltbl[] = { -1, 3, 2, 1 };
@@ -447,6 +448,10 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
             }
             // bail if a valid packet could not be found at the start of stream
             if (!info->valid_packets && offs - startoffs > MAX_INVALID_BYTES) {
+                goto error;
+            }
+
+            if (info->is_streaming && offs - startoffs > MAX_INVALID_BYTES_STREAM) {
                 goto error;
             }
 
