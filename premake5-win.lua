@@ -898,6 +898,7 @@ project "resources"
 
 project "resources_windows"
     kind "Utility"
+    dependson {"translations", "ddb_gui_GTK3", "ddb_gui_GTK2" }
     postbuildcommands {
         "./scripts/windows_postbuild.sh bin/%{cfg.buildcfg}"
     }
