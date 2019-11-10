@@ -490,35 +490,10 @@ _handle_icy_headers (size_t avail, HTTP_FILE *fp, char *ptr, void *stream) {
 }
 
 static size_t
-http_curl_write (void *_ptr, size_t size, size_t nmemb, void *stream) {
-    char *ptr = _ptr;
-    size_t avail = size * nmemb;
-    HTTP_FILE *fp = (HTTP_FILE *)stream;
-
-//    trace ("http_curl_write %d bytes, wait_meta=%d\n", size * nmemb, fp->wait_meta);
-    gettimeofday (&fp->last_read_time, NULL);
-    if (http_need_abort (stream)) {
-        fp->status = STATUS_ABORTED;
-        trace ("vfs_curl STATUS_ABORTED at start of packet\n");
-        return 0;
-    }
-
-    if (!fp->gotheader) {
-        size_t consumed = _handle_icy_headers (avail, fp, ptr, stream);
-        avail -= consumed;
-        if (!avail) {
-            return nmemb*size;
-        }
-    }
-
-    deadbeef->mutex_lock (fp->mutex);
-    if (fp->status == STATUS_INITIAL && fp->gotheader) {
-        fp->status = STATUS_READING;
-    }
-    deadbeef->mutex_unlock (fp->mutex);
-
+_handle_icy_metadata(size_t avail, HTTP_FILE *fp, char *ptr, int *error) {
+    size_t size = avail;
     while (fp->icy_metaint > 0) {
-//            trace ("wait_meta=%d, avail=%d\n", fp->wait_meta, avail);
+        //            trace ("wait_meta=%d, avail=%d\n", fp->wait_meta, avail);
         if (fp->metadata_size > 0) {
             if (fp->metadata_size > fp->metadata_have_size) {
                 trace ("metadata fetch mode, avail: %d, metadata_size: %d, metadata_have_size: %d)\n", avail, fp->metadata_size, fp->metadata_have_size);
@@ -550,6 +525,7 @@ http_curl_write (void *_ptr, size_t size, size_t nmemb, void *stream) {
             // read bytes remaining until metadata block
             size_t res1 = http_curl_write_wrapper (fp, ptr, fp->wait_meta);
             if (res1 != fp->wait_meta) {
+                *error = 1;
                 return 0;
             }
             avail -= res1;
@@ -579,10 +555,52 @@ http_curl_write (void *_ptr, size_t size, size_t nmemb, void *stream) {
         }
         if (avail < 0) {
             trace ("vfs_curl: something bad happened in metadata parser. can't continue streaming.\n");
+            *error = 1;
             return 0;
         }
     }
+    return size-avail;
+}
 
+static size_t
+http_curl_write (void *_ptr, size_t size, size_t nmemb, void *stream) {
+    char *ptr = _ptr;
+    size_t avail = size * nmemb;
+    HTTP_FILE *fp = (HTTP_FILE *)stream;
+
+//    trace ("http_curl_write %d bytes, wait_meta=%d\n", size * nmemb, fp->wait_meta);
+    gettimeofday (&fp->last_read_time, NULL);
+    if (http_need_abort (stream)) {
+        fp->status = STATUS_ABORTED;
+        trace ("vfs_curl STATUS_ABORTED at start of packet\n");
+        return 0;
+    }
+
+    // process the in-stream headers, if present
+    if (!fp->gotheader) {
+        size_t consumed = _handle_icy_headers (avail, fp, ptr, stream);
+        avail -= consumed;
+        ptr += consumed;
+        if (!avail) {
+            return nmemb*size;
+        }
+    }
+
+    deadbeef->mutex_lock (fp->mutex);
+    if (fp->status == STATUS_INITIAL && fp->gotheader) {
+        fp->status = STATUS_READING;
+    }
+    deadbeef->mutex_unlock (fp->mutex);
+
+    int error = 0;
+    size_t consumed = _handle_icy_metadata (avail, fp, ptr, &error);
+    if (error) {
+        return 0;
+    }
+    avail -= consumed;
+    ptr += consumed;
+
+    // the remaining bytes are the normal stream, without metadata or headers
     if (avail) {
 //        trace ("http_curl_write_wrapper [2] %d\n", avail);
         size_t res = http_curl_write_wrapper (fp, ptr, avail);
@@ -591,6 +609,7 @@ http_curl_write (void *_ptr, size_t size, size_t nmemb, void *stream) {
     }
     return nmemb * size - avail;
 }
+
 static size_t
 http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream) {
     int end = 0;
