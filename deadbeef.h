@@ -114,10 +114,12 @@ extern "C" {
 
     #endif
 
-    #if __GNUC_PREREQ(4,5)
+    // Deprecating of enum values requires GCC 6+.
+    // Older GCC can still be used to build.
+    #if __GNUC_PREREQ(6,0)
     #   define DDB_DEPRECATED(x) __attribute__ ((deprecated(x)))
     #else
-    #   define DDB_DEPRECATED(x) __attribute__ ((deprecated))
+    #   define DDB_DEPRECATED(x)
     #endif
 
 #else
