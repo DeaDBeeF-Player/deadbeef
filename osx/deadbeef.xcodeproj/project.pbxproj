@@ -291,6 +291,9 @@
 		2D135EF4226E47CE00BAAE84 /* SciptableTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EF3226E47CE00BAAE84 /* SciptableTests.m */; };
 		2D135EFD226E4E1900BAAE84 /* scriptable_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EFA226E4E1600BAAE84 /* scriptable_encoder.c */; };
 		2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D135EF9226E4E1600BAAE84 /* scriptable_encoder.h */; };
+		2D15721623785BD900985E47 /* VfsCurlTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D15721523785BD900985E47 /* VfsCurlTests.m */; };
+		2D15722423785BEC00985E47 /* vfs_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24B5019E724E100E34920 /* vfs_curl.c */; };
+		2D15722723785D0100985E47 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
 		2D17F8461AB3391A00AF2853 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D17F8451AB3391A00AF2853 /* MainMenu.xib */; };
 		2D1A563A1D9FF9A4005E5CDD /* ReplayGain.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D1A56391D9FF9A4005E5CDD /* ReplayGain.xib */; };
 		2D1A564A1D9FFB10005E5CDD /* ReplayGainScannerController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1A56481D9FFB10005E5CDD /* ReplayGainScannerController.h */; };
@@ -3412,6 +3415,8 @@
 		2D135EF3226E47CE00BAAE84 /* SciptableTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SciptableTests.m; sourceTree = "<group>"; };
 		2D135EF9226E4E1600BAAE84 /* scriptable_encoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable_encoder.h; sourceTree = "<group>"; };
 		2D135EFA226E4E1600BAAE84 /* scriptable_encoder.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable_encoder.c; sourceTree = "<group>"; };
+		2D15721523785BD900985E47 /* VfsCurlTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VfsCurlTests.m; sourceTree = "<group>"; };
+		2D15722523785C0500985E47 /* vfs_curl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = vfs_curl.h; path = plugins/vfs_curl/vfs_curl.h; sourceTree = "<group>"; };
 		2D17F8451AB3391A00AF2853 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		2D1A56391D9FF9A4005E5CDD /* ReplayGain.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ReplayGain.xib; sourceTree = "<group>"; };
 		2D1A56481D9FFB10005E5CDD /* ReplayGainScannerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayGainScannerController.h; sourceTree = "<group>"; };
@@ -5807,6 +5812,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D01D7ED1AB2222400BCD3C4 /* libddbcore.a in Frameworks */,
+				2D15722723785D0100985E47 /* libcurl.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7852,6 +7858,7 @@
 			isa = PBXGroup;
 			children = (
 				2DA24B5019E724E100E34920 /* vfs_curl.c */,
+				2D15722523785C0500985E47 /* vfs_curl.h */,
 			);
 			name = vfs_curl;
 			sourceTree = "<group>";
@@ -7902,6 +7909,7 @@
 				2D4A9467223EFC6700199551 /* CoreAudioTests.m */,
 				2D135EF3226E47CE00BAAE84 /* SciptableTests.m */,
 				2D0A6B0A2376E12200252E6D /* TrackSwitchingTests.m */,
+				2D15721523785BD900985E47 /* VfsCurlTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -13466,12 +13474,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D0A6B0B2376E12200252E6D /* TrackSwitchingTests.m in Sources */,
+				2D15722423785BEC00985E47 /* vfs_curl.c in Sources */,
 				4D6CF18E20EB7A9900811034 /* mp3parser.c in Sources */,
 				2DE7A8FB1CA493CE00318A9F /* CuesheetTests.m in Sources */,
 				4D6CF18D20EB788A00811034 /* MP3DecoderTests.m in Sources */,
 				4D90AAFF20EA5CA500D13537 /* DDBTestInitializer.m in Sources */,
 				2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */,
 				2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */,
+				2D15721623785BD900985E47 /* VfsCurlTests.m in Sources */,
 				4D6CF18B20EB783900811034 /* MP3ParserTests.m in Sources */,
 				2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */,
 				2D0F90C21CCFF094003FA197 /* TaggingTests.m in Sources */,

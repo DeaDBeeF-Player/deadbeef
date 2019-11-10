@@ -29,7 +29,7 @@
 #include <assert.h>
 #include <curl/curlver.h>
 #include <time.h>
-#include "../../deadbeef.h"
+#include "vfs_curl.h"
 
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
@@ -38,57 +38,6 @@
 
 static DB_functions_t *deadbeef;
 
-#define BUFFER_SIZE (0x10000)
-#define BUFFER_MASK 0xffff
-
-#define MAX_METADATA 1024
-
-#define TIMEOUT 10 // in seconds
-
-enum {
-    STATUS_INITIAL  = 0,
-    STATUS_READING  = 1,
-    STATUS_FINISHED = 2,
-    STATUS_ABORTED  = 3,
-    STATUS_SEEK     = 4,
-    STATUS_DESTROY  = 5,
-};
-
-typedef struct {
-    DB_vfs_t *vfs;
-    char *url;
-    uint8_t buffer[BUFFER_SIZE];
-
-    DB_playItem_t *track;
-    int64_t pos; // position in stream; use "& BUFFER_MASK" to make it index into ringbuffer
-    int64_t length;
-    int32_t remaining; // remaining bytes in buffer read from stream
-    int64_t skipbytes;
-    intptr_t tid; // thread id which does http requests
-    intptr_t mutex;
-    uint8_t nheaderpackets;
-    char *content_type;
-    CURL *curl;
-    struct timeval last_read_time;
-    uint8_t status;
-    int icy_metaint;
-    int wait_meta;
-
-    char metadata[MAX_METADATA];
-    size_t metadata_size; // size of metadata in stream
-    size_t metadata_have_size; // amount which is already in metadata buffer
-
-    char http_err[CURL_ERROR_SIZE];
-
-    float prev_playtime;
-    time_t started_timestamp;
-
-    // flags (bitfields to save some space)
-    unsigned seektoend : 1; // indicates that next tell must return length
-    unsigned gotheader : 1; // tells that all headers (including ICY) were processed (to start reading body)
-    unsigned icyheader : 1; // tells that we're currently reading ICY headers
-    unsigned gotsomeheader : 1; // tells that we got some headers before body started
-} HTTP_FILE;
 
 static DB_vfs_t plugin;
 
@@ -439,6 +388,7 @@ http_content_header_handler_int (void *ptr, size_t size, void *stream, int *end_
     if (refresh_playlist) {
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     }
+
     if (!fp->icyheader) {
         fp->gotsomeheader = 1;
     }
@@ -446,8 +396,8 @@ http_content_header_handler_int (void *ptr, size_t size, void *stream, int *end_
 }
 
 // returns number of bytes consumed
-static size_t
-_handle_icy_headers (size_t avail, HTTP_FILE *fp, char *ptr, void *stream) {
+size_t
+vfs_curl_handle_icy_headers (size_t avail, HTTP_FILE *fp, char *ptr) {
     size_t size = avail;
 
     // check if that's ICY
@@ -455,11 +405,23 @@ _handle_icy_headers (size_t avail, HTTP_FILE *fp, char *ptr, void *stream) {
         trace ("icy headers in the stream\n");
         ptr += 10;
         avail -= 10;
+
+        fp->icyheader = 1;
+
+        // check for ternmination marker
+        if (avail >= 4 && !memcmp (ptr, "\r\n\r\n", 4)) {
+            avail -= 4;
+            ptr += 4;
+            fp->gotheader = 1;
+
+            return size - avail;
+        }
+
+        // skip remaining linebreaks
         while (avail > 0 && (*ptr == '\r' || *ptr == '\n')) {
             avail--;
             ptr++;
         }
-        fp->icyheader = 1;
     }
     if (fp->icyheader) {
         if (fp->nheaderpackets > 10) {
@@ -473,7 +435,7 @@ _handle_icy_headers (size_t avail, HTTP_FILE *fp, char *ptr, void *stream) {
             fp->nheaderpackets++;
 
             int end = 0;
-            size_t consumed = http_content_header_handler_int (ptr, avail, stream, &end);
+            size_t consumed = http_content_header_handler_int (ptr, avail, fp, &end);
             avail -= consumed;
             ptr += consumed;
             fp->gotheader = end || (avail != 0);
@@ -578,7 +540,7 @@ http_curl_write (void *_ptr, size_t size, size_t nmemb, void *stream) {
 
     // process the in-stream headers, if present
     if (!fp->gotheader) {
-        size_t consumed = _handle_icy_headers (avail, fp, ptr, stream);
+        size_t consumed = vfs_curl_handle_icy_headers (avail, fp, ptr);
         avail -= consumed;
         ptr += consumed;
         if (!avail) {
@@ -648,8 +610,8 @@ http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, d
     return 0;
 }
 
-static void
-http_destroy (HTTP_FILE *fp) {
+void
+vfs_curl_free_file (HTTP_FILE *fp) {
     if (fp->content_type) {
         free (fp->content_type);
     }
@@ -850,7 +812,7 @@ http_close (DB_FILE *stream) {
         deadbeef->thread_join (fp->tid);
     }
     http_cancel_abort ((DB_FILE *)fp);
-    http_destroy (fp);
+    vfs_curl_free_file (fp);
     http_unreg_open_file ((DB_FILE *)fp);
     trace ("http_close done\n");
 }
