@@ -310,6 +310,185 @@ http_stream_reset (HTTP_FILE *fp) {
     fp->wait_meta = 0;
 }
 
+static const uint8_t *
+parse_header (const uint8_t *p, const uint8_t *e, uint8_t *key, int keysize, uint8_t *value, int valuesize) {
+    size_t sz; // will hold lenght of extracted string
+    const uint8_t *v; // pointer to current character
+    keysize--;
+    valuesize--;
+    *key = 0;
+    *value = 0;
+    v = p;
+    // find :
+    while (v < e && *v != 0x0d && *v != 0x0a && *v != ':') {
+        v++;
+    }
+    if (*v != ':') {
+        // skip linebreaks
+        while (v < e && (*v == 0x0d || *v == 0x0a)) {
+            v++;
+        }
+        return v;
+    }
+    // copy key
+    sz = v-p;
+    sz = min (keysize, sz);
+    memcpy (key, p, sz);
+    key[sz] = 0;
+
+    // skip whitespace
+    v++;
+    while (v < e && (*v == 0x20 || *v == 0x08)) {
+        v++;
+    }
+    if (*v == 0x0d || *v == 0x0a) {
+        // skip linebreaks
+        while (v < e && (*v == 0x0d || *v == 0x0a)) {
+            v++;
+        }
+        return v;
+    }
+    p = v;
+
+    // find linebreak
+    while (v < e && *v != 0x0d && *v != 0x0a) {
+        v++;
+    }
+
+    // copy value
+    sz = v-p;
+    sz = min (valuesize, sz);
+    memcpy (value, p, sz);
+    value[sz] = 0;
+
+    return v;
+}
+
+static size_t
+http_content_header_handler_int (void *ptr, size_t size, void *stream, int *end_of_headers) {
+//    trace ("http_content_header_handler\n");
+    assert (stream);
+    HTTP_FILE *fp = (HTTP_FILE *)stream;
+    const uint8_t *p = ptr;
+    const uint8_t *end = p + size;
+    uint8_t key[256];
+    uint8_t value[256];
+    int refresh_playlist = 0;
+
+    if (fp->length == 0) {
+        fp->length = -1;
+    }
+
+    while (p < end) {
+        if (p <= end - 4) {
+            if (!memcmp (p, "\r\n\r\n", 4)) {
+                p += 4;
+                *end_of_headers = 1;
+                return p - (uint8_t *)ptr;
+            }
+        }
+        // skip linebreaks
+        while (p < end && (*p == 0x0d || *p == 0x0a)) {
+            p++;
+        }
+        p = parse_header (p, end, key, sizeof (key), value, sizeof (value));
+        trace ("%skey=%s value=%s\n", fp->icyheader ? "[icy] " : "", key, value);
+        if (!strcasecmp ((char *)key, "Content-Type")) {
+            if (fp->content_type) {
+                free (fp->content_type);
+            }
+            fp->content_type = strdup ((char *)value);
+        }
+        else if (!strcasecmp ((char *)key, "Content-Length")) {
+            fp->length = atoi ((char *)value);
+        }
+        else if (!strcasecmp ((char *)key, "icy-name")) {
+            if (fp->track) {
+                vfs_curl_set_meta (fp->track, "title", (char *)value);
+                refresh_playlist = 1;
+            }
+        }
+        else if (!strcasecmp ((char *)key, "icy-genre")) {
+            if (fp->track) {
+                vfs_curl_set_meta (fp->track, "genre", (char *)value);
+                refresh_playlist = 1;
+            }
+        }
+        else if (!strcasecmp ((char *)key, "icy-metaint")) {
+            //printf ("icy-metaint: %d\n", atoi (value));
+            fp->icy_metaint = atoi ((char *)value);
+            fp->wait_meta = fp->icy_metaint;
+        }
+        else if (!strcasecmp ((char *)key, "icy-url")) {
+            if (fp->track) {
+                vfs_curl_set_meta (fp->track, "url", (char *)value);
+                refresh_playlist = 1;
+            }
+        }
+
+        // for icy streams, reset length
+        if (!strncasecmp ((char *)key, "icy-", 4)) {
+            fp->length = -1;
+        }
+    }
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
+    if (refresh_playlist) {
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    }
+    if (!fp->icyheader) {
+        fp->gotsomeheader = 1;
+    }
+    return p - (uint8_t *)ptr;
+}
+
+// returns number of bytes consumed
+static size_t
+_handle_icy_headers (size_t avail, HTTP_FILE *fp, char *ptr, void *stream) {
+    size_t size = avail;
+
+    // check if that's ICY
+    if (!fp->icyheader && avail >= 10 && !memcmp (ptr, "ICY 200 OK", 10)) {
+        trace ("icy headers in the stream\n");
+        ptr += 10;
+        avail -= 10;
+        while (avail > 0 && (*ptr == '\r' || *ptr == '\n')) {
+            avail--;
+            ptr++;
+        }
+        fp->icyheader = 1;
+    }
+    if (fp->icyheader) {
+        if (fp->nheaderpackets > 10) {
+            fprintf (stderr, "vfs_curl: warning: seems like stream has unterminated ICY headers\n");
+            fp->icy_metaint = 0;
+            fp->wait_meta = 0;
+            fp->gotheader = 1;
+        }
+        else if (avail) {
+            //                trace ("parsing icy headers:\n%s\n", ptr);
+            fp->nheaderpackets++;
+
+            int end = 0;
+            size_t consumed = http_content_header_handler_int (ptr, avail, stream, &end);
+            avail -= consumed;
+            ptr += consumed;
+            fp->gotheader = end || (avail != 0);
+        }
+    }
+    else {
+        fp->gotheader = 1;
+    }
+    if (!avail) {
+        return size;
+    }
+
+    return size-avail;
+}
+
 static size_t
 http_curl_write (void *_ptr, size_t size, size_t nmemb, void *stream) {
     char *ptr = _ptr;
@@ -323,49 +502,10 @@ http_curl_write (void *_ptr, size_t size, size_t nmemb, void *stream) {
         trace ("vfs_curl STATUS_ABORTED at start of packet\n");
         return 0;
     }
-//    if (fp->gotsomeheader) {
-//        fp->gotheader = 1;
-//    }
+
     if (!fp->gotheader) {
-        // check if that's ICY
-        if (!fp->icyheader && avail >= 10 && !memcmp (ptr, "ICY 200 OK", 10)) {
-            trace ("icy headers in the stream\n");
-            ptr += 10;
-            avail -= 10;
-            while (avail > 0 && (*ptr == '\r' || *ptr == '\n')) {
-                avail--;
-                ptr++;
-            }
-            fp->icyheader = 1;
-        }
-        if (fp->icyheader) {
-            if (fp->nheaderpackets > 10) {
-                fprintf (stderr, "vfs_curl: warning: seems like stream has unterminated ICY headers\n");
-                fp->icy_metaint = 0;
-                fp->wait_meta = 0;
-                fp->gotheader = 1;
-            }
-            else if (avail) {
-//                trace ("parsing icy headers:\n%s\n", ptr);
-                fp->nheaderpackets++;
-                avail -= http_content_header_handler (ptr, 1, avail, stream);
-                if (avail == 0 && size*nmemb>= 4 && memcmp (ptr + size*nmemb - 4, "\r\n\r\n", 4)) {
-                    ptr += size*nmemb;
-                    if (fp->gotheader) {
-                        fp->gotheader = 0; // don't reset icy header
-                    }
-                }
-                else {
-                    fp->gotheader = 1;
-                    if (fp->wait_meta > 0) {
-                        ptr += size*nmemb - avail;
-                    }
-                }
-            }
-        }
-        else {
-            fp->gotheader = 1;
-        }
+        size_t consumed = _handle_icy_headers (avail, fp, ptr, stream);
+        avail -= consumed;
         if (!avail) {
             return nmemb*size;
         }
@@ -451,139 +591,10 @@ http_curl_write (void *_ptr, size_t size, size_t nmemb, void *stream) {
     }
     return nmemb * size - avail;
 }
-
-static const uint8_t *
-parse_header (const uint8_t *p, const uint8_t *e, uint8_t *key, int keysize, uint8_t *value, int valuesize) {
-    size_t sz; // will hold lenght of extracted string
-    const uint8_t *v; // pointer to current character
-    keysize--;
-    valuesize--;
-    *key = 0;
-    *value = 0;
-    v = p;
-    // find :
-    while (v < e && *v != 0x0d && *v != 0x0a && *v != ':') {
-        v++;
-    }
-    if (*v != ':') {
-        // skip linebreaks
-        while (v < e && (*v == 0x0d || *v == 0x0a)) {
-            v++;
-        }
-        return v;
-    }
-    // copy key
-    sz = v-p;
-    sz = min (keysize, sz);
-    memcpy (key, p, sz);
-    key[sz] = 0;
-
-    // skip whitespace
-    v++;
-    while (v < e && (*v == 0x20 || *v == 0x08)) {
-        v++;
-    }
-    if (*v == 0x0d || *v == 0x0a) {
-        // skip linebreaks
-        while (v < e && (*v == 0x0d || *v == 0x0a)) {
-            v++;
-        }
-        return v;
-    }
-    p = v;
-
-    // find linebreak
-    while (v < e && *v != 0x0d && *v != 0x0a) {
-        v++;
-    }
-    
-    // copy value
-    sz = v-p;
-    sz = min (valuesize, sz);
-    memcpy (value, p, sz);
-    value[sz] = 0;
-
-    return v;
-}
-
 static size_t
 http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream) {
-//    trace ("http_content_header_handler\n");
-    assert (stream);
-    HTTP_FILE *fp = (HTTP_FILE *)stream;
-    const uint8_t *p = ptr;
-    const uint8_t *end = p + size*nmemb;
-    uint8_t key[256];
-    uint8_t value[256];
-    int refresh_playlist = 0;
-
-    if (fp->length == 0) {
-        fp->length = -1;
-    }
-
-    while (p < end) {
-        if (p <= end - 4) {
-            if (!memcmp (p, "\r\n\r\n", 4)) {
-                p += 4;
-                return p - (uint8_t *)ptr;
-            }
-        }
-        // skip linebreaks
-        while (p < end && (*p == 0x0d || *p == 0x0a)) {
-            p++;
-        }
-        p = parse_header (p, end, key, sizeof (key), value, sizeof (value));
-        trace ("%skey=%s value=%s\n", fp->icyheader ? "[icy] " : "", key, value);
-        if (!strcasecmp ((char *)key, "Content-Type")) {
-            if (fp->content_type) {
-                free (fp->content_type);
-            }
-            fp->content_type = strdup ((char *)value);
-        }
-        else if (!strcasecmp ((char *)key, "Content-Length")) {
-            fp->length = atoi ((char *)value);
-        }
-        else if (!strcasecmp ((char *)key, "icy-name")) {
-            if (fp->track) {
-                vfs_curl_set_meta (fp->track, "title", (char *)value);
-                refresh_playlist = 1;
-            }
-        }
-        else if (!strcasecmp ((char *)key, "icy-genre")) {
-            if (fp->track) {
-                vfs_curl_set_meta (fp->track, "genre", (char *)value);
-                refresh_playlist = 1;
-            }
-        }
-        else if (!strcasecmp ((char *)key, "icy-metaint")) {
-            //printf ("icy-metaint: %d\n", atoi (value));
-            fp->icy_metaint = atoi ((char *)value);
-            fp->wait_meta = fp->icy_metaint; 
-        }
-        else if (!strcasecmp ((char *)key, "icy-url")) {
-            if (fp->track) {
-                vfs_curl_set_meta (fp->track, "url", (char *)value);
-                refresh_playlist = 1;
-            }
-        }
-
-        // for icy streams, reset length
-        if (!strncasecmp ((char *)key, "icy-", 4)) {
-            fp->length = -1;
-        }
-    }
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (plt) {
-        deadbeef->plt_modified (plt);
-        deadbeef->plt_unref (plt);
-    }
-    if (refresh_playlist) {
-        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    }
-    if (!fp->icyheader) {
-        fp->gotsomeheader = 1;
-    }
-    return p - (uint8_t *)ptr;
+    int end = 0;
+    return http_content_header_handler_int (ptr, size*nmemb, stream, &end);
 }
 
 static int
