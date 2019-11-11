@@ -1228,6 +1228,10 @@ m3u_error:
             new_fileinfo_file_vfs = new_fileinfo->file->vfs;
             new_fileinfo_file_identifier = vfs_get_identifier(new_fileinfo->file);
         }
+        else {
+            new_fileinfo_file_vfs = NULL;
+            new_fileinfo_file_identifier = 0;
+        }
         if (new_fileinfo && dec->init (new_fileinfo, DB_PLAYITEM (it)) != 0) {
             trace ("\033[0;31mfailed to init decoder\033[37;0m\n");
             pl_delete_meta (it, "!DECODER");
@@ -1242,8 +1246,14 @@ m3u_error:
             continue;
         }
         else {
-            new_fileinfo_file_vfs = new_fileinfo->file->vfs;
-            new_fileinfo_file_identifier = vfs_get_identifier (new_fileinfo->file);
+            if (new_fileinfo->file) {
+                new_fileinfo_file_vfs = new_fileinfo->file->vfs;
+                new_fileinfo_file_identifier = vfs_get_identifier (new_fileinfo->file);
+            }
+            else {
+                new_fileinfo_file_vfs = NULL;
+                new_fileinfo_file_identifier = 0;
+            }
 
             if (streaming_track) {
                 pl_item_unref (streaming_track);
