@@ -786,10 +786,10 @@ http_open (const char *fname) {
         plugin.plugin.flags &= ~DDB_PLUGIN_FLAG_LOGGING;
     }
     HTTP_FILE *fp = malloc (sizeof (HTTP_FILE));
-    fp->identifier = ++_curr_identifier;
-
     http_reg_open_file ((DB_FILE *)fp);
     memset (fp, 0, sizeof (HTTP_FILE));
+
+    fp->identifier = ++_curr_identifier;
     fp->vfs = &plugin;
     fp->url = strdup (fname);
     return (DB_FILE*)fp;

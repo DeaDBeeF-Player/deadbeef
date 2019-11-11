@@ -163,7 +163,7 @@ vfs_fabort (DB_FILE *stream) {
 uint64_t
 vfs_get_identifier (DB_FILE *stream) {
     if (stream->vfs->get_identifier) {
-        stream->vfs->get_identifier (stream);
+        return stream->vfs->get_identifier (stream);
     }
     return 0;
 }

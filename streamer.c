@@ -202,7 +202,7 @@ streamer_abort_files (void) {
     DB_vfs_t *newfile_vfs = new_fileinfo_file_vfs;
     uint64_t newfile_identifier = new_fileinfo_file_identifier;
 
-    DB_vfs_t *strfile_vfs = new_fileinfo_file_vfs;
+    DB_vfs_t *strfile_vfs =streamer_file_vfs;
     uint64_t strfile_identifier = streamer_file_identifier;
 
     trace ("\033[0;33mstreamer_abort_files\033[37;0m\n");
@@ -1303,11 +1303,11 @@ streamer_get_apx_bitrate (void) {
 
 void
 streamer_set_nextsong (int song, int startpaused) {
+    streamer_abort_files ();
     if (song == -1) {
         // this is a stop query -- clear the queue
         handler_reset (handler);
     }
-    streamer_abort_files ();
     handler_push (handler, STR_EV_PLAY_TRACK_IDX, 0, song, startpaused);
 }
 
