@@ -1877,8 +1877,9 @@ typedef struct DB_vfs_s {
 
     int (*is_container) (const char *fname); // should return 1 if this plugin can parse specified file
 
-// this allows interruption of hanging network streams
-    void (*abort) (DB_FILE *stream);
+// Was used to interrupt hanging network streams, but not used since API 1.11.
+// Use get_identifier / abort_with_identifier instead
+    void (*abort) (DB_FILE *stream) DEPRECATED_111;
 
 // file access, follows stdio API with few extension
     DB_FILE* (*open) (const char *fname);
@@ -1904,6 +1905,14 @@ typedef struct DB_vfs_s {
     // can be NULL
     // can return NULL
     const char *(*get_scheme_for_name) (const char *fname);
+#endif
+
+#if (DDB_API_LEVEL >= 11)
+    // Optional method, which should return a unique ID associated with the file
+    uint64_t (*get_identifier) (DB_FILE *f);
+
+    // Optional method to abort any file / stream operation on a file with specified identifier
+    void (*abort_with_identifier) (uint64_t identifier);
 #endif
 } DB_vfs_t;
 

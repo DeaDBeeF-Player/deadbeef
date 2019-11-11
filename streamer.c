@@ -112,9 +112,11 @@ static ddb_waveformat_t prev_output_format; // last format that was sent to outp
 static ddb_waveformat_t last_block_fmt; // input file format corresponding to the current output
 
 static DB_fileinfo_t *fileinfo;
-static DB_FILE *fileinfo_file;
+static uint64_t fileinfo_file_identifier;
+static DB_vfs_t *fileinfo_file_vfs;
 static DB_fileinfo_t *new_fileinfo;
-static DB_FILE *new_fileinfo_file;
+static uint64_t new_fileinfo_file_identifier;
+static DB_vfs_t *new_fileinfo_file_vfs;
 
 // This counter is incremented by one for each streamer_read call, which returns -1,
 // which means audio should stop, but we need to wait a bit until buffered data has finished playing,
@@ -123,7 +125,8 @@ static DB_FILE *new_fileinfo_file;
 static int _audio_stall_count;
 
 // to allow interruption of stall file requests
-static DB_FILE *streamer_file;
+static uint64_t streamer_file_identifier;
+static DB_vfs_t *streamer_file_vfs;
 
 #if defined(HAVE_XGUI) || defined(ANDROID)
 #include "equalizer.h"
@@ -193,20 +196,26 @@ _streamer_mark_album_played_up_to (playItem_t *item);
 
 static void
 streamer_abort_files (void) {
-    DB_FILE *file = fileinfo_file;
-    DB_FILE *newfile = new_fileinfo_file;
-    DB_FILE *strfile = streamer_file;
-    trace ("\033[0;33mstreamer_abort_files\033[37;0m\n");
-    trace ("%p %p %p\n", file, newfile, strfile);
+    DB_vfs_t *file_vfs = fileinfo_file_vfs;
+    uint64_t file_identifier = fileinfo_file_identifier;
 
-    if (file) {
-        vfs_fabort (file);
+    DB_vfs_t *newfile_vfs = new_fileinfo_file_vfs;
+    uint64_t newfile_identifier = new_fileinfo_file_identifier;
+
+    DB_vfs_t *strfile_vfs = new_fileinfo_file_vfs;
+    uint64_t strfile_identifier = streamer_file_identifier;
+
+    trace ("\033[0;33mstreamer_abort_files\033[37;0m\n");
+    trace ("%lld %lld %lld\n", file_identifier, newfile_identifier, strfile_identifier);
+
+    if (file_vfs && file_identifier) {
+        vfs_abort_with_identifier(file_vfs, file_identifier);
     }
-    if (newfile) {
-        vfs_fabort (newfile);
+    if (newfile_vfs && newfile_identifier) {
+        vfs_abort_with_identifier(newfile_vfs, newfile_identifier);
     }
-    if (strfile) {
-        vfs_fabort (strfile);
+    if (strfile_vfs && strfile_identifier) {
+        vfs_abort_with_identifier(strfile_vfs, strfile_identifier);
     }
 
 }
@@ -852,9 +861,14 @@ streamer_play_failed (playItem_t *failed_track) {
         // the track has failed to be played,
         // but we want to send it down to streamreader for proper track switching etc.
         fileinfo = calloc(sizeof (DB_fileinfo_t), 1);
-        fileinfo_file = NULL;
+
+        fileinfo_file_vfs = NULL;
+        fileinfo_file_identifier = 0;
+
         new_fileinfo = NULL;
-        new_fileinfo_file = NULL;
+        new_fileinfo_file_vfs = NULL;
+        new_fileinfo_file_identifier = 0;
+
         if (streaming_track) {
             pl_item_unref (streaming_track);
         }
@@ -881,7 +895,8 @@ stream_track (playItem_t *it, int startpaused) {
     if (fileinfo) {
         fileinfo_free (fileinfo);
         fileinfo = NULL;
-        fileinfo_file = NULL;
+        fileinfo_file_vfs = NULL;
+        fileinfo_file_identifier = 0;
     }
     trace ("stream_track %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
     int err = 0;
@@ -947,17 +962,23 @@ stream_track (playItem_t *it, int startpaused) {
         pl_lock ();
         char *uri = strdupa (pl_find_meta (it, ":URI"));
         pl_unlock ();
-        DB_FILE *fp = streamer_file = vfs_fopen (uri);
+        DB_FILE *fp = vfs_fopen (uri);
         trace ("\033[0;34mgetting content-type\033[37;0m\n");
         if (!fp) {
             err = -1;
             goto error;
         }
+        streamer_file_vfs = fp->vfs;
+        streamer_file_identifier = vfs_get_identifier (fp);
+
         const char *ct = vfs_get_content_type (fp);
         if (!ct) {
             vfs_fclose (fp);
             fp = NULL;
-            streamer_file = NULL;
+
+            streamer_file_vfs = NULL;
+            streamer_file_identifier = 0;
+
             if (!startpaused) {
                 streamer_play_failed (it);
             }
@@ -1121,7 +1142,10 @@ m3u_error:
             }
             goto error;
         }
-        streamer_file = NULL;
+
+        streamer_file_vfs = NULL;
+        streamer_file_identifier = 0;
+
         vfs_fclose (fp);
     }
 
@@ -1201,14 +1225,16 @@ m3u_error:
         trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), dec->plugin.id);
         new_fileinfo = dec_open (dec, STREAMER_HINTS, it);
         if (new_fileinfo && new_fileinfo->file) {
-            new_fileinfo_file = new_fileinfo->file;
+            new_fileinfo_file_vfs = new_fileinfo->file->vfs;
+            new_fileinfo_file_identifier = vfs_get_identifier(new_fileinfo->file);
         }
         if (new_fileinfo && dec->init (new_fileinfo, DB_PLAYITEM (it)) != 0) {
             trace ("\033[0;31mfailed to init decoder\033[37;0m\n");
             pl_delete_meta (it, "!DECODER");
             dec->free (new_fileinfo);
             new_fileinfo = NULL;
-            new_fileinfo_file = NULL;
+            new_fileinfo_file_vfs = NULL;
+            new_fileinfo_file_identifier = 0;
         }
 
         if (!new_fileinfo) {
@@ -1216,7 +1242,9 @@ m3u_error:
             continue;
         }
         else {
-            new_fileinfo_file = new_fileinfo->file;
+            new_fileinfo_file_vfs = new_fileinfo->file->vfs;
+            new_fileinfo_file_identifier = vfs_get_identifier (new_fileinfo->file);
+
             if (streaming_track) {
                 pl_item_unref (streaming_track);
             }
@@ -1234,7 +1262,8 @@ success:
     if (new_fileinfo) {
         fileinfo = new_fileinfo;
         new_fileinfo = NULL;
-        new_fileinfo_file = NULL;
+        new_fileinfo_file_vfs = NULL;
+        new_fileinfo_file_identifier = 0;
     }
 
 error:
@@ -1611,7 +1640,8 @@ streamer_thread (void *unused) {
     if (fileinfo) {
         fileinfo_free (fileinfo);
         fileinfo = NULL;
-        fileinfo_file = NULL;
+        fileinfo_file_vfs = NULL;
+        fileinfo_file_identifier = 0;
     }
     streamer_lock ();
     if (streaming_track) {

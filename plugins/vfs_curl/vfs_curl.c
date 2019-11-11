@@ -48,20 +48,22 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
 
 static int64_t biglock;
 
+static uint64_t _curr_identifier;
+
 #define MAX_ABORT_FILES 100
-static DB_FILE *open_files[MAX_ABORT_FILES];
+static HTTP_FILE *open_files[MAX_ABORT_FILES];
 static int num_open_files = 0;
-static DB_FILE *abort_files[MAX_ABORT_FILES];
+static uint64_t abort_files[MAX_ABORT_FILES];
 static int num_abort_files = 0;
 
 static int
-http_need_abort (DB_FILE *fp);
+http_need_abort (uint64_t identifier);
 
 static void
-http_cancel_abort (DB_FILE *fp);
+http_cancel_abort (uint64_t identifier);
 
 static void
-http_abort (DB_FILE *fp);
+vfs_curl_abort_with_identifier (uint64_t identifier);
 
 static void
 http_reg_open_file (DB_FILE *fp);
@@ -79,7 +81,7 @@ http_curl_write_wrapper (HTTP_FILE *fp, void *ptr, size_t size) {
             deadbeef->mutex_unlock (fp->mutex);
             return 0;
         }
-        if (http_need_abort ((DB_FILE*)fp)) {
+        if (http_need_abort (fp->identifier)) {
             fp->status = STATUS_ABORTED;
             trace ("vfs_curl STATUS_ABORTED in the middle of packet\n");
             deadbeef->mutex_unlock (fp->mutex);
@@ -402,7 +404,7 @@ vfs_curl_handle_icy_headers (size_t avail, HTTP_FILE *fp, char *ptr) {
 
     // check if that's ICY
     if (!fp->icyheader && avail >= 10 && !memcmp (ptr, "ICY 200 OK", 10)) {
-        trace ("icy headers in the stream\n");
+        trace ("icy headers in the stream %p\n", fp);
         ptr += 10;
         avail -= 10;
 
@@ -532,7 +534,7 @@ http_curl_write (void *_ptr, size_t size, size_t nmemb, void *stream) {
 
 //    trace ("http_curl_write %d bytes, wait_meta=%d\n", size * nmemb, fp->wait_meta);
     gettimeofday (&fp->last_read_time, NULL);
-    if (http_need_abort (stream)) {
+    if (http_need_abort (fp->identifier)) {
         fp->status = STATUS_ABORTED;
         trace ("vfs_curl STATUS_ABORTED at start of packet\n");
         return 0;
@@ -600,7 +602,7 @@ http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, d
         deadbeef->mutex_unlock (fp->mutex);
         return -1;
     }
-    if (http_need_abort ((DB_FILE *)fp)) {
+    if (http_need_abort (fp->identifier)) {
         fp->status = STATUS_ABORTED;
         trace ("vfs_curl STATUS_ABORTED in progress callback\n");
         deadbeef->mutex_unlock (fp->mutex);
@@ -783,8 +785,9 @@ http_open (const char *fname) {
     else {
         plugin.plugin.flags &= ~DDB_PLUGIN_FLAG_LOGGING;
     }
-    trace ("http_open\n");
     HTTP_FILE *fp = malloc (sizeof (HTTP_FILE));
+    fp->identifier = ++_curr_identifier;
+
     http_reg_open_file ((DB_FILE *)fp);
     memset (fp, 0, sizeof (HTTP_FILE));
     fp->vfs = &plugin;
@@ -807,11 +810,12 @@ http_close (DB_FILE *stream) {
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
 
-    http_abort (stream);
+    uint64_t identifier = fp->identifier;
+    vfs_curl_abort_with_identifier (identifier);
     if (fp->tid) {
         deadbeef->thread_join (fp->tid);
     }
-    http_cancel_abort ((DB_FILE *)fp);
+    http_cancel_abort (identifier);
     vfs_curl_free_file (fp);
     http_unreg_open_file ((DB_FILE *)fp);
     trace ("http_close done\n");
@@ -982,7 +986,7 @@ http_rewind (DB_FILE *stream) {
 
 static int64_t
 http_getlength (DB_FILE *stream) {
-    trace ("http_getlength\n");
+    trace ("http_getlength %p\n", stream);
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     if (fp->status == STATUS_ABORTED) {
@@ -1026,34 +1030,13 @@ http_get_content_type (DB_FILE *stream) {
     return fp->content_type;
 }
 
-static void
-http_abort (DB_FILE *fp) {
-    trace ("abort file: %p\n", fp);
-    deadbeef->mutex_lock (biglock);
-    int i;
-    for (i = 0; i < num_abort_files; i++) {
-        if (abort_files[i] == fp) {
-            break;
-        }
-    }
-    if (i == num_abort_files) {
-        if (num_abort_files == MAX_ABORT_FILES) {
-            trace ("vfs_curl: abort_files list overflow\n");
-        }
-        else {
-            trace ("added file to abort list: %p\n", fp);
-            abort_files[num_abort_files++] = fp;
-        }
-    }
-    deadbeef->mutex_unlock (biglock);
-}
 
 static int
-http_need_abort (DB_FILE *fp) {
+http_need_abort (uint64_t identifier) {
     deadbeef->mutex_lock (biglock);
     for (int i = 0; i < num_abort_files; i++) {
-        if (abort_files[i] == fp) {
-            trace ("need to abort: %p\n", fp);
+        if (abort_files[i] == identifier) {
+            trace ("need to abort: %lld\n", identifier);
             deadbeef->mutex_unlock (biglock);
             return 1;
         }
@@ -1063,10 +1046,10 @@ http_need_abort (DB_FILE *fp) {
 }
 
 static void
-http_cancel_abort (DB_FILE *fp) {
+http_cancel_abort (uint64_t identifier) {
     deadbeef->mutex_lock (biglock);
     for (int i = 0; i < num_abort_files; i++) {
-        if (abort_files[i] == fp) {
+        if (abort_files[i] == identifier) {
             if (i != num_abort_files-1) {
                 abort_files[i] = abort_files[num_abort_files-1];
             }
@@ -1080,8 +1063,9 @@ http_cancel_abort (DB_FILE *fp) {
 static void
 http_reg_open_file (DB_FILE *fp) {
     deadbeef->mutex_lock (biglock);
+    HTTP_FILE *file = (HTTP_FILE *)fp;
     for (int i = 0; i < num_open_files; i++) {
-        if (open_files[i] == fp) {
+        if (open_files[i] == file) {
             deadbeef->mutex_unlock (biglock);
             return;
         }
@@ -1091,16 +1075,17 @@ http_reg_open_file (DB_FILE *fp) {
         deadbeef->mutex_unlock (biglock);
         return;
     }
-    open_files[num_open_files++] = fp;
+    open_files[num_open_files++] = file;
     deadbeef->mutex_unlock (biglock);
 }
 
 static void
 http_unreg_open_file (DB_FILE *fp) {
     deadbeef->mutex_lock (biglock);
+    HTTP_FILE *file = (HTTP_FILE *)fp;
     int i;
     for (i = 0; i < num_open_files; i++) {
-        if (open_files[i] == fp) {
+        if (open_files[i] == file) {
             if (i != num_open_files-1) {
                 open_files[i] = open_files[num_open_files-1];
             }
@@ -1114,7 +1099,7 @@ http_unreg_open_file (DB_FILE *fp) {
     int j = 0;
     while (j < num_abort_files) {
         for (i = 0; i < num_open_files; i++) {
-            if (abort_files[j] == open_files[i]) {
+            if (abort_files[j] == open_files[i]->identifier) {
                 break;
             }
         }
@@ -1156,6 +1141,41 @@ int
 http_is_streaming (void) {
     return 1;
 }
+
+static uint64_t
+vfs_curl_get_identifier (DB_FILE *f) {
+    deadbeef->mutex_lock (biglock);
+
+    HTTP_FILE *file = (HTTP_FILE *)f;
+    uint64_t identifier = file->identifier;
+
+    deadbeef->mutex_unlock (biglock);
+
+    return identifier;
+}
+
+static void
+vfs_curl_abort_with_identifier (uint64_t identifier) {
+    trace ("abort vfs_curl stream: %lld\n", identifier);
+    deadbeef->mutex_lock (biglock);
+    int i;
+    for (i = 0; i < num_abort_files; i++) {
+        if (abort_files[i] == identifier) {
+            break;
+        }
+    }
+    if (i == num_abort_files) {
+        if (num_abort_files == MAX_ABORT_FILES) {
+            trace ("vfs_curl: abort_files list overflow\n");
+        }
+        else {
+            trace ("added file to abort list: %lld\n", identifier);
+            abort_files[num_abort_files++] = identifier;
+        }
+    }
+    deadbeef->mutex_unlock (biglock);
+}
+
 
 static const char settings_dlg[] =
     "property \"Enable logging\" checkbox vfs_curl.trace 0;\n"
@@ -1200,7 +1220,6 @@ static DB_vfs_t plugin = {
     .open = http_open,
     .set_track = http_set_track,
     .close = http_close,
-    .abort = http_abort,
     .read = http_read,
     .seek = http_seek,
     .tell = http_tell,
@@ -1209,6 +1228,8 @@ static DB_vfs_t plugin = {
     .get_content_type = http_get_content_type,
     .get_schemes = http_get_schemes,
     .is_streaming = http_is_streaming,
+    .get_identifier = vfs_curl_get_identifier,
+    .abort_with_identifier = vfs_curl_abort_with_identifier,
 };
 
 DB_plugin_t *

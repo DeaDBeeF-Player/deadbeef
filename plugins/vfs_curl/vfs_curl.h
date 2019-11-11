@@ -57,6 +57,8 @@ typedef struct {
     float prev_playtime;
     time_t started_timestamp;
 
+    uint64_t identifier;
+
     // flags (bitfields to save some space)
     unsigned seektoend : 1; // indicates that next tell must return length
     unsigned gotheader : 1; // tells that all headers (including ICY) were processed (to start reading body)
