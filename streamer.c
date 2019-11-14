@@ -128,6 +128,18 @@ static int _audio_stall_count;
 static uint64_t streamer_file_identifier;
 static DB_vfs_t *streamer_file_vfs;
 
+// We always decode the entire block, 16384 bytes of input PCM
+// after DSP that can become really big.
+// Think converting from 8KHz/8 bit to 192KHz/32 bit, thats 96x size increase,
+// which gives us the need of 1.5MB buffer.
+//
+// It's guaranteed that outbuffer contains only samples from the files with same wave format.
+//
+#define OUTPUT_BUFFER_SIZE (512*1024) // FIXME: need to be able to calculate that size from DSP chain
+static char *_output_buffer;
+static size_t _output_buffer_size;
+static int _outbuffer_remaining;
+
 // A buffer used in streamer_read.
 static float *_temp_audio_buffer;
 static size_t _temp_audio_buffer_size;
@@ -1750,20 +1762,26 @@ streamer_free (void) {
     playpos = 0;
     playtime = 0;
 
+    free (_output_buffer);
+    _output_buffer_size = 0;
+    _outbuffer_remaining = 0;
+
     free (_temp_audio_buffer);
     _temp_audio_buffer_size = 0;
 }
 
-// We always decode the entire block, 16384 bytes of input PCM
-// after DSP that can become really big.
-// Think converting from 8KHz/8 bit to 192KHz/32 bit, thats 96x size increase,
-// which gives us the need of 1.5MB buffer.
-//
-// It's guaranteed that outbuffer contains only samples from the files with same wave format.
-//
-// FIXME: this BSS allocation is temporary, needs to be on heap, and allocated on demand.
-static char outbuffer[512*1024];
-static int outbuffer_remaining;
+static char *
+_get_output_buffer (size_t size) {
+    if (_output_buffer) {
+        if (_output_buffer_size >= size) {
+            return _output_buffer;
+        }
+        free (_output_buffer);
+    }
+    _output_buffer_size = size;
+    _output_buffer = malloc (_output_buffer_size);
+    return _output_buffer;
+}
 
 void
 streamer_reset (int full) { // must be called when current song changes by external reasons
@@ -1775,7 +1793,7 @@ streamer_reset (int full) { // must be called when current song changes by exter
     streamer_lock();
     streamreader_reset ();
     dsp_reset ();
-    outbuffer_remaining = 0;
+    _outbuffer_remaining = 0;
     streamer_unlock();
 }
 
@@ -2017,19 +2035,20 @@ streamer_read (char *bytes, int size) {
     // only decode until the next format change
     if (!memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
         // decode enough blocks to fill the output buffer
-        while (block != NULL && outbuffer_remaining < size && !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
-            int rb = process_output_block (block, outbuffer + outbuffer_remaining);
+        while (block != NULL && _outbuffer_remaining < size && !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
+            char *outbuffer = _get_output_buffer (OUTPUT_BUFFER_SIZE);
+            int rb = process_output_block (block, outbuffer + _outbuffer_remaining);
             if (rb <= 0) {
                 break;
             }
-            outbuffer_remaining += rb;
+            _outbuffer_remaining += rb;
             block_bitrate = block->bitrate;
             block = streamreader_get_curr_block();
         }
     }
     // empty buffer and the next block format differs? request format change!
 
-    if (!outbuffer_remaining && block && memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
+    if (!_outbuffer_remaining && block && memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
         _format_change_wait = 1;
         streamer_unlock();
         memset (bytes, 0, size);
@@ -2038,7 +2057,7 @@ streamer_read (char *bytes, int size) {
     streamer_unlock ();
 
     // consume decoded data
-    int sz = min (size, outbuffer_remaining);
+    int sz = min (size, _outbuffer_remaining);
     if (!sz) {
         // no data available
         memset (bytes, 0, size);
@@ -2051,11 +2070,13 @@ streamer_read (char *bytes, int size) {
         sz -= (sz % ss);
     }
 
+    char *outbuffer = _get_output_buffer(OUTPUT_BUFFER_SIZE);
+
     memcpy (bytes, outbuffer, sz);
-    if (sz < outbuffer_remaining) {
-        memmove (outbuffer, outbuffer + sz, outbuffer_remaining - sz);
+    if (sz < _outbuffer_remaining) {
+        memmove (outbuffer, outbuffer + sz, _outbuffer_remaining - sz);
     }
-    outbuffer_remaining -= sz;
+    _outbuffer_remaining -= sz;
 
     // approximate bitrate
     if (block_bitrate != -1) {
