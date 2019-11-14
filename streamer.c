@@ -128,6 +128,10 @@ static int _audio_stall_count;
 static uint64_t streamer_file_identifier;
 static DB_vfs_t *streamer_file_vfs;
 
+// A buffer used in streamer_read.
+static float *_temp_audio_buffer;
+static size_t _temp_audio_buffer_size;
+
 #if defined(HAVE_XGUI) || defined(ANDROID)
 #include "equalizer.h"
 #endif
@@ -1745,6 +1749,9 @@ streamer_free (void) {
 
     playpos = 0;
     playtime = 0;
+
+    free (_temp_audio_buffer);
+    _temp_audio_buffer_size = 0;
 }
 
 // We always decode the entire block, 16384 bytes of input PCM
@@ -1949,6 +1956,19 @@ streamer_apply_soft_volume (char *bytes, int sz) {
     }
 }
 
+static float *
+_get_temp_audio_buffer (size_t size) {
+    if (_temp_audio_buffer) {
+        if (_temp_audio_buffer_size >= size) {
+            return _temp_audio_buffer;
+        }
+        free (_temp_audio_buffer);
+    }
+    _temp_audio_buffer_size = size;
+    _temp_audio_buffer = malloc (_temp_audio_buffer_size);
+    return _temp_audio_buffer;
+}
+
 int
 streamer_read (char *bytes, int size) {
 #if 0
@@ -2081,7 +2101,7 @@ streamer_read (char *bytes, int size) {
             .is_bigendian = 0
         };
 
-        float temp_audio_data[in_frames * out_fmt.channels];
+        float *temp_audio_data = _get_temp_audio_buffer (in_frames * out_fmt.channels);
         pcm_convert (&output->fmt, bytes, &out_fmt, (char *)temp_audio_data, sz);
         ddb_audio_data_t data;
         data.fmt = &out_fmt;
