@@ -1763,10 +1763,12 @@ streamer_free (void) {
     playtime = 0;
 
     free (_output_buffer);
+    _output_buffer = NULL;
     _output_buffer_size = 0;
     _outbuffer_remaining = 0;
 
     free (_temp_audio_buffer);
+    _temp_audio_buffer = NULL;
     _temp_audio_buffer_size = 0;
 }
 
