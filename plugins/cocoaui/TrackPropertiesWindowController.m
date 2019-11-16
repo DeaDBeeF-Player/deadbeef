@@ -214,7 +214,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
                 value = [value stringByAppendingString:[NSString stringWithUTF8String:p]];
                 p += strlen (p) + 1;
                 if (p < end) {
-                    value = [value stringByAppendingString:@";"];
+                    value = [value stringByAppendingString:p < end-1 ? @"; " : @";"];
                 }
             }
         }
