@@ -501,6 +501,14 @@ get_next_track (playItem_t *curr, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
         return NULL; // empty playlist
     }
 
+    playlist_t *item_plt = pl_get_playlist(curr);
+    if (!item_plt) {
+        curr = NULL;
+    }
+    if (item_plt) {
+        plt_unref (item_plt);
+    }
+
     if (shuffle == DDB_SHUFFLE_TRACKS || shuffle == DDB_SHUFFLE_ALBUMS) { // shuffle
         playItem_t *it = NULL;
         if (!curr || shuffle == DDB_SHUFFLE_TRACKS) {
@@ -2450,11 +2458,11 @@ streamer_get_next_track_with_direction (int dir, ddb_shuffle_t shuffle, ddb_repe
 
     // possibly need a reshuffle
     if (!next && streamer_playlist->count[PL_MAIN] != 0) {
-        int pl_loop_mode = conf_get_int ("playback.loop", DDB_REPEAT_OFF);
-        int pl_order = conf_get_int ("playback.order", DDB_SHUFFLE_OFF);
+        int repeat = streamer_get_repeat ();
+        int shuffle = streamer_get_shuffle ();
 
-        if (pl_loop_mode == DDB_REPEAT_OFF) {
-            if (pl_order == DDB_SHUFFLE_ALBUMS || pl_order == DDB_SHUFFLE_TRACKS) {
+        if (repeat == DDB_REPEAT_OFF) {
+            if (shuffle == DDB_SHUFFLE_ALBUMS || shuffle == DDB_SHUFFLE_TRACKS) {
                 plt_reshuffle (streamer_playlist, dir > 0 ? &next : NULL, dir < 0 ? &next : NULL);
                 if (next && dir < 0) {
                     // mark all songs as played except the current one
