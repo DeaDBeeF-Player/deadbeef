@@ -681,7 +681,11 @@ action_seek_5p_forward_cb (struct DB_plugin_action_s *action, int ctx) {
         float dur = deadbeef->pl_get_item_duration (it);
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
-            deadbeef->sendmessage (DB_EV_SEEK, 0, (pos + dur * 0.05f) * 1000, 0);
+            pos += dur * 0.05f;
+            if (pos > dur) {
+                pos = dur;
+            }
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(pos * 1000), 0);
         }
         deadbeef->pl_item_unref (it);
     }
@@ -697,12 +701,11 @@ action_seek_5p_backward_cb (struct DB_plugin_action_s *action, int ctx) {
         float dur = deadbeef->pl_get_item_duration (it);
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
-            pos = (pos - dur * 0.05f) * 1000;
+            pos -= dur * 0.05f;
             if (pos < 0) {
                 pos = 0;
             }
-
-            deadbeef->sendmessage (DB_EV_SEEK, 0, pos, 0);
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(pos * 1000), 0);
         }
         deadbeef->pl_item_unref (it);
     }
@@ -718,7 +721,11 @@ action_seek_1p_forward_cb (struct DB_plugin_action_s *action, int ctx) {
         float dur = deadbeef->pl_get_item_duration (it);
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
-            deadbeef->sendmessage (DB_EV_SEEK, 0, (pos + dur * 0.01f) * 1000, 0);
+            pos += dur * 0.01f;
+            if (pos > dur) {
+                pos = dur;
+            }
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(pos * 1000), 0);
         }
         deadbeef->pl_item_unref (it);
     }
@@ -734,11 +741,11 @@ action_seek_1p_backward_cb (struct DB_plugin_action_s *action, int ctx) {
         float dur = deadbeef->pl_get_item_duration (it);
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
-            pos = (pos - dur * 0.01f) * 1000;
+            pos -= dur * 0.01f;
             if (pos < 0) {
                 pos = 0;
             }
-            deadbeef->sendmessage (DB_EV_SEEK, 0, pos, 0);
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(pos * 1000), 0);
         }
         deadbeef->pl_item_unref (it);
     }
@@ -755,10 +762,13 @@ seek_sec (float sec) {
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
             pos += sec;
+            if (pos > dur) {
+                pos = dur;
+            }
             if (pos < 0) {
                 pos = 0;
             }
-            deadbeef->sendmessage (DB_EV_SEEK, 0, pos * 1000, 0);
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(pos * 1000), 0);
         }
         deadbeef->pl_item_unref (it);
     }
