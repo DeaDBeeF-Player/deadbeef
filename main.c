@@ -806,6 +806,14 @@ player_mainloop (void) {
                         streamer_set_seek (p1 / 1000.f);
                     }
                     break;
+                case DB_EV_PLAYLISTCHANGED:
+                    switch (p1) {
+                    case DDB_PLAYLIST_CHANGE_CONTENT:
+                    case DDB_PLAYLIST_CHANGE_CREATED:
+                    case DDB_PLAYLIST_CHANGE_DELETED:
+                        streamer_notify_track_deleted ();
+                        break;
+                    }
                 }
             }
             if (msg >= DB_EV_FIRST && ctx) {

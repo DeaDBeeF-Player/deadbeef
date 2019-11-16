@@ -197,21 +197,26 @@ streamreader_get_curr_block (void) {
     return block_data;
 }
 
+static void
+_streamreader_release_block (streamblock_t *block) {
+    block->pos = -1;
+    block->track = NULL;
+    block->queued = 0;
+
+    numblocks_ready--;
+    if (numblocks_ready < 0) {
+        numblocks_ready = 0;
+    }
+}
+
 void
 streamreader_next_block (void) {
     if (block_data) {
-        block_data->pos = -1;
-        block_data->track = NULL;
-        block_data->queued = 0;
+        _streamreader_release_block (block_data);
 
         block_data = block_data->next;
         if (!block_data) {
             block_data = blocks;
-        }
-
-        numblocks_ready--;
-        if (numblocks_ready < 0) {
-            numblocks_ready = 0;
         }
     }
 
@@ -219,6 +224,7 @@ streamreader_next_block (void) {
         block_data = NULL; // no available blocks with data
     }
 }
+
 
 void
 streamreader_reset (void) {
@@ -240,4 +246,31 @@ streamreader_reset (void) {
 int
 streamreader_num_blocks_ready (void) {
     return numblocks_ready;
+}
+
+void
+streamreader_flush_after (playItem_t *it) {
+    streamblock_t *b = block_data;
+
+    int n = numblocks_ready;
+    while (b->track == it && n > 0) {
+        b = b->next;
+        if (!b) {
+            b = blocks;
+        }
+        n--;
+    }
+
+    block_next = b;
+
+    while (n > 0) {
+        _streamreader_release_block (b);
+        b = b->next;
+        if (!b) {
+            b = blocks;
+        }
+        n--;
+    }
+
+    _firstblock = 1;
 }

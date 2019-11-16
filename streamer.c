@@ -1520,6 +1520,37 @@ streamer_set_output_format (ddb_waveformat_t *fmt) {
     }
 }
 
+static void
+_streamer_track_deleted (ddb_repeat_t repeat, ddb_shuffle_t shuffle) {
+    // cancel buffering of next track, if it's not in playlist anymore
+
+    if (!streaming_track) {
+        return;
+    }
+
+    if (playing_track && streaming_track == playing_track) {
+        return;
+    }
+
+    playlist_t *plt = pl_get_playlist (streaming_track);
+    if (!plt) {
+        streamer_lock ();
+        streamreader_flush_after (playing_track);
+        if (streaming_track) {
+            pl_item_unref (streaming_track);
+        }
+        streaming_track = playing_track;
+        if (streaming_track) {
+            pl_item_ref (streaming_track);
+        }
+        streamer_unlock ();
+        streamer_next (shuffle, repeat);
+    }
+    else {
+        plt_unref (plt);
+    }
+}
+
 void
 streamer_thread (void *unused) {
 #if defined(__linux__) && !defined(ANDROID)
@@ -1566,17 +1597,22 @@ streamer_thread (void *unused) {
             case STR_EV_SET_DSP_CHAIN:
                 streamer_set_dsp_chain_real ((ddb_dsp_context_t *)ctx);
                 break;
+            case STR_EV_TRACK_DELETED:
+                _streamer_track_deleted (repeat, shuffle);
+                break;
+            }
+
+            // each event can modify shuffle/repeat, so update them here, so that subsequent event handlers use new values
+            ddb_shuffle_t new_shuffle = streamer_get_shuffle ();
+            repeat = streamer_get_repeat ();
+
+            if (new_shuffle != shuffle) {
+                pl_reshuffle_all ();
+                streamer_shuffle_changed (shuffle, new_shuffle);
+                shuffle = new_shuffle;
             }
         }
 
-        ddb_shuffle_t new_shuffle = streamer_get_shuffle ();
-        repeat = streamer_get_repeat ();
-
-        if (new_shuffle != shuffle) {
-            pl_reshuffle_all ();
-            streamer_shuffle_changed (shuffle, new_shuffle);
-            shuffle = new_shuffle;
-        }
 
         if (output && output->state () == OUTPUT_STATE_STOPPED) {
             if (!handler_hasmessages (handler)) {
@@ -1656,12 +1692,11 @@ streamer_thread (void *unused) {
                 }
             }
 
-            // next track
-            if (!stop) {
-                streamer_next (shuffle, repeat);
+            if (stop) {
+                stream_track (NULL, 0);
             }
             else {
-                stream_track(NULL, 0);
+                streamer_next (shuffle, repeat);
             }
         }
 
@@ -2771,4 +2806,9 @@ streamer_set_output (DB_output_t *output) {
         streamer_unlock ();
     }
     messagepump_push (DB_EV_OUTPUTCHANGED, 0, 0, 0);
+}
+
+void
+streamer_notify_track_deleted (void) {
+    handler_push (handler, STR_EV_TRACK_DELETED, 0, 0, 0);
 }

@@ -85,4 +85,8 @@ streamreader_num_blocks_ready (void);
 void
 streamreader_configchanged (void);
 
+// Remove any blocks after the ones referencing `it`
+void
+streamreader_flush_after (playItem_t *it);
+
 #endif /* streamreader_h */
