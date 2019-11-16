@@ -267,8 +267,6 @@ trkproperties_fill_meta (GtkListStore *store, DB_playItem_t **tracks, int numtra
     const char **keys = NULL;
     int nkeys = trkproperties_build_key_list (&keys, 0, tracks, numtracks);
 
-    int k;
-
     // add "standard" fields
     for (int i = 0; trkproperties_types[i]; i += 2) {
         add_field (store, trkproperties_types[i], _(trkproperties_types[i+1]), 0, tracks, numtracks);
@@ -414,9 +412,6 @@ show_track_properties_dlg (int ctx, ddb_playlist_t *plt) {
     g_object_set (G_OBJECT (rend_text2), "editable", TRUE, NULL);
 
     GtkWidget *widget = trackproperties;
-    GtkWidget *w;
-    const char *meta;
-
     trkproperties_fill_metadata ();
 
     gtk_widget_set_sensitive (lookup_widget (widget, "write_tags"), TRUE);
@@ -452,10 +447,31 @@ set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoi
             while (*e && *e != ';') {
                 e++;
             }
-            char *v = malloc (e-p+1);
-            memcpy (v, p, e-p);
-            v[e-p] = 0;
-            values[n++] = v;
+
+            // trim
+            const char *rb = p;
+            const char *re = e-1;
+            while (rb <= re) {
+                if ((uint8_t)(*rb) > 0x20) {
+                    break;
+                }
+                rb++;
+            }
+            while (re >= rb) {
+                if ((uint8_t)(*re) > 0x20) {
+                    break;
+                }
+                re--;
+            }
+
+            if (rb <= re) {
+                re++;
+                char *v = malloc (re-rb+1);
+                memcpy (v, rb, re-rb);
+                v[re-rb] = 0;
+                values[n++] = v;
+            }
+
             if (!*e) {
                 break;
             }
@@ -465,18 +481,17 @@ set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoi
         for (int i = 0; i < numtracks; i++) {
             deadbeef->pl_delete_meta (tracks[i], skey);
             if (*svalue) {
-                const char *oldvalue= deadbeef->pl_find_meta_raw (tracks[i], skey);
-                for (n = 0; n < num_values; n++) {
-                    if (values[n] && *values[n]) {
-                        deadbeef->pl_append_meta (tracks[i], skey, values[n]);
+                for (int k = 0; k < n; k++) {
+                    if (values[k] && *values[k]) {
+                        deadbeef->pl_append_meta (tracks[i], skey, values[k]);
                     }
                 }
             }
         }
 
-        for (n = 0; n < num_values; n++) {
-            if (values[n]) {
-                free (values[n]);
+        for (int k = 0; k < n; k++) {
+            if (values[k]) {
+                free (values[k]);
             }
         }
         free (values);
