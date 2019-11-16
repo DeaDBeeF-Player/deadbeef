@@ -736,7 +736,7 @@ on_trkproperties_edit_activate          (GtkMenuItem     *menuitem,
     free (uppercase_key);
 
     GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
-    gtk_text_buffer_set_text (buffer, svalue, strlen (svalue));
+    gtk_text_buffer_set_text (buffer, svalue, (gint)strlen (svalue));
     gtk_text_view_set_buffer (GTK_TEXT_VIEW (lookup_widget (dlg, "field_value")), buffer);
 
     g_value_unset (&key);
@@ -925,7 +925,7 @@ on_trkproperties_add_new_field_activate
             }
 
             if (!dup) {
-                int l = strlen (text);
+                size_t l = strlen (text);
                 char title[l+3];
                 snprintf (title, sizeof (title), "<%s>", text);
                 const char *value = "";
@@ -993,7 +993,6 @@ on_trkproperties_crop_activate         (GtkMenuItem     *menuitem,
     GtkTreeModel *model = gtk_tree_view_get_model (treeview);
 
     GtkTreeIter iter;
-    GtkTreeIter next;
     gboolean res = gtk_tree_model_get_iter_first (model, &iter);
     while (res) {
         int getnext = 1;
@@ -1001,8 +1000,6 @@ on_trkproperties_crop_activate         (GtkMenuItem     *menuitem,
         if (gtk_tree_path_compare (path, iter_path)) {
             GValue key = {0,};
             gtk_tree_model_get_value (model, &iter, 2, &key);
-            const char *skey = g_value_get_string (&key);
-
 
             GValue value = {0,};
             gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 2, &value);
