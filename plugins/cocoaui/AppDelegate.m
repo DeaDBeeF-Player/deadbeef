@@ -243,6 +243,7 @@ main_cleanup_and_quit (void);
     [ReplayGainScannerController cleanup];
     [_mainWindow cleanup];
     [_searchWindow cleanup];
+    self.nowPlayable = nil;
     main_cleanup_and_quit();
 }
 
