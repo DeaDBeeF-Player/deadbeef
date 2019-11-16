@@ -250,6 +250,10 @@ streamreader_num_blocks_ready (void) {
 
 void
 streamreader_flush_after (playItem_t *it) {
+    if (!block_data) {
+        return;
+    }
+
     streamblock_t *b = block_data;
 
     int n = numblocks_ready;

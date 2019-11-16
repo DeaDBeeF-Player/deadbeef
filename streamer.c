@@ -1521,6 +1521,24 @@ streamer_set_output_format (ddb_waveformat_t *fmt) {
 }
 
 static void
+_streamer_requeue_after_current (ddb_repeat_t repeat, ddb_shuffle_t shuffle) {
+    if (!playing_track) {
+        return;
+    }
+    streamer_lock ();
+    streamreader_flush_after (playing_track);
+    if (streaming_track) {
+        pl_item_unref (streaming_track);
+    }
+    streaming_track = playing_track;
+    if (streaming_track) {
+        pl_item_ref (streaming_track);
+    }
+    streamer_unlock ();
+    streamer_next (shuffle, repeat);
+}
+
+static void
 _streamer_track_deleted (ddb_repeat_t repeat, ddb_shuffle_t shuffle) {
     // cancel buffering of next track, if it's not in playlist anymore
 
@@ -1534,17 +1552,7 @@ _streamer_track_deleted (ddb_repeat_t repeat, ddb_shuffle_t shuffle) {
 
     playlist_t *plt = pl_get_playlist (streaming_track);
     if (!plt) {
-        streamer_lock ();
-        streamreader_flush_after (playing_track);
-        if (streaming_track) {
-            pl_item_unref (streaming_track);
-        }
-        streaming_track = playing_track;
-        if (streaming_track) {
-            pl_item_ref (streaming_track);
-        }
-        streamer_unlock ();
-        streamer_next (shuffle, repeat);
+        _streamer_requeue_after_current (repeat, shuffle);
     }
     else {
         plt_unref (plt);
@@ -1601,18 +1609,28 @@ streamer_thread (void *unused) {
                 _streamer_track_deleted (repeat, shuffle);
                 break;
             }
-
-            // each event can modify shuffle/repeat, so update them here, so that subsequent event handlers use new values
-            ddb_shuffle_t new_shuffle = streamer_get_shuffle ();
-            repeat = streamer_get_repeat ();
-
-            if (new_shuffle != shuffle) {
-                pl_reshuffle_all ();
-                streamer_shuffle_changed (shuffle, new_shuffle);
-                shuffle = new_shuffle;
-            }
         }
 
+        // each event can modify shuffle/repeat, so update them here, so that subsequent event handlers use new values
+        ddb_shuffle_t new_shuffle = streamer_get_shuffle ();
+        ddb_repeat_t new_repeat = streamer_get_repeat ();
+
+        int need_requeue = 0;
+        if (new_shuffle != shuffle || new_repeat != repeat) {
+            need_requeue = 1;
+        }
+
+        if (new_shuffle != shuffle) {
+            pl_reshuffle_all ();
+            streamer_shuffle_changed (shuffle, new_shuffle);
+            shuffle = new_shuffle;
+        }
+
+        repeat = new_repeat;
+
+        if (need_requeue) {
+            _streamer_requeue_after_current(repeat, shuffle);
+        }
 
         if (output && output->state () == OUTPUT_STATE_STOPPED) {
             if (!handler_hasmessages (handler)) {
