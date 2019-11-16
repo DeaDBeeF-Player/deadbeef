@@ -2124,7 +2124,7 @@ streamer_read (char *bytes, int size) {
             .is_bigendian = 0
         };
 
-        float *temp_audio_data = _get_temp_audio_buffer (in_frames * out_fmt.channels);
+        float *temp_audio_data = _get_temp_audio_buffer (in_frames * out_fmt.channels * sizeof (float));
         pcm_convert (&output->fmt, bytes, &out_fmt, (char *)temp_audio_data, sz);
         ddb_audio_data_t data;
         data.fmt = &out_fmt;
