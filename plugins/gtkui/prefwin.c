@@ -1087,6 +1087,14 @@ on_hide_delete_from_disk_toggled       (GtkToggleButton *togglebutton,
 }
 
 void
+on_skip_deleted_songs_toggled          (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("gtkui.skip_deleted_songs", active);
+}
+
+void
 on_titlebar_format_playing_changed     (GtkEditable     *editable,
                                         gpointer         user_data)
 {
