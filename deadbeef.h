@@ -330,11 +330,15 @@ enum output_state_t {
     OUTPUT_STATE_PAUSED DEPRECATED_111 = 2,
 };
 
+#if (DDB_API_LEVEL >= 11)
+
 typedef enum ddb_playback_state_e {
     DDB_PLAYBACK_STATE_STOPPED DEPRECATED_111 = 0,
     DDB_PLAYBACK_STATE_PLAYING DEPRECATED_111 = 1,
     DDB_PLAYBACK_STATE_PAUSED DEPRECATED_111 = 2,
 } ddb_playback_state_t;
+
+#endif
 
 // playback order
 enum playback_order_t {
@@ -1791,7 +1795,11 @@ typedef struct DB_output_s {
     int (*stop) (void);
     int (*pause) (void);
     int (*unpause) (void);
+#if (DDB_API_LEVEL >= 11)
     ddb_playback_state_t (*state) (void);
+#else
+    int (*state) (void);
+#endif
     // soundcard enumeration (can be NULL)
     void (*enum_soundcards) (void (*callback)(const char *name, const char *desc, void*), void *userdata);
 
