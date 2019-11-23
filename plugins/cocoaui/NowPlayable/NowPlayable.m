@@ -77,21 +77,22 @@ extern DB_functions_t *deadbeef;
             }
             deadbeef->pl_item_unref (it);
         }
+
         info[MPNowPlayingInfoPropertyMediaType] = @(MPNowPlayingInfoMediaTypeAudio);
 
         MPNowPlayingInfoCenter *infoCenter = [MPNowPlayingInfoCenter defaultCenter];
 
         infoCenter.nowPlayingInfo = info;
 
-        int state = deadbeef->get_output ()->state ();
+        ddb_playback_state_t state = deadbeef->get_output ()->state ();
         switch (state) {
-        case OUTPUT_STATE_PLAYING:
+        case DDB_PLAYBACK_STATE_PLAYING:
             infoCenter.playbackState = MPNowPlayingPlaybackStatePlaying;
             break;
-        case OUTPUT_STATE_PAUSED:
+        case DDB_PLAYBACK_STATE_PAUSED:
             infoCenter.playbackState = MPNowPlayingPlaybackStatePaused;
             break;
-        case OUTPUT_STATE_STOPPED:
+        case DDB_PLAYBACK_STATE_STOPPED:
             infoCenter.playbackState = MPNowPlayingPlaybackStateStopped;
             break;
         }
@@ -114,8 +115,8 @@ extern DB_functions_t *deadbeef;
 }
 
 - (MPRemoteCommandHandlerStatus)togglePlayPauseCommand:(MPRemoteCommandEvent *)sender {
-    int state = deadbeef->get_output ()->state ();
-    if (state == OUTPUT_STATE_PLAYING) {
+    ddb_playback_state_t state = deadbeef->get_output ()->state ();
+    if (state == DDB_PLAYBACK_STATE_PLAYING) {
         deadbeef->sendmessage (DB_EV_PAUSE, 0, 0, 0);
     }
     else {

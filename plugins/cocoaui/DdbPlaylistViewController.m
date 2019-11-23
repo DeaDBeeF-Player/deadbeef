@@ -661,7 +661,7 @@ extern DB_functions_t *deadbeef;
 
     if (_columns[col].type == DB_COLUMN_PLAYING && playing_track && (DB_playItem_t *)row == playing_track) {
         NSImage *img = NULL;
-        int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
+        int paused = deadbeef->get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
         if (paused) {
             img = _pauseTpl;

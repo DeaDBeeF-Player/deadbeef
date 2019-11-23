@@ -103,7 +103,7 @@ static char sb_text[512];
     
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
     
-    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track)) {
+    if (!output || (output->state () == DDB_PLAYBACK_STATE_STOPPED || !track)) {
         snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
     }
     else {

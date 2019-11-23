@@ -70,13 +70,13 @@ mainloop (void *ctx) {
                         streamer_move_to_prevsong (1);
                         break;
                     case DB_EV_PAUSE:
-                        if (output->state () != OUTPUT_STATE_PAUSED) {
+                        if (output->state () != DDB_PLAYBACK_STATE_PAUSED) {
                             output->pause ();
                             messagepump_push (DB_EV_PAUSED, 0, 1, 0);
                         }
                         break;
                     case DB_EV_TOGGLE_PAUSE:
-                        if (output->state () != OUTPUT_STATE_PLAYING) {
+                        if (output->state () != DDB_PLAYBACK_STATE_PLAYING) {
                             streamer_play_current_track ();
                         }
                         else {

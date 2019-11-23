@@ -1632,7 +1632,7 @@ streamer_thread (void *unused) {
             _streamer_requeue_after_current(repeat, shuffle);
         }
 
-        if (output && output->state () == OUTPUT_STATE_STOPPED) {
+        if (output && output->state () == DDB_PLAYBACK_STATE_STOPPED) {
             if (!handler_hasmessages (handler)) {
                 usleep (50000);
             }
@@ -2369,7 +2369,7 @@ _play_track (playItem_t *it, int startpaused) {
         else {
             int st = output->state();
             output->play ();
-            if (st == OUTPUT_STATE_PAUSED) {
+            if (st == DDB_PLAYBACK_STATE_PAUSED) {
                 messagepump_push(DB_EV_PAUSED, 0, 0, 0);
             }
         }
@@ -2457,7 +2457,7 @@ streamer_get_current_track_to_play (playlist_t *plt) {
 static void
 play_current (void) {
     DB_output_t *output = plug_get_output ();
-    if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
+    if (output->state () == DDB_PLAYBACK_STATE_PAUSED && playing_track) {
         // restart if network stream
         if (is_remote_stream (playing_track) && pl_get_item_duration (playing_track) < 0) {
             streamer_reset (1);
@@ -2794,7 +2794,7 @@ streamer_set_output (DB_output_t *output) {
         streamer_lock ();
     }
     DB_output_t *prev = plug_get_output ();
-    int state = OUTPUT_STATE_STOPPED;
+    ddb_playback_state_t state = DDB_PLAYBACK_STATE_STOPPED;
 
     ddb_waveformat_t fmt = {0};
     if (prev) {
@@ -2809,10 +2809,10 @@ streamer_set_output (DB_output_t *output) {
     }
 
     int res = 0;
-    if (state == OUTPUT_STATE_PLAYING) {
+    if (state == DDB_PLAYBACK_STATE_PLAYING) {
         res = output->play ();
     }
-    else if (state == OUTPUT_STATE_PAUSED) {
+    else if (state == DDB_PLAYBACK_STATE_PAUSED) {
         res = output->pause ();
     }
 

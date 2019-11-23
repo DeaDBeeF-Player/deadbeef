@@ -322,8 +322,8 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             return 0;
         }
         else if (!strcmp (parg, "--play-pause")) {
-            int state = deadbeef->get_output ()->state ();
-            if (state == OUTPUT_STATE_PLAYING) {
+            ddb_playback_state_t state = deadbeef->get_output ()->state ();
+            if (state == DDB_PLAYBACK_STATE_PLAYING) {
                 deadbeef->sendmessage (DB_EV_PAUSE, 0, 0, 0);
             }
             else {
@@ -706,7 +706,7 @@ save_resume_state (void) {
     int playtrack = -1;
     int playlist = -1;
     playlist_t *plt = pl_get_playlist (trk);
-    int paused = (output->state () == OUTPUT_STATE_PAUSED);
+    int paused = (output->state () == DDB_PLAYBACK_STATE_PAUSED);
     if (trk && plt) {
         playlist = plt_get_idx_of(plt);
         playtrack = plt_get_item_idx(plt, trk, PL_MAIN);
@@ -774,13 +774,13 @@ player_mainloop (void) {
                     streamer_move_to_prevsong (1);
                     break;
                 case DB_EV_PAUSE:
-                    if (output->state () != OUTPUT_STATE_PAUSED) {
+                    if (output->state () != DDB_PLAYBACK_STATE_PAUSED) {
                         output->pause ();
                         messagepump_push (DB_EV_PAUSED, 0, 1, 0);
                     }
                     break;
                 case DB_EV_TOGGLE_PAUSE:
-                    if (output->state () != OUTPUT_STATE_PLAYING) {
+                    if (output->state () != DDB_PLAYBACK_STATE_PLAYING) {
                         streamer_play_current_track ();
                     }
                     else {
@@ -862,7 +862,7 @@ sigsegv_handler (int sig) {
 void
 restore_resume_state (void) {
     DB_output_t *output = plug_get_output ();
-    if (conf_get_int ("resume_last_session", 1) && output->state () == OUTPUT_STATE_STOPPED) {
+    if (conf_get_int ("resume_last_session", 1) && output->state () == DDB_PLAYBACK_STATE_STOPPED) {
         int plt = conf_get_int ("resume.playlist", -1);
         int track = conf_get_int ("resume.track", -1);
         float pos = conf_get_float ("resume.position", -1);

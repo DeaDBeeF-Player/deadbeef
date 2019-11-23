@@ -460,7 +460,7 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
     DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
 
     if (!gtkui_unicode_playstate && it && it == playing_track && info->id == DB_COLUMN_PLAYING) {
-        int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
+        int paused = deadbeef->get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
         GdkPixbuf *pixbuf;
         if (paused) {
@@ -483,7 +483,7 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
         char text[1024] = "";
         int is_dimmed = 0;
         if (it == playing_track && info->id == DB_COLUMN_PLAYING) {
-            int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
+            int paused = deadbeef->get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED;
             int buffering = !deadbeef->streamer_ok_to_read (-1);
             if (paused) {
                 strcpy (text, "||");

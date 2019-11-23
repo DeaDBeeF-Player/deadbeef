@@ -125,7 +125,7 @@ on_playbtn_clicked                     (GtkButton       *button,
 {
     // NOTE: this function is a copy of action_play_cb
     DB_output_t *output = deadbeef->get_output ();
-    if (output->state () == OUTPUT_STATE_PAUSED) {
+    if (output->state () == DDB_PLAYBACK_STATE_PAUSED) {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         int cur = deadbeef->plt_get_cursor (plt, PL_MAIN);
         if (cur != -1) {

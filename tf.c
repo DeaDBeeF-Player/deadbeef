@@ -2885,8 +2885,8 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     
                     if (playing && 
                             (
-                            (tmp_a && plug_get_output ()->state () == OUTPUT_STATE_PLAYING)
-                            || (tmp_b && plug_get_output ()->state () == OUTPUT_STATE_PAUSED)
+                            (tmp_a && plug_get_output ()->state () == DDB_PLAYBACK_STATE_PLAYING)
+                            || (tmp_b && plug_get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED)
                             )) {
                         *out++ = '1';
                         outlen--;

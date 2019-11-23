@@ -195,7 +195,7 @@ update_songinfo (gpointer unused) {
     char *bc = NULL;
 
 
-    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track)) {
+    if (!output || (output->state () == DDB_PLAYBACK_STATE_STOPPED || !track)) {
         bc = statusbar_stopped_bc;
     }
     else {
