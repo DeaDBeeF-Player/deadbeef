@@ -716,7 +716,10 @@ opusdec_write_metadata (DB_playItem_t *it) {
         split_tag (tags, oggedit_map_tag (strdupa ("R128_ALBUM_GAIN"), "meta2tag"), s, (int)strlen (s) + 1);
     }
 
-    int header_gain = (track_gain - 5.f) * 256;
+    int header_gain = 0;
+    if (track_gain_str) {
+        header_gain = (track_gain - 5.f) * 256;
+    }
 
     const char *stream_size_string = deadbeef->pl_find_meta(it, ":STREAM SIZE");
     const size_t stream_size = stream_size_string ? (off_t)atoll(stream_size_string) : 0;
