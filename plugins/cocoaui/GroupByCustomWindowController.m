@@ -28,6 +28,8 @@
 
 - (void)initWithFormat:(NSString *)format {
     self.format = format;
+
+    [self initUI];
 }
 
 - (IBAction)cancelAction:(id)sender {
