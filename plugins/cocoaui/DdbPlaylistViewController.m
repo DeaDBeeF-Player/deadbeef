@@ -27,6 +27,7 @@
 #import "ConverterWindowController.h"
 #import "CoverManager.h"
 #import "ReplayGainScannerController.h"
+#import "EditColumnWindowController.h"
 #include "../../deadbeef.h"
 #include "rg_scanner.h"
 
@@ -40,7 +41,7 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic, strong) NSTimer *playPosUpdateTimer;
 @property (nonatomic, assign) DB_playItem_t *playPosUpdateTrack;
-
+@property (nonatomic) EditColumnWindowController *editColumnWindowController;
 @end
 
 @implementation DdbPlaylistViewController {
@@ -76,8 +77,13 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)menuAddColumn:(id)sender {
-    [self initAddColumnSheet:-1];
-    [self.view.window beginSheet:self.addColumnPanel completionHandler:^(NSModalResponse returnCode) {
+    if (!self.editColumnWindowController) {
+        self.editColumnWindowController = [[EditColumnWindowController alloc] initWithWindowNibName:@"EditColumnPanel"];
+    }
+
+    [self.editColumnWindowController initAddColumnSheet];
+
+    [self.view.window beginSheet:self.editColumnWindowController.window completionHandler:^(NSModalResponse returnCode) {
         if (returnCode == NSModalResponseOK) {
             int idx = [self insertColumn:_menuColumn];
             if (idx >= 0) {
@@ -88,8 +94,22 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)menuEditColumn:(id)sender {
-    [self initAddColumnSheet:_menuColumn];
-    [self.view.window beginSheet:self.addColumnPanel completionHandler:^(NSModalResponse returnCode) {
+    if (!self.editColumnWindowController) {
+        self.editColumnWindowController = [[EditColumnWindowController alloc] initWithWindowNibName:@"EditColumnPanel"];
+    }
+
+    uint8_t *c = _columns[_menuColumn].text_color;
+    NSColor *color = [NSColor colorWithDeviceRed:c[0]/255.f green:c[1]/255.f blue:c[2]/255.f alpha:c[3]/255.f];
+
+    [self.editColumnWindowController initEditColumnSheetWithTitle:[NSString stringWithUTF8String:_columns[_menuColumn].title]
+                                                             type:_columns[_menuColumn].type
+                                                           format:[NSString stringWithUTF8String:_columns[_menuColumn].format]
+                                                        alignment:_columns[_menuColumn].alignment
+                                                     setTextColor:_columns[_menuColumn].set_text_color
+                                                        textColor:color];
+
+
+    [self.view.window beginSheet:self.editColumnWindowController.window completionHandler:^(NSModalResponse returnCode) {
         if (returnCode == NSModalResponseOK) {
             int idx = _menuColumn;
             if (idx >= 0) {
@@ -99,52 +119,6 @@ extern DB_functions_t *deadbeef;
     }];
 }
 
-- (void)initAddColumnSheet:(int)colIdx {
-    if (colIdx == -1) {
-        _addColumnTitle.stringValue = @"";
-        [_addColumnType selectItemAtIndex: 10];
-        _addColumnFormat.enabled = YES;
-        _addColumnFormat.stringValue = @"";
-        [_addColumnAlignment selectItemAtIndex:0];
-        _addColumnSetColor.state = NSOffState;
-        _addColumnColor.enabled = NO;
-        _addColumnColor.color = NSColor.blackColor;
-    }
-    else {
-        _addColumnTitle.stringValue = [NSString stringWithUTF8String:_columns[colIdx].title];
-        int type = 10; // custom
-        switch (_columns[colIdx].type) {
-        case DB_COLUMN_FILENUMBER:
-            type = 0;
-            break;
-        case DB_COLUMN_PLAYING:
-            type = 1;
-            break;
-        case DB_COLUMN_ALBUM_ART:
-            type = 2;
-            break;
-        }
-        [_addColumnType selectItemAtIndex: type];
-        _addColumnFormat.enabled = type == 10;
-        _addColumnFormat.stringValue = [NSString stringWithUTF8String:_columns[colIdx].format];
-        [_addColumnAlignment selectItemAtIndex:(NSInteger)_columns[colIdx].alignment];
-        _addColumnSetColor.state = _columns[colIdx].set_text_color;
-        _addColumnColor.enabled = _columns[colIdx].set_text_color;
-        uint8_t *c = _columns[colIdx].text_color;
-        [NSColorPanel sharedColorPanel].showsAlpha = YES;
-        _addColumnColor.color = [NSColor colorWithDeviceRed:c[0]/255.f green:c[1]/255.f blue:c[2]/255.f alpha:c[3]/255.f];
-    }
-}
-
-- (IBAction)addColumnTypeChanged:(id)sender {
-    BOOL isCustom = [_addColumnType indexOfSelectedItem] == 10;
-    _addColumnFormat.enabled =  isCustom;
-    _addColumnTitle.stringValue = [[_addColumnType selectedItem] title];
-}
-
-- (IBAction)addColumnSetColorChanged:(NSButton *)sender {
-    _addColumnColor.enabled = sender.state == NSOnState;
-}
 
 - (void)menuRemoveColumn:(id)sender {
     if (_menuColumn >= 0) {
@@ -202,8 +176,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)updateColumn:(int)idx {
     CGFloat r, g, b, a;
-    NSColor *color = [[_addColumnColor color] colorUsingColorSpace:[NSColorSpace deviceRGBColorSpace
-]];
+    NSColor *color = [self.editColumnWindowController.colorWell.color colorUsingColorSpace:[NSColorSpace deviceRGBColorSpace]];
     [color getRed:&r green:&g blue:&b alpha:&a];
 
     uint8_t rgba[] = {
@@ -212,7 +185,8 @@ extern DB_functions_t *deadbeef;
 
     int type = -1;
 
-    switch ([_addColumnType indexOfSelectedItem]) {
+    NSInteger typeIndex = self.editColumnWindowController.typePopUpButton.indexOfSelectedItem;
+    switch (typeIndex) {
     case 0:
         type = DB_COLUMN_FILENUMBER;
         break;
@@ -223,38 +197,36 @@ extern DB_functions_t *deadbeef;
         type = DB_COLUMN_ALBUM_ART;
         break;
     case 3: // artist / album
-        _addColumnFormat.stringValue = @"$if(%album artist%,%album artist%,Unknown Artist)[ - %album%]";
+        self.editColumnWindowController.formatTextField.stringValue = @"$if(%album artist%,%album artist%,Unknown Artist)[ - %album%]";
         break;
     case 4: // artist
-        _addColumnFormat.stringValue = @"$if(%artist%,%artist%,Unknown Artist)";
+        self.editColumnWindowController.formatTextField.stringValue = @"$if(%artist%,%artist%,Unknown Artist)";
         break;
     case 5: // album
-        _addColumnFormat.stringValue = @"%album%";
+        self.editColumnWindowController.formatTextField.stringValue = @"%album%";
         break;
     case 6: // title / track artist
-        _addColumnFormat.stringValue = @"%title%[ // %track artist%]";
+        self.editColumnWindowController.formatTextField.stringValue = @"%title%[ // %track artist%]";
         break;
     case 7: // duration
-        _addColumnFormat.stringValue = @"%length%";
+        self.editColumnWindowController.formatTextField.stringValue = @"%length%";
         break;
     case 8: // track number
-        _addColumnFormat.stringValue = @"%tracknumber%";
+        self.editColumnWindowController.formatTextField.stringValue = @"%tracknumber%";
         break;
     case 9: // album artist
-        _addColumnFormat.stringValue = @"$if(%album artist%,%album artist%,Unknown Artist)";
+        self.editColumnWindowController.formatTextField.stringValue = @"$if(%album artist%,%album artist%,Unknown Artist)";
         break;
     }
 
-    [self initColumn:idx withTitle:[[_addColumnTitle stringValue] UTF8String]  withId:(int)type withSize:_columns[idx].size withFormat:[[_addColumnFormat stringValue] UTF8String] withAlignment:(int)[_addColumnAlignment indexOfSelectedItem] withSetColor:_addColumnSetColor.state == NSOnState withColor:rgba];
+    [self initColumn:idx
+           withTitle:self.editColumnWindowController.titleTextField.stringValue.UTF8String
+              withId:(int)type
+            withSize:_columns[idx].size
+          withFormat:self.editColumnWindowController.formatTextField.stringValue.UTF8String
+       withAlignment:(int)self.editColumnWindowController.alignmentPopUpButton.indexOfSelectedItem withSetColor:(self.editColumnWindowController.setColorButton.state == NSOnState)
+           withColor:rgba];
     [self columnsChanged];
-}
-
-- (IBAction)addColumnCancel:(id)sender {
-    [NSApp endSheet:self.addColumnPanel returnCode:NSModalResponseCancel];
-}
-
-- (IBAction)addColumnOK:(id)sender {
-    [NSApp endSheet:self.addColumnPanel returnCode:NSModalResponseOK];
 }
 
 #define DEFAULT_COLUMNS "[{\"title\":\"Playing\", \"id\":\"1\", \"format\":\"%playstatus%\", \"size\":\"50\"}, {\"title\":\"Artist / Album\", \"format\":\"$if(%album artist%,%album artist%,Unknown Artist)[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track number%\", \"size\":\"50\"}, {\"title\":\"Title / Track Artist\", \"format\":\"%title%[ // %track artist%]\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"

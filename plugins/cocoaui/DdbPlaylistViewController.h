@@ -56,20 +56,6 @@ typedef struct {
 - (void)initContent;
 - (int)playlistIter;
 
-// playlist columns
-@property (unsafe_unretained) IBOutlet NSPanel *addColumnPanel;
-- (IBAction)addColumnCancel:(id)sender;
-- (IBAction)addColumnOK:(id)sender;
-
-@property (unsafe_unretained) IBOutlet NSTextField *addColumnTitle;
-@property (unsafe_unretained) IBOutlet NSPopUpButton *addColumnType;
-@property (unsafe_unretained) IBOutlet NSTextField *addColumnFormat;
-@property (unsafe_unretained) IBOutlet NSPopUpButton *addColumnAlignment;
-@property (unsafe_unretained) IBOutlet NSButton *addColumnSetColor;
-@property (unsafe_unretained) IBOutlet NSColorWell *addColumnColor;
-- (IBAction)addColumnTypeChanged:(id)sender;
-- (IBAction)addColumnSetColorChanged:(id)sender;
-
 - (int)handleListviewMessage:(DdbListview *)listview id:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
 - (void)cleanup;
