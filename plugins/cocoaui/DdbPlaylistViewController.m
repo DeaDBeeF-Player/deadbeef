@@ -578,6 +578,9 @@ extern DB_functions_t *deadbeef;
     NSError *err = nil;
     NSData *dt = [NSJSONSerialization dataWithJSONObject:columns options:0 error:&err];
 
+    DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
+    [[view listview] updateContentFrame];
+
     NSString *json = [[NSString alloc] initWithData:dt encoding:NSUTF8StringEncoding];
     [self writeColumnConfig:json];
     deadbeef->conf_save ();
