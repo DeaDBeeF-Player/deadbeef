@@ -28,6 +28,7 @@
 #import "CoverManager.h"
 #import "ReplayGainScannerController.h"
 #import "EditColumnWindowController.h"
+#import "GroupByCustomWindowController.h"
 #include "../../deadbeef.h"
 #include "rg_scanner.h"
 
@@ -42,6 +43,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic, strong) NSTimer *playPosUpdateTimer;
 @property (nonatomic, assign) DB_playItem_t *playPosUpdateTrack;
 @property (nonatomic) EditColumnWindowController *editColumnWindowController;
+@property (nonatomic) GroupByCustomWindowController *groupByCustomWindowController;
 @end
 
 @implementation DdbPlaylistViewController {
@@ -171,7 +173,23 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)menuGroupByCustom:(id)sender {
-    // TODO
+    if (!self.groupByCustomWindowController) {
+        self.groupByCustomWindowController = [[GroupByCustomWindowController alloc] initWithWindowNibName:@"GroupByCustomWindow"];
+    }
+
+    char buf[1000];
+    deadbeef->conf_get_str ([self groupByConfStr], "", buf, sizeof (buf));
+    [self.groupByCustomWindowController initWithFormat:[NSString stringWithUTF8String:buf]];
+
+    [self.view.window beginSheet:self.groupByCustomWindowController.window completionHandler:^(NSModalResponse returnCode) {
+        if (returnCode == NSModalResponseOK) {
+            [self clearGrouping];
+            _group_str = strdup (self.groupByCustomWindowController.formatTextField.stringValue.UTF8String);
+            deadbeef->conf_set_str([self groupByConfStr], _group_str);
+            DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
+            [[view listview] reloadData];
+        }
+    }];
 }
 
 - (void)updateColumn:(int)idx {

@@ -1028,7 +1028,6 @@ int grouptitleheight = 22;
     contentView.frame = frame;
 }
 
-// must be called from within pl_lock
 - (void)initGroups {
     groups_build_idx = [_delegate modificationIdx];
 
