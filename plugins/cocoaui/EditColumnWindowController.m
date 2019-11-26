@@ -24,13 +24,7 @@
 
 - (void)windowDidLoad {
     [super windowDidLoad];
-
-    [self initEditColumnSheetWithTitle:self.title
-                                  type:self.type
-                                format:self.format
-                             alignment:self.alignment
-                          setTextColor:self.setTextColor
-                             textColor:self.textColor];
+    [self initUI];
 }
 
 - (void)initAddColumnSheet {
@@ -40,6 +34,34 @@
                              alignment:-1
                           setTextColor:NO
                              textColor:NSColor.blackColor];
+}
+
+- (void)initUI {
+    if (!self.titleTextField) {
+        return;
+    }
+
+    int type = 10; // custom
+    switch (self.type) {
+    case DB_COLUMN_FILENUMBER:
+        type = 0;
+        break;
+    case DB_COLUMN_PLAYING:
+        type = 1;
+        break;
+    case DB_COLUMN_ALBUM_ART:
+        type = 2;
+        break;
+    }
+
+    self.titleTextField.stringValue = self.title;
+    [self.typePopUpButton selectItemAtIndex: type];
+    self.formatTextField.enabled = type == 10;
+    self.formatTextField.stringValue = self.format;
+    [self.alignmentPopUpButton selectItemAtIndex:self.alignment];
+    self.setColorButton.state = self.setTextColor;
+    self.colorWell.enabled = self.setTextColor;
+    NSColorPanel.sharedColorPanel.showsAlpha = YES;
 }
 
 - (void)initEditColumnSheetWithTitle:(NSString *)title
@@ -56,31 +78,7 @@
     self.setTextColor = setTextColor;
     self.textColor = textColor;
 
-    int type = 10; // custom
-    switch (inputType) {
-    case DB_COLUMN_FILENUMBER:
-        type = 0;
-        break;
-    case DB_COLUMN_PLAYING:
-        type = 1;
-        break;
-    case DB_COLUMN_ALBUM_ART:
-        type = 2;
-        break;
-    }
-
-    if (!self.titleTextField) {
-        return;
-    }
-
-    self.titleTextField.stringValue = title;
-    [self.typePopUpButton selectItemAtIndex: type];
-    self.formatTextField.enabled = type == 10;
-    self.formatTextField.stringValue = format;
-    [self.alignmentPopUpButton selectItemAtIndex:alignment];
-    self.setColorButton.state = setTextColor;
-    self.colorWell.enabled = setTextColor;
-    NSColorPanel.sharedColorPanel.showsAlpha = YES;
+    [self initUI];
 }
 
 - (IBAction)addColumnTypeChanged:(id)sender {
