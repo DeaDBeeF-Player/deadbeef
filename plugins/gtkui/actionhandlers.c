@@ -480,15 +480,6 @@ action_delete_from_disk_handler_cb (void *data) {
             deadbeef->pl_item_unref (it);
         }
     }
-
-    deadbeef->pl_save_all ();
-    if (it_current_song) {
-        deadbeef->pl_item_unref (it_current_song);
-    }
-    deadbeef->pl_unlock ();
-    deadbeef->plt_unref (plt);
-
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     
     if (deadbeef->conf_get_int ("gtkui.skip_deleted_songs", 0) 
         && deadbeef->plt_get_item_idx (plt, it_current_song, PL_MAIN) == -1 
@@ -504,7 +495,14 @@ action_delete_from_disk_handler_cb (void *data) {
             deadbeef->sendmessage(DB_EV_NEXT, 0, 0, 0);
         }
     }
-    
+
+    deadbeef->pl_save_all ();
+    if (it_current_song) {
+        deadbeef->pl_item_unref (it_current_song);
+    }
+    deadbeef->pl_unlock ();
+    deadbeef->plt_unref (plt);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     return FALSE;
 }
 
