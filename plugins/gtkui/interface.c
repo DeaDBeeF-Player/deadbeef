@@ -1625,6 +1625,7 @@ create_prefwin (void)
   GtkWidget *vbox44;
   GtkWidget *mmb_delete_playlist;
   GtkWidget *hide_delete_from_disk;
+  GtkWidget *skip_deleted_songs;
   GtkWidget *auto_name_playlist_from_folder;
   GtkWidget *auto_size_columns;
   GtkWidget *hbox141;
@@ -2267,6 +2268,10 @@ create_prefwin (void)
   hide_delete_from_disk = gtk_check_button_new_with_mnemonic (_("Hide \"Remove From Disk\" context menu item"));
   gtk_widget_show (hide_delete_from_disk);
   gtk_box_pack_start (GTK_BOX (vbox44), hide_delete_from_disk, FALSE, FALSE, 0);
+
+  skip_deleted_songs = gtk_check_button_new_with_mnemonic (_("Switch to the next song when the currently played one is removed from disk"));
+  gtk_widget_show (skip_deleted_songs);
+  gtk_box_pack_start (GTK_BOX (vbox44), skip_deleted_songs, FALSE, FALSE, 0);
 
   auto_name_playlist_from_folder = gtk_check_button_new_with_mnemonic (_("Auto-name playlists when adding a single folder"));
   gtk_widget_show (auto_name_playlist_from_folder);
@@ -3223,6 +3228,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) hide_delete_from_disk, "toggled",
                     G_CALLBACK (on_hide_delete_from_disk_toggled),
                     NULL);
+  g_signal_connect ((gpointer) skip_deleted_songs, "toggled",
+                    G_CALLBACK (on_skip_deleted_songs_toggled),
+                    NULL);
   g_signal_connect ((gpointer) auto_name_playlist_from_folder, "toggled",
                     G_CALLBACK (on_auto_name_playlist_from_folder_toggled),
                     NULL);
@@ -3501,6 +3509,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, vbox44, "vbox44");
   GLADE_HOOKUP_OBJECT (prefwin, mmb_delete_playlist, "mmb_delete_playlist");
   GLADE_HOOKUP_OBJECT (prefwin, hide_delete_from_disk, "hide_delete_from_disk");
+  GLADE_HOOKUP_OBJECT (prefwin, skip_deleted_songs, "skip_deleted_songs");
   GLADE_HOOKUP_OBJECT (prefwin, auto_name_playlist_from_folder, "auto_name_playlist_from_folder");
   GLADE_HOOKUP_OBJECT (prefwin, auto_size_columns, "auto_size_columns");
   GLADE_HOOKUP_OBJECT (prefwin, hbox141, "hbox141");

@@ -75,7 +75,7 @@
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
-static ddb_gtkui_t plugin;
+ddb_gtkui_t plugin;
 DB_functions_t *deadbeef;
 
 // main widgets
@@ -1966,13 +1966,14 @@ static const char settings_dlg[] =
 ;
 
 // define plugin interface
-static ddb_gtkui_t plugin = {
+ddb_gtkui_t plugin = {
     .gui.plugin.api_vmajor = DB_API_VERSION_MAJOR,
     .gui.plugin.api_vminor = DB_API_VERSION_MINOR,
     .gui.plugin.version_major = DDB_GTKUI_API_VERSION_MAJOR,
     .gui.plugin.version_minor = DDB_GTKUI_API_VERSION_MINOR,
     .gui.plugin.type = DB_PLUGIN_GUI,
     .gui.plugin.id = DDB_GTKUI_PLUGIN_ID,
+    .gui.plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
 #if GTK_CHECK_VERSION(3,0,0)
     .gui.plugin.name = "GTK3 user interface",
     .gui.plugin.descr = "User interface using GTK+ 3.x",
