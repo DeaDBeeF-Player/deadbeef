@@ -40,14 +40,15 @@
 #include "trkproperties.h"
 #include "callbacks.h"
 #include <sys/stat.h>
+#include "gtkui_api.h"
 
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
 
 extern GtkWidget *mainwin;
 extern DB_functions_t *deadbeef;
-static DB_plugin_t *plugin;
-#define trace(...) { deadbeef->log_detailed (plugin, 0, __VA_ARGS__); }
+extern ddb_gtkui_t plugin;
+#define trace(...) { deadbeef->log_detailed (&plugin, 0, __VA_ARGS__); }
 
 gboolean
 action_open_files_handler_cb (void *userdata) {
@@ -393,7 +394,7 @@ delete_and_remove_track (const char *uri, ddb_playlist_t *plt, ddb_playItem_t *i
         deadbeef->plt_remove_item (plt, it);
         remove_deleted_file_from_all_playlists (uri);
     } else {
-        trace("Failed to delete file: %s\n", uri);
+        trace ("Failed to delete file: %s\n", uri);
     }
 }
 
@@ -481,7 +482,9 @@ action_delete_from_disk_handler_cb (void *data) {
     }
 
     deadbeef->pl_save_all ();
-    deadbeef->pl_item_unref (it_current_song);
+    if (it_current_song) {
+        deadbeef->pl_item_unref (it_current_song);
+    }
     deadbeef->pl_unlock ();
     deadbeef->plt_unref (plt);
 
