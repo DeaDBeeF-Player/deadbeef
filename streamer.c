@@ -1527,6 +1527,12 @@ _streamer_requeue_after_current (ddb_repeat_t repeat, ddb_shuffle_t shuffle) {
     }
     streamer_lock ();
     streamreader_flush_after (playing_track);
+
+    if (playing_track == streaming_track) {
+        streamer_unlock ();
+        return;
+    }
+
     if (streaming_track) {
         pl_item_unref (streaming_track);
     }
