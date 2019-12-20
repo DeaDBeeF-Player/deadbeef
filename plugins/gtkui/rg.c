@@ -65,8 +65,8 @@ static void
 _formatTime (float sec, int extraPrecise, char *buf, int bufsize) {
     int hr;
     int min;
-    hr = (int)floor (sec / 360);
-    sec -= hr * 360;
+    hr = (int)floor (sec / 3600);
+    sec -= hr * 3600;
     min = (int)floor (sec / 60);
     sec -= min * 60;
 
@@ -113,7 +113,7 @@ _ctl_progress (rgs_controller_t *ctl, int current) {
         _formatTime (est, 0, estimated, sizeof (estimated));
 
         char status[200];
-        snprintf (status, sizeof (status), "Time elapsed: %s, estimated: %s, speed: %0.2fx", elapsed, estimated, speed);
+        snprintf (status, sizeof (status), "Time elapsed: %s, estimated: %s, speed: %0.2fx (%i of %i files)", elapsed, estimated, speed, current, ctl->_rg_settings.num_tracks);
         gtk_label_set_text (GTK_LABEL (statusLabel), status);
     }
     else {
