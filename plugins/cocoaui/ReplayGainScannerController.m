@@ -215,8 +215,8 @@ static NSMutableArray *g_rgControllers;
 - (NSString *)formatTime:(float)sec extraPrecise:(BOOL)extraPrecise {
     int hr;
     int min;
-    hr = (int)floor (sec / 360);
-    sec -= hr * 360;
+    hr = (int)floor (sec / 3600);
+    sec -= hr * 3600;
     min = (int)floor (sec / 60);
     sec -= min * 60;
 
@@ -256,7 +256,7 @@ static NSMutableArray *g_rgControllers;
         NSString *elapsed = [self formatTime:timePassed extraPrecise:NO];
         NSString *estimated = [self formatTime:est extraPrecise:NO];
 
-        _statusLabel.stringValue = [NSString stringWithFormat:@"Time elapsed: %@, estimated: %@, speed: %0.2fx", elapsed, estimated, speed];
+        _statusLabel.stringValue = [NSString stringWithFormat:@"Time elapsed: %@, estimated: %@, speed: %0.2fx (%i of %i files)", elapsed, estimated, speed, current, _rg_settings.num_tracks];
     }
     else {
         _statusLabel.stringValue = @"";
