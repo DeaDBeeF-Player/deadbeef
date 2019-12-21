@@ -269,12 +269,11 @@ streamreader_flush_after (playItem_t *it) {
 
     while (n > 0) {
         _streamreader_release_block (b);
+        _firstblock = 1;
         b = b->next;
         if (!b) {
             b = blocks;
         }
         n--;
     }
-
-    _firstblock = 1;
 }
