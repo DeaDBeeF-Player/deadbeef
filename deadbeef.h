@@ -333,9 +333,9 @@ enum output_state_t {
 #if (DDB_API_LEVEL >= 11)
 
 typedef enum ddb_playback_state_e {
-    DDB_PLAYBACK_STATE_STOPPED DEPRECATED_111 = 0,
-    DDB_PLAYBACK_STATE_PLAYING DEPRECATED_111 = 1,
-    DDB_PLAYBACK_STATE_PAUSED DEPRECATED_111 = 2,
+    DDB_PLAYBACK_STATE_STOPPED = 0,
+    DDB_PLAYBACK_STATE_PLAYING = 1,
+    DDB_PLAYBACK_STATE_PAUSED = 2,
 } ddb_playback_state_t;
 
 #endif
