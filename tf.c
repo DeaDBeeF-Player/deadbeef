@@ -1168,7 +1168,8 @@ tf_func_progress_impl(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, 
 
     int progress, range;
     int barsize;
-    uint32_t notch, bar;
+    char *notch;
+    char *bar;
 
     const char *argpos = args;
 
@@ -1198,12 +1199,12 @@ tf_func_progress_impl(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, 
 
     int blen_notch = 0;
     TF_EVAL_CHECK(len, ctx, argpos, arglens[3], out, outlen - 1, fail_on_undef);
-    notch = u8_nextchar(out, &blen_notch);
+    notch = strdup (out);
     argpos += arglens[3];
 
     int blen_bar = 0;
     TF_EVAL_CHECK(len, ctx, argpos, arglens[4], out, outlen - 1, fail_on_undef);
-    bar = u8_nextchar(out, &blen_bar);
+    bar = strdup (out);
     argpos += arglens[4];
 
     int replaced = progress * barsize / range;
@@ -1219,21 +1220,26 @@ tf_func_progress_impl(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, 
     char *cur = out;
     int remaining = outlen;
     for (int i = 0; i != barsize; ++i) {
-        int written;
         /*
          * Experimenting in fb2k, it looks like:
          * What would strictly precede the mark's normal mode position gets marked in alt mode,
          * with the exception of a full bar.
          */
         // Try to replicate this.
+        char *p = NULL;
         if (alt ? i < replaced : i == replaced) {
-            written = u8_toutf8(cur, remaining, &notch, blen_notch);
+            p = notch;
         } else {
-            written = u8_toutf8(cur, remaining, &bar, blen_bar);
+            p = bar;
         }
-        cur += written;
-        remaining -= written;
+        size_t l = min(strlen (p), remaining);
+        strncpy (cur, p, l);
+        cur += l;
+        remaining -= l;
     }
+
+    free (bar);
+    free (notch);
 
     return outlen - remaining;
 }
