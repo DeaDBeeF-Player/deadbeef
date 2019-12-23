@@ -167,6 +167,8 @@ const char *ddb_internal_rg_keys[] = {
     NULL
 };
 
+static const char wmp_popm_email[] = "Windows Media Player 9 Series";
+
 static inline uint32_t
 extract_i32_le (unsigned char *buf)
 {
@@ -3722,6 +3724,12 @@ junk_id3v2_load_ufid (int version_major, playItem_t *it, uint8_t *readptr, unsig
     }
     readptr++;
     synched_size--;
+
+    if (!synched_size) {
+        trace ("UFID is incomplete, no data after owner\n");
+        return -1;
+    }
+
     char id[synched_size+1];
     memcpy (id, readptr, synched_size);
     id[synched_size] = 0;
@@ -3737,6 +3745,145 @@ junk_id3v2_load_ufid (int version_major, playItem_t *it, uint8_t *readptr, unsig
     }
 
     pl_replace_meta (it, "musicbrainz_trackid", id);
+    return 0;
+}
+
+static void
+junk_id3v2_append_frame (DB_id3v2_tag_t *tag, DB_id3v2_frame_t *f) {
+    DB_id3v2_frame_t *tail;
+    for (tail = tag->frames; tail && tail->next; tail = tail->next);
+    if (tail) {
+        tail->next = f;
+    }
+    else {
+        tag->frames = f;
+    }
+}
+
+unsigned
+junk_stars_from_popm_rating (uint8_t rating) {
+    if (rating == 0) {
+        return 0;
+    }
+    else if (rating < 64) {
+        return 1;
+    }
+    else if (rating < 128) {
+        return 2;
+    }
+    else if (rating < 196) {
+        return 3;
+    }
+    else if (rating < 255) {
+        return 4;
+    }
+    else {
+        return 5;
+    }
+}
+
+uint8_t
+junk_popm_rating_from_stars (unsigned stars) {
+    switch (stars) {
+    case 0:
+        return 0;
+    case 1:
+        return 63;
+    case 2:
+        return 127;
+    case 3:
+        return 195;
+    case 4:
+        return 254;
+    default:
+        return 255;
+    }
+}
+
+int
+junk_id3v2_load_popm (int version_major, playItem_t *it, uint8_t *readptr, unsigned synched_size, int *found_wmp_popm) {
+    char *email = readptr;
+
+    // fetch the email
+    while (*readptr && synched_size > 0) {
+        readptr++;
+        synched_size--;
+    }
+    if (!synched_size) {
+        trace ("POPM id is not null-terminated\n");
+        return -1;
+    }
+    readptr++;
+    synched_size--;
+
+    if (!synched_size) {
+        trace ("POPM doesn't have rating\n");
+        return -1;
+    }
+
+    // fetch rating
+    uint8_t rating = *readptr;
+    readptr++;
+    synched_size--;
+
+    // map to [0..5], compatible with WMP
+    unsigned stars = junk_stars_from_popm_rating (rating);
+
+    char str[2];
+    snprintf (str, sizeof (str), "%d", stars);
+    pl_replace_meta(it, "RATING", str);
+
+    if (!strcasecmp (email, wmp_popm_email)) {
+        *found_wmp_popm = 1;
+    }
+
+    return 0;
+}
+
+static int
+junk_id3v2_remove_popm_with_email (DB_id3v2_tag_t *tag, const char *email) {
+    DB_id3v2_frame_t *frame = tag->frames;
+    DB_id3v2_frame_t *prev = NULL;
+
+    while (frame) {
+        DB_id3v2_frame_t *next = frame->next;
+        if (!strcmp (frame->id, "POPM") && !strcasecmp(frame->data, wmp_popm_email)) {
+            if (prev) {
+                prev->next = frame->next;
+            }
+            else {
+                tag->frames = frame->next;
+            }
+            free (frame);
+        }
+        else {
+            prev = frame;
+        }
+        frame = next;
+    }
+    return 0;
+}
+
+static int
+junk_id3v2_add_popm_with_email (DB_id3v2_tag_t *tag, const char *email, uint8_t rating, int have_playcount, uint8_t playcount) {
+    size_t l = strlen (email);
+    size_t s = l + 2;
+    if (have_playcount) {
+        s++;
+    }
+    DB_id3v2_frame_t *frame = calloc (sizeof(DB_id3v2_frame_t)+s, 1);
+    strcpy (frame->id, "POPM");
+    frame->size = (uint32_t)s;
+
+    strcpy (frame->data, email);
+    frame->data[l+1] = rating;
+
+    if (have_playcount) {
+        frame->data[l+2] = playcount;
+    }
+
+    junk_id3v2_append_frame (tag, frame);
+
     return 0;
 }
 
@@ -3776,14 +3923,7 @@ junk_id3v2_add_ufid_frame (DB_id3v2_tag_t *tag, const char *owner, const char *i
     memcpy (f->data, owner, ownerlen+1);
     memcpy (f->data+ownerlen+1, id, id_len);
     // append to tag
-    DB_id3v2_frame_t *tail;
-    for (tail = tag->frames; tail && tail->next; tail = tail->next);
-    if (tail) {
-        tail->next = f;
-    }
-    else {
-        tag->frames = f;
-    }
+    junk_id3v2_append_frame (tag, f);
 
     return f;
 }
@@ -3900,7 +4040,7 @@ junk_id3v2_add_genre (playItem_t *it, char *genre) {
 
 
 static int
-junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, DB_id3v2_frame_t *frame, const char *sb_charset) {
+junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, DB_id3v2_frame_t *frame, const char *sb_charset, int *found_wmp_popm) {
     int added = 0;
 
     int version_major = id3v2_tag->version[0];
@@ -3994,6 +4134,16 @@ junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, D
                 return -1;
             }
             return junk_id3v2_load_ufid (version_major, it, readptr, synched_size);
+        }
+        else if (it && !strcmp (frameid, "POPM")) {
+            if (synched_size < 2) {
+                trace ("POPM frame is too short, skipped\n");
+                return -1;
+            }
+            if (*found_wmp_popm) {
+                return 0;
+            }
+            return junk_id3v2_load_popm (version_major, it, readptr, synched_size, found_wmp_popm);
         }
         else if (it && !strcmp (frameid, "TXXX")) {
             if (synched_size < 2) {
@@ -4092,9 +4242,9 @@ junk_id3v2_detect_charset (DB_id3v2_tag_t *id3v2_tag) {
 }
 
 static int
-junk_id3v2_set_metadata (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, const char *charset) {
+junk_id3v2_set_metadata (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, const char *charset, int *found_wmp_popm) {
     for (DB_id3v2_frame_t *f = id3v2_tag->frames; f; f = f->next) {
-        junk_id3v2_set_metadata_from_frame (it, id3v2_tag, f, charset);
+        junk_id3v2_set_metadata_from_frame (it, id3v2_tag, f, charset, found_wmp_popm);
     }
     return 0;
 }
@@ -4172,6 +4322,9 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
         }
         readptr += sz;
     }
+
+    int found_wmp_popm = 0;
+
     while (readptr - tag <= size - 4 && *readptr) {
         if (version_major == 3 || version_major == 4) {
             trace ("pos %d of %d\n", readptr - tag, size);
@@ -4333,7 +4486,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             readptr += sz;
 
             if (it) {
-                junk_id3v2_set_metadata_from_frame(it, tag_store, frm, "cp1252");
+                junk_id3v2_set_metadata_from_frame(it, tag_store, frm, "cp1252", &found_wmp_popm);
             }
             if (!tag_store) {
                 free (frm);
@@ -4394,7 +4547,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             readptr += sz;
 
             if (it) {
-                junk_id3v2_set_metadata_from_frame(it, tag_store, frm, "cp1252");
+                junk_id3v2_set_metadata_from_frame(it, tag_store, frm, "cp1252", &found_wmp_popm);
             }
             if (!tag_store) {
                 free (frm);
@@ -4431,7 +4584,8 @@ junk_id3v2_read (playItem_t *it, DB_FILE *fp) {
     if (!res) {
         // detect charset on all text fields
         const char *charset = junk_id3v2_detect_charset (&id3v2_tag);
-        junk_id3v2_set_metadata (it, &id3v2_tag, charset);
+        int found_wmp_popm = 0;
+        junk_id3v2_set_metadata (it, &id3v2_tag, charset, &found_wmp_popm);
     }
     if (id3v2_tag.version[0] == 2) {
         uint32_t f = pl_get_item_flags (it);
@@ -4654,6 +4808,41 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             val = pl_find_meta (it, "musicbrainz_trackid");
             if (val && *val) {
                 junk_id3v2_add_ufid_frame (&id3v2, "http://musicbrainz.org", val, (int)strlen (val));
+            }
+
+            val = pl_find_meta(it, "rating");
+            if (val && *val) {
+                // find and update an existing frame, keep playcount
+                DB_id3v2_frame_t *frame = id3v2.frames;
+                DB_id3v2_frame_t *frame_popm = NULL;
+                for (; frame; frame = frame->next) {
+                    if (!strcmp (frame->id, "POPM")) {
+                        frame_popm = frame;
+                        if (!strcasecmp(frame->data, wmp_popm_email)) {
+                            break;
+                        }
+                    }
+                }
+
+                int have_playcount = 0;
+                uint8_t pcnt = 0;
+
+                if (frame_popm) {
+                    // has playcount?
+                    const char *email = frame_popm->data;
+                    size_t len = strlen(email)+1;
+                    if (len+1 < frame_popm->size) {
+                        have_playcount = 1;
+                        pcnt = frame_popm->data[len];
+                    }
+                }
+
+
+                junk_id3v2_remove_popm_with_email(&id3v2, wmp_popm_email);
+                junk_id3v2_add_popm_with_email (&id3v2, wmp_popm_email, junk_popm_rating_from_stars(atoi(val)), have_playcount, pcnt);
+            }
+            else {
+                junk_id3v2_remove_frames (&id3v2, "POPM");
             }
         }
         pl_unlock ();
