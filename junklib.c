@@ -1257,9 +1257,11 @@ junk_id3v1_write2 (int fd, playItem_t *it, const char *enc) {
         else {\
             strncpy (store, temp, sizeof (store));\
         }\
-        char *cr = strchr (store, '\n');\
-        if (cr) {\
-            *cr = 0;\
+        for (char *cr = store; cr < store+sizeof(store); cr++) {\
+            if (*cr == '\n') {\
+                *cr = 0;\
+                break;\
+            }\
         }\
     }\
 }
