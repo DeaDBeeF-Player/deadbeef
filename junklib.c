@@ -2034,6 +2034,19 @@ junk_id3v2_remove_frames (DB_id3v2_tag_t *tag, const char *frame_id) {
     return 0;
 }
 
+static DB_id3v2_frame_t *
+junk_id3v2_append_frame (DB_id3v2_tag_t *tag, DB_id3v2_frame_t *f) {
+    DB_id3v2_frame_t *tail;
+    for (tail = tag->frames; tail && tail->next; tail = tail->next);
+    if (tail) {
+        tail->next = f;
+    }
+    else {
+        tag->frames = f;
+    }
+    return f;
+}
+
 DB_id3v2_frame_t *
 junk_id3v2_add_text_frame2 (DB_id3v2_tag_t *tag, const char *frame_id, const char *value, size_t inlen) {
     // copy value to handle multiline strings
@@ -2086,20 +2099,7 @@ junk_id3v2_add_text_frame2 (DB_id3v2_tag_t *tag, const char *frame_id, const cha
         free (out);
     }
 
-    // append to tag
-    DB_id3v2_frame_t *tail = NULL;
-
-    for (tail = tag->frames; tail && tail->next; tail = tail->next);
-
-    if (tail) {
-        tail->next = f;
-    }
-    else {
-        tag->frames = f;
-    }
-    tail = f;
-
-    return tail;
+    return junk_id3v2_append_frame(tag, f);
 }
 
 DB_id3v2_frame_t *
@@ -2190,17 +2190,7 @@ junk_id3v2_add_comment_frame (DB_id3v2_tag_t *tag, const char *frame_id, const c
 
     free (buffer);
 
-    // append to tag
-    DB_id3v2_frame_t *tail;
-    for (tail = tag->frames; tail && tail->next; tail = tail->next);
-    if (tail) {
-        tail->next = f;
-    }
-    else {
-        tag->frames = f;
-    }
-
-    return f;
+    return junk_id3v2_append_frame(tag, f);
 }
 
 int
@@ -2303,15 +2293,8 @@ junk_id3v2_add_txxx_frame (DB_id3v2_tag_t *tag, const char *key, const char *val
     f->size = (int)size;
     f->data[0] = encoding;
     memcpy (&f->data[1], out, res);
-    // append to tag
-    DB_id3v2_frame_t *tail;
-    for (tail = tag->frames; tail && tail->next; tail = tail->next);
-    if (tail) {
-        tail->next = f;
-    }
-    else {
-        tag->frames = f;
-    }
+
+    junk_id3v2_append_frame(tag, f);
 
     free (out);
 
@@ -3748,18 +3731,6 @@ junk_id3v2_load_ufid (int version_major, playItem_t *it, uint8_t *readptr, unsig
     return 0;
 }
 
-static void
-junk_id3v2_append_frame (DB_id3v2_tag_t *tag, DB_id3v2_frame_t *f) {
-    DB_id3v2_frame_t *tail;
-    for (tail = tag->frames; tail && tail->next; tail = tail->next);
-    if (tail) {
-        tail->next = f;
-    }
-    else {
-        tag->frames = f;
-    }
-}
-
 unsigned
 junk_stars_from_popm_rating (uint8_t rating) {
     if (rating == 0) {
@@ -3864,7 +3835,7 @@ junk_id3v2_remove_popm_with_email (DB_id3v2_tag_t *tag, const char *email) {
     return 0;
 }
 
-static int
+static DB_id3v2_frame_t *
 junk_id3v2_add_popm_with_email (DB_id3v2_tag_t *tag, const char *email, uint8_t rating, int have_playcount, uint8_t playcount) {
     size_t l = strlen (email);
     size_t s = l + 2;
@@ -3882,9 +3853,7 @@ junk_id3v2_add_popm_with_email (DB_id3v2_tag_t *tag, const char *email, uint8_t 
         frame->data[l+2] = playcount;
     }
 
-    junk_id3v2_append_frame (tag, frame);
-
-    return 0;
+    return junk_id3v2_append_frame (tag, frame);
 }
 
 int
@@ -3922,10 +3891,8 @@ junk_id3v2_add_ufid_frame (DB_id3v2_tag_t *tag, const char *owner, const char *i
     f->size = (int)len;
     memcpy (f->data, owner, ownerlen+1);
     memcpy (f->data+ownerlen+1, id, id_len);
-    // append to tag
-    junk_id3v2_append_frame (tag, f);
 
-    return f;
+    return junk_id3v2_append_frame (tag, f);
 }
 
 static int
