@@ -146,6 +146,7 @@ static const char *frame_mapping[] = {
     "MOOD", NULL, "TMOO", NULL, NULL,
     "PRODUCED_NOTICE", NULL, "TPRO", NULL, NULL,
     "musicbrainz_trackid", NULL, NULL, NULL, NULL,
+    "rating", NULL, NULL, NULL, NULL,
     NULL
 };
 
@@ -4777,6 +4778,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                 junk_id3v2_add_ufid_frame (&id3v2, "http://musicbrainz.org", val, (int)strlen (val));
             }
 
+            // POPM
             val = pl_find_meta(it, "rating");
             if (val && *val) {
                 // find and update an existing frame, keep playcount
