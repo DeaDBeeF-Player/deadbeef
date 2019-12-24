@@ -1,3 +1,42 @@
+version 1.8.3
+	Fixed a CD Text reading issue
+	Added title formatting functions: len2, longer, longest, padcut, padcut_right, progress, progress2, right, roman, rot13, shortest, strchr, stricmp, strrchr, strstr, substr, tab, trim (esainane@github)
+	Fixed a bunch of memory bugs in title formatting (esainane@github)
+	Added optional automatic playlist sorting (kpcee@github)
+	Added title formatting value %playback_time_ms% (nonoo@github)
+	Added an option to start deadbeef hidden / minimized to tray (kpcee@github)
+	Fixed %_path_raw% to always produce an URI (Evgeny Kravchenko)
+	Fixed rounding of %selection_playback_time% (kpcee@github)
+	Fixed a memory leak in AAC plugin
+	Fixed crash when removing playlist from UI layout (Nicolai Syvertsen)
+	Added logging of plugin load errors
+	Added an option to replaygain scan all unscanned files in playlist (kpcee@github)
+	Added detecting and ignoring freeformat MP3 files
+	Removed logging of playlist load debug messages
+	Fixed playback stuttering after deleting files
+	Fixed deleting files using playlist tab context menu
+	Fixed saving playlist after deleting files
+	Fixed saving playlist after replaygain scan
+	Fixed a bunch of crashes and memory leaks when opening playlist context menu (Christian Boxdörfer)
+	Fixed a performance issue when seeking in MP3 files
+	Fixed a bunch of issues with Repeat and Shuffle implementation
+	Fixed handling of in-stream HTTP headers for streaming audio
+	Fixed a bunch of bugs in HTTP stream interruption
+	Fixed semicolon-separated values handling in track properties dialog
+	Fixed choosing next track when the currently playing track was removed
+	Fixed seeking out of bounds using hotkeys
+	Fixed saving opus header gain when no replaygain info is present
+	Improved remove from disk dialog (kpcee@github)
+	Fixed ID3v2 TLAN (LANGUAGE) and TMED (MEDIA TYPE) mapping to be consistent with other formats
+	Fixed replaygain bug causing it to be ON by default
+	Fixed bug in elapsed time calculation in replaygain scanner UI
+	Fixed a stack overflow bug when writing ID3v1
+	Added ID3v2 POPM rating support, both reading and writing
+
+
+
+
+
 version 1.8.2
 	Volume control from command line supports increment syntax (by eauno1re@github)
 	Fixed writing multi-value fields into FLAC tags
