@@ -78,7 +78,7 @@ static void apply_conf (GtkWidget *w, ddb_dialog_t *conf) {
     char token[MAX_TOKEN];
     const char *script = conf->layout;
     parser_line = 1;
-    while (script = gettoken (script, token)) {
+    while ((script = gettoken (script, token))) {
         if (strcmp (token, "property")) {
             fprintf (stderr, "invalid token while loading plugin %s config dialog: %s at line %d\n", conf->title, token, parser_line);
             break;
@@ -98,7 +98,7 @@ static void apply_conf (GtkWidget *w, ddb_dialog_t *conf) {
         if (!strncmp (type, "hbox[", 5) || !strncmp (type, "vbox[", 5)) {
             // skip to ;
             char semicolon[MAX_TOKEN];
-            while (script = gettoken_warn_eof (script, semicolon)) {
+            while ((script = gettoken_warn_eof (script, semicolon))) {
                 if (!strcmp (semicolon, ";")) {
                     break;
                 }

@@ -122,9 +122,8 @@ typedef struct {
 
 static DB_fileinfo_t *
 ffmpeg_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (ffmpeg_info_t));
-    memset (_info, 0, sizeof (ffmpeg_info_t));
-    return _info;
+    ffmpeg_info_t *info = calloc (sizeof (ffmpeg_info_t), 1);
+    return &info->info;
 }
 
 // ensure that the buffer can contain entire frame of frame_size bytes per channel

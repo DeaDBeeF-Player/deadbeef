@@ -82,7 +82,7 @@ skip_to_prev_helper (const char *meta)
     }
     deadbeef->pl_lock ();
     DB_output_t *output = deadbeef->get_output ();
-    if (output->state () == OUTPUT_STATE_STOPPED) {
+    if (output->state () == DDB_PLAYBACK_STATE_STOPPED) {
         deadbeef->pl_unlock ();
         return;
     }
@@ -131,7 +131,7 @@ skip_to_next_helper (const char *meta)
     }
     deadbeef->pl_lock ();
     DB_output_t *output = deadbeef->get_output ();
-    if (output->state () == OUTPUT_STATE_STOPPED) {
+    if (output->state () == DDB_PLAYBACK_STATE_STOPPED) {
         deadbeef->pl_unlock ();
         return;
     }
@@ -209,7 +209,7 @@ action_skip_to_next_artist_handler (DB_plugin_action_t *act, int ctx)
 {
     deadbeef->pl_lock ();
     DB_output_t *output = deadbeef->get_output ();
-    if (output->state () == OUTPUT_STATE_STOPPED) {
+    if (output->state () == DDB_PLAYBACK_STATE_STOPPED) {
         deadbeef->pl_unlock ();
         return 0;
     }
@@ -265,7 +265,7 @@ action_skip_to_prev_artist_handler (DB_plugin_action_t *act, int ctx)
 {
     deadbeef->pl_lock ();
     DB_output_t *output = deadbeef->get_output ();
-    if (output->state () == OUTPUT_STATE_STOPPED) {
+    if (output->state () == DDB_PLAYBACK_STATE_STOPPED) {
         deadbeef->pl_unlock ();
         return 0;
     }
@@ -620,6 +620,7 @@ action_move_tracks_up_handler (DB_plugin_action_t *act, int ctx) {
         if (it_count) {
             int i = 0;
             uint32_t indexes[it_count];
+            memset (indexes, 0, sizeof (indexes));
 
             it = deadbeef->plt_get_first (plt, PL_MAIN);
             while (it) {
@@ -673,6 +674,7 @@ action_move_tracks_down_handler (DB_plugin_action_t *act, int ctx) {
         if (it_count) {
             int i = 0;
             uint32_t indexes[it_count];
+            memset (indexes, 0, sizeof (indexes));
 
             it = deadbeef->plt_get_first (plt, PL_MAIN);
             while (it) {

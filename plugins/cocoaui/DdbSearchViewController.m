@@ -28,7 +28,7 @@ extern DB_functions_t *deadbeef;
 
 @implementation DdbSearchViewController
 
-#define DEFAULT_COLUMNS "[{\"title\":\"Artist - Album\", \"format\":\"%artist%[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track number%\", \"size\":\"50\"}, {\"title\":\"Track Title\", \"format\":\"%title%\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
+#define DEFAULT_COLUMNS "[{\"title\":\"Artist - Album\", \"format\":\"$if(%album artist%,%album artist%,Unknown Artist)[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track number%\", \"size\":\"50\"}, {\"title\":\"Track Title\", \"format\":\"%title%\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
 
 - (NSString *)getColumnConfig {
     return [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.search_columns", DEFAULT_COLUMNS)];
@@ -43,7 +43,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)awakeFromNib {
-    DdbSearchWidget *view = (DdbSearchWidget *)[self view];
+    DdbSearchWidget *view = (DdbSearchWidget *)self.view;
     view.delegate = self;
     [self initContent];
 }
@@ -65,13 +65,13 @@ extern DB_functions_t *deadbeef;
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SEARCHRESULT, 0);
         deadbeef->plt_unref (plt);
-        DdbSearchWidget *pltWidget = (DdbSearchWidget *)[self view];
+        DdbSearchWidget *pltWidget = (DdbSearchWidget *)self.view;
         deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, (uintptr_t)[pltWidget listview], PL_MAIN, 0);
     }
 }
 
 - (void)selectionChanged:(DdbListviewRow_t)row {
-    DdbSearchWidget *pltWidget = (DdbSearchWidget *)[self view];
+    DdbSearchWidget *pltWidget = (DdbSearchWidget *)self.view;
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, (uintptr_t)[pltWidget listview], DDB_PLAYLIST_CHANGE_SELECTION, 0);
     deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, (uintptr_t)[pltWidget listview], PL_MAIN, 0);
 }
@@ -84,7 +84,7 @@ extern DB_functions_t *deadbeef;
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SEARCHRESULT, 0);
         deadbeef->plt_unref (plt);
     }
-    [_entry setStringValue:@""];
+    _entry.stringValue = @"";
     [_entry becomeFirstResponder];
 
 }

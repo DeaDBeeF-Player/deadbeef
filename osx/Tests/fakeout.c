@@ -76,7 +76,7 @@ fakeout_unpause (void);
 int
 fakeout_init (void) {
     trace ("fakeout_init\n");
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     if (!_manual) {
         fakeout_terminate = 0;
         fakeout_tid = deadbeef->thread_start (fakeout_thread, NULL);
@@ -102,7 +102,7 @@ fakeout_free (void) {
             deadbeef->thread_join (fakeout_tid);
         }
         fakeout_tid = 0;
-        state = OUTPUT_STATE_STOPPED;
+        state = DDB_PLAYBACK_STATE_STOPPED;
         fakeout_terminate = 0;
     }
     return 0;
@@ -113,13 +113,13 @@ fakeout_play (void) {
     if (!fakeout_tid && !_manual) {
         fakeout_init ();
     }
-    state = OUTPUT_STATE_PLAYING;
+    state = DDB_PLAYBACK_STATE_PLAYING;
     return 0;
 }
 
 int
 fakeout_stop (void) {
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     deadbeef->streamer_reset (1);
     fakeout_free();
     return 0;
@@ -127,19 +127,19 @@ fakeout_stop (void) {
 
 int
 fakeout_pause (void) {
-    if (state == OUTPUT_STATE_STOPPED) {
+    if (state == DDB_PLAYBACK_STATE_STOPPED) {
         return -1;
     }
     // set pause state
-    state = OUTPUT_STATE_PAUSED;
+    state = DDB_PLAYBACK_STATE_PAUSED;
     return 0;
 }
 
 int
 fakeout_unpause (void) {
     // unset pause state
-    if (state == OUTPUT_STATE_PAUSED) {
-        state = OUTPUT_STATE_PLAYING;
+    if (state == DDB_PLAYBACK_STATE_PAUSED) {
+        state = DDB_PLAYBACK_STATE_PLAYING;
     }
     return 0;
 }
@@ -157,7 +157,7 @@ fakeout_thread (void *context) {
             break;
         }
 
-        if (state != OUTPUT_STATE_PLAYING) {
+        if (state != DDB_PLAYBACK_STATE_PLAYING) {
             usleep (10000);
             continue;
         }

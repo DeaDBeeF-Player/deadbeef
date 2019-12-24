@@ -118,9 +118,8 @@ static WavpackStreamReader wsr = {
 
 static DB_fileinfo_t *
 wv_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (wvctx_t));
-    memset (_info, 0, sizeof (wvctx_t));
-    return _info;
+    wvctx_t *info = calloc (sizeof (wvctx_t), 1);
+    return &info->info;
 }
 
 static int

@@ -22,13 +22,13 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#import "PluginConfigurationViewController.h"
-#import "DSPPresetListDataSource.h"
+#import "PropertySheetViewController.h"
+#import "ScriptableTableDataSource.h"
 
 #define DEFAULT_TITLEBAR_PLAYING_VALUE "%artist% - %title% - DeaDBeeF-%_deadbeef_version%"
 #define DEFAULT_TITLEBAR_STOPPED_VALUE "DeaDBeeF-%_deadbeef_version%"
 
-@interface PreferencesWindowController : NSWindowController<NSToolbarDelegate,NSTableViewDelegate,NSTableViewDataSource,NSMenuDelegate>
+@interface PreferencesWindowController : NSWindowController<NSToolbarDelegate,NSTableViewDelegate,NSTableViewDataSource,NSMenuDelegate,ScriptableItemDelegate>
 @property (strong) IBOutlet NSView *soundView;
 @property (strong) IBOutlet NSView *playbackView;
 @property (strong) IBOutlet NSView *dspView;
@@ -81,25 +81,7 @@
 
 - (IBAction)stopAfterCurrentAlbumResetAction:(id)sender;
 
-// dsp properties
-@property (strong) IBOutlet NSPanel *dspConfigPanel;
-//@property (unsafe_unretained) IBOutlet NSScrollView *dspConfigView;
-@property (strong) IBOutlet PluginConfigurationViewController *dspConfigViewController;
-
-
-
-- (IBAction)dspConfigOkAction:(id)sender;
-- (IBAction)dspConfigResetAction:(id)sender;
-
-- (IBAction)dspChainAction:(id)sender;
-- (IBAction)dspSaveAction:(id)sender;
-- (IBAction)dspLoadAction:(id)sender;
-
-@property (unsafe_unretained) IBOutlet NSTableView *dspList;
-
 @property (weak) IBOutlet NSView *dspPresetSelectorContainer;
-
-@property (strong) IBOutlet DSPPresetListDataSource *dspPresetListDataSource;
 
 // GUI misc properties
 @property (unsafe_unretained) IBOutlet NSButton *enable_shift_jis_detection;
@@ -156,11 +138,11 @@
 @property (unsafe_unretained) IBOutlet NSTextView *pluginDescription;
 @property (unsafe_unretained) IBOutlet NSTextView *pluginLicense;
 
-@property (strong) IBOutlet PluginConfigurationViewController *pluginConfViewController;
-
-
+@property (strong) IBOutlet PropertySheetViewController *pluginConfViewController;
 
 - (IBAction)pluginOpenWebsite:(id)sender;
 - (IBAction)pluginConfResetDefaults:(id)sender;
+
+- (void)outputDeviceChanged;
 
 @end

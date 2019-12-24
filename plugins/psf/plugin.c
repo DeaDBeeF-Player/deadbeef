@@ -48,10 +48,8 @@ typedef struct {
 
 static DB_fileinfo_t *
 psfplug_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (psfplug_info_t));
-    psfplug_info_t *info = (psfplug_info_t *)_info;
-    memset (info, 0, sizeof (psfplug_info_t));
-    return _info;
+    psfplug_info_t *info = calloc (sizeof (psfplug_info_t), 1);
+    return &info->info;
 }
 
 static int

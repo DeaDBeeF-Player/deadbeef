@@ -61,10 +61,8 @@ typedef struct {
 
 static DB_fileinfo_t *
 tta_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (tta_info_t));
-    tta_info_t *info = (tta_info_t *)_info;
-    memset (info, 0, sizeof (tta_info_t));
-    return _info;
+    tta_info_t *info = calloc (sizeof (tta_info_t), 1);
+    return &info->info;
 }
 
 static int

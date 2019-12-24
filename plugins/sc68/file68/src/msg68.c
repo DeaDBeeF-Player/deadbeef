@@ -294,7 +294,7 @@ int msg68_cat(const char * name, const char * desc, int masked)
       if (masked) {
         msg68_bitmsk |= 1<<i;
       } else {
-        msg68_bitmsk &= ~(1<<i);
+        msg68_bitmsk &= ~(1UL<<i);
       }
     }
   }

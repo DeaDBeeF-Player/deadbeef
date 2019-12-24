@@ -44,7 +44,7 @@ static CoverManager *g_DefaultCoverManager = nil;
 
 + (CoverManager *)defaultCoverManager {
     if (!g_DefaultCoverManager) {
-        g_DefaultCoverManager = [[CoverManager alloc] init];
+        g_DefaultCoverManager = [CoverManager new];
     }
     return g_DefaultCoverManager;
 }

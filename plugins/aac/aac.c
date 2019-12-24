@@ -1006,6 +1006,7 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
                     int64_t fsize = deadbeef->fgetlength (fp);
                     deadbeef->fclose (fp);
+                    fp = NULL;
 
                     char s[100];
                     snprintf (s, sizeof (s), "%lld", fsize);
@@ -1052,6 +1053,9 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                 }
             }
             mp4ff_close (mp4);
+            if (fp) {
+                deadbeef->fclose (fp);
+            }
             if (i < ntracks) {
                 return after;
             }

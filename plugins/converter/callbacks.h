@@ -134,3 +134,7 @@ on_bypass_same_format_toggled          (GtkToggleButton *togglebutton,
 void
 on_retag_after_copy_toggled            (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_minimize_on_startup_clicked         (GtkButton       *button,
+                                        gpointer         user_data);

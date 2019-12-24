@@ -45,7 +45,6 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <sys/types.h>
 
 // #define USE_INET_SOCKET
 #define DEFAULT_LISTENING_PORT 48879
@@ -86,6 +85,9 @@
 #include "playqueue.h"
 #include "tf.h"
 #include "logger.h"
+#include "scriptable/scriptable.h"
+#include "scriptable/scriptable_dsp.h"
+#include "scriptable/scriptable_encoder.h"
 
 #ifndef PREFIX
 #error PREFIX must be defined
@@ -320,8 +322,8 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             return 0;
         }
         else if (!strcmp (parg, "--play-pause")) {
-            int state = deadbeef->get_output ()->state ();
-            if (state == OUTPUT_STATE_PLAYING) {
+            ddb_playback_state_t state = deadbeef->get_output ()->state ();
+            if (state == DDB_PLAYBACK_STATE_PLAYING) {
                 deadbeef->sendmessage (DB_EV_PAUSE, 0, 0, 0);
             }
             else {
@@ -704,7 +706,7 @@ save_resume_state (void) {
     int playtrack = -1;
     int playlist = -1;
     playlist_t *plt = pl_get_playlist (trk);
-    int paused = (output->state () == OUTPUT_STATE_PAUSED);
+    int paused = (output->state () == DDB_PLAYBACK_STATE_PAUSED);
     if (trk && plt) {
         playlist = plt_get_idx_of(plt);
         playtrack = plt_get_item_idx(plt, trk, PL_MAIN);
@@ -772,13 +774,13 @@ player_mainloop (void) {
                     streamer_move_to_prevsong (1);
                     break;
                 case DB_EV_PAUSE:
-                    if (output->state () != OUTPUT_STATE_PAUSED) {
+                    if (output->state () != DDB_PLAYBACK_STATE_PAUSED) {
                         output->pause ();
                         messagepump_push (DB_EV_PAUSED, 0, 1, 0);
                     }
                     break;
                 case DB_EV_TOGGLE_PAUSE:
-                    if (output->state () != OUTPUT_STATE_PLAYING) {
+                    if (output->state () != DDB_PLAYBACK_STATE_PLAYING) {
                         streamer_play_current_track ();
                     }
                     else {
@@ -804,6 +806,14 @@ player_mainloop (void) {
                         streamer_set_seek (p1 / 1000.f);
                     }
                     break;
+                case DB_EV_PLAYLISTCHANGED:
+                    switch (p1) {
+                    case DDB_PLAYLIST_CHANGE_CONTENT:
+                    case DDB_PLAYLIST_CHANGE_CREATED:
+                    case DDB_PLAYLIST_CHANGE_DELETED:
+                        streamer_notify_track_deleted ();
+                        break;
+                    }
                 }
             }
             if (msg >= DB_EV_FIRST && ctx) {
@@ -852,7 +862,7 @@ sigsegv_handler (int sig) {
 void
 restore_resume_state (void) {
     DB_output_t *output = plug_get_output ();
-    if (conf_get_int ("resume_last_session", 1) && output->state () == OUTPUT_STATE_STOPPED) {
+    if (conf_get_int ("resume_last_session", 1) && output->state () == DDB_PLAYBACK_STATE_STOPPED) {
         int plt = conf_get_int ("resume.playlist", -1);
         int track = conf_get_int ("resume.track", -1);
         float pos = conf_get_float ("resume.position", -1);
@@ -1307,9 +1317,12 @@ main (int argc, char *argv[]) {
 
     free (cmdline);
 
-#if 0
-    signal (SIGTERM, sigterm_handler);
-    atexit (atexit_handler); // helps to save in simple cases
+
+#ifdef OSX_APPBUNDLE
+    // work in progress API, doesn't compile outside of xcode yet
+    scriptableInit();
+    scriptableDspLoadPresets();
+    scriptableEncoderLoadPresets();
 #endif
 
     streamer_init ();

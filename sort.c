@@ -28,6 +28,8 @@
 #include "utf8.h"
 #include "sort.h"
 #include "tf.h"
+#include "pltmeta.h"
+#include "messagepump.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -138,6 +140,7 @@ qsort_cmp_func (const void *a, const void *b) {
 
 void
 plt_sort_random (playlist_t *playlist, int iter) {
+    plt_replace_meta (playlist, "autosort_mode", "random");
     if (!playlist->head[iter] || !playlist->head[iter]->next[iter]) {
         return;
     }
@@ -198,6 +201,7 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
         return;
     }
     int ascending = order == DDB_SORT_DESCENDING ? 0 : 1;
+    plt_set_meta_int (playlist, "autosort_ascending", ascending);
 
     if (format == NULL || id == DB_COLUMN_FILENUMBER || !playlist->head[iter] || !playlist->head[iter]->next[iter]) {
         return;
@@ -215,6 +219,8 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
         pl_sort_tf_bytecode = NULL;
     }
     else {
+        plt_replace_meta (playlist, "autosort_mode", "tf");
+        plt_replace_meta (playlist, "autosort_tf", format);
         pl_sort_format = NULL;
         pl_sort_tf_bytecode = tf_compile (format);
         pl_sort_tf_ctx._size = sizeof (pl_sort_tf_ctx);
@@ -357,3 +363,32 @@ sort_track_array (playlist_t *playlist, playItem_t **tracks, int num_tracks, con
     pl_unlock ();
 }
 
+void
+plt_autosort (playlist_t *plt) {
+    int autosort_enabled = plt_find_meta_int (plt, "autosort_enabled", 0);
+    if (!autosort_enabled) {
+        return;
+    }
+
+    const char *autosort_mode = plt_find_meta (plt, "autosort_mode");
+    if (!autosort_mode) {
+        return;
+    }
+
+    if (!strcmp (autosort_mode, "tf")) {
+        int ascending = plt_find_meta_int (plt, "autosort_ascending", 0);
+        const char *fmt = plt_find_meta (plt, "autosort_tf");
+        if (!fmt) {
+            return;
+        }
+        plt_sort_v2 (plt, PL_MAIN, -1, fmt, ascending ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
+    }
+    else if (!strcmp (autosort_mode, "random")) {
+        plt_sort_v2 (plt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM);
+    }
+
+    plt_save_config (plt);
+    plt_unref (plt);
+
+    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+}

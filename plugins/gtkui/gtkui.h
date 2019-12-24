@@ -166,7 +166,7 @@ void
 gtkui_run_preferences_dlg (void);
 
 int
-gtkui_get_gui_refresh_rate ();
+gtkui_get_gui_refresh_rate (void);
 
 void
 gtkui_titlebar_tf_init (void);
@@ -182,6 +182,9 @@ gtkui_mainwin_init(void);
 
 void
 gtkui_mainwin_free(void);
+
+static void
+init_widget_layout (void);
 
 enum GtkuiFileChooserType {
     GTKUI_FILECHOOSER_OPENFILE,

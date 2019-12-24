@@ -37,8 +37,8 @@ extern DB_functions_t *deadbeef;
         listFrame.origin.x = 0;
         listFrame.origin.y = 0;
         _listview = [[DdbListview alloc] initWithFrame:listFrame];
-        [_listview setNeedsDisplay:YES];
-        [_listview setAutoresizingMask:NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewMinYMargin|NSViewHeightSizable|NSViewMaxYMargin];
+        _listview.needsDisplay = YES;
+        _listview.autoresizingMask = NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewMinYMargin|NSViewHeightSizable|NSViewMaxYMargin;
         [self addSubview:_listview];
         
     }

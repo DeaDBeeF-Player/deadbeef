@@ -30,7 +30,7 @@ static DB_output_t plugin;
 
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
-static int state = OUTPUT_STATE_STOPPED;
+static ddb_playback_state_t state = DDB_PLAYBACK_STATE_STOPPED;
 static uint64_t mutex;
 
 // audiounit impl
@@ -115,6 +115,11 @@ get_best_samplerate (int samplerate, int *avail_samplerates, int count) {
         int64_t mod = samplerate > avail_samplerates[i] ? (samplerate % avail_samplerates[i]) : (avail_samplerates[i] % samplerate);
         int64_t score = dist*2+mod;
 
+        // upscaling is generally better than downscaling
+        if (avail_samplerates[i] < samplerate) {
+            score *= 100;
+        }
+
         if (index == -1 || score < nearest) {
             nearest = score;
             index = i;
@@ -189,13 +194,13 @@ OSStatus callbackFunction(AudioObjectID inObjectID,
                           UInt32 inNumberAddresses,
                           const AudioObjectPropertyAddress inAddresses[],
                           void *inClientData) {
-    int st = state;
+    ddb_playback_state_t st = state;
     ca_free ();
     ca_init ();
-    if (st == OUTPUT_STATE_PLAYING) {
+    if (st == DDB_PLAYBACK_STATE_PLAYING) {
         ca_play();
     }
-    else if (st == OUTPUT_STATE_PAUSED) {
+    else if (st == DDB_PLAYBACK_STATE_PAUSED) {
         ca_pause();
     }
     return noErr;
@@ -206,7 +211,7 @@ ca_get_deviceid (void) {
     device_id = -1;
 
     char newdev[100];
-    deadbeef->conf_get_str ("coreaudio.device", "", newdev, sizeof (newdev));
+    deadbeef->conf_get_str ("coreaudio_soundcard", "", newdev, sizeof (newdev));
 
     AudioObjectPropertyAddress propertyAddress = {
         kAudioHardwarePropertyDevices,
@@ -340,7 +345,7 @@ ca_init (void) {
                                    &outputDeviceAddress,
                                    &callbackFunction, nil);
 
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
 
     return 0;
 }
@@ -435,15 +440,15 @@ ca_play (void) {
     }
 
     deadbeef->mutex_lock (mutex);
-    if (state != OUTPUT_STATE_PLAYING) {
+    if (state != DDB_PLAYBACK_STATE_PLAYING) {
         err = AudioDeviceStart (device_id, ca_buffer_callback);
         if (err != noErr) {
             trace ("AudioDeviceStart: %x\n", err);
-            state = OUTPUT_STATE_STOPPED;
+            state = DDB_PLAYBACK_STATE_STOPPED;
             deadbeef->mutex_unlock (mutex);
             return -1;
         }
-        state = OUTPUT_STATE_PLAYING;
+        state = DDB_PLAYBACK_STATE_PLAYING;
     }
     deadbeef->mutex_unlock (mutex);
 
@@ -457,9 +462,9 @@ ca_stop (void) {
         return 0;
     }
     deadbeef->mutex_lock (mutex);
-    if (state != OUTPUT_STATE_STOPPED) {
+    if (state != DDB_PLAYBACK_STATE_STOPPED) {
         err = AudioDeviceStop (device_id, ca_buffer_callback);
-        state = OUTPUT_STATE_STOPPED;
+        state = DDB_PLAYBACK_STATE_STOPPED;
         if (err != noErr) {
             trace ("AudioDeviceStop: %x\n", err);
             deadbeef->mutex_unlock (mutex);
@@ -482,12 +487,12 @@ ca_pause (void) {
 
     deadbeef->mutex_lock (mutex);
 
-    if (state != OUTPUT_STATE_PAUSED) {
-        state = OUTPUT_STATE_PAUSED;
+    if (state != DDB_PLAYBACK_STATE_PAUSED) {
+        state = DDB_PLAYBACK_STATE_PAUSED;
         err = AudioDeviceStop (device_id, ca_buffer_callback);
         if (err != noErr) {
             trace ("AudioDeviceStop: %x\n", err);
-            state = OUTPUT_STATE_STOPPED;
+            state = DDB_PLAYBACK_STATE_STOPPED;
             deadbeef->mutex_unlock (mutex);
             return -1;
         }
@@ -538,7 +543,7 @@ ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const A
     char *buffer = outOutputData->mBuffers[0].mData;
     sz = outOutputData->mBuffers[0].mDataByteSize;
 
-    if (state == OUTPUT_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1)) {
+    if (state == DDB_PLAYBACK_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1)) {
         int br = deadbeef->streamer_read (buffer, sz);
         if (br < 0) {
             br = 0;
@@ -559,7 +564,7 @@ ca_unpause (void) {
     return ca_play ();
 }
 
-static int
+static ddb_playback_state_t
 ca_state (void) {
     return state;
 }

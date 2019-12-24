@@ -34,6 +34,28 @@
 #define LOCK {pl_lock();}
 #define UNLOCK {pl_unlock();}
 
+DB_metaInfo_t *
+pl_meta_for_key_with_override (playItem_t *it, const char *key) {
+    pl_ensure_lock ();
+    DB_metaInfo_t *m = it->meta;
+
+    // try to find an override
+    while (m) {
+        if (m->key[0] == '!' && !strcasecmp (key, m->key+1)) {
+            return m;
+        }
+        m = m->next;
+    }
+
+    m = it->meta;
+    while (m) {
+        if (key && !strcasecmp (key, m->key)) {
+            return m;
+        }
+        m = m->next;
+    }
+    return NULL;}
+
 
 DB_metaInfo_t *
 pl_meta_for_key (playItem_t *it, const char *key) {

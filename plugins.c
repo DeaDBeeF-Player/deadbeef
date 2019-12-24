@@ -24,6 +24,7 @@
 
   Alexey Yakovenko waker@users.sourceforge.net
 */
+#include <ctype.h>
 #include <dirent.h>
 #include <dlfcn.h>
 #include <assert.h>
@@ -60,6 +61,7 @@
 #include "sort.h"
 #include "logger.h"
 #include "replaygain.h"
+#include "playmodes.h"
 #ifdef __APPLE__
 #include "cocoautil.h"
 #endif
@@ -500,6 +502,10 @@ static DB_functions_t deadbeef_api = {
 
     .plt_is_loading_cue = (int (*)(ddb_playlist_t *))plt_is_loading_cue,
 
+    .streamer_set_shuffle = streamer_set_shuffle,
+    .streamer_get_shuffle = streamer_get_shuffle,
+    .streamer_set_repeat = streamer_set_repeat,
+    .streamer_get_repeat = streamer_get_repeat,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -639,6 +645,7 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
                     dlclose (p->handle);
                 }
                 free (p);
+                break;
             }
             else {
                 trace_err ("found copy of plugin \"%s\" (%s), but newer version is already loaded\n", plugin_api->id, plugin_api->name)
@@ -825,7 +832,7 @@ load_gui_plugin (const char **plugdirs) {
             trace ("found selected GUI plugin: %s\n", g_gui_names[i]);
             for (int n = 0; plugdirs[n]; n++) {
                 snprintf (name, sizeof (name), "ddb_gui_%s" PLUGINEXT, conf_gui_plug);
-                if (!load_plugin (plugdirs[n], name, strlen (name))) {
+                if (!load_plugin (plugdirs[n], name, (int)strlen (name))) {
                     return 0;
                 }
             }
@@ -838,7 +845,7 @@ load_gui_plugin (const char **plugdirs) {
     for (int i = 0; g_gui_names[i]; i++) {
         for (int n = 0; plugdirs[n]; n++) {
             snprintf (name, sizeof (name), "ddb_gui_%s" PLUGINEXT, g_gui_names[i]);
-            if (!load_plugin (plugdirs[n], name, strlen (name))) {
+            if (!load_plugin (plugdirs[n], name, (int)strlen (name))) {
                 return 0;
             }
             else {
@@ -954,7 +961,7 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
 
                 if (!gui_scan) {
                     if (0 != load_plugin (plugdir, d_name, (int)l)) {
-                        trace_err ("plugin %s not found or failed to load\n", d_name);
+                        trace ("plugin %s not found or failed to load\n", d_name);
                     }
                 }
                 break;
@@ -981,9 +988,9 @@ plug_load_all (void) {
 
 #ifdef OSX_APPBUNDLE
     char libpath[PATH_MAX];
-    int res = cocoautil_get_library_path (libpath, sizeof (libpath));
+    int res = cocoautil_get_application_support_path (libpath, sizeof (libpath));
     if (!res) {
-        strncat (libpath, "/deadbeef/plugins", sizeof (libpath) - strlen (libpath) - 1);
+        strncat (libpath, "/Deadbeef/Plugins", sizeof (libpath) - strlen (libpath) - 1);
     }
     const char *plugins_dirs[] = { dirname, !res ? libpath : NULL, NULL };
 #else
@@ -1472,6 +1479,9 @@ plug_is_local_file (const char *fname) {
 
     const char *f = fname;
     for (; *f; f++) {
+        if (*f != ':' && !isalpha (*f)) {
+            break;
+        }
         if (!strncmp (f, "://", 3)) {
             DB_vfs_t **plug = plug_get_vfs_list ();
             for (int i = 0; plug[i]; i++) {
@@ -1490,6 +1500,74 @@ plug_is_local_file (const char *fname) {
 
     return 1;
 }
+
+static int is_url (const char *path_or_url) {
+    const char *f = path_or_url;
+    for (; *f; f++) {
+        if (*f != ':' && !isalpha (*f)) {
+            break; // not a URL
+        }
+        if (!strncmp (f, "://", 3)) {
+            return 1; // some URL
+        }
+    }
+    return 0;
+}
+
+int
+is_relative_path_posix (const char *path_or_url) {
+    // file url?
+    if (!strncasecmp (path_or_url, "file://", 7)) {
+        path_or_url += 7;
+    }
+
+    // other url?
+    if (is_url (path_or_url)) {
+        return 0;
+    }
+
+    // path starts with a '/'?
+    return *path_or_url != '/';
+}
+
+int
+is_relative_path_win32 (const char *path_or_url) {
+    // file url?
+    if (!strncasecmp (path_or_url, "file://", 7)) {
+        path_or_url += 7;
+    }
+    else {
+        // other url?
+        if (is_url (path_or_url)) {
+            return 0;
+        }
+    }
+
+    // absolute paths start with "C:\" (or any other letter)
+    // UNC paths can also be absolute (starting with "\\")
+    // NOTE: this test won't cover \\? relative path and absolute path starting with "\"
+    if (strlen (path_or_url) >= 3) {
+        if (isalpha(path_or_url[0]) && path_or_url[1] == ':' && (path_or_url[2] == '\\' || path_or_url[2] == '/')) {
+            return 0;
+        }
+        else if (path_or_url[0] == '\\' && path_or_url[1] == '\\') {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+#ifndef _WIN32
+int
+is_relative_path (const char *path_or_url) {
+    return is_relative_path_posix (path_or_url);
+}
+#else
+int
+is_relative_path (const char *path_or_url) {
+    return is_relative_path_win32 (path_or_url);
+}
+#endif
 
 void
 background_job_increment (void) {

@@ -26,8 +26,8 @@
 @implementation DdbTitleFormattingHelpButton
 
 - (void)awakeFromNib {
-    [self setAction:@selector(handleAction:)];
-    [self setTarget:self];
+    self.action = @selector(handleAction:);
+    self.target = self;
 }
 
 - (void)handleAction:(id)sender {

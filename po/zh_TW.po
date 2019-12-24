@@ -1,13 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
+# BENSON CHUNG <earlycat@gmail.com>, 2019
 # BrLi <rainman59118@gmail.com>, 2013
 # BrLi <rainman59118@gmail.com>, 2013
 # Hiunn-hué <hiunnhue108@ymail.com>, 2015-2016,2019
 # PCMan <pcman.tw@gmail.com>, 2010
-# Julian Lai <laichiaheng@outlook.com>, 2015-2017
+# Julian Lai <laichiaheng@outlook.com>, 2015-2017,2019
 # Louis Chen <louistw@uab.edu>, 2019
 # PCMan <pcman.tw@gmail.com>, 2010
 msgid ""
@@ -15,14 +16,13 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-23 20:03+0200\n"
-"PO-Revision-Date: 2019-05-05 16:26+0000\n"
-"Last-Translator: Hiunn-hué <hiunnhue108@ymail.com>\n"
-"Language-Team: Chinese (Taiwan) (http://www.transifex.com/deadbeef-player/"
-"deadbeef-player/language/zh_TW/)\n"
-"Language: zh_TW\n"
+"PO-Revision-Date: 2019-09-30 18:10+0000\n"
+"Last-Translator: Julian Lai <laichiaheng@outlook.com>\n"
+"Language-Team: Chinese (Taiwan) (http://www.transifex.com/deadbeef-player/deadbeef-player/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: zh_TW\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../plugins/gtkui/callbacks.c:351
@@ -54,23 +54,23 @@ msgstr "儲存 DeaDBeeF 等化器預設值"
 
 #: ../plugins/gtkui/eq.c:153
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "DeaDBeeF 等化器預設值檔案 (*.ddbeq)"
+msgstr "DeaDBeeF 等化器預設值檔案（*.ddbeq）"
 
 #: ../plugins/gtkui/eq.c:192
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "載入 DeaDBeeF 等化器預設值..."
+msgstr "載入 DeaDBeeF 等化器預設值…"
 
 #: ../plugins/gtkui/eq.c:196
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "DeaDBeeF 等化器預設值 (*.ddbeq)"
+msgstr "DeaDBeeF 等化器預設值（*.ddbeq）"
 
 #: ../plugins/gtkui/eq.c:257
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "匯入 Foobar2000 等化器預設值..."
+msgstr "匯入 Foobar2000 等化器預設值…"
 
 #: ../plugins/gtkui/eq.c:261
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "Foobar2000 等化器預設值 (*.feq)"
+msgstr "Foobar2000 等化器預設值（*.feq）"
 
 #: ../plugins/gtkui/eq.c:326
 msgid "Save Preset"
@@ -119,23 +119,23 @@ msgstr "%d 天 %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:210
 msgid "total playtime"
-msgstr ""
+msgstr "總播放時數"
 
 #: ../plugins/gtkui/gtkui.c:414 ../plugins/gtkui/gtkui.c:418
 msgid "Paused"
-msgstr ""
+msgstr "已暫停"
 
 #: ../plugins/gtkui/gtkui.c:414 ../plugins/gtkui/gtkui.c:418
 msgid "bit"
-msgstr ""
+msgstr "位元"
 
 #: ../plugins/gtkui/gtkui.c:414 ../plugins/gtkui/gtkui.c:415
 msgid "selection playtime"
-msgstr ""
+msgstr "已選項目的播放長度"
 
 #: ../plugins/gtkui/gtkui.c:415 ../plugins/gtkui/gtkui.c:419
 msgid "Stopped"
-msgstr ""
+msgstr "已停止"
 
 #: ../plugins/gtkui/gtkui.c:682 ../translation/plugins.c:209
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
@@ -146,17 +146,17 @@ msgstr "新播放清單"
 #: ../plugins/gtkui/gtkui.c:685 ../plugins/pltbrowser/pltbrowser.c:75
 #, c-format
 msgid "New Playlist (%d)"
-msgstr "新播放清單 (%d)"
+msgstr "新播放清單（%d）"
 
 #: ../plugins/gtkui/gtkui.c:742
 #, c-format
 msgid "Copy of %s"
-msgstr ""
+msgstr "%s 的副本"
 
 #: ../plugins/gtkui/gtkui.c:745
 #, c-format
 msgid "Copy of %s (%d)"
-msgstr ""
+msgstr "%s（%d）的副本"
 
 #. register widget types
 #: ../plugins/gtkui/gtkui.c:1226
@@ -170,11 +170,11 @@ msgstr "播放清單"
 
 #: ../plugins/gtkui/gtkui.c:1230
 msgid "Splitter (top and bottom)"
-msgstr "分隔線 (上與下)"
+msgstr "分隔線（上與下）"
 
 #: ../plugins/gtkui/gtkui.c:1231
 msgid "Splitter (left and right)"
-msgstr "分隔線 (左與右)"
+msgstr "分隔線（左與右）"
 
 #: ../plugins/gtkui/gtkui.c:1233
 msgid "Tabs"
@@ -215,7 +215,7 @@ msgstr "按鈕"
 
 #: ../plugins/gtkui/gtkui.c:1242
 msgid "Seekbar"
-msgstr "進度列"
+msgstr "進度條"
 
 #: ../plugins/gtkui/gtkui.c:1243
 msgid "Playback controls"
@@ -223,7 +223,7 @@ msgstr "播放控制按鈕"
 
 #: ../plugins/gtkui/gtkui.c:1244
 msgid "Volume bar"
-msgstr "音量列"
+msgstr "音量條"
 
 #: ../plugins/gtkui/gtkui.c:1245
 msgid "Chiptune voices"
@@ -243,11 +243,9 @@ msgstr "未能載入說明檔案"
 
 #: ../plugins/gtkui/gtkui.c:1485
 msgid ""
-"The player is currently running background tasks. If you quit now, the tasks "
-"will be cancelled or interrupted. This may result in data loss."
-msgstr ""
-"播放器正在背景執行中。如果您現在退出，程式將會被取消或中斷。這可能導致資料遺"
-"失。"
+"The player is currently running background tasks. If you quit now, the tasks"
+" will be cancelled or interrupted. This may result in data loss."
+msgstr "播放器正在背景執行中。如果您現在退出，程式將會被取消或中斷。這可能導致資料遺失。"
 
 #: ../plugins/gtkui/gtkui.c:1487
 msgid "Do you still want to quit?"
@@ -261,11 +259,11 @@ msgstr "警告"
 
 #: ../plugins/gtkui/interface.c:132 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
-msgstr "檔案(_F)"
+msgstr "檔案 (_F)"
 
 #: ../plugins/gtkui/interface.c:139 ../plugins/gtkui/deadbeef.glade.h:2
 msgid "_Open file(s)"
-msgstr "開啟檔案(_O)"
+msgstr "開啟檔案 (_O)"
 
 #: ../plugins/gtkui/interface.c:151 ../plugins/gtkui/deadbeef.glade.h:3
 msgid "Add file(s)"
@@ -278,7 +276,7 @@ msgstr "加入資料夾"
 #: ../plugins/gtkui/interface.c:167 ../plugins/gtkui/interface.c:3793
 #: ../plugins/gtkui/deadbeef.glade.h:5
 msgid "Add location"
-msgstr "加入位址"
+msgstr "添加位置"
 
 #: ../plugins/gtkui/interface.c:175 ../plugins/gtkui/deadbeef.glade.h:6
 msgid "New playlist"
@@ -294,15 +292,15 @@ msgstr "儲存播放清單"
 
 #: ../plugins/gtkui/interface.c:191 ../plugins/gtkui/deadbeef.glade.h:9
 msgid "_Quit"
-msgstr "結束(_Q)"
+msgstr "結束 (_Q)"
 
 #: ../plugins/gtkui/interface.c:199 ../plugins/gtkui/deadbeef.glade.h:10
 msgid "_Edit"
-msgstr "編輯(_E)"
+msgstr "編輯 (_E)"
 
 #: ../plugins/gtkui/interface.c:206 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "_Clear"
-msgstr "清除(_C)"
+msgstr "清除 (_C)"
 
 #: ../plugins/gtkui/interface.c:214 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Select all"
@@ -336,7 +334,7 @@ msgstr "剪裁"
 
 #: ../plugins/gtkui/interface.c:245 ../plugins/gtkui/deadbeef.glade.h:18
 msgid "_Find"
-msgstr "尋找(_F)"
+msgstr "尋找 (_F)"
 
 #: ../plugins/gtkui/interface.c:249 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Sort by"
@@ -391,11 +389,11 @@ msgstr "偏好設定"
 
 #: ../plugins/gtkui/interface.c:292 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "_View"
-msgstr "檢視(_V)"
+msgstr "檢視 (_V)"
 
 #: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:29
 msgid "Status bar"
-msgstr "狀態列"
+msgstr "狀態欄"
 
 #: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Equalizer"
@@ -411,28 +409,28 @@ msgstr "日誌"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "_Playback"
-msgstr "播放(_P)"
+msgstr "播放 (_P)"
 
 #: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:34
 msgid "Shuffle"
-msgstr "<br>"
+msgstr "跳躍"
 
 #: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/interface.c:372
 #: ../plugins/gtkui/deadbeef.glade.h:35
 msgid "Off"
-msgstr "<br>"
+msgstr "關閉"
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Tracks"
-msgstr "<br>"
+msgstr "曲目"
 
 #: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Albums"
-msgstr "<br>"
+msgstr "專輯"
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Random Tracks"
-msgstr ""
+msgstr "隨機曲目"
 
 #: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
@@ -440,7 +438,7 @@ msgstr "重複播放"
 
 #: ../plugins/gtkui/interface.c:360 ../plugins/gtkui/deadbeef.glade.h:40
 msgid "All Tracks"
-msgstr "全部"
+msgstr "全部曲目"
 
 #: ../plugins/gtkui/interface.c:366 ../plugins/gtkui/deadbeef.glade.h:41
 msgid "One Track"
@@ -456,7 +454,7 @@ msgstr "隨播放移動游標"
 
 #: ../plugins/gtkui/interface.c:387 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current track"
-msgstr "播放當前歌曲後停止"
+msgstr "播放當前曲目後停止"
 
 #: ../plugins/gtkui/interface.c:391 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Stop after current album"
@@ -464,16 +462,16 @@ msgstr "播放完此專輯後停止"
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "Jump to current track"
-msgstr "跳至當前歌曲"
+msgstr "跳至當前曲目"
 
 #: ../plugins/gtkui/interface.c:403 ../plugins/gtkui/interface.c:410
 #: ../plugins/gtkui/deadbeef.glade.h:47
 msgid "_Help"
-msgstr "說明(_H)"
+msgstr "說明 (_H)"
 
 #: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:48
 msgid "_ChangeLog"
-msgstr "更新日誌(_C)"
+msgstr "更新日誌 (_C)"
 
 #: ../plugins/gtkui/interface.c:426 ../plugins/gtkui/deadbeef.glade.h:49
 msgid "_GPLv2"
@@ -485,11 +483,11 @@ msgstr "_LGPLv2.1"
 
 #: ../plugins/gtkui/interface.c:438 ../plugins/gtkui/deadbeef.glade.h:51
 msgid "_About"
-msgstr "關於(_A)"
+msgstr "關於 (_A)"
 
 #: ../plugins/gtkui/interface.c:446 ../plugins/gtkui/deadbeef.glade.h:52
 msgid "_Translators"
-msgstr "翻譯者(_T)"
+msgstr "翻譯者 (_T)"
 
 #: ../plugins/gtkui/interface.c:715 ../plugins/gtkui/deadbeef.glade.h:53
 msgid "Search"
@@ -543,7 +541,7 @@ msgstr "結束"
 #: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:157
 #, no-c-format
 msgid "Track Properties"
-msgstr "歌曲屬性"
+msgstr "曲目屬性"
 
 #: ../plugins/gtkui/interface.c:1060 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Location:"
@@ -555,12 +553,12 @@ msgstr "設定"
 
 #: ../plugins/gtkui/interface.c:1127 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "_Apply"
-msgstr "套用(_A)"
+msgstr "套用 (_A)"
 
 #: ../plugins/gtkui/interface.c:1148 ../plugins/gtkui/interface.c:1194
 #: ../plugins/gtkui/deadbeef.glade.h:67
 msgid "_Close"
-msgstr "關閉(_C)"
+msgstr "關閉 (_C)"
 
 #: ../plugins/gtkui/interface.c:1152 ../plugins/gtkui/deadbeef.glade.h:68
 msgid "Metadata"
@@ -594,11 +592,11 @@ msgstr "格式："
 
 #: ../plugins/gtkui/interface.c:1382 ../plugins/gtkui/deadbeef.glade.h:76
 msgid "Sort format:"
-msgstr ""
+msgstr "排序格式："
 
 #: ../plugins/gtkui/interface.c:1391 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "(if non-empty)"
-msgstr ""
+msgstr "（如果非為空）"
 
 #: ../plugins/gtkui/interface.c:1399 ../plugins/gtkui/deadbeef.glade.h:78
 msgid "Alignment:"
@@ -625,13 +623,13 @@ msgstr "字體色彩："
 #: ../plugins/gtkui/interface.c:3852 ../plugins/gtkui/interface.c:3982
 #: ../plugins/gtkui/deadbeef.glade.h:70
 msgid "_Cancel"
-msgstr "取消(_C)"
+msgstr "取消 (_C)"
 
 #: ../plugins/gtkui/interface.c:1465 ../plugins/gtkui/interface.c:3742
 #: ../plugins/gtkui/interface.c:3873 ../plugins/gtkui/interface.c:4003
 #: ../plugins/gtkui/deadbeef.glade.h:71
 msgid "_OK"
-msgstr "確定(_O)"
+msgstr "確定 (_O)"
 
 #: ../plugins/gtkui/interface.c:1805 ../plugins/gtkui/deadbeef.glade.h:83
 msgid "Output plugin:"
@@ -655,15 +653,15 @@ msgstr "目標取樣率："
 
 #: ../plugins/gtkui/interface.c:1885 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "For multiples of 48KHz (96K, 192K, ...):"
-msgstr ""
+msgstr "為 48KHz 的倍數時（96K、192K、…）："
 
 #: ../plugins/gtkui/interface.c:1904 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "For multiples of 44.1KHz (88.2K, 176.4K, ...):"
-msgstr ""
+msgstr "為 44.1KHz 的倍數時（88.2K、176.4K、…）："
 
 #: ../plugins/gtkui/interface.c:1919 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Based on input samplerate"
-msgstr ""
+msgstr "基於輸入取樣率"
 
 #: ../plugins/gtkui/interface.c:1923 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Override samplerate"
@@ -679,11 +677,11 @@ msgstr "來源模式"
 
 #: ../plugins/gtkui/interface.c:1963
 msgid "By playback order"
-msgstr ""
+msgstr "依播放順序"
 
 #: ../plugins/gtkui/interface.c:1964
 msgid "Track"
-msgstr "歌曲"
+msgstr "曲目"
 
 #: ../plugins/gtkui/interface.c:1971 ../plugins/gtkui/deadbeef.glade.h:97
 msgid "Processing:"
@@ -697,11 +695,11 @@ msgstr "無"
 
 #: ../plugins/gtkui/interface.c:1981
 msgid "Apply gain"
-msgstr "啟用增益"
+msgstr "啟用音量標準化"
 
 #: ../plugins/gtkui/interface.c:1982
 msgid "Apply gain and prevent clipping according to peak"
-msgstr "啟用增益並防止爆音"
+msgstr "啟用音量標準化並防止爆音"
 
 #: ../plugins/gtkui/interface.c:1983
 msgid "Only prevent clipping"
@@ -719,19 +717,19 @@ msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:2010 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Preamp with RG info:"
-msgstr ""
+msgstr "參照音量標準化放大："
 
 #: ../plugins/gtkui/interface.c:2017 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Preamp without RG info:"
-msgstr ""
+msgstr "不參照音量標準化放大："
 
 #: ../plugins/gtkui/interface.c:2044 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "<b>ReplayGain</b>"
-msgstr "<b>播放增益</b>"
+msgstr "<b>音量標準化</b>"
 
 #: ../plugins/gtkui/interface.c:2053 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr "由指令列 (或檔案管理員) 將檔案加入至此播放清單："
+msgstr "由指令列（或檔案管理員）將檔案加入至此播放清單："
 
 #: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Resume previous session on startup"
@@ -743,7 +741,7 @@ msgstr "加入資料夾時不要加入壓縮檔"
 
 #: ../plugins/gtkui/interface.c:2070 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "\"Stop after current track\" option will switch off after triggering"
-msgstr "「播放當前歌曲後停止」選項在觸發後將會自動關閉"
+msgstr "觸發「播放當前曲目後停止」後將會停止"
 
 #: ../plugins/gtkui/interface.c:2074 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "\"Stop after current album\" option will switch off after triggering"
@@ -767,7 +765,7 @@ msgstr "DSP 連鎖預設值"
 
 #: ../plugins/gtkui/interface.c:2146 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "_Load"
-msgstr "載入(_L)"
+msgstr "載入 (_L)"
 
 #: ../plugins/gtkui/interface.c:2150 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "DSP"
@@ -795,7 +793,7 @@ msgstr "啟用中文 CP936 偵測與重新編碼"
 
 #: ../plugins/gtkui/interface.c:2188 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Interface refresh rate (times per second):"
-msgstr "介面重刷率 (每秒次數)："
+msgstr "介面重刷率（每秒次數）："
 
 #: ../plugins/gtkui/interface.c:2202 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Titlebar text while playing:"
@@ -807,11 +805,11 @@ msgstr "停止時標題列文字："
 
 #: ../plugins/gtkui/interface.c:2230 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "GUI Plugin (changing requires restart):"
-msgstr "圖形使用者介面 (須重新啟動)："
+msgstr "圖形使用者介面（須重新啟動）："
 
 #: ../plugins/gtkui/interface.c:2238 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Display selection playback time in status bar"
-msgstr ""
+msgstr "在狀態欄顯示被選取曲目的總時數"
 
 #: ../plugins/gtkui/interface.c:2242 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Player"
@@ -838,11 +836,11 @@ msgstr "自動調整成適合視窗大小的欄位"
 
 #: ../plugins/gtkui/interface.c:2271 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Group spacing:"
-msgstr ""
+msgstr "群組間隔："
 
 #: ../plugins/gtkui/interface.c:2281 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "pixels"
-msgstr ""
+msgstr "像素"
 
 #: ../plugins/gtkui/interface.c:2289 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "GUI/Misc"
@@ -855,15 +853,15 @@ msgstr "取代"
 
 #: ../plugins/gtkui/interface.c:2313 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Bars"
-msgstr ""
+msgstr "欄"
 
 #: ../plugins/gtkui/interface.c:2320 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Background (EQ)"
-msgstr ""
+msgstr "背景（EQ）"
 
 #: ../plugins/gtkui/interface.c:2339 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Seekbar/Volumebar/EQ"
-msgstr ""
+msgstr "進度列 / 音量列 / EQ"
 
 #: ../plugins/gtkui/interface.c:2364 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Base:"
@@ -957,7 +955,7 @@ msgstr "<b>背景</b>"
 
 #: ../plugins/gtkui/interface.c:2682 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "Override (loses GTK treeview theming, but speeds up rendering)"
-msgstr "取代 (會失去 GTK 樹狀目錄佈景，但加速繪製)"
+msgstr "取代（會失去 GTK 樹狀目錄佈景，但加速繪製）"
 
 #: ../plugins/gtkui/interface.c:2734 ../plugins/gtkui/deadbeef.glade.h:162
 msgid "Appearance"
@@ -1028,14 +1026,11 @@ msgid ""
 "or the Revert button to undo your changes.\n"
 "The changes will NOT be saved\n"
 "if you don't press Apply."
-msgstr ""
-"請按「套用」儲存你的設定，\n"
-"或按「還原」恢復原本的設定。\n"
-"只要沒按套用鍵，你的設定就不會儲存。"
+msgstr "請按「套用」儲存你的設定，\n或按「還原」恢復原本的設定。\n只要沒按套用鍵，你的設定就不會儲存。"
 
 #: ../plugins/gtkui/interface.c:2965 ../plugins/gtkui/deadbeef.glade.h:181
 msgid "_Defaults"
-msgstr "預設(_D)"
+msgstr "預設 (_D)"
 
 #: ../plugins/gtkui/interface.c:2969 ../plugins/gtkui/deadbeef.glade.h:182
 msgid "Hotkeys"
@@ -1067,11 +1062,11 @@ msgstr "自訂標題"
 
 #: ../plugins/gtkui/interface.c:3926 ../plugins/gtkui/deadbeef.glade.h:188
 msgid "Group By ..."
-msgstr "依據...分組"
+msgstr "依據…分組"
 
 #: ../plugins/gtkui/interface.c:4050 ../plugins/gtkui/deadbeef.glade.h:189
 msgid "Sort by ..."
-msgstr "依據...排序"
+msgstr "依據…排序"
 
 #: ../plugins/gtkui/interface.c:4066 ../plugins/gtkui/deadbeef.glade.h:190
 msgid "Format"
@@ -1140,7 +1135,7 @@ msgstr "ID3v2 版本"
 
 #: ../plugins/gtkui/interface.c:4321
 msgid "2.3 (Recommended)"
-msgstr "2.3 (建議版本)"
+msgstr "2.3（建議版本）"
 
 #: ../plugins/gtkui/interface.c:4322
 msgid "2.4"
@@ -1148,7 +1143,7 @@ msgstr "2.4"
 
 #: ../plugins/gtkui/interface.c:4328 ../plugins/gtkui/deadbeef.glade.h:206
 msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr "ID3v1 字元編碼 (預設為 iso8859-1)"
+msgstr "ID3v1 字元編碼（預設為 iso8859-1）"
 
 #: ../plugins/gtkui/interface.c:4365 ../plugins/gtkui/deadbeef.glade.h:207
 msgid "Write ID3v2.4"
@@ -1164,10 +1159,7 @@ msgid ""
 "DeaDBeeF decoder plugins. For example, mp3 files can have content type "
 "\"audio/x-mpeg\", and need to be decoded by DeaDBeeF's own \"stdmpg\" "
 "plugin, or \"ffmpeg\" plugin."
-msgstr ""
-"這張表格定義了網路串流內容類型與 DeadBeeF 解碼外掛之間的對應關係。例如 MP3 檔"
-"案的內容類型可以是 audio/x-mpeg，需要使用 DeadBeeF 本身的 stdmpg 外掛或 "
-"ffmpeg 外掛來解碼。"
+msgstr "這張表格定義了網路串流內容類型與 DeadBeeF 解碼外掛之間的對應關係。例如 MP3 檔案的內容類型可以是 audio/x-mpeg，需要使用 DeadBeeF 本身的 stdmpg 外掛或 ffmpeg 外掛來解碼。"
 
 #: ../plugins/gtkui/interface.c:4638 ../plugins/gtkui/deadbeef.glade.h:210
 msgid "Reset to defaults"
@@ -1204,11 +1196,11 @@ msgstr "選擇動作"
 #: ../plugins/gtkui/interface.c:5030 ../plugins/gtkui/deadbeef.glade.h:218
 msgid ""
 "This dialog allows setting custom title for any track. This is most useful "
-"for radio stations. An option to set the custom title is also present in the "
-"\"Add Location\" dialog. The title itself is visible in columns displaying "
+"for radio stations. An option to set the custom title is also present in the"
+" \"Add Location\" dialog. The title itself is visible in columns displaying "
 "the \"Artist\" metadata field. It should look like \"[custom] artist\" if "
 "the Artist field is present, or just \"custom\" otherwise."
-msgstr ""
+msgstr "此對話框允許為任意音軌自訂標題。這功能在廣播電台最為實用。在「添加位置」對話框內也包含有自訂標題的選項。這標題會顯示在「藝人」元數據欄位內。它應該顯示成「[自訂]藝人」或者只有「自訂」。"
 
 #: ../plugins/gtkui/interface.c:5086 ../plugins/gtkui/deadbeef.glade.h:219
 #: ../translation/plugins.c:139 ../plugins/shellexecui/interface.c:70
@@ -1219,11 +1211,11 @@ msgstr "編輯(_E)"
 
 #: ../plugins/gtkui/interface.c:5090 ../plugins/gtkui/deadbeef.glade.h:220
 msgid "Edit (in place)"
-msgstr ""
+msgstr "編輯 (in place)"
 
 #: ../plugins/gtkui/interface.c:5102 ../plugins/gtkui/deadbeef.glade.h:221
 msgid "Add new field..."
-msgstr ""
+msgstr "新增欄位"
 
 #: ../plugins/gtkui/interface.c:5150 ../plugins/gtkui/deadbeef.glade.h:222
 msgid "Edit Value"
@@ -1231,11 +1223,11 @@ msgstr "編輯參數"
 
 #: ../plugins/gtkui/interface.c:5163 ../plugins/gtkui/deadbeef.glade.h:223
 msgid "Field name:"
-msgstr ""
+msgstr "欄位名稱:"
 
 #: ../plugins/gtkui/interface.c:5174 ../plugins/gtkui/deadbeef.glade.h:224
 msgid "Field value:"
-msgstr ""
+msgstr "欄位值:"
 
 #: ../plugins/gtkui/interface.c:5231 ../plugins/gtkui/deadbeef.glade.h:225
 msgid "DeaDBeeF Log"
@@ -1243,33 +1235,33 @@ msgstr "DeaDBeeF 日誌"
 
 #: ../plugins/gtkui/interface.c:5260 ../plugins/gtkui/deadbeef.glade.h:226
 msgid "Clear"
-msgstr ""
+msgstr "清除"
 
 #: ../plugins/gtkui/interface.c:5297 ../plugins/gtkui/deadbeef.glade.h:227
 msgid "ReplayGain Scan Progress"
-msgstr ""
+msgstr "音量標準化掃描進度"
 
 #: ../plugins/gtkui/interface.c:5308 ../plugins/gtkui/deadbeef.glade.h:228
 msgid "Current File:"
-msgstr ""
+msgstr "當前檔案："
 
 #: ../plugins/gtkui/interface.c:5326 ../plugins/gtkui/interface.c:5386
 #: ../plugins/gtkui/deadbeef.glade.h:229 ../plugins/gtkui/rg.c:313
 msgid "Status"
-msgstr ""
+msgstr "狀態"
 
 #: ../plugins/gtkui/interface.c:5333 ../plugins/gtkui/interface.c:5397
 #: ../plugins/gtkui/deadbeef.glade.h:230
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: ../plugins/gtkui/interface.c:5365 ../plugins/gtkui/deadbeef.glade.h:231
 msgid "ReplayGain Scan Results"
-msgstr ""
+msgstr "音量標準化掃描結果"
 
 #: ../plugins/gtkui/interface.c:5393 ../plugins/gtkui/deadbeef.glade.h:232
 msgid "Update File Tags"
-msgstr ""
+msgstr "更新檔案標籤"
 
 #: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:651
 msgid "Artist / Album"
@@ -1277,7 +1269,7 @@ msgstr "藝人 / 專輯"
 
 #: ../plugins/gtkui/mainplaylist.c:232 ../plugins/gtkui/search.c:652
 msgid "Track No"
-msgstr "歌曲編號"
+msgstr "曲目"
 
 #: ../plugins/gtkui/mainplaylist.c:234 ../plugins/gtkui/plcommon.c:97
 #: ../plugins/gtkui/search.c:654 ../plugins/pltbrowser/pltbrowser.c:414
@@ -1324,7 +1316,7 @@ msgstr "位元率"
 #: ../plugins/gtkui/plcommon.c:940 ../plugins/gtkui/plcommon.c:1049
 #: ../plugins/gtkui/pltmenu.c:427
 msgid "_Paste"
-msgstr "貼上（_P）"
+msgstr "貼上 (_P)"
 
 #: ../plugins/gtkui/plcommon.c:994 ../translation/plugins.c:306
 #, no-c-format
@@ -1344,11 +1336,11 @@ msgstr "重整音樂資料"
 
 #: ../plugins/gtkui/plcommon.c:1029 ../plugins/gtkui/pltmenu.c:403
 msgid "Cu_t"
-msgstr "剪下（T）"
+msgstr "剪下 (_T)"
 
 #: ../plugins/gtkui/plcommon.c:1039 ../plugins/gtkui/pltmenu.c:415
 msgid "_Copy"
-msgstr "複製（_C）"
+msgstr "複製 (_C)"
 
 #: ../plugins/gtkui/plcommon.c:1083 ../translation/plugins.c:147
 #, no-c-format
@@ -1381,7 +1373,7 @@ msgstr "藝人/日期/專輯"
 
 #: ../plugins/gtkui/pluginconf.c:47
 msgid "Open file..."
-msgstr "開啟檔案..."
+msgstr "開啟檔案…"
 
 #: ../plugins/gtkui/pluginconf.c:238
 #, c-format
@@ -1402,19 +1394,19 @@ msgstr "您確定不儲存繼續嗎？"
 
 #: ../plugins/gtkui/progress.c:62
 msgid "Adding files..."
-msgstr "正在加入檔案..."
+msgstr "正在加入檔案…"
 
 #: ../plugins/gtkui/progress.c:95
 msgid "Initializing..."
-msgstr "正在初始化..."
+msgstr "正在初始化…"
 
 #: ../plugins/gtkui/search.c:659
 msgid "Search [(%list_total% results)]"
-msgstr "尋找 [(共%list_total% 項結果)]"
+msgstr "尋找 [（共%list_total% 項結果）]"
 
 #: ../plugins/gtkui/trkproperties.c:100
 msgid "You've modified data for this track."
-msgstr "已修改此歌曲資料。"
+msgstr "已修改此曲目資料。"
 
 #: ../plugins/gtkui/trkproperties.c:102
 msgid "Really close the window?"
@@ -1441,7 +1433,7 @@ msgstr "[多重值]"
 
 #: ../plugins/gtkui/trkproperties.c:620
 msgid "Writing tags..."
-msgstr "正在寫入標籤..."
+msgstr "正在寫入標籤…"
 
 #: ../plugins/gtkui/trkproperties.c:875
 msgid "Field name"
@@ -1466,7 +1458,7 @@ msgstr "已有此名稱欄位，請選別個。"
 #: ../main.c:120
 #, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr "使用方法：deadbeef [選項] [--] [檔案(複數)]\n"
+msgstr "使用方法：deadbeef [選項] [--] [檔案（複數）]\n"
 
 #: ../main.c:121
 #, c-format
@@ -1476,7 +1468,7 @@ msgstr "選項：\n"
 #: ../main.c:122
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "   --help  或  -h     顯示說明 (本訊息) 並結束\n"
+msgstr "   --help  或  -h     顯示說明（本訊息）並結束\n"
 
 #: ../main.c:123
 #, c-format
@@ -1536,11 +1528,8 @@ msgstr "   --queue            將檔案附加至播放清單\n"
 
 #: ../main.c:134
 #, c-format
-msgid ""
-"   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr ""
-"   --gui 擴充  告訴程式您想使用哪個圖形界面，預設是 \"GTK2\"\n"
-"\n"
+msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
+msgstr "   --gui 擴充  告訴程式您想使用哪個圖形界面，預設是 \"GTK2\"\n\n"
 
 #: ../main.c:135
 #, c-format
@@ -1553,10 +1542,7 @@ msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
-msgstr ""
-"                      FMT %%-句法：[a]藝人, [t]歌名, [b]專輯,\n"
-"                      [l]長度, [n]歌曲編號, [y]年份, [c]評語,\n"
-"                      [r]版權, [e]已過時間\n"
+msgstr "                      FMT %%-句法：[a]藝人, [t]歌名, [b]專輯,\n                      [l]長度, [n]曲目, [y]年份, [c]評語,\n                      [r]版權, [e]已過時間\n"
 
 #: ../main.c:139
 #, c-format
@@ -1585,17 +1571,16 @@ msgstr "--nowplaying-tf FMT 會使用新的標題格式將格式化的歌名輸�
 #: ../main.c:143
 #, c-format
 msgid ""
-"                      FMT syntax: http://github.com/DeaDBeeF-Player/deadbeef/"
-"wiki/Title-formatting-2.0\n"
-msgstr ""
+"                      FMT syntax: http://github.com/DeaDBeeF-"
+"Player/deadbeef/wiki/Title-formatting-2.0\n"
+msgstr "                      FMT 語法：http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"
 
 #: ../main.c:144
 #, c-format
 msgid ""
 "                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
 "should print \"artist - title\"\n"
-msgstr ""
-"例如：--nowplaying-tf \"%%artist%% - %%title%%\" 會顯示 \"藝人 - 歌名\"\n"
+msgstr "例如：--nowplaying-tf \"%%artist%% - %%title%%\" 會顯示 \"藝人 - 歌名\"\n"
 
 #: ../main.c:145
 #, c-format
@@ -1612,7 +1597,7 @@ msgstr ""
 #: ../main.c:147
 #, c-format
 msgid "                      Examples: --volume 80 or --volume -20dB\n"
-msgstr ""
+msgstr "                      範例: --volume 80 或 --volume -20dB\n"
 
 #: ../playlist.c:492 ../playlist.c:2325
 msgid "Default"
@@ -1639,17 +1624,14 @@ msgid ""
 "Left\n"
 "Right\n"
 "Center"
-msgstr ""
-"左\n"
-"右\n"
-"置中"
+msgstr "左\n右\n置中"
 
 #: ../plugins/gtkui/deadbeef.glade.h:94
 msgid ""
 "By playback order\n"
 "Track\n"
 "Album"
-msgstr ""
+msgstr "播放順序依照\n曲目\n專輯"
 
 #: ../plugins/gtkui/deadbeef.glade.h:98
 msgid ""
@@ -1657,32 +1639,26 @@ msgid ""
 "Apply gain\n"
 "Apply gain and prevent clipping according to peak\n"
 "Only prevent clipping"
-msgstr ""
+msgstr "關閉\n啟用音量標準化\n啟用音量標準化並防止爆音\n只防止爆音"
 
 #: ../plugins/gtkui/deadbeef.glade.h:192
 msgid ""
 "Ascending\n"
 "Descending"
-msgstr ""
-"順序\n"
-"逆序"
+msgstr "順序\n逆序"
 
 #: ../plugins/gtkui/deadbeef.glade.h:204
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr ""
-"2.3 (建議版本)\n"
-"2.4"
+msgstr "2.3（建議版本）\n2.4"
 
 #: ../plugins/wildmidi/wildmidiplug.c:193
 #, c-format
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
-msgstr ""
-"wildmidi：找不到 freepats 設定檔案。請安裝 timidity-freepats 套件，或在外掛程"
-"式設定指定 freepats.cfg 的路徑。"
+msgstr "wildmidi：找不到 freepats 設定檔案。請安裝 timidity-freepats 套件，或在外掛程式設定指定 freepats.cfg 的路徑。"
 
 #: ../translation/extra.c:3
 msgid "Track Title"
@@ -1767,12 +1743,12 @@ msgstr "偏好的間隔大小"
 #: ../translation/plugins.c:15
 #, no-c-format
 msgid "Refresh cover art"
-msgstr ""
+msgstr "更新專輯封面"
 
 #: ../translation/plugins.c:17
 #, no-c-format
 msgid "Cache update period (in hours, 0=never)"
-msgstr ""
+msgstr "快取更新間隔（單位為小時，0 = 從不）"
 
 #: ../translation/plugins.c:19
 #, no-c-format
@@ -1787,47 +1763,47 @@ msgstr "由本機資料夾取得"
 #: ../translation/plugins.c:23
 #, no-c-format
 msgid "Fetch from Last.fm"
-msgstr ""
+msgstr "從 Last.fm 取得"
 
 #: ../translation/plugins.c:25
 #, no-c-format
 msgid "Fetch from MusicBrainz"
-msgstr ""
+msgstr "從 MusicBrainz 取得"
 
 #: ../translation/plugins.c:27
 #, no-c-format
 msgid "Fetch from Albumart.org"
-msgstr ""
+msgstr "從 Albumart.org 取得"
 
 #: ../translation/plugins.c:29
 #, no-c-format
 msgid "Fetch from World of Spectrum (AY files only)"
-msgstr ""
+msgstr "從 World of Spectrum 取得 (AY files only)"
 
 #: ../translation/plugins.c:31
 #, no-c-format
 msgid "When no artwork is found"
-msgstr ""
+msgstr "當找不到封面"
 
 #: ../translation/plugins.c:33
 #, no-c-format
 msgid "leave blank"
-msgstr ""
+msgstr "保留為空白"
 
 #: ../translation/plugins.c:35
 #, no-c-format
 msgid "use DeaDBeeF default cover"
-msgstr ""
+msgstr "使用 DeaDBeeF 預設封面"
 
 #: ../translation/plugins.c:37
 #, no-c-format
 msgid "display custom image"
-msgstr ""
+msgstr "顯示自訂影像"
 
 #: ../translation/plugins.c:39
 #, no-c-format
 msgid "Custom image path"
-msgstr ""
+msgstr "自訂影像路徑"
 
 #: ../translation/plugins.c:41
 #, no-c-format
@@ -1838,38 +1814,38 @@ msgstr "依較長一邊縮放封面"
 #: ../translation/plugins.c:44
 #, no-c-format
 msgid "Disable disk cache"
-msgstr ""
+msgstr "停用磁碟快取"
 
 #: ../translation/plugins.c:46
 #, no-c-format
 msgid "Save extracted covers to music folders"
-msgstr ""
+msgstr "儲存解壓縮的封面圖到音樂資料夾"
 
 #: ../translation/plugins.c:48
 #, no-c-format
 msgid "Local file mask"
-msgstr ""
+msgstr "本機檔案遮罩"
 
 #: ../translation/plugins.c:50
 #, no-c-format
 msgid "Artwork folders"
-msgstr ""
+msgstr "美術資料夾"
 
 #. plugins/cdda/cdda.c
 #: ../translation/plugins.c:53
 #, no-c-format
 msgid "CD drive to load"
-msgstr ""
+msgstr "要載入的 CD 光碟機"
 
 #: ../translation/plugins.c:55
 #, no-c-format
 msgid "Audio CD Drive"
-msgstr ""
+msgstr "音訊 CD 光碟機"
 
 #: ../translation/plugins.c:57
 #, no-c-format
 msgid "File"
-msgstr ""
+msgstr "檔案"
 
 #: ../translation/plugins.c:59
 #, no-c-format
@@ -1889,17 +1865,17 @@ msgstr "優先使用 CD-Text 而非 CDDB"
 #: ../translation/plugins.c:65
 #, no-c-format
 msgid "CDDB url (e.g. 'freedb.org')"
-msgstr "CDDB 網址 (例如 freedb.org)"
+msgstr "CDDB 網址（例如 freedb.org）"
 
 #: ../translation/plugins.c:67
 #, no-c-format
 msgid "CDDB port number (e.g. '888')"
-msgstr "CDDB 連接埠號碼 (例如 888)"
+msgstr "CDDB 連接埠號碼（例如 888）"
 
 #: ../translation/plugins.c:69
 #, no-c-format
 msgid "Use CDDB protocol"
-msgstr ""
+msgstr "使用 CDDB 協定"
 
 #: ../translation/plugins.c:71
 #, no-c-format
@@ -1909,42 +1885,42 @@ msgstr "啟用支援 NRG 影像"
 #: ../translation/plugins.c:73
 #, no-c-format
 msgid "Drive speed for normal playback"
-msgstr ""
+msgstr "光碟機正常播放速率"
 
 #: ../translation/plugins.c:75
 #, no-c-format
 msgid "1x"
-msgstr ""
+msgstr "1 倍"
 
 #: ../translation/plugins.c:77
 #, no-c-format
 msgid "2x"
-msgstr ""
+msgstr "2 倍"
 
 #: ../translation/plugins.c:79
 #, no-c-format
 msgid "4x"
-msgstr ""
+msgstr "4 倍"
 
 #: ../translation/plugins.c:81
 #, no-c-format
 msgid "8x"
-msgstr ""
+msgstr "8 倍"
 
 #: ../translation/plugins.c:83
 #, no-c-format
 msgid "16x"
-msgstr ""
+msgstr "16 倍"
 
 #: ../translation/plugins.c:85
 #, no-c-format
 msgid "Max"
-msgstr ""
+msgstr "最大"
 
 #: ../translation/plugins.c:87
 #, no-c-format
 msgid "Use cdparanoia error correction when ripping"
-msgstr ""
+msgstr "轉錄時使用 cdparanoia 修正錯誤"
 
 #. plugins/converter/convgui.c
 #: ../translation/plugins.c:90
@@ -1956,12 +1932,12 @@ msgstr "轉檔"
 #: ../translation/plugins.c:93
 #, no-c-format
 msgid "Autodetect samplerate from output device"
-msgstr ""
+msgstr "從輸出設備自動偵測取樣率"
 
 #: ../translation/plugins.c:95
 #, no-c-format
 msgid "Set samplerate directly"
-msgstr ""
+msgstr "直接設定取樣率"
 
 #: ../translation/plugins.c:97
 #, no-c-format
@@ -1972,12 +1948,12 @@ msgstr "品質 / 演算法"
 #: ../translation/plugins.c:100
 #, no-c-format
 msgid "Resampling quality (0..5, higher is better)"
-msgstr ""
+msgstr "重取樣品質（0..5，越高越好）"
 
 #: ../translation/plugins.c:102
 #, no-c-format
 msgid "8-bit output (default is 16)"
-msgstr "8-bit 輸出 (預設值是 16)"
+msgstr "8 位元輸出（預設值是 16）"
 
 #: ../translation/plugins.c:104
 #, no-c-format
@@ -1992,39 +1968,39 @@ msgstr ""
 #: ../translation/plugins.c:110
 #, no-c-format
 msgid "On/Off Only"
-msgstr ""
+msgstr "僅 開/關"
 
 #: ../translation/plugins.c:112
 #, no-c-format
 msgid "Full"
-msgstr ""
+msgstr "完整"
 
 #. plugins/ffmpeg/ffmpeg.c
 #: ../translation/plugins.c:115
 #, no-c-format
 msgid "Use all extensions supported by ffmpeg"
-msgstr ""
+msgstr "使用 ffmpeg 支援的所有擴充"
 
 #: ../translation/plugins.c:117
 #, no-c-format
 msgid "File Extensions (separate with ';')"
-msgstr "檔案副檔名 (以 ; 分隔)"
+msgstr "檔案副檔名（以 ; 分隔）"
 
 #. plugins/gme/cgme.c
 #: ../translation/plugins.c:120
 #, no-c-format
 msgid "Max song length (in minutes)"
-msgstr "歌曲最大長度 (分鐘)"
+msgstr "歌曲最大長度（分鐘）"
 
 #: ../translation/plugins.c:122
 #, no-c-format
 msgid "Fadeout length (seconds)"
-msgstr "淡出長度 (單位:秒)"
+msgstr "淡出長度 （單位：秒）"
 
 #: ../translation/plugins.c:124
 #, no-c-format
 msgid "Play loops nr. of times (if available)"
-msgstr "循環播放次數 (若支援)"
+msgstr "循環播放次數（若支援）"
 
 #: ../translation/plugins.c:126
 #, no-c-format
@@ -2035,147 +2011,147 @@ msgstr ""
 #: ../translation/plugins.c:129
 #, no-c-format
 msgid "ReplayGain"
-msgstr ""
+msgstr "音量標準化"
 
 #: ../translation/plugins.c:131
 #, no-c-format
 msgid "Remove ReplayGain Information"
-msgstr ""
+msgstr "移除音量標準化資訊"
 
 #: ../translation/plugins.c:133
 #, no-c-format
 msgid "Scan Selection As Albums (By Tags)"
-msgstr ""
+msgstr "將掃描選取項目視為專輯（依標籤）"
 
 #: ../translation/plugins.c:135
 #, no-c-format
 msgid "Scan Selection As Single Album"
-msgstr ""
+msgstr "將掃描選取項目視為專輯"
 
 #: ../translation/plugins.c:137
 #, no-c-format
 msgid "Scan Per-file Track Gain"
-msgstr ""
+msgstr "掃描每首曲目"
 
 #: ../translation/plugins.c:141
 #, no-c-format
 msgid "Deselect All"
-msgstr ""
+msgstr "反向全選"
 
 #: ../translation/plugins.c:143
 #, no-c-format
 msgid "Select All"
-msgstr ""
+msgstr "全選"
 
 #: ../translation/plugins.c:149
 #, no-c-format
 msgid "Add Location"
-msgstr ""
+msgstr "添加位置"
 
 #: ../translation/plugins.c:151
 #, no-c-format
 msgid "Add Folder(s)"
-msgstr ""
+msgstr "添加目錄"
 
 #: ../translation/plugins.c:153
 #, no-c-format
 msgid "Add File(s)"
-msgstr ""
+msgstr "添加檔案"
 
 #: ../translation/plugins.c:155
 #, no-c-format
 msgid "Open File(s)"
-msgstr ""
+msgstr "開啟檔案"
 
 #: ../translation/plugins.c:161
 #, no-c-format
 msgid "Show Help Page"
-msgstr ""
+msgstr "顯示說明頁"
 
 #: ../translation/plugins.c:165
 #, no-c-format
 msgid "Cycle Repeat Mode"
-msgstr ""
+msgstr "循環重複模式"
 
 #: ../translation/plugins.c:167
 #, no-c-format
 msgid "Repeat - Off"
-msgstr ""
+msgstr "重播 - 關"
 
 #: ../translation/plugins.c:169
 #, no-c-format
 msgid "Repeat - Single Track"
-msgstr ""
+msgstr "重播 - 單曲"
 
 #: ../translation/plugins.c:171
 #, no-c-format
 msgid "Repeat - All"
-msgstr ""
+msgstr "重播 - 全部"
 
 #: ../translation/plugins.c:173
 #, no-c-format
 msgid "Cycle Shuffle Mode"
-msgstr ""
+msgstr "循環跳躍播放模式"
 
 #: ../translation/plugins.c:175
 #, no-c-format
 msgid "Shuffle - Random Tracks"
-msgstr ""
+msgstr "跳躍 - 隨機曲目"
 
 #: ../translation/plugins.c:177
 #, no-c-format
 msgid "Shuffle - Albums"
-msgstr ""
+msgstr "跳躍 - 專輯"
 
 #: ../translation/plugins.c:179
 #, no-c-format
 msgid "Shuffle - Tracks"
-msgstr ""
+msgstr "跳躍 - 曲目"
 
 #: ../translation/plugins.c:181
 #, no-c-format
 msgid "Shuffle - Off"
-msgstr ""
+msgstr "跳躍 - 關閉"
 
 #: ../translation/plugins.c:183
 #, no-c-format
 msgid "Toggle Cursor Follows Playback"
-msgstr ""
+msgstr "隨播放移動游標"
 
 #: ../translation/plugins.c:185
 #, no-c-format
 msgid "Toggle Scroll Follows Playback"
-msgstr ""
+msgstr "隨播放捲動"
 
 #: ../translation/plugins.c:187
 #, no-c-format
 msgid "View"
-msgstr ""
+msgstr "檢視"
 
 #: ../translation/plugins.c:189
 #, no-c-format
 msgid "Show\\/Hide menu"
-msgstr ""
+msgstr "顯示\\/隱藏 選單"
 
 #: ../translation/plugins.c:191
 #, no-c-format
 msgid "Show\\/Hide statusbar"
-msgstr ""
+msgstr "顯示\\/隱藏 狀態列"
 
 #: ../translation/plugins.c:193
 #, no-c-format
 msgid "Toggle Design Mode"
-msgstr ""
+msgstr "切換為設計模式"
 
 #: ../translation/plugins.c:197
 #, no-c-format
 msgid "Sort Custom"
-msgstr ""
+msgstr "自訂排序"
 
 #: ../translation/plugins.c:199
 #, no-c-format
 msgid "Crop Selected"
-msgstr ""
+msgstr "剪下選取項目"
 
 #: ../translation/plugins.c:201
 #, no-c-format
@@ -2185,7 +2161,7 @@ msgstr "將曲目自播放清單中移除"
 #: ../translation/plugins.c:203
 #, no-c-format
 msgid "Save Playlist"
-msgstr ""
+msgstr "儲存播放清單"
 
 #: ../translation/plugins.c:205 ../plugins/gtkui/actionhandlers.c:539
 #, no-c-format
@@ -2195,47 +2171,47 @@ msgstr "載入播放清單"
 #: ../translation/plugins.c:207
 #, no-c-format
 msgid "Remove Current Playlist"
-msgstr ""
+msgstr "移除現有播放清單"
 
 #: ../translation/plugins.c:211
 #, no-c-format
 msgid "Show\\/Hide Equalizer"
-msgstr ""
+msgstr "顯示\\/隱藏 等化器"
 
 #: ../translation/plugins.c:213
 #, no-c-format
 msgid "Hide Equalizer"
-msgstr ""
+msgstr "隱藏等化器"
 
 #: ../translation/plugins.c:215
 #, no-c-format
 msgid "Show Equalizer"
-msgstr ""
+msgstr "顯示等化器"
 
 #: ../translation/plugins.c:217
 #, no-c-format
 msgid "Show\\/Hide Player Window"
-msgstr ""
+msgstr "顯示\\/隱藏 播放器視窗"
 
 #: ../translation/plugins.c:219
 #, no-c-format
 msgid "Hide Player Window"
-msgstr ""
+msgstr "隱藏播放器視窗"
 
 #: ../translation/plugins.c:221
 #, no-c-format
 msgid "Show Player Window"
-msgstr ""
+msgstr "顯示播放器視窗"
 
 #: ../translation/plugins.c:223
 #, no-c-format
 msgid "Find"
-msgstr ""
+msgstr "尋找"
 
 #: ../translation/plugins.c:225
 #, no-c-format
 msgid "Show\\/Hide Log window"
-msgstr ""
+msgstr "顯示\\/隱藏 日誌視窗"
 
 #: ../translation/plugins.c:227
 #, no-c-format
@@ -2255,7 +2231,7 @@ msgstr "自訂狀態圖示"
 #: ../translation/plugins.c:233
 #, no-c-format
 msgid "Run gtk_init with --sync (debug mode)"
-msgstr "以 --sync (除錯模式) 執行 gtk_init"
+msgstr "以 --sync（除錯模式）執行 gtk_init"
 
 #: ../translation/plugins.c:235
 #, no-c-format
@@ -2265,17 +2241,17 @@ msgstr "在外掛選單項目之間加入分隔符號"
 #: ../translation/plugins.c:237
 #, no-c-format
 msgid "Use unicode chars instead of images for track state"
-msgstr ""
+msgstr "以萬國碼取代圖片顯示曲目狀態"
 
 #: ../translation/plugins.c:239
 #, no-c-format
 msgid "Disable seekbar overlay text"
-msgstr ""
+msgstr "禁用進度條的覆蓋文字"
 
 #: ../translation/plugins.c:244
 #, no-c-format
 msgid "Jump To Currently Playing Track"
-msgstr ""
+msgstr "跳至當前歌曲"
 
 #: ../translation/plugins.c:246
 #, no-c-format
@@ -2330,117 +2306,117 @@ msgstr "下一個播放清單"
 #: ../translation/plugins.c:266
 #, no-c-format
 msgid "Prev Playlist"
-msgstr ""
+msgstr "前一個播放清單"
 
 #: ../translation/plugins.c:268
 #, no-c-format
 msgid "Switch To Playlist 10"
-msgstr ""
+msgstr "切換至播放清單 10"
 
 #: ../translation/plugins.c:270
 #, no-c-format
 msgid "Switch To Playlist 9"
-msgstr ""
+msgstr "切換至播放清單 9"
 
 #: ../translation/plugins.c:272
 #, no-c-format
 msgid "Switch To Playlist 8"
-msgstr ""
+msgstr "切換至播放清單 8"
 
 #: ../translation/plugins.c:274
 #, no-c-format
 msgid "Switch To Playlist 7"
-msgstr ""
+msgstr "切換至播放清單 7"
 
 #: ../translation/plugins.c:276
 #, no-c-format
 msgid "Switch To Playlist 6"
-msgstr ""
+msgstr "切換至播放清單 6"
 
 #: ../translation/plugins.c:278
 #, no-c-format
 msgid "Switch To Playlist 5"
-msgstr ""
+msgstr "切換至播放清單 5"
 
 #: ../translation/plugins.c:280
 #, no-c-format
 msgid "Switch To Playlist 4"
-msgstr ""
+msgstr "切換至播放清單 4"
 
 #: ../translation/plugins.c:282
 #, no-c-format
 msgid "Switch To Playlist 3"
-msgstr ""
+msgstr "切換至播放清單 3"
 
 #: ../translation/plugins.c:284
 #, no-c-format
 msgid "Switch To Playlist 2"
-msgstr ""
+msgstr "切換至播放清單 2"
 
 #: ../translation/plugins.c:286
 #, no-c-format
 msgid "Switch To Playlist 1"
-msgstr ""
+msgstr "切換至播放清單 1"
 
 #: ../translation/plugins.c:288
 #, no-c-format
 msgid "Sort Randomize"
-msgstr ""
+msgstr "亂數排序"
 
 #: ../translation/plugins.c:290
 #, no-c-format
 msgid "Sort By Date"
-msgstr ""
+msgstr "依日期排序"
 
 #: ../translation/plugins.c:292
 #, no-c-format
 msgid "Sort By Artist"
-msgstr ""
+msgstr "依表演者排序"
 
 #: ../translation/plugins.c:294
 #, no-c-format
 msgid "Sort By Album"
-msgstr ""
+msgstr "依專輯排序"
 
 #: ../translation/plugins.c:296
 #, no-c-format
 msgid "Sort By Track Number"
-msgstr ""
+msgstr "依曲目排序"
 
 #: ../translation/plugins.c:298
 #, no-c-format
 msgid "Sort By Title"
-msgstr ""
+msgstr "依標題排序"
 
 #: ../translation/plugins.c:300
 #, no-c-format
 msgid "Invert Selection"
-msgstr ""
+msgstr "反轉選擇"
 
 #: ../translation/plugins.c:302
 #, no-c-format
 msgid "Clear Playlist"
-msgstr ""
+msgstr "清除播放清單"
 
 #: ../translation/plugins.c:308
 #, no-c-format
 msgid "Toggle In Playback Queue"
-msgstr ""
+msgstr "切換回放佇列"
 
 #: ../translation/plugins.c:310
 #, no-c-format
 msgid "Move"
-msgstr ""
+msgstr "移動"
 
 #: ../translation/plugins.c:312
 #, no-c-format
 msgid "Move Tracks Down"
-msgstr ""
+msgstr "下移音軌"
 
 #: ../translation/plugins.c:314
 #, no-c-format
 msgid "Move Tracks Up"
-msgstr ""
+msgstr "上移音軌"
 
 #: ../translation/plugins.c:316
 #, no-c-format
@@ -2450,7 +2426,7 @@ msgstr "切換靜音"
 #: ../translation/plugins.c:326
 #, no-c-format
 msgid "Toggle Pause"
-msgstr ""
+msgstr "切換暫停"
 
 #: ../translation/plugins.c:328
 #, no-c-format
@@ -2490,38 +2466,38 @@ msgstr "倒回 1%"
 #: ../translation/plugins.c:344
 #, no-c-format
 msgid "Seek 5% Forward"
-msgstr ""
+msgstr "快進 5%"
 
 #: ../translation/plugins.c:346
 #, no-c-format
 msgid "Seek 5% Backward"
-msgstr ""
+msgstr "倒回 5%"
 
 #: ../translation/plugins.c:348
 #, no-c-format
 msgid "Volume Up"
-msgstr ""
+msgstr "提昇音量"
 
 #: ../translation/plugins.c:350
 #, no-c-format
 msgid "Volume Down"
-msgstr ""
+msgstr "降低音量"
 
 #: ../translation/plugins.c:352
 #, no-c-format
 msgid "Toggle Stop After Current Track"
-msgstr ""
+msgstr "播放當前曲目後停止"
 
 #: ../translation/plugins.c:354
 #, no-c-format
 msgid "Toggle Stop After Current Album"
-msgstr ""
+msgstr "播放完此專輯後停止"
 
 #. plugins/lastfm/lastfm.c
 #: ../translation/plugins.c:357
 #, no-c-format
 msgid "Lookup On Last.fm"
-msgstr ""
+msgstr "從 Last.fm 搜尋"
 
 #: ../translation/plugins.c:359
 #, no-c-format
@@ -2531,7 +2507,7 @@ msgstr "偏用歌曲記錄"
 #: ../translation/plugins.c:361
 #, no-c-format
 msgid "Disable nowplaying"
-msgstr "停用 nowplaying"
+msgstr "停用正在播放"
 
 #: ../translation/plugins.c:363
 #, no-c-format
@@ -2556,7 +2532,7 @@ msgstr "以專輯作者取代作者欄"
 #: ../translation/plugins.c:371
 #, no-c-format
 msgid "Send MusicBrainz ID"
-msgstr ""
+msgstr "送出 MusicBrainz ID"
 
 #: ../translation/plugins.c:373
 #, no-c-format
@@ -2567,23 +2543,23 @@ msgstr ""
 #: ../translation/plugins.c:376
 #, no-c-format
 msgid "Left mix"
-msgstr ""
+msgstr "左側混音"
 
 #: ../translation/plugins.c:378
 #, no-c-format
 msgid "Right mix"
-msgstr ""
+msgstr "右側混音"
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:381
 #, no-c-format
 msgid "Force 16 bit output"
-msgstr ""
+msgstr "強制 16 位元輸出"
 
 #: ../translation/plugins.c:383
 #, no-c-format
 msgid "Backend"
-msgstr ""
+msgstr "後端"
 
 #: ../translation/plugins.c:388
 #, no-c-format
@@ -2603,7 +2579,7 @@ msgstr "顯示專輯封面"
 #: ../translation/plugins.c:394
 #, no-c-format
 msgid "Album art size (px)"
-msgstr "專輯封面尺寸 (像素)"
+msgstr "專輯封面尺寸（像素）"
 
 #. plugins/oss/oss.c
 #: ../translation/plugins.c:397
@@ -2614,55 +2590,55 @@ msgstr "裝置檔案"
 #: ../translation/plugins.c:402
 #, no-c-format
 msgid "Highlight current playlist"
-msgstr ""
+msgstr "突顯目前的播放清單"
 
 #: ../translation/plugins.c:404
 #, no-c-format
 msgid "Play on double-click"
-msgstr ""
+msgstr "雙擊播放"
 
 #. plugins/portaudio/portaudio.c
 #: ../translation/plugins.c:407
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value choosen by portaudio)"
-msgstr ""
+msgstr "緩衝區大小（-1 以使用 portaudio 選用的最佳值）"
 
 #: ../translation/plugins.c:409
 #, no-c-format
 msgid "Device name encoding"
-msgstr ""
+msgstr "裝置名稱編碼"
 
 #: ../translation/plugins.c:411
 #, no-c-format
 msgid "ASCII / UTF-8"
-msgstr ""
+msgstr "ASCII / UTF-8"
 
 #: ../translation/plugins.c:413
 #, no-c-format
 msgid "cp1250"
-msgstr ""
+msgstr "cp1250"
 
 #: ../translation/plugins.c:415
 #, no-c-format
 msgid "Defined below"
-msgstr ""
+msgstr "在下面定義"
 
 #: ../translation/plugins.c:417
 #, no-c-format
 msgid "Custom device name encoding"
-msgstr ""
+msgstr "自訂裝置名稱編碼"
 
 #. plugins/pulse/pulse.c
 #: ../translation/plugins.c:420
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
-msgstr ""
+msgstr "PulseAudio 伺服器（預設為空）"
 
 #. plugins/sc68/in_sc68.c
 #: ../translation/plugins.c:423
 #, no-c-format
 msgid "Default song length (in minutes)"
-msgstr ""
+msgstr "預設歌曲長度（分鐘）"
 
 #: ../translation/plugins.c:425
 #, no-c-format
@@ -2672,7 +2648,7 @@ msgstr "取樣率"
 #: ../translation/plugins.c:427
 #, no-c-format
 msgid "Skip when shorter than (sec)"
-msgstr ""
+msgstr "跳過歌曲如果時間短於（秒）"
 
 #. plugins/shellexecui/shellexecui.c
 #: ../translation/plugins.c:430
@@ -2694,7 +2670,7 @@ msgstr "絕對搜索表格路徑"
 #: ../translation/plugins.c:437
 #, no-c-format
 msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr "置換音訊位元組 (如聽到的只是雜訊則切換)"
+msgstr "置換音訊位元組（如聽到的只是雜訊則切換）"
 
 #. plugins/sid/plugin.c
 #: ../translation/plugins.c:440
@@ -2705,124 +2681,124 @@ msgstr "啟用 HVSC 歌曲長度資料庫"
 #: ../translation/plugins.c:442
 #, no-c-format
 msgid "Full path to Songlengths.md5/.txt"
-msgstr ""
+msgstr "Songlengths.md5/.txt 的完整路徑"
 
 #: ../translation/plugins.c:444
 #, no-c-format
 msgid "Bits per sample"
-msgstr ""
+msgstr "取樣位元"
 
 #: ../translation/plugins.c:446
 #, no-c-format
 msgid "Mono synth"
-msgstr ""
+msgstr "單聲道合成器"
 
 #: ../translation/plugins.c:448
 #, no-c-format
 msgid "Default song length (sec)"
-msgstr "預設歌曲長度 (秒)"
+msgstr "預設歌曲長度（秒）"
 
 #. plugins/supereq/supereq.c
 #: ../translation/plugins.c:451
 #, no-c-format
 msgid "Preamp"
-msgstr ""
+msgstr "前級放大器"
 
 #: ../translation/plugins.c:453
 #, no-c-format
 msgid "55 Hz"
-msgstr ""
+msgstr "55 Hz"
 
 #: ../translation/plugins.c:455
 #, no-c-format
 msgid "77 Hz"
-msgstr ""
+msgstr "77 Hz"
 
 #: ../translation/plugins.c:457
 #, no-c-format
 msgid "110 Hz"
-msgstr ""
+msgstr "110 Hz"
 
 #: ../translation/plugins.c:459
 #, no-c-format
 msgid "156 Hz"
-msgstr ""
+msgstr "156 Hz"
 
 #: ../translation/plugins.c:461
 #, no-c-format
 msgid "220 Hz"
-msgstr ""
+msgstr "220 Hz"
 
 #: ../translation/plugins.c:463
 #, no-c-format
 msgid "311 Hz"
-msgstr ""
+msgstr "311 Hz"
 
 #: ../translation/plugins.c:465
 #, no-c-format
 msgid "440 Hz"
-msgstr ""
+msgstr "440 Hz"
 
 #: ../translation/plugins.c:467
 #, no-c-format
 msgid "622 Hz"
-msgstr ""
+msgstr "622 Hz"
 
 #: ../translation/plugins.c:469
 #, no-c-format
 msgid "880 Hz"
-msgstr ""
+msgstr "880 Hz"
 
 #: ../translation/plugins.c:471
 #, no-c-format
 msgid "1.2 kHz"
-msgstr ""
+msgstr "1.2 kHz"
 
 #: ../translation/plugins.c:473
 #, no-c-format
 msgid "1.8 kHz"
-msgstr ""
+msgstr "1.8 kHz"
 
 #: ../translation/plugins.c:475
 #, no-c-format
 msgid "2.5 kHz"
-msgstr ""
+msgstr "2.5 kHz"
 
 #: ../translation/plugins.c:477
 #, no-c-format
 msgid "3.5 kHz"
-msgstr ""
+msgstr "3.5 kHz"
 
 #: ../translation/plugins.c:479
 #, no-c-format
 msgid "5 kHz"
-msgstr ""
+msgstr "5 kHz"
 
 #: ../translation/plugins.c:481
 #, no-c-format
 msgid "7 kHz"
-msgstr ""
+msgstr "7 kHz"
 
 #: ../translation/plugins.c:483
 #, no-c-format
 msgid "10 kHz"
-msgstr ""
+msgstr "10 kHz"
 
 #: ../translation/plugins.c:485
 #, no-c-format
 msgid "14 kHz"
-msgstr ""
+msgstr "14 kHz"
 
 #: ../translation/plugins.c:487
 #, no-c-format
 msgid "20 kHz"
-msgstr ""
+msgstr "20 kHz"
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:490
 #, no-c-format
 msgid "Enable logging"
-msgstr ""
+msgstr "啟用日誌記錄"
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:493
@@ -2853,11 +2829,11 @@ msgstr "轉檔器出錯"
 
 #: ../plugins/converter/convgui.c:347
 msgid "Converting..."
-msgstr "正在轉檔......"
+msgstr "正在轉檔…"
 
 #: ../plugins/converter/convgui.c:692
 msgid "Select folder..."
-msgstr "選取資料夾..."
+msgstr "選取資料夾…"
 
 #: ../plugins/converter/convgui.c:958
 msgid "Failed to save encoder preset"
@@ -2937,12 +2913,12 @@ msgstr "保持資料夾結構"
 #: ../plugins/converter/interface.c:128
 #: ../plugins/converter/converter.glade.h:4
 msgid "Copy if the format is not changing"
-msgstr ""
+msgstr "當格式沒改變時複製來源"
 
 #: ../plugins/converter/interface.c:132
 #: ../plugins/converter/converter.glade.h:5
 msgid "Re-tag after copy"
-msgstr ""
+msgstr "複製後重新標注"
 
 #: ../plugins/converter/interface.c:140
 #: ../plugins/converter/converter.glade.h:6
@@ -2955,7 +2931,7 @@ msgstr "輸出檔案名稱："
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default ([%tracknumber%. ][%artist% - ]%title%)."
-msgstr ""
+msgstr "副檔名（例如 .mp3）會自動補上。\n留白代表使用預設值（[%tracknumber%. ][%artist% - ]%title%）。"
 
 #: ../plugins/converter/interface.c:164
 #: ../plugins/converter/converter.glade.h:10
@@ -3049,9 +3025,7 @@ msgstr "指令列："
 msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
-msgstr ""
-"例如：lame - %o\n"
-"%i 為輸入檔案，%o 為輸出檔案，- 為 stdin"
+msgstr "例如：lame - %o\n%i 為輸入檔案，%o 為輸出檔案，- 為 stdin"
 
 #: ../plugins/converter/interface.c:469
 #: ../plugins/converter/converter.glade.h:34
@@ -3059,9 +3033,7 @@ msgstr ""
 msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
-msgstr ""
-"<small>%o - 輸出檔案名稱\n"
-"%i - 臨時輸入檔案名稱</small>"
+msgstr "<small>%o - 輸出檔案名稱\n%i - 臨時輸入檔案名稱</small>"
 
 #: ../plugins/converter/interface.c:478
 #: ../plugins/converter/converter.glade.h:36
@@ -3074,11 +3046,11 @@ msgstr "管線"
 
 #: ../plugins/converter/interface.c:486
 msgid "Temp File"
-msgstr ""
+msgstr "暫存檔案"
 
 #: ../plugins/converter/interface.c:487
 msgid "Source File"
-msgstr ""
+msgstr "來源檔案"
 
 #: ../plugins/converter/interface.c:504
 #: ../plugins/converter/converter.glade.h:40
@@ -3144,23 +3116,23 @@ msgstr "支援的音訊格式"
 
 #: ../plugins/gtkui/fileman.c:344 ../plugins/gtkui/fileman.c:421
 msgid "All files (*)"
-msgstr "所有檔案 (*)"
+msgstr "所有檔案（*）"
 
 #: ../plugins/gtkui/fileman.c:455 ../plugins/gtkui/fileman.c:499
 msgid "Supported playlist formats"
-msgstr ""
+msgstr "已支援的播放清單格式"
 
 #: ../plugins/gtkui/fileman.c:462
 msgid "All files"
-msgstr ""
+msgstr "所有檔案"
 
 #: ../plugins/gtkui/fileman.c:505
 msgid "Other files (*)"
-msgstr "其他檔案 (*)"
+msgstr "其他檔案（*）"
 
 #: ../plugins/gtkui/fileman.c:516
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr "DeaDBeeF 播放清單 (*.dbpl)"
+msgstr "DeaDBeeF 播放清單（*.dbpl）"
 
 #: ../plugins/gtkui/fileman.c:560
 msgid "Follow symlinks"
@@ -3174,23 +3146,14 @@ msgid ""
 "24 bit signed int\n"
 "32 bit signed int\n"
 "32 bit float"
-msgstr ""
-"保持來源格式\n"
-"8 bit signed int\n"
-"16 bit signed int\n"
-"24 bit signed int\n"
-"32 bit signed int\n"
-"32 bit float"
+msgstr "保持來源格式\n8 bit signed int\n16 bit signed int\n24 bit signed int\n32 bit signed int\n32 bit float"
 
 #: ../plugins/converter/converter.glade.h:21
 msgid ""
 "Skip\n"
 "Prompt\n"
 "Overwrite"
-msgstr ""
-"略過\n"
-"提示\n"
-"覆蓋"
+msgstr "略過\n提示\n覆蓋"
 
 #: ../plugins/converter/converter.glade.h:37
 msgid ""
@@ -3241,8 +3204,8 @@ msgstr "形式不拘，例如：我的 Shell 指令"
 #: ../plugins/shellexecui/interface.c:205
 #: ../plugins/shellexecui/shellexec.glade.h:13
 msgid ""
-"Command ID, normally it should be something short, for example \"youtube_open"
-"\". It must be unique."
+"Command ID, normally it should be something short, for example "
+"\"youtube_open\". It must be unique."
 msgstr "指令 ID，通常要簡短且不能重複，例如：youtube_open"
 
 #: ../plugins/shellexecui/interface.c:208
@@ -3288,7 +3251,7 @@ msgstr "作用在遠端操控檔案（例如：http:// streams）"
 #: ../plugins/shellexecui/interface.c:228
 #: ../plugins/shellexecui/shellexec.glade.h:23
 msgid "Generic (Main Menu)"
-msgstr "一般 (主選單)"
+msgstr "一般（主選單）"
 
 #: ../plugins/shellexecui/interface.c:231
 #: ../plugins/shellexecui/shellexec.glade.h:22
@@ -3301,9 +3264,7 @@ msgid ""
 "<small>If you want to add the command to main menu, make sure that title "
 "contains the menu path like this: \"File/My Command\", where File is the "
 "menu name in the English version.</small>"
-msgstr ""
-"<small> 如果您想要將指令加入到主選單，請確保標題內含有清單路徑，像是：「檔"
-"案 / 我的指令」，當中的「檔案」是英文的清單名稱。</small>"
+msgstr "<small> 如果您想要將指令加入到主選單，請確保標題內含有清單路徑，像是：「檔案 / 我的指令」，當中的「檔案」是英文的清單名稱。</small>"
 
 #: ../plugins/shellexecui/shellexecui.c:96
 msgid "Add Command"
@@ -3340,15 +3301,15 @@ msgstr "無效的數值"
 
 #: ../plugins/gtkui/actionhandlers.c:52
 msgid "Open file(s)..."
-msgstr "開啟檔案..."
+msgstr "開啟檔案…"
 
 #: ../plugins/gtkui/actionhandlers.c:67
 msgid "Add file(s) to playlist..."
-msgstr "新增檔案至播放清單..."
+msgstr "新增檔案至播放清單…"
 
 #: ../plugins/gtkui/actionhandlers.c:82
 msgid "Add folder(s) to playlist..."
-msgstr "新增資料夾至播放清單..."
+msgstr "新增資料夾至播放清單…"
 
 #: ../plugins/gtkui/actionhandlers.c:296
 msgid "help.txt"
@@ -3362,9 +3323,7 @@ msgstr "刪除硬碟中的檔案"
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
-"檔案將會消失，要繼續嗎？\n"
-"(可以在 GTKUI 外掛設定中關閉這個對話框)"
+msgstr "檔案將會消失，要繼續嗎？\n（可以在 GTKUI 外掛設定中關閉這個對話框）"
 
 #: ../plugins/gtkui/actionhandlers.c:561
 msgid "Save Playlist As"
@@ -3380,20 +3339,13 @@ msgstr "無效的數值"
 
 #: ../plugins/gtkui/ctmapping.c:200
 msgid ""
-"Content-type and Plugins fields must be non-empty, and comply with the "
-"rules.\n"
+"Content-type and Plugins fields must be non-empty, and comply with the rules.\n"
 "Example content-type: 'audio/mpeg'.\n"
 "Example plugin ids: 'stdmpg ffmpeg'.\n"
 "Spaces must be used as separators in plugin ids list.\n"
 "Content type should be only letters, numbers and '-' sign.\n"
 "Plugin id can contain only letters and numbers."
-msgstr ""
-"內容類型和外掛程式欄位不得留白，而且必須遵守規則。\n"
-"內容類型範例：audio/mpeg\n"
-"外掛程式範例：stdmpg ffmpeg\n"
-"你可以指定多個外掛程式，但中間必須用半形空白隔開。\n"
-"內容類型欄位只能填入字母、數字和「-」符號。\n"
-"外掛程式欄位只能填入字母和數字。"
+msgstr "內容類型和外掛程式欄位不得留白，而且必須遵守規則。\n內容類型範例：audio/mpeg\n外掛程式範例：stdmpg ffmpeg\n你可以指定多個外掛程式，但中間必須用半形空白隔開。\n內容類型欄位只能填入字母、數字和「-」符號。\n外掛程式欄位只能填入字母和數字。"
 
 #: ../plugins/gtkui/ctmapping.c:228 ../plugins/gtkui/ctmapping.c:260
 msgid "Nothing is selected."
@@ -3406,11 +3358,11 @@ msgstr "元件 \"%s\" 不被允許"
 
 #: ../plugins/gtkui/widgets.c:840
 msgid "Replace with..."
-msgstr "取代為..."
+msgstr "取代為…"
 
 #: ../plugins/gtkui/widgets.c:845
 msgid "Insert..."
-msgstr "插入..."
+msgstr "插入…"
 
 #: ../plugins/gtkui/widgets.c:872
 msgid "Cut"
@@ -3430,7 +3382,7 @@ msgstr "此類型的元件不能重複使用"
 
 #: ../plugins/gtkui/widgets.c:1288
 msgid "Proportional Sizing"
-msgstr ""
+msgstr "等比例縮放"
 
 #: ../plugins/gtkui/widgets.c:1300
 msgid "Lock Top Pane Height"
@@ -3450,7 +3402,7 @@ msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1563 ../plugins/gtkui/widgets.c:1678
 msgid "Rename Tab"
-msgstr ""
+msgstr "重命名分頁"
 
 #: ../plugins/gtkui/widgets.c:1685
 msgid "Remove Tab"
@@ -3458,15 +3410,15 @@ msgstr "移除分頁"
 
 #: ../plugins/gtkui/widgets.c:1692 ../plugins/gtkui/widgets.c:1872
 msgid "Add New Tab"
-msgstr ""
+msgstr "新增頁籤"
 
 #: ../plugins/gtkui/widgets.c:1701
 msgid "Move Tab Left"
-msgstr ""
+msgstr "頁籤左移"
 
 #: ../plugins/gtkui/widgets.c:1708
 msgid "Move Tab Right"
-msgstr ""
+msgstr "頁籤右移"
 
 #: ../plugins/gtkui/widgets.c:2362 ../plugins/gtkui/widgets.c:2540
 #: ../plugins/pltbrowser/pltbrowser.c:883
@@ -3495,7 +3447,7 @@ msgstr "填入"
 
 #: ../plugins/gtkui/widgets.c:4045
 msgid "Configure Button"
-msgstr ""
+msgstr "設定按鈕"
 
 #: ../plugins/gtkui/widgets.c:4324
 msgid "Voices:"
@@ -3515,19 +3467,19 @@ msgstr "新增播放清單"
 
 #: ../plugins/gtkui/pltmenu.c:394
 msgid "Duplicate Playlist"
-msgstr ""
+msgstr "複製播放清單"
 
 #: ../plugins/pltbrowser/pltbrowser.c:177
 msgid " (paused)"
-msgstr ""
+msgstr "（已暫停）"
 
 #: ../plugins/pltbrowser/pltbrowser.c:180
 msgid " (stopped)"
-msgstr ""
+msgstr "（已停止）"
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
 msgid " (playing)"
-msgstr ""
+msgstr "（播放中）"
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3561,27 +3513,27 @@ msgstr "立體聲"
 
 #: ../plugins/gtkui/rg.c:284
 msgid "Updating File Tags Progress"
-msgstr ""
+msgstr "更新檔案標籤進度"
 
 #: ../plugins/gtkui/rg.c:314
 msgid "Album Gain"
-msgstr ""
+msgstr "專輯音量標準化"
 
 #: ../plugins/gtkui/rg.c:315
 msgid "Track Gain"
-msgstr ""
+msgstr "單曲音量標準化"
 
 #: ../plugins/gtkui/rg.c:316
 msgid "Album Peak"
-msgstr ""
+msgstr "專輯音量峰值"
 
 #: ../plugins/gtkui/rg.c:317
 msgid "Track Peak"
-msgstr ""
+msgstr "單曲音量峰值"
 
 #: ../plugins/gtkui/rg.c:320
 msgid "Success"
-msgstr ""
+msgstr "成功"
 
 #: ../plugins/gtkui/rg.c:321
 msgid "File not found"

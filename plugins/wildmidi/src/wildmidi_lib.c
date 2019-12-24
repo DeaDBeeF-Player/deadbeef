@@ -625,12 +625,14 @@ WM_BufferFile (const char *filename, unsigned long int *size) {
 			buffer_dir[strlen(buffer_dir)+1] = '\0';
 			buffer_dir[strlen(buffer_dir)] = '/';
 		}
-		buffer_file = realloc(buffer_file,(strlen(buffer_file) + strlen(buffer_dir) + 1));
-		if (buffer_file == NULL) {
+		char *new_buffer_file = realloc(buffer_file,(strlen(buffer_file) + strlen(buffer_dir) + 1));
+		if (new_buffer_file == NULL) {
+			free (buffer_file);
 			WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_MEM, NULL, errno);
 			WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_LOAD, filename, errno);
 			return NULL;
 		}
+		buffer_file = new_buffer_file;
 		memmove((buffer_file + strlen(buffer_dir)), buffer_file, strlen(buffer_file)+1);
 		strncpy (buffer_file,buffer_dir,strlen(buffer_dir));
 	}

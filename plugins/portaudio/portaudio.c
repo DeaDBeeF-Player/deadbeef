@@ -92,7 +92,7 @@ DB_functions_t *deadbeef;
 static uintptr_t mutex;
 static intptr_t portaudio_tid;
 
-static int state;
+static ddb_playback_state_t state;
 
 // actual stream
 static PaStream *stream = 0;
@@ -304,11 +304,11 @@ portaudio_setformat (ddb_waveformat_t *fmt) {
         err = Pa_StartStream (stream);
         if (err != paNoError) {
             trace ("Failed to start stream. %s\n", Pa_GetErrorText(err));
-            state = OUTPUT_STATE_STOPPED;
+            state = DDB_PLAYBACK_STATE_STOPPED;
             return -1;
         }
         trace ("portaudio_setformat: Started stream.\n");
-        state = OUTPUT_STATE_PLAYING;
+        state = DDB_PLAYBACK_STATE_PLAYING;
     }
     return 0;
 }
@@ -343,14 +343,14 @@ portaudio_play (void) {
         trace ("portaudio_play: opening stream\n");
         portaudio_stream_start ();
     }
-    state = OUTPUT_STATE_PLAYING;
+    state = DDB_PLAYBACK_STATE_PLAYING;
     userData->abort = STREAM_CONTINUE;
     if (!Pa_IsStreamActive(stream)) {
         PaError err;
         err = Pa_StartStream (stream);
         if (err != paNoError) {
             trace ("Failed to start stream. %s\n", Pa_GetErrorText(err));
-            state = OUTPUT_STATE_STOPPED;
+            state = DDB_PLAYBACK_STATE_STOPPED;
             return -1;
         }
         trace ("portaudio_play: Started stream.\n");
@@ -372,7 +372,7 @@ pa_GetSampleFormat (int bps, int is_float) {
 static int
 portaudio_stop (void) {
     trace ("portaudio_stop\n");
-    if (state == OUTPUT_STATE_STOPPED) {
+    if (state == DDB_PLAYBACK_STATE_STOPPED) {
         return -1;
     }
     if (stream) {
@@ -385,7 +385,7 @@ portaudio_stop (void) {
             }
         }
     }
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     deadbeef->streamer_reset (1);
     return 0;
 }
@@ -393,8 +393,12 @@ portaudio_stop (void) {
 static int
 portaudio_pause (void) {
     trace ("portaudio_pause\n");
-    if (state == OUTPUT_STATE_STOPPED) {
-        return -1;
+    if (state == DDB_PLAYBACK_STATE_STOPPED) {
+        // If option 'Resume previous session on startup' is enabled deadbeef will call:
+        // portaudio_stop() and portaudio_pause() (no portaudio_play()).
+        // If it's the case we should just set the state and do the main job later.
+        state = DDB_PLAYBACK_STATE_PAUSED;
+        return 0;
     }
     PaError err;
     err = Pa_AbortStream (stream);
@@ -403,14 +407,14 @@ portaudio_pause (void) {
         return -1;
     }
     // set pause state
-    state = OUTPUT_STATE_PAUSED;
+    state = DDB_PLAYBACK_STATE_PAUSED;
     return 0;
 }
 
 static int
 portaudio_unpause (void) {
     trace ("portaudio_unpause\n");
-    if (!(state == OUTPUT_STATE_PAUSED)) {
+    if (!(state == DDB_PLAYBACK_STATE_PAUSED)) {
         return -1;
     }
     return portaudio_play ();
@@ -533,7 +537,7 @@ portaudio_callback (const void *in, void *out, unsigned long framesPerBuffer, co
     else if (P_UDATA(uData).i < LOOP_CLOSE) {
         P_UDATA(uData).i += 1;
     }
-    if (state != OUTPUT_STATE_PLAYING) {
+    if (state != DDB_PLAYBACK_STATE_PLAYING) {
         trace ("portaudio_callback [%d]: abort\n", P_UDATA(uData).num);
         return paAbort;
     }
@@ -567,7 +571,7 @@ static void pa_SetDefault () {
     stream_parameters.hostApiSpecificStreamInfo = NULL;
 }
 
-static int
+static ddb_playback_state_t
 portaudio_get_state (void) {
     return state;
 }
@@ -625,12 +629,14 @@ static DB_output_t plugin = {
     .plugin.api_vmajor = 1,
     .plugin.api_vminor = 10,
     .plugin.version_major = 1,
-    .plugin.version_minor = 4,
+    .plugin.version_minor = 5,
     .plugin.type = DB_PLUGIN_OUTPUT,
     .plugin.id = "portaudio",
     .plugin.name = "PortAudio output plugin",
     .plugin.descr = "This plugin plays audio using PortAudio library.\n"
     "\n"
+    "Changes in version 1.5:\n"
+    "    * Fixed issues when resuming previous session.\n"
     "Changes in version 1.4:\n"
     "    * Fix device enumeration when ASCII used.\n"
     "    * Invalid characters will be discarded.\n"

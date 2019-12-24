@@ -27,15 +27,13 @@
 
 - (void)windowDidLoad {
     [super windowDidLoad];
-
-    //[[_textView textStorage] setFont:[NSFont fontWithName:@"Fixed" size:18]];
 }
 
 - (void)appendText:(NSString *)text {
-    NSAttributedString* attr = [[NSAttributedString alloc] initWithString:text attributes:@{NSForegroundColorAttributeName:[NSColor controlTextColor]}];
+    NSAttributedString* attr = [[NSAttributedString alloc] initWithString:text attributes:@{NSForegroundColorAttributeName:NSColor.controlTextColor}];
 
     NSRect visibleRect = [_clipView documentVisibleRect];
-    NSRect docRect = [_textView frame];
+    NSRect docRect = _textView.frame;
 
     BOOL scroll = NO;
     if (visibleRect.origin.y + visibleRect.size.height >= docRect.size.height) {
@@ -49,7 +47,7 @@
 }
 
 - (IBAction)clearAction:(id)sender {
-    [_textView.textStorage setAttributedString: [[NSAttributedString alloc] initWithString:@"" attributes:@{NSForegroundColorAttributeName:[NSColor controlTextColor]}]];
+    _textView.textStorage.attributedString =  [[NSAttributedString alloc] initWithString:@"" attributes:@{NSForegroundColorAttributeName:NSColor.controlTextColor}];
 }
 
 @end

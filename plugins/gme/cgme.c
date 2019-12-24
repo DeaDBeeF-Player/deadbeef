@@ -67,11 +67,9 @@ typedef struct {
 
 static DB_fileinfo_t *
 cgme_open (uint32_t hint) {
-    DB_fileinfo_t *_info = malloc (sizeof (gme_fileinfo_t));
-    gme_fileinfo_t *info = (gme_fileinfo_t *)_info;
-    memset (_info, 0, sizeof (gme_fileinfo_t));
+    gme_fileinfo_t *info = calloc (sizeof (gme_fileinfo_t), 1);
     info->can_loop = hint & DDB_DECODER_HINT_CAN_LOOP;
-    return _info;
+    return &info->info;
 }
 
 static int
@@ -107,7 +105,7 @@ read_gzfile (const char *fname, char **buffer, int *size) {
             // and mkstemp is considered insecure,
             // so just make the name manually.
             // This is as insecure as mkstemp, but (hopefully) won't be bugged by static analyzers
-            snprintf (tmpnm, sizeof (tmpnm), "%s/ddbgme%03d.vgz", tmp);
+            snprintf (tmpnm, sizeof (tmpnm), "%s/ddbgme%03d.vgz", tmp, idx);
             fd = open (tmpnm, O_RDWR|O_CREAT|O_TRUNC);
 #else
             snprintf (tmpnm, sizeof (tmpnm), "%s/ddbgmeXXXXXX.vgz", tmp);
@@ -340,12 +338,12 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     gme_err_t res = "gme uninitialized";
 
-    char *buffer;
+    char *buffer = NULL;
     int sz;
     if (!read_gzfile (fname, &buffer, &sz)) {
         res = gme_open_data (buffer, sz, &emu, gme_info_only);
-        free (buffer);
     }
+    free (buffer);
     if (res) {
         DB_FILE *f = deadbeef->fopen (fname);
         if (!f) {
@@ -483,7 +481,7 @@ static int
 cgme_start (void) {
     conf_fadeout = deadbeef->conf_get_int ("gme.fadeout", 10);
     conf_loopcount = deadbeef->conf_get_int ("gme.loopcount", 2);
-    conf_play_forever = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL) == PLAYBACK_MODE_LOOP_SINGLE;
+    conf_play_forever = deadbeef->streamer_get_repeat () == DDB_REPEAT_SINGLE;
     return 0;
 }
 
@@ -540,7 +538,7 @@ cgme_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     case DB_EV_CONFIGCHANGED:
         conf_fadeout = deadbeef->conf_get_int ("gme.fadeout", 10);
         conf_loopcount = deadbeef->conf_get_int ("gme.loopcount", 2);
-        conf_play_forever = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL) == PLAYBACK_MODE_LOOP_SINGLE;
+        conf_play_forever = deadbeef->streamer_get_repeat () == DDB_REPEAT_SINGLE;
         if (chip_voices != deadbeef->conf_get_int ("chip.voices", 0xff)) {
             chip_voices_changed = 1;
         }

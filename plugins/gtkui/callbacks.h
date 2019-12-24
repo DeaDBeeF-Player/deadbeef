@@ -826,6 +826,10 @@ on_hide_delete_from_disk_toggled       (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
 
 void
+on_skip_deleted_songs_toggled          (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
 on_titlebar_format_playing_changed     (GtkEditable     *editable,
                                         gpointer         user_data);
 
@@ -1410,4 +1414,8 @@ on_checkbutton_sr_override_toggled     (GtkToggleButton *togglebutton,
 
 void
 on_checkbutton_dependent_sr_toggled    (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_minimize_on_startup_clicked         (GtkButton       *button,
                                         gpointer         user_data);

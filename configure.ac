@@ -17,16 +17,15 @@ AC_PROG_INSTALL
 dnl AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 AC_C_BIGENDIAN
-AM_GNU_GETTEXT
+AM_GNU_GETTEXT([external])
 PKG_PROG_PKG_CONFIG
 AM_PROG_CC_C_O
-
+AM_ICONV
 IT_PROG_INTLTOOL([0.40.0])
 GETTEXT_PACKAGE=deadbeef
 AC_SUBST(GETTEXT_PACKAGE)
 
 test "$prefix" = NONE && prefix=/usr/local
-AC_DEFINE_UNQUOTED(LOCALEDIR, "${prefix}/${DATADIRNAME}/locale", [Name of gettext locale directory])
 
 case "$host" in
   i686-apple-*)
@@ -156,8 +155,6 @@ case "$host" in
     AC_SUBST(NOCPPLIB)
     ;;
 esac
-
-AC_CHECK_LIB([intl], [main], [INTL_LIBS="-lintl";AC_SUBST(INTL_LIBS)])
 
 dnl check for yasm
 AC_CHECK_PROG(HAVE_YASM, yasm, yes, no)
@@ -948,7 +945,6 @@ plugins/pltbrowser/Makefile
 plugins/sc68/Makefile
 plugins/coreaudio/Makefile
 plugins/rg_scanner/Makefile
-intl/Makefile
 po/Makefile.in
 deadbeef.desktop
 ])

@@ -945,7 +945,9 @@ ddb_splitter_size_allocate (GtkWidget *widget, GtkAllocation *a_con)
     GdkRectangle old_handle_pos = sp_priv->handle_pos;
 
     GtkAllocation a_c1;
+    memset (&a_c1, 0, sizeof (a_c1));
     GtkAllocation a_c2;
+    memset (&a_c2, 0, sizeof (a_c2));
     if (sp_priv->orientation == GTK_ORIENTATION_HORIZONTAL) {
         if (c1_visible) {
             // use full height in horitzontal splitter

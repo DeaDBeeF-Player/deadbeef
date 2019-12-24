@@ -51,6 +51,10 @@
 
 #define SUBGROUP_DELIMITER "|||"
 
+#if !GTK_CHECK_VERSION(3,22,0)
+#define gtk_menu_popup_at_pointer(menu,trigger_event) gtk_menu_popup(menu, NULL, NULL, NULL, NULL, 3, gtk_get_current_event_time())
+#endif
+
 typedef struct {
     int id;
     char *format;
@@ -141,9 +145,15 @@ pl_common_init(void)
 void
 pl_common_free (void)
 {
-    g_object_unref(play16_pixbuf);
-    g_object_unref(pause16_pixbuf);
-    g_object_unref(buffering16_pixbuf);
+    if (play16_pixbuf) {
+        g_object_unref(play16_pixbuf);
+    }
+    if (pause16_pixbuf) {
+        g_object_unref(pause16_pixbuf);
+    }
+    if (buffering16_pixbuf) {
+        g_object_unref(buffering16_pixbuf);
+    }
 }
 
 static col_info_t *
@@ -157,17 +167,11 @@ create_col_info (DdbListview *listview, int id) {
     return info;
 }
 
-static gboolean
-coverart_release_cb (void *user_data) {
+static void
+coverart_release (void *user_data) {
     col_info_t *info = user_data;
     g_object_unref(info->listview->list);
     free(user_data);
-    return FALSE;
-}
-
-static void
-coverart_release (void *user_data) {
-    g_idle_add(coverart_release_cb, user_data);
 }
 
 void
@@ -354,10 +358,9 @@ cover_draw_cairo (GdkPixbuf *pixbuf, int x, int min_y, int max_y, int width, int
 
 static void
 cover_draw_anything (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr, void *user_data) {
-    int max_dimension = max(width, height);
     GdkPixbuf *pixbuf = get_cover_art(it, -1, -1, NULL, NULL);
     if (!pixbuf) {
-        pixbuf = get_cover_art(it, max_dimension, max_dimension, cover_invalidate, user_data);
+        pixbuf = get_cover_art(it, width, height, cover_invalidate, user_data);
     }
     if (pixbuf) {
         cover_draw_cairo(pixbuf, x, min_y, max_y, width, height, cr, CAIRO_FILTER_FAST);
@@ -367,8 +370,7 @@ cover_draw_anything (DB_playItem_t *it, int x, int min_y, int max_y, int width, 
 
 static void
 cover_draw_exact (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr, void *user_data) {
-    int max_dimension = max(width, height);
-    GdkPixbuf *pixbuf = get_cover_art(it, max_dimension, max_dimension, cover_invalidate, user_data);
+    GdkPixbuf *pixbuf = get_cover_art(it, width, height, cover_invalidate, user_data);
     if (!pixbuf) {
         pixbuf = get_cover_art(it, -1, -1, NULL, NULL);
     }
@@ -414,7 +416,7 @@ convert_escapetext_to_pango_attrlist (char *text, float *fg, float *bg, float *h
     PangoAttrList *lst = pango_attr_list_new ();
     char *pin = text;
     int x,y,a=0;
-    PangoAttribute *attr;
+    PangoAttribute *attr = NULL;
     int index=0;
     while (*pin) {
         int pos=0;
@@ -423,10 +425,10 @@ convert_escapetext_to_pango_attrlist (char *text, float *fg, float *bg, float *h
             memmove(pin, pin+pos, strlen(pin+pos)+1);
             a += y;
 
-            if (a == 0) {
+            if (attr && a == 0) {
                 attr->end_index = index+1;
                 pango_attr_list_insert (lst, attr);
-            } else if (y >= 1 && y <= 3) {
+            } else if (a != 0 && y >= 1 && y <= 3) {
                 const float blend[] = {.50f, .25f, 0};
                 int r = CHANNEL_BLENDR(highlight[0], fg[0], blend[y-1]) * 65535;
                 int g = CHANNEL_BLENDR(highlight[1], fg[1], blend[y-1]) * 65535;
@@ -434,7 +436,7 @@ convert_escapetext_to_pango_attrlist (char *text, float *fg, float *bg, float *h
 
                 attr = pango_attr_foreground_new (r, g, b);
                 attr->start_index = index;
-            } else if (y >= -3 && y <= -1) {
+            } else if (a != 0 && y >= -3 && y <= -1) {
                 const float blend[] = {.30f, .60f, .80f};
                 int r = CHANNEL_BLENDR(fg[0], bg[0], blend[-y-1]) * 65535;
                 int g = CHANNEL_BLENDR(fg[1], bg[1], blend[-y-1]) * 65535;
@@ -458,7 +460,7 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
     DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
 
     if (!gtkui_unicode_playstate && it && it == playing_track && info->id == DB_COLUMN_PLAYING) {
-        int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
+        int paused = deadbeef->get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
         GdkPixbuf *pixbuf;
         if (paused) {
@@ -470,15 +472,18 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
         else {
             pixbuf = buffering16_pixbuf;
         }
-        gdk_cairo_set_source_pixbuf (cr, pixbuf, x + width/2 - 8, y + height/2 - 8);
-        cairo_rectangle (cr, x + width/2 - 8, y + height/2 - 8, 16, 16);
-        cairo_fill (cr);
+
+        if (pixbuf) {
+            gdk_cairo_set_source_pixbuf (cr, pixbuf, x + width/2 - 8, y + height/2 - 8);
+            cairo_rectangle (cr, x + width/2 - 8, y + height/2 - 8, 16, 16);
+            cairo_fill (cr);
+        }
     }
     else if (it) {
         char text[1024] = "";
-        int is_dimmed;
+        int is_dimmed = 0;
         if (it == playing_track && info->id == DB_COLUMN_PLAYING) {
-            int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
+            int paused = deadbeef->get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED;
             int buffering = !deadbeef->streamer_ok_to_read (-1);
             if (paused) {
                 strcpy (text, "||");
@@ -958,7 +963,7 @@ list_empty_region_context_menu (DdbListview *listview) {
             G_CALLBACK (on_paste_activate),
             NULL);
 
-    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL/*popup_menu_position_func*/, listview, 0, gtk_get_current_event_time());
+    gtk_menu_popup_at_pointer (GTK_MENU (playlist_menu), NULL);
 }
 
 void
@@ -1268,7 +1273,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
             G_CALLBACK (properties_activate),
             NULL);
 
-    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL/*popup_menu_position_func*/, listview, 0, gtk_get_current_event_time());
+    gtk_menu_popup_at_pointer (GTK_MENU (playlist_menu), NULL);
 }
 
 static char *
@@ -1542,9 +1547,9 @@ on_group_by_custom_activate            (GtkMenuItem     *menuitem,
     DdbListviewGroupFormat *fmt = listview->group_formats;
     while (fmt) {
         if (format[0] != 0) {
-            strncat(format, SUBGROUP_DELIMITER, sizeof(format));
+            strncat(format, SUBGROUP_DELIMITER, sizeof(format) - 1);
         }
-        strncat(format, fmt->format, sizeof(format));
+        strncat(format, fmt->format, sizeof(format) - 1);
         fmt = fmt->next;
     }
     gtk_entry_set_text (GTK_ENTRY (entry), format);
@@ -1960,7 +1965,7 @@ pl_common_header_context_menu (DdbListview *ps, int column) {
     g_object_set_data (G_OBJECT (menu), "ps", ps);
     g_object_set_data (G_OBJECT (menu), "column", GINT_TO_POINTER (column));
 
-    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
+    gtk_menu_popup_at_pointer (GTK_MENU (menu), NULL);
 }
 
 void
