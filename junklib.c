@@ -1355,32 +1355,11 @@ junk_id3v1_write (FILE *fp, playItem_t *it, const char *enc) {
 
     pl_lock ();
 
-#define conv(name, store) {\
-    memset (store, 0x20, sizeof (store));\
-    meta = pl_find_meta (it, name);\
-    if (meta) {\
-        char temp[1000];\
-        int l = junk_iconv (meta, (int)strlen (meta), temp, (int)sizeof (temp), UTF8_STR, enc);\
-        if (l == -1) {\
-            memset (store, 0, sizeof (store));\
-        }\
-        else {\
-            strncpy (store, temp, sizeof (store));\
-        }\
-        char *cr = strchr (store, '\n');\
-        if (cr) {\
-            *cr = 0;\
-        }\
-    }\
-}
-
-    conv ("title", title);
-    conv ("artist", artist);
-    conv ("album", album);
-    conv ("year", year);
-    conv ("comment", comment);
-
-#undef conv
+    id3v2_conv (it, "title", title, sizeof (title), enc);
+    id3v2_conv (it, "artist", artist, sizeof (artist), enc);
+    id3v2_conv (it, "album", album, sizeof (album), enc);
+    id3v2_conv (it, "year", year, sizeof (year), enc);
+    id3v2_conv (it, "comment", comment, sizeof (comment), enc);
 
     // tracknum
     meta = pl_find_meta (it, "track");
