@@ -7,12 +7,9 @@
 //
 
 #import <XCTest/XCTest.h>
-//#include <string.h>
 #include "deadbeef.h"
 #include "playlist.h"
-
-int
-shellexec_eval_command (const char *shcommand, char *output, size_t size, DB_playItem_t *it);
+#include "shellexecutil.h"
 
 @interface ShellexecTests : XCTestCase
 
@@ -27,6 +24,7 @@ shellexec_eval_command (const char *shcommand, char *output, size_t size, DB_pla
     int res = shellexec_eval_command ("%D", output, sizeof (output), (DB_playItem_t *)it);
     XCTAssertEqual(res, 0);
     XCTAssertTrue(!strcmp (output, "'/storage/music'&"));
+    pl_item_unref (it);
 }
 
 - (void)test_EvalCommand_DirectoryWithSpecialChars_OutputsDirectory {
@@ -36,6 +34,7 @@ shellexec_eval_command (const char *shcommand, char *output, size_t size, DB_pla
     int res = shellexec_eval_command ("%D", output, sizeof (output), (DB_playItem_t *)it);
     XCTAssertEqual(res, 0);
     XCTAssertTrue(!strcmp (output, "'/storage/folder'\"'\"''\"'\"'name'&"));
+    pl_item_unref (it);
 }
 
 
