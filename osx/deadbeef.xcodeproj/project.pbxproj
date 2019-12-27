@@ -1443,6 +1443,10 @@
 		2DA04EAF23B6A4B70070AC01 /* callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA04EA823B6A4B70070AC01 /* callbacks.h */; };
 		2DA04EB223B6A4D40070AC01 /* shellexec.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA04E8123B6A4320070AC01 /* shellexec.dylib */; };
 		2DA04EB323B6A4D40070AC01 /* shellexecui_gtk3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA04E9D23B6A4960070AC01 /* shellexecui_gtk3.dylib */; };
+		2DA04EF223B6A81A0070AC01 /* ShellexecTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA04EF123B6A81A0070AC01 /* ShellexecTests.m */; };
+		2DA04EF623B6AA6E0070AC01 /* shellexecutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA04EF423B6AA6E0070AC01 /* shellexecutil.h */; };
+		2DA04EF723B6AA6E0070AC01 /* shellexecutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA04EF523B6AA6E0070AC01 /* shellexecutil.c */; };
+		2DA04EF823B6AAA40070AC01 /* shellexecutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA04EF523B6AA6E0070AC01 /* shellexecutil.c */; };
 		2DA0ACE91AA71516007EDD43 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2DA0ACEE1AA71E7C007EDD43 /* in_sc68.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */; };
 		2DA24AE119E7203A00E34920 /* asyn-ares.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A0F19E7203700E34920 /* asyn-ares.c */; };
@@ -4551,6 +4555,9 @@
 		2DA04EA623B6A4B60070AC01 /* support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = support.h; path = plugins/shellexecui/support.h; sourceTree = "<group>"; };
 		2DA04EA723B6A4B60070AC01 /* support.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = support.c; path = plugins/shellexecui/support.c; sourceTree = "<group>"; };
 		2DA04EA823B6A4B70070AC01 /* callbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = callbacks.h; path = plugins/shellexecui/callbacks.h; sourceTree = "<group>"; };
+		2DA04EF123B6A81A0070AC01 /* ShellexecTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ShellexecTests.m; sourceTree = "<group>"; };
+		2DA04EF423B6AA6E0070AC01 /* shellexecutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = shellexecutil.h; path = plugins/shellexec/shellexecutil.h; sourceTree = "<group>"; };
+		2DA04EF523B6AA6E0070AC01 /* shellexecutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = shellexecutil.c; path = plugins/shellexec/shellexecutil.c; sourceTree = "<group>"; };
 		2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = in_sc68.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA0ACEA1AA7162C007EDD43 /* in_sc68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = in_sc68.c; path = plugins/sc68/in_sc68.c; sourceTree = "<group>"; };
 		2DA2499E19E71FEB00E34920 /* libcurl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcurl.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7816,6 +7823,8 @@
 			children = (
 				2DA04E9423B6A4510070AC01 /* shellexec.c */,
 				2DA04E9323B6A4510070AC01 /* shellexec.h */,
+				2DA04EF423B6AA6E0070AC01 /* shellexecutil.h */,
+				2DA04EF523B6AA6E0070AC01 /* shellexecutil.c */,
 			);
 			name = shellexec;
 			sourceTree = "<group>";
@@ -7997,6 +8006,7 @@
 				2D135EF3226E47CE00BAAE84 /* SciptableTests.m */,
 				2D0A6B0A2376E12200252E6D /* TrackSwitchingTests.m */,
 				2D15721523785BD900985E47 /* VfsCurlTests.m */,
+				2DA04EF123B6A81A0070AC01 /* ShellexecTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -10333,6 +10343,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DA04EF623B6AA6E0070AC01 /* shellexecutil.h in Headers */,
 				2DA04E9523B6A4520070AC01 /* shellexec.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -13466,6 +13477,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DA04E9623B6A4520070AC01 /* shellexec.c in Sources */,
+				2DA04EF723B6AA6E0070AC01 /* shellexecutil.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13673,6 +13685,7 @@
 				2D0F90C21CCFF094003FA197 /* TaggingTests.m in Sources */,
 				2DA66ECE1EDF501000E20989 /* fakein.c in Sources */,
 				2D4A9459223EFC1700199551 /* coreaudio.c in Sources */,
+				2DA04EF823B6AAA40070AC01 /* shellexecutil.c in Sources */,
 				2DA66EC81EDF4EF800E20989 /* StreamerTests.m in Sources */,
 				2D135EF4226E47CE00BAAE84 /* SciptableTests.m in Sources */,
 				2DAA4C141AAF88FF00519559 /* TitleFormattingTests.m in Sources */,
@@ -13680,6 +13693,7 @@
 				4D31BECE1E9FB194001D1B89 /* ResamplerTests.m in Sources */,
 				2D7F38031B2858AC00692A7B /* JunklibTests.m in Sources */,
 				4D0B0CEE20162D95004162DA /* FormatConversionTests.m in Sources */,
+				2DA04EF223B6A81A0070AC01 /* ShellexecTests.m in Sources */,
 				4DC416FE2180919D0056133E /* PlaylistTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
