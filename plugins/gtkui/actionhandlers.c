@@ -48,7 +48,7 @@
 extern GtkWidget *mainwin;
 extern DB_functions_t *deadbeef;
 extern ddb_gtkui_t plugin;
-#define trace(...) { deadbeef->log_detailed (&plugin, 0, __VA_ARGS__); }
+#define trace(...) { deadbeef->log_detailed (&plugin.gui.plugin, 0, __VA_ARGS__); }
 
 gboolean
 action_open_files_handler_cb (void *userdata) {
@@ -266,11 +266,13 @@ action_add_location_handler_cb (void *user_data) {
                 ddb_playlist_t *plt = deadbeef->plt_get_curr ();
                 if (!deadbeef->plt_add_files_begin (plt, 0)) {
                     DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
-#ifndef DISABLE_CUSTOM_TITLE
                     DB_playItem_t *it = deadbeef->plt_insert_file2 (0, plt, tail, text, NULL, NULL, NULL);
+#ifndef DISABLE_CUSTOM_TITLE
                     if (it && deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
                         deadbeef->pl_replace_meta (it, ":CUSTOM_TITLE", gtk_entry_get_text (GTK_ENTRY (ct)));
                     }
+#else
+#   pragma unused(it)
 #endif
                     if (tail) {
                         deadbeef->pl_item_unref (tail);
@@ -427,7 +429,7 @@ action_delete_from_disk_handler_cb (void *data) {
         }
 
         GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Delete files from disk"));
-        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), buf);
+        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), "%s", buf);
         gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
 
         int response = gtk_dialog_run (GTK_DIALOG (dlg));
