@@ -129,7 +129,7 @@ shx_callback (Shx_action_t *action, int ctx)
                 DB_playItem_t **items = NULL;
                 int items_count = deadbeef->plt_getselcount (plt);
                 if (0 < items_count) {
-                    items = malloc (sizeof (DB_playItem_t *) * items_count);
+                    items = calloc (sizeof (DB_playItem_t *), items_count);
                     if (items) {
                         int n = 0;
                         DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
@@ -162,10 +162,10 @@ shx_callback (Shx_action_t *action, int ctx)
             ddb_playlist_t *plt = deadbeef->action_get_playlist ();
             if (plt) {
                 deadbeef->pl_lock ();
-                DB_playItem_t **items;
+                DB_playItem_t **items = NULL;
                 int items_count = deadbeef->plt_get_item_count (plt, PL_MAIN);
                 if (0 < items_count) {
-                    items = malloc (sizeof (DB_playItem_t *) * items_count);
+                    items = calloc (sizeof (DB_playItem_t *), items_count);
                     if (items) {
                         int n = 0;
                         DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
@@ -389,7 +389,7 @@ shx_get_actions_json (json_t *json) {
         return NULL;
     }
 
-    unsigned n = json_array_size (json);
+    size_t n = json_array_size (json);
     for (int i = 0; i < n; i++) {
         json_t *item = json_array_get (json, i);
         if (!json_is_object (item)) {
@@ -435,7 +435,7 @@ shx_get_actions_json (json_t *json) {
         else {
             action->shx_flags = 0;
 
-            int nflags = json_array_size (jflags);
+            size_t nflags = json_array_size (jflags);
             for (int i = 0; i < nflags; i++) {
                 json_t *jflag = json_array_get (jflags, i);
                 if (!json_is_string (jflag)) {
