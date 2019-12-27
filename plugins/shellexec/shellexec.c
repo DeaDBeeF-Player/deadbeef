@@ -52,6 +52,7 @@
 #include <jansson.h>
 #include "../../deadbeef.h"
 #include "shellexec.h"
+#include "shellexecutil.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
