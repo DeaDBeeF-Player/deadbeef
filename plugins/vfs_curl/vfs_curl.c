@@ -51,8 +51,6 @@ static int64_t biglock;
 static uint64_t _curr_identifier;
 
 #define MAX_ABORT_FILES 100
-static HTTP_FILE *open_files[MAX_ABORT_FILES];
-static int num_open_files = 0;
 static uint64_t abort_files[MAX_ABORT_FILES];
 static int num_abort_files = 0;
 
@@ -64,12 +62,6 @@ http_cancel_abort (uint64_t identifier);
 
 static void
 vfs_curl_abort_with_identifier (uint64_t identifier);
-
-static void
-http_reg_open_file (DB_FILE *fp);
-
-static void
-http_unreg_open_file (DB_FILE *fp);
 
 static size_t
 http_curl_write_wrapper (HTTP_FILE *fp, void *ptr, size_t size) {
@@ -786,7 +778,6 @@ http_open (const char *fname) {
         plugin.plugin.flags &= ~DDB_PLUGIN_FLAG_LOGGING;
     }
     HTTP_FILE *fp = malloc (sizeof (HTTP_FILE));
-    http_reg_open_file ((DB_FILE *)fp);
     memset (fp, 0, sizeof (HTTP_FILE));
 
     fp->identifier = ++_curr_identifier;
@@ -817,7 +808,6 @@ http_close (DB_FILE *stream) {
     }
     http_cancel_abort (identifier);
     vfs_curl_free_file (fp);
-    http_unreg_open_file ((DB_FILE *)fp);
     trace ("http_close done\n");
 }
 
@@ -1056,59 +1046,6 @@ http_cancel_abort (uint64_t identifier) {
             num_abort_files--;
             break;
         }
-    }
-    deadbeef->mutex_unlock (biglock);
-}
-
-static void
-http_reg_open_file (DB_FILE *fp) {
-    deadbeef->mutex_lock (biglock);
-    HTTP_FILE *file = (HTTP_FILE *)fp;
-    for (int i = 0; i < num_open_files; i++) {
-        if (open_files[i] == file) {
-            deadbeef->mutex_unlock (biglock);
-            return;
-        }
-    }
-    if (num_open_files == MAX_ABORT_FILES) {
-        fprintf (stderr, "vfs_curl: open files overflow\n");
-        deadbeef->mutex_unlock (biglock);
-        return;
-    }
-    open_files[num_open_files++] = file;
-    deadbeef->mutex_unlock (biglock);
-}
-
-static void
-http_unreg_open_file (DB_FILE *fp) {
-    deadbeef->mutex_lock (biglock);
-    HTTP_FILE *file = (HTTP_FILE *)fp;
-    int i;
-    for (i = 0; i < num_open_files; i++) {
-        if (open_files[i] == file) {
-            if (i != num_open_files-1) {
-                open_files[i] = open_files[num_open_files-1];
-            }
-            num_open_files--;
-            trace ("remove from open list: %p\n", fp);
-            break;
-        }
-    }
-
-    // gc abort_files
-    int j = 0;
-    while (j < num_abort_files) {
-        for (i = 0; i < num_open_files; i++) {
-            if (abort_files[j] == open_files[i]->identifier) {
-                break;
-            }
-        }
-        if (i == num_open_files) {
-            // remove abort
-            http_cancel_abort (abort_files[j]);
-            continue;
-        }
-        j++;
     }
     deadbeef->mutex_unlock (biglock);
 }

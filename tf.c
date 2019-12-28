@@ -1099,7 +1099,6 @@ tf_func_pad_impl (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, cons
     int str_chars = u8_strlen(str);
 
     if (str_chars >= padlen_chars) {
-        int l;
         if (str_chars > padlen_chars && cut) {
             // u8_strncpy has no limiter in byte units available. We rely on str being of size outlen above for safety
             return u8_strncpy(out, str, padlen_chars);
@@ -1197,13 +1196,16 @@ tf_func_progress_impl(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, 
     }
     argpos += arglens[2];
 
-    int blen_notch = 0;
     TF_EVAL_CHECK(len, ctx, argpos, arglens[3], out, outlen - 1, fail_on_undef);
     notch = strdup (out);
     argpos += arglens[3];
 
-    int blen_bar = 0;
-    TF_EVAL_CHECK(len, ctx, argpos, arglens[4], out, outlen - 1, fail_on_undef);
+    len = tf_eval_int (ctx, argpos, arglens[4], out, outlen - 1, &bool_out, fail_on_undef);
+    if (len < 0) {
+        free (notch);
+        *out = 0;
+        return -1;
+    }
     bar = strdup (out);
     argpos += arglens[4];
 
@@ -1233,7 +1235,7 @@ tf_func_progress_impl(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, 
             p = bar;
         }
         size_t l = min(strlen (p), remaining);
-        strncpy (cur, p, l);
+        l = u8_strncpy (cur, p, (int)l);
         cur += l;
         remaining -= l;
     }
@@ -1577,9 +1579,7 @@ tf_func_trim(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
 
     TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
 
-    int bfrom = -1, bto = 0, inrun = 0;
-
-    int offset = 0;
+    int bfrom = -1, bto = 0;
 
     for (int offset = 0; offset != len && out[offset]; ) {
         const int last = offset;
@@ -2968,7 +2968,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                             const char prefix[] = "file://";
                             #endif
                             tf_append_out (&out, &outlen, prefix, sizeof (prefix) - 1);
-                            tf_append_out (&out, &outlen, v, strlen (v));
+                            tf_append_out (&out, &outlen, v, (int)strlen (v));
                         }
                         else {
                             int is_uri = 1;
@@ -2986,7 +2986,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
 
                             if (is_uri) {
                                 // This is already a URI, just copy as is
-                                tf_append_out (&out, &outlen, v, strlen (v));
+                                tf_append_out (&out, &outlen, v, (int)strlen (v));
                             }
                             else {
                                 // Relative paths are considered invalid

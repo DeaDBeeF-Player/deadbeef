@@ -2110,6 +2110,21 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
 
+- (void)test_Progress2Pos3Range5Len5WithUnicodeChars_ReturnsBar5CharsWithKnobAt3 {
+    char *bc = tf_compile("$progress2(3,5,5,★,☆)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "★★★☆☆"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Progress2Pos3Range5Len5WithMultpleUnicodeChars_ReturnsBar5CharsWithKnobAt3 {
+    char *bc = tf_compile("$progress2(3,5,5,⏣⌽,⚙︎⌬)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "⏣⌽⏣⌽⏣⌽⚙︎⌬⚙︎⌬"), @"The actual output is: %s", buffer);
+}
+
+
 - (void)test_Progress2Pos0Range100Len10_ReturnsBar10CharsWithKnobAt0 {
     char *bc = tf_compile("$progress2(0,100,10,x,=)");
     tf_eval (&ctx, bc, buffer, 1000);
