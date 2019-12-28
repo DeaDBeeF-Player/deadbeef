@@ -32,10 +32,9 @@ version 1.8.3
 	Fixed bug in elapsed time calculation in replaygain scanner UI
 	Fixed a stack overflow bug when writing ID3v1
 	Added ID3v2 POPM rating support, both reading and writing
-
-
-
-
+	Fixed an issue with splitters not reaching the view edges
+	Fixed single-quote escaping issue in ShellExec
+	Fixed Add Location dialog not adding URLs
 
 version 1.8.2
 	Volume control from command line supports increment syntax (by eauno1re@github)
