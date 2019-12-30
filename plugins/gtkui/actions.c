@@ -148,7 +148,7 @@ add_mainmenu_actions (void)
                     if (prev_title && 0 == strcmp ("File", prev_title))
                         gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 5);
                     else if (prev_title && 0 == strcmp ("Edit", prev_title))
-                        gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 7);
+                        gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 8);
                     else {
                         gtk_container_add (GTK_CONTAINER (current), actionitem);
                     }

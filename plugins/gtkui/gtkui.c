@@ -1815,12 +1815,20 @@ static DB_plugin_action_t action_preferences = {
     .next = &action_toggle_designmode
 };
 
+static DB_plugin_action_t action_remove_dead_items = {
+    .title = "Edit/Remove dead items",
+    .name = "remove_dead_items",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_remove_dead_items_handler,
+    .next = &action_preferences
+};
+
 static DB_plugin_action_t action_sort_custom = {
     .title = "Edit/Sort Custom",
     .name = "sort_custom",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_sort_custom_handler,
-    .next = &action_preferences
+    .next = &action_remove_dead_items
 };
 
 static DB_plugin_action_t action_crop_selected = {

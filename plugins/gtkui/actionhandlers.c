@@ -698,6 +698,49 @@ action_toggle_designmode_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 gboolean
+action_remove_dead_items_handler_cb (void *data) {
+    deadbeef->pl_lock ();
+
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    
+    if (plt) {
+        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+
+        while (it) {
+            const char *uri = deadbeef->pl_find_meta (it, ":URI");
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+
+            // Remove only local files, not network streams
+            if (deadbeef->is_local_file (uri)) {
+                // check if file exists
+                DB_FILE *fp = deadbeef->fopen (uri);
+                if (!fp) {
+                    //trace("Removing '%s' from playlist\n", uri);
+                    deadbeef->plt_remove_item (plt, it);
+                } else {
+                    deadbeef->fclose (fp);
+                }
+            }
+
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+    }
+
+    deadbeef->plt_unref (plt);
+    deadbeef->pl_unlock ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
+
+    return FALSE;
+}
+
+int
+action_remove_dead_items_handler (DB_plugin_action_t *act, int ctx) {
+    gdk_threads_add_idle (action_remove_dead_items_handler_cb, NULL);
+    return 0;
+}
+
+gboolean
 action_preferences_handler_cb (void *data) {
     gtkui_run_preferences_dlg ();
     return FALSE;

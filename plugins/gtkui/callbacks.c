@@ -98,7 +98,12 @@ on_quit_activate                      (GtkMenuItem     *menuitem,
     gdk_threads_add_idle (action_quit_handler_cb, NULL);
 }
 
-
+void
+on_remove_dead_items_activate           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    gdk_threads_add_idle (action_remove_dead_items_handler_cb, NULL);
+}
 
 void
 on_select_all1_activate                (GtkMenuItem     *menuitem,

@@ -53,6 +53,8 @@ create_mainwin (void)
   GtkWidget *Edit_menu;
   GtkWidget *clear1;
   GtkWidget *image683;
+  GtkWidget *remove_dead_items;
+  GtkWidget *image688;
   GtkWidget *select_all1;
   GtkWidget *deselect_all1;
   GtkWidget *invert_selection1;
@@ -213,6 +215,14 @@ create_mainwin (void)
   image683 = gtk_image_new_from_stock ("gtk-clear", GTK_ICON_SIZE_MENU);
   gtk_widget_show (image683);
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (clear1), image683);
+
+  remove_dead_items = gtk_image_menu_item_new_with_mnemonic (_("Remove dead items"));
+  gtk_widget_show (remove_dead_items);
+  gtk_container_add (GTK_CONTAINER (Edit_menu), remove_dead_items);
+
+  image688 = gtk_image_new_from_stock ("gtk-clear", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image688);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (remove_dead_items), image688);
 
   select_all1 = gtk_menu_item_new_with_mnemonic (_("Select all"));
   gtk_widget_show (select_all1);
@@ -511,6 +521,9 @@ create_mainwin (void)
   g_signal_connect ((gpointer) clear1, "activate",
                     G_CALLBACK (on_clear1_activate),
                     NULL);
+  g_signal_connect ((gpointer) remove_dead_items, "activate",
+                    G_CALLBACK (on_remove_dead_items_activate),
+                    NULL);
   g_signal_connect ((gpointer) select_all1, "activate",
                     G_CALLBACK (on_select_all1_activate),
                     NULL);
@@ -645,6 +658,8 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, Edit_menu, "Edit_menu");
   GLADE_HOOKUP_OBJECT (mainwin, clear1, "clear1");
   GLADE_HOOKUP_OBJECT (mainwin, image683, "image683");
+  GLADE_HOOKUP_OBJECT (mainwin, remove_dead_items, "remove_dead_items");
+  GLADE_HOOKUP_OBJECT (mainwin, image688, "image688");
   GLADE_HOOKUP_OBJECT (mainwin, select_all1, "select_all1");
   GLADE_HOOKUP_OBJECT (mainwin, deselect_all1, "deselect_all1");
   GLADE_HOOKUP_OBJECT (mainwin, invert_selection1, "invert_selection1");
