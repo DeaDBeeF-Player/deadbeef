@@ -498,28 +498,64 @@ _rg_remove_meta (DB_playItem_t *track) {
 
 int
 rg_apply (DB_playItem_t *track, uint32_t flags, float track_gain, float track_peak, float album_gain, float album_peak) {
-    _rg_remove_meta(track);
+    deadbeef->pl_lock ();
+    const char *search_uri = deadbeef->pl_find_meta (track, ":URI");
+    int n = deadbeef->plt_get_count ();
 
-    if (flags & (1<<DDB_REPLAYGAIN_TRACKGAIN)) {
-        deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_TRACKGAIN, track_gain);
-    }
-    if (flags & (1<<DDB_REPLAYGAIN_TRACKPEAK)) {
-        deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_TRACKPEAK, track_peak);
-    }
-    if (flags & (1<<DDB_REPLAYGAIN_ALBUMGAIN)) {
-        deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_ALBUMGAIN, album_gain);
-    }
-    if (flags & (1<<DDB_REPLAYGAIN_ALBUMPEAK)) {
-        deadbeef->pl_set_item_replaygain (track, DDB_REPLAYGAIN_ALBUMPEAK, album_peak);
-    }
+    for (int i = 0; i < n; ++i) {
+        ddb_playlist_t *plt = deadbeef->plt_get_for_idx (i);
+        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
 
+        while (it) {
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            const char *uri = deadbeef->pl_find_meta (it, ":URI");
+            if (strcmp (uri, search_uri) == 0) {
+                _rg_remove_meta (it);
+
+                if (flags & (1<<DDB_REPLAYGAIN_TRACKGAIN)) {
+                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, track_gain);
+                }
+                if (flags & (1<<DDB_REPLAYGAIN_TRACKPEAK)) {
+                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, track_peak);
+                }
+                if (flags & (1<<DDB_REPLAYGAIN_ALBUMGAIN)) {
+                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, album_gain);
+                }
+                if (flags & (1<<DDB_REPLAYGAIN_ALBUMPEAK)) {
+                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, album_peak);
+                }
+            }
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+        deadbeef->plt_unref (plt);
+    }
+    deadbeef->pl_unlock ();
     return _rg_write_meta (track);
 }
 
 int
 rg_remove (DB_playItem_t *track) {
-    _rg_remove_meta (track);
+    deadbeef->pl_lock ();
+    const char *search_uri = deadbeef->pl_find_meta (track, ":URI");
+    int n = deadbeef->plt_get_count ();
 
+    for (int i = 0; i < n; ++i) {
+        ddb_playlist_t *plt = deadbeef->plt_get_for_idx (i);
+        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+
+        while (it) {
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            const char *uri = deadbeef->pl_find_meta (it, ":URI");
+            if (strcmp (uri, search_uri) == 0) {
+                _rg_remove_meta (it);
+            }
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+        deadbeef->plt_unref (plt);
+    }
+    deadbeef->pl_unlock ();
     return _rg_write_meta (track);
 }
 
