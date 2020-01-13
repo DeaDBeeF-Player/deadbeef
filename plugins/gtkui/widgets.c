@@ -537,7 +537,9 @@ w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
     }
     // nuke all default children
     while (w->children) {
+        ddb_gtkui_widget_t *c = w->children;
         w_remove (w, w->children);
+        w_destroy (c);
     }
 
     // load widget params
