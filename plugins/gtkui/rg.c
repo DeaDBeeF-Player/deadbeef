@@ -168,19 +168,16 @@ _ctl_dismiss (rgs_controller_t *ctl) {
     }
 
     if (ctl->progress_window) {
-        gtk_widget_hide (ctl->progress_window);
         gtk_widget_destroy (ctl->progress_window);
         ctl->progress_window = NULL;
     }
 
     if (ctl->results_window) {
-        gtk_widget_hide (ctl->results_window);
         gtk_widget_destroy (ctl->results_window);
         ctl->results_window = NULL;
     }
 
     if (ctl->update_progress_window) {
-        gtk_widget_hide (ctl->update_progress_window);
         gtk_widget_destroy (ctl->update_progress_window);
         ctl->update_progress_window = NULL;
     }
