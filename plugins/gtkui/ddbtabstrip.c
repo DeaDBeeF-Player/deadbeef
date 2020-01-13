@@ -846,6 +846,10 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 #endif
 
     draw_end (&ts->drawctx);
+
+#if !GTK_CHECK_VERSION(3,0,0)
+    gdk_gc_unref (gc);
+#endif
 }
 
 static int
