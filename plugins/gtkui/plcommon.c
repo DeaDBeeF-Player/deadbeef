@@ -201,6 +201,7 @@ pl_common_free_col_info (void *data) {
             info->cover_load_timeout_id = 0;
         }
     }
+    free (info);
 }
 
 #define COL_CONF_BUFFER_SIZE 10000
