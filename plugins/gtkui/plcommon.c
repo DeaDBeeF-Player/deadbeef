@@ -1548,9 +1548,9 @@ on_group_by_custom_activate            (GtkMenuItem     *menuitem,
     DdbListviewGroupFormat *fmt = listview->group_formats;
     while (fmt) {
         if (format[0] != 0) {
-            strncat(format, SUBGROUP_DELIMITER, sizeof(format) - 1);
+            strncat(format, SUBGROUP_DELIMITER, sizeof(format) - strlen(format) - 1);
         }
-        strncat(format, fmt->format, sizeof(format) - 1);
+        strncat(format, fmt->format, sizeof(format) - strlen(format) - 1);
         fmt = fmt->next;
     }
     gtk_entry_set_text (GTK_ENTRY (entry), format);
