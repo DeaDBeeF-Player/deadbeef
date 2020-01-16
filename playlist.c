@@ -105,6 +105,7 @@ static int playlists_count = 0;
 static playlist_t *playlists_head = NULL;
 static playlist_t *playlist = NULL; // current playlist
 static int plt_loading = 0; // disable sending event about playlist switch, config regen, etc
+static int ignore_duplicates = 0;
 
 #if !DISABLE_LOCKING
 static uintptr_t mutex;
@@ -975,6 +976,16 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
     // now that it's known we're not dealing with URL, check if it's a relative path
     if (is_relative_path (fname)) {
         return NULL;
+    }
+
+    // Skip double tracks
+    if (ignore_duplicates) {
+        for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+            const char *uri = pl_find_meta (it, ":URI");
+            if (strcmp (uri, fname) == 0) {
+                return NULL;
+            }
+        }
     }
 
     // detect decoder
@@ -3861,6 +3872,7 @@ plt_process_cue (playlist_t *plt, playItem_t *after, playItem_t *it, uint64_t to
 void
 pl_configchanged (void) {
     conf_cue_prefer_embedded = conf_get_int ("cue.prefer_embedded", 0);
+    ignore_duplicates = plt_find_meta_int (playlist, "ignore_duplicates", 0);
 }
 
 int64_t

@@ -126,6 +126,23 @@ on_copy_playlist1_activate        (GtkMenuItem     *menuitem,
 }
 
 static void
+on_duplicates_toggled (GtkMenuItem     *menuitem,
+                    gpointer         user_data)
+{
+    if (pltmenu_idx < 0) {
+        return;
+    }
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+    if (plt) {
+        int enabled = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem));
+        deadbeef->plt_set_meta_int (plt, "ignore_duplicates", enabled);
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+        deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    }
+}
+
+static void
 on_autosort_toggled (GtkMenuItem     *menuitem,
                     gpointer         user_data)
 {
@@ -134,8 +151,9 @@ on_autosort_toggled (GtkMenuItem     *menuitem,
     }
     ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
     if (plt) {
-        int enabled = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(menuitem));
+        int enabled = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem));
         deadbeef->plt_set_meta_int (plt, "autosort_enabled", enabled);
+        deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
     }
 }
@@ -381,6 +399,7 @@ gtkui_create_pltmenu (int plt_idx) {
     GtkWidget *remove_playlist1;
     GtkWidget *add_new_playlist1;
     GtkWidget *copy_playlist1;
+    GtkWidget *duplicates;
     GtkWidget *autosort;
     GtkWidget *separator11;
     GtkWidget *cut;
@@ -421,6 +440,12 @@ gtkui_create_pltmenu (int plt_idx) {
     copy_playlist1 = gtk_menu_item_new_with_mnemonic (_("Duplicate Playlist"));
     gtk_widget_show (copy_playlist1);
     gtk_container_add (GTK_CONTAINER (plmenu), copy_playlist1);
+
+    int ignore_duplicates = deadbeef->plt_find_meta_int (deadbeef->plt_get_for_idx (pltmenu_idx), "ignore_duplicates", 0);
+    duplicates = gtk_check_menu_item_new_with_label (_("Ignore Duplicates"));
+    gtk_check_menu_item_set_active (duplicates, ignore_duplicates);
+    gtk_widget_show (duplicates);
+    gtk_container_add (GTK_CONTAINER (plmenu), duplicates);
 
     int autosort_enabled = 0;
     if (pltmenu_idx >= 0) {
@@ -496,6 +521,9 @@ gtkui_create_pltmenu (int plt_idx) {
             NULL);
     g_signal_connect ((gpointer) add_new_playlist1, "activate",
             G_CALLBACK (on_add_new_playlist1_activate),
+            NULL);
+    g_signal_connect ((gpointer) duplicates, "toggled",
+            G_CALLBACK (on_duplicates_toggled),
             NULL);
     g_signal_connect ((gpointer) autosort, "toggled",
             G_CALLBACK (on_autosort_toggled),
