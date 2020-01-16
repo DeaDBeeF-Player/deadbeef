@@ -1533,6 +1533,19 @@ on_group_by_artist_activate            (GtkMenuItem     *menuitem,
     groups_changed (get_context_menu_listview (menuitem), "%artist%");
 }
 
+
+static void
+_make_format (char *format, size_t size, DdbListviewGroupFormat *fmt) {
+    format[0] = 0;
+    while (fmt) {
+        if (format[0] != 0) {
+            strncat(format, SUBGROUP_DELIMITER, size - strlen(format) - 1);
+        }
+        strncat(format, fmt->format, size - strlen(format) - 1);
+        fmt = fmt->next;
+    }
+}
+
 static void
 on_group_by_custom_activate            (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
@@ -1544,15 +1557,9 @@ on_group_by_custom_activate            (GtkMenuItem     *menuitem,
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
     GtkWidget *entry = lookup_widget (dlg, "format");
     char format[1024];
-    format[0] = 0;
-    DdbListviewGroupFormat *fmt = listview->group_formats;
-    while (fmt) {
-        if (format[0] != 0) {
-            strncat(format, SUBGROUP_DELIMITER, sizeof(format) - 1);
-        }
-        strncat(format, fmt->format, sizeof(format) - 1);
-        fmt = fmt->next;
-    }
+
+    _make_format(format, sizeof (format), listview->group_formats);
+
     gtk_entry_set_text (GTK_ENTRY (entry), format);
 //    gtk_window_set_title (GTK_WINDOW (dlg), "Group by");
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
