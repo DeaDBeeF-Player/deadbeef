@@ -1555,7 +1555,12 @@ enum {
 
 #if (DDB_API_LEVEL >= 10)
     // Don't allow running this action in playlist context, even if it supports multiple selection
-    DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST = 1 << 7
+    DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST = 1 << 7,
+#endif
+
+#if (DDB_API_LEVEL >= 11)
+    // If this has a hotkey assigned and it is held down, the callback should be called at a regular interval
+    DB_ACTION_HOTKEY_REPEAT = 1 << 8
 #endif
 };
 

@@ -30,6 +30,8 @@
 #endif
 #ifndef NO_XLIB_H
 #include <X11/Xlib.h>
+#include <X11/XKBlib.h>
+#include <time.h>
 #endif
 #include <ctype.h>
 #ifdef __linux__
@@ -78,11 +80,14 @@ typedef struct command_s {
     int modifier;
     int ctx;
     int isglobal;
+    int last_activation;
+    int activations;
     DB_plugin_action_t *action;
 } command_t;
 
 static command_t commands [MAX_COMMAND_COUNT];
 static int command_count = 0;
+static int keys_down = 0;
 
 #ifndef NO_XLIB_H
 static void
@@ -466,19 +471,29 @@ hotkeys_event_loop (void *unused) {
                     XUngrabKey (disp, commands[i].x11_keycode, commands[i].modifier | flags, DefaultRootWindow (disp));
                 }
             }
+            if (keys_down) {
+                XUngrabKeyboard(disp, CurrentTime);
+            }
+            keys_down = 0;
             memset (commands, 0, sizeof (commands));
             command_count = 0;
             read_config (disp);
             need_reset = 0;
         }
 
+        int now = 0;
+        {
+            struct timespec time;
+            clock_gettime(CLOCK_MONOTONIC, &time);
+            now = (time.tv_sec * 1000) + (time.tv_nsec / 1000000);
+        }
+
         XEvent event;
         while (XPending (disp))
         {
             XNextEvent (disp, &event);
-
-            if (event.xkey.type == KeyPress)
-            {
+            int down = 0;
+            if ((down = (event.xkey.type == KeyPress)) || event.xkey.type == KeyRelease) {
                 int state = event.xkey.state;
                 // ignore caps/scroll/numlock
                 state &= (ShiftMask|ControlMask|Mod1Mask|Mod4Mask);
@@ -488,8 +503,29 @@ hotkeys_event_loop (void *unused) {
                     if ( (event.xkey.keycode == commands[ i ].x11_keycode) &&
                          (state == commands[ i ].modifier))
                     {
-                        trace ("matches to commands[%d]!\n", i);
-                        cmd_invoke_plugin_command (commands[i].action, commands[i].ctx);
+                        if (down) {
+                            if (commands[i].last_activation == 0) {
+                                if (!keys_down++) {
+                                    // We have to grab the keyboard when keys are down or we can loose
+                                    // key release events. See https://bugs.freedesktop.org/show_bug.cgi?id=99280
+                                    XGrabKeyboard (disp, DefaultRootWindow (disp), GrabModeAsync, False, GrabModeAsync, event.xkey.time);
+                                }
+                                trace ("down command[%d]!\n", i);
+                                commands[i].last_activation = now;
+
+                                if ((commands[i].action->flags & DB_ACTION_HOTKEY_REPEAT) == 0) {
+                                    trace ("invoke command[%d]!\n", i);
+                                    cmd_invoke_plugin_command (commands[i].action, commands[i].ctx);
+                                }
+                            }
+                        } else {
+                            if (!--keys_down) {
+                                XUngrabKeyboard(disp, event.xkey.time);
+                            }
+                            commands[i].last_activation = 0;
+                            commands[i].activations = 0;
+                            trace ("up command[%d]!\n", i);
+                        }
                         break;
                     }
                 }
@@ -498,7 +534,20 @@ hotkeys_event_loop (void *unused) {
                 }
             }
         }
-        usleep (200 * 1000);
+
+        if (keys_down) {
+            for (i = 0; i < command_count; i++) {
+                if (commands[i].last_activation != 0 && (commands[i].action->flags & DB_ACTION_HOTKEY_REPEAT) != 0) {
+                    while (commands[i].last_activation <= now || commands[i].last_activation + 500 <= now) {
+                        commands[i].last_activation += commands[i].activations < 3 ? 100 : 50;
+                        commands[i].activations++;
+                        trace ("invoke command[%d]!\n", i);
+                        cmd_invoke_plugin_command (commands[i].action, commands[i].ctx);
+                    }
+                }
+            }
+        }
+        usleep (50 * 1000);
     }
 }
 #endif
@@ -515,6 +564,7 @@ hotkeys_connect (void) {
         return -1;
     }
     XSetErrorHandler (x_err_handler);
+    XkbSetDetectableAutoRepeat(disp, True, NULL);
 
     read_config (disp);
 
@@ -1174,7 +1224,7 @@ static DB_plugin_action_t action_play_random = {
 static DB_plugin_action_t action_seek_1s_forward = {
     .title = "Playback/Seek 1s Forward",
     .name = "seek_1s_fwd",
-    .flags = DB_ACTION_COMMON,
+    .flags = DB_ACTION_COMMON | DB_ACTION_HOTKEY_REPEAT,
     .callback2 = action_seek_1s_forward_cb,
     .next = &action_play_random
 };
@@ -1182,7 +1232,7 @@ static DB_plugin_action_t action_seek_1s_forward = {
 static DB_plugin_action_t action_seek_1s_backward = {
     .title = "Playback/Seek 1s Backward",
     .name = "seek_1s_back",
-    .flags = DB_ACTION_COMMON,
+    .flags = DB_ACTION_COMMON | DB_ACTION_HOTKEY_REPEAT,
     .callback2 = action_seek_1s_backward_cb,
     .next = &action_seek_1s_forward
 };
@@ -1190,7 +1240,7 @@ static DB_plugin_action_t action_seek_1s_backward = {
 static DB_plugin_action_t action_seek_5s_forward = {
     .title = "Playback/Seek 5s Forward",
     .name = "seek_5s_fwd",
-    .flags = DB_ACTION_COMMON,
+    .flags = DB_ACTION_COMMON | DB_ACTION_HOTKEY_REPEAT,
     .callback2 = action_seek_5s_forward_cb,
     .next = &action_seek_1s_backward
 };
@@ -1198,7 +1248,7 @@ static DB_plugin_action_t action_seek_5s_forward = {
 static DB_plugin_action_t action_seek_5s_backward = {
     .title = "Playback/Seek 5s Backward",
     .name = "seek_5s_back",
-    .flags = DB_ACTION_COMMON,
+    .flags = DB_ACTION_COMMON | DB_ACTION_HOTKEY_REPEAT,
     .callback2 = action_seek_5s_backward_cb,
     .next = &action_seek_5s_forward
 };
@@ -1207,7 +1257,7 @@ static DB_plugin_action_t action_seek_5s_backward = {
 static DB_plugin_action_t action_seek_1p_forward = {
     .title = "Playback/Seek 1% Forward",
     .name = "seek_1p_fwd",
-    .flags = DB_ACTION_COMMON,
+    .flags = DB_ACTION_COMMON | DB_ACTION_HOTKEY_REPEAT,
     .callback2 = action_seek_1p_forward_cb,
     .next = &action_seek_5s_backward
 };
@@ -1215,7 +1265,7 @@ static DB_plugin_action_t action_seek_1p_forward = {
 static DB_plugin_action_t action_seek_1p_backward = {
     .title = "Playback/Seek 1% Backward",
     .name = "seek_1p_back",
-    .flags = DB_ACTION_COMMON,
+    .flags = DB_ACTION_COMMON | DB_ACTION_HOTKEY_REPEAT,
     .callback2 = action_seek_1p_backward_cb,
     .next = &action_seek_1p_forward
 };
@@ -1223,7 +1273,7 @@ static DB_plugin_action_t action_seek_1p_backward = {
 static DB_plugin_action_t action_seek_5p_forward = {
     .title = "Playback/Seek 5% Forward",
     .name = "seek_5p_fwd",
-    .flags = DB_ACTION_COMMON,
+    .flags = DB_ACTION_COMMON | DB_ACTION_HOTKEY_REPEAT,
     .callback2 = action_seek_5p_forward_cb,
     .next = &action_seek_1p_backward
 };
@@ -1231,7 +1281,7 @@ static DB_plugin_action_t action_seek_5p_forward = {
 static DB_plugin_action_t action_seek_5p_backward = {
     .title = "Playback/Seek 5% Backward",
     .name = "seek_5p_back",
-    .flags = DB_ACTION_COMMON,
+    .flags = DB_ACTION_COMMON | DB_ACTION_HOTKEY_REPEAT,
     .callback2 = action_seek_5p_backward_cb,
     .next = &action_seek_5p_forward
 };
@@ -1239,7 +1289,7 @@ static DB_plugin_action_t action_seek_5p_backward = {
 static DB_plugin_action_t action_volume_up = {
     .title = "Playback/Volume Up",
     .name = "volume_up",
-    .flags = DB_ACTION_COMMON,
+    .flags = DB_ACTION_COMMON | DB_ACTION_HOTKEY_REPEAT,
     .callback2 = action_volume_up_cb,
     .next = &action_seek_5p_backward
 };
@@ -1247,7 +1297,7 @@ static DB_plugin_action_t action_volume_up = {
 static DB_plugin_action_t action_volume_down = {
     .title = "Playback/Volume Down",
     .name = "volume_down",
-    .flags = DB_ACTION_COMMON,
+    .flags = DB_ACTION_COMMON | DB_ACTION_HOTKEY_REPEAT,
     .callback2 = action_volume_down_cb,
     .next = &action_volume_up
 };
