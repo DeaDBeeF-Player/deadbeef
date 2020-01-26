@@ -35,6 +35,8 @@ version 1.8.3
 	Fixed an issue with splitters not reaching the view edges
 	Fixed single-quote escaping issue in ShellExec
 	Fixed Add Location dialog not adding URLs
+	Fixed ffmpeg file handle leak
+	Added remove playlist confirmation dialog in GTK UI (kpcee@github)
 
 version 1.8.2
 	Volume control from command line supports increment syntax (by eauno1re@github)
