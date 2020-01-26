@@ -90,7 +90,7 @@ blargg_err_t Sgc_Impl::start_track( int track )
 	{
 		vectors_addr = 0x10000 - Sgc_Cpu::page_size;
 		idle_addr = vectors_addr;
-		for ( int i = 1; i < 8; ++i )
+		for ( int i = 1; i < 7; ++i )
 		{
 			vectors [i*8 + 0] = 0xC3; // JP addr
 			vectors [i*8 + 1] = header_.rst_addrs [i*2 + 0];

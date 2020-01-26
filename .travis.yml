@@ -4,16 +4,25 @@ matrix:
     include:
         - os: linux
           dist: trusty
+          addons:
+            apt:
+              packages:
+              - autopoint
+              - automake
+              - autoconf
+              - intltool
+              - libc6-dev
+              - yasm
+              - libglib2.0-bin
+              - fakeroot
+              # for i686:
+              # - gcc-multilib
           sudo: required
         - os: osx
           osx_image: xcode10.1
 
 git:
   submodules: false
-
-#os:
-#    - linux
-#    - osx
 
 script:
     - ./travis/build.sh

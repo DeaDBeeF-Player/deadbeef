@@ -212,15 +212,16 @@ static int
 get_tab_under_cursor (DdbTabStrip *ts, int x);
 
 static void
-ddb_tabstrip_destroy(GObject *object)
+ddb_tabstrip_unrealize(GtkWidget *w)
 {
   DdbTabStrip *tabstrip;
 
-  g_return_if_fail(object != NULL);
-  g_return_if_fail(DDB_IS_TABSTRIP(object));
+  g_return_if_fail(w != NULL);
+  g_return_if_fail(DDB_IS_TABSTRIP(w));
 
-  tabstrip = DDB_TABSTRIP (object);
+  tabstrip = DDB_TABSTRIP (w);
   draw_free (&tabstrip->drawctx);
+  GTK_WIDGET_CLASS (ddb_tabstrip_parent_class)->unrealize (w);
 }
 
 static void
@@ -233,6 +234,7 @@ ddb_tabstrip_class_init(DdbTabStripClass *class)
   widget_class->draw = on_tabstrip_draw;
 #endif
   widget_class->realize = ddb_tabstrip_realize;
+  widget_class->unrealize = ddb_tabstrip_unrealize;
   widget_class->size_allocate = ddb_tabstrip_size_allocate;
   widget_class->button_press_event = on_tabstrip_button_press_event;
   widget_class->button_release_event = on_tabstrip_button_release_event;
@@ -846,6 +848,10 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 #endif
 
     draw_end (&ts->drawctx);
+
+#if !GTK_CHECK_VERSION(3,0,0)
+    gdk_gc_unref (gc);
+#endif
 }
 
 static int

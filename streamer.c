@@ -2795,7 +2795,6 @@ streamer_yield (void) {
 
 void
 streamer_set_output (DB_output_t *output) {
-    printf ("streamer_set_output\n");
     if (mutex) {
         streamer_lock ();
     }

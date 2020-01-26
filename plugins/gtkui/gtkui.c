@@ -1295,6 +1295,7 @@ gtkui_mainwin_init(void) {
 
     GtkIconTheme *theme = gtk_icon_theme_get_default();
     if (gtk_icon_theme_has_icon(theme, "deadbeef")) {
+        // NOTE: according to valgrind, this leaks memory - seems to be a GTK bug
         gtk_window_set_icon_name (GTK_WINDOW (mainwin), "deadbeef");
     }
     else {

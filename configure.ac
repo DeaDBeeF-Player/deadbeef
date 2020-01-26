@@ -295,7 +295,7 @@ AS_IF([test "${enable_ffmpeg}" != "no"], [
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_DBUS=yes
     DBUS_DEPS_LIBS="../../$LIB/lib/libdbus-1.a ../../$LIB/lib/libexpat.a -lrt"
-    DBUS_DEPS_CFLAGS="-I../../$LIB/include/dbus-1"
+    DBUS_DEPS_CFLAGS="-I../../$LIB/include/dbus-1.0 -I../../$LIB/lib/dbus-1.0/include/"
     AC_SUBST(DBUS_DEPS_LIBS)
 ], [
     PKG_CHECK_MODULES(DBUS_DEPS, dbus-1, HAVE_DBUS=yes, HAVE_DBUS=no)
