@@ -17,6 +17,9 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#ifdef HAVE_ALLOCA_H
+#include <alloca.h>
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
