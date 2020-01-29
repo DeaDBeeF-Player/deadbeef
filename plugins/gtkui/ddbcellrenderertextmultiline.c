@@ -488,7 +488,7 @@ static void ddb_cell_renderer_text_multiline_instance_init (DdbCellRendererTextM
 static void ddb_cell_renderer_text_multiline_finalize (GObject* obj) {
     DdbCellRendererTextMultiline * self;
     self = DDB_CELL_RENDERER_TEXT_MULTILINE (obj);
-    g_clear_object (&self->priv->entry);
+    _g_object_unref0 (self->priv->entry);
     G_OBJECT_CLASS (ddb_cell_renderer_text_multiline_parent_class)->finalize (obj);
 }
 
