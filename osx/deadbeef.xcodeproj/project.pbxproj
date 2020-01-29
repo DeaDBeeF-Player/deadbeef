@@ -1708,6 +1708,9 @@
 		2DEA2F951B99A15800A4C6EA /* Bml_Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCA51B7710650063DA75 /* Bml_Parser.cpp */; };
 		2DEBA1BF23E203B9000E4135 /* eqpreset.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEBA1BD23E203B9000E4135 /* eqpreset.h */; };
 		2DEBA1CE23E20466000E4135 /* eqpreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBA1BE23E203B9000E4135 /* eqpreset.c */; };
+		2DEBA1D223E207A3000E4135 /* EqualizerWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEBA1CF23E207A3000E4135 /* EqualizerWindowController.h */; };
+		2DEBA1D323E207A3000E4135 /* EqualizerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBA1D023E207A3000E4135 /* EqualizerWindowController.m */; };
+		2DEBA1D423E207A3000E4135 /* EqualizerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DEBA1D123E207A3000E4135 /* EqualizerWindowController.xib */; };
 		2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEF494219C4DB4100B718C1 /* DdbListview.h */; };
 		2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF494319C4DB4100B718C1 /* DdbListview.m */; };
 		2DF16CB61DCB62FD007D7F05 /* supereq.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DF16CB01DCB62D9007D7F05 /* supereq.dylib */; };
@@ -4832,6 +4835,9 @@
 		2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wavpack.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DEBA1BD23E203B9000E4135 /* eqpreset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = eqpreset.h; sourceTree = "<group>"; };
 		2DEBA1BE23E203B9000E4135 /* eqpreset.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = eqpreset.c; sourceTree = "<group>"; };
+		2DEBA1CF23E207A3000E4135 /* EqualizerWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EqualizerWindowController.h; sourceTree = "<group>"; };
+		2DEBA1D023E207A3000E4135 /* EqualizerWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EqualizerWindowController.m; sourceTree = "<group>"; };
+		2DEBA1D123E207A3000E4135 /* EqualizerWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EqualizerWindowController.xib; sourceTree = "<group>"; };
 		2DEF494219C4DB4100B718C1 /* DdbListview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbListview.h; sourceTree = "<group>"; };
 		2DEF494319C4DB4100B718C1 /* DdbListview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbListview.m; sourceTree = "<group>"; };
 		2DF16CB01DCB62D9007D7F05 /* supereq.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = supereq.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6930,6 +6936,7 @@
 				2D651D1B22722AD200375AE2 /* ScriptableSelectView.xib */,
 				2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */,
 				2D9C0C14238DC0E700CE8C10 /* GroupByCustomWindow.xib */,
+				2DEBA1D123E207A3000E4135 /* EqualizerWindowController.xib */,
 			);
 			name = XIB;
 			sourceTree = "<group>";
@@ -9397,6 +9404,8 @@
 				2DA5E340238DB1A8005832B7 /* EditColumnWindowController.m */,
 				2D9C0C23238DC2C100CE8C10 /* GroupByCustomWindowController.h */,
 				2D9C0C24238DC2C100CE8C10 /* GroupByCustomWindowController.m */,
+				2DEBA1CF23E207A3000E4135 /* EqualizerWindowController.h */,
+				2DEBA1D023E207A3000E4135 /* EqualizerWindowController.m */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -10840,6 +10849,7 @@
 				2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
 				2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */,
+				2DEBA1D223E207A3000E4135 /* EqualizerWindowController.h in Headers */,
 				2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */,
 				2D54915722B1711E000FE7E3 /* HelpWindowController.h in Headers */,
 				2D9C0C25238DC2C100CE8C10 /* GroupByCustomWindowController.h in Headers */,
@@ -12533,6 +12543,7 @@
 				2DA24BA319E72A2500E34920 /* vfs_curl.dylib in Resources */,
 				2D9C0C15238DC0E700CE8C10 /* GroupByCustomWindow.xib in Resources */,
 				2D93DC571AADFEEF003D2D8D /* README in Resources */,
+				2DEBA1D423E207A3000E4135 /* EqualizerWindowController.xib in Resources */,
 				2D22F75E19E138B3009C631E /* sid.dylib in Resources */,
 				2D828E5419E5679800EE874F /* Search.xib in Resources */,
 				4DAF343F19B75FF500EE96ED /* ddb_dumb.dylib in Resources */,
@@ -13923,6 +13934,7 @@
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
 				2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */,
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
+				2DEBA1D323E207A3000E4135 /* EqualizerWindowController.m in Sources */,
 				2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */,
 				2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */,
 				2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */,

@@ -30,6 +30,7 @@
 #import "NowPlayable.h"
 #import "LogWindowController.h"
 #import "HelpWindowController.h"
+#import "EqualizerWindowController.h"
 #include "conf.h"
 #include "streamer.h"
 #include "junklib.h"
@@ -44,7 +45,8 @@ extern BOOL g_CanQuit;
 
 @interface AppDelegate ()
 
-@property NowPlayable *nowPlayable;
+@property (nonatomic) NowPlayable *nowPlayable;
+@property (nonatomic) BOOL equalizerAvailable;
 
 @end
 
@@ -53,6 +55,7 @@ extern BOOL g_CanQuit;
     SearchWindowController *_searchWindow;
     LogWindowController *_logWindow;
     HelpWindowController *_helpWindow;
+    EqualizerWindowController *_equalizerWindow;
 
     NSMenuItem *_dockMenuNPHeading;
     NSMenuItem *_dockMenuNPTitle;
@@ -214,6 +217,25 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     _logWindow.window.excludedFromWindowsMenu = YES;
 }
 
+- (BOOL)equalizerAvailable {
+    ddb_dsp_context_t *dsp = deadbeef->streamer_get_dsp_chain ();
+    while (dsp) {
+        if (!strcmp (dsp->plugin->plugin.id, "supereq")) {
+            return YES;
+        }
+        dsp = dsp->next;
+    }
+    return NO;
+}
+
+- (void)initEqualizerWindow {
+    if (!_equalizerWindow) {
+        _equalizerWindow = [[EqualizerWindowController alloc] initWithWindowNibName:@"EqualizerWindowController"];
+        [_equalizerWindowToggleMenuItem bind:@"state" toObject:_equalizerWindow.window withKeyPath:@"visible" options:nil];
+        _equalizerWindow.window.excludedFromWindowsMenu = YES;
+    }
+}
+
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
     if (g_CanQuit) {
         return NSTerminateNow;
@@ -312,6 +334,15 @@ main_cleanup_and_quit (void);
     _logWindow.window.isVisible = vis;
     if (vis) {
         [_logWindow.window makeKeyWindow];
+    }
+}
+
+- (IBAction)showEqualizerWindowAction:(id)sender {
+    [self initEqualizerWindow];
+    BOOL vis = ![_equalizerWindow.window isVisible];
+    _equalizerWindow.window.isVisible = vis;
+    if (vis) {
+        [_equalizerWindow.window makeKeyWindow];
     }
 }
 

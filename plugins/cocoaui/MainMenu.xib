@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15400" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15400"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -599,6 +599,17 @@ CA
                                     <action selector="showMainWinAction:" target="494" id="oym-O9-Z75"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Equalizer Window" id="bdf-d2-ZyP">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showEqualizerWindowAction:" target="494" id="mzB-oW-LUz"/>
+                                    <binding destination="494" name="hidden" keyPath="self.equalizerAvailable" id="kSh-aP-sx1">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Log Window" id="0kj-VC-KFs">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -635,6 +646,7 @@ CA
                 <outlet property="customSortPanel" destination="vHm-fI-UgZ" id="e7O-Nh-WwI"/>
                 <outlet property="descendingSortMode" destination="a0b-O2-r16" id="jve-MJ-Pfo"/>
                 <outlet property="dockMenu" destination="891-Kp-BFs" id="DTX-sh-Bko"/>
+                <outlet property="equalizerWindowToggleMenuItem" destination="bdf-d2-ZyP" id="heH-WD-edM"/>
                 <outlet property="logWindowToggleMenuItem" destination="0kj-VC-KFs" id="oPf-z6-Bk7"/>
                 <outlet property="loopAll" destination="bp3-Nw-TaR" id="t92-xv-gTj"/>
                 <outlet property="loopNone" destination="pGf-UH-jjg" id="fd0-Uw-O2Y"/>
@@ -665,7 +677,7 @@ CA
                         <rect key="frame" x="80" y="54" width="264" height="19"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Type URL here" drawsBackground="YES" id="Kzo-Mq-Xge">
-                            <font key="font" metaFont="menu" size="11"/>
+                            <font key="font" metaFont="controlContent" size="11"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>

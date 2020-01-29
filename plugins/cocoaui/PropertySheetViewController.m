@@ -9,6 +9,9 @@
     NSMutableArray *_bindings;
     settings_data_t _settingsData;
 }
+
+@property (nonatomic,readwrite) NSSize calculatedSize;
+
 @end
 
 @implementation PropertySheetViewController
@@ -39,11 +42,11 @@
     id obj = notification.object;
     if (obj == self.item) {
         // reload properties
-        [self reloadProperties];
+        [self reload];
     }
 }
 
-- (void)reloadProperties {
+- (void)reload {
     for (int i = 0; i < _settingsData.nprops; i++) {
         // find binding with the same propname
         for (NSDictionary *binding in _bindings) {
@@ -83,6 +86,8 @@
     NSInteger h = _settingsData.nprops * (unit_h + _unitSpacing) + _topMargin;
     NSSize sz;
 
+    self.calculatedSize = NSMakeSize(NSWidth(self.view.frame), h);
+
     if ([view isKindOfClass:[NSScrollView class]]) {
         NSScrollView *scrollView = (NSScrollView *)view;
         view = [scrollView documentView];
@@ -93,6 +98,7 @@
         else {
             rc.size.height = [scrollView contentView].frame.size.height;
         }
+
         view.frame = rc;
 
         sz = [scrollView contentSize];

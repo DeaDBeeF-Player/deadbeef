@@ -18,6 +18,8 @@
 
 @interface PropertySheetViewController : NSViewController<NSTextFieldDelegate>
 
+@property (nonatomic,readonly) NSSize calculatedSize;
+
 @property (weak,nonatomic) IBOutlet id<PropertySheetDataSource> dataSource;
 @property (weak) IBOutlet id item;
 
@@ -30,5 +32,6 @@
 @property NSInteger unitSpacing;
 
 - (void)reset;
+- (void)reload;
 
 @end
