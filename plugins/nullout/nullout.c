@@ -21,6 +21,9 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#ifdef HAVE_CONFIG_H
+#include "../../config.h"
+#endif
 #include <stdint.h>
 #include <unistd.h>
 #ifdef __linux__
