@@ -7,7 +7,7 @@
 //
 
 #include "eqpreset.h"
-#include "ddbequalizer.h"
+#include "../deadbeef.h"
 
 void
 eq_preset_save (char *fname) {
