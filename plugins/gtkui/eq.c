@@ -28,6 +28,7 @@
 #include "gtkui.h"
 #include "support.h"
 #include "ddbequalizer.h"
+#include "../../shared/eqpreset.h"
 
 static GtkWidget *eqcont;
 static GtkWidget *eqwin;
@@ -140,27 +141,6 @@ on_zero_bands_clicked                  (GtkButton       *button,
     }
 }
 
-static void
-_save_eq_preset (gchar *fname) {
-    FILE *fp = fopen (fname, "w+b");
-    if (fp) {
-        ddb_dsp_context_t *eq = get_supereq ();
-        if (eq) {
-            char fv[100];
-            float v;
-            for (int i = 0; i < 18; i++) {
-                eq->plugin->get_param (eq, i+1, fv, sizeof (fv));
-                v = atof (fv);
-                fprintf (fp, "%f\n", v);
-            }
-            eq->plugin->get_param (eq, 0, fv, sizeof (fv));
-            v = atof (fv);
-            fprintf (fp, "%f\n", v);
-        }
-        fclose (fp);
-    }
-}
-
 void
 on_save_preset_clicked                  (GtkMenuItem       *menuitem,
         gpointer         user_data) {
@@ -182,7 +162,7 @@ on_save_preset_clicked                  (GtkMenuItem       *menuitem,
         gtk_widget_destroy (dlg);
 
         if (fname) {
-            _save_eq_preset (fname);
+            eq_preset_save (fname);
             g_free (fname);
         }
     }
@@ -191,36 +171,8 @@ on_save_preset_clicked                  (GtkMenuItem       *menuitem,
     }
 }
 
-static int
-_load_eq_preset (gchar *fname, float *preamp, float values[18]) {
-    FILE *fp = fopen (fname, "rt");
-    if (fp) {
-        int i = 0;
-        while (i < 19) {
-            char tmp[20];
-            char *out = fgets (tmp, sizeof (tmp), fp);
-            if (!out) {
-                break;
-            }
-            float val = atof (tmp);
-            if (i == 18) {
-                *preamp = val;
-            }
-            else {
-                values[i] = val;
-            }
-            i++;
-        }
-        fclose (fp);
-        if (i != 19) {
-            return -1;
-        }
-    }
-    return 0;
-}
-
 static void
-_apply_preset (float preamp, float values[18]) {
+eq_preset_apply (float preamp, float values[18]) {
     // apply and save config
     ddb_dsp_context_t *eq = get_supereq ();
     if (!eq) {
@@ -265,8 +217,8 @@ on_load_preset_clicked                  (GtkMenuItem       *menuitem,
         if (fname) {
             float preamp;
             float values[18];
-            if (!_load_eq_preset (fname, &preamp, values)) {
-                _apply_preset(preamp, values);
+            if (!eq_preset_load (fname, &preamp, values)) {
+                eq_preset_apply(preamp, values);
             }
             else {
                 fprintf (stderr, "[eq] corrupted DeaDBeeF preset file, discarded\n");
@@ -275,28 +227,6 @@ on_load_preset_clicked                  (GtkMenuItem       *menuitem,
         }
     }
     gtk_widget_destroy (dlg);
-}
-
-static int
-_load_fb2k_preset (gchar *fname, float values[18]) {
-    FILE *fp = fopen (fname, "rt");
-    if (fp) {
-        int i = 0;
-        while (i < 18) {
-            char tmp[20];
-            char *out = fgets (tmp, sizeof (tmp), fp);
-            if (!out) {
-                break;
-            }
-            values[i] = (float)atoi (tmp);
-            i++;
-        }
-        fclose (fp);
-        if (i != 18) {
-            return -1;
-        }
-    }
-    return 0;
 }
 
 void
@@ -328,8 +258,8 @@ on_import_fb2k_preset_clicked                  (GtkButton       *button,
         gchar *fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
         if (fname) {
             float values[18];
-            if (!_load_fb2k_preset (fname, values)) {
-                _apply_preset (0, values);
+            if (!eq_preset_load_fb2k (fname, values)) {
+                eq_preset_apply (0, values);
             }
             else {
                 fprintf (stderr, "[eq] corrupted Foobar2000 preset file, discarded\n");

@@ -1706,6 +1706,8 @@
 		2DE92F561BAFFBEE00F37154 /* wavpack.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */; };
 		2DEA2F941B99A15600A4C6EA /* Spc_Sfm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCE01B7710650063DA75 /* Spc_Sfm.cpp */; };
 		2DEA2F951B99A15800A4C6EA /* Bml_Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D1CCA51B7710650063DA75 /* Bml_Parser.cpp */; };
+		2DEBA1BF23E203B9000E4135 /* eqpreset.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEBA1BD23E203B9000E4135 /* eqpreset.h */; };
+		2DEBA1CE23E20466000E4135 /* eqpreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBA1BE23E203B9000E4135 /* eqpreset.c */; };
 		2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEF494219C4DB4100B718C1 /* DdbListview.h */; };
 		2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF494319C4DB4100B718C1 /* DdbListview.m */; };
 		2DF16CB61DCB62FD007D7F05 /* supereq.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DF16CB01DCB62D9007D7F05 /* supereq.dylib */; };
@@ -4828,6 +4830,8 @@
 		2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = bufferingTemplate.pdf; path = images/bufferingTemplate.pdf; sourceTree = "<group>"; };
 		2DE7A8FA1CA493CE00318A9F /* CuesheetTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CuesheetTests.m; sourceTree = "<group>"; };
 		2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wavpack.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DEBA1BD23E203B9000E4135 /* eqpreset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = eqpreset.h; sourceTree = "<group>"; };
+		2DEBA1BE23E203B9000E4135 /* eqpreset.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = eqpreset.c; sourceTree = "<group>"; };
 		2DEF494219C4DB4100B718C1 /* DdbListview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbListview.h; sourceTree = "<group>"; };
 		2DEF494319C4DB4100B718C1 /* DdbListview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbListview.m; sourceTree = "<group>"; };
 		2DF16CB01DCB62D9007D7F05 /* supereq.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = supereq.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7814,6 +7818,8 @@
 				2D93DC531AADFEEF003D2D8D /* pluginsettings.h */,
 				2D6965371D74338A00EB99D8 /* mp4tagutil.c */,
 				2D6965381D74338A00EB99D8 /* mp4tagutil.h */,
+				2DEBA1BD23E203B9000E4135 /* eqpreset.h */,
+				2DEBA1BE23E203B9000E4135 /* eqpreset.c */,
 			);
 			path = shared;
 			sourceTree = "<group>";
@@ -10821,6 +10827,7 @@
 				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
 				2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */,
 				2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */,
+				2DEBA1BF23E203B9000E4135 /* eqpreset.h in Headers */,
 				2D6D81EF1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h in Headers */,
 				2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */,
 				2D1A564A1D9FFB10005E5CDD /* ReplayGainScannerController.h in Headers */,
@@ -13737,6 +13744,7 @@
 				2DE3B8022269BF3100AFF9AE /* deadbeefapp.c in Sources */,
 				2DE3B7C92269BF1300AFF9AE /* interface.c in Sources */,
 				2DE3B8092269BF3100AFF9AE /* namedicons.c in Sources */,
+				2DEBA1CE23E20466000E4135 /* eqpreset.c in Sources */,
 				2DE3B8142269C0A400AFF9AE /* trkproperties_shared.c in Sources */,
 				2DE3B7D72269BF1700AFF9AE /* prefwin.c in Sources */,
 				2DE3B7DC2269BF1700AFF9AE /* ddbseekbar.c in Sources */,
