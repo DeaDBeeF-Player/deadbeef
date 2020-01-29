@@ -26,8 +26,8 @@
 #endif
 
 #include <gtk/gtk.h>
-//#include <gdk/gdkkeysyms.h>
 #include <string.h>
+#include <stdlib.h>
 #include "drawing.h"
 #include "support.h"
 #include "gtkui.h"

@@ -45,7 +45,7 @@ amp_to_db (float amp) {
     return 20*log10 (amp);
 }
 
-ddb_dsp_context_t *
+static ddb_dsp_context_t *
 get_supereq (void) {
     ddb_dsp_context_t *dsp = deadbeef->streamer_get_dsp_chain ();
     while (dsp) {

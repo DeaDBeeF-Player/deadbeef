@@ -257,7 +257,7 @@ static void ddb_cell_renderer_text_multiline_gtk_cell_renderer_text_editing_done
     g_return_if_fail (entry != NULL);
     g_return_if_fail (_self_ != NULL);
 
-    g_clear_object (&_self_->priv->entry);
+    _g_object_unref0 (_self_->priv->entry);
 
     if (_self_->priv->focus_out_id > 0) {
         g_signal_handler_disconnect ((GObject*) entry, _self_->priv->focus_out_id);
