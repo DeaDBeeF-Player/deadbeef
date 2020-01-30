@@ -124,7 +124,7 @@ extern DB_functions_t *deadbeef;
     self.propertySheetViewController.contentFontSize = 11;
     self.propertySheetViewController.unitSpacing = 4;
     self.propertySheetViewController.autoAlignLabels = NO;
-    self.propertySheetViewController.labelFixedWidth = 120;
+    self.propertySheetViewController.labelFixedWidth = 50;
     self.propertySheetDataSource = [EQPropertySheetDataSource new];
     self.propertySheetViewController.dataSource = self.propertySheetDataSource;
 

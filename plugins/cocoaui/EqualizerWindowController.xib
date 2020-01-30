@@ -18,14 +18,15 @@
         <window title="Equalizer" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="EqualizerWindow" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="490" height="180"/>
+            <rect key="contentRect" x="196" y="240" width="609" height="180"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
+            <value key="minSize" type="size" width="609" height="300"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="490" height="180"/>
+                <rect key="frame" x="0.0" y="0.0" width="609" height="180"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <customView horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sWN-HO-WvC" customClass="EqualizerView">
-                        <rect key="frame" x="20" y="20" width="450" height="114"/>
+                        <rect key="frame" x="20" y="20" width="569" height="114"/>
                     </customView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dJ6-Kn-sUc">
                         <rect key="frame" x="18" y="144" width="61" height="18"/>
@@ -96,12 +97,17 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="144" y="102"/>
+            <point key="canvasLocation" x="203.5" y="102"/>
         </window>
         <viewController id="SAn-ps-SLr" customClass="PropertySheetViewController">
             <connections>
                 <outlet property="view" destination="sWN-HO-WvC" id="Jpg-b5-M1g"/>
             </connections>
         </viewController>
+        <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" id="utg-e2-5Mo">
+            <rect key="frame" x="0.0" y="0.0" width="200" height="110"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <point key="canvasLocation" x="-223" y="314"/>
+        </stackView>
     </objects>
 </document>

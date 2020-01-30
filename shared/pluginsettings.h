@@ -40,6 +40,8 @@ enum {
     PROP_SLIDER, // hscale, vscale, spinbtn
     PROP_ITEMLIST, // abstract list of items, with a type: List<Type>
     PROP_ITEMSELECT,
+    PROP_HBOX,
+    PROP_VBOX,
 };
 
 typedef struct {

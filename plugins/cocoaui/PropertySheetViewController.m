@@ -50,7 +50,8 @@
     for (int i = 0; i < _settingsData.nprops; i++) {
         // find binding with the same propname
         for (NSDictionary *binding in _bindings) {
-            if ([binding[@"propname"] isEqualToString:[NSString stringWithUTF8String:_settingsData.props[i].key]]) {
+            if (_settingsData.props[i].key
+                && [binding[@"propname"] isEqualToString:[NSString stringWithUTF8String:_settingsData.props[i].key]]) {
                 NSControl *ctl = binding[@"sender"];
                 NSString *key = [NSString stringWithUTF8String:_settingsData.props[i].key];
                 NSString *def = [NSString stringWithUTF8String:_settingsData.props[i].def];
@@ -69,7 +70,7 @@
 
 - (void)setDataSource:(id<PropertySheetDataSource>)dataSource {
     _dataSource = dataSource;
-    NSView *view = self.view;
+    NSView *view;
     _bindings = [NSMutableArray new];
 
     settings_data_free (&_settingsData);
@@ -88,8 +89,8 @@
 
     self.calculatedSize = NSMakeSize(NSWidth(self.view.frame), h);
 
-    if ([view isKindOfClass:[NSScrollView class]]) {
-        NSScrollView *scrollView = (NSScrollView *)view;
+    if ([self.view isKindOfClass:[NSScrollView class]]) {
+        NSScrollView *scrollView = (NSScrollView *)self.view;
         view = [scrollView documentView];
         NSRect rc = view.frame;
         if (_settingsData.nprops) {
@@ -104,12 +105,13 @@
         sz = [scrollView contentSize];
     }
     else {
+        view = self.view;
         sz = view.frame.size;
         h = sz.height;
     }
 
-    while ([[view subviews] count] > 0) {
-        [[[view subviews] lastObject] removeFromSuperview];
+    while (view.subviews.count > 0) {
+        [view.subviews.lastObject removeFromSuperview];
     }
 
     if (!have_settings) {
@@ -131,7 +133,7 @@
     if (_autoAlignLabels) {
         label_width = 0;
         NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        textStyle.alignment = NSLeftTextAlignment;
+        textStyle.alignment = NSTextAlignmentLeft;
         textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
         NSDictionary *attrs = @{
@@ -161,10 +163,92 @@
         label_width += 10;
     }
 
-    NSInteger y = h - (unit_h + _unitSpacing) - _topMargin;
+
+    NSStackView *sv;
+    int svItemCount = 0;
+    BOOL vert = NO;
+
+    NSInteger topLevelY = h - (unit_h + _unitSpacing) - _topMargin;
     for (int i = 0; i < _settingsData.nprops; i++) {
 
         int calculated_label_w = 0;
+
+        if (_settingsData.props[i].type == PROP_HBOX) {
+            // FIXME: disabled h/vboxes inside of scrollviews to prevent breaking plugin configuration
+            if ([self.view isKindOfClass:NSScrollView.class]) {
+                continue;
+            }
+
+            // FIXME: reuse for vbox
+            // parse parameters
+            char token[MAX_TOKEN];
+            const char *script = _settingsData.props[i].select_options;
+
+            // count
+            script = gettoken (script, token);
+            if (!script) {
+                continue;
+            }
+
+            svItemCount = atoi (token);
+
+            int hmg = 1;
+            int fill = 1;
+            int expand = 1;
+            int border = 0;
+            int spacing = 0;
+            int height = (int)unit_h;
+
+            // other args
+            while ((script = gettoken (script, token))) {
+                if (!strcmp (token, "hmg")) {
+                    hmg = 1;
+                }
+                else if (!strcmp (token, "fill")) {
+                    fill = 1;
+                }
+                else if (!strcmp (token, "expand")) {
+                    expand = 1;
+                }
+                else if (!strncmp (token, "border=", 7)) {
+                    border = atoi(token+7);
+                }
+                else if (!strncmp (token, "spacing=", 8)) {
+                    spacing = atoi (token+8);
+                }
+                else if (!strncmp (token, "height=", 7)) {
+                    height = atoi (token+7);
+                }
+            }
+
+
+            topLevelY -= (unit_h + _unitSpacing);
+            sv = [[NSStackView alloc] initWithFrame:NSMakeRect(padding, topLevelY-height, view.frame.size.width-padding*2, height)];
+            sv.orientation = NSUserInterfaceLayoutOrientationHorizontal;
+            sv.distribution = NSStackViewDistributionFillEqually;
+            sv.autoresizingMask = NSViewMinYMargin|NSViewMaxYMargin|NSViewMaxXMargin|NSViewMinXMargin|NSViewWidthSizable;
+            sv.spacing = 0;
+            [self.view addSubview:sv];
+
+            svItemCount = atoi (_settingsData.props[i].select_options);
+            view = sv;
+            h = height-topLevelY;
+            self.calculatedSize = NSMakeSize(600, height); // FIXME: hardcoded width, should be calculated from content width
+            topLevelY += height;
+            vert = YES;
+            continue;
+        }
+        else if (_settingsData.props[i].type == PROP_VBOX) {
+            continue;
+        }
+
+        NSInteger y = topLevelY;
+        if (svItemCount) {
+            view = [[NSView alloc] initWithFrame:NSMakeRect(0,0,50,200)];
+            [sv addView:view inGravity:NSStackViewGravityLeading];
+            svItemCount--;
+            y = 0;
+        }
 
         // set label
         switch (_settingsData.props[i].type) {
@@ -199,8 +283,18 @@
 
                 // resize label to fit content
                 calculated_label_w = [[lbl cell] cellSizeForBounds:lbl.bounds].width+1;
-                lbl.frame = NSMakeRect(padding+label_width-calculated_label_w, y+3, calculated_label_w, unit_h-6);
-                lbl.autoresizingMask = NSViewMinYMargin;
+
+                NSRect frame;
+                if (!vert) {
+                    frame = NSMakeRect(padding+label_width-calculated_label_w, y+3, calculated_label_w, unit_h-6);
+                }
+                else {
+                    frame = NSMakeRect(3, 200, 50, unit_h-6);
+                    lbl.frameRotation = -90;
+                }
+
+                lbl.frame = frame;
+                lbl.autoresizingMask = NSViewMaxXMargin;
 
                 [view addSubview:lbl];
             }
@@ -273,8 +367,17 @@
             case PROP_SLIDER:
             {
                 int w = sz.width-label_width - padding*3;
-                NSRect frame = NSMakeRect(label_width+padding*2, y+3, w - _sliderLabelWidth-8, unit_h-3);
+                NSRect frame;
+                if (!vert) {
+                    frame = NSMakeRect(label_width+padding*2, y+3, w - _sliderLabelWidth-8, unit_h-3);
+                }
+                else {
+                    frame = NSMakeRect(0, unit_h-3, 50, 200-40-(unit_h-3));
+                }
                 NSSlider *slider = [[NSSlider alloc] initWithFrame:frame];
+                if (vert) {
+                    slider.vertical = YES;
+                }
                 slider.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin;
                 const char *opts = _settingsData.props[i].select_options;
                 float min, max, step;
@@ -296,12 +399,41 @@
                     slider.floatValue = [value floatValue];
                 }
 
-                NSRect frame2 = NSMakeRect(label_width+padding*2 + w - _sliderLabelWidth - 4, y+3, _sliderLabelWidth, unit_h-3);
+                NSRect frame2;
+                if (!vert) {
+                    frame2 = NSMakeRect(label_width+padding*2 + w - _sliderLabelWidth - 4, y+3, _sliderLabelWidth, unit_h-3);
+                }
+                else {
+                    frame2 = NSMakeRect(0, 0, 50, unit_h-3);
+                }
+
                 NSTextField *valueedit = [[NSTextField alloc] initWithFrame:frame2];
                 valueedit.font = fontContent;
                 valueedit.autoresizingMask = NSViewMinYMargin|NSViewMinXMargin;
+                if (!vert) {
+                    valueedit.editable = YES;
+                }
+                else {
+                    valueedit.bezeled = NO;
+                    valueedit.drawsBackground = NO;
+                    valueedit.editable = NO;
+                    valueedit.selectable = NO;
+                    valueedit.cell.truncatesLastVisibleLine = YES;
+                    valueedit.cell.scrollable = NO;
+                    valueedit.cell.wraps = NO;
+                    valueedit.font = fontLabel;
+                    valueedit.alignment = NSTextAlignmentCenter;
+
+                    NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+                    f.allowsFloats = YES;
+                    f.alwaysShowsDecimalSeparator = NO;
+                    f.numberStyle = NSNumberFormatterDecimalStyle;
+                    f.maximumFractionDigits = 2;
+                    valueedit.cell.formatter = f;
+
+                    valueedit.autoresizingMask = NSViewMinXMargin|NSViewMaxXMargin|NSViewWidthSizable;
+                }
                 valueedit.stringValue = value;
-                valueedit.editable = YES;
 
                 [_bindings addObject:@{@"sender":slider,
                                        @"propname":propname,
@@ -402,7 +534,19 @@
                 [view addSubview:popUpButton];
                 break;            }
         }
-        y -= unit_h + _unitSpacing;
+        if (!svItemCount && sv) {
+            if ([self.view isKindOfClass:[NSScrollView class]]) {
+                NSScrollView *scrollView = (NSScrollView *)self.view;
+                view = [scrollView documentView];
+            }
+            else {
+                view = self.view;
+            }
+            sv = nil;
+        }
+        else {
+            topLevelY -= unit_h + _unitSpacing;
+        }
     }
 }
 
