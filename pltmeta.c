@@ -51,7 +51,6 @@ plt_add_meta (playlist_t *it, const char *key, const char *value) {
         m = m->next;
     }
     // add
-    char str[256];
     if (!value || !*value) {
         UNLOCK;
         return;

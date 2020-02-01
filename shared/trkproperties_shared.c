@@ -190,10 +190,10 @@ trkproperties_reload_tags (DB_playItem_t **tracks, int numtracks) {
                 f &= ~DDB_TAG_MASK;
                 deadbeef->pl_set_item_flags (it, f);
                 DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
-                for (int i = 0; decoders[i]; i++) {
-                    if (!strcmp (decoders[i]->plugin.id, decoder_id)) {
-                        if (decoders[i]->read_metadata) {
-                            decoders[i]->read_metadata (it);
+                for (int j = 0; decoders[j]; j++) {
+                    if (!strcmp (decoders[j]->plugin.id, decoder_id)) {
+                        if (decoders[j]->read_metadata) {
+                            decoders[j]->read_metadata (it);
                         }
                         break;
                     }
@@ -276,9 +276,9 @@ trkproperties_get_field_value (char *out, int size, const char *key, DB_playItem
                         out += 2;
                         size -= 2;
                     }
-                    int n = string_append_multivalue (out, size, meta, &clipped);
-                    out += n;
-                    size -= n;
+                    int len = string_append_multivalue (out, size, meta, &clipped);
+                    out += len;
+                    size -= len;
                 }
             }
         }
@@ -298,8 +298,8 @@ trkproperties_get_field_value (char *out, int size, const char *key, DB_playItem
         // When the code is converted to use dynamic buffer - this can be removed
         int idx = (int)(out - 4 - out_start);
         u8_dec (out_start, &idx);
-        char *prev = out_start + idx;
-        strcpy (prev, "...");
+        char *p = out_start + idx;
+        strcpy (p, "...");
     }
     free (prev);
     return multiple;

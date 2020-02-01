@@ -897,11 +897,9 @@ plt_get_title_wrapper (int plt) {
     int l = deadbeef->plt_get_title (plt, NULL, 0);
     char buf[l+1];
     deadbeef->plt_get_title (plt, buf, (int)sizeof buf);
-    deadbeef->plt_unref (plt);
     _renamePlaylistTitle.stringValue = [NSString stringWithUTF8String:buf];
     [self.window beginSheet:self.renamePlaylistWindow completionHandler:^(NSModalResponse returnCode) {
         if (returnCode == NSModalResponseOK) {
-            ddb_playlist_t *plt = deadbeef->plt_get_for_idx (_tab_clicked);
             deadbeef->plt_set_title (plt, [[_renamePlaylistTitle stringValue] UTF8String]);
             deadbeef->plt_save_config (plt);
             deadbeef->plt_unref (plt);

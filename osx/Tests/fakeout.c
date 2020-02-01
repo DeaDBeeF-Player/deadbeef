@@ -177,7 +177,7 @@ fakeout_callback (char *stream, int len) {
     return bytesread;
 }
 
-int
+ddb_playback_state_t
 fakeout_get_state (void) {
     return state;
 }
@@ -241,7 +241,7 @@ fakeout_consume (int nbytes) {
             nbytes -= rb;
         }
         if (_realtime) {
-            usleep ((int64_t)n * 1000 / (44100 * 4) * 2);
+            usleep ((uint64_t)n * 1000 / (44100 * 4) * 2);
         }
     }
 }

@@ -31,7 +31,7 @@
 
 static int fake_out_state_value = DDB_PLAYBACK_STATE_STOPPED;
 
-static int fake_out_state (void) {
+static ddb_playback_state_t fake_out_state (void) {
     return fake_out_state_value;
 }
 

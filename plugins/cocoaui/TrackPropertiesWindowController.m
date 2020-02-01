@@ -381,7 +381,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         NSInteger n = [uniq count];
 
         NSString *val = n > 1 ? @"[Multiple Values] " : @"";
-        for (int i = 0; i < [uniq count]; i++) {
+        for (NSUInteger i = 0; i < uniq.count; i++) {
             val = [val stringByAppendingString:uniq[i]];
             if (i < [uniq count] - 1) {
                 val = [val stringByAppendingString:@"; "];
@@ -402,7 +402,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     NSMutableDictionary *dict = store[rowIndex];
 
     NSMutableArray<NSString *> *values = dict[@"values"];
-    for (int i = 0; i < [values count]; i++) {
+    for (NSUInteger i = 0; i < values.count; i++) {
         if ([values[i] isNotEqualTo:anObject]) {
             values[i] = anObject;
             self.modified = YES;
@@ -420,16 +420,16 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
         NSMutableArray *transformedValues = [NSMutableArray new];
         for (NSString *val in components) {
-            NSInteger i = 0;
-            while ((i < [val length])
-                   && [[NSCharacterSet whitespaceCharacterSet] characterIsMember:[val characterAtIndex:i]]) {
-                i++;
+            NSUInteger j = 0;
+            while ((j < val.length)
+                   && [[NSCharacterSet whitespaceCharacterSet] characterIsMember:[val characterAtIndex:j]]) {
+                j++;
             }
             // whitespace-only?
-            if (i > 0 && i == [val length]-1) {
+            if (j > 0 && j == [val length]-1) {
                 continue;
             }
-            [transformedValues addObject: (i == 0 ? val : [val substringFromIndex:i])];
+            [transformedValues addObject: (j == 0 ? val : [val substringFromIndex:j])];
         }
 
         deadbeef->pl_delete_meta (_tracks[i], skey);
@@ -472,13 +472,12 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
                 deadbeef->pl_item_unref (track);
             });
             // find decoder
-            DB_decoder_t *dec = NULL;
             DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
             for (int i = 0; decoders[i]; i++) {
                 if (!strcmp (decoders[i]->plugin.id, decoder_id)) {
-                    dec = decoders[i];
-                    if (dec->write_metadata) {
-                        dec->write_metadata (track);
+                    DB_decoder_t *d = decoders[i];
+                    if (d->write_metadata) {
+                        d->write_metadata (track);
                     }
                     break;
                 }

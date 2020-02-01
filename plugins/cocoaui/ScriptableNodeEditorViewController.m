@@ -91,7 +91,7 @@
         scriptableItem_t *node = scriptableItemCreateItemOfType(self.dataSource.scriptable, t->str);
         id<NSTableViewDataSource> ds = _dataSource;
         NSInteger cnt = [ds numberOfRowsInTableView:_nodeList];
-        NSInteger index = [_nodeList selectedRow];
+        index = [_nodeList selectedRow];
         if (index < 0) {
             index = cnt;
         }
