@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,readonly) int count;
 
 - (instancetype)init NS_UNAVAILABLE; 
-- (instancetype)initWithSelectedPlaylistItems:(ddb_playlist_t *)playlist;
+- (instancetype)initWithSelectedItemsOfPlaylist:(ddb_playlist_t *)playlist;
 
 @end
 

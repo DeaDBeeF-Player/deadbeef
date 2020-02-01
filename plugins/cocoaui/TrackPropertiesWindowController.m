@@ -189,8 +189,6 @@ extern DB_functions_t *deadbeef;
 }
 
 
-#define min(x,y) ((x)<(y)?(x):(y))
-
 // NOTE: add_field gets called once for each unique key (e.g. Artist or Album),
 // which means it will usually contain 10-20 fields
 static void

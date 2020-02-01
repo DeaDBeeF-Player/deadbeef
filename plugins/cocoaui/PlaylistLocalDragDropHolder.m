@@ -80,7 +80,7 @@ extern DB_functions_t *deadbeef;
     return (int)_playlistIdx;
 }
 
-- (instancetype)initWithSelectedPlaylistItems:(ddb_playlist_t *)playlist {
+- (instancetype)initWithSelectedItemsOfPlaylist:(ddb_playlist_t *)playlist {
     self = [super init];
     if (!self) {
         return nil;
