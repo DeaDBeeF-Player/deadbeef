@@ -43,7 +43,7 @@
 }
 
 - (void)reset {
-    DdbSearchViewController *ctl = (DdbSearchViewController *)_viewController;
+    SearchViewController *ctl = (SearchViewController *)_viewController;
     [ctl reset];
 }
 @end

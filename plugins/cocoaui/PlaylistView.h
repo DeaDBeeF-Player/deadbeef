@@ -20,12 +20,32 @@
 
     3. This notice may not be removed or altered from any source distribution.
 */
-#import "DdbWidget.h"
-#import "PlaylistView.h"
 
-@interface DdbPlaylistWidget : DdbWidget {
-    PlaylistView *_listview;
-}
+#import "DdbWidget.h"
+#import "PlaylistHeaderView.h"
+#import "PlaylistContentView.h"
+
+@interface PlaylistView : NSView
+
+@property (nonatomic,readonly) PlaylistHeaderView *headerView;
+@property (nonatomic,readonly) PlaylistContentView *contentView;
+//@property (readonly) DdbListviewGroup_t *groups;
+//@property (readonly) int grouptitle_height;
+//@property (readonly) int fullheight;
+//@property (readwrite) NSPoint lastpos;
+//@property (readwrite) int shift_sel_anchor;
 @property (weak,nonatomic) id<DdbListviewDelegate> delegate;
-@property (readonly) PlaylistView *listview;
+
+//- (void)reloadData;
+//- (void)groupCheck;
+//- (int)pickPoint:(int)y group:(DdbListviewGroup_t **)group groupIndex:(int *)group_idx index:(int *)global_idx;
+//- (void)drawRow:(int)idx;
+//- (void)drawGroup:(int)idx;
+//- (void)listMouseUp:(NSEvent *)event;
+//- (void)listMouseDragged:(NSEvent *)event;
+//- (void)setCursor:(int)cursor noscroll:(BOOL)noscroll;
+//- (void)scrollToRowWithIndex:(int)idx;
+//- (void)setVScroll:(int)scroll;
+- (void)updateContentFrame;
+//- (void)cleanup;
 @end

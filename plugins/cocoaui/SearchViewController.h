@@ -21,13 +21,13 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 #import <Cocoa/Cocoa.h>
-#import "DdbListview.h"
-#import "DdbPlaylistViewController.h"
+#import "PlaylistView.h"
+#import "PlaylistViewController.h"
 
-@interface DdbSearchViewController : DdbPlaylistViewController
+@interface SearchViewController : PlaylistViewController
 
 @property (unsafe_unretained) IBOutlet NSTextField *entry;
-@property (unsafe_unretained) IBOutlet DdbListview *listview;
+@property (unsafe_unretained) IBOutlet PlaylistView *listview;
 
 - (void)reset;
 @end

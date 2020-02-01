@@ -21,10 +21,10 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 #import "DdbWidget.h"
-#import "DdbListview.h"
+#import "PlaylistView.h"
 
 @interface DdbSearchWidget : DdbWidget {
 }
 @property (weak,nonatomic) id<DdbListviewDelegate> delegate;
-@property (unsafe_unretained) IBOutlet DdbListview *listview;
+@property (unsafe_unretained) IBOutlet PlaylistView *listview;
 @end

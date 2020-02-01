@@ -20,13 +20,13 @@
 
     3. This notice may not be removed or altered from any source distribution.
 */
-#import "DdbSearchViewController.h"
+#import "SearchViewController.h"
 #import "DdbSearchWidget.h"
 #include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
 
-@implementation DdbSearchViewController
+@implementation SearchViewController
 
 #define DEFAULT_COLUMNS "[{\"title\":\"Artist - Album\", \"format\":\"$if(%album artist%,%album artist%,Unknown Artist)[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track number%\", \"size\":\"50\"}, {\"title\":\"Track Title\", \"format\":\"%title%\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
 

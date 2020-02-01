@@ -1228,8 +1228,8 @@
 		2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D713FFC1A5D7D5900EFF139 /* playqueue.h */; };
 		2D71C26A1DC88E5C00247CEF /* ScriptableTableDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D71C2681DC88E5C00247CEF /* ScriptableTableDataSource.h */; };
 		2D71C26B1DC88E5C00247CEF /* ScriptableTableDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D71C2691DC88E5C00247CEF /* ScriptableTableDataSource.m */; };
-		2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */; };
-		2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */; };
+		2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D72047419DF2971000989C6 /* PlaylistViewController.h */; };
+		2D72047719DF2971000989C6 /* PlaylistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D72047519DF2971000989C6 /* PlaylistViewController.m */; };
 		2D72AE5E1CFE1F7500103AAE /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D72AE5D1CFE1F7500103AAE /* ImageIO.framework */; };
 		2D74926A1CCFF9AE00D3A59E /* ffap.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32F9EA19A63441000FFDE0 /* ffap.dylib */; };
 		2D74926B1CCFF9AE00D3A59E /* mp3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; };
@@ -1311,8 +1311,8 @@
 		2D828E5419E5679800EE874F /* Search.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D828E5319E5679800EE874F /* Search.xib */; };
 		2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D828E5519E567C800EE874F /* DdbSearchWidget.h */; };
 		2D828E5819E567C800EE874F /* DdbSearchWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D828E5619E567C800EE874F /* DdbSearchWidget.m */; };
-		2D828E5B19E56B4D00EE874F /* DdbSearchViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D828E5919E56B4D00EE874F /* DdbSearchViewController.h */; };
-		2D828E5C19E56B4D00EE874F /* DdbSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D828E5A19E56B4D00EE874F /* DdbSearchViewController.m */; };
+		2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D828E5919E56B4D00EE874F /* SearchViewController.h */; };
+		2D828E5C19E56B4D00EE874F /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D828E5A19E56B4D00EE874F /* SearchViewController.m */; };
 		2D86AFC41C358CDD0018C174 /* dial_conf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D86AFBF1C358CDD0018C174 /* dial_conf.c */; };
 		2D86AFC51C358CDD0018C174 /* dial_finf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D86AFC01C358CDD0018C174 /* dial_finf.c */; };
 		2D86AFC61C358CDD0018C174 /* dial_tsel.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D86AFC11C358CDD0018C174 /* dial_tsel.c */; };
@@ -1597,6 +1597,12 @@
 		2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */; };
 		2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */; };
 		2DD877A31C370C7100CC94FB /* ferror68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD877A21C370C7100CC94FB /* ferror68.c */; };
+		2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDBA24B23E5E66D00051320 /* PlaylistContentView.h */; };
+		2DDBA24E23E5E66D00051320 /* PlaylistContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDBA24C23E5E66D00051320 /* PlaylistContentView.m */; };
+		2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDBA25E23E5EA3800051320 /* PlaylistLocalDragDropHolder.h */; };
+		2DDBA26123E5EA3800051320 /* PlaylistLocalDragDropHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDBA25F23E5EA3800051320 /* PlaylistLocalDragDropHolder.m */; };
+		2DDBA26423E5F14A00051320 /* PlaylistHeaderView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDBA26223E5F14A00051320 /* PlaylistHeaderView.h */; };
+		2DDBA26523E5F14A00051320 /* PlaylistHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDBA26323E5F14A00051320 /* PlaylistHeaderView.m */; };
 		2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */; };
 		2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */; };
 		2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */; };
@@ -1711,8 +1717,8 @@
 		2DEBA1D223E207A3000E4135 /* EqualizerWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEBA1CF23E207A3000E4135 /* EqualizerWindowController.h */; };
 		2DEBA1D323E207A3000E4135 /* EqualizerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBA1D023E207A3000E4135 /* EqualizerWindowController.m */; };
 		2DEBA1D423E207A3000E4135 /* EqualizerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DEBA1D123E207A3000E4135 /* EqualizerWindowController.xib */; };
-		2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEF494219C4DB4100B718C1 /* DdbListview.h */; };
-		2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF494319C4DB4100B718C1 /* DdbListview.m */; };
+		2DEF494419C4DB4100B718C1 /* PlaylistView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEF494219C4DB4100B718C1 /* PlaylistView.h */; };
+		2DEF494519C4DB4100B718C1 /* PlaylistView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF494319C4DB4100B718C1 /* PlaylistView.m */; };
 		2DF16CB61DCB62FD007D7F05 /* supereq.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DF16CB01DCB62D9007D7F05 /* supereq.dylib */; };
 		2DF16CBC1DCB6335007D7F05 /* Equ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DF16CB71DCB6335007D7F05 /* Equ.cpp */; };
 		2DF16CBD1DCB6335007D7F05 /* Equ.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF16CB81DCB6335007D7F05 /* Equ.h */; };
@@ -4358,8 +4364,8 @@
 		2D713FFC1A5D7D5900EFF139 /* playqueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playqueue.h; sourceTree = "<group>"; };
 		2D71C2681DC88E5C00247CEF /* ScriptableTableDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptableTableDataSource.h; sourceTree = "<group>"; };
 		2D71C2691DC88E5C00247CEF /* ScriptableTableDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScriptableTableDataSource.m; sourceTree = "<group>"; };
-		2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbPlaylistViewController.h; sourceTree = "<group>"; };
-		2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbPlaylistViewController.m; sourceTree = "<group>"; };
+		2D72047419DF2971000989C6 /* PlaylistViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaylistViewController.h; sourceTree = "<group>"; };
+		2D72047519DF2971000989C6 /* PlaylistViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaylistViewController.m; sourceTree = "<group>"; };
 		2D72AE5D1CFE1F7500103AAE /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		2D7492861CCFFE7700D3A59E /* TestData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TestData; sourceTree = "<group>"; };
 		2D7C37EC1B2C40520029DE0A /* libogglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libogglib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4368,8 +4374,8 @@
 		2D828E5319E5679800EE874F /* Search.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Search.xib; sourceTree = "<group>"; };
 		2D828E5519E567C800EE874F /* DdbSearchWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbSearchWidget.h; path = widgets/DdbSearchWidget.h; sourceTree = "<group>"; };
 		2D828E5619E567C800EE874F /* DdbSearchWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbSearchWidget.m; path = widgets/DdbSearchWidget.m; sourceTree = "<group>"; };
-		2D828E5919E56B4D00EE874F /* DdbSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbSearchViewController.h; sourceTree = "<group>"; };
-		2D828E5A19E56B4D00EE874F /* DdbSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbSearchViewController.m; sourceTree = "<group>"; };
+		2D828E5919E56B4D00EE874F /* SearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchViewController.h; sourceTree = "<group>"; };
+		2D828E5A19E56B4D00EE874F /* SearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchViewController.m; sourceTree = "<group>"; };
 		2D86AFBF1C358CDD0018C174 /* dial_conf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dial_conf.c; path = ../libsc68/dial68/dial_conf.c; sourceTree = "<group>"; };
 		2D86AFC01C358CDD0018C174 /* dial_finf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dial_finf.c; path = ../libsc68/dial68/dial_finf.c; sourceTree = "<group>"; };
 		2D86AFC11C358CDD0018C174 /* dial_tsel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dial_tsel.c; path = ../libsc68/dial68/dial_tsel.c; sourceTree = "<group>"; };
@@ -4733,6 +4739,12 @@
 		2DD877A21C370C7100CC94FB /* ferror68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ferror68.c; sourceTree = "<group>"; };
 		2DD9EF0419A5089F00189344 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoautil.h; sourceTree = "<group>"; };
 		2DD9EF0519A5089F00189344 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoautil.m; sourceTree = "<group>"; };
+		2DDBA24B23E5E66D00051320 /* PlaylistContentView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistContentView.h; sourceTree = "<group>"; };
+		2DDBA24C23E5E66D00051320 /* PlaylistContentView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistContentView.m; sourceTree = "<group>"; };
+		2DDBA25E23E5EA3800051320 /* PlaylistLocalDragDropHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistLocalDragDropHolder.h; sourceTree = "<group>"; };
+		2DDBA25F23E5EA3800051320 /* PlaylistLocalDragDropHolder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistLocalDragDropHolder.m; sourceTree = "<group>"; };
+		2DDBA26223E5F14A00051320 /* PlaylistHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistHeaderView.h; sourceTree = "<group>"; };
+		2DDBA26323E5F14A00051320 /* PlaylistHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistHeaderView.m; sourceTree = "<group>"; };
 		2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConverterWindowController.h; sourceTree = "<group>"; };
 		2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConverterWindowController.m; sourceTree = "<group>"; };
 		2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbWidget.h; path = widgets/DdbWidget.h; sourceTree = "<group>"; };
@@ -4838,8 +4850,8 @@
 		2DEBA1CF23E207A3000E4135 /* EqualizerWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EqualizerWindowController.h; sourceTree = "<group>"; };
 		2DEBA1D023E207A3000E4135 /* EqualizerWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EqualizerWindowController.m; sourceTree = "<group>"; };
 		2DEBA1D123E207A3000E4135 /* EqualizerWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EqualizerWindowController.xib; sourceTree = "<group>"; };
-		2DEF494219C4DB4100B718C1 /* DdbListview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbListview.h; sourceTree = "<group>"; };
-		2DEF494319C4DB4100B718C1 /* DdbListview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbListview.m; sourceTree = "<group>"; };
+		2DEF494219C4DB4100B718C1 /* PlaylistView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaylistView.h; sourceTree = "<group>"; };
+		2DEF494319C4DB4100B718C1 /* PlaylistView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaylistView.m; sourceTree = "<group>"; };
 		2DF16CB01DCB62D9007D7F05 /* supereq.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = supereq.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DF16CB71DCB6335007D7F05 /* Equ.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Equ.cpp; path = plugins/supereq/Equ.cpp; sourceTree = "<group>"; };
 		2DF16CB81DCB6335007D7F05 /* Equ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Equ.h; path = plugins/supereq/Equ.h; sourceTree = "<group>"; };
@@ -8219,6 +8231,25 @@
 			path = ../icons/1024x1024;
 			sourceTree = "<group>";
 		};
+		2DDBA26623E5FBA000051320 /* Playlist */ = {
+			isa = PBXGroup;
+			children = (
+				2DEF494219C4DB4100B718C1 /* PlaylistView.h */,
+				2DEF494319C4DB4100B718C1 /* PlaylistView.m */,
+				2DDBA24B23E5E66D00051320 /* PlaylistContentView.h */,
+				2DDBA24C23E5E66D00051320 /* PlaylistContentView.m */,
+				2DDBA26223E5F14A00051320 /* PlaylistHeaderView.h */,
+				2DDBA26323E5F14A00051320 /* PlaylistHeaderView.m */,
+				2D72047419DF2971000989C6 /* PlaylistViewController.h */,
+				2D72047519DF2971000989C6 /* PlaylistViewController.m */,
+				2DDBA25E23E5EA3800051320 /* PlaylistLocalDragDropHolder.h */,
+				2DDBA25F23E5EA3800051320 /* PlaylistLocalDragDropHolder.m */,
+				2D828E5919E56B4D00EE874F /* SearchViewController.h */,
+				2D828E5A19E56B4D00EE874F /* SearchViewController.m */,
+			);
+			name = Playlist;
+			sourceTree = "<group>";
+		};
 		2DE1D3DF19B11286009B5BC6 /* widgets */ = {
 			isa = PBXGroup;
 			children = (
@@ -9348,6 +9379,7 @@
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
+				2DDBA26623E5FBA000051320 /* Playlist */,
 				2DA3720B2370B7C3005E64A3 /* NowPlayable */,
 				2D46220D226DBA2A003997E9 /* Utility */,
 				2DD5262E2062F1DF002609C5 /* help-cocoa.txt */,
@@ -9359,12 +9391,6 @@
 				2D061F7B19E9685E00CE6C29 /* DdbShared.h */,
 				4DA72BD91838EAAB00A98C62 /* AppDelegate.h */,
 				4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */,
-				2DEF494219C4DB4100B718C1 /* DdbListview.h */,
-				2DEF494319C4DB4100B718C1 /* DdbListview.m */,
-				2D72047419DF2971000989C6 /* DdbPlaylistViewController.h */,
-				2D72047519DF2971000989C6 /* DdbPlaylistViewController.m */,
-				2D828E5919E56B4D00EE874F /* DdbSearchViewController.h */,
-				2D828E5A19E56B4D00EE874F /* DdbSearchViewController.m */,
 				2D524C071B245AE00018C4FA /* DdbTitleFormattingHelpButton.h */,
 				2D524C081B245AE00018C4FA /* DdbTitleFormattingHelpButton.m */,
 				2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */,
@@ -10829,9 +10855,11 @@
 				4DC96E701E4CC9670093CFD3 /* dsp.h in Headers */,
 				2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */,
 				2DF55C3F2270FCB9002C44DC /* ScriptableNodeEditorViewController.h in Headers */,
+				2DDBA26423E5F14A00051320 /* PlaylistHeaderView.h in Headers */,
+				2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
 				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
-				2DEF494419C4DB4100B718C1 /* DdbListview.h in Headers */,
+				2DEF494419C4DB4100B718C1 /* PlaylistView.h in Headers */,
 				4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */,
 				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
 				2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */,
@@ -10858,18 +10886,19 @@
 				2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */,
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
 				2DF55C432270FF7E002C44DC /* ScriptablePropertySheetDataSource.h in Headers */,
-				2D72047619DF2971000989C6 /* DdbPlaylistViewController.h in Headers */,
+				2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
 				2D0A6B1B237718DA00252E6D /* playmodes.h in Headers */,
 				2D06B39D19D056BC0041BE86 /* DdbPlaylistWidget.h in Headers */,
 				2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */,
-				2D828E5B19E56B4D00EE874F /* DdbSearchViewController.h in Headers */,
+				2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */,
 				2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */,
 				2D49857F1D5CF13F00E4D985 /* LogWindowController.h in Headers */,
 				2D98613E226C814100BAACB1 /* PropertySheetViewController.h in Headers */,
 				2D642EB01AE9152E00FC1F7B /* sort.h in Headers */,
 				2D986142226C816000BAACB1 /* BrowseButton.h in Headers */,
+				2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13915,13 +13944,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
-				2DEF494519C4DB4100B718C1 /* DdbListview.m in Sources */,
+				2DEF494519C4DB4100B718C1 /* PlaylistView.m in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
 				2DF55C402270FCB9002C44DC /* ScriptableNodeEditorViewController.m in Sources */,
 				2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */,
 				2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */,
 				2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */,
 				2D46221E226DBA57003997E9 /* FlippedClipView.m in Sources */,
+				2DDBA26523E5F14A00051320 /* PlaylistHeaderView.m in Sources */,
 				2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */,
 				2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
@@ -13940,17 +13970,19 @@
 				2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */,
 				2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */,
 				2D9C0C26238DC2C100CE8C10 /* GroupByCustomWindowController.m in Sources */,
-				2D828E5C19E56B4D00EE874F /* DdbSearchViewController.m in Sources */,
+				2D828E5C19E56B4D00EE874F /* SearchViewController.m in Sources */,
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
 				2D71C26B1DC88E5C00247CEF /* ScriptableTableDataSource.m in Sources */,
 				2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */,
+				2DDBA26123E5EA3800051320 /* PlaylistLocalDragDropHolder.m in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
 				2DF55C442270FF7E002C44DC /* ScriptablePropertySheetDataSource.m in Sources */,
 				2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */,
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,
 				2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */,
 				2D828E5819E567C800EE874F /* DdbSearchWidget.m in Sources */,
-				2D72047719DF2971000989C6 /* DdbPlaylistViewController.m in Sources */,
+				2DDBA24E23E5E66D00051320 /* PlaylistContentView.m in Sources */,
+				2D72047719DF2971000989C6 /* PlaylistViewController.m in Sources */,
 				2D54915822B1711E000FE7E3 /* HelpWindowController.m in Sources */,
 				2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */,
 				2D986143226C816000BAACB1 /* BrowseButton.m in Sources */,

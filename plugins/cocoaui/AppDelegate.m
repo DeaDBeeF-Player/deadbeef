@@ -24,7 +24,7 @@
 #import "AppDelegate.h"
 #import "dispatch/dispatch.h"
 #import "DdbWidgetManager.h"
-#import "DdbPlaylistViewController.h"
+#import "PlaylistViewController.h"
 #import "ReplayGainScannerController.h"
 #import "DdbShared.h"
 #import "NowPlayable.h"
