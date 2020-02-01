@@ -66,7 +66,14 @@ static int grouptitleheight = 22;
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender {
 
     _draggingInView = YES;
-    return NSDragOperationCopy;
+
+    NSUInteger modifiers = (NSEvent.modifierFlags & NSEventModifierFlagDeviceIndependentFlagsMask);
+
+    if (modifiers == NSEventModifierFlagOption)   {
+        return NSDragOperationCopy;
+    }
+
+    return NSDragOperationMove;
 }
 
 - (BOOL)wantsPeriodicDraggingUpdates {
@@ -79,7 +86,13 @@ static int grouptitleheight = 22;
     _lastDragLocation = [self convertPoint:[sender draggingLocation] fromView:nil];
     self.needsDisplay = YES;
 
-    return NSDragOperationCopy;
+    NSUInteger modifiers = (NSEvent.modifierFlags & NSEventModifierFlagDeviceIndependentFlagsMask);
+
+    if (modifiers == NSEventModifierFlagOption)   {
+        return NSDragOperationCopy;
+    }
+
+    return NSDragOperationMove;
 }
 
 - (void)draggingExited:(id<NSDraggingInfo>)sender {
@@ -120,7 +133,8 @@ static int grouptitleheight = 22;
 
         int length = holder.count;
 
-        [delegate dropItems:from_playlist before:row indices:indices count:length copy:NO];
+        NSDragOperation op = sender.draggingSourceOperationMask;
+        [delegate dropItems:(int)from_playlist before:row indices:indices count:length copy:op==NSDragOperationCopy];
         free(indices);
     }
     else if ( [[pboard types] containsObject:NSFilenamesPboardType] ) {
@@ -1016,7 +1030,7 @@ static int grouptitleheight = 22;
 - (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context {
     switch(context) {
         case NSDraggingContextWithinApplication:
-            return NSDragOperationCopy | NSDragOperationMove | NSDragOperationDelete;
+            return NSDragOperationCopy | NSDragOperationMove;
         case NSDraggingContextOutsideApplication:
             return NSDragOperationNone; // FIXME
     }
