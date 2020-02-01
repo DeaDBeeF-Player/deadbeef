@@ -227,7 +227,7 @@ extern DB_functions_t *deadbeef;
     [color getRed:&r green:&g blue:&b alpha:&a];
 
     uint8_t rgba[] = {
-        r*255,g*255,b*255,a*255
+        (uint8_t)(r*255),(uint8_t)(g*255),(uint8_t)(b*255),(uint8_t)(a*255)
     };
 
     int type = -1;
@@ -792,7 +792,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
             nextGroupCoord:(int)grp_next_y
                       xPos:(int)x
                       yPos:(int)y
-                 viewportY:(int)viewportY
+                 viewportY:(CGFloat)viewportY
                      width:(int)width
                     height:(int)height {
     DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)self.view;
@@ -815,10 +815,10 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     }
 
     int art_x = x + ART_PADDING_HORZ;
-    int min_y = (pinned ? viewportY+listview.contentView.grouptitle_height : y) + ART_PADDING_VERT;
-    int max_y = grp_next_y;
+    CGFloat min_y = (pinned ? viewportY+listview.contentView.grouptitle_height : y) + ART_PADDING_VERT;
+    CGFloat max_y = grp_next_y;
 
-    int ypos = min_y;
+    CGFloat ypos = min_y;
     if (min_y + art_width + ART_PADDING_VERT >= max_y) {
         ypos = max_y - art_width - ART_PADDING_VERT;
     }
@@ -1323,10 +1323,10 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     }
 }
 
-- (void)scrollChanged:(int)pos {
+- (void)scrollChanged:(CGFloat)pos {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
-        deadbeef->plt_set_scroll (plt, pos);
+        deadbeef->plt_set_scroll (plt, (int)pos);
         deadbeef->plt_unref (plt);
     }
 }

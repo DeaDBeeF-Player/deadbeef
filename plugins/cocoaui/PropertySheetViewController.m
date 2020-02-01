@@ -81,10 +81,10 @@
         have_settings = NO;
     }
 
-    NSInteger label_width = _labelFixedWidth;
+    CGFloat label_width = _labelFixedWidth;
     int padding = 4;
-    NSInteger unit_h = _contentFontSize + 11;
-    NSInteger h = _settingsData.nprops * (unit_h + _unitSpacing) + _topMargin;
+    CGFloat unit_h = _contentFontSize + 11;
+    CGFloat h = _settingsData.nprops * (unit_h + _unitSpacing) + _topMargin;
     NSSize sz;
 
     self.calculatedSize = NSMakeSize(NSWidth(self.view.frame), h);
@@ -168,10 +168,10 @@
     int svItemCount = 0;
     BOOL vert = NO;
 
-    NSInteger topLevelY = h - (unit_h + _unitSpacing) - _topMargin;
+    CGFloat topLevelY = h - (unit_h + _unitSpacing) - _topMargin;
     for (int i = 0; i < _settingsData.nprops; i++) {
 
-        int calculated_label_w = 0;
+        CGFloat calculated_label_w = 0;
 
         if (_settingsData.props[i].type == PROP_HBOX) {
             // FIXME: disabled h/vboxes inside of scrollviews to prevent breaking plugin configuration
@@ -242,7 +242,7 @@
             continue;
         }
 
-        NSInteger y = topLevelY;
+        CGFloat y = topLevelY;
         if (svItemCount) {
             view = [[NSView alloc] initWithFrame:NSMakeRect(0,0,50,200)];
             [sv addView:view inGravity:NSStackViewGravityLeading];
@@ -311,7 +311,7 @@
             case PROP_FILE:
             case PROP_DIR:
             {
-                int w = sz.width-label_width - padding*3;
+                CGFloat w = sz.width-label_width - padding*3;
                 if (_settingsData.props[i].type == PROP_FILE || _settingsData.props[i].type == PROP_DIR) {
                     w -= 12+padding;
                 }
@@ -366,7 +366,7 @@
             }
             case PROP_SLIDER:
             {
-                int w = sz.width-label_width - padding*3;
+                CGFloat w = sz.width-label_width - padding*3;
                 NSRect frame;
                 if (!vert) {
                     frame = NSMakeRect(label_width+padding*2, y+3, w - _sliderLabelWidth-8, unit_h-3);

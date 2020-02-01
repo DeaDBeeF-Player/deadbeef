@@ -358,7 +358,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
 
             if (parg < pend) {
                 char *end;
-                const int pct = strtol (parg, &end, 10);
+                const int pct = (int)strtol (parg, &end, 10);
                 if (!strcasecmp(end, "db")) {
                     deadbeef->volume_set_db (pct);
                 } else {
@@ -510,7 +510,7 @@ int db_socket_set_unix (struct sockaddr_un *remote, int *len) {
         exit(1);
     }
 
-    memset (remote, 0, sizeof (remote));
+    memset (remote, 0, sizeof (struct sockaddr_un));
     remote->sun_family = AF_UNIX;
 
 #if USE_ABSTRACT_SOCKET_NAME
@@ -519,7 +519,7 @@ int db_socket_set_unix (struct sockaddr_un *remote, int *len) {
 #else
     char *socketdirenv = getenv ("DDB_SOCKET_DIR");
     snprintf (remote->sun_path, sizeof (remote->sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
-    *len = offsetof(struct sockaddr_un, sun_path) + strlen (remote->sun_path);
+    *len = offsetof(struct sockaddr_un, sun_path) + (int)strlen (remote->sun_path);
 #endif
     return s;
 }
@@ -555,7 +555,7 @@ server_start (void) {
     if (unlink(srv_local.sun_path) < 0) {
         perror ("INFO: unlink socket");
     }
-    len = offsetof(struct sockaddr_un, sun_path) + strlen (srv_local.sun_path);
+    len = offsetof(struct sockaddr_un, sun_path) + (int)strlen (srv_local.sun_path);
 #endif
 
     int flags;

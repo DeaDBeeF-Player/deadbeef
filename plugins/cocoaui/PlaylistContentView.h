@@ -55,7 +55,7 @@ typedef struct DdbListviewGroup_s {
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect;
 - (void)drawCell:(int)rowIdx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused;
 - (void)drawGroupTitle:(DdbListviewRow_t)row inRect:(NSRect)rect;
-- (void)drawAlbumArtForGroup:(DdbListviewGroup_t *)group groupIndex:(int)groupIndex inColumn:(DdbListviewCol_t)col isPinnedGroup:(BOOL)pinned nextGroupCoord:(int)grp_next_y xPos:(int)x yPos:(int)y viewportY:(int)viewportY width:(int)width height:(int)height;
+- (void)drawAlbumArtForGroup:(DdbListviewGroup_t *)group groupIndex:(int)groupIndex inColumn:(DdbListviewCol_t)col isPinnedGroup:(BOOL)pinned nextGroupCoord:(int)grp_next_y xPos:(int)x yPos:(int)y viewportY:(CGFloat)viewportY width:(int)width height:(int)height;
 - (int)modificationIdx;
 - (void)selectionChanged:(DdbListviewRow_t)row;
 - (int)selectedCount;
@@ -64,7 +64,7 @@ typedef struct DdbListviewGroup_s {
 - (void)sortColumn:(DdbListviewCol_t)column withOrder:(int)order;
 - (void)dropItems:(int)from_playlist before:(DdbListviewRow_t)before indices:(uint32_t *)indices count:(int)count copy:(BOOL)copy;
 - (void)externalDropItems:(NSArray *)paths after:(DdbListviewRow_t)after;
-- (void)scrollChanged:(int)scrollpos;
+- (void)scrollChanged:(CGFloat)scrollpos;
 @end
 
 @interface PlaylistContentView : NSView

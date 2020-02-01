@@ -186,7 +186,7 @@ static char sb_text[512];
         if (dur >= 0) {
             float time = [(NSSlider*)sender floatValue] / 100.f;
             time *= dur;
-            deadbeef->sendmessage (DB_EV_SEEK, 0, time * 1000, 0);
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(time * 1000), 0);
         }
         deadbeef->pl_item_unref (trk);
     }
@@ -203,7 +203,7 @@ static char sb_text[512];
     }
 
     deadbeef->volume_set_db (volume);
-    int db = volume;
+    int db = (int)volume;
     sender.toolTip = [NSString stringWithFormat:@"%s%ddB", db < 0 ? "" : "+", db];
 }
 
@@ -238,7 +238,7 @@ static char sb_text[512];
 
 - (void)updateVolumeBar {
     float range = -deadbeef->volume_get_min_db ();
-    int vol = (deadbeef->volume_get_db () + range) / range * 100;
+    float vol = (deadbeef->volume_get_db () + range) / range * 100;
     [self volumeBar].floatValue = vol;
 }
 

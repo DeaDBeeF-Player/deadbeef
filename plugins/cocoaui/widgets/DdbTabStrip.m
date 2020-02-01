@@ -159,7 +159,7 @@ plt_get_title_wrapper (int plt) {
     int selected = deadbeef->plt_get_curr_idx ();
     NSString *title = plt_get_title_wrapper (tab);
     NSSize sz = [title sizeWithAttributes:(tab == selected ? self.titleAttributesSelected : self.titleAttributes)];
-    int w = sz.width;
+    int w = (int)sz.width;
     w += text_left_padding + text_right_padding;
     if (w < min_tab_size) {
         w = min_tab_size;

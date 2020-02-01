@@ -29,7 +29,7 @@ static int grouptitleheight = 22;
 @property (nonatomic) NSPoint lastpos;
 
 @property (nonatomic) BOOL areaselect;
-@property (nonatomic) int areaselect_y;
+@property (nonatomic) CGFloat areaselect_y;
 @property (nonatomic) int area_selection_start;
 @property (nonatomic) int area_selection_end;
 
@@ -201,7 +201,7 @@ static int grouptitleheight = 22;
                  isPinnedGroup:(BOOL)isPinnedGroup
                 nextGroupCoord:(int)grp_next_y
                           yPos:(int)y
-                     viewportY:(int)viewportY
+                     viewportY:(CGFloat)viewportY
                     clipRegion:(NSRect)clip {
     int x = 0;
     id<DdbListviewDelegate> delegate = self.delegate;
@@ -234,8 +234,8 @@ static int grouptitleheight = 22;
 
     DdbListviewGroup_t *grp = [self groups];
 
-    int clip_y = dirtyRect.origin.y;
-    int clip_h = dirtyRect.size.height;
+    CGFloat clip_y = dirtyRect.origin.y;
+    CGFloat clip_h = dirtyRect.size.height;
 
     // find 1st group
     int idx = 0;
@@ -828,7 +828,7 @@ static int grouptitleheight = 22;
     _area_selection_end = sel;
 }
 
-- (int)pickPoint:(int)y group:(DdbListviewGroup_t **)group groupIndex:(int *)group_idx index:(int *)global_idx {
+- (int)pickPoint:(CGFloat)y group:(DdbListviewGroup_t **)group groupIndex:(int *)group_idx index:(int *)global_idx {
     int idx = 0;
     int grp_y = 0;
     int gidx = 0;
@@ -844,11 +844,11 @@ static int grouptitleheight = 22;
                 *global_idx = idx;
             }
             else if (y >= _grouptitle_height + grp->num_items * rowheight) {
-                *group_idx = (y - _grouptitle_height) / rowheight;
+                *group_idx = (int)((y - _grouptitle_height) / rowheight);
                 *global_idx = -1;
             }
             else {
-                *group_idx = (y - _grouptitle_height) / rowheight;
+                *group_idx = (int)((y - _grouptitle_height) / rowheight);
                 *global_idx = idx + *group_idx;
             }
             return 0;
@@ -1187,8 +1187,8 @@ static int grouptitleheight = 22;
 - (BOOL)setScrollForPos:(int)pos {
     NSScrollView *sv = [self enclosingScrollView];
     NSRect vis = [sv documentVisibleRect];
-    int scrollpos = vis.origin.y;
-    int newscroll = scrollpos;
+    CGFloat scrollpos = vis.origin.y;
+    CGFloat newscroll = scrollpos;
 
     if (![_delegate pinGroups] && pos < scrollpos) {
         newscroll = pos;

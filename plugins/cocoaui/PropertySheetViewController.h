@@ -23,8 +23,8 @@
 @property (weak,nonatomic) IBOutlet id<PropertySheetDataSource> dataSource;
 @property (weak) IBOutlet id item;
 
-@property NSInteger labelFontSize;
-@property NSInteger contentFontSize;
+@property CGFloat labelFontSize;
+@property CGFloat contentFontSize;
 @property NSInteger topMargin;
 @property BOOL autoAlignLabels;
 @property NSInteger labelFixedWidth;

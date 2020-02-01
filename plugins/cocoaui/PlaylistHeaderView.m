@@ -12,8 +12,8 @@
 
 @interface PlaylistHeaderView() {
     int _orig_col_width;
-    int _drag_col_pos;
-    int _drag_delta;
+    CGFloat _drag_col_pos;
+    CGFloat _drag_delta;
     DdbListviewCol_t _dragging;
     DdbListviewCol_t _sizing;
     NSPoint _dragPt;
@@ -54,7 +54,7 @@
 
     id <DdbListviewDelegate> delegate = [self.listview delegate];
 
-    int x = -rc.origin.x;
+    CGFloat x = -rc.origin.x;
     for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
 
@@ -73,7 +73,7 @@
     for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
 
-        int cx = x;
+        CGFloat cx = x;
         if (_dragging == col) {
             cx = _drag_col_pos + _drag_delta;
             NSRect colRect = NSMakeRect(cx, 1, w, self.frame.size.height-2);
@@ -101,7 +101,7 @@
     id <DdbListviewDelegate> delegate = [self.listview delegate];
     NSScrollView *sv = [self.listview.contentView enclosingScrollView];
     NSRect rc = [sv documentVisibleRect];
-    int x = -rc.origin.x;
+    CGFloat x = -rc.origin.x;
     int idx = 0;
     NSPoint pt = [self convertPoint:[event locationInWindow] fromView:self];
     for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
@@ -128,7 +128,7 @@
 
     NSPoint convPt = [self convertPoint:[theEvent locationInWindow] fromView:nil];
 
-    int x = -rc.origin.x;
+    CGFloat x = -rc.origin.x;
     id <DdbListviewDelegate> delegate = [self.listview delegate];
 
     _dragging = [delegate invalidColumn];
@@ -195,9 +195,9 @@
 
     id <DdbListviewDelegate> delegate = [self.listview delegate];
     if (_sizing != [delegate invalidColumn]) {
-        int dx = convPt.x - _dragPt.x;
+        CGFloat dx = convPt.x - _dragPt.x;
 
-        int w = _orig_col_width + dx;
+        int w = _orig_col_width + (int)dx;
         if (w < 10) {
             w = 10;
         }
@@ -205,7 +205,7 @@
             NSScrollView *sv = [self.listview.contentView enclosingScrollView];
             NSRect rc = [sv documentVisibleRect];
 
-            int scroll = -rc.origin.x;
+            CGFloat scroll = -rc.origin.x;
 
             [delegate setColumnWidth:w forColumn:_sizing];
             [self.listview updateContentFrame];
@@ -224,12 +224,12 @@
         NSScrollView *sv = [self.listview.contentView enclosingScrollView];
         NSRect rc = [sv documentVisibleRect];
 
-        int x = -rc.origin.x;
+        CGFloat x = -rc.origin.x;
 
         DdbListviewCol_t inspos = [delegate invalidColumn];
 
         // FIXME: DdbListviewCol_t is not always index -- account for this
-        int cx = _drag_col_pos + _drag_delta;
+        CGFloat cx = _drag_col_pos + _drag_delta;
         for (DdbListviewCol_t cc = [delegate firstColumn]; cc != [delegate invalidColumn]; cc = [delegate nextColumn:cc]) {
             int cw = [delegate columnWidth:cc];
 
@@ -262,7 +262,7 @@
     NSRect rc = [sv documentVisibleRect];
     NSPoint convPt = [self convertPoint:theCoord fromView:nil];
 
-    int x = -rc.origin.x;
+    CGFloat x = -rc.origin.x;
     DdbListviewCol_t col;
     for (col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
