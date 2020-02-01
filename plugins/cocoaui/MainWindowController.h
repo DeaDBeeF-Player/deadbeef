@@ -45,5 +45,6 @@
 - (void)updateVolumeBar;
 - (void)updateTitleBarConfig;
 - (void)updateTitleBar;
+
 - (void)cleanup;
 @end

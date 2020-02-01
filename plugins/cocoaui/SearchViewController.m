@@ -96,8 +96,4 @@ extern DB_functions_t *deadbeef;
     deadbeef->plt_unref (plt);
 }
 
-- (void)dealloc {
-    [self cleanup];
-}
-
 @end

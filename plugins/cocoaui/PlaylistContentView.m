@@ -58,9 +58,14 @@ static int grouptitleheight = 22;
     return self;
 }
 
-- (void)dealloc
+- (void)cleanup
 {
     [self freeGroups];
+}
+
+- (void)dealloc
+{
+    [self cleanup];
 }
 
 #pragma mark - Drag and drop

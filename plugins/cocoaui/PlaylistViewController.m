@@ -52,10 +52,6 @@ extern DB_functions_t *deadbeef;
     BOOL _pin_groups;
 }
 
-- (void)dealloc {
-    [self cleanup];
-}
-
 - (void)cleanup {
     [self clearGrouping];
 
@@ -68,6 +64,9 @@ extern DB_functions_t *deadbeef;
         deadbeef->pl_item_unref (self.playPosUpdateTrack);
         self.playPosUpdateTrack = NULL;
     }
+
+    DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
+    [view.listview.contentView cleanup];
 
     // don't wait for an automatic autorelease,
     // this would cause deadbeef's track refcount checker to run before the objects are really released

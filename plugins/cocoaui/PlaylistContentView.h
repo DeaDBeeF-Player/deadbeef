@@ -72,6 +72,8 @@ typedef struct DdbListviewGroup_s {
 @property (nonatomic, weak) id<DdbListviewDelegate> delegate;
 @property (nonatomic,readonly) int grouptitle_height;
 
+- (void)cleanup;
+
 - (void)drawRow:(int)idx;
 - (void)drawGroup:(int)idx;
 

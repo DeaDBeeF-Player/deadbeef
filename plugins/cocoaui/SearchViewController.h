@@ -30,4 +30,5 @@
 @property (unsafe_unretained) IBOutlet PlaylistView *listview;
 
 - (void)reset;
+
 @end

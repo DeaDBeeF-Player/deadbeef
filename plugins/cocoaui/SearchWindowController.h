@@ -28,6 +28,5 @@
 @property (strong) IBOutlet SearchViewController *viewController;
 
 - (void)reset;
-- (void)cleanup;
 
 @end

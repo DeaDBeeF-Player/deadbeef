@@ -45,18 +45,19 @@ extern DB_functions_t *deadbeef;
 
 @implementation MainWindowController
 
-- (void)dealloc {
-    [self cleanup];
-}
-
 - (void)cleanup {
+    // not releasing this timer explicitly causes a reference cycle
     if (_updateTimer) {
         [_updateTimer invalidate];
         _updateTimer = nil;
     }
-    [self freeTitleBarConfig];
 
-    [_playlistViewController cleanup];
+    [self.playlistViewController cleanup];
+}
+
+- (void)dealloc {
+    [self cleanup];
+    [self freeTitleBarConfig];
 }
 
 - (void)windowDidLoad {
