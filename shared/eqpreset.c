@@ -6,8 +6,25 @@
 //  Copyright © 2020 Alexey Yakovenko. All rights reserved.
 //
 
+#include <string.h>
+#include <stdlib.h>
 #include "eqpreset.h"
 #include "../deadbeef.h"
+
+extern DB_functions_t *deadbeef;
+
+static ddb_dsp_context_t *
+get_supereq (void) {
+    ddb_dsp_context_t *dsp = deadbeef->streamer_get_dsp_chain ();
+    while (dsp) {
+        if (!strcmp (dsp->plugin->plugin.id, "supereq")) {
+            return dsp;
+        }
+        dsp = dsp->next;
+    }
+
+    return NULL;
+}
 
 void
 eq_preset_save (char *fname) {
