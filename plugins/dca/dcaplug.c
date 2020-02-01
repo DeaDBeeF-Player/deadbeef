@@ -510,6 +510,8 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         info->endsample = totalsamples-1;
     }
 
+    deadbeef->pl_set_meta_int (it, ":CHANNELS", _info->fmt.channels);
+
     trace ("dca_init: nchannels: %d, samplerate: %d\n", _info->fmt.channels, _info->fmt.samplerate);
     return 0;
 }
