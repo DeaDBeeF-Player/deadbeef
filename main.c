@@ -161,7 +161,7 @@ prepare_command_line (int argc, char *argv[], int *size) {
     int seen_ddash = 0;
 
     // initial buffer limit, will expand if needed
-    int limit = 4096;
+    size_t limit = 4096;
     char *buf = (char*) malloc (limit);
 
     if (argc <= 1) {
@@ -635,7 +635,7 @@ int
 server_update (void) {
     // handle remote stuff
     int t = sizeof (srv_remote);
-    unsigned s2;
+    int s2;
     s2 = accept(srv_socket, (struct sockaddr *)&srv_remote, &t);
     if (s2 == -1 && errno != EAGAIN && errno != EWOULDBLOCK) {
         perror("accept");

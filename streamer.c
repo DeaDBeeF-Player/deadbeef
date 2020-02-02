@@ -2534,8 +2534,8 @@ streamer_get_next_track_with_direction (int dir, ddb_shuffle_t shuffle, ddb_repe
 
     // possibly need a reshuffle
     if (!next && streamer_playlist->count[PL_MAIN] != 0) {
-        int repeat = streamer_get_repeat ();
-        int shuffle = streamer_get_shuffle ();
+        ddb_repeat_t repeat = streamer_get_repeat ();
+        ddb_shuffle_t shuffle = streamer_get_shuffle ();
 
         if (repeat == DDB_REPEAT_OFF) {
             if (shuffle == DDB_SHUFFLE_ALBUMS || shuffle == DDB_SHUFFLE_TRACKS) {
