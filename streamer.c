@@ -2425,10 +2425,9 @@ play_index (int idx, int startpaused) {
 
 error:
     output->stop ();
-
-    streamer_lock();
     streamer_reset (1);
 
+    streamer_lock();
     _handle_playback_stopped ();
     stream_track (NULL, 0);
     if (plt) {
@@ -2545,13 +2544,13 @@ streamer_get_next_track_with_direction (int dir, ddb_shuffle_t shuffle, ddb_repe
 static void
 play_next (int dir, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
     DB_output_t *output = plug_get_output ();
-    streamer_reset(1);
 
     playItem_t *next = streamer_get_next_track_with_direction (dir, shuffle, repeat);
 
     if (!next) {
         streamer_set_last_played (NULL);
         output->stop ();
+        streamer_reset(1);
         _handle_playback_stopped ();
         return;
     }
