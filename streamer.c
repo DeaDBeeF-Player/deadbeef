@@ -2414,9 +2414,27 @@ play_index (int idx, int startpaused) {
     // rebuild shuffle order
     plt_reshuffle (plt, NULL, NULL);
 
-    // This ensures that the manually triggered item becomes first in shuffle queue.
-    // It works because shufflerating is generated using rand(), which gives only numbers in the [0..RAND_MAX] range.
-    it->shufflerating = -1;
+    ddb_shuffle_t shuffle = streamer_get_shuffle ();
+    if (shuffle == DDB_SHUFFLE_ALBUMS) {
+        pl_lock ();
+        _streamer_mark_album_played_up_to (it);
+
+        // mark songs from all other albums as played
+        playItem_t *i = plt->head[PL_MAIN];
+        while (i) {
+            if (i->shufflerating != it->shufflerating) {
+                i->played = 1;
+            }
+            i = i->next[PL_MAIN];
+        }
+        pl_unlock ();
+    }
+    else {
+        // This ensures that the manually triggered item becomes first in shuffle queue.
+        // It works because shufflerating is generated using rand(), which gives only numbers in the [0..RAND_MAX] range.
+        it->shufflerating = -1;
+    }
+
     _play_track(it, startpaused);
 
     pl_item_unref(it);
