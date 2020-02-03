@@ -10,12 +10,12 @@
 #define eqpreset_h
 
 void
-eq_preset_save (char *fname);
+eq_preset_save (const char *fname);
 
 int
-eq_preset_load (char *fname, float *preamp, float values[18]);
+eq_preset_load (const char *fname, float *preamp, float values[18]);
 
 int
-eq_preset_load_fb2k (char *fname, float values[18]);
+eq_preset_load_fb2k (const char *fname, float values[18]);
 
 #endif /* eqpreset_h */

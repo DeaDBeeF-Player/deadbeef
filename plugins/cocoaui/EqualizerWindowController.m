@@ -9,6 +9,7 @@
 #import "EqualizerWindowController.h"
 #import "PropertySheetViewController.h"
 #include "deadbeef.h"
+#include "eqpreset.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -112,6 +113,7 @@ extern DB_functions_t *deadbeef;
 @property (weak) IBOutlet EqualizerView *equalizerView;
 
 @property (nonatomic) BOOL enabled;
+@property (strong) IBOutlet NSMenu *presetsMenu;
 
 @end
 
@@ -135,6 +137,45 @@ extern DB_functions_t *deadbeef;
     [self didChangeValueForKey:@"enabled"];
 }
 
+- (void)setEnabled:(BOOL)enabled {
+    ddb_dsp_context_t *eq = self.propertySheetDataSource.supereq;
+    if (!eq) {
+        return;
+    }
+
+    eq->enabled = enabled;
+}
+
+- (BOOL)enabled {
+    ddb_dsp_context_t *eq = self.propertySheetDataSource.supereq;
+    if (!eq) {
+        return NO;
+    }
+
+    return eq->enabled;
+}
+
+- (void)applyPresetWithPreamp:(float)preamp bands:(float[18])bands {
+    // apply and save config
+    ddb_dsp_context_t *eq = self.propertySheetDataSource.supereq;
+    if (!eq) {
+        return;
+    }
+
+    char str[50];
+    snprintf (str, sizeof(str), "%f", preamp);
+    eq->plugin->set_param(eq, 0, str);
+
+    for (int i = 0; i < 18; i++) {
+        snprintf (str, sizeof(str), "%f", bands[i]);
+        eq->plugin->set_param(eq, i+1, str);
+    }
+    [self.propertySheetViewController reload];
+    deadbeef->streamer_dsp_chain_save ();
+}
+
+#pragma mark - Button actions
+
 - (IBAction)zeroAllAction:(id)sender {
     for (int i = 0; i < 19; i++) {
         [self.propertySheetDataSource propertySheet:self.propertySheetViewController setValue:@"0" forKey:[NSString stringWithFormat:@"%d", i] item:nil];
@@ -154,22 +195,56 @@ extern DB_functions_t *deadbeef;
     [self.propertySheetViewController reload];
 }
 
-- (void)setEnabled:(BOOL)enabled {
-    ddb_dsp_context_t *eq = self.propertySheetDataSource.supereq;
-    if (!eq) {
-        return;
-    }
 
-    eq->enabled = enabled;
+- (IBAction)presetsButtonAction:(id)sender {
+    [NSMenu popUpContextMenu:self.presetsMenu withEvent:NSApplication.sharedApplication.currentEvent forView:sender];
 }
 
-- (BOOL)enabled {
-    ddb_dsp_context_t *eq = self.propertySheetDataSource.supereq;
-    if (!eq) {
-        return NO;
+- (IBAction)loadPresetAction:(id)sender {
+    NSOpenPanel* panel = [NSOpenPanel openPanel];
+    panel.canChooseFiles = YES;
+    panel.allowsMultipleSelection = NO;
+    panel.canChooseDirectories = NO;
+    panel.allowedFileTypes = @[@"ddbeq"];
+    if ([panel runModal] == NSModalResponseOK)
+    {
+        NSString *fileName = panel.URLs.firstObject.path;
+        float preamp;
+        float bands[18];
+        if (!eq_preset_load(fileName.UTF8String, &preamp, bands)) {
+            [self applyPresetWithPreamp:preamp bands:bands];
+        }
     }
+}
 
-    return eq->enabled;
+- (IBAction)savePresetAction:(id)sender {
+    NSSavePanel *panel = [NSSavePanel savePanel];
+    panel.title = @"Save Playlist";
+    panel.canCreateDirectories = YES;
+    panel.extensionHidden = NO;
+    panel.allowedFileTypes = @[@"ddbeq"];
+    panel.allowsOtherFileTypes = NO;
+
+    if ([panel runModal] == NSModalResponseOK) {
+        NSString *fname = panel.URL.path;
+        eq_preset_save (fname.UTF8String);
+    }
+}
+
+- (IBAction)importFoobar2000PresetAction:(id)sender {
+    NSOpenPanel* panel = [NSOpenPanel openPanel];
+    panel.canChooseFiles = YES;
+    panel.allowsMultipleSelection = NO;
+    panel.canChooseDirectories = NO;
+    panel.allowedFileTypes = @[@"feq"];
+    if ([panel runModal] == NSModalResponseOK)
+    {
+        NSString *fileName = panel.URLs.firstObject.path;
+        float bands[18];
+        if (!eq_preset_load_fb2k (fileName.UTF8String, bands)) {
+            [self applyPresetWithPreamp:0 bands:bands];
+        }
+    }
 }
 
 @end

@@ -27,7 +27,7 @@ get_supereq (void) {
 }
 
 void
-eq_preset_save (char *fname) {
+eq_preset_save (const char *fname) {
     FILE *fp = fopen (fname, "w+b");
     if (fp) {
         ddb_dsp_context_t *eq = get_supereq ();
@@ -36,11 +36,11 @@ eq_preset_save (char *fname) {
             float v;
             for (int i = 0; i < 18; i++) {
                 eq->plugin->get_param (eq, i+1, fv, sizeof (fv));
-                v = atof (fv);
+                v = (float)atof (fv);
                 fprintf (fp, "%f\n", v);
             }
             eq->plugin->get_param (eq, 0, fv, sizeof (fv));
-            v = atof (fv);
+            v = (float)atof (fv);
             fprintf (fp, "%f\n", v);
         }
         fclose (fp);
@@ -48,7 +48,7 @@ eq_preset_save (char *fname) {
 }
 
 int
-eq_preset_load (char *fname, float *preamp, float values[18]) {
+eq_preset_load (const char *fname, float *preamp, float values[18]) {
     FILE *fp = fopen (fname, "rt");
     if (fp) {
         int i = 0;
@@ -58,7 +58,7 @@ eq_preset_load (char *fname, float *preamp, float values[18]) {
             if (!out) {
                 break;
             }
-            float val = atof (tmp);
+            float val = (float)atof (tmp);
             if (i == 18) {
                 *preamp = val;
             }
@@ -76,7 +76,7 @@ eq_preset_load (char *fname, float *preamp, float values[18]) {
 }
 
 int
-eq_preset_load_fb2k (char *fname, float values[18]) {
+eq_preset_load_fb2k (const char *fname, float values[18]) {
     FILE *fp = fopen (fname, "rt");
     if (fp) {
         int i = 0;

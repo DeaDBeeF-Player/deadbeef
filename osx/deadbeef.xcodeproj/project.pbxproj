@@ -266,6 +266,7 @@
 		2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */; };
 		2D08359A1D4F4DB600A5C643 /* cdumb.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0835991D4F4DB600A5C643 /* cdumb.h */; };
 		2D0A002819C390E9006F7462 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
+		2D0A549223E8CC9500E0F978 /* eqpreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBA1BE23E203B9000E4135 /* eqpreset.c */; };
 		2D0A6B0B2376E12200252E6D /* TrackSwitchingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A6B0A2376E12200252E6D /* TrackSwitchingTests.m */; };
 		2D0A6B1B237718DA00252E6D /* playmodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A6B19237718DA00252E6D /* playmodes.h */; };
 		2D0A6B1D23771B3300252E6D /* playmodes.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A6B1A237718DA00252E6D /* playmodes.c */; };
@@ -12740,6 +12741,7 @@
 				2D01D7E61AB2219C00BCD3C4 /* vfs_stdio.c in Sources */,
 				2D01D7D91AB2219C00BCD3C4 /* messagepump.c in Sources */,
 				2D01D7D81AB2219C00BCD3C4 /* junklib.c in Sources */,
+				2D0A549223E8CC9500E0F978 /* eqpreset.c in Sources */,
 				2D01D7D31AB2219C00BCD3C4 /* escape.c in Sources */,
 				2D01D7DA1AB2219C00BCD3C4 /* metacache.c in Sources */,
 				2D01D7D41AB2219C00BCD3C4 /* conf.c in Sources */,

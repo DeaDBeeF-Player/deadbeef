@@ -9,6 +9,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="EqualizerWindowController">
             <connections>
                 <outlet property="equalizerView" destination="sWN-HO-WvC" id="FFk-aK-5Dm"/>
+                <outlet property="presetsMenu" destination="emA-sG-JlZ" id="xD4-0H-teY"/>
                 <outlet property="propertySheetViewController" destination="SAn-ps-SLr" id="XTV-PW-kAe"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
@@ -70,10 +71,13 @@
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="n9e-7C-zco">
                         <rect key="frame" x="390" y="135" width="86" height="32"/>
-                        <buttonCell key="cell" type="push" title="Presets" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="U2Y-ih-20m">
+                        <buttonCell key="cell" type="push" title="Presets" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="U2Y-ih-20m">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="presetsButtonAction:" target="-2" id="tav-7C-aBN"/>
+                        </connections>
                     </button>
                 </subviews>
                 <constraints>
@@ -104,10 +108,28 @@
                 <outlet property="view" destination="sWN-HO-WvC" id="Jpg-b5-M1g"/>
             </connections>
         </viewController>
-        <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" id="utg-e2-5Mo">
-            <rect key="frame" x="0.0" y="0.0" width="200" height="110"/>
-            <autoresizingMask key="autoresizingMask"/>
-            <point key="canvasLocation" x="-223" y="314"/>
-        </stackView>
+        <menu id="emA-sG-JlZ">
+            <items>
+                <menuItem title="Load Preset" id="H5A-Up-qff">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="loadPresetAction:" target="-2" id="uE3-j1-gvR"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Save Preset" id="7mE-m8-eHG">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="savePresetAction:" target="-2" id="AYz-jF-Zqo"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Import Foobar2000 Preset" id="Gz1-1e-Cxq">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="importFoobar2000PresetAction:" target="-2" id="SXa-ME-qRf"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="204" y="304"/>
+        </menu>
     </objects>
 </document>
