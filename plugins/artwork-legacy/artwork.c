@@ -1326,7 +1326,7 @@ id3v2_artwork (const DB_id3v2_frame_t *f, int minor_version)
 //        trace ("artwork: unsupported mime type: %s\n", data);
 //        return NULL;
 //    }
-    if (*mime_end != 3) {
+    if (*mime_end != 3 && *mime_end != 0) {
         trace ("artwork: picture type=%d\n", *mime_end);
         return NULL;
     }
