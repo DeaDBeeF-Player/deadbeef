@@ -30,8 +30,8 @@
                         <rect key="frame" x="20" y="20" width="569" height="114"/>
                     </customView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dJ6-Kn-sUc">
-                        <rect key="frame" x="18" y="144" width="61" height="18"/>
-                        <buttonCell key="cell" type="check" title="Check" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="jEW-7j-qDm">
+                        <rect key="frame" x="18" y="144" width="63" height="18"/>
+                        <buttonCell key="cell" type="check" title="Enable" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="jEW-7j-qDm">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
@@ -40,7 +40,7 @@
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vPz-Hc-ylL">
-                        <rect key="frame" x="77" y="135" width="86" height="32"/>
+                        <rect key="frame" x="79" y="135" width="86" height="32"/>
                         <buttonCell key="cell" type="push" title="Zero all" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1Z0-3S-RWc">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -50,7 +50,7 @@
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lDw-Kb-yUq">
-                        <rect key="frame" x="163" y="135" width="118" height="32"/>
+                        <rect key="frame" x="165" y="135" width="118" height="32"/>
                         <buttonCell key="cell" type="push" title="Zero preamp" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wiI-Zd-eEi">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -60,7 +60,7 @@
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eJe-Bh-MYO">
-                        <rect key="frame" x="281" y="135" width="109" height="32"/>
+                        <rect key="frame" x="283" y="135" width="109" height="32"/>
                         <buttonCell key="cell" type="push" title="Zero bands" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="8IA-ad-y1y">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -70,7 +70,7 @@
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="n9e-7C-zco">
-                        <rect key="frame" x="390" y="135" width="86" height="32"/>
+                        <rect key="frame" x="392" y="135" width="86" height="32"/>
                         <buttonCell key="cell" type="push" title="Presets" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="U2Y-ih-20m">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
