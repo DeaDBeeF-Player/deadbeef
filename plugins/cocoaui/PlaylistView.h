@@ -20,14 +20,16 @@
 
     3. This notice may not be removed or altered from any source distribution.
 */
-#import <Cocoa/Cocoa.h>
-#import "DdbListview.h"
-#import "DdbPlaylistViewController.h"
 
-@interface DdbSearchViewController : DdbPlaylistViewController
+#import "DdbWidget.h"
+#import "PlaylistHeaderView.h"
+#import "PlaylistContentView.h"
 
-@property (unsafe_unretained) IBOutlet NSTextField *entry;
-@property (unsafe_unretained) IBOutlet DdbListview *listview;
+@interface PlaylistView : NSView
 
-- (void)reset;
+@property (nonatomic,readonly) PlaylistHeaderView *headerView;
+@property (nonatomic,readonly) PlaylistContentView *contentView;
+@property (weak,nonatomic) id<DdbListviewDelegate> delegate;
+
+- (void)updateContentFrame;
 @end

@@ -97,7 +97,7 @@ get_avail_samplerates(void)
 
         avail_samplerates = malloc (sizeof (int) * num);
         for (int i = 0; i < num; i++) {
-            avail_samplerates[i] = nsrs[i].mMinimum;
+            avail_samplerates[i] = (int)nsrs[i].mMinimum;
         }
         num_avail_samplerates = num;
         free (nsrs);
@@ -136,7 +136,7 @@ ca_apply_format (void) {
     UInt32 sz;
     deadbeef->mutex_lock (mutex);
     if (req_format.mSampleRate > 0) {
-        req_format.mSampleRate = get_best_samplerate (req_format.mSampleRate, avail_samplerates, num_avail_samplerates);
+        req_format.mSampleRate = get_best_samplerate ((int)req_format.mSampleRate, avail_samplerates, num_avail_samplerates);
 
         // setting nominal samplerate doesn't work in most cases, and requires some timing trickery
 #if 0
@@ -525,7 +525,7 @@ ca_fmtchanged (AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioOb
         plugin.fmt.bps = device_format.mBitsPerChannel;
         plugin.fmt.channels = device_format.mChannelsPerFrame;
         plugin.fmt.is_float = 1;
-        plugin.fmt.samplerate = device_format.mSampleRate;
+        plugin.fmt.samplerate = (int)device_format.mSampleRate;
         plugin.fmt.channelmask = 0;
         for (int i = 0; i < plugin.fmt.channels; i++) {
             plugin.fmt.channelmask |= (1<<i);

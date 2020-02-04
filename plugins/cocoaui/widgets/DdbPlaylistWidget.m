@@ -21,7 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 #import "DdbPlaylistWidget.h"
-#import "DdbPlaylistViewController.h"
+#import "PlaylistViewController.h"
 #include "../../../deadbeef.h"
 
 extern DB_functions_t *deadbeef;
@@ -36,7 +36,7 @@ extern DB_functions_t *deadbeef;
         NSRect listFrame = frame;
         listFrame.origin.x = 0;
         listFrame.origin.y = 0;
-        _listview = [[DdbListview alloc] initWithFrame:listFrame];
+        _listview = [[PlaylistView alloc] initWithFrame:listFrame];
         _listview.needsDisplay = YES;
         _listview.autoresizingMask = NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewMinYMargin|NSViewHeightSizable|NSViewMaxYMargin;
         [self addSubview:_listview];
@@ -58,7 +58,7 @@ extern DB_functions_t *deadbeef;
 
 
 - (int)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
-    return [(DdbPlaylistViewController *)_delegate handleListviewMessage:_listview id:_id ctx:ctx p1:p1 p2:p2];
+    return [(PlaylistViewController *)_delegate handleListviewMessage:_listview id:_id ctx:ctx p1:p1 p2:p2];
 }
 
 @end

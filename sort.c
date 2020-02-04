@@ -290,11 +290,6 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
         pl_item_unref (track_under_cursor);
     }
 
-    struct timeval tm2;
-    gettimeofday (&tm2, NULL);
-    int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
-    trace ("sort time: %f seconds\n", ms / 1000.f);
-
     plt_modified (playlist);
 
     if (version == 0) {

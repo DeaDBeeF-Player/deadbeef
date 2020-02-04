@@ -224,8 +224,6 @@ convert_samples (ddb_dca_state_t *state, int flags)
 {
     sample_t *_samples = dca_samples (state->state);
 
-    int samplesize = state->info.fmt.channels * state->info.fmt.bps / 8;
-
     int n, i, c;
     n = 256;
     int16_t *dst = state->output_buffer + state->remaining * state->info.fmt.channels;
@@ -243,11 +241,11 @@ convert_samples (ddb_dca_state_t *state, int flags)
 
 // returns number of frames decoded
 static int
-dca_decode_data (ddb_dca_state_t *ddb_state, uint8_t * start, int size, int probe)
+dca_decode_data (ddb_dca_state_t *ddb_state, uint8_t * start, size_t size, int probe)
 {
     int n_decoded = 0;
     uint8_t * end = start + size;
-    int len;
+    size_t len;
 
     while (1) {
         len = end - start;
@@ -313,10 +311,9 @@ error:
 }
 
 // returns offset to DTS data in the file, or -1
-static int
+static int64_t
 dts_open_wav (DB_FILE *fp, wavfmt_t *fmt, int64_t *totalsamples) {
     char riff[4];
-    int offset = -1;
 
     if (deadbeef->fread (&riff, 1, sizeof (riff), fp) != sizeof (riff)) {
         return -1;
@@ -513,6 +510,8 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         info->endsample = totalsamples-1;
     }
 
+    deadbeef->pl_set_meta_int (it, ":CHANNELS", _info->fmt.channels);
+
     trace ("dca_init: nchannels: %d, samplerate: %d\n", _info->fmt.channels, _info->fmt.samplerate);
     return 0;
 }
@@ -537,7 +536,7 @@ dts_read (DB_fileinfo_t *_info, char *bytes, int size) {
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     if (info->endsample >= 0) {
         if (info->currentsample + size / samplesize > info->endsample) {
-            size = (info->endsample - info->currentsample + 1) * samplesize;
+            size = (int)((info->endsample - info->currentsample + 1) * samplesize);
             if (size <= 0) {
                 return 0;
             }
@@ -611,7 +610,7 @@ dts_seek_sample (DB_fileinfo_t *_info, int sample) {
     int64_t offs = info->frame_byte_size * nframe + info->offset;
     deadbeef->fseek (info->file, offs, SEEK_SET);
     info->remaining = 0;
-    info->skipsamples = sample - nframe * info->frame_length;
+    info->skipsamples = (int)(sample - nframe * info->frame_length);
 
     info->currentsample = sample;
     _info->readpos = (float)(sample - info->startsample) / _info->fmt.samplerate;
@@ -620,7 +619,6 @@ dts_seek_sample (DB_fileinfo_t *_info, int sample) {
 
 static int
 dts_seek (DB_fileinfo_t *_info, float time) {
-    ddb_dca_state_t *info = (ddb_dca_state_t *)_info;
     return dts_seek_sample (_info, time * _info->fmt.samplerate);
 }
 
@@ -639,7 +637,7 @@ dts_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int64_t totalsamples = -1;
     const char *filetype = NULL;
 
-    int offset = 0;
+    int64_t offset = 0;
     double dur = -1;
     // WAV format
     if ((offset = dts_open_wav (fp, &fmt, &totalsamples)) != -1) {

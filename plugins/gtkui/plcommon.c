@@ -167,13 +167,6 @@ create_col_info (DdbListview *listview, int id) {
     return info;
 }
 
-static void
-coverart_release (void *user_data) {
-    col_info_t *info = user_data;
-    g_object_unref(info->listview->list);
-    free(user_data);
-}
-
 void
 pl_common_free_col_info (void *data) {
     if (!data) {
@@ -193,13 +186,9 @@ pl_common_free_col_info (void *data) {
     if (info->sort_bytecode) {
         free (info->sort_bytecode);
     }
-    if (pl_common_is_album_art_column(info)) {
-        g_object_ref(info->listview->list);
-        queue_cover_callback(coverart_release, info);
-        if (info->cover_load_timeout_id) {
-            g_source_remove(info->cover_load_timeout_id);
-            info->cover_load_timeout_id = 0;
-        }
+    if (info->cover_load_timeout_id) {
+        g_source_remove(info->cover_load_timeout_id);
+        info->cover_load_timeout_id = 0;
     }
     free (info);
 }

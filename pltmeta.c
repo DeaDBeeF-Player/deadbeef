@@ -51,7 +51,6 @@ plt_add_meta (playlist_t *it, const char *key, const char *value) {
         m = m->next;
     }
     // add
-    char str[256];
     if (!value || !*value) {
         UNLOCK;
         return;
@@ -81,7 +80,7 @@ plt_append_meta (playlist_t *it, const char *key, const char *value) {
     else {
         // check for duplicate data
         const char *str = old;
-        int len;
+        size_t len;
         while (str) {
             char *next = strchr (str, '\n');
 
@@ -100,7 +99,7 @@ plt_append_meta (playlist_t *it, const char *key, const char *value) {
 
             str = next;
         }
-        int sz = strlen (old) + newlen + 2;
+        size_t sz = strlen (old) + newlen + 2;
         char out[sz];
         snprintf (out, sz, "%s\n%s", old, value);
         plt_replace_meta (it, key, out);
@@ -192,7 +191,7 @@ float
 plt_find_meta_float (playlist_t *it, const char *key, float def) {
     pl_lock ();
     const char *val = plt_find_meta (it, key);
-    float res = val ? atof (val) : def;
+    float res = val ? (float)atof (val) : def;
     pl_unlock ();
     return res;
 }

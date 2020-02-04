@@ -21,13 +21,12 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 #import <Cocoa/Cocoa.h>
-#import "DdbSearchViewController.h"
+#import "SearchViewController.h"
 
 @interface SearchWindowController : NSWindowController
 
-@property (strong) IBOutlet DdbSearchViewController *viewController;
+@property (strong) IBOutlet SearchViewController *viewController;
 
 - (void)reset;
-- (void)cleanup;
 
 @end

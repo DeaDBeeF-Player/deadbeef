@@ -17,7 +17,10 @@
  * MA 02110-1301 USA
  */
 
+#include <gtk/gtk.h>
 #include <math.h>
+#include <string.h>
+#include "support.h"
 #include "ddb_splitter.h"
 
 /**

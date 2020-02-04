@@ -119,6 +119,7 @@ int64_t mp4ff_get_track_pts_delta(mp4ff_t *f, int t, int s);
 int mp4ff_get_track_sample_size(mp4ff_t *f, int t, int s);
 #endif
 
+int32_t mp4ff_tag_delete(mp4ff_metadata_t *tags);
 int32_t mp4ff_meta_update(mp4ff_callback_t *f,const mp4ff_metadata_t * data);
 int32_t mp4ff_tag_add_field(mp4ff_metadata_t *tags, const char *item, const char *value);
 int32_t mp4ff_tag_set_field(mp4ff_metadata_t *tags, const char *item, const char *value);

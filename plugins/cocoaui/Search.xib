@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <development version="8000" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -19,25 +17,25 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="504" y="370" width="480" height="272"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
             <value key="minSize" type="size" width="480" height="272"/>
             <view key="contentView" id="mAA-dR-WF5">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <customView id="rV8-at-cOX" customClass="DdbSearchWidget">
+                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rV8-at-cOX" customClass="DdbSearchWidget">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <customView id="3rg-sN-E4j" customClass="DdbListview">
+                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3rg-sN-E4j" customClass="PlaylistView">
                                 <rect key="frame" x="0.0" y="0.0" width="480" height="245"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </customView>
-                            <textField verticalHuggingPriority="750" id="YUk-Qq-4iU">
+                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YUk-Qq-4iU">
                                 <rect key="frame" x="5" y="248" width="470" height="19"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Enter the search terms here" drawsBackground="YES" usesSingleLineMode="YES" id="dr1-ne-XQt">
-                                    <font key="font" metaFont="smallSystem"/>
+                                    <font key="font" metaFont="label" size="11"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -55,7 +53,7 @@
             </view>
             <point key="canvasLocation" x="172" y="197"/>
         </window>
-        <viewController id="W5J-RI-hQb" customClass="DdbSearchViewController">
+        <viewController id="W5J-RI-hQb" customClass="SearchViewController">
             <connections>
                 <outlet property="entry" destination="YUk-Qq-4iU" id="ZC6-xm-pei"/>
                 <outlet property="listview" destination="3rg-sN-E4j" id="38m-Lu-pcD"/>

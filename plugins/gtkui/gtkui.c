@@ -1365,6 +1365,8 @@ gtkui_mainwin_free(void) {
     deadbeef->unlisten_file_added (fileadded_listener_id);
     deadbeef->unlisten_file_add_beginend (fileadd_beginend_listener_id);
 
+    cover_art_free ();
+
     w_free ();
 
     if (refresh_timeout) {
@@ -1373,7 +1375,6 @@ gtkui_mainwin_free(void) {
     }
 
     clipboard_free_current ();
-    cover_art_free ();
     eq_window_destroy ();
     trkproperties_destroy ();
     progress_destroy ();

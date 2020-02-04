@@ -132,15 +132,6 @@ pnull_unpause (void) {
     return 0;
 }
 
-static int
-pnull_get_endianness (void) {
-#if WORDS_BIGENDIAN
-    return 1;
-#else
-    return 0;
-#endif
-}
-
 static void
 pnull_thread (void *context) {
 #ifdef __linux__
@@ -174,7 +165,7 @@ pnull_callback (char *stream, int len) {
     }
 }
 
-int
+ddb_playback_state_t
 pnull_get_state (void) {
     return state;
 }
