@@ -22,11 +22,11 @@
 */
 
 
+#include "../../deadbeef.h"
+#include <gtk/gtk.h>
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
 #endif
-#include "../../deadbeef.h"
-#include <gtk/gtk.h>
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>

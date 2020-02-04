@@ -2,10 +2,6 @@
 
 #include "ebur128.h"
 
-#ifdef HAVE_CONFIG_H
-#include "../../../config.h"
-#endif
-
 #include <float.h>
 #include <limits.h>
 #include <math.h> /* You may have to define _USE_MATH_DEFINES if you use MSVC */

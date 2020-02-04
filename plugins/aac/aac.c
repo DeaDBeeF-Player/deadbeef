@@ -17,13 +17,13 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifdef HAVE_CONFIG_H
-#include "../../config.h"
-#endif
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <neaacdec.h>
+#ifdef HAVE_CONFIG_H
+#include "../../config.h"
+#endif
 #include <stdlib.h>
 #include <math.h>
 #include "../../deadbeef.h"

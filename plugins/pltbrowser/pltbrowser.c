@@ -20,14 +20,13 @@
 
     3. This notice may not be removed or altered from any source distribution.
 */
-
-#ifdef HAVE_CONFIG_H
-#include "../../config.h"
-#endif
 #include "../../deadbeef.h"
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_CONFIG_H
+#include "../../config.h"
+#endif
 #include "../gtkui/gtkui_api.h"
 #include "../../gettext.h"
 #include "support.h"

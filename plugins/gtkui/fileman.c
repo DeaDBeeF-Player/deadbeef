@@ -21,9 +21,6 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifdef HAVE_CONFIG_H
-#include "../../config.h"
-#endif
 #include "../../deadbeef.h"
 #include <gtk/gtk.h>
 #include <stdlib.h>
