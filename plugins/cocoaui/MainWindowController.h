@@ -24,8 +24,8 @@
 #import <Cocoa/Cocoa.h>
 
 #import "DdbTabStrip.h"
-#import "DdbListview.h"
-#import "DdbPlaylistViewController.h"
+#import "PlaylistView.h"
+#import "PlaylistViewController.h"
 #import "DdbSeekBar.h"
 
 @interface MainWindowController : NSWindowController
@@ -34,7 +34,7 @@
 @property (unsafe_unretained) IBOutlet NSTextField *statusBar;
 @property (unsafe_unretained) IBOutlet DdbSeekBar *seekBar;
 @property (unsafe_unretained) IBOutlet NSSlider *volumeBar;
-@property (strong) IBOutlet DdbPlaylistViewController *playlistViewController;
+@property (strong) IBOutlet PlaylistViewController *playlistViewController;
 
 - (IBAction)seekBarAction:(id)sender;
 - (IBAction)volumeBarAction:(id)sender;
@@ -45,5 +45,6 @@
 - (void)updateVolumeBar;
 - (void)updateTitleBarConfig;
 - (void)updateTitleBar;
+
 - (void)cleanup;
 @end

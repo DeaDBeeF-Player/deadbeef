@@ -362,8 +362,8 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, int ctx) {
     return 0;
 }
 
-void
-remove_deleted_file_from_all_playlists (const char *search_uri) {
+static void
+_remove_file_from_all_playlists (const char *search_uri) {
     // The caller is responsible for pl_lock
     int n = deadbeef->plt_get_count ();
     for (int i = 0; i < n; ++i) {
@@ -383,8 +383,8 @@ remove_deleted_file_from_all_playlists (const char *search_uri) {
     }
 }
 
-void
-delete_and_remove_track (const char *uri, ddb_playlist_t *plt, ddb_playItem_t *it) {
+static void
+_delete_and_remove_track_from_all_playlists (const char *uri, ddb_playlist_t *plt, ddb_playItem_t *it) {
     (void)unlink (uri);
 
     // check if file exists
@@ -393,8 +393,7 @@ delete_and_remove_track (const char *uri, ddb_playlist_t *plt, ddb_playItem_t *i
     int stat_res = stat (uri, &buf);
     
     if (stat_res != 0) {
-        deadbeef->plt_remove_item (plt, it);
-        remove_deleted_file_from_all_playlists (uri);
+        _remove_file_from_all_playlists (uri);
     } else {
         trace ("Failed to delete file: %s\n", uri);
     }
@@ -439,31 +438,46 @@ action_delete_from_disk_handler_cb (void *data) {
         }
     }
     deadbeef->pl_lock ();
+
+    DB_playItem_t **tracklist = NULL;
+    unsigned trackcount = 0;
     
     DB_playItem_t *it_current_song = deadbeef->streamer_get_playing_track ();
     int idx_current_song = -1;
     if (ctx == DDB_ACTION_CTX_SELECTION) {
+        unsigned selcount = deadbeef->plt_getselcount (plt);
+        tracklist = calloc (selcount, sizeof (DB_playItem_t *));
         DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
         while (it) {
+            if (trackcount == selcount) {
+                break;
+            }
             DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (uri)) {
                 if (it == it_current_song) {
                     idx_current_song = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
                 }
-                delete_and_remove_track (uri, plt, it);
+                deadbeef->pl_item_ref (it);
+                tracklist[trackcount++] = it;
             }
             deadbeef->pl_item_unref (it);
             it = next;
         }
     }
     else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
+        unsigned count = deadbeef->plt_get_item_count (plt, PL_MAIN);
+        tracklist = calloc (count, sizeof (DB_playItem_t *));
         DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
         while (it) {
+            if (trackcount == count) {
+                break;
+            }
             DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->is_local_file (uri)) {
-                delete_and_remove_track (uri, plt, it);
+                deadbeef->pl_item_ref (it);
+                tracklist[trackcount++] = it;
             }
             deadbeef->pl_item_unref (it);
             it = next;
@@ -476,11 +490,23 @@ action_delete_from_disk_handler_cb (void *data) {
             if (deadbeef->is_local_file (uri)) {
                 int idx = idx_current_song = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
                 if (idx != -1) {
-                    delete_and_remove_track (uri, plt, it);
+                    tracklist = calloc (1, sizeof (DB_playItem_t *));
+                    deadbeef->pl_item_ref (it);
+                    tracklist[trackcount++] = it;
                 }
             }
             deadbeef->pl_item_unref (it);
         }
+    }
+
+    if (tracklist) {
+        for (unsigned i = 0; i < trackcount; i++) {
+            const char *uri = deadbeef->pl_find_meta (tracklist[i], ":URI");
+            _delete_and_remove_track_from_all_playlists (uri, plt, tracklist[i]);
+            deadbeef->pl_item_unref (tracklist[i]);
+        }
+        free (tracklist);
+        tracklist = NULL;
     }
     
     if (deadbeef->conf_get_int ("gtkui.skip_deleted_songs", 0) 

@@ -37,6 +37,8 @@
 
 @property (unsafe_unretained) IBOutlet NSMenuItem *mainWindowToggleMenuItem;
 @property (unsafe_unretained) IBOutlet NSMenuItem *logWindowToggleMenuItem;
+@property (weak) IBOutlet NSMenuItem *equalizerWindowToggleMenuItem;
+
 
 @property (unsafe_unretained) IBOutlet NSMenu *mainMenu;
 @property (unsafe_unretained) IBOutlet NSMenu *dockMenu;

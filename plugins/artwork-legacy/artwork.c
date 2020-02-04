@@ -1254,7 +1254,8 @@ local_image_file (const char *cache_path, const char *local_path, const char *ur
         }
     }
     if (!scan_local_path ("*.jpg", cache_path, local_path, uri, vfsplug) ||
-        !scan_local_path ("*.jpeg", cache_path, local_path, uri, vfsplug)) {
+        !scan_local_path ("*.jpeg", cache_path, local_path, uri, vfsplug) ||
+        !scan_local_path ("*.png", cache_path, local_path, uri, vfsplug)) {
         return 0;
     }
 
@@ -1326,7 +1327,7 @@ id3v2_artwork (const DB_id3v2_frame_t *f, int minor_version)
 //        trace ("artwork: unsupported mime type: %s\n", data);
 //        return NULL;
 //    }
-    if (*mime_end != 3) {
+    if (*mime_end != 3 && *mime_end != 0) {
         trace ("artwork: picture type=%d\n", *mime_end);
         return NULL;
     }

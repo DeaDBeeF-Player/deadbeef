@@ -434,7 +434,7 @@ clamp_samplerate (int val) {
     _network_http_user_agent.stringValue =  [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("network.http_user_agent", "")];
 }
 
-- (NSArray *)toolbarSelectableItemIdentifiers: (NSToolbar *)toolbar;
+- (NSArray *)toolbarSelectableItemIdentifiers: (NSToolbar *)toolbar
 {
     return [NSArray arrayWithObjects:
             @"Sound",

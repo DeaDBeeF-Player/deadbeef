@@ -187,8 +187,12 @@ AS_IF([test "${enable_portable}" != "no" -a "${enable_staticlink}" != "no"], [
     PREFIXFLAGS=" -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
 ])
 
-CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE $PREFIXFLAGS -DDDB_WARN_DEPRECATED=1"
-CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE $PREFIXFLAGS -DDDB_WARN_DEPRECATED=1"
+dnl HACK: using undocumented variable to check whether it's safe to define __EXTENSIONS__
+test $ac_cv_safe_to_define___extensions__ = yes && CFLAGS_EXTENSIONS="-D__EXTENSIONS__"
+
+CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE $CFLAGS_EXTENSIONS $PREFIXFLAGS -DDDB_WARN_DEPRECATED=1"
+CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE $CFLAGS_EXTENSIONS $PREFIXFLAGS -DDDB_WARN_DEPRECATED=1"
+
 
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_ZLIB=yes

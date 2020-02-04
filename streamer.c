@@ -2414,9 +2414,27 @@ play_index (int idx, int startpaused) {
     // rebuild shuffle order
     plt_reshuffle (plt, NULL, NULL);
 
-    // This ensures that the manually triggered item becomes first in shuffle queue.
-    // It works because shufflerating is generated using rand(), which gives only numbers in the [0..RAND_MAX] range.
-    it->shufflerating = -1;
+    ddb_shuffle_t shuffle = streamer_get_shuffle ();
+    if (shuffle == DDB_SHUFFLE_ALBUMS) {
+        pl_lock ();
+        _streamer_mark_album_played_up_to (it);
+
+        // mark songs from all other albums as played
+        playItem_t *i = plt->head[PL_MAIN];
+        while (i) {
+            if (i->shufflerating != it->shufflerating) {
+                i->played = 1;
+            }
+            i = i->next[PL_MAIN];
+        }
+        pl_unlock ();
+    }
+    else {
+        // This ensures that the manually triggered item becomes first in shuffle queue.
+        // It works because shufflerating is generated using rand(), which gives only numbers in the [0..RAND_MAX] range.
+        it->shufflerating = -1;
+    }
+
     _play_track(it, startpaused);
 
     pl_item_unref(it);
@@ -2425,10 +2443,9 @@ play_index (int idx, int startpaused) {
 
 error:
     output->stop ();
-
-    streamer_lock();
     streamer_reset (1);
 
+    streamer_lock();
     _handle_playback_stopped ();
     stream_track (NULL, 0);
     if (plt) {
@@ -2517,8 +2534,8 @@ streamer_get_next_track_with_direction (int dir, ddb_shuffle_t shuffle, ddb_repe
 
     // possibly need a reshuffle
     if (!next && streamer_playlist->count[PL_MAIN] != 0) {
-        int repeat = streamer_get_repeat ();
-        int shuffle = streamer_get_shuffle ();
+        ddb_repeat_t repeat = streamer_get_repeat ();
+        ddb_shuffle_t shuffle = streamer_get_shuffle ();
 
         if (repeat == DDB_REPEAT_OFF) {
             if (shuffle == DDB_SHUFFLE_ALBUMS || shuffle == DDB_SHUFFLE_TRACKS) {
@@ -2545,13 +2562,13 @@ streamer_get_next_track_with_direction (int dir, ddb_shuffle_t shuffle, ddb_repe
 static void
 play_next (int dir, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
     DB_output_t *output = plug_get_output ();
-    streamer_reset(1);
 
     playItem_t *next = streamer_get_next_track_with_direction (dir, shuffle, repeat);
 
     if (!next) {
         streamer_set_last_played (NULL);
         output->stop ();
+        streamer_reset(1);
         _handle_playback_stopped ();
         return;
     }

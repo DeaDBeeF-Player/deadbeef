@@ -22,7 +22,7 @@
 */
 
 #import "DdbSearchWidget.h"
-#import "DdbPlaylistViewController.h"
+#import "PlaylistViewController.h"
 #include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
@@ -41,7 +41,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (int)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
-    return _delegate ? [(DdbPlaylistViewController *)_delegate handleListviewMessage:_listview id:_id ctx:ctx p1:p1 p2:p2] : 0;
+    return _delegate ? [(PlaylistViewController *)_delegate handleListviewMessage:_listview id:_id ctx:ctx p1:p1 p2:p2] : 0;
 }
 
 @end

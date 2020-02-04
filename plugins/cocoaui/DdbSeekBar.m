@@ -69,8 +69,8 @@
 
     NSRect rc = aRect;
 
-    int h = rc.size.height;
-    int y = rc.origin.y + (int)rc.size.height/2 - (int)h/2;
+    CGFloat h = rc.size.height;
+    CGFloat y = rc.origin.y + (int)rc.size.height/2 - (int)h/2;
     rc.origin.y = y;
     rc.size.height = h;
 

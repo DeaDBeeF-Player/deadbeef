@@ -64,7 +64,7 @@ ringbuf_write (ringbuf_t *p, char *bytes, size_t size) {
     return 0;
 }
 
-int
+size_t
 ringbuf_read (ringbuf_t *p, char *bytes, size_t size) {
     if (p->remaining < size) {
         size = p->remaining;

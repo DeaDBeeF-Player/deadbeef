@@ -389,7 +389,7 @@ float
 pl_find_meta_float (playItem_t *it, const char *key, float def) {
     pl_lock ();
     const char *val = pl_find_meta (it, key);
-    float res = val ? atof (val) : def;
+    float res = val ? (float)atof (val) : def;
     pl_unlock ();
     return res;
 }
