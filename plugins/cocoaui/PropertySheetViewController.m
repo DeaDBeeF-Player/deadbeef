@@ -433,19 +433,21 @@
 
                     valueedit.autoresizingMask = NSViewMinXMargin|NSViewMaxXMargin|NSViewWidthSizable;
                 }
-                valueedit.stringValue = value;
+                valueedit.floatValue = value.floatValue;
 
                 [_bindings addObject:@{@"sender":slider,
                                        @"propname":propname,
                                        @"valueview":valueedit,
                                        @"isInteger":[NSNumber numberWithBool:step == 1 ? YES:NO],
+                                       @"isFloat":[NSNumber numberWithBool:step != 1 ? YES:NO],
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
                                        }];
 
                 [_bindings addObject:@{@"sender":valueedit,
                                        @"propname":propname,
                                        @"valueview":slider,
-                                       @"isInteger":[NSNumber numberWithBool:YES],
+                                       @"isInteger":[NSNumber numberWithBool:step == 1 ? YES:NO],
+                                       @"isFloat":[NSNumber numberWithBool:step != 1 ? YES:NO],
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
                                        }];
 
@@ -559,6 +561,9 @@
             if (binding[@"isInteger"] && [binding[@"isInteger"] boolValue]) {
                 value = [@([sender integerValue]) stringValue];
             }
+            else if (binding[@"isFloat"] && [binding[@"isFloat"] boolValue]) {
+                value = [@([sender floatValue]) stringValue];
+            }
             else if ([sender isKindOfClass:[NSPopUpButton class]]) {
                 value = [@([sender indexOfSelectedItem]) stringValue];
             }
@@ -603,7 +608,10 @@
             // synchronize dependent widgets, e.g. slider with its textfield
             if (binding[@"valueview"]) {
                 if (binding[@"isInteger"] && [binding[@"isInteger"] boolValue]) {
-                    ((NSControl *)binding[@"valueview"]).stringValue = [@([sender integerValue]) stringValue];
+                    ((NSControl *)binding[@"valueview"]).integerValue = [sender integerValue];
+                }
+                else if (binding[@"isFloat"] && [binding[@"isFloat"] boolValue]) {
+                    ((NSControl *)binding[@"valueview"]).floatValue = [sender floatValue];
                 }
                 else {
                     ((NSControl *)binding[@"valueview"]).stringValue = [sender stringValue];
@@ -614,6 +622,9 @@
             NSString *value;
             if (binding[@"isInteger"] && [binding[@"isInteger"] boolValue]) {
                 value = [@([sender integerValue]) stringValue];
+            }
+            else if (binding[@"isFloat"] && [binding[@"isFloat"] boolValue]) {
+                value = [@([sender floatValue]) stringValue];
             }
             else if ([sender isKindOfClass:[NSPopUpButton class]]) {
                 value = [sender titleOfSelectedItem];
