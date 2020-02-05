@@ -61,7 +61,15 @@
                     pb.title = value;
                 }
                 else {
-                    ctl.stringValue = value;
+                    if (binding[@"isInteger"] && [binding[@"isInteger"] boolValue]) {
+                        ctl.integerValue = [value integerValue];
+                    }
+                    else if (binding[@"isFloat"] && [binding[@"isFloat"] boolValue]) {
+                        ctl.floatValue = [value floatValue];
+                    }
+                    else {
+                        ctl.stringValue = value;
+                    }
                 }
             }
         }
