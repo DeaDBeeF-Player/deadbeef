@@ -27,6 +27,7 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include "../../config.h"
 #include <string.h>
 #if defined(TINYWV) || defined(OSX_BUILD)
 #include <wavpack.h>
