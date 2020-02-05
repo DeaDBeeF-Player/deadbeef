@@ -420,8 +420,8 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
 
     while (fsize > 0 || fsize < 0) {
         int64_t readsize = 4; // fe ff + frame header
-        if (fsize > 0 && offs + readsize >= fsize-endoffs) {
-            readsize = fsize - offs;
+        if (fsize > 0 && offs + readsize >= fsize - endoffs) {
+            readsize = fsize - endoffs - offs;
         }
 
         if (readsize <= 0) {
