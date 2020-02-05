@@ -37,6 +37,10 @@ version 1.8.3
 	Fixed Add Location dialog not adding URLs
 	Fixed ffmpeg file handle leak
 	Added remove playlist confirmation dialog in GTK UI (kpcee@github)
+	Fixed DTS channel count metadata
+	Fixed loading MP3 album art of APIC type=0 (Other)
+	Added album art fallback to png (jakesfr@github)
+	Fixed ALSA hanging after audio format change
 
 version 1.8.2
 	Volume control from command line supports increment syntax (by eauno1re@github)
