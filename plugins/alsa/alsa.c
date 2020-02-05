@@ -71,6 +71,9 @@ palsa_free (void);
 static int
 palsa_setformat (ddb_waveformat_t *fmt);
 
+static ddb_playback_state_t
+palsa_get_state (void);
+
 static int
 palsa_play (void);
 
@@ -424,6 +427,10 @@ open_error:
 static int
 palsa_setformat (ddb_waveformat_t *fmt) {
     LOCK;
+    ddb_playback_state_t state = palsa_get_state ();
+    if (state == DDB_PLAYBACK_STATE_PLAYING) {
+        palsa_pause ();
+    }
     memcpy (&requested_fmt, fmt, sizeof (ddb_waveformat_t));
     trace ("palsa_setformat %dbit %s %dch %dHz channelmask=%X\n", requested_fmt.bps, fmt->is_float ? "float" : "int", fmt->channels, fmt->samplerate, fmt->channelmask);
     if (!audio
@@ -454,6 +461,9 @@ palsa_setformat (ddb_waveformat_t *fmt) {
         return -1;
     }
     trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
+    if (state == DDB_PLAYBACK_STATE_PLAYING) {
+        palsa_unpause ();
+    }
     UNLOCK;
 
     return 0;
