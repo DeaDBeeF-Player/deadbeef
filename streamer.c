@@ -111,7 +111,7 @@ static int _format_change_wait;
 static ddb_waveformat_t prev_output_format; // last format that was sent to output via streamer_set_output_format
 static ddb_waveformat_t last_block_fmt; // input file format corresponding to the current output
 
-static DB_fileinfo_t *fileinfo;
+static DB_fileinfo_t *fileinfo_curr;
 static uint64_t fileinfo_file_identifier;
 static DB_vfs_t *fileinfo_file_vfs;
 static DB_fileinfo_t *new_fileinfo;
@@ -466,7 +466,7 @@ get_random_track (void) {
         return NULL;
     }
     int curr = str_get_idx_of (streaming_track);
-    int r = rand () / (float)RAND_MAX * cnt;
+    int r = (int)(rand () / (double)RAND_MAX * cnt);
     if (r == curr) {
         r++;
         if (r >= cnt) {
@@ -884,7 +884,7 @@ streamer_play_failed (playItem_t *failed_track) {
         streamer_set_last_played (failed_track);
         // the track has failed to be played,
         // but we want to send it down to streamreader for proper track switching etc.
-        fileinfo = calloc(sizeof (DB_fileinfo_t), 1);
+        fileinfo_curr = calloc(sizeof (DB_fileinfo_t), 1);
 
         fileinfo_file_vfs = NULL;
         fileinfo_file_identifier = 0;
@@ -916,9 +916,9 @@ fileinfo_free (DB_fileinfo_t *fileinfo) {
 
 static int
 stream_track (playItem_t *it, int startpaused) {
-    if (fileinfo) {
-        fileinfo_free (fileinfo);
-        fileinfo = NULL;
+    if (fileinfo_curr) {
+        fileinfo_free (fileinfo_curr);
+        fileinfo_curr = NULL;
         fileinfo_file_vfs = NULL;
         fileinfo_file_identifier = 0;
     }
@@ -961,9 +961,9 @@ stream_track (playItem_t *it, int startpaused) {
     char decoder_id[100] = "";
     char filetype[100] = "";
     pl_lock ();
-    const char *dec = pl_find_meta (it, ":DECODER");
-    if (dec) {
-        strncpy (decoder_id, dec, sizeof (decoder_id));
+    const char *dec_id = pl_find_meta (it, ":DECODER");
+    if (dec_id) {
+        strncpy (decoder_id, dec_id, sizeof (decoder_id));
     }
 
     if (!decoder_id[0]) {
@@ -1294,7 +1294,7 @@ m3u_error:
 success:
     streamer_play_failed (NULL);
     if (new_fileinfo) {
-        fileinfo = new_fileinfo;
+        fileinfo_curr = new_fileinfo;
         new_fileinfo = NULL;
         new_fileinfo_file_vfs = NULL;
         new_fileinfo_file_identifier = 0;
@@ -1376,7 +1376,7 @@ streamer_seek_real (float seekpos) {
     // Some fileinfos can exist without plugin bound to them,
     // for example when a track failed to play.
     // Don't attempt seeking in them.
-    if (!fileinfo || !fileinfo->plugin) {
+    if (!fileinfo_curr || !fileinfo_curr->plugin) {
         return;
     }
     float seek = seekpos;
@@ -1400,12 +1400,12 @@ streamer_seek_real (float seekpos) {
             }
         }
 
-        if (fileinfo && track && dur > 0) {
+        if (fileinfo_curr && track && dur > 0) {
             streamer_lock ();
-            if (fileinfo->plugin->seek (fileinfo, playpos) >= 0) {
+            if (fileinfo_curr->plugin->seek (fileinfo_curr, playpos) >= 0) {
                 streamer_reset (1);
             }
-            playpos = fileinfo->readpos;
+            playpos = fileinfo_curr->readpos;
             avg_bitrate = -1;
             streamer_unlock();
         }
@@ -1571,8 +1571,8 @@ streamer_thread (void *unused) {
     prctl (PR_SET_NAME, "deadbeef-stream", 0, 0, 0, 0);
 #endif
 
-    ddb_shuffle_t shuffle = -1;
-    ddb_repeat_t repeat = -1;
+    ddb_shuffle_t shuffle = (ddb_shuffle_t)-1;
+    ddb_repeat_t repeat = (ddb_repeat_t)-1;
 
     uint32_t id;
     uintptr_t ctx;
@@ -1660,7 +1660,7 @@ streamer_thread (void *unused) {
 
         _update_buffering_state ();
 
-        if (!fileinfo) {
+        if (!fileinfo_curr) {
             // HACK: This is to overcome the output plugin API limitation.
             // We count the number of times the output plugin has starved,
             // and stop playback after counter reaches the limit.
@@ -1685,7 +1685,7 @@ streamer_thread (void *unused) {
         }
 
         // streamreader_read_block will lock the mutex after success
-        int res = streamreader_read_block (block, streaming_track, fileinfo, mutex);
+        int res = streamreader_read_block (block, streaming_track, fileinfo_curr, mutex);
         int last = 0;
 
         if (res >= 0) {
@@ -1730,9 +1730,9 @@ streamer_thread (void *unused) {
     while (!handler_pop (handler, &id, &ctx, &p1, &p2));
 
     // stop streaming song
-    if (fileinfo) {
-        fileinfo_free (fileinfo);
-        fileinfo = NULL;
+    if (fileinfo_curr) {
+        fileinfo_free (fileinfo_curr);
+        fileinfo_curr = NULL;
         fileinfo_file_vfs = NULL;
         fileinfo_file_identifier = 0;
     }
@@ -1984,7 +1984,7 @@ streamer_apply_soft_volume (char *bytes, int sz) {
         int bytesread = sz;
         if (output->fmt.bps == 16) {
             mult *= 1000;
-            int16_t ivolume = vol * mult;
+            int16_t ivolume = (int16_t)(vol * mult);
             if (ivolume != 1000) {
                 int half = bytesread/2;
                 for (int i = 0; i < half; i++) {
@@ -1996,7 +1996,7 @@ streamer_apply_soft_volume (char *bytes, int sz) {
         }
         else if (output->fmt.bps == 8) {
             mult *= 255;
-            int16_t ivolume = vol * mult;
+            int16_t ivolume = (int16_t)(vol * mult);
             if (ivolume != 255) {
                 for (int i = 0; i < bytesread; i++) {
                     *stream = (int8_t)(((int32_t)(*stream)) * ivolume / 1000);
@@ -2006,7 +2006,7 @@ streamer_apply_soft_volume (char *bytes, int sz) {
         }
         else if (output->fmt.bps == 24) {
             mult *= 1000;
-            int16_t ivolume = vol * mult;
+            int16_t ivolume = (int16_t)(vol * mult);
             if (ivolume != 1000) {
                 int third = bytesread/3;
                 for (int i = 0; i < third; i++) {
@@ -2021,7 +2021,7 @@ streamer_apply_soft_volume (char *bytes, int sz) {
         }
         else if (output->fmt.bps == 32 && !output->fmt.is_float) {
             mult *= 1000;
-            int16_t ivolume = vol * mult;
+            int16_t ivolume = (int16_t)(vol * mult);
             if (ivolume != 1000) {
                 for (int i = 0; i < bytesread/4; i++) {
                     int32_t sample = *((int32_t*)stream);
@@ -2054,6 +2054,72 @@ _get_temp_audio_buffer (size_t size) {
     _temp_audio_buffer_size = size;
     _temp_audio_buffer = malloc (_temp_audio_buffer_size);
     return _temp_audio_buffer;
+}
+
+static void
+viz_process (char * restrict bytes, int bytes_size, DB_output_t *output) {
+    if (waveform_listeners || spectrum_listeners) {
+        int in_frame_size = (output->fmt.bps >> 3) * output->fmt.channels;
+        int in_frames = bytes_size / in_frame_size;
+        ddb_waveformat_t out_fmt = {
+            .bps = 32,
+            .channels = output->fmt.channels,
+            .samplerate = output->fmt.samplerate,
+            .channelmask = output->fmt.channelmask,
+            .is_float = 1,
+            .is_bigendian = 0
+        };
+
+        float *temp_audio_data = _get_temp_audio_buffer (in_frames * out_fmt.channels * sizeof (float));
+        pcm_convert (&output->fmt, bytes, &out_fmt, (char *)temp_audio_data, bytes_size);
+        ddb_audio_data_t waveform_data = {
+            .fmt = &out_fmt,
+            .data = temp_audio_data,
+            .nframes = in_frames
+        };
+        mutex_lock (wdl_mutex);
+        for (wavedata_listener_t *l = waveform_listeners; l; l = l->next) {
+            l->callback (l->ctx, &waveform_data);
+        }
+        mutex_unlock (wdl_mutex);
+
+        if (out_fmt.channels != audio_data_channels || !spectrum_listeners) {
+            audio_data_fill = 0;
+            audio_data_channels = out_fmt.channels;
+        }
+
+        if (spectrum_listeners) {
+            int remaining = in_frames;
+            do {
+                int sz = DDB_FREQ_BANDS * 2 -audio_data_fill;
+                sz = min (sz, remaining);
+                for (int c = 0; c < audio_data_channels; c++) {
+                    for (int s = 0; s < sz; s++) {
+                        audio_data[DDB_FREQ_BANDS * 2 * c + audio_data_fill + s] = temp_audio_data[(in_frames-remaining + s) * audio_data_channels + c];
+                    }
+                }
+                //            memcpy (&audio_data[audio_data_fill], &temp_audio_data[in_frames-remaining], sz * sizeof (float));
+                audio_data_fill += sz;
+                remaining -= sz;
+                if (audio_data_fill == DDB_FREQ_BANDS * 2) {
+                    for (int c = 0; c < audio_data_channels; c++) {
+                        calc_freq (&audio_data[DDB_FREQ_BANDS * 2 * c], &freq_data[DDB_FREQ_BANDS * c]);
+                    }
+                    ddb_audio_data_t spectrum_data = {
+                        .fmt = &out_fmt,
+                        .data = freq_data,
+                        .nframes = DDB_FREQ_BANDS
+                    };
+                    mutex_lock (wdl_mutex);
+                    for (wavedata_listener_t *l = spectrum_listeners; l; l = l->next) {
+                        l->callback (l->ctx, &spectrum_data);
+                    }
+                    mutex_unlock (wdl_mutex);
+                    audio_data_fill = 0;
+                }
+            } while (remaining > 0);
+        }
+    }
 }
 
 int
@@ -2179,66 +2245,7 @@ streamer_read (char *bytes, int size) {
 
 #ifndef ANDROID
 
-    if (waveform_listeners || spectrum_listeners) {
-        int in_frame_size = (output->fmt.bps >> 3) * output->fmt.channels;
-        int in_frames = sz / in_frame_size;
-        ddb_waveformat_t out_fmt = {
-            .bps = 32,
-            .channels = output->fmt.channels,
-            .samplerate = output->fmt.samplerate,
-            .channelmask = output->fmt.channelmask,
-            .is_float = 1,
-            .is_bigendian = 0
-        };
-
-        float *temp_audio_data = _get_temp_audio_buffer (in_frames * out_fmt.channels * sizeof (float));
-        pcm_convert (&output->fmt, bytes, &out_fmt, (char *)temp_audio_data, sz);
-        ddb_audio_data_t data;
-        data.fmt = &out_fmt;
-        data.data = temp_audio_data;
-        data.nframes = in_frames;
-        mutex_lock (wdl_mutex);
-        for (wavedata_listener_t *l = waveform_listeners; l; l = l->next) {
-            l->callback (l->ctx, &data);
-        }
-        mutex_unlock (wdl_mutex);
-
-        if (out_fmt.channels != audio_data_channels || !spectrum_listeners) {
-            audio_data_fill = 0;
-            audio_data_channels = out_fmt.channels;
-        }
-
-        if (spectrum_listeners) {
-            int remaining = in_frames;
-            do {
-                int sz = DDB_FREQ_BANDS * 2 -audio_data_fill;
-                sz = min (sz, remaining);
-                for (int c = 0; c < audio_data_channels; c++) {
-                    for (int s = 0; s < sz; s++) {
-                        audio_data[DDB_FREQ_BANDS * 2 * c + audio_data_fill + s] = temp_audio_data[(in_frames-remaining + s) * audio_data_channels + c];
-                    }
-                }
-                //            memcpy (&audio_data[audio_data_fill], &temp_audio_data[in_frames-remaining], sz * sizeof (float));
-                audio_data_fill += sz;
-                remaining -= sz;
-                if (audio_data_fill == DDB_FREQ_BANDS * 2) {
-                    for (int c = 0; c < audio_data_channels; c++) {
-                        calc_freq (&audio_data[DDB_FREQ_BANDS * 2 * c], &freq_data[DDB_FREQ_BANDS * c]);
-                    }
-                    ddb_audio_data_t data;
-                    data.fmt = &out_fmt;
-                    data.data = freq_data;
-                    data.nframes = DDB_FREQ_BANDS;
-                    mutex_lock (wdl_mutex);
-                    for (wavedata_listener_t *l = spectrum_listeners; l; l = l->next) {
-                        l->callback (l->ctx, &data);
-                    }
-                    mutex_unlock (wdl_mutex);
-                    audio_data_fill = 0;
-                }
-            } while (remaining > 0);
-        }
-    }
+    viz_process (bytes, sz, output);
 #endif
 
     streamer_apply_soft_volume (bytes, sz);
@@ -2534,9 +2541,6 @@ streamer_get_next_track_with_direction (int dir, ddb_shuffle_t shuffle, ddb_repe
 
     // possibly need a reshuffle
     if (!next && streamer_playlist->count[PL_MAIN] != 0) {
-        ddb_repeat_t repeat = streamer_get_repeat ();
-        ddb_shuffle_t shuffle = streamer_get_shuffle ();
-
         if (repeat == DDB_REPEAT_OFF) {
             if (shuffle == DDB_SHUFFLE_ALBUMS || shuffle == DDB_SHUFFLE_TRACKS) {
                 plt_reshuffle (streamer_playlist, dir > 0 ? &next : NULL, dir < 0 ? &next : NULL);
@@ -2584,7 +2588,7 @@ streamer_play_current_track (void) {
 
 struct DB_fileinfo_s *
 streamer_get_current_fileinfo (void) {
-    return fileinfo;
+    return fileinfo_curr;
 }
 
 static void
