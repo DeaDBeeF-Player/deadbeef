@@ -409,6 +409,8 @@ project "ddb_gui_GTK2"
    files {
        "plugins/gtkui/*.h",
        "plugins/gtkui/*.c",
+       "shared/eqpreset.c",
+       "shared/eqpreset.h",
        "shared/pluginsettings.h",
        "shared/pluginsettings.c",
        "shared/trkproperties_shared.h",
@@ -444,6 +446,8 @@ project "ddb_gui_GTK3"
    files {
        "plugins/gtkui/*.h",
        "plugins/gtkui/*.c",
+       "shared/eqpreset.c",
+       "shared/eqpreset.h",
        "shared/pluginsettings.h",
        "shared/pluginsettings.c",
        "shared/trkproperties_shared.h",
