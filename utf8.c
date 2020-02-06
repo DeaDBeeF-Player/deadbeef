@@ -133,20 +133,20 @@ int u8_toutf8(char *dest, int32_t sz, uint32_t *src, int32_t srcsz)
         else if (ch < 0x800) {
             if (dest >= dest_end-1)
                 return i;
-            *dest++ = (ch>>6) | 0xC0;
+            *dest++ = (char)((ch>>6) | 0xC0);
             *dest++ = (ch & 0x3F) | 0x80;
         }
         else if (ch < 0x10000) {
             if (dest >= dest_end-2)
                 return i;
-            *dest++ = (ch>>12) | 0xE0;
+            *dest++ = (char)((ch>>12) | 0xE0);
             *dest++ = ((ch>>6) & 0x3F) | 0x80;
             *dest++ = (ch & 0x3F) | 0x80;
         }
         else if (ch < 0x200000) {
             if (dest >= dest_end-3)
                 return i;
-            *dest++ = (ch>>18) | 0xF0;
+            *dest++ = (char)((ch>>18) | 0xF0);
             *dest++ = ((ch>>12) & 0x3F) | 0x80;
             *dest++ = ((ch>>6) & 0x3F) | 0x80;
             *dest++ = (ch & 0x3F) | 0x80;
@@ -165,18 +165,18 @@ int u8_wc_toutf8(char *dest, uint32_t ch)
         return 1;
     }
     if (ch < 0x800) {
-        dest[0] = (ch>>6) | 0xC0;
+        dest[0] = (char)((ch>>6) | 0xC0);
         dest[1] = (ch & 0x3F) | 0x80;
         return 2;
     }
     if (ch < 0x10000) {
-        dest[0] = (ch>>12) | 0xE0;
+        dest[0] = (char)((ch>>12) | 0xE0);
         dest[1] = ((ch>>6) & 0x3F) | 0x80;
         dest[2] = (ch & 0x3F) | 0x80;
         return 3;
     }
     if (ch < 0x200000) {
-        dest[0] = (ch>>18) | 0xF0;
+        dest[0] = (char)((ch>>18) | 0xF0);
         dest[1] = ((ch>>12) & 0x3F) | 0x80;
         dest[2] = ((ch>>6) & 0x3F) | 0x80;
         dest[3] = (ch & 0x3F) | 0x80;
@@ -318,7 +318,7 @@ int hex_digit(char c)
    returns number of input characters processed */
 int u8_read_escape_sequence(const char *str, uint32_t *dest)
 {
-    uint32_t ch;
+    long ch;
     char digs[]="\0\0\0\0\0\0\0\0\0";
     int32_t dno=0, i=1;
 
@@ -365,7 +365,7 @@ int u8_read_escape_sequence(const char *str, uint32_t *dest)
         if (dno > 0)
             ch = strtol(digs, NULL, 16);
     }
-    *dest = ch;
+    *dest = (uint32_t)ch;
 
     return i;
 }
@@ -677,10 +677,10 @@ int
 u8_tolower_slow (const char *input, int len, char *out) {
     struct u8_case_map_t *lc = u8_lc_in_word_set (input, len);
     if (lc) {
-        int ll = strlen (lc->lower);
+        size_t ll = strlen (lc->lower);
         memcpy (out, lc->lower, ll);
         out[ll] = 0;
-        return ll;
+        return (int)ll;
     }
     return 0;
 }
@@ -712,10 +712,10 @@ int
 u8_toupper_slow (const char *input, int len, char *out) {
     struct u8_uppercase_map_t *uc = u8_uc_in_word_set (input, len);
     if (uc) {
-        int ll = strlen (uc->upper);
+        size_t ll = strlen (uc->upper);
         memcpy (out, uc->upper, ll);
         out[ll] = 0;
-        return ll;
+        return (int)ll;
     }
     return 0;
 }
@@ -766,7 +766,6 @@ utfcasestr (const char *s1, const char *s2) {
             int32_t i2 = 0;
             char lw1[10];
             char lw2[10];
-            const char *next;
             u8_nextchar (p1, &i1);
             u8_nextchar (p2, &i2);
             u8_tolower (p1, i1, lw1);
@@ -798,7 +797,6 @@ utfcasestr_fast (const char *s1, const char *s2) {
             int32_t i1 = 0;
             int32_t i2 = 0;
             char lw1[10];
-            const char *next;
             u8_nextchar (p1, &i1);
             u8_nextchar (p2, &i2);
             int l1 = u8_tolower (p1, i1, lw1);
@@ -825,7 +823,6 @@ u8_strcasecmp (const char *a, const char *b) {
         int32_t i1 = 0;
         int32_t i2 = 0;
         char s1[10], s2[10];
-        const char *next;
         u8_nextchar (p1, &i1);
         u8_nextchar (p2, &i2);
         int l1 = u8_tolower (p1, i1, s1);

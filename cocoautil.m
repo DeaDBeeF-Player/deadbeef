@@ -26,23 +26,35 @@
 
 int
 cocoautil_get_resources_path (char *s, int size) {
-    strcpy (s, [[[NSBundle mainBundle] resourcePath] UTF8String]);
+    strcpy (s, NSBundle.mainBundle.resourcePath.UTF8String);
     return 0;
 }
 
 void
 cocoautil_backtrace (void) {
-    NSLog(@"%@",[NSThread callStackSymbols]);
+    NSLog(@"%@", NSThread.callStackSymbols);
 }
 
 int
 cocoautil_get_library_path (char *s, int size) {
     *s = 0;
 
-    NSArray* paths = NSSearchPathForDirectoriesInDomains( NSLibraryDirectory, NSUserDomainMask, YES );
-    if (![paths count]) {
+    NSArray<NSString *> *paths = NSSearchPathForDirectoriesInDomains (NSLibraryDirectory, NSUserDomainMask, YES);
+    if (!paths.count) {
         return -1;
     }
-    strncat (s, [paths[0] UTF8String], size);
+    strncat (s, paths[0].UTF8String, size);
+    return 0;
+}
+
+int
+cocoautil_get_application_support_path (char *s, int size) {
+    *s = 0;
+
+    NSArray<NSString *> *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+    if (!paths.count) {
+        return -1;
+    }
+    strncat (s, paths[0].UTF8String, size);
     return 0;
 }

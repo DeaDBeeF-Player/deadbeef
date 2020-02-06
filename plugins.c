@@ -988,9 +988,9 @@ plug_load_all (void) {
 
 #ifdef OSX_APPBUNDLE
     char libpath[PATH_MAX];
-    int res = cocoautil_get_library_path (libpath, sizeof (libpath));
+    int res = cocoautil_get_application_support_path (libpath, sizeof (libpath));
     if (!res) {
-        strncat (libpath, "/deadbeef/plugins", sizeof (libpath) - strlen (libpath) - 1);
+        strncat (libpath, "/Deadbeef/Plugins", sizeof (libpath) - strlen (libpath) - 1);
     }
     const char *plugins_dirs[] = { dirname, !res ? libpath : NULL, NULL };
 #else

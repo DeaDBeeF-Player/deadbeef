@@ -29,9 +29,9 @@
 #include "streamer.h"
 #include "plugins.h"
 
-static int fake_out_state_value = OUTPUT_STATE_STOPPED;
+static int fake_out_state_value = DDB_PLAYBACK_STATE_STOPPED;
 
-static int fake_out_state (void) {
+static ddb_playback_state_t fake_out_state (void) {
     return fake_out_state_value;
 }
 
@@ -62,7 +62,7 @@ static DB_output_t fake_out = {
 
     streamer_set_playing_track (NULL);
 
-    fake_out_state_value = OUTPUT_STATE_STOPPED;
+    fake_out_state_value = DDB_PLAYBACK_STATE_STOPPED;
 }
 
 - (void)tearDown {
@@ -1273,7 +1273,7 @@ static DB_output_t fake_out = {
 - (void)test_IsPlayingReturnValueTrue_CorrespondsToStringValue {
     streamer_set_playing_track (it);
     plug_set_output (&fake_out);
-    fake_out_state_value = OUTPUT_STATE_PLAYING;
+    fake_out_state_value = DDB_PLAYBACK_STATE_PLAYING;
     char *bc = tf_compile("$if(%isplaying%,YES,NO) %isplaying%");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
@@ -1282,7 +1282,7 @@ static DB_output_t fake_out = {
 
 - (void)test_IsPlayingReturnValueFalse_CorrespondsToStringValue {
     plug_set_output (&fake_out);
-    fake_out_state_value = OUTPUT_STATE_STOPPED;
+    fake_out_state_value = DDB_PLAYBACK_STATE_STOPPED;
     char *bc = tf_compile("$if(%isplaying%,YES,NO) %isplaying%");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
@@ -1292,7 +1292,7 @@ static DB_output_t fake_out = {
 - (void)test_IsPausedReturnValueTrue_CorrespondsToStringValue {
     streamer_set_playing_track (it);
     plug_set_output (&fake_out);
-    fake_out_state_value = OUTPUT_STATE_PAUSED;
+    fake_out_state_value = DDB_PLAYBACK_STATE_PAUSED;
     char *bc = tf_compile("$if(%ispaused%,YES,NO) %ispaused%");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
@@ -2109,6 +2109,21 @@ static DB_output_t fake_out = {
     tf_free (bc);
     XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
 }
+
+- (void)test_Progress2Pos3Range5Len5WithUnicodeChars_ReturnsBar5CharsWithKnobAt3 {
+    char *bc = tf_compile("$progress2(3,5,5,★,☆)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "★★★☆☆"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_Progress2Pos3Range5Len5WithMultpleUnicodeChars_ReturnsBar5CharsWithKnobAt3 {
+    char *bc = tf_compile("$progress2(3,5,5,⏣⌽,⚙︎⌬)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "⏣⌽⏣⌽⏣⌽⚙︎⌬⚙︎⌬"), @"The actual output is: %s", buffer);
+}
+
 
 - (void)test_Progress2Pos0Range100Len10_ReturnsBar10CharsWithKnobAt0 {
     char *bc = tf_compile("$progress2(0,100,10,x,=)");

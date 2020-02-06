@@ -1201,8 +1201,8 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
     if (vfs && vfs->scandir) {
         n = vfs->scandir (dirname, &namelist, NULL, dirent_alphasort);
         // we can't rely on vfs plugins to set d_type
-        // windows: missing dirent[]->d_type
-        #ifndef __MINGW32__
+        // windows/svr4 unixes: missing dirent[]->d_type
+        #if !defined(__MINGW32__) && !defined(__SVR4)
         for (int i = 0; i < n; i++) {
             namelist[i]->d_type = DT_REG;
         }
@@ -1224,8 +1224,8 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
 
     for (int i = 0; i < n; i++) {
         // no hidden files
-        // windows: missing dirent[]->d_type
-        #ifdef __MINGW32__
+        // windows/svr4 unixes: missing dirent[]->d_type
+        #if defined(__MINGW32__) || defined(__SVR4)
         if (namelist[i]->d_name[0] == '.') {
         #else
         if (namelist[i]->d_name[0] == '.' || (namelist[i]->d_type != DT_REG && namelist[i]->d_type != DT_UNKNOWN)) {
@@ -1649,6 +1649,7 @@ pl_item_unref (playItem_t *it) {
     //trace ("\033[0;31m-it %p: refc=%d: %s\033[37;0m\n", it, it->_refc, pl_find_meta_raw (it, ":URI"));
     if (it->_refc < 0) {
         trace ("\033[0;31mplaylist: bad refcount on item %p\033[37;0m\n", it);
+        assert(0);
     }
     if (it->_refc <= 0) {
         //printf ("\033[0;31mdeleted %s\033[37;0m\n", pl_find_meta_raw (it, ":URI"));

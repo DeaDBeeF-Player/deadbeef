@@ -25,7 +25,7 @@
 
 @implementation DdbTableViewRightClickActivate
 
-- (NSMenu *)menuForEvent:(NSEvent *)theEvent;
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
     NSInteger row = [self rowAtPoint: [self convertPoint: [theEvent locationInWindow] fromView: nil]];
     if (row != -1 && ![[self selectedRowIndexes] containsIndex:row]) {

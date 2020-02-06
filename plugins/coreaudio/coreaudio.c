@@ -30,7 +30,7 @@ static DB_output_t plugin;
 
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
-static int state = OUTPUT_STATE_STOPPED;
+static ddb_playback_state_t state = DDB_PLAYBACK_STATE_STOPPED;
 static uint64_t mutex;
 
 // audiounit impl
@@ -97,7 +97,7 @@ get_avail_samplerates(void)
 
         avail_samplerates = malloc (sizeof (int) * num);
         for (int i = 0; i < num; i++) {
-            avail_samplerates[i] = nsrs[i].mMinimum;
+            avail_samplerates[i] = (int)nsrs[i].mMinimum;
         }
         num_avail_samplerates = num;
         free (nsrs);
@@ -136,7 +136,7 @@ ca_apply_format (void) {
     UInt32 sz;
     deadbeef->mutex_lock (mutex);
     if (req_format.mSampleRate > 0) {
-        req_format.mSampleRate = get_best_samplerate (req_format.mSampleRate, avail_samplerates, num_avail_samplerates);
+        req_format.mSampleRate = get_best_samplerate ((int)req_format.mSampleRate, avail_samplerates, num_avail_samplerates);
 
         // setting nominal samplerate doesn't work in most cases, and requires some timing trickery
 #if 0
@@ -194,13 +194,13 @@ OSStatus callbackFunction(AudioObjectID inObjectID,
                           UInt32 inNumberAddresses,
                           const AudioObjectPropertyAddress inAddresses[],
                           void *inClientData) {
-    int st = state;
+    ddb_playback_state_t st = state;
     ca_free ();
     ca_init ();
-    if (st == OUTPUT_STATE_PLAYING) {
+    if (st == DDB_PLAYBACK_STATE_PLAYING) {
         ca_play();
     }
-    else if (st == OUTPUT_STATE_PAUSED) {
+    else if (st == DDB_PLAYBACK_STATE_PAUSED) {
         ca_pause();
     }
     return noErr;
@@ -345,7 +345,7 @@ ca_init (void) {
                                    &outputDeviceAddress,
                                    &callbackFunction, nil);
 
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
 
     return 0;
 }
@@ -440,15 +440,15 @@ ca_play (void) {
     }
 
     deadbeef->mutex_lock (mutex);
-    if (state != OUTPUT_STATE_PLAYING) {
+    if (state != DDB_PLAYBACK_STATE_PLAYING) {
         err = AudioDeviceStart (device_id, ca_buffer_callback);
         if (err != noErr) {
             trace ("AudioDeviceStart: %x\n", err);
-            state = OUTPUT_STATE_STOPPED;
+            state = DDB_PLAYBACK_STATE_STOPPED;
             deadbeef->mutex_unlock (mutex);
             return -1;
         }
-        state = OUTPUT_STATE_PLAYING;
+        state = DDB_PLAYBACK_STATE_PLAYING;
     }
     deadbeef->mutex_unlock (mutex);
 
@@ -462,9 +462,9 @@ ca_stop (void) {
         return 0;
     }
     deadbeef->mutex_lock (mutex);
-    if (state != OUTPUT_STATE_STOPPED) {
+    if (state != DDB_PLAYBACK_STATE_STOPPED) {
         err = AudioDeviceStop (device_id, ca_buffer_callback);
-        state = OUTPUT_STATE_STOPPED;
+        state = DDB_PLAYBACK_STATE_STOPPED;
         if (err != noErr) {
             trace ("AudioDeviceStop: %x\n", err);
             deadbeef->mutex_unlock (mutex);
@@ -487,12 +487,12 @@ ca_pause (void) {
 
     deadbeef->mutex_lock (mutex);
 
-    if (state != OUTPUT_STATE_PAUSED) {
-        state = OUTPUT_STATE_PAUSED;
+    if (state != DDB_PLAYBACK_STATE_PAUSED) {
+        state = DDB_PLAYBACK_STATE_PAUSED;
         err = AudioDeviceStop (device_id, ca_buffer_callback);
         if (err != noErr) {
             trace ("AudioDeviceStop: %x\n", err);
-            state = OUTPUT_STATE_STOPPED;
+            state = DDB_PLAYBACK_STATE_STOPPED;
             deadbeef->mutex_unlock (mutex);
             return -1;
         }
@@ -525,7 +525,7 @@ ca_fmtchanged (AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioOb
         plugin.fmt.bps = device_format.mBitsPerChannel;
         plugin.fmt.channels = device_format.mChannelsPerFrame;
         plugin.fmt.is_float = 1;
-        plugin.fmt.samplerate = device_format.mSampleRate;
+        plugin.fmt.samplerate = (int)device_format.mSampleRate;
         plugin.fmt.channelmask = 0;
         for (int i = 0; i < plugin.fmt.channels; i++) {
             plugin.fmt.channelmask |= (1<<i);
@@ -543,7 +543,7 @@ ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const A
     char *buffer = outOutputData->mBuffers[0].mData;
     sz = outOutputData->mBuffers[0].mDataByteSize;
 
-    if (state == OUTPUT_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1)) {
+    if (state == DDB_PLAYBACK_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1)) {
         int br = deadbeef->streamer_read (buffer, sz);
         if (br < 0) {
             br = 0;
@@ -564,7 +564,7 @@ ca_unpause (void) {
     return ca_play ();
 }
 
-static int
+static ddb_playback_state_t
 ca_state (void) {
     return state;
 }

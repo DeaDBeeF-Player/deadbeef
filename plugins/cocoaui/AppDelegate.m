@@ -24,12 +24,13 @@
 #import "AppDelegate.h"
 #import "dispatch/dispatch.h"
 #import "DdbWidgetManager.h"
-#import "DdbPlaylistViewController.h"
+#import "PlaylistViewController.h"
 #import "ReplayGainScannerController.h"
 #import "DdbShared.h"
 #import "NowPlayable.h"
 #import "LogWindowController.h"
 #import "HelpWindowController.h"
+#import "EqualizerWindowController.h"
 #include "conf.h"
 #include "streamer.h"
 #include "junklib.h"
@@ -42,60 +43,34 @@ extern DB_functions_t *deadbeef;
 
 extern BOOL g_CanQuit;
 
-@interface AppDelegate ()
+AppDelegate *g_appDelegate;
 
-@property NowPlayable *nowPlayable;
-
-@end
-
-@implementation AppDelegate {
-    PreferencesWindowController *_prefWindow;
-    SearchWindowController *_searchWindow;
-    LogWindowController *_logWindow;
-    HelpWindowController *_helpWindow;
-
-    NSMenuItem *_dockMenuNPHeading;
-    NSMenuItem *_dockMenuNPTitle;
-    NSMenuItem *_dockMenuNPArtistAlbum;
-    NSMenuItem *_dockMenuNPSeparator;
-
+@interface AppDelegate () {
     char *_titleScript;
     char *_artistAlbumScript;
 }
 
-DB_playItem_t *prev = NULL;
-int prevIdx = -1;
-NSImage *playImg;
-NSImage *pauseImg;
-NSImage *bufferingImg;
-AppDelegate *g_appDelegate;
-NSInteger firstSelected = -1;
 
-static void
-_cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, void *ctx) {
-    [g_appDelegate appendLoggerText:text forPlugin:plugin onLayers:layers];
-}
+@property (nonatomic) NowPlayable *nowPlayable;
+@property (nonatomic) BOOL equalizerAvailable;
 
-- (void)appendLoggerText:(const char *)text forPlugin:(DB_plugin_t *)plugin onLayers:(uint32_t)layers {
-    NSString *str = [NSString stringWithUTF8String:text];
-    if (!str) {
-        return; // may happen in case of invalid UTF8 and such
-    }
+@property (nonatomic) PreferencesWindowController *prefWindow;
+@property (nonatomic) SearchWindowController *searchWindow;
+@property (nonatomic) LogWindowController *logWindow;
+@property (nonatomic) HelpWindowController *helpWindow;
+@property (nonatomic) EqualizerWindowController *equalizerWindow;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [_logWindow appendText:str];
+@property (nonatomic) NSMenuItem *dockMenuNPHeading;
+@property (nonatomic) NSMenuItem *dockMenuNPTitle;
+@property (nonatomic) NSMenuItem *dockMenuNPArtistAlbum;
+@property (nonatomic) NSMenuItem *dockMenuNPSeparator;
 
-        if (layers == DDB_LOG_LAYER_DEFAULT) {
-            if (![_logWindow.window isVisible]) {
-                [_logWindow showWindow:self];
-            }
-        }
-    });
-}
+@property (nonatomic) NSInteger firstSelected;
 
-- (void)dealloc {
-    deadbeef->log_viewer_unregister (_cocoaui_logger_callback, NULL);
-}
+
+@end
+
+@implementation AppDelegate
 
 - (void)volumeChanged {
     [_mainWindow updateVolumeBar];
@@ -214,6 +189,25 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     _logWindow.window.excludedFromWindowsMenu = YES;
 }
 
+- (BOOL)equalizerAvailable {
+    ddb_dsp_context_t *dsp = deadbeef->streamer_get_dsp_chain ();
+    while (dsp) {
+        if (!strcmp (dsp->plugin->plugin.id, "supereq")) {
+            return YES;
+        }
+        dsp = dsp->next;
+    }
+    return NO;
+}
+
+- (void)initEqualizerWindow {
+    if (!_equalizerWindow) {
+        _equalizerWindow = [[EqualizerWindowController alloc] initWithWindowNibName:@"EqualizerWindowController"];
+        [_equalizerWindowToggleMenuItem bind:@"state" toObject:_equalizerWindow.window withKeyPath:@"visible" options:nil];
+        _equalizerWindow.window.excludedFromWindowsMenu = YES;
+    }
+}
+
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
     if (g_CanQuit) {
         return NSTerminateNow;
@@ -239,10 +233,18 @@ extern void
 main_cleanup_and_quit (void);
 
 - (void)applicationWillTerminate:(NSNotification *)notification {
-    [ConverterWindowController cleanup];
-    [ReplayGainScannerController cleanup];
-    [_mainWindow cleanup];
-    [_searchWindow cleanup];
+    @autoreleasepool {
+        [ConverterWindowController cleanup];
+        [ReplayGainScannerController cleanup];
+        [_searchWindow close];
+        _searchWindow = nil;
+        self.nowPlayable = nil;
+        [self.logWindow close];
+        self.logWindow = nil;
+
+        // MainWindowController is not released
+        [_mainWindow cleanup];
+    }
     main_cleanup_and_quit();
 }
 
@@ -251,9 +253,7 @@ main_cleanup_and_quit (void);
     // high sierra would terminate the app on SIGPIPE by default, which breaks converter error handling
     signal(SIGPIPE, SIG_IGN);
 
-    playImg = [NSImage imageNamed:@"btnplayTemplate.pdf"];
-    pauseImg = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
-    bufferingImg = [NSImage imageNamed:@"bufferingTemplate.pdf"];
+    _firstSelected = -1;
 
     // initialize gui from settings
     [self configChanged];
@@ -268,8 +268,6 @@ main_cleanup_and_quit (void);
 #endif
 
     [self updateDockNowPlaying];
-
-    deadbeef->log_viewer_register (_cocoaui_logger_callback, NULL);
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag{
@@ -314,18 +312,27 @@ main_cleanup_and_quit (void);
     }
 }
 
+- (IBAction)showEqualizerWindowAction:(id)sender {
+    [self initEqualizerWindow];
+    BOOL vis = ![_equalizerWindow.window isVisible];
+    _equalizerWindow.window.isVisible = vis;
+    if (vis) {
+        [_equalizerWindow.window makeKeyWindow];
+    }
+}
+
 // playlist delegate
 - (NSIndexSet *)tableView:(NSTableView *)tableView selectionIndexesForProposedSelection:(NSIndexSet *)proposedSelectionIndexes
 {
-    firstSelected = -1;
+    self.firstSelected = -1;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         //deadbeef->plt_deselect_all (plt);
         int __block i = 0;
         DB_playItem_t __block *it = deadbeef->plt_get_first(plt, PL_MAIN);
         [proposedSelectionIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-            if (firstSelected == -1) {
-                firstSelected = idx;
+            if (self.firstSelected == -1) {
+                self.firstSelected = idx;
             }
             while (i < idx && it) {
                 deadbeef->pl_set_selected (it, 0);

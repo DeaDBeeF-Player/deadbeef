@@ -70,13 +70,13 @@ mainloop (void *ctx) {
                         streamer_move_to_prevsong (1);
                         break;
                     case DB_EV_PAUSE:
-                        if (output->state () != OUTPUT_STATE_PAUSED) {
+                        if (output->state () != DDB_PLAYBACK_STATE_PAUSED) {
                             output->pause ();
                             messagepump_push (DB_EV_PAUSED, 0, 1, 0);
                         }
                         break;
                     case DB_EV_TOGGLE_PAUSE:
-                        if (output->state () != OUTPUT_STATE_PLAYING) {
+                        if (output->state () != DDB_PLAYBACK_STATE_PLAYING) {
                             streamer_play_current_track ();
                         }
                         else {
@@ -188,7 +188,7 @@ wait_until_stopped (void) {
     playlist_t *plt = plt_alloc ("testplt");
     // create two test fake tracks
     DB_playItem_t *_sinewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "/sine.fake", NULL, NULL, NULL);
-    DB_playItem_t *_squarewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, _sinewave, "/square.fake", NULL, NULL, NULL);
+//    DB_playItem_t *_squarewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, _sinewave, "/square.fake", NULL, NULL, NULL);
 
     plt_set_curr (plt);
 

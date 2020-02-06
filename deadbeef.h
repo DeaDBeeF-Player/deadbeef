@@ -325,10 +325,20 @@ enum {
 
 // output plugin states
 enum output_state_t {
-    OUTPUT_STATE_STOPPED = 0,
-    OUTPUT_STATE_PLAYING = 1,
-    OUTPUT_STATE_PAUSED = 2,
+    OUTPUT_STATE_STOPPED DEPRECATED_111 = 0,
+    OUTPUT_STATE_PLAYING DEPRECATED_111 = 1,
+    OUTPUT_STATE_PAUSED DEPRECATED_111 = 2,
 };
+
+#if (DDB_API_LEVEL >= 11)
+
+typedef enum ddb_playback_state_e {
+    DDB_PLAYBACK_STATE_STOPPED = 0,
+    DDB_PLAYBACK_STATE_PLAYING = 1,
+    DDB_PLAYBACK_STATE_PAUSED = 2,
+} ddb_playback_state_t;
+
+#endif
 
 // playback order
 enum playback_order_t {
@@ -1785,8 +1795,11 @@ typedef struct DB_output_s {
     int (*stop) (void);
     int (*pause) (void);
     int (*unpause) (void);
-    // one of output_state_t enum values
+#if (DDB_API_LEVEL >= 11)
+    ddb_playback_state_t (*state) (void);
+#else
     int (*state) (void);
+#endif
     // soundcard enumeration (can be NULL)
     void (*enum_soundcards) (void (*callback)(const char *name, const char *desc, void*), void *userdata);
 
@@ -1877,8 +1890,9 @@ typedef struct DB_vfs_s {
 
     int (*is_container) (const char *fname); // should return 1 if this plugin can parse specified file
 
-// this allows interruption of hanging network streams
-    void (*abort) (DB_FILE *stream);
+// Was used to interrupt hanging network streams, but not used since API 1.11.
+// Use get_identifier / abort_with_identifier instead
+    void (*abort) (DB_FILE *stream) DEPRECATED_111;
 
 // file access, follows stdio API with few extension
     DB_FILE* (*open) (const char *fname);
@@ -1904,6 +1918,14 @@ typedef struct DB_vfs_s {
     // can be NULL
     // can return NULL
     const char *(*get_scheme_for_name) (const char *fname);
+#endif
+
+#if (DDB_API_LEVEL >= 11)
+    // Optional method, which should return a unique ID associated with the file
+    uint64_t (*get_identifier) (DB_FILE *f);
+
+    // Optional method to abort any file / stream operation on a file with specified identifier
+    void (*abort_with_identifier) (uint64_t identifier);
 #endif
 } DB_vfs_t;
 

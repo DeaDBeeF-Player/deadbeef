@@ -37,8 +37,8 @@
 #define avcodec_open2(ctx,codec,data) avcodec_open(ctx,codec)
 #endif
 
-#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(53, 17, 0)
-#define avformat_free_context(ctx) av_close_input_file(ctx)
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(55, 16, 101)
+#define avformat_close_input(ctx) {av_close_input_file(*(ctx)); *(ctx) = NULL;}
 #endif
 
 #if LIBAVCODEC_VERSION_INT > AV_VERSION_INT(55, 28, 0)
@@ -281,8 +281,9 @@ ffmpeg_free (DB_fileinfo_t *_info) {
             avcodec_close (info->ctx);
         }
         if (info->fctx) {
-            avformat_free_context (info->fctx);
+            avformat_close_input (&info->fctx);
         }
+
         free (info);
     }
 }
@@ -715,7 +716,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     if (codec == NULL)
     {
         trace ("ffmpeg can't decode %s\n", fname);
-        avformat_free_context(fctx);
+        avformat_close_input (&fctx);
         return NULL;
     }
     trace ("ffmpeg can decode %s\n", fname);
@@ -723,7 +724,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     if (avcodec_open2 (ctx, codec, NULL) < 0) {
         trace ("ffmpeg: avcodec_open2 failed\n");
-        avformat_free_context(fctx);
+        avformat_close_input (&fctx);
         return NULL;
     }
 
@@ -781,7 +782,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     // free decoder
     avcodec_close (ctx);
-    avformat_free_context(fctx);
+    avformat_close_input (&fctx);
 
     DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, samplerate);
     if (cue) {
@@ -973,19 +974,19 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
     if (codec == NULL)
     {
         trace ("ffmpeg can't decode %s\n", deadbeef->pl_find_meta (it, ":URI"));
-        avformat_free_context(fctx);
+        avformat_close_input (&fctx);
         return -1;
     }
     if (avcodec_open2 (ctx, codec, NULL) < 0) {
         trace ("ffmpeg: avcodec_open2 failed\n");
-        avformat_free_context(fctx);
+        avformat_close_input (&fctx);
         return -1;
     }
 
     deadbeef->pl_delete_all_meta (it);
     ffmpeg_read_metadata_internal (it, fctx);
 
-    avformat_free_context(fctx);
+    avformat_close_input (&fctx);
 
     return 0;
 }

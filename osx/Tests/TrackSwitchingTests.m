@@ -148,4 +148,24 @@
     }
 }
 
+- (void)test_GetNextTrack_CurrentIsNotInPlaylist_First {
+    playlist_t *plt = plt_get_curr();
+
+    playItem_t *playing = pl_item_alloc();
+
+    streamer_set_playing_track(playing);
+    streamer_set_last_played (playing);
+
+    playItem_t *it = streamer_get_next_track_with_direction(1, DDB_SHUFFLE_OFF, DDB_REPEAT_OFF);
+
+    XCTAssertEqual(it, plt->head[PL_MAIN]);
+
+    plt_unref (plt);
+
+    if (it) {
+        pl_item_unref (it);
+    }
+    pl_item_unref (playing);
+}
+
 @end

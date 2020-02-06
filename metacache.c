@@ -49,17 +49,17 @@ static metacache_hash_t hash[HASH_SIZE];
 
 static uint32_t
 metacache_get_hash_sdbm (const char *str, size_t len) {
-    uint32_t hash = 0;
+    uint32_t h = 0;
     int c;
 
     const char *end = str+len;
 
     while (str < end) {
         c = *str++;
-        hash = c + (hash << 6) + (hash << 16) - hash;
+        h = c + (h << 6) + (h << 16) - h;
     }
 
-    return hash;
+    return h;
 }
 
 static metacache_str_t *

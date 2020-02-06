@@ -36,13 +36,13 @@
 }
 
 - (void)mouseDown:(NSEvent *)theEvent {
-    if (theEvent.type == NSLeftMouseDown) {
+    if (theEvent.type == NSEventTypeLeftMouseDown) {
         _dragging = YES;
     }
     [super mouseDown:theEvent];
     // NSSlider mouseDown short-circuits the mainloop, and runs drag tracking from within the mouseDown handler,
     // so this needs to be done here instead of mouseUp handler, which is never fired.
-    if (theEvent.type == NSLeftMouseDown) {
+    if (theEvent.type == NSEventTypeLeftMouseDown) {
         _dragging = NO;
     }
 }
@@ -69,8 +69,8 @@
 
     NSRect rc = aRect;
 
-    int h = rc.size.height;
-    int y = rc.origin.y + (int)rc.size.height/2 - (int)h/2;
+    CGFloat h = rc.size.height;
+    CGFloat y = rc.origin.y + (int)rc.size.height/2 - (int)h/2;
     rc.origin.y = y;
     rc.size.height = h;
 

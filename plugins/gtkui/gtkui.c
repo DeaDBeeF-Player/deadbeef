@@ -75,7 +75,7 @@
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
-static ddb_gtkui_t plugin;
+ddb_gtkui_t plugin;
 DB_functions_t *deadbeef;
 
 // main widgets
@@ -195,7 +195,7 @@ update_songinfo (gpointer unused) {
     char *bc = NULL;
 
 
-    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track)) {
+    if (!output || (output->state () == DDB_PLAYBACK_STATE_STOPPED || !track)) {
         bc = statusbar_stopped_bc;
     }
     else {
@@ -1295,6 +1295,7 @@ gtkui_mainwin_init(void) {
 
     GtkIconTheme *theme = gtk_icon_theme_get_default();
     if (gtk_icon_theme_has_icon(theme, "deadbeef")) {
+        // NOTE: according to valgrind, this leaks memory - seems to be a GTK bug
         gtk_window_set_icon_name (GTK_WINDOW (mainwin), "deadbeef");
     }
     else {
@@ -1364,6 +1365,8 @@ gtkui_mainwin_free(void) {
     deadbeef->unlisten_file_added (fileadded_listener_id);
     deadbeef->unlisten_file_add_beginend (fileadd_beginend_listener_id);
 
+    cover_art_free ();
+
     w_free ();
 
     if (refresh_timeout) {
@@ -1372,7 +1375,6 @@ gtkui_mainwin_free(void) {
     }
 
     clipboard_free_current ();
-    cover_art_free ();
     eq_window_destroy ();
     trkproperties_destroy ();
     progress_destroy ();
@@ -1966,13 +1968,14 @@ static const char settings_dlg[] =
 ;
 
 // define plugin interface
-static ddb_gtkui_t plugin = {
+ddb_gtkui_t plugin = {
     .gui.plugin.api_vmajor = DB_API_VERSION_MAJOR,
     .gui.plugin.api_vminor = DB_API_VERSION_MINOR,
     .gui.plugin.version_major = DDB_GTKUI_API_VERSION_MAJOR,
     .gui.plugin.version_minor = DDB_GTKUI_API_VERSION_MINOR,
     .gui.plugin.type = DB_PLUGIN_GUI,
     .gui.plugin.id = DDB_GTKUI_PLUGIN_ID,
+    .gui.plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
 #if GTK_CHECK_VERSION(3,0,0)
     .gui.plugin.name = "GTK3 user interface",
     .gui.plugin.descr = "User interface using GTK+ 3.x",

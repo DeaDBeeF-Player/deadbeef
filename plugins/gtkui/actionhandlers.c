@@ -40,12 +40,15 @@
 #include "trkproperties.h"
 #include "callbacks.h"
 #include <sys/stat.h>
+#include "gtkui_api.h"
 
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
 
 extern GtkWidget *mainwin;
 extern DB_functions_t *deadbeef;
+extern ddb_gtkui_t plugin;
+#define trace(...) { deadbeef->log_detailed (&plugin.gui.plugin, 0, __VA_ARGS__); }
 
 gboolean
 action_open_files_handler_cb (void *userdata) {
@@ -263,11 +266,13 @@ action_add_location_handler_cb (void *user_data) {
                 ddb_playlist_t *plt = deadbeef->plt_get_curr ();
                 if (!deadbeef->plt_add_files_begin (plt, 0)) {
                     DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
-#ifndef DISABLE_CUSTOM_TITLE
                     DB_playItem_t *it = deadbeef->plt_insert_file2 (0, plt, tail, text, NULL, NULL, NULL);
+#ifndef DISABLE_CUSTOM_TITLE
                     if (it && deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
                         deadbeef->pl_replace_meta (it, ":CUSTOM_TITLE", gtk_entry_get_text (GTK_ENTRY (ct)));
                     }
+#else
+#   pragma unused(it)
 #endif
                     if (tail) {
                         deadbeef->pl_item_unref (tail);
@@ -357,25 +362,73 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, int ctx) {
     return 0;
 }
 
-void
-delete_and_remove_track (const char *uri, ddb_playlist_t *plt, ddb_playItem_t *it) {
+static void
+_remove_file_from_all_playlists (const char *search_uri) {
+    // The caller is responsible for pl_lock
+    int n = deadbeef->plt_get_count ();
+    for (int i = 0; i < n; ++i) {
+        ddb_playlist_t *plt = deadbeef->plt_get_for_idx (i);
+        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+        while (it) {
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            const char *uri = deadbeef->pl_find_meta (it, ":URI");
+            if (strcmp (uri, search_uri) == 0) {
+                deadbeef->plt_remove_item (plt, it);
+            }
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+
+        deadbeef->plt_unref (plt);
+    }
+}
+
+static void
+_delete_and_remove_track_from_all_playlists (const char *uri, ddb_playlist_t *plt, ddb_playItem_t *it) {
     (void)unlink (uri);
 
     // check if file exists
     struct stat buf;
     memset (&buf, 0, sizeof (buf));
     int stat_res = stat (uri, &buf);
+    
     if (stat_res != 0) {
-        deadbeef->plt_remove_item (plt, it);
+        _remove_file_from_all_playlists (uri);
+    } else {
+        trace ("Failed to delete file: %s\n", uri);
     }
 }
 
 gboolean
 action_delete_from_disk_handler_cb (void *data) {
-    int ctx = (intptr_t)data;
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (!plt) {
+        return FALSE;
+    }
+    
+    int ctx = (int)(intptr_t)data;
     if (deadbeef->conf_get_int ("gtkui.delete_files_ask", 1)) {
+        char buf[1000];
+        const char *buf2 = _(" The files will be lost.\n\n(This dialog can be turned off in GTKUI plugin settings)");
+
+        if (ctx == DDB_ACTION_CTX_SELECTION) {
+            int selected_files = deadbeef->pl_getselcount ();
+            if (selected_files == 1) {
+                snprintf(buf, sizeof (buf), _("Do you really want to delete the selected file?%s"), buf2);
+            } else {
+                snprintf(buf, sizeof (buf), _("Do you really want to delete all %d selected files?%s"), selected_files, buf2);
+            }
+        }
+        else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
+            int files = deadbeef->plt_get_item_count (plt, PL_MAIN);
+            snprintf(buf, sizeof (buf), _("Do you really want to delete all %d files from the current playlist?%s"), files, buf2);
+        }
+        else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
+            snprintf(buf, sizeof (buf), _("Do you really want to delete the currently playing file?%s"), buf2);
+        }
+
         GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Delete files from disk"));
-        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Files will be lost. Proceed?\n(This dialog can be turned off in GTKUI plugin settings)"));
+        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), "%s", buf);
         gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
 
         int response = gtk_dialog_run (GTK_DIALOG (dlg));
@@ -384,68 +437,99 @@ action_delete_from_disk_handler_cb (void *data) {
             return FALSE;
         }
     }
-
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (!plt) {
-        return FALSE;
-    }
     deadbeef->pl_lock ();
 
+    DB_playItem_t **tracklist = NULL;
+    unsigned trackcount = 0;
+    
+    DB_playItem_t *it_current_song = deadbeef->streamer_get_playing_track ();
+    int idx_current_song = -1;
     if (ctx == DDB_ACTION_CTX_SELECTION) {
+        unsigned selcount = deadbeef->plt_getselcount (plt);
+        tracklist = calloc (selcount, sizeof (DB_playItem_t *));
         DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
         while (it) {
+            if (trackcount == selcount) {
+                break;
+            }
             DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (uri)) {
-                delete_and_remove_track (uri, plt, it);
+                if (it == it_current_song) {
+                    idx_current_song = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
+                }
+                deadbeef->pl_item_ref (it);
+                tracklist[trackcount++] = it;
             }
             deadbeef->pl_item_unref (it);
             it = next;
         }
-
-        deadbeef->plt_save_config (plt);
     }
     else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
+        unsigned count = deadbeef->plt_get_item_count (plt, PL_MAIN);
+        tracklist = calloc (count, sizeof (DB_playItem_t *));
         DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
         while (it) {
+            if (trackcount == count) {
+                break;
+            }
             DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->is_local_file (uri)) {
-                delete_and_remove_track (uri, plt, it);
-// FIXME: this dialog should allow something like "cancel" and "ignore all", then
-// it will be usable
-//                else {
-//                    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, _("Can't delete the file. Perhaps it doesn't exist, read-only, or part of read-only VFS, or all of the above."));
-//                    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), uri);
-//                    gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
-//
-//                    int response = gtk_dialog_run (GTK_DIALOG (dlg));
-//                    gtk_widget_destroy (dlg);
-//                }
+                deadbeef->pl_item_ref (it);
+                tracklist[trackcount++] = it;
             }
             deadbeef->pl_item_unref (it);
             it = next;
         }
-
-        deadbeef->plt_save_config (plt);
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
         DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
         if (it) {
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->is_local_file (uri)) {
-                int idx = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
+                int idx = idx_current_song = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
                 if (idx != -1) {
-                    delete_and_remove_track (uri, plt, it);
+                    tracklist = calloc (1, sizeof (DB_playItem_t *));
+                    deadbeef->pl_item_ref (it);
+                    tracklist[trackcount++] = it;
                 }
             }
             deadbeef->pl_item_unref (it);
         }
-        deadbeef->plt_save_config (plt);
+    }
+
+    if (tracklist) {
+        for (unsigned i = 0; i < trackcount; i++) {
+            const char *uri = deadbeef->pl_find_meta (tracklist[i], ":URI");
+            _delete_and_remove_track_from_all_playlists (uri, plt, tracklist[i]);
+            deadbeef->pl_item_unref (tracklist[i]);
+        }
+        free (tracklist);
+        tracklist = NULL;
+    }
+    
+    if (deadbeef->conf_get_int ("gtkui.skip_deleted_songs", 0) 
+        && deadbeef->plt_get_item_idx (plt, it_current_song, PL_MAIN) == -1 
+        && deadbeef->streamer_get_current_playlist () == deadbeef->plt_get_curr_idx () 
+        && deadbeef->get_output ()->state () == OUTPUT_STATE_PLAYING) {
+        
+        if (idx_current_song != -1 
+            && deadbeef->playqueue_get_count () == 0 
+            && deadbeef->streamer_get_shuffle () == DDB_SHUFFLE_OFF) {
+            deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, idx_current_song, 0);
+        }
+        else {
+            deadbeef->sendmessage(DB_EV_NEXT, 0, 0, 0);
+        }
+    }
+
+    deadbeef->pl_save_all ();
+    if (it_current_song) {
+        deadbeef->pl_item_unref (it_current_song);
     }
     deadbeef->pl_unlock ();
     deadbeef->plt_unref (plt);
-
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     return FALSE;
 }

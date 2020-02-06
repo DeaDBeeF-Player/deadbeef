@@ -6,7 +6,6 @@ AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([1.11 dist-bzip2 tar-ustar silent-rules subdir-objects no-dependencies])
 AM_SILENT_RULES([yes])
 AM_MAINTAINER_MODE()
-
 AC_USE_SYSTEM_EXTENSIONS
 LT_INIT([disable-static])
 AC_PROG_CC
@@ -168,7 +167,7 @@ AC_CHECK_LIB([dl], [main], [HAVE_DL=yes;DL_LIBS="-ldl";AC_SUBST(DL_LIBS)])
 dnl check libsocket (OpenIndiana)
 AC_CHECK_LIB([socket], [main], [HAVE_SOCKET=yes;DL_LIBS="-lsocket";AC_SUBST(DL_LIBS)])
 dnl check for seperate alloca.h (OpenIndiana)
-AC_CHECK_HEADER([alloca.h],[],[alloca.h not found.])
+AC_CHECK_HEADER([alloca.h],[AC_DEFINE([HAVE_ALLOCA_H], [1], [Define if system has alloca.h])],[alloca.h not found.])
 dnl check for syslimits.h (BSD)
 AC_CHECK_HEADERS([sys/syslimits.h])
 AC_CHECK_HEADERS([sys/cdefs.h])
@@ -188,8 +187,12 @@ AS_IF([test "${enable_portable}" != "no" -a "${enable_staticlink}" != "no"], [
     PREFIXFLAGS=" -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
 ])
 
-CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE $PREFIXFLAGS -DDDB_WARN_DEPRECATED=1"
-CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE $PREFIXFLAGS -DDDB_WARN_DEPRECATED=1"
+dnl HACK: using undocumented variable to check whether it's safe to define __EXTENSIONS__
+test $ac_cv_safe_to_define___extensions__ = yes && CFLAGS_EXTENSIONS="-D__EXTENSIONS__"
+
+CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE $CFLAGS_EXTENSIONS $PREFIXFLAGS -DDDB_WARN_DEPRECATED=1"
+CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE $CFLAGS_EXTENSIONS $PREFIXFLAGS -DDDB_WARN_DEPRECATED=1"
+
 
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_ZLIB=yes
@@ -295,7 +298,7 @@ AS_IF([test "${enable_ffmpeg}" != "no"], [
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_DBUS=yes
     DBUS_DEPS_LIBS="../../$LIB/lib/libdbus-1.a ../../$LIB/lib/libexpat.a -lrt"
-    DBUS_DEPS_CFLAGS="-I../../$LIB/include/dbus-1"
+    DBUS_DEPS_CFLAGS="-I../../$LIB/include/dbus-1.0 -I../../$LIB/lib/dbus-1.0/include/"
     AC_SUBST(DBUS_DEPS_LIBS)
 ], [
     PKG_CHECK_MODULES(DBUS_DEPS, dbus-1, HAVE_DBUS=yes, HAVE_DBUS=no)

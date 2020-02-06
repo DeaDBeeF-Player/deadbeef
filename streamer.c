@@ -112,9 +112,11 @@ static ddb_waveformat_t prev_output_format; // last format that was sent to outp
 static ddb_waveformat_t last_block_fmt; // input file format corresponding to the current output
 
 static DB_fileinfo_t *fileinfo;
-static DB_FILE *fileinfo_file;
+static uint64_t fileinfo_file_identifier;
+static DB_vfs_t *fileinfo_file_vfs;
 static DB_fileinfo_t *new_fileinfo;
-static DB_FILE *new_fileinfo_file;
+static uint64_t new_fileinfo_file_identifier;
+static DB_vfs_t *new_fileinfo_file_vfs;
 
 // This counter is incremented by one for each streamer_read call, which returns -1,
 // which means audio should stop, but we need to wait a bit until buffered data has finished playing,
@@ -123,7 +125,24 @@ static DB_FILE *new_fileinfo_file;
 static int _audio_stall_count;
 
 // to allow interruption of stall file requests
-static DB_FILE *streamer_file;
+static uint64_t streamer_file_identifier;
+static DB_vfs_t *streamer_file_vfs;
+
+// We always decode the entire block, 16384 bytes of input PCM
+// after DSP that can become really big.
+// Think converting from 8KHz/8 bit to 192KHz/32 bit, thats 96x size increase,
+// which gives us the need of 1.5MB buffer.
+//
+// It's guaranteed that outbuffer contains only samples from the files with same wave format.
+//
+#define OUTPUT_BUFFER_SIZE (512*1024) // FIXME: need to be able to calculate that size from DSP chain
+static char *_output_buffer;
+static size_t _output_buffer_size;
+static int _outbuffer_remaining;
+
+// A buffer used in streamer_read.
+static float *_temp_audio_buffer;
+static size_t _temp_audio_buffer_size;
 
 #if defined(HAVE_XGUI) || defined(ANDROID)
 #include "equalizer.h"
@@ -193,20 +212,26 @@ _streamer_mark_album_played_up_to (playItem_t *item);
 
 static void
 streamer_abort_files (void) {
-    DB_FILE *file = fileinfo_file;
-    DB_FILE *newfile = new_fileinfo_file;
-    DB_FILE *strfile = streamer_file;
-    trace ("\033[0;33mstreamer_abort_files\033[37;0m\n");
-    trace ("%p %p %p\n", file, newfile, strfile);
+    DB_vfs_t *file_vfs = fileinfo_file_vfs;
+    uint64_t file_identifier = fileinfo_file_identifier;
 
-    if (file) {
-        vfs_fabort (file);
+    DB_vfs_t *newfile_vfs = new_fileinfo_file_vfs;
+    uint64_t newfile_identifier = new_fileinfo_file_identifier;
+
+    DB_vfs_t *strfile_vfs =streamer_file_vfs;
+    uint64_t strfile_identifier = streamer_file_identifier;
+
+    trace ("\033[0;33mstreamer_abort_files\033[37;0m\n");
+    trace ("%lld %lld %lld\n", file_identifier, newfile_identifier, strfile_identifier);
+
+    if (file_vfs && file_identifier) {
+        vfs_abort_with_identifier(file_vfs, file_identifier);
     }
-    if (newfile) {
-        vfs_fabort (newfile);
+    if (newfile_vfs && newfile_identifier) {
+        vfs_abort_with_identifier(newfile_vfs, newfile_identifier);
     }
-    if (strfile) {
-        vfs_fabort (strfile);
+    if (strfile_vfs && strfile_identifier) {
+        vfs_abort_with_identifier(strfile_vfs, strfile_identifier);
     }
 
 }
@@ -474,6 +499,14 @@ get_next_track (playItem_t *curr, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
     if (!plt->head[PL_MAIN]) {
         pl_unlock ();
         return NULL; // empty playlist
+    }
+
+    playlist_t *item_plt = pl_get_playlist(curr);
+    if (!item_plt) {
+        curr = NULL;
+    }
+    if (item_plt) {
+        plt_unref (item_plt);
     }
 
     if (shuffle == DDB_SHUFFLE_TRACKS || shuffle == DDB_SHUFFLE_ALBUMS) { // shuffle
@@ -852,9 +885,14 @@ streamer_play_failed (playItem_t *failed_track) {
         // the track has failed to be played,
         // but we want to send it down to streamreader for proper track switching etc.
         fileinfo = calloc(sizeof (DB_fileinfo_t), 1);
-        fileinfo_file = NULL;
+
+        fileinfo_file_vfs = NULL;
+        fileinfo_file_identifier = 0;
+
         new_fileinfo = NULL;
-        new_fileinfo_file = NULL;
+        new_fileinfo_file_vfs = NULL;
+        new_fileinfo_file_identifier = 0;
+
         if (streaming_track) {
             pl_item_unref (streaming_track);
         }
@@ -881,7 +919,8 @@ stream_track (playItem_t *it, int startpaused) {
     if (fileinfo) {
         fileinfo_free (fileinfo);
         fileinfo = NULL;
-        fileinfo_file = NULL;
+        fileinfo_file_vfs = NULL;
+        fileinfo_file_identifier = 0;
     }
     trace ("stream_track %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
     int err = 0;
@@ -947,17 +986,23 @@ stream_track (playItem_t *it, int startpaused) {
         pl_lock ();
         char *uri = strdupa (pl_find_meta (it, ":URI"));
         pl_unlock ();
-        DB_FILE *fp = streamer_file = vfs_fopen (uri);
+        DB_FILE *fp = vfs_fopen (uri);
         trace ("\033[0;34mgetting content-type\033[37;0m\n");
         if (!fp) {
             err = -1;
             goto error;
         }
+        streamer_file_vfs = fp->vfs;
+        streamer_file_identifier = vfs_get_identifier (fp);
+
         const char *ct = vfs_get_content_type (fp);
         if (!ct) {
             vfs_fclose (fp);
             fp = NULL;
-            streamer_file = NULL;
+
+            streamer_file_vfs = NULL;
+            streamer_file_identifier = 0;
+
             if (!startpaused) {
                 streamer_play_failed (it);
             }
@@ -1121,7 +1166,10 @@ m3u_error:
             }
             goto error;
         }
-        streamer_file = NULL;
+
+        streamer_file_vfs = NULL;
+        streamer_file_identifier = 0;
+
         vfs_fclose (fp);
     }
 
@@ -1201,14 +1249,20 @@ m3u_error:
         trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), dec->plugin.id);
         new_fileinfo = dec_open (dec, STREAMER_HINTS, it);
         if (new_fileinfo && new_fileinfo->file) {
-            new_fileinfo_file = new_fileinfo->file;
+            new_fileinfo_file_vfs = new_fileinfo->file->vfs;
+            new_fileinfo_file_identifier = vfs_get_identifier(new_fileinfo->file);
+        }
+        else {
+            new_fileinfo_file_vfs = NULL;
+            new_fileinfo_file_identifier = 0;
         }
         if (new_fileinfo && dec->init (new_fileinfo, DB_PLAYITEM (it)) != 0) {
             trace ("\033[0;31mfailed to init decoder\033[37;0m\n");
             pl_delete_meta (it, "!DECODER");
             dec->free (new_fileinfo);
             new_fileinfo = NULL;
-            new_fileinfo_file = NULL;
+            new_fileinfo_file_vfs = NULL;
+            new_fileinfo_file_identifier = 0;
         }
 
         if (!new_fileinfo) {
@@ -1216,7 +1270,15 @@ m3u_error:
             continue;
         }
         else {
-            new_fileinfo_file = new_fileinfo->file;
+            if (new_fileinfo->file) {
+                new_fileinfo_file_vfs = new_fileinfo->file->vfs;
+                new_fileinfo_file_identifier = vfs_get_identifier (new_fileinfo->file);
+            }
+            else {
+                new_fileinfo_file_vfs = NULL;
+                new_fileinfo_file_identifier = 0;
+            }
+
             if (streaming_track) {
                 pl_item_unref (streaming_track);
             }
@@ -1234,7 +1296,8 @@ success:
     if (new_fileinfo) {
         fileinfo = new_fileinfo;
         new_fileinfo = NULL;
-        new_fileinfo_file = NULL;
+        new_fileinfo_file_vfs = NULL;
+        new_fileinfo_file_identifier = 0;
     }
 
 error:
@@ -1264,11 +1327,11 @@ streamer_get_apx_bitrate (void) {
 
 void
 streamer_set_nextsong (int song, int startpaused) {
+    streamer_abort_files ();
     if (song == -1) {
         // this is a stop query -- clear the queue
         handler_reset (handler);
     }
-    streamer_abort_files ();
     handler_push (handler, STR_EV_PLAY_TRACK_IDX, 0, song, startpaused);
 }
 
@@ -1457,6 +1520,51 @@ streamer_set_output_format (ddb_waveformat_t *fmt) {
     }
 }
 
+static void
+_streamer_requeue_after_current (ddb_repeat_t repeat, ddb_shuffle_t shuffle) {
+    if (!playing_track) {
+        return;
+    }
+    streamer_lock ();
+    streamreader_flush_after (playing_track);
+
+    if (playing_track == streaming_track) {
+        streamer_unlock ();
+        return;
+    }
+
+    if (streaming_track) {
+        pl_item_unref (streaming_track);
+    }
+    streaming_track = playing_track;
+    if (streaming_track) {
+        pl_item_ref (streaming_track);
+    }
+    streamer_unlock ();
+    streamer_next (shuffle, repeat);
+}
+
+static void
+_streamer_track_deleted (ddb_repeat_t repeat, ddb_shuffle_t shuffle) {
+    // cancel buffering of next track, if it's not in playlist anymore
+
+    if (!streaming_track) {
+        return;
+    }
+
+    if (playing_track && streaming_track == playing_track) {
+        return;
+    }
+
+    playlist_t *plt = pl_get_playlist (streaming_track);
+    if (!plt) {
+        _streamer_requeue_after_current (repeat, shuffle);
+    }
+    else {
+        plt_unref (plt);
+    }
+}
+
 void
 streamer_thread (void *unused) {
 #if defined(__linux__) && !defined(ANDROID)
@@ -1503,11 +1611,20 @@ streamer_thread (void *unused) {
             case STR_EV_SET_DSP_CHAIN:
                 streamer_set_dsp_chain_real ((ddb_dsp_context_t *)ctx);
                 break;
+            case STR_EV_TRACK_DELETED:
+                _streamer_track_deleted (repeat, shuffle);
+                break;
             }
         }
 
+        // each event can modify shuffle/repeat, so update them here, so that subsequent event handlers use new values
         ddb_shuffle_t new_shuffle = streamer_get_shuffle ();
-        repeat = streamer_get_repeat ();
+        ddb_repeat_t new_repeat = streamer_get_repeat ();
+
+        int need_requeue = 0;
+        if (new_shuffle != shuffle || new_repeat != repeat) {
+            need_requeue = 1;
+        }
 
         if (new_shuffle != shuffle) {
             pl_reshuffle_all ();
@@ -1515,7 +1632,13 @@ streamer_thread (void *unused) {
             shuffle = new_shuffle;
         }
 
-        if (output && output->state () == OUTPUT_STATE_STOPPED) {
+        repeat = new_repeat;
+
+        if (need_requeue) {
+            _streamer_requeue_after_current(repeat, shuffle);
+        }
+
+        if (output && output->state () == DDB_PLAYBACK_STATE_STOPPED) {
             if (!handler_hasmessages (handler)) {
                 usleep (50000);
             }
@@ -1593,12 +1716,11 @@ streamer_thread (void *unused) {
                 }
             }
 
-            // next track
-            if (!stop) {
-                streamer_next (shuffle, repeat);
+            if (stop) {
+                stream_track (NULL, 0);
             }
             else {
-                stream_track(NULL, 0);
+                streamer_next (shuffle, repeat);
             }
         }
 
@@ -1611,7 +1733,8 @@ streamer_thread (void *unused) {
     if (fileinfo) {
         fileinfo_free (fileinfo);
         fileinfo = NULL;
-        fileinfo_file = NULL;
+        fileinfo_file_vfs = NULL;
+        fileinfo_file_identifier = 0;
     }
     streamer_lock ();
     if (streaming_track) {
@@ -1705,18 +1828,29 @@ streamer_free (void) {
 
     playpos = 0;
     playtime = 0;
+
+    free (_output_buffer);
+    _output_buffer = NULL;
+    _output_buffer_size = 0;
+    _outbuffer_remaining = 0;
+
+    free (_temp_audio_buffer);
+    _temp_audio_buffer = NULL;
+    _temp_audio_buffer_size = 0;
 }
 
-// We always decode the entire block, 16384 bytes of input PCM
-// after DSP that can become really big.
-// Think converting from 8KHz/8 bit to 192KHz/32 bit, thats 96x size increase,
-// which gives us the need of 1.5MB buffer.
-//
-// It's guaranteed that outbuffer contains only samples from the files with same wave format.
-//
-// FIXME: this BSS allocation is temporary, needs to be on heap, and allocated on demand.
-static char outbuffer[512*1024];
-static int outbuffer_remaining;
+static char *
+_get_output_buffer (size_t size) {
+    if (_output_buffer) {
+        if (_output_buffer_size >= size) {
+            return _output_buffer;
+        }
+        free (_output_buffer);
+    }
+    _output_buffer_size = size;
+    _output_buffer = malloc (_output_buffer_size);
+    return _output_buffer;
+}
 
 void
 streamer_reset (int full) { // must be called when current song changes by external reasons
@@ -1728,7 +1862,7 @@ streamer_reset (int full) { // must be called when current song changes by exter
     streamer_lock();
     streamreader_reset ();
     dsp_reset ();
-    outbuffer_remaining = 0;
+    _outbuffer_remaining = 0;
     streamer_unlock();
 }
 
@@ -1909,6 +2043,19 @@ streamer_apply_soft_volume (char *bytes, int sz) {
     }
 }
 
+static float *
+_get_temp_audio_buffer (size_t size) {
+    if (_temp_audio_buffer) {
+        if (_temp_audio_buffer_size >= size) {
+            return _temp_audio_buffer;
+        }
+        free (_temp_audio_buffer);
+    }
+    _temp_audio_buffer_size = size;
+    _temp_audio_buffer = malloc (_temp_audio_buffer_size);
+    return _temp_audio_buffer;
+}
+
 int
 streamer_read (char *bytes, int size) {
 #if 0
@@ -1957,19 +2104,20 @@ streamer_read (char *bytes, int size) {
     // only decode until the next format change
     if (!memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
         // decode enough blocks to fill the output buffer
-        while (block != NULL && outbuffer_remaining < size && !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
-            int rb = process_output_block (block, outbuffer + outbuffer_remaining);
+        while (block != NULL && _outbuffer_remaining < size && !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
+            char *outbuffer = _get_output_buffer (OUTPUT_BUFFER_SIZE);
+            int rb = process_output_block (block, outbuffer + _outbuffer_remaining);
             if (rb <= 0) {
                 break;
             }
-            outbuffer_remaining += rb;
+            _outbuffer_remaining += rb;
             block_bitrate = block->bitrate;
             block = streamreader_get_curr_block();
         }
     }
     // empty buffer and the next block format differs? request format change!
 
-    if (!outbuffer_remaining && block && memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
+    if (!_outbuffer_remaining && block && memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
         _format_change_wait = 1;
         streamer_unlock();
         memset (bytes, 0, size);
@@ -1978,7 +2126,7 @@ streamer_read (char *bytes, int size) {
     streamer_unlock ();
 
     // consume decoded data
-    int sz = min (size, outbuffer_remaining);
+    int sz = min (size, _outbuffer_remaining);
     if (!sz) {
         // no data available
         memset (bytes, 0, size);
@@ -1991,11 +2139,13 @@ streamer_read (char *bytes, int size) {
         sz -= (sz % ss);
     }
 
+    char *outbuffer = _get_output_buffer(OUTPUT_BUFFER_SIZE);
+
     memcpy (bytes, outbuffer, sz);
-    if (sz < outbuffer_remaining) {
-        memmove (outbuffer, outbuffer + sz, outbuffer_remaining - sz);
+    if (sz < _outbuffer_remaining) {
+        memmove (outbuffer, outbuffer + sz, _outbuffer_remaining - sz);
     }
-    outbuffer_remaining -= sz;
+    _outbuffer_remaining -= sz;
 
     // approximate bitrate
     if (block_bitrate != -1) {
@@ -2041,7 +2191,7 @@ streamer_read (char *bytes, int size) {
             .is_bigendian = 0
         };
 
-        float temp_audio_data[in_frames * out_fmt.channels];
+        float *temp_audio_data = _get_temp_audio_buffer (in_frames * out_fmt.channels * sizeof (float));
         pcm_convert (&output->fmt, bytes, &out_fmt, (char *)temp_audio_data, sz);
         ddb_audio_data_t data;
         data.fmt = &out_fmt;
@@ -2225,7 +2375,7 @@ _play_track (playItem_t *it, int startpaused) {
         else {
             int st = output->state();
             output->play ();
-            if (st == OUTPUT_STATE_PAUSED) {
+            if (st == DDB_PLAYBACK_STATE_PAUSED) {
                 messagepump_push(DB_EV_PAUSED, 0, 0, 0);
             }
         }
@@ -2261,7 +2411,30 @@ play_index (int idx, int startpaused) {
     }
     pl_unlock();
 
-    _streamer_mark_album_played_up_to (it);
+    // rebuild shuffle order
+    plt_reshuffle (plt, NULL, NULL);
+
+    ddb_shuffle_t shuffle = streamer_get_shuffle ();
+    if (shuffle == DDB_SHUFFLE_ALBUMS) {
+        pl_lock ();
+        _streamer_mark_album_played_up_to (it);
+
+        // mark songs from all other albums as played
+        playItem_t *i = plt->head[PL_MAIN];
+        while (i) {
+            if (i->shufflerating != it->shufflerating) {
+                i->played = 1;
+            }
+            i = i->next[PL_MAIN];
+        }
+        pl_unlock ();
+    }
+    else {
+        // This ensures that the manually triggered item becomes first in shuffle queue.
+        // It works because shufflerating is generated using rand(), which gives only numbers in the [0..RAND_MAX] range.
+        it->shufflerating = -1;
+    }
+
     _play_track(it, startpaused);
 
     pl_item_unref(it);
@@ -2270,10 +2443,9 @@ play_index (int idx, int startpaused) {
 
 error:
     output->stop ();
-
-    streamer_lock();
     streamer_reset (1);
 
+    streamer_lock();
     _handle_playback_stopped ();
     stream_track (NULL, 0);
     if (plt) {
@@ -2308,7 +2480,7 @@ streamer_get_current_track_to_play (playlist_t *plt) {
 static void
 play_current (void) {
     DB_output_t *output = plug_get_output ();
-    if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
+    if (output->state () == DDB_PLAYBACK_STATE_PAUSED && playing_track) {
         // restart if network stream
         if (is_remote_stream (playing_track) && pl_get_item_duration (playing_track) < 0) {
             streamer_reset (1);
@@ -2362,11 +2534,11 @@ streamer_get_next_track_with_direction (int dir, ddb_shuffle_t shuffle, ddb_repe
 
     // possibly need a reshuffle
     if (!next && streamer_playlist->count[PL_MAIN] != 0) {
-        int pl_loop_mode = conf_get_int ("playback.loop", DDB_REPEAT_OFF);
-        int pl_order = conf_get_int ("playback.order", DDB_SHUFFLE_OFF);
+        ddb_repeat_t repeat = streamer_get_repeat ();
+        ddb_shuffle_t shuffle = streamer_get_shuffle ();
 
-        if (pl_loop_mode == DDB_REPEAT_OFF) {
-            if (pl_order == DDB_SHUFFLE_ALBUMS || pl_order == DDB_SHUFFLE_TRACKS) {
+        if (repeat == DDB_REPEAT_OFF) {
+            if (shuffle == DDB_SHUFFLE_ALBUMS || shuffle == DDB_SHUFFLE_TRACKS) {
                 plt_reshuffle (streamer_playlist, dir > 0 ? &next : NULL, dir < 0 ? &next : NULL);
                 if (next && dir < 0) {
                     // mark all songs as played except the current one
@@ -2390,13 +2562,13 @@ streamer_get_next_track_with_direction (int dir, ddb_shuffle_t shuffle, ddb_repe
 static void
 play_next (int dir, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
     DB_output_t *output = plug_get_output ();
-    streamer_reset(1);
 
     playItem_t *next = streamer_get_next_track_with_direction (dir, shuffle, repeat);
 
     if (!next) {
         streamer_set_last_played (NULL);
         output->stop ();
+        streamer_reset(1);
         _handle_playback_stopped ();
         return;
     }
@@ -2640,12 +2812,11 @@ streamer_yield (void) {
 
 void
 streamer_set_output (DB_output_t *output) {
-    printf ("streamer_set_output\n");
     if (mutex) {
         streamer_lock ();
     }
     DB_output_t *prev = plug_get_output ();
-    int state = OUTPUT_STATE_STOPPED;
+    ddb_playback_state_t state = DDB_PLAYBACK_STATE_STOPPED;
 
     ddb_waveformat_t fmt = {0};
     if (prev) {
@@ -2660,10 +2831,10 @@ streamer_set_output (DB_output_t *output) {
     }
 
     int res = 0;
-    if (state == OUTPUT_STATE_PLAYING) {
+    if (state == DDB_PLAYBACK_STATE_PLAYING) {
         res = output->play ();
     }
-    else if (state == OUTPUT_STATE_PAUSED) {
+    else if (state == DDB_PLAYBACK_STATE_PAUSED) {
         res = output->pause ();
     }
 
@@ -2675,4 +2846,9 @@ streamer_set_output (DB_output_t *output) {
         streamer_unlock ();
     }
     messagepump_push (DB_EV_OUTPUTCHANGED, 0, 0, 0);
+}
+
+void
+streamer_notify_track_deleted (void) {
+    handler_push (handler, STR_EV_TRACK_DELETED, 0, 0, 0);
 }

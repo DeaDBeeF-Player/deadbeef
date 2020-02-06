@@ -125,7 +125,7 @@ on_playbtn_clicked                     (GtkButton       *button,
 {
     // NOTE: this function is a copy of action_play_cb
     DB_output_t *output = deadbeef->get_output ();
-    if (output->state () == OUTPUT_STATE_PAUSED) {
+    if (output->state () == DDB_PLAYBACK_STATE_PAUSED) {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         int cur = deadbeef->plt_get_cursor (plt, PL_MAIN);
         if (cur != -1) {
@@ -237,7 +237,9 @@ void
 on_order_linear_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->streamer_set_shuffle (DDB_SHUFFLE_OFF);
+    if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(menuitem))) {
+        deadbeef->streamer_set_shuffle (DDB_SHUFFLE_OFF);
+    }
 }
 
 
@@ -245,21 +247,27 @@ void
 on_order_shuffle_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->streamer_set_shuffle (DDB_SHUFFLE_TRACKS);
+    if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(menuitem))) {
+        deadbeef->streamer_set_shuffle (DDB_SHUFFLE_TRACKS);
+    }
 }
 
 void
 on_order_shuffle_albums_activate       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->streamer_set_shuffle (DDB_SHUFFLE_ALBUMS);
+    if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(menuitem))) {
+        deadbeef->streamer_set_shuffle (DDB_SHUFFLE_ALBUMS);
+    }
 }
 
 void
 on_order_random_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->streamer_set_shuffle (DDB_SHUFFLE_RANDOM);
+    if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(menuitem))) {
+        deadbeef->streamer_set_shuffle (DDB_SHUFFLE_RANDOM);
+    }
 }
 
 
@@ -267,7 +275,9 @@ void
 on_loop_all_activate                   (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->streamer_set_repeat (DDB_REPEAT_ALL);
+    if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(menuitem))) {
+        deadbeef->streamer_set_repeat (DDB_REPEAT_ALL);
+    }
 }
 
 
@@ -275,7 +285,9 @@ void
 on_loop_single_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->streamer_set_repeat (DDB_REPEAT_SINGLE);
+    if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(menuitem))) {
+        deadbeef->streamer_set_repeat (DDB_REPEAT_SINGLE);
+    }
 }
 
 
@@ -283,7 +295,9 @@ void
 on_loop_disable_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->streamer_set_repeat (DDB_REPEAT_OFF);
+    if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(menuitem))) {
+        deadbeef->streamer_set_repeat (DDB_REPEAT_OFF);
+    }
 }
 
 gboolean
@@ -793,5 +807,3 @@ on_log_window_key_press_event          (GtkWidget       *widget,
     }
     return FALSE;
 }
-
-

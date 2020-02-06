@@ -27,11 +27,17 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifdef HAVE_CONFIG_H
+#include "../../config.h"
+#endif
 #include <string.h>
 #if defined(TINYWV) || defined(OSX_BUILD)
 #include <wavpack.h>
 #else
 #include <wavpack/wavpack.h>
+#endif
+#ifdef HAVE_ALLOCA_H
+#include <alloca.h>
 #endif
 #include <stdio.h>
 #include <stdlib.h>

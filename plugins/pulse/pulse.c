@@ -52,7 +52,7 @@ static int pulse_terminate;
 static pa_simple *s;
 static pa_sample_spec ss;
 static ddb_waveformat_t requested_fmt;
-static int state = OUTPUT_STATE_STOPPED;
+static ddb_playback_state_t state = DDB_PLAYBACK_STATE_STOPPED;
 static uintptr_t mutex;
 static int in_callback;
 
@@ -147,7 +147,7 @@ static int pulse_init(void)
 {
     trace ("pulse_init\n");
     deadbeef->mutex_lock (mutex);
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     trace ("pulse_terminate=%d\n", pulse_terminate);
     assert (!pulse_terminate);
 
@@ -182,10 +182,10 @@ static int pulse_setformat (ddb_waveformat_t *fmt)
     pulse_free ();
     pulse_init ();
     int res = 0;
-    if (st == OUTPUT_STATE_PLAYING) {
+    if (st == DDB_PLAYBACK_STATE_PLAYING) {
         res = pulse_play ();
     }
-    else if (st == OUTPUT_STATE_PAUSED) {
+    else if (st == DDB_PLAYBACK_STATE_PAUSED) {
         res = pulse_pause ();
     }
 
@@ -196,7 +196,7 @@ static int pulse_free(void)
 {
     trace("pulse_free\n");
 
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
 
     deadbeef->mutex_lock(mutex);
     if (!pulse_tid) {
@@ -232,7 +232,7 @@ static int pulse_play(void)
     }
 
     pa_simple_flush (s, NULL);
-    state = OUTPUT_STATE_PLAYING;
+    state = DDB_PLAYBACK_STATE_PLAYING;
     deadbeef->mutex_unlock (mutex);
 
     return 0;
@@ -249,7 +249,7 @@ static int pulse_pause(void)
 {
     trace ("pulse_pause\n");
     pulse_free();
-    state = OUTPUT_STATE_PAUSED;
+    state = DDB_PLAYBACK_STATE_PAUSED;
     return 0;
 }
 
@@ -257,14 +257,14 @@ static int pulse_unpause(void)
 {
     trace ("pulse_unpause\n");
     deadbeef->mutex_lock (mutex);
-    if (state == OUTPUT_STATE_PAUSED)
+    if (state == DDB_PLAYBACK_STATE_PAUSED)
     {
         if (pulse_init () < 0)
         {
             deadbeef->mutex_unlock (mutex);
             return -1;
         }
-        state = OUTPUT_STATE_PLAYING;
+        state = DDB_PLAYBACK_STATE_PLAYING;
     }
 
     deadbeef->mutex_unlock (mutex);
@@ -281,7 +281,7 @@ static void pulse_thread(void *context)
     trace ("pulse thread started \n");
     while (!pulse_terminate)
     {
-        if (state != OUTPUT_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1))
+        if (state != DDB_PLAYBACK_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1))
         {
             usleep(10000);
             continue;
@@ -320,7 +320,7 @@ static void pulse_thread(void *context)
     }
 
     deadbeef->mutex_lock (mutex);
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     if (s)
     {
         pa_simple_drain (s, NULL);
@@ -333,7 +333,7 @@ static void pulse_thread(void *context)
     trace ("pulse_thread finished\n");
 }
 
-static int pulse_get_state(void)
+static ddb_playback_state_t pulse_get_state(void)
 {
     return state;
 }

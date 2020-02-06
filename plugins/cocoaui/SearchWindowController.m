@@ -28,14 +28,6 @@
 
 @implementation SearchWindowController
 
-- (void)dealloc {
-    [self cleanup];
-}
-
-- (void)cleanup {
-    [_viewController cleanup];
-}
-
 - (void)windowDidLoad {
     [super windowDidLoad];
     
@@ -43,7 +35,7 @@
 }
 
 - (void)reset {
-    DdbSearchViewController *ctl = (DdbSearchViewController *)_viewController;
+    SearchViewController *ctl = (SearchViewController *)_viewController;
     [ctl reset];
 }
 @end

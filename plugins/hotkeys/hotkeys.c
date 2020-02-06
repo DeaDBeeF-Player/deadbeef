@@ -592,7 +592,7 @@ int
 action_play_cb (struct DB_plugin_action_s *action, int ctx) {
     // NOTE: this function is copied as on_playbtn_clicked in gtkui
     DB_output_t *output = deadbeef->get_output ();
-    if (output->state () == OUTPUT_STATE_PAUSED) {
+    if (output->state () == DDB_PLAYBACK_STATE_PAUSED) {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         int cur = deadbeef->plt_get_cursor (plt, PL_MAIN);
         if (cur != -1) {
@@ -657,8 +657,8 @@ action_toggle_pause_cb (struct DB_plugin_action_s *action, int ctx) {
 
 int
 action_play_pause_cb (struct DB_plugin_action_s *action, int ctx) {
-    int state = deadbeef->get_output ()->state ();
-    if (state == OUTPUT_STATE_PLAYING) {
+    ddb_playback_state_t state = deadbeef->get_output ()->state ();
+    if (state == DDB_PLAYBACK_STATE_PLAYING) {
         deadbeef->sendmessage (DB_EV_PAUSE, 0, 0, 0);
     }
     else {
@@ -681,7 +681,11 @@ action_seek_5p_forward_cb (struct DB_plugin_action_s *action, int ctx) {
         float dur = deadbeef->pl_get_item_duration (it);
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
-            deadbeef->sendmessage (DB_EV_SEEK, 0, (pos + dur * 0.05f) * 1000, 0);
+            pos += dur * 0.05f;
+            if (pos > dur) {
+                pos = dur;
+            }
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(pos * 1000), 0);
         }
         deadbeef->pl_item_unref (it);
     }
@@ -697,12 +701,11 @@ action_seek_5p_backward_cb (struct DB_plugin_action_s *action, int ctx) {
         float dur = deadbeef->pl_get_item_duration (it);
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
-            pos = (pos - dur * 0.05f) * 1000;
+            pos -= dur * 0.05f;
             if (pos < 0) {
                 pos = 0;
             }
-
-            deadbeef->sendmessage (DB_EV_SEEK, 0, pos, 0);
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(pos * 1000), 0);
         }
         deadbeef->pl_item_unref (it);
     }
@@ -718,7 +721,11 @@ action_seek_1p_forward_cb (struct DB_plugin_action_s *action, int ctx) {
         float dur = deadbeef->pl_get_item_duration (it);
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
-            deadbeef->sendmessage (DB_EV_SEEK, 0, (pos + dur * 0.01f) * 1000, 0);
+            pos += dur * 0.01f;
+            if (pos > dur) {
+                pos = dur;
+            }
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(pos * 1000), 0);
         }
         deadbeef->pl_item_unref (it);
     }
@@ -734,11 +741,11 @@ action_seek_1p_backward_cb (struct DB_plugin_action_s *action, int ctx) {
         float dur = deadbeef->pl_get_item_duration (it);
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
-            pos = (pos - dur * 0.01f) * 1000;
+            pos -= dur * 0.01f;
             if (pos < 0) {
                 pos = 0;
             }
-            deadbeef->sendmessage (DB_EV_SEEK, 0, pos, 0);
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(pos * 1000), 0);
         }
         deadbeef->pl_item_unref (it);
     }
@@ -755,10 +762,13 @@ seek_sec (float sec) {
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
             pos += sec;
+            if (pos > dur) {
+                pos = dur;
+            }
             if (pos < 0) {
                 pos = 0;
             }
-            deadbeef->sendmessage (DB_EV_SEEK, 0, pos * 1000, 0);
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(pos * 1000), 0);
         }
         deadbeef->pl_item_unref (it);
     }

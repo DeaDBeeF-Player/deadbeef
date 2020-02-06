@@ -158,7 +158,7 @@ fill_pltbrowser_rows (gpointer user_data)
     int n = deadbeef->plt_get_count ();
     int plt_active = deadbeef->streamer_get_current_playlist ();
     int highlight_curr = deadbeef->conf_get_int ("gtkui.pltbrowser.highlight_curr_plt", 0);
-    int output_state = deadbeef->get_output ()->state ();
+    ddb_playback_state_t playback_state = deadbeef->get_output ()->state ();
 
     for (int i = 0; i < n; i++) {
         ddb_playlist_t *plt = deadbeef->plt_get_for_idx (i);
@@ -173,10 +173,10 @@ fill_pltbrowser_rows (gpointer user_data)
         char num_items_str[100];
         deadbeef->plt_get_title (plt, title_temp, sizeof (title_temp));
         if (plt_active == i && highlight_curr) {
-            if (output_state == OUTPUT_STATE_PAUSED) {
+            if (playback_state == DDB_PLAYBACK_STATE_PAUSED) {
                 snprintf (title, sizeof (title), "%s%s", title_temp, _(" (paused)"));
             }
-            else if (output_state == OUTPUT_STATE_STOPPED) {
+            else if (playback_state == DDB_PLAYBACK_STATE_STOPPED) {
                 snprintf (title, sizeof (title), "%s%s", title_temp, _(" (stopped)"));
             }
             else {
@@ -190,10 +190,10 @@ fill_pltbrowser_rows (gpointer user_data)
         if (plt_active == i) {
             GtkIconTheme *icon_theme = gtk_icon_theme_get_default();
             if (icon_theme) {
-                if (output_state == OUTPUT_STATE_PAUSED) {
+                if (playback_state == DDB_PLAYBACK_STATE_PAUSED) {
                     playing_pixbuf = gtk_icon_theme_load_icon (icon_theme, "media-playback-pause", 16, 0, NULL);
                 }
-                else if (output_state == OUTPUT_STATE_STOPPED) {
+                else if (playback_state == DDB_PLAYBACK_STATE_STOPPED) {
                     playing_pixbuf = gtk_icon_theme_load_icon (icon_theme, "media-playback-stop", 16, 0, NULL);
                 }
                 else {

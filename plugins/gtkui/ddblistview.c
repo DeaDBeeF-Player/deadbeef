@@ -398,7 +398,6 @@ ddb_listview_init(DdbListview *listview)
     gtk_widget_set_events (listview->header, GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_ENTER_NOTIFY_MASK);
 
     listview->list = gtk_drawing_area_new ();
-    g_object_ref(listview->list);
     gtk_widget_show (listview->list);
     gtk_box_pack_start (GTK_BOX (vbox), listview->list, TRUE, TRUE, 0);
     gtk_widget_set_can_focus (listview->list, TRUE);

@@ -70,7 +70,7 @@ pnull_unpause (void);
 int
 pnull_init (void) {
     trace ("pnull_init\n");
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     null_terminate = 0;
     null_tid = deadbeef->thread_start (pnull_thread, NULL);
     return 0;
@@ -91,7 +91,7 @@ pnull_free (void) {
             deadbeef->thread_join (null_tid);
         }
         null_tid = 0;
-        state = OUTPUT_STATE_STOPPED;
+        state = DDB_PLAYBACK_STATE_STOPPED;
         null_terminate = 0;
     }
     return 0;
@@ -102,43 +102,34 @@ pnull_play (void) {
     if (!null_tid) {
         pnull_init ();
     }
-    state = OUTPUT_STATE_PLAYING;
+    state = DDB_PLAYBACK_STATE_PLAYING;
     return 0;
 }
 
 int
 pnull_stop (void) {
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     deadbeef->streamer_reset (1);
     return 0;
 }
 
 int
 pnull_pause (void) {
-    if (state == OUTPUT_STATE_STOPPED) {
+    if (state == DDB_PLAYBACK_STATE_STOPPED) {
         return -1;
     }
     // set pause state
-    state = OUTPUT_STATE_PAUSED;
+    state = DDB_PLAYBACK_STATE_PAUSED;
     return 0;
 }
 
 int
 pnull_unpause (void) {
     // unset pause state
-    if (state == OUTPUT_STATE_PAUSED) {
-        state = OUTPUT_STATE_PLAYING;
+    if (state == DDB_PLAYBACK_STATE_PAUSED) {
+        state = DDB_PLAYBACK_STATE_PLAYING;
     }
     return 0;
-}
-
-static int
-pnull_get_endianness (void) {
-#if WORDS_BIGENDIAN
-    return 1;
-#else
-    return 0;
-#endif
 }
 
 static void
@@ -150,7 +141,7 @@ pnull_thread (void *context) {
         if (null_terminate) {
             break;
         }
-        if (state != OUTPUT_STATE_PLAYING) {
+        if (state != DDB_PLAYBACK_STATE_PLAYING) {
             usleep (10000);
             continue;
         }
@@ -174,7 +165,7 @@ pnull_callback (char *stream, int len) {
     }
 }
 
-int
+ddb_playback_state_t
 pnull_get_state (void) {
     return state;
 }

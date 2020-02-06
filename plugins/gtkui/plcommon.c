@@ -167,13 +167,6 @@ create_col_info (DdbListview *listview, int id) {
     return info;
 }
 
-static void
-coverart_release (void *user_data) {
-    col_info_t *info = user_data;
-    g_object_unref(info->listview->list);
-    free(user_data);
-}
-
 void
 pl_common_free_col_info (void *data) {
     if (!data) {
@@ -193,14 +186,11 @@ pl_common_free_col_info (void *data) {
     if (info->sort_bytecode) {
         free (info->sort_bytecode);
     }
-    if (pl_common_is_album_art_column(info)) {
-        g_object_ref(info->listview->list);
-        queue_cover_callback(coverart_release, info);
-        if (info->cover_load_timeout_id) {
-            g_source_remove(info->cover_load_timeout_id);
-            info->cover_load_timeout_id = 0;
-        }
+    if (info->cover_load_timeout_id) {
+        g_source_remove(info->cover_load_timeout_id);
+        info->cover_load_timeout_id = 0;
     }
+    free (info);
 }
 
 #define COL_CONF_BUFFER_SIZE 10000
@@ -460,7 +450,7 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
     DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
 
     if (!gtkui_unicode_playstate && it && it == playing_track && info->id == DB_COLUMN_PLAYING) {
-        int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
+        int paused = deadbeef->get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
         GdkPixbuf *pixbuf;
         if (paused) {
@@ -483,7 +473,7 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
         char text[1024] = "";
         int is_dimmed = 0;
         if (it == playing_track && info->id == DB_COLUMN_PLAYING) {
-            int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
+            int paused = deadbeef->get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED;
             int buffering = !deadbeef->streamer_ok_to_read (-1);
             if (paused) {
                 strcpy (text, "||");
@@ -1532,6 +1522,19 @@ on_group_by_artist_activate            (GtkMenuItem     *menuitem,
     groups_changed (get_context_menu_listview (menuitem), "%artist%");
 }
 
+
+static void
+_make_format (char *format, size_t size, DdbListviewGroupFormat *fmt) {
+    format[0] = 0;
+    while (fmt) {
+        if (format[0] != 0) {
+            strncat(format, SUBGROUP_DELIMITER, size - strlen(format) - 1);
+        }
+        strncat(format, fmt->format, size - strlen(format) - 1);
+        fmt = fmt->next;
+    }
+}
+
 static void
 on_group_by_custom_activate            (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
@@ -1543,15 +1546,9 @@ on_group_by_custom_activate            (GtkMenuItem     *menuitem,
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
     GtkWidget *entry = lookup_widget (dlg, "format");
     char format[1024];
-    format[0] = 0;
-    DdbListviewGroupFormat *fmt = listview->group_formats;
-    while (fmt) {
-        if (format[0] != 0) {
-            strncat(format, SUBGROUP_DELIMITER, sizeof(format) - 1);
-        }
-        strncat(format, fmt->format, sizeof(format) - 1);
-        fmt = fmt->next;
-    }
+
+    _make_format(format, sizeof (format), listview->group_formats);
+
     gtk_entry_set_text (GTK_ENTRY (entry), format);
 //    gtk_window_set_title (GTK_WINDOW (dlg), "Group by");
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
