@@ -986,6 +986,53 @@
                     <rect key="frame" x="221" y="10" width="469" height="327"/>
                     <font key="font" metaFont="system"/>
                     <tabViewItems>
+                        <tabViewItem label="Configuration" identifier="2" id="dZm-hO-siC">
+                            <view key="view" id="rqC-ar-oIf">
+                                <rect key="frame" x="10" y="33" width="449" height="281"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WQ4-SD-wFX">
+                                        <rect key="frame" x="288" y="13" width="147" height="32"/>
+                                        <buttonCell key="cell" type="push" title="Reset To Defaults" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hx7-KI-xg9">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="pluginConfResetDefaults:" target="-2" id="EWR-Ux-2kq"/>
+                                        </connections>
+                                    </button>
+                                    <scrollView autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oef-pD-hfw">
+                                        <rect key="frame" x="20" y="52" width="409" height="221"/>
+                                        <clipView key="contentView" copiesOnScroll="NO" id="c6E-sw-DGw" customClass="FlippedClipView">
+                                            <rect key="frame" x="1" y="1" width="392" height="219"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <subviews>
+                                                <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9eO-pn-WbB">
+                                                    <rect key="frame" x="0.0" y="0.0" width="655" height="374"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                </view>
+                                            </subviews>
+                                        </clipView>
+                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="JjP-Kq-V4s">
+                                            <rect key="frame" x="1" y="80" width="166" height="15"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </scroller>
+                                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Ywy-t2-JeC">
+                                            <rect key="frame" x="393" y="1" width="15" height="219"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </scroller>
+                                    </scrollView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="WQ4-SD-wFX" secondAttribute="bottom" constant="20" id="4eE-Wq-aN3"/>
+                                    <constraint firstAttribute="trailing" secondItem="WQ4-SD-wFX" secondAttribute="trailing" constant="20" id="IYZ-Tt-jAh"/>
+                                    <constraint firstItem="WQ4-SD-wFX" firstAttribute="top" secondItem="Oef-pD-hfw" secondAttribute="bottom" constant="11" id="gF2-Sf-9if"/>
+                                    <constraint firstItem="Oef-pD-hfw" firstAttribute="trailing" secondItem="WQ4-SD-wFX" secondAttribute="trailing" id="kBH-AF-IJd"/>
+                                    <constraint firstItem="Oef-pD-hfw" firstAttribute="leading" secondItem="rqC-ar-oIf" secondAttribute="leading" constant="20" id="mUV-Ef-3cd"/>
+                                    <constraint firstItem="Oef-pD-hfw" firstAttribute="top" secondItem="rqC-ar-oIf" secondAttribute="top" constant="8" id="wSb-3f-GAz"/>
+                                </constraints>
+                            </view>
+                        </tabViewItem>
                         <tabViewItem label="Info" identifier="1" id="nFO-cb-yUJ">
                             <view key="view" id="XwR-5F-hVu">
                                 <rect key="frame" x="10" y="33" width="449" height="281"/>
@@ -1056,53 +1103,6 @@
                                     <constraint firstItem="UT2-B7-f8U" firstAttribute="firstBaseline" secondItem="wDm-op-PV2" secondAttribute="firstBaseline" id="mX6-rp-OpP"/>
                                     <constraint firstItem="cbN-IE-HyD" firstAttribute="firstBaseline" secondItem="wDm-op-PV2" secondAttribute="firstBaseline" id="mXd-xI-crM"/>
                                     <constraint firstItem="wDm-op-PV2" firstAttribute="top" secondItem="XwR-5F-hVu" secondAttribute="top" constant="8" id="qNf-WJ-G9G"/>
-                                </constraints>
-                            </view>
-                        </tabViewItem>
-                        <tabViewItem label="Configuration" identifier="2" id="dZm-hO-siC">
-                            <view key="view" id="rqC-ar-oIf">
-                                <rect key="frame" x="10" y="33" width="449" height="281"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <subviews>
-                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WQ4-SD-wFX">
-                                        <rect key="frame" x="288" y="13" width="147" height="32"/>
-                                        <buttonCell key="cell" type="push" title="Reset To Defaults" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hx7-KI-xg9">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="pluginConfResetDefaults:" target="-2" id="EWR-Ux-2kq"/>
-                                        </connections>
-                                    </button>
-                                    <scrollView autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oef-pD-hfw">
-                                        <rect key="frame" x="20" y="52" width="409" height="221"/>
-                                        <clipView key="contentView" copiesOnScroll="NO" id="c6E-sw-DGw" customClass="FlippedClipView">
-                                            <rect key="frame" x="1" y="1" width="392" height="219"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <subviews>
-                                                <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9eO-pn-WbB">
-                                                    <rect key="frame" x="0.0" y="0.0" width="655" height="374"/>
-                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                </view>
-                                            </subviews>
-                                        </clipView>
-                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="JjP-Kq-V4s">
-                                            <rect key="frame" x="1" y="80" width="166" height="15"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </scroller>
-                                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Ywy-t2-JeC">
-                                            <rect key="frame" x="393" y="1" width="15" height="219"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </scroller>
-                                    </scrollView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="WQ4-SD-wFX" secondAttribute="bottom" constant="20" id="4eE-Wq-aN3"/>
-                                    <constraint firstAttribute="trailing" secondItem="WQ4-SD-wFX" secondAttribute="trailing" constant="20" id="IYZ-Tt-jAh"/>
-                                    <constraint firstItem="WQ4-SD-wFX" firstAttribute="top" secondItem="Oef-pD-hfw" secondAttribute="bottom" constant="11" id="gF2-Sf-9if"/>
-                                    <constraint firstItem="Oef-pD-hfw" firstAttribute="trailing" secondItem="WQ4-SD-wFX" secondAttribute="trailing" id="kBH-AF-IJd"/>
-                                    <constraint firstItem="Oef-pD-hfw" firstAttribute="leading" secondItem="rqC-ar-oIf" secondAttribute="leading" constant="20" id="mUV-Ef-3cd"/>
-                                    <constraint firstItem="Oef-pD-hfw" firstAttribute="top" secondItem="rqC-ar-oIf" secondAttribute="top" constant="8" id="wSb-3f-GAz"/>
                                 </constraints>
                             </view>
                         </tabViewItem>
