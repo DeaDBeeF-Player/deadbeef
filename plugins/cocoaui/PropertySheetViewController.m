@@ -252,6 +252,10 @@
 
                 lbl.font = self.fontLabel;
 
+                if (![box.view isKindOfClass:NSStackView.class]) {
+                    [lbl setContentHuggingPriority:NSLayoutPriorityDefaultHigh+1 forOrientation:NSLayoutConstraintOrientationHorizontal];
+                }
+
                 lbl.translatesAutoresizingMaskIntoConstraints = NO;
                 [view addSubview:lbl];
 
