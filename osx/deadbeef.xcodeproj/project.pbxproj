@@ -1450,6 +1450,10 @@
 		2DA04EF823B6AAA40070AC01 /* shellexecutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA04EF523B6AA6E0070AC01 /* shellexecutil.c */; };
 		2DA0ACE91AA71516007EDD43 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2DA0ACEE1AA71E7C007EDD43 /* in_sc68.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */; };
+		2DA2259F23F041B00033F411 /* DesignableViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA2259D23F041B00033F411 /* DesignableViewController.h */; };
+		2DA225A023F041B00033F411 /* DesignableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA2259E23F041B00033F411 /* DesignableViewController.m */; };
+		2DA225B023F0425C0033F411 /* DesignableView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA225AE23F0425C0033F411 /* DesignableView.h */; };
+		2DA225B123F0425C0033F411 /* DesignableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA225AF23F0425C0033F411 /* DesignableView.m */; };
 		2DA24AE119E7203A00E34920 /* asyn-ares.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A0F19E7203700E34920 /* asyn-ares.c */; };
 		2DA24AE219E7203A00E34920 /* asyn-thread.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A1019E7203700E34920 /* asyn-thread.c */; };
 		2DA24AE319E7203A00E34920 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A1119E7203700E34920 /* base64.c */; };
@@ -4572,6 +4576,10 @@
 		2DA04EF523B6AA6E0070AC01 /* shellexecutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = shellexecutil.c; path = plugins/shellexec/shellexecutil.c; sourceTree = "<group>"; };
 		2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = in_sc68.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA0ACEA1AA7162C007EDD43 /* in_sc68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = in_sc68.c; path = plugins/sc68/in_sc68.c; sourceTree = "<group>"; };
+		2DA2259D23F041B00033F411 /* DesignableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DesignableViewController.h; sourceTree = "<group>"; };
+		2DA2259E23F041B00033F411 /* DesignableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DesignableViewController.m; sourceTree = "<group>"; };
+		2DA225AE23F0425C0033F411 /* DesignableView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DesignableView.h; sourceTree = "<group>"; };
+		2DA225AF23F0425C0033F411 /* DesignableView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DesignableView.m; sourceTree = "<group>"; };
 		2DA2499E19E71FEB00E34920 /* libcurl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcurl.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA24A0F19E7203700E34920 /* asyn-ares.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "asyn-ares.c"; path = "osx/deps/curl-7.38.0/lib/asyn-ares.c"; sourceTree = "<group>"; };
 		2DA24A1019E7203700E34920 /* asyn-thread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "asyn-thread.c"; path = "osx/deps/curl-7.38.0/lib/asyn-thread.c"; sourceTree = "<group>"; };
@@ -9433,6 +9441,10 @@
 				2D9C0C24238DC2C100CE8C10 /* GroupByCustomWindowController.m */,
 				2DEBA1CF23E207A3000E4135 /* EqualizerWindowController.h */,
 				2DEBA1D023E207A3000E4135 /* EqualizerWindowController.m */,
+				2DA2259D23F041B00033F411 /* DesignableViewController.h */,
+				2DA2259E23F041B00033F411 /* DesignableViewController.m */,
+				2DA225AE23F0425C0033F411 /* DesignableView.h */,
+				2DA225AF23F0425C0033F411 /* DesignableView.m */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -10873,6 +10885,7 @@
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
 				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
 				2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */,
+				2DA225B023F0425C0033F411 /* DesignableView.h in Headers */,
 				2D651D17227227C300375AE2 /* ScriptableNodeEditorWindowController.h in Headers */,
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
 				2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */,
@@ -10898,6 +10911,7 @@
 				2D49857F1D5CF13F00E4D985 /* LogWindowController.h in Headers */,
 				2D98613E226C814100BAACB1 /* PropertySheetViewController.h in Headers */,
 				2D642EB01AE9152E00FC1F7B /* sort.h in Headers */,
+				2DA2259F23F041B00033F411 /* DesignableViewController.h in Headers */,
 				2D986142226C816000BAACB1 /* BrowseButton.h in Headers */,
 				2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */,
 			);
@@ -13947,6 +13961,7 @@
 			files = (
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
 				2DEF494519C4DB4100B718C1 /* PlaylistView.m in Sources */,
+				2DA225B123F0425C0033F411 /* DesignableView.m in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
 				2DF55C402270FCB9002C44DC /* ScriptableNodeEditorViewController.m in Sources */,
 				2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */,
@@ -13979,6 +13994,7 @@
 				2DDBA26123E5EA3800051320 /* PlaylistLocalDragDropHolder.m in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
 				2DF55C442270FF7E002C44DC /* ScriptablePropertySheetDataSource.m in Sources */,
+				2DA225A023F041B00033F411 /* DesignableViewController.m in Sources */,
 				2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */,
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,
 				2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */,
