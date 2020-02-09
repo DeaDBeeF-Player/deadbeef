@@ -21,13 +21,15 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import "PlaylistViewController.h"
-#import "PlaylistView.h"
 #import "ConverterWindowController.h"
 #import "CoverManager.h"
-#import "ReplayGainScannerController.h"
 #import "EditColumnWindowController.h"
 #import "GroupByCustomWindowController.h"
+#import "NSImage+Additions.h"
+#import "PlaylistViewController.h"
+#import "PlaylistView.h"
+#import "ReplayGainScannerController.h"
+
 #include "../../deadbeef.h"
 #include "rg_scanner.h"
 
@@ -299,13 +301,9 @@ extern DB_functions_t *deadbeef;
     else {
         [self loadColumns:json];
     }
-    _playTpl = [NSImage imageNamed:@"btnplayTemplate.pdf"];
-    _playTpl.flipped = YES;
-    _pauseTpl = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
-    _pauseTpl.flipped = YES;
-    _bufTpl = [NSImage imageNamed:@"bufferingTemplate.pdf"];
-    _bufTpl.flipped = YES;
-
+    _playTpl = [[NSImage imageNamed:@"btnplayTemplate.pdf"] flippedImage];
+    _pauseTpl = [[NSImage imageNamed:@"btnpauseTemplate.pdf"] flippedImage];
+    _bufTpl = [[NSImage imageNamed:@"bufferingTemplate.pdf"] flippedImage];
 
     NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
 
