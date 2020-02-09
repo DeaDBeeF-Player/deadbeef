@@ -16,6 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSDictionary *)serialize;
 
+- (int)sendMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 NS_REQUIRES_SUPER;
+
+- (void)cleanup;
+
 @end
 
 NS_ASSUME_NONNULL_END

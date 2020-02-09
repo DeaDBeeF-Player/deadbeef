@@ -24,6 +24,7 @@
 #import "DdbPlaceholderWidget.h"
 #import "DesignableViewController.h"
 #import "MainWindowController.h"
+#import "PlaylistViewController.h"
 #import "PreferencesWindowController.h"
 #include "../../deadbeef.h"
 #include <sys/time.h>
@@ -40,7 +41,6 @@ extern DB_functions_t *deadbeef;
 }
 
 
-@property (nonatomic) DesignableViewController *rootViewController;
 @property (weak) IBOutlet NSView *designableContainerView;
 
 
@@ -60,7 +60,7 @@ extern DB_functions_t *deadbeef;
         _updateTimer = nil;
     }
 
-    [self.playlistViewController cleanup];
+    [self.rootViewController cleanup];
 }
 
 - (void)dealloc {
@@ -71,9 +71,11 @@ extern DB_functions_t *deadbeef;
 - (void)windowDidLoad {
     [super windowDidLoad];
 
-    self.rootViewController = [[DesignableViewController alloc] initWithNibName:nil bundle:nil];
-    NSView *view = [DdbPlaceholderWidget new];
-    self.rootViewController.view = view;
+    PlaylistViewController *pvc = [[PlaylistViewController alloc] initWithNibName:nil bundle:nil];
+    PlaylistView *view = [PlaylistView new];
+    pvc.view = view;
+    [pvc setup];
+    self.rootViewController = pvc;
 
     view.translatesAutoresizingMaskIntoConstraints = NO;
     [self.designableContainerView addSubview:view];

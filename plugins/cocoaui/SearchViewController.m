@@ -21,7 +21,6 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 #import "SearchViewController.h"
-#import "DdbSearchWidget.h"
 #include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
@@ -43,9 +42,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)awakeFromNib {
-    DdbSearchWidget *view = (DdbSearchWidget *)self.view;
-    view.delegate = self;
-    [self initContent];
+    [super awakeFromNib];
 }
 
 - (const char *)groupByConfStr {
@@ -65,15 +62,15 @@ extern DB_functions_t *deadbeef;
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SEARCHRESULT, 0);
         deadbeef->plt_unref (plt);
-        DdbSearchWidget *pltWidget = (DdbSearchWidget *)self.view;
-        deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, (uintptr_t)[pltWidget listview], PL_MAIN, 0);
+        PlaylistView *pv = (PlaylistView *)self.view;
+        deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, (uintptr_t)pv, PL_MAIN, 0);
     }
 }
 
 - (void)selectionChanged:(DdbListviewRow_t)row {
-    DdbSearchWidget *pltWidget = (DdbSearchWidget *)self.view;
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, (uintptr_t)[pltWidget listview], DDB_PLAYLIST_CHANGE_SELECTION, 0);
-    deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, (uintptr_t)[pltWidget listview], PL_MAIN, 0);
+    PlaylistView *pv = (PlaylistView *)self.view;
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, (uintptr_t)pv, DDB_PLAYLIST_CHANGE_SELECTION, 0);
+    deadbeef->sendmessage (DB_EV_FOCUS_SELECTION, (uintptr_t)pv, PL_MAIN, 0);
 }
 
 - (void)reset {

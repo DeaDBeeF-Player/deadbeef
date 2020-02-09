@@ -22,7 +22,6 @@
 */
 
 #import "PlaylistViewController.h"
-#import "DdbPlaylistWidget.h"
 #import "PlaylistView.h"
 #import "ConverterWindowController.h"
 #import "CoverManager.h"
@@ -65,8 +64,8 @@ extern DB_functions_t *deadbeef;
         self.playPosUpdateTrack = NULL;
     }
 
-    DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
-    [view.listview.contentView cleanup];
+    PlaylistView *lv = (PlaylistView *)self.view;
+    [lv.contentView cleanup];
 
     // don't wait for an automatic autorelease,
     // this would cause deadbeef's track refcount checker to run before the objects are really released
@@ -130,8 +129,7 @@ extern DB_functions_t *deadbeef;
     _pin_groups = sender.state == NSOnState ? 0 : 1;
     sender.state = _pin_groups?NSOnState:NSOffState;
     deadbeef->conf_set_int ([self pinGroupsConfStr], _pin_groups);
-    DdbPlaylistWidget *pw = (DdbPlaylistWidget *)self.view;
-    PlaylistView *lv = pw.listview;
+    PlaylistView *lv = (PlaylistView *)self.view;
     lv.contentView.needsDisplay = YES;
 }
 
@@ -149,24 +147,24 @@ extern DB_functions_t *deadbeef;
 - (void)menuGroupByNone:(id)sender {
     [self clearGrouping];
     deadbeef->conf_remove_items ([self groupByConfStr]);
-    DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
-    [view.listview.contentView reloadData];
+    PlaylistView *lv = (PlaylistView *)self.view;
+    [lv.contentView reloadData];
 }
 
 - (void)menuGroupByArtistDateAlbum:(id)sender {
     [self clearGrouping];
     _group_str = strdup ("%album artist% - ['['%year%']' ]%album%");
     deadbeef->conf_set_str ([self groupByConfStr], _group_str);
-    DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
-    [view.listview.contentView reloadData];
+    PlaylistView *lv = (PlaylistView *)self.view;
+    [lv.contentView reloadData];
 }
 
 - (void)menuGroupByArtist:(id)sender {
     [self clearGrouping];
     _group_str = strdup ("%artist%");
     deadbeef->conf_set_str ([self groupByConfStr], _group_str);
-    DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
-    [view.listview.contentView reloadData];
+    PlaylistView *lv = (PlaylistView *)self.view;
+    [lv.contentView reloadData];
 }
 
 - (void)menuGroupByCustom:(id)sender {
@@ -183,15 +181,14 @@ extern DB_functions_t *deadbeef;
             [self clearGrouping];
             _group_str = strdup (self.groupByCustomWindowController.formatTextField.stringValue.UTF8String);
             deadbeef->conf_set_str([self groupByConfStr], _group_str);
-            DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
-            [view.listview.contentView reloadData];
+            PlaylistView *lv = (PlaylistView *)self.view;
+            [lv.contentView reloadData];
         }
     }];
 }
 
 - (void)columnsChanged {
-    DdbPlaylistWidget *pw = (DdbPlaylistWidget *)self.view;
-    PlaylistView *lv = pw.listview;
+    PlaylistView *lv = (PlaylistView *)self.view;
     lv.headerView.needsDisplay = YES;
     lv.contentView.needsDisplay = YES;
 
@@ -213,8 +210,7 @@ extern DB_functions_t *deadbeef;
     NSError *err = nil;
     NSData *dt = [NSJSONSerialization dataWithJSONObject:columns options:0 error:&err];
 
-    DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
-    [view.listview updateContentFrame];
+    [lv updateContentFrame];
 
     NSString *json = [[NSString alloc] initWithData:dt encoding:NSUTF8StringEncoding];
     [self writeColumnConfig:json];
@@ -369,11 +365,14 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)awakeFromNib {
-    DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
-    view.delegate = self;
-    [self initContent];
+    [self setup];
+}
 
-    [self setupPlaylist:[view listview]];
+- (void)setup {
+    PlaylistView *lv = (PlaylistView *)self.view;
+    lv.delegate = self;
+    [self initContent];
+    [self setupPlaylist:lv];
 }
 
 - (void)freeColumns {
@@ -561,7 +560,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (DdbListviewCol_t)nextColumn:(DdbListviewCol_t)col {
-    return col == [self columnCount] - 1 ? [self invalidColumn] : col+1;
+    return col >= [self columnCount] - 1 ? [self invalidColumn] : col+1;
 }
 
 - (DdbListviewCol_t)invalidColumn {
@@ -627,7 +626,9 @@ extern DB_functions_t *deadbeef;
 
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect {
     [NSColor.controlTextColor set];
-    [[NSString stringWithUTF8String:_columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y-2, rect.size.width-6, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
+    if (col < self.columnCount) {
+        [[NSString stringWithUTF8String:_columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y-2, rect.size.width-6, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
+    }
 }
 
 - (void)drawCell:(int)idx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused {
@@ -724,8 +725,8 @@ extern DB_functions_t *deadbeef;
                 DB_playItem_t *trk = deadbeef->pl_get_for_idx_and_iter (ctx.idx, [self playlistIter]);
 
                 if (ctx.plt == curr && trk == self.playPosUpdateTrack) {
-                    DdbPlaylistWidget *view = (DdbPlaylistWidget *)self.view;
-                    [view.listview.contentView drawRow:idx];
+                    PlaylistView *lv = (PlaylistView *)self.view;
+                    [lv.contentView drawRow:idx];
                 }
                 if (trk) {
                     deadbeef->pl_item_unref (trk);
@@ -779,9 +780,8 @@ typedef struct {
 static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     cover_avail_info_t *info = user_data;
     PlaylistViewController *ctl = (__bridge_transfer PlaylistViewController *)info->ctl;
-    DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)ctl.view;
-    PlaylistView *listview = [pltWidget listview];
-    [listview.contentView drawGroup:info->grp];
+    PlaylistView *lv = (PlaylistView *)ctl.view;
+    [lv.contentView drawGroup:info->grp];
     free (info);
 }
 
@@ -795,8 +795,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
                  viewportY:(CGFloat)viewportY
                      width:(int)width
                     height:(int)height {
-    DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)self.view;
-    PlaylistView *listview = [pltWidget listview];
+    PlaylistView *lv = (PlaylistView *)self.view;
     DB_playItem_t *it = (DB_playItem_t *)grp->head;
     cover_avail_info_t *inf = calloc (sizeof (cover_avail_info_t), 1);
     inf->ctl = (__bridge_retained void *)self;
@@ -808,14 +807,14 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     }
 
     int art_width = width - ART_PADDING_HORZ * 2;
-    int art_height = height - ART_PADDING_VERT * 2 - listview.contentView.grouptitle_height;
+    int art_height = height - ART_PADDING_VERT * 2 - lv.contentView.grouptitle_height;
 
     if (art_width < 8 || art_height < 8 || !it) {
         return;
     }
 
     int art_x = x + ART_PADDING_HORZ;
-    CGFloat min_y = (pinned ? viewportY+listview.contentView.grouptitle_height : y) + ART_PADDING_VERT;
+    CGFloat min_y = (pinned ? viewportY+lv.contentView.grouptitle_height : y) + ART_PADDING_VERT;
     CGFloat max_y = grp_next_y;
 
     CGFloat ypos = min_y;
@@ -906,8 +905,8 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 }
 
 - (void)selectionChanged:(DdbListviewRow_t)row {
-    DdbPlaylistWidget *pltWidget = (DdbPlaylistWidget *)self.view;
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, (uintptr_t)[pltWidget listview], DDB_PLAYLIST_CHANGE_SELECTION, 0);
+    PlaylistView *lv = (PlaylistView *)self.view;
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, (uintptr_t)lv, DDB_PLAYLIST_CHANGE_SELECTION, 0);
 }
 
 - (int)selectedCount {
@@ -982,7 +981,8 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     }
 }
 
-- (int)handleListviewMessage:(PlaylistView *)listview id:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
+- (int)sendMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
+    PlaylistView *listview = (PlaylistView *)self.view;
     switch (_id) {
         case DB_EV_SONGCHANGED: {
             if ([self playlistIter] != PL_MAIN) {
@@ -1112,7 +1112,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         }
             break;
         case DB_EV_FOCUS_SELECTION: {
-            if ([self playlistIter] != p1) {
+            if ([self playlistIter] != (int)p1) {
                 break;
             }
 
@@ -1144,7 +1144,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
             });
         }
     }
-    return 0;
+    return [super sendMessage:_id ctx:ctx p1:p1 p2:p2];
 }
 
 - (void)convertSelection {
@@ -1278,7 +1278,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         dispatch_async(aQueue, ^{
             DB_playItem_t *first = NULL;
             DB_playItem_t *after = (DB_playItem_t *)_after;
-            for( int i = 0; i < [paths count]; i++ )
+            for(NSUInteger i = 0; i < paths.count; i++ )
             {
                 NSString* path = [paths objectAtIndex:i];
                 if (path) {

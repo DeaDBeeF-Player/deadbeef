@@ -10,7 +10,6 @@
             <connections>
                 <outlet property="buttonBar" destination="Q6A-xH-8bl" id="xdh-C7-jri"/>
                 <outlet property="designableContainerView" destination="udP-Ce-pRu" id="OZl-0H-bFI"/>
-                <outlet property="playlistViewController" destination="9vD-D4-Hkc" id="q5O-bp-H6s"/>
                 <outlet property="seekBar" destination="cFf-VJ-YO5" id="20Z-bb-Rt3"/>
                 <outlet property="statusBar" destination="Rek-dI-lyl" id="6Pu-H7-aOK"/>
                 <outlet property="tabStrip" destination="d3W-U7-VFA" id="Muq-bp-ETV"/>
@@ -41,11 +40,7 @@
                     <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="ouj-13-WFq">
                         <rect key="frame" x="0.0" y="10" width="507" height="5"/>
                     </box>
-                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yp3-Vv-aHK" customClass="DdbPlaylistWidget">
-                        <rect key="frame" x="0.0" y="13" width="507" height="155"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                    </customView>
-                    <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="udP-Ce-pRu">
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="udP-Ce-pRu">
                         <rect key="frame" x="0.0" y="13" width="507" height="155"/>
                     </customView>
                 </subviews>
@@ -132,11 +127,6 @@
             </toolbar>
             <point key="canvasLocation" x="385.5" y="39"/>
         </window>
-        <viewController id="9vD-D4-Hkc" customClass="PlaylistViewController">
-            <connections>
-                <outlet property="view" destination="yp3-Vv-aHK" id="Fly-Yv-kSQ"/>
-            </connections>
-        </viewController>
         <window title="Rename Playlist" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="dIi-bq-ybp" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>

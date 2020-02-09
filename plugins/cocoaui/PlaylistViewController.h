@@ -22,6 +22,7 @@
 */
 
 #import <Cocoa/Cocoa.h>
+#import "DesignableViewController.h"
 #import "PlaylistView.h"
 #import "TrackPropertiesWindowController.h"
 #import "ConverterWindowController.h"
@@ -39,7 +40,7 @@ typedef struct {
     char *bytecode;
 } plt_col_info_t;
 
-@interface PlaylistViewController : NSViewController<DdbListviewDelegate,NSMenuDelegate> {
+@interface PlaylistViewController : DesignableViewController<DdbListviewDelegate,NSMenuDelegate> {
     plt_col_info_t _columns[PLT_MAX_COLUMNS];
     int _ncolumns;
     int _menuColumn;
@@ -53,10 +54,8 @@ typedef struct {
     TrackPropertiesWindowController *_trkProperties;
 }
 
-- (void)initContent;
+- (void)setup;
 - (int)playlistIter;
-
-- (int)handleListviewMessage:(PlaylistView *)listview id:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
 - (void)cleanup;
 
