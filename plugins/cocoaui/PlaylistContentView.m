@@ -43,6 +43,7 @@ static int grouptitleheight = 22;
 @property (nonatomic) int scroll_direction;
 @property (nonatomic) int scroll_pointer_y;
 
+@property (nonatomic) NSSize contentSize;
 
 @end
 
@@ -1248,22 +1249,13 @@ static int grouptitleheight = 22;
         _fullwidth += [_delegate columnWidth:c];
     }
 
-    NSScrollView *sv = [self enclosingScrollView];
-    NSSize size = [sv contentSize];
-    NSRect frame = self.frame;
-    if (_fullwidth > size.width) {
-        frame.size.width = _fullwidth;
-    }
-    else {
-        frame.size.width = size.width;
-    }
-    if (_fullheight > size.height) {
-        frame.size.height = _fullheight;
-    }
-    else {
-        frame.size.height = size.height;
-    }
-    self.frame = frame;
+    self.contentSize = NSMakeSize(_fullwidth, _fullheight);
+    [self invalidateIntrinsicContentSize];
 }
+
+- (NSSize)intrinsicContentSize {
+    return self.contentSize;
+}
+
 @end
 

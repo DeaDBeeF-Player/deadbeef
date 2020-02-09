@@ -210,7 +210,7 @@ extern DB_functions_t *deadbeef;
     NSError *err = nil;
     NSData *dt = [NSJSONSerialization dataWithJSONObject:columns options:0 error:&err];
 
-    [lv updateContentFrame];
+    [lv.contentView updateContentFrame];
 
     NSString *json = [[NSString alloc] initWithData:dt encoding:NSUTF8StringEncoding];
     [self writeColumnConfig:json];

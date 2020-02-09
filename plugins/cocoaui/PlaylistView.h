@@ -31,5 +31,4 @@
 @property (nonatomic,readonly) PlaylistContentView *contentView;
 @property (weak,nonatomic) id<DdbListviewDelegate> delegate;
 
-- (void)updateContentFrame;
 @end

@@ -71,10 +71,15 @@ static int headerheight = 23;
         NSSize size = [sv contentSize];
         NSRect lcvrect = NSMakeRect(0, 0, size.width, size.height-headerheight);
         PlaylistContentView *lcv = [[PlaylistContentView alloc] initWithFrame:lcvrect];
-        lcv.autoresizingMask = NSViewWidthSizable;
         self.contentView = lcv;
 
+        lcv.translatesAutoresizingMaskIntoConstraints = NO;
         sv.documentView = lcv;
+
+        [lcv.leadingAnchor constraintEqualToAnchor:sv.contentView.leadingAnchor].active = YES;
+        [lcv.topAnchor constraintEqualToAnchor:sv.contentView.topAnchor].active = YES;
+        [lcv.trailingAnchor constraintGreaterThanOrEqualToAnchor:sv.contentView.trailingAnchor].active = YES;
+        [lcv.bottomAnchor constraintGreaterThanOrEqualToAnchor:sv.contentView.bottomAnchor].active = YES;
 
         sv.hasVerticalScroller = YES;
         sv.hasHorizontalScroller = YES;
@@ -85,8 +90,6 @@ static int headerheight = 23;
         NSView *synchronizedContentView = [sv contentView];
         synchronizedContentView.postsBoundsChangedNotifications = YES;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(scrollChanged:) name:NSViewBoundsDidChangeNotification object:synchronizedContentView];
-
-        [sv addObserver:self forKeyPath:@"frameSize" options:0 context:NULL];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(windowDidBecomeKey:)
@@ -106,12 +109,6 @@ static int headerheight = 23;
 }
 
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if ([keyPath isEqualToString:@"frameSize"]) {
-        [self updateContentFrame];
-    }
-}
-
 - (void)scrollChanged:(id)notification {
     self.headerView.needsDisplay = YES;
 
@@ -120,10 +117,6 @@ static int headerheight = 23;
     if ([_delegate respondsToSelector:@selector(scrollChanged:)]) {
         [_delegate scrollChanged:vis.origin.y];
     }
-}
-
-- (void)updateContentFrame {
-    [self.contentView updateContentFrame];
 }
 
 - (void)setDelegate:(id<DdbListviewDelegate>)delegate {
