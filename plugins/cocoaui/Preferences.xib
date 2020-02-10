@@ -311,24 +311,35 @@
             <rect key="frame" x="0.0" y="0.0" width="468" height="222"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zZe-aS-edz">
-                    <rect key="frame" x="18" y="24" width="77" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zZe-aS-edz">
+                    <rect key="frame" x="18" y="24" width="77" height="16"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="DSP Preset:" id="80n-mJ-LRw">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7EN-x3-aU8">
-                    <rect key="frame" x="101" y="17" width="347" height="28"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="7EN-x3-aU8">
+                    <rect key="frame" x="101" y="20" width="347" height="24"/>
                 </customView>
-                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wB2-nl-rwo">
-                    <rect key="frame" x="20" y="53" width="428" height="149"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="wB2-nl-rwo">
+                    <rect key="frame" x="20" y="52" width="428" height="150"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="150" id="rA4-8s-pdL"/>
+                    </constraints>
                 </customView>
             </subviews>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="wB2-nl-rwo" secondAttribute="trailing" constant="20" id="233-mp-hyG"/>
+                <constraint firstItem="7EN-x3-aU8" firstAttribute="top" secondItem="wB2-nl-rwo" secondAttribute="bottom" constant="8" id="8Zr-Cu-SA6"/>
+                <constraint firstItem="7EN-x3-aU8" firstAttribute="leading" secondItem="zZe-aS-edz" secondAttribute="trailing" constant="8" id="DPs-6w-4aX"/>
+                <constraint firstItem="wB2-nl-rwo" firstAttribute="top" secondItem="FgU-f9-bru" secondAttribute="top" constant="20" id="JBS-xI-3xO"/>
+                <constraint firstItem="7EN-x3-aU8" firstAttribute="trailing" secondItem="wB2-nl-rwo" secondAttribute="trailing" id="dOt-5P-IeB"/>
+                <constraint firstItem="wB2-nl-rwo" firstAttribute="leading" secondItem="FgU-f9-bru" secondAttribute="leading" constant="20" id="exl-ha-FUe"/>
+                <constraint firstItem="zZe-aS-edz" firstAttribute="leading" secondItem="FgU-f9-bru" secondAttribute="leading" constant="20" id="kK6-Zg-dGb"/>
+                <constraint firstAttribute="bottom" secondItem="7EN-x3-aU8" secondAttribute="bottom" constant="20" id="qSq-Ep-8Lu"/>
+                <constraint firstItem="zZe-aS-edz" firstAttribute="centerY" secondItem="7EN-x3-aU8" secondAttribute="centerY" id="rrU-wg-biq"/>
+            </constraints>
             <point key="canvasLocation" x="355" y="597"/>
         </customView>
         <customView identifier="GUI_Misc" id="MUz-8x-xuE">
@@ -1042,7 +1053,7 @@
                                         <rect key="frame" x="20" y="17" width="409" height="224"/>
                                         <clipView key="contentView" drawsBackground="NO" id="Lle-Gh-L94">
                                             <rect key="frame" x="1" y="1" width="392" height="222"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="RAU-kc-ZWb">
                                                     <rect key="frame" x="0.0" y="0.0" width="392" height="222"/>
@@ -1115,7 +1126,7 @@
                                         <rect key="frame" x="20" y="20" width="409" height="253"/>
                                         <clipView key="contentView" drawsBackground="NO" id="kGi-v7-aYF">
                                             <rect key="frame" x="1" y="1" width="392" height="251"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="8p1-kz-NZ1">
                                                     <rect key="frame" x="0.0" y="0.0" width="392" height="251"/>
