@@ -26,7 +26,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="609" height="180"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <customView horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sWN-HO-WvC" customClass="EqualizerView">
+                    <customView horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sWN-HO-WvC" customClass="PropertySheetContentView">
                         <rect key="frame" x="20" y="20" width="569" height="114"/>
                     </customView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dJ6-Kn-sUc">
@@ -105,6 +105,7 @@
         </window>
         <viewController id="SAn-ps-SLr" customClass="PropertySheetViewController">
             <connections>
+                <outlet property="contentView" destination="sWN-HO-WvC" id="MQd-69-kHj"/>
                 <outlet property="view" destination="sWN-HO-WvC" id="Jpg-b5-M1g"/>
             </connections>
         </viewController>

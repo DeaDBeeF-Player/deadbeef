@@ -8,6 +8,7 @@
 
 #import "EqualizerWindowController.h"
 #import "PropertySheetViewController.h"
+#import "PropertySheetContentView.h"
 #include "deadbeef.h"
 #include "eqpreset.h"
 
@@ -22,7 +23,7 @@ extern DB_functions_t *deadbeef;
 @implementation EQPropertySheetDataSource
 
 - (NSString *)propertySheet:(PropertySheetViewController *)vc configForItem:(id)item {
-    return @"property \"\" hbox[19] hmg fill expand border=0 spacing=8 height=200;\n"
+    return @"property \"\" hbox[19] hmg fill expand border=0 spacing=8 height=200 width=600;\n"
     "property \"Preamp\" vscale[20,-20,0.5] vert 0 0;\n"
     "property \"55\" vscale[20,-20,0.5] vert 1 0;\n"
     "property \"77\" vscale[20,-20,0.5] vert 2 0;\n"
@@ -87,30 +88,11 @@ extern DB_functions_t *deadbeef;
 
 #pragma mark -
 
-@interface EqualizerView : NSView
-
-@property (nonatomic) NSSize calculatedSize;
-
-@end
-
-@implementation EqualizerView
-
-- (NSSize)intrinsicContentSize {
-    return self.calculatedSize;
-
-}
-
-@end
-
-#pragma mark -
-
 @interface EqualizerWindowController ()
 
 @property (strong) IBOutlet PropertySheetViewController *propertySheetViewController;
 
 @property (nonatomic) EQPropertySheetDataSource *propertySheetDataSource;
-
-@property (weak) IBOutlet EqualizerView *equalizerView;
 
 @property (nonatomic) BOOL enabled;
 @property (strong) IBOutlet NSMenu *presetsMenu;
@@ -129,9 +111,6 @@ extern DB_functions_t *deadbeef;
     self.propertySheetViewController.labelFixedWidth = 50;
     self.propertySheetDataSource = [EQPropertySheetDataSource new];
     self.propertySheetViewController.dataSource = self.propertySheetDataSource;
-
-    self.equalizerView.calculatedSize = self.propertySheetViewController.calculatedSize;
-    [self.equalizerView invalidateIntrinsicContentSize];
 
     [self willChangeValueForKey:@"enabled"];
     [self didChangeValueForKey:@"enabled"];

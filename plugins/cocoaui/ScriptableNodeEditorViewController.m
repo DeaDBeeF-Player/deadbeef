@@ -33,6 +33,7 @@
     // Do view setup here.
     self.dataSource.delegate = self;
     _nodeList.dataSource = self.dataSource;
+
     [_nodeList registerForDraggedTypes: [NSArray arrayWithObjects: _dataSource.pasteboardItemIdentifier, nil]];
 }
 
@@ -159,8 +160,8 @@
         self.propertiesViewController.unitSpacing = 4;
         self.propertiesViewController.autoAlignLabels = NO;
 
-        self.propertiesDataSource = [[ScriptablePropertySheetDataSource alloc] initWithScriptable:item];
         self.propertiesDataSource.delegate = self;
+        self.propertiesDataSource = [[ScriptablePropertySheetDataSource alloc] initWithScriptable:item];
 
         self.propertiesViewController.dataSource = self.propertiesDataSource;
         [self.view.window beginSheet:_propertiesPanel completionHandler:^(NSModalResponse returnCode) {

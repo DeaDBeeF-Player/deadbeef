@@ -1,5 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
+@class PropertySheetContentView;
+
 @class PropertySheetViewController;
 
 @protocol PropertySheetDataSource
@@ -18,18 +20,19 @@
 
 @interface PropertySheetViewController : NSViewController<NSTextFieldDelegate>
 
-@property (nonatomic,readonly) NSSize calculatedSize;
+@property (nonatomic) IBOutlet PropertySheetContentView *contentView;
+@property (nonatomic,readonly) NSSize contentSize;
 
-@property (weak,nonatomic) IBOutlet id<PropertySheetDataSource> dataSource;
+@property (nonatomic, weak) IBOutlet id<PropertySheetDataSource> dataSource;
 @property (weak) IBOutlet id item;
 
-@property CGFloat labelFontSize;
-@property CGFloat contentFontSize;
-@property NSInteger topMargin;
-@property BOOL autoAlignLabels;
-@property NSInteger labelFixedWidth;
-@property NSInteger sliderLabelWidth;
-@property NSInteger unitSpacing;
+@property (nonatomic) CGFloat labelFontSize;
+@property (nonatomic) CGFloat contentFontSize;
+@property (nonatomic) NSInteger topMargin;
+@property (nonatomic) BOOL autoAlignLabels;
+@property (nonatomic) NSInteger labelFixedWidth;
+@property (nonatomic) NSInteger sliderLabelWidth;
+@property (nonatomic) NSInteger unitSpacing;
 
 - (void)reset;
 - (void)reload;

@@ -1,4 +1,5 @@
 #import "PropertySheetViewController.h"
+#import "PropertySheetContentView.h"
 // FIXME: needed for referencing other object lists
 //#import "ItemListViewController.h"
 #include "parser.h"
@@ -12,7 +13,6 @@
 @property (nonatomic) NSView *view;
 @property (nonatomic) NSView *firstLabel;
 @property (nonatomic) NSView *previousField;
-@property (nonatomic) BOOL isVertical; // FIXME: this is a hack for vertical layout in horz stackview. Should be per item param.
 @property (nonatomic) BOOL isStackView;
 @end
 
@@ -24,7 +24,7 @@
 
 @interface PropertySheetViewController ()
 
-@property (nonatomic,readwrite) NSSize calculatedSize;
+@property (nonatomic,readwrite) NSSize contentSize;
 @property (nonatomic) NSMutableArray *bindings;
 @property (nonatomic) settings_data_t settingsData;
 
@@ -95,11 +95,14 @@
     }
 }
 
-- (void)constrainCurrentField:(NSView *)currentField boxHandler:(BoxHandler *)box currLabel:(NSView *)currLabel unalignedFields:(NSMutableArray<NSView *> *)unalignedFields view:(NSView *)view {
+- (void)constrainCurrentField:(NSView *)currentField isVert:(BOOL)isVert boxHandler:(BoxHandler *)box currLabel:(NSView *)currLabel unalignedFields:(NSMutableArray<NSView *> *)unalignedFields view:(NSView *)view {
     if (currentField) {
         currentField.translatesAutoresizingMaskIntoConstraints = NO;
 
-        if (box.firstLabel) {
+        if ([currentField isKindOfClass:NSStackView.class]) {
+            [currentField.leadingAnchor constraintEqualToAnchor:currentField.superview.leadingAnchor constant:0].active=YES;
+        }
+        else if (box.firstLabel) {
             [currentField.leadingAnchor constraintEqualToAnchor:box.firstLabel.trailingAnchor constant:8].active=YES;
         }
         else {
@@ -132,17 +135,28 @@
 
 - (NSUInteger)addFieldsToBox:(BoxHandler *)box fromIndex:(NSUInteger)index count:(NSUInteger)count {
     NSView *view = box.view;
-    CGFloat unit_h = _contentFontSize + 11;
+    CGFloat unit_h = _contentFontSize + 13;
 
     NSMutableArray<NSView *> *unalignedFields = [NSMutableArray new];
 
+    CGFloat contentWidth = self.contentSize.width;
+    CGFloat contentHeight = self.contentSize.height;
 
-    for (NSUInteger i = index; i < index+count; i++) {
+    NSUInteger i = index;
+    NSUInteger remaining = count;
 
-        if (_settingsData.props[i].type == PROP_HBOX) {
+    while (remaining-- && i < (NSUInteger)_settingsData.nprops) {
+
+        if (box.isStackView) {
+            view = [NSView new];
+            NSStackView *stackview = (NSStackView *)box.view;
+            view.autoresizingMask = NSViewMinXMargin | NSViewMaxXMargin;
+            [stackview addArrangedSubview:view];
+        }
+
+        if (_settingsData.props[i].type == PROP_HBOX || _settingsData.props[i].type == PROP_VBOX) {
             NSStackView *sv;
 
-            // FIXME: reuse for vbox
             // parse parameters
             char token[MAX_TOKEN];
             const char *script = _settingsData.props[i].select_options;
@@ -160,10 +174,11 @@
             int expand = 1;
             int border = 0;
             int spacing = 0;
-            int height = (int)unit_h;
+            int width = -1;
+            int height = -1;
 
             // other args
-            while ((script = gettoken (script, token))) {
+            while ((script = gettoken (script, token)) && strcmp (token, ";")) {
                 if (!strcmp (token, "hmg")) {
                     hmg = 1;
                 }
@@ -179,6 +194,9 @@
                 else if (!strncmp (token, "spacing=", 8)) {
                     spacing = atoi (token+8);
                 }
+                else if (!strncmp (token, "width=", 6)) {
+                    width = atoi (token+6);
+                }
                 else if (!strncmp (token, "height=", 7)) {
                     height = atoi (token+7);
                 }
@@ -187,39 +205,43 @@
 
             sv = [NSStackView new];
 
-            sv.orientation = NSUserInterfaceLayoutOrientationHorizontal;
+            sv.orientation = _settingsData.props[i].type == PROP_VBOX
+            ? NSUserInterfaceLayoutOrientationVertical
+            : NSUserInterfaceLayoutOrientationHorizontal;
+
             sv.distribution = NSStackViewDistributionFillEqually;
-            sv.spacing = 0;
+            sv.spacing = spacing;
+            sv.edgeInsets = NSEdgeInsetsMake(border, border, border, border);
+
             sv.translatesAutoresizingMaskIntoConstraints = NO;
             [view addSubview:sv];
 
             BoxHandler *nestedBox = [BoxHandler new];
             nestedBox.view = sv;
             nestedBox.isStackView = YES;
-            nestedBox.isVertical = YES;
 
             [nestedBox.view.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:0].active=YES;
 
-            [self constrainCurrentField:sv boxHandler:box currLabel:nil unalignedFields:unalignedFields view:view];
+            [self constrainCurrentField:sv isVert:NO boxHandler:box currLabel:nil unalignedFields:unalignedFields view:view];
 
-            [sv.heightAnchor constraintEqualToConstant:height].active = YES;
+            if (height != -1) {
+                [sv.heightAnchor constraintEqualToConstant:height].active = YES;
+            }
 
-            NSUInteger added = [self addFieldsToBox:nestedBox fromIndex:i+1 count:nestedCount];
+            i = [self addFieldsToBox:nestedBox fromIndex:i+1 count:nestedCount];
 
-            self.calculatedSize = NSMakeSize(600, height); // FIXME: hardcoded width, should be calculated from content width
-            i += added;
+            if (width != -1) {
+                contentWidth = MAX(width, contentWidth);
+            }
+            if (height != -1) {
+                contentHeight += height;
+            }
             continue;
-        }
-        else if (_settingsData.props[i].type == PROP_VBOX) {
-            continue;
-        }
-
-        if (box.isStackView) {
-            view = [[NSView alloc] initWithFrame:NSMakeRect(0,0,50,200)];
-            [(NSStackView *)box.view addView:view inGravity:NSStackViewGravityLeading];
         }
 
         NSView *currLabel;
+
+        BOOL isVert = NO;
 
         // set label
         switch (_settingsData.props[i].type) {
@@ -232,6 +254,21 @@
         case PROP_ITEMLIST:
         case PROP_ITEMSELECT:
             {
+                if (_settingsData.props[i].type == PROP_SLIDER) {
+                    const char *opts = _settingsData.props[i].select_options;
+                    if (opts) {
+                        char token[MAX_TOKEN];
+                        const char *script = opts;
+
+                        // count
+                        while ((script = gettoken (script, token)) && strcmp (token, ";")) {
+                            if (!strcmp (token, "vert")) {
+                                isVert = YES;
+                            }
+                        }
+                    }
+                }
+
                 NSTextField *lbl = [NSTextField new];
                 NSString *title = [NSString stringWithUTF8String:_settingsData.props[i].title];
                 lbl.stringValue = title;
@@ -259,14 +296,18 @@
                 lbl.translatesAutoresizingMaskIntoConstraints = NO;
                 [view addSubview:lbl];
 
-                if (!box.isVertical) {
+                if (!isVert) {
                     // horz alignment, same size labels
                     if (box.firstLabel) {
                         [lbl.leadingAnchor constraintEqualToAnchor:box.firstLabel.leadingAnchor].active = YES;
                         [lbl.trailingAnchor constraintEqualToAnchor:box.firstLabel.trailingAnchor].active = YES;
                     }
                     else {
-                        [lbl.leadingAnchor constraintEqualToAnchor:view.leadingAnchor constant:20].active = YES;
+                        CGFloat offs = 20;
+                        if (box.isStackView) {
+                            offs = 0;
+                        }
+                        [lbl.leadingAnchor constraintEqualToAnchor:view.leadingAnchor constant:offs].active = YES;
                         box.firstLabel = lbl;
                     }
 
@@ -364,7 +405,7 @@
         case PROP_SLIDER:
             {
                 NSSlider *slider = [NSSlider new];
-                if (box.isVertical) {
+                if (isVert) {
                     slider.vertical = YES;
                 }
                 const char *opts = _settingsData.props[i].select_options;
@@ -389,7 +430,7 @@
 
                 NSTextField *valueedit = [NSTextField new];
                 valueedit.font = self.fontContent;
-                if (!box.isVertical) {
+                if (!isVert) {
                     valueedit.editable = YES;
                 }
                 else {
@@ -440,7 +481,7 @@
                 valueedit.translatesAutoresizingMaskIntoConstraints = NO;
                 [view addSubview:valueedit];
 
-                if (!box.isVertical) {
+                if (!isVert) {
                     [valueedit.firstBaselineAnchor constraintEqualToAnchor:currentField.firstBaselineAnchor].active = YES;
                     [valueedit.widthAnchor constraintEqualToConstant:100].active = YES;
                     [valueedit.leadingAnchor constraintEqualToAnchor:currentField.trailingAnchor constant:8].active = YES;
@@ -539,14 +580,20 @@
             }
         }
 
-        if (!box.isStackView) {
-            [self constrainCurrentField:currentField boxHandler:box currLabel:currLabel unalignedFields:unalignedFields view:view];
+        if (currentField && !isVert) {
+            [self constrainCurrentField:currentField isVert:isVert boxHandler:box currLabel:currLabel unalignedFields:unalignedFields view:view];
+            contentHeight += unit_h;
         }
+
+        i++;
     }
 
     if (!box.isStackView) {
         for (NSView *field in unalignedFields) {
-            if (box.firstLabel) {
+            if ([field isKindOfClass:NSStackView.class]) {
+                [field.leadingAnchor constraintEqualToAnchor:field.superview.leadingAnchor constant:8].active=YES;
+            }
+            else if (box.firstLabel) {
                 [field.leadingAnchor constraintEqualToAnchor:box.firstLabel.trailingAnchor constant:8].active=YES;
             }
             else {
@@ -559,11 +606,21 @@
         }
     }
 
-    return count;
+    // constrain to bottom
+    if (box.previousField) {
+        [box.previousField.bottomAnchor constraintEqualToAnchor:view.bottomAnchor constant:-8].active = YES;
+    }
+
+    self.contentSize = NSMakeSize(contentWidth, contentHeight);
+
+    return i;
 }
 
 - (void)setDataSource:(id<PropertySheetDataSource>)dataSource {
     _dataSource = dataSource;
+
+    self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
+
     NSView *view;
     _bindings = [NSMutableArray new];
 
@@ -575,35 +632,9 @@
         have_settings = NO;
     }
 
-//    CGFloat label_width = _labelFixedWidth;
-    CGFloat unit_h = _contentFontSize + 11;
+    self.contentSize = NSMakeSize(NSWidth(self.view.frame)-2, 0);
 
-    CGFloat h = _settingsData.nprops * (unit_h + _unitSpacing) + _topMargin;
-    NSSize sz;
-
-    self.calculatedSize = NSMakeSize(NSWidth(self.view.frame), h);
-
-    if ([self.view isKindOfClass:[NSScrollView class]]) {
-        NSScrollView *scrollView = (NSScrollView *)self.view;
-        view = [scrollView documentView];
-        NSRect rc = view.frame;
-        rc.size.width = scrollView.contentView.frame.size.width;
-        if (_settingsData.nprops) {
-            rc.size.height = h;
-        }
-        else {
-            rc.size.height = [scrollView contentView].frame.size.height;
-        }
-
-        view.frame = rc;
-
-        sz = [scrollView contentSize];
-    }
-    else {
-        view = self.view;
-        sz = view.frame.size;
-        h = sz.height;
-    }
+    view = self.contentView;
 
     while (view.subviews.count > 0) {
         [view.subviews.lastObject removeFromSuperview];
@@ -621,8 +652,11 @@
         [view addSubview:lbl];
         [lbl.centerXAnchor constraintEqualToAnchor:view.centerXAnchor].active = YES;
         [lbl.centerYAnchor constraintEqualToAnchor:view.centerYAnchor].active = YES;
+        self.contentView.contentSize = NSMakeSize(NSWidth(self.view.frame)-6, NSHeight(self.view.frame)-6);
         return;
     }
+
+    self.contentView.contentSize = NSMakeSize(0, 0);
 
     self.fontLabel = [NSFont systemFontOfSize:_labelFontSize weight:NSFontWeightRegular];
     self.fontContent = [NSFont systemFontOfSize:_contentFontSize weight:NSFontWeightRegular];
@@ -666,6 +700,8 @@
 
     [self addFieldsToBox:box fromIndex:0 count:self.settingsData.nprops];
 
+//    self.contentView.frame = NSMakeRect(0, 0, self.contentSize.width, self.contentSize.height);
+    self.contentView.contentSize = self.contentSize;
 }
 
 - (void)save {

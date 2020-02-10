@@ -25,7 +25,7 @@
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <clipView key="contentView" ambiguous="YES" id="TSk-Ch-Vfg">
                         <rect key="frame" x="1" y="1" width="501" height="105"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" ambiguous="YES" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" id="6kF-fI-yim">
                                 <rect key="frame" x="0.0" y="0.0" width="501" height="105"/>
@@ -108,7 +108,7 @@
                             <rect key="frame" x="1" y="1" width="549" height="228"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TeJ-pI-xP9">
+                                <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TeJ-pI-xP9" customClass="PropertySheetContentView">
                                     <rect key="frame" x="0.0" y="0.0" width="549" height="228"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 </view>
@@ -167,6 +167,7 @@ Gw
         </window>
         <viewController id="Pnv-33-o5j" userLabel="Dsp Config Property Sheet View Controller" customClass="PropertySheetViewController">
             <connections>
+                <outlet property="contentView" destination="TeJ-pI-xP9" id="3dI-N4-7RA"/>
                 <outlet property="view" destination="OuH-IF-bmv" id="ltE-4u-EdZ"/>
             </connections>
         </viewController>
