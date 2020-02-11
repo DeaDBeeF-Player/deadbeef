@@ -103,7 +103,12 @@
             [currentField.leadingAnchor constraintEqualToAnchor:currentField.superview.leadingAnchor constant:0].active=YES;
         }
         else if (box.firstLabel) {
-            [currentField.leadingAnchor constraintLessThanOrEqualToAnchor:box.firstLabel.trailingAnchor constant:8].active=YES;
+            if ([currentField isKindOfClass:NSButton.class]) {
+                [currentField.leadingAnchor constraintLessThanOrEqualToAnchor:box.firstLabel.trailingAnchor constant:8].active=YES;
+            }
+            else {
+                [currentField.leadingAnchor constraintEqualToAnchor:box.firstLabel.trailingAnchor constant:8].active=YES;
+            }
         }
         else {
             [unalignedFields addObject:currentField];
