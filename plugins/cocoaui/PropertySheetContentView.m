@@ -12,7 +12,6 @@
 
 - (NSSize)intrinsicContentSize {
     return self.contentSize;
-
 }
 
 - (void)setContentSize:(NSSize)contentSize {

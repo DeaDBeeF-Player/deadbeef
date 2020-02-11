@@ -36,7 +36,7 @@
                                 <tableColumns>
                                     <tableColumn editable="NO" width="498" minWidth="40" maxWidth="1000" id="uXK-Fd-IrU">
                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
-                                            <font key="font" metaFont="menu" size="11"/>
+                                            <font key="font" metaFont="message" size="11"/>
                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                         </tableHeaderCell>
@@ -93,7 +93,7 @@
             <point key="canvasLocation" x="-240" y="367"/>
         </customView>
         <window title="DSP Configuration" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="DmZ-5J-Htc" customClass="NSPanel">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="167" y="107" width="591" height="300"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
@@ -116,7 +116,6 @@
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="deviceWhite"/>
                         </clipView>
                         <constraints>
-                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="550" id="DmA-be-59z"/>
                             <constraint firstAttribute="height" constant="230" id="EzT-iI-24y"/>
                         </constraints>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="gs5-PP-7y7">

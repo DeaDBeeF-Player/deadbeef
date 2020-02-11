@@ -103,7 +103,7 @@
             [currentField.leadingAnchor constraintEqualToAnchor:currentField.superview.leadingAnchor constant:0].active=YES;
         }
         else if (box.firstLabel) {
-            [currentField.leadingAnchor constraintEqualToAnchor:box.firstLabel.trailingAnchor constant:8].active=YES;
+            [currentField.leadingAnchor constraintLessThanOrEqualToAnchor:box.firstLabel.trailingAnchor constant:8].active=YES;
         }
         else {
             [unalignedFields addObject:currentField];
@@ -289,10 +289,6 @@
 
                 lbl.font = self.fontLabel;
 
-                if (![box.view isKindOfClass:NSStackView.class]) {
-                    [lbl setContentHuggingPriority:NSLayoutPriorityDefaultHigh+1 forOrientation:NSLayoutConstraintOrientationHorizontal];
-                }
-
                 lbl.translatesAutoresizingMaskIntoConstraints = NO;
                 [view addSubview:lbl];
 
@@ -318,6 +314,9 @@
                     else {
                         [lbl.topAnchor constraintEqualToAnchor:view.topAnchor constant:8].active = YES;
                     }
+                    [lbl setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh forOrientation:NSLayoutConstraintOrientationHorizontal];
+
+                    [lbl setContentHuggingPriority:NSLayoutPriorityDefaultHigh-1 forOrientation:NSLayoutConstraintOrientationHorizontal];
                 }
                 else {
                     [lbl.topAnchor constraintEqualToAnchor:view.topAnchor constant:0].active = YES;
@@ -326,7 +325,6 @@
                     [lbl.rightAnchor constraintLessThanOrEqualToAnchor:view.rightAnchor constant:0].active = YES;
                 }
                 currLabel = lbl;
-//                continue;
             }
         }
 
@@ -399,7 +397,6 @@
                 checkbox.action = @selector(valueChanged:);
 
                 [currentField.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:-20].active=YES;
-
                 break;
             }
         case PROP_SLIDER:
@@ -656,7 +653,7 @@
         return;
     }
 
-    self.contentView.contentSize = NSMakeSize(0, 0);
+    self.contentSize = NSMakeSize(NSWidth(self.contentView.frame), 0);
 
     self.fontLabel = [NSFont systemFontOfSize:_labelFontSize weight:NSFontWeightRegular];
     self.fontContent = [NSFont systemFontOfSize:_contentFontSize weight:NSFontWeightRegular];
