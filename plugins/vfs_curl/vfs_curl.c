@@ -635,6 +635,8 @@ http_thread_func (void *ctx) {
     trace ("vfs_curl: started loading data %s\n", fp->url);
     for (;;) {
         struct curl_slist *headers = NULL;
+        struct curl_slist *ok_aliases = curl_slist_append (NULL, "ICY 200 OK");
+
         curl_easy_reset (curl);
         curl_easy_setopt (curl, CURLOPT_URL, fp->url);
         char ua[100];
@@ -657,6 +659,7 @@ http_thread_func (void *ctx) {
         curl_easy_setopt (curl, CURLOPT_MAXREDIRS, 10);
         headers = curl_slist_append (headers, "Icy-Metadata:1");
         curl_easy_setopt (curl, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt (curl, CURLOPT_HTTP200ALIASES, ok_aliases);
         if (fp->pos > 0 && fp->length >= 0) {
             curl_easy_setopt (curl, CURLOPT_RESUME_FROM, (long)fp->pos);
         }
@@ -742,6 +745,7 @@ http_thread_func (void *ctx) {
         }
         deadbeef->mutex_unlock (fp->mutex);
         curl_slist_free_all (headers);
+        curl_slist_free_all (ok_aliases);
     }
     fp->curl = NULL;
     curl_easy_cleanup (curl);
