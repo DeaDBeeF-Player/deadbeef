@@ -596,7 +596,12 @@
                 [field.leadingAnchor constraintEqualToAnchor:field.superview.leadingAnchor constant:8].active=YES;
             }
             else if (box.firstLabel) {
-                [field.leadingAnchor constraintEqualToAnchor:box.firstLabel.trailingAnchor constant:8].active=YES;
+                if ([field isKindOfClass:NSButton.class]) {
+                    [field.leadingAnchor constraintLessThanOrEqualToAnchor:box.firstLabel.trailingAnchor constant:8].active=YES;
+                }
+                else {
+                    [field.leadingAnchor constraintEqualToAnchor:box.firstLabel.trailingAnchor constant:8].active=YES;
+                }
             }
             else {
                 CGFloat leadingOffs = 20;
