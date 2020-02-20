@@ -1,6 +1,6 @@
-title AAC 256VBR kbps (Nero FAAC)
+title AAC VBR 256kbps (Nero FAAC)
 ext m4a
-encoder faac -q 300 -w -o %o -
+encoder faac -q 350 -w -o %o -
 method 0
 id3v2_version 0
 tag_id3v2 0
