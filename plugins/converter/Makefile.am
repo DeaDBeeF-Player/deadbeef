@@ -8,7 +8,9 @@ convdata = \
 	convpresets/MS_RIFF_WAV.txt\
 	convpresets/MusePack.txt\
 	convpresets/Ogg_FLAC.txt\
-	convpresets/Ogg_Vorbis_(-q_5).txt\
+	convpresets/Ogg_VBR_192Kbps.txt\
+	convpresets/Ogg_VBR_256Kbps.txt\
+	convpresets/Ogg_VBR_320Kbps.txt\
 	convpresets/Opus.txt\
 	convpresets/TTA.txt\
 	convpresets/WavPack.txt\
