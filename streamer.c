@@ -928,7 +928,8 @@ stream_track (playItem_t *it, int startpaused) {
     playItem_t *to = NULL;
 
     if (first_failed_track && first_failed_track == it) {
-        streamer_play_failed (NULL); // looped to the first failed track
+        // looped to the first failed track
+        _handle_playback_stopped();
         goto error;
     }
 
