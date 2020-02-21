@@ -1,5 +1,7 @@
 convdata = \
-	convpresets/AAC_(Nero_FAAC).txt\
+	convpresets/AAC_VBR_192Kbps_(Nero_FAAC).txt\
+	convpresets/AAC_VBR_256Kbps_(Nero_FAAC).txt\
+	convpresets/AAC_VBR_320Kbps_(Nero_FAAC).txt\
 	convpresets/FLAC_(compression_level_5).txt\
 	convpresets/MP3_CBR_320_Kbps_(Lame).txt\
 	convpresets/MP3_VBR_192Kbps_(Lame).txt\
