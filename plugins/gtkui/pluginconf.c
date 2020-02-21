@@ -492,9 +492,6 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
                 gtk_scale_set_value_pos (GTK_SCALE (prop), vertical?GTK_POS_BOTTOM:GTK_POS_RIGHT);
             }
             label = gtk_label_new (_(labeltext));
-            if (vertical) {
-                gtk_label_set_angle(GTK_LABEL(label), 270);
-            }
             gtk_widget_show (label);
             g_signal_connect (G_OBJECT (prop), "value-changed", G_CALLBACK (prop_changed), win);
             gtk_widget_show (prop);
