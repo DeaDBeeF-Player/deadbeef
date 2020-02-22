@@ -41,6 +41,9 @@ version 1.8.3
 	Fixed loading MP3 album art of APIC type=0 (Other)
 	Added album art fallback to png (jakesfr@github)
 	Fixed ALSA hanging after audio format change
+	Fixed handling "ICY 200 OK" status in vfs-curl (thesame)
+	Improved EQ UI layout in the DSP settings
+	Fixed streamer being stuck in buffering mode when trying to play deleted files
 
 version 1.8.2
 	Volume control from command line supports increment syntax (by eauno1re@github)
