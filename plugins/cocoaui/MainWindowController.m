@@ -21,7 +21,10 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#import "DdbPlaceholderWidget.h"
+#import "DesignableViewController.h"
 #import "MainWindowController.h"
+#import "PlaylistViewController.h"
 #import "PreferencesWindowController.h"
 #include "../../deadbeef.h"
 #include <sys/time.h>
@@ -36,6 +39,11 @@ extern DB_functions_t *deadbeef;
     char *_statusbar_playing_script;
     int _prevSeekBarPos;
 }
+
+
+@property (weak) IBOutlet NSView *designableContainerView;
+
+
 @end
 
 @interface NSView (AppKitDetails)
@@ -52,7 +60,7 @@ extern DB_functions_t *deadbeef;
         _updateTimer = nil;
     }
 
-    [self.playlistViewController cleanup];
+    [self.rootViewController cleanup];
 }
 
 - (void)dealloc {
@@ -62,6 +70,20 @@ extern DB_functions_t *deadbeef;
 
 - (void)windowDidLoad {
     [super windowDidLoad];
+
+    PlaylistViewController *pvc = [[PlaylistViewController alloc] initWithNibName:nil bundle:nil];
+    PlaylistView *view = [PlaylistView new];
+    pvc.view = view;
+    [pvc setup];
+    self.rootViewController = pvc;
+
+    view.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.designableContainerView addSubview:view];
+
+    [view.topAnchor constraintEqualToAnchor:self.designableContainerView.topAnchor].active = YES;
+    [view.bottomAnchor constraintEqualToAnchor:self.designableContainerView.bottomAnchor].active = YES;
+    [view.leadingAnchor constraintEqualToAnchor:self.designableContainerView.leadingAnchor].active = YES;
+    [view.trailingAnchor constraintEqualToAnchor:self.designableContainerView.trailingAnchor].active = YES;
 
     // add tab strip to the window titlebar
     NSTitlebarAccessoryViewController* vc = [NSTitlebarAccessoryViewController new];

@@ -455,10 +455,10 @@ cdumb_stop (void) {
 }
 
 static const char settings_dlg[] =
-    "property \"Resampling quality (0..5, higher is better)\" spinbtn[0,5,1] dumb.resampling_quality 4;\n"
-    "property \"8-bit output (default is 16)\" checkbox dumb.8bitoutput 0;\n"
-    "property \"Internal DUMB volume (0..128)\" spinbtn[0,128,16] dumb.globalvolume 64;\n"
+    "property \"Resampling quality\" spinbtn[0,5,1] dumb.resampling_quality 4;\n"
+    "property \"Internal DUMB volume\" spinbtn[0,128,16] dumb.globalvolume 64;\n"
     "property \"Volume ramping\" select[3] dumb.volume_ramping 0 None \"On/Off Only\" \"Full\";\n"
+    "property \"8-bit output\" checkbox dumb.8bitoutput 0;\n"
 ;
 
 // define plugin interface

@@ -182,7 +182,7 @@
     }
     else if (_dragging != [delegate invalidColumn] || _sizing != [delegate invalidColumn]) {
         [delegate columnsChanged];
-        [self.listview updateContentFrame];
+        [self.listview.contentView updateContentFrame];
     }
     _dragging = [delegate invalidColumn];
     _sizing = [delegate invalidColumn];
@@ -208,7 +208,7 @@
             CGFloat scroll = -rc.origin.x;
 
             [delegate setColumnWidth:w forColumn:_sizing];
-            [self.listview updateContentFrame];
+            [self.listview.contentView updateContentFrame];
             self.listview.contentView.needsDisplay = YES;
             self.needsDisplay = YES;
 

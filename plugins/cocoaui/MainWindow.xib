@@ -9,7 +9,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="MainWindowController">
             <connections>
                 <outlet property="buttonBar" destination="Q6A-xH-8bl" id="xdh-C7-jri"/>
-                <outlet property="playlistViewController" destination="9vD-D4-Hkc" id="q5O-bp-H6s"/>
+                <outlet property="designableContainerView" destination="udP-Ce-pRu" id="OZl-0H-bFI"/>
                 <outlet property="seekBar" destination="cFf-VJ-YO5" id="20Z-bb-Rt3"/>
                 <outlet property="statusBar" destination="Rek-dI-lyl" id="6Pu-H7-aOK"/>
                 <outlet property="tabStrip" destination="d3W-U7-VFA" id="Muq-bp-ETV"/>
@@ -29,24 +29,34 @@
                 <rect key="frame" x="0.0" y="0.0" width="507" height="168"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rek-dI-lyl">
-                        <rect key="frame" x="3" y="2" width="506" height="11"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Rek-dI-lyl">
+                        <rect key="frame" x="3" y="2" width="501" height="11"/>
                         <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="left" title="Label" usesSingleLineMode="YES" id="udl-p6-f4h">
-                            <font key="font" metaFont="miniSystem"/>
+                            <font key="font" metaFont="label" size="9"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="ouj-13-WFq">
+                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="ouj-13-WFq">
                         <rect key="frame" x="0.0" y="10" width="507" height="5"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                     </box>
-                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yp3-Vv-aHK" customClass="DdbPlaylistWidget">
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="udP-Ce-pRu">
                         <rect key="frame" x="0.0" y="13" width="507" height="155"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     </customView>
                 </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="udP-Ce-pRu" secondAttribute="trailing" id="300-dB-nZ8"/>
+                    <constraint firstItem="ouj-13-WFq" firstAttribute="top" secondItem="udP-Ce-pRu" secondAttribute="bottom" id="3r0-OH-TFM"/>
+                    <constraint firstAttribute="trailing" secondItem="ouj-13-WFq" secondAttribute="trailing" id="53q-ls-DA5"/>
+                    <constraint firstAttribute="bottom" secondItem="Rek-dI-lyl" secondAttribute="bottom" constant="2" id="BOf-Ns-5pa"/>
+                    <constraint firstAttribute="trailing" secondItem="Rek-dI-lyl" secondAttribute="trailing" constant="5" id="GPf-bb-dQu"/>
+                    <constraint firstAttribute="bottom" secondItem="Rek-dI-lyl" secondAttribute="bottom" constant="2" id="bPm-Xq-wCO"/>
+                    <constraint firstItem="udP-Ce-pRu" firstAttribute="top" secondItem="Ds9-lN-DIb" secondAttribute="top" id="gwO-2r-wMY"/>
+                    <constraint firstItem="Rek-dI-lyl" firstAttribute="leading" secondItem="Ds9-lN-DIb" secondAttribute="leading" constant="5" id="pFQ-UU-ZHm"/>
+                    <constraint firstItem="ouj-13-WFq" firstAttribute="leading" secondItem="Ds9-lN-DIb" secondAttribute="leading" id="txM-NN-anW"/>
+                    <constraint firstItem="udP-Ce-pRu" firstAttribute="leading" secondItem="Ds9-lN-DIb" secondAttribute="leading" id="vx1-Es-TL1"/>
+                    <constraint firstItem="Rek-dI-lyl" firstAttribute="top" secondItem="ouj-13-WFq" secondAttribute="bottom" constant="-1" id="wce-bt-IuC"/>
+                </constraints>
             </view>
             <toolbar key="toolbar" implicitIdentifier="BF18C458-D1D4-4997-A57A-526B66F95A52" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="1DX-Tf-YIx">
                 <allowedToolbarItems>
@@ -117,11 +127,6 @@
             </toolbar>
             <point key="canvasLocation" x="385.5" y="39"/>
         </window>
-        <viewController id="9vD-D4-Hkc" customClass="PlaylistViewController">
-            <connections>
-                <outlet property="view" destination="yp3-Vv-aHK" id="Fly-Yv-kSQ"/>
-            </connections>
-        </viewController>
         <window title="Rename Playlist" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="dIi-bq-ybp" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>

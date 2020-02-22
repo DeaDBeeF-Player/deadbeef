@@ -33,6 +33,7 @@
     // Do view setup here.
     self.dataSource.delegate = self;
     _nodeList.dataSource = self.dataSource;
+
     [_nodeList registerForDraggedTypes: [NSArray arrayWithObjects: _dataSource.pasteboardItemIdentifier, nil]];
 }
 
@@ -154,10 +155,15 @@
 
     }
     else {
-        self.propertiesDataSource = [[ScriptablePropertySheetDataSource alloc] initWithScriptable:item];
-        self.propertiesDataSource.delegate = self;
+        self.propertiesViewController.labelFontSize = 10;
+        self.propertiesViewController.contentFontSize = 11;
+        self.propertiesViewController.unitSpacing = 4;
+        self.propertiesViewController.autoAlignLabels = NO;
 
-        _propertiesViewController.dataSource = self.propertiesDataSource;
+        self.propertiesDataSource.delegate = self;
+        self.propertiesDataSource = [[ScriptablePropertySheetDataSource alloc] initWithScriptable:item];
+
+        self.propertiesViewController.dataSource = self.propertiesDataSource;
         [self.view.window beginSheet:_propertiesPanel completionHandler:^(NSModalResponse returnCode) {
         }];
     }
@@ -172,7 +178,7 @@
 }
 
 - (IBAction)configResetAction:(id)sender {
-    [_propertiesViewController reset];
+    [self.propertiesViewController reset];
 }
 
 - (IBAction)segmentedControlAction:(id)sender {

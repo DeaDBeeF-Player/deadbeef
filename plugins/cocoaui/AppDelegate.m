@@ -24,7 +24,6 @@
 #import "AppDelegate.h"
 #import "dispatch/dispatch.h"
 #import "DdbWidgetManager.h"
-#import "PlaylistViewController.h"
 #import "ReplayGainScannerController.h"
 #import "DdbShared.h"
 #import "NowPlayable.h"
@@ -672,7 +671,10 @@ main_cleanup_and_quit (void);
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2
 {
     [[DdbWidgetManager defaultWidgetManager] widgetMessage:_id ctx:ctx p1:p1 p2:p2];
-    
+
+    [g_appDelegate.mainWindow.rootViewController sendMessage:_id ctx:ctx p1:p1 p2:p2];
+    [(DesignableViewController *)(g_appDelegate.searchWindow.viewController) sendMessage:_id ctx:ctx p1:p1 p2:p2];
+
     if (_id == DB_EV_CONFIGCHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(configChanged) withObject:nil waitUntilDone:NO];
     }

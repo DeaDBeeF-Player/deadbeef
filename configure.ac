@@ -6,7 +6,6 @@ AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([1.11 dist-bzip2 tar-ustar silent-rules subdir-objects no-dependencies])
 AM_SILENT_RULES([yes])
 AM_MAINTAINER_MODE()
-
 AC_USE_SYSTEM_EXTENSIONS
 LT_INIT([disable-static])
 AC_PROG_CC
@@ -168,7 +167,7 @@ AC_CHECK_LIB([dl], [main], [HAVE_DL=yes;DL_LIBS="-ldl";AC_SUBST(DL_LIBS)])
 dnl check libsocket (OpenIndiana)
 AC_CHECK_LIB([socket], [main], [HAVE_SOCKET=yes;DL_LIBS="-lsocket";AC_SUBST(DL_LIBS)])
 dnl check for seperate alloca.h (OpenIndiana)
-AC_CHECK_HEADER([alloca.h],[],[alloca.h not found.])
+AC_CHECK_HEADER([alloca.h],[AC_DEFINE([HAVE_ALLOCA_H], [1], [Define if system has alloca.h])],[alloca.h not found.])
 dnl check for syslimits.h (BSD)
 AC_CHECK_HEADERS([sys/syslimits.h])
 AC_CHECK_HEADERS([sys/cdefs.h])

@@ -262,8 +262,6 @@
 		2D05A90D1B4BE6AF004C913D /* short_term.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D05A8FC1B4BE6AF004C913D /* short_term.c */; };
 		2D05A90E1B4BE6AF004C913D /* table.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D05A8FD1B4BE6AF004C913D /* table.c */; };
 		2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D061F7919E9685000CE6C29 /* DdbShared.m */; };
-		2D06B39D19D056BC0041BE86 /* DdbPlaylistWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06B39B19D056BC0041BE86 /* DdbPlaylistWidget.h */; };
-		2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */; };
 		2D08359A1D4F4DB600A5C643 /* cdumb.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0835991D4F4DB600A5C643 /* cdumb.h */; };
 		2D0A002819C390E9006F7462 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
 		2D0A549223E8CC9500E0F978 /* eqpreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBA1BE23E203B9000E4135 /* eqpreset.c */; };
@@ -302,6 +300,8 @@
 		2D1DC09C1DCB3A1500441A08 /* ddb_mono2stereo.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */; };
 		2D1DC09D1DCB3A1900441A08 /* mono2stereo.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5423B61DCB38D600ACBDEB /* mono2stereo.c */; };
 		2D1DC09F1DCB3B7500441A08 /* alac_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D1DC09E1DCB3B7500441A08 /* alac_plugin.c */; };
+		2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */; };
+		2D20D12523F099F4008ACBE6 /* NSImage+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D20D12323F099F4008ACBE6 /* NSImage+Additions.m */; };
 		2D22F70719E13838009C631E /* c64cia.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F60D19E13762009C631E /* c64cia.h */; };
 		2D22F70819E13838009C631E /* c64vic.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F60E19E13762009C631E /* c64vic.h */; };
 		2D22F70919E13838009C631E /* c64xsid.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F60F19E13762009C631E /* c64xsid.h */; };
@@ -1310,8 +1310,6 @@
 		2D7DE4A61E64CD7700AA0F83 /* dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 4DC96E6D1E4CC9670093CFD3 /* dsp.c */; };
 		2D7F38031B2858AC00692A7B /* JunklibTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D7F38021B2858AC00692A7B /* JunklibTests.m */; };
 		2D828E5419E5679800EE874F /* Search.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D828E5319E5679800EE874F /* Search.xib */; };
-		2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D828E5519E567C800EE874F /* DdbSearchWidget.h */; };
-		2D828E5819E567C800EE874F /* DdbSearchWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D828E5619E567C800EE874F /* DdbSearchWidget.m */; };
 		2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D828E5919E56B4D00EE874F /* SearchViewController.h */; };
 		2D828E5C19E56B4D00EE874F /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D828E5A19E56B4D00EE874F /* SearchViewController.m */; };
 		2D86AFC41C358CDD0018C174 /* dial_conf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D86AFBF1C358CDD0018C174 /* dial_conf.c */; };
@@ -1450,6 +1448,10 @@
 		2DA04EF823B6AAA40070AC01 /* shellexecutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA04EF523B6AA6E0070AC01 /* shellexecutil.c */; };
 		2DA0ACE91AA71516007EDD43 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2DA0ACEE1AA71E7C007EDD43 /* in_sc68.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */; };
+		2DA2259F23F041B00033F411 /* DesignableViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA2259D23F041B00033F411 /* DesignableViewController.h */; };
+		2DA225A023F041B00033F411 /* DesignableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA2259E23F041B00033F411 /* DesignableViewController.m */; };
+		2DA225B023F0425C0033F411 /* DesignableView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA225AE23F0425C0033F411 /* DesignableView.h */; };
+		2DA225B123F0425C0033F411 /* DesignableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA225AF23F0425C0033F411 /* DesignableView.m */; };
 		2DA24AE119E7203A00E34920 /* asyn-ares.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A0F19E7203700E34920 /* asyn-ares.c */; };
 		2DA24AE219E7203A00E34920 /* asyn-thread.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A1019E7203700E34920 /* asyn-thread.c */; };
 		2DA24AE319E7203A00E34920 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A1119E7203700E34920 /* base64.c */; };
@@ -1545,6 +1547,8 @@
 		2DA24BA019E7254F00E34920 /* vtls.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA24B8819E7254F00E34920 /* vtls.h */; };
 		2DA24BA319E72A2500E34920 /* vfs_curl.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA24B4B19E724C200E34920 /* vfs_curl.dylib */; };
 		2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */; };
+		2DA30B7F23F1C9A3003D22E3 /* PropertySheetContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA30B7D23F1C9A3003D22E3 /* PropertySheetContentView.h */; };
+		2DA30B8023F1C9A3003D22E3 /* PropertySheetContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30B7E23F1C9A3003D22E3 /* PropertySheetContentView.m */; };
 		2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA372192370B854005E64A3 /* NowPlayable.h */; };
 		2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA3721A2370B854005E64A3 /* NowPlayable.m */; };
 		2DA5E331238DB0C4005832B7 /* EditColumnPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */; };
@@ -3434,8 +3438,6 @@
 		2D05A8FD1B4BE6AF004C913D /* table.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = table.c; path = "osx/deps/libsndfile-1.0.25/src/GSM610/table.c"; sourceTree = "<group>"; };
 		2D061F7919E9685000CE6C29 /* DdbShared.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbShared.m; sourceTree = "<group>"; };
 		2D061F7B19E9685E00CE6C29 /* DdbShared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbShared.h; sourceTree = "<group>"; };
-		2D06B39B19D056BC0041BE86 /* DdbPlaylistWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbPlaylistWidget.h; path = widgets/DdbPlaylistWidget.h; sourceTree = "<group>"; };
-		2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbPlaylistWidget.m; path = widgets/DdbPlaylistWidget.m; sourceTree = "<group>"; };
 		2D0835991D4F4DB600A5C643 /* cdumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cdumb.h; path = plugins/dumb/cdumb.h; sourceTree = "<group>"; };
 		2D0A002519C390E9006F7462 /* tf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tf.c; sourceTree = "<group>"; };
 		2D0A002619C390E9006F7462 /* tf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tf.h; sourceTree = "<group>"; };
@@ -3470,6 +3472,8 @@
 		2D1A56491D9FFB10005E5CDD /* ReplayGainScannerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayGainScannerController.m; sourceTree = "<group>"; };
 		2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ddb_mono2stereo.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D1DC09E1DCB3B7500441A08 /* alac_plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = alac_plugin.c; path = plugins/alac/alac_plugin.c; sourceTree = "<group>"; };
+		2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSImage+Additions.h"; sourceTree = "<group>"; };
+		2D20D12323F099F4008ACBE6 /* NSImage+Additions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSImage+Additions.m"; sourceTree = "<group>"; };
 		2D22F5AD19E136D1009C631E /* envelope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = envelope.h; path = "plugins/sid/sidplay-libs/resid/envelope.h"; sourceTree = "<group>"; };
 		2D22F5AE19E136D1009C631E /* extfilt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = extfilt.h; path = "plugins/sid/sidplay-libs/resid/extfilt.h"; sourceTree = "<group>"; };
 		2D22F5AF19E136D1009C631E /* filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = filter.h; path = "plugins/sid/sidplay-libs/resid/filter.h"; sourceTree = "<group>"; };
@@ -4373,8 +4377,6 @@
 		2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libvorbislib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7F38021B2858AC00692A7B /* JunklibTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JunklibTests.m; sourceTree = "<group>"; };
 		2D828E5319E5679800EE874F /* Search.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Search.xib; sourceTree = "<group>"; };
-		2D828E5519E567C800EE874F /* DdbSearchWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbSearchWidget.h; path = widgets/DdbSearchWidget.h; sourceTree = "<group>"; };
-		2D828E5619E567C800EE874F /* DdbSearchWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbSearchWidget.m; path = widgets/DdbSearchWidget.m; sourceTree = "<group>"; };
 		2D828E5919E56B4D00EE874F /* SearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchViewController.h; sourceTree = "<group>"; };
 		2D828E5A19E56B4D00EE874F /* SearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchViewController.m; sourceTree = "<group>"; };
 		2D86AFBF1C358CDD0018C174 /* dial_conf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dial_conf.c; path = ../libsc68/dial68/dial_conf.c; sourceTree = "<group>"; };
@@ -4572,6 +4574,10 @@
 		2DA04EF523B6AA6E0070AC01 /* shellexecutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = shellexecutil.c; path = plugins/shellexec/shellexecutil.c; sourceTree = "<group>"; };
 		2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = in_sc68.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA0ACEA1AA7162C007EDD43 /* in_sc68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = in_sc68.c; path = plugins/sc68/in_sc68.c; sourceTree = "<group>"; };
+		2DA2259D23F041B00033F411 /* DesignableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DesignableViewController.h; sourceTree = "<group>"; };
+		2DA2259E23F041B00033F411 /* DesignableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DesignableViewController.m; sourceTree = "<group>"; };
+		2DA225AE23F0425C0033F411 /* DesignableView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DesignableView.h; sourceTree = "<group>"; };
+		2DA225AF23F0425C0033F411 /* DesignableView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DesignableView.m; sourceTree = "<group>"; };
 		2DA2499E19E71FEB00E34920 /* libcurl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcurl.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA24A0F19E7203700E34920 /* asyn-ares.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "asyn-ares.c"; path = "osx/deps/curl-7.38.0/lib/asyn-ares.c"; sourceTree = "<group>"; };
 		2DA24A1019E7203700E34920 /* asyn-thread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "asyn-thread.c"; path = "osx/deps/curl-7.38.0/lib/asyn-thread.c"; sourceTree = "<group>"; };
@@ -4671,6 +4677,8 @@
 		2DA24B8719E7254F00E34920 /* vtls.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vtls.c; sourceTree = "<group>"; };
 		2DA24B8819E7254F00E34920 /* vtls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vtls.h; sourceTree = "<group>"; };
 		2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = u8_uc_map.h; sourceTree = "<group>"; };
+		2DA30B7D23F1C9A3003D22E3 /* PropertySheetContentView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PropertySheetContentView.h; sourceTree = "<group>"; };
+		2DA30B7E23F1C9A3003D22E3 /* PropertySheetContentView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PropertySheetContentView.m; sourceTree = "<group>"; };
 		2DA372192370B854005E64A3 /* NowPlayable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NowPlayable.h; path = NowPlayable/NowPlayable.h; sourceTree = "<group>"; };
 		2DA3721A2370B854005E64A3 /* NowPlayable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = NowPlayable.m; path = NowPlayable/NowPlayable.m; sourceTree = "<group>"; };
 		2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditColumnPanel.xib; sourceTree = "<group>"; };
@@ -6895,6 +6903,8 @@
 				2D46221C226DBA57003997E9 /* FlippedClipView.m */,
 				2D986140226C815F00BAACB1 /* BrowseButton.h */,
 				2D986141226C816000BAACB1 /* BrowseButton.m */,
+				2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */,
+				2D20D12323F099F4008ACBE6 /* NSImage+Additions.m */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -8264,10 +8274,6 @@
 				2DE1D3E519B11539009B5BC6 /* DdbPlaceholderWidget.m */,
 				2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */,
 				2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */,
-				2D06B39B19D056BC0041BE86 /* DdbPlaylistWidget.h */,
-				2D06B39C19D056BC0041BE86 /* DdbPlaylistWidget.m */,
-				2D828E5519E567C800EE874F /* DdbSearchWidget.h */,
-				2D828E5619E567C800EE874F /* DdbSearchWidget.m */,
 			);
 			name = widgets;
 			sourceTree = "<group>";
@@ -9433,6 +9439,12 @@
 				2D9C0C24238DC2C100CE8C10 /* GroupByCustomWindowController.m */,
 				2DEBA1CF23E207A3000E4135 /* EqualizerWindowController.h */,
 				2DEBA1D023E207A3000E4135 /* EqualizerWindowController.m */,
+				2DA2259D23F041B00033F411 /* DesignableViewController.h */,
+				2DA2259E23F041B00033F411 /* DesignableViewController.m */,
+				2DA225AE23F0425C0033F411 /* DesignableView.h */,
+				2DA225AF23F0425C0033F411 /* DesignableView.m */,
+				2DA30B7D23F1C9A3003D22E3 /* PropertySheetContentView.h */,
+				2DA30B7E23F1C9A3003D22E3 /* PropertySheetContentView.m */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -10860,6 +10872,7 @@
 				2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
 				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
+				2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */,
 				2DEF494419C4DB4100B718C1 /* PlaylistView.h in Headers */,
 				4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */,
 				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
@@ -10873,6 +10886,7 @@
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
 				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
 				2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */,
+				2DA225B023F0425C0033F411 /* DesignableView.h in Headers */,
 				2D651D17227227C300375AE2 /* ScriptableNodeEditorWindowController.h in Headers */,
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
 				2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */,
@@ -10884,20 +10898,20 @@
 				2D9C0C25238DC2C100CE8C10 /* GroupByCustomWindowController.h in Headers */,
 				2DF55C292270F415002C44DC /* ScriptableSelectViewController.h in Headers */,
 				2D71C26A1DC88E5C00247CEF /* ScriptableTableDataSource.h in Headers */,
-				2D828E5719E567C800EE874F /* DdbSearchWidget.h in Headers */,
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
 				2DF55C432270FF7E002C44DC /* ScriptablePropertySheetDataSource.h in Headers */,
 				2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
 				2D0A6B1B237718DA00252E6D /* playmodes.h in Headers */,
-				2D06B39D19D056BC0041BE86 /* DdbPlaylistWidget.h in Headers */,
 				2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */,
 				2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */,
 				2D49857F1D5CF13F00E4D985 /* LogWindowController.h in Headers */,
 				2D98613E226C814100BAACB1 /* PropertySheetViewController.h in Headers */,
 				2D642EB01AE9152E00FC1F7B /* sort.h in Headers */,
+				2DA30B7F23F1C9A3003D22E3 /* PropertySheetContentView.h in Headers */,
+				2DA2259F23F041B00033F411 /* DesignableViewController.h in Headers */,
 				2D986142226C816000BAACB1 /* BrowseButton.h in Headers */,
 				2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */,
 			);
@@ -13947,6 +13961,7 @@
 			files = (
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
 				2DEF494519C4DB4100B718C1 /* PlaylistView.m in Sources */,
+				2DA225B123F0425C0033F411 /* DesignableView.m in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
 				2DF55C402270FCB9002C44DC /* ScriptableNodeEditorViewController.m in Sources */,
 				2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */,
@@ -13956,12 +13971,14 @@
 				2DDBA26523E5F14A00051320 /* PlaylistHeaderView.m in Sources */,
 				2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */,
 				2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */,
+				2D20D12523F099F4008ACBE6 /* NSImage+Additions.m in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				2D651D18227227C300375AE2 /* ScriptableNodeEditorWindowController.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
 				2D1A564B1D9FFB10005E5CDD /* ReplayGainScannerController.m in Sources */,
 				2DF55C2A2270F415002C44DC /* ScriptableSelectViewController.m in Sources */,
 				2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */,
+				2DA30B8023F1C9A3003D22E3 /* PropertySheetContentView.m in Sources */,
 				2D98613F226C814100BAACB1 /* PropertySheetViewController.m in Sources */,
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
 				2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */,
@@ -13979,10 +13996,9 @@
 				2DDBA26123E5EA3800051320 /* PlaylistLocalDragDropHolder.m in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
 				2DF55C442270FF7E002C44DC /* ScriptablePropertySheetDataSource.m in Sources */,
-				2D06B39E19D056BC0041BE86 /* DdbPlaylistWidget.m in Sources */,
+				2DA225A023F041B00033F411 /* DesignableViewController.m in Sources */,
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,
 				2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */,
-				2D828E5819E567C800EE874F /* DdbSearchWidget.m in Sources */,
 				2DDBA24E23E5E66D00051320 /* PlaylistContentView.m in Sources */,
 				2D72047719DF2971000989C6 /* PlaylistViewController.m in Sources */,
 				2D54915822B1711E000FE7E3 /* HelpWindowController.m in Sources */,

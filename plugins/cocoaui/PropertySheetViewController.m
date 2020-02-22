@@ -1,16 +1,35 @@
 #import "PropertySheetViewController.h"
+#import "PropertySheetContentView.h"
 // FIXME: needed for referencing other object lists
 //#import "ItemListViewController.h"
 #include "parser.h"
 #include "pluginsettings.h"
 #import "BrowseButton.h"
 
-@interface PropertySheetViewController () {
-    NSMutableArray *_bindings;
-    settings_data_t _settingsData;
-}
+#pragma mark - BoxHandler
 
-@property (nonatomic,readwrite) NSSize calculatedSize;
+@interface BoxHandler : NSObject
+
+@property (nonatomic) NSView *view;
+@property (nonatomic) NSView *firstLabel;
+@property (nonatomic) NSView *previousField;
+@property (nonatomic) BOOL isStackView;
+@end
+
+@implementation BoxHandler
+
+@end
+
+#pragma mark - PropertySheetViewController
+
+@interface PropertySheetViewController ()
+
+@property (nonatomic,readwrite) NSSize contentSize;
+@property (nonatomic) NSMutableArray *bindings;
+@property (nonatomic) settings_data_t settingsData;
+
+@property (nonatomic) NSFont *fontLabel;
+@property (nonatomic) NSFont *fontContent;
 
 @end
 
@@ -61,125 +80,88 @@
                     pb.title = value;
                 }
                 else {
-                    ctl.stringValue = value;
+                    if (binding[@"isInteger"] && [binding[@"isInteger"] boolValue]) {
+                        ctl.integerValue = [value integerValue];
+                    }
+                    else if (binding[@"isFloat"] && [binding[@"isFloat"] boolValue]) {
+                        ctl.floatValue = [value floatValue];
+                    }
+                    else {
+                        ctl.stringValue = value;
+                    }
                 }
             }
         }
     }
 }
 
-- (void)setDataSource:(id<PropertySheetDataSource>)dataSource {
-    _dataSource = dataSource;
-    NSView *view;
-    _bindings = [NSMutableArray new];
+- (void)constrainCurrentField:(NSView *)currentField isVert:(BOOL)isVert boxHandler:(BoxHandler *)box currLabel:(NSView *)currLabel unalignedFields:(NSMutableArray<NSView *> *)unalignedFields view:(NSView *)view {
+    if (currentField) {
+        currentField.translatesAutoresizingMaskIntoConstraints = NO;
 
-    settings_data_free (&_settingsData);
-
-    BOOL have_settings = YES;
-    NSString *config = [dataSource propertySheet:self configForItem:self.item];
-    if (!config || settings_data_init(&_settingsData, [config UTF8String]) < 0) {
-        have_settings = NO;
-    }
-
-    CGFloat label_width = _labelFixedWidth;
-    int padding = 4;
-    CGFloat unit_h = _contentFontSize + 11;
-    CGFloat h = _settingsData.nprops * (unit_h + _unitSpacing) + _topMargin;
-    NSSize sz;
-
-    self.calculatedSize = NSMakeSize(NSWidth(self.view.frame), h);
-
-    if ([self.view isKindOfClass:[NSScrollView class]]) {
-        NSScrollView *scrollView = (NSScrollView *)self.view;
-        view = [scrollView documentView];
-        NSRect rc = view.frame;
-        if (_settingsData.nprops) {
-            rc.size.height = h;
+        if ([currentField isKindOfClass:NSStackView.class]) {
+            [currentField.leadingAnchor constraintEqualToAnchor:currentField.superview.leadingAnchor constant:0].active=YES;
+        }
+        else if (box.firstLabel) {
+            if ([currentField isKindOfClass:NSButton.class]) {
+                [currentField.leadingAnchor constraintLessThanOrEqualToAnchor:box.firstLabel.trailingAnchor constant:8].active=YES;
+            }
+            else {
+                [currentField.leadingAnchor constraintEqualToAnchor:box.firstLabel.trailingAnchor constant:8].active=YES;
+            }
         }
         else {
-            rc.size.height = [scrollView contentView].frame.size.height;
+            [unalignedFields addObject:currentField];
         }
 
-        view.frame = rc;
+        CGFloat leadingOffs = 20;
 
-        sz = [scrollView contentSize];
-    }
-    else {
-        view = self.view;
-        sz = view.frame.size;
-        h = sz.height;
-    }
-
-    while (view.subviews.count > 0) {
-        [view.subviews.lastObject removeFromSuperview];
-    }
-
-    if (!have_settings) {
-        NSTextField *lbl = [[NSTextField alloc] initWithFrame:NSMakeRect(0, sz.height/2 - unit_h/2, sz.width, unit_h)];
-        lbl.stringValue = @"No properties available";
-        lbl.alignment = NSTextAlignmentCenter;
-        lbl.bezeled = NO;
-        lbl.drawsBackground = NO;
-        lbl.editable = NO;
-        lbl.selectable = NO;
-        lbl.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin|NSViewMaxYMargin;
-        [view addSubview:lbl];
-        return;
-    }
-
-    NSFont *fontLabel = [NSFont systemFontOfSize:_labelFontSize weight:NSFontWeightRegular];
-    NSFont *fontContent = [NSFont systemFontOfSize:_contentFontSize weight:NSFontWeightRegular];
-
-    if (_autoAlignLabels) {
-        label_width = 0;
-        NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        textStyle.alignment = NSTextAlignmentLeft;
-        textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
-
-        NSDictionary *attrs = @{
-                             NSParagraphStyleAttributeName: textStyle,
-                             NSFontAttributeName:fontLabel
-                             };
-        for (int i = 0; i < _settingsData.nprops; i++) {
-            // set label
-            switch (_settingsData.props[i].type) {
-                case PROP_ENTRY:
-                case PROP_PASSWORD:
-                case PROP_SELECT:
-                case PROP_SLIDER:
-                case PROP_FILE:
-                case PROP_DIR:
-                case PROP_ITEMLIST:
-                case PROP_ITEMSELECT: {
-                    NSString *title = [NSString stringWithUTF8String:_settingsData.props[i].title];
-                    NSSize size = [title sizeWithAttributes:attrs];
-                    if (size.width > label_width) {
-                        label_width = size.width;
-                    }
-                    break;
-                }
-            }
+        if ([currentField isKindOfClass:NSStackView.class]) {
+            leadingOffs = 0;
         }
-        label_width += 10;
-    }
+        [currentField.leadingAnchor constraintGreaterThanOrEqualToAnchor:view.leadingAnchor constant:leadingOffs].active=YES;
 
-
-    NSStackView *sv;
-    int svItemCount = 0;
-    BOOL vert = NO;
-
-    CGFloat topLevelY = h - (unit_h + _unitSpacing) - _topMargin;
-    for (int i = 0; i < _settingsData.nprops; i++) {
-
-        CGFloat calculated_label_w = 0;
-
-        if (_settingsData.props[i].type == PROP_HBOX) {
-            // FIXME: disabled h/vboxes inside of scrollviews to prevent breaking plugin configuration
-            if ([self.view isKindOfClass:NSScrollView.class]) {
-                continue;
+        if (currLabel) {
+            [currentField.firstBaselineAnchor constraintEqualToAnchor:currLabel.firstBaselineAnchor].active=YES;
+        }
+        else if (box.previousField) {
+            [currentField.topAnchor constraintEqualToAnchor:box.previousField.bottomAnchor constant:8].active=YES;
+        }
+        else {
+            CGFloat topOffs = 8;
+            if ([currentField isKindOfClass:NSStackView.class]) {
+                topOffs = 0;
             }
+            [currentField.topAnchor constraintEqualToAnchor:view.topAnchor constant:topOffs].active=YES;
+        }
+        box.previousField = currentField;
+    }
+}
 
-            // FIXME: reuse for vbox
+- (NSUInteger)addFieldsToBox:(BoxHandler *)box fromIndex:(NSUInteger)index count:(NSUInteger)count {
+    NSView *view = box.view;
+    CGFloat unit_h = _contentFontSize + 13;
+
+    NSMutableArray<NSView *> *unalignedFields = [NSMutableArray new];
+
+    CGFloat contentWidth = self.contentSize.width;
+    CGFloat contentHeight = self.contentSize.height;
+
+    NSUInteger i = index;
+    NSUInteger remaining = count;
+
+    while (remaining-- && i < (NSUInteger)_settingsData.nprops) {
+
+        if (box.isStackView) {
+            view = [NSView new];
+            NSStackView *stackview = (NSStackView *)box.view;
+            view.autoresizingMask = NSViewMinXMargin | NSViewMaxXMargin;
+            [stackview addArrangedSubview:view];
+        }
+
+        if (_settingsData.props[i].type == PROP_HBOX || _settingsData.props[i].type == PROP_VBOX) {
+            NSStackView *sv;
+
             // parse parameters
             char token[MAX_TOKEN];
             const char *script = _settingsData.props[i].select_options;
@@ -190,17 +172,18 @@
                 continue;
             }
 
-            svItemCount = atoi (token);
+            int nestedCount = atoi (token);
 
             int hmg = 1;
             int fill = 1;
             int expand = 1;
             int border = 0;
             int spacing = 0;
-            int height = (int)unit_h;
+            int width = -1;
+            int height = -1;
 
             // other args
-            while ((script = gettoken (script, token))) {
+            while ((script = gettoken (script, token)) && strcmp (token, ";")) {
                 if (!strcmp (token, "hmg")) {
                     hmg = 1;
                 }
@@ -216,52 +199,82 @@
                 else if (!strncmp (token, "spacing=", 8)) {
                     spacing = atoi (token+8);
                 }
+                else if (!strncmp (token, "width=", 6)) {
+                    width = atoi (token+6);
+                }
                 else if (!strncmp (token, "height=", 7)) {
                     height = atoi (token+7);
                 }
             }
 
 
-            topLevelY -= (unit_h + _unitSpacing);
-            sv = [[NSStackView alloc] initWithFrame:NSMakeRect(padding, topLevelY-height, view.frame.size.width-padding*2, height)];
-            sv.orientation = NSUserInterfaceLayoutOrientationHorizontal;
+            sv = [NSStackView new];
+
+            sv.orientation = _settingsData.props[i].type == PROP_VBOX
+            ? NSUserInterfaceLayoutOrientationVertical
+            : NSUserInterfaceLayoutOrientationHorizontal;
+
             sv.distribution = NSStackViewDistributionFillEqually;
-            sv.autoresizingMask = NSViewMinYMargin|NSViewMaxYMargin|NSViewMaxXMargin|NSViewMinXMargin|NSViewWidthSizable;
-            sv.spacing = 0;
-            [self.view addSubview:sv];
+            sv.spacing = spacing;
+            sv.edgeInsets = NSEdgeInsetsMake(border, border, border, border);
 
-            svItemCount = atoi (_settingsData.props[i].select_options);
-            view = sv;
-            h = height-topLevelY;
-            self.calculatedSize = NSMakeSize(600, height); // FIXME: hardcoded width, should be calculated from content width
-            topLevelY += height;
-            vert = YES;
+            sv.translatesAutoresizingMaskIntoConstraints = NO;
+            [view addSubview:sv];
+
+            BoxHandler *nestedBox = [BoxHandler new];
+            nestedBox.view = sv;
+            nestedBox.isStackView = YES;
+
+            [nestedBox.view.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:0].active=YES;
+
+            [self constrainCurrentField:sv isVert:NO boxHandler:box currLabel:nil unalignedFields:unalignedFields view:view];
+
+            if (height != -1) {
+                [sv.heightAnchor constraintEqualToConstant:height].active = YES;
+            }
+
+            i = [self addFieldsToBox:nestedBox fromIndex:i+1 count:nestedCount];
+
+            if (width != -1) {
+                contentWidth = MAX(width, contentWidth);
+            }
+            if (height != -1) {
+                contentHeight += height;
+            }
             continue;
         }
-        else if (_settingsData.props[i].type == PROP_VBOX) {
-            continue;
-        }
 
-        CGFloat y = topLevelY;
-        if (svItemCount) {
-            view = [[NSView alloc] initWithFrame:NSMakeRect(0,0,50,200)];
-            [sv addView:view inGravity:NSStackViewGravityLeading];
-            svItemCount--;
-            y = 0;
-        }
+        NSView *currLabel;
+
+        BOOL isVert = NO;
 
         // set label
         switch (_settingsData.props[i].type) {
-            case PROP_ENTRY:
-            case PROP_PASSWORD:
-            case PROP_SELECT:
-            case PROP_SLIDER:
-            case PROP_FILE:
-            case PROP_DIR:
-            case PROP_ITEMLIST:
-            case PROP_ITEMSELECT:
+        case PROP_ENTRY:
+        case PROP_PASSWORD:
+        case PROP_SELECT:
+        case PROP_SLIDER:
+        case PROP_FILE:
+        case PROP_DIR:
+        case PROP_ITEMLIST:
+        case PROP_ITEMSELECT:
             {
-                NSTextField *lbl = [[NSTextField alloc] initWithFrame:NSMakeRect(padding, y+3, label_width, unit_h-6)];
+                if (_settingsData.props[i].type == PROP_SLIDER) {
+                    const char *opts = _settingsData.props[i].select_options;
+                    if (opts) {
+                        char token[MAX_TOKEN];
+                        const char *script = opts;
+
+                        // count
+                        while ((script = gettoken (script, token)) && strcmp (token, ";")) {
+                            if (!strcmp (token, "vert")) {
+                                isVert = YES;
+                            }
+                        }
+                    }
+                }
+
+                NSTextField *lbl = [NSTextField new];
                 NSString *title = [NSString stringWithUTF8String:_settingsData.props[i].title];
                 lbl.stringValue = title;
                 lbl.bezeled = NO;
@@ -279,24 +292,44 @@
                     lbl.cell.lineBreakMode = NSLineBreakByTruncatingTail;
                 }
 
-                lbl.font = fontLabel;
+                lbl.font = self.fontLabel;
 
-                // resize label to fit content
-                calculated_label_w = [[lbl cell] cellSizeForBounds:lbl.bounds].width+1;
+                lbl.translatesAutoresizingMaskIntoConstraints = NO;
+                [view addSubview:lbl];
 
-                NSRect frame;
-                if (!vert) {
-                    frame = NSMakeRect(padding+label_width-calculated_label_w, y+3, calculated_label_w, unit_h-6);
+                if (!isVert) {
+                    // horz alignment, same size labels
+                    if (box.firstLabel) {
+                        [lbl.leadingAnchor constraintEqualToAnchor:box.firstLabel.leadingAnchor].active = YES;
+                        [lbl.trailingAnchor constraintEqualToAnchor:box.firstLabel.trailingAnchor].active = YES;
+                    }
+                    else {
+                        CGFloat offs = 20;
+                        if (box.isStackView) {
+                            offs = 0;
+                        }
+                        [lbl.leadingAnchor constraintEqualToAnchor:view.leadingAnchor constant:offs].active = YES;
+                        box.firstLabel = lbl;
+                    }
+
+                    // vert spacing
+                    if (box.previousField) {
+                        [lbl.topAnchor constraintEqualToAnchor:box.previousField.bottomAnchor constant:8].active = YES;
+                    }
+                    else {
+                        [lbl.topAnchor constraintEqualToAnchor:view.topAnchor constant:8].active = YES;
+                    }
+                    [lbl setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh forOrientation:NSLayoutConstraintOrientationHorizontal];
+
+                    [lbl setContentHuggingPriority:NSLayoutPriorityDefaultHigh-1 forOrientation:NSLayoutConstraintOrientationHorizontal];
                 }
                 else {
-                    frame = NSMakeRect(3, 200, 50, unit_h-6);
-                    lbl.frameRotation = -90;
+                    [lbl.topAnchor constraintEqualToAnchor:view.topAnchor constant:0].active = YES;
+                    [lbl.centerXAnchor constraintEqualToAnchor:view.centerXAnchor constant:0].active = YES;
+                    [lbl.leftAnchor constraintGreaterThanOrEqualToAnchor:view.leftAnchor constant:0].active = YES;
+                    [lbl.rightAnchor constraintLessThanOrEqualToAnchor:view.rightAnchor constant:0].active = YES;
                 }
-
-                lbl.frame = frame;
-                lbl.autoresizingMask = NSViewMaxXMargin;
-
-                [view addSubview:lbl];
+                currLabel = lbl;
             }
         }
 
@@ -305,80 +338,78 @@
         NSString *def = [NSString stringWithUTF8String:_settingsData.props[i].def];
         NSString *value = [self.dataSource propertySheet:self valueForKey:propname def:def item:self.item];
 
+        NSView *currentField;
+
         switch (_settingsData.props[i].type) {
-            case PROP_ENTRY:
-            case PROP_PASSWORD:
-            case PROP_FILE:
-            case PROP_DIR:
+        case PROP_ENTRY:
+        case PROP_PASSWORD:
+        case PROP_FILE:
+        case PROP_DIR:
             {
-                CGFloat w = sz.width-label_width - padding*3;
-                if (_settingsData.props[i].type == PROP_FILE || _settingsData.props[i].type == PROP_DIR) {
-                    w -= 12+padding;
-                }
-                NSRect frame = NSMakeRect(label_width+padding*2, y+3, w, unit_h-3);
-                NSTextField *tf = _settingsData.props[i].type == PROP_PASSWORD ? [[NSSecureTextField alloc] initWithFrame:frame] : [[NSTextField alloc] initWithFrame:frame];
-                tf.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin;
-                tf.font = fontContent;
+                NSTextField *tf = _settingsData.props[i].type == PROP_PASSWORD ? [NSSecureTextField new] : [NSTextField new];
+                tf.font = self.fontContent;
                 tf.usesSingleLineMode = YES;
                 tf.stringValue = value;
                 [view addSubview:tf];
                 [_bindings addObject:@{@"sender":tf,
                                        @"propname":propname,
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
-                                       }];
+                }];
                 tf.target = self;
                 tf.delegate = self;
 
+                currentField = tf;
+
                 if (_settingsData.props[i].type == PROP_FILE || _settingsData.props[i].type == PROP_DIR) {
-                    BrowseButton *btn = [[BrowseButton alloc] initWithFrame:NSMakeRect(label_width+padding*3+w, y+unit_h/2-5, 12, 10)];
-                    btn.autoresizingMask = NSViewMinYMargin|NSViewMinXMargin;
+                    BrowseButton *btn = [BrowseButton new];
                     btn.isDir = _settingsData.props[i].type == PROP_DIR;
                     btn.initialPath = value;
                     btn.fileSelectedBlock = ^(NSString * _Nonnull path) {
                         tf.stringValue = path;
                         [self valueChanged:tf];
                     };
+                    btn.translatesAutoresizingMaskIntoConstraints = NO;
                     [view addSubview:btn];
+
+                    [btn.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:-20].active=YES;
+                    [btn.leadingAnchor constraintEqualToAnchor:currentField.trailingAnchor constant:8].active=YES;
+                    [btn.topAnchor constraintEqualToAnchor:currentField.topAnchor].active=YES;
+                    [btn.bottomAnchor constraintEqualToAnchor:currentField.bottomAnchor].active=YES;
+                }
+                else {
+                    [currentField.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:-20].active=YES;
                 }
 
                 break;
             }
-            case PROP_CHECKBOX:
+        case PROP_CHECKBOX:
             {
-                NSRect frame = NSMakeRect(label_width+padding*2, y+3, sz.width-label_width - padding*3, unit_h-3);
-                NSButton *checkbox = [[NSButton alloc] initWithFrame:frame];
+                NSButton *checkbox = [NSButton new];
                 checkbox.buttonType = NSButtonTypeSwitch;
                 checkbox.title = [NSString stringWithUTF8String:_settingsData.props[i].title];
                 checkbox.state = [value intValue] ? NSControlStateValueOn : NSControlStateValueOff;
-                checkbox.font = fontContent;
-                checkbox.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin;
+                checkbox.font = self.fontContent;
+
                 [view addSubview:checkbox];
+                currentField = checkbox;
 
                 [_bindings addObject:@{@"sender":checkbox,
                                        @"propname":propname,
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
-                                       }];
+                }];
 
                 checkbox.target = self;
                 checkbox.action = @selector(valueChanged:);
 
+                [currentField.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:-20].active=YES;
                 break;
             }
-            case PROP_SLIDER:
+        case PROP_SLIDER:
             {
-                CGFloat w = sz.width-label_width - padding*3;
-                NSRect frame;
-                if (!vert) {
-                    frame = NSMakeRect(label_width+padding*2, y+3, w - _sliderLabelWidth-8, unit_h-3);
-                }
-                else {
-                    frame = NSMakeRect(0, unit_h-3, 50, 200-40-(unit_h-3));
-                }
-                NSSlider *slider = [[NSSlider alloc] initWithFrame:frame];
-                if (vert) {
+                NSSlider *slider = [NSSlider new];
+                if (isVert) {
                     slider.vertical = YES;
                 }
-                slider.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin;
                 const char *opts = _settingsData.props[i].select_options;
                 float min, max, step;
                 sscanf (opts, "%f,%f,%f", &min, &max, &step);
@@ -399,18 +430,9 @@
                     slider.floatValue = [value floatValue];
                 }
 
-                NSRect frame2;
-                if (!vert) {
-                    frame2 = NSMakeRect(label_width+padding*2 + w - _sliderLabelWidth - 4, y+3, _sliderLabelWidth, unit_h-3);
-                }
-                else {
-                    frame2 = NSMakeRect(0, 0, 50, unit_h-3);
-                }
-
-                NSTextField *valueedit = [[NSTextField alloc] initWithFrame:frame2];
-                valueedit.font = fontContent;
-                valueedit.autoresizingMask = NSViewMinYMargin|NSViewMinXMargin;
-                if (!vert) {
+                NSTextField *valueedit = [NSTextField new];
+                valueedit.font = self.fontContent;
+                if (!isVert) {
                     valueedit.editable = YES;
                 }
                 else {
@@ -421,7 +443,7 @@
                     valueedit.cell.truncatesLastVisibleLine = YES;
                     valueedit.cell.scrollable = NO;
                     valueedit.cell.wraps = NO;
-                    valueedit.font = fontLabel;
+                    valueedit.font = self.fontLabel;
                     valueedit.alignment = NSTextAlignmentCenter;
 
                     NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
@@ -431,7 +453,6 @@
                     f.maximumFractionDigits = 2;
                     valueedit.cell.formatter = f;
 
-                    valueedit.autoresizingMask = NSViewMinXMargin|NSViewMaxXMargin|NSViewWidthSizable;
                 }
                 valueedit.floatValue = value.floatValue;
 
@@ -441,7 +462,7 @@
                                        @"isInteger":[NSNumber numberWithBool:step == 1 ? YES:NO],
                                        @"isFloat":[NSNumber numberWithBool:step != 1 ? YES:NO],
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
-                                       }];
+                }];
 
                 [_bindings addObject:@{@"sender":valueedit,
                                        @"propname":propname,
@@ -449,23 +470,42 @@
                                        @"isInteger":[NSNumber numberWithBool:step == 1 ? YES:NO],
                                        @"isFloat":[NSNumber numberWithBool:step != 1 ? YES:NO],
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
-                                       }];
+                }];
 
                 slider.target = self;
                 slider.action = @selector(valueChanged:);
+                currentField = slider;
 
                 valueedit.delegate = (id<NSTextFieldDelegate>)self;
 
                 [view addSubview:slider];
+
+                valueedit.translatesAutoresizingMaskIntoConstraints = NO;
                 [view addSubview:valueedit];
+
+                if (!isVert) {
+                    [valueedit.firstBaselineAnchor constraintEqualToAnchor:currentField.firstBaselineAnchor].active = YES;
+                    [valueedit.widthAnchor constraintEqualToConstant:100].active = YES;
+                    [valueedit.leadingAnchor constraintEqualToAnchor:currentField.trailingAnchor constant:8].active = YES;
+                    [valueedit.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:-20].active = YES;
+                }
+                else {
+                    slider.translatesAutoresizingMaskIntoConstraints = NO;
+                    [slider.topAnchor constraintEqualToAnchor:currLabel.bottomAnchor constant:0].active = YES;
+                    [slider.centerXAnchor constraintEqualToAnchor:view.centerXAnchor constant:0].active = YES;
+                    [slider.leadingAnchor constraintGreaterThanOrEqualToAnchor:view.leadingAnchor constant:0].active = YES;
+                    [slider.trailingAnchor constraintLessThanOrEqualToAnchor:view.trailingAnchor constant:0].active = YES;
+                    [valueedit.topAnchor constraintEqualToAnchor:slider.bottomAnchor constant:0].active = YES;
+                    [valueedit.leadingAnchor constraintEqualToAnchor:view.leadingAnchor constant:0].active = YES;
+                    [valueedit.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:0].active = YES;
+                    [valueedit.bottomAnchor constraintEqualToAnchor:view.bottomAnchor constant:0].active = YES;
+                }
                 break;
             }
-            case PROP_SELECT:
+        case PROP_SELECT:
             {
-                NSRect frame = NSMakeRect(label_width+padding*2, y, sz.width-label_width - padding*2 - padding, unit_h);
-                NSPopUpButton *popUpButton = [[NSPopUpButton alloc] initWithFrame:frame];
-                popUpButton.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin;
-                popUpButton.font = fontContent;
+                NSPopUpButton *popUpButton = [NSPopUpButton new];
+                popUpButton.font = self.fontContent;
 
                 char token[MAX_TOKEN];
                 const char *script = _settingsData.props[i].select_options;
@@ -482,36 +522,38 @@
                 [_bindings addObject:@{@"sender":popUpButton,
                                        @"propname":propname,
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
-                                       }];
+                }];
 
                 popUpButton.target = self;
                 popUpButton.action = @selector(valueChanged:);
 
+
+                popUpButton.translatesAutoresizingMaskIntoConstraints = NO;
                 [view addSubview:popUpButton];
+                currentField = popUpButton;
+                [currentField.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:-20].active = YES;
                 break;
             }
 #if 0
-                // FIXME: needed for referencing other object lists
-            case PROP_ITEMLIST:
+            // FIXME: needed for referencing other object lists
+        case PROP_ITEMLIST:
             {
                 // This should add a proper list view with a backing VC, with add/remove/edit buttons attached to it
                 ItemListViewController *vc = [[ItemListViewController alloc] initWithProp:&_settingsData.props[i] scriptable:[accessor getScriptable]];
                 [_bindings addObject:@{@"sender":vc,
                                        @"propname":propname,
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
-                                       }];
+                }];
                 NSRect frame = NSMakeRect(0, 0, sz.width, sz.height);
                 vc.view.frame = frame;
                 [view addSubview:vc.view];
-                vc.view.autoresizingMask = NSViewMinXMargin|NSViewWidthSizable|NSViewMaxXMargin|NSViewMinYMargin|NSViewHeightSizable|NSViewMaxYMargin;
                 break;
             }
 #endif
-            case PROP_ITEMSELECT:
+        case PROP_ITEMSELECT:
             {
-                NSRect frame = NSMakeRect(label_width+padding*2, y, sz.width-label_width - padding*2 - padding, unit_h);
-                NSPopUpButton *popUpButton = [[NSPopUpButton alloc] initWithFrame:frame];
-                popUpButton.font = fontContent;
+                NSPopUpButton *popUpButton = [NSPopUpButton new];
+                popUpButton.font = self.fontContent;
 
                 [popUpButton addItemWithTitle:@""];
 
@@ -527,29 +569,146 @@
                 [_bindings addObject:@{@"sender":popUpButton,
                                        @"propname":propname,
                                        @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
-                                       }];
+                }];
 
                 popUpButton.target = self;
                 popUpButton.action = @selector(valueChanged:);
-                popUpButton.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin;
 
+                popUpButton.translatesAutoresizingMaskIntoConstraints = NO;
                 [view addSubview:popUpButton];
-                break;            }
+                currentField = popUpButton;
+                [currentField.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:-20].active = YES;
+                break;
+            }
         }
-        if (!svItemCount && sv) {
-            if ([self.view isKindOfClass:[NSScrollView class]]) {
-                NSScrollView *scrollView = (NSScrollView *)self.view;
-                view = [scrollView documentView];
+
+        if (currentField && !isVert) {
+            [self constrainCurrentField:currentField isVert:isVert boxHandler:box currLabel:currLabel unalignedFields:unalignedFields view:view];
+            contentHeight += unit_h;
+        }
+
+        i++;
+    }
+
+    if (!box.isStackView) {
+        for (NSView *field in unalignedFields) {
+            if ([field isKindOfClass:NSStackView.class]) {
+                [field.leadingAnchor constraintEqualToAnchor:field.superview.leadingAnchor constant:8].active=YES;
+            }
+            else if (box.firstLabel) {
+                if ([field isKindOfClass:NSButton.class]) {
+                    [field.leadingAnchor constraintLessThanOrEqualToAnchor:box.firstLabel.trailingAnchor constant:8].active=YES;
+                }
+                else {
+                    [field.leadingAnchor constraintEqualToAnchor:box.firstLabel.trailingAnchor constant:8].active=YES;
+                }
             }
             else {
-                view = self.view;
+                CGFloat leadingOffs = 20;
+                if ([field isKindOfClass:NSStackView.class]) {
+                    leadingOffs = 0;
+                }
+                [field.leadingAnchor constraintEqualToAnchor:field.superview.leadingAnchor constant:leadingOffs].active=YES;
             }
-            sv = nil;
-        }
-        else {
-            topLevelY -= unit_h + _unitSpacing;
         }
     }
+
+    // constrain to bottom
+    if (box.previousField) {
+        [box.previousField.bottomAnchor constraintEqualToAnchor:view.bottomAnchor constant:-8].active = YES;
+    }
+
+    self.contentSize = NSMakeSize(contentWidth, contentHeight);
+
+    return i;
+}
+
+- (void)setDataSource:(id<PropertySheetDataSource>)dataSource {
+    _dataSource = dataSource;
+
+    self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
+
+    NSView *view;
+    _bindings = [NSMutableArray new];
+
+    settings_data_free (&_settingsData);
+
+    BOOL have_settings = YES;
+    NSString *config = [dataSource propertySheet:self configForItem:self.item];
+    if (!config || settings_data_init(&_settingsData, [config UTF8String]) < 0) {
+        have_settings = NO;
+    }
+
+    self.contentSize = NSMakeSize(NSWidth(self.view.frame)-2, 0);
+
+    view = self.contentView;
+
+    while (view.subviews.count > 0) {
+        [view.subviews.lastObject removeFromSuperview];
+    }
+
+    if (!have_settings) {
+        NSTextField *lbl = [NSTextField new];
+        lbl.stringValue = @"No properties available";
+        lbl.alignment = NSTextAlignmentCenter;
+        lbl.bezeled = NO;
+        lbl.drawsBackground = NO;
+        lbl.editable = NO;
+        lbl.selectable = NO;
+        lbl.translatesAutoresizingMaskIntoConstraints = NO;
+        [view addSubview:lbl];
+        [lbl.centerXAnchor constraintEqualToAnchor:view.centerXAnchor].active = YES;
+        [lbl.centerYAnchor constraintEqualToAnchor:view.centerYAnchor].active = YES;
+        self.contentView.contentSize = NSMakeSize(NSWidth(self.view.frame)-6, NSHeight(self.view.frame)-6);
+        return;
+    }
+
+    self.contentSize = NSMakeSize(NSWidth(self.contentView.frame), 0);
+
+    self.fontLabel = [NSFont systemFontOfSize:_labelFontSize weight:NSFontWeightRegular];
+    self.fontContent = [NSFont systemFontOfSize:_contentFontSize weight:NSFontWeightRegular];
+
+//    if (_autoAlignLabels) {
+//        label_width = 0;
+//        NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+//        textStyle.alignment = NSTextAlignmentLeft;
+//        textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+//
+//        NSDictionary *attrs = @{
+//                             NSParagraphStyleAttributeName: textStyle,
+//                             NSFontAttributeName:self.fontLabel
+//                             };
+//        for (int i = 0; i < _settingsData.nprops; i++) {
+//            // set label
+//            switch (_settingsData.props[i].type) {
+//                case PROP_ENTRY:
+//                case PROP_PASSWORD:
+//                case PROP_SELECT:
+//                case PROP_SLIDER:
+//                case PROP_FILE:
+//                case PROP_DIR:
+//                case PROP_ITEMLIST:
+//                case PROP_ITEMSELECT: {
+//                    NSString *title = [NSString stringWithUTF8String:_settingsData.props[i].title];
+//                    NSSize size = [title sizeWithAttributes:attrs];
+//                    if (size.width > label_width) {
+//                        label_width = size.width;
+//                    }
+//                    break;
+//                }
+//            }
+//        }
+//        label_width += 10;
+//    }
+
+
+    BoxHandler *box = [BoxHandler new];
+    box.view = view;
+
+    [self addFieldsToBox:box fromIndex:0 count:self.settingsData.nprops];
+
+//    self.contentView.frame = NSMakeRect(0, 0, self.contentSize.width, self.contentSize.height);
+    self.contentView.contentSize = self.contentSize;
 }
 
 - (void)save {

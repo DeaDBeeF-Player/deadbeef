@@ -46,22 +46,40 @@ static int headerheight = 23;
 - (PlaylistView *)initWithFrame:(NSRect)rect {
     self = [super initWithFrame:rect];
     if (self) {
-        PlaylistHeaderView *thv = [[PlaylistHeaderView alloc] initWithFrame:NSMakeRect(0, rect.size.height-headerheight, rect.size.width, headerheight)];
-        thv.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin;
+        PlaylistHeaderView *thv = [PlaylistHeaderView new];
+
+        thv.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:thv];
+
+        [thv.leadingAnchor constraintEqualToAnchor:self.leadingAnchor].active = YES;
+        [thv.trailingAnchor constraintEqualToAnchor:self.trailingAnchor].active = YES;
+        [thv.topAnchor constraintEqualToAnchor:self.topAnchor].active = YES;
+        [thv.heightAnchor constraintEqualToConstant:headerheight].active = YES;
+
         thv.listview = self;
         self.headerView = thv;
 
-        NSScrollView *sv = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, rect.size.height-headerheight)];
+        NSScrollView *sv = [NSScrollView new];
+        sv.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:sv];
+
+        [sv.leadingAnchor constraintEqualToAnchor:self.leadingAnchor].active = YES;
+        [sv.trailingAnchor constraintEqualToAnchor:self.trailingAnchor].active = YES;
+        [sv.topAnchor constraintEqualToAnchor:thv.bottomAnchor].active = YES;
+        [sv.bottomAnchor constraintEqualToAnchor:self.bottomAnchor].active = YES;
 
         NSSize size = [sv contentSize];
         NSRect lcvrect = NSMakeRect(0, 0, size.width, size.height-headerheight);
         PlaylistContentView *lcv = [[PlaylistContentView alloc] initWithFrame:lcvrect];
-        lcv.autoresizingMask = NSViewWidthSizable;
         self.contentView = lcv;
 
+        lcv.translatesAutoresizingMaskIntoConstraints = NO;
         sv.documentView = lcv;
+
+        [lcv.leadingAnchor constraintEqualToAnchor:sv.contentView.leadingAnchor].active = YES;
+        [lcv.topAnchor constraintEqualToAnchor:sv.contentView.topAnchor].active = YES;
+        [lcv.trailingAnchor constraintGreaterThanOrEqualToAnchor:sv.contentView.trailingAnchor].active = YES;
+        [lcv.bottomAnchor constraintGreaterThanOrEqualToAnchor:sv.contentView.bottomAnchor].active = YES;
 
         sv.hasVerticalScroller = YES;
         sv.hasHorizontalScroller = YES;
@@ -72,8 +90,6 @@ static int headerheight = 23;
         NSView *synchronizedContentView = [sv contentView];
         synchronizedContentView.postsBoundsChangedNotifications = YES;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(scrollChanged:) name:NSViewBoundsDidChangeNotification object:synchronizedContentView];
-
-        [sv addObserver:self forKeyPath:@"frameSize" options:0 context:NULL];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(windowDidBecomeKey:)
@@ -93,12 +109,6 @@ static int headerheight = 23;
 }
 
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if ([keyPath isEqualToString:@"frameSize"]) {
-        [self updateContentFrame];
-    }
-}
-
 - (void)scrollChanged:(id)notification {
     self.headerView.needsDisplay = YES;
 
@@ -107,10 +117,6 @@ static int headerheight = 23;
     if ([_delegate respondsToSelector:@selector(scrollChanged:)]) {
         [_delegate scrollChanged:vis.origin.y];
     }
-}
-
-- (void)updateContentFrame {
-    [self.contentView updateContentFrame];
 }
 
 - (void)setDelegate:(id<DdbListviewDelegate>)delegate {
