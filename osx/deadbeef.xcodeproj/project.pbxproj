@@ -1611,6 +1611,8 @@
 		2DDF87D924027DA500CA8E91 /* PluginActionMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDF87D724027DA500CA8E91 /* PluginActionMenuItem.h */; };
 		2DDF87DA24027DA500CA8E91 /* PluginActionMenuItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDF87D824027DA500CA8E91 /* PluginActionMenuItem.m */; };
 		2DDF87EA24027FCF00CA8E91 /* hotkeys.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */; };
+		2DDF87ED2402845C00CA8E91 /* NSMenu+ActionItems.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDF87EB2402845C00CA8E91 /* NSMenu+ActionItems.h */; };
+		2DDF87EE2402845C00CA8E91 /* NSMenu+ActionItems.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDF87EC2402845C00CA8E91 /* NSMenu+ActionItems.m */; };
 		2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */; };
 		2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */; };
 		2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */; };
@@ -4766,6 +4768,8 @@
 		2DDBA26323E5F14A00051320 /* PlaylistHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistHeaderView.m; sourceTree = "<group>"; };
 		2DDF87D724027DA500CA8E91 /* PluginActionMenuItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginActionMenuItem.h; sourceTree = "<group>"; };
 		2DDF87D824027DA500CA8E91 /* PluginActionMenuItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginActionMenuItem.m; sourceTree = "<group>"; };
+		2DDF87EB2402845C00CA8E91 /* NSMenu+ActionItems.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSMenu+ActionItems.h"; sourceTree = "<group>"; };
+		2DDF87EC2402845C00CA8E91 /* NSMenu+ActionItems.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSMenu+ActionItems.m"; sourceTree = "<group>"; };
 		2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConverterWindowController.h; sourceTree = "<group>"; };
 		2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConverterWindowController.m; sourceTree = "<group>"; };
 		2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbWidget.h; path = widgets/DdbWidget.h; sourceTree = "<group>"; };
@@ -6919,6 +6923,8 @@
 				2D20D12323F099F4008ACBE6 /* NSImage+Additions.m */,
 				2DDF87D724027DA500CA8E91 /* PluginActionMenuItem.h */,
 				2DDF87D824027DA500CA8E91 /* PluginActionMenuItem.m */,
+				2DDF87EB2402845C00CA8E91 /* NSMenu+ActionItems.h */,
+				2DDF87EC2402845C00CA8E91 /* NSMenu+ActionItems.m */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -10924,6 +10930,7 @@
 				2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */,
 				2D49857F1D5CF13F00E4D985 /* LogWindowController.h in Headers */,
 				2D98613E226C814100BAACB1 /* PropertySheetViewController.h in Headers */,
+				2DDF87ED2402845C00CA8E91 /* NSMenu+ActionItems.h in Headers */,
 				2D642EB01AE9152E00FC1F7B /* sort.h in Headers */,
 				2DA30B7F23F1C9A3003D22E3 /* PropertySheetContentView.h in Headers */,
 				2DA2259F23F041B00033F411 /* DesignableViewController.h in Headers */,
@@ -13982,6 +13989,7 @@
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
 				2DF55C402270FCB9002C44DC /* ScriptableNodeEditorViewController.m in Sources */,
 				2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */,
+				2DDF87EE2402845C00CA8E91 /* NSMenu+ActionItems.m in Sources */,
 				2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */,
 				2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */,
 				2D46221E226DBA57003997E9 /* FlippedClipView.m in Sources */,
