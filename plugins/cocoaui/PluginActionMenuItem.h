@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PluginActionMenuItem : NSMenuItem
 
 @property (nonatomic,unsafe_unretained) DB_plugin_action_t *pluginAction;
+@property (nonatomic) ddb_action_context_t pluginActionContext;
 
 @end
 

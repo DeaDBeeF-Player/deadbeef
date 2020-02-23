@@ -1709,7 +1709,6 @@
 		2DE3B8622269CA1500AFF9AE /* hotkeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B8482269CA1500AFF9AE /* hotkeys.h */; };
 		2DE3B8642269CA1500AFF9AE /* actionhandlers.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B84C2269CA1500AFF9AE /* actionhandlers.c */; };
 		2DE3B8652269CA1500AFF9AE /* hotkeys.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B84F2269CA1500AFF9AE /* hotkeys.c */; };
-		2DE3B86A2269CA1500AFF9AE /* keysyms.inc in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B85D2269CA1500AFF9AE /* keysyms.inc */; };
 		2DE3B86D2269CA5400AFF9AE /* hotkeys.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */; };
 		2DE3B86E2269CA9800AFF9AE /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
 		2DE3B86F2269CAEA00AFF9AE /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
@@ -4859,10 +4858,8 @@
 		2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = hotkeys.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DE3B8422269CA1500AFF9AE /* actionhandlers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = actionhandlers.h; sourceTree = "<group>"; };
 		2DE3B8482269CA1500AFF9AE /* hotkeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hotkeys.h; sourceTree = "<group>"; };
-		2DE3B84B2269CA1500AFF9AE /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		2DE3B84C2269CA1500AFF9AE /* actionhandlers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = actionhandlers.c; sourceTree = "<group>"; };
 		2DE3B84F2269CA1500AFF9AE /* hotkeys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hotkeys.c; sourceTree = "<group>"; };
-		2DE3B85D2269CA1500AFF9AE /* keysyms.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = keysyms.inc; sourceTree = "<group>"; };
 		2DE3B8742269F68B00AFF9AE /* pltbrowser_gtk3.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = pltbrowser_gtk3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DE3B87D2269F6B900AFF9AE /* support.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = support.c; sourceTree = "<group>"; };
 		2DE3B87E2269F6B900AFF9AE /* pltbrowser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pltbrowser.c; sourceTree = "<group>"; };
@@ -8388,10 +8385,8 @@
 			children = (
 				2DE3B8422269CA1500AFF9AE /* actionhandlers.h */,
 				2DE3B8482269CA1500AFF9AE /* hotkeys.h */,
-				2DE3B84B2269CA1500AFF9AE /* COPYING */,
 				2DE3B84C2269CA1500AFF9AE /* actionhandlers.c */,
 				2DE3B84F2269CA1500AFF9AE /* hotkeys.c */,
-				2DE3B85D2269CA1500AFF9AE /* keysyms.inc */,
 			);
 			name = hotkeys;
 			path = plugins/hotkeys;
@@ -13867,7 +13862,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DE3B86A2269CA1500AFF9AE /* keysyms.inc in Sources */,
 				2DE3B8642269CA1500AFF9AE /* actionhandlers.c in Sources */,
 				2DE3B86E2269CA9800AFF9AE /* parser.c in Sources */,
 				2DE3B8652269CA1500AFF9AE /* hotkeys.c in Sources */,

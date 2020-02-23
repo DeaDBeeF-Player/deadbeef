@@ -71,6 +71,7 @@ extern "C" {
 // that there's a better replacement in the newer deadbeef versions.
 
 // api version history:
+// 1.11 -- deadbeef-1.8.3
 // 1.10 -- deadbeef-1.8.0
 // 1.9 -- deadbeef-0.7.2
 // 1.8 -- deadbeef-0.7.0
@@ -1562,7 +1563,11 @@ enum {
 // action contexts
 // since 1.5
 #if (DDB_API_LEVEL >= 5)
+#if (DDB_API_LEVEL >= 11)
+typedef enum ddb_action_context_e {
+#else
 enum {
+#endif
     DDB_ACTION_CTX_MAIN,
     DDB_ACTION_CTX_SELECTION,
     // NOTE: starting with API 1.8, plugins should be using the
@@ -1570,13 +1575,20 @@ enum {
     DDB_ACTION_CTX_PLAYLIST,
     DDB_ACTION_CTX_NOWPLAYING,
     DDB_ACTION_CTX_COUNT
-};
+#if (DDB_API_LEVEL >= 11)
+} ddb_action_context_t;
+#else
+}
+#endif
 #endif
 
 struct DB_plugin_action_s;
 
 typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, void *userdata);
-#if (DDB_API_LEVEL >= 5)
+
+#if (DDB_API_LEVEL >= 11)
+typedef int (*DB_plugin_action_callback2_t) (struct DB_plugin_action_s *action, ddb_action_context_t ctx);
+#elif (DDB_API_LEVEL >= 5)
 typedef int (*DB_plugin_action_callback2_t) (struct DB_plugin_action_s *action, int ctx);
 #endif
 

@@ -191,7 +191,9 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 
 - (void)initMainMenu {
     // add new actions
-    [self.mainMenu addActionItems];
+    [self.mainMenu addActionItemsWithContext:DDB_ACTION_CTX_MAIN filter:^BOOL(DB_plugin_action_t * _Nonnull action) {
+        return (action->flags & (DB_ACTION_COMMON|DB_ACTION_ADD_MENU)) != 0;
+    }];
 }
 
 - (BOOL)equalizerAvailable {

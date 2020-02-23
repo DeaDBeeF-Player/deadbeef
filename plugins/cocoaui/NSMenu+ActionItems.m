@@ -16,10 +16,10 @@ extern DB_functions_t *deadbeef;
 @implementation NSMenu (ActionItems)
 
 - (void)pluginAction:(PluginActionMenuItem *)sender {
-    sender.pluginAction->callback2 (sender.pluginAction, DDB_ACTION_CTX_MAIN);
+    sender.pluginAction->callback2 (sender.pluginAction, sender.pluginActionContext);
 }
 
-- (void)addActionItems {
+- (void)addActionItemsWithContext:(ddb_action_context_t)context filter:(BOOL(^)(DB_plugin_action_t *action))filter {
     DB_plugin_t **plugins = deadbeef->plug_get_list();
     int i;
 
@@ -35,7 +35,7 @@ extern DB_functions_t *deadbeef;
         {
             char *tmp = NULL;
 
-            int has_addmenu = (action->flags & DB_ACTION_COMMON) && ((action->flags & DB_ACTION_ADD_MENU) || (action->callback));
+            int has_addmenu = filter(action);
 
             if (!has_addmenu)
                 continue;
@@ -71,6 +71,7 @@ extern DB_functions_t *deadbeef;
                 if (!slash) {
                     PluginActionMenuItem *actionitem = [[PluginActionMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:ptr] action:@selector(pluginAction:) keyEquivalent:@""];
                     actionitem.pluginAction = action;
+                    actionitem.pluginActionContext = DDB_ACTION_CTX_MAIN;
                     actionitem.target = self;
 
                     // Special cases for positioning in standard submenus
