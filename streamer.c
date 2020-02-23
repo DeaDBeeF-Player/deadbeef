@@ -37,6 +37,7 @@
 #include "threading.h"
 #include "playlist.h"
 #include "common.h"
+#include "ctmap.h"
 #include "streamer.h"
 #include "messagepump.h"
 #include "conf.h"
@@ -741,15 +742,7 @@ streamer_song_removed_notify (playItem_t *it) {
     }
 }
 
-#define CTMAP_MAX_PLUGINS 5
-
-typedef struct ctmap_s {
-    char *ct;
-    char *plugins[CTMAP_MAX_PLUGINS];
-    struct ctmap_s *next;
-} ctmap_t;
-
-static ctmap_t *streamer_ctmap;
+static ddb_ctmap_t *streamer_ctmap;
 static char conf_network_ctmapping[2048];
 static uintptr_t ctmap_mutex;
 
@@ -774,70 +767,6 @@ ctmap_lock (void) {
 static void
 ctmap_unlock (void) {
     mutex_unlock (ctmap_mutex);
-}
-
-static void
-ctmap_free (void) {
-    while (streamer_ctmap) {
-        ctmap_t *ct = streamer_ctmap;
-        free (ct->ct);
-        for (int i = 0; ct->plugins[i]; i++) {
-            free (ct->plugins[i]);
-        }
-        streamer_ctmap = ct->next;
-        free (ct);
-    }
-}
-
-static void
-ctmap_init (void) {
-    ctmap_free ();
-    char *mapstr = conf_network_ctmapping;
-
-    const char *p = mapstr;
-    char t[MAX_TOKEN];
-    char plugins[MAX_TOKEN*5];
-
-    ctmap_t *tail = NULL;
-
-    for (;;) {
-        p = gettoken (p, t);
-
-        if (!p) {
-            break;
-        }
-
-        ctmap_t *ctmap = malloc (sizeof (ctmap_t));
-        memset (ctmap, 0, sizeof (ctmap_t));
-        ctmap->ct = strdup (t);
-
-        int n = 0;
-
-        p = gettoken (p, t);
-        if (!p || strcmp (t, "{")) {
-            free (ctmap->ct);
-            free (ctmap);
-            break;
-        }
-
-        plugins[0] = 0;
-        for (;;) {
-            p = gettoken (p, t);
-            if (!p || !strcmp (t, "}") || n >= CTMAP_MAX_PLUGINS-1) {
-                break;
-            }
-
-            ctmap->plugins[n++] = strdup (t);
-        }
-        ctmap->plugins[n] = NULL;
-        if (tail) {
-            tail->next = ctmap;
-        }
-        tail = ctmap;
-        if (!streamer_ctmap) {
-            streamer_ctmap = ctmap;
-        }
-    }
 }
 
 static int
@@ -980,7 +909,7 @@ stream_track (playItem_t *it, int startpaused) {
     }
     pl_unlock ();
     char *cct = "undefined";
-    char *plugs[CTMAP_MAX_PLUGINS] = {NULL};
+    char *plugs[DDB_CTMAP_MAX_PLUGINS] = {NULL};
     if (!decoder_id[0] && (!strcmp (filetype, "content") || !filetype[0])) {
         // try to get content-type
         trace ("\033[0;34mopening file %s\033[37;0m\n", pl_find_meta (it, ":URI"));
@@ -1025,7 +954,7 @@ stream_track (playItem_t *it, int startpaused) {
         }
 
         ctmap_lock ();
-        ctmap_t *ctmap = streamer_ctmap;
+        ddb_ctmap_t *ctmap = streamer_ctmap;
         while (ctmap) {
             if (!strcmp (cct, ctmap->ct)) {
                 break;
@@ -1770,7 +1699,9 @@ streamer_init (void) {
 
     ctmap_init_mutex ();
     conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, conf_network_ctmapping, sizeof (conf_network_ctmapping));
-    ctmap_init ();
+    ddb_ctmap_free (streamer_ctmap);
+    streamer_ctmap = NULL;
+    streamer_ctmap = ddb_ctmap_init_from_string (conf_network_ctmapping);
 
     streamer_tid = thread_start (streamer_thread, NULL);
     return 0;
@@ -1810,7 +1741,8 @@ streamer_free (void) {
     }
     streamer_set_streamer_playlist (NULL);
 
-    ctmap_free ();
+    ddb_ctmap_free (streamer_ctmap);
+    streamer_ctmap = NULL;
     ctmap_free_mutex ();
 
     mutex_free (mutex);
@@ -2306,7 +2238,8 @@ streamer_configchanged (void) {
     char mapstr[2048];
     conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, mapstr, sizeof (mapstr));
     if (strcmp (mapstr, conf_network_ctmapping)) {
-        ctmap_init ();
+        strcpy(conf_network_ctmapping, mapstr);
+        streamer_ctmap = ddb_ctmap_init_from_string (conf_network_ctmapping);
     }
 
     int new_conf_streamer_override_samplerate = conf_get_int ("streamer.override_samplerate", 0);

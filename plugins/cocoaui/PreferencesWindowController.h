@@ -127,8 +127,6 @@
 @property (unsafe_unretained) IBOutlet NSSecureTextField *network_proxy_password;
 @property (unsafe_unretained) IBOutlet NSTextField *network_http_user_agent;
 
-- (IBAction)networkEditContentTypeMapping:(id)sender;
-
 // Plugins properties
 @property (unsafe_unretained) IBOutlet NSTextField *pluginUnselectedText;
 @property (unsafe_unretained) IBOutlet NSTabView *pluginTabView;

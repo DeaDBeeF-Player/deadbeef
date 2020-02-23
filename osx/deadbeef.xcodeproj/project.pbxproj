@@ -1549,6 +1549,8 @@
 		2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */; };
 		2DA30B7F23F1C9A3003D22E3 /* PropertySheetContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA30B7D23F1C9A3003D22E3 /* PropertySheetContentView.h */; };
 		2DA30B8023F1C9A3003D22E3 /* PropertySheetContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30B7E23F1C9A3003D22E3 /* PropertySheetContentView.m */; };
+		2DA30E602402D1B1001BAB8A /* ctmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA30E5E2402D1B1001BAB8A /* ctmap.h */; };
+		2DA30E6F2402D29A001BAB8A /* ctmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30E5F2402D1B1001BAB8A /* ctmap.c */; };
 		2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA372192370B854005E64A3 /* NowPlayable.h */; };
 		2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA3721A2370B854005E64A3 /* NowPlayable.m */; };
 		2DA5E331238DB0C4005832B7 /* EditColumnPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */; };
@@ -4690,6 +4692,8 @@
 		2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = u8_uc_map.h; sourceTree = "<group>"; };
 		2DA30B7D23F1C9A3003D22E3 /* PropertySheetContentView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PropertySheetContentView.h; sourceTree = "<group>"; };
 		2DA30B7E23F1C9A3003D22E3 /* PropertySheetContentView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PropertySheetContentView.m; sourceTree = "<group>"; };
+		2DA30E5E2402D1B1001BAB8A /* ctmap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ctmap.h; sourceTree = "<group>"; };
+		2DA30E5F2402D1B1001BAB8A /* ctmap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ctmap.c; sourceTree = "<group>"; };
 		2DA372192370B854005E64A3 /* NowPlayable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NowPlayable.h; path = NowPlayable/NowPlayable.h; sourceTree = "<group>"; };
 		2DA3721A2370B854005E64A3 /* NowPlayable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = NowPlayable.m; path = NowPlayable/NowPlayable.m; sourceTree = "<group>"; };
 		2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditColumnPanel.xib; sourceTree = "<group>"; };
@@ -7867,6 +7871,8 @@
 				2D6965381D74338A00EB99D8 /* mp4tagutil.h */,
 				2DEBA1BD23E203B9000E4135 /* eqpreset.h */,
 				2DEBA1BE23E203B9000E4135 /* eqpreset.c */,
+				2DA30E5E2402D1B1001BAB8A /* ctmap.h */,
+				2DA30E5F2402D1B1001BAB8A /* ctmap.c */,
 			);
 			path = shared;
 			sourceTree = "<group>";
@@ -10908,6 +10914,7 @@
 				2DDF87D924027DA500CA8E91 /* PluginActionMenuItem.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
 				2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */,
+				2DA30E602402D1B1001BAB8A /* ctmap.h in Headers */,
 				2DEBA1D223E207A3000E4135 /* EqualizerWindowController.h in Headers */,
 				2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */,
 				2D54915722B1711E000FE7E3 /* HelpWindowController.h in Headers */,
@@ -12768,6 +12775,7 @@
 				2D01D7DB1AB2219C00BCD3C4 /* playlist.c in Sources */,
 				2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */,
 				2D5121C61B01DEFD009F6410 /* sort.c in Sources */,
+				2DA30E6F2402D29A001BAB8A /* ctmap.c in Sources */,
 				2D01D7E21AB2219C00BCD3C4 /* streamer.c in Sources */,
 				2D448A841D5C5C6500B43F12 /* logger.c in Sources */,
 				2D01D7E71AB2219C00BCD3C4 /* volume.c in Sources */,

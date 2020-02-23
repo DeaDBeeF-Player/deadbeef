@@ -8,3 +8,6 @@ libtrkpropertiesutil_a_CFLAGS = -fPIC -std=c99
 
 libeqpreset_a_SOURCES = eqpreset.h eqpreset.c
 libeqpreset_a_CFLAGS = -fPIC -std=c99
+
+libctmap_a_SOURCES = ctmap.h ctmap.c
+libctmap_a_CFLAGS = -fPIC -std=c99

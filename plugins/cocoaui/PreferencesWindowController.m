@@ -25,11 +25,50 @@
 #import "ScriptableTableDataSource.h"
 #import "ScriptableSelectViewController.h"
 #import "ScriptableNodeEditorViewController.h"
+#include "ctmap.h"
 #include "deadbeef.h"
 #include "pluginsettings.h"
 #include "scriptable_dsp.h"
 
 extern DB_functions_t *deadbeef;
+
+static NSString *kContentTypeMappingChangedNotification = @"ContentTypeMappingChanged";
+
+@interface ContentTypeMap : NSObject
+
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithContentType:(NSString *)contentType plugins:(NSString *)plugins;
+
+@property (nonatomic) NSString *contentType;
+@property (nonatomic) NSString *plugins;
+
+@end
+
+
+@implementation ContentTypeMap
+
+- (instancetype)initWithContentType:(NSString *)contentType plugins:(NSString *)plugins {
+    self = [super init];
+
+    _contentType = contentType;
+    _plugins = plugins;
+
+    return self;
+}
+
+- (void)setContentType:(NSString *)contentType {
+    _contentType = contentType;
+    [NSNotificationCenter.defaultCenter postNotificationName:kContentTypeMappingChangedNotification object:self];
+}
+
+- (void)setPlugins:(NSString *)plugins {
+    _plugins = plugins;
+    [NSNotificationCenter.defaultCenter postNotificationName:kContentTypeMappingChangedNotification object:self];
+}
+
+@end
+
+#pragma mark -
 
 
 @interface PluginConfigPropertySheetDataSource : NSObject<PropertySheetDataSource> {
@@ -104,6 +143,9 @@ extern DB_functions_t *deadbeef;
 @property (weak) IBOutlet NSComboBox *multiplesOf48ComboBox;
 @property (weak) IBOutlet NSComboBox *multiplesOf44ComboBox;
 
+@property (weak) IBOutlet NSArrayController *contentTypeMappingArrayController;
+@property (weak) IBOutlet NSTableView *contentTypeMappingTableView;
+
 @end
 
 @implementation PreferencesWindowController
@@ -145,6 +187,8 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     [self initPluginList];
 
     [self setInitialValues];
+
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(contentTypeMappingChanged:) name:kContentTypeMappingChangedNotification object:nil];
 
     // toolbar
     _toolbar.delegate = self;
@@ -333,6 +377,67 @@ clamp_samplerate (int val) {
     self.pluginInfo = -1;
 }
 
+
+- (void)contentTypeMappingChanged:(ContentTypeMap *)sender {
+    NSArray<ContentTypeMap *> *objects = self.contentTypeMappingArrayController.arrangedObjects;
+
+    char mapstr[2048] = "";
+    int s = sizeof (mapstr);
+    char *p = mapstr;
+
+    for (ContentTypeMap *m in objects) {
+        const char *ct = m.contentType ? m.contentType.UTF8String : "";
+        const char *plugins = m.plugins ? m.plugins.UTF8String : "";
+        int l = snprintf (p, s, "\"%s\" {%s} ", ct, plugins);
+        p += l;
+        s -= l;
+        if (s <= 0) {
+            break;
+        }
+    }
+
+    deadbeef->conf_set_str ("network.ctmapping", mapstr);
+    deadbeef->conf_save ();
+
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)resetContentTypeMapping:(id)sender {
+    deadbeef->conf_set_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING);
+    [self initContentTypeMapping];
+}
+
+- (void)initContentTypeMapping {
+    [self.contentTypeMappingArrayController setContent:nil];
+
+    char ctmap_str[2048];
+    deadbeef->conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, ctmap_str, sizeof (ctmap_str));
+    ddb_ctmap_t *ctmap = ddb_ctmap_init_from_string (ctmap_str);
+    if (ctmap) {
+
+        ddb_ctmap_t *m = ctmap;
+        while (m) {
+            NSString *plugins = @"";
+            for (int i = 0; m->plugins[i]; i++) {
+                if (i != 0) {
+                    plugins = [plugins stringByAppendingString:@" "];
+                }
+                plugins = [plugins stringByAppendingString:[NSString stringWithUTF8String:m->plugins[i]]];
+            }
+
+
+            ContentTypeMap *map = [[ContentTypeMap alloc] initWithContentType:[NSString stringWithUTF8String:m->ct] plugins:plugins];
+            [self.contentTypeMappingArrayController addObject:map];
+
+            m = m->next;
+        }
+
+        ddb_ctmap_free (ctmap);
+    }
+
+    [self.contentTypeMappingTableView reloadData];
+}
+
 - (void)setInitialValues {
     // playback
     [_replaygain_source_mode selectItemAtIndex: deadbeef->conf_get_int ("replaygain.source_mode", 0)];
@@ -432,6 +537,9 @@ clamp_samplerate (int val) {
     _network_proxy_username.stringValue =  [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("network.proxy.username", "")];
     _network_proxy_password.stringValue =  [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("network.proxy.password", "")];
     _network_http_user_agent.stringValue =  [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("network.http_user_agent", "")];
+
+    // Content-type mapping
+    [self initContentTypeMapping];
 }
 
 - (NSArray *)toolbarSelectableItemIdentifiers: (NSToolbar *)toolbar
@@ -484,10 +592,6 @@ clamp_samplerate (int val) {
 
 - (IBAction)pluginsAction:(id)sender {
     [self switchToView:_pluginsView];
-}
-
-
-- (IBAction)networkEditContentTypeMapping:(id)sender {
 }
 
 - (IBAction)pluginOpenWebsite:(id)sender {
