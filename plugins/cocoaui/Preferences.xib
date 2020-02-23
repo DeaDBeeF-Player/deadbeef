@@ -799,10 +799,17 @@
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kg8-9z-h8H">
                                         <rect key="frame" x="158" y="184" width="368" height="21"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="n9I-nG-sPd">
+                                            <numberFormatter key="formatter" formatterBehavior="default10_4" localizesFormat="NO" usesGroupingSeparator="NO" formatWidth="-1" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="42" id="RnU-re-G7C">
+                                                <real key="minimum" value="0.0"/>
+                                                <real key="maximum" value="65535"/>
+                                            </numberFormatter>
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
+                                        <connections>
+                                            <binding destination="-2" name="value" keyPath="self.networkProxyPort" id="Es0-ip-Hto"/>
+                                        </connections>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6kD-YR-t66">
                                         <rect key="frame" x="6" y="129" width="106" height="16"/>
@@ -830,6 +837,9 @@
                                                 <string>NSAllRomanInputSourcesLocaleIdentifier</string>
                                             </allowedInputSourceLocales>
                                         </secureTextFieldCell>
+                                        <connections>
+                                            <binding destination="-2" name="value" keyPath="self.networkProxyPassword" id="ccA-YL-lK2"/>
+                                        </connections>
                                     </secureTextField>
                                     <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="vYg-2y-G9G">
                                         <rect key="frame" x="8" y="86" width="518" height="5"/>
@@ -857,6 +867,9 @@
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
+                                        <connections>
+                                            <binding destination="-2" name="value" keyPath="self.networkProxyAddress" id="BiD-r1-jZw"/>
+                                        </connections>
                                     </textField>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Otk-ep-eDt">
                                         <rect key="frame" x="158" y="126" width="368" height="21"/>
@@ -865,6 +878,9 @@
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
+                                        <connections>
+                                            <binding destination="-2" name="value" keyPath="self.networkProxyUserName" id="mgT-O1-K5x"/>
+                                        </connections>
                                     </textField>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xdl-oE-Ddr">
                                         <rect key="frame" x="158" y="59" width="368" height="21"/>
@@ -873,6 +889,9 @@
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
+                                        <connections>
+                                            <binding destination="-2" name="value" keyPath="self.networkProxyUserAgent" id="fw6-sn-Vq2"/>
+                                        </connections>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6ZQ-2R-J1F">
                                         <rect key="frame" x="156" y="152" width="373" height="25"/>
@@ -901,7 +920,13 @@
                                                     </menuItem>
                                                 </items>
                                             </menu>
+                                            <connections>
+                                                <binding destination="-2" name="selectedIndex" keyPath="self.networkProxyType" id="tOw-ut-7Ma"/>
+                                            </connections>
                                         </popUpButtonCell>
+                                        <connections>
+                                            <binding destination="-2" name="selectedIndex" keyPath="self.networkProxyType" id="txE-VD-9nr"/>
+                                        </connections>
                                     </popUpButton>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="hob-ds-asX">
                                         <rect key="frame" x="156" y="240" width="372" height="18"/>
@@ -909,6 +934,9 @@
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
+                                        <connections>
+                                            <binding destination="-2" name="value" keyPath="self.enableNetworkProxy" id="teh-44-bB5"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <constraints>

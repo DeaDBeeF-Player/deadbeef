@@ -118,15 +118,6 @@
 @property (unsafe_unretained) IBOutlet NSButton *listview_italic_current_text;
 @property (unsafe_unretained) IBOutlet NSButton *listview_italic_selected_text;
 
-// Network properties
-@property (unsafe_unretained) IBOutlet NSButton *network_proxy;
-@property (unsafe_unretained) IBOutlet NSTextField *network_proxy_address;
-@property (unsafe_unretained) IBOutlet NSTextField *network_proxy_port;
-@property (unsafe_unretained) IBOutlet NSPopUpButton *network_proxy_type;
-@property (unsafe_unretained) IBOutlet NSTextField *network_proxy_username;
-@property (unsafe_unretained) IBOutlet NSSecureTextField *network_proxy_password;
-@property (unsafe_unretained) IBOutlet NSTextField *network_http_user_agent;
-
 // Plugins properties
 @property (unsafe_unretained) IBOutlet NSTextField *pluginUnselectedText;
 @property (unsafe_unretained) IBOutlet NSTabView *pluginTabView;

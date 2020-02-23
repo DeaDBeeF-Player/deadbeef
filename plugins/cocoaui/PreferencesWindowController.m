@@ -146,6 +146,16 @@ extern DB_functions_t *deadbeef;
 @property (weak) IBOutlet NSArrayController *contentTypeMappingArrayController;
 @property (weak) IBOutlet NSTableView *contentTypeMappingTableView;
 
+// Network properties
+@property (nonatomic) BOOL enableNetworkProxy;
+@property (nonatomic) NSString *networkProxyAddress;
+@property (nonatomic) NSNumber *networkProxyPort;
+@property (nonatomic) NSUInteger networkProxyType;
+@property (nonatomic) NSString *networkProxyUserName;
+@property (nonatomic) NSString *networkProxyPassword;
+@property (nonatomic) NSString *networkProxyUserAgent;
+
+
 @end
 
 @implementation PreferencesWindowController
@@ -512,34 +522,128 @@ clamp_samplerate (int val) {
     _listview_italic_selected_text.state =  deadbeef->conf_get_int ("cocoaui.italic_selected_tracks", 0) ? NSOnState : NSOffState;
 
     // network
-    _network_proxy.state =  deadbeef->conf_get_int ("network.proxy", 0) ? NSOnState : NSOffState;
-    _network_proxy_address.stringValue = [NSString stringWithUTF8String: deadbeef->conf_get_str_fast ("network.proxy.address", "")];
-    _network_proxy_port.stringValue = [NSString stringWithUTF8String: deadbeef->conf_get_str_fast ("network.proxy.port", "8080")];
+    _enableNetworkProxy = deadbeef->conf_get_int ("network.proxy", 0);
+    [self willChangeValueForKey:@"enableNetworkProxy"];
+    [self didChangeValueForKey:@"enableNetworkProxy"];
+
+    _networkProxyAddress = [NSString stringWithUTF8String: deadbeef->conf_get_str_fast ("network.proxy.address", "")];
+    [self willChangeValueForKey:@"networkProxyAddress"];
+    [self didChangeValueForKey:@"networkProxyAddress"];
+
+    _networkProxyPort = @(deadbeef->conf_get_int ("network.proxy.port", 8080));
+    [self willChangeValueForKey:@"networkProxyPort"];
+    [self didChangeValueForKey:@"networkProxyPort"];
+
     const char *type = deadbeef->conf_get_str_fast ("network.proxy.type", "HTTP");
     if (!strcasecmp (type, "HTTP")) {
-        [_network_proxy_type selectItemAtIndex:0];
+        _networkProxyType = 0;
     }
     else if (!strcasecmp (type, "HTTP_1_0")) {
-        [_network_proxy_type selectItemAtIndex:1];
+        _networkProxyType = 1;
     }
     else if (!strcasecmp (type, "SOCKS4")) {
-        [_network_proxy_type selectItemAtIndex:2];
+        _networkProxyType = 2;
     }
     else if (!strcasecmp (type, "SOCKS5")) {
-        [_network_proxy_type selectItemAtIndex:3];
+        _networkProxyType = 3;
     }
     else if (!strcasecmp (type, "SOCKS4A")) {
-        [_network_proxy_type selectItemAtIndex:4];
+        _networkProxyType = 4;
     }
     else if (!strcasecmp (type, "SOCKS5_HOSTNAME")) {
-        [_network_proxy_type selectItemAtIndex:5];
+        _networkProxyType = 5;
     }
-    _network_proxy_username.stringValue =  [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("network.proxy.username", "")];
-    _network_proxy_password.stringValue =  [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("network.proxy.password", "")];
-    _network_http_user_agent.stringValue =  [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("network.http_user_agent", "")];
+    [self willChangeValueForKey:@"networkProxyType"];
+    [self didChangeValueForKey:@"networkProxyType"];
+
+    _networkProxyUserName = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("network.proxy.username", "")];
+    [self willChangeValueForKey:@"networkProxyUserName"];
+    [self didChangeValueForKey:@"networkProxyUserName"];
+
+    _networkProxyPassword = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("network.proxy.password", "")];
+    [self willChangeValueForKey:@"networkProxyPassword"];
+    [self didChangeValueForKey:@"networkProxyPassword"];
+
+    _networkProxyUserAgent = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("network.http_user_agent", "")];
+    [self willChangeValueForKey:@"networkProxyUserAgent"];
+    [self didChangeValueForKey:@"networkProxyUserAgent"];
 
     // Content-type mapping
     [self initContentTypeMapping];
+}
+
+- (void)setEnableNetworkProxy:(BOOL)enableNetworkProxy {
+    _enableNetworkProxy = enableNetworkProxy;
+    deadbeef->conf_set_int ("network.proxy", enableNetworkProxy);
+    deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->conf_save ();
+}
+
+- (void)setNetworkProxyAddress:(NSString *)networkProxyAddress {
+    _networkProxyAddress = networkProxyAddress;
+    deadbeef->conf_set_str ("network.proxy.address", (networkProxyAddress?:@"").UTF8String);
+    deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->conf_save ();
+}
+
+- (void)setNetworkProxyPort:(NSNumber *)networkProxyPort {
+    _networkProxyPort = networkProxyPort;
+    deadbeef->conf_set_int ("network.proxy.port", (networkProxyPort?:@8080).unsignedIntValue);
+    deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->conf_save ();
+}
+
+- (void)setNetworkProxyType:(NSUInteger)networkProxyType {
+    _networkProxyType = networkProxyType;
+    const char *type = NULL;
+    switch (networkProxyType) {
+    case 0:
+        type = "HTTP";
+        break;
+    case 1:
+        type = "HTTP_1_0";
+        break;
+    case 2:
+        type = "SOCKS4";
+        break;
+    case 3:
+        type = "SOCKS5";
+        break;
+    case 4:
+        type = "SOCKS4A";
+        break;
+    case 5:
+        type = "SOCKS5_HOSTNAME";
+        break;
+    default:
+        type = "HTTP";
+        break;
+    }
+
+    deadbeef->conf_set_str ("network.proxy.type", type);
+    deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->conf_save ();
+}
+
+- (void)setNetworkProxyUserName:(NSString *)networkProxyUserName {
+    _networkProxyUserName = networkProxyUserName;
+    deadbeef->conf_set_str ("network.proxy.username", (networkProxyUserName?:@"").UTF8String);
+    deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->conf_save ();
+}
+
+- (void)setNetworkProxyPassword:(NSString *)networkProxyPassword {
+    _networkProxyPassword = networkProxyPassword;
+    deadbeef->conf_set_str ("network.proxy.password", (networkProxyPassword?:@"").UTF8String);
+    deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->conf_save ();
+}
+
+- (void)setNetworkProxyUserAgent:(NSString *)networkProxyUserAgent {
+    _networkProxyUserAgent = networkProxyUserAgent;
+    deadbeef->conf_set_str ("network.http_user_agent", (networkProxyUserAgent?:@"").UTF8String);
+    deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->conf_save ();
 }
 
 - (NSArray *)toolbarSelectableItemIdentifiers: (NSToolbar *)toolbar
