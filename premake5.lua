@@ -42,7 +42,9 @@ project "deadbeef"
        "external/wcwidth/wcwidth.c",
        "external/wcwidth/wcwidth.h",
        "ConvertUTF/*.h",
-       "ConvertUTF/*.c"
+       "ConvertUTF/*.c",
+       "shared/ctmap.c",
+       "shared/ctmap.h"
    }
 
    defines { "PORTABLE=1", "STATICLINK=1", "PREFIX=\"donotuse\"", "LIBDIR=\"donotuse\"", "DOCDIR=\"donotuse\"" }
