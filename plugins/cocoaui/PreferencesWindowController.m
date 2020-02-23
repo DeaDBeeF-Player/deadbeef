@@ -146,6 +146,20 @@ extern DB_functions_t *deadbeef;
 @property (weak) IBOutlet NSArrayController *contentTypeMappingArrayController;
 @property (weak) IBOutlet NSTableView *contentTypeMappingTableView;
 
+// ReplayGain
+@property (unsafe_unretained) IBOutlet NSPopUpButton *replaygain_source_mode;
+@property (unsafe_unretained) IBOutlet NSPopUpButton *replaygain_processing;
+@property (unsafe_unretained) IBOutlet NSSlider *replaygain_preamp_with_rg;
+@property (unsafe_unretained) IBOutlet NSSlider *replaygain_preamp_without_rg;
+@property (unsafe_unretained) IBOutlet NSTextField *replaygain_preamp_with_rg_label;
+@property (unsafe_unretained) IBOutlet NSTextField *replaygain_preamp_without_rg_label;
+
+- (IBAction)replaygain_preamp_with_rg_action:(id)sender;
+- (IBAction)replaygain_preamp_without_rg_action:(id)sender;
+- (IBAction)replaygain_source_mode_action:(id)sender;
+- (IBAction)replaygain_processing_action:(id)sender;
+
+
 // Network properties
 @property (nonatomic) BOOL enableNetworkProxy;
 @property (nonatomic) NSString *networkProxyAddress;
@@ -464,10 +478,11 @@ clamp_samplerate (int val) {
         processing_idx = 3;
     }
 
-    [_replaygain_processing selectItemAtIndex:processing_idx];
-    _replaygain_preamp_with_rg.floatValue = deadbeef->conf_get_float ("replaygain.preamp_with_rg", 0);
-    _replaygain_preamp_without_rg.floatValue = deadbeef->conf_get_float ("replaygain.preamp_without_rg", 0);
+    [self.replaygain_processing selectItemAtIndex:processing_idx];
+    self.replaygain_preamp_with_rg.floatValue = deadbeef->conf_get_float ("replaygain.preamp_with_rg", 0);
+    self.replaygain_preamp_without_rg.floatValue = deadbeef->conf_get_float ("replaygain.preamp_without_rg", 0);
     [self updateRGLabels];
+
     _cli_add_to_specific_playlist.state =  deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1) ? NSOnState : NSOffState;
     _cli_add_playlist_name.stringValue =  [NSString stringWithUTF8String: deadbeef->conf_get_str_fast ("cli_add_playlist_name", "Default")];
     _resume_last_session.state =  deadbeef->conf_get_int ("resume_last_session", 1) ? NSOnState : NSOffState;
