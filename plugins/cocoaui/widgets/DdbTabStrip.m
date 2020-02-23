@@ -664,11 +664,23 @@ plt_get_title_wrapper (int plt) {
 
 - (void)closePlaylist:(id)sender {
     if (_tab_clicked != -1) {
-        deadbeef->plt_remove (_tab_clicked);
-        int playlist = deadbeef->plt_get_curr_idx ();
-        deadbeef->conf_set_int ("playlist.current", playlist);
-        [self scrollToTab:playlist];
-        _tab_clicked = -1;
+        NSAlert *alert = [NSAlert new];
+
+        alert.messageText = @"Removing playlist";
+        alert.informativeText = [NSString stringWithFormat:@"Do you really want to remove the playlist '%@'?", plt_get_title_wrapper (_tab_clicked)];
+        [alert addButtonWithTitle:@"No"];
+        [alert addButtonWithTitle:@"Yes"];
+
+        [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+            if (returnCode == NSAlertFirstButtonReturn) {
+                return;
+            }
+            deadbeef->plt_remove (_tab_clicked);
+            int playlist = deadbeef->plt_get_curr_idx ();
+            deadbeef->conf_set_int ("playlist.current", playlist);
+            [self scrollToTab:playlist];
+            _tab_clicked = -1;
+        }];
     }
 }
 
