@@ -37,7 +37,7 @@
 #include "threading.h"
 #include "playlist.h"
 #include "common.h"
-#include "ctmap.h"
+#include "shared/ctmap.h"
 #include "streamer.h"
 #include "messagepump.h"
 #include "conf.h"
