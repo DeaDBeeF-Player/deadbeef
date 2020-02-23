@@ -1500,4 +1500,5 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 
     return theMenu;
 }
+
 @end

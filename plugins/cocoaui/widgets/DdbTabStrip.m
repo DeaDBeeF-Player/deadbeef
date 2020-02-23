@@ -23,6 +23,7 @@
 
 #import "DdbTabStrip.h"
 #import "DdbShared.h"
+#import "NSMenu+ActionItems.h"
 #include "../../../deadbeef.h"
 
 extern DB_functions_t *deadbeef;
@@ -695,6 +696,21 @@ plt_get_title_wrapper (int plt) {
             NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:@"Rename Playlist" action:@selector(renamePlaylistAction:) keyEquivalent:@""];
             [menu insertItem:item atIndex:0];
         }
+
+        [menu addActionItemsForContext:DDB_ACTION_CTX_PLAYLIST track:NULL filter:^BOOL(DB_plugin_action_t * _Nonnull action) {
+
+            if (!(action->flags & DB_ACTION_MULTIPLE_TRACKS)) {
+                return NO;
+            }
+
+            if (action->flags & DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST) {
+                return NO;
+            }
+
+            return YES;
+        }];
+
+
         return menu;
     }
     return nil;

@@ -17,11 +17,14 @@ extern DB_functions_t *deadbeef;
 
 - (void)pluginAction:(PluginActionMenuItem *)sender {
     sender.pluginAction->callback2 (sender.pluginAction, sender.pluginActionContext);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 - (void)addActionItemsForContext:(ddb_action_context_t)context track:(nullable DB_playItem_t *)track filter:(BOOL(^)(DB_plugin_action_t *action))filter {
     DB_plugin_t **plugins = deadbeef->plug_get_list();
     int i;
+
+    int hide_remove_from_disk = deadbeef->conf_get_int ("cocoaui.hide_remove_from_disk", 0);
 
     for (i = 0; plugins[i]; i++)
     {
@@ -35,6 +38,9 @@ extern DB_functions_t *deadbeef;
         {
             char *tmp = NULL;
 
+            if (action->name && !strcmp (action->name, "delete_from_disk") && hide_remove_from_disk) {
+                continue;
+            }
             if (action->flags&DB_ACTION_DISABLED) {
                 continue;
             }
@@ -79,10 +85,10 @@ extern DB_functions_t *deadbeef;
                     actionitem.target = self;
 
                     // Special cases for positioning in standard submenus
-                    if (prev_title && !strcmp ("File", prev_title)) {
+                    if (prev_title && !strcmp ("File", prev_title) && context == DDB_ACTION_CTX_MAIN) {
                         [current insertItem:actionitem atIndex:5];
                     }
-                    else if (prev_title && !strcmp ("Edit", prev_title)) {
+                    else if (prev_title && !strcmp ("Edit", prev_title) && context == DDB_ACTION_CTX_MAIN) {
                         [current insertItem:actionitem atIndex:7];
                     }
                     else {
@@ -93,7 +99,6 @@ extern DB_functions_t *deadbeef;
                 }
                 *slash = 0;
 
-
                 // get submenu
                 NSMenu *previous = current;
                 current = [current itemWithTitle:[NSString stringWithUTF8String:ptr]].submenu;
@@ -103,7 +108,7 @@ extern DB_functions_t *deadbeef;
                     newitem.submenu = [[NSMenu alloc] initWithTitle:[NSString stringWithUTF8String:ptr]];
 
                     // If we add new submenu in main bar, add it before 'Help'
-                    if (NULL == prev_title) {
+                    if (NULL == prev_title && context == DDB_ACTION_CTX_MAIN) {
                         [previous insertItem:newitem atIndex:4];
                     }
                     else {
