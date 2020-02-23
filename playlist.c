@@ -1202,7 +1202,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         n = vfs->scandir (dirname, &namelist, NULL, dirent_alphasort);
         // we can't rely on vfs plugins to set d_type
         // windows/svr4 unixes: missing dirent[]->d_type
-        #ifdef _DIRENT_HAVE_D_TYPE
+        #if !defined(__MINGW32__) && !defined(__SVR4)
         for (int i = 0; i < n; i++) {
             namelist[i]->d_type = DT_REG;
         }
