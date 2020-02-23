@@ -30,6 +30,7 @@
 #import "LogWindowController.h"
 #import "HelpWindowController.h"
 #import "EqualizerWindowController.h"
+#import "PluginActionMenuItem.h"
 #include "conf.h"
 #include "streamer.h"
 #include "junklib.h"
@@ -81,8 +82,7 @@ AppDelegate *g_appDelegate;
     }
 }
 
-- (void)configChanged
-{
+- (void)configChanged {
     NSMenuItem *shuffle_items[] = {
         _orderLinear,
         _orderShuffle,
@@ -163,6 +163,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 }
 
 - (void)awakeFromNib {
+    [self initMainMenu];
     [self initMainWindow];
     [self initSearchWindow];
     [self initLogWindow];
@@ -186,6 +187,108 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     _logWindow = [[LogWindowController alloc] initWithWindowNibName:@"Log"];
     [_logWindowToggleMenuItem bind:@"state" toObject:_logWindow.window withKeyPath:@"visible" options:nil];
     _logWindow.window.excludedFromWindowsMenu = YES;
+}
+
+- (void)pluginAction:(PluginActionMenuItem *)sender {
+    sender.pluginAction->callback2 (sender.pluginAction, DDB_ACTION_CTX_MAIN);
+}
+
+- (void)initMainMenu {
+    // add new actions
+    DB_plugin_t **plugins = deadbeef->plug_get_list();
+    int i;
+
+    for (i = 0; plugins[i]; i++)
+    {
+        if (!plugins[i]->get_actions)
+            continue;
+
+        DB_plugin_action_t *actions = plugins[i]->get_actions (NULL);
+        DB_plugin_action_t *action = NULL;
+
+        for (action = actions; action; action = action->next)
+        {
+            char *tmp = NULL;
+
+            int has_addmenu = (action->flags & DB_ACTION_COMMON) && ((action->flags & DB_ACTION_ADD_MENU) || (action->callback));
+
+            if (!has_addmenu)
+                continue;
+
+            // 1st check if we have slashes
+            const char *slash_test = action->title;
+            while (NULL != (slash_test = strchr (slash_test, '/'))) {
+                if (slash_test && slash_test > action->title && *(slash_test-1) == '\\') {
+                    slash_test++;
+                    continue;
+                }
+                break;
+            }
+            if (!slash_test) {
+                continue;
+            }
+
+            tmp = strdup (action->title);
+            const char *ptr = tmp;
+
+            const char *prev_title = NULL;
+
+            NSMenu *current = self.mainMenu;
+
+            while (1) {
+                // find unescaped forward slash
+                char *slash = strchr (ptr, '/');
+                if (slash && slash > ptr && *(slash-1) == '\\') {
+                    ptr = slash + 1;
+                    continue;
+                }
+
+                if (!slash) {
+                    PluginActionMenuItem *actionitem = [[PluginActionMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:ptr] action:@selector(pluginAction:) keyEquivalent:@""];
+                    actionitem.pluginAction = action;
+
+                    // Special cases for positioning in standard submenus
+                    if (prev_title && !strcmp ("File", prev_title)) {
+                        [current insertItem:actionitem atIndex:5];
+                    }
+                    else if (prev_title && !strcmp ("Edit", prev_title)) {
+                        [current insertItem:actionitem atIndex:7];
+                    }
+                    else {
+                        [current addItem:actionitem];
+                    }
+
+                    break;
+                }
+                *slash = 0;
+
+
+                // get submenu
+                NSMenu *previous = current;
+                current = [current itemWithTitle:[NSString stringWithUTF8String:ptr]].submenu;
+                if (!current) {
+                    // create new item with submenu
+                    NSMenuItem *newitem = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:ptr] action:nil keyEquivalent:@""];
+                    newitem.submenu = [[NSMenu alloc] initWithTitle:[NSString stringWithUTF8String:ptr]];
+
+                    // If we add new submenu in main bar, add it before 'Help'
+                    if (NULL == prev_title) {
+                        [previous insertItem:newitem atIndex:4];
+                    }
+                    else {
+                        [previous addItem:newitem];
+                    }
+
+                    current = newitem.submenu;
+                }
+                prev_title = ptr;
+                ptr = slash + 1;
+            }
+            if (tmp) {
+                free (tmp);
+            }
+        }
+    }
 }
 
 - (BOOL)equalizerAvailable {

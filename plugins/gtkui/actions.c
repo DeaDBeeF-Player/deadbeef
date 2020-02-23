@@ -98,7 +98,7 @@ add_mainmenu_actions (void)
             continue;
 
         DB_plugin_action_t *actions = plugins[i]->get_actions (NULL);
-        DB_plugin_action_t *action;
+        DB_plugin_action_t *action = NULL;
 
         for (action = actions; action; action = action->next)
         {
@@ -127,7 +127,7 @@ add_mainmenu_actions (void)
             char *prev_title = NULL;
 
             GtkWidget *current = menubar;
-            GtkWidget *previous;
+            GtkWidget *previous = NULL;
 
             while (1)
             {
