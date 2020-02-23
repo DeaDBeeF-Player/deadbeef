@@ -34,7 +34,7 @@
 @property (strong) IBOutlet NSView *dspView;
 @property (strong) IBOutlet NSView *guiView;
 @property (strong) IBOutlet NSView *appearanceView;
-@property (strong) IBOutlet NSView *networkView;
+//@property (strong) IBOutlet NSView *networkView;
 @property (strong) IBOutlet NSView *pluginsView;
 @property (unsafe_unretained) IBOutlet NSToolbar *toolbar;
 
