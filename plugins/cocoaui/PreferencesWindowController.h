@@ -29,7 +29,6 @@
 #define DEFAULT_TITLEBAR_STOPPED_VALUE "DeaDBeeF-%_deadbeef_version%"
 
 @interface PreferencesWindowController : NSWindowController<NSToolbarDelegate,NSTableViewDelegate,NSTableViewDataSource,NSMenuDelegate,ScriptableItemDelegate>
-@property (strong) IBOutlet NSView *soundView;
 @property (strong) IBOutlet NSView *playbackView;
 @property (strong) IBOutlet NSView *dspView;
 @property (strong) IBOutlet NSView *guiView;
@@ -45,28 +44,6 @@
 - (IBAction)guiAction:(id)sender;
 - (IBAction)networkAction:(id)sender;
 - (IBAction)pluginsAction:(id)sender;
-
-// Playback
-@property (unsafe_unretained) IBOutlet NSButton *cli_add_to_specific_playlist;
-@property (unsafe_unretained) IBOutlet NSTextField *cli_add_playlist_name;
-@property (unsafe_unretained) IBOutlet NSButton *resume_last_session;
-
-- (IBAction)resumeLastSessionAction:(id)sender;
-
-
-@property (unsafe_unretained) IBOutlet NSButton *ignore_archives;
-
-- (IBAction)ignoreArchivesAction:(id)sender;
-
-
-@property (unsafe_unretained) IBOutlet NSButton *stop_after_current_reset;
-
-- (IBAction)stopAfterCurrentResetAction:(id)sender;
-
-
-@property (unsafe_unretained) IBOutlet NSButton *stop_after_album_reset;
-
-- (IBAction)stopAfterCurrentAlbumResetAction:(id)sender;
 
 @property (weak) IBOutlet NSView *dspPresetSelectorContainer;
 

@@ -1553,6 +1553,8 @@
 		2DA30E6F2402D29A001BAB8A /* ctmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30E5F2402D1B1001BAB8A /* ctmap.c */; };
 		2DA30E7424032550001BAB8A /* NetworkPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA30E7224032550001BAB8A /* NetworkPreferencesViewController.h */; };
 		2DA30E7524032550001BAB8A /* NetworkPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30E7324032550001BAB8A /* NetworkPreferencesViewController.m */; };
+		2DA30E792403292D001BAB8A /* SoundPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA30E772403292D001BAB8A /* SoundPreferencesViewController.h */; };
+		2DA30E7A2403292D001BAB8A /* SoundPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30E782403292D001BAB8A /* SoundPreferencesViewController.m */; };
 		2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA372192370B854005E64A3 /* NowPlayable.h */; };
 		2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA3721A2370B854005E64A3 /* NowPlayable.m */; };
 		2DA5E331238DB0C4005832B7 /* EditColumnPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */; };
@@ -4698,6 +4700,8 @@
 		2DA30E5F2402D1B1001BAB8A /* ctmap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ctmap.c; sourceTree = "<group>"; };
 		2DA30E7224032550001BAB8A /* NetworkPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkPreferencesViewController.h; sourceTree = "<group>"; };
 		2DA30E7324032550001BAB8A /* NetworkPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NetworkPreferencesViewController.m; sourceTree = "<group>"; };
+		2DA30E772403292D001BAB8A /* SoundPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SoundPreferencesViewController.h; sourceTree = "<group>"; };
+		2DA30E782403292D001BAB8A /* SoundPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SoundPreferencesViewController.m; sourceTree = "<group>"; };
 		2DA372192370B854005E64A3 /* NowPlayable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NowPlayable.h; path = NowPlayable/NowPlayable.h; sourceTree = "<group>"; };
 		2DA3721A2370B854005E64A3 /* NowPlayable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = NowPlayable.m; path = NowPlayable/NowPlayable.m; sourceTree = "<group>"; };
 		2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditColumnPanel.xib; sourceTree = "<group>"; };
@@ -9472,6 +9476,8 @@
 				2DA30B7E23F1C9A3003D22E3 /* PropertySheetContentView.m */,
 				2DA30E7224032550001BAB8A /* NetworkPreferencesViewController.h */,
 				2DA30E7324032550001BAB8A /* NetworkPreferencesViewController.m */,
+				2DA30E772403292D001BAB8A /* SoundPreferencesViewController.h */,
+				2DA30E782403292D001BAB8A /* SoundPreferencesViewController.m */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -10918,6 +10924,7 @@
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
 				2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */,
 				2DDF87D924027DA500CA8E91 /* PluginActionMenuItem.h in Headers */,
+				2DA30E792403292D001BAB8A /* SoundPreferencesViewController.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
 				2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */,
 				2DA30E602402D1B1001BAB8A /* ctmap.h in Headers */,
@@ -14016,6 +14023,7 @@
 				2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */,
 				2DA30B8023F1C9A3003D22E3 /* PropertySheetContentView.m in Sources */,
 				2D98613F226C814100BAACB1 /* PropertySheetViewController.m in Sources */,
+				2DA30E7A2403292D001BAB8A /* SoundPreferencesViewController.m in Sources */,
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
 				2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */,
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,

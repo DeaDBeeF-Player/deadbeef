@@ -12,8 +12,6 @@
                 <outlet property="audioDevicesPopupButton" destination="0ET-qW-1ss" id="YwC-6z-B39"/>
                 <outlet property="autoresize_columns" destination="pt4-Vh-haG" id="ltv-Y2-Vr9"/>
                 <outlet property="basedOnInputSamplerateCheckbox" destination="OHq-bQ-a2N" id="kOa-IW-a5I"/>
-                <outlet property="cli_add_playlist_name" destination="ySk-s8-tM7" id="NfI-d6-Jw3"/>
-                <outlet property="cli_add_to_specific_playlist" destination="Rqu-qW-OA7" id="dxQ-dK-H94"/>
                 <outlet property="color_bar_background" destination="tgF-mM-RL5" id="yba-27-MhO"/>
                 <outlet property="color_bar_foreground" destination="Fvy-JU-f9r" id="kAg-uQ-hmi"/>
                 <outlet property="color_listview_cursor" destination="67H-ct-aL1" id="NI1-Jf-ccK"/>
@@ -32,7 +30,6 @@
                 <outlet property="enable_shift_jis_detection" destination="zMC-Ss-j3s" id="wIv-Sl-08v"/>
                 <outlet property="guiView" destination="MUz-8x-xuE" id="dCp-1n-ZbF"/>
                 <outlet property="hide_remove_from_disk" destination="5ti-KG-6jS" id="Xc7-vA-izk"/>
-                <outlet property="ignore_archives" destination="zCE-Xa-7cL" id="1Sr-Gj-MTF"/>
                 <outlet property="listview_bold_current_text" destination="8qz-wz-lce" id="QdE-gL-4R0"/>
                 <outlet property="listview_bold_selected_text" destination="Dkf-Gh-jgm" id="vHO-5f-HPb"/>
                 <outlet property="listview_italic_current_text" destination="2mI-5E-ghQ" id="QKw-VD-RPP"/>
@@ -58,16 +55,7 @@
                 <outlet property="pluginVersion" destination="wDm-op-PV2" id="yb0-S2-7T0"/>
                 <outlet property="pluginsView" destination="ZNh-3b-s1L" id="ZWj-HZ-tLL"/>
                 <outlet property="refresh_rate" destination="vtf-8S-vYr" id="1dI-0B-TIp"/>
-                <outlet property="replaygain_preamp_with_rg" destination="arn-tx-1Aq" id="WEE-jF-GXL"/>
-                <outlet property="replaygain_preamp_with_rg_label" destination="50R-70-80x" id="myW-N9-3ua"/>
-                <outlet property="replaygain_preamp_without_rg" destination="zKw-Aq-JuH" id="Sgh-qO-5ET"/>
-                <outlet property="replaygain_preamp_without_rg_label" destination="dBd-wH-v4A" id="y2U-7c-6T3"/>
-                <outlet property="replaygain_processing" destination="78i-nx-GgZ" id="6rL-ZY-TOy"/>
-                <outlet property="replaygain_source_mode" destination="OHh-mq-dNT" id="xJZ-FO-yx9"/>
-                <outlet property="resume_last_session" destination="elV-fL-38G" id="6PW-Yt-0Fk"/>
-                <outlet property="soundView" destination="UtU-5A-sPy" id="g3t-rQ-fMb"/>
-                <outlet property="stop_after_album_reset" destination="Ypp-Lr-7tH" id="yD2-9S-R4p"/>
-                <outlet property="stop_after_current_reset" destination="vaP-mG-6h4" id="9ha-5S-KCv"/>
+                <outlet property="soundViewController" destination="YqN-ZP-2eU" id="DKY-gJ-i4q"/>
                 <outlet property="targetSamplerateComboBox" destination="ePT-oo-DxM" id="TSl-Sq-6Ur"/>
                 <outlet property="targetSamplerateLabel" destination="kev-Ar-D1H" id="WvY-iB-sAy"/>
                 <outlet property="titlebar_playing" destination="pSK-4V-QiQ" id="HHk-oD-wV8"/>
@@ -97,7 +85,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="resumeLastSessionAction:" target="-2" id="pAB-Sj-fWz"/>
+                        <action selector="resumeLastSessionAction:" target="YqN-ZP-2eU" id="QHP-9P-2AJ"/>
                     </connections>
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="Rqu-qW-OA7">
@@ -106,6 +94,9 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <action selector="cliAddToSpecificPlaylistAction:" target="YqN-ZP-2eU" id="BMp-qX-MRv"/>
+                    </connections>
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="zCE-Xa-7cL">
                     <rect key="frame" x="18" y="68" width="288" height="18"/>
@@ -114,7 +105,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="ignoreArchivesAction:" target="-2" id="oyW-qa-9kU"/>
+                        <action selector="ignoreArchivesAction:" target="YqN-ZP-2eU" id="Hng-7k-eKu"/>
                     </connections>
                 </button>
                 <button verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Ypp-Lr-7tH">
@@ -124,7 +115,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="stopAfterCurrentAlbumResetAction:" target="-2" id="6EW-ZR-Wrb"/>
+                        <action selector="stopAfterCurrentAlbumResetAction:" target="YqN-ZP-2eU" id="fpQ-4W-Gdc"/>
                     </connections>
                 </button>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jCD-pm-VFD">
@@ -151,7 +142,7 @@
                         </menu>
                     </popUpButtonCell>
                     <connections>
-                        <action selector="replaygain_source_mode_action:" target="-2" id="HZF-0k-YsM"/>
+                        <action selector="replaygain_source_mode_action:" target="YqN-ZP-2eU" id="Qv7-sQ-ISI"/>
                     </connections>
                 </popUpButton>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WcI-yT-RjC">
@@ -179,14 +170,14 @@
                         </menu>
                     </popUpButtonCell>
                     <connections>
-                        <action selector="replaygain_processing_action:" target="-2" id="Di0-xX-R7q"/>
+                        <action selector="replaygain_processing_action:" target="YqN-ZP-2eU" id="WLF-YV-dJI"/>
                     </connections>
                 </popUpButton>
                 <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="arn-tx-1Aq">
-                    <rect key="frame" x="173" y="198" width="263" height="24"/>
+                    <rect key="frame" x="193" y="198" width="243" height="24"/>
                     <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="-12" maxValue="12" tickMarkPosition="below" numberOfTickMarks="25" sliderType="linear" id="Evm-9c-G7T"/>
                     <connections>
-                        <action selector="replaygain_preamp_with_rg_action:" target="-2" id="brQ-CX-e3L"/>
+                        <action selector="replaygain_preamp_with_rg_action:" target="YqN-ZP-2eU" id="xgy-PD-ekh"/>
                     </connections>
                 </slider>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="50R-70-80x">
@@ -201,11 +192,11 @@
                     <rect key="frame" x="193" y="169" width="243" height="24"/>
                     <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="-12" maxValue="12" tickMarkPosition="below" numberOfTickMarks="25" sliderType="linear" id="fjS-kS-bqN"/>
                     <connections>
-                        <action selector="replaygain_preamp_without_rg_action:" target="-2" id="Zju-GB-guc"/>
+                        <action selector="replaygain_preamp_without_rg_action:" target="YqN-ZP-2eU" id="utG-rx-iGm"/>
                     </connections>
                 </slider>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UVS-UD-Ivp">
-                    <rect key="frame" x="38" y="210" width="131" height="16"/>
+                    <rect key="frame" x="38" y="210" width="151" height="16"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Preamp with RG info:" id="ht1-sb-ufq">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -246,7 +237,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="stopAfterCurrentResetAction:" target="-2" id="9wH-o3-PRM"/>
+                        <action selector="stopAfterCurrentResetAction:" target="YqN-ZP-2eU" id="z1j-Ev-HN6"/>
                     </connections>
                 </button>
             </subviews>
@@ -257,6 +248,7 @@
                 <constraint firstItem="78i-nx-GgZ" firstAttribute="trailing" secondItem="OHh-mq-dNT" secondAttribute="trailing" id="8ey-VL-Vas"/>
                 <constraint firstItem="ySk-s8-tM7" firstAttribute="trailing" secondItem="OHh-mq-dNT" secondAttribute="trailing" id="8u0-7K-CKf"/>
                 <constraint firstItem="WcI-yT-RjC" firstAttribute="leading" secondItem="jCD-pm-VFD" secondAttribute="leading" id="94v-vg-trd"/>
+                <constraint firstItem="UVS-UD-Ivp" firstAttribute="trailing" secondItem="pUH-bn-6Sk" secondAttribute="trailing" id="9XT-Z3-sU1"/>
                 <constraint firstItem="OHh-mq-dNT" firstAttribute="leading" secondItem="jCD-pm-VFD" secondAttribute="trailing" constant="8" id="BZK-Rv-MWK"/>
                 <constraint firstItem="UVS-UD-Ivp" firstAttribute="firstBaseline" secondItem="arn-tx-1Aq" secondAttribute="firstBaseline" id="Bhn-G0-yRv"/>
                 <constraint firstItem="zKw-Aq-JuH" firstAttribute="leading" secondItem="pUH-bn-6Sk" secondAttribute="trailing" constant="8" id="Bjq-e7-U4l"/>
@@ -265,7 +257,7 @@
                 <constraint firstItem="50R-70-80x" firstAttribute="trailing" secondItem="OHh-mq-dNT" secondAttribute="trailing" id="GYB-m1-osB"/>
                 <constraint firstItem="zCE-Xa-7cL" firstAttribute="top" secondItem="elV-fL-38G" secondAttribute="bottom" constant="11" id="HHG-x9-dya"/>
                 <constraint firstItem="OHh-mq-dNT" firstAttribute="top" secondItem="2WW-3v-yct" secondAttribute="bottom" constant="8" id="HNI-Li-CX7"/>
-                <constraint firstItem="arn-tx-1Aq" firstAttribute="leading" secondItem="UVS-UD-Ivp" secondAttribute="trailing" constant="8" id="LJI-ZH-TEb"/>
+                <constraint firstItem="zKw-Aq-JuH" firstAttribute="leading" secondItem="arn-tx-1Aq" secondAttribute="leading" id="Jep-LR-lrE"/>
                 <constraint firstAttribute="trailing" secondItem="o57-76-gIf" secondAttribute="trailing" constant="12" id="LZD-2O-wsV"/>
                 <constraint firstItem="2WW-3v-yct" firstAttribute="leading" secondItem="Zmc-ua-enY" secondAttribute="leading" constant="20" id="M04-2S-OWz"/>
                 <constraint firstItem="elV-fL-38G" firstAttribute="leading" secondItem="2WW-3v-yct" secondAttribute="leading" id="McV-B1-AjR"/>
@@ -1637,6 +1629,23 @@
                 <outlet property="contentTypeMappingArrayController" destination="H3C-fa-Rey" id="Uc3-r0-hNE"/>
                 <outlet property="contentTypeMappingTableView" destination="Bgl-g5-g9B" id="riG-qm-lGi"/>
                 <outlet property="view" destination="JAw-ar-I3a" id="WNs-fS-3Gu"/>
+            </connections>
+        </viewController>
+        <viewController id="YqN-ZP-2eU" customClass="SoundPreferencesViewController">
+            <connections>
+                <outlet property="cli_add_playlist_name" destination="ySk-s8-tM7" id="nmi-Gw-qt3"/>
+                <outlet property="cli_add_to_specific_playlist" destination="Rqu-qW-OA7" id="qnc-W5-9Mu"/>
+                <outlet property="ignore_archives" destination="zCE-Xa-7cL" id="fpl-2k-R2t"/>
+                <outlet property="replaygain_preamp_with_rg" destination="arn-tx-1Aq" id="PF6-MC-4k6"/>
+                <outlet property="replaygain_preamp_with_rg_label" destination="50R-70-80x" id="Fhq-6W-ExI"/>
+                <outlet property="replaygain_preamp_without_rg" destination="zKw-Aq-JuH" id="7pC-2j-RML"/>
+                <outlet property="replaygain_preamp_without_rg_label" destination="dBd-wH-v4A" id="7N1-rQ-6WN"/>
+                <outlet property="replaygain_processing" destination="78i-nx-GgZ" id="xmv-Bk-Uwd"/>
+                <outlet property="replaygain_source_mode" destination="OHh-mq-dNT" id="Oyz-aI-yMs"/>
+                <outlet property="resume_last_session" destination="elV-fL-38G" id="yTz-Vg-KuL"/>
+                <outlet property="stop_after_album_reset" destination="Ypp-Lr-7tH" id="xkR-cg-INQ"/>
+                <outlet property="stop_after_current_reset" destination="vaP-mG-6h4" id="dHI-dC-IoU"/>
+                <outlet property="view" destination="UtU-5A-sPy" id="taT-ru-Hbc"/>
             </connections>
         </viewController>
     </objects>
