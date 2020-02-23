@@ -621,11 +621,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 
     tabstrip_adjust_hscroll (ts);
     cairo_set_line_width (cr, 1);
-#ifdef __APPLE__
-    cairo_set_antialias (cr, gtkui_is_retina ? CAIRO_ANTIALIAS_GRAY : CAIRO_ANTIALIAS_NONE);
-#else
     cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
-#endif
     int cnt = deadbeef->plt_get_count ();
     int hscroll = ts->hscrollpos;
 
