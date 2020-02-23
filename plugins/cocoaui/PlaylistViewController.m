@@ -1413,11 +1413,35 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     [ReplayGainScannerController runScanner:mode forTracks:tracks count:count];
 }
 
+- (void)addPluginActions:(NSMenu *)theMenu {
+    DB_playItem_t *track = NULL;
+    int selcount = self.selectedCount;
+
+    if (selcount == 1) {
+        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+        while (it) {
+            if (deadbeef->pl_is_selected (it)) {
+                break;
+            }
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+        track = it;
+    }
+
+    [theMenu addActionItemsForContext:DDB_ACTION_CTX_SELECTION track:track filter:^BOOL(DB_plugin_action_t * _Nonnull action) {
+
+        return (selcount==1 && (action->flags&DB_ACTION_SINGLE_TRACK)) || (selcount > 1 && (action->flags&DB_ACTION_MULTIPLE_TRACKS));
+    }];
+}
+
 - (NSMenu *)contextMenuForEvent:(NSEvent *)event forView:(NSView *)view {
     NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
     BOOL enabled = [self selectedCount] != 0;
 
-    [theMenu insertItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@"" atIndex:0].enabled = enabled;
+    [theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0].enabled = enabled;
 
     NSMenu *rgMenu = [[NSMenu alloc] initWithTitle:@"ReplayGain"];
     rgMenu.delegate = self;
@@ -1446,50 +1470,33 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         } forIter:PL_MAIN];
     }
 
-    [rgMenu insertItemWithTitle:@"Scan Per-file Track Gain" action:@selector(rgScanTracks:) keyEquivalent:@"" atIndex:0].enabled = can_be_rg_scanned;
-    [rgMenu insertItemWithTitle:@"Scan Selection As Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@"" atIndex:1].enabled = can_be_rg_scanned;
-    [rgMenu insertItemWithTitle:@"Scan Selection As Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@"" atIndex:2].enabled = can_be_rg_scanned;
-    [rgMenu insertItemWithTitle:@"Remove ReplayGain Information" action:@selector(rgRemove:) keyEquivalent:@"" atIndex:3].enabled = has_rg_info;
+    [rgMenu addItemWithTitle:@"Scan Per-file Track Gain" action:@selector(rgScanTracks:) keyEquivalent:@""].enabled = can_be_rg_scanned;
+    [rgMenu addItemWithTitle:@"Scan Selection As Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@""].enabled = can_be_rg_scanned;
+    [rgMenu addItemWithTitle:@"Scan Selection As Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@""].enabled = can_be_rg_scanned;
+    [rgMenu addItemWithTitle:@"Remove ReplayGain Information" action:@selector(rgRemove:) keyEquivalent:@""].enabled = has_rg_info;
 
     NSMenuItem *rgMenuItem = [[NSMenuItem alloc] initWithTitle:@"ReplayGain" action:nil keyEquivalent:@""];
     rgMenuItem.enabled = enabled;
     rgMenuItem.submenu = rgMenu;
-    [theMenu insertItem:rgMenuItem atIndex:0];
+    [theMenu addItem:rgMenuItem];
 
-    [theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0].enabled = enabled;
+    [theMenu addItemWithTitle:@"Add To Playback Queue" action:@selector(addToPlaybackQueue) keyEquivalent:@""].enabled = enabled;
 
-    // FIXME: should be added via plugin action
-    [theMenu insertItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@"" atIndex:0].enabled = enabled;
+    [theMenu addItemWithTitle:@"Remove From Playback Queue" action:@selector(removeFromPlaybackQueue) keyEquivalent:@""].enabled = enabled;
 
-    [theMenu insertItem:[NSMenuItem separatorItem] atIndex:0];
+    [theMenu addItem:NSMenuItem.separatorItem];
 
-    [theMenu insertItemWithTitle:@"Remove From Playback Queue" action:@selector(removeFromPlaybackQueue) keyEquivalent:@"" atIndex:0].enabled = enabled;
+    [theMenu addItem:NSMenuItem.separatorItem];
 
-    [theMenu insertItemWithTitle:@"Add To Playback Queue" action:@selector(addToPlaybackQueue) keyEquivalent:@"" atIndex:0].enabled = enabled;
+    [theMenu addItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@""].enabled = enabled;
+
+    [self addPluginActions:theMenu];
+
+    [theMenu addItem:NSMenuItem.separatorItem];
+
+    [theMenu addItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@""].enabled = enabled;
 
     theMenu.autoenablesItems = NO;
-
-    DB_playItem_t *track = NULL;
-    int selcount = self.selectedCount;
-
-    if (selcount == 1) {
-        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-        while (it) {
-            if (deadbeef->pl_is_selected (it)) {
-                break;
-            }
-            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-
-            deadbeef->pl_item_unref (it);
-            it = next;
-        }
-        track = it;
-    }
-
-    [theMenu addActionItemsForContext:DDB_ACTION_CTX_SELECTION track:track filter:^BOOL(DB_plugin_action_t * _Nonnull action) {
-
-        return (selcount==1 && (action->flags&DB_ACTION_SINGLE_TRACK)) || (selcount > 1 && (action->flags&DB_ACTION_MULTIPLE_TRACKS));
-    }];
 
     return theMenu;
 }
