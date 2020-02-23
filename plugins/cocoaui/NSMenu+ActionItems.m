@@ -19,7 +19,7 @@ extern DB_functions_t *deadbeef;
     sender.pluginAction->callback2 (sender.pluginAction, sender.pluginActionContext);
 }
 
-- (void)addActionItemsWithContext:(ddb_action_context_t)context filter:(BOOL(^)(DB_plugin_action_t *action))filter {
+- (void)addActionItemsForContext:(ddb_action_context_t)context track:(nullable DB_playItem_t *)track filter:(BOOL(^)(DB_plugin_action_t *action))filter {
     DB_plugin_t **plugins = deadbeef->plug_get_list();
     int i;
 
@@ -28,12 +28,16 @@ extern DB_functions_t *deadbeef;
         if (!plugins[i]->get_actions)
             continue;
 
-        DB_plugin_action_t *actions = plugins[i]->get_actions (NULL);
+        DB_plugin_action_t *actions = plugins[i]->get_actions (track);
         DB_plugin_action_t *action = NULL;
 
         for (action = actions; action; action = action->next)
         {
             char *tmp = NULL;
+
+            if (action->flags&DB_ACTION_DISABLED) {
+                continue;
+            }
 
             int has_addmenu = filter(action);
 
@@ -49,7 +53,7 @@ extern DB_functions_t *deadbeef;
                 }
                 break;
             }
-            if (!slash_test) {
+            if (!slash_test && ((action->flags&DB_ACTION_ADD_MENU) && context == DDB_ACTION_CTX_MAIN)) {
                 continue;
             }
 
@@ -71,7 +75,7 @@ extern DB_functions_t *deadbeef;
                 if (!slash) {
                     PluginActionMenuItem *actionitem = [[PluginActionMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:ptr] action:@selector(pluginAction:) keyEquivalent:@""];
                     actionitem.pluginAction = action;
-                    actionitem.pluginActionContext = DDB_ACTION_CTX_MAIN;
+                    actionitem.pluginActionContext = context;
                     actionitem.target = self;
 
                     // Special cases for positioning in standard submenus

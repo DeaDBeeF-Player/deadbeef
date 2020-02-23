@@ -29,6 +29,7 @@
 #import "PlaylistViewController.h"
 #import "PlaylistView.h"
 #import "ReplayGainScannerController.h"
+#import "NSMenu+ActionItems.h"
 
 #include "../../deadbeef.h"
 #include "rg_scanner.h"
@@ -1467,6 +1468,28 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     [theMenu insertItemWithTitle:@"Add To Playback Queue" action:@selector(addToPlaybackQueue) keyEquivalent:@"" atIndex:0].enabled = enabled;
 
     theMenu.autoenablesItems = NO;
+
+    DB_playItem_t *track = NULL;
+    int selcount = self.selectedCount;
+
+    if (selcount == 1) {
+        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+        while (it) {
+            if (deadbeef->pl_is_selected (it)) {
+                break;
+            }
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+        track = it;
+    }
+
+    [theMenu addActionItemsForContext:DDB_ACTION_CTX_SELECTION track:track filter:^BOOL(DB_plugin_action_t * _Nonnull action) {
+
+        return (selcount==1 && (action->flags&DB_ACTION_SINGLE_TRACK)) || (selcount > 1 && (action->flags&DB_ACTION_MULTIPLE_TRACKS));
+    }];
 
     return theMenu;
 }

@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSMenu (ActionItems)
 
-- (void)addActionItemsWithContext:(ddb_action_context_t)context filter:(BOOL(^)(DB_plugin_action_t *action))filter;
+- (void)addActionItemsForContext:(ddb_action_context_t)context track:(nullable DB_playItem_t *)track filter:(BOOL(^)(DB_plugin_action_t *action))filter;
 
 @end
 
