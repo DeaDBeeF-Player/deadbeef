@@ -642,12 +642,9 @@ show_file_chooser (const gchar          *title,
     }
 
     // restore folder
-    // Windows: restore done by gtk? (todo check linux)
-    #if defined USE_GTK_NATIVE_FILE_CHOOSER && defined __MINGW32__
     deadbeef->conf_lock ();
     gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast (conf_lastdir, ""));
     deadbeef->conf_unlock ();
-    #endif
 
     int response = run_file_chooser(dlg);
 
