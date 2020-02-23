@@ -1,4 +1,4 @@
-noinst_LIBRARIES = libmp4tagutil.a libtrkpropertiesutil.a libeqpreset.a
+noinst_LIBRARIES = libmp4tagutil.a libtrkpropertiesutil.a libeqpreset.a libctmap.a
 
 libmp4tagutil_a_SOURCES = mp4tagutil.h mp4tagutil.c
 libmp4tagutil_a_CFLAGS = -DUSE_MP4FF -DUSE_TAGGING -fPIC -std=c99 -I@top_srcdir@/plugins/libmp4ff
