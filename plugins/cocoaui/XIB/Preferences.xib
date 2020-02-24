@@ -88,7 +88,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="resumeLastSessionAction:" target="YqN-ZP-2eU" id="QHP-9P-2AJ"/>
+                        <binding destination="YqN-ZP-2eU" name="value" keyPath="self.resumeLastSession" id="QX5-V8-Aeh"/>
                     </connections>
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="Rqu-qW-OA7">
@@ -98,7 +98,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="cliAddToSpecificPlaylistAction:" target="YqN-ZP-2eU" id="BMp-qX-MRv"/>
+                        <binding destination="YqN-ZP-2eU" name="value" keyPath="self.cliAddToSpecificPlaylist" id="5ux-xH-mT9"/>
                     </connections>
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="zCE-Xa-7cL">
@@ -108,7 +108,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="ignoreArchivesAction:" target="YqN-ZP-2eU" id="Hng-7k-eKu"/>
+                        <binding destination="YqN-ZP-2eU" name="value" keyPath="self.ignoreArchives" id="nrL-Ot-eKE"/>
                     </connections>
                 </button>
                 <button verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Ypp-Lr-7tH">
@@ -118,7 +118,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="stopAfterCurrentAlbumResetAction:" target="YqN-ZP-2eU" id="fpQ-4W-Gdc"/>
+                        <binding destination="YqN-ZP-2eU" name="value" keyPath="self.stopAfterCurrentAlbumReset" id="eab-qC-eAm"/>
                     </connections>
                 </button>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jCD-pm-VFD">
@@ -145,7 +145,7 @@
                         </menu>
                     </popUpButtonCell>
                     <connections>
-                        <action selector="replaygain_source_mode_action:" target="YqN-ZP-2eU" id="Qv7-sQ-ISI"/>
+                        <binding destination="YqN-ZP-2eU" name="selectedIndex" keyPath="self.rgSourceMode" id="xkg-Ac-J0c"/>
                     </connections>
                 </popUpButton>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WcI-yT-RjC">
@@ -173,29 +173,32 @@
                         </menu>
                     </popUpButtonCell>
                     <connections>
-                        <action selector="replaygain_processing_action:" target="YqN-ZP-2eU" id="WLF-YV-dJI"/>
+                        <binding destination="YqN-ZP-2eU" name="selectedIndex" keyPath="self.rgProcessingIdx" id="qsz-oy-zQX"/>
                     </connections>
                 </popUpButton>
                 <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="arn-tx-1Aq">
                     <rect key="frame" x="193" y="198" width="243" height="24"/>
                     <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="-12" maxValue="12" tickMarkPosition="below" numberOfTickMarks="25" sliderType="linear" id="Evm-9c-G7T"/>
                     <connections>
-                        <action selector="replaygain_preamp_with_rg_action:" target="YqN-ZP-2eU" id="xgy-PD-ekh"/>
+                        <binding destination="YqN-ZP-2eU" name="value" keyPath="self.rgPreampWithRg" id="FKU-Do-7dT"/>
                     </connections>
                 </slider>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="50R-70-80x">
                     <rect key="frame" x="434" y="210" width="33" height="14"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="+0dB" id="JHv-qd-TUt">
-                        <font key="font" metaFont="label" size="11"/>
+                        <font key="font" metaFont="message" size="11"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
+                    <connections>
+                        <binding destination="YqN-ZP-2eU" name="value" keyPath="self.rgPreampWithRgLabel" id="gab-Zm-Y3c"/>
+                    </connections>
                 </textField>
                 <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zKw-Aq-JuH">
                     <rect key="frame" x="193" y="169" width="243" height="24"/>
                     <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="-12" maxValue="12" tickMarkPosition="below" numberOfTickMarks="25" sliderType="linear" id="fjS-kS-bqN"/>
                     <connections>
-                        <action selector="replaygain_preamp_without_rg_action:" target="YqN-ZP-2eU" id="utG-rx-iGm"/>
+                        <binding destination="YqN-ZP-2eU" name="value" keyPath="self.rgPreampWithoutRg" id="eyP-P2-uhb"/>
                     </connections>
                 </slider>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UVS-UD-Ivp">
@@ -217,10 +220,13 @@
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dBd-wH-v4A">
                     <rect key="frame" x="434" y="181" width="33" height="14"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="+0dB" id="cCa-sk-iJw">
-                        <font key="font" metaFont="label" size="11"/>
+                        <font key="font" metaFont="message" size="11"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
+                    <connections>
+                        <binding destination="YqN-ZP-2eU" name="value" keyPath="self.rgPreampWithoutRgLabel" id="k7I-fG-RIT"/>
+                    </connections>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2WW-3v-yct">
                     <rect key="frame" x="18" y="294" width="77" height="16"/>
@@ -240,7 +246,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="stopAfterCurrentResetAction:" target="YqN-ZP-2eU" id="z1j-Ev-HN6"/>
+                        <binding destination="YqN-ZP-2eU" name="value" keyPath="self.stopAfterCurrentReset" id="Ck3-5A-0zm"/>
                     </connections>
                 </button>
             </subviews>
@@ -1637,17 +1643,6 @@
         <viewController id="YqN-ZP-2eU" customClass="SoundPreferencesViewController">
             <connections>
                 <outlet property="cli_add_playlist_name" destination="ySk-s8-tM7" id="nmi-Gw-qt3"/>
-                <outlet property="cli_add_to_specific_playlist" destination="Rqu-qW-OA7" id="qnc-W5-9Mu"/>
-                <outlet property="ignore_archives" destination="zCE-Xa-7cL" id="fpl-2k-R2t"/>
-                <outlet property="replaygain_preamp_with_rg" destination="arn-tx-1Aq" id="PF6-MC-4k6"/>
-                <outlet property="replaygain_preamp_with_rg_label" destination="50R-70-80x" id="Fhq-6W-ExI"/>
-                <outlet property="replaygain_preamp_without_rg" destination="zKw-Aq-JuH" id="7pC-2j-RML"/>
-                <outlet property="replaygain_preamp_without_rg_label" destination="dBd-wH-v4A" id="7N1-rQ-6WN"/>
-                <outlet property="replaygain_processing" destination="78i-nx-GgZ" id="xmv-Bk-Uwd"/>
-                <outlet property="replaygain_source_mode" destination="OHh-mq-dNT" id="Oyz-aI-yMs"/>
-                <outlet property="resume_last_session" destination="elV-fL-38G" id="yTz-Vg-KuL"/>
-                <outlet property="stop_after_album_reset" destination="Ypp-Lr-7tH" id="xkR-cg-INQ"/>
-                <outlet property="stop_after_current_reset" destination="vaP-mG-6h4" id="dHI-dC-IoU"/>
                 <outlet property="view" destination="UtU-5A-sPy" id="taT-ru-Hbc"/>
             </connections>
         </viewController>

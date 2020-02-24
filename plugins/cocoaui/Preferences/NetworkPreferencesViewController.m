@@ -69,21 +69,18 @@ static NSString *kContentTypeMappingChangedNotification = @"ContentTypeMappingCh
 
 @implementation NetworkPreferencesViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    self = [super initWithCoder:coder];
+    if (!self) {
+        return nil;
+    }
     // network
     _enableNetworkProxy = deadbeef->conf_get_int ("network.proxy", 0);
-    [self willChangeValueForKey:@"enableNetworkProxy"];
-    [self didChangeValueForKey:@"enableNetworkProxy"];
 
     _networkProxyAddress = conf_get_nsstr ("network.proxy.address", "");
-    [self willChangeValueForKey:@"networkProxyAddress"];
-    [self didChangeValueForKey:@"networkProxyAddress"];
 
     _networkProxyPort = @(deadbeef->conf_get_int ("network.proxy.port", 8080));
-    [self willChangeValueForKey:@"networkProxyPort"];
-    [self didChangeValueForKey:@"networkProxyPort"];
 
     NSString *t = conf_get_nsstr ("network.proxy.type", "HTTP");
     const char *type = t.UTF8String;
@@ -105,23 +102,21 @@ static NSString *kContentTypeMappingChangedNotification = @"ContentTypeMappingCh
     else if (!strcasecmp (type, "SOCKS5_HOSTNAME")) {
         _networkProxyType = 5;
     }
-    [self willChangeValueForKey:@"networkProxyType"];
-    [self didChangeValueForKey:@"networkProxyType"];
 
     _networkProxyUserName = conf_get_nsstr ("network.proxy.username", "");
-    [self willChangeValueForKey:@"networkProxyUserName"];
-    [self didChangeValueForKey:@"networkProxyUserName"];
 
     _networkProxyPassword = conf_get_nsstr ("network.proxy.password", "");
-    [self willChangeValueForKey:@"networkProxyPassword"];
-    [self didChangeValueForKey:@"networkProxyPassword"];
 
     _networkProxyUserAgent = conf_get_nsstr ("network.http_user_agent", "");
-    [self willChangeValueForKey:@"networkProxyUserAgent"];
-    [self didChangeValueForKey:@"networkProxyUserAgent"];
 
     // Content-type mapping
     [self initContentTypeMapping];
+
+    return self;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
 
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(contentTypeMappingChanged:) name:kContentTypeMappingChangedNotification object:nil];
 

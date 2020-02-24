@@ -15,34 +15,38 @@ extern DB_functions_t *deadbeef;
 @interface SoundPreferencesViewController ()
 
 // ReplayGain
-@property (unsafe_unretained) IBOutlet NSPopUpButton *replaygain_source_mode;
-@property (unsafe_unretained) IBOutlet NSPopUpButton *replaygain_processing;
-@property (unsafe_unretained) IBOutlet NSSlider *replaygain_preamp_with_rg;
-@property (unsafe_unretained) IBOutlet NSSlider *replaygain_preamp_without_rg;
-@property (unsafe_unretained) IBOutlet NSTextField *replaygain_preamp_with_rg_label;
-@property (unsafe_unretained) IBOutlet NSTextField *replaygain_preamp_without_rg_label;
+@property (nonatomic) ddb_rg_source_mode_t rgSourceMode;
+@property (nonatomic) NSUInteger rgProcessingIdx;
 
-@property (unsafe_unretained) IBOutlet NSButton *cli_add_to_specific_playlist;
-@property (unsafe_unretained) IBOutlet NSTextField *cli_add_playlist_name;
-@property (unsafe_unretained) IBOutlet NSButton *resume_last_session;
-@property (unsafe_unretained) IBOutlet NSButton *ignore_archives;
-@property (unsafe_unretained) IBOutlet NSButton *stop_after_current_reset;
-@property (unsafe_unretained) IBOutlet NSButton *stop_after_album_reset;
+@property (nonatomic) float rgPreampWithRg;
+@property (nonatomic) float rgPreampWithoutRg;
+@property (nonatomic) NSString *rgPreampWithRgLabel;
+@property (nonatomic) NSString *rgPreampWithoutRgLabel;
 
+// Other settings
+@property (nonatomic) BOOL cliAddToSpecificPlaylist;
 @property (nonatomic) NSString *cliSpecificPlaylist;
+@property (nonatomic) BOOL resumeLastSession;
+@property (nonatomic) BOOL ignoreArchives;
+@property (nonatomic) BOOL stopAfterCurrentReset;
+@property (nonatomic) BOOL stopAfterCurrentAlbumReset;
 
 @end
 
 @implementation SoundPreferencesViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    self = [super initWithCoder:coder];
+    if (!self) {
+        return nil;
+    }
 
-    // playback
-    [_replaygain_source_mode selectItemAtIndex: deadbeef->conf_get_int ("replaygain.source_mode", 0)];
+    // ReplayGain
+    _rgSourceMode = deadbeef->conf_get_int ("replaygain.source_mode", 0);
 
-    int processing_idx = 0;
-    int processing_flags = deadbeef->conf_get_int ("replaygain.processing_flags", 0);
+    NSUInteger processing_idx = 0;
+    ddb_rg_processing_t processing_flags = deadbeef->conf_get_int ("replaygain.processing_flags", 0);
     if (processing_flags == DDB_RG_PROCESSING_GAIN) {
         processing_idx = 1;
     }
@@ -53,85 +57,59 @@ extern DB_functions_t *deadbeef;
         processing_idx = 3;
     }
 
-    [self.replaygain_processing selectItemAtIndex:processing_idx];
-    self.replaygain_preamp_with_rg.floatValue = deadbeef->conf_get_float ("replaygain.preamp_with_rg", 0);
-    self.replaygain_preamp_without_rg.floatValue = deadbeef->conf_get_float ("replaygain.preamp_without_rg", 0);
+    _rgProcessingIdx = processing_idx;
+
+    _rgPreampWithRg = deadbeef->conf_get_float ("replaygain.preamp_with_rg", 0);
+    _rgPreampWithoutRg = deadbeef->conf_get_float ("replaygain.preamp_without_rg", 0);
+
     [self updateRGLabels];
 
-    _cli_add_to_specific_playlist.state =  deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1) ? NSOnState : NSOffState;
-    _cli_add_playlist_name.stringValue =  conf_get_nsstr ("cli_add_playlist_name", "Default");
-    _resume_last_session.state =  deadbeef->conf_get_int ("resume_last_session", 1) ? NSOnState : NSOffState;
-    _ignore_archives.state =  deadbeef->conf_get_int ("ignore_archives", 1) ? NSOnState : NSOffState;
-    _stop_after_current_reset.state =  deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0) ? NSOnState : NSOffState;
-    _stop_after_album_reset.state =  deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0) ? NSOnState : NSOffState;
+    // Other settings
+    // playback
+    _cliAddToSpecificPlaylist =  deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1) ? YES : NO;
+    _cliSpecificPlaylist = conf_get_nsstr ("cli_add_playlist_name", "Default");
+    _resumeLastSession = deadbeef->conf_get_int ("resume_last_session", 1) ? YES : NO;
+    _ignoreArchives = deadbeef->conf_get_int ("ignore_archives", 1) ? YES : NO;
+    _stopAfterCurrentReset = deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0) ? YES : NO;
+    _stopAfterCurrentAlbumReset = deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0) ? YES : NO;
 
-    _cliSpecificPlaylist = conf_get_nsstr("cli_add_playlist_name", "Default");
-    [self willChangeValueForKey:@"cliSpecificPlaylist"];
-    [self didChangeValueForKey:@"cliSpecificPlaylist"];
-}
-
-- (void)setCliSpecificPlaylist:(NSString *)cliSpecificPlaylist {
-    _cliSpecificPlaylist = cliSpecificPlaylist;
-    conf_set_nsstr("cli_add_playlist_name", cliSpecificPlaylist);
-}
-
-- (IBAction)ignoreArchivesAction:(id)sender {
-    deadbeef->conf_set_int ("ignore_archives", _ignore_archives.state == NSOnState);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-}
-
-- (IBAction)cliAddToSpecificPlaylistAction:(id)sender {
-    deadbeef->conf_set_int ("cli_add_to_specific_playlist", _cli_add_to_specific_playlist.state == NSOnState);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-}
-
-- (IBAction)resumeLastSessionAction:(NSButton *)sender {
-    deadbeef->conf_set_int ("resume_last_session", sender.state == NSOnState);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-}
-
-- (IBAction)stopAfterCurrentResetAction:(id)sender {
-    deadbeef->conf_set_int ("playlist.stop_after_current_reset", _stop_after_current_reset.state == NSOnState);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-}
-
-- (IBAction)stopAfterCurrentAlbumResetAction:(id)sender {
-    deadbeef->conf_set_int ("playlist.stop_after_album_reset", _stop_after_album_reset.state == NSOnState);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    return self;
 }
 
 #pragma mark - ReplayGain
 
 - (void)updateRGLabels {
-    float value = [_replaygain_preamp_with_rg floatValue];
-    _replaygain_preamp_with_rg_label.stringValue = [NSString stringWithFormat:@"%s%0.2fdB", value >= 0 ? "+" : "", value];
-    value = [_replaygain_preamp_without_rg floatValue];
-    _replaygain_preamp_without_rg_label.stringValue = [NSString stringWithFormat:@"%s%0.2fdB", value >= 0 ? "+" : "", value];
+    float value = _rgPreampWithRg;
+    self.rgPreampWithRgLabel = [NSString stringWithFormat:@"%s%0.2fdB", value >= 0 ? "+" : "", value];
+
+    value = _rgPreampWithoutRg;
+    self.rgPreampWithoutRgLabel = [NSString stringWithFormat:@"%s%0.2fdB", value >= 0 ? "+" : "", value];
 }
 
-- (IBAction)replaygain_preamp_with_rg_action:(id)sender {
-    float value = [sender floatValue];
-    deadbeef->conf_set_float ("replaygain.preamp_with_rg", value);
+
+- (void)setRgPreampWithRg:(float)rgPreampWithRg {
+    _rgPreampWithRg = rgPreampWithRg;
+    deadbeef->conf_set_float ("replaygain.preamp_with_rg", rgPreampWithRg);
     [self updateRGLabels];
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
-- (IBAction)replaygain_preamp_without_rg_action:(id)sender {
-    float value = [sender floatValue];
-    deadbeef->conf_set_float ("replaygain.preamp_without_rg", value);
+- (void)setRgPreampWithoutRg:(float)rgPreampWithoutRg {
+    _rgPreampWithoutRg = rgPreampWithoutRg;
+    deadbeef->conf_set_float ("replaygain.preamp_without_rg", rgPreampWithoutRg);
     [self updateRGLabels];
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
-- (IBAction)replaygain_source_mode_action:(id)sender {
-    NSInteger idx = [_replaygain_source_mode indexOfSelectedItem];
-    deadbeef->conf_set_int ("replaygain.source_mode", (int)idx);
+- (void)setRgSourceMode:(ddb_rg_source_mode_t)rgSourceMode {
+    _rgSourceMode = rgSourceMode;
+    deadbeef->conf_set_int ("replaygain.source_mode", rgSourceMode);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
-- (IBAction)replaygain_processing_action:(id)sender {
+- (void)setRgProcessingIdx:(NSUInteger)idx {
+    _rgProcessingIdx = idx;
     uint32_t flags = 0;
-    NSInteger idx = [_replaygain_processing indexOfSelectedItem];
     if (idx == 1) {
         flags = DDB_RG_PROCESSING_GAIN;
     }
@@ -143,6 +121,44 @@ extern DB_functions_t *deadbeef;
     }
 
     deadbeef->conf_set_int ("replaygain.processing_flags", flags);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+#pragma mark - Other settings
+
+- (void)setCliAddToSpecificPlaylist:(BOOL)cliAddToSpecificPlaylist {
+    _cliAddToSpecificPlaylist = cliAddToSpecificPlaylist;
+    deadbeef->conf_set_int ("cli_add_to_specific_playlist", cliAddToSpecificPlaylist);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (void)setCliSpecificPlaylist:(NSString *)cliSpecificPlaylist {
+    _cliSpecificPlaylist = cliSpecificPlaylist;
+    conf_set_nsstr("cli_add_playlist_name", cliSpecificPlaylist);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (void)setIgnoreArchives:(BOOL)ignoreArchives {
+    _ignoreArchives = ignoreArchives;
+    deadbeef->conf_set_int ("ignore_archives", ignoreArchives);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (void)setResumeLastSession:(BOOL)resumeLastSession {
+    _resumeLastSession = resumeLastSession;
+    deadbeef->conf_set_int ("resume_last_session", resumeLastSession);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (void)setStopAfterCurrentReset:(BOOL)stopAfterCurrentReset {
+    _stopAfterCurrentReset = stopAfterCurrentReset;
+    deadbeef->conf_set_int ("playlist.stop_after_current_reset", stopAfterCurrentReset);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (void)setStopAfterCurrentAlbumReset:(BOOL)stopAfterCurrentAlbumReset {
+    _stopAfterCurrentAlbumReset = stopAfterCurrentAlbumReset;
+    deadbeef->conf_set_int ("playlist.stop_after_album_reset", stopAfterCurrentAlbumReset);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
