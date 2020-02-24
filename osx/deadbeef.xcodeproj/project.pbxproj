@@ -1574,6 +1574,8 @@
 		2DB225401D4F2F9500776E31 /* urf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB225371D4F2F9500776E31 /* urf.h */; };
 		2DB225431D4F30C100776E31 /* modloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DB225411D4F30C100776E31 /* modloader.cpp */; };
 		2DB225441D4F30C100776E31 /* modloader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB225421D4F30C100776E31 /* modloader.h */; };
+		2DB2F73F240466AF00F7C000 /* PluginsPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB2F73D240466AF00F7C000 /* PluginsPreferencesViewController.h */; };
+		2DB2F740240466AF00F7C000 /* PluginsPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */; };
 		2DB61F6B1DA8F1750095742A /* demux.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB61F691DA8F1750095742A /* demux.h */; };
 		2DB61F6C1DA8F1750095742A /* demux.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB61F6A1DA8F1750095742A /* demux.c */; };
 		2DB61F6E1DA8F1B80095742A /* stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB61F6D1DA8F1B80095742A /* stream.c */; };
@@ -4726,6 +4728,8 @@
 		2DB225371D4F2F9500776E31 /* urf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = urf.h; path = plugins/dumb/urf.h; sourceTree = "<group>"; };
 		2DB225411D4F30C100776E31 /* modloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = modloader.cpp; path = plugins/dumb/modloader.cpp; sourceTree = "<group>"; };
 		2DB225421D4F30C100776E31 /* modloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = modloader.h; path = plugins/dumb/modloader.h; sourceTree = "<group>"; };
+		2DB2F73D240466AF00F7C000 /* PluginsPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginsPreferencesViewController.h; sourceTree = "<group>"; };
+		2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginsPreferencesViewController.m; sourceTree = "<group>"; };
 		2DB61F691DA8F1750095742A /* demux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = demux.h; path = plugins/alac/demux.h; sourceTree = "<group>"; };
 		2DB61F6A1DA8F1750095742A /* demux.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = demux.c; path = plugins/alac/demux.c; sourceTree = "<group>"; };
 		2DB61F6D1DA8F1B80095742A /* stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream.c; path = plugins/alac/stream.c; sourceTree = "<group>"; };
@@ -7900,6 +7904,8 @@
 				2DCF73B31A952F8900495740 /* PreferencesWindowController.m */,
 				2DA30E772403292D001BAB8A /* SoundPreferencesViewController.h */,
 				2DA30E782403292D001BAB8A /* SoundPreferencesViewController.m */,
+				2DB2F73D240466AF00F7C000 /* PluginsPreferencesViewController.h */,
+				2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */,
 			);
 			path = Preferences;
 			sourceTree = "<group>";
@@ -10973,6 +10979,7 @@
 				2DDF87ED2402845C00CA8E91 /* NSMenu+ActionItems.h in Headers */,
 				2D642EB01AE9152E00FC1F7B /* sort.h in Headers */,
 				2DA30B7F23F1C9A3003D22E3 /* PropertySheetContentView.h in Headers */,
+				2DB2F73F240466AF00F7C000 /* PluginsPreferencesViewController.h in Headers */,
 				2DA2259F23F041B00033F411 /* DesignableViewController.h in Headers */,
 				2D986142226C816000BAACB1 /* BrowseButton.h in Headers */,
 				2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */,
@@ -14049,6 +14056,7 @@
 				2D98613F226C814100BAACB1 /* PropertySheetViewController.m in Sources */,
 				2DA30E7A2403292D001BAB8A /* SoundPreferencesViewController.m in Sources */,
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
+				2DB2F740240466AF00F7C000 /* PluginsPreferencesViewController.m in Sources */,
 				2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */,
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
 				2DEBA1D323E207A3000E4135 /* EqualizerWindowController.m in Sources */,

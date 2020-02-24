@@ -23,6 +23,7 @@
 
 #import "DdbShared.h"
 #import "NetworkPreferencesViewController.h"
+#import "PluginsPreferencesViewController.h"
 #import "PreferencesWindowController.h"
 #import "ScriptableTableDataSource.h"
 #import "ScriptableSelectViewController.h"
@@ -31,50 +32,6 @@
 #include "deadbeef.h"
 #include "pluginsettings.h"
 #include "scriptable_dsp.h"
-
-extern DB_functions_t *deadbeef;
-
-@interface PluginConfigPropertySheetDataSource : NSObject<PropertySheetDataSource> {
-    DB_plugin_t *_plugin;
-    BOOL _multipleChanges;
-}
-@end
-
-@implementation PluginConfigPropertySheetDataSource
-- (instancetype)initWithPlugin:(DB_plugin_t *)plugin {
-    self = [super init];
-    _plugin = plugin;
-    return self;
-}
-
-- (NSString *)propertySheet:(PropertySheetViewController *)vc configForItem:(id)item {
-    return _plugin->configdialog ? [NSString stringWithUTF8String:_plugin->configdialog] : nil;
-}
-
-- (NSString *)propertySheet:(PropertySheetViewController *)vc valueForKey:(NSString *)key def:(NSString *)def item:(id)item {
-    char str[200];
-    deadbeef->conf_get_str ([key UTF8String], [def UTF8String], str, sizeof (str));
-    return [NSString stringWithUTF8String:str];
-}
-
-- (void)propertySheet:(PropertySheetViewController *)vc setValue:(NSString *)value forKey:(NSString *)key item:(id)item {
-    deadbeef->conf_set_str ([key UTF8String], [value UTF8String]);
-    if (!_multipleChanges) {
-        deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    }
-}
-
-- (void)propertySheetBeginChanges {
-    _multipleChanges = YES;
-}
-
-- (void)propertySheetCommitChanges {
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    _multipleChanges = NO;
-}
-
-@end
-
 
 extern DB_functions_t *deadbeef;
 
@@ -89,8 +46,6 @@ extern DB_functions_t *deadbeef;
 @property (weak) IBOutlet NSView *dspNodeEditorContainer;
 @property ScriptableNodeEditorViewController *dspNodeEditorViewController;
 
-
-@property PluginConfigPropertySheetDataSource *pluginPropertySheetDataSource;
 
 @property (weak) IBOutlet NSPopUpButton *outputPluginsPopupButton;
 
@@ -108,6 +63,7 @@ extern DB_functions_t *deadbeef;
 
 @property (strong) IBOutlet SoundPreferencesViewController *soundViewController;
 @property (strong) IBOutlet NetworkPreferencesViewController *networkViewController;
+@property (strong) IBOutlet PluginsPreferencesViewController *pluginsViewController;
 
 
 @end
@@ -147,8 +103,6 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     self.dspNodeEditorViewController.delegate = self;
     self.dspNodeEditorViewController.view.frame = _dspNodeEditorContainer.bounds;
     [_dspNodeEditorContainer addSubview:self.dspNodeEditorViewController.view];
-
-    [self initPluginList];
 
     [self setInitialValues];
 
@@ -333,13 +287,6 @@ clamp_samplerate (int val) {
     return [NSColor colorWithDeviceRed:r/255.f green:g/255.f blue:b/255.f alpha:a/255.f];
 }
 
-- (void)initPluginList {
-    _pluginList.dataSource = self;
-    _pluginList.delegate = self;
-    self.pluginInfo = -1;
-}
-
-
 - (void)setInitialValues {
     // gui/misc -> player
     _enable_shift_jis_detection.state =  deadbeef->conf_get_int ("junk.enable_shift_jis_detection", 0) ? NSOnState : NSOffState;
@@ -436,77 +383,8 @@ clamp_samplerate (int val) {
 }
 
 - (IBAction)pluginsAction:(id)sender {
-    [self switchToView:_pluginsView];
+    [self switchToView:self.pluginsViewController.view];
 }
 
-- (IBAction)pluginOpenWebsite:(id)sender {
-}
-
-- (IBAction)pluginConfResetDefaults:(id)sender {
-    [_pluginConfViewController reset];
-}
-
-- (void)initPluginConfiguration:(NSInteger)idx {
-    DB_plugin_t *p = deadbeef->plug_get_list()[idx];
-    
-    self.pluginPropertySheetDataSource = [[PluginConfigPropertySheetDataSource alloc] initWithPlugin:p];
-
-    _pluginConfViewController.labelFontSize = 10;
-    _pluginConfViewController.contentFontSize = 11;
-    _pluginConfViewController.unitSpacing = 4;
-    _pluginConfViewController.autoAlignLabels = NO;
-    _pluginConfViewController.labelFixedWidth = 120;
-    _pluginConfViewController.dataSource = self.pluginPropertySheetDataSource;
-}
-
-- (void)setPluginInfo:(NSInteger)idx {
-    NSString *version = @"";
-    NSString *description = @"";
-    NSString *license = @"";
-
-    if (idx != -1) {
-        _pluginUnselectedText.hidden = YES;
-        _pluginTabView.hidden = NO;
-        DB_plugin_t **p = deadbeef->plug_get_list();
-        version = [NSString stringWithFormat:@"%d.%d", p[idx]->version_major, p[idx]->version_minor];
-        if (p[idx]->descr) {
-            description = [NSString stringWithUTF8String:p[idx]->descr];
-        }
-        if (p[idx]->copyright) {
-            license = [NSString stringWithUTF8String:p[idx]->copyright];
-        }
-
-        [self initPluginConfiguration:idx];
-    }
-    else {
-        _pluginUnselectedText.hidden = NO;
-        _pluginTabView.hidden = YES;
-    }
-
-    _pluginVersion.stringValue = version;
-    NSAttributedString *str = [[NSAttributedString alloc] initWithString:description attributes:@{NSForegroundColorAttributeName:NSColor.controlTextColor}];
-    [_pluginDescription textStorage].attributedString = str;
-    _pluginDescription.string = description;
-    _pluginLicense.string = license;
-}
-
-// data source for plugin list
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView {
-    DB_plugin_t **p = deadbeef->plug_get_list();
-    int cnt;
-    for (cnt = 0; p[cnt]; cnt++);
-
-    return cnt;
-}
-
-- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
-    DB_plugin_t **p = deadbeef->plug_get_list();
-
-    return [NSString stringWithUTF8String: p[rowIndex]->name];
-}
-
-- (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
-    self.pluginInfo = [_pluginList selectedRow];
-}
 
 @end

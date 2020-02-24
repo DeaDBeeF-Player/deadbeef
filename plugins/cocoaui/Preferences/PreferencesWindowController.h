@@ -22,7 +22,6 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#import "PropertySheetViewController.h"
 #import "ScriptableTableDataSource.h"
 
 #define DEFAULT_TITLEBAR_PLAYING_VALUE "%artist% - %title% - DeaDBeeF-%_deadbeef_version%"
@@ -33,8 +32,6 @@
 @property (strong) IBOutlet NSView *dspView;
 @property (strong) IBOutlet NSView *guiView;
 @property (strong) IBOutlet NSView *appearanceView;
-//@property (strong) IBOutlet NSView *networkView;
-@property (strong) IBOutlet NSView *pluginsView;
 @property (unsafe_unretained) IBOutlet NSToolbar *toolbar;
 
 - (IBAction)soundAction:(id)sender;
@@ -81,20 +78,6 @@
 @property (unsafe_unretained) IBOutlet NSButton *listview_bold_selected_text;
 @property (unsafe_unretained) IBOutlet NSButton *listview_italic_current_text;
 @property (unsafe_unretained) IBOutlet NSButton *listview_italic_selected_text;
-
-// Plugins properties
-@property (unsafe_unretained) IBOutlet NSTextField *pluginUnselectedText;
-@property (unsafe_unretained) IBOutlet NSTabView *pluginTabView;
-
-@property (unsafe_unretained) IBOutlet NSTableView *pluginList;
-@property (unsafe_unretained) IBOutlet NSTextField *pluginVersion;
-@property (unsafe_unretained) IBOutlet NSTextView *pluginDescription;
-@property (unsafe_unretained) IBOutlet NSTextView *pluginLicense;
-
-@property (strong) IBOutlet PropertySheetViewController *pluginConfViewController;
-
-- (IBAction)pluginOpenWebsite:(id)sender;
-- (IBAction)pluginConfResetDefaults:(id)sender;
 
 - (void)outputDeviceChanged;
 

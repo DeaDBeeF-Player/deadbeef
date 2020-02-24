@@ -46,14 +46,8 @@
                 <outlet property="override_bar_colors" destination="KCh-ey-ibq" id="i0u-b3-pMw"/>
                 <outlet property="override_playlist_colors" destination="xaR-5U-yt4" id="kff-f4-3XY"/>
                 <outlet property="playbackView" destination="Zmc-ua-enY" id="oGy-nE-FiQ"/>
-                <outlet property="pluginConfViewController" destination="MIg-N1-ie7" id="j3E-7j-FeK"/>
-                <outlet property="pluginDescription" destination="RAU-kc-ZWb" id="zfn-9H-cxs"/>
-                <outlet property="pluginLicense" destination="8p1-kz-NZ1" id="Lfo-no-HoV"/>
-                <outlet property="pluginList" destination="oDJ-0h-H53" id="0mm-vA-Zd6"/>
-                <outlet property="pluginTabView" destination="bES-gi-vpR" id="YOE-ij-uIw"/>
-                <outlet property="pluginUnselectedText" destination="Oe9-ps-NvQ" id="alq-55-LVG"/>
-                <outlet property="pluginVersion" destination="wDm-op-PV2" id="yb0-S2-7T0"/>
                 <outlet property="pluginsView" destination="ZNh-3b-s1L" id="ZWj-HZ-tLL"/>
+                <outlet property="pluginsViewController" destination="AAs-to-EGG" id="gfD-Ut-jGg"/>
                 <outlet property="refresh_rate" destination="vtf-8S-vYr" id="1dI-0B-TIp"/>
                 <outlet property="soundViewController" destination="YqN-ZP-2eU" id="DKY-gJ-i4q"/>
                 <outlet property="targetSamplerateComboBox" destination="ePT-oo-DxM" id="TSl-Sq-6Ur"/>
@@ -1169,7 +1163,7 @@
                     <rect key="frame" x="20" y="20" width="200" height="311"/>
                     <clipView key="contentView" id="Qwb-Aj-8az">
                         <rect key="frame" x="1" y="1" width="198" height="309"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" alternatingRowBackgroundColors="YES" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" autosaveName="" id="oDJ-0h-H53">
                                 <rect key="frame" x="0.0" y="0.0" width="198" height="309"/>
@@ -1235,14 +1229,14 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <action selector="pluginConfResetDefaults:" target="-2" id="EWR-Ux-2kq"/>
+                                            <action selector="pluginConfResetDefaults:" target="AAs-to-EGG" id="XHT-qt-wJE"/>
                                         </connections>
                                     </button>
                                     <scrollView autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oef-pD-hfw">
                                         <rect key="frame" x="20" y="52" width="409" height="221"/>
                                         <clipView key="contentView" copiesOnScroll="NO" id="c6E-sw-DGw" customClass="FlippedClipView">
                                             <rect key="frame" x="1" y="1" width="407" height="219"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9eO-pn-WbB" customClass="PropertySheetContentView">
                                                     <rect key="frame" x="0.0" y="0.0" width="407" height="219"/>
@@ -1279,7 +1273,7 @@
                                         <rect key="frame" x="20" y="17" width="409" height="224"/>
                                         <clipView key="contentView" drawsBackground="NO" id="Lle-Gh-L94">
                                             <rect key="frame" x="1" y="1" width="392" height="222"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="RAU-kc-ZWb">
                                                     <rect key="frame" x="0.0" y="0.0" width="392" height="222"/>
@@ -1324,7 +1318,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <action selector="pluginOpenWebsite:" target="-2" id="Hpt-1y-dW3"/>
+                                            <action selector="pluginOpenWebsite:" target="AAs-to-EGG" id="CEx-ry-pOn"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -1352,7 +1346,7 @@
                                         <rect key="frame" x="20" y="20" width="409" height="253"/>
                                         <clipView key="contentView" drawsBackground="NO" id="kGi-v7-aYF">
                                             <rect key="frame" x="1" y="1" width="392" height="251"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="8p1-kz-NZ1">
                                                     <rect key="frame" x="0.0" y="0.0" width="392" height="251"/>
@@ -1391,7 +1385,7 @@
                 <constraint firstItem="bES-gi-vpR" firstAttribute="top" secondItem="ZNh-3b-s1L" secondAttribute="top" constant="20" id="9zJ-te-fSb"/>
                 <constraint firstAttribute="trailing" secondItem="bES-gi-vpR" secondAttribute="trailing" constant="20" id="CRi-f1-Wmd"/>
                 <constraint firstItem="oPE-t8-hhR" firstAttribute="leading" secondItem="ZNh-3b-s1L" secondAttribute="leading" constant="20" id="HZp-91-yum"/>
-                <constraint firstAttribute="bottom" secondItem="bES-gi-vpR" secondAttribute="bottom" constant="20" id="TRX-6y-gd0"/>
+                <constraint firstItem="bES-gi-vpR" firstAttribute="bottom" secondItem="oPE-t8-hhR" secondAttribute="bottom" id="KpB-sh-fs4"/>
                 <constraint firstItem="bES-gi-vpR" firstAttribute="leading" secondItem="oDJ-0h-H53" secondAttribute="trailing" constant="9" id="Tw8-VZ-Hai"/>
                 <constraint firstAttribute="bottom" secondItem="oPE-t8-hhR" secondAttribute="bottom" constant="20" id="Zif-gB-q3h"/>
             </constraints>
@@ -1644,6 +1638,19 @@
             <connections>
                 <outlet property="cli_add_playlist_name" destination="ySk-s8-tM7" id="nmi-Gw-qt3"/>
                 <outlet property="view" destination="UtU-5A-sPy" id="taT-ru-Hbc"/>
+            </connections>
+        </viewController>
+        <viewController id="AAs-to-EGG" customClass="PluginsPreferencesViewController">
+            <connections>
+                <outlet property="pluginConfViewController" destination="MIg-N1-ie7" id="UGa-2A-e4X"/>
+                <outlet property="pluginDescription" destination="RAU-kc-ZWb" id="6Iv-QP-yfo"/>
+                <outlet property="pluginLicense" destination="8p1-kz-NZ1" id="c1y-vH-fLV"/>
+                <outlet property="pluginList" destination="oDJ-0h-H53" id="lwW-gU-heT"/>
+                <outlet property="pluginTabView" destination="bES-gi-vpR" id="CbE-ET-MR2"/>
+                <outlet property="pluginUnselectedText" destination="Oe9-ps-NvQ" id="rG6-Ck-voZ"/>
+                <outlet property="pluginVersion" destination="wDm-op-PV2" id="yiW-hS-MMz"/>
+                <outlet property="view" destination="ZNh-3b-s1L" id="Aag-Jo-0i9"/>
+                <outlet property="wwwButton" destination="cbN-IE-HyD" id="y8M-AM-q7I"/>
             </connections>
         </viewController>
     </objects>
