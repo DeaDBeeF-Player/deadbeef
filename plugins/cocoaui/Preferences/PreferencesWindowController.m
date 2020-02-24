@@ -35,9 +35,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface PreferencesWindowController () {
-    settings_data_t _settingsData;
-}
+@interface PreferencesWindowController ()
 
 @property (strong) IBOutlet ScriptableSelectViewController *dspSelectViewController;
 
@@ -65,14 +63,9 @@ extern DB_functions_t *deadbeef;
 @property (strong) IBOutlet NetworkPreferencesViewController *networkViewController;
 @property (strong) IBOutlet PluginsPreferencesViewController *pluginsViewController;
 
-
 @end
 
 @implementation PreferencesWindowController
-
-- (void)dealloc {
-    settings_data_free (&_settingsData);
-}
 
 static void
 ca_enum_callback (const char *s, const char *d, void *userdata) {
