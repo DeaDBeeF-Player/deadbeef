@@ -31,7 +31,7 @@
 #import "ReplayGainScannerController.h"
 #import "NSMenu+ActionItems.h"
 
-#include "../../deadbeef.h"
+#include "deadbeef.h"
 #include "rg_scanner.h"
 
 #define CELL_HPADDING 4

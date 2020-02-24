@@ -10,7 +10,7 @@
 #import "PlaylistView.h"
 #import "DdbShared.h"
 #import "PlaylistLocalDragDropHolder.h"
-#include "../../deadbeef.h"
+#include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
 
