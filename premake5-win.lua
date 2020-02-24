@@ -102,9 +102,9 @@ end
        "plugins/libparser/*.h",
        "plugins/libparser/*.c",
        "external/wcwidth/wcwidth.c",
-       "external/wcwidth/wcwidth.h"
-       -- "ConvertUTF/*.h",
-       -- "ConvertUTF/*.c"
+       "external/wcwidth/wcwidth.h",
+       "shared/ctmap.c",
+       "shared/ctmap.h"
    }
    defines { "PORTABLE=1", "STATICLINK=1", "PREFIX=\"donotuse\"", "LIBDIR=\"donotuse\"", "DOCDIR=\"donotuse\"", "LOCALEDIR=\"donotuse\""}
    links { "m", "pthread", "dl"}
