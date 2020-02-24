@@ -55,7 +55,7 @@ static NSString *kContentTypeMappingChangedNotification = @"ContentTypeMappingCh
 
 @property (nonatomic) BOOL enableNetworkProxy;
 @property (nonatomic) NSString *networkProxyAddress;
-@property (nonatomic) NSNumber *networkProxyPort;
+@property (nonatomic) NSUInteger networkProxyPort;
 @property (nonatomic) NSUInteger networkProxyType;
 @property (nonatomic) NSString *networkProxyUserName;
 @property (nonatomic) NSString *networkProxyPassword;
@@ -80,7 +80,7 @@ static NSString *kContentTypeMappingChangedNotification = @"ContentTypeMappingCh
 
     _networkProxyAddress = conf_get_nsstr ("network.proxy.address", "");
 
-    _networkProxyPort = @(deadbeef->conf_get_int ("network.proxy.port", 8080));
+    _networkProxyPort = deadbeef->conf_get_int ("network.proxy.port", 8080);
 
     NSString *t = conf_get_nsstr ("network.proxy.type", "HTTP");
     const char *type = t.UTF8String;
@@ -186,21 +186,18 @@ static NSString *kContentTypeMappingChangedNotification = @"ContentTypeMappingCh
     _enableNetworkProxy = enableNetworkProxy;
     deadbeef->conf_set_int ("network.proxy", enableNetworkProxy);
     deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (void)setNetworkProxyAddress:(NSString *)networkProxyAddress {
     _networkProxyAddress = networkProxyAddress;
     deadbeef->conf_set_str ("network.proxy.address", (networkProxyAddress?:@"").UTF8String);
     deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
-- (void)setNetworkProxyPort:(NSNumber *)networkProxyPort {
+- (void)setNetworkProxyPort:(NSUInteger)networkProxyPort {
     _networkProxyPort = networkProxyPort;
-    deadbeef->conf_set_int ("network.proxy.port", (networkProxyPort?:@8080).unsignedIntValue);
+    deadbeef->conf_set_int ("network.proxy.port", (int)(networkProxyPort?:8080));
     deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (void)setNetworkProxyType:(NSUInteger)networkProxyType {
@@ -232,30 +229,24 @@ static NSString *kContentTypeMappingChangedNotification = @"ContentTypeMappingCh
 
     deadbeef->conf_set_str ("network.proxy.type", type);
     deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (void)setNetworkProxyUserName:(NSString *)networkProxyUserName {
     _networkProxyUserName = networkProxyUserName;
     deadbeef->conf_set_str ("network.proxy.username", (networkProxyUserName?:@"").UTF8String);
     deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (void)setNetworkProxyPassword:(NSString *)networkProxyPassword {
     _networkProxyPassword = networkProxyPassword;
     deadbeef->conf_set_str ("network.proxy.password", (networkProxyPassword?:@"").UTF8String);
     deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
 
 - (void)setNetworkProxyUserAgent:(NSString *)networkProxyUserAgent {
     _networkProxyUserAgent = networkProxyUserAgent;
     deadbeef->conf_set_str ("network.http_user_agent", (networkProxyUserAgent?:@"").UTF8String);
     deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
-    deadbeef->conf_save ();
 }
-
-
 
 @end
