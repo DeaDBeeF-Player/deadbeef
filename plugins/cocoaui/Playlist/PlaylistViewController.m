@@ -21,6 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#import "DdbShared.h"
 #import "ConverterWindowController.h"
 #import "CoverManager.h"
 #import "EditColumnWindowController.h"
@@ -278,7 +279,7 @@ extern DB_functions_t *deadbeef;
 #define DEFAULT_COLUMNS "[{\"title\":\"Playing\", \"id\":\"1\", \"format\":\"%playstatus%\", \"size\":\"50\"}, {\"title\":\"Artist / Album\", \"format\":\"$if(%album artist%,%album artist%,Unknown Artist)[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track number%\", \"size\":\"50\"}, {\"title\":\"Title / Track Artist\", \"format\":\"%title%[ // %track artist%]\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
 
 - (NSString *)getColumnConfig {
-    return [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.columns", DEFAULT_COLUMNS)];
+    return conf_get_nsstr ("cocoaui.columns", DEFAULT_COLUMNS);
 }
 
 - (void)writeColumnConfig:(NSString *)config {

@@ -21,6 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#import "DdbShared.h"
 #import "NetworkPreferencesViewController.h"
 #import "PreferencesWindowController.h"
 #import "ScriptableTableDataSource.h"
@@ -222,11 +223,11 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     [self initAudioDeviceList];
 
     self.overrideSamplerateCheckbox.state = deadbeef->conf_get_int ("streamer.override_samplerate", 0) ? NSControlStateValueOn : NSControlStateValueOff;
-    self.targetSamplerateComboBox.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("streamer.samplerate", "44100")];
+    self.targetSamplerateComboBox.stringValue = conf_get_nsstr ("streamer.samplerate", "44100");
 
     self.basedOnInputSamplerateCheckbox.state = deadbeef->conf_get_int ("streamer.use_dependent_samplerate", 0) ? NSControlStateValueOn : NSControlStateValueOff;
-    self.multiplesOf48ComboBox.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("streamer.samplerate_mult_48", "48000")];
-    self.multiplesOf44ComboBox.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("streamer.samplerate_mult_44", "44100")];
+    self.multiplesOf48ComboBox.stringValue = conf_get_nsstr ("streamer.samplerate_mult_48", "48000");
+    self.multiplesOf44ComboBox.stringValue = conf_get_nsstr ("streamer.samplerate_mult_44", "44100");
     [self validateAudioSettingsViews];
 }
 
@@ -345,8 +346,8 @@ clamp_samplerate (int val) {
     _enable_cp1251_detection.state =  deadbeef->conf_get_int ("junk.enable_cp1251_detection", 0) ? NSOnState : NSOffState;
     _enable_cp936_detection.state =  deadbeef->conf_get_int ("junk.enable_cp936_detection", 0) ? NSOnState : NSOffState;
     _refresh_rate.intValue =  deadbeef->conf_get_int ("cocoaui.refresh_rate", 10);
-    _titlebar_playing.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.titlebar_playing", DEFAULT_TITLEBAR_PLAYING_VALUE)];
-    _titlebar_stopped.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.titlebar_stopped", DEFAULT_TITLEBAR_STOPPED_VALUE)];
+    _titlebar_playing.stringValue = conf_get_nsstr ("cocoaui.titlebar_playing", DEFAULT_TITLEBAR_PLAYING_VALUE);
+    _titlebar_stopped.stringValue = conf_get_nsstr ("cocoaui.titlebar_stopped", DEFAULT_TITLEBAR_STOPPED_VALUE);
 
     // gui/misc -> playlist
     _mmb_delete_playlist.state =  deadbeef->conf_get_int ("cocoaui.mmb_delete_playlist", 1) ? NSOnState : NSOffState;

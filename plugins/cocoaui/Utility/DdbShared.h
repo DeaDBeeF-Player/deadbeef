@@ -24,12 +24,18 @@
 #ifndef deadbeef_DdbShared_h
 #define deadbeef_DdbShared_h
 
+extern NSString * const ddbPlaylistItemsUTIType;
+
 int
 cocoaui_add_new_playlist (void);
 
 void
 cocoaui_playlist_set_curr (int playlist);
 
-extern NSString *ddbPlaylistItemsUTIType;
+NSString *
+conf_get_nsstr (const char *key, const char *def);
+
+void
+conf_set_nsstr (const char *key, NSString *value);
 
 #endif

@@ -25,6 +25,8 @@
 #import "DdbShared.h"
 #import "deadbeef.h"
 
+NSString * const ddbPlaylistItemsUTIType = @"org.deadbeef.playlistItems";
+
 extern DB_functions_t *deadbeef;
 
 #define _(x) x
@@ -67,4 +69,14 @@ cocoaui_playlist_set_curr (int playlist) {
     deadbeef->conf_set_int ("playlist.current", playlist);
 }
 
-NSString *ddbPlaylistItemsUTIType = @"org.deadbeef.playlistItems";
+NSString *
+conf_get_nsstr (const char *key, const char *def) {
+    char value[1024];
+    deadbeef->conf_get_str (key, def, value, sizeof (value));
+    return [NSString stringWithUTF8String:value];
+}
+
+void
+conf_set_nsstr (const char *key, NSString *value) {
+    deadbeef->conf_set_str (key, value.UTF8String);
+}

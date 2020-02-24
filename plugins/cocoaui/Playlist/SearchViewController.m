@@ -20,6 +20,7 @@
 
     3. This notice may not be removed or altered from any source distribution.
 */
+#import "DdbShared.h"
 #import "SearchViewController.h"
 #include "deadbeef.h"
 
@@ -30,7 +31,7 @@ extern DB_functions_t *deadbeef;
 #define DEFAULT_COLUMNS "[{\"title\":\"Artist - Album\", \"format\":\"$if(%album artist%,%album artist%,Unknown Artist)[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track number%\", \"size\":\"50\"}, {\"title\":\"Track Title\", \"format\":\"%title%\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
 
 - (NSString *)getColumnConfig {
-    return [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.search_columns", DEFAULT_COLUMNS)];
+    return conf_get_nsstr ("cocoaui.search_columns", DEFAULT_COLUMNS);
 }
 
 - (void)writeColumnConfig:(NSString *)config {

@@ -6,6 +6,7 @@
 //  Copyright © 2020 Alexey Yakovenko. All rights reserved.
 //
 
+#import "DdbShared.h"
 #import "SoundPreferencesViewController.h"
 #include "deadbeef.h"
 
@@ -27,6 +28,8 @@ extern DB_functions_t *deadbeef;
 @property (unsafe_unretained) IBOutlet NSButton *ignore_archives;
 @property (unsafe_unretained) IBOutlet NSButton *stop_after_current_reset;
 @property (unsafe_unretained) IBOutlet NSButton *stop_after_album_reset;
+
+@property (nonatomic) NSString *cliSpecificPlaylist;
 
 @end
 
@@ -56,11 +59,20 @@ extern DB_functions_t *deadbeef;
     [self updateRGLabels];
 
     _cli_add_to_specific_playlist.state =  deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1) ? NSOnState : NSOffState;
-    _cli_add_playlist_name.stringValue =  [NSString stringWithUTF8String: deadbeef->conf_get_str_fast ("cli_add_playlist_name", "Default")];
+    _cli_add_playlist_name.stringValue =  conf_get_nsstr ("cli_add_playlist_name", "Default");
     _resume_last_session.state =  deadbeef->conf_get_int ("resume_last_session", 1) ? NSOnState : NSOffState;
     _ignore_archives.state =  deadbeef->conf_get_int ("ignore_archives", 1) ? NSOnState : NSOffState;
     _stop_after_current_reset.state =  deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0) ? NSOnState : NSOffState;
     _stop_after_album_reset.state =  deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0) ? NSOnState : NSOffState;
+
+    _cliSpecificPlaylist = conf_get_nsstr("cli_add_playlist_name", "Default");
+    [self willChangeValueForKey:@"cliSpecificPlaylist"];
+    [self didChangeValueForKey:@"cliSpecificPlaylist"];
+}
+
+- (void)setCliSpecificPlaylist:(NSString *)cliSpecificPlaylist {
+    _cliSpecificPlaylist = cliSpecificPlaylist;
+    conf_set_nsstr("cli_add_playlist_name", cliSpecificPlaylist);
 }
 
 - (IBAction)ignoreArchivesAction:(id)sender {

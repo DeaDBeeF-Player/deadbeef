@@ -6,6 +6,7 @@
 //  Copyright © 2020 Alexey Yakovenko. All rights reserved.
 //
 
+#import "DdbShared.h"
 #import "NetworkPreferencesViewController.h"
 #include "ctmap.h"
 #include "deadbeef.h"
@@ -76,7 +77,7 @@ static NSString *kContentTypeMappingChangedNotification = @"ContentTypeMappingCh
     [self willChangeValueForKey:@"enableNetworkProxy"];
     [self didChangeValueForKey:@"enableNetworkProxy"];
 
-    _networkProxyAddress = [NSString stringWithUTF8String: deadbeef->conf_get_str_fast ("network.proxy.address", "")];
+    _networkProxyAddress = conf_get_nsstr ("network.proxy.address", "");
     [self willChangeValueForKey:@"networkProxyAddress"];
     [self didChangeValueForKey:@"networkProxyAddress"];
 
@@ -84,7 +85,8 @@ static NSString *kContentTypeMappingChangedNotification = @"ContentTypeMappingCh
     [self willChangeValueForKey:@"networkProxyPort"];
     [self didChangeValueForKey:@"networkProxyPort"];
 
-    const char *type = deadbeef->conf_get_str_fast ("network.proxy.type", "HTTP");
+    NSString *t = conf_get_nsstr ("network.proxy.type", "HTTP");
+    const char *type = t.UTF8String;
     if (!strcasecmp (type, "HTTP")) {
         _networkProxyType = 0;
     }
@@ -106,15 +108,15 @@ static NSString *kContentTypeMappingChangedNotification = @"ContentTypeMappingCh
     [self willChangeValueForKey:@"networkProxyType"];
     [self didChangeValueForKey:@"networkProxyType"];
 
-    _networkProxyUserName = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("network.proxy.username", "")];
+    _networkProxyUserName = conf_get_nsstr ("network.proxy.username", "");
     [self willChangeValueForKey:@"networkProxyUserName"];
     [self didChangeValueForKey:@"networkProxyUserName"];
 
-    _networkProxyPassword = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("network.proxy.password", "")];
+    _networkProxyPassword = conf_get_nsstr ("network.proxy.password", "");
     [self willChangeValueForKey:@"networkProxyPassword"];
     [self didChangeValueForKey:@"networkProxyPassword"];
 
-    _networkProxyUserAgent = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("network.http_user_agent", "")];
+    _networkProxyUserAgent = conf_get_nsstr ("network.http_user_agent", "");
     [self willChangeValueForKey:@"networkProxyUserAgent"];
     [self didChangeValueForKey:@"networkProxyUserAgent"];
 
