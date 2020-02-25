@@ -14,23 +14,52 @@ extern DB_functions_t *deadbeef;
 
 @interface SoundPreferencesViewController ()
 
-@property (weak) IBOutlet NSPopUpButton *outputPluginsPopupButton;
-
 @property NSMutableArray<NSString *> *audioDevices;
-@property (weak) IBOutlet NSPopUpButton *audioDevicesPopupButton;
-@property (weak) IBOutlet NSTextField *targetSamplerateLabel;
-@property (weak) IBOutlet NSTextField *multiplesOf48Label;
-@property (weak) IBOutlet NSTextField *multiplesOf44Label;
 
-@property (weak) IBOutlet NSButton *overrideSamplerateCheckbox;
-@property (weak) IBOutlet NSComboBox *targetSamplerateComboBox;
-@property (weak) IBOutlet NSButton *basedOnInputSamplerateCheckbox;
-@property (weak) IBOutlet NSComboBox *multiplesOf48ComboBox;
-@property (weak) IBOutlet NSComboBox *multiplesOf44ComboBox;
+@property (weak) IBOutlet NSPopUpButton *outputPluginsPopupButton;
+@property (weak) IBOutlet NSPopUpButton *audioDevicesPopupButton;
+
+@property (nonatomic) NSUInteger outputPluginsIndex;
+@property (nonatomic) NSUInteger audioDevicesIndex;
+@property (nonatomic) BOOL audioDevicesEnabled;
+@property (nonatomic) BOOL overrideSamplerate;
+@property (nonatomic) NSString *targetSamplerate;
+@property (nonatomic) BOOL basedOnInputSamplerate;
+@property (nonatomic) NSString *samplerateForMultiplesOf48;
+@property (nonatomic) NSString *samplerateForMultiplesOf44;
 
 @end
 
 @implementation SoundPreferencesViewController
+
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    self = [super initWithCoder:coder];
+    if (!self) {
+        return nil;
+    }
+    NSInteger index = 0;
+
+    char curplug[200];
+    deadbeef->conf_get_str ("output_plugin", "coreaudio", curplug, sizeof (curplug));
+    DB_output_t **o = deadbeef->plug_get_output_list ();
+    for (index = 0; o[index]; index++) {
+        if (!strcmp (o[index]->plugin.id, curplug)) {
+            _outputPluginsIndex = index;
+        }
+    }
+
+
+    _overrideSamplerate = deadbeef->conf_get_int ("streamer.override_samplerate", 0) ? YES : NO;
+    _targetSamplerate = @(deadbeef->conf_get_int ("streamer.samplerate", 44100)).stringValue;
+
+    _basedOnInputSamplerate = deadbeef->conf_get_int ("streamer.use_dependent_samplerate", 0) ? YES : NO;
+
+    _samplerateForMultiplesOf48 = @(deadbeef->conf_get_int ("streamer.samplerate_mult_48", 48000)).stringValue;
+    _samplerateForMultiplesOf44 = @(deadbeef->conf_get_int ("streamer.samplerate_mult_44", 44100)).stringValue;
+
+    return self;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -50,33 +79,31 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
 }
 
 - (void)initAudioDeviceList {
-    [self.audioDevicesPopupButton removeAllItems];
+    DB_output_t *output = deadbeef->get_output ();
 
     self.audioDevices = [NSMutableArray new];
-    DB_output_t *output = deadbeef->get_output ();
-    if (!output->enum_soundcards) {
-        self.audioDevicesPopupButton.enabled = NO;
-        return;
+    _audioDevicesEnabled = output->enum_soundcards ? YES : NO;
+
+    if (output->enum_soundcards) {
+        output->enum_soundcards (ca_enum_callback, (__bridge void *)(self.audioDevices));
     }
-
-    self.audioDevicesPopupButton.enabled = YES;
-
-    output->enum_soundcards (ca_enum_callback, (__bridge void *)(self.audioDevices));
 
     NSString *conf_name = [[NSString stringWithUTF8String:output->plugin.id] stringByAppendingString:@"_soundcard"];
     char curdev[200];
     deadbeef->conf_get_str ([conf_name UTF8String], "", curdev, sizeof (curdev));
+    _audioDevicesIndex = 1;
+    NSUInteger index = 1;
     [self.audioDevicesPopupButton removeAllItems];
     [self.audioDevicesPopupButton addItemWithTitle:@"System Default"];
-    [self.audioDevicesPopupButton selectItemAtIndex:0];
-    NSInteger index = 1;
     for (NSString *dev in self.audioDevices) {
-        [self.audioDevicesPopupButton addItemWithTitle:dev];
         if (!strcmp ([dev UTF8String], curdev)) {
-            [self.audioDevicesPopupButton selectItemAtIndex:index];
+            _audioDevicesIndex = index;
         }
         index++;
+        [self.audioDevicesPopupButton addItemWithTitle:dev];
     }
+    [self willChangeValueForKey:@"audioDevicesIndex"];
+    [self didChangeValueForKey:@"audioDevicesIndex"];
 }
 
 - (void)initializeAudioTab {
@@ -90,61 +117,36 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     DB_output_t **o = deadbeef->plug_get_output_list ();
     for (index = 0; o[index]; index++) {
         [self.outputPluginsPopupButton addItemWithTitle:[NSString stringWithUTF8String:o[index]->plugin.name]];
-        if (!strcmp (o[index]->plugin.id, curplug)) {
-            [self.outputPluginsPopupButton selectItemAtIndex:index];
-        }
     }
 
     // audio devices
     [self initAudioDeviceList];
-
-    self.overrideSamplerateCheckbox.state = deadbeef->conf_get_int ("streamer.override_samplerate", 0) ? NSControlStateValueOn : NSControlStateValueOff;
-    self.targetSamplerateComboBox.stringValue = conf_get_nsstr ("streamer.samplerate", "44100");
-
-    self.basedOnInputSamplerateCheckbox.state = deadbeef->conf_get_int ("streamer.use_dependent_samplerate", 0) ? NSControlStateValueOn : NSControlStateValueOff;
-    self.multiplesOf48ComboBox.stringValue = conf_get_nsstr ("streamer.samplerate_mult_48", "48000");
-    self.multiplesOf44ComboBox.stringValue = conf_get_nsstr ("streamer.samplerate_mult_44", "44100");
-    [self validateAudioSettingsViews];
 }
 
-- (void)validateAudioSettingsViews {
-    BOOL override = deadbeef->conf_get_int ("streamer.override_samplerate", 0) ? YES : NO;
-    BOOL useDependent = deadbeef->conf_get_int ("streamer.use_dependent_samplerate", 0) ? YES : NO;
-
-    self.targetSamplerateLabel.enabled = override;
-    self.targetSamplerateComboBox.enabled = override;
-
-    self.basedOnInputSamplerateCheckbox.enabled = override;
-
-    self.multiplesOf48Label.enabled = override && useDependent;
-    self.multiplesOf48ComboBox.enabled = override && useDependent;
-
-    self.multiplesOf44Label.enabled = override && useDependent;
-    self.multiplesOf44ComboBox.enabled = override && useDependent;
-}
-
-- (IBAction)outputPluginAction:(id)sender {
+- (void)setOutputPluginsIndex:(NSUInteger)outputPluginsIndex {
+    _outputPluginsIndex = outputPluginsIndex;
     DB_output_t **o = deadbeef->plug_get_output_list ();
-    deadbeef->conf_set_str ("output_plugin", o[[self.outputPluginsPopupButton indexOfSelectedItem]]->plugin.id);
+    deadbeef->conf_set_str ("output_plugin", o[outputPluginsIndex]->plugin.id);
     deadbeef->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
 }
 
-- (IBAction)playbackDeviceAction:(NSPopUpButton *)sender {
-    NSString *title = [[sender selectedItem] title];
+- (void)setAudioDevicesIndex:(NSUInteger)audioDevicesIndex {
+    _audioDevicesIndex = audioDevicesIndex;
+    NSString *title = audioDevicesIndex == 0 ? @"System Default" : self.audioDevices[audioDevicesIndex-1];
     DB_output_t *output = deadbeef->get_output ();
     NSString *dev = [[NSString stringWithUTF8String:output->plugin.id] stringByAppendingString:@"_soundcard"];
-    deadbeef->conf_set_str ([dev UTF8String], [title UTF8String]);
+    deadbeef->conf_set_str (dev.UTF8String, title.UTF8String);
     deadbeef->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
 }
 
-- (IBAction)overrideSamplerateAction:(NSButton *)sender {
-    deadbeef->conf_set_int ("streamer.override_samplerate", sender.state == NSControlStateValueOn ? 1 : 0);
+- (void)setOverrideSamplerate:(BOOL)overrideSamplerate {
+    _overrideSamplerate = overrideSamplerate;
+    deadbeef->conf_set_int ("streamer.override_samplerate", overrideSamplerate);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    [self validateAudioSettingsViews];
 }
 
-static int
-clamp_samplerate (int val) {
+static NSUInteger
+clamp_samplerate (NSUInteger val) {
     if (val < 8000) {
         return 8000;
     }
@@ -154,27 +156,30 @@ clamp_samplerate (int val) {
     return val;
 }
 
-- (IBAction)targetSamplerateAction:(NSComboBox *)sender {
-    int samplerate = clamp_samplerate ((int)[sender integerValue]);
-    deadbeef->conf_set_int ("streamer.samplerate", samplerate);
+- (void)setTargetSamplerate:(NSString *)targetSamplerate {
+    NSUInteger samplerate = clamp_samplerate (atoi(targetSamplerate.UTF8String));
+    _targetSamplerate = @(samplerate).stringValue;
+    deadbeef->conf_set_int ("streamer.samplerate", (int)samplerate);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
-- (IBAction)basedOnInputSamplerateAction:(NSButton *)sender {
-    deadbeef->conf_set_int ("streamer.use_dependent_samplerate", sender.state == NSControlStateValueOn ? 1 : 0);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    [self validateAudioSettingsViews];
-}
-
-- (IBAction)multiplesOf48Action:(NSComboBox *)sender {
-    int samplerate = clamp_samplerate ((int)[sender integerValue]);
-    deadbeef->conf_set_int ("streamer.samplerate_mult_48", samplerate);
+- (void)setBasedOnInputSamplerate:(BOOL)basedOnInputSamplerate {
+    _basedOnInputSamplerate = basedOnInputSamplerate;
+    deadbeef->conf_set_int ("streamer.use_dependent_samplerate", basedOnInputSamplerate);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
-- (IBAction)multiplesOf44Action:(NSComboBox *)sender {
-    int samplerate = clamp_samplerate ((int)[sender integerValue]);
-    deadbeef->conf_set_int ("streamer.samplerate_mult_44", samplerate);
+- (void)setSamplerateForMultiplesOf48:(NSString *)samplerateForMultiplesOf48 {
+    NSUInteger samplerate = clamp_samplerate (atoi(samplerateForMultiplesOf48.UTF8String));
+    _samplerateForMultiplesOf48 = @(samplerate).stringValue;
+    deadbeef->conf_set_int ("streamer.samplerate_mult_48", (int)samplerate);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (void)setSamplerateForMultiplesOf44:(NSString *)samplerateForMultiplesOf44 {
+    NSUInteger samplerate = clamp_samplerate (atoi(samplerateForMultiplesOf44.UTF8String));
+    _samplerateForMultiplesOf44 = @(samplerate).stringValue;
+    deadbeef->conf_set_int ("streamer.samplerate_mult_44", (int)samplerate);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
