@@ -9,9 +9,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowController">
             <connections>
                 <outlet property="appearanceView" destination="Psg-tn-Uc3" id="XJ4-XU-dNz"/>
-                <outlet property="audioDevicesPopupButton" destination="0ET-qW-1ss" id="YwC-6z-B39"/>
                 <outlet property="autoresize_columns" destination="pt4-Vh-haG" id="ltv-Y2-Vr9"/>
-                <outlet property="basedOnInputSamplerateCheckbox" destination="OHq-bQ-a2N" id="kOa-IW-a5I"/>
                 <outlet property="color_bar_background" destination="tgF-mM-RL5" id="yba-27-MhO"/>
                 <outlet property="color_bar_foreground" destination="Fvy-JU-f9r" id="kAg-uQ-hmi"/>
                 <outlet property="color_listview_cursor" destination="67H-ct-aL1" id="NI1-Jf-ccK"/>
@@ -35,23 +33,15 @@
                 <outlet property="listview_italic_current_text" destination="2mI-5E-ghQ" id="QKw-VD-RPP"/>
                 <outlet property="listview_italic_selected_text" destination="Ju6-JL-SK6" id="RxW-cT-Is1"/>
                 <outlet property="mmb_delete_playlist" destination="mQR-r2-hgB" id="I1Y-hc-8Vs"/>
-                <outlet property="multiplesOf44ComboBox" destination="DZJ-up-vkC" id="KMV-Id-EuE"/>
-                <outlet property="multiplesOf44Label" destination="VdO-R5-ZVn" id="Jq6-lI-Fil"/>
-                <outlet property="multiplesOf48ComboBox" destination="xIv-0C-D3P" id="s7P-rJ-5cq"/>
-                <outlet property="multiplesOf48Label" destination="CiA-bx-OlM" id="fhB-7A-RWO"/>
                 <outlet property="name_playlist_from_folder" destination="va0-Vc-fXe" id="EAm-pp-vao"/>
                 <outlet property="networkViewController" destination="4Qv-4Y-koA" id="Sws-hE-eaY"/>
-                <outlet property="outputPluginsPopupButton" destination="WGI-Tr-J4c" id="k81-dq-NYf"/>
-                <outlet property="overrideSamplerateCheckbox" destination="Lkp-Xx-fTd" id="scj-fp-ThS"/>
                 <outlet property="override_bar_colors" destination="KCh-ey-ibq" id="i0u-b3-pMw"/>
                 <outlet property="override_playlist_colors" destination="xaR-5U-yt4" id="kff-f4-3XY"/>
-                <outlet property="playbackView" destination="Zmc-ua-enY" id="oGy-nE-FiQ"/>
+                <outlet property="playbackViewController" destination="YqN-ZP-2eU" id="DKY-gJ-i4q"/>
                 <outlet property="pluginsView" destination="ZNh-3b-s1L" id="ZWj-HZ-tLL"/>
                 <outlet property="pluginsViewController" destination="AAs-to-EGG" id="gfD-Ut-jGg"/>
                 <outlet property="refresh_rate" destination="vtf-8S-vYr" id="1dI-0B-TIp"/>
-                <outlet property="soundViewController" destination="YqN-ZP-2eU" id="DKY-gJ-i4q"/>
-                <outlet property="targetSamplerateComboBox" destination="ePT-oo-DxM" id="TSl-Sq-6Ur"/>
-                <outlet property="targetSamplerateLabel" destination="kev-Ar-D1H" id="WvY-iB-sAy"/>
+                <outlet property="soundViewController" destination="rug-kD-oVn" id="cEh-Za-gUT"/>
                 <outlet property="titlebar_playing" destination="pSK-4V-QiQ" id="HHk-oD-wV8"/>
                 <outlet property="titlebar_stopped" destination="usM-X5-aNf" id="kTP-nC-Pic"/>
                 <outlet property="toolbar" destination="b4X-86-Cex" id="1AX-xy-fdb"/>
@@ -60,7 +50,7 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView identifier="Playback" id="Zmc-ua-enY">
+        <customView identifier="Playback" id="Zmc-ua-enY" userLabel="Playback View">
             <rect key="frame" x="0.0" y="0.0" width="485" height="330"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
@@ -1273,7 +1263,7 @@
                                         <rect key="frame" x="20" y="17" width="409" height="224"/>
                                         <clipView key="contentView" drawsBackground="NO" id="Lle-Gh-L94">
                                             <rect key="frame" x="1" y="1" width="392" height="222"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="RAU-kc-ZWb">
                                                     <rect key="frame" x="0.0" y="0.0" width="392" height="222"/>
@@ -1346,7 +1336,7 @@
                                         <rect key="frame" x="20" y="20" width="409" height="253"/>
                                         <clipView key="contentView" drawsBackground="NO" id="kGi-v7-aYF">
                                             <rect key="frame" x="1" y="1" width="392" height="251"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="8p1-kz-NZ1">
                                                     <rect key="frame" x="0.0" y="0.0" width="392" height="251"/>
@@ -1480,7 +1470,7 @@
                         <menu key="menu" id="soW-Kc-Bpg"/>
                     </popUpButtonCell>
                     <connections>
-                        <action selector="outputPluginAction:" target="-2" id="rWn-dQ-Lrg"/>
+                        <action selector="outputPluginAction:" target="rug-kD-oVn" id="ilv-2Q-ukv"/>
                     </connections>
                 </popUpButton>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l0R-EK-reQ">
@@ -1501,7 +1491,7 @@
                         <menu key="menu" id="IBa-jO-ZD7"/>
                     </popUpButtonCell>
                     <connections>
-                        <action selector="playbackDeviceAction:" target="-2" id="MHA-xY-Gzt"/>
+                        <action selector="playbackDeviceAction:" target="rug-kD-oVn" id="vv2-UA-urq"/>
                     </connections>
                 </popUpButton>
                 <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="dAy-8r-6bC">
@@ -1516,7 +1506,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="overrideSamplerateAction:" target="-2" id="jaF-3E-mzQ"/>
+                        <action selector="overrideSamplerateAction:" target="rug-kD-oVn" id="uoa-TZ-Oe5"/>
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OHq-bQ-a2N">
@@ -1527,7 +1517,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="basedOnInputSamplerateAction:" target="-2" id="QXZ-5m-sov"/>
+                        <action selector="basedOnInputSamplerateAction:" target="rug-kD-oVn" id="Epm-95-aVj"/>
                     </connections>
                 </button>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CiA-bx-OlM">
@@ -1565,7 +1555,7 @@
                         </objectValues>
                     </comboBoxCell>
                     <connections>
-                        <action selector="targetSamplerateAction:" target="-2" id="AZo-6Z-2hg"/>
+                        <action selector="targetSamplerateAction:" target="rug-kD-oVn" id="oeL-hz-uQL"/>
                     </connections>
                 </comboBox>
                 <comboBox verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xIv-0C-D3P">
@@ -1585,7 +1575,7 @@
                         </objectValues>
                     </comboBoxCell>
                     <connections>
-                        <action selector="multiplesOf48Action:" target="-2" id="MCL-0K-K4W"/>
+                        <action selector="multiplesOf48Action:" target="rug-kD-oVn" id="DGW-uL-Sbv"/>
                     </connections>
                 </comboBox>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kev-Ar-D1H">
@@ -1614,7 +1604,7 @@
                         </objectValues>
                     </comboBoxCell>
                     <connections>
-                        <action selector="multiplesOf44Action:" target="-2" id="6AJ-TL-huC"/>
+                        <action selector="multiplesOf44Action:" target="rug-kD-oVn" id="ceh-nf-xiY"/>
                     </connections>
                 </comboBox>
             </subviews>
@@ -1627,17 +1617,31 @@
             </declaredKeys>
         </arrayController>
         <userDefaultsController representsSharedInstance="YES" id="4c2-YY-bzC"/>
+        <viewController id="rug-kD-oVn" customClass="SoundPreferencesViewController">
+            <connections>
+                <outlet property="audioDevicesPopupButton" destination="0ET-qW-1ss" id="i76-UM-UzV"/>
+                <outlet property="basedOnInputSamplerateCheckbox" destination="OHq-bQ-a2N" id="Ibh-WU-YBG"/>
+                <outlet property="multiplesOf44ComboBox" destination="DZJ-up-vkC" id="TZl-KR-YrV"/>
+                <outlet property="multiplesOf44Label" destination="VdO-R5-ZVn" id="BUx-1C-XXK"/>
+                <outlet property="multiplesOf48ComboBox" destination="xIv-0C-D3P" id="KdS-BE-RBl"/>
+                <outlet property="multiplesOf48Label" destination="CiA-bx-OlM" id="zlL-qP-fNt"/>
+                <outlet property="outputPluginsPopupButton" destination="WGI-Tr-J4c" id="HFj-0L-GdY"/>
+                <outlet property="overrideSamplerateCheckbox" destination="Lkp-Xx-fTd" id="4sJ-M8-yOh"/>
+                <outlet property="targetSamplerateComboBox" destination="ePT-oo-DxM" id="LFa-mL-mwS"/>
+                <outlet property="targetSamplerateLabel" destination="kev-Ar-D1H" id="HWQ-qv-zLR"/>
+                <outlet property="view" destination="Zmc-ua-enY" id="JNj-c9-K90"/>
+            </connections>
+        </viewController>
+        <viewController id="YqN-ZP-2eU" customClass="PlaybackPreferencesViewController">
+            <connections>
+                <outlet property="view" destination="UtU-5A-sPy" id="taT-ru-Hbc"/>
+            </connections>
+        </viewController>
         <viewController id="4Qv-4Y-koA" customClass="NetworkPreferencesViewController">
             <connections>
                 <outlet property="contentTypeMappingArrayController" destination="H3C-fa-Rey" id="Uc3-r0-hNE"/>
                 <outlet property="contentTypeMappingTableView" destination="Bgl-g5-g9B" id="riG-qm-lGi"/>
                 <outlet property="view" destination="JAw-ar-I3a" id="WNs-fS-3Gu"/>
-            </connections>
-        </viewController>
-        <viewController id="YqN-ZP-2eU" customClass="SoundPreferencesViewController">
-            <connections>
-                <outlet property="cli_add_playlist_name" destination="ySk-s8-tM7" id="nmi-Gw-qt3"/>
-                <outlet property="view" destination="UtU-5A-sPy" id="taT-ru-Hbc"/>
             </connections>
         </viewController>
         <viewController id="AAs-to-EGG" customClass="PluginsPreferencesViewController">

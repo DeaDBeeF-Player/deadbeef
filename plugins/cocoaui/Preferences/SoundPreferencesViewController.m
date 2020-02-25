@@ -2,7 +2,7 @@
 //  SoundPreferencesViewController.m
 //  DeaDBeeF
 //
-//  Created by Alexey Yakovenko on 2/23/20.
+//  Created by Alexey Yakovenko on 2/25/20.
 //  Copyright © 2020 Alexey Yakovenko. All rights reserved.
 //
 
@@ -14,152 +14,170 @@ extern DB_functions_t *deadbeef;
 
 @interface SoundPreferencesViewController ()
 
-// ReplayGain
-@property (nonatomic) ddb_rg_source_mode_t rgSourceMode;
-@property (nonatomic) NSUInteger rgProcessingIdx;
+@property (weak) IBOutlet NSPopUpButton *outputPluginsPopupButton;
 
-@property (nonatomic) float rgPreampWithRg;
-@property (nonatomic) float rgPreampWithoutRg;
-@property (nonatomic) NSString *rgPreampWithRgLabel;
-@property (nonatomic) NSString *rgPreampWithoutRgLabel;
+@property NSMutableArray<NSString *> *audioDevices;
+@property (weak) IBOutlet NSPopUpButton *audioDevicesPopupButton;
+@property (weak) IBOutlet NSTextField *targetSamplerateLabel;
+@property (weak) IBOutlet NSTextField *multiplesOf48Label;
+@property (weak) IBOutlet NSTextField *multiplesOf44Label;
 
-// Other settings
-@property (nonatomic) BOOL cliAddToSpecificPlaylist;
-@property (nonatomic) NSString *cliSpecificPlaylist;
-@property (nonatomic) BOOL resumeLastSession;
-@property (nonatomic) BOOL ignoreArchives;
-@property (nonatomic) BOOL stopAfterCurrentReset;
-@property (nonatomic) BOOL stopAfterCurrentAlbumReset;
+@property (weak) IBOutlet NSButton *overrideSamplerateCheckbox;
+@property (weak) IBOutlet NSComboBox *targetSamplerateComboBox;
+@property (weak) IBOutlet NSButton *basedOnInputSamplerateCheckbox;
+@property (weak) IBOutlet NSComboBox *multiplesOf48ComboBox;
+@property (weak) IBOutlet NSComboBox *multiplesOf44ComboBox;
 
 @end
 
 @implementation SoundPreferencesViewController
 
-- (instancetype)initWithCoder:(NSCoder *)coder
-{
-    self = [super initWithCoder:coder];
-    if (!self) {
-        return nil;
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do view setup here.
+    [self initializeAudioTab];
+}
+
+- (void)outputDeviceChanged {
+    [self initAudioDeviceList];
+}
+
+static void
+ca_enum_callback (const char *s, const char *d, void *userdata) {
+    NSMutableArray<NSString *> *devices = (__bridge NSMutableArray<NSString *> *)userdata;
+
+    [devices addObject:[NSString stringWithUTF8String:s]];
+}
+
+- (void)initAudioDeviceList {
+    [self.audioDevicesPopupButton removeAllItems];
+
+    self.audioDevices = [NSMutableArray new];
+    DB_output_t *output = deadbeef->get_output ();
+    if (!output->enum_soundcards) {
+        self.audioDevicesPopupButton.enabled = NO;
+        return;
     }
 
-    // ReplayGain
-    _rgSourceMode = deadbeef->conf_get_int ("replaygain.source_mode", 0);
+    self.audioDevicesPopupButton.enabled = YES;
 
-    NSUInteger processing_idx = 0;
-    ddb_rg_processing_t processing_flags = deadbeef->conf_get_int ("replaygain.processing_flags", 0);
-    if (processing_flags == DDB_RG_PROCESSING_GAIN) {
-        processing_idx = 1;
+    output->enum_soundcards (ca_enum_callback, (__bridge void *)(self.audioDevices));
+
+    NSString *conf_name = [[NSString stringWithUTF8String:output->plugin.id] stringByAppendingString:@"_soundcard"];
+    char curdev[200];
+    deadbeef->conf_get_str ([conf_name UTF8String], "", curdev, sizeof (curdev));
+    [self.audioDevicesPopupButton removeAllItems];
+    [self.audioDevicesPopupButton addItemWithTitle:@"System Default"];
+    [self.audioDevicesPopupButton selectItemAtIndex:0];
+    NSInteger index = 1;
+    for (NSString *dev in self.audioDevices) {
+        [self.audioDevicesPopupButton addItemWithTitle:dev];
+        if (!strcmp ([dev UTF8String], curdev)) {
+            [self.audioDevicesPopupButton selectItemAtIndex:index];
+        }
+        index++;
     }
-    else if (processing_flags == (DDB_RG_PROCESSING_GAIN|DDB_RG_PROCESSING_PREVENT_CLIPPING)) {
-        processing_idx = 2;
-    }
-    else if (processing_flags == DDB_RG_PROCESSING_PREVENT_CLIPPING) {
-        processing_idx = 3;
-    }
-
-    _rgProcessingIdx = processing_idx;
-
-    _rgPreampWithRg = deadbeef->conf_get_float ("replaygain.preamp_with_rg", 0);
-    _rgPreampWithoutRg = deadbeef->conf_get_float ("replaygain.preamp_without_rg", 0);
-
-    [self updateRGLabels];
-
-    // Other settings
-    // playback
-    _cliAddToSpecificPlaylist =  deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1) ? YES : NO;
-    _cliSpecificPlaylist = conf_get_nsstr ("cli_add_playlist_name", "Default");
-    _resumeLastSession = deadbeef->conf_get_int ("resume_last_session", 1) ? YES : NO;
-    _ignoreArchives = deadbeef->conf_get_int ("ignore_archives", 1) ? YES : NO;
-    _stopAfterCurrentReset = deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0) ? YES : NO;
-    _stopAfterCurrentAlbumReset = deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0) ? YES : NO;
-
-    return self;
 }
 
-#pragma mark - ReplayGain
+- (void)initializeAudioTab {
+    // output plugins
 
-- (void)updateRGLabels {
-    float value = _rgPreampWithRg;
-    self.rgPreampWithRgLabel = [NSString stringWithFormat:@"%s%0.2fdB", value >= 0 ? "+" : "", value];
+    NSInteger index = 0;
+    [self.outputPluginsPopupButton removeAllItems];
 
-    value = _rgPreampWithoutRg;
-    self.rgPreampWithoutRgLabel = [NSString stringWithFormat:@"%s%0.2fdB", value >= 0 ? "+" : "", value];
-}
-
-
-- (void)setRgPreampWithRg:(float)rgPreampWithRg {
-    _rgPreampWithRg = rgPreampWithRg;
-    deadbeef->conf_set_float ("replaygain.preamp_with_rg", rgPreampWithRg);
-    [self updateRGLabels];
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-}
-
-- (void)setRgPreampWithoutRg:(float)rgPreampWithoutRg {
-    _rgPreampWithoutRg = rgPreampWithoutRg;
-    deadbeef->conf_set_float ("replaygain.preamp_without_rg", rgPreampWithoutRg);
-    [self updateRGLabels];
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-}
-
-- (void)setRgSourceMode:(ddb_rg_source_mode_t)rgSourceMode {
-    _rgSourceMode = rgSourceMode;
-    deadbeef->conf_set_int ("replaygain.source_mode", rgSourceMode);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-}
-
-- (void)setRgProcessingIdx:(NSUInteger)idx {
-    _rgProcessingIdx = idx;
-    uint32_t flags = 0;
-    if (idx == 1) {
-        flags = DDB_RG_PROCESSING_GAIN;
-    }
-    if (idx == 2) {
-        flags = DDB_RG_PROCESSING_GAIN | DDB_RG_PROCESSING_PREVENT_CLIPPING;
-    }
-    if (idx == 3) {
-        flags = DDB_RG_PROCESSING_PREVENT_CLIPPING;
+    char curplug[200];
+    deadbeef->conf_get_str ("output_plugin", "coreaudio", curplug, sizeof (curplug));
+    DB_output_t **o = deadbeef->plug_get_output_list ();
+    for (index = 0; o[index]; index++) {
+        [self.outputPluginsPopupButton addItemWithTitle:[NSString stringWithUTF8String:o[index]->plugin.name]];
+        if (!strcmp (o[index]->plugin.id, curplug)) {
+            [self.outputPluginsPopupButton selectItemAtIndex:index];
+        }
     }
 
-    deadbeef->conf_set_int ("replaygain.processing_flags", flags);
+    // audio devices
+    [self initAudioDeviceList];
+
+    self.overrideSamplerateCheckbox.state = deadbeef->conf_get_int ("streamer.override_samplerate", 0) ? NSControlStateValueOn : NSControlStateValueOff;
+    self.targetSamplerateComboBox.stringValue = conf_get_nsstr ("streamer.samplerate", "44100");
+
+    self.basedOnInputSamplerateCheckbox.state = deadbeef->conf_get_int ("streamer.use_dependent_samplerate", 0) ? NSControlStateValueOn : NSControlStateValueOff;
+    self.multiplesOf48ComboBox.stringValue = conf_get_nsstr ("streamer.samplerate_mult_48", "48000");
+    self.multiplesOf44ComboBox.stringValue = conf_get_nsstr ("streamer.samplerate_mult_44", "44100");
+    [self validateAudioSettingsViews];
+}
+
+- (void)validateAudioSettingsViews {
+    BOOL override = deadbeef->conf_get_int ("streamer.override_samplerate", 0) ? YES : NO;
+    BOOL useDependent = deadbeef->conf_get_int ("streamer.use_dependent_samplerate", 0) ? YES : NO;
+
+    self.targetSamplerateLabel.enabled = override;
+    self.targetSamplerateComboBox.enabled = override;
+
+    self.basedOnInputSamplerateCheckbox.enabled = override;
+
+    self.multiplesOf48Label.enabled = override && useDependent;
+    self.multiplesOf48ComboBox.enabled = override && useDependent;
+
+    self.multiplesOf44Label.enabled = override && useDependent;
+    self.multiplesOf44ComboBox.enabled = override && useDependent;
+}
+
+- (IBAction)outputPluginAction:(id)sender {
+    DB_output_t **o = deadbeef->plug_get_output_list ();
+    deadbeef->conf_set_str ("output_plugin", o[[self.outputPluginsPopupButton indexOfSelectedItem]]->plugin.id);
+    deadbeef->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
+}
+
+- (IBAction)playbackDeviceAction:(NSPopUpButton *)sender {
+    NSString *title = [[sender selectedItem] title];
+    DB_output_t *output = deadbeef->get_output ();
+    NSString *dev = [[NSString stringWithUTF8String:output->plugin.id] stringByAppendingString:@"_soundcard"];
+    deadbeef->conf_set_str ([dev UTF8String], [title UTF8String]);
+    deadbeef->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
+}
+
+- (IBAction)overrideSamplerateAction:(NSButton *)sender {
+    deadbeef->conf_set_int ("streamer.override_samplerate", sender.state == NSControlStateValueOn ? 1 : 0);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    [self validateAudioSettingsViews];
+}
+
+static int
+clamp_samplerate (int val) {
+    if (val < 8000) {
+        return 8000;
+    }
+    else if (val > 768000) {
+        return 768000;
+    }
+    return val;
+}
+
+- (IBAction)targetSamplerateAction:(NSComboBox *)sender {
+    int samplerate = clamp_samplerate ((int)[sender integerValue]);
+    deadbeef->conf_set_int ("streamer.samplerate", samplerate);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
-#pragma mark - Other settings
+- (IBAction)basedOnInputSamplerateAction:(NSButton *)sender {
+    deadbeef->conf_set_int ("streamer.use_dependent_samplerate", sender.state == NSControlStateValueOn ? 1 : 0);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    [self validateAudioSettingsViews];
+}
 
-- (void)setCliAddToSpecificPlaylist:(BOOL)cliAddToSpecificPlaylist {
-    _cliAddToSpecificPlaylist = cliAddToSpecificPlaylist;
-    deadbeef->conf_set_int ("cli_add_to_specific_playlist", cliAddToSpecificPlaylist);
+- (IBAction)multiplesOf48Action:(NSComboBox *)sender {
+    int samplerate = clamp_samplerate ((int)[sender integerValue]);
+    deadbeef->conf_set_int ("streamer.samplerate_mult_48", samplerate);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
-- (void)setCliSpecificPlaylist:(NSString *)cliSpecificPlaylist {
-    _cliSpecificPlaylist = cliSpecificPlaylist;
-    conf_set_nsstr("cli_add_playlist_name", cliSpecificPlaylist);
+- (IBAction)multiplesOf44Action:(NSComboBox *)sender {
+    int samplerate = clamp_samplerate ((int)[sender integerValue]);
+    deadbeef->conf_set_int ("streamer.samplerate_mult_44", samplerate);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
-- (void)setIgnoreArchives:(BOOL)ignoreArchives {
-    _ignoreArchives = ignoreArchives;
-    deadbeef->conf_set_int ("ignore_archives", ignoreArchives);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-}
 
-- (void)setResumeLastSession:(BOOL)resumeLastSession {
-    _resumeLastSession = resumeLastSession;
-    deadbeef->conf_set_int ("resume_last_session", resumeLastSession);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-}
-
-- (void)setStopAfterCurrentReset:(BOOL)stopAfterCurrentReset {
-    _stopAfterCurrentReset = stopAfterCurrentReset;
-    deadbeef->conf_set_int ("playlist.stop_after_current_reset", stopAfterCurrentReset);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-}
-
-- (void)setStopAfterCurrentAlbumReset:(BOOL)stopAfterCurrentAlbumReset {
-    _stopAfterCurrentAlbumReset = stopAfterCurrentAlbumReset;
-    deadbeef->conf_set_int ("playlist.stop_after_album_reset", stopAfterCurrentAlbumReset);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-}
 
 @end
