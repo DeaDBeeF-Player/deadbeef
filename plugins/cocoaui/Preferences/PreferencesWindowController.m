@@ -24,25 +24,14 @@
 #import "DspPreferencesViewController.h"
 #import "GuiPreferencesWindowController.h"
 #import "NetworkPreferencesViewController.h"
-#import "SoundPreferencesViewController.h"
+#import "PlaybackPreferencesViewController.h"
 #import "PluginsPreferencesViewController.h"
 #import "PreferencesWindowController.h"
-#import "PlaybackPreferencesViewController.h"
-#include "deadbeef.h"
-
-extern DB_functions_t *deadbeef;
+#import "SoundPreferencesViewController.h"
 
 @interface PreferencesWindowController ()
 
 @property (unsafe_unretained) IBOutlet NSToolbar *toolbar;
-
-- (IBAction)soundAction:(id)sender;
-- (IBAction)playbackAction:(id)sender;
-- (IBAction)appearanceAction:(id)sender;
-- (IBAction)dspAction:(id)sender;
-- (IBAction)guiAction:(id)sender;
-- (IBAction)networkAction:(id)sender;
-- (IBAction)pluginsAction:(id)sender;
 
 @property (strong) IBOutlet DspPreferencesViewController *dspViewController;
 @property (strong) IBOutlet GuiPreferencesWindowController *guiViewController;

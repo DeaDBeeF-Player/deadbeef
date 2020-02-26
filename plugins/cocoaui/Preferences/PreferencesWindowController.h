@@ -23,9 +23,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface PreferencesWindowController : NSWindowController<NSToolbarDelegate,NSTableViewDelegate,NSTableViewDataSource,NSMenuDelegate>
-
-
+@interface PreferencesWindowController : NSWindowController<NSToolbarDelegate>
 
 - (void)outputDeviceChanged;
 
