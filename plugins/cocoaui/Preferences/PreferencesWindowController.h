@@ -25,37 +25,7 @@
 
 @interface PreferencesWindowController : NSWindowController<NSToolbarDelegate,NSTableViewDelegate,NSTableViewDataSource,NSMenuDelegate>
 
-@property (strong) IBOutlet NSView *appearanceView;
-@property (unsafe_unretained) IBOutlet NSToolbar *toolbar;
 
-- (IBAction)soundAction:(id)sender;
-- (IBAction)playbackAction:(id)sender;
-- (IBAction)appearanceAction:(id)sender;
-- (IBAction)dspAction:(id)sender;
-- (IBAction)guiAction:(id)sender;
-- (IBAction)networkAction:(id)sender;
-- (IBAction)pluginsAction:(id)sender;
-
-// Appearance properties
-@property (unsafe_unretained) IBOutlet NSButton *override_bar_colors;
-@property (unsafe_unretained) IBOutlet NSColorWell *color_bar_foreground;
-@property (unsafe_unretained) IBOutlet NSColorWell *color_bar_background;
-
-@property (unsafe_unretained) IBOutlet NSButton *override_playlist_colors;
-@property (unsafe_unretained) IBOutlet NSColorWell *color_listview_text;
-@property (unsafe_unretained) IBOutlet NSColorWell *color_listview_playing_text;
-@property (unsafe_unretained) IBOutlet NSColorWell *color_listview_selected_text;
-@property (unsafe_unretained) IBOutlet NSColorWell *color_listview_group_header_text;
-@property (unsafe_unretained) IBOutlet NSColorWell *color_listview_cursor;
-
-@property (unsafe_unretained) IBOutlet NSColorWell *color_listview_even_background;
-@property (unsafe_unretained) IBOutlet NSColorWell *color_listview_odd_background;
-@property (unsafe_unretained) IBOutlet NSColorWell *color_listview_selected_background;
-
-@property (unsafe_unretained) IBOutlet NSButton *listview_bold_current_text;
-@property (unsafe_unretained) IBOutlet NSButton *listview_bold_selected_text;
-@property (unsafe_unretained) IBOutlet NSButton *listview_italic_current_text;
-@property (unsafe_unretained) IBOutlet NSButton *listview_italic_selected_text;
 
 - (void)outputDeviceChanged;
 

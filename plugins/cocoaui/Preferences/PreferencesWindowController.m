@@ -34,8 +34,18 @@ extern DB_functions_t *deadbeef;
 
 @interface PreferencesWindowController ()
 
-@property (strong) IBOutlet DspPreferencesViewController *dspPreferencesViewController;
-@property (strong) IBOutlet GuiPreferencesWindowController *guiPreferencesViewController;
+@property (unsafe_unretained) IBOutlet NSToolbar *toolbar;
+
+- (IBAction)soundAction:(id)sender;
+- (IBAction)playbackAction:(id)sender;
+- (IBAction)appearanceAction:(id)sender;
+- (IBAction)dspAction:(id)sender;
+- (IBAction)guiAction:(id)sender;
+- (IBAction)networkAction:(id)sender;
+- (IBAction)pluginsAction:(id)sender;
+
+@property (strong) IBOutlet DspPreferencesViewController *dspViewController;
+@property (strong) IBOutlet GuiPreferencesWindowController *guiViewController;
 @property (strong) IBOutlet SoundPreferencesViewController *soundViewController;
 @property (strong) IBOutlet PlaybackPreferencesViewController *playbackViewController;
 @property (strong) IBOutlet NetworkPreferencesViewController *networkViewController;
@@ -48,9 +58,6 @@ extern DB_functions_t *deadbeef;
 - (void)windowDidLoad {
     [super windowDidLoad];
 
-    [self setInitialValues];
-
-    // toolbar
     _toolbar.delegate = self;
     _toolbar.selectedItemIdentifier = @"Sound";
 
@@ -62,62 +69,6 @@ extern DB_functions_t *deadbeef;
 }
 
 
-#pragma mark - Unsorted
-
-- (NSString *)cfgFormattedColorForName:(NSString *)colorName {
-    NSColorList *clist = [NSColorList colorListNamed:@"System"];
-    return [self cfgFormattedColor:[clist colorWithKey:colorName]];
-}
-
-- (NSString *)cfgFormattedColor:(NSColor *)color {
-    CGFloat r, g, b, a;
-    [[color colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed:&r green:&g blue:&b alpha:&a];
-    return [NSString stringWithFormat:@"#%02x%02x%02x%02x", (int)(r*255), (int)(g*255), (int)(b*255), (int)(a*255)];
-}
-
-- (NSColor *)configColorForKey:(NSString *)key withDefault:(NSString *)def {
-    char buf[10];
-    deadbeef->conf_get_str ([key UTF8String], [def UTF8String], buf, sizeof (buf));
-    int r, g, b, a;
-    if (4 != sscanf (buf, "#%02x%02x%02x%02x", &r, &g, &b, &a)) {
-        return NSColor.blackColor;
-    }
-    return [NSColor colorWithDeviceRed:r/255.f green:g/255.f blue:b/255.f alpha:a/255.f];
-}
-
-- (void)setInitialValues {
-    // appearance for seekbar / volumebar
-    _override_bar_colors.state =  deadbeef->conf_get_int ("cocoaui.override_bar_colors", 0) ? NSOnState : NSOffState;
-
-    // make the config strings with defaults
-    NSString *cfg_textcolor = [self cfgFormattedColorForName:@"controlTextColor"];
-    NSString *cfg_shadowcolor = [self cfgFormattedColorForName:@"controlShadowColor"];
-    NSString *cfg_selectedtextcolor = [self cfgFormattedColorForName:@"alternateSelectedControlTextColor"];
-    NSString *cfg_evenrowcolor = [self cfgFormattedColor:NSColor.controlAlternatingRowBackgroundColors[0]];
-    NSString *cfg_oddrowcolor = [self cfgFormattedColor:NSColor.controlAlternatingRowBackgroundColors[1]];
-    NSString *cfg_selectedrowcolor = [self cfgFormattedColorForName:@"alternateSelectedControlColor"];
-
-    _color_bar_foreground.color = [self configColorForKey:@"cocoaui.color.bar_foreground" withDefault:cfg_textcolor];
-    _color_bar_background.color = [self configColorForKey:@"cocoaui.color.bar_background" withDefault:cfg_shadowcolor];
-
-    // appearance for playlist
-    _override_playlist_colors.state =  deadbeef->conf_get_int ("cocoaui.override_listview_colors", 0) ? NSOnState : NSOffState;
-    
-    _color_listview_text.color =  [self configColorForKey:@"cocoaui.color.listview_text" withDefault:cfg_textcolor];
-    _color_listview_playing_text.color =  [self configColorForKey:@"cocoaui.color.listview_playing_text" withDefault:cfg_textcolor];
-    _color_listview_selected_text.color =  [self configColorForKey:@"cocoaui.color.listview_selected_text" withDefault:cfg_selectedtextcolor];
-    _color_listview_group_header_text.color =  [self configColorForKey:@"cocoaui.color.listview_group_header_text" withDefault:cfg_textcolor];
-    _color_listview_cursor.color =  [self configColorForKey:@"cocoaui.color.cursor" withDefault:cfg_textcolor];
-    _color_listview_even_background.color =  [self configColorForKey:@"cocoaui.color.listview_even_background" withDefault:cfg_evenrowcolor];
-    _color_listview_odd_background.color =  [self configColorForKey:@"cocoaui.color.listview_odd_background" withDefault:cfg_oddrowcolor];
-    _color_listview_selected_background.color =  [self configColorForKey:@"cocoaui.color.listview_selected_background" withDefault:cfg_selectedrowcolor];
-
-    _listview_bold_current_text.state =  deadbeef->conf_get_int ("cocoaui.embolden_current_track", 0) ? NSOnState : NSOffState;
-    _listview_bold_selected_text.state =  deadbeef->conf_get_int ("cocoaui.embolden_selected_tracks", 0) ? NSOnState : NSOffState;
-    _listview_italic_current_text.state =  deadbeef->conf_get_int ("cocoaui.italic_current_track", 0) ? NSOnState : NSOffState;
-    _listview_italic_selected_text.state =  deadbeef->conf_get_int ("cocoaui.italic_selected_tracks", 0) ? NSOnState : NSOffState;
-}
-
 - (NSArray *)toolbarSelectableItemIdentifiers: (NSToolbar *)toolbar
 {
     return [NSArray arrayWithObjects:
@@ -125,7 +76,6 @@ extern DB_functions_t *deadbeef;
             @"Playback",
             @"DSP",
             @"GUI",
-//            @"Appearance",
             @"Network",
             @"Plugins",
             nil];
@@ -150,16 +100,12 @@ extern DB_functions_t *deadbeef;
     [self switchToView:self.soundViewController.view];
 }
 
-- (IBAction)appearanceAction:(id)sender {
-    [self switchToView:_appearanceView];
-}
-
 - (IBAction)dspAction:(id)sender {
-    [self switchToView:self.dspPreferencesViewController.view];
+    [self switchToView:self.dspViewController.view];
 }
 
 - (IBAction)guiAction:(id)sender {
-    [self switchToView:self.guiPreferencesViewController.view];
+    [self switchToView:self.guiViewController.view];
 }
 
 - (IBAction)networkAction:(id)sender {
