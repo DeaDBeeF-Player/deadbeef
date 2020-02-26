@@ -1548,6 +1548,8 @@
 		2DA24B9F19E7254F00E34920 /* vtls.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24B8719E7254F00E34920 /* vtls.c */; };
 		2DA24BA019E7254F00E34920 /* vtls.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA24B8819E7254F00E34920 /* vtls.h */; };
 		2DA24BA319E72A2500E34920 /* vfs_curl.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA24B4B19E724C200E34920 /* vfs_curl.dylib */; };
+		2DA273782406ED4100FB9BE1 /* GuiPreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA273762406ED4100FB9BE1 /* GuiPreferencesWindowController.h */; };
+		2DA273792406ED4100FB9BE1 /* GuiPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA273772406ED4100FB9BE1 /* GuiPreferencesWindowController.m */; };
 		2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */; };
 		2DA30B7F23F1C9A3003D22E3 /* PropertySheetContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA30B7D23F1C9A3003D22E3 /* PropertySheetContentView.h */; };
 		2DA30B8023F1C9A3003D22E3 /* PropertySheetContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30B7E23F1C9A3003D22E3 /* PropertySheetContentView.m */; };
@@ -4699,6 +4701,8 @@
 		2DA24B7419E7254F00E34920 /* curl_darwinssl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = curl_darwinssl.h; sourceTree = "<group>"; };
 		2DA24B8719E7254F00E34920 /* vtls.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vtls.c; sourceTree = "<group>"; };
 		2DA24B8819E7254F00E34920 /* vtls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vtls.h; sourceTree = "<group>"; };
+		2DA273762406ED4100FB9BE1 /* GuiPreferencesWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiPreferencesWindowController.h; sourceTree = "<group>"; };
+		2DA273772406ED4100FB9BE1 /* GuiPreferencesWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GuiPreferencesWindowController.m; sourceTree = "<group>"; };
 		2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = u8_uc_map.h; sourceTree = "<group>"; };
 		2DA30B7D23F1C9A3003D22E3 /* PropertySheetContentView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PropertySheetContentView.h; sourceTree = "<group>"; };
 		2DA30B7E23F1C9A3003D22E3 /* PropertySheetContentView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PropertySheetContentView.m; sourceTree = "<group>"; };
@@ -7902,14 +7906,16 @@
 		2D9FA3862404515500276E00 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
+				2DA273762406ED4100FB9BE1 /* GuiPreferencesWindowController.h */,
+				2DA273772406ED4100FB9BE1 /* GuiPreferencesWindowController.m */,
 				2DA30E7224032550001BAB8A /* NetworkPreferencesViewController.h */,
 				2DA30E7324032550001BAB8A /* NetworkPreferencesViewController.m */,
+				2DA30E772403292D001BAB8A /* PlaybackPreferencesViewController.h */,
+				2DA30E782403292D001BAB8A /* PlaybackPreferencesViewController.m */,
 				2DB2F73D240466AF00F7C000 /* PluginsPreferencesViewController.h */,
 				2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */,
 				2DCF73B21A952F8900495740 /* PreferencesWindowController.h */,
 				2DCF73B31A952F8900495740 /* PreferencesWindowController.m */,
-				2DA30E772403292D001BAB8A /* PlaybackPreferencesViewController.h */,
-				2DA30E782403292D001BAB8A /* PlaybackPreferencesViewController.m */,
 				2D9BD6772405A81600C02D60 /* SoundPreferencesViewController.h */,
 				2D9BD6782405A81600C02D60 /* SoundPreferencesViewController.m */,
 			);
@@ -10940,6 +10946,7 @@
 				2DDBA26423E5F14A00051320 /* PlaylistHeaderView.h in Headers */,
 				2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
+				2DA273782406ED4100FB9BE1 /* GuiPreferencesWindowController.h in Headers */,
 				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
 				2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */,
 				2DEF494419C4DB4100B718C1 /* PlaylistView.h in Headers */,
@@ -14049,6 +14056,7 @@
 				2DA30E7524032550001BAB8A /* NetworkPreferencesViewController.m in Sources */,
 				2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */,
 				2D46221E226DBA57003997E9 /* FlippedClipView.m in Sources */,
+				2DA273792406ED4100FB9BE1 /* GuiPreferencesWindowController.m in Sources */,
 				2DDBA26523E5F14A00051320 /* PlaylistHeaderView.m in Sources */,
 				2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */,
 				2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */,

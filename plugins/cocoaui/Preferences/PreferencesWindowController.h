@@ -24,12 +24,8 @@
 #import <Cocoa/Cocoa.h>
 #import "ScriptableTableDataSource.h"
 
-#define DEFAULT_TITLEBAR_PLAYING_VALUE "%artist% - %title% - DeaDBeeF-%_deadbeef_version%"
-#define DEFAULT_TITLEBAR_STOPPED_VALUE "DeaDBeeF-%_deadbeef_version%"
-
 @interface PreferencesWindowController : NSWindowController<NSToolbarDelegate,NSTableViewDelegate,NSTableViewDataSource,NSMenuDelegate,ScriptableItemDelegate>
 @property (strong) IBOutlet NSView *dspView;
-@property (strong) IBOutlet NSView *guiView;
 @property (strong) IBOutlet NSView *appearanceView;
 @property (unsafe_unretained) IBOutlet NSToolbar *toolbar;
 
@@ -42,20 +38,6 @@
 - (IBAction)pluginsAction:(id)sender;
 
 @property (weak) IBOutlet NSView *dspPresetSelectorContainer;
-
-// GUI misc properties
-@property (unsafe_unretained) IBOutlet NSButton *enable_shift_jis_detection;
-@property (unsafe_unretained) IBOutlet NSButton *enable_cp1251_detection;
-@property (unsafe_unretained) IBOutlet NSButton *enable_cp936_detection;
-@property (unsafe_unretained) IBOutlet NSSlider *refresh_rate;
-@property (unsafe_unretained) IBOutlet NSTextField *titlebar_playing;
-@property (unsafe_unretained) IBOutlet NSTextField *titlebar_stopped;
-
-// GUI Playlist properties
-@property (unsafe_unretained) IBOutlet NSButton *mmb_delete_playlist;
-@property (unsafe_unretained) IBOutlet NSButton *hide_remove_from_disk;
-@property (unsafe_unretained) IBOutlet NSButton *name_playlist_from_folder;
-@property (unsafe_unretained) IBOutlet NSButton *autoresize_columns;
 
 // Appearance properties
 @property (unsafe_unretained) IBOutlet NSButton *override_bar_colors;

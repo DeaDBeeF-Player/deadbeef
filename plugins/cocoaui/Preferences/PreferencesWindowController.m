@@ -22,6 +22,7 @@
 */
 
 #import "DdbShared.h"
+#import "GuiPreferencesWindowController.h"
 #import "NetworkPreferencesViewController.h"
 #import "SoundPreferencesViewController.h"
 #import "PluginsPreferencesViewController.h"
@@ -45,7 +46,7 @@ extern DB_functions_t *deadbeef;
 @property (weak) IBOutlet NSView *dspNodeEditorContainer;
 @property ScriptableNodeEditorViewController *dspNodeEditorViewController;
 
-
+@property (strong) IBOutlet GuiPreferencesWindowController *guiPreferencesViewController;
 @property (strong) IBOutlet SoundPreferencesViewController *soundViewController;
 @property (strong) IBOutlet PlaybackPreferencesViewController *playbackViewController;
 @property (strong) IBOutlet NetworkPreferencesViewController *networkViewController;
@@ -127,20 +128,6 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)setInitialValues {
-    // gui/misc -> player
-    _enable_shift_jis_detection.state =  deadbeef->conf_get_int ("junk.enable_shift_jis_detection", 0) ? NSOnState : NSOffState;
-    _enable_cp1251_detection.state =  deadbeef->conf_get_int ("junk.enable_cp1251_detection", 0) ? NSOnState : NSOffState;
-    _enable_cp936_detection.state =  deadbeef->conf_get_int ("junk.enable_cp936_detection", 0) ? NSOnState : NSOffState;
-    _refresh_rate.intValue =  deadbeef->conf_get_int ("cocoaui.refresh_rate", 10);
-    _titlebar_playing.stringValue = conf_get_nsstr ("cocoaui.titlebar_playing", DEFAULT_TITLEBAR_PLAYING_VALUE);
-    _titlebar_stopped.stringValue = conf_get_nsstr ("cocoaui.titlebar_stopped", DEFAULT_TITLEBAR_STOPPED_VALUE);
-
-    // gui/misc -> playlist
-    _mmb_delete_playlist.state =  deadbeef->conf_get_int ("cocoaui.mmb_delete_playlist", 1) ? NSOnState : NSOffState;
-    _hide_remove_from_disk.state =  deadbeef->conf_get_int ("cocoaui.hide_remove_from_disk", 0) ? NSOnState : NSOffState;
-    _name_playlist_from_folder.state =  deadbeef->conf_get_int ("cocoaui.name_playlist_from_folder", 1) ? NSOnState : NSOffState;
-    _autoresize_columns.state =  deadbeef->conf_get_int ("cocoaui.autoresize_columns", 0) ? NSOnState : NSOffState;
-
     // appearance for seekbar / volumebar
     _override_bar_colors.state =  deadbeef->conf_get_int ("cocoaui.override_bar_colors", 0) ? NSOnState : NSOffState;
 
@@ -214,7 +201,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (IBAction)guiAction:(id)sender {
-    [self switchToView:_guiView];
+    [self switchToView:self.guiPreferencesViewController.view];
 }
 
 - (IBAction)networkAction:(id)sender {

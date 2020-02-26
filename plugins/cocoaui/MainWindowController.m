@@ -23,10 +23,11 @@
 
 #import "DdbPlaceholderWidget.h"
 #import "DesignableViewController.h"
+#import "GuiPreferencesWindowController.h"
 #import "MainWindowController.h"
 #import "PlaylistViewController.h"
 #import "PreferencesWindowController.h"
-#include "../../deadbeef.h"
+#include "deadbeef.h"
 #include <sys/time.h>
 
 extern DB_functions_t *deadbeef;
