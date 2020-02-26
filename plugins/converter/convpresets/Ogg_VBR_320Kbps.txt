@@ -1,6 +1,6 @@
-title Ogg Vorbis (-q 5)
+title Ogg Vorbis VBR 320kbps
 ext ogg
-encoder oggenc -q 5 -o %o -
+encoder oggenc -q 9 -o %o -
 method 0
 id3v2_version 0
 tag_id3v2 0
