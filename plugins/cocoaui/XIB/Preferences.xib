@@ -19,9 +19,7 @@
                 <outlet property="color_listview_selected_background" destination="Ms9-r7-O93" id="nVA-Wh-gQ4"/>
                 <outlet property="color_listview_selected_text" destination="Rhn-mE-OBT" id="hSC-Ge-MS3"/>
                 <outlet property="color_listview_text" destination="RuD-hX-F2n" id="bIl-YI-gyG"/>
-                <outlet property="dspNodeEditorContainer" destination="wB2-nl-rwo" id="lEQ-Dd-QuK"/>
-                <outlet property="dspPresetSelectorContainer" destination="7EN-x3-aU8" id="0OS-0y-wss"/>
-                <outlet property="dspView" destination="FgU-f9-bru" id="lA3-wb-KlQ"/>
+                <outlet property="dspPreferencesViewController" destination="lFU-Xs-9Xm" id="uoG-jh-Sr8"/>
                 <outlet property="guiPreferencesViewController" destination="jtP-FH-nkX" id="GQ4-wY-XrK"/>
                 <outlet property="listview_bold_current_text" destination="8qz-wz-lce" id="QdE-gL-4R0"/>
                 <outlet property="listview_bold_selected_text" destination="Dkf-Gh-jgm" id="vHO-5f-HPb"/>
@@ -1709,6 +1707,13 @@
             </declaredKeys>
         </arrayController>
         <userDefaultsController representsSharedInstance="YES" id="4c2-YY-bzC"/>
+        <viewController id="lFU-Xs-9Xm" customClass="DspPreferencesViewController">
+            <connections>
+                <outlet property="dspNodeEditorContainer" destination="wB2-nl-rwo" id="qfi-i3-PGQ"/>
+                <outlet property="dspPresetSelectorContainer" destination="7EN-x3-aU8" id="Z5z-ay-O5c"/>
+                <outlet property="view" destination="FgU-f9-bru" id="nq9-P1-CvP"/>
+            </connections>
+        </viewController>
         <viewController id="rug-kD-oVn" customClass="SoundPreferencesViewController">
             <connections>
                 <outlet property="audioDevicesPopupButton" destination="0ET-qW-1ss" id="i76-UM-UzV"/>

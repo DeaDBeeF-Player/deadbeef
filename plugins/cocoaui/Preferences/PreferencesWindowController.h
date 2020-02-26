@@ -22,10 +22,9 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#import "ScriptableTableDataSource.h"
 
-@interface PreferencesWindowController : NSWindowController<NSToolbarDelegate,NSTableViewDelegate,NSTableViewDataSource,NSMenuDelegate,ScriptableItemDelegate>
-@property (strong) IBOutlet NSView *dspView;
+@interface PreferencesWindowController : NSWindowController<NSToolbarDelegate,NSTableViewDelegate,NSTableViewDataSource,NSMenuDelegate>
+
 @property (strong) IBOutlet NSView *appearanceView;
 @property (unsafe_unretained) IBOutlet NSToolbar *toolbar;
 
@@ -36,8 +35,6 @@
 - (IBAction)guiAction:(id)sender;
 - (IBAction)networkAction:(id)sender;
 - (IBAction)pluginsAction:(id)sender;
-
-@property (weak) IBOutlet NSView *dspPresetSelectorContainer;
 
 // Appearance properties
 @property (unsafe_unretained) IBOutlet NSButton *override_bar_colors;

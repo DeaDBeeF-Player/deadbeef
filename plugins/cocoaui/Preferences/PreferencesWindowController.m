@@ -21,31 +21,20 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import "DdbShared.h"
+#import "DspPreferencesViewController.h"
 #import "GuiPreferencesWindowController.h"
 #import "NetworkPreferencesViewController.h"
 #import "SoundPreferencesViewController.h"
 #import "PluginsPreferencesViewController.h"
 #import "PreferencesWindowController.h"
-#import "ScriptableTableDataSource.h"
-#import "ScriptableSelectViewController.h"
-#import "ScriptableNodeEditorViewController.h"
 #import "PlaybackPreferencesViewController.h"
 #include "deadbeef.h"
-#include "pluginsettings.h"
-#include "scriptable_dsp.h"
 
 extern DB_functions_t *deadbeef;
 
 @interface PreferencesWindowController ()
 
-@property (strong) IBOutlet ScriptableSelectViewController *dspSelectViewController;
-
-@property ScriptableTableDataSource *dspChainDataSource;
-@property ScriptableTableDataSource *dspPresetsDataSource;
-@property (weak) IBOutlet NSView *dspNodeEditorContainer;
-@property ScriptableNodeEditorViewController *dspNodeEditorViewController;
-
+@property (strong) IBOutlet DspPreferencesViewController *dspPreferencesViewController;
 @property (strong) IBOutlet GuiPreferencesWindowController *guiPreferencesViewController;
 @property (strong) IBOutlet SoundPreferencesViewController *soundViewController;
 @property (strong) IBOutlet PlaybackPreferencesViewController *playbackViewController;
@@ -59,26 +48,6 @@ extern DB_functions_t *deadbeef;
 - (void)windowDidLoad {
     [super windowDidLoad];
 
-    // dsp
-    scriptableItem_t *chain = scriptableDspConfigFromDspChain (deadbeef->streamer_get_dsp_chain ());
-    self.dspChainDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:chain pasteboardItemIdentifier:@"deadbeef.dspnode.preferences"];
-
-    self.dspPresetsDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:scriptableDspRoot() pasteboardItemIdentifier:@"deadbeef.dsppreset.preferences"];
-
-    // preset list and browse button
-    self.dspSelectViewController = [[ScriptableSelectViewController alloc] initWithNibName:@"ScriptableSelectView" bundle:nil];
-    self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
-    self.dspSelectViewController.delegate = self;
-    self.dspSelectViewController.view.frame = _dspPresetSelectorContainer.bounds;
-    [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
-
-    // current dsp chain node list / editor
-    self.dspNodeEditorViewController = [[ScriptableNodeEditorViewController alloc] initWithNibName:@"ScriptableNodeEditorView" bundle:nil];
-    self.dspNodeEditorViewController.dataSource = self.dspChainDataSource;
-    self.dspNodeEditorViewController.delegate = self;
-    self.dspNodeEditorViewController.view.frame = _dspNodeEditorContainer.bounds;
-    [_dspNodeEditorContainer addSubview:self.dspNodeEditorViewController.view];
-
     [self setInitialValues];
 
     // toolbar
@@ -88,19 +57,8 @@ extern DB_functions_t *deadbeef;
     [self switchToView:self.playbackViewController.view];
 }
 
-#pragma mark - ScriptableItemDelegate
-- (void)scriptableItemChanged:(scriptableItem_t *)scriptable {
-    if (scriptable == self.dspChainDataSource.scriptable
-        || scriptableItemIndexOfChild(self.dspChainDataSource.scriptable, scriptable) >= 0) {
-        ddb_dsp_context_t *chain = scriptableDspConfigToDspChain (self.dspChainDataSource.scriptable);
-        deadbeef->streamer_set_dsp_chain (chain);
-        deadbeef->dsp_preset_free (chain);
-    }
-}
-
 - (void)showWindow:(id)sender {
     [super showWindow:sender];
-    self.dspSelectViewController.scriptable = scriptableDspRoot();
 }
 
 
@@ -197,7 +155,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (IBAction)dspAction:(id)sender {
-    [self switchToView:_dspView];
+    [self switchToView:self.dspPreferencesViewController.view];
 }
 
 - (IBAction)guiAction:(id)sender {
