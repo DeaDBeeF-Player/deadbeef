@@ -134,7 +134,7 @@ extern DB_functions_t *deadbeef;
     sender.state = _pin_groups?NSOnState:NSOffState;
     deadbeef->conf_set_int ([self pinGroupsConfStr], _pin_groups);
     PlaylistView *lv = (PlaylistView *)self.view;
-    lv.contentView.needsDisplay = YES;
+    [lv.contentView updatePinnedGroup];
 }
 
 - (void)clearGrouping {

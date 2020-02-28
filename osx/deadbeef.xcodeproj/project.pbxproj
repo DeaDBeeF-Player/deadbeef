@@ -658,6 +658,8 @@
 		2D37CB421D1A91D500667E17 /* libmp4ff.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; };
 		2D3A4BBA1D631582002C7098 /* medialib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A4BB91D631582002C7098 /* medialib.c */; };
 		2D3A4BBD1D6315D6002C7098 /* medialib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; };
+		2D3CD9372409A091005875A9 /* PinnedGroupTitleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3CD9352409A091005875A9 /* PinnedGroupTitleView.h */; };
+		2D3CD9382409A091005875A9 /* PinnedGroupTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3CD9362409A091005875A9 /* PinnedGroupTitleView.m */; };
 		2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2D3E0E1B1B39AAC20007ECC3 /* btnBrowseTemplate.pdf */; };
 		2D3EBD9D1A9379BD00E5E255 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D3EBD9C1A9379BD00E5E255 /* Preferences.xib */; };
 		2D40208F1F27BD7200D4EA4F /* cueutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D40208D1F27BD7200D4EA4F /* cueutil.c */; };
@@ -3841,6 +3843,9 @@
 		2D3420DC1D0856D5004C136A /* libmp4ff.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmp4ff.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D3A4BB41D631530002C7098 /* medialib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = medialib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D3A4BB91D631582002C7098 /* medialib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = medialib.c; path = plugins/medialib/medialib.c; sourceTree = "<group>"; };
+		2D3CD9352409A091005875A9 /* PinnedGroupTitleView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PinnedGroupTitleView.h; sourceTree = "<group>"; };
+		2D3CD9362409A091005875A9 /* PinnedGroupTitleView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PinnedGroupTitleView.m; sourceTree = "<group>"; };
+		2D3CD9462409A1B7005875A9 /* DdbListviewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbListviewDelegate.h; sourceTree = "<group>"; };
 		2D3E0E1B1B39AAC20007ECC3 /* btnBrowseTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = btnBrowseTemplate.pdf; sourceTree = "<group>"; };
 		2D3EBD9C1A9379BD00E5E255 /* Preferences.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 		2D40208D1F27BD7200D4EA4F /* cueutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cueutil.c; sourceTree = "<group>"; };
@@ -8348,6 +8353,9 @@
 		2DDBA26623E5FBA000051320 /* Playlist */ = {
 			isa = PBXGroup;
 			children = (
+				2D3CD9462409A1B7005875A9 /* DdbListviewDelegate.h */,
+				2D3CD9352409A091005875A9 /* PinnedGroupTitleView.h */,
+				2D3CD9362409A091005875A9 /* PinnedGroupTitleView.m */,
 				2DDBA24B23E5E66D00051320 /* PlaylistContentView.h */,
 				2DDBA24C23E5E66D00051320 /* PlaylistContentView.m */,
 				2DDBA26223E5F14A00051320 /* PlaylistHeaderView.h */,
@@ -10975,6 +10983,7 @@
 				2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */,
 				2DDF87D924027DA500CA8E91 /* PluginActionMenuItem.h in Headers */,
 				2DA30E792403292D001BAB8A /* PlaybackPreferencesViewController.h in Headers */,
+				2D3CD9372409A091005875A9 /* PinnedGroupTitleView.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
 				2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */,
 				2DA30E602402D1B1001BAB8A /* ctmap.h in Headers */,
@@ -14062,6 +14071,7 @@
 				2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */,
 				2DA30E7524032550001BAB8A /* NetworkPreferencesViewController.m in Sources */,
 				2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */,
+				2D3CD9382409A091005875A9 /* PinnedGroupTitleView.m in Sources */,
 				2D46221E226DBA57003997E9 /* FlippedClipView.m in Sources */,
 				2DA273792406ED4100FB9BE1 /* GuiPreferencesWindowController.m in Sources */,
 				2DDBA26523E5F14A00051320 /* PlaylistHeaderView.m in Sources */,

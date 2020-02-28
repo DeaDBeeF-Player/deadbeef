@@ -6,6 +6,7 @@
 //  Copyright © 2020 Alexey Yakovenko. All rights reserved.
 //
 
+#import "PinnedGroupTitleView.h"
 #import "PlaylistContentView.h"
 #import "PlaylistView.h"
 #import "DdbShared.h"
@@ -45,6 +46,8 @@ static int grouptitleheight = 22;
 
 @property (nonatomic) NSSize contentSize;
 
+@property (nonatomic) PinnedGroupTitleView *pinnedGroupTitleView;
+
 @end
 
 @implementation PlaylistContentView
@@ -56,7 +59,16 @@ static int grouptitleheight = 22;
 
     [self registerForDraggedTypes:[NSArray arrayWithObjects:ddbPlaylistItemsUTIType, NSFilenamesPboardType, nil]];
 
+    _pinnedGroupTitleView = [PinnedGroupTitleView new];
+    _pinnedGroupTitleView.hidden = YES;
+    [self addSubview:_pinnedGroupTitleView];
+
     return self;
+}
+
+- (void)setDelegate:(id<DdbListviewDelegate>)delegate {
+    _delegate = delegate;
+    self.pinnedGroupTitleView.delegate = delegate;
 }
 
 - (void)cleanup
@@ -228,6 +240,64 @@ static int grouptitleheight = 22;
 
 #pragma mark - Drawing
 
+- (void)drawGroupTitle:(DdbListviewGroup_t *)grp grp_y:(int)grp_y title_height:(int)title_height {
+    id<DdbListviewDelegate> delegate = self.delegate;
+    NSRect groupRect = NSMakeRect(0, grp_y, self.frame.size.width, title_height);
+    NSColor *clr = [NSColor.controlAlternatingRowBackgroundColors objectAtIndex:0];
+    [clr set];
+#if DEBUG_DRAW_GROUP_TITLES
+    [NSColor.greenColor set];
+#endif
+    [NSBezierPath fillRect:groupRect];
+    [delegate drawGroupTitle:grp->head inRect:groupRect];
+}
+
+- (void)updatePinnedGroup {
+    NSScrollView *scrollView = self.enclosingScrollView;
+    NSRect visibleRect = [scrollView documentVisibleRect];
+
+    DdbListviewGroup_t *grp = self.groups;
+
+    CGFloat scrollPos = visibleRect.origin.y;
+
+    int idx = 0;
+    int grp_y = 0;
+    int groupIndex = 0;
+    while (grp && grp_y + grp->height < scrollPos) {
+        grp_y += grp->height;
+        idx += grp->num_items;
+        grp = grp->next;
+        groupIndex++;
+    }
+
+    if (self.delegate.pinGroups && grp && grp_y < scrollPos && grp_y + grp->height >= scrollPos) {
+        self.pinnedGroupTitleView.hidden = NO;
+        self.pinnedGroupTitleView.group = grp;
+        CGFloat pos = scrollPos;
+        int grp_next_y = grp_y + grp->height;
+        if (grp->next && pos + self.grouptitle_height > grp_next_y) {
+            pos = grp_next_y - self.grouptitle_height;
+        }
+        self.pinnedGroupTitleView.frame = NSMakeRect(0, pos, NSWidth(self.frame), self.grouptitle_height);
+    }
+    else {
+        self.pinnedGroupTitleView.hidden = YES;
+    }
+
+    if ([self.delegate respondsToSelector:@selector(scrollChanged:)]) {
+        [self.delegate scrollChanged:scrollPos];
+    }
+}
+
+- (void)setFrameSize:(NSSize)newSize {
+    [super setFrameSize:newSize];
+    [self updatePinnedGroup];
+}
+
+- (void)scrollChanged:(NSRect)visibleRect {
+    [self updatePinnedGroup];
+}
+
 - (void)drawListView:(NSRect)dirtyRect {
     id<DdbListviewDelegate> delegate = self.delegate;
 
@@ -237,6 +307,7 @@ static int grouptitleheight = 22;
 
     CGFloat clip_y = dirtyRect.origin.y;
     CGFloat clip_h = dirtyRect.size.height;
+
 
     // find 1st group
     int idx = 0;
@@ -248,7 +319,6 @@ static int grouptitleheight = 22;
         grp = grp->next;
         groupIndex++;
     }
-    DdbListviewGroup_t *pin_grp = [delegate pinGroups] && grp && grp_y < dirtyRect.origin.y && grp_y + grp->height >= dirtyRect.origin.y ? grp : NULL;
 
     int cursor = [delegate cursor];
     DdbListviewRow_t cursor_it = [delegate invalidRow];
@@ -320,38 +390,12 @@ static int grouptitleheight = 22;
 
         // draw album art
         int grp_next_y = grp_y + grp->height;
-        [self renderAlbumArtForGroup:grp groupIndex:groupIndex isPinnedGroup:pin_grp==grp nextGroupCoord:grp_next_y yPos:grp_y + title_height viewportY:dirtyRect.origin.y clipRegion:dirtyRect];
+        [self renderAlbumArtForGroup:grp groupIndex:groupIndex isPinnedGroup:NO nextGroupCoord:grp_next_y yPos:grp_y + title_height viewportY:dirtyRect.origin.y clipRegion:dirtyRect];
 
-        if (pin_grp == grp && clip_y-dirtyRect.origin.y <= title_height) {
-            // draw pinned group title
-            // scrollx, 0, total_width, min(title_height, grp_next_y)
-            NSRect groupRect = NSMakeRect(0, dirtyRect.origin.y, self.frame.size.width, MIN (title_height, grp_next_y));
-            NSColor *clr = [NSColor.controlAlternatingRowBackgroundColors objectAtIndex:0];
-            [clr set];
-#if DEBUG_DRAW_GROUP_TITLES
-            [NSColor.redColor set];
-#endif
-
-            [NSBezierPath fillRect:groupRect];
+        if (clip_y <= grp_y + title_height) {
+            // draw group title
             if (title_height > 0) {
-                // scrollx, min(0, grp_next_y-title_height), total_width, title_height
-                groupRect.origin.y = MIN (dirtyRect.origin.y, grp_next_y-title_height);
-                groupRect.size.height = title_height;
-                [delegate drawGroupTitle:grp->head inRect:groupRect];
-            }
-        }
-        else if (clip_y <= grp_y + title_height) {
-            // draw normal group title
-            if (title_height > 0) {
-                // scrollx, grp_y, total_width, title_height
-                NSRect groupRect = NSMakeRect(0, grp_y, self.frame.size.width, title_height);
-                NSColor *clr = [NSColor.controlAlternatingRowBackgroundColors objectAtIndex:0];
-                [clr set];
-#if DEBUG_DRAW_GROUP_TITLES
-                [NSColor.greenColor set];
-#endif
-                [NSBezierPath fillRect:groupRect];
-                [delegate drawGroupTitle:grp->head inRect:groupRect];
+                [self drawGroupTitle:grp grp_y:grp_y title_height:title_height];
             }
         }
 
@@ -360,6 +404,14 @@ static int grouptitleheight = 22;
         grp = grp->next;
         groupIndex++;
     }
+
+//    if (pin_grp) {
+//        self.pinnedGroupTitleView.hidden = NO;
+//    }
+//    else {
+//        self.pinnedGroupTitleView.hidden = NO;
+//    }
+//        [self drawGroupTitle:pin_grp grp_y:pinnedGrpPos title_height:title_height];
 
     if (cursor_it != [delegate invalidRow]) {
         [delegate unrefRow:cursor_it];
@@ -1165,15 +1217,6 @@ static int grouptitleheight = 22;
             NSScrollView *sv = self.enclosingScrollView;
             NSRect vis = [sv documentVisibleRect];
             NSRect rect = NSMakeRect(vis.origin.x, y, vis.size.width, grp->height);
-            /*if (rect.origin.y < 0) {
-                rect.size.height += rect.origin.y;
-                rect.origin.y = 0;
-            }
-            if (rect.origin.y + rect.size.height >= vis.size.height) {
-                rect.size.height = vis.size.height - rect.origin.y;
-            }
-            rect.origin.x = vis.origin.x;
-            rect.size.width = vis.size.width;*/
             self.needsDisplayInRect = rect;
             break;
         }

@@ -113,10 +113,8 @@ static int headerheight = 23;
     self.headerView.needsDisplay = YES;
 
     NSScrollView *sv = [self.contentView enclosingScrollView];
-    NSRect vis = [sv documentVisibleRect];
-    if ([_delegate respondsToSelector:@selector(scrollChanged:)]) {
-        [_delegate scrollChanged:vis.origin.y];
-    }
+    NSRect rect = [sv documentVisibleRect];
+    [self.contentView scrollChanged:rect];
 }
 
 - (void)setDelegate:(id<DdbListviewDelegate>)delegate {
