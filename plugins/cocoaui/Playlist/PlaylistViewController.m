@@ -34,6 +34,7 @@
 
 #include "deadbeef.h"
 #include "rg_scanner.h"
+#include "utf8.h"
 
 #define CELL_HPADDING 4
 #define ART_PADDING_HORZ 8
@@ -742,26 +743,125 @@ extern DB_functions_t *deadbeef;
     }
 }
 
+- (size_t)getTintFromString:(const char *)string len:(size_t)len tint:(int *)tint {
+    const char *p = string;
+    const char marker[] = "\0331;";
+
+    if (len <= sizeof(marker)+1) {
+        return 0;
+    }
+
+    if (strncmp (p, marker, sizeof(marker)-1)) {
+        return 0;
+    }
+
+    p += sizeof (marker)-1;
+
+    const char *amount = p;
+
+    if (*p == '-' || *p == '+') {
+        p++;
+    }
+
+    if (!isdigit (*p)) {
+        return 0;
+    }
+
+    while (isdigit (*p)) {
+        p++;
+    }
+
+    if (*p != 'm') {
+        return 0;
+    }
+    p++;
+
+    *tint = atoi (amount);
+    return p - string;
+}
+
+- (NSMutableAttributedString *)stringWithDimAttributesFromString:(const char *)inputString initialAttributes:(NSDictionary *)attributes {
+    const int maxDimRanges = 100;
+    int dimRanges[maxDimRanges];
+    int numDimRanges = 0;
+
+    char *plainString = calloc (strlen(inputString), 1);
+
+    const char *p = inputString;
+    char *out = plainString;
+    size_t remaining = strlen (inputString);
+
+    int currentTint = 0;
+
+    int index = 0;
+    while (*p) {
+        int tint = 0;
+        size_t len = [self getTintFromString:p len:remaining tint:&tint];
+
+        if (len != 0) {
+            if (numDimRanges < maxDimRanges) {
+                currentTint += tint;
+                dimRanges[numDimRanges++] = currentTint;
+                dimRanges[numDimRanges++] = index;
+            }
+            p += len;
+            remaining -= len;
+        }
+        uint32_t i = 0;
+        u8_nextchar(p, &i);
+        memcpy (out, p, i);
+        out += i;
+        p += i;
+        remaining -= i;
+        index++;
+    }
+    *out = 0;
+
+    NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithUTF8String:plainString] attributes:attributes];
+
+    // add attributes
+    for (int i = 0; i < numDimRanges/2; i++) {
+        int index0 = dimRanges[i*2+1];
+        int tint = dimRanges[i*2+0];
+        NSUInteger len = str.length - index0;
+
+        CGFloat blend = 1.f + 0.1 * tint;
+        if (blend < 0) {
+            blend = 0;
+        }
+
+        NSColor *foreground = NSColor.controlTextColor;
+        NSColor *background = NSColor.controlBackgroundColor;
+        NSColor *tinted = [background blendedColorWithFraction:blend ofColor:foreground];
+
+        [str addAttributes:@{
+            NSForegroundColorAttributeName:tinted
+        } range:NSMakeRange(index0, len)];
+    }
+
+    return str;
+}
+
 - (void)drawGroupTitle:(DdbListviewRow_t)row inRect:(NSRect)rect {
     ddb_tf_context_t ctx = {
         ._size = sizeof (ddb_tf_context_t),
         .it = (DB_playItem_t *)row,
         .plt = deadbeef->plt_get_curr (),
+        .flags = DDB_TF_CONTEXT_TEXT_DIM | DDB_TF_CONTEXT_NO_DYNAMIC,
     };
 
     char text[1024] = "";
     deadbeef->tf_eval (&ctx, _group_bytecode, text, sizeof (text));
 
-    NSString *title = [NSString stringWithUTF8String:text];
+    NSMutableAttributedString *attrString = [self stringWithDimAttributesFromString:text initialAttributes:_groupTextAttrsDictionary];
 
-    NSSize size = [title sizeWithAttributes:_groupTextAttrsDictionary];
-
+    NSSize size = [attrString size];
 
     NSRect strRect = rect;
     strRect.origin.x += 5;
     strRect.origin.y = strRect.origin.y + strRect.size.height / 2 - size.height / 2;
     strRect.size.height = size.height;
-    [title drawInRect:strRect withAttributes:_groupTextAttrsDictionary];
+    [attrString drawInRect:strRect];
 
     if (ctx.plt) {
         deadbeef->plt_unref (ctx.plt);
