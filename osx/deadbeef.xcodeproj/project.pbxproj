@@ -1603,6 +1603,8 @@
 		2DB96AA519ABB50300E318A8 /* src_zoh.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB96A9A19ABB50300E318A8 /* src_zoh.c */; };
 		2DB96AA819ABB52200E318A8 /* dsp_libsrc.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DB96A8019ABB47C00E318A8 /* dsp_libsrc.dylib */; };
 		2DB96AAB19ABB53200E318A8 /* libsamplerate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DB96A8A19ABB4C600E318A8 /* libsamplerate.a */; };
+		2DBCB725240AE0BE0012F178 /* tftintutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBCB71F240ADCC10012F178 /* tftintutil.h */; };
+		2DBCB726240AE28E0012F178 /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DBCB720240ADCC10012F178 /* tftintutil.c */; };
 		2DBF129D22DE53D200D59073 /* icy2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D565AB21A40BCE200CE1F5D /* icy2utf8.c */; };
 		2DC4199E1B90540A007E3026 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DC4199D1B90540A007E3026 /* Carbon.framework */; };
 		2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC80A8E1A9222F800C9397F /* TrackProperties.xib */; };
@@ -4766,6 +4768,8 @@
 		2DB96A9819ABB50300E318A8 /* src_linear.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src_linear.c; path = "deps/libsamplerate-0.1.8/src/src_linear.c"; sourceTree = "<group>"; };
 		2DB96A9919ABB50300E318A8 /* src_sinc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src_sinc.c; path = "deps/libsamplerate-0.1.8/src/src_sinc.c"; sourceTree = "<group>"; };
 		2DB96A9A19ABB50300E318A8 /* src_zoh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src_zoh.c; path = "deps/libsamplerate-0.1.8/src/src_zoh.c"; sourceTree = "<group>"; };
+		2DBCB71F240ADCC10012F178 /* tftintutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tftintutil.h; sourceTree = "<group>"; };
+		2DBCB720240ADCC10012F178 /* tftintutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tftintutil.c; sourceTree = "<group>"; };
 		2DC4199D1B90540A007E3026 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		2DC80A8E1A9222F800C9397F /* TrackProperties.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackProperties.xib; sourceTree = "<group>"; };
 		2DCB281419E86162008E9DF6 /* m3u.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = m3u.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6961,6 +6965,8 @@
 				2DDF87EC2402845C00CA8E91 /* NSMenu+ActionItems.m */,
 				2DDF87D724027DA500CA8E91 /* PluginActionMenuItem.h */,
 				2DDF87D824027DA500CA8E91 /* PluginActionMenuItem.m */,
+				2DBCB71F240ADCC10012F178 /* tftintutil.h */,
+				2DBCB720240ADCC10012F178 /* tftintutil.c */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -9839,6 +9845,7 @@
 				2D135EF1226E47AA00BAAE84 /* scriptable_dsp.h in Headers */,
 				2D448A851D5C5C6500B43F12 /* logger.h in Headers */,
 				2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */,
+				2DBCB725240AE0BE0012F178 /* tftintutil.h in Headers */,
 				2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */,
 				2D61F1AC230D1D0F0045D366 /* wcwidth.h in Headers */,
 			);
@@ -12871,6 +12878,7 @@
 				2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */,
 				2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */,
 				2D40208F1F27BD7200D4EA4F /* cueutil.c in Sources */,
+				2DBCB726240AE28E0012F178 /* tftintutil.c in Sources */,
 				2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */,
 				2D7DE4A61E64CD7700AA0F83 /* dsp.c in Sources */,
 				2D01D7D21AB2219C00BCD3C4 /* tf.c in Sources */,
