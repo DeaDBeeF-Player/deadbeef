@@ -634,13 +634,16 @@ extern DB_functions_t *deadbeef;
 
 - (void)drawCell:(int)idx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused {
     int sel = deadbeef->pl_is_selected((DB_playItem_t *)row);
+    NSColor *background = NSColor.controlBackgroundColor;
     if (sel) {
         if (focused) {
             [NSColor.alternateSelectedControlColor set];
+            background = NSColor.alternateSelectedControlColor;
             [NSBezierPath fillRect:rect];
         }
         else {
             [NSColor.controlShadowColor set];
+            background = NSColor.controlShadowColor;
             [NSBezierPath fillRect:rect];
         }
     }
@@ -698,7 +701,7 @@ extern DB_functions_t *deadbeef;
             .plt = deadbeef->plt_get_curr (),
             .id = _columns[col].type,
             .idx = idx,
-            .flags = DDB_TF_CONTEXT_HAS_ID|DDB_TF_CONTEXT_HAS_INDEX,
+            .flags = DDB_TF_CONTEXT_HAS_ID|DDB_TF_CONTEXT_HAS_INDEX|DDB_TF_CONTEXT_TEXT_DIM,
         };
 
         char text[1024] = "";
@@ -708,7 +711,11 @@ extern DB_functions_t *deadbeef;
         rect.size.width -= CELL_HPADDING;
 
         if (text[0]) {
-            [[NSString stringWithUTF8String:text] drawInRect:rect withAttributes:sel?_cellSelectedTextAttrsDictionary:_cellTextAttrsDictionary];
+            NSDictionary *attributes = sel?_cellSelectedTextAttrsDictionary:_cellTextAttrsDictionary;
+            NSColor *foreground = attributes[NSForegroundColorAttributeName];
+
+            NSMutableAttributedString *attrString = [self stringWithDimAttributesFromString:text initialAttributes:attributes                                                     foregroundColor:foreground backgroundColor:background];
+            [attrString drawInRect:rect];
         }
 
         if (ctx.update > 0) {
@@ -747,7 +754,7 @@ extern DB_functions_t *deadbeef;
     const char *p = string;
     const char marker[] = "\0331;";
 
-    if (len <= sizeof(marker)+1) {
+    if (len < sizeof(marker)+1) {
         return 0;
     }
 
@@ -780,12 +787,12 @@ extern DB_functions_t *deadbeef;
     return p - string;
 }
 
-- (NSMutableAttributedString *)stringWithDimAttributesFromString:(const char *)inputString initialAttributes:(NSDictionary *)attributes {
+- (NSMutableAttributedString *)stringWithDimAttributesFromString:(const char *)inputString initialAttributes:(NSDictionary *)attributes foregroundColor:(NSColor *)foregroundColor backgroundColor:(NSColor *)backgroundColor {
     const int maxDimRanges = 100;
     int dimRanges[maxDimRanges];
     int numDimRanges = 0;
 
-    char *plainString = calloc (strlen(inputString), 1);
+    char *plainString = calloc (strlen(inputString) + 1, 1);
 
     const char *p = inputString;
     char *out = plainString;
@@ -830,14 +837,14 @@ extern DB_functions_t *deadbeef;
             blend = 0;
         }
 
-        NSColor *foreground = NSColor.controlTextColor;
-        NSColor *background = NSColor.controlBackgroundColor;
-        NSColor *tinted = [background blendedColorWithFraction:blend ofColor:foreground];
+        NSColor *tinted = [backgroundColor blendedColorWithFraction:blend ofColor:foregroundColor];
 
         [str addAttributes:@{
             NSForegroundColorAttributeName:tinted
         } range:NSMakeRange(index0, len)];
     }
+
+    free (plainString);
 
     return str;
 }
@@ -853,7 +860,7 @@ extern DB_functions_t *deadbeef;
     char text[1024] = "";
     deadbeef->tf_eval (&ctx, _group_bytecode, text, sizeof (text));
 
-    NSMutableAttributedString *attrString = [self stringWithDimAttributesFromString:text initialAttributes:_groupTextAttrsDictionary];
+    NSMutableAttributedString *attrString = [self stringWithDimAttributesFromString:text initialAttributes:_groupTextAttrsDictionary foregroundColor:_groupTextAttrsDictionary[NSForegroundColorAttributeName] backgroundColor:NSColor.controlBackgroundColor];
 
     NSSize size = [attrString size];
 
