@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * players.h - Players enumeration, by Simon Peter <dn.tlp@gmx.net>
  */
@@ -32,9 +32,8 @@ CPlayerDesc::CPlayerDesc()
 }
 
 CPlayerDesc::CPlayerDesc(const CPlayerDesc &pd)
-  : factory(pd.factory), extlength(pd.extlength)
+  : factory(pd.factory), filetype(pd.filetype), extlength(pd.extlength)
 {
-    memcpy (filetype, pd.filetype, sizeof (filetype));
   if(pd.extensions) {
     extensions = (char *)malloc(extlength);
     memcpy(extensions, pd.extensions, extlength);
@@ -42,10 +41,9 @@ CPlayerDesc::CPlayerDesc(const CPlayerDesc &pd)
     extensions = 0;
 }
 
-CPlayerDesc::CPlayerDesc(Factory f, const char *type, const char *ext)
-  : factory(f), extensions(0)
+CPlayerDesc::CPlayerDesc(Factory f, const std::string &type, const char *ext)
+  : factory(f), filetype(type), extensions(0)
 {
-    strcpy (filetype, type);
   const char *i = ext;
 
   // Determine length of passed extensions list
@@ -82,25 +80,26 @@ const char *CPlayerDesc::get_extension(unsigned int n) const
 
 /***** CPlayers *****/
 
-const CPlayerDesc *CPlayers::lookup_filetype(const char *ftype) const
+const CPlayerDesc *CPlayers::lookup_filetype(const std::string &ftype) const
 {
-    for (const CPlayerDesc *i = head; i; i = i->next) {
-        if(!strcmp (i->filetype, ftype))
-            return i;
-    }
+  const_iterator	i;
+
+  for(i = begin(); i != end(); i++)
+    if((*i)->filetype == ftype)
+      return *i;
 
   return 0;
 }
 
-const CPlayerDesc *CPlayers::lookup_extension(const char *extension) const
+const CPlayerDesc *CPlayers::lookup_extension(const std::string &extension) const
 {
-    for (const CPlayerDesc *i = head; i; i = i->next) {
-        for(int j = 0; i->get_extension(j); j++) {
-            if(!strcmp (i->get_extension (j), extension)) {
-                return i;
-            }
-        }
-    }
+  const_iterator	i;
+  unsigned int		j;
+
+  for(i = begin(); i != end(); i++)
+    for(j = 0; (*i)->get_extension(j); j++)
+      if(!stricmp(extension.c_str(), (*i)->get_extension(j)))
+	return *i;
 
   return 0;
 }

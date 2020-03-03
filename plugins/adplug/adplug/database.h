@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * database.h - AdPlug database class
  * Copyright (c) 2002 Riven the Mage <riven@ok.ru>
@@ -24,7 +24,8 @@
 #ifndef H_ADPLUG_DATABASE
 #define H_ADPLUG_DATABASE
 
-#if 0
+#include <iostream>
+#include <string>
 #include <binio.h>
 
 class CAdPlugDatabase
@@ -52,7 +53,7 @@ public:
 
     RecordType	type;
     CKey	key;
-    char *filetype, comment;
+    std::string	filetype, comment;
 
     static CRecord *factory(RecordType type);
     static CRecord *factory(binistream &in);
@@ -62,8 +63,8 @@ public:
 
     void write(binostream &out);
 
-    //bool user_read(std::istream &in, std::ostream &out);
-    //bool user_write(std::ostream &out);
+    bool user_read(std::istream &in, std::ostream &out);
+    bool user_write(std::ostream &out);
 
   protected:
     virtual void read_own(binistream &in) = 0;
@@ -164,7 +165,5 @@ protected:
   virtual bool user_read_own(std::istream &in, std::ostream &out);
   virtual bool user_write_own(std::ostream &out);
 };
-
-#endif
 
 #endif

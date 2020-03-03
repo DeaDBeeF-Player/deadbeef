@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * fprovide.h - File provider class framework, by Simon Peter <dn.tlp@gmx.net>
  */
@@ -22,6 +22,7 @@
 #ifndef H_ADPLUG_FILEPROVIDER
 #define H_ADPLUG_FILEPROVIDER
 
+#include <string>
 #include <binio.h>
 
 class CFileProvider
@@ -31,18 +32,18 @@ public:
     {
     }
 
-  virtual binistream *open(const char *) const = 0;
+  virtual binistream *open(std::string) const = 0;
   virtual void close(binistream *) const = 0;
 
-  static bool extension(const char *filename,
-			const char *extension);
+  static bool extension(const std::string &filename,
+			const std::string &extension);
   static unsigned long filesize(binistream *f);
 };
 
 class CProvider_Filesystem: public CFileProvider
 {
 public:
-  virtual binistream *open(const char *filename) const;
+  virtual binistream *open(std::string filename) const;
   virtual void close(binistream *f) const;
 };
 

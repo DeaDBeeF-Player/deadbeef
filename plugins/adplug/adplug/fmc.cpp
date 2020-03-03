@@ -14,12 +14,12 @@
 
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
   fmc.cpp - FMC Loader by Riven the Mage <riven@ok.ru>
 */
 
-#include <string.h>
+#include <cstring>
 #include "fmc.h"
 
 /* -------- Public Methods -------------------------------- */
@@ -29,7 +29,7 @@ CPlayer *CfmcLoader::factory(Copl *newopl)
   return new CfmcLoader(newopl);
 }
 
-bool CfmcLoader::load(const char *filename, const CFileProvider &fp)
+bool CfmcLoader::load(const std::string &filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   const unsigned char conv_fx[16] = {0,1,2,3,4,8,255,255,255,255,26,11,12,13,14,15};
@@ -168,19 +168,19 @@ float CfmcLoader::getrefresh()
   return 50.0f;
 }
 
-const char * CfmcLoader::gettype()
+std::string CfmcLoader::gettype()
 {
-  return "Faust Music Creator";
+  return std::string("Faust Music Creator");
 }
 
-const char * CfmcLoader::gettitle()
+std::string CfmcLoader::gettitle()
 {
-  return header.title;
+  return std::string(header.title);
 }
 
-const char * CfmcLoader::getinstrument(unsigned int n)
+std::string CfmcLoader::getinstrument(unsigned int n)
 {
-  return instruments[n].name;
+  return std::string(instruments[n].name);
 }
 
 unsigned int CfmcLoader::getinstruments()

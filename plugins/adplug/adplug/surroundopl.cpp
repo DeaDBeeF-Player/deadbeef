@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * surroundopl.cpp - Wrapper class to provide a surround/harmonic effect
  *   for another OPL emulator, by Adam Nielsen <malvineous@shikadi.net>
@@ -69,16 +69,13 @@ void CSurroundopl::update(short *buf, int samples)
 			((char *)buf)[i * 2 + 1] = ((char *)this->rbuf)[i];
 		}
 	}
-
 }
 
-// template methods
 void CSurroundopl::write(int reg, int val)
 {
 	a->write(reg, val);
 
 	// Transpose the other channel to produce the harmonic effect
-
 	int iChannel = -1;
 	int iRegister = reg; // temp
 	int iValue = val; // temp
@@ -86,19 +83,13 @@ void CSurroundopl::write(int reg, int val)
 
 	// Remember the FM state, so that the harmonic effect can access
 	// previously assigned register values.
-	/*if (((iRegister >> 4 == 0xB) && (iValue & 0x20) && !(this->iFMReg[iRegister] & 0x20)) ||
-		(iRegister == 0xBD) && (
-			((iValue & 0x01) && !(this->iFMReg[0xBD] & 0x01))
-		)) {
-		this->iFMReg[iRegister] = iValue;
-	}*/
-	this->iFMReg[iRegister] = iValue;
+	this->iFMReg[this->currChip][iRegister] = iValue;
 
 	if ((iChannel >= 0)) {// && (i == 1)) {
-		uint8_t iBlock = (this->iFMReg[0xB0 + iChannel] >> 2) & 0x07;
-		uint16_t iFNum = ((this->iFMReg[0xB0 + iChannel] & 0x03) << 8) | this->iFMReg[0xA0 + iChannel];
+		uint8_t iBlock = (this->iFMReg[this->currChip][0xB0 + iChannel] >> 2) & 0x07;
+		uint16_t iFNum = ((this->iFMReg[this->currChip][0xB0 + iChannel] & 0x03) << 8) | this->iFMReg[this->currChip][0xA0 + iChannel];
 		//double dbOriginalFreq = 50000.0 * (double)iFNum * pow(2, iBlock - 20);
-		double dbOriginalFreq = 49716.0 * (double)iFNum * pow(2, iBlock - 20);
+		double dbOriginalFreq = 49716.0 * (double)iFNum * pow(2.0, iBlock - 20);
 
 		uint8_t iNewBlock = iBlock;
 		uint16_t iNewFNum;
@@ -106,7 +97,7 @@ void CSurroundopl::write(int reg, int val)
 		// Adjust the frequency and calculate the new FNum
 		//double dbNewFNum = (dbOriginalFreq+(dbOriginalFreq/FREQ_OFFSET)) / (50000.0 * pow(2, iNewBlock - 20));
 		//#define calcFNum() ((dbOriginalFreq+(dbOriginalFreq/FREQ_OFFSET)) / (50000.0 * pow(2, iNewBlock - 20)))
-		#define calcFNum() ((dbOriginalFreq+(dbOriginalFreq/FREQ_OFFSET)) / (49716.0 * pow(2, iNewBlock - 20)))
+		#define calcFNum() ((dbOriginalFreq+(dbOriginalFreq/FREQ_OFFSET)) / (49716.0 * pow(2.0, iNewBlock - 20)))
 		double dbNewFNum = calcFNum();
 
 		// Make sure it's in range for the OPL chip
@@ -161,15 +152,15 @@ void CSurroundopl::write(int reg, int val)
 			// Overwrite the supplied value with the new F-Number and Block.
 			iValue = (iValue & ~0x1F) | (iNewBlock << 2) | ((iNewFNum >> 8) & 0x03);
 
-			this->iCurrentTweakedBlock[iChannel] = iNewBlock; // save it so we don't have to update register 0xB0 later on
-			this->iCurrentFNum[iChannel] = iNewFNum;
+			this->iCurrentTweakedBlock[this->currChip][iChannel] = iNewBlock; // save it so we don't have to update register 0xB0 later on
+			this->iCurrentFNum[this->currChip][iChannel] = iNewFNum;
 
-			if (this->iTweakedFMReg[0xA0 + iChannel] != (iNewFNum & 0xFF)) {
+			if (this->iTweakedFMReg[this->currChip][0xA0 + iChannel] != (iNewFNum & 0xFF)) {
 				// Need to write out low bits
 				uint8_t iAdditionalReg = 0xA0 + iChannel;
 				uint8_t iAdditionalValue = iNewFNum & 0xFF;
 				b->write(iAdditionalReg, iAdditionalValue);
-				this->iTweakedFMReg[iAdditionalReg] = iAdditionalValue;
+				this->iTweakedFMReg[this->currChip][iAdditionalReg] = iAdditionalValue;
 			}
 		} else if ((iRegister >= 0xA0) && (iRegister <= 0xA8)) {
 
@@ -177,17 +168,17 @@ void CSurroundopl::write(int reg, int val)
 			iValue = iNewFNum & 0xFF;
 
 			// See if we need to update the block number, which is stored in a different register
-			uint8_t iNewB0Value = (this->iFMReg[0xB0 + iChannel] & ~0x1F) | (iNewBlock << 2) | ((iNewFNum >> 8) & 0x03);
+			uint8_t iNewB0Value = (this->iFMReg[this->currChip][0xB0 + iChannel] & ~0x1F) | (iNewBlock << 2) | ((iNewFNum >> 8) & 0x03);
 			if (
 				(iNewB0Value & 0x20) && // but only update if there's a note currently playing (otherwise we can just wait
-				(this->iTweakedFMReg[0xB0 + iChannel] != iNewB0Value)   // until the next noteon and update it then)
+				(this->iTweakedFMReg[this->currChip][0xB0 + iChannel] != iNewB0Value)   // until the next noteon and update it then)
 			) {
 				AdPlug_LogWrite("OPL INFO: CH%d - FNum %d/B#%d -> FNum %d/B#%d == keyon register update!\n",
 					iChannel, iFNum, iBlock, iNewFNum, iNewBlock);
 					// The note is already playing, so we need to adjust the upper bits too
 					uint8_t iAdditionalReg = 0xB0 + iChannel;
 					b->write(iAdditionalReg, iNewB0Value);
-					this->iTweakedFMReg[iAdditionalReg] = iNewB0Value;
+					this->iTweakedFMReg[this->currChip][iAdditionalReg] = iNewB0Value;
 			} // else the note is not playing, the upper bits will be set when the note is next played
 
 		} // if (register 0xB0 or 0xA0)
@@ -196,8 +187,27 @@ void CSurroundopl::write(int reg, int val)
 
 	// Now write to the original register with a possibly modified value
 	b->write(iRegister, iValue);
-	this->iTweakedFMReg[iRegister] = iValue;
+	this->iTweakedFMReg[this->currChip][iRegister] = iValue;
+}
 
-};
+void CSurroundopl::init()
+{
+	a->init();
+	b->init();
+	for (int c = 0; c < 2; c++) {
+		for (int i = 0; i < 256; i++) {
+			this->iFMReg[c][i] = 0;
+			this->iTweakedFMReg[c][i] = 0;
+		}
+		for (int i = 0; i < 9; i++) {
+			this->iCurrentTweakedBlock[c][i] = 0;
+			this->iCurrentFNum[c][i] = 0;
+		}
+	}
+}
 
-void CSurroundopl::init() {};
+void CSurroundopl::setchip(int n)
+{
+	a->setchip(n);
+	b->setchip(n);
+}

@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * amd.h - AMD Loader by Simon Peter <dn.tlp@gmx.net>
  */
@@ -30,19 +30,19 @@ public:
 		: CmodPlayer(newopl)
 	{ };
 
-	bool load(const char *filename, const CFileProvider &fp);
+	bool load(const std::string &filename, const CFileProvider &fp);
 	float getrefresh();
 
-	const char *gettype()
-	{ return "AMUSIC Adlib Tracker"; };
-	const char *gettitle()
-	{ return songname; };
-	const char *getauthor()
-	{ return author; };
+	std::string gettype()
+	{ return std::string("AMUSIC Adlib Tracker"); };
+	std::string gettitle()
+	{ return std::string(songname,0,24); };
+	std::string getauthor()
+	{ return std::string(author,0,24); };
 	unsigned int getinstruments()
 	{ return 26; };
-	const char *getinstrument(unsigned int n)
-	{ return instname[n]; };
+	std::string getinstrument(unsigned int n)
+	{ return std::string(instname[n],0,23); };
 
 private:
 	char songname[24],author[24],instname[26][23];

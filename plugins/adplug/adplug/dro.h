@@ -14,39 +14,56 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * dro.h - DOSBox Raw OPL Player by Sjoerd van der Berg <harekiet@zophar.net>
+ * Refactored to better match dro2.h 
+ *  by Laurence Dougal Myers <jestarjokin@jestarjokin.net>
  */
 
+/*
+ * Copyright (c) 2012 - 2017 Wraithverge <liam82067@yahoo.com>
+ * - Realigned and re-ordered sections.
+ * - Removed unused garbage.
+ * - Finalized support for displaying arbitrary Tag data.
+ */
+
+#include <stdint.h> // for uintxx_t
 #include "player.h"
 
 class CdroPlayer: public CPlayer
 {
- public:
-  static CPlayer *factory(Copl *newopl);
+	protected:
+		static const uint8_t iCmdDelayS = 0x00; // Wraithverge: fixed this with "static".
+		static const uint8_t iCmdDelayL = 0x01; // Wraithverge: fixed this with "static".
 
-  CdroPlayer(Copl *newopl);
-  ~CdroPlayer()
-    {
-      if(data)
-	delete [] data;
-    }
+		uint8_t *data;
+		int iLength;
+		int iPos;
+		int iDelay;
 
-  bool load(const char *filename, const CFileProvider &fp);
-  bool update();
-  void rewind(int subsong);
-  float getrefresh();
+	private:
+		char title[40];
+		char author[40];
+		char desc[1023];
 
-  const char * gettype()
-    {
-      return "DOSBox Raw OPL v0.1";
-    }
+	public:
+		static CPlayer *factory(Copl *newopl);
 
- protected:
-  unsigned char *data;
-  unsigned long pos,length;
-  unsigned long msdone,mstotal;
-  unsigned short delay;
-  unsigned char index, opl3_mode;
+		CdroPlayer(Copl *newopl);
+		~CdroPlayer();
+
+		bool load(const std::string &filename, const CFileProvider &fp);
+		bool update();
+		void rewind(int subsong);
+		float getrefresh();
+
+		std::string gettype()
+		{
+			return std::string("DOSBox Raw OPL v0.1");
+		}
+
+		std::string gettitle() { return std::string(title, 0, 40); };
+		std::string getauthor() { return std::string(author, 0, 40); };
+		std::string getdesc() { return std::string(desc, 0, 1023); };
 };

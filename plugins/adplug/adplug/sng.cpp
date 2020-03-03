@@ -14,12 +14,12 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * sng.cpp - SNG Player by Simon Peter <dn.tlp@gmx.net>
  */
 
-#include <string.h>
+#include <cstring>
 #include "sng.h"
 
 CPlayer *CsngPlayer::factory(Copl *newopl)
@@ -27,7 +27,7 @@ CPlayer *CsngPlayer::factory(Copl *newopl)
   return new CsngPlayer(newopl);
 }
 
-bool CsngPlayer::load(const char *filename, const CFileProvider &fp)
+bool CsngPlayer::load(const std::string &filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   int i;

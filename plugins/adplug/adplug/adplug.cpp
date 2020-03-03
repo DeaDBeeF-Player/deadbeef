@@ -14,16 +14,24 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * adplug.cpp - CAdPlug utility class, by Simon Peter <dn.tlp@gmx.net>
  */
 
-#include <string.h>
+/*
+ * Copyright (c) 2017 Wraithverge <liam82067@yahoo.com>
+ * - Added extension ".rac" for CrawPlayer.
+ * - Corrected 'type' string for CrawPlayer.
+ */
+
+#include <cstring>
+#include <string>
 #include <binfile.h>
 
 #include "adplug.h"
 #include "debug.h"
+#include "version.h"
 
 /***** Replayer includes *****/
 
@@ -34,7 +42,7 @@
 #include "sng.h"
 #include "adtrack.h"
 #include "bam.h"
-//#include "cmf.h"
+#include "cmf.h"
 #include "d00.h"
 #include "dfm.h"
 #include "hsp.h"
@@ -67,11 +75,18 @@
 #include "rix.h"
 #include "adl.h"
 #include "jbm.h"
+#include "got.h"
+#include "mus.h"
+#include "mdi.h"
+#include "cmfmcsop.h"
+#include "vgm.h"
+#include "sop.h"
+#include "herad.h"
 
 /***** CAdPlug *****/
 
 // List of all players that come with the standard AdPlug distribution
-CPlayerDesc CAdPlug::allplayers[] = {
+const CPlayerDesc CAdPlug::allplayers[] = {
   CPlayerDesc(ChscPlayer::factory, "HSC-Tracker", ".hsc\0"),
   CPlayerDesc(CsngPlayer::factory, "SNGPlay", ".sng\0"),
   CPlayerDesc(CimfPlayer::factory, "Apogee IMF", ".imf\0.wlf\0.adlib\0"),
@@ -79,13 +94,15 @@ CPlayerDesc CAdPlug::allplayers[] = {
   CPlayerDesc(CadtrackLoader::factory, "Adlib Tracker", ".sng\0"),
   CPlayerDesc(CamdLoader::factory, "AMUSIC", ".amd\0"),
   CPlayerDesc(CbamPlayer::factory, "Bob's Adlib Music", ".bam\0"),
-//  CPlayerDesc(CcmfPlayer::factory, "Creative Music File", ".cmf\0"),
+  CPlayerDesc(CcmfPlayer::factory, "Creative Music File", ".cmf\0"),
   CPlayerDesc(Cd00Player::factory, "Packed EdLib", ".d00\0"),
   CPlayerDesc(CdfmLoader::factory, "Digital-FM", ".dfm\0"),
   CPlayerDesc(ChspLoader::factory, "HSC Packed", ".hsp\0"),
   CPlayerDesc(CksmPlayer::factory, "Ken Silverman Music", ".ksm\0"),
   CPlayerDesc(CmadLoader::factory, "Mlat Adlib Tracker", ".mad\0"),
-  CPlayerDesc(CmidPlayer::factory, "MIDI", ".mid\0.sci\0.laa\0.cmf\0"),
+  CPlayerDesc(CmusPlayer::factory, "AdLib MIDI/IMS Format", ".mus\0.ims\0"),
+  CPlayerDesc(CmdiPlayer::factory, "AdLib MIDIPlay File", ".mdi\0"),
+  CPlayerDesc(CmidPlayer::factory, "MIDI", ".mid\0.sci\0.laa\0"),
   CPlayerDesc(CmkjPlayer::factory, "MKJamz", ".mkj\0"),
   CPlayerDesc(CcffLoader::factory, "Boomtracker", ".cff\0"),
   CPlayerDesc(CdmoLoader::factory, "TwinTeam", ".dmo\0"),
@@ -94,9 +111,9 @@ CPlayerDesc CAdPlug::allplayers[] = {
   CPlayerDesc(CfmcLoader::factory, "Faust Music Creator", ".sng\0"),
   CPlayerDesc(CmtkLoader::factory, "MPU-401 Trakker", ".mtk\0"),
   CPlayerDesc(CradLoader::factory, "Reality Adlib Tracker", ".rad\0"),
-  CPlayerDesc(CrawPlayer::factory, "RdosPlay RAW", ".raw\0"),
+  CPlayerDesc(CrawPlayer::factory, "Raw AdLib Capture", ".rac\0.raw\0"),
   CPlayerDesc(Csa2Loader::factory, "Surprise! Adlib Tracker", ".sat\0.sa2\0"),
-  CPlayerDesc(CxadbmfPlayer::factory, "BMF Adlib Tracker", ".xad\0"),
+  CPlayerDesc(CxadbmfPlayer::factory, "BMF Adlib Tracker", ".xad\0.bmf\0"),
   CPlayerDesc(CxadflashPlayer::factory, "Flash", ".xad\0"),
   CPlayerDesc(CxadhybridPlayer::factory, "Hybrid", ".xad\0"),
   CPlayerDesc(CxadhypPlayer::factory, "Hypnosis", ".xad\0"),
@@ -112,10 +129,15 @@ CPlayerDesc CAdPlug::allplayers[] = {
   CPlayerDesc(CrixPlayer::factory, "Softstar RIX OPL Music", ".rix\0"),
   CPlayerDesc(CadlPlayer::factory, "Westwood ADL", ".adl\0"),
   CPlayerDesc(CjbmPlayer::factory, "JBM Adlib Music", ".jbm\0"),
+  CPlayerDesc(CgotPlayer::factory, "God of Thunder Music", ".got\0"),
+  CPlayerDesc(CcmfmacsoperaPlayer::factory, "SoundFX Macs Opera CMF", ".cmf\0"),
+  CPlayerDesc(CvgmPlayer::factory, "Video Game Music", ".vgm\0.vgz\0"),
+  CPlayerDesc(CsopPlayer::factory, "Note Sequencer by sopepos", ".sop\0"),
+  CPlayerDesc(CheradPlayer::factory, "Herbulot AdLib System", ".hsq\0.sqx\0.sdb\0.agd\0.ha2\0"),
   CPlayerDesc()
 };
 
-const CPlayers &CAdPlug::init_players(CPlayerDesc pd[])
+const CPlayers &CAdPlug::init_players(const CPlayerDesc pd[])
 {
   static CPlayers	initplayers;
   unsigned int		i;
@@ -127,23 +149,23 @@ const CPlayers &CAdPlug::init_players(CPlayerDesc pd[])
 }
 
 const CPlayers CAdPlug::players = CAdPlug::init_players(CAdPlug::allplayers);
-//CAdPlugDatabase *CAdPlug::database = 0;
+CAdPlugDatabase *CAdPlug::database = 0;
 
-CPlayer *CAdPlug::factory(const char *fn, Copl *opl, const CPlayers &pl,
+CPlayer *CAdPlug::factory(const std::string &fn, Copl *opl, const CPlayers &pl,
 			  const CFileProvider &fp)
 {
   CPlayer			*p;
-  CPlayerDesc *i;
+  CPlayers::const_iterator	i;
   unsigned int			j;
 
-  AdPlug_LogWrite("*** CAdPlug::factory(\"%s\",opl,fp) ***\n", fn);
+  AdPlug_LogWrite("*** CAdPlug::factory(\"%s\",opl,fp) ***\n", fn.c_str());
 
   // Try a direct hit by file extension
-  for(i = pl.head; i; i = i->next)
-    for(j = 0; i->get_extension(j); j++)
-      if(fp.extension(fn, i->get_extension(j))) {
-	AdPlug_LogWrite("Trying direct hit: %s\n", i->filetype);
-	if((p = i->factory(opl))) {
+  for(i = pl.begin(); i != pl.end(); i++)
+    for(j = 0; (*i)->get_extension(j); j++)
+      if(fp.extension(fn, (*i)->get_extension(j))) {
+	AdPlug_LogWrite("Trying direct hit: %s\n", (*i)->filetype.c_str());
+	if((p = (*i)->factory(opl))) {
 	  if(p->load(fn, fp)) {
 	    AdPlug_LogWrite("got it!\n");
 	    AdPlug_LogWrite("--- CAdPlug::factory ---\n");
@@ -154,9 +176,9 @@ CPlayer *CAdPlug::factory(const char *fn, Copl *opl, const CPlayers &pl,
       }
 
   // Try all players, one by one
-  for(i = pl.head; i; i = i->next) {
-    AdPlug_LogWrite("Trying: %s\n", i->filetype);
-    if((p = i->factory(opl))) {
+  for(i = pl.begin(); i != pl.end(); i++) {
+    AdPlug_LogWrite("Trying: %s\n", (*i)->filetype.c_str());
+    if((p = (*i)->factory(opl))) {
       if(p->load(fn, fp)) {
         AdPlug_LogWrite("got it!\n");
         AdPlug_LogWrite("--- CAdPlug::factory ---\n");
@@ -172,20 +194,18 @@ CPlayer *CAdPlug::factory(const char *fn, Copl *opl, const CPlayers &pl,
   return 0;
 }
 
-#if 0
 void CAdPlug::set_database(CAdPlugDatabase *db)
 {
   database = db;
 }
-#endif
 
-const char * CAdPlug::get_version()
+std::string CAdPlug::get_version()
 {
-  return VERSION;
+  return std::string(ADPLUG_VERSION);
 }
 
-void CAdPlug::debug_output(const char *filename)
+void CAdPlug::debug_output(const std::string &filename)
 {
-  AdPlug_LogFile(filename);
-  AdPlug_LogWrite("CAdPlug::debug_output(\"%s\"): Redirected.\n",filename);
+  AdPlug_LogFile(filename.c_str());
+  AdPlug_LogWrite("CAdPlug::debug_output(\"%s\"): Redirected.\n",filename.c_str());
 }

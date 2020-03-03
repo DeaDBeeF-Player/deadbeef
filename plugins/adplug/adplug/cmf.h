@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * cmf.h - CMF player by Adam Nielsen <malvineous@shikadi.net>
  */
@@ -51,6 +51,7 @@ typedef struct {
 typedef struct {
 	int iPatch; // MIDI patch for this channel
 	int iPitchbend; // Current pitchbend amount for this channel
+	int iTranspose; // Transpose amount for this channel (between -128 and +128)
 } MIDICHANNEL;
 
 typedef struct {
@@ -70,8 +71,9 @@ class CcmfPlayer: public CPlayer
 		SBI *pInstruments;
 		bool bPercussive; // are rhythm-mode instruments enabled?
 		uint8_t iCurrentRegs[256]; // Current values in the OPL chip
-		int iTranspose;  // Transpose amount for entire song (between -128 and +128)
 		uint8_t iPrevCommand; // Previous command (used for repeated MIDI commands, as the seek and playback code need to share this)
+		uint8_t iNotePlaying[16]; // Last note turned on, used for duplicate note check
+		bool bNoteFix[16]; // Fix duplicated Note On / Note Off
 
 		int iNoteCount;  // Used to count how long notes have been playing for
 		MIDICHANNEL chMIDI[16];
@@ -103,8 +105,10 @@ class CcmfPlayer: public CPlayer
 		uint32_t readMIDINumber();
 		void writeInstrumentSettings(uint8_t iChannel, uint8_t iOperatorSource, uint8_t iOperatorDest, uint8_t iInstrument);
 		void writeOPL(uint8_t iRegister, uint8_t iValue);
+		void getFreq(uint8_t iChannel, uint8_t iNote, uint8_t * iBlock, uint16_t * iOPLFNum);
 		void cmfNoteOn(uint8_t iChannel, uint8_t iNote, uint8_t iVelocity);
 		void cmfNoteOff(uint8_t iChannel, uint8_t iNote, uint8_t iVelocity);
+		void cmfNoteUpdate(uint8_t iChannel);
 		uint8_t getPercChannel(uint8_t iChannel);
 		void MIDIchangeInstrument(uint8_t iOPLChannel, uint8_t iMIDIChannel, uint8_t iNewInstrument);
 		void MIDIcontroller(uint8_t iChannel, uint8_t iController, uint8_t iValue);

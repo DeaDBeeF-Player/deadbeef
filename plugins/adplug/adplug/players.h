@@ -14,13 +14,16 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * players.h - Players enumeration, by Simon Peter <dn.tlp@gmx.net>
  */
 
 #ifndef H_ADPLUG_PLAYERS
 #define H_ADPLUG_PLAYERS
+
+#include <string>
+#include <list>
 
 #include "opl.h"
 #include "player.h"
@@ -31,47 +34,27 @@ public:
   typedef CPlayer *(*Factory)(Copl *);
 
   Factory	factory;
-  char filetype[50];
+  std::string	filetype;
 
   CPlayerDesc();
   CPlayerDesc(const CPlayerDesc &pd);
-  CPlayerDesc(Factory f, const char *type, const char *ext);
+  CPlayerDesc(Factory f, const std::string &type, const char *ext);
 
   ~CPlayerDesc();
 
   void add_extension(const char *ext);
   const char *get_extension(unsigned int n) const;
 
-  CPlayerDesc *next;
-
 private:
   char		*extensions;
   unsigned long	extlength;
 };
 
-class CPlayers
+class CPlayers: public std::list<const CPlayerDesc *>
 {
 public:
-  CPlayerDesc *head;
-  CPlayerDesc *tail;
-    CPlayers() {
-        head = 0;
-        tail = 0;
-    }
-  const CPlayerDesc *lookup_filetype(const char *ftype) const;
-  const CPlayerDesc *lookup_extension(const char *extension) const;
-
-  void push_back (CPlayerDesc *ply) {
-      ply->next = 0;
-      if (tail) {
-          tail->next = ply;
-      }
-      tail = ply;
-      if (!head) {
-          head = ply;
-      }
-  }
-
+  const CPlayerDesc *lookup_filetype(const std::string &ftype) const;
+  const CPlayerDesc *lookup_extension(const std::string &extension) const;
 };
 
 #endif

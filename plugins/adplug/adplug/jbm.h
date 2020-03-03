@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * jbm.h - JBM Player by Dennis Lindroos <lindroos@nls.fi>
  */
@@ -32,22 +32,22 @@ class CjbmPlayer: public CPlayer
   CjbmPlayer(Copl *newopl) : CPlayer(newopl), m(0)
     { }
   ~CjbmPlayer()
-    { delete [] m; }
+    { if(m != NULL) delete [] m; }
 
-  bool load(const char *filename, const CFileProvider &fp);
+  bool load(const std::string &filename, const CFileProvider &fp);
   bool update();
   void rewind(int subsong);
 
   float getrefresh()
     { return timer; }
 
-  const char * gettype()
+  std::string gettype()
     {
-      return flags&1 ? "JBM Adlib Music [rhythm mode]" :
-			 "JBM Adlib Music";
+      return std::string(flags&1 ? "JBM Adlib Music [rhythm mode]" :
+			 "JBM Adlib Music");
     }
-  const char * getauthor()
-    { return "Johannes Bjerregaard"; }
+  std::string getauthor()
+    { return std::string("Johannes Bjerregaard"); }
 
  protected:
 

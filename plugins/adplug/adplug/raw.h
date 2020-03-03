@@ -14,9 +14,17 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * raw.h - RAW Player by Simon Peter <dn.tlp@gmx.net>
+ */
+
+/*
+ * Copyright (c) 2015 - 2017 Wraithverge <liam82067@yahoo.com>
+ * - Preliminary support for displaying arbitrary Tag data. (2015)
+ * - Minor realignments. (2017)
+ * - Corrected 'type' string. (2017)
+ * - Finalized Tag support. (2017)
  */
 
 #include "player.h"
@@ -24,21 +32,26 @@
 class CrawPlayer: public CPlayer
 {
 public:
-  static CPlayer *factory(Copl *newopl);
+	static CPlayer *factory(Copl *newopl);
 
 	CrawPlayer(Copl *newopl)
 		: CPlayer(newopl), data(0)
 	{ };
-	~CrawPlayer()
-	{ if(data) delete [] data; };
 
-	bool load(const char *filename, const CFileProvider &fp);
+	~CrawPlayer()
+	{ if (data) delete[] data; };
+
+	bool load(const std::string &filename, const CFileProvider &fp);
 	bool update();
 	void rewind(int subsong);
 	float getrefresh();
 
-	const char * gettype()
-	{ return "RdosPlay RAW"; };
+	// Wraithverge: RAC originally captured these files, not RdosPlay.
+	std::string gettype() { return std::string("Raw AdLib Capture"); };
+
+	std::string gettitle() { return std::string(title, 0, 40); };
+	std::string getauthor() { return std::string(author, 0, 60); };
+	std::string getdesc() { return std::string(desc, 0, 1023); };
 
 protected:
 	struct Tdata {
@@ -49,4 +62,9 @@ protected:
 	unsigned short clock, speed;
 	unsigned char del;
 	bool songend;
+
+private:
+	char title[40];
+	char author[60];
+	char desc[1023];
 };

@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * player.cpp - Replayer base class, by Simon Peter <dn.tlp@gmx.net>
  */
@@ -32,8 +32,8 @@ const unsigned char CPlayer::op_table[9] =
   {0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12};
 
 CPlayer::CPlayer(Copl *newopl)
+  : opl(newopl), db(CAdPlug::database)
 {
-    opl = newopl;
 }
 
 CPlayer::~CPlayer()

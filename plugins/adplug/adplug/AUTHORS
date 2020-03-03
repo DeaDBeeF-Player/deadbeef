@@ -1,17 +1,12 @@
-AdPlug is copyright (C) 1999 - 2008 Simon Peter <dn.tlp@gmx.net>, et al.
+AdPlug is copyright (C) 1999 - 2017 Simon Peter <dn.tlp@gmx.net>, et al.
 All library code is written by Simon Peter, except the parts listed below.
 
 Additional Credits:
 -------------------
-Alexey Yakovenko <waker@users.sourceforge.net>:
-  - stripped off all STL code
-  - fixed several memory bugs in ADL format
-  - Android NDK port
-
 Phil Hassey <philhassey@hotmail.com>:
   - Player development for the following formats:
     - MID: MIDI Audio File Format
-    - CMF: Creative Music File Format
+    - CMF: Creative Music File Format (original player)
     - SCI: Sierra's AdLib Audio File Format
     - LAA: LucasArts AdLib Audio File Format
 
@@ -84,6 +79,20 @@ Adam Nielsen <malvineous@shikadi.net>:
   - Fixes for CMF rhythm mode support in original player
   - Added entirely new (more accurate) CMF player
   - Added surround/harmonic synth
+  - DRO: v2 player
 
 Dennis Lindroos <lindroos@nls.fi>:
   - JBM: JBM Adlib Music format player development
+
+Riven the Mage <riven@ok.ru>:
+  - BMF: Easy AdLib 1.0
+
+Sebastian Kienzl <seb@knzl.de>:
+  - CMF: SoundFX Macs Opera
+
+Stas'M <binarymaster@mail.ru>
+  - GOT: God of Thunder
+  - HSQ/SQX/SDB/AGD/HA2: Herbulot AdLib System (HERAD)
+  - MUS/IMS/MDI: AdLib Visual Composer ROL derivatives
+  - SOP: sopepos' Note Player
+  - VGM: Video Game Music

@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * a2m.h - A2M Loader by Simon Peter <dn.tlp@gmx.net>
  */
@@ -32,19 +32,19 @@ public:
   Ca2mLoader(Copl *newopl): CmodPlayer(newopl)
     { }
 
-  bool load(const char *filename, const CFileProvider &fp);
+  bool load(const std::string &filename, const CFileProvider &fp);
   float getrefresh();
 
-  const char *gettype()
-    { return "AdLib Tracker 2"; }
-  const char *gettitle()
-    { if(*songname) return songname; else return ""; }
-  const char *getauthor()
-    { if(*author) return author; else return ""; }
+  std::string gettype()
+    { return std::string("AdLib Tracker 2"); }
+  std::string gettitle()
+    { if(*songname) return std::string(songname,1,*songname); else return std::string(); }
+  std::string getauthor()
+    { if(*author) return std::string(author,1,*author); else return std::string(); }
   unsigned int getinstruments()
     { return 250; }
-  const char *getinstrument(unsigned int n)
-    { return instname[n]; }
+  std::string getinstrument(unsigned int n)
+    { return std::string(instname[n],1,*instname[n]); }
 
 private:
 

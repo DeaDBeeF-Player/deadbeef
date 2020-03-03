@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * fprovide.cpp - File provider class framework, by Simon Peter <dn.tlp@gmx.net>
  */
@@ -27,10 +27,10 @@
 
 /***** CFileProvider *****/
 
-bool CFileProvider::extension(const char *filename,
-			      const char *extension)
+bool CFileProvider::extension(const std::string &filename,
+			      const std::string &extension)
 {
-  const char *fname = filename, *ext = extension;
+  const char *fname = filename.c_str(), *ext = extension.c_str();
 
   if(strlen(fname) < strlen(ext) ||
      stricmp(fname + strlen(fname) - strlen(ext), ext))
@@ -52,7 +52,7 @@ unsigned long CFileProvider::filesize(binistream *f)
 
 /***** CProvider_Filesystem *****/
 
-binistream *CProvider_Filesystem::open(const char * filename) const
+binistream *CProvider_Filesystem::open(std::string filename) const
 {
   binifstream *f = new binifstream(filename);
 

@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * dfm.cpp - Digital-FM Loader by Simon Peter <dn.tlp@gmx.net>
  */
@@ -30,7 +30,7 @@ CPlayer *CdfmLoader::factory(Copl *newopl)
   return new CdfmLoader(newopl);
 }
 
-bool CdfmLoader::load(const char *filename, const CFileProvider &fp)
+bool CdfmLoader::load(const std::string &filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   unsigned char		npats,n,note,fx,c,r,param;
@@ -64,7 +64,9 @@ bool CdfmLoader::load(const char *filename, const CFileProvider &fp)
     inst[i].data[0] = f->readInt(1);
   }
   for(i = 0; i < 128; i++) order[i] = f->readInt(1);
-  for(i = 0; i < 128 && order[i] != 128; i++) ; length = i;
+  for(i = 0; i < 128 && order[i] != 128; i++)
+    ;
+  length = i;
   npats = f->readInt(1);
   for(i = 0; i < npats; i++) {
     n = f->readInt(1);
@@ -101,10 +103,12 @@ bool CdfmLoader::load(const char *filename, const CFileProvider &fp)
   return true;
 }
 
-const char * CdfmLoader::gettype()
+std::string CdfmLoader::gettype()
 {
+	char tmpstr[20];
+
 	sprintf(tmpstr,"Digital-FM %d.%d",header.hiver,header.lover);
-	return tmpstr;
+	return std::string(tmpstr);
 }
 
 float CdfmLoader::getrefresh()
