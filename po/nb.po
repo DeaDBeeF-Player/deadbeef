@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Kjell Cato Heskjestad <cato@heskjestad.xyz>, 2019
+# Kjell Cato Heskjestad <cato@heskjestad.xyz>, 2019-2020
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-05 19:56+0100\n"
-"PO-Revision-Date: 2020-02-05 19:02+0000\n"
+"POT-Creation-Date: 2020-03-03 19:35+0100\n"
+"PO-Revision-Date: 2020-03-03 18:38+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Norwegian Bokmål (http://www.transifex.com/deadbeef-player/deadbeef-player/language/nb/)\n"
 "MIME-Version: 1.0\n"
@@ -34,7 +34,7 @@ msgid "DeaDBeeF Translators"
 msgstr "DeaDBeeF-oversettere"
 
 #: ../plugins/gtkui/callbacks.c:642 ../plugins/gtkui/interface.c:976
-#: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:159
+#: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:166
 #: ../plugins/converter/convgui.c:1781 ../plugins/converter/convgui.c:1789
 #: ../plugins/gtkui/actionhandlers.c:305
 #, no-c-format
@@ -78,7 +78,7 @@ msgid "Import Foobar2000 Preset"
 msgstr "Importer Foobar2000-oppsett"
 
 #. plugins/notify/notify.c
-#: ../plugins/gtkui/eq.c:322 ../translation/plugins.c:386
+#: ../plugins/gtkui/eq.c:322 ../translation/plugins.c:391
 #, no-c-format
 msgid "Enable"
 msgstr "Aktiver"
@@ -100,12 +100,12 @@ msgstr "Nullstill bånd"
 msgid "Presets"
 msgstr "Oppsett"
 
-#: ../plugins/gtkui/gtkui.c:163 ../tf.c:2524
+#: ../plugins/gtkui/gtkui.c:163 ../tf.c:2527
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 dag %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:166 ../tf.c:2527
+#: ../plugins/gtkui/gtkui.c:166 ../tf.c:2530
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d dager %d:%02d:%02d"
@@ -130,7 +130,7 @@ msgstr "utvalgt spilletid"
 msgid "Stopped"
 msgstr "Stoppet"
 
-#: ../plugins/gtkui/gtkui.c:690 ../translation/plugins.c:209
+#: ../plugins/gtkui/gtkui.c:690 ../translation/plugins.c:216
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
 #, no-c-format
 msgid "New Playlist"
@@ -376,7 +376,7 @@ msgid "Custom"
 msgstr "Selvvalgt"
 
 #: ../plugins/gtkui/interface.c:292 ../plugins/gtkui/interface.c:1793
-#: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:195
+#: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:202
 #, no-c-format
 msgid "Preferences"
 msgstr "Innstillinger"
@@ -488,13 +488,13 @@ msgid "Search"
 msgstr "Søk"
 
 #: ../plugins/gtkui/interface.c:794 ../plugins/gtkui/deadbeef.glade.h:54
-#: ../translation/plugins.c:320
+#: ../translation/plugins.c:325
 #, no-c-format
 msgid "Stop"
 msgstr "Stopp"
 
 #: ../plugins/gtkui/interface.c:802 ../plugins/gtkui/deadbeef.glade.h:55
-#: ../translation/plugins.c:318
+#: ../translation/plugins.c:323
 #, no-c-format
 msgid "Play"
 msgstr "Spill"
@@ -504,19 +504,19 @@ msgid "Pause"
 msgstr "Pause"
 
 #: ../plugins/gtkui/interface.c:818 ../plugins/gtkui/deadbeef.glade.h:57
-#: ../translation/plugins.c:322
+#: ../translation/plugins.c:327
 #, no-c-format
 msgid "Previous"
 msgstr "Forrige"
 
 #: ../plugins/gtkui/interface.c:826 ../plugins/gtkui/deadbeef.glade.h:58
-#: ../translation/plugins.c:324
+#: ../translation/plugins.c:329
 #, no-c-format
 msgid "Next"
 msgstr "Neste"
 
 #: ../plugins/gtkui/interface.c:834 ../plugins/gtkui/deadbeef.glade.h:59
-#: ../translation/plugins.c:330
+#: ../translation/plugins.c:335
 #, no-c-format
 msgid "Play Random"
 msgstr "Spill tilfeldig"
@@ -526,13 +526,13 @@ msgid "About"
 msgstr "Om"
 
 #: ../plugins/gtkui/interface.c:856 ../plugins/gtkui/deadbeef.glade.h:61
-#: ../translation/plugins.c:145
+#: ../translation/plugins.c:152
 #, no-c-format
 msgid "Quit"
 msgstr "Avslutt"
 
 #: ../plugins/gtkui/interface.c:1049 ../plugins/gtkui/plcommon.c:1227
-#: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:157
+#: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:164
 #, no-c-format
 msgid "Track Properties"
 msgstr "Sporets egenskaper"
@@ -682,7 +682,7 @@ msgid "Processing:"
 msgstr "Behandling: "
 
 #: ../plugins/gtkui/interface.c:1989 ../plugins/gtkui/plcommon.c:1909
-#: ../translation/plugins.c:108 ../plugins/gtkui/widgets.c:3971
+#: ../translation/plugins.c:106 ../plugins/gtkui/widgets.c:3971
 #, no-c-format
 msgid "None"
 msgstr "Ingen"
@@ -742,7 +742,7 @@ msgid "\"Stop after current album\" option will switch off after triggering"
 msgstr "Slå av innstillingen «Stopp etter dette albumet» etter utløsning"
 
 #: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:112
-#: ../translation/plugins.c:163
+#: ../translation/plugins.c:170
 #, no-c-format
 msgid "Playback"
 msgstr "Avspilling"
@@ -767,7 +767,7 @@ msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2173 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Minimize to tray on startup"
-msgstr ""
+msgstr "Minimer til systemkurv ved oppstart"
 
 #: ../plugins/gtkui/interface.c:2177 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Close minimizes to tray"
@@ -815,7 +815,7 @@ msgstr "Spiller"
 
 #. plugins/pltbrowser/pltbrowser.c
 #: ../plugins/gtkui/interface.c:2264 ../plugins/gtkui/deadbeef.glade.h:129
-#: ../translation/plugins.c:400
+#: ../translation/plugins.c:405
 #, no-c-format
 msgid "Close playlists with middle mouse button"
 msgstr "Lukk spillelister med midtre museknapp"
@@ -827,7 +827,7 @@ msgstr "Skjul «Slett fra disk» i sprettoppmenyen"
 #: ../plugins/gtkui/interface.c:2272 ../plugins/gtkui/deadbeef.glade.h:131
 msgid ""
 "Switch to the next song when the currently played one is removed from disk"
-msgstr ""
+msgstr "Hopp til neste låt hvis den som spilles fjernes fra disk"
 
 #: ../plugins/gtkui/interface.c:2276 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Auto-name playlists when adding a single folder"
@@ -1206,7 +1206,7 @@ msgid ""
 msgstr "Dette dialogvinduet lar deg velge en egen tittel for et vilkårlig spor. Dette er mest nyttig for radiostasjoner. Det er også mulig å velge egen tittel i dialogvinduet «Legg til adresse». Selve tittelen vises i kolonner som viser metadatafeltet «Artist». Den ser ut som «[selvvalgt] artist» hvis «Artist»-feltet finnes, ellers bare «selvvalgt»."
 
 #: ../plugins/gtkui/interface.c:5111 ../plugins/gtkui/deadbeef.glade.h:221
-#: ../translation/plugins.c:139 ../plugins/shellexecui/interface.c:70
+#: ../translation/plugins.c:146 ../plugins/shellexecui/interface.c:70
 #: ../plugins/shellexecui/shellexec.glade.h:5
 #, no-c-format
 msgid "Edit"
@@ -1321,18 +1321,18 @@ msgstr "Bitrate"
 msgid "_Paste"
 msgstr "_Lim inn"
 
-#: ../plugins/gtkui/plcommon.c:989 ../translation/plugins.c:306
+#: ../plugins/gtkui/plcommon.c:989 ../translation/plugins.c:311
 #, no-c-format
 msgid "Add To Playback Queue"
 msgstr "Legg til i avspillingskøen"
 
-#: ../plugins/gtkui/plcommon.c:993 ../translation/plugins.c:304
+#: ../plugins/gtkui/plcommon.c:993 ../translation/plugins.c:309
 #, no-c-format
 msgid "Remove From Playback Queue"
 msgstr "Fjern fra avspillingskøen"
 
 #. plugins/hotkeys/hotkeys.c
-#: ../plugins/gtkui/plcommon.c:1015 ../translation/plugins.c:242
+#: ../plugins/gtkui/plcommon.c:1015 ../translation/plugins.c:247
 #, no-c-format
 msgid "Reload Metadata"
 msgstr "Oppdater metadata"
@@ -1345,7 +1345,7 @@ msgstr "Klipp _ut"
 msgid "_Copy"
 msgstr "_Kopier"
 
-#: ../plugins/gtkui/plcommon.c:1078 ../translation/plugins.c:147
+#: ../plugins/gtkui/plcommon.c:1078 ../translation/plugins.c:154
 #, no-c-format
 msgid "Remove From Disk"
 msgstr "Slett fra disk"
@@ -1595,19 +1595,19 @@ msgstr "   --volume [NUM]     Skriv eller velg deadbeefs volumnivå.\n"
 msgid ""
 "                      The NUM parameter can be specified in percents "
 "(absolute value or increment/decrement)\n"
-msgstr ""
+msgstr "                      NUM-parameteren kan angis i prosent (absoluttverdi eller økning/reduksjon)\n"
 
 #: ../main.c:149
 #, c-format
 msgid "                      or in dB [-50, 0] (if with suffix).\n"
-msgstr ""
+msgstr "                      eller i dB [-50, 0] (bruk i så fall suffiks).\n"
 
 #: ../main.c:150
 #, c-format
 msgid ""
 "                      Examples: --volume 80, --volume +10, --volume -5 or "
 "--volume -20dB\n"
-msgstr ""
+msgstr "                      Eksempler: --volume 80, --volume +10, --volume -5 eller --volume -20dB\n"
 
 #: ../playlist.c:479 ../playlist.c:2316
 msgid "Default"
@@ -1957,33 +1957,33 @@ msgstr "Kvalitet/algoritme"
 #. plugins/dumb/cdumb.c
 #: ../translation/plugins.c:100
 #, no-c-format
-msgid "Resampling quality (0..5, higher is better)"
-msgstr "Resamplingskvalitet (0 til 5, høyere er bedre)"
+msgid "Resampling quality"
+msgstr ""
 
 #: ../translation/plugins.c:102
 #, no-c-format
-msgid "8-bit output (default is 16)"
-msgstr "8-biters utdata (standard er 16)"
+msgid "Internal DUMB volume"
+msgstr ""
 
 #: ../translation/plugins.c:104
-#, no-c-format
-msgid "Internal DUMB volume (0..128)"
-msgstr "Internt DUMB-volum (0 til 128)"
-
-#: ../translation/plugins.c:106
 #, no-c-format
 msgid "Volume ramping"
 msgstr "Volumovergang"
 
-#: ../translation/plugins.c:110
+#: ../translation/plugins.c:108
 #, no-c-format
 msgid "On/Off Only"
 msgstr "Kun av/på"
 
-#: ../translation/plugins.c:112
+#: ../translation/plugins.c:110
 #, no-c-format
 msgid "Full"
 msgstr "Full"
+
+#: ../translation/plugins.c:112
+#, no-c-format
+msgid "8-bit output"
+msgstr ""
 
 #. plugins/ffmpeg/ffmpeg.c
 #: ../translation/plugins.c:115
@@ -1996,822 +1996,788 @@ msgstr "Bruk alle filtypene som ffmpeg støtter"
 msgid "File Extensions (separate with ';')"
 msgstr "Filtyper (skill dem med «;»)"
 
-#. plugins/gme/cgme.c
+#. plugins/flac/flac.c
 #: ../translation/plugins.c:120
+#, no-c-format
+msgid "Ignore bad header errors"
+msgstr ""
+
+#: ../translation/plugins.c:122
+#, no-c-format
+msgid "Ignore unparsable stream errors"
+msgstr ""
+
+#. plugins/gme/cgme.c
+#: ../translation/plugins.c:125
 #, no-c-format
 msgid "Max song length (in minutes)"
 msgstr "Lengste låtlengde (i minutter)"
 
-#: ../translation/plugins.c:122
+#: ../translation/plugins.c:127
 #, no-c-format
 msgid "Fadeout length (seconds)"
 msgstr "Uttoningslengde (sekunder)"
 
-#: ../translation/plugins.c:124
+#: ../translation/plugins.c:129
 #, no-c-format
 msgid "Play loops nr. of times (if available)"
 msgstr "Gjenta sløyfer (hvis tilgjengelig)"
 
-#: ../translation/plugins.c:126
+#: ../translation/plugins.c:131
 #, no-c-format
 msgid "ColecoVision BIOS (for SGC file format)"
 msgstr "ColecoVision BIOS (for filformatet SGC)"
 
 #. plugins/gtkui/gtkui.c
-#: ../translation/plugins.c:129
+#: ../translation/plugins.c:134
 #, no-c-format
 msgid "ReplayGain"
 msgstr "ReplayGain"
 
-#: ../translation/plugins.c:131
+#: ../translation/plugins.c:136
 #, no-c-format
 msgid "Remove ReplayGain Information"
 msgstr "Fjern ReplayGain-informasjon"
 
-#: ../translation/plugins.c:133
+#: ../translation/plugins.c:138
 #, no-c-format
 msgid "Scan Selection As Albums (By Tags)"
 msgstr "Analyser utvalget som albumer (iht. metadata)"
 
-#: ../translation/plugins.c:135
+#: ../translation/plugins.c:140
 #, no-c-format
 msgid "Scan Selection As Single Album"
 msgstr "Analyser utvalget som ett album"
 
-#: ../translation/plugins.c:137
+#: ../translation/plugins.c:142
 #, no-c-format
 msgid "Scan Per-file Track Gain"
 msgstr "Analyser hver fil for seg selv"
 
-#: ../translation/plugins.c:141
+#: ../translation/plugins.c:144
+#, no-c-format
+msgid "Scan Per-file Track Gain If Not Scanned"
+msgstr ""
+
+#: ../translation/plugins.c:148
 #, no-c-format
 msgid "Deselect All"
 msgstr "Fravelg alle"
 
-#: ../translation/plugins.c:143
+#: ../translation/plugins.c:150
 #, no-c-format
 msgid "Select All"
 msgstr "Velg alle"
 
-#: ../translation/plugins.c:149
+#: ../translation/plugins.c:156
 #, no-c-format
 msgid "Add Location"
 msgstr "Legg til adresse"
 
-#: ../translation/plugins.c:151
+#: ../translation/plugins.c:158
 #, no-c-format
 msgid "Add Folder(s)"
 msgstr "Legg til mappe(r)"
 
-#: ../translation/plugins.c:153
+#: ../translation/plugins.c:160
 #, no-c-format
 msgid "Add File(s)"
 msgstr "Legg til fil(er)"
 
-#: ../translation/plugins.c:155
+#: ../translation/plugins.c:162
 #, no-c-format
 msgid "Open File(s)"
 msgstr "Åpne fil(er)"
 
-#: ../translation/plugins.c:161
+#: ../translation/plugins.c:168
 #, no-c-format
 msgid "Show Help Page"
 msgstr "Vis hjelpeside"
 
-#: ../translation/plugins.c:165
+#: ../translation/plugins.c:172
 #, no-c-format
 msgid "Cycle Repeat Mode"
 msgstr "Veksle mellom repetisjonsmåtene"
 
-#: ../translation/plugins.c:167
+#: ../translation/plugins.c:174
 #, no-c-format
 msgid "Repeat - Off"
 msgstr "Ikke repeter"
 
-#: ../translation/plugins.c:169
+#: ../translation/plugins.c:176
 #, no-c-format
 msgid "Repeat - Single Track"
 msgstr "Repeter ett spor"
 
-#: ../translation/plugins.c:171
+#: ../translation/plugins.c:178
 #, no-c-format
 msgid "Repeat - All"
 msgstr "Repeter alle"
 
-#: ../translation/plugins.c:173
+#: ../translation/plugins.c:180
 #, no-c-format
 msgid "Cycle Shuffle Mode"
 msgstr "Veksle mellom blandingsmåtene"
 
-#: ../translation/plugins.c:175
+#: ../translation/plugins.c:182
 #, no-c-format
 msgid "Shuffle - Random Tracks"
 msgstr "Bland tilfeldige spor"
 
-#: ../translation/plugins.c:177
+#: ../translation/plugins.c:184
 #, no-c-format
 msgid "Shuffle - Albums"
 msgstr "Bland albumer"
 
-#: ../translation/plugins.c:179
+#: ../translation/plugins.c:186
 #, no-c-format
 msgid "Shuffle - Tracks"
 msgstr "Bland spor"
 
-#: ../translation/plugins.c:181
+#: ../translation/plugins.c:188
 #, no-c-format
 msgid "Shuffle - Off"
 msgstr "Ingen blanding"
 
-#: ../translation/plugins.c:183
+#: ../translation/plugins.c:190
 #, no-c-format
 msgid "Toggle Cursor Follows Playback"
 msgstr "Slå av/på markør følger avspilling"
 
-#: ../translation/plugins.c:185
+#: ../translation/plugins.c:192
 #, no-c-format
 msgid "Toggle Scroll Follows Playback"
 msgstr "Slå av/på rulling følger avspilling"
 
-#: ../translation/plugins.c:187
+#: ../translation/plugins.c:194
 #, no-c-format
 msgid "View"
 msgstr "Vis"
 
-#: ../translation/plugins.c:189
+#: ../translation/plugins.c:196
 #, no-c-format
 msgid "Show\\/Hide menu"
 msgstr "Vis\\/skjul meny"
 
-#: ../translation/plugins.c:191
+#: ../translation/plugins.c:198
 #, no-c-format
 msgid "Show\\/Hide statusbar"
 msgstr "Vis\\/skjul statuslinje"
 
-#: ../translation/plugins.c:193
+#: ../translation/plugins.c:200
 #, no-c-format
 msgid "Toggle Design Mode"
 msgstr "Slå av/på designmodus"
 
-#: ../translation/plugins.c:197
+#: ../translation/plugins.c:204
 #, no-c-format
 msgid "Sort Custom"
 msgstr "Selvvalgt sortering"
 
-#: ../translation/plugins.c:199
+#: ../translation/plugins.c:206
 #, no-c-format
 msgid "Crop Selected"
 msgstr "Beskjær utvalgte"
 
-#: ../translation/plugins.c:201
+#: ../translation/plugins.c:208
 #, no-c-format
 msgid "Remove Track(s) From Playlist"
 msgstr "Fjern spor fra spilleliste"
 
-#: ../translation/plugins.c:203
+#: ../translation/plugins.c:210
 #, no-c-format
 msgid "Save Playlist"
 msgstr "Lagre spilleliste"
 
-#: ../translation/plugins.c:205 ../plugins/gtkui/actionhandlers.c:626
+#: ../translation/plugins.c:212 ../plugins/gtkui/actionhandlers.c:626
 #, no-c-format
 msgid "Load Playlist"
 msgstr "Åpne spilleliste"
 
-#: ../translation/plugins.c:207
+#: ../translation/plugins.c:214
 #, no-c-format
 msgid "Remove Current Playlist"
 msgstr "Fjern aktiv spilleliste"
 
-#: ../translation/plugins.c:211
+#: ../translation/plugins.c:218
 #, no-c-format
 msgid "Show\\/Hide Equalizer"
 msgstr "Vis\\/skjul equalizer"
 
-#: ../translation/plugins.c:213
+#: ../translation/plugins.c:220
 #, no-c-format
 msgid "Hide Equalizer"
 msgstr "Skjul equalizer"
 
-#: ../translation/plugins.c:215
+#: ../translation/plugins.c:222
 #, no-c-format
 msgid "Show Equalizer"
 msgstr "Vis equalizer"
 
-#: ../translation/plugins.c:217
+#: ../translation/plugins.c:224
 #, no-c-format
 msgid "Show\\/Hide Player Window"
 msgstr "Vis\\/skjul spillevindu"
 
-#: ../translation/plugins.c:219
+#: ../translation/plugins.c:226
 #, no-c-format
 msgid "Hide Player Window"
 msgstr "Skjul spillevindu"
 
-#: ../translation/plugins.c:221
+#: ../translation/plugins.c:228
 #, no-c-format
 msgid "Show Player Window"
 msgstr "Vis spillevindu"
 
-#: ../translation/plugins.c:223
+#: ../translation/plugins.c:230
 #, no-c-format
 msgid "Find"
 msgstr "Finn"
 
-#: ../translation/plugins.c:225
+#: ../translation/plugins.c:232
 #, no-c-format
 msgid "Show\\/Hide Log window"
 msgstr "Vis\\/skjul loggvindu"
 
-#: ../translation/plugins.c:227
+#: ../translation/plugins.c:234
 #, no-c-format
 msgid "Ask confirmation to delete files from disk"
 msgstr "Bekreft sletting av filer fra disk"
 
-#: ../translation/plugins.c:229
+#: ../translation/plugins.c:236
 #, no-c-format
 msgid "Status icon volume control sensitivity"
 msgstr "Følsomheten til volumkontrollen i systemkurven"
 
-#: ../translation/plugins.c:231
+#: ../translation/plugins.c:238
 #, no-c-format
 msgid "Custom status icon"
 msgstr "Selvvalgt ikon i systemkurven"
 
-#: ../translation/plugins.c:233
-#, no-c-format
-msgid "Run gtk_init with --sync (debug mode)"
-msgstr "Kjør gtk_init med --sync (feilsøkingsmodus)"
-
-#: ../translation/plugins.c:235
+#: ../translation/plugins.c:240
 #, no-c-format
 msgid "Add separators between plugin context menu items"
 msgstr "Legg til separatorer i sprettoppmenyen mellom elementer fra programtillegg"
 
-#: ../translation/plugins.c:237
+#: ../translation/plugins.c:242
 #, no-c-format
 msgid "Use unicode chars instead of images for track state"
 msgstr "Bruk Unicode-tegn istedenfor bilder for avspillingsstatus"
 
-#: ../translation/plugins.c:239
+#: ../translation/plugins.c:244
 #, no-c-format
 msgid "Disable seekbar overlay text"
 msgstr "Deaktiver tekst oppå søkebryteren"
 
-#: ../translation/plugins.c:244
+#: ../translation/plugins.c:249
 #, no-c-format
 msgid "Jump To Currently Playing Track"
 msgstr "Hopp til sporet som spiller"
 
-#: ../translation/plugins.c:246
+#: ../translation/plugins.c:251
 #, no-c-format
 msgid "Skip to"
 msgstr "Gå til"
 
-#: ../translation/plugins.c:248
+#: ../translation/plugins.c:253
 #, no-c-format
 msgid "Previous genre"
 msgstr "Forrige sjanger"
 
-#: ../translation/plugins.c:250
+#: ../translation/plugins.c:255
 #, no-c-format
 msgid "Previous composer"
 msgstr "Forrige komponist"
 
-#: ../translation/plugins.c:252
+#: ../translation/plugins.c:257
 #, no-c-format
 msgid "Previous artist"
 msgstr "Forrige artist"
 
-#: ../translation/plugins.c:254
+#: ../translation/plugins.c:259
 #, no-c-format
 msgid "Previous album"
 msgstr "Forrige album"
 
-#: ../translation/plugins.c:256
+#: ../translation/plugins.c:261
 #, no-c-format
 msgid "Next genre"
 msgstr "Neste sjanger"
 
-#: ../translation/plugins.c:258
+#: ../translation/plugins.c:263
 #, no-c-format
 msgid "Next composer"
 msgstr "Neste komponist"
 
-#: ../translation/plugins.c:260
+#: ../translation/plugins.c:265
 #, no-c-format
 msgid "Next artist"
 msgstr "Neste artist"
 
-#: ../translation/plugins.c:262
+#: ../translation/plugins.c:267
 #, no-c-format
 msgid "Next album"
 msgstr "Neste album"
 
-#: ../translation/plugins.c:264
+#: ../translation/plugins.c:269
 #, no-c-format
 msgid "Next Playlist"
 msgstr "Neste spilleliste"
 
-#: ../translation/plugins.c:266
+#: ../translation/plugins.c:271
 #, no-c-format
 msgid "Prev Playlist"
 msgstr "Forrige spilleliste"
 
-#: ../translation/plugins.c:268
+#: ../translation/plugins.c:273
 #, no-c-format
 msgid "Switch To Playlist 10"
 msgstr "Vis spilleliste 10"
 
-#: ../translation/plugins.c:270
+#: ../translation/plugins.c:275
 #, no-c-format
 msgid "Switch To Playlist 9"
 msgstr "Vis spilleliste 9"
 
-#: ../translation/plugins.c:272
+#: ../translation/plugins.c:277
 #, no-c-format
 msgid "Switch To Playlist 8"
 msgstr "Vis spilleliste 8"
 
-#: ../translation/plugins.c:274
+#: ../translation/plugins.c:279
 #, no-c-format
 msgid "Switch To Playlist 7"
 msgstr "Vis spilleliste 7"
 
-#: ../translation/plugins.c:276
+#: ../translation/plugins.c:281
 #, no-c-format
 msgid "Switch To Playlist 6"
 msgstr "Vis spilleliste 6"
 
-#: ../translation/plugins.c:278
+#: ../translation/plugins.c:283
 #, no-c-format
 msgid "Switch To Playlist 5"
 msgstr "Vis spilleliste 5"
 
-#: ../translation/plugins.c:280
+#: ../translation/plugins.c:285
 #, no-c-format
 msgid "Switch To Playlist 4"
 msgstr "Vis spilleliste 4"
 
-#: ../translation/plugins.c:282
+#: ../translation/plugins.c:287
 #, no-c-format
 msgid "Switch To Playlist 3"
 msgstr "Vis spilleliste 3"
 
-#: ../translation/plugins.c:284
+#: ../translation/plugins.c:289
 #, no-c-format
 msgid "Switch To Playlist 2"
 msgstr "Vis spilleliste 2"
 
-#: ../translation/plugins.c:286
+#: ../translation/plugins.c:291
 #, no-c-format
 msgid "Switch To Playlist 1"
 msgstr "Vis spilleliste 1"
 
-#: ../translation/plugins.c:288
+#: ../translation/plugins.c:293
 #, no-c-format
 msgid "Sort Randomize"
 msgstr "Tilfeldig sortering"
 
-#: ../translation/plugins.c:290
+#: ../translation/plugins.c:295
 #, no-c-format
 msgid "Sort By Date"
 msgstr "Sorter etter dato"
 
-#: ../translation/plugins.c:292
+#: ../translation/plugins.c:297
 #, no-c-format
 msgid "Sort By Artist"
 msgstr "Sorter etter artist"
 
-#: ../translation/plugins.c:294
+#: ../translation/plugins.c:299
 #, no-c-format
 msgid "Sort By Album"
 msgstr "Sorter etter album"
 
-#: ../translation/plugins.c:296
+#: ../translation/plugins.c:301
 #, no-c-format
 msgid "Sort By Track Number"
 msgstr "Sorter etter spornummer"
 
-#: ../translation/plugins.c:298
+#: ../translation/plugins.c:303
 #, no-c-format
 msgid "Sort By Title"
 msgstr "Sorter etter tittel"
 
-#: ../translation/plugins.c:300
+#: ../translation/plugins.c:305
 #, no-c-format
 msgid "Invert Selection"
 msgstr "Inverter utvalg"
 
-#: ../translation/plugins.c:302
+#: ../translation/plugins.c:307
 #, no-c-format
 msgid "Clear Playlist"
 msgstr "Tøm spilleliste"
 
-#: ../translation/plugins.c:308
+#: ../translation/plugins.c:313
 #, no-c-format
 msgid "Toggle In Playback Queue"
 msgstr "Legg til i/fjern fra avspillingskøen "
 
-#: ../translation/plugins.c:310
+#: ../translation/plugins.c:315
 #, no-c-format
 msgid "Move"
 msgstr "Flytt"
 
-#: ../translation/plugins.c:312
+#: ../translation/plugins.c:317
 #, no-c-format
 msgid "Move Tracks Down"
 msgstr "Flytt sporene nedover"
 
-#: ../translation/plugins.c:314
+#: ../translation/plugins.c:319
 #, no-c-format
 msgid "Move Tracks Up"
 msgstr "Flytt sporene oppover"
 
-#: ../translation/plugins.c:316
+#: ../translation/plugins.c:321
 #, no-c-format
 msgid "Toggle Mute"
 msgstr "Demping av/på"
 
-#: ../translation/plugins.c:326
+#: ../translation/plugins.c:331
 #, no-c-format
 msgid "Toggle Pause"
 msgstr "Pause av/på"
 
-#: ../translation/plugins.c:328
+#: ../translation/plugins.c:333
 #, no-c-format
 msgid "Play\\/Pause"
 msgstr "Spill\\/pause"
 
-#: ../translation/plugins.c:332
+#: ../translation/plugins.c:337
 #, no-c-format
 msgid "Seek 1s Forward"
 msgstr "Spol 1 s framover"
 
-#: ../translation/plugins.c:334
+#: ../translation/plugins.c:339
 #, no-c-format
 msgid "Seek 1s Backward"
 msgstr "Spol 1 s bakover"
 
-#: ../translation/plugins.c:336
+#: ../translation/plugins.c:341
 #, no-c-format
 msgid "Seek 5s Forward"
 msgstr "Spol 5 s framover"
 
-#: ../translation/plugins.c:338
+#: ../translation/plugins.c:343
 #, no-c-format
 msgid "Seek 5s Backward"
 msgstr "Spol 5 s bakover"
 
-#: ../translation/plugins.c:340
+#: ../translation/plugins.c:345
 #, no-c-format
 msgid "Seek 1% Forward"
 msgstr "Spol 1% framover"
 
-#: ../translation/plugins.c:342
+#: ../translation/plugins.c:347
 #, no-c-format
 msgid "Seek 1% Backward"
 msgstr "Spol 1% bakover"
 
-#: ../translation/plugins.c:344
+#: ../translation/plugins.c:349
 #, no-c-format
 msgid "Seek 5% Forward"
 msgstr "Spol 5% framover"
 
-#: ../translation/plugins.c:346
+#: ../translation/plugins.c:351
 #, no-c-format
 msgid "Seek 5% Backward"
 msgstr "Spol 5% bakover"
 
-#: ../translation/plugins.c:348
+#: ../translation/plugins.c:353
 #, no-c-format
 msgid "Volume Up"
 msgstr "Øk volum"
 
-#: ../translation/plugins.c:350
+#: ../translation/plugins.c:355
 #, no-c-format
 msgid "Volume Down"
 msgstr "Senk volum"
 
-#: ../translation/plugins.c:352
+#: ../translation/plugins.c:357
 #, no-c-format
 msgid "Toggle Stop After Current Track"
 msgstr "Slå av/på stopping etter dette sporet"
 
-#: ../translation/plugins.c:354
+#: ../translation/plugins.c:359
 #, no-c-format
 msgid "Toggle Stop After Current Album"
 msgstr "Slå av/på stopping etter dette albumet"
 
 #. plugins/lastfm/lastfm.c
-#: ../translation/plugins.c:357
+#: ../translation/plugins.c:362
 #, no-c-format
 msgid "Lookup On Last.fm"
 msgstr "Slå opp på Last.fm"
 
-#: ../translation/plugins.c:359
+#: ../translation/plugins.c:364
 #, no-c-format
 msgid "Enable scrobbler"
 msgstr "Aktiver logging"
 
-#: ../translation/plugins.c:361
+#: ../translation/plugins.c:366
 #, no-c-format
 msgid "Disable nowplaying"
 msgstr "Deaktiver «spiller nå»"
 
-#: ../translation/plugins.c:363
+#: ../translation/plugins.c:368
 #, no-c-format
 msgid "Username"
 msgstr "Brukernavn"
 
-#: ../translation/plugins.c:365
+#: ../translation/plugins.c:370
 #, no-c-format
 msgid "Password"
 msgstr "Passord"
 
-#: ../translation/plugins.c:367
+#: ../translation/plugins.c:372
 #, no-c-format
 msgid "Scrobble URL"
 msgstr "Scrobble-URL"
 
-#: ../translation/plugins.c:369
+#: ../translation/plugins.c:374
 #, no-c-format
 msgid "Prefer Album Artist over Artist field"
 msgstr "Foretrekk albumartist framfor artist-feltet"
 
-#: ../translation/plugins.c:371
+#: ../translation/plugins.c:376
 #, no-c-format
 msgid "Send MusicBrainz ID"
 msgstr "Send MusicBrainz-ID"
 
-#: ../translation/plugins.c:373
+#: ../translation/plugins.c:378
 #, no-c-format
 msgid "Submit tracks shorter than 30 seconds (not recommended)"
 msgstr "Send inn spor som er kortere enn 30 sekunder (anbefales ikke)"
 
 #. plugins/mono2stereo/mono2stereo.c
-#: ../translation/plugins.c:376
+#: ../translation/plugins.c:381
 #, no-c-format
 msgid "Left mix"
 msgstr "Blandingsforhold venstre"
 
-#: ../translation/plugins.c:378
+#: ../translation/plugins.c:383
 #, no-c-format
 msgid "Right mix"
 msgstr "Blandingsforhold høyre"
 
 #. plugins/mp3/mp3.c
-#: ../translation/plugins.c:381
+#: ../translation/plugins.c:386
 #, no-c-format
 msgid "Force 16 bit output"
 msgstr "Tving 16-biters utdata"
 
-#: ../translation/plugins.c:383
+#: ../translation/plugins.c:388
 #, no-c-format
 msgid "Backend"
 msgstr "Bakstykke"
 
-#: ../translation/plugins.c:388
+#: ../translation/plugins.c:393
 #, no-c-format
 msgid "Notification title format"
 msgstr "Varslets tittelformatering"
 
-#: ../translation/plugins.c:390
+#: ../translation/plugins.c:395
 #, no-c-format
 msgid "Notification content format"
 msgstr "Varslets innholdsformatering"
 
-#: ../translation/plugins.c:392
+#: ../translation/plugins.c:397
 #, no-c-format
 msgid "Show album art"
 msgstr "Vis albumomslag"
 
-#: ../translation/plugins.c:394
+#: ../translation/plugins.c:399
 #, no-c-format
 msgid "Album art size (px)"
 msgstr "Albumomslagets størrelse (piksler)"
 
 #. plugins/oss/oss.c
-#: ../translation/plugins.c:397
+#: ../translation/plugins.c:402
 #, no-c-format
 msgid "Device file"
 msgstr "Enhetsfil"
 
-#: ../translation/plugins.c:402
+#: ../translation/plugins.c:407
 #, no-c-format
 msgid "Highlight current playlist"
 msgstr "Uthev aktiv spilleliste"
 
-#: ../translation/plugins.c:404
+#: ../translation/plugins.c:409
 #, no-c-format
 msgid "Play on double-click"
 msgstr "Dobbeltklikk for å spille"
 
 #. plugins/portaudio/portaudio.c
-#: ../translation/plugins.c:407
+#: ../translation/plugins.c:412
 #, no-c-format
-msgid "Buffer size (-1 to use optimal value choosen by portaudio)"
-msgstr "Bufferstørrelse (velg -1 for å bruke optimal verdi valgt av portaudio)"
+msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
+msgstr ""
 
-#: ../translation/plugins.c:409
+#: ../translation/plugins.c:414
 #, no-c-format
 msgid "Device name encoding"
 msgstr "Enhetsnavnets tegnsett"
 
-#: ../translation/plugins.c:411
+#: ../translation/plugins.c:416
 #, no-c-format
 msgid "ASCII / UTF-8"
 msgstr "ASCII / UTF-8"
 
-#: ../translation/plugins.c:413
+#: ../translation/plugins.c:418
 #, no-c-format
 msgid "cp1250"
 msgstr "cp1250"
 
-#: ../translation/plugins.c:415
+#: ../translation/plugins.c:420
 #, no-c-format
 msgid "Defined below"
 msgstr "Definert nedenfor"
 
-#: ../translation/plugins.c:417
+#: ../translation/plugins.c:422
 #, no-c-format
 msgid "Custom device name encoding"
 msgstr "Selvvalgt tegnsett for enhetsnavnet"
 
 #. plugins/pulse/pulse.c
-#: ../translation/plugins.c:420
+#: ../translation/plugins.c:425
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
 msgstr "PulseAudio-tjener (la være tom for å bruke standard)"
 
 #. plugins/sc68/in_sc68.c
-#: ../translation/plugins.c:423
+#: ../translation/plugins.c:428
 #, no-c-format
 msgid "Default song length (in minutes)"
 msgstr "Forvalgt låtlengde (i minutter)"
 
-#: ../translation/plugins.c:425
+#: ../translation/plugins.c:430
 #, no-c-format
 msgid "Samplerate"
 msgstr "Samplingsrate"
 
-#: ../translation/plugins.c:427
+#: ../translation/plugins.c:432
 #, no-c-format
 msgid "Skip when shorter than (sec)"
 msgstr "Hopp over hvis kortere enn (sek)"
 
 #. plugins/shellexecui/shellexecui.c
-#: ../translation/plugins.c:430
+#: ../translation/plugins.c:435
 #, no-c-format
 msgid "Configure Custom Shell Commands"
 msgstr "Sett opp egne skallkommandoer"
 
 #. plugins/shn/shn.c
-#: ../translation/plugins.c:433
+#: ../translation/plugins.c:438
 #, no-c-format
 msgid "Relative seek table path"
 msgstr "Relativ sti til søketabell"
 
-#: ../translation/plugins.c:435
+#: ../translation/plugins.c:440
 #, no-c-format
 msgid "Absolute seek table path"
 msgstr "Absolutt sti til søketabell"
 
-#: ../translation/plugins.c:437
+#: ../translation/plugins.c:442
 #, no-c-format
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr "Bytt byterekkefølge (hvis du kun hører støy)"
 
 #. plugins/sid/plugin.c
-#: ../translation/plugins.c:440
+#: ../translation/plugins.c:445
 #, no-c-format
 msgid "Enable HVSC Songlength DB"
 msgstr "Aktiver HVSCs låtlengdedatabase"
 
-#: ../translation/plugins.c:442
+#: ../translation/plugins.c:447
 #, no-c-format
 msgid "Full path to Songlengths.md5/.txt"
 msgstr "Full sti til Songlengths.md5/.txt"
 
-#: ../translation/plugins.c:444
+#: ../translation/plugins.c:449
 #, no-c-format
 msgid "Bits per sample"
 msgstr "Bitdybde"
 
-#: ../translation/plugins.c:446
-#, no-c-format
-msgid "Mono synth"
-msgstr "Monosynt"
-
-#: ../translation/plugins.c:448
+#: ../translation/plugins.c:451
 #, no-c-format
 msgid "Default song length (sec)"
 msgstr "Forvalgt låtlengde (sek)"
 
+#: ../translation/plugins.c:453
+#, no-c-format
+msgid "Mono synth"
+msgstr "Monosynt"
+
 #. plugins/supereq/supereq.c
-#: ../translation/plugins.c:451
+#: ../translation/plugins.c:456
 #, no-c-format
 msgid "Preamp"
 msgstr "Forforst."
 
-#: ../translation/plugins.c:453
+#: ../translation/plugins.c:458
 #, no-c-format
-msgid "55 Hz"
-msgstr "55 Hz"
+msgid "1.2K"
+msgstr ""
 
-#: ../translation/plugins.c:455
+#: ../translation/plugins.c:460
 #, no-c-format
-msgid "77 Hz"
-msgstr "77 Hz"
+msgid "1.8K"
+msgstr ""
 
-#: ../translation/plugins.c:457
+#: ../translation/plugins.c:462
 #, no-c-format
-msgid "110 Hz"
-msgstr "110 Hz"
+msgid "2.5K"
+msgstr ""
 
-#: ../translation/plugins.c:459
+#: ../translation/plugins.c:464
 #, no-c-format
-msgid "156 Hz"
-msgstr "156 Hz"
+msgid "3.5K"
+msgstr ""
 
-#: ../translation/plugins.c:461
+#: ../translation/plugins.c:466
 #, no-c-format
-msgid "220 Hz"
-msgstr "220 Hz"
+msgid "5K"
+msgstr ""
 
-#: ../translation/plugins.c:463
+#: ../translation/plugins.c:468
 #, no-c-format
-msgid "311 Hz"
-msgstr "311 Hz"
+msgid "7K"
+msgstr ""
 
-#: ../translation/plugins.c:465
+#: ../translation/plugins.c:470
 #, no-c-format
-msgid "440 Hz"
-msgstr "440 Hz"
+msgid "10K"
+msgstr ""
 
-#: ../translation/plugins.c:467
+#: ../translation/plugins.c:472
 #, no-c-format
-msgid "622 Hz"
-msgstr "622 Hz"
+msgid "14K"
+msgstr ""
 
-#: ../translation/plugins.c:469
+#: ../translation/plugins.c:474
 #, no-c-format
-msgid "880 Hz"
-msgstr "880 Hz"
-
-#: ../translation/plugins.c:471
-#, no-c-format
-msgid "1.2 kHz"
-msgstr "1,2 kHz"
-
-#: ../translation/plugins.c:473
-#, no-c-format
-msgid "1.8 kHz"
-msgstr "1,8 kHz"
-
-#: ../translation/plugins.c:475
-#, no-c-format
-msgid "2.5 kHz"
-msgstr "2,5 kHz"
-
-#: ../translation/plugins.c:477
-#, no-c-format
-msgid "3.5 kHz"
-msgstr "3,5 kHz"
-
-#: ../translation/plugins.c:479
-#, no-c-format
-msgid "5 kHz"
-msgstr "5 kHz"
-
-#: ../translation/plugins.c:481
-#, no-c-format
-msgid "7 kHz"
-msgstr "7 kHz"
-
-#: ../translation/plugins.c:483
-#, no-c-format
-msgid "10 kHz"
-msgstr "10 kHz"
-
-#: ../translation/plugins.c:485
-#, no-c-format
-msgid "14 kHz"
-msgstr "14 kHz"
-
-#: ../translation/plugins.c:487
-#, no-c-format
-msgid "20 kHz"
-msgstr "20 kHz"
+msgid "20K"
+msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
-#: ../translation/plugins.c:490
+#: ../translation/plugins.c:477
 #, no-c-format
 msgid "Enable logging"
 msgstr "Aktiver logging"
 
 #. plugins/wildmidi/wildmidiplug.c
-#: ../translation/plugins.c:493
+#: ../translation/plugins.c:480
 #, no-c-format
 msgid "Timidity++ bank configuration file"
 msgstr "Timidity++ bankoppsettsfil"
@@ -3330,27 +3296,27 @@ msgid ""
 " The files will be lost.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "Dette vil faktisk slette filer.\n\n(Dette dialogvinduet kan slås av i innstillingene til GTKUI-tillegget)."
 
 #: ../plugins/gtkui/actionhandlers.c:417
 #, c-format
 msgid "Do you really want to delete the selected file?%s"
-msgstr ""
+msgstr "Vil du virkelig slette valgt fil? %s"
 
 #: ../plugins/gtkui/actionhandlers.c:419
 #, c-format
 msgid "Do you really want to delete all %d selected files?%s"
-msgstr ""
+msgstr "Vil du virkelig slette alle de %d valgte filene? %s"
 
 #: ../plugins/gtkui/actionhandlers.c:424
 #, c-format
 msgid "Do you really want to delete all %d files from the current playlist?%s"
-msgstr ""
+msgstr "Vil du virkelig slette alle %d filer fra gjeldende spilleliste? %s"
 
 #: ../plugins/gtkui/actionhandlers.c:427
 #, c-format
 msgid "Do you really want to delete the currently playing file?%s"
-msgstr ""
+msgstr "Vil du virkelig slette fila som spiller nå? %s"
 
 #: ../plugins/gtkui/actionhandlers.c:430
 msgid "Delete files from disk"
@@ -3490,12 +3456,12 @@ msgstr "Endre navn på spilleliste"
 
 #: ../plugins/gtkui/pltmenu.c:90
 msgid "Removing playlist"
-msgstr ""
+msgstr "Fjerner spilleliste"
 
 #: ../plugins/gtkui/pltmenu.c:91
 #, c-format
 msgid "Do you really want to remove the playlist '%s'?"
-msgstr ""
+msgstr "Vil du virkelig fjerne spillelista «%s»?"
 
 #: ../plugins/gtkui/pltmenu.c:410
 msgid "Remove Playlist"
@@ -3511,7 +3477,7 @@ msgstr "Dupliser spilleliste"
 
 #: ../plugins/gtkui/pltmenu.c:433
 msgid "Enable Autosort"
-msgstr ""
+msgstr "Aktiver autosortering"
 
 #: ../plugins/pltbrowser/pltbrowser.c:177
 msgid " (paused)"
@@ -3547,11 +3513,11 @@ msgstr "♫"
 msgid "Playlist browser"
 msgstr "Spillelistebehandling"
 
-#: ../tf.c:2194
+#: ../tf.c:2197
 msgid "mono"
 msgstr "mono"
 
-#: ../tf.c:2197 ../tf.c:2201
+#: ../tf.c:2200 ../tf.c:2204
 msgid "stereo"
 msgstr "stereo"
 

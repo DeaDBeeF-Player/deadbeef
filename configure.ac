@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([deadbeef], [1.8.3-beta4])
+AC_INIT([deadbeef], [devel])
 
 AC_CONFIG_HEADER(config.h)
 
