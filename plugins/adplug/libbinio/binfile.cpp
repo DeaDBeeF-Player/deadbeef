@@ -22,8 +22,6 @@
 
 #include "binfile.h"
 
-extern DB_functions_t *deadbeef;
-
 /***** binfbase *****/
 
 binfbase::binfbase()
@@ -39,22 +37,21 @@ binfbase::~binfbase()
 void binfbase::close()
 {
   if(f != NULL) {
-      deadbeef->fclose(f);
-      f = NULL;
+    if(fclose(f) == EOF) err |= Fatal; else f = NULL;
   } else
     err |= NotOpen;
 }
 
 void binfbase::seek(long pos, Offset offs)
 {
-  int error = 0;
+  int error;
 
   if(f == NULL) { err |= NotOpen; return; }
 
   switch(offs) {
-  case Set: error = deadbeef->fseek(f, pos, SEEK_SET); break;
-  case Add: error = deadbeef->fseek(f, pos, SEEK_CUR); break;
-  case End: error = deadbeef->fseek(f, pos, SEEK_END); break;
+  case Set: error = fseek(f, pos, SEEK_SET); break;
+  case Add: error = fseek(f, pos, SEEK_CUR); break;
+  case End: error = fseek(f, pos, SEEK_END); break;
   }
 
   if(error == -1) err |= Fatal;
@@ -66,7 +63,7 @@ long binfbase::pos()
 
   if(f == NULL) { err |= NotOpen; return 0; }
 
-  pos = deadbeef->ftell(f);
+  pos = ftell(f);
 
   if(pos == -1) {
     err |= Fatal;
@@ -99,7 +96,7 @@ binifstream::~binifstream()
 
 void binifstream::open(const char *filename, const Mode mode)
 {
-  f = deadbeef->fopen(filename);
+  f = fopen(filename, "rb");
 
   if(f == NULL)
     switch(errno) {
@@ -121,27 +118,13 @@ binifstream::Byte binifstream::getByte()
   int read;
 
   if(f != NULL) {
-      if (1 != deadbeef->fread (&read, 1, 1, f)) {
-          err |= Eof;
-      }
+    read = fgetc(f);
+    if(read == EOF) err |= Eof;
     return (Byte)read;
   } else {
     err |= NotOpen;
     return 0;
   }
-}
-
-void binifstream::getBuf(char *buf, int size)
-{
-    int read;
-
-    if(f != NULL) {
-        if (1 != deadbeef->fread (buf, size, 1, f)) {
-            err |= Eof;
-        }
-    } else {
-        err |= NotOpen;
-    }
 }
 
 /***** binofstream *****/
@@ -168,8 +151,7 @@ binofstream::~binofstream()
 
 void binofstream::open(const char *filename, const Mode mode)
 {
-#if 0
-  const char *modestr = "wb";
+  char *modestr = "wb";
 
   // Check if append mode is desired
   if(mode & Append) modestr = "ab";
@@ -186,7 +168,6 @@ void binofstream::open(const char *filename, const Mode mode)
     case ENOENT: err |= NotFound; break;
     default: err |= NotOpen; break;
     }
-#endif
 }
 
 #if BINIO_ENABLE_STRING
@@ -198,12 +179,10 @@ void binofstream::open(const std::string &filename, const Mode mode)
 
 void binofstream::putByte(Byte b)
 {
-#if 0
   if(f == NULL) { err |= NotOpen; return; }
 
   if(fputc(b, f) == EOF)
     err |= Fatal;
-#endif
 }
 
 /***** binfstream *****/
@@ -230,22 +209,22 @@ binfstream::~binfstream()
 
 void binfstream::open(const char *filename, const Mode mode)
 {
-  const char	*modestr = "w+b";	// Create & at beginning
+  char	*modestr = "w+b";	// Create & at beginning
   int	ferror = 0;
 
   // Apply desired mode
   if(mode & NoCreate) {
     if(!(mode & Append))
-      modestr = "r+b";	// NoCreate & at beginning
+      modestr[0] = 'r';	// NoCreate & at beginning
   } else
     if(mode & Append)	// Create & append
-      modestr = "a+b";
+      modestr[0] = 'a';
 
-  f = deadbeef->fopen(filename);
+  f = fopen(filename, modestr);
 
   // NoCreate & append (emulated -- not possible with standard C fopen())
   if(f != NULL && (mode & Append) && (mode & NoCreate))
-    ferror = deadbeef->fseek(f, 0, SEEK_END);
+    ferror = fseek(f, 0, SEEK_END);
 
   if(f == NULL || ferror == -1) {
     switch(errno) {

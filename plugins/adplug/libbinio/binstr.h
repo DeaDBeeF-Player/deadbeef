@@ -44,7 +44,6 @@ public:
 
 protected:
   virtual Byte getByte();
-  virtual void getBuf(char *buf, int size);
 };
 
 class binosstream: public binostream, virtual public binsbase

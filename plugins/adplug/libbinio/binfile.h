@@ -24,8 +24,6 @@
 
 #include "binio.h"
 
-#include "../../../deadbeef.h"
-
 class binfbase: virtual public binio
 {
 public:
@@ -49,7 +47,7 @@ public:
   virtual long pos();
 
 protected:
-  DB_FILE *f;
+  FILE *f;
 };
 
 class binifstream: public binistream, virtual public binfbase
@@ -70,7 +68,6 @@ public:
 
 protected:
   virtual Byte getByte();
-  virtual void getBuf(char *buf, int size);
 };
 
 class binofstream: public binostream, virtual public binfbase

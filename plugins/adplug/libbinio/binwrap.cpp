@@ -14,10 +14,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * binwrap.cpp - Binary I/O wrapper, using standard iostreams library
- * Copyright (C) 2002, 2003 Simon Peter <dn.tlp@gmx.net>
+ * Copyright (C) 2002, 2003, 2009 Simon Peter <dn.tlp@gmx.net>
  */
 
-#include <stdio.h>
 #include "binwrap.h"
 
 #if BINIO_ENABLE_IOSTREAM
@@ -48,9 +47,12 @@ biniwstream::Byte biniwstream::getByte()
 {
   if(!in) { err = NotOpen; return 0; }
 
-  int i = in->get();
-  if(i == EOF) err |= Eof;
-  return (Byte)i;
+  if(!in->eof()) {
+    return (Byte)in->get();
+  } else {
+    err |= Eof;
+    return 0;
+  }
 }
 
 long biniwstream::pos()
