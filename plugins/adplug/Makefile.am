@@ -153,6 +153,10 @@ adplug_la_SOURCES = plugin.c\
                    adplug/xad.cpp\
                    adplug/xad.h\
                    adplug/xsm.cpp\
-                   adplug/xsm.h
+                   adplug/xsm.h\
+                   adplug/adlibemu.c\
+                   adplug/debug.c\
+                   adplug/fmopl.c\
+                   adplug/nukedopl.c
 
 endif
