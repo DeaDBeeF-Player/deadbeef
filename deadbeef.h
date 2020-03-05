@@ -1598,7 +1598,7 @@ enum {
 #if (DDB_API_LEVEL >= 11)
 } ddb_action_context_t;
 #else
-}
+};
 #endif
 #endif
 
