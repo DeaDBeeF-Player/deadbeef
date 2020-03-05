@@ -98,7 +98,7 @@ bool CksmPlayer::load(const std::string &filename, const CFileProvider &fp)
 
 bool CksmPlayer::update()
 {
-  int quanter,chan,drumnum,freq,track,volevel,volval;
+    int quanter,chan = 0,drumnum = 0,freq,track,volevel,volval;
   unsigned int i,j,bufnum;
   unsigned long temp,templong;
 

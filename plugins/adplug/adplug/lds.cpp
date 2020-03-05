@@ -557,6 +557,11 @@ void CldsPlayer::rewind(int subsong)
 void CldsPlayer::playsound(int inst_number, int channel_number, int tunehigh)
 {
   Channel		*c = &channel[channel_number];		// current channel
+
+    if (inst_number >= numpatch) {
+        inst_number = numpatch-1;
+    }
+
   SoundBank		*i = &soundbank[inst_number];		// current instrument
   unsigned int		regnum = op_table[channel_number];	// channel's OPL2 register
   unsigned char		volcalc, octave;

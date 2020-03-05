@@ -51,23 +51,24 @@ bool ChscPlayer::load(const std::string &filename, const CFileProvider &fp)
   int total_patterns_in_hsc = (fp.filesize(f) - 1587) / 1152;
 
   // load section
-  for(i=0;i<128*12;i++)		// load instruments
-    *((unsigned char *)instr + i) = f->readInt(1);
+  f->readBuf ((char *)instr, 128*12);
   for (i=0;i<128;i++) {			// correct instruments
     instr[i][2] ^= (instr[i][2] & 0x40) << 1;
     instr[i][3] ^= (instr[i][3] & 0x40) << 1;
     instr[i][11] >>= 4;			// slide
   }
+
+  f->readBuf ((char *)song, 51); // load tracklist
+
   for(i=0;i<51;i++) {	// load tracklist
-    song[i] = f->readInt(1);
     // if out of range, song ends here
     if (
       ((song[i] & 0x7F) > 0x31)
       || ((song[i] & 0x7F) >= total_patterns_in_hsc)
     ) song[i] = 0xFF;
   }
-  for(i=0;i<50*64*9;i++)			// load patterns
-    *((char *)patterns + i) = f->readInt(1);
+
+  f->readBuf ((char *)patterns, 50*64*9); // load patterns
 
   fp.close(f);
   rewind(0);					// rewind module
