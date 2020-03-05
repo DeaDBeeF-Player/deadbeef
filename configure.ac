@@ -147,7 +147,7 @@ AS_IF([test "${enable_abstract_socket}" != "no"], [
 case "$host" in
   *-*-gnu )
     AS_IF([test "${enable_staticlink}" != "no"], [
-        NOCPPLIB="-nostdlib ../../$LIB/lib/libsupc++.a"
+        NOCPPLIB="-nostdlib -lstdc++"
     ], [
         NOCPPLIB=""
     ])
