@@ -17,6 +17,7 @@
  * Copyright (C) 2003, 2010 Simon Peter <dn.tlp@gmx.net>
  */
 
+#include <string.h>
 #include "binstr.h"
 
 /***** binsbase *****/
@@ -80,6 +81,17 @@ binisstream::Byte binisstream::getByte()
 
   return in;
 }
+
+void binisstream::getBuf(char *buf, int size)
+{
+    if(spos - data >= length) {
+      err |= Eof;
+      return;
+    }
+    memcpy (buf, spos, size);
+    spos += size;
+}
+
 
 /***** binosstream *****/
 

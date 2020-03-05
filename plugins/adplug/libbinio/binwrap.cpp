@@ -17,6 +17,7 @@
  * Copyright (C) 2002, 2003, 2009 Simon Peter <dn.tlp@gmx.net>
  */
 
+#include <stdio.h>
 #include "binwrap.h"
 
 #if BINIO_ENABLE_IOSTREAM
