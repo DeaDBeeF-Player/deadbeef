@@ -1,0 +1,17 @@
+name: Build for macOS
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: build
+      run: TRAVIS_OS_NAME=osx travis/build.sh
