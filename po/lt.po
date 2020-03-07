@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-03 19:35+0100\n"
-"PO-Revision-Date: 2020-03-03 18:38+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2020-03-04 12:38+0000\n"
+"Last-Translator: Moo\n"
 "Language-Team: Lithuanian (http://www.transifex.com/deadbeef-player/deadbeef-player/language/lt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1961,12 +1961,12 @@ msgstr "Kokybė / Algoritmas"
 #: ../translation/plugins.c:100
 #, no-c-format
 msgid "Resampling quality"
-msgstr ""
+msgstr "Diskretizacijos kokybė"
 
 #: ../translation/plugins.c:102
 #, no-c-format
 msgid "Internal DUMB volume"
-msgstr ""
+msgstr "Vidinis DUMB garsis"
 
 #: ../translation/plugins.c:104
 #, no-c-format
@@ -1986,7 +1986,7 @@ msgstr "Pilnas"
 #: ../translation/plugins.c:112
 #, no-c-format
 msgid "8-bit output"
-msgstr ""
+msgstr "8-bitų išvestis"
 
 #. plugins/ffmpeg/ffmpeg.c
 #: ../translation/plugins.c:115
@@ -2003,12 +2003,12 @@ msgstr "Failų prievardžiai (atskirkite „;“)"
 #: ../translation/plugins.c:120
 #, no-c-format
 msgid "Ignore bad header errors"
-msgstr ""
+msgstr "Nepaisyti blogos antraštės klaidų"
 
 #: ../translation/plugins.c:122
 #, no-c-format
 msgid "Ignore unparsable stream errors"
-msgstr ""
+msgstr "Nepaisyti neišnagrinėjamo srauto klaidų"
 
 #. plugins/gme/cgme.c
 #: ../translation/plugins.c:125
@@ -2060,7 +2060,7 @@ msgstr "Peržiūrėti po failą takelių stiprinimą"
 #: ../translation/plugins.c:144
 #, no-c-format
 msgid "Scan Per-file Track Gain If Not Scanned"
-msgstr ""
+msgstr "Peržiūrėti kiekvieno failo takelių stiprinimą, jei neperžiūrėta"
 
 #: ../translation/plugins.c:148
 #, no-c-format
@@ -2625,7 +2625,7 @@ msgstr "Dukart spustelėjus, pradėti atkūrimą"
 #: ../translation/plugins.c:412
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
-msgstr ""
+msgstr "Buferio dydis (-1, kad būtų naudojama optimali portaudio pasirinkta reikšmė)"
 
 #: ../translation/plugins.c:414
 #, no-c-format
@@ -2731,47 +2731,47 @@ msgstr "Preamp"
 #: ../translation/plugins.c:458
 #, no-c-format
 msgid "1.2K"
-msgstr ""
+msgstr "1.2K"
 
 #: ../translation/plugins.c:460
 #, no-c-format
 msgid "1.8K"
-msgstr ""
+msgstr "1.8K"
 
 #: ../translation/plugins.c:462
 #, no-c-format
 msgid "2.5K"
-msgstr ""
+msgstr "2.5K"
 
 #: ../translation/plugins.c:464
 #, no-c-format
 msgid "3.5K"
-msgstr ""
+msgstr "3.5K"
 
 #: ../translation/plugins.c:466
 #, no-c-format
 msgid "5K"
-msgstr ""
+msgstr "5K"
 
 #: ../translation/plugins.c:468
 #, no-c-format
 msgid "7K"
-msgstr ""
+msgstr "7K"
 
 #: ../translation/plugins.c:470
 #, no-c-format
 msgid "10K"
-msgstr ""
+msgstr "10K"
 
 #: ../translation/plugins.c:472
 #, no-c-format
 msgid "14K"
-msgstr ""
+msgstr "14K"
 
 #: ../translation/plugins.c:474
 #, no-c-format
 msgid "20K"
-msgstr ""
+msgstr "20K"
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:477
