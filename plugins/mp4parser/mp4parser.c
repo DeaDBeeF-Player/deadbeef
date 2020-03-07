@@ -1047,10 +1047,6 @@ mp4p_open (mp4p_file_callbacks_t *callbacks) {
         if (!atom) {
             break;
         }
-        if (!atom->subatoms) {
-            mp4p_atom_free(atom);
-            return NULL;
-        }
         if (!head) {
             head = tail = atom;
         }
