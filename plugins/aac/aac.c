@@ -684,8 +684,8 @@ aac_seek (DB_fileinfo_t *_info, float t) {
 
 typedef struct {
     char *title;
-    int32_t startsample;
-    int32_t endsample;
+    int64_t startsample;
+    int64_t endsample;
 } aac_chapter_t;
 
 static aac_chapter_t *
@@ -787,10 +787,12 @@ aac_insert_with_chapters (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem
         else {
             deadbeef->pl_add_meta (it, "title", chapters[i].title);
         }
-        it->startsample = chapters[i].startsample;
-        it->endsample = chapters[i].endsample;
+        deadbeef->pl_item_set_startsample (it, chapters[i].startsample);
+        deadbeef->pl_item_set_endsample (it, chapters[i].endsample);
         deadbeef->pl_replace_meta (it, ":FILETYPE", ftype);
-        deadbeef->plt_set_item_duration (plt, it, (float)(it->endsample - it->startsample + 1) / samplerate);
+        float duration = (float)(chapters[i].endsample - chapters[i].startsample + 1) / samplerate;
+        deadbeef->plt_set_item_duration (plt, it, duration);
+        printf ("chapter %d duration: %f\n", i, duration);
         after = deadbeef->plt_insert_item (plt, after, it);
         deadbeef->pl_item_unref (it);
     }

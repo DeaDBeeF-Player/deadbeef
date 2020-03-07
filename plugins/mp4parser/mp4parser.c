@@ -60,7 +60,7 @@ _dbg_print_indent (void) {
 
 static void
 _dbg_print_atom (mp4p_atom_t *atom) {
-#if 0
+#if 1
     _dbg_print_indent();
     _dbg_print_fourcc(atom->type);
     printf ("\n");
@@ -1103,10 +1103,10 @@ mp4p_stts_sample_duration (mp4p_atom_t *stts_atom, uint32_t sample) {
     }
     uint32_t n = 0;
     for (uint32_t i = 0; i < stts->number_of_entries; i++) {
-        n += stts->entries[i].sample_count;
         if (n >= sample) {
             return stts->entries[i].sample_duration;
         }
+        n += stts->entries[i].sample_count;
     }
     return 0;
 }
