@@ -248,7 +248,7 @@ float
 conf_get_float (const char *key, float def) {
     conf_lock ();
     const char *v = conf_get_str_fast (key, NULL);
-    float res = v ? atof (v) : def;
+    float res = v ? (float)atof (v) : def;
     conf_unlock ();
     return res;
 }

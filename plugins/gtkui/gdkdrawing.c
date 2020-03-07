@@ -26,8 +26,8 @@
 #endif
 
 #include <gtk/gtk.h>
-//#include <gdk/gdkkeysyms.h>
 #include <string.h>
+#include <stdlib.h>
 #include "drawing.h"
 #include "support.h"
 #include "gtkui.h"
@@ -391,7 +391,7 @@ gtkui_init_theme_colors (void) {
     GtkStyle *entry_style = gtk_widget_get_style (theme_entry);
     char color_text[100];
     const char *clr;
-    const char *font_name = pango_font_description_to_string (style->font_desc);
+    char *font_name = pango_font_description_to_string (style->font_desc);
 
     if (!override_bar_colors) {
         memcpy (&gtkui_bar_foreground_color, &style->base[GTK_STATE_SELECTED], sizeof (GdkColor));
@@ -512,6 +512,10 @@ gtkui_init_theme_colors (void) {
         strncpy (gtkui_listview_group_text_font, deadbeef->conf_get_str_fast ("gtkui.font.listview_group_text", font_name), sizeof (gtkui_listview_group_text_font));
         strncpy (gtkui_listview_column_text_font, deadbeef->conf_get_str_fast ("gtkui.font.listview_column_text", font_name), sizeof (gtkui_listview_column_text_font));
     }
+
+    free (font_name);
+    font_name = NULL;
+
     deadbeef->conf_unlock ();
 }
 

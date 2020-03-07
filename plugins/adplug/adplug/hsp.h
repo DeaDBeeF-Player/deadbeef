@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * hsp.h: HSC Packed Loader by Simon Peter <dn.tlp@gmx.net>
  */
@@ -33,7 +33,7 @@ public:
 		: ChscPlayer(newopl)
 	{};
 
-	bool load(const char *filename, const CFileProvider &fp);
+	bool load(const std::string &filename, const CFileProvider &fp);
 };
 
 #endif

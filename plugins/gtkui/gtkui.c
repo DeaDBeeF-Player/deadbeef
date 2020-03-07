@@ -75,7 +75,7 @@
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
-static ddb_gtkui_t plugin;
+ddb_gtkui_t plugin;
 DB_functions_t *deadbeef;
 
 // main widgets
@@ -115,10 +115,6 @@ int gtkui_tabstrip_italic_selected;
 int gtkui_groups_pinned;
 int gtkui_listview_busy;
 int gtkui_groups_spacing;
-
-#ifdef __APPLE__
-int gtkui_is_retina = 0;
-#endif
 
 int gtkui_unicode_playstate = 0;
 int gtkui_disable_seekbar_overlay = 0;
@@ -169,6 +165,8 @@ format_timestr (char *buf, int sz, float time) {
 
 static gboolean
 update_songinfo (gpointer unused) {
+    if (w_get_rootwidget() == NULL) return FALSE;
+ 
     int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
     if (!gtk_widget_get_visible (mainwin) || iconified) {
         return FALSE;
@@ -193,7 +191,7 @@ update_songinfo (gpointer unused) {
     char *bc = NULL;
 
 
-    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track)) {
+    if (!output || (output->state () == DDB_PLAYBACK_STATE_STOPPED || !track)) {
         bc = statusbar_stopped_bc;
     }
     else {
@@ -302,11 +300,13 @@ show_traymenu (void) {
     g_idle_add (show_traymenu_cb, NULL);
 }
 
+#if GTK_CHECK_VERSION(3,0,0)
 static gboolean
 mainwin_hide_cb (gpointer data) {
-    gtk_widget_hide (mainwin);
-    return FALSE;
-}
+     gtk_widget_hide (mainwin);
+     return FALSE;
+ }
+#endif
 
 void
 mainwin_toggle_visible (void) {
@@ -315,6 +315,8 @@ mainwin_toggle_visible (void) {
         gtk_widget_hide (mainwin);
     }
     else {
+        if (w_get_rootwidget() == NULL) init_widget_layout ();
+      
         wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0);
         if (iconified) {
             gtk_window_deiconify (GTK_WINDOW(mainwin));
@@ -363,6 +365,8 @@ on_trayicon_popup_menu (GtkWidget       *widget,
 
 static gboolean
 activate_cb (gpointer nothing) {
+    if (w_get_rootwidget() == NULL) init_widget_layout ();
+    wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0);
     gtk_widget_show (mainwin);
     gtk_window_present (GTK_WINDOW (mainwin));
     return FALSE;
@@ -584,12 +588,12 @@ gtkui_on_configchanged (void *data) {
 
     // order
     const char *orderwidgets[4] = { "order_linear", "order_shuffle", "order_random", "order_shuffle_albums" };
-    w = orderwidgets[deadbeef->conf_get_int ("playback.order", PLAYBACK_ORDER_LINEAR)];
+    w = orderwidgets[deadbeef->streamer_get_shuffle ()];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
 
     // looping
     const char *loopingwidgets[3] = { "loop_all", "loop_disable", "loop_single" };
-    w = loopingwidgets[deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL)];
+    w = loopingwidgets[deadbeef->streamer_get_repeat ()];
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, w)), TRUE);
 
     // scroll follows playback
@@ -1244,12 +1248,26 @@ gtkui_mainwin_init(void) {
 
     mainwin = create_mainwin ();
 
-#if GTK_CHECK_VERSION(3,10,0)
-#if USE_GTK_APPLICATION
-    // This must be called before window is shown
-    gtk_application_add_window ( GTK_APPLICATION (gapp), GTK_WINDOW (mainwin));
+#if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
+     // This must be called before window is shown
+     gtk_application_add_window ( GTK_APPLICATION (gapp), GTK_WINDOW (mainwin));
 #endif
-#endif
+
+   wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0); 
+    
+#if GTK_CHECK_VERSION(3,0,0)
+    init_widget_layout ();
+    gtk_widget_set_events (GTK_WIDGET (mainwin), gtk_widget_get_events (GTK_WIDGET (mainwin)) | GDK_SCROLL_MASK);
+
+    if (deadbeef->conf_get_int ("gtkui.start_hidden", 0)) {
+        g_idle_add (mainwin_hide_cb, NULL);
+    }
+#elif GTK_CHECK_VERSION(2,16,0)
+    if (!deadbeef->conf_get_int ("gtkui.start_hidden", 0)) {
+        init_widget_layout ();
+        gtk_widget_show (mainwin);
+    }
+#endif 
 
     logwindow = gtkui_create_log_window();
     deadbeef->log_viewer_register (logwindow_logger_callback, logwindow);
@@ -1268,14 +1286,12 @@ gtkui_mainwin_init(void) {
         deadbeef->conf_set_int ("hotkeys_created", 1);
         deadbeef->conf_save ();
     }
-#if GTK_CHECK_VERSION(3,0,0)
-    gtk_widget_set_events (GTK_WIDGET (mainwin), gtk_widget_get_events (GTK_WIDGET (mainwin)) | GDK_SCROLL_MASK);
-#endif
 
     pl_common_init();
 
     GtkIconTheme *theme = gtk_icon_theme_get_default();
     if (gtk_icon_theme_has_icon(theme, "deadbeef")) {
+        // NOTE: according to valgrind, this leaks memory - seems to be a GTK bug
         gtk_window_set_icon_name (GTK_WINDOW (mainwin), "deadbeef");
     }
     else {
@@ -1284,7 +1300,6 @@ gtkui_mainwin_init(void) {
         snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_system_dir(DDB_SYS_DIR_PREFIX));
         gtk_window_set_icon_from_file (GTK_WINDOW (mainwin), iconpath, NULL);
     }
-
 
     gtkui_on_configchanged (NULL);
 
@@ -1323,11 +1338,6 @@ gtkui_mainwin_init(void) {
     for (int i = 0; i < window_init_hooks_count; i++) {
         window_init_hooks[i].callback (window_init_hooks[i].userdata);
     }
-    wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0);
-    gtk_widget_show (mainwin);
-
-    init_widget_layout ();
-
     gtkui_set_titlebar (NULL);
 
     fileadded_listener_id = deadbeef->listen_file_added (gtkui_add_file_info_cb, NULL);
@@ -1339,20 +1349,14 @@ gtkui_mainwin_init(void) {
 
     gtkui_accept_messages = 1;
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-
-#ifdef __APPLE__
-    gtkui_is_retina = is_retina (mainwin);
-#endif
-
-    if (deadbeef->conf_get_int ("gtkui.start_hidden", 0)) {
-        g_idle_add (mainwin_hide_cb, NULL);
-    }
 }
 
 void
 gtkui_mainwin_free(void) {
     deadbeef->unlisten_file_added (fileadded_listener_id);
     deadbeef->unlisten_file_add_beginend (fileadd_beginend_listener_id);
+
+    cover_art_free ();
 
     w_free ();
 
@@ -1362,7 +1366,6 @@ gtkui_mainwin_free(void) {
     }
 
     clipboard_free_current ();
-    cover_art_free ();
     eq_window_destroy ();
     trkproperties_destroy ();
     progress_destroy ();
@@ -1594,12 +1597,20 @@ static DB_plugin_action_t action_rg_scan_per_file = {
     .next = &action_rg_scan_selection_as_album
 };
 
+static DB_plugin_action_t action_scan_all_tracks_without_rg = {
+    .title = "ReplayGain/Scan Per-file Track Gain If Not Scanned",
+    .name = "scan_all_tracks_without_Rg",
+    .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_ADD_MENU,
+    .callback2 = action_scan_all_tracks_without_rg_handler ,
+    .next = &action_rg_scan_per_file
+};
+
 static DB_plugin_action_t action_deselect_all = {
     .title = "Edit/Deselect All",
     .name = "deselect_all",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_deselect_all_handler,
-    .next = &action_rg_scan_per_file
+    .next = &action_scan_all_tracks_without_rg
 };
 
 static DB_plugin_action_t action_select_all = {
@@ -1948,13 +1959,14 @@ static const char settings_dlg[] =
 ;
 
 // define plugin interface
-static ddb_gtkui_t plugin = {
+ddb_gtkui_t plugin = {
     .gui.plugin.api_vmajor = DB_API_VERSION_MAJOR,
     .gui.plugin.api_vminor = DB_API_VERSION_MINOR,
     .gui.plugin.version_major = DDB_GTKUI_API_VERSION_MAJOR,
     .gui.plugin.version_minor = DDB_GTKUI_API_VERSION_MINOR,
     .gui.plugin.type = DB_PLUGIN_GUI,
     .gui.plugin.id = DDB_GTKUI_PLUGIN_ID,
+    .gui.plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
 #if GTK_CHECK_VERSION(3,0,0)
     .gui.plugin.name = "GTK3 user interface",
     .gui.plugin.descr = "User interface using GTK+ 3.x",

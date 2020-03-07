@@ -410,7 +410,7 @@ on_seekbar_button_press_event          (GtkWidget       *widget,
                                         GdkEventButton  *event)
 {
     DdbSeekbar *self = DDB_SEEKBAR (widget);
-    if (deadbeef->get_output ()->state () == OUTPUT_STATE_STOPPED) {
+    if (deadbeef->get_output ()->state () == DDB_PLAYBACK_STATE_STOPPED) {
         return FALSE;
     }
     self->seekbar_moving = 1;

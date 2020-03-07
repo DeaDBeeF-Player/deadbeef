@@ -101,8 +101,10 @@ end
        "md5/*.c",
        "plugins/libparser/*.h",
        "plugins/libparser/*.c",
-       -- "ConvertUTF/*.h",
-       -- "ConvertUTF/*.c"
+       "external/wcwidth/wcwidth.c",
+       "external/wcwidth/wcwidth.h",
+       "shared/ctmap.c",
+       "shared/ctmap.h"
    }
    defines { "PORTABLE=1", "STATICLINK=1", "PREFIX=\"donotuse\"", "LIBDIR=\"donotuse\"", "DOCDIR=\"donotuse\"", "LOCALEDIR=\"donotuse\""}
    links { "m", "pthread", "dl"}
@@ -165,6 +167,32 @@ project "aac_plugin"
    files {
        "plugins/aac/*.h",
        "plugins/aac/*.c",
+       "shared/mp4tagutil.h",
+       "shared/mp4tagutil.c",
+       "plugins/libmp4ff/*.h",
+       "plugins/libmp4ff/*.c"
+   }
+
+   defines { "USE_MP4FF=1", "USE_TAGGING=1" }
+   links { "faad" }
+end
+
+if option ("plugin-alac") then
+project "alac_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "alac"
+
+   files {
+       "plugins/alac/alac_plugin.c",
+       "plugins/alac/alac.c",
+       "plugins/alac/decomp.h",
+       "plugins/alac/demux.c",
+       "plugins/alac/demux.h",
+       "plugins/alac/stream.c",
+       "plugins/alac/stream.h",
        "shared/mp4tagutil.h",
        "shared/mp4tagutil.c",
        "plugins/libmp4ff/*.h",
@@ -381,6 +409,8 @@ project "ddb_gui_GTK2"
    files {
        "plugins/gtkui/*.h",
        "plugins/gtkui/*.c",
+       "shared/eqpreset.c",
+       "shared/eqpreset.h",
        "shared/pluginsettings.h",
        "shared/pluginsettings.c",
        "shared/trkproperties_shared.h",
@@ -416,6 +446,8 @@ project "ddb_gui_GTK3"
    files {
        "plugins/gtkui/*.h",
        "plugins/gtkui/*.c",
+       "shared/eqpreset.c",
+       "shared/eqpreset.h",
        "shared/pluginsettings.h",
        "shared/pluginsettings.c",
        "shared/trkproperties_shared.h",
@@ -863,51 +895,16 @@ project "resources"
     postbuildcommands {
         "{MKDIR} bin/%{cfg.buildcfg}/pixmaps",
         "{COPY} icons/32x32/deadbeef.png bin/%{cfg.buildcfg}",
-        "{COPY} pixmaps/*.png pixmaps/*.svg bin/%{cfg.buildcfg}/pixmaps/",
+        "{COPY} pixmaps/*.png bin/%{cfg.buildcfg}/pixmaps/",
         "{MKDIR} bin/%{cfg.buildcfg}/plugins/convpresets",
         "{COPY} plugins/converter/convpresets bin/%{cfg.buildcfg}/plugins/",
     }
 
 project "resources_windows"
     kind "Utility"
+    dependson {"translations", "ddb_gui_GTK3", "ddb_gui_GTK2" }
     postbuildcommands {
-        -- misc
-        "{MKDIR} bin/%{cfg.buildcfg}/plugins",
-        "{MKDIR} bin/%{cfg.buildcfg}/pixmaps",
-        "{MKDIR} bin/%{cfg.buildcfg}/doc",
-        "{MKDIR} bin/%{cfg.buildcfg}/share/themes bin/%{cfg.buildcfg}/share/icons",
-        "{MKDIR} bin/%{cfg.buildcfg}/config",
-        "{MKDIR} bin/%{cfg.buildcfg}/lib",
-        "{COPY} ChangeLog help.txt COPYING.GPLv2 COPYING.LGPLv2.1 about.txt translators.txt  bin/%{cfg.buildcfg}/doc/",
-        -- translations
-        "{MKDIR} bin/%{cfg.buildcfg}/locale",
-        "for i in po/*.gmo ; do (base=`basename $$i .gmo` ; mkdir -p bin/%{cfg.buildcfg}/locale/$$base/LC_MESSAGES ; cp $$i bin/%{cfg.buildcfg}/locale/$$base/LC_MESSAGES/deadbeef.mo) ; done",
-        "{COPY} translation/help.ru.txt  bin/%{cfg.buildcfg}/doc/",
-        -- libraries
-        --"rm  bin/%{cfg.buildcfg}/plugins/*.lib | true",
-        --"rm  bin/%{cfg.buildcfg}/libwin.lib | true",
-        "ldd bin/%{cfg.buildcfg}/plugins/*.dll bin/%{cfg.buildcfg}/deadbeef.exe | awk \'NF == 4 {print $$3}; NF == 2 {print $$1}\' | grep -i -v \"???\" | grep -i -v \"System32\" | grep -i -v \"WinSxS\" |sort -u | tr \'\\r\\n\' \' \'> .libraries.tmp",
-        "{COPY} `cat .libraries.tmp` bin/%{cfg.buildcfg}/ | true",
-        -- gdk_pixbuf libs
-        "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/lib/gdk-pixbuf-2.0 bin/%{cfg.buildcfg}/lib/gdk-pixbuf-2.0 2>>/dev/null); done; true",
-        -- gtk2 theme
-        "{MKDIR} bin/%{cfg.buildcfg}/lib/gtk-2.0/2.10.0/engines",
-        "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/themes/MS-Windows bin/%{cfg.buildcfg}/share/themes/ 2>>/dev/null ; cp $$i/lib/gtk-2.0/2.10.0/engines/libwimp.dll bin/%{cfg.buildcfg}/lib/gtk-2.0/2.10.0/engines 2>>/dev/null ); done; true",
-        "{MKDIR} bin/%{cfg.buildcfg}/etc bin/%{cfg.buildcfg}/etc/gtk-2.0",
-        "{TOUCH} bin/%{cfg.buildcfg}/etc/gtk-2.0/settings.ini",
-        "echo -e \"[Settings]\\r\\ngtk-theme-name = MS-Windows\\n\" > bin/%{cfg.buildcfg}/etc/gtk-2.0/settings.ini",
-        -- gtk3 misc
-        "{MKDIR} bin/%{cfg.buildcfg}/etc bin/%{cfg.buildcfg}/etc/gtk-3.0",
-        "{TOUCH} bin/%{cfg.buildcfg}/etc/gtk-3.0/settings.ini",
-        "echo -e \"[Settings]\\r\\ngtk-theme-name = Windows-10\\r\\ngtk-icon-theme-name = Windows-10-Icons\" > bin/%{cfg.buildcfg}/etc/gtk-3.0/settings.ini",
-        "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/icons/hicolor bin/%{cfg.buildcfg}/share/icons/ ; cp -r $$i/share/glib-2.0 bin/%{cfg.buildcfg}/share/ ); done; true",
-        -- Windows-10 theme and icons can be obtained from https://github.com/B00merang-Project/Windows-10 and https://github.com/B00merang-Project/Windows-10-Icons)
-        "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/icons/Windows-10-Icons bin/%{cfg.buildcfg}/share/icons/ 2>>/dev/null ; cp -r $$i/share/themes/Windows-10 bin/%{cfg.buildcfg}/share/themes/ 2>>/dev/null ); done; true",
-        -- Adwaita still needed for some icons
-		-- UPDATE: not anymore
-        -- "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/icons/Adwaita bin/%{cfg.buildcfg}/share/icons/ 2>>/dev/null); done; true",
-        "echo \"output_plugin PortAudio output plugin\" > bin/%{cfg.buildcfg}/config/config",
-        "echo \"gui_plugin GTK3\" >> bin/%{cfg.buildcfg}/config/config"
+        "./scripts/windows_postbuild.sh bin/%{cfg.buildcfg}"
     }
 
 print_options()

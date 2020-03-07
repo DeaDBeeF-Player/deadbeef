@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * ksm.h - KSM Player for AdPlug by Simon Peter <dn.tlp@gmx.net>
  */
@@ -32,17 +32,17 @@ public:
 	~CksmPlayer()
 	{ if(note) delete [] note; };
 
-	bool load(const char *filename, const CFileProvider &fp);
+	bool load(const std::string &filename, const CFileProvider &fp);
 	bool update();
 	void rewind(int subsong);
 	float getrefresh()
 	{ return 240.0f; };
 
-	const char * gettype()
-	{ return "Ken Silverman's Music Format"; };
+	std::string gettype()
+	{ return std::string("Ken Silverman's Music Format"); };
 	unsigned int getinstruments()
 	{ return 16; };
-	const char * getinstrument(unsigned int n);
+	std::string getinstrument(unsigned int n);
 
 private:
 	static const unsigned int adlibfreq[63];

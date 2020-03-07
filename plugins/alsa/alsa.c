@@ -43,7 +43,7 @@ DB_functions_t *deadbeef;
 static snd_pcm_t *audio;
 static int alsa_terminate;
 static ddb_waveformat_t requested_fmt;
-static int state; // one of output_state_t
+static ddb_playback_state_t state;
 static uintptr_t mutex;
 static intptr_t alsa_tid;
 
@@ -70,6 +70,9 @@ palsa_free (void);
 
 static int
 palsa_setformat (ddb_waveformat_t *fmt);
+
+static ddb_playback_state_t
+palsa_get_state (void);
 
 static int
 palsa_play (void);
@@ -337,7 +340,7 @@ palsa_init (void) {
     trace ("alsa_soundcard: %s\n", conf_alsa_soundcard);
 
     snd_pcm_sw_params_t *sw_params = NULL;
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     //const char *conf_alsa_soundcard = conf_get_str ("alsa_soundcard", "default");
     if ((err = snd_pcm_open (&audio, conf_alsa_soundcard, SND_PCM_STREAM_PLAYBACK, 0))) {
         fprintf (stderr, "could not open audio device (%s)\n",
@@ -424,6 +427,10 @@ open_error:
 static int
 palsa_setformat (ddb_waveformat_t *fmt) {
     LOCK;
+    ddb_playback_state_t state = palsa_get_state ();
+    if (state == DDB_PLAYBACK_STATE_PLAYING) {
+        palsa_pause ();
+    }
     memcpy (&requested_fmt, fmt, sizeof (ddb_waveformat_t));
     trace ("palsa_setformat %dbit %s %dch %dHz channelmask=%X\n", requested_fmt.bps, fmt->is_float ? "float" : "int", fmt->channels, fmt->samplerate, fmt->channelmask);
     if (!audio
@@ -454,6 +461,9 @@ palsa_setformat (ddb_waveformat_t *fmt) {
         return -1;
     }
     trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
+    if (state == DDB_PLAYBACK_STATE_PLAYING) {
+        palsa_unpause ();
+    }
     UNLOCK;
 
     return 0;
@@ -479,7 +489,7 @@ palsa_hw_pause (int pause) {
     if (!audio) {
         return;
     }
-    if (state == OUTPUT_STATE_STOPPED) {
+    if (state == DDB_PLAYBACK_STATE_STOPPED) {
         return;
     }
     if (pause == 1) {
@@ -502,7 +512,7 @@ palsa_play (void) {
         UNLOCK;
         return err;
     }
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     err = snd_pcm_drop (audio);
     if (err < 0) {
         UNLOCK;
@@ -516,7 +526,7 @@ palsa_play (void) {
         return err;
     }
     snd_pcm_start (audio);
-    state = OUTPUT_STATE_PLAYING;
+    state = DDB_PLAYBACK_STATE_PLAYING;
     UNLOCK;
     return 0;
 }
@@ -529,7 +539,7 @@ palsa_stop (void) {
     }
     LOCK;
 
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     snd_pcm_drop (audio);
     UNLOCK;
 
@@ -550,7 +560,7 @@ palsa_pause (void) {
     }
     // set pause state
     palsa_hw_pause (1);
-    state = OUTPUT_STATE_PAUSED;
+    state = DDB_PLAYBACK_STATE_PAUSED;
     UNLOCK;
     return 0;
 }
@@ -569,8 +579,8 @@ palsa_unpause (void) {
             return -1;
         }
     }
-    else if (state == OUTPUT_STATE_PAUSED) {
-        state = OUTPUT_STATE_PLAYING;
+    else if (state == DDB_PLAYBACK_STATE_PAUSED) {
+        state = DDB_PLAYBACK_STATE_PLAYING;
         palsa_hw_pause (0);
     }
     UNLOCK;
@@ -611,7 +621,7 @@ palsa_thread (void *context) {
 
         LOCK;
 
-        if (state != OUTPUT_STATE_PLAYING) {
+        if (state != DDB_PLAYBACK_STATE_PLAYING) {
             UNLOCK;
             usleep (10000);
             continue;
@@ -678,7 +688,7 @@ palsa_thread (void *context) {
 
 static int
 palsa_callback (char *stream, int len) {
-    if (state != OUTPUT_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1)) {
+    if (state != DDB_PLAYBACK_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1)) {
         memset (stream, 0, len);
         return len;
     }
@@ -742,7 +752,7 @@ palsa_enum_soundcards (void (*callback)(const char *name, const char *desc, void
     snd_device_name_free_hint(hints);
 }
 
-static int
+static ddb_playback_state_t
 palsa_get_state (void) {
     return state;
 }

@@ -42,11 +42,11 @@ scriptableItemLoadDspPreset (scriptableItem_t *preset, const char *fname) {
     char temp[100];
     for (;;) {
         // plugin {
-        int err = fscanf (fp, "%99s {\n", temp);
-        if (err == EOF) {
+        int ret = fscanf (fp, "%99s {\n", temp);
+        if (ret == EOF) {
             break;
         }
-        else if (1 != err) {
+        else if (1 != ret) {
             fprintf (stderr, "error plugin name\n");
             goto error;
         }

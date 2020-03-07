@@ -59,7 +59,7 @@
         .channelmask = DDB_SPEAKER_BACK_LEFT|DDB_SPEAKER_BACK_RIGHT
     };
 
-    int res = pcm_convert (&inputfmt, samples, &outputfmt, outsamples, sizeof (samples));
+    int res = pcm_convert (&inputfmt, samples, &outputfmt, (const char *)outsamples, sizeof (samples));
     XCTAssert(res == 8, @"The result is %d", res);
     XCTAssert(outsamples[0] == 0, @"sample0 is %d", outsamples[0]);
     XCTAssert(outsamples[1] == 0, @"sample1 is %d", outsamples[1]);
@@ -85,7 +85,7 @@
         .channelmask = DDB_SPEAKER_BACK_LEFT|DDB_SPEAKER_FRONT_RIGHT
     };
 
-    int res = pcm_convert (&inputfmt, samples, &outputfmt, outsamples, sizeof (samples));
+    int res = pcm_convert (&inputfmt, samples, &outputfmt, (const char *)outsamples, sizeof (samples));
     XCTAssert(res == 8, @"The result is %d", res);
     XCTAssert(outsamples[0] == 0, @"sample0 is %d", outsamples[0]);
     XCTAssert(outsamples[1] == 0x2000, @"sample1 is %d", outsamples[1]);

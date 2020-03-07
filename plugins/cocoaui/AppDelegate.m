@@ -24,12 +24,13 @@
 #import "AppDelegate.h"
 #import "dispatch/dispatch.h"
 #import "DdbWidgetManager.h"
-#import "DdbPlaylistViewController.h"
 #import "ReplayGainScannerController.h"
 #import "DdbShared.h"
-#import "MediaKeyController.h"
+#import "NowPlayable.h"
 #import "LogWindowController.h"
 #import "HelpWindowController.h"
+#import "EqualizerWindowController.h"
+#import "NSMenu+ActionItems.h"
 #include "conf.h"
 #include "streamer.h"
 #include "junklib.h"
@@ -41,57 +42,35 @@
 extern DB_functions_t *deadbeef;
 
 extern BOOL g_CanQuit;
-@implementation AppDelegate {
-    PreferencesWindowController *_prefWindow;
-    SearchWindowController *_searchWindow;
-    LogWindowController *_logWindow;
-    HelpWindowController *_helpWindow;
 
-    NSMenuItem *_dockMenuNPHeading;
-    NSMenuItem *_dockMenuNPTitle;
-    NSMenuItem *_dockMenuNPArtistAlbum;
-    NSMenuItem *_dockMenuNPSeparator;
+AppDelegate *g_appDelegate;
 
+@interface AppDelegate () {
     char *_titleScript;
     char *_artistAlbumScript;
 }
 
-DB_playItem_t *prev = NULL;
-int prevIdx = -1;
-NSImage *playImg;
-NSImage *pauseImg;
-NSImage *bufferingImg;
-AppDelegate *g_appDelegate;
-NSInteger firstSelected = -1;
 
-static void
-_cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, void *ctx) {
-    [g_appDelegate appendLoggerText:text forPlugin:plugin onLayers:layers];
-}
+@property (nonatomic) NowPlayable *nowPlayable;
+@property (nonatomic) BOOL equalizerAvailable;
 
-- (void)appendLoggerText:(const char *)text forPlugin:(DB_plugin_t *)plugin onLayers:(uint32_t)layers {
-    NSString *str = [NSString stringWithUTF8String:text];
-    if (!str) {
-        return; // may happen in case of invalid UTF8 and such
-    }
+@property (nonatomic) PreferencesWindowController *prefWindow;
+@property (nonatomic) SearchWindowController *searchWindow;
+@property (nonatomic) LogWindowController *logWindow;
+@property (nonatomic) HelpWindowController *helpWindow;
+@property (nonatomic) EqualizerWindowController *equalizerWindow;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [_logWindow appendText:str];
+@property (nonatomic) NSMenuItem *dockMenuNPHeading;
+@property (nonatomic) NSMenuItem *dockMenuNPTitle;
+@property (nonatomic) NSMenuItem *dockMenuNPArtistAlbum;
+@property (nonatomic) NSMenuItem *dockMenuNPSeparator;
 
-        if (layers == DDB_LOG_LAYER_DEFAULT) {
-            if (![[_logWindow window] isVisible]) {
-                [_logWindow showWindow:self];
-            }
-        }
-    });
-}
+@property (nonatomic) NSInteger firstSelected;
 
-- (void)dealloc {
-    deadbeef->log_viewer_unregister (_cocoaui_logger_callback, NULL);
-#if !DISABLE_MM_KEY_GRABBER
-    ungrabMediaKeys ();
-#endif
-}
+
+@end
+
+@implementation AppDelegate
 
 - (void)volumeChanged {
     [_mainWindow updateVolumeBar];
@@ -103,9 +82,8 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, 
     }
 }
 
-- (void)configChanged
-{
-    id order_items[] = {
+- (void)configChanged {
+    NSMenuItem *shuffle_items[] = {
         _orderLinear,
         _orderShuffle,
         _orderRandom,
@@ -113,30 +91,30 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, 
         nil
     };
     
-    int order = deadbeef->conf_get_int ("playback.order", PLAYBACK_ORDER_LINEAR);
-    for (int i = 0; order_items[i]; i++) {
-        [order_items[i] setState:i==order?NSOnState:NSOffState];
+    ddb_shuffle_t shuffle = deadbeef->streamer_get_shuffle ();
+    for (ddb_shuffle_t i = 0; shuffle_items[i]; i++) {
+        shuffle_items[i].state = i==shuffle?NSOnState:NSOffState;
     }
     
-    id loop_items[] = {
+    NSMenuItem *repeat_items[] = {
         _loopAll,
         _loopNone,
         _loopSingle,
         nil
     };
     
-    int loop = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL);
-    for (int i = 0; loop_items[i]; i++) {
-        [loop_items[i] setState:i==loop?NSOnState:NSOffState];
+    ddb_repeat_t repeat = deadbeef->streamer_get_repeat ();
+    for (ddb_repeat_t i = 0; repeat_items[i]; i++) {
+        repeat_items[i].state = i==repeat?NSOnState:NSOffState;
     }
     
-    [_scrollFollowsPlayback setState:deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)?NSOnState:NSOffState];
-    [_cursorFollowsPlayback setState:deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)?NSOnState:NSOffState];
+    _scrollFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)?NSOnState:NSOffState;
+    _cursorFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)?NSOnState:NSOffState;
     
-    [_stopAfterCurrent setState:deadbeef->conf_get_int ("playlist.stop_after_current", 0)?NSOnState:NSOffState];
-    [_stopAfterCurrentAlbum setState:deadbeef->conf_get_int ("playlist.stop_after_album", 0)?NSOnState:NSOffState];
+    _stopAfterCurrent.state = deadbeef->conf_get_int ("playlist.stop_after_current", 0)?NSOnState:NSOffState;
+    _stopAfterCurrentAlbum.state = deadbeef->conf_get_int ("playlist.stop_after_album", 0)?NSOnState:NSOffState;
 
-    [_descendingSortMode setState:deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSOnState : NSOffState];
+    _descendingSortMode.state = deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSOnState : NSOffState;
 
     [self volumeChanged];
 
@@ -149,14 +127,15 @@ static int fileadd_cancelled = 0;
 static void fileadd_begin (ddb_fileadd_data_t *data, void *user_data) {
     fileadd_cancelled = 0;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [NSApp beginSheet:g_appDelegate.addFilesWindow modalForWindow:[[g_appDelegate mainWindow] window] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+        [g_appDelegate.mainWindow.window beginSheet:g_appDelegate.addFilesWindow completionHandler:^(NSModalResponse returnCode) {
+
+        }];
     });
 }
 
 static void fileadd_end (ddb_fileadd_data_t *data, void *user_data) {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [g_appDelegate.addFilesWindow orderOut:g_appDelegate];
-        [NSApp endSheet:g_appDelegate.addFilesWindow];
+        [g_appDelegate.mainWindow.window endSheet:g_appDelegate.addFilesWindow returnCode:NSModalResponseOK];
         [[[g_appDelegate mainWindow] window] makeKeyAndOrderFront:g_appDelegate];
     });
 }
@@ -172,7 +151,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
         NSString *s = [NSString stringWithUTF8String:uri];
         _settingLabel = YES;
         dispatch_async(dispatch_get_main_queue(), ^{
-            [g_appDelegate.addFilesLabel setStringValue:s];
+            g_appDelegate.addFilesLabel.stringValue = s;
             _settingLabel = NO;
         });
     }
@@ -184,6 +163,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 }
 
 - (void)awakeFromNib {
+    [self initMainMenu];
     [self initMainWindow];
     [self initSearchWindow];
     [self initLogWindow];
@@ -191,22 +171,48 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 
 - (void)initMainWindow {
     _mainWindow = [[MainWindowController alloc] initWithWindowNibName:@"MainWindow"];
-    [_mainWindow setShouldCascadeWindows:NO];
-    [[_mainWindow window] setReleasedWhenClosed:NO];
-    [[_mainWindow window] setExcludedFromWindowsMenu:YES];
-    [[_mainWindow window] setIsVisible:YES];
-    [_mainWindowToggleMenuItem bind:@"state" toObject:[_mainWindow window] withKeyPath:@"visible" options:nil];
+    _mainWindow.shouldCascadeWindows = NO;
+    _mainWindow.window.releasedWhenClosed = NO;
+    _mainWindow.window.excludedFromWindowsMenu = YES;
+    _mainWindow.window.isVisible = YES;
+    [_mainWindowToggleMenuItem bind:@"state" toObject:_mainWindow.window withKeyPath:@"visible" options:nil];
 }
 
 - (void)initSearchWindow {
     _searchWindow = [[SearchWindowController alloc] initWithWindowNibName:@"Search"];
-    [_searchWindow setShouldCascadeWindows:NO];
+    _searchWindow.shouldCascadeWindows = NO;
 }
 
 - (void)initLogWindow {
     _logWindow = [[LogWindowController alloc] initWithWindowNibName:@"Log"];
-    [_logWindowToggleMenuItem bind:@"state" toObject:[_logWindow window] withKeyPath:@"visible" options:nil];
-    [[_logWindow window] setExcludedFromWindowsMenu:YES];
+    [_logWindowToggleMenuItem bind:@"state" toObject:_logWindow.window withKeyPath:@"visible" options:nil];
+    _logWindow.window.excludedFromWindowsMenu = YES;
+}
+
+- (void)initMainMenu {
+    // add new actions
+    [self.mainMenu addActionItemsForContext:DDB_ACTION_CTX_MAIN track:nil filter:^BOOL(DB_plugin_action_t * _Nonnull action) {
+        return (action->flags & (DB_ACTION_COMMON|DB_ACTION_ADD_MENU)) == (DB_ACTION_COMMON|DB_ACTION_ADD_MENU);
+    }];
+}
+
+- (BOOL)equalizerAvailable {
+    ddb_dsp_context_t *dsp = deadbeef->streamer_get_dsp_chain ();
+    while (dsp) {
+        if (!strcmp (dsp->plugin->plugin.id, "supereq")) {
+            return YES;
+        }
+        dsp = dsp->next;
+    }
+    return NO;
+}
+
+- (void)initEqualizerWindow {
+    if (!_equalizerWindow) {
+        _equalizerWindow = [[EqualizerWindowController alloc] initWithWindowNibName:@"EqualizerWindowController"];
+        [_equalizerWindowToggleMenuItem bind:@"state" toObject:_equalizerWindow.window withKeyPath:@"visible" options:nil];
+        _equalizerWindow.window.excludedFromWindowsMenu = YES;
+    }
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
@@ -215,9 +221,9 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     }
 
     if (deadbeef->have_background_jobs ()) {
-        NSAlert *alert = [[NSAlert alloc] init];
-        [alert setMessageText:@"Do you really want to quit now?"];
-        [alert setInformativeText:@"DeaDBeeF is currently running background tasks. If you quit now, the tasks will be cancelled or interrupted. This may result in data loss."];
+        NSAlert *alert = [NSAlert new];
+        alert.messageText = @"Do you really want to quit now?";
+        alert.informativeText = @"DeaDBeeF is currently running background tasks. If you quit now, the tasks will be cancelled or interrupted. This may result in data loss.";
         [alert addButtonWithTitle:@"No"];
         [alert addButtonWithTitle:@"Yes"];
         NSModalResponse res = [alert runModal];
@@ -234,10 +240,18 @@ extern void
 main_cleanup_and_quit (void);
 
 - (void)applicationWillTerminate:(NSNotification *)notification {
-    [ConverterWindowController cleanup];
-    [ReplayGainScannerController cleanup];
-    [_mainWindow cleanup];
-    [_searchWindow cleanup];
+    @autoreleasepool {
+        [ConverterWindowController cleanup];
+        [ReplayGainScannerController cleanup];
+        [_searchWindow close];
+        _searchWindow = nil;
+        self.nowPlayable = nil;
+        [self.logWindow close];
+        self.logWindow = nil;
+
+        // MainWindowController is not released
+        [_mainWindow cleanup];
+    }
     main_cleanup_and_quit();
 }
 
@@ -246,9 +260,7 @@ main_cleanup_and_quit (void);
     // high sierra would terminate the app on SIGPIPE by default, which breaks converter error handling
     signal(SIGPIPE, SIG_IGN);
 
-    playImg = [NSImage imageNamed:@"btnplayTemplate.pdf"];
-    pauseImg = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
-    bufferingImg = [NSImage imageNamed:@"bufferingTemplate.pdf"];
+    _firstSelected = -1;
 
     // initialize gui from settings
     [self configChanged];
@@ -259,19 +271,14 @@ main_cleanup_and_quit (void);
     g_appDelegate = self;
 
 #if !DISABLE_MM_KEY_GRABBER
-    grabMediaKeys ();
+    self.nowPlayable = [NowPlayable new];
 #endif
 
     [self updateDockNowPlaying];
-    [[NSApp dockTile] setContentView: _dockTileView];
-//    [[NSApp dockTile] setBadgeLabel:@"Hello"];
-    [[NSApp dockTile] display];
-
-    deadbeef->log_viewer_register (_cocoaui_logger_callback, NULL);
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag{
-    [[_mainWindow window] setIsVisible:YES];
+    _mainWindow.window.isVisible = YES;
     return YES;
 }
 
@@ -297,33 +304,42 @@ main_cleanup_and_quit (void);
 
 
 - (IBAction)showMainWinAction:(id)sender {
-    BOOL vis = ![[_mainWindow window] isVisible];
-    [[_mainWindow window] setIsVisible:vis];
+    BOOL vis = ![_mainWindow.window isVisible];
+    _mainWindow.window.isVisible = vis;
     if (vis) {
-        [[_mainWindow window] makeKeyWindow];
+        [_mainWindow.window makeKeyWindow];
     }
 }
 
 - (IBAction)showLogWindowAction:(id)sender {
-    BOOL vis = ![[_logWindow window] isVisible];
-    [[_logWindow window] setIsVisible:vis];
+    BOOL vis = ![_logWindow.window isVisible];
+    _logWindow.window.isVisible = vis;
     if (vis) {
-        [[_logWindow window] makeKeyWindow];
+        [_logWindow.window makeKeyWindow];
+    }
+}
+
+- (IBAction)showEqualizerWindowAction:(id)sender {
+    [self initEqualizerWindow];
+    BOOL vis = ![_equalizerWindow.window isVisible];
+    _equalizerWindow.window.isVisible = vis;
+    if (vis) {
+        [_equalizerWindow.window makeKeyWindow];
     }
 }
 
 // playlist delegate
 - (NSIndexSet *)tableView:(NSTableView *)tableView selectionIndexesForProposedSelection:(NSIndexSet *)proposedSelectionIndexes
 {
-    firstSelected = -1;
+    self.firstSelected = -1;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         //deadbeef->plt_deselect_all (plt);
-        int __block i = 0;
+        NSUInteger __block i = 0;
         DB_playItem_t __block *it = deadbeef->plt_get_first(plt, PL_MAIN);
         [proposedSelectionIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-            if (firstSelected == -1) {
-                firstSelected = idx;
+            if (self.firstSelected == -1) {
+                self.firstSelected = idx;
             }
             while (i < idx && it) {
                 deadbeef->pl_set_selected (it, 0);
@@ -355,10 +371,10 @@ main_cleanup_and_quit (void);
 
 - (void)openFiles:(BOOL)clear play:(BOOL)play {
     NSOpenPanel* openDlg = [NSOpenPanel openPanel];
-    [openDlg setCanChooseFiles:YES];
-    [openDlg setAllowsMultipleSelection:YES];
-    [openDlg setCanChooseDirectories:NO];
-    if ( [openDlg runModal] == NSOKButton )
+    openDlg.canChooseFiles = YES;
+    openDlg.allowsMultipleSelection = YES;
+    openDlg.canChooseDirectories = NO;
+    if ( [openDlg runModal] == NSModalResponseOK )
     {
         NSArray* files = [openDlg URLs];
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -369,8 +385,7 @@ main_cleanup_and_quit (void);
             }
             dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
             dispatch_async(aQueue, ^{
-                for( int i = 0; i < [files count]; i++ )
-                {
+                for (NSUInteger i = 0; i < files.count; i++) {
                     NSString* fileName = [[files objectAtIndex:i] path];
                     if (fileName) {
                         deadbeef->plt_add_file2 (0, plt, [fileName UTF8String], NULL, NULL);
@@ -401,18 +416,17 @@ main_cleanup_and_quit (void);
 
 - (IBAction)addFoldersAction:(id)sender {
     NSOpenPanel* openDlg = [NSOpenPanel openPanel];
-    [openDlg setCanChooseFiles:NO];
-    [openDlg setAllowsMultipleSelection:YES];
-    [openDlg setCanChooseDirectories:YES];
-    if ( [openDlg runModal] == NSOKButton )
+    openDlg.canChooseFiles = NO;
+    openDlg.allowsMultipleSelection = YES;
+    openDlg.canChooseDirectories = YES;
+    if ( [openDlg runModal] == NSModalResponseOK )
     {
         NSArray* files = [openDlg URLs];
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         if (!deadbeef->plt_add_files_begin (plt, 0)) {
             dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
             dispatch_async(aQueue, ^{
-                for( int i = 0; i < [files count]; i++ )
-                {
+                for (NSUInteger i = 0; i < files.count; i++) {
                     NSString *fileName = [[files objectAtIndex:i] path];
                     if (fileName) {
                         deadbeef->plt_add_dir2 (0, plt, [fileName UTF8String], NULL, NULL);
@@ -431,38 +445,38 @@ main_cleanup_and_quit (void);
 }
 
 - (IBAction)addLocationAction:(id)sender {
-    [_addLocationTextField setStringValue:@""];
-    [NSApp beginSheet:_addLocationPanel modalForWindow:[_mainWindow window] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+    _addLocationTextField.stringValue = @"";
+    [_mainWindow.window beginSheet:_addLocationPanel completionHandler:^(NSModalResponse returnCode) {
+        if (returnCode == NSModalResponseOK) {
+            NSString *text = [_addLocationTextField stringValue];
+
+            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            if (!deadbeef->plt_add_files_begin (plt, 0)) {
+                dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+                dispatch_async(aQueue, ^{
+                    DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
+                    deadbeef->plt_insert_file2 (0, plt, tail, [text UTF8String], NULL, NULL, NULL);
+                    if (tail) {
+                        deadbeef->pl_item_unref (tail);
+                    }
+                    deadbeef->plt_add_files_end (plt, 0);
+                    deadbeef->plt_unref (plt);
+                    deadbeef->pl_save_current ();
+                });
+            }
+            else {
+                deadbeef->plt_unref (plt);
+            }
+        }
+    }];
 }
 
 - (IBAction)addLocationOKAction:(id)sender {
-    NSString *text = [_addLocationTextField stringValue];
-
-    [_addLocationPanel orderOut:self];
-    [NSApp endSheet:_addLocationPanel];
-
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (!deadbeef->plt_add_files_begin (plt, 0)) {
-        dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        dispatch_async(aQueue, ^{
-            DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
-            deadbeef->plt_insert_file2 (0, plt, tail, [text UTF8String], NULL, NULL, NULL);
-            if (tail) {
-                deadbeef->pl_item_unref (tail);
-            }
-            deadbeef->plt_add_files_end (plt, 0);
-            deadbeef->plt_unref (plt);
-            deadbeef->pl_save_current ();
-        });
-    }
-    else {
-        deadbeef->plt_unref (plt);
-    }
+    [_mainWindow.window endSheet:_addLocationPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)addLocationCancelAction:(id)sender {
-    [_addLocationPanel orderOut:self];
-    [NSApp endSheet:_addLocationPanel];
+    [_mainWindow.window endSheet:_addLocationPanel returnCode:NSModalResponseCancel];
 }
 
 - (IBAction)clearAction:(id)sender {
@@ -473,7 +487,7 @@ main_cleanup_and_quit (void);
 
 - (void)sortPlaylistByTF:(const char *)tf {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, tf, [_descendingSortMode state] == NSOffState ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, tf, _descendingSortMode.state == NSOffState ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
@@ -509,38 +523,35 @@ main_cleanup_and_quit (void);
 
 - (IBAction)sortPlaylistCustom:(id)sender {
     deadbeef->pl_lock ();
-    [_customSortEntry setStringValue:[NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.custom_sort_tf", "")]];
+    _customSortEntry.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.custom_sort_tf", "")];
     deadbeef->pl_unlock ();
-    [_customSortDescending setState:deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSOnState : NSOffState];
-    [NSApp beginSheet:_customSortPanel modalForWindow:[_mainWindow window] modalDelegate:self didEndSelector:@selector(didEndCustomSort:returnCode:contextInfo:) contextInfo:nil];
+    _customSortDescending.state = deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSOnState : NSOffState;
+    [_mainWindow.window beginSheet:_customSortPanel completionHandler:^(NSModalResponse returnCode) {
+        NSInteger state = _customSortDescending.state;
+        _descendingSortMode.state =  state;
+        deadbeef->conf_set_int ("cocoaui.sort_desc", state == NSOnState ? 1 : 0);
+        deadbeef->conf_set_str ("cocoaui.custom_sort_tf", [[_customSortEntry stringValue] UTF8String]);
 
-}
+        if (returnCode == NSModalResponseOK) {
+            [self sortPlaylistByTF:[[_customSortEntry stringValue] UTF8String]];
+        }
+        deadbeef->conf_save ();
+    }];
 
-- (void)didEndCustomSort:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
-    [sheet orderOut:self];
-    NSInteger state = [_customSortDescending state];
-    [_descendingSortMode setState: state];
-    deadbeef->conf_set_int ("cocoaui.sort_desc", state == NSOnState ? 1 : 0);
-    deadbeef->conf_set_str ("cocoaui.custom_sort_tf", [[_customSortEntry stringValue] UTF8String]);
-
-    if (returnCode == NSOKButton) {
-        [self sortPlaylistByTF:[[_customSortEntry stringValue] UTF8String]];
-    }
-    deadbeef->conf_save ();
 }
 
 - (IBAction)customSortOKAction:(id)sender {
-    [NSApp endSheet:_customSortPanel returnCode:NSOKButton];
+    [_mainWindow.window endSheet:_customSortPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)customSortCancelAction:(id)sender {
-    [NSApp endSheet:_customSortPanel returnCode:NSOKButton];
+    [_mainWindow.window endSheet:_customSortPanel returnCode:NSModalResponseCancel];
 }
 
 - (IBAction)toggleDescendingSortOrderAction:(id)sender {
     int st = !deadbeef->conf_get_int ("cocoaui.sort_desc", 0);
     deadbeef->conf_set_int ("cocoaui.sort_desc", st);
-    [_descendingSortMode setState:st ? NSOnState : NSOffState];
+    _descendingSortMode.state = st ? NSOnState : NSOffState;
     deadbeef->conf_save ();
 }
 
@@ -551,38 +562,31 @@ main_cleanup_and_quit (void);
 }
 
 - (IBAction)orderLinearAction:(id)sender {
-    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_LINEAR);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_shuffle (DDB_SHUFFLE_OFF);
 }
 
 - (IBAction)orderRandomAction:(id)sender {
-    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_RANDOM);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_shuffle (DDB_SHUFFLE_RANDOM);
 }
 
 - (IBAction)orderShuffleAction:(id)sender {
-    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_SHUFFLE_TRACKS);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_shuffle (DDB_SHUFFLE_TRACKS);
 }
 
 - (IBAction)orderShuffleAlbumsAction:(id)sender {
-    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_SHUFFLE_ALBUMS);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_shuffle (DDB_SHUFFLE_ALBUMS);
 }
 
 - (IBAction)loopAllAction:(id)sender {
-    deadbeef->conf_set_int ("playback.loop", 0);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_repeat (DDB_REPEAT_ALL);
 }
 
 - (IBAction)loopNoneAction:(id)sender {
-    deadbeef->conf_set_int ("playback.loop", 1);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_repeat (DDB_REPEAT_OFF);
 }
 
 - (IBAction)loopSingleAction:(id)sender {
-    deadbeef->conf_set_int ("playback.loop", 2);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    deadbeef->streamer_set_repeat (DDB_REPEAT_SINGLE);
 }
 
 - (IBAction)centerSelectionInVisibleArea:(id)sender {
@@ -673,7 +677,10 @@ main_cleanup_and_quit (void);
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2
 {
     [[DdbWidgetManager defaultWidgetManager] widgetMessage:_id ctx:ctx p1:p1 p2:p2];
-    
+
+    [g_appDelegate.mainWindow.rootViewController sendMessage:_id ctx:ctx p1:p1 p2:p2];
+    [(DesignableViewController *)(g_appDelegate.searchWindow.viewController) sendMessage:_id ctx:ctx p1:p1 p2:p2];
+
     if (_id == DB_EV_CONFIGCHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(configChanged) withObject:nil waitUntilDone:NO];
     }
@@ -723,7 +730,7 @@ main_cleanup_and_quit (void);
 
     if (!_dockMenuNPHeading) {
         _dockMenuNPHeading = [[NSMenuItem alloc] initWithTitle:@"Now playing:" action:nil keyEquivalent:@""];
-        [_dockMenuNPHeading setEnabled:NO];
+        _dockMenuNPHeading.enabled = NO;
         _dockMenuNPSeparator = [NSMenuItem separatorItem];
         [_dockMenu insertItem:_dockMenuNPHeading atIndex:0];
         [_dockMenu insertItem:_dockMenuNPSeparator atIndex:1];
@@ -752,16 +759,16 @@ main_cleanup_and_quit (void);
         deadbeef->pl_item_unref (it);
     }
     _dockMenuNPTitle = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:title] action:nil keyEquivalent:@""];
-    [_dockMenuNPTitle setEnabled:NO];
+    _dockMenuNPTitle.enabled = NO;
     _dockMenuNPArtistAlbum = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:artistAlbum] action:nil keyEquivalent:@""];
-    [_dockMenuNPArtistAlbum setEnabled:NO];
+    _dockMenuNPArtistAlbum.enabled = NO;
     [_dockMenu insertItem:_dockMenuNPTitle atIndex:1];
     [_dockMenu insertItem:_dockMenuNPArtistAlbum atIndex:2];
 }
 
 - (IBAction)performFindPanelAction:(id)sender {
-    [[_searchWindow window] setIsVisible:YES];
-    [[_searchWindow window] makeKeyWindow];
+    _searchWindow.window.isVisible = YES;
+    [_searchWindow.window makeKeyWindow];
     [_searchWindow reset];
 }
 
@@ -774,10 +781,10 @@ main_cleanup_and_quit (void);
 
 - (IBAction)loadPlaylistAction:(id)sender {
     NSOpenPanel* openDlg = [NSOpenPanel openPanel];
-    [openDlg setCanChooseFiles:YES];
-    [openDlg setAllowsMultipleSelection:YES];
-    [openDlg setCanChooseDirectories:NO];
-    if ([openDlg runModal] == NSOKButton)
+    openDlg.canChooseFiles = YES;
+    openDlg.allowsMultipleSelection = YES;
+    openDlg.canChooseDirectories = NO;
+    if ([openDlg runModal] == NSModalResponseOK)
     {
         NSArray* files = [openDlg URLs];
         if ([files count] < 1) {
@@ -802,13 +809,13 @@ main_cleanup_and_quit (void);
 
 - (IBAction)savePlaylistAction:(id)sender {
     NSSavePanel *panel = [NSSavePanel savePanel];
-    [panel setTitle:@"Save Playlist"];
-    [panel setCanCreateDirectories:YES];
-    [panel setExtensionHidden:NO];
+    panel.title = @"Save Playlist";
+    panel.canCreateDirectories = YES;
+    panel.extensionHidden = NO;
 
     NSString *message = @"Supported file types: .dbpl";
 
-    NSMutableArray *types = [[NSMutableArray alloc] init];
+    NSMutableArray *types = [NSMutableArray new];
     [types addObject:@"dbpl"];
 
     DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();
@@ -827,11 +834,11 @@ main_cleanup_and_quit (void);
         }
     }
 
-    [panel setMessage:message];
-    [panel setAllowedFileTypes:types];
-    [panel setAllowsOtherFileTypes:NO];
+    panel.message = message;
+    panel.allowedFileTypes = types;
+    panel.allowsOtherFileTypes = NO;
 
-    if ([panel runModal] == NSOKButton) {
+    if ([panel runModal] == NSModalResponseOK) {
         NSString *fname = [[panel URL] path];
         if (fname) {
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -858,7 +865,7 @@ main_cleanup_and_quit (void);
         _helpWindow = [[HelpWindowController alloc] initWithWindowNibName:@"HelpViewer"];
     }
 
-    if (![[_helpWindow window] isVisible]) {
+    if (![_helpWindow.window isVisible]) {
         [_helpWindow showWindow:self];
     }
 }

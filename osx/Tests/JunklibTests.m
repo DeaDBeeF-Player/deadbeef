@@ -24,6 +24,7 @@
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
 #include "ConvertUTF.h"
+#include "junklib.h"
 
 @interface Junklib : XCTestCase
 
@@ -158,6 +159,81 @@ _split_multivalue (char *text, size_t text_size);
     _split_multivalue(input, sizeof (input)-1);
 
     XCTAssert(!strcmp (input, "Test /"), @"Pass");
+}
+
+- (void)test_starsFromPopmRating_0_0 {
+    unsigned stars = junk_stars_from_popm_rating (0);
+    XCTAssertEqual(stars, 0);
+}
+
+- (void)test_starsFromPopmRating_1_1 {
+    unsigned stars = junk_stars_from_popm_rating (1);
+    XCTAssertEqual(stars, 1);
+}
+
+- (void)test_starsFromPopmRating_63_1 {
+    unsigned stars = junk_stars_from_popm_rating (63);
+    XCTAssertEqual(stars, 1);
+}
+
+- (void)test_starsFromPopmRating_64_2 {
+    unsigned stars = junk_stars_from_popm_rating (64);
+    XCTAssertEqual(stars, 2);
+}
+
+- (void)test_starsFromPopmRating_127_2 {
+    unsigned stars = junk_stars_from_popm_rating (127);
+    XCTAssertEqual(stars, 2);
+}
+
+- (void)test_starsFromPopmRating_128_3 {
+    unsigned stars = junk_stars_from_popm_rating (128);
+    XCTAssertEqual(stars, 3);
+}
+
+- (void)test_starsFromPopmRating_195_3 {
+    unsigned stars = junk_stars_from_popm_rating (195);
+    XCTAssertEqual(stars, 3);
+}
+
+- (void)test_starsFromPopmRating_196_4 {
+    unsigned stars = junk_stars_from_popm_rating (196);
+    XCTAssertEqual(stars, 4);
+}
+
+- (void)test_starsFromPopmRating_254_4 {
+    unsigned stars = junk_stars_from_popm_rating (254);
+    XCTAssertEqual(stars, 4);
+}
+
+- (void)test_starsFromPopmRating_255_5 {
+    unsigned stars = junk_stars_from_popm_rating (255);
+    XCTAssertEqual(stars, 5);
+}
+
+- (void)test_popmRatingFromStars_0_0 {
+    uint8_t rating = junk_popm_rating_from_stars(0);
+    XCTAssertEqual(rating, 0);
+}
+
+- (void)test_popmRatingFromStars_1_63 {
+    uint8_t rating = junk_popm_rating_from_stars(1);
+    XCTAssertEqual(rating, 63);
+}
+
+- (void)test_popmRatingFromStars_2_127 {
+    uint8_t rating = junk_popm_rating_from_stars(2);
+    XCTAssertEqual(rating, 127);
+}
+
+- (void)test_popmRatingFromStars_3_195 {
+    uint8_t rating = junk_popm_rating_from_stars(3);
+    XCTAssertEqual(rating, 195);
+}
+
+- (void)test_popmRatingFromStars_4_254 {
+    uint8_t rating = junk_popm_rating_from_stars(4);
+    XCTAssertEqual(rating, 254);
 }
 
 @end

@@ -42,7 +42,7 @@ ringbuf_init (ringbuf_t *p, char *buffer, size_t size);
 int
 ringbuf_write (ringbuf_t *p, char *bytes, size_t size);
 
-int
+size_t
 ringbuf_read (ringbuf_t *p, char *bytes, size_t size);
 
 #endif

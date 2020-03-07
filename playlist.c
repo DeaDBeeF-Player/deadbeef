@@ -66,8 +66,9 @@
 #include "strdupa.h"
 #include "tf.h"
 #include "playqueue.h"
-
+#include "sort.h"
 #include "cueutil.h"
+#include "playmodes.h"
 
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
@@ -117,8 +118,6 @@ static playlist_t dummy_playlist = {
     .refc = 1
 };
 
-static int pl_order = -1; // mirrors "playback.order" config variable
-
 static int no_remove_notify;
 
 static playlist_t *addfiles_playlist; // current playlist for adding files/folders; set in pl_add_files_begin
@@ -153,22 +152,10 @@ typedef struct ddb_fileadd_beginend_listener_s {
 static ddb_fileadd_beginend_listener_t *file_add_beginend_listeners;
 
 void
-pl_set_order (int order) {
-    int prev_order = pl_order;
-
-    if (pl_order != order) {
-        pl_order = order;
-        for (playlist_t *plt = playlists_head; plt; plt = plt->next) {
-            plt_reshuffle (plt, NULL, NULL);
-        }
+pl_reshuffle_all (void) {
+    for (playlist_t *plt = playlists_head; plt; plt = plt->next) {
+        plt_reshuffle (plt, NULL, NULL);
     }
-
-    streamer_notify_order_changed (prev_order, pl_order);
-}
-
-int
-pl_get_order (void) {
-    return pl_order;
 }
 
 int
@@ -966,13 +953,6 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         fname += 7;
     }
 
-    // detect decoder
-    const char *eol = strrchr (fname, '.');
-    if (!eol) {
-        return NULL;
-    }
-    eol++;
-
     #ifdef __MINGW32__
     // replace backslashes with normal slashes
     char fname_conv[strlen(fname)+1];
@@ -991,6 +971,18 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         fname++;
     }
     #endif
+
+    // now that it's known we're not dealing with URL, check if it's a relative path
+    if (is_relative_path (fname)) {
+        return NULL;
+    }
+
+    // detect decoder
+    const char *eol = strrchr (fname, '.');
+    if (!eol) {
+        return NULL;
+    }
+    eol++;
 
     // handle cue files
     if (!strcasecmp (eol, "cue")) {
@@ -1114,7 +1106,7 @@ _get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *v
         snprintf (fullname, sz, "%s/%s", stripped_dirname, d_name);
         if (dir) {
             *dir = 0;
-            strncat (dir, stripped_dirname, dirsz);
+            strncat (dir, stripped_dirname, dirsz - 1);
         }
     }
     else {
@@ -1125,21 +1117,15 @@ _get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *v
         if (sch && strncmp (sch, d_name, strlen (sch))) {
             snprintf (fullname, sz, "%s%s:%s", sch, dirname, d_name);
             if (dir) {
-                *dir = 0;
-                size_t n = strlen (fullname) - strlen (d_name);
-                if (n > dirsz) {
-                    n = dirsz;
-                }
-                strncat (dir, fullname, n);
-                dir[n] = 0;
+                snprintf (dir, dirsz, "%s%s:", sch, dirname);
             }
         }
         else {
             *fullname = 0;
-            strncat (fullname, d_name, sz);
+            strncat (fullname, d_name, sz - 1);
             if (dir) {
                 *dir = 0;
-                strncat (dir, dirname, dirsz);
+                strncat (dir, dirname, dirsz - 1);
             }
         }
     }
@@ -1189,6 +1175,10 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
     }
     #endif
 
+    if (is_relative_path (dirname)) {
+        return NULL;
+    }
+
     if (!playlist->follow_symlinks && !vfs) {
         struct stat buf;
         lstat (dirname, &buf);
@@ -1211,8 +1201,8 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
     if (vfs && vfs->scandir) {
         n = vfs->scandir (dirname, &namelist, NULL, dirent_alphasort);
         // we can't rely on vfs plugins to set d_type
-        // windows: missing dirent[]->d_type
-        #ifndef __MINGW32__
+        // windows/svr4 unixes: missing dirent[]->d_type
+        #if !defined(__MINGW32__) && !defined(__SVR4)
         for (int i = 0; i < n; i++) {
             namelist[i]->d_type = DT_REG;
         }
@@ -1234,8 +1224,8 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
 
     for (int i = 0; i < n; i++) {
         // no hidden files
-        // windows: missing dirent[]->d_type
-        #ifdef __MINGW32__
+        // windows/svr4 unixes: missing dirent[]->d_type
+        #if defined(__MINGW32__) || defined(__SVR4)
         if (namelist[i]->d_name[0] == '.') {
         #else
         if (namelist[i]->d_name[0] == '.' || (namelist[i]->d_type != DT_REG && namelist[i]->d_type != DT_UNKNOWN)) {
@@ -1565,7 +1555,7 @@ plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
             prev_aa = pl_find_meta_raw (prev, "albumartist");
         }
     }
-    if (pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS && prev && pl_find_meta_raw (prev, "album") == pl_find_meta_raw (it, "album") && ((aa && prev_aa && aa == prev_aa) || pl_find_meta_raw (prev, "artist") == pl_find_meta_raw (it, "artist"))) {
+    if (streamer_get_shuffle () == DDB_SHUFFLE_ALBUMS && prev && pl_find_meta_raw (prev, "album") == pl_find_meta_raw (it, "album") && ((aa && prev_aa && aa == prev_aa) || pl_find_meta_raw (prev, "artist") == pl_find_meta_raw (it, "artist"))) {
         it->shufflerating = prev->shufflerating;
     }
     else {
@@ -1659,6 +1649,7 @@ pl_item_unref (playItem_t *it) {
     //trace ("\033[0;31m-it %p: refc=%d: %s\033[37;0m\n", it, it->_refc, pl_find_meta_raw (it, ":URI"));
     if (it->_refc < 0) {
         trace ("\033[0;31mplaylist: bad refcount on item %p\033[37;0m\n", it);
+        assert(0);
     }
     if (it->_refc <= 0) {
         //printf ("\033[0;31mdeleted %s\033[37;0m\n", pl_find_meta_raw (it, ":URI"));
@@ -1723,7 +1714,7 @@ pl_crop_selected (void) {
 int
 plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     LOCK;
-    plt->last_save_modification_idx = plt->last_save_modification_idx;
+    plt->last_save_modification_idx = plt->modification_idx;
     const char *ext = strrchr (fname, '.');
     if (ext) {
         DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();
@@ -2032,7 +2023,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
     }
     FILE *fp = fopen (fname, "rb");
     if (!fp) {
-        trace ("plt_load: failed to open %s\n", fname);
+//        trace ("plt_load: failed to open %s\n", fname);
         return NULL;
     }
 
@@ -2043,25 +2034,25 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
     playItem_t *it = NULL;
     char magic[4];
     if (fread (magic, 1, 4, fp) != 4) {
-        trace ("failed to read magic\n");
+//        trace ("failed to read magic\n");
         goto load_fail;
     }
     if (strncmp (magic, "DBPL", 4)) {
-        trace ("bad signature\n");
+//        trace ("bad signature\n");
         goto load_fail;
     }
     if (fread (&majorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
     if (majorver != PLAYLIST_MAJOR_VER) {
-        trace ("bad majorver=%d\n", majorver);
+//        trace ("bad majorver=%d\n", majorver);
         goto load_fail;
     }
     if (fread (&minorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
     if (minorver < 1) {
-        trace ("bad minorver=%d\n", minorver);
+//        trace ("bad minorver=%d\n", minorver);
         goto load_fail;
     }
     uint32_t cnt;
@@ -2217,7 +2208,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
                 char value[l+1];
                 int res = (int)fread (value, 1, l, fp);
                 if (res != l) {
-                    trace ("playlist read error: requested %d, got %d\n", l, res);
+//                    trace ("playlist read error: requested %d, got %d\n", l, res);
                     goto load_fail;
                 }
                 value[l] = 0;
@@ -2275,7 +2266,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
                 char value[l+1];
                 int res = (int)fread (value, 1, l, fp);
                 if (res != l) {
-                    trace ("playlist read error: requested %d, got %d\n", l, res);
+//                    trace ("playlist read error: requested %d, got %d\n", l, res);
                     goto load_fail;
                 }
                 value[l] = 0;
@@ -2293,7 +2284,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
     }
     return last_added;
 load_fail:
-    trace ("playlist load fail (%s)!\n", fname);
+//    trace ("playlist load fail (%s)!\n", fname);
     if (fp) {
         fclose (fp);
     }
@@ -2414,7 +2405,7 @@ plt_reshuffle (playlist_t *playlist, playItem_t **ppmin, playItem_t **ppmax) {
         if (!new_aa) {
             new_aa = pl_find_meta_raw (it, "albumartist");
         }
-        if (pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS && prev && alb == pl_find_meta_raw (it, "album") && ((aa && new_aa && aa == new_aa) || art == pl_find_meta_raw (it, "artist"))) {
+        if (streamer_get_shuffle () == DDB_SHUFFLE_ALBUMS && prev && alb == pl_find_meta_raw (it, "album") && ((aa && new_aa && aa == new_aa) || art == pl_find_meta_raw (it, "artist"))) {
             it->shufflerating = prev->shufflerating;
         }
         else {
@@ -3112,17 +3103,17 @@ float
 plt_get_selection_playback_time (playlist_t *playlist) {
     LOCK;
 
-    if (!playlist->recalc_seltime) {
-        float t = playlist->seltime;
-        UNLOCK;
-        return t;
-    }
-
     float t = 0;
+    
+    if (!playlist->recalc_seltime) {
+        t = playlist->seltime;
+        UNLOCK;
+        return roundf(t);
+    }
 
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         if (it->selected){
-            t += it->_duration;
+            t += roundf(it->_duration);
         }
     }
 
@@ -3812,7 +3803,10 @@ plt_add_files_end (playlist_t *plt, int visibility) {
         l->callback_end (&d, l->user_data);
     }
     background_job_decrement ();
+    
+    plt_autosort (plt);
 }
+
 
 void
 plt_deselect_all (playlist_t *playlist) {

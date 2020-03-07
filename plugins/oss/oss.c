@@ -44,7 +44,7 @@ DB_functions_t *deadbeef;
 static intptr_t oss_tid;
 static int oss_terminate;
 static int oss_rate = 44100;
-static int state;
+static ddb_playback_state_t state;
 static int fd;
 static uintptr_t mutex;
 
@@ -128,7 +128,7 @@ oss_set_hwparams (ddb_waveformat_t *fmt) {
 static int
 oss_init (void) {
     trace ("oss_init\n");
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     oss_terminate = 0;
     mutex = 0;
 
@@ -158,7 +158,7 @@ oss_free (void) {
             deadbeef->thread_join (oss_tid);
         }
         oss_tid = 0;
-        state = OUTPUT_STATE_STOPPED;
+        state = DDB_PLAYBACK_STATE_STOPPED;
         oss_terminate = 0;
         if (fd) {
             close (fd);
@@ -179,23 +179,23 @@ oss_play (void) {
             return -1;
         }
     }
-    state = OUTPUT_STATE_PLAYING;
+    state = DDB_PLAYBACK_STATE_PLAYING;
     return 0;
 }
 
 static int
 oss_stop (void) {
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     deadbeef->streamer_reset (1);
     return 0;
 }
 
 static int
 oss_pause (void) {
-    if (state == OUTPUT_STATE_STOPPED) {
+    if (state == DDB_PLAYBACK_STATE_STOPPED) {
         return -1;
     }
-    state = OUTPUT_STATE_PAUSED;
+    state = DDB_PLAYBACK_STATE_PAUSED;
     return 0;
 }
 
@@ -228,11 +228,11 @@ oss_setformat (ddb_waveformat_t *fmt) {
     deadbeef->mutex_unlock (mutex);
 
     switch (_state) {
-    case OUTPUT_STATE_STOPPED:
+    case DDB_PLAYBACK_STATE_STOPPED:
         return oss_stop ();
-    case OUTPUT_STATE_PLAYING:
+    case DDB_PLAYBACK_STATE_PLAYING:
         return oss_play ();
-    case OUTPUT_STATE_PAUSED:
+    case DDB_PLAYBACK_STATE_PAUSED:
         if (0 != oss_play ()) {
             return -1;
         }
@@ -283,7 +283,7 @@ oss_thread (void *context) {
         if (oss_terminate) {
             break;
         }
-        if (state != OUTPUT_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1)) {
+        if (state != DDB_PLAYBACK_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1)) {
             usleep (10000);
             continue;
         }
@@ -318,7 +318,7 @@ oss_callback (char *stream, int len) {
     return deadbeef->streamer_read (stream, len);
 }
 
-static int
+static ddb_playback_state_t
 oss_get_state (void) {
     return state;
 }

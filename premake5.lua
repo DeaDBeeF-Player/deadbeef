@@ -39,8 +39,12 @@ project "deadbeef"
        "md5/*.c",
        "plugins/libparser/*.h",
        "plugins/libparser/*.c",
+       "external/wcwidth/wcwidth.c",
+       "external/wcwidth/wcwidth.h",
        "ConvertUTF/*.h",
-       "ConvertUTF/*.c"
+       "ConvertUTF/*.c",
+       "shared/ctmap.c",
+       "shared/ctmap.h"
    }
 
    defines { "PORTABLE=1", "STATICLINK=1", "PREFIX=\"donotuse\"", "LIBDIR=\"donotuse\"", "DOCDIR=\"donotuse\"" }
@@ -70,6 +74,30 @@ project "aac_plugin"
    files {
        "plugins/aac/*.h",
        "plugins/aac/*.c",
+       "shared/mp4tagutil.h",
+       "shared/mp4tagutil.c",
+       "plugins/libmp4ff/*.h",
+       "plugins/libmp4ff/*.c"
+   }
+
+   defines { "USE_MP4FF=1", "USE_TAGGING=1" }
+   links { "faad" }
+
+project "alac_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "alac"
+
+   files {
+       "plugins/alac/alac_plugin.c",
+       "plugins/alac/alac.c",
+       "plugins/alac/decomp.h",
+       "plugins/alac/demux.c",
+       "plugins/alac/demux.h",
+       "plugins/alac/stream.c",
+       "plugins/alac/stream.h",
        "shared/mp4tagutil.h",
        "shared/mp4tagutil.c",
        "plugins/libmp4ff/*.h",
@@ -267,6 +295,8 @@ project "ddb_gui_GTK2"
    files {
        "plugins/gtkui/*.h",
        "plugins/gtkui/*.c",
+       "shared/eqpreset.c",
+       "shared/eqpreset.h",
        "shared/pluginsettings.h",
        "shared/pluginsettings.c",
        "shared/trkproperties_shared.h",
@@ -300,6 +330,8 @@ project "ddb_gui_GTK3"
    files {
        "plugins/gtkui/*.h",
        "plugins/gtkui/*.c",
+       "shared/eqpreset.c",
+       "shared/eqpreset.h",
        "shared/pluginsettings.h",
        "shared/pluginsettings.c",
        "shared/trkproperties_shared.h",
@@ -595,7 +627,7 @@ project "resources"
     postbuildcommands {
         "{MKDIR} bin/%{cfg.buildcfg}/pixmaps",
         "{COPY} icons/32x32/deadbeef.png bin/%{cfg.buildcfg}",
-        "{COPY} pixmaps/*.png pixmaps/*.svg bin/%{cfg.buildcfg}/pixmaps/",
+        "{COPY} pixmaps/*.png bin/%{cfg.buildcfg}/pixmaps/",
         "{MKDIR} bin/%{cfg.buildcfg}/plugins/convpresets",
         "{COPY} plugins/converter/convpresets bin/%{cfg.buildcfg}/plugins/",
     }

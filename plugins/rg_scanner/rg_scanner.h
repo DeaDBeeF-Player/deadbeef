@@ -50,8 +50,6 @@ typedef struct {
     int scan_result;
 } ddb_rg_scanner_result_t;
 
-// FIXME: parts of this structure must be made private
-
 typedef struct {
     // Size of this structure
     int _size;

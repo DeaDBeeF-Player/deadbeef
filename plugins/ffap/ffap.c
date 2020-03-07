@@ -671,9 +671,8 @@ ffap_free (DB_fileinfo_t *_info)
 
 static DB_fileinfo_t *
 ffap_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (ape_info_t));
-    memset (_info, 0, sizeof (ape_info_t));
-    return _info;
+    ape_info_t *info = calloc (sizeof (ape_info_t), 1);
+    return &info->info;
 }
 
 static int

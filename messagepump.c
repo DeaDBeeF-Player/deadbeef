@@ -31,6 +31,7 @@
 #include "messagepump.h"
 #include "threading.h"
 #include "playlist.h"
+#include "common.h"
 
 typedef struct message_s {
     uint32_t id;
@@ -174,8 +175,9 @@ messagepump_event_alloc (uint32_t id) {
     case DB_EV_SEEKED:
         sz = sizeof (ddb_event_playpos_t);
         break;
+    default:
+        trace ("Invalid event %d to use with messagepump_event_alloc, use sendmessage instead\n", id);
     }
-    assert (("Invalid event %d to use with messagepump_event_alloc, use sendmessage instead\n", id));
     ev = malloc (sz);
     memset (ev, 0, sz);
     ev->event = id;

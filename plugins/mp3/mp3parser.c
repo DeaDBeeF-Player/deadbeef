@@ -26,6 +26,9 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <math.h>
+#include <sys/time.h>
+
+//#define PERFORMANCE_STATS 1
 
 extern DB_functions_t *deadbeef;
 
@@ -38,6 +41,7 @@ extern DB_functions_t *deadbeef;
 #define MIN_PACKET_LENGTH (MIN_PACKET_SAMPLES / 8 * MIN_BITRATE*1000 / MAX_SAMPLERATE)
 #define MAX_PACKET_LENGTH 1441
 #define MAX_INVALID_BYTES 1000000
+#define MAX_INVALID_BYTES_STREAM 1000
 
 static const int vertbl[] = {3, -1, 2, 1}; // 3 is 2.5
 static const int ltbl[] = { -1, 3, 2, 1 };
@@ -66,6 +70,8 @@ static const int brtable[5][16] = {
 #define TOC_FLAG        0x0004
 #define VBR_SCALE_FLAG  0x0008
 
+// -1 recoverable failure
+// -2 freeformat (bitrate=0) stream detected
 static int
 _parse_packet (mp3packet_t * restrict packet, uint8_t * restrict fb) {
     memset (packet, 0, sizeof (mp3packet_t));
@@ -124,6 +130,9 @@ _parse_packet (mp3packet_t * restrict packet, uint8_t * restrict fb) {
     }
     else {
         idx = packet->layer == 1 ? 3 : 4;
+    }
+    if (packet->bitrate == 0) {
+        return -2; // freeformat not supported
     }
     packet->bitrate = brtable[idx][packet->bitrate];
     if (packet->bitrate <= 0) {
@@ -304,7 +313,6 @@ _check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int dat
 
         // musiclen
         info->lame_musiclength = extract_i32 (data);
-        data += 4;
     }
 
     return 0;
@@ -368,6 +376,12 @@ _packet_same_fmt (mp3packet_t *ref_packet, mp3packet_t *packet) {
 
 int
 mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int startoffs, int endoffs, int64_t seek_to_sample) {
+#if PERFORMANCE_STATS
+    struct timeval start_tv;
+    struct timeval end_tv;
+    gettimeofday (&start_tv, NULL);
+#endif
+
     memset (info, 0, sizeof (mp3info_t));
     info->fsize = fsize;
     info->datasize = fsize-startoffs-endoffs;
@@ -383,9 +397,11 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     int err = -1;
 
     deadbeef->fseek (fp, startoffs, SEEK_SET);
+    info->num_seeks++;
 
-    if (fsize > 0) {
-        fsize -= endoffs;
+    int64_t datasize = fsize;
+    if (datasize > 0) {
+        datasize -= startoffs+endoffs;
     }
 
     if (fsize < 0) {
@@ -404,8 +420,8 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
 
     while (fsize > 0 || fsize < 0) {
         int64_t readsize = 4; // fe ff + frame header
-        if (fsize > 0 && offs + readsize >= fsize) {
-            readsize = fsize - offs;
+        if (fsize > 0 && offs + readsize >= fsize - endoffs) {
+            readsize = fsize - endoffs - offs;
         }
 
         if (readsize <= 0) {
@@ -416,17 +432,27 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
 
         if (fileoffs != offs) {
             deadbeef->fseek (fp, offs, SEEK_SET);
+            info->num_seeks++;
             fileoffs = offs;
         }
         if (deadbeef->fread (fhdr, 1, readsize, fp) != readsize) {
             goto error;
         }
+        info->num_reads++;
+        info->bytes_read += readsize;
         fileoffs += readsize;
 
         int res = _parse_packet (&packet, fhdr);
         if (res < 0 || (info->npackets && !_packet_same_fmt (&info->ref_packet, &packet))) {
+            if (res == -2 && info->valid_packets == 0) {
+                goto error; // ignore freeformat streams
+            }
             // bail if a valid packet could not be found at the start of stream
             if (!info->valid_packets && offs - startoffs > MAX_INVALID_BYTES) {
+                goto error;
+            }
+
+            if (info->is_streaming && offs - startoffs > MAX_INVALID_BYTES_STREAM) {
                 goto error;
             }
 
@@ -448,7 +474,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
         }
         else {
             // EOF
-            if (fsize >= 0 && offs + res > fsize) {
+            if (fsize >= 0 && offs + res > fsize - endoffs) {
                 if (info->valid_packets) {
                     goto end;
                 }
@@ -474,6 +500,9 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 if (deadbeef->fread (xinghdr, 1, sizeof (xinghdr), fp) != sizeof (xinghdr)) {
                     return -1;
                 }
+                info->num_reads++;
+                info->bytes_read += sizeof (xinghdr);
+
                 fileoffs += sizeof (xinghdr);
                 int xingres = _check_xing_header (info, &packet, xinghdr, (int)sizeof (xinghdr));
                 if (!xingres) {
@@ -520,13 +549,14 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
             // we still need to fetch a few packets to get averages right.
             // 200 packets give a pretty accurate value, and correspond
             // to less than 40KB or data
-            if (info->have_xing_header && !(flags & MP3_PARSE_FULLSCAN) && info->npackets >= 200) {
+            if (info->have_xing_header && seek_to_sample < 0 && !(flags & MP3_PARSE_FULLSCAN) && info->npackets >= 200) {
                 goto end;
             }
             // Calculate CBR duration from file size
             else if (!vbr && !info->have_xing_header && !(flags & MP3_PARSE_FULLSCAN) && info->npackets >= 200) {
                 // calculate total number of packets from file size
-                int64_t npackets = ceil(fsize/(float)info->ref_packet.packetlength);
+                // 8876 - 9485
+                int64_t npackets = ceil(datasize/(float)info->ref_packet.packetlength);
                 info->totalsamples = npackets * info->ref_packet.samples_per_frame;
                 info->have_duration = 1;
                 goto end;
@@ -541,14 +571,17 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
             offs += res;
 
             // for streaming tracks -- approximate duration
-            if (seek_to_sample == -1 && fsize > 0 && offs - startoffs > 50000 && (info->is_streaming || (flags&MP3_PARSE_ESTIMATE_DURATION))) {
+            if (seek_to_sample == -1
+                && fsize > 0
+                && offs > (startoffs+50000)
+                && (info->is_streaming || (flags&MP3_PARSE_ESTIMATE_DURATION))) {
                 if (!info->valid_packets) {
                     goto error;
                 }
 
                 info->avg_packetlength = floor (info->avg_packetlength/info->valid_packets);
                 info->avg_samples_per_frame /= info->valid_packets;
-                info->npackets = (fsize - startoffs - endoffs) / info->avg_packetlength;
+                info->npackets = datasize / info->avg_packetlength;
                 info->avg_bitrate /= info->valid_packets;
                 if (info->have_xing_header) {
                     info->npackets--;
@@ -569,8 +602,8 @@ end:
         info->avg_samples_per_frame /= info->npackets;
         info->avg_packetlength /= info->npackets;
         info->avg_bitrate /= info->npackets;
-        if (offs < fsize-endoffs && info->avg_packetlength != 0) {
-            info->npackets = (fsize - startoffs - endoffs) / info->avg_packetlength;
+        if (offs < datasize && info->avg_packetlength != 0) {
+            info->npackets = datasize / info->avg_packetlength;
             if (info->have_xing_header) {
                 info->npackets--;
             }
@@ -594,5 +627,10 @@ end_noaverages:
     }
     err = 0;
 error:
+#if PERFORMANCE_STATS
+    gettimeofday (&end_tv, NULL);
+    float elapsed = (end_tv.tv_sec-start_tv.tv_sec) + (end_tv.tv_usec - start_tv.tv_usec) / 1000000.f;
+    printf ("mp3 stats:\nSeeks: %llu\nReads: %llu\nBytes: %llu\nTime: %f sec", info->num_seeks, info->num_reads, info->bytes_read, elapsed);
+#endif
     return err;
 }

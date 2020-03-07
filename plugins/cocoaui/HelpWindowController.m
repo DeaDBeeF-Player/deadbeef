@@ -28,7 +28,7 @@
     if (content) {
         [self.textView.textStorage setAttributedString:
          [[NSAttributedString alloc] initWithString:content attributes:@{NSForegroundColorAttributeName: NSColor.controlTextColor}]];
-        [self.textView setSelectedRange:NSMakeRange(0, 0)];
+        self.textView.selectedRange = NSMakeRange(0, 0);
     }
 }
 

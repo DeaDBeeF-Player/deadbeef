@@ -46,7 +46,7 @@ void get_deadbeef_monitor_rect (GdkRectangle *rect)
 void
 wingeom_save (GtkWidget *widget, const char *name) {
 
-    GdkRectangle r;
+    GdkRectangle r = {0,};
     if (widget != mainwin) {
         get_deadbeef_monitor_rect(&r);
     }

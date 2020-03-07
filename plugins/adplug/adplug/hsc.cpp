@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * hsc.cpp - HSC Player by Simon Peter <dn.tlp@gmx.net>
  */
@@ -31,28 +31,43 @@ CPlayer *ChscPlayer::factory(Copl *newopl)
   return new ChscPlayer(newopl);
 }
 
-bool ChscPlayer::load(const char *filename, const CFileProvider &fp)
+bool ChscPlayer::load(const std::string &filename, const CFileProvider &fp)
 {
   binistream	*f = fp.open(filename);
   int		i;
 
   // file validation section
-  if(!f || !fp.extension(filename, ".hsc") || fp.filesize(f) > 59187) {
-    AdPlug_LogWrite("ChscPlayer::load(\"%s\"): Not a HSC file!\n", filename);
+  if (
+    !f
+    || !fp.extension(filename, ".hsc")
+    || fp.filesize(f) > (59187 + 1)  // +1 is for some files that have a trailing 0x00 on the end
+    || fp.filesize(f) < (1587 + 1152) // no 0x00 byte here as this is the smallest possible size
+  ) {
+    AdPlug_LogWrite("ChscPlayer::load(\"%s\"): Not a HSC file!\n", filename.c_str());
     fp.close(f);
     return false;
   }
 
+  int total_patterns_in_hsc = (fp.filesize(f) - 1587) / 1152;
+
   // load section
   f->readBuf ((char *)instr, 128*12);
-
-
   for (i=0;i<128;i++) {			// correct instruments
     instr[i][2] ^= (instr[i][2] & 0x40) << 1;
     instr[i][3] ^= (instr[i][3] & 0x40) << 1;
     instr[i][11] >>= 4;			// slide
   }
+
   f->readBuf ((char *)song, 51); // load tracklist
+
+  for(i=0;i<51;i++) {	// load tracklist
+    // if out of range, song ends here
+    if (
+      ((song[i] & 0x7F) > 0x31)
+      || ((song[i] & 0x7F) >= total_patterns_in_hsc)
+    ) song[i] = 0xFF;
+  }
+
   f->readBuf ((char *)patterns, 50*64*9); // load patterns
 
   fp.close(f);
@@ -75,7 +90,9 @@ bool ChscPlayer::update()
     fadein--;
 
   pattnr = song[songpos];
-  if(pattnr == 0xff) {			// arrangement handling
+  // 0xff indicates song end, but this prevents a crash for some songs that
+  // use other weird values, like 0xbf
+  if(pattnr >= 0xb2) {			// arrangement handling
     songend = 1;				// set end-flag
     songpos = 0;
     pattnr = song[songpos];

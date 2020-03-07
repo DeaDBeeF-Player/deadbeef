@@ -21,9 +21,13 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#import "DdbPlaceholderWidget.h"
+#import "DesignableViewController.h"
+#import "GuiPreferencesWindowController.h"
 #import "MainWindowController.h"
+#import "PlaylistViewController.h"
 #import "PreferencesWindowController.h"
-#include "../../deadbeef.h"
+#include "deadbeef.h"
 #include <sys/time.h>
 
 extern DB_functions_t *deadbeef;
@@ -36,6 +40,11 @@ extern DB_functions_t *deadbeef;
     char *_statusbar_playing_script;
     int _prevSeekBarPos;
 }
+
+
+@property (weak) IBOutlet NSView *designableContainerView;
+
+
 @end
 
 @interface NSView (AppKitDetails)
@@ -45,28 +54,43 @@ extern DB_functions_t *deadbeef;
 
 @implementation MainWindowController
 
-- (void)dealloc {
-    [self cleanup];
-}
-
 - (void)cleanup {
+    // not releasing this timer explicitly causes a reference cycle
     if (_updateTimer) {
         [_updateTimer invalidate];
         _updateTimer = nil;
     }
-    [self freeTitleBarConfig];
 
-    [_playlistViewController cleanup];
+    [self.rootViewController cleanup];
+}
+
+- (void)dealloc {
+    [self cleanup];
+    [self freeTitleBarConfig];
 }
 
 - (void)windowDidLoad {
     [super windowDidLoad];
 
+    PlaylistViewController *pvc = [[PlaylistViewController alloc] initWithNibName:nil bundle:nil];
+    PlaylistView *view = [PlaylistView new];
+    pvc.view = view;
+    [pvc setup];
+    self.rootViewController = pvc;
+
+    view.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.designableContainerView addSubview:view];
+
+    [view.topAnchor constraintEqualToAnchor:self.designableContainerView.topAnchor].active = YES;
+    [view.bottomAnchor constraintEqualToAnchor:self.designableContainerView.bottomAnchor].active = YES;
+    [view.leadingAnchor constraintEqualToAnchor:self.designableContainerView.leadingAnchor].active = YES;
+    [view.trailingAnchor constraintEqualToAnchor:self.designableContainerView.trailingAnchor].active = YES;
+
     // add tab strip to the window titlebar
-    NSTitlebarAccessoryViewController* vc = [[NSTitlebarAccessoryViewController alloc] init];
+    NSTitlebarAccessoryViewController* vc = [NSTitlebarAccessoryViewController new];
 
     vc.view = _tabStrip;
-    vc.fullScreenMinHeight = [_tabStrip bounds].size.height;
+    vc.fullScreenMinHeight = _tabStrip.bounds.size.height;
     vc.layoutAttribute = NSLayoutAttributeBottom;
 
     [self.window addTitlebarAccessoryViewController:vc];
@@ -103,7 +127,7 @@ static char sb_text[512];
     
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
     
-    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track)) {
+    if (!output || (output->state () == DDB_PLAYBACK_STATE_STOPPED || !track)) {
         snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
     }
     else {
@@ -120,7 +144,7 @@ static char sb_text[512];
     
     if (strcmp (sbtext_new, sb_text)) {
         strcpy (sb_text, sbtext_new);
-        [[self statusBar] setStringValue:[NSString stringWithUTF8String:sb_text]];
+        [self statusBar].stringValue = [NSString stringWithUTF8String:sb_text];
     }
     
     if (track) {
@@ -148,7 +172,7 @@ static char sb_text[512];
         int cmp =(int)(perc*4000);
         if (cmp != _prevSeekBarPos) {
             _prevSeekBarPos = cmp;
-            [_seekBar setFloatValue:perc];
+            _seekBar.floatValue = perc;
         }
     }
 
@@ -156,14 +180,14 @@ static char sb_text[512];
     if (!trk || dur < 0) {
         st = NO;
     }
-    if ([_seekBar isEnabled] != st) {
-        [_seekBar setEnabled:st];
+    if (_seekBar.isEnabled != st) {
+        _seekBar.enabled = st;
     }
 }
 
 - (void)frameUpdate:(id)userData
 {
-    if (![[self window] isVisible]) {
+    if (![self.window isVisible]) {
         return;
     }
 
@@ -185,13 +209,13 @@ static char sb_text[512];
         if (dur >= 0) {
             float time = [(NSSlider*)sender floatValue] / 100.f;
             time *= dur;
-            deadbeef->sendmessage (DB_EV_SEEK, 0, time * 1000, 0);
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(time * 1000), 0);
         }
         deadbeef->pl_item_unref (trk);
     }
 }
 
-- (IBAction)volumeBarAction:(id)sender {
+- (IBAction)volumeBarAction:(NSControl *)sender {
     float range = -deadbeef->volume_get_min_db ();
     float volume = [(NSSlider*)sender floatValue] / 100.f * range - range;
     if (volume < -range) {
@@ -202,8 +226,8 @@ static char sb_text[512];
     }
 
     deadbeef->volume_set_db (volume);
-    int db = volume;
-    [sender setToolTip:[NSString stringWithFormat:@"%s%ddB", db < 0 ? "" : "+", db]];
+    int db = (int)volume;
+    sender.toolTip = [NSString stringWithFormat:@"%s%ddB", db < 0 ? "" : "+", db];
 }
 
 - (IBAction)tbClicked:(id)sender {
@@ -237,8 +261,8 @@ static char sb_text[512];
 
 - (void)updateVolumeBar {
     float range = -deadbeef->volume_get_min_db ();
-    int vol = (deadbeef->volume_get_db () + range) / range * 100;
-    [[self volumeBar] setFloatValue:vol];
+    float vol = (deadbeef->volume_get_db () + range) / range * 100;
+    [self volumeBar].floatValue = vol;
 }
 
 - (void)freeTitleBarConfig {
@@ -290,7 +314,7 @@ static char sb_text[512];
         deadbeef->pl_item_unref (ctx.it);
     }
 
-    [[self window] setTitle:[NSString stringWithUTF8String:buffer]];
+    self.window.title = [NSString stringWithUTF8String:buffer];
 }
 
 @end

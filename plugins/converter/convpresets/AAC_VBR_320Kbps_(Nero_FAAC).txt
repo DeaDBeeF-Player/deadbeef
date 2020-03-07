@@ -1,0 +1,11 @@
+title AAC VBR 320kbps (Nero FAAC)
+ext m4a
+encoder faac -q 700 -w -o %o -
+method 0
+id3v2_version 0
+tag_id3v2 0
+tag_id3v1 0
+tag_apev2 0
+tag_flac 0
+tag_oggvorbis 0
+tag_mp4 1

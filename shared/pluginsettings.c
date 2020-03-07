@@ -83,6 +83,23 @@ settings_data_init (settings_data_t *settings_data, const char *layout) {
             break;
         }
 
+        int is_hbox = !strncmp (type, "hbox[", 5);
+        int is_vbox = !strncmp (type, "vbox[", 5);
+        if (is_hbox || is_vbox) {
+            settings_data_add_property(settings_data, is_hbox ? PROP_HBOX : PROP_VBOX, NULL, NULL, NULL);
+            settings_property_t *prop = &settings_data->props[settings_data->nprops-1];
+            prop->select_options = strchr (type_ptr, '[') + 1;
+
+            char skip[MAX_TOKEN] = "";
+            do {
+                script = gettoken_warn_eof (script, skip);
+                if (!script) {
+                    break;
+                }
+            } while (strcmp (skip, ";"));
+            continue;
+        }
+
         // ignore layout options
         char key[MAX_TOKEN];
         const char *skiptokens[] = { "vert", NULL };

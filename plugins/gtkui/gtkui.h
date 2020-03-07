@@ -47,7 +47,6 @@ extern int gtkui_italic_selected_tracks;
 extern int gtkui_italic_tracks;
 extern int gtkui_italic_current_track;
 
-extern int gtkui_is_retina;
 extern int gtkui_unicode_playstate;
 extern int gtkui_disable_seekbar_overlay;
 
@@ -182,6 +181,9 @@ gtkui_mainwin_init(void);
 
 void
 gtkui_mainwin_free(void);
+
+static void
+init_widget_layout (void);
 
 enum GtkuiFileChooserType {
     GTKUI_FILECHOOSER_OPENFILE,

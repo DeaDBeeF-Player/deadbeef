@@ -142,11 +142,11 @@ ayemu_vtx_t * ayemu_vtx_header(data_ptr_t buf, size_t size)
 
 ayemu_vtx_t * ayemu_vtx_load(data_ptr_t buf, size_t size)
 {
-  ayemu_vtx_t *vtx;
+  ayemu_vtx_t *vtx = NULL;
 
   const char *data = read_header(buf, &vtx, size);
 
-  if (! data) {
+  if (!vtx) {
     fprintf(stderr, "ayemu_vtx_load: Cannot parse file header\n");
     return NULL;
   }
@@ -157,6 +157,7 @@ ayemu_vtx_t * ayemu_vtx_load(data_ptr_t buf, size_t size)
   if ((vtx->regdata = (unsigned char *) malloc (vtx->regdata_size)) == NULL) {
     fprintf (stderr, "ayemu_vtx_load_data: Can allocate %d bytes"
 	     " for unpack register data\n", vtx->regdata_size);
+    ayemu_vtx_free(vtx);
     return NULL;
   }
 

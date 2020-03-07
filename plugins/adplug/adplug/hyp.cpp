@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * [xad] HYP player, by Riven the Mage <riven@ok.ru>
  */
@@ -119,7 +119,7 @@ float CxadhypPlayer::xadplayer_getrefresh()
   return 60.0f;
 }
 
-const char * CxadhypPlayer::xadplayer_gettype()
+std::string CxadhypPlayer::xadplayer_gettype()
 {
-  return "xad: hypnosis player";
+  return std::string("xad: hypnosis player");
 }

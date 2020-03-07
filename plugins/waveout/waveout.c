@@ -71,7 +71,8 @@ static unsigned int waveout_device;
 static char setup_dev[MAXPNAMELEN]="default";
 
 intptr_t waveout_tid;
-static int wave_terminate, state;
+static int wave_terminate;
+static ddb_playlist_t state;
 static int audio_blocks_sent, audio_block_write_index;
 static int bytesread, bytes_per_block, avail_audio_buffers;
 static WAVEFORMATEXTENSIBLE wave_format;
@@ -109,7 +110,7 @@ int
 pwaveout_init (void)
 {
     trace("pwaveout_init\n");
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     wave_terminate = 0;
 
     return 0;
@@ -238,7 +239,7 @@ pwaveout_setformat (ddb_waveformat_t *fmt)
         wave_format.dwChannelMask |= SPEAKER_TOP_BACK_RIGHT;
 
 
-    if (state == OUTPUT_STATE_STOPPED && audio_blocks_sent == 0)
+    if (state == DDB_PLAYBACK_STATE_STOPPED && audio_blocks_sent == 0)
     {
         openresult = waveOutOpen(NULL, waveout_device, (WAVEFORMATEX *)&wave_format, 0, 0, WAVE_FORMAT_QUERY);
         if (openresult != MMSYSERR_NOERROR)
@@ -274,7 +275,7 @@ pwaveout_free (void)
             deadbeef->thread_join(waveout_tid);
             trace("pwaveout_free: thread join done\n");
         }
-        state = OUTPUT_STATE_STOPPED;
+        state = DDB_PLAYBACK_STATE_STOPPED;
         wave_terminate = 0;
     }
     return 0;
@@ -325,7 +326,7 @@ pwaveout_play (void)
 
                 audio_block_write_index = 0;
                 result = 0;
-                state = OUTPUT_STATE_PLAYING;
+                state = DDB_PLAYBACK_STATE_PLAYING;
                 trace("pwaveout_play: go! (bytes_per_block=%d)\n",bytes_per_block);
             }
         }
@@ -342,12 +343,12 @@ pwaveout_stop (void)
 
     if (device_handle != NULL)
     {
-        if (state == OUTPUT_STATE_PAUSED)
+        if (state == DDB_PLAYBACK_STATE_PAUSED)
             /* cannot close a paused device */
             waveOutRestart(device_handle);
 
         /* inhibit pwaveout_thread from sending more audio blocks to the device */
-        state = OUTPUT_STATE_STOPPED;
+        state = DDB_PLAYBACK_STATE_STOPPED;
         waveOutReset(device_handle);
         /* ensure pwaveout_thread catches the new state */
         nanosleep(&sleep_time, NULL);
@@ -377,7 +378,7 @@ pwaveout_stop (void)
         }
     }
 
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
 
     deadbeef->streamer_reset(1);
 
@@ -388,14 +389,14 @@ static int
 pwaveout_pause (void)
 {
     trace("pwaveout_pause\n");
-    if (state == OUTPUT_STATE_STOPPED) {
+    if (state == DDB_PLAYBACK_STATE_STOPPED) {
         return -1;
     }
 
-    if (state == OUTPUT_STATE_PLAYING)
+    if (state == DDB_PLAYBACK_STATE_PLAYING)
     {
         waveOutPause(device_handle);
-        state = OUTPUT_STATE_PAUSED;
+        state = DDB_PLAYBACK_STATE_PAUSED;
     }
     return 0;
 }
@@ -405,10 +406,10 @@ pwaveout_unpause (void)
 {
     trace("pwaveout_unpause\n");
 
-    if (state == OUTPUT_STATE_PAUSED)
+    if (state == DDB_PLAYBACK_STATE_PAUSED)
     {
         waveOutRestart(device_handle);
-        state = OUTPUT_STATE_PLAYING;
+        state = DDB_PLAYBACK_STATE_PLAYING;
     }
     return 0;
 }
@@ -429,7 +430,7 @@ pwaveout_thread (void *context)
             break;
         }
 
-        if (state != OUTPUT_STATE_PLAYING && !audio_format_change_pending)
+        if (state != DDB_PLAYBACK_STATE_PLAYING && !audio_format_change_pending)
         {
             nanosleep(&sleep_time, NULL);
             //__mingw_sleep(0, AUDIO_BUFFER_DURATION*1000000); /* __mingw_sleep(seconds, nanoseconds) */
@@ -528,7 +529,7 @@ pwaveout_thread (void *context)
     trace("pwaveout_thread terminating\n");
 }
 
-int
+ddb_playback_state_t
 pwaveout_get_state (void) {
     //trace("pwaveout_get_state\n"); /* this routine is called several times a second, so too much logging */
     return state;
@@ -543,7 +544,7 @@ waveout_start (void) {
     int result = 0;
 
     trace("waveout_start\n");
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     audio_blocks_sent = 0;
     audio_format_change_pending = 0;
     device_handle = NULL;

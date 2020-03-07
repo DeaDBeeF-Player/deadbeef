@@ -55,7 +55,7 @@ rg_calc_thread(void *ctx) {
     DB_fileinfo_t *fileinfo = NULL;
 
     char *buffer = NULL;
-    char *bufferf = NULL;
+    float *bufferf = NULL;
 
     track_state_t *st = (track_state_t *)ctx;
     if (st->settings->pabort && *(st->settings->pabort)) {
@@ -138,7 +138,7 @@ rg_calc_thread(void *ctx) {
             fmt.is_float = 1;
         }
         else {
-            bufferf = buffer;
+            bufferf = (float *)buffer;
         }
 
         int eof = 0;
@@ -165,13 +165,13 @@ rg_calc_thread(void *ctx) {
             // convert from native output to float,
             // only if the input is not float already
             if (!fileinfo->fmt.is_float) {
-                deadbeef->pcm_convert (&fileinfo->fmt, buffer, &fmt, bufferf, sz);
+                deadbeef->pcm_convert (&fileinfo->fmt, buffer, &fmt, (char *)bufferf, sz);
             }
 
             int frames = sz / samplesize;
 
-            ebur128_add_frames_float (st->gain_state[st->track_index], (float*) bufferf, frames); // collect data
-            ebur128_add_frames_float (st->peak_state[st->track_index], (float*) bufferf, frames); // collect data
+            ebur128_add_frames_float (st->gain_state[st->track_index], bufferf, frames); // collect data
+            ebur128_add_frames_float (st->peak_state[st->track_index], bufferf, frames); // collect data
         }
 
         if (!st->settings->pabort || !(*(st->settings->pabort))) {
@@ -213,7 +213,7 @@ error:
         dec->free (fileinfo);
     }
 
-    if (buffer && buffer != bufferf) {
+    if (buffer && buffer != (char *)bufferf) {
         free (buffer);
         buffer = NULL;
     }

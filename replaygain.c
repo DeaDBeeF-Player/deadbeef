@@ -26,11 +26,12 @@
 */
 #include <string.h>
 #include <stdlib.h>
-#include "playlist.h"
+#include "streamer.h"
 #include "volume.h"
 #include "replaygain.h"
 #include "conf.h"
 #include "common.h"
+#include "playmodes.h"
 
 static ddb_replaygain_settings_t current_settings;
 
@@ -70,7 +71,7 @@ void
 replaygain_init_settings (ddb_replaygain_settings_t *settings, playItem_t *it) {
     memset (((char *)settings) + sizeof (settings->_size), 0, settings->_size - sizeof (settings->_size));
     settings->source_mode = conf_get_int ("replaygain.source_mode", 0);
-    settings->processing_flags = conf_get_int ("replaygain.processing_flags", 1);
+    settings->processing_flags = conf_get_int ("replaygain.processing_flags", 0);
     settings->preamp_with_rg = db_to_amp (conf_get_float ("replaygain.preamp_with_rg", 0));
     settings->preamp_without_rg = db_to_amp (conf_get_float ("replaygain.preamp_without_rg", 0));
     settings->albumgain = 1;
@@ -132,8 +133,8 @@ _get_source_mode (int mode) {
     if (mode != DDB_RG_SOURCE_MODE_PLAYBACK_ORDER) {
         return mode;
     }
-    int order = pl_get_order ();
-    if (order == PLAYBACK_ORDER_SHUFFLE_ALBUMS || order == PLAYBACK_ORDER_LINEAR) {
+    ddb_shuffle_t shuffle = streamer_get_shuffle ();
+    if (shuffle == DDB_SHUFFLE_ALBUMS || shuffle == DDB_SHUFFLE_OFF) {
         return DDB_RG_SOURCE_MODE_ALBUM;
     }
     else {

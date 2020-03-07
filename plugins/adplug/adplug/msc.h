@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * msc.h - MSC Player by Lubomir Bulej (pallas@kadan.cz)
  */
@@ -32,12 +32,12 @@ class CmscPlayer: public CPlayer
   CmscPlayer(Copl * newopl);
   ~CmscPlayer();
 	
-  bool load(const char *filename, const CFileProvider &fp);
+  bool load(const std::string &filename, const CFileProvider &fp);
   bool update();
   void rewind(int subsong);
   float getrefresh();
 
-  const char * gettype ();
+  std::string gettype ();
 
  protected:
   typedef unsigned char		u8;
@@ -81,8 +81,6 @@ class CmscPlayer: public CPlayer
 
  private:
   static const u8 msc_signature [MSC_SIGN_LEN];
-  char vstr [40];
-
 
   bool load_header (binistream * bf, msc_header * hdr);
   bool decode_octet (u8 * output);

@@ -86,3 +86,5 @@ osx/build
 .dirstamp
 .vscode/c_cpp_properties.json
 *.make
+Makefile
+*.a

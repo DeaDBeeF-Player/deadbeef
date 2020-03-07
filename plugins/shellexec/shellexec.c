@@ -52,12 +52,13 @@
 #include <jansson.h>
 #include "../../deadbeef.h"
 #include "shellexec.h"
+#include "shellexecutil.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
 static Shx_plugin_t plugin;
-static DB_functions_t *deadbeef;
+DB_functions_t *deadbeef;
 
 static Shx_action_t *actions;
 
@@ -83,32 +84,12 @@ trim (char* s)
 
 static int shx_exec_track_cmd (Shx_action_t *action, DB_playItem_t *it) {
     char cmd[_POSIX_ARG_MAX];
-    int res = deadbeef->pl_format_title_escaped (it, -1, cmd, sizeof (cmd) - 2, -1, action->shcommand);
-    if (res < 0) {
-        trace ("shellexec: failed to format string for execution (too long?)\n");
+    if (shellexec_eval_command(action->shcommand, cmd, sizeof (cmd), it) < 0) {
         return -1;
-    }
-    strcat (cmd, "&");
-
-    // replace \' with '"'"'
-    size_t l = strlen (cmd);
-    size_t remaining = _POSIX_ARG_MAX - l - 1;
-    for (int i = 0; cmd[i]; i++) {
-        if (cmd[i] == '\\' && cmd[i+1] == '\'' && remaining >= 3) {
-            memmove (&cmd[i+5], &cmd[i+2], l - i + 1 - 2);
-            memcpy (&cmd[i], "'\"'\"'", 5);
-            l += 3;
-            remaining -= 3;
-            i += 5;
-        }
-        else if (remaining < 3) {
-            fprintf (stderr, "shellexec: command is too long.\n");
-            return -1;
-        }
     }
 
     trace ("%s\n", cmd);
-    res = system (cmd);
+    system (cmd);
     return 0;
 }
 
@@ -129,7 +110,7 @@ shx_callback (Shx_action_t *action, int ctx)
                 DB_playItem_t **items = NULL;
                 int items_count = deadbeef->plt_getselcount (plt);
                 if (0 < items_count) {
-                    items = malloc (sizeof (DB_playItem_t *) * items_count);
+                    items = calloc (sizeof (DB_playItem_t *), items_count);
                     if (items) {
                         int n = 0;
                         DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
@@ -162,10 +143,10 @@ shx_callback (Shx_action_t *action, int ctx)
             ddb_playlist_t *plt = deadbeef->action_get_playlist ();
             if (plt) {
                 deadbeef->pl_lock ();
-                DB_playItem_t **items;
+                DB_playItem_t **items = NULL;
                 int items_count = deadbeef->plt_get_item_count (plt, PL_MAIN);
                 if (0 < items_count) {
-                    items = malloc (sizeof (DB_playItem_t *) * items_count);
+                    items = calloc (sizeof (DB_playItem_t *), items_count);
                     if (items) {
                         int n = 0;
                         DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
@@ -389,7 +370,7 @@ shx_get_actions_json (json_t *json) {
         return NULL;
     }
 
-    unsigned n = json_array_size (json);
+    size_t n = json_array_size (json);
     for (int i = 0; i < n; i++) {
         json_t *item = json_array_get (json, i);
         if (!json_is_object (item)) {
@@ -435,7 +416,7 @@ shx_get_actions_json (json_t *json) {
         else {
             action->shx_flags = 0;
 
-            int nflags = json_array_size (jflags);
+            size_t nflags = json_array_size (jflags);
             for (int i = 0; i < nflags; i++) {
                 json_t *jflag = json_array_get (jflags, i);
                 if (!json_is_string (jflag)) {

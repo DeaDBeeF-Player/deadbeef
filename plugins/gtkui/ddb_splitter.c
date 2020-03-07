@@ -17,7 +17,10 @@
  * MA 02110-1301 USA
  */
 
+#include <gtk/gtk.h>
 #include <math.h>
+#include <string.h>
+#include "support.h"
 #include "ddb_splitter.h"
 
 /**
@@ -492,11 +495,11 @@ update_drag (DdbSplitter *splitter)
     if (size != splitter->priv->child1_size) {
         if (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL) {
             float gripsize = (float)splitter->priv->handle_pos.width/a.width;
-            ddb_splitter_set_proportion (splitter, CLAMP ((float)size/a.width, gripsize, 1-gripsize*2));
+            ddb_splitter_set_proportion (splitter, CLAMP ((float)size/a.width, 0, 1-gripsize));
         }
         else {
             float gripsize = (float)splitter->priv->handle_pos.height/a.height;
-            ddb_splitter_set_proportion (splitter, CLAMP ((float)size/a.height, gripsize, 1-gripsize*2));
+            ddb_splitter_set_proportion (splitter, CLAMP ((float)size/a.height, 0, 1-gripsize));
         }
     }
 }

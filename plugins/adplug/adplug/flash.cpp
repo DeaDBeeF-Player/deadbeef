@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * [xad] FLASH player, by Riven the Mage <riven@ok.ru>
  */
@@ -219,9 +219,9 @@ float CxadflashPlayer::xadplayer_getrefresh()
   return 17.5f;
 }
 
-const char * CxadflashPlayer::xadplayer_gettype()
+std::string CxadflashPlayer::xadplayer_gettype()
 {
-  return "xad: flash player";
+  return std::string("xad: flash player");
 }
 
 unsigned int CxadflashPlayer::xadplayer_getinstruments()

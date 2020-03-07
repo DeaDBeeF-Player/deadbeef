@@ -1,3 +1,34 @@
+version 1.8.2
+	Volume control from command line supports increment syntax (by eauno1re@github)
+	Fixed writing multi-value fields into FLAC tags
+	Map ALBUMARTIST field to ALBUM ARTIST field in FLAC
+	Fixed sound output plugin selection bug in GTK UI
+	Fixed crash when opening files of 0 size
+	Fixed UI freeze when nullout plugin is selected
+	Fixed a regression in restoring the last selected folder in GTK file chooser
+
+version 1.8.1
+	Fixed audio freeze while sorting
+	Fixed crash when resuming playback of a file that's been deleted
+	Fixed error messages when loading PLS playlist with relative paths
+	Fixed adjusting shuffle queue after a user initiated track change
+	Write Album Artist field into Ogg files as "ALBUMARTIST"
+	Load external album covers before embedded
+	Removed the unmaintained sndio plugin
+	Fixed localization of status bar
+	Added experimental subgrouping support in playlist, via using `|||` separator for each subsequent nested group, when using Group by -> Custom (by ToadKing)
+	Added new title formatting functions `$stripprefix` and `$swapprefix` (by ToadKing)
+	Changed supereq DSP configuration to be more compact horizontally and to have more slider precision
+	Updated Repeat and Shuffle hotkey names to match the menus
+	Fixed rounding bug of total playtime in statusbar
+	Fixed design mode splitter handles dragging beyond the window edges
+	Fixed setting album art size based on larger dimension (by ToadKing)
+	Fixed regression causing custom layouts with splitters look wrong
+	Added FLAC plugin option to ignore corrupted stream errors
+	Fixed supereq reentrancy bug, potentially causing crash after changing audio output configuration
+	Fixed reloading replaygain info
+	Fixed writing replaygain info to APEv2 tags
+
 version 1.8.0
 	added Opus support
 	added ReplayGain Scanner

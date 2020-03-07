@@ -32,6 +32,7 @@
 #include "messagepump.h"
 #include "fakein.h"
 #include "fakeout.h"
+#include "playmodes.h"
 
 static int count_played;
 
@@ -69,13 +70,13 @@ mainloop (void *ctx) {
                         streamer_move_to_prevsong (1);
                         break;
                     case DB_EV_PAUSE:
-                        if (output->state () != OUTPUT_STATE_PAUSED) {
+                        if (output->state () != DDB_PLAYBACK_STATE_PAUSED) {
                             output->pause ();
                             messagepump_push (DB_EV_PAUSED, 0, 1, 0);
                         }
                         break;
                     case DB_EV_TOGGLE_PAUSE:
-                        if (output->state () != OUTPUT_STATE_PLAYING) {
+                        if (output->state () != DDB_PLAYBACK_STATE_PLAYING) {
                             streamer_play_current_track ();
                         }
                         else {
@@ -167,7 +168,7 @@ wait_until_stopped (void) {
 
     streamer_init ();
 
-    conf_set_int ("playback.loop", PLAYBACK_MODE_NOLOOP);
+    streamer_set_repeat(DDB_REPEAT_OFF);
     count_played = 0;
 
     _mainloop_tid = thread_start (mainloop, NULL);
@@ -186,8 +187,8 @@ wait_until_stopped (void) {
 - (void)test_Play2TracksNoLoop_Sends2SongChanged {
     playlist_t *plt = plt_alloc ("testplt");
     // create two test fake tracks
-    DB_playItem_t *_sinewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "sine.fake", NULL, NULL, NULL);
-    DB_playItem_t *_squarewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, _sinewave, "square.fake", NULL, NULL, NULL);
+    DB_playItem_t *_sinewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "/sine.fake", NULL, NULL, NULL);
+//    DB_playItem_t *_squarewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, _sinewave, "/square.fake", NULL, NULL, NULL);
 
     plt_set_curr (plt);
 
@@ -228,12 +229,12 @@ static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
 
 - (void)test_SwitchBetweenTracks_DoesNotJumpBackToPrevious {
     // for this test, we want "loop single" mode, to make sure first track is playing when we start the 2nd one.
-    conf_set_int ("playback.loop", PLAYBACK_MODE_LOOP_SINGLE);
+    streamer_set_repeat(DDB_REPEAT_SINGLE);
 
     playlist_t *plt = plt_alloc ("testplt");
     // create two test fake tracks
-    switchtest_tracks[0] = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "sine.fake", NULL, NULL, NULL);
-    switchtest_tracks[1] = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, switchtest_tracks[0], "square.fake", NULL, NULL, NULL);
+    switchtest_tracks[0] = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "/sine.fake", NULL, NULL, NULL);
+    switchtest_tracks[1] = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, switchtest_tracks[0], "/square.fake", NULL, NULL, NULL);
 
     plt_set_curr (plt);
 
@@ -271,6 +272,5 @@ static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
     XCTAssert (switchtest_counts[0] == 0);
     XCTAssert (count_played = 2);
 }
-
 
 @end

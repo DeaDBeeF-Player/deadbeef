@@ -22,20 +22,27 @@
 */
 
 #import "LogWindowController.h"
+#include "deadbeef.h"
+
+extern DB_functions_t *deadbeef;
 
 @implementation LogWindowController
 
 - (void)windowDidLoad {
     [super windowDidLoad];
 
-    //[[_textView textStorage] setFont:[NSFont fontWithName:@"Fixed" size:18]];
+    deadbeef->log_viewer_register (_cocoaui_logger_callback, (__bridge void *)(self));
+}
+
+- (void)dealloc {
+    deadbeef->log_viewer_unregister (_cocoaui_logger_callback, (__bridge void *)(self));
 }
 
 - (void)appendText:(NSString *)text {
-    NSAttributedString* attr = [[NSAttributedString alloc] initWithString:text attributes:@{NSForegroundColorAttributeName:[NSColor controlTextColor]}];
+    NSAttributedString* attr = [[NSAttributedString alloc] initWithString:text attributes:@{NSForegroundColorAttributeName:NSColor.controlTextColor}];
 
     NSRect visibleRect = [_clipView documentVisibleRect];
-    NSRect docRect = [_textView frame];
+    NSRect docRect = _textView.frame;
 
     BOOL scroll = NO;
     if (visibleRect.origin.y + visibleRect.size.height >= docRect.size.height) {
@@ -49,7 +56,31 @@
 }
 
 - (IBAction)clearAction:(id)sender {
-    [_textView.textStorage setAttributedString: [[NSAttributedString alloc] initWithString:@"" attributes:@{NSForegroundColorAttributeName:[NSColor controlTextColor]}]];
+    _textView.textStorage.attributedString =  [[NSAttributedString alloc] initWithString:@"" attributes:@{NSForegroundColorAttributeName:NSColor.controlTextColor}];
 }
+
+static void
+_cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, void *ctx) {
+    LogWindowController *ctl = (__bridge LogWindowController *)(ctx);
+    [ctl appendLoggerText:text forPlugin:plugin onLayers:layers];
+}
+
+- (void)appendLoggerText:(const char *)text forPlugin:(DB_plugin_t *)plugin onLayers:(uint32_t)layers {
+    NSString *str = [NSString stringWithUTF8String:text];
+    if (!str) {
+        return; // may happen in case of invalid UTF8 and such
+    }
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self appendText:str];
+
+        if (layers == DDB_LOG_LAYER_DEFAULT) {
+            if (![self.window isVisible]) {
+                [self showWindow:self];
+            }
+        }
+    });
+}
+
 
 @end
