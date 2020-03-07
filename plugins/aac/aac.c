@@ -75,10 +75,10 @@ typedef struct {
 
     int mp4sample;
     int mp4framesize;
-    int skipsamples;
-    int startsample;
-    int endsample;
-    int currentsample;
+    int64_t skipsamples;
+    int64_t startsample;
+    int64_t endsample;
+    int64_t currentsample;
 
     // buffer with input packet data
     uint8_t buffer[AAC_MAX_PACKET_SIZE];
@@ -351,9 +351,10 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->plugin = &plugin;
 
     if (!info->file->vfs->is_streaming ()) {
-        if (it->endsample > 0) {
-            info->startsample = it->startsample;
-            info->endsample = it->endsample;
+        int64_t endsample = deadbeef->pl_item_get_endsample(it);
+        if (endsample > 0) {
+            info->startsample = deadbeef->pl_item_get_startsample(it);
+            info->endsample = endsample;
             plugin.seek_sample (_info, 0);
         }
         else {
@@ -415,7 +416,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     if (!info->file->vfs->is_streaming ()) {
         if (info->currentsample + size / samplesize > info->endsample) {
-            size = (info->endsample - info->currentsample + 1) * samplesize;
+            size = (int)(info->endsample - info->currentsample + 1) * samplesize;
             if (size <= 0) {
                 return 0;
             }
@@ -427,7 +428,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
     while (size > 0) {
         if (info->skipsamples > 0 && info->out_remaining > 0) {
-            int skip = min (info->out_remaining, info->skipsamples);
+            int64_t skip = min (info->out_remaining, info->skipsamples);
             if (skip < info->out_remaining) {
                 memmove (info->out_buffer, info->out_buffer + skip * samplesize, (info->out_remaining - skip) * samplesize);
             }
@@ -583,7 +584,7 @@ error:
     return -1;
 }
 
-// returns -1 on error, 0 on success
+// returns -1 on error, skipsamples on success
 int
 seek_raw_aac (aac_info_t *info, int sample) {
     uint8_t buf[ADTS_HEADER_SIZE*8];
@@ -635,24 +636,11 @@ aac_seek_sample (DB_fileinfo_t *_info, int sample) {
 
     sample += info->startsample;
     if (info->mp4file) {
-        mp4p_atom_t *mdhd_atom = mp4p_atom_find(info->trak, "trak/mdia/mdhd");
-        mp4p_mdhd_t *mdhd = mdhd_atom->data;
-
         mp4p_atom_t *stts_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl/stts");
 
-        int scale = _info->fmt.samplerate / mdhd->time_scale;
-        int pos = 0;
-        for (int i = 0; i < info->mp4samples; i++)
-        {
-            uint32_t thissample_duration = mp4p_stts_sample_duration(stts_atom, i);
-
-            if (pos + thissample_duration > sample / scale) {
-                info->skipsamples = sample - pos * scale;
-                info->mp4sample = i;
-                break;
-            }
-            pos += thissample_duration;
-        }
+        uint64_t startsample = 0;
+        info->mp4sample = mp4p_stts_mp4sample_containing_sample(stts_atom, sample, &startsample);
+        info->skipsamples = sample - startsample;
     }
     else {
         int skip = deadbeef->junk_get_leading_size (info->file);
@@ -663,7 +651,7 @@ aac_seek_sample (DB_fileinfo_t *_info, int sample) {
             deadbeef->fseek (info->file, 0, SEEK_SET);
         }
 
-        int res = seek_raw_aac (info, sample);
+        int64_t res = seek_raw_aac (info, sample);
         if (res < 0) {
             return -1;
         }
@@ -726,15 +714,12 @@ aac_load_itunes_chapters (aac_info_t *info, mp4p_chap_t *chap, /* out */ int *nu
 
         mp4p_mdhd_t *mdhd = mdhd_atom->data;
 
-        uint64_t sample_count = mp4p_stts_total_num_samples (stts_atom);
-
-        aac_chapter_t *chapters = malloc (sizeof (aac_chapter_t) * sample_count);
-        memset (chapters, 0, sizeof (aac_chapter_t) * sample_count);
+        aac_chapter_t *chapters = calloc (info->mp4samples, sizeof (aac_chapter_t));
         *num_chapters = 0;
 
         int64_t total_dur = 0;
         int64_t curr_sample = 0;
-        for (int sample = 0; sample < sample_count; sample++)
+        for (int sample = 0; sample < info->mp4samples; sample++)
         {
             int32_t dur = (int64_t)1000 * mp4p_stts_sample_duration(stts_atom, sample) / mdhd->time_scale; // milliseconds
             total_dur += dur;

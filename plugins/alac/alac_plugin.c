@@ -78,10 +78,10 @@ typedef struct {
     int junk;
     uint8_t out_buffer[BUFFER_SIZE];
     int out_remaining;
-    int skipsamples;
-    int currentsample;
-    int startsample;
-    int endsample;
+    int64_t skipsamples;
+    int64_t currentsample;
+    int64_t startsample;
+    int64_t endsample;
 } alacplug_info_t;
 
 // allocate codec control structure
@@ -168,9 +168,10 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     alac_set_info (info->_alac, (char *)alac->asc);
 
     if (!info->file->vfs->is_streaming ()) {
-        if (it->endsample > 0) {
-            info->startsample = it->startsample;
-            info->endsample = it->endsample;
+        int64_t endsample = deadbeef->pl_item_get_endsample(it);
+        if (endsample > 0) {
+            info->startsample = deadbeef->pl_item_get_startsample(it);
+            info->endsample = endsample;
             alac_plugin.seek_sample (_info, 0);
         }
         else {
@@ -212,7 +213,7 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     if (!info->file->vfs->is_streaming ()) {
         if (info->currentsample + size / samplesize > info->endsample) {
-            size = (info->endsample - info->currentsample + 1) * samplesize;
+            size = (int)(info->endsample - info->currentsample + 1) * samplesize;
             if (size <= 0) {
                 trace ("alacplug_read: eof (current=%d, total=%d)\n", info->currentsample, info->endsample);
                 return 0;
@@ -223,7 +224,7 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
     while (size > 0) {
         // handle seeking
         if (info->skipsamples > 0 && info->out_remaining > 0) {
-            int skip = min (info->out_remaining, info->skipsamples);
+            int64_t skip = min (info->out_remaining, info->skipsamples);
             if (skip < info->out_remaining) {
                 memmove (info->out_buffer, info->out_buffer + skip * samplesize, (info->out_remaining - skip) * samplesize);
             }

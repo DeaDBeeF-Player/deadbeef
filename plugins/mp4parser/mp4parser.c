@@ -1096,17 +1096,41 @@ mp4p_stts_total_num_samples (mp4p_atom_t *stts_atom) {
 }
 
 uint32_t
-mp4p_stts_sample_duration (mp4p_atom_t *stts_atom, uint32_t sample) {
+mp4p_stts_sample_duration (mp4p_atom_t *stts_atom, uint32_t mp4sample) {
     mp4p_stts_t *stts = stts_atom->data;
     if (!stts) {
         return 0;
     }
     uint32_t n = 0;
     for (uint32_t i = 0; i < stts->number_of_entries; i++) {
-        if (n >= sample) {
-            return stts->entries[i].sample_duration;
+        int nsamples = stts->entries[i].sample_count;
+        while (nsamples--) {
+            if (n >= mp4sample) {
+                return stts->entries[i].sample_duration;
+            }
+            n++;
         }
-        n += stts->entries[i].sample_count;
+    }
+    return 0;
+}
+
+uint32_t
+mp4p_stts_mp4sample_containing_sample (mp4p_atom_t *stts_atom, uint64_t sample, uint64_t *mp4sample_startingsample) {
+    mp4p_stts_t *stts = stts_atom->data;
+    if (!stts) {
+        return 0;
+    }
+    int mp4sample = 0;
+    int pos = 0;
+    for (int i = 0; i < stts->number_of_entries; i++) {
+        int64_t total = stts->entries[i].sample_duration * stts->entries[i].sample_count;
+        if (pos + total >= sample) {
+            uint32_t idx = (uint32_t)((sample - pos) / stts->entries[i].sample_duration);
+            *mp4sample_startingsample = pos + idx * stts->entries[i].sample_duration;
+            return mp4sample + idx;
+        }
+        pos += total;
+        mp4sample += stts->entries[i].sample_count;
     }
     return 0;
 }

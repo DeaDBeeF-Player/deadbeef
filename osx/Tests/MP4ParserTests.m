@@ -338,4 +338,74 @@ static fake_callbacks_t _fake_file_cb = {
     mp4p_file_close (cb);
 }
 
+- (void)test_SttsSampleDuration_1EntryMultipleSamples_ReturnsCorrectDuration {
+    mp4p_stts_entry_t entry = {
+        .sample_count = 1000,
+        .sample_duration = 50000
+    };
+
+    mp4p_stts_t stts = {
+        .number_of_entries = 1,
+        .entries = &entry
+    };
+
+    mp4p_atom_t atom = {
+        .data = &stts
+    };
+
+    uint32_t mp4sample = mp4p_stts_sample_duration (&atom, 20);
+
+    XCTAssertEqual (mp4sample, 50000);
+}
+
+- (void)test_SttsMP4SampleContainingSample_1EntryMultipleSamples_ReturnsCorrectMP4Sample {
+    mp4p_stts_entry_t entry = {
+        .sample_count = 1000,
+        .sample_duration = 50000
+    };
+
+    mp4p_stts_t stts = {
+        .number_of_entries = 1,
+        .entries = &entry
+    };
+
+    mp4p_atom_t atom = {
+        .data = &stts
+    };
+
+    int64_t startsample = 0;
+    uint32_t mp4sample = mp4p_stts_mp4sample_containing_sample (&atom, 1000000, &startsample);
+
+    XCTAssertEqual (mp4sample, 20);
+    XCTAssertEqual (startsample, 1000000);
+}
+
+- (void)test_SttsMP4SampleContainingSample_2EntryMultipleSamples_ReturnsCorrectMP4Sample {
+    mp4p_stts_entry_t entries[] = {
+        {
+            .sample_count = 10,
+            .sample_duration = 50000
+        },
+        {
+            .sample_count = 10,
+            .sample_duration = 50000
+        },
+    };
+
+    mp4p_stts_t stts = {
+        .number_of_entries = 2,
+        .entries = entries
+    };
+
+    mp4p_atom_t atom = {
+        .data = &stts
+    };
+
+    int64_t startsample = 0;
+    uint32_t mp4sample = mp4p_stts_mp4sample_containing_sample (&atom, 620000, &startsample);
+
+    XCTAssertEqual (mp4sample, 12);
+    XCTAssertEqual (startsample, 600000);
+}
+
 @end

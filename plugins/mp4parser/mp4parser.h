@@ -255,7 +255,10 @@ uint64_t
 mp4p_stts_total_num_samples (mp4p_atom_t *stts_atom);
 
 uint32_t
-mp4p_stts_sample_duration (mp4p_atom_t *stts_atom, uint32_t sample);
+mp4p_stts_sample_duration (mp4p_atom_t *stts_atom, uint32_t mp4sample);
+
+uint32_t
+mp4p_stts_mp4sample_containing_sample (mp4p_atom_t *stts_atom, uint64_t sample, uint64_t *mp4sample_startingsample);
 
 uint64_t
 mp4p_stts_total_sample_duration (mp4p_atom_t *stts_atom);
