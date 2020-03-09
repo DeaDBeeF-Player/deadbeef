@@ -202,12 +202,12 @@ static char sb_text[512];
     }
 }
 
-- (IBAction)seekBarAction:(id)sender {
+- (IBAction)seekBarAction:(DdbSeekBar *)sender {
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (trk) {
         float dur = deadbeef->pl_get_item_duration (trk);
         if (dur >= 0) {
-            float time = [(NSSlider*)sender floatValue] / 100.f;
+            float time = sender.floatValue / 100.f;
             time *= dur;
             deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(time * 1000), 0);
         }

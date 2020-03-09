@@ -10,7 +10,7 @@
             <connections>
                 <outlet property="buttonBar" destination="Q6A-xH-8bl" id="xdh-C7-jri"/>
                 <outlet property="designableContainerView" destination="udP-Ce-pRu" id="OZl-0H-bFI"/>
-                <outlet property="seekBar" destination="cFf-VJ-YO5" id="20Z-bb-Rt3"/>
+                <outlet property="seekBar" destination="paF-TY-fCE" id="tuP-OX-ekk"/>
                 <outlet property="statusBar" destination="Rek-dI-lyl" id="6Pu-H7-aOK"/>
                 <outlet property="tabStrip" destination="d3W-U7-VFA" id="Muq-bp-ETV"/>
                 <outlet property="volumeBar" destination="tGc-Yg-ZUl" id="AVa-nf-Q2f"/>
@@ -60,6 +60,21 @@
             </view>
             <toolbar key="toolbar" implicitIdentifier="BF18C458-D1D4-4997-A57A-526B66F95A52" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="1DX-Tf-YIx">
                 <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="B7B3A6E3-A418-464C-AAF3-D9D0B5687BBF" label="Custom View" paletteLabel="Custom View" tag="-1" id="OXm-XA-qXT" userLabel="Custom Seekbar" customClass="CustomToolbarItem">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="163" height="26"/>
+                        <size key="maxSize" width="100000000" height="26"/>
+                        <customView key="view" id="paF-TY-fCE" userLabel="DdbSeekbar" customClass="DdbSeekBar">
+                            <rect key="frame" x="0.0" y="14" width="163" height="26"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <connections>
+                                <action selector="seekBarAction:" target="-2" id="9eR-Cc-ac9"/>
+                            </connections>
+                        </customView>
+                        <connections>
+                            <outlet property="customView" destination="paF-TY-fCE" id="OWC-57-U6X"/>
+                        </connections>
+                    </toolbarItem>
                     <toolbarItem implicitItemIdentifier="5BC003E8-E444-40E9-BE77-B0900BC6FF5D" label="Custom View" paletteLabel="Custom View" id="ui3-O7-e5f">
                         <nil key="toolTip"/>
                         <size key="minSize" width="130" height="24"/>
@@ -92,19 +107,6 @@
                             </connections>
                         </segmentedControl>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="DF47D195-9251-4803-8613-826ABB4666A8" label="Custom View" paletteLabel="Custom View" id="Dxp-kc-PGC">
-                        <nil key="toolTip"/>
-                        <size key="minSize" width="100" height="21"/>
-                        <size key="maxSize" width="100000000" height="26"/>
-                        <slider key="view" verticalHuggingPriority="750" id="cFf-VJ-YO5" customClass="DdbSeekBar">
-                            <rect key="frame" x="0.0" y="14" width="200" height="21"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                            <sliderCell key="cell" state="on" alignment="left" maxValue="100" tickMarkPosition="above" sliderType="linear" id="mzq-Uz-vVL" customClass="DdbSeekBarCell"/>
-                            <connections>
-                                <action selector="seekBarAction:" target="-2" id="2b3-fB-hxe"/>
-                            </connections>
-                        </slider>
-                    </toolbarItem>
                     <toolbarItem implicitItemIdentifier="0D19120C-6CE3-44D9-88AF-A6AC3500FF97" label="Custom View" paletteLabel="Custom View" id="icE-Ef-aFl">
                         <nil key="toolTip"/>
                         <size key="minSize" width="96" height="21"/>
@@ -121,7 +123,7 @@
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="ui3-O7-e5f"/>
-                    <toolbarItem reference="Dxp-kc-PGC"/>
+                    <toolbarItem reference="OXm-XA-qXT"/>
                     <toolbarItem reference="icE-Ef-aFl"/>
                 </defaultToolbarItems>
             </toolbar>

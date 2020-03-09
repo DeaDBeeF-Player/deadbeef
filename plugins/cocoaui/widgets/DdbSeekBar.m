@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2015 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2020 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -21,79 +21,140 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#import <QuartzCore/CATransaction.h>
 #import "DdbSeekBar.h"
 
-@implementation DdbSeekBar {
-    BOOL _dragging;
-}
+@interface DdbSeekBar() <CALayerDelegate>
 
--(void)setNeedsDisplayInRect:(NSRect)invalidRect{
-    super.needsDisplayInRect = self.bounds;
-}
+@property (nonatomic,readwrite) BOOL dragging;
 
-- (BOOL)dragging {
-    return _dragging;
-}
-
-- (void)mouseDown:(NSEvent *)theEvent {
-    if (theEvent.type == NSEventTypeLeftMouseDown) {
-        _dragging = YES;
-    }
-    [super mouseDown:theEvent];
-    // NSSlider mouseDown short-circuits the mainloop, and runs drag tracking from within the mouseDown handler,
-    // so this needs to be done here instead of mouseUp handler, which is never fired.
-    if (theEvent.type == NSEventTypeLeftMouseDown) {
-        _dragging = NO;
-    }
-}
+@property (nonatomic) CALayer *track;
+@property (nonatomic) CALayer *thumb;
 
 @end
 
-@implementation DdbSeekBarCell {
-}
+@implementation DdbSeekBar
 
-- (id)initWithCoder:(NSCoder *)decoder
-{
-    self = [super initWithCoder:decoder];
+- (instancetype)initWithFrame:(NSRect)frameRect {
+    self = [super initWithFrame:frameRect];
+    if (!self) {
+        return nil;
+    }
+    [self setup];
     return self;
 }
 
-- (void)drawKnob:(NSRect)knobRect {
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    self = [super initWithCoder:coder];
+    if (!self) {
+        return nil;
+    }
+    [self setup];
+    return self;
 }
 
-//- (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
-- (void)drawBarInside:(NSRect)aRect flipped:(BOOL)flipped {
-    [super drawBarInside:aRect flipped:flipped];
+- (void)setup {
+    self.wantsLayer = YES;
 
-    NSView *controlView = [self controlView];
+    self.layer = [CALayer new];
+    self.layer.delegate = self;
 
-    NSRect rc = aRect;
+    self.track = [CALayer new];
+    self.thumb = [CALayer new];
 
-    CGFloat h = rc.size.height;
-    CGFloat y = rc.origin.y + (int)rc.size.height/2 - (int)h/2;
-    rc.origin.y = y;
-    rc.size.height = h;
+    self.track.borderWidth = 2;
+    self.track.borderColor = [NSColor.alternateSelectedControlColor colorWithAlphaComponent:0.8].CGColor;
+    self.track.cornerRadius = 5;
 
-    NSPoint convPt = [controlView convertPoint:NSMakePoint(0,y) fromView:nil];
-    NSGraphicsContext *gc = [NSGraphicsContext currentContext];
-    [gc saveGraphicsState];
-    gc.patternPhase = convPt;
+    self.thumb.backgroundColor = [NSColor.alternateSelectedControlColor colorWithAlphaComponent:0.8].CGColor;
+    self.thumb.cornerRadius = 5;
 
-    // foreground
+    [self.layer addSublayer:self.thumb];
+    [self.layer addSublayer:self.track];
 
-    rc.size.width = (int)(rc.size.width * self.doubleValue / ([self maxValue] - [self minValue]));
-    rc.size.height -= 2;
-    rc.origin.y += 1;
-    NSWindow *window = controlView.window;
-    if (window.isKeyWindow) {
-        [NSColor.keyboardFocusIndicatorColor set];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(becameKey:) name:NSWindowDidBecomeKeyNotification object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(resignedKey:) name:NSWindowDidResignKeyNotification object:nil];
+}
+
+- (void)becameKey:(NSNotification *)notification {
+    [CATransaction begin];
+    [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+    self.track.borderColor = [NSColor.alternateSelectedControlColor colorWithAlphaComponent:0.8].CGColor;
+    self.thumb.backgroundColor = [NSColor.alternateSelectedControlColor colorWithAlphaComponent:0.8].CGColor;
+    [CATransaction commit];
+}
+
+- (void)resignedKey:(NSNotification *)notification {
+    [CATransaction begin];
+    [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+    self.track.borderColor = NSColor.controlShadowColor.CGColor;
+    self.thumb.backgroundColor = NSColor.controlShadowColor.CGColor;
+    [CATransaction commit];
+}
+
+- (void)layoutSublayersOfLayer:(CALayer *)layer {
+    if (layer == self.layer) {
+        [CATransaction begin];
+        [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+        CGFloat y = (NSHeight(self.frame)-10)/2;
+        self.track.frame = NSMakeRect(0, y, NSWidth(self.frame), 10);
+        [self layoutThumbLayer];
+        [CATransaction commit];
     }
-    else {
-        [NSColor.controlShadowColor set];
-    }
-    [NSBezierPath fillRect:rc];
+}
 
-    [gc restoreGraphicsState];
+- (void)layoutThumbLayer {
+    CGFloat y = (NSHeight(self.frame)-10)/2;
+    CGFloat w = self.floatValue / 100 * NSWidth(self.frame);
+    self.thumb.frame = NSMakeRect(0, y, w, 10);
+}
+
+- (void)setFloatValue:(float)floatValue {
+    [super setFloatValue:floatValue];
+
+    [CATransaction begin];
+    [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+    [self layoutThumbLayer];
+    [CATransaction commit];
+}
+
+- (void)updateThumb:(NSEvent * _Nonnull)theEvent {
+    CGFloat pos = [self convertPoint:theEvent.locationInWindow fromView:nil].x;
+
+    pos = pos/NSWidth(self.frame)*100;
+    pos = MAX(0, MIN(100, pos));
+    self.floatValue = pos;
+
+    [CATransaction begin];
+    [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+    [self layoutThumbLayer];
+    [CATransaction commit];
+}
+
+- (void)mouseDown:(NSEvent *)theEvent {
+    if (theEvent.type != NSEventTypeLeftMouseDown) {
+        return;
+    }
+
+    [self updateThumb:theEvent];
+
+    self.dragging = YES;
+
+    for (;;) {
+        NSEvent *event = [self.window nextEventMatchingMask: NSEventMaskLeftMouseUp |
+                          NSEventMaskLeftMouseDragged];
+
+        if (event.type == NSEventTypeLeftMouseDragged) {
+            [self updateThumb:event];
+        }
+        else if (event.type == NSEventTypeLeftMouseUp) {
+            [self sendAction:self.action to:self.target];
+            break;
+        }
+    }
+
+    self.dragging = NO;
 }
 
 @end
