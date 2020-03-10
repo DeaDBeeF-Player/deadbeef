@@ -31,7 +31,7 @@ static int grouptitleheight = 22;
 
     id<DdbListviewDelegate> delegate = self.delegate;
     NSRect groupRect = NSMakeRect(0, 0, self.frame.size.width, grouptitleheight);
-    NSColor *clr = [NSColor colorWithCalibratedWhite:1 alpha:0.9];
+    NSColor *clr = [NSColor.windowBackgroundColor colorWithAlphaComponent:0.9];
     [clr set];
 #if DEBUG_DRAW_GROUP_TITLES
     [NSColor.greenColor set];
