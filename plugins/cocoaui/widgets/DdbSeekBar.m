@@ -71,6 +71,16 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
     [self removeObserver:self forKeyPath:@"effectiveAppearance"];
 }
 
+- (void)setEnabled:(BOOL)enabled {
+    [super setEnabled:enabled];
+    if (enabled) {
+        self.thumb.hidden = NO;
+    }
+    else {
+        self.thumb.hidden = YES;
+    }
+}
+
 - (void)initColors {
     self.trackBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.4];
     self.trackInactiveBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.2];
