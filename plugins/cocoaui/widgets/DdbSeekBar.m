@@ -24,6 +24,8 @@
 #import <QuartzCore/CATransaction.h>
 #import "DdbSeekBar.h"
 
+static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
+
 @interface DdbSeekBar() <CALayerDelegate>
 
 @property (nonatomic,readwrite) BOOL dragging;
@@ -41,6 +43,8 @@
 @property (nonatomic) NSColor *thumbInactiveBackgroundColor;
 @property (nonatomic) NSColor *thumbInactiveBorderColor;
 
+@property (nonatomic) BOOL isKey;
+
 @end
 
 @implementation DdbSeekBar
@@ -54,8 +58,7 @@
     return self;
 }
 
-- (instancetype)initWithCoder:(NSCoder *)coder
-{
+- (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (!self) {
         return nil;
@@ -64,8 +67,27 @@
     return self;
 }
 
+- (void)dealloc {
+    [self removeObserver:self forKeyPath:@"effectiveAppearance"];
+}
+
+- (void)initColors {
+    self.trackBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.4];
+    self.trackInactiveBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.2];
+    self.trackPosBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.6];
+    self.trackPosInactiveBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.4];
+    self.thumbBackgroundColor = [NSColor.alternateSelectedControlColor highlightWithLevel:0.2];
+    self.thumbInactiveBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.4];
+    self.thumbBorderColor = [NSColor.windowBackgroundColor shadowWithLevel:0];
+    self.thumbInactiveBorderColor = [NSColor.windowBackgroundColor shadowWithLevel:0];
+}
+
 - (void)setup {
     self.wantsLayer = YES;
+
+    [self initColors];
+
+    [self addObserver:self forKeyPath:@"effectiveAppearance" options:0 context:kEffectiveAppearanceContext];
 
     self.layer = [CALayer new];
     self.layer.delegate = self;
@@ -74,22 +96,9 @@
     self.trackPos = [CALayer new];
     self.thumb = [CALayer new];
 
-    self.trackBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.4];
-    self.trackInactiveBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.2];
-    self.trackPosBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.6];
-    self.trackPosInactiveBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.4];
-    self.thumbBackgroundColor = [NSColor.alternateSelectedControlColor highlightWithLevel:0.2];
-    self.thumbInactiveBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.4];
-    self.thumbBorderColor = [NSColor.whiteColor shadowWithLevel:0.1];
-    self.thumbInactiveBorderColor = [NSColor.whiteColor shadowWithLevel:0.1];
-
-    self.track.backgroundColor = self.trackBackgroundColor.CGColor;
     self.track.cornerRadius = 2;
-    self.trackPos.backgroundColor = self.trackPosBackgroundColor.CGColor;
     self.trackPos.cornerRadius = 2;
 
-    self.thumb.backgroundColor = self.thumbBackgroundColor.CGColor;
-    self.thumb.borderColor = self.thumbBorderColor.CGColor;
     self.thumb.borderWidth = 1;
     self.thumb.cornerRadius = 3;
 
@@ -101,23 +110,64 @@
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(resignedKey:) name:NSWindowDidResignKeyNotification object:nil];
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == kEffectiveAppearanceContext) {
+        [self initColors];
+        [self updateTrackColors];
+        [self updateTrackPosColors];
+        [self updateThumbColors];
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+- (void)updateTrackColors {
+    if (self.isKey) {
+        self.track.backgroundColor = self.trackBackgroundColor.CGColor;
+    }
+    else {
+        self.track.backgroundColor = self.trackInactiveBackgroundColor.CGColor;
+    }
+}
+
+- (void)updateTrackPosColors {
+    if (self.isKey) {
+        self.trackPos.backgroundColor = self.trackPosBackgroundColor.CGColor;
+    }
+    else {
+        self.trackPos.backgroundColor = self.trackPosInactiveBackgroundColor.CGColor;
+    }
+}
+
+- (void)updateThumbColors {
+    if (self.isKey) {
+        self.thumb.backgroundColor = self.thumbBackgroundColor.CGColor;
+        self.thumb.borderColor = self.thumbBorderColor.CGColor;
+    }
+    else {
+        self.thumb.backgroundColor = self.thumbInactiveBackgroundColor.CGColor;
+        self.thumb.borderColor = self.thumbInactiveBorderColor.CGColor;
+    }
+}
+
 - (void)becameKey:(NSNotification *)notification {
     [CATransaction begin];
     [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
-    self.track.backgroundColor = self.trackBackgroundColor.CGColor;
-    self.trackPos.backgroundColor = self.trackPosBackgroundColor.CGColor;
-    self.thumb.backgroundColor = self.thumbBackgroundColor.CGColor;
-    self.thumb.borderColor = self.thumbBorderColor.CGColor;
+    self.isKey = YES;
+    [self updateTrackColors];
+    [self updateTrackPosColors];
+    [self updateThumbColors];
     [CATransaction commit];
 }
 
 - (void)resignedKey:(NSNotification *)notification {
     [CATransaction begin];
     [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
-    self.track.backgroundColor = self.trackInactiveBackgroundColor.CGColor;
-    self.trackPos.backgroundColor = self.trackPosInactiveBackgroundColor.CGColor;
-    self.thumb.backgroundColor = self.thumbInactiveBackgroundColor.CGColor;
-    self.thumb.borderColor = self.thumbInactiveBorderColor.CGColor;
+    self.isKey = NO;
+    [self updateTrackColors];
+    [self updateTrackPosColors];
+    [self updateThumbColors];
     [CATransaction commit];
 }
 
