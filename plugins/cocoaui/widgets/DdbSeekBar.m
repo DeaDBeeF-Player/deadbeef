@@ -246,6 +246,10 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
         return;
     }
 
+    if (!self.enabled) {
+        return;
+    }
+
     [self updateThumb:theEvent];
 
     self.dragging = YES;

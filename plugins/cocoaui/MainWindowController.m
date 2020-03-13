@@ -34,8 +34,6 @@ extern DB_functions_t *deadbeef;
 
 @interface TrackPositionFormatter : NSFormatter
 
-@property (nonatomic) DB_playItem_t *track;
-
 - (NSString *)stringForObjectValue:(NSControl *)obj;
 
 - (BOOL)getObjectValue:(out id  _Nullable *)obj forString:(NSString *)string errorDescription:(out NSString * _Nullable *)error;
@@ -43,27 +41,6 @@ extern DB_functions_t *deadbeef;
 @end
 
 @implementation TrackPositionFormatter
-
-- (void)dealloc {
-    if (self.track) {
-        deadbeef->pl_item_unref (self.track);
-        self.track = NULL;
-    }
-}
-
-- (void)setTrack:(DB_playItem_t *)track {
-    if (track == self.track) {
-        return;
-    }
-    if (self.track) {
-        deadbeef->pl_item_unref (self.track);
-        self.track = NULL;
-    }
-    self.track = track;
-    if (self.track) {
-        deadbeef->pl_item_ref (self.track);
-    }
-}
 
 - (NSString *)stringForObjectValue:(NSControl *)obj {
 
