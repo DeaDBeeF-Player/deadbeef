@@ -23,6 +23,7 @@
 
 #import <QuartzCore/CATransaction.h>
 #import "DdbSeekBar.h"
+#import "SeekbarOverlay.h"
 
 static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 
@@ -44,6 +45,9 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 @property (nonatomic) NSColor *thumbInactiveBorderColor;
 
 @property (nonatomic) BOOL isKey;
+
+@property (nonatomic) SeekbarOverlay *overlay;
+@property (nonatomic) NSTimer *overlayTimer;
 
 @end
 
@@ -98,6 +102,14 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
     [self initColors];
 
     [self addObserver:self forKeyPath:@"effectiveAppearance" options:0 context:kEffectiveAppearanceContext];
+
+    _overlay = [SeekbarOverlay new];
+    [self addSubview:_overlay];
+    _overlay.translatesAutoresizingMaskIntoConstraints = NO;
+    [_overlay.centerXAnchor constraintEqualToAnchor:self.centerXAnchor].active = YES;
+    [_overlay.centerYAnchor constraintEqualToAnchor:self.centerYAnchor].active = YES;
+    _overlay.hidden = YES;
+
 
     self.layer = [CALayer new];
     self.layer.delegate = self;
@@ -214,11 +226,19 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
     pos = (pos-3)/(NSWidth(self.frame)-6)*100;
     pos = MAX(0, MIN(100, pos));
     self.floatValue = pos;
+    self.overlay.text = self.stringValue;
 
     [CATransaction begin];
     [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
     [self layoutThumbLayer];
     [CATransaction commit];
+}
+
+- (void)refreshOverlayTimer {
+    [self.overlayTimer invalidate];
+    self.overlayTimer = [NSTimer scheduledTimerWithTimeInterval:1 repeats:NO block:^(NSTimer * _Nonnull timer) {
+        self.overlay.hidden = YES;
+    }];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent {
@@ -229,6 +249,9 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
     [self updateThumb:theEvent];
 
     self.dragging = YES;
+
+
+    self.overlay.hidden = NO;
 
     for (;;) {
         NSEvent *event = [self.window nextEventMatchingMask: NSEventMaskLeftMouseUp |
@@ -243,6 +266,7 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
         }
     }
 
+    [self refreshOverlayTimer];
     self.dragging = NO;
 }
 

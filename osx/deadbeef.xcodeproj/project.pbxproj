@@ -1319,6 +1319,8 @@
 		2D9C0C15238DC0E700CE8C10 /* GroupByCustomWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D9C0C14238DC0E700CE8C10 /* GroupByCustomWindow.xib */; };
 		2D9C0C25238DC2C100CE8C10 /* GroupByCustomWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9C0C23238DC2C100CE8C10 /* GroupByCustomWindowController.h */; };
 		2D9C0C26238DC2C100CE8C10 /* GroupByCustomWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9C0C24238DC2C100CE8C10 /* GroupByCustomWindowController.m */; };
+		2D9F6534241BE78C00D9D16E /* SeekbarOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */; };
+		2D9F6535241BE78C00D9D16E /* SeekbarOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */; };
 		2D9FFA251D7588A700D1B5F8 /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6965371D74338A00EB99D8 /* mp4tagutil.c */; };
 		2D9FFA351D7589A000D1B5F8 /* libmp4ff.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; };
 		2DA04E9523B6A4520070AC01 /* shellexec.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA04E9323B6A4510070AC01 /* shellexec.h */; };
@@ -4502,6 +4504,8 @@
 		2D9C0C14238DC0E700CE8C10 /* GroupByCustomWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GroupByCustomWindow.xib; sourceTree = "<group>"; };
 		2D9C0C23238DC2C100CE8C10 /* GroupByCustomWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GroupByCustomWindowController.h; sourceTree = "<group>"; };
 		2D9C0C24238DC2C100CE8C10 /* GroupByCustomWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GroupByCustomWindowController.m; sourceTree = "<group>"; };
+		2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SeekbarOverlay.h; sourceTree = "<group>"; };
+		2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SeekbarOverlay.m; sourceTree = "<group>"; };
 		2DA04E8123B6A4320070AC01 /* shellexec.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = shellexec.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA04E9323B6A4510070AC01 /* shellexec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = shellexec.h; path = plugins/shellexec/shellexec.h; sourceTree = "<group>"; };
 		2DA04E9423B6A4510070AC01 /* shellexec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = shellexec.c; path = plugins/shellexec/shellexec.c; sourceTree = "<group>"; };
@@ -8457,6 +8461,8 @@
 		2DE1D3DF19B11286009B5BC6 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
+				2DAD809F2416DBB100EB3075 /* CustomToolbarItem.h */,
+				2DAD80A02416DBB100EB3075 /* CustomToolbarItem.m */,
 				2DE1D3E419B11539009B5BC6 /* DdbPlaceholderWidget.h */,
 				2DE1D3E519B11539009B5BC6 /* DdbPlaceholderWidget.m */,
 				2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */,
@@ -8467,8 +8473,8 @@
 				2DE1D3DC19B11283009B5BC6 /* DdbWidget.m */,
 				2DE1D3E019B114CD009B5BC6 /* DdbWidgetManager.h */,
 				2DE1D3E119B114CD009B5BC6 /* DdbWidgetManager.m */,
-				2DAD809F2416DBB100EB3075 /* CustomToolbarItem.h */,
-				2DAD80A02416DBB100EB3075 /* CustomToolbarItem.m */,
+				2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */,
+				2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -11080,6 +11086,7 @@
 				2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */,
 				2DDF87D924027DA500CA8E91 /* PluginActionMenuItem.h in Headers */,
 				2DA30E792403292D001BAB8A /* PlaybackPreferencesViewController.h in Headers */,
+				2D9F6534241BE78C00D9D16E /* SeekbarOverlay.h in Headers */,
 				2D3CD9372409A091005875A9 /* PinnedGroupTitleView.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
 				2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */,
@@ -14205,6 +14212,7 @@
 				2DB2F740240466AF00F7C000 /* PluginsPreferencesViewController.m in Sources */,
 				2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */,
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
+				2D9F6535241BE78C00D9D16E /* SeekbarOverlay.m in Sources */,
 				2DEBA1D323E207A3000E4135 /* EqualizerWindowController.m in Sources */,
 				2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */,
 				2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */,
