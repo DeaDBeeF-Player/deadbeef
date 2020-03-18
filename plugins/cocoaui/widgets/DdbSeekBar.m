@@ -35,14 +35,14 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 @property (nonatomic) CALayer *trackPos;
 @property (nonatomic) CALayer *thumb;
 
-@property (nonatomic) NSColor *trackBackgroundColor;
-@property (nonatomic) NSColor *trackInactiveBackgroundColor;
-@property (nonatomic) NSColor *trackPosBackgroundColor;
-@property (nonatomic) NSColor *trackPosInactiveBackgroundColor;
-@property (nonatomic) NSColor *thumbBackgroundColor;
-@property (nonatomic) NSColor *thumbBorderColor;
-@property (nonatomic) NSColor *thumbInactiveBackgroundColor;
-@property (nonatomic) NSColor *thumbInactiveBorderColor;
+@property (nonatomic,copy) NSColor *trackBackgroundColor;
+@property (nonatomic,copy) NSColor *trackInactiveBackgroundColor;
+@property (nonatomic,copy) NSColor *trackPosBackgroundColor;
+@property (nonatomic,copy) NSColor *trackPosInactiveBackgroundColor;
+@property (nonatomic,copy) NSColor *thumbBackgroundColor;
+@property (nonatomic,copy) NSColor *thumbBorderColor;
+@property (nonatomic,copy) NSColor *thumbInactiveBackgroundColor;
+@property (nonatomic,copy) NSColor *thumbInactiveBorderColor;
 
 @property (nonatomic) BOOL isKey;
 
@@ -77,20 +77,20 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 
 - (void)setEnabled:(BOOL)enabled {
     [super setEnabled:enabled];
-    if (enabled) {
-        self.thumb.hidden = NO;
-    }
-    else {
-        self.thumb.hidden = YES;
-    }
+    [self updateThumbVisibility];
 }
 
 - (void)initColors {
-    self.trackBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.4];
+    self.trackBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.42];
     self.trackInactiveBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.2];
-    self.trackPosBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.6];
+    if (@available(macOS 10.14, *)) {
+        self.trackPosBackgroundColor = NSColor.controlAccentColor;
+    }
+    else {
+        self.trackPosBackgroundColor = [NSColor.alternateSelectedControlColor highlightWithLevel:0.2];
+    }
     self.trackPosInactiveBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.4];
-    self.thumbBackgroundColor = [NSColor.alternateSelectedControlColor highlightWithLevel:0.2];
+    self.thumbBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.7];
     self.thumbInactiveBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.4];
     self.thumbBorderColor = [NSColor.windowBackgroundColor shadowWithLevel:0];
     self.thumbInactiveBorderColor = [NSColor.windowBackgroundColor shadowWithLevel:0];
@@ -123,6 +123,7 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 
     self.thumb.borderWidth = 1;
     self.thumb.cornerRadius = 3;
+    self.thumb.hidden = YES;
 
     [self.layer addSublayer:self.track];
     [self.layer addSublayer:self.trackPos];
@@ -130,6 +131,31 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(becameKey:) name:NSWindowDidBecomeKeyNotification object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(resignedKey:) name:NSWindowDidResignKeyNotification object:nil];
+
+    NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect:NSZeroRect options:NSTrackingActiveInActiveApp|NSTrackingInVisibleRect|NSTrackingMouseEnteredAndExited owner:self userInfo:nil];
+    [self addTrackingArea:trackingArea];
+}
+
+- (void)updateThumbVisibility {
+    NSPoint pos = NSEvent.mouseLocation;
+    pos = [self.window convertPointFromScreen:pos];
+    pos = [self convertPoint:pos fromView:nil];
+
+    BOOL visible = self.enabled && (self.dragging || NSPointInRect(pos, self.bounds));
+    self.thumb.hidden = !visible;
+
+    [CATransaction begin];
+    [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+    [self layoutThumbLayer];
+    [CATransaction commit];
+}
+
+- (void)mouseEntered:(NSEvent *)event {
+    [self updateThumbVisibility];
+}
+
+- (void)mouseExited:(NSEvent *)event {
+    [self updateThumbVisibility];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -207,7 +233,9 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 - (void)layoutThumbLayer {
     CGFloat y = NSHeight(self.frame)/2;
     CGFloat x = self.floatValue / 100 * (NSWidth(self.frame)-6);\
-    self.thumb.frame = NSMakeRect(x, y-6, 6, 12);
+    if (!self.thumb.hidden) {
+        self.thumb.frame = NSMakeRect(x, y-6, 6, 12);
+    }
     self.trackPos.frame = NSMakeRect(3, y-1.5, x, 3);
 }
 

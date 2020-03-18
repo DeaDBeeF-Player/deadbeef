@@ -107,6 +107,8 @@ extern DB_functions_t *deadbeef;
 - (void)windowDidLoad {
     [super windowDidLoad];
 
+    self.volumeBar.trackFillColor = NSColor.redColor;
+
     PlaylistViewController *pvc = [[PlaylistViewController alloc] initWithNibName:nil bundle:nil];
     PlaylistView *view = [PlaylistView new];
     pvc.view = view;

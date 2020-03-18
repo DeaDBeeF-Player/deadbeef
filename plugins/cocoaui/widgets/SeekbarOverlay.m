@@ -49,7 +49,7 @@
 
     self.textLayer = [CATextLayer new];
     self.font = [NSFont systemFontOfSize:20 weight:NSFontWeightBold];
-    self.textLayer.foregroundColor = NSColor.controlHighlightColor.CGColor;
+    self.textLayer.foregroundColor = [NSColor.whiteColor shadowWithLevel:0.1].CGColor;
     self.textLayer.font = (__bridge CFTypeRef _Nullable)self.font;
     self.textLayer.fontSize = self.font.pointSize;
     self.textLayer.alignmentMode = kCAAlignmentCenter;
