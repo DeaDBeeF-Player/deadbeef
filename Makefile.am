@@ -2,7 +2,8 @@ SUBDIRS = pixmaps\
 		  icons\
 		  shared\
 		  ${PLUGINS_DIRS}\
-		  po
+		  po\
+		  intl
 
 bin_PROGRAMS = deadbeef
 
