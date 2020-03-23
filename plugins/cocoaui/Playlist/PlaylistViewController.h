@@ -38,6 +38,7 @@ typedef struct {
     int set_text_color;
     uint8_t text_color[4];
     char *bytecode;
+    int sort_order;
 } plt_col_info_t;
 
 @interface PlaylistViewController : DesignableViewController<DdbListviewDelegate,NSMenuDelegate> {

@@ -49,6 +49,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic, assign) DB_playItem_t *playPosUpdateTrack;
 @property (nonatomic) EditColumnWindowController *editColumnWindowController;
 @property (nonatomic) GroupByCustomWindowController *groupByCustomWindowController;
+@property (nonatomic) int sortColumn;
 
 @end
 
@@ -374,6 +375,9 @@ extern DB_functions_t *deadbeef;
 - (void)setup {
     PlaylistView *lv = (PlaylistView *)self.view;
     lv.delegate = self;
+
+    self.sortColumn = -1;
+
     [self initContent];
     [self setupPlaylist:lv];
 }
@@ -424,10 +428,18 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)removeColumnAtIndex:(int)idx {
+    char *sortColumnTitle = NULL;
+    if (self.sortColumn >= 0) {
+        sortColumnTitle = _columns[self.sortColumn].title;
+
+    }
+
     if (idx != _ncolumns-1) {
         memmove (&_columns[idx], &_columns[idx+1], (_ncolumns-idx) * sizeof (plt_col_info_t));
     }
     _ncolumns--;
+
+    self.sortColumn = [self columnIndexForTitle:sortColumnTitle];
 }
 
 // pass col=-1 for "empty space", e.g. when appending new col
@@ -586,8 +598,23 @@ extern DB_functions_t *deadbeef;
     return _columns[col].type == DB_COLUMN_ALBUM_ART;
 }
 
+- (int)columnIndexForTitle:(const char *)title {
+    for (int i = 0; i < _ncolumns; i++) {
+        if (_columns[i].title == title) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 - (void)moveColumn:(DdbListviewCol_t)col to:(DdbListviewCol_t)to {
     plt_col_info_t tmp;
+
+    char *sortColumnTitle = NULL;
+    if (self.sortColumn >= 0) {
+        sortColumnTitle = _columns[self.sortColumn].title;
+
+    }
 
     while (col < to) {
         memcpy (&tmp, &_columns[col], sizeof (plt_col_info_t));
@@ -601,6 +628,8 @@ extern DB_functions_t *deadbeef;
         memcpy (&_columns[col-1], &tmp, sizeof (plt_col_info_t));
         col--;
     }
+
+    self.sortColumn = [self columnIndexForTitle:sortColumnTitle];
 }
 
 - (DdbListviewRow_t)firstRow {
@@ -628,9 +657,34 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect {
-    [NSColor.controlTextColor set];
     if (col < self.columnCount) {
-        [[NSString stringWithUTF8String:_columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y-2, rect.size.width-6, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
+        CGFloat width = rect.size.width-6;
+        if (col == self.sortColumn) {
+            width -= 16;
+        }
+        if (width < 0) {
+            width = 0;
+        }
+        [NSColor.controlTextColor set];
+        [[NSString stringWithUTF8String:_columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y-2, width, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
+
+
+        if (col == self.sortColumn) {
+            [[NSColor.controlTextColor highlightWithLevel:0.5] set];
+            NSBezierPath *path = [NSBezierPath new];
+            path.lineWidth = 2;
+            if (_columns[col].sort_order == DDB_SORT_ASCENDING) {
+                [path moveToPoint:NSMakePoint(rect.origin.x+4+width+4, rect.origin.y+10)];
+                [path lineToPoint:NSMakePoint(rect.origin.x+4+width+8, rect.origin.y+10+4)];
+                [path lineToPoint:NSMakePoint(rect.origin.x+4+width+12, rect.origin.y+10)];
+            }
+            else if (_columns[col].sort_order == DDB_SORT_DESCENDING) {
+                [path moveToPoint:NSMakePoint(rect.origin.x+4+width+4, rect.origin.y+10+4)];
+                [path lineToPoint:NSMakePoint(rect.origin.x+4+width+8, rect.origin.y+10)];
+                [path lineToPoint:NSMakePoint(rect.origin.x+4+width+12, rect.origin.y+10+4)];
+            }
+            [path stroke];
+        }
     }
 }
 
@@ -1287,11 +1341,21 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
-- (void)sortColumn:(DdbListviewCol_t)column withOrder:(int)order {
+- (void)sortColumn:(DdbListviewCol_t)column {
     plt_col_info_t *c = &_columns[(int)column];
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort_v2 (plt, PL_MAIN, c->type, c->format, order-1);
+
+    if (self.sortColumn != column) {
+        _columns[column].sort_order = 0;
+    }
+    self.sortColumn = (int)column;
+    _columns[column].sort_order = 1 - _columns[column].sort_order;
+
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, c->type, c->format, _columns[column].sort_order);
     deadbeef->plt_unref (plt);
+
+    PlaylistView *lv = (PlaylistView *)self.view;
+    lv.headerView.needsDisplay = YES;
 }
 
 - (void)dropItems:(int)from_playlist before:(DdbListviewRow_t)before indices:(uint32_t *)indices count:(int)count copy:(BOOL)copy {
