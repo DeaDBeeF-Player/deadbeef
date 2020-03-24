@@ -92,8 +92,8 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
     self.trackPosInactiveBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.4];
     self.thumbBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.7];
     self.thumbInactiveBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.4];
-    self.thumbBorderColor = [NSColor.windowBackgroundColor shadowWithLevel:0];
-    self.thumbInactiveBorderColor = [NSColor.windowBackgroundColor shadowWithLevel:0];
+    self.thumbBorderColor = NSColor.windowBackgroundColor;
+    self.thumbInactiveBorderColor = NSColor.windowBackgroundColor;
 }
 
 - (void)setup {
@@ -123,6 +123,10 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 
     self.thumb.borderWidth = 1;
     self.thumb.cornerRadius = 3;
+    self.thumb.shadowColor = NSColor.blackColor.CGColor;
+    self.thumb.shadowOffset = NSMakeSize(0, -1);
+    self.thumb.shadowRadius = 1;
+    self.thumb.shadowOpacity = 0.3;
     self.thumb.hidden = YES;
 
     [self.layer addSublayer:self.track];
