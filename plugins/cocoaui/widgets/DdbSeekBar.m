@@ -138,7 +138,9 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 
 - (void)updateThumbVisibility {
     NSPoint pos = NSEvent.mouseLocation;
-    pos = [self.window convertPointFromScreen:pos];
+    NSRect rect = NSMakeRect(pos.x, pos.y, 0, 0);
+    rect = [self.window convertRectFromScreen:rect];
+    pos = rect.origin;
     pos = [self convertPoint:pos fromView:nil];
 
     BOOL visible = self.enabled && (self.dragging || NSPointInRect(pos, self.bounds));
