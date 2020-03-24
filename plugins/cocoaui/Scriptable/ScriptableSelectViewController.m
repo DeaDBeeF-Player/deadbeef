@@ -40,9 +40,10 @@
         self.nodeEditorWindowController = [[ScriptableNodeEditorWindowController alloc] initWithWindowNibName:@"ScriptableNodeEditorWindow"];
         self.nodeEditorWindowController.dataSource = self.dataSource;
         self.nodeEditorWindowController.delegate = self.delegate;
-        self.nodeEditorWindowController.window.title = @"DSP Presets"; // FIXME hardcoded title
     }
-    [self.nodeEditorWindowController showWindow:nil];
+
+    [self.view.window beginSheet:self.nodeEditorWindowController.window completionHandler:^(NSModalResponse returnCode) {
+    }];
 }
 
 @end

@@ -70,5 +70,4 @@ extern DB_functions_t *deadbeef;
     }
 }
 
-
 @end

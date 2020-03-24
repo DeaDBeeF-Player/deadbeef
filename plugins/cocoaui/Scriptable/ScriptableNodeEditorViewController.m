@@ -43,7 +43,6 @@
     [self.delegate scriptableItemChanged:scriptable];
 }
 
-
 - (NSMenu *)getCreateItemMenu {
     scriptableStringListItem_t *names = scriptableItemFactoryItemNames (self.dataSource.scriptable);
     if (!names) {
@@ -151,7 +150,9 @@
             self.nodeEditorWindowController.delegate = self.delegate;
             self.nodeEditorWindowController.window.title = [NSString stringWithUTF8String:scriptableItemPropertyValueForKey(item, "name")]; // preset name
         }
-        [self.nodeEditorWindowController showWindow:nil];
+        NSWindow *window = self.view.window;
+        [window beginSheet:self.nodeEditorWindowController.window completionHandler:^(NSModalResponse returnCode) {
+        }];
 
     }
     else {
@@ -185,15 +186,15 @@
     NSInteger selectedSegment = [sender selectedSegment];
 
     switch (selectedSegment) {
-        case 0:
-            [self addAction:sender];
-            break;
-        case 1:
-            [self removeAction:sender];
-            break;
-        case 2:
-            [self configureAction:sender];
-            break;
+    case 0:
+        [self addAction:sender];
+        break;
+    case 1:
+        [self removeAction:sender];
+        break;
+    case 2:
+        [self configureAction:sender];
+        break;
     }
 }
 
@@ -202,5 +203,6 @@
 
 - (IBAction)loadAction:(id)sender {
 }
+
 
 @end
