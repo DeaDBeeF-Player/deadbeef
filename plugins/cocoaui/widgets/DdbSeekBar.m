@@ -282,12 +282,10 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 
     self.dragging = YES;
 
-
     self.overlay.hidden = NO;
 
     for (;;) {
-        NSEvent *event = [self.window nextEventMatchingMask: NSEventMaskLeftMouseUp |
-                          NSEventMaskLeftMouseDragged];
+        NSEvent *event = [self.window nextEventMatchingMask: NSEventMaskLeftMouseUp | NSEventMaskLeftMouseDragged];
 
         if (event.type == NSEventTypeLeftMouseDragged) {
             [self updateThumb:event];
