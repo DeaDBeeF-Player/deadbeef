@@ -37,7 +37,7 @@ extern DB_functions_t *deadbeef;
     // Do view setup here.
 
     // dsp
-    scriptableItem_t *chain = scriptableDspConfigFromDspChain (deadbeef->streamer_get_dsp_chain ());
+    scriptableItem_t *chain = scriptableDspPresetFromDspChain (deadbeef->streamer_get_dsp_chain ());
     self.dspChainDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:chain pasteboardItemIdentifier:@"deadbeef.dspnode.preferences"];
 
     self.dspPresetsDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:scriptableDspRoot() pasteboardItemIdentifier:@"deadbeef.dsppreset.preferences"];
@@ -61,12 +61,15 @@ extern DB_functions_t *deadbeef;
 
 #pragma mark - ScriptableItemDelegate
 
-- (void)scriptableItemChanged:(scriptableItem_t *)scriptable {
+- (void)scriptableItemChanged:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change {
     if (scriptable == self.dspChainDataSource.scriptable
         || scriptableItemIndexOfChild(self.dspChainDataSource.scriptable, scriptable) >= 0) {
         ddb_dsp_context_t *chain = scriptableDspConfigToDspChain (self.dspChainDataSource.scriptable);
         deadbeef->streamer_set_dsp_chain (chain);
         deadbeef->dsp_preset_free (chain);
+    }
+    else if (scriptable == self.dspPresetsDataSource.scriptable) { // list of presets changed
+        [self.dspSelectViewController reloadData];
     }
 }
 

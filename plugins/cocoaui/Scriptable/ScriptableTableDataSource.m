@@ -23,16 +23,16 @@ extern DB_functions_t *deadbeef;
 
 - (void)insertItem:(scriptableItem_t *)item atIndex:(NSInteger)index {
     scriptableItemInsertSubItemAtIndex(_scriptable, item, (unsigned int)index);
-    [self.delegate scriptableItemChanged:_scriptable];
+    [self.delegate scriptableItemChanged:_scriptable change:ScriptableItemChangeCreate];
 }
 
 - (void)removeItemAtIndex:(NSInteger)index {
     scriptableItem_t *item = scriptableItemChildAtIndex(_scriptable, (unsigned int)index);
     if (item) {
+        [self.delegate scriptableItemChanged:_scriptable change:ScriptableItemChangeDelete];
         scriptableItemRemoveSubItem(_scriptable, item);
         scriptableItemFree (item);
     }
-    [self.delegate scriptableItemChanged:_scriptable];
 }
 
 - (scriptableItem_t *)itemAtIndex:(NSInteger)index {
@@ -47,7 +47,7 @@ extern DB_functions_t *deadbeef;
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
     scriptableItem_t *node = scriptableItemChildAtIndex(_scriptable, (unsigned int)row);
     const char *name = scriptableItemPropertyValueForKey(node, "name");
-    return [NSString stringWithUTF8String:name];
+    return [NSString stringWithUTF8String:name?:"<NullName>"];
 }
 
 #pragma mark - Drag & Drop
@@ -93,7 +93,7 @@ extern DB_functions_t *deadbeef;
     // reinsert the node at new position
     scriptableItemInsertSubItemAtIndex (_scriptable, node, (unsigned int)row);
 
-    [self.delegate scriptableItemChanged:_scriptable];
+    [self.delegate scriptableItemChanged:_scriptable change:ScriptableItemChangeCreate];
 
     return YES;
 }

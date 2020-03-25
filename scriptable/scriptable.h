@@ -1,11 +1,11 @@
 #ifndef scriptable_h
 #define scriptable_h
 
-typedef struct keyValue_s {
-    struct keyValue_s *next;
+typedef struct scriptableKeyValue_s {
+    struct scriptableKeyValue_s *next;
     char *key;
     char *value;
-} keyValuePair_t;
+} scriptableKeyValue_t;
 
 typedef struct stringListItem_s {
     struct stringListItem_s *next;
@@ -14,7 +14,7 @@ typedef struct stringListItem_s {
 
 typedef struct scriptableItem_s {
     struct scriptableItem_s *next;
-    keyValuePair_t *properties;
+    scriptableKeyValue_t *properties;
 
     struct scriptableItem_s *parent;
     struct scriptableItem_s *children;
@@ -22,9 +22,22 @@ typedef struct scriptableItem_s {
 
     int isList; // for example, dsp preset, or dsp chain
 
+    // hooks for subclasses
     scriptableStringListItem_t *(*factoryItemNames)(struct scriptableItem_s *item);
+
     scriptableStringListItem_t *(*factoryItemTypes)(struct scriptableItem_s *item);
+
     struct scriptableItem_s *(*createItemOfType)(struct scriptableItem_s *item, const char *type);
+
+    // additional update logic, such as save the item data to disk
+    int (*updateItem)(struct scriptableItem_s *item);
+
+    // additional update logic, such as save all subItems data to disk, if it's stored in a single file
+    int (*updateItemForSubItem)(struct scriptableItem_s *item, struct scriptableItem_s *subItem);
+
+    // additional remove logic, such as delete subItem data from disk
+    int (*removeSubItem)(struct scriptableItem_s *item, struct scriptableItem_s *subItem);
+
     void (*free)(struct scriptableItem_s *item);
     void (*save)(struct scriptableItem_s *item);
 } scriptableItem_t;
@@ -65,11 +78,21 @@ scriptableItemCreateItemOfType (scriptableItem_t *item, const char *type);
 void
 scriptableItemAddSubItem (scriptableItem_t *item, scriptableItem_t *subItem);
 
+// - CRUD
+
 void
 scriptableItemInsertSubItemAtIndex (scriptableItem_t *item, scriptableItem_t *subItem, unsigned int insertPosition);
 
 void
 scriptableItemRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subItem);
+
+void
+scriptableItemUpdate (scriptableItem_t *item);
+
+void
+scriptableItemUpdateForSubItem (scriptableItem_t *item, scriptableItem_t *subItem);
+
+// -
 
 const char *
 scriptableItemPropertyValueForKey (scriptableItem_t *item, const char *key);

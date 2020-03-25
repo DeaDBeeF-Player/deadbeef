@@ -39,8 +39,8 @@
 
 #pragma mark - ScriptableItemDelegate
 
-- (void)scriptableItemChanged:(scriptableItem_t *)scriptable {
-    [self.delegate scriptableItemChanged:scriptable];
+- (void)scriptableItemChanged:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change {
+    [self.delegate scriptableItemChanged:scriptable change:change];
 }
 
 - (NSMenu *)getCreateItemMenu {

@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak) NSObject<ScriptableItemDelegate> *delegate;
 
 - (void)setScriptable:(scriptableItem_t *)scriptable;
+- (void)reloadData;
 
 @end
 

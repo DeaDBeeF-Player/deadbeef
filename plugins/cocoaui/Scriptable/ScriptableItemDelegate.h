@@ -3,10 +3,15 @@
 
 #include "scriptable.h"
 
+typedef NS_CLOSED_ENUM(NSUInteger, ScriptableItemChange) {
+    ScriptableItemChangeCreate,
+    ScriptableItemChangeUpdate,
+    ScriptableItemChangeDelete,
+};
+
 @protocol ScriptableItemDelegate
 
-@optional
-- (void)scriptableItemChanged:(scriptableItem_t *)scriptable;
+- (void)scriptableItemChanged:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change;
 
 @end
 

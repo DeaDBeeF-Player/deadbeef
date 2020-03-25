@@ -5,13 +5,13 @@
 
 static scriptableItem_t *rootNode;
 
-keyValuePair_t *
+scriptableKeyValue_t *
 keyValuePairAlloc (void) {
-    return calloc (1, sizeof (keyValuePair_t));
+    return calloc (1, sizeof (scriptableKeyValue_t));
 }
 
 void
-keyValuePairFree (keyValuePair_t *p) {
+keyValuePairFree (scriptableKeyValue_t *p) {
     free (p->key);
     free (p->value);
     free (p);
@@ -55,9 +55,9 @@ scriptableItemFree (scriptableItem_t *item) {
         item->free (item);
     }
 
-    keyValuePair_t *p = item->properties;
+    scriptableKeyValue_t *p = item->properties;
     while (p) {
-        keyValuePair_t *next = p->next;
+        scriptableKeyValue_t *next = p->next;
         keyValuePairFree(p);
         p = next;
     }
@@ -133,6 +133,10 @@ scriptableItemAddSubItem (scriptableItem_t *item, scriptableItem_t *subItem) {
         item->children = subItem;
     }
     item->childrenTail = subItem;
+
+    subItem->parent = item;
+
+    scriptableItemUpdate(item);
 }
 
 void
@@ -158,10 +162,16 @@ scriptableItemInsertSubItemAtIndex (scriptableItem_t *item, scriptableItem_t *su
     if (item->childrenTail == prev) {
         item->childrenTail = subItem;
     }
+
+    scriptableItemUpdate(item);
 }
 
 void
 scriptableItemRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subItem) {
+    if (item->removeSubItem) {
+        item->removeSubItem (item, subItem);
+    }
+
     scriptableItem_t *prev = NULL;
     for (scriptableItem_t *c = item->children; c; prev = c, c = c->next) {
         if (c == subItem) {
@@ -179,9 +189,27 @@ scriptableItemRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subItem) 
     }
 }
 
+void
+scriptableItemUpdate (scriptableItem_t *item) {
+    if (item->updateItem) {
+        item->updateItem (item);
+    }
+    if (item->parent) {
+        scriptableItemUpdateForSubItem(item->parent, item);
+    }
+}
+
+void
+scriptableItemUpdateForSubItem (scriptableItem_t *item, scriptableItem_t *subItem) {
+    if (item->updateItemForSubItem) {
+        item->updateItemForSubItem (item, subItem);
+    }
+}
+
+
 const char *
 scriptableItemPropertyValueForKey (scriptableItem_t *item, const char *key) {
-    for (keyValuePair_t *p = item->properties; p; p = p->next) {
+    for (scriptableKeyValue_t *p = item->properties; p; p = p->next) {
         if (!strcasecmp (p->key, key)) {
             return p->value;
         }
@@ -191,8 +219,8 @@ scriptableItemPropertyValueForKey (scriptableItem_t *item, const char *key) {
 
 void
 scriptableItemSetPropertyValueForKey (scriptableItem_t *item, const char *value, const char *key) {
-    keyValuePair_t *prev = NULL;
-    for (keyValuePair_t *p = item->properties; p; prev = p, p = p->next) {
+    scriptableKeyValue_t *prev = NULL;
+    for (scriptableKeyValue_t *p = item->properties; p; prev = p, p = p->next) {
         if (!strcasecmp (p->key, key)) {
             if (p->value) {
                 free (p->value);
@@ -207,18 +235,21 @@ scriptableItemSetPropertyValueForKey (scriptableItem_t *item, const char *value,
                     prev->next = p->next;
                     keyValuePairFree (p);
                 }
-                return;
+                scriptableItemUpdate(item);
             }
+            return;
         }
     }
     // new prop
     if (value) {
-        keyValuePair_t *p = keyValuePairAlloc ();
+        scriptableKeyValue_t *p = keyValuePairAlloc ();
         p->key = strdup (key);
         p->value = strdup (value);
         p->next = item->properties;
         item->properties = p;
     }
+
+    scriptableItemUpdate(item);
 }
 
 scriptableStringListItem_t *

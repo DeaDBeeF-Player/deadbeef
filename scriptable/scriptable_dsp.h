@@ -14,7 +14,7 @@ scriptableItem_t *
 scriptableDspNodeItemFromDspContext (ddb_dsp_context_t *context);
 
 scriptableItem_t *
-scriptableDspConfigFromDspChain (ddb_dsp_context_t *chain);
+scriptableDspPresetFromDspChain (ddb_dsp_context_t *chain);
 
 ddb_dsp_context_t *
 scriptableDspConfigToDspChain (scriptableItem_t *item);

@@ -10,9 +10,13 @@
 #import "ScriptableNodeEditorWindowController.h"
 
 @interface ScriptableSelectViewController ()
+
+@property (nonatomic) scriptableItem_t *scriptable;
+
 @property (weak) IBOutlet NSPopUpButton *nameList;
 @property (weak) IBOutlet NSButton *browseButton;
-@property ScriptableNodeEditorWindowController *nodeEditorWindowController;
+@property (nonatomic) ScriptableNodeEditorWindowController *nodeEditorWindowController;
+
 @end
 
 @implementation ScriptableSelectViewController
@@ -23,13 +27,8 @@
 }
 
 - (void)setScriptable:(scriptableItem_t *)scriptable {
-    [self.nameList removeAllItems];
-    for (scriptableItem_t *c = scriptable->children; c; c = c->next) {
-        const char *name = scriptableItemPropertyValueForKey(c, "name");
-        if (name) {
-            [self.nameList addItemWithTitle:[NSString stringWithUTF8String:name]];
-        }
-    }
+    _scriptable = scriptable;
+    [self reloadData];
 }
 
 - (IBAction)nameSelectedAction:(id)sender {
@@ -44,6 +43,16 @@
 
     [self.view.window beginSheet:self.nodeEditorWindowController.window completionHandler:^(NSModalResponse returnCode) {
     }];
+}
+
+- (void)reloadData {
+    [self.nameList removeAllItems];
+    for (scriptableItem_t *c = self.scriptable->children; c; c = c->next) {
+        const char *name = scriptableItemPropertyValueForKey(c, "name");
+        if (name) {
+            [self.nameList addItemWithTitle:[NSString stringWithUTF8String:name]];
+        }
+    }
 }
 
 @end
