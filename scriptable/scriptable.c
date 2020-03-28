@@ -139,6 +139,31 @@ scriptableItemAddSubItem (scriptableItem_t *item, scriptableItem_t *subItem) {
     scriptableItemUpdate(item);
 }
 
+scriptableItem_t *
+scriptableItemClone (scriptableItem_t *item) {
+    scriptableItem_t *cloned = scriptableItemAlloc ();
+    for (scriptableKeyValue_t *property = item->properties; property; property = property->next) {
+        scriptableItemSetPropertyValueForKey(cloned, property->value, property->key);
+    }
+    for (scriptableItem_t *child = item->children; child; child = child->next) {
+        scriptableItem_t *clonedChild = scriptableItemClone(child);
+        scriptableItemAddSubItem(cloned, clonedChild);
+    }
+    cloned->isList = item->isList;
+
+    cloned->factoryItemNames = item->factoryItemNames;
+    cloned->factoryItemTypes = item->factoryItemTypes;
+    cloned->createItemOfType = item->createItemOfType;
+    cloned->updateItem = item->updateItem;
+    cloned->updateItemForSubItem = item->updateItemForSubItem;
+    cloned->removeSubItem = item->removeSubItem;
+    cloned->free = item->free;
+    cloned->save = item->save;
+
+    return cloned;
+}
+
+
 void
 scriptableItemInsertSubItemAtIndex (scriptableItem_t *item, scriptableItem_t *subItem, unsigned int insertPosition) {
     unsigned int pos = 0;

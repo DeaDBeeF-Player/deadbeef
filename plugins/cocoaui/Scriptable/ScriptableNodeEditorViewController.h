@@ -10,12 +10,21 @@
 #import "ScriptableTableDataSource.h"
 #import "ScriptableItemDelegate.h"
 
+@class ScriptableNodeEditorViewController;
+
+@protocol ScriptableNodeEditorCustomButtonsInitializer
+
+- (void)customButtonsInitializer:(ScriptableNodeEditorViewController *_Nonnull)controller initButtonsInSegmentedControl:(NSSegmentedControl *_Nonnull)segmentedControl;
+
+@end
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ScriptableNodeEditorViewController : NSViewController
 
 @property (weak) ScriptableTableDataSource *dataSource;
 @property (weak) NSObject<ScriptableItemDelegate> *delegate;
+@property (weak) NSObject<ScriptableNodeEditorCustomButtonsInitializer> *customButtonsInitializer;
 
 @end
 

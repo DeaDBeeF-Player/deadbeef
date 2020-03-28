@@ -11,13 +11,6 @@ extern DB_functions_t *deadbeef;
 
 @implementation ScriptableTableDataSource
 
-- (void)dealloc {
-    if (_scriptable) {
-        scriptableItemFree (_scriptable);
-        _scriptable = NULL;
-    }
-}
-
 - (BOOL)editableNames {
     if (!_scriptable) {
         return NO;

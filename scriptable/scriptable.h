@@ -22,6 +22,8 @@ typedef struct scriptableItem_s {
 
     int isList; // for example, dsp preset, or dsp chain
 
+    // FIXME: this should be combined in a single global struct and stored as a pointer
+
     // hooks for subclasses
     scriptableStringListItem_t *(*factoryItemNames)(struct scriptableItem_s *item);
 
@@ -77,6 +79,9 @@ scriptableItemCreateItemOfType (scriptableItem_t *item, const char *type);
 
 void
 scriptableItemAddSubItem (scriptableItem_t *item, scriptableItem_t *subItem);
+
+scriptableItem_t *
+scriptableItemClone (scriptableItem_t *item);
 
 // - CRUD
 

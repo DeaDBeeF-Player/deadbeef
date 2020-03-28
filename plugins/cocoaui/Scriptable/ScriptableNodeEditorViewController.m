@@ -17,6 +17,7 @@
 @property (strong) IBOutlet NSPanel *propertiesPanel;
 @property (strong) IBOutlet PropertySheetViewController *propertiesViewController;
 @property ScriptablePropertySheetDataSource *propertiesDataSource;
+@property (weak) IBOutlet NSSegmentedControl *customButtonsSegmentedControl;
 
 // for recursion
 @property ScriptableNodeEditorWindowController *nodeEditorWindowController;
@@ -33,6 +34,11 @@
     // Do view setup here.
     self.dataSource.delegate = self;
     _nodeList.dataSource = self.dataSource;
+
+    if (self.customButtonsInitializer) {
+        [self.customButtonsInitializer customButtonsInitializer:self initButtonsInSegmentedControl:self.customButtonsSegmentedControl];
+        self.customButtonsSegmentedControl.hidden = NO;
+    }
 
     [_nodeList registerForDraggedTypes: [NSArray arrayWithObjects: _dataSource.pasteboardItemIdentifier, nil]];
 }
