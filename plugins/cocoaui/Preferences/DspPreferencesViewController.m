@@ -29,6 +29,8 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) scriptableItem_t *currentDspChain;
 
+@property (weak) IBOutlet NSPanel *dspPresetNamePanel;
+@property (weak) IBOutlet NSTextField *dspPresetNameTextField;
 
 @end
 
@@ -80,11 +82,23 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)segmentedControlAction:(NSSegmentedControl *)sender {
-    scriptableItem_t *preset = scriptableItemClone (self.currentDspChain);
-    scriptableItemSetPropertyValueForKey(preset, "Saved New Preset", "name");
-    scriptableItem_t *presets = scriptableDspRoot();
-    scriptableItemAddSubItem(presets, preset);
-    [self.dspSelectViewController reloadData];
+    [self.view.window beginSheet:self.dspPresetNamePanel completionHandler:^(NSModalResponse returnCode) {
+        if (returnCode == NSModalResponseOK) {
+            scriptableItem_t *preset = scriptableItemClone (self.currentDspChain);
+            scriptableItem_t *presets = scriptableDspRoot();
+            scriptableItemSetUniqueNameUsingPrefixAndRoot(preset, self.dspPresetNameTextField.stringValue.UTF8String, presets);
+            scriptableItemAddSubItem(presets, preset);
+            [self.dspSelectViewController reloadData];
+        }
+    }];
+}
+
+- (IBAction)presetNameOK:(id)sender {
+    [self.view.window endSheet:self.dspPresetNamePanel returnCode:NSModalResponseOK];
+}
+
+- (IBAction)presetNameCancel:(id)sender {
+    [self.view.window endSheet:self.dspPresetNamePanel returnCode:NSModalResponseCancel];
 }
 
 #pragma mark - ScriptableItemDelegate

@@ -34,12 +34,16 @@
 - (IBAction)nameSelectedAction:(id)sender {
 }
 
-- (IBAction)browseButtonAction:(id)sender {
+- (void)initNodeEditorWindowController {
     if (!self.nodeEditorWindowController) {
         self.nodeEditorWindowController = [[ScriptableNodeEditorWindowController alloc] initWithWindowNibName:@"ScriptableNodeEditorWindow"];
         self.nodeEditorWindowController.dataSource = self.dataSource;
         self.nodeEditorWindowController.delegate = self.delegate;
     }
+}
+
+- (IBAction)browseButtonAction:(id)sender {
+    [self initNodeEditorWindowController];
 
     [self.view.window beginSheet:self.nodeEditorWindowController.window completionHandler:^(NSModalResponse returnCode) {
     }];

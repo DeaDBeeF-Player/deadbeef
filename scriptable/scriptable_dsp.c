@@ -194,9 +194,8 @@ scriptableDspPresetCallbacks = {
 };
 
 
-static scriptableItem_t *scriptableDspCreateBlankPreset(char *name) {
+static scriptableItem_t *scriptableDspCreateBlankPreset (void) {
     scriptableItem_t *item = scriptableItemAlloc();
-    scriptableItemSetPropertyValueForKey(item, name, "name");
     item->isList = 1;
     item->callbacks = &scriptableDspPresetCallbacks;
     return item;
@@ -204,27 +203,8 @@ static scriptableItem_t *scriptableDspCreateBlankPreset(char *name) {
 
 static scriptableItem_t *
 scriptableDspCreatePresetWithPluginId (scriptableItem_t *root, const char *pluginId) {
-    char name[100] = "New DSP Preset";
-    int i;
-    const int MAX_ATTEMPTS = 100;
-    for (i = 1; i < MAX_ATTEMPTS; i++) {
-        scriptableItem_t *c = NULL;
-        for (c = root->children; c; c = c->next) {
-            const char *cname = scriptableItemPropertyValueForKey(c, "name");
-            if (!strcasecmp (name, cname)) {
-                break;
-            }
-        }
-        if (!c) {
-            break;
-        }
-        snprintf (name, sizeof (name), "New DSP Preset %02d", i);
-    }
-    if (i == MAX_ATTEMPTS) {
-        return NULL;
-    }
-
-    scriptableItem_t * item = scriptableDspCreateBlankPreset(name);
+    scriptableItem_t * item = scriptableDspCreateBlankPreset();
+    scriptableItemSetUniqueNameUsingPrefixAndRoot (item, "New DSP Preset", root);
 
     return item;
 }
@@ -286,7 +266,8 @@ scriptableDspLoadPresets (void) {
 
             strncat(name, namelist[i]->d_name, end-namelist[i]->d_name);
 
-            scriptableItem_t *preset = scriptableDspCreateBlankPreset(name);
+            scriptableItem_t *preset = scriptableDspCreateBlankPreset();
+            scriptableItemSetUniqueNameUsingPrefixAndRoot(preset, name, scriptableDspRoot());
 
             if (scriptableItemLoadDspPreset (preset, namelist[i]->d_name)) {
                 scriptableItemFree (preset);

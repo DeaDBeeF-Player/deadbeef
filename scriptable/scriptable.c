@@ -1,7 +1,8 @@
-#include "scriptable.h"
+#include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
+#include "scriptable.h"
 
 static scriptableItem_t *rootNode;
 
@@ -269,6 +270,32 @@ scriptableItemSetPropertyValueForKey (scriptableItem_t *item, const char *value,
     }
 
     scriptableItemUpdate(item);
+}
+
+void
+scriptableItemSetUniqueNameUsingPrefixAndRoot (scriptableItem_t *item, const char *prefix, scriptableItem_t *root) {
+    int i;
+    const int MAX_ATTEMPTS = 100;
+    char name[100];
+    for (i = 0; i < MAX_ATTEMPTS; i++) {
+        if (i == 0) {
+            snprintf (name, sizeof (name), "%s", prefix);
+        }
+        else {
+            snprintf (name, sizeof (name), "%s %02d", prefix, i);
+        }
+        scriptableItem_t *c = NULL;
+        for (c = root->children; c; c = c->next) {
+            const char *cname = scriptableItemPropertyValueForKey(c, "name");
+            if (!strcasecmp (name, cname)) {
+                break;
+            }
+        }
+        if (!c) {
+            scriptableItemSetPropertyValueForKey(item, name, "name");
+            return;
+        }
+    }
 }
 
 scriptableStringListItem_t *

@@ -109,6 +109,9 @@ scriptableItemPropertyValueForKey (scriptableItem_t *item, const char *key);
 void
 scriptableItemSetPropertyValueForKey (scriptableItem_t *item, const char *value, const char *key);
 
+void
+scriptableItemSetUniqueNameUsingPrefixAndRoot (scriptableItem_t *item, const char *prefix, scriptableItem_t *root);
+
 scriptableStringListItem_t *
 scriptableItemFactoryItemNames (struct scriptableItem_s *item);
 
