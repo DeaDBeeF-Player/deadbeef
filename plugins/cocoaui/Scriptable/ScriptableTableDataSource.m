@@ -40,6 +40,7 @@ extern DB_functions_t *deadbeef;
 }
 
 #pragma mark - NSTableViewDataSource
+
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
     return scriptableItemNumChildren (_scriptable);
 }
@@ -50,7 +51,7 @@ extern DB_functions_t *deadbeef;
     return [NSString stringWithUTF8String:name?:"<NullName>"];
 }
 
-#pragma mark - Drag & Drop
+#pragma mark Drag & Drop
 
 - (id <NSPasteboardWriting>)tableView:(NSTableView *)tableView pasteboardWriterForRow:(NSInteger)row {
     NSString *identifier = [NSString stringWithFormat:@"%d", (int)row];
@@ -89,11 +90,14 @@ extern DB_functions_t *deadbeef;
     scriptableItem_t *node = scriptableItemChildAtIndex(_scriptable, (unsigned int)sourceRow);
     scriptableItemRemoveSubItem(_scriptable, node);
 
-
     // reinsert the node at new position
     scriptableItemInsertSubItemAtIndex (_scriptable, node, (unsigned int)row);
 
     [self.delegate scriptableItemChanged:_scriptable change:ScriptableItemChangeCreate];
+
+    [tableView beginUpdates];
+    [tableView moveRowAtIndex:sourceRow toIndex:row];
+    [tableView endUpdates];
 
     return YES;
 }

@@ -4,6 +4,7 @@
 #import "ScriptableItemDelegate.h"
 
 @interface ScriptableTableDataSource : NSObject<NSTableViewDataSource>
+
 @property NSString *pasteboardItemIdentifier;
 @property (nonatomic) scriptableItem_t *scriptable;
 @property (weak) NSObject<ScriptableItemDelegate> *delegate;

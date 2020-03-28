@@ -11,7 +11,7 @@
 #import "ScriptablePropertySheetDataSource.h"
 #import "ScriptableNodeEditorWindowController.h"
 
-@interface ScriptableNodeEditorViewController () <ScriptableItemDelegate,NSMenuDelegate>
+@interface ScriptableNodeEditorViewController () <ScriptableItemDelegate,NSMenuDelegate,NSTableViewDelegate>
 
 @property (unsafe_unretained) IBOutlet NSTableView *nodeList;
 @property (strong) IBOutlet NSPanel *propertiesPanel;
@@ -33,14 +33,9 @@
     // Do view setup here.
     self.dataSource.delegate = self;
     _nodeList.dataSource = self.dataSource;
+    _nodeList.delegate = self;
 
     [_nodeList registerForDraggedTypes: [NSArray arrayWithObjects: _dataSource.pasteboardItemIdentifier, nil]];
-}
-
-#pragma mark - ScriptableItemDelegate
-
-- (void)scriptableItemChanged:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change {
-    [self.delegate scriptableItemChanged:scriptable change:change];
 }
 
 - (NSMenu *)getCreateItemMenu {
@@ -202,6 +197,26 @@
 }
 
 - (IBAction)loadAction:(id)sender {
+}
+
+#pragma mark - ScriptableItemDelegate
+
+- (void)scriptableItemChanged:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change {
+    [self.delegate scriptableItemChanged:scriptable change:change];
+}
+
+#pragma mark - NSTableViewDelegate
+
+
+- (nullable NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row {
+    NSTableCellView *view = [tableView makeViewWithIdentifier:tableColumn.identifier owner:self];
+
+    scriptableItem_t *item = scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)row);
+    const char *name = scriptableItemPropertyValueForKey(item, "name");
+
+    view.textField.stringValue = [NSString stringWithUTF8String:name];
+
+    return view;
 }
 
 
