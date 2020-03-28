@@ -4,6 +4,11 @@
 
 extern DB_functions_t *deadbeef;
 
+@interface ScriptableTableDataSource()
+@property (nonatomic,readwrite) NSString *pasteboardItemIdentifier;
+@property (nonatomic,readwrite) scriptableItem_t *scriptable;
+@end
+
 @implementation ScriptableTableDataSource
 
 - (void)dealloc {
@@ -11,6 +16,14 @@ extern DB_functions_t *deadbeef;
         scriptableItemFree (_scriptable);
         _scriptable = NULL;
     }
+}
+
+- (BOOL)editableNames {
+    if (!_scriptable) {
+        return NO;
+    }
+    const char *editable = scriptableItemPropertyValueForKey(_scriptable, "editableNames");
+    return editable != NULL;
 }
 
 - (ScriptableTableDataSource *)initWithScriptable:(scriptableItem_t *)scriptable pasteboardItemIdentifier:(NSString *)identifier {
@@ -43,12 +56,6 @@ extern DB_functions_t *deadbeef;
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
     return scriptableItemNumChildren (_scriptable);
-}
-
-- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-    scriptableItem_t *node = scriptableItemChildAtIndex(_scriptable, (unsigned int)row);
-    const char *name = scriptableItemPropertyValueForKey(node, "name");
-    return [NSString stringWithUTF8String:name?:"<NullName>"];
 }
 
 #pragma mark Drag & Drop

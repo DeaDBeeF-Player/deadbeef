@@ -250,6 +250,7 @@ scriptableDspRoot (void) {
         dspRoot = scriptableItemAlloc();
         dspRoot->createItemOfType = scriptableDspCreatePresetWithPluginId;
         scriptableItemSetPropertyValueForKey(dspRoot, "DSPPresets", "name");
+        scriptableItemSetPropertyValueForKey(dspRoot, "yes", "editableNames");
         scriptableItemAddSubItem(scriptableRoot(), dspRoot);
         dspRoot->factoryItemNames = scriptableDspPresetItemNames;
         dspRoot->factoryItemTypes = scriptableDspPresetItemTypes;

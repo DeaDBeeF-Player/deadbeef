@@ -163,6 +163,8 @@ scriptableItemInsertSubItemAtIndex (scriptableItem_t *item, scriptableItem_t *su
         item->childrenTail = subItem;
     }
 
+    subItem->parent = item;
+
     scriptableItemUpdate(item);
 }
 

@@ -33,7 +33,6 @@
     // Do view setup here.
     self.dataSource.delegate = self;
     _nodeList.dataSource = self.dataSource;
-    _nodeList.delegate = self;
 
     [_nodeList registerForDraggedTypes: [NSArray arrayWithObjects: _dataSource.pasteboardItemIdentifier, nil]];
 }
@@ -97,6 +96,8 @@
         [_dataSource insertItem:node atIndex:index];
         [_nodeList endUpdates];
         [_nodeList selectRowIndexes:is byExtendingSelection:NO];
+
+        // FIXME: start in-place editing
     }
 
     scriptableStringListFree (types);
@@ -214,9 +215,23 @@
     scriptableItem_t *item = scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)row);
     const char *name = scriptableItemPropertyValueForKey(item, "name");
 
+    view.textField.editable = self.dataSource.editableNames;
+
     view.textField.stringValue = [NSString stringWithUTF8String:name];
 
     return view;
+}
+
+#pragma mark Save edited text
+
+- (IBAction)textEdited:(NSTextField *)textField {
+    NSInteger row = [self.nodeList rowForView:textField];
+    if (row != -1) {
+        const char *value = textField.stringValue.UTF8String;
+        scriptableItem_t *item = scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)row);
+        scriptableItemSetPropertyValueForKey(item, value, "name");
+        [self.delegate scriptableItemChanged:self.dataSource.scriptable change:ScriptableItemChangeUpdate];
+    }
 }
 
 
