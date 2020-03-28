@@ -12,19 +12,9 @@ typedef struct stringListItem_s {
     char *str;
 } scriptableStringListItem_t;
 
-typedef struct scriptableItem_s {
-    struct scriptableItem_s *next;
-    scriptableKeyValue_t *properties;
+struct scriptableItem_s;
 
-    struct scriptableItem_s *parent;
-    struct scriptableItem_s *children;
-    struct scriptableItem_s *childrenTail;
-
-    int isList; // for example, dsp preset, or dsp chain
-
-    // FIXME: this should be combined in a single global struct and stored as a pointer
-
-    // hooks for subclasses
+typedef struct {
     scriptableStringListItem_t *(*factoryItemNames)(struct scriptableItem_s *item);
 
     scriptableStringListItem_t *(*factoryItemTypes)(struct scriptableItem_s *item);
@@ -42,6 +32,20 @@ typedef struct scriptableItem_s {
 
     void (*free)(struct scriptableItem_s *item);
     void (*save)(struct scriptableItem_s *item);
+} scriptableCallbacks_t;
+
+typedef struct scriptableItem_s {
+    struct scriptableItem_s *next;
+    scriptableKeyValue_t *properties;
+
+    struct scriptableItem_s *parent;
+    struct scriptableItem_s *children;
+    struct scriptableItem_s *childrenTail;
+
+    int isList; // for example, dsp preset, or dsp chain
+
+    // hooks for subclasses
+    scriptableCallbacks_t *callbacks;
 } scriptableItem_t;
 
 scriptableItem_t *

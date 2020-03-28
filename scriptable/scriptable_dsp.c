@@ -185,13 +185,20 @@ scriptableDspPresetItemTypes (scriptableItem_t *item) {
     return s;
 }
 
+static scriptableCallbacks_t
+scriptableDspPresetCallbacks = {
+    .factoryItemNames = scriptableDspChainItemNames,
+    .factoryItemTypes = scriptableDspChainItemTypes,
+    .createItemOfType = scriptableDspCreateItemOfType,
+    .updateItemForSubItem = scriptableDspPresetUpdateItemForSubItem,
+};
+
+
 static scriptableItem_t *scriptableDspCreateBlankPreset(char *name) {
     scriptableItem_t *item = scriptableItemAlloc();
     scriptableItemSetPropertyValueForKey(item, name, "name");
-    item->factoryItemNames = scriptableDspChainItemNames;
-    item->factoryItemTypes = scriptableDspChainItemTypes;
-    item->createItemOfType = scriptableDspCreateItemOfType;
     item->isList = 1;
+    item->callbacks = &scriptableDspPresetCallbacks;
     return item;
 }
 
@@ -242,20 +249,23 @@ scriptableDspRootRemoveSubItem (struct scriptableItem_s *item, struct scriptable
     return unlink (path);
 }
 
+static scriptableCallbacks_t scriptableDspPresetListCallbacks = {
+    .createItemOfType = scriptableDspCreatePresetWithPluginId,
+    .factoryItemNames = scriptableDspPresetItemNames,
+    .factoryItemTypes = scriptableDspPresetItemTypes,
+    .removeSubItem = scriptableDspRootRemoveSubItem,
+};
 
 scriptableItem_t *
 scriptableDspRoot (void) {
     scriptableItem_t *dspRoot = scriptableItemSubItemForName (scriptableRoot(), "DSPPresets");
     if (!dspRoot) {
         dspRoot = scriptableItemAlloc();
-        dspRoot->createItemOfType = scriptableDspCreatePresetWithPluginId;
         scriptableItemSetPropertyValueForKey(dspRoot, "DSPPresets", "name");
         scriptableItemSetPropertyValueForKey(dspRoot, "yes", "editableNames");
         scriptableItemAddSubItem(scriptableRoot(), dspRoot);
-        dspRoot->factoryItemNames = scriptableDspPresetItemNames;
-        dspRoot->factoryItemTypes = scriptableDspPresetItemTypes;
         dspRoot->isList = 1;
-        dspRoot->removeSubItem = scriptableDspRootRemoveSubItem;
+        dspRoot->callbacks = &scriptableDspPresetListCallbacks;
     }
     return dspRoot;
 }
@@ -284,7 +294,6 @@ scriptableDspLoadPresets (void) {
             else {
                 scriptableItemAddSubItem(scriptableDspRoot(), preset);
             }
-            preset->updateItemForSubItem = scriptableDspPresetUpdateItemForSubItem;
 
             free (namelist[i]);
         }
@@ -423,12 +432,7 @@ scriptableDspPresetFromDspChain (ddb_dsp_context_t *chain) {
     }
 
     config->isList = 1;
-    config->factoryItemNames = scriptableDspChainItemNames;
-    config->factoryItemTypes = scriptableDspChainItemTypes;
-    config->createItemOfType = scriptableDspCreateItemOfType;
-
-    // CRUD
-    config->updateItemForSubItem = scriptableDspPresetUpdateItemForSubItem;
+    config->callbacks = &scriptableDspPresetCallbacks;
 
     return config;
 }

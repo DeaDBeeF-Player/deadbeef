@@ -24,8 +24,8 @@ scriptableItemAlloc (void) {
 
 void
 scriptableItemSave (scriptableItem_t *item) {
-    if (item->save) {
-        item->save (item);
+    if (item->callbacks && item->callbacks->save) {
+        item->callbacks->save (item);
     }
 }
 
@@ -51,8 +51,8 @@ scriptableStringListFree (scriptableStringListItem_t *list) {
 
 void
 scriptableItemFree (scriptableItem_t *item) {
-    if (item->free) {
-        item->free (item);
+    if (item->callbacks && item->callbacks->free) {
+        item->callbacks->free (item);
     }
 
     scriptableKeyValue_t *p = item->properties;
@@ -118,10 +118,10 @@ scriptableItemSubItemForName (scriptableItem_t *item, const char *name) {
 
 scriptableItem_t *
 scriptableItemCreateItemOfType (scriptableItem_t *item, const char *type) {
-    if (!item->createItemOfType) {
-        return NULL;
+    if (item->callbacks && item->callbacks->createItemOfType) {
+        return item->callbacks->createItemOfType (item, type);
     }
-    return item->createItemOfType (item, type);
+    return NULL;
 }
 
 void
@@ -150,15 +150,7 @@ scriptableItemClone (scriptableItem_t *item) {
         scriptableItemAddSubItem(cloned, clonedChild);
     }
     cloned->isList = item->isList;
-
-    cloned->factoryItemNames = item->factoryItemNames;
-    cloned->factoryItemTypes = item->factoryItemTypes;
-    cloned->createItemOfType = item->createItemOfType;
-    cloned->updateItem = item->updateItem;
-    cloned->updateItemForSubItem = item->updateItemForSubItem;
-    cloned->removeSubItem = item->removeSubItem;
-    cloned->free = item->free;
-    cloned->save = item->save;
+    cloned->callbacks = item->callbacks;
 
     return cloned;
 }
@@ -195,8 +187,8 @@ scriptableItemInsertSubItemAtIndex (scriptableItem_t *item, scriptableItem_t *su
 
 void
 scriptableItemRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subItem) {
-    if (item->removeSubItem) {
-        item->removeSubItem (item, subItem);
+    if (item->callbacks && item->callbacks->removeSubItem) {
+        item->callbacks->removeSubItem (item, subItem);
     }
 
     scriptableItem_t *prev = NULL;
@@ -218,8 +210,8 @@ scriptableItemRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subItem) 
 
 void
 scriptableItemUpdate (scriptableItem_t *item) {
-    if (item->updateItem) {
-        item->updateItem (item);
+    if (item->callbacks && item->callbacks->updateItem) {
+        item->callbacks->updateItem (item);
     }
     if (item->parent) {
         scriptableItemUpdateForSubItem(item->parent, item);
@@ -228,8 +220,8 @@ scriptableItemUpdate (scriptableItem_t *item) {
 
 void
 scriptableItemUpdateForSubItem (scriptableItem_t *item, scriptableItem_t *subItem) {
-    if (item->updateItemForSubItem) {
-        item->updateItemForSubItem (item, subItem);
+    if (item->callbacks && item->callbacks->updateItemForSubItem) {
+        item->callbacks->updateItemForSubItem (item, subItem);
     }
 }
 
@@ -281,18 +273,18 @@ scriptableItemSetPropertyValueForKey (scriptableItem_t *item, const char *value,
 
 scriptableStringListItem_t *
 scriptableItemFactoryItemNames (struct scriptableItem_s *item) {
-    if (!item->factoryItemNames) {
-        return NULL;
+    if (item->callbacks && item->callbacks->factoryItemNames) {
+        return item->callbacks->factoryItemNames (item);
     }
-    return item->factoryItemNames (item);
+    return NULL;
 }
 
 scriptableStringListItem_t *
 scriptableItemFactoryItemTypes (struct scriptableItem_s *item) {
-    if (!item->factoryItemTypes) {
-        return NULL;
+    if (item->callbacks && item->callbacks->factoryItemTypes) {
+        return item->callbacks->factoryItemTypes (item);
     }
-    return item->factoryItemTypes (item);
+    return NULL;
 }
 
 void
