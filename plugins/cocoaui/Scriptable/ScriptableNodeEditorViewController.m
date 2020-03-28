@@ -134,6 +134,7 @@
     if (index >= 0) {
         [_nodeList selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
     }
+    [self.delegate scriptableItemChanged:self.dataSource.scriptable change:ScriptableItemChangeUpdate];
 }
 
 - (IBAction)configureAction:(id)sender {
