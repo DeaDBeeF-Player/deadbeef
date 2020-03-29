@@ -18,14 +18,6 @@ extern DB_functions_t *deadbeef;
     }
 }
 
-- (void)dealloc
-{
-    if (_scriptable) {
-        scriptableItemFree (_scriptable);
-        _scriptable = NULL;
-    }
-}
-
 - (instancetype)init {
     return [self initWithScriptable:nil];
 }
@@ -58,7 +50,6 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)setScriptable:(scriptableItem_t *)scriptable {
-    scriptableItemFree(_scriptable);
     _scriptable = scriptable;
     [self.delegate scriptableItemChanged:_scriptable change:ScriptableItemChangeUpdate];
 }

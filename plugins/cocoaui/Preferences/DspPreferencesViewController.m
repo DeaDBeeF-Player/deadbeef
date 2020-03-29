@@ -32,17 +32,30 @@ extern DB_functions_t *deadbeef;
 @property (weak) IBOutlet NSPanel *dspPresetNamePanel;
 @property (weak) IBOutlet NSTextField *dspPresetNameTextField;
 
+@property (nonatomic) scriptableItem_t *currentDspChain; // owned by this object, must be freed
+
 @end
 
 @implementation DspPreferencesViewController
+
+- (void)setCurrentDspChain:(scriptableItem_t *)currentDspChain {
+    if (_currentDspChain) {
+        scriptableItemFree(_currentDspChain);
+    }
+    _currentDspChain = currentDspChain;
+}
+
+- (void)dealloc {
+    self.currentDspChain = nil; // required because of the setter
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do view setup here.
 
     // dsp
-    scriptableItem_t *currentDspChain = scriptableDspPresetFromDspChain (deadbeef->streamer_get_dsp_chain ());
-    self.dspChainDataSource = [ScriptableTableDataSource dataSourceWithScriptable:currentDspChain];
+    _currentDspChain = scriptableDspPresetFromDspChain (deadbeef->streamer_get_dsp_chain ());
+    self.dspChainDataSource = [ScriptableTableDataSource dataSourceWithScriptable:_currentDspChain];
 
     self.dspPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableDspRoot()];
 
