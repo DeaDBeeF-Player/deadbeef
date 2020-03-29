@@ -74,6 +74,23 @@
     return menu;
 }
 
+- (void)createNodeWithType:(const char *)type {
+    scriptableItem_t *node = scriptableItemCreateItemOfType(self.dataSource.scriptable, type);
+    id<NSTableViewDataSource> ds = _dataSource;
+    NSInteger cnt = [ds numberOfRowsInTableView:_nodeList];
+    NSInteger index = [_nodeList selectedRow];
+    if (index < 0) {
+        index = cnt;
+    }
+
+    NSIndexSet *is = [NSIndexSet indexSetWithIndex:index];
+    [_nodeList beginUpdates];
+    [_nodeList insertRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideDown];
+    [_dataSource insertItem:node atIndex:index];
+    [_nodeList endUpdates];
+    [_nodeList selectRowIndexes:is byExtendingSelection:NO];
+}
+
 - (void)createNode:(id)sender {
     NSMenuItem *item = sender;
 
@@ -82,7 +99,7 @@
         return;
     }
 
-    NSInteger index = 0;//= item.tag;
+    NSInteger index = 0;
 
     scriptableStringListItem_t *t = types;
     while (t) {
@@ -94,20 +111,7 @@
     }
 
     if (t) {
-        scriptableItem_t *node = scriptableItemCreateItemOfType(self.dataSource.scriptable, t->str);
-        id<NSTableViewDataSource> ds = _dataSource;
-        NSInteger cnt = [ds numberOfRowsInTableView:_nodeList];
-        index = [_nodeList selectedRow];
-        if (index < 0) {
-            index = cnt;
-        }
-
-        NSIndexSet *is = [NSIndexSet indexSetWithIndex:index];
-        [_nodeList beginUpdates];
-        [_nodeList insertRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideDown];
-        [_dataSource insertItem:node atIndex:index];
-        [_nodeList endUpdates];
-        [_nodeList selectRowIndexes:is byExtendingSelection:NO];
+        [self createNodeWithType:t->str];
 
         // FIXME: start in-place editing
     }
@@ -116,6 +120,27 @@
 }
 
 - (IBAction)addAction:(id)sender {
+    scriptableStringListItem_t *names = scriptableItemFactoryItemNames (self.dataSource.scriptable);
+    if (!names) {
+        return;
+    }
+
+    if (!names->next) {
+        // single action
+        scriptableStringListItem_t *types = scriptableItemFactoryItemTypes (self.dataSource.scriptable);
+        if (!types) {
+            return;
+        }
+
+        [self createNodeWithType:types->str];
+
+        scriptableStringListFree (names);
+        scriptableStringListFree (types);
+
+        return;
+    }
+
+
     NSMenu *menu = [self getCreateItemMenu];
     if (menu) {
         [NSMenu popUpContextMenu:menu withEvent:[NSApp currentEvent] forView:sender];
