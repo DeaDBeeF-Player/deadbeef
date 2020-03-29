@@ -113,6 +113,17 @@ extern DB_functions_t *deadbeef;
         [alert runModal];
         return;
     }
+    if (!scriptableItemIsSubItemAllowed(scriptableDspRoot(), name)) {
+        // alert
+        NSAlert *alert = [NSAlert new];
+        alert.messageText = @"This name is not allowed.";
+        alert.informativeText = @"Try a different name.";
+        alert.alertStyle = NSAlertStyleWarning;
+        [alert addButtonWithTitle:@"OK"];
+
+        [alert runModal];
+        return;
+    }
 
     [self.view.window endSheet:self.dspPresetNamePanel returnCode:NSModalResponseOK];
 }

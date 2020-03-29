@@ -26,6 +26,8 @@ typedef struct {
 
     struct scriptableItem_s *(*createItemOfType)(struct scriptableItem_s *item, const char *type);
 
+    int (*isSubItemNameAllowed)(struct scriptableItem_s *item, const char *name);
+
     // additional update logic, such as save the item data to disk
     int (*updateItem)(struct scriptableItem_s *item);
 
@@ -118,6 +120,9 @@ scriptableItemSetUniqueNameUsingPrefixAndRoot (scriptableItem_t *item, const cha
 
 int
 scriptableItemContainsSubItemWithName (scriptableItem_t *item, const char *name);
+
+int
+scriptableItemIsSubItemAllowed (scriptableItem_t *item, const char *name);
 
 scriptableStringListItem_t *
 scriptableItemFactoryItemNames (struct scriptableItem_s *item);

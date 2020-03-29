@@ -309,6 +309,13 @@ scriptableItemContainsSubItemWithName (scriptableItem_t *item, const char *name)
     return 0;
 }
 
+int
+scriptableItemIsSubItemAllowed (scriptableItem_t *item, const char *name) {
+    if (item->callbacks && item->callbacks->isSubItemNameAllowed) {
+        return item->callbacks->isSubItemNameAllowed (item, name);
+    }
+    return 1;
+}
 
 scriptableStringListItem_t *
 scriptableItemFactoryItemNames (struct scriptableItem_s *item) {

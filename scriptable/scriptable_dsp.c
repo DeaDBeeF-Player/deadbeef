@@ -286,6 +286,27 @@ scriptableDspRootRemoveSubItem (struct scriptableItem_s *item, struct scriptable
     return unlink (path);
 }
 
+static int
+isPresetNameAllowed (scriptableItem_t *preset, const char *name) {
+    // all space or empty?
+    const uint8_t *p = (const uint8_t *)name;
+    for (; p; p++) {
+        if (*p != 0x20) {
+            break;
+        }
+    }
+    if (*p == 0) {
+        return 0;
+    }
+
+    // starts with a dot?
+    if (*name == '.') {
+        return 0;
+    }
+
+    return 1;
+}
+
 static scriptableCallbacks_t scriptableDspPresetListCallbacks = {
     .isList = 1,
     .allowRenaming = 1,
@@ -293,6 +314,7 @@ static scriptableCallbacks_t scriptableDspPresetListCallbacks = {
     .factoryItemNames = scriptableDspPresetItemNames,
     .factoryItemTypes = scriptableDspPresetItemTypes,
     .removeSubItem = scriptableDspRootRemoveSubItem,
+    .isSubItemNameAllowed = isPresetNameAllowed,
 };
 
 scriptableItem_t *
