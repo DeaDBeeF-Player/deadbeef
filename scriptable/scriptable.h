@@ -116,6 +116,9 @@ scriptableItemSetPropertyValueForKey (scriptableItem_t *item, const char *value,
 void
 scriptableItemSetUniqueNameUsingPrefixAndRoot (scriptableItem_t *item, const char *prefix, scriptableItem_t *root);
 
+int
+scriptableItemContainsSubItemWithName (scriptableItem_t *item, const char *name);
+
 scriptableStringListItem_t *
 scriptableItemFactoryItemNames (struct scriptableItem_s *item);
 

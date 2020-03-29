@@ -90,9 +90,10 @@ extern DB_functions_t *deadbeef;
 - (void)segmentedControlAction:(NSSegmentedControl *)sender {
     [self.view.window beginSheet:self.dspPresetNamePanel completionHandler:^(NSModalResponse returnCode) {
         if (returnCode == NSModalResponseOK) {
+            const char *name = self.dspPresetNameTextField.stringValue.UTF8String;
             scriptableItem_t *preset = scriptableItemClone (self.dspChainDataSource.scriptable);
             scriptableItem_t *presets = scriptableDspRoot();
-            scriptableItemSetUniqueNameUsingPrefixAndRoot(preset, self.dspPresetNameTextField.stringValue.UTF8String, presets);
+            scriptableItemSetUniqueNameUsingPrefixAndRoot(preset, name, presets);
             scriptableItemAddSubItem(presets, preset);
             [self.dspSelectViewController reloadData];
         }
@@ -100,6 +101,19 @@ extern DB_functions_t *deadbeef;
 }
 
 - (IBAction)presetNameOK:(id)sender {
+    const char *name = self.dspPresetNameTextField.stringValue.UTF8String;
+    if (scriptableItemContainsSubItemWithName(scriptableDspRoot(), name)) {
+        // alert
+        NSAlert *alert = [NSAlert new];
+        alert.messageText = @"Preset with this name already exists.";
+        alert.informativeText = @"Try a different name.";
+        alert.alertStyle = NSAlertStyleWarning;
+        [alert addButtonWithTitle:@"OK"];
+
+        [alert runModal];
+        return;
+    }
+
     [self.view.window endSheet:self.dspPresetNamePanel returnCode:NSModalResponseOK];
 }
 

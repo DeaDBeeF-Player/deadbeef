@@ -289,19 +289,26 @@ scriptableItemSetUniqueNameUsingPrefixAndRoot (scriptableItem_t *item, const cha
         else {
             snprintf (name, sizeof (name), "%s %02d", prefix, i);
         }
-        scriptableItem_t *c = NULL;
-        for (c = root->children; c; c = c->next) {
-            const char *cname = scriptableItemPropertyValueForKey(c, "name");
-            if (!strcasecmp (name, cname)) {
-                break;
-            }
-        }
-        if (!c) {
+
+        if (!scriptableItemContainsSubItemWithName(root, name)) {
             scriptableItemSetPropertyValueForKey(item, name, "name");
             return;
         }
     }
 }
+
+int
+scriptableItemContainsSubItemWithName (scriptableItem_t *item, const char *name) {
+    scriptableItem_t *c = NULL;
+    for (c = item->children; c; c = c->next) {
+        const char *cname = scriptableItemPropertyValueForKey(c, "name");
+        if (!strcasecmp (name, cname)) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 
 scriptableStringListItem_t *
 scriptableItemFactoryItemNames (struct scriptableItem_s *item) {
