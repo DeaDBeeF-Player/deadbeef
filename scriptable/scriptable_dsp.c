@@ -19,6 +19,9 @@ scriptableDspChainItemTypes (scriptableItem_t *item);
 static scriptableItem_t *
 scriptableDspCreateItemOfType (struct scriptableItem_s *root, const char *type);
 
+static void
+scriptableDspInitContextFromItem(scriptableItem_t *c, ddb_dsp_context_t *ctx, DB_dsp_t *dsp);
+
 static int
 dirent_alphasort (const struct dirent **a, const struct dirent **b) {
     return strcmp ((*a)->d_name, (*b)->d_name);
@@ -99,27 +102,32 @@ error:
     return err;
 }
 
+static DB_dsp_t *
+dspPluginForId (const char *pluginId) {
+    DB_dsp_t **dsps = deadbeef->plug_get_dsp_list ();
+    for (int i = 0; dsps[i]; i++) {
+        if (!strcmp (dsps[i]->plugin.id, pluginId)) {
+            return dsps[i];
+        }
+    }
+    return NULL;
+}
+
 static scriptableItem_t *
 scriptableDspCreateItemOfType (struct scriptableItem_s *root, const char *type) {
     scriptableItem_t *item = scriptableItemAlloc();
     scriptableItemSetPropertyValueForKey(item, "DSPNode", "type");
     scriptableItemSetPropertyValueForKey(item, type, "pluginId");
 
-    const char *name = NULL;
-    DB_dsp_t **dsps = deadbeef->plug_get_dsp_list ();
-    for (int i = 0; dsps[i]; i++) {
-        if (!strcmp (dsps[i]->plugin.id, type)) {
-            name = dsps[i]->plugin.name;
-            scriptableItemSetPropertyValueForKey(item, dsps[i]->configdialog, "configDialog");
-            break;
-        }
-    }
-    if (name) {
+    DB_dsp_t *dsp = dspPluginForId(type);
+    if (dsp) {
+        const char *name = dsp->plugin.name;
+        scriptableItemSetPropertyValueForKey(item, dsp->configdialog, "configDialog");
         scriptableItemSetPropertyValueForKey(item, name, "name");
     }
     else {
         char missing[200];
-        snprintf (missing, sizeof (missing), "<%s>", type);
+        snprintf (missing, sizeof (missing), "%s (Plugin Missing)", type);
         scriptableItemSetPropertyValueForKey(item, missing, "name");
     }
 
@@ -127,7 +135,60 @@ scriptableDspCreateItemOfType (struct scriptableItem_s *root, const char *type) 
 }
 
 static int
-scriptableDspPresetUpdateItemForSubItem (struct scriptableItem_s *item, struct scriptableItem_s *subItem) {
+scriptableDspPresetSaveAtPath(struct scriptableItem_s *item, char *path) {
+    FILE *fp = fopen (path, "w+b");
+    if (!fp) {
+        return -1;
+    }
+
+    for (scriptableItem_t *node = item->children; node; node = node->next) {
+        const char *pluginId = scriptableItemPropertyValueForKey (node, "pluginId");
+        if (!pluginId) {
+            continue;
+        }
+
+        fprintf (fp, "%s {\n", pluginId);
+
+        DB_dsp_t *dsp = dspPluginForId(pluginId);
+        if (!dsp) {
+            // when a plugin is missing: write out all numeric-name properties, in their original order
+            for (scriptableKeyValue_t *kv = node->properties; kv; kv = kv->next) {
+                int intKey = atoi (kv->key);
+                char stringKey[10];
+                snprintf (stringKey, sizeof (stringKey), "%d", intKey);
+                if (!strcmp (stringKey, kv->key)) {
+                    fprintf (fp, "\t%s\n", kv->value);
+                }
+            }
+        }
+        else {
+            // when a plugin is present, create a context, and get the values from plugin
+            ddb_dsp_context_t *ctx = dsp->open ();
+            if (dsp->num_params) {
+                scriptableDspInitContextFromItem (node, ctx, dsp);
+
+                int n = ctx->plugin->num_params();
+                for (int p = 0; p < n; p++) {
+                    char s[10];
+                    ctx->plugin->get_param (ctx, p, s, sizeof(s));
+                    fprintf (fp, "\t%s\n", s);
+                }
+            }
+            dsp->close (ctx);
+        }
+
+        fprintf (fp, "}\n");
+    }
+
+    if (fclose (fp) != 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+static int
+scriptableDspPresetUpdateItem (scriptableItem_t *item) {
     const char *presetName = scriptableItemPropertyValueForKey (item, "name");
     if (!presetName) {
         return -1;
@@ -144,30 +205,12 @@ scriptableDspPresetUpdateItemForSubItem (struct scriptableItem_s *item, struct s
     }
 
 
-    FILE *fp = fopen (path, "w+b");
-    if (!fp) {
-        return -1;
-    }
+    return scriptableDspPresetSaveAtPath(item, path);
+}
 
-    for (scriptableItem_t *i = item->children; i; i = i->next) {
-        const char *pluginId = scriptableItemPropertyValueForKey (i, "pluginId");
-        if (!pluginId) {
-            continue;
-        }
-
-        fprintf (fp, "%s {\n", pluginId);
-
-        for (scriptableKeyValue_t *kv = i->properties; kv; kv = kv->next) {
-            fprintf (fp, "\t%s\n", kv->value);
-        }
-
-        fprintf (fp, "}\n");
-    }
-
-    if (fclose (fp) != 0) {
-        return -1;
-    }
-
+static int
+scriptableDspPresetUpdateItemForSubItem (struct scriptableItem_s *item, struct scriptableItem_s *subItem) {
+    scriptableDspPresetUpdateItem(item);
     return 0;
 }
 
@@ -193,9 +236,9 @@ scriptableDspPresetCallbacks = {
     .factoryItemNames = scriptableDspChainItemNames,
     .factoryItemTypes = scriptableDspChainItemTypes,
     .createItemOfType = scriptableDspCreateItemOfType,
+    .updateItem = scriptableDspPresetUpdateItem,
     .updateItemForSubItem = scriptableDspPresetUpdateItemForSubItem,
 };
-
 
 static scriptableItem_t *scriptableDspCreateBlankPreset (void) {
     scriptableItem_t *item = scriptableItemAlloc();
@@ -204,7 +247,8 @@ static scriptableItem_t *scriptableDspCreateBlankPreset (void) {
 }
 
 static scriptableItem_t *
-scriptableDspCreatePresetWithPluginId (scriptableItem_t *root, const char *pluginId) {
+scriptableDspCreatePresetWithType (scriptableItem_t *root, const char *type) {
+    // type is ignored, since there's only one preset type
     scriptableItem_t * item = scriptableDspCreateBlankPreset();
     scriptableItemSetUniqueNameUsingPrefixAndRoot (item, "New DSP Preset", root);
 
@@ -234,7 +278,7 @@ scriptableDspRootRemoveSubItem (struct scriptableItem_s *item, struct scriptable
 static scriptableCallbacks_t scriptableDspPresetListCallbacks = {
     .isList = 1,
     .allowRenaming = 1,
-    .createItemOfType = scriptableDspCreatePresetWithPluginId,
+    .createItemOfType = scriptableDspCreatePresetWithType,
     .factoryItemNames = scriptableDspPresetItemNames,
     .factoryItemTypes = scriptableDspPresetItemTypes,
     .removeSubItem = scriptableDspRootRemoveSubItem,
@@ -254,6 +298,9 @@ scriptableDspRoot (void) {
 
 void
 scriptableDspLoadPresets (void) {
+    scriptableItem_t *root = scriptableDspRoot();
+    root->isLoading = 1;
+
     struct dirent **namelist = NULL;
     char path[1024];
     if (snprintf (path, sizeof (path), "%s/presets/dsp", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG)) > 0) {
@@ -269,19 +316,22 @@ scriptableDspLoadPresets (void) {
             strncat(name, namelist[i]->d_name, end-namelist[i]->d_name);
 
             scriptableItem_t *preset = scriptableDspCreateBlankPreset();
-            scriptableItemSetUniqueNameUsingPrefixAndRoot(preset, name, scriptableDspRoot());
+            preset->isLoading = 1;
+            scriptableItemSetUniqueNameUsingPrefixAndRoot(preset, name, root);
 
             if (scriptableItemLoadDspPreset (preset, namelist[i]->d_name)) {
                 scriptableItemFree (preset);
             }
             else {
-                scriptableItemAddSubItem(scriptableDspRoot(), preset);
+                scriptableItemAddSubItem(root, preset);
             }
+            preset->isLoading = 0;
 
             free (namelist[i]);
         }
         free (namelist);
     }
+    root->isLoading = 0;
 }
 
 scriptableItem_t *
@@ -307,6 +357,39 @@ scriptableDspNodeItemFromDspContext (ddb_dsp_context_t *context) {
     return node;
 }
 
+static void
+scriptableDspInitContextFromItem(scriptableItem_t *c, ddb_dsp_context_t *ctx, DB_dsp_t *dsp) {
+    settings_data_t dt;
+    memset (&dt, 0, sizeof (dt));
+    if (dsp->configdialog) {
+        settings_data_init (&dt, dsp->configdialog);
+    }
+
+    int n = dsp->num_params();
+    for (int i = 0; i < n; i++) {
+        char key[10];
+        snprintf (key, sizeof (key), "%d", i);
+        const char *value = scriptableItemPropertyValueForKey(c, key);
+        if (!value) {
+            for (int p = 0; p < dt.nprops; p++) {
+                if (!dt.props[p].key) {
+                    continue;
+                }
+                if (atoi(dt.props[p].key) == i) {
+                    value = dt.props[p].def;
+                    break;
+                }
+            }
+        }
+        assert (value);
+        dsp->set_param (ctx, i, value);
+    }
+
+    if (dsp->configdialog) {
+        settings_data_free(&dt);
+    }
+}
+
 ddb_dsp_context_t *
 scriptableDspConfigToDspChain (scriptableItem_t *item) {
     ddb_dsp_context_t *head = NULL;
@@ -322,32 +405,7 @@ scriptableDspConfigToDspChain (scriptableItem_t *item) {
 
         ddb_dsp_context_t *ctx = dsp->open ();
         if (dsp->num_params) {
-            settings_data_t dt;
-            memset (&dt, 0, sizeof (dt));
-            if (dsp->configdialog) {
-                settings_data_init (&dt, dsp->configdialog);
-            }
-
-            int n = dsp->num_params();
-            for (int i = 0; i < n; i++) {
-                char key[10];
-                snprintf (key, sizeof (key), "%d", i);
-                const char *value = scriptableItemPropertyValueForKey(c, key);
-                if (!value) {
-                    for (int p = 0; p < dt.nprops; p++) {
-                        if (atoi(dt.props[p].key) == i) {
-                            value = dt.props[p].def;
-                            break;
-                        }
-                    }
-                }
-                assert (value);
-                dsp->set_param (ctx, i, value);
-            }
-
-            if (dsp->configdialog) {
-                settings_data_free(&dt);
-            }
+            scriptableDspInitContextFromItem (c, ctx, dsp);
 
         }
         if (tail) {

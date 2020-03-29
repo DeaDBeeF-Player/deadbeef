@@ -47,7 +47,8 @@ typedef struct scriptableItem_s {
     struct scriptableItem_s *children;
     struct scriptableItem_s *childrenTail;
 
-    // hooks for subclasses
+    int isLoading; // prevent calling hooks while loading data
+
     scriptableCallbacks_t *callbacks;
 } scriptableItem_t;
 

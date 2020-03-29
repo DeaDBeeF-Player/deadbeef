@@ -210,6 +210,9 @@ scriptableItemRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subItem) 
 
 void
 scriptableItemUpdate (scriptableItem_t *item) {
+    if (item->isLoading) {
+        return;
+    }
     if (item->callbacks && item->callbacks->updateItem) {
         item->callbacks->updateItem (item);
     }
@@ -220,6 +223,9 @@ scriptableItemUpdate (scriptableItem_t *item) {
 
 void
 scriptableItemUpdateForSubItem (scriptableItem_t *item, scriptableItem_t *subItem) {
+    if (item->isLoading) {
+        return;
+    }
     if (item->callbacks && item->callbacks->updateItemForSubItem) {
         item->callbacks->updateItemForSubItem (item, subItem);
     }
@@ -254,8 +260,8 @@ scriptableItemSetPropertyValueForKey (scriptableItem_t *item, const char *value,
                     prev->next = p->next;
                     keyValuePairFree (p);
                 }
-                scriptableItemUpdate(item);
             }
+            scriptableItemUpdate(item);
             return;
         }
     }
