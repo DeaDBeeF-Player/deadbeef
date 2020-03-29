@@ -177,13 +177,11 @@
 
     if (item->callbacks && item->callbacks->isList) {
         // recurse!
-        if (!self.nodeEditorWindowController) {
-            self.nodeEditorWindowController = [[ScriptableNodeEditorWindowController alloc] initWithWindowNibName:@"ScriptableNodeEditorWindow"];
-            self.nodeDataSource = [ScriptableTableDataSource dataSourceWithScriptable:item]; // FIXME: generate unique item ID for the list
-            self.nodeEditorWindowController.dataSource = self.nodeDataSource;
-            self.nodeEditorWindowController.delegate = self.delegate;
-            self.nodeEditorWindowController.window.title = [NSString stringWithUTF8String:scriptableItemPropertyValueForKey(item, "name")]; // preset name
-        }
+        self.nodeEditorWindowController = [[ScriptableNodeEditorWindowController alloc] initWithWindowNibName:@"ScriptableNodeEditorWindow"];
+        self.nodeDataSource = [ScriptableTableDataSource dataSourceWithScriptable:item];
+        self.nodeEditorWindowController.dataSource = self.nodeDataSource;
+        self.nodeEditorWindowController.delegate = self.delegate;
+        self.nodeEditorWindowController.window.title = [NSString stringWithUTF8String:scriptableItemPropertyValueForKey(item, "name")]; // preset name
         NSWindow *window = self.view.window;
         [window beginSheet:self.nodeEditorWindowController.window completionHandler:^(NSModalResponse returnCode) {
         }];
