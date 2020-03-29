@@ -187,6 +187,9 @@ scriptableDspPresetItemTypes (scriptableItem_t *item) {
 
 static scriptableCallbacks_t
 scriptableDspPresetCallbacks = {
+    .isList = 1,
+    .isReorderable = 1,
+    .pasteboardItemIdentifier = "deadbeef.dspnode",
     .factoryItemNames = scriptableDspChainItemNames,
     .factoryItemTypes = scriptableDspChainItemTypes,
     .createItemOfType = scriptableDspCreateItemOfType,
@@ -196,7 +199,6 @@ scriptableDspPresetCallbacks = {
 
 static scriptableItem_t *scriptableDspCreateBlankPreset (void) {
     scriptableItem_t *item = scriptableItemAlloc();
-    item->isList = 1;
     item->callbacks = &scriptableDspPresetCallbacks;
     return item;
 }
@@ -230,6 +232,8 @@ scriptableDspRootRemoveSubItem (struct scriptableItem_s *item, struct scriptable
 }
 
 static scriptableCallbacks_t scriptableDspPresetListCallbacks = {
+    .isList = 1,
+    .allowRenaming = 1,
     .createItemOfType = scriptableDspCreatePresetWithPluginId,
     .factoryItemNames = scriptableDspPresetItemNames,
     .factoryItemTypes = scriptableDspPresetItemTypes,
@@ -242,9 +246,7 @@ scriptableDspRoot (void) {
     if (!dspRoot) {
         dspRoot = scriptableItemAlloc();
         scriptableItemSetPropertyValueForKey(dspRoot, "DSPPresets", "name");
-        scriptableItemSetPropertyValueForKey(dspRoot, "yes", "editableNames");
         scriptableItemAddSubItem(scriptableRoot(), dspRoot);
-        dspRoot->isList = 1;
         dspRoot->callbacks = &scriptableDspPresetListCallbacks;
     }
     return dspRoot;
@@ -412,7 +414,6 @@ scriptableDspPresetFromDspChain (ddb_dsp_context_t *chain) {
         chain = chain->next;
     }
 
-    config->isList = 1;
     config->callbacks = &scriptableDspPresetCallbacks;
 
     return config;

@@ -4,13 +4,19 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface ScriptableTableDataSource()
-
-@property (nonatomic,readwrite) NSString *pasteboardItemIdentifier;
-
+@interface ScriptableReorerableTableDataSource : ScriptableTableDataSource
 @end
 
 @implementation ScriptableTableDataSource
+
++ (ScriptableTableDataSource *)dataSourceWithScriptable:(scriptableItem_t *)scriptable {
+    if (scriptable->callbacks && scriptable->callbacks->isReorderable) {
+        return [[ScriptableReorerableTableDataSource alloc] initWithScriptable:scriptable];
+    }
+    else {
+        return [[ScriptableTableDataSource alloc] initWithScriptable:scriptable];
+    }
+}
 
 - (void)dealloc
 {
@@ -20,18 +26,15 @@ extern DB_functions_t *deadbeef;
     }
 }
 
-- (BOOL)editableNames {
-    if (!_scriptable) {
-        return NO;
-    }
-    const char *editable = scriptableItemPropertyValueForKey(_scriptable, "editableNames");
-    return editable != NULL;
+- (instancetype)init {
+    return [self initWithScriptable:nil];
 }
 
-- (ScriptableTableDataSource *)initWithScriptable:(scriptableItem_t *)scriptable pasteboardItemIdentifier:(NSString *)identifier {
-    self = [super init];
-    self.pasteboardItemIdentifier = identifier;
+- (NSString *)pasteboardItemIdentifier {
+    return nil;
+}
 
+- (ScriptableTableDataSource *)initWithScriptable:(scriptableItem_t *)scriptable {
     _scriptable = scriptable;
     return self;
 }
@@ -60,15 +63,28 @@ extern DB_functions_t *deadbeef;
     [self.delegate scriptableItemChanged:_scriptable change:ScriptableItemChangeUpdate];
 }
 
-#pragma mark - NSTableViewDataSource
+#pragma mark NSTableViewDataSource
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
     return scriptableItemNumChildren (_scriptable);
 }
 
-#pragma mark Drag & Drop
+@end
+
+#pragma mark - ScriptableReorerableTableDataSource
+
+@implementation ScriptableReorerableTableDataSource
+
+- (NSString *)pasteboardItemIdentifier {
+    return [NSString stringWithUTF8String:self.scriptable->callbacks->pasteboardItemIdentifier];
+}
+
+#pragma mark NSTableViewDataSource Drag & Drop
 
 - (id <NSPasteboardWriting>)tableView:(NSTableView *)tableView pasteboardWriterForRow:(NSInteger)row {
+    if (!self.scriptable->callbacks->isReorderable) {
+        return nil;
+    }
     NSString *identifier = [NSString stringWithFormat:@"%d", (int)row];
 
     NSPasteboardItem *pboardItem = [NSPasteboardItem new];
@@ -102,13 +118,13 @@ extern DB_functions_t *deadbeef;
         row--;
     }
 
-    scriptableItem_t *node = scriptableItemChildAtIndex(_scriptable, (unsigned int)sourceRow);
-    scriptableItemRemoveSubItem(_scriptable, node);
+    scriptableItem_t *node = scriptableItemChildAtIndex(self.scriptable, (unsigned int)sourceRow);
+    scriptableItemRemoveSubItem(self.scriptable, node);
 
     // reinsert the node at new position
-    scriptableItemInsertSubItemAtIndex (_scriptable, node, (unsigned int)row);
+    scriptableItemInsertSubItemAtIndex (self.scriptable, node, (unsigned int)row);
 
-    [self.delegate scriptableItemChanged:_scriptable change:ScriptableItemChangeCreate];
+    [self.delegate scriptableItemChanged:self.scriptable change:ScriptableItemChangeCreate];
 
     [tableView beginUpdates];
     [tableView moveRowAtIndex:sourceRow toIndex:row];

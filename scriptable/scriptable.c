@@ -150,7 +150,6 @@ scriptableItemClone (scriptableItem_t *item) {
         scriptableItem_t *clonedChild = scriptableItemClone(child);
         scriptableItemAddSubItem(cloned, clonedChild);
     }
-    cloned->isList = item->isList;
     cloned->callbacks = item->callbacks;
 
     return cloned;

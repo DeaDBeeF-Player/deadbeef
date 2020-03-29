@@ -33,14 +33,16 @@
 
     // Do view setup here.
     self.dataSource.delegate = self;
-    _nodeList.dataSource = self.dataSource;
+    self.nodeList.dataSource = self.dataSource;
 
     if (self.customButtonsInitializer) {
         [self.customButtonsInitializer customButtonsInitializer:self initButtonsInSegmentedControl:self.customButtonsSegmentedControl];
         self.customButtonsSegmentedControl.hidden = NO;
     }
 
-    [_nodeList registerForDraggedTypes: [NSArray arrayWithObjects: _dataSource.pasteboardItemIdentifier, nil]];
+    if (self.dataSource.scriptable->callbacks && self.dataSource.scriptable->callbacks->isReorderable) {
+        [self.nodeList registerForDraggedTypes: [NSArray arrayWithObjects: _dataSource.pasteboardItemIdentifier, nil]];
+    }
 }
 
 - (void)reloadData {
@@ -148,11 +150,11 @@
     }
     scriptableItem_t *item = scriptableItemChildAtIndex(_dataSource.scriptable, (unsigned int)index);
 
-    if (item->isList) {
+    if (item->callbacks && item->callbacks->isList) {
         // recurse!
         if (!self.nodeEditorWindowController) {
             self.nodeEditorWindowController = [[ScriptableNodeEditorWindowController alloc] initWithWindowNibName:@"ScriptableNodeEditorWindow"];
-            self.nodeDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:item pasteboardItemIdentifier:@"test"]; // FIXME: generate unique item ID for the list
+            self.nodeDataSource = [ScriptableTableDataSource dataSourceWithScriptable:item]; // FIXME: generate unique item ID for the list
             self.nodeEditorWindowController.dataSource = self.nodeDataSource;
             self.nodeEditorWindowController.delegate = self.delegate;
             self.nodeEditorWindowController.window.title = [NSString stringWithUTF8String:scriptableItemPropertyValueForKey(item, "name")]; // preset name
@@ -226,7 +228,7 @@
     scriptableItem_t *item = scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)row);
     const char *name = scriptableItemPropertyValueForKey(item, "name");
 
-    view.textField.editable = self.dataSource.editableNames;
+    view.textField.editable = self.dataSource.scriptable->callbacks && self.dataSource.scriptable->callbacks->allowRenaming;
 
     view.textField.stringValue = [NSString stringWithUTF8String:name];
 

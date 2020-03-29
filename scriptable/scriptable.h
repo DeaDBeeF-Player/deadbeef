@@ -15,6 +15,11 @@ typedef struct stringListItem_s {
 struct scriptableItem_s;
 
 typedef struct {
+    int isList; // for example, dsp preset, or dsp chain
+    int isReorderable; // whether items can be reordered by the user
+    int allowRenaming; // whether the names can be changed by the user
+    const char *pasteboardItemIdentifier; // for drag drop on mac
+
     scriptableStringListItem_t *(*factoryItemNames)(struct scriptableItem_s *item);
 
     scriptableStringListItem_t *(*factoryItemTypes)(struct scriptableItem_s *item);
@@ -41,8 +46,6 @@ typedef struct scriptableItem_s {
     struct scriptableItem_s *parent;
     struct scriptableItem_s *children;
     struct scriptableItem_s *childrenTail;
-
-    int isList; // for example, dsp preset, or dsp chain
 
     // hooks for subclasses
     scriptableCallbacks_t *callbacks;

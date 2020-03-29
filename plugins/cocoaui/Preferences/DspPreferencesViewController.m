@@ -42,9 +42,9 @@ extern DB_functions_t *deadbeef;
 
     // dsp
     scriptableItem_t *currentDspChain = scriptableDspPresetFromDspChain (deadbeef->streamer_get_dsp_chain ());
-    self.dspChainDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:currentDspChain pasteboardItemIdentifier:@"deadbeef.dspnode.preferences"];
+    self.dspChainDataSource = [ScriptableTableDataSource dataSourceWithScriptable:currentDspChain];
 
-    self.dspPresetsDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:scriptableDspRoot() pasteboardItemIdentifier:@"deadbeef.dsppreset.preferences"];
+    self.dspPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableDspRoot()];
 
     // preset list and browse button
     self.dspSelectViewController = [[ScriptableSelectViewController alloc] initWithNibName:@"ScriptableSelectView" bundle:nil];
