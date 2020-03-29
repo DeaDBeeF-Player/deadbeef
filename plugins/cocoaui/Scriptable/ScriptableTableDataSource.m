@@ -5,11 +5,20 @@
 extern DB_functions_t *deadbeef;
 
 @interface ScriptableTableDataSource()
+
 @property (nonatomic,readwrite) NSString *pasteboardItemIdentifier;
-@property (nonatomic,readwrite) scriptableItem_t *scriptable;
+
 @end
 
 @implementation ScriptableTableDataSource
+
+- (void)dealloc
+{
+    if (_scriptable) {
+        scriptableItemFree (_scriptable);
+        _scriptable = NULL;
+    }
+}
 
 - (BOOL)editableNames {
     if (!_scriptable) {
@@ -43,6 +52,12 @@ extern DB_functions_t *deadbeef;
 
 - (scriptableItem_t *)itemAtIndex:(NSInteger)index {
     return scriptableItemChildAtIndex(_scriptable, (unsigned int)index);
+}
+
+- (void)setScriptable:(scriptableItem_t *)scriptable {
+    scriptableItemFree(_scriptable);
+    _scriptable = scriptable;
+    [self.delegate scriptableItemChanged:_scriptable change:ScriptableItemChangeUpdate];
 }
 
 #pragma mark - NSTableViewDataSource

@@ -16,7 +16,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface DspPreferencesViewController () <ScriptableNodeEditorCustomButtonsInitializer>
+@interface DspPreferencesViewController () <ScriptableNodeEditorCustomButtonsInitializer, ScriptableSelectDelegate>
 
 @property (weak) IBOutlet NSView *dspPresetSelectorContainer;
 @property (weak) IBOutlet NSView *dspNodeEditorContainer;
@@ -27,7 +27,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) ScriptableTableDataSource *dspChainDataSource;
 @property (nonatomic) ScriptableTableDataSource *dspPresetsDataSource;
 
-@property (nonatomic) scriptableItem_t *currentDspChain;
+//@property (nonatomic) scriptableItem_t *currentDspChain;
 
 @property (weak) IBOutlet NSPanel *dspPresetNamePanel;
 @property (weak) IBOutlet NSTextField *dspPresetNameTextField;
@@ -36,28 +36,20 @@ extern DB_functions_t *deadbeef;
 
 @implementation DspPreferencesViewController
 
-- (void)dealloc
-{
-    if (_currentDspChain) {
-        scriptableItemFree (_currentDspChain);
-        _currentDspChain = NULL;
-    }
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do view setup here.
 
     // dsp
-    self.currentDspChain = scriptableDspPresetFromDspChain (deadbeef->streamer_get_dsp_chain ());
-    self.dspChainDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:self.currentDspChain pasteboardItemIdentifier:@"deadbeef.dspnode.preferences"];
+    scriptableItem_t *currentDspChain = scriptableDspPresetFromDspChain (deadbeef->streamer_get_dsp_chain ());
+    self.dspChainDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:currentDspChain pasteboardItemIdentifier:@"deadbeef.dspnode.preferences"];
 
     self.dspPresetsDataSource = [[ScriptableTableDataSource alloc] initWithScriptable:scriptableDspRoot() pasteboardItemIdentifier:@"deadbeef.dsppreset.preferences"];
 
     // preset list and browse button
     self.dspSelectViewController = [[ScriptableSelectViewController alloc] initWithNibName:@"ScriptableSelectView" bundle:nil];
     self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
-    self.dspSelectViewController.delegate = self;
+    self.dspSelectViewController.scriptableItemDelegate = self;
     self.dspSelectViewController.view.frame = _dspPresetSelectorContainer.bounds;
     [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
 
@@ -70,6 +62,7 @@ extern DB_functions_t *deadbeef;
     [_dspNodeEditorContainer addSubview:self.dspNodeEditorViewController.view];
 
     self.dspSelectViewController.scriptable = scriptableDspRoot();
+    self.dspSelectViewController.scriptableSelectDelegate = self;
 }
 
 #pragma mark - ScriptableNodeEditorCustomButtonsInitializer
@@ -84,7 +77,7 @@ extern DB_functions_t *deadbeef;
 - (void)segmentedControlAction:(NSSegmentedControl *)sender {
     [self.view.window beginSheet:self.dspPresetNamePanel completionHandler:^(NSModalResponse returnCode) {
         if (returnCode == NSModalResponseOK) {
-            scriptableItem_t *preset = scriptableItemClone (self.currentDspChain);
+            scriptableItem_t *preset = scriptableItemClone (self.dspChainDataSource.scriptable);
             scriptableItem_t *presets = scriptableDspRoot();
             scriptableItemSetUniqueNameUsingPrefixAndRoot(preset, self.dspPresetNameTextField.stringValue.UTF8String, presets);
             scriptableItemAddSubItem(presets, preset);
@@ -114,5 +107,14 @@ extern DB_functions_t *deadbeef;
         [self.dspSelectViewController reloadData];
     }
 }
+
+#pragma mark - ScriptableSelectDelegate
+
+- (void)scriptableSelectItemSelected:(nonnull scriptableItem_t *)item {
+    self.dspChainDataSource.scriptable = scriptableItemClone(item);
+    [self.dspNodeEditorViewController reloadData];
+}
+
+#pragma mark -
 
 @end

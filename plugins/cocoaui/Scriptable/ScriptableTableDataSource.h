@@ -7,7 +7,7 @@
 
 @property (nonatomic,readonly) NSString *pasteboardItemIdentifier;
 @property (nonatomic,readonly) BOOL editableNames;
-@property (nonatomic,readonly) scriptableItem_t *scriptable;
+@property (nonatomic) scriptableItem_t *scriptable;
 @property (weak) NSObject<ScriptableItemDelegate> *delegate;
 
 - (ScriptableTableDataSource *)initWithScriptable:(scriptableItem_t *)scriptable pasteboardItemIdentifier:(NSString *)identifier;

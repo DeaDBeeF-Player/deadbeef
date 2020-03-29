@@ -13,9 +13,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol ScriptableSelectDelegate
+
+- (void)scriptableSelectItemSelected:(scriptableItem_t *)item;
+
+@end
+
 @interface ScriptableSelectViewController : NSViewController
+
 @property (weak) ScriptableTableDataSource *dataSource;
-@property (weak) NSObject<ScriptableItemDelegate> *delegate;
+@property (weak) NSObject<ScriptableItemDelegate> *scriptableItemDelegate;
+@property (weak) NSObject<ScriptableSelectDelegate> *scriptableSelectDelegate;
 
 - (void)setScriptable:(scriptableItem_t *)scriptable;
 - (void)reloadData;

@@ -43,6 +43,10 @@
     [_nodeList registerForDraggedTypes: [NSArray arrayWithObjects: _dataSource.pasteboardItemIdentifier, nil]];
 }
 
+- (void)reloadData {
+    [self.nodeList reloadData];
+}
+
 - (NSMenu *)getCreateItemMenu {
     scriptableStringListItem_t *names = scriptableItemFactoryItemNames (self.dataSource.scriptable);
     if (!names) {

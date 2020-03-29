@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak) NSObject<ScriptableItemDelegate> *delegate;
 @property (weak) NSObject<ScriptableNodeEditorCustomButtonsInitializer> *customButtonsInitializer;
 
+- (void)reloadData;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -31,14 +31,16 @@
     [self reloadData];
 }
 
-- (IBAction)nameSelectedAction:(id)sender {
+- (IBAction)nameSelectedAction:(NSPopUpButton *)sender {
+    NSUInteger index = sender.indexOfSelectedItem;
+    [self.scriptableSelectDelegate scriptableSelectItemSelected:scriptableItemChildAtIndex(self.scriptable, (unsigned int)index)];
 }
 
 - (void)initNodeEditorWindowController {
     if (!self.nodeEditorWindowController) {
         self.nodeEditorWindowController = [[ScriptableNodeEditorWindowController alloc] initWithWindowNibName:@"ScriptableNodeEditorWindow"];
         self.nodeEditorWindowController.dataSource = self.dataSource;
-        self.nodeEditorWindowController.delegate = self.delegate;
+        self.nodeEditorWindowController.delegate = self.scriptableItemDelegate;
     }
 }
 
