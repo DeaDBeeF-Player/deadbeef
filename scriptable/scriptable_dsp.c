@@ -136,7 +136,12 @@ scriptableDspCreateItemOfType (struct scriptableItem_s *root, const char *type) 
 
 static int
 scriptableDspPresetSaveAtPath(struct scriptableItem_s *item, char *path) {
-    FILE *fp = fopen (path, "w+b");
+    char temp_path[PATH_MAX];
+    if (snprintf (temp_path, sizeof (temp_path), "%s.tmp", path) >= sizeof (temp_path)) {
+        return -1;
+    }
+
+    FILE *fp = fopen (temp_path, "w+b");
     if (!fp) {
         return -1;
     }
@@ -184,7 +189,13 @@ scriptableDspPresetSaveAtPath(struct scriptableItem_s *item, char *path) {
         return -1;
     }
 
-    return 0;
+    if (!rename(temp_path, path)) {
+        return 0;
+    }
+
+    (void)unlink (temp_path);
+
+    return -1;
 }
 
 static int
