@@ -16,7 +16,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface DspPreferencesViewController () <ScriptableNodeEditorCustomButtonsInitializer, ScriptableSelectDelegate>
+@interface DspPreferencesViewController () <ScriptableNodeEditorCustomButtonsInitializer, ScriptableErrorViewer, ScriptableSelectDelegate>
 
 @property (weak) IBOutlet NSView *dspPresetSelectorContainer;
 @property (weak) IBOutlet NSView *dspNodeEditorContainer;
@@ -68,7 +68,7 @@ extern DB_functions_t *deadbeef;
 
     // current dsp chain node list / editor
     self.dspNodeEditorViewController = [[ScriptableNodeEditorViewController alloc] initWithNibName:@"ScriptableNodeEditorView" bundle:nil];
-    self.dspNodeEditorViewController.customButtonsInitializer = self;
+    self.dspNodeEditorViewController.scriptableNodeEditorDelegate = self;
     self.dspNodeEditorViewController.dataSource = self.dspChainDataSource;
     self.dspNodeEditorViewController.delegate = self;
     self.dspNodeEditorViewController.view.frame = _dspNodeEditorContainer.bounds;
@@ -76,11 +76,12 @@ extern DB_functions_t *deadbeef;
 
     self.dspSelectViewController.scriptable = scriptableDspRoot();
     self.dspSelectViewController.scriptableSelectDelegate = self;
+    self.dspSelectViewController.errorViewer = self;
 }
 
 #pragma mark - ScriptableNodeEditorCustomButtonsInitializer
 
-- (void)customButtonsInitializer:(ScriptableNodeEditorViewController *)controller initButtonsInSegmentedControl:(NSSegmentedControl *)segmentedControl {
+- (void)scriptableNodeEditorCustomButtonsInitializer:(ScriptableNodeEditorViewController *)controller initButtonsInSegmentedControl:(NSSegmentedControl *)segmentedControl {
     segmentedControl.segmentCount = 1;
     [segmentedControl setLabel:@"Save as preset" forSegment:0];
     segmentedControl.target = self;
@@ -100,28 +101,34 @@ extern DB_functions_t *deadbeef;
     }];
 }
 
+- (void)displayDuplicateNameError {
+    NSAlert *alert = [NSAlert new];
+    alert.messageText = @"Preset with this name already exists.";
+    alert.informativeText = @"Try a different name.";
+    alert.alertStyle = NSAlertStyleWarning;
+    [alert addButtonWithTitle:@"OK"];
+
+    [alert runModal];
+}
+
+- (void)displayInvalidNameError {
+    NSAlert *alert = [NSAlert new];
+    alert.messageText = @"This name is not allowed.";
+    alert.informativeText = @"Try a different name.";
+    alert.alertStyle = NSAlertStyleWarning;
+    [alert addButtonWithTitle:@"OK"];
+
+    [alert runModal];
+}
+
 - (IBAction)presetNameOK:(id)sender {
     const char *name = self.dspPresetNameTextField.stringValue.UTF8String;
     if (scriptableItemContainsSubItemWithName(scriptableDspRoot(), name)) {
-        // alert
-        NSAlert *alert = [NSAlert new];
-        alert.messageText = @"Preset with this name already exists.";
-        alert.informativeText = @"Try a different name.";
-        alert.alertStyle = NSAlertStyleWarning;
-        [alert addButtonWithTitle:@"OK"];
-
-        [alert runModal];
+        [self displayDuplicateNameError];
         return;
     }
-    if (!scriptableItemIsSubItemAllowed(scriptableDspRoot(), name)) {
-        // alert
-        NSAlert *alert = [NSAlert new];
-        alert.messageText = @"This name is not allowed.";
-        alert.informativeText = @"Try a different name.";
-        alert.alertStyle = NSAlertStyleWarning;
-        [alert addButtonWithTitle:@"OK"];
-
-        [alert runModal];
+    if (!scriptableItemIsSubItemNameAllowed(scriptableDspRoot(), name)) {
+        [self displayInvalidNameError];
         return;
     }
 
@@ -130,6 +137,16 @@ extern DB_functions_t *deadbeef;
 
 - (IBAction)presetNameCancel:(id)sender {
     [self.view.window endSheet:self.dspPresetNamePanel returnCode:NSModalResponseCancel];
+}
+
+#pragma mark - ScriptableErrorViewer
+
+- (void)scriptableErrorViewer:(id)sender duplicateNameErrorForItem:(scriptableItem_t *)item {
+    [self displayDuplicateNameError];
+}
+
+- (void)scriptableErrorViewer:(id)sender invalidNameErrorForItem:(scriptableItem_t *)item {
+    [self displayInvalidNameError];
 }
 
 #pragma mark - ScriptableItemDelegate

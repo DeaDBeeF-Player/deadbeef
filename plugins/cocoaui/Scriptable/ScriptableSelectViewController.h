@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #include "scriptable.h"
 #import "ScriptableTableDataSource.h"
-#import "ScriptableItemDelegate.h"
+#import "ScriptableProtocols.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak) ScriptableTableDataSource *dataSource;
 @property (weak) NSObject<ScriptableItemDelegate> *scriptableItemDelegate;
 @property (weak) NSObject<ScriptableSelectDelegate> *scriptableSelectDelegate;
+@property (weak) NSObject<ScriptableErrorViewer> *errorViewer;
 
 - (void)setScriptable:(scriptableItem_t *)scriptable;
 - (void)reloadData;

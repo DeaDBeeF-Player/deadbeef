@@ -310,7 +310,7 @@ scriptableItemContainsSubItemWithName (scriptableItem_t *item, const char *name)
 }
 
 int
-scriptableItemIsSubItemAllowed (scriptableItem_t *item, const char *name) {
+scriptableItemIsSubItemNameAllowed (scriptableItem_t *item, const char *name) {
     if (item->callbacks && item->callbacks->isSubItemNameAllowed) {
         return item->callbacks->isSubItemNameAllowed (item, name);
     }

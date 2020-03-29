@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PropertySheetViewController.h"
-#import "ScriptableItemDelegate.h"
+#import "ScriptableProtocols.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

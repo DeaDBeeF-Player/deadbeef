@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "ScriptableTableDataSource.h"
-#import "ScriptableItemDelegate.h"
+#import "ScriptableProtocols.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (weak) ScriptableTableDataSource *dataSource;
 @property (weak) NSObject<ScriptableItemDelegate> *delegate;
+@property (weak) NSObject<ScriptableErrorViewer> *errorViewer;
 
 @end
 

@@ -122,7 +122,7 @@ int
 scriptableItemContainsSubItemWithName (scriptableItem_t *item, const char *name);
 
 int
-scriptableItemIsSubItemAllowed (scriptableItem_t *item, const char *name);
+scriptableItemIsSubItemNameAllowed (scriptableItem_t *item, const char *name);
 
 scriptableStringListItem_t *
 scriptableItemFactoryItemNames (struct scriptableItem_s *item);

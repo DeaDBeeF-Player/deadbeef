@@ -28,6 +28,7 @@
     self.nodeEditorViewController = [[ScriptableNodeEditorViewController alloc] initWithNibName:@"ScriptableNodeEditorView" bundle:nil];
     self.nodeEditorViewController.dataSource = self.dataSource;
     self.nodeEditorViewController.delegate = self.delegate;
+    self.nodeEditorViewController.errorViewer = self.errorViewer;
     self.nodeEditorViewController.view.frame = self.nodeEditorViewContainer.bounds;
     [self.nodeEditorViewContainer addSubview:self.nodeEditorViewController.view];
 

@@ -37,11 +37,10 @@
 }
 
 - (void)initNodeEditorWindowController {
-    if (!self.nodeEditorWindowController) {
-        self.nodeEditorWindowController = [[ScriptableNodeEditorWindowController alloc] initWithWindowNibName:@"ScriptableNodeEditorWindow"];
-        self.nodeEditorWindowController.dataSource = self.dataSource;
-        self.nodeEditorWindowController.delegate = self.scriptableItemDelegate;
-    }
+    self.nodeEditorWindowController = [[ScriptableNodeEditorWindowController alloc] initWithWindowNibName:@"ScriptableNodeEditorWindow"];
+    self.nodeEditorWindowController.dataSource = self.dataSource;
+    self.nodeEditorWindowController.delegate = self.scriptableItemDelegate;
+    self.nodeEditorWindowController.errorViewer = self.errorViewer;
 }
 
 - (IBAction)browseButtonAction:(id)sender {

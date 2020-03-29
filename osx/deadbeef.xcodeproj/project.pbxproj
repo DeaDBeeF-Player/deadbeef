@@ -4499,6 +4499,7 @@
 		2D98613D226C814000BAACB1 /* PropertySheetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PropertySheetViewController.m; sourceTree = "<group>"; };
 		2D986140226C815F00BAACB1 /* BrowseButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowseButton.h; sourceTree = "<group>"; };
 		2D986141226C816000BAACB1 /* BrowseButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowseButton.m; sourceTree = "<group>"; };
+		2D999EC32431258700EF68EE /* ScriptableProtocols.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableProtocols.h; sourceTree = "<group>"; };
 		2D9BD6772405A81600C02D60 /* SoundPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SoundPreferencesViewController.h; sourceTree = "<group>"; };
 		2D9BD6782405A81600C02D60 /* SoundPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SoundPreferencesViewController.m; sourceTree = "<group>"; };
 		2D9C0C14238DC0E700CE8C10 /* GroupByCustomWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GroupByCustomWindow.xib; sourceTree = "<group>"; };
@@ -4981,7 +4982,6 @@
 		2DF55C3E2270FCB9002C44DC /* ScriptableNodeEditorViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptableNodeEditorViewController.m; sourceTree = "<group>"; };
 		2DF55C412270FF7E002C44DC /* ScriptablePropertySheetDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptablePropertySheetDataSource.h; sourceTree = "<group>"; };
 		2DF55C422270FF7E002C44DC /* ScriptablePropertySheetDataSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptablePropertySheetDataSource.m; sourceTree = "<group>"; };
-		2DF55C452271006D002C44DC /* ScriptableItemDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableItemDelegate.h; sourceTree = "<group>"; };
 		2DF622B81B335DF400C70C7D /* convpresets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = convpresets; path = plugins/converter/convpresets; sourceTree = "<group>"; };
 		2DF930441AB816DC0030C0CA /* wildmidi.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wildmidi.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DF9304A1AB817310030C0CA /* wildmidi_lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wildmidi_lib.h; sourceTree = "<group>"; };
@@ -8020,7 +8020,7 @@
 		2D9FA3952404526800276E00 /* Scriptable */ = {
 			isa = PBXGroup;
 			children = (
-				2DF55C452271006D002C44DC /* ScriptableItemDelegate.h */,
+				2D999EC32431258700EF68EE /* ScriptableProtocols.h */,
 				2DF55C3D2270FCB9002C44DC /* ScriptableNodeEditorViewController.h */,
 				2DF55C3E2270FCB9002C44DC /* ScriptableNodeEditorViewController.m */,
 				2D651D15227227C300375AE2 /* ScriptableNodeEditorWindowController.h */,

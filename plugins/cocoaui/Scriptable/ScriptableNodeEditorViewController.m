@@ -11,6 +11,8 @@
 #import "ScriptablePropertySheetDataSource.h"
 #import "ScriptableNodeEditorWindowController.h"
 
+#pragma mark - ScriptableNodeEditorViewController
+
 @interface ScriptableNodeEditorViewController () <ScriptableItemDelegate,NSMenuDelegate,NSTableViewDelegate>
 
 @property (unsafe_unretained) IBOutlet NSTableView *nodeList;
@@ -35,8 +37,8 @@
     self.dataSource.delegate = self;
     self.nodeList.dataSource = self.dataSource;
 
-    if (self.customButtonsInitializer) {
-        [self.customButtonsInitializer customButtonsInitializer:self initButtonsInSegmentedControl:self.customButtonsSegmentedControl];
+    if (self.scriptableNodeEditorDelegate) {
+        [self.scriptableNodeEditorDelegate scriptableNodeEditorCustomButtonsInitializer:self initButtonsInSegmentedControl:self.customButtonsSegmentedControl];
         self.customButtonsSegmentedControl.hidden = NO;
     }
 
@@ -265,8 +267,18 @@
     if (row != -1) {
         const char *value = textField.stringValue.UTF8String;
         scriptableItem_t *item = scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)row);
-        scriptableItemSetPropertyValueForKey(item, value, "name");
-        [self.delegate scriptableItemChanged:self.dataSource.scriptable change:ScriptableItemChangeUpdate];
+        if (scriptableItemContainsSubItemWithName (item->parent, value)) {
+            [self.errorViewer scriptableErrorViewer:self duplicateNameErrorForItem:item];
+            [textField becomeFirstResponder];
+        }
+        else if (!scriptableItemIsSubItemNameAllowed (item->parent, value)) {
+            [self.errorViewer scriptableErrorViewer:self invalidNameErrorForItem:item];
+            [textField becomeFirstResponder];
+        }
+        else {
+            scriptableItemSetPropertyValueForKey(item, value, "name");
+            [self.delegate scriptableItemChanged:self.dataSource.scriptable change:ScriptableItemChangeUpdate];
+        }
     }
 }
 
