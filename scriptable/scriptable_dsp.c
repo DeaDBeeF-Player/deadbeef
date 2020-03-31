@@ -134,6 +134,10 @@ scriptableItemLoadDspPreset (scriptableItem_t *preset, const char *fname) {
                 break;
             }
             else if (1 != sscanf (temp, "\t%1000[^\n]\n", value)) {
+                // skip if empty line
+                if (!strcmp (temp, "\n")) {
+                    continue;
+                }
                 fprintf (stderr, "error loading param %d\n", n);
                 goto error;
             }
