@@ -81,11 +81,18 @@
     id<NSTableViewDataSource> ds = _dataSource;
     NSInteger cnt = [ds numberOfRowsInTableView:_nodeList];
     NSInteger index = [_nodeList selectedRow];
-    if (index < 0) {
+    if (cnt == 0) {
+        index = 0;
+    }
+    else if (index < 0) {
         index = cnt;
+    }
+    else {
+        index++;
     }
 
     NSIndexSet *is = [NSIndexSet indexSetWithIndex:index];
+
     [_nodeList beginUpdates];
     [_nodeList insertRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideDown];
     [_dataSource insertItem:node atIndex:index];
@@ -114,8 +121,6 @@
 
     if (t) {
         [self createNodeWithType:t->str];
-
-        // FIXME: start in-place editing
     }
 
     scriptableStringListFree (types);
