@@ -38,7 +38,10 @@ typedef struct {
     int (*removeSubItem)(struct scriptableItem_s *item, struct scriptableItem_s *subItem);
 
     void (*free)(struct scriptableItem_s *item);
+
     void (*save)(struct scriptableItem_s *item);
+
+    char * (*saveToString)(struct scriptableItem_s *item);
 } scriptableCallbacks_t;
 
 typedef struct scriptableItem_s {
@@ -71,6 +74,9 @@ scriptableStringListFree (scriptableStringListItem_t *list);
 
 void
 scriptableItemSave (scriptableItem_t *item);
+
+char *
+scriptableItemSaveToString (scriptableItem_t *item);
 
 unsigned int
 scriptableItemNumChildren (scriptableItem_t *item);

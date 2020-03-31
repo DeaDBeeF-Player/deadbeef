@@ -156,6 +156,9 @@
 		2D026DB21CAC5DE300E27961 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DB11CAC5DE300E27961 /* libiconv.dylib */; };
 		2D026DB61CAC5E0E00E27961 /* VideoDecodeAcceleration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DB51CAC5E0E00E27961 /* VideoDecodeAcceleration.framework */; };
 		2D026DB81CAC5E8100E27961 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DB71CAC5E8100E27961 /* Security.framework */; };
+		2D04C3C02433B0FD003C2AAC /* growableBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D04C3BE2433B0FD003C2AAC /* growableBuffer.h */; };
+		2D04C3CF2433B147003C2AAC /* growableBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D04C3BF2433B0FD003C2AAC /* growableBuffer.c */; };
+		2D04C3D12433B3B9003C2AAC /* GrowableBufferTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D04C3D02433B3B9003C2AAC /* GrowableBufferTests.m */; };
 		2D05A8861B4BE600004C913D /* chanmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D05A8371B4BE600004C913D /* chanmap.h */; };
 		2D05A8871B4BE600004C913D /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D05A8381B4BE600004C913D /* common.h */; };
 		2D05A8891B4BE600004C913D /* ima_oki_adpcm.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D05A83A1B4BE600004C913D /* ima_oki_adpcm.h */; };
@@ -3389,6 +3392,9 @@
 		2D026DB31CAC5DEC00E27961 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
 		2D026DB51CAC5E0E00E27961 /* VideoDecodeAcceleration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoDecodeAcceleration.framework; path = System/Library/Frameworks/VideoDecodeAcceleration.framework; sourceTree = SDKROOT; };
 		2D026DB71CAC5E8100E27961 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		2D04C3BE2433B0FD003C2AAC /* growableBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = growableBuffer.h; sourceTree = "<group>"; };
+		2D04C3BF2433B0FD003C2AAC /* growableBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = growableBuffer.c; sourceTree = "<group>"; };
+		2D04C3D02433B3B9003C2AAC /* GrowableBufferTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GrowableBufferTests.m; sourceTree = "<group>"; };
 		2D05A8291B4BE59D004C913D /* sndfile.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = sndfile.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D05A8311B4BE5BC004C913D /* libsndfilelib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsndfilelib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D05A8371B4BE600004C913D /* chanmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = chanmap.h; path = "osx/deps/libsndfile-1.0.25/src/chanmap.h"; sourceTree = "<group>"; };
@@ -7992,6 +7998,8 @@
 				2DEBA1BE23E203B9000E4135 /* eqpreset.c */,
 				2DA30E5E2402D1B1001BAB8A /* ctmap.h */,
 				2DA30E5F2402D1B1001BAB8A /* ctmap.c */,
+				2D04C3BE2433B0FD003C2AAC /* growableBuffer.h */,
+				2D04C3BF2433B0FD003C2AAC /* growableBuffer.c */,
 			);
 			path = shared;
 			sourceTree = "<group>";
@@ -8235,6 +8243,7 @@
 				2D0A6B0A2376E12200252E6D /* TrackSwitchingTests.m */,
 				2D15721523785BD900985E47 /* VfsCurlTests.m */,
 				2DA04EF123B6A81A0070AC01 /* ShellexecTests.m */,
+				2D04C3D02433B3B9003C2AAC /* GrowableBufferTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -11115,6 +11124,7 @@
 				2DA30B7F23F1C9A3003D22E3 /* PropertySheetContentView.h in Headers */,
 				2DB2F73F240466AF00F7C000 /* PluginsPreferencesViewController.h in Headers */,
 				2DA2259F23F041B00033F411 /* DesignableViewController.h in Headers */,
+				2D04C3C02433B0FD003C2AAC /* growableBuffer.h in Headers */,
 				2D986142226C816000BAACB1 /* BrowseButton.h in Headers */,
 				2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */,
 			);
@@ -12971,6 +12981,7 @@
 				2D01D7DF1AB2219C00BCD3C4 /* premix.c in Sources */,
 				2D01D7DC1AB2219C00BCD3C4 /* plmeta.c in Sources */,
 				2D01D7D51AB2219C00BCD3C4 /* dsppreset.c in Sources */,
+				2D04C3CF2433B147003C2AAC /* growableBuffer.c in Sources */,
 				2D01D7E01AB2219C00BCD3C4 /* replaygain.c in Sources */,
 				2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */,
 				2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */,
@@ -13960,6 +13971,7 @@
 				2DE7A8FB1CA493CE00318A9F /* CuesheetTests.m in Sources */,
 				4D6CF18D20EB788A00811034 /* MP3DecoderTests.m in Sources */,
 				4D90AAFF20EA5CA500D13537 /* DDBTestInitializer.m in Sources */,
+				2D04C3D12433B3B9003C2AAC /* GrowableBufferTests.m in Sources */,
 				2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */,
 				2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */,
 				2D15721623785BD900985E47 /* VfsCurlTests.m in Sources */,

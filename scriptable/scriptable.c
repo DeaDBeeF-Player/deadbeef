@@ -30,6 +30,15 @@ scriptableItemSave (scriptableItem_t *item) {
     }
 }
 
+char *
+scriptableItemSaveToString (scriptableItem_t *item) {
+    if (item->callbacks && item->callbacks->saveToString) {
+        return item->callbacks->saveToString (item);
+    }
+    return NULL;
+}
+
+
 scriptableStringListItem_t *
 scriptableStringListItemAlloc (void) {
     return calloc (1, sizeof (scriptableStringListItem_t));
