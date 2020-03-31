@@ -97,11 +97,9 @@ _("Set samplerate directly");
 _("Quality / Algorithm");
 // plugins/dumb/cdumb.c
 // xgettext:no-c-format
-_("Resampling quality (0..5, higher is better)");
+_("Resampling quality");
 // xgettext:no-c-format
-_("8-bit output (default is 16)");
-// xgettext:no-c-format
-_("Internal DUMB volume (0..128)");
+_("Internal DUMB volume");
 // xgettext:no-c-format
 _("Volume ramping");
 // xgettext:no-c-format
@@ -110,11 +108,18 @@ _("None");
 _("On/Off Only");
 // xgettext:no-c-format
 _("Full");
+// xgettext:no-c-format
+_("8-bit output");
 // plugins/ffmpeg/ffmpeg.c
 // xgettext:no-c-format
 _("Use all extensions supported by ffmpeg");
 // xgettext:no-c-format
 _("File Extensions (separate with ';')");
+// plugins/flac/flac.c
+// xgettext:no-c-format
+_("Ignore bad header errors");
+// xgettext:no-c-format
+_("Ignore unparsable stream errors");
 // plugins/gme/cgme.c
 // xgettext:no-c-format
 _("Max song length (in minutes)");
@@ -135,6 +140,8 @@ _("Scan Selection As Albums (By Tags)");
 _("Scan Selection As Single Album");
 // xgettext:no-c-format
 _("Scan Per-file Track Gain");
+// xgettext:no-c-format
+_("Scan Per-file Track Gain If Not Scanned");
 // xgettext:no-c-format
 _("Edit");
 // xgettext:no-c-format
@@ -229,8 +236,6 @@ _("Ask confirmation to delete files from disk");
 _("Status icon volume control sensitivity");
 // xgettext:no-c-format
 _("Custom status icon");
-// xgettext:no-c-format
-_("Run gtk_init with --sync (debug mode)");
 // xgettext:no-c-format
 _("Add separators between plugin context menu items");
 // xgettext:no-c-format
@@ -404,7 +409,7 @@ _("Highlight current playlist");
 _("Play on double-click");
 // plugins/portaudio/portaudio.c
 // xgettext:no-c-format
-_("Buffer size (-1 to use optimal value choosen by portaudio)");
+_("Buffer size (-1 to use optimal value chosen by portaudio)");
 // xgettext:no-c-format
 _("Device name encoding");
 // xgettext:no-c-format
@@ -443,48 +448,30 @@ _("Full path to Songlengths.md5/.txt");
 // xgettext:no-c-format
 _("Bits per sample");
 // xgettext:no-c-format
-_("Mono synth");
-// xgettext:no-c-format
 _("Default song length (sec)");
+// xgettext:no-c-format
+_("Mono synth");
 // plugins/supereq/supereq.c
 // xgettext:no-c-format
 _("Preamp");
 // xgettext:no-c-format
-_("55 Hz");
+_("1.2K");
 // xgettext:no-c-format
-_("77 Hz");
+_("1.8K");
 // xgettext:no-c-format
-_("110 Hz");
+_("2.5K");
 // xgettext:no-c-format
-_("156 Hz");
+_("3.5K");
 // xgettext:no-c-format
-_("220 Hz");
+_("5K");
 // xgettext:no-c-format
-_("311 Hz");
+_("7K");
 // xgettext:no-c-format
-_("440 Hz");
+_("10K");
 // xgettext:no-c-format
-_("622 Hz");
+_("14K");
 // xgettext:no-c-format
-_("880 Hz");
-// xgettext:no-c-format
-_("1.2 kHz");
-// xgettext:no-c-format
-_("1.8 kHz");
-// xgettext:no-c-format
-_("2.5 kHz");
-// xgettext:no-c-format
-_("3.5 kHz");
-// xgettext:no-c-format
-_("5 kHz");
-// xgettext:no-c-format
-_("7 kHz");
-// xgettext:no-c-format
-_("10 kHz");
-// xgettext:no-c-format
-_("14 kHz");
-// xgettext:no-c-format
-_("20 kHz");
+_("20K");
 // plugins/vfs_curl/vfs_curl.c
 // xgettext:no-c-format
 _("Enable logging");
