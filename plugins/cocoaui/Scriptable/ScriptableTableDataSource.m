@@ -73,20 +73,26 @@ extern DB_functions_t *deadbeef;
 #pragma mark NSTableViewDataSource Drag & Drop
 
 - (id <NSPasteboardWriting>)tableView:(NSTableView *)tableView pasteboardWriterForRow:(NSInteger)row {
-    if (!self.scriptable->callbacks->isReorderable) {
+    if (!self.scriptable->callbacks || !self.scriptable->callbacks->isReorderable) {
         return nil;
     }
-    NSString *identifier = [NSString stringWithFormat:@"%d", (int)row];
+    scriptableItem_t *item = scriptableItemChildAtIndex(self.scriptable, (unsigned int)row);
+    if (!item) {
+        return nil;
+    }
+
+    NSMutableDictionary *plist = [NSMutableDictionary new];
+    plist[@"sourceRowIndex"] = @(row);
 
     NSPasteboardItem *pboardItem = [NSPasteboardItem new];
-    [pboardItem setString:identifier forType: self.pasteboardItemIdentifier];
+    [pboardItem setPropertyList:plist forType:self.pasteboardItemIdentifier];
 
     return pboardItem;
 }
 
 - (NSDragOperation)tableView:(NSTableView *)tableView validateDrop:(id<NSDraggingInfo>)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)dropOperation {
 
-    BOOL canDrag = row >= 0;
+    BOOL canDrag = row >= 0 && info.draggingSource == tableView;
 
     if (canDrag) {
         return NSDragOperationMove;
@@ -98,18 +104,30 @@ extern DB_functions_t *deadbeef;
 - (BOOL)tableView:(NSTableView *)tableView acceptDrop:(id<NSDraggingInfo>)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)dropOperation {
 
     NSPasteboard *p = [info draggingPasteboard];
-    NSInteger sourceRow = [[p stringForType:self.pasteboardItemIdentifier] intValue];
 
-    if (sourceRow == row || sourceRow >= [self numberOfRowsInTableView:tableView] || sourceRow < 0) {
+    NSDictionary *pboardPList = [p propertyListForType:self.pasteboardItemIdentifier];
+    NSNumber *rowIndexNum = pboardPList[@"sourceRowIndex"];
+    NSInteger sourceRowIndex = -1;
+    if (rowIndexNum) {
+        sourceRowIndex = rowIndexNum.intValue;
+    }
+    else {
+        return NO;
+    }
+
+
+    // move to new position
+    if (sourceRowIndex == row || sourceRowIndex >= [self numberOfRowsInTableView:tableView] || sourceRowIndex < 0) {
         return NO;
     }
 
     // fetch and remove list item
-    if (row > sourceRow) {
+    if (row > sourceRowIndex) {
         row--;
     }
 
-    scriptableItem_t *node = scriptableItemChildAtIndex(self.scriptable, (unsigned int)sourceRow);
+    scriptableItem_t *node = scriptableItemChildAtIndex(self.scriptable, (unsigned int)sourceRowIndex);
+
     scriptableItemRemoveSubItem(self.scriptable, node);
 
     // reinsert the node at new position
@@ -118,7 +136,7 @@ extern DB_functions_t *deadbeef;
     [self.delegate scriptableItemChanged:self.scriptable change:ScriptableItemChangeCreate];
 
     [tableView beginUpdates];
-    [tableView moveRowAtIndex:sourceRow toIndex:row];
+    [tableView moveRowAtIndex:sourceRowIndex toIndex:row];
     [tableView endUpdates];
 
     return YES;

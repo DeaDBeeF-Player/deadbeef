@@ -169,6 +169,8 @@ dspPluginForId (const char *pluginId) {
 static scriptableItem_t *
 scriptableDspCreateItemOfType (scriptableItem_t *root, const char *type) {
     scriptableItem_t *item = scriptableItemAlloc();
+    item->type = "DSPNode";
+
     scriptableItemSetPropertyValueForKey(item, type, "pluginId");
     item->callbacks = &scriptableDspNodeCallbacks;
 

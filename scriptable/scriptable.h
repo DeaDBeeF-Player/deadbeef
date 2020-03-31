@@ -53,6 +53,7 @@ typedef struct scriptableItem_s {
     struct scriptableItem_s *childrenTail;
 
     int isLoading; // prevent calling hooks while loading data
+    const char *type; // the type name, as used by scriptableItemCreateItemOfType
 
     scriptableCallbacks_t *callbacks;
 } scriptableItem_t;
