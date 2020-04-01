@@ -251,6 +251,13 @@ scriptableItemPropertyValueForKey (scriptableItem_t *item, const char *key) {
     return NULL;
 }
 
+static void
+scriptableItemPropertyValueChangedForKey (scriptableItem_t *item, const char *key) {
+    if (item->callbacks && item->callbacks->propertyValueChangedForKey) {
+        item->callbacks->propertyValueChangedForKey (item, key);
+    }
+}
+
 void
 scriptableItemSetPropertyValueForKey (scriptableItem_t *item, const char *value, const char *key) {
     scriptableKeyValue_t *prev = NULL;
@@ -270,6 +277,7 @@ scriptableItemSetPropertyValueForKey (scriptableItem_t *item, const char *value,
                     keyValuePairFree (p);
                 }
             }
+            scriptableItemPropertyValueChangedForKey (item, key);
             scriptableItemUpdate(item);
             return;
         }

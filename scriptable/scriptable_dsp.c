@@ -47,9 +47,14 @@ isPresetNameAllowed (scriptableItem_t *preset, const char *name);
 static char *
 scriptableDspPresetNodeSaveToString (scriptableItem_t *item);
 
+static void
+scriptableDspPresetNodePropertyValueChangedForKey (struct scriptableItem_s *item, const char *key);
+
+
 static scriptableCallbacks_t
 scriptableDspNodeCallbacks = {
-    .saveToString = scriptableDspPresetNodeSaveToString
+    .saveToString = scriptableDspPresetNodeSaveToString,
+    .propertyValueChangedForKey = scriptableDspPresetNodePropertyValueChangedForKey,
 };
 
 static scriptableCallbacks_t
@@ -193,6 +198,29 @@ scriptableDspCreateItemOfType (scriptableItem_t *root, const char *type) {
     return item;
 }
 
+static void
+scriptableDspPresetNodePropertyValueChangedForKey (struct scriptableItem_s *item, const char *key) {
+    if (!item->parent) {
+        return;
+    }
+
+    const char *parentName = scriptableItemPropertyValueForKey(item->parent, "name");
+    if (parentName) {
+        return; // not the current DSP chain
+    }
+
+    ddb_dsp_context_t *chain = deadbeef->streamer_get_dsp_chain ();
+
+    for (scriptableItem_t *node = item->parent->children; node; node = node->next) {
+        if (node == item) {
+            int param = atoi (key);
+            const char *value = scriptableItemPropertyValueForKey(item, key);
+            chain->plugin->set_param (chain, param, value);
+            break;
+        }
+        chain = chain->next;
+    }
+}
 
 
 static char *
@@ -282,6 +310,8 @@ static int
 scriptableDspPresetUpdateItem (scriptableItem_t *item) {
     const char *presetName = scriptableItemPropertyValueForKey (item, "name");
     if (!presetName) {
+        // find the corresponding node in the current dsp chain, and update
+
         return -1;
     }
 
