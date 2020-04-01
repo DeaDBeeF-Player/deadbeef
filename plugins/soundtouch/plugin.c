@@ -118,15 +118,23 @@ st_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxframes,
     st_set_sample_rate (st->st, fmt->samplerate);
     st_set_channels (st->st, fmt->channels);
 
+    static int consumed = 0;
+    static int produced = 0;
+
+    consumed += nframes;
+
     st_put_samples (st->st, samples, nframes);
     int nout = 0;
     int n = 0;
     do {
         n = st_receive_samples (st->st, samples, maxframes);
+        produced += n;
         maxframes -= n;
         samples += n * fmt->channels;
         nout += n;
     } while (n != 0);
+
+    printf ("soundtouch: %d %d\n", consumed, produced);
 
     return nout;
 }
@@ -250,7 +258,7 @@ st_get_param (ddb_dsp_context_t *ctx, int p, char *val, int sz) {
 }
 
 static const char settings_dlg[] =
-    "property \"Tempo Change (%)\" spinbtn[-200,200,1] 0 0;\n"
+    "property \"Tempo Change (%)\" spinbtn[-100,200,1] 0 0;\n"
     "property \"Pitch Change (semi-tones)\" spinbtn[-24,24,0.0000001] 1 0;\n"
     "property \"Playback Rate Change (%)\" spinbtn[-200,200,1] 2 0;\n"
     "property \"Absolute Samplerate (overrides Rate Change if nonzero)\" spinbtn[0,192000,1] 8 0;\n"
