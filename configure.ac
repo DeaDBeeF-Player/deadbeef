@@ -133,6 +133,7 @@ AC_ARG_ENABLE(sc68, [AS_HELP_STRING([--enable-sc68     ], [build sc68 Atari ST a
 AC_ARG_ENABLE(abstract_socket, [AS_HELP_STRING([--enable-abstract-socket      ], [use abstract UNIX socket for IPC (default: disabled)])], [enable_abstract_socket=$enableval], [enable_abstract_socket=no])
 dnl AC_ARG_ENABLE(statusnotifier, [AS_HELP_STRING([--enable-statusnotifier], [KDE status notifier plugin for tray icon (default: disabled)])], [enable_statusnotifier=$enableval], [enable_statusnotifier=no])
 AC_ARG_ENABLE(rgscanner, [AS_HELP_STRING([--disable-rgscanner], [build ReplayGain scanner plugin (default: enabled)])], [enable_rgscanner=$enableval], [enable_rgscanner=yes])
+AC_ARG_ENABLE(soundtouch,   [AS_HELP_STRING([--disable-soundtouch  ], [disable soundtouch plugin (default: enabled)])], [enable_soundtouch=$enableval], [enable_soundtouch=yes])
 
 AS_IF([test "${enable_staticlink}" != "no"], [
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
@@ -822,7 +823,11 @@ AS_IF([test "${enable_rgscanner}" != "no"], [
     HAVE_RGSCANNER=yes
 ])
 
-PLUGINS_DIRS="plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/opus plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/rg_scanner"
+AS_IF([test "${enable_soundtouch}" != "no"], [
+    HAVE_SOUNDTOUCH=yes
+])
+
+PLUGINS_DIRS="plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/opus plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/rg_scanner plugins/soundtouch"
 
 AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
@@ -891,6 +896,7 @@ AM_CONDITIONAL(USE_ABSTRACT_SOCKET_NAME, test "x$USE_ABSTRACT_SOCKET_NAME" = "xy
 AM_CONDITIONAL(HAVE_SSE2, test "${HAVE_SSE2}")
 dnl AM_CONDITIONAL(HAVE_STATUSNOTIFIER, test "x$HAVE_STATUSNOTIFIER" = "xyes")
 AM_CONDITIONAL(HAVE_RGSCANNER, test "x$HAVE_RGSCANNER" = "xyes")
+AM_CONDITIONAL(HAVE_SOUNDTOUCH, test "x$HAVE_SOUNDTOUCH" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
@@ -948,6 +954,7 @@ plugins/pltbrowser/Makefile
 plugins/sc68/Makefile
 plugins/coreaudio/Makefile
 plugins/rg_scanner/Makefile
+plugins/soundtouch/Makefile
 po/Makefile.in
 deadbeef.desktop
 ])
@@ -976,57 +983,58 @@ AC_DEFUN([PRINT_PLUGIN_INFO],
     ]
 )
 
-PRINT_PLUGIN_INFO([stdio],[Standard IO plugin],[true])
-PRINT_PLUGIN_INFO([gme],[chiptune music player based on GME],[test "x$HAVE_GME" = "xyes"])
-PRINT_PLUGIN_INFO([nullout],[NULL output],[test "x$HAVE_NULLOUT" = "xyes"])
+PRINT_PLUGIN_INFO([aac],[AAC player (m4a, aac, mp4) based on FAAD2],[test "x$HAVE_AAC" = "xyes"])
+PRINT_PLUGIN_INFO([adplug],[adplug player (OPL2/OPL3 emulation)],[test "x$HAVE_ADPLUG" = "xyes"])
+PRINT_PLUGIN_INFO([alac],[ALAC plugin],[test "x$HAVE_ALAC" = "xyes"])
 PRINT_PLUGIN_INFO([alsa],[ALSA output],[test "x$HAVE_ALSA" = "xyes"])
-PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$HAVE_OSS" = "xyes"])
-PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test "x$HAVE_PULSEPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([artwork],[Cover art plugin],[test "x$HAVE_ARTWORK" = "xyes"])
+PRINT_PLUGIN_INFO([cdda],[cd audio player],[test "x$HAVE_CDDAPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([converter],[plugin for converting files to any formats],[test "x$HAVE_CONVERTER" = "xyes"])
 PRINT_PLUGIN_INFO([coreaudio],[CoreAudio output plugin],[test "x$HAVE_COREAUDIO" = "xyes"])
-PRINT_PLUGIN_INFO([sid],[SID player based on libsidplay2],[test "x$HAVE_SID" = "xyes"])
+PRINT_PLUGIN_INFO([dca],[libdca (DTS Audio) player plugin],[test "x$HAVE_DCA" = "xyes"])
+PRINT_PLUGIN_INFO([dsp_src],[High quality samplerate conversion using libsamplerate],[test "x$HAVE_DSP_SRC" = "xyes"])
+PRINT_PLUGIN_INFO([dumb],[DUMB module plugin, for MOD, S3M, etc],[test "x$HAVE_DUMB" = "xyes"])
 PRINT_PLUGIN_INFO([ffap],[Monkey's audio (APE) decoder],[test "x$HAVE_FFAP" = "xyes"])
+PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test "x$HAVE_FFMPEGPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([flac],[flac player],[test "x$HAVE_FLACPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([gme],[chiptune music player based on GME],[test "x$HAVE_GME" = "xyes"])
+PRINT_PLUGIN_INFO([gtkui3],[GTK3 user interface],[test "x$HAVE_GTK3" = "xyes"])
+PRINT_PLUGIN_INFO([gtkui],[GTK2 user interface],[test "x$HAVE_GTK2" = "xyes"])
+PRINT_PLUGIN_INFO([hotkeys],[Local and global hotkeys support],[test "x$HAVE_HOTKEYS" = "xyes"])
 PRINT_PLUGIN_INFO([lastfm],[last.fm scrobbler],[test "x$HAVE_LASTFM" = "xyes"])
+PRINT_PLUGIN_INFO([m3u],[M3U and PLS playlist support],[test "x$HAVE_M3U" = "xyes"])
+PRINT_PLUGIN_INFO([mms],[mms streaming support],[test "x$HAVE_MMS" = "xyes"])
+PRINT_PLUGIN_INFO([mono2stereo],[mono2stereo DSP plugin],[test "x$HAVE_MONO2STEREO" = "xyes"])
 PRINT_PLUGIN_INFO([mp3],[mp3 plugin],[test "x$HAVE_MP3" = "xyes"])
 PRINT_PLUGIN_INFO([    libmad],[libmad backend for mp3 plugin],[test "x$HAVE_LIBMAD" = "xyes"])
 PRINT_PLUGIN_INFO([    libmpg123],[libmpg123 backend for mp3 plugin],[test "x$HAVE_LIBMPG123" = "xyes"])
-PRINT_PLUGIN_INFO([vorbis],[ogg vorbis player],[test "x$HAVE_VORBISPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([opus],[ogg opus player],[test "x$HAVE_OPUSPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([flac],[flac player],[test "x$HAVE_FLACPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([wavpack],[wavpack player],[test "x$HAVE_WAVPACKPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([sndfile],[PCM (wav,aiff,etc) player based on libsndfile],[test "x$HAVE_SNDFILEPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([vtx],[vtx file player (ay8910/12 emulation)],[test "x$HAVE_VTX" = "xyes"])
-PRINT_PLUGIN_INFO([adplug],[adplug player (OPL2/OPL3 emulation)],[test "x$HAVE_ADPLUG" = "xyes"])
-PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test "x$HAVE_VFS_CURL" = "xyes"])
-PRINT_PLUGIN_INFO([cdda],[cd audio player],[test "x$HAVE_CDDAPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([gtkui],[GTK2 user interface],[test "x$HAVE_GTK2" = "xyes"])
-PRINT_PLUGIN_INFO([gtkui3],[GTK3 user interface],[test "x$HAVE_GTK3" = "xyes"])
-PRINT_PLUGIN_INFO([hotkeys],[Local and global hotkeys support],[test "x$HAVE_HOTKEYS" = "xyes"])
-PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test "x$HAVE_FFMPEGPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([artwork],[Cover art plugin],[test "x$HAVE_ARTWORK" = "xyes"])
-PRINT_PLUGIN_INFO([supereq],[Equalizer based on Super EQ library by Naoki Shibata],[test "x$HAVE_SUPEREQ" = "xyes"])
+PRINT_PLUGIN_INFO([musepack],[musepack player plugin],[test "x$HAVE_MUSEPACK" = "xyes"])
 PRINT_PLUGIN_INFO([notify],[notification-daemon support plugin],[test "x$HAVE_NOTIFY" = "xyes"])
+PRINT_PLUGIN_INFO([nullout],[NULL output],[test "x$HAVE_NULLOUT" = "xyes"])
+PRINT_PLUGIN_INFO([opus],[ogg opus player],[test "x$HAVE_OPUSPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$HAVE_OSS" = "xyes"])
+PRINT_PLUGIN_INFO([pltbrowser],[playlist browser gui plugin],[test "x$HAVE_PLTBROWSER" = "xyes"])
+PRINT_PLUGIN_INFO([psf],[PSF player, using Audio Overload SDK],[test "x$HAVE_PSF" = "xyes"])
+PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test "x$HAVE_PULSEPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([rgscanner],[plugin for ReplayGain scanner support],[test "x$HAVE_RGSCANNER" = "xyes"])
+PRINT_PLUGIN_INFO([sc68],[sc68 Atari ST And Amiga player],[test "x$HAVE_SC68" = "xyes"])
 PRINT_PLUGIN_INFO([shellexec],[shell commands plugin],[test "x$HAVE_SHELLEXEC" = "xyes"])
 PRINT_PLUGIN_INFO([shellexecui],[GTK user interface for setting up shellexec plugin],[test "x$HAVE_SHELLEXECUI" = "xyes"])
-PRINT_PLUGIN_INFO([musepack],[musepack player plugin],[test "x$HAVE_MUSEPACK" = "xyes"])
-PRINT_PLUGIN_INFO([wildmidi],[WildMidi player plugin],[test "x$HAVE_WILDMIDI" = "xyes"])
-PRINT_PLUGIN_INFO([tta],[TTA player plugin],[test "x$HAVE_TTA" = "xyes"])
-PRINT_PLUGIN_INFO([dca],[libdca (DTS Audio) player plugin],[test "x$HAVE_DCA" = "xyes"])
-PRINT_PLUGIN_INFO([aac],[AAC player (m4a, aac, mp4) based on FAAD2],[test "x$HAVE_AAC" = "xyes"])
-PRINT_PLUGIN_INFO([mms],[mms streaming support],[test "x$HAVE_MMS" = "xyes"])
-PRINT_PLUGIN_INFO([dsp_src],[High quality samplerate conversion using libsamplerate],[test "x$HAVE_DSP_SRC" = "xyes"])
-PRINT_PLUGIN_INFO([m3u],[M3U and PLS playlist support],[test "x$HAVE_M3U" = "xyes"])
-PRINT_PLUGIN_INFO([vfs_zip],[zip archive support],[test "x$HAVE_VFS_ZIP" = "xyes"])
-PRINT_PLUGIN_INFO([converter],[plugin for converting files to any formats],[test "x$HAVE_CONVERTER" = "xyes"])
-dnl PRINT_PLUGIN_INFO([medialib],[media library support plugin],[test "x$HAVE_MEDIALIB" = "xyes"])
-PRINT_PLUGIN_INFO([psf],[PSF player, using Audio Overload SDK],[test "x$HAVE_PSF" = "xyes"])
-PRINT_PLUGIN_INFO([dumb],[DUMB module plugin, for MOD, S3M, etc],[test "x$HAVE_DUMB" = "xyes"])
 PRINT_PLUGIN_INFO([shn],[SHN plugin based on xmms-shn],[test "x$HAVE_SHN" = "xyes"])
-PRINT_PLUGIN_INFO([mono2stereo],[mono2stereo DSP plugin],[test "x$HAVE_MONO2STEREO" = "xyes"])
-PRINT_PLUGIN_INFO([alac],[ALAC plugin],[test "x$HAVE_ALAC" = "xyes"])
+PRINT_PLUGIN_INFO([sid],[SID player based on libsidplay2],[test "x$HAVE_SID" = "xyes"])
+PRINT_PLUGIN_INFO([sndfile],[PCM (wav,aiff,etc) player based on libsndfile],[test "x$HAVE_SNDFILEPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([soundtouch],[SoundTouch plugin used for time stretching and pitch shifting],[test "x$HAVE_SOUNDTOUCH" = "xyes"])
+PRINT_PLUGIN_INFO([stdio],[Standard IO plugin],[true])
+PRINT_PLUGIN_INFO([supereq],[Equalizer based on Super EQ library by Naoki Shibata],[test "x$HAVE_SUPEREQ" = "xyes"])
+PRINT_PLUGIN_INFO([tta],[TTA player plugin],[test "x$HAVE_TTA" = "xyes"])
+PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test "x$HAVE_VFS_CURL" = "xyes"])
+PRINT_PLUGIN_INFO([vfs_zip],[zip archive support],[test "x$HAVE_VFS_ZIP" = "xyes"])
+PRINT_PLUGIN_INFO([vorbis],[ogg vorbis player],[test "x$HAVE_VORBISPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([vtx],[vtx file player (ay8910/12 emulation)],[test "x$HAVE_VTX" = "xyes"])
+PRINT_PLUGIN_INFO([wavpack],[wavpack player],[test "x$HAVE_WAVPACKPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([wildmidi],[WildMidi player plugin],[test "x$HAVE_WILDMIDI" = "xyes"])
 PRINT_PLUGIN_INFO([wma],[WMA plugin],[test "x$HAVE_WMA" = "xyes"])
-PRINT_PLUGIN_INFO([pltbrowser],[playlist browser gui plugin],[test "x$HAVE_PLTBROWSER" = "xyes"])
-PRINT_PLUGIN_INFO([sc68],[sc68 Atari ST And Amiga player],[test "x$HAVE_SC68" = "xyes"])
+dnl PRINT_PLUGIN_INFO([medialib],[media library support plugin],[test "x$HAVE_MEDIALIB" = "xyes"])
 dnl PRINT_PLUGIN_INFO([statusnotifier],[plugin for KDE tray icon support],[test "x$HAVE_STATUSNOTIFIER" = "xyes"])
-PRINT_PLUGIN_INFO([rgscanner],[plugin for ReplayGain scanner support],[test "x$HAVE_RGSCANNER" = "xyes"])
 
 echo
