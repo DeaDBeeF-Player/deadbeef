@@ -253,12 +253,9 @@
 		2D00F6EE2435342A000FC130 /* tarray.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F67B2435342A000FC130 /* tarray.c */; };
 		2D00F6EF2435342A000FC130 /* sampbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F67C2435342A000FC130 /* sampbuf.c */; };
 		2D00F6F02435342A000FC130 /* resample.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F67D2435342A000FC130 /* resample.c */; };
-		2D00F6F12435342A000FC130 /* resamp3.inc in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F67E2435342A000FC130 /* resamp3.inc */; };
-		2D00F6F22435342A000FC130 /* resamp2.inc in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F67F2435342A000FC130 /* resamp2.inc */; };
 		2D00F6F32435342A000FC130 /* silence.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F6802435342A000FC130 /* silence.c */; };
 		2D00F6F42435342A000FC130 /* lpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F6812435342A000FC130 /* lpc.c */; };
 		2D00F6F52435342A000FC130 /* riff.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F6822435342A000FC130 /* riff.c */; };
-		2D00F6F62435342A000FC130 /* resample.inc in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F6832435342A000FC130 /* resample.inc */; };
 		2D00F6F72435342A000FC130 /* umr.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D00F6842435342A000FC130 /* umr.h */; };
 		2D00F85D24353550000FC130 /* gmewrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F6F92435354F000FC130 /* gmewrap.cpp */; };
 		2D00F85E24353550000FC130 /* cgme.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F6FC2435354F000FC130 /* cgme.c */; };
@@ -687,7 +684,6 @@
 		2D00FE17243538BB000FC130 /* htk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00FD47243538BA000FC130 /* htk.c */; };
 		2D00FE18243538BB000FC130 /* macbinary3.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00FD48243538BA000FC130 /* macbinary3.c */; };
 		2D00FE19243538BB000FC130 /* wve.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00FD49243538BA000FC130 /* wve.c */; };
-		2D00FE1A243538BB000FC130 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 2D00FD4A243538BA000FC130 /* Makefile */; };
 		2D00FE1B243538BB000FC130 /* test_main.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D00FD4B243538BA000FC130 /* test_main.h */; };
 		2D00FE1C243538BB000FC130 /* ima_adpcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00FD4C243538BA000FC130 /* ima_adpcm.c */; };
 		2D00FE1D243538BB000FC130 /* paf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00FD4D243538BA000FC130 /* paf.c */; };
@@ -4080,7 +4076,6 @@
 		2D00FD47243538BA000FC130 /* htk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = htk.c; sourceTree = "<group>"; };
 		2D00FD48243538BA000FC130 /* macbinary3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = macbinary3.c; sourceTree = "<group>"; };
 		2D00FD49243538BA000FC130 /* wve.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wve.c; sourceTree = "<group>"; };
-		2D00FD4A243538BA000FC130 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		2D00FD4B243538BA000FC130 /* test_main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test_main.h; sourceTree = "<group>"; };
 		2D00FD4C243538BA000FC130 /* ima_adpcm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ima_adpcm.c; sourceTree = "<group>"; };
 		2D00FD4D243538BA000FC130 /* paf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = paf.c; sourceTree = "<group>"; };
@@ -7614,7 +7609,6 @@
 				2D00FD47243538BA000FC130 /* htk.c */,
 				2D00FD48243538BA000FC130 /* macbinary3.c */,
 				2D00FD49243538BA000FC130 /* wve.c */,
-				2D00FD4A243538BA000FC130 /* Makefile */,
 				2D00FD4B243538BA000FC130 /* test_main.h */,
 				2D00FD4C243538BA000FC130 /* ima_adpcm.c */,
 				2D00FD4D243538BA000FC130 /* paf.c */,
@@ -13891,7 +13885,6 @@
 				2D00FE0D243538BB000FC130 /* strings.c in Sources */,
 				2D00FE1C243538BB000FC130 /* ima_adpcm.c in Sources */,
 				2D00FE4E243538BB000FC130 /* add.c in Sources */,
-				2D00FE1A243538BB000FC130 /* Makefile in Sources */,
 				2D00FE5C243538BB000FC130 /* wav.c in Sources */,
 				2D00FE1E243538BB000FC130 /* test_broadcast_var.c in Sources */,
 				2D00FE36243538BB000FC130 /* dwd.c in Sources */,
@@ -15160,7 +15153,6 @@
 				2D00F69C2435342A000FC130 /* register.c in Sources */,
 				2D00F6C52435342A000FC130 /* loads3m.c in Sources */,
 				2D00F6B52435342A000FC130 /* readmod.c in Sources */,
-				2D00F6F12435342A000FC130 /* resamp3.inc in Sources */,
 				2D00F6D62435342A000FC130 /* readpsm.c in Sources */,
 				2D00F6AF2435342A000FC130 /* readstm.c in Sources */,
 				2D00F6AA2435342A000FC130 /* loadptm.c in Sources */,
@@ -15226,13 +15218,11 @@
 				2D00F6AB2435342A000FC130 /* loadpsm2.c in Sources */,
 				2D00F6EC2435342A000FC130 /* barray.c in Sources */,
 				2D00F6BE2435342A000FC130 /* loadasy.c in Sources */,
-				2D00F6F22435342A000FC130 /* resamp2.inc in Sources */,
 				2D00F69A2435342A000FC130 /* makeduh.c in Sources */,
 				2D00F6EF2435342A000FC130 /* sampbuf.c in Sources */,
 				2D00F6D12435342A000FC130 /* loadmtm.c in Sources */,
 				2D00F6872435342A000FC130 /* unrealfmtdata.cpp in Sources */,
 				2D00F6DF2435342A000FC130 /* loadpsm.c in Sources */,
-				2D00F6F62435342A000FC130 /* resample.inc in Sources */,
 				2D00F6DB2435342A000FC130 /* readamf.c in Sources */,
 				2D00F6A02435342A000FC130 /* rendsig.c in Sources */,
 				2D00F6E02435342A000FC130 /* readokt.c in Sources */,
