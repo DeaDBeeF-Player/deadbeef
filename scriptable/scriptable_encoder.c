@@ -7,6 +7,10 @@
 
 extern DB_functions_t *deadbeef;
 
+static scriptableCallbacks_t scriptableEncoderCallbacks = {
+    .readonlyPrefix = "[Built-in] ",
+};
+
 static int
 dirent_alphasort (const struct dirent **a, const struct dirent **b) {
     return strcmp ((*a)->d_name, (*b)->d_name);
@@ -21,6 +25,18 @@ scandir_preset_filter (const struct dirent *ent) {
     return 0;
 }
 
+static const char *configdialog =
+    "property \"File extension\" entry ext \"\";"
+    "property \"Encoder command line\" entry encoder \"\";"
+    "property \"Data transfer method\" select[3] method 0 \"Pipe (stdin)\" \"Temporary file\" \"Source file\";"
+    "property \"ID3v2 version\" select[2] id3v2_version 0 \"2.3\" \"2.4\";"
+    "property \"Write ID3v2 tag\" checkbox tag_id3v2 0;"
+    "property \"Write ID3v1 tag\" checkbox tag_id3v1 0;"
+    "property \"Write APEv2 tag\" checkbox tag_apev2 0;"
+    "property \"Write FLAC tag\" checkbox tag_flac 0;"
+    "property \"Write OggVorbis tag\" checkbox tag_oggvorbis 0;"
+    "property \"Write MP4 tag\" checkbox tag_mp4 0;"
+;
 
 static int
 scriptableItemLoadEncoderPreset (scriptableItem_t *preset, const char *name, const char *path) {
@@ -48,9 +64,11 @@ scriptableItemLoadEncoderPreset (scriptableItem_t *preset, const char *name, con
         *sp = 0;
         char *item = sp + 1;
 
-        scriptableItemSetPropertyValueForKey(preset, item, str);
         if (!strcmp (str, "title")) {
             scriptableItemSetPropertyValueForKey(preset, item, "name");
+        }
+        else {
+            scriptableItemSetPropertyValueForKey(preset, item, str);
         }
     }
 
@@ -91,23 +109,24 @@ scriptableEncoderLoadPresets (void) {
     };
 
     for (int di = 0; preset_dirs[di]; di++) {
-        const char *path = preset_dirs[di];
+        const char *presetspath = preset_dirs[di];
         struct dirent **namelist = NULL;
-        int n = scandir (path, &namelist, scandir_preset_filter, dirent_alphasort);
+        int n = scandir (presetspath, &namelist, scandir_preset_filter, dirent_alphasort);
         int i;
         for (i = 0; i < n; i++) {
             char s[PATH_MAX];
-            if (snprintf (s, sizeof (s), "%s/%s", path, namelist[i]->d_name) > 0){
+            if (snprintf (s, sizeof (s), "%s/%s", presetspath, namelist[i]->d_name) > 0){
 
                 scriptableItem_t *preset = scriptableItemAlloc();
+                preset->callbacks = &scriptableEncoderCallbacks;
+                preset->configDialog = configdialog;
                 if (scriptableItemLoadEncoderPreset (preset, namelist[i]->d_name, s)) {
                     scriptableItemFree (preset);
                 }
                 else {
-                    if (path == syspath) {
-                        scriptableItemSetPropertyValueForKey(preset, "true", "readonly");
+                    if (di == 0) {
+                        preset->isReadonly = 1;
                     }
-
                     scriptableItemAddSubItem(scriptableEncoderRoot(), preset);
                 }
             }

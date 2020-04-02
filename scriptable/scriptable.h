@@ -19,6 +19,7 @@ typedef struct {
     int isReorderable; // whether items can be reordered by the user
     int allowRenaming; // whether the names can be changed by the user
     const char *pasteboardItemIdentifier; // for drag drop on mac
+    const char *readonlyPrefix;
 
     scriptableStringListItem_t *(*factoryItemNames)(struct scriptableItem_s *item);
 
@@ -55,7 +56,10 @@ typedef struct scriptableItem_s {
     struct scriptableItem_s *childrenTail;
 
     int isLoading; // prevent calling hooks while loading data
+    int isReadonly;
+
     const char *type; // the type name, as used by scriptableItemCreateItemOfType
+    const char *configDialog;
 
     scriptableCallbacks_t *callbacks;
 } scriptableItem_t;
@@ -138,6 +142,9 @@ scriptableItemFactoryItemNames (struct scriptableItem_s *item);
 
 scriptableStringListItem_t *
 scriptableItemFactoryItemTypes (struct scriptableItem_s *item);
+
+char *
+scriptableItemFormattedName (scriptableItem_t *item);
 
 void
 scriptableInit (void);

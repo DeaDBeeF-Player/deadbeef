@@ -25,6 +25,7 @@
 #import "ScriptableTableDataSource.h"
 #import "ScriptableSelectViewController.h"
 #import "scriptable_dsp.h"
+#import "scriptable_encoder.h"
 #include "converter.h"
 #include "deadbeef.h"
 
@@ -48,16 +49,20 @@ static NSString *default_format = @"[%tracknumber%. ][%artist% - ]%title%";
     int _output_is_float;
     int _overwrite_action;
     ddb_encoder_preset_t *_encoder_preset;
-    ddb_dsp_preset_t *_dsp_preset;
     int _cancelled;
     NSInteger _overwritePromptResult;
     BOOL _working;
     NSInteger _bypassSameFormatState;
     NSInteger _retagAfterCopyState;
 }
+
 @property (nonatomic) ScriptableSelectViewController *dspSelectViewController;
 @property (nonatomic) ScriptableTableDataSource *dspPresetsDataSource;
 @property (weak) IBOutlet NSView *dspPresetSelectorContainer;
+
+@property (nonatomic) ScriptableSelectViewController *encoderSelectViewController;
+@property (nonatomic) ScriptableTableDataSource *encoderPresetsDataSource;
+@property (weak) IBOutlet NSView *encoderPresetSelectorContainer;
 
 @end
 
@@ -80,12 +85,21 @@ static NSMutableArray *g_converterControllers;
     self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
 
     self.dspSelectViewController = [[ScriptableSelectViewController alloc] initWithNibName:@"ScriptableSelectView" bundle:nil];
-    self.dspSelectViewController.view.frame = _dspPresetSelectorContainer.bounds;
+    self.dspSelectViewController.view.frame = self.dspPresetSelectorContainer.bounds;
     [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
 //    self.dspSelectViewController.scriptableItemDelegate = self;
 //    self.dspSelectViewController.scriptableSelectDelegate = self;
 //    self.dspSelectViewController.errorViewer = self;
     self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
+
+
+    self.encoderPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableEncoderRoot()];
+    self.encoderSelectViewController.dataSource = self.dspPresetsDataSource;
+
+    self.encoderSelectViewController = [[ScriptableSelectViewController alloc] initWithNibName:@"ScriptableSelectView" bundle:nil];
+    self.encoderSelectViewController.view.frame = self.encoderPresetSelectorContainer.bounds;
+    [self.encoderPresetSelectorContainer addSubview:self.encoderSelectViewController.view];
+    self.encoderSelectViewController.dataSource = self.encoderPresetsDataSource;
 }
 
 - (void)dealloc {
@@ -123,10 +137,6 @@ static NSMutableArray *g_converterControllers;
 
     // fill encoder presets
     [self fillEncoderPresets];
-
-    // TODO: fill dsp presets
-    [_dspPreset addItemWithTitle:@"Pass through"];
-    [_dspPreset selectItemAtIndex:deadbeef->conf_get_int ("converter.dsp_preset", -1) + 1];
 
     [_outputFormat selectItemAtIndex:deadbeef->conf_get_int ("converter.output_format", 0)];
     [_fileExistsAction selectItemAtIndex:deadbeef->conf_get_int ("converter.overwrite_action", 0)];
@@ -231,11 +241,6 @@ static NSMutableArray *g_converterControllers;
     [self updateFilenamesPreview];
 }
 
-- (IBAction)dspPresetChanged:(id)sender {
-    deadbeef->conf_set_int ("converter.dsp_preset", (int)[_dspPreset indexOfSelectedItem]-1);
-    deadbeef->conf_save ();
-}
-
 - (IBAction)overwritePromptChanged:(id)sender {
     deadbeef->conf_set_int ("converter.overwrite_action", (int)[_fileExistsAction indexOfSelectedItem]);
     deadbeef->conf_save ();
@@ -270,10 +275,6 @@ static NSMutableArray *g_converterControllers;
     if (_encoder_preset) {
         _converter_plugin->encoder_preset_free (_encoder_preset);
         _encoder_preset = NULL;
-    }
-    if (_dsp_preset) {
-        _converter_plugin->dsp_preset_free (_dsp_preset);
-        _dsp_preset = NULL;
     }
 }
 
@@ -384,7 +385,7 @@ static NSMutableArray *g_converterControllers;
 
     // Display the panel attached to the document's window.
     [panel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result){
-        if (result == NSFileHandlingPanelOKButton) {
+        if (result == NSModalResponseOK) {
             NSURL * url = [panel URL];
             _outputFolder.stringValue =  [url path];
         }
@@ -618,18 +619,8 @@ static NSMutableArray *g_converterControllers;
 }
 
 
-// dsp presets sheet
-- (IBAction)editDSPPresetsAction:(id)sender {
-    [self.window beginSheet:_dspPresetsPanel completionHandler:^(NSModalResponse returnCode) {
-    }];
-}
-
 - (IBAction)closeEncoderPresetsAction:(id)sender {
     [self.window endSheet:_encoderPresetsPanel returnCode:NSModalResponseOK];
-}
-
-- (IBAction)closeDSPPresetsAction:(id)sender {
-    [self.window endSheet:_dspPresetsPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)okAction:(id)sender {
@@ -681,6 +672,9 @@ static NSMutableArray *g_converterControllers;
         return;
     }
 
+    // FIXME
+
+#if 0
     int dsp_idx = (int)[_dspPreset indexOfSelectedItem] - 1;
 
     ddb_dsp_preset_t *dsp_preset = NULL;
@@ -697,6 +691,7 @@ static NSMutableArray *g_converterControllers;
         _dsp_preset = _converter_plugin->dsp_preset_alloc ();
         _converter_plugin->dsp_preset_copy (_dsp_preset, dsp_preset);
     }
+#endif
 
     _cancelled = NO;
     self.window.isVisible = NO;
@@ -763,7 +758,8 @@ static NSMutableArray *g_converterControllers;
         .output_bps = _output_bps,
         .output_is_float = _output_is_float,
         .encoder_preset = _encoder_preset,
-        .dsp_preset = _dsp_preset,
+        // FIXME
+//        .dsp_preset = _dsp_preset,
         .bypass_conversion_on_same_format = (_bypassSameFormatState == NSOnState),
         .rewrite_tags_after_copy = (_retagAfterCopyState == NSOnState),
     };

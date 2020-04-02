@@ -160,6 +160,7 @@ scriptableItemClone (scriptableItem_t *item) {
         scriptableItemAddSubItem(cloned, clonedChild);
     }
     cloned->callbacks = item->callbacks;
+    cloned->configDialog = item->configDialog;
 
     return cloned;
 }
@@ -348,6 +349,23 @@ scriptableItemFactoryItemTypes (struct scriptableItem_s *item) {
         return item->callbacks->factoryItemTypes (item);
     }
     return NULL;
+}
+
+char *
+scriptableItemFormattedName (scriptableItem_t *item) {
+    const char *name = scriptableItemPropertyValueForKey(item, "name");
+    if (!name) {
+        return NULL;
+    }
+
+    if (!item->isReadonly || !item->callbacks || !item->callbacks->readonlyPrefix) {
+        return strdup (name);
+    }
+
+    size_t len = strlen (name) + strlen (item->callbacks->readonlyPrefix) + 1;
+    char *buffer = calloc (1, len);
+    snprintf (buffer, len, "%s%s", item->callbacks->readonlyPrefix, name);
+    return buffer;
 }
 
 void

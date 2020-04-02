@@ -186,7 +186,7 @@ scriptableDspCreateItemOfType (scriptableItem_t *root, const char *type) {
     DB_dsp_t *dsp = dspPluginForId(type);
     if (dsp) {
         const char *name = dsp->plugin.name;
-        scriptableItemSetPropertyValueForKey(item, dsp->configdialog, "configDialog");
+        item->configDialog = dsp->configdialog;
         scriptableItemSetPropertyValueForKey(item, name, "name");
     }
     else {
@@ -460,9 +460,7 @@ static scriptableItem_t *scriptableDspCreateNodeFromContext (ddb_dsp_context_t *
     node->callbacks = &scriptableDspNodeCallbacks;
     scriptableItemSetPropertyValueForKey(node, context->plugin->plugin.id, "pluginId");
     scriptableItemSetPropertyValueForKey(node, context->plugin->plugin.name, "name");
-    if (context->plugin->configdialog) {
-        scriptableItemSetPropertyValueForKey(node, context->plugin->configdialog, "configDialog");
-    }
+    node->configDialog = context->plugin->configdialog;
     return node;
 }
 

@@ -33,7 +33,6 @@
 @property (unsafe_unretained) IBOutlet NSTextField *outputFileName;
 @property (unsafe_unretained) IBOutlet NSArrayController *filenamePreviewController;
 @property (unsafe_unretained) IBOutlet NSPopUpButton *encoderPreset;
-@property (unsafe_unretained) IBOutlet NSPopUpButton *dspPreset;
 @property (unsafe_unretained) IBOutlet NSPopUpButton *outputFormat;
 @property (unsafe_unretained) IBOutlet NSPopUpButton *fileExistsAction;
 - (IBAction)cancelAction:(id)sender;
@@ -41,7 +40,6 @@
 
 - (IBAction)openOutputFolderAction:(id)sender;
 - (IBAction)editEncoderPresetsAction:(id)sender;
-- (IBAction)editDSPPresetsAction:(id)sender;
 
 - (IBAction)outputFolderChanged:(id)sender;
 - (IBAction)writeToSourceFolderChanged:(id)sender;
@@ -50,7 +48,6 @@
 - (IBAction)retagAfterCopyChanged:(id)sender;
 - (IBAction)outputPathChanged:(id)sender;
 - (IBAction)encoderPresetChanged:(id)sender;
-- (IBAction)dspPresetChanged:(id)sender;
 - (IBAction)overwritePromptChanged:(id)sender;
 - (IBAction)outputFormatChanged:(id)sender;
 
@@ -84,9 +81,6 @@
 - (IBAction)encoderPresetMP4TagChangedAction:(id)sender;
 
 
-
-@property (strong) IBOutlet NSPanel *dspPresetsPanel;
-- (IBAction)closeDSPPresetsAction:(id)sender;
 
 @property (strong) IBOutlet NSPanel *progressPanel;
 @property (unsafe_unretained) IBOutlet NSTextField *progressText;

@@ -279,11 +279,13 @@
     NSTableCellView *view = [tableView makeViewWithIdentifier:tableColumn.identifier owner:self];
 
     scriptableItem_t *item = scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)row);
-    const char *name = scriptableItemPropertyValueForKey(item, "name");
+    char *name = scriptableItemFormattedName(item);
 
     view.textField.editable = self.dataSource.scriptable->callbacks && self.dataSource.scriptable->callbacks->allowRenaming;
 
     view.textField.stringValue = [NSString stringWithUTF8String:name];
+
+    free (name);
 
     return view;
 }

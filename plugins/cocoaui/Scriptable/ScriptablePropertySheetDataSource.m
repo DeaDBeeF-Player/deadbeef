@@ -22,7 +22,7 @@
 }
 
 - (NSString *)propertySheet:(PropertySheetViewController *)vc configForItem:(id)item {
-    const char *config = scriptableItemPropertyValueForKey(_scriptable, "configDialog");
+    const char *config = _scriptable->configDialog;
     return config ? [NSString stringWithUTF8String:config] : nil;
 }
 
