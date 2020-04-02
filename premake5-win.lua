@@ -23,7 +23,7 @@ newoption {
 if _OPTIONS["standard"] ~= nil then
   plugins_to_disable = {"plugin-artwork", "plugin-converter", "plugin-converter_gtk2",
                         "plugin-converter_gtk3","plugin-ffmpeg","plugin-waveout",
-                        "plugin-wildmidi" }
+                        "plugin-wildmidi", "plugin-soundtouch" }
   for i,v in ipairs(plugins_to_disable) do
     if _OPTIONS[v] == nil then
       _OPTIONS[v] = "disabled"
@@ -877,6 +877,37 @@ project "lastfm"
        "plugins/lastfm/*.c"
    }
    pkgconfig ("libcurl")
+end
+
+if option ("plugin-soundtouch") then
+project "ddb_soundtouch"
+   kind "SharedLib"
+   language "C++"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   includedirs { "plugins/soundtouch/soundtouch/include" }
+
+   files {
+       "plugins/soundtouch/plugin.c",
+       "plugins/soundtouch/st.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/AAFilter.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/BPMDetect.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/FIFOSampleBuffer.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/FIRFilter.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/InterpolateCubic.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/InterpolateLinear.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/InterpolateShannon.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/PeakFinder.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/RateTransposer.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/SoundTouch.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/SoundTouch.sln",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/SoundTouch.vcxproj",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/TDStretch.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/cpu_detect_x86.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/mmx_optimized.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/sse_optimized.cpp"
+   }
 end
 
 

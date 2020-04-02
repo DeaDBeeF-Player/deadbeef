@@ -621,6 +621,35 @@ project "nullout"
        "plugins/nullout/*.c",
    }
 
+project "ddb_soundtouch"
+   kind "SharedLib"
+   language "C++"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   includedirs { "plugins/soundtouch/soundtouch/include" }
+
+   files {
+       "plugins/soundtouch/plugin.c",
+       "plugins/soundtouch/st.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/AAFilter.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/BPMDetect.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/FIFOSampleBuffer.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/FIRFilter.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/InterpolateCubic.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/InterpolateLinear.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/InterpolateShannon.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/PeakFinder.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/RateTransposer.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/SoundTouch.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/SoundTouch.sln",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/SoundTouch.vcxproj",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/TDStretch.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/cpu_detect_x86.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/mmx_optimized.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/sse_optimized.cpp"
+   }
+
 
 project "resources"
     kind "Utility"
