@@ -1,32 +1,63 @@
 #ifndef scriptable_h
 #define scriptable_h
 
-typedef struct keyValue_s {
-    struct keyValue_s *next;
+typedef struct scriptableKeyValue_s {
+    struct scriptableKeyValue_s *next;
     char *key;
     char *value;
-} keyValuePair_t;
+} scriptableKeyValue_t;
 
 typedef struct stringListItem_s {
     struct stringListItem_s *next;
     char *str;
 } scriptableStringListItem_t;
 
+struct scriptableItem_s;
+
+typedef struct {
+    int isList; // for example, dsp preset, or dsp chain
+    int isReorderable; // whether items can be reordered by the user
+    int allowRenaming; // whether the names can be changed by the user
+    const char *pasteboardItemIdentifier; // for drag drop on mac
+
+    scriptableStringListItem_t *(*factoryItemNames)(struct scriptableItem_s *item);
+
+    scriptableStringListItem_t *(*factoryItemTypes)(struct scriptableItem_s *item);
+
+    struct scriptableItem_s *(*createItemOfType)(struct scriptableItem_s *item, const char *type);
+
+    int (*isSubItemNameAllowed)(struct scriptableItem_s *item, const char *name);
+
+    // additional update logic, such as save the item data to disk
+    int (*updateItem)(struct scriptableItem_s *item);
+
+    // additional update logic, such as save all subItems data to disk, if it's stored in a single file
+    int (*updateItemForSubItem)(struct scriptableItem_s *item, struct scriptableItem_s *subItem);
+
+    // additional remove logic, such as delete subItem data from disk
+    int (*removeSubItem)(struct scriptableItem_s *item, struct scriptableItem_s *subItem);
+
+    void (*free)(struct scriptableItem_s *item);
+
+    void (*save)(struct scriptableItem_s *item);
+
+    char * (*saveToString)(struct scriptableItem_s *item);
+
+    void (*propertyValueChangedForKey) (struct scriptableItem_s *item, const char *key);
+} scriptableCallbacks_t;
+
 typedef struct scriptableItem_s {
     struct scriptableItem_s *next;
-    keyValuePair_t *properties;
+    scriptableKeyValue_t *properties;
 
     struct scriptableItem_s *parent;
     struct scriptableItem_s *children;
     struct scriptableItem_s *childrenTail;
 
-    int isList; // for example, dsp preset, or dsp chain
+    int isLoading; // prevent calling hooks while loading data
+    const char *type; // the type name, as used by scriptableItemCreateItemOfType
 
-    scriptableStringListItem_t *(*factoryItemNames)(struct scriptableItem_s *item);
-    scriptableStringListItem_t *(*factoryItemTypes)(struct scriptableItem_s *item);
-    struct scriptableItem_s *(*createItemOfType)(struct scriptableItem_s *item, const char *type);
-    void (*free)(struct scriptableItem_s *item);
-    void (*save)(struct scriptableItem_s *item);
+    scriptableCallbacks_t *callbacks;
 } scriptableItem_t;
 
 scriptableItem_t *
@@ -47,6 +78,9 @@ scriptableStringListFree (scriptableStringListItem_t *list);
 void
 scriptableItemSave (scriptableItem_t *item);
 
+char *
+scriptableItemSaveToString (scriptableItem_t *item);
+
 unsigned int
 scriptableItemNumChildren (scriptableItem_t *item);
 
@@ -65,17 +99,39 @@ scriptableItemCreateItemOfType (scriptableItem_t *item, const char *type);
 void
 scriptableItemAddSubItem (scriptableItem_t *item, scriptableItem_t *subItem);
 
+scriptableItem_t *
+scriptableItemClone (scriptableItem_t *item);
+
+// - CRUD
+
 void
 scriptableItemInsertSubItemAtIndex (scriptableItem_t *item, scriptableItem_t *subItem, unsigned int insertPosition);
 
 void
 scriptableItemRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subItem);
 
+void
+scriptableItemUpdate (scriptableItem_t *item);
+
+void
+scriptableItemUpdateForSubItem (scriptableItem_t *item, scriptableItem_t *subItem);
+
+// -
+
 const char *
 scriptableItemPropertyValueForKey (scriptableItem_t *item, const char *key);
 
 void
 scriptableItemSetPropertyValueForKey (scriptableItem_t *item, const char *value, const char *key);
+
+void
+scriptableItemSetUniqueNameUsingPrefixAndRoot (scriptableItem_t *item, const char *prefix, scriptableItem_t *root);
+
+int
+scriptableItemContainsSubItemWithName (scriptableItem_t *item, const char *name);
+
+int
+scriptableItemIsSubItemNameAllowed (scriptableItem_t *item, const char *name);
 
 scriptableStringListItem_t *
 scriptableItemFactoryItemNames (struct scriptableItem_s *item);

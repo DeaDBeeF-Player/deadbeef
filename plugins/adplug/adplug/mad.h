@@ -14,7 +14,7 @@
 
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
   mad.h - MAD loader by Riven the Mage <riven@ok.ru>
 */
@@ -28,12 +28,12 @@ public:
 
 	CmadLoader(Copl *newopl) : CmodPlayer(newopl) { };
 
-	bool	load(const char *filename, const CFileProvider &fp);
+	bool	load(const std::string &filename, const CFileProvider &fp);
 	void	rewind(int subsong);
 	float	getrefresh();
 
-	const char *	gettype();
-	const char *	getinstrument(unsigned int n);
+	std::string	gettype();
+	std::string	getinstrument(unsigned int n);
 	unsigned int	getinstruments();
 
 private:

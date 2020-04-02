@@ -528,17 +528,37 @@ enum {
 };
 
 #if (DDB_API_LEVEL >= 10)
+#if (DDB_API_LEVEL >= 11)
+typedef enum ddb_rg_source_mode_e {
+#else
 enum {
+#endif
+
     DDB_RG_SOURCE_MODE_PLAYBACK_ORDER = 0,
     DDB_RG_SOURCE_MODE_TRACK = 1,
     DDB_RG_SOURCE_MODE_ALBUM = 2,
-};
 
-enum {
+#if (DDB_API_LEVEL >= 11)
+} ddb_rg_source_mode_t;
+#else
+};
+#endif
+
+#if (DDB_API_LEVEL >= 11)
+typedef enum ddb_rg_processing_e {
+#else
+    enum {
+#endif
+
     DDB_RG_PROCESSING_NONE = 0,
     DDB_RG_PROCESSING_GAIN = 1,
     DDB_RG_PROCESSING_PREVENT_CLIPPING = 2,
+
+#if (DDB_API_LEVEL >= 11)
+} ddb_rg_processing_t;
+#else
 };
+#endif
 
 typedef struct {
     int _size;
@@ -1578,7 +1598,7 @@ enum {
 #if (DDB_API_LEVEL >= 11)
 } ddb_action_context_t;
 #else
-}
+};
 #endif
 #endif
 

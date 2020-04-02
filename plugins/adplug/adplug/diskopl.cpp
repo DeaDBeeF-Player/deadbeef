@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * diskopl.cpp - Disk Writer OPL, by Simon Peter <dn.tlp@gmx.net>
  */
@@ -24,13 +24,13 @@
 //static const unsigned short note_table[12] = {363,385,408,432,458,485,514,544,577,611,647,686};
 const unsigned char CDiskopl::op_table[9] = {0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12};
 
-CDiskopl::CDiskopl(const char * filename)
+CDiskopl::CDiskopl(std::string filename)
   : old_freq(0.0f), del(1), nowrite(false)
 {
   unsigned short clock = 0xffff;
 
   currType = TYPE_OPL3;
-  f = fopen(filename,"wb");
+  f = fopen(filename.c_str(),"wb");
   fwrite("RAWADATA",8,1,f);
   fwrite(&clock,sizeof(clock),1,f);
 }

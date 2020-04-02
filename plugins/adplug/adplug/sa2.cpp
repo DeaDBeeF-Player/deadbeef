@@ -14,12 +14,13 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * sa2.cpp - SAdT2 Loader by Simon Peter <dn.tlp@gmx.net>
  *           SAdT Loader by Mamiya <mamiya@users.sourceforge.net>
  */
 
+#include <cstring>
 #include <stdio.h>
 #include <string.h>
 
@@ -31,7 +32,7 @@ CPlayer *Csa2Loader::factory(Copl *newopl)
   return new Csa2Loader(newopl);
 }
 
-bool Csa2Loader::load(const char *filename, const CFileProvider &fp)
+bool Csa2Loader::load(const std::string &filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   struct {
@@ -160,7 +161,7 @@ bool Csa2Loader::load(const char *filename, const CFileProvider &fp)
 
   AdPlug_LogWrite("Csa2Loader::load(\"%s\"): sat_type = %x, nop = %d, "
 		  "length = %d, restartpos = %d, activechan = %x, bpm = %d\n",
-		  filename, sat_type, nop, length, restartpos, activechan, bpm);
+		  filename.c_str(), sat_type, nop, length, restartpos, activechan, bpm);
 
   // track data
   if(sat_type & HAS_OLDPATTERNS) {
@@ -226,13 +227,15 @@ bool Csa2Loader::load(const char *filename, const CFileProvider &fp)
   return true;
 }
 
-const char * Csa2Loader::gettype()
+std::string Csa2Loader::gettype()
 {
-  snprintf(filetype,sizeof(filetype),"Surprise! Adlib Tracker 2 (version %d)",header.version);
-  return filetype;
+  char tmpstr[40];
+
+  sprintf(tmpstr,"Surprise! Adlib Tracker 2 (version %d)",header.version);
+  return std::string(tmpstr);
 }
 
-const char * Csa2Loader::gettitle()
+std::string Csa2Loader::gettitle()
 {
   char bufinst[29*17],buf[18];
   int i,ptr;
@@ -253,12 +256,8 @@ const char * Csa2Loader::gettitle()
     strcat(bufinst,buf);
   }
 
-  if(strchr(bufinst,'"')) {
-      const char *pos = strchr(bufinst,'"')+1;
-      int len = strrchr(bufinst,'"')-pos;
-      memcpy (title,pos,len);
-      title[len] = 0;
-      return title;
-  }
-  return "";
+  if(strchr(bufinst,'"'))
+    return std::string(bufinst,strchr(bufinst,'"')-bufinst+1,strrchr(bufinst,'"')-strchr(bufinst,'"')-1);
+  else
+    return std::string();
 }

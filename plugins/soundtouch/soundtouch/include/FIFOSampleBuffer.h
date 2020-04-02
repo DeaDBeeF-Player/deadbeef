@@ -15,13 +15,6 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2009-02-21 18:00:14 +0200 (Sat, 21 Feb 2009) $
-// File revision : $Revision: 4 $
-//
-// $Id: FIFOSampleBuffer.h 63 2009-02-21 16:00:14Z oparviai $
-//
-////////////////////////////////////////////////////////////////////////////////
-//
 // License :
 //
 //  SoundTouch audio processing library
@@ -89,7 +82,7 @@ private:
 
     /// Returns current capacity.
     uint getCapacity() const;
- 
+
 public:
 
     /// Constructor
@@ -119,7 +112,7 @@ public:
     /// 'putSamples(numSamples)' function.
     SAMPLETYPE *ptrEnd(
                 uint slackCapacity   ///< How much free capacity (in samples) there _at least_ 
-                                     ///< should be so that the caller can succesfully insert the 
+                                     ///< should be so that the caller can successfully insert the 
                                      ///< desired samples to the buffer. If necessary, the function 
                                      ///< grows the buffer size to comply with this requirement.
                 );
@@ -162,11 +155,21 @@ public:
     /// Sets number of channels, 1 = mono, 2 = stereo.
     void setChannels(int numChannels);
 
+    /// Get number of channels
+    int getChannels() 
+    {
+        return channels;
+    }
+
     /// Returns nonzero if there aren't any samples available for outputting.
     virtual int isEmpty() const;
 
     /// Clears all the samples.
     virtual void clear();
+
+    /// allow trimming (downwards) amount of samples in pipeline.
+    /// Returns adjusted amount of samples
+    uint adjustAmountOfSamples(uint numSamples);
 };
 
 }

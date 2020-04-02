@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * adtrack.cpp - Adlib Tracker 1.0 Loader by Simon Peter <dn.tlp@gmx.net>
  *
@@ -35,10 +35,6 @@
 #include "adtrack.h"
 #include "debug.h"
 
-#include <limits.h>
-#ifndef PATH_MAX
-#define PATH_MAX    1024    /* max # of characters in a path name */
-#endif
 /*** Public methods ***/
 
 CPlayer *CadtrackLoader::factory(Copl *newopl)
@@ -46,7 +42,7 @@ CPlayer *CadtrackLoader::factory(Copl *newopl)
   return new CadtrackLoader(newopl);
 }
 
-bool CadtrackLoader::load(const char * filename, const CFileProvider &fp)
+bool CadtrackLoader::load(const std::string &filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   binistream *instf;
@@ -61,20 +57,12 @@ bool CadtrackLoader::load(const char * filename, const CFileProvider &fp)
     { fp.close(f); return false; }
 
   // check for instruments file
-  char instfilename[PATH_MAX];
-  strncpy (instfilename, filename, sizeof (instfilename)-5);
-  instfilename[PATH_MAX-5] = 0;
-  char *pext = strrchr (instfilename, '.');
-  if (pext) {
-      strcpy (pext, ".ins");
-  }
-  else {
-      strcat (instfilename, ".ins");
-  }
+  std::string instfilename(filename, 0, filename.find_last_of('.'));
+  instfilename += ".ins";
   AdPlug_LogWrite("CadtrackLoader::load(,\"%s\"): Checking for \"%s\"...\n",
-		  filename, instfilename);
+		  filename.c_str(), instfilename.c_str());
   instf = fp.open(instfilename);
-  if(!instf || fp.filesize(instf) != 468) { fp.close(f); return false; }
+  if(!instf || fp.filesize(instf) != 468) { if(instf) { fp.close(instf); } fp.close(f); return false; }
 
   // give CmodPlayer a hint on what we're up to
   realloc_patterns(1,1000,9); realloc_instruments(9); realloc_order(1);

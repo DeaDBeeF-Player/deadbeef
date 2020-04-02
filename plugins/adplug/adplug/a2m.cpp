@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * a2m.cpp - A2M Loader by Simon Peter <dn.tlp@gmx.net>
  *
@@ -29,7 +29,7 @@
  * Following commands are ignored: Gxy, Hxy, Kxy - &xy
  */
 
-#include <string.h>
+#include <cstring>
 #include "a2m.h"
 
 const unsigned int Ca2mLoader::MAXFREQ = 2000,
@@ -59,13 +59,13 @@ CPlayer *Ca2mLoader::factory(Copl *newopl)
   return new Ca2mLoader(newopl);
 }
 
-bool Ca2mLoader::load(const char *filename, const CFileProvider &fp)
+bool Ca2mLoader::load(const std::string &filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   char id[10];
   int i,j,k,t;
   unsigned int l;
-  unsigned char *org = 0, *orgptr, flags = 0, numpats, version;
+  unsigned char *org = NULL, *orgptr, flags = 0, numpats, version;
   unsigned long crc, alength;
   unsigned short len[9], *secdata, *secptr;
   const unsigned char convfx[16] = {0,1,2,23,24,3,5,4,6,9,17,13,11,19,7,14};
@@ -307,10 +307,16 @@ void Ca2mLoader::updatefreq(unsigned short a,unsigned short b)
 		freq[dad[a]] = freq[a] + freq[b];
 		a = dad[a];
 		if(a != ROOT)
+		{
 			if(leftc[dad[a]] == a)
+			{
 				b = rghtc[dad[a]];
+			}
 			else
+			{
 				b = leftc[dad[a]];
+			}
+		}
 	} while(a != ROOT);
 
 	if(freq[ROOT] == MAXFREQ)

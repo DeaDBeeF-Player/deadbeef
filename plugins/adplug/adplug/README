@@ -1,11 +1,7 @@
-this version of AdPlug is not the original work.
-it has STL code stripped off, + many bug fixes that are not upstream (yet)
-for original AdPlug information see below
-
 AdPlug - A free AdLib sound player library
-Copyright (C) 1999 - 2010 Simon Peter, et al.
+Copyright (C) 1999 - 2017 Simon Peter, et al.
 
-Website: http://adplug.sourceforge.net/
+Website: http://adplug.github.io/
 
 Description:
 ------------
@@ -43,23 +39,28 @@ Library:	Version:
 --------	--------
 libbinio	>= 1.4
 
-libbinio can be obtained from http://libbinio.sourceforge.net/.
+libbinio can be obtained from http://adplug.github.io/libbinio/.
 
 Installation:
 -------------
 Please refer to the INSTALL file for installation instructions.
 
-CVS:
-----
-If you checked out from CVS, please first run:
+Linux/OSX git:
+--------------
+If you checked out from git, please first run:
 
 autoreconf --install
 
 to generate the build cruft and get the configure script. Oh, and did i
 mention you need recent versions of autoconf, automake and libtool?
 
-When building a CVS version, always supply the --enable-maintainer-mode
-option to the configure script!
+Windows git:
+------------
+If you checked out from git, you will need to copy src\version.h.in to
+src\version.h and replace @VERSION@ with a proper version number.
+
+A Visual Studio 2015 solution you can open and build is located in
+contrib\vs2015\vs2015.sln.
 
 Debugging AdPlug:
 -----------------
@@ -72,20 +73,29 @@ AdPlug logs to stderr by default. The output can be redirected anytime to a
 user specified logfile. This is done by using the 'CAdPlug::debug_output'
 method of the 'CAdPlug' class.
 
+If you have changed a format and the tests now fail (run "make check"), once
+you have confirmed the output is correct, there will be a *.test file in the
+test/ folder.  Rename this from .test to .ref to have it used as the new
+reference data.
+
 The emulator license issue:
 ---------------------------
-AdPlug uses MAME's fmopl OPL2 emulator. While this official distribution
+AdPlug now uses WoodyOPL, the LGPL-licenced OPL emulator from the DOSBox
+team.
+
+Previously, AdPlug used MAME's fmopl OPL2 emulator. While this distribution
 includes an old LGPL'd version of the emulator, which was developed by
 Tatsuyuki Satoh alone, who relicensed this version under the LGPL, there is
-a patch available at:
-
-http://www.informatik.uni-oldenburg.de/~dyna/adplug/
-
+a patch available in the `mame` branch of the GitHub repository
 that replaces the old version by the latest version from the MAME source
 distribution. The new version features improved emulation quality, but is
 licensed under the MAME license, which restricts commercial redistribution.
 
 The same goes for the OPL3 emulator, which requires the new version of
 the OPL2 emulator to build.
+
+Later versions of MAME are released under the GPL, so this patch could be
+updated to use that instead, however this is probably not necessary given
+the high quality of the WoodyOPL emulator.
 
 	- Simon Peter <dn.tlp@gmx.net>

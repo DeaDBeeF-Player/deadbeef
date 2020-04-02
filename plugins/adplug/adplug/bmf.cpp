@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * [xad] BMF player, by Riven the Mage <riven@ok.ru>
  */
@@ -40,7 +40,7 @@
   comment : inaccurate replaying, because constant outport; in original player it can be 380 or 382.
 */
 
-#include <string.h>
+#include <cstring>
 #include "bmf.h"
 #include "debug.h"
 
@@ -97,7 +97,7 @@ bool CxadbmfPlayer::xadplayer_load()
   else if (!strncmp((char *)&tune[0],"BMF1.1",6))
   {
     bmf.version = BMF1_1;
-    bmf.timer = 60.0f;
+    bmf.timer = 68.5f;
   }
   else
   {
@@ -111,11 +111,13 @@ bool CxadbmfPlayer::xadplayer_load()
     ptr = 6;
 
     strncpy(bmf.title,(char *)&tune[ptr],36);
+    bmf.title[35] = 0;
 
     while (tune[ptr]) { ptr++; }
 	ptr++;
 
     strncpy(bmf.author,(char *)&tune[ptr],36);
+    bmf.author[35] = 0;
 
     while (tune[ptr]) { ptr++; }
 	ptr++;
@@ -381,19 +383,19 @@ float CxadbmfPlayer::xadplayer_getrefresh()
   return bmf.timer;
 }
 
-const char * CxadbmfPlayer::xadplayer_gettype()
+std::string CxadbmfPlayer::xadplayer_gettype()
 {
-  return "xad: BMF Adlib Tracker";
+  return std::string("xad: BMF Adlib Tracker");
 }
 
-const char * CxadbmfPlayer::xadplayer_gettitle()
+std::string CxadbmfPlayer::xadplayer_gettitle()
 {
-  return bmf.title;
+  return std::string(bmf.title);
 }
 
-const char * CxadbmfPlayer::xadplayer_getauthor()
+std::string CxadbmfPlayer::xadplayer_getauthor()
 {
-  return bmf.author;
+  return std::string(bmf.author);
 }
 
 unsigned int CxadbmfPlayer::xadplayer_getinstruments()
@@ -401,9 +403,14 @@ unsigned int CxadbmfPlayer::xadplayer_getinstruments()
   return 32;
 }
 
-const char * CxadbmfPlayer::xadplayer_getinstrument(unsigned int i)
+std::string CxadbmfPlayer::xadplayer_getinstrument(unsigned int i)
 {
-  return bmf.instruments[i].name;
+  return std::string(bmf.instruments[i].name);
+}
+
+unsigned int CxadbmfPlayer::xadplayer_getspeed()
+{
+  return plr.speed;
 }
 
 /* -------- Internal Functions ---------------------------- */

@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * dfm.h - Digital-FM Loader by Simon Peter <dn.tlp@gmx.net>
  */
@@ -30,16 +30,16 @@ public:
 		: CmodPlayer(newopl)
 	{ };
 
-	bool load(const char *filename, const CFileProvider &fp);
+	bool load(const std::string &filename, const CFileProvider &fp);
 	float getrefresh();
 
-	const char * gettype();
+	std::string gettype();
 	unsigned int getinstruments()
 	{ return 32; };
-	const char * getinstrument(unsigned int n)
-	{ return instname[n]; };
-	const char * getdesc()
-	{ return songinfo; };
+	std::string getinstrument(unsigned int n)
+	{ if(*instname[n]) return std::string(instname[n],1,*instname[n]); else return std::string(); };
+	std::string getdesc()
+	{ return std::string(songinfo,1,*songinfo); };
 
 private:
 	struct {
@@ -49,5 +49,4 @@ private:
 
 	char songinfo[33];
 	char instname[32][12];
-	char tmpstr[20];
 };

@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * sa2.h - SAdT2 Loader by Simon Peter <dn.tlp@gmx.net>
  *         SAdT Loader by Mamiya <mamiya@users.sourceforge.net>
@@ -31,18 +31,18 @@ public:
 		: CmodPlayer(newopl)
 	{ }
 
-	bool load(const char *filename, const CFileProvider &fp);
+	bool load(const std::string &filename, const CFileProvider &fp);
 
-	const char * gettype();
-	const char * gettitle();
+	std::string gettype();
+	std::string gettitle();
 	unsigned int getinstruments()
 	{ return 31; }
-	const char * getinstrument(unsigned int n)
+	std::string getinstrument(unsigned int n)
 	{
 	  if(n < 29)
-	    return instname[n];
+	    return std::string(instname[n],1,16);
 	  else
-	    return "-broken-";
+	    return std::string("-broken-");
 	}
 
 private:
@@ -52,6 +52,4 @@ private:
 	} header;
 
 	char instname[29][17];
-	char filetype[40];
-	char title[200];
 };

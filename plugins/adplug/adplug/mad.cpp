@@ -14,12 +14,12 @@
 
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
   mad.cpp - MAD loader by Riven the Mage <riven@ok.ru>
 */
 
-#include <string.h>
+#include <cstring>
 #include "mad.h"
 
 /* -------- Public Methods -------------------------------- */
@@ -29,7 +29,7 @@ CPlayer *CmadLoader::factory(Copl *newopl)
   return new CmadLoader(newopl);
 }
 
-bool CmadLoader::load(const char *filename, const CFileProvider &fp)
+bool CmadLoader::load(const std::string &filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   const unsigned char conv_inst[10] = { 2,1,10,9,4,3,6,5,8,7 };
@@ -111,14 +111,14 @@ float CmadLoader::getrefresh()
 	return (float)timer;
 }
 
-const char * CmadLoader::gettype()
+std::string CmadLoader::gettype()
 {
-	return "Mlat Adlib Tracker";
+	return std::string("Mlat Adlib Tracker");
 }
 
-const char * CmadLoader::getinstrument(unsigned int n)
+std::string CmadLoader::getinstrument(unsigned int n)
 {
-	return instruments[n].name;
+	return std::string(instruments[n].name,8);
 }
 
 unsigned int CmadLoader::getinstruments()

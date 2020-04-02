@@ -14,12 +14,12 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * mtk.cpp - MPU-401 Trakker Loader by Simon Peter (dn.tlp@gmx.net)
  */
 
-#include <string.h>
+#include <cstring>
 #include "mtk.h"
 
 /*** public methods **************************************/
@@ -29,7 +29,7 @@ CPlayer *CmtkLoader::factory(Copl *newopl)
   return new CmtkLoader(newopl);
 }
 
-bool CmtkLoader::load(const char *filename, const CFileProvider &fp)
+bool CmtkLoader::load(const std::string &filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   struct {

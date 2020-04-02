@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * bam.cpp - Bob's Adlib Music Player, by Simon Peter <dn.tlp@gmx.net>
  *
@@ -65,7 +65,7 @@ CPlayer *CbamPlayer::factory(Copl *newopl)
   return new CbamPlayer(newopl);
 }
 
-bool CbamPlayer::load(const char *filename, const CFileProvider &fp)
+bool CbamPlayer::load(const std::string &filename, const CFileProvider &fp)
 {
         binistream *f = fp.open(filename); if(!f) return false;
 	char id[4];

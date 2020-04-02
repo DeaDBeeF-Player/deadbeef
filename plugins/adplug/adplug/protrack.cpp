@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * protrack.cpp - Generic Protracker Player
  *
@@ -25,7 +25,7 @@
  * Protracker-like format, this is most certainly the player you want to use.
  */
 
-#include <string.h>
+#include <cstring>
 #include "protrack.h"
 #include "debug.h"
 
@@ -202,7 +202,7 @@ bool CmodPlayer::update()
   for(chan = 0; chan < nchans; chan++) {
     oplchan = set_opl_chip(chan);
 
-    if(!(activechan >> (31 - chan)) & 1) {	// channel active?
+    if(!((activechan >> (31 - chan)) & 1)) {	// channel active?
       AdPlug_LogWrite("N/A|");
       continue;
     }

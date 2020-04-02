@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="EqualizerWindowController">
+            <connections>
+                <outlet property="presetsMenu" destination="emA-sG-JlZ" id="xD4-0H-teY"/>
+                <outlet property="propertySheetViewController" destination="SAn-ps-SLr" id="XTV-PW-kAe"/>
+                <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Equalizer" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="EqualizerWindow" animationBehavior="default" id="F0z-JX-Cv5">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="609" height="180"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
+            <value key="minSize" type="size" width="609" height="300"/>
+            <view key="contentView" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="609" height="180"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <customView horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sWN-HO-WvC" customClass="PropertySheetContentView">
+                        <rect key="frame" x="20" y="20" width="569" height="114"/>
+                    </customView>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dJ6-Kn-sUc">
+                        <rect key="frame" x="18" y="144" width="63" height="18"/>
+                        <buttonCell key="cell" type="check" title="Enable" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="jEW-7j-qDm">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <binding destination="-2" name="value" keyPath="self.enabled" id="N6p-rf-2lC"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vPz-Hc-ylL">
+                        <rect key="frame" x="79" y="135" width="86" height="32"/>
+                        <buttonCell key="cell" type="push" title="Zero all" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1Z0-3S-RWc">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="zeroAllAction:" target="-2" id="oWo-d7-5IB"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lDw-Kb-yUq">
+                        <rect key="frame" x="165" y="135" width="118" height="32"/>
+                        <buttonCell key="cell" type="push" title="Zero preamp" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wiI-Zd-eEi">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="zeroPreampAction:" target="-2" id="OAj-qx-dF8"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eJe-Bh-MYO">
+                        <rect key="frame" x="283" y="135" width="109" height="32"/>
+                        <buttonCell key="cell" type="push" title="Zero bands" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="8IA-ad-y1y">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="zeroBandsAction:" target="-2" id="fOk-WM-Ye9"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="n9e-7C-zco">
+                        <rect key="frame" x="392" y="135" width="86" height="32"/>
+                        <buttonCell key="cell" type="push" title="Presets" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="U2Y-ih-20m">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="presetsButtonAction:" target="-2" id="tav-7C-aBN"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="eJe-Bh-MYO" firstAttribute="leading" secondItem="lDw-Kb-yUq" secondAttribute="trailing" constant="12" id="2iO-gJ-Gpn"/>
+                    <constraint firstAttribute="bottom" secondItem="sWN-HO-WvC" secondAttribute="bottom" constant="20" id="6SS-ro-GFk"/>
+                    <constraint firstItem="sWN-HO-WvC" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" id="6hS-eC-mPu"/>
+                    <constraint firstItem="vPz-Hc-ylL" firstAttribute="leading" secondItem="dJ6-Kn-sUc" secondAttribute="trailing" constant="6" id="8Y2-Fb-Mgu"/>
+                    <constraint firstItem="lDw-Kb-yUq" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="17" id="9mS-lB-ZdG"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="n9e-7C-zco" secondAttribute="trailing" constant="20" id="Fum-qW-hou"/>
+                    <constraint firstItem="dJ6-Kn-sUc" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" id="Hsu-8I-l7M"/>
+                    <constraint firstItem="dJ6-Kn-sUc" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" id="SV4-eD-w1y"/>
+                    <constraint firstItem="n9e-7C-zco" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="17" id="T53-MN-BBf"/>
+                    <constraint firstItem="eJe-Bh-MYO" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="17" id="bes-jV-5Ou"/>
+                    <constraint firstItem="sWN-HO-WvC" firstAttribute="top" secondItem="vPz-Hc-ylL" secondAttribute="bottom" constant="8" id="k7u-Pi-gCw"/>
+                    <constraint firstItem="vPz-Hc-ylL" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="17" id="mWe-hH-sRQ"/>
+                    <constraint firstItem="lDw-Kb-yUq" firstAttribute="leading" secondItem="vPz-Hc-ylL" secondAttribute="trailing" constant="12" id="nUf-6d-Tv5"/>
+                    <constraint firstAttribute="trailing" secondItem="sWN-HO-WvC" secondAttribute="trailing" constant="20" id="uBq-rp-iji"/>
+                    <constraint firstItem="n9e-7C-zco" firstAttribute="leading" secondItem="eJe-Bh-MYO" secondAttribute="trailing" constant="12" id="w9v-Qp-K1I"/>
+                </constraints>
+            </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
+            </connections>
+            <point key="canvasLocation" x="203.5" y="102"/>
+        </window>
+        <viewController id="SAn-ps-SLr" customClass="PropertySheetViewController">
+            <connections>
+                <outlet property="contentView" destination="sWN-HO-WvC" id="MQd-69-kHj"/>
+                <outlet property="view" destination="sWN-HO-WvC" id="Jpg-b5-M1g"/>
+            </connections>
+        </viewController>
+        <menu id="emA-sG-JlZ">
+            <items>
+                <menuItem title="Load Preset" id="H5A-Up-qff">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="loadPresetAction:" target="-2" id="uE3-j1-gvR"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Save Preset" id="7mE-m8-eHG">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="savePresetAction:" target="-2" id="AYz-jF-Zqo"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Import Foobar2000 Preset" id="Gz1-1e-Cxq">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="importFoobar2000PresetAction:" target="-2" id="SXa-ME-qRf"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="204" y="304"/>
+        </menu>
+    </objects>
+</document>

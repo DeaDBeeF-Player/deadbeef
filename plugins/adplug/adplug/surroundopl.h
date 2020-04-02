@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * surroundopl.h - Wrapper class to provide a surround/harmonic effect
  *   for another OPL emulator, by Adam Nielsen <malvineous@shikadi.net>
@@ -36,7 +36,7 @@
 
 // Number of FNums away from the upper/lower limit before switching to the next
 // block (octave.)  By rights it should be zero, but for some reason this seems
-// to cut it to close and the transposed OPL doesn't hit the right note all the
+// to cut it too close and the transposed OPL doesn't hit the right note all the
 // time.  Setting it higher means it will switch blocks sooner and that seems
 // to help.  Don't set it too high or it'll get stuck in an infinite loop if
 // one block is too high and the adjacent block is too low ;-)
@@ -49,10 +49,10 @@ class CSurroundopl: public Copl
 		short bufsize;
 		short *lbuf, *rbuf;
 		Copl *a, *b;
-		uint8_t iFMReg[256];
-		uint8_t iTweakedFMReg[256];
-		uint8_t iCurrentTweakedBlock[9]; // Current value of the Block in the tweaked OPL chip
-		uint8_t iCurrentFNum[9];         // Current value of the FNum in the tweaked OPL chip
+		uint8_t iFMReg[2][256];
+		uint8_t iTweakedFMReg[2][256];
+		uint8_t iCurrentTweakedBlock[2][9]; // Current value of the Block in the tweaked OPL chip
+		uint8_t iCurrentFNum[2][9];         // Current value of the FNum in the tweaked OPL chip
 
 	public:
 
@@ -63,7 +63,7 @@ class CSurroundopl: public Copl
 		void write(int reg, int val);
 
 		void init();
-
+		void setchip(int n);
 };
 
 #endif
