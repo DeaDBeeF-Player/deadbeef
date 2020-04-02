@@ -1041,7 +1041,6 @@
 		2D48DC162269B731002CACFD /* alac.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D91773F1A0E8966004BC222 /* alac.dylib */; };
 		2D48DC172269B731002CACFD /* m3u.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DCB281419E86162008E9DF6 /* m3u.dylib */; };
 		2D48DC192269B731002CACFD /* vfs_curl.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA24B4B19E724C200E34920 /* vfs_curl.dylib */; };
-		2D48DC1A2269B731002CACFD /* README in Resources */ = {isa = PBXBuildFile; fileRef = 2D93DC541AADFEEF003D2D8D /* README */; };
 		2D48DC1B2269B731002CACFD /* sid.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D22F75519E1384B009C631E /* sid.dylib */; };
 		2D48DC1D2269B731002CACFD /* ddb_dumb.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */; };
 		2D48DC1E2269B731002CACFD /* gme.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */; };
@@ -1635,7 +1634,6 @@
 		2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */; };
 		2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D92D0551CD513AA00CD53F0 /* trkproperties_shared.h */; };
 		2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D93DC531AADFEEF003D2D8D /* pluginsettings.h */; };
-		2D93DC571AADFEEF003D2D8D /* README in Resources */ = {isa = PBXBuildFile; fileRef = 2D93DC541AADFEEF003D2D8D /* README */; };
 		2D977F451CA4B1F3006DBE79 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
 		2D977F461CA4B209006DBE79 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
 		2D98613E226C814100BAACB1 /* PropertySheetViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98612F226C814000BAACB1 /* PropertySheetViewController.h */; };
@@ -13512,7 +13510,6 @@
 				2D48DC162269B731002CACFD /* alac.dylib in Resources */,
 				2D48DC172269B731002CACFD /* m3u.dylib in Resources */,
 				2D48DC192269B731002CACFD /* vfs_curl.dylib in Resources */,
-				2D48DC1A2269B731002CACFD /* README in Resources */,
 				2D48DC1B2269B731002CACFD /* sid.dylib in Resources */,
 				2D48DC1D2269B731002CACFD /* ddb_dumb.dylib in Resources */,
 				2D48DC1E2269B731002CACFD /* gme.dylib in Resources */,
@@ -13616,7 +13613,6 @@
 				2D11E8B41AA0E3DD00A67A20 /* MainWindow.xib in Resources */,
 				2DA24BA319E72A2500E34920 /* vfs_curl.dylib in Resources */,
 				2D9C0C15238DC0E700CE8C10 /* GroupByCustomWindow.xib in Resources */,
-				2D93DC571AADFEEF003D2D8D /* README in Resources */,
 				2DEBA1D423E207A3000E4135 /* EqualizerWindowController.xib in Resources */,
 				2D22F75E19E138B3009C631E /* sid.dylib in Resources */,
 				2D828E5419E5679800EE874F /* Search.xib in Resources */,
