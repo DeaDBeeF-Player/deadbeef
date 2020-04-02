@@ -321,7 +321,7 @@ Gw
                             <action selector="retagAfterCopyChanged:" target="-2" id="tcu-Zt-2Tw"/>
                         </connections>
                     </button>
-                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="dn5-nJ-yUS">
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="dn5-nJ-yUS" userLabel="dspPresetSelectorContainer">
                         <rect key="frame" x="133" y="100" width="206" height="22"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="22" id="9ik-Mk-S7s"/>
