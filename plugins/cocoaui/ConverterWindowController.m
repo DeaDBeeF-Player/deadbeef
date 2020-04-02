@@ -22,6 +22,9 @@
 */
 
 #import "ConverterWindowController.h"
+#import "ScriptableTableDataSource.h"
+#import "ScriptableSelectViewController.h"
+#import "scriptable_dsp.h"
 #include "converter.h"
 #include "deadbeef.h"
 
@@ -52,11 +55,38 @@ static NSString *default_format = @"[%tracknumber%. ][%artist% - ]%title%";
     NSInteger _bypassSameFormatState;
     NSInteger _retagAfterCopyState;
 }
+@property (nonatomic) ScriptableSelectViewController *dspSelectViewController;
+@property (nonatomic) ScriptableTableDataSource *dspPresetsDataSource;
+@property (weak) IBOutlet NSView *dspPresetSelectorContainer;
+
 @end
 
 static NSMutableArray *g_converterControllers;
 
 @implementation ConverterWindowController
+
+- (void)windowDidLoad {
+    [super windowDidLoad];
+
+    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
+    _converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id ("converter");
+
+    _encoderPresetsTableView.dataSource = self;
+    _encoderPresetsTableView.delegate = self;
+    [self initializeWidgets];
+    self.window.delegate = self;
+
+    self.dspPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableDspRoot()];
+    self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
+
+    self.dspSelectViewController = [[ScriptableSelectViewController alloc] initWithNibName:@"ScriptableSelectView" bundle:nil];
+    self.dspSelectViewController.view.frame = _dspPresetSelectorContainer.bounds;
+    [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
+//    self.dspSelectViewController.scriptableItemDelegate = self;
+//    self.dspSelectViewController.scriptableSelectDelegate = self;
+//    self.dspSelectViewController.errorViewer = self;
+    self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
+}
 
 - (void)dealloc {
     [self reset];
@@ -214,18 +244,6 @@ static NSMutableArray *g_converterControllers;
 - (IBAction)outputFormatChanged:(id)sender {
     deadbeef->conf_set_int ("converter.output_format", (int)[_outputFormat indexOfSelectedItem]);
     deadbeef->conf_save ();
-}
-
-- (void)windowDidLoad {
-    [super windowDidLoad];
-    
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
-    _converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id ("converter");
-
-    _encoderPresetsTableView.dataSource = self;
-    _encoderPresetsTableView.delegate = self;
-    [self initializeWidgets];
-    self.window.delegate = self;
 }
 
 - (IBAction)progressCancelAction:(id)sender {

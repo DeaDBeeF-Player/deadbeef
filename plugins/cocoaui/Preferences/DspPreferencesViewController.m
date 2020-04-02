@@ -61,10 +61,12 @@ extern DB_functions_t *deadbeef;
 
     // preset list and browse button
     self.dspSelectViewController = [[ScriptableSelectViewController alloc] initWithNibName:@"ScriptableSelectView" bundle:nil];
-    self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
     self.dspSelectViewController.scriptableItemDelegate = self;
     self.dspSelectViewController.view.frame = _dspPresetSelectorContainer.bounds;
     [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
+    self.dspSelectViewController.scriptableSelectDelegate = self;
+    self.dspSelectViewController.errorViewer = self;
+    self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
 
     // current dsp chain node list / editor
     self.dspNodeEditorViewController = [[ScriptableNodeEditorViewController alloc] initWithNibName:@"ScriptableNodeEditorView" bundle:nil];
@@ -74,9 +76,6 @@ extern DB_functions_t *deadbeef;
     self.dspNodeEditorViewController.view.frame = _dspNodeEditorContainer.bounds;
     [_dspNodeEditorContainer addSubview:self.dspNodeEditorViewController.view];
 
-    self.dspSelectViewController.scriptable = scriptableDspRoot();
-    self.dspSelectViewController.scriptableSelectDelegate = self;
-    self.dspSelectViewController.errorViewer = self;
 }
 
 #pragma mark - ScriptableNodeEditorCustomButtonsInitializer

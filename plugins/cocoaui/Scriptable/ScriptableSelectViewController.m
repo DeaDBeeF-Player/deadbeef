@@ -11,8 +11,6 @@
 
 @interface ScriptableSelectViewController ()
 
-@property (nonatomic) scriptableItem_t *scriptable;
-
 @property (weak) IBOutlet NSPopUpButton *nameList;
 @property (weak) IBOutlet NSButton *browseButton;
 @property (nonatomic) ScriptableNodeEditorWindowController *nodeEditorWindowController;
@@ -26,14 +24,14 @@
     // Do view setup here.
 }
 
-- (void)setScriptable:(scriptableItem_t *)scriptable {
-    _scriptable = scriptable;
+- (void)setDataSource:(ScriptableTableDataSource *)dataSource {
+    _dataSource = dataSource;
     [self reloadData];
 }
 
 - (IBAction)nameSelectedAction:(NSPopUpButton *)sender {
     NSUInteger index = sender.indexOfSelectedItem;
-    [self.scriptableSelectDelegate scriptableSelectItemSelected:scriptableItemChildAtIndex(self.scriptable, (unsigned int)index)];
+    [self.scriptableSelectDelegate scriptableSelectItemSelected:scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)index)];
 }
 
 - (void)initNodeEditorWindowController {
@@ -52,7 +50,7 @@
 
 - (void)reloadData {
     [self.nameList removeAllItems];
-    for (scriptableItem_t *c = self.scriptable->children; c; c = c->next) {
+    for (scriptableItem_t *c = self.dataSource.scriptable->children; c; c = c->next) {
         const char *name = scriptableItemPropertyValueForKey(c, "name");
         if (name) {
             [self.nameList addItemWithTitle:[NSString stringWithUTF8String:name]];
