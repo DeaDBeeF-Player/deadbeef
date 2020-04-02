@@ -2714,6 +2714,13 @@
 			remoteGlobalIDString = 2D00F23E2434DE4E000FC130;
 			remoteInfo = ddb_soundtouch;
 		};
+		2D1BEB972435C26C003EFD61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D4459D21C04F28800230939 /* libzip.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B01D68A15B2F3F1002D5007;
+			remoteInfo = libzip;
+		};
 		2D1DC09A1DCB3A1000441A08 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -12908,6 +12915,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D1BEB982435C26C003EFD61 /* PBXTargetDependency */,
 				2D00F33024351ED3000FC130 /* PBXTargetDependency */,
 				2DDF87E924027FC600CA8E91 /* PBXTargetDependency */,
 				2DF16CB51DCB62F4007D7F05 /* PBXTargetDependency */,
@@ -15536,6 +15544,11 @@
 			isa = PBXTargetDependency;
 			target = 2D00F23E2434DE4E000FC130 /* ddb_soundtouch */;
 			targetProxy = 2D1BEB862435BE46003EFD61 /* PBXContainerItemProxy */;
+		};
+		2D1BEB982435C26C003EFD61 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libzip;
+			targetProxy = 2D1BEB972435C26C003EFD61 /* PBXContainerItemProxy */;
 		};
 		2D1DC09B1DCB3A1000441A08 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
