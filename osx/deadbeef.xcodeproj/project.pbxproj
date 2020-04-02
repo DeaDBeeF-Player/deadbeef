@@ -849,6 +849,7 @@
 		2D1A563A1D9FF9A4005E5CDD /* ReplayGain.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D1A56391D9FF9A4005E5CDD /* ReplayGain.xib */; };
 		2D1A564A1D9FFB10005E5CDD /* ReplayGainScannerController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1A56481D9FFB10005E5CDD /* ReplayGainScannerController.h */; };
 		2D1A564B1D9FFB10005E5CDD /* ReplayGainScannerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A56491D9FFB10005E5CDD /* ReplayGainScannerController.m */; };
+		2D1BEB962435BE4E003EFD61 /* ddb_soundtouch.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D00F23F2434DE4E000FC130 /* ddb_soundtouch.dylib */; };
 		2D1DC09C1DCB3A1500441A08 /* ddb_mono2stereo.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */; };
 		2D1DC09F1DCB3B7500441A08 /* alac_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D1DC09E1DCB3B7500441A08 /* alac_plugin.c */; };
 		2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */; };
@@ -2705,6 +2706,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D11D3B81B9DC67100C7C731;
 			remoteInfo = vtx;
+		};
+		2D1BEB862435BE46003EFD61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D00F23E2434DE4E000FC130;
+			remoteInfo = ddb_soundtouch;
 		};
 		2D1DC09A1DCB3A1000441A08 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -12369,6 +12377,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D1BEB872435BE46003EFD61 /* PBXTargetDependency */,
 				2DA04EB123B6A4C80070AC01 /* PBXTargetDependency */,
 				2DA04E9823B6A46C0070AC01 /* PBXTargetDependency */,
 				2DE3B8952269F6D200AFF9AE /* PBXTargetDependency */,
@@ -13456,6 +13465,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D1BEB962435BE4E003EFD61 /* ddb_soundtouch.dylib in Resources */,
 				2DA04EB223B6A4D40070AC01 /* shellexec.dylib in Resources */,
 				2DA04EB323B6A4D40070AC01 /* shellexecui_gtk3.dylib in Resources */,
 				2DE3B8962269F6D900AFF9AE /* pltbrowser_gtk3.dylib in Resources */,
@@ -15521,6 +15531,11 @@
 			isa = PBXTargetDependency;
 			target = 2D11D3B81B9DC67100C7C731 /* vtx */;
 			targetProxy = 2D11D3CB1B9DC6AA00C7C731 /* PBXContainerItemProxy */;
+		};
+		2D1BEB872435BE46003EFD61 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D00F23E2434DE4E000FC130 /* ddb_soundtouch */;
+			targetProxy = 2D1BEB862435BE46003EFD61 /* PBXContainerItemProxy */;
 		};
 		2D1DC09B1DCB3A1000441A08 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
