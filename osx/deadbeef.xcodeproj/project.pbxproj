@@ -1974,6 +1974,7 @@
 		2DDBA26123E5EA3800051320 /* PlaylistLocalDragDropHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDBA25F23E5EA3800051320 /* PlaylistLocalDragDropHolder.m */; };
 		2DDBA26423E5F14A00051320 /* PlaylistHeaderView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDBA26223E5F14A00051320 /* PlaylistHeaderView.h */; };
 		2DDBA26523E5F14A00051320 /* PlaylistHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDBA26323E5F14A00051320 /* PlaylistHeaderView.m */; };
+		2DDBDA392436678700C12A75 /* btnduplicateTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DDBDA2B2436678700C12A75 /* btnduplicateTemplate.pdf */; };
 		2DDF87D924027DA500CA8E91 /* PluginActionMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDF87D724027DA500CA8E91 /* PluginActionMenuItem.h */; };
 		2DDF87DA24027DA500CA8E91 /* PluginActionMenuItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDF87D824027DA500CA8E91 /* PluginActionMenuItem.m */; };
 		2DDF87EA24027FCF00CA8E91 /* hotkeys.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */; };
@@ -5343,6 +5344,7 @@
 		2DDBA25F23E5EA3800051320 /* PlaylistLocalDragDropHolder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistLocalDragDropHolder.m; sourceTree = "<group>"; };
 		2DDBA26223E5F14A00051320 /* PlaylistHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistHeaderView.h; sourceTree = "<group>"; };
 		2DDBA26323E5F14A00051320 /* PlaylistHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistHeaderView.m; sourceTree = "<group>"; };
+		2DDBDA2B2436678700C12A75 /* btnduplicateTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = btnduplicateTemplate.pdf; sourceTree = "<group>"; };
 		2DDF87D724027DA500CA8E91 /* PluginActionMenuItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginActionMenuItem.h; sourceTree = "<group>"; };
 		2DDF87D824027DA500CA8E91 /* PluginActionMenuItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginActionMenuItem.m; sourceTree = "<group>"; };
 		2DDF87EB2402845C00CA8E91 /* NSMenu+ActionItems.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSMenu+ActionItems.h"; sourceTree = "<group>"; };
@@ -10034,6 +10036,7 @@
 		4D2362B218395D0300C9E818 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				2DDBDA2B2436678700C12A75 /* btnduplicateTemplate.pdf */,
 				4D2A6C9D183BC29400AC6BF5 /* btnnextTemplate.pdf */,
 				4D2A6C9E183BC29400AC6BF5 /* btnpauseTemplate.pdf */,
 				4D2A6C9F183BC29400AC6BF5 /* btnprevTemplate.pdf */,
@@ -13577,6 +13580,7 @@
 			files = (
 				2D00F33124351EDF000FC130 /* ddb_soundtouch.dylib in Resources */,
 				2DDF87EA24027FCF00CA8E91 /* hotkeys.dylib in Resources */,
+				2DDBDA392436678700C12A75 /* btnduplicateTemplate.pdf in Resources */,
 				4D9C62991FDEC32E00D83CEF /* libvorbislib.dylib in Resources */,
 				4D9C5B0F1FDEBAFC00D83CEF /* libopuslib.dylib in Resources */,
 				2D8BA3531E2672C3001D5708 /* libflaclib.dylib in Resources */,

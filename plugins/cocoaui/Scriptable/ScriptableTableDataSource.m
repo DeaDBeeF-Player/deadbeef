@@ -45,6 +45,14 @@ extern DB_functions_t *deadbeef;
     }
 }
 
+- (void)duplicateItem:(scriptableItem_t *)item atIndex:(NSInteger)index {
+    scriptableItem_t *duplicate = scriptableItemClone(item);
+    char name[100];
+    snprintf (name, sizeof (name), "%s (Copy)", scriptableItemPropertyValueForKey(item, "name"));
+    scriptableItemSetUniqueNameUsingPrefixAndRoot(duplicate, name, self.scriptable);
+    [self insertItem:duplicate atIndex:index];
+}
+
 - (scriptableItem_t *)itemAtIndex:(NSInteger)index {
     return scriptableItemChildAtIndex(_scriptable, (unsigned int)index);
 }

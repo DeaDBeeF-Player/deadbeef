@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (ScriptableTableDataSource *)initWithScriptable:(scriptableItem_t * _Nullable)scriptable NS_DESIGNATED_INITIALIZER;
 - (void)insertItem:(scriptableItem_t *)item atIndex:(NSInteger)index;
 - (void)removeItemAtIndex:(NSInteger)index;
+- (void)duplicateItem:(scriptableItem_t *)item atIndex:(NSInteger)index;
 - (scriptableItem_t *)itemAtIndex:(NSInteger)index;
 
 @end

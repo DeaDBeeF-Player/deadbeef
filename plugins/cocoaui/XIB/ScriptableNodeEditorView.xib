@@ -94,19 +94,14 @@
                     </buttonCell>
                 </button>
                 <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zeQ-XA-rPj">
-                    <rect key="frame" x="0.0" y="-1" width="88" height="23"/>
+                    <rect key="frame" x="0.0" y="-1" width="125" height="23"/>
                     <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="momentary" id="JxR-I5-JXJ">
                         <font key="font" metaFont="system"/>
                         <segments>
-                            <segment image="NSAddTemplate">
-                                <nil key="label"/>
-                            </segment>
-                            <segment image="NSRemoveTemplate" tag="1">
-                                <nil key="label"/>
-                            </segment>
-                            <segment image="NSActionTemplate">
-                                <nil key="label"/>
-                            </segment>
+                            <segment toolTip="Add" image="NSAddTemplate" width="30"/>
+                            <segment toolTip="Remove" image="NSRemoveTemplate" width="30" tag="1"/>
+                            <segment toolTip="Configure" image="NSActionTemplate" width="30"/>
+                            <segment toolTip="Duplicate" image="btnduplicateTemplate" width="30"/>
                         </segments>
                     </segmentedCell>
                     <connections>
@@ -225,5 +220,6 @@ Gw
         <image name="NSActionTemplate" width="14" height="14"/>
         <image name="NSAddTemplate" width="11" height="11"/>
         <image name="NSRemoveTemplate" width="11" height="11"/>
+        <image name="btnduplicateTemplate" width="26" height="26"/>
     </resources>
 </document>

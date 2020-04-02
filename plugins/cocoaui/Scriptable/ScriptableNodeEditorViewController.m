@@ -76,10 +76,8 @@
     return menu;
 }
 
-- (void)createNodeWithType:(const char *)type {
-    scriptableItem_t *node = scriptableItemCreateItemOfType(self.dataSource.scriptable, type);
-    id<NSTableViewDataSource> ds = _dataSource;
-    NSInteger cnt = [ds numberOfRowsInTableView:_nodeList];
+- (NSInteger)insertionIndex {
+    NSInteger cnt = [_dataSource numberOfRowsInTableView:_nodeList];
     NSInteger index = [_nodeList selectedRow];
     if (cnt == 0) {
         index = 0;
@@ -90,6 +88,12 @@
     else {
         index++;
     }
+    return index;
+}
+
+- (void)createNodeWithType:(const char *)type {
+    scriptableItem_t *node = scriptableItemCreateItemOfType(self.dataSource.scriptable, type);
+    NSInteger index = [self insertionIndex];
 
     NSIndexSet *is = [NSIndexSet indexSetWithIndex:index];
 
@@ -209,6 +213,22 @@
     }
 }
 
+- (void)duplicateAction:(id)sender {
+    NSInteger selectedIndex = [_nodeList selectedRow];
+    if (selectedIndex == -1) {
+        return;
+    }
+    scriptableItem_t *item = scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)selectedIndex);
+
+    NSInteger insertIndex = [self insertionIndex];
+    NSIndexSet *is = [NSIndexSet indexSetWithIndex:insertIndex];
+    [_nodeList beginUpdates];
+    [_nodeList insertRowsAtIndexes:is withAnimation:NSTableViewAnimationSlideDown];
+    [self.dataSource duplicateItem:item atIndex:insertIndex];
+    [_nodeList endUpdates];
+    [_nodeList selectRowIndexes:is byExtendingSelection:NO];
+}
+
 - (IBAction)configCancelAction:(id)sender {
     [NSApp endSheet:_propertiesPanel returnCode:NSModalResponseCancel];
 }
@@ -233,6 +253,9 @@
         break;
     case 2:
         [self configureAction:sender];
+        break;
+    case 3:
+        [self duplicateAction:sender];
         break;
     }
 }
