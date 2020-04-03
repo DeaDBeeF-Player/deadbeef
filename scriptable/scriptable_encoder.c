@@ -7,12 +7,24 @@
 
 extern DB_functions_t *deadbeef;
 
+static scriptableStringListItem_t *
+scriptableEncoderChainItemNames (scriptableItem_t *item);
+
+static scriptableStringListItem_t *
+scriptableEncoderChainItemTypes (scriptableItem_t *item);
+
+static scriptableItem_t *
+scriptableEncoderCreatePreset (scriptableItem_t *root, const char *type);
+
 static scriptableCallbacks_t scriptableEncoderCallbacks = {
     .readonlyPrefix = "[Built-in] ",
 };
 
 static scriptableCallbacks_t scriptableRootCallbacks = {
     .allowRenaming = 1,
+    .factoryItemNames = scriptableEncoderChainItemNames,
+    .factoryItemTypes = scriptableEncoderChainItemTypes,
+    .createItemOfType = scriptableEncoderCreatePreset,
 };
 
 static int
@@ -41,6 +53,29 @@ static const char *configdialog =
     "property \"Write OggVorbis tag\" checkbox tag_oggvorbis 0;"
     "property \"Write MP4 tag\" checkbox tag_mp4 0;"
 ;
+
+static scriptableStringListItem_t *
+scriptableEncoderChainItemNames (scriptableItem_t *item) {
+    scriptableStringListItem_t *s = scriptableStringListItemAlloc();
+    s->str = strdup("EncoderPreset");
+    return s;
+}
+
+static scriptableStringListItem_t *
+scriptableEncoderChainItemTypes (scriptableItem_t *item) {
+    scriptableStringListItem_t *s = scriptableStringListItemAlloc();
+    s->str = strdup("EncoderPreset");
+    return s;
+}
+
+static scriptableItem_t *
+scriptableEncoderCreatePreset (scriptableItem_t *root, const char *type) {
+    // type is ignored, since there's only one preset type
+    scriptableItem_t * item = scriptableItemAlloc();
+    scriptableItemSetUniqueNameUsingPrefixAndRoot (item, "New Encoder Preset", root);
+    return item;
+}
+
 
 static int
 scriptableItemLoadEncoderPreset (scriptableItem_t *preset, const char *name, const char *path) {

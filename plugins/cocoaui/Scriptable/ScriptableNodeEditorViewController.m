@@ -51,6 +51,8 @@
     if (self.dataSource.scriptable->callbacks && self.dataSource.scriptable->callbacks->isReorderable) {
         [self.nodeList registerForDraggedTypes: [NSArray arrayWithObjects: _dataSource.pasteboardItemIdentifier, nil]];
     }
+
+    [self updateButtons];
 }
 
 - (void)reloadData {
@@ -109,6 +111,7 @@
     [_dataSource insertItem:node atIndex:index];
     [_nodeList endUpdates];
     [_nodeList selectRowIndexes:is byExtendingSelection:NO];
+    [_nodeList scrollRowToVisible:index];
 }
 
 - (void)createNode:(id)sender {
@@ -236,6 +239,7 @@
     [self.dataSource duplicateItem:item atIndex:insertIndex];
     [_nodeList endUpdates];
     [_nodeList selectRowIndexes:is byExtendingSelection:NO];
+    [_nodeList scrollRowToVisible:insertIndex];
 }
 
 - (IBAction)configOkAction:(id)sender {
