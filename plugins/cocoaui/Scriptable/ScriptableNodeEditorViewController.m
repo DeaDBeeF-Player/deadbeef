@@ -19,12 +19,17 @@
 @property (strong) IBOutlet NSPanel *propertiesPanel;
 @property (strong) IBOutlet PropertySheetViewController *propertiesViewController;
 @property ScriptablePropertySheetDataSource *propertiesDataSource;
+@property (weak) IBOutlet NSSegmentedControl *segmentedControl;
 @property (weak) IBOutlet NSSegmentedControl *customButtonsSegmentedControl;
 
 // for recursion
 @property ScriptableNodeEditorWindowController *nodeEditorWindowController;
 @property ScriptableTableDataSource *nodeDataSource;
 
+@property (nonatomic,readonly) BOOL addEnabled;
+@property (nonatomic,readonly) BOOL removeEnabled;
+@property (nonatomic,readonly) BOOL configureEnabled;
+@property (nonatomic,readonly) BOOL duplicateEnabled;
 
 @end
 
@@ -49,6 +54,7 @@
 
 - (void)reloadData {
     [self.nodeList reloadData];
+    [self updateButtons];
 }
 
 - (NSMenu *)getCreateItemMenu {
@@ -176,6 +182,7 @@
     if (index >= 0) {
         [_nodeList selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
     }
+    [self updateButtons];
     [self.delegate scriptableItemChanged:self.dataSource.scriptable change:ScriptableItemChangeUpdate];
 }
 
@@ -229,10 +236,6 @@
     [_nodeList selectRowIndexes:is byExtendingSelection:NO];
 }
 
-- (IBAction)configCancelAction:(id)sender {
-    [NSApp endSheet:_propertiesPanel returnCode:NSModalResponseCancel];
-}
-
 - (IBAction)configOkAction:(id)sender {
     [NSApp endSheet:_propertiesPanel returnCode:NSModalResponseOK];
 }
@@ -260,10 +263,39 @@
     }
 }
 
-- (IBAction)saveAction:(id)sender {
+- (scriptableItem_t *)selectedItem {
+    NSInteger selectedIndex = [_nodeList selectedRow];
+    if (selectedIndex == -1) {
+        return NULL;
+    }
+    return scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)selectedIndex);
 }
 
-- (IBAction)loadAction:(id)sender {
+- (BOOL)addEnabled {
+    return YES;
+}
+
+- (BOOL)removeEnabled {
+    scriptableItem_t *item = [self selectedItem];
+    if (!item) {
+        return NO;
+    }
+    return !item->isReadonly;
+}
+
+- (BOOL)configureEnabled {
+    return [self selectedItem] != NULL;
+}
+
+- (BOOL)duplicateEnabled {
+    return [self selectedItem] != NULL;
+}
+
+- (void)updateButtons {
+    [self.segmentedControl setEnabled:self.addEnabled forSegment:0];
+    [self.segmentedControl setEnabled:self.removeEnabled forSegment:1];
+    [self.segmentedControl setEnabled:self.configureEnabled forSegment:2];
+    [self.segmentedControl setEnabled:self.duplicateEnabled forSegment:3];
 }
 
 #pragma mark - ScriptableItemDelegate
@@ -289,6 +321,11 @@
 
     return view;
 }
+
+- (void)tableViewSelectionDidChange:(NSNotification *)notification {
+    [self updateButtons];
+}
+
 
 #pragma mark Save edited text
 
