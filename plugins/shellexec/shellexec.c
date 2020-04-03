@@ -564,9 +564,7 @@ static Shx_plugin_t plugin = {
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.id = "shellexec",
     .misc.plugin.name = "Shell commands",
-    .misc.plugin.descr = "Run custom shell commands as plugin actions.\n"
-        "... FIXME ..."
-    ,
+    .misc.plugin.descr = "Run custom shell commands as plugin actions.\n",
     .misc.plugin.copyright = 
         "Shellexec plugin for DeaDBeeF\n"
         "Copyright (C) 2010-2014 Deadbeef team\n"
