@@ -23,11 +23,12 @@ scriptableItemAlloc (void) {
     return calloc (1, sizeof (scriptableItem_t));
 }
 
-void
+int
 scriptableItemSave (scriptableItem_t *item) {
-    if (item->callbacks && item->callbacks->save) {
-        item->callbacks->save (item);
+    if (!item->isReadonly && item->callbacks && item->callbacks->save) {
+        return item->callbacks->save (item);
     }
+    return 0;
 }
 
 char *

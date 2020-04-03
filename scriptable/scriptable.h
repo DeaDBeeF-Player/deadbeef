@@ -40,7 +40,7 @@ typedef struct {
 
     void (*free)(struct scriptableItem_s *item);
 
-    void (*save)(struct scriptableItem_s *item);
+    int (*save)(struct scriptableItem_s *item);
 
     char * (*saveToString)(struct scriptableItem_s *item);
 
@@ -79,7 +79,7 @@ scriptableStringListItemFree (scriptableStringListItem_t *item);
 void
 scriptableStringListFree (scriptableStringListItem_t *list);
 
-void
+int
 scriptableItemSave (scriptableItem_t *item);
 
 char *

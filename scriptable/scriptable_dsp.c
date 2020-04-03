@@ -50,6 +50,9 @@ scriptableDspPresetNodeSaveToString (scriptableItem_t *item);
 static void
 scriptableDspPresetNodePropertyValueChangedForKey (struct scriptableItem_s *item, const char *key);
 
+static int
+scriptableDspPresetSave(scriptableItem_t *item);
+
 
 static scriptableCallbacks_t
 scriptableDspNodeCallbacks = {
@@ -67,6 +70,7 @@ scriptableDspPresetCallbacks = {
     .createItemOfType = scriptableDspCreateItemOfType,
     .updateItem = scriptableDspPresetUpdateItem,
     .updateItemForSubItem = scriptableDspPresetUpdateItemForSubItem,
+    .save = scriptableDspPresetSave
 };
 
 static scriptableCallbacks_t scriptableDspPresetListCallbacks = {
@@ -307,7 +311,7 @@ scriptableDspPresetSaveAtPath(scriptableItem_t *item, char *path) {
 }
 
 static int
-scriptableDspPresetUpdateItem (scriptableItem_t *item) {
+scriptableDspPresetSave(scriptableItem_t *item) {
     const char *presetName = scriptableItemPropertyValueForKey (item, "name");
     if (!presetName) {
         // find the corresponding node in the current dsp chain, and update
@@ -330,9 +334,13 @@ scriptableDspPresetUpdateItem (scriptableItem_t *item) {
 }
 
 static int
+scriptableDspPresetUpdateItem (scriptableItem_t *item) {
+    return scriptableItemSave(item);
+}
+
+static int
 scriptableDspPresetUpdateItemForSubItem (scriptableItem_t *item, scriptableItem_t *subItem) {
-    scriptableDspPresetUpdateItem(item);
-    return 0;
+    return scriptableItemSave(item);
 }
 
 static scriptableStringListItem_t *
@@ -412,6 +420,12 @@ scriptableDspRoot (void) {
         dspRoot = scriptableItemAlloc();
         scriptableItemSetPropertyValueForKey(dspRoot, "DSPPresets", "name");
         scriptableItemAddSubItem(scriptableRoot(), dspRoot);
+
+        scriptableItem_t *passThroughDspPreset = scriptableDspCreatePresetWithType(dspRoot, "DSPPreset");
+        passThroughDspPreset->isReadonly = 1;
+        scriptableItemSetPropertyValueForKey(passThroughDspPreset, "Pass-through", "name");
+        scriptableItemAddSubItem(dspRoot, passThroughDspPreset);
+
         dspRoot->callbacks = &scriptableDspPresetListCallbacks;
     }
     return dspRoot;
