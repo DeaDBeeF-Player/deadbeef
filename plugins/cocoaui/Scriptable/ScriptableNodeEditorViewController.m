@@ -313,7 +313,13 @@
     scriptableItem_t *item = scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)row);
     char *name = scriptableItemFormattedName(item);
 
-    view.textField.editable = self.dataSource.scriptable->callbacks && self.dataSource.scriptable->callbacks->allowRenaming;
+    view.textField.enabled = !item->isReadonly;
+    if (self.dataSource.scriptable->callbacks && self.dataSource.scriptable->callbacks->allowRenaming) {
+        view.textField.editable = YES;
+    }
+    else {
+        view.textField.selectable = YES;
+    }
 
     view.textField.stringValue = [NSString stringWithUTF8String:name];
 
