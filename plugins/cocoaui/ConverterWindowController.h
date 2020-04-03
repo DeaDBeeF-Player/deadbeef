@@ -23,7 +23,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface ConverterWindowController : NSWindowController<NSWindowDelegate,NSTableViewDataSource,NSTableViewDelegate>
+@interface ConverterWindowController : NSWindowController<NSWindowDelegate>
 
 @property (unsafe_unretained) IBOutlet NSTextField *outputFolder;
 @property (unsafe_unretained) IBOutlet NSButton *writeToSourceFolder;
@@ -32,55 +32,19 @@
 @property (weak) IBOutlet NSButton *retagAfterCopy;
 @property (unsafe_unretained) IBOutlet NSTextField *outputFileName;
 @property (unsafe_unretained) IBOutlet NSArrayController *filenamePreviewController;
-@property (unsafe_unretained) IBOutlet NSPopUpButton *encoderPreset;
 @property (unsafe_unretained) IBOutlet NSPopUpButton *outputFormat;
 @property (unsafe_unretained) IBOutlet NSPopUpButton *fileExistsAction;
 - (IBAction)cancelAction:(id)sender;
 - (IBAction)okAction:(id)sender;
 
 - (IBAction)openOutputFolderAction:(id)sender;
-- (IBAction)editEncoderPresetsAction:(id)sender;
 
-- (IBAction)outputFolderChanged:(id)sender;
 - (IBAction)writeToSourceFolderChanged:(id)sender;
 - (IBAction)preserveFolderStructureChanged:(id)sender;
 - (IBAction)bypassSameFormatChanged:(id)sender;
 - (IBAction)retagAfterCopyChanged:(id)sender;
-- (IBAction)outputPathChanged:(id)sender;
-- (IBAction)encoderPresetChanged:(id)sender;
 - (IBAction)overwritePromptChanged:(id)sender;
 - (IBAction)outputFormatChanged:(id)sender;
-
-
-
-@property (strong) IBOutlet NSPanel *encoderPresetsPanel;
-- (IBAction)closeEncoderPresetsAction:(id)sender;
-- (IBAction)addEncoderPresetAction:(id)sender;
-- (IBAction)removeEncoderPresetAction:(id)sender;
-@property (unsafe_unretained) IBOutlet NSTableView *encoderPresetsTableView;
-@property (unsafe_unretained) IBOutlet NSTextField *encoderPresetOutputFileExtension;
-@property (unsafe_unretained) IBOutlet NSTextField *encoderPresetCommandLine;
-@property (unsafe_unretained) IBOutlet NSPopUpButton *encoderPresetExecutionMethod;
-@property (unsafe_unretained) IBOutlet NSPopUpButton *encoderPresetID3v2TagVersion;
-@property (unsafe_unretained) IBOutlet NSButton *encoderPresetApeTag;
-@property (unsafe_unretained) IBOutlet NSButton *encoderPresetFlacTag;
-@property (unsafe_unretained) IBOutlet NSButton *encoderPresetOggVorbisTag;
-@property (unsafe_unretained) IBOutlet NSButton *encoderPresetID3v1Tag;
-@property (unsafe_unretained) IBOutlet NSButton *encoderPresetID3v2Tag;
-@property (unsafe_unretained) IBOutlet NSButton *encoderPresetMP4Tag;
-
-- (IBAction)encoderPresetOutputFileExtensionChangedAction:(id)sender;
-- (IBAction)encoderPresetCommandLineChangedAction:(id)sender;
-- (IBAction)encoderPresetExecutionMethodChangedAction:(id)sender;
-- (IBAction)encoderPresetID3v2TagVersionChangedAction:(id)sender;
-- (IBAction)encoderPresetApeTagChangedAction:(id)sender;
-- (IBAction)encoderPresetFlacTagChangedAction:(id)sender;
-- (IBAction)encoderPresetOggVorbisTagChangedAction:(id)sender;
-- (IBAction)encoderPresetID3v1TagChangedAction:(id)sender;
-- (IBAction)encoderPresetID3v2TagChangedAction:(id)sender;
-- (IBAction)encoderPresetMP4TagChangedAction:(id)sender;
-
-
 
 @property (strong) IBOutlet NSPanel *progressPanel;
 @property (unsafe_unretained) IBOutlet NSTextField *progressText;

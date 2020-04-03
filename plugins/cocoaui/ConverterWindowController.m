@@ -32,7 +32,7 @@
 extern DB_functions_t *deadbeef;
 static NSString *default_format = @"[%tracknumber%. ][%artist% - ]%title%";
 
-@interface ConverterWindowController () {
+@interface ConverterWindowController () <ScriptableSelectDelegate,ScriptableItemDelegate> {
     ddb_converter_t *_converter_plugin;
 
     NSCondition *_overwritePromptCondition;
@@ -48,13 +48,15 @@ static NSString *default_format = @"[%tracknumber%. ][%artist% - ]%title%";
     int _output_bps;
     int _output_is_float;
     int _overwrite_action;
-    ddb_encoder_preset_t *_encoder_preset;
     int _cancelled;
     NSInteger _overwritePromptResult;
     BOOL _working;
     NSInteger _bypassSameFormatState;
     NSInteger _retagAfterCopyState;
 }
+
+@property (nonatomic,unsafe_unretained) ddb_dsp_preset_t *dsp_preset;
+@property (nonatomic,unsafe_unretained) ddb_encoder_preset_t *encoder_preset;
 
 @property (nonatomic) ScriptableSelectViewController *dspSelectViewController;
 @property (nonatomic) ScriptableTableDataSource *dspPresetsDataSource;
@@ -76,23 +78,22 @@ static NSMutableArray *g_converterControllers;
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     _converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id ("converter");
 
-    _encoderPresetsTableView.dataSource = self;
-    _encoderPresetsTableView.delegate = self;
     [self initializeWidgets];
     self.window.delegate = self;
 
+    // FIXME: select current preset
     self.dspPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableDspRoot()];
     self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
-
     self.dspSelectViewController = [[ScriptableSelectViewController alloc] initWithNibName:@"ScriptableSelectView" bundle:nil];
     self.dspSelectViewController.view.frame = self.dspPresetSelectorContainer.bounds;
     [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
-//    self.dspSelectViewController.scriptableItemDelegate = self;
-//    self.dspSelectViewController.scriptableSelectDelegate = self;
-//    self.dspSelectViewController.errorViewer = self;
     self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
+    self.dspSelectViewController.scriptableItemDelegate = self;
+    self.dspSelectViewController.scriptableSelectDelegate = self;
+//    self.dspSelectViewController.errorViewer = self;
 
 
+    // FIXME: select current preset
     self.encoderPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableEncoderRoot()];
     self.encoderSelectViewController.dataSource = self.dspPresetsDataSource;
 
@@ -100,18 +101,13 @@ static NSMutableArray *g_converterControllers;
     self.encoderSelectViewController.view.frame = self.encoderPresetSelectorContainer.bounds;
     [self.encoderPresetSelectorContainer addSubview:self.encoderSelectViewController.view];
     self.encoderSelectViewController.dataSource = self.encoderPresetsDataSource;
+    self.encoderSelectViewController.scriptableItemDelegate = self;
+    self.encoderSelectViewController.scriptableSelectDelegate = self;
+    //    self.encoderSelectViewController.errorViewer = self;
 }
 
 - (void)dealloc {
     [self reset];
-}
-
-- (NSString *)encoderPresetTitleForPreset:(ddb_encoder_preset_t *)thePreset {
-    NSString *title = [NSString stringWithUTF8String:thePreset->title];
-    if (thePreset->readonly) {
-        title = [@"[Built-in] " stringByAppendingString:title];
-    }
-    return title;
 }
 
 - (void)initializeWidgets {
@@ -135,37 +131,22 @@ static NSMutableArray *g_converterControllers;
     [_fileExistsAction selectItemAtIndex:deadbeef->conf_get_int ("converter.overwrite_action", 0)];
     deadbeef->conf_unlock ();
 
-    // fill encoder presets
-    [self fillEncoderPresets];
-
     [_outputFormat selectItemAtIndex:deadbeef->conf_get_int ("converter.output_format", 0)];
     [_fileExistsAction selectItemAtIndex:deadbeef->conf_get_int ("converter.overwrite_action", 0)];
-}
-
--(void)fillEncoderPresets {
-    [_encoderPreset removeAllItems];
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_list ();
-    while (p) {
-        [_encoderPreset addItemWithTitle:[self encoderPresetTitleForPreset:p]];
-        p = p->next;
-    }
-    [_encoderPreset selectItemAtIndex:deadbeef->conf_get_int ("converter.encoder_preset", 0)];
 }
 
 - (void)controlTextDidChange:(NSNotification *)notification {
     NSTextField *textField = [notification object];
     if (textField == _outputFolder) {
-        [self outputFolderChanged:self];
+        [self updateFilenamesPreview];
+        deadbeef->conf_set_str ("converter.output_folder", [[_outputFolder stringValue] UTF8String]);
+        deadbeef->conf_save ();
     }
     else if (textField == _outputFileName) {
-        [self outputPathChanged:self];
+        [self updateFilenamesPreview];
+        deadbeef->conf_set_str ("converter.output_file", [[_outputFileName stringValue] UTF8String]);
+        deadbeef->conf_save ();
     }
-}
-
-- (IBAction)outputFolderChanged:(id)sender {
-    [self updateFilenamesPreview];
-    deadbeef->conf_set_str ("converter.output_folder", [[_outputFolder stringValue] UTF8String]);
-    deadbeef->conf_save ();
 }
 
 - (IBAction)preserveFolderStructureChanged:(id)sender {
@@ -189,16 +170,14 @@ static NSMutableArray *g_converterControllers;
 -(void)updateFilenamesPreview {
     NSMutableArray *convert_items_preview = [NSMutableArray arrayWithCapacity:_convert_items_count];
 
-    int enc_preset = (int)[_encoderPreset indexOfSelectedItem];
-    ddb_encoder_preset_t *encoder_preset = NULL;
 
-    if (enc_preset >= 0) {
-        encoder_preset = _converter_plugin->encoder_preset_get_for_idx (enc_preset);
-    }
-
-    if (!encoder_preset) {
+    NSInteger selectedEncoderPreset = self.encoderSelectViewController.indexOfSelectedItem;
+    if (selectedEncoderPreset == -1) {
         return;
     }
+    scriptableItem_t *preset = scriptableItemChildAtIndex(scriptableEncoderRoot(), (unsigned int)selectedEncoderPreset);
+    ddb_encoder_preset_t *encoder_preset = _converter_plugin->encoder_preset_alloc();
+    scriptableEncoderPresetToConverterEncoderPreset(preset, encoder_preset);
 
     NSString *outfile = [_outputFileName stringValue];
 
@@ -220,12 +199,6 @@ static NSMutableArray *g_converterControllers;
     _filenamePreviewController.content = convert_items_preview;
 }
 
-- (IBAction)outputPathChanged:(id)sender {
-    [self updateFilenamesPreview];
-    deadbeef->conf_set_str ("converter.output_file", [[_outputFileName stringValue] UTF8String]);
-    deadbeef->conf_save ();
-}
-
 - (IBAction)writeToSourceFolderChanged:(NSButton *)sender {
     [self updateFilenamesPreview];
     int active = sender.state == NSOnState;
@@ -235,11 +208,6 @@ static NSMutableArray *g_converterControllers;
     _preserveFolderStructure.enabled = !active;
 }
 
-
-- (IBAction)encoderPresetChanged:(id)sender {
-    deadbeef->conf_set_int ("converter.encoder_preset", (int)[_encoderPreset indexOfSelectedItem]);
-    [self updateFilenamesPreview];
-}
 
 - (IBAction)overwritePromptChanged:(id)sender {
     deadbeef->conf_set_int ("converter.overwrite_action", (int)[_fileExistsAction indexOfSelectedItem]);
@@ -272,9 +240,14 @@ static NSMutableArray *g_converterControllers;
 
     _outfolder = nil;
     _outfile = nil;
-    if (_encoder_preset) {
-        _converter_plugin->encoder_preset_free (_encoder_preset);
-        _encoder_preset = NULL;
+
+    if (self.encoder_preset) {
+        _converter_plugin->encoder_preset_free (self.encoder_preset);
+        self.encoder_preset = NULL;
+    }
+    if (self.dsp_preset) {
+        _converter_plugin->dsp_preset_free (self.dsp_preset);
+        self.dsp_preset = NULL;
     }
 }
 
@@ -392,235 +365,18 @@ static NSMutableArray *g_converterControllers;
     }];
 }
 
-// encoder presets sheet
-- (IBAction)editEncoderPresetsAction:(id)sender {
-    [self.window beginSheet:_encoderPresetsPanel completionHandler:^(NSModalResponse returnCode) {
-        [self fillEncoderPresets];
-    }];
-}
-
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
-{
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_list ();
-    int cnt = 0;
-    while (p) {
-        cnt++;
-        p = p->next;
+- (void)setEncoder_preset:(ddb_encoder_preset_t *)encoder_preset {
+    if (_encoder_preset) {
+        _converter_plugin->encoder_preset_free (_encoder_preset);
     }
-    return cnt;
+    _encoder_preset = encoder_preset;
 }
 
-- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_list ();
-    int i = 0;
-    while (p && i < rowIndex) {
-        i++;
-        p = p->next;
+- (void)setDsp_preset:(ddb_dsp_preset_t *)dsp_preset {
+    if (_dsp_preset) {
+        _converter_plugin->dsp_preset_free (_dsp_preset);
     }
-    return [self encoderPresetTitleForPreset:p];
-}
-
-- (BOOL)tableView:(NSTableView *)aTableView shouldEditTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx ((int)rowIndex);
-    return p && !p->readonly;
-}
-
-- (NSString *)uniqueEncoderPresetTitle:(NSString *)title {
-    NSString *uniqueTitle = title;
-    int nr = 1;
-    for (;;) {
-        ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_list ();
-        while (p) {
-            if (!strcmp ([uniqueTitle UTF8String], p->title)) {
-                break;
-            }
-            p = p->next;
-        }
-        if (!p) {
-            return uniqueTitle;
-        }
-        uniqueTitle = [NSString stringWithFormat:@"%@ (%d)", title, nr];
-        nr++;
-    }
-    return nil;
-}
-
-- (IBAction)addEncoderPresetAction:(id)sender {
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_alloc ();
-    NSString *title = [self uniqueEncoderPresetTitle:@"New preset"];
-    p->title = strdup ([title UTF8String]);
-    p->encoder = strdup ("");
-    p->ext = strdup ("");
-
-    int cnt = 0;
-    ddb_encoder_preset_t *pp = _converter_plugin->encoder_preset_get_list ();
-    while (pp) {
-        cnt++;
-        pp = pp->next;
-    }
-
-    _converter_plugin->encoder_preset_append (p);
-
-    [_encoderPresetsTableView reloadData];
-    [_encoderPresetsTableView editColumn:0 row:cnt withEvent:nil select:YES];
-}
-
-- (void)tableView:(NSTableView *)aTableView setObjectValue:(id)anObject forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx ((int)rowIndex);
-    if (p) {
-        if (p->title) {
-            char path[PATH_MAX];
-            if (snprintf (path, sizeof (path), "%s/presets/encoders/%s.txt", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG), p->title) > 0) {
-                unlink (path);
-            }
-            free (p->title);
-        }
-        NSString *title = [self uniqueEncoderPresetTitle:anObject];
-        p->title = strdup ([title UTF8String]);
-        _converter_plugin->encoder_preset_save (p, 1);
-    }
-}
-
-- (IBAction)removeEncoderPresetAction:(id)sender {
-    int idx = (int)[_encoderPresetsTableView selectedRow];
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
-    if (p) {
-        if (!p->readonly) {
-            _converter_plugin->encoder_preset_remove(p);
-            [_encoderPresetsTableView reloadData];
-        }
-    }
-}
-
-
-- (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
-    self.presetInfo = [_encoderPresetsTableView selectedRow];
-}
-
-- (void)setPresetInfo:(NSInteger)idx {
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx ((int)idx);
-    if (p) {
-
-        if (p->tag_id3v2 ^ [[self encoderPresetID3v2Tag] state] ) { [[self encoderPresetID3v2Tag] setNextState]; };
-        if (p->tag_id3v1 ^ [[self encoderPresetID3v1Tag] state]) { [[self encoderPresetID3v1Tag] setNextState]; };
-        if (p->tag_apev2 ^ [[self encoderPresetApeTag] state] ) { [[self encoderPresetApeTag] setNextState]; };
-        if (p->tag_flac ^ [[self encoderPresetFlacTag] state]) { [[self encoderPresetFlacTag] setNextState]; };
-        if (p->tag_oggvorbis ^ [[self encoderPresetOggVorbisTag] state]) { [[self encoderPresetOggVorbisTag] setNextState]; };
-        if (p->tag_mp4 ^ [[self encoderPresetMP4Tag] state] ) { [[self encoderPresetMP4Tag] setNextState]; };
-
-        [self encoderPresetOutputFileExtension].stringValue =  [NSString stringWithFormat:@"%s", p->ext] ;
-        [self encoderPresetCommandLine].stringValue =  [NSString stringWithFormat:@"%s", p->encoder] ;
-
-        [[self encoderPresetExecutionMethod] selectItemAtIndex:(p->method)];
-        [[self encoderPresetID3v2TagVersion] selectItemAtIndex:(p->id3v2_version)];
-
-        BOOL enabled = !(p->readonly);
-        [self encoderPresetOutputFileExtension].enabled =  enabled ;
-        [self encoderPresetCommandLine].enabled =  enabled ;
-        [self encoderPresetExecutionMethod].enabled =  enabled ;
-        [self encoderPresetID3v2TagVersion].enabled =  enabled ;
-        [self encoderPresetApeTag].enabled =  enabled ;
-        [self encoderPresetFlacTag].enabled =  enabled ;
-        [self encoderPresetOggVorbisTag].enabled =  enabled ;
-        [self encoderPresetID3v1Tag].enabled =  enabled ;
-        [self encoderPresetID3v2Tag].enabled =  enabled ;
-        [self encoderPresetMP4Tag].enabled =  enabled ;
-    }
-}
-
-- (IBAction)encoderPresetOutputFileExtensionChangedAction:(id)sender {
-    int idx = (int)[_encoderPresetsTableView selectedRow];
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
-    if(p) {
-        p->ext = strdup ([[sender stringValue] UTF8String]);
-        _converter_plugin->encoder_preset_save (p, 1);
-    }
-}
-
-- (IBAction)encoderPresetCommandLineChangedAction:(id)sender {
-    int idx = (int)[_encoderPresetsTableView selectedRow];
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
-    if(p) {
-        p->encoder = strdup ([[sender stringValue] UTF8String]);
-        _converter_plugin->encoder_preset_save (p, 1);
-    }
-}
-
-- (IBAction)encoderPresetExecutionMethodChangedAction:(id)sender {
-    int idx = (int)[_encoderPresetsTableView selectedRow];
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
-    if(p) {
-        p->method = (int)[sender indexOfSelectedItem];
-        _converter_plugin->encoder_preset_save (p, 1);
-    }
-}
-
-- (IBAction)encoderPresetID3v2TagVersionChangedAction:(id)sender {
-    int idx = (int)[_encoderPresetsTableView selectedRow];
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
-    if(p) {
-        p->id3v2_version = (int)[sender indexOfSelectedItem];
-        _converter_plugin->encoder_preset_save (p, 1);
-    }
-}
-
-- (IBAction)encoderPresetApeTagChangedAction:(NSButton *)sender {
-    int idx = (int)[_encoderPresetsTableView selectedRow];
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
-    if(p) {
-        p->tag_apev2 = sender.state == NSOnState;
-        _converter_plugin->encoder_preset_save (p, 1);
-    }
-}
-
-- (IBAction)encoderPresetFlacTagChangedAction:(NSButton *)sender {
-    int idx = (int)[_encoderPresetsTableView selectedRow];
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
-    if(p) {
-        p->tag_flac = sender.state == NSOnState;
-        _converter_plugin->encoder_preset_save (p, 1);
-    }
-}
-
-- (IBAction)encoderPresetOggVorbisTagChangedAction:(NSButton *)sender {
-    int idx = (int)[_encoderPresetsTableView selectedRow];
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
-    if(p) {
-        p->tag_oggvorbis = sender.state == NSOnState;
-        _converter_plugin->encoder_preset_save (p, 1);
-    }
-}
-
-- (IBAction)encoderPresetID3v1TagChangedAction:(NSButton *)sender {
-    int idx = (int)[_encoderPresetsTableView selectedRow];
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
-    if(p) {
-        p->tag_id3v1 = sender.state == NSOnState;
-        _converter_plugin->encoder_preset_save (p, 1);
-    }
-}
-
-- (IBAction)encoderPresetID3v2TagChangedAction:(NSButton *)sender {
-    int idx = (int)[_encoderPresetsTableView selectedRow];
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
-    if(p) {
-        p->tag_id3v2 = sender.state == NSOnState;
-        _converter_plugin->encoder_preset_save (p, 1);
-    }
-}
-
-- (IBAction)encoderPresetMP4TagChangedAction:(NSButton *)sender {
-    int idx = (int)[_encoderPresetsTableView selectedRow];
-    ddb_encoder_preset_t *p = _converter_plugin->encoder_preset_get_for_idx (idx);
-    if(p) {
-        p->tag_mp4 = sender.state == NSOnState;
-        _converter_plugin->encoder_preset_save (p, 1);
-    }
-}
-
-
-- (IBAction)closeEncoderPresetsAction:(id)sender {
-    [self.window endSheet:_encoderPresetsPanel returnCode:NSModalResponseOK];
+    _dsp_preset = dsp_preset;
 }
 
 - (IBAction)okAction:(id)sender {
@@ -653,14 +409,15 @@ static NSMutableArray *g_converterControllers;
             break;
     }
 
-    int enc_preset = (int)[_encoderPreset indexOfSelectedItem];
-    ddb_encoder_preset_t *encoder_preset = NULL;
-
-    if (enc_preset >= 0) {
-        encoder_preset = _converter_plugin->encoder_preset_get_for_idx (enc_preset);
+    NSInteger selectedEncoderPreset = self.encoderSelectViewController.indexOfSelectedItem;
+    if (selectedEncoderPreset != -1) {
+        scriptableItem_t *preset = scriptableItemChildAtIndex(scriptableEncoderRoot(), (unsigned int)selectedEncoderPreset);
+        self.encoder_preset = _converter_plugin->encoder_preset_alloc();
+        scriptableEncoderPresetToConverterEncoderPreset(preset, self.encoder_preset);
     }
 
-    if (!encoder_preset) {
+
+    if (!self.encoder_preset) {
         NSAlert *alert = [NSAlert new];
         [alert addButtonWithTitle:@"OK"];
         alert.messageText = @"Encoder is not selected.";
@@ -672,26 +429,13 @@ static NSMutableArray *g_converterControllers;
         return;
     }
 
-    // FIXME
-
-#if 0
-    int dsp_idx = (int)[_dspPreset indexOfSelectedItem] - 1;
-
-    ddb_dsp_preset_t *dsp_preset = NULL;
-    if (dsp_idx >= 0) {
-        dsp_preset = _converter_plugin->dsp_preset_get_for_idx (dsp_idx);
+    NSInteger selectedDspPreset = self.dspSelectViewController.indexOfSelectedItem;
+    if (selectedDspPreset != -1) {
+        scriptableItem_t *preset = scriptableItemChildAtIndex(scriptableDspRoot(), (unsigned int)selectedDspPreset);
+        ddb_dsp_context_t *chain = scriptableDspConfigToDspChain(preset);
+        self.dsp_preset = _converter_plugin->dsp_preset_alloc ();
+        self.dsp_preset->chain = chain;
     }
-
-    // copy selected presets, to guarantee they don't change while converting
-    if (encoder_preset) {
-        _encoder_preset = _converter_plugin->encoder_preset_alloc ();
-        _converter_plugin->encoder_preset_copy (_encoder_preset, encoder_preset);
-    }
-    if (dsp_preset) {
-        _dsp_preset = _converter_plugin->dsp_preset_alloc ();
-        _converter_plugin->dsp_preset_copy (_dsp_preset, dsp_preset);
-    }
-#endif
 
     _cancelled = NO;
     self.window.isVisible = NO;
@@ -757,9 +501,8 @@ static NSMutableArray *g_converterControllers;
     ddb_converter_settings_t settings = {
         .output_bps = _output_bps,
         .output_is_float = _output_is_float,
-        .encoder_preset = _encoder_preset,
-        // FIXME
-//        .dsp_preset = _dsp_preset,
+        .encoder_preset = self.encoder_preset,
+        .dsp_preset = self.dsp_preset,
         .bypass_conversion_on_same_format = (_bypassSameFormatState == NSOnState),
         .rewrite_tags_after_copy = (_retagAfterCopyState == NSOnState),
     };
@@ -863,6 +606,37 @@ static NSMutableArray *g_converterControllers;
 
 + (void)cleanup {
     g_converterControllers = nil;
+}
+
+#pragma mark - ScriptableSelectDelegate
+
+- (void)scriptableSelectItemSelected:(nonnull scriptableItem_t *)item {
+    if (item->parent == scriptableEncoderRoot()) {
+        const char *name = scriptableItemPropertyValueForKey(item, "name");
+        deadbeef->conf_set_str ("converter.encoder_preset_name", name);
+        [self updateFilenamesPreview];
+    }
+    else if (item->parent == scriptableDspRoot()) {
+        const char *name = scriptableItemPropertyValueForKey(item, "name");
+        deadbeef->conf_set_str ("converter.dsp_preset_name", name);
+    }
+}
+
+#pragma mark - ScriptableItemDelegate
+
+- (void)scriptableItemChanged:(scriptableItem_t * _Nonnull)scriptable change:(ScriptableItemChange)change {
+    if (scriptable == scriptableEncoderRoot()) {
+        NSInteger selectedEncPresetIndex = self.encoderSelectViewController.indexOfSelectedItem;
+        scriptableItem_t *selectedEncPreset = scriptableItemChildAtIndex(scriptableEncoderRoot(), (unsigned int)selectedEncPresetIndex);
+        [self scriptableSelectItemSelected:selectedEncPreset];
+        [self.encoderSelectViewController reloadData];
+    }
+    else if (scriptable == scriptableDspRoot()) {
+        NSInteger selectedDspPresetIndex = self.dspSelectViewController.indexOfSelectedItem;
+        scriptableItem_t *selectedDspPreset = scriptableItemChildAtIndex(scriptableDspRoot(), (unsigned int)selectedDspPresetIndex);
+        [self scriptableSelectItemSelected:selectedDspPreset];
+        [self.dspSelectViewController reloadData];
+    }
 }
 
 @end

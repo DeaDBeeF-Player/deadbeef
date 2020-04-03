@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak) NSObject<ScriptableSelectDelegate> *scriptableSelectDelegate;
 @property (weak) NSObject<ScriptableErrorViewer> *errorViewer;
 
+@property (nonatomic,readonly) NSInteger indexOfSelectedItem;
+
 - (void)reloadData;
 
 @end

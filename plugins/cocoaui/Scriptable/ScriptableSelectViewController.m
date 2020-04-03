@@ -58,4 +58,8 @@
     }
 }
 
+- (NSInteger)indexOfSelectedItem {
+    return self.nameList.indexOfSelectedItem;
+}
+
 @end

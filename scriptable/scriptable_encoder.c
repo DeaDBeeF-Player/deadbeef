@@ -11,6 +11,10 @@ static scriptableCallbacks_t scriptableEncoderCallbacks = {
     .readonlyPrefix = "[Built-in] ",
 };
 
+static scriptableCallbacks_t scriptableRootCallbacks = {
+    .allowRenaming = 1,
+};
+
 static int
 dirent_alphasort (const struct dirent **a, const struct dirent **b) {
     return strcmp ((*a)->d_name, (*b)->d_name);
@@ -86,6 +90,7 @@ scriptableEncoderRoot (void) {
     scriptableItem_t *encoderRoot = scriptableItemSubItemForName (scriptableRoot(), "EncoderPresets");
     if (!encoderRoot) {
         encoderRoot = scriptableItemAlloc();
+        encoderRoot->callbacks = &scriptableRootCallbacks;
         scriptableItemSetPropertyValueForKey(encoderRoot, "EncoderPresets", "name");
         scriptableItemAddSubItem(scriptableRoot(), encoderRoot);
     }
@@ -137,4 +142,9 @@ scriptableEncoderLoadPresets (void) {
         free (namelist);
         namelist = NULL;
     }
+}
+
+ddb_encoder_preset_t *
+scriptableEncoderPresetToConverterEncoderPreset (scriptableItem_t *item, ddb_encoder_preset_t *encoder_preset) {
+    return NULL;
 }
