@@ -15,6 +15,7 @@
 @end
 
 @implementation ScriptablePropertySheetDataSource
+
 - (instancetype)initWithScriptable:(scriptableItem_t *)scriptable {
     self = [super init];
     _scriptable = scriptable;
@@ -25,6 +26,11 @@
     const char *config = _scriptable->configDialog;
     return config ? [NSString stringWithUTF8String:config] : nil;
 }
+
+- (BOOL)propertySheet:(PropertySheetViewController *)vc itemIsReadonly:(id)item {
+    return _scriptable->isReadonly;
+}
+
 
 - (NSString *)propertySheet:(PropertySheetViewController *)vc valueForKey:(NSString *)key def:(NSString *)def item:(id)item {
     const char *value = scriptableItemPropertyValueForKey(_scriptable, [key UTF8String]);

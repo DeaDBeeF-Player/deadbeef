@@ -17,6 +17,7 @@
 
 @property (unsafe_unretained) IBOutlet NSTableView *nodeList;
 @property (strong) IBOutlet NSPanel *propertiesPanel;
+@property (weak) IBOutlet NSButton *propertiesPanelResetButton;
 @property (strong) IBOutlet PropertySheetViewController *propertiesViewController;
 @property ScriptablePropertySheetDataSource *propertiesDataSource;
 @property (weak) IBOutlet NSSegmentedControl *segmentedControl;
@@ -215,6 +216,7 @@
         self.propertiesDataSource = [[ScriptablePropertySheetDataSource alloc] initWithScriptable:item];
 
         self.propertiesViewController.dataSource = self.propertiesDataSource;
+        self.propertiesPanelResetButton.enabled = !item->isReadonly;
         [self.view.window beginSheet:_propertiesPanel completionHandler:^(NSModalResponse returnCode) {
         }];
     }

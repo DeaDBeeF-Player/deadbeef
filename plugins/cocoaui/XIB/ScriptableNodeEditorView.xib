@@ -11,6 +11,7 @@
                 <outlet property="customButtonsSegmentedControl" destination="66e-Rv-oF4" id="LLZ-Mg-kAV"/>
                 <outlet property="nodeList" destination="6kF-fI-yim" id="1CZ-Sm-h41"/>
                 <outlet property="propertiesPanel" destination="DmZ-5J-Htc" id="a4K-ur-hsR"/>
+                <outlet property="propertiesPanelResetButton" destination="y6m-T7-vjz" id="5h6-qv-3NG"/>
                 <outlet property="propertiesViewController" destination="Pnv-33-o5j" id="PCp-1f-fGC"/>
                 <outlet property="segmentedControl" destination="zeQ-XA-rPj" id="GSH-vx-6ed"/>
                 <outlet property="view" destination="qcl-7l-m6v" id="iEb-Yw-WkH"/>
@@ -138,7 +139,7 @@
             </constraints>
             <point key="canvasLocation" x="-318.5" y="393.5"/>
         </customView>
-        <window title="DSP Configuration" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="DmZ-5J-Htc" customClass="NSPanel">
+        <window title="DSP Configuration" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="DmZ-5J-Htc" userLabel="Property Sheet Panel" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="167" y="107" width="591" height="300"/>
@@ -152,7 +153,7 @@
                         <rect key="frame" x="20" y="49" width="551" height="230"/>
                         <clipView key="contentView" id="zcI-Og-GmQ" customClass="FlippedClipView">
                             <rect key="frame" x="1" y="1" width="549" height="228"/>
-                            <autoresizingMask key="autoresizingMask"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TeJ-pI-xP9" customClass="PropertySheetContentView">
                                     <rect key="frame" x="0.0" y="0.0" width="549" height="228"/>

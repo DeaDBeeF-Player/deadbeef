@@ -141,7 +141,7 @@
     }
 }
 
-- (NSUInteger)addFieldsToBox:(BoxHandler *)box fromIndex:(NSUInteger)index count:(NSUInteger)count {
+- (NSUInteger)addFieldsToBox:(BoxHandler *)box fromIndex:(NSUInteger)index count:(NSUInteger)count isReadonly:(BOOL)isReadonly {
     NSView *view = box.view;
     CGFloat unit_h = _contentFontSize + 13;
 
@@ -266,7 +266,7 @@
                 [sv.heightAnchor constraintEqualToConstant:height].active = YES;
             }
 
-            i = [self addFieldsToBox:nestedBox fromIndex:i+1 count:nestedCount];
+            i = [self addFieldsToBox:nestedBox fromIndex:i+1 count:nestedCount isReadonly:isReadonly];
 
             if (width != -1) {
                 contentWidth = MAX(width, contentWidth);
@@ -373,7 +373,7 @@
         NSString *def = [NSString stringWithUTF8String:_settingsData.props[i].def];
         NSString *value = [self.dataSource propertySheet:self valueForKey:propname def:def item:self.item];
 
-        NSView *currentField;
+        NSControl *currentField;
 
         switch (_settingsData.props[i].type) {
         case PROP_ENTRY:
@@ -630,6 +630,10 @@
             contentHeight += unit_h;
         }
 
+        if (isReadonly) {
+            currentField.enabled = NO;
+        }
+
         i++;
     }
 
@@ -672,7 +676,7 @@
     return i;
 }
 
-- (void)setDataSource:(id<PropertySheetDataSource>)dataSource {
+- (void)setDataSource:(NSObject<PropertySheetDataSource> *)dataSource {
     _dataSource = dataSource;
 
     self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -684,6 +688,10 @@
 
     BOOL have_settings = YES;
     NSString *config = [dataSource propertySheet:self configForItem:self.item];
+    BOOL isReadonly = NO;
+    if ([dataSource respondsToSelector:@selector(propertySheet:itemIsReadonly:)]) {
+        isReadonly = [dataSource propertySheet:self itemIsReadonly:self.item];
+    }
     if (!config || settings_data_init(&_settingsData, [config UTF8String]) < 0) {
         have_settings = NO;
     }
@@ -754,7 +762,7 @@
     BoxHandler *box = [BoxHandler new];
     box.view = view;
 
-    [self addFieldsToBox:box fromIndex:0 count:self.settingsData.nprops];
+    [self addFieldsToBox:box fromIndex:0 count:self.settingsData.nprops isReadonly:isReadonly];
 
 //    self.contentView.frame = NSMakeRect(0, 0, self.contentSize.width, self.contentSize.height);
     self.contentView.contentSize = self.contentSize;
