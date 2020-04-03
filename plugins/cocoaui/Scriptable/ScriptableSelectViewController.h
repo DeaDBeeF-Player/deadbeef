@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,readonly) NSInteger indexOfSelectedItem;
 
 - (void)reloadData;
+- (void)selectItem:(scriptableItem_t *)item;
 
 @end
 

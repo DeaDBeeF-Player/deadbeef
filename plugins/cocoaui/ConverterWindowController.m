@@ -81,7 +81,6 @@ static NSMutableArray *g_converterControllers;
     [self initializeWidgets];
     self.window.delegate = self;
 
-    // FIXME: select current preset
     self.dspPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableDspRoot()];
     self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
     self.dspSelectViewController = [[ScriptableSelectViewController alloc] initWithNibName:@"ScriptableSelectView" bundle:nil];
@@ -92,8 +91,13 @@ static NSMutableArray *g_converterControllers;
     self.dspSelectViewController.scriptableSelectDelegate = self;
 //    self.dspSelectViewController.errorViewer = self;
 
+    char dsp_preset_name[100];
+    deadbeef->conf_get_str ("converter.dsp_preset_name", "", dsp_preset_name, sizeof(dsp_preset_name));
+    scriptableItem_t *dspPreset = scriptableItemSubItemForName(scriptableDspRoot(), dsp_preset_name);
+    if (dspPreset) {
+        [self.dspSelectViewController selectItem:dspPreset];
+    }
 
-    // FIXME: select current preset
     self.encoderPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableEncoderRoot()];
     self.encoderSelectViewController.dataSource = self.dspPresetsDataSource;
 
@@ -104,6 +108,14 @@ static NSMutableArray *g_converterControllers;
     self.encoderSelectViewController.scriptableItemDelegate = self;
     self.encoderSelectViewController.scriptableSelectDelegate = self;
     //    self.encoderSelectViewController.errorViewer = self;
+
+    char enc_preset_name[100];
+    deadbeef->conf_get_str ("converter.encoder_preset_name", "", enc_preset_name, sizeof(enc_preset_name));
+    scriptableItem_t *encPreset = scriptableItemSubItemForName(scriptableEncoderRoot(), enc_preset_name);
+    if (encPreset) {
+        [self.encoderSelectViewController selectItem:encPreset];
+    }
+
 }
 
 - (void)dealloc {
