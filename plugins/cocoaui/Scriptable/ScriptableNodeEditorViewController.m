@@ -348,6 +348,11 @@
     if (row != -1) {
         const char *value = textField.stringValue.UTF8String;
         scriptableItem_t *item = scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)row);
+        const char *name = scriptableItemPropertyValueForKey(item, "name");
+        if (!strcmp (name, value)) {
+            return; // name unchanged
+        }
+
         if (scriptableItemContainsSubItemWithName (item->parent, value)) {
             [self.errorViewer scriptableErrorViewer:self duplicateNameErrorForItem:item];
             [textField becomeFirstResponder];
