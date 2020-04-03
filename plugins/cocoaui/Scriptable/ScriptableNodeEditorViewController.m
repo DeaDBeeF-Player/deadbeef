@@ -321,9 +321,11 @@
 
     view.textField.enabled = !item->isReadonly;
     if (self.dataSource.scriptable->callbacks && self.dataSource.scriptable->callbacks->allowRenaming) {
+        view.textField.selectable = NO;
         view.textField.editable = YES;
     }
     else {
+        view.textField.editable = NO;
         view.textField.selectable = YES;
     }
 
