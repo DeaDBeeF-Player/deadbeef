@@ -88,10 +88,16 @@ scriptableEncoderChainItemTypes (scriptableItem_t *item) {
     return s;
 }
 
+static scriptableItem_t *scriptableEncoderCreateBlankPreset() {
+    scriptableItem_t *item = scriptableItemAlloc();
+    item->callbacks = &scriptableEncoderCallbacks;
+    return item;
+}
+
 static scriptableItem_t *
 scriptableEncoderCreatePreset (scriptableItem_t *root, const char *type) {
     // type is ignored, since there's only one preset type
-    scriptableItem_t * item = scriptableItemAlloc();
+    scriptableItem_t * item = scriptableEncoderCreateBlankPreset();
     scriptableItemSetUniqueNameUsingPrefixAndRoot (item, "New Encoder Preset", root);
     return item;
 }
@@ -285,9 +291,8 @@ scriptableEncoderLoadPresets (void) {
             char s[PATH_MAX];
             if (snprintf (s, sizeof (s), "%s/%s", presetspath, namelist[i]->d_name) > 0){
 
-                scriptableItem_t *preset = scriptableItemAlloc();
+                scriptableItem_t *preset = scriptableEncoderCreateBlankPreset ();
                 preset->isLoading = 1;
-                preset->callbacks = &scriptableEncoderCallbacks;
                 preset->configDialog = configdialog;
                 if (scriptableItemLoadEncoderPreset (preset, namelist[i]->d_name, s)) {
                     scriptableItemFree (preset);

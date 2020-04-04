@@ -447,7 +447,7 @@ scriptableDspRoot (void) {
         scriptableItemSetPropertyValueForKey(dspRoot, "DSPPresets", "name");
         scriptableItemAddSubItem(scriptableRoot(), dspRoot);
 
-        scriptableItem_t *passThroughDspPreset = scriptableDspCreatePresetWithType(dspRoot, "DSPPreset");
+        scriptableItem_t *passThroughDspPreset = scriptableDspCreateBlankPreset();
         passThroughDspPreset->isLoading = 1;
         passThroughDspPreset->isReadonly = 1;
         scriptableItemSetPropertyValueForKey(passThroughDspPreset, "Pass-through", "name");
@@ -631,15 +631,13 @@ scriptableDspChainItemTypes (scriptableItem_t *item) {
 
 scriptableItem_t *
 scriptableDspPresetFromDspChain (ddb_dsp_context_t *chain) {
-    scriptableItem_t *config = scriptableItemAlloc();
+    scriptableItem_t *config = scriptableDspCreateBlankPreset();
 
     while (chain) {
         scriptableItem_t *node = scriptableDspNodeItemFromDspContext (chain);
         scriptableItemAddSubItem(config, node);
         chain = chain->next;
     }
-
-    config->callbacks = &scriptableDspPresetCallbacks;
 
     return config;
 }

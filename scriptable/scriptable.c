@@ -301,6 +301,7 @@ scriptableItemSetPropertyValueForKey (scriptableItem_t *item, const char *value,
         item->properties = p;
     }
 
+    scriptableItemPropertyValueDidChangeForKey (item, key);
     scriptableItemUpdate(item);
 }
 
