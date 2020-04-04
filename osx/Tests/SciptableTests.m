@@ -36,7 +36,7 @@
 - (void)test_LoadDSPPreset_ReturnsExpectedData {
     scriptableDspLoadPresets ();
     scriptableItem_t *dspRoot = scriptableDspRoot ();
-    XCTAssertEqual(1, scriptableItemNumChildren (dspRoot));
+    XCTAssertEqual(2, scriptableItemNumChildren (dspRoot));
     scriptableFree();
 }
 
@@ -44,9 +44,8 @@
     scriptableDspLoadPresets ();
     scriptableItem_t *dspRoot = scriptableDspRoot ();
 
-    scriptableItem_t *preset = dspRoot->children;
+    scriptableItem_t *preset = dspRoot->children->next;
     XCTAssertEqual(3, scriptableItemNumChildren (preset));
-
     scriptableFree();
 }
 
@@ -54,7 +53,7 @@
     scriptableDspLoadPresets ();
     scriptableItem_t *dspRoot = scriptableDspRoot ();
 
-    scriptableItem_t *preset = dspRoot->children;
+    scriptableItem_t *preset = dspRoot->children->next;
     scriptableItem_t *plugin = preset->children;
 
     const char *pluginId = scriptableItemPropertyValueForKey(plugin, "pluginId");
@@ -121,6 +120,21 @@
     XCTAssert(preset.id3v2_version==0);
     free (preset.ext);
     free (preset.encoder);
+}
+
+- (void)test_DSPPreset_HasPassThrough {
+    scriptableDspLoadPresets ();
+    scriptableItem_t *dspRoot = scriptableDspRoot ();
+    int numPresets = scriptableItemNumChildren (dspRoot);
+    XCTAssertEqual(numPresets, 2);
+
+    scriptableItem_t *preset = dspRoot->children;
+    XCTAssertEqual(0, scriptableItemNumChildren (preset));
+
+    const char *name = scriptableItemPropertyValueForKey(preset, "name");
+    XCTAssert(!strcmp (name, "Pass-through"));
+
+    scriptableFree();
 }
 
 @end
