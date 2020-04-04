@@ -1983,6 +1983,13 @@
 		2DDF87EA24027FCF00CA8E91 /* hotkeys.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */; };
 		2DDF87ED2402845C00CA8E91 /* NSMenu+ActionItems.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDF87EB2402845C00CA8E91 /* NSMenu+ActionItems.h */; };
 		2DDF87EE2402845C00CA8E91 /* NSMenu+ActionItems.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDF87EC2402845C00CA8E91 /* NSMenu+ActionItems.m */; };
+		2DDFABE12438EA6000E13E85 /* aac_decoder_protocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDFABDB2438E5D500E13E85 /* aac_decoder_protocol.h */; };
+		2DDFABE22438EA6000E13E85 /* aac_decoder_faad2.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DDFABDC2438E83400E13E85 /* aac_decoder_faad2.c */; };
+		2DDFABE32438EA6000E13E85 /* aac_decoder_faad2.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDFABDE2438E8E800E13E85 /* aac_decoder_faad2.h */; };
+		2DDFABE62438EA9900E13E85 /* libfaad2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D28F0551C283C75004A6E7B /* libfaad2.a */; };
+		2DDFABE92438EDC600E13E85 /* aac_decoder_fdk.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDFABE72438EDC600E13E85 /* aac_decoder_fdk.h */; };
+		2DDFABEB2438EE6A00E13E85 /* aac_decoder_fdk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DDFABE82438EDC600E13E85 /* aac_decoder_fdk.c */; };
+		2DDFABEE2438F20400E13E85 /* aac_decoder_wrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DDFABEC2438F1FC00E13E85 /* aac_decoder_wrap.c */; };
 		2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */; };
 		2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */; };
 		2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */; };
@@ -3198,6 +3205,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 2D65D6EE1E0A910B00FD1C8A;
 			remoteInfo = FDK;
+		};
+		2DDFABE42438EA9400E13E85 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D28F0541C283C75004A6E7B;
+			remoteInfo = faad2;
 		};
 		2DE3B7BD2269BC5700AFF9AE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -5362,6 +5376,12 @@
 		2DDF87D824027DA500CA8E91 /* PluginActionMenuItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginActionMenuItem.m; sourceTree = "<group>"; };
 		2DDF87EB2402845C00CA8E91 /* NSMenu+ActionItems.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSMenu+ActionItems.h"; sourceTree = "<group>"; };
 		2DDF87EC2402845C00CA8E91 /* NSMenu+ActionItems.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSMenu+ActionItems.m"; sourceTree = "<group>"; };
+		2DDFABDB2438E5D500E13E85 /* aac_decoder_protocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = aac_decoder_protocol.h; sourceTree = "<group>"; };
+		2DDFABDC2438E83400E13E85 /* aac_decoder_faad2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = aac_decoder_faad2.c; sourceTree = "<group>"; };
+		2DDFABDE2438E8E800E13E85 /* aac_decoder_faad2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = aac_decoder_faad2.h; sourceTree = "<group>"; };
+		2DDFABE72438EDC600E13E85 /* aac_decoder_fdk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = aac_decoder_fdk.h; sourceTree = "<group>"; };
+		2DDFABE82438EDC600E13E85 /* aac_decoder_fdk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = aac_decoder_fdk.c; sourceTree = "<group>"; };
+		2DDFABEC2438F1FC00E13E85 /* aac_decoder_wrap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = aac_decoder_wrap.c; sourceTree = "<group>"; };
 		2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConverterWindowController.h; sourceTree = "<group>"; };
 		2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConverterWindowController.m; sourceTree = "<group>"; };
 		2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbWidget.h; sourceTree = "<group>"; };
@@ -6079,6 +6099,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DDFABE62438EA9900E13E85 /* libfaad2.a in Frameworks */,
 				2DAB83A41E12ACF1000E65F1 /* libmp4parser.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7898,6 +7919,12 @@
 				2D28F0451C283BF7004A6E7B /* aac_parser.c */,
 				2D28F0461C283BF7004A6E7B /* aac_parser.h */,
 				2D28F0471C283BF7004A6E7B /* aac.c */,
+				2DDFABDB2438E5D500E13E85 /* aac_decoder_protocol.h */,
+				2DDFABEC2438F1FC00E13E85 /* aac_decoder_wrap.c */,
+				2DDFABDC2438E83400E13E85 /* aac_decoder_faad2.c */,
+				2DDFABDE2438E8E800E13E85 /* aac_decoder_faad2.h */,
+				2DDFABE72438EDC600E13E85 /* aac_decoder_fdk.h */,
+				2DDFABE82438EDC600E13E85 /* aac_decoder_fdk.c */,
 			);
 			name = aac;
 			path = plugins/aac;
@@ -10896,7 +10923,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DDFABE32438EA6000E13E85 /* aac_decoder_faad2.h in Headers */,
 				2D28F0491C283BF7004A6E7B /* aac_parser.h in Headers */,
+				2DDFABE12438EA6000E13E85 /* aac_decoder_protocol.h in Headers */,
 				2D69653C1D74338A00EB99D8 /* mp4tagutil.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -11919,6 +11948,7 @@
 				2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */,
 				2D1A564A1D9FFB10005E5CDD /* ReplayGainScannerController.h in Headers */,
 				2DA5E341238DB1A8005832B7 /* EditColumnWindowController.h in Headers */,
+				2DDFABE92438EDC600E13E85 /* aac_decoder_fdk.h in Headers */,
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
 				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
 				2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */,
@@ -12343,6 +12373,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DDFABE52438EA9400E13E85 /* PBXTargetDependency */,
 				2DAB83A31E12ACE7000E65F1 /* PBXTargetDependency */,
 			);
 			name = aac;
@@ -14125,9 +14156,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DDFABEB2438EE6A00E13E85 /* aac_decoder_fdk.c in Sources */,
 				2D69653A1D74338A00EB99D8 /* mp4tagutil.c in Sources */,
 				2D28F0481C283BF7004A6E7B /* aac_parser.c in Sources */,
 				2D28F04A1C283BF7004A6E7B /* aac.c in Sources */,
+				2DDFABEE2438F20400E13E85 /* aac_decoder_wrap.c in Sources */,
+				2DDFABE22438EA6000E13E85 /* aac_decoder_faad2.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15975,6 +16009,11 @@
 			target = 2DE3B82F2269C9FB00AFF9AE /* hotkeys */;
 			targetProxy = 2DDF87E824027FC600CA8E91 /* PBXContainerItemProxy */;
 		};
+		2DDFABE52438EA9400E13E85 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D28F0541C283C75004A6E7B /* faad2 */;
+			targetProxy = 2DDFABE42438EA9400E13E85 /* PBXContainerItemProxy */;
+		};
 		2DE3B7BE2269BC5700AFF9AE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2DE3B7B82269BC3500AFF9AE /* ddb_gui_GTK3 */;
@@ -17438,6 +17477,7 @@
 					"\"$(SRCROOT)/../plugins/fdk/libMpegTPDec/include\"",
 					"\"$(SRCROOT)/../plugins/fdk/libPCMutils/include\"",
 					"\"$(SRCROOT)/../plugins/fdk/libSYS/include\"",
+					"\"$(SRCROOT)/deps/faad2-2.7/include\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -17472,6 +17512,7 @@
 					"\"$(SRCROOT)/../plugins/fdk/libMpegTPDec/include\"",
 					"\"$(SRCROOT)/../plugins/fdk/libPCMutils/include\"",
 					"\"$(SRCROOT)/../plugins/fdk/libSYS/include\"",
+					"\"$(SRCROOT)/deps/faad2-2.7/include\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
