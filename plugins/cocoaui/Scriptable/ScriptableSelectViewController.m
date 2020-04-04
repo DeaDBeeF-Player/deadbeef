@@ -64,7 +64,7 @@
 
 - (void)selectItem:(scriptableItem_t *)item {
     int index = scriptableItemIndexOfChild(self.dataSource.scriptable, item);
-    if (index != 1) {
+    if (index != -1) {
         [self.nameList selectItemAtIndex:index];
     }
 }
