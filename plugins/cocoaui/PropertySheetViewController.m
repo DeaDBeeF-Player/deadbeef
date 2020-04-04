@@ -851,7 +851,8 @@
                 value = [@([sender floatValue]) stringValue];
             }
             else if ([sender isKindOfClass:[NSPopUpButton class]]) {
-                value = [sender titleOfSelectedItem];
+                NSUInteger idx = [sender indexOfSelectedItem];
+                value = @(idx).stringValue;
             }
             else {
                 value = [sender stringValue];
