@@ -631,7 +631,15 @@
         }
 
         if (isReadonly) {
-            currentField.enabled = NO;
+            if ([currentField isKindOfClass:NSTextField.class]) {
+                NSTextField *tf = (NSTextField *)currentField;
+                tf.enabled = YES;
+                tf.editable = NO;
+                tf.selectable = YES;
+            }
+            else {
+                currentField.enabled = NO;
+            }
         }
 
         i++;
