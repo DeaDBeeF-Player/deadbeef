@@ -139,7 +139,7 @@
             </constraints>
             <point key="canvasLocation" x="-318.5" y="393.5"/>
         </customView>
-        <window title="DSP Configuration" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="DmZ-5J-Htc" userLabel="Property Sheet Panel" customClass="NSPanel">
+        <window title="Property Sheet" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="DmZ-5J-Htc" userLabel="Property Sheet Panel" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="167" y="107" width="591" height="300"/>
@@ -210,7 +210,7 @@ Gw
             </view>
             <point key="canvasLocation" x="-256.5" y="679.5"/>
         </window>
-        <viewController id="Pnv-33-o5j" userLabel="Dsp Config Property Sheet View Controller" customClass="PropertySheetViewController">
+        <viewController id="Pnv-33-o5j" userLabel="PropertySheetViewController" customClass="PropertySheetViewController">
             <connections>
                 <outlet property="contentView" destination="TeJ-pI-xP9" id="3dI-N4-7RA"/>
                 <outlet property="view" destination="OuH-IF-bmv" id="ltE-4u-EdZ"/>
