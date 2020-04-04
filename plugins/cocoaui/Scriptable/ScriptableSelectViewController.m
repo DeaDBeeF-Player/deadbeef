@@ -49,12 +49,18 @@
 }
 
 - (void)reloadData {
+    NSInteger index = self.indexOfSelectedItem;
+
     [self.nameList removeAllItems];
     for (scriptableItem_t *c = self.dataSource.scriptable->children; c; c = c->next) {
         const char *name = scriptableItemPropertyValueForKey(c, "name");
         if (name) {
             [self.nameList addItemWithTitle:[NSString stringWithUTF8String:name]];
         }
+    }
+
+    if (index != -1) {
+        [self.nameList selectItemAtIndex:index];
     }
 }
 
