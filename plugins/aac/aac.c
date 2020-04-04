@@ -550,7 +550,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             mp4p_atom_t *stbl_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl");
             uint64_t offs = mp4p_sample_offset (stbl_atom, info->mp4sample);
             unsigned int size = mp4p_sample_size (stbl_atom, info->mp4sample);
-            printf ("%08X %d\n", (int)offs, size);
+//            printf ("%08X %d\n", (int)offs, size);
 
             uint8_t *mp4packet = malloc (size);
             deadbeef->fseek (info->file, offs+info->junk, SEEK_SET);
@@ -745,18 +745,21 @@ aac_load_itunes_chapters (aac_info_t *info, mp4p_chap_t *chap, /* out */ int *nu
         mp4p_atom_t *stts_atom = mp4p_atom_find(trak_atom, "trak/mdia/minf/stbl/stts");
         mp4p_atom_t *mdhd_atom = mp4p_atom_find(trak_atom, "trak/mdia/mdhd");
         mp4p_atom_t *stbl_atom = mp4p_atom_find(trak_atom, "trak/mdia/minf/stbl");
-        if (!stts_atom || !mdhd_atom || !stbl_atom) {
+        mp4p_atom_t *stsz_atom = mp4p_atom_find(stbl_atom, "stbl/stsz");
+
+        if (!stts_atom || !mdhd_atom || !stbl_atom || !stsz_atom) {
             continue;
         }
 
         mp4p_mdhd_t *mdhd = mdhd_atom->data;
+        mp4p_stsz_t *stsz = stsz_atom->data;
 
-        aac_chapter_t *chapters = calloc (info->mp4samples, sizeof (aac_chapter_t));
+        aac_chapter_t *chapters = calloc (stsz->number_of_entries, sizeof (aac_chapter_t));
         *num_chapters = 0;
 
         int64_t total_dur = 0;
         int64_t curr_sample = 0;
-        for (int sample = 0; sample < info->mp4samples; sample++)
+        for (int sample = 0; sample < stsz->number_of_entries; sample++)
         {
             int32_t dur = (int64_t)1000 * mp4p_stts_sample_duration(stts_atom, sample) / mdhd->time_scale; // milliseconds
             total_dur += dur;

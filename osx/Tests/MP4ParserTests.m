@@ -93,10 +93,19 @@
         { 10, 3, 3 },
     };
 
-    mp4p_stco_entry_t stco_entries[3] = {
+    // subchunk: 7
+    // off =
+
+    mp4p_stco_entry_t stco_entries[] = {
         {.offset = 0},
         {.offset = 10000},
-        {.offset = 24000},
+        {.offset = 20000},
+        {.offset = 30000},
+        {.offset = 40000},
+        {.offset = 50000},
+        {.offset = 60000},
+        {.offset = 70000},
+        {.offset = 80000},
     };
 
     mp4p_stsc_t stsc = {
@@ -137,10 +146,10 @@
         .subatoms = &stsz_atom
     };
     
-    // this should find sample 0 in chunk 20
+    // this should find sample 0 in chunk 7
     uint64_t offs = mp4p_sample_offset(&stbl_atom, 20);
     
-    XCTAssert(offs == 20000, @"Got %lld instead of expected 20000", offs);
+    XCTAssertEqual(offs, 70000);
 }
 
 - (void)test_WriteMoovWithMetadataToBuffer_WrittenSizeMatchingCalculatedSize {
