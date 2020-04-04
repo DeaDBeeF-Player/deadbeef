@@ -254,11 +254,9 @@ static NSMutableArray *g_converterControllers;
     _outfile = nil;
 
     if (self.encoder_preset) {
-        _converter_plugin->encoder_preset_free (self.encoder_preset);
         self.encoder_preset = NULL;
     }
     if (self.dsp_preset) {
-        _converter_plugin->dsp_preset_free (self.dsp_preset);
         self.dsp_preset = NULL;
     }
 }
@@ -445,8 +443,10 @@ static NSMutableArray *g_converterControllers;
     if (selectedDspPreset != -1) {
         scriptableItem_t *preset = scriptableItemChildAtIndex(scriptableDspRoot(), (unsigned int)selectedDspPreset);
         ddb_dsp_context_t *chain = scriptableDspConfigToDspChain(preset);
-        self.dsp_preset = _converter_plugin->dsp_preset_alloc ();
-        self.dsp_preset->chain = chain;
+        if (chain) {
+            self.dsp_preset = _converter_plugin->dsp_preset_alloc ();
+            self.dsp_preset->chain = chain;
+        }
     }
 
     _cancelled = NO;

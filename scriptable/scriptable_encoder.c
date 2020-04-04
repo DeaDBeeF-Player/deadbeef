@@ -311,7 +311,21 @@ scriptableEncoderLoadPresets (void) {
     root->isLoading = 0;
 }
 
-ddb_encoder_preset_t *
+static const char *
+valueForKeyOrDefault (scriptableItem_t *item, const char *key, const char *def) {
+    return scriptableItemPropertyValueForKey(item, key) ?: def;
+}
+
+void
 scriptableEncoderPresetToConverterEncoderPreset (scriptableItem_t *item, ddb_encoder_preset_t *encoder_preset) {
-    return NULL;
+    encoder_preset->ext = strdup (valueForKeyOrDefault(item, "ext", ""));
+    encoder_preset->encoder = strdup (valueForKeyOrDefault(item, "encoder", ""));
+    encoder_preset->method = atoi (valueForKeyOrDefault(item, "method", "0"));
+    encoder_preset->tag_id3v2 = atoi (valueForKeyOrDefault(item, "tag_id3v2", "0"));
+    encoder_preset->tag_id3v1 = atoi (valueForKeyOrDefault(item, "tag_id3v1", "0"));
+    encoder_preset->tag_apev2 = atoi (valueForKeyOrDefault(item, "tag_apev2", "0"));
+    encoder_preset->tag_flac = atoi (valueForKeyOrDefault(item, "tag_flac", "0"));
+    encoder_preset->tag_oggvorbis = atoi (valueForKeyOrDefault(item, "tag_oggvorbis", "0"));
+    encoder_preset->tag_mp4 = atoi (valueForKeyOrDefault(item, "tag_mp4", "0"));
+    encoder_preset->id3v2_version = atoi (valueForKeyOrDefault(item, "id3v2_version", "0"));
 }

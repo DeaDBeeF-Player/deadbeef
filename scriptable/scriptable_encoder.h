@@ -10,7 +10,7 @@ scriptableEncoderRoot (void);
 void
 scriptableEncoderLoadPresets (void);
 
-ddb_encoder_preset_t *
+void
 scriptableEncoderPresetToConverterEncoderPreset (scriptableItem_t *item, ddb_encoder_preset_t *encoder_preset);
 
 #endif /* scriptable_encoder_h */
