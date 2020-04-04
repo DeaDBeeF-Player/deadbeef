@@ -9,15 +9,27 @@
 #import <Cocoa/Cocoa.h>
 #include "scriptable.h"
 #import "ScriptableTableDataSource.h"
-#import "ScriptableItemDelegate.h"
+#import "ScriptableProtocols.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ScriptableSelectViewController : NSViewController
-@property (weak) ScriptableTableDataSource *dataSource;
-@property (weak) NSObject<ScriptableItemDelegate> *delegate;
+@protocol ScriptableSelectDelegate
 
-- (void)setScriptable:(scriptableItem_t *)scriptable;
+- (void)scriptableSelectItemSelected:(scriptableItem_t *)item;
+
+@end
+
+@interface ScriptableSelectViewController : NSViewController
+
+@property (nonatomic,strong) IBOutlet ScriptableTableDataSource *dataSource;
+@property (weak) NSObject<ScriptableItemDelegate> *scriptableItemDelegate;
+@property (weak) NSObject<ScriptableSelectDelegate> *scriptableSelectDelegate;
+@property (weak) NSObject<ScriptableErrorViewer> *errorViewer;
+
+@property (nonatomic,readonly) NSInteger indexOfSelectedItem;
+
+- (void)reloadData;
+- (void)selectItem:(scriptableItem_t *)item;
 
 @end
 

@@ -23,9 +23,9 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface DdbSeekBar : NSSlider
-- (BOOL)dragging;
-@end
+IB_DESIGNABLE
+@interface DdbSeekBar : NSControl
 
-@interface DdbSeekBarCell : NSSliderCell
+@property (nonatomic,readonly) BOOL dragging;
+
 @end

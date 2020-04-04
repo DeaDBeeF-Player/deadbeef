@@ -32,6 +32,47 @@
 
 extern DB_functions_t *deadbeef;
 
+@interface TrackPositionFormatter : NSFormatter
+
+- (NSString *)stringForObjectValue:(NSControl *)obj;
+
+- (BOOL)getObjectValue:(out id  _Nullable *)obj forString:(NSString *)string errorDescription:(out NSString * _Nullable *)error;
+
+@end
+
+@implementation TrackPositionFormatter
+
+- (NSString *)stringForObjectValue:(NSControl *)obj {
+
+    DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
+    if (!track) {
+        return @"--:--:--";
+    }
+
+    double pos = obj.doubleValue / 100;
+    float duration = 0;
+    duration = deadbeef->pl_get_item_duration (track);
+    double time = duration * pos;
+    int hr = time/3600;
+    int mn = (time-hr*3600)/60;
+    int sc = round(time-hr*3600-mn*60);
+
+    NSString *res = [NSString stringWithFormat:@"%02d:%02d:%02d", hr, mn, sc];
+
+    deadbeef->pl_item_unref (track);
+
+    return res;
+}
+
+- (BOOL)getObjectValue:(out id  _Nullable __autoreleasing *)obj forString:(NSString *)string errorDescription:(out NSString * _Nullable __autoreleasing *)error {
+    *error = @"error";
+    return NO;
+}
+
+@end
+
+#pragma mark -
+
 
 @interface MainWindowController () {
     NSTimer *_updateTimer;
@@ -41,14 +82,8 @@ extern DB_functions_t *deadbeef;
     int _prevSeekBarPos;
 }
 
-
 @property (weak) IBOutlet NSView *designableContainerView;
 
-
-@end
-
-@interface NSView (AppKitDetails)
-- (void)_addKnownSubview:(NSView *)subview;
 @end
 
 
@@ -85,6 +120,9 @@ extern DB_functions_t *deadbeef;
     [view.bottomAnchor constraintEqualToAnchor:self.designableContainerView.bottomAnchor].active = YES;
     [view.leadingAnchor constraintEqualToAnchor:self.designableContainerView.leadingAnchor].active = YES;
     [view.trailingAnchor constraintEqualToAnchor:self.designableContainerView.trailingAnchor].active = YES;
+
+    // seekbar value formatter
+    self.seekBar.formatter = [TrackPositionFormatter new];
 
     // add tab strip to the window titlebar
     NSTitlebarAccessoryViewController* vc = [NSTitlebarAccessoryViewController new];
@@ -202,12 +240,12 @@ static char sb_text[512];
     }
 }
 
-- (IBAction)seekBarAction:(id)sender {
+- (IBAction)seekBarAction:(DdbSeekBar *)sender {
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (trk) {
         float dur = deadbeef->pl_get_item_duration (trk);
         if (dur >= 0) {
-            float time = [(NSSlider*)sender floatValue] / 100.f;
+            float time = sender.floatValue / 100.f;
             time *= dur;
             deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(time * 1000), 0);
         }

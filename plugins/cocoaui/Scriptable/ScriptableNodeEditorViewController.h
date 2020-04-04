@@ -8,7 +8,17 @@
 
 #import <Cocoa/Cocoa.h>
 #import "ScriptableTableDataSource.h"
-#import "ScriptableItemDelegate.h"
+#import "ScriptableProtocols.h"
+
+@class ScriptableNodeEditorViewController;
+
+
+@protocol ScriptableNodeEditorCustomButtonsInitializer
+
+- (void)scriptableNodeEditorCustomButtonsInitializer:(ScriptableNodeEditorViewController *_Nonnull)controller initButtonsInSegmentedControl:(NSSegmentedControl *_Nonnull)segmentedControl;
+
+@end
+
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,6 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (weak) ScriptableTableDataSource *dataSource;
 @property (weak) NSObject<ScriptableItemDelegate> *delegate;
+@property (weak) NSObject<ScriptableNodeEditorCustomButtonsInitializer> *scriptableNodeEditorDelegate;
+@property (weak) NSObject<ScriptableErrorViewer> *errorViewer;
+
+- (void)reloadData;
 
 @end
 

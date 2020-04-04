@@ -15,6 +15,7 @@
 @end
 
 @implementation ScriptablePropertySheetDataSource
+
 - (instancetype)initWithScriptable:(scriptableItem_t *)scriptable {
     self = [super init];
     _scriptable = scriptable;
@@ -22,9 +23,14 @@
 }
 
 - (NSString *)propertySheet:(PropertySheetViewController *)vc configForItem:(id)item {
-    const char *config = scriptableItemPropertyValueForKey(_scriptable, "configDialog");
+    const char *config = _scriptable->configDialog;
     return config ? [NSString stringWithUTF8String:config] : nil;
 }
+
+- (BOOL)propertySheet:(PropertySheetViewController *)vc itemIsReadonly:(id)item {
+    return _scriptable->isReadonly;
+}
+
 
 - (NSString *)propertySheet:(PropertySheetViewController *)vc valueForKey:(NSString *)key def:(NSString *)def item:(id)item {
     const char *value = scriptableItemPropertyValueForKey(_scriptable, [key UTF8String]);
@@ -34,7 +40,7 @@
 - (void)propertySheet:(PropertySheetViewController *)vc setValue:(NSString *)value forKey:(NSString *)key item:(id)item {
     scriptableItemSetPropertyValueForKey(_scriptable, [value UTF8String], [key UTF8String]);
     if (!_multipleChanges) {
-        [self.delegate scriptableItemChanged:_scriptable];
+        [self.delegate scriptableItemChanged:_scriptable change:ScriptableItemChangeUpdate];
     }
 }
 
@@ -43,7 +49,7 @@
 }
 
 - (void)propertySheetCommitChanges {
-    [self.delegate scriptableItemChanged:_scriptable];
+    [self.delegate scriptableItemChanged:_scriptable change:ScriptableItemChangeUpdate];
     _multipleChanges = NO;
 }
 @end

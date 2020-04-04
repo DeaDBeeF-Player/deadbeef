@@ -9,13 +9,6 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2009-02-21 18:00:14 +0200 (Sat, 21 Feb 2009) $
-// File revision : $Revision: 4 $
-//
-// $Id: PeakFinder.h 63 2009-02-21 16:00:14Z oparviai $
-//
-////////////////////////////////////////////////////////////////////////////////
-//
 // License :
 //
 //  SoundTouch audio processing library
@@ -51,8 +44,8 @@ protected:
 
     /// Calculates the mass center between given vector items.
     double calcMassCenter(const float *data, ///< Data vector.
-                         int firstPos,      ///< Index of first vector item beloging to the peak.
-                         int lastPos        ///< Index of last vector item beloging to the peak.
+                         int firstPos,      ///< Index of first vector item belonging to the peak.
+                         int lastPos        ///< Index of last vector item belonging to the peak.
                          ) const;
 
     /// Finds the data vector index where the monotoniously decreasing signal crosses the
@@ -62,6 +55,10 @@ protected:
                             int peakpos,        ///< Peak position index within the data vector.
                             int direction       /// Direction where to proceed from the peak: 1 = right, -1 = left.
                             ) const;
+
+    // Finds real 'top' of a peak hump from neighnourhood of the given 'peakpos'.
+    int findTop(const float *data, int peakpos) const;
+
 
     /// Finds the 'ground' level, i.e. smallest level between two neighbouring peaks, to right- 
     /// or left-hand side of the given peak position.

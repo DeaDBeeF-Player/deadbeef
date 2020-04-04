@@ -720,7 +720,6 @@ on_cut_activate (GtkMenuItem *menuitem, gpointer user_data) {
         return;
     }
     // save hierarchy to string
-    // FIXME: use real clipboard
     paste_buffer[0] = 0;
     save_widget_to_string (paste_buffer, sizeof (paste_buffer), current_widget);
 
@@ -743,7 +742,6 @@ on_copy_activate (GtkMenuItem *menuitem, gpointer user_data) {
         return;
     }
     // save hierarchy to string
-    // FIXME: use real clipboard
     paste_buffer[0] = 0;
     save_widget_to_string (paste_buffer, sizeof (paste_buffer), current_widget);
 }

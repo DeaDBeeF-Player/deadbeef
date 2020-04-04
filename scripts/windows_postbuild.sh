@@ -13,7 +13,8 @@ fi
 mkdir -pv "$1/plugins"
 mkdir -pv "$1/pixmaps"
 mkdir -pv "$1/doc"
-mkdir -pv "$1/share/themes $1/share/icons"
+mkdir -pv "$1/share/themes"
+mkdir -pv "$1/share/icons"
 mkdir -pv "$1/config"
 mkdir -pv "$1/lib"
 mkdir -pv "$1/locale"
@@ -56,12 +57,12 @@ for i in /mingw32 /mingw64 /usr; do
 	cp -ru $i/lib/gtk-2.0/2.10.0/engines/libwimp.dll "$1/lib/gtk-2.0/2.10.0/engines" 2>>/dev/null | true
 done
 
-mkdir -pv "$1/etc" "$1/etc/gtk-2.0"
+mkdir -pv "$1/etc/gtk-2.0"
 touch "$1/etc/gtk-2.0/settings.ini"
 echo -e "[Settings]\r\ngtk-theme-name = MS-Windows\n" > "$1/etc/gtk-2.0/settings.ini"
 
 # gtk3 misc
-mkdir -pv "$1/etc" "$1/etc/gtk-3.0"
+mkdir -pv "$1/etc/gtk-3.0"
 touch "$1/etc/gtk-3.0/settings.ini"
 echo -e "[Settings]\r\ngtk-theme-name = Windows-10\r\ngtk-icon-theme-name = Windows-10-Icons" > "$1/etc/gtk-3.0/settings.ini"
 

@@ -23,7 +23,7 @@ extern DB_functions_t *deadbeef;
 @implementation EQPropertySheetDataSource
 
 - (NSString *)propertySheet:(PropertySheetViewController *)vc configForItem:(id)item {
-    return @"property \"\" hbox[19] hmg fill expand border=0 spacing=8 height=200 width=600;\n"
+    return @"property \"\" hbox[19] hmg fill expand border=0 spacing=8 height=200 width=600 noclip itemwidth=30;\n"
     "property \"Preamp\" vscale[20,-20,0.5] vert 0 0;\n"
     "property \"55\" vscale[20,-20,0.5] vert 1 0;\n"
     "property \"77\" vscale[20,-20,0.5] vert 2 0;\n"

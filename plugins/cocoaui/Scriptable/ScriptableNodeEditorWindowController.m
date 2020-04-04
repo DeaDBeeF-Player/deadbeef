@@ -10,7 +10,9 @@
 #import "ScriptableNodeEditorViewController.h"
 
 @interface ScriptableNodeEditorWindowController ()
+
 @property (weak) IBOutlet NSView *nodeEditorViewContainer;
+@property (weak) IBOutlet NSTextField *title;
 
 @property ScriptableNodeEditorViewController *nodeEditorViewController;
 
@@ -26,9 +28,22 @@
     self.nodeEditorViewController = [[ScriptableNodeEditorViewController alloc] initWithNibName:@"ScriptableNodeEditorView" bundle:nil];
     self.nodeEditorViewController.dataSource = self.dataSource;
     self.nodeEditorViewController.delegate = self.delegate;
+    self.nodeEditorViewController.errorViewer = self.errorViewer;
     self.nodeEditorViewController.view.frame = self.nodeEditorViewContainer.bounds;
     [self.nodeEditorViewContainer addSubview:self.nodeEditorViewController.view];
 
+    const char *title = scriptableItemPropertyValueForKey(self.dataSource.scriptable, "name");
+
+    self.title.stringValue = [NSString stringWithFormat:@"Edit %s", title];
+}
+
+- (IBAction)closeAction:(id)sender {
+    if (self.window.sheetParent) {
+        [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
+    }
+    else {
+        [self.window close];
+    }
 }
 
 @end

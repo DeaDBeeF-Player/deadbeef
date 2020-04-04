@@ -27,15 +27,3 @@ script:
 
 after_success:
     - ./travis/upload.sh
-
-notifications:
-    irc:
-        channels:
-            - "chat.freenode.net#deadbeefplayer"
-        on_success: always
-        on_failure: always
-        template:
-            - "%{branch} - %{commit} : %{author} : %{message}"
-            - "Commit message: %{commit_subject}"
-            - "Diff: %{compare_url}"
-            - "Build details: %{build_url}"

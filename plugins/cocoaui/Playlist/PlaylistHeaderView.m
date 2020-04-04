@@ -18,7 +18,6 @@
     DdbListviewCol_t _sizing;
     NSPoint _dragPt;
     BOOL _prepare;
-    int _sortOrder;
     DdbListviewCol_t _sortColumn;
     NSColor *_separatorColor;
 }
@@ -163,22 +162,8 @@
     id <DdbListviewDelegate> delegate = [self.listview delegate];
 
     if (_prepare) { // clicked
-        if (_sortColumn != _dragging) {
-            _sortOrder = 0;
-        }
         _sortColumn = _dragging;
-        switch (_sortOrder) {
-        case 0:
-            _sortOrder = 1;
-            break;
-        case 1:
-            _sortOrder = 2;
-            break;
-        case 2:
-            _sortOrder = 1;
-            break;
-        }
-        [delegate sortColumn:_dragging withOrder:_sortOrder-1];
+        [delegate sortColumn:_dragging];
     }
     else if (_dragging != [delegate invalidColumn] || _sizing != [delegate invalidColumn]) {
         [delegate columnsChanged];

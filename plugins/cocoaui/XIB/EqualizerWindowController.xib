@@ -8,7 +8,6 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="EqualizerWindowController">
             <connections>
-                <outlet property="equalizerView" destination="sWN-HO-WvC" id="FFk-aK-5Dm"/>
                 <outlet property="presetsMenu" destination="emA-sG-JlZ" id="xD4-0H-teY"/>
                 <outlet property="propertySheetViewController" destination="SAn-ps-SLr" id="XTV-PW-kAe"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
