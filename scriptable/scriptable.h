@@ -44,7 +44,8 @@ typedef struct {
 
     char * (*saveToString)(struct scriptableItem_s *item);
 
-    void (*propertyValueChangedForKey) (struct scriptableItem_s *item, const char *key);
+    void (*propertyValueWillChangeForKey) (struct scriptableItem_s *item, const char *key);
+    void (*propertyValueDidChangeForKey) (struct scriptableItem_s *item, const char *key);
 } scriptableCallbacks_t;
 
 typedef struct scriptableItem_s {

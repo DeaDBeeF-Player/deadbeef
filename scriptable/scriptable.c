@@ -254,15 +254,23 @@ scriptableItemPropertyValueForKey (scriptableItem_t *item, const char *key) {
 }
 
 static void
-scriptableItemPropertyValueChangedForKey (scriptableItem_t *item, const char *key) {
-    if (item->callbacks && item->callbacks->propertyValueChangedForKey) {
-        item->callbacks->propertyValueChangedForKey (item, key);
+scriptableItemPropertyValueWillChangeForKey (scriptableItem_t *item, const char *key) {
+    if (!item->isLoading && item->callbacks && item->callbacks->propertyValueWillChangeForKey) {
+        item->callbacks->propertyValueWillChangeForKey (item, key);
+    }
+}
+
+static void
+scriptableItemPropertyValueDidChangeForKey (scriptableItem_t *item, const char *key) {
+    if (!item->isLoading && item->callbacks && item->callbacks->propertyValueDidChangeForKey) {
+        item->callbacks->propertyValueDidChangeForKey (item, key);
     }
 }
 
 void
 scriptableItemSetPropertyValueForKey (scriptableItem_t *item, const char *value, const char *key) {
     scriptableKeyValue_t *prev = NULL;
+    scriptableItemPropertyValueWillChangeForKey (item, key);
     for (scriptableKeyValue_t *p = item->properties; p; prev = p, p = p->next) {
         if (!strcasecmp (p->key, key)) {
             if (p->value) {
@@ -279,7 +287,7 @@ scriptableItemSetPropertyValueForKey (scriptableItem_t *item, const char *value,
                     keyValuePairFree (p);
                 }
             }
-            scriptableItemPropertyValueChangedForKey (item, key);
+            scriptableItemPropertyValueDidChangeForKey (item, key);
             scriptableItemUpdate(item);
             return;
         }

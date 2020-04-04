@@ -48,16 +48,21 @@ static char *
 scriptableDspPresetNodeSaveToString (scriptableItem_t *item);
 
 static void
-scriptableDspPresetNodePropertyValueChangedForKey (struct scriptableItem_s *item, const char *key);
+scriptableDspPropertyValueWillChangeForKey (struct scriptableItem_s *item, const char *key);
+
+static void
+scriptableDspPresetNodePropertyValueDidChangeForKey (struct scriptableItem_s *item, const char *key);
 
 static int
 scriptableDspPresetSave(scriptableItem_t *item);
 
+static int
+scriptableDspPresetDelete(scriptableItem_t *subItem);
 
 static scriptableCallbacks_t
 scriptableDspNodeCallbacks = {
     .saveToString = scriptableDspPresetNodeSaveToString,
-    .propertyValueChangedForKey = scriptableDspPresetNodePropertyValueChangedForKey,
+    .propertyValueDidChangeForKey = scriptableDspPresetNodePropertyValueDidChangeForKey,
 };
 
 static scriptableCallbacks_t
@@ -70,7 +75,8 @@ scriptableDspPresetCallbacks = {
     .createItemOfType = scriptableDspCreateItemOfType,
     .updateItem = scriptableDspPresetUpdateItem,
     .updateItemForSubItem = scriptableDspPresetUpdateItemForSubItem,
-    .save = scriptableDspPresetSave
+    .save = scriptableDspPresetSave,
+    .propertyValueWillChangeForKey = scriptableDspPropertyValueWillChangeForKey,
 };
 
 static scriptableCallbacks_t scriptableDspPresetListCallbacks = {
@@ -203,15 +209,17 @@ scriptableDspCreateItemOfType (scriptableItem_t *root, const char *type) {
 }
 
 static void
-scriptableDspPresetNodePropertyValueChangedForKey (struct scriptableItem_s *item, const char *key) {
+scriptableDspPresetNodePropertyValueDidChangeForKey (struct scriptableItem_s *item, const char *key) {
     if (!item->parent) {
         return;
     }
 
     const char *parentName = scriptableItemPropertyValueForKey(item->parent, "name");
     if (parentName) {
-        return; // not the current DSP chain
+        return; // ignore actual presets
     }
+
+    // Set as current dsp chain
 
     ddb_dsp_context_t *chain = deadbeef->streamer_get_dsp_chain ();
 
@@ -225,6 +233,19 @@ scriptableDspPresetNodePropertyValueChangedForKey (struct scriptableItem_s *item
         chain = chain->next;
     }
 }
+
+static void
+scriptableDspPropertyValueWillChangeForKey (struct scriptableItem_s *item, const char *key) {
+    if (item->isReadonly) {
+        return;
+    }
+    if (!strcmp (key, "name")) {
+        // FIXME: this deletes the preset during rename.
+        // If the next save operation fails - data loss will occur.
+        scriptableDspPresetDelete(item);
+    }
+}
+
 
 
 static char *
@@ -373,7 +394,7 @@ scriptableDspCreatePresetWithType (scriptableItem_t *root, const char *type) {
 }
 
 static int
-scriptableDspRootRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subItem) {
+scriptableDspPresetDelete(scriptableItem_t *subItem) {
     const char *name = scriptableItemPropertyValueForKey(subItem, "name");
     if (!name) {
         return -1;
@@ -390,6 +411,11 @@ scriptableDspRootRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subIte
     }
 
     return unlink (path);
+}
+
+static int
+scriptableDspRootRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subItem) {
+    return scriptableDspPresetDelete(subItem);
 }
 
 static int
@@ -422,9 +448,11 @@ scriptableDspRoot (void) {
         scriptableItemAddSubItem(scriptableRoot(), dspRoot);
 
         scriptableItem_t *passThroughDspPreset = scriptableDspCreatePresetWithType(dspRoot, "DSPPreset");
+        passThroughDspPreset->isLoading = 1;
         passThroughDspPreset->isReadonly = 1;
         scriptableItemSetPropertyValueForKey(passThroughDspPreset, "Pass-through", "name");
         scriptableItemAddSubItem(dspRoot, passThroughDspPreset);
+        passThroughDspPreset->isLoading = 0;
 
         dspRoot->callbacks = &scriptableDspPresetListCallbacks;
     }

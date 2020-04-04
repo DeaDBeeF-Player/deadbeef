@@ -23,10 +23,20 @@ scriptableEncoderPresetSave(scriptableItem_t *item);
 static int
 scriptableEncoderUpdateItem (struct scriptableItem_s *item);
 
+static void
+scriptableEncoderPropertyValueWillChangeForKey (struct scriptableItem_s *item, const char *key);
+
+static int
+scriptableEncoderDelete (scriptableItem_t *item);
+
+static int
+scriptableEncoderRootRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subItem);
+
 static scriptableCallbacks_t scriptableEncoderCallbacks = {
     .readonlyPrefix = "[Built-in] ",
     .save = scriptableEncoderPresetSave,
     .updateItem = scriptableEncoderUpdateItem,
+    .propertyValueWillChangeForKey = scriptableEncoderPropertyValueWillChangeForKey,
 };
 
 static scriptableCallbacks_t scriptableRootCallbacks = {
@@ -34,6 +44,7 @@ static scriptableCallbacks_t scriptableRootCallbacks = {
     .factoryItemNames = scriptableEncoderChainItemNames,
     .factoryItemTypes = scriptableEncoderChainItemTypes,
     .createItemOfType = scriptableEncoderCreatePreset,
+    .removeSubItem = scriptableEncoderRootRemoveSubItem,
 };
 
 static int
@@ -200,6 +211,14 @@ scriptableEncoderUpdateItem (struct scriptableItem_s *item) {
     return scriptableItemSave (item);
 }
 
+static void
+scriptableEncoderPropertyValueWillChangeForKey (struct scriptableItem_s *item, const char *key) {
+    if (!strcmp (key, "name")) {
+        // FIXME: this deletes the preset during rename.
+        // If the next save operation fails - data loss will occur.
+        scriptableEncoderDelete(item);
+    }
+}
 
 scriptableItem_t *
 scriptableEncoderRoot (void) {
@@ -211,6 +230,31 @@ scriptableEncoderRoot (void) {
         scriptableItemAddSubItem(scriptableRoot(), encoderRoot);
     }
     return encoderRoot;
+}
+
+static int
+scriptableEncoderDelete (scriptableItem_t *item) {
+    const char *name = scriptableItemPropertyValueForKey(item, "name");
+    if (!name) {
+        return -1;
+    }
+
+    char fname[PATH_MAX];
+    if (snprintf (fname, sizeof (fname), "%s.txt", name) >= sizeof (fname)) {
+        return -1;
+    }
+
+    char path[PATH_MAX];
+    if (getEncoderPresetFullPathName (fname, path, sizeof (path)) < 0) {
+        return -1;
+    }
+
+    return unlink (path);
+}
+
+static int
+scriptableEncoderRootRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subItem) {
+    return scriptableEncoderDelete (subItem);
 }
 
 void
