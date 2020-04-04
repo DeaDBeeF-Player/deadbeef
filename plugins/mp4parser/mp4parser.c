@@ -60,7 +60,7 @@ _dbg_print_indent (void) {
 
 static void
 _dbg_print_atom (mp4p_atom_t *atom) {
-#if 1
+#if 0
     _dbg_print_indent();
     _dbg_print_fourcc(atom->type);
     printf ("\n");

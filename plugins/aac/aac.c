@@ -619,8 +619,6 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     info->currentsample += (initsize-size) / samplesize;
 
     return initsize-size;
-
-    return -1;
 }
 
 // returns -1 on error, skipsamples on success
@@ -895,6 +893,8 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
         aacDecoderClose(info.dec);
         return -1;
     }
+    info.info.fmt.samplerate = samplerate;
+    info.info.fmt.channels = channels;
 
     int64_t totalsamples = 0;
 
