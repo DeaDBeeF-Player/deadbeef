@@ -2,7 +2,7 @@
 #define scriptable_encoder_h
 
 #include "scriptable.h"
-#include "converter.h"
+#include "../plugins/converter/converter.h"
 
 scriptableItem_t *
 scriptableEncoderRoot (void);
