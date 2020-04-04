@@ -7,6 +7,7 @@
 //
 
 #import "DspPreferencesViewController.h"
+#import "ScriptableErrorViewer.h"
 #import "ScriptableTableDataSource.h"
 #import "ScriptableSelectViewController.h"
 #import "ScriptableNodeEditorViewController.h"
@@ -16,7 +17,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface DspPreferencesViewController () <ScriptableNodeEditorCustomButtonsInitializer, ScriptableErrorViewer, ScriptableSelectDelegate>
+@interface DspPreferencesViewController () <ScriptableNodeEditorCustomButtonsInitializer, ScriptableSelectDelegate>
 
 @property (weak) IBOutlet NSView *dspPresetSelectorContainer;
 @property (weak) IBOutlet NSView *dspNodeEditorContainer;
@@ -65,7 +66,7 @@ extern DB_functions_t *deadbeef;
     self.dspSelectViewController.view.frame = _dspPresetSelectorContainer.bounds;
     [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
     self.dspSelectViewController.scriptableSelectDelegate = self;
-    self.dspSelectViewController.errorViewer = self;
+    self.dspSelectViewController.errorViewer = ScriptableErrorViewer.sharedInstance;
     self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
 
     // current dsp chain node list / editor
@@ -100,34 +101,14 @@ extern DB_functions_t *deadbeef;
     }];
 }
 
-- (void)displayDuplicateNameError {
-    NSAlert *alert = [NSAlert new];
-    alert.messageText = @"Preset with this name already exists.";
-    alert.informativeText = @"Try a different name.";
-    alert.alertStyle = NSAlertStyleWarning;
-    [alert addButtonWithTitle:@"OK"];
-
-    [alert runModal];
-}
-
-- (void)displayInvalidNameError {
-    NSAlert *alert = [NSAlert new];
-    alert.messageText = @"This name is not allowed.";
-    alert.informativeText = @"Try a different name.";
-    alert.alertStyle = NSAlertStyleWarning;
-    [alert addButtonWithTitle:@"OK"];
-
-    [alert runModal];
-}
-
 - (IBAction)presetNameOK:(id)sender {
     const char *name = self.dspPresetNameTextField.stringValue.UTF8String;
     if (scriptableItemContainsSubItemWithName(scriptableDspRoot(), name)) {
-        [self displayDuplicateNameError];
+        [ScriptableErrorViewer.sharedInstance displayDuplicateNameError];
         return;
     }
     if (!scriptableItemIsSubItemNameAllowed(scriptableDspRoot(), name)) {
-        [self displayInvalidNameError];
+        [ScriptableErrorViewer.sharedInstance displayInvalidNameError];
         return;
     }
 
@@ -136,16 +117,6 @@ extern DB_functions_t *deadbeef;
 
 - (IBAction)presetNameCancel:(id)sender {
     [self.view.window endSheet:self.dspPresetNamePanel returnCode:NSModalResponseCancel];
-}
-
-#pragma mark - ScriptableErrorViewer
-
-- (void)scriptableErrorViewer:(id)sender duplicateNameErrorForItem:(scriptableItem_t *)item {
-    [self displayDuplicateNameError];
-}
-
-- (void)scriptableErrorViewer:(id)sender invalidNameErrorForItem:(scriptableItem_t *)item {
-    [self displayInvalidNameError];
 }
 
 #pragma mark - ScriptableItemDelegate

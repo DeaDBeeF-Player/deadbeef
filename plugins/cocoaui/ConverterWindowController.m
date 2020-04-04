@@ -22,6 +22,7 @@
 */
 
 #import "ConverterWindowController.h"
+#import "ScriptableErrorViewer.h"
 #import "ScriptableTableDataSource.h"
 #import "ScriptableSelectViewController.h"
 #import "scriptable_dsp.h"
@@ -89,7 +90,7 @@ static NSMutableArray *g_converterControllers;
     self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
     self.dspSelectViewController.scriptableItemDelegate = self;
     self.dspSelectViewController.scriptableSelectDelegate = self;
-//    self.dspSelectViewController.errorViewer = self;
+    self.dspSelectViewController.errorViewer = ScriptableErrorViewer.sharedInstance;
 
     char dsp_preset_name[100];
     deadbeef->conf_get_str ("converter.dsp_preset_name", "", dsp_preset_name, sizeof(dsp_preset_name));
@@ -107,7 +108,7 @@ static NSMutableArray *g_converterControllers;
     self.encoderSelectViewController.dataSource = self.encoderPresetsDataSource;
     self.encoderSelectViewController.scriptableItemDelegate = self;
     self.encoderSelectViewController.scriptableSelectDelegate = self;
-    //    self.encoderSelectViewController.errorViewer = self;
+    self.encoderSelectViewController.errorViewer = ScriptableErrorViewer.sharedInstance;
 
     char enc_preset_name[100];
     deadbeef->conf_get_str ("converter.encoder_preset_name", "", enc_preset_name, sizeof(enc_preset_name));

@@ -1629,6 +1629,8 @@
 		2D8DA1471C9719680044CC15 /* registers2.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D8DA0BD1C9718C10044CC15 /* registers2.c */; };
 		2D8E9C1819ED5C4400EE1408 /* curl_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8E9C1719ED5C4400EE1408 /* curl_config.h */; };
 		2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B3EDF1837EC44003E6066 /* deadbeef.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2D90EF992438A5A600AF6F4B /* ScriptableErrorViewer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D90EF972438A5A600AF6F4B /* ScriptableErrorViewer.h */; };
+		2D90EF9A2438A5A600AF6F4B /* ScriptableErrorViewer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D90EF982438A5A600AF6F4B /* ScriptableErrorViewer.m */; };
 		2D9177391A0E8966004BC222 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
 		2D9177421A0E89C8004BC222 /* alac.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D91773F1A0E8966004BC222 /* alac.dylib */; };
 		2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */; };
@@ -4970,6 +4972,8 @@
 		2D8DA0EB1C9718C10044CC15 /* plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plugin.c; sourceTree = "<group>"; };
 		2D8E9C1719ED5C4400EE1408 /* curl_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = curl_config.h; path = osx/curl_config.h; sourceTree = "<group>"; };
 		2D8E9C1919ED5C8200EE1408 /* libpoll.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpoll.dylib; path = usr/lib/libpoll.dylib; sourceTree = SDKROOT; };
+		2D90EF972438A5A600AF6F4B /* ScriptableErrorViewer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableErrorViewer.h; sourceTree = "<group>"; };
+		2D90EF982438A5A600AF6F4B /* ScriptableErrorViewer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptableErrorViewer.m; sourceTree = "<group>"; };
 		2D91773F1A0E8966004BC222 /* alac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = alac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D9177501A0E8A3D004BC222 /* mp4ff_int_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4ff_int_types.h; sourceTree = "<group>"; };
 		2D9177511A0E8A3D004BC222 /* mp4ff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4ff.h; sourceTree = "<group>"; };
@@ -9045,6 +9049,8 @@
 				2DF55C282270F415002C44DC /* ScriptableSelectViewController.m */,
 				2D71C2681DC88E5C00247CEF /* ScriptableTableDataSource.h */,
 				2D71C2691DC88E5C00247CEF /* ScriptableTableDataSource.m */,
+				2D90EF972438A5A600AF6F4B /* ScriptableErrorViewer.h */,
+				2D90EF982438A5A600AF6F4B /* ScriptableErrorViewer.m */,
 			);
 			path = Scriptable;
 			sourceTree = "<group>";
@@ -11900,6 +11906,7 @@
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
 				2DA30E7424032550001BAB8A /* NetworkPreferencesViewController.h in Headers */,
 				2D9BD6792405A81600C02D60 /* SoundPreferencesViewController.h in Headers */,
+				2D90EF992438A5A600AF6F4B /* ScriptableErrorViewer.h in Headers */,
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
 				2D0A6B1B237718DA00252E6D /* playmodes.h in Headers */,
 				2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */,
@@ -15053,6 +15060,7 @@
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				2D651D18227227C300375AE2 /* ScriptableNodeEditorWindowController.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
+				2D90EF9A2438A5A600AF6F4B /* ScriptableErrorViewer.m in Sources */,
 				2D1A564B1D9FFB10005E5CDD /* ReplayGainScannerController.m in Sources */,
 				2DF55C2A2270F415002C44DC /* ScriptableSelectViewController.m in Sources */,
 				2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */,
