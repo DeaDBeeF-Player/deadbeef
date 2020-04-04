@@ -278,7 +278,7 @@
 }
 
 - (BOOL)addEnabled {
-    return YES;
+    return !self.dataSource.scriptable->isReadonly;
 }
 
 - (BOOL)removeEnabled {
