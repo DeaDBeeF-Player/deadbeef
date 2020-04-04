@@ -23,30 +23,31 @@ aacDecoderClose_FDK (aacDecoderHandle_t *_dec) {
 }
 
 int
-aacDecoderInit_FDK (aacDecoderHandle_t *_dec, uint8_t *buff, size_t buffSize, unsigned *samplerate, unsigned *channels) {
-//    fdkDecoder_t *dec = (fdkDecoder_t *)_dec;
+aacDecoderInit_FDK (aacDecoderHandle_t *_dec, uint8_t *asc, size_t ascSize, unsigned *samplerate, unsigned *channels) {
+    fdkDecoder_t *dec = (fdkDecoder_t *)_dec;
+
+    UINT fdkASCSize = (UINT)ascSize;
+    AAC_DECODER_ERROR err = aacDecoder_ConfigRaw(dec->dec, &asc, &fdkASCSize);
+    if (err != AAC_DEC_OK) {
+        return -1;
+    }
+
+
+    CStreamInfo* stream_info = aacDecoder_GetStreamInfo(dec->dec);
+    if (stream_info->extSamplingRate) {
+        *samplerate = stream_info->extSamplingRate;
+    }
+    else if (stream_info->sampleRate) {
+        *samplerate = stream_info->sampleRate;
+    }
+    else if (stream_info->aacSampleRate) {
+        *samplerate = stream_info->aacSampleRate;
+    }
+    else {
+        return -1;
+    }
 
     // TODO: fetch samplerate and number of channels
-
-    return 0;
-}
-
-const uint8_t *
-aacDecoderGetASC_FDK (aacDecoderHandle_t *_dec) {
-//    fdkDecoder_t *dec = (fdkDecoder_t *)_dec;
-
-    // TODO: can FDK do that?
-    return NULL;
-}
-
-int
-aacDecoderSetASC_FDK (aacDecoderHandle_t *_dec, const uint8_t *asc) {
-//    fdkDecoder_t *dec = (fdkDecoder_t *)_dec;
-//    AAC_DECODER_ERROR err = aacDecoder_ConfigRaw(dec->dec, asc, asc_size);
-//    if (err != AAC_DEC_OK) {
-//        return -1;
-//    }
-
     return 0;
 }
 
@@ -72,8 +73,6 @@ ascDecoderDecodeFrame_FDK (aacDecoderHandle_t *_dec, aacDecoderFrameInfo_t *fram
 static aacDecoderCallbacks_t aacDecoderCallbacks_FDK = {
     .close = aacDecoderClose,
     .init = aacDecoderInit,
-    .getASC = aacDecoderGetASC,
-    .setASC = aacDecoderSetASC,
     .decodeFrame = ascDecoderDecodeFrame,
 };
 

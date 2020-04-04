@@ -7,6 +7,7 @@
 //
 
 #include <stdlib.h>
+#include <string.h>
 #include <neaacdec.h>
 
 #include "aac_decoder_faad2.h"
@@ -59,14 +60,18 @@ ascDecoderDecodeFrame_FAAD2 (aacDecoderHandle_t *_dec, aacDecoderFrameInfo_t *fr
     faad2Decoder_t *dec = (faad2Decoder_t *)_dec;
     NeAACDecFrameInfo fi = {0};
     void *samples = NeAACDecDecode(dec->dec, &fi, (unsigned char *)buffer, (unsigned long)bufferSize);
+
+    frameInfo->bytesconsumed = fi.bytesconsumed;
+    frameInfo->samples = fi.samples;
+    frameInfo->channels = fi.channels;
+    memcpy (frameInfo->channel_position, fi.channel_position, sizeof (fi.channel_position));
+
     return (uint8_t *)samples;
 }
 
 static aacDecoderCallbacks_t aacDecoderCallbacks_FAAD2 = {
     .close = aacDecoderClose_FAAD2,
     .init = aacDecoderInit_FAAD2,
-    .getASC = aacDecoderGetASC_FAAD2,
-    .setASC = aacDecoderSetASC_FAAD2,
     .decodeFrame = ascDecoderDecodeFrame_FAAD2,
 };
 

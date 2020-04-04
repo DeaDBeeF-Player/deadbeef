@@ -24,7 +24,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "aacdecoder_lib.h"
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
 #endif
@@ -33,6 +32,7 @@
 #include "../../deadbeef.h"
 #include "../../strdupa.h"
 #include "aac_parser.h"
+#include "aac_decoder_faad2.h"
 
 #include "../../shared/mp4tagutil.h"
 
@@ -50,6 +50,7 @@ DB_functions_t *deadbeef;
 #define MP4FILE mp4ff_t *
 #define MP4FILE_CB mp4ff_callback_t
 
+#define RAW_AAC_PROBE_SIZE 100
 
 // aac channel mapping
 // 0: Defined in AOT Specifc Config
@@ -62,10 +63,23 @@ DB_functions_t *deadbeef;
 // 7: 8 channels: front-center, front-left, front-right, side-left, side-right, back-left, back-right, LFE-channel
 // 8-15: Reserved
 
+// aac channels
+#define FRONT_CHANNEL_CENTER (1)
+#define FRONT_CHANNEL_LEFT   (2)
+#define FRONT_CHANNEL_RIGHT  (3)
+#define SIDE_CHANNEL_LEFT    (4)
+#define SIDE_CHANNEL_RIGHT   (5)
+#define BACK_CHANNEL_LEFT    (6)
+#define BACK_CHANNEL_RIGHT   (7)
+#define BACK_CHANNEL_CENTER  (8)
+#define LFE_CHANNEL          (9)
+#define UNKNOWN_CHANNEL      (0)
+
 
 typedef struct {
     DB_fileinfo_t info;
-    HANDLE_AACDECODER dec;
+    aacDecoderHandle_t *dec;
+    aacDecoderFrameInfo_t frame_info;
     DB_FILE *file;
 
     mp4p_file_callbacks_t mp4reader;
@@ -212,24 +226,6 @@ aac_probe (DB_FILE *fp, float *duration, int *samplerate, int *channels, int64_t
 }
 
 static int
-_mp4_get_samplerate (aac_info_t *info) {
-    CStreamInfo* stream_info = aacDecoder_GetStreamInfo(info->dec);
-    if (stream_info->extSamplingRate) {
-        info->info.fmt.samplerate = stream_info->extSamplingRate;
-    }
-    else if (stream_info->sampleRate) {
-        info->info.fmt.samplerate = stream_info->sampleRate;
-    }
-    else if (stream_info->aacSampleRate) {
-        info->info.fmt.samplerate = stream_info->aacSampleRate;
-    }
-    else {
-        return -1;
-    }
-    return 0;
-}
-
-static int
 aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     aac_info_t *info = (aac_info_t *)_info;
 
@@ -258,6 +254,8 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->mp4reader.ptrhandle = info->file;
     mp4_init_ddb_file_callbacks (&info->mp4reader);
     info->mp4file = mp4p_open(&info->mp4reader);
+
+
 
     int64_t totalsamples = -1;
     float duration = -1;
@@ -291,19 +289,20 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
         // init mp4 decoding
         info->mp4samples = stsz->number_of_entries;
-        info->dec = aacDecoder_Open (TT_MP4_RAW, 1);
+        info->dec = aacDecoderOpenFAAD2();
+        unsigned samplerate;
+        unsigned channels;
 
         mp4p_atom_t *esds_atom = mp4p_atom_find (info->trak, "trak/mdia/minf/stbl/stsd/mp4a/esds");
         mp4p_esds_t *esds = esds_atom->data;
 
         uint8_t *asc = (uint8_t *)esds->asc;
-        if (aacDecoder_ConfigRaw(info->dec, &asc, &esds->asc_size) != AAC_DEC_OK) {
+        if (aacDecoderInit(info->dec, asc, esds->asc_size, &samplerate, &channels) < 0) {
             return -1;
         }
+        _info->fmt.samplerate = samplerate;
+        _info->fmt.channels = channels;
 
-        if (_mp4_get_samplerate (info) < 0) {
-            return -1;
-        }
         _info->fmt.channels = aac->channel_count;
     }
     else {
@@ -340,11 +339,22 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             deadbeef->pl_replace_meta (it, "!FILETYPE", "AAC");
         }
 
-        _info->fmt.channels = channels;
-        _info->fmt.samplerate = samplerate;
+        off_t fileOffs = deadbeef->ftell (info->file);
+        uint8_t asc[RAW_AAC_PROBE_SIZE];
+        size_t nb = deadbeef->fread (asc, 1, sizeof (asc), info->file);
+        if (nb != sizeof (asc)) {
+            return -1;
+        }
+        deadbeef->fseek (info->file, fileOffs, SEEK_SET);
+        unsigned usamplerate;
+        unsigned uchannels;
 
-        // FIXME: FDK-AAC likes to crash on unsupported/unrecognized data, so need to bail here if ADTS stream is not detected.
-        info->dec = aacDecoder_Open(TT_MP4_ADTS, 1);
+        info->dec = aacDecoderOpenFAAD2();
+        if (aacDecoderInit(info->dec, asc, sizeof (asc), &usamplerate, &uchannels) < 0) {
+            return -1;
+        }
+        _info->fmt.samplerate = usamplerate;
+        _info->fmt.channels = uchannels;
     }
 
     _info->fmt.bps = 16;
@@ -397,7 +407,7 @@ aac_free (DB_fileinfo_t *_info) {
             mp4p_atom_free_list (info->mp4file);
         }
         if (info->dec) {
-            aacDecoder_Close (info->dec);
+            aacDecoderClose (info->dec);
         }
         free (info);
     }
@@ -405,9 +415,6 @@ aac_free (DB_fileinfo_t *_info) {
 
 static int
 aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
-    // this needs to persist until aacDecoder_DecodeFrame ends
-    unsigned char *mp4packet = NULL;
-
     aac_info_t *info = (aac_info_t *)_info;
     if (info->eof) {
         return 0;
@@ -424,9 +431,9 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     }
 
     int initsize = size;
-    unsigned long consumed = 0;
 
     while (size > 0) {
+        // skip decoded samples
         if (info->skipsamples > 0 && info->out_remaining > 0) {
             int64_t skip = min (info->out_remaining, info->skipsamples);
             if (skip < info->out_remaining) {
@@ -435,6 +442,8 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             info->out_remaining -= skip;
             info->skipsamples -= skip;
         }
+
+        // consume decoded samples
         if (info->out_remaining > 0) {
             int n = size / samplesize;
             n = min (info->out_remaining, n);
@@ -447,6 +456,64 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
             else {
                 int i, j;
+                if (info->remap[0] == -1) {
+                    // build remap mtx
+                    // FIXME: should build channelmask 1st; then remap based on channelmask
+                    for (i = 0; i < _info->fmt.channels; i++) {
+                        switch (info->frame_info.channel_position[i]) {
+                        case FRONT_CHANNEL_CENTER:
+                            trace ("FC->%d %d\n", i, 2);
+                            info->remap[2] = i;
+                            break;
+                        case FRONT_CHANNEL_LEFT:
+                            trace ("FL->%d %d\n", i, 0);
+                            info->remap[0] = i;
+                            break;
+                        case FRONT_CHANNEL_RIGHT:
+                            trace ("FR->%d %d\n", i, 1);
+                            info->remap[1] = i;
+                            break;
+                        case SIDE_CHANNEL_LEFT:
+                            trace ("SL->%d %d\n", i, 6);
+                            info->remap[6] = i;
+                            break;
+                        case SIDE_CHANNEL_RIGHT:
+                            trace ("SR->%d %d\n", i, 7);
+                            info->remap[7] = i;
+                            break;
+                        case BACK_CHANNEL_LEFT:
+                            trace ("RL->%d %d\n", i, 4);
+                            info->remap[4] = i;
+                            break;
+                        case BACK_CHANNEL_RIGHT:
+                            trace ("RR->%d %d\n", i, 5);
+                            info->remap[5] = i;
+                            break;
+                        case BACK_CHANNEL_CENTER:
+                            trace ("BC->%d %d\n", i, 8);
+                            info->remap[8] = i;
+                            break;
+                        case LFE_CHANNEL:
+                            trace ("LFE->%d %d\n", i, 3);
+                            info->remap[3] = i;
+                            break;
+                        default:
+                            trace ("aac: unknown ch(%d)->%d\n", info->frame_info.channel_position[i], i);
+                            break;
+                        }
+                    }
+                    for (i = 0; i < _info->fmt.channels; i++) {
+                        trace ("%d ", info->remap[i]);
+                    }
+                    trace ("\n");
+                    if (info->remap[0] == -1) {
+                        info->remap[0] = 0;
+                    }
+                    if ((_info->fmt.channels == 1 && info->remap[0] == FRONT_CHANNEL_CENTER)
+                        || (_info->fmt.channels == 2 && info->remap[0] == FRONT_CHANNEL_LEFT && info->remap[1] == FRONT_CHANNEL_RIGHT)) {
+                        info->noremap = 1;
+                    }
+                }
 
                 for (i = 0; i < n; i++) {
                     for (j = 0; j < _info->fmt.channels; j++) {
@@ -473,6 +540,8 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             continue;
         }
 
+        uint8_t *samples = NULL;
+
         if (info->mp4file) {
             if (info->mp4sample >= info->mp4samples) {
                 break;
@@ -480,10 +549,10 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
             mp4p_atom_t *stbl_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl");
             uint64_t offs = mp4p_sample_offset (stbl_atom, info->mp4sample);
-            UINT size = mp4p_sample_size (stbl_atom, info->mp4sample);
+            unsigned int size = mp4p_sample_size (stbl_atom, info->mp4sample);
             printf ("%08X %d\n", (int)offs, size);
 
-            mp4packet = malloc (size);
+            uint8_t *mp4packet = malloc (size);
             deadbeef->fseek (info->file, offs+info->junk, SEEK_SET);
             if (size != deadbeef->fread (mp4packet, 1, size, info->file)) {
                 trace ("aac: failed to read sample\n");
@@ -493,83 +562,57 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
             info->mp4sample++;
 
-            UINT valid = size;
-            AAC_DECODER_ERROR err = aacDecoder_Fill(info->dec, &mp4packet, &size, &valid);
+            samples = ascDecoderDecodeFrame (info->dec, &info->frame_info, mp4packet, size);
 
-            if (err != AAC_DEC_OK) {
-                goto error;
+            free (mp4packet);
+            mp4packet = NULL;
+
+            if (!samples) {
+                trace ("aac: ascDecoderDecodeFrame returned NULL\n");
+                break;
             }
         }
         else {
-            uint8_t *packet = info->buffer;
-            size_t n = deadbeef->fread (packet, 1, 2, info->file);
-            if (n != 2) {
-                goto error;
+            if (info->remaining < AAC_MAX_PACKET_SIZE) {
+                trace ("fread from offs %lld\n", deadbeef->ftell (info->file));
+                size_t res = deadbeef->fread (info->buffer + info->remaining, 1, AAC_MAX_PACKET_SIZE-info->remaining, info->file);
+                info->remaining += res;
+                trace ("remain: %d\n", info->remaining);
+                if (!info->remaining) {
+                    break;
+                }
             }
-            if (packet[0] != 0xff || (packet[1] & 0xf0) != 0xf0) {
-                trace ("aac: ADTS out of sync, resyncing\n");
+            trace ("NeAACDecDecode %d bytes\n", info->remaining)
+            uint8_t *samples = ascDecoderDecodeFrame (info->dec, &info->frame_info, info->buffer, info->remaining);
+            trace ("samples =%p\n", samples);
+            if (!samples) {
+//                trace ("NeAACDecDecode failed with error %s (%d), consumed=%d\n", NeAACDecGetErrorMessage(info->frame_info.error), (int)info->frame_info.error, (int)info->frame_info.bytesconsumed);
                 if (info->num_errors > 10) {
+                    trace ("NeAACDecDecode failed %d times, interrupting\n", info->num_errors);
                     break;
                 }
                 info->num_errors++;
                 info->remaining = 0;
                 continue;
             }
-            n = deadbeef->fread (packet+2, 1, 5, info->file);
-            if (n != 5) {
-                goto error;
-            }
-
             info->num_errors=0;
-            UINT packet_size = ((packet[3] & 0x03) << 11) | (packet[4] << 3) | (packet[5] >> 5);
-            n = deadbeef->fread(packet + 7, 1, packet_size - 7, info->file);
-            if (n != packet_size - 7) {
-                goto error;
+            unsigned long consumed = info->frame_info.bytesconsumed;
+            if (consumed > info->remaining) {
+                trace ("NeAACDecDecode consumed more than available! wtf?\n");
+                break;
             }
-            UINT valid = packet_size;
-            AAC_DECODER_ERROR err = aacDecoder_Fill(info->dec, &packet, &packet_size, &valid);
-            if (err != AAC_DEC_OK) {
-                goto error;
+            if (consumed == info->remaining) {
+                info->remaining = 0;
             }
-            consumed = info->remaining-valid;
+            else if (consumed > 0) {
+                memmove (info->buffer, info->buffer + consumed, info->remaining - consumed);
+                info->remaining -= consumed;
+            }
         }
 
-        AAC_DECODER_ERROR err = aacDecoder_DecodeFrame(info->dec, (short *)info->out_buffer, OUT_BUFFER_SIZE/sizeof(short), 0);
-
-        if (mp4packet) {
-            free (mp4packet);
-            mp4packet = NULL;
-        }
-
-        if (consumed == info->remaining) {
-            info->remaining = 0;
-        }
-        else if (consumed > 0) {
-            memmove (info->buffer, info->buffer + consumed, info->remaining - consumed);
-            info->remaining -= consumed;
-        }
-
-        if (err != AAC_DEC_OK) {
-            trace ("aacDecoder_DecodeFrame: error %d\n", err);
-            break;
-        }
-
-        CStreamInfo *frame_info = aacDecoder_GetStreamInfo(info->dec);
-        info->out_remaining = (int)frame_info->frameSize;
-
-        if (info->remap[0] == -1) {
-            // build remap mtx
-            for (int i = 0; i < _info->fmt.channels; i++) {
-                AUDIO_CHANNEL_TYPE idx = frame_info->pChannelIndices[i];
-                info->remap[idx] = i;
-            }
-            if (info->remap[0] == -1) {
-                info->remap[0] = 0;
-            }
-            if ((_info->fmt.channels == 1 && info->remap[0] == 0)
-                || (_info->fmt.channels == 2 && info->remap[0] == 0 && info->remap[1] == 1)) {
-                info->noremap = 1;
-            }
+        if (info->frame_info.samples > 0) {
+            memcpy (info->out_buffer, samples, info->frame_info.samples * 2);
+            info->out_remaining = (int)(info->frame_info.samples / info->frame_info.channels);
         }
     }
 
@@ -577,10 +620,6 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
     return initsize-size;
 
-error:
-    if (mp4packet) {
-        free (mp4packet);
-    }
     return -1;
 }
 
@@ -727,7 +766,7 @@ aac_load_itunes_chapters (aac_info_t *info, mp4p_chap_t *chap, /* out */ int *nu
             uint32_t buffer_size = 0;
 
             uint64_t offs = mp4p_sample_offset (stbl_atom, sample);
-            UINT size = mp4p_sample_size (stbl_atom, sample);
+            uint32_t size = mp4p_sample_size (stbl_atom, sample);
 
             buffer = malloc (size);
             deadbeef->fseek (info->file, offs+info->junk, SEEK_SET);
@@ -847,22 +886,16 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     mp4p_atom_t *esds_atom = mp4p_atom_find (info.trak, "trak/mdia/minf/stbl/stsd/mp4a/esds");
     mp4p_esds_t *esds = esds_atom->data;
 
-    info.dec = aacDecoder_Open (TT_MP4_RAW, 1);
-
+    info.dec = aacDecoderOpenFAAD2();
+    unsigned samplerate;
+    unsigned channels;
     uint8_t *asc = (uint8_t *)esds->asc;
-    if (aacDecoder_ConfigRaw(info.dec, &asc, &esds->asc_size) != AAC_DEC_OK) {
+    if (aacDecoderInit(info.dec, asc, esds->asc_size, &samplerate, &channels) < 0) {
         mp4p_atom_free_list(info.mp4file);
+        aacDecoderClose(info.dec);
         return -1;
     }
 
-    if (_mp4_get_samplerate(&info) < 0) {
-        mp4p_atom_free_list(info.mp4file);
-        aacDecoder_Close(info.dec);
-        return -1;
-    }
-    aacDecoder_Close(info.dec);
-
-    int channels = aac->channel_count;
     int64_t totalsamples = 0;
 
     mp4p_atom_t *stts_atom = mp4p_atom_find(info.trak, "trak/mdia/minf/stbl/stts");

@@ -18,16 +18,6 @@ aacDecoderInit (aacDecoderHandle_t *dec, uint8_t *buff, size_t buffSize, unsigne
     return dec->callbacks->init (dec, buff, buffSize, samplerate, channels);
 }
 
-const uint8_t *
-aacDecoderGetASC (aacDecoderHandle_t *dec) {
-    return dec->callbacks->getASC (dec);
-}
-
-int
-aacDecoderSetASC (aacDecoderHandle_t *dec, const uint8_t *asc) {
-    return dec->callbacks->setASC (dec, asc);
-}
-
 uint8_t *
 ascDecoderDecodeFrame (aacDecoderHandle_t *dec, aacDecoderFrameInfo_t *frameInfo, const uint8_t *buffer, size_t bufferSize) {
     return dec->callbacks->decodeFrame (dec, frameInfo, buffer, bufferSize);

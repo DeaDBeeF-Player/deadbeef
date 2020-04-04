@@ -1990,6 +1990,7 @@
 		2DDFABE92438EDC600E13E85 /* aac_decoder_fdk.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDFABE72438EDC600E13E85 /* aac_decoder_fdk.h */; };
 		2DDFABEB2438EE6A00E13E85 /* aac_decoder_fdk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DDFABE82438EDC600E13E85 /* aac_decoder_fdk.c */; };
 		2DDFABEE2438F20400E13E85 /* aac_decoder_wrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DDFABEC2438F1FC00E13E85 /* aac_decoder_wrap.c */; };
+		2DDFABF12438FB7D00E13E85 /* libFDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DDFABCD2438E56000E13E85 /* libFDK.a */; };
 		2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */; };
 		2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */; };
 		2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */; };
@@ -3212,6 +3213,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D28F0541C283C75004A6E7B;
 			remoteInfo = faad2;
+		};
+		2DDFABEF2438FB7900E13E85 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D65D9891E0A930400FD1C8A /* FDK.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D65D6ED1E0A910B00FD1C8A;
+			remoteInfo = FDK;
 		};
 		2DE3B7BD2269BC5700AFF9AE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -6099,6 +6107,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DDFABF12438FB7D00E13E85 /* libFDK.a in Frameworks */,
 				2DDFABE62438EA9900E13E85 /* libfaad2.a in Frameworks */,
 				2DAB83A41E12ACF1000E65F1 /* libmp4parser.a in Frameworks */,
 			);
@@ -12373,6 +12382,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DDFABF02438FB7900E13E85 /* PBXTargetDependency */,
 				2DDFABE52438EA9400E13E85 /* PBXTargetDependency */,
 				2DAB83A31E12ACE7000E65F1 /* PBXTargetDependency */,
 			);
@@ -16013,6 +16023,11 @@
 			isa = PBXTargetDependency;
 			target = 2D28F0541C283C75004A6E7B /* faad2 */;
 			targetProxy = 2DDFABE42438EA9400E13E85 /* PBXContainerItemProxy */;
+		};
+		2DDFABF02438FB7900E13E85 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = FDK;
+			targetProxy = 2DDFABEF2438FB7900E13E85 /* PBXContainerItemProxy */;
 		};
 		2DE3B7BE2269BC5700AFF9AE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
