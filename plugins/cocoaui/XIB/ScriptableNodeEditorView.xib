@@ -145,8 +145,8 @@
             <rect key="contentRect" x="167" y="107" width="591" height="300"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
             <value key="minSize" type="size" width="541" height="259"/>
-            <view key="contentView" misplaced="YES" id="QU9-W9-bL8">
-                <rect key="frame" x="0.0" y="0.0" width="591" height="300"/>
+            <view key="contentView" id="QU9-W9-bL8">
+                <rect key="frame" x="0.0" y="0.0" width="591" height="299"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OuH-IF-bmv">
@@ -160,7 +160,6 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 </view>
                             </subviews>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="deviceWhite"/>
                         </clipView>
                         <constraints>
                             <constraint firstAttribute="height" constant="230" id="EzT-iI-24y"/>
