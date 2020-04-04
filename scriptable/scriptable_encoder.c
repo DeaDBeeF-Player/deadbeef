@@ -1,7 +1,8 @@
-#include "scriptable_encoder.h"
-#include <stdlib.h>
 #include <limits.h>
+#include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include "scriptable_encoder.h"
 #include "../deadbeef.h"
 #include "strdupa.h"
 
@@ -16,8 +17,16 @@ scriptableEncoderChainItemTypes (scriptableItem_t *item);
 static scriptableItem_t *
 scriptableEncoderCreatePreset (scriptableItem_t *root, const char *type);
 
+static int
+scriptableEncoderPresetSave(scriptableItem_t *item);
+
+static int
+scriptableEncoderUpdateItem (struct scriptableItem_s *item);
+
 static scriptableCallbacks_t scriptableEncoderCallbacks = {
     .readonlyPrefix = "[Built-in] ",
+    .save = scriptableEncoderPresetSave,
+    .updateItem = scriptableEncoderUpdateItem,
 };
 
 static scriptableCallbacks_t scriptableRootCallbacks = {
@@ -101,7 +110,7 @@ scriptableItemLoadEncoderPreset (scriptableItem_t *preset, const char *name, con
         }
 
         *sp = 0;
-        char *item = sp + 1;
+        const char *item = sp + 1;
 
         if (!strcmp (str, "title")) {
             scriptableItemSetPropertyValueForKey(preset, item, "name");
@@ -120,6 +129,78 @@ error:
     return err;
 }
 
+static int
+scriptableEncoderPresetSaveAtPath(scriptableItem_t *item, char *path) {
+    char temp_path[PATH_MAX];
+    if (snprintf (temp_path, sizeof (temp_path), "%s.tmp", path) >= sizeof (temp_path)) {
+        return -1;
+    }
+
+    FILE *fp = fopen (temp_path, "w+b");
+    if (!fp) {
+        return -1;
+    }
+
+    fprintf (fp, "title %s\n", scriptableItemPropertyValueForKey(item, "name"));
+    fprintf (fp, "ext %s\n", scriptableItemPropertyValueForKey(item, "ext"));
+    fprintf (fp, "encoder %s\n", scriptableItemPropertyValueForKey(item, "encoder"));
+    fprintf (fp, "method %s\n", scriptableItemPropertyValueForKey(item, "method"));
+    fprintf (fp, "id3v2_version %s\n", scriptableItemPropertyValueForKey(item, "id3v2_version"));
+    fprintf (fp, "tag_id3v2 %s\n", scriptableItemPropertyValueForKey(item, "tag_id3v2"));
+    fprintf (fp, "tag_id3v1 %s\n", scriptableItemPropertyValueForKey(item, "tag_id3v1"));
+    fprintf (fp, "tag_apev2 %s\n", scriptableItemPropertyValueForKey(item, "tag_apev2"));
+    fprintf (fp, "tag_flac %s\n", scriptableItemPropertyValueForKey(item, "tag_flac"));
+    fprintf (fp, "tag_oggvorbis %s\n", scriptableItemPropertyValueForKey(item, "tag_oggvorbis"));
+    fprintf (fp, "tag_mp4 %s\n", scriptableItemPropertyValueForKey(item, "tag_mp4"));
+
+
+    if (fclose (fp) != 0) {
+        return -1;
+    }
+
+    if (!rename(temp_path, path)) {
+        return 0;
+    }
+
+    (void)unlink (temp_path);
+
+    return -1;
+}
+
+static int
+getEncoderPresetFullPathName (const char *fname, char *path, size_t size) {
+    int res = snprintf (path, size, "%s/presets/encoders/%s", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG), fname);
+    return res < size ? 0 : -1;
+}
+
+
+static int
+scriptableEncoderPresetSave(scriptableItem_t *item) {
+    const char *presetName = scriptableItemPropertyValueForKey (item, "name");
+    if (!presetName) {
+        return -1;
+    }
+
+    char fname[PATH_MAX];
+    if (snprintf (fname, sizeof (fname), "%s.txt", presetName) >= sizeof (fname)) {
+        return -1;
+    }
+
+    char path[PATH_MAX];
+    if (getEncoderPresetFullPathName (fname, path, sizeof (path)) < 0) {
+        return -1;
+    }
+
+
+    return scriptableEncoderPresetSaveAtPath(item, path);
+}
+
+static int
+scriptableEncoderUpdateItem (struct scriptableItem_s *item) {
+    return scriptableItemSave (item);
+}
+
+
 scriptableItem_t *
 scriptableEncoderRoot (void) {
     scriptableItem_t *encoderRoot = scriptableItemSubItemForName (scriptableRoot(), "EncoderPresets");
@@ -134,6 +215,9 @@ scriptableEncoderRoot (void) {
 
 void
 scriptableEncoderLoadPresets (void) {
+    scriptableItem_t *root = scriptableEncoderRoot();
+    root->isLoading = 1;
+
     char path[PATH_MAX];
     if (snprintf (path, sizeof (path), "%s/presets/encoders", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG)) < 0) {
         path[0] = 0;
@@ -158,6 +242,7 @@ scriptableEncoderLoadPresets (void) {
             if (snprintf (s, sizeof (s), "%s/%s", presetspath, namelist[i]->d_name) > 0){
 
                 scriptableItem_t *preset = scriptableItemAlloc();
+                preset->isLoading = 1;
                 preset->callbacks = &scriptableEncoderCallbacks;
                 preset->configDialog = configdialog;
                 if (scriptableItemLoadEncoderPreset (preset, namelist[i]->d_name, s)) {
@@ -167,8 +252,9 @@ scriptableEncoderLoadPresets (void) {
                     if (di == 0) {
                         preset->isReadonly = 1;
                     }
-                    scriptableItemAddSubItem(scriptableEncoderRoot(), preset);
+                    scriptableItemAddSubItem(root, preset);
                 }
+                preset->isLoading = 0;
             }
         }
         for (i = 0; i < n; i++) {
@@ -177,6 +263,8 @@ scriptableEncoderLoadPresets (void) {
         free (namelist);
         namelist = NULL;
     }
+
+    root->isLoading = 0;
 }
 
 ddb_encoder_preset_t *
