@@ -63,7 +63,8 @@
 #include "mp4ff.h"
 
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
-#define trace(...)
+#define trace(...) { deadbeef->log (__VA_ARGS__); }
+//#define trace(...)
 
 DB_functions_t *deadbeef;
 static DB_artwork_plugin_t plugin;
@@ -943,11 +944,21 @@ make_cache_path2 (char *path, int size, const char *fname, const char *album, co
         artist = "Unknown artist";
     }
 
+    #ifdef __MINGW32__
+    if (make_cache_dir_path (path, size, artist, img_size)) {
+        return -1;
+    }
+    #else
     if (make_cache_dir_path (path, size-NAME_MAX, artist, img_size)) {
         return -1;
     }
+    #endif
 
     int max_album_chars = min (NAME_MAX, size - strlen (path)) - sizeof ("1.jpg.part");
+    #ifdef __MINGW32__
+    // override char limit todo
+    max_album_chars = 250;
+    #endif
     if (max_album_chars <= 0) {
         trace ("Path buffer not long enough for %s and filename\n", path);
         return -1;
@@ -1220,7 +1231,10 @@ local_image_file (const char *cache_path, const char *local_path, const char *ur
     if (!artwork_filemask) {
         return -1;
     }
-
+    #ifdef __MINGW32__
+    // TODO mask not working properly, picks flac file.
+    return -1;
+    #endif
     trace ("scanning %s for artwork\n", local_path);
     char filemask[strlen (artwork_filemask)+1];
     strcpy (filemask, artwork_filemask);
