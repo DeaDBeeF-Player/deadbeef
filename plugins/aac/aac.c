@@ -767,7 +767,6 @@ aac_load_itunes_chapters (aac_info_t *info, mp4p_chap_t *chap, /* out */ int *nu
             int32_t dur = (int64_t)1000 * mp4p_stts_sample_duration(stts_atom, sample) / mdhd->time_scale; // milliseconds
             total_dur += dur;
             unsigned char *buffer = NULL;
-            uint32_t buffer_size = 0;
 
             uint64_t offs = mp4p_sample_offset (stbl_atom, sample);
             uint32_t size = mp4p_sample_size (stbl_atom, sample);
@@ -779,7 +778,7 @@ aac_load_itunes_chapters (aac_info_t *info, mp4p_chap_t *chap, /* out */ int *nu
                 continue;
             }
             int len = (buffer[0] << 8) | buffer[1];
-            len = min (len, buffer_size - 2);
+            len = min (len, size - 2);
             if (len > 0) {
                 chapters[*num_chapters].title = strndup ((const char *)&buffer[2], len);
             }
