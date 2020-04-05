@@ -305,8 +305,6 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
         _info->fmt.samplerate = samplerate;
         _info->fmt.channels = channels;
-
-        _info->fmt.channels = aac->channel_count;
     }
     else {
         int samplerate = -1;
