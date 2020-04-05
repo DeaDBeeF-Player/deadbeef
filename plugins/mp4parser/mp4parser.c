@@ -952,8 +952,8 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         _load_chap_atom (atom, fp);
     }
     else {
-        _dbg_print_indent ();
-        printf ("[opaque]\n");
+//        _dbg_print_indent ();
+//        printf ("[opaque]\n");
     }
 
     return 0;
@@ -1725,7 +1725,6 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
         if (buffer) {
             if (atom->size == 0) {
                 _dbg_print_fourcc(atom->type);
-                printf (": size=0\n");
                 return 0;
             }
             uint32_t init_size = buffer_size;
@@ -1733,7 +1732,6 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
             WRITE_BUF(atom->type, 4);
             if (!atom->to_buffer) {
                 _dbg_print_fourcc(atom->type);
-                printf (": doesn't have writer\n");
                 //WRITE_BUF(atom->data, atom->size - 8);
             }
             else {

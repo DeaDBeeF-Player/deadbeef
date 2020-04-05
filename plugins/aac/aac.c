@@ -819,7 +819,6 @@ aac_insert_with_chapters (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem
         deadbeef->pl_replace_meta (it, ":FILETYPE", ftype);
         float duration = (float)(chapters[i].endsample - chapters[i].startsample + 1) / samplerate;
         deadbeef->plt_set_item_duration (plt, it, duration);
-        printf ("chapter %d duration: %f\n", i, duration);
         after = deadbeef->plt_insert_item (plt, after, it);
         deadbeef->pl_item_unref (it);
     }
