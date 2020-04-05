@@ -2030,6 +2030,7 @@ fetcher_thread (void *none)
             }
             else {
                 trace ("artwork fetcher: no cover art found\n");
+                free (cover);
                 send_query_callbacks (query->callbacks, NULL);
             }
             query_free (query);

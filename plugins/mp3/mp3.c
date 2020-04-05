@@ -89,8 +89,7 @@ cmp3_seek_stream (DB_fileinfo_t *_info, int sample) {
 
 static DB_fileinfo_t *
 cmp3_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (mp3_info_t));
-    mp3_info_t *info = (mp3_info_t *)_info;
+    mp3_info_t *info = malloc (sizeof (mp3_info_t));
     memset (info, 0, sizeof (mp3_info_t));
 
     if (hints & DDB_DECODER_HINT_RAW_SIGNAL) {
@@ -107,7 +106,7 @@ cmp3_open (uint32_t hints) {
     if (hints & (1<<31)) {
         info->mp3flags |= MP3_PARSE_ESTIMATE_DURATION;
     }
-    return _info;
+    return &info->info;
 }
 
 void
