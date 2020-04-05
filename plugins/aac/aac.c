@@ -306,6 +306,9 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.samplerate = samplerate;
         _info->fmt.channels = channels;
     }
+    else if (info->mp4file) {
+        return -1; // mp4 but not aac
+    }
     else {
         int samplerate = -1;
         int channels = -1;
@@ -879,7 +882,7 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     }
     if (!aac) {
         mp4p_atom_free_list(info.mp4file);
-        return -1; // mp4 without aac
+        return 1; // mp4 without aac
     }
 
     // get audio format: samplerate, bps, channels
@@ -1006,6 +1009,9 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         if (res == 0) {
             deadbeef->fclose (fp);
             return after;
+        }
+        else if (res > 0) { // mp4 but not aac
+            return NULL;
         }
     }
 
