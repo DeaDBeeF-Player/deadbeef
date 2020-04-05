@@ -1987,10 +1987,7 @@
 		2DDFABE22438EA6000E13E85 /* aac_decoder_faad2.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DDFABDC2438E83400E13E85 /* aac_decoder_faad2.c */; };
 		2DDFABE32438EA6000E13E85 /* aac_decoder_faad2.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDFABDE2438E8E800E13E85 /* aac_decoder_faad2.h */; };
 		2DDFABE62438EA9900E13E85 /* libfaad2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D28F0551C283C75004A6E7B /* libfaad2.a */; };
-		2DDFABE92438EDC600E13E85 /* aac_decoder_fdk.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDFABE72438EDC600E13E85 /* aac_decoder_fdk.h */; };
-		2DDFABEB2438EE6A00E13E85 /* aac_decoder_fdk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DDFABE82438EDC600E13E85 /* aac_decoder_fdk.c */; };
 		2DDFABEE2438F20400E13E85 /* aac_decoder_wrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DDFABEC2438F1FC00E13E85 /* aac_decoder_wrap.c */; };
-		2DDFABF12438FB7D00E13E85 /* libFDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DDFABCD2438E56000E13E85 /* libFDK.a */; };
 		2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */; };
 		2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */; };
 		2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */; };
@@ -3213,13 +3210,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D28F0541C283C75004A6E7B;
 			remoteInfo = faad2;
-		};
-		2DDFABEF2438FB7900E13E85 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2D65D9891E0A930400FD1C8A /* FDK.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 2D65D6ED1E0A910B00FD1C8A;
-			remoteInfo = FDK;
 		};
 		2DE3B7BD2269BC5700AFF9AE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -6107,7 +6097,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DDFABF12438FB7D00E13E85 /* libFDK.a in Frameworks */,
 				2DDFABE62438EA9900E13E85 /* libfaad2.a in Frameworks */,
 				2DAB83A41E12ACF1000E65F1 /* libmp4parser.a in Frameworks */,
 			);
@@ -11957,7 +11946,6 @@
 				2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */,
 				2D1A564A1D9FFB10005E5CDD /* ReplayGainScannerController.h in Headers */,
 				2DA5E341238DB1A8005832B7 /* EditColumnWindowController.h in Headers */,
-				2DDFABE92438EDC600E13E85 /* aac_decoder_fdk.h in Headers */,
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
 				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
 				2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */,
@@ -12382,7 +12370,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				2DDFABF02438FB7900E13E85 /* PBXTargetDependency */,
 				2DDFABE52438EA9400E13E85 /* PBXTargetDependency */,
 				2DAB83A31E12ACE7000E65F1 /* PBXTargetDependency */,
 			);
@@ -14166,7 +14153,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DDFABEB2438EE6A00E13E85 /* aac_decoder_fdk.c in Sources */,
 				2D69653A1D74338A00EB99D8 /* mp4tagutil.c in Sources */,
 				2D28F0481C283BF7004A6E7B /* aac_parser.c in Sources */,
 				2D28F04A1C283BF7004A6E7B /* aac.c in Sources */,
@@ -16023,11 +16009,6 @@
 			isa = PBXTargetDependency;
 			target = 2D28F0541C283C75004A6E7B /* faad2 */;
 			targetProxy = 2DDFABE42438EA9400E13E85 /* PBXContainerItemProxy */;
-		};
-		2DDFABF02438FB7900E13E85 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = FDK;
-			targetProxy = 2DDFABEF2438FB7900E13E85 /* PBXContainerItemProxy */;
 		};
 		2DE3B7BE2269BC5700AFF9AE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
