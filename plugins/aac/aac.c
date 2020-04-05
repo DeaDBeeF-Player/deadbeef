@@ -729,7 +729,7 @@ aac_load_itunes_chapters (aac_info_t *info, mp4p_chap_t *chap, /* out */ int *nu
         mp4p_atom_t *trak_atom = mp4p_atom_find(mp4, "moov/trak");
         while (trak_atom) {
             text_atom = NULL;
-            if (!mp4p_atom_type_compare(trak_atom, "trak")) {
+            if (!mp4p_atom_type_compare(trak_atom, "trak") && mp4p_trak_has_chapters(trak_atom)) {
                 text_atom = mp4p_atom_find(trak_atom, "trak/mdia/minf/stbl/stsd/text");
                 mp4p_atom_t *tkhd_atom = mp4p_atom_find(trak_atom, "trak/tkhd");
                 if (text_atom && tkhd_atom) {
@@ -750,10 +750,6 @@ aac_load_itunes_chapters (aac_info_t *info, mp4p_chap_t *chap, /* out */ int *nu
         mp4p_atom_t *mdhd_atom = mp4p_atom_find(trak_atom, "trak/mdia/mdhd");
         mp4p_atom_t *stbl_atom = mp4p_atom_find(trak_atom, "trak/mdia/minf/stbl");
         mp4p_atom_t *stsz_atom = mp4p_atom_find(stbl_atom, "stbl/stsz");
-
-        if (!stts_atom || !mdhd_atom || !stbl_atom || !stsz_atom) {
-            continue;
-        }
 
         mp4p_mdhd_t *mdhd = mdhd_atom->data;
         mp4p_stsz_t *stsz = stsz_atom->data;
@@ -873,10 +869,12 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     info.trak = mp4p_atom_find (info.mp4file, "moov/trak");
     mp4p_mp4a_t *aac = NULL;
     while (info.trak) {
-        mp4p_atom_t *aac_atom = mp4p_atom_find (info.trak, "trak/mdia/minf/stbl/stsd/mp4a");
-        if (aac_atom) {
-            aac = aac_atom->data;
-            break;
+        if (mp4p_trak_playable(info.trak)) {
+            mp4p_atom_t *aac_atom = mp4p_atom_find (info.trak, "trak/mdia/minf/stbl/stsd/mp4a");
+            if (aac_atom) {
+                aac = aac_atom->data;
+                break;
+            }
         }
         info.trak = info.trak->next;
     }

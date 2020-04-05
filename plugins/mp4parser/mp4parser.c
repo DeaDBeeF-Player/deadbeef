@@ -1875,3 +1875,43 @@ error:
     return res;
 }
 
+int
+mp4p_trak_playable (mp4p_atom_t *trak_atom) {
+    const char *atom_list[] = {
+        "trak/mdia/minf/stbl/stts",
+        "trak/mdia/mdhd",
+        "trak/mdia/minf/stbl",
+        "trak/mdia/minf/stbl/stsz",
+        "trak/mdia/minf/stbl/stsd/mp4a/esds",
+        NULL
+    };
+
+    for (int i = 0; atom_list[i]; i++) {
+        if (!mp4p_atom_find(trak_atom, atom_list[i])) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int
+mp4p_trak_has_chapters (mp4p_atom_t *trak_atom) {
+    const char *atom_list[] = {
+        "trak/mdia/minf/stbl/stsd/text",
+        "trak/tkhd",
+        "trak/mdia/minf/stbl",
+        "trak/mdia/minf/stbl/stts",
+        "trak/mdia/minf/stbl/stsz",
+        "trak/mdia/mdhd",
+        NULL
+    };
+
+    for (int i = 0; atom_list[i]; i++) {
+        if (!mp4p_atom_find(trak_atom, atom_list[i])) {
+            return 0;
+        }
+    }
+
+    return 1;
+}

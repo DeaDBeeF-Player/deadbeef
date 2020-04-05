@@ -323,4 +323,10 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size);
 int
 mp4p_update_metadata (mp4p_file_callbacks_t *callbacks, mp4p_atom_t *source, mp4p_atom_t *dest);
 
+int
+mp4p_trak_playable (mp4p_atom_t *trak_atom);
+
+int
+mp4p_trak_has_chapters (mp4p_atom_t *trak_atom);
+
 #endif /* mp4parser_h */
