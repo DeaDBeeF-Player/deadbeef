@@ -10,6 +10,7 @@
 #define aac_decoder_protocol_h
 
 #include <stdint.h>
+#include <stddef.h>
 
 typedef struct {
     unsigned long bytesconsumed;

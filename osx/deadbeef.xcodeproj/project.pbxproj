@@ -4280,8 +4280,8 @@
 		2D2351241B138F3200A62936 /* converter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = converter.h; sourceTree = "<group>"; };
 		2D2351271B13922400A62936 /* Converter.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Converter.xib; sourceTree = "<group>"; };
 		2D24B6941E0E777D0059B1AE /* libmp4parser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmp4parser.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D24B6991E0E77A10059B1AE /* mp4parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp4parser.c; path = plugins/mp4parser/mp4parser.c; sourceTree = "<group>"; };
-		2D24B69A1E0E77A10059B1AE /* mp4parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp4parser.h; path = plugins/mp4parser/mp4parser.h; sourceTree = "<group>"; };
+		2D24B6991E0E77A10059B1AE /* mp4parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp4parser.c; sourceTree = "<group>"; };
+		2D24B69A1E0E77A10059B1AE /* mp4parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4parser.h; sourceTree = "<group>"; };
 		2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = rg_scanner.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D27AEE61D9D871600842D76 /* rg_scanner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rg_scanner.c; sourceTree = "<group>"; };
 		2D27AEE71D9D871600842D76 /* rg_scanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rg_scanner.h; sourceTree = "<group>"; };
@@ -7888,6 +7888,7 @@
 				2D24B69A1E0E77A10059B1AE /* mp4parser.h */,
 			);
 			name = mp4parser;
+			path = shared/mp4parser;
 			sourceTree = "<group>";
 		};
 		2D27AEE51D9D86F600842D76 /* rg_scanner */ = {

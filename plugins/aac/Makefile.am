@@ -11,7 +11,7 @@ aac_la_SOURCES =\
 
 aac_la_LDFLAGS = -module -avoid-version
 
-aac_la_LIBADD = $(LDADD) $(FAAD2_LIBS) ../../shared/libmp4tagutil.a ../mp4parser/libmp4parser.a
-aac_la_CFLAGS = -I@top_srcdir@/plugins/mp4parser $(CFLAGS) $(FAAD2_CFLAGS) -std=c99 -DUSE_MP4FF -DUSE_TAGGING
+aac_la_LIBADD = $(LDADD) $(FAAD2_LIBS) ../../shared/libmp4tagutil.a ../../shared/libmp4parser.a
+aac_la_CFLAGS = -I@top_srcdir@/shared/mp4parser $(CFLAGS) $(FAAD2_CFLAGS) -std=c99
 endif
 

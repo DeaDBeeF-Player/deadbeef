@@ -25,7 +25,7 @@
 #define mp4tagutil_h
 
 #include "../deadbeef.h"
-#include "mp4parser.h"
+#include "../shared/mp4parser/mp4parser.h"
 
 int
 mp4_read_metadata (DB_playItem_t *it);
