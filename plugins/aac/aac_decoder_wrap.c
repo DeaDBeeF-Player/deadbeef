@@ -19,6 +19,6 @@ aacDecoderInit (aacDecoderHandle_t *dec, uint8_t *buff, size_t buffSize, unsigne
 }
 
 uint8_t *
-ascDecoderDecodeFrame (aacDecoderHandle_t *dec, aacDecoderFrameInfo_t *frameInfo, const uint8_t *buffer, size_t bufferSize) {
+aacDecoderDecodeFrame (aacDecoderHandle_t *dec, aacDecoderFrameInfo_t *frameInfo, const uint8_t *buffer, size_t bufferSize) {
     return dec->callbacks->decodeFrame (dec, frameInfo, buffer, bufferSize);
 }

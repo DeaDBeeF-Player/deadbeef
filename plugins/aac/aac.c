@@ -255,13 +255,11 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     mp4_init_ddb_file_callbacks (&info->mp4reader);
     info->mp4file = mp4p_open(&info->mp4reader);
 
-
-
     int64_t totalsamples = -1;
     float duration = -1;
+    mp4p_mp4a_t *aac = NULL;
 
     if (info->mp4file) {
-        mp4p_mp4a_t *aac = NULL;
         info->trak = mp4p_atom_find (info->mp4file, "moov/trak");
         while (info->trak) {
             mp4p_atom_t *aac_atom = mp4p_atom_find (info->trak, "trak/mdia/minf/stbl/stsd/mp4a");
@@ -273,9 +271,14 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
 
         if (!aac) {
-            return -1;
+            if (info->mp4file) {
+                mp4p_atom_free_list (info->mp4file);
+                info->mp4file = NULL;
+            }
         }
+    }
 
+    if (aac) {
         mp4p_atom_t *stts_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl/stts");
         mp4p_atom_t *mdhd_atom = mp4p_atom_find(info->trak, "trak/mdia/mdhd");
 
@@ -562,7 +565,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
             info->mp4sample++;
 
-            samples = ascDecoderDecodeFrame (info->dec, &info->frame_info, mp4packet, size);
+            samples = aacDecoderDecodeFrame (info->dec, &info->frame_info, mp4packet, size);
 
             free (mp4packet);
             mp4packet = NULL;
@@ -583,7 +586,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 }
             }
             trace ("NeAACDecDecode %d bytes\n", info->remaining)
-            uint8_t *samples = ascDecoderDecodeFrame (info->dec, &info->frame_info, info->buffer, info->remaining);
+            samples = aacDecoderDecodeFrame (info->dec, &info->frame_info, info->buffer, info->remaining);
             trace ("samples =%p\n", samples);
             if (!samples) {
 //                trace ("NeAACDecDecode failed with error %s (%d), consumed=%d\n", NeAACDecGetErrorMessage(info->frame_info.error), (int)info->frame_info.error, (int)info->frame_info.bytesconsumed);
