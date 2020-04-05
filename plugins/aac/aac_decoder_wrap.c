@@ -18,6 +18,12 @@ aacDecoderInit (aacDecoderHandle_t *dec, uint8_t *buff, size_t buffSize, unsigne
     return dec->callbacks->init (dec, buff, buffSize, samplerate, channels);
 }
 
+int
+aacDecoderInitRaw (aacDecoderHandle_t *dec, uint8_t *buff, size_t buffSize, unsigned *samplerate, unsigned *channels) {
+    return dec->callbacks->initRaw (dec, buff, buffSize, samplerate, channels);
+}
+
+
 uint8_t *
 aacDecoderDecodeFrame (aacDecoderHandle_t *dec, aacDecoderFrameInfo_t *frameInfo, const uint8_t *buffer, size_t bufferSize) {
     return dec->callbacks->decodeFrame (dec, frameInfo, buffer, bufferSize);

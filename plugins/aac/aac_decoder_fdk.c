@@ -73,6 +73,7 @@ ascDecoderDecodeFrame_FDK (aacDecoderHandle_t *_dec, aacDecoderFrameInfo_t *fram
 static aacDecoderCallbacks_t aacDecoderCallbacks_FDK = {
     .close = aacDecoderClose,
     .init = aacDecoderInit,
+    .initRaw = aacDecoderInit,
     .decodeFrame = aacDecoderDecodeFrame,
 };
 

@@ -25,6 +25,8 @@ typedef struct {
 
     int (*init) (struct aacDecoderHandle_s * dec, uint8_t *buff, size_t buffSize, unsigned *samplerate, unsigned *channels);
 
+    int (*initRaw) (struct aacDecoderHandle_s * dec, uint8_t *buff, size_t buffSize, unsigned *samplerate, unsigned *channels);
+
     uint8_t * (*decodeFrame) (struct aacDecoderHandle_s *dec, aacDecoderFrameInfo_t *frameInfo, const uint8_t *buffer, size_t bufferSize);
 } aacDecoderCallbacks_t;
 
@@ -37,6 +39,9 @@ aacDecoderClose (aacDecoderHandle_t *dec);
 
 int
 aacDecoderInit (aacDecoderHandle_t *dec, uint8_t *buff, size_t buffSize, unsigned *samplerate, unsigned *channels);
+
+int
+aacDecoderInitRaw (aacDecoderHandle_t *dec, uint8_t *buff, size_t buffSize, unsigned *samplerate, unsigned *channels);
 
 uint8_t *
 aacDecoderDecodeFrame (aacDecoderHandle_t *dec, aacDecoderFrameInfo_t *frameInfo, const uint8_t *buffer, size_t bufferSize);

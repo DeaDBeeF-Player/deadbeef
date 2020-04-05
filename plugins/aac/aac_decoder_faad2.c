@@ -38,6 +38,20 @@ aacDecoderInit_FAAD2 (aacDecoderHandle_t *_dec, uint8_t *buff, size_t buffSize, 
     return 0;
 }
 
+static int
+aacDecoderInitRaw_FAAD2 (aacDecoderHandle_t *_dec, uint8_t *buff, size_t buffSize, unsigned *samplerate, unsigned *channels) {
+    faad2Decoder_t *dec = (faad2Decoder_t *)_dec;
+    unsigned long sr;
+    unsigned char ch;
+    long res = NeAACDecInit(dec->dec, buff, (unsigned long)buffSize, &sr, &ch);
+    if (res < 0) {
+        return -1;
+    }
+    *samplerate = (unsigned)sr;
+    *channels = (unsigned)ch;
+    return 0;
+}
+
 static const uint8_t *
 aacDecoderGetASC_FAAD2 (aacDecoderHandle_t *_dec) {
     faad2Decoder_t *dec = (faad2Decoder_t *)_dec;
@@ -72,6 +86,7 @@ ascDecoderDecodeFrame_FAAD2 (aacDecoderHandle_t *_dec, aacDecoderFrameInfo_t *fr
 static aacDecoderCallbacks_t aacDecoderCallbacks_FAAD2 = {
     .close = aacDecoderClose_FAAD2,
     .init = aacDecoderInit_FAAD2,
+    .initRaw = aacDecoderInitRaw_FAAD2,
     .decodeFrame = ascDecoderDecodeFrame_FAAD2,
 };
 

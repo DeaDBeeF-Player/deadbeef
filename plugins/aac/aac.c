@@ -353,7 +353,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         unsigned uchannels;
 
         info->dec = aacDecoderOpenFAAD2();
-        if (aacDecoderInit(info->dec, asc, sizeof (asc), &usamplerate, &uchannels) < 0) {
+        if (aacDecoderInitRaw(info->dec, asc, sizeof (asc), &usamplerate, &uchannels) < 0) {
             return -1;
         }
         _info->fmt.samplerate = usamplerate;
