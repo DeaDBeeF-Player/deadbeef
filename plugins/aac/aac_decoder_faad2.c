@@ -29,7 +29,7 @@ aacDecoderInit_FAAD2 (aacDecoderHandle_t *_dec, uint8_t *buff, size_t buffSize, 
     faad2Decoder_t *dec = (faad2Decoder_t *)_dec;
     unsigned long sr;
     unsigned char ch;
-    long res = NeAACDecInit(dec->dec, buff, (unsigned long)buffSize, &sr, &ch);
+    long res = NeAACDecInit2(dec->dec, buff, (unsigned long)buffSize, &sr, &ch);
     if (res < 0) {
         return -1;
     }
