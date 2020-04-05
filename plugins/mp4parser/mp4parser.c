@@ -339,6 +339,10 @@ _load_custom_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     }
 
     uint32_t name_size = READ_UINT32(fp);
+    if (name_size < 12) {
+        return -1;
+    }
+
     char name_type[4];
     READ_BUF(fp, name_type, 4);
     if (strncasecmp (name_type, "name", 4)) {
@@ -347,8 +351,10 @@ _load_custom_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
 
     READ_COMMON_HEADER();
 
-    meta->name = malloc (name_size-12);
-    READ_BUF(fp, meta->name, name_size - 12);
+    name_size -= 12;
+    meta->name = malloc (name_size + 1);
+    READ_BUF(fp, meta->name, name_size);
+    meta->name[name_size] = 0;
 
     uint32_t data_size = READ_UINT32(fp);
     char data_type[4];
