@@ -326,14 +326,20 @@ static int
 _load_custom_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     mp4p_meta_t *meta = atom->data;
     uint32_t mean_size = READ_UINT32(fp);
+    if (mean_size < 12) {
+        return -1;
+    }
+    mean_size -= 12;
+
     char mean_type[4];
     READ_BUF(fp, mean_type, 4);
     if (strncasecmp (mean_type, "mean", 4)) {
         return -1;
     }
     READ_COMMON_HEADER();
-    char *mean_data = malloc (mean_size - 12);
-    READ_BUF(fp, mean_data, mean_size - 12);
+    char *mean_data = malloc (mean_size + 1);
+    READ_BUF(fp, mean_data, mean_size);
+    mean_data[mean_size] = 0;
     if (strncasecmp (mean_data, "com.apple.iTunes", 16)) {
         return -1;
     }
@@ -342,6 +348,7 @@ _load_custom_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     if (name_size < 12) {
         return -1;
     }
+    name_size -= 12;
 
     char name_type[4];
     READ_BUF(fp, name_type, 4);
@@ -351,12 +358,15 @@ _load_custom_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
 
     READ_COMMON_HEADER();
 
-    name_size -= 12;
     meta->name = malloc (name_size + 1);
     READ_BUF(fp, meta->name, name_size);
     meta->name[name_size] = 0;
 
     uint32_t data_size = READ_UINT32(fp);
+    if (data_size < 12) {
+        return -1;
+    }
+    data_size -= 12;
     char data_type[4];
     READ_BUF(fp, data_type, 4);
     if (strncasecmp (data_type, "data", 4)) {
@@ -367,10 +377,10 @@ _load_custom_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
 
     READ_UINT32(fp);
 
-    meta->data_size = data_size-12;
-    meta->text = malloc (meta->data_size+1);
-    READ_BUF(fp, meta->text, meta->data_size);
-    meta->text[meta->data_size] = 0;
+    meta->data_size = data_size;
+    meta->text = malloc (data_size+1);
+    READ_BUF(fp, meta->text, data_size);
+    meta->text[data_size] = 0;
 
     return 0;
 }
@@ -386,6 +396,9 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     }
 
     uint32_t size = READ_UINT32(fp);
+    if (size < 12) {
+        return -1;
+    }
     char data[4];
     READ_BUF(fp, data, 4);
     if (strncasecmp (data, "data", 4)) {
@@ -416,7 +429,7 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
         READ_BUF(fp, meta->text, meta->data_size);
         meta->text[meta->data_size] = 0;
 
-        printf ("%s\n", meta->text);
+//        printf ("%s\n", meta->text);
     }
     else {
         return -1;
