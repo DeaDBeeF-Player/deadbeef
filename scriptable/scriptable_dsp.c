@@ -148,7 +148,7 @@ scriptableItemLoadDspPreset (scriptableItem_t *preset, const char *fname) {
             if (!strcmp (temp, "}\n")) {
                 break;
             }
-            else if (1 != sscanf (temp, "\t%1000[^\n]\n", value)) {
+            else if (1 != sscanf (temp, "\t%100[^\n]\n", value)) {
                 // skip if empty line
                 if (!strcmp (temp, "\n")) {
                     continue;
