@@ -65,6 +65,12 @@ static const char *_mp4_atom_map[] = {
     COPYRIGHT_SYM "lyr", "lyrics",
     "purd", "purchase date",
     "MusicBrainz Track Id", "musicbrainz_trackid",
+    "DISCID", "DISCID",
+    "iTunSMPB", "iTunSMPB",
+    "replaygain_track_gain", "replaygain_track_gain",
+    "replaygain_track_peak", "replaygain_track_peak",
+    "replaygain_album_gain", "replaygain_album_gain",
+    "replaygain_album_peak", "replaygain_album_peak",
 
     NULL, NULL
 };
@@ -98,11 +104,14 @@ _remove_known_fields (mp4p_atom_t *ilst) {
         mp4p_atom_t *next = meta_atom->next;
         mp4p_meta_t *meta = meta_atom->data;
 
-        for (int i = 0; _mp4_atom_map[i]; i++) {
-            char type[5];
-            memcpy (type, meta_atom->type, 4);
-            type[4] = 0;
-            if (meta->name || !strcasecmp(type, _mp4_atom_map[i])) {
+        char type[5];
+        memcpy (type, meta_atom->type, 4);
+        type[4] = 0;
+
+        for (int i = 0; _mp4_atom_map[i]; i += 2) {
+            // FIXME: this removes all fields, even unknown ones
+            if ((meta->name && !strcasecmp (meta->name, _mp4_atom_map[i]))
+                || !strcasecmp(type, _mp4_atom_map[i])) {
                 mp4p_atom_remove_subatom (ilst, meta_atom);
                 break;
             }
@@ -132,6 +141,7 @@ mp4tagutil_find_udta (mp4p_atom_t *moov, mp4p_atom_t **pmeta, mp4p_atom_t **pils
                 subatom = subatom->next;
                 continue;
             }
+            meta = subatom;
             hdlr = mp4p_atom_find(subatom, "meta/hdlr");
             if (hdlr) {
                 mp4p_hdlr_t *hdlr_data = hdlr->data;
@@ -153,24 +163,23 @@ mp4tagutil_find_udta (mp4p_atom_t *moov, mp4p_atom_t **pmeta, mp4p_atom_t **pils
     return NULL;
 }
 
-// FIXME: much of this code should be moved to mp4parser lib when finalized
-mp4p_atom_t *
-mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
+static int
+_mp4tagutil_file_editable (mp4p_atom_t *mp4file) {
     mp4p_atom_t *moov = mp4p_atom_find(mp4file, "moov");
     mp4p_atom_t *padding = NULL;
     mp4p_atom_t *mdat = NULL;
     if (!moov || !moov->next) {
-        return NULL;
+        return 0;
     }
 
     // only [moov, free, mdat] or [moov, mdat] are supported
     if (!mp4p_atom_type_compare(moov->next, "free")) {
         padding = moov->next;
         if (!padding->next) {
-            return NULL;
+            return 0;
         }
         if (mp4p_atom_type_compare(padding->next, "mdat")) {
-            return NULL;
+            return 0;
         }
         mdat = padding->next;
     }
@@ -178,42 +187,43 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
         mdat = moov->next;
     }
     else {
-        return NULL;
+        return 0;
     }
 
-    mp4p_atom_t *orig = mp4file;
-    mp4file = mp4p_atom_clone (orig);
+    return 1;
+}
 
-    mp4p_atom_t *meta = NULL;
-    mp4p_atom_t *ilst = NULL;
-
-    mp4p_atom_t *moov_new = mp4p_atom_find(mp4file, "moov");
-
-    mp4p_atom_t *udta = mp4tagutil_find_udta (moov_new, &meta, &ilst);
-
-    // FIXME: atoms following udta is unsupported yet
-    if (udta && udta->next) {
-        mp4p_atom_free_list (mp4file);
-        return NULL;
+static void
+_mp4tagutil_update_stco (mp4p_atom_t *stco_atom, off_t delta) {
+    mp4p_stco_t *stco = stco_atom->data;
+    for (uint32_t i = 0; i < stco->number_of_entries; i++) {
+        stco->entries[i].offset += delta;
     }
+}
 
-    if (!udta) {
-        // udta not found at all -- append to moov, it needs to be the last one.
-        udta = mp4p_atom_append (moov_new, mp4p_atom_new ("udta"));
-    }
+static void
+_mp4gagutil_update_all_stco (mp4p_atom_t *moov, off_t delta) {
+    mp4p_atom_t *trak = mp4p_atom_find (moov, "trak");
+    for (; trak; trak = trak->next) {
+        if (mp4p_atom_type_compare(trak, "trak")) {
+            continue;
+        }
+        mp4p_atom_t *stbl = mp4p_atom_find (trak, "trak/mdia/minf/stbl");
+        if (stbl) {
+            mp4p_atom_t *stco = mp4p_atom_find(stbl, "stbl/stco");
+            if (stco) {
+                _mp4tagutil_update_stco(stco, delta);
+            }
 
-    if (!meta) {
-        // append meta/hdlr/ilst if needed
-        meta = mp4p_atom_append (udta, mp4p_atom_new ("meta"));
-        mp4p_atom_t *hdlr = mp4p_atom_append (meta, mp4p_atom_new ("hdlr"));
-        mp4p_hdlr_init (hdlr, "\0\0\0\0", "mdir", "appl");
-        ilst = mp4p_atom_append (meta, mp4p_atom_new ("ilst"));
+            mp4p_atom_t *co64 = mp4p_atom_find(stbl, "stbl/co64");
+            if (co64) {
+                _mp4tagutil_update_stco(co64, delta);
+            }
+        }
     }
-    else {
-        // cleanup the pre-existing keyvalue list
-        _remove_known_fields (ilst);
-    }
+}
 
+static void _mp4tagutil_add_metadata_fields(mp4p_atom_t *ilst, DB_playItem_t *it) {
     deadbeef->pl_lock ();
     DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it);
     while (m) {
@@ -317,44 +327,110 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
             mp4p_ilst_append_custom(ilst, tag_rg_names[n], s);
         }
     }
-    
+
     deadbeef->pl_unlock ();
+}
 
-    if (padding) {
-        // remove padding in the modified version
-        mp4p_atom_t *padding_new = moov_new->next;
-        moov_new->next = padding_new->next;
-        mp4p_atom_free (padding_new);
+// FIXME: much of this code should be moved to mp4parser lib when finalized
+mp4p_atom_t *
+mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
+    if (!_mp4tagutil_file_editable (mp4file)) {
+        return NULL;
     }
 
-    mp4p_atom_t *mdat_new = moov_new->next;
+    mp4p_atom_t *mp4file_orig = mp4file;
+    mp4p_atom_t *mdat_orig = mp4p_atom_find(mp4file_orig, "mdat");
 
-    mp4p_atom_calculate_size(moov_new);
+    mp4file = mp4p_atom_clone (mp4file_orig);
 
-    // at this point, we got the mp4file with new tags, without padding
-    mp4p_rebuild_positions (mp4file, mp4file->pos);
+    mp4p_atom_t *meta = NULL;
+    mp4p_atom_t *ilst = NULL;
 
-    // get the distance between new and old mdat
-    int64_t offs = mdat->pos - mdat_new->pos;
+    mp4p_atom_t *moov = mp4p_atom_find(mp4file, "moov");
 
-    // xxxxxxxxxxxxxxx|  <-- original file mdat pos
-    // yyyyyy|--offs--   <-- new file mdat pos, and offs
+    mp4p_atom_t *udta = mp4tagutil_find_udta (moov, &meta, &ilst);
 
-    // enough space for padding atom + headroom?
-    if (offs < 8) {
-        // nope, add a new one
-        offs = 1024;
+    // FIXME: atoms after "udta" are not unsupported
+    if (udta && udta->next) {
+        mp4p_atom_free_list (mp4file);
+        return NULL;
     }
 
-    // padding block is always inserted
-    mp4p_atom_t *padding_new = mp4p_atom_new ("free");
-    assert (offs >= 0);
-    padding_new->size = (uint32_t)offs;
-    padding_new->next = mdat_new;
-    moov_new->next = padding_new;
+    if (!udta) {
+        // udta not found at all -- append to moov, it needs to be the last one.
+        udta = mp4p_atom_append (moov, mp4p_atom_new ("udta"));
+    }
 
-    // rebuild positions with padding
+    if (!meta) {
+        // append meta/hdlr/ilst if needed
+        meta = mp4p_atom_append (udta, mp4p_atom_new ("meta"));
+        mp4p_atom_t *hdlr = mp4p_atom_append (meta, mp4p_atom_new ("hdlr"));
+        mp4p_hdlr_init (hdlr, "\0\0\0\0", "mdir", "appl");
+        ilst = mp4p_atom_append (meta, mp4p_atom_new ("ilst"));
+    }
+    else {
+        // cleanup the pre-existing keyvalue list
+        _remove_known_fields (ilst);
+    }
+
+    _mp4tagutil_add_metadata_fields(ilst, it);
+
+    mp4p_atom_update_size (moov);
     mp4p_rebuild_positions (mp4file, mp4file->pos);
+
+    printf ("------------orig\n");
+    mp4p_dbg_dump_atom(mp4file_orig);
+    printf ("------------new\n");
+    mp4p_dbg_dump_atom(mp4file);
+    printf ("------------\n");
+
+    // remove pre-existing padding
+
+    for (;;) {
+        mp4p_atom_t *padding = mp4p_atom_find(mp4file, "free");
+        if (!padding) {
+            break;
+        }
+        mp4p_atom_remove_sibling(mp4file, padding);
+    }
+
+    // update sizes/positions for mdat offs delta calculation
+
+    mp4p_atom_update_size (moov);
+    mp4p_rebuild_positions (mp4file, mp4file->pos);
+
+    mp4p_atom_t *mdat = mp4p_atom_find(mp4file, "mdat");
+
+    off_t delta = mdat->pos - mdat_orig->pos;
+    if (delta == 0) {
+        // mdat is not moving
+    }
+    else if (delta <= -8) {
+        // freed up enough space to add padding
+        mp4p_atom_t *padding = mp4p_atom_new ("free");
+        padding->size = (uint32_t)-delta;
+        padding->next = mdat;
+        moov->next = padding;
+        mp4p_atom_update_size (moov);
+        mp4p_rebuild_positions (mp4file, mp4file->pos);
+
+        delta = mdat->pos - mdat_orig->pos;
+        assert (delta == 0);
+    }
+    else {
+        // mdat is moving -> stco update + padding needed
+        mp4p_atom_t *padding = mp4p_atom_new ("free");
+        padding->size = 1024;
+        padding->next = mdat;
+        moov->next = padding;
+        mp4p_atom_update_size (moov);
+        mp4p_rebuild_positions (mp4file, mp4file->pos);
+
+        _mp4gagutil_update_all_stco (moov, delta);
+
+        delta = mdat->pos - mdat_orig->pos;
+        assert (delta > 0);
+    }
 
     return mp4file;
 }
@@ -389,14 +465,14 @@ mp4_write_metadata (DB_playItem_t *it) {
 
     mp4p_atom_t *mp4file_updated = mp4tagutil_modify_meta(mp4file, it);
 
-    int res = mp4p_update_metadata (file, mp4file, mp4file_updated);
+//    int res = mp4p_update_metadata (file, mp4file, mp4file_updated);
 
     mp4p_file_close(file);
 
     mp4p_atom_free_list(mp4file);
     mp4p_atom_free_list(mp4file_updated);
 
-    return res;
+    return 0;
 }
 
 static void
@@ -404,17 +480,15 @@ mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     int got_itunes_tags = 0;
     mp4p_atom_t *moov = mp4p_atom_find(mp4file, "moov");
 
-    mp4p_atom_t *meta = NULL;
+    mp4p_atom_t *unused = NULL;
     mp4p_atom_t *ilst = NULL;
 
-    mp4p_atom_t *udta = mp4tagutil_find_udta (moov, &meta, &ilst);
+    mp4p_atom_t *udta = mp4tagutil_find_udta (moov, &unused, &ilst);
     if (!udta) {
         return;
     }
 
-    mp4p_atom_t *meta_atom = ilst->subatoms;
-
-    while (meta_atom) {
+    for (mp4p_atom_t *meta_atom = ilst->subatoms; meta_atom; meta_atom = meta_atom->next) {
         got_itunes_tags = 1;
 
         mp4p_meta_t *meta = meta_atom->data;
@@ -491,7 +565,6 @@ mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
                 }
             }
         }
-        meta_atom = meta_atom->next;
     }
     if (got_itunes_tags) {
         uint32_t f = deadbeef->pl_get_item_flags (it);

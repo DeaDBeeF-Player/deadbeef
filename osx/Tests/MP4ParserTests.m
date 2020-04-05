@@ -417,4 +417,14 @@ static fake_callbacks_t _fake_file_cb = {
     XCTAssertEqual (startsample, 600000);
 }
 
+- (void)test_modifyMeta_none_positionUnchanged {
+    mp4p_atom_t *mp4file = NULL;
+
+    mp4p_atom_t *ftyp = mp4file = mp4p_atom_new("ftyp");
+    mp4p_atom_t *moov = mp4file->next = mp4p_atom_new("moov");
+    mp4p_atom_t *mdat = mp4file->next = mp4p_atom_new("mdat");
+    
+
+}
+
 @end

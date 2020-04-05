@@ -273,6 +273,9 @@ const char *
 mp4p_genre_name_for_index (uint16_t index);
 
 void
+mp4p_atom_remove_sibling(mp4p_atom_t *atom, mp4p_atom_t *sibling);
+
+void
 mp4p_atom_remove_subatom (mp4p_atom_t *atom, mp4p_atom_t *subatom);
 
 mp4p_atom_t *
@@ -282,7 +285,7 @@ mp4p_atom_t *
 mp4p_atom_clone (mp4p_atom_t *src);
 
 void
-mp4p_atom_calculate_size (mp4p_atom_t *atom);
+mp4p_atom_update_size (mp4p_atom_t *atom);
 
 void
 mp4p_rebuild_positions (mp4p_atom_t *atom, uint64_t init_pos);
@@ -328,5 +331,8 @@ mp4p_trak_playable (mp4p_atom_t *trak_atom);
 
 int
 mp4p_trak_has_chapters (mp4p_atom_t *trak_atom);
+
+void
+mp4p_dbg_dump_atom (mp4p_atom_t *atom);
 
 #endif /* mp4parser_h */

@@ -60,9 +60,10 @@ _dbg_print_indent (void) {
 
 static void
 _dbg_print_atom (mp4p_atom_t *atom) {
-#if 0
+#if 1
     _dbg_print_indent();
     _dbg_print_fourcc(atom->type);
+    printf (" pos=%x size=%x", (int)atom->pos, (int)atom->size);
     printf ("\n");
 #endif
 }
@@ -565,7 +566,6 @@ _load_chap_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
 // but this should not be considered a critical failure.
 int
 mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
-    _dbg_print_atom (atom);
     for (int i = 0; container_atoms[i]; i++) {
         if (!mp4p_atom_type_compare (atom, container_atoms[i])) {
             return _load_subatoms(atom, fp);
@@ -1087,7 +1087,6 @@ mp4p_atom_find (mp4p_atom_t *root, const char *path) {
     mp4p_atom_t *a = root;
     while (a) {
         if (!strncasecmp (a->type, path, 4)) {
-            _dbg_print_atom (a);
             break;
         }
         a = a->next;
@@ -1544,6 +1543,24 @@ mp4p_ilst_append_text (mp4p_atom_t *ilst_atom, const char *type, const char *tex
 }
 
 void
+mp4p_atom_remove_sibling(mp4p_atom_t *atom, mp4p_atom_t *sibling) {
+    mp4p_atom_t *prev = NULL;
+    mp4p_atom_t *curr = atom;
+
+    while (curr) {
+        if (curr == sibling) {
+            if (prev) {
+                prev->next = sibling->next;
+            }
+            mp4p_atom_free (sibling);
+            break;
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+}
+
+void
 mp4p_atom_remove_subatom (mp4p_atom_t *atom, mp4p_atom_t *subatom) {
     mp4p_atom_t *c = atom->subatoms;
     mp4p_atom_t *prev = NULL;
@@ -1608,12 +1625,13 @@ mp4p_atom_clone (mp4p_atom_t *src) {
 }
 
 void
-mp4p_atom_calculate_size (mp4p_atom_t *atom) {
+mp4p_atom_update_size (mp4p_atom_t *atom) {
+    if (atom->data) {
+        return;
+    }
     atom->size = 8; // type+size = 8 bytes
     for (mp4p_atom_t *subatom = atom->subatoms; subatom; subatom = subatom->next) {
-        if (subatom->subatoms) {
-            mp4p_atom_calculate_size(subatom);
-        }
+        mp4p_atom_update_size(subatom);
         atom->size += subatom->size;
     }
 }
@@ -1621,17 +1639,21 @@ mp4p_atom_calculate_size (mp4p_atom_t *atom) {
 void
 mp4p_rebuild_positions (mp4p_atom_t *atom, uint64_t init_pos) {
     atom->pos = init_pos;
+    if (atom->data) {
+        init_pos += atom->size;
+    }
+    else {
+        init_pos += 8;
 
-    uint64_t offs = init_pos;
-    for (mp4p_atom_t *subatom = atom->subatoms; subatom; subatom = subatom->next) {
-        mp4p_rebuild_positions(subatom, offs);
-        offs += subatom->size;
+        for (mp4p_atom_t *subatom = atom->subatoms; subatom; subatom = subatom->next) {
+            mp4p_rebuild_positions(subatom, init_pos);
+            init_pos += subatom->size;
+        }
     }
 
-    offs = atom->pos + atom->size;
     for (mp4p_atom_t *next = atom->next; next; next = next->next) {
-        mp4p_rebuild_positions(next, offs);
-        offs += next->size;
+        mp4p_rebuild_positions(next, init_pos);
+        init_pos += next->size;
     }
 }
 
@@ -1913,4 +1935,20 @@ mp4p_trak_has_chapters (mp4p_atom_t *trak_atom) {
     }
 
     return 1;
+}
+
+static void mp4p_dbg_dump_subatoms(mp4p_atom_t *atom) {
+    _dbg_print_atom(atom);
+    _dbg_indent += 4;
+    for (mp4p_atom_t *sub = atom->subatoms; sub; sub = sub->next) {
+        mp4p_dbg_dump_subatoms(sub);
+    }
+    _dbg_indent -= 4;
+}
+
+void
+mp4p_dbg_dump_atom (mp4p_atom_t *atom) {
+    for (; atom; atom = atom->next) {
+        mp4p_dbg_dump_subatoms(atom);
+    }
 }
