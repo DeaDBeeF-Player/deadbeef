@@ -297,6 +297,9 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         unsigned channels;
 
         mp4p_atom_t *esds_atom = mp4p_atom_find (info->trak, "trak/mdia/minf/stbl/stsd/mp4a/esds");
+        if (!esds_atom) {
+            return -1;
+        }
         mp4p_esds_t *esds = esds_atom->data;
 
         uint8_t *asc = (uint8_t *)esds->asc;
@@ -885,6 +888,10 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
 
     // get audio format: samplerate, bps, channels
     mp4p_atom_t *esds_atom = mp4p_atom_find (info.trak, "trak/mdia/minf/stbl/stsd/mp4a/esds");
+    if (!esds_atom) {
+        mp4p_atom_free_list(info.mp4file);
+        return -1;
+    }
     mp4p_esds_t *esds = esds_atom->data;
 
     info.dec = aacDecoderOpenFAAD2();

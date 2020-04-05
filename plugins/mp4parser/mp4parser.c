@@ -1882,7 +1882,6 @@ mp4p_trak_playable (mp4p_atom_t *trak_atom) {
         "trak/mdia/mdhd",
         "trak/mdia/minf/stbl",
         "trak/mdia/minf/stbl/stsz",
-        "trak/mdia/minf/stbl/stsd/mp4a/esds",
         NULL
     };
 
