@@ -463,13 +463,19 @@ mp4_write_metadata (DB_playItem_t *it) {
 
     mp4p_atom_t *mp4file_updated = mp4tagutil_modify_meta(mp4file, it);
 
-//    int res = mp4p_update_metadata (file, mp4file, mp4file_updated);
+    int res = mp4p_update_metadata (file, mp4file, mp4file_updated);
 
-    mp4p_file_close(file);
+    int close_err =  mp4p_file_close(file);
 
     mp4p_atom_free_list(mp4file);
     mp4p_atom_free_list(mp4file_updated);
 
+    if (res < 0) {
+        return -1;
+    }
+    if (close_err < 0) {
+        return -1;
+    }
     return 0;
 }
 

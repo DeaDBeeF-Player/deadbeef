@@ -328,7 +328,7 @@ static fake_callbacks_t _fake_file_cb = {
     mp4p_atom_free (mp4file);
 
     XCTAssert (!res);
-    XCTAssertEqual(2150, cb.size);
+    XCTAssertEqual(2134, cb.size);
 }
 
 - (void)test_ReadMP4Opus_GivesExpectedFormatData {
