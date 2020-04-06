@@ -28,7 +28,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include "mp4tagutil.h"
-#include "../shared/mp4parser/mp4parser.h"
+#include "../shared/mp4parser/mp4p.h"
 #include "../strdupa.h"
 
 #ifndef __linux__
@@ -438,7 +438,7 @@ mp4_write_metadata (DB_playItem_t *it) {
     char fname[PATH_MAX];
     deadbeef->pl_get_meta (it, ":URI", fname, sizeof (fname));
 
-    mp4p_file_callbacks_t *file = mp4p_open_file_readwrite (fname);
+    mp4p_file_callbacks_t *file = mp4p_file_open_readwrite (fname);
 
     if (!file) {
         return -1;

@@ -2,6 +2,7 @@
 #define mp4parser_h
 
 #include <stdint.h>
+#include "mp4pfile.h"
 
 typedef struct mp4p_atom_s {
     uint64_t pos;
@@ -249,28 +250,6 @@ mp4p_atom_free (mp4p_atom_t *atom);
 
 void
 mp4p_atom_free_list (mp4p_atom_t *atom);
-
-typedef struct mp4p_file_callbacks_s {
-    union {
-        void *ptrhandle;
-        int handle;
-    };
-    ssize_t (*read) (struct mp4p_file_callbacks_s *stream, void *ptr, size_t size);
-    ssize_t (*write) (struct mp4p_file_callbacks_s *stream, void *ptr, size_t size);
-    off_t (*seek) (struct mp4p_file_callbacks_s *stream, off_t offset, int whence);
-    off_t (*tell) (struct mp4p_file_callbacks_s *stream); // could be implemented via `lseek(fd, 0, SEEK_CUR)`
-    int (*truncate) (struct mp4p_file_callbacks_s *stream, off_t length);
-} mp4p_file_callbacks_t;
-
-mp4p_file_callbacks_t *
-mp4p_open_file_read (const char *fname);
-
-// Use to read and write the file transactionally -- supports reading, writing and resizing
-mp4p_file_callbacks_t *
-mp4p_open_file_readwrite (const char *fname);
-
-int
-mp4p_file_close (mp4p_file_callbacks_t *callbacks);
 
 // Loading starts from the current position in the stream.
 mp4p_atom_t *

@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#include "mp4parser.h"
+#include "mp4p.h"
 #include "playlist.h"
 #include "mp4tagutil.h"
 #include "plugins.h"
@@ -334,7 +334,7 @@ static fake_callbacks_t _fake_file_cb = {
 - (void)test_ReadMP4Opus_GivesExpectedFormatData {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/opus.mp4", dbplugindir);
-    mp4p_file_callbacks_t *cb = mp4p_open_file_read (path);
+    mp4p_file_callbacks_t *cb = mp4p_file_open_read (path);
     mp4p_atom_t *mp4file = mp4p_open (cb);
     mp4p_atom_t *opus = mp4p_atom_find(mp4file, "moov/trak/mdia/minf/stbl/stsd/Opus");
     XCTAssertFalse(opus == NULL);

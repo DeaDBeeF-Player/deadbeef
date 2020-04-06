@@ -12,5 +12,5 @@ libeqpreset_a_CFLAGS = -fPIC -std=c99
 libctmap_a_SOURCES = ctmap.h ctmap.c
 libctmap_a_CFLAGS = -fPIC -std=c99
 
-libmp4parser_a_SOURCES = mp4parser/mp4parser.c mp4parser/mp4parser.h
+libmp4parser_a_SOURCES = mp4parser/mp4p.c mp4parser/mp4p.h mp4parser/mp4pfile.c mp4parser/mp4pfile.h
 libmp4parser_a_CFLAGS = -fPIC -std=c99

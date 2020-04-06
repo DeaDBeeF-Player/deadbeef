@@ -2,13 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include "mp4parser.h"
-
-#ifndef __linux__
-#define O_LARGEFILE 0
-#endif
+#include "mp4p.h"
 
 static mp4p_atom_t *
 _atom_load (mp4p_atom_t *parent_atom, mp4p_file_callbacks_t *fp);
@@ -283,7 +277,7 @@ _esds_free (void *data) {
 }
 
 static uint32_t
-_meta_write (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
+_ilst_meta_write (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
     uint32_t init_size = buffer_size;
     mp4p_ilst_meta_t *meta = atom->data;
 
@@ -405,7 +399,7 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     if (strncasecmp (data, "data", 4)) {
         return -1;
     }
-    atom->to_buffer = _meta_write;
+    atom->to_buffer = _ilst_meta_write;
     READ_COMMON_HEADER();
 
     READ_UINT32(fp);
@@ -1022,73 +1016,6 @@ success:
     return atom;
 }
 
-static ssize_t
-_file_read (mp4p_file_callbacks_t *stream, void *ptr, size_t size) {
-    return read (stream->handle, ptr, size);
-}
-
-static ssize_t
-_file_write (mp4p_file_callbacks_t *stream, void *ptr, size_t size) {
-    return write (stream->handle, ptr, size);
-}
-
-static off_t
-_file_seek (mp4p_file_callbacks_t *stream, off_t offset, int whence) {
-    return lseek (stream->handle, offset, whence);
-}
-
-static int64_t
-_file_tell (mp4p_file_callbacks_t *stream) {
-    return lseek(stream->handle, 0, SEEK_CUR);
-}
-
-static int
-_file_truncate (mp4p_file_callbacks_t *stream, off_t length) {
-    return ftruncate (stream->handle, length);
-}
-
-static void
-_init_file_callbacks (mp4p_file_callbacks_t *file) {
-    file->read = _file_read;
-    file->write = _file_write;
-    file->seek = _file_seek;
-    file->tell = _file_tell;
-    file->truncate = _file_truncate;
-}
-
-mp4p_file_callbacks_t *
-mp4p_open_file_read (const char *fname) {
-    int fd = open (fname, O_RDONLY|O_LARGEFILE);
-    if (fd < 0) {
-        return NULL;
-    }
-
-    mp4p_file_callbacks_t *file = calloc (1, sizeof (mp4p_file_callbacks_t));
-    file->handle = fd;
-    _init_file_callbacks(file);
-    return file;
-}
-
-mp4p_file_callbacks_t *
-mp4p_open_file_readwrite (const char *fname) {
-    int fd = open (fname, O_RDWR|O_LARGEFILE);
-    if (fd < 0) {
-        return NULL;
-    }
-
-    mp4p_file_callbacks_t *file = calloc (1, sizeof (mp4p_file_callbacks_t));
-    file->handle = fd;
-    _init_file_callbacks(file);
-    return file;
-}
-
-int
-mp4p_file_close (mp4p_file_callbacks_t *file) {
-    int res = close (file->handle);
-    free (file);
-    return res;
-}
-
 mp4p_atom_t *
 mp4p_open (mp4p_file_callbacks_t *callbacks) {
     mp4p_atom_t *head = NULL;
@@ -1505,7 +1432,7 @@ mp4p_ilst_append_custom (mp4p_atom_t *ilst_atom, const char *name, const char *t
     mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
     atom->data = meta;
     atom->free = _meta_free;
-    atom->to_buffer = _meta_write;
+    atom->to_buffer = _ilst_meta_write;
 
     memcpy (atom->type, "----", 4);
     atom->size = 8;
@@ -1524,7 +1451,7 @@ mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text) {
     mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
     atom->data = meta;
     atom->free = _meta_free;
-    atom->to_buffer = _meta_write;
+    atom->to_buffer = _ilst_meta_write;
 
     uint16_t genre_id = mp4p_genre_index_for_name (text);
     if (genre_id) {
@@ -1551,7 +1478,7 @@ mp4p_ilst_append_track_disc (mp4p_atom_t *ilst_atom, const char *type, uint16_t 
     mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
     atom->data = meta;
     atom->free = _meta_free;
-    atom->to_buffer = _meta_write;
+    atom->to_buffer = _ilst_meta_write;
     atom->size = 24+6;
 
     memcpy (atom->type, type, 4);
@@ -1570,7 +1497,7 @@ mp4p_ilst_append_text (mp4p_atom_t *ilst_atom, const char *type, const char *tex
     mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
     atom->data = meta;
     atom->free = _meta_free;
-    atom->to_buffer = _meta_write;
+    atom->to_buffer = _ilst_meta_write;
     meta->data_size = (uint32_t)strlen(text);
     atom->size = 24+meta->data_size;
 
