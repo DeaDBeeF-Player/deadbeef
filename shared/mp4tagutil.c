@@ -104,7 +104,7 @@ _remove_known_fields (mp4p_atom_t *ilst) {
     mp4p_atom_t *meta_atom = ilst->subatoms;
     while (meta_atom) {
         mp4p_atom_t *next = meta_atom->next;
-        mp4p_meta_t *meta = meta_atom->data;
+        mp4p_ilst_meta_t *meta = meta_atom->data;
 
         char type[5];
         memcpy (type, meta_atom->type, 4);
@@ -495,7 +495,7 @@ mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     for (mp4p_atom_t *meta_atom = ilst->subatoms; meta_atom; meta_atom = meta_atom->next) {
         got_itunes_tags = 1;
 
-        mp4p_meta_t *meta = meta_atom->data;
+        mp4p_ilst_meta_t *meta = meta_atom->data;
 
         char type[5];
         memcpy (type, meta_atom->type, 4);

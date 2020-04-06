@@ -15,7 +15,15 @@ typedef struct mp4p_atom_s {
 
     // if to_buffer is null, data must point to a plain buffer of size-8 bytes, that can be saved directly
     uint32_t (*to_buffer) (struct mp4p_atom_s *atom, uint8_t *buffer, uint32_t buffer_size);
+
+    // Special case for `meta` atom, which has both the common header and subatoms.
+    // For this case, the version_flags is stored in data, and is written before subatoms.
+    unsigned write_data_before_subatoms : 1;
 } mp4p_atom_t;
+
+typedef struct {
+    uint32_t version_flags; // uint8 version and uint24 flags
+} mp4p_common_header_t;
 
 typedef struct {
     char major_brand[4];
@@ -25,6 +33,7 @@ typedef struct {
 } mp4p_mtyp_t;
 
 typedef struct {
+    mp4p_common_header_t ch;
     uint32_t creation_time;
     uint32_t modification_time;
     uint32_t time_scale;
@@ -43,6 +52,7 @@ typedef struct {
 } mp4p_mvhd_t;
 
 typedef struct {
+    mp4p_common_header_t ch;
     uint32_t creation_time;
     uint32_t modification_time;
     uint32_t track_id;
@@ -59,6 +69,7 @@ typedef struct {
 } mp4p_tkhd_t;
 
 typedef struct {
+    mp4p_common_header_t ch;
     uint32_t creation_time;
     uint32_t modification_time;
     uint32_t time_scale;
@@ -68,6 +79,7 @@ typedef struct {
 } mp4p_mdhd_t;
 
 typedef struct {
+    mp4p_common_header_t ch;
     char component_type[4];
     char component_subtype[4];
     char component_manufacturer[4];
@@ -78,39 +90,47 @@ typedef struct {
 } mp4p_hdlr_t;
 
 typedef struct {
+    mp4p_common_header_t ch;
     uint16_t balance;
 } mp4p_smhd_t;
 
 typedef struct {
+    mp4p_common_header_t ch;
     uint32_t number_of_entries;
 } mp4p_stsd_t;
 
 typedef struct {
+    mp4p_common_header_t ch;
     uint32_t sample_count;
     uint32_t sample_duration;
 } mp4p_stts_entry_t;
 
 typedef struct {
+    mp4p_common_header_t ch;
     uint32_t number_of_entries;
     mp4p_stts_entry_t *entries;
 } mp4p_stts_t;
 
 typedef struct {
+    mp4p_common_header_t ch;
     uint32_t first_chunk;
     uint32_t samples_per_chunk;
     uint32_t sample_description_id;
 } mp4p_stsc_entry_t;
 
 typedef struct {
+    mp4p_common_header_t ch;
     uint32_t number_of_entries;
     mp4p_stsc_entry_t *entries;
 } mp4p_stsc_t;
 
 typedef struct {
+    mp4p_common_header_t ch;
     uint32_t sample_size;
 } mp4p_stsz_entry_t;
 
 typedef struct {
+    mp4p_common_header_t ch;
     uint32_t sample_size;
     uint32_t number_of_entries;
     mp4p_stsz_entry_t *entries;
@@ -122,11 +142,13 @@ typedef struct {
 } mp4p_stco_entry_t;
 
 typedef struct {
+    mp4p_common_header_t ch;
     uint32_t number_of_entries;
     mp4p_stco_entry_t *entries;
 } mp4p_stco_t;
 
 typedef struct {
+    mp4p_common_header_t ch;
     uint32_t number_of_entries;
 } mp4p_dref_t;
 
@@ -186,6 +208,7 @@ typedef struct {
 } mp4p_dOps_t;
 
 typedef struct {
+    mp4p_common_header_t ch;
     uint8_t dc_audiotype;
     uint8_t dc_audiostream;
     uint8_t dc_buffersize_db[3];
@@ -197,15 +220,20 @@ typedef struct {
 } mp4p_esds_t;
 
 typedef struct {
-    uint32_t version_flags;
+    mp4p_common_header_t ch;
+} mp4p_meta_t;
+
+typedef struct {
+    mp4p_common_header_t ch;
     uint32_t data_size;
     uint64_t data_offset;
     char *name;
     char *text;
     uint16_t *values;
-} mp4p_meta_t;
+} mp4p_ilst_meta_t;
 
 typedef struct {
+    mp4p_common_header_t ch;
     uint8_t nchapters;
     char    **name;
     int64_t  *start;

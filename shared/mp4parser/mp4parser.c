@@ -153,7 +153,7 @@ _read_uint64 (mp4p_file_callbacks_t *fp, uint64_t *value) {
 #define READ_BUF(fp,buf,size) {if (size != fp->read(fp, buf, size)) return -1;}
 
 // read/skip uint8 version and uint24 flags
-#define READ_COMMON_HEADER() {READ_UINT32(fp);}
+#define READ_COMMON_HEADER() {atom_data->ch.version_flags = READ_UINT32(fp);}
 
 #define WRITE_UINT8(x) {if (buffer_size < 1) return 0; *buffer++ = x; buffer_size--; }
 #define WRITE_UINT16(x) {if (buffer_size < 2) return 0; *buffer++ = (x>>8); *buffer++ = (x & 0xff); buffer_size -= 2;}
@@ -260,7 +260,7 @@ _dOps_free (void *data) {
 
 static void
 _meta_free (void *data) {
-    mp4p_meta_t *meta = data;
+    mp4p_ilst_meta_t *meta = data;
     if (meta->name) {
         free (meta->name);
     }
@@ -285,7 +285,7 @@ _esds_free (void *data) {
 static uint32_t
 _meta_write (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
     uint32_t init_size = buffer_size;
-    mp4p_meta_t *meta = atom->data;
+    mp4p_ilst_meta_t *meta = atom->data;
 
     // mean + name
     if (meta->name) {
@@ -306,7 +306,7 @@ _meta_write (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
         uint32_t data_atom_size = meta->data_size+16;
         WRITE_UINT32(data_atom_size);
         WRITE_BUF("data", 4);
-        WRITE_UINT32(meta->version_flags);
+        WRITE_UINT32(meta->ch.version_flags);
         WRITE_UINT32(0);
     }
     if (meta->text) {
@@ -325,7 +325,7 @@ _meta_write (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
 
 static int
 _load_custom_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
-    mp4p_meta_t *meta = atom->data;
+    mp4p_ilst_meta_t *atom_data = atom->data;
     uint32_t mean_size = READ_UINT32(fp);
     if (mean_size < 12) {
         return -1;
@@ -359,9 +359,9 @@ _load_custom_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
 
     READ_COMMON_HEADER();
 
-    meta->name = malloc (name_size + 1);
-    READ_BUF(fp, meta->name, name_size);
-    meta->name[name_size] = 0;
+    atom_data->name = malloc (name_size + 1);
+    READ_BUF(fp, atom_data->name, name_size);
+    atom_data->name[name_size] = 0;
 
     uint32_t data_size = READ_UINT32(fp);
     if (data_size < 12) {
@@ -378,18 +378,18 @@ _load_custom_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
 
     READ_UINT32(fp);
 
-    meta->data_size = data_size;
-    meta->text = malloc (data_size+1);
-    READ_BUF(fp, meta->text, data_size);
-    meta->text[data_size] = 0;
+    atom_data->data_size = data_size;
+    atom_data->text = malloc (data_size+1);
+    READ_BUF(fp, atom_data->text, data_size);
+    atom_data->text[data_size] = 0;
 
     return 0;
 }
 
 static int
 _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
-    mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
-    atom->data = meta;
+    mp4p_ilst_meta_t *atom_data = calloc (sizeof (mp4p_ilst_meta_t), 1);
+    atom->data = atom_data;
     atom->free = _meta_free;
 
     if (!memcmp (atom->type, "----", 4)) {
@@ -406,35 +406,35 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
         return -1;
     }
     atom->to_buffer = _meta_write;
-    meta->version_flags = READ_UINT32(fp);
+    READ_COMMON_HEADER();
 
     READ_UINT32(fp);
 
-    meta->data_size = size - 12;
+    atom_data->data_size = size - 12;
 
-    meta->data_offset = fp->tell (fp);
+    atom_data->data_offset = fp->tell (fp);
 
-    uint32_t flag = meta->version_flags & 0xff;
+    uint32_t flag = atom_data->ch.version_flags & 0xff;
 
     if (flag == 0) {
-        meta->values = calloc (meta->data_size / 2, sizeof (uint16_t));
-        for (int i = 0; i < meta->data_size/2; i++) {
-            meta->values[i] = READ_UINT16(fp);
+        atom_data->values = calloc (atom_data->data_size / 2, sizeof (uint16_t));
+        for (int i = 0; i < atom_data->data_size/2; i++) {
+            atom_data->values[i] = READ_UINT16(fp);
         }
     }
     else if (flag == 1) {
-        if (meta->data_size > 255 && strncasecmp (atom->type, COPYRIGHT_SYM "lyr", 4)) {
+        if (atom_data->data_size > 255 && strncasecmp (atom->type, COPYRIGHT_SYM "lyr", 4)) {
             return -1;
         }
-        meta->text = calloc (meta->data_size+1, 1);
-        READ_BUF(fp, meta->text, meta->data_size);
-        meta->text[meta->data_size] = 0;
+        atom_data->text = calloc (atom_data->data_size+1, 1);
+        READ_BUF(fp, atom_data->text, atom_data->data_size);
+        atom_data->text[atom_data->data_size] = 0;
 
 //        printf ("%s\n", meta->text);
     }
     else {
         // opaque metadata
-        _meta_free (meta);
+        _meta_free (atom_data);
         atom->data = NULL;
         atom->free = NULL;
         fp->seek(fp, atom->pos + 8, SEEK_SET);
@@ -477,20 +477,21 @@ _mp4p_chpl_free (void *data) {
 static int32_t
 _load_chpl_atom(mp4p_atom_t *atom, mp4p_file_callbacks_t *fp)
 {
+    mp4p_chpl_t *atom_data = calloc (sizeof (mp4p_chpl_t), 1);
+    atom->data = atom_data;
+    atom->free = _mp4p_chpl_free;
+
     READ_COMMON_HEADER();
 
-    mp4p_chpl_t *chpl = calloc (sizeof (mp4p_chpl_t), 1);
-    atom->data = chpl;
-    atom->free = _mp4p_chpl_free;
     int i;
     uint32_t i_read = atom->size;
 
-    chpl->nchapters = READ_UINT8(fp);
+    atom_data->nchapters = READ_UINT8(fp);
     i_read -= 5;
 
-    chpl->name = calloc (sizeof (char *), chpl->nchapters);
-    chpl->start = calloc (sizeof (int64_t), chpl->nchapters);
-    for( i = 0; i < chpl->nchapters; i++ )
+    atom_data->name = calloc (sizeof (char *), atom_data->nchapters);
+    atom_data->start = calloc (sizeof (int64_t), atom_data->nchapters);
+    for( i = 0; i < atom_data->nchapters; i++ )
     {
         uint64_t i_start;
         uint8_t i_len;
@@ -499,14 +500,14 @@ _load_chpl_atom(mp4p_atom_t *atom, mp4p_file_callbacks_t *fp)
         i_len = READ_UINT8(fp);
         i_read -= 1;
 
-        chpl->name[i] = malloc( i_len + 1 );
+        atom_data->name[i] = malloc( i_len + 1 );
 
         uint32_t i_copy = i_len < i_read ? i_len : i_read;
         if( i_copy > 0 ) {
-            READ_BUF(fp, chpl->name[i], i_copy)
+            READ_BUF(fp, atom_data->name[i], i_copy)
         }
-        chpl->name[i][i_copy] = '\0';
-        chpl->start[i] = i_start;
+        atom_data->name[i][i_copy] = '\0';
+        atom_data->start[i] = i_start;
 
         i_read -= i_copy;
     }
@@ -514,18 +515,18 @@ _load_chpl_atom(mp4p_atom_t *atom, mp4p_file_callbacks_t *fp)
     /* Bubble sort by increasing start date */
     do
     {
-        for( i = 0; i < chpl->nchapters - 1; i++ )
+        for( i = 0; i < atom_data->nchapters - 1; i++ )
         {
-            if( chpl->start[i] > chpl->start[i+1] )
+            if( atom_data->start[i] > atom_data->start[i+1] )
             {
-                char *psz = chpl->name[i+1];
-                int64_t i64 = chpl->start[i+1];
+                char *psz = atom_data->name[i+1];
+                int64_t i64 = atom_data->start[i+1];
 
-                chpl->name[i+1] = chpl->name[i];
-                chpl->start[i+1] = chpl->start[i];
+                atom_data->name[i+1] = atom_data->name[i];
+                atom_data->start[i+1] = atom_data->start[i];
 
-                chpl->name[i] = psz;
-                chpl->start[i] = i64;
+                atom_data->name[i] = psz;
+                atom_data->start[i] = i64;
 
                 i = -1;
                 break;
@@ -592,85 +593,77 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         return -1;
     }
     else if (!mp4p_atom_type_compare (atom, "ftyp")) {
-        mp4p_mtyp_t *mtyp = calloc (sizeof (mp4p_mtyp_t), 1);
+        mp4p_mtyp_t *mtyp = calloc (atom->size - 8, 1);
         atom->data = mtyp;
         atom->free = free;
-        READ_BUF(fp,mtyp->major_brand,4);
-        READ_BUF(fp,mtyp->version,4);
-        READ_BUF(fp,mtyp->compat_brand_1,4);
-        READ_BUF(fp,mtyp->compat_brand_2,4);
-
-        // can have more than 4 values, which can be extracted if needed
-#if 0
-        char more[4];
-        int n = atom->size / 4 - 4;
-        for (int i = 0; i < n; i++) {
-            READ_BUF(fp,more,4);
-        }
-#endif
+        READ_BUF(fp, mtyp, atom->size-8);
     }
     else if (!mp4p_atom_type_compare(atom, "mvhd")) {
-        mp4p_mvhd_t *mvhd = calloc (sizeof (mp4p_mvhd_t), 1);
-        atom->data = mvhd;
+        mp4p_mvhd_t *atom_data = calloc (sizeof (mp4p_mvhd_t), 1);
+        atom->data = atom_data;
         atom->free = free;
+// FIXME:        atom->to_buffer = _mvhd_to_buffer;
 
         READ_COMMON_HEADER();
 
-        mvhd->creation_time = READ_UINT32(fp);
-        mvhd->modification_time = READ_UINT32(fp);
-        mvhd->time_scale = READ_UINT32(fp);
-        mvhd->duration = READ_UINT32(fp);
-        mvhd->preferred_rate = READ_UINT32(fp);
-        mvhd->preferred_volume = READ_UINT16(fp);
-        READ_BUF(fp, mvhd->reserved, 10);
-        READ_BUF(fp, mvhd->matrix_structure, 36);
-        mvhd->preview_time = READ_UINT32(fp);
-        mvhd->preview_duration = READ_UINT32(fp);
-        mvhd->poster_time = READ_UINT32(fp);
-        mvhd->selection_time = READ_UINT32(fp);
-        mvhd->selection_duration = READ_UINT32(fp);
-        mvhd->current_time = READ_UINT32(fp);
-        mvhd->next_track_id = READ_UINT32(fp);
+        atom_data->creation_time = READ_UINT32(fp);
+        atom_data->modification_time = READ_UINT32(fp);
+        atom_data->time_scale = READ_UINT32(fp);
+        atom_data->duration = READ_UINT32(fp);
+        atom_data->preferred_rate = READ_UINT32(fp);
+        atom_data->preferred_volume = READ_UINT16(fp);
+        READ_BUF(fp, atom_data->reserved, 10);
+        READ_BUF(fp, atom_data->matrix_structure, 36);
+        atom_data->preview_time = READ_UINT32(fp);
+        atom_data->preview_duration = READ_UINT32(fp);
+        atom_data->poster_time = READ_UINT32(fp);
+        atom_data->selection_time = READ_UINT32(fp);
+        atom_data->selection_duration = READ_UINT32(fp);
+        atom_data->current_time = READ_UINT32(fp);
+        atom_data->next_track_id = READ_UINT32(fp);
     }
     else if (!mp4p_atom_type_compare(atom, "tkhd")) {
-        mp4p_tkhd_t *tkhd = calloc (sizeof (mp4p_tkhd_t), 1);
-        atom->data = tkhd;
+        mp4p_tkhd_t *atom_data = calloc (sizeof (mp4p_tkhd_t), 1);
+        atom->data = atom_data;
         atom->free = free;
+// FIXME:        atom->to_buffer = _tkhd_to_buffer;
 
         READ_COMMON_HEADER();
 
-        tkhd->creation_time = READ_UINT32(fp);
-        tkhd->modification_time = READ_UINT32(fp);
-        tkhd->track_id = READ_UINT32(fp);
-        READ_BUF(fp, tkhd->reserved, 4);
-        tkhd->duration = READ_UINT32(fp);
-        READ_BUF(fp, tkhd->reserved2, 8);
-        tkhd->layer = READ_UINT16(fp);
-        tkhd->alternate_group = READ_UINT16(fp);
-        tkhd->volume = READ_UINT16(fp);
-        READ_BUF(fp, tkhd->reserved3, 2);
-        READ_BUF(fp, tkhd->matrix_structure, 36);
-        tkhd->track_width = READ_UINT32(fp);
-        tkhd->track_height = READ_UINT32(fp);
+        atom_data->creation_time = READ_UINT32(fp);
+        atom_data->modification_time = READ_UINT32(fp);
+        atom_data->track_id = READ_UINT32(fp);
+        READ_BUF(fp, atom_data->reserved, 4);
+        atom_data->duration = READ_UINT32(fp);
+        READ_BUF(fp, atom_data->reserved2, 8);
+        atom_data->layer = READ_UINT16(fp);
+        atom_data->alternate_group = READ_UINT16(fp);
+        atom_data->volume = READ_UINT16(fp);
+        READ_BUF(fp, atom_data->reserved3, 2);
+        READ_BUF(fp, atom_data->matrix_structure, 36);
+        atom_data->track_width = READ_UINT32(fp);
+        atom_data->track_height = READ_UINT32(fp);
     }
     else if (!mp4p_atom_type_compare(atom, "mdhd")) {
-        mp4p_mdhd_t *mdhd = calloc (sizeof (mp4p_mdhd_t), 1);
-        atom->data = mdhd;
+        mp4p_mdhd_t *atom_data = calloc (sizeof (mp4p_mdhd_t), 1);
+        atom->data = atom_data;
         atom->free = free;
+        // FIXME:        atom->to_buffer = _mdhd_to_buffer;
 
         READ_COMMON_HEADER();
 
-        mdhd->creation_time = READ_UINT32(fp);
-        mdhd->modification_time = READ_UINT32(fp);
-        mdhd->time_scale = READ_UINT32(fp);
-        mdhd->duration = READ_UINT32(fp);
-        mdhd->language = READ_UINT16(fp);
-        mdhd->quality = READ_UINT16(fp);
+        atom_data->creation_time = READ_UINT32(fp);
+        atom_data->modification_time = READ_UINT32(fp);
+        atom_data->time_scale = READ_UINT32(fp);
+        atom_data->duration = READ_UINT32(fp);
+        atom_data->language = READ_UINT16(fp);
+        atom_data->quality = READ_UINT16(fp);
     }
     else if (!mp4p_atom_type_compare(atom, "hdlr")) {
-        mp4p_hdlr_t *hdlr = calloc (sizeof (mp4p_hdlr_t), 1);
-        atom->data = hdlr;
+        mp4p_hdlr_t *atom_data = calloc (sizeof (mp4p_hdlr_t), 1);
+        atom->data = atom_data;
         atom->free = _hdlr_free;
+// FIXME:        atom->to_buffer = _hdlr_to_buffer;
 
         READ_COMMON_HEADER();
 
@@ -678,124 +671,133 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         // type is "\0\0\0\0"
         // the subtype is "mdir"
         // and manufacturer is "appl"
-        READ_BUF(fp, hdlr->component_type, 4);
-        READ_BUF(fp, hdlr->component_subtype, 4);
-        READ_BUF(fp, hdlr->component_manufacturer, 4);
+        READ_BUF(fp, atom_data->component_type, 4);
+        READ_BUF(fp, atom_data->component_subtype, 4);
+        READ_BUF(fp, atom_data->component_manufacturer, 4);
 
-        hdlr->component_flags = READ_UINT32(fp);
-        hdlr->component_flags_mask = READ_UINT32(fp);
+        atom_data->component_flags = READ_UINT32(fp);
+        atom_data->component_flags_mask = READ_UINT32(fp);
 
-        hdlr->buf_len = READ_UINT8(fp);
-        if (hdlr->buf_len) {
-            hdlr->buf = calloc (hdlr->buf_len, 1);
-            READ_BUF(fp, hdlr->buf, hdlr->buf_len);
+        atom_data->buf_len = READ_UINT8(fp);
+        if (atom_data->buf_len) {
+            atom_data->buf = calloc (atom_data->buf_len, 1);
+            READ_BUF(fp, atom_data->buf, atom_data->buf_len);
         }
     }
     else if (!mp4p_atom_type_compare(atom, "smhd")) {
-        mp4p_smhd_t *smhd = calloc (sizeof (mp4p_smhd_t), 1);
-        atom->data = smhd;
+        mp4p_smhd_t *atom_data = calloc (sizeof (mp4p_smhd_t), 1);
+        atom->data = atom_data;
         atom->free = free;
+// FIXME:        atom->to_buffer = _smhd_to_buffer;
 
         READ_COMMON_HEADER();
 
-        smhd->balance = READ_UINT16(fp);
+        atom_data->balance = READ_UINT16(fp);
     }
     else if (!mp4p_atom_type_compare(atom, "stsd")) {
-        mp4p_stsd_t *stsd = calloc (sizeof (mp4p_stsd_t), 1);
-        atom->data = stsd;
+        mp4p_stsd_t *atom_data = calloc (sizeof (mp4p_stsd_t), 1);
+        atom->data = atom_data;
         atom->free = free;
+// FIXME:        atom->to_buffer = _stsd_to_buffer;
+
         READ_COMMON_HEADER();
 
-        stsd->number_of_entries = READ_UINT32(fp);
+        atom_data->number_of_entries = READ_UINT32(fp);
         _load_subatoms(atom, fp);
     }
     else if (!mp4p_atom_type_compare(atom, "stts")) {
-        mp4p_stts_t *stts = calloc (sizeof (mp4p_stts_t), 1);
-        atom->data = stts;
+        mp4p_stts_t *atom_data = calloc (sizeof (mp4p_stts_t), 1);
+        atom->data = atom_data;
         atom->free = _stts_free;
+// FIXME:        atom->to_buffer = _stts_to_buffer;
 
         READ_COMMON_HEADER();
 
-        stts->number_of_entries = READ_UINT32(fp);
-        if (stts->number_of_entries) {
-            stts->entries = calloc (sizeof (mp4p_stts_entry_t), stts->number_of_entries);
+        atom_data->number_of_entries = READ_UINT32(fp);
+        if (atom_data->number_of_entries) {
+            atom_data->entries = calloc (sizeof (mp4p_stts_entry_t), atom_data->number_of_entries);
         }
-        for (uint32_t i = 0; i < stts->number_of_entries; i++) {
-            stts->entries[i].sample_count = READ_UINT32(fp);
-            stts->entries[i].sample_duration = READ_UINT32(fp);
+        for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
+            atom_data->entries[i].sample_count = READ_UINT32(fp);
+            atom_data->entries[i].sample_duration = READ_UINT32(fp);
         }
     }
     else if (!mp4p_atom_type_compare(atom, "stsc")) {
-        mp4p_stsc_t *stsc = calloc (sizeof (mp4p_stsc_t), 1);
-        atom->data = stsc;
+        mp4p_stsc_t *atom_data = calloc (sizeof (mp4p_stsc_t), 1);
+        atom->data = atom_data;
         atom->free = _stsc_free;
+// FIXME:        atom->to_buffer = _stsc_to_buffer;
 
         READ_COMMON_HEADER();
 
-        stsc->number_of_entries = READ_UINT32(fp);
-        if (stsc->number_of_entries) {
-            stsc->entries = calloc (sizeof (mp4p_stsc_entry_t), stsc->number_of_entries);
+        atom_data->number_of_entries = READ_UINT32(fp);
+        if (atom_data->number_of_entries) {
+            atom_data->entries = calloc (sizeof (mp4p_stsc_entry_t), atom_data->number_of_entries);
         }
-        for (uint32_t i = 0; i < stsc->number_of_entries; i++) {
-            stsc->entries[i].first_chunk = READ_UINT32(fp);
-            stsc->entries[i].samples_per_chunk = READ_UINT32(fp);
-            stsc->entries[i].sample_description_id = READ_UINT32(fp);
+        for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
+            atom_data->entries[i].first_chunk = READ_UINT32(fp);
+            atom_data->entries[i].samples_per_chunk = READ_UINT32(fp);
+            atom_data->entries[i].sample_description_id = READ_UINT32(fp);
         }
     }
     else if (!mp4p_atom_type_compare(atom, "stsz")) {
-        mp4p_stsz_t *stsz = calloc (sizeof (mp4p_stsz_t), 1);
-        atom->data = stsz;
+        mp4p_stsz_t *atom_data = calloc (sizeof (mp4p_stsz_t), 1);
+        atom->data = atom_data;
         atom->free = _stsz_free;
+// FIXME:        atom->to_buffer = _stsz_to_buffer;
 
         READ_COMMON_HEADER();
 
-        stsz->sample_size = READ_UINT32(fp);
-        stsz->number_of_entries = READ_UINT32(fp);
-        if (stsz->number_of_entries) {
-            stsz->entries = calloc (sizeof (mp4p_stsz_entry_t), stsz->number_of_entries);
+        atom_data->sample_size = READ_UINT32(fp);
+        atom_data->number_of_entries = READ_UINT32(fp);
+        if (atom_data->number_of_entries) {
+            atom_data->entries = calloc (sizeof (mp4p_stsz_entry_t), atom_data->number_of_entries);
         }
-        for (uint32_t i = 0; i < stsz->number_of_entries; i++) {
-            stsz->entries[i].sample_size = READ_UINT32(fp);
+        for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
+            atom_data->entries[i].sample_size = READ_UINT32(fp);
         }
     }
     else if (!mp4p_atom_type_compare(atom, "stco")) {
-        mp4p_stco_t *stco = calloc (sizeof (mp4p_stco_t), 1);
-        atom->data = stco;
+        mp4p_stco_t *atom_data = calloc (sizeof (mp4p_stco_t), 1);
+        atom->data = atom_data;
         atom->free = _stco_free;
+// FIXME:        atom->to_buffer = _stco_to_buffer;
 
         READ_COMMON_HEADER();
 
-        stco->number_of_entries = READ_UINT32(fp);
-        if (stco->number_of_entries) {
-            stco->entries = calloc (sizeof (mp4p_stco_entry_t), stco->number_of_entries);
+        atom_data->number_of_entries = READ_UINT32(fp);
+        if (atom_data->number_of_entries) {
+            atom_data->entries = calloc (sizeof (mp4p_stco_entry_t), atom_data->number_of_entries);
         }
-        for (uint32_t i = 0; i < stco->number_of_entries; i++) {
-            stco->entries[i].offset = (uint64_t)READ_UINT32(fp);
+        for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
+            atom_data->entries[i].offset = (uint64_t)READ_UINT32(fp);
         }
     }
     else if (!mp4p_atom_type_compare(atom, "co64")) {
-        mp4p_stco_t *stco = calloc (sizeof (mp4p_stco_t), 1);
-        atom->data = stco;
+        mp4p_stco_t *atom_data = calloc (sizeof (mp4p_stco_t), 1);
+        atom->data = atom_data;
         atom->free = _stco_free;
+// FIXME:        atom->to_buffer = _co64_to_buffer;
 
         READ_COMMON_HEADER();
-        stco->number_of_entries = READ_UINT32(fp);
-        if (stco->number_of_entries) {
-            stco->entries = calloc (sizeof (mp4p_stco_entry_t), stco->number_of_entries);
+        atom_data->number_of_entries = READ_UINT32(fp);
+        if (atom_data->number_of_entries) {
+            atom_data->entries = calloc (sizeof (mp4p_stco_entry_t), atom_data->number_of_entries);
         }
 
-        for (uint32_t i = 0; i < stco->number_of_entries; i++) {
-            stco->entries[i].offset = READ_UINT64(fp);
+        for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
+            atom_data->entries[i].offset = READ_UINT64(fp);
         }
     }
     else if (!mp4p_atom_type_compare(atom, "dref")) {
-        mp4p_dref_t *dref = calloc (sizeof (mp4p_dref_t), 1);
-        atom->data = dref;
+        mp4p_dref_t *atom_data = calloc (sizeof (mp4p_dref_t), 1);
+        atom->data = atom_data;
         atom->free = free;
+// FIXME:        atom->to_buffer = _dref_to_buffer;
 
         READ_COMMON_HEADER();
 
-        dref->number_of_entries = READ_UINT32(fp);
+        atom_data->number_of_entries = READ_UINT32(fp);
         _load_subatoms(atom, fp);
     }
     else if (!mp4p_atom_type_compare(atom, "tref")) {
@@ -805,6 +807,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         mp4p_alac_t *alac = calloc (sizeof (mp4p_alac_t), 1);
         atom->data = alac;
         atom->free = _alac_free;
+// FIXME:        atom->to_buffer = _alac_to_buffer;
 
         READ_BUF(fp, alac->reserved, 6);
         alac->data_reference_index = READ_UINT16(fp);
@@ -829,6 +832,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     else if (!mp4p_atom_type_compare(atom, "mp4a")) {
         mp4p_mp4a_t *mp4a = calloc (sizeof (mp4p_mp4a_t), 1);
         atom->data = mp4a;
+// FIXME:        atom->to_buffer = _mp4a_to_buffer;
 
         READ_BUF(fp, mp4a->reserved, 6);
         mp4a->data_reference_index = READ_UINT16(fp);
@@ -848,6 +852,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     else if (!mp4p_atom_type_compare(atom, "Opus")) {
         mp4p_Opus_t *opus = calloc (sizeof (mp4p_Opus_t), 1);
         atom->data = opus;
+// FIXME:        atom->to_buffer = _Opus_to_buffer;
 
         READ_BUF(fp, opus->reserved, 6);
         opus->data_reference_index = READ_UINT16(fp);
@@ -872,6 +877,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         mp4p_dOps_t *dOps = calloc (sizeof (mp4p_dOps_t), 1);
         atom->data = dOps;
         atom->free = _dOps_free;
+// FIXME:        atom->to_buffer = _dOps_to_buffer;
 
         dOps->version = READ_UINT8(fp);
         if (dOps->version != 0) {
@@ -893,12 +899,12 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
                 }
             }
         }
-
     }
     else if (!mp4p_atom_type_compare(atom, "esds")) {
-        mp4p_esds_t *esds = calloc (sizeof (mp4p_esds_t), 1);
-        atom->data = esds;
+        mp4p_esds_t *atom_data = calloc (sizeof (mp4p_esds_t), 1);
+        atom->data = atom_data;
         atom->free = _esds_free;
+// FIXME:        atom->to_buffer = _esds_to_buffer;
 
         READ_COMMON_HEADER();
 
@@ -932,29 +938,32 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
             return -1;
         }
 
-        esds->dc_audiotype = READ_UINT8(fp);
-        esds->dc_audiostream = READ_UINT8(fp);
-        READ_BUF(fp, esds->dc_buffersize_db, 3);
+        atom_data->dc_audiotype = READ_UINT8(fp);
+        atom_data->dc_audiostream = READ_UINT8(fp);
+        READ_BUF(fp, atom_data->dc_buffersize_db, 3);
 
-        esds->dc_max_bitrate = READ_UINT32(fp);
-        esds->dc_avg_bitrate = READ_UINT32(fp);
+        atom_data->dc_max_bitrate = READ_UINT32(fp);
+        atom_data->dc_avg_bitrate = READ_UINT32(fp);
 
         uint8_t ds_tag = READ_UINT8(fp);
         if (ds_tag != 5) {
             return -1;
         }
 
-        if (_read_esds_tag_size(fp, &esds->asc_size)) {
+        if (_read_esds_tag_size(fp, &atom_data->asc_size)) {
             return -1;
         }
-        if (!esds->asc_size) {
+        if (!atom_data->asc_size) {
             return 0;
         }
 
-        esds->asc = malloc (esds->asc_size);
-        READ_BUF(fp, esds->asc, esds->asc_size);
+        atom_data->asc = malloc (atom_data->asc_size);
+        READ_BUF(fp, atom_data->asc, atom_data->asc_size);
     }
     else if (!mp4p_atom_type_compare(atom, "meta")) {
+        mp4p_meta_t *atom_data = calloc (4, 1);
+        atom->data = atom_data;
+        atom->write_data_before_subatoms = 1;
         READ_COMMON_HEADER();
         return _load_subatoms(atom, fp);
     }
@@ -962,12 +971,15 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         return _load_subatoms(atom, fp);
     }
     else if (parent_atom && !mp4p_atom_type_compare(parent_atom, "ilst")) {
+// FIXME:        atom->to_buffer = _meta_to_buffer;
         return _load_metadata_atom (atom, fp);
     }
     else if (!mp4p_atom_type_compare (atom, "chpl")) {
+// FIXME:        atom->to_buffer = _chpl_to_buffer;
         return _load_chpl_atom (atom, fp);
     }
     else if (!mp4p_atom_type_compare (atom, "chap")) {
+// FIXME:        atom->to_buffer = _chap_to_buffer;
         return _load_chap_atom (atom, fp);
     }
     else {
@@ -1085,7 +1097,7 @@ mp4p_open (mp4p_file_callbacks_t *callbacks) {
     for (;;) {
         mp4p_atom_t *atom = _atom_load (NULL, callbacks);
         if (!atom) {
-            mp4p_atom_free(atom);
+            mp4p_atom_free(head);
             return NULL;
         }
 
@@ -1490,7 +1502,7 @@ mp4p_genre_index_for_name (const char *name) {
 mp4p_atom_t *
 mp4p_ilst_append_custom (mp4p_atom_t *ilst_atom, const char *name, const char *text) {
     mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
-    mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
+    mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
     atom->data = meta;
     atom->free = _meta_free;
     atom->to_buffer = _meta_write;
@@ -1509,7 +1521,7 @@ mp4p_ilst_append_custom (mp4p_atom_t *ilst_atom, const char *name, const char *t
 mp4p_atom_t *
 mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text) {
     mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
-    mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
+    mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
     atom->data = meta;
     atom->free = _meta_free;
     atom->to_buffer = _meta_write;
@@ -1518,7 +1530,7 @@ mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text) {
     if (genre_id) {
         memcpy (atom->type, "gnre", 4);
         atom->size = 24+2;
-        meta->version_flags = 0;
+        meta->ch.version_flags = 0;
         meta->values = malloc (2);
         meta->values[0] = genre_id;
         meta->data_size = 2;
@@ -1526,7 +1538,7 @@ mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text) {
     else {
         memcpy (atom->type, COPYRIGHT_SYM "gen", 4);
         atom->size = 24 + (uint32_t)strlen(text);
-        meta->version_flags = 1;
+        meta->ch.version_flags = 1;
         meta->text = strdup (text);
         meta->data_size = (uint32_t)strlen(text);
     }
@@ -1536,14 +1548,14 @@ mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text) {
 mp4p_atom_t *
 mp4p_ilst_append_track_disc (mp4p_atom_t *ilst_atom, const char *type, uint16_t index, uint16_t total) {
     mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
-    mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
+    mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
     atom->data = meta;
     atom->free = _meta_free;
     atom->to_buffer = _meta_write;
     atom->size = 24+6;
 
     memcpy (atom->type, type, 4);
-    meta->version_flags = 0;
+    meta->ch.version_flags = 0;
     meta->values = malloc (6);
     meta->data_size = 6;
     meta->values[0] = 0;
@@ -1555,7 +1567,7 @@ mp4p_ilst_append_track_disc (mp4p_atom_t *ilst_atom, const char *type, uint16_t 
 mp4p_atom_t *
 mp4p_ilst_append_text (mp4p_atom_t *ilst_atom, const char *type, const char *text) {
     mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
-    mp4p_meta_t *meta = calloc (sizeof (mp4p_meta_t), 1);
+    mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
     atom->data = meta;
     atom->free = _meta_free;
     atom->to_buffer = _meta_write;
@@ -1563,7 +1575,7 @@ mp4p_ilst_append_text (mp4p_atom_t *ilst_atom, const char *type, const char *tex
     atom->size = 24+meta->data_size;
 
     memcpy (atom->type, type, 4);
-    meta->version_flags = 1;
+    meta->ch.version_flags = 1;
     meta->text = strdup (text);
 
     return mp4p_atom_append (ilst_atom, atom);
@@ -1752,6 +1764,11 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
     // calculate the size of all sub-atoms
     if (atom->subatoms) {
         uint32_t size = 8;
+
+        if (atom->write_data_before_subatoms) {
+            size += atom->size - 8;
+        }
+
         for (mp4p_atom_t *c = atom->subatoms; c; c = c->next) {
             size += mp4p_atom_to_buffer (c, NULL, 0);
         }
@@ -1760,6 +1777,11 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
             uint32_t init_size = buffer_size;
             WRITE_UINT32(size);
             WRITE_BUF(atom->type, 4);
+
+            if (atom->write_data_before_subatoms) {
+                WRITE_BUF(atom->data, atom->size - 8);
+            }
+
             for (mp4p_atom_t *c = atom->subatoms; c; c = c->next) {
                 buffer_size -= mp4p_atom_to_buffer (c, buffer, buffer_size);
             }
@@ -1774,14 +1796,14 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
         if (buffer) {
             if (atom->size == 0) {
                 _dbg_print_fourcc(atom->type);
-                return 0;
+                return -1;
             }
             uint32_t init_size = buffer_size;
             WRITE_UINT32(atom->size);
             WRITE_BUF(atom->type, 4);
             if (!atom->to_buffer) {
                 _dbg_print_fourcc(atom->type);
-                //WRITE_BUF(atom->data, atom->size - 8);
+                WRITE_BUF(atom->data, atom->size - 8);
             }
             else {
                 buffer_size -= atom->to_buffer (atom, buffer, buffer_size);
