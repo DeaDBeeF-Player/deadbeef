@@ -67,6 +67,8 @@ static const char *_mp4_atom_map[] = {
     "MusicBrainz Track Id", "musicbrainz_trackid",
     "DISCID", "DISCID",
     "iTunSMPB", "iTunSMPB",
+    // NOTE: these replaygain fields are read/written in a special way,
+    // but they need to be here to be "known" fields, so that they're cleaned up on write.
     "replaygain_track_gain", "replaygain_track_gain",
     "replaygain_track_peak", "replaygain_track_peak",
     "replaygain_album_gain", "replaygain_album_gain",
@@ -107,11 +109,10 @@ _remove_known_fields (mp4p_atom_t *ilst) {
         char type[5];
         memcpy (type, meta_atom->type, 4);
         type[4] = 0;
+        const char *name = meta->name ?: type;
 
         for (int i = 0; _mp4_atom_map[i]; i += 2) {
-            // FIXME: this removes all fields, even unknown ones
-            if ((meta->name && !strcasecmp (meta->name, _mp4_atom_map[i]))
-                || !strcasecmp(type, _mp4_atom_map[i])) {
+            if (!strcasecmp (name, _mp4_atom_map[i])) {
                 mp4p_atom_remove_subatom (ilst, meta_atom);
                 break;
             }
@@ -378,12 +379,6 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     mp4p_atom_update_size (moov);
     mp4p_rebuild_positions (mp4file, mp4file->pos);
 
-    printf ("------------orig\n");
-    mp4p_dbg_dump_atom(mp4file_orig);
-    printf ("------------new\n");
-    mp4p_dbg_dump_atom(mp4file);
-    printf ("------------\n");
-
     // remove pre-existing padding
 
     for (;;) {
@@ -402,10 +397,7 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     mp4p_atom_t *mdat = mp4p_atom_find(mp4file, "mdat");
 
     off_t delta = mdat->pos - mdat_orig->pos;
-    if (delta == 0) {
-        // mdat is not moving
-    }
-    else if (delta <= -8) {
+    if (delta <= -8) {
         // freed up enough space to add padding
         mp4p_atom_t *padding = mp4p_atom_new ("free");
         padding->size = (uint32_t)-delta;
@@ -417,7 +409,7 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
         delta = mdat->pos - mdat_orig->pos;
         assert (delta == 0);
     }
-    else {
+    else if (delta != 0) {
         // mdat is moving -> stco update + padding needed
         mp4p_atom_t *padding = mp4p_atom_new ("free");
         padding->size = 1024;
@@ -431,6 +423,12 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
         delta = mdat->pos - mdat_orig->pos;
         assert (delta > 0);
     }
+
+//    printf ("------------orig\n");
+//    mp4p_dbg_dump_atom(mp4file_orig);
+//    printf ("------------new\n");
+//    mp4p_dbg_dump_atom(mp4file);
+//    printf ("------------\n");
 
     return mp4file;
 }
