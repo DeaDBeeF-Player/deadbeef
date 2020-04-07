@@ -1,0 +1,83 @@
+//
+//  mp4patomdata.c
+//  DeaDBeeF
+//
+//  Created by Alexey Yakovenko on 4/7/20.
+//  Copyright © 2020 Alexey Yakovenko. All rights reserved.
+//
+
+#include <string.h>
+#include "mp4p.h"
+#include "mp4patomdata.h"
+
+#define READ_UINT8() ({if (buffer_size < 1) return -1; uint8_t _temp8 = *buffer; buffer++; buffer_size--; _temp8;})
+#define READ_UINT16() ({if (buffer_size < 2) return -1; uint16_t _temp16 = (buffer[1]) | (buffer[0]<<8); buffer+=2, buffer_size -= 2; _temp16;})
+#define READ_INT16() ({if (buffer_size < 2) return -1; int16_t _temp16 = (((int8_t *)buffer)[1]) | (buffer[0]<<8); buffer+=2; buffer_size-=2;  _temp16;})
+#define READ_UINT32() ({if (buffer_size < 4) return -1;  uint32_t _temp32 = (uint32_t)buffer[3] | ((uint32_t)buffer[2]<<8) | ((uint32_t)buffer[1]<<16) | ((uint32_t)buffer[0]<<24); buffer+=4; buffer_size-=4; _temp32;})
+#define READ_INT32() ({if (buffer_size < 4) return -1;  int32_t _temp32 = (int32_t)buffer[3] | ((uint32_t)buffer[2]<<8) | ((uint32_t)buffer[1]<<16) | ((uint32_t)buffer[0]<<24); buffer+=4; buffer_size-=4; _temp32;})
+#define READ_UINT64() ({if (buffer_size < 8) return -1;  uint64_t _temp64 = (uint64_t)csize[7] | ((uint64_t)csize[6]<<8) | ((uint64_t)csize[5]<<16) | ((uint64_t)csize[4]<<24) | ((uint64_t)csize[3]<<32) | ((uint64_t)csize[2]<<40) | ((uint64_t)csize[1] << 48) | ((uint64_t)csize[0] << 56); buffer+=8; buffer_size-=8; _temp64;})
+#define READ_INT64() ({if (buffer_size < 8) return -1;  uint64_t _temp64 = (int64_t)csize[7] | ((uint64_t)csize[6]<<8) | ((uint64_t)csize[5]<<16) | ((uint64_t)csize[4]<<24) | ((uint64_t)csize[3]<<32) | ((uint64_t)csize[2]<<40) | ((uint64_t)csize[1] << 48) | ((uint64_t)csize[0] << 56); buffer+=8; buffer_size-=8; _temp64;})
+#define READ_BUF(buf,size) {if (buffer_size < size) return -1; memcpy (buf, buffer, size); buffer += size; buffer_size -= size; }
+
+// read/skip uint8 version and uint24 flags
+#define READ_COMMON_HEADER() {atom_data->ch.version_flags = READ_UINT32();}
+
+#define WRITE_UINT8(x) {if (buffer_size < 1) return 0; *buffer++ = x; buffer_size--; }
+#define WRITE_UINT16(x) {if (buffer_size < 2) return 0; *buffer++ = (x>>8); *buffer++ = (x & 0xff); buffer_size -= 2;}
+#define WRITE_UINT32(x) {if (buffer_size < 4) return 0; *buffer++ = ((x>>24)); *buffer++ = ((x>>16)&0xff); *buffer++ = ((x>>8)&0xff); *buffer++ = (x & 0xff); buffer_size -=4 ;}
+#define WRITE_BUF(buf,size) {if (buffer_size < size) return 0; memcpy (buffer, buf, size); buffer += size; buffer_size -= size; }
+#define WRITE_COMMON_HEADER() {WRITE_UINT32(atom_data->ch.version_flags);}
+
+#pragma mark mvhd
+
+int
+mp4p_mvhd_atomdata_read (mp4p_mvhd_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+     READ_COMMON_HEADER();
+
+     atom_data->creation_time = READ_UINT32();
+     atom_data->modification_time = READ_UINT32();
+     atom_data->time_scale = READ_UINT32();
+     atom_data->duration = READ_UINT32();
+     atom_data->preferred_rate = READ_UINT32();
+     atom_data->preferred_volume = READ_UINT16();
+     READ_BUF(atom_data->reserved, 10);
+     READ_BUF(atom_data->matrix_structure, 36);
+     atom_data->preview_time = READ_UINT32();
+     atom_data->preview_duration = READ_UINT32();
+     atom_data->poster_time = READ_UINT32();
+     atom_data->selection_time = READ_UINT32();
+     atom_data->selection_duration = READ_UINT32();
+     atom_data->current_time = READ_UINT32();
+     atom_data->next_track_id = READ_UINT32();
+     return 0;
+ }
+
+size_t
+mp4p_mvhd_atomdata_write (mp4p_mvhd_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return 100;
+    }
+    uint8_t *origin = buffer;
+    WRITE_COMMON_HEADER();
+
+    WRITE_UINT32(atom_data->creation_time);
+    WRITE_UINT32(atom_data->modification_time);
+    WRITE_UINT32(atom_data->time_scale);
+    WRITE_UINT32(atom_data->duration);
+    WRITE_UINT32(atom_data->preferred_rate);
+    WRITE_UINT16(atom_data->preferred_volume);
+    WRITE_BUF(atom_data->reserved, 10);
+    WRITE_BUF(atom_data->matrix_structure, 36);
+    WRITE_UINT32(atom_data->preview_time);
+    WRITE_UINT32(atom_data->preview_duration);
+    WRITE_UINT32(atom_data->poster_time);
+    WRITE_UINT32(atom_data->selection_time);
+    WRITE_UINT32(atom_data->selection_duration);
+    WRITE_UINT32(atom_data->current_time);
+    WRITE_UINT32(atom_data->next_track_id);
+
+    return buffer - origin;
+}
+
+
+
