@@ -93,6 +93,7 @@ typedef struct {
 typedef struct {
     mp4p_common_header_t ch;
     uint16_t balance;
+    uint16_t reserved;
 } mp4p_smhd_t;
 
 typedef struct {

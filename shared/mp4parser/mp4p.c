@@ -401,11 +401,11 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
         return -1;
     }
     atom->to_buffer = _ilst_meta_write;
-    READ_COMMON_HEADER();
+    READ_COMMON_HEADER(); // FIXME: version_flags go into wrong atom
 
-    READ_UINT32(fp);
+    READ_UINT32(fp); // FIXME: ignored value
 
-    atom_data->data_size = size - 12;
+    atom_data->data_size = size - 16;
 
     atom_data->data_offset = fp->tell (fp);
 
@@ -573,11 +573,22 @@ mp4p_atom_type_invalid (mp4p_atom_t *atom) {
     return 0;
 }
 
+uint8_t
+_adjust_varstring_len (char *buf, uint8_t len) {
+    for (uint8_t i = 0; i < len; i++) {
+        if (buf[i] == 0) {
+            return i+1;
+        }
+    }
+    return len;
+}
+
 // The function may return -1 on parser failures,
 // but this should not be considered a critical failure.
 int
 mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     int res = 0;
+    int terminates_with_varstring = 0;
 
     for (int i = 0; container_atoms[i]; i++) {
         if (!mp4p_atom_type_compare (atom, container_atoms[i])) {
@@ -659,6 +670,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         mp4p_hdlr_t *atom_data = calloc (sizeof (mp4p_hdlr_t), 1);
         atom->data = atom_data;
         atom->free = _hdlr_free;
+        terminates_with_varstring = 1;
 // FIXME:        atom->to_buffer = _hdlr_to_buffer;
 
         READ_COMMON_HEADER();
@@ -678,6 +690,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         if (atom_data->buf_len) {
             atom_data->buf = calloc (atom_data->buf_len, 1);
             READ_BUF(fp, atom_data->buf, atom_data->buf_len);
+            atom_data->buf_len = _adjust_varstring_len (atom_data->buf, atom_data->buf_len);
         }
     }
     else if (!mp4p_atom_type_compare(atom, "smhd")) {
@@ -689,6 +702,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         READ_COMMON_HEADER();
 
         atom_data->balance = READ_UINT16(fp);
+        atom_data->reserved = READ_UINT16(fp);
     }
     else if (!mp4p_atom_type_compare(atom, "stsd")) {
         mp4p_stsd_t *atom_data = calloc (sizeof (mp4p_stsd_t), 1);
@@ -984,13 +998,23 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     if (!res) {
         // validate position
         off_t offs = fp->tell (fp);
-        if (offs != atom->pos + atom->size) {
-            // NOTE: It would be great to cause a validation error here,
-            // but atoms can contain variable-sized strings of wrong size,
-            // and overlap subsequent atoms. This is generally not
-            // a problem, because the data is 0-terminated anyway,
-            // and the tail is ignored, but would be great to use this
-            // in testing and troubleshooting.
+        // NOTE: It would be great to cause a validation error here,
+        // but atoms can contain variable-sized strings of wrong size,
+        // and overlap subsequent atoms. This is generally not
+        // a problem, because the data is 0-terminated anyway,
+        // and the tail is ignored, but would be great to use this
+        // in testing and troubleshooting.
+        // So here we have a special flag indicating that the current
+        // atom terminates with a variable-size string,
+        // and should be checked for "at least atom size", and not
+        // "exact atom size".
+        if (terminates_with_varstring) {
+            if (offs < atom->pos + atom->size) {
+                res = -1;
+            }
+        }
+        else if (offs != atom->pos + atom->size) {
+            res = -1;
         }
     }
 
