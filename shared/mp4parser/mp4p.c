@@ -591,7 +591,6 @@ _adjust_varstring_len (char *buf, uint8_t len) {
 int
 mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     int res = 0;
-    int terminates_with_varstring = 0;
 
     for (int i = 0; container_atoms[i]; i++) {
         if (!mp4p_atom_type_compare (atom, container_atoms[i])) {
@@ -642,28 +641,11 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         mp4p_hdlr_t *atom_data = calloc (sizeof (mp4p_hdlr_t), 1);
         atom->data = atom_data;
         atom->free = _hdlr_free;
-        terminates_with_varstring = 1;
-// FIXME:        atom->to_buffer = _hdlr_to_buffer;
+        atom->write = (mp4p_atom_data_writer_t)mp4p_hdlr_atomdata_write;
 
-        READ_COMMON_HEADER();
-
-        // NOTE: in the udta/meta/hdlr,
-        // type is "\0\0\0\0"
-        // the subtype is "mdir"
-        // and manufacturer is "appl"
-        READ_BUF(fp, atom_data->component_type, 4);
-        READ_BUF(fp, atom_data->component_subtype, 4);
-        READ_BUF(fp, atom_data->component_manufacturer, 4);
-
-        atom_data->component_flags = READ_UINT32(fp);
-        atom_data->component_flags_mask = READ_UINT32(fp);
-
-        atom_data->buf_len = READ_UINT8(fp);
-        if (atom_data->buf_len) {
-            atom_data->buf = calloc (atom_data->buf_len, 1);
-            READ_BUF(fp, atom_data->buf, atom_data->buf_len);
-            atom_data->buf_len = _adjust_varstring_len (atom_data->buf, atom_data->buf_len);
-        }
+        READ_ATOM_BUFFER();
+        res = mp4p_hdlr_atomdata_read (atom_data, atombuf, atom->size-8);
+        FREE_ATOM_BUFFER();
     }
     else if (!mp4p_atom_type_compare(atom, "smhd")) {
         mp4p_smhd_t *atom_data = calloc (sizeof (mp4p_smhd_t), 1);
@@ -970,22 +952,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     if (!res) {
         // validate position
         off_t offs = fp->tell (fp);
-        // NOTE: It would be great to cause a validation error here,
-        // but atoms can contain variable-sized strings of wrong size,
-        // and overlap subsequent atoms. This is generally not
-        // a problem, because the data is 0-terminated anyway,
-        // and the tail is ignored, but would be great to use this
-        // in testing and troubleshooting.
-        // So here we have a special flag indicating that the current
-        // atom terminates with a variable-size string,
-        // and should be checked for "at least atom size", and not
-        // "exact atom size".
-        if (terminates_with_varstring) {
-            if (offs < atom->pos + atom->size) {
-                res = -1;
-            }
-        }
-        else if (offs != atom->pos + atom->size) {
+        if (offs != atom->pos + atom->size) {
             res = -1;
         }
     }

@@ -6,6 +6,7 @@
 //  Copyright © 2020 Alexey Yakovenko. All rights reserved.
 //
 
+#include <stdlib.h>
 #include <string.h>
 #include "mp4p.h"
 #include "mp4patomdata.h"
@@ -163,6 +164,63 @@ mp4p_mdhd_atomdata_write (mp4p_mdhd_t *atom_data, uint8_t *buffer, size_t buffer
 
     return buffer - origin;
 }
+
+#pragma mark hdlr
+
+int
+mp4p_hdlr_atomdata_read (mp4p_hdlr_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    READ_COMMON_HEADER();
+
+    // NOTE: in the udta/meta/hdlr,
+    // type is "\0\0\0\0"
+    // the subtype is "mdir"
+    // and manufacturer is "appl"
+    READ_BUF(atom_data->component_type, 4);
+    READ_BUF(atom_data->component_subtype, 4);
+    READ_BUF(atom_data->component_manufacturer, 4);
+
+    atom_data->component_flags = READ_UINT32();
+    atom_data->component_flags_mask = READ_UINT32();
+
+    atom_data->buf_len = READ_UINT8();
+    if (atom_data->buf_len) {
+        if (atom_data->buf_len > buffer_size) {
+            atom_data->buf_len = buffer_size;
+        }
+
+        atom_data->buf = malloc (atom_data->buf_len);
+        READ_BUF(atom_data->buf, atom_data->buf_len);
+    }
+
+    return 0;
+}
+
+size_t
+mp4p_hdlr_atomdata_write (mp4p_hdlr_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return 25 + atom_data->buf_len;
+    }
+    uint8_t *origin = buffer;
+
+    WRITE_COMMON_HEADER();
+
+    WRITE_BUF(atom_data->component_type, 4);
+    WRITE_BUF(atom_data->component_subtype, 4);
+    WRITE_BUF(atom_data->component_manufacturer, 4);
+
+    WRITE_UINT32(atom_data->component_flags);
+    WRITE_UINT32(atom_data->component_flags_mask);
+
+    WRITE_UINT8(atom_data->buf_len);
+    if (atom_data->buf_len) {
+        WRITE_BUF(atom_data->buf, atom_data->buf_len);
+    }
+
+    return buffer - origin;
+}
+
+
+
 
 
 

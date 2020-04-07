@@ -101,4 +101,30 @@
     XCTAssert(!memcmp (&dataread, &data, sizeof (data)));
 }
 
+- (void)test_hdlrWriteRead_EqualOutput {
+    mp4p_hdlr_t data = {
+        .ch.version_flags = 0xaabbccdd,
+        .component_type = "typ",
+        .component_subtype = "sub",
+        .component_manufacturer = "man",
+        .component_flags = 0x16253498,
+        .component_flags_mask = 0x47382910,
+        .buf_len = 10,
+        .buf = "10b_filler",
+    };
+
+
+    size_t bufsize = mp4p_hdlr_atomdata_write(&data, NULL, 0);
+    uint8_t *buffer = malloc (bufsize);
+    size_t writtensize = mp4p_hdlr_atomdata_write(&data, buffer, bufsize);
+    XCTAssertEqual (bufsize, writtensize);
+
+    mp4p_hdlr_t dataread;
+    int res = mp4p_hdlr_atomdata_read(&dataread, buffer, bufsize);
+    XCTAssert(!res);
+
+    XCTAssert(!memcmp (&dataread, &data, 25));
+    XCTAssert(!memcmp (dataread.buf, data.buf, data.buf_len));
+}
+
 @end
