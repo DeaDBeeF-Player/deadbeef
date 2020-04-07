@@ -155,6 +155,8 @@ _read_uint64 (mp4p_file_callbacks_t *fp, uint64_t *value) {
 #define WRITE_BUF(buf,size) {if (buffer_size < size) return 0; memcpy (buffer, buf, size); buffer += size; buffer_size -= size; }
 #define WRITE_COMMON_HEADER() {WRITE_UINT32(0);}
 
+// Known container atoms, which can contain known sub-atoms.
+// Uknown atoms will be loaded as opaque blobs, even if they're technically containers.
 static const char *container_atoms[] = {
     "moov",
     "trak",
@@ -165,7 +167,6 @@ static const char *container_atoms[] = {
     "udta",
     NULL
 };
-
 
 static void
 _hdlr_free (void *data) {
@@ -467,7 +468,6 @@ _mp4p_chpl_free (void *data) {
     free (data);
 }
 
-// FIXME: untested
 static int32_t
 _load_chpl_atom(mp4p_atom_t *atom, mp4p_file_callbacks_t *fp)
 {
@@ -577,6 +577,8 @@ mp4p_atom_type_invalid (mp4p_atom_t *atom) {
 // but this should not be considered a critical failure.
 int
 mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
+    int res = 0;
+
     for (int i = 0; container_atoms[i]; i++) {
         if (!mp4p_atom_type_compare (atom, container_atoms[i])) {
             return _load_subatoms(atom, fp);
@@ -841,7 +843,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
 
         READ_BUF(fp, mp4a->reserved3, 2);
 
-        return _load_subatoms(atom, fp);
+        res = _load_subatoms(atom, fp);
     }
     else if (!mp4p_atom_type_compare(atom, "Opus")) {
         mp4p_Opus_t *opus = calloc (sizeof (mp4p_Opus_t), 1);
@@ -865,7 +867,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
             return -1;
         }
         READ_BUF(fp, opus->reserved3, 2);
-        return _load_subatoms(atom, fp);
+        res = _load_subatoms(atom, fp);
     }
     else if (!mp4p_atom_type_compare(atom, "dOps")) {
         mp4p_dOps_t *dOps = calloc (sizeof (mp4p_dOps_t), 1);
@@ -947,41 +949,53 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         if (_read_esds_tag_size(fp, &atom_data->asc_size)) {
             return -1;
         }
-        if (!atom_data->asc_size) {
-            return 0;
+        if (atom_data->asc_size) {
+            atom_data->asc = malloc (atom_data->asc_size);
+            READ_BUF(fp, atom_data->asc, atom_data->asc_size);
         }
-
-        atom_data->asc = malloc (atom_data->asc_size);
-        READ_BUF(fp, atom_data->asc, atom_data->asc_size);
     }
     else if (!mp4p_atom_type_compare(atom, "meta")) {
         mp4p_meta_t *atom_data = calloc (4, 1);
         atom->data = atom_data;
         atom->write_data_before_subatoms = 1;
         READ_COMMON_HEADER();
-        return _load_subatoms(atom, fp);
+        res = _load_subatoms(atom, fp);
     }
     else if (!mp4p_atom_type_compare(atom, "ilst")) {
-        return _load_subatoms(atom, fp);
+        res = _load_subatoms(atom, fp);
     }
     else if (parent_atom && !mp4p_atom_type_compare(parent_atom, "ilst")) {
 // FIXME:        atom->to_buffer = _meta_to_buffer;
-        return _load_metadata_atom (atom, fp);
+        res = _load_metadata_atom (atom, fp);
     }
     else if (!mp4p_atom_type_compare (atom, "chpl")) {
 // FIXME:        atom->to_buffer = _chpl_to_buffer;
-        return _load_chpl_atom (atom, fp);
+        res = _load_chpl_atom (atom, fp);
     }
     else if (!mp4p_atom_type_compare (atom, "chap")) {
 // FIXME:        atom->to_buffer = _chap_to_buffer;
-        return _load_chap_atom (atom, fp);
+        res = _load_chap_atom (atom, fp);
     }
     else {
-//        _dbg_print_indent ();
-//        printf ("[opaque]\n");
+        atom->data = malloc (atom->size - 8);
+        READ_BUF(fp, atom->data, atom->size - 8);
     }
 
-    return 0;
+    if (!res) {
+        // validate position
+        off_t offs = fp->tell (fp);
+        if (offs != atom->pos + atom->size) {
+            // NOTE: It would be great to cause a validation error here,
+            // but atoms can contain variable-sized strings of wrong size,
+            // and overlap subsequent atoms. This is generally not
+            // a problem, because the data is 0-terminated anyway,
+            // and the tail is ignored, but would be great to use this
+            // in testing and troubleshooting.
+        }
+    }
+
+
+    return res;
 }
 
 static mp4p_atom_t *
