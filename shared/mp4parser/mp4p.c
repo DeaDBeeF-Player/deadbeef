@@ -651,12 +651,11 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         mp4p_smhd_t *atom_data = calloc (sizeof (mp4p_smhd_t), 1);
         atom->data = atom_data;
         atom->free = free;
-// FIXME:        atom->to_buffer = _smhd_to_buffer;
+        atom->write = (mp4p_atom_data_writer_t)mp4p_smhd_atomdata_write;
 
-        READ_COMMON_HEADER();
-
-        atom_data->balance = READ_UINT16(fp);
-        atom_data->reserved = READ_UINT16(fp);
+        READ_ATOM_BUFFER();
+        res = mp4p_smhd_atomdata_read (atom_data, atombuf, atom->size-8);
+        FREE_ATOM_BUFFER();
     }
     else if (!mp4p_atom_type_compare(atom, "stsd")) {
         mp4p_stsd_t *atom_data = calloc (sizeof (mp4p_stsd_t), 1);

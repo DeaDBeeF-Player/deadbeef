@@ -219,9 +219,31 @@ mp4p_hdlr_atomdata_write (mp4p_hdlr_t *atom_data, uint8_t *buffer, size_t buffer
     return buffer - origin;
 }
 
+#pragma mark smhd
+
+int
+mp4p_smhd_atomdata_read (mp4p_smhd_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    READ_COMMON_HEADER();
+
+    atom_data->balance = READ_UINT16();
+    atom_data->reserved = READ_UINT16();
+
+    return 0;
+}
+
+size_t
+mp4p_smhd_atomdata_write (mp4p_smhd_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return 8;
+    }
+    uint8_t *origin = buffer;
+
+    WRITE_COMMON_HEADER();
+
+    WRITE_UINT16(atom_data->balance);
+    WRITE_UINT16(atom_data->reserved);
 
 
-
-
-
+    return buffer - origin;
+}
 
