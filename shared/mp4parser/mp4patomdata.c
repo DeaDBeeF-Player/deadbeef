@@ -129,6 +129,41 @@ mp4p_tkhd_atomdata_write (mp4p_tkhd_t *atom_data, uint8_t *buffer, size_t buffer
     return buffer - origin;
 }
 
+#pragma mark mdhd
+
+int
+mp4p_mdhd_atomdata_read (mp4p_mdhd_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    READ_COMMON_HEADER();
+
+    atom_data->creation_time = READ_UINT32();
+    atom_data->modification_time = READ_UINT32();
+    atom_data->time_scale = READ_UINT32();
+    atom_data->duration = READ_UINT32();
+    atom_data->language = READ_UINT16();
+    atom_data->quality = READ_UINT16();
+
+    return 0;
+}
+
+size_t
+mp4p_mdhd_atomdata_write (mp4p_mdhd_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return 24;
+    }
+    uint8_t *origin = buffer;
+
+    WRITE_COMMON_HEADER();
+
+    WRITE_UINT32(atom_data->creation_time);
+    WRITE_UINT32(atom_data->modification_time);
+    WRITE_UINT32(atom_data->time_scale);
+    WRITE_UINT32(atom_data->duration);
+    WRITE_UINT16(atom_data->language);
+    WRITE_UINT16(atom_data->quality);
+
+    return buffer - origin;
+}
+
 
 
 

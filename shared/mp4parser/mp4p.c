@@ -632,16 +632,11 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         mp4p_mdhd_t *atom_data = calloc (sizeof (mp4p_mdhd_t), 1);
         atom->data = atom_data;
         atom->free = free;
-        // FIXME:        atom->to_buffer = _mdhd_to_buffer;
+        atom->write = (mp4p_atom_data_writer_t)mp4p_mdhd_atomdata_write;
 
-        READ_COMMON_HEADER();
-
-        atom_data->creation_time = READ_UINT32(fp);
-        atom_data->modification_time = READ_UINT32(fp);
-        atom_data->time_scale = READ_UINT32(fp);
-        atom_data->duration = READ_UINT32(fp);
-        atom_data->language = READ_UINT16(fp);
-        atom_data->quality = READ_UINT16(fp);
+        READ_ATOM_BUFFER();
+        res = mp4p_mdhd_atomdata_read (atom_data, atombuf, atom->size-8);
+        FREE_ATOM_BUFFER();
     }
     else if (!mp4p_atom_type_compare(atom, "hdlr")) {
         mp4p_hdlr_t *atom_data = calloc (sizeof (mp4p_hdlr_t), 1);

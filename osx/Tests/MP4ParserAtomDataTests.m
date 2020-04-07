@@ -77,4 +77,28 @@
 
     XCTAssert(!memcmp (&dataread, &data, sizeof (data)));
 }
+
+- (void)test_mdhdWriteRead_EqualOutput {
+    mp4p_mdhd_t data = {
+        .ch.version_flags = 0xaabbccdd,
+        .creation_time = 0xddccbbaa,
+        .modification_time = 0x11223344,
+        .time_scale = 0x44332211,
+        .duration = 0xeebbaadd,
+        .language = 0x3948,
+        .quality = 0x8374,
+    };
+
+    size_t bufsize = mp4p_mdhd_atomdata_write(&data, NULL, 0);
+    uint8_t *buffer = malloc (bufsize);
+    size_t writtensize = mp4p_mdhd_atomdata_write(&data, buffer, bufsize);
+    XCTAssertEqual (bufsize, writtensize);
+
+    mp4p_mdhd_t dataread;
+    int res = mp4p_mdhd_atomdata_read(&dataread, buffer, bufsize);
+    XCTAssert(!res);
+
+    XCTAssert(!memcmp (&dataread, &data, sizeof (data)));
+}
+
 @end
