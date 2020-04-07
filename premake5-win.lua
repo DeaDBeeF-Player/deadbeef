@@ -910,6 +910,21 @@ project "ddb_soundtouch"
    }
 end
 
+if option ("plugin-tta") then
+project "tta"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/tta/ttaplug.c",
+       "plugins/tta/filter.h",
+       "plugins/tta/ttadec.c",
+       "plugins/tta/ttadec.h"
+   }
+end
+
 
 project "translations"
    kind "Utility"
