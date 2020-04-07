@@ -146,4 +146,22 @@
     XCTAssert(!memcmp (&dataread, &data, sizeof(data)));
 }
 
+- (void)test_stsdWriteRead_EqualOutput {
+    mp4p_stsd_t data = {
+        .ch.version_flags = 0xaabbccdd,
+        .number_of_entries = 0x25364758,
+    };
+
+    size_t bufsize = mp4p_stsd_atomdata_write(&data, NULL, 0);
+    uint8_t *buffer = malloc (bufsize);
+    size_t writtensize = mp4p_stsd_atomdata_write(&data, buffer, bufsize);
+    XCTAssertEqual (bufsize, writtensize);
+
+    mp4p_stsd_t dataread;
+    int res = mp4p_stsd_atomdata_read(&dataread, buffer, bufsize);
+    XCTAssert(!res);
+
+    XCTAssert(!memcmp (&dataread, &data, sizeof(data)));
+}
+
 @end

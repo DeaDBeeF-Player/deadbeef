@@ -247,3 +247,28 @@ mp4p_smhd_atomdata_write (mp4p_smhd_t *atom_data, uint8_t *buffer, size_t buffer
     return buffer - origin;
 }
 
+#pragma mark stsd
+
+int
+mp4p_stsd_atomdata_read (mp4p_stsd_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    READ_COMMON_HEADER();
+
+    atom_data->number_of_entries = READ_UINT32();
+
+    return 0;
+}
+
+size_t
+mp4p_stsd_atomdata_write (mp4p_stsd_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return 8;
+    }
+    uint8_t *origin = buffer;
+
+    WRITE_COMMON_HEADER();
+
+    WRITE_UINT32(atom_data->number_of_entries);
+
+    return buffer - origin;
+}
+

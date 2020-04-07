@@ -158,6 +158,21 @@ _read_uint64 (mp4p_file_callbacks_t *fp, uint64_t *value) {
 #define READ_ATOM_BUFFER() uint8_t *atombuf = malloc (atom->size-8); if (fp->read(fp, atombuf, atom->size-8) != atom->size-8) { res = -1; goto error; }
 #define FREE_ATOM_BUFFER() free (atombuf);
 
+#define ATOM_DEF_INNER(atomname)\
+    mp4p_##atomname##_t *atom_data = calloc (sizeof (mp4p_##atomname##_t), 1);\
+    atom->data = atom_data;\
+    atom->free = free;\
+    atom->write = (mp4p_atom_data_writer_t)mp4p_##atomname##_atomdata_write;\
+    READ_ATOM_BUFFER();\
+    res = mp4p_##atomname##_atomdata_read (atom_data, atombuf, atom->size-8);\
+    FREE_ATOM_BUFFER();
+
+
+#define ATOM_DEF(atomname) else if (!mp4p_atom_type_compare(atom, #atomname)) {\
+    ATOM_DEF_INNER(atomname)\
+}
+
+
 // Known container atoms, which can contain known sub-atoms.
 // Uknown atoms will be loaded as opaque blobs, even if they're technically containers.
 static const char *container_atoms[] = {
@@ -598,6 +613,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         }
     }
 
+
     if (mp4p_atom_type_invalid (atom)) {
         return -1;
     }
@@ -607,65 +623,27 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         atom->free = free;
         READ_BUF(fp, mtyp, atom->size-8);
     }
-    else if (!mp4p_atom_type_compare(atom, "mvhd")) {
-        mp4p_mvhd_t *atom_data = calloc (sizeof (mp4p_mvhd_t), 1);
-        atom->data = atom_data;
-        atom->free = free;
-        atom->write = (mp4p_atom_data_writer_t)mp4p_mvhd_atomdata_write;
-
-        READ_ATOM_BUFFER();
-        res = mp4p_mvhd_atomdata_read (atom_data, atombuf, atom->size-8);
-        FREE_ATOM_BUFFER();
-    }
-    else if (!mp4p_atom_type_compare(atom, "tkhd")) {
-        mp4p_tkhd_t *atom_data = calloc (sizeof (mp4p_tkhd_t), 1);
-        atom->data = atom_data;
-        atom->free = free;
-        atom->write = (mp4p_atom_data_writer_t)mp4p_tkhd_atomdata_write;
-
-        READ_ATOM_BUFFER();
-        res = mp4p_tkhd_atomdata_read (atom_data, atombuf, atom->size-8);
-        FREE_ATOM_BUFFER();
-    }
-    else if (!mp4p_atom_type_compare(atom, "mdhd")) {
-        mp4p_mdhd_t *atom_data = calloc (sizeof (mp4p_mdhd_t), 1);
-        atom->data = atom_data;
-        atom->free = free;
-        atom->write = (mp4p_atom_data_writer_t)mp4p_mdhd_atomdata_write;
-
-        READ_ATOM_BUFFER();
-        res = mp4p_mdhd_atomdata_read (atom_data, atombuf, atom->size-8);
-        FREE_ATOM_BUFFER();
-    }
-    else if (!mp4p_atom_type_compare(atom, "hdlr")) {
-        mp4p_hdlr_t *atom_data = calloc (sizeof (mp4p_hdlr_t), 1);
-        atom->data = atom_data;
-        atom->free = _hdlr_free;
-        atom->write = (mp4p_atom_data_writer_t)mp4p_hdlr_atomdata_write;
-
-        READ_ATOM_BUFFER();
-        res = mp4p_hdlr_atomdata_read (atom_data, atombuf, atom->size-8);
-        FREE_ATOM_BUFFER();
-    }
-    else if (!mp4p_atom_type_compare(atom, "smhd")) {
-        mp4p_smhd_t *atom_data = calloc (sizeof (mp4p_smhd_t), 1);
-        atom->data = atom_data;
-        atom->free = free;
-        atom->write = (mp4p_atom_data_writer_t)mp4p_smhd_atomdata_write;
-
-        READ_ATOM_BUFFER();
-        res = mp4p_smhd_atomdata_read (atom_data, atombuf, atom->size-8);
-        FREE_ATOM_BUFFER();
-    }
+    ATOM_DEF(mvhd)
+    ATOM_DEF(tkhd)
+    ATOM_DEF(mdhd)
+    ATOM_DEF(hdlr)
+    ATOM_DEF(smhd)
     else if (!mp4p_atom_type_compare(atom, "stsd")) {
-        mp4p_stsd_t *atom_data = calloc (sizeof (mp4p_stsd_t), 1);
+        mp4p_stsd_t *atom_data = calloc (sizeof (mp4p_stts_t), 1);
         atom->data = atom_data;
-        atom->free = free;
-// FIXME:        atom->to_buffer = _stsd_to_buffer;
+        atom->write = (mp4p_atom_data_writer_t)mp4p_stsd_atomdata_write;
 
-        READ_COMMON_HEADER();
+        uint8_t *atombuf = malloc (sizeof (mp4p_stsd_t));
+        if (fp->read(fp, atombuf, sizeof (mp4p_stsd_t)) != sizeof (mp4p_stsd_t)) {
+            res = -1;
+            goto error;
+        }
 
-        atom_data->number_of_entries = READ_UINT32(fp);
+        mp4p_stsd_atomdata_read(atom_data, atombuf, sizeof (mp4p_stsd_t));
+
+        free (atombuf);
+
+        atom->write_data_before_subatoms = 1;
         _load_subatoms(atom, fp);
     }
     else if (!mp4p_atom_type_compare(atom, "stts")) {
@@ -1664,7 +1642,7 @@ mp4p_hdlr_init (mp4p_atom_t *hdlr_atom, const char *type, const char *subtype, c
 
 uint32_t
 mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
-    // calculate the size of all sub-atoms
+    // calculate the size including sub-atoms
     if (atom->subatoms) {
         uint32_t size = 8;
 
@@ -1682,7 +1660,17 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
             WRITE_BUF(atom->type, 4);
 
             if (atom->write_data_before_subatoms) {
-                WRITE_BUF(atom->data, atom->size - 8);
+                if (atom->write) {
+                    size_t len = atom->write (atom->data, buffer, buffer_size);
+                    if (len != buffer_size) {
+                        return 0; // FIXME: how to error?
+                    }
+                    buffer += len;
+                    buffer_size -= len;
+                }
+                else {
+                    WRITE_BUF(atom->data, atom->size - 8);
+                }
             }
 
             for (mp4p_atom_t *c = atom->subatoms; c; c = c->next) {
