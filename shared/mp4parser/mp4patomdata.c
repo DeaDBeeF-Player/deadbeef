@@ -362,3 +362,49 @@ mp4p_stts_atomdata_free (void *data) {
     free (stts);
 }
 
+#pragma mark stsc
+
+int
+mp4p_stsc_atomdata_read (mp4p_stsc_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    READ_COMMON_HEADER();
+
+    atom_data->number_of_entries = READ_UINT32();
+    if (atom_data->number_of_entries) {
+        atom_data->entries = calloc (sizeof (mp4p_stsc_entry_t), atom_data->number_of_entries);
+    }
+    for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
+        atom_data->entries[i].first_chunk = READ_UINT32();
+        atom_data->entries[i].samples_per_chunk = READ_UINT32();
+        atom_data->entries[i].sample_description_id = READ_UINT32();
+    }
+
+    return 0;
+}
+
+size_t
+mp4p_stsc_atomdata_write (mp4p_stsc_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return 8 + atom_data->number_of_entries * 12;
+    }
+    uint8_t *origin = buffer;
+    WRITE_COMMON_HEADER();
+
+    WRITE_UINT32(atom_data->number_of_entries);
+    for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
+        WRITE_UINT32(atom_data->entries[i].first_chunk);
+        WRITE_UINT32(atom_data->entries[i].samples_per_chunk);
+        WRITE_UINT32(atom_data->entries[i].sample_description_id);
+    }
+
+    return buffer - origin;
+}
+
+void
+mp4p_stsc_atomdata_free (void *data) {
+    mp4p_stsc_t *stsc = data;
+    if (stsc->entries) {
+        free (stsc->entries);
+    }
+    free (stsc);
+}
+

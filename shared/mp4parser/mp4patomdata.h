@@ -103,7 +103,6 @@ typedef struct {
 } mp4p_stts_t;
 
 typedef struct {
-    mp4p_common_header_t ch;
     uint32_t first_chunk;
     uint32_t samples_per_chunk;
     uint32_t sample_description_id;
@@ -293,5 +292,13 @@ size_t
 mp4p_stts_atomdata_write (mp4p_stts_t *atom_data, uint8_t *buffer, size_t buffer_size);
 void
 mp4p_stts_atomdata_free (void *data);
+
+// stsc
+int
+mp4p_stsc_atomdata_read (mp4p_stsc_t *atom_data, uint8_t *buffer, size_t buffer_size);
+size_t
+mp4p_stsc_atomdata_write (mp4p_stsc_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_stsc_atomdata_free (void *data);
 
 #endif /* mp4patomdata_h */

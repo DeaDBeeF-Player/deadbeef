@@ -193,4 +193,31 @@
     mp4p_stts_atomdata_free (dataread);
 }
 
+- (void)test_stscWriteRead_EqualOutput {
+    mp4p_stsc_entry_t entries[3] = {
+        { .first_chunk = 0x01928374, .samples_per_chunk=0x19283746, .sample_description_id=0x56473829 },
+        { .first_chunk = 0x56473829, .samples_per_chunk=0x13243546, .sample_description_id=0x24354657 },
+        { .first_chunk = 0x25364758, .samples_per_chunk=0x08978675, .sample_description_id=0x75645342 },
+    };
+    mp4p_stsc_t data = {
+        .ch.version_flags = 0xaabbccdd,
+        .number_of_entries = 3,
+        .entries = entries,
+    };
+
+    size_t bufsize = mp4p_stsc_atomdata_write(&data, NULL, 0);
+    uint8_t *buffer = malloc (bufsize);
+    size_t writtensize = mp4p_stsc_atomdata_write(&data, buffer, bufsize);
+    XCTAssertEqual (bufsize, writtensize);
+
+    mp4p_stsc_t *dataread = malloc(sizeof (mp4p_stsc_t));
+    int res = mp4p_stsc_atomdata_read(dataread, buffer, bufsize);
+    XCTAssert(!res);
+
+    XCTAssert(!memcmp (dataread, &data, 8));
+    XCTAssert(!memcmp (dataread->entries, data.entries, 3*8));
+
+    mp4p_stsc_atomdata_free (dataread);
+}
+
 @end
