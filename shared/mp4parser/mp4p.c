@@ -622,23 +622,11 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         mp4p_tkhd_t *atom_data = calloc (sizeof (mp4p_tkhd_t), 1);
         atom->data = atom_data;
         atom->free = free;
-// FIXME:        atom->to_buffer = _tkhd_to_buffer;
+        atom->write = (mp4p_atom_data_writer_t)mp4p_tkhd_atomdata_write;
 
-        READ_COMMON_HEADER();
-
-        atom_data->creation_time = READ_UINT32(fp);
-        atom_data->modification_time = READ_UINT32(fp);
-        atom_data->track_id = READ_UINT32(fp);
-        READ_BUF(fp, atom_data->reserved, 4);
-        atom_data->duration = READ_UINT32(fp);
-        READ_BUF(fp, atom_data->reserved2, 8);
-        atom_data->layer = READ_UINT16(fp);
-        atom_data->alternate_group = READ_UINT16(fp);
-        atom_data->volume = READ_UINT16(fp);
-        READ_BUF(fp, atom_data->reserved3, 2);
-        READ_BUF(fp, atom_data->matrix_structure, 36);
-        atom_data->track_width = READ_UINT32(fp);
-        atom_data->track_height = READ_UINT32(fp);
+        READ_ATOM_BUFFER();
+        res = mp4p_tkhd_atomdata_read (atom_data, atombuf, atom->size-8);
+        FREE_ATOM_BUFFER();
     }
     else if (!mp4p_atom_type_compare(atom, "mdhd")) {
         mp4p_mdhd_t *atom_data = calloc (sizeof (mp4p_mdhd_t), 1);

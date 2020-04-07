@@ -233,10 +233,17 @@ typedef struct {
     uint32_t *track_id;
 } mp4p_chap_t;
 
+
+// mvhd
 int
 mp4p_mvhd_atomdata_read (mp4p_mvhd_t *atom_data, uint8_t *buffer, size_t buffer_size);
-
 size_t
 mp4p_mvhd_atomdata_write (mp4p_mvhd_t *atom_data, uint8_t *buffer, size_t buffer_size);
+
+// tkhd
+int
+mp4p_tkhd_atomdata_read (mp4p_tkhd_t *atom_data, uint8_t *buffer, size_t buffer_size);
+size_t
+mp4p_tkhd_atomdata_write (mp4p_tkhd_t *atom_data, uint8_t *buffer, size_t buffer_size);
 
 #endif /* mp4patomdata_h */
