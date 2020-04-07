@@ -80,6 +80,10 @@ mp4p_mvhd_atomdata_write (mp4p_mvhd_t *atom_data, uint8_t *buffer, size_t buffer
     return buffer - origin;
 }
 
+void
+mp4p_mvhd_atomdata_free (void *atom_data) {
+    free (atom_data);
+}
 
 #pragma mark tkhd
 
@@ -130,6 +134,11 @@ mp4p_tkhd_atomdata_write (mp4p_tkhd_t *atom_data, uint8_t *buffer, size_t buffer
     return buffer - origin;
 }
 
+void
+mp4p_tkhd_atomdata_free (void *atom_data) {
+    free (atom_data);
+}
+
 #pragma mark mdhd
 
 int
@@ -163,6 +172,11 @@ mp4p_mdhd_atomdata_write (mp4p_mdhd_t *atom_data, uint8_t *buffer, size_t buffer
     WRITE_UINT16(atom_data->quality);
 
     return buffer - origin;
+}
+
+void
+mp4p_mdhd_atomdata_free (void *atom_data) {
+    free (atom_data);
 }
 
 #pragma mark hdlr
@@ -219,6 +233,27 @@ mp4p_hdlr_atomdata_write (mp4p_hdlr_t *atom_data, uint8_t *buffer, size_t buffer
     return buffer - origin;
 }
 
+void
+mp4p_hdlr_atomdata_free (void *atom_data) {
+    mp4p_hdlr_t *hdlr = atom_data;
+    if (hdlr->buf) {
+        free (hdlr->buf);
+    }
+    free (hdlr);
+}
+
+void
+mp4p_hdlr_init (mp4p_atom_t *hdlr_atom, const char *type, const char *subtype, const char *manufacturer) {
+    mp4p_hdlr_t *hdlr = calloc(sizeof (mp4p_hdlr_t), 1);
+    hdlr_atom->size = 33;
+    hdlr_atom->data = hdlr;
+    hdlr_atom->free = mp4p_hdlr_atomdata_free;
+    hdlr_atom->write = (mp4p_atom_data_write_func_t)mp4p_hdlr_atomdata_write;
+    memcpy (hdlr->component_type, type, 4);
+    memcpy (hdlr->component_subtype, subtype, 4);
+    memcpy (hdlr->component_manufacturer, manufacturer, 4);
+}
+
 #pragma mark smhd
 
 int
@@ -247,6 +282,11 @@ mp4p_smhd_atomdata_write (mp4p_smhd_t *atom_data, uint8_t *buffer, size_t buffer
     return buffer - origin;
 }
 
+void
+mp4p_smhd_atomdata_free (void *atom_data) {
+    free (atom_data);
+}
+
 #pragma mark stsd
 
 int
@@ -270,5 +310,55 @@ mp4p_stsd_atomdata_write (mp4p_stsd_t *atom_data, uint8_t *buffer, size_t buffer
     WRITE_UINT32(atom_data->number_of_entries);
 
     return buffer - origin;
+}
+
+void
+mp4p_stsd_atomdata_free (void *atom_data) {
+    free (atom_data);
+}
+
+#pragma mark stts
+
+int
+mp4p_stts_atomdata_read (mp4p_stts_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    READ_COMMON_HEADER();
+
+    atom_data->number_of_entries = READ_UINT32();
+    if (atom_data->number_of_entries) {
+        atom_data->entries = calloc (sizeof (mp4p_stts_entry_t), atom_data->number_of_entries);
+    }
+    for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
+        atom_data->entries[i].sample_count = READ_UINT32();
+        atom_data->entries[i].sample_duration = READ_UINT32();
+    }
+
+    return 0;
+}
+
+size_t
+mp4p_stts_atomdata_write (mp4p_stts_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return 8 + atom_data->number_of_entries * 8;
+    }
+    uint8_t *origin = buffer;
+
+    WRITE_COMMON_HEADER();
+
+    WRITE_UINT32(atom_data->number_of_entries);
+    for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
+        WRITE_UINT32(atom_data->entries[i].sample_count);
+        WRITE_UINT32(atom_data->entries[i].sample_duration);
+    }
+
+    return buffer - origin;
+}
+
+void
+mp4p_stts_atomdata_free (void *data) {
+    mp4p_stts_t *stts = data;
+    if (stts->entries) {
+        free (stts->entries);
+    }
+    free (stts);
 }
 

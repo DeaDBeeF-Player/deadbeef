@@ -119,12 +119,14 @@
     size_t writtensize = mp4p_hdlr_atomdata_write(&data, buffer, bufsize);
     XCTAssertEqual (bufsize, writtensize);
 
-    mp4p_hdlr_t dataread;
-    int res = mp4p_hdlr_atomdata_read(&dataread, buffer, bufsize);
+    mp4p_hdlr_t *dataread = malloc (sizeof(mp4p_hdlr_t));
+    int res = mp4p_hdlr_atomdata_read(dataread, buffer, bufsize);
     XCTAssert(!res);
 
-    XCTAssert(!memcmp (&dataread, &data, 25));
-    XCTAssert(!memcmp (dataread.buf, data.buf, data.buf_len));
+    XCTAssert(!memcmp (dataread, &data, 25));
+    XCTAssert(!memcmp (dataread->buf, data.buf, data.buf_len));
+
+    mp4p_hdlr_atomdata_free(dataread);
 }
 
 - (void)test_smhdWriteRead_EqualOutput {
@@ -162,6 +164,33 @@
     XCTAssert(!res);
 
     XCTAssert(!memcmp (&dataread, &data, sizeof(data)));
+}
+
+- (void)test_sttsWriteRead_EqualOutput {
+    mp4p_stts_entry_t entries[3] = {
+        { .sample_count=0x19283746, .sample_duration=0x56473829 },
+        { .sample_count=0x13243546, .sample_duration=0x24354657 },
+        { .sample_count=0x08978675, .sample_duration=0x75645342 },
+    };
+    mp4p_stts_t data = {
+        .ch.version_flags = 0xaabbccdd,
+        .number_of_entries = 3,
+        .entries = entries,
+    };
+
+    size_t bufsize = mp4p_stts_atomdata_write(&data, NULL, 0);
+    uint8_t *buffer = malloc (bufsize);
+    size_t writtensize = mp4p_stts_atomdata_write(&data, buffer, bufsize);
+    XCTAssertEqual (bufsize, writtensize);
+
+    mp4p_stts_t *dataread = malloc(sizeof (mp4p_stts_t));
+    int res = mp4p_stts_atomdata_read(dataread, buffer, bufsize);
+    XCTAssert(!res);
+
+    XCTAssert(!memcmp (dataread, &data, 8));
+    XCTAssert(!memcmp (dataread->entries, data.entries, 3*8));
+
+    mp4p_stts_atomdata_free (dataread);
 }
 
 @end

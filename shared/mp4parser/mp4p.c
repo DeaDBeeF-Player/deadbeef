@@ -161,7 +161,7 @@ _read_uint64 (mp4p_file_callbacks_t *fp, uint64_t *value) {
 #define ATOM_DEF_INNER(atomname)\
     mp4p_##atomname##_t *atom_data = calloc (sizeof (mp4p_##atomname##_t), 1);\
     atom->data = atom_data;\
-    atom->free = free;\
+    atom->free = mp4p_##atomname##_atomdata_free;\
     atom->write = (mp4p_atom_data_write_func_t)mp4p_##atomname##_atomdata_write;\
     READ_ATOM_BUFFER();\
     res = mp4p_##atomname##_atomdata_read (atom_data, atombuf, atom->size-8);\
@@ -185,41 +185,6 @@ static const char *container_atoms[] = {
     "udta",
     NULL
 };
-
-static void
-_hdlr_free (void *data) {
-    mp4p_hdlr_t *hdlr = data;
-    if (hdlr->buf) {
-        free (hdlr->buf);
-    }
-    free (hdlr);
-}
-
-static uint32_t
-_hdlr_write (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
-    uint32_t init_size = buffer_size;
-    mp4p_hdlr_t *hdlr = atom->data;
-    WRITE_COMMON_HEADER();
-    WRITE_BUF(hdlr->component_type, 4);
-    WRITE_BUF(hdlr->component_subtype, 4);
-    WRITE_BUF(hdlr->component_manufacturer, 4);
-    WRITE_UINT32(hdlr->component_flags);
-    WRITE_UINT32(hdlr->component_flags_mask);
-    WRITE_UINT8(hdlr->buf_len);
-    if (hdlr->buf_len) {
-        WRITE_BUF(hdlr->buf, hdlr->buf_len);
-    }
-    return init_size - buffer_size;
-}
-
-static void
-_stts_free (void *data) {
-    mp4p_stts_t *stts = data;
-    if (stts->entries) {
-        free (stts->entries);
-    }
-    free (stts);
-}
 
 static void
 _stsc_free (void *data) {
@@ -632,6 +597,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         mp4p_stsd_t *atom_data = calloc (sizeof (mp4p_stts_t), 1);
         atom->data = atom_data;
         atom->write = (mp4p_atom_data_write_func_t)mp4p_stsd_atomdata_write;
+        atom->free = mp4p_stsd_atomdata_free;
 
         uint8_t *atombuf = malloc (sizeof (mp4p_stsd_t));
         if (fp->read(fp, atombuf, sizeof (mp4p_stsd_t)) != sizeof (mp4p_stsd_t)) {
@@ -646,23 +612,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         atom->write_data_before_subatoms = 1;
         _load_subatoms(atom, fp);
     }
-    else if (!mp4p_atom_type_compare(atom, "stts")) {
-        mp4p_stts_t *atom_data = calloc (sizeof (mp4p_stts_t), 1);
-        atom->data = atom_data;
-        atom->free = _stts_free;
-// FIXME:        atom->to_buffer = _stts_to_buffer;
-
-        READ_COMMON_HEADER();
-
-        atom_data->number_of_entries = READ_UINT32(fp);
-        if (atom_data->number_of_entries) {
-            atom_data->entries = calloc (sizeof (mp4p_stts_entry_t), atom_data->number_of_entries);
-        }
-        for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
-            atom_data->entries[i].sample_count = READ_UINT32(fp);
-            atom_data->entries[i].sample_duration = READ_UINT32(fp);
-        }
-    }
+    ATOM_DEF(stts)
     else if (!mp4p_atom_type_compare(atom, "stsc")) {
         mp4p_stsc_t *atom_data = calloc (sizeof (mp4p_stsc_t), 1);
         atom->data = atom_data;
@@ -1626,18 +1576,6 @@ mp4p_atom_dump (mp4p_atom_t *atom) {
         mp4p_atom_dump (c);
     }
     _dbg_indent -= 4;
-}
-
-void
-mp4p_hdlr_init (mp4p_atom_t *hdlr_atom, const char *type, const char *subtype, const char *manufacturer) {
-    mp4p_hdlr_t *hdlr = calloc(sizeof (mp4p_hdlr_t), 1);
-    hdlr_atom->size = 33;
-    hdlr_atom->data = hdlr;
-    hdlr_atom->free = _hdlr_free;
-    hdlr_atom->write = _hdlr_write;
-    memcpy (hdlr->component_type, type, 4);
-    memcpy (hdlr->component_subtype, subtype, 4);
-    memcpy (hdlr->component_manufacturer, manufacturer, 4);
 }
 
 uint32_t

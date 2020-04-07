@@ -9,6 +9,8 @@
 #ifndef mp4patomdata_h
 #define mp4patomdata_h
 
+struct mp4p_atom_s;
+
 typedef struct {
     uint32_t version_flags; // uint8 version and uint24 flags
 } mp4p_common_header_t;
@@ -239,35 +241,57 @@ int
 mp4p_mvhd_atomdata_read (mp4p_mvhd_t *atom_data, uint8_t *buffer, size_t buffer_size);
 size_t
 mp4p_mvhd_atomdata_write (mp4p_mvhd_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_mvhd_atomdata_free (void *atom_data);
 
 // tkhd
 int
 mp4p_tkhd_atomdata_read (mp4p_tkhd_t *atom_data, uint8_t *buffer, size_t buffer_size);
 size_t
 mp4p_tkhd_atomdata_write (mp4p_tkhd_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_tkhd_atomdata_free (void *atom_data);
 
 // mdhd
 int
 mp4p_mdhd_atomdata_read (mp4p_mdhd_t *atom_data, uint8_t *buffer, size_t buffer_size);
 size_t
 mp4p_mdhd_atomdata_write (mp4p_mdhd_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_mdhd_atomdata_free (void *atom_data);
 
 // hdlr
 int
 mp4p_hdlr_atomdata_read (mp4p_hdlr_t *atom_data, uint8_t *buffer, size_t buffer_size);
 size_t
 mp4p_hdlr_atomdata_write (mp4p_hdlr_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_hdlr_atomdata_free (void *atom_data);
+void
+mp4p_hdlr_init (struct mp4p_atom_s *hdlr_atom, const char *type, const char *subtype, const char *manufacturer);
 
 // smhd
 int
 mp4p_smhd_atomdata_read (mp4p_smhd_t *atom_data, uint8_t *buffer, size_t buffer_size);
 size_t
 mp4p_smhd_atomdata_write (mp4p_smhd_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_smhd_atomdata_free (void *atom_data);
 
 // stsd
 int
 mp4p_stsd_atomdata_read (mp4p_stsd_t *atom_data, uint8_t *buffer, size_t buffer_size);
 size_t
 mp4p_stsd_atomdata_write (mp4p_stsd_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_stsd_atomdata_free (void *atom_data);
+
+// stts
+int
+mp4p_stts_atomdata_read (mp4p_stts_t *atom_data, uint8_t *buffer, size_t buffer_size);
+size_t
+mp4p_stts_atomdata_write (mp4p_stts_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_stts_atomdata_free (void *data);
 
 #endif /* mp4patomdata_h */
