@@ -6,7 +6,8 @@
 #include "mp4patomdata.h"
 
 
-typedef size_t (*mp4p_atom_data_writer_t) (void *atom, uint8_t *buffer, uint32_t buffer_size);
+typedef size_t (*mp4p_atom_data_write_func_t) (void *atom_data, uint8_t *buffer, uint32_t buffer_size);
+typedef void (*mp4p_atom_data_free_func_t) (void *atom_data);
 
 typedef struct mp4p_atom_s {
     uint64_t pos;
@@ -16,13 +17,14 @@ typedef struct mp4p_atom_s {
     struct mp4p_atom_s *subatoms;
     struct mp4p_atom_s *next;
 
-    void (*free) (void *data);
+    /// If `free` is not null, if will be called with the `data` passed as argument, to free the data
+    mp4p_atom_data_free_func_t free;
 
-    // if to_buffer is null, data must point to a plain buffer of size-8 bytes, that can be saved directly
-    mp4p_atom_data_writer_t write;
+    /// If `write` is null, data must point to a plain buffer of size-8 bytes, that can be saved directly
+    mp4p_atom_data_write_func_t write;
 
-    // Special case for `meta` atom, which has both the common header and subatoms.
-    // For this case, the version_flags is stored in data, and is written before subatoms.
+    /// Special case for `meta` atom, which has both the common header and subatoms.
+    /// For this case, the version_flags is stored in data, and is written before subatoms.
     unsigned write_data_before_subatoms : 1;
 } mp4p_atom_t;
 

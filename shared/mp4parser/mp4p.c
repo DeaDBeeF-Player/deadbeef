@@ -162,7 +162,7 @@ _read_uint64 (mp4p_file_callbacks_t *fp, uint64_t *value) {
     mp4p_##atomname##_t *atom_data = calloc (sizeof (mp4p_##atomname##_t), 1);\
     atom->data = atom_data;\
     atom->free = free;\
-    atom->write = (mp4p_atom_data_writer_t)mp4p_##atomname##_atomdata_write;\
+    atom->write = (mp4p_atom_data_write_func_t)mp4p_##atomname##_atomdata_write;\
     READ_ATOM_BUFFER();\
     res = mp4p_##atomname##_atomdata_read (atom_data, atombuf, atom->size-8);\
     FREE_ATOM_BUFFER();
@@ -631,7 +631,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     else if (!mp4p_atom_type_compare(atom, "stsd")) {
         mp4p_stsd_t *atom_data = calloc (sizeof (mp4p_stts_t), 1);
         atom->data = atom_data;
-        atom->write = (mp4p_atom_data_writer_t)mp4p_stsd_atomdata_write;
+        atom->write = (mp4p_atom_data_write_func_t)mp4p_stsd_atomdata_write;
 
         uint8_t *atombuf = malloc (sizeof (mp4p_stsd_t));
         if (fp->read(fp, atombuf, sizeof (mp4p_stsd_t)) != sizeof (mp4p_stsd_t)) {
