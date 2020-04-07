@@ -528,7 +528,7 @@ static int
 portaudio_callback (const void *in, void *out, unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *uData ) {
     if (!deadbeef->streamer_ok_to_read (-1)) {
         trace ("portaudio_callback [%d]: wait\n",P_UDATA(uData).num);
-        usleep (20000);
+        usleep (10000);
     }
     if (P_UDATA(uData).i == LOOP_CLOSE) {
         portaudio_tid = deadbeef->thread_start (portaudio_thread, NULL);
@@ -548,7 +548,15 @@ portaudio_callback (const void *in, void *out, unsigned long framesPerBuffer, co
         memset (out, 0, framesPerBuffer * P_UDATA(uData).framesize);
         return paComplete;
     }
-    deadbeef->streamer_read (out, framesPerBuffer * P_UDATA(uData).framesize);
+    int str_read_ret = deadbeef->streamer_read (out, framesPerBuffer * P_UDATA(uData).framesize);
+
+    // check for underflow
+    if (str_read_ret < framesPerBuffer * P_UDATA(uData).framesize) {
+        //statusFlags = paOutputUnderflow;
+        // trim data that was not written
+        trace ("portaudio_callback [%d]: got %d frames instead of %d\n",P_UDATA(uData).num, str_read_ret/framesPerBuffer, P_UDATA(uData).framesize);
+        memset (out+str_read_ret, 0, framesPerBuffer * P_UDATA(uData).framesize - str_read_ret);
+    }
     // check if we are supposed to play this audio data
     if (P_UDATA(uData).abort == STREAM_COMPLETE) {
         trace ("portaudio_callback [%d]: slowly aborting stream\n",P_UDATA(uData).num);
@@ -629,12 +637,14 @@ static DB_output_t plugin = {
     .plugin.api_vmajor = 1,
     .plugin.api_vminor = 10,
     .plugin.version_major = 1,
-    .plugin.version_minor = 5,
+    .plugin.version_minor = 6,
     .plugin.type = DB_PLUGIN_OUTPUT,
     .plugin.id = "portaudio",
     .plugin.name = "PortAudio output plugin",
     .plugin.descr = "This plugin plays audio using PortAudio library.\n"
     "\n"
+    "Changes in version 1.6:\n"
+    "    * Fixed ending of stream when option 'Stop after current track/album' is used.\n"
     "Changes in version 1.5:\n"
     "    * Fixed issues when resuming previous session.\n"
     "Changes in version 1.4:\n"
