@@ -187,15 +187,6 @@ static const char *container_atoms[] = {
 };
 
 static void
-_stsz_free (void *data) {
-    mp4p_stsz_t *stsz = data;
-    if (stsz->entries) {
-        free (stsz->entries);
-    }
-    free (stsz);
-}
-
-static void
 _stco_free (void *data) {
     mp4p_stco_t *stco = data;
     if (stco->entries) {
@@ -605,23 +596,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     }
     ATOM_DEF(stts)
     ATOM_DEF(stsc)
-    else if (!mp4p_atom_type_compare(atom, "stsz")) {
-        mp4p_stsz_t *atom_data = calloc (sizeof (mp4p_stsz_t), 1);
-        atom->data = atom_data;
-        atom->free = _stsz_free;
-// FIXME:        atom->to_buffer = _stsz_to_buffer;
-
-        READ_COMMON_HEADER();
-
-        atom_data->sample_size = READ_UINT32(fp);
-        atom_data->number_of_entries = READ_UINT32(fp);
-        if (atom_data->number_of_entries) {
-            atom_data->entries = calloc (sizeof (mp4p_stsz_entry_t), atom_data->number_of_entries);
-        }
-        for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
-            atom_data->entries[i].sample_size = READ_UINT32(fp);
-        }
-    }
+    ATOM_DEF(stsz)
     else if (!mp4p_atom_type_compare(atom, "stco")) {
         mp4p_stco_t *atom_data = calloc (sizeof (mp4p_stco_t), 1);
         atom->data = atom_data;

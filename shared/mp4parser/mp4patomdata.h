@@ -301,4 +301,12 @@ mp4p_stsc_atomdata_write (mp4p_stsc_t *atom_data, uint8_t *buffer, size_t buffer
 void
 mp4p_stsc_atomdata_free (void *data);
 
+// stsz
+int
+mp4p_stsz_atomdata_read (mp4p_stsz_t *atom_data, uint8_t *buffer, size_t buffer_size);
+size_t
+mp4p_stsz_atomdata_write (mp4p_stsz_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_stsz_atomdata_free (void *data);
+
 #endif /* mp4patomdata_h */

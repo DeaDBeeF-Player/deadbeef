@@ -408,3 +408,48 @@ mp4p_stsc_atomdata_free (void *data) {
     free (stsc);
 }
 
+#pragma mark stsz
+
+int
+mp4p_stsz_atomdata_read (mp4p_stsz_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    READ_COMMON_HEADER();
+
+    atom_data->sample_size = READ_UINT32();
+    atom_data->number_of_entries = READ_UINT32();
+    if (atom_data->number_of_entries) {
+        atom_data->entries = calloc (sizeof (mp4p_stsz_entry_t), atom_data->number_of_entries);
+    }
+    for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
+        atom_data->entries[i].sample_size = READ_UINT32();
+    }
+
+    return 0;
+}
+
+size_t
+mp4p_stsz_atomdata_write (mp4p_stsz_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return 12 + atom_data->number_of_entries * 4;
+    }
+    uint8_t *origin = buffer;
+    WRITE_COMMON_HEADER();
+
+    WRITE_UINT32(atom_data->sample_size);
+    WRITE_UINT32(atom_data->number_of_entries);
+    for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
+        WRITE_UINT32(atom_data->entries[i].sample_size);
+    }
+
+
+    return buffer - origin;
+}
+
+void
+mp4p_stsz_atomdata_free (void *data) {
+    mp4p_stsz_t *stsz = data;
+    if (stsz->entries) {
+        free (stsz->entries);
+    }
+    free (stsz);
+}
+
