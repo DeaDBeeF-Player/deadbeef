@@ -1231,10 +1231,6 @@ local_image_file (const char *cache_path, const char *local_path, const char *ur
     if (!artwork_filemask) {
         return -1;
     }
-    #ifdef __MINGW32__
-    // TODO mask not working properly, picks flac file.
-    return -1;
-    #endif
     trace ("scanning %s for artwork\n", local_path);
     char filemask[strlen (artwork_filemask)+1];
     strcpy (filemask, artwork_filemask);
