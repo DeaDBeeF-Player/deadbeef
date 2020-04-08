@@ -35,9 +35,7 @@ int scandir (const char      *dirname_o,
 
     // setting arg cchWideChar to zero will return the length in codepoints, and
     // it also includes str terminator in the length
-    int utf16_points = MultiByteToWideChar (
-        CP_UTF8, MB_ERR_INVALID_CHARS, dirname_o, -1, NULL, 0
-    );
+    int utf16_points = MultiByteToWideChar (CP_UTF8, MB_ERR_INVALID_CHARS, dirname_o, -1, NULL, 0);
     if (utf16_points < 1) {
         set_convert_errno (void);
         return -1;
@@ -46,9 +44,7 @@ int scandir (const char      *dirname_o,
     // Add 4 for enough room for '\*.*'
     wchar_t dir_wide[utf16_points + 4];
     memset (dir_wide, 0, sizeof(wchar_t) * (utf16_points + 4));
-    int ret = MultiByteToWideChar (
-        CP_UTF8, MB_ERR_INVALID_CHARS, dirname_o, -1, dir_wide, utf16_points
-    );
+    int ret = MultiByteToWideChar (CP_UTF8, MB_ERR_INVALID_CHARS, dirname_o, -1, dir_wide, utf16_points);
     if (ret < 1) {
         // I don't see how this could fail if the first call succeeded, but check anyways.
         set_convert_errno (void);
@@ -86,18 +82,12 @@ int scandir (const char      *dirname_o,
     do {
         wchar_t* name = fData.cFileName;
         // Skip the special file names `.` and `..`
-        if (
-            name[0] == '.' &&
-            (name[1] == 0 || (name[1] == '.' && name[2] == 0))
-        ) {
+        if (name[0] == '.' && (name[1] == 0 || (name[1] == '.' && name[2] == 0))) {
             continue;
         }
         struct dirent tDir = { 0 };
         // cchWideChar can be -1 for null terminated
-        int ret = WideCharToMultiByte (
-            CP_UTF8, WC_ERR_INVALID_CHARS, name, -1,
-            tDir.d_name, sizeof(tDir.d_name) - 1, NULL, NULL
-        );
+        int ret = WideCharToMultiByte (CP_UTF8, WC_ERR_INVALID_CHARS, name, -1, tDir.d_name, sizeof(tDir.d_name) - 1, NULL, NULL);
         // Encoding conversion for the unicode string failed
         if (ret < 1) {
             free_namelist (names, count);
@@ -140,10 +130,7 @@ int scandir (const char      *dirname_o,
 
     // Now sort if we have a comparison callback
     if (cmp != NULL) {
-        qsort (
-            names, count, sizeof(struct dirent*),
-            (int (*)(const void*, const void*))cmp
-        );
+        qsort (names, count, sizeof(struct dirent*), (int (*)(const void*, const void*))cmp);
     }
     if (namelist_to) {
         *namelist_to = names;
