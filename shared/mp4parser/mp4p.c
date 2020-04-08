@@ -829,7 +829,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         // validate position
         off_t offs = fp->tell (fp);
         if (offs != atom->pos + atom->size) {
-            res = -1;
+//            res = -1;
         }
     }
 
