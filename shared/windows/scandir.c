@@ -9,9 +9,7 @@ static void set_convert_errno (void) {
     // Is there like a debug assert instead in this project?
     /*if (GetLastError() != ERROR_NO_UNICODE_TRANSLATION) {
         // Sad days =(
-        trace_err(
-            "The scandir implementation is using a bad argument for encoding conversion!\n"
-        );
+        trace_err ("The scandir implementation is using a bad argument for encoding conversion!\n");
     }*/
     _set_errno (EILSEQ);
 }
@@ -69,7 +67,8 @@ int scandir (const char      *dirname_o,
     if (hFind == INVALID_HANDLE_VALUE) {
         if (GetLastError () == ERROR_FILE_NOT_FOUND) {
             _set_errno (ENOENT);
-        } else {
+        }
+        else {
             _set_errno (EACCES);
         }
         return -1;
