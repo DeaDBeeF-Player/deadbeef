@@ -882,7 +882,7 @@ esc_char (char c) {
         return '\\';
     }
 #else
-    if (c == '\\') {
+    if (c == '/' || c == ':') {
         return '_';
     }
 #endif
