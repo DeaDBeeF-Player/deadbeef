@@ -37,7 +37,7 @@ int scandir (const char      *dirname_o,
     // it also includes str terminator in the length
     int utf16_points = MultiByteToWideChar (CP_UTF8, MB_ERR_INVALID_CHARS, dirname_o, -1, NULL, 0);
     if (utf16_points < 1) {
-        set_convert_errno (void);
+        set_convert_errno ();
         return -1;
     }
 
@@ -47,7 +47,7 @@ int scandir (const char      *dirname_o,
     int ret = MultiByteToWideChar (CP_UTF8, MB_ERR_INVALID_CHARS, dirname_o, -1, dir_wide, utf16_points);
     if (ret < 1) {
         // I don't see how this could fail if the first call succeeded, but check anyways.
-        set_convert_errno (void);
+        set_convert_errno ();
         return -1;
     }
 
@@ -91,7 +91,7 @@ int scandir (const char      *dirname_o,
         // Encoding conversion for the unicode string failed
         if (ret < 1) {
             free_namelist (names, count);
-            set_convert_errno (void);
+            set_convert_errno ();
             FindClose (hFind); // Don't forget to close
             return -1;
         }
