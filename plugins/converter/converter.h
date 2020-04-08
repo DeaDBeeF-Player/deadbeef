@@ -26,8 +26,6 @@
 #include <stdint.h>
 #include "../../deadbeef.h"
 
-// changes in 2.0:
-//   new API for specifying encoder/dsp presets
 // changes in 1.5:
 //   added mp4 tagging support
 //   added converter option to copy files without conversion, if file format isn't changing

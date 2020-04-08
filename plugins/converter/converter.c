@@ -1556,8 +1556,8 @@ converter_stop (void) {
 static ddb_converter_t plugin = {
     .misc.plugin.api_vmajor = DB_API_VERSION_MAJOR,
     .misc.plugin.api_vminor = DB_API_VERSION_MINOR,
-    .misc.plugin.version_major = 2,
-    .misc.plugin.version_minor = 0,
+    .misc.plugin.version_major = 1,
+    .misc.plugin.version_minor = 5,
     .misc.plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.name = "Converter",
