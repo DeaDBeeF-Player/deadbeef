@@ -5,7 +5,7 @@
 
 //#include "common.h" // for trace_err()
 
-static void set_convert_errno() {
+static void set_convert_errno (void) {
     // Is there like a debug assert instead in this project?
     /*if (GetLastError() != ERROR_NO_UNICODE_TRANSLATION) {
         // Sad days =(
@@ -13,14 +13,14 @@ static void set_convert_errno() {
             "The scandir implementation is using a bad argument for encoding conversion!\n"
         );
     }*/
-    _set_errno(EILSEQ);
+    _set_errno (EILSEQ);
 }
 
-static void free_namelist(struct dirent **names, int count) {
+static void free_namelist (struct dirent **names, int count) {
     for (int i = 0; i < count; i++) {
-        free(names[i]);
+        free (names[i]);
     }
-    free(names);
+    free (names);
 }
 
 int scandir (const char      *dirname_o,
@@ -35,23 +35,23 @@ int scandir (const char      *dirname_o,
 
     // setting arg cchWideChar to zero will return the length in codepoints, and
     // it also includes str terminator in the length
-    int utf16_points = MultiByteToWideChar(
+    int utf16_points = MultiByteToWideChar (
         CP_UTF8, MB_ERR_INVALID_CHARS, dirname_o, -1, NULL, 0
     );
     if (utf16_points < 1) {
-        set_convert_errno();
+        set_convert_errno (void);
         return -1;
     }
 
     // Add 4 for enough room for '\*.*'
     wchar_t dir_wide[utf16_points + 4];
-    memset(dir_wide, 0, sizeof(wchar_t) * (utf16_points + 4));
-    int ret = MultiByteToWideChar(
+    memset (dir_wide, 0, sizeof(wchar_t) * (utf16_points + 4));
+    int ret = MultiByteToWideChar (
         CP_UTF8, MB_ERR_INVALID_CHARS, dirname_o, -1, dir_wide, utf16_points
     );
     if (ret < 1) {
         // I don't see how this could fail if the first call succeeded, but check anyways.
-        set_convert_errno();
+        set_convert_errno (void);
         return -1;
     }
 
@@ -69,12 +69,12 @@ int scandir (const char      *dirname_o,
     dir_wide[utf16_points + 2] = '*';
 
     WIN32_FIND_DATAW fData = { 0 };
-    HANDLE           hFind = FindFirstFileW(dir_wide, &fData);
+    HANDLE           hFind = FindFirstFileW (dir_wide, &fData);
     if (hFind == INVALID_HANDLE_VALUE) {
-        if (GetLastError() == ERROR_FILE_NOT_FOUND) {
-            _set_errno(ENOENT);
+        if (GetLastError () == ERROR_FILE_NOT_FOUND) {
+            _set_errno (ENOENT);
         } else {
-            _set_errno(EACCES);
+            _set_errno (EACCES);
         }
         return -1;
     }
@@ -94,40 +94,40 @@ int scandir (const char      *dirname_o,
         }
         struct dirent tDir = { 0 };
         // cchWideChar can be -1 for null terminated
-        int ret = WideCharToMultiByte(
+        int ret = WideCharToMultiByte (
             CP_UTF8, WC_ERR_INVALID_CHARS, name, -1,
             tDir.d_name, sizeof(tDir.d_name) - 1, NULL, NULL
         );
         // Encoding conversion for the unicode string failed
         if (ret < 1) {
-            free_namelist(names, count);
-            set_convert_errno();
-            FindClose(hFind); // Don't forget to close
+            free_namelist (names, count);
+            set_convert_errno (void);
+            FindClose (hFind); // Don't forget to close
             return -1;
         }
-        if (selector && selector(&tDir)) {
+        if (selector && selector (&tDir)) {
             continue;
         }
         //MessageBox(0, tDir.d_name, "Variable", 0);
 
-        struct dirent* cDir = malloc(sizeof(struct dirent));
+        struct dirent* cDir = malloc (sizeof(struct dirent));
         if (cDir == NULL) {
             // Free before setting errno since it can set errno
-            free_namelist(names, count);
-            _set_errno(ENOMEM);
-            FindClose(hFind);
+            free_namelist (names, count);
+            _set_errno (ENOMEM);
+            FindClose (hFind);
             return -1;
         }
-        memcpy(cDir, &tDir, sizeof(struct dirent));
+        memcpy (cDir, &tDir, sizeof(struct dirent));
 
         // Check we have room
         if (count == capacity) {
             capacity = capacity == 0 ? 16 : capacity << 1;
-            struct dirent** new = realloc(names, capacity * sizeof(struct dirent*));
+            struct dirent** new = realloc (names, capacity * sizeof(struct dirent*));
             if (new == NULL) {
-                free(cDir);
-                free_namelist(names, count);
-                _set_errno(ENOMEM);
+                free (cDir);
+                free_namelist (names, count);
+                _set_errno (ENOMEM);
                 FindClose(hFind);
                 return -1;
             }
@@ -135,12 +135,12 @@ int scandir (const char      *dirname_o,
         }
         names[count] = cDir;
         count++;
-    } while (FindNextFileW(hFind, &fData));
-    FindClose(hFind);
+    } while (FindNextFileW (hFind, &fData));
+    FindClose (hFind);
 
     // Now sort if we have a comparison callback
     if (cmp != NULL) {
-        qsort(
+        qsort (
             names, count, sizeof(struct dirent*),
             (int (*)(const void*, const void*))cmp
         );
@@ -148,6 +148,6 @@ int scandir (const char      *dirname_o,
     if (namelist_to) {
         *namelist_to = names;
     }
-    _set_errno(sErr);
+    _set_errno (sErr);
     return count;
 }
