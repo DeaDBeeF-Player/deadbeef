@@ -539,6 +539,15 @@ _adjust_varstring_len (char *buf, uint8_t len) {
     return len;
 }
 
+uint32_t
+mp4p_atom_subatom_count (mp4p_atom_t *atom) {
+    uint32_t count = 0;
+    for (mp4p_atom_t *subatom = atom->subatoms; subatom; subatom = subatom->next) {
+        count++;
+    }
+    return count;
+}
+
 // The function may return -1 on parser failures,
 // but this should not be considered a critical failure.
 int
@@ -579,28 +588,55 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
             goto error;
         }
 
-        mp4p_stsd_atomdata_read(atom_data, atombuf, sizeof (mp4p_stsd_t));
+        res = mp4p_stsd_atomdata_read(atom_data, atombuf, sizeof (mp4p_stsd_t));
 
         free (atombuf);
 
-        atom->write_data_before_subatoms = 1;
-        _load_subatoms(atom, fp);
+        if (!res) {
+            atom->write_data_before_subatoms = 1;
+            res = _load_subatoms(atom, fp);
+
+            uint32_t count = mp4p_atom_subatom_count (atom);
+
+            // correct for count mismatch
+            if (atom_data->number_of_entries != count) {
+                atom_data->number_of_entries = count;
+            }
+        }
     }
     ATOM_DEF(stts)
     ATOM_DEF(stsc)
     ATOM_DEF(stsz)
     ATOM_DEF(stco)
     ATOM_DEF(co64)
+    // NOTE: stsd atom is special, since it contains data + subatoms, so need to be processed manually
     else if (!mp4p_atom_type_compare(atom, "dref")) {
         mp4p_dref_t *atom_data = calloc (sizeof (mp4p_dref_t), 1);
         atom->data = atom_data;
+        atom->write = (mp4p_atom_data_write_func_t)mp4p_dref_atomdata_write;
         atom->free = free;
-// FIXME:        atom->to_buffer = _dref_to_buffer;
 
-        READ_COMMON_HEADER();
+        uint8_t *atombuf = malloc (sizeof (mp4p_dref_t));
+        if (fp->read(fp, atombuf, sizeof (mp4p_dref_t)) != sizeof (mp4p_dref_t)) {
+            res = -1;
+            goto error;
+        }
 
-        atom_data->number_of_entries = READ_UINT32(fp);
-        _load_subatoms(atom, fp);
+        res = mp4p_dref_atomdata_read(atom_data, atombuf, sizeof (mp4p_dref_t));
+
+        free (atombuf);
+
+        if (!res) {
+            atom->write_data_before_subatoms = 1;
+            res = _load_subatoms(atom, fp);
+
+            uint32_t count = mp4p_atom_subatom_count (atom);
+
+            // correct for count mismatch
+            if (atom_data->number_of_entries != count) {
+                atom_data->number_of_entries = count;
+            }
+        }
     }
     else if (!mp4p_atom_type_compare(atom, "tref")) {
         _load_subatoms(atom, fp);

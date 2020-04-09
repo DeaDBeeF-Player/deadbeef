@@ -326,4 +326,12 @@ mp4p_co64_atomdata_write (mp4p_co64_t *atom_data, uint8_t *buffer, size_t buffer
 void
 mp4p_co64_atomdata_free (void *data);
 
+// dref
+int
+mp4p_dref_atomdata_read (mp4p_dref_t *atom_data, uint8_t *buffer, size_t buffer_size);
+size_t
+mp4p_dref_atomdata_write (mp4p_dref_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_dref_atomdata_free (void *data);
+
 #endif /* mp4patomdata_h */

@@ -302,5 +302,23 @@
     mp4p_co64_atomdata_free (dataread);
 }
 
+- (void)test_drefWriteRead_EqualOutput {
+    mp4p_dref_t data = {
+        .ch.version_flags = 0xaabbccdd,
+        .number_of_entries = 0x19287564,
+    };
+
+    size_t bufsize = mp4p_dref_atomdata_write(&data, NULL, 0);
+    uint8_t *buffer = malloc (bufsize);
+    size_t writtensize = mp4p_dref_atomdata_write(&data, buffer, bufsize);
+    XCTAssertEqual (bufsize, writtensize);
+
+    mp4p_dref_t dataread;
+    int res = mp4p_dref_atomdata_read(&dataread, buffer, bufsize);
+    XCTAssert(!res);
+
+    XCTAssert(!memcmp (&dataread, &data, sizeof(data)));
+}
+
 
 @end

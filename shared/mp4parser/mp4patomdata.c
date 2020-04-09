@@ -536,3 +536,33 @@ mp4p_co64_atomdata_free (void *data) {
     }
     free (co64);
 }
+
+#pragma mark dref
+
+int
+mp4p_dref_atomdata_read (mp4p_dref_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    READ_COMMON_HEADER();
+
+    atom_data->number_of_entries = READ_UINT32();
+
+    return 0;
+}
+
+size_t
+mp4p_dref_atomdata_write (mp4p_dref_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return 8;
+    }
+    uint8_t *origin = buffer;
+    WRITE_COMMON_HEADER();
+
+    WRITE_UINT32(atom_data->number_of_entries);
+
+    return buffer - origin;
+}
+
+void
+mp4p_dref_atomdata_free (void *data) {
+    mp4p_dref_t *dref = data;
+    free (dref);
+}

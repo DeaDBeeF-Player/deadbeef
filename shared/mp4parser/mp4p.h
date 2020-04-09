@@ -75,6 +75,9 @@ mp4p_atom_new (const char *type);
 mp4p_atom_t *
 mp4p_atom_clone (mp4p_atom_t *src);
 
+uint32_t
+mp4p_atom_subatom_count (mp4p_atom_t *atom);
+
 void
 mp4p_atom_update_size (mp4p_atom_t *atom);
 
