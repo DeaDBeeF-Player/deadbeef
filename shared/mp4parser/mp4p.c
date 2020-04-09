@@ -192,8 +192,8 @@ _read_uint64 (mp4p_file_callbacks_t *fp, uint64_t *value) {
     }\
 }
 
-// Known container atoms, which can contain known sub-atoms.
-// Uknown atoms will be loaded as opaque blobs, even if they're technically containers.
+/// Known container atoms, which can contain known sub-atoms.
+/// Uknown atoms will be loaded as opaque blobs, even if they're technically containers.
 static const char *container_atoms[] = {
     "moov",
     "trak",
@@ -207,193 +207,7 @@ static const char *container_atoms[] = {
     NULL
 };
 
-static void
-_meta_free (void *data) {
-    mp4p_ilst_meta_t *meta = data;
-    if (meta->name) {
-        free (meta->name);
-    }
-    if (meta->values) {
-        free (meta->values);
-    }
-    if (meta->text) {
-        free (meta->text);
-    }
-    free (meta);
-}
-
-static void
-_esds_free (void *data) {
-    mp4p_esds_t *esds = data;
-    if (esds->asc) {
-        free (esds->asc);
-    }
-    free (esds);
-}
-
-static uint32_t
-_ilst_meta_write (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
-    uint32_t init_size = buffer_size;
-    mp4p_ilst_meta_t *meta = atom->data;
-
-    // mean + name
-    if (meta->name) {
-        uint32_t mean_size = 28;
-        WRITE_UINT32(mean_size);
-        WRITE_BUF("mean", 4);
-        WRITE_UINT32(0);
-        WRITE_BUF("com.apple.iTunes", 16);
-
-        uint32_t name_size = 12 + (uint32_t)strlen(meta->name);
-        WRITE_UINT32(name_size);
-        WRITE_BUF("name", 4);
-        WRITE_UINT32(0);
-        WRITE_BUF(meta->name, (uint32_t)strlen(meta->name));
-    }
-    // data atom
-    if (meta->text || meta->values) {
-        uint32_t data_atom_size = meta->data_size+16;
-        WRITE_UINT32(data_atom_size);
-        WRITE_BUF("data", 4);
-        WRITE_UINT32(meta->ch.version_flags);
-        WRITE_UINT32(0);
-    }
-    if (meta->text) {
-        WRITE_BUF(meta->text,meta->data_size);
-    }
-    else if (meta->values) {
-        for (int i = 0; i < meta->data_size/2; i++) {
-            WRITE_UINT16(meta->values[i]);
-        }
-    }
-    return init_size - buffer_size;
-}
-
-
 #define COPYRIGHT_SYM "\xa9"
-
-static int
-_load_custom_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
-    mp4p_ilst_meta_t *atom_data = atom->data;
-    uint32_t mean_size = READ_UINT32(fp);
-    if (mean_size < 12) {
-        return -1;
-    }
-    mean_size -= 12;
-
-    char mean_type[4];
-    READ_BUF(fp, mean_type, 4);
-    if (strncasecmp (mean_type, "mean", 4)) {
-        return -1;
-    }
-    READ_COMMON_HEADER();
-    char *mean_data = malloc (mean_size + 1);
-    READ_BUF(fp, mean_data, mean_size);
-    mean_data[mean_size] = 0;
-    if (strncasecmp (mean_data, "com.apple.iTunes", 16)) {
-        return -1;
-    }
-
-    uint32_t name_size = READ_UINT32(fp);
-    if (name_size < 12) {
-        return -1;
-    }
-    name_size -= 12;
-
-    char name_type[4];
-    READ_BUF(fp, name_type, 4);
-    if (strncasecmp (name_type, "name", 4)) {
-        return -1;
-    }
-
-    READ_COMMON_HEADER();
-
-    atom_data->name = malloc (name_size + 1);
-    READ_BUF(fp, atom_data->name, name_size);
-    atom_data->name[name_size] = 0;
-
-    uint32_t data_size = READ_UINT32(fp);
-    if (data_size < 12) {
-        return -1;
-    }
-    data_size -= 12;
-    char data_type[4];
-    READ_BUF(fp, data_type, 4);
-    if (strncasecmp (data_type, "data", 4)) {
-        return -1;
-    }
-
-    READ_COMMON_HEADER();
-
-    READ_UINT32(fp);
-
-    atom_data->data_size = data_size;
-    atom_data->text = malloc (data_size+1);
-    READ_BUF(fp, atom_data->text, data_size);
-    atom_data->text[data_size] = 0;
-
-    return 0;
-}
-
-static int
-_load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
-    mp4p_ilst_meta_t *atom_data = calloc (sizeof (mp4p_ilst_meta_t), 1);
-    atom->data = atom_data;
-    atom->free = _meta_free;
-
-    if (!memcmp (atom->type, "----", 4)) {
-        return _load_custom_metadata_atom (atom, fp);
-    }
-
-    uint32_t size = READ_UINT32(fp);
-    if (size < 12) {
-        return -1;
-    }
-    char data[4];
-    READ_BUF(fp, data, 4);
-    if (strncasecmp (data, "data", 4)) {
-        return -1;
-    }
-    atom->write = _ilst_meta_write;
-    READ_COMMON_HEADER(); // FIXME: version_flags go into wrong atom
-
-    READ_UINT32(fp); // FIXME: ignored value
-
-    atom_data->data_size = size - 16;
-
-    atom_data->data_offset = fp->tell (fp);
-
-    uint32_t flag = atom_data->ch.version_flags & 0xff;
-
-    if (flag == 0) {
-        atom_data->values = calloc (atom_data->data_size / 2, sizeof (uint16_t));
-        for (int i = 0; i < atom_data->data_size/2; i++) {
-            atom_data->values[i] = READ_UINT16(fp);
-        }
-    }
-    else if (flag == 1) {
-        if (atom_data->data_size > 255 && strncasecmp (atom->type, COPYRIGHT_SYM "lyr", 4)) {
-            return -1;
-        }
-        atom_data->text = calloc (atom_data->data_size+1, 1);
-        READ_BUF(fp, atom_data->text, atom_data->data_size);
-        atom_data->text[atom_data->data_size] = 0;
-
-//        printf ("%s\n", meta->text);
-    }
-    else {
-        // opaque metadata
-        _meta_free (atom_data);
-        atom->data = NULL;
-        atom->free = NULL;
-        fp->seek(fp, atom->pos + 8, SEEK_SET);
-        atom->data = malloc (atom->size - 8);
-        READ_BUF(fp, atom->data, atom->size - 8);
-        return 0;
-    }
-
-    return 0;
-}
 
 int
 mp4p_atom_type_invalid (mp4p_atom_t *atom) {
@@ -424,8 +238,8 @@ mp4p_atom_subatom_count (mp4p_atom_t *atom) {
     return count;
 }
 
-// The function may return -1 on parser failures,
-// but this should not be considered a critical failure.
+/// @return The function may return -1 on parser failures,
+/// but this should not be considered a critical failure.
 int
 mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     int res = 0;
@@ -447,8 +261,27 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         READ_BUF(fp, mtyp, atom->size-8);
     }
     else if (parent_atom && !mp4p_atom_type_compare(parent_atom, "ilst")) {
-        // FIXME:        atom->to_buffer = _meta_to_buffer;
-        res = _load_metadata_atom (atom, fp);
+        mp4p_ilst_meta_t *atom_data = calloc (1, sizeof (mp4p_ilst_meta_t));
+        // custom fields contain extra "mean" and "name" subatoms
+        if (!mp4p_atom_type_compare(atom, "----")) {
+            atom_data->custom = 1;
+        }
+        atom->data = atom_data;
+        atom->write = (mp4p_atom_data_write_func_t)mp4p_ilst_meta_atomdata_write;
+        atom->free = mp4p_ilst_meta_atomdata_free;
+        READ_ATOM_BUFFER(atom->size - 8);
+        res = mp4p_ilst_meta_atomdata_read (atom_data, atombuf, atom->size - 8);
+        if (res < 0) {
+            // unknown? load as opaque
+            mp4p_ilst_meta_atomdata_free (atom->data);
+            atom->write = NULL;
+            atom->free = NULL;
+            atom->data = atombuf;
+            res = 0;
+        }
+        else {
+            FREE_ATOM_BUFFER();
+        }
     }
     ATOM_DEF(mvhd)
     ATOM_DEF(tkhd)
@@ -940,8 +773,8 @@ mp4p_ilst_append_custom (mp4p_atom_t *ilst_atom, const char *name, const char *t
     mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
     mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
     atom->data = meta;
-    atom->free = _meta_free;
-    atom->write = _ilst_meta_write;
+    atom->free = mp4p_ilst_meta_atomdata_free;
+    atom->write = (mp4p_atom_data_write_func_t)mp4p_ilst_meta_atomdata_write;
 
     memcpy (atom->type, "----", 4);
     atom->size = 8;
@@ -949,6 +782,7 @@ mp4p_ilst_append_custom (mp4p_atom_t *ilst_atom, const char *name, const char *t
     atom->size += 12 + (uint32_t)strlen(name); // name
     atom->size += 16 + (uint32_t)strlen(text); // data
     meta->name = strdup (name);
+    meta->data_version_flags = 1;
     meta->text = strdup (text);
     meta->data_size = (uint32_t)strlen(text);
     return mp4p_atom_append (ilst_atom, atom);
@@ -959,14 +793,14 @@ mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text) {
     mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
     mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
     atom->data = meta;
-    atom->free = _meta_free;
-    atom->write = _ilst_meta_write;
+    atom->free = mp4p_ilst_meta_atomdata_free;
+    atom->write = (mp4p_atom_data_write_func_t)mp4p_ilst_meta_atomdata_write;
 
     uint16_t genre_id = mp4p_genre_index_for_name (text);
     if (genre_id) {
         memcpy (atom->type, "gnre", 4);
         atom->size = 24+2;
-        meta->ch.version_flags = 0;
+        meta->data_version_flags = 0;
         meta->values = malloc (2);
         meta->values[0] = genre_id;
         meta->data_size = 2;
@@ -974,7 +808,7 @@ mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text) {
     else {
         memcpy (atom->type, COPYRIGHT_SYM "gen", 4);
         atom->size = 24 + (uint32_t)strlen(text);
-        meta->ch.version_flags = 1;
+        meta->data_version_flags = 1;
         meta->text = strdup (text);
         meta->data_size = (uint32_t)strlen(text);
     }
@@ -986,12 +820,12 @@ mp4p_ilst_append_track_disc (mp4p_atom_t *ilst_atom, const char *type, uint16_t 
     mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
     mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
     atom->data = meta;
-    atom->free = _meta_free;
-    atom->write = _ilst_meta_write;
+    atom->free = mp4p_ilst_meta_atomdata_free;
+    atom->write = (mp4p_atom_data_write_func_t)mp4p_ilst_meta_atomdata_write;
     atom->size = 24+6;
 
     memcpy (atom->type, type, 4);
-    meta->ch.version_flags = 0;
+    meta->data_version_flags = 0;
     meta->values = malloc (6);
     meta->data_size = 6;
     meta->values[0] = 0;
@@ -1001,18 +835,24 @@ mp4p_ilst_append_track_disc (mp4p_atom_t *ilst_atom, const char *type, uint16_t 
 }
 
 mp4p_atom_t *
-mp4p_ilst_append_text (mp4p_atom_t *ilst_atom, const char *type, const char *text) {
+mp4p_ilst_meta_create_text (const char *text, const char *type) {
     mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
     mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
     atom->data = meta;
-    atom->free = _meta_free;
-    atom->write = _ilst_meta_write;
+    atom->free = mp4p_ilst_meta_atomdata_free;
+    atom->write = (mp4p_atom_data_write_func_t)mp4p_ilst_meta_atomdata_write;
     meta->data_size = (uint32_t)strlen(text);
     atom->size = 24+meta->data_size;
 
     memcpy (atom->type, type, 4);
-    meta->ch.version_flags = 1;
+    meta->data_version_flags = 1;
     meta->text = strdup (text);
+    return atom;
+}
+
+mp4p_atom_t *
+mp4p_ilst_append_text (mp4p_atom_t *ilst_atom, const char *type, const char *text) {
+    mp4p_atom_t * atom = mp4p_ilst_meta_create_text (text, type);
 
     return mp4p_atom_append (ilst_atom, atom);
 }

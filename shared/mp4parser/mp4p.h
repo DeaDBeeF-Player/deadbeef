@@ -97,6 +97,10 @@ mp4p_atom_t *
 mp4p_ilst_append_track_disc (mp4p_atom_t *ilst_atom, const char *type, uint16_t index, uint16_t total);
 
 mp4p_atom_t *
+mp4p_ilst_meta_create_text (const char *text, const char *type);
+
+// FIXME: can be replaced with simple mp4p_ilst_meta_create_text + append
+mp4p_atom_t *
 mp4p_ilst_append_text (mp4p_atom_t *ilst_atom, const char *type, const char *text);
 
 mp4p_atom_t *

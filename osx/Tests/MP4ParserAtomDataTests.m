@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "mp4patomdata.h"
+#import "mp4p.h"
 
 @interface MP4ParserAtomDataTests : XCTestCase
 
@@ -549,4 +549,25 @@
     XCTAssertEqual(dataread.number_of_entries, data.number_of_entries);
     XCTAssert(!memcmp (dataread.entries, data.entries, 12));
 }
+
+- (void)test_textMetaWriteRead_EqualOutput {
+    mp4p_atom_t *meta_atom = mp4p_ilst_meta_create_text ("Hello", "abcd");
+    mp4p_ilst_meta_t *data = meta_atom->data;
+
+    size_t bufsize = mp4p_ilst_meta_atomdata_write(data, NULL, 0);
+    uint8_t *buffer = malloc (bufsize);
+    size_t writtensize = mp4p_ilst_meta_atomdata_write(data, buffer, bufsize);
+    XCTAssertEqual (bufsize, writtensize);
+
+    mp4p_ilst_meta_t dataread;
+    int res = mp4p_ilst_meta_atomdata_read(&dataread, buffer, bufsize);
+    XCTAssert(!res);
+
+    XCTAssert(!dataread.custom);
+    XCTAssertEqual(dataread.data_size, 5);
+    XCTAssertEqual(dataread.data_version_flags, 1);
+    XCTAssert(!strcmp(dataread.text, "Hello"));
+}
+
+
 @end

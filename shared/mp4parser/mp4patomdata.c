@@ -991,31 +991,6 @@ mp4p_esds_atomdata_free (void *data) {
     free (esds);
 }
 
-/*
-#pragma mark tmpl
-
-int
-mp4p_tmpl_atomdata_read (mp4p_tmpl_t *atom_data, uint8_t *buffer, size_t buffer_size) {
-    return 0;
-}
-
-size_t
-mp4p_tmpl_atomdata_write (mp4p_tmpl_t *atom_data, uint8_t *buffer, size_t buffer_size) {
-    if (!buffer) {
-        return 100;
-    }
-    uint8_t *origin = buffer;
-
-    
-    return buffer - origin;
-}
-
-void
-mp4p_tmpl_atomdata_free (void *atom_data) {
-    free (atom_data);
-}
-*/
-
 #pragma mark chpl
 
 int
@@ -1144,3 +1119,185 @@ mp4p_chap_atomdata_free (void *atom_data) {
     free (chap->entries);
     free (atom_data);
 }
+
+#pragma mark ilst_custom
+
+int
+mp4p_ilst_meta_atomdata_read (mp4p_ilst_meta_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (atom_data->custom) {
+        // mean subatom
+        uint32_t mean_size = READ_UINT32();
+        if (mean_size < 12) {
+            return -1;
+        }
+        mean_size -= 12;
+
+        char mean_type[4];
+        READ_BUF(mean_type, 4);
+        if (strncasecmp (mean_type, "mean", 4)) {
+            return -1;
+        }
+        READ_UINT32(); // 0
+        char *mean_data = malloc (mean_size + 1);
+        READ_BUF(mean_data, mean_size);
+        mean_data[mean_size] = 0;
+        if (strncasecmp (mean_data, "com.apple.iTunes", 16)) {
+            return -1;
+        }
+
+        // name subatom
+        uint32_t name_size = READ_UINT32();
+        if (name_size < 12) {
+            return -1;
+        }
+        name_size -= 12;
+
+        char name_type[4];
+        READ_BUF(name_type, 4);
+        if (strncasecmp (name_type, "name", 4)) {
+            return -1;
+        }
+
+        READ_UINT32(); // 0
+
+        atom_data->name = malloc (name_size + 1);
+        READ_BUF(atom_data->name, name_size);
+        atom_data->name[name_size] = 0;
+    }
+
+    // data subatom
+    uint32_t data_size = READ_UINT32();
+    if (data_size < 16) {
+        return -1;
+    }
+    data_size -= 16;
+    atom_data->data_size = data_size;
+
+    char data_type[4];
+    READ_BUF(data_type, 4);
+    if (strncasecmp (data_type, "data", 4)) {
+        return -1;
+    }
+
+    atom_data->data_version_flags = READ_UINT32();
+    uint32_t flag = atom_data->data_version_flags & 0xff;
+
+    READ_UINT32();
+
+    if (flag == 0) {
+        // array of numbers
+        atom_data->values = calloc (atom_data->data_size / 2, sizeof (uint16_t));
+        for (int i = 0; i < atom_data->data_size/2; i++) {
+            atom_data->values[i] = READ_UINT16();
+        }
+    }
+    else if (flag == 1) {
+        // text
+        // FIXME: why large texts were skipped?
+        //        if (atom_data->data_size > 255 && strncasecmp (atom->type, COPYRIGHT_SYM "lyr", 4)) {
+        //            return -1;
+        //        }
+        atom_data->text = calloc (atom_data->data_size+1, 1);
+        READ_BUF(atom_data->text, atom_data->data_size);
+        atom_data->text[atom_data->data_size] = 0;
+
+        //        printf ("%s\n", meta->text);
+    }
+    else {
+        // blob
+        // FIXME: make it optional, i.e. skip and don't load to memory
+        atom_data->blob = calloc (1, atom_data->data_size);
+        READ_BUF(atom_data->blob, atom_data->data_size);
+    }
+    return 0;
+}
+
+size_t
+mp4p_ilst_meta_atomdata_write (mp4p_ilst_meta_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        size_t size = 0;
+        if (atom_data->custom) {
+            size += 28; // mean
+            size += 12 + strlen (atom_data->name); // name
+        }
+        size += 16 + atom_data->data_size;
+        return size;
+    }
+    uint8_t *origin = buffer;
+
+    // mean + name
+    if (atom_data->name) {
+        uint32_t mean_size = 28;
+        WRITE_UINT32(mean_size);
+        WRITE_BUF("mean", 4);
+        WRITE_UINT32(0);
+        WRITE_BUF("com.apple.iTunes", 16);
+
+        uint32_t name_size = 12 + (uint32_t)strlen(atom_data->name);
+        WRITE_UINT32(name_size);
+        WRITE_BUF("name", 4);
+        WRITE_UINT32(0);
+        WRITE_BUF(atom_data->name, (uint32_t)strlen(atom_data->name));
+    }
+    // data atom
+    if (atom_data->text || atom_data->values) {
+        uint32_t data_atom_size = atom_data->data_size+16;
+        WRITE_UINT32(data_atom_size);
+        WRITE_BUF("data", 4);
+    }
+    WRITE_UINT32(atom_data->data_version_flags);
+    WRITE_UINT32(0); // FIXME: what is this?
+
+    if (atom_data->data_version_flags == 0) {
+        for (int i = 0; i < atom_data->data_size/2; i++) {
+            WRITE_UINT16(atom_data->values[i]);
+        }
+    }
+    else if (atom_data->data_version_flags == 1) {
+        WRITE_BUF(atom_data->text,atom_data->data_size);
+    }
+    else if (atom_data->data_version_flags == 2) {
+        WRITE_BUF(atom_data->blob,atom_data->data_size);
+    }
+    else {
+        return 0;
+    }
+
+    return buffer - origin;
+}
+
+void
+mp4p_ilst_meta_atomdata_free (void *atom_data) {
+    mp4p_ilst_meta_t *meta = atom_data;
+    free (meta->name);
+    free (meta->values);
+    free (meta->text);
+    free (meta->blob);
+    free (atom_data);
+}
+
+#if 0
+#pragma mark tmpl
+
+int
+mp4p_tmpl_atomdata_read (mp4p_tmpl_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    return 0;
+}
+
+size_t
+mp4p_tmpl_atomdata_write (mp4p_tmpl_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return 100;
+    }
+    uint8_t *origin = buffer;
+
+
+    return buffer - origin;
+}
+
+void
+mp4p_tmpl_atomdata_free (void *atom_data) {
+    free (atom_data);
+}
+
+#endif

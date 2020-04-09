@@ -225,12 +225,21 @@ typedef struct {
 } mp4p_meta_t;
 
 typedef struct {
-    mp4p_common_header_t ch;
+    /// Tells the loader to load `mean` and `name` subatoms
+    unsigned custom : 1;
+
+    /// data_size is the size of the data atom minus the header.
+    /// it contains either the string length without 0,
+    /// or byte size of the numeric values
     uint32_t data_size;
-    uint64_t data_offset;
+    uint32_t data_version_flags;
+
+    /// The name is optional, only present in `----` atoms
+    /// If it's not null, the atom will be written with mean and name subatoms
     char *name;
     char *text;
     uint16_t *values;
+    uint8_t *blob;
 } mp4p_ilst_meta_t;
 
 typedef struct {
@@ -404,5 +413,17 @@ size_t
 mp4p_chap_atomdata_write (mp4p_chap_t *atom_data, uint8_t *buffer, size_t buffer_size);
 void
 mp4p_chap_atomdata_free (void *data);
+
+// ilst_custom
+
+/// If subatoms can't be interpreted, and the function returns -1,
+/// the caller should then reinterpret this atom as opaque to preserve it.
+/// Be careful with casting the data pointer to mp4p_ilst_meta_t.
+int
+mp4p_ilst_meta_atomdata_read (mp4p_ilst_meta_t *atom_data, uint8_t *buffer, size_t buffer_size);
+size_t
+mp4p_ilst_meta_atomdata_write (mp4p_ilst_meta_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_ilst_meta_atomdata_free (void *data);
 
 #endif /* mp4patomdata_h */
