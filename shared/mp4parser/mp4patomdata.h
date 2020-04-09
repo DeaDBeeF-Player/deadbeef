@@ -147,14 +147,16 @@ typedef struct {
     uint8_t reserved[6];
     uint16_t data_reference_index;
     uint8_t reserved2[8];
+    uint8_t *asc;
+    // end of actual atom data, begin of parsed values
+
+    uint32_t asc_size;
+
     uint16_t channel_count;
     uint16_t bps;
     uint16_t packet_size;
     uint32_t sample_rate;
     uint8_t reserved3[2];
-
-    uint32_t asc_size;
-    uint8_t *asc;
 } mp4p_alac_t;
 
 typedef struct {
@@ -333,5 +335,13 @@ size_t
 mp4p_dref_atomdata_write (mp4p_dref_t *atom_data, uint8_t *buffer, size_t buffer_size);
 void
 mp4p_dref_atomdata_free (void *data);
+
+// alac
+int
+mp4p_alac_atomdata_read (mp4p_alac_t *atom_data, uint8_t *buffer, size_t buffer_size);
+size_t
+mp4p_alac_atomdata_write (mp4p_alac_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_alac_atomdata_free (void *data);
 
 #endif /* mp4patomdata_h */

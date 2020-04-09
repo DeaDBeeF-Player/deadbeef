@@ -566,3 +566,62 @@ mp4p_dref_atomdata_free (void *data) {
     mp4p_dref_t *dref = data;
     free (dref);
 }
+
+#pragma mark alac
+
+int
+mp4p_alac_atomdata_read (mp4p_alac_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    size_t atomdata_size = buffer_size;
+
+    if (atomdata_size < 32) {
+        return -1;
+    }
+
+    READ_BUF(atom_data->reserved, 6);
+    atom_data->data_reference_index = READ_UINT16();
+
+    READ_BUF(atom_data->reserved2, 8);
+
+    atom_data->asc_size = (uint32_t)(atomdata_size - 16);
+    if (atom_data->asc_size > 64) {
+        atom_data->asc_size = 64;
+    }
+    atom_data->asc = calloc (atom_data->asc_size, 1);
+    READ_BUF(atom_data->asc, atom_data->asc_size);
+
+    // These values are parsed from the ASC blob
+    buffer = atom_data->asc;
+    buffer_size = atom_data->asc_size;
+    atom_data->channel_count = READ_UINT16();
+    atom_data->bps = READ_UINT16();
+    atom_data->packet_size = READ_UINT16();
+    atom_data->sample_rate = READ_UINT32();
+
+    return 0;
+}
+
+size_t
+mp4p_alac_atomdata_write (mp4p_alac_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (atom_data->asc_size < 24) {
+        return -1;
+    }
+    if (!buffer) {
+        return 16+atom_data->asc_size;
+    }
+    uint8_t *origin = buffer;
+
+    WRITE_BUF(atom_data->reserved, 6);
+    WRITE_UINT16(atom_data->data_reference_index);
+
+    WRITE_BUF(atom_data->reserved2, 8);
+    WRITE_BUF(atom_data->asc, atom_data->asc_size);
+
+    return buffer - origin;
+}
+
+void
+mp4p_alac_atomdata_free (void *data) {
+    mp4p_alac_t *alac = data;
+    free (alac->asc);
+    free (alac);
+}

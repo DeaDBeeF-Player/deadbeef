@@ -183,17 +183,9 @@ static const char *container_atoms[] = {
     "dinf",
     "stbl",
     "udta",
+    "tref",
     NULL
 };
-
-static void
-_alac_free (void *data) {
-    mp4p_alac_t *alac = data;
-    if (alac->asc) {
-        free (alac->asc);
-    }
-    free (alac);
-}
 
 static void
 _dOps_free (void *data) {
@@ -592,6 +584,8 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
 
         free (atombuf);
 
+        // FIXME: changing subatoms of stsd needs to update number_of_entries
+
         if (!res) {
             atom->write_data_before_subatoms = 1;
             res = _load_subatoms(atom, fp);
@@ -626,6 +620,8 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
 
         free (atombuf);
 
+        // FIXME: changing subatoms of dref needs to update number_of_entries
+
         if (!res) {
             atom->write_data_before_subatoms = 1;
             res = _load_subatoms(atom, fp);
@@ -638,34 +634,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
             }
         }
     }
-    else if (!mp4p_atom_type_compare(atom, "tref")) {
-        _load_subatoms(atom, fp);
-    }
-    else if (!mp4p_atom_type_compare(atom, "alac")) {
-        mp4p_alac_t *alac = calloc (sizeof (mp4p_alac_t), 1);
-        atom->data = alac;
-        atom->free = _alac_free;
-// FIXME:        atom->to_buffer = _alac_to_buffer;
-
-        READ_BUF(fp, alac->reserved, 6);
-        alac->data_reference_index = READ_UINT16(fp);
-
-        READ_BUF(fp, alac->reserved2, 8);
-
-        // we parse these values, but also read them into the ASC
-        alac->channel_count = READ_UINT16(fp);
-        alac->bps = READ_UINT16(fp);
-        alac->packet_size = READ_UINT16(fp);
-        alac->sample_rate = READ_UINT32(fp);
-
-        alac->asc_size = atom->size - 24;
-        if (alac->asc_size > 64) {
-            alac->asc_size = 64;
-        }
-        fp->seek (fp, -10, SEEK_CUR);
-        alac->asc = calloc (alac->asc_size, 1);
-        READ_BUF(fp, alac->asc, alac->asc_size);
-    }
+    ATOM_DEF(alac)
     // mp4a is the same as alac, but followed with subatoms
     else if (!mp4p_atom_type_compare(atom, "mp4a")) {
         mp4p_mp4a_t *mp4a = calloc (sizeof (mp4p_mp4a_t), 1);

@@ -321,4 +321,27 @@
 }
 
 
+- (void)test_alacWriteRead_EqualOutput {
+    mp4p_alac_t data = {
+        .reserved = "fillf",
+        .data_reference_index = 0x1029,
+        .reserved2 = "5647382",
+        .reserved3 = "6",
+        .asc_size = 24,
+        .asc = "24bytefillabcdefghijklm"
+    };
+
+    size_t bufsize = mp4p_alac_atomdata_write(&data, NULL, 0);
+    uint8_t *buffer = malloc (bufsize);
+    size_t writtensize = mp4p_alac_atomdata_write(&data, buffer, bufsize);
+    XCTAssertEqual (bufsize, writtensize);
+
+    mp4p_alac_t dataread;
+    int res = mp4p_alac_atomdata_read(&dataread, buffer, bufsize);
+    XCTAssert(!res);
+
+    XCTAssert(!memcmp (&dataread, &data, 16));
+    XCTAssert(!memcmp (dataread.asc, data.asc, data.asc_size));
+}
+
 @end
