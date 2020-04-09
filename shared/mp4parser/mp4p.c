@@ -155,23 +155,42 @@ _read_uint64 (mp4p_file_callbacks_t *fp, uint64_t *value) {
 #define WRITE_BUF(buf,size) {if (buffer_size < size) return 0; memcpy (buffer, buf, size); buffer += size; buffer_size -= size; }
 #define WRITE_COMMON_HEADER() {WRITE_UINT32(0);}
 
-#define READ_ATOM_BUFFER() uint8_t *atombuf = malloc (atom->size-8); if (fp->read(fp, atombuf, atom->size-8) != atom->size-8) { res = -1; goto error; }
+#define READ_ATOM_BUFFER(headersize) uint8_t *atombuf = malloc (headersize); if (fp->read(fp, atombuf, headersize) != headersize) { res = -1; goto error; }
 #define FREE_ATOM_BUFFER() free (atombuf);
 
-#define ATOM_DEF_INNER(atomname)\
+#define ATOM_DEF_INNER(atomname,headersize)\
     mp4p_##atomname##_t *atom_data = calloc (sizeof (mp4p_##atomname##_t), 1);\
     atom->data = atom_data;\
     atom->free = mp4p_##atomname##_atomdata_free;\
     atom->write = (mp4p_atom_data_write_func_t)mp4p_##atomname##_atomdata_write;\
-    READ_ATOM_BUFFER();\
-    res = mp4p_##atomname##_atomdata_read (atom_data, atombuf, atom->size-8);\
+    READ_ATOM_BUFFER(headersize);\
+    res = mp4p_##atomname##_atomdata_read (atom_data, atombuf, headersize);\
     FREE_ATOM_BUFFER();
 
 
 #define ATOM_DEF(atomname) else if (!mp4p_atom_type_compare(atom, #atomname)) {\
-    ATOM_DEF_INNER(atomname)\
+    ATOM_DEF_INNER(atomname,atom->size-8)\
 }
 
+#define ATOM_DEF_WITH_SUBATOMS(atomname,headersize) else if (!mp4p_atom_type_compare(atom, #atomname)) {\
+    ATOM_DEF_INNER(atomname,headersize)\
+    if (!res) {\
+        atom->write_data_before_subatoms = 1;\
+        res = _load_subatoms(atom, fp);\
+    }\
+}
+
+#define ATOM_DEF_WITH_SUBATOMS_SYNC_ENTRY_COUNT(atomname,headersize) else if (!mp4p_atom_type_compare(atom, #atomname)) {\
+    ATOM_DEF_INNER(atomname,headersize)\
+    if (!res) {\
+        atom->write_data_before_subatoms = 1;\
+        res = _load_subatoms(atom, fp);\
+        uint32_t count = mp4p_atom_subatom_count (atom);\
+        if (atom_data->number_of_entries != count) {\
+            atom_data->number_of_entries = count;\
+        }\
+    }\
+}
 
 // Known container atoms, which can contain known sub-atoms.
 // Uknown atoms will be loaded as opaque blobs, even if they're technically containers.
@@ -567,96 +586,15 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     ATOM_DEF(mdhd)
     ATOM_DEF(hdlr)
     ATOM_DEF(smhd)
-    // NOTE: stsd atom is special, since it contains data + subatoms, so need to be processed manually
-    else if (!mp4p_atom_type_compare(atom, "stsd")) {
-        mp4p_stsd_t *atom_data = calloc (sizeof (mp4p_stts_t), 1);
-        atom->data = atom_data;
-        atom->write = (mp4p_atom_data_write_func_t)mp4p_stsd_atomdata_write;
-        atom->free = mp4p_stsd_atomdata_free;
-
-        uint8_t *atombuf = malloc (sizeof (mp4p_stsd_t));
-        if (fp->read(fp, atombuf, sizeof (mp4p_stsd_t)) != sizeof (mp4p_stsd_t)) {
-            res = -1;
-            goto error;
-        }
-
-        res = mp4p_stsd_atomdata_read(atom_data, atombuf, sizeof (mp4p_stsd_t));
-
-        free (atombuf);
-
-        // FIXME: changing subatoms of stsd needs to update number_of_entries
-
-        if (!res) {
-            atom->write_data_before_subatoms = 1;
-            res = _load_subatoms(atom, fp);
-
-            uint32_t count = mp4p_atom_subatom_count (atom);
-
-            // correct for count mismatch
-            if (atom_data->number_of_entries != count) {
-                atom_data->number_of_entries = count;
-            }
-        }
-    }
+    ATOM_DEF_WITH_SUBATOMS_SYNC_ENTRY_COUNT(stsd,sizeof (mp4p_stsd_t))
     ATOM_DEF(stts)
     ATOM_DEF(stsc)
     ATOM_DEF(stsz)
     ATOM_DEF(stco)
     ATOM_DEF(co64)
-    // NOTE: stsd atom is special, since it contains data + subatoms, so need to be processed manually
-    else if (!mp4p_atom_type_compare(atom, "dref")) {
-        mp4p_dref_t *atom_data = calloc (sizeof (mp4p_dref_t), 1);
-        atom->data = atom_data;
-        atom->write = (mp4p_atom_data_write_func_t)mp4p_dref_atomdata_write;
-        atom->free = free;
-
-        uint8_t *atombuf = malloc (sizeof (mp4p_dref_t));
-        if (fp->read(fp, atombuf, sizeof (mp4p_dref_t)) != sizeof (mp4p_dref_t)) {
-            res = -1;
-            goto error;
-        }
-
-        res = mp4p_dref_atomdata_read(atom_data, atombuf, sizeof (mp4p_dref_t));
-
-        free (atombuf);
-
-        // FIXME: changing subatoms of dref needs to update number_of_entries
-
-        if (!res) {
-            atom->write_data_before_subatoms = 1;
-            res = _load_subatoms(atom, fp);
-
-            uint32_t count = mp4p_atom_subatom_count (atom);
-
-            // correct for count mismatch
-            if (atom_data->number_of_entries != count) {
-                atom_data->number_of_entries = count;
-            }
-        }
-    }
+    ATOM_DEF_WITH_SUBATOMS_SYNC_ENTRY_COUNT(stsd,sizeof (mp4p_dref_t))
     ATOM_DEF(alac)
-    // NOTE: mp4a atom is special, since it contains data + subatoms, so need to be processed manually
-    else if (!mp4p_atom_type_compare(atom, "mp4a")) {
-        mp4p_mp4a_t *atom_data = calloc (sizeof (mp4p_mp4a_t), 1);
-        atom->data = atom_data;
-        atom->write = (mp4p_atom_data_write_func_t)mp4p_mp4a_atomdata_write;
-        atom->free = mp4p_mp4a_atomdata_free;
-
-        uint8_t *atombuf = malloc (28);
-        if (fp->read(fp, atombuf, 28) != 28) {
-            res = -1;
-            goto error;
-        }
-
-        res = mp4p_mp4a_atomdata_read(atom_data, atombuf, 28);
-
-        free (atombuf);
-
-        if (!res) {
-            atom->write_data_before_subatoms = 1;
-            res = _load_subatoms(atom, fp);
-        }
-    }
+    ATOM_DEF_WITH_SUBATOMS(mp4a,28)
     else if (!mp4p_atom_type_compare(atom, "Opus")) {
         mp4p_Opus_t *opus = calloc (sizeof (mp4p_Opus_t), 1);
         atom->data = opus;
