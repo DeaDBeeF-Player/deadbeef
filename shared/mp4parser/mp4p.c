@@ -203,6 +203,7 @@ static const char *container_atoms[] = {
     "stbl",
     "udta",
     "tref",
+    "ilst",
     NULL
 };
 
@@ -394,22 +395,6 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     return 0;
 }
 
-// read tag size, encoded in a 1-4 byte sequence, terminated when high bit is 0
-int
-_read_esds_tag_size (mp4p_file_callbacks_t *fp, uint32_t *retval) {
-    uint32_t num = 0;
-    for (int i = 0; i < 4; i++) {
-        uint8_t val = READ_UINT8(fp);
-        num <<= 7;
-        num |= (val & 0x7f);
-        if (!(val & 0x80)) {
-            break;
-        }
-    }
-    *retval = num;
-    return 0;
-}
-
 static void
 _mp4p_chpl_free (void *data) {
     mp4p_chpl_t *chpl = data;
@@ -567,6 +552,10 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         atom->free = free;
         READ_BUF(fp, mtyp, atom->size-8);
     }
+    else if (parent_atom && !mp4p_atom_type_compare(parent_atom, "ilst")) {
+        // FIXME:        atom->to_buffer = _meta_to_buffer;
+        res = _load_metadata_atom (atom, fp);
+    }
     ATOM_DEF(mvhd)
     ATOM_DEF(tkhd)
     ATOM_DEF(mdhd)
@@ -583,77 +572,13 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     ATOM_DEF_WITH_SUBATOMS(mp4a,28)
     ATOM_DEF_WITH_SUBATOMS(Opus,28)
     ATOM_DEF(dOps)
-    else if (!mp4p_atom_type_compare(atom, "esds")) {
-        mp4p_esds_t *atom_data = calloc (sizeof (mp4p_esds_t), 1);
-        atom->data = atom_data;
-        atom->free = _esds_free;
-// FIXME:        atom->to_buffer = _esds_to_buffer;
-
-        READ_COMMON_HEADER();
-
-        uint8_t es_tag = READ_UINT8(fp);
-        if (es_tag == 3)
-        {
-            uint32_t es_tag_size;
-            if (_read_esds_tag_size (fp, &es_tag_size)) {
-                return -1;
-            }
-            if (es_tag_size < 20) {
-                return -1;
-            }
-
-            READ_UINT8(fp);
-        }
-
-        READ_UINT8(fp);
-        READ_UINT8(fp);
-
-        uint8_t dc_tag = READ_UINT8(fp);
-        if (dc_tag != 4) {
-            return -1;
-        }
-
-        uint32_t dc_tag_size;
-        if (_read_esds_tag_size (fp, &dc_tag_size)) {
-            return -1;
-        }
-        if (dc_tag_size < 13) {
-            return -1;
-        }
-
-        atom_data->dc_audiotype = READ_UINT8(fp);
-        atom_data->dc_audiostream = READ_UINT8(fp);
-        READ_BUF(fp, atom_data->dc_buffersize_db, 3);
-
-        atom_data->dc_max_bitrate = READ_UINT32(fp);
-        atom_data->dc_avg_bitrate = READ_UINT32(fp);
-
-        uint8_t ds_tag = READ_UINT8(fp);
-        if (ds_tag != 5) {
-            return -1;
-        }
-
-        if (_read_esds_tag_size(fp, &atom_data->asc_size)) {
-            return -1;
-        }
-        if (atom_data->asc_size) {
-            atom_data->asc = malloc (atom_data->asc_size);
-            READ_BUF(fp, atom_data->asc, atom_data->asc_size);
-        }
-    }
+    ATOM_DEF(esds)
     else if (!mp4p_atom_type_compare(atom, "meta")) {
         mp4p_meta_t *atom_data = calloc (4, 1);
         atom->data = atom_data;
         atom->write_data_before_subatoms = 1;
         READ_COMMON_HEADER();
         res = _load_subatoms(atom, fp);
-    }
-    else if (!mp4p_atom_type_compare(atom, "ilst")) {
-        res = _load_subatoms(atom, fp);
-    }
-    else if (parent_atom && !mp4p_atom_type_compare(parent_atom, "ilst")) {
-// FIXME:        atom->to_buffer = _meta_to_buffer;
-        res = _load_metadata_atom (atom, fp);
     }
     else if (!mp4p_atom_type_compare (atom, "chpl")) {
 // FIXME:        atom->to_buffer = _chpl_to_buffer;

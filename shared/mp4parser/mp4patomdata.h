@@ -202,11 +202,19 @@ typedef struct {
 
 typedef struct {
     mp4p_common_header_t ch;
+    uint32_t es_tag;
+    uint32_t es_tag_size;
+    uint8_t ignored1;
+    uint8_t ignored2;
+    uint8_t ignored3;
+    uint8_t dc_tag;
+    uint32_t dc_tag_size;
     uint8_t dc_audiotype;
     uint8_t dc_audiostream;
     uint8_t dc_buffersize_db[3];
     uint32_t dc_max_bitrate;
     uint32_t dc_avg_bitrate;
+    uint32_t ds_tag;
 
     uint32_t asc_size;
     char *asc;
@@ -367,5 +375,13 @@ size_t
 mp4p_dOps_atomdata_write (mp4p_dOps_t *atom_data, uint8_t *buffer, size_t buffer_size);
 void
 mp4p_dOps_atomdata_free (void *data);
+
+// esds
+int
+mp4p_esds_atomdata_read (mp4p_esds_t *atom_data, uint8_t *buffer, size_t buffer_size);
+size_t
+mp4p_esds_atomdata_write (mp4p_esds_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_esds_atomdata_free (void *data);
 
 #endif /* mp4patomdata_h */

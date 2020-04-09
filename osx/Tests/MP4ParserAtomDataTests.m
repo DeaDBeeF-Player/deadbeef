@@ -433,4 +433,57 @@
     }
 }
 
+- (void)test_esdsWriteRead_EqualOutput {
+    mp4p_esds_t data = {
+        .ch.version_flags = 0xaabbccdd,
+        .es_tag = 3,
+        .es_tag_size = 0x0384756,
+        .ignored1 = 0x91,
+        .ignored2 = 0x72,
+        .dc_tag = 4,
+        .dc_tag_size = 0x06473829,
+        .dc_audiotype = 0x78,
+        .dc_audiostream = 0x91,
+        .dc_buffersize_db = "fi",
+        .dc_max_bitrate = 0x15263748,
+        .dc_avg_bitrate = 0x96857463,
+        .ds_tag = 5,
+        .asc_size = 24,
+        .asc = "24bytefillabcdefghijklm",
+    };
+
+    size_t bufsize = mp4p_esds_atomdata_write(&data, NULL, 0);
+    uint8_t *buffer = malloc (bufsize);
+    size_t writtensize = mp4p_esds_atomdata_write(&data, buffer, bufsize);
+    XCTAssertEqual (bufsize, writtensize);
+
+    mp4p_esds_t dataread = {0};
+    int res = mp4p_esds_atomdata_read(&dataread, buffer, bufsize);
+    XCTAssert(!res);
+
+    size_t offs = offsetof(mp4p_esds_t, asc);
+    XCTAssert(!memcmp (&dataread, &data, offs));
+    XCTAssert(!memcmp (dataread.asc, data.asc, data.asc_size));
+}
+
+- (void)test_writeReadEsdsTagSize_EqualOutput {
+    uint32_t input = 0x00bbccdd;
+    uint8_t buffer[4];
+
+    int
+    write_esds_tag_size (uint8_t *buffer, size_t buffer_size, uint32_t num);
+    int
+    read_esds_tag_size (uint8_t *buffer, size_t buffer_size, uint32_t *retval);
+
+    int res = write_esds_tag_size(buffer, 4, input);
+    XCTAssertEqual(res,4);
+
+    uint32 output = 0;
+    res = read_esds_tag_size(buffer, 4, &output);
+    XCTAssertEqual(res,4);
+
+    XCTAssertEqual(input,output);
+}
+
+
 @end

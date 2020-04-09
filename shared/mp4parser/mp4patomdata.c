@@ -790,3 +790,202 @@ mp4p_dOps_atomdata_free (void *data) {
     }
     free (dOps);
 }
+
+#pragma mark esds
+
+// read tag size, encoded in a 1-4 byte sequence, terminated when high bit is 0
+int
+read_esds_tag_size (uint8_t *buffer, size_t buffer_size, uint32_t *retval) {
+    size_t initial_size = buffer_size;
+    uint32_t num = 0;
+    for (int i = 0; i < 4; i++) {
+        uint8_t val = READ_UINT8();
+        num <<= 7;
+        num |= (val & 0x7f);
+        if (!(val & 0x80)) {
+            break;
+        }
+    }
+    *retval = num;
+    return (int)(initial_size - buffer_size);
+}
+
+int
+mp4p_esds_atomdata_read (mp4p_esds_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    READ_COMMON_HEADER();
+
+    atom_data->es_tag = READ_UINT8();
+    if (atom_data->es_tag == 3)
+    {
+        int res = read_esds_tag_size (buffer, buffer_size, &atom_data->es_tag_size);
+        if (res < 0) {
+            return -1;
+        }
+        if (atom_data->es_tag_size < 20) {
+            return -1;
+        }
+
+        buffer += res;
+        buffer_size -= res;
+
+        atom_data->ignored1 = READ_UINT8();
+    }
+
+    // FIXME: validate against spec -- could be that this is es_tag_size
+    atom_data->ignored2 = READ_UINT8();
+    atom_data->ignored3 = READ_UINT8();
+
+    atom_data->dc_tag = READ_UINT8();
+    if (atom_data->dc_tag != 4) {
+        return -1;
+    }
+
+    int res = read_esds_tag_size (buffer, buffer_size, &atom_data->dc_tag_size);
+    if (res < 0) {
+        return -1;
+    }
+    if (atom_data->dc_tag_size < 13) {
+        return -1;
+    }
+    buffer += res;
+    buffer_size -= res;
+
+    atom_data->dc_audiotype = READ_UINT8();
+    atom_data->dc_audiostream = READ_UINT8();
+    READ_BUF(atom_data->dc_buffersize_db, 3);
+
+    atom_data->dc_max_bitrate = READ_UINT32();
+    atom_data->dc_avg_bitrate = READ_UINT32();
+
+    atom_data->ds_tag = READ_UINT8();
+    if (atom_data->ds_tag != 5) {
+        return -1;
+    }
+
+    res = read_esds_tag_size(buffer, buffer_size, &atom_data->asc_size);
+    if (res < 0) {
+        return -1;
+    }
+    buffer += res;
+    buffer_size -= res;
+
+    // FIXME: validate asc_size
+    if (atom_data->asc_size) {
+        atom_data->asc = malloc (atom_data->asc_size);
+        READ_BUF(atom_data->asc, atom_data->asc_size);
+    }
+
+    return 0;
+}
+
+int
+write_esds_tag_size (uint8_t *buffer, size_t buffer_size, uint32_t num) {
+    uint8_t data[4] = {0};
+    int count = 0;
+    size_t initial_size = buffer_size;
+    while (num) {
+        data[count++] = num & 0x7f;
+        num >>= 7;
+    }
+    if (count == 0) {
+        count = 1;
+    }
+
+    for (int i = count-1; i >= 0; i--) {
+        uint8_t val = data[i];
+        if (i != 0) {
+            val |= 0x80;
+        }
+        WRITE_UINT8(val);
+    }
+    return (int)(initial_size - buffer_size);
+}
+
+size_t
+_esds_tag_written_size (uint32_t tag) {
+    uint8_t buffer[4];
+    size_t buffer_size = 4;
+    return (size_t)write_esds_tag_size(buffer, buffer_size, tag);
+}
+
+size_t
+mp4p_esds_atomdata_write (mp4p_esds_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        size_t size = 5;
+        if (atom_data->es_tag == 3) {
+            size += _esds_tag_written_size (atom_data->es_tag_size);
+            size++;
+        }
+
+        size += 3;
+        size += _esds_tag_written_size (atom_data->dc_tag_size);
+
+        size += 14;
+
+        size += _esds_tag_written_size (atom_data->asc_size);
+        size += atom_data->asc_size;
+        return size;
+    }
+    uint8_t *origin = buffer;
+
+    WRITE_COMMON_HEADER();
+
+    WRITE_UINT8(atom_data->es_tag);
+    if (atom_data->es_tag == 3)
+    {
+        int res = write_esds_tag_size (buffer, buffer_size, atom_data->es_tag_size);
+        if (res < 0) {
+            return 0;
+        }
+
+        buffer += res;
+        buffer_size -= res;
+
+        WRITE_UINT8(atom_data->ignored1);
+    }
+
+    WRITE_UINT8(atom_data->ignored2);
+    WRITE_UINT8(atom_data->ignored3);
+
+    WRITE_UINT8(atom_data->dc_tag);
+    if (atom_data->dc_tag != 4) {
+        return 0;
+    }
+
+    int res = write_esds_tag_size (buffer, buffer_size, atom_data->dc_tag_size);
+    if (res < 0) {
+        return 0;
+    }
+
+    buffer += res;
+    buffer_size -= res;
+
+    WRITE_UINT8(atom_data->dc_audiotype);
+    WRITE_UINT8(atom_data->dc_audiostream);
+    WRITE_BUF(atom_data->dc_buffersize_db, 3);
+
+    WRITE_UINT32(atom_data->dc_max_bitrate);
+    WRITE_UINT32(atom_data->dc_avg_bitrate);
+
+    WRITE_UINT8(atom_data->ds_tag);
+
+    res = write_esds_tag_size(buffer, buffer_size, atom_data->asc_size);
+    if (res < 0) {
+        return 0;
+    }
+    buffer += res;
+    buffer_size -= res;
+
+    if (atom_data->asc_size) {
+        WRITE_BUF(atom_data->asc, atom_data->asc_size);
+    }
+
+    return buffer - origin;
+}
+
+void
+mp4p_esds_atomdata_free (void *data) {
+    mp4p_esds_t *esds = data;
+    free (esds->asc);
+    free (esds);
+}
