@@ -635,26 +635,27 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         }
     }
     ATOM_DEF(alac)
-    // mp4a is the same as alac, but followed with subatoms
+    // NOTE: mp4a atom is special, since it contains data + subatoms, so need to be processed manually
     else if (!mp4p_atom_type_compare(atom, "mp4a")) {
-        mp4p_mp4a_t *mp4a = calloc (sizeof (mp4p_mp4a_t), 1);
-        atom->data = mp4a;
-// FIXME:        atom->to_buffer = _mp4a_to_buffer;
+        mp4p_mp4a_t *atom_data = calloc (sizeof (mp4p_mp4a_t), 1);
+        atom->data = atom_data;
+        atom->write = (mp4p_atom_data_write_func_t)mp4p_mp4a_atomdata_write;
+        atom->free = mp4p_mp4a_atomdata_free;
 
-        READ_BUF(fp, mp4a->reserved, 6);
-        mp4a->data_reference_index = READ_UINT16(fp);
+        uint8_t *atombuf = malloc (28);
+        if (fp->read(fp, atombuf, 28) != 28) {
+            res = -1;
+            goto error;
+        }
 
-        READ_BUF(fp, mp4a->reserved2, 8);
+        res = mp4p_mp4a_atomdata_read(atom_data, atombuf, 28);
 
-        // we parse these values, but also read them into the ASC
-        mp4a->channel_count = READ_UINT16(fp);
-        mp4a->bps = READ_UINT16(fp);
-        mp4a->packet_size = READ_UINT16(fp);
-        mp4a->sample_rate = READ_UINT32(fp);
+        free (atombuf);
 
-        READ_BUF(fp, mp4a->reserved3, 2);
-
-        res = _load_subatoms(atom, fp);
+        if (!res) {
+            atom->write_data_before_subatoms = 1;
+            res = _load_subatoms(atom, fp);
+        }
     }
     else if (!mp4p_atom_type_compare(atom, "Opus")) {
         mp4p_Opus_t *opus = calloc (sizeof (mp4p_Opus_t), 1);
