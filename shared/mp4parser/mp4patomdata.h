@@ -236,8 +236,9 @@ typedef struct {
 typedef struct {
     mp4p_common_header_t ch;
     uint8_t nchapters;
-    char    **name;
-    int64_t  *start;
+    int64_t *start;
+    uint8_t *name_len;
+    char **name;
 } mp4p_chpl_t;
 
 typedef struct {
@@ -383,5 +384,13 @@ size_t
 mp4p_esds_atomdata_write (mp4p_esds_t *atom_data, uint8_t *buffer, size_t buffer_size);
 void
 mp4p_esds_atomdata_free (void *data);
+
+// chpl
+int
+mp4p_chpl_atomdata_read (mp4p_chpl_t *atom_data, uint8_t *buffer, size_t buffer_size);
+size_t
+mp4p_chpl_atomdata_write (mp4p_chpl_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_chpl_atomdata_free (void *data);
 
 #endif /* mp4patomdata_h */

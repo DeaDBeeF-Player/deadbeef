@@ -58,6 +58,7 @@ mp4p_mvhd_atomdata_read (mp4p_mvhd_t *atom_data, uint8_t *buffer, size_t buffer_
 size_t
 mp4p_mvhd_atomdata_write (mp4p_mvhd_t *atom_data, uint8_t *buffer, size_t buffer_size) {
     if (!buffer) {
+        // FIXME: looks wrong
         return 100;
     }
     uint8_t *origin = buffer;
@@ -988,4 +989,127 @@ mp4p_esds_atomdata_free (void *data) {
     mp4p_esds_t *esds = data;
     free (esds->asc);
     free (esds);
+}
+
+/*
+#pragma mark tmpl
+
+int
+mp4p_tmpl_atomdata_read (mp4p_tmpl_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    return 0;
+}
+
+size_t
+mp4p_tmpl_atomdata_write (mp4p_tmpl_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return 100;
+    }
+    uint8_t *origin = buffer;
+
+    
+    return buffer - origin;
+}
+
+void
+mp4p_tmpl_atomdata_free (void *atom_data) {
+    free (atom_data);
+}
+*/
+
+#pragma mark chpl
+
+int
+mp4p_chpl_atomdata_read (mp4p_chpl_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    READ_COMMON_HEADER();
+
+    int i;
+
+    atom_data->nchapters = READ_UINT8();
+
+    if (atom_data->nchapters) {
+        atom_data->start = calloc (sizeof (uint64_t), atom_data->nchapters);
+        atom_data->name_len = calloc (sizeof (uint8_t), atom_data->nchapters);
+        atom_data->name = calloc (sizeof (char *), atom_data->nchapters);
+    }
+    for(i = 0; i < atom_data->nchapters; i++)
+    {
+        atom_data->start[i] = READ_UINT64();
+        uint8_t name_len = READ_UINT8();
+        if (name_len > buffer_size) {
+            name_len = buffer_size;
+        }
+        atom_data->name_len[i] = name_len;
+        if (name_len) {
+            atom_data->name[i] = malloc(name_len+1);
+            READ_BUF(atom_data->name[i], name_len);
+        }
+        atom_data->name[i][name_len] = 0;
+    }
+    // FIXME: convert to qsort
+    /* Bubble sort by increasing start date */
+    do
+    {
+        for( i = 0; i < atom_data->nchapters - 1; i++ )
+        {
+            if( atom_data->start[i] > atom_data->start[i+1] )
+            {
+                char *psz = atom_data->name[i+1];
+                int64_t i64 = atom_data->start[i+1];
+                uint8_t nl = atom_data->name_len[i+1];
+
+                atom_data->name[i+1] = atom_data->name[i];
+                atom_data->start[i+1] = atom_data->start[i];
+                atom_data->name_len[i+1] = atom_data->name_len[i];
+
+                atom_data->name[i] = psz;
+                atom_data->start[i] = i64;
+                atom_data->name_len[i] = nl;
+
+                i = -1;
+                break;
+            }
+        }
+    } while( i == -1 );
+
+    return 0;
+}
+
+size_t
+mp4p_chpl_atomdata_write (mp4p_chpl_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        size_t size = 5;
+        for (int i = 0; i < atom_data->nchapters; i++) {
+            size += 8 + 1 + atom_data->name_len[i];
+        }
+        return size;
+    }
+    uint8_t *origin = buffer;
+
+    WRITE_COMMON_HEADER();
+
+    int i;
+
+    WRITE_UINT8(atom_data->nchapters);
+
+    for(i = 0; i < atom_data->nchapters; i++)
+    {
+        WRITE_UINT64(atom_data->start[i]);
+        WRITE_UINT8(atom_data->name_len[i]);
+        if (atom_data->name_len[i]) {
+            WRITE_BUF(atom_data->name[i], atom_data->name_len[i]);
+        }
+    }
+
+    return buffer - origin;
+}
+
+void
+mp4p_chpl_atomdata_free (void *data) {
+    mp4p_chpl_t *chpl = data;
+    for (int i = 0; i < chpl->nchapters; i++) {
+        free (chpl->name[i]);
+    }
+    free (chpl->name);
+    free (chpl->start);
+    free (data);
 }

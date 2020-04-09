@@ -485,5 +485,37 @@
     XCTAssertEqual(input,output);
 }
 
+- (void)test_chplWriteRead_EqualOutput {
+    uint64_t start[3] = { 0, 1, 2 };
+    uint8_t name_len[3] = { 9, 9, 9 };
+    char *name[3] = { "Chapter 0", "Chapter 1", "Chapter 2" };
+
+    mp4p_chpl_t data = {
+        .ch.version_flags = 0xaabbccdd,
+        .nchapters = 3,
+        .start = start,
+        .name_len = name_len,
+        .name = name,
+
+    };
+
+    size_t bufsize = mp4p_chpl_atomdata_write(&data, NULL, 0);
+    uint8_t *buffer = malloc (bufsize);
+    size_t writtensize = mp4p_chpl_atomdata_write(&data, buffer, bufsize);
+    XCTAssertEqual (bufsize, writtensize);
+
+    mp4p_chpl_t dataread = {0};
+    int res = mp4p_chpl_atomdata_read(&dataread, buffer, bufsize);
+    XCTAssert(!res);
+
+    size_t offs = offsetof(mp4p_chpl_t, start);
+    XCTAssert(!memcmp (&dataread, &data, offs));
+
+    XCTAssert(!memcmp (dataread.start, data.start, sizeof (start)));
+    XCTAssert(!memcmp (dataread.name_len, data.name_len, sizeof (name_len)));
+    for (int i = 0; i < 3; i++) {
+        XCTAssert(!memcmp (dataread.name[i], data.name[i], data.name_len[i]));
+    }
+}
 
 @end

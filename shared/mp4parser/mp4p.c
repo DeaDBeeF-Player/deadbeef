@@ -395,83 +395,6 @@ _load_metadata_atom (mp4p_atom_t *atom, mp4p_file_callbacks_t *fp) {
     return 0;
 }
 
-static void
-_mp4p_chpl_free (void *data) {
-    mp4p_chpl_t *chpl = data;
-    for (int i = 0; i < chpl->nchapters; i++) {
-        free (chpl->name[i]);
-    }
-    free (chpl->name);
-    free (chpl->start);
-    free (data);
-}
-
-static int32_t
-_load_chpl_atom(mp4p_atom_t *atom, mp4p_file_callbacks_t *fp)
-{
-    mp4p_chpl_t *atom_data = calloc (sizeof (mp4p_chpl_t), 1);
-    atom->data = atom_data;
-    atom->free = _mp4p_chpl_free;
-
-    READ_COMMON_HEADER();
-
-    int i;
-    uint32_t i_read = atom->size;
-
-    atom_data->nchapters = READ_UINT8(fp);
-    i_read -= 5;
-
-    atom_data->name = calloc (sizeof (char *), atom_data->nchapters);
-    atom_data->start = calloc (sizeof (int64_t), atom_data->nchapters);
-    for( i = 0; i < atom_data->nchapters; i++ )
-    {
-        uint64_t i_start;
-        uint8_t i_len;
-        i_start = READ_UINT64(fp);
-        i_read -= 8;
-        i_len = READ_UINT8(fp);
-        i_read -= 1;
-
-        atom_data->name[i] = malloc( i_len + 1 );
-
-        uint32_t i_copy = i_len < i_read ? i_len : i_read;
-        if( i_copy > 0 ) {
-            READ_BUF(fp, atom_data->name[i], i_copy)
-        }
-        atom_data->name[i][i_copy] = '\0';
-        atom_data->start[i] = i_start;
-
-        i_read -= i_copy;
-    }
-    // FIXME: convert to qsort
-    /* Bubble sort by increasing start date */
-    do
-    {
-        for( i = 0; i < atom_data->nchapters - 1; i++ )
-        {
-            if( atom_data->start[i] > atom_data->start[i+1] )
-            {
-                char *psz = atom_data->name[i+1];
-                int64_t i64 = atom_data->start[i+1];
-
-                atom_data->name[i+1] = atom_data->name[i];
-                atom_data->start[i+1] = atom_data->start[i];
-
-                atom_data->name[i] = psz;
-                atom_data->start[i] = i64;
-
-                i = -1;
-                break;
-            }
-        }
-    } while( i == -1 );
-
-    return 0;
-
-error:
-    return -1;
-}
-
 void
 _mp4p_chap_free (void *data) {
     mp4p_chap_t *chap = data;
@@ -580,10 +503,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         READ_COMMON_HEADER();
         res = _load_subatoms(atom, fp);
     }
-    else if (!mp4p_atom_type_compare (atom, "chpl")) {
-// FIXME:        atom->to_buffer = _chpl_to_buffer;
-        res = _load_chpl_atom (atom, fp);
-    }
+    ATOM_DEF(chpl)
     else if (!mp4p_atom_type_compare (atom, "chap")) {
 // FIXME:        atom->to_buffer = _chap_to_buffer;
         res = _load_chap_atom (atom, fp);
