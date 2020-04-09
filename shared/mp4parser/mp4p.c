@@ -595,30 +595,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     ATOM_DEF_WITH_SUBATOMS_SYNC_ENTRY_COUNT(stsd,sizeof (mp4p_dref_t))
     ATOM_DEF(alac)
     ATOM_DEF_WITH_SUBATOMS(mp4a,28)
-    else if (!mp4p_atom_type_compare(atom, "Opus")) {
-        mp4p_Opus_t *opus = calloc (sizeof (mp4p_Opus_t), 1);
-        atom->data = opus;
-// FIXME:        atom->to_buffer = _Opus_to_buffer;
-
-        READ_BUF(fp, opus->reserved, 6);
-        opus->data_reference_index = READ_UINT16(fp);
-
-        READ_BUF(fp, opus->reserved2, 8);
-
-        // we parse these values, but also read them into the ASC
-        opus->channel_count = READ_UINT16(fp);
-        opus->bps = READ_UINT16(fp);
-        if (opus->bps != 16) {
-            return -1;
-        }
-        opus->packet_size = READ_UINT16(fp);
-        opus->sample_rate = READ_UINT32(fp);
-        if (opus->sample_rate != 48000) {
-            return -1;
-        }
-        READ_BUF(fp, opus->reserved3, 2);
-        res = _load_subatoms(atom, fp);
-    }
+    ATOM_DEF_WITH_SUBATOMS(Opus,28)
     else if (!mp4p_atom_type_compare(atom, "dOps")) {
         mp4p_dOps_t *dOps = calloc (sizeof (mp4p_dOps_t), 1);
         atom->data = dOps;

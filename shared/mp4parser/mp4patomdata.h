@@ -352,4 +352,12 @@ mp4p_mp4a_atomdata_write (mp4p_mp4a_t *atom_data, uint8_t *buffer, size_t buffer
 void
 mp4p_mp4a_atomdata_free (void *data);
 
+// Opus
+int
+mp4p_Opus_atomdata_read (mp4p_Opus_t *atom_data, uint8_t *buffer, size_t buffer_size);
+size_t
+mp4p_Opus_atomdata_write (mp4p_Opus_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_Opus_atomdata_free (void *data);
+
 #endif /* mp4patomdata_h */

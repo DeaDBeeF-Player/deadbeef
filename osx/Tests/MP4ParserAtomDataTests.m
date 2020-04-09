@@ -368,4 +368,28 @@
     XCTAssert(!memcmp (&dataread, &data, sizeof(data)));
 }
 
+- (void)test_OpusWriteRead_EqualOutput {
+    mp4p_Opus_t data = {
+        .reserved = "fillf",
+        .data_reference_index = 0x7463,
+        .reserved2 = "5647382",
+        .channel_count = 0x2435,
+        .bps = 16,
+        .packet_size = 0x3847,
+        .sample_rate = 48000,
+        .reserved3 = "f"
+    };
+
+    size_t bufsize = mp4p_Opus_atomdata_write(&data, NULL, 0);
+    uint8_t *buffer = malloc (bufsize);
+    size_t writtensize = mp4p_Opus_atomdata_write(&data, buffer, bufsize);
+    XCTAssertEqual (bufsize, writtensize);
+
+    mp4p_Opus_t dataread;
+    int res = mp4p_Opus_atomdata_read(&dataread, buffer, bufsize);
+    XCTAssert(!res);
+
+    XCTAssert(!memcmp (&dataread, &data, sizeof(data)));
+}
+
 @end

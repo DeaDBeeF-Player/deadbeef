@@ -672,3 +672,54 @@ mp4p_mp4a_atomdata_free (void *data) {
     mp4p_mp4a_t *mp4a = data;
     free (mp4a);
 }
+
+#pragma mark Opus
+
+int
+mp4p_Opus_atomdata_read (mp4p_Opus_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    READ_BUF(atom_data->reserved, 6);
+    atom_data->data_reference_index = READ_UINT16();
+
+    READ_BUF(atom_data->reserved2, 8);
+
+    atom_data->channel_count = READ_UINT16();
+    atom_data->bps = READ_UINT16();
+    if (atom_data->bps != 16) {
+        return -1;
+    }
+    atom_data->packet_size = READ_UINT16();
+    atom_data->sample_rate = READ_UINT32();
+    if (atom_data->sample_rate != 48000) {
+        return -1;
+    }
+    READ_BUF(atom_data->reserved3, 2);
+
+    return 0;
+}
+
+size_t
+mp4p_Opus_atomdata_write (mp4p_Opus_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return 28;
+    }
+    uint8_t *origin = buffer;
+
+    WRITE_BUF(atom_data->reserved, 6);
+    WRITE_UINT16(atom_data->data_reference_index);
+
+    WRITE_BUF(atom_data->reserved2, 8);
+
+    WRITE_UINT16(atom_data->channel_count);
+    WRITE_UINT16(atom_data->bps);
+    WRITE_UINT16(atom_data->packet_size);
+    WRITE_UINT32(atom_data->sample_rate);
+    WRITE_BUF(atom_data->reserved3, 2);
+
+    return buffer - origin;
+}
+
+void
+mp4p_Opus_atomdata_free (void *data) {
+    mp4p_Opus_t *Opus = data;
+    free (Opus);
+}
