@@ -530,4 +530,23 @@
     }
 }
 
+- (void)test_chapWriteRead_EqualOutput {
+    uint32_t entries[3] = { 0x19283746, 0x56473829, 0x15263748 };
+    mp4p_chap_t data = {
+        .number_of_entries = 3,
+        .entries = entries,
+    };
+
+    size_t bufsize = mp4p_chap_atomdata_write(&data, NULL, 0);
+    uint8_t *buffer = malloc (bufsize);
+    size_t writtensize = mp4p_chap_atomdata_write(&data, buffer, bufsize);
+    XCTAssertEqual (bufsize, writtensize);
+
+    mp4p_chap_t dataread;
+    int res = mp4p_chap_atomdata_read(&dataread, buffer, bufsize);
+    XCTAssert(!res);
+
+    XCTAssertEqual(dataread.number_of_entries, data.number_of_entries);
+    XCTAssert(!memcmp (dataread.entries, data.entries, 12));
+}
 @end

@@ -726,7 +726,7 @@ aac_load_itunes_chapters (aac_info_t *info, mp4p_chap_t *chap, /* out */ int *nu
 
     mp4p_atom_t *mp4 = info->mp4file;
 
-    for (int i = 0; i < chap->count; i++)
+    for (int i = 0; i < chap->number_of_entries; i++)
     {
         mp4p_atom_t *text_atom = NULL;
         mp4p_atom_t *trak_atom = mp4p_atom_find(mp4, "moov/trak");
@@ -737,7 +737,7 @@ aac_load_itunes_chapters (aac_info_t *info, mp4p_chap_t *chap, /* out */ int *nu
                 mp4p_atom_t *tkhd_atom = mp4p_atom_find(trak_atom, "trak/tkhd");
                 if (text_atom && tkhd_atom) {
                     mp4p_tkhd_t *tkhd = tkhd_atom->data;
-                    if (tkhd->track_id == chap->track_id[i]) {
+                    if (tkhd->track_id == chap->entries[i]) {
                         break;
                     }
                 }
@@ -947,7 +947,7 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     mp4p_atom_t *chap_atom = mp4p_atom_find(info.trak, "trak/tref/chap");
     if (chap_atom) {
         mp4p_chap_t *chap = chap_atom->data;
-        if (chap->count > 0) {
+        if (chap->number_of_entries > 0) {
             chapters = aac_load_itunes_chapters (&info, chap, &num_chapters, info.info.fmt.samplerate);
         }
     }

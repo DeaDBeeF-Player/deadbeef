@@ -246,8 +246,8 @@ typedef struct {
 } mp4p_chpl_t;
 
 typedef struct {
-    uint32_t count;
-    uint32_t *track_id;
+    uint32_t number_of_entries;
+    uint32_t *entries;
 } mp4p_chap_t;
 
 
@@ -396,5 +396,13 @@ size_t
 mp4p_chpl_atomdata_write (mp4p_chpl_t *atom_data, uint8_t *buffer, size_t buffer_size);
 void
 mp4p_chpl_atomdata_free (void *data);
+
+// chap
+int
+mp4p_chap_atomdata_read (mp4p_chap_t *atom_data, uint8_t *buffer, size_t buffer_size);
+size_t
+mp4p_chap_atomdata_write (mp4p_chap_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_chap_atomdata_free (void *data);
 
 #endif /* mp4patomdata_h */

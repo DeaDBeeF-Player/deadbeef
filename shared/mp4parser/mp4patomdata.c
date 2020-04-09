@@ -1104,3 +1104,43 @@ mp4p_chpl_atomdata_free (void *data) {
     free (chpl->entries);
     free (data);
 }
+
+#pragma mark chap
+
+int
+mp4p_chap_atomdata_read (mp4p_chap_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    atom_data->number_of_entries = (uint32_t)(buffer_size / sizeof(uint32_t));
+    if (atom_data->number_of_entries > 0) {
+        atom_data->entries = calloc (atom_data->number_of_entries, sizeof(uint32_t));
+    }
+    else {
+        return -1;
+    }
+
+    for (int i = 0; i < atom_data->number_of_entries; i++) {
+        atom_data->entries[i] = READ_UINT32();
+    }
+
+    return 0;
+}
+
+size_t
+mp4p_chap_atomdata_write (mp4p_chap_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return atom_data->number_of_entries * 4;
+    }
+    uint8_t *origin = buffer;
+
+    for (int i = 0; i < atom_data->number_of_entries; i++) {
+        WRITE_UINT32(atom_data->entries[i]);
+    }
+
+    return buffer - origin;
+}
+
+void
+mp4p_chap_atomdata_free (void *atom_data) {
+    mp4p_chap_t *chap = atom_data;
+    free (chap->entries);
+    free (atom_data);
+}
