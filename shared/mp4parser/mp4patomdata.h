@@ -126,7 +126,6 @@ typedef struct {
     mp4p_stsz_entry_t *entries;
 } mp4p_stsz_t;
 
-// NOTE: reused for stco and co64
 typedef struct {
     uint64_t offset;
 } mp4p_stco_entry_t;
@@ -136,6 +135,8 @@ typedef struct {
     uint32_t number_of_entries;
     mp4p_stco_entry_t *entries;
 } mp4p_stco_t;
+
+typedef mp4p_stco_t mp4p_co64_t;
 
 typedef struct {
     mp4p_common_header_t ch;
@@ -308,5 +309,21 @@ size_t
 mp4p_stsz_atomdata_write (mp4p_stsz_t *atom_data, uint8_t *buffer, size_t buffer_size);
 void
 mp4p_stsz_atomdata_free (void *data);
+
+// stco
+int
+mp4p_stco_atomdata_read (mp4p_stco_t *atom_data, uint8_t *buffer, size_t buffer_size);
+size_t
+mp4p_stco_atomdata_write (mp4p_stco_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_stco_atomdata_free (void *data);
+
+// co64
+int
+mp4p_co64_atomdata_read (mp4p_co64_t *atom_data, uint8_t *buffer, size_t buffer_size);
+size_t
+mp4p_co64_atomdata_write (mp4p_co64_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_co64_atomdata_free (void *data);
 
 #endif /* mp4patomdata_h */

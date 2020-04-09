@@ -16,7 +16,7 @@
 #define READ_INT16() ({if (buffer_size < 2) return -1; int16_t _temp16 = (((int8_t *)buffer)[1]) | (buffer[0]<<8); buffer+=2; buffer_size-=2;  _temp16;})
 #define READ_UINT32() ({if (buffer_size < 4) return -1;  uint32_t _temp32 = (uint32_t)buffer[3] | ((uint32_t)buffer[2]<<8) | ((uint32_t)buffer[1]<<16) | ((uint32_t)buffer[0]<<24); buffer+=4; buffer_size-=4; _temp32;})
 #define READ_INT32() ({if (buffer_size < 4) return -1;  int32_t _temp32 = (int32_t)buffer[3] | ((uint32_t)buffer[2]<<8) | ((uint32_t)buffer[1]<<16) | ((uint32_t)buffer[0]<<24); buffer+=4; buffer_size-=4; _temp32;})
-#define READ_UINT64() ({if (buffer_size < 8) return -1;  uint64_t _temp64 = (uint64_t)csize[7] | ((uint64_t)csize[6]<<8) | ((uint64_t)csize[5]<<16) | ((uint64_t)csize[4]<<24) | ((uint64_t)csize[3]<<32) | ((uint64_t)csize[2]<<40) | ((uint64_t)csize[1] << 48) | ((uint64_t)csize[0] << 56); buffer+=8; buffer_size-=8; _temp64;})
+#define READ_UINT64() ({if (buffer_size < 8) return -1;  uint64_t _temp64 = (uint64_t)buffer[7] | ((uint64_t)buffer[6]<<8) | ((uint64_t)buffer[5]<<16) | ((uint64_t)buffer[4]<<24) | ((uint64_t)buffer[3]<<32) | ((uint64_t)buffer[2]<<40) | ((uint64_t)buffer[1] << 48) | ((uint64_t)buffer[0] << 56); buffer+=8; buffer_size-=8; _temp64;})
 #define READ_INT64() ({if (buffer_size < 8) return -1;  uint64_t _temp64 = (int64_t)csize[7] | ((uint64_t)csize[6]<<8) | ((uint64_t)csize[5]<<16) | ((uint64_t)csize[4]<<24) | ((uint64_t)csize[3]<<32) | ((uint64_t)csize[2]<<40) | ((uint64_t)csize[1] << 48) | ((uint64_t)csize[0] << 56); buffer+=8; buffer_size-=8; _temp64;})
 #define READ_BUF(buf,size) {if (buffer_size < size) return -1; memcpy (buf, buffer, size); buffer += size; buffer_size -= size; }
 
@@ -26,6 +26,7 @@
 #define WRITE_UINT8(x) {if (buffer_size < 1) return 0; *buffer++ = x; buffer_size--; }
 #define WRITE_UINT16(x) {if (buffer_size < 2) return 0; *buffer++ = (x>>8); *buffer++ = (x & 0xff); buffer_size -= 2;}
 #define WRITE_UINT32(x) {if (buffer_size < 4) return 0; *buffer++ = ((x>>24)); *buffer++ = ((x>>16)&0xff); *buffer++ = ((x>>8)&0xff); *buffer++ = (x & 0xff); buffer_size -=4 ;}
+#define WRITE_UINT64(x) {if (buffer_size < 8) return 0; *buffer++ = ((x>>56)); *buffer++ = ((x>>48)&0xff); *buffer++ = ((x>>40)); *buffer++ = ((x>>32)&0xff); *buffer++ = ((x>>24)); *buffer++ = ((x>>16)&0xff); *buffer++ = ((x>>8)&0xff); *buffer++ = (x & 0xff); buffer_size -= 8 ;}
 #define WRITE_BUF(buf,size) {if (buffer_size < size) return 0; memcpy (buffer, buf, size); buffer += size; buffer_size -= size; }
 #define WRITE_COMMON_HEADER() {WRITE_UINT32(atom_data->ch.version_flags);}
 
@@ -440,7 +441,6 @@ mp4p_stsz_atomdata_write (mp4p_stsz_t *atom_data, uint8_t *buffer, size_t buffer
         WRITE_UINT32(atom_data->entries[i].sample_size);
     }
 
-
     return buffer - origin;
 }
 
@@ -453,3 +453,86 @@ mp4p_stsz_atomdata_free (void *data) {
     free (stsz);
 }
 
+#pragma mark stco
+
+int
+mp4p_stco_atomdata_read (mp4p_stco_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    READ_COMMON_HEADER();
+
+    atom_data->number_of_entries = READ_UINT32();
+    if (atom_data->number_of_entries) {
+        atom_data->entries = calloc (sizeof (mp4p_stco_entry_t), atom_data->number_of_entries);
+    }
+    for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
+        atom_data->entries[i].offset = (uint64_t)READ_UINT32();
+    }
+
+    return 0;
+}
+
+size_t
+mp4p_stco_atomdata_write (mp4p_stco_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return 8 + atom_data->number_of_entries * 4;
+    }
+    uint8_t *origin = buffer;
+    WRITE_COMMON_HEADER();
+
+    WRITE_UINT32(atom_data->number_of_entries);
+    for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
+        WRITE_UINT32((uint32_t)atom_data->entries[i].offset);
+    }
+
+    return buffer - origin;
+}
+
+void
+mp4p_stco_atomdata_free (void *data) {
+    mp4p_stco_t *stco = data;
+    if (stco->entries) {
+        free (stco->entries);
+    }
+    free (stco);
+}
+
+#pragma mark co64
+
+int
+mp4p_co64_atomdata_read (mp4p_co64_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    READ_COMMON_HEADER();
+
+    atom_data->number_of_entries = READ_UINT32();
+    if (atom_data->number_of_entries) {
+        atom_data->entries = calloc (sizeof (mp4p_stco_entry_t), atom_data->number_of_entries);
+    }
+    for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
+        atom_data->entries[i].offset = READ_UINT64();
+    }
+
+    return 0;
+}
+
+size_t
+mp4p_co64_atomdata_write (mp4p_co64_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return 8 + atom_data->number_of_entries * 8;
+    }
+    uint8_t *origin = buffer;
+    WRITE_COMMON_HEADER();
+
+    WRITE_UINT32(atom_data->number_of_entries);
+    for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
+        WRITE_UINT64(atom_data->entries[i].offset);
+    }
+
+    return buffer - origin;
+}
+
+void
+mp4p_co64_atomdata_free (void *data) {
+    mp4p_co64_t *co64 = data;
+    if (co64->entries) {
+        free (co64->entries);
+    }
+    free (co64);
+}

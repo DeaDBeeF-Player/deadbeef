@@ -187,15 +187,6 @@ static const char *container_atoms[] = {
 };
 
 static void
-_stco_free (void *data) {
-    mp4p_stco_t *stco = data;
-    if (stco->entries) {
-        free (stco->entries);
-    }
-    free (stco);
-}
-
-static void
 _alac_free (void *data) {
     mp4p_alac_t *alac = data;
     if (alac->asc) {
@@ -575,6 +566,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     ATOM_DEF(mdhd)
     ATOM_DEF(hdlr)
     ATOM_DEF(smhd)
+    // NOTE: stsd atom is special, since it contains data + subatoms, so need to be processed manually
     else if (!mp4p_atom_type_compare(atom, "stsd")) {
         mp4p_stsd_t *atom_data = calloc (sizeof (mp4p_stts_t), 1);
         atom->data = atom_data;
@@ -597,38 +589,8 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     ATOM_DEF(stts)
     ATOM_DEF(stsc)
     ATOM_DEF(stsz)
-    else if (!mp4p_atom_type_compare(atom, "stco")) {
-        mp4p_stco_t *atom_data = calloc (sizeof (mp4p_stco_t), 1);
-        atom->data = atom_data;
-        atom->free = _stco_free;
-// FIXME:        atom->to_buffer = _stco_to_buffer;
-
-        READ_COMMON_HEADER();
-
-        atom_data->number_of_entries = READ_UINT32(fp);
-        if (atom_data->number_of_entries) {
-            atom_data->entries = calloc (sizeof (mp4p_stco_entry_t), atom_data->number_of_entries);
-        }
-        for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
-            atom_data->entries[i].offset = (uint64_t)READ_UINT32(fp);
-        }
-    }
-    else if (!mp4p_atom_type_compare(atom, "co64")) {
-        mp4p_stco_t *atom_data = calloc (sizeof (mp4p_stco_t), 1);
-        atom->data = atom_data;
-        atom->free = _stco_free;
-// FIXME:        atom->to_buffer = _co64_to_buffer;
-
-        READ_COMMON_HEADER();
-        atom_data->number_of_entries = READ_UINT32(fp);
-        if (atom_data->number_of_entries) {
-            atom_data->entries = calloc (sizeof (mp4p_stco_entry_t), atom_data->number_of_entries);
-        }
-
-        for (uint32_t i = 0; i < atom_data->number_of_entries; i++) {
-            atom_data->entries[i].offset = READ_UINT64(fp);
-        }
-    }
+    ATOM_DEF(stco)
+    ATOM_DEF(co64)
     else if (!mp4p_atom_type_compare(atom, "dref")) {
         mp4p_dref_t *atom_data = calloc (sizeof (mp4p_dref_t), 1);
         atom->data = atom_data;

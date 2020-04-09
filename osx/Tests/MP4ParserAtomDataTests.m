@@ -248,5 +248,59 @@
     mp4p_stsz_atomdata_free (dataread);
 }
 
+- (void)test_stcoWriteRead_EqualOutput {
+    mp4p_stco_entry_t entries[3] = {
+        { .offset = 0x01928374 },
+        { .offset = 0x56473829 },
+        { .offset = 0x25364758 },
+    };
+    mp4p_stco_t data = {
+        .ch.version_flags = 0xaabbccdd,
+        .number_of_entries = 3,
+        .entries = entries,
+    };
+
+    size_t bufsize = mp4p_stco_atomdata_write(&data, NULL, 0);
+    uint8_t *buffer = malloc (bufsize);
+    size_t writtensize = mp4p_stco_atomdata_write(&data, buffer, bufsize);
+    XCTAssertEqual (bufsize, writtensize);
+
+    mp4p_stco_t *dataread = malloc(sizeof (mp4p_stco_t));
+    int res = mp4p_stco_atomdata_read(dataread, buffer, bufsize);
+    XCTAssert(!res);
+
+    XCTAssert(!memcmp (dataread, &data, 8));
+    XCTAssert(!memcmp (dataread->entries, data.entries, 3*8));
+
+    mp4p_stco_atomdata_free (dataread);
+}
+
+- (void)test_co64WriteRead_EqualOutput {
+    mp4p_stco_entry_t entries[3] = {
+        { .offset = 0x0192837456473829 },
+        { .offset = 0x5647382925364758 },
+        { .offset = 0x2536475801928374 },
+    };
+    mp4p_co64_t data = {
+        .ch.version_flags = 0xaabbccdd,
+        .number_of_entries = 3,
+        .entries = entries,
+    };
+
+    size_t bufsize = mp4p_co64_atomdata_write(&data, NULL, 0);
+    uint8_t *buffer = malloc (bufsize);
+    size_t writtensize = mp4p_co64_atomdata_write(&data, buffer, bufsize);
+    XCTAssertEqual (bufsize, writtensize);
+
+    mp4p_co64_t *dataread = malloc(sizeof (mp4p_co64_t));
+    int res = mp4p_co64_atomdata_read(dataread, buffer, bufsize);
+    XCTAssert(!res);
+
+    XCTAssert(!memcmp (dataread, &data, 8));
+    XCTAssert(!memcmp (dataread->entries, data.entries, 3*8));
+
+    mp4p_co64_atomdata_free (dataread);
+}
+
 
 @end
