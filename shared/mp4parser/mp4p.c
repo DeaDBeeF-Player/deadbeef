@@ -207,20 +207,6 @@ static const char *container_atoms[] = {
 };
 
 static void
-_dOps_free (void *data) {
-    mp4p_dOps_t *dOps = data;
-    if (dOps->channel_mapping_table) {
-        for (int i = 0; i < dOps->output_channel_count; i++) {
-            if (dOps->channel_mapping_table[i].channel_mapping) {
-                free (dOps->channel_mapping_table[i].channel_mapping);
-            }
-        }
-        free (dOps->channel_mapping_table);
-    }
-    free (dOps);
-}
-
-static void
 _meta_free (void *data) {
     mp4p_ilst_meta_t *meta = data;
     if (meta->name) {
@@ -596,33 +582,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     ATOM_DEF(alac)
     ATOM_DEF_WITH_SUBATOMS(mp4a,28)
     ATOM_DEF_WITH_SUBATOMS(Opus,28)
-    else if (!mp4p_atom_type_compare(atom, "dOps")) {
-        mp4p_dOps_t *dOps = calloc (sizeof (mp4p_dOps_t), 1);
-        atom->data = dOps;
-        atom->free = _dOps_free;
-// FIXME:        atom->to_buffer = _dOps_to_buffer;
-
-        dOps->version = READ_UINT8(fp);
-        if (dOps->version != 0) {
-            return -1;
-        }
-        dOps->output_channel_count = READ_UINT8(fp);
-        dOps->pre_skip = READ_UINT16(fp);
-        dOps->input_sample_rate = READ_UINT32(fp);
-        dOps->output_gain = READ_INT16(fp);
-        dOps->channel_mapping_family = READ_UINT8(fp);
-        if (dOps->channel_mapping_family != 0) {
-            dOps->channel_mapping_table = calloc (sizeof (mp4p_opus_channel_mapping_table_t), dOps->output_channel_count);
-            for (int i = 0; i < dOps->output_channel_count; i++) {
-                dOps->channel_mapping_table[i].channel_mapping = calloc(1, dOps->output_channel_count);
-                dOps->channel_mapping_table[i].stream_count = READ_UINT8(fp);
-                dOps->channel_mapping_table[i].coupled_count = READ_UINT8(fp);
-                for (int j = 0; j < dOps->output_channel_count; j++) {
-                    dOps->channel_mapping_table[i].channel_mapping[j] = READ_UINT8(fp);
-                }
-            }
-        }
-    }
+    ATOM_DEF(dOps)
     else if (!mp4p_atom_type_compare(atom, "esds")) {
         mp4p_esds_t *atom_data = calloc (sizeof (mp4p_esds_t), 1);
         atom->data = atom_data;

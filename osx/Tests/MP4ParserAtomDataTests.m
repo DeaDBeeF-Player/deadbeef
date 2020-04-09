@@ -392,4 +392,45 @@
     XCTAssert(!memcmp (&dataread, &data, sizeof(data)));
 }
 
+- (void)test_dOpsWriteRead_EqualOutput {
+    uint8_t channel_mapping[2] = {0x47,0x83};
+    mp4p_opus_channel_mapping_table_t channel_mapping_table[2] = {
+        {
+            .stream_count = 0x45,
+            .coupled_count = 0x87,
+            .channel_mapping = channel_mapping,
+        },
+        {
+            .stream_count = 0x45,
+            .coupled_count = 0x87,
+            .channel_mapping = channel_mapping,
+        }
+    };
+    mp4p_dOps_t data = {
+        .version = 0,
+        .output_channel_count = 2,
+        .pre_skip = 0x1928,
+        .input_sample_rate = 0x46576879,
+        .output_gain = 0x4857,
+        .channel_mapping_family = 0x37,
+        .channel_mapping_table = channel_mapping_table,
+    };
+
+    size_t bufsize = mp4p_dOps_atomdata_write(&data, NULL, 0);
+    uint8_t *buffer = malloc (bufsize);
+    size_t writtensize = mp4p_dOps_atomdata_write(&data, buffer, bufsize);
+    XCTAssertEqual (bufsize, writtensize);
+
+    mp4p_dOps_t dataread;
+    int res = mp4p_dOps_atomdata_read(&dataread, buffer, bufsize);
+    XCTAssert(!res);
+
+    XCTAssert(!memcmp (&dataread, &data, 11));
+
+    for (int i = 0; i < data.output_channel_count; i++) {
+        XCTAssert(!memcmp (&dataread.channel_mapping_table[i], &data.channel_mapping_table[i], 2));
+        XCTAssert(!memcmp (dataread.channel_mapping_table[i].channel_mapping, data.channel_mapping_table[i].channel_mapping, data.output_channel_count));
+    }
+}
+
 @end

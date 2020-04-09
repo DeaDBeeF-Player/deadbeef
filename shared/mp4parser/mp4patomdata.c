@@ -25,6 +25,7 @@
 
 #define WRITE_UINT8(x) {if (buffer_size < 1) return 0; *buffer++ = x; buffer_size--; }
 #define WRITE_UINT16(x) {if (buffer_size < 2) return 0; *buffer++ = (x>>8); *buffer++ = (x & 0xff); buffer_size -= 2;}
+#define WRITE_INT16(x) {if (buffer_size < 2) return 0; *buffer++ = (x>>8); *buffer++ = (uint8_t)(x & 0xff); buffer_size -= 2;}
 #define WRITE_UINT32(x) {if (buffer_size < 4) return 0; *buffer++ = ((x>>24)); *buffer++ = ((x>>16)&0xff); *buffer++ = ((x>>8)&0xff); *buffer++ = (x & 0xff); buffer_size -=4 ;}
 #define WRITE_UINT64(x) {if (buffer_size < 8) return 0; *buffer++ = ((x>>56)); *buffer++ = ((x>>48)&0xff); *buffer++ = ((x>>40)); *buffer++ = ((x>>32)&0xff); *buffer++ = ((x>>24)); *buffer++ = ((x>>16)&0xff); *buffer++ = ((x>>8)&0xff); *buffer++ = (x & 0xff); buffer_size -= 8 ;}
 #define WRITE_BUF(buf,size) {if (buffer_size < size) return 0; memcpy (buffer, buf, size); buffer += size; buffer_size -= size; }
@@ -722,4 +723,70 @@ void
 mp4p_Opus_atomdata_free (void *data) {
     mp4p_Opus_t *Opus = data;
     free (Opus);
+}
+
+#pragma mark dOps
+
+int
+mp4p_dOps_atomdata_read (mp4p_dOps_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    atom_data->version = READ_UINT8();
+    if (atom_data->version != 0) {
+        return -1;
+    }
+    atom_data->output_channel_count = READ_UINT8();
+    atom_data->pre_skip = READ_UINT16();
+    atom_data->input_sample_rate = READ_UINT32();
+    atom_data->output_gain = READ_INT16();
+    atom_data->channel_mapping_family = READ_UINT8();
+    if (atom_data->channel_mapping_family != 0) {
+        atom_data->channel_mapping_table = calloc (sizeof (mp4p_opus_channel_mapping_table_t), atom_data->output_channel_count);
+        for (int i = 0; i < atom_data->output_channel_count; i++) {
+            atom_data->channel_mapping_table[i].channel_mapping = calloc(1, atom_data->output_channel_count);
+            atom_data->channel_mapping_table[i].stream_count = READ_UINT8();
+            atom_data->channel_mapping_table[i].coupled_count = READ_UINT8();
+            for (int j = 0; j < atom_data->output_channel_count; j++) {
+                atom_data->channel_mapping_table[i].channel_mapping[j] = READ_UINT8();
+            }
+        }
+    }
+
+    return 0;
+}
+
+size_t
+mp4p_dOps_atomdata_write (mp4p_dOps_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return 11 + (2+atom_data->output_channel_count) * atom_data->output_channel_count;
+    }
+    uint8_t *origin = buffer;
+
+    WRITE_UINT8(atom_data->version);
+    WRITE_UINT8(atom_data->output_channel_count);
+    WRITE_UINT16(atom_data->pre_skip);
+    WRITE_UINT32(atom_data->input_sample_rate);
+    WRITE_INT16(atom_data->output_gain);
+    WRITE_UINT8(atom_data->channel_mapping_family);
+    for (int i = 0; i < atom_data->output_channel_count; i++) {
+        WRITE_UINT8(atom_data->channel_mapping_table[i].stream_count);
+        WRITE_UINT8(atom_data->channel_mapping_table[i].coupled_count);
+        for (int j = 0; j < atom_data->output_channel_count; j++) {
+            WRITE_UINT8(atom_data->channel_mapping_table[i].channel_mapping[j]);
+        }
+    }
+
+    return buffer - origin;
+}
+
+void
+mp4p_dOps_atomdata_free (void *data) {
+    mp4p_dOps_t *dOps = data;
+    if (dOps->channel_mapping_table) {
+        for (int i = 0; i < dOps->output_channel_count; i++) {
+            if (dOps->channel_mapping_table[i].channel_mapping) {
+                free (dOps->channel_mapping_table[i].channel_mapping);
+            }
+        }
+        free (dOps->channel_mapping_table);
+    }
+    free (dOps);
 }
