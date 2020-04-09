@@ -486,16 +486,28 @@
 }
 
 - (void)test_chplWriteRead_EqualOutput {
-    uint64_t start[3] = { 0, 1, 2 };
-    uint8_t name_len[3] = { 9, 9, 9 };
-    char *name[3] = { "Chapter 0", "Chapter 1", "Chapter 2" };
+    mp4p_chpl_entry_t entries[3] = {
+        {
+            .start_time = 0,
+            .name_len = 9,
+            .name = "Chapter 1"
+        },
+        {
+            .start_time = 1,
+            .name_len = 9,
+            .name = "Chapter 2"
+        },
+        {
+            .start_time = 2,
+            .name_len = 9,
+            .name = "Chapter 3"
+        }
+    };
 
     mp4p_chpl_t data = {
         .ch.version_flags = 0xaabbccdd,
-        .nchapters = 3,
-        .start = start,
-        .name_len = name_len,
-        .name = name,
+        .number_of_entries = 3,
+        .entries = entries,
 
     };
 
@@ -508,13 +520,13 @@
     int res = mp4p_chpl_atomdata_read(&dataread, buffer, bufsize);
     XCTAssert(!res);
 
-    size_t offs = offsetof(mp4p_chpl_t, start);
+    size_t offs = offsetof(mp4p_chpl_t, entries);
     XCTAssert(!memcmp (&dataread, &data, offs));
 
-    XCTAssert(!memcmp (dataread.start, data.start, sizeof (start)));
-    XCTAssert(!memcmp (dataread.name_len, data.name_len, sizeof (name_len)));
     for (int i = 0; i < 3; i++) {
-        XCTAssert(!memcmp (dataread.name[i], data.name[i], data.name_len[i]));
+        XCTAssertEqual(dataread.entries[i].start_time, data.entries[i].start_time);
+        XCTAssertEqual(dataread.entries[i].name_len, data.entries[i].name_len);
+        XCTAssert(!memcmp (dataread.entries[i].name, data.entries[i].name, data.entries[i].name_len));
     }
 }
 

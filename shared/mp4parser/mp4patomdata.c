@@ -1024,46 +1024,38 @@ mp4p_chpl_atomdata_read (mp4p_chpl_t *atom_data, uint8_t *buffer, size_t buffer_
 
     int i;
 
-    atom_data->nchapters = READ_UINT8();
+    atom_data->number_of_entries = READ_UINT8();
 
-    if (atom_data->nchapters) {
-        atom_data->start = calloc (sizeof (uint64_t), atom_data->nchapters);
-        atom_data->name_len = calloc (sizeof (uint8_t), atom_data->nchapters);
-        atom_data->name = calloc (sizeof (char *), atom_data->nchapters);
+    if (atom_data->number_of_entries) {
+        atom_data->entries = calloc (sizeof (mp4p_chpl_entry_t), atom_data->number_of_entries);
     }
-    for(i = 0; i < atom_data->nchapters; i++)
+    for(i = 0; i < atom_data->number_of_entries; i++)
     {
-        atom_data->start[i] = READ_UINT64();
+        atom_data->entries[i].start_time = READ_UINT64();
         uint8_t name_len = READ_UINT8();
         if (name_len > buffer_size) {
             name_len = buffer_size;
         }
-        atom_data->name_len[i] = name_len;
+        atom_data->entries[i].name_len = name_len;
         if (name_len) {
-            atom_data->name[i] = malloc(name_len+1);
-            READ_BUF(atom_data->name[i], name_len);
+            atom_data->entries[i].name = malloc(name_len+1);
+            READ_BUF(atom_data->entries[i].name, name_len);
         }
-        atom_data->name[i][name_len] = 0;
+        atom_data->entries[i].name[name_len] = 0;
     }
     // FIXME: convert to qsort
     /* Bubble sort by increasing start date */
-    do
-    {
-        for( i = 0; i < atom_data->nchapters - 1; i++ )
-        {
-            if( atom_data->start[i] > atom_data->start[i+1] )
-            {
-                char *psz = atom_data->name[i+1];
-                int64_t i64 = atom_data->start[i+1];
-                uint8_t nl = atom_data->name_len[i+1];
+    do {
+        for (i = 0; i < atom_data->number_of_entries - 1; i++) {
+            if (atom_data->entries[i].start_time > atom_data->entries[i+1].start_time ) {
 
-                atom_data->name[i+1] = atom_data->name[i];
-                atom_data->start[i+1] = atom_data->start[i];
-                atom_data->name_len[i+1] = atom_data->name_len[i];
+                mp4p_chpl_entry_t temp;
 
-                atom_data->name[i] = psz;
-                atom_data->start[i] = i64;
-                atom_data->name_len[i] = nl;
+                memcpy (&temp, atom_data->entries+i+1, sizeof (mp4p_chpl_entry_t));
+
+                memcpy (atom_data->entries+i+1, atom_data->entries+i, sizeof (mp4p_chpl_entry_t));
+
+                memcpy (atom_data->entries+i, &temp, sizeof (mp4p_chpl_entry_t));
 
                 i = -1;
                 break;
@@ -1078,8 +1070,8 @@ size_t
 mp4p_chpl_atomdata_write (mp4p_chpl_t *atom_data, uint8_t *buffer, size_t buffer_size) {
     if (!buffer) {
         size_t size = 5;
-        for (int i = 0; i < atom_data->nchapters; i++) {
-            size += 8 + 1 + atom_data->name_len[i];
+        for (int i = 0; i < atom_data->number_of_entries; i++) {
+            size += 8 + 1 + atom_data->entries[i].name_len;
         }
         return size;
     }
@@ -1089,14 +1081,14 @@ mp4p_chpl_atomdata_write (mp4p_chpl_t *atom_data, uint8_t *buffer, size_t buffer
 
     int i;
 
-    WRITE_UINT8(atom_data->nchapters);
+    WRITE_UINT8(atom_data->number_of_entries);
 
-    for(i = 0; i < atom_data->nchapters; i++)
+    for(i = 0; i < atom_data->number_of_entries; i++)
     {
-        WRITE_UINT64(atom_data->start[i]);
-        WRITE_UINT8(atom_data->name_len[i]);
-        if (atom_data->name_len[i]) {
-            WRITE_BUF(atom_data->name[i], atom_data->name_len[i]);
+        WRITE_UINT64(atom_data->entries[i].start_time);
+        WRITE_UINT8(atom_data->entries[i].name_len);
+        if (atom_data->entries[i].name_len) {
+            WRITE_BUF(atom_data->entries[i].name, atom_data->entries[i].name_len);
         }
     }
 
@@ -1106,10 +1098,9 @@ mp4p_chpl_atomdata_write (mp4p_chpl_t *atom_data, uint8_t *buffer, size_t buffer
 void
 mp4p_chpl_atomdata_free (void *data) {
     mp4p_chpl_t *chpl = data;
-    for (int i = 0; i < chpl->nchapters; i++) {
-        free (chpl->name[i]);
+    for (int i = 0; i < chpl->number_of_entries; i++) {
+        free (chpl->entries[i].name);
     }
-    free (chpl->name);
-    free (chpl->start);
+    free (chpl->entries);
     free (data);
 }

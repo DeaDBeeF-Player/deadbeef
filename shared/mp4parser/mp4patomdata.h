@@ -234,11 +234,15 @@ typedef struct {
 } mp4p_ilst_meta_t;
 
 typedef struct {
+    uint64_t start_time;
+    uint8_t name_len;
+    char *name;
+} mp4p_chpl_entry_t;
+
+typedef struct {
     mp4p_common_header_t ch;
-    uint8_t nchapters;
-    int64_t *start;
-    uint8_t *name_len;
-    char **name;
+    uint8_t number_of_entries;
+    mp4p_chpl_entry_t *entries;
 } mp4p_chpl_t;
 
 typedef struct {
