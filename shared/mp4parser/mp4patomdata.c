@@ -58,7 +58,6 @@ mp4p_mvhd_atomdata_read (mp4p_mvhd_t *atom_data, uint8_t *buffer, size_t buffer_
 size_t
 mp4p_mvhd_atomdata_write (mp4p_mvhd_t *atom_data, uint8_t *buffer, size_t buffer_size) {
     if (!buffer) {
-        // FIXME: looks wrong
         return 100;
     }
     uint8_t *origin = buffer;

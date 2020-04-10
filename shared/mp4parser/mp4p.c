@@ -366,7 +366,9 @@ mp4p_open (mp4p_file_callbacks_t *callbacks) {
     for (;;) {
         mp4p_atom_t *atom = _atom_load (NULL, callbacks);
         if (!atom) {
-            mp4p_atom_free(head);
+            if (head) {
+                mp4p_atom_free(head);
+            }
             return NULL;
         }
 
