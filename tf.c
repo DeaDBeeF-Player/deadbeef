@@ -56,6 +56,7 @@
 #include <inttypes.h>
 #include <math.h>
 #include <assert.h>
+#include <sys/stat.h>
 #include "streamer.h"
 #include "utf8.h"
 #include "playlist.h"
@@ -2950,6 +2951,22 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                                 tf_append_out(&out, &outlen, start, (int)(end-start));
                                 skip_out = 1;
                             }
+                        }
+                    }
+                }
+                else if (!strcmp (name, "last_modified")) {
+                    const char *v = pl_find_meta_raw (it, ":URI");
+                    if (v) {
+                        if (!strncmp (v, "file://", 7)) {
+                            v += 7;
+                        }
+                        struct stat sb;
+                        struct tm localtm;
+                        char mtime[20];
+                        if (!stat (v, &sb) && localtime_r (&sb.st_mtime, &localtm) != NULL
+                                && strftime (mtime, sizeof(mtime), "%F %T", &localtm)) {
+                            tf_append_out (&out, &outlen, mtime, (int)strlen (mtime));
+                            skip_out = 1;
                         }
                     }
                 }
