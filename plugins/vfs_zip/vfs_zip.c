@@ -101,6 +101,9 @@ vfs_zip_open (const char *fname) {
         }
         memset (&st, 0, sizeof (st));
 
+        while (*colon == '/') {
+            colon++;
+        }
         int res = zip_stat(z, colon, 0, &st);
         if (res != 0) {
             zip_close (z);
