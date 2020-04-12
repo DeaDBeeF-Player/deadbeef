@@ -70,6 +70,8 @@ project "libwin"
    files {
        "shared/windows/fopen.c",
        "shared/windows/mingw32_layer.h",
+       "shared/windows/mkdir.c",
+       "shared/windows/rmdir.c",
        "shared/windows/rename.c",
        "shared/windows/scandir.c",
        "shared/windows/stat.c",
@@ -290,11 +292,11 @@ project "opus_plugin"
    defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
    links { "opusfile", "opus", "m", "ogg" }
    filter "configurations:debug32 or release32"
-   
+
       includedirs { "static-deps/lib-x86-32/include/opus" }
 
    filter "configurations:debug or release"
-   
+
       includedirs { "static-deps/lib-x86-64/include/opus" }
 end
 
@@ -427,12 +429,12 @@ project "ddb_gui_GTK2"
     pkgconfig ("gtk+-2.0 jansson")
 
     filter "configurations:debug32 or release32"
-    
+
        includedirs { "static-deps/lib-x86-32/gtk-2.16.0/include/**", "static-deps/lib-x86-32/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-32/gtk-2.16.0/lib", "static-deps/lib-x86-32/gtk-2.16.0/lib/**" }
 
     filter "configurations:debug or release"
-    
+
        includedirs { "static-deps/lib-x86-64/gtk-2.16.0/include/**", "static-deps/lib-x86-64/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-64/gtk-2.16.0/lib", "static-deps/lib-x86-64/gtk-2.16.0/lib/**" }
 end
