@@ -33,8 +33,9 @@
 #undef max
 #undef min
 
-// Ignore modes for mkdir to be comatible with windows mkdir
-#define mkdir(X,Y)    mkdir(X)
+// make mkdir and rmdir compatible with windows
+#define mkdir(X,Y) win_mkdir(X, Y)
+#define rmdir(X)   win_rmdir(X)
 
 // Most of these values come from Elio's port, these values should be checked if they are still needed
 
@@ -105,6 +106,9 @@ typedef pthread_cond_t  *db_cond_t;
 #undef rename
 #define rename(X,Y) rename_windows(X,Y)
 int rename_windows(const char *, const char *);
+
+int win_mkdir (const char *path, mode_t mode);
+int win_rmdir (const char *path);
 
 // Own scandir implementation
 int scandir (const char *__dir, struct dirent ***__namelist, int (*__selector) (const struct dirent *), int (*__cmp) (const struct dirent **, const struct dirent **));
