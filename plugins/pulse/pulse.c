@@ -42,7 +42,9 @@
 static DB_output_t plugin;
 DB_functions_t * deadbeef;
 
-#define CONFSTR_PULSE_SERVERADDR "pulse.serveraddr"
+// serveraddr2 is a version bump, since the handling has changed, and "default"
+// value has different meaning.
+#define CONFSTR_PULSE_SERVERADDR "pulse.serveraddr2"
 #define CONFSTR_PULSE_BUFFERSIZE "pulse.buffersize"
 #define PULSE_DEFAULT_BUFFERSIZE 4096
 
