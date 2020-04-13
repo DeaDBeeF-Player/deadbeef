@@ -1020,17 +1020,9 @@ esc_char (char c) {
 
 static int
 make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
-    char esc_artist[NAME_MAX+1];
+    char esc_artist[NAME_MAX] = "Unknown artist";
     if (artist) {
-        size_t i = 0;
-        while (artist[i] && i < NAME_MAX) {
-            esc_artist[i] = esc_char (artist[i]);
-            i++;
-        }
-        esc_artist[i] = '\0';
-    }
-    else {
-        strcpy (esc_artist, "Unknown artist");
+        sanitize_name_for_file_system(artist, esc_artist, NAME_MAX);
     }
 
     if (make_cache_root_path (path, size) < 0) {
