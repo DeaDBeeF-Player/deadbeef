@@ -1064,25 +1064,31 @@ make_cache_path2 (char *path, int size, const char *fname, const char *album, co
     if (!artist || !*artist) {
         artist = "Unknown artist";
     }
+    // If buffer larger than max path size limit it to NAME_MAX
+    if(size > NAME_MAX) {
+        size = NAME_MAX;
+    }
 
-    #ifdef __MINGW32__
+    if(size < sizeof ("1.jpg.part")) {
+        trace ("Artwork File Cache: Path buffer way too small!\n");
+        return -1;
+    }
+    // Temp file extension or something just make sure there is room for it
+    size -= sizeof ("1.jpg.part");
+
+
     if (make_cache_dir_path (path, size, artist, img_size)) {
         return -1;
     }
-    #else
-    if (make_cache_dir_path (path, size-NAME_MAX, artist, img_size)) {
-        return -1;
-    }
-    #endif
 
-    int max_album_chars = min (NAME_MAX, size - strlen (path)) - sizeof ("1.jpg.part");
-    if (max_album_chars <= 0) {
+    size -= strlen (path);
+    if (size < 1) {
         trace ("Path buffer not long enough for %s and filename\n", path);
         return -1;
     }
 
-    char esc_album[max_album_chars+1];
-    size_t len = sanitize_name_for_file_system (album, esc_album, max_album_chars + 1);
+    char esc_album[size+1];
+    size_t len = sanitize_name_for_file_system (album, esc_album, size + 1);
     if (len < 1) {
         // Would only happen if the name was entirely spaces or something like that.
         trace ("Artwork File Cache: Not possible to get any unique album name.\n");
