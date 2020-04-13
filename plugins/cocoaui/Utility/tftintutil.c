@@ -67,6 +67,9 @@ calculate_tint_ranges_from_string (const char *inputString, int *tintRanges, uns
             p += len;
             remaining -= len;
         }
+        if (remaining == 0) {
+            break;
+        }
         uint32_t i = 0;
         u8_nextchar(p, &i);
         memcpy (out, p, i);
