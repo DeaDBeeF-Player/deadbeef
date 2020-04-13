@@ -1082,11 +1082,12 @@ make_cache_path2 (char *path, int size, const char *fname, const char *album, co
     }
 
     char esc_album[max_album_chars+1];
-    const char *palbum = strlen (album) > max_album_chars ? album+strlen (album)-max_album_chars : album;
-    size_t i = 0;
-    do {
-        esc_album[i] = esc_char (palbum[i]);
-    } while (palbum[i++]);
+    size_t len = sanitize_name_for_file_system (album, esc_album, max_album_chars + 1);
+    if (len < 1) {
+        // Would only happen if the name was entirely spaces or something like that.
+        trace ("Artwork File Cache: Not possible to get any unique album name.\n");
+        return -1;
+    }
 
     sprintf (path+strlen (path), "%s%s", esc_album, ".jpg");
     return 0;
