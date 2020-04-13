@@ -925,6 +925,83 @@ is_illegal_windows_name (const char* str) {
     return 0;
 }
 
+// Maybe put this in utils if useful in other places?
+static size_t
+sanitize_name_for_file_system (const char* name, char* clean, size_t clean_capacity) {
+    if(clean_capacity < 1) {
+        return 0;
+    }
+    // Trim leading white spaces
+    while (isspace (*name)) {
+        name++;
+    }
+
+    // Most Unix OSes only care about `/`, and `NULL`, but Mac OS does not like `:`
+    // https://en.wikipedia.org/wiki/Filename#Comparison_of_filename_limitations
+    size_t length = 0;
+    const char* name_end = name;
+    // An other possibility is escape to hex, but the old esc_char function just used `_`
+    while (*name_end != '\0' && (length + 1) < clean_capacity) {
+        unsigned char c = *name_end;
+        if (isspace (c)) {
+            c = ' ';
+        }
+        if (c == '/') {
+            c = '\\';
+        }
+        if (c == ':') {
+            c = '_';
+        }
+        // While only a restriction on windows these seem like a bad idea in general
+        if (c < 32) {
+            c = '_';
+        }
+        #ifdef __MINGW32__
+        if (is_illegal_windows_char (c)) {
+            c = '_';
+        }
+        #endif
+
+        clean[length] = c;
+        length++;
+        name_end++;
+    }
+    clean[length] = '\0';
+    //  Just an empty string nothing more process.
+    if(length < 1) {
+        return 0;
+    }
+
+    // A leading dash can make interacting with a file from the commandline a pain
+    if(clean[0] == '-') {
+        clean[0] = '_';
+    }
+
+    // Adjust length to trim trailing spaces, again a windows only thing, but spaces at the end
+    // and begining of strings can be a pain to work with from a commandline.
+    while (length > 0 && isspace (*(clean + length - 1))) {
+        length--;
+    }
+
+    #ifdef __MINGW32__
+    // prepend an underscore to the name
+    if (is_illegal_windows_name (clean)) {
+        if(length + 1 >= clean_capacity) {
+            length--; // truncate by one then
+        }
+        memmove (clean + 1, clean, length);
+        length++;
+        clean[0] = '_';
+        clean[length] = '\0';
+    }
+    // File names can't end with a period `.` on windows
+    if(clean[length - 1] == '.') {
+        clean[length - 1] = '_';
+    }
+    #endif
+    return length;
+}
+
 // esc_char is needed to prevent using file path separators,
 // e.g. to avoid writing arbitrary files using "../../../filename"
 static char
