@@ -872,6 +872,59 @@ scale_file (const char *in, const char *out, int img_size)
 #endif
 }
 
+static int
+is_illegal_windows_char(char c) {
+    // Forbidden characters in a windows file name: <>:"/\|?* and codepoints with value < 32
+    // https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file#naming-conventions
+    static const char bad_chars[] = { '<', '>', ':', '"', '/', '\\', '|', '?', '*' };
+    for (int i = 0; i < sizeof(bad_chars); i++) {
+        if(c == bad_chars[i]) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int
+is_illegal_windows_name (const char* str) {
+    // A file can't be named these regardless of case.
+    // "CON", "PRN", "AUX", "NUL",
+    // "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+    // "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
+
+    // Also if a dot follows right after any of these it's forbidden as well
+    // since windows treats that as a file extension.
+    static const uint32_t com = ('C' << 16) | ('O' << 8) | 'M';
+    static const uint32_t lpt = ('L' << 16) | ('P' << 8) | 'T';
+    static const uint32_t names[] = {
+        ('A' << 16) | ('U' << 8) | 'X',
+        ('C' << 16) | ('O' << 8) | 'N',
+        ('N' << 16) | ('U' << 8) | 'L',
+        ('P' << 16) | ('R' << 8) | 'N'
+    };
+    uint32_t val = 0;
+    for (int i = 0; i < 3; i++) {
+        char tmp = str[i];
+        if(str[i] == '\0') {
+            return 0;
+        }
+        val <<= 8;
+        val  |= tmp;
+    }
+    val &= 0xdfdfdf; // Make case insensitive.
+    if (str[3] >= '0' && str[3] <= '9' && (val == com || val == lpt) && (str[4] == '\0' || str[4] == '.')) {
+        return 1;
+    }
+    if (str[3] == '\0' || str[3] == '.') {
+        for (int i = 0; i < 4; i++) {
+            if(val == names[i]) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
 // esc_char is needed to prevent using file path separators,
 // e.g. to avoid writing arbitrary files using "../../../filename"
 static char
