@@ -577,7 +577,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 goto end;
             }
             // Calculate CBR duration from file size
-            else if (!vbr && !info->have_xing_header && !(flags & MP3_PARSE_FULLSCAN) && info->npackets >= 200) {
+            else if (!vbr && !info->have_xing_header && seek_to_sample < 0 && !(flags & MP3_PARSE_FULLSCAN) && info->npackets >= 200) {
                 // calculate total number of packets from file size
                 // 8876 - 9485
                 int64_t npackets = ceil(datasize/(float)info->ref_packet.packetlength);
@@ -654,7 +654,7 @@ error:
 #if PERFORMANCE_STATS
     gettimeofday (&end_tv, NULL);
     float elapsed = (end_tv.tv_sec-start_tv.tv_sec) + (end_tv.tv_usec - start_tv.tv_usec) / 1000000.f;
-    printf ("mp3 stats:\nSeeks: %llu\nReads: %llu\nBytes: %llu\nTime: %f sec", info->num_seeks, info->num_reads, info->bytes_read, elapsed);
+    printf ("mp3 stats:\nSeeks: %llu\nReads: %llu\nBytes: %llu\nTime: %f sec\n", info->num_seeks, info->num_reads, info->bytes_read, elapsed);
 #endif
     return err;
 }
