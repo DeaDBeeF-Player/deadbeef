@@ -146,8 +146,7 @@ mp4tagutil_find_udta (mp4p_atom_t *moov, mp4p_atom_t **pmeta, mp4p_atom_t **pils
             hdlr = mp4p_atom_find(subatom, "meta/hdlr");
             if (hdlr) {
                 mp4p_hdlr_t *hdlr_data = hdlr->data;
-                if (!mp4p_fourcc_compare (hdlr_data->component_subtype, "mdir")
-                    && !mp4p_fourcc_compare(hdlr_data->component_manufacturer, "appl")) {
+                if (!mp4p_fourcc_compare (hdlr_data->component_subtype, "mdir")) {
                     ilst = mp4p_atom_find(subatom, "meta/ilst");
                     *pmeta = meta;
                     *pilst = ilst;
@@ -488,7 +487,7 @@ mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     mp4p_atom_t *ilst = NULL;
 
     mp4p_atom_t *udta = mp4tagutil_find_udta (moov, &unused, &ilst);
-    if (!udta) {
+    if (!udta || !ilst) {
         return;
     }
 
