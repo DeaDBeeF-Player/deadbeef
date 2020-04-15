@@ -260,6 +260,9 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
         atom->free = free;
         READ_BUF(fp, mtyp, atom->size-8);
     }
+    else if (!mp4p_atom_type_compare (atom, "mdat")) {
+        return 0; // special atom, that's not loaded into memory
+    }
     else if (parent_atom && !mp4p_atom_type_compare(parent_atom, "ilst")) {
         mp4p_ilst_meta_t *atom_data = calloc (1, sizeof (mp4p_ilst_meta_t));
         // custom fields contain extra "mean" and "name" subatoms
@@ -366,10 +369,7 @@ mp4p_open (mp4p_file_callbacks_t *callbacks) {
     for (;;) {
         mp4p_atom_t *atom = _atom_load (NULL, callbacks);
         if (!atom) {
-            if (head) {
-                mp4p_atom_free(head);
-            }
-            return NULL;
+            break;
         }
 
         if (!head) {
@@ -378,10 +378,6 @@ mp4p_open (mp4p_file_callbacks_t *callbacks) {
         else {
             tail->next = atom;
             tail = atom;
-        }
-
-        if (!mp4p_atom_type_compare(atom, "mdat")) {
-            break;
         }
     }
 
