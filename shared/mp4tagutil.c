@@ -478,7 +478,7 @@ mp4_write_metadata (DB_playItem_t *it) {
     return 0;
 }
 
-static void
+void
 mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     int got_itunes_tags = 0;
     mp4p_atom_t *moov = mp4p_atom_find(mp4file, "moov");

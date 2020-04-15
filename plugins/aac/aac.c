@@ -863,6 +863,8 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     mp4_init_ddb_file_callbacks (&info.mp4reader);
     mp4 = info.mp4file = mp4p_open(&info.mp4reader);
 
+    // FIXME: error handling doesn't close the file
+
     if (!mp4) {
         return -1; // not mp4
     }
@@ -890,7 +892,7 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     mp4p_atom_t *esds_atom = mp4p_atom_find (info.trak, "trak/mdia/minf/stbl/stsd/mp4a/esds");
     if (!esds_atom) {
         mp4p_atom_free_list(info.mp4file);
-        return -1;
+        return 1;
     }
     mp4p_esds_t *esds = esds_atom->data;
 
@@ -901,7 +903,7 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     if (aacDecoderInit(info.dec, asc, esds->asc_size, &samplerate, &channels) < 0) {
         mp4p_atom_free_list(info.mp4file);
         aacDecoderClose(info.dec);
-        return -1;
+        return 1;
     }
     info.info.fmt.samplerate = samplerate;
     info.info.fmt.channels = channels;
@@ -922,7 +924,6 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     deadbeef->plt_set_item_duration (plt, it, duration);
 
     deadbeef->rewind (fp);
-    mp4_read_metadata_file(it, &info.mp4reader);
     (void)deadbeef->junk_apev2_read (it, fp);
     (void)deadbeef->junk_id3v2_read (it, fp);
     (void)deadbeef->junk_id3v1_read (it, fp);
@@ -995,6 +996,8 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
         *after = cue;
         return 0;
     }
+
+    mp4_load_tags (info.mp4file, it);
 
     *after = deadbeef->plt_insert_item (plt, *after, it);
     deadbeef->pl_item_unref (it);

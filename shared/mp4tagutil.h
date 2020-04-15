@@ -42,4 +42,7 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it);
 void
 mp4_init_ddb_file_callbacks (mp4p_file_callbacks_t *cb);
 
+void
+mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it);
+
 #endif /* mp4tagutil_h */
