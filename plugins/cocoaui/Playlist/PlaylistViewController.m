@@ -1412,6 +1412,10 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 
                         // TODO: set cursor to the first dropped item
                     }
+
+                    if (abort) {
+                        break;
+                    }
                 }
             }
             if (after) {
