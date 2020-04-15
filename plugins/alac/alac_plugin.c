@@ -400,7 +400,6 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->plt_set_item_duration (plt, it, duration);
 
     deadbeef->rewind (fp);
-    mp4_read_metadata_file(it, &info.mp4reader);
 
     (void)deadbeef->junk_apev2_read (it, fp);
     (void)deadbeef->junk_id3v2_read (it, fp);
@@ -442,6 +441,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         return cue;
     }
 
+    mp4_load_tags (info.mp4file, it);
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
 
