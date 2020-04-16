@@ -72,6 +72,7 @@ typedef struct {
     mp4p_file_callbacks_t mp4reader;
     mp4p_atom_t *mp4file;
     mp4p_atom_t *trak;
+    uint32_t alac_samplerate;
     uint64_t mp4samples;
     alac_file *_alac;
     int mp4sample;
@@ -141,9 +142,6 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     // 1. sum of all stts entries
     mp4p_atom_t *stts_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl/stts");
-    mp4p_atom_t *mdhd_atom = mp4p_atom_find(info->trak, "trak/mdia/mdhd");
-
-    mp4p_mdhd_t *mdhd = mdhd_atom->data;
 
 //    printf ("num_samples: %lld\n", num_mp4samples);
 
@@ -152,8 +150,8 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     // duration is calculated from stts table (time-to-sample), which is not pcm-sample-precise.
     // there should be a way to count pcm samples
     uint64_t total_sample_duration = mp4p_stts_total_sample_duration (stts_atom);
-    totalsamples = total_sample_duration * samplerate / mdhd->time_scale;
-    duration = total_sample_duration / (float)mdhd->time_scale;
+    totalsamples = total_sample_duration * samplerate / alac->sample_rate;
+    duration = total_sample_duration / (float)alac->sample_rate;
 
     mp4p_atom_t *stsz_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl/stsz");
     mp4p_stsz_t *stsz = stsz_atom->data;
@@ -287,34 +285,26 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
     return initsize-size;
 }
 
-int
+static int
 alacplug_seek_sample (DB_fileinfo_t *_info, int sample) {
     alacplug_info_t *info = (alacplug_info_t *)_info;
 
     sample += info->startsample;
 
-    mp4p_atom_t *mdhd_atom = mp4p_atom_find(info->trak, "trak/mdia/mdhd");
-    mp4p_mdhd_t *mdhd = mdhd_atom->data;
-
     mp4p_atom_t *stts_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl/stts");
 
-    int scale = _info->fmt.samplerate / mdhd->time_scale;
-    int pos = 0;
-    for (int i = 0; i < info->mp4samples; i++)
-    {
-        uint32_t thissample_duration = mp4p_stts_sample_duration(stts_atom, i);
+    uint64_t seeksample = (int)((int64_t)sample * info->alac_samplerate / _info->fmt.samplerate);
 
-        if (pos + thissample_duration > sample / scale) {
-            info->skipsamples = sample - pos * scale;
-            info->mp4sample = i;
-            break;
-        }
-        pos += thissample_duration;
-    }
-    trace ("seek res: frame %d, skip %d\n", info->mp4sample, info->skipsamples);
+    uint64_t startsample = 0;
+    info->mp4sample = mp4p_stts_mp4sample_containing_sample(stts_atom, seeksample, &startsample);
+
+    startsample = startsample * _info->fmt.samplerate / info->alac_samplerate;
+    info->skipsamples = sample - startsample;
+
     info->out_remaining = 0;
     info->currentsample = sample;
     _info->readpos = (float)(info->currentsample - info->startsample) / _info->fmt.samplerate;
+
     return 0;
 }
 
@@ -387,12 +377,10 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     channels = alac->channel_count;
 
     mp4p_atom_t *stts_atom = mp4p_atom_find(info.trak, "trak/mdia/minf/stbl/stts");
-    mp4p_atom_t *mdhd_atom = mp4p_atom_find(info.trak, "trak/mdia/mdhd");
-    mp4p_mdhd_t *mdhd = mdhd_atom->data;
 
     uint64_t total_sample_duration = mp4p_stts_total_sample_duration (stts_atom);
-    totalsamples = total_sample_duration * samplerate / mdhd->time_scale;
-    duration = total_sample_duration / (float)mdhd->time_scale;
+    totalsamples = total_sample_duration * samplerate / alac->sample_rate;
+    duration = total_sample_duration / (float)alac->sample_rate;
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, alac_plugin.plugin.id);
     ftype = "ALAC";
