@@ -86,6 +86,7 @@ typedef struct {
     mp4p_atom_t *mp4file;
     mp4p_atom_t *trak;
     uint64_t mp4samples;
+    uint32_t aac_samplerate;
 
     int mp4sample;
     int mp4framesize;
@@ -265,6 +266,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             mp4p_atom_t *aac_atom = mp4p_atom_find (info->trak, "trak/mdia/minf/stbl/stsd/mp4a");
             if (aac_atom) {
                 aac = aac_atom->data;
+                info->aac_samplerate = aac->sample_rate;
                 break;
             }
             info->trak = info->trak->next;
@@ -280,13 +282,8 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     if (aac) {
         mp4p_atom_t *stts_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl/stts");
-        mp4p_atom_t *mdhd_atom = mp4p_atom_find(info->trak, "trak/mdia/mdhd");
 
-        mp4p_mdhd_t *mdhd = mdhd_atom->data;
         uint64_t total_sample_duration = mp4p_stts_total_sample_duration (stts_atom);
-        totalsamples = total_sample_duration * aac->sample_rate / mdhd->time_scale;
-        duration = total_sample_duration / (float)mdhd->time_scale;
-
         mp4p_atom_t *stsz_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl/stsz");
         mp4p_stsz_t *stsz = stsz_atom->data;
 
@@ -306,6 +303,9 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         if (aacDecoderInit(info->dec, asc, esds->asc_size, &samplerate, &channels) < 0) {
             return -1;
         }
+        totalsamples = total_sample_duration * samplerate / info->aac_samplerate;
+        duration = total_sample_duration / (float)info->aac_samplerate;
+
         _info->fmt.samplerate = samplerate;
         _info->fmt.channels = channels;
     }
@@ -679,11 +679,16 @@ aac_seek_sample (DB_fileinfo_t *_info, int sample) {
     aac_info_t *info = (aac_info_t *)_info;
 
     sample += info->startsample;
+
     if (info->mp4file) {
         mp4p_atom_t *stts_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl/stts");
 
+        uint64_t seeksample = (int)((int64_t)sample * info->aac_samplerate / _info->fmt.samplerate);
+
         uint64_t startsample = 0;
-        info->mp4sample = mp4p_stts_mp4sample_containing_sample(stts_atom, sample, &startsample);
+        info->mp4sample = mp4p_stts_mp4sample_containing_sample(stts_atom, seeksample, &startsample);
+
+        startsample = startsample * _info->fmt.samplerate / info->aac_samplerate;
         info->skipsamples = sample - startsample;
     }
     else {
@@ -750,22 +755,17 @@ aac_load_itunes_chapters (aac_info_t *info, mp4p_chap_t *chap, /* out */ int *nu
         }
 
         mp4p_atom_t *stts_atom = mp4p_atom_find(trak_atom, "trak/mdia/minf/stbl/stts");
-        mp4p_atom_t *mdhd_atom = mp4p_atom_find(trak_atom, "trak/mdia/mdhd");
         mp4p_atom_t *stbl_atom = mp4p_atom_find(trak_atom, "trak/mdia/minf/stbl");
         mp4p_atom_t *stsz_atom = mp4p_atom_find(stbl_atom, "stbl/stsz");
 
-        mp4p_mdhd_t *mdhd = mdhd_atom->data;
         mp4p_stsz_t *stsz = stsz_atom->data;
 
         aac_chapter_t *chapters = calloc (stsz->number_of_entries, sizeof (aac_chapter_t));
         *num_chapters = 0;
 
-        int64_t total_dur = 0;
         int64_t curr_sample = 0;
         for (int sample = 0; sample < stsz->number_of_entries; sample++)
         {
-            int32_t dur = (int64_t)1000 * mp4p_stts_sample_duration(stts_atom, sample) / mdhd->time_scale; // milliseconds
-            total_dur += dur;
             unsigned char *buffer = NULL;
 
             uint64_t offs = mp4p_sample_offset (stbl_atom, sample);
@@ -783,7 +783,8 @@ aac_load_itunes_chapters (aac_info_t *info, mp4p_chap_t *chap, /* out */ int *nu
                 chapters[*num_chapters].title = strndup ((const char *)&buffer[2], len);
             }
             chapters[*num_chapters].startsample = (int)curr_sample;
-            curr_sample += (int64_t)dur * samplerate / 1000.f;
+            uint64_t samplecount = mp4p_stts_sample_duration(stts_atom, sample) * samplerate / info->aac_samplerate;
+            curr_sample += samplecount;
             chapters[*num_chapters].endsample = (int)curr_sample - 1;
             free (buffer);
             (*num_chapters)++;
@@ -878,6 +879,7 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
             mp4p_atom_t *aac_atom = mp4p_atom_find (info.trak, "trak/mdia/minf/stbl/stsd/mp4a");
             if (aac_atom) {
                 aac = aac_atom->data;
+                info.aac_samplerate = aac->sample_rate;
                 break;
             }
         }
@@ -911,12 +913,10 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     int64_t totalsamples = 0;
 
     mp4p_atom_t *stts_atom = mp4p_atom_find(info.trak, "trak/mdia/minf/stbl/stts");
-    mp4p_atom_t *mdhd_atom = mp4p_atom_find(info.trak, "trak/mdia/mdhd");
-    mp4p_mdhd_t *mdhd = mdhd_atom->data;
 
     uint64_t total_sample_duration = mp4p_stts_total_sample_duration (stts_atom);
-    totalsamples = total_sample_duration * info.info.fmt.samplerate / mdhd->time_scale;
-    duration = total_sample_duration / (float)mdhd->time_scale;
+    totalsamples = total_sample_duration * samplerate / info.aac_samplerate;
+    duration = total_sample_duration / (float)info.aac_samplerate;
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     ftype = "MP4 AAC";
