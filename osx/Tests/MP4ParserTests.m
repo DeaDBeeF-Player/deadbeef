@@ -155,6 +155,8 @@
 - (void)test_WriteMoovWithMetadataToBuffer_WrittenSizeMatchingCalculatedSize {
     mp4p_atom_t *mp4file = mp4p_atom_new("moov");
     mp4file->next = mp4p_atom_new("mdat");
+    mp4file->next->data = "DataOfMdat";
+    mp4file->next->size = 18;
 
     playItem_t *it = pl_item_alloc();
 
@@ -227,6 +229,8 @@
 
 mp4p_atom_t *createFakeMP4File (void) {
     mp4p_atom_t *ftyp = mp4p_atom_new("ftyp");
+    static uint8_t filler[24] = {0};
+    ftyp->data = filler;
     ftyp->size = 24;
 
     mp4p_atom_t *moov = ftyp->next = mp4p_atom_new("moov");
@@ -302,22 +306,6 @@ static fake_callbacks_t _fake_file_cb = {
 
     playItem_t *it = pl_item_alloc();
 
-    // ftyp = 24
-    //
-    // moov = 8
-    // udta = 8
-    // meta = 8
-    // hdlr = 33
-    // ilst = 8
-    // ©nam = 8
-    // data = 16 + valuelength (5 bytes for Hello)
-    // ------
-    // total = 8+8+8+34+8+8+16+5 = 94
-    //
-    // + 1024 bytes `free`
-    // + 1008 bytes `mdat`
-
-    // we write one metadata atom, which will add
     pl_append_meta(it, "title", "Hello");
 
     mp4p_atom_t *mp4file_updated = mp4tagutil_modify_meta(mp4file, (DB_playItem_t *)it);
@@ -325,10 +313,10 @@ static fake_callbacks_t _fake_file_cb = {
 
     int res = mp4p_update_metadata (&cb.cb, mp4file, mp4file_updated);
 
-    mp4p_atom_free (mp4file);
-
     XCTAssert (!res);
-    XCTAssertEqual(2134, cb.size);
+    XCTAssertEqual(2150, cb.size);
+    mp4p_atom_free (mp4file);
+    mp4p_atom_free (mp4file_updated);
 }
 
 - (void)test_ReadMP4Opus_GivesExpectedFormatData {

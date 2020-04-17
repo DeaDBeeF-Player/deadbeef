@@ -1054,7 +1054,13 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
             }
 
             for (mp4p_atom_t *c = atom->subatoms; c; c = c->next) {
-                buffer_size -= mp4p_atom_to_buffer (c, buffer, buffer_size);
+                uint32_t subsize = mp4p_atom_to_buffer (c, buffer, buffer_size);
+                if (subsize != c->size) {
+                    // error
+                    break;
+                }
+                buffer += subsize;
+                buffer_size -= subsize;
             }
 
             return init_size - buffer_size;
@@ -1073,13 +1079,25 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
             WRITE_BUF(atom->type, 4);
             if (!atom->write) {
                 _dbg_print_fourcc(atom->type);
-                WRITE_BUF(atom->data, atom->size - 8);
+                if (!memcmp (atom->type, "free", 4)) {
+                    size_t size = atom->size - 8;
+                    if (size > buffer_size) {
+                        size = buffer_size;
+                    }
+                    memset (buffer, 0, size);
+                    buffer += size;
+                    buffer_size -= size;
+                }
+                else if (atom->data) {
+                    WRITE_BUF(atom->data, atom->size - 8);
+                }
             }
             else {
-                buffer_size -= atom->write (atom, buffer, buffer_size);
-                if (init_size - buffer_size != atom->size) {
-                    return -1;
+                size_t written_size = atom->write (atom->data, buffer, buffer_size);
+                if (written_size != atom->size - 8) {
+                    // error
                 }
+                buffer_size -= written_size;
                 return init_size - buffer_size;
             }
         }
@@ -1171,6 +1189,7 @@ mp4p_update_metadata (mp4p_file_callbacks_t *file, mp4p_atom_t *source, mp4p_ato
         uint32_t written_size = mp4p_atom_to_buffer(atom, buffer, atom_size);
         if (written_size != atom_size) {
             res = -1;
+            mp4p_atom_to_buffer(atom, buffer, atom_size);
             goto error;
         }
 
