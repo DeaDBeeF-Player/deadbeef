@@ -418,6 +418,9 @@ mp4p_stsz_atomdata_read (mp4p_stsz_t *atom_data, uint8_t *buffer, size_t buffer_
 
     atom_data->sample_size = READ_UINT32();
     atom_data->number_of_entries = READ_UINT32();
+    if (buffer_size < atom_data->number_of_entries * 4) {
+        atom_data->number_of_entries = (uint32_t)(buffer_size / 4);
+    }
     if (atom_data->number_of_entries) {
         atom_data->entries = calloc (sizeof (mp4p_stsz_entry_t), atom_data->number_of_entries);
     }

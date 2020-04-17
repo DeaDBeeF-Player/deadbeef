@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 #include "mp4p.h"
 
 static mp4p_atom_t *
@@ -152,7 +151,7 @@ _read_uint64 (mp4p_file_callbacks_t *fp, uint64_t *value) {
 #define WRITE_UINT8(x) {if (buffer_size < 1) return 0; *buffer++ = x; buffer_size--; }
 #define WRITE_UINT16(x) {if (buffer_size < 2) return 0; *buffer++ = (x>>8); *buffer++ = (x & 0xff); buffer_size -= 2;}
 #define WRITE_UINT32(x) {if (buffer_size < 4) return 0; *buffer++ = ((x>>24)); *buffer++ = ((x>>16)&0xff); *buffer++ = ((x>>8)&0xff); *buffer++ = (x & 0xff); buffer_size -=4 ;}
-#define WRITE_BUF(buf,size) {if (buffer_size < size) return 0; memcpy (buffer, buf, size); buffer += size; buffer_size -= size; }
+#define WRITE_BUF(buf,size) {if (buffer_size < size) return 0; if (!buf) return -1; memcpy (buffer, buf, size); buffer += size; buffer_size -= size; }
 #define WRITE_COMMON_HEADER() {WRITE_UINT32(0);}
 
 #define READ_ATOM_BUFFER(headersize) uint8_t *atombuf = malloc (headersize); if (fp->read(fp, atombuf, headersize) != headersize) { res = -1; goto error; }
@@ -1058,7 +1057,6 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
                 buffer_size -= mp4p_atom_to_buffer (c, buffer, buffer_size);
             }
 
-            assert (init_size - buffer_size == size);
             return init_size - buffer_size;
         }
 
@@ -1079,7 +1077,9 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
             }
             else {
                 buffer_size -= atom->write (atom, buffer, buffer_size);
-                assert (init_size - buffer_size == atom->size);
+                if (init_size - buffer_size != atom->size) {
+                    return -1;
+                }
                 return init_size - buffer_size;
             }
         }
@@ -1169,7 +1169,10 @@ mp4p_update_metadata (mp4p_file_callbacks_t *file, mp4p_atom_t *source, mp4p_ato
         uint32_t atom_size = mp4p_atom_to_buffer (atom, NULL, 0);
         uint8_t *buffer = malloc (atom_size);
         uint32_t written_size = mp4p_atom_to_buffer(atom, buffer, atom_size);
-        assert (written_size == atom_size);
+        if (written_size != atom_size) {
+            res = -1;
+            goto error;
+        }
 
         if (file->write (file, buffer, atom_size) != atom_size) {
             free (buffer);
