@@ -508,7 +508,6 @@
         .ch.version_flags = 0xaabbccdd,
         .number_of_entries = 3,
         .entries = entries,
-
     };
 
     size_t bufsize = mp4p_chpl_atomdata_write(&data, NULL, 0);
@@ -520,8 +519,7 @@
     int res = mp4p_chpl_atomdata_read(&dataread, buffer, bufsize);
     XCTAssert(!res);
 
-    size_t offs = offsetof(mp4p_chpl_t, entries);
-    XCTAssert(!memcmp (&dataread, &data, offs));
+    XCTAssert(!memcmp (&dataread, &data, 5));
 
     for (int i = 0; i < 3; i++) {
         XCTAssertEqual(dataread.entries[i].start_time, data.entries[i].start_time);
