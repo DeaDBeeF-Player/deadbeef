@@ -42,7 +42,9 @@
 static DB_output_t plugin;
 DB_functions_t * deadbeef;
 
-#define CONFSTR_PULSE_SERVERADDR "pulse.serveraddr"
+// serveraddr2 is a version bump, since the handling has changed, and "default"
+// value has different meaning.
+#define CONFSTR_PULSE_SERVERADDR "pulse.serveraddr2"
 #define CONFSTR_PULSE_BUFFERSIZE "pulse.buffersize"
 #define PULSE_DEFAULT_BUFFERSIZE 4096
 
@@ -129,7 +131,22 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
 
     // Read serveraddr from config
     char server[1000];
-    deadbeef->conf_get_str (CONFSTR_PULSE_SERVERADDR, "", server, sizeof (server));
+
+    // migrate from 0.7.x
+    deadbeef->conf_lock ();
+    int has_server2 = deadbeef->conf_get_str_fast (CONFSTR_PULSE_SERVERADDR, NULL) != NULL;
+    deadbeef->conf_unlock ();
+
+    if (!has_server2) {
+        deadbeef->conf_get_str ("pulse.serveraddr", "", server, sizeof (server));
+        // convert default
+        if (!strcasecmp (server, "default")) {
+            *server = 0;
+        }
+    }
+    else {
+        deadbeef->conf_get_str (CONFSTR_PULSE_SERVERADDR, "", server, sizeof (server));
+    }
 
     s = pa_simple_new(*server ? server : NULL, "Deadbeef", PA_STREAM_PLAYBACK, dev, "Music", &ss, &channel_map, attr, &error);
 

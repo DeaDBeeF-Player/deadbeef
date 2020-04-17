@@ -207,77 +207,89 @@ _parse_packet (mp3packet_t * restrict packet, uint8_t * restrict fb) {
     return packet->packetlength;
 }
 
-static uint32_t
-extract_i32 (unsigned char *buf)
-{
-    uint32_t x;
-    // big endian extract
-
-    x = buf[0];
-    x <<= 8;
-    x |= buf[1];
-    x <<= 8;
-    x |= buf[2];
-    x <<= 8;
-    x |= buf[3];
-
-    return x;
-}
+#define READ_UINT8() ({if (buffer_size < 1) return -1; uint8_t _temp8 = *buffer; buffer++; buffer_size--; _temp8;})
+#define READ_UINT32() ({if (buffer_size < 4) return -1;  uint32_t _temp32 = (uint32_t)buffer[3] | ((uint32_t)buffer[2]<<8) | ((uint32_t)buffer[1]<<16) | ((uint32_t)buffer[0]<<24); buffer+=4; buffer_size-=4; _temp32;})
 
 static int
-_check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int datasize) {
+_check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *buffer, int buffer_size) {
     const char cookieXing[] = "Xing";
     const char cookieInfo[] = "Info";
 
     // ignore mpeg version, and try both 17 and 32 byte offsets
-    uint8_t *magic = data + 17;
+    buffer += 17;
+    buffer_size -= 17;
+    if (buffer_size < 4) {
+        return -1;
+    }
 
-    int havecookie = !memcmp (cookieXing, magic, 4) || !memcmp (cookieInfo, magic, 4);
+    int havecookie = !memcmp (cookieXing, buffer, 4) || !memcmp (cookieInfo, buffer, 4);
 
     if (!havecookie) {
-        magic = data + 32;
-        havecookie = !memcmp (cookieXing, magic, 4) || !memcmp (cookieInfo, magic, 4);;
+        buffer += 15;
+        buffer_size -= 15;
+        if (buffer_size < 4) {
+            return -1;
+        }
+
+        havecookie = !memcmp (cookieXing, buffer, 4) || !memcmp (cookieInfo, buffer, 4);;
     }
 
     if (!havecookie) {
         return -1;
     }
 
-    data = magic + 4;
+    buffer += 4;
+    buffer_size -= 4;
 
     info->packet_offs = packet->offs+packet->packetlength;
 
     // read flags
-    uint32_t flags;
-    flags = extract_i32 (data);
-    data += 4;
+    uint32_t flags = READ_UINT32();
 
     if (flags & FRAMES_FLAG) {
+        if (buffer_size < 4) {
+            return -1;
+        }
         // read number of frames
-        uint32_t nframes = extract_i32 (data);
+        uint32_t nframes = READ_UINT32();
         info->totalsamples = nframes * packet->samples_per_frame;
         info->have_duration = 1;
-        data += 4;
     }
     if (flags & BYTES_FLAG) {
-        data += 4;
+        READ_UINT32();
     }
     if (flags & TOC_FLAG) {
-        data += 100;
+        if (buffer_size < 100) {
+            return -1;
+        }
+        buffer += 100;
+        buffer_size -= 100;
     }
     if (flags & VBR_SCALE_FLAG) {
-        data += 4;
+        READ_UINT32();
+    }
+    if (buffer_size < 4) {
+        return -1;
     }
     // lame header
     int lame_header = 0;
-    if (!memcmp (data, "LAME", 4)) {
+    if (!memcmp (buffer, "LAME", 4)) {
         lame_header = 1;
     }
-    data += 4;
+    buffer += 4;
+    buffer_size -= 4;
 
-    data += 5; // what is this?
+    if (buffer_size < 5) {
+        return -1;
+    }
 
-    uint8_t rev = *data++;
+    buffer += 5; // what is this?
+    buffer_size -= 5;
+
+    if (buffer_size < 1) {
+        return -1;
+    }
+    uint8_t rev = READ_UINT8();
 
     switch (rev & 0x0f) {
         case XING_CBR ... XING_ABR2:
@@ -285,34 +297,46 @@ _check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *data, int dat
             break;
     }
     if (lame_header) {
-        data++; //uint8_t lpf = *data++;
+        if (buffer_size < 22) {
+            return -1;
+        }
+        buffer += 1; //uint8_t lpf = *data++;
+        buffer_size -= 1;
 
         //3 floats: replay gain
 
-        data += 4; // float rg_peaksignalamp = extract_f32 (buf);
+        buffer += 4; // float rg_peaksignalamp = extract_f32 (buf);
+        buffer_size -= 4;
 
-        data += 2; // uint16_t rg_radio = extract_i16 (buf);
+        buffer += 2; // uint16_t rg_radio = extract_i16 (buf);
+        buffer_size -= 2;
 
-        data += 2; // uint16_t rg_audiophile = extract_i16 (buf);
-
-        // skip
-        data += 2;
-
-        info->delay = (((uint32_t)data[0]) << 4) | ((((uint32_t)data[1]) & 0xf0)>>4);
-        info->padding = ((((uint32_t)data[1])&0x0f)<<8) | ((uint32_t)data[2]);
-        data += 3;
+        buffer += 2; // uint16_t rg_audiophile = extract_i16 (buf);
+        buffer_size -= 2;
 
         // skip
-        data++;
+        buffer += 2;
+        buffer_size -= 2;
 
-        data++; // uint8_t mp3gain = *data++;
+        info->delay = (((uint32_t)buffer[0]) << 4) | ((((uint32_t)buffer[1]) & 0xf0)>>4);
+        info->padding = ((((uint32_t)buffer[1])&0x0f)<<8) | ((uint32_t)buffer[2]);
+        buffer += 3;
+        buffer_size -= 3;
+
+        // skip
+        buffer++;
+        buffer_size -= 1;
+
+        buffer++; // uint8_t mp3gain = *data++;
+        buffer_size -= 1;
 
         // lame preset nr
-        info->lamepreset = data[1] | (data[0]<<8);
-        data += 2;
+        info->lamepreset = buffer[1] | (buffer[0]<<8);
+        buffer += 2;
+        buffer_size -= 2;
 
         // musiclen
-        info->lame_musiclength = extract_i32 (data);
+        info->lame_musiclength = READ_UINT32();
     }
 
     return 0;
@@ -553,7 +577,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 goto end;
             }
             // Calculate CBR duration from file size
-            else if (!vbr && !info->have_xing_header && !(flags & MP3_PARSE_FULLSCAN) && info->npackets >= 200) {
+            else if (!vbr && !info->have_xing_header && seek_to_sample < 0 && !(flags & MP3_PARSE_FULLSCAN) && info->npackets >= 200) {
                 // calculate total number of packets from file size
                 // 8876 - 9485
                 int64_t npackets = ceil(datasize/(float)info->ref_packet.packetlength);
@@ -630,7 +654,7 @@ error:
 #if PERFORMANCE_STATS
     gettimeofday (&end_tv, NULL);
     float elapsed = (end_tv.tv_sec-start_tv.tv_sec) + (end_tv.tv_usec - start_tv.tv_usec) / 1000000.f;
-    printf ("mp3 stats:\nSeeks: %llu\nReads: %llu\nBytes: %llu\nTime: %f sec", info->num_seeks, info->num_reads, info->bytes_read, elapsed);
+    printf ("mp3 stats:\nSeeks: %llu\nReads: %llu\nBytes: %llu\nTime: %f sec\n", info->num_seeks, info->num_reads, info->bytes_read, elapsed);
 #endif
     return err;
 }
