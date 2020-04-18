@@ -426,4 +426,12 @@ mp4p_ilst_meta_atomdata_write (mp4p_ilst_meta_t *atom_data, uint8_t *buffer, siz
 void
 mp4p_ilst_meta_atomdata_free (void *data);
 
+// meta
+int
+mp4p_meta_atomdata_read (mp4p_meta_t *atom_data, uint8_t *buffer, size_t buffer_size);
+size_t
+mp4p_meta_atomdata_write (mp4p_meta_t *atom_data, uint8_t *buffer, size_t buffer_size);
+void
+mp4p_meta_atomdata_free (void *data);
+
 #endif /* mp4patomdata_h */

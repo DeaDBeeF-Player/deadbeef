@@ -1278,6 +1278,32 @@ mp4p_ilst_meta_atomdata_free (void *atom_data) {
     free (atom_data);
 }
 
+#pragma mark meta
+
+int
+mp4p_meta_atomdata_read (mp4p_meta_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    READ_COMMON_HEADER();
+    return 0;
+}
+
+size_t
+mp4p_meta_atomdata_write (mp4p_meta_t *atom_data, uint8_t *buffer, size_t buffer_size) {
+    if (!buffer) {
+        return 4;
+    }
+    uint8_t *origin = buffer;
+
+    WRITE_COMMON_HEADER();
+
+    return buffer - origin;
+}
+
+void
+mp4p_meta_atomdata_free (void *atom_data) {
+    free (atom_data);
+}
+
+
 #if 0
 #pragma mark tmpl
 

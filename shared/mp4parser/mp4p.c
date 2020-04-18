@@ -269,13 +269,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     ATOM_DEF_WITH_SUBATOMS(Opus,28)
     ATOM_DEF(dOps)
     ATOM_DEF(esds)
-    else if (!mp4p_atom_type_compare(atom, "meta")) {
-        mp4p_meta_t *atom_data = calloc (4, 1);
-        atom->data = atom_data;
-        atom->write_data_before_subatoms = 1;
-        READ_COMMON_HEADER();
-        res = _load_subatoms(atom, fp);
-    }
+    ATOM_DEF_WITH_SUBATOMS(meta,4)
     ATOM_DEF(chpl)
     ATOM_DEF(chap)
     else {
@@ -876,6 +870,9 @@ mp4p_atom_clone (mp4p_atom_t *src) {
     dest->pos = src->pos;
     dest->size = src->size;
     dest->write = src->write;
+    // data is not duplicated, so not freeing it in the clone
+
+    dest->write_data_before_subatoms = src->write_data_before_subatoms;
 
     if (dest->size > 0) {
         dest->data = src->data;
@@ -906,13 +903,12 @@ mp4p_atom_clone (mp4p_atom_t *src) {
 
 void
 mp4p_atom_update_size (mp4p_atom_t *atom) {
-    if (!atom->subatoms) {
-        if (atom->write) {
-            atom->size = (uint32_t)atom->write (atom->data, NULL, 0) + 8;
-        }
-        return;
-    }
     atom->size = 8; // type+size = 8 bytes
+    if (!atom->subatoms || atom->write_data_before_subatoms) {
+        if (atom->write) {
+            atom->size += (uint32_t)atom->write (atom->data, NULL, 0);
+        }
+    }
     for (mp4p_atom_t *subatom = atom->subatoms; subatom; subatom = subatom->next) {
         mp4p_atom_update_size(subatom);
         atom->size += subatom->size;
@@ -997,35 +993,17 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
 
     // calculate the size including sub-atoms
     if (atom->subatoms) {
-        uint32_t size = 8;
-
-        if (atom->write_data_before_subatoms) {
-            size += atom->size - 8;
-        }
-
-        for (mp4p_atom_t *c = atom->subatoms; c; c = c->next) {
-            size += mp4p_atom_to_buffer (c, NULL, 0);
-        }
-
         if (!buffer) {
-            return size;
+            return atom->size;
         }
 
-        WRITE_UINT32(size);
+        WRITE_UINT32(atom->size);
         WRITE_BUF(atom->type, 4);
 
-        if (atom->write_data_before_subatoms) {
-            if (atom->write) {
-                size_t len = atom->write (atom->data, buffer, buffer_size);
-                if (len != buffer_size) {
-                    return 0;
-                }
-                buffer += len;
-                buffer_size -= len;
-            }
-            else {
-                WRITE_BUF(atom->data, atom->size - 8);
-            }
+        if (atom->write_data_before_subatoms && atom->write) {
+            size_t len = atom->write (atom->data, buffer, buffer_size);
+            buffer += len;
+            buffer_size -= len;
         }
 
         for (mp4p_atom_t *c = atom->subatoms; c; c = c->next) {
