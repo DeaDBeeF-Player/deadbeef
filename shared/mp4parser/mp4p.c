@@ -769,6 +769,7 @@ mp4p_atom_t *
 mp4p_ilst_append_custom (mp4p_atom_t *ilst_atom, const char *name, const char *text) {
     mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
     mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
+    meta->custom = 1;
     atom->data = meta;
     atom->free = mp4p_ilst_meta_atomdata_free;
     atom->write = (mp4p_atom_data_write_func_t)mp4p_ilst_meta_atomdata_write;
