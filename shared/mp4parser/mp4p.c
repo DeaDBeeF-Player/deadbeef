@@ -99,26 +99,6 @@ _load_fourcc_atom (mp4p_atom_t *atom, const char *expected, mp4p_file_callbacks_
 #endif
 
 static int
-_read_uint16 (mp4p_file_callbacks_t *fp, uint16_t *value) {
-    uint8_t csize[2];
-    if (2 != fp->read (fp, csize, 2)) {
-        return -1;
-    }
-    *value = (csize[1]) | (csize[0]<<8);
-    return 0;
-}
-
-static int
-_read_int16 (mp4p_file_callbacks_t *fp, int16_t *value) {
-    uint8_t csize[2];
-    if (2 != fp->read (fp, csize, 2)) {
-        return -1;
-    }
-    *value = (((int8_t *)csize)[1]) | (csize[0]<<8);
-    return 0;
-}
-
-static int
 _read_uint32 (mp4p_file_callbacks_t *fp, uint32_t *value) {
     uint8_t csize[4];
     if (4 != fp->read (fp, csize, 4)) {
@@ -128,21 +108,8 @@ _read_uint32 (mp4p_file_callbacks_t *fp, uint32_t *value) {
     return 0;
 }
 
-static int
-_read_uint64 (mp4p_file_callbacks_t *fp, uint64_t *value) {
-    uint8_t csize[8];
-    if (8 != fp->read (fp, csize, 8)) {
-        return -1;
-    }
-    *value = (uint64_t)csize[7] | ((uint64_t)csize[6]<<8) | ((uint64_t)csize[5]<<16) | ((uint64_t)csize[4]<<24) | ((uint64_t)csize[3]<<32) | ((uint64_t)csize[2]<<40) | ((uint64_t)csize[1] << 48) | ((uint64_t)csize[0] << 56);
-    return 0;
-}
-
 #define READ_UINT8(fp) ({uint8_t _temp8; if (1 != fp->read (fp, &_temp8, 1)) return -1; _temp8;})
-#define READ_UINT16(fp) ({uint16_t _temp16; if (_read_uint16 (fp, &_temp16) < 0) return -1; _temp16;})
-#define READ_INT16(fp) ({int16_t _temp16; if (_read_int16 (fp, &_temp16) < 0) return -1; _temp16;})
 #define READ_UINT32(fp) ({ uint32_t _temp32; if (_read_uint32 (fp, &_temp32) < 0) return -1; _temp32;})
-#define READ_UINT64(fp) ({ uint64_t _temp64; if (_read_uint64 (fp, &_temp64) < 0) return -1; _temp64;})
 #define READ_BUF(fp,buf,size) {if (size != fp->read(fp, buf, size)) return -1;}
 
 // read/skip uint8 version and uint24 flags
@@ -192,7 +159,7 @@ _read_uint64 (mp4p_file_callbacks_t *fp, uint64_t *value) {
 }
 
 /// Known container atoms, which can contain known sub-atoms.
-/// Uknown atoms will be loaded as opaque blobs, even if they're technically containers.
+/// Unknown atoms will be loaded as opaque blobs, even if they're technically containers.
 static const char *container_atoms[] = {
     "moov",
     "trak",
@@ -1026,6 +993,8 @@ mp4p_atom_dump (mp4p_atom_t *atom) {
 
 uint32_t
 mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
+    uint32_t init_size = buffer_size;
+
     // calculate the size including sub-atoms
     if (atom->subatoms) {
         uint32_t size = 8;
@@ -1038,79 +1007,73 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
             size += mp4p_atom_to_buffer (c, NULL, 0);
         }
 
-        if (buffer) {
-            uint32_t init_size = buffer_size;
-            WRITE_UINT32(size);
-            WRITE_BUF(atom->type, 4);
-
-            if (atom->write_data_before_subatoms) {
-                if (atom->write) {
-                    size_t len = atom->write (atom->data, buffer, buffer_size);
-                    if (len != buffer_size) {
-                        return 0; // FIXME: how to error?
-                    }
-                    buffer += len;
-                    buffer_size -= len;
-                }
-                else {
-                    WRITE_BUF(atom->data, atom->size - 8);
-                }
-            }
-
-            for (mp4p_atom_t *c = atom->subatoms; c; c = c->next) {
-                uint32_t subsize = mp4p_atom_to_buffer (c, buffer, buffer_size);
-                if (subsize != c->size) {
-                    // FIXME: debug write
-                    mp4p_atom_to_buffer (c, buffer, buffer_size);
-                    break;
-                }
-                buffer += subsize;
-                buffer_size -= subsize;
-            }
-
-            return init_size - buffer_size;
+        if (!buffer) {
+            return size;
         }
 
-        return size;
-    }
-    else {
-        if (buffer) {
-            if (atom->size == 0) {
-                _dbg_print_fourcc(atom->type);
-                return -1;
-            }
-            uint32_t init_size = buffer_size;
-            WRITE_UINT32(atom->size);
-            WRITE_BUF(atom->type, 4);
-            if (!atom->write) {
-                _dbg_print_fourcc(atom->type);
-                if (!memcmp (atom->type, "free", 4)) {
-                    size_t size = atom->size - 8;
-                    if (size > buffer_size) {
-                        size = buffer_size;
-                    }
-                    memset (buffer, 0, size);
-                    buffer += size;
-                    buffer_size -= size;
+        WRITE_UINT32(size);
+        WRITE_BUF(atom->type, 4);
+
+        if (atom->write_data_before_subatoms) {
+            if (atom->write) {
+                size_t len = atom->write (atom->data, buffer, buffer_size);
+                if (len != buffer_size) {
+                    return 0;
                 }
-                else if (atom->data) {
-                    WRITE_BUF(atom->data, atom->size - 8);
-                }
+                buffer += len;
+                buffer_size -= len;
             }
             else {
-                size_t written_size = atom->write (atom->data, buffer, buffer_size);
-                if (written_size != atom->size - 8) {
-                    // FIXME: debug write
-                    atom->write (atom->data, buffer, buffer_size);
-                }
-                buffer_size -= written_size;
-                return init_size - buffer_size;
+                WRITE_BUF(atom->data, atom->size - 8);
             }
         }
 
-        return atom->size;
+        for (mp4p_atom_t *c = atom->subatoms; c; c = c->next) {
+            uint32_t subsize = mp4p_atom_to_buffer (c, buffer, buffer_size);
+            if (subsize != c->size) {
+                // FIXME: debug write
+                mp4p_atom_to_buffer (c, buffer, buffer_size);
+                break;
+            }
+            buffer += subsize;
+            buffer_size -= subsize;
+        }
     }
-    return 0;
+    else {
+        if (!buffer) {
+            return atom->size;
+        }
+        if (atom->size == 0) {
+            _dbg_print_fourcc(atom->type);
+            return 0;
+        }
+        WRITE_UINT32(atom->size);
+        WRITE_BUF(atom->type, 4);
+        if (!atom->write) {
+            _dbg_print_fourcc(atom->type);
+            if (!memcmp (atom->type, "free", 4)) {
+                size_t size = atom->size - 8;
+                if (size > buffer_size) { // prevent buffer overflow - this would still cause an error
+                    size = buffer_size;
+                }
+                memset (buffer, 0, size);
+                buffer += size;
+                buffer_size -= size;
+            }
+            else if (atom->data) {
+                WRITE_BUF(atom->data, atom->size - 8);
+            }
+        }
+        else {
+            size_t written_size = atom->write (atom->data, buffer, buffer_size);
+            if (written_size != atom->size - 8) {
+                // FIXME: debug write
+                atom->write (atom->data, buffer, buffer_size);
+            }
+            buffer_size -= written_size;
+        }
+    }
+    return init_size - buffer_size;
 }
 
 static int
