@@ -509,6 +509,22 @@ project "converter"
    }
 end
 
+if option ("plugin-shellexec", "jansson") then
+project "shellexec"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/shellexec/shellexec.c",
+       "plugins/shellexec/shellexec.h",
+       "plugins/shellexec/shellexecutil.c",
+       "plugins/shellexec/shellexecutil.h"
+   }
+   pkgconfig("jansson")
+end
+
 if option ("plugin-sndfile", "sndfile") then
 project "sndfile_plugin"
    kind "SharedLib"
@@ -741,6 +757,46 @@ project "pltbrowser_gtk3"
    }
 
    pkgconfig ("gtk+-3.0")
+end
+
+if option ("plugin-shellexecui_gtk2", "gtk+-2.0 jansson") then
+project "shellexecui_gtk2"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/shellexecui/shellexecui.c",
+       "plugins/shellexecui/interface.c",
+       "plugins/shellexecui/support.c",
+       "plugins/shellexecui/callbacks.c",
+       "plugins/shellexecui/interface.h",
+       "plugins/shellexecui/support.h",
+       "plugins/shellexecui/callbacks.h"
+   }
+
+   pkgconfig ("gtk+-2.0 jansson")
+end
+
+if option ("plugin-shellexecui_gtk3", "gtk+-3.0 jansson") then
+project "shellexecui_gtk3"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/shellexecui/shellexecui.c",
+       "plugins/shellexecui/interface.c",
+       "plugins/shellexecui/support.c",
+       "plugins/shellexecui/callbacks.c",
+       "plugins/shellexecui/interface.h",
+       "plugins/shellexecui/support.h",
+       "plugins/shellexecui/callbacks.h"
+   }
+
+   pkgconfig ("gtk+-3.0 jansson")
 end
 
 if option ("plugin-wildmidi") then
