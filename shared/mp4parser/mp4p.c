@@ -263,7 +263,7 @@ mp4p_atom_init (mp4p_atom_t *parent_atom, mp4p_atom_t *atom, mp4p_file_callbacks
     ATOM_DEF(stsz)
     ATOM_DEF(stco)
     ATOM_DEF(co64)
-    ATOM_DEF_WITH_SUBATOMS_SYNC_ENTRY_COUNT(stsd,sizeof (mp4p_dref_t))
+    ATOM_DEF_WITH_SUBATOMS_SYNC_ENTRY_COUNT(dref,sizeof (mp4p_dref_t))
     ATOM_DEF(alac)
     ATOM_DEF_WITH_SUBATOMS(mp4a,28)
     ATOM_DEF_WITH_SUBATOMS(Opus,28)
@@ -903,6 +903,9 @@ mp4p_atom_clone (mp4p_atom_t *src) {
 
 void
 mp4p_atom_update_size (mp4p_atom_t *atom) {
+    if (!atom->write && !atom->subatoms) {
+        return;
+    }
     atom->size = 8; // type+size = 8 bytes
     if (!atom->subatoms || atom->write_data_before_subatoms) {
         if (atom->write) {
@@ -1028,7 +1031,6 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
         WRITE_UINT32(atom->size);
         WRITE_BUF(atom->type, 4);
         if (!atom->write) {
-            _dbg_print_fourcc(atom->type);
             if (!memcmp (atom->type, "free", 4)) {
                 size_t size = atom->size - 8;
                 if (size > buffer_size) { // prevent buffer overflow - this would still cause an error
