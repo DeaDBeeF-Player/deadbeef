@@ -336,6 +336,7 @@ int32_t mp4ff_get_decoder_config(const mp4ff_t *f, const int32_t track,
     {
         *ppBuf = NULL;
         *pBufSize = 0;
+        return 1;
     } else {
         *ppBuf = malloc(f->track[track]->decoderConfigLen);
         if (*ppBuf == NULL)
