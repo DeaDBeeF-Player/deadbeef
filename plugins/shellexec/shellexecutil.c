@@ -13,7 +13,24 @@ shellexec_eval_command (const char *shcommand, char *output, size_t size, DB_pla
         trace ("shellexec: failed to format string for execution (too long?)\n");
         return -1;
     }
+    // Run in background
+    #ifndef __MINGW32__
     strncat (output, "&", size);
+    #else
+    {
+        const char *cmd_prefix = "start /b \"\" cmd /c \"";
+        size_t conv_len = strlen(output) + strlen(cmd_prefix) + 1;
+        size_t len = strlen(output);
+        if ( conv_len > size) {
+            trace ("shellexec: string too long\n");
+            return -1;
+        }
+        memmove (output + strlen(cmd_prefix), output, len);
+        output[conv_len] = 0;
+        output[conv_len - 1] = '\"';
+        memcpy (output, cmd_prefix, strlen(cmd_prefix));
+    }
+    #endif
 
     // replace \' with '"'"'
     size_t l = strlen (output);
@@ -35,6 +52,14 @@ shellexec_eval_command (const char *shcommand, char *output, size_t size, DB_pla
             return -1;
         }
     }
+    #ifdef __MINGW32__
+    // replace ' with "
+    // Required for paths to work
+    char *str_p = output;
+    while(str_p = strchr(str_p, '\'')) {
+        *str_p = '\"';
+    }
+    #endif
     return 0;
 }
 
