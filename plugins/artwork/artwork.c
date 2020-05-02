@@ -1251,14 +1251,6 @@ local_image_file (const char *local_path, const char *uri, DB_vfs_t *vfsplug, dd
                 return 0;
             }
         }
-        if (!scan_local_path ("*.jpg", path, uri, vfsplug, cover)
-            || !scan_local_path ("*.jpeg", path, uri, vfsplug, cover)
-            || !scan_local_path ("*.png", path, uri, vfsplug, cover)) {
-            free (filemask);
-            free (folders);
-            free (path);
-            return 0;
-        }
         free (path);
     }
 

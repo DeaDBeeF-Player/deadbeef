@@ -323,6 +323,7 @@ valueForKeyOrDefault (scriptableItem_t *item, const char *key, const char *def) 
 
 void
 scriptableEncoderPresetToConverterEncoderPreset (scriptableItem_t *item, ddb_encoder_preset_t *encoder_preset) {
+    memset (encoder_preset, 0, sizeof (ddb_encoder_preset_t));
     encoder_preset->ext = strdup (valueForKeyOrDefault(item, "ext", ""));
     encoder_preset->encoder = strdup (valueForKeyOrDefault(item, "encoder", ""));
     encoder_preset->method = atoi (valueForKeyOrDefault(item, "method", "0"));
