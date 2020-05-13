@@ -239,6 +239,9 @@ _combine_into_unique_multivalue (const char *value1, int size1, const char *valu
 // skip duplicates
 void
 pl_append_meta_full (playItem_t *it, const char *key, const char *value, int size) {
+    if (!value || size == 0 || *value == 0) {
+        return;
+    }
     pl_lock ();
     DB_metaInfo_t *m = pl_meta_for_key (it, key);
     if (!m) {
