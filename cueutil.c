@@ -30,7 +30,7 @@
 #include <sys/stat.h>
 #include "plugins.h"
 #include "common.h"
-#include "playlist.h"
+#include "plmeta.h"
 #include "junklib.h"
 #include "vfs.h"
 

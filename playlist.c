@@ -50,6 +50,7 @@
 #include <math.h>
 #include "gettext.h"
 #include "playlist.h"
+#include "plmeta.h"
 #include "streamer.h"
 #include "messagepump.h"
 #include "plugins.h"

@@ -29,6 +29,7 @@
 #include "sort.h"
 #include "tf.h"
 #include "pltmeta.h"
+#include "plmeta.h"
 #include "messagepump.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }

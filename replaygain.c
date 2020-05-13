@@ -32,6 +32,7 @@
 #include "conf.h"
 #include "common.h"
 #include "playmodes.h"
+#include "plmeta.h"
 
 static ddb_replaygain_settings_t current_settings;
 

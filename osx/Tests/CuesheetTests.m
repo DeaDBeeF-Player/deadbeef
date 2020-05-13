@@ -22,7 +22,7 @@
 */
 
 #import <XCTest/XCTest.h>
-#include "playlist.h"
+#include "plmeta.h"
 #include "../../common.h"
 
 @interface Cuesheet : XCTestCase

@@ -8,7 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #include "vfs_curl.h"
-#include "playlist.h"
+#include "plmeta.h"
 
 extern DB_functions_t *deadbeef;
 

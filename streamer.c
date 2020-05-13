@@ -36,6 +36,7 @@
 #include <errno.h>
 #include "threading.h"
 #include "playlist.h"
+#include "plmeta.h"
 #include "common.h"
 #include "shared/ctmap.h"
 #include "streamer.h"

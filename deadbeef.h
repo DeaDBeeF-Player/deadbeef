@@ -71,6 +71,7 @@ extern "C" {
 // that there's a better replacement in the newer deadbeef versions.
 
 // api version history:
+// 1.12 -- deadbeef-1.8.4
 // 1.11 -- deadbeef-1.8.3
 // 1.10 -- deadbeef-1.8.0
 // 1.9 -- deadbeef-0.7.2
@@ -96,7 +97,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 11
+#define DB_API_VERSION_MINOR 12
 
 #if defined(__clang__)
 
@@ -1530,6 +1531,14 @@ typedef struct {
     void (*streamer_set_repeat) (ddb_repeat_t repeat);
 
     ddb_repeat_t (*streamer_get_repeat) (void);
+#endif
+
+// since 1.12
+#if (DDB_API_LEVEL >= 12)
+    DB_metaInfo_t *(*pl_meta_for_key_with_override) (ddb_playItem_t *it, const char *key);
+    const char *(*pl_find_meta_with_override) (DB_playItem_t *it, const char *key);
+    int (*pl_get_meta_with_override) (ddb_playItem_t *it, const char *key, char *val, size_t size);
+    int (*pl_meta_exists_with_override) (DB_playItem_t *it, const char *key);
 #endif
 } DB_functions_t;
 
