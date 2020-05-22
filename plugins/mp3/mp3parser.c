@@ -440,7 +440,8 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     int64_t fileoffs = startoffs;
 
     int prev_br = -1;
-    int vbr = 0;
+    int prev_length = -1;
+    int variable_packets = 0;
 
     while (fsize > 0 || fsize < 0) {
         int64_t readsize = 4; // fe ff + frame header
@@ -562,12 +563,13 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 memcpy (&info->prev_packet, &packet, sizeof (packet));
             }
 
-            if (prev_br != -1) {
-                if (prev_br!=packet.bitrate) {
-                    vbr = 1;
+            if (!variable_packets && (prev_br != -1 || prev_length != -1)) {
+                if (prev_br != packet.bitrate || prev_br != packet.packetlength) {
+                    variable_packets = 1;
                 }
             }
             prev_br = packet.bitrate;
+            prev_length = packet.packetlength;
 
             // Even if we already got everything we need from lame header,
             // we still need to fetch a few packets to get averages right.
@@ -577,7 +579,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 goto end;
             }
             // Calculate CBR duration from file size
-            else if (!vbr && !info->have_xing_header && seek_to_sample < 0 && !(flags & MP3_PARSE_FULLSCAN) && info->npackets >= 200) {
+            else if (!variable_packets && !info->have_xing_header && seek_to_sample < 0 && !(flags & MP3_PARSE_FULLSCAN) && info->npackets >= 200) {
                 // calculate total number of packets from file size
                 // 8876 - 9485
                 int64_t npackets = ceil(datasize/(float)info->ref_packet.packetlength);
