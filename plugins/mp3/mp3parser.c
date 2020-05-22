@@ -564,7 +564,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
             }
 
             if (!variable_packets && (prev_br != -1 || prev_length != -1)) {
-                if (prev_br != packet.bitrate || prev_br != packet.packetlength) {
+                if (prev_br != packet.bitrate || prev_length != packet.packetlength) {
                     variable_packets = 1;
                 }
             }
