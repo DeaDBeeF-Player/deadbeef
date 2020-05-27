@@ -411,7 +411,15 @@ pl_cue_get_field_value(cueparser_t *cue) {
                 }
             }
         }
-        return -1;
+
+        // ignore unsupported fields
+        while (*(cue->p) && *(cue->p) >= 0x20) {
+            cue->p++;
+        }
+        while (*(cue->p) && *(cue->p) < 0x20) {
+            cue->p++;
+        }
+        return CUE_MAX_FIELDS;
     }
 }
 
