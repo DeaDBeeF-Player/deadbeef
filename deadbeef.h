@@ -1354,12 +1354,12 @@ typedef struct {
     // free the code returned by tf_compile
     void (*tf_free) (char *code);
 
-    // evaluate the titleformatting script in a given context
+    // Evaluate the compiled titleformatting script in the given context
     // ctx: a pointer to ddb_tf_context_t structure initialized by the caller
     // code: the bytecode data created by tf_compile
     // out: buffer allocated by the caller, must be big enough to fit the output string
     // outlen: the size of out buffer
-    // returns -1 on fail, output size on success
+    // returns -1 on failure, output size on success
     int (*tf_eval) (ddb_tf_context_t *ctx, const char *code, char *out, int outlen);
 
     // sort using title formatting v2
