@@ -121,6 +121,10 @@ int path_long(const char * path_in, char * path_out, int len) {
     wchar_t out_w[PATH_MAX/*strlen(in_c)*/];
     int win_ret = GetLongPathNameW (in_w, out_w, 256);
 
+    // GetLongPathNameW can fail if path is like "/c/dir/..."" (msys2 style)
+    // this is not checked and will later resolve to deadbeef.exe location
+
+
     // convert to absolute path
     wchar_t abs_path_w[PATH_MAX*2];
     _wfullpath(abs_path_w, out_w, PATH_MAX*2);
