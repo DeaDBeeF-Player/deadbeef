@@ -198,12 +198,8 @@ mp4p_hdlr_atomdata_read (mp4p_hdlr_t *atom_data, uint8_t *buffer, size_t buffer_
     atom_data->component_flags = READ_UINT32();
     atom_data->component_flags_mask = READ_UINT32();
 
-    atom_data->buf_len = READ_UINT8();
+    atom_data->buf_len = buffer_size;
     if (atom_data->buf_len) {
-        if (atom_data->buf_len > buffer_size) {
-            atom_data->buf_len = buffer_size;
-        }
-
         atom_data->buf = malloc (atom_data->buf_len);
         READ_BUF(atom_data->buf, atom_data->buf_len);
     }
@@ -214,7 +210,7 @@ mp4p_hdlr_atomdata_read (mp4p_hdlr_t *atom_data, uint8_t *buffer, size_t buffer_
 size_t
 mp4p_hdlr_atomdata_write (mp4p_hdlr_t *atom_data, uint8_t *buffer, size_t buffer_size) {
     if (!buffer) {
-        return 25 + atom_data->buf_len;
+        return 24 + atom_data->buf_len;
     }
     uint8_t *origin = buffer;
 
@@ -227,7 +223,6 @@ mp4p_hdlr_atomdata_write (mp4p_hdlr_t *atom_data, uint8_t *buffer, size_t buffer
     WRITE_UINT32(atom_data->component_flags);
     WRITE_UINT32(atom_data->component_flags_mask);
 
-    WRITE_UINT8(atom_data->buf_len);
     if (atom_data->buf_len) {
         WRITE_BUF(atom_data->buf, atom_data->buf_len);
     }
