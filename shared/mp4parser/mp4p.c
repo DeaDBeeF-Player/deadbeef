@@ -29,7 +29,7 @@ mp4p_atom_free_list (mp4p_atom_t *atom) {
 
 int
 mp4p_fourcc_compare (const char *value1, const char *value2) {
-    return strncasecmp (value1, value2, 4);
+    return strncmp (value1, value2, 4);
 }
 
 int
@@ -352,7 +352,7 @@ mp4p_atom_find (mp4p_atom_t *root, const char *path) {
 
     mp4p_atom_t *a = root;
     while (a) {
-        if (!strncasecmp (a->type, path, 4)) {
+        if (!strncmp (a->type, path, 4)) {
             break;
         }
         a = a->next;

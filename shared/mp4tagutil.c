@@ -43,7 +43,7 @@ extern DB_functions_t *deadbeef;
 
 static const char *_mp4_atom_map[] = {
     COPYRIGHT_SYM "alb", "album",
-    COPYRIGHT_SYM "art", "artist",
+    COPYRIGHT_SYM "ART", "artist",
     "aART", "band",
     COPYRIGHT_SYM "cmt", "comment",
     COPYRIGHT_SYM "day", "year",
@@ -112,7 +112,8 @@ _remove_known_fields (mp4p_atom_t *ilst) {
         const char *name = meta->name ?: type;
 
         for (int i = 0; _mp4_atom_map[i]; i += 2) {
-            if (!strcasecmp (name, _mp4_atom_map[i])) {
+            // NOTE: atom names are case sensitive
+            if (!strcmp (name, _mp4_atom_map[i])) {
                 mp4p_atom_remove_subatom (ilst, meta_atom);
                 break;
             }
