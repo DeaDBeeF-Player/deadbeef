@@ -881,12 +881,18 @@ mp4p_esds_atomdata_read (mp4p_esds_t *atom_data, uint8_t *buffer, size_t buffer_
     return 0;
 }
 
+#define ESDS_TAG_SIZE_WRITE_4B 1
+
 int
 write_esds_tag_size (uint8_t *buffer, size_t buffer_size, uint32_t num) {
     uint8_t data[4] = {0};
     int count = 0;
     size_t initial_size = buffer_size;
-    while (num) {
+    while (num
+#if ESDS_TAG_SIZE_WRITE_4B
+           || count < 4
+#endif
+           ) {
         data[count++] = num & 0x7f;
         num >>= 7;
     }

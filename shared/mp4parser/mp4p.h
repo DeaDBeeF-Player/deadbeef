@@ -94,7 +94,7 @@ mp4p_atom_t *
 mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text);
 
 mp4p_atom_t *
-mp4p_ilst_append_track_disc (mp4p_atom_t *ilst_atom, const char *type, uint16_t index, uint16_t total);
+mp4p_ilst_create_track_disc (const char *type, uint16_t index, uint16_t total);
 
 mp4p_atom_t *
 mp4p_ilst_meta_create_text (const char *text, const char *type);

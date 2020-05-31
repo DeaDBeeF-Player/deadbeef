@@ -775,22 +775,23 @@ mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text) {
 }
 
 mp4p_atom_t *
-mp4p_ilst_append_track_disc (mp4p_atom_t *ilst_atom, const char *type, uint16_t index, uint16_t total) {
+mp4p_ilst_create_track_disc (const char *type, uint16_t index, uint16_t total) {
     mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
     mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
     atom->data = meta;
     atom->free = mp4p_ilst_meta_atomdata_free;
     atom->write = (mp4p_atom_data_write_func_t)mp4p_ilst_meta_atomdata_write;
-    atom->size = 24+6;
+    atom->size = 32;
 
     memcpy (atom->type, type, 4);
     meta->data_version_flags = 0;
-    meta->values = malloc (6);
-    meta->data_size = 6;
-    meta->values[0] = 0;
+    meta->data_size = 8;
+    meta->values = calloc (4, 2);
+    meta->values[0] = 0; // FIXME: what is this?
     meta->values[1] = index;
     meta->values[2] = total;
-    return mp4p_atom_append (ilst_atom, atom);
+    meta->values[3] = 0; // FIXME: what is this?
+    return atom;
 }
 
 mp4p_atom_t *

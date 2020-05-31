@@ -285,10 +285,10 @@ static void _mp4tagutil_add_metadata_fields(mp4p_atom_t *ilst, DB_playItem_t *it
         inumdiscs = atoi (numdiscs);
     }
     if (itrack || inumtracks) {
-        mp4p_ilst_append_track_disc (ilst, "trck", itrack, inumtracks);
+        mp4p_atom_append (ilst, mp4p_ilst_create_track_disc ("trkn", itrack, inumtracks));
     }
     if (idisc || inumdiscs) {
-        mp4p_ilst_append_track_disc (ilst, "disk", itrack, inumtracks);
+        mp4p_atom_append (ilst, mp4p_ilst_create_track_disc ("disk", itrack, inumtracks));
     }
 
     static const char *tag_rg_names[] = {
