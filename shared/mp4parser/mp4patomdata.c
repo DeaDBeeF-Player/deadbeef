@@ -1015,6 +1015,8 @@ int
 mp4p_chpl_atomdata_read (mp4p_chpl_t *atom_data, uint8_t *buffer, size_t buffer_size) {
     READ_COMMON_HEADER();
 
+    atom_data->ignore1 = READ_UINT32();
+
     int i;
 
     atom_data->number_of_entries = READ_UINT8();
@@ -1062,7 +1064,7 @@ mp4p_chpl_atomdata_read (mp4p_chpl_t *atom_data, uint8_t *buffer, size_t buffer_
 size_t
 mp4p_chpl_atomdata_write (mp4p_chpl_t *atom_data, uint8_t *buffer, size_t buffer_size) {
     if (!buffer) {
-        size_t size = 5;
+        size_t size = 5 + 4;
         for (int i = 0; i < atom_data->number_of_entries; i++) {
             size += 8 + 1 + atom_data->entries[i].name_len;
         }
@@ -1071,6 +1073,7 @@ mp4p_chpl_atomdata_write (mp4p_chpl_t *atom_data, uint8_t *buffer, size_t buffer
     uint8_t *origin = buffer;
 
     WRITE_COMMON_HEADER();
+    WRITE_UINT32(atom_data->ignore1);
 
     int i;
 

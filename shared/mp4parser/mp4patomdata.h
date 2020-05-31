@@ -255,6 +255,7 @@ typedef struct {
 typedef struct {
     mp4p_common_header_t ch;
     uint8_t number_of_entries;
+    uint32_t ignore1; // FIXME: this is not in the spec, but all test files has 4 zero bytes there
     mp4p_chpl_entry_t *entries;
 } mp4p_chpl_t;
 
