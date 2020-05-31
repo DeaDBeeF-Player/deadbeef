@@ -307,7 +307,7 @@ static fake_callbacks_t _fake_file_cb = {
 
     playItem_t *it = pl_item_alloc();
 
-    pl_append_meta(it, "title", "Hello");
+    pl_append_meta(it, "title", "Hello!");
 
     mp4p_atom_t *mp4file_updated = mp4tagutil_modify_meta(mp4file, (DB_playItem_t *)it);
     pl_item_unref (it);
