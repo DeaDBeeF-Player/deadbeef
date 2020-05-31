@@ -551,7 +551,7 @@
 }
 
 - (void)test_textMetaWriteRead_EqualOutput {
-    mp4p_atom_t *meta_atom = mp4p_ilst_meta_create_text ("Hello", "abcd");
+    mp4p_atom_t *meta_atom = mp4p_ilst_create_text ("Type", "Value");
     mp4p_ilst_meta_t *data = meta_atom->data;
 
     size_t bufsize = mp4p_ilst_meta_atomdata_write(data, NULL, 0);
@@ -561,12 +561,12 @@
 
     mp4p_ilst_meta_t dataread;
     int res = mp4p_ilst_meta_atomdata_read(&dataread, buffer, bufsize);
-    XCTAssert(!res);
+    XCTAssertEqual(res, 0);
 
     XCTAssert(!dataread.custom);
     XCTAssertEqual(dataread.data_size, 5);
     XCTAssertEqual(dataread.data_version_flags, 1);
-    XCTAssert(!strcmp(dataread.text, "Hello"));
+    XCTAssert(!strcmp(dataread.text, "Value"));
 }
 
 - (void)test_trknMetaReadWrite_EqualOutput {

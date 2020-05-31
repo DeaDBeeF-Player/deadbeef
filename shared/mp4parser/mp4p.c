@@ -727,7 +727,7 @@ mp4p_genre_index_for_name (const char *name) {
 }
 
 mp4p_atom_t *
-mp4p_ilst_append_custom (mp4p_atom_t *ilst_atom, const char *name, const char *text) {
+mp4p_ilst_create_custom (const char *name, const char *text) {
     mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
     mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
     meta->custom = 1;
@@ -744,11 +744,11 @@ mp4p_ilst_append_custom (mp4p_atom_t *ilst_atom, const char *name, const char *t
     meta->data_version_flags = 1;
     meta->text = strdup (text);
     meta->data_size = (uint32_t)strlen(text);
-    return mp4p_atom_append (ilst_atom, atom);
+    return atom;
 }
 
 mp4p_atom_t *
-mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text) {
+mp4p_ilst_create_genre (const char *text) {
     mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
     mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
     atom->data = meta;
@@ -771,7 +771,7 @@ mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text) {
         meta->text = strdup (text);
         meta->data_size = (uint32_t)strlen(text);
     }
-    return mp4p_atom_append (ilst_atom, atom);
+    return atom;
 }
 
 mp4p_atom_t *
@@ -795,7 +795,7 @@ mp4p_ilst_create_track_disc (const char *type, uint16_t index, uint16_t total) {
 }
 
 mp4p_atom_t *
-mp4p_ilst_meta_create_text (const char *text, const char *type) {
+mp4p_ilst_create_text (const char *type, const char *text) {
     mp4p_atom_t *atom = calloc (sizeof (mp4p_atom_t), 1);
     mp4p_ilst_meta_t *meta = calloc (sizeof (mp4p_ilst_meta_t), 1);
     atom->data = meta;
@@ -808,13 +808,6 @@ mp4p_ilst_meta_create_text (const char *text, const char *type) {
     meta->data_version_flags = 1;
     meta->text = strdup (text);
     return atom;
-}
-
-mp4p_atom_t *
-mp4p_ilst_append_text (mp4p_atom_t *ilst_atom, const char *type, const char *text) {
-    mp4p_atom_t * atom = mp4p_ilst_meta_create_text (text, type);
-
-    return mp4p_atom_append (ilst_atom, atom);
 }
 
 void

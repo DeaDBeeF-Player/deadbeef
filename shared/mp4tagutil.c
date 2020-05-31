@@ -251,10 +251,10 @@ static void _mp4tagutil_add_metadata_fields(mp4p_atom_t *ilst, DB_playItem_t *it
         const char *end = m->value + m->valuesize;
         while (value < end) {
             if (!_mp4_atom_map[i] || strlen (_mp4_atom_map[i]) != 4) {
-                mp4p_ilst_append_custom(ilst, _mp4_atom_map[i] ? _mp4_atom_map[i] : m->key, value);
+                mp4p_atom_append(ilst, mp4p_ilst_create_custom(_mp4_atom_map[i] ? _mp4_atom_map[i] : m->key, value));
             }
             else {
-                mp4p_ilst_append_text(ilst, _mp4_atom_map[i], value);
+                mp4p_atom_append(ilst, mp4p_ilst_create_text(_mp4_atom_map[i], value));
             }
             size_t l = strlen (value) + 1;
             value += l;
@@ -264,7 +264,7 @@ static void _mp4tagutil_add_metadata_fields(mp4p_atom_t *ilst, DB_playItem_t *it
 
     const char *genre = deadbeef->pl_find_meta (it, "genre");
     if (genre) {
-        mp4p_ilst_append_genre (ilst, genre);
+        mp4p_atom_append(ilst, mp4p_ilst_create_genre (genre));
     }
     const char *track = deadbeef->pl_find_meta (it, "track");
     const char *numtracks = deadbeef->pl_find_meta (it, "numtracks");
@@ -324,7 +324,7 @@ static void _mp4tagutil_add_metadata_fields(mp4p_atom_t *ilst, DB_playItem_t *it
                 snprintf (s, sizeof (s), "%.6f", value);
                 break;
             }
-            mp4p_ilst_append_custom(ilst, tag_rg_names[n], s);
+            mp4p_atom_append(ilst, mp4p_ilst_create_custom(tag_rg_names[n], s));
         }
     }
 

@@ -91,20 +91,16 @@ mp4p_atom_t *
 mp4p_atom_append (mp4p_atom_t *parent, mp4p_atom_t *atom);
 
 mp4p_atom_t *
-mp4p_ilst_append_genre (mp4p_atom_t *ilst_atom, const char *text);
+mp4p_ilst_create_genre (const char *text);
 
 mp4p_atom_t *
 mp4p_ilst_create_track_disc (const char *type, uint16_t index, uint16_t total);
 
 mp4p_atom_t *
-mp4p_ilst_meta_create_text (const char *text, const char *type);
-
-// FIXME: can be replaced with simple mp4p_ilst_meta_create_text + append
-mp4p_atom_t *
-mp4p_ilst_append_text (mp4p_atom_t *ilst_atom, const char *type, const char *text);
+mp4p_ilst_create_text (const char *type, const char *text);
 
 mp4p_atom_t *
-mp4p_ilst_append_custom (mp4p_atom_t *ilst_atom, const char *name, const char *text);
+mp4p_ilst_create_custom (const char *name, const char *text);
 
 void
 mp4p_atom_dump (mp4p_atom_t *atom);
