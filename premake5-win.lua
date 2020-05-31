@@ -70,6 +70,8 @@ project "libwin"
    files {
        "shared/windows/fopen.c",
        "shared/windows/mingw32_layer.h",
+       "shared/windows/mkdir.c",
+       "shared/windows/rmdir.c",
        "shared/windows/rename.c",
        "shared/windows/scandir.c",
        "shared/windows/stat.c",
@@ -290,11 +292,11 @@ project "opus_plugin"
    defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
    links { "opusfile", "opus", "m", "ogg" }
    filter "configurations:debug32 or release32"
-   
+
       includedirs { "static-deps/lib-x86-32/include/opus" }
 
    filter "configurations:debug or release"
-   
+
       includedirs { "static-deps/lib-x86-64/include/opus" }
 end
 
@@ -427,12 +429,12 @@ project "ddb_gui_GTK2"
     pkgconfig ("gtk+-2.0 jansson")
 
     filter "configurations:debug32 or release32"
-    
+
        includedirs { "static-deps/lib-x86-32/gtk-2.16.0/include/**", "static-deps/lib-x86-32/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-32/gtk-2.16.0/lib", "static-deps/lib-x86-32/gtk-2.16.0/lib/**" }
 
     filter "configurations:debug or release"
-    
+
        includedirs { "static-deps/lib-x86-64/gtk-2.16.0/include/**", "static-deps/lib-x86-64/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-64/gtk-2.16.0/lib", "static-deps/lib-x86-64/gtk-2.16.0/lib/**" }
 end
@@ -505,6 +507,22 @@ project "converter"
        "plugins/libmp4ff/*.c",
        "shared/mp4tagutil.c",
    }
+end
+
+if option ("plugin-shellexec", "jansson") then
+project "shellexec"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/shellexec/shellexec.c",
+       "plugins/shellexec/shellexec.h",
+       "plugins/shellexec/shellexecutil.c",
+       "plugins/shellexec/shellexecutil.h"
+   }
+   pkgconfig("jansson")
 end
 
 if option ("plugin-sndfile", "sndfile") then
@@ -741,6 +759,46 @@ project "pltbrowser_gtk3"
    pkgconfig ("gtk+-3.0")
 end
 
+if option ("plugin-shellexecui_gtk2", "gtk+-2.0 jansson") then
+project "shellexecui_gtk2"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/shellexecui/shellexecui.c",
+       "plugins/shellexecui/interface.c",
+       "plugins/shellexecui/support.c",
+       "plugins/shellexecui/callbacks.c",
+       "plugins/shellexecui/interface.h",
+       "plugins/shellexecui/support.h",
+       "plugins/shellexecui/callbacks.h"
+   }
+
+   pkgconfig ("gtk+-2.0 jansson")
+end
+
+if option ("plugin-shellexecui_gtk3", "gtk+-3.0 jansson") then
+project "shellexecui_gtk3"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/shellexecui/shellexecui.c",
+       "plugins/shellexecui/interface.c",
+       "plugins/shellexecui/support.c",
+       "plugins/shellexecui/callbacks.c",
+       "plugins/shellexecui/interface.h",
+       "plugins/shellexecui/support.h",
+       "plugins/shellexecui/callbacks.h"
+   }
+
+   pkgconfig ("gtk+-3.0 jansson")
+end
+
 if option ("plugin-wildmidi") then
 project "wildmidi_plugin"
    kind "SharedLib"
@@ -907,6 +965,21 @@ project "ddb_soundtouch"
        "plugins/soundtouch/soundtouch/source/SoundTouch/cpu_detect_x86.cpp",
        "plugins/soundtouch/soundtouch/source/SoundTouch/mmx_optimized.cpp",
        "plugins/soundtouch/soundtouch/source/SoundTouch/sse_optimized.cpp"
+   }
+end
+
+if option ("plugin-tta") then
+project "tta"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/tta/ttaplug.c",
+       "plugins/tta/filter.h",
+       "plugins/tta/ttadec.c",
+       "plugins/tta/ttadec.h"
    }
 end
 

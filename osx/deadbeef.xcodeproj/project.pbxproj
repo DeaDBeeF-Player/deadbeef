@@ -4504,6 +4504,7 @@
 		2D5D21401A4033B0001D5A79 /* lastfm.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = lastfm.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D5D21451A4033FF001D5A79 /* lastfm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lastfm.c; path = plugins/lastfm/lastfm.c; sourceTree = "<group>"; };
 		2D5F88F41E12F94300A7DA8D /* MP4ParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MP4ParserTests.m; sourceTree = "<group>"; };
+		2D5DD91C246C697800734047 /* plmeta.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = plmeta.h; sourceTree = "<group>"; };
 		2D60108B1A9CDF06000136AF /* SearchWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchWindowController.h; sourceTree = "<group>"; };
 		2D60108C1A9CDF06000136AF /* SearchWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchWindowController.m; sourceTree = "<group>"; };
 		2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbTabStrip.h; sourceTree = "<group>"; };
@@ -9999,6 +10000,7 @@
 				2D40208E1F27BD7200D4EA4F /* cueutil.h */,
 				2D0A6B19237718DA00252E6D /* playmodes.h */,
 				2D0A6B1A237718DA00252E6D /* playmodes.c */,
+				2D5DD91C246C697800734047 /* plmeta.h */,
 			);
 			name = deadbeef;
 			path = ..;

@@ -27,7 +27,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include "playlist.h"
+#include "plmeta.h"
 #include "deadbeef.h"
 #include "metacache.h"
 
@@ -239,6 +239,9 @@ _combine_into_unique_multivalue (const char *value1, int size1, const char *valu
 // skip duplicates
 void
 pl_append_meta_full (playItem_t *it, const char *key, const char *value, int size) {
+    if (!value || size == 0 || *value == 0) {
+        return;
+    }
     pl_lock ();
     DB_metaInfo_t *m = pl_meta_for_key (it, key);
     if (!m) {
@@ -362,6 +365,16 @@ pl_find_meta (playItem_t *it, const char *key) {
 }
 
 const char *
+pl_find_meta_with_override (playItem_t *it, const char *key) {
+    pl_ensure_lock ();
+    DB_metaInfo_t *m = pl_meta_for_key_with_override(it, key);
+    if (m) {
+        return m->value;
+    }
+    return NULL;
+}
+
+const char *
 pl_find_meta_raw (playItem_t *it, const char *key) {
     DB_metaInfo_t *m = pl_meta_for_key (it, key);
     return m ? m->value : NULL;
@@ -475,6 +488,20 @@ pl_get_meta (playItem_t *it, const char *key, char *val, int size) {
 }
 
 int
+pl_get_meta_with_override (playItem_t *it, const char *key, char *val, size_t size) {
+    *val = 0;
+    pl_lock ();
+    DB_metaInfo_t *meta = pl_meta_for_key_with_override (it, key);
+    if (!meta) {
+        pl_unlock ();
+        return 0;
+    }
+    strncpy (val, meta->value, size);
+    pl_unlock ();
+    return 1;
+}
+
+int
 pl_get_meta_raw (playItem_t *it, const char *key, char *val, int size) {
     *val = 0;
     pl_lock ();
@@ -492,6 +519,14 @@ int
 pl_meta_exists (playItem_t *it, const char *key) {
     pl_lock ();
     const char *v = pl_find_meta (it, key);
+    pl_unlock ();
+    return v ? 1 : 0;
+}
+
+int
+pl_meta_exists_with_override (playItem_t *it, const char *key) {
+    pl_lock ();
+    const char *v = pl_find_meta_with_override (it, key);
     pl_unlock ();
     return v ? 1 : 0;
 }

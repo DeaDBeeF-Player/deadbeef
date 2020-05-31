@@ -337,10 +337,10 @@ fail:
 static int
 lfm_fetch_song_info (DB_playItem_t *song, float playtime, char *a, char *t, char *b, float *l, char *n, char *m) {
     if (deadbeef->conf_get_int ("lastfm.prefer_album_artist", 0)) {
-        if (!deadbeef->pl_get_meta (song, "band", a, META_FIELD_SIZE)) {
-            if (!deadbeef->pl_get_meta (song, "album artist", a, META_FIELD_SIZE)) {
-                if (!deadbeef->pl_get_meta (song, "albumartist", a, META_FIELD_SIZE)) {
-                    if (!deadbeef->pl_get_meta (song, "artist", a, META_FIELD_SIZE)) {
+        if (!deadbeef->pl_get_meta_with_override (song, "band", a, META_FIELD_SIZE)) {
+            if (!deadbeef->pl_get_meta_with_override (song, "album artist", a, META_FIELD_SIZE)) {
+                if (!deadbeef->pl_get_meta_with_override (song, "albumartist", a, META_FIELD_SIZE)) {
+                    if (!deadbeef->pl_get_meta_with_override (song, "artist", a, META_FIELD_SIZE)) {
                         return -1;
                     }
                 }
@@ -348,20 +348,20 @@ lfm_fetch_song_info (DB_playItem_t *song, float playtime, char *a, char *t, char
         }
     }
     else {
-        if (!deadbeef->pl_get_meta (song, "artist", a, META_FIELD_SIZE)) {
-            if (!deadbeef->pl_get_meta (song, "band", a, META_FIELD_SIZE)) {
-                if (!deadbeef->pl_get_meta (song, "album artist", a, META_FIELD_SIZE)) {
-                    if (!deadbeef->pl_get_meta (song, "albumartist", a, META_FIELD_SIZE)) {
+        if (!deadbeef->pl_get_meta_with_override (song, "artist", a, META_FIELD_SIZE)) {
+            if (!deadbeef->pl_get_meta_with_override (song, "band", a, META_FIELD_SIZE)) {
+                if (!deadbeef->pl_get_meta_with_override (song, "album artist", a, META_FIELD_SIZE)) {
+                    if (!deadbeef->pl_get_meta_with_override (song, "albumartist", a, META_FIELD_SIZE)) {
                         return -1;
                     }
                 }
             }
         }
     }
-    if (!deadbeef->pl_get_meta (song, "title", t, META_FIELD_SIZE)) {
+    if (!deadbeef->pl_get_meta_with_override (song, "title", t, META_FIELD_SIZE)) {
         return -1;
     }
-    if (!deadbeef->pl_get_meta (song, "album", b, META_FIELD_SIZE)) {
+    if (!deadbeef->pl_get_meta_with_override (song, "album", b, META_FIELD_SIZE)) {
         *b = 0;
     }
     *l = deadbeef->pl_get_item_duration (song);
@@ -371,10 +371,10 @@ lfm_fetch_song_info (DB_playItem_t *song, float playtime, char *a, char *t, char
     if (*l < 30 && deadbeef->conf_get_int ("lastfm.submit_tiny_tracks", 0)) {
         *l = 30;
     }
-    if (!deadbeef->pl_get_meta (song, "track", n, META_FIELD_SIZE)) {
+    if (!deadbeef->pl_get_meta_with_override (song, "track", n, META_FIELD_SIZE)) {
         *n = 0;
     }
-    if (!deadbeef->conf_get_int ("lastfm.mbid", 0) || !deadbeef->pl_get_meta (song, "musicbrainz_trackid", m, META_FIELD_SIZE)) {
+    if (!deadbeef->conf_get_int ("lastfm.mbid", 0) || !deadbeef->pl_get_meta_with_override (song, "musicbrainz_trackid", m, META_FIELD_SIZE)) {
         *m = 0;
     }
     return 0;
@@ -579,10 +579,10 @@ lastfm_songchanged (ddb_event_trackchange_t *ev, uintptr_t data) {
 
 #endif
 
-    if (!deadbeef->pl_meta_exists (ev->from, "artist")
-            || !deadbeef->pl_meta_exists (ev->from, "title")
+    if (!deadbeef->pl_meta_exists_with_override (ev->from, "artist")
+            || !deadbeef->pl_meta_exists_with_override (ev->from, "title")
        ) {
-        trace ("lfm: not enough metadata for submission, artist=%s, title=%s, album=%s\n", deadbeef->pl_find_meta (ev->from, "artist"), deadbeef->pl_find_meta (ev->from, "title"), deadbeef->pl_find_meta (ev->from, "album"));
+        trace ("lfm: not enough metadata for submission, artist=%s, title=%s, album=%s\n", deadbeef->pl_find_meta_with_override (ev->from, "artist"), deadbeef->pl_find_meta_with_override (ev->from, "title"), deadbeef->pl_find_meta_with_override (ev->from, "album"));
         return 0;
     }
     deadbeef->mutex_lock (lfm_mutex);
@@ -835,10 +835,10 @@ lfm_action_lookup (DB_plugin_action_t *action, ddb_action_context_t ctx) {
         goto out;
     }
 
-    if (!deadbeef->pl_get_meta (it, "artist", artist, sizeof (artist))) {
+    if (!deadbeef->pl_get_meta_with_override (it, "artist", artist, sizeof (artist))) {
         goto out;
     }
-    if (!deadbeef->pl_get_meta (it, "title", title, sizeof (title))) {
+    if (!deadbeef->pl_get_meta_with_override (it, "title", title, sizeof (title))) {
         goto out;
     }
 
@@ -883,8 +883,8 @@ lfm_get_actions (DB_playItem_t *it)
 {
     deadbeef->pl_lock ();
     if (!it ||
-        !deadbeef->pl_meta_exists (it, "artist") ||
-        !deadbeef->pl_meta_exists (it, "title"))
+        !deadbeef->pl_find_meta_with_override (it, "artist") ||
+        !deadbeef->pl_find_meta_with_override (it, "title"))
     {
         lookup_action.flags |= DB_ACTION_DISABLED;
     }

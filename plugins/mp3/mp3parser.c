@@ -42,6 +42,7 @@ extern DB_functions_t *deadbeef;
 #define MAX_PACKET_LENGTH 1441
 #define MAX_INVALID_BYTES 1000000
 #define MAX_INVALID_BYTES_STREAM 1000
+#define MAX_FREEFORMAT_PACKETS 10
 
 static const int vertbl[] = {3, -1, 2, 1}; // 3 is 2.5
 static const int ltbl[] = { -1, 3, 2, 1 };
@@ -440,7 +441,9 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
     int64_t fileoffs = startoffs;
 
     int prev_br = -1;
-    int vbr = 0;
+    int prev_length = -1;
+    int variable_packets = 0;
+    int freeformat_packets = 0;
 
     while (fsize > 0 || fsize < 0) {
         int64_t readsize = 4; // fe ff + frame header
@@ -469,8 +472,13 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
         int res = _parse_packet (&packet, fhdr);
         if (res < 0 || (info->npackets && !_packet_same_fmt (&info->ref_packet, &packet))) {
             if (res == -2 && info->valid_packets == 0) {
+                freeformat_packets++;
+            }
+
+            if (freeformat_packets > MAX_FREEFORMAT_PACKETS) {
                 goto error; // ignore freeformat streams
             }
+
             // bail if a valid packet could not be found at the start of stream
             if (!info->valid_packets && offs - startoffs > MAX_INVALID_BYTES) {
                 goto error;
@@ -562,12 +570,13 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 memcpy (&info->prev_packet, &packet, sizeof (packet));
             }
 
-            if (prev_br != -1) {
-                if (prev_br!=packet.bitrate) {
-                    vbr = 1;
+            if (!variable_packets && (prev_br != -1 || prev_length != -1)) {
+                if (prev_br != packet.bitrate || prev_length != packet.packetlength) {
+                    variable_packets = 1;
                 }
             }
             prev_br = packet.bitrate;
+            prev_length = packet.packetlength;
 
             // Even if we already got everything we need from lame header,
             // we still need to fetch a few packets to get averages right.
@@ -577,7 +586,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 goto end;
             }
             // Calculate CBR duration from file size
-            else if (!vbr && !info->have_xing_header && seek_to_sample < 0 && !(flags & MP3_PARSE_FULLSCAN) && info->npackets >= 200) {
+            else if (!variable_packets && !info->have_xing_header && seek_to_sample < 0 && !(flags & MP3_PARSE_FULLSCAN) && info->npackets >= 200) {
                 // calculate total number of packets from file size
                 // 8876 - 9485
                 int64_t npackets = ceil(datasize/(float)info->ref_packet.packetlength);

@@ -9,7 +9,7 @@
 #import <XCTest/XCTest.h>
 #include "deadbeef.h"
 #include "../../common.h"
-#include "playlist.h"
+#include "plmeta.h"
 #include "plugins.h"
 
 @interface PlaylistTests : XCTestCase

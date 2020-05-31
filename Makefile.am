@@ -20,7 +20,8 @@ deadbeef_SOURCES =\
 	main.c common.h deadbeef.h\
 	plugins.c plugins.h moduleconf.h\
 	cueutil.c cueutil.h playlist.c playlist.h \
-	plmeta.c pltmeta.c pltmeta.h\
+	plmeta.c plmeta.h\
+	pltmeta.c pltmeta.h\
 	streamer.c streamer.h\
 	dsp.c dsp.h\
 	streamreader.c streamreader.h\

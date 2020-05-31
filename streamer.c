@@ -36,6 +36,7 @@
 #include <errno.h>
 #include "threading.h"
 #include "playlist.h"
+#include "plmeta.h"
 #include "common.h"
 #include "shared/ctmap.h"
 #include "streamer.h"
@@ -1803,6 +1804,10 @@ static int
 process_output_block (streamblock_t *block, char *bytes) {
     DB_output_t *output = plug_get_output ();
 
+    if (block->pos < 0) {
+        return 0;
+    }
+
     // handle change of track
     if (block->last) {
         update_stop_after_current ();
@@ -1819,8 +1824,8 @@ process_output_block (streamblock_t *block, char *bytes) {
         return 0;
     }
 
+    assert (block->size > block->pos);
     int sz = block->size - block->pos;
-    assert (sz);
 
     ddb_waveformat_t datafmt; // comes either from dsp, or from input plugin
     memcpy (&datafmt, &block->fmt, sizeof (ddb_waveformat_t));

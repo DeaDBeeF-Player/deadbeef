@@ -60,6 +60,7 @@
 #include "streamer.h"
 #include "utf8.h"
 #include "playlist.h"
+#include "plmeta.h"
 #include "playqueue.h"
 #include "tf.h"
 #include "gettext.h"

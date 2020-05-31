@@ -50,6 +50,7 @@
 #include <math.h>
 #include "gettext.h"
 #include "playlist.h"
+#include "plmeta.h"
 #include "streamer.h"
 #include "messagepump.h"
 #include "plugins.h"
@@ -2864,6 +2865,17 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             }
             else if (*fmt == 'F') {
                 meta = pl_find_meta_raw (it, ":URI");
+                #ifdef __MINGW32__
+                int len = strlen(meta);
+                strncpy (dirname, meta, len);
+                dirname[len] = 0;
+                // Convert to backslashes on windows
+                char *str_p = dirname;
+                while (str_p = strchr(str_p,'/')) {
+                    *str_p = '\\';
+                }
+                meta = dirname;
+                #endif
             }
             else if (*fmt == 'T') {
                 char *t = tags;
@@ -2951,6 +2963,15 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     len = min (len, sizeof (dirname)-1);
                     strncpy (dirname, f, len);
                     dirname[len] = 0;
+                    #ifdef __MINGW32__
+                    {
+                        // Convert to backslashes on windows
+                        char *str_p = dirname;
+                        while (str_p = strchr(str_p,'/')) {
+                            *str_p = '\\';
+                        }
+                    }
+                    #endif
                     meta = dirname;
                 }
             }

@@ -46,6 +46,7 @@
 #include "messagepump.h"
 #include "threading.h"
 #include "playlist.h"
+#include "plmeta.h"
 #include "volume.h"
 #include "streamer.h"
 #include "common.h"
@@ -506,6 +507,11 @@ static DB_functions_t deadbeef_api = {
     .streamer_get_shuffle = streamer_get_shuffle,
     .streamer_set_repeat = streamer_set_repeat,
     .streamer_get_repeat = streamer_get_repeat,
+
+    .pl_meta_for_key_with_override = (DB_metaInfo_t *(*) (ddb_playItem_t *it, const char *key))pl_meta_for_key_with_override,
+    .pl_find_meta_with_override = (const char *(*) (ddb_playItem_t *it, const char *key))pl_find_meta_with_override,
+    .pl_get_meta_with_override = (int (*) (ddb_playItem_t *it, const char *key, char *val, size_t size))pl_get_meta_with_override,
+    .pl_meta_exists_with_override = (int (*) (ddb_playItem_t *it, const char *key))pl_meta_exists_with_override,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

@@ -30,7 +30,7 @@
 #include <sys/stat.h>
 #include "plugins.h"
 #include "common.h"
-#include "playlist.h"
+#include "plmeta.h"
 #include "junklib.h"
 #include "vfs.h"
 
@@ -318,6 +318,11 @@ static int
 pl_cue_get_field_value(cueparser_t *cue) {
     if (!strncasecmp (cue->p, "FILE ", 5)) {
         pl_get_qvalue_from_cue (cue->p + 5, sizeof (cue->cuefields[CUE_FIELD_FILE]), cue->cuefields[CUE_FIELD_FILE], cue->charset);
+        const char *ext = strrchr (cue->cuefields[CUE_FIELD_FILE], '.');
+        if (ext && !strcasecmp(ext, ".cue")) {
+            trace_err("Cuesheet %s refers to another cuesheet, which is not allowed\n", cue->fname);
+            return -1;
+        }
         return CUE_FIELD_FILE;
     }
     else if (!strncasecmp (cue->p, "TRACK ", 6)) {
@@ -406,7 +411,15 @@ pl_cue_get_field_value(cueparser_t *cue) {
                 }
             }
         }
-        return -1;
+
+        // ignore unsupported fields
+        while (*(cue->p) && *(cue->p) >= 0x20) {
+            cue->p++;
+        }
+        while (*(cue->p) && *(cue->p) < 0x20) {
+            cue->p++;
+        }
+        return CUE_MAX_FIELDS;
     }
 }
 
@@ -787,6 +800,9 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
         }
         else {
             field = pl_cue_get_field_value(&cue);
+            if (field < 0) {
+                goto error;
+            }
         }
 
         // Next field immediately after FILE, indicates whether current TRACK belongs to previous or next FILE

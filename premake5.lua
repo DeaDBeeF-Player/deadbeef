@@ -650,6 +650,19 @@ project "ddb_soundtouch"
        "plugins/soundtouch/soundtouch/source/SoundTouch/sse_optimized.cpp"
    }
 
+project "tta"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/tta/ttaplug.c",
+       "plugins/tta/filter.h",
+       "plugins/tta/ttadec.c",
+       "plugins/tta/ttadec.h"
+   }
+
 
 project "resources"
     kind "Utility"

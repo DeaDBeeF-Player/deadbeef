@@ -135,6 +135,7 @@ static NSMutableArray *g_converterControllers;
     _preserveFolderStructure.state = deadbeef->conf_get_int ("converter.preserve_folder_structure", 0) ? NSOnState : NSOffState;
     _bypassSameFormat.state = deadbeef->conf_get_int ("converter.bypass_same_format", 0);
     _retagAfterCopy.state = deadbeef->conf_get_int ("converter.retag_after_copy", 0);
+    _retagAfterCopy.enabled = _bypassSameFormat.state == NSOnState;
 
     int write_to_source_folder = deadbeef->conf_get_int ("converter.write_to_source_folder", 0);
     _writeToSourceFolder.state = write_to_source_folder ? NSOnState : NSOffState;

@@ -23,7 +23,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
-#include "playlist.h"
+#include "plmeta.h"
 #include "tf.h"
 #include "tftintutil.h"
 #include "playqueue.h"

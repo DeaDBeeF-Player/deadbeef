@@ -58,6 +58,7 @@ uint16_t sj_to_unicode[] = {
 #endif
 #include <sys/stat.h>
 #include "playlist.h"
+#include "plmeta.h"
 #include "utf8.h"
 #include "plugins.h"
 #include "conf.h"

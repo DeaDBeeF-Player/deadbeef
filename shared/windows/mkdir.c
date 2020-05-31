@@ -1,6 +1,6 @@
 /*
-    shared/windows/strndup.c
-    Copyright (C) 2016 Elio Blanca
+    shared/windows/mkdir.c
+    Copyright (C) 2020 Keith Cancel <admin@keith.pro>
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -20,25 +20,24 @@
 
     3. This notice may not be removed or altered from any source distribution.
 */
-#include <malloc.h>
-#include <string.h>
 
-char *strndup(const char *buff, size_t bufflen)
-{
-    char *result = NULL;
+#include <windows.h>
+#include <wchar.h>
 
-    if (strlen(buff)>bufflen)
-    {
-        if ((result=malloc(1+bufflen)) != NULL)
-        {
-            memcpy(result, buff, bufflen);
-            result[bufflen] = 0;
-        }
+typedef unsigned short mode_t;
+
+// TODO: Maybe also take into account mode.
+int
+win_mkdir (const char *path, mode_t mode) {
+    // get length includeing NULL terminater
+    int utf16_points = MultiByteToWideChar (CP_UTF8, /*Flags*/ 0, path, -1, NULL, 0);
+    if (utf16_points < 1) {
+        return -1;
     }
-    else
-    {
-        result = strdup(buff);
+    wchar_t wPath[utf16_points];
+    memset(wPath, 0, sizeof(wchar_t) * utf16_points);
+    if(MultiByteToWideChar (CP_UTF8, /*Flags*/ 0, path, -1, wPath, utf16_points) < 1) {
+        return -1;
     }
-
-    return result;
+    return _wmkdir (wPath);
 }
