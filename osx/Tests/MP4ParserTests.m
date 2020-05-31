@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 #include "mp4p.h"
 #include "playlist.h"
+#include "plmeta.h"
 #include "mp4tagutil.h"
 #include "plugins.h"
 #include "conf.h"
