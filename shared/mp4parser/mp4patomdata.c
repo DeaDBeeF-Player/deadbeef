@@ -878,6 +878,12 @@ mp4p_esds_atomdata_read (mp4p_esds_t *atom_data, uint8_t *buffer, size_t buffer_
         READ_BUF(atom_data->asc, atom_data->asc_size);
     }
 
+    if (buffer_size > 0) {
+        atom_data->remainder_size = (uint32_t)buffer_size;
+        atom_data->remainder = calloc (1, buffer_size);
+        READ_BUF(atom_data->remainder, buffer_size);
+    }
+
     return 0;
 }
 
@@ -893,6 +899,9 @@ write_esds_tag_size (uint8_t *buffer, size_t buffer_size, uint32_t num) {
            || count < 4
 #endif
            ) {
+        if (count >= 4) {
+            return -1;
+        }
         data[count++] = num & 0x7f;
         num >>= 7;
     }
@@ -933,6 +942,8 @@ mp4p_esds_atomdata_write (mp4p_esds_t *atom_data, uint8_t *buffer, size_t buffer
 
         size += _esds_tag_written_size (atom_data->asc_size);
         size += atom_data->asc_size;
+
+        size += atom_data->remainder_size;
         return size;
     }
     uint8_t *origin = buffer;
@@ -987,6 +998,10 @@ mp4p_esds_atomdata_write (mp4p_esds_t *atom_data, uint8_t *buffer, size_t buffer
 
     if (atom_data->asc_size) {
         WRITE_BUF(atom_data->asc, atom_data->asc_size);
+    }
+
+    if (atom_data->remainder_size) {
+        WRITE_BUF(atom_data->remainder, atom_data->remainder_size);
     }
 
     return buffer - origin;

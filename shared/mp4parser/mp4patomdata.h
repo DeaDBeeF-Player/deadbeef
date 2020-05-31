@@ -218,6 +218,10 @@ typedef struct {
 
     uint32_t asc_size;
     char *asc;
+
+    // FIXME: what is supposed to be there?
+    uint8_t *remainder;
+    uint32_t remainder_size;
 } mp4p_esds_t;
 
 typedef struct {

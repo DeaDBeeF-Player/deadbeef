@@ -450,6 +450,8 @@
         .ds_tag = 5,
         .asc_size = 24,
         .asc = "24bytefillabcdefghijklm",
+        .remainder_size = 6,
+        .remainder = "ghjklm"
     };
 
     size_t bufsize = mp4p_esds_atomdata_write(&data, NULL, 0);
