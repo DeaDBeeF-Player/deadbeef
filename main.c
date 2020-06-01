@@ -1344,6 +1344,9 @@ main (int argc, char *argv[]) {
     if (gui) {
         gui->start ();
     }
+    else {
+        messagepump_push (DB_EV_TERMINATE, 0, 0, 0);
+    }
 
     ddb_logger_stop_buffering ();
 
