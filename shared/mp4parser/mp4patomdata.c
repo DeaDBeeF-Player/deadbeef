@@ -1156,9 +1156,9 @@ mp4p_ilst_meta_atomdata_read (mp4p_ilst_meta_t *atom_data, uint8_t *buffer, size
         char mean_type[4];
         READ_BUF(mean_type, 4);
         if (strncasecmp (mean_type, "mean", 4)) {
-            return -1;
+            return -1; // FIXME: Unsupported fields must be loaded as blobs, and preserved when rewriting the ilst
         }
-        READ_UINT32(); // 0
+        READ_UINT32(); // version_flags always 0
         char *mean_data = malloc (mean_size + 1);
         READ_BUF(mean_data, mean_size);
         mean_data[mean_size] = 0;
@@ -1179,7 +1179,7 @@ mp4p_ilst_meta_atomdata_read (mp4p_ilst_meta_t *atom_data, uint8_t *buffer, size
             return -1;
         }
 
-        READ_UINT32(); // 0
+        READ_UINT32(); // version_flags always 0
 
         atom_data->name = malloc (name_size + 1);
         READ_BUF(atom_data->name, name_size);
@@ -1203,7 +1203,7 @@ mp4p_ilst_meta_atomdata_read (mp4p_ilst_meta_t *atom_data, uint8_t *buffer, size
     atom_data->data_version_flags = READ_UINT32();
     uint32_t flag = atom_data->data_version_flags & 0xff;
 
-    READ_UINT32();
+    READ_UINT32(); // what is this?
 
     if (flag == 0) {
         // array of numbers
@@ -1247,13 +1247,13 @@ mp4p_ilst_meta_atomdata_write (mp4p_ilst_meta_t *atom_data, uint8_t *buffer, siz
         uint32_t mean_size = 28;
         WRITE_UINT32(mean_size);
         WRITE_BUF("mean", 4);
-        WRITE_UINT32(0);
+        WRITE_UINT32(0); // version_flags always 0
         WRITE_BUF("com.apple.iTunes", 16);
 
         uint32_t name_size = 12 + (uint32_t)strlen(atom_data->name);
         WRITE_UINT32(name_size);
         WRITE_BUF("name", 4);
-        WRITE_UINT32(0);
+        WRITE_UINT32(0); // version_flags always 0
         WRITE_BUF(atom_data->name, (uint32_t)strlen(atom_data->name));
     }
     // data atom
@@ -1263,7 +1263,7 @@ mp4p_ilst_meta_atomdata_write (mp4p_ilst_meta_t *atom_data, uint8_t *buffer, siz
         WRITE_BUF("data", 4);
     }
     WRITE_UINT32(atom_data->data_version_flags);
-    WRITE_UINT32(0); // FIXME: what is this?
+    WRITE_UINT32(0); // what is this?
 
     if (atom_data->data_version_flags == 0) {
         for (int i = 0; i < atom_data->data_size/2; i++) {

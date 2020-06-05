@@ -373,6 +373,8 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     else {
         // cleanup the pre-existing keyvalue list
         _remove_known_fields (ilst);
+
+        // FIXME: delete all fields which are not mapped, but present in the track
     }
 
     _mp4tagutil_add_metadata_fields(ilst, it);
