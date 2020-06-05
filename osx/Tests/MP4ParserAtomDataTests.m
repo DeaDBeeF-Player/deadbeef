@@ -559,7 +559,7 @@
     size_t writtensize = mp4p_ilst_meta_atomdata_write(data, buffer, bufsize);
     XCTAssertEqual (bufsize, writtensize);
 
-    mp4p_ilst_meta_t dataread;
+    mp4p_ilst_meta_t dataread = {0};
     int res = mp4p_ilst_meta_atomdata_read(&dataread, buffer, bufsize);
     XCTAssertEqual(res, 0);
 
@@ -578,7 +578,7 @@
     size_t writtensize = mp4p_ilst_meta_atomdata_write(data, buffer, bufsize);
     XCTAssertEqual (bufsize, writtensize);
 
-    mp4p_ilst_meta_t dataread;
+    mp4p_ilst_meta_t dataread = {0};
     int res = mp4p_ilst_meta_atomdata_read(&dataread, buffer, bufsize);
     XCTAssert(!res);
 
