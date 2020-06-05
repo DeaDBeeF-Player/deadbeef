@@ -829,7 +829,7 @@ mp4p_esds_atomdata_read (mp4p_esds_t *atom_data, uint8_t *buffer, size_t buffer_
         atom_data->ignored1 = READ_UINT8();
     }
 
-    // FIXME: validate against spec -- could be that this is es_tag_size
+    // FIXME: validate against spec -- could be that this is tag_size
     atom_data->ignored2 = READ_UINT8();
     atom_data->ignored3 = READ_UINT8();
 
@@ -1214,10 +1214,6 @@ mp4p_ilst_meta_atomdata_read (mp4p_ilst_meta_t *atom_data, uint8_t *buffer, size
     }
     else if (flag == 1) {
         // text
-        // FIXME: why large texts were skipped?
-        //        if (atom_data->data_size > 255 && strncasecmp (atom->type, COPYRIGHT_SYM "lyr", 4)) {
-        //            return -1;
-        //        }
         atom_data->text = calloc (atom_data->data_size+1, 1);
         READ_BUF(atom_data->text, atom_data->data_size);
         atom_data->text[atom_data->data_size] = 0;

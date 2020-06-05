@@ -1006,8 +1006,6 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
         for (mp4p_atom_t *c = atom->subatoms; c; c = c->next) {
             uint32_t subsize = mp4p_atom_to_buffer (c, buffer, buffer_size);
             if (subsize != c->size) {
-                // FIXME: debug write
-                mp4p_atom_to_buffer (c, buffer, buffer_size);
                 break;
             }
             buffer += subsize;
@@ -1040,10 +1038,6 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
         }
         else {
             size_t written_size = atom->write (atom->data, buffer, buffer_size);
-            if (written_size != atom->size - 8) {
-                // FIXME: debug write
-                atom->write (atom->data, buffer, buffer_size);
-            }
             buffer_size -= written_size;
         }
     }
@@ -1132,8 +1126,6 @@ mp4p_update_metadata (mp4p_file_callbacks_t *file, mp4p_atom_t *source, mp4p_ato
         uint32_t written_size = mp4p_atom_to_buffer(atom, buffer, atom_size);
         if (written_size != atom_size) {
             res = -1;
-            // FIXME: debug write
-            mp4p_atom_to_buffer(atom, buffer, atom_size);
             goto error;
         }
 
