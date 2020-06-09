@@ -5,9 +5,9 @@
 # Translators:
 # aasche <anton.asche@mhinac.de>, 2017,2019
 # aer, 2019
-# aer, 2019
-# aer, 2019
-# aer, 2019
+# aer <aer66@mail.de>, 2019
+# aer <aer66@mail.de>, 2019
+# aer <aer66@mail.de>, 2019-2020
 # aasche <anton.asche@mhinac.de>, 2017,2019
 # copycat <copycat@onlinehome.de>, 2016
 # copycat <copycat@onlinehome.de>, 2016
@@ -27,8 +27,8 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-03 19:35+0100\n"
-"PO-Revision-Date: 2020-03-03 18:38+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2020-05-01 05:54+0000\n"
+"Last-Translator: aer <aer66@mail.de>\n"
 "Language-Team: German (http://www.transifex.com/deadbeef-player/deadbeef-player/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -44,7 +44,7 @@ msgstr "Über DeaDBeeF %s"
 #: ../plugins/gtkui/callbacks.c:371
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr "DeaDBeeF %s ChangeLog"
+msgstr "DeaDBeeF %s Änderungen"
 
 #: ../plugins/gtkui/callbacks.c:631
 #, c-format
@@ -785,7 +785,7 @@ msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2173 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Minimize to tray on startup"
-msgstr ""
+msgstr "Beim Start in Systemleiste minimieren"
 
 #: ../plugins/gtkui/interface.c:2177 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Close minimizes to tray"
@@ -845,7 +845,7 @@ msgstr "Eintrag \"Vom Datenträger löschen\" im Kontextmenü verstecken"
 #: ../plugins/gtkui/interface.c:2272 ../plugins/gtkui/deadbeef.glade.h:131
 msgid ""
 "Switch to the next song when the currently played one is removed from disk"
-msgstr ""
+msgstr "Zum nächsten Lied wechseln, wenn gewähltes von der Festplatte gelöscht wurde"
 
 #: ../plugins/gtkui/interface.c:2276 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Auto-name playlists when adding a single folder"
@@ -1613,19 +1613,19 @@ msgstr "   --volume [NUM]     Anzeige oder Setzen des Lautstärkepegels von DeaD
 msgid ""
 "                      The NUM parameter can be specified in percents "
 "(absolute value or increment/decrement)\n"
-msgstr ""
+msgstr "Der NUM-Parameter kann in Prozent angegeben werden (absoluter Wert oder Anstieg/Verminderung)\n"
 
 #: ../main.c:149
 #, c-format
 msgid "                      or in dB [-50, 0] (if with suffix).\n"
-msgstr ""
+msgstr "oder in dB [-50,0] (falls mit Dateinamenerweiterung)\n"
 
 #: ../main.c:150
 #, c-format
 msgid ""
 "                      Examples: --volume 80, --volume +10, --volume -5 or "
 "--volume -20dB\n"
-msgstr ""
+msgstr "Beispiele: --volume 80, --volume +10, --volume -5 or --volume -20dB\n"
 
 #: ../playlist.c:479 ../playlist.c:2316
 msgid "Default"
@@ -1908,7 +1908,7 @@ msgstr "Benutze das CDDB-Protokoll"
 #: ../translation/plugins.c:71
 #, no-c-format
 msgid "Enable NRG image support"
-msgstr "Unterstützung von NRG-Abbilddateien einschalten"
+msgstr "Unterstützung von NRG-Abbilddateien aktivieren"
 
 #: ../translation/plugins.c:73
 #, no-c-format
@@ -1976,12 +1976,12 @@ msgstr "Qualität / Algorithmus"
 #: ../translation/plugins.c:100
 #, no-c-format
 msgid "Resampling quality"
-msgstr ""
+msgstr "Resampling-Qualität"
 
 #: ../translation/plugins.c:102
 #, no-c-format
 msgid "Internal DUMB volume"
-msgstr ""
+msgstr "Interne DUMB-Lautstärke"
 
 #: ../translation/plugins.c:104
 #, no-c-format
@@ -2001,7 +2001,7 @@ msgstr "Alles"
 #: ../translation/plugins.c:112
 #, no-c-format
 msgid "8-bit output"
-msgstr ""
+msgstr "8-bit-Audioausgabe"
 
 #. plugins/ffmpeg/ffmpeg.c
 #: ../translation/plugins.c:115
@@ -2018,12 +2018,12 @@ msgstr "Dateiendungen (trennen mit ';')"
 #: ../translation/plugins.c:120
 #, no-c-format
 msgid "Ignore bad header errors"
-msgstr ""
+msgstr "Defekte Kopfzeilen ignorieren"
 
 #: ../translation/plugins.c:122
 #, no-c-format
 msgid "Ignore unparsable stream errors"
-msgstr ""
+msgstr "Nichtdekodierbare Fehler beim Streamen ignorieren"
 
 #. plugins/gme/cgme.c
 #: ../translation/plugins.c:125
@@ -2075,7 +2075,7 @@ msgstr "Einzelne(n) Titel scannen"
 #: ../translation/plugins.c:144
 #, no-c-format
 msgid "Scan Per-file Track Gain If Not Scanned"
-msgstr ""
+msgstr "Einzel-Titel-Gain nutzen, wenn nicht gescannt wird"
 
 #: ../translation/plugins.c:148
 #, no-c-format
@@ -2640,7 +2640,7 @@ msgstr "Bei Doppelklick abspielen"
 #: ../translation/plugins.c:412
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
-msgstr ""
+msgstr "Puffergröße (-1 als optimaler Wert portaudio)"
 
 #: ../translation/plugins.c:414
 #, no-c-format
@@ -2746,47 +2746,47 @@ msgstr "Vorverstärker"
 #: ../translation/plugins.c:458
 #, no-c-format
 msgid "1.2K"
-msgstr ""
+msgstr "1.2K"
 
 #: ../translation/plugins.c:460
 #, no-c-format
 msgid "1.8K"
-msgstr ""
+msgstr "1.8K"
 
 #: ../translation/plugins.c:462
 #, no-c-format
 msgid "2.5K"
-msgstr ""
+msgstr "2.5K"
 
 #: ../translation/plugins.c:464
 #, no-c-format
 msgid "3.5K"
-msgstr ""
+msgstr "3.5K"
 
 #: ../translation/plugins.c:466
 #, no-c-format
 msgid "5K"
-msgstr ""
+msgstr "5K"
 
 #: ../translation/plugins.c:468
 #, no-c-format
 msgid "7K"
-msgstr ""
+msgstr "7K"
 
 #: ../translation/plugins.c:470
 #, no-c-format
 msgid "10K"
-msgstr ""
+msgstr "10K"
 
 #: ../translation/plugins.c:472
 #, no-c-format
 msgid "14K"
-msgstr ""
+msgstr "14K"
 
 #: ../translation/plugins.c:474
 #, no-c-format
 msgid "20K"
-msgstr ""
+msgstr "20K"
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:477
@@ -3314,27 +3314,27 @@ msgid ""
 " The files will be lost.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "Dateien werden gelöscht.\n\n(Dieser Hinweis kann in der GTKUI-Erweiterung abgeschaltet werden)"
 
 #: ../plugins/gtkui/actionhandlers.c:417
 #, c-format
 msgid "Do you really want to delete the selected file?%s"
-msgstr ""
+msgstr "Gewählte Datei wirklich löschen? %s"
 
 #: ../plugins/gtkui/actionhandlers.c:419
 #, c-format
 msgid "Do you really want to delete all %d selected files?%s"
-msgstr ""
+msgstr "Gewählte %d Dateien wirklich löschen? %s"
 
 #: ../plugins/gtkui/actionhandlers.c:424
 #, c-format
 msgid "Do you really want to delete all %d files from the current playlist?%s"
-msgstr ""
+msgstr "Gewählte %d Dateien aus aktueller Abspielliste entfernen? %s"
 
 #: ../plugins/gtkui/actionhandlers.c:427
 #, c-format
 msgid "Do you really want to delete the currently playing file?%s"
-msgstr ""
+msgstr "Die gerade abspielende Datei wirkilich löschen?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:430
 msgid "Delete files from disk"
@@ -3474,12 +3474,12 @@ msgstr "Wiedergabeliste umbenennen"
 
 #: ../plugins/gtkui/pltmenu.c:90
 msgid "Removing playlist"
-msgstr ""
+msgstr "Abspielliste entfernen"
 
 #: ../plugins/gtkui/pltmenu.c:91
 #, c-format
 msgid "Do you really want to remove the playlist '%s'?"
-msgstr ""
+msgstr "Abspielliste '%s' wirklich entfernen?"
 
 #: ../plugins/gtkui/pltmenu.c:410
 msgid "Remove Playlist"
@@ -3495,7 +3495,7 @@ msgstr "Wiedergabeliste duplizieren"
 
 #: ../plugins/gtkui/pltmenu.c:433
 msgid "Enable Autosort"
-msgstr ""
+msgstr "Automatische Sortierung aktivieren"
 
 #: ../plugins/pltbrowser/pltbrowser.c:177
 msgid " (paused)"

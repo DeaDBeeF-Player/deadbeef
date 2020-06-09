@@ -8,7 +8,8 @@
 # Kelvin Cooper <Zhu-Zhe-Yong@live.com>, 2017
 # oupula zheng <3078825@qq.com>, 2017
 # pingplug <pingplug@foxmail.com>, 2016-2018
-# Wylmer Wang, 2013-2014
+# Tramsifex <sunnycode@protonmail.com>, 2020
+# e0c668032ced196bd60f2b6a070d982d_8f72ae0, 2013-2014
 # xdtianyu <xdtianyu@gmail.com>, 2014
 # xdtianyu <xdtianyu@gmail.com>, 2014
 # pingplug <pingplug@foxmail.com>, 2015-2016
@@ -17,8 +18,8 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-03 19:35+0100\n"
-"PO-Revision-Date: 2020-03-03 18:38+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2020-04-24 05:37+0000\n"
+"Last-Translator: Tramsifex <sunnycode@protonmail.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/deadbeef-player/deadbeef-player/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -120,23 +121,23 @@ msgstr "%d 天 %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:212
 msgid "total playtime"
-msgstr ""
+msgstr "总播放时间"
 
 #: ../plugins/gtkui/gtkui.c:422 ../plugins/gtkui/gtkui.c:426
 msgid "Paused"
-msgstr ""
+msgstr "已暂停"
 
 #: ../plugins/gtkui/gtkui.c:422 ../plugins/gtkui/gtkui.c:426
 msgid "bit"
-msgstr ""
+msgstr "位"
 
 #: ../plugins/gtkui/gtkui.c:422 ../plugins/gtkui/gtkui.c:423
 msgid "selection playtime"
-msgstr ""
+msgstr "选择播放时间"
 
 #: ../plugins/gtkui/gtkui.c:423 ../plugins/gtkui/gtkui.c:427
 msgid "Stopped"
-msgstr ""
+msgstr "已停止"
 
 #: ../plugins/gtkui/gtkui.c:690 ../translation/plugins.c:216
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
@@ -775,7 +776,7 @@ msgstr "DSP (数字信号处理)"
 
 #: ../plugins/gtkui/interface.c:2173 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Minimize to tray on startup"
-msgstr ""
+msgstr "启动时最小化到托盘"
 
 #: ../plugins/gtkui/interface.c:2177 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Close minimizes to tray"
@@ -835,7 +836,7 @@ msgstr "隐藏“从磁盘移除”右键菜单项"
 #: ../plugins/gtkui/interface.c:2272 ../plugins/gtkui/deadbeef.glade.h:131
 msgid ""
 "Switch to the next song when the currently played one is removed from disk"
-msgstr ""
+msgstr "当前播放的歌曲从磁盘移除时切换到下一首"
 
 #: ../plugins/gtkui/interface.c:2276 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Auto-name playlists when adding a single folder"
@@ -1603,19 +1604,19 @@ msgstr "--volume [NUM] 打印或者设置 deadbeef 音量\n"
 msgid ""
 "                      The NUM parameter can be specified in percents "
 "(absolute value or increment/decrement)\n"
-msgstr ""
+msgstr "                      该NUM参数可以用百分比来指定(绝对值或增量/减量)\n"
 
 #: ../main.c:149
 #, c-format
 msgid "                      or in dB [-50, 0] (if with suffix).\n"
-msgstr ""
+msgstr "                     或者使用 dB [-50, 0] (如果使用后缀)。\n"
 
 #: ../main.c:150
 #, c-format
 msgid ""
 "                      Examples: --volume 80, --volume +10, --volume -5 or "
 "--volume -20dB\n"
-msgstr ""
+msgstr "                      例如：--volume 80, --volume +10, --volume -5 or --volume -20dB\n"
 
 #: ../playlist.c:479 ../playlist.c:2316
 msgid "Default"
@@ -1966,12 +1967,12 @@ msgstr "品质 / 算法"
 #: ../translation/plugins.c:100
 #, no-c-format
 msgid "Resampling quality"
-msgstr ""
+msgstr "重采样质量"
 
 #: ../translation/plugins.c:102
 #, no-c-format
 msgid "Internal DUMB volume"
-msgstr ""
+msgstr "内部 DUMB 音量"
 
 #: ../translation/plugins.c:104
 #, no-c-format
@@ -1991,7 +1992,7 @@ msgstr "完全"
 #: ../translation/plugins.c:112
 #, no-c-format
 msgid "8-bit output"
-msgstr ""
+msgstr "8位输出"
 
 #. plugins/ffmpeg/ffmpeg.c
 #: ../translation/plugins.c:115
@@ -2008,12 +2009,12 @@ msgstr "文件扩展名(用;分隔)"
 #: ../translation/plugins.c:120
 #, no-c-format
 msgid "Ignore bad header errors"
-msgstr ""
+msgstr "忽略头部损坏错误"
 
 #: ../translation/plugins.c:122
 #, no-c-format
 msgid "Ignore unparsable stream errors"
-msgstr ""
+msgstr "忽略无法解析的串流错误"
 
 #. plugins/gme/cgme.c
 #: ../translation/plugins.c:125
@@ -2050,22 +2051,22 @@ msgstr "删除回放增益信息"
 #: ../translation/plugins.c:138
 #, no-c-format
 msgid "Scan Selection As Albums (By Tags)"
-msgstr ""
+msgstr "扫描所选项为专辑(按标签)"
 
 #: ../translation/plugins.c:140
 #, no-c-format
 msgid "Scan Selection As Single Album"
-msgstr ""
+msgstr "扫描所选项为单曲专辑"
 
 #: ../translation/plugins.c:142
 #, no-c-format
 msgid "Scan Per-file Track Gain"
-msgstr ""
+msgstr "扫描每个文件的音轨增益"
 
 #: ../translation/plugins.c:144
 #, no-c-format
 msgid "Scan Per-file Track Gain If Not Scanned"
-msgstr ""
+msgstr "如未扫描，扫描每个文件的音轨增益"
 
 #: ../translation/plugins.c:148
 #, no-c-format
@@ -2105,47 +2106,47 @@ msgstr "显示帮助页面"
 #: ../translation/plugins.c:172
 #, no-c-format
 msgid "Cycle Repeat Mode"
-msgstr ""
+msgstr "循环重复模式"
 
 #: ../translation/plugins.c:174
 #, no-c-format
 msgid "Repeat - Off"
-msgstr ""
+msgstr "重复 - 关"
 
 #: ../translation/plugins.c:176
 #, no-c-format
 msgid "Repeat - Single Track"
-msgstr ""
+msgstr "重复 - 单轨"
 
 #: ../translation/plugins.c:178
 #, no-c-format
 msgid "Repeat - All"
-msgstr ""
+msgstr "重复 - 全部"
 
 #: ../translation/plugins.c:180
 #, no-c-format
 msgid "Cycle Shuffle Mode"
-msgstr ""
+msgstr "循环随机播放模式"
 
 #: ../translation/plugins.c:182
 #, no-c-format
 msgid "Shuffle - Random Tracks"
-msgstr ""
+msgstr "随机播放 - 随机音轨"
 
 #: ../translation/plugins.c:184
 #, no-c-format
 msgid "Shuffle - Albums"
-msgstr ""
+msgstr "随机播放 - 专辑"
 
 #: ../translation/plugins.c:186
 #, no-c-format
 msgid "Shuffle - Tracks"
-msgstr ""
+msgstr "随机播放 - 音轨"
 
 #: ../translation/plugins.c:188
 #, no-c-format
 msgid "Shuffle - Off"
-msgstr ""
+msgstr "随机播放 - 关"
 
 #: ../translation/plugins.c:190
 #, no-c-format
@@ -2572,12 +2573,12 @@ msgstr "提交短于30秒的音轨（不推荐）"
 #: ../translation/plugins.c:381
 #, no-c-format
 msgid "Left mix"
-msgstr ""
+msgstr "左混音"
 
 #: ../translation/plugins.c:383
 #, no-c-format
 msgid "Right mix"
-msgstr ""
+msgstr "右混音"
 
 #. plugins/mp3/mp3.c
 #: ../translation/plugins.c:386
@@ -2630,32 +2631,32 @@ msgstr "双击时播放"
 #: ../translation/plugins.c:412
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
-msgstr ""
+msgstr "缓冲大小(-1由portaudio选择最佳值)"
 
 #: ../translation/plugins.c:414
 #, no-c-format
 msgid "Device name encoding"
-msgstr ""
+msgstr "设备名称编码"
 
 #: ../translation/plugins.c:416
 #, no-c-format
 msgid "ASCII / UTF-8"
-msgstr ""
+msgstr "ASCII / UTF-8"
 
 #: ../translation/plugins.c:418
 #, no-c-format
 msgid "cp1250"
-msgstr ""
+msgstr "cp1250"
 
 #: ../translation/plugins.c:420
 #, no-c-format
 msgid "Defined below"
-msgstr ""
+msgstr "以下已定义"
 
 #: ../translation/plugins.c:422
 #, no-c-format
 msgid "Custom device name encoding"
-msgstr ""
+msgstr "自定义设备名称编码"
 
 #. plugins/pulse/pulse.c
 #: ../translation/plugins.c:425
@@ -2710,7 +2711,7 @@ msgstr "启用 HVSC 歌曲长度数据库"
 #: ../translation/plugins.c:447
 #, no-c-format
 msgid "Full path to Songlengths.md5/.txt"
-msgstr ""
+msgstr "Songlengths.md5/.txt的完整路径"
 
 #: ../translation/plugins.c:449
 #, no-c-format
@@ -2736,53 +2737,53 @@ msgstr "前置放大"
 #: ../translation/plugins.c:458
 #, no-c-format
 msgid "1.2K"
-msgstr ""
+msgstr "1.2K"
 
 #: ../translation/plugins.c:460
 #, no-c-format
 msgid "1.8K"
-msgstr ""
+msgstr "1.8K"
 
 #: ../translation/plugins.c:462
 #, no-c-format
 msgid "2.5K"
-msgstr ""
+msgstr "2.5K"
 
 #: ../translation/plugins.c:464
 #, no-c-format
 msgid "3.5K"
-msgstr ""
+msgstr "3.5K"
 
 #: ../translation/plugins.c:466
 #, no-c-format
 msgid "5K"
-msgstr ""
+msgstr "5K"
 
 #: ../translation/plugins.c:468
 #, no-c-format
 msgid "7K"
-msgstr ""
+msgstr "7K"
 
 #: ../translation/plugins.c:470
 #, no-c-format
 msgid "10K"
-msgstr ""
+msgstr "10K"
 
 #: ../translation/plugins.c:472
 #, no-c-format
 msgid "14K"
-msgstr ""
+msgstr "14K"
 
 #: ../translation/plugins.c:474
 #, no-c-format
 msgid "20K"
-msgstr ""
+msgstr "20K"
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:477
 #, no-c-format
 msgid "Enable logging"
-msgstr ""
+msgstr "启用日志记录"
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:480
@@ -3104,11 +3105,11 @@ msgstr "所有文件;(*)"
 
 #: ../plugins/gtkui/fileman.c:455 ../plugins/gtkui/fileman.c:499
 msgid "Supported playlist formats"
-msgstr ""
+msgstr "支持的播放列表格式"
 
 #: ../plugins/gtkui/fileman.c:462
 msgid "All files"
-msgstr ""
+msgstr "所有文件"
 
 #: ../plugins/gtkui/fileman.c:505
 msgid "Other files (*)"
@@ -3304,27 +3305,27 @@ msgid ""
 " The files will be lost.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "该文件将会丢失。\n\n(此对话框可以在GTKUI插件设置中关闭)"
 
 #: ../plugins/gtkui/actionhandlers.c:417
 #, c-format
 msgid "Do you really want to delete the selected file?%s"
-msgstr ""
+msgstr "您确实要删除选中的文件吗？%s"
 
 #: ../plugins/gtkui/actionhandlers.c:419
 #, c-format
 msgid "Do you really want to delete all %d selected files?%s"
-msgstr ""
+msgstr "您确实要删除所有%d选中的文件？%s"
 
 #: ../plugins/gtkui/actionhandlers.c:424
 #, c-format
 msgid "Do you really want to delete all %d files from the current playlist?%s"
-msgstr ""
+msgstr "您确实要从当前播放列表删除所有%d文件？%s"
 
 #: ../plugins/gtkui/actionhandlers.c:427
 #, c-format
 msgid "Do you really want to delete the currently playing file?%s"
-msgstr ""
+msgstr "您确实要移除当前播放中的文件吗？%s"
 
 #: ../plugins/gtkui/actionhandlers.c:430
 msgid "Delete files from disk"
@@ -3464,12 +3465,12 @@ msgstr "重命名播放列表"
 
 #: ../plugins/gtkui/pltmenu.c:90
 msgid "Removing playlist"
-msgstr ""
+msgstr "正在移除播放列表"
 
 #: ../plugins/gtkui/pltmenu.c:91
 #, c-format
 msgid "Do you really want to remove the playlist '%s'?"
-msgstr ""
+msgstr "您确实要移除播放列表'%s'吗？"
 
 #: ../plugins/gtkui/pltmenu.c:410
 msgid "Remove Playlist"
@@ -3485,7 +3486,7 @@ msgstr "复制播放列表"
 
 #: ../plugins/gtkui/pltmenu.c:433
 msgid "Enable Autosort"
-msgstr ""
+msgstr "启用自动排序"
 
 #: ../plugins/pltbrowser/pltbrowser.c:177
 msgid " (paused)"

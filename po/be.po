@@ -4,10 +4,10 @@
 # 
 # Translators:
 # Yauhen Bugamol <haxycgm@gmail.com>, 2013
-# DeadMetaler <dead.666@bk.ru>, 2018-2019
+# DeadMetaler <dead.666@bk.ru>, 2018-2020
 # DeadMetaler <metalomaniax@gmail.com>, 2018
 # Yauhen Bugamol <haxycgm@gmail.com>, 2013
-# Zmicer Turok <nashtlumach@gmail.com>, 2019
+# Zmicer Turok <nashtlumach@gmail.com>, 2017,2019-2020
 # Zmicer Turok <nashtlumach@gmail.com>, 2017
 # Zmicer Turok <zmicerturok@gmail.com>, 2017-2018
 # Zmicer Turok <zmicerturok@gmail.com >, 2017
@@ -19,8 +19,8 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-03 19:35+0100\n"
-"PO-Revision-Date: 2020-03-03 18:38+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2020-05-21 13:48+0000\n"
+"Last-Translator: Zmicer Turok <nashtlumach@gmail.com>\n"
 "Language-Team: Belarusian (http://www.transifex.com/deadbeef-player/deadbeef-player/language/be/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -777,7 +777,7 @@ msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2173 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Minimize to tray on startup"
-msgstr ""
+msgstr "Згортваць на прастору апавяшчэнняў падчас запуску"
 
 #: ../plugins/gtkui/interface.c:2177 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Close minimizes to tray"
@@ -837,7 +837,7 @@ msgstr "Прыбраць з меню \"Выдаліць з дыска\""
 #: ../plugins/gtkui/interface.c:2272 ../plugins/gtkui/deadbeef.glade.h:131
 msgid ""
 "Switch to the next song when the currently played one is removed from disk"
-msgstr ""
+msgstr "Пераключыцца на наступную песню, калі прайграваемая на дадзены момант песня выдаліцца з дыска"
 
 #: ../plugins/gtkui/interface.c:2276 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Auto-name playlists when adding a single folder"
@@ -1039,7 +1039,7 @@ msgid ""
 "or the Revert button to undo your changes.\n"
 "The changes will NOT be saved\n"
 "if you don't press Apply."
-msgstr "Націсніце на \"Ужыць\", каб захаваць змены,\nальбо \"Адрабіць\" каб адкінуць змены.\nЗмены не захаваюцца\nкалі не націснецце на \"Ужыць\"."
+msgstr "Націсніце на \"Ужыць\", каб захаваць змены,\nальбо \"Адрабіць\" каб адкінуць змены.\nЗмены не захаваюцца\nкалі не націснеце на \"Ужыць\"."
 
 #: ../plugins/gtkui/interface.c:2982 ../plugins/gtkui/deadbeef.glade.h:183
 msgid "_Defaults"
@@ -1407,7 +1407,7 @@ msgstr "Сапраўды захаваць і працягнуць?"
 
 #: ../plugins/gtkui/progress.c:62
 msgid "Adding files..."
-msgstr "Файы дадаюцца..."
+msgstr "Файлы дадаюцца..."
 
 #: ../plugins/gtkui/progress.c:95
 msgid "Initializing..."
@@ -1547,7 +1547,7 @@ msgstr "   --gui PLUGIN       Абраць убудову інтэрфейсу, 
 #: ../main.c:137
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "   --nowplaying FMT    Адлюстраваць адфарматыраваную назву трэка\n"
+msgstr "   --nowplaying FMT    Адлюстраваць адфарматаваную назву трэка\n"
 
 #: ../main.c:138
 #, c-format
@@ -1572,7 +1572,7 @@ msgstr "                      для дадатковай інфармацыі �
 #: ../main.c:143
 #, c-format
 msgid "                      NOTE: --nowplaying is deprecated.\n"
-msgstr "                      НАТАТКА: парметр --nowplaying састарэў.\n"
+msgstr "                      НАТАТКА: параметр --nowplaying састарэў.\n"
 
 #: ../main.c:144
 #, c-format
@@ -1605,19 +1605,19 @@ msgstr "   --volume [ЛІК]     Вывад альбо прызначэнне ў
 msgid ""
 "                      The NUM parameter can be specified in percents "
 "(absolute value or increment/decrement)\n"
-msgstr ""
+msgstr "                      Параметр ЛІК можа быць вызначаны ў адсотках (абсалютнае значэнне альбо павелічэнне ці памяншэнне)\n"
 
 #: ../main.c:149
 #, c-format
 msgid "                      or in dB [-50, 0] (if with suffix).\n"
-msgstr ""
+msgstr "                      альбо ў Дб [-50, 0] (калі з суфіксам).\n"
 
 #: ../main.c:150
 #, c-format
 msgid ""
 "                      Examples: --volume 80, --volume +10, --volume -5 or "
 "--volume -20dB\n"
-msgstr ""
+msgstr "                      Прыклады: --volume 80, --volume +10, --volume -5 альбо --volume -20Дб\n"
 
 #: ../playlist.c:479 ../playlist.c:2316
 msgid "Default"
@@ -1644,7 +1644,7 @@ msgid ""
 "Left\n"
 "Right\n"
 "Center"
-msgstr "Лева\nПрава\nЦентр"
+msgstr "Лева\nПрава\nЦэнтр"
 
 #: ../plugins/gtkui/deadbeef.glade.h:94
 msgid ""
@@ -1659,7 +1659,7 @@ msgid ""
 "Apply gain\n"
 "Apply gain and prevent clipping according to peak\n"
 "Only prevent clipping"
-msgstr "НІчога\nУжыць узмацненне\nУжыць узмацненне і прадухіліць абрэзку згодна піку\nТолькі прадухіліць абрэзку"
+msgstr "Нічога\nУжыць узмацненне\nУжыць узмацненне і прадухіліць абрэзку згодна піку\nТолькі прадухіліць абрэзку"
 
 #: ../plugins/gtkui/deadbeef.glade.h:194
 msgid ""
@@ -1968,12 +1968,12 @@ msgstr "Якасць/Алгарытм"
 #: ../translation/plugins.c:100
 #, no-c-format
 msgid "Resampling quality"
-msgstr ""
+msgstr "Якасць перадыскрэтызацыі"
 
 #: ../translation/plugins.c:102
 #, no-c-format
 msgid "Internal DUMB volume"
-msgstr ""
+msgstr "Унутраны гук DUMB"
 
 #: ../translation/plugins.c:104
 #, no-c-format
@@ -1993,7 +1993,7 @@ msgstr "Цалкам"
 #: ../translation/plugins.c:112
 #, no-c-format
 msgid "8-bit output"
-msgstr ""
+msgstr "8-бітны вывад"
 
 #. plugins/ffmpeg/ffmpeg.c
 #: ../translation/plugins.c:115
@@ -2010,12 +2010,12 @@ msgstr "Канчаткі файлаў (праз ';')"
 #: ../translation/plugins.c:120
 #, no-c-format
 msgid "Ignore bad header errors"
-msgstr ""
+msgstr "Не зважаць на памылкі загалоўкаў"
 
 #: ../translation/plugins.c:122
 #, no-c-format
 msgid "Ignore unparsable stream errors"
-msgstr ""
+msgstr "Не зважаць на памылкі струменяў, якія немагчыма разабраць"
 
 #. plugins/gme/cgme.c
 #: ../translation/plugins.c:125
@@ -2067,7 +2067,7 @@ msgstr "Сканаванне ўзмацнення кожнага файла"
 #: ../translation/plugins.c:144
 #, no-c-format
 msgid "Scan Per-file Track Gain If Not Scanned"
-msgstr ""
+msgstr "Сканаваць узмацненне ў кожным файле, калі той не сканаваўся"
 
 #: ../translation/plugins.c:148
 #, no-c-format
@@ -2632,7 +2632,7 @@ msgstr "Прайграваць падвойнай пстрычкай"
 #: ../translation/plugins.c:412
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
-msgstr ""
+msgstr "Памер буфера (-1 - аптымальнае значэнне, абранае portaudio)"
 
 #: ../translation/plugins.c:414
 #, no-c-format
@@ -2738,47 +2738,47 @@ msgstr "Перадузмацненне"
 #: ../translation/plugins.c:458
 #, no-c-format
 msgid "1.2K"
-msgstr ""
+msgstr "1.2K"
 
 #: ../translation/plugins.c:460
 #, no-c-format
 msgid "1.8K"
-msgstr ""
+msgstr "1.8K"
 
 #: ../translation/plugins.c:462
 #, no-c-format
 msgid "2.5K"
-msgstr ""
+msgstr "2.5K"
 
 #: ../translation/plugins.c:464
 #, no-c-format
 msgid "3.5K"
-msgstr ""
+msgstr "3.5K"
 
 #: ../translation/plugins.c:466
 #, no-c-format
 msgid "5K"
-msgstr ""
+msgstr "5K"
 
 #: ../translation/plugins.c:468
 #, no-c-format
 msgid "7K"
-msgstr ""
+msgstr "7K"
 
 #: ../translation/plugins.c:470
 #, no-c-format
 msgid "10K"
-msgstr ""
+msgstr "10K"
 
 #: ../translation/plugins.c:472
 #, no-c-format
 msgid "14K"
-msgstr ""
+msgstr "14K"
 
 #: ../translation/plugins.c:474
 #, no-c-format
 msgid "20K"
-msgstr ""
+msgstr "20K"
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:477
@@ -2917,7 +2917,7 @@ msgstr "Назва файла вываду:"
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default ([%tracknumber%. ][%artist% - ]%title%)."
-msgstr "Пашырэнне (напрыклад, .mp3) дадасца аўтаматычна.\nПакіньце поле пустым для прадвызнчанага значэння ([%tracknumber%. ][%artist% - ]%title%)."
+msgstr "Пашырэнне (напрыклад, .mp3) дадасца аўтаматычна.\nПакіньце поле пустым для прадвызначанага значэння ([%tracknumber%. ][%artist% - ]%title%)."
 
 #: ../plugins/converter/interface.c:164
 #: ../plugins/converter/converter.glade.h:10
@@ -3306,27 +3306,27 @@ msgid ""
 " The files will be lost.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr " Файлы будуць страчаныя. Працягнуць?\n\n(Гэты дыялог можна адключыць у наладах убудовы GTKUI)"
 
 #: ../plugins/gtkui/actionhandlers.c:417
 #, c-format
 msgid "Do you really want to delete the selected file?%s"
-msgstr ""
+msgstr "Сапраўды хочаце выдаліць абраны файл?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:419
 #, c-format
 msgid "Do you really want to delete all %d selected files?%s"
-msgstr ""
+msgstr "Сапраўды хочаце выдаліць %d абраныя файлы?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:424
 #, c-format
 msgid "Do you really want to delete all %d files from the current playlist?%s"
-msgstr ""
+msgstr "Сапраўды хочаце выдаліць усе %d файлаў з бягучага плэйліста?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:427
 #, c-format
 msgid "Do you really want to delete the currently playing file?%s"
-msgstr ""
+msgstr "Сапраўды хочаце выдаліць файл, які зараз прайграецца?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:430
 msgid "Delete files from disk"
@@ -3466,12 +3466,12 @@ msgstr "Змяніць назву плэйліста"
 
 #: ../plugins/gtkui/pltmenu.c:90
 msgid "Removing playlist"
-msgstr ""
+msgstr "Выдаленне плэйліста"
 
 #: ../plugins/gtkui/pltmenu.c:91
 #, c-format
 msgid "Do you really want to remove the playlist '%s'?"
-msgstr ""
+msgstr "Сапраўды хочаце выдаліць плэйліст \"%s\"?"
 
 #: ../plugins/gtkui/pltmenu.c:410
 msgid "Remove Playlist"
@@ -3487,7 +3487,7 @@ msgstr "Дубляваць плэйліст"
 
 #: ../plugins/gtkui/pltmenu.c:433
 msgid "Enable Autosort"
-msgstr ""
+msgstr "Уключыць аўтасартаванне"
 
 #: ../plugins/pltbrowser/pltbrowser.c:177
 msgid " (paused)"

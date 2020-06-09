@@ -9,8 +9,8 @@
 # Charles Monzat <c.monzat@laposte.net>, 2017
 # Charles Monzat <c.monzat@laposte.net>, 2018
 # Olowen Cilyan <gaknar@gmail.com>, 2010
-# iceTwy <inactive+iceTwy@transifex.com>, 2013
-# iceTwy <inactive+iceTwy@transifex.com>, 2013
+# 097950c3e38693254c8793afaa517ec3_d5cd331 <cf836c24550e2ded1c5e47f5d946d87a_102749>, 2013
+# 097950c3e38693254c8793afaa517ec3_d5cd331 <cf836c24550e2ded1c5e47f5d946d87a_102749>, 2013
 # Olowen Cilyan <gaknar@gmail.com>, 2010
 # Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>, 2014
 # Charles Monzat <c.monzat@laposte.net>, 2014-2015
@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-03 19:35+0100\n"
-"PO-Revision-Date: 2020-03-08 19:37+0000\n"
+"PO-Revision-Date: 2020-04-12 20:09+0000\n"
 "Last-Translator: Charles Monzat <c.monzat@laposte.net>\n"
 "Language-Team: French (http://www.transifex.com/deadbeef-player/deadbeef-player/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -343,7 +343,7 @@ msgstr "_Rechercher"
 
 #: ../plugins/gtkui/interface.c:252 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Sort by"
-msgstr "Classer par"
+msgstr "Trier par"
 
 #: ../plugins/gtkui/interface.c:259 ../plugins/gtkui/mainplaylist.c:233
 #: ../plugins/gtkui/plcommon.c:99 ../plugins/gtkui/prefwin.c:446
@@ -838,7 +838,7 @@ msgstr "Masquer l’entrée « Supprimer du disque » du menu contextuel"
 #: ../plugins/gtkui/interface.c:2272 ../plugins/gtkui/deadbeef.glade.h:131
 msgid ""
 "Switch to the next song when the currently played one is removed from disk"
-msgstr ""
+msgstr "Passer au morceau suivant lorsque celui en cours de lecture est supprimé du disque"
 
 #: ../plugins/gtkui/interface.c:2276 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Auto-name playlists when adding a single folder"
@@ -1080,7 +1080,7 @@ msgstr "Grouper par…"
 
 #: ../plugins/gtkui/interface.c:4075 ../plugins/gtkui/deadbeef.glade.h:191
 msgid "Sort by ..."
-msgstr "Classer par…"
+msgstr "Trier par…"
 
 #: ../plugins/gtkui/interface.c:4091 ../plugins/gtkui/deadbeef.glade.h:192
 msgid "Format"
@@ -1523,17 +1523,17 @@ msgstr "   --play-pause       Démarre la lecture si elle est arrêtée, sinon b
 #: ../main.c:132
 #, c-format
 msgid "   --next             Next song in playlist\n"
-msgstr "   --next             Piste suivante dans la liste de lecture\n"
+msgstr "   --next             Morceau suivant dans la liste de lecture\n"
 
 #: ../main.c:133
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr "   --prev             Musique précédente dans la liste de lecture\n"
+msgstr "   --prev             Morceau précédent dans la liste de lecture\n"
 
 #: ../main.c:134
 #, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr "   --random           Musique aléatoire dans la liste de lecture\n"
+msgstr "   --random           Morceau aléatoire dans la liste de lecture\n"
 
 #: ../main.c:135
 #, c-format
@@ -2011,12 +2011,12 @@ msgstr "Extensions de fichier (séparées par « ; »)"
 #: ../translation/plugins.c:120
 #, no-c-format
 msgid "Ignore bad header errors"
-msgstr ""
+msgstr "Ignorer les erreurs de mauvais en-tête"
 
 #: ../translation/plugins.c:122
 #, no-c-format
 msgid "Ignore unparsable stream errors"
-msgstr ""
+msgstr "Ignorer les erreurs de flux non analysables"
 
 #. plugins/gme/cgme.c
 #: ../translation/plugins.c:125
@@ -2068,7 +2068,7 @@ msgstr "Analyser le gain de piste par fichier"
 #: ../translation/plugins.c:144
 #, no-c-format
 msgid "Scan Per-file Track Gain If Not Scanned"
-msgstr ""
+msgstr "Analyser le gain de piste par fichier (si non analysé)"
 
 #: ../translation/plugins.c:148
 #, no-c-format
@@ -2670,7 +2670,7 @@ msgstr "Serveur PulseAudio (laisser vide pour le réglage par défaut)"
 #: ../translation/plugins.c:428
 #, no-c-format
 msgid "Default song length (in minutes)"
-msgstr "Durée de chanson par défaut (en minute)"
+msgstr "Durée de morceau par défaut (en minutes)"
 
 #: ../translation/plugins.c:430
 #, no-c-format
@@ -3307,27 +3307,27 @@ msgid ""
 " The files will be lost.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "Les fichiers seront perdus.\n(\nCet avertissement peut être désactivé dans les paramètres du greffon GTKUI)"
 
 #: ../plugins/gtkui/actionhandlers.c:417
 #, c-format
 msgid "Do you really want to delete the selected file?%s"
-msgstr ""
+msgstr "Voulez-vous vraiment supprimer le fichier sélectionné ? %s"
 
 #: ../plugins/gtkui/actionhandlers.c:419
 #, c-format
 msgid "Do you really want to delete all %d selected files?%s"
-msgstr ""
+msgstr "Voulez-vous vraiment supprimer les %d fichiers sélectionnés ? %s"
 
 #: ../plugins/gtkui/actionhandlers.c:424
 #, c-format
 msgid "Do you really want to delete all %d files from the current playlist?%s"
-msgstr ""
+msgstr "Voulez-vous vraiment supprimer les %d fichiers de la liste de lecture actuelle ? %s"
 
 #: ../plugins/gtkui/actionhandlers.c:427
 #, c-format
 msgid "Do you really want to delete the currently playing file?%s"
-msgstr ""
+msgstr "Voulez-vous vraiment supprimer le fichier en cours de lecture ? %s"
 
 #: ../plugins/gtkui/actionhandlers.c:430
 msgid "Delete files from disk"
@@ -3472,7 +3472,7 @@ msgstr ""
 #: ../plugins/gtkui/pltmenu.c:91
 #, c-format
 msgid "Do you really want to remove the playlist '%s'?"
-msgstr ""
+msgstr "Voulez-vous vraiment supprimer la liste de lecture « %s » ?"
 
 #: ../plugins/gtkui/pltmenu.c:410
 msgid "Remove Playlist"
@@ -3488,7 +3488,7 @@ msgstr "Dupliquer la liste de lecture"
 
 #: ../plugins/gtkui/pltmenu.c:433
 msgid "Enable Autosort"
-msgstr ""
+msgstr "Activer le tri automatique"
 
 #: ../plugins/pltbrowser/pltbrowser.c:177
 msgid " (paused)"

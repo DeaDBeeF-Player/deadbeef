@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-03 19:35+0100\n"
-"PO-Revision-Date: 2020-03-03 18:38+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2020-05-09 14:27+0000\n"
+"Last-Translator: Anari Jalakas <anari.jalakas@gmail.com>\n"
 "Language-Team: Estonian (http://www.transifex.com/deadbeef-player/deadbeef-player/language/et/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -215,7 +215,7 @@ msgstr "Esituse juhtimine"
 
 #: ../plugins/gtkui/gtkui.c:1249
 msgid "Volume bar"
-msgstr "Helitugevuse riba"
+msgstr "Helitaseme riba"
 
 #: ../plugins/gtkui/gtkui.c:1250
 msgid "Chiptune voices"
@@ -439,11 +439,11 @@ msgstr "Üks pala"
 
 #: ../plugins/gtkui/interface.c:382 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
-msgstr "Kerimisriba järgib taasesitust"
+msgstr "Kerimisriba järgib esitust"
 
 #: ../plugins/gtkui/interface.c:387 ../plugins/gtkui/deadbeef.glade.h:43
 msgid "Cursor follows playback"
-msgstr "Kursor järgib taasesitust"
+msgstr "Kursor järgib esitust"
 
 #: ../plugins/gtkui/interface.c:391 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current track"
@@ -692,7 +692,7 @@ msgstr "Rakenda võimendus"
 
 #: ../plugins/gtkui/interface.c:1991
 msgid "Apply gain and prevent clipping according to peak"
-msgstr "Määra ja rakenda võimendus vastavalt helitugevuse tippudele"
+msgstr "Määra ja rakenda võimendus vastavalt helitaseme tippudele"
 
 #: ../plugins/gtkui/interface.c:1992
 msgid "Only prevent clipping"
@@ -766,7 +766,7 @@ msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2173 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Minimize to tray on startup"
-msgstr ""
+msgstr "Minimeeri käivitumisel süsteemisalve"
 
 #: ../plugins/gtkui/interface.c:2177 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Close minimizes to tray"
@@ -806,7 +806,7 @@ msgstr "Graafiline plugin (muutus nõuab taaskäivitust):"
 
 #: ../plugins/gtkui/interface.c:2251 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Display selection playback time in status bar"
-msgstr "Kuva olekuribal valiku taasesituse aega"
+msgstr "Kuva olekuribal valiku esituse aega"
 
 #: ../plugins/gtkui/interface.c:2255 ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Player"
@@ -826,7 +826,7 @@ msgstr "Peida kirje \"Kustuta kettalt\" menüüst"
 #: ../plugins/gtkui/interface.c:2272 ../plugins/gtkui/deadbeef.glade.h:131
 msgid ""
 "Switch to the next song when the currently played one is removed from disk"
-msgstr ""
+msgstr "Lülitu järgmise loo juurde, kui hetkel mängiv eemaldatakse kettalt"
 
 #: ../plugins/gtkui/interface.c:2276 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Auto-name playlists when adding a single folder"
@@ -863,7 +863,7 @@ msgstr "Taust (EQ)"
 
 #: ../plugins/gtkui/interface.c:2356 ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Seekbar/Volumebar/EQ"
-msgstr "Otsinguriba/Helitugevuse riba/Ekvalaiser"
+msgstr "Otsinguriba/Helitaseme riba/Ekvalaiser"
 
 #: ../plugins/gtkui/interface.c:2381 ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Base:"
@@ -1241,7 +1241,7 @@ msgstr "Tühjenda"
 
 #: ../plugins/gtkui/interface.c:5322 ../plugins/gtkui/deadbeef.glade.h:229
 msgid "ReplayGain Scan Progress"
-msgstr "ReplayGain skännimine töös"
+msgstr "ReplayGain analüüs töös"
 
 #: ../plugins/gtkui/interface.c:5333 ../plugins/gtkui/deadbeef.glade.h:230
 msgid "Current File:"
@@ -1259,11 +1259,11 @@ msgstr "Loobu"
 
 #: ../plugins/gtkui/interface.c:5390 ../plugins/gtkui/deadbeef.glade.h:233
 msgid "ReplayGain Scan Results"
-msgstr "ReplayGain skännimise tulemused"
+msgstr "ReplayGain analüüsi tulemused"
 
 #: ../plugins/gtkui/interface.c:5418 ../plugins/gtkui/deadbeef.glade.h:234
 msgid "Update File Tags"
-msgstr "Rakenda tulemused"
+msgstr "Uuenda failide andmed"
 
 #: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:651
 msgid "Artist / Album"
@@ -1334,7 +1334,7 @@ msgstr "Eemalda esitusjärjekorrast"
 #: ../plugins/gtkui/plcommon.c:1015 ../translation/plugins.c:247
 #, no-c-format
 msgid "Reload Metadata"
-msgstr "Metaandmete taaslaadimine"
+msgstr "Metaandmete uuestilaadimine"
 
 #: ../plugins/gtkui/plcommon.c:1024 ../plugins/gtkui/pltmenu.c:446
 msgid "Cu_t"
@@ -1485,17 +1485,17 @@ msgstr "   --version          Väljastab versiooniteabe ja väljub\n"
 #: ../main.c:127
 #, c-format
 msgid "   --play             Start playback\n"
-msgstr "   --play             Käivitab taasesituse\n"
+msgstr "   --play             Käivitab esituse\n"
 
 #: ../main.c:128
 #, c-format
 msgid "   --stop             Stop playback\n"
-msgstr "   --stop             Seiskab taasesituse\n"
+msgstr "   --stop             Seiskab esituse\n"
 
 #: ../main.c:129
 #, c-format
 msgid "   --pause            Pause playback\n"
-msgstr "   --pause            Peatab taasesituse\n"
+msgstr "   --pause            Peatab esituse\n"
 
 #: ../main.c:130
 #, c-format
@@ -1506,7 +1506,7 @@ msgstr "   --toggle-pause     Pausi lülitamine\n"
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr "   --play-pause       Kui peatatud siis alustab taasesituse, muul juhul lülitab ümber\n"
+msgstr "   --play-pause       Kui peatatud siis alustab esituse, muul juhul lülitab ümber\n"
 
 #: ../main.c:132
 #, c-format
@@ -1587,26 +1587,26 @@ msgstr "                      näide: --nowplaying-tf \"%%artist%% - %%title%%\"
 #: ../main.c:147
 #, c-format
 msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
-msgstr "   --volume [NUM]     Prindib või määrab helitugevuse.\n"
+msgstr "   --volume [NUM]     Prindib või määrab helitaseme.\n"
 
 #: ../main.c:148
 #, c-format
 msgid ""
 "                      The NUM parameter can be specified in percents "
 "(absolute value or increment/decrement)\n"
-msgstr ""
+msgstr "                      NUM parameetrit saab täpsustada protsentides (absoluutväärtus või juurdekasv/vähenemine)\n"
 
 #: ../main.c:149
 #, c-format
 msgid "                      or in dB [-50, 0] (if with suffix).\n"
-msgstr ""
+msgstr "                      või dB-des [-50, 0] (kui järelliitega).\n"
 
 #: ../main.c:150
 #, c-format
 msgid ""
 "                      Examples: --volume 80, --volume +10, --volume -5 or "
 "--volume -20dB\n"
-msgstr ""
+msgstr "                      Näited: --volume 80, --volume +10, --volume -5 või --volume -20dB\n"
 
 #: ../playlist.c:479 ../playlist.c:2316
 msgid "Default"
@@ -1924,7 +1924,7 @@ msgstr "16x"
 #: ../translation/plugins.c:85
 #, no-c-format
 msgid "Max"
-msgstr "Maks."
+msgstr "Maks"
 
 #: ../translation/plugins.c:87
 #, no-c-format
@@ -1957,17 +1957,17 @@ msgstr "Kvaliteet / Algoritm"
 #: ../translation/plugins.c:100
 #, no-c-format
 msgid "Resampling quality"
-msgstr ""
+msgstr "Ümberdiskreetimise kvaliteet"
 
 #: ../translation/plugins.c:102
 #, no-c-format
 msgid "Internal DUMB volume"
-msgstr ""
+msgstr "Sisemine DUMB maht"
 
 #: ../translation/plugins.c:104
 #, no-c-format
 msgid "Volume ramping"
-msgstr "Helitugevuse suurendamine"
+msgstr "Helitaseme suurendamine"
 
 #: ../translation/plugins.c:108
 #, no-c-format
@@ -1982,7 +1982,7 @@ msgstr "Täielik"
 #: ../translation/plugins.c:112
 #, no-c-format
 msgid "8-bit output"
-msgstr ""
+msgstr "8-bitine väljund"
 
 #. plugins/ffmpeg/ffmpeg.c
 #: ../translation/plugins.c:115
@@ -1999,12 +1999,12 @@ msgstr "Faililaiendid (eralda sümboliga ';')"
 #: ../translation/plugins.c:120
 #, no-c-format
 msgid "Ignore bad header errors"
-msgstr ""
+msgstr "Eira mittekorrektse päiserea vigu"
 
 #: ../translation/plugins.c:122
 #, no-c-format
 msgid "Ignore unparsable stream errors"
-msgstr ""
+msgstr "Eira voogedastuse vigu"
 
 #. plugins/gme/cgme.c
 #: ../translation/plugins.c:125
@@ -2036,27 +2036,27 @@ msgstr "ReplayGain"
 #: ../translation/plugins.c:136
 #, no-c-format
 msgid "Remove ReplayGain Information"
-msgstr "Helitugevuse paranduse info eemaldamine"
+msgstr "Helitaseme parandi info eemaldamine"
 
 #: ../translation/plugins.c:138
 #, no-c-format
 msgid "Scan Selection As Albums (By Tags)"
-msgstr "Valiku skänneerimine albumite kaupa (siltide alusel)"
+msgstr "Valiku analüüsimine albumite kaupa (siltide alusel)"
 
 #: ../translation/plugins.c:140
 #, no-c-format
 msgid "Scan Selection As Single Album"
-msgstr "Valiku skänneerimine ühe albumina"
+msgstr "Valiku analüüsimine ühe albumina"
 
 #: ../translation/plugins.c:142
 #, no-c-format
 msgid "Scan Per-file Track Gain"
-msgstr "Helitugevuse parandi skänneerimine failide kaupa"
+msgstr "Valiku analüüsimine failide kaupa"
 
 #: ../translation/plugins.c:144
 #, no-c-format
 msgid "Scan Per-file Track Gain If Not Scanned"
-msgstr ""
+msgstr "Kõigi määramata lugude analüüsimine failide kaupa"
 
 #: ../translation/plugins.c:148
 #, no-c-format
@@ -2141,12 +2141,12 @@ msgstr "Juhuesitlus - väljas"
 #: ../translation/plugins.c:190
 #, no-c-format
 msgid "Toggle Cursor Follows Playback"
-msgstr "Kursor järgib taasesitust - ümberlülitamine"
+msgstr "Kursor järgib esitust - ümberlülitamine"
 
 #: ../translation/plugins.c:192
 #, no-c-format
 msgid "Toggle Scroll Follows Playback"
-msgstr "Kerimisriba järgib taasesitust - ümberlülitamine"
+msgstr "Kerimisriba järgib esitust - ümberlülitamine"
 
 #: ../translation/plugins.c:194
 #, no-c-format
@@ -2246,7 +2246,7 @@ msgstr "Küsi failide kustutamise kohta kinnitust"
 #: ../translation/plugins.c:236
 #, no-c-format
 msgid "Status icon volume control sensitivity"
-msgstr "Olekuikooni helitugevuse tundlikus"
+msgstr "Olekuikooni helitaseme tundlikus"
 
 #: ../translation/plugins.c:238
 #, no-c-format
@@ -2621,7 +2621,7 @@ msgstr "Topeltklõps käivitab mängimise"
 #: ../translation/plugins.c:412
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
-msgstr ""
+msgstr "Puhvri suurus (-1 kasutab portaudio valitud optimaalset väärtust)"
 
 #: ../translation/plugins.c:414
 #, no-c-format
@@ -2706,7 +2706,7 @@ msgstr "Täispikk tee asukohta Songlengths.md5/.txt"
 #: ../translation/plugins.c:449
 #, no-c-format
 msgid "Bits per sample"
-msgstr "Bitte diskreetide kohta"
+msgstr "Bitte sämpli kohta"
 
 #: ../translation/plugins.c:451
 #, no-c-format
@@ -2727,47 +2727,47 @@ msgstr "Eelvõimendus"
 #: ../translation/plugins.c:458
 #, no-c-format
 msgid "1.2K"
-msgstr ""
+msgstr "1.2K"
 
 #: ../translation/plugins.c:460
 #, no-c-format
 msgid "1.8K"
-msgstr ""
+msgstr "1.8K"
 
 #: ../translation/plugins.c:462
 #, no-c-format
 msgid "2.5K"
-msgstr ""
+msgstr "2.5K"
 
 #: ../translation/plugins.c:464
 #, no-c-format
 msgid "3.5K"
-msgstr ""
+msgstr "3.5K"
 
 #: ../translation/plugins.c:466
 #, no-c-format
 msgid "5K"
-msgstr ""
+msgstr "5K"
 
 #: ../translation/plugins.c:468
 #, no-c-format
 msgid "7K"
-msgstr ""
+msgstr "5K"
 
 #: ../translation/plugins.c:470
 #, no-c-format
 msgid "10K"
-msgstr ""
+msgstr "10K"
 
 #: ../translation/plugins.c:472
 #, no-c-format
 msgid "14K"
-msgstr ""
+msgstr "14K"
 
 #: ../translation/plugins.c:474
 #, no-c-format
 msgid "20K"
-msgstr ""
+msgstr "20K"
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:477
@@ -3295,27 +3295,27 @@ msgid ""
 " The files will be lost.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr " Failid lähevad kaduma.\n\n(Selle dialoogi saab GTKUI plugina seadetes välja lülitada)"
 
 #: ../plugins/gtkui/actionhandlers.c:417
 #, c-format
 msgid "Do you really want to delete the selected file?%s"
-msgstr ""
+msgstr "Kas soovid tõesti valitud faili kustutada?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:419
 #, c-format
 msgid "Do you really want to delete all %d selected files?%s"
-msgstr ""
+msgstr "Kas soovid tõesti kustutada kõik %d valitud faili?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:424
 #, c-format
 msgid "Do you really want to delete all %d files from the current playlist?%s"
-msgstr ""
+msgstr "Kas soovid tõesti kustutada kõik %d faili praegusest esitusloendist?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:427
 #, c-format
 msgid "Do you really want to delete the currently playing file?%s"
-msgstr ""
+msgstr "Kas soovid tõesti praegu mängitava faili kustutada? %s"
 
 #: ../plugins/gtkui/actionhandlers.c:430
 msgid "Delete files from disk"
@@ -3455,12 +3455,12 @@ msgstr "Esitusloendi ümbernimetamine"
 
 #: ../plugins/gtkui/pltmenu.c:90
 msgid "Removing playlist"
-msgstr ""
+msgstr "Esitusloendi eemaldamine"
 
 #: ../plugins/gtkui/pltmenu.c:91
 #, c-format
 msgid "Do you really want to remove the playlist '%s'?"
-msgstr ""
+msgstr "Kas soovid tõesti eemaldada esitusloendi '%s'?"
 
 #: ../plugins/gtkui/pltmenu.c:410
 msgid "Remove Playlist"
@@ -3476,7 +3476,7 @@ msgstr "Esitusloendi kloonimine"
 
 #: ../plugins/gtkui/pltmenu.c:433
 msgid "Enable Autosort"
-msgstr ""
+msgstr "Luba automaatne sortimine"
 
 #: ../plugins/pltbrowser/pltbrowser.c:177
 msgid " (paused)"
@@ -3526,23 +3526,23 @@ msgstr "Uuendatakse failide siltide"
 
 #: ../plugins/gtkui/rg.c:311
 msgid "Album Gain"
-msgstr "Albumi helitugevuse parand"
+msgstr "Albumi helitaseme parand"
 
 #: ../plugins/gtkui/rg.c:312
 msgid "Track Gain"
-msgstr "Pala helitugevuse parand"
+msgstr "Pala helitaseme parand"
 
 #: ../plugins/gtkui/rg.c:313
 msgid "Album Peak"
-msgstr "Albumi helitugevuse tipp"
+msgstr "Albumi helitaseme tipp"
 
 #: ../plugins/gtkui/rg.c:314
 msgid "Track Peak"
-msgstr "Pala helitugevuse tipp"
+msgstr "Pala helitaseme tipp"
 
 #: ../plugins/gtkui/rg.c:317
 msgid "Success"
-msgstr "Õnnestumine"
+msgstr "Edukas"
 
 #: ../plugins/gtkui/rg.c:318
 msgid "File not found"
