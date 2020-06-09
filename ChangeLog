@@ -1,3 +1,19 @@
+version 1.8.4
+	Soundtouch plugin has been updated, and is now included in the releases
+	Added %last_modified% title formatting keyword (Cristian Ciocaltea)
+	Fixed stack overflow bug in converter
+	Fixed buffer overflow bug in mp3 parser
+	Fixed handling of leading forward shash character in zipper file names
+	Fixed handling user-specified file mask in artwork plugin
+	Fixed CBR MP3 scanning performance
+	Fixed stack overflow in title formatting tint range calculation
+	Fixed pulseaudio plugin configuration backwards compatibility issue
+	Fixed last.fm scrobbling of streaming shoutcast tracks
+	Fixed deadlock when loading cuesheets which recursively reference themselves
+	Fixed a false-positive when detecting free format MP3 files
+	Fixed skipping unsupported fields in cuesheets
+	Fixed a regression which caused MP3 tag editing to crash when text can't be represented as CP1252
+
 version 1.8.3
 	Fixed a CD Text reading issue
 	Added title formatting functions: len2, longer, longest, padcut, padcut_right, progress, progress2, right, roman, rot13, shortest, strchr, stricmp, strrchr, strstr, substr, tab, trim (esainane@github)
