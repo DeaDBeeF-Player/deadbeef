@@ -109,14 +109,14 @@ static NSString *kContentTypeMappingChangedNotification = @"ContentTypeMappingCh
 
     _networkProxyUserAgent = conf_get_nsstr ("network.http_user_agent", "");
 
-    // Content-type mapping
-    [self initContentTypeMapping];
-
     return self;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    // Content-type mapping
+    [self initContentTypeMapping];
 
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(contentTypeMappingChanged:) name:kContentTypeMappingChangedNotification object:nil];
 
