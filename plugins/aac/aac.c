@@ -242,6 +242,10 @@ mp4_track_get_info(mp4ff_t *mp4, int track, float *duration, int *samplerate, in
         trace ("NeAACDecInit2 returned error\n");
         goto error;
     }
+    if (ch == 0) {
+        trace ("NeAACDecInit2 returned 0 channels\n");
+        goto error;
+    }
     *samplerate = (int)srate;
     *channels = ch;
     samples = mp4ff_num_samples(mp4, track);
