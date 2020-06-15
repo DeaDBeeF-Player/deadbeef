@@ -675,16 +675,16 @@ field_unescape (char* s)
 char*
 gnet_uri_get_string (const GURI* uri)
 {
+  if (!uri) {
+    return NULL;
+  }
+
   char* rv = NULL;
   char *buffer = malloc (1024);
   memset (buffer, 0, 1024);
   char *b = buffer;
   int remaining = 1024;
   
-  if (!uri) {
-      return NULL;
-  }
-
   if (uri->scheme) {
       int n = snprintf (buffer, 1024, "%s:", uri->scheme);
       buffer += n;

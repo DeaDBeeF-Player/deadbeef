@@ -1085,7 +1085,6 @@ m3u_error:
             if (*tempfile) {
                 unlink (tempfile);
             }
-            err = -1;
             if (buf) {
                 free (buf);
             }
@@ -1095,7 +1094,22 @@ m3u_error:
             else if (fd != -1) {
                 close (fd);
             }
+
+            it->played = 1;
+
+            if (!startpaused) {
+                streamer_play_failed (it);
+            }
+            else {
+                err = -1;
+            }
+
+            pl_lock ();
+            trace_err ("Failed to play track: %s\n", pl_find_meta(it, ":URI"));
+            pl_unlock ();
+
             goto error;
+
         }
 
         streamer_file_vfs = NULL;
