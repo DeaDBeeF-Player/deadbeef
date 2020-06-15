@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-03 19:35+0100\n"
+"POT-Creation-Date: 2020-06-15 20:41+0200\n"
 "PO-Revision-Date: 2020-04-12 20:09+0000\n"
 "Last-Translator: Charles Monzat <c.monzat@laposte.net>\n"
 "Language-Team: French (http://www.transifex.com/deadbeef-player/deadbeef-player/language/fr/)\n"
@@ -111,151 +111,151 @@ msgstr "Bandes à zéro"
 msgid "Presets"
 msgstr "Préréglages"
 
-#: ../plugins/gtkui/gtkui.c:163 ../tf.c:2527
+#: ../plugins/gtkui/gtkui.c:159 ../tf.c:2529
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 jour %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:166 ../tf.c:2530
+#: ../plugins/gtkui/gtkui.c:162 ../tf.c:2532
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d jours %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:212
+#: ../plugins/gtkui/gtkui.c:208
 msgid "total playtime"
 msgstr "de temps d’écoute total"
 
-#: ../plugins/gtkui/gtkui.c:422 ../plugins/gtkui/gtkui.c:426
+#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:422
 msgid "Paused"
 msgstr "En pause"
 
-#: ../plugins/gtkui/gtkui.c:422 ../plugins/gtkui/gtkui.c:426
+#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:422
 msgid "bit"
 msgstr "bits"
 
-#: ../plugins/gtkui/gtkui.c:422 ../plugins/gtkui/gtkui.c:423
+#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:419
 msgid "selection playtime"
 msgstr "de temps d’écoute de la sélection"
 
-#: ../plugins/gtkui/gtkui.c:423 ../plugins/gtkui/gtkui.c:427
+#: ../plugins/gtkui/gtkui.c:419 ../plugins/gtkui/gtkui.c:423
 msgid "Stopped"
 msgstr "Arrêté"
 
-#: ../plugins/gtkui/gtkui.c:690 ../translation/plugins.c:216
+#: ../plugins/gtkui/gtkui.c:686 ../translation/plugins.c:216
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
 #, no-c-format
 msgid "New Playlist"
 msgstr "Nouvelle liste de lecture"
 
-#: ../plugins/gtkui/gtkui.c:693 ../plugins/pltbrowser/pltbrowser.c:75
+#: ../plugins/gtkui/gtkui.c:689 ../plugins/pltbrowser/pltbrowser.c:75
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Nouvelle liste de lecture (%d)"
 
-#: ../plugins/gtkui/gtkui.c:750
+#: ../plugins/gtkui/gtkui.c:746
 #, c-format
 msgid "Copy of %s"
 msgstr "Copie de %s"
 
-#: ../plugins/gtkui/gtkui.c:753
+#: ../plugins/gtkui/gtkui.c:749
 #, c-format
 msgid "Copy of %s (%d)"
 msgstr "Copie de %s (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1231
+#: ../plugins/gtkui/gtkui.c:1227
 msgid "Playlist with tabs"
 msgstr "Liste de lecture avec onglets"
 
-#: ../plugins/gtkui/gtkui.c:1232 ../plugins/gtkui/interface.c:2302
+#: ../plugins/gtkui/gtkui.c:1228 ../plugins/gtkui/interface.c:2302
 #: ../plugins/gtkui/interface.c:2747 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Playlist"
 msgstr "Liste de lecture"
 
-#: ../plugins/gtkui/gtkui.c:1235
+#: ../plugins/gtkui/gtkui.c:1231
 msgid "Splitter (top and bottom)"
 msgstr "Séparateur (haut et bas)"
 
-#: ../plugins/gtkui/gtkui.c:1236
+#: ../plugins/gtkui/gtkui.c:1232
 msgid "Splitter (left and right)"
 msgstr "Séparateur (gauche et droite)"
 
-#: ../plugins/gtkui/gtkui.c:1238
+#: ../plugins/gtkui/gtkui.c:1234
 msgid "Tabs"
 msgstr "Onglets"
 
-#: ../plugins/gtkui/gtkui.c:1239
+#: ../plugins/gtkui/gtkui.c:1235
 msgid "Playlist tabs"
 msgstr "Onglets des listes de lecture"
 
-#: ../plugins/gtkui/gtkui.c:1240
+#: ../plugins/gtkui/gtkui.c:1236
 msgid "Selection properties"
 msgstr "Propriétés de la sélection"
 
-#: ../plugins/gtkui/gtkui.c:1241
+#: ../plugins/gtkui/gtkui.c:1237
 msgid "Album art display"
 msgstr "Affichage de la couverture de l’album"
 
-#: ../plugins/gtkui/gtkui.c:1242
+#: ../plugins/gtkui/gtkui.c:1238
 msgid "Scope"
 msgstr "Portée"
 
-#: ../plugins/gtkui/gtkui.c:1243
+#: ../plugins/gtkui/gtkui.c:1239
 msgid "Spectrum"
 msgstr "Spectre"
 
-#: ../plugins/gtkui/gtkui.c:1244
+#: ../plugins/gtkui/gtkui.c:1240
 msgid "HBox"
 msgstr "HBox"
 
-#: ../plugins/gtkui/gtkui.c:1245
+#: ../plugins/gtkui/gtkui.c:1241
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:1246 ../plugins/gtkui/widgets.c:3874
-#: ../plugins/gtkui/widgets.c:3961
+#: ../plugins/gtkui/gtkui.c:1242 ../plugins/gtkui/widgets.c:3872
+#: ../plugins/gtkui/widgets.c:3959
 msgid "Button"
 msgstr "Bouton"
 
-#: ../plugins/gtkui/gtkui.c:1247
+#: ../plugins/gtkui/gtkui.c:1243
 msgid "Seekbar"
 msgstr "Barre de lecture"
 
-#: ../plugins/gtkui/gtkui.c:1248
+#: ../plugins/gtkui/gtkui.c:1244
 msgid "Playback controls"
 msgstr "Contrôles de lecture"
 
-#: ../plugins/gtkui/gtkui.c:1249
+#: ../plugins/gtkui/gtkui.c:1245
 msgid "Volume bar"
 msgstr "Barre de volume"
 
-#: ../plugins/gtkui/gtkui.c:1250
+#: ../plugins/gtkui/gtkui.c:1246
 msgid "Chiptune voices"
 msgstr "Voix chiptune"
 
-#: ../plugins/gtkui/gtkui.c:1251
+#: ../plugins/gtkui/gtkui.c:1247
 msgid "Log viewer"
 msgstr "Visionneur de journal"
 
-#: ../plugins/gtkui/gtkui.c:1443
+#: ../plugins/gtkui/gtkui.c:1434
 msgid "Failed while reading help file"
 msgstr "Impossible de lire le fichier d’aide"
 
-#: ../plugins/gtkui/gtkui.c:1453
+#: ../plugins/gtkui/gtkui.c:1444
 msgid "Failed to load help file"
 msgstr "Impossible de charger le fichier d’aide"
 
-#: ../plugins/gtkui/gtkui.c:1466
+#: ../plugins/gtkui/gtkui.c:1457
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks"
 " will be cancelled or interrupted. This may result in data loss."
 msgstr "Le lecteur est actuellement actif en tâche de fond. Si vous quittez maintenant, les tâches seront ignorées ou interrompues. Cela peut provoquer des pertes de données."
 
-#: ../plugins/gtkui/gtkui.c:1468
+#: ../plugins/gtkui/gtkui.c:1459
 msgid "Do you still want to quit?"
 msgstr "Voulez-vous toujours quitter ?"
 
-#: ../plugins/gtkui/gtkui.c:1469 ../plugins/gtkui/prefwin.c:470
+#: ../plugins/gtkui/gtkui.c:1460 ../plugins/gtkui/prefwin.c:470
 #: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1080
 #: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:432
 #: ../plugins/gtkui/pltmenu.c:92
@@ -577,7 +577,7 @@ msgstr "Propriétés"
 #: ../plugins/gtkui/deadbeef.glade.h:72 ../plugins/converter/interface.c:418
 #: ../plugins/converter/converter.glade.h:25
 #: ../plugins/shellexecui/interface.c:163
-#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1572
+#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1570
 #: ../plugins/gtkui/pltmenu.c:66
 msgid "Title:"
 msgstr "Titre :"
@@ -693,7 +693,7 @@ msgid "Processing:"
 msgstr "Traitement :"
 
 #: ../plugins/gtkui/interface.c:1989 ../plugins/gtkui/plcommon.c:1909
-#: ../translation/plugins.c:106 ../plugins/gtkui/widgets.c:3971
+#: ../translation/plugins.c:106 ../plugins/gtkui/widgets.c:3969
 #, no-c-format
 msgid "None"
 msgstr "Sans"
@@ -1432,12 +1432,12 @@ msgid "[Multiple values] "
 msgstr "[Plusieurs valeurs] "
 
 #: ../plugins/gtkui/trkproperties.c:374 ../plugins/gtkui/trkproperties.c:389
-#: ../plugins/gtkui/widgets.c:2587
+#: ../plugins/gtkui/widgets.c:2585
 msgid "Key"
 msgstr "Clé"
 
 #: ../plugins/gtkui/trkproperties.c:375 ../plugins/gtkui/trkproperties.c:390
-#: ../plugins/gtkui/widgets.c:2589
+#: ../plugins/gtkui/widgets.c:2587
 msgid "Value"
 msgstr "Valeur"
 
@@ -1620,23 +1620,23 @@ msgid ""
 "--volume -20dB\n"
 msgstr "                      Exemples : --volume 80, --volume +10, --volume -5 ou --volume -20 dB\n"
 
-#: ../playlist.c:479 ../playlist.c:2316
+#: ../playlist.c:480 ../playlist.c:2317
 msgid "Default"
 msgstr "Par défaut"
 
-#: ../playlist.c:2981
+#: ../playlist.c:3002
 msgid "Mono"
 msgstr "Mono"
 
-#: ../playlist.c:2981
+#: ../playlist.c:3002
 msgid "Stereo"
 msgstr "Stéréo"
 
-#: ../playlist.c:3499
+#: ../playlist.c:3520
 msgid "Yes"
 msgstr "Oui"
 
-#: ../playlist.c:3499
+#: ../playlist.c:3520
 msgid "No"
 msgstr "Non"
 
@@ -3257,7 +3257,7 @@ msgstr "<small>Si vous voulez ajouter la commande au menu principal, assurez-vou
 msgid "Add Command"
 msgstr "Ajouter une commande"
 
-#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:871
+#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:869
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -3364,100 +3364,100 @@ msgstr "Rien n’a été sélectionné."
 msgid "Widget \"%s\" is not available"
 msgstr "Le widget « %s » n’est pas disponible"
 
-#: ../plugins/gtkui/widgets.c:846
+#: ../plugins/gtkui/widgets.c:844
 msgid "Replace with..."
 msgstr "Remplacer par…"
 
-#: ../plugins/gtkui/widgets.c:851
+#: ../plugins/gtkui/widgets.c:849
 msgid "Insert..."
 msgstr "Insertion…"
 
-#: ../plugins/gtkui/widgets.c:878
+#: ../plugins/gtkui/widgets.c:876
 msgid "Cut"
 msgstr "Couper"
 
-#: ../plugins/gtkui/widgets.c:885
+#: ../plugins/gtkui/widgets.c:883
 msgid "Copy"
 msgstr "Copier"
 
-#: ../plugins/gtkui/widgets.c:892
+#: ../plugins/gtkui/widgets.c:890
 msgid "Paste"
 msgstr "Coller"
 
-#: ../plugins/gtkui/widgets.c:1019
+#: ../plugins/gtkui/widgets.c:1017
 msgid "Multiple widgets of this type are not supported"
 msgstr "Plusieurs widgets de ce type ne sont pas pris en charge"
 
-#: ../plugins/gtkui/widgets.c:1294
+#: ../plugins/gtkui/widgets.c:1292
 msgid "Proportional Sizing"
 msgstr "Redimensionnement proportionnel"
 
-#: ../plugins/gtkui/widgets.c:1306
+#: ../plugins/gtkui/widgets.c:1304
 msgid "Lock Top Pane Height"
 msgstr "Verrouiller la hauteur du volet supérieur"
 
-#: ../plugins/gtkui/widgets.c:1309
+#: ../plugins/gtkui/widgets.c:1307
 msgid "Lock Left Pane Width"
 msgstr "Verrouiller la largeur du volet gauche"
 
-#: ../plugins/gtkui/widgets.c:1322
+#: ../plugins/gtkui/widgets.c:1320
 msgid "Lock Bottom Pane Height"
 msgstr "Verrouiller la hauteur du volet inférieur"
 
-#: ../plugins/gtkui/widgets.c:1325
+#: ../plugins/gtkui/widgets.c:1323
 msgid "Lock Right Pane Width"
 msgstr "Verrouiller la largeur du volet droit"
 
-#: ../plugins/gtkui/widgets.c:1569 ../plugins/gtkui/widgets.c:1684
+#: ../plugins/gtkui/widgets.c:1567 ../plugins/gtkui/widgets.c:1682
 msgid "Rename Tab"
 msgstr "Renommer l’onglet"
 
-#: ../plugins/gtkui/widgets.c:1691
+#: ../plugins/gtkui/widgets.c:1689
 msgid "Remove Tab"
 msgstr "Supprimer l’onglet"
 
-#: ../plugins/gtkui/widgets.c:1698 ../plugins/gtkui/widgets.c:1878
+#: ../plugins/gtkui/widgets.c:1696 ../plugins/gtkui/widgets.c:1876
 msgid "Add New Tab"
 msgstr "Ajouter un nouvel onglet"
 
-#: ../plugins/gtkui/widgets.c:1707
+#: ../plugins/gtkui/widgets.c:1705
 msgid "Move Tab Left"
 msgstr "Déplacer l’onglet vers la gauche"
 
-#: ../plugins/gtkui/widgets.c:1714
+#: ../plugins/gtkui/widgets.c:1712
 msgid "Move Tab Right"
 msgstr "Déplacer l’onglet vers la droite"
 
-#: ../plugins/gtkui/widgets.c:2368 ../plugins/gtkui/widgets.c:2546
+#: ../plugins/gtkui/widgets.c:2366 ../plugins/gtkui/widgets.c:2544
 #: ../plugins/pltbrowser/pltbrowser.c:883
 msgid "Show Column Headers"
 msgstr "Montrer les en-têtes de colonne"
 
-#: ../plugins/gtkui/widgets.c:3593
+#: ../plugins/gtkui/widgets.c:3591
 msgid "Expand Box by 1 Item"
 msgstr "Développer la case d’un élément"
 
-#: ../plugins/gtkui/widgets.c:3598
+#: ../plugins/gtkui/widgets.c:3596
 msgid "Shrink Box by 1 Item"
 msgstr "Réduire la case d’un élément"
 
-#: ../plugins/gtkui/widgets.c:3603
+#: ../plugins/gtkui/widgets.c:3601
 msgid "Homogeneous"
 msgstr "Homogène"
 
-#: ../plugins/gtkui/widgets.c:3643
+#: ../plugins/gtkui/widgets.c:3641
 msgid "Expand"
 msgstr "Développer"
 
-#: ../plugins/gtkui/widgets.c:3651
+#: ../plugins/gtkui/widgets.c:3649
 msgid "Fill"
 msgstr "Remplir"
 
-#: ../plugins/gtkui/widgets.c:4051
+#: ../plugins/gtkui/widgets.c:4049
 msgid "Configure Button"
 msgstr "Configurer le bouton"
 
-#: ../plugins/gtkui/widgets.c:4330
+#: ../plugins/gtkui/widgets.c:4328
 msgid "Voices:"
 msgstr "Voix :"
 
@@ -3524,11 +3524,11 @@ msgstr "♫"
 msgid "Playlist browser"
 msgstr "Navigateur de liste de lecture"
 
-#: ../tf.c:2197
+#: ../tf.c:2199
 msgid "mono"
 msgstr "mono"
 
-#: ../tf.c:2200 ../tf.c:2204
+#: ../tf.c:2202 ../tf.c:2206
 msgid "stereo"
 msgstr "stéréo"
 

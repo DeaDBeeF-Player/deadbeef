@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-03 19:35+0100\n"
+"POT-Creation-Date: 2020-06-15 20:41+0200\n"
 "PO-Revision-Date: 2020-04-24 05:37+0000\n"
 "Last-Translator: Tramsifex <sunnycode@protonmail.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/deadbeef-player/deadbeef-player/language/zh_CN/)\n"
@@ -109,151 +109,151 @@ msgstr "清零频段"
 msgid "Presets"
 msgstr "预设置"
 
-#: ../plugins/gtkui/gtkui.c:163 ../tf.c:2527
+#: ../plugins/gtkui/gtkui.c:159 ../tf.c:2529
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 天 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:166 ../tf.c:2530
+#: ../plugins/gtkui/gtkui.c:162 ../tf.c:2532
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d 天 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:212
+#: ../plugins/gtkui/gtkui.c:208
 msgid "total playtime"
 msgstr "总播放时间"
 
-#: ../plugins/gtkui/gtkui.c:422 ../plugins/gtkui/gtkui.c:426
+#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:422
 msgid "Paused"
 msgstr "已暂停"
 
-#: ../plugins/gtkui/gtkui.c:422 ../plugins/gtkui/gtkui.c:426
+#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:422
 msgid "bit"
 msgstr "位"
 
-#: ../plugins/gtkui/gtkui.c:422 ../plugins/gtkui/gtkui.c:423
+#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:419
 msgid "selection playtime"
 msgstr "选择播放时间"
 
-#: ../plugins/gtkui/gtkui.c:423 ../plugins/gtkui/gtkui.c:427
+#: ../plugins/gtkui/gtkui.c:419 ../plugins/gtkui/gtkui.c:423
 msgid "Stopped"
 msgstr "已停止"
 
-#: ../plugins/gtkui/gtkui.c:690 ../translation/plugins.c:216
+#: ../plugins/gtkui/gtkui.c:686 ../translation/plugins.c:216
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
 #, no-c-format
 msgid "New Playlist"
 msgstr "新播放列表"
 
-#: ../plugins/gtkui/gtkui.c:693 ../plugins/pltbrowser/pltbrowser.c:75
+#: ../plugins/gtkui/gtkui.c:689 ../plugins/pltbrowser/pltbrowser.c:75
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "新播放列表(%d)"
 
-#: ../plugins/gtkui/gtkui.c:750
+#: ../plugins/gtkui/gtkui.c:746
 #, c-format
 msgid "Copy of %s"
 msgstr "%s的副本"
 
-#: ../plugins/gtkui/gtkui.c:753
+#: ../plugins/gtkui/gtkui.c:749
 #, c-format
 msgid "Copy of %s (%d)"
 msgstr "%s的副本 (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1231
+#: ../plugins/gtkui/gtkui.c:1227
 msgid "Playlist with tabs"
 msgstr "标签页式播放列表"
 
-#: ../plugins/gtkui/gtkui.c:1232 ../plugins/gtkui/interface.c:2302
+#: ../plugins/gtkui/gtkui.c:1228 ../plugins/gtkui/interface.c:2302
 #: ../plugins/gtkui/interface.c:2747 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Playlist"
 msgstr "播放列表"
 
-#: ../plugins/gtkui/gtkui.c:1235
+#: ../plugins/gtkui/gtkui.c:1231
 msgid "Splitter (top and bottom)"
 msgstr "分割线(顶部和底部)"
 
-#: ../plugins/gtkui/gtkui.c:1236
+#: ../plugins/gtkui/gtkui.c:1232
 msgid "Splitter (left and right)"
 msgstr "分割线(左侧和右侧)"
 
-#: ../plugins/gtkui/gtkui.c:1238
+#: ../plugins/gtkui/gtkui.c:1234
 msgid "Tabs"
 msgstr "标签页"
 
-#: ../plugins/gtkui/gtkui.c:1239
+#: ../plugins/gtkui/gtkui.c:1235
 msgid "Playlist tabs"
 msgstr "播放列表标签页"
 
-#: ../plugins/gtkui/gtkui.c:1240
+#: ../plugins/gtkui/gtkui.c:1236
 msgid "Selection properties"
 msgstr "所选项目属性"
 
-#: ../plugins/gtkui/gtkui.c:1241
+#: ../plugins/gtkui/gtkui.c:1237
 msgid "Album art display"
 msgstr "专辑封面显示"
 
-#: ../plugins/gtkui/gtkui.c:1242
+#: ../plugins/gtkui/gtkui.c:1238
 msgid "Scope"
 msgstr "波形"
 
-#: ../plugins/gtkui/gtkui.c:1243
+#: ../plugins/gtkui/gtkui.c:1239
 msgid "Spectrum"
 msgstr "频谱"
 
-#: ../plugins/gtkui/gtkui.c:1244
+#: ../plugins/gtkui/gtkui.c:1240
 msgid "HBox"
 msgstr "水平框"
 
-#: ../plugins/gtkui/gtkui.c:1245
+#: ../plugins/gtkui/gtkui.c:1241
 msgid "VBox"
 msgstr "垂直框"
 
-#: ../plugins/gtkui/gtkui.c:1246 ../plugins/gtkui/widgets.c:3874
-#: ../plugins/gtkui/widgets.c:3961
+#: ../plugins/gtkui/gtkui.c:1242 ../plugins/gtkui/widgets.c:3872
+#: ../plugins/gtkui/widgets.c:3959
 msgid "Button"
 msgstr "按钮"
 
-#: ../plugins/gtkui/gtkui.c:1247
+#: ../plugins/gtkui/gtkui.c:1243
 msgid "Seekbar"
 msgstr "拖动条"
 
-#: ../plugins/gtkui/gtkui.c:1248
+#: ../plugins/gtkui/gtkui.c:1244
 msgid "Playback controls"
 msgstr "播放控制"
 
-#: ../plugins/gtkui/gtkui.c:1249
+#: ../plugins/gtkui/gtkui.c:1245
 msgid "Volume bar"
 msgstr "音量条"
 
-#: ../plugins/gtkui/gtkui.c:1250
+#: ../plugins/gtkui/gtkui.c:1246
 msgid "Chiptune voices"
 msgstr "芯片合成语音"
 
-#: ../plugins/gtkui/gtkui.c:1251
+#: ../plugins/gtkui/gtkui.c:1247
 msgid "Log viewer"
 msgstr "日志查看器"
 
-#: ../plugins/gtkui/gtkui.c:1443
+#: ../plugins/gtkui/gtkui.c:1434
 msgid "Failed while reading help file"
 msgstr "读取帮助文件时出错"
 
-#: ../plugins/gtkui/gtkui.c:1453
+#: ../plugins/gtkui/gtkui.c:1444
 msgid "Failed to load help file"
 msgstr "载入帮助文件失败"
 
-#: ../plugins/gtkui/gtkui.c:1466
+#: ../plugins/gtkui/gtkui.c:1457
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks"
 " will be cancelled or interrupted. This may result in data loss."
 msgstr "播放器正在执行后台任务。如果您现在退出，任务会取消或中断；这可能造成数据丢失。"
 
-#: ../plugins/gtkui/gtkui.c:1468
+#: ../plugins/gtkui/gtkui.c:1459
 msgid "Do you still want to quit?"
 msgstr "您仍然要退出吗？"
 
-#: ../plugins/gtkui/gtkui.c:1469 ../plugins/gtkui/prefwin.c:470
+#: ../plugins/gtkui/gtkui.c:1460 ../plugins/gtkui/prefwin.c:470
 #: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1080
 #: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:432
 #: ../plugins/gtkui/pltmenu.c:92
@@ -575,7 +575,7 @@ msgstr "属性"
 #: ../plugins/gtkui/deadbeef.glade.h:72 ../plugins/converter/interface.c:418
 #: ../plugins/converter/converter.glade.h:25
 #: ../plugins/shellexecui/interface.c:163
-#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1572
+#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1570
 #: ../plugins/gtkui/pltmenu.c:66
 msgid "Title:"
 msgstr "标题："
@@ -691,7 +691,7 @@ msgid "Processing:"
 msgstr "处理："
 
 #: ../plugins/gtkui/interface.c:1989 ../plugins/gtkui/plcommon.c:1909
-#: ../translation/plugins.c:106 ../plugins/gtkui/widgets.c:3971
+#: ../translation/plugins.c:106 ../plugins/gtkui/widgets.c:3969
 #, no-c-format
 msgid "None"
 msgstr "无"
@@ -1430,12 +1430,12 @@ msgid "[Multiple values] "
 msgstr "[多个值] "
 
 #: ../plugins/gtkui/trkproperties.c:374 ../plugins/gtkui/trkproperties.c:389
-#: ../plugins/gtkui/widgets.c:2587
+#: ../plugins/gtkui/widgets.c:2585
 msgid "Key"
 msgstr "项目"
 
 #: ../plugins/gtkui/trkproperties.c:375 ../plugins/gtkui/trkproperties.c:390
-#: ../plugins/gtkui/widgets.c:2589
+#: ../plugins/gtkui/widgets.c:2587
 msgid "Value"
 msgstr "值"
 
@@ -1618,23 +1618,23 @@ msgid ""
 "--volume -20dB\n"
 msgstr "                      例如：--volume 80, --volume +10, --volume -5 or --volume -20dB\n"
 
-#: ../playlist.c:479 ../playlist.c:2316
+#: ../playlist.c:480 ../playlist.c:2317
 msgid "Default"
 msgstr "默认"
 
-#: ../playlist.c:2981
+#: ../playlist.c:3002
 msgid "Mono"
 msgstr "单声道"
 
-#: ../playlist.c:2981
+#: ../playlist.c:3002
 msgid "Stereo"
 msgstr "立体声"
 
-#: ../playlist.c:3499
+#: ../playlist.c:3520
 msgid "Yes"
 msgstr "是"
 
-#: ../playlist.c:3499
+#: ../playlist.c:3520
 msgid "No"
 msgstr "否"
 
@@ -3255,7 +3255,7 @@ msgstr "<small>如果您想向主菜单添加命令，请确保标题中包含�
 msgid "Add Command"
 msgstr "添加命令"
 
-#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:871
+#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:869
 msgid "Delete"
 msgstr "删除"
 
@@ -3362,100 +3362,100 @@ msgstr "没有选择项目。"
 msgid "Widget \"%s\" is not available"
 msgstr "“%s”部件不可用"
 
-#: ../plugins/gtkui/widgets.c:846
+#: ../plugins/gtkui/widgets.c:844
 msgid "Replace with..."
 msgstr "替换为..."
 
-#: ../plugins/gtkui/widgets.c:851
+#: ../plugins/gtkui/widgets.c:849
 msgid "Insert..."
 msgstr "插入..."
 
-#: ../plugins/gtkui/widgets.c:878
+#: ../plugins/gtkui/widgets.c:876
 msgid "Cut"
 msgstr "剪切"
 
-#: ../plugins/gtkui/widgets.c:885
+#: ../plugins/gtkui/widgets.c:883
 msgid "Copy"
 msgstr "复制"
 
-#: ../plugins/gtkui/widgets.c:892
+#: ../plugins/gtkui/widgets.c:890
 msgid "Paste"
 msgstr "粘贴"
 
-#: ../plugins/gtkui/widgets.c:1019
+#: ../plugins/gtkui/widgets.c:1017
 msgid "Multiple widgets of this type are not supported"
 msgstr "不支持此类部件的多个实例"
 
-#: ../plugins/gtkui/widgets.c:1294
+#: ../plugins/gtkui/widgets.c:1292
 msgid "Proportional Sizing"
 msgstr "比例间距"
 
-#: ../plugins/gtkui/widgets.c:1306
+#: ../plugins/gtkui/widgets.c:1304
 msgid "Lock Top Pane Height"
 msgstr "锁定顶部面板高度"
 
-#: ../plugins/gtkui/widgets.c:1309
+#: ../plugins/gtkui/widgets.c:1307
 msgid "Lock Left Pane Width"
 msgstr "锁定左侧面板宽度"
 
-#: ../plugins/gtkui/widgets.c:1322
+#: ../plugins/gtkui/widgets.c:1320
 msgid "Lock Bottom Pane Height"
 msgstr "锁定底部面板高度"
 
-#: ../plugins/gtkui/widgets.c:1325
+#: ../plugins/gtkui/widgets.c:1323
 msgid "Lock Right Pane Width"
 msgstr "锁定右侧面板宽度"
 
-#: ../plugins/gtkui/widgets.c:1569 ../plugins/gtkui/widgets.c:1684
+#: ../plugins/gtkui/widgets.c:1567 ../plugins/gtkui/widgets.c:1682
 msgid "Rename Tab"
 msgstr "重命名标签"
 
-#: ../plugins/gtkui/widgets.c:1691
+#: ../plugins/gtkui/widgets.c:1689
 msgid "Remove Tab"
 msgstr "移除标签"
 
-#: ../plugins/gtkui/widgets.c:1698 ../plugins/gtkui/widgets.c:1878
+#: ../plugins/gtkui/widgets.c:1696 ../plugins/gtkui/widgets.c:1876
 msgid "Add New Tab"
 msgstr "添加新标签"
 
-#: ../plugins/gtkui/widgets.c:1707
+#: ../plugins/gtkui/widgets.c:1705
 msgid "Move Tab Left"
 msgstr "标签左移"
 
-#: ../plugins/gtkui/widgets.c:1714
+#: ../plugins/gtkui/widgets.c:1712
 msgid "Move Tab Right"
 msgstr "标签右移"
 
-#: ../plugins/gtkui/widgets.c:2368 ../plugins/gtkui/widgets.c:2546
+#: ../plugins/gtkui/widgets.c:2366 ../plugins/gtkui/widgets.c:2544
 #: ../plugins/pltbrowser/pltbrowser.c:883
 msgid "Show Column Headers"
 msgstr "显示列标题"
 
-#: ../plugins/gtkui/widgets.c:3593
+#: ../plugins/gtkui/widgets.c:3591
 msgid "Expand Box by 1 Item"
 msgstr "向框中增加 1 项"
 
-#: ../plugins/gtkui/widgets.c:3598
+#: ../plugins/gtkui/widgets.c:3596
 msgid "Shrink Box by 1 Item"
 msgstr "从框中减少 1 项"
 
-#: ../plugins/gtkui/widgets.c:3603
+#: ../plugins/gtkui/widgets.c:3601
 msgid "Homogeneous"
 msgstr "平均"
 
-#: ../plugins/gtkui/widgets.c:3643
+#: ../plugins/gtkui/widgets.c:3641
 msgid "Expand"
 msgstr "扩展"
 
-#: ../plugins/gtkui/widgets.c:3651
+#: ../plugins/gtkui/widgets.c:3649
 msgid "Fill"
 msgstr "填充"
 
-#: ../plugins/gtkui/widgets.c:4051
+#: ../plugins/gtkui/widgets.c:4049
 msgid "Configure Button"
 msgstr "配置按钮"
 
-#: ../plugins/gtkui/widgets.c:4330
+#: ../plugins/gtkui/widgets.c:4328
 msgid "Voices:"
 msgstr "语音："
 
@@ -3522,11 +3522,11 @@ msgstr "♫"
 msgid "Playlist browser"
 msgstr "播放列表浏览器"
 
-#: ../tf.c:2197
+#: ../tf.c:2199
 msgid "mono"
 msgstr "单声道"
 
-#: ../tf.c:2200 ../tf.c:2204
+#: ../tf.c:2202 ../tf.c:2206
 msgid "stereo"
 msgstr "立体声"
 

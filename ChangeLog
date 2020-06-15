@@ -13,6 +13,7 @@ version 1.8.4
 	Fixed a false-positive when detecting free format MP3 files
 	Fixed skipping unsupported fields in cuesheets
 	Fixed a regression which caused MP3 tag editing to crash when text can't be represented as CP1252
+	Fixed playback of certain network streams
 
 version 1.8.3
 	Fixed a CD Text reading issue
