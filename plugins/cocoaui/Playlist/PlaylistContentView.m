@@ -160,10 +160,10 @@ static int grouptitleheight = 22;
 
         PlaylistLocalDragDropHolder *holder = [draggedItems firstObject];
         NSInteger from_playlist = holder.playlistIdx;
-        uint32_t * indices = malloc (sizeof (uint32_t *) * holder.count);
+        uint32_t *indices = calloc (sizeof (uint32_t), holder.count);
         int i = 0;
         for (NSNumber * number in holder.itemsIndices) {
-            indices[i] = [number unsignedIntValue];
+            indices[i] = (uint32_t)number.unsignedIntValue;
             ++i;
         }
 
@@ -672,7 +672,7 @@ static int grouptitleheight = 22;
         }
     }
     else if (_areaselect) {
-        DdbListviewGroup_t *grp;
+        DdbListviewGroup_t *grp = NULL;
         int grp_index;
         int sel;
         if ([self pickPoint:pt.y group:&grp groupIndex:&grp_index index:&sel] == -1) {

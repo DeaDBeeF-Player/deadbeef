@@ -1583,7 +1583,7 @@ streamer_thread (void *unused) {
             _streamer_requeue_after_current(repeat, shuffle);
         }
 
-        if (output && output->state () == DDB_PLAYBACK_STATE_STOPPED) {
+        if (output->state () == DDB_PLAYBACK_STATE_STOPPED) {
             if (!handler_hasmessages (handler)) {
                 usleep (50000);
             }
