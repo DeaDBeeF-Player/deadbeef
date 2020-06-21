@@ -963,6 +963,7 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
             }
         }
         free (chapters);
+        chapters = NULL;
         if (cue) {
             mp4p_atom_free_list(info.mp4file);
             deadbeef->pl_item_unref (it);
@@ -972,6 +973,8 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
             return 0;
         }
     }
+    free (chapters);
+    chapters = NULL;
     deadbeef->pl_unlock ();
 
     // embedded cue

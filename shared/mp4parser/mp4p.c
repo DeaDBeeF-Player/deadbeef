@@ -121,7 +121,7 @@ _read_uint32 (mp4p_file_callbacks_t *fp, uint32_t *value) {
 #define WRITE_BUF(buf,size) {if (buffer_size < size) return 0; if (!buf) return -1; memcpy (buffer, buf, size); buffer += size; buffer_size -= size; }
 #define WRITE_COMMON_HEADER() {WRITE_UINT32(0);}
 
-#define READ_ATOM_BUFFER(headersize) uint8_t *atombuf = malloc (headersize); if (fp->read(fp, atombuf, headersize) != headersize) { res = -1; goto error; }
+#define READ_ATOM_BUFFER(headersize) uint8_t *atombuf = (uint8_t *)malloc (headersize); if (fp->read(fp, atombuf, headersize) != headersize) { res = -1; goto error; }
 #define FREE_ATOM_BUFFER() free (atombuf);
 
 #define ATOM_DEF_INNER(atomname,headersize)\
@@ -1097,6 +1097,7 @@ _rewrite_mdat (mp4p_file_callbacks_t *file, off_t mdat_delta, mp4p_atom_t *mdat_
 int
 mp4p_update_metadata (mp4p_file_callbacks_t *file, mp4p_atom_t *source, mp4p_atom_t *dest) {
     int res = -1;
+    uint8_t *buffer = NULL;
 
     mp4p_atom_t *mdat_src = mp4p_atom_find (source, "mdat");
     mp4p_atom_t *mdat_dst = mp4p_atom_find (dest, "mdat");
@@ -1122,7 +1123,7 @@ mp4p_update_metadata (mp4p_file_callbacks_t *file, mp4p_atom_t *source, mp4p_ato
         }
 
         uint32_t atom_size = mp4p_atom_to_buffer (atom, NULL, 0);
-        uint8_t *buffer = malloc (atom_size);
+        buffer = malloc (atom_size);
         uint32_t written_size = mp4p_atom_to_buffer(atom, buffer, atom_size);
         if (written_size != atom_size) {
             res = -1;
@@ -1130,16 +1131,18 @@ mp4p_update_metadata (mp4p_file_callbacks_t *file, mp4p_atom_t *source, mp4p_ato
         }
 
         if (file->write (file, buffer, atom_size) != atom_size) {
-            free (buffer);
             goto error;
         }
+
         free (buffer);
+        buffer = NULL;
     }
 
     res = 0;
 
 error:
-
+    free (buffer);
+    buffer = NULL;
     return res;
 }
 

@@ -1035,8 +1035,8 @@ mp4p_chpl_atomdata_read (mp4p_chpl_t *atom_data, uint8_t *buffer, size_t buffer_
         if (name_len) {
             atom_data->entries[i].name = malloc(name_len+1);
             READ_BUF(atom_data->entries[i].name, name_len);
+            atom_data->entries[i].name[name_len] = 0;
         }
-        atom_data->entries[i].name[name_len] = 0;
     }
     // FIXME: convert to qsort
     /* Bubble sort by increasing start date */
@@ -1159,10 +1159,22 @@ mp4p_ilst_meta_atomdata_read (mp4p_ilst_meta_t *atom_data, uint8_t *buffer, size
             return -1; // FIXME: Unsupported fields must be loaded as blobs, and preserved when rewriting the ilst
         }
         READ_UINT32(); // version_flags always 0
+        if (buffer_size < mean_size + 1) {
+            return -1;
+        }
         char *mean_data = malloc (mean_size + 1);
-        READ_BUF(mean_data, mean_size);
+
+        memcpy (mean_data, buffer, mean_size);
+        buffer += mean_size;
+        buffer_size -= mean_size;
+
         mean_data[mean_size] = 0;
-        if (strncasecmp (mean_data, "com.apple.iTunes", 16)) {
+        int supported_mean = !strncasecmp (mean_data, "com.apple.iTunes", 16);
+
+        free (mean_data);
+        mean_data = NULL;
+
+        if (!supported_mean) {
             return -1;
         }
 
@@ -1266,12 +1278,18 @@ mp4p_ilst_meta_atomdata_write (mp4p_ilst_meta_t *atom_data, uint8_t *buffer, siz
     WRITE_UINT32(0); // what is this?
 
     if (atom_data->data_version_flags == 0) {
+        if (!atom_data->values) {
+            return 0;
+        }
         for (int i = 0; i < atom_data->data_size/2; i++) {
             WRITE_UINT16(atom_data->values[i]);
         }
     }
     else if (atom_data->data_version_flags == 1) {
-        WRITE_BUF(atom_data->text,atom_data->data_size);
+        if (!atom_data->text) {
+            return 0;
+        }
+        WRITE_BUF(atom_data->text, atom_data->data_size);
     }
     else if (atom_data->data_version_flags == 2) {
         WRITE_BUF(atom_data->blob,atom_data->data_size);
