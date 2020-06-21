@@ -14,6 +14,7 @@ version 1.8.4
 	Fixed skipping unsupported fields in cuesheets
 	Fixed a regression which caused MP3 tag editing to crash when text can't be represented as CP1252
 	Fixed playback of certain network streams
+	Fixed handling of ID3v2 COMM frame content description data
 
 version 1.8.3
 	Fixed a CD Text reading issue
