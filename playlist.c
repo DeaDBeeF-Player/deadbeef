@@ -2186,7 +2186,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
         if (fread (&nm, 1, 2, fp) != 2) {
             goto load_fail;
         }
-        for (int i = 0; i < nm; i++) {
+        for (int j = 0; j < nm; j++) {
             if (fread (&l, 1, 2, fp) != 2) {
                 goto load_fail;
             }
