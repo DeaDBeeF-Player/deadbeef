@@ -60,9 +60,6 @@ ddb_ctmap_init_from_string (const char *mapstr) {
         ddb_ctmap_t *ctmap = malloc (sizeof (ddb_ctmap_t));
         memset (ctmap, 0, sizeof (ddb_ctmap_t));
         ctmap->ct = strdup (t);
-        if (!head) {
-            head = ctmap;
-        }
 
         int n = 0;
 
@@ -71,6 +68,10 @@ ddb_ctmap_init_from_string (const char *mapstr) {
             free (ctmap->ct);
             free (ctmap);
             break;
+        }
+
+        if (!head) {
+            head = ctmap;
         }
 
         plugins[0] = 0;

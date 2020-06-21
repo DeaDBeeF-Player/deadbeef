@@ -1278,6 +1278,8 @@ main (int argc, char *argv[]) {
     if (!strcmp (cmdline, "--nowplaying")) {
         char nothing[] = "nothing";
         fwrite (nothing, 1, sizeof (nothing)-1, stdout);
+        free (cmdline);
+        cmdline = NULL;
         return 0;
     }
 

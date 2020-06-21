@@ -422,7 +422,7 @@ static int
 isPresetNameAllowed (scriptableItem_t *preset, const char *name) {
     // all space or empty?
     const uint8_t *p = (const uint8_t *)name;
-    for (; p; p++) {
+    for (; *p; p++) {
         if (*p != 0x20) {
             break;
         }

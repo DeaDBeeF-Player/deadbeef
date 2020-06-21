@@ -1080,7 +1080,6 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 }
 
 - (int)sendMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
-    PlaylistView *listview = (PlaylistView *)self.view;
     switch (_id) {
         case DB_EV_SONGCHANGED: {
             if ([self playlistIter] != PL_MAIN) {
@@ -1094,6 +1093,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
             if (to)
                 deadbeef->pl_item_ref (to);
             dispatch_async(dispatch_get_main_queue(), ^{
+                PlaylistView *listview = (PlaylistView *)self.view;
                 DB_playItem_t *it;
                 int idx = 0;
                 deadbeef->pl_lock ();
@@ -1120,6 +1120,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
             if (track) {
                 deadbeef->pl_item_ref (track);
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    PlaylistView *listview = (PlaylistView *)self.view;
                     BOOL draw = NO;
                     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
                     if (plt) {
@@ -1139,6 +1140,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
             break;
         case DB_EV_PAUSED: {
             dispatch_async(dispatch_get_main_queue(), ^{
+                PlaylistView *listview = (PlaylistView *)self.view;
                 DB_playItem_t *curr = deadbeef->streamer_get_playing_track ();
                 if (curr) {
                     int idx = deadbeef->pl_get_idx_of (curr);
@@ -1151,26 +1153,30 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         case DB_EV_PLAYLISTCHANGED: {
             if (!p1 || (p1 == DDB_PLAYLIST_CHANGE_SEARCHRESULT)) {
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    PlaylistView *listview = (PlaylistView *)self.view;
                     [listview.contentView reloadData];
                 });
             }
             else if (p1 == DDB_PLAYLIST_CHANGE_SELECTION) {
-                if (ctx != (uintptr_t)listview) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    PlaylistView *listview = (PlaylistView *)self.view;
+                    if (ctx != (uintptr_t)listview) {
                         [listview.contentView reloadData];
-                    });
-                }
+                    }
+                });
             }
         }
             break;
         case DB_EV_PLAYLISTSWITCHED: {
             dispatch_async(dispatch_get_main_queue(), ^{
+                PlaylistView *listview = (PlaylistView *)self.view;
                 [self setupPlaylist:listview];
             });
         }
             break;
         case DB_EV_TRACKFOCUSCURRENT: {
             dispatch_async(dispatch_get_main_queue(), ^{
+                PlaylistView *listview = (PlaylistView *)self.view;
                 deadbeef->pl_lock ();
                 DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
                 if (it) {
@@ -1205,6 +1211,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
             break;
         case DB_EV_CONFIGCHANGED: {
             dispatch_async(dispatch_get_main_queue(), ^{
+                PlaylistView *listview = (PlaylistView *)self.view;
                 [listview.contentView reloadData];
             });
         }
@@ -1215,6 +1222,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
             }
 
             dispatch_async(dispatch_get_main_queue(), ^{
+                PlaylistView *listview = (PlaylistView *)self.view;
                 deadbeef->pl_lock ();
                 ddb_playlist_t *plt = deadbeef->plt_get_curr ();
                 if (plt) {
