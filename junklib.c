@@ -3599,10 +3599,14 @@ junk_load_comm_frame (int version_major, const char *field_name, playItem_t *it,
     size_t len = strlen (descr) + strlen (value) + 3;
     char comment[len];
 
-    if (*descr) {
-        snprintf (comment, len, "%s: %s", descr, value);
-    }
-    else {
+// FIXME: COMM frames can have multiple unique content descriptors,
+// which uniquely identify each comment,
+// but there's no UI to display or edit this, so they are ignored.
+//    if (*descr) {
+//        snprintf (comment, len, "%s: %s", descr, value);
+//    }
+//    else
+    {
         strcpy (comment, value);
     }
 
