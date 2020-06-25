@@ -2,7 +2,7 @@
 #include "config.h"
 #endif
 
-#if HAVE_SSE2
+#if HAVE_SSE2 || defined(__SSE2__)
 #include <math.h>
 #include <xmmintrin.h>
 #include "internal/resampler.h"

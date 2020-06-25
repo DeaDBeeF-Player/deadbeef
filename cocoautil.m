@@ -26,7 +26,7 @@
 
 int
 cocoautil_get_resources_path (char *s, int size) {
-    strcpy (s, NSBundle.mainBundle.resourcePath.UTF8String);
+    strlcpy (s, NSBundle.mainBundle.resourcePath.UTF8String, size);
     return 0;
 }
 
@@ -43,7 +43,7 @@ cocoautil_get_library_path (char *s, int size) {
     if (!paths.count) {
         return -1;
     }
-    strncat (s, paths[0].UTF8String, size);
+    strlcpy (s, paths.firstObject.UTF8String, size);
     return 0;
 }
 
@@ -55,6 +55,6 @@ cocoautil_get_application_support_path (char *s, int size) {
     if (!paths.count) {
         return -1;
     }
-    strncat (s, paths[0].UTF8String, size);
+    strlcpy (s, paths.firstObject.UTF8String, size);
     return 0;
 }
