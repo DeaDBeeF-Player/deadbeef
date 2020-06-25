@@ -34,7 +34,7 @@
 #define trace(fmt,...)
 
 static DB_output_t plugin;
-DB_functions_t *deadbeef;
+static DB_functions_t *deadbeef;
 
 static intptr_t fakeout_tid;
 static int fakeout_terminate;
