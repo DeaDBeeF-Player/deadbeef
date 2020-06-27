@@ -1968,6 +1968,8 @@
 		2DC1CE5B240EEBA6000776DB /* rat.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC1CDCF240EEBA5000776DB /* rat.h */; };
 		2DC4199E1B90540A007E3026 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DC4199D1B90540A007E3026 /* Carbon.framework */; };
 		2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC80A8E1A9222F800C9397F /* TrackProperties.xib */; };
+		2DC8263E24A7432C00DB756B /* ffmpeg.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; };
+		2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; };
 		2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
 		2DCB281A19E86183008E9DF6 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
 		2DCB281D19E86194008E9DF6 /* m3u.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DCB281419E86162008E9DF6 /* m3u.dylib */; };
@@ -3180,6 +3182,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2DB96A8919ABB4C600E318A8;
 			remoteInfo = samplerate;
+		};
+		2DC8263C24A7432700DB756B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D026D881CAC5BBF00E27961;
+			remoteInfo = ffmpeg;
 		};
 		2DCB281B19E8618D008E9DF6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -6427,6 +6436,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DC8263E24A7432C00DB756B /* ffmpeg.dylib in Frameworks */,
 				4D66DBA11F6181C400BFF76B /* AudioToolbox.framework in Frameworks */,
 				2DC4199E1B90540A007E3026 /* Carbon.framework in Frameworks */,
 				2D01D7EA1AB221B200BCD3C4 /* libddbcore.a in Frameworks */,
@@ -13161,6 +13171,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DC8263D24A7432700DB756B /* PBXTargetDependency */,
 				2D1BEB982435C26C003EFD61 /* PBXTargetDependency */,
 				2D00F33024351ED3000FC130 /* PBXTargetDependency */,
 				2DDF87E924027FC600CA8E91 /* PBXTargetDependency */,
@@ -13837,6 +13848,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Resources */,
 				2D00F33124351EDF000FC130 /* ddb_soundtouch.dylib in Resources */,
 				2DDF87EA24027FCF00CA8E91 /* hotkeys.dylib in Resources */,
 				2DDBDA392436678700C12A75 /* btnduplicateTemplate.pdf in Resources */,
@@ -16145,6 +16157,11 @@
 			isa = PBXTargetDependency;
 			target = 2DB96A8919ABB4C600E318A8 /* samplerate */;
 			targetProxy = 2DB96AA919ABB52A00E318A8 /* PBXContainerItemProxy */;
+		};
+		2DC8263D24A7432700DB756B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D026D881CAC5BBF00E27961 /* ffmpeg */;
+			targetProxy = 2DC8263C24A7432700DB756B /* PBXContainerItemProxy */;
 		};
 		2DCB281C19E8618D008E9DF6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
