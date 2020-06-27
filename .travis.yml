@@ -15,11 +15,9 @@ matrix:
               - yasm
               - libglib2.0-bin
               - fakeroot
-              # for i686:
-              # - gcc-multilib
           sudo: required
         - os: osx
-          osx_image: xcode10.1
+          osx_image: xcode11.3
 
 git:
   submodules: false
@@ -29,15 +27,3 @@ script:
 
 after_success:
     - ./travis/upload.sh
-
-notifications:
-    irc:
-        channels:
-            - "chat.freenode.net#deadbeefplayer"
-        on_success: always
-        on_failure: always
-        template:
-            - "%{branch} - %{commit} : %{author} : %{message}"
-            - "Commit message: %{commit_subject}"
-            - "Diff: %{compare_url}"
-            - "Build details: %{build_url}"

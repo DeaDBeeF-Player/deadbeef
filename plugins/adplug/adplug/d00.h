@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * d00.h - D00 Player by Simon Peter <dn.tlp@gmx.net>
  */
@@ -35,18 +35,18 @@ class Cd00Player: public CPlayer
   ~Cd00Player()
     { if(filedata) delete [] filedata; };
 
-  bool load(const char *filename, const CFileProvider &fp);
+  bool load(const std::string &filename, const CFileProvider &fp);
   bool update();
   void rewind(int subsong);
   float getrefresh();
 
-  const char * gettype();
-  const char * gettitle()
-    { if(version > 1) return header->songname; else return ""; };
-  const char * getauthor()
-    { if(version > 1) return header->author; else return ""; };
-  const char * getdesc()
-    { if(*datainfo) return datainfo; else return ""; };
+  std::string gettype();
+  std::string gettitle()
+    { if(version > 1) return std::string(header->songname); else return std::string(); };
+  std::string getauthor()
+    { if(version > 1) return std::string(header->author); else return std::string(); };
+  std::string getdesc()
+    { if(*datainfo) return std::string(datainfo); else return std::string(); };
   unsigned int getsubsongs();
 
  protected:
@@ -97,7 +97,6 @@ class Cd00Player: public CPlayer
   d00header *header;
   d00header1 *header1;
   char *filedata;
-  char	tmpstr[40];
 
  private:
   void setvolume(unsigned char chan);

@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * player.h - Replayer base class, by Simon Peter <dn.tlp@gmx.net>
  */
@@ -22,9 +22,11 @@
 #ifndef H_ADPLUG_PLAYER
 #define H_ADPLUG_PLAYER
 
+#include <string>
+
 #include "fprovide.h"
 #include "opl.h"
-//#include "database.h"
+#include "database.h"
 
 class CPlayer
 {
@@ -35,7 +37,7 @@ public:
 /***** Operational methods *****/
 	void seek(unsigned long ms);
 
-	virtual bool load(const char *filename,	// loads file
+	virtual bool load(const std::string &filename,	// loads file
 			  const CFileProvider &fp = CProvider_Filesystem()) = 0;
 	virtual bool update() = 0;			// executes replay code for 1 tick
 	virtual void rewind(int subsong = -1) = 0;	// rewinds to specified subsong
@@ -44,13 +46,13 @@ public:
 /***** Informational methods *****/
 	unsigned long songlength(int subsong = -1);
 
-	virtual const char *gettype() = 0;	// returns file type
-	virtual const char *gettitle()		// returns song title
-	  { return ""; }
-	virtual const char *getauthor()		// returns song author name
-	  { return ""; }
-	virtual const char *getdesc()		// returns song description
-	  { return ""; }
+	virtual std::string gettype() = 0;	// returns file type
+	virtual std::string gettitle()		// returns song title
+	  { return std::string(); }
+	virtual std::string getauthor()		// returns song author name
+	  { return std::string(); }
+	virtual std::string getdesc()		// returns song description
+	  { return std::string(); }
 	virtual unsigned int getpatterns()	// returns number of patterns
 	  { return 0; }
 	virtual unsigned int getpattern()	// returns currently playing pattern
@@ -69,12 +71,12 @@ public:
 	  { return 0; }
 	virtual unsigned int getinstruments()	// returns number of instruments
 	  { return 0; }
-	virtual const char *getinstrument(unsigned int n)	// returns n-th instrument name
-	  { return ""; }
+	virtual std::string getinstrument(unsigned int n)	// returns n-th instrument name
+	  { return std::string(); }
 
 protected:
 	Copl		*opl;	// our OPL chip
-	//CAdPlugDatabase	*db;	// AdPlug Database
+	CAdPlugDatabase	*db;	// AdPlug Database
 
 	static const unsigned short	note_table[12];	// standard adlib note table
 	static const unsigned char	op_table[9];	// the 9 operators as expected by the OPL

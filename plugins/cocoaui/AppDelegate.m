@@ -30,6 +30,7 @@
 #import "LogWindowController.h"
 #import "HelpWindowController.h"
 #import "EqualizerWindowController.h"
+#import "NSMenu+ActionItems.h"
 #include "conf.h"
 #include "streamer.h"
 #include "junklib.h"
@@ -81,8 +82,7 @@ AppDelegate *g_appDelegate;
     }
 }
 
-- (void)configChanged
-{
+- (void)configChanged {
     NSMenuItem *shuffle_items[] = {
         _orderLinear,
         _orderShuffle,
@@ -92,7 +92,7 @@ AppDelegate *g_appDelegate;
     };
     
     ddb_shuffle_t shuffle = deadbeef->streamer_get_shuffle ();
-    for (int i = 0; shuffle_items[i]; i++) {
+    for (ddb_shuffle_t i = 0; shuffle_items[i]; i++) {
         shuffle_items[i].state = i==shuffle?NSOnState:NSOffState;
     }
     
@@ -104,7 +104,7 @@ AppDelegate *g_appDelegate;
     };
     
     ddb_repeat_t repeat = deadbeef->streamer_get_repeat ();
-    for (int i = 0; repeat_items[i]; i++) {
+    for (ddb_repeat_t i = 0; repeat_items[i]; i++) {
         repeat_items[i].state = i==repeat?NSOnState:NSOffState;
     }
     
@@ -163,6 +163,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 }
 
 - (void)awakeFromNib {
+    [self initMainMenu];
     [self initMainWindow];
     [self initSearchWindow];
     [self initLogWindow];
@@ -186,6 +187,13 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     _logWindow = [[LogWindowController alloc] initWithWindowNibName:@"Log"];
     [_logWindowToggleMenuItem bind:@"state" toObject:_logWindow.window withKeyPath:@"visible" options:nil];
     _logWindow.window.excludedFromWindowsMenu = YES;
+}
+
+- (void)initMainMenu {
+    // add new actions
+    [self.mainMenu addActionItemsForContext:DDB_ACTION_CTX_MAIN track:nil filter:^BOOL(DB_plugin_action_t * _Nonnull action) {
+        return (action->flags & (DB_ACTION_COMMON|DB_ACTION_ADD_MENU)) == (DB_ACTION_COMMON|DB_ACTION_ADD_MENU);
+    }];
 }
 
 - (BOOL)equalizerAvailable {
@@ -327,7 +335,7 @@ main_cleanup_and_quit (void);
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         //deadbeef->plt_deselect_all (plt);
-        int __block i = 0;
+        NSUInteger __block i = 0;
         DB_playItem_t __block *it = deadbeef->plt_get_first(plt, PL_MAIN);
         [proposedSelectionIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
             if (self.firstSelected == -1) {
@@ -377,8 +385,7 @@ main_cleanup_and_quit (void);
             }
             dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
             dispatch_async(aQueue, ^{
-                for( int i = 0; i < [files count]; i++ )
-                {
+                for (NSUInteger i = 0; i < files.count; i++) {
                     NSString* fileName = [[files objectAtIndex:i] path];
                     if (fileName) {
                         deadbeef->plt_add_file2 (0, plt, [fileName UTF8String], NULL, NULL);
@@ -419,8 +426,7 @@ main_cleanup_and_quit (void);
         if (!deadbeef->plt_add_files_begin (plt, 0)) {
             dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
             dispatch_async(aQueue, ^{
-                for( int i = 0; i < [files count]; i++ )
-                {
+                for (NSUInteger i = 0; i < files.count; i++) {
                     NSString *fileName = [[files objectAtIndex:i] path];
                     if (fileName) {
                         deadbeef->plt_add_dir2 (0, plt, [fileName UTF8String], NULL, NULL);

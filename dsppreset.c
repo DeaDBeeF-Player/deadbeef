@@ -94,7 +94,7 @@ dsp_preset_load (const char *fname, ddb_dsp_context_t **head) {
             if (!strcmp (temp, "}\n")) {
                 break;
             }
-            else if (1 != sscanf (temp, "\t%1000[^\n]\n", value)) {
+            else if (1 != sscanf (temp, "\t%100[^\n]\n", value)) {
                 fprintf (stderr, "error loading param %d\n", n);
                 goto error;
             }

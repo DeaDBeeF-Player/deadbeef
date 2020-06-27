@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * hsp.cpp - HSP Loader by Simon Peter <dn.tlp@gmx.net>
  */
@@ -28,7 +28,7 @@ CPlayer *ChspLoader::factory(Copl *newopl)
   return new ChspLoader(newopl);
 }
 
-bool ChspLoader::load(const char *filename, const CFileProvider &fp)
+bool ChspLoader::load(const std::string &filename, const CFileProvider &fp)
 {
   binistream	*f = fp.open(filename); if(!f) return false;
   unsigned long	i, j, orgsize, filesize;
@@ -51,8 +51,15 @@ bool ChspLoader::load(const char *filename, const CFileProvider &fp)
     if(j >= orgsize) break;	// memory boundary check
     memset(org + j, cmp[i + 1], j + cmp[i] < orgsize ? cmp[i] : orgsize - j - 1);
   }
+  if (j < orgsize) {
+    orgsize = j;
+  }
   delete [] cmp;
 
+  if (orgsize < 128 * 12 + 51) {	// check decompressed size
+    delete [] org;
+    return false;
+  }
   memcpy(instr, org, 128 * 12);		// instruments
   for(i = 0; i < 128; i++) {		// correct instruments
     instr[i][2] ^= (instr[i][2] & 0x40) << 1;

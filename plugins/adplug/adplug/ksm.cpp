@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * ksm.cpp - KSM Player for AdPlug by Simon Peter <dn.tlp@gmx.net>
  */
@@ -40,23 +40,23 @@ CPlayer *CksmPlayer::factory(Copl *newopl)
   return new CksmPlayer(newopl);
 }
 
-bool CksmPlayer::load(const char *filename, const CFileProvider &fp)
+bool CksmPlayer::load(const std::string &filename, const CFileProvider &fp)
 {
   binistream	*f;
   int		i;
-  char		*fn = new char[strlen (filename) + 9];
+  char		*fn = new char[filename.length() + 9];
 
   // file validation section
   if(!fp.extension(filename, ".ksm")) {
     AdPlug_LogWrite("CksmPlayer::load(,\"%s\"): File doesn't have '.ksm' "
-		    "extension! Rejected!\n", filename);
-    delete[] fn;
+		    "extension! Rejected!\n", filename.c_str());
+    delete [] fn;
     return false;
   }
-  AdPlug_LogWrite("*** CksmPlayer::load(,\"%s\") ***\n", filename);
+  AdPlug_LogWrite("*** CksmPlayer::load(,\"%s\") ***\n", filename.c_str());
 
   // Load instruments from 'insts.dat'
-  strcpy(fn, filename);
+  strcpy(fn, filename.c_str());
   for(i = strlen(fn) - 1; i >= 0; i--)
     if(fn[i] == '/' || fn[i] == '\\')
       break;
@@ -290,12 +290,12 @@ void CksmPlayer::rewind(int subsong)
   nownote = 0;
 }
 
-const char * CksmPlayer::getinstrument(unsigned int n)
+std::string CksmPlayer::getinstrument(unsigned int n)
 {
   if(trchan[n])
-    return instname[trinst[n]];
+    return std::string(instname[trinst[n]]);
   else
-    return "";
+    return std::string();
 }
 
 /*** private methods *************************************/

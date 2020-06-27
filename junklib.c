@@ -58,6 +58,7 @@ uint16_t sj_to_unicode[] = {
 #endif
 #include <sys/stat.h>
 #include "playlist.h"
+#include "plmeta.h"
 #include "utf8.h"
 #include "plugins.h"
 #include "conf.h"
@@ -2040,9 +2041,9 @@ junk_id3v2_add_text_frame2 (DB_id3v2_tag_t *tag, const char *frame_id, const cha
 
     int encoding = 0;
 
-    size_t outlen = -1;
+    int outlen = -1;
     if (tag->version[0] == 4) {
-        outlen = inlen;
+        outlen = (int)inlen;
         out = (uint8_t *)value;
         encoding = 3;
     }
@@ -2130,13 +2131,13 @@ junk_id3v2_add_comment_frame (DB_id3v2_tag_t *tag, const char *frame_id, const c
     char *buffer = malloc (buffersize);
 
     int enc = 0;
-    size_t l;
+    int l;
 
     if (tag->version[0] == 4) {
         // utf8
         enc = 3;
         memcpy (buffer, input, inputsize);
-        l = inputsize;
+        l = (int)inputsize;
     }
     else {
         l = junk_iconv (input, (int)inputsize, buffer, (int)buffersize, UTF8_STR, "cp1252");
@@ -2238,10 +2239,10 @@ junk_id3v2_add_txxx_frame (DB_id3v2_tag_t *tag, const char *key, const char *val
     int encoding = 0;
 
 
-    size_t res;
+    int res;
 
     if (tag->version[0] == 4) {
-        res = len;
+        res = (int)len;
         encoding = 3;
         memcpy (out, key, keylen);
         out[keylen] = 0;
@@ -3598,10 +3599,14 @@ junk_load_comm_frame (int version_major, const char *field_name, playItem_t *it,
     size_t len = strlen (descr) + strlen (value) + 3;
     char comment[len];
 
-    if (*descr) {
-        snprintf (comment, len, "%s: %s", descr, value);
-    }
-    else {
+// FIXME: COMM frames can have multiple unique content descriptors,
+// which uniquely identify each comment,
+// but there's no UI to display or edit this, so they are ignored.
+//    if (*descr) {
+//        snprintf (comment, len, "%s: %s", descr, value);
+//    }
+//    else
+    {
         strcpy (comment, value);
     }
 

@@ -31,15 +31,13 @@
 extern DB_functions_t *deadbeef;
 
 int
-action_jump_to_current_handler (DB_plugin_action_t *act, int ctx)
-{
+action_jump_to_current_handler (DB_plugin_action_t *act, int ctx) {
     deadbeef->sendmessage (DB_EV_TRACKFOCUSCURRENT, 0, 0, 0);
     return 0;
 }
 
 static DB_playItem_t*
-skip_to_get_track_helper ()
-{
+skip_to_get_track_helper () {
     DB_playItem_t *current = deadbeef->streamer_get_playing_track ();
     if (!current) {
         return NULL;
@@ -75,8 +73,7 @@ skip_to_get_track_helper ()
 }
 
 static void
-skip_to_prev_helper (const char *meta)
-{
+skip_to_prev_helper (const char *meta) {
     if (!meta) {
         return;
     }
@@ -124,8 +121,7 @@ skip_to_prev_helper (const char *meta)
 }
 
 static void
-skip_to_next_helper (const char *meta)
-{
+skip_to_next_helper (const char *meta) {
     if (!meta) {
         return;
     }
@@ -163,50 +159,43 @@ skip_to_next_helper (const char *meta)
 }
 
 int
-action_skip_to_next_album_handler (DB_plugin_action_t *act, int ctx)
-{
+action_skip_to_next_album_handler (DB_plugin_action_t *act, int ctx) {
     skip_to_next_helper ("album");
     return 0;
 }
 
 int
-action_skip_to_next_genre_handler (DB_plugin_action_t *act, int ctx)
-{
+action_skip_to_next_genre_handler (DB_plugin_action_t *act, int ctx) {
     skip_to_next_helper ("genre");
     return 0;
 }
 
 int
-action_skip_to_next_composer_handler (DB_plugin_action_t *act, int ctx)
-{
+action_skip_to_next_composer_handler (DB_plugin_action_t *act, int ctx) {
     skip_to_next_helper ("composer");
     return 0;
 }
 
 int
-action_skip_to_prev_album_handler (DB_plugin_action_t *act, int ctx)
-{
+action_skip_to_prev_album_handler (DB_plugin_action_t *act, int ctx) {
     skip_to_prev_helper ("album");
     return 0;
 }
 
 int
-action_skip_to_prev_genre_handler (DB_plugin_action_t *act, int ctx)
-{
+action_skip_to_prev_genre_handler (DB_plugin_action_t *act, int ctx) {
     skip_to_prev_helper ("genre");
     return 0;
 }
 
 int
-action_skip_to_prev_composer_handler (DB_plugin_action_t *act, int ctx)
-{
+action_skip_to_prev_composer_handler (DB_plugin_action_t *act, int ctx) {
     skip_to_prev_helper ("composer");
     return 0;
 }
 
 int
-action_skip_to_next_artist_handler (DB_plugin_action_t *act, int ctx)
-{
+action_skip_to_next_artist_handler (DB_plugin_action_t *act, int ctx) {
     deadbeef->pl_lock ();
     DB_output_t *output = deadbeef->get_output ();
     if (output->state () == DDB_PLAYBACK_STATE_STOPPED) {
@@ -261,8 +250,7 @@ action_skip_to_next_artist_handler (DB_plugin_action_t *act, int ctx)
 }
 
 int
-action_skip_to_prev_artist_handler (DB_plugin_action_t *act, int ctx)
-{
+action_skip_to_prev_artist_handler (DB_plugin_action_t *act, int ctx) {
     deadbeef->pl_lock ();
     DB_output_t *output = deadbeef->get_output ();
     if (output->state () == DDB_PLAYBACK_STATE_STOPPED) {

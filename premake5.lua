@@ -42,7 +42,9 @@ project "deadbeef"
        "external/wcwidth/wcwidth.c",
        "external/wcwidth/wcwidth.h",
        "ConvertUTF/*.h",
-       "ConvertUTF/*.c"
+       "ConvertUTF/*.c",
+       "shared/ctmap.c",
+       "shared/ctmap.h"
    }
 
    defines { "PORTABLE=1", "STATICLINK=1", "PREFIX=\"donotuse\"", "LIBDIR=\"donotuse\"", "DOCDIR=\"donotuse\"" }
@@ -72,6 +74,30 @@ project "aac_plugin"
    files {
        "plugins/aac/*.h",
        "plugins/aac/*.c",
+       "shared/mp4tagutil.h",
+       "shared/mp4tagutil.c",
+       "plugins/libmp4ff/*.h",
+       "plugins/libmp4ff/*.c"
+   }
+
+   defines { "USE_MP4FF=1", "USE_TAGGING=1" }
+   links { "faad" }
+
+project "alac_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "alac"
+
+   files {
+       "plugins/alac/alac_plugin.c",
+       "plugins/alac/alac.c",
+       "plugins/alac/decomp.h",
+       "plugins/alac/demux.c",
+       "plugins/alac/demux.h",
+       "plugins/alac/stream.c",
+       "plugins/alac/stream.h",
        "shared/mp4tagutil.h",
        "shared/mp4tagutil.c",
        "plugins/libmp4ff/*.h",
@@ -269,6 +295,8 @@ project "ddb_gui_GTK2"
    files {
        "plugins/gtkui/*.h",
        "plugins/gtkui/*.c",
+       "shared/eqpreset.c",
+       "shared/eqpreset.h",
        "shared/pluginsettings.h",
        "shared/pluginsettings.c",
        "shared/trkproperties_shared.h",
@@ -302,6 +330,8 @@ project "ddb_gui_GTK3"
    files {
        "plugins/gtkui/*.h",
        "plugins/gtkui/*.c",
+       "shared/eqpreset.c",
+       "shared/eqpreset.h",
        "shared/pluginsettings.h",
        "shared/pluginsettings.c",
        "shared/trkproperties_shared.h",
@@ -591,13 +621,55 @@ project "nullout"
        "plugins/nullout/*.c",
    }
 
+project "ddb_soundtouch"
+   kind "SharedLib"
+   language "C++"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   includedirs { "plugins/soundtouch/soundtouch/include" }
+
+   files {
+       "plugins/soundtouch/plugin.c",
+       "plugins/soundtouch/st.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/AAFilter.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/BPMDetect.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/FIFOSampleBuffer.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/FIRFilter.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/InterpolateCubic.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/InterpolateLinear.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/InterpolateShannon.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/PeakFinder.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/RateTransposer.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/SoundTouch.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/SoundTouch.sln",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/SoundTouch.vcxproj",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/TDStretch.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/cpu_detect_x86.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/mmx_optimized.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/sse_optimized.cpp"
+   }
+
+project "tta"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/tta/ttaplug.c",
+       "plugins/tta/filter.h",
+       "plugins/tta/ttadec.c",
+       "plugins/tta/ttadec.h"
+   }
+
 
 project "resources"
     kind "Utility"
     postbuildcommands {
         "{MKDIR} bin/%{cfg.buildcfg}/pixmaps",
         "{COPY} icons/32x32/deadbeef.png bin/%{cfg.buildcfg}",
-        "{COPY} pixmaps/*.png pixmaps/*.svg bin/%{cfg.buildcfg}/pixmaps/",
+        "{COPY} pixmaps/*.png bin/%{cfg.buildcfg}/pixmaps/",
         "{MKDIR} bin/%{cfg.buildcfg}/plugins/convpresets",
         "{COPY} plugins/converter/convpresets bin/%{cfg.buildcfg}/plugins/",
     }

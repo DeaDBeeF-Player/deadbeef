@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * adplug.h - AdPlug main header file, by Simon Peter <dn.tlp@gmx.net>
  */
@@ -22,11 +22,13 @@
 #ifndef H_ADPLUG_ADPLUG
 #define H_ADPLUG_ADPLUG
 
+#include <string>
+
 #include "player.h"
 #include "opl.h"
 #include "fprovide.h"
 #include "players.h"
-//#include "database.h"
+#include "database.h"
 
 class CAdPlug
 {
@@ -35,19 +37,19 @@ class CAdPlug
 public:
   static const CPlayers players;
 
-  static CPlayer *factory(const char *fn, Copl *opl,
+  static CPlayer *factory(const std::string &fn, Copl *opl,
 			  const CPlayers &pl = players,
 			  const CFileProvider &fp = CProvider_Filesystem());
 
-//  static void set_database(CAdPlugDatabase *db);
-  static const char *get_version();
-  static void debug_output(const char *filename);
+  static void set_database(CAdPlugDatabase *db);
+  static std::string get_version();
+  static void debug_output(const std::string &filename);
 
 private:
-//  static CAdPlugDatabase *database;
-  static CPlayerDesc allplayers[];
+  static CAdPlugDatabase *database;
+  static const CPlayerDesc allplayers[];
 
-  static const CPlayers &init_players(CPlayerDesc pd[]);
+  static const CPlayers &init_players(const CPlayerDesc pd[]);
 };
 
 #endif

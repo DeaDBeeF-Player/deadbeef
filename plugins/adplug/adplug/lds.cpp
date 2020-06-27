@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * lds.cpp - LOUDNESS Player by Simon Peter <dn.tlp@gmx.net>
  */
@@ -83,7 +83,7 @@ CldsPlayer::~CldsPlayer()
   if(patterns) delete [] patterns;
 }
 
-bool CldsPlayer::load(const char *filename, const CFileProvider &fp)
+bool CldsPlayer::load(const std::string &filename, const CFileProvider &fp)
 {
   binistream	*f;
   unsigned int	i, j;
@@ -142,7 +142,7 @@ bool CldsPlayer::load(const char *filename, const CFileProvider &fp)
 
   AdPlug_LogWrite("CldsPlayer::load(\"%s\",fp): loading LOUDNESS file: mode = "
 		  "%d, pattlen = %d, numpatch = %d, numposi = %d\n",
-		  filename, mode, pattlen, numpatch, numposi);
+		  filename.c_str(), mode, pattlen, numpatch, numposi);
 
   // load patterns
   f->ignore(2);		// ignore # of digital sounds (not played by this player)

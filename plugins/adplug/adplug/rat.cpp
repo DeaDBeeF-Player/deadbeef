@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * [xad] RAT player, by Riven the Mage <riven@ok.ru>
  */
@@ -29,7 +29,7 @@
   comment : there are bug in original replayer's adlib_init(): wrong frequency registers.
 */
 
-#include <string.h>
+#include <cstring>
 #include "rat.h"
 #include "debug.h"
 
@@ -254,14 +254,14 @@ float CxadratPlayer::xadplayer_getrefresh()
   return 60.0f;
 }
 
-const char * CxadratPlayer::xadplayer_gettype()
+std::string CxadratPlayer::xadplayer_gettype()
 {
-  return "xad: rat player";
+  return (std::string("xad: rat player"));
 }
 
-const char * CxadratPlayer::xadplayer_gettitle()
+std::string CxadratPlayer::xadplayer_gettitle()
 {
-  return rat.hdr.title;
+  return (std::string(rat.hdr.title,32));
 }
 
 unsigned int CxadratPlayer::xadplayer_getinstruments()

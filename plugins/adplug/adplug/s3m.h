@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * s3m.h - AdLib S3M Player by Simon Peter <dn.tlp@gmx.net>
  */
@@ -23,7 +23,6 @@
 #define H_ADPLUG_S3M
 
 #include "player.h"
-#include <stdint.h>
 
 class Cs3mPlayer: public CPlayer
 {
@@ -32,14 +31,14 @@ class Cs3mPlayer: public CPlayer
 
   Cs3mPlayer(Copl *newopl);
 
-  bool load(const char *filename, const CFileProvider &fp);
+  bool load(const std::string &filename, const CFileProvider &fp);
   bool update();
   void rewind(int subsong);
   float getrefresh();
 
-  const char * gettype();
-  const char * gettitle()
-    { return header.name; };
+  std::string gettype();
+  std::string gettitle()
+    { return std::string(header.name); };
 
   unsigned int getpatterns()
     { return header.patnum; };
@@ -55,8 +54,8 @@ class Cs3mPlayer: public CPlayer
     { return speed; };
   unsigned int getinstruments()
     { return header.insnum; };
-  const char * getinstrument(unsigned int n)
-    { return inst[n].name; };
+  std::string getinstrument(unsigned int n)
+    { return std::string(inst[n].name); };
 
  protected:
   struct s3mheader {
@@ -90,10 +89,8 @@ class Cs3mPlayer: public CPlayer
   unsigned char orders[256];
   unsigned char crow,ord,speed,tempo,del,songend,loopstart,loopcnt;
 
-  char filetype[30];
-
  private:
-  static const int8_t chnresolv[];
+  static const signed char chnresolv[];
   static const unsigned short notetable[12];
   static const unsigned char vibratotab[32];
 

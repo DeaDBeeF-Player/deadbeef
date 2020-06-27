@@ -71,6 +71,8 @@ extern "C" {
 // that there's a better replacement in the newer deadbeef versions.
 
 // api version history:
+// 1.12 -- deadbeef-1.8.4
+// 1.11 -- deadbeef-1.8.3
 // 1.10 -- deadbeef-1.8.0
 // 1.9 -- deadbeef-0.7.2
 // 1.8 -- deadbeef-0.7.0
@@ -95,7 +97,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 11
+#define DB_API_VERSION_MINOR 12
 
 #if defined(__clang__)
 
@@ -527,17 +529,37 @@ enum {
 };
 
 #if (DDB_API_LEVEL >= 10)
+#if (DDB_API_LEVEL >= 11)
+typedef enum ddb_rg_source_mode_e {
+#else
 enum {
+#endif
+
     DDB_RG_SOURCE_MODE_PLAYBACK_ORDER = 0,
     DDB_RG_SOURCE_MODE_TRACK = 1,
     DDB_RG_SOURCE_MODE_ALBUM = 2,
-};
 
-enum {
+#if (DDB_API_LEVEL >= 11)
+} ddb_rg_source_mode_t;
+#else
+};
+#endif
+
+#if (DDB_API_LEVEL >= 11)
+typedef enum ddb_rg_processing_e {
+#else
+    enum {
+#endif
+
     DDB_RG_PROCESSING_NONE = 0,
     DDB_RG_PROCESSING_GAIN = 1,
     DDB_RG_PROCESSING_PREVENT_CLIPPING = 2,
+
+#if (DDB_API_LEVEL >= 11)
+} ddb_rg_processing_t;
+#else
 };
+#endif
 
 typedef struct {
     int _size;
@@ -1332,12 +1354,12 @@ typedef struct {
     // free the code returned by tf_compile
     void (*tf_free) (char *code);
 
-    // evaluate the titleformatting script in a given context
+    // Evaluate the compiled titleformatting script in the given context
     // ctx: a pointer to ddb_tf_context_t structure initialized by the caller
     // code: the bytecode data created by tf_compile
     // out: buffer allocated by the caller, must be big enough to fit the output string
     // outlen: the size of out buffer
-    // returns -1 on fail, output size on success
+    // returns -1 on failure, output size on success
     int (*tf_eval) (ddb_tf_context_t *ctx, const char *code, char *out, int outlen);
 
     // sort using title formatting v2
@@ -1510,6 +1532,14 @@ typedef struct {
 
     ddb_repeat_t (*streamer_get_repeat) (void);
 #endif
+
+// since 1.12
+#if (DDB_API_LEVEL >= 12)
+    DB_metaInfo_t *(*pl_meta_for_key_with_override) (ddb_playItem_t *it, const char *key);
+    const char *(*pl_find_meta_with_override) (DB_playItem_t *it, const char *key);
+    int (*pl_get_meta_with_override) (ddb_playItem_t *it, const char *key, char *val, size_t size);
+    int (*pl_meta_exists_with_override) (DB_playItem_t *it, const char *key);
+#endif
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this
@@ -1562,7 +1592,11 @@ enum {
 // action contexts
 // since 1.5
 #if (DDB_API_LEVEL >= 5)
+#if (DDB_API_LEVEL >= 11)
+typedef enum ddb_action_context_e {
+#else
 enum {
+#endif
     DDB_ACTION_CTX_MAIN,
     DDB_ACTION_CTX_SELECTION,
     // NOTE: starting with API 1.8, plugins should be using the
@@ -1570,13 +1604,20 @@ enum {
     DDB_ACTION_CTX_PLAYLIST,
     DDB_ACTION_CTX_NOWPLAYING,
     DDB_ACTION_CTX_COUNT
+#if (DDB_API_LEVEL >= 11)
+} ddb_action_context_t;
+#else
 };
+#endif
 #endif
 
 struct DB_plugin_action_s;
 
 typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, void *userdata);
-#if (DDB_API_LEVEL >= 5)
+
+#if (DDB_API_LEVEL >= 11)
+typedef int (*DB_plugin_action_callback2_t) (struct DB_plugin_action_s *action, ddb_action_context_t ctx);
+#elif (DDB_API_LEVEL >= 5)
 typedef int (*DB_plugin_action_callback2_t) (struct DB_plugin_action_s *action, int ctx);
 #endif
 

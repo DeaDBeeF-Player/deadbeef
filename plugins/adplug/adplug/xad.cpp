@@ -14,127 +14,162 @@
 
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
   xad.cpp - XAD shell player by Riven the Mage <riven@ok.ru>
 */
 
+/*
+ * Copyright (c) 2015 - 2017 Wraithverge <liam82067@yahoo.com>
+ * - Realigned to Tabs.
+ * - Added support for Speed indicator in 'File Info' dialogues.
+ */
+
 #include "xad.h"
+// Wraithverge: added DEBUG PPD.
+#ifdef DEBUG
 #include "debug.h"
+#endif
 
 /* -------- Public Methods -------------------------------- */
 
 CxadPlayer::CxadPlayer(Copl * newopl) : CPlayer(newopl)
 {
-  tune = 0;
+	tune = 0;
 }
 
 CxadPlayer::~CxadPlayer()
 {
-  if (tune)
-    delete [] tune;
+	if (tune) delete[] tune;
 }
 
-bool CxadPlayer::load(const char *filename, const CFileProvider &fp)
+bool CxadPlayer::load(const std::string &filename, const CFileProvider &fp)
 {
-  binistream *f = fp.open(filename); if(!f) return false;
-  bool ret = false;
+	binistream *f = fp.open(filename); if(!f) return false;
+	bool ret = false;
+	bool xad_header = true;
 
-  // load header
-  xad.id = f->readInt(4);
-  f->readString(xad.title, 36);
-  f->readString(xad.author, 36);
-  xad.fmt = f->readInt(2);
-  xad.speed = f->readInt(1);
-  xad.reserved_a = f->readInt(1);
+	// load header
+	xad.id = f->readInt(4);
+	f->readString(xad.title, 36);
+	f->readString(xad.author, 36);
+	xad.fmt = f->readInt(2);
+	xad.speed = f->readInt(1);
+	xad.reserved_a = f->readInt(1);
 
-  // 'XAD!' - signed ?
-  if(xad.id != 0x21444158) { fp.close(f); return false; }
+	// 'XAD!' - signed ?
+	if (xad.id != 0x21444158) {
+		if ((xad.id & 0xFFFFFF) == 4607298) // 'BMF'
+		{
+			xad_header = false;
+			xad.fmt = BMF;
+		}
+		if (xad_header)
+		{
+			fp.close(f);
+			return false;
+		}
+	}
+	if (!xad_header)
+	{
+		xad.title[0] = 0;
+		xad.author[0] = 0;
+		xad.speed = 0;
+		xad.reserved_a = 0;
+		f->seek(0);
+		tune_size = fp.filesize(f);
+	}
+	else
+	{
+		// get file size
+		tune_size = fp.filesize(f) - 80;
+	}
 
-  // get file size
-  tune_size = fp.filesize(f) - 80;
+	// load()
+	tune = new unsigned char [tune_size];
+	f->readString((char *)tune, tune_size);
+	fp.close(f);
 
-  // load()
-  tune = new unsigned char [tune_size];
-  f->readString((char *)tune, tune_size);
-  fp.close(f);
+	ret = xadplayer_load();
 
-  ret = xadplayer_load();
+	if (ret) rewind(0);
 
-  if (ret)
-    rewind(0);
-
-  return ret;
+	return ret;
 }
 
 void CxadPlayer::rewind(int subsong)
 {
-  opl->init();
+	opl->init();
 
-  plr.speed = xad.speed;
-  plr.speed_counter = 1;
-  plr.playing = 1;
-  plr.looping = 0;
+	plr.speed = xad.speed;
+	plr.speed_counter = 1;
+	plr.playing = 1;
+	plr.looping = 0;
 
-  // rewind()
-  xadplayer_rewind(subsong);
+	// rewind()
+	xadplayer_rewind(subsong);
 
-#ifdef DEBUG
-  AdPlug_LogWrite("-----------\n");
-#endif
+	#ifdef DEBUG
+	AdPlug_LogWrite("-----------\n");
+	#endif
 }
 
 bool CxadPlayer::update()
 {
-  if (--plr.speed_counter)
-    goto update_end;
+	if (--plr.speed_counter) goto update_end;
 
-  plr.speed_counter = plr.speed;
+	plr.speed_counter = plr.speed;
 
-  // update()
-  xadplayer_update();
+	// update()
+	xadplayer_update();
 
 update_end:
-  return (plr.playing && (!plr.looping));
+	return (plr.playing && (!plr.looping));
 }
 
 float CxadPlayer::getrefresh()
 {
-  return xadplayer_getrefresh();
+	return xadplayer_getrefresh();
 }
 
-const char * CxadPlayer::gettype()
+std::string CxadPlayer::gettype()
 {
-  return xadplayer_gettype();
+	return xadplayer_gettype();
 }
 
-const char * CxadPlayer::gettitle()
+std::string CxadPlayer::gettitle()
 {
-  return xadplayer_gettitle();
+	return xadplayer_gettitle();
 }
 
-const char * CxadPlayer::getauthor()
+std::string CxadPlayer::getauthor()
 {
-  return xadplayer_getauthor();
+	return xadplayer_getauthor();
 }
 
-const char * CxadPlayer::getinstrument(unsigned int i)
+std::string CxadPlayer::getinstrument(unsigned int i)
 {
-  return xadplayer_getinstrument(i);
+	return xadplayer_getinstrument(i);
 }
 
 unsigned int CxadPlayer::getinstruments()
 {
-  return xadplayer_getinstruments();
+	return xadplayer_getinstruments();
+}
+
+// Wraithverge: added this.
+unsigned int CxadPlayer::getspeed()
+{
+	return xadplayer_getspeed();
 }
 
 /* -------- Protected Methods ------------------------------- */
 
 void CxadPlayer::opl_write(int reg, int val)
 {
-  adlib[reg] = val;
-#ifdef DEBUG
-  AdPlug_LogWrite("[ %02X ] = %02X\n",reg,val);
-#endif
-  opl->write(reg,val);
+	adlib[reg] = val;
+	#ifdef DEBUG
+	AdPlug_LogWrite("[ %02X ] = %02X\n",reg,val);
+	#endif
+	opl->write(reg,val);
 }

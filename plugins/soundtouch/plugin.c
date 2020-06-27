@@ -31,7 +31,6 @@ enum {
     ST_PARAM_USE_QUICKSEEK,
     ST_PARAM_SEQUENCE_MS,
     ST_PARAM_SEEKWINDOW_MS,
-    ST_PARAM_SET_OUTPUT_SAMPLERATE,
     ST_PARAM_COUNT
 };
 
@@ -49,7 +48,6 @@ typedef struct {
     int use_quickseek;
     int sequence_ms;
     int seekwindow_ms;
-    int set_output_samplerate;
     int changed;
 } ddb_soundtouch_t;
 
@@ -89,31 +87,18 @@ int
 st_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxframes, ddb_waveformat_t *fmt, float *ratio) {
     ddb_soundtouch_t *st = (ddb_soundtouch_t *)_src;
     if (st->changed) {
-        if (st->set_output_samplerate > 0) {
-            st_set_rate_change (st->st, 0);
-            st_set_rate (st->st, fmt->samplerate / (float)st->set_output_samplerate);
-        }
-        else {
-            st_set_rate (st->st, 1);
-            st_set_rate_change (st->st, st->rate);
-        }
+        st_set_rate (st->st, 1);
+        st_set_rate_change (st->st, st->rate);
         st_set_pitch_semi_tones (st->st, st->pitch);
         st_set_tempo_change (st->st, st->tempo);
         st_set_setting (st->st, SETTING_USE_AA_FILTER, st->use_aa_filter);
-        st_set_setting (st->st, SETTING_AA_FILTER_LENGTH, st->aa_filter_length);
+        st_set_setting (st->st, SETTING_AA_FILTER_LENGTH, st->aa_filter_length &~ 7);
         st_set_setting (st->st, SETTING_USE_QUICKSEEK, st->use_quickseek);
         st_set_setting (st->st, SETTING_SEQUENCE_MS, st->sequence_ms);
         st_set_setting (st->st, SETTING_SEEKWINDOW_MS, st->seekwindow_ms);
         st->changed = 0;
     }
     *ratio = (1.f + 0.01f * st->tempo);
-
-    if (st->set_output_samplerate > 0) {
-        fmt->samplerate = st->set_output_samplerate;
-    }
-    else {
-        *ratio *= (1.f + 0.01f * st->rate);
-    }
 
     st_set_sample_rate (st->st, fmt->samplerate);
     st_set_channels (st->st, fmt->channels);
@@ -150,8 +135,6 @@ st_get_param_name (int p) {
         return "Time Stretch Sequence Length (ms)";
     case ST_PARAM_SEEKWINDOW_MS:
         return "Time Stretch Seek Window Length (ms)";
-    case ST_PARAM_SET_OUTPUT_SAMPLERATE:
-        return "Set Output Samplerate";
     default:
         fprintf (stderr, "st_param_name: invalid param index (%d)\n", p);
     }
@@ -199,15 +182,6 @@ st_set_param (ddb_dsp_context_t *ctx, int p, const char *val) {
         st->seekwindow_ms = atoi (val);
         st->changed = 1;
         break;
-    case ST_PARAM_SET_OUTPUT_SAMPLERATE:
-        st->set_output_samplerate = atoi (val);
-        if (st->set_output_samplerate < 8000) {
-            st->set_output_samplerate = 0;
-        }
-        else if (st->set_output_samplerate > 192000) {
-            st->set_output_samplerate = 192000;
-        }
-        break;
     default:
         fprintf (stderr, "st_param: invalid param index (%d)\n", p);
     }
@@ -241,24 +215,20 @@ st_get_param (ddb_dsp_context_t *ctx, int p, char *val, int sz) {
     case ST_PARAM_SEEKWINDOW_MS:
         snprintf (val, sz, "%d", st->seekwindow_ms);
         break;
-    case ST_PARAM_SET_OUTPUT_SAMPLERATE:
-        snprintf (val, sz, "%d", st->set_output_samplerate);
-        break;
     default:
         fprintf (stderr, "st_get_param: invalid param index (%d)\n", p);
     }
 }
 
 static const char settings_dlg[] =
-    "property \"Tempo Change (%)\" spinbtn[-200,200,1] 0 0;\n"
+    "property \"Tempo Change (%)\" spinbtn[-90,200,1] 0 0;\n"
     "property \"Pitch Change (semi-tones)\" spinbtn[-24,24,0.0000001] 1 0;\n"
-    "property \"Playback Rate Change (%)\" spinbtn[-200,200,1] 2 0;\n"
-    "property \"Absolute Samplerate (overrides Rate Change if nonzero)\" spinbtn[0,192000,1] 8 0;\n"
+    "property \"Playback Rate Change (%)\" spinbtn[-90,200,1] 2 0;\n"
     "property \"Use AA Filter\" checkbox 3 0;\n"
     "property \"AA Filter Length\" spinbtn[16,64,1] 4 32;\n"
     "property \"Use Quickseek\" checkbox 5 0;\n"
-    "property \"Time Stretch Sequence Length (ms)\" spinbtn[10,500,1] 6 82;\n"
-    "property \"Time Stretch Seek Window Length (ms)\" spinbtn[10,500,1] 7 28;\n"
+    "property \"Time Stretch Sequence Length (ms)\" spinbtn[10,50,1] 6 10;\n"
+    "property \"Time Stretch Seek Window Length (ms)\" spinbtn[10,50,1] 7 28;\n"
 ;
 
 static DB_dsp_t plugin = {
@@ -275,7 +245,7 @@ static DB_dsp_t plugin = {
     .plugin.copyright = 
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
-        "uses SoundTouch Library, (C) Olli Parviainen"
+        "Uses SoundTouch Library 2.1.2, (C) Olli Parviainen"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"

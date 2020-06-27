@@ -23,6 +23,7 @@
 
 #import "DdbTabStrip.h"
 #import "DdbShared.h"
+#import "NSMenu+ActionItems.h"
 #include "../../../deadbeef.h"
 
 extern DB_functions_t *deadbeef;
@@ -663,11 +664,23 @@ plt_get_title_wrapper (int plt) {
 
 - (void)closePlaylist:(id)sender {
     if (_tab_clicked != -1) {
-        deadbeef->plt_remove (_tab_clicked);
-        int playlist = deadbeef->plt_get_curr_idx ();
-        deadbeef->conf_set_int ("playlist.current", playlist);
-        [self scrollToTab:playlist];
-        _tab_clicked = -1;
+        NSAlert *alert = [NSAlert new];
+
+        alert.messageText = @"Removing playlist";
+        alert.informativeText = [NSString stringWithFormat:@"Do you really want to remove the playlist '%@'?", plt_get_title_wrapper (_tab_clicked)];
+        [alert addButtonWithTitle:@"No"];
+        [alert addButtonWithTitle:@"Yes"];
+
+        [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+            if (returnCode == NSAlertFirstButtonReturn) {
+                return;
+            }
+            deadbeef->plt_remove (_tab_clicked);
+            int playlist = deadbeef->plt_get_curr_idx ();
+            deadbeef->conf_set_int ("playlist.current", playlist);
+            [self scrollToTab:playlist];
+            _tab_clicked = -1;
+        }];
     }
 }
 
@@ -695,6 +708,21 @@ plt_get_title_wrapper (int plt) {
             NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:@"Rename Playlist" action:@selector(renamePlaylistAction:) keyEquivalent:@""];
             [menu insertItem:item atIndex:0];
         }
+
+        [menu addActionItemsForContext:DDB_ACTION_CTX_PLAYLIST track:NULL filter:^BOOL(DB_plugin_action_t * _Nonnull action) {
+
+            if (!(action->flags & DB_ACTION_MULTIPLE_TRACKS)) {
+                return NO;
+            }
+
+            if (action->flags & DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST) {
+                return NO;
+            }
+
+            return YES;
+        }];
+
+
         return menu;
     }
     return nil;

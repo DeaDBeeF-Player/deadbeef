@@ -85,6 +85,7 @@
 #include "playqueue.h"
 #include "tf.h"
 #include "logger.h"
+
 #ifdef OSX_APPBUNDLE
 #include "scriptable/scriptable.h"
 #include "scriptable/scriptable_dsp.h"
@@ -1321,7 +1322,6 @@ main (int argc, char *argv[]) {
 
 
 #ifdef OSX_APPBUNDLE
-    // work in progress API, doesn't compile outside of xcode yet
     scriptableInit();
     scriptableDspLoadPresets();
     scriptableEncoderLoadPresets();

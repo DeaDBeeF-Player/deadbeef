@@ -14,7 +14,7 @@
 
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
   cff.cpp - BoomTracker loader by Riven the Mage <riven@ok.ru>
 */
@@ -24,6 +24,7 @@
   slides use previous effect data instead of current.
 */
 
+#include <cstring>
 #include <stdlib.h>
 #include <string.h>
 
@@ -36,7 +37,7 @@ CPlayer *CcffLoader::factory(Copl *newopl)
   return new CcffLoader(newopl);
 }
 
-bool CcffLoader::load(const char *filename, const CFileProvider &fp)
+bool CcffLoader::load(const std::string &filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   const unsigned char conv_inst[11] = { 2,1,10,9,4,3,6,5,0,8,7 };
@@ -68,17 +69,17 @@ bool CcffLoader::load(const char *filename, const CFileProvider &fp)
       if (!unpacker->unpack(packed_module,module))
 	{
 	  delete unpacker;
-	  delete[] packed_module;
-	  delete[] module;
+	  delete [] packed_module;
+	  delete [] module;
 	  return false;
 	}
 
       delete unpacker;
-      delete[] packed_module;
+      delete [] packed_module;
 
       if (memcmp(&module[0x5E1],"CUD-FM-File - SEND A POSTCARD -",31))
 	{
-	  delete[] module;
+	  delete [] module;
 	  return false;
 	}
     }
@@ -274,27 +275,27 @@ void CcffLoader::rewind(int subsong)
     }
 }
 
-const char * CcffLoader::gettype()
+std::string CcffLoader::gettype()
 {
   if (header.packed)
-    return "BoomTracker 4, packed";
+    return std::string("BoomTracker 4, packed");
   else
-    return "BoomTracker 4";
+    return std::string("BoomTracker 4");
 }
 
-const char * CcffLoader::gettitle()
+std::string CcffLoader::gettitle()
 {
-  return song_title;
+  return std::string(song_title,20);
 }
 
-const char * CcffLoader::getauthor()
+std::string CcffLoader::getauthor()
 {
-  return song_author;
+  return std::string(song_author,20);
 }
 
-const char * CcffLoader::getinstrument(unsigned int n)
+std::string CcffLoader::getinstrument(unsigned int n)
 {
-  return instruments[n].name;
+  return std::string(instruments[n].name);
 }
 
 unsigned int CcffLoader::getinstruments()
@@ -378,7 +379,10 @@ long CcffLoader::cff_unpacker::unpack(unsigned char *ibuf, unsigned char *obuf)
 	  }
 
 	  for (unsigned int i=0;i<repeat_counter*repeat_length;i++)
-	    output[output_length++] = output[output_length - repeat_length];
+	  {
+	    output[output_length] = output[output_length - repeat_length];
+	    output_length++;
+	  }
 
 	  code_length = old_code_length;
 

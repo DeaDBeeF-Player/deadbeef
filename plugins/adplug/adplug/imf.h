@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * imf.h - IMF Player by Simon Peter <dn.tlp@gmx.net>
  */
@@ -35,18 +35,18 @@ public:
 	~CimfPlayer()
 	  { if(data) delete [] data; if(footer) delete [] footer; };
 
-	bool load(const char *filename, const CFileProvider &fp);
+	bool load(const std::string &filename, const CFileProvider &fp);
 	bool update();
 	void rewind(int subsong);
 	float getrefresh()
 	  { return timer; };
 
-	const char * gettype()
-	  { return "IMF File Format"; }
-	const char * gettitle();
-	const char * getauthor()
+	std::string gettype()
+	  { return std::string("IMF File Format"); }
+	std::string gettitle();
+	std::string getauthor()
 	  { return author_name; }
-	const char * getdesc();
+	std::string getdesc();
 
 protected:
 	unsigned long	pos, size;
@@ -54,9 +54,7 @@ protected:
 	bool		songend;
 	float		rate, timer;
 	char		*footer;
-	char track_name[100], game_name[100], author_name[100], remarks[100];
-	char title[100];
-	char desc[100];
+	std::string	track_name, game_name, author_name, remarks;
 
 	struct Sdata {
 		unsigned char	reg, val;
@@ -64,7 +62,7 @@ protected:
 	} *data;
 
 private:
-	float getrate(const char *filename, const CFileProvider &fp, binistream *f);
+	float getrate(const std::string &filename, const CFileProvider &fp, binistream *f);
 };
 
 #endif

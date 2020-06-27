@@ -23,7 +23,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
-#include "playlist.h"
+#include "plmeta.h"
 #include "junklib.h"
 #include "vfs.h"
 #include "../../common.h"

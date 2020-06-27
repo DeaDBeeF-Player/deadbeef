@@ -23,8 +23,9 @@
 
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
-#include "playlist.h"
+#include "plmeta.h"
 #include "tf.h"
+#include "tftintutil.h"
 #include "playqueue.h"
 #include "streamer.h"
 #include "plugins.h"
@@ -2331,6 +2332,74 @@ static DB_output_t fake_out = {
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
     XCTAssert(!strcmp (buffer, "\t   hello  \t"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_CalculateTintFromString_LeadingTint_Valid {
+    char str[] = "\0331;1mhello";
+
+    int tintRanges[100];
+
+    char *output;
+    unsigned count = calculate_tint_ranges_from_string (str, tintRanges, 100, &output);
+
+    XCTAssertEqual (count, 2);
+    XCTAssertTrue(!strcmp(output,"hello"));
+    XCTAssertEqual(tintRanges[0], 1);
+    XCTAssertEqual(tintRanges[1], 0);
+
+    free (output);
+}
+
+- (void)test_CalculateTintFromString_TrailingTint_Valid {
+    char str[] = "hello\0331;1m";
+
+    int tintRanges[100];
+
+    char *output;
+    unsigned count = calculate_tint_ranges_from_string (str, tintRanges, 100, &output);
+
+    XCTAssertEqual (count, 2);
+    XCTAssertTrue(!strcmp(output,"hello"));
+    XCTAssertEqual(tintRanges[0], 1);
+    XCTAssertEqual(tintRanges[1], 5);
+
+    free (output);
+}
+
+- (void)test_CalculateTintFromString_MultipleTintLeadingTrailing_Valid {
+    char str[] = "\0331;-1mhello\0331;1m";
+
+    int tintRanges[100];
+
+    char *output;
+    unsigned count = calculate_tint_ranges_from_string (str, tintRanges, 100, &output);
+
+    XCTAssertEqual (count, 4);
+    XCTAssertTrue(!strcmp(output,"hello"));
+    XCTAssertEqual(tintRanges[0], -1);
+    XCTAssertEqual(tintRanges[1], 0);
+    XCTAssertEqual(tintRanges[2], 0);
+    XCTAssertEqual(tintRanges[3], 5);
+
+    free (output);
+}
+
+- (void)test_CalculateTintFromString_MultipleTintMiddle_Valid {
+    char str[] = "Leading\0331;-5mMiddle\0331;5mTrailing";
+
+    int tintRanges[100];
+
+    char *output;
+    unsigned count = calculate_tint_ranges_from_string (str, tintRanges, 100, &output);
+
+    XCTAssertEqual (count, 4);
+    XCTAssertTrue(!strcmp(output,"LeadingMiddleTrailing"));
+    XCTAssertEqual(tintRanges[0], -5);
+    XCTAssertEqual(tintRanges[1], 7);
+    XCTAssertEqual(tintRanges[2], 0);
+    XCTAssertEqual(tintRanges[3], 13);
+
+    free (output);
 }
 
 @end

@@ -14,7 +14,7 @@
 
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
   dtm.cpp - DTM loader by Riven the Mage <riven@ok.ru>
 */
@@ -22,7 +22,7 @@
   NOTE: Panning (Ex) effect is ignored.
 */
 
-#include <string.h>
+#include <cstring>
 #include "dtm.h"
 
 /* -------- Public Methods -------------------------------- */
@@ -32,7 +32,7 @@ CPlayer *CdtmLoader::factory(Copl *newopl)
   return new CdtmLoader(newopl);
 }
 
-bool CdtmLoader::load(const char *filename, const CFileProvider &fp)
+bool CdtmLoader::load(const std::string &filename, const CFileProvider &fp)
 {
   binistream *f = fp.open(filename); if(!f) return false;
   const unsigned char conv_inst[11] = { 2,1,10,9,4,3,6,5,0,8,7 };
@@ -132,7 +132,7 @@ bool CdtmLoader::load(const char *filename, const CFileProvider &fp)
 
       if (!unpacked_length)
 	{
-	  delete pattern;
+	  delete [] pattern;
 	  fp.close(f);
 	  return false;
 	}
@@ -251,29 +251,29 @@ float CdtmLoader::getrefresh()
   return 18.2f;
 }
 
-const char * CdtmLoader::gettype()
+std::string CdtmLoader::gettype()
 {
-  return "DeFy Adlib Tracker";
+  return std::string("DeFy Adlib Tracker");
 }
 
-const char * CdtmLoader::gettitle()
+std::string CdtmLoader::gettitle()
 {
-  return header.title;
+  return std::string(header.title);
 }
 
-const char * CdtmLoader::getauthor()
+std::string CdtmLoader::getauthor()
 {
-  return header.author;
+  return std::string(header.author);
 }
 
-const char * CdtmLoader::getdesc()
+std::string CdtmLoader::getdesc()
 {
-  return desc;
+  return std::string(desc);
 }
 
-const char * CdtmLoader::getinstrument(unsigned int n)
+std::string CdtmLoader::getinstrument(unsigned int n)
 {
-  return instruments[n].name;
+  return std::string(instruments[n].name);
 }
 
 unsigned int CdtmLoader::getinstruments()

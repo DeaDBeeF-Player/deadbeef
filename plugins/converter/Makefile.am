@@ -1,12 +1,16 @@
 convdata = \
-	convpresets/AAC_(Nero_FAAC).txt\
+	convpresets/AAC_VBR_192Kbps_(Nero_FAAC).txt\
+	convpresets/AAC_VBR_256Kbps_(Nero_FAAC).txt\
+	convpresets/AAC_VBR_320Kbps_(Nero_FAAC).txt\
 	convpresets/FLAC_(compression_level_5).txt\
 	convpresets/MP3_CBR_320_Kbps_(Lame).txt\
 	convpresets/MP3_VBR_192Kbps_(Lame).txt\
 	convpresets/MS_RIFF_WAV.txt\
 	convpresets/MusePack.txt\
 	convpresets/Ogg_FLAC.txt\
-	convpresets/Ogg_Vorbis_(-q_5).txt\
+	convpresets/Ogg_VBR_192Kbps.txt\
+	convpresets/Ogg_VBR_256Kbps.txt\
+	convpresets/Ogg_VBR_320Kbps.txt\
 	convpresets/Opus.txt\
 	convpresets/TTA.txt\
 	convpresets/WavPack.txt\

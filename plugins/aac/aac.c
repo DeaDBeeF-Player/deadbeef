@@ -242,6 +242,10 @@ mp4_track_get_info(mp4ff_t *mp4, int track, float *duration, int *samplerate, in
         trace ("NeAACDecInit2 returned error\n");
         goto error;
     }
+    if (ch == 0) {
+        trace ("NeAACDecInit2 returned 0 channels\n");
+        goto error;
+    }
     *samplerate = (int)srate;
     *channels = ch;
     samples = mp4ff_num_samples(mp4, track);
@@ -1029,8 +1033,9 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                                 free (chapters[n].title);
                             }
                         }
-                        free (chapters);
                         if (cue) {
+                            free (chapters);
+                            chapters = NULL;
                             mp4ff_close (mp4);
                             deadbeef->pl_item_unref (it);
                             deadbeef->pl_item_unref (cue);
@@ -1038,7 +1043,8 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                             return cue;
                         }
                     }
-
+                    free (chapters);
+                    chapters = NULL;
                     deadbeef->pl_unlock ();
 
                     DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, samplerate);

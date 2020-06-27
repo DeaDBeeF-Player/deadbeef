@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>534D13B4-7360-415A-926F-D5212B2BBEFA</string>
+	<key>IDESourceControlProjectName</key>
+	<string>deadbeef</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>5a031502-5ecf-44a1-884c-8ae1cb1c7d14</key>
+		<string>svn://svn.code.sf.net/p/sc68/code</string>
+		<key>870F2FA92E71E8245C3680AD04155F36F65F581C</key>
+		<string>https://github.com/Alexey-Yakovenko/deadbeef-osx-deps.git</string>
+		<key>E53431AAD500967BB7F43A33CE93F09E5ADD8308</key>
+		<string>github.com:Alexey-Yakovenko/deadbeef.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>osx/deadbeef.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>5a031502-5ecf-44a1-884c-8ae1cb1c7d14</key>
+		<string>../../../sc68-code</string>
+		<key>870F2FA92E71E8245C3680AD04155F36F65F581C</key>
+		<string>../../osx/deps</string>
+		<key>E53431AAD500967BB7F43A33CE93F09E5ADD8308</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>github.com:Alexey-Yakovenko/deadbeef.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>E53431AAD500967BB7F43A33CE93F09E5ADD8308</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>E53431AAD500967BB7F43A33CE93F09E5ADD8308</string>
+			<key>IDESourceControlWCCName</key>
+			<string>deadbeef</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>870F2FA92E71E8245C3680AD04155F36F65F581C</string>
+			<key>IDESourceControlWCCName</key>
+			<string>deps</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>5a031502-5ecf-44a1-884c-8ae1cb1c7d14</string>
+			<key>IDESourceControlWCCName</key>
+			<string>sc68-code</string>
+		</dict>
+	</array>
+</dict>
+</plist>

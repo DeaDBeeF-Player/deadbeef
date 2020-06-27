@@ -10,6 +10,7 @@
 - (NSString *)propertySheet:(PropertySheetViewController *)vc valueForKey:(NSString *)key def:(NSString *)def item:(id)item;
 - (void)propertySheet:(PropertySheetViewController *)vc setValue:(NSString *)value forKey:(NSString *)key item:(id)item;
 @optional
+- (BOOL)propertySheet:(PropertySheetViewController *)vc itemIsReadonly:(id)item;
 - (id)propertySheet:(PropertySheetViewController *)vc itemForName:(NSString *)name;
 - (id)propertySheet:(PropertySheetViewController *)vc subItemWithIndex:(NSInteger)index item:(id)item;
 - (NSInteger)propertySheet:(PropertySheetViewController *)vc subItemCount:(id)item;
@@ -23,7 +24,7 @@
 @property (nonatomic) IBOutlet PropertySheetContentView *contentView;
 @property (nonatomic,readonly) NSSize contentSize;
 
-@property (nonatomic, weak) IBOutlet id<PropertySheetDataSource> dataSource;
+@property (nonatomic, weak) IBOutlet NSObject<PropertySheetDataSource> *dataSource;
 @property (weak) IBOutlet id item;
 
 @property (nonatomic) CGFloat labelFontSize;

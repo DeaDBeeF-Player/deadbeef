@@ -116,10 +116,6 @@ int gtkui_groups_pinned;
 int gtkui_listview_busy;
 int gtkui_groups_spacing;
 
-#ifdef __APPLE__
-int gtkui_is_retina = 0;
-#endif
-
 int gtkui_unicode_playstate = 0;
 int gtkui_disable_seekbar_overlay = 0;
 
@@ -1353,11 +1349,6 @@ gtkui_mainwin_init(void) {
 
     gtkui_accept_messages = 1;
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-
-#ifdef __APPLE__
-    // FIXME: causes a crash because of start_hidden feature
-//    gtkui_is_retina = is_retina (mainwin);
-#endif
 }
 
 void

@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * binio.h - Binary stream I/O classes
- * Copyright (C) 2002, 2003 Simon Peter <dn.tlp@gmx.net>
+ * Copyright (C) 2002, 2003, 2005 Simon Peter <dn.tlp@gmx.net>
  */
 
 #ifndef H_BINIO_BINIO
@@ -26,13 +26,13 @@
 //
 // Set to 1 to build std::string supporting methods. You need the STL to
 // do this.
-#define BINIO_ENABLE_STRING	0
+#define BINIO_ENABLE_STRING	1
 
 // BINIO_ENABLE_IOSTREAM - Build iostream wrapper classes
 //
 // Set to 1 to build the iostream wrapper classes. You need the standard
 // C++ library to do this.
-#define BINIO_ENABLE_IOSTREAM	0
+#define BINIO_ENABLE_IOSTREAM	1
 
 // BINIO_ISO_STDLIB - Build with ISO C++ standard library compliance
 //
@@ -124,7 +124,7 @@ public:
 
   Int readInt(unsigned int size);
   Float readFloat(FType ft);
-  unsigned long readString(char *str, unsigned long amount);
+  unsigned long readString(char *str, unsigned long maxlen);
   unsigned long readString(char *str, unsigned long maxlen, const char delim);
   void readBuf(char *buf, int size);
 #if BINIO_ENABLE_STRING

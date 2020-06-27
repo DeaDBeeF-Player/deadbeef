@@ -1,3 +1,25 @@
+/*
+    shared/windows/utils.c
+    Copyright (C) 2018-2020 Jakub Wasylków
+
+    This software is provided 'as-is', without any express or implied
+    warranty.  In no event will the authors be held liable for any damages
+    arising from the use of this software.
+
+    Permission is granted to anyone to use this software for any purpose,
+    including commercial applications, and to alter it and redistribute it
+    freely, subject to the following restrictions:
+
+    1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+
+    3. This notice may not be removed or altered from any source distribution.
+*/
 #include <string.h>
 #include <shlwapi.h>
 
@@ -117,6 +139,41 @@ int path_long(const char * path_in, char * path_out, int len) {
     return iconv2_ret;
 }
 
+int startup_fixes(char *out_p) {
+    // FIX 1: realpath to return ASCII-only string
+    // ensures that plugins can be dlopened even when they are located in non-ASCII path
+    // uses char *out_p variable and returns ret variable (this function is called from realpath implementation)
+
+    // load file path
+    wchar_t argv_win[PATH_MAX];
+    GetModuleFileNameW(NULL,argv_win,PATH_MAX);
+    int argv_win_len = wcslen(argv_win);
+    // convert to utf8
+    int ret = win_charset_conv ((char *) argv_win, (wcslen(argv_win)+1)*2, out_p, PATH_MAX, "WCHAR_T", "UTF-8");
+
+    // Set current directory, so that windows can find libraries needed to load plugins
+    {
+        char out_scd[strlen(out_p)];
+        strcpy (out_scd, out_p);
+        char *ll = strrchr (out_scd, '\\');
+        if (ll) {
+            *ll = 0;
+        }
+        SetCurrentDirectory(out_scd);
+    }
+
+    // convert to DOS path
+    path_short (out_p, out_p, PATH_MAX);
+    path_long_last_path_exists = 1;
+
+    // FIX 2: GTK to disable client-side decorations
+    // since gtk 3.24.12 on windows (msys) client-side decorations are not forced, we need to disable them
+    putenv ("GTK_CSD=0");
+
+    // End of fixes
+    return ret;
+}
+
 unsigned char first_call = 1;
 
 // realpath windows implementation
@@ -137,29 +194,8 @@ char *realpath (const char *path, char *resolved_path) {
     // This function is called first in main() to get main dir path.
     // To ensure that plugins will load sucessfully, we need to return DOS path (as it is ASCII-only)
     if (first_call) {
-        // load file path
-        wchar_t argv_win[PATH_MAX];
-        GetModuleFileNameW(NULL,argv_win,PATH_MAX);
-        int argv_win_len = wcslen(argv_win);
-        // convert to utf8
-        ret = win_charset_conv ((char *) argv_win, (wcslen(argv_win)+1)*2, out_p, PATH_MAX, "WCHAR_T", "UTF-8");
-
-        // Set current directory, so that windows can find libraries needed to load plugins
-        {
-            char out_scd[strlen(out_p)];
-            strcpy (out_scd, out_p);
-            char *ll = strrchr (out_scd, '\\');
-            if (ll) {
-                *ll = 0;
-            }
-            SetCurrentDirectory(out_scd);
-        }
-
-        // convert to DOS path
-        path_short (out_p, out_p, PATH_MAX);
+        ret = startup_fixes (out_p);
         first_call = 0;
-        path_long_last_path_exists = 1;
-
     }
     else {
         // use path_long which will use GetLongPathName to resolve path
@@ -183,5 +219,4 @@ char *realpath (const char *path, char *resolved_path) {
         }
     }
     return out_p;
- }
- 
+}

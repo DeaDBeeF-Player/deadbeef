@@ -14,13 +14,14 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * u6m.h - Ultima 6 Music Player by Marc Winterrowd.
  * This code extends the Adlib Winamp plug-in by Simon Peter <dn.tlp@gmx.net>
  */
 
-#include <string.h>
+#include <stack>
+
 #include "player.h"
 
 #define default_dict_size 4096     // because maximum codeword size == 12 bits
@@ -31,7 +32,7 @@ class Cu6mPlayer: public CPlayer
  public:
   static CPlayer *factory(Copl *newopl);
 
-  Cu6mPlayer(Copl *newopl) : CPlayer(newopl), song_data(0), subsong_stack_sz(0)
+  Cu6mPlayer(Copl *newopl) : CPlayer(newopl), song_data(0)
     {
     };
 
@@ -41,14 +42,14 @@ class Cu6mPlayer: public CPlayer
       if(song_data) delete[] song_data;
     };
 
-  bool load(const char *filename, const CFileProvider &fp);
+  bool load(const std::string &filename, const CFileProvider &fp);
   bool update();
   void rewind(int subsong);
   float getrefresh();
 
-  const char * gettype()
+  std::string gettype()
     {
-      return "Ultima 6 Music";
+      return std::string("Ultima 6 Music");
     };
 
  protected:
@@ -108,9 +109,7 @@ class Cu6mPlayer: public CPlayer
   int song_pos;               // current offset within the song
   int loop_position;          // position of the loop point
   int read_delay;             // delay (in timer ticks) before further song data is read
-  enum {MAX_SUBSONG_STACK = 100};
-  subsong_info subsong_stack[MAX_SUBSONG_STACK];
-  int subsong_stack_sz;
+  std::stack<subsong_info> subsong_stack;
 
   int instrument_offsets[9];  // offsets of the adlib instrument data
   // vibrato ("vb")
@@ -164,7 +163,6 @@ class Cu6mPlayer: public CPlayer
   bool lzw_decompress(data_block source, data_block dest);
   int get_next_codeword (long& bits_read, unsigned char *source, int codeword_size);
   void output_root(unsigned char root, unsigned char *destination, long& position);
-  //void get_string(int codeword, MyDict& dictionary, std::stack<unsigned char>& root_stack);
-  void get_string(int codeword, MyDict& dictionary, unsigned char *root_stack, int &root_stack_size);
+  void get_string(int codeword, MyDict& dictionary, std::stack<unsigned char>& root_stack);
 };
 

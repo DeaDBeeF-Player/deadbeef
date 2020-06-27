@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  * adl.h - ADL player adaption by Simon Peter <dn.tlp@gmx.net>
  */
@@ -36,7 +36,7 @@ class CadlPlayer: public CPlayer
   CadlPlayer(Copl *newopl);
   ~CadlPlayer();
 
-  bool load(const char *filename, const CFileProvider &fp);
+  bool load(const std::string &filename, const CFileProvider &fp);
   bool update();
   void rewind(int subsong = -1);
 
@@ -48,14 +48,16 @@ class CadlPlayer: public CPlayer
 
   unsigned int getsubsongs();
   unsigned int getsubsong() { return cursubsong; }
-  const char *gettype() { return "Westwood ADL"; }
+  std::string gettype();
 
  private:
   int numsubsongs, cursubsong;
 
   AdlibDriver *_driver;
 
-  uint8_t _trackEntries[120];
+  uint8_t  _version;
+  uint8_t  _trackEntries[120];
+  uint16_t _trackEntries16[250];
   uint8_t *_soundDataPtr;
   int _sfxPlayingSound;
 
@@ -70,9 +72,9 @@ class CadlPlayer: public CPlayer
 
   bool init();
   void process();
-  void playTrack(uint8_t track);
-  void playSoundEffect(uint8_t track);
-  void play(uint8_t track);
+  void playTrack(uint16_t track);
+  void playSoundEffect(uint16_t track);
+  void play(uint16_t track);
   void unk1();
   void unk2();
 };

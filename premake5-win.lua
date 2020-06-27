@@ -23,7 +23,7 @@ newoption {
 if _OPTIONS["standard"] ~= nil then
   plugins_to_disable = {"plugin-artwork", "plugin-converter", "plugin-converter_gtk2",
                         "plugin-converter_gtk3","plugin-ffmpeg","plugin-waveout",
-                        "plugin-wildmidi" }
+                        "plugin-wildmidi", "plugin-soundtouch" }
   for i,v in ipairs(plugins_to_disable) do
     if _OPTIONS[v] == nil then
       _OPTIONS[v] = "disabled"
@@ -70,6 +70,8 @@ project "libwin"
    files {
        "shared/windows/fopen.c",
        "shared/windows/mingw32_layer.h",
+       "shared/windows/mkdir.c",
+       "shared/windows/rmdir.c",
        "shared/windows/rename.c",
        "shared/windows/scandir.c",
        "shared/windows/stat.c",
@@ -102,9 +104,9 @@ end
        "plugins/libparser/*.h",
        "plugins/libparser/*.c",
        "external/wcwidth/wcwidth.c",
-       "external/wcwidth/wcwidth.h"
-       -- "ConvertUTF/*.h",
-       -- "ConvertUTF/*.c"
+       "external/wcwidth/wcwidth.h",
+       "shared/ctmap.c",
+       "shared/ctmap.h"
    }
    defines { "PORTABLE=1", "STATICLINK=1", "PREFIX=\"donotuse\"", "LIBDIR=\"donotuse\"", "DOCDIR=\"donotuse\"", "LOCALEDIR=\"donotuse\""}
    links { "m", "pthread", "dl"}
@@ -167,6 +169,32 @@ project "aac_plugin"
    files {
        "plugins/aac/*.h",
        "plugins/aac/*.c",
+       "shared/mp4tagutil.h",
+       "shared/mp4tagutil.c",
+       "plugins/libmp4ff/*.h",
+       "plugins/libmp4ff/*.c"
+   }
+
+   defines { "USE_MP4FF=1", "USE_TAGGING=1" }
+   links { "faad" }
+end
+
+if option ("plugin-alac") then
+project "alac_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "alac"
+
+   files {
+       "plugins/alac/alac_plugin.c",
+       "plugins/alac/alac.c",
+       "plugins/alac/decomp.h",
+       "plugins/alac/demux.c",
+       "plugins/alac/demux.h",
+       "plugins/alac/stream.c",
+       "plugins/alac/stream.h",
        "shared/mp4tagutil.h",
        "shared/mp4tagutil.c",
        "plugins/libmp4ff/*.h",
@@ -264,11 +292,11 @@ project "opus_plugin"
    defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
    links { "opusfile", "opus", "m", "ogg" }
    filter "configurations:debug32 or release32"
-   
+
       includedirs { "static-deps/lib-x86-32/include/opus" }
 
    filter "configurations:debug or release"
-   
+
       includedirs { "static-deps/lib-x86-64/include/opus" }
 end
 
@@ -383,6 +411,8 @@ project "ddb_gui_GTK2"
    files {
        "plugins/gtkui/*.h",
        "plugins/gtkui/*.c",
+       "shared/eqpreset.c",
+       "shared/eqpreset.h",
        "shared/pluginsettings.h",
        "shared/pluginsettings.c",
        "shared/trkproperties_shared.h",
@@ -399,12 +429,12 @@ project "ddb_gui_GTK2"
     pkgconfig ("gtk+-2.0 jansson")
 
     filter "configurations:debug32 or release32"
-    
+
        includedirs { "static-deps/lib-x86-32/gtk-2.16.0/include/**", "static-deps/lib-x86-32/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-32/gtk-2.16.0/lib", "static-deps/lib-x86-32/gtk-2.16.0/lib/**" }
 
     filter "configurations:debug or release"
-    
+
        includedirs { "static-deps/lib-x86-64/gtk-2.16.0/include/**", "static-deps/lib-x86-64/gtk-2.16.0/lib/**", "plugins/gtkui", "plugins/libparser" }
        libdirs { "static-deps/lib-x86-64/gtk-2.16.0/lib", "static-deps/lib-x86-64/gtk-2.16.0/lib/**" }
 end
@@ -418,6 +448,8 @@ project "ddb_gui_GTK3"
    files {
        "plugins/gtkui/*.h",
        "plugins/gtkui/*.c",
+       "shared/eqpreset.c",
+       "shared/eqpreset.h",
        "shared/pluginsettings.h",
        "shared/pluginsettings.c",
        "shared/trkproperties_shared.h",
@@ -475,6 +507,22 @@ project "converter"
        "plugins/libmp4ff/*.c",
        "shared/mp4tagutil.c",
    }
+end
+
+if option ("plugin-shellexec", "jansson") then
+project "shellexec"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/shellexec/shellexec.c",
+       "plugins/shellexec/shellexec.h",
+       "plugins/shellexec/shellexecutil.c",
+       "plugins/shellexec/shellexecutil.h"
+   }
+   pkgconfig("jansson")
 end
 
 if option ("plugin-sndfile", "sndfile") then
@@ -711,6 +759,46 @@ project "pltbrowser_gtk3"
    pkgconfig ("gtk+-3.0")
 end
 
+if option ("plugin-shellexecui_gtk2", "gtk+-2.0 jansson") then
+project "shellexecui_gtk2"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/shellexecui/shellexecui.c",
+       "plugins/shellexecui/interface.c",
+       "plugins/shellexecui/support.c",
+       "plugins/shellexecui/callbacks.c",
+       "plugins/shellexecui/interface.h",
+       "plugins/shellexecui/support.h",
+       "plugins/shellexecui/callbacks.h"
+   }
+
+   pkgconfig ("gtk+-2.0 jansson")
+end
+
+if option ("plugin-shellexecui_gtk3", "gtk+-3.0 jansson") then
+project "shellexecui_gtk3"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/shellexecui/shellexecui.c",
+       "plugins/shellexecui/interface.c",
+       "plugins/shellexecui/support.c",
+       "plugins/shellexecui/callbacks.c",
+       "plugins/shellexecui/interface.h",
+       "plugins/shellexecui/support.h",
+       "plugins/shellexecui/callbacks.h"
+   }
+
+   pkgconfig ("gtk+-3.0 jansson")
+end
+
 if option ("plugin-wildmidi") then
 project "wildmidi_plugin"
    kind "SharedLib"
@@ -849,6 +937,52 @@ project "lastfm"
    pkgconfig ("libcurl")
 end
 
+if option ("plugin-soundtouch") then
+project "ddb_soundtouch"
+   kind "SharedLib"
+   language "C++"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   includedirs { "plugins/soundtouch/soundtouch/include" }
+
+   files {
+       "plugins/soundtouch/plugin.c",
+       "plugins/soundtouch/st.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/AAFilter.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/BPMDetect.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/FIFOSampleBuffer.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/FIRFilter.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/InterpolateCubic.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/InterpolateLinear.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/InterpolateShannon.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/PeakFinder.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/RateTransposer.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/SoundTouch.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/SoundTouch.sln",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/SoundTouch.vcxproj",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/TDStretch.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/cpu_detect_x86.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/mmx_optimized.cpp",
+       "plugins/soundtouch/soundtouch/source/SoundTouch/sse_optimized.cpp"
+   }
+end
+
+if option ("plugin-tta") then
+project "tta"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/tta/ttaplug.c",
+       "plugins/tta/filter.h",
+       "plugins/tta/ttadec.c",
+       "plugins/tta/ttadec.h"
+   }
+end
+
 
 project "translations"
    kind "Utility"
@@ -865,51 +999,16 @@ project "resources"
     postbuildcommands {
         "{MKDIR} bin/%{cfg.buildcfg}/pixmaps",
         "{COPY} icons/32x32/deadbeef.png bin/%{cfg.buildcfg}",
-        "{COPY} pixmaps/*.png pixmaps/*.svg bin/%{cfg.buildcfg}/pixmaps/",
+        "{COPY} pixmaps/*.png bin/%{cfg.buildcfg}/pixmaps/",
         "{MKDIR} bin/%{cfg.buildcfg}/plugins/convpresets",
         "{COPY} plugins/converter/convpresets bin/%{cfg.buildcfg}/plugins/",
     }
 
 project "resources_windows"
     kind "Utility"
+    dependson {"translations", "ddb_gui_GTK3", "ddb_gui_GTK2" }
     postbuildcommands {
-        -- misc
-        "{MKDIR} bin/%{cfg.buildcfg}/plugins",
-        "{MKDIR} bin/%{cfg.buildcfg}/pixmaps",
-        "{MKDIR} bin/%{cfg.buildcfg}/doc",
-        "{MKDIR} bin/%{cfg.buildcfg}/share/themes bin/%{cfg.buildcfg}/share/icons",
-        "{MKDIR} bin/%{cfg.buildcfg}/config",
-        "{MKDIR} bin/%{cfg.buildcfg}/lib",
-        "{COPY} ChangeLog help.txt COPYING.GPLv2 COPYING.LGPLv2.1 about.txt translators.txt  bin/%{cfg.buildcfg}/doc/",
-        -- translations
-        "{MKDIR} bin/%{cfg.buildcfg}/locale",
-        "for i in po/*.gmo ; do (base=`basename $$i .gmo` ; mkdir -p bin/%{cfg.buildcfg}/locale/$$base/LC_MESSAGES ; cp $$i bin/%{cfg.buildcfg}/locale/$$base/LC_MESSAGES/deadbeef.mo) ; done",
-        "{COPY} translation/help.ru.txt  bin/%{cfg.buildcfg}/doc/",
-        -- libraries
-        --"rm  bin/%{cfg.buildcfg}/plugins/*.lib | true",
-        --"rm  bin/%{cfg.buildcfg}/libwin.lib | true",
-        "ldd bin/%{cfg.buildcfg}/plugins/*.dll bin/%{cfg.buildcfg}/deadbeef.exe | awk \'NF == 4 {print $$3}; NF == 2 {print $$1}\' | grep -i -v \"???\" | grep -i -v \"System32\" | grep -i -v \"WinSxS\" |sort -u | tr \'\\r\\n\' \' \'> .libraries.tmp",
-        "{COPY} `cat .libraries.tmp` bin/%{cfg.buildcfg}/ | true",
-        -- gdk_pixbuf libs
-        "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/lib/gdk-pixbuf-2.0 bin/%{cfg.buildcfg}/lib/gdk-pixbuf-2.0 2>>/dev/null); done; true",
-        -- gtk2 theme
-        "{MKDIR} bin/%{cfg.buildcfg}/lib/gtk-2.0/2.10.0/engines",
-        "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/themes/MS-Windows bin/%{cfg.buildcfg}/share/themes/ 2>>/dev/null ; cp $$i/lib/gtk-2.0/2.10.0/engines/libwimp.dll bin/%{cfg.buildcfg}/lib/gtk-2.0/2.10.0/engines 2>>/dev/null ); done; true",
-        "{MKDIR} bin/%{cfg.buildcfg}/etc bin/%{cfg.buildcfg}/etc/gtk-2.0",
-        "{TOUCH} bin/%{cfg.buildcfg}/etc/gtk-2.0/settings.ini",
-        "echo -e \"[Settings]\\r\\ngtk-theme-name = MS-Windows\\n\" > bin/%{cfg.buildcfg}/etc/gtk-2.0/settings.ini",
-        -- gtk3 misc
-        "{MKDIR} bin/%{cfg.buildcfg}/etc bin/%{cfg.buildcfg}/etc/gtk-3.0",
-        "{TOUCH} bin/%{cfg.buildcfg}/etc/gtk-3.0/settings.ini",
-        "echo -e \"[Settings]\\r\\ngtk-theme-name = Windows-10\\r\\ngtk-icon-theme-name = Windows-10-Icons\" > bin/%{cfg.buildcfg}/etc/gtk-3.0/settings.ini",
-        "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/icons/hicolor bin/%{cfg.buildcfg}/share/icons/ ; cp -r $$i/share/glib-2.0 bin/%{cfg.buildcfg}/share/ ); done; true",
-        -- Windows-10 theme and icons can be obtained from https://github.com/B00merang-Project/Windows-10 and https://github.com/B00merang-Project/Windows-10-Icons)
-        "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/icons/Windows-10-Icons bin/%{cfg.buildcfg}/share/icons/ 2>>/dev/null ; cp -r $$i/share/themes/Windows-10 bin/%{cfg.buildcfg}/share/themes/ 2>>/dev/null ); done; true",
-        -- Adwaita still needed for some icons
-		-- UPDATE: not anymore
-        -- "for i in /mingw32 /mingw64 /usr; do (cp -r $$i/share/icons/Adwaita bin/%{cfg.buildcfg}/share/icons/ 2>>/dev/null); done; true",
-        "echo \"output_plugin PortAudio output plugin\" > bin/%{cfg.buildcfg}/config/config",
-        "echo \"gui_plugin GTK3\" >> bin/%{cfg.buildcfg}/config/config"
+        "./scripts/windows_postbuild.sh bin/%{cfg.buildcfg}"
     }
 
 print_options()

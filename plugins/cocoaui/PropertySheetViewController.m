@@ -14,6 +14,9 @@
 @property (nonatomic) NSView *firstLabel;
 @property (nonatomic) NSView *previousField;
 @property (nonatomic) BOOL isStackView;
+@property (nonatomic) BOOL noclip;
+@property (nonatomic) int itemWidth;
+
 @end
 
 @implementation BoxHandler
@@ -138,7 +141,7 @@
     }
 }
 
-- (NSUInteger)addFieldsToBox:(BoxHandler *)box fromIndex:(NSUInteger)index count:(NSUInteger)count {
+- (NSUInteger)addFieldsToBox:(BoxHandler *)box fromIndex:(NSUInteger)index count:(NSUInteger)count isReadonly:(BOOL)isReadonly {
     NSView *view = box.view;
     CGFloat unit_h = _contentFontSize + 13;
 
@@ -150,10 +153,23 @@
     NSUInteger i = index;
     NSUInteger remaining = count;
 
+    if (box.isStackView && box.noclip) {
+        NSStackView *stackview = (NSStackView *)box.view;
+        NSView *spacingView = [NSView new];
+        [stackview addArrangedSubview:spacingView];
+    }
+
     while (remaining-- && i < (NSUInteger)_settingsData.nprops) {
 
         if (box.isStackView) {
             view = [NSView new];
+
+            if (box.noclip) {
+                view.wantsLayer = YES;
+                view.layer = [CALayer new];
+                view.layer.masksToBounds = NO;
+            }
+
             NSStackView *stackview = (NSStackView *)box.view;
             view.autoresizingMask = NSViewMinXMargin | NSViewMaxXMargin;
             [stackview addArrangedSubview:view];
@@ -181,6 +197,8 @@
             int spacing = 0;
             int width = -1;
             int height = -1;
+            int noclip = 0;
+            int itemwidth = -1;
 
             // other args
             while ((script = gettoken (script, token)) && strcmp (token, ";")) {
@@ -205,6 +223,12 @@
                 else if (!strncmp (token, "height=", 7)) {
                     height = atoi (token+7);
                 }
+                else if (!strncmp (token, "noclip", 6)) {
+                    noclip = 1;
+                }
+                else if (!strncmp (token, "itemwidth=", 10)) {
+                    itemwidth = atoi (token+10);
+                }
             }
 
 
@@ -214,7 +238,14 @@
             ? NSUserInterfaceLayoutOrientationVertical
             : NSUserInterfaceLayoutOrientationHorizontal;
 
-            sv.distribution = NSStackViewDistributionFillEqually;
+            if (fill) {
+                if (hmg) {
+                    sv.distribution = NSStackViewDistributionFillEqually;
+                }
+                else {
+                    sv.distribution = NSStackViewDistributionFill;
+                }
+            }
             sv.spacing = spacing;
             sv.edgeInsets = NSEdgeInsetsMake(border, border, border, border);
 
@@ -224,6 +255,8 @@
             BoxHandler *nestedBox = [BoxHandler new];
             nestedBox.view = sv;
             nestedBox.isStackView = YES;
+            nestedBox.noclip = noclip;
+            nestedBox.itemWidth = itemwidth;
 
             [nestedBox.view.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:0].active=YES;
 
@@ -233,7 +266,7 @@
                 [sv.heightAnchor constraintEqualToConstant:height].active = YES;
             }
 
-            i = [self addFieldsToBox:nestedBox fromIndex:i+1 count:nestedCount];
+            i = [self addFieldsToBox:nestedBox fromIndex:i+1 count:nestedCount isReadonly:isReadonly];
 
             if (width != -1) {
                 contentWidth = MAX(width, contentWidth);
@@ -326,8 +359,10 @@
                 else {
                     [lbl.topAnchor constraintEqualToAnchor:view.topAnchor constant:0].active = YES;
                     [lbl.centerXAnchor constraintEqualToAnchor:view.centerXAnchor constant:0].active = YES;
-                    [lbl.leftAnchor constraintGreaterThanOrEqualToAnchor:view.leftAnchor constant:0].active = YES;
-                    [lbl.rightAnchor constraintLessThanOrEqualToAnchor:view.rightAnchor constant:0].active = YES;
+                    if (!box.noclip) {
+                        [lbl.leftAnchor constraintGreaterThanOrEqualToAnchor:view.leftAnchor constant:0].active = YES;
+                        [lbl.rightAnchor constraintLessThanOrEqualToAnchor:view.rightAnchor constant:0].active = YES;
+                    }
                 }
                 currLabel = lbl;
             }
@@ -338,7 +373,7 @@
         NSString *def = [NSString stringWithUTF8String:_settingsData.props[i].def];
         NSString *value = [self.dataSource propertySheet:self valueForKey:propname def:def item:self.item];
 
-        NSView *currentField;
+        NSControl *currentField;
 
         switch (_settingsData.props[i].type) {
         case PROP_ENTRY:
@@ -495,9 +530,17 @@
                     [slider.centerXAnchor constraintEqualToAnchor:view.centerXAnchor constant:0].active = YES;
                     [slider.leadingAnchor constraintGreaterThanOrEqualToAnchor:view.leadingAnchor constant:0].active = YES;
                     [slider.trailingAnchor constraintLessThanOrEqualToAnchor:view.trailingAnchor constant:0].active = YES;
+                    if (box.itemWidth >= 0) {
+                        [slider.widthAnchor constraintEqualToConstant:box.itemWidth].active = YES;
+                    }
                     [valueedit.topAnchor constraintEqualToAnchor:slider.bottomAnchor constant:0].active = YES;
-                    [valueedit.leadingAnchor constraintEqualToAnchor:view.leadingAnchor constant:0].active = YES;
-                    [valueedit.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:0].active = YES;
+                    if (box.noclip) {
+                        [valueedit.centerXAnchor constraintEqualToAnchor:view.centerXAnchor constant:0].active = YES;
+                    }
+                    else {
+                        [valueedit.leadingAnchor constraintEqualToAnchor:view.leadingAnchor constant:0].active = YES;
+                        [valueedit.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:0].active = YES;
+                    }
                     [valueedit.bottomAnchor constraintEqualToAnchor:view.bottomAnchor constant:0].active = YES;
                 }
                 break;
@@ -587,7 +630,25 @@
             contentHeight += unit_h;
         }
 
+        if (isReadonly) {
+            if ([currentField isKindOfClass:NSTextField.class]) {
+                NSTextField *tf = (NSTextField *)currentField;
+                tf.enabled = YES;
+                tf.editable = NO;
+                tf.selectable = YES;
+            }
+            else {
+                currentField.enabled = NO;
+            }
+        }
+
         i++;
+    }
+
+    if (box.isStackView && box.noclip) {
+        NSStackView *stackview = (NSStackView *)box.view;
+        NSView *spacingView = [NSView new];
+        [stackview addArrangedSubview:spacingView];
     }
 
     if (!box.isStackView) {
@@ -623,7 +684,7 @@
     return i;
 }
 
-- (void)setDataSource:(id<PropertySheetDataSource>)dataSource {
+- (void)setDataSource:(NSObject<PropertySheetDataSource> *)dataSource {
     _dataSource = dataSource;
 
     self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -635,6 +696,10 @@
 
     BOOL have_settings = YES;
     NSString *config = [dataSource propertySheet:self configForItem:self.item];
+    BOOL isReadonly = NO;
+    if ([dataSource respondsToSelector:@selector(propertySheet:itemIsReadonly:)]) {
+        isReadonly = [dataSource propertySheet:self itemIsReadonly:self.item];
+    }
     if (!config || settings_data_init(&_settingsData, [config UTF8String]) < 0) {
         have_settings = NO;
     }
@@ -705,7 +770,7 @@
     BoxHandler *box = [BoxHandler new];
     box.view = view;
 
-    [self addFieldsToBox:box fromIndex:0 count:self.settingsData.nprops];
+    [self addFieldsToBox:box fromIndex:0 count:self.settingsData.nprops isReadonly:isReadonly];
 
 //    self.contentView.frame = NSMakeRect(0, 0, self.contentSize.width, self.contentSize.height);
     self.contentView.contentSize = self.contentSize;
@@ -786,7 +851,8 @@
                 value = [@([sender floatValue]) stringValue];
             }
             else if ([sender isKindOfClass:[NSPopUpButton class]]) {
-                value = [sender titleOfSelectedItem];
+                NSUInteger idx = [sender indexOfSelectedItem];
+                value = @(idx).stringValue;
             }
             else {
                 value = [sender stringValue];

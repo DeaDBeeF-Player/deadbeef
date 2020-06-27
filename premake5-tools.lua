@@ -225,7 +225,17 @@ function print_options ()
 end
 
 -- Returns deadbeef version which is stored in ./PORTABLE_VERSION
+-- WINDOWS: Return current date
 function get_version ()
+	if os.host() == "windows" then
+		date = os.date("%Y-%m-%d")
+		fp = io.open ("PORTABLE_VERSION","w")
+		io.output (fp)
+		io.write(date)
+		io.close (fp)
+		print(date)
+		return date
+	end
 	fp = io.open ("PORTABLE_VERSION","r")
 	io.input (fp)
 	local ver = io.read()
