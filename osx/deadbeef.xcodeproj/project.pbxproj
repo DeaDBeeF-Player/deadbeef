@@ -5042,8 +5042,6 @@
 		2D9D35A724A522B600CF2035 /* celt_neon_intr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = celt_neon_intr.c; sourceTree = "<group>"; };
 		2D9D35A924A522B600CF2035 /* armcpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = armcpu.h; sourceTree = "<group>"; };
 		2D9D35AA24A522B600CF2035 /* pitch_neon_intr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pitch_neon_intr.c; sourceTree = "<group>"; };
-		2D9D35E924A525BF00CF2035 /* opus_celt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opus_celt.h; sourceTree = "<group>"; };
-		2D9D35EA24A525BF00CF2035 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2D9D363B24A52BB500CF2035 /* macros_armv4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macros_armv4.h; sourceTree = "<group>"; };
 		2D9D363C24A52BB500CF2035 /* SigProc_FIX_armv4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SigProc_FIX_armv4.h; sourceTree = "<group>"; };
 		2D9D363D24A52BB500CF2035 /* macros_armv5e.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macros_armv5e.h; sourceTree = "<group>"; };
@@ -9154,15 +9152,6 @@
 			path = arm;
 			sourceTree = "<group>";
 		};
-		2D9D35E824A525BF00CF2035 /* opus_celt */ = {
-			isa = PBXGroup;
-			children = (
-				2D9D35E924A525BF00CF2035 /* opus_celt.h */,
-				2D9D35EA24A525BF00CF2035 /* Info.plist */,
-			);
-			path = opus_celt;
-			sourceTree = "<group>";
-		};
 		2D9D363A24A52BB500CF2035 /* arm */ = {
 			isa = PBXGroup;
 			children = (
@@ -9937,7 +9926,6 @@
 				4D1B3EB31837EC44003E6066 /* deadbeef */,
 				2DAA4C091AAF88DE00519559 /* Tests */,
 				2D00F2402434DE4F000FC130 /* soundtouch */,
-				2D9D35E824A525BF00CF2035 /* opus_celt */,
 				4D1B3E7C18379829003E6066 /* Frameworks */,
 				4D1B3E7B18379829003E6066 /* Products */,
 				2D48DC5C2269B732002CACFD /* DeaDBeeF GTK3.plist */,
