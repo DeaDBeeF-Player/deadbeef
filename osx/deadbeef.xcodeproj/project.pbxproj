@@ -799,8 +799,6 @@
 		2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47481837EC47003E6066 /* plugins.c */; };
 		2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */; };
 		2D01D7F21AB223CC00BCD3C4 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
-		2D026DA01CAC5C5000E27961 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026D9D1CAC5C5000E27961 /* libavcodec.a */; };
-		2D026DA11CAC5C5000E27961 /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026D9E1CAC5C5000E27961 /* libavformat.a */; };
 		2D026DA91CAC5CB900E27961 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2D026DAB1CAC5CB900E27961 /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DAA1CAC5CB900E27961 /* libbz2.dylib */; };
 		2D026DAD1CAC5CDF00E27961 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DAC1CAC5CDF00E27961 /* CoreFoundation.framework */; };
@@ -1147,6 +1145,15 @@
 		2D5B51221FF43FC8000AD484 /* liboggedit.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.dylib */; };
 		2D5D21461A4033FF001D5A79 /* lastfm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5D21451A4033FF001D5A79 /* lastfm.c */; };
 		2D5D214C1A403428001D5A79 /* lastfm.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D5D21401A4033B0001D5A79 /* lastfm.dylib */; };
+		2D5D9C5A24A7FB0200D632E4 /* libavformat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D5D9C5724A7FB0200D632E4 /* libavformat.dylib */; };
+		2D5D9C5B24A7FB0200D632E4 /* libavutil.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D5D9C5824A7FB0200D632E4 /* libavutil.dylib */; };
+		2D5D9C5C24A7FB0200D632E4 /* libavcodec.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D5D9C5924A7FB0200D632E4 /* libavcodec.dylib */; };
+		2D5D9C6924A7FB5800D632E4 /* libavformat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D5D9C6624A7FB5800D632E4 /* libavformat.dylib */; };
+		2D5D9C6A24A7FB5800D632E4 /* libavutil.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D5D9C6724A7FB5800D632E4 /* libavutil.dylib */; };
+		2D5D9C6B24A7FB5800D632E4 /* libavcodec.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D5D9C6824A7FB5800D632E4 /* libavcodec.dylib */; };
+		2D5D9C6C24A7FBBA00D632E4 /* libavcodec.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D5D9C6824A7FB5800D632E4 /* libavcodec.dylib */; };
+		2D5D9C6D24A7FBBC00D632E4 /* libavformat.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D5D9C6624A7FB5800D632E4 /* libavformat.dylib */; };
+		2D5D9C6E24A7FBC600D632E4 /* libavutil.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D5D9C6724A7FB5800D632E4 /* libavutil.dylib */; };
 		2D5F88F51E12F94300A7DA8D /* MP4ParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5F88F41E12F94300A7DA8D /* MP4ParserTests.m */; };
 		2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D60108B1A9CDF06000136AF /* SearchWindowController.h */; };
 		2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D60108C1A9CDF06000136AF /* SearchWindowController.m */; };
@@ -1543,7 +1550,6 @@
 		2D88EA0B1B2AF6DD0072FD43 /* oggedit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D88EA031B2AF6DD0072FD43 /* oggedit.h */; };
 		2D88EA0E1B2AF71A0072FD43 /* liboggedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.dylib */; };
 		2D88EA111B2AF77B0072FD43 /* vorbis.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D88E9ED1B2AF6640072FD43 /* vorbis.dylib */; };
-		2D8B54961CAC8CD500A6F5A4 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026D9F1CAC5C5000E27961 /* libavutil.a */; };
 		2D8BA3521E2672BF001D5708 /* libogglib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
 		2D8BA3531E2672C3001D5708 /* libflaclib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */; };
 		2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8D96AC1D10904A00A5C7E6 /* CoverManager.h */; };
@@ -4222,12 +4228,6 @@
 		2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libddbcore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testbootstrap.c; sourceTree = "<group>"; };
 		2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ffmpeg.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D026D9D1CAC5C5000E27961 /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = deps/ffmpeg/lib/libavcodec.a; sourceTree = "<group>"; };
-		2D026D9E1CAC5C5000E27961 /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = deps/ffmpeg/lib/libavformat.a; sourceTree = "<group>"; };
-		2D026D9F1CAC5C5000E27961 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = deps/ffmpeg/lib/libavutil.a; sourceTree = "<group>"; };
-		2D026DA31CAC5C5100E27961 /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = deps/ffmpeg/lib/libavcodec.a; sourceTree = "<group>"; };
-		2D026DA41CAC5C5100E27961 /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = deps/ffmpeg/lib/libavformat.a; sourceTree = "<group>"; };
-		2D026DA51CAC5C5100E27961 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = deps/ffmpeg/lib/libavutil.a; sourceTree = "<group>"; };
 		2D026DAA1CAC5CB900E27961 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
 		2D026DAC1CAC5CDF00E27961 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		2D026DAE1CAC5DAD00E27961 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
@@ -4503,6 +4503,12 @@
 		2D565B0B1A40BCE200CE1F5D /* true.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = true.h; path = "../../osx/deps/mpg123-1.21.0/src/libmpg123/true.h"; sourceTree = "<group>"; };
 		2D5D21401A4033B0001D5A79 /* lastfm.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = lastfm.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D5D21451A4033FF001D5A79 /* lastfm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lastfm.c; path = plugins/lastfm/lastfm.c; sourceTree = "<group>"; };
+		2D5D9C5724A7FB0200D632E4 /* libavformat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.dylib; path = deps/ffmpeg/lib/libavformat.dylib; sourceTree = "<group>"; };
+		2D5D9C5824A7FB0200D632E4 /* libavutil.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.dylib; path = deps/ffmpeg/lib/libavutil.dylib; sourceTree = "<group>"; };
+		2D5D9C5924A7FB0200D632E4 /* libavcodec.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.dylib; path = deps/ffmpeg/lib/libavcodec.dylib; sourceTree = "<group>"; };
+		2D5D9C6624A7FB5800D632E4 /* libavformat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.dylib; path = deps/ffmpeg/lib/libavformat.dylib; sourceTree = SOURCE_ROOT; };
+		2D5D9C6724A7FB5800D632E4 /* libavutil.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.dylib; path = deps/ffmpeg/lib/libavutil.dylib; sourceTree = SOURCE_ROOT; };
+		2D5D9C6824A7FB5800D632E4 /* libavcodec.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.dylib; path = deps/ffmpeg/lib/libavcodec.dylib; sourceTree = SOURCE_ROOT; };
 		2D5DD91C246C697800734047 /* plmeta.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = plmeta.h; sourceTree = "<group>"; };
 		2D5F88F41E12F94300A7DA8D /* MP4ParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MP4ParserTests.m; sourceTree = "<group>"; };
 		2D60108B1A9CDF06000136AF /* SearchWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchWindowController.h; sourceTree = "<group>"; };
@@ -6082,18 +6088,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D5D9C5A24A7FB0200D632E4 /* libavformat.dylib in Frameworks */,
+				2D5D9C5B24A7FB0200D632E4 /* libavutil.dylib in Frameworks */,
+				2D5D9C5C24A7FB0200D632E4 /* libavcodec.dylib in Frameworks */,
 				83BA8E5F1D542D2700D345EE /* CoreMedia.framework in Frameworks */,
 				83BA8E501D542D0D00D345EE /* VideoToolbox.framework in Frameworks */,
 				2D026DB81CAC5E8100E27961 /* Security.framework in Frameworks */,
+				2D5D9C6924A7FB5800D632E4 /* libavformat.dylib in Frameworks */,
 				2D026DB61CAC5E0E00E27961 /* VideoDecodeAcceleration.framework in Frameworks */,
 				2D026DB21CAC5DE300E27961 /* libiconv.dylib in Frameworks */,
+				2D5D9C6A24A7FB5800D632E4 /* libavutil.dylib in Frameworks */,
 				2D026DAF1CAC5DAD00E27961 /* CoreVideo.framework in Frameworks */,
+				2D5D9C6B24A7FB5800D632E4 /* libavcodec.dylib in Frameworks */,
 				2D026DAD1CAC5CDF00E27961 /* CoreFoundation.framework in Frameworks */,
 				2D026DAB1CAC5CB900E27961 /* libbz2.dylib in Frameworks */,
 				2D026DA91CAC5CB900E27961 /* libz.dylib in Frameworks */,
-				2D026DA01CAC5C5000E27961 /* libavcodec.a in Frameworks */,
-				2D026DA11CAC5C5000E27961 /* libavformat.a in Frameworks */,
-				2D8B54961CAC8CD500A6F5A4 /* libavutil.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7875,6 +7884,9 @@
 		2D026D9A1CAC5BD300E27961 /* ffmpeg */ = {
 			isa = PBXGroup;
 			children = (
+				2D5D9C6824A7FB5800D632E4 /* libavcodec.dylib */,
+				2D5D9C6624A7FB5800D632E4 /* libavformat.dylib */,
+				2D5D9C6724A7FB5800D632E4 /* libavutil.dylib */,
 				2D00F336243531F9000FC130 /* ffmpeg.c */,
 			);
 			name = ffmpeg;
@@ -10019,6 +10031,9 @@
 		4D1B3E7C18379829003E6066 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2D5D9C5924A7FB0200D632E4 /* libavcodec.dylib */,
+				2D5D9C5724A7FB0200D632E4 /* libavformat.dylib */,
+				2D5D9C5824A7FB0200D632E4 /* libavutil.dylib */,
 				4D66DBA01F6181C400BFF76B /* AudioToolbox.framework */,
 				83BA8E5E1D542D2700D345EE /* CoreMedia.framework */,
 				83BA8E4F1D542D0D00D345EE /* VideoToolbox.framework */,
@@ -10030,12 +10045,6 @@
 				2D026DAE1CAC5DAD00E27961 /* CoreVideo.framework */,
 				2D026DAC1CAC5CDF00E27961 /* CoreFoundation.framework */,
 				2D026DAA1CAC5CB900E27961 /* libbz2.dylib */,
-				2D026DA31CAC5C5100E27961 /* libavcodec.a */,
-				2D026DA41CAC5C5100E27961 /* libavformat.a */,
-				2D026DA51CAC5C5100E27961 /* libavutil.a */,
-				2D026D9D1CAC5C5000E27961 /* libavcodec.a */,
-				2D026D9E1CAC5C5000E27961 /* libavformat.a */,
-				2D026D9F1CAC5C5000E27961 /* libavutil.a */,
 				2D977F441CA4B1F3006DBE79 /* libcurl.dylib */,
 				2D4BEAEB1CA49EEC007ADB0A /* libcurl.tbd */,
 				2D667E161C9C2E8400359129 /* libssl.dylib */,
@@ -13919,6 +13928,9 @@
 				2D651D1C22722AD200375AE2 /* ScriptableSelectView.xib in Resources */,
 				2D5B51221FF43FC8000AD484 /* liboggedit.dylib in Resources */,
 				2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */,
+				2D5D9C6C24A7FBBA00D632E4 /* libavcodec.dylib in Resources */,
+				2D5D9C6D24A7FBBC00D632E4 /* libavformat.dylib in Resources */,
+				2D5D9C6E24A7FBC600D632E4 /* libavutil.dylib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
