@@ -114,8 +114,6 @@
 		07765E4E1C28562000F5F4BC /* uri.h in Headers */ = {isa = PBXBuildFile; fileRef = 07765E421C28562000F5F4BC /* uri.h */; };
 		07765E501C28563D00F5F4BC /* mmsplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765E4F1C28563D00F5F4BC /* mmsplug.c */; };
 		07765E531C2856DF00F5F4BC /* mms.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 07765E2E1C28559600F5F4BC /* mms.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2D00F2422434DE4F000FC130 /* soundtouch.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D00F2412434DE4F000FC130 /* soundtouch.h */; };
-		2D00F2442434DE4F000FC130 /* soundtouch.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F2432434DE4F000FC130 /* soundtouch.m */; };
 		2D00F2AA2434DEB3000FC130 /* st.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F2772434DE87000FC130 /* st.cpp */; };
 		2D00F2AB2434DEB3000FC130 /* plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F2782434DE87000FC130 /* plugin.c */; };
 		2D00F2E72434F98F000FC130 /* st.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D00F2752434DE87000FC130 /* st.h */; };
@@ -3630,8 +3628,6 @@
 		07765E421C28562000F5F4BC /* uri.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uri.h; sourceTree = "<group>"; };
 		07765E4F1C28563D00F5F4BC /* mmsplug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mmsplug.c; sourceTree = "<group>"; };
 		2D00F23F2434DE4E000FC130 /* ddb_soundtouch.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ddb_soundtouch.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D00F2412434DE4F000FC130 /* soundtouch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = soundtouch.h; sourceTree = "<group>"; };
-		2D00F2432434DE4F000FC130 /* soundtouch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = soundtouch.m; sourceTree = "<group>"; };
 		2D00F2752434DE87000FC130 /* st.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = st.h; sourceTree = "<group>"; };
 		2D00F2772434DE87000FC130 /* st.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = st.cpp; sourceTree = "<group>"; };
 		2D00F2782434DE87000FC130 /* plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plugin.c; sourceTree = "<group>"; };
@@ -6834,15 +6830,6 @@
 				07765E421C28562000F5F4BC /* uri.h */,
 			);
 			path = libmms;
-			sourceTree = "<group>";
-		};
-		2D00F2402434DE4F000FC130 /* soundtouch */ = {
-			isa = PBXGroup;
-			children = (
-				2D00F2412434DE4F000FC130 /* soundtouch.h */,
-				2D00F2432434DE4F000FC130 /* soundtouch.m */,
-			);
-			path = soundtouch;
 			sourceTree = "<group>";
 		};
 		2D00F2552434DE87000FC130 /* soundtouch */ = {
@@ -10069,7 +10056,6 @@
 				4D1B514C1837EF7C003E6066 /* plugins */,
 				4D1B3EB31837EC44003E6066 /* deadbeef */,
 				2DAA4C091AAF88DE00519559 /* Tests */,
-				2D00F2402434DE4F000FC130 /* soundtouch */,
 				4D1B3E7C18379829003E6066 /* Frameworks */,
 				4D1B3E7B18379829003E6066 /* Products */,
 				2D48DC5C2269B732002CACFD /* DeaDBeeF GTK3.plist */,
@@ -11048,7 +11034,6 @@
 				2D00F32D24351ECA000FC130 /* PeakFinder.h in Headers */,
 				2D00F32924351ECA000FC130 /* AAFilter.h in Headers */,
 				2D00F32824351ECA000FC130 /* InterpolateLinear.h in Headers */,
-				2D00F2422434DE4F000FC130 /* soundtouch.h in Headers */,
 				2D00F2E72434F98F000FC130 /* st.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -14089,7 +14074,6 @@
 				2D00F31824351ECA000FC130 /* sse_optimized.cpp in Sources */,
 				2D00F31C24351ECA000FC130 /* AAFilter.cpp in Sources */,
 				2D00F32024351ECA000FC130 /* TDStretch.cpp in Sources */,
-				2D00F2442434DE4F000FC130 /* soundtouch.m in Sources */,
 				2D00F32624351ECA000FC130 /* mmx_optimized.cpp in Sources */,
 				2D00F32224351ECA000FC130 /* FIRFilter.cpp in Sources */,
 				2D00F2AA2434DEB3000FC130 /* st.cpp in Sources */,
