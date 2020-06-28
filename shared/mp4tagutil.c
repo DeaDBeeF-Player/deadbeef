@@ -518,7 +518,8 @@ mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
             deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (meta->text));
         }
         else {
-            for (int i = 0; _mp4_atom_map[i]; i += 2) {
+            int i = 0;
+            for (; _mp4_atom_map[i]; i += 2) {
                 if (!strcasecmp (name, _mp4_atom_map[i])) {
                     if (meta->text) {
                         deadbeef->pl_append_meta (it, _mp4_atom_map[i+1], meta->text);
@@ -571,6 +572,12 @@ mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
                     break;
                 }
             }
+
+            if (!_mp4_atom_map[i] && meta->name) {
+                // unknown field
+                deadbeef->pl_append_meta (it, meta->name, meta->text);
+            }
+
         }
     }
     if (got_itunes_tags) {
