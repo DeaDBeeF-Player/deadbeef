@@ -168,27 +168,8 @@ mp4tagutil_find_udta (mp4p_atom_t *moov, mp4p_atom_t **pmeta, mp4p_atom_t **pils
 static int
 _mp4tagutil_file_editable (mp4p_atom_t *mp4file) {
     mp4p_atom_t *moov = mp4p_atom_find(mp4file, "moov");
-    mp4p_atom_t *padding = NULL;
-    mp4p_atom_t *mdat = NULL;
-    if (!moov || !moov->next) {
-        return 0;
-    }
-
-    // only [moov, free, mdat] or [moov, mdat] are supported
-    if (!mp4p_atom_type_compare(moov->next, "free")) {
-        padding = moov->next;
-        if (!padding->next) {
-            return 0;
-        }
-        if (mp4p_atom_type_compare(padding->next, "mdat")) {
-            return 0;
-        }
-        mdat = padding->next;
-    }
-    else if (!mp4p_atom_type_compare(moov->next, "mdat")) {
-        mdat = moov->next;
-    }
-    else {
+    mp4p_atom_t *mdat = mp4p_atom_find(mp4file, "mdat");
+    if (!moov || !mdat) {
         return 0;
     }
 
@@ -203,28 +184,29 @@ _mp4tagutil_update_stco (mp4p_atom_t *stco_atom, off_t delta) {
     }
 }
 
-static void
-_mp4gagutil_update_all_stco (mp4p_atom_t *moov, off_t delta) {
-    mp4p_atom_t *trak = mp4p_atom_find (moov, "trak");
-    for (; trak; trak = trak->next) {
-        if (mp4p_atom_type_compare(trak, "trak")) {
-            continue;
-        }
-        mp4p_atom_t *stbl = mp4p_atom_find (trak, "trak/mdia/minf/stbl");
-        if (stbl) {
-            mp4p_atom_t *stco = mp4p_atom_find(stbl, "stbl/stco");
-            if (stco) {
-                _mp4tagutil_update_stco(stco, delta);
-            }
-
-            mp4p_atom_t *co64 = mp4p_atom_find(stbl, "stbl/co64");
-            if (co64) {
-                _mp4tagutil_update_stco(co64, delta);
-            }
-        }
-    }
-}
-
+// NOTE: This is unused, since we're not moving mdat. Useful for reference.
+//static void
+//_mp4gagutil_update_all_stco (mp4p_atom_t *moov, off_t delta) {
+//    mp4p_atom_t *trak = mp4p_atom_find (moov, "trak");
+//    for (; trak; trak = trak->next) {
+//        if (mp4p_atom_type_compare(trak, "trak")) {
+//            continue;
+//        }
+//        mp4p_atom_t *stbl = mp4p_atom_find (trak, "trak/mdia/minf/stbl");
+//        if (stbl) {
+//            mp4p_atom_t *stco = mp4p_atom_find(stbl, "stbl/stco");
+//            if (stco) {
+//                _mp4tagutil_update_stco(stco, delta);
+//            }
+//
+//            mp4p_atom_t *co64 = mp4p_atom_find(stbl, "stbl/co64");
+//            if (co64) {
+//                _mp4tagutil_update_stco(co64, delta);
+//            }
+//        }
+//    }
+//}
+//
 static void _mp4tagutil_add_metadata_fields(mp4p_atom_t *ilst, DB_playItem_t *it) {
     deadbeef->pl_lock ();
     DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it);
@@ -341,7 +323,6 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     }
 
     mp4p_atom_t *mp4file_orig = mp4file;
-    mp4p_atom_t *mdat_orig = mp4p_atom_find(mp4file_orig, "mdat");
 
     mp4file = mp4p_atom_clone (mp4file_orig);
 
@@ -349,6 +330,7 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     mp4p_atom_t *ilst = NULL;
 
     mp4p_atom_t *moov = mp4p_atom_find(mp4file, "moov");
+    mp4p_atom_t *mdat = mp4p_atom_find(mp4file, "mdat");
 
     mp4p_atom_t *udta = mp4tagutil_find_udta (moov, &meta, &ilst);
 
@@ -379,52 +361,89 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
 
     _mp4tagutil_add_metadata_fields(ilst, it);
 
-    mp4p_atom_update_size (moov);
-    mp4p_rebuild_positions (mp4file, mp4file->pos);
+    // find first padding, if present
+    mp4p_atom_t *padding = mp4p_atom_find(mp4file, "free");
+    if (padding && padding->pos > mdat->pos) {
+        padding = NULL;
+    }
 
-    // remove pre-existing padding
-
-    for (;;) {
-        mp4p_atom_t *padding = mp4p_atom_find(mp4file, "free");
-        if (!padding) {
+    // desired atom to insert moov after
+    mp4p_atom_t *before_moov_begin = NULL;
+    for (mp4p_atom_t *curr = mp4file; curr->next; curr = curr->next) {
+        if (mp4p_atom_type_compare(curr->next, "moov")
+            || mp4p_atom_type_compare(curr->next, "free")
+            || mp4p_atom_type_compare(curr->next, "mdat")) {
+            before_moov_begin = curr;
             break;
         }
-        mp4p_atom_remove_sibling(mp4file, padding);
+    }
+    if (!before_moov_begin) {
+        mp4p_atom_free(mp4file);
+        return NULL;
     }
 
-    // update sizes/positions for mdat offs delta calculation
+    // calculate padding size, and find the end of padding (eop)
+    mp4p_atom_t *eop = moov->next;
+    size_t padding_size = 0;
+    for (mp4p_atom_t *curr = padding; curr && !mp4p_atom_type_compare(curr, "free"); curr = curr->next) {
+        padding_size += curr->size;
+        eop = curr->next;
+    }
 
+    // calculate final size of moov
     mp4p_atom_update_size (moov);
-    mp4p_rebuild_positions (mp4file, mp4file->pos);
 
-    mp4p_atom_t *mdat = mp4p_atom_find(mp4file, "mdat");
-
-    off_t delta = mdat->pos - mdat_orig->pos;
-    if (delta <= -8) {
-        // freed up enough space to add padding
-        mp4p_atom_t *padding = mp4p_atom_new ("free");
-        padding->size = (uint32_t)-delta;
-        padding->next = mdat;
-        moov->next = padding;
-        mp4p_atom_update_size (moov);
-        mp4p_rebuild_positions (mp4file, mp4file->pos);
-
-        delta = mdat->pos - mdat_orig->pos;
-        assert (delta == 0);
+    // remove old padding
+    mp4p_atom_t *next = NULL;
+    while (padding && !mp4p_atom_type_compare(padding, "free")) {
+        next = padding->next;
+        mp4p_atom_remove_sibling(mp4file, padding, 1);
+        padding = next;
     }
-    else if (delta != 0) {
-        // mdat is moving -> stco update + padding needed
-        mp4p_atom_t *padding = mp4p_atom_new ("free");
-        padding->size = 1024;
-        padding->next = mdat;
-        moov->next = padding;
-        mp4p_atom_update_size (moov);
-        mp4p_rebuild_positions (mp4file, mp4file->pos);
+    padding = NULL;
 
-        _mp4gagutil_update_all_stco (moov, delta);
+    // does moov + free fit before eop?
+    if (before_moov_begin->pos + before_moov_begin->size + moov->size == eop->pos
+        || before_moov_begin->pos + before_moov_begin->size + moov->size < eop->pos - 8) {
+        // moov fits: put to the beginning
+        mp4p_atom_remove_sibling(mp4file, moov, 0);
+        moov->pos = before_moov_begin->pos + before_moov_begin->size;
+        moov->next = before_moov_begin->next;
+        before_moov_begin->next = moov;
 
-        delta = mdat->pos - mdat_orig->pos;
-        assert (delta > 0);
+        // add new padding
+        if (moov->pos + moov->size < eop->pos - 8) {
+            padding = mp4p_atom_new ("free");
+            padding->pos = moov->pos + moov->size;
+            padding->size = (uint32_t)(next->pos - (moov->pos + moov->size));
+
+            padding->next = moov->next;
+            moov->next = padding;
+        }
+    }
+    // moov doesn't fit -- put to the end of file
+    else {
+        // prepare padding
+        padding = mp4p_atom_new ("free");
+        padding->pos = moov->pos;
+        padding->size = (uint32_t)(eop->pos - moov->pos);
+
+        mp4p_atom_remove_sibling(mp4file, moov, 0);
+        mp4p_atom_t *tail = mp4file;
+        while (tail->next) {
+            tail = tail->next;
+        }
+        tail->next = moov;
+        moov->pos = tail->pos + tail->size;
+
+        // insert padding before eop
+        for (mp4p_atom_t *before = mp4file; before; before = before->next) {
+            if (before->next == eop) {
+                before->next = padding;
+                padding->next = eop;
+                break;
+            }
+        }
     }
 
 //    printf ("------------orig\n");
@@ -465,8 +484,12 @@ mp4_write_metadata (DB_playItem_t *it) {
     }
 
     mp4p_atom_t *mp4file_updated = mp4tagutil_modify_meta(mp4file, it);
+    if (!mp4file_updated) {
+        mp4p_file_close(file);
+        return -1;
+    }
 
-    int res = mp4p_update_metadata (file, mp4file, mp4file_updated);
+    int res = mp4p_update_metadata (file, mp4file_updated);
 
     int close_err =  mp4p_file_close(file);
 

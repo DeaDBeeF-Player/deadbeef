@@ -811,7 +811,7 @@ mp4p_ilst_create_text (const char *type, const char *text) {
 }
 
 void
-mp4p_atom_remove_sibling(mp4p_atom_t *atom, mp4p_atom_t *sibling) {
+mp4p_atom_remove_sibling(mp4p_atom_t *atom, mp4p_atom_t *sibling, int free) {
     mp4p_atom_t *prev = NULL;
     mp4p_atom_t *curr = atom;
 
@@ -820,7 +820,12 @@ mp4p_atom_remove_sibling(mp4p_atom_t *atom, mp4p_atom_t *sibling) {
             if (prev) {
                 prev->next = sibling->next;
             }
-            mp4p_atom_free (sibling);
+            if (free) {
+                mp4p_atom_free (sibling);
+            }
+            else {
+                sibling->next = NULL;
+            }
             break;
         }
         prev = curr;
@@ -1045,105 +1050,51 @@ mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size) {
 }
 
 static int
-_rewrite_mdat (mp4p_file_callbacks_t *file, off_t mdat_delta, mp4p_atom_t *mdat_src) {
-    uint8_t temp[4096];
-
-    off_t size = file->seek (file, 0, SEEK_END);
-    if (size < 0) {
-        return -1; // couldn't get the size
+_atom_write(mp4p_file_callbacks_t *file, mp4p_atom_t *atom) {
+    uint32_t atom_size = mp4p_atom_to_buffer (atom, NULL, 0);
+    uint8_t *buffer = malloc (atom_size);
+    uint32_t written_size = mp4p_atom_to_buffer(atom, buffer, atom_size);
+    if (written_size != atom_size) {
+        free (buffer);
+        return -1;
     }
-
-    // resize the file
-    if (file->truncate (file, size + mdat_delta) < 0) {
+    file->seek (file, atom->pos, SEEK_SET);
+    if (file->write (file, buffer, atom_size) != atom_size) {
+        free (buffer);
         return -1;
     }
 
-    off_t pos_src = size;
-    do {
-        ssize_t blocksize = sizeof (temp);
-        if (pos_src - (off_t)sizeof (temp) < (off_t)mdat_src->pos) {
-            blocksize = pos_src - mdat_src->pos;
-            pos_src = mdat_src->pos;
-        }
-        else {
-            pos_src -= sizeof (temp);
-        }
-
-        if (file->seek (file, pos_src, SEEK_SET) < 0) {
-            return -1;
-        }
-
-        if (blocksize != file->read (file, temp, blocksize)) {
-            return -1;
-        }
-
-        off_t pos_dst = pos_src + mdat_delta;
-
-        if (file->seek (file, pos_dst, SEEK_SET) < 0) {
-            return -1;
-        }
-
-        if (blocksize != file->write (file, temp, blocksize)) {
-            return -1;
-        }
-    } while (pos_src > mdat_src->pos);
-
+    free (buffer);
     return 0;
 }
 
-// FIXME: The mdat offset can ONLY move forward for now, but this can be changed quite easily.
-// 1. Rewrite `mdat` at new offset
-// 2. Write out all atoms before the mdat
 int
-mp4p_update_metadata (mp4p_file_callbacks_t *file, mp4p_atom_t *source, mp4p_atom_t *dest) {
-    int res = -1;
-    uint8_t *buffer = NULL;
+mp4p_update_metadata (mp4p_file_callbacks_t *callbacks, mp4p_atom_t *mp4file) {
+    // resize
+    for (mp4p_atom_t *tail = mp4file; tail; tail = tail->next) {
+        if (!tail->next) {
+            if (callbacks->truncate (callbacks, tail->pos + tail->size) < 0) {
+                return -1;
+            }
 
-    mp4p_atom_t *mdat_src = mp4p_atom_find (source, "mdat");
-    mp4p_atom_t *mdat_dst = mp4p_atom_find (dest, "mdat");
-    off_t mdat_delta = mdat_dst->pos - mdat_src->pos;
-
-    if (mdat_delta < 0) {
-        goto error; // truncation unsupported
-    }
-
-    // need to move mdat?
-    if (mdat_delta > 0) {
-        // get file size
-        if (_rewrite_mdat (file, mdat_delta, mdat_src) < 0) {
-            goto error;
         }
     }
 
-    file->seek (file, 0, SEEK_SET);
-
-    for (mp4p_atom_t *atom = dest; atom; atom = atom->next) {
-        if (!mp4p_fourcc_compare(atom->type, "mdat")) {
-            break;
-        }
-
-        uint32_t atom_size = mp4p_atom_to_buffer (atom, NULL, 0);
-        buffer = malloc (atom_size);
-        uint32_t written_size = mp4p_atom_to_buffer(atom, buffer, atom_size);
-        if (written_size != atom_size) {
-            res = -1;
-            goto error;
-        }
-
-        if (file->write (file, buffer, atom_size) != atom_size) {
-            goto error;
-        }
-
-        free (buffer);
-        buffer = NULL;
+    // write moov
+    mp4p_atom_t *moov = mp4p_atom_find (mp4file, "moov");
+    if (_atom_write(callbacks, moov) < 0) {
+        return -1;
     }
 
-    res = 0;
+    // write padding
+    mp4p_atom_t *padding = mp4p_atom_find (mp4file, "free");
+    if (padding) {
+        if (_atom_write(callbacks, padding) < 0) {
+            return -1;
+        }
+    }
 
-error:
-    free (buffer);
-    buffer = NULL;
-    return res;
+    return 0;
 }
 
 int

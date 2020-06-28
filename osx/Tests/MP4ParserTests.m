@@ -312,7 +312,7 @@ static fake_callbacks_t _fake_file_cb = {
     mp4p_atom_t *mp4file_updated = mp4tagutil_modify_meta(mp4file, (DB_playItem_t *)it);
     pl_item_unref (it);
 
-    int res = mp4p_update_metadata (&cb.cb, mp4file, mp4file_updated);
+    int res = mp4p_update_metadata (&cb.cb, mp4file_updated);
 
     XCTAssert (!res);
     XCTAssertEqual(2150, cb.size);

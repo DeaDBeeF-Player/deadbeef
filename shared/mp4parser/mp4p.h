@@ -64,7 +64,7 @@ const char *
 mp4p_genre_name_for_index (uint16_t index);
 
 void
-mp4p_atom_remove_sibling(mp4p_atom_t *atom, mp4p_atom_t *sibling);
+mp4p_atom_remove_sibling(mp4p_atom_t *atom, mp4p_atom_t *sibling, int free);
 
 void
 mp4p_atom_remove_subatom (mp4p_atom_t *atom, mp4p_atom_t *subatom);
@@ -108,6 +108,7 @@ mp4p_atom_dump (mp4p_atom_t *atom);
 void
 mp4p_hdlr_init (mp4p_atom_t *hdlr_atom, const char *type, const char *subtype, const char *manufacturer);
 
+/// @returns memcmp result of comparison of type and the atom's typs
 int
 mp4p_atom_type_compare (mp4p_atom_t *atom, const char *type);
 
@@ -118,7 +119,7 @@ uint32_t
 mp4p_atom_to_buffer (mp4p_atom_t *atom, uint8_t *buffer, uint32_t buffer_size);
 
 int
-mp4p_update_metadata (mp4p_file_callbacks_t *callbacks, mp4p_atom_t *source, mp4p_atom_t *dest);
+mp4p_update_metadata (mp4p_file_callbacks_t *callbacks, mp4p_atom_t *mp4file);
 
 int
 mp4p_trak_playable (mp4p_atom_t *trak_atom);
