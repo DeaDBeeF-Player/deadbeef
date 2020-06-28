@@ -3,16 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# 이정희 <daemul72@gmail.com>, 2020
-# 이정희 <daemul72@gmail.com>, 2019-2020
+# MarongHappy <daemul72@gmail.com>, 2020
+# MarongHappy <daemul72@gmail.com>, 2019-2020
 # ieukori <ieukori@gmail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-03 19:35+0100\n"
-"PO-Revision-Date: 2020-03-07 04:45+0000\n"
-"Last-Translator: 이정희 <daemul72@gmail.com>\n"
+"POT-Creation-Date: 2020-06-15 20:41+0200\n"
+"PO-Revision-Date: 2020-05-20 11:07+0000\n"
+"Last-Translator: MarongHappy <daemul72@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/deadbeef-player/deadbeef-player/language/ko/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -61,11 +61,11 @@ msgstr "DeaDBeeF EQ 프리셋 (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:235
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "푸바2000 EQ 프리셋 가져오기..."
+msgstr "Foobar2000 EQ 프리셋 가져오기..."
 
 #: ../plugins/gtkui/eq.c:239
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "푸바2000 EQ 프리셋 (*.feq)"
+msgstr "Foobar2000 EQ 프리셋 (*.feq)"
 
 #: ../plugins/gtkui/eq.c:280
 msgid "Save Preset"
@@ -77,7 +77,7 @@ msgstr "프리셋 불러오기"
 
 #: ../plugins/gtkui/eq.c:296
 msgid "Import Foobar2000 Preset"
-msgstr "푸바2000 프리셋 가져오기"
+msgstr "Foobar2000 프리셋 가져오기"
 
 #. plugins/notify/notify.c
 #: ../plugins/gtkui/eq.c:322 ../translation/plugins.c:391
@@ -102,151 +102,151 @@ msgstr "밴드 0으로"
 msgid "Presets"
 msgstr "프리셋"
 
-#: ../plugins/gtkui/gtkui.c:163 ../tf.c:2527
+#: ../plugins/gtkui/gtkui.c:159 ../tf.c:2529
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1일 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:166 ../tf.c:2530
+#: ../plugins/gtkui/gtkui.c:162 ../tf.c:2532
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d일 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:212
+#: ../plugins/gtkui/gtkui.c:208
 msgid "total playtime"
-msgstr "전체 재생 시간"
+msgstr "전체 재생시간"
 
-#: ../plugins/gtkui/gtkui.c:422 ../plugins/gtkui/gtkui.c:426
+#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:422
 msgid "Paused"
 msgstr "일시정지됨"
 
-#: ../plugins/gtkui/gtkui.c:422 ../plugins/gtkui/gtkui.c:426
+#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:422
 msgid "bit"
 msgstr "비트"
 
-#: ../plugins/gtkui/gtkui.c:422 ../plugins/gtkui/gtkui.c:423
+#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:419
 msgid "selection playtime"
 msgstr "선택 재생시간"
 
-#: ../plugins/gtkui/gtkui.c:423 ../plugins/gtkui/gtkui.c:427
+#: ../plugins/gtkui/gtkui.c:419 ../plugins/gtkui/gtkui.c:423
 msgid "Stopped"
 msgstr "중지됨"
 
-#: ../plugins/gtkui/gtkui.c:690 ../translation/plugins.c:216
+#: ../plugins/gtkui/gtkui.c:686 ../translation/plugins.c:216
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
 #, no-c-format
 msgid "New Playlist"
 msgstr "새 재생목록"
 
-#: ../plugins/gtkui/gtkui.c:693 ../plugins/pltbrowser/pltbrowser.c:75
+#: ../plugins/gtkui/gtkui.c:689 ../plugins/pltbrowser/pltbrowser.c:75
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "새 재생목록 (%d)"
 
-#: ../plugins/gtkui/gtkui.c:750
+#: ../plugins/gtkui/gtkui.c:746
 #, c-format
 msgid "Copy of %s"
 msgstr "복사: %s"
 
-#: ../plugins/gtkui/gtkui.c:753
+#: ../plugins/gtkui/gtkui.c:749
 #, c-format
 msgid "Copy of %s (%d)"
 msgstr "복사: %s (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1231
+#: ../plugins/gtkui/gtkui.c:1227
 msgid "Playlist with tabs"
 msgstr "탭으로 표시된 재생목록"
 
-#: ../plugins/gtkui/gtkui.c:1232 ../plugins/gtkui/interface.c:2302
+#: ../plugins/gtkui/gtkui.c:1228 ../plugins/gtkui/interface.c:2302
 #: ../plugins/gtkui/interface.c:2747 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Playlist"
 msgstr "재생목록"
 
-#: ../plugins/gtkui/gtkui.c:1235
+#: ../plugins/gtkui/gtkui.c:1231
 msgid "Splitter (top and bottom)"
 msgstr "분할 (상 - 하)"
 
-#: ../plugins/gtkui/gtkui.c:1236
+#: ../plugins/gtkui/gtkui.c:1232
 msgid "Splitter (left and right)"
 msgstr "분할 (좌 - 우)"
 
-#: ../plugins/gtkui/gtkui.c:1238
+#: ../plugins/gtkui/gtkui.c:1234
 msgid "Tabs"
 msgstr "탭"
 
-#: ../plugins/gtkui/gtkui.c:1239
+#: ../plugins/gtkui/gtkui.c:1235
 msgid "Playlist tabs"
 msgstr "재생목록 탭"
 
-#: ../plugins/gtkui/gtkui.c:1240
+#: ../plugins/gtkui/gtkui.c:1236
 msgid "Selection properties"
 msgstr "선택한 곡의 정보"
 
-#: ../plugins/gtkui/gtkui.c:1241
+#: ../plugins/gtkui/gtkui.c:1237
 msgid "Album art display"
 msgstr "앨범아트 표시"
 
-#: ../plugins/gtkui/gtkui.c:1242
+#: ../plugins/gtkui/gtkui.c:1238
 msgid "Scope"
 msgstr "스코프"
 
-#: ../plugins/gtkui/gtkui.c:1243
+#: ../plugins/gtkui/gtkui.c:1239
 msgid "Spectrum"
 msgstr "스펙트럼"
 
-#: ../plugins/gtkui/gtkui.c:1244
+#: ../plugins/gtkui/gtkui.c:1240
 msgid "HBox"
 msgstr "가로영역"
 
-#: ../plugins/gtkui/gtkui.c:1245
+#: ../plugins/gtkui/gtkui.c:1241
 msgid "VBox"
 msgstr "세로영역"
 
-#: ../plugins/gtkui/gtkui.c:1246 ../plugins/gtkui/widgets.c:3874
-#: ../plugins/gtkui/widgets.c:3961
+#: ../plugins/gtkui/gtkui.c:1242 ../plugins/gtkui/widgets.c:3872
+#: ../plugins/gtkui/widgets.c:3959
 msgid "Button"
 msgstr "버튼"
 
-#: ../plugins/gtkui/gtkui.c:1247
+#: ../plugins/gtkui/gtkui.c:1243
 msgid "Seekbar"
 msgstr "진행막대"
 
-#: ../plugins/gtkui/gtkui.c:1248
+#: ../plugins/gtkui/gtkui.c:1244
 msgid "Playback controls"
 msgstr "재생 조절"
 
-#: ../plugins/gtkui/gtkui.c:1249
+#: ../plugins/gtkui/gtkui.c:1245
 msgid "Volume bar"
 msgstr "음량 조절"
 
-#: ../plugins/gtkui/gtkui.c:1250
+#: ../plugins/gtkui/gtkui.c:1246
 msgid "Chiptune voices"
 msgstr "FM 신디사이저"
 
-#: ../plugins/gtkui/gtkui.c:1251
+#: ../plugins/gtkui/gtkui.c:1247
 msgid "Log viewer"
 msgstr "로그 뷰어"
 
-#: ../plugins/gtkui/gtkui.c:1443
+#: ../plugins/gtkui/gtkui.c:1434
 msgid "Failed while reading help file"
 msgstr "도움말 파일을 읽는 동안 실패했습니다"
 
-#: ../plugins/gtkui/gtkui.c:1453
+#: ../plugins/gtkui/gtkui.c:1444
 msgid "Failed to load help file"
 msgstr "도움말 파일을 불러오지 못했습니다"
 
-#: ../plugins/gtkui/gtkui.c:1466
+#: ../plugins/gtkui/gtkui.c:1457
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks"
 " will be cancelled or interrupted. This may result in data loss."
 msgstr "재생기가 백그라운드에서 실행 중입니다. 지금 종료하면 작업이 취소되거나 중단됩니다. 이로 인해 데이터가 손실될 수 있습니다."
 
-#: ../plugins/gtkui/gtkui.c:1468
+#: ../plugins/gtkui/gtkui.c:1459
 msgid "Do you still want to quit?"
 msgstr "중지하시겠습니까?"
 
-#: ../plugins/gtkui/gtkui.c:1469 ../plugins/gtkui/prefwin.c:470
+#: ../plugins/gtkui/gtkui.c:1460 ../plugins/gtkui/prefwin.c:470
 #: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1080
 #: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:432
 #: ../plugins/gtkui/pltmenu.c:92
@@ -348,7 +348,7 @@ msgstr "제목"
 
 #: ../plugins/gtkui/interface.c:263 ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Track number"
-msgstr "트랙 번호"
+msgstr "곡 번호"
 
 #: ../plugins/gtkui/interface.c:267 ../plugins/gtkui/interface.c:1974
 #: ../plugins/gtkui/plcommon.c:98 ../plugins/gtkui/deadbeef.glade.h:22
@@ -370,7 +370,7 @@ msgstr "날짜"
 
 #: ../plugins/gtkui/interface.c:279 ../plugins/gtkui/deadbeef.glade.h:25
 msgid "Random"
-msgstr "무작위"
+msgstr "랜덤"
 
 #: ../plugins/gtkui/interface.c:283 ../plugins/gtkui/plcommon.c:106
 #: ../plugins/gtkui/plcommon.c:1921 ../plugins/gtkui/deadbeef.glade.h:26
@@ -381,7 +381,7 @@ msgstr "사용자 지정"
 #: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:202
 #, no-c-format
 msgid "Preferences"
-msgstr "환경 설정"
+msgstr "기본 설정"
 
 #: ../plugins/gtkui/interface.c:296 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "_View"
@@ -426,7 +426,7 @@ msgstr "앨범"
 
 #: ../plugins/gtkui/interface.c:351 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Random Tracks"
-msgstr "무작위 곡"
+msgstr "곡 랜덤"
 
 #: ../plugins/gtkui/interface.c:357 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
@@ -521,7 +521,7 @@ msgstr "다음"
 #: ../translation/plugins.c:335
 #, no-c-format
 msgid "Play Random"
-msgstr "무작위 재생"
+msgstr "랜덤 재생"
 
 #: ../plugins/gtkui/interface.c:843 ../plugins/gtkui/deadbeef.glade.h:60
 msgid "About"
@@ -568,7 +568,7 @@ msgstr "속성"
 #: ../plugins/gtkui/deadbeef.glade.h:72 ../plugins/converter/interface.c:418
 #: ../plugins/converter/converter.glade.h:25
 #: ../plugins/shellexecui/interface.c:163
-#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1572
+#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1570
 #: ../plugins/gtkui/pltmenu.c:66
 msgid "Title:"
 msgstr "제목:"
@@ -684,7 +684,7 @@ msgid "Processing:"
 msgstr "처리 중:"
 
 #: ../plugins/gtkui/interface.c:1989 ../plugins/gtkui/plcommon.c:1909
-#: ../translation/plugins.c:106 ../plugins/gtkui/widgets.c:3971
+#: ../translation/plugins.c:106 ../plugins/gtkui/widgets.c:3969
 #, no-c-format
 msgid "None"
 msgstr "없음"
@@ -914,7 +914,7 @@ msgstr "탭 스트립"
 
 #: ../plugins/gtkui/interface.c:2534 ../plugins/gtkui/deadbeef.glade.h:152
 msgid "Normal track(s):"
-msgstr "일반 곡(들):"
+msgstr "정상적인 곡:"
 
 #: ../plugins/gtkui/interface.c:2547 ../plugins/gtkui/interface.c:2709
 #: ../plugins/gtkui/deadbeef.glade.h:153
@@ -924,7 +924,7 @@ msgstr "재생중인 곡:"
 #: ../plugins/gtkui/interface.c:2560 ../plugins/gtkui/interface.c:2716
 #: ../plugins/gtkui/deadbeef.glade.h:154
 msgid "Selected track(s):"
-msgstr "선택된 곡(들):"
+msgstr "선택된 곡:"
 
 #: ../plugins/gtkui/interface.c:2573 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "Columns:"
@@ -1274,7 +1274,7 @@ msgstr "아티스트 / 앨범"
 
 #: ../plugins/gtkui/mainplaylist.c:232 ../plugins/gtkui/search.c:652
 msgid "Track No"
-msgstr "트랙 번호"
+msgstr "곡 번호"
 
 #: ../plugins/gtkui/mainplaylist.c:234 ../plugins/gtkui/plcommon.c:101
 #: ../plugins/gtkui/search.c:654 ../plugins/pltbrowser/pltbrowser.c:414
@@ -1304,7 +1304,7 @@ msgstr "연도"
 
 #: ../plugins/gtkui/plcommon.c:102 ../translation/extra.c:8
 msgid "Track Number"
-msgstr "트랙 번호"
+msgstr "곡 번호"
 
 #: ../plugins/gtkui/plcommon.c:103 ../translation/extra.c:5
 msgid "Band / Album Artist"
@@ -1423,12 +1423,12 @@ msgid "[Multiple values] "
 msgstr "[여러 값] "
 
 #: ../plugins/gtkui/trkproperties.c:374 ../plugins/gtkui/trkproperties.c:389
-#: ../plugins/gtkui/widgets.c:2587
+#: ../plugins/gtkui/widgets.c:2585
 msgid "Key"
 msgstr "키"
 
 #: ../plugins/gtkui/trkproperties.c:375 ../plugins/gtkui/trkproperties.c:390
-#: ../plugins/gtkui/widgets.c:2589
+#: ../plugins/gtkui/widgets.c:2587
 msgid "Value"
 msgstr "값"
 
@@ -1514,17 +1514,17 @@ msgstr "   --play-pause       중지된 경우 재생 시작, 그렇지 않으�
 #: ../main.c:132
 #, c-format
 msgid "   --next             Next song in playlist\n"
-msgstr "   --next             재생목록의 다음 곡으로\n"
+msgstr "   --next             재생목록의 다음 노래\n"
 
 #: ../main.c:133
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr "   --prev             재생목록의 이전 곡으로\n"
+msgstr "   --prev             재생목록의 이전 노래\n"
 
 #: ../main.c:134
 #, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr "   --random           재생목록 안에서 뒤섞어서 재생\n"
+msgstr "   --random           재생목록의 노래 랜덤\n"
 
 #: ../main.c:135
 #, c-format
@@ -1534,7 +1534,7 @@ msgstr "   --queue            재생목록에 파일 추가\n"
 #: ../main.c:136
 #, c-format
 msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr "   --gui PLUGIN       어떤 GUI plugin을 사용하고 있는지 알려줌, 기본은 \"GTK2\"\n"
+msgstr "   --gui PLUGIN       사용할 GUI 플러그인을 알려주며, 기본값은 \"GTK2\" 입니다.\n"
 
 #: ../main.c:137
 #, c-format
@@ -1611,23 +1611,23 @@ msgid ""
 "--volume -20dB\n"
 msgstr "                      예제: --volume 80, --volume +10, --volume -5 or --volume -20dB\n"
 
-#: ../playlist.c:479 ../playlist.c:2316
+#: ../playlist.c:480 ../playlist.c:2317
 msgid "Default"
 msgstr "기본"
 
-#: ../playlist.c:2981
+#: ../playlist.c:3002
 msgid "Mono"
 msgstr "모노"
 
-#: ../playlist.c:2981
+#: ../playlist.c:3002
 msgid "Stereo"
 msgstr "스테레오"
 
-#: ../playlist.c:3499
+#: ../playlist.c:3520
 msgid "Yes"
 msgstr "예"
 
-#: ../playlist.c:3499
+#: ../playlist.c:3520
 msgid "No"
 msgstr "아니오"
 
@@ -1682,7 +1682,7 @@ msgstr "연주자"
 
 #: ../translation/extra.c:9
 msgid "Total Tracks"
-msgstr "전체 곡 수"
+msgstr "전체 곡"
 
 #: ../translation/extra.c:10
 msgid "Genre"
@@ -1694,7 +1694,7 @@ msgstr "작곡자"
 
 #: ../translation/extra.c:12
 msgid "Disc Number"
-msgstr "디스크 수"
+msgstr "디스크 번호"
 
 #: ../translation/extra.c:13
 msgid "Total Discs"
@@ -2013,7 +2013,7 @@ msgstr "해석할 수 없는 스트림 오류 무시"
 #: ../translation/plugins.c:125
 #, no-c-format
 msgid "Max song length (in minutes)"
-msgstr "최대 음악 길이 (분)"
+msgstr "최대 노래 길이 (분)"
 
 #: ../translation/plugins.c:127
 #, no-c-format
@@ -2059,7 +2059,7 @@ msgstr "파일별 곡 게인 검색"
 #: ../translation/plugins.c:144
 #, no-c-format
 msgid "Scan Per-file Track Gain If Not Scanned"
-msgstr "검색되지 않은 경우 파일당 트랙 게인 검색"
+msgstr "검색되지 않은 경우 파일당 곡 게인 검색"
 
 #: ../translation/plugins.c:148
 #, no-c-format
@@ -2124,7 +2124,7 @@ msgstr "순서섞기 모드 주기"
 #: ../translation/plugins.c:182
 #, no-c-format
 msgid "Shuffle - Random Tracks"
-msgstr "순서섞기 - 무작위 곡"
+msgstr "순서섞기 - 곡 랜덤"
 
 #: ../translation/plugins.c:184
 #, no-c-format
@@ -2259,7 +2259,7 @@ msgstr "사용자 지정 상태 아이콘"
 #: ../translation/plugins.c:240
 #, no-c-format
 msgid "Add separators between plugin context menu items"
-msgstr "컨텍스트 메뉴에 분리줄 추가"
+msgstr "플러그인 컨텍스트 메뉴 항목 간에 구분기호 추가"
 
 #: ../translation/plugins.c:242
 #, no-c-format
@@ -2384,7 +2384,7 @@ msgstr "재생 목록 1로 전환"
 #: ../translation/plugins.c:293
 #, no-c-format
 msgid "Sort Randomize"
-msgstr "무작위 정렬"
+msgstr "랜덤화 정렬"
 
 #: ../translation/plugins.c:295
 #, no-c-format
@@ -2404,7 +2404,7 @@ msgstr "앨범별로 정렬"
 #: ../translation/plugins.c:301
 #, no-c-format
 msgid "Sort By Track Number"
-msgstr "트랙 번호별로 정렬"
+msgstr "곡 번호별로 정렬"
 
 #: ../translation/plugins.c:303
 #, no-c-format
@@ -2434,12 +2434,12 @@ msgstr "이동"
 #: ../translation/plugins.c:317
 #, no-c-format
 msgid "Move Tracks Down"
-msgstr "곡을 아래로 이동"
+msgstr "곡 아래로 이동"
 
 #: ../translation/plugins.c:319
 #, no-c-format
 msgid "Move Tracks Up"
-msgstr "곡을 위로 이동"
+msgstr "곡 위로 이동"
 
 #: ../translation/plugins.c:321
 #, no-c-format
@@ -2560,7 +2560,7 @@ msgstr "MusicBrainz ID 보내기"
 #: ../translation/plugins.c:378
 #, no-c-format
 msgid "Submit tracks shorter than 30 seconds (not recommended)"
-msgstr "30초 미만의 곡 제출 (권장되지 않음)"
+msgstr "30초 미만의 곡 전송 (권장되지 않음)"
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:381
@@ -2714,7 +2714,7 @@ msgstr "샘플별 비트 수"
 #: ../translation/plugins.c:451
 #, no-c-format
 msgid "Default song length (sec)"
-msgstr "기본 노래 길이 (sec)"
+msgstr "기본 노래 길이 (초)"
 
 #: ../translation/plugins.c:453
 #, no-c-format
@@ -2924,7 +2924,7 @@ msgstr "DSP 프리셋:"
 #: ../plugins/converter/interface.c:211
 #: ../plugins/converter/converter.glade.h:12
 msgid "Number of threads:"
-msgstr "쓰레드 갯수:"
+msgstr "쓰레드 수:"
 
 #: ../plugins/converter/interface.c:224
 #: ../plugins/converter/converter.glade.h:13
@@ -3194,17 +3194,17 @@ msgstr "단일 곡"
 #: ../plugins/shellexecui/interface.c:211
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
-msgstr "단일 곡에서 작업합니다."
+msgstr "단일 곡에서 작동합니다."
 
 #: ../plugins/shellexecui/interface.c:213
 #: ../plugins/shellexecui/shellexec.glade.h:17
 msgid "Multiple Tracks"
-msgstr "다수의 곡"
+msgstr "다중 곡"
 
 #: ../plugins/shellexecui/interface.c:216
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
-msgstr "다수의 곡에서 작업합니다."
+msgstr "다중 곡에서 작동합니다."
 
 #: ../plugins/shellexecui/interface.c:218
 #: ../plugins/shellexecui/shellexec.glade.h:19
@@ -3248,7 +3248,7 @@ msgstr "<small>기본 메뉴에 명령을 추가하려면 제목에 다음과 �
 msgid "Add Command"
 msgstr "명령 추가"
 
-#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:871
+#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:869
 msgid "Delete"
 msgstr "삭제"
 
@@ -3291,7 +3291,7 @@ msgstr "재생목록에 폴더 추가..."
 
 #: ../plugins/gtkui/actionhandlers.c:304
 msgid "help.txt"
-msgstr "도움말.txt"
+msgstr "help.ko.txt"
 
 #: ../plugins/gtkui/actionhandlers.c:412
 msgid ""
@@ -3355,100 +3355,100 @@ msgstr "선택된 항목이 없습니다."
 msgid "Widget \"%s\" is not available"
 msgstr "\"%s\" 위젯은 사용할 수 없습니다"
 
-#: ../plugins/gtkui/widgets.c:846
+#: ../plugins/gtkui/widgets.c:844
 msgid "Replace with..."
 msgstr "바꾸기..."
 
-#: ../plugins/gtkui/widgets.c:851
+#: ../plugins/gtkui/widgets.c:849
 msgid "Insert..."
 msgstr "끼워넣기..."
 
-#: ../plugins/gtkui/widgets.c:878
+#: ../plugins/gtkui/widgets.c:876
 msgid "Cut"
 msgstr "자르기"
 
-#: ../plugins/gtkui/widgets.c:885
+#: ../plugins/gtkui/widgets.c:883
 msgid "Copy"
 msgstr "복사하기"
 
-#: ../plugins/gtkui/widgets.c:892
+#: ../plugins/gtkui/widgets.c:890
 msgid "Paste"
 msgstr "붙여넣기"
 
-#: ../plugins/gtkui/widgets.c:1019
+#: ../plugins/gtkui/widgets.c:1017
 msgid "Multiple widgets of this type are not supported"
 msgstr "이런 형식의 여러 위젯은 지원하지 않습니다"
 
-#: ../plugins/gtkui/widgets.c:1294
+#: ../plugins/gtkui/widgets.c:1292
 msgid "Proportional Sizing"
 msgstr "비례 크기 조정"
 
-#: ../plugins/gtkui/widgets.c:1306
+#: ../plugins/gtkui/widgets.c:1304
 msgid "Lock Top Pane Height"
 msgstr "상단 창 높이 잠금"
 
-#: ../plugins/gtkui/widgets.c:1309
+#: ../plugins/gtkui/widgets.c:1307
 msgid "Lock Left Pane Width"
 msgstr "왼쪽 창 너비 잠금"
 
-#: ../plugins/gtkui/widgets.c:1322
+#: ../plugins/gtkui/widgets.c:1320
 msgid "Lock Bottom Pane Height"
 msgstr "하단 창 높이 잠금"
 
-#: ../plugins/gtkui/widgets.c:1325
+#: ../plugins/gtkui/widgets.c:1323
 msgid "Lock Right Pane Width"
 msgstr "오른쪽 창 너비 잠금"
 
-#: ../plugins/gtkui/widgets.c:1569 ../plugins/gtkui/widgets.c:1684
+#: ../plugins/gtkui/widgets.c:1567 ../plugins/gtkui/widgets.c:1682
 msgid "Rename Tab"
 msgstr "탭 이름변경"
 
-#: ../plugins/gtkui/widgets.c:1691
+#: ../plugins/gtkui/widgets.c:1689
 msgid "Remove Tab"
 msgstr "탭 제거"
 
-#: ../plugins/gtkui/widgets.c:1698 ../plugins/gtkui/widgets.c:1878
+#: ../plugins/gtkui/widgets.c:1696 ../plugins/gtkui/widgets.c:1876
 msgid "Add New Tab"
 msgstr "새 탭 추가"
 
-#: ../plugins/gtkui/widgets.c:1707
+#: ../plugins/gtkui/widgets.c:1705
 msgid "Move Tab Left"
 msgstr "탭 왼쪽 이동"
 
-#: ../plugins/gtkui/widgets.c:1714
+#: ../plugins/gtkui/widgets.c:1712
 msgid "Move Tab Right"
 msgstr "탭 오른쪽 이동"
 
-#: ../plugins/gtkui/widgets.c:2368 ../plugins/gtkui/widgets.c:2546
+#: ../plugins/gtkui/widgets.c:2366 ../plugins/gtkui/widgets.c:2544
 #: ../plugins/pltbrowser/pltbrowser.c:883
 msgid "Show Column Headers"
 msgstr "컬럼 제목 보이기"
 
-#: ../plugins/gtkui/widgets.c:3593
+#: ../plugins/gtkui/widgets.c:3591
 msgid "Expand Box by 1 Item"
 msgstr "1개 항목으로 박스 확장"
 
-#: ../plugins/gtkui/widgets.c:3598
+#: ../plugins/gtkui/widgets.c:3596
 msgid "Shrink Box by 1 Item"
 msgstr "1개 항목으로 박스 축소"
 
-#: ../plugins/gtkui/widgets.c:3603
+#: ../plugins/gtkui/widgets.c:3601
 msgid "Homogeneous"
 msgstr "같은 종류"
 
-#: ../plugins/gtkui/widgets.c:3643
+#: ../plugins/gtkui/widgets.c:3641
 msgid "Expand"
 msgstr "확장"
 
-#: ../plugins/gtkui/widgets.c:3651
+#: ../plugins/gtkui/widgets.c:3649
 msgid "Fill"
 msgstr "채우기"
 
-#: ../plugins/gtkui/widgets.c:4051
+#: ../plugins/gtkui/widgets.c:4049
 msgid "Configure Button"
 msgstr "버튼 설정"
 
-#: ../plugins/gtkui/widgets.c:4330
+#: ../plugins/gtkui/widgets.c:4328
 msgid "Voices:"
 msgstr "음성:"
 
@@ -3515,11 +3515,11 @@ msgstr "♫"
 msgid "Playlist browser"
 msgstr "재생목록 찾아보기"
 
-#: ../tf.c:2197
+#: ../tf.c:2199
 msgid "mono"
 msgstr "모노"
 
-#: ../tf.c:2200 ../tf.c:2204
+#: ../tf.c:2202 ../tf.c:2206
 msgid "stereo"
 msgstr "스테레오"
 

@@ -85,9 +85,12 @@
 #include "playqueue.h"
 #include "tf.h"
 #include "logger.h"
+
+#ifdef OSX_APPBUNDLE
 #include "scriptable/scriptable.h"
 #include "scriptable/scriptable_dsp.h"
 #include "scriptable/scriptable_encoder.h"
+#endif
 
 #ifndef PREFIX
 #error PREFIX must be defined
