@@ -80,6 +80,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/pltbrowser_gtk2.so\
     $PLUGDIR/pltbrowser_gtk3.so\
     $PLUGDIR/in_sc68.so\
+    $PLUGDIR/ddb_soundtouch.so\
     $PLUGDIR/data68\
     $PIXMAPDIR\
     $SRCDIR/locale\

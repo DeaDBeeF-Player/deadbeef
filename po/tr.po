@@ -3,6 +3,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# abc Def <hdogan1974@gmail.com>, 2020
 # Ercan PEKER <bahadiroglu33@gmail.com>, 2017
 # Burak <public@burakgarci.net>, 2013
 # Burak <burakgarci@gmail.com>, 2013
@@ -14,9 +15,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-03 19:35+0100\n"
-"PO-Revision-Date: 2020-03-03 18:38+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2020-06-15 20:41+0200\n"
+"PO-Revision-Date: 2020-04-15 17:52+0000\n"
+"Last-Translator: abc Def <hdogan1974@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/deadbeef-player/deadbeef-player/language/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -106,151 +107,151 @@ msgstr "Bantları Sıfırla"
 msgid "Presets"
 msgstr "Önayarlar"
 
-#: ../plugins/gtkui/gtkui.c:163 ../tf.c:2527
+#: ../plugins/gtkui/gtkui.c:159 ../tf.c:2529
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 gün %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:166 ../tf.c:2530
+#: ../plugins/gtkui/gtkui.c:162 ../tf.c:2532
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d gün %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:212
+#: ../plugins/gtkui/gtkui.c:208
 msgid "total playtime"
 msgstr "toplam çalma süresi"
 
-#: ../plugins/gtkui/gtkui.c:422 ../plugins/gtkui/gtkui.c:426
+#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:422
 msgid "Paused"
 msgstr "Duraklatıldı"
 
-#: ../plugins/gtkui/gtkui.c:422 ../plugins/gtkui/gtkui.c:426
+#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:422
 msgid "bit"
-msgstr ""
+msgstr "bit"
 
-#: ../plugins/gtkui/gtkui.c:422 ../plugins/gtkui/gtkui.c:423
+#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:419
 msgid "selection playtime"
 msgstr "seçim oynatma süresi"
 
-#: ../plugins/gtkui/gtkui.c:423 ../plugins/gtkui/gtkui.c:427
+#: ../plugins/gtkui/gtkui.c:419 ../plugins/gtkui/gtkui.c:423
 msgid "Stopped"
 msgstr "Durdu"
 
-#: ../plugins/gtkui/gtkui.c:690 ../translation/plugins.c:216
+#: ../plugins/gtkui/gtkui.c:686 ../translation/plugins.c:216
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
 #, no-c-format
 msgid "New Playlist"
 msgstr "Yeni Çalma Listesi"
 
-#: ../plugins/gtkui/gtkui.c:693 ../plugins/pltbrowser/pltbrowser.c:75
+#: ../plugins/gtkui/gtkui.c:689 ../plugins/pltbrowser/pltbrowser.c:75
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Yeni Çalma Listesi (%d)"
 
-#: ../plugins/gtkui/gtkui.c:750
+#: ../plugins/gtkui/gtkui.c:746
 #, c-format
 msgid "Copy of %s"
 msgstr "%s Kopyalandı"
 
-#: ../plugins/gtkui/gtkui.c:753
+#: ../plugins/gtkui/gtkui.c:749
 #, c-format
 msgid "Copy of %s (%d)"
 msgstr "%s (%d) Kopyalandı"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1231
+#: ../plugins/gtkui/gtkui.c:1227
 msgid "Playlist with tabs"
 msgstr "Sekmeli çalma listesi"
 
-#: ../plugins/gtkui/gtkui.c:1232 ../plugins/gtkui/interface.c:2302
+#: ../plugins/gtkui/gtkui.c:1228 ../plugins/gtkui/interface.c:2302
 #: ../plugins/gtkui/interface.c:2747 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Playlist"
 msgstr "Çalma listesi"
 
-#: ../plugins/gtkui/gtkui.c:1235
+#: ../plugins/gtkui/gtkui.c:1231
 msgid "Splitter (top and bottom)"
 msgstr "Bölümle (üst ve alt)"
 
-#: ../plugins/gtkui/gtkui.c:1236
+#: ../plugins/gtkui/gtkui.c:1232
 msgid "Splitter (left and right)"
 msgstr "Bölümle (sol ve sağ)"
 
-#: ../plugins/gtkui/gtkui.c:1238
+#: ../plugins/gtkui/gtkui.c:1234
 msgid "Tabs"
 msgstr "Sekmeler"
 
-#: ../plugins/gtkui/gtkui.c:1239
+#: ../plugins/gtkui/gtkui.c:1235
 msgid "Playlist tabs"
 msgstr "Çalma listesi sekmeleri"
 
-#: ../plugins/gtkui/gtkui.c:1240
+#: ../plugins/gtkui/gtkui.c:1236
 msgid "Selection properties"
 msgstr "Seçim özellikleri"
 
-#: ../plugins/gtkui/gtkui.c:1241
+#: ../plugins/gtkui/gtkui.c:1237
 msgid "Album art display"
 msgstr "Albüm kapağı görünümü"
 
-#: ../plugins/gtkui/gtkui.c:1242
+#: ../plugins/gtkui/gtkui.c:1238
 msgid "Scope"
 msgstr "Alan/kapsam"
 
-#: ../plugins/gtkui/gtkui.c:1243
+#: ../plugins/gtkui/gtkui.c:1239
 msgid "Spectrum"
 msgstr "Spektrum"
 
-#: ../plugins/gtkui/gtkui.c:1244
+#: ../plugins/gtkui/gtkui.c:1240
 msgid "HBox"
 msgstr "Yatay Kutu"
 
-#: ../plugins/gtkui/gtkui.c:1245
+#: ../plugins/gtkui/gtkui.c:1241
 msgid "VBox"
 msgstr "Dikey Kutu"
 
-#: ../plugins/gtkui/gtkui.c:1246 ../plugins/gtkui/widgets.c:3874
-#: ../plugins/gtkui/widgets.c:3961
+#: ../plugins/gtkui/gtkui.c:1242 ../plugins/gtkui/widgets.c:3872
+#: ../plugins/gtkui/widgets.c:3959
 msgid "Button"
 msgstr "Düğme"
 
-#: ../plugins/gtkui/gtkui.c:1247
+#: ../plugins/gtkui/gtkui.c:1243
 msgid "Seekbar"
 msgstr "Oynatma çubuğu"
 
-#: ../plugins/gtkui/gtkui.c:1248
+#: ../plugins/gtkui/gtkui.c:1244
 msgid "Playback controls"
 msgstr "Oynatma kontrolleri"
 
-#: ../plugins/gtkui/gtkui.c:1249
+#: ../plugins/gtkui/gtkui.c:1245
 msgid "Volume bar"
 msgstr "Ses çubuğu"
 
-#: ../plugins/gtkui/gtkui.c:1250
+#: ../plugins/gtkui/gtkui.c:1246
 msgid "Chiptune voices"
 msgstr "Chiptune sesleri"
 
-#: ../plugins/gtkui/gtkui.c:1251
+#: ../plugins/gtkui/gtkui.c:1247
 msgid "Log viewer"
 msgstr "Günlük kaydı görüntüleyici"
 
-#: ../plugins/gtkui/gtkui.c:1443
+#: ../plugins/gtkui/gtkui.c:1434
 msgid "Failed while reading help file"
 msgstr "Yardım dosyası okunurken hata oluştu"
 
-#: ../plugins/gtkui/gtkui.c:1453
+#: ../plugins/gtkui/gtkui.c:1444
 msgid "Failed to load help file"
 msgstr "Yardım dosyası yüklenirken hata oluştu"
 
-#: ../plugins/gtkui/gtkui.c:1466
+#: ../plugins/gtkui/gtkui.c:1457
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks"
 " will be cancelled or interrupted. This may result in data loss."
 msgstr "Müzikçalar şu anda arka planda görevler çalıştırıyor. Şimdi çıkarsanız, görevler iptal edilir veya kesilir. Bu, veri kaybına neden olabilir."
 
-#: ../plugins/gtkui/gtkui.c:1468
+#: ../plugins/gtkui/gtkui.c:1459
 msgid "Do you still want to quit?"
 msgstr "Hâlâ çıkmak istiyor musunuz?"
 
-#: ../plugins/gtkui/gtkui.c:1469 ../plugins/gtkui/prefwin.c:470
+#: ../plugins/gtkui/gtkui.c:1460 ../plugins/gtkui/prefwin.c:470
 #: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1080
 #: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:432
 #: ../plugins/gtkui/pltmenu.c:92
@@ -572,7 +573,7 @@ msgstr "Özellikler"
 #: ../plugins/gtkui/deadbeef.glade.h:72 ../plugins/converter/interface.c:418
 #: ../plugins/converter/converter.glade.h:25
 #: ../plugins/shellexecui/interface.c:163
-#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1572
+#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1570
 #: ../plugins/gtkui/pltmenu.c:66
 msgid "Title:"
 msgstr "Başlık:"
@@ -688,7 +689,7 @@ msgid "Processing:"
 msgstr "İşlem yapılıyor:"
 
 #: ../plugins/gtkui/interface.c:1989 ../plugins/gtkui/plcommon.c:1909
-#: ../translation/plugins.c:106 ../plugins/gtkui/widgets.c:3971
+#: ../translation/plugins.c:106 ../plugins/gtkui/widgets.c:3969
 #, no-c-format
 msgid "None"
 msgstr "Hiçbiri"
@@ -1427,12 +1428,12 @@ msgid "[Multiple values] "
 msgstr "[çoklu değerler]"
 
 #: ../plugins/gtkui/trkproperties.c:374 ../plugins/gtkui/trkproperties.c:389
-#: ../plugins/gtkui/widgets.c:2587
+#: ../plugins/gtkui/widgets.c:2585
 msgid "Key"
 msgstr "Tuş"
 
 #: ../plugins/gtkui/trkproperties.c:375 ../plugins/gtkui/trkproperties.c:390
-#: ../plugins/gtkui/widgets.c:2589
+#: ../plugins/gtkui/widgets.c:2587
 msgid "Value"
 msgstr "Değer"
 
@@ -1615,23 +1616,23 @@ msgid ""
 "--volume -20dB\n"
 msgstr ""
 
-#: ../playlist.c:479 ../playlist.c:2316
+#: ../playlist.c:480 ../playlist.c:2317
 msgid "Default"
 msgstr "Varsayılan"
 
-#: ../playlist.c:2981
+#: ../playlist.c:3002
 msgid "Mono"
 msgstr "Mono"
 
-#: ../playlist.c:2981
+#: ../playlist.c:3002
 msgid "Stereo"
 msgstr "Steryo"
 
-#: ../playlist.c:3499
+#: ../playlist.c:3520
 msgid "Yes"
 msgstr "Evet"
 
-#: ../playlist.c:3499
+#: ../playlist.c:3520
 msgid "No"
 msgstr "Hayır"
 
@@ -1906,27 +1907,27 @@ msgstr "Normal oynatma için sürüş hızı"
 #: ../translation/plugins.c:75
 #, no-c-format
 msgid "1x"
-msgstr ""
+msgstr "1x"
 
 #: ../translation/plugins.c:77
 #, no-c-format
 msgid "2x"
-msgstr ""
+msgstr "2x"
 
 #: ../translation/plugins.c:79
 #, no-c-format
 msgid "4x"
-msgstr ""
+msgstr "4x"
 
 #: ../translation/plugins.c:81
 #, no-c-format
 msgid "8x"
-msgstr ""
+msgstr "8x"
 
 #: ../translation/plugins.c:83
 #, no-c-format
 msgid "16x"
-msgstr ""
+msgstr "16x"
 
 #: ../translation/plugins.c:85
 #, no-c-format
@@ -2638,7 +2639,7 @@ msgstr "Cihaz adı kodlaması"
 #: ../translation/plugins.c:416
 #, no-c-format
 msgid "ASCII / UTF-8"
-msgstr ""
+msgstr "ASCII / UTF-8"
 
 #: ../translation/plugins.c:418
 #, no-c-format
@@ -2734,47 +2735,47 @@ msgstr ""
 #: ../translation/plugins.c:458
 #, no-c-format
 msgid "1.2K"
-msgstr ""
+msgstr "1.2K"
 
 #: ../translation/plugins.c:460
 #, no-c-format
 msgid "1.8K"
-msgstr ""
+msgstr "1.8K"
 
 #: ../translation/plugins.c:462
 #, no-c-format
 msgid "2.5K"
-msgstr ""
+msgstr "2.5K"
 
 #: ../translation/plugins.c:464
 #, no-c-format
 msgid "3.5K"
-msgstr ""
+msgstr "3.5K"
 
 #: ../translation/plugins.c:466
 #, no-c-format
 msgid "5K"
-msgstr ""
+msgstr "5K"
 
 #: ../translation/plugins.c:468
 #, no-c-format
 msgid "7K"
-msgstr ""
+msgstr "7K"
 
 #: ../translation/plugins.c:470
 #, no-c-format
 msgid "10K"
-msgstr ""
+msgstr "10K"
 
 #: ../translation/plugins.c:472
 #, no-c-format
 msgid "14K"
-msgstr ""
+msgstr "14K"
 
 #: ../translation/plugins.c:474
 #, no-c-format
 msgid "20K"
-msgstr ""
+msgstr "20K"
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:477
@@ -3062,7 +3063,7 @@ msgstr "ID3v2"
 #: ../plugins/converter/interface.c:544
 #: ../plugins/converter/converter.glade.h:45
 msgid "MP4"
-msgstr ""
+msgstr "MP4"
 
 #: ../plugins/converter/interface.c:550
 #: ../plugins/converter/converter.glade.h:46
@@ -3252,7 +3253,7 @@ msgstr "<small> Komutu ana menüye eklemek isterseniz, başlığın şu şekilde
 msgid "Add Command"
 msgstr "Komut Ekle"
 
-#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:871
+#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:869
 msgid "Delete"
 msgstr "Sil"
 
@@ -3359,100 +3360,100 @@ msgstr "Hiçbir  şey seçilmedi."
 msgid "Widget \"%s\" is not available"
 msgstr "\"%s\" aracı kullanılamıyor"
 
-#: ../plugins/gtkui/widgets.c:846
+#: ../plugins/gtkui/widgets.c:844
 msgid "Replace with..."
 msgstr "... ile değiştir"
 
-#: ../plugins/gtkui/widgets.c:851
+#: ../plugins/gtkui/widgets.c:849
 msgid "Insert..."
 msgstr "Ekle"
 
-#: ../plugins/gtkui/widgets.c:878
+#: ../plugins/gtkui/widgets.c:876
 msgid "Cut"
 msgstr "Kes"
 
-#: ../plugins/gtkui/widgets.c:885
+#: ../plugins/gtkui/widgets.c:883
 msgid "Copy"
 msgstr "Kopyala"
 
-#: ../plugins/gtkui/widgets.c:892
+#: ../plugins/gtkui/widgets.c:890
 msgid "Paste"
 msgstr "Yapıştır"
 
-#: ../plugins/gtkui/widgets.c:1019
+#: ../plugins/gtkui/widgets.c:1017
 msgid "Multiple widgets of this type are not supported"
 msgstr "Bu türden çoklu pencere öğeleri desteklenmiyor"
 
-#: ../plugins/gtkui/widgets.c:1294
+#: ../plugins/gtkui/widgets.c:1292
 msgid "Proportional Sizing"
 msgstr "Oransal Boyutlandırma"
 
-#: ../plugins/gtkui/widgets.c:1306
+#: ../plugins/gtkui/widgets.c:1304
 msgid "Lock Top Pane Height"
 msgstr "Üst Panel Yüksekliğini Kilitle"
 
-#: ../plugins/gtkui/widgets.c:1309
+#: ../plugins/gtkui/widgets.c:1307
 msgid "Lock Left Pane Width"
 msgstr "Sol Panel Genişliğini Kilitle"
 
-#: ../plugins/gtkui/widgets.c:1322
+#: ../plugins/gtkui/widgets.c:1320
 msgid "Lock Bottom Pane Height"
 msgstr "Alt Panel Yüksekliğini Kilitle"
 
-#: ../plugins/gtkui/widgets.c:1325
+#: ../plugins/gtkui/widgets.c:1323
 msgid "Lock Right Pane Width"
 msgstr "Sağ Panel Genişliğini Kilitle"
 
-#: ../plugins/gtkui/widgets.c:1569 ../plugins/gtkui/widgets.c:1684
+#: ../plugins/gtkui/widgets.c:1567 ../plugins/gtkui/widgets.c:1682
 msgid "Rename Tab"
 msgstr "Sekmeyi Yeniden Adlandır"
 
-#: ../plugins/gtkui/widgets.c:1691
+#: ../plugins/gtkui/widgets.c:1689
 msgid "Remove Tab"
 msgstr "Sekmeyi Sil"
 
-#: ../plugins/gtkui/widgets.c:1698 ../plugins/gtkui/widgets.c:1878
+#: ../plugins/gtkui/widgets.c:1696 ../plugins/gtkui/widgets.c:1876
 msgid "Add New Tab"
 msgstr "Yeni Sekme Ekle"
 
-#: ../plugins/gtkui/widgets.c:1707
+#: ../plugins/gtkui/widgets.c:1705
 msgid "Move Tab Left"
 msgstr "Sekmeyi Sola Taşı"
 
-#: ../plugins/gtkui/widgets.c:1714
+#: ../plugins/gtkui/widgets.c:1712
 msgid "Move Tab Right"
 msgstr "Sekmeyi Sağa Taşı"
 
-#: ../plugins/gtkui/widgets.c:2368 ../plugins/gtkui/widgets.c:2546
+#: ../plugins/gtkui/widgets.c:2366 ../plugins/gtkui/widgets.c:2544
 #: ../plugins/pltbrowser/pltbrowser.c:883
 msgid "Show Column Headers"
 msgstr "Sütun Başlıklarını Göster"
 
-#: ../plugins/gtkui/widgets.c:3593
+#: ../plugins/gtkui/widgets.c:3591
 msgid "Expand Box by 1 Item"
 msgstr "Kutuyu 1 Öğeye Göre Genişlet"
 
-#: ../plugins/gtkui/widgets.c:3598
+#: ../plugins/gtkui/widgets.c:3596
 msgid "Shrink Box by 1 Item"
 msgstr "Kutuyu 1 Öğeye Göre Küçült"
 
-#: ../plugins/gtkui/widgets.c:3603
+#: ../plugins/gtkui/widgets.c:3601
 msgid "Homogeneous"
 msgstr "Aynı yapıda olanlar"
 
-#: ../plugins/gtkui/widgets.c:3643
+#: ../plugins/gtkui/widgets.c:3641
 msgid "Expand"
 msgstr "Genişlet"
 
-#: ../plugins/gtkui/widgets.c:3651
+#: ../plugins/gtkui/widgets.c:3649
 msgid "Fill"
 msgstr "Doldur"
 
-#: ../plugins/gtkui/widgets.c:4051
+#: ../plugins/gtkui/widgets.c:4049
 msgid "Configure Button"
 msgstr "Düğmeyi Yapılandırın"
 
-#: ../plugins/gtkui/widgets.c:4330
+#: ../plugins/gtkui/widgets.c:4328
 msgid "Voices:"
 msgstr "Sesler:"
 
@@ -3462,7 +3463,7 @@ msgstr "Çalma listesini yeniden adlandır"
 
 #: ../plugins/gtkui/pltmenu.c:90
 msgid "Removing playlist"
-msgstr ""
+msgstr "Oynatma listesini kaldır"
 
 #: ../plugins/gtkui/pltmenu.c:91
 #, c-format
@@ -3471,7 +3472,7 @@ msgstr ""
 
 #: ../plugins/gtkui/pltmenu.c:410
 msgid "Remove Playlist"
-msgstr "Çalma listesini sil"
+msgstr "Oynatma Listesini Kaldır"
 
 #: ../plugins/gtkui/pltmenu.c:417
 msgid "Add New Playlist"
@@ -3483,7 +3484,7 @@ msgstr "Çalma Listesini Çoğalt"
 
 #: ../plugins/gtkui/pltmenu.c:433
 msgid "Enable Autosort"
-msgstr ""
+msgstr "Oto Sıralamayı Etkinleştir"
 
 #: ../plugins/pltbrowser/pltbrowser.c:177
 msgid " (paused)"
@@ -3519,11 +3520,11 @@ msgstr "♫"
 msgid "Playlist browser"
 msgstr "Çalma listesi tarayıcısı"
 
-#: ../tf.c:2197
+#: ../tf.c:2199
 msgid "mono"
 msgstr "mono"
 
-#: ../tf.c:2200 ../tf.c:2204
+#: ../tf.c:2202 ../tf.c:2206
 msgid "stereo"
 msgstr "steryo"
 
