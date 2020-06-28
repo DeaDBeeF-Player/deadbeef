@@ -556,6 +556,8 @@ plug_get_system_dir (int dir_id) {
         return dbpixmapdir;
     case DDB_SYS_DIR_CACHE:
         return dbcachedir;
+    case DDB_SYS_DIR_PLUGIN_RESOURCES:
+        return dbresourcedir;
     }
     return NULL;
 }

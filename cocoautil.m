@@ -30,6 +30,12 @@ cocoautil_get_resources_path (char *s, int size) {
     return 0;
 }
 
+int
+cocoautil_get_plugins_path (char *s, int size) {
+    strlcpy (s, NSBundle.mainBundle.builtInPlugInsPath.UTF8String, size);
+    return 0;
+}
+
 void
 cocoautil_backtrace (void) {
     NSLog(@"%@", NSThread.callStackSymbols);

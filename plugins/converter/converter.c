@@ -435,7 +435,7 @@ load_encoder_presets (void) {
     }
 
     char syspath[PATH_MAX];
-    if (snprintf (syspath, sizeof (syspath), "%s/convpresets", deadbeef->get_system_dir (DDB_SYS_DIR_PLUGIN)) < 0) {
+    if (snprintf (syspath, sizeof (syspath), "%s/convpresets", deadbeef->get_system_dir (DDB_SYS_DIR_PLUGIN_RESOURCES)) < 0) {
         return -1;
     }
 

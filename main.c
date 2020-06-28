@@ -111,6 +111,7 @@ char dbplugindir[PATH_MAX]; // see deadbeef->get_plugin_dir
 char dbpixmapdir[PATH_MAX]; // see deadbeef->get_pixmap_dir
 char dbcachedir[PATH_MAX];
 char dbruntimedir[PATH_MAX]; // /run/user/<uid>/deadbeef
+char dbresourcedir[PATH_MAX];
 
 char use_gui_plugin[100];
 
@@ -1136,7 +1137,7 @@ main (int argc, char *argv[]) {
     }
     else if (portable) {
 #ifdef OSX_APPBUNDLE
-        cocoautil_get_resources_path (dbplugindir, sizeof (dbplugindir));
+        cocoautil_get_plugins_path (dbplugindir, sizeof (dbplugindir));
 #else
         if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/plugins", dbinstalldir) > sizeof (dbplugindir)) {
             trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
@@ -1150,6 +1151,18 @@ main (int argc, char *argv[]) {
             trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
+    }
+
+    if (portable) {
+#ifdef OSX_APPBUNDLE
+        cocoautil_get_resources_path (dbresourcedir, sizeof (dbresourcedir));
+#else
+        if (snprintf (dbresourcedir, sizeof (dbresourcedir), "%s/plugins", dbinstalldir) > sizeof (dbresourcedir)) {
+            trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
+            return -1;
+        }
+#endif
+        mkdir (dbplugindir, 0755);
     }
 
     // Get doc and pixmaps dirs
