@@ -154,10 +154,17 @@
 }
 
 - (void)test_WriteMoovWithMetadataToBuffer_WrittenSizeMatchingCalculatedSize {
-    mp4p_atom_t *mp4file = mp4p_atom_new("moov");
-    mp4file->next = mp4p_atom_new("mdat");
-    mp4file->next->data = "DataOfMdat";
-    mp4file->next->size = 18;
+    mp4p_atom_t *mp4file = mp4p_atom_new("ftyp");
+    mp4file->size = 32;
+    mp4p_atom_t *moov = mp4p_atom_new("moov");
+    moov->pos = 32;
+    mp4file->next = moov;
+    mp4p_atom_t *mdat = mp4p_atom_new("mdat");
+    moov->next = mdat;
+
+    mdat->data = "DataOfMdat";
+    mdat->pos = 200;
+    mdat->size = 18;
 
     playItem_t *it = pl_item_alloc();
 
@@ -177,55 +184,19 @@
     pl_item_unref (it);
     mp4p_atom_dump (mp4file);
 
-    uint32_t size = mp4p_atom_to_buffer (mp4file_tagged, NULL, 0);
+    mp4p_atom_t *moov_modified = mp4p_atom_find(mp4file_tagged, "moov");
 
-    XCTAssert (size != 0);
+    uint32_t size = mp4p_atom_to_buffer (moov_modified, NULL, 0);
+
+    XCTAssertNotEqual (size, 0);
 
     char *buffer = malloc (size);
-    uint32_t written_size = mp4p_atom_to_buffer(mp4file_tagged, buffer, size);
+    uint32_t written_size = mp4p_atom_to_buffer(moov_modified, buffer, size);
 
     mp4p_atom_free_list (mp4file_tagged);
     mp4p_atom_free_list (mp4file);
 
-    XCTAssert (written_size == size);
-}
-
-- (void)test_AddTagsToAFileWithoutPadding_AddsPaddingOf1024Bytes {
-    mp4p_atom_t *mp4file = mp4p_atom_new("moov");
-    mp4p_atom_t *mdat = mp4file->next = mp4p_atom_new("mdat");
-
-    mdat->pos = 32; // arbitrary small position
-
-    playItem_t *it = pl_item_alloc();
-    pl_append_meta(it, "title", "Title");
-    mp4p_atom_t *mp4file_tagged = mp4tagutil_modify_meta(mp4file, (DB_playItem_t *)it);
-    pl_item_unref (it);
-
-    XCTAssert(!mp4p_atom_type_compare(mp4file_tagged->next, "free"));
-    XCTAssert(mp4file_tagged->next->size == 1024);
-
-    mp4p_atom_free_list (mp4file_tagged);
-    mp4p_atom_free_list (mp4file);
-}
-
-- (void)test_AddTagsToAFileWithoutPadding_PaddingIsReduced {
-    mp4p_atom_t *mp4file = mp4p_atom_new("moov");
-    mp4p_atom_t *padding = mp4file->next = mp4p_atom_new("free");
-    padding->size = 1024;
-    mp4p_atom_t *mdat = padding->next = mp4p_atom_new("mdat");
-
-    mdat->pos = padding->size;
-
-    playItem_t *it = pl_item_alloc();
-    pl_append_meta(it, "title", "Title");
-    mp4p_atom_t *mp4file_tagged = mp4tagutil_modify_meta(mp4file, (DB_playItem_t *)it);
-    pl_item_unref (it);
-
-    XCTAssert(!mp4p_atom_type_compare(mp4file_tagged->next, "free"));
-    XCTAssert(mp4file_tagged->next->size == 1024 - mp4file_tagged->size);
-
-    mp4p_atom_free_list (mp4file_tagged);
-    mp4p_atom_free_list (mp4file);
+    XCTAssertEqual (written_size, size);
 }
 
 mp4p_atom_t *createFakeMP4File (void) {
@@ -315,7 +286,7 @@ static fake_callbacks_t _fake_file_cb = {
     int res = mp4p_update_metadata (&cb.cb, mp4file_updated);
 
     XCTAssert (!res);
-    XCTAssertEqual(2150, cb.size);
+    XCTAssertEqual(1134, cb.size);
     mp4p_atom_free (mp4file);
     mp4p_atom_free (mp4file_updated);
 }

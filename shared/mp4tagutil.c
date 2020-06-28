@@ -169,7 +169,7 @@ static int
 _mp4tagutil_file_editable (mp4p_atom_t *mp4file) {
     mp4p_atom_t *moov = mp4p_atom_find(mp4file, "moov");
     mp4p_atom_t *mdat = mp4p_atom_find(mp4file, "mdat");
-    if (!moov || !mdat) {
+    if (!moov || !mdat || mp4p_atom_type_compare(mp4file, "ftyp")) {
         return 0;
     }
 
@@ -415,7 +415,7 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
         if (moov->pos + moov->size < eop->pos - 8) {
             padding = mp4p_atom_new ("free");
             padding->pos = moov->pos + moov->size;
-            padding->size = (uint32_t)(next->pos - (moov->pos + moov->size));
+            padding->size = (uint32_t)(eop->pos - (moov->pos + moov->size));
 
             padding->next = moov->next;
             moov->next = padding;
