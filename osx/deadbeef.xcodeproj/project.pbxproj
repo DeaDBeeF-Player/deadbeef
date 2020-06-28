@@ -846,7 +846,7 @@
 		2D1A563A1D9FF9A4005E5CDD /* ReplayGain.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D1A56391D9FF9A4005E5CDD /* ReplayGain.xib */; };
 		2D1A564A1D9FFB10005E5CDD /* ReplayGainScannerController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1A56481D9FFB10005E5CDD /* ReplayGainScannerController.h */; };
 		2D1A564B1D9FFB10005E5CDD /* ReplayGainScannerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1A56491D9FFB10005E5CDD /* ReplayGainScannerController.m */; };
-		2D1BEB962435BE4E003EFD61 /* ddb_soundtouch.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D00F23F2434DE4E000FC130 /* ddb_soundtouch.dylib */; };
+		2D1BEB962435BE4E003EFD61 /* ddb_soundtouch.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D00F23F2434DE4E000FC130 /* ddb_soundtouch.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D1DC09C1DCB3A1500441A08 /* ddb_mono2stereo.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D1DC09F1DCB3B7500441A08 /* alac_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D1DC09E1DCB3B7500441A08 /* alac_plugin.c */; };
 		2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */; };
@@ -1007,48 +1007,48 @@
 		2D48DBF32269B731002CACFD /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51631837F60A003E6066 /* CoreAudio.framework */; };
 		2D48DBF42269B731002CACFD /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51671837F655003E6066 /* AudioUnit.framework */; };
 		2D48DBF52269B731002CACFD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
-		2D48DBF72269B731002CACFD /* libvorbislib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */; };
-		2D48DBF82269B731002CACFD /* libopuslib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C5B051FDEBACC00D83CEF /* libopuslib.dylib */; };
-		2D48DBF92269B731002CACFD /* libflaclib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */; };
-		2D48DBFA2269B731002CACFD /* supereq.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DF16CB01DCB62D9007D7F05 /* supereq.dylib */; };
-		2D48DBFB2269B731002CACFD /* ddb_mono2stereo.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */; };
-		2D48DBFC2269B731002CACFD /* rg_scanner.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */; };
-		2D48DBFD2269B731002CACFD /* medialib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; };
-		2D48DBFE2269B731002CACFD /* artwork.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D621F831CD92C9000EB6D22 /* artwork.dylib */; };
-		2D48DBFF2269B731002CACFD /* libmp4ff.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; };
-		2D48DC002269B731002CACFD /* adplug.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D652FCB1CE79E8500163808 /* adplug.dylib */; };
-		2D48DC012269B731002CACFD /* ffmpeg.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; };
-		2D48DC022269B731002CACFD /* psf.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DFD50951C9715B800961D19 /* psf.dylib */; };
-		2D48DC032269B731002CACFD /* mms.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07765E2E1C28559600F5F4BC /* mms.dylib */; };
-		2D48DC042269B731002CACFD /* ddb_shn.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07765D6F1C279B7D00F5F4BC /* ddb_shn.dylib */; };
-		2D48DC052269B731002CACFD /* dca.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 070220AA1C275D3900FC9AF9 /* dca.dylib */; };
-		2D48DC062269B731002CACFD /* musepack.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07021FE91C27551D00FC9AF9 /* musepack.dylib */; };
-		2D48DC072269B731002CACFD /* tta.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07021F891C2745E900FC9AF9 /* tta.dylib */; };
-		2D48DC082269B731002CACFD /* wma.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 07021F3A1C2734F100FC9AF9 /* wma.dylib */; };
-		2D48DC092269B731002CACFD /* vfs_zip.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D4458D91C04F1C000230939 /* vfs_zip.dylib */; };
-		2D48DC0A2269B731002CACFD /* wavpack.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */; };
-		2D48DC0C2269B731002CACFD /* vtx.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D11D3B91B9DC67100C7C731 /* vtx.dylib */; };
-		2D48DC0D2269B731002CACFD /* sndfile.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D05A8291B4BE59D004C913D /* sndfile.dylib */; };
-		2D48DC0E2269B731002CACFD /* vorbis.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D88E9ED1B2AF6640072FD43 /* vorbis.dylib */; };
-		2D48DC0F2269B731002CACFD /* converter.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D23511B1B138ECB00A62936 /* converter.dylib */; };
-		2D48DC112269B731002CACFD /* in_sc68.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */; };
-		2D48DC122269B731002CACFD /* mp3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; };
-		2D48DC142269B731002CACFD /* lastfm.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D5D21401A4033B0001D5A79 /* lastfm.dylib */; };
-		2D48DC162269B731002CACFD /* alac.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D91773F1A0E8966004BC222 /* alac.dylib */; };
-		2D48DC172269B731002CACFD /* m3u.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DCB281419E86162008E9DF6 /* m3u.dylib */; };
-		2D48DC192269B731002CACFD /* vfs_curl.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA24B4B19E724C200E34920 /* vfs_curl.dylib */; };
-		2D48DC1B2269B731002CACFD /* sid.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D22F75519E1384B009C631E /* sid.dylib */; };
-		2D48DC1D2269B731002CACFD /* ddb_dumb.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */; };
-		2D48DC1E2269B731002CACFD /* gme.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */; };
-		2D48DC1F2269B731002CACFD /* dsp_libsrc.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DB96A8019ABB47C00E318A8 /* dsp_libsrc.dylib */; };
-		2D48DC212269B731002CACFD /* flac.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA6219A646C0000FFDE0 /* flac.dylib */; };
-		2D48DC222269B731002CACFD /* ffap.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32F9EA19A63441000FFDE0 /* ffap.dylib */; };
+		2D48DBF72269B731002CACFD /* libvorbislib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DBF82269B731002CACFD /* libopuslib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D9C5B051FDEBACC00D83CEF /* libopuslib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DBF92269B731002CACFD /* libflaclib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DBFA2269B731002CACFD /* supereq.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DF16CB01DCB62D9007D7F05 /* supereq.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DBFB2269B731002CACFD /* ddb_mono2stereo.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DBFC2269B731002CACFD /* rg_scanner.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DBFD2269B731002CACFD /* medialib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DBFE2269B731002CACFD /* artwork.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D621F831CD92C9000EB6D22 /* artwork.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DBFF2269B731002CACFD /* libmp4ff.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC002269B731002CACFD /* adplug.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D652FCB1CE79E8500163808 /* adplug.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC012269B731002CACFD /* ffmpeg.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC022269B731002CACFD /* psf.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DFD50951C9715B800961D19 /* psf.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC032269B731002CACFD /* mms.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 07765E2E1C28559600F5F4BC /* mms.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC042269B731002CACFD /* ddb_shn.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 07765D6F1C279B7D00F5F4BC /* ddb_shn.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC052269B731002CACFD /* dca.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 070220AA1C275D3900FC9AF9 /* dca.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC062269B731002CACFD /* musepack.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 07021FE91C27551D00FC9AF9 /* musepack.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC072269B731002CACFD /* tta.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 07021F891C2745E900FC9AF9 /* tta.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC082269B731002CACFD /* wma.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 07021F3A1C2734F100FC9AF9 /* wma.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC092269B731002CACFD /* vfs_zip.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D4458D91C04F1C000230939 /* vfs_zip.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC0A2269B731002CACFD /* wavpack.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC0C2269B731002CACFD /* vtx.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D11D3B91B9DC67100C7C731 /* vtx.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC0D2269B731002CACFD /* sndfile.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D05A8291B4BE59D004C913D /* sndfile.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC0E2269B731002CACFD /* vorbis.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D88E9ED1B2AF6640072FD43 /* vorbis.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC0F2269B731002CACFD /* converter.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D23511B1B138ECB00A62936 /* converter.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC112269B731002CACFD /* in_sc68.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC122269B731002CACFD /* mp3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC142269B731002CACFD /* lastfm.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D5D21401A4033B0001D5A79 /* lastfm.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC162269B731002CACFD /* alac.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D91773F1A0E8966004BC222 /* alac.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC172269B731002CACFD /* m3u.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DCB281419E86162008E9DF6 /* m3u.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC192269B731002CACFD /* vfs_curl.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA24B4B19E724C200E34920 /* vfs_curl.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC1B2269B731002CACFD /* sid.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D22F75519E1384B009C631E /* sid.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC1D2269B731002CACFD /* ddb_dumb.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC1E2269B731002CACFD /* gme.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC1F2269B731002CACFD /* dsp_libsrc.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DB96A8019ABB47C00E318A8 /* dsp_libsrc.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC212269B731002CACFD /* flac.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32FA6219A646C0000FFDE0 /* flac.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC222269B731002CACFD /* ffap.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32F9EA19A63441000FFDE0 /* ffap.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D48DC2F2269B731002CACFD /* convpresets in Resources */ = {isa = PBXBuildFile; fileRef = 2DF622B81B335DF400C70C7D /* convpresets */; };
-		2D48DC302269B731002CACFD /* aac.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D28F0411C283BE3004A6E7B /* aac.dylib */; };
-		2D48DC312269B731002CACFD /* opus.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C5AEF1FDEBAAE00D83CEF /* opus.dylib */; };
-		2D48DC322269B731002CACFD /* libogglib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
-		2D48DC332269B731002CACFD /* libopusfile.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D9C629E1FDEC51000D83CEF /* libopusfile.dylib */; };
-		2D48DC342269B731002CACFD /* liboggedit.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.dylib */; };
+		2D48DC302269B731002CACFD /* aac.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D28F0411C283BE3004A6E7B /* aac.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC312269B731002CACFD /* opus.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D9C5AEF1FDEBAAE00D83CEF /* opus.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC322269B731002CACFD /* libogglib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC332269B731002CACFD /* libopusfile.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D9C629E1FDEC51000D83CEF /* libopusfile.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DC342269B731002CACFD /* liboggedit.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D48DC352269B731002CACFD /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2DD5262E2062F1DF002609C5 /* help-cocoa.txt */; };
 		2D48DC372269B731002CACFD /* dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DC96E6E1E4CC9670093CFD3 /* dsp.h */; };
 		2D48DC382269B731002CACFD /* deadbeef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B3EDF1837EC44003E6066 /* deadbeef.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1668,8 +1668,8 @@
 		2DA04EAD23B6A4B70070AC01 /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA04EA623B6A4B60070AC01 /* support.h */; };
 		2DA04EAE23B6A4B70070AC01 /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA04EA723B6A4B60070AC01 /* support.c */; };
 		2DA04EAF23B6A4B70070AC01 /* callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA04EA823B6A4B70070AC01 /* callbacks.h */; };
-		2DA04EB223B6A4D40070AC01 /* shellexec.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA04E8123B6A4320070AC01 /* shellexec.dylib */; };
-		2DA04EB323B6A4D40070AC01 /* shellexecui_gtk3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA04E9D23B6A4960070AC01 /* shellexecui_gtk3.dylib */; };
+		2DA04EB223B6A4D40070AC01 /* shellexec.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA04E8123B6A4320070AC01 /* shellexec.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DA04EB323B6A4D40070AC01 /* shellexecui_gtk3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA04E9D23B6A4960070AC01 /* shellexecui_gtk3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DA04EF223B6A81A0070AC01 /* ShellexecTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA04EF123B6A81A0070AC01 /* ShellexecTests.m */; };
 		2DA04EF623B6AA6E0070AC01 /* shellexecutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA04EF423B6AA6E0070AC01 /* shellexecutil.h */; };
 		2DA04EF723B6AA6E0070AC01 /* shellexecutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA04EF523B6AA6E0070AC01 /* shellexecutil.c */; };
@@ -2003,6 +2003,7 @@
 		2DE1B21F24A89E0D0070CD7C /* libavutil.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D5D9C5824A7FB0200D632E4 /* libavutil.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DE1B36C24A8A6150070CD7C /* Replay in Copy SC68 replays */ = {isa = PBXBuildFile; fileRef = 2DE1B36A24A8A5F20070CD7C /* Replay */; };
 		2DE1B36F24A8AAD80070CD7C /* libflaclib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */; };
+		2DE1B37224A8B3EB0070CD7C /* Replay in Copy SC68 replays */ = {isa = PBXBuildFile; fileRef = 2DE1B36A24A8A5F20070CD7C /* Replay */; };
 		2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */; };
 		2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3DC19B11283009B5BC6 /* DdbWidget.m */; };
 		2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3E019B114CD009B5BC6 /* DdbWidgetManager.h */; };
@@ -2010,7 +2011,7 @@
 		2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3E419B11539009B5BC6 /* DdbPlaceholderWidget.h */; };
 		2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3E519B11539009B5BC6 /* DdbPlaceholderWidget.m */; };
 		2DE3B5762269B80900AFF9AE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BE51838EAAB00A98C62 /* Images.xcassets */; };
-		2DE3B7BF2269BCAB00AFF9AE /* ddb_gui_GTK3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE3B7B92269BC3500AFF9AE /* ddb_gui_GTK3.dylib */; };
+		2DE3B7BF2269BCAB00AFF9AE /* ddb_gui_GTK3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE3B7B92269BC3500AFF9AE /* ddb_gui_GTK3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DE3B7C02269BF1300AFF9AE /* eq.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5782269BB4300AFF9AE /* eq.c */; };
 		2DE3B7C12269BF1300AFF9AE /* progress.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B57A2269BB4300AFF9AE /* progress.h */; };
 		2DE3B7C22269BF1300AFF9AE /* ddblistview.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B57D2269BB4300AFF9AE /* ddblistview.c */; };
@@ -2097,13 +2098,13 @@
 		2DE3B8622269CA1500AFF9AE /* hotkeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B8482269CA1500AFF9AE /* hotkeys.h */; };
 		2DE3B8642269CA1500AFF9AE /* actionhandlers.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B84C2269CA1500AFF9AE /* actionhandlers.c */; };
 		2DE3B8652269CA1500AFF9AE /* hotkeys.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B84F2269CA1500AFF9AE /* hotkeys.c */; };
-		2DE3B86D2269CA5400AFF9AE /* hotkeys.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */; };
+		2DE3B86D2269CA5400AFF9AE /* hotkeys.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DE3B86E2269CA9800AFF9AE /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
 		2DE3B86F2269CAEA00AFF9AE /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
 		2DE3B88F2269F6BA00AFF9AE /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B87D2269F6B900AFF9AE /* support.c */; };
 		2DE3B8902269F6BA00AFF9AE /* pltbrowser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B87E2269F6B900AFF9AE /* pltbrowser.c */; };
 		2DE3B8932269F6BA00AFF9AE /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B88C2269F6B900AFF9AE /* support.h */; };
-		2DE3B8962269F6D900AFF9AE /* pltbrowser_gtk3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE3B8742269F68B00AFF9AE /* pltbrowser_gtk3.dylib */; };
+		2DE3B8962269F6D900AFF9AE /* pltbrowser_gtk3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE3B8742269F68B00AFF9AE /* pltbrowser_gtk3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DE570BF243CE274000F00D4 /* mp4patomdata.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE570BD243CE274000F00D4 /* mp4patomdata.h */; };
 		2DE570CF243CE2FC000F00D4 /* mp4patomdata.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE570BE243CE274000F00D4 /* mp4patomdata.c */; };
 		2DE570D0243CE302000F00D4 /* mp4patomdata.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE570BE243CE274000F00D4 /* mp4patomdata.c */; };
@@ -3451,6 +3452,74 @@
 			dstSubfolderSpec = 7;
 			files = (
 				2DE1B36C24A8A6150070CD7C /* Replay in Copy SC68 replays */,
+			);
+			name = "Copy SC68 replays";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DE1B37024A8B34D0070CD7C /* Copy Plugins */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				2D1BEB962435BE4E003EFD61 /* ddb_soundtouch.dylib in Copy Plugins */,
+				2DA04EB223B6A4D40070AC01 /* shellexec.dylib in Copy Plugins */,
+				2DA04EB323B6A4D40070AC01 /* shellexecui_gtk3.dylib in Copy Plugins */,
+				2DE3B8962269F6D900AFF9AE /* pltbrowser_gtk3.dylib in Copy Plugins */,
+				2DE3B86D2269CA5400AFF9AE /* hotkeys.dylib in Copy Plugins */,
+				2DE3B7BF2269BCAB00AFF9AE /* ddb_gui_GTK3.dylib in Copy Plugins */,
+				2D48DBF72269B731002CACFD /* libvorbislib.dylib in Copy Plugins */,
+				2D48DBF82269B731002CACFD /* libopuslib.dylib in Copy Plugins */,
+				2D48DBF92269B731002CACFD /* libflaclib.dylib in Copy Plugins */,
+				2D48DBFA2269B731002CACFD /* supereq.dylib in Copy Plugins */,
+				2D48DBFB2269B731002CACFD /* ddb_mono2stereo.dylib in Copy Plugins */,
+				2D48DBFC2269B731002CACFD /* rg_scanner.dylib in Copy Plugins */,
+				2D48DBFD2269B731002CACFD /* medialib.dylib in Copy Plugins */,
+				2D48DBFE2269B731002CACFD /* artwork.dylib in Copy Plugins */,
+				2D48DBFF2269B731002CACFD /* libmp4ff.dylib in Copy Plugins */,
+				2D48DC002269B731002CACFD /* adplug.dylib in Copy Plugins */,
+				2D48DC012269B731002CACFD /* ffmpeg.dylib in Copy Plugins */,
+				2D48DC022269B731002CACFD /* psf.dylib in Copy Plugins */,
+				2D48DC032269B731002CACFD /* mms.dylib in Copy Plugins */,
+				2D48DC042269B731002CACFD /* ddb_shn.dylib in Copy Plugins */,
+				2D48DC052269B731002CACFD /* dca.dylib in Copy Plugins */,
+				2D48DC062269B731002CACFD /* musepack.dylib in Copy Plugins */,
+				2D48DC072269B731002CACFD /* tta.dylib in Copy Plugins */,
+				2D48DC082269B731002CACFD /* wma.dylib in Copy Plugins */,
+				2D48DC092269B731002CACFD /* vfs_zip.dylib in Copy Plugins */,
+				2D48DC0A2269B731002CACFD /* wavpack.dylib in Copy Plugins */,
+				2D48DC0C2269B731002CACFD /* vtx.dylib in Copy Plugins */,
+				2D48DC0D2269B731002CACFD /* sndfile.dylib in Copy Plugins */,
+				2D48DC0E2269B731002CACFD /* vorbis.dylib in Copy Plugins */,
+				2D48DC0F2269B731002CACFD /* converter.dylib in Copy Plugins */,
+				2D48DC112269B731002CACFD /* in_sc68.dylib in Copy Plugins */,
+				2D48DC122269B731002CACFD /* mp3.dylib in Copy Plugins */,
+				2D48DC142269B731002CACFD /* lastfm.dylib in Copy Plugins */,
+				2D48DC162269B731002CACFD /* alac.dylib in Copy Plugins */,
+				2D48DC172269B731002CACFD /* m3u.dylib in Copy Plugins */,
+				2D48DC192269B731002CACFD /* vfs_curl.dylib in Copy Plugins */,
+				2D48DC1B2269B731002CACFD /* sid.dylib in Copy Plugins */,
+				2D48DC1D2269B731002CACFD /* ddb_dumb.dylib in Copy Plugins */,
+				2D48DC1E2269B731002CACFD /* gme.dylib in Copy Plugins */,
+				2D48DC1F2269B731002CACFD /* dsp_libsrc.dylib in Copy Plugins */,
+				2D48DC212269B731002CACFD /* flac.dylib in Copy Plugins */,
+				2D48DC222269B731002CACFD /* ffap.dylib in Copy Plugins */,
+				2D48DC302269B731002CACFD /* aac.dylib in Copy Plugins */,
+				2D48DC312269B731002CACFD /* opus.dylib in Copy Plugins */,
+				2D48DC322269B731002CACFD /* libogglib.dylib in Copy Plugins */,
+				2D48DC332269B731002CACFD /* libopusfile.dylib in Copy Plugins */,
+				2D48DC342269B731002CACFD /* liboggedit.dylib in Copy Plugins */,
+			);
+			name = "Copy Plugins";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DE1B37124A8B3A20070CD7C /* Copy SC68 replays */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = data68;
+			dstSubfolderSpec = 7;
+			files = (
+				2DE1B37224A8B3EB0070CD7C /* Replay in Copy SC68 replays */,
 			);
 			name = "Copy SC68 replays";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12698,6 +12767,8 @@
 				2D48DBEF2269B731002CACFD /* Frameworks */,
 				2D48DBF62269B731002CACFD /* Resources */,
 				2D48DC362269B731002CACFD /* Headers */,
+				2DE1B37024A8B34D0070CD7C /* Copy Plugins */,
+				2DE1B37124A8B3A20070CD7C /* Copy SC68 replays */,
 			);
 			buildRules = (
 			);
@@ -13809,57 +13880,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D1BEB962435BE4E003EFD61 /* ddb_soundtouch.dylib in Resources */,
-				2DA04EB223B6A4D40070AC01 /* shellexec.dylib in Resources */,
-				2DA04EB323B6A4D40070AC01 /* shellexecui_gtk3.dylib in Resources */,
-				2DE3B8962269F6D900AFF9AE /* pltbrowser_gtk3.dylib in Resources */,
-				2DE3B86D2269CA5400AFF9AE /* hotkeys.dylib in Resources */,
-				2DE3B7BF2269BCAB00AFF9AE /* ddb_gui_GTK3.dylib in Resources */,
-				2D48DBF72269B731002CACFD /* libvorbislib.dylib in Resources */,
 				2DE3B5762269B80900AFF9AE /* Images.xcassets in Resources */,
-				2D48DBF82269B731002CACFD /* libopuslib.dylib in Resources */,
-				2D48DBF92269B731002CACFD /* libflaclib.dylib in Resources */,
-				2D48DBFA2269B731002CACFD /* supereq.dylib in Resources */,
-				2D48DBFB2269B731002CACFD /* ddb_mono2stereo.dylib in Resources */,
-				2D48DBFC2269B731002CACFD /* rg_scanner.dylib in Resources */,
-				2D48DBFD2269B731002CACFD /* medialib.dylib in Resources */,
 				2DE3B8292269C62F00AFF9AE /* pixmaps in Resources */,
-				2D48DBFE2269B731002CACFD /* artwork.dylib in Resources */,
-				2D48DBFF2269B731002CACFD /* libmp4ff.dylib in Resources */,
-				2D48DC002269B731002CACFD /* adplug.dylib in Resources */,
-				2D48DC012269B731002CACFD /* ffmpeg.dylib in Resources */,
-				2D48DC022269B731002CACFD /* psf.dylib in Resources */,
-				2D48DC032269B731002CACFD /* mms.dylib in Resources */,
-				2D48DC042269B731002CACFD /* ddb_shn.dylib in Resources */,
-				2D48DC052269B731002CACFD /* dca.dylib in Resources */,
-				2D48DC062269B731002CACFD /* musepack.dylib in Resources */,
-				2D48DC072269B731002CACFD /* tta.dylib in Resources */,
-				2D48DC082269B731002CACFD /* wma.dylib in Resources */,
-				2D48DC092269B731002CACFD /* vfs_zip.dylib in Resources */,
-				2D48DC0A2269B731002CACFD /* wavpack.dylib in Resources */,
-				2D48DC0C2269B731002CACFD /* vtx.dylib in Resources */,
-				2D48DC0D2269B731002CACFD /* sndfile.dylib in Resources */,
-				2D48DC0E2269B731002CACFD /* vorbis.dylib in Resources */,
-				2D48DC0F2269B731002CACFD /* converter.dylib in Resources */,
-				2D48DC112269B731002CACFD /* in_sc68.dylib in Resources */,
-				2D48DC122269B731002CACFD /* mp3.dylib in Resources */,
-				2D48DC142269B731002CACFD /* lastfm.dylib in Resources */,
-				2D48DC162269B731002CACFD /* alac.dylib in Resources */,
-				2D48DC172269B731002CACFD /* m3u.dylib in Resources */,
-				2D48DC192269B731002CACFD /* vfs_curl.dylib in Resources */,
-				2D48DC1B2269B731002CACFD /* sid.dylib in Resources */,
-				2D48DC1D2269B731002CACFD /* ddb_dumb.dylib in Resources */,
-				2D48DC1E2269B731002CACFD /* gme.dylib in Resources */,
-				2D48DC1F2269B731002CACFD /* dsp_libsrc.dylib in Resources */,
-				2D48DC212269B731002CACFD /* flac.dylib in Resources */,
-				2D48DC222269B731002CACFD /* ffap.dylib in Resources */,
 				2D48DC2F2269B731002CACFD /* convpresets in Resources */,
-				2D48DC302269B731002CACFD /* aac.dylib in Resources */,
 				2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */,
-				2D48DC312269B731002CACFD /* opus.dylib in Resources */,
-				2D48DC322269B731002CACFD /* libogglib.dylib in Resources */,
-				2D48DC332269B731002CACFD /* libopusfile.dylib in Resources */,
-				2D48DC342269B731002CACFD /* liboggedit.dylib in Resources */,
 				2D48DC352269B731002CACFD /* help-cocoa.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
