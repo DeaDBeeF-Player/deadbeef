@@ -1,0 +1,9 @@
+MP4P -- ISO/IEC Base Media File Format Library
+
+This is the library for handling MP4 files.
+
+Some of the features:
+
+* Parsing most atoms / boxes necessary for handling AAC and ALAC files in MP4 container
+* Reading and writing metadata in iTunes format
+* Finding and enumerating the atoms

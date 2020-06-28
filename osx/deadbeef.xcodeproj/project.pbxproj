@@ -5579,6 +5579,8 @@
 		2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConverterWindowController.h; sourceTree = "<group>"; };
 		2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConverterWindowController.m; sourceTree = "<group>"; };
 		2DE1B36A24A8A5F20070CD7C /* Replay */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Replay; path = data68/Replay; sourceTree = "<group>"; };
+		2DE1B38724A924F80070CD7C /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		2DE1B38824A924F80070CD7C /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbWidget.h; sourceTree = "<group>"; };
 		2DE1D3DC19B11283009B5BC6 /* DdbWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbWidget.m; sourceTree = "<group>"; };
 		2DE1D3E019B114CD009B5BC6 /* DdbWidgetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbWidgetManager.h; sourceTree = "<group>"; };
@@ -8075,9 +8077,11 @@
 			path = plugins/converter;
 			sourceTree = "<group>";
 		};
-		2D24B6981E0E77920059B1AE /* mp4parser */ = {
+		2D24B6981E0E77920059B1AE /* mp4p */ = {
 			isa = PBXGroup;
 			children = (
+				2DE1B38724A924F80070CD7C /* COPYING */,
+				2DE1B38824A924F80070CD7C /* README */,
 				2D24B6991E0E77A10059B1AE /* mp4p.c */,
 				2D24B69A1E0E77A10059B1AE /* mp4p.h */,
 				2DE94038243BCD3600D32D63 /* mp4pfile.h */,
@@ -8085,8 +8089,8 @@
 				2DE570BD243CE274000F00D4 /* mp4patomdata.h */,
 				2DE570BE243CE274000F00D4 /* mp4patomdata.c */,
 			);
-			name = mp4parser;
-			path = shared/mp4parser;
+			name = mp4p;
+			path = shared/mp4p;
 			sourceTree = "<group>";
 		};
 		2D27AEE51D9D86F600842D76 /* rg_scanner */ = {
@@ -10285,7 +10289,7 @@
 		4D1B514C1837EF7C003E6066 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
-				2D24B6981E0E77920059B1AE /* mp4parser */,
+				2D24B6981E0E77920059B1AE /* mp4p */,
 				2D00F2552434DE87000FC130 /* soundtouch */,
 				2DA04EA123B6A49A0070AC01 /* shellexecui */,
 				2DA04E9223B6A4370070AC01 /* shellexec */,

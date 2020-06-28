@@ -40,7 +40,7 @@
 
 #include "../../shared/mp4tagutil.h"
 
-#include "../../shared/mp4parser/mp4p.h"
+#include "../../shared/mp4p/mp4p.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
