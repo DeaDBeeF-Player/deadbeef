@@ -176,15 +176,15 @@ _mp4tagutil_file_editable (mp4p_atom_t *mp4file) {
     return 1;
 }
 
-static void
-_mp4tagutil_update_stco (mp4p_atom_t *stco_atom, off_t delta) {
-    mp4p_stco_t *stco = stco_atom->data;
-    for (uint32_t i = 0; i < stco->number_of_entries; i++) {
-        stco->entries[i].offset += delta;
-    }
-}
-
 // NOTE: This is unused, since we're not moving mdat. Useful for reference.
+//static void
+//_mp4tagutil_update_stco (mp4p_atom_t *stco_atom, off_t delta) {
+//    mp4p_stco_t *stco = stco_atom->data;
+//    for (uint32_t i = 0; i < stco->number_of_entries; i++) {
+//        stco->entries[i].offset += delta;
+//    }
+//}
+//
 //static void
 //_mp4gagutil_update_all_stco (mp4p_atom_t *moov, off_t delta) {
 //    mp4p_atom_t *trak = mp4p_atom_find (moov, "trak");
@@ -206,8 +206,9 @@ _mp4tagutil_update_stco (mp4p_atom_t *stco_atom, off_t delta) {
 //        }
 //    }
 //}
-//
-static void _mp4tagutil_add_metadata_fields(mp4p_atom_t *ilst, DB_playItem_t *it) {
+
+static void
+_mp4tagutil_add_metadata_fields(mp4p_atom_t *ilst, DB_playItem_t *it) {
     deadbeef->pl_lock ();
     DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it);
     while (m) {
@@ -671,3 +672,23 @@ mp4_read_metadata (DB_playItem_t *it) {
     return res;
 }
 
+mp4p_atom_t *
+mp4_get_cover_atom (mp4p_atom_t *mp4file) {
+    mp4p_atom_t *moov = mp4p_atom_find(mp4file, "moov");
+    if (!moov) {
+        return NULL;
+    }
+    mp4p_atom_t *meta = NULL;
+    mp4p_atom_t *ilst = NULL;
+    mp4p_atom_t *udta = mp4tagutil_find_udta (moov, &meta, &ilst);
+    if (!udta || !ilst) {
+        return NULL;
+    }
+
+    for (mp4p_atom_t *curr = ilst->subatoms; curr; curr = curr->next) {
+        if (!mp4p_atom_type_compare(curr, "covr")) {
+            return curr;
+        }
+    }
+    return NULL;
+}

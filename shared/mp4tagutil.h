@@ -45,4 +45,7 @@ mp4_init_ddb_file_callbacks (mp4p_file_callbacks_t *cb);
 void
 mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it);
 
+mp4p_atom_t *
+mp4_get_cover_atom (mp4p_atom_t *mp4file);
+
 #endif /* mp4tagutil_h */

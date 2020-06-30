@@ -981,7 +981,6 @@
 		2D3420E71D0856F0004C136A /* mp4tagupdate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177571A0E8A3D004BC222 /* mp4tagupdate.c */; };
 		2D3420E81D0856F0004C136A /* mp4util.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177581A0E8A3D004BC222 /* mp4util.c */; };
 		2D3420EF1D085787004C136A /* libmp4ff.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2D37CB421D1A91D500667E17 /* libmp4ff.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; };
 		2D3A4BBD1D6315D6002C7098 /* medialib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D3CD9372409A091005875A9 /* PinnedGroupTitleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3CD9352409A091005875A9 /* PinnedGroupTitleView.h */; };
 		2D3CD9382409A091005875A9 /* PinnedGroupTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3CD9362409A091005875A9 /* PinnedGroupTitleView.m */; };
@@ -1061,6 +1060,8 @@
 		2D4A9459223EFC1700199551 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
 		2D4A9468223EFC6700199551 /* CoreAudioTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4A9467223EFC6700199551 /* CoreAudioTests.m */; };
 		2D5121C61B01DEFD009F6410 /* sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D642EAD1AE9152E00FC1F7B /* sort.c */; };
+		2D5193C824ABBC1600134891 /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6965371D74338A00EB99D8 /* mp4tagutil.c */; };
+		2D5193CB24ABBC3700134891 /* libmp4parser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D24B6941E0E777D0059B1AE /* libmp4parser.a */; };
 		2D51999C1A436FD100670717 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D51999A1A436FD100670717 /* config.h */; };
 		2D51999D1A436FD100670717 /* mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D51999B1A436FD100670717 /* mpg123.h */; };
 		2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D524C071B245AE00018C4FA /* DdbTitleFormattingHelpButton.h */; };
@@ -2785,13 +2786,6 @@
 			remoteGlobalIDString = 2D621F821CD92C9000EB6D22;
 			remoteInfo = artwork;
 		};
-		2D37CB431D1A91DE00667E17 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2D3420DB1D0856D5004C136A;
-			remoteInfo = mp4ff;
-		};
 		2D3A4BBB1D6315CE002C7098 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -3057,6 +3051,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4D9C5AEE1FDEBAAE00D83CEF;
 			remoteInfo = opus;
+		};
+		2D5193C924ABBC3000134891 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D24B6931E0E777D0059B1AE;
+			remoteInfo = mp4parser;
 		};
 		2D565B971A40C0F300CE1F5D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -6369,8 +6370,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D5193CB24ABBC3700134891 /* libmp4parser.a in Frameworks */,
 				2DE1B36F24A8AAD80070CD7C /* libflaclib.dylib in Frameworks */,
-				2D37CB421D1A91D500667E17 /* libmp4ff.dylib in Frameworks */,
 				2D72AE5E1CFE1F7500103AAE /* ImageIO.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12838,8 +12839,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D5193CA24ABBC3000134891 /* PBXTargetDependency */,
 				2DE1B36E24A8AACD0070CD7C /* PBXTargetDependency */,
-				2D37CB441D1A91DE00667E17 /* PBXTargetDependency */,
 			);
 			name = artwork;
 			productName = artwork;
@@ -14619,6 +14620,7 @@
 				2D621FD01CD92CCA00EB6D22 /* artwork_internal.c in Sources */,
 				2D621FDD1CD92CCA00EB6D22 /* wos.c in Sources */,
 				2D621FCD1CD92CCA00EB6D22 /* artwork.c in Sources */,
+				2D5193C824ABBC1600134891 /* mp4tagutil.c in Sources */,
 				2D621FD71CD92CCA00EB6D22 /* lastfm.c in Sources */,
 				2D621FDB1CD92CCA00EB6D22 /* musicbrainz.c in Sources */,
 				2D621FCA1CD92CCA00EB6D22 /* albumartorg.c in Sources */,
@@ -15904,11 +15906,6 @@
 			target = 2D621F821CD92C9000EB6D22 /* artwork */;
 			targetProxy = 2D3138231D08AB2700CBD871 /* PBXContainerItemProxy */;
 		};
-		2D37CB441D1A91DE00667E17 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2D3420DB1D0856D5004C136A /* mp4ff */;
-			targetProxy = 2D37CB431D1A91DE00667E17 /* PBXContainerItemProxy */;
-		};
 		2D3A4BBC1D6315CE002C7098 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D3A4BB31D631530002C7098 /* medialib */;
@@ -16098,6 +16095,11 @@
 			isa = PBXTargetDependency;
 			target = 4D9C5AEE1FDEBAAE00D83CEF /* opus */;
 			targetProxy = 2D48DBCB2269B731002CACFD /* PBXContainerItemProxy */;
+		};
+		2D5193CA24ABBC3000134891 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D24B6931E0E777D0059B1AE /* mp4parser */;
+			targetProxy = 2D5193C924ABBC3000134891 /* PBXContainerItemProxy */;
 		};
 		2D565B981A40C0F300CE1F5D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -18127,9 +18129,7 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"USE_TAGGING=1",
 					"USE_VFS_CURL=1",
-					"USE_MP4FF=1",
 					"USE_METAFLAC=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
@@ -18166,9 +18166,7 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"USE_TAGGING=1",
 					"USE_VFS_CURL=1",
-					"USE_MP4FF=1",
 					"USE_METAFLAC=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
