@@ -28,7 +28,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include "mp4tagutil.h"
-#include "../shared/mp4p/mp4p.h"
+#include <mp4p/mp4p.h>
 #include "../strdupa.h"
 
 #ifndef __linux__

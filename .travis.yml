@@ -20,7 +20,7 @@ matrix:
           osx_image: xcode11.3
 
 git:
-  submodules: false
+  submodules: true
 
 script:
     - ./travis/build.sh

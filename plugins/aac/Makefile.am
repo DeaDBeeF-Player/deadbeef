@@ -11,7 +11,7 @@ aac_la_SOURCES =\
 
 aac_la_LDFLAGS = -module -avoid-version
 
-aac_la_LIBADD = $(LDADD) $(FAAD2_LIBS) ../../shared/libmp4tagutil.a ../../shared/libmp4p.a
-aac_la_CFLAGS = -I@top_srcdir@/shared/mp4p $(CFLAGS) $(FAAD2_CFLAGS) -std=c99
+aac_la_LIBADD = $(LDADD) $(FAAD2_LIBS) ../../shared/libmp4tagutil.a ../../external/libmp4p.a
+aac_la_CFLAGS = -I@top_srcdir@/external/mp4p/include $(CFLAGS) $(FAAD2_CFLAGS) -std=c99
 endif
 
