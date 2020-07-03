@@ -977,7 +977,6 @@
 		2D3420E61D0856F0004C136A /* mp4sample.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177561A0E8A3D004BC222 /* mp4sample.c */; };
 		2D3420E71D0856F0004C136A /* mp4tagupdate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177571A0E8A3D004BC222 /* mp4tagupdate.c */; };
 		2D3420E81D0856F0004C136A /* mp4util.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177581A0E8A3D004BC222 /* mp4util.c */; };
-		2D3420EF1D085787004C136A /* libmp4ff.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D3A4BBD1D6315D6002C7098 /* medialib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D3CD9372409A091005875A9 /* PinnedGroupTitleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3CD9352409A091005875A9 /* PinnedGroupTitleView.h */; };
 		2D3CD9382409A091005875A9 /* PinnedGroupTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3CD9362409A091005875A9 /* PinnedGroupTitleView.m */; };
@@ -3413,7 +3412,6 @@
 				2D27AEF11D9D877D00842D76 /* rg_scanner.dylib in Copy Plugins */,
 				2D3A4BBD1D6315D6002C7098 /* medialib.dylib in Copy Plugins */,
 				2D3138251D08AB3400CBD871 /* artwork.dylib in Copy Plugins */,
-				2D3420EF1D085787004C136A /* libmp4ff.dylib in Copy Plugins */,
 				2D6530E41CE79F4E00163808 /* adplug.dylib in Copy Plugins */,
 				2D8DA07A1C97184B0044CC15 /* psf.dylib in Copy Plugins */,
 				07765E531C2856DF00F5F4BC /* mms.dylib in Copy Plugins */,
@@ -17531,10 +17529,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					USE_TAGGING,
-					USE_MP4FF,
-				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
@@ -17566,10 +17560,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					USE_TAGGING,
-					USE_MP4FF,
-				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
