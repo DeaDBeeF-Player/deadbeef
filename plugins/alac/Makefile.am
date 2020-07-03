@@ -6,8 +6,8 @@ alac_la_SOURCES = alac_plugin.c\
 
 alac_la_LDFLAGS = -module -avoid-version
 
-alac_la_LIBADD = $(LDADD) $(FAAD2_LIBS) ../../shared/libmp4p.a
-alac_la_CFLAGS = $(CFLAGS) -std=c99 -I@top_srcdir@/shared/mp4p
+alac_la_LIBADD = $(LDADD) $(FAAD2_LIBS) ../../external/libmp4p.a
+alac_la_CFLAGS = $(CFLAGS) -std=c99 -I@top_srcdir@/external/mp4p/include
 endif
 
 

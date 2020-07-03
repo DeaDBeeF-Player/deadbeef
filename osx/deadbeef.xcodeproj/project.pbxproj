@@ -1656,7 +1656,6 @@
 		2D9F6534241BE78C00D9D16E /* SeekbarOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */; };
 		2D9F6535241BE78C00D9D16E /* SeekbarOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */; };
 		2D9FFA251D7588A700D1B5F8 /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6965371D74338A00EB99D8 /* mp4tagutil.c */; };
-		2D9FFA351D7589A000D1B5F8 /* libmp4ff.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; };
 		2DA04E9523B6A4520070AC01 /* shellexec.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA04E9323B6A4510070AC01 /* shellexec.h */; };
 		2DA04E9623B6A4520070AC01 /* shellexec.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA04E9423B6A4510070AC01 /* shellexec.c */; };
 		2DA04EA923B6A4B70070AC01 /* interface.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA04EA223B6A4B60070AC01 /* interface.c */; };
@@ -3138,13 +3137,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D9177371A0E8966004BC222;
 			remoteInfo = alac;
-		};
-		2D9FFA331D75899000D1B5F8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2D3420DB1D0856D5004C136A;
-			remoteInfo = mp4ff;
 		};
 		2DA04E9723B6A46C0070AC01 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -6291,7 +6283,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D71F1C224AE7A4E00E753D3 /* mp4p.framework in Frameworks */,
-				2D9FFA351D7589A000D1B5F8 /* libmp4ff.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12587,7 +12578,6 @@
 			);
 			dependencies = (
 				2D71F1C124AE7A4A00E753D3 /* PBXTargetDependency */,
-				2D9FFA341D75899000D1B5F8 /* PBXTargetDependency */,
 			);
 			name = converter;
 			productName = converter;
@@ -16122,11 +16112,6 @@
 			isa = PBXTargetDependency;
 			target = 2D9177371A0E8966004BC222 /* alac */;
 			targetProxy = 2D9177401A0E89B8004BC222 /* PBXContainerItemProxy */;
-		};
-		2D9FFA341D75899000D1B5F8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2D3420DB1D0856D5004C136A /* mp4ff */;
-			targetProxy = 2D9FFA331D75899000D1B5F8 /* PBXContainerItemProxy */;
 		};
 		2DA04E9823B6A46C0070AC01 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

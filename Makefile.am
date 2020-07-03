@@ -1,5 +1,6 @@
 SUBDIRS = pixmaps\
 		  icons\
+		  external\
 		  shared\
 		  ${PLUGINS_DIRS}\
 		  po\
