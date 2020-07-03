@@ -45,7 +45,7 @@
                BlueprintIdentifier = "2D9E5C2124AE6B050099B108"
                BuildableName = "mp4pTests.xctest"
                BlueprintName = "mp4pTests"
-               ReferencedContainer = "container:../../mp4p/mp4p/mp4p.xcodeproj">
+               ReferencedContainer = "container:../external/mp4p/projects/Xcode/mp4p.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
