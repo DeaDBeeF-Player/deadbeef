@@ -16,14 +16,14 @@ filter "configurations:debug or debug32"
 
 filter "configurations:debug or release"
   buildoptions { "-fPIC", "-std=c99" }
-  includedirs { "plugins/libmp4ff", "static-deps/lib-x86-64/include/x86_64-linux-gnu", "static-deps/lib-x86-64/include", "external/mp4p/include" }
+  includedirs { "static-deps/lib-x86-64/include/x86_64-linux-gnu", "static-deps/lib-x86-64/include" }
   libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib" }
 
 
 filter "configurations:debug32 or release32"
   buildoptions { "-std=c99", "-m32" }
   linkoptions { "-m32" }
-  includedirs { "plugins/libmp4ff", "static-deps/lib-x86-32/include/i386-linux-gnu", "static-deps/lib-x86-32/include", "external/mp4p/include" }
+  includedirs { "static-deps/lib-x86-32/include/i386-linux-gnu", "static-deps/lib-x86-32/include" }
   libdirs { "static-deps/lib-x86-32/lib/i386-linux-gnu", "static-deps/lib-x86-32/lib" }
 
 filter "configurations:release32 or release"
@@ -60,7 +60,6 @@ project "mp4p"
   files {
       "external/mp4p/src/*.c",
   }
-  prebuildcommands { "git submodule update --init external/mp4p"}
   includedirs { "external/mp4p/include" }
 
 project "liboggedit"
@@ -94,6 +93,8 @@ project "aac_plugin"
    targetprefix ""
    targetname "aac"
 
+   includedirs { "external/mp4p/include" }
+
    files {
        "plugins/aac/aac.c",
        "plugins/aac/aac_decoder_faad2.c",
@@ -114,6 +115,8 @@ project "alac_plugin"
    targetdir "bin/%{cfg.buildcfg}/plugins"
    targetprefix ""
    targetname "alac"
+
+   includedirs { "external/mp4p/include" }
 
    files {
        "plugins/alac/alac_plugin.c",
@@ -389,6 +392,8 @@ project "converter"
    targetdir "bin/%{cfg.buildcfg}/plugins"
    targetprefix ""
 
+   includedirs { "external/mp4p/include" }
+
    files {
        "plugins/converter/converter.c",
        "shared/mp4tagutil.c",
@@ -582,16 +587,16 @@ project "artwork_plugin"
 
    files {
        "plugins/artwork-legacy/*.c",
-       "plugins/libmp4ff/*.c"
+       "shared/mp4tagutil.*",
    }
 
    excludes {
    }
 
-   includedirs { "../libmp4ff" }
+   includedirs { "external/mp4p/include", "shared" }
 
-   defines { "USE_OGG=1", "USE_VFS_CURL", "USE_METAFLAC", "USE_MP4FF", "USE_TAGGING=1" }
-   links { "jpeg", "png", "z", "FLAC", "ogg" }
+   defines { "USE_OGG=1", "USE_VFS_CURL", "USE_METAFLAC" }
+   links { "jpeg", "png", "z", "FLAC", "ogg", "mp4p" }
 
 project "supereq_plugin"
    kind "SharedLib"

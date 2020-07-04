@@ -60,7 +60,7 @@
 #include "wos.h"
 #include "cache.h"
 #include "artwork.h"
-#include "mp4ff.h"
+#include "mp4tagutil.h"
 
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(...)
@@ -1546,56 +1546,73 @@ apev2_extract_art (const char *fname, const char *outname) {
     return err;
 }
 
-static uint32_t
-mp4_fp_read (void *user_data, void *buffer, uint32_t length) {
-    DB_FILE* stream = user_data;
-    uint32_t ret = (uint32_t)deadbeef->fread (buffer, 1, length, stream);
-    return ret;
-}
-
-static uint32_t
-mp4_fp_seek (void *user_data, uint64_t position) {
-    DB_FILE* stream = user_data;
-    return deadbeef->fseek (stream, (int64_t)position, SEEK_SET);
-}
-
 static int
 mp4_extract_art (const char *fname, const char *outname) {
+    int ret = -1;
+    mp4p_atom_t *mp4file = NULL;
+    DB_FILE* fp = NULL;
+    uint8_t* image_blob = NULL;
+
     if (!strcasestr (fname, ".mp4") && !strcasestr (fname, ".m4a") && !strcasestr (fname, ".m4b")) {
         return -1;
     }
 
-    int ret = 0;
-    DB_FILE* fp = deadbeef->fopen (fname);
+    fp = deadbeef->fopen (fname);
     if (!fp) {
-        return -1;
+        goto error;
     }
 
-    mp4ff_callback_t cb = {
-        .read = mp4_fp_read,
-        .write = NULL,
-        .seek = mp4_fp_seek,
-        .truncate = NULL,
-        .user_data = fp
-    };
-    mp4ff_t *mp4 = mp4ff_open_read_coveronly (&cb);
-    if (!mp4) {
+    mp4p_file_callbacks_t callbacks = {0};
+    callbacks.ptrhandle = fp;
+    mp4_init_ddb_file_callbacks (&callbacks);
+    mp4file = mp4p_open(&callbacks);
+    if (!mp4file) {
+        goto error;
+    }
+
+    mp4p_atom_t *covr = mp4_get_cover_atom(mp4file);
+    if (!covr) {
+        goto error;
+    }
+
+    mp4p_ilst_meta_t *data = covr->data;
+
+    uint32_t sz = data->data_size;
+    image_blob = malloc (sz);
+    if (data->blob) {
+        image_blob = memcpy (image_blob, data->blob, sz);
+    }
+    else if (data->values) {
+        uint16_t *v = data->values;
+        for (size_t i = 0; i < sz/2; i++, v++) {
+            image_blob[i*2+0] = (*v) >> 8;
+            image_blob[i*2+1] = (*v) & 0xff;
+        }
+    }
+    else {
+        goto error;
+    }
+
+    trace ("will write mp4 cover art (%u bytes) into %s\n", sz, outname);
+    if (!write_file (outname, (char *)image_blob, sz)) {
+        ret = 0;
+    }
+    free (image_blob);
+    image_blob = NULL;
+
+error:
+    if (image_blob) {
+        free(image_blob);
+        image_blob = NULL;
+    }
+    if (mp4file) {
+        mp4p_atom_free_list (mp4file);
+        mp4file = NULL;
+    }
+    if (fp) {
         deadbeef->fclose (fp);
-        return -1;
+        fp = NULL;
     }
-
-    mp4ff_cover_art_t* art_list = mp4ff_cover_get (mp4);
-    if (!art_list->tail) {
-        ret = -1;
-    } else {
-        uint32_t sz = art_list->tail->size;
-        char* image_blob = art_list->tail->data;
-        trace ("will write mp4 cover art (%u bytes) into %s\n", sz, outname);
-        write_file (outname, image_blob, sz);
-    }
-
-    mp4ff_close (mp4);
-    deadbeef->fclose (fp);
     return ret;
 }
 
