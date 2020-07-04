@@ -61,4 +61,4 @@ Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy develo
 
 ----
 
-[Support this project development](http://deadbeef.sourceforge.net/support.html)
+[Support development of this project](http://deadbeef.sourceforge.net/support.html)
