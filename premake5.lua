@@ -23,7 +23,7 @@ filter "configurations:debug or release"
 filter "configurations:debug32 or release32"
   buildoptions { "-std=c99", "-m32" }
   linkoptions { "-m32" }
-  includedirs { "plugins/libmp4ff", "static-deps/lib-x86-32/include/i386-linux-gnu", "static-deps/lib-x86-32/include" "external/mp4p/include" }
+  includedirs { "plugins/libmp4ff", "static-deps/lib-x86-32/include/i386-linux-gnu", "static-deps/lib-x86-32/include", "external/mp4p/include" }
   libdirs { "static-deps/lib-x86-32/lib/i386-linux-gnu", "static-deps/lib-x86-32/lib" }
 
 filter "configurations:release32 or release"
@@ -60,7 +60,7 @@ project "mp4p"
   files {
       "external/mp4p/src/*.c",
   }
-  prebuildcommands { "git submodule --init external/mp4p"}
+  prebuildcommands { "git submodule update --init external/mp4p"}
   includedirs { "external/mp4p/include" }
 
 project "liboggedit"
