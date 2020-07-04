@@ -72,7 +72,7 @@ static char setup_dev[MAXPNAMELEN]="default";
 
 intptr_t waveout_tid;
 static int wave_terminate;
-static ddb_playlist_t state;
+static ddb_playback_state_t state;
 static int audio_blocks_sent, audio_block_write_index;
 static int bytesread, bytes_per_block, avail_audio_buffers;
 static WAVEFORMATEXTENSIBLE wave_format;

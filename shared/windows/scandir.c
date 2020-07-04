@@ -67,10 +67,19 @@ int scandir (const char      *dirname_o,
                 // skip dots
                 if (wcscmp(fData.cFileName, L".") != 0 && wcscmp(fData.cFileName, L"..") != 0) {
                     // mem
-                    if (struct_count == DIRENT_CHUNK) {
+                    if (struct_count == DIRENT_CHUNK * alloc_multiplier) {
+                        struct dirent **namelist_orig = namelist;
                         namelist = realloc (namelist, sizeof(struct dirent *) * DIRENT_CHUNK * ++alloc_multiplier);
-                        if (!namelist)
+                        if (!namelist) {
+                            // no more space, free what we allocated
+                            int j;
+                            for (j = 0; j < struct_count; j++) {
+                                free(namelist_orig[j]);
+                            }
+                            free (namelist_orig);
+                            struct_count = -1;
                             break;
+                        }
                     }
                     // entry
                     struct dirent * tmp = (struct dirent *) malloc (sizeof(struct dirent));
