@@ -10,6 +10,8 @@ defines {
     "HAVE_LOG2=1"
 }
 
+linkgroups 'On'
+
 if nls() then
   defines {"ENABLE_NLS"}
   defines {"PACKAGE=\"deadbeef\""}
@@ -54,7 +56,7 @@ filter "configurations:release32 or release"
 
 filter "system:Windows"
   buildoptions { "-include shared/windows/mingw32_layer.h", "-fno-builtin"}
-  includedirs { "shared/windows/include", "/mingw64/include/opus" }
+  includedirs { "shared/windows/include", "/mingw64/include/opus", "external/mp4p/include" }
   libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib" }
   defines { "USE_STDIO", "HAVE_ICONV", "_POSIX_C_SOURCE" }
 
@@ -116,6 +118,27 @@ end
         "shared/windows/Resources.rc"
       }
 
+project "mp4p"
+  kind "StaticLib"
+  language "C"
+  targetdir "bin/%{cfg.buildcfg}/plugins"
+  targetprefix ""
+  files {
+      "external/mp4p/src/*.c",
+  }
+  prebuildcommands { "git submodule update --init external/mp4p"}
+  includedirs { "external/mp4p/include" }
+
+project "liboggedit"
+  kind "StaticLib"
+  language "C"
+  targetdir "bin/%{cfg.buildcfg}/plugins"
+  targetprefix ""
+  files {
+      "plugins/liboggedit/*.c",
+      "plugins/liboggedit/*.h"
+  }
+
 local mp3_v = option ("plugin-mp3", "libmpg123", "mad")
 if mp3_v then
 project "mp3"
@@ -167,16 +190,18 @@ project "aac_plugin"
    targetname "aac"
 
    files {
-       "plugins/aac/*.h",
-       "plugins/aac/*.c",
+       "plugins/aac/aac.c",
+       "plugins/aac/aac_decoder_faad2.c",
+       "plugins/aac/aac_decoder_wrap.c",
+       "plugins/aac/aac_parser.c",
+       "plugins/aac/aac_decoder_faad2.h",
+       "plugins/aac/aac_decoder_protocol.h",
+       "plugins/aac/aac_parser.h",
        "shared/mp4tagutil.h",
-       "shared/mp4tagutil.c",
-       "plugins/libmp4ff/*.h",
-       "plugins/libmp4ff/*.c"
+       "shared/mp4tagutil.c"
    }
 
-   defines { "USE_MP4FF=1", "USE_TAGGING=1" }
-   links { "faad" }
+   links { "faad", "mp4p" }
 end
 
 if option ("plugin-alac") then
@@ -191,18 +216,11 @@ project "alac_plugin"
        "plugins/alac/alac_plugin.c",
        "plugins/alac/alac.c",
        "plugins/alac/decomp.h",
-       "plugins/alac/demux.c",
-       "plugins/alac/demux.h",
-       "plugins/alac/stream.c",
-       "plugins/alac/stream.h",
        "shared/mp4tagutil.h",
-       "shared/mp4tagutil.c",
-       "plugins/libmp4ff/*.h",
-       "plugins/libmp4ff/*.c"
+       "shared/mp4tagutil.c"
    }
 
-   defines { "USE_MP4FF=1", "USE_TAGGING=1" }
-   links { "faad" }
+   links { "faad", "mp4p" }
 end
 
 if option ("plugin-flac", "flac ogg") then
@@ -215,13 +233,11 @@ project "flac_plugin"
 
    files {
        "plugins/flac/*.h",
-       "plugins/flac/*.c",
-       "plugins/liboggedit/*.h",
-       "plugins/liboggedit/*.c",
+       "plugins/flac/*.c"
    }
 
    defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
-   links { "FLAC", "ogg" }
+   links { "FLAC", "ogg", "liboggedit" }
 end
 
 if option ("plugin-wavpack", "wavpack") then
@@ -265,13 +281,11 @@ project "vorbis_plugin"
 
    files {
        "plugins/vorbis/*.h",
-       "plugins/vorbis/*.c",
-       "plugins/liboggedit/*.h",
-       "plugins/liboggedit/*.c",
+       "plugins/vorbis/*.c"
    }
 
    defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
-   links { "vorbisfile", "vorbis", "m", "ogg" }
+   links { "vorbisfile", "vorbis", "m", "ogg", "liboggedit" }
 end
 
 if option ("plugin-opus", "opusfile opus ogg") then
@@ -284,13 +298,11 @@ project "opus_plugin"
 
    files {
        "plugins/opus/*.h",
-       "plugins/opus/*.c",
-       "plugins/liboggedit/*.h",
-       "plugins/liboggedit/*.c",
+       "plugins/opus/*.c"
    }
 
    defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
-   links { "opusfile", "opus", "m", "ogg" }
+   links { "opusfile", "opus", "m", "ogg", "liboggedit" }
    filter "configurations:debug32 or release32"
 
       includedirs { "static-deps/lib-x86-32/include/opus" }
@@ -499,14 +511,12 @@ project "converter"
    targetdir "bin/%{cfg.buildcfg}/plugins"
    targetprefix ""
 
-   defines {
-      "USE_TAGGING=1"
-   }
    files {
        "plugins/converter/converter.c",
-       "plugins/libmp4ff/*.c",
-       "shared/mp4tagutil.c",
+       "shared/mp4tagutil.h",
+       "shared/mp4tagutil.c"
    }
+   links { "mp4p" }
 end
 
 if option ("plugin-shellexec", "jansson") then

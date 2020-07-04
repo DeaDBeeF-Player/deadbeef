@@ -8,20 +8,22 @@ defines {
     "HAVE_LOG2=1"
 }
 
+linkgroups 'On'
+
 filter "configurations:debug or debug32"
   defines { "DEBUG" }
   symbols "On"
 
 filter "configurations:debug or release"
   buildoptions { "-fPIC", "-std=c99" }
-  includedirs { "plugins/libmp4ff", "static-deps/lib-x86-64/include/x86_64-linux-gnu", "static-deps/lib-x86-64/include"  }
+  includedirs { "plugins/libmp4ff", "static-deps/lib-x86-64/include/x86_64-linux-gnu", "static-deps/lib-x86-64/include", "external/mp4p/include" }
   libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib" }
 
 
 filter "configurations:debug32 or release32"
   buildoptions { "-std=c99", "-m32" }
   linkoptions { "-m32" }
-  includedirs { "plugins/libmp4ff", "static-deps/lib-x86-32/include/i386-linux-gnu", "static-deps/lib-x86-32/include"  }
+  includedirs { "plugins/libmp4ff", "static-deps/lib-x86-32/include/i386-linux-gnu", "static-deps/lib-x86-32/include" "external/mp4p/include" }
   libdirs { "static-deps/lib-x86-32/lib/i386-linux-gnu", "static-deps/lib-x86-32/lib" }
 
 filter "configurations:release32 or release"
@@ -50,6 +52,27 @@ project "deadbeef"
    defines { "PORTABLE=1", "STATICLINK=1", "PREFIX=\"donotuse\"", "LIBDIR=\"donotuse\"", "DOCDIR=\"donotuse\"" }
    links { "m", "pthread", "dl" }
 
+project "mp4p"
+  kind "StaticLib"
+  language "C"
+  targetdir "bin/%{cfg.buildcfg}/plugins"
+  targetprefix ""
+  files {
+      "external/mp4p/src/*.c",
+  }
+  prebuildcommands { "git submodule --init external/mp4p"}
+  includedirs { "external/mp4p/include" }
+
+project "liboggedit"
+  kind "StaticLib"
+  language "C"
+  targetdir "bin/%{cfg.buildcfg}/plugins"
+  targetprefix ""
+  files {
+      "plugins/liboggedit/*.c",
+      "plugins/liboggedit/*.h"
+  }
+
 project "mp3"
    kind "SharedLib"
    language "C"
@@ -72,16 +95,18 @@ project "aac_plugin"
    targetname "aac"
 
    files {
-       "plugins/aac/*.h",
-       "plugins/aac/*.c",
+       "plugins/aac/aac.c",
+       "plugins/aac/aac_decoder_faad2.c",
+       "plugins/aac/aac_decoder_wrap.c",
+       "plugins/aac/aac_parser.c",
+       "plugins/aac/aac_decoder_faad2.h",
+       "plugins/aac/aac_decoder_protocol.h",
+       "plugins/aac/aac_parser.h",
        "shared/mp4tagutil.h",
-       "shared/mp4tagutil.c",
-       "plugins/libmp4ff/*.h",
-       "plugins/libmp4ff/*.c"
+       "shared/mp4tagutil.c"
    }
 
-   defines { "USE_MP4FF=1", "USE_TAGGING=1" }
-   links { "faad" }
+   links { "faad", "mp4p" }
 
 project "alac_plugin"
    kind "SharedLib"
@@ -94,18 +119,11 @@ project "alac_plugin"
        "plugins/alac/alac_plugin.c",
        "plugins/alac/alac.c",
        "plugins/alac/decomp.h",
-       "plugins/alac/demux.c",
-       "plugins/alac/demux.h",
-       "plugins/alac/stream.c",
-       "plugins/alac/stream.h",
        "shared/mp4tagutil.h",
-       "shared/mp4tagutil.c",
-       "plugins/libmp4ff/*.h",
-       "plugins/libmp4ff/*.c"
+       "shared/mp4tagutil.c"
    }
 
-   defines { "USE_MP4FF=1", "USE_TAGGING=1" }
-   links { "faad" }
+   links { "faad", "mp4p" }
 
 project "flac_plugin"
    kind "SharedLib"
@@ -116,13 +134,11 @@ project "flac_plugin"
 
    files {
        "plugins/flac/*.h",
-       "plugins/flac/*.c",
-       "plugins/liboggedit/*.h",
-       "plugins/liboggedit/*.c",
+       "plugins/flac/*.c"
    }
 
    defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
-   links { "FLAC", "ogg" }
+   links { "FLAC", "ogg", "liboggedit" }
 
 project "wavpack_plugin"
    kind "SharedLib"
@@ -160,13 +176,11 @@ project "vorbis_plugin"
 
    files {
        "plugins/vorbis/*.h",
-       "plugins/vorbis/*.c",
-       "plugins/liboggedit/*.h",
-       "plugins/liboggedit/*.c",
+       "plugins/vorbis/*.c"
    }
 
    defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
-   links { "vorbisfile", "vorbis", "m", "ogg" }
+   links { "vorbisfile", "vorbis", "m", "ogg", "liboggedit" }
 
 project "opus_plugin"
    kind "SharedLib"
@@ -177,13 +191,11 @@ project "opus_plugin"
 
    files {
        "plugins/opus/*.h",
-       "plugins/opus/*.c",
-       "plugins/liboggedit/*.h",
-       "plugins/liboggedit/*.c",
+       "plugins/opus/*.c"
    }
 
    defines { "HAVE_OGG_STREAM_FLUSH_FILL" }
-   links { "opusfile", "opus", "m", "ogg" }
+   links { "opusfile", "opus", "m", "ogg", "liboggedit" }
    filter "configurations:debug32 or release32"
    
       includedirs { "static-deps/lib-x86-32/include/opus" }
@@ -377,14 +389,11 @@ project "converter"
    targetdir "bin/%{cfg.buildcfg}/plugins"
    targetprefix ""
 
-   defines {
-      "USE_TAGGING=1"
-   }
    files {
        "plugins/converter/converter.c",
-       "plugins/libmp4ff/*.c",
        "shared/mp4tagutil.c",
    }
+   links { "mp4p"}
 
 project "sndfile_plugin"
    kind "SharedLib"
