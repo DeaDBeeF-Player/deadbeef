@@ -30,7 +30,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (NSString *)propertySheet:(PropertySheetViewController *)vc valueForKey:(NSString *)key def:(NSString *)def item:(id)item {
-    char str[200];
+    char str[1000];
     deadbeef->conf_get_str ([key UTF8String], [def UTF8String], str, sizeof (str));
     return [NSString stringWithUTF8String:str];
 }

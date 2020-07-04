@@ -31,3 +31,5 @@ char dbdocdir[PATH_MAX]; // see deadbeef->get_doc_dir
 char dbplugindir[PATH_MAX]; // see deadbeef->get_plugin_dir
 char dbpixmapdir[PATH_MAX]; // see deadbeef->get_pixmap_dir
 char dbcachedir[PATH_MAX];
+char dbresourcedir[PATH_MAX];
+

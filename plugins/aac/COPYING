@@ -1,25 +1,102 @@
 AAC DeaDBeeF Player Plugin
-Copyright (c) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>
+Copyright (c) 2009-2016 Alexey Yakovenko <waker@users.sourceforge.net>
 
-libmp4ff (modified)
-Code from MP4FF is copyright (c) Nero AG, www.nero.com
-deadbeef-related modifications (c) 2009-2014 Alexey Yakovenko
+This software is provided 'as-is', without any express or implied
+warranty.  In no event will the authors be held liable for any damages
+arising from the use of this software.
 
-Relies on libfaad2
-Code from FAAD2 is copyright (c) Nero AG, www.nero.com
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+ claim that you wrote the original software. If you use this software
+ in a product, an acknowledgment in the product documentation would be
+ appreciated but is not required.
+
+2. Altered source versions must be plainly marked as such, and must not be
+ misrepresented as being the original software.
+
+3. This notice may not be removed or altered from any source distribution.
 
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
+Software License for The Fraunhofer FDK AAC Codec Library for Android
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+© Copyright  1995 - 2012 Fraunhofer-Gesellschaft zur Förderung der angewandten Forschung e.V.
+  All rights reserved.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+1.    INTRODUCTION
+The Fraunhofer FDK AAC Codec Library for Android ("FDK AAC Codec") is software that implements
+the MPEG Advanced Audio Coding ("AAC") encoding and decoding scheme for digital audio.
+This FDK AAC Codec software is intended to be used on a wide variety of Android devices.
+
+AAC's HE-AAC and HE-AAC v2 versions are regarded as today's most efficient general perceptual
+audio codecs. AAC-ELD is considered the best-performing full-bandwidth communications codec by
+independent studies and is widely deployed. AAC has been standardized by ISO and IEC as part
+of the MPEG specifications.
+
+Patent licenses for necessary patent claims for the FDK AAC Codec (including those of Fraunhofer)
+may be obtained through Via Licensing (www.vialicensing.com) or through the respective patent owners
+individually for the purpose of encoding or decoding bit streams in products that are compliant with
+the ISO/IEC MPEG audio standards. Please note that most manufacturers of Android devices already license
+these patent claims through Via Licensing or directly from the patent owners, and therefore FDK AAC Codec
+software may already be covered under those patent licenses when it is used for those licensed purposes only.
+
+Commercially-licensed AAC software libraries, including floating-point versions with enhanced sound quality,
+are also available from Fraunhofer. Users are encouraged to check the Fraunhofer website for additional
+applications information and documentation.
+
+2.    COPYRIGHT LICENSE
+
+Redistribution and use in source and binary forms, with or without modification, are permitted without
+payment of copyright license fees provided that you satisfy the following conditions:
+
+You must retain the complete text of this software license in redistributions of the FDK AAC Codec or
+your modifications thereto in source code form.
+
+You must retain the complete text of this software license in the documentation and/or other materials
+provided with redistributions of the FDK AAC Codec or your modifications thereto in binary form.
+You must make available free of charge copies of the complete source code of the FDK AAC Codec and your
+modifications thereto to recipients of copies in binary form.
+
+The name of Fraunhofer may not be used to endorse or promote products derived from this library without
+prior written permission.
+
+You may not charge copyright license fees for anyone to use, copy or distribute the FDK AAC Codec
+software or your modifications thereto.
+
+Your modified versions of the FDK AAC Codec must carry prominent notices stating that you changed the software
+and the date of any change. For modified versions of the FDK AAC Codec, the term
+"Fraunhofer FDK AAC Codec Library for Android" must be replaced by the term
+"Third-Party Modified Version of the Fraunhofer FDK AAC Codec Library for Android."
+
+3.    NO PATENT LICENSE
+
+NO EXPRESS OR IMPLIED LICENSES TO ANY PATENT CLAIMS, including without limitation the patents of Fraunhofer,
+ARE GRANTED BY THIS SOFTWARE LICENSE. Fraunhofer provides no warranty of patent non-infringement with
+respect to this software.
+
+You may use this FDK AAC Codec software or modifications thereto only for purposes that are authorized
+by appropriate patent licenses.
+
+4.    DISCLAIMER
+
+This FDK AAC Codec software is provided by Fraunhofer on behalf of the copyright holders and contributors
+"AS IS" and WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES, including but not limited to the implied warranties
+of merchantability and fitness for a particular purpose. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE for any direct, indirect, incidental, special, exemplary, or consequential damages,
+including but not limited to procurement of substitute goods or services; loss of use, data, or profits,
+or business interruption, however caused and on any theory of liability, whether in contract, strict
+liability, or tort (including negligence), arising in any way out of the use of this software, even if
+advised of the possibility of such damage.
+
+5.    CONTACT INFORMATION
+
+Fraunhofer Institute for Integrated Circuits IIS
+Attention: Audio and Multimedia Departments - FDK AAC LL
+Am Wolfsmantel 33
+91058 Erlangen, Germany
+
+www.iis.fraunhofer.de/amm
+amm-info@iis.fraunhofer.de
 

@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) NSArray *subviewControllers;
 
-- (NSDictionary *)serialize;
+- (NSDictionary * _Nullable)serialize;
 
 - (int)sendMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 NS_REQUIRES_SUPER;
 

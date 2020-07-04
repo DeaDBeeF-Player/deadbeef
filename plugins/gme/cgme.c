@@ -148,6 +148,7 @@ read_gzfile (const char *fname, char **buffer, int *size) {
         nb = gzread (gz, *buffer + pos, readsize);
         if (nb < 0) {
             free (*buffer);
+            *buffer = NULL;
             trace ("failed to gzread from %s\n", fname);
             gzclose (gz);
             goto error;

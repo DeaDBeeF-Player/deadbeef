@@ -16,7 +16,7 @@ AC_PROG_INSTALL
 dnl AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 AC_C_BIGENDIAN
-AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT
 PKG_PROG_PKG_CONFIG
 AM_PROG_CC_C_O
 AM_ICONV
@@ -902,6 +902,7 @@ AC_SUBST(PLUGINS_DIRS)
 
 AC_CONFIG_FILES([
 Makefile
+external/Makefile
 shared/Makefile
 pixmaps/Makefile
 icons/Makefile
@@ -956,6 +957,7 @@ plugins/coreaudio/Makefile
 plugins/rg_scanner/Makefile
 plugins/soundtouch/Makefile
 po/Makefile.in
+intl/Makefile
 deadbeef.desktop
 ])
 

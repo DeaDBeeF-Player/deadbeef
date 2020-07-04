@@ -36,19 +36,11 @@
 #include <fcntl.h>
 #include "../../strdupa.h"
 
-#define USE_MP4FF 1
-
 #include "decomp.h"
 
-#include "mp4ff.h"
 #include "../../shared/mp4tagutil.h"
 
-#if !USE_MP4FF
-extern "C" {
-#include "demux.h"
-#include "stream.h"
-}
-#endif
+#include <mp4p/mp4p.h>
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -65,11 +57,6 @@ extern "C" {
 static DB_decoder_t alac_plugin;
 DB_functions_t *deadbeef;
 
-#if USE_MP4FF
-#define MP4FILE mp4ff_t *
-#define MP4FILE_CB mp4ff_callback_t
-#endif
-
 #ifdef WORDS_BIGENDIAN
 int host_bigendian = 1;
 #else
@@ -82,24 +69,17 @@ int host_bigendian = 0;
 typedef struct {
     DB_fileinfo_t info;
     DB_FILE *file;
-#if USE_MP4FF
-    MP4FILE mp4;
-    MP4FILE_CB mp4reader;
-    int mp4track;
-    int mp4framesize;
-    int mp4samples;
-#else
-    demux_res_t demux_res;
-    stream_t *stream;
-    uint8_t buffer[IN_BUFFER_SIZE];
-    int64_t dataoffs;
-#endif
+    mp4p_file_callbacks_t mp4reader;
+    mp4p_atom_t *mp4file;
+    mp4p_atom_t *trak;
+    uint32_t alac_samplerate;
+    uint64_t mp4samples;
     alac_file *_alac;
     int mp4sample;
     int junk;
     uint8_t out_buffer[BUFFER_SIZE];
     int out_remaining;
-    int skipsamples;
+    int64_t skipsamples;
     int64_t currentsample;
     int64_t startsample;
     int64_t endsample;
@@ -111,114 +91,6 @@ alacplug_open (uint32_t hints) {
     alacplug_info_t *info = calloc (sizeof (alacplug_info_t), 1);
     return &info->info;
 }
-
-#if USE_MP4FF
-static uint32_t
-mp4_fs_read (void *user_data, void *buffer, uint32_t length) {
-    alacplug_info_t *info = (alacplug_info_t *)user_data;
-    return (uint32_t)deadbeef->fread (buffer, 1, length, info->file);
-}
-
-static uint32_t
-mp4_fs_seek (void *user_data, uint64_t position) {
-    alacplug_info_t *info = (alacplug_info_t *)user_data;
-    return deadbeef->fseek (info->file, position+info->junk, SEEK_SET);
-}
-
-static int
-mp4_track_get_info (mp4ff_t *mp4, int track, int samplerate, float *duration, int *channels, int64_t *totalsamples, int *mp4framesize) {
-    unsigned char*  buff = 0;
-    unsigned int    buff_size = 0;
-    int samples = 0;
-
-    if (mp4ff_get_decoder_config(mp4, track, &buff, &buff_size)) {
-        return -1;
-    }
-    if (!buff) {
-        return -1;
-    }
-
-    alac_file *alac = create_alac (mp4->track[track]->sampleSize, mp4->track[track]->channelCount);
-    alac_set_info (alac, (char *)buff);
-
-    *channels = mp4->track[track]->channelCount;
-
-    samples = mp4ff_num_samples(mp4, track);
-
-    if (samples <= 0) {
-        return -1;
-    }
-
-    int i_sample_count = samples;
-    int i_sample;
-
-    int64_t total_dur = 0;
-    for( i_sample = 0; i_sample < i_sample_count; i_sample++ )
-    {
-        total_dur += mp4ff_get_sample_duration (mp4, track, i_sample);
-    }
-    if (totalsamples) {
-        *totalsamples = total_dur * samplerate / mp4ff_time_scale (mp4, track);
-        *mp4framesize = (int)((*totalsamples) / i_sample_count);
-    }
-    *duration = total_dur / (float)mp4ff_time_scale (mp4, track);
-
-    return 0;
-}
-#else
-static int
-get_sample_info(demux_res_t *demux_res, uint32_t samplenum,
-                           uint32_t *sample_duration,
-                           uint32_t *sample_byte_size)
-{
-    unsigned int duration_index_accum = 0;
-    unsigned int duration_cur_index = 0;
-
-    if (samplenum >= demux_res->num_sample_byte_sizes)
-    {
-        fprintf(stderr, "sample %i does not exist\n", samplenum);
-        return 0;
-    }
-
-    if (!demux_res->num_time_to_samples)
-    {
-        fprintf(stderr, "no time to samples\n");
-        return 0;
-    }
-    while ((demux_res->time_to_sample[duration_cur_index].sample_count + duration_index_accum)
-            <= samplenum)
-    {
-        duration_index_accum += demux_res->time_to_sample[duration_cur_index].sample_count;
-        duration_cur_index++;
-        if (duration_cur_index >= demux_res->num_time_to_samples)
-        {
-            fprintf(stderr, "sample %i does not have a duration\n", samplenum);
-            return 0;
-        }
-    }
-
-    *sample_duration = demux_res->time_to_sample[duration_cur_index].sample_duration;
-    *sample_byte_size = demux_res->sample_byte_size[samplenum];
-
-    return 1;
-}
-
-static int64_t
-alacplug_get_totalsamples (demux_res_t *demux_res) {
-    int64_t totalsamples = 0;
-    for (int i = 0; i < demux_res->num_sample_byte_sizes; i++)
-    {
-        unsigned int thissample_duration = 0;
-        unsigned int thissample_bytesize = 0;
-
-        get_sample_info(demux_res, i, &thissample_duration,
-                &thissample_bytesize);
-
-        totalsamples += thissample_duration;
-    }
-    return totalsamples;
-}
-#endif
 
 int
 alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
@@ -232,101 +104,71 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
-    int64_t totalsamples = 0;
-
-#if USE_MP4FF
-    info->mp4track = -1;
-    info->mp4reader.read = mp4_fs_read;
-    info->mp4reader.write = NULL;
-    info->mp4reader.seek = mp4_fs_seek;
-    info->mp4reader.truncate = NULL;
-    info->mp4reader.user_data = info;
+    uint64_t totalsamples = 0;
 
     int samplerate = 0;
     int channels = 0;
     int bps = 0;
     float duration = 0;
 
-    trace ("alac_init: mp4ff_open_read %s\n", deadbeef->pl_find_meta (it, ":URI"));
-    info->mp4 = mp4ff_open_read (&info->mp4reader);
-    if (info->mp4) {
-        int ntracks = mp4ff_total_tracks (info->mp4);
-        for (int i = 0; i < ntracks; i++) {
-            if (mp4ff_get_track_type (info->mp4, i) != TRACK_AUDIO) {
-                continue;
-            }
+    DB_FILE *file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    info->mp4reader.ptrhandle = file;
+    mp4_init_ddb_file_callbacks (&info->mp4reader);
+    info->mp4file = mp4p_open(&info->mp4reader);
 
-            // samplerate is stored in the ASC+44
-            unsigned char*  buff = 0;
-            unsigned int    buff_size = 0;
-            if (mp4ff_get_decoder_config (info->mp4, i, &buff, &buff_size)) {
-                continue;
-            }
-            unsigned char *ptr = buff + 44;
-            samplerate = (ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | (ptr[3]);
-            ptr = buff + 28;
-            bps = (ptr[0] << 8) | ptr[1];
-
-            free (buff);
-
-            int res = mp4_track_get_info (info->mp4, i, samplerate, &duration, &channels, &totalsamples, &info->mp4framesize);
-            if (res >= 0 && duration > 0) {
-                info->mp4track = i;
-                break;
-            }
+    // iterate over tracks, find the ALAC one
+    info->trak = mp4p_atom_find (info->mp4file, "moov/trak");
+    mp4p_alac_t *alac = NULL;
+    while (info->trak) {
+        mp4p_atom_t *alac_atom = mp4p_atom_find (info->trak, "trak/mdia/minf/stbl/stsd/alac");
+        if (alac_atom && mp4p_trak_playable(info->trak)) {
+            alac = alac_atom->data;
+            break;
         }
-        trace ("track: %d\n", info->mp4track);
-        if (info->mp4track >= 0) {
-            // init mp4 decoding
-            info->mp4samples = mp4ff_num_samples(info->mp4, info->mp4track);
-
-            unsigned char*  buff = 0;
-            unsigned int    buff_size = 0;
-            if (mp4ff_get_decoder_config (info->mp4, info->mp4track, &buff, &buff_size)) {
-                return -1;
-            }
-
-            info->_alac = create_alac (info->mp4->track[info->mp4track]->sampleSize, info->mp4->track[info->mp4track]->channelCount);
-            alac_set_info (info->_alac, (char *)buff);
-
-            trace ("alac: successfully initialized track %d\n", info->mp4track);
-            _info->fmt.samplerate = alac_get_samplerate(info->_alac);
-            _info->fmt.bps = alac_get_bitspersample (info->_alac);
-            _info->fmt.channels = channels;
-            free (buff);
-        }
-        else {
-            trace ("alac: track not found in mp4 container\n");
-            mp4ff_close (info->mp4);
-            info->mp4 = NULL;
-        }
+        info->trak = info->trak->next;
     }
-#else
-    info->stream = stream_create_file (info->file, 1, info->junk);
-
-    if (!qtmovie_read(info->stream, &info->demux_res)) {
-        if (!info->demux_res.format_read || info->demux_res.format != MAKEFOURCC('a','l','a','c')) {
-            return -1;
-        }
+    if (!alac) {
+//        printf ("not found\n");
+        return -1;
     }
-    info->dataoffs = deadbeef->ftell (info->file);
 
-    info->_alac = create_alac (info->demux_res.sample_size, info->demux_res.num_channels);
-    alac_set_info(info->_alac, info->demux_res.codecdata);
+    // get audio format: samplerate, bps, channels
+    samplerate = alac->sample_rate;
+    bps = alac->bps;
+    channels = alac->channel_count;
+    //printf ("%d %d %d\n", _samplerate, _bps, _channels);
 
-    info->demux_res.sample_rate = alac_get_samplerate (info->_alac);
-    info->demux_res.sample_size = alac_get_bitspersample (info->_alac);
+    // get file info: totalsamples
 
-    totalsamples = alacplug_get_totalsamples (&info->demux_res);
-    _info->fmt.bps = info->demux_res.sample_size;
-    _info->fmt.channels = info->demux_res.num_channels;
-    _info->fmt.samplerate = info->demux_res.sample_rate;
-#endif
+    // 1. sum of all stts entries
+    mp4p_atom_t *stts_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl/stts");
+
+//    printf ("num_samples: %lld\n", num_mp4samples);
+
+    // total PCM samples and duration
+
+    // duration is calculated from stts table (time-to-sample), which is not pcm-sample-precise.
+    // there should be a way to count pcm samples
+    uint64_t total_sample_duration = mp4p_stts_total_sample_duration (stts_atom);
+    totalsamples = total_sample_duration * samplerate / alac->sample_rate;
+    duration = total_sample_duration / (float)alac->sample_rate;
+
+    mp4p_atom_t *stsz_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl/stsz");
+    mp4p_stsz_t *stsz = stsz_atom->data;
+
+    info->mp4samples = stsz->number_of_entries;
+
+    _info->fmt.samplerate = samplerate;
+    _info->fmt.channels = channels;
+    _info->fmt.bps = bps;
+
+    info->_alac = create_alac (bps, channels);
+    alac_set_info (info->_alac, (char *)alac->asc);
 
     if (!info->file->vfs->is_streaming ()) {
-        int64_t endsample = deadbeef->pl_item_get_endsample (it);
+        int64_t endsample = deadbeef->pl_item_get_endsample(it);
         if (endsample > 0) {
-            info->startsample = deadbeef->pl_item_get_startsample (it);
+            info->startsample = deadbeef->pl_item_get_startsample(it);
             info->endsample = endsample;
             alac_plugin.seek_sample (_info, 0);
         }
@@ -351,16 +193,9 @@ alacplug_free (DB_fileinfo_t *_info) {
         if (info->file) {
             deadbeef->fclose (info->file);
         }
-#if USE_MP4FF
-        if (info->mp4) {
-            mp4ff_close (info->mp4);
+        if (info->mp4file) {
+            mp4p_atom_free_list (info->mp4file);
         }
-#else
-        if (info->stream) {
-            stream_destroy (info->stream);
-        }
-        qtmovie_free_demux (&info->demux_res);
-#endif
 
         if (info->_alac) {
             alac_file_free (info->_alac);
@@ -376,7 +211,7 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     if (!info->file->vfs->is_streaming ()) {
         if (info->currentsample + size / samplesize > info->endsample) {
-            size = (info->endsample - info->currentsample + 1) * samplesize;
+            size = (int)(info->endsample - info->currentsample + 1) * samplesize;
             if (size <= 0) {
                 trace ("alacplug_read: eof (current=%d, total=%d)\n", info->currentsample, info->endsample);
                 return 0;
@@ -387,7 +222,7 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
     while (size > 0) {
         // handle seeking
         if (info->skipsamples > 0 && info->out_remaining > 0) {
-            int skip = min (info->out_remaining, info->skipsamples);
+            int64_t skip = min (info->out_remaining, info->skipsamples);
             if (skip < info->out_remaining) {
                 memmove (info->out_buffer, info->out_buffer + skip * samplesize, (info->out_remaining - skip) * samplesize);
             }
@@ -415,131 +250,61 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
 
         unsigned char *buffer = NULL;
-        uint32_t buffer_size = 0;
+//        uint32_t buffer_size = 0;
         uint32_t outNumSamples = 0;
 
-#if USE_MP4FF
         if (info->mp4sample >= info->mp4samples) {
             trace ("alac: finished with the last mp4sample\n");
             break;
         }
 
-        int rc = mp4ff_read_sample (info->mp4, info->mp4track, info->mp4sample, &buffer, &buffer_size);
-        if (rc == 0) {
-            trace ("mp4ff_read_sample failed\n");
-            break;
-        }
-#else
-        // decode next frame
-        if (info->mp4sample == info->demux_res.num_sample_byte_sizes) {
-            break; // end of file
-        }
+        mp4p_atom_t *stbl_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl");
+        uint64_t offs = mp4p_sample_offset (stbl_atom, info->mp4sample);
+        uint64_t size = mp4p_sample_size (stbl_atom, info->mp4sample);
 
-        uint32_t sample_duration;
-        uint32_t sample_byte_size;
-        /* just get one sample for now */
-        if (!get_sample_info(&info->demux_res, info->mp4sample,
-                             &sample_duration, &sample_byte_size))
-        {
-            fprintf(stderr, "alac: sample failed\n");
+        buffer = malloc (size);
+        deadbeef->fseek (info->file, offs+info->junk, SEEK_SET);
+        if (size != deadbeef->fread (buffer, 1, size, info->file)) {
+            trace ("alac: failed to read sample\n");
             break;
         }
-        if (IN_BUFFER_SIZE < sample_byte_size)
-        {
-            fprintf(stderr, "alac: buffer too small! (is %i want %i)\n",
-                    IN_BUFFER_SIZE,
-                    sample_byte_size);
-            break;
-        }
-
-        buffer_size = stream_read (info->stream, sample_byte_size, info->buffer);
-        if (stream_eof (info->stream)) {
-            break;
-        }
-
-        buffer = info->buffer;
-#endif
 
         int outputBytes = 0;
-        decode_frame(info->_alac, buffer, rc, info->out_buffer, &outputBytes);
+        decode_frame(info->_alac, buffer, (int)size, info->out_buffer, &outputBytes);
         outNumSamples = outputBytes / samplesize;
 
         info->out_remaining += outNumSamples;
         info->mp4sample++;
 
-#if USE_MP4FF
         if (buffer) {
             free (buffer);
         }
-#endif
     }
 
     info->currentsample += (initsize-size) / samplesize;
     return initsize-size;
 }
 
-int
+static int
 alacplug_seek_sample (DB_fileinfo_t *_info, int sample) {
     alacplug_info_t *info = (alacplug_info_t *)_info;
 
     sample += info->startsample;
 
-#if USE_MP4FF
-    int totalsamples = 0;
-    int i;
-    int num_sample_byte_sizes = mp4ff_get_num_sample_byte_sizes (info->mp4, info->mp4track);
-    int scale = _info->fmt.samplerate / mp4ff_time_scale (info->mp4, info->mp4track);
-    for (i = 0; i < num_sample_byte_sizes; i++)
-    {
-        unsigned int thissample_duration = 0;
-        unsigned int thissample_bytesize = 0;
+    mp4p_atom_t *stts_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl/stts");
 
-        mp4ff_get_sample_info(info->mp4, info->mp4track, i, &thissample_duration,
-                              &thissample_bytesize);
+    uint64_t seeksample = (int)((int64_t)sample * info->alac_samplerate / _info->fmt.samplerate);
 
-        if (totalsamples + thissample_duration > sample / scale) {
-            info->skipsamples = sample - totalsamples * scale;
-            break;
-        }
-        totalsamples += thissample_duration;
-    }
-    //        i = sample / info->mp4framesize;
-    //        info->skipsamples = sample - info->mp4sample * info->mp4framesize;
-    info->mp4sample = i;
-    trace ("seek res: frame %d (old: %d*%d), skip %d\n", info->mp4sample, sample / info->mp4framesize, info->mp4framesize, info->skipsamples);
-#else
+    uint64_t startsample = 0;
+    info->mp4sample = mp4p_stts_mp4sample_containing_sample(stts_atom, seeksample, &startsample);
 
-    int totalsamples = 0;
-    int64_t seekpos = 0;
-    int i;
-    for (i = 0; i < info->demux_res.num_sample_byte_sizes; i++)
-    {
-        unsigned int thissample_duration = 0;
-        unsigned int thissample_bytesize = 0;
+    startsample = startsample * _info->fmt.samplerate / info->alac_samplerate;
+    info->skipsamples = sample - startsample;
 
-        get_sample_info(&info->demux_res, i, &thissample_duration,
-                &thissample_bytesize);
-
-        if (totalsamples + thissample_duration > sample) {
-            info->skipsamples = sample - totalsamples;
-            break;
-        }
-        totalsamples += thissample_duration;
-        seekpos += info->demux_res.sample_byte_size[i];
-    }
-
-    if (i == info->demux_res.num_sample_byte_sizes) {
-        return -1;
-    }
-
-
-    deadbeef->fseek(info->file, info->dataoffs + seekpos, SEEK_SET);
-
-    info->mp4sample = i;
-#endif
     info->out_remaining = 0;
     info->currentsample = sample;
     _info->readpos = (float)(info->currentsample - info->startsample) / _info->fmt.samplerate;
+
     return 0;
 }
 
@@ -555,21 +320,10 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int samplerate = 0;
     int bps = 0;
     int channels = 0;
-#if !USE_MP4FF
-    int64_t fsize = 0;
-#endif
     int64_t totalsamples = 0;
 
     alacplug_info_t info;
-    mp4ff_t *mp4 = NULL;
-    DB_playItem_t *it = NULL;
-
-#if !USE_MP4FF
-    demux_res_t demux_res;
-    stream_t *stream;
-
-    memset (&demux_res, 0, sizeof (demux_res));
-#endif
+    mp4p_atom_t *mp4 = NULL;
 
     memset (&info, 0, sizeof (info));
 
@@ -589,207 +343,106 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         info.junk = 0;
     }
 
-#if USE_MP4FF
-
     const char *ftype = NULL;
     float duration = -1;
 
-    // slowwww!
-    info.file = fp;
-    MP4FILE_CB cb = {
-        .read = mp4_fs_read,
-        .write = NULL,
-        .seek = mp4_fs_seek,
-        .truncate = NULL,
-        .user_data = &info
-    };
+    info.mp4reader.ptrhandle = fp;
+    mp4_init_ddb_file_callbacks (&info.mp4reader);
+    mp4 = info.mp4file = mp4p_open(&info.mp4reader);
 
-    mp4 = mp4ff_open_read (&cb);
-    if (mp4) {
-        int ntracks = mp4ff_total_tracks (mp4);
-        trace ("alac: numtracks=%d\n", ntracks);
-        int i;
-        for (i = 0; i < ntracks; i++) {
-            if (mp4ff_get_track_type (mp4, i) != TRACK_AUDIO) {
-                trace ("alac: track %d is not audio\n", i);
-                continue;
-            }
-            // samplerate is stored in the ASC+44
-            unsigned char*  buff = 0;
-            unsigned int    buff_size = 0;
-            if (mp4ff_get_decoder_config (mp4, i, &buff, &buff_size)) {
-                continue;
-            }
-            unsigned char *ptr = buff + 44;
-            samplerate = (ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | (ptr[3]);
-            ptr = buff + 28;
-            bps = (ptr[0] << 8) | ptr[1];
-            free (buff);
-
-            int mp4framesize;
-            int res = mp4_track_get_info (mp4, i, samplerate, &duration, &channels, &totalsamples, &mp4framesize);
-            if (res >= 0 && duration > 0) {
-                trace ("alac: found audio track %d (duration=%f, totalsamples=%d)\n", i, duration, totalsamples);
-
-#if 0 // TODO
-                int num_chapters = 0;
-                mp4_chapter_t *chapters = NULL;
-                if (mp4ff_chap_get_num_tracks(mp4) > 0) {
-                    chapters = mp4_load_itunes_chapters (mp4, &num_chapters, samplerate);
-                }
-#endif
-                DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, alac_plugin.plugin.id);
-                ftype = "ALAC";
-                deadbeef->pl_add_meta (it, ":FILETYPE", ftype);
-                deadbeef->pl_set_meta_int (it, ":TRACKNUM", i);
-                deadbeef->plt_set_item_duration (plt, it, duration);
-
-                deadbeef->rewind (fp);
-                mp4_read_metadata_file(it, fp);
-
-                int64_t fsize = deadbeef->fgetlength (fp);
-                deadbeef->fclose (fp);
-
-                char s[100];
-                snprintf (s, sizeof (s), "%lld", fsize);
-                deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
-                snprintf (s, sizeof (s), "%d", bps);
-                deadbeef->pl_add_meta (it, ":BPS", s);
-                snprintf (s, sizeof (s), "%d", channels);
-                deadbeef->pl_add_meta (it, ":CHANNELS", s);
-                snprintf (s, sizeof (s), "%d", samplerate);
-                deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
-                int br = (int)roundf(fsize / duration * 8 / 1000);
-                snprintf (s, sizeof (s), "%d", br);
-                deadbeef->pl_add_meta (it, ":BITRATE", s);
-
-#if 0 // TODO
-                // embedded chapters
-                deadbeef->pl_lock (); // FIXME: is it needed?
-                if (chapters && num_chapters > 0) {
-                    DB_playItem_t *cue = mp4_insert_with_chapters (plt, after, it, chapters, num_chapters, totalsamples, samplerate);
-                    for (int n = 0; n < num_chapters; n++) {
-                        if (chapters[n].title) {
-                            free (chapters[n].title);
-                        }
-                    }
-                    free (chapters);
-                    if (cue) {
-                        mp4ff_close (mp4);
-                        deadbeef->pl_item_unref (it);
-                        deadbeef->pl_item_unref (cue);
-                        deadbeef->pl_unlock ();
-                        return cue;
-                    }
-                }
-#endif
-
-                DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, samplerate);
-                if (cue) {
-                    deadbeef->pl_item_unref (it);
-                    return cue;
-                }
-
-                after = deadbeef->plt_insert_item (plt, after, it);
-                deadbeef->pl_item_unref (it);
-                break;
-            }
+    if (!info.mp4file) {
+        deadbeef->fclose (fp);
+        return NULL;
+    }
+    // iterate over tracks, and the ALAC one
+    info.trak = mp4p_atom_find (info.mp4file, "moov/trak");
+    mp4p_alac_t *alac = NULL;
+    while (info.trak) {
+        mp4p_atom_t *alac_atom = mp4p_atom_find (info.trak, "trak/mdia/minf/stbl/stsd/alac");
+        if (alac_atom && mp4p_trak_playable(info.trak)) {
+            alac = alac_atom->data;
+            break;
         }
-        mp4ff_close (mp4);
-        if (i < ntracks) {
-            return after;
-        }
-        // mp4 container found, but no valid alac tracks in it
+        info.trak = info.trak->next;
+    }
+    if (!alac) {
+        deadbeef->fclose (fp);
+        mp4p_atom_free_list(info.mp4file);
         return NULL;
     }
 
-#else
+    // get audio format: samplerate, bps, channels
+    samplerate = alac->sample_rate;
+    bps = alac->bps;
+    channels = alac->channel_count;
 
-    float duration = -1;
+    mp4p_atom_t *stts_atom = mp4p_atom_find(info.trak, "trak/mdia/minf/stbl/stts");
 
-    stream = stream_create_file (fp, 1, info.junk);
-    if (!stream) {
-        trace ("alac: stream_create_file failed\n");
-        goto error;
-    }
+    uint64_t total_sample_duration = mp4p_stts_total_sample_duration (stts_atom);
+    totalsamples = total_sample_duration * samplerate / alac->sample_rate;
+    duration = total_sample_duration / (float)alac->sample_rate;
 
-    if (!qtmovie_read(stream, &demux_res)) {
-        if (!demux_res.format_read || demux_res.format != MAKEFOURCC('a','l','a','c')) {
-            trace ("alac track not found in the file %s, expected atom %X got %X\n", fname, MAKEFOURCC('a','l','a','c'), demux_res.format);
-            goto error;
-        }
-    }
-
-    it = deadbeef->pl_item_alloc_init (fname, alac_plugin.plugin.id);
-    deadbeef->pl_add_meta (it, ":FILETYPE", "ALAC");
-
-    totalsamples = alacplug_get_totalsamples (&demux_res);
-    duration = totalsamples / (float)demux_res.sample_rate;
-
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, alac_plugin.plugin.id);
+    ftype = "ALAC";
+    deadbeef->pl_add_meta (it, ":FILETYPE", ftype);
     deadbeef->plt_set_item_duration (plt, it, duration);
 
     deadbeef->rewind (fp);
-    mp4_read_metadata_file (it, fp);
 
-    fsize = deadbeef->fgetlength (fp);
+    (void)deadbeef->junk_apev2_read (it, fp);
+    (void)deadbeef->junk_id3v2_read (it, fp);
+    (void)deadbeef->junk_id3v1_read (it, fp);
 
+    int64_t fsize = deadbeef->fgetlength (fp);
     deadbeef->fclose (fp);
-    fp = NULL;
 
-    stream_destroy (stream);
-    stream = NULL;
-    if (mp4) {
-        mp4ff_close (mp4);
-        mp4 = NULL;
-    }
-    samplerate = demux_res.sample_rate;
-    bps = demux_res.sample_size;
-    channels = demux_res.num_channels;
+    char s[100];
+    snprintf (s, sizeof (s), "%lld", fsize);
+    deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
+    deadbeef->pl_add_meta (it, ":BPS", "16");
+    snprintf (s, sizeof (s), "%d", channels);
+    deadbeef->pl_add_meta (it, ":CHANNELS", s);
+    snprintf (s, sizeof (s), "%d", samplerate);
+    deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
+    int br = (int)roundf(fsize / duration * 8 / 1000);
+    snprintf (s, sizeof (s), "%d", br);
+    deadbeef->pl_add_meta (it, ":BITRATE", s);
 
-    qtmovie_free_demux (&demux_res);
+    // embedded cue
+    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
+    DB_playItem_t *cue = NULL;
 
-    trace ("duration %f\n", duration);
-    if (duration > 0) {
-        char s[100];
-        snprintf (s, sizeof (s), "%lld", fsize);
-        deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
-        snprintf (s, sizeof (s), "%d", bps);
-        deadbeef->pl_add_meta (it, ":BPS", s);
-        snprintf (s, sizeof (s), "%d", channels);
-        deadbeef->pl_add_meta (it, ":CHANNELS", s);
-        snprintf (s, sizeof (s), "%d", samplerate);
-        deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
-        int br = (int)roundf(fsize / duration * 8 / 1000);
-        snprintf (s, sizeof (s), "%d", br);
-        deadbeef->pl_add_meta (it, ":BITRATE", s);
-        DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, samplerate);
+    if (cuesheet) {
+        cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, (const uint8_t *)cuesheet, (int)strlen (cuesheet), (int)totalsamples, samplerate);
         if (cue) {
+            mp4p_atom_free_list(info.mp4file);
             deadbeef->pl_item_unref (it);
+            deadbeef->pl_item_unref (cue);
             return cue;
         }
     }
 
-    trace ("success\n");
-success:
+    cue  = deadbeef->plt_insert_cue (plt, after, it, (int)totalsamples, samplerate);
+    if (cue) {
+        deadbeef->pl_item_unref (it);
+        deadbeef->pl_item_unref (cue);
+        return cue;
+    }
+
+    mp4_load_tags (info.mp4file, it);
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
-error:
-    if (fp) {
-        deadbeef->fclose (fp);
-    }
-    if (mp4) {
-        mp4ff_close (mp4);
-    }
-    qtmovie_free_demux (&demux_res);
-#endif
-    return it;
+
+    mp4p_atom_free_list(info.mp4file);
+    return after;
 }
 
 static const char * exts[] = { "mp4", "m4a", NULL };
 
 // define plugin interface
 static DB_decoder_t alac_plugin = {
-    DDB_PLUGIN_SET_API_VERSION
+    .plugin.api_vmajor = 1,
+    .plugin.api_vminor = 0,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,

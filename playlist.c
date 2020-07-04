@@ -1995,6 +1995,9 @@ pl_save_all (void) {
 
 static playItem_t *
 plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+    playItem_t *it = NULL;
+    playItem_t *last_added = NULL;
+
     // try plugins 1st
     char *escaped = uri_unescape (fname, (int)strlen (fname));
     if (escaped) {
@@ -2028,11 +2031,8 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
         return NULL;
     }
 
-    playItem_t *last_added = NULL;
-
     uint8_t majorver;
     uint8_t minorver;
-    playItem_t *it = NULL;
     char magic[4];
     if (fread (magic, 1, 4, fp) != 4) {
 //        trace ("failed to read magic\n");
@@ -2186,7 +2186,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
         if (fread (&nm, 1, 2, fp) != 2) {
             goto load_fail;
         }
-        for (int i = 0; i < nm; i++) {
+        for (int j = 0; j < nm; j++) {
             if (fread (&l, 1, 2, fp) != 2) {
                 goto load_fail;
             }
@@ -2237,6 +2237,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
             pl_item_unref (last_added);
         }
         last_added = it;
+        it = NULL;
     }
 
     // load playlist metadata
@@ -2285,6 +2286,10 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
     }
     return last_added;
 load_fail:
+    if (it) {
+        pl_item_unref (it);
+        it = NULL;
+    }
 //    trace ("playlist load fail (%s)!\n", fname);
     if (fp) {
         fclose (fp);

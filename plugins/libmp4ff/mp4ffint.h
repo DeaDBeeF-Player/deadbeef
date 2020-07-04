@@ -40,10 +40,11 @@ extern "C" {
 
 #define MAX_TRACKS 1024
 #define TRACK_UNKNOWN 0
-#define TRACK_AUDIO   1
-#define TRACK_VIDEO   2
-#define TRACK_SYSTEM  3
-#define TRACK_TEXT    4
+#define TRACK_AUDIO_AAC   1
+#define TRACK_AUDIO_ALAC   2
+#define TRACK_VIDEO   3
+#define TRACK_SYSTEM  4
+#define TRACK_TEXT    5
 
 #define ATOM_TREF 100
 

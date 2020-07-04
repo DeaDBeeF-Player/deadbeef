@@ -9,8 +9,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (ScriptableTableDataSource *)dataSourceWithScriptable:(scriptableItem_t *)scriptable;
 
-@property (nonatomic,readonly) NSString *pasteboardItemIdentifier;
-@property (nonatomic) scriptableItem_t *scriptable;
+@property (nonatomic,readonly,nullable) NSString *pasteboardItemIdentifier;
+@property (nonatomic,nullable) scriptableItem_t *scriptable;
 @property (weak) NSObject<ScriptableItemDelegate> *delegate;
 
 - (ScriptableTableDataSource *)initWithScriptable:(scriptableItem_t * _Nullable)scriptable NS_DESIGNATED_INITIALIZER;

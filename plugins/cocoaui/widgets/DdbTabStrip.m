@@ -54,6 +54,8 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic,readonly) NSDictionary *titleAttributes;
 @property (nonatomic,readonly) NSDictionary *titleAttributesSelected;
+
+@property (nonatomic) BOOL playlistConfirmationAlertOpen;
 @end
 
 @implementation DdbTabStrip
@@ -671,7 +673,10 @@ plt_get_title_wrapper (int plt) {
         [alert addButtonWithTitle:@"No"];
         [alert addButtonWithTitle:@"Yes"];
 
+        self.playlistConfirmationAlertOpen = YES;
+
         [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+            self.playlistConfirmationAlertOpen = NO;
             if (returnCode == NSAlertFirstButtonReturn) {
                 return;
             }
@@ -729,6 +734,10 @@ plt_get_title_wrapper (int plt) {
 }
 
 -(void)otherMouseDown:(NSEvent *)event {
+    if (self.playlistConfirmationAlertOpen) {
+        return;
+    }
+
     NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
     _tab_clicked = [self tabUnderCursor:coord.x];
     if (event.type == NSEventTypeOtherMouseDown) {

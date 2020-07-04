@@ -1,0 +1,11 @@
+FROM deadbeef-builder-player-distro
+
+WORKDIR /usr/src/deadbeef
+COPY . /usr/src/deadbeef
+
+RUN rm -rf m4
+RUN rm ltmain.sh
+RUN ./autogen.sh
+RUN ./configure
+RUN make distcheck
+

@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2016 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2017 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -24,8 +24,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <limits.h>
+#include <assert.h>
+#include <stdlib.h>
 #include "mp4tagutil.h"
-#include "mp4ff.h"
+#include <mp4p/mp4p.h>
 #include "../strdupa.h"
 
 #ifndef __linux__
@@ -36,123 +39,195 @@
 
 extern DB_functions_t *deadbeef;
 
-typedef struct {
-    DB_FILE *file;
-    int64_t junk;
-} file_info_t;
+#define COPYRIGHT_SYM "\xa9"
 
-static uint32_t
-_fs_read (void *user_data, void *buffer, uint32_t length) {
-    file_info_t *info = user_data;
-    return (uint32_t)deadbeef->fread (buffer, 1, length, info->file);
-}
-
-static uint32_t
-_fs_seek (void *user_data, uint64_t position) {
-    file_info_t *info = user_data;
-    return deadbeef->fseek (info->file, position+info->junk, SEEK_SET);
-}
-
-static uint32_t stdio_read (void *user_data, void *buffer, uint32_t length) {
-    return (uint32_t)read (*(int *)user_data, buffer, length);
-}
-
-static uint32_t stdio_write (void *user_data, void *buffer, uint32_t length) {
-    return (uint32_t)write (*(int *)user_data, buffer, length);
-}
-
-static uint32_t stdio_seek (void *user_data, uint64_t position) {
-    return (uint32_t)lseek64 (*(int *)user_data, position, SEEK_SET);
-}
-
-static uint32_t stdio_truncate (void *user_data) {
-    off64_t pos = lseek64 (*(int *)user_data, 0, SEEK_CUR);
-    return ftruncate(*(int *)user_data, pos);
-}
-
-static const char *metainfo[] = {
-    "artist", "artist",
-    "title", "title",
-    "album", "album",
-    "track", "track",
-    "date", "year",
-    "genre", "genre",
-    "comment", "comment",
-    "performer", "performer",
-    "album_artist", "band",
-    "writer", "composer",
-    "vendor", "vendor",
-    "disc", "disc",
-    "compilation", "compilation",
-    "totaldiscs", "numdiscs",
-    "copyright", "copyright",
-    "totaltracks", "numtracks",
-    "tool", "tool",
+static const char *_mp4_atom_map[] = {
+    COPYRIGHT_SYM "alb", "album",
+    COPYRIGHT_SYM "ART", "artist",
+    "aART", "band",
+    COPYRIGHT_SYM "cmt", "comment",
+    COPYRIGHT_SYM "day", "year",
+    COPYRIGHT_SYM "nam", "title",
+    COPYRIGHT_SYM "gen", "genre",
+    "gnre", "genre",
+    "trkn", "track",
+    "disk", "disc",
+    COPYRIGHT_SYM "wrt", "composer",
+    COPYRIGHT_SYM "too", "encoder",
+    "tmpo", "bpm",
+    "cprt", "copyright",
+    COPYRIGHT_SYM "grp", "grouping",
+    "cpil", "compilation",
+    "pcst", "podcast",
+    "catg", "category",
+    "keyw", "keyword",
+    "desc", "description",
+    COPYRIGHT_SYM "lyr", "lyrics",
+    "purd", "purchase date",
     "MusicBrainz Track Id", "musicbrainz_trackid",
-    NULL
+    "DISCID", "DISCID",
+    "iTunSMPB", "iTunSMPB",
+    // NOTE: these replaygain fields are read/written in a special way,
+    // but they need to be here to be "known" fields, so that they're cleaned up on write.
+    "replaygain_track_gain", "replaygain_track_gain",
+    "replaygain_track_peak", "replaygain_track_peak",
+    "replaygain_album_gain", "replaygain_album_gain",
+    "replaygain_album_peak", "replaygain_album_peak",
+
+    NULL, NULL
 };
 
-int
-mp4_write_metadata (DB_playItem_t *it) {
-    deadbeef->pl_lock ();
-    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
-    deadbeef->pl_unlock ();
-    DB_FILE *fp = deadbeef->fopen (uri);
+/* For writing:
+ * Load/get the existing udta atom
+ * If present:
+ *   Find ilst
+ *   Remove all known non-custom fields, keep the rest
+ *   Remove all custom fields
+ * If not present:
+ *   Create new udta/meta/ilst
+ * Re-append all new non-custom fields
+ * Re-append all new custom fields
+ * Generate data block
+ * If the new udta block can fit over the old one, with at least 8 bytes extra for the "free" atom:
+ *   Overwrite the old block
+ *   Pad with "free" atom if necessary
+ * If can't fit: the entire moov atom has to be relocated!
+ *   Rename the existing moov into "free"
+ *   Append the modified moov block to the end of file, after the last atom
+ *   IMPORTANT: the entirety of moov atom with all sub atoms needs to be loaded and saved
+ * Further work:
+ *   Find if there are "free" blocks between ftyp and mdat, and try to fit the moov there; If that works, truncate the file.
+ */
 
-    if (!fp) {
-        return -1;
+static void
+_remove_known_fields (mp4p_atom_t *ilst) {
+    mp4p_atom_t *meta_atom = ilst->subatoms;
+    while (meta_atom) {
+        mp4p_atom_t *next = meta_atom->next;
+        mp4p_ilst_meta_t *meta = meta_atom->data;
+
+        char type[5];
+        memcpy (type, meta_atom->type, 4);
+        type[4] = 0;
+
+        for (int i = 0; _mp4_atom_map[i]; i += 2) {
+            // NOTE: atom names are case sensitive,
+            // but custom fields are not
+            if ((!meta->custom && !strcmp (type, _mp4_atom_map[i]))
+                || (meta->custom && !strcasecmp (meta->name, _mp4_atom_map[i]))) {
+                mp4p_atom_remove_subatom (ilst, meta_atom);
+                break;
+            }
+        }
+        meta_atom = next;
+    }
+}
+
+static mp4p_atom_t *
+mp4tagutil_find_udta (mp4p_atom_t *moov, mp4p_atom_t **pmeta, mp4p_atom_t **pilst) {
+    mp4p_atom_t *hdlr = NULL;
+    mp4p_atom_t *meta = NULL;
+    mp4p_atom_t *ilst = NULL;
+    // find an existing udta with \0\0\0\0 mdir appl handler
+    mp4p_atom_t *udta = mp4p_atom_find (moov, "moov/udta");
+    while (udta) {
+        if (mp4p_atom_type_compare (udta, "udta")) {
+            udta = udta->next;
+            continue;
+        }
+        // there can be multiple meta atoms
+        mp4p_atom_t *subatom = udta->subatoms;
+        while (subatom) {
+            // check each meta subatom
+            if (mp4p_atom_type_compare (subatom, "meta")) {
+                meta = hdlr = ilst = NULL;
+                subatom = subatom->next;
+                continue;
+            }
+            meta = subatom;
+            hdlr = mp4p_atom_find(subatom, "meta/hdlr");
+            if (hdlr) {
+                mp4p_hdlr_t *hdlr_data = hdlr->data;
+                if (!mp4p_fourcc_compare (hdlr_data->component_subtype, "mdir")) {
+                    ilst = mp4p_atom_find(subatom, "meta/ilst");
+                    *pmeta = meta;
+                    *pilst = ilst;
+                    return udta;
+                }
+            }
+            meta = hdlr = ilst = NULL;
+            subatom = subatom->next;
+        }
+        udta = udta->next;
+    }
+    *pmeta = NULL;
+    *pilst = NULL;
+    return NULL;
+}
+
+static int
+_mp4tagutil_file_editable (mp4p_atom_t *mp4file) {
+    mp4p_atom_t *moov = mp4p_atom_find(mp4file, "moov");
+    mp4p_atom_t *mdat = mp4p_atom_find(mp4file, "mdat");
+    if (!moov || !mdat || mp4p_atom_type_compare(mp4file, "ftyp")) {
+        return 0;
     }
 
-    file_info_t inf;
-    memset (&inf, 0, sizeof (inf));
-    inf.file = fp;
-    inf.junk = deadbeef->junk_get_leading_size (fp);
-    if (inf.junk >= 0) {
-        deadbeef->fseek (inf.file, inf.junk, SEEK_SET);
-    }
-    else {
-        inf.junk = 0;
-    }
+    return 1;
+}
 
-    mp4ff_callback_t read_cb = {
-        .read = _fs_read,
-        .write = NULL,
-        .seek = _fs_seek,
-        .truncate = NULL,
-        .user_data = &inf
-    };
+// NOTE: This is unused, since we're not moving mdat. Useful for reference.
+//static void
+//_mp4tagutil_update_stco (mp4p_atom_t *stco_atom, off_t delta) {
+//    mp4p_stco_t *stco = stco_atom->data;
+//    for (uint32_t i = 0; i < stco->number_of_entries; i++) {
+//        stco->entries[i].offset += delta;
+//    }
+//}
+//
+//static void
+//_mp4gagutil_update_all_stco (mp4p_atom_t *moov, off_t delta) {
+//    mp4p_atom_t *trak = mp4p_atom_find (moov, "trak");
+//    for (; trak; trak = trak->next) {
+//        if (mp4p_atom_type_compare(trak, "trak")) {
+//            continue;
+//        }
+//        mp4p_atom_t *stbl = mp4p_atom_find (trak, "trak/mdia/minf/stbl");
+//        if (stbl) {
+//            mp4p_atom_t *stco = mp4p_atom_find(stbl, "stbl/stco");
+//            if (stco) {
+//                _mp4tagutil_update_stco(stco, delta);
+//            }
+//
+//            mp4p_atom_t *co64 = mp4p_atom_find(stbl, "stbl/co64");
+//            if (co64) {
+//                _mp4tagutil_update_stco(co64, delta);
+//            }
+//        }
+//    }
+//}
 
-    mp4ff_t *mp4 = mp4ff_open_read (&read_cb);
-    deadbeef->fclose (fp);
-
-    if (!mp4) {
-        return -1;
-    }
-
-    deadbeef->pl_lock ();
-    uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
-    deadbeef->pl_unlock ();
-    int fd_out = open (uri, O_LARGEFILE | O_RDWR);
-
-    mp4ff_callback_t write_cb = {
-        .read = stdio_read,
-        .write = stdio_write,
-        .seek = stdio_seek,
-        .truncate = stdio_truncate,
-        .user_data = &fd_out
-    };
-
-    mp4ff_tag_delete (&mp4->tags);
-
+static void
+_mp4tagutil_add_metadata_fields(mp4p_atom_t *ilst, DB_playItem_t *it) {
     deadbeef->pl_lock ();
     DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it);
     while (m) {
         if (strchr (":!_", m->key[0])) {
             break;
         }
+
+        if (!strcasecmp (m->key, "track")
+            || !strcasecmp (m->key, "numtracks")
+            || !strcasecmp (m->key, "disc")
+            || !strcasecmp (m->key, "numdiscs")
+            || !strcasecmp (m->key, "genre")) {
+            m = m->next;
+            continue;
+        }
+
         int i;
-        for (i = 0; metainfo[i]; i += 2) {
-            if (!strcasecmp (metainfo[i+1], m->key)) {
+        for (i = 0; _mp4_atom_map[i]; i += 2) {
+            if (!strcasecmp (_mp4_atom_map[i+1], m->key)) {
                 break;
             }
         }
@@ -160,11 +235,45 @@ mp4_write_metadata (DB_playItem_t *it) {
         const char *value = m->value;
         const char *end = m->value + m->valuesize;
         while (value < end) {
-            mp4ff_tag_add_field (&mp4->tags, metainfo[i] ? metainfo[i] : m->key, value);
+            if (!_mp4_atom_map[i] || strlen (_mp4_atom_map[i]) != 4) {
+                mp4p_atom_append(ilst, mp4p_ilst_create_custom(_mp4_atom_map[i] ? _mp4_atom_map[i] : m->key, value));
+            }
+            else {
+                mp4p_atom_append(ilst, mp4p_ilst_create_text(_mp4_atom_map[i], value));
+            }
             size_t l = strlen (value) + 1;
             value += l;
         }
         m = m->next;
+    }
+
+    const char *genre = deadbeef->pl_find_meta (it, "genre");
+    if (genre) {
+        mp4p_atom_append(ilst, mp4p_ilst_create_genre (genre));
+    }
+    const char *track = deadbeef->pl_find_meta (it, "track");
+    const char *numtracks = deadbeef->pl_find_meta (it, "numtracks");
+    const char *disc = deadbeef->pl_find_meta (it, "disc");
+    const char *numdiscs = deadbeef->pl_find_meta (it, "numdiscs");
+
+    uint16_t itrack = 0, inumtracks = 0, idisc = 0, inumdiscs = 0;
+    if (track) {
+        itrack = atoi (track);
+    }
+    if (numtracks) {
+        inumtracks = atoi (numtracks);
+    }
+    if (disc) {
+        idisc = atoi (disc);
+    }
+    if (numdiscs) {
+        inumdiscs = atoi (numdiscs);
+    }
+    if (itrack || inumtracks) {
+        mp4p_atom_append (ilst, mp4p_ilst_create_track_disc ("trkn", itrack, inumtracks));
+    }
+    if (idisc || inumdiscs) {
+        mp4p_atom_append (ilst, mp4p_ilst_create_track_disc ("disk", itrack, inumtracks));
     }
 
     static const char *tag_rg_names[] = {
@@ -200,66 +309,301 @@ mp4_write_metadata (DB_playItem_t *it) {
                 snprintf (s, sizeof (s), "%.6f", value);
                 break;
             }
-            mp4ff_tag_add_field (&mp4->tags, tag_rg_names[n], s);
+            mp4p_atom_append(ilst, mp4p_ilst_create_custom(tag_rg_names[n], s));
         }
     }
 
     deadbeef->pl_unlock ();
-
-    int32_t res = mp4ff_meta_update(&write_cb, &mp4->tags);
-
-    mp4ff_close (mp4);
-    close (fd_out);
-    
-    return !res;
 }
 
-static void
-mp4_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
-    int got_itunes_tags = 0;
+// FIXME: much of this code should be moved to mp4parser lib when finalized
+mp4p_atom_t *
+mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
+    if (!_mp4tagutil_file_editable (mp4file)) {
+        return NULL;
+    }
 
-    int n = mp4ff_meta_get_num_items (mp4);
-    for (int t = 0; t < n; t++)  {
-        char *key = NULL;
-        char *value = NULL;
-        int res = mp4ff_meta_get_by_index(mp4, t, &key, &value);
-        if (res) {
-            got_itunes_tags = 1;
-            if (strcasecmp (key, "cover")) {
-                if (!strcasecmp (key, "replaygain_track_gain")) {
-                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (value));
-                }
-                else if (!strcasecmp (key, "replaygain_album_gain")) {
-                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (value));
-                }
-                else if (!strcasecmp (key, "replaygain_track_peak")) {
-                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (value));
-                }
-                else if (!strcasecmp (key, "replaygain_album_peak")) {
-                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (value));
-                }
-                else {
-                    int i;
-                    for (i = 0; metainfo[i]; i += 2) {
-                        if (!strcasecmp (metainfo[i], key)) {
-                            deadbeef->pl_append_meta (it, metainfo[i+1], value);
-                            break;
-                        }
-                    }
-                    if (!metainfo[i]) {
-                        deadbeef->pl_append_meta (it, key, value);
-                    }
-                }
+    mp4p_atom_t *mp4file_orig = mp4file;
+
+    mp4file = mp4p_atom_clone (mp4file_orig);
+
+    mp4p_atom_t *meta = NULL;
+    mp4p_atom_t *ilst = NULL;
+
+    mp4p_atom_t *moov = mp4p_atom_find(mp4file, "moov");
+    mp4p_atom_t *mdat = mp4p_atom_find(mp4file, "mdat");
+
+    mp4p_atom_t *udta = mp4tagutil_find_udta (moov, &meta, &ilst);
+
+    // FIXME: atoms after "udta" are not unsupported
+    if (udta && udta->next) {
+        mp4p_atom_free_list (mp4file);
+        return NULL;
+    }
+
+    if (!udta) {
+        // udta not found at all -- append to moov, it needs to be the last one.
+        udta = mp4p_atom_append (moov, mp4p_atom_new ("udta"));
+    }
+
+    if (!meta) {
+        // append meta/hdlr/ilst if needed
+        meta = mp4p_atom_append (udta, mp4p_atom_new ("meta"));
+        mp4p_atom_t *hdlr = mp4p_atom_append (meta, mp4p_atom_new ("hdlr"));
+        mp4p_hdlr_init (hdlr, "\0\0\0\0", "mdir", "appl");
+        ilst = mp4p_atom_append (meta, mp4p_atom_new ("ilst"));
+    }
+    else {
+        // cleanup the pre-existing keyvalue list
+        _remove_known_fields (ilst);
+
+        // FIXME: delete all fields which are not mapped, but present in the track
+    }
+
+    _mp4tagutil_add_metadata_fields(ilst, it);
+
+    // find first padding, if present
+    mp4p_atom_t *padding = mp4p_atom_find(mp4file, "free");
+    if (padding && padding->pos > mdat->pos) {
+        padding = NULL;
+    }
+
+    // desired atom to insert moov after
+    mp4p_atom_t *before_moov_begin = NULL;
+    for (mp4p_atom_t *curr = mp4file; curr->next; curr = curr->next) {
+        if (mp4p_atom_type_compare(curr->next, "moov")
+            || mp4p_atom_type_compare(curr->next, "free")
+            || mp4p_atom_type_compare(curr->next, "mdat")) {
+            before_moov_begin = curr;
+            break;
+        }
+    }
+    if (!before_moov_begin) {
+        mp4p_atom_free(mp4file);
+        return NULL;
+    }
+
+    // calculate padding size, and find the end of padding (eop)
+    mp4p_atom_t *eop = moov->next;
+    size_t padding_size = 0;
+    for (mp4p_atom_t *curr = padding; curr && !mp4p_atom_type_compare(curr, "free"); curr = curr->next) {
+        padding_size += curr->size;
+        eop = curr->next;
+    }
+
+    // calculate final size of moov
+    mp4p_atom_update_size (moov);
+
+    // remove old padding
+    mp4p_atom_t *next = NULL;
+    while (padding && !mp4p_atom_type_compare(padding, "free")) {
+        next = padding->next;
+        mp4p_atom_remove_sibling(mp4file, padding, 1);
+        padding = next;
+    }
+    padding = NULL;
+
+    // does moov + free fit before eop?
+    if (before_moov_begin->pos + before_moov_begin->size + moov->size == eop->pos
+        || before_moov_begin->pos + before_moov_begin->size + moov->size < eop->pos - 8) {
+        // moov fits: put to the beginning
+        mp4p_atom_remove_sibling(mp4file, moov, 0);
+        moov->pos = before_moov_begin->pos + before_moov_begin->size;
+        moov->next = before_moov_begin->next;
+        before_moov_begin->next = moov;
+
+        // add new padding
+        if (moov->pos + moov->size < eop->pos - 8) {
+            padding = mp4p_atom_new ("free");
+            padding->pos = moov->pos + moov->size;
+            padding->size = (uint32_t)(eop->pos - (moov->pos + moov->size));
+
+            padding->next = moov->next;
+            moov->next = padding;
+        }
+    }
+    // moov doesn't fit -- put to the end of file
+    else {
+        // prepare padding
+        padding = mp4p_atom_new ("free");
+        padding->pos = moov->pos;
+        padding->size = (uint32_t)(eop->pos - moov->pos);
+
+        mp4p_atom_remove_sibling(mp4file, moov, 0);
+        mp4p_atom_t *tail = mp4file;
+        while (tail->next) {
+            tail = tail->next;
+        }
+        tail->next = moov;
+        moov->pos = tail->pos + tail->size;
+
+        // insert padding before eop
+        for (mp4p_atom_t *before = mp4file; before; before = before->next) {
+            if (before->next == eop) {
+                before->next = padding;
+                padding->next = eop;
+                break;
             }
-        }
-        if (key) {
-            free (key);
-        }
-        if (value) {
-            free (value);
         }
     }
 
+//    printf ("------------orig\n");
+//    mp4p_dbg_dump_atom(mp4file_orig);
+//    printf ("------------new\n");
+//    mp4p_dbg_dump_atom(mp4file);
+//    printf ("------------\n");
+
+    return mp4file;
+}
+
+int
+mp4_write_metadata (DB_playItem_t *it) {
+    char fname[PATH_MAX];
+    deadbeef->pl_get_meta (it, ":URI", fname, sizeof (fname));
+
+    mp4p_file_callbacks_t *file = mp4p_file_open_readwrite (fname);
+
+    if (!file) {
+        return -1;
+    }
+
+    mp4p_atom_t *mp4file = mp4p_open(file);
+
+#if 0 // FIXME: skipping junk is unsupported yet with file callbacks (junklib can't read using this interface -- a VFS wrapper needed?
+    int junk = deadbeef->junk_get_leading_size (fp);
+    if (junk >= 0) {
+        deadbeef->fseek (fp, junk, SEEK_SET);
+    }
+    else {
+        junk = 0;
+    }
+#endif
+
+    if (!mp4file) {
+        mp4p_file_close(file);
+        return -1;
+    }
+
+    mp4p_atom_t *mp4file_updated = mp4tagutil_modify_meta(mp4file, it);
+    if (!mp4file_updated) {
+        mp4p_file_close(file);
+        return -1;
+    }
+
+    int res = mp4p_update_metadata (file, mp4file_updated);
+
+    int close_err =  mp4p_file_close(file);
+
+    mp4p_atom_free_list(mp4file);
+    mp4p_atom_free_list(mp4file_updated);
+
+    if (res < 0) {
+        return -1;
+    }
+    if (close_err < 0) {
+        return -1;
+    }
+    return 0;
+}
+
+void
+mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
+    int got_itunes_tags = 0;
+    mp4p_atom_t *moov = mp4p_atom_find(mp4file, "moov");
+
+    mp4p_atom_t *unused = NULL;
+    mp4p_atom_t *ilst = NULL;
+
+    mp4p_atom_t *udta = mp4tagutil_find_udta (moov, &unused, &ilst);
+    if (!udta || !ilst) {
+        return;
+    }
+
+    for (mp4p_atom_t *meta_atom = ilst->subatoms; meta_atom; meta_atom = meta_atom->next) {
+        got_itunes_tags = 1;
+
+        mp4p_ilst_meta_t *meta = meta_atom->data;
+
+        char type[5];
+        memcpy (type, meta_atom->type, 4);
+        type[4] = 0;
+        const char *name = meta->name ? meta->name : type;
+
+        if (!strcasecmp (name, "replaygain_track_gain")) {
+            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (meta->text));
+        }
+        else if (!strcasecmp (name, "replaygain_album_gain")) {
+            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (meta->text));
+        }
+        else if (!strcasecmp (name, "replaygain_track_peak")) {
+            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (meta->text));
+        }
+        else if (!strcasecmp (name, "replaygain_album_peak")) {
+            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (meta->text));
+        }
+        else {
+            int i = 0;
+            for (; _mp4_atom_map[i]; i += 2) {
+                if (!strcasecmp (name, _mp4_atom_map[i])) {
+                    if (meta->text) {
+                        deadbeef->pl_append_meta (it, _mp4_atom_map[i+1], meta->text);
+                    }
+                    else if (meta->values) {
+                        if (!memcmp (meta_atom->type, "trkn", 4)) {
+                            if (meta->data_size >= 6) { // leading + idx + total
+                                uint16_t track = meta->values[1];
+                                uint16_t total = meta->values[2];
+                                char s[10];
+                                if (track) {
+                                    snprintf (s, sizeof (s), "%d", (int)track);
+                                    deadbeef->pl_replace_meta (it, "track", s);
+                                }
+                                if (total) {
+                                    snprintf (s, sizeof (s), "%d", (int)total);
+                                    deadbeef->pl_replace_meta (it, "numtracks", s);
+                                }
+                            }
+                        }
+                        else if (!memcmp (meta_atom->type, "disk", 4)) {
+                            if (meta->data_size >= 6) { // leading + idx + total
+                                uint16_t track = meta->values[1];
+                                uint16_t total = meta->values[2];
+                                char s[10];
+                                if (track) {
+                                    snprintf (s, sizeof (s), "%d", (int)track);
+                                    deadbeef->pl_replace_meta (it, "disc", s);
+                                }
+                                if (total) {
+                                    snprintf (s, sizeof (s), "%d", (int)total);
+                                    deadbeef->pl_replace_meta (it, "numdiscs", s);
+                                }
+                            }
+                        }
+                        else if (!strcmp (_mp4_atom_map[i+1], "genre")) {
+                            if (meta->values[0]) {
+                                const char *genre = mp4p_genre_name_for_index(meta->values[0]);
+                                if (genre) {
+                                    deadbeef->pl_replace_meta (it, _mp4_atom_map[i+1], genre);
+                                }
+                            }
+                        }
+                        else {
+                            char s[10];
+                            snprintf (s, sizeof (s), "%d", (int)meta->values[0]);
+                            deadbeef->pl_replace_meta (it, _mp4_atom_map[i+1], s);
+                        }
+                    }
+                    break;
+                }
+            }
+
+            if (!_mp4_atom_map[i] && meta->name) {
+                // unknown field
+                deadbeef->pl_append_meta (it, meta->name, meta->text);
+            }
+
+        }
+    }
     if (got_itunes_tags) {
         uint32_t f = deadbeef->pl_get_item_flags (it);
         f |= DDB_TAG_ITUNES;
@@ -267,46 +611,47 @@ mp4_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
     }
 }
 
-int
-mp4_read_metadata_file (DB_playItem_t *it, DB_FILE *fp) {
-    file_info_t inf;
-    memset (&inf, 0, sizeof (inf));
-    inf.file = fp;
-    inf.junk = deadbeef->junk_get_leading_size (fp);
-    if (inf.junk >= 0) {
-        deadbeef->fseek (inf.file, inf.junk, SEEK_SET);
-    }
-    else {
-        inf.junk = 0;
-    }
 
-    mp4ff_callback_t cb = {
-        .read = _fs_read,
-        .write = NULL,
-        .seek = _fs_seek,
-        .truncate = NULL,
-        .user_data = &inf
-    };
+
+int
+mp4_read_metadata_file (DB_playItem_t *it, mp4p_file_callbacks_t *cb) {
+    mp4p_atom_t *mp4file = mp4p_open (cb);
 
     deadbeef->pl_delete_all_meta (it);
 
-    mp4ff_t *mp4 = mp4ff_open_read (&cb);
-    if (mp4) {
-        mp4_load_tags (it, mp4);
-        mp4ff_close (mp4);
-    }
-    (void)deadbeef->junk_apev2_read (it, fp);
-    (void)deadbeef->junk_id3v2_read (it, fp);
-    (void)deadbeef->junk_id3v1_read (it, fp);
+    // convert
+    mp4_load_tags (mp4file, it);
+    mp4p_atom_free_list (mp4file);
     return 0;
+}
+
+static ssize_t
+_file_read (mp4p_file_callbacks_t *stream, void *ptr, size_t size) {
+    return deadbeef->fread (ptr, 1, size, (DB_FILE *)stream->ptrhandle);
+}
+
+static off_t
+_file_seek (mp4p_file_callbacks_t *stream, off_t offset, int whence) {
+    return deadbeef->fseek ((DB_FILE *)stream->ptrhandle, offset, whence);
+}
+
+static int64_t
+_file_tell (mp4p_file_callbacks_t *stream) {
+    return deadbeef->ftell ((DB_FILE *)stream->ptrhandle);
+}
+
+void
+mp4_init_ddb_file_callbacks (mp4p_file_callbacks_t *cb) {
+    cb->read = _file_read;
+    cb->seek = _file_seek;
+    cb->tell = _file_tell;
 }
 
 int
 mp4_read_metadata (DB_playItem_t *it) {
-    deadbeef->pl_lock ();
-    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
-    deadbeef->pl_unlock ();
-    DB_FILE *fp = deadbeef->fopen (uri);
+    char fname[PATH_MAX];
+    deadbeef->pl_get_meta (it, ":URI", fname, sizeof (fname));
+    DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         return -1;
     }
@@ -316,9 +661,34 @@ mp4_read_metadata (DB_playItem_t *it) {
         return -1;
     }
 
-    int res = mp4_read_metadata_file(it, fp);
+    mp4p_file_callbacks_t cb;
+    memset (&cb, 0, sizeof (cb));
+    cb.ptrhandle = fp;
+    mp4_init_ddb_file_callbacks(&cb);
+
+    int res = mp4_read_metadata_file(it, &cb);
     deadbeef->fclose (fp);
 
     return res;
 }
 
+mp4p_atom_t *
+mp4_get_cover_atom (mp4p_atom_t *mp4file) {
+    mp4p_atom_t *moov = mp4p_atom_find(mp4file, "moov");
+    if (!moov) {
+        return NULL;
+    }
+    mp4p_atom_t *meta = NULL;
+    mp4p_atom_t *ilst = NULL;
+    mp4p_atom_t *udta = mp4tagutil_find_udta (moov, &meta, &ilst);
+    if (!udta || !ilst) {
+        return NULL;
+    }
+
+    for (mp4p_atom_t *curr = ilst->subatoms; curr; curr = curr->next) {
+        if (!mp4p_atom_type_compare(curr, "covr")) {
+            return curr;
+        }
+    }
+    return NULL;
+}

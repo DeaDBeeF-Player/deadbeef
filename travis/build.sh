@@ -30,7 +30,6 @@ case "$TRAVIS_OS_NAME" in
         brew install yasm 1> /dev/null 2> /dev/null || exit 1
         echo gem install xcpretty ...
         gem install xcpretty 1> /dev/null 2> /dev/null || exit 1
-        git submodule update --init || exit 1
         rev=`git rev-parse --short HEAD`
         /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $rev"  plugins/cocoaui/deadbeef-Info.plist
         xcodebuild -project osx/deadbeef.xcodeproj -target DeaDBeeF -configuration Release -quiet | xcpretty ; test ${PIPESTATUS[0]} -eq 0 || exit 1

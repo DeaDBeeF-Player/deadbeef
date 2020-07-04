@@ -465,10 +465,10 @@ static int32_t mp4ff_read_stsd(mp4ff_t *f)
 
         if (atom_type == ATOM_MP4A)
         {
-            f->track[f->total_tracks - 1]->type = TRACK_AUDIO;
+            f->track[f->total_tracks - 1]->type = TRACK_AUDIO_AAC;
             mp4ff_read_mp4a(f);
         } else if (atom_type == ATOM_ALAC) {
-            f->track[f->total_tracks - 1]->type = TRACK_AUDIO;
+            f->track[f->total_tracks - 1]->type = TRACK_AUDIO_ALAC;
             mp4ff_read_alac(f, (int)size - header_size);
         } else if (atom_type == ATOM_MP4V) {
             f->track[f->total_tracks - 1]->type = TRACK_VIDEO;

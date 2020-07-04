@@ -25,7 +25,7 @@
 #import "AppDelegate.h"
 #include "deadbeef.h"
 
-DB_functions_t *deadbeef;
+extern DB_functions_t *deadbeef;
 
 BOOL g_CanQuit = NO;
 

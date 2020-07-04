@@ -329,7 +329,7 @@ in_sc68_start (void) {
     }
 
     char datadir[PATH_MAX];
-    snprintf (datadir, sizeof (datadir), "%s/data68", deadbeef->get_system_dir (DDB_SYS_DIR_PLUGIN));
+    snprintf (datadir, sizeof (datadir), "%s/data68", deadbeef->get_system_dir (DDB_SYS_DIR_PLUGIN_RESOURCES));
     sc68_cntl (0, SC68_SET_OPT_STR, "share-path", datadir);
 
     return 0;

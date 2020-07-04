@@ -177,6 +177,7 @@ messagepump_event_alloc (uint32_t id) {
         break;
     default:
         trace ("Invalid event %d to use with messagepump_event_alloc, use sendmessage instead\n", id);
+        return NULL;
     }
     ev = malloc (sz);
     memset (ev, 0, sz);

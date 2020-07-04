@@ -65,6 +65,7 @@ extern char dbdocdir[PATH_MAX]; // see deadbeef->get_doc_dir
 extern char dbplugindir[PATH_MAX]; // see deadbeef->get_plugin_dir
 extern char dbpixmapdir[PATH_MAX]; // see deadbeef->get_pixmap_dir
 extern char dbcachedir[PATH_MAX];
+extern char dbresourcedir[PATH_MAX];
 
 // parses a list of paths and adds them to playlist
 // 0 - no error, files loaded

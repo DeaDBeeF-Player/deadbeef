@@ -1,0 +1,321 @@
+#
+# Options:
+# prefix=\path\to\install
+#
+# Compiling:  nmake -f Makefile.vc
+# Installing: nmake -f Makefile.vc prefix=\path\to\x install
+#
+
+# Linker and librarian commands
+LD = link
+AR = lib
+
+!IFDEF HOME
+# In case we are using a cross compiler shell.
+MKDIR_FLAGS = -p
+!ENDIF
+
+AM_CPPFLAGS = \
+    -Iwin32 \
+    -IlibAACdec/include \
+    -IlibAACenc/include \
+    -IlibArithCoding/include \
+    -IlibDRCdec/include \
+    -IlibSACdec/include \
+    -IlibSACenc/include \
+    -IlibSBRdec/include \
+    -IlibSBRenc/include \
+    -IlibMpegTPDec/include \
+    -IlibMpegTPEnc/include \
+    -IlibSYS/include \
+    -IlibFDK/include \
+    -IlibPCMutils/include
+
+AACDEC_SRC = \
+    libAACdec/src/FDK_delay.cpp \
+    libAACdec/src/aac_ram.cpp \
+    libAACdec/src/aac_rom.cpp \
+    libAACdec/src/aacdec_drc.cpp \
+    libAACdec/src/aacdec_hcr.cpp \
+    libAACdec/src/aacdec_hcr_bit.cpp \
+    libAACdec/src/aacdec_hcrs.cpp \
+    libAACdec/src/aacdec_pns.cpp \
+    libAACdec/src/aacdec_tns.cpp \
+    libAACdec/src/aacdecoder.cpp \
+    libAACdec/src/aacdecoder_lib.cpp \
+    libAACdec/src/block.cpp \
+    libAACdec/src/channel.cpp \
+    libAACdec/src/channelinfo.cpp \
+    libAACdec/src/conceal.cpp \
+    libAACdec/src/ldfiltbank.cpp \
+    libAACdec/src/pulsedata.cpp \
+    libAACdec/src/rvlc.cpp \
+    libAACdec/src/rvlcbit.cpp \
+    libAACdec/src/rvlcconceal.cpp \
+    libAACdec/src/stereo.cpp \
+    libAACdec/src/usacdec_ace_d4t64.cpp \
+    libAACdec/src/usacdec_ace_ltp.cpp \
+    libAACdec/src/usacdec_acelp.cpp \
+    libAACdec/src/usacdec_fac.cpp \
+    libAACdec/src/usacdec_lpc.cpp \
+    libAACdec/src/usacdec_lpd.cpp \
+    libAACdec/src/usacdec_rom.cpp
+
+AACENC_SRC = \
+    libAACenc/src/aacEnc_ram.cpp \
+    libAACenc/src/aacEnc_rom.cpp \
+    libAACenc/src/aacenc.cpp \
+    libAACenc/src/aacenc_lib.cpp \
+    libAACenc/src/aacenc_pns.cpp \
+    libAACenc/src/aacenc_tns.cpp \
+    libAACenc/src/adj_thr.cpp \
+    libAACenc/src/band_nrg.cpp \
+    libAACenc/src/bandwidth.cpp \
+    libAACenc/src/bit_cnt.cpp \
+    libAACenc/src/bitenc.cpp \
+    libAACenc/src/block_switch.cpp \
+    libAACenc/src/channel_map.cpp \
+    libAACenc/src/chaosmeasure.cpp \
+    libAACenc/src/dyn_bits.cpp \
+    libAACenc/src/grp_data.cpp \
+    libAACenc/src/intensity.cpp \
+    libAACenc/src/line_pe.cpp \
+    libAACenc/src/metadata_compressor.cpp \
+    libAACenc/src/metadata_main.cpp \
+    libAACenc/src/mps_main.cpp \
+    libAACenc/src/ms_stereo.cpp \
+    libAACenc/src/noisedet.cpp \
+    libAACenc/src/pnsparam.cpp \
+    libAACenc/src/pre_echo_control.cpp \
+    libAACenc/src/psy_configuration.cpp \
+    libAACenc/src/psy_main.cpp \
+    libAACenc/src/qc_main.cpp \
+    libAACenc/src/quantize.cpp \
+    libAACenc/src/sf_estim.cpp \
+    libAACenc/src/spreading.cpp \
+    libAACenc/src/tonality.cpp \
+    libAACenc/src/transform.cpp
+
+ARITHCODING_SRC = \
+    libArithCoding/src/ac_arith_coder.cpp
+
+DRCDEC_SRC = \
+    libDRCdec/src/FDK_drcDecLib.cpp \
+    libDRCdec/src/drcDec_gainDecoder.cpp \
+    libDRCdec/src/drcDec_reader.cpp \
+    libDRCdec/src/drcDec_rom.cpp \
+    libDRCdec/src/drcDec_selectionProcess.cpp \
+    libDRCdec/src/drcDec_tools.cpp \
+    libDRCdec/src/drcGainDec_init.cpp \
+    libDRCdec/src/drcGainDec_preprocess.cpp \
+    libDRCdec/src/drcGainDec_process.cpp
+
+FDK_SRC = \
+    libFDK/src/FDK_bitbuffer.cpp \
+    libFDK/src/FDK_core.cpp \
+    libFDK/src/FDK_crc.cpp \
+    libFDK/src/FDK_decorrelate.cpp \
+    libFDK/src/FDK_hybrid.cpp \
+    libFDK/src/FDK_lpc.cpp \
+    libFDK/src/FDK_matrixCalloc.cpp \
+    libFDK/src/FDK_qmf_domain.cpp \
+    libFDK/src/FDK_tools_rom.cpp \
+    libFDK/src/FDK_trigFcts.cpp \
+    libFDK/src/autocorr2nd.cpp \
+    libFDK/src/dct.cpp \
+    libFDK/src/fft.cpp \
+    libFDK/src/fft_rad2.cpp \
+    libFDK/src/fixpoint_math.cpp \
+    libFDK/src/huff_nodes.cpp \
+    libFDK/src/mdct.cpp \
+    libFDK/src/nlc_dec.cpp \
+    libFDK/src/qmf.cpp \
+    libFDK/src/scale.cpp
+
+MPEGTPDEC_SRC = \
+    libMpegTPDec/src/tpdec_adif.cpp \
+    libMpegTPDec/src/tpdec_adts.cpp \
+    libMpegTPDec/src/tpdec_asc.cpp \
+    libMpegTPDec/src/tpdec_drm.cpp \
+    libMpegTPDec/src/tpdec_latm.cpp \
+    libMpegTPDec/src/tpdec_lib.cpp
+
+MPEGTPENC_SRC = \
+    libMpegTPEnc/src/tpenc_adif.cpp \
+    libMpegTPEnc/src/tpenc_adts.cpp \
+    libMpegTPEnc/src/tpenc_asc.cpp \
+    libMpegTPEnc/src/tpenc_latm.cpp \
+    libMpegTPEnc/src/tpenc_lib.cpp
+
+PCMUTILS_SRC = \
+    libPCMutils/src/limiter.cpp \
+    libPCMutils/src/pcm_utils.cpp \
+    libPCMutils/src/pcmdmx_lib.cpp
+
+SACDEC_SRC = \
+    libSACdec/src/sac_bitdec.cpp \
+    libSACdec/src/sac_calcM1andM2.cpp \
+    libSACdec/src/sac_dec.cpp \
+    libSACdec/src/sac_dec_conceal.cpp \
+    libSACdec/src/sac_dec_lib.cpp \
+    libSACdec/src/sac_process.cpp \
+    libSACdec/src/sac_qmf.cpp \
+    libSACdec/src/sac_reshapeBBEnv.cpp \
+    libSACdec/src/sac_rom.cpp \
+    libSACdec/src/sac_smoothing.cpp \
+    libSACdec/src/sac_stp.cpp \
+    libSACdec/src/sac_tsd.cpp
+
+SACENC_SRC = \
+    libSACenc/src/sacenc_bitstream.cpp \
+    libSACenc/src/sacenc_delay.cpp \
+    libSACenc/src/sacenc_dmx_tdom_enh.cpp \
+    libSACenc/src/sacenc_filter.cpp \
+    libSACenc/src/sacenc_framewindowing.cpp \
+    libSACenc/src/sacenc_huff_tab.cpp \
+    libSACenc/src/sacenc_lib.cpp \
+    libSACenc/src/sacenc_nlc_enc.cpp \
+    libSACenc/src/sacenc_onsetdetect.cpp \
+    libSACenc/src/sacenc_paramextract.cpp \
+    libSACenc/src/sacenc_staticgain.cpp \
+    libSACenc/src/sacenc_tree.cpp \
+    libSACenc/src/sacenc_vectorfunctions.cpp
+
+SBRDEC_SRC = \
+    libSBRdec/src/HFgen_preFlat.cpp \
+    libSBRdec/src/env_calc.cpp \
+    libSBRdec/src/env_dec.cpp \
+    libSBRdec/src/env_extr.cpp \
+    libSBRdec/src/hbe.cpp \
+    libSBRdec/src/huff_dec.cpp \
+    libSBRdec/src/lpp_tran.cpp \
+    libSBRdec/src/psbitdec.cpp \
+    libSBRdec/src/psdec.cpp \
+    libSBRdec/src/psdec_drm.cpp \
+    libSBRdec/src/psdecrom_drm.cpp \
+    libSBRdec/src/pvc_dec.cpp \
+    libSBRdec/src/sbr_crc.cpp \
+    libSBRdec/src/sbr_deb.cpp \
+    libSBRdec/src/sbr_dec.cpp \
+    libSBRdec/src/sbr_ram.cpp \
+    libSBRdec/src/sbr_rom.cpp \
+    libSBRdec/src/sbrdec_drc.cpp \
+    libSBRdec/src/sbrdec_freq_sca.cpp \
+    libSBRdec/src/sbrdecoder.cpp
+
+SBRENC_SRC = \
+    libSBRenc/src/bit_sbr.cpp \
+    libSBRenc/src/code_env.cpp \
+    libSBRenc/src/env_bit.cpp \
+    libSBRenc/src/env_est.cpp \
+    libSBRenc/src/fram_gen.cpp \
+    libSBRenc/src/invf_est.cpp \
+    libSBRenc/src/mh_det.cpp \
+    libSBRenc/src/nf_est.cpp \
+    libSBRenc/src/ps_bitenc.cpp \
+    libSBRenc/src/ps_encode.cpp \
+    libSBRenc/src/ps_main.cpp \
+    libSBRenc/src/resampler.cpp \
+    libSBRenc/src/sbr_encoder.cpp \
+    libSBRenc/src/sbr_misc.cpp \
+    libSBRenc/src/sbrenc_freq_sca.cpp \
+    libSBRenc/src/sbrenc_ram.cpp \
+    libSBRenc/src/sbrenc_rom.cpp \
+    libSBRenc/src/ton_corr.cpp \
+    libSBRenc/src/tran_det.cpp
+
+SYS_SRC = \
+    libSYS/src/genericStds.cpp \
+    libSYS/src/syslib_channelMapDescr.cpp
+
+libfdk_aac_SOURCES = \
+    $(AACDEC_SRC) $(AACENC_SRC) \
+    $(ARITHCODING_SRC) \
+    $(DRCDEC_SRC) \
+    $(MPEGTPDEC_SRC) $(MPEGTPENC_SRC) \
+    $(SACDEC_SRC) $(SACENC_SRC) \
+    $(SBRDEC_SRC) $(SBRENC_SRC) \
+    $(PCMUTILS_SRC) $(FDK_SRC) $(SYS_SRC)
+
+
+aac_enc_SOURCES = aac-enc.c wavreader.c
+
+prefix = \usr\local
+prefix_win = $(prefix:/=\)	# In case we are using MSYS or MinGW.
+
+CFLAGS   = /nologo /W3 /Ox /MT /EHsc /Dinline=__inline $(TARGET_FLAGS) $(AM_CPPFLAGS) $(XCFLAGS)
+CXXFLAGS = $(CFLAGS)
+CPPFLAGS = $(CFLAGS)
+LDFLAGS  = -nologo $(XLDFLAGS)
+ARFLAGS  = -nologo
+
+incdir = $(prefix_win)\include\fdk-aac
+bindir = $(prefix_win)\bin
+libdir = $(prefix_win)\lib
+
+INST_DIRS = $(bindir) $(incdir) $(libdir)
+
+LIB_DEF    = fdk-aac.def
+STATIC_LIB = fdk-aac.lib
+SHARED_LIB = fdk-aac-1.dll
+IMP_LIB    = fdk-aac.dll.lib
+
+AAC_ENC_OBJS = $(aac_enc_SOURCES:.c=.obj)
+FDK_OBJS     = $(libfdk_aac_SOURCES:.cpp=.obj)
+
+PROGS = aac-enc.exe
+
+
+
+all: $(LIB_DEF) $(STATIC_LIB) $(SHARED_LIB) $(IMP_LIB) $(PROGS)
+
+clean:
+	del /f $(LIB_DEF) $(STATIC_LIB) $(SHARED_LIB) $(IMP_LIB) $(PROGS) libfdk-aac.pc 2>NUL
+	del /f *.obj *.exp 2>NUL
+	del /f libAACdec\src\*.obj 2>NUL
+	del /f libAACenc\src\*.obj 2>NUL
+	del /f libArithCoding\src\*.obj 2>NUL
+	del /f libDRCdec\src\*.obj 2>NUL
+	del /f libFDK\src\*.obj 2>NUL
+	del /f libMpegTPDec\src\*.obj 2>NUL
+	del /f libMpegTPEnc\src\*.obj 2>NUL
+	del /f libPCMutils\src\*.obj 2>NUL
+	del /f libSACdec\src\*.obj 2>NUL
+	del /f libSACenc\src\*.obj 2>NUL
+	del /f libSBRdec\src\*.obj 2>NUL
+	del /f libSBRenc\src\*.obj 2>NUL
+	del /f libSYS\src\*.obj 2>NUL
+
+install: $(INST_DIRS)
+	copy libAACdec\include\aacdecoder_lib.h $(incdir)
+	copy libAACenc\include\aacenc_lib.h $(incdir)
+	copy libSYS\include\FDK_audio.h $(incdir)
+	copy libSYS\include\genericStds.h $(incdir)
+	copy libSYS\include\machine_type.h $(incdir)
+	copy libSYS\include\syslib_channelMapDescr.h $(incdir)
+	copy $(STATIC_LIB) $(libdir)
+	copy $(IMP_LIB) $(libdir)
+	copy $(SHARED_LIB) $(bindir)
+	copy $(PROGS) $(bindir)
+	copy $(LIB_DEF) $(libdir)
+
+$(INST_DIRS):
+	@mkdir $(MKDIR_FLAGS) $@
+
+$(STATIC_LIB): $(FDK_OBJS)
+	$(AR) $(ARFLAGS) -out:$@ $(FDK_OBJS)
+
+$(IMP_LIB): $(SHARED_LIB)
+
+$(SHARED_LIB): $(FDK_OBJS)
+	$(LD) $(LDFLAGS) -OUT:$@ -DEF:$(LIB_DEF) -implib:$(IMP_LIB) -DLL $(FDK_OBJS)
+
+$(PROGS): $(AAC_ENC_OBJS)
+	$(LD) $(LDFLAGS) -out:$@ $(AAC_ENC_OBJS) $(STATIC_LIB)
+
+.cpp.obj:
+	$(CXX) $(CXXFLAGS) -c -Fo$@ $<
+
+$(LIB_DEF):
+	@echo EXPORTS > $(LIB_DEF)
+	@type fdk-aac.sym >> $(LIB_DEF)
