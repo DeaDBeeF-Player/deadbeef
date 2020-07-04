@@ -35,4 +35,15 @@ case "$TRAVIS_OS_NAME" in
         zip -r deadbeef-$VERSION-osx-x86_64.zip DeaDBeeF.app || exit 1
         cd ../../..
     ;;
+    windows)
+        $msys2 git clone https://github.com/kuba160/Windows-10.git
+        $msys2 rm -rv Windows-10/.git
+        $msys2 git clone https://github.com/kuba160/Windows-10-Icons.git
+        $msys2 rm -rv Windows-10-Icons/.git
+        $msys2 wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-windows.zip && unzip premake-5.0.0-alpha14-windows.zip
+        $msys2 ./premake5 --os=linux --file=premake5-win.lua --standard gmake
+        $msys2 make config=release_windows
+        $msys2 make config=debug_windows
+        $msys2 cp -r Windows-10 bin/debug/share/themes/Windows-10 && cp -r Windows-10 bin/release/share/themes/Windows-10
+        $msys2 cp -r Windows-10-Icons bin/debug/share/icons/Windows-10-Icons && cp -r Windows-10-Icons bin/release/share/icons/Windows-10-Icons
 esac
