@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17132.0.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17132.0.2"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -22,15 +22,15 @@
         <window title="DeaDBeeF" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="mainwin" animationBehavior="default" tabbingMode="disallowed" id="zZI-9s-62b">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="335" y="390" width="507" height="168"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
+            <rect key="contentRect" x="335" y="390" width="785" height="287"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
             <value key="minSize" type="size" width="500" height="200"/>
             <view key="contentView" id="Ds9-lN-DIb">
-                <rect key="frame" x="0.0" y="0.0" width="507" height="168"/>
+                <rect key="frame" x="0.0" y="0.0" width="785" height="287"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Rek-dI-lyl">
-                        <rect key="frame" x="3" y="2" width="501" height="11"/>
+                        <rect key="frame" x="3" y="2" width="779" height="11"/>
                         <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="left" title="Label" usesSingleLineMode="YES" id="udl-p6-f4h">
                             <font key="font" metaFont="label" size="9"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -38,10 +38,10 @@
                         </textFieldCell>
                     </textField>
                     <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="ouj-13-WFq">
-                        <rect key="frame" x="0.0" y="10" width="507" height="5"/>
+                        <rect key="frame" x="0.0" y="10" width="785" height="5"/>
                     </box>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="udP-Ce-pRu">
-                        <rect key="frame" x="0.0" y="13" width="507" height="155"/>
+                        <rect key="frame" x="0.0" y="13" width="785" height="274"/>
                     </customView>
                 </subviews>
                 <constraints>
@@ -62,8 +62,8 @@
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="B7B3A6E3-A418-464C-AAF3-D9D0B5687BBF" label="Custom View" paletteLabel="Custom View" tag="-1" id="OXm-XA-qXT" userLabel="Custom Seekbar" customClass="CustomToolbarItem">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="163" height="26"/>
-                        <size key="maxSize" width="100000000" height="26"/>
+                        <size key="minSize" width="300" height="26"/>
+                        <size key="maxSize" width="1000" height="26"/>
                         <customView key="view" id="paF-TY-fCE" userLabel="DdbSeekbar" customClass="DdbSeekBar">
                             <rect key="frame" x="0.0" y="14" width="163" height="26"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -75,10 +75,8 @@
                             <outlet property="customView" destination="paF-TY-fCE" id="OWC-57-U6X"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="5BC003E8-E444-40E9-BE77-B0900BC6FF5D" label="Custom View" paletteLabel="Custom View" id="ui3-O7-e5f">
+                    <toolbarItem implicitItemIdentifier="5BC003E8-E444-40E9-BE77-B0900BC6FF5D" label="Custom View" paletteLabel="Custom View" sizingBehavior="auto" id="ui3-O7-e5f">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="130" height="24"/>
-                        <size key="maxSize" width="130" height="24"/>
                         <segmentedControl key="view" verticalHuggingPriority="750" id="Q6A-xH-8bl">
                             <rect key="frame" x="0.0" y="14" width="130" height="24"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -110,7 +108,7 @@
                     <toolbarItem implicitItemIdentifier="0D19120C-6CE3-44D9-88AF-A6AC3500FF97" label="Custom View" paletteLabel="Custom View" id="icE-Ef-aFl">
                         <nil key="toolTip"/>
                         <size key="minSize" width="96" height="21"/>
-                        <size key="maxSize" width="96" height="21"/>
+                        <size key="maxSize" width="96" height="28"/>
                         <slider key="view" verticalHuggingPriority="750" id="tGc-Yg-ZUl">
                             <rect key="frame" x="0.0" y="14" width="96" height="21"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
@@ -127,13 +125,13 @@
                     <toolbarItem reference="icE-Ef-aFl"/>
                 </defaultToolbarItems>
             </toolbar>
-            <point key="canvasLocation" x="385.5" y="39"/>
+            <point key="canvasLocation" x="246.5" y="98.5"/>
         </window>
         <window title="Rename Playlist" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="dIi-bq-ybp" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="139" y="81" width="276" height="89"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
             <view key="contentView" id="QGf-bK-m9s">
                 <rect key="frame" x="0.0" y="0.0" width="276" height="89"/>
                 <autoresizingMask key="autoresizingMask"/>
