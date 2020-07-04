@@ -46,4 +46,8 @@ case "$TRAVIS_OS_NAME" in
         $mingw64 make config=debug_windows
         $msys2 cp -r Windows-10 bin/debug/share/themes/Windows-10 && cp -r Windows-10 bin/release/share/themes/Windows-10
         $msys2 cp -r Windows-10-Icons bin/debug/share/icons/Windows-10-Icons && cp -r Windows-10-Icons bin/release/share/icons/Windows-10-Icons
+        $msys2 cd bin/ && mv release deadbeef-x86_64 && zip -r deadbeef-x86_64.zip deadbeef-x86_64/ && mv deadbeef-x86_64 release
+        $msys2 cd bin/ && mv debug deadbeef-x86_64 && zip -r deadbeef-x86_64_DEBUG.zip deadbeef-x86_64/ && mv deadbeef-x86_64 debug
+        /C/ProgramData/chocolatey/bin/ISCC.exe "//Obin" tools/windows-installer/deadbeef.iss
+        /C/ProgramData/chocolatey/bin/ISCC.exe "//DDEBUG" "//Obin" tools/windows-installer/deadbeef.iss
 esac
