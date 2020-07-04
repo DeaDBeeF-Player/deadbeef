@@ -2484,16 +2484,20 @@
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
 			fileType = sourcecode.asm;
+			inputFiles = (
+			);
 			isEditable = 1;
 			outputFiles = (
 				"${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o",
 			);
-			script = "/usr/local/bin/yasm -f macho64 -D ARCH_X86_64 -m amd64 -DPIC -DPREFIX -o ${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o ${INPUT_FILE_PATH}";
+			script = "YASM=${PROJECT_DIR}/deps/yasm/yasm\n${YASM} -f macho64 -D ARCH_X86_64 -m amd64 -DPIC -DPREFIX -o ${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o ${INPUT_FILE_PATH}\n\n\n";
 		};
 		4D32FA0C19A64275000FFDE0 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
 			fileType = sourcecode.nasm;
+			inputFiles = (
+			);
 			isEditable = 1;
 			outputFiles = (
 			);
@@ -20205,6 +20209,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
+				"EXCLUDED_SOURCE_FILE_NAMES[arch=arm64]" = dsputil_yasm.asm;
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64]" = (
@@ -20227,6 +20232,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
+				"EXCLUDED_SOURCE_FILE_NAMES[arch=arm64]" = dsputil_yasm.asm;
 				EXECUTABLE_PREFIX = "";
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64]" = (
 					"HAVE_SSE2=1",

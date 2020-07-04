@@ -20,20 +20,28 @@ Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy develo
 
 ### Linux, BSD and similar (GTK/*NIX version)
 
-* Install git, GCC toolchain, then clone the repo
+* Install git, GCC toolchain
 * Install autoconf, automake, libtool, intltool, autopoint
+* Remember to get submodules: ```git submodule update --init```
 * Run ```./autogen.sh``` to bootstrap
 * Read the generated INSTALL file and ```./configure --help``` for instructions
 * See the README file for more information
 
-### OS X (COCOA version)
+### macOS (COCOA version)
 
-* Install XCode, and run `sudo xcode-select --install`; This would also get you git etc
-* Clone the deadbeef repo, and fetch the dependencies: ```git submodule update --init```
-* Install [Yasm](https://yasm.tortall.net/Download.html) -- unpack the source, then run `./configure && make -j8 && sudo make install`
+* Install Xcode, 10.0 or higher.
+* Run `sudo xcode-select --install` - This will configure git and command line build tools
+* Clone the deadbeef git repository
+* Remember to get submodules: ```git submodule update --init```
+
+#### Command line
+
 * Run ```xcodebuild -project osx/deadbeef.xcodeproj -target DeaDBeeF -configuration Release```
-* Get the output: ```osx/build/Release/DeaDBeeF.app```
-* OR open the osx/deadbeef.xcodeproj in XCode, and build/run from there
+* The output will be located here: ```osx/build/Release/DeaDBeeF.app```
+
+#### Xcode UI
+
+* Open the `osx/deadbeef.xcodeproj` in Xcode, and build/run from there
 
 ### Windows
 
