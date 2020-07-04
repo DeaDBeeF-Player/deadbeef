@@ -24,8 +24,6 @@ case "$TRAVIS_OS_NAME" in
         make dist || exit 1
     ;;
     osx)
-        echo brew update ...
-        brew update 1> /dev/null 2> /dev/null || exit 1
         echo gem install xcpretty ...
         gem install xcpretty 1> /dev/null 2> /dev/null || exit 1
         rev=`git rev-parse --short HEAD`
