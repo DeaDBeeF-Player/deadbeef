@@ -36,18 +36,17 @@ case "$TRAVIS_OS_NAME" in
         cd ../../..
     ;;
     windows)
-        $msys2 git clone https://github.com/kuba160/Windows-10.git
-        $msys2 rm -rv Windows-10/.git
-        $msys2 git clone https://github.com/kuba160/Windows-10-Icons.git
-        $msys2 rm -rv Windows-10-Icons/.git
-        $msys2 wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-windows.zip && unzip premake-5.0.0-alpha14-windows.zip
+        git clone https://github.com/kuba160/deadbeef-windows-deps.git
+        wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-windows.zip && unzip premake-5.0.0-alpha14-windows.zip
         $mingw64 ./premake5 --os=linux --file=premake5-win.lua --standard gmake
         $mingw64 make config=release_windows
         $mingw64 make config=debug_windows
-        $msys2 cp -r Windows-10 bin/debug/share/themes/Windows-10 && cp -r Windows-10 bin/release/share/themes/Windows-10
-        $msys2 cp -r Windows-10-Icons bin/debug/share/icons/Windows-10-Icons && cp -r Windows-10-Icons bin/release/share/icons/Windows-10-Icons
-        $msys2 mv bin/release bin/deadbeef-x86_64 && (cd bin && $msys2 zip -q -r deadbeef-x86_64.zip deadbeef-x86_64/) && mv bin/deadbeef-x86_64 bin/release
-        $msys2 mv bin/debug bin/deadbeef-x86_64 && (cd bin && $msys2 zip -q -r deadbeef-x86_64_DEBUG.zip deadbeef-x86_64/) && mv bin/deadbeef-x86_64 bin/debug
+        cp -r deadbeef-windows-deps/Windows-10 bin/debug/share/themes/Windows-10
+        cp -r deadbeef-windows-deps/Windows-10 bin/release/share/themes/Windows-10
+        cp -r deadbeef-windows-deps/Windows-10-Icons bin/debug/share/icons/Windows-10-Icons
+        cp -r deadbeef-windows-deps/Windows-10-Icons bin/release/share/icons/Windows-10-Icons
+        mv bin/release bin/deadbeef-x86_64 && (cd bin && $msys2 zip -q -r deadbeef-x86_64.zip deadbeef-x86_64/) && mv bin/deadbeef-x86_64 bin/release
+        mv bin/debug bin/deadbeef-x86_64 && (cd bin && $msys2 zip -q -r deadbeef-x86_64_DEBUG.zip deadbeef-x86_64/) && mv bin/deadbeef-x86_64 bin/debug
         /C/ProgramData/chocolatey/bin/ISCC.exe "//Obin" "//Qp" tools/windows-installer/deadbeef.iss
         /C/ProgramData/chocolatey/bin/ISCC.exe "//DDEBUG" "//Obin" "//Qp" tools/windows-installer/deadbeef.iss
 esac
