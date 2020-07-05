@@ -597,7 +597,7 @@ mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
                 }
             }
 
-            if (!_mp4_atom_map[i] && meta->name) {
+            if (!_mp4_atom_map[i] && meta->name && meta->text) {
                 // unknown field
                 deadbeef->pl_append_meta (it, meta->name, meta->text);
             }
