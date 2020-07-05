@@ -37,7 +37,7 @@ case "$TRAVIS_OS_NAME" in
     ;;
     windows)
         git clone https://github.com/kuba160/deadbeef-windows-deps.git
-        wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-windows.zip && unzip premake-5.0.0-alpha14-windows.zip
+        wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha15/premake-5.0.0-alpha15-windows.zip && unzip premake-5.0.0-alpha15-windows.zip
         $mingw64 ./premake5 --os=linux --file=premake5-win.lua --standard gmake
         $mingw64 make config=release_windows
         $mingw64 make config=debug_windows
