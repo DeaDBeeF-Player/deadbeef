@@ -1,5 +1,6 @@
 SUBDIRS = pixmaps\
 		  icons\
+		  external\
 		  shared\
 		  ${PLUGINS_DIRS}\
 		  po\
@@ -21,7 +22,8 @@ deadbeef_SOURCES =\
 	main.c common.h deadbeef.h\
 	plugins.c plugins.h moduleconf.h\
 	cueutil.c cueutil.h playlist.c playlist.h \
-	plmeta.c pltmeta.c pltmeta.h\
+	plmeta.c plmeta.h\
+	pltmeta.c pltmeta.h\
 	streamer.c streamer.h\
 	dsp.c dsp.h\
 	streamreader.c streamreader.h\
@@ -48,16 +50,18 @@ deadbeef_SOURCES =\
 	tf.c tf.h\
 	playqueue.c playqueue.h\
 	sort.c sort.h\
-	logger.c logger.h
+	logger.c logger.h\
+	external/wcwidth/wcwidth.c external/wcwidth/wcwidth.h\
+	playmodes.c playmodes.h
 	
 #	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
 
-deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread $(INTL_LIBS) plugins/libparser/libparser.a
+deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread $(INTL_LIBS) shared/libctmap.a plugins/libparser/libparser.a
 
-AM_CFLAGS = $(DEPS_CFLAGS) -std=c99
+AM_CFLAGS = $(DEPS_CFLAGS) -std=c99 -DLOCALEDIR=\"@localedir@\"
 AM_CPPFLAGS = $(DEPS_CFLAGS)
 
 docsdir = $(docdir)

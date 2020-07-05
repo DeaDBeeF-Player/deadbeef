@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * mid.h - LAA, SCI, MID & CMF Player by Philip Hassey <philhassey@hotmail.com>
  */
@@ -30,18 +30,18 @@ public:
   ~CmidPlayer()
     { if(data) delete [] data; }
 
-  bool load(const char *filename, const CFileProvider &fp);
+  bool load(const std::string &filename, const CFileProvider &fp);
   bool update();
   void rewind(int subsong);
   float getrefresh();
 
-  const char * gettype();
-  const char * gettitle()
-    { return title; }
-  const char * getauthor()
-    { return author; }
-  const char * getdesc()
-    { return remarks; }
+  std::string gettype();
+  std::string gettitle()
+    { return std::string(title); }
+  std::string getauthor()
+    { return std::string(author); }
+  std::string getdesc()
+    { return std::string(remarks); }
   unsigned int getinstruments()
     { return tins; }
   unsigned int getsubsongs()
@@ -95,7 +95,7 @@ public:
   int type,tins,stins;
 
  private:
-  bool load_sierra_ins(const char *fname, const CFileProvider &fp);
+  bool load_sierra_ins(const std::string &fname, const CFileProvider &fp);
   void midiprintf(const char *format, ...);
   unsigned char datalook(long pos);
   unsigned long getnexti(unsigned long num);

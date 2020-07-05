@@ -38,6 +38,8 @@
 
 @property (unsafe_unretained) IBOutlet NSMenuItem *mainWindowToggleMenuItem;
 @property (unsafe_unretained) IBOutlet NSMenuItem *logWindowToggleMenuItem;
+@property (weak) IBOutlet NSMenuItem *equalizerWindowToggleMenuItem;
+
 
 @property (unsafe_unretained) IBOutlet NSMenu *mainMenu;
 @property (unsafe_unretained) IBOutlet NSMenu *dockMenu;
@@ -57,8 +59,6 @@
 
 - (IBAction)toggleDescendingSortOrderAction:(id)sender;
 @property (unsafe_unretained) IBOutlet NSMenuItem *descendingSortMode;
-
-@property (unsafe_unretained) IBOutlet NSImageView *dockTileView;
 
 - (IBAction)openPrefWindow:(id)sender;
 

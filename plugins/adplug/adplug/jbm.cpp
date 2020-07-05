@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * Johannes Bjerregaard's JBM Adlib Music Format player for AdPlug
  * Written by Dennis Lindroos <lindroos@nls.fi>, February-March 2007
@@ -63,7 +63,7 @@ CPlayer *CjbmPlayer::factory(Copl *newopl)
   return new CjbmPlayer(newopl);
 }
 
-bool CjbmPlayer::load(const char *filename, const CFileProvider &fp)
+bool CjbmPlayer::load(const std::string &filename, const CFileProvider &fp)
 {
   binistream	*f = fp.open(filename); if(!f) return false;
   int		filelen = fp.filesize(f);

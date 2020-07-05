@@ -30,8 +30,27 @@
 #include "gtkui.h"
 #include "support.h"
 
+void get_deadbeef_monitor_rect (GdkRectangle *rect)
+{
+    GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (mainwin));
+#if GTK_CHECK_VERSION(3,22,0)
+    GdkDisplay *display = gdk_window_get_display (gtk_widget_get_window (mainwin));
+    GdkMonitor *monitor = gdk_display_get_monitor_at_window (display, gtk_widget_get_window (mainwin));
+    gdk_monitor_get_geometry (monitor, rect);
+#else
+    gint monitor = gdk_screen_get_monitor_at_window (screen, gtk_widget_get_window (mainwin));
+    gdk_screen_get_monitor_geometry (screen, monitor, rect);
+#endif
+}
+
 void
 wingeom_save (GtkWidget *widget, const char *name) {
+
+    GdkRectangle r = {0,};
+    if (widget != mainwin) {
+        get_deadbeef_monitor_rect(&r);
+    }
+
 #if GTK_CHECK_VERSION(2,2,0)
 	GdkWindowState window_state = gdk_window_get_state (gtk_widget_get_window (widget));
 #else
@@ -44,9 +63,9 @@ wingeom_save (GtkWidget *widget, const char *name) {
         gtk_window_get_position (GTK_WINDOW (widget), &x, &y);
         gtk_window_get_size (GTK_WINDOW (widget), &w, &h);
         snprintf (key, sizeof (key), "%s.geometry.x", name);
-        deadbeef->conf_set_int (key, x);
+        deadbeef->conf_set_int (key, x - r.x);
         snprintf (key, sizeof (key), "%s.geometry.y", name);
-        deadbeef->conf_set_int (key, y);
+        deadbeef->conf_set_int (key, y - r.y);
         snprintf (key, sizeof (key), "%s.geometry.w", name);
         deadbeef->conf_set_int (key, w);
         snprintf (key, sizeof (key), "%s.geometry.h", name);
@@ -87,10 +106,17 @@ wingeom_save_max (GdkEventWindowState *event, GtkWidget *widget, const char *nam
 void
 wingeom_restore (GtkWidget *win, const char *name, int dx, int dy, int dw, int dh, int dmax) {
     char key[100];
+
+
+    GdkRectangle r = {0,};
+    if (win != mainwin) {
+        get_deadbeef_monitor_rect(&r);
+    }
+
     snprintf (key, sizeof (key), "%s.geometry.x", name);
-    int x = deadbeef->conf_get_int (key, dx);
+    int x = deadbeef->conf_get_int (key, dx) + r.x;
     snprintf (key, sizeof (key), "%s.geometry.y", name);
-    int y = deadbeef->conf_get_int (key, dy);
+    int y = deadbeef->conf_get_int (key, dy) + r.y;
     snprintf (key, sizeof (key), "%s.geometry.w", name);
     int w = deadbeef->conf_get_int (key, dw);
     snprintf (key, sizeof (key), "%s.geometry.h", name);

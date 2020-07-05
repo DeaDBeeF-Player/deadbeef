@@ -109,6 +109,10 @@ vfs_fclose (DB_FILE *stream) {
 
 size_t
 vfs_fread (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
+    if (!size || !nmemb) {
+        return 0;
+    }
+
     if (!can_use_file (stream)) {
         return 0;
     }
@@ -154,7 +158,19 @@ vfs_get_content_type (DB_FILE *stream) {
 
 void
 vfs_fabort (DB_FILE *stream) {
-    if (stream->vfs->abort) {
-        stream->vfs->abort (stream);
+}
+
+uint64_t
+vfs_get_identifier (DB_FILE *stream) {
+    if (stream->vfs->get_identifier) {
+        return stream->vfs->get_identifier (stream);
+    }
+    return 0;
+}
+
+void
+vfs_abort_with_identifier (DB_vfs_t *vfs, uint64_t identifier) {
+    if (vfs->abort_with_identifier) {
+        vfs->abort_with_identifier (identifier);
     }
 }

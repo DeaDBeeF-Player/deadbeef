@@ -23,6 +23,11 @@
 
 #import "DdbWidget.h"
 
-@interface DdbTabStrip : DdbWidget
+@interface DdbTabStrip : DdbWidget<NSMenuDelegate>
 - (int)clickedTab;
+@property (weak) IBOutlet NSBox *hiddenVertLine;
+@property (weak) IBOutlet NSPanel *renamePlaylistWindow;
+@property (weak) IBOutlet NSTextField *renamePlaylistTitle;
+- (IBAction)renamePlaylistCancelAction:(id)sender;
+- (IBAction)renamePlaylistOKAction:(id)sender;
 @end

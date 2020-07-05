@@ -3,10 +3,9 @@ AC_INIT([deadbeef], [devel])
 
 AC_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE([1.11 dist-bzip2 tar-ustar silent-rules subdir-objects])
+AM_INIT_AUTOMAKE([1.11 dist-bzip2 tar-ustar silent-rules subdir-objects no-dependencies])
 AM_SILENT_RULES([yes])
 AM_MAINTAINER_MODE()
-
 AC_USE_SYSTEM_EXTENSIONS
 LT_INIT([disable-static])
 AC_PROG_CC
@@ -20,13 +19,12 @@ AC_C_BIGENDIAN
 AM_GNU_GETTEXT
 PKG_PROG_PKG_CONFIG
 AM_PROG_CC_C_O
-
+AM_ICONV
 IT_PROG_INTLTOOL([0.40.0])
 GETTEXT_PACKAGE=deadbeef
 AC_SUBST(GETTEXT_PACKAGE)
 
 test "$prefix" = NONE && prefix=/usr/local
-AC_DEFINE_UNQUOTED(LOCALEDIR, "${prefix}/${DATADIRNAME}/locale", [Name of gettext locale directory])
 
 case "$host" in
   i686-apple-*)
@@ -83,7 +81,6 @@ AC_ARG_ENABLE(alsa,     [AS_HELP_STRING([--disable-alsa    ], [disable ALSA outp
 AC_ARG_ENABLE(oss,      [AS_HELP_STRING([--disable-oss     ], [disable Open Sound System output plugin (default: enabled)])], [enable_oss=$enableval], [enable_oss=yes])
 AC_ARG_ENABLE(pulse,    [AS_HELP_STRING([--disable-pulse   ], [disable PulseAudio output plugin (default: enabled)])], [enable_pulse=$enableval], [enable_pulse=yes])
 AC_ARG_ENABLE(coreaudio,[AS_HELP_STRING([--disable-coreaudio], [disable CoreAudio output plugin (default: enabled)])], [enable_coreaudio=$enableval], [enable_coreaudio=yes])
-AC_ARG_ENABLE(sndio,    [AS_HELP_STRING([--disable-sndio   ], [disable sndio output plugin (default: auto)])], [enable_sndio=$enableval], [enable_sndio=yes])
 AC_ARG_ENABLE(gtk3,     [AS_HELP_STRING([--disable-gtk3     ], [disable GTK3 version of gtkui plugin (default: enabled)])], [enable_gtk3=$enableval], [enable_gtk3=yes])
 AC_ARG_ENABLE(gtk2,     [AS_HELP_STRING([--disable-gtk2     ], [disable GTK2 version of gtkui plugin (default: enabled)])], [enable_gtk2=$enableval], [enable_gtk2=yes])
 AC_ARG_ENABLE(vfs_curl, [AS_HELP_STRING([--disable-vfs-curl], [disable HTTP streaming vfs plugin (default: enabled)])], [enable_vfs_curl=$enableval], [enable_vfs_curl=yes])
@@ -136,6 +133,7 @@ AC_ARG_ENABLE(sc68, [AS_HELP_STRING([--enable-sc68     ], [build sc68 Atari ST a
 AC_ARG_ENABLE(abstract_socket, [AS_HELP_STRING([--enable-abstract-socket      ], [use abstract UNIX socket for IPC (default: disabled)])], [enable_abstract_socket=$enableval], [enable_abstract_socket=no])
 dnl AC_ARG_ENABLE(statusnotifier, [AS_HELP_STRING([--enable-statusnotifier], [KDE status notifier plugin for tray icon (default: disabled)])], [enable_statusnotifier=$enableval], [enable_statusnotifier=no])
 AC_ARG_ENABLE(rgscanner, [AS_HELP_STRING([--disable-rgscanner], [build ReplayGain scanner plugin (default: enabled)])], [enable_rgscanner=$enableval], [enable_rgscanner=yes])
+AC_ARG_ENABLE(soundtouch,   [AS_HELP_STRING([--disable-soundtouch  ], [disable soundtouch plugin (default: enabled)])], [enable_soundtouch=$enableval], [enable_soundtouch=yes])
 
 AS_IF([test "${enable_staticlink}" != "no"], [
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
@@ -150,15 +148,13 @@ AS_IF([test "${enable_abstract_socket}" != "no"], [
 case "$host" in
   *-*-gnu )
     AS_IF([test "${enable_staticlink}" != "no"], [
-        NOCPPLIB="-nostdlib ../../$LIB/lib/libsupc++.a"
+        NOCPPLIB="-nostdlib -lstdc++"
     ], [
         NOCPPLIB=""
     ])
     AC_SUBST(NOCPPLIB)
     ;;
 esac
-
-AC_CHECK_LIB([intl], [main], [INTL_LIBS="-lintl";AC_SUBST(INTL_LIBS)])
 
 dnl check for yasm
 AC_CHECK_PROG(HAVE_YASM, yasm, yes, no)
@@ -172,7 +168,7 @@ AC_CHECK_LIB([dl], [main], [HAVE_DL=yes;DL_LIBS="-ldl";AC_SUBST(DL_LIBS)])
 dnl check libsocket (OpenIndiana)
 AC_CHECK_LIB([socket], [main], [HAVE_SOCKET=yes;DL_LIBS="-lsocket";AC_SUBST(DL_LIBS)])
 dnl check for seperate alloca.h (OpenIndiana)
-AC_CHECK_HEADER([alloca.h],[],[alloca.h not found.])
+AC_CHECK_HEADER([alloca.h],[AC_DEFINE([HAVE_ALLOCA_H], [1], [Define if system has alloca.h])],[alloca.h not found.])
 dnl check for syslimits.h (BSD)
 AC_CHECK_HEADERS([sys/syslimits.h])
 AC_CHECK_HEADERS([sys/cdefs.h])
@@ -192,8 +188,12 @@ AS_IF([test "${enable_portable}" != "no" -a "${enable_staticlink}" != "no"], [
     PREFIXFLAGS=" -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
 ])
 
-CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE $PREFIXFLAGS -DDDB_WARN_DEPRECATED=1"
-CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE $PREFIXFLAGS -DDDB_WARN_DEPRECATED=1"
+dnl HACK: using undocumented variable to check whether it's safe to define __EXTENSIONS__
+test $ac_cv_safe_to_define___extensions__ = yes && CFLAGS_EXTENSIONS="-D__EXTENSIONS__"
+
+CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE $CFLAGS_EXTENSIONS $PREFIXFLAGS -DDDB_WARN_DEPRECATED=1"
+CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE $CFLAGS_EXTENSIONS $PREFIXFLAGS -DDDB_WARN_DEPRECATED=1"
+
 
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_ZLIB=yes
@@ -228,14 +228,6 @@ AS_IF([test "${enable_gtk3}" = "yes"], [
        PKG_CHECK_MODULES(GTK3_DEPS, gtk+-3.0 >= 3.0 gthread-2.0 glib-2.0 gio-2.0, HAVE_GTK3=yes, HAVE_GTK3=no)
     ])
     AC_PATH_PROG([GLIB_COMPILE_RESOURCES], [glib-compile-resources])
-dnl    AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
-dnl    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
-    if test "$OS_OSX" = "yes"; then
-        PKG_CHECK_MODULES(GTK_MAC, gtk-mac-integration)
-        AC_SUBST(GTK_MAC_LIBS)
-        AC_SUBST(GTK_MAC_CFLAGS)
-    fi
-
     ], [
     HAVE_GTK3=no
 ])
@@ -292,16 +284,6 @@ AS_IF([test "${enable_coreaudio}" != "no" -a "${found_coreaudio_h}" != "no"], [
 
 AC_SUBST(COREAUDIO_LIBS)
 
-AC_CHECK_HEADER([sndio.h], [found_sndio_h=yes], [found_sndio_h=no])
-AC_CHECK_LIB([sndio], [sio_write], [found_sndio_lib=yes], [found_sndio_lib=no])
-AS_IF([test "${enable_sndio}" != "no" -a "${found_sndio_h}" != "no" -a "${found_sndio_lib}" != "no"], [
-  AC_DEFINE(HAVE_SNDIO, 1, [Build sndio support])
-  HAVE_SNDIO=yes
-  SNDIO_LIBS="-lsndio"
-])
-
-AC_SUBST(SNDIO_LIBS)
-
 AS_IF([test "${enable_ffmpeg}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         FFMPEG_DEPS_CFLAGS="-I../../$LIB/include"
@@ -317,7 +299,7 @@ AS_IF([test "${enable_ffmpeg}" != "no"], [
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_DBUS=yes
     DBUS_DEPS_LIBS="../../$LIB/lib/libdbus-1.a ../../$LIB/lib/libexpat.a -lrt"
-    DBUS_DEPS_CFLAGS="-I../../$LIB/include/dbus-1"
+    DBUS_DEPS_CFLAGS="-I../../$LIB/include/dbus-1.0 -I../../$LIB/lib/dbus-1.0/include/"
     AC_SUBST(DBUS_DEPS_LIBS)
 ], [
     PKG_CHECK_MODULES(DBUS_DEPS, dbus-1, HAVE_DBUS=yes, HAVE_DBUS=no)
@@ -344,7 +326,7 @@ AS_IF([test "${have_iconv}" = "yes"], [
     AC_DEFINE(HAVE_LIBICONV,1,[Use libiconv instead of glibc iconv])
 ])
 
-AX_CHECK_COMPILER_FLAGS(-msse2, HAVE_SSE2=1, [])
+AX_CHECK_COMPILER_FLAGS(-msse2, HAVE_SSE2=1, [], -Werror)
 AS_IF([test "${HAVE_SSE2}"], [
     AC_DEFINE(HAVE_SSE2,1,[Support SSE2 instructions])
 ])
@@ -352,7 +334,7 @@ AS_IF([test "${HAVE_SSE2}"], [
 dnl curl lib
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_CURL=yes
-    CURL_LIBS="../../$LIB/lib/libcurl.a ../../$LIB/lib/libz.a -lssl -lcrypto -lrt"
+    CURL_LIBS="-lpthread -lrt ../../$LIB/lib/libcurl.a ../../$LIB/lib/libz.a"
     CURL_CFLAGS="-I../../$LIB/include"
     AC_SUBST(CURL_LIBS)
     AC_SUBST(CURL_CFLAGS)
@@ -511,10 +493,6 @@ dnl vfs_curl plugin
 AS_IF([test "${enable_vfs_curl}" != "no"], [
     AS_IF([test "${HAVE_CURL}" = "yes"], [
         HAVE_VFS_CURL=yes
-        VFS_CURL_LIBS="$CURL_LIBS"
-        AC_SUBST(VFS_CURL_LIBS)
-        VFS_CURL_CFLAGS="$CURL_CFLAGS"
-        AC_SUBST(VFS_CURL_CFLAGS)
     ])
 ])
 
@@ -584,13 +562,6 @@ AS_IF([test "${enable_hotkeys}" != "no"], [
 dnl no support for global hotkeys on osx, but plugin will work anyway
 AS_IF([test "${OS_OSX}" = "yes"], [
     HAVE_HOTKEYS=yes
-])
-
-dnl *** SNDIO output
-AS_IF([test "${enable_sndio}" != "no"], [
-    have_sndiod=no
-
-    AC_MSG_CHECKING(for sndiod )
 ])
 
 dnl *** OSS output (partly stolen from audacious)
@@ -852,7 +823,11 @@ AS_IF([test "${enable_rgscanner}" != "no"], [
     HAVE_RGSCANNER=yes
 ])
 
-PLUGINS_DIRS="plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/opus plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/sndio plugins/rg_scanner"
+AS_IF([test "${enable_soundtouch}" != "no"], [
+    HAVE_SOUNDTOUCH=yes
+])
+
+PLUGINS_DIRS="plugins/liboggedit plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/opus plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/rg_scanner plugins/soundtouch"
 
 AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
@@ -868,7 +843,6 @@ AM_CONDITIONAL(HAVE_GTK2, test "x$HAVE_GTK2" = "xyes")
 AM_CONDITIONAL(HAVE_GTK3, test "x$HAVE_GTK3" = "xyes")
 AM_CONDITIONAL(HAVE_ALSA, test "x$HAVE_ALSAPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_COREAUDIO, test "x$HAVE_COREAUDIO" = "xyes")
-AM_CONDITIONAL(HAVE_SNDIO, test "x$HAVE_SNDIO" = "xyes")
 AM_CONDITIONAL(HAVE_FFMPEG, test "x$HAVE_FFMPEGPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_PULSE, test "x$HAVE_PULSEPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_ARTWORK, test "x$HAVE_ARTWORK" = "xyes")
@@ -922,16 +896,17 @@ AM_CONDITIONAL(USE_ABSTRACT_SOCKET_NAME, test "x$USE_ABSTRACT_SOCKET_NAME" = "xy
 AM_CONDITIONAL(HAVE_SSE2, test "${HAVE_SSE2}")
 dnl AM_CONDITIONAL(HAVE_STATUSNOTIFIER, test "x$HAVE_STATUSNOTIFIER" = "xyes")
 AM_CONDITIONAL(HAVE_RGSCANNER, test "x$HAVE_RGSCANNER" = "xyes")
+AM_CONDITIONAL(HAVE_SOUNDTOUCH, test "x$HAVE_SOUNDTOUCH" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
 AC_CONFIG_FILES([
 Makefile
+external/Makefile
 shared/Makefile
 pixmaps/Makefile
 icons/Makefile
 plugins/liboggedit/Makefile
-plugins/libmp4ff/Makefile
 plugins/libparser/Makefile
 plugins/gme/Makefile
 plugins/alsa/Makefile
@@ -978,10 +953,10 @@ plugins/wma/Makefile
 plugins/pltbrowser/Makefile
 plugins/sc68/Makefile
 plugins/coreaudio/Makefile
-plugins/sndio/Makefile
 plugins/rg_scanner/Makefile
-intl/Makefile
+plugins/soundtouch/Makefile
 po/Makefile.in
+intl/Makefile
 deadbeef.desktop
 ])
 
@@ -1009,58 +984,58 @@ AC_DEFUN([PRINT_PLUGIN_INFO],
     ]
 )
 
-PRINT_PLUGIN_INFO([stdio],[Standard IO plugin],[true])
-PRINT_PLUGIN_INFO([gme],[chiptune music player based on GME],[test "x$HAVE_GME" = "xyes"])
-PRINT_PLUGIN_INFO([nullout],[NULL output],[test "x$HAVE_NULLOUT" = "xyes"])
+PRINT_PLUGIN_INFO([aac],[AAC player (m4a, aac, mp4) based on FAAD2],[test "x$HAVE_AAC" = "xyes"])
+PRINT_PLUGIN_INFO([adplug],[adplug player (OPL2/OPL3 emulation)],[test "x$HAVE_ADPLUG" = "xyes"])
+PRINT_PLUGIN_INFO([alac],[ALAC plugin],[test "x$HAVE_ALAC" = "xyes"])
 PRINT_PLUGIN_INFO([alsa],[ALSA output],[test "x$HAVE_ALSA" = "xyes"])
-PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$HAVE_OSS" = "xyes"])
-PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test "x$HAVE_PULSEPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([artwork],[Cover art plugin],[test "x$HAVE_ARTWORK" = "xyes"])
+PRINT_PLUGIN_INFO([cdda],[cd audio player],[test "x$HAVE_CDDAPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([converter],[plugin for converting files to any formats],[test "x$HAVE_CONVERTER" = "xyes"])
 PRINT_PLUGIN_INFO([coreaudio],[CoreAudio output plugin],[test "x$HAVE_COREAUDIO" = "xyes"])
-PRINT_PLUGIN_INFO([sndio],[sndio output plugin],[test "x$HAVE_SNDIO" = "xyes"])
-PRINT_PLUGIN_INFO([sid],[SID player based on libsidplay2],[test "x$HAVE_SID" = "xyes"])
+PRINT_PLUGIN_INFO([dca],[libdca (DTS Audio) player plugin],[test "x$HAVE_DCA" = "xyes"])
+PRINT_PLUGIN_INFO([dsp_src],[High quality samplerate conversion using libsamplerate],[test "x$HAVE_DSP_SRC" = "xyes"])
+PRINT_PLUGIN_INFO([dumb],[DUMB module plugin, for MOD, S3M, etc],[test "x$HAVE_DUMB" = "xyes"])
 PRINT_PLUGIN_INFO([ffap],[Monkey's audio (APE) decoder],[test "x$HAVE_FFAP" = "xyes"])
+PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test "x$HAVE_FFMPEGPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([flac],[flac player],[test "x$HAVE_FLACPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([gme],[chiptune music player based on GME],[test "x$HAVE_GME" = "xyes"])
+PRINT_PLUGIN_INFO([gtkui3],[GTK3 user interface],[test "x$HAVE_GTK3" = "xyes"])
+PRINT_PLUGIN_INFO([gtkui],[GTK2 user interface],[test "x$HAVE_GTK2" = "xyes"])
+PRINT_PLUGIN_INFO([hotkeys],[Local and global hotkeys support],[test "x$HAVE_HOTKEYS" = "xyes"])
 PRINT_PLUGIN_INFO([lastfm],[last.fm scrobbler],[test "x$HAVE_LASTFM" = "xyes"])
+PRINT_PLUGIN_INFO([m3u],[M3U and PLS playlist support],[test "x$HAVE_M3U" = "xyes"])
+PRINT_PLUGIN_INFO([mms],[mms streaming support],[test "x$HAVE_MMS" = "xyes"])
+PRINT_PLUGIN_INFO([mono2stereo],[mono2stereo DSP plugin],[test "x$HAVE_MONO2STEREO" = "xyes"])
 PRINT_PLUGIN_INFO([mp3],[mp3 plugin],[test "x$HAVE_MP3" = "xyes"])
 PRINT_PLUGIN_INFO([    libmad],[libmad backend for mp3 plugin],[test "x$HAVE_LIBMAD" = "xyes"])
 PRINT_PLUGIN_INFO([    libmpg123],[libmpg123 backend for mp3 plugin],[test "x$HAVE_LIBMPG123" = "xyes"])
-PRINT_PLUGIN_INFO([vorbis],[ogg vorbis player],[test "x$HAVE_VORBISPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([opus],[ogg opus player],[test "x$HAVE_OPUSPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([flac],[flac player],[test "x$HAVE_FLACPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([wavpack],[wavpack player],[test "x$HAVE_WAVPACKPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([sndfile],[PCM (wav,aiff,etc) player based on libsndfile],[test "x$HAVE_SNDFILEPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([vtx],[vtx file player (ay8910/12 emulation)],[test "x$HAVE_VTX" = "xyes"])
-PRINT_PLUGIN_INFO([adplug],[adplug player (OPL2/OPL3 emulation)],[test "x$HAVE_ADPLUG" = "xyes"])
-PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test "x$HAVE_VFS_CURL" = "xyes"])
-PRINT_PLUGIN_INFO([cdda],[cd audio player],[test "x$HAVE_CDDAPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([gtkui],[GTK2 user interface],[test "x$HAVE_GTK2" = "xyes"])
-PRINT_PLUGIN_INFO([gtkui3],[GTK3 user interface],[test "x$HAVE_GTK3" = "xyes"])
-PRINT_PLUGIN_INFO([hotkeys],[Local and global hotkeys support],[test "x$HAVE_HOTKEYS" = "xyes"])
-PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test "x$HAVE_FFMPEGPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([artwork],[Cover art plugin],[test "x$HAVE_ARTWORK" = "xyes"])
-PRINT_PLUGIN_INFO([supereq],[Equalizer based on Super EQ library by Naoki Shibata],[test "x$HAVE_SUPEREQ" = "xyes"])
+PRINT_PLUGIN_INFO([musepack],[musepack player plugin],[test "x$HAVE_MUSEPACK" = "xyes"])
 PRINT_PLUGIN_INFO([notify],[notification-daemon support plugin],[test "x$HAVE_NOTIFY" = "xyes"])
+PRINT_PLUGIN_INFO([nullout],[NULL output],[test "x$HAVE_NULLOUT" = "xyes"])
+PRINT_PLUGIN_INFO([opus],[ogg opus player],[test "x$HAVE_OPUSPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$HAVE_OSS" = "xyes"])
+PRINT_PLUGIN_INFO([pltbrowser],[playlist browser gui plugin],[test "x$HAVE_PLTBROWSER" = "xyes"])
+PRINT_PLUGIN_INFO([psf],[PSF player, using Audio Overload SDK],[test "x$HAVE_PSF" = "xyes"])
+PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test "x$HAVE_PULSEPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([rgscanner],[plugin for ReplayGain scanner support],[test "x$HAVE_RGSCANNER" = "xyes"])
+PRINT_PLUGIN_INFO([sc68],[sc68 Atari ST And Amiga player],[test "x$HAVE_SC68" = "xyes"])
 PRINT_PLUGIN_INFO([shellexec],[shell commands plugin],[test "x$HAVE_SHELLEXEC" = "xyes"])
 PRINT_PLUGIN_INFO([shellexecui],[GTK user interface for setting up shellexec plugin],[test "x$HAVE_SHELLEXECUI" = "xyes"])
-PRINT_PLUGIN_INFO([musepack],[musepack player plugin],[test "x$HAVE_MUSEPACK" = "xyes"])
-PRINT_PLUGIN_INFO([wildmidi],[WildMidi player plugin],[test "x$HAVE_WILDMIDI" = "xyes"])
-PRINT_PLUGIN_INFO([tta],[TTA player plugin],[test "x$HAVE_TTA" = "xyes"])
-PRINT_PLUGIN_INFO([dca],[libdca (DTS Audio) player plugin],[test "x$HAVE_DCA" = "xyes"])
-PRINT_PLUGIN_INFO([aac],[AAC player (m4a, aac, mp4) based on FAAD2],[test "x$HAVE_AAC" = "xyes"])
-PRINT_PLUGIN_INFO([mms],[mms streaming support],[test "x$HAVE_MMS" = "xyes"])
-PRINT_PLUGIN_INFO([dsp_src],[High quality samplerate conversion using libsamplerate],[test "x$HAVE_DSP_SRC" = "xyes"])
-PRINT_PLUGIN_INFO([m3u],[M3U and PLS playlist support],[test "x$HAVE_M3U" = "xyes"])
-PRINT_PLUGIN_INFO([vfs_zip],[zip archive support],[test "x$HAVE_VFS_ZIP" = "xyes"])
-PRINT_PLUGIN_INFO([converter],[plugin for converting files to any formats],[test "x$HAVE_CONVERTER" = "xyes"])
-dnl PRINT_PLUGIN_INFO([medialib],[media library support plugin],[test "x$HAVE_MEDIALIB" = "xyes"])
-PRINT_PLUGIN_INFO([psf],[PSF player, using Audio Overload SDK],[test "x$HAVE_PSF" = "xyes"])
-PRINT_PLUGIN_INFO([dumb],[DUMB module plugin, for MOD, S3M, etc],[test "x$HAVE_DUMB" = "xyes"])
 PRINT_PLUGIN_INFO([shn],[SHN plugin based on xmms-shn],[test "x$HAVE_SHN" = "xyes"])
-PRINT_PLUGIN_INFO([mono2stereo],[mono2stereo DSP plugin],[test "x$HAVE_MONO2STEREO" = "xyes"])
-PRINT_PLUGIN_INFO([alac],[ALAC plugin],[test "x$HAVE_ALAC" = "xyes"])
+PRINT_PLUGIN_INFO([sid],[SID player based on libsidplay2],[test "x$HAVE_SID" = "xyes"])
+PRINT_PLUGIN_INFO([sndfile],[PCM (wav,aiff,etc) player based on libsndfile],[test "x$HAVE_SNDFILEPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([soundtouch],[SoundTouch plugin used for time stretching and pitch shifting],[test "x$HAVE_SOUNDTOUCH" = "xyes"])
+PRINT_PLUGIN_INFO([stdio],[Standard IO plugin],[true])
+PRINT_PLUGIN_INFO([supereq],[Equalizer based on Super EQ library by Naoki Shibata],[test "x$HAVE_SUPEREQ" = "xyes"])
+PRINT_PLUGIN_INFO([tta],[TTA player plugin],[test "x$HAVE_TTA" = "xyes"])
+PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test "x$HAVE_VFS_CURL" = "xyes"])
+PRINT_PLUGIN_INFO([vfs_zip],[zip archive support],[test "x$HAVE_VFS_ZIP" = "xyes"])
+PRINT_PLUGIN_INFO([vorbis],[ogg vorbis player],[test "x$HAVE_VORBISPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([vtx],[vtx file player (ay8910/12 emulation)],[test "x$HAVE_VTX" = "xyes"])
+PRINT_PLUGIN_INFO([wavpack],[wavpack player],[test "x$HAVE_WAVPACKPLUGIN" = "xyes"])
+PRINT_PLUGIN_INFO([wildmidi],[WildMidi player plugin],[test "x$HAVE_WILDMIDI" = "xyes"])
 PRINT_PLUGIN_INFO([wma],[WMA plugin],[test "x$HAVE_WMA" = "xyes"])
-PRINT_PLUGIN_INFO([pltbrowser],[playlist browser gui plugin],[test "x$HAVE_PLTBROWSER" = "xyes"])
-PRINT_PLUGIN_INFO([sc68],[sc68 Atari ST And Amiga player],[test "x$HAVE_SC68" = "xyes"])
+dnl PRINT_PLUGIN_INFO([medialib],[media library support plugin],[test "x$HAVE_MEDIALIB" = "xyes"])
 dnl PRINT_PLUGIN_INFO([statusnotifier],[plugin for KDE tray icon support],[test "x$HAVE_STATUSNOTIFIER" = "xyes"])
-PRINT_PLUGIN_INFO([rgscanner],[plugin for ReplayGain scanner support],[test "x$HAVE_RGSCANNER" = "xyes"])
 
 echo

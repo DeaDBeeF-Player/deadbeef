@@ -33,7 +33,7 @@ static float hamming[N];              /* hamming window, scaled to sum to 1 */
 static int reversed[N];               /* bit-reversal table */
 static float complex roots[N / 2];    /* N-th roots of unity */
 static int generated = 0;
-static float LOGN; /* log N (base 2) */
+static int LOGN; /* log N (base 2) */
 
 /* Reverse the order of the lowest LOGN bits in an integer. */
 
@@ -61,13 +61,13 @@ static void generate_tables (void)
     if (generated)
         return;
 
-    LOGN = log2(N);
+    LOGN = (int)log2(N);
     for (int n = 0; n < N; n ++)
-        hamming[n] = 1 - 0.85 * cosf (2 * M_PI * n / N);
+        hamming[n] = 1 - 0.85f * cosf (2 * (float)M_PI * n / N);
     for (int n = 0; n < N; n ++)
         reversed[n] = bit_reverse (n);
     for (int n = 0; n < N / 2; n ++)
-        roots[n] = cexpf (2 * M_PI * I * n / N);
+        roots[n] = cexpf (2 * (float)M_PI * I * n / N);
 
     generated = 1;
 }

@@ -37,13 +37,14 @@
 #include <assert.h>
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stdout, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
 static DB_output_t plugin;
 DB_functions_t * deadbeef;
 
-#define CONFSTR_PULSE_SERVERADDR "pulse.serveraddr"
+// serveraddr2 is a version bump, since the handling has changed, and "default"
+// value has different meaning.
+#define CONFSTR_PULSE_SERVERADDR "pulse.serveraddr2"
 #define CONFSTR_PULSE_BUFFERSIZE "pulse.buffersize"
 #define PULSE_DEFAULT_BUFFERSIZE 4096
 
@@ -53,7 +54,7 @@ static int pulse_terminate;
 static pa_simple *s;
 static pa_sample_spec ss;
 static ddb_waveformat_t requested_fmt;
-static int state = OUTPUT_STATE_STOPPED;
+static ddb_playback_state_t state = DDB_PLAYBACK_STATE_STOPPED;
 static uintptr_t mutex;
 static int in_callback;
 
@@ -130,7 +131,22 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
 
     // Read serveraddr from config
     char server[1000];
-    deadbeef->conf_get_str (CONFSTR_PULSE_SERVERADDR, "", server, sizeof (server));
+
+    // migrate from 0.7.x
+    deadbeef->conf_lock ();
+    int has_server2 = deadbeef->conf_get_str_fast (CONFSTR_PULSE_SERVERADDR, NULL) != NULL;
+    deadbeef->conf_unlock ();
+
+    if (!has_server2) {
+        deadbeef->conf_get_str ("pulse.serveraddr", "", server, sizeof (server));
+        // convert default
+        if (!strcasecmp (server, "default")) {
+            *server = 0;
+        }
+    }
+    else {
+        deadbeef->conf_get_str (CONFSTR_PULSE_SERVERADDR, "", server, sizeof (server));
+    }
 
     s = pa_simple_new(*server ? server : NULL, "Deadbeef", PA_STREAM_PLAYBACK, dev, "Music", &ss, &channel_map, attr, &error);
 
@@ -148,7 +164,7 @@ static int pulse_init(void)
 {
     trace ("pulse_init\n");
     deadbeef->mutex_lock (mutex);
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     trace ("pulse_terminate=%d\n", pulse_terminate);
     assert (!pulse_terminate);
 
@@ -180,14 +196,13 @@ static int pulse_setformat (ddb_waveformat_t *fmt)
         return 0;
     }
 
-    pa_simple_flush (s, NULL);
     pulse_free ();
     pulse_init ();
     int res = 0;
-    if (st == OUTPUT_STATE_PLAYING) {
+    if (st == DDB_PLAYBACK_STATE_PLAYING) {
         res = pulse_play ();
     }
-    else if (st == OUTPUT_STATE_PAUSED) {
+    else if (st == DDB_PLAYBACK_STATE_PAUSED) {
         res = pulse_pause ();
     }
 
@@ -198,7 +213,7 @@ static int pulse_free(void)
 {
     trace("pulse_free\n");
 
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
 
     deadbeef->mutex_lock(mutex);
     if (!pulse_tid) {
@@ -234,7 +249,7 @@ static int pulse_play(void)
     }
 
     pa_simple_flush (s, NULL);
-    state = OUTPUT_STATE_PLAYING;
+    state = DDB_PLAYBACK_STATE_PLAYING;
     deadbeef->mutex_unlock (mutex);
 
     return 0;
@@ -251,7 +266,7 @@ static int pulse_pause(void)
 {
     trace ("pulse_pause\n");
     pulse_free();
-    state = OUTPUT_STATE_PAUSED;
+    state = DDB_PLAYBACK_STATE_PAUSED;
     return 0;
 }
 
@@ -259,14 +274,14 @@ static int pulse_unpause(void)
 {
     trace ("pulse_unpause\n");
     deadbeef->mutex_lock (mutex);
-    if (state == OUTPUT_STATE_PAUSED)
+    if (state == DDB_PLAYBACK_STATE_PAUSED)
     {
         if (pulse_init () < 0)
         {
             deadbeef->mutex_unlock (mutex);
             return -1;
         }
-        state = OUTPUT_STATE_PLAYING;
+        state = DDB_PLAYBACK_STATE_PLAYING;
     }
 
     deadbeef->mutex_unlock (mutex);
@@ -280,9 +295,10 @@ static void pulse_thread(void *context)
     prctl(PR_SET_NAME, "deadbeef-pulse", 0, 0, 0, 0);
 #endif
 
+    trace ("pulse thread started \n");
     while (!pulse_terminate)
     {
-        if (state != OUTPUT_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1))
+        if (state != DDB_PLAYBACK_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1))
         {
             usleep(10000);
             continue;
@@ -321,9 +337,10 @@ static void pulse_thread(void *context)
     }
 
     deadbeef->mutex_lock (mutex);
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     if (s)
     {
+        pa_simple_drain (s, NULL);
         pa_simple_free(s);
         s = NULL;
     }
@@ -333,7 +350,7 @@ static void pulse_thread(void *context)
     trace ("pulse_thread finished\n");
 }
 
-static int pulse_get_state(void)
+static ddb_playback_state_t pulse_get_state(void)
 {
     return state;
 }
@@ -371,6 +388,7 @@ static DB_output_t plugin =
     .plugin.version_major = 0,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_OUTPUT,
+//    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .plugin.id = "pulseaudio",
     .plugin.name = "PulseAudio output plugin",
     .plugin.descr = "At the moment of this writing, PulseAudio seems to be very unstable in many (or most) GNU/Linux distributions.\nIf you experience problems - please try switching to ALSA or OSS output.\nIf that doesn't help - please uninstall PulseAudio from your system, and try ALSA or OSS again.\nThanks for understanding",

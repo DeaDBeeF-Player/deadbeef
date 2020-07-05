@@ -85,6 +85,16 @@ on_remove_playlist1_activate           (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     if (pltmenu_idx != -1) {
+        char title[500];
+        plt_get_title_wrapper (pltmenu_idx, title, sizeof (title));
+        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Removing playlist"));
+        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Do you really want to remove the playlist '%s'?"), title);
+        gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
+        int response = gtk_dialog_run (GTK_DIALOG (dlg));
+        gtk_widget_destroy (dlg);
+        if (response != GTK_RESPONSE_YES) {
+            return;
+        }
         deadbeef->plt_remove (pltmenu_idx);
         int playlist = deadbeef->plt_get_curr_idx ();
         deadbeef->conf_set_int ("playlist.current", playlist);
@@ -111,6 +121,22 @@ on_copy_playlist1_activate        (GtkMenuItem     *menuitem,
         if (playlist != -1) {
             gtkui_playlist_set_curr (playlist);
         }
+        deadbeef->plt_unref (plt);
+    }
+}
+
+static void
+on_autosort_toggled (GtkMenuItem     *menuitem,
+                    gpointer         user_data)
+{
+    if (pltmenu_idx < 0) {
+        return;
+    }
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+    if (plt) {
+        int enabled = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(menuitem));
+        deadbeef->plt_set_meta_int (plt, "autosort_enabled", enabled);
+        deadbeef->plt_unref (plt);
     }
 }
 
@@ -355,6 +381,7 @@ gtkui_create_pltmenu (int plt_idx) {
     GtkWidget *remove_playlist1;
     GtkWidget *add_new_playlist1;
     GtkWidget *copy_playlist1;
+    GtkWidget *autosort;
     GtkWidget *separator11;
     GtkWidget *cut;
     GtkWidget *cut_image;
@@ -395,6 +422,22 @@ gtkui_create_pltmenu (int plt_idx) {
     gtk_widget_show (copy_playlist1);
     gtk_container_add (GTK_CONTAINER (plmenu), copy_playlist1);
 
+    int autosort_enabled = 0;
+    if (pltmenu_idx >= 0) {
+        ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
+        if (plt) {
+            autosort_enabled = deadbeef->plt_find_meta_int (plt, "autosort_enabled", 0);
+            deadbeef->plt_unref (plt);
+        }
+    }
+    autosort = gtk_check_menu_item_new_with_label (_("Enable Autosort"));
+    gtk_check_menu_item_set_active (autosort, autosort_enabled);
+    gtk_widget_show (autosort);
+    gtk_container_add (GTK_CONTAINER (plmenu), autosort);
+    if (pltmenu_idx == -1) {
+        gtk_widget_set_sensitive (autosort, FALSE);
+    }
+    
     separator11 = gtk_separator_menu_item_new ();
     gtk_widget_show (separator11);
     gtk_container_add (GTK_CONTAINER (plmenu), separator11);
@@ -453,6 +496,9 @@ gtkui_create_pltmenu (int plt_idx) {
             NULL);
     g_signal_connect ((gpointer) add_new_playlist1, "activate",
             G_CALLBACK (on_add_new_playlist1_activate),
+            NULL);
+    g_signal_connect ((gpointer) autosort, "toggled",
+            G_CALLBACK (on_autosort_toggled),
             NULL);
     g_signal_connect ((gpointer) copy_playlist1, "activate",
             G_CALLBACK (on_copy_playlist1_activate),

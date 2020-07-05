@@ -65,9 +65,7 @@
 #include "albumartorg.h"
 #include "wos.h"
 #include "cache.h"
-#ifdef USE_MP4FF
-#include "mp4ff.h"
-#endif
+#include "mp4tagutil.h"
 #include "../../strdupa.h"
 
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin.plugin, 0, __VA_ARGS__); }
@@ -906,9 +904,9 @@ scale_file (const char *in, const char *out, int img_size)
         unlink (out);
     }
 #endif
-#endif
     cache_unlock ();
     return err;
+#endif
 }
 #endif
 
@@ -1251,14 +1249,6 @@ local_image_file (const char *local_path, const char *uri, DB_vfs_t *vfsplug, dd
                 return 0;
             }
         }
-        if (!scan_local_path ("*.jpg", path, uri, vfsplug, cover)
-            || !scan_local_path ("*.jpeg", path, uri, vfsplug, cover)
-            || !scan_local_path ("*.png", path, uri, vfsplug, cover)) {
-            free (filemask);
-            free (folders);
-            free (path);
-            return 0;
-        }
         free (path);
     }
 
@@ -1588,85 +1578,85 @@ apev2_extract_art (const char *fname, const char *outname, ddb_cover_info_t *cov
     return err;
 }
 
-#ifdef USE_MP4FF
-static uint32_t
-mp4_fp_read (void *user_data, void *buffer, uint32_t length) {
-    DB_FILE* stream = user_data;
-    uint32_t ret = (uint32_t)deadbeef->fread (buffer, 1, length, stream);
-    return ret;
-}
-
-static uint32_t
-mp4_fp_seek (void *user_data, uint64_t position) {
-    DB_FILE* stream = user_data;
-    return deadbeef->fseek (stream, (int64_t)position, SEEK_SET);
-}
-
 static int
 mp4_extract_art (const char *fname, const char *outname, ddb_cover_info_t *cover) {
     int ret = -1;
+    mp4p_atom_t *mp4file = NULL;
+    DB_FILE* fp = NULL;
+    uint8_t* image_blob = NULL;
+
     if (!strcasestr (fname, ".mp4") && !strcasestr (fname, ".m4a") && !strcasestr (fname, ".m4b")) {
         return -1;
     }
 
-    DB_FILE* fp = deadbeef->fopen (fname);
+    fp = deadbeef->fopen (fname);
     if (!fp) {
-        return -1;
+        goto error;
     }
 
-    mp4ff_callback_t cb = {
-        .read = mp4_fp_read,
-        .write = NULL,
-        .seek = mp4_fp_seek,
-        .truncate = NULL,
-        .user_data = fp
-    };
-    mp4ff_t *mp4 = mp4ff_open_read_coveronly (&cb);
-    if (!mp4) {
-        deadbeef->fclose (fp);
-        return -1;
+    mp4p_file_callbacks_t callbacks = {0};
+    callbacks.ptrhandle = fp;
+    mp4_init_ddb_file_callbacks (&callbacks);
+    mp4file = mp4p_open(&callbacks);
+    if (!mp4file) {
+        goto error;
     }
 
-    mp4ff_cover_art_t* art_list = mp4ff_cover_get (mp4);
-    mp4ff_cover_art_item_t *f;
-    mp4ff_cover_art_item_t *fprev = NULL;
-    for (f = art_list->items; f; f = f->next) {
-        if (!f->next) {
-            break;
-        }
-        fprev = f;
+    mp4p_atom_t *covr = mp4_get_cover_atom(mp4file);
+    if (!covr) {
+        goto error;
     }
-    if (f) {
-        uint32_t sz = f->size;
-        char* image_blob = f->data;
-        trace ("will write mp4 cover art (%u bytes) into %s\n", sz, outname);
-        if (!artwork_disable_cache) {
-            if (!write_file (outname, image_blob, sz)) {
-                ret = 0;
-                cover->filename = strdup (outname);
-            }
+
+    mp4p_ilst_meta_t *data = covr->data;
+
+    uint32_t sz = data->data_size;
+    image_blob = malloc (sz);
+    if (data->blob) {
+        image_blob = memcpy (image_blob, data->blob, sz);
+    }
+    else if (data->values) {
+        uint16_t *v = data->values;
+        for (size_t i = 0; i < sz/2; i++, v++) {
+            image_blob[i*2+0] = (*v) >> 8;
+            image_blob[i*2+1] = (*v) & 0xff;
         }
-        else {
-            // steal the frame memory from mp4ff_cover_art_t
-            art_list->tail = fprev;
-            if (fprev) {
-                fprev->next = NULL;
-            }
-            else {
-                art_list->items = NULL;
-            }
-            cover->blob = (char *)image_blob;
-            cover->blob_size = sz;
-            cover->blob_image_size = sz;
+    }
+    else {
+        goto error;
+    }
+
+    trace ("will write mp4 cover art (%u bytes) into %s\n", sz, outname);
+    if (!artwork_disable_cache) {
+        if (!write_file (outname, (char *)image_blob, sz)) {
             ret = 0;
+            cover->filename = strdup (outname);
         }
+        free (image_blob);
+        image_blob = NULL;
+    }
+    else {
+        cover->blob = (char *)image_blob;
+        image_blob = NULL;
+        cover->blob_size = data->data_size;
+        cover->blob_image_size = data->data_size;
+        ret = 0;
     }
 
-    mp4ff_close (mp4);
-    deadbeef->fclose (fp);
+error:
+    if (image_blob) {
+        free(image_blob);
+        image_blob = NULL;
+    }
+    if (mp4file) {
+        mp4p_atom_free_list (mp4file);
+        mp4file = NULL;
+    }
+    if (fp) {
+        deadbeef->fclose (fp);
+        fp = NULL;
+    }
     return ret;
 }
-#endif
 
 static int
 web_lookups (const char *artist, const char *album, const char *cache_path, ddb_cover_info_t *cover)
@@ -1806,6 +1796,29 @@ process_query (const char *filepath, const char *album, const char *artist, ddb_
 
     int islocal = deadbeef->is_local_file (filepath);
 
+    if (artwork_enable_local && islocal) {
+        char *fname_copy = strdup (filepath);
+        if (fname_copy) {
+            char *vfs_fname = vfs_path (fname_copy);
+            if (vfs_fname) {
+                /* Search inside scannable VFS containers */
+                DB_vfs_t *plugin = scandir_plug (vfs_fname);
+                if (plugin && !local_image_file (vfs_fname, fname_copy, plugin, cover)) {
+                    free (fname_copy);
+                    return 1;
+                }
+            }
+
+            /* Search in file directory */
+            if (!local_image_file (dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL, cover)) {
+                free (fname_copy);
+                return 1;
+            }
+
+            free (fname_copy);
+        }
+    }
+
     if (artwork_enable_embedded && islocal) {
 #ifdef USE_METAFLAC
         // try to load embedded from flac metadata
@@ -1827,35 +1840,10 @@ process_query (const char *filepath, const char *album, const char *artist, ddb_
             return 1;
         }
 
-#ifdef USE_MP4FF
         // try to load embedded from mp4
         trace ("trying to load artwork from mp4 tag for %s\n", filepath);
         if (!mp4_extract_art (filepath, cache_path, cover)) {
             return 1;
-        }
-#endif
-    }
-
-    if (artwork_enable_local && islocal) {
-        char *fname_copy = strdup (filepath);
-        if (fname_copy) {
-            char *vfs_fname = vfs_path (fname_copy);
-            if (vfs_fname) {
-                /* Search inside scannable VFS containers */
-                DB_vfs_t *plugin = scandir_plug (vfs_fname);
-                if (plugin && !local_image_file (vfs_fname, fname_copy, plugin, cover)) {
-                    free (fname_copy);
-                    return 1;
-                }
-            }
-
-            /* Search in file directory */
-            if (!local_image_file (dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL, cover)) {
-                free (fname_copy);
-                return 1;
-            }
-
-            free (fname_copy);
         }
     }
 
@@ -1970,13 +1958,26 @@ fetcher_thread (void *none)
         trace ("artwork fetcher: waiting for signal ...\n");
         // FIXME: use deadbeef->cond_wait
         pthread_cond_wait ((pthread_cond_t *)queue_cond, (pthread_mutex_t *)queue_mutex);
-        trace ("artwork fetcher: cond signalled, process queue\n");
+        trace ("artwork fetcher: cond signaled, process queue\n");
 
         /* Loop until queue is empty */
         while (queue) {
             deadbeef->mutex_unlock (queue_mutex);
 
             ddb_cover_query_t *info = queue->callbacks->info;
+
+            if (!info->track) {
+                deadbeef->mutex_lock (queue_mutex);
+                cover_query_t *query = query_pop ();
+                deadbeef->mutex_unlock (queue_mutex);
+
+                send_query_callbacks (query->callbacks, NULL);
+                query_free (query);
+
+                /* Look for what to do next */
+                deadbeef->mutex_lock (queue_mutex);
+                continue;
+            }
 
             /* Process this query, hopefully writing a file into cache */
             ddb_cover_info_t *cover = calloc (sizeof (ddb_cover_info_t), 1);
@@ -2007,6 +2008,10 @@ fetcher_thread (void *none)
             deadbeef->mutex_unlock (queue_mutex);
 
             if (!query) {
+                if (cover) {
+                    free (cover);
+                    cover = NULL;
+                }
                 break;
             }
 
@@ -2017,6 +2022,7 @@ fetcher_thread (void *none)
             }
             else {
                 trace ("artwork fetcher: no cover art found\n");
+                free (cover);
                 send_query_callbacks (query->callbacks, NULL);
             }
             query_free (query);
@@ -2052,33 +2058,31 @@ get_fetcher_preferences (void)
 
     artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
     artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
-    if (artwork_enable_local) {
-        deadbeef->conf_lock ();
-        const char *new_artwork_filemask = deadbeef->conf_get_str_fast ("artwork.filemask", NULL);
-        if (!new_artwork_filemask || !new_artwork_filemask[0]) {
-            new_artwork_filemask = DEFAULT_FILEMASK;
-        }
-        if (!strings_equal (artwork_filemask, new_artwork_filemask)) {
-            char *old_artwork_filemask = artwork_filemask;
-            artwork_filemask = strdup (new_artwork_filemask);
-            if (old_artwork_filemask) {
-                free (old_artwork_filemask);
-            }
-        }
-
-        const char *new_artwork_folders = deadbeef->conf_get_str_fast ("artwork.folders", NULL);
-        if (!new_artwork_folders || !new_artwork_folders[0]) {
-            new_artwork_folders = DEFAULT_FOLDERS;
-        }
-        if (!strings_equal (artwork_folders, new_artwork_folders)) {
-            char *old_artwork_folders = artwork_folders;
-            artwork_folders = strdup (new_artwork_folders);
-            if (old_artwork_folders) {
-                free (old_artwork_folders);
-            }
-        }
-        deadbeef->conf_unlock ();
+    deadbeef->conf_lock ();
+    const char *new_artwork_filemask = deadbeef->conf_get_str_fast ("artwork.filemask", NULL);
+    if (!new_artwork_filemask || !new_artwork_filemask[0]) {
+        new_artwork_filemask = DEFAULT_FILEMASK;
     }
+    if (!strings_equal (artwork_filemask, new_artwork_filemask)) {
+        char *old_artwork_filemask = artwork_filemask;
+        artwork_filemask = strdup (new_artwork_filemask);
+        if (old_artwork_filemask) {
+            free (old_artwork_filemask);
+        }
+    }
+
+    const char *new_artwork_folders = deadbeef->conf_get_str_fast ("artwork.folders", NULL);
+    if (!new_artwork_folders || !new_artwork_folders[0]) {
+        new_artwork_folders = DEFAULT_FOLDERS;
+    }
+    if (!strings_equal (artwork_folders, new_artwork_folders)) {
+        char *old_artwork_folders = artwork_folders;
+        artwork_folders = strdup (new_artwork_folders);
+        if (old_artwork_folders) {
+            free (old_artwork_folders);
+        }
+    }
+    deadbeef->conf_unlock ();
 #ifdef USE_VFS_CURL
     artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
     artwork_enable_mb = deadbeef->conf_get_int ("artwork.enable_musicbrainz", 0);
@@ -2149,6 +2153,7 @@ artwork_configchanged (void)
         ddb_cover_query_t *q = calloc (sizeof (ddb_cover_query_t), 1);
         q->user_data = &cache_reset_time;
         enqueue_query (q, cache_reset_callback);
+        q = NULL;
 
         artwork_abort_http_request ();
         deadbeef->mutex_unlock (queue_mutex);

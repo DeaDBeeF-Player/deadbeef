@@ -1,12 +1,16 @@
 convdata = \
-	convpresets/AAC_(Nero_FAAC).txt\
+	convpresets/AAC_VBR_192Kbps_(Nero_FAAC).txt\
+	convpresets/AAC_VBR_256Kbps_(Nero_FAAC).txt\
+	convpresets/AAC_VBR_320Kbps_(Nero_FAAC).txt\
 	convpresets/FLAC_(compression_level_5).txt\
 	convpresets/MP3_CBR_320_Kbps_(Lame).txt\
 	convpresets/MP3_VBR_192Kbps_(Lame).txt\
 	convpresets/MS_RIFF_WAV.txt\
 	convpresets/MusePack.txt\
 	convpresets/Ogg_FLAC.txt\
-	convpresets/Ogg_Vorbis_(-q_5).txt\
+	convpresets/Ogg_VBR_192Kbps.txt\
+	convpresets/Ogg_VBR_256Kbps.txt\
+	convpresets/Ogg_VBR_320Kbps.txt\
 	convpresets/Opus.txt\
 	convpresets/TTA.txt\
 	convpresets/WavPack.txt\
@@ -33,10 +37,10 @@ endif
 convdatadir = $(libdir)/deadbeef/convpresets
 convdata_DATA = $(convdata)
 
-converter_la_CFLAGS =  $(CFLAGS) -I@top_srcdir@/plugins/libmp4ff -std=c99 -fPIC -DUSE_TAGGING=1
+converter_la_CFLAGS =  $(CFLAGS) -I@top_srcdir@/external/mp4p/include -std=c99 -fPIC -DUSE_TAGGING=1
 converter_la_SOURCES = converter.c converter.h
 converter_la_LDFLAGS = -module -avoid-version
-converter_la_LIBADD = $(LDADD) ../../shared/libmp4tagutil.a ../libmp4ff/libmp4ff.a
+converter_la_LIBADD = $(LDADD) ../../shared/libmp4tagutil.a ../../external/libmp4p.a
 
 if HAVE_GTK2
 converter_gtk2_la_SOURCES = convgui.c interface.c support.c callbacks.h converter.h interface.h support.h

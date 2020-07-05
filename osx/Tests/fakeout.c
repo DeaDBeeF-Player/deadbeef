@@ -34,7 +34,7 @@
 #define trace(fmt,...)
 
 static DB_output_t plugin;
-DB_functions_t *deadbeef;
+static DB_functions_t *deadbeef;
 
 static intptr_t fakeout_tid;
 static int fakeout_terminate;
@@ -76,7 +76,7 @@ fakeout_unpause (void);
 int
 fakeout_init (void) {
     trace ("fakeout_init\n");
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     if (!_manual) {
         fakeout_terminate = 0;
         fakeout_tid = deadbeef->thread_start (fakeout_thread, NULL);
@@ -102,7 +102,7 @@ fakeout_free (void) {
             deadbeef->thread_join (fakeout_tid);
         }
         fakeout_tid = 0;
-        state = OUTPUT_STATE_STOPPED;
+        state = DDB_PLAYBACK_STATE_STOPPED;
         fakeout_terminate = 0;
     }
     return 0;
@@ -113,13 +113,13 @@ fakeout_play (void) {
     if (!fakeout_tid && !_manual) {
         fakeout_init ();
     }
-    state = OUTPUT_STATE_PLAYING;
+    state = DDB_PLAYBACK_STATE_PLAYING;
     return 0;
 }
 
 int
 fakeout_stop (void) {
-    state = OUTPUT_STATE_STOPPED;
+    state = DDB_PLAYBACK_STATE_STOPPED;
     deadbeef->streamer_reset (1);
     fakeout_free();
     return 0;
@@ -127,19 +127,19 @@ fakeout_stop (void) {
 
 int
 fakeout_pause (void) {
-    if (state == OUTPUT_STATE_STOPPED) {
+    if (state == DDB_PLAYBACK_STATE_STOPPED) {
         return -1;
     }
     // set pause state
-    state = OUTPUT_STATE_PAUSED;
+    state = DDB_PLAYBACK_STATE_PAUSED;
     return 0;
 }
 
 int
 fakeout_unpause (void) {
     // unset pause state
-    if (state == OUTPUT_STATE_PAUSED) {
-        state = OUTPUT_STATE_PLAYING;
+    if (state == DDB_PLAYBACK_STATE_PAUSED) {
+        state = DDB_PLAYBACK_STATE_PLAYING;
     }
     return 0;
 }
@@ -157,7 +157,7 @@ fakeout_thread (void *context) {
             break;
         }
 
-        if (state != OUTPUT_STATE_PLAYING) {
+        if (state != DDB_PLAYBACK_STATE_PLAYING) {
             usleep (10000);
             continue;
         }
@@ -177,7 +177,7 @@ fakeout_callback (char *stream, int len) {
     return bytesread;
 }
 
-int
+ddb_playback_state_t
 fakeout_get_state (void) {
     return state;
 }
@@ -241,7 +241,7 @@ fakeout_consume (int nbytes) {
             nbytes -= rb;
         }
         if (_realtime) {
-            usleep ((int64_t)n * 1000000 / (44100 * 4) * 2);
+            usleep ((uint64_t)n * 1000 / (44100 * 4) * 2);
         }
     }
 }

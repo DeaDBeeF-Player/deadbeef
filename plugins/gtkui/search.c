@@ -305,6 +305,7 @@ playlistswitch_cb (void) {
     if (listview) {
         ddb_listview_list_setup(listview, 0);
     }
+    return FALSE;
 }
 
 int
@@ -570,9 +571,9 @@ search_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it,
 }
 
 static void
-search_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height)
+search_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height, int group_depth)
 {
-    pl_common_draw_group_title (listview, drawable, it, PL_SEARCH, x, y, width, height);
+    pl_common_draw_group_title (listview, drawable, it, PL_SEARCH, x, y, width, height, group_depth);
 }
 
 void
@@ -654,6 +655,6 @@ search_playlist_init (GtkWidget *mainwin) {
     }
     search_binding.columns_changed = search_columns_changed;
 
-    pl_common_set_group_format (listview, "gtkui.search.group_by_tf");
+    pl_common_set_group_format (listview, "gtkui.search.group_by_tf", "gtkui.search.group_artwork_level", "gtkui.search.subgroup_title_padding");
     window_title_bytecode = deadbeef->tf_compile (_("Search [(%list_total% results)]"));
 }

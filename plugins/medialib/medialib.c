@@ -29,7 +29,7 @@
 #include "../../deadbeef.h"
 #include "medialib.h"
 
-DB_functions_t *deadbeef;
+static DB_functions_t *deadbeef;
 
 static int filter_id;
 static char *artist_album_bc;
@@ -317,8 +317,6 @@ ml_free_tree (tree_node_t *node) {
     free (node);
 }
 
-DB_playItem_t *(*plt_insert_dir) (ddb_playlist_t *plt, DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-
 static uintptr_t tid;
 static int scanner_terminate;
 static int scanner_file_idx = 0;
@@ -573,7 +571,7 @@ scanner_thread (void *none) {
 
     printf ("adding dir: %s\n", musicdir);
     deadbeef->plt_clear (ml_playlist);
-    plt_insert_dir (ml_playlist, NULL, musicdir, &scanner_terminate, add_file_info_cb, NULL);
+    deadbeef->plt_insert_dir (ml_playlist, NULL, musicdir, &scanner_terminate, add_file_info_cb, NULL);
     _ml_state = DDB_MEDIALIB_STATE_INDEXING;
     ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
     ml_index ();
@@ -1124,7 +1122,5 @@ DB_plugin_t *
 medialib_load (DB_functions_t *api) {
     deadbeef = api;
 
-    // hack: we need original function without overrides
-    plt_insert_dir = deadbeef->plt_insert_dir;
     return DB_PLUGIN (&plugin);
 }

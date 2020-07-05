@@ -87,7 +87,11 @@ preferences_fill_soundcards (void) {
     deadbeef->conf_unlock ();
 
     if (output_device_names) {
-        g_slist_free_full (output_device_names, g_free);
+        for (GSList *dev = output_device_names; dev; dev = dev->next) {
+            g_free (dev->data);
+            dev->data = NULL;
+        }
+        g_slist_free (output_device_names);
         output_device_names = NULL;
     }
     output_device_names = g_slist_append (output_device_names, g_strdup ("default"));
@@ -203,11 +207,11 @@ gtkui_run_preferences_dlg (void) {
     // output plugin selection
     combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_output_plugin"));
 
-    const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", "ALSA output plugin");
+    const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", "alsa");
     DB_output_t **out_plugs = deadbeef->plug_get_output_list ();
     for (int i = 0; out_plugs[i]; i++) {
         gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), out_plugs[i]->plugin.name);
-        if (!strcmp (outplugname, out_plugs[i]->plugin.name)) {
+        if (!strcmp (outplugname, out_plugs[i]->plugin.id)) {
             gtk_combo_box_set_active (combobox, i);
         }
     }
@@ -269,9 +273,13 @@ gtkui_run_preferences_dlg (void) {
 
     // preamp without rg
     set_scale("global_preamp", deadbeef->conf_get_int ("replaygain.preamp_without_rg", 0));
+    
     // dsp
     dsp_setup_init (prefwin);
 
+    // minimize_on_startup
+    set_toggle_button("minimize_on_startup", deadbeef->conf_get_int ("gtkui.start_hidden", 0));
+    
     // close_send_to_tray
     set_toggle_button("pref_close_send_to_tray", deadbeef->conf_get_int ("close_send_to_tray", 0));
 
@@ -283,6 +291,9 @@ gtkui_run_preferences_dlg (void) {
 
     // hide_delete_from_disk
     set_toggle_button("hide_delete_from_disk", deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0));
+    
+    // play next song when currently played is deleted
+    set_toggle_button("skip_deleted_songs", deadbeef->conf_get_int ("gtkui.skip_deleted_songs", 0));
 
     // auto-rename playlist from folder name
     set_toggle_button("auto_name_playlist_from_folder", deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 1));
@@ -501,9 +512,9 @@ on_pref_output_plugin_changed          (GtkComboBox     *combobox,
     DB_output_t *new = NULL;
 
     deadbeef->conf_lock ();
-    const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", "ALSA output plugin");
+    const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", "alsa");
     for (int i = 0; out_plugs[i]; i++) {
-        if (!strcmp (out_plugs[i]->plugin.name, outplugname)) {
+        if (!strcmp (out_plugs[i]->plugin.id, outplugname)) {
             prev = out_plugs[i];
         }
         if (i == active) {
@@ -517,7 +528,7 @@ on_pref_output_plugin_changed          (GtkComboBox     *combobox,
     }
     else {
         if (prev != new) {
-            deadbeef->conf_set_str ("output_plugin", new->plugin.name);
+            deadbeef->conf_set_str ("output_plugin", new->plugin.id);
             deadbeef->sendmessage (DB_EV_REINIT_SOUND, 0, 0, 0);
         }
     }
@@ -582,6 +593,19 @@ on_global_preamp_value_changed     (GtkRange        *range,
 }
 
 void
+on_minimize_on_startup_clicked     (GtkButton       *button,
+                                   gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
+    deadbeef->conf_set_int ("gtkui.start_hidden", active);
+    if (active == 1) {
+        set_toggle_button("hide_tray_icon", 0);
+        deadbeef->conf_set_int ("gtkui.hide_tray_icon", 0);
+    }
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
 on_pref_close_send_to_tray_clicked     (GtkButton       *button,
                                         gpointer         user_data)
 {
@@ -596,6 +620,10 @@ on_hide_tray_icon_toggled              (GtkToggleButton *togglebutton,
 {
     int active = gtk_toggle_button_get_active (togglebutton);
     deadbeef->conf_set_int ("gtkui.hide_tray_icon", active);
+    if (active == 1) {
+        set_toggle_button("minimize_on_startup", 0);
+        deadbeef->conf_set_int ("gtkui.start_hidden", 0);
+    }
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
@@ -1060,6 +1088,14 @@ on_hide_delete_from_disk_toggled       (GtkToggleButton *togglebutton,
 {
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
     deadbeef->conf_set_int ("gtkui.hide_remove_from_disk", active);
+}
+
+void
+on_skip_deleted_songs_toggled          (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("gtkui.skip_deleted_songs", active);
 }
 
 void

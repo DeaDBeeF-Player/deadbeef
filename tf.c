@@ -45,6 +45,9 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#ifdef HAVE_ALLOCA_H
+#include <alloca.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -53,14 +56,17 @@
 #include <inttypes.h>
 #include <math.h>
 #include <assert.h>
+#include <sys/stat.h>
 #include "streamer.h"
 #include "utf8.h"
 #include "playlist.h"
+#include "plmeta.h"
 #include "playqueue.h"
 #include "tf.h"
 #include "gettext.h"
 #include "plugins.h"
 #include "junklib.h"
+#include "external/wcwidth/wcwidth.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -72,10 +78,24 @@
 
 typedef struct {
     const char *i;
-    char *o;
+    uint8_t *o;
     int eol;
 } tf_compiler_t;
 
+/*
+ * String functions: Returns the number of bytes in the output buffer,
+ *                   not including a null terminator, which is not written.
+ * Integer functions: As with string functions. Returns a number in string format.
+ * Boolean functions: Returns a postive value to indicate truthiness,
+ *                    but with an empty output string (*out == 0).
+ *
+ * In any context, -1 indicates an error.
+ * The output string is sometimes, but not always, set to the empty string (*out == 0) in such cases.
+ * Use of TF_EVAL_CHECK will always ensure that the output string is always
+ * null terminated in such cases, once reached.
+ *
+ * @param outlen Available bytes in `out`, not including space for any terminating null.
+ */
 typedef int (*tf_func_ptr_t)(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef);
 
 #define TF_MAX_FUNCS 0xff
@@ -85,6 +105,11 @@ typedef struct {
     tf_func_ptr_t func;
 } tf_func_def;
 
+
+/*
+ * @param out output buffer to write to
+ * @param outlen Available bytes in the buffer `out`, not including the terminating null byte.
+ */
 static int
 tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int outlen, int *bool_out, int fail_on_undef);
 
@@ -100,7 +125,7 @@ if (res < 0) { *out = 0; return -1; }
 static playItem_t empty_track;
 // empty playlist is used when ctx.plt is null
 static playlist_t empty_playlist;
-// empty code is used when "code" argumen is null
+// empty code is used when "code" argument is null
 static char empty_code[4] = {0};
 
 static int
@@ -116,6 +141,9 @@ snprintf_clip (char *buf, size_t len, const char *fmt, ...) {
     return (int)min (n, len-1);
 }
 
+/*
+ * @param outlen bytes available in the buffer `out`, including the terminating null byte
+ */
 int
 tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
     if (
@@ -174,7 +202,7 @@ tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
         break;
     default:
         // tf_eval_int expects outlen to not include the terminating zero
-        l = tf_eval_int (ctx, code, codelen, out, outlen-1, &bool_out, 0);
+        TF_EVAL_CHECK(l, ctx, code, codelen, out, outlen - 1, 0);
         break;
     }
 
@@ -211,15 +239,16 @@ tf_func_greater (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const
 
     char a[10];
     int len;
-    TF_EVAL_CHECK(len, ctx, arg, arglens[0], a, sizeof (a), fail_on_undef);
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], a, sizeof (a) - 1, fail_on_undef);
 
     int aa = atoi (a);
 
     arg += arglens[0];
     char b[10];
-    TF_EVAL_CHECK(len, ctx, arg, arglens[1], b, sizeof (b), fail_on_undef);
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], b, sizeof (b) - 1, fail_on_undef);
     int bb = atoi (b);
 
+    *out = 0;
     return aa > bb;
 }
 
@@ -235,14 +264,137 @@ tf_func_strcmp (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const 
 
     char s1[1000];
     int len;
-    TF_EVAL_CHECK(len, ctx, arg, arglens[0], s1, sizeof (s1), fail_on_undef);
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], s1, sizeof (s1) - 1, fail_on_undef);
 
     arg += arglens[0];
     char s2[1000];
-    TF_EVAL_CHECK(len, ctx, arg, arglens[1], s2, sizeof (s2), fail_on_undef);
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], s2, sizeof (s2) - 1, fail_on_undef);
 
     int res = strcmp (s1, s2);
+    *out = 0;
     return !res;
+}
+
+int
+tf_func_stricmp (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 2) {
+        return -1;
+    }
+    const char *arg = args;
+
+    int bool_out = 0;
+
+    char s1[1000];
+    int len;
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], s1, sizeof (s1) - 1, fail_on_undef);
+
+    arg += arglens[0];
+    char s2[1000];
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], s2, sizeof (s2) - 1, fail_on_undef);
+
+    int res = u8_strcasecmp (s1, s2);
+    *out = 0;
+    return !res;
+}
+
+static int
+tf_prefix_helper (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef, int swap) {
+    if (argc == 0) {
+        return -1;
+    }
+
+    const char *arg = args;
+    int bool_out = 0;
+    int i;
+
+    char str[1000];
+    int len;
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], str, sizeof (str) - 1, fail_on_undef);
+    arg += arglens[0];
+
+    int prefix_count;
+    size_t buffer_size;
+    char *buf = NULL;
+
+    if (argc == 1) {
+        prefix_count = 2;
+        buffer_size = 0;
+    }
+    else {
+        prefix_count = argc - 1;
+        buffer_size = 2000;
+        buf = alloca(buffer_size);
+    }
+
+    const char *prefixes[prefix_count];
+    int prefix_lengths[prefix_count];
+
+    if (argc == 1) {
+        prefixes[0] = "A";
+        prefix_lengths[0] = 1;
+        prefixes[1] = "The";
+        prefix_lengths[1] = 3;
+    }
+    else {
+        char *ptr = buf;
+        for (i = 0; i < prefix_count; ++i) {
+            prefixes[i] = ptr;
+            TF_EVAL_CHECK (prefix_lengths[i], ctx, arg, arglens[i+1], ptr, (int)(buf+buffer_size-ptr-1), fail_on_undef);
+            ptr += prefix_lengths[i]+1;
+            arg += arglens[i+1];
+        }
+    }
+
+    for (i = 0; i < prefix_count; i++) {
+        if (prefix_lengths[i] + 1 > len) {
+            continue;
+        }
+
+        if (!strncasecmp(str, prefixes[i], prefix_lengths[i]) && str[prefix_lengths[i]] == ' ') {
+            int stripped_length = len - prefix_lengths[i] - 1;
+            int new_len;
+            if (swap) {
+                new_len = len + 1;
+            }
+            else {
+                new_len = stripped_length;
+            }
+
+            if (new_len > outlen) {
+                return -1;
+            }
+
+            memcpy(out, str + prefix_lengths[i] + 1, stripped_length);
+
+            if (swap) {
+                out[stripped_length] = ',';
+                out[stripped_length+1] = ' ';
+                memcpy(out+stripped_length+2, str, prefix_lengths[i]);
+            }
+
+            return new_len;
+        }
+    }
+
+    if (len > outlen) {
+        return -1;
+    }
+
+    memcpy(out, str, len);
+
+    return len;
+}
+
+// $stripprefix(str,...) strips a list of prefixes from a string. If no prefixes are supplied, 'A' and 'The' are used.
+int
+tf_func_stripprefix (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    return tf_prefix_helper (ctx, argc, arglens, args, out, outlen, fail_on_undef, 0);
+}
+
+// $swapprefix(str,...) moves a list of prefixes to the end of a string. If no prefixes are supplied, 'A' and 'The' are used.
+int
+tf_func_swapprefix (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    return tf_prefix_helper (ctx, argc, arglens, args, out, outlen, fail_on_undef, 1);
 }
 
 // $upper(str) converts a string to uppercase
@@ -256,7 +408,7 @@ tf_func_upper (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const c
 
     int len;
     char temp_str[1000];
-    TF_EVAL_CHECK(len, ctx, args, arglens[0], temp_str, sizeof (temp_str), fail_on_undef);
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], temp_str, sizeof (temp_str) - 1, fail_on_undef);
 
     char *pout = out;
     char *p = temp_str;
@@ -286,7 +438,7 @@ tf_func_lower (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const c
 
     int len;
     char temp_str[1000];
-    TF_EVAL_CHECK(len, ctx, args, arglens[0], temp_str, sizeof (temp_str), fail_on_undef);
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], temp_str, sizeof (temp_str) - 1, fail_on_undef);
 
     char *pout = out;
     char *p = temp_str;
@@ -384,7 +536,7 @@ tf_func_replace (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const
 
     for (i = 0; i < argc; ++i) {
         lines[i] = ptr;
-        TF_EVAL_CHECK (lens[i], ctx, arg, arglens[i], ptr, (int)(buf+sizeof(buf)-ptr), fail_on_undef);
+        TF_EVAL_CHECK (lens[i], ctx, arg, arglens[i], ptr, (int)(buf+sizeof(buf)-ptr-1), fail_on_undef);
         ptr += lens[i]+1;
         arg += arglens[i];
     }
@@ -441,7 +593,7 @@ tf_func_abbr (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const ch
         char num_chars_str[10];
         arg += arglens[0];
         int l;
-        TF_EVAL_CHECK(l, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str), fail_on_undef);
+        TF_EVAL_CHECK(l, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str) - 1, fail_on_undef);
         int num_chars = atoi (num_chars_str);
         if (len <= num_chars) {
             return len;
@@ -510,7 +662,7 @@ tf_func_ascii (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const c
 
     int len;
     char temp_str[1000];
-    TF_EVAL_CHECK(len, ctx, args, arglens[0], temp_str, sizeof (temp_str), fail_on_undef);
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], temp_str, sizeof (temp_str) - 1, fail_on_undef);
 
     len = junk_iconv (temp_str, len, out, outlen, "utf-8", "ascii");
 
@@ -613,7 +765,6 @@ tf_func_char (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const ch
         return -1;
     }
     len = u8_wc_toutf8 (out, n);
-    out[len] = 0;
     return len;
 }
 
@@ -709,7 +860,7 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const ch
     char num_chars_str[10];
     arg += arglens[0];
     int len;
-    TF_EVAL_CHECK(len, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str), fail_on_undef);
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str) - 1, fail_on_undef);
     int num_chars = atoi (num_chars_str);
     if (num_chars <= 0 || num_chars > outlen) {
         *out = 0;
@@ -719,7 +870,7 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const ch
     // get text
     char text[1000];
     arg = args;
-    TF_EVAL_CHECK(len, ctx, arg, arglens[0], text, sizeof (text), fail_on_undef);
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], text, sizeof (text) - 1, fail_on_undef);
 
     // convert num_chars to num_bytes
     int num_bytes = u8_offset(text, num_chars);
@@ -742,7 +893,7 @@ tf_func_repeat (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const 
     char num_chars_str[10];
     arg += arglens[0];
     int len;
-    TF_EVAL_CHECK(len, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str), fail_on_undef);
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str) - 1, fail_on_undef);
     int repeat_count = atoi (num_chars_str);
     if (repeat_count < 0) {
         *out = 0;
@@ -757,7 +908,7 @@ tf_func_repeat (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const 
     // get expr
     char text[1000];
     arg = args;
-    TF_EVAL_CHECK(len, ctx, arg, arglens[0], text, sizeof (text), fail_on_undef);
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], text, sizeof (text) - 1, fail_on_undef);
 
     int res=0;
     for (int i = 0; i < repeat_count; i++) {
@@ -785,18 +936,18 @@ tf_func_insert (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const 
     // get str
     char str[1000];
     arg = args;
-    TF_EVAL_CHECK(str_len, ctx, arg, arglens[0], str, sizeof (str), fail_on_undef);
+    TF_EVAL_CHECK(str_len, ctx, arg, arglens[0], str, sizeof (str) - 1, fail_on_undef);
     int str_chars = u8_strlen(str);
 
     // get insert
     char insert[1000];
     arg += arglens[0];
-    TF_EVAL_CHECK(insert_len, ctx, arg, arglens[1], insert, sizeof (insert), fail_on_undef);
+    TF_EVAL_CHECK(insert_len, ctx, arg, arglens[1], insert, sizeof (insert) - 1, fail_on_undef);
 
     // get insertion point
     char num_chars_str[10];
     arg += arglens[1];
-    TF_EVAL_CHECK(len, ctx, arg, arglens[2], num_chars_str, sizeof (num_chars_str), fail_on_undef);
+    TF_EVAL_CHECK(len, ctx, arg, arglens[2], num_chars_str, sizeof (num_chars_str) - 1, fail_on_undef);
     int insertion_point = atoi (num_chars_str);
     if (insertion_point < 0) {
         *out = 0;
@@ -846,10 +997,78 @@ tf_func_len (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
     return snprintf_clip(out, outlen, "%d", u8_strlen(out));
 }
 
+int
+tf_func_len2 (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1) {
+        return -1;
+    }
+
+    int bool_out = 0;
+    int len;
+
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+
+    int wcsz = 0;
+    int32_t i = 0;
+    uint32_t c;
+    while (out[i] && (c = u8_nextchar(out, &i)) != 0) {
+        wcsz += mk_wcwidth(c);
+    }
+
+    return snprintf_clip(out, outlen, "%d", wcsz);
+}
+
+int
+tf_func_extremest_impl(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef, int shortest) {
+    if (argc < 1) {
+        return -1;
+    }
+    int bool_out = 0;
+    int this_blen, this_clen;
+    int best_blen = arglens[0];
+    const char *pos = args;
+
+    char tmp[outlen + 1];
+
+    TF_EVAL_CHECK(best_blen, ctx, pos, arglens[0], out, outlen, fail_on_undef);
+    int best_clen = u8_strlen(out);
+
+    for (int i = 1; i != argc; ++i) {
+        pos += arglens[i - 1];
+        TF_EVAL_CHECK(this_blen, ctx, pos, arglens[i], tmp, outlen, fail_on_undef);
+        this_clen = u8_strlen(tmp);
+        if (shortest ? this_clen < best_clen : this_clen > best_clen) {
+            best_clen = this_clen;
+            best_blen = this_blen;
+            u8_strnbcpy(out, tmp, min(best_blen, outlen));
+       }
+    }
+
+    return best_blen;
+}
+
+int
+tf_func_shortest(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    return tf_func_extremest_impl(ctx, argc, arglens, args, out, outlen, fail_on_undef, 1);
+}
+
+int
+tf_func_longest(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    return tf_func_extremest_impl(ctx, argc, arglens, args, out, outlen, fail_on_undef, 0);
+}
+
+int
+tf_func_longer(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 2) {
+        return -1;
+    }
+    return tf_func_longest(ctx, argc, arglens, args, out, outlen, fail_on_undef);
+}
+
 // $pad(expr,len[, char]): If `expr` is shorter than len characters, the function adds `char` characters (if present otherwise
 // spaces) to the right of `expr` to make the result `len` characters long. Otherwise the function returns str unchanged.
 int
-tf_func_pad_impl (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef, int right) {
+tf_func_pad_impl (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef, int right, int cut) {
     if (argc < 1 || argc > 3) {
         return -1;
     }
@@ -861,13 +1080,13 @@ tf_func_pad_impl (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, cons
     int nb_pad_char=1;
 
     // get expr
-    char str[1000];
-    TF_EVAL_CHECK(str_len, ctx, args, arglens[0], str, sizeof(str), fail_on_undef);
+    char str[outlen];
+    TF_EVAL_CHECK(str_len, ctx, args, arglens[0], str, outlen, fail_on_undef);
 
     // get len
     char num_chars_str[10];
     arg += arglens[0];
-    TF_EVAL_CHECK(len, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str), fail_on_undef);
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str) - 1, fail_on_undef);
     int padlen_chars = atoi (num_chars_str);
     if (padlen_chars < 0) {
         *out = 0;
@@ -876,7 +1095,7 @@ tf_func_pad_impl (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, cons
     // get char
     if (argc == 3) {
         arg += arglens[1];
-        TF_EVAL_CHECK(len, ctx, arg, arglens[2], pad_char_str, sizeof (pad_char_str), fail_on_undef);
+        TF_EVAL_CHECK(len, ctx, arg, arglens[2], pad_char_str, sizeof (pad_char_str) - 1, fail_on_undef);
         // only accept first character
         nb_pad_char = u8_offset(pad_char_str, 1);
         pad_char_str[nb_pad_char] = 0;
@@ -885,8 +1104,11 @@ tf_func_pad_impl (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, cons
     int str_chars = u8_strlen(str);
 
     if (str_chars >= padlen_chars) {
-        u8_strnbcpy(out, str, min (str_len, outlen));
-        return str_len;
+        if (str_chars > padlen_chars && cut) {
+            // u8_strncpy has no limiter in byte units available. We rely on str being of size outlen above for safety
+            return u8_strncpy(out, str, padlen_chars);
+        }
+        return u8_strnbcpy(out, str, min (str_len, outlen));
     }
 
     int res=0,l;
@@ -914,20 +1136,474 @@ tf_func_pad_impl (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, cons
         res += l;
     }
 
-    out[res] = 0;
-    
     return res;
 }
 
 int
 tf_func_pad (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
-    return tf_func_pad_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 0);
+    return tf_func_pad_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 0, 0);
 }
 
 // $pad_right(expr,len[,char]): same as $pad but right aligns string
 int
 tf_func_pad_right (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
-    return tf_func_pad_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 1);
+    return tf_func_pad_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 1, 0);
+}
+
+// _cut variants: same as above, but truncates string if too long
+int
+tf_func_padcut (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    return tf_func_pad_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 0, 1);
+}
+
+int
+tf_func_padcut_right (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    return tf_func_pad_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 1, 1);
+}
+
+int
+tf_func_progress_impl(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef, int alt) {
+    if (argc != 5) {
+        return -1;
+    }
+
+    int bool_out = 0;
+    int len;
+
+    int progress, range;
+    int barsize;
+    char *notch;
+    char *bar;
+
+    const char *argpos = args;
+
+    TF_EVAL_CHECK(len, ctx, argpos, arglens[0], out, outlen - 1, fail_on_undef);
+    progress = atoi(out);
+    if (progress < 0) {
+        return -1;
+    }
+    argpos += arglens[0];
+
+    TF_EVAL_CHECK(len, ctx, argpos, arglens[1], out, outlen - 1, fail_on_undef);
+    range = atoi(out);
+    if (range < 0) {
+        return -1;
+    }
+    if (range == 0) {
+        range = 1;
+    }
+    argpos += arglens[1];
+
+    TF_EVAL_CHECK(len, ctx, argpos, arglens[2], out, outlen - 1, fail_on_undef);
+    barsize = atoi(out);
+    if (range < 0) {
+        return -1;
+    }
+    argpos += arglens[2];
+
+    TF_EVAL_CHECK(len, ctx, argpos, arglens[3], out, outlen - 1, fail_on_undef);
+    notch = strdup (out);
+    argpos += arglens[3];
+
+    len = tf_eval_int (ctx, argpos, arglens[4], out, outlen - 1, &bool_out, fail_on_undef);
+    if (len < 0) {
+        free (notch);
+        *out = 0;
+        return -1;
+    }
+    bar = strdup (out);
+    argpos += arglens[4];
+
+    int replaced = progress * barsize / range;
+    /*
+     * Alt mode fills a bar. Normal mode draws a single notch.
+     * This adjustment sets what happens once we've reached the end, whether we should:
+     *   - fill up completely, or
+     *   - replace the last character.
+     */
+    if (!alt && replaced >= barsize) {
+        replaced = barsize - 1;
+    }
+    char *cur = out;
+    int remaining = outlen;
+    for (int i = 0; i != barsize; ++i) {
+        /*
+         * Experimenting in fb2k, it looks like:
+         * What would strictly precede the mark's normal mode position gets marked in alt mode,
+         * with the exception of a full bar.
+         */
+        // Try to replicate this.
+        char *p = NULL;
+        if (alt ? i < replaced : i == replaced) {
+            p = notch;
+        } else {
+            p = bar;
+        }
+        size_t l = min(strlen (p), remaining);
+        l = u8_strncpy (cur, p, (int)l);
+        cur += l;
+        remaining -= l;
+    }
+
+    free (bar);
+    free (notch);
+
+    return outlen - remaining;
+}
+
+int
+tf_func_progress (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    return tf_func_progress_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 0);
+}
+
+int
+tf_func_progress2 (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    return tf_func_progress_impl (ctx, argc, arglens, args, out, outlen, fail_on_undef, 1);
+}
+
+int
+tf_func_right (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 2) {
+        return -1;
+    }
+
+    int bool_out = 0;
+    int len;
+
+    TF_EVAL_CHECK(len, ctx, args + arglens[0], arglens[1], out, outlen, fail_on_undef);
+    int desired_chars = atoi(out);
+    if (desired_chars < 0) {
+        return -1;
+    }
+
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+    int clen = u8_strlen(out);
+
+    if (clen < desired_chars) {
+        return len;
+    }
+
+    int32_t index = 0;
+    for (int remaining = clen - desired_chars; remaining; --remaining) {
+        u8_nextchar(out, &index);
+    }
+
+    int newblen = len - index;
+
+    memmove(out, out + index, newblen);
+    return newblen;
+}
+
+int
+tf_func_roman (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1) {
+        return -1;
+    }
+
+    int bool_out = 0;
+    int len;
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+    int value = atoi(out);
+    // fb2k (presumably, it goes off my screen) formats 100000; but not 100001
+    if (value < 0 || value > 100000) {
+        return -1;
+    }
+
+    int pos = 0;
+    while (pos < outlen - 1) {
+        if (value <= 0) {
+            break;
+        }
+        if (value >= 1000) {
+            out[pos++] = 'M';
+            value -= 1000;
+        } else if (value >= 900) {
+            out[pos++] = 'C';
+            value += 100;
+        } else if (value >= 500) {
+            out[pos++] = 'D';
+            value -= 500;
+        } else if (value >= 400) {
+            out[pos++] = 'C';
+            value += 100;
+        } else if (value >= 100) {
+            out[pos++] = 'C';
+            value -= 100;
+        } else if (value >= 90) {
+            out[pos++] = 'X';
+            value += 10;
+        } else if (value >= 50) {
+            out[pos++] = 'L';
+            value -= 50;
+        } else if (value >= 40) {
+            out[pos++] = 'X';
+            value += 10;
+        } else if (value >= 10) {
+            out[pos++] = 'X';
+            value -= 10;
+        } else if (value >= 9) {
+            out[pos++] = 'I';
+            value += 1;
+        } else if (value >= 5) {
+            out[pos++] = 'V';
+            value -= 5;
+        } else if (value >= 4) {
+            out[pos++] = 'I';
+            value += 1;
+        } else if (value >= 1) {
+            out[pos++] = 'I';
+            value -= 1;
+        }
+    }
+
+    return pos;
+}
+
+int
+tf_func_rot13 (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1) {
+        return -1;
+    }
+
+    int bool_out = 0;
+    int len;
+
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+
+    int32_t offset = 0;
+    while (offset < outlen && out[offset]) {
+        char c = out[offset];
+        if (c >= 'A' && c <= 'M') {
+            out[offset++] += 13;
+        } else if (c >= 'N' && c <= 'Z') {
+            out[offset++] -= 13;
+        } else if (c >= 'a' && c <= 'm') {
+            out[offset++] += 13;
+        } else if (c >= 'n' && c <= 'z') {
+            out[offset++] -= 13;
+        } else {
+            u8_nextchar(out, &offset);
+        }
+    }
+
+    return offset;
+}
+
+int
+tf_func_strchr(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc < 1) {
+        return -1;
+    }
+
+    int bool_out = 0;
+    int len;
+
+    TF_EVAL_CHECK(len, ctx, args + arglens[0], arglens[1], out, outlen, fail_on_undef);
+    int dummy = 0;
+    // fb2k permits strings with many characters as the needle, but uses exactly the first character from them.
+    uint32_t needle = u8_nextchar(out, &dummy);
+
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+
+    int32_t charpos;
+    char *pos = u8_strchr(out, needle, &charpos);
+
+    if (!pos) {
+        // 0 is used to indicate not found
+        charpos = 0;
+    } else {
+        // Convert from 0- to 1- based indexing.
+        charpos += 1;
+    }
+
+    return snprintf_clip(out, outlen, "%" PRId32, charpos);
+}
+
+int
+tf_func_strrchr(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc < 1) {
+        return -1;
+    }
+
+    int bool_out = 0;
+    int len;
+
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+
+    char str[10];
+    TF_EVAL_CHECK(len, ctx, args + arglens[0], arglens[1], str, sizeof(str) - 1, fail_on_undef);
+    int dummy = 0;
+    uint32_t needle = u8_nextchar(str, &dummy);
+
+    int32_t acc = 0, charpos;
+    char *pos = out;
+    do {
+        pos = u8_strchr(pos, needle, &charpos);
+        if (pos) {
+            /*
+             * Simultaneously and efficiently:
+             * - prevent finding the same character repeatedly
+             * - preserve 0 = not found as a return string
+             * - convert from 0- to 1- based indexing
+             * The second and third points are effected on the first iteration,
+             * with the +1 on the accumulator converting indexing and marking
+             * found when found.
+             * The first point is effected on later iterations, with the +1 on
+             * the accumulator covering the increment in character position
+             * from the previous iteration.
+             */
+            acc += charpos + 1;
+            pos = pos + 1;
+        }
+    } while (pos);
+
+    return snprintf_clip(out, outlen, "%" PRId32, acc);
+}
+
+int
+tf_func_strstr(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 2) {
+        return -1;
+    }
+
+    int bool_out = 0;
+    int len;
+
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+
+    char needle[1000];
+
+    TF_EVAL_CHECK(len, ctx, args + arglens[0], arglens[1], needle, sizeof(needle) - 1, fail_on_undef);
+
+    char *pos = strstr(out, needle);
+
+    int clen = 0;
+    if (pos) {
+        /*
+         * Terminate the string at the occurrence of the needle, then find the new
+         * overall length to find the offset in characters
+         */
+        *pos = 0;
+        clen = u8_strlen(out);
+        // Convert from 0-based offset to 1-based indexing
+        clen += 1;
+    }
+    return snprintf_clip(out, outlen, "%d", clen);
+}
+
+// fb2k uses 1-based indexing for $substr, with both points inclusive, and all arguments mandatory.
+int
+tf_func_substr(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 3) {
+        return -1;
+    }
+
+    int bool_out = 0;
+    int len;
+
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+
+    char str[10];
+    TF_EVAL_CHECK(len, ctx, args + arglens[0], arglens[1], str, sizeof(str) - 1, fail_on_undef);
+    int from = atoi(str);
+    if (from <= 0) {
+        // fb2k tolerates negative 'from' values
+        from = 1;
+    }
+    // Convert to a 0-based offset
+    from -= 1;
+
+    char *temp = malloc (outlen);
+    TF_EVAL_CHECK(len, ctx, args + arglens[0] + arglens[1], arglens[2], temp, outlen, fail_on_undef);
+    int to = atoi(temp);
+    free (temp);
+    if (to <= 0) {
+        // If we don't want anything, finish early
+        return 0;
+    }
+    // Convert to a 0-based offset
+    to -= 1;
+
+    int bpos = 0;
+    int chars;
+    for (chars = 0; out[bpos] && chars != from; ++chars) {
+        u8_nextchar(out, &bpos);
+    }
+    int bfrom = bpos;
+
+    for ( ; out[bpos] && chars <= to; ++chars) {
+        u8_nextchar(out, &bpos);
+    }
+    int bto = bpos;
+
+    int bdiff = bto - bfrom;
+
+    memmove(out, out + bfrom, bdiff);
+
+    return bdiff;
+
+}
+
+int
+tf_func_tab(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc > 1) {
+        return -1;
+    }
+
+    volatile int amount = 1;
+    if (argc == 1) {
+        int bool_out = 0;
+        int len;
+
+        char str[10];
+        TF_EVAL_CHECK(len, ctx, args, arglens[0], str, sizeof(str) - 1, fail_on_undef);
+        amount = atoi(str);
+        if (amount < 0) {
+            return -1;
+        }
+    }
+    if (amount > outlen) {
+        amount = outlen;
+    }
+
+    memset(out, '\t', amount);
+    return amount;
+}
+
+int
+tf_func_trim(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc == 0) {
+        return 0;
+    }
+    if (argc != 1) {
+        return -1;
+    }
+
+    int bool_out = 0;
+    int len;
+
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+
+    int bfrom = -1, bto = 0;
+
+    for (int offset = 0; offset != len && out[offset]; ) {
+        const int last = offset;
+        u8_nextchar(out, &offset);
+        if (out[last] != ' ') {
+            if (bfrom == -1) {
+                bfrom = last;
+            }
+            bto = offset;
+        }
+    }
+
+    if (bfrom == -1) {
+        return 0;
+    }
+
+    int bdiff = bto - bfrom;
+    memmove(out, out + bfrom, bdiff);
+    return bdiff;
 }
 
 int
@@ -947,7 +1623,7 @@ tf_func_directory (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, con
     if (argc == 2) {
         char temp[20];
         args += arglens[0];
-        TF_EVAL_CHECK(len, ctx, args, arglens[1], temp, sizeof (temp), fail_on_undef);
+        TF_EVAL_CHECK(len, ctx, args, arglens[1], temp, sizeof (temp) - 1, fail_on_undef);
         levels = atoi (temp);
         if (levels < 0) {
             return -1;
@@ -998,7 +1674,6 @@ tf_func_directory (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, con
     }
 
     memmove (out, start, end-start);
-    out[end-start] = 0;
     return (int)(end-start);
 }
 
@@ -1027,7 +1702,6 @@ tf_func_directory_path (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens
     }
 
     p++;
-    *p = 0;
     return (int)(p-out);
 }
 
@@ -1575,6 +2249,7 @@ tf_func_or (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char
         int len;
         TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
         if (bool_out) {
+            *out = 0;
             return 1;
         }
         arg += arglens[i];
@@ -1592,6 +2267,7 @@ tf_func_not (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
 
     int len;
     TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
+    *out = 0;
     return !bool_out;
 }
 
@@ -1632,7 +2308,7 @@ tf_func_fix_eol (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const
     char ind[1000];
     int indlen = sizeof (ind);
     if (argc == 2) {
-        TF_EVAL_CHECK(indlen, ctx, args + arglens[0], arglens[1], ind, indlen, fail_on_undef);
+        TF_EVAL_CHECK(indlen, ctx, args + arglens[0], arglens[1], ind, indlen - 1, fail_on_undef);
     }
     else {
         strcpy (ind, " (...)");
@@ -1747,23 +2423,43 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "crc32", tf_func_crc32 },
     { "crlf", tf_func_crlf },
     { "cut", tf_func_left },
-    { "left", tf_func_left }, // alias of 'cut'
     { "directory", tf_func_directory },
     { "directory_path", tf_func_directory_path },
     { "ext", tf_func_ext },
     { "filename", tf_func_filename },
     { "fix_eol", tf_func_fix_eol },
     { "hex", tf_func_hex },
-    { "strcmp", tf_func_strcmp },
-    { "upper", tf_func_upper },
+    { "insert", tf_func_insert },
+    { "left", tf_func_left }, // alias of 'cut'
+    { "len", tf_func_len },
+    { "len2", tf_func_len2 },
+    { "longer", tf_func_longer },
+    { "longest", tf_func_longest },
     { "lower", tf_func_lower },
     { "num", tf_func_num },
-    { "replace", tf_func_replace },
-    { "repeat", tf_func_repeat },
-    { "insert", tf_func_insert },
-    { "len", tf_func_len },
     { "pad", tf_func_pad },
     { "pad_right", tf_func_pad_right },
+    { "padcut", tf_func_padcut },
+    { "padcut_right", tf_func_padcut_right },
+    { "progress", tf_func_progress },
+    { "progress2", tf_func_progress2 },
+    { "repeat", tf_func_repeat },
+    { "replace", tf_func_replace },
+    { "right", tf_func_right },
+    { "roman", tf_func_roman },
+    { "rot13", tf_func_rot13 },
+    { "shortest", tf_func_shortest },
+    { "strchr", tf_func_strchr },
+    { "strcmp", tf_func_strcmp },
+    { "stricmp", tf_func_stricmp },
+    { "stripprefix", tf_func_stripprefix },
+    { "strrchr", tf_func_strrchr },
+    { "strstr", tf_func_strstr },
+    { "substr", tf_func_substr },
+    { "swapprefix", tf_func_swapprefix },
+    { "tab", tf_func_tab },
+    { "trim", tf_func_trim },
+    { "upper", tf_func_upper },
     // Track info
     { "meta", tf_func_meta },
     { "channels", tf_func_channels },
@@ -1772,7 +2468,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
 
 static const char *
 _tf_get_combined_value (playItem_t *it, const char *key, int *needs_free) {
-    DB_metaInfo_t *meta = pl_meta_for_key (it, key);
+    DB_metaInfo_t *meta = pl_meta_for_key_with_override (it, key);
 
     if (!meta) {
         *needs_free = 0;
@@ -1839,6 +2535,11 @@ format_playback_time (char *out, int outlen, float t) {
     return len;
 }
 
+/*
+ * @param outlen bytes available in the buffer `out`, not including the terminating null byte
+ * @returns bytes written to `out`, not including the terminating null byte,
+ *          which is always written on nonnegative return
+ */
 static int
 tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int outlen, int *bool_out, int fail_on_undef) {
     playItem_t *it = (playItem_t *)ctx->it;
@@ -1850,6 +2551,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
 
     while (size) {
         if (*code) {
+            // Plain text
             int len = u8_charcpy (out, code, outlen);
             if (len == 0) {
                 break;
@@ -1860,21 +2562,24 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
             outlen -= len;
         }
         else {
+            // Start of special block
             code++;
             size--;
             if (*code == 1) {
+                // Function call
                 code++;
                 size--;
                 tf_func_ptr_t func = tf_funcs[*code].func;
                 code++;
                 size--;
                 uint16_t *arglens = NULL;
-                if (*code) {
+                char numargs = *code;
+                if (numargs) {
                     // copy arg lengths, to make sure they're aligned
-                    arglens = alloca (*code * sizeof (uint16_t));
-                    memcpy (arglens, code+1, *code * sizeof (uint16_t));
+                    arglens = alloca (numargs * sizeof (uint16_t));
+                    memcpy (arglens, code+1, numargs * sizeof (uint16_t));
                 };
-                int res = func (ctx, code[0], arglens, code+1+code[0]*sizeof (uint16_t), out, outlen, fail_on_undef);
+                int res = func (ctx, numargs, arglens, code+1+numargs*sizeof (uint16_t), out, outlen, fail_on_undef);
                 if (res == -1) {
                     return -1;
                 }
@@ -1889,14 +2594,15 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 out += res;
                 outlen -= res;
 
-                int blocksize = 1 + code[0]*2;
-                for (int i = 0; i < code[0]; i++) {
+                int blocksize = 1 + numargs*2;
+                for (int i = 0; i < numargs; i++) {
                     blocksize += arglens[i];
                 }
                 code += blocksize;
                 size -= blocksize;
             }
             else if (*code == 2) {
+                // Meta field
                 code++;
                 size--;
                 uint8_t len = *code;
@@ -1921,7 +2627,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 int skip_out = 0;
 
                 // temp vars used for strcmp optimizations
-                int tmp_a = 0, tmp_b = 0, tmp_c = 0, tmp_d = 0;
+                int tmp_a = 0, tmp_b = 0, tmp_c = 0, tmp_d = 0, tmp_e = 0;
 
                 if (!strcmp (name, aa_fields[0])) {
                     for (int i = 0; !val && aa_fields[i]; i++) {
@@ -1962,11 +2668,14 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                             }
                             p++;
                         }
-                        if (p > v) {
-                            int len = snprintf_clip (out, outlen, "%02d", atoi(v));
-                            out += len;
-                            outlen -= len;
+                        if (p > v && *p == 0 && p-v == 1) {
+                            int l = snprintf_clip (out, outlen, "%02d", atoi(v));
+                            out += l;
+                            outlen -= l;
                             skip_out = 1;
+                        }
+                        else {
+                            val = v;
                         }
                     }
                 }
@@ -1989,7 +2698,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                             const char *end = strrchr (start, '.');
                             if (end) {
                                 int n = (int)(end-start);
-                                n = min ((int)(end-start), outlen);
+                                n = min (n, outlen);
                                 n = u8_strnbcpy (out, start, n);
                                 outlen -= n;
                                 out += n;
@@ -2006,19 +2715,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 else if (!strcmp (name, "track number")) {
                     const char *v = pl_find_meta_raw (it, "track");
                     if (v) {
-                        const char *p = v;
-                        while (*p) {
-                            if (!isdigit (*p)) {
-                                break;
-                            }
-                            p++;
-                        }
-                        if (p > v) {
-                            int len = snprintf_clip (out, outlen, "%d", atoi(v));
-                            out += len;
-                            outlen -= len;
-                            skip_out = 1;
-                        }
+                        val = v;
                     }
                 }
                 else if (!strcmp (name, "date")) {
@@ -2034,9 +2731,9 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     if (playing_track) {
                         int br = streamer_get_apx_bitrate();
                         if (br >= 0) {
-                            int len = snprintf_clip (out, outlen, "%d", br);
-                            out += len;
-                            outlen -= len;
+                            int l = snprintf_clip (out, outlen, "%d", br);
+                            out += l;
+                            outlen -= l;
                             skip_out = 1;
                         }
                         pl_item_unref (playing_track);
@@ -2052,24 +2749,24 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     const char *v = pl_find_meta_raw (it, ":FILE_SIZE");
                     if (v) {
                         int64_t bs = atoll (v);
-                        int len;
+                        int l;
                         if (bs >= 1024*1024*1024) {
                             double gb = (double)bs / (double)(1024*1024*1024);
-                            len = snprintf_clip (out, outlen, "%.3lf GB", gb);
+                            l = snprintf_clip (out, outlen, "%.3lf GB", gb);
                         }
                         else if (bs >= 1024*1024) {
                             double mb = (double)bs / (double)(1024*1024);
-                            len = snprintf_clip (out, outlen, "%.3lf MB", mb);
+                            l = snprintf_clip (out, outlen, "%.3lf MB", mb);
                         }
                         else if (bs >= 1024) {
                             double kb = (double)bs / (double)(1024);
-                            len = snprintf_clip (out, outlen, "%.3lf KB", kb);
+                            l = snprintf_clip (out, outlen, "%.3lf KB", kb);
                         }
                         else {
-                            len = snprintf_clip (out, outlen, "%lld B", bs);
+                            l = snprintf_clip (out, outlen, "%lld B", bs);
                         }
-                        out += len;
-                        outlen -= len;
+                        out += l;
+                        outlen -= l;
                         skip_out = 1;
                     }
                 }
@@ -2091,7 +2788,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 else if (!strcmp (name, "replaygain_track_peak")) {
                     val = pl_find_meta_raw (it, ":REPLAYGAIN_TRACKPEAK");
                 }
-                else if ((tmp_a = !strcmp (name, "playback_time")) || (tmp_b = !strcmp (name, "playback_time_seconds")) || (tmp_c = !strcmp (name, "playback_time_remaining")) || (tmp_d = !strcmp (name, "playback_time_remaining_seconds"))) {
+                else if ((tmp_a = !strcmp (name, "playback_time")) || (tmp_b = !strcmp (name, "playback_time_seconds")) || (tmp_c = !strcmp (name, "playback_time_remaining")) || (tmp_d = !strcmp (name, "playback_time_remaining_seconds")) || (tmp_e = !strcmp (name, "playback_time_ms"))) {
                     playItem_t *playing = streamer_get_playing_track ();
                     if (it && playing == it && !(ctx->flags & DDB_TF_CONTEXT_NO_DYNAMIC)) {
                         float t = streamer_get_playpos ();
@@ -2100,27 +2797,37 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                             t = dur - t;
                         }
                         if (t >= 0) {
-                            int len = 0;
-                            if (tmp_a || tmp_c) {
-                                int hr = t/3600;
-                                int mn = (t-hr*3600)/60;
-                                int sc = t-hr*3600-mn*60;
-                                if (hr) {
-                                    len = snprintf_clip (out, outlen, "%d:%02d:%02d", hr, mn, sc);
-                                }
-                                else {
-                                    len = snprintf_clip (out, outlen, "%d:%02d", mn, sc);
+                            int l = 0;
+                            if (tmp_a || tmp_c || tmp_e) {
+                                int hr = (int)(t/3600);
+                                int mn = (int)((t-hr*3600)/60);
+                                int sc = (int)(t-hr*3600-mn*60);
+                                if (tmp_e) {
+                                    int ms = (int)((t-hr*3600-mn*60-sc)*1000);
+                                    if (hr) {
+                                        l = snprintf_clip (out, outlen, "%d:%02d:%02d.%03d", hr, mn, sc, ms);
+                                    }
+                                    else {
+                                        l = snprintf_clip (out, outlen, "%d:%02d.%03d", mn, sc, ms);
+                                    }
+                                } else {
+                                    if (hr) {
+                                        l = snprintf_clip (out, outlen, "%d:%02d:%02d", hr, mn, sc);
+                                    }
+                                    else {
+                                        l = snprintf_clip (out, outlen, "%d:%02d", mn, sc);
+                                    }
                                 }
                             }
                             else if (tmp_b || tmp_d) {
-                                len = snprintf_clip (out, outlen, "%0.2f", t);
+                                l = snprintf_clip (out, outlen, "%0.2f", t);
                             }
-                            out += len;
-                            outlen -= len;
+                            out += l;
+                            outlen -= l;
                             skip_out = 1;
                             // notify the caller about update interval
                             if (!ctx->update || (ctx->update > 1000)) {
-                                ctx->update = 1000;
+                                ctx->update = tmp_e ? 100 : 1000;
                             }
                         }
                     }
@@ -2137,51 +2844,51 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                         t = roundf(t * 1000) / 1000.f;
                     }
                     if (t >= 0) {
-                        int hr = t/3600;
-                        int mn = (t-hr*3600)/60;
-                        int sc = tmp_a ? t-hr*3600-mn*60 : t-hr*3600-mn*60;
-                        int ms = tmp_b ? (t-hr*3600-mn*60-sc) * 1000.f : 0;
-                        int len = 0;
+                        int hr = (int)(t/3600);
+                        int mn = (int)((t-hr*3600)/60);
+                        int sc = (int)(tmp_a ? t-hr*3600-mn*60 : t-hr*3600-mn*60);
+                        int ms = (int)(tmp_b ? (t-hr*3600-mn*60-sc) * 1000.f : 0);
+                        int l = 0;
                         if (tmp_a) {
                             if (hr) {
-                                len = snprintf_clip (out, outlen, "%d:%02d:%02d", hr, mn, sc);
+                                l = snprintf_clip (out, outlen, "%d:%02d:%02d", hr, mn, sc);
                             }
                             else {
-                                len = snprintf_clip (out, outlen, "%d:%02d", mn, sc);
+                                l = snprintf_clip (out, outlen, "%d:%02d", mn, sc);
                             }
                         }
                         else if (tmp_b) {
                             if (hr) {
-                                len = snprintf_clip (out, outlen, "%d:%02d:%02d.%03d", hr, mn, sc, ms);
+                                l = snprintf_clip (out, outlen, "%d:%02d:%02d.%03d", hr, mn, sc, ms);
                             }
                             else {
-                                len = snprintf_clip (out, outlen, "%d:%02d.%03d", mn, sc, ms);
+                                l = snprintf_clip (out, outlen, "%d:%02d.%03d", mn, sc, ms);
                             }
                         }
-                        out += len;
-                        outlen -= len;
+                        out += l;
+                        outlen -= l;
                         skip_out = 1;
                     }
                 }
                 else if ((tmp_a = !strcmp (name, "length_seconds") || (tmp_b = !strcmp (name, "length_seconds_fp")))) {
                     float t = pl_get_item_duration (it);
                     if (t >= 0) {
-                        int len;
+                        int l;
                         if (tmp_a) {
-                            len = snprintf_clip (out, outlen, "%d", (int)roundf(t));
+                            l = snprintf_clip (out, outlen, "%d", (int)roundf(t));
                         }
                         else {
-                            len = snprintf_clip (out, outlen, "%0.3f", t);
+                            l = snprintf_clip (out, outlen, "%0.3f", t);
                         }
-                        out += len;
-                        outlen -= len;
+                        out += l;
+                        outlen -= l;
                         skip_out = 1;
                     }
                 }
                 else if (!strcmp (name, "length_samples")) {
-                    int len = snprintf_clip (out, outlen, "%lld", pl_item_get_endsample ((playItem_t *)ctx->it) - pl_item_get_startsample ((playItem_t *)ctx->it));
-                    out += len;
-                    outlen -= len;
+                    int l = snprintf_clip (out, outlen, "%lld", pl_item_get_endsample ((playItem_t *)ctx->it) - pl_item_get_startsample ((playItem_t *)ctx->it));
+                    out += l;
+                    outlen -= l;
                     skip_out = 1;
                 }
                 else if ((tmp_a = !strcmp (name, "isplaying")) || (tmp_b = !strcmp (name, "ispaused"))) {
@@ -2189,8 +2896,8 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     
                     if (playing && 
                             (
-                            (tmp_a && plug_get_output ()->state () == OUTPUT_STATE_PLAYING)
-                            || (tmp_b && plug_get_output ()->state () == OUTPUT_STATE_PAUSED)
+                            (tmp_a && plug_get_output ()->state () == DDB_PLAYBACK_STATE_PLAYING)
+                            || (tmp_b && plug_get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED)
                             )) {
                         *out++ = '1';
                         outlen--;
@@ -2248,8 +2955,67 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                         }
                     }
                 }
+                else if (!strcmp (name, "last_modified")) {
+                    const char *v = pl_find_meta_raw (it, ":URI");
+                    if (v) {
+                        if (!strncmp (v, "file://", 7)) {
+                            v += 7;
+                        }
+                        struct stat sb;
+                        struct tm localtm;
+                        char mtime[20];
+                        if (!stat (v, &sb) && localtime_r (&sb.st_mtime, &localtm) != NULL
+                                && strftime (mtime, sizeof(mtime), "%F %T", &localtm)) {
+                            tf_append_out (&out, &outlen, mtime, (int)strlen (mtime));
+                            skip_out = 1;
+                        }
+                    }
+                }
                 else if (!strcmp (name, "_path_raw")) {
-                    val = pl_find_meta_raw (it, ":URI");
+                    const char *v = pl_find_meta_raw (it, ":URI");
+
+                    if (v) {
+                        #ifdef _WIN32
+                        int is_absolute = (isalpha (v[0]) && v[1] == ':' && v[2] == '/');
+                        #else
+                        int is_absolute = (v[0] == '/');
+                        #endif
+
+                        if (is_absolute) {
+                            // This is an absolute path, just prepend proper prefix
+                            #ifdef _WIN32
+                            const char prefix[] = "file:///";
+                            #else
+                            const char prefix[] = "file://";
+                            #endif
+                            tf_append_out (&out, &outlen, prefix, sizeof (prefix) - 1);
+                            tf_append_out (&out, &outlen, v, (int)strlen (v));
+                        }
+                        else {
+                            int is_uri = 1;
+
+                            for (const char *p = v; p; p++) {
+                                if (!strncmp (p, "://", 3)) {
+                                    break;
+                                }
+
+                                if (!isalpha (*p)) {
+                                    is_uri = 0;
+                                    break;
+                                }
+                            }
+
+                            if (is_uri) {
+                                // This is already a URI, just copy as is
+                                tf_append_out (&out, &outlen, v, (int)strlen (v));
+                            }
+                            else {
+                                // Relative paths are considered invalid
+                            }
+                        }
+
+                        skip_out = 1;
+                    }
                 }
                 else if (!strcmp (name, "path")) {
                     val = pl_find_meta_raw (it, ":URI");
@@ -2295,9 +3061,9 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                         else {
                             idx = pl_get_idx_of_iter (it, ctx->iter) + 1;
                         }
-                        int len = snprintf_clip (out, outlen, "%0*d", digits, idx);
-                        out += len;
-                        outlen -= len;
+                        int l = snprintf_clip (out, outlen, "%0*d", digits, idx);
+                        out += l;
+                        outlen -= l;
                         skip_out = 1;
                     }
                 }
@@ -2315,9 +3081,9 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                         }
                     }
                     if (total_tracks >= 0) {
-                        int len = snprintf_clip (out, outlen, "%d", total_tracks);
-                        out += len;
-                        outlen -= len;
+                        int l = snprintf_clip (out, outlen, "%d", total_tracks);
+                        out += l;
+                        outlen -= l;
                         skip_out = 1;
                     }
                 }
@@ -2326,9 +3092,9 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     if (it) {
                         int idx = playqueue_test (it) + 1;
                         if (idx >= 1) {
-                            int len = snprintf_clip (out, outlen, "%d", idx);
-                            out += len;
-                            outlen -= len;
+                            int l = snprintf_clip (out, outlen, "%d", idx);
+                            out += l;
+                            outlen -= l;
                             skip_out = 1;
                         }
                     }
@@ -2338,17 +3104,17 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     if (it) {
                         int idx = playqueue_test (it) + 1;
                         if (idx >= 1) {
-                            int len = snprintf_clip (out, outlen, "%d", idx);
-                            out += len;
-                            outlen -= len;
+                            int l = snprintf_clip (out, outlen, "%d", idx);
+                            out += l;
+                            outlen -= l;
                             int count = playqueue_getcount ();
                             for (int i = idx; i < count; i++) {
                                 playItem_t *trk = playqueue_get_item (i);
                                 if (trk) {
                                     if (it == trk) {
-                                        len = snprintf_clip (out, outlen, ",%d", i + 1);
-                                        out += len;
-                                        outlen -= len;
+                                        l = snprintf_clip (out, outlen, ",%d", i + 1);
+                                        out += l;
+                                        outlen -= l;
                                     }
                                     pl_item_unref (trk);
                                 }
@@ -2361,9 +3127,9 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 else if (!strcmp (name, "queue_total")) {
                     int count = playqueue_getcount ();
                     if (count >= 0) {
-                        int len = snprintf_clip (out, outlen, "%d", count);
-                        out += len;
-                        outlen -= len;
+                        int l = snprintf_clip (out, outlen, "%d", count);
+                        out += l;
+                        outlen -= l;
                         skip_out = 1;
                     }
                 }
@@ -2376,10 +3142,10 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 else if (!strcmp (name, "selection_playback_time")) {
                     float seltime = plt_get_selection_playback_time((playlist_t *)ctx->plt);
 
-                    int len = format_playback_time (out, outlen, seltime);
+                    int l = format_playback_time (out, outlen, seltime);
 
-                    out += len;
-                    outlen -= len;
+                    out += l;
+                    outlen -= l;
                     skip_out = 1;
                 }
                 else {
@@ -2416,8 +3182,8 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 code += 4;
                 size -= 4;
 
-                int bool_out = 0;
-                int res = tf_eval_int (ctx, code, len, out, outlen, &bool_out, 1);
+                int ignored_bool_out = 0;
+                int res = tf_eval_int (ctx, code, len, out, outlen, &ignored_bool_out, 1);
                 if (res >= 0) {
                     out += res;
                     outlen -= res;
@@ -2482,8 +3248,8 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 code += 4;
                 size -= 4;
 
-                int bool_out = 0;
-                int res = tf_eval_int (ctx, code, len, out, outlen - dimlen, &bool_out, fail_on_undef);
+                int ignored_bool_out = 0;
+                int res = tf_eval_int (ctx, code, len, out, outlen - dimlen, &ignored_bool_out, fail_on_undef);
                 if (res >= 0) {
                     out += res;
                     outlen -= res;
@@ -2506,6 +3272,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
             }
         }
     }
+    // Always null terminate when there's no error
     *out = 0;
 
     if (fail_on_undef && count_false_conditionals > 0 && count_true_conditionals == 0) {
@@ -2541,7 +3308,7 @@ tf_compile_func (tf_compiler_t *c) {
     for (i = 0; tf_funcs[i].name; i++) {
         int l = (int)strlen (tf_funcs[i].name);
         if (c->i - name_start == l && !memcmp (tf_funcs[i].name, name_start, l)) {
-            *(c->o++) = i;
+            *(c->o++) = (char)i;
             break;
         }
     }
@@ -2556,9 +3323,9 @@ tf_compile_func (tf_compiler_t *c) {
     c->i++;
 
     // remember ptr and start reading args
-    char *start = c->o;
+    uint8_t *start = c->o;
     *(c->o++) = 0; // num args
-    char *argstart = c->o;
+    uint8_t *argstart = c->o;
 
     uint16_t *arglens = (uint16_t *)c->o;
 
@@ -2580,7 +3347,7 @@ tf_compile_func (tf_compiler_t *c) {
             memmove (arglens+num_args+1, arglens+num_args, c->o - start - num_args*sizeof(uint16_t));
             c->o += 2;
             // store arg length
-            arglens[*start] = len;
+            arglens[*start] = (uint16_t)len;
             (*start)++; // num args++
             argstart = c->o;
 
@@ -2608,7 +3375,7 @@ tf_compile_field (tf_compiler_t *c) {
     *(c->o++) = 2;
 
     const char *fstart = c->i;
-    char *plen = c->o;
+    uint8_t *plen = c->o;
     c->o += 1;
     while (*(c->i)) {
         if (*(c->i) == '%') {
@@ -2627,7 +3394,7 @@ tf_compile_field (tf_compiler_t *c) {
     if (len > 0xff) {
         return -1;
     }
-    *plen = len;
+    *plen = (char)len;
 
     char field[len+1];
     memcpy (field, fstart, len);
@@ -2641,7 +3408,7 @@ tf_compile_ifdef (tf_compiler_t *c) {
     *(c->o++) = 0;
     *(c->o++) = 3;
 
-    char *plen = c->o;
+    uint8_t *plen = c->o;
     c->o += 4;
 
     char *start = c->o;
@@ -2680,10 +3447,10 @@ tf_compile_text_dim (tf_compiler_t *c) {
     *(c->o++) = 0;
     *(c->o++) = 5;
 
-    char *pamount = c->o;
+    uint8_t *pamount = c->o;
     c->o++;
 
-    char *plen = c->o;
+    uint8_t *plen = c->o;
     c->o += 4;
 
     char *start = c->o;
@@ -2817,7 +3584,7 @@ tf_compile (const char *script) {
 
     c.i = script;
 
-    char code[strlen(script) * 3];
+    uint8_t code[strlen(script) * 3];
     memset (code, 0, sizeof (code));
 
     c.o = code;
@@ -2901,7 +3668,7 @@ tf_import_legacy (const char *fmt, char *out, int outsize) {
                 if (*e == '@') {
                     char nm[100];
                     size_t l = e-fmt-1;
-                    l = min (l, sizeof (nm)-1);
+                    l = min (l, sizeof (nm)-3);
                     strncpy (nm+1, fmt+1, l);
                     nm[l+2] = 0;
                     nm[0] = '%';

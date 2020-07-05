@@ -323,57 +323,57 @@ create_mainwin (void)
   Playback_menu = gtk_menu_new ();
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (Playback), Playback_menu);
 
-  Order = gtk_menu_item_new_with_mnemonic (_("Order"));
+  Order = gtk_menu_item_new_with_mnemonic (_("Shuffle"));
   gtk_widget_show (Order);
   gtk_container_add (GTK_CONTAINER (Playback_menu), Order);
 
   Order_menu = gtk_menu_new ();
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (Order), Order_menu);
 
-  order_linear = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Linear"));
+  order_linear = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Off"));
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_linear));
   gtk_widget_show (order_linear);
   gtk_container_add (GTK_CONTAINER (Order_menu), order_linear);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_linear), TRUE);
 
-  order_shuffle = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Shuffle tracks"));
+  order_shuffle = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Tracks"));
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_shuffle));
   gtk_widget_show (order_shuffle);
   gtk_container_add (GTK_CONTAINER (Order_menu), order_shuffle);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_shuffle), TRUE);
 
-  order_shuffle_albums = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Shuffle albums"));
+  order_shuffle_albums = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Albums"));
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_shuffle_albums));
   gtk_widget_show (order_shuffle_albums);
   gtk_container_add (GTK_CONTAINER (Order_menu), order_shuffle_albums);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_shuffle_albums), TRUE);
 
-  order_random = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Random"));
+  order_random = gtk_radio_menu_item_new_with_mnemonic (order_linear_group, _("Random Tracks"));
   order_linear_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (order_random));
   gtk_widget_show (order_random);
   gtk_container_add (GTK_CONTAINER (Order_menu), order_random);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (order_random), TRUE);
 
-  Looping = gtk_menu_item_new_with_mnemonic (_("Looping"));
+  Looping = gtk_menu_item_new_with_mnemonic (_("Repeat"));
   gtk_widget_show (Looping);
   gtk_container_add (GTK_CONTAINER (Playback_menu), Looping);
 
   Looping_menu = gtk_menu_new ();
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (Looping), Looping_menu);
 
-  loop_all = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, _("Loop all"));
+  loop_all = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, _("All Tracks"));
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_all));
   gtk_widget_show (loop_all);
   gtk_container_add (GTK_CONTAINER (Looping_menu), loop_all);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_all), TRUE);
 
-  loop_single = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, _("Loop single song"));
+  loop_single = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, _("One Track"));
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_single));
   gtk_widget_show (loop_single);
   gtk_container_add (GTK_CONTAINER (Looping_menu), loop_single);
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (loop_single), TRUE);
 
-  loop_disable = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, _("Don't loop"));
+  loop_disable = gtk_radio_menu_item_new_with_mnemonic (loop_all_group, _("Off"));
   loop_all_group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (loop_disable));
   gtk_widget_show (loop_disable);
   gtk_container_add (GTK_CONTAINER (Looping_menu), loop_disable);
@@ -1602,6 +1602,7 @@ create_prefwin (void)
   GtkWidget *label110;
   GtkWidget *notebook5;
   GtkWidget *vbox9;
+  GtkWidget *minimize_on_startup;
   GtkWidget *pref_close_send_to_tray;
   GtkWidget *hide_tray_icon;
   GtkWidget *enable_shift_jis_recoding;
@@ -1624,6 +1625,7 @@ create_prefwin (void)
   GtkWidget *vbox44;
   GtkWidget *mmb_delete_playlist;
   GtkWidget *hide_delete_from_disk;
+  GtkWidget *skip_deleted_songs;
   GtkWidget *auto_name_playlist_from_folder;
   GtkWidget *auto_size_columns;
   GtkWidget *hbox141;
@@ -2168,6 +2170,10 @@ create_prefwin (void)
   gtk_container_add (GTK_CONTAINER (notebook5), vbox9);
   gtk_container_set_border_width (GTK_CONTAINER (vbox9), 12);
 
+  minimize_on_startup = gtk_check_button_new_with_mnemonic (_("Minimize to tray on startup"));
+  gtk_widget_show (minimize_on_startup);
+  gtk_box_pack_start (GTK_BOX (vbox9), minimize_on_startup, FALSE, FALSE, 0);
+
   pref_close_send_to_tray = gtk_check_button_new_with_mnemonic (_("Close minimizes to tray"));
   gtk_widget_show (pref_close_send_to_tray);
   gtk_box_pack_start (GTK_BOX (vbox9), pref_close_send_to_tray, FALSE, FALSE, 0);
@@ -2262,6 +2268,10 @@ create_prefwin (void)
   hide_delete_from_disk = gtk_check_button_new_with_mnemonic (_("Hide \"Remove From Disk\" context menu item"));
   gtk_widget_show (hide_delete_from_disk);
   gtk_box_pack_start (GTK_BOX (vbox44), hide_delete_from_disk, FALSE, FALSE, 0);
+
+  skip_deleted_songs = gtk_check_button_new_with_mnemonic (_("Switch to the next song when the currently played one is removed from disk"));
+  gtk_widget_show (skip_deleted_songs);
+  gtk_box_pack_start (GTK_BOX (vbox44), skip_deleted_songs, FALSE, FALSE, 0);
 
   auto_name_playlist_from_folder = gtk_check_button_new_with_mnemonic (_("Auto-name playlists when adding a single folder"));
   gtk_widget_show (auto_name_playlist_from_folder);
@@ -3179,6 +3189,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) dsp_preset_load, "clicked",
                     G_CALLBACK (on_dsp_preset_load_clicked),
                     NULL);
+  g_signal_connect ((gpointer) minimize_on_startup, "clicked",
+                    G_CALLBACK (on_minimize_on_startup_clicked),
+                    NULL);
   g_signal_connect ((gpointer) pref_close_send_to_tray, "clicked",
                     G_CALLBACK (on_pref_close_send_to_tray_clicked),
                     NULL);
@@ -3214,6 +3227,9 @@ create_prefwin (void)
                     NULL);
   g_signal_connect ((gpointer) hide_delete_from_disk, "toggled",
                     G_CALLBACK (on_hide_delete_from_disk_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) skip_deleted_songs, "toggled",
+                    G_CALLBACK (on_skip_deleted_songs_toggled),
                     NULL);
   g_signal_connect ((gpointer) auto_name_playlist_from_folder, "toggled",
                     G_CALLBACK (on_auto_name_playlist_from_folder_toggled),
@@ -3470,6 +3486,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label110, "label110");
   GLADE_HOOKUP_OBJECT (prefwin, notebook5, "notebook5");
   GLADE_HOOKUP_OBJECT (prefwin, vbox9, "vbox9");
+  GLADE_HOOKUP_OBJECT (prefwin, minimize_on_startup, "minimize_on_startup");
   GLADE_HOOKUP_OBJECT (prefwin, pref_close_send_to_tray, "pref_close_send_to_tray");
   GLADE_HOOKUP_OBJECT (prefwin, hide_tray_icon, "hide_tray_icon");
   GLADE_HOOKUP_OBJECT (prefwin, enable_shift_jis_recoding, "enable_shift_jis_recoding");
@@ -3492,6 +3509,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, vbox44, "vbox44");
   GLADE_HOOKUP_OBJECT (prefwin, mmb_delete_playlist, "mmb_delete_playlist");
   GLADE_HOOKUP_OBJECT (prefwin, hide_delete_from_disk, "hide_delete_from_disk");
+  GLADE_HOOKUP_OBJECT (prefwin, skip_deleted_songs, "skip_deleted_songs");
   GLADE_HOOKUP_OBJECT (prefwin, auto_name_playlist_from_folder, "auto_name_playlist_from_folder");
   GLADE_HOOKUP_OBJECT (prefwin, auto_size_columns, "auto_size_columns");
   GLADE_HOOKUP_OBJECT (prefwin, hbox141, "hbox141");
@@ -5300,7 +5318,7 @@ create_rg_scan_progress (void)
   GtkWidget *rg_scan_progress_cancel;
 
   rg_scan_progress = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_widget_set_size_request (rg_scan_progress, 440, -1);
+  gtk_widget_set_size_request (rg_scan_progress, 650, -1);
   gtk_window_set_title (GTK_WINDOW (rg_scan_progress), _("ReplayGain Scan Progress"));
 
   vbox50 = gtk_vbox_new (FALSE, 8);
@@ -5368,7 +5386,7 @@ create_rg_scan_results (void)
   GtkWidget *rg_scan_results_cancel;
 
   rg_scan_results = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_widget_set_size_request (rg_scan_results, 550, 350);
+  gtk_widget_set_size_request (rg_scan_results, 1000, 350);
   gtk_window_set_title (GTK_WINDOW (rg_scan_results), _("ReplayGain Scan Results"));
 
   vbox51 = gtk_vbox_new (FALSE, 8);

@@ -29,7 +29,7 @@ static DdbWidgetManager *_defaultWidgetManager = nil;
 
 + (DdbWidgetManager *)defaultWidgetManager {
     if (!_defaultWidgetManager) {
-        _defaultWidgetManager = [[DdbWidgetManager alloc] init];
+        _defaultWidgetManager = [DdbWidgetManager new];
     }
     return _defaultWidgetManager;
 }
@@ -37,7 +37,7 @@ static DdbWidgetManager *_defaultWidgetManager = nil;
 - (DdbWidgetManager *)init {
     self = [super init];
     if (self) {
-        _regWidgets = [[NSMutableArray alloc] init];
+        _regWidgets = [NSMutableArray new];
     }
     return self;
 }

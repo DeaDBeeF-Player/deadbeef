@@ -32,7 +32,7 @@
 
 #ifndef _WIN32
 #define __cdecl
-#define __fastcall __attribute__((regparm(3)))
+#define __fastcall // __attribute__((regparm(3))) // FIXME: not on ARM
 #endif
 
 /* No dynarec for x86_64 yet */

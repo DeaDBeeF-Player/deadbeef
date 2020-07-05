@@ -29,6 +29,7 @@
 
 enum {
     MP3_PARSE_FULLSCAN = 1,
+    MP3_PARSE_ESTIMATE_DURATION = 2,
 };
 
 // vbrmethod constants
@@ -71,9 +72,11 @@ typedef struct {
     int vbr_type;
 
     // FIXME: these fields should be filled/used only for network streams of finite length
-    float avg_packetlength;
-    int avg_samplerate;
-    int avg_samples_per_frame;
+    double avg_packetlength;
+    int64_t avg_samples_per_frame;
+    int64_t avg_bitrate;
+
+    int is_streaming;
 
     int delay;
     int padding;
@@ -82,11 +85,17 @@ typedef struct {
     uint32_t lame_musiclength; // file size from beginning of LAME info packet until the last byte of packet with audio, as encoded by Lame
 
     uint64_t fsize;
+    uint64_t datasize;
 
     // intermediates
     mp3packet_t prev_packet;
 
     int checked_xing_header;
+
+    // read statistics
+    uint64_t num_seeks;
+    uint64_t num_reads;
+    uint64_t bytes_read;
 } mp3info_t;
 
 // Params:

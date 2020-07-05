@@ -1,241 +1,261 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
 # Arthur Țițeică <arthur@psw.ro>, 2013
 # Arthur Țițeică <arthur.titeica@gmail.com>, 2013
 # Cristian Alexe <cristian.alexe@outlook.com>, 2017
 # Daniel <danny3@tutanota.com>, 2016
 # Daniel <danny3@tutanota.com>, 2016,2018
-# Mișu Moldovan <dumol@l10n.ro>, 2014,2016
+# Dumitru Moldovan <dumol@gnome.org>, 2014,2016
+# Dumitru Moldovan <dumol@gnome.org>, 2014,2016
 # Mișu Moldovan <dumol@xfce.org>, 2012
 # Arthur Țițeică <arthur.titeica@gmail.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-08 19:06+0100\n"
-"PO-Revision-Date: 2018-02-07 21:43+0000\n"
+"POT-Creation-Date: 2020-06-15 20:41+0200\n"
+"PO-Revision-Date: 2020-03-03 18:38+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
-"Language-Team: Romanian (http://www.transifex.com/deadbeef-player/deadbeef-"
-"player/language/ro/)\n"
-"Language: ro\n"
+"Language-Team: Romanian (http://www.transifex.com/deadbeef-player/deadbeef-player/language/ro/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?"
-"2:1));\n"
+"Language: ro\n"
+"Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));\n"
 
-#: ../plugins/gtkui/callbacks.c:354
+#: ../plugins/gtkui/callbacks.c:358
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "Despre DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:367
+#: ../plugins/gtkui/callbacks.c:371
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "Istoricul modificărilor DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:627
+#: ../plugins/gtkui/callbacks.c:631
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "Traducători DeaDBeeF"
 
-#: ../plugins/gtkui/callbacks.c:638 ../plugins/gtkui/interface.c:976
-#: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:85
-#: ../plugins/converter/convgui.c:1759 ../plugins/converter/convgui.c:1767
-#: ../plugins/gtkui/actionhandlers.c:473
+#: ../plugins/gtkui/callbacks.c:642 ../plugins/gtkui/interface.c:976
+#: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:166
+#: ../plugins/converter/convgui.c:1781 ../plugins/converter/convgui.c:1789
+#: ../plugins/gtkui/actionhandlers.c:305
+#, no-c-format
 msgid "Help"
 msgstr "Ajutor"
 
-#: ../plugins/gtkui/eq.c:146
+#: ../plugins/gtkui/eq.c:147
 msgid "Save DeaDBeeF EQ Preset"
 msgstr "Salvare prestabiliri  EG DeaDBeeF"
 
-#: ../plugins/gtkui/eq.c:153
+#: ../plugins/gtkui/eq.c:154
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
 msgstr "Fișiere cu prestabiliri EG DeaDBeeF (*.ddbeq)"
 
-#: ../plugins/gtkui/eq.c:192
+#: ../plugins/gtkui/eq.c:194
 msgid "Load DeaDBeeF EQ Preset..."
 msgstr "Încărcare prestabiliri EG (egalizator) DeaDBeeF..."
 
-#: ../plugins/gtkui/eq.c:196
+#: ../plugins/gtkui/eq.c:198
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
 msgstr "Prestabiliri EG (egalizator) DeaDBeeF (*.ddbeq)"
 
-#: ../plugins/gtkui/eq.c:257
+#: ../plugins/gtkui/eq.c:235
 msgid "Import Foobar2000 EQ Preset..."
 msgstr "Import de prestabiliri EG (egalizator) Foobar2000..."
 
-#: ../plugins/gtkui/eq.c:261
+#: ../plugins/gtkui/eq.c:239
 msgid "Foobar2000 EQ presets (*.feq)"
 msgstr "Prestabiliri EG (egalizator) Foobar2000 (*.feq)"
 
-#: ../plugins/gtkui/eq.c:326
+#: ../plugins/gtkui/eq.c:280
 msgid "Save Preset"
 msgstr "Salvare prestabiliri"
 
-#: ../plugins/gtkui/eq.c:334
+#: ../plugins/gtkui/eq.c:288
 msgid "Load Preset"
 msgstr "Încărcare prestabiliri"
 
-#: ../plugins/gtkui/eq.c:342
+#: ../plugins/gtkui/eq.c:296
 msgid "Import Foobar2000 Preset"
 msgstr "Import de  prestabiliri Foobar2000..."
 
 #. plugins/notify/notify.c
-#: ../plugins/gtkui/eq.c:367 ../translation/plugins.c:201
+#: ../plugins/gtkui/eq.c:322 ../translation/plugins.c:391
+#, no-c-format
 msgid "Enable"
 msgstr "Activare"
 
-#: ../plugins/gtkui/eq.c:376
+#: ../plugins/gtkui/eq.c:331
 msgid "Zero All"
 msgstr "Zero tot"
 
-#: ../plugins/gtkui/eq.c:383
+#: ../plugins/gtkui/eq.c:338
 msgid "Zero Preamp"
 msgstr "Zero preamp"
 
-#: ../plugins/gtkui/eq.c:390
+#: ../plugins/gtkui/eq.c:345
 msgid "Zero Bands"
 msgstr "Zero benzi"
 
-#: ../plugins/gtkui/eq.c:397 ../plugins/converter/interface.c:852
+#: ../plugins/gtkui/eq.c:352 ../plugins/converter/interface.c:852
 #: ../plugins/converter/converter.glade.h:55
 msgid "Presets"
 msgstr "Prestabiliri"
 
-#: ../plugins/gtkui/gtkui.c:167 ../tf.c:1833
+#: ../plugins/gtkui/gtkui.c:159 ../tf.c:2529
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "o zi %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:170 ../tf.c:1836
+#: ../plugins/gtkui/gtkui.c:162 ../tf.c:2532
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d zile %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:672 ../translation/plugins.c:110
+#: ../plugins/gtkui/gtkui.c:208
+msgid "total playtime"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:422
+msgid "Paused"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:422
+msgid "bit"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:419
+msgid "selection playtime"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:419 ../plugins/gtkui/gtkui.c:423
+msgid "Stopped"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:686 ../translation/plugins.c:216
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
+#, no-c-format
 msgid "New Playlist"
 msgstr "Listă de redare nouă"
 
-#: ../plugins/gtkui/gtkui.c:675 ../plugins/pltbrowser/pltbrowser.c:75
+#: ../plugins/gtkui/gtkui.c:689 ../plugins/pltbrowser/pltbrowser.c:75
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Listă de redare nouă (%d)"
 
-#: ../plugins/gtkui/gtkui.c:732
+#: ../plugins/gtkui/gtkui.c:746
 #, c-format
 msgid "Copy of %s"
 msgstr "Copia lui %s"
 
-#: ../plugins/gtkui/gtkui.c:735
+#: ../plugins/gtkui/gtkui.c:749
 #, c-format
 msgid "Copy of %s (%d)"
 msgstr "Copia lui %s (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1216
+#: ../plugins/gtkui/gtkui.c:1227
 msgid "Playlist with tabs"
 msgstr "Listă de redare cu file"
 
-#: ../plugins/gtkui/gtkui.c:1217 ../plugins/gtkui/interface.c:2292
-#: ../plugins/gtkui/interface.c:2737 ../plugins/gtkui/deadbeef.glade.h:134
+#: ../plugins/gtkui/gtkui.c:1228 ../plugins/gtkui/interface.c:2302
+#: ../plugins/gtkui/interface.c:2747 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Playlist"
 msgstr "Listă de redare"
 
-#: ../plugins/gtkui/gtkui.c:1220
+#: ../plugins/gtkui/gtkui.c:1231
 msgid "Splitter (top and bottom)"
 msgstr "Separator (sus și jos)"
 
-#: ../plugins/gtkui/gtkui.c:1221
+#: ../plugins/gtkui/gtkui.c:1232
 msgid "Splitter (left and right)"
 msgstr "Separator (stânga și dreapta)"
 
-#: ../plugins/gtkui/gtkui.c:1223
+#: ../plugins/gtkui/gtkui.c:1234
 msgid "Tabs"
 msgstr "File"
 
-#: ../plugins/gtkui/gtkui.c:1224
+#: ../plugins/gtkui/gtkui.c:1235
 msgid "Playlist tabs"
 msgstr "File de liste de redare"
 
-#: ../plugins/gtkui/gtkui.c:1225
+#: ../plugins/gtkui/gtkui.c:1236
 msgid "Selection properties"
 msgstr "Proprietățile selecției"
 
-#: ../plugins/gtkui/gtkui.c:1226
+#: ../plugins/gtkui/gtkui.c:1237
 msgid "Album art display"
 msgstr "Afișare copertă de album"
 
-#: ../plugins/gtkui/gtkui.c:1227
+#: ../plugins/gtkui/gtkui.c:1238
 msgid "Scope"
 msgstr "Scop"
 
-#: ../plugins/gtkui/gtkui.c:1228
+#: ../plugins/gtkui/gtkui.c:1239
 msgid "Spectrum"
 msgstr "Spectru"
 
-#: ../plugins/gtkui/gtkui.c:1229
+#: ../plugins/gtkui/gtkui.c:1240
 msgid "HBox"
 msgstr "HBox"
 
-#: ../plugins/gtkui/gtkui.c:1230
+#: ../plugins/gtkui/gtkui.c:1241
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:1231 ../plugins/gtkui/widgets.c:3846
-#: ../plugins/gtkui/widgets.c:3932
+#: ../plugins/gtkui/gtkui.c:1242 ../plugins/gtkui/widgets.c:3872
+#: ../plugins/gtkui/widgets.c:3959
 msgid "Button"
 msgstr "Buton"
 
-#: ../plugins/gtkui/gtkui.c:1232
+#: ../plugins/gtkui/gtkui.c:1243
 msgid "Seekbar"
 msgstr "Bară de căutare"
 
-#: ../plugins/gtkui/gtkui.c:1233
+#: ../plugins/gtkui/gtkui.c:1244
 msgid "Playback controls"
 msgstr "Controale de redare"
 
-#: ../plugins/gtkui/gtkui.c:1234
+#: ../plugins/gtkui/gtkui.c:1245
 msgid "Volume bar"
 msgstr "Bară de volum"
 
-#: ../plugins/gtkui/gtkui.c:1235
+#: ../plugins/gtkui/gtkui.c:1246
 msgid "Chiptune voices"
 msgstr "Voci sintetizate"
 
-#: ../plugins/gtkui/gtkui.c:1236
+#: ../plugins/gtkui/gtkui.c:1247
 msgid "Log viewer"
 msgstr "Vizualizator jurnal"
 
-#: ../plugins/gtkui/gtkui.c:1457
+#: ../plugins/gtkui/gtkui.c:1434
 msgid "Failed while reading help file"
 msgstr "Nu s-a putut citi fișierul ce conține ajutorul"
 
-#: ../plugins/gtkui/gtkui.c:1467
+#: ../plugins/gtkui/gtkui.c:1444
 msgid "Failed to load help file"
 msgstr "Nu s-a putut încărca fișierul ce conține ajutorul"
 
-#: ../plugins/gtkui/gtkui.c:1480
+#: ../plugins/gtkui/gtkui.c:1457
 msgid ""
-"The player is currently running background tasks. If you quit now, the tasks "
-"will be cancelled or interrupted. This may result in data loss."
-msgstr ""
-"Lectorul are în lucru unele sarcini în fundal. Dacă îl închideți acum, "
-"aceste sarcini vor fi întrerupte sau se vor pierde. E posibil să pierdeți "
-"anumite date."
+"The player is currently running background tasks. If you quit now, the tasks"
+" will be cancelled or interrupted. This may result in data loss."
+msgstr "Lectorul are în lucru unele sarcini în fundal. Dacă îl închideți acum, aceste sarcini vor fi întrerupte sau se vor pierde. E posibil să pierdeți anumite date."
 
-#: ../plugins/gtkui/gtkui.c:1482
+#: ../plugins/gtkui/gtkui.c:1459
 msgid "Do you still want to quit?"
 msgstr "Sigur doriți să ieșiți?"
 
-#: ../plugins/gtkui/gtkui.c:1483 ../plugins/gtkui/prefwin.c:456
-#: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1077
-#: ../plugins/converter/convgui.c:1654 ../plugins/gtkui/actionhandlers.c:553
+#: ../plugins/gtkui/gtkui.c:1460 ../plugins/gtkui/prefwin.c:470
+#: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1080
+#: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:432
+#: ../plugins/gtkui/pltmenu.c:92
 msgid "Warning"
 msgstr "Avertizare"
 
@@ -255,7 +275,7 @@ msgstr "Adăugare fișiere"
 msgid "Add folder(s)"
 msgstr "Adăugare directoare"
 
-#: ../plugins/gtkui/interface.c:168 ../plugins/gtkui/interface.c:3800
+#: ../plugins/gtkui/interface.c:168 ../plugins/gtkui/interface.c:3818
 #: ../plugins/gtkui/deadbeef.glade.h:5
 msgid "Add location"
 msgstr "Adăugare link"
@@ -300,8 +320,8 @@ msgstr "Inversare a selecției"
 msgid "Selection"
 msgstr "Selecție"
 
-#: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/interface.c:5101
-#: ../plugins/gtkui/plcommon.c:1072 ../plugins/gtkui/deadbeef.glade.h:16
+#: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/interface.c:5119
+#: ../plugins/gtkui/plcommon.c:1071 ../plugins/gtkui/deadbeef.glade.h:16
 #: ../plugins/converter/interface.c:676
 #: ../plugins/converter/converter.glade.h:51
 #: ../plugins/shellexecui/interface.c:66
@@ -309,7 +329,7 @@ msgstr "Selecție"
 msgid "Remove"
 msgstr "Ștergere"
 
-#: ../plugins/gtkui/interface.c:244 ../plugins/gtkui/interface.c:5105
+#: ../plugins/gtkui/interface.c:244 ../plugins/gtkui/interface.c:5123
 #: ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Crop"
 msgstr "Decupare"
@@ -323,9 +343,9 @@ msgid "Sort by"
 msgstr "Sortare după"
 
 #: ../plugins/gtkui/interface.c:259 ../plugins/gtkui/mainplaylist.c:233
-#: ../plugins/gtkui/plcommon.c:93 ../plugins/gtkui/prefwin.c:432
-#: ../plugins/gtkui/search.c:652 ../plugins/gtkui/deadbeef.glade.h:20
-#: ../plugins/converter/convgui.c:1175 ../plugins/converter/convgui.c:1730
+#: ../plugins/gtkui/plcommon.c:99 ../plugins/gtkui/prefwin.c:446
+#: ../plugins/gtkui/search.c:653 ../plugins/gtkui/deadbeef.glade.h:20
+#: ../plugins/converter/convgui.c:1184 ../plugins/converter/convgui.c:1752
 #: ../plugins/converter/interface.c:653
 #: ../plugins/converter/converter.glade.h:48
 #: ../plugins/shellexecui/shellexecui.c:324
@@ -336,15 +356,15 @@ msgstr "Titlu"
 msgid "Track number"
 msgstr "Numărul piesei"
 
-#: ../plugins/gtkui/interface.c:267 ../plugins/gtkui/interface.c:1972
-#: ../plugins/gtkui/plcommon.c:92 ../plugins/gtkui/deadbeef.glade.h:22
+#: ../plugins/gtkui/interface.c:267 ../plugins/gtkui/interface.c:1974
+#: ../plugins/gtkui/plcommon.c:98 ../plugins/gtkui/deadbeef.glade.h:22
 #: ../translation/extra.c:6
 msgid "Album"
 msgstr "Album"
 
 #. Track properties dialog
-#: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/plcommon.c:91
-#: ../plugins/gtkui/plcommon.c:1848 ../plugins/gtkui/deadbeef.glade.h:23
+#: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/plcommon.c:97
+#: ../plugins/gtkui/plcommon.c:1917 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:2
 msgid "Artist"
 msgstr "Artist"
@@ -354,18 +374,18 @@ msgstr "Artist"
 msgid "Date"
 msgstr "Dată"
 
-#: ../plugins/gtkui/interface.c:279 ../plugins/gtkui/interface.c:351
-#: ../plugins/gtkui/deadbeef.glade.h:25
+#: ../plugins/gtkui/interface.c:279 ../plugins/gtkui/deadbeef.glade.h:25
 msgid "Random"
 msgstr "Aleatoare"
 
-#: ../plugins/gtkui/interface.c:283 ../plugins/gtkui/plcommon.c:100
-#: ../plugins/gtkui/plcommon.c:1852 ../plugins/gtkui/deadbeef.glade.h:26
+#: ../plugins/gtkui/interface.c:283 ../plugins/gtkui/plcommon.c:106
+#: ../plugins/gtkui/plcommon.c:1921 ../plugins/gtkui/deadbeef.glade.h:26
 msgid "Custom"
 msgstr "Personalizare..."
 
-#: ../plugins/gtkui/interface.c:292 ../plugins/gtkui/interface.c:1791
-#: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:103
+#: ../plugins/gtkui/interface.c:292 ../plugins/gtkui/interface.c:1793
+#: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:202
+#, no-c-format
 msgid "Preferences"
 msgstr "Preferințe"
 
@@ -393,38 +413,38 @@ msgstr "Jurnal"
 msgid "_Playback"
 msgstr "_Redare"
 
-#: ../plugins/gtkui/interface.c:326 ../plugins/gtkui/interface.c:4096
-#: ../plugins/gtkui/deadbeef.glade.h:34
-msgid "Order"
-msgstr "Ordine"
+#: ../plugins/gtkui/interface.c:326 ../plugins/gtkui/deadbeef.glade.h:34
+msgid "Shuffle"
+msgstr ""
 
-#: ../plugins/gtkui/interface.c:333 ../plugins/gtkui/deadbeef.glade.h:35
-msgid "Linear"
-msgstr "Liniară"
+#: ../plugins/gtkui/interface.c:333 ../plugins/gtkui/interface.c:376
+#: ../plugins/gtkui/deadbeef.glade.h:35
+msgid "Off"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:339 ../plugins/gtkui/deadbeef.glade.h:36
-msgid "Shuffle tracks"
-msgstr "Piese amestecate"
+msgid "Tracks"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:345 ../plugins/gtkui/deadbeef.glade.h:37
-msgid "Shuffle albums"
-msgstr "Albume amestecate"
+msgid "Albums"
+msgstr ""
 
-#: ../plugins/gtkui/interface.c:357 ../plugins/gtkui/deadbeef.glade.h:38
-msgid "Looping"
-msgstr "Repetare"
+#: ../plugins/gtkui/interface.c:351 ../plugins/gtkui/deadbeef.glade.h:38
+msgid "Random Tracks"
+msgstr ""
 
-#: ../plugins/gtkui/interface.c:364 ../plugins/gtkui/deadbeef.glade.h:39
-msgid "Loop all"
-msgstr "Repetare pentru listă"
+#: ../plugins/gtkui/interface.c:357 ../plugins/gtkui/deadbeef.glade.h:39
+msgid "Repeat"
+msgstr ""
 
-#: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:40
-msgid "Loop single song"
-msgstr "Repetare pentru piesa actuală"
+#: ../plugins/gtkui/interface.c:364 ../plugins/gtkui/deadbeef.glade.h:40
+msgid "All Tracks"
+msgstr ""
 
-#: ../plugins/gtkui/interface.c:376 ../plugins/gtkui/deadbeef.glade.h:41
-msgid "Don't loop"
-msgstr "Fără repetare"
+#: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:41
+msgid "One Track"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:382 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -476,12 +496,14 @@ msgid "Search"
 msgstr "Căutare"
 
 #: ../plugins/gtkui/interface.c:794 ../plugins/gtkui/deadbeef.glade.h:54
-#: ../translation/plugins.c:166
+#: ../translation/plugins.c:325
+#, no-c-format
 msgid "Stop"
 msgstr "Stop"
 
 #: ../plugins/gtkui/interface.c:802 ../plugins/gtkui/deadbeef.glade.h:55
-#: ../translation/plugins.c:165
+#: ../translation/plugins.c:323
+#, no-c-format
 msgid "Play"
 msgstr "Redare"
 
@@ -490,17 +512,20 @@ msgid "Pause"
 msgstr "Pauză"
 
 #: ../plugins/gtkui/interface.c:818 ../plugins/gtkui/deadbeef.glade.h:57
-#: ../translation/plugins.c:167
+#: ../translation/plugins.c:327
+#, no-c-format
 msgid "Previous"
 msgstr "Înapoi"
 
 #: ../plugins/gtkui/interface.c:826 ../plugins/gtkui/deadbeef.glade.h:58
-#: ../translation/plugins.c:168
+#: ../translation/plugins.c:329
+#, no-c-format
 msgid "Next"
 msgstr "Înainte"
 
 #: ../plugins/gtkui/interface.c:834 ../plugins/gtkui/deadbeef.glade.h:59
-#: ../translation/plugins.c:171
+#: ../translation/plugins.c:335
+#, no-c-format
 msgid "Play Random"
 msgstr "Aleator"
 
@@ -509,12 +534,14 @@ msgid "About"
 msgstr "Despre"
 
 #: ../plugins/gtkui/interface.c:856 ../plugins/gtkui/deadbeef.glade.h:61
-#: ../translation/plugins.c:78
+#: ../translation/plugins.c:152
+#, no-c-format
 msgid "Quit"
 msgstr "Ieșire"
 
-#: ../plugins/gtkui/interface.c:1049 ../plugins/gtkui/plcommon.c:1228
-#: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:84
+#: ../plugins/gtkui/interface.c:1049 ../plugins/gtkui/plcommon.c:1227
+#: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:164
+#, no-c-format
 msgid "Track Properties"
 msgstr "Proprietățile piesei"
 
@@ -543,11 +570,11 @@ msgstr "Metadate"
 msgid "Properties"
 msgstr "Proprietăți"
 
-#: ../plugins/gtkui/interface.c:1335 ../plugins/gtkui/interface.c:3697
+#: ../plugins/gtkui/interface.c:1335 ../plugins/gtkui/interface.c:3715
 #: ../plugins/gtkui/deadbeef.glade.h:72 ../plugins/converter/interface.c:418
 #: ../plugins/converter/converter.glade.h:25
 #: ../plugins/shellexecui/interface.c:163
-#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1549
+#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1570
 #: ../plugins/gtkui/pltmenu.c:66
 msgid "Title:"
 msgstr "Titlu:"
@@ -560,7 +587,7 @@ msgstr "Introduceți aici un nou titlu pentru coloană"
 msgid "Type:"
 msgstr "Tip:"
 
-#: ../plugins/gtkui/interface.c:1364 ../plugins/gtkui/interface.c:3948
+#: ../plugins/gtkui/interface.c:1364 ../plugins/gtkui/interface.c:3966
 #: ../plugins/gtkui/deadbeef.glade.h:75
 msgid "Format:"
 msgstr "Format:"
@@ -589,762 +616,769 @@ msgstr "Dreapta"
 msgid "Center"
 msgstr "Centru"
 
-#: ../plugins/gtkui/interface.c:1422 ../plugins/gtkui/interface.c:4848
+#: ../plugins/gtkui/interface.c:1422 ../plugins/gtkui/interface.c:4866
 #: ../plugins/gtkui/deadbeef.glade.h:82
 msgid "Text color:"
 msgstr "Culoare text:"
 
-#: ../plugins/gtkui/interface.c:1451 ../plugins/gtkui/interface.c:3728
-#: ../plugins/gtkui/interface.c:3859 ../plugins/gtkui/interface.c:3989
+#: ../plugins/gtkui/interface.c:1451 ../plugins/gtkui/interface.c:3746
+#: ../plugins/gtkui/interface.c:3877 ../plugins/gtkui/interface.c:4007
 #: ../plugins/gtkui/deadbeef.glade.h:70
 msgid "_Cancel"
 msgstr "_Renunță"
 
-#: ../plugins/gtkui/interface.c:1472 ../plugins/gtkui/interface.c:3749
-#: ../plugins/gtkui/interface.c:3880 ../plugins/gtkui/interface.c:4010
+#: ../plugins/gtkui/interface.c:1472 ../plugins/gtkui/interface.c:3767
+#: ../plugins/gtkui/interface.c:3898 ../plugins/gtkui/interface.c:4028
 #: ../plugins/gtkui/deadbeef.glade.h:71
 msgid "_OK"
 msgstr "_OK"
 
-#: ../plugins/gtkui/interface.c:1812 ../plugins/gtkui/deadbeef.glade.h:83
+#: ../plugins/gtkui/interface.c:1814 ../plugins/gtkui/deadbeef.glade.h:83
 msgid "Output plugin:"
 msgstr "Modul de ieșire audio:"
 
-#: ../plugins/gtkui/interface.c:1825 ../plugins/gtkui/deadbeef.glade.h:84
+#: ../plugins/gtkui/interface.c:1827 ../plugins/gtkui/deadbeef.glade.h:84
 msgid "Output device:"
 msgstr "Dispozitiv de ieșire audio:"
 
-#: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:85
+#: ../plugins/gtkui/interface.c:1836 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Always convert 8 bit audio to 16 bit"
 msgstr "Convertire la 16-biți pentru piesele audio de 8-biți"
 
-#: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:86
+#: ../plugins/gtkui/interface.c:1840 ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Always convert 16 bit audio to 24 bit"
 msgstr "Transformă întotdeauna audio pe 16 biți în 24 de biți"
 
-#: ../plugins/gtkui/interface.c:1859 ../plugins/gtkui/deadbeef.glade.h:87
+#: ../plugins/gtkui/interface.c:1861 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Target samplerate:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/deadbeef.glade.h:88
+#: ../plugins/gtkui/interface.c:1894 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "For multiples of 48KHz (96K, 192K, ...):"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1911 ../plugins/gtkui/deadbeef.glade.h:89
+#: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "For multiples of 44.1KHz (88.2K, 176.4K, ...):"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1926 ../plugins/gtkui/deadbeef.glade.h:90
+#: ../plugins/gtkui/interface.c:1928 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Based on input samplerate"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1930 ../plugins/gtkui/deadbeef.glade.h:91
+#: ../plugins/gtkui/interface.c:1932 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Override samplerate"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1934 ../plugins/gtkui/deadbeef.glade.h:92
+#: ../plugins/gtkui/interface.c:1936 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Sound"
 msgstr "Sunet"
 
-#: ../plugins/gtkui/interface.c:1961 ../plugins/gtkui/deadbeef.glade.h:93
+#: ../plugins/gtkui/interface.c:1963 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Source mode:"
 msgstr "Mod sursă:"
 
-#: ../plugins/gtkui/interface.c:1970
+#: ../plugins/gtkui/interface.c:1972
 msgid "By playback order"
 msgstr "După ordinea de redare"
 
-#: ../plugins/gtkui/interface.c:1971
+#: ../plugins/gtkui/interface.c:1973
 msgid "Track"
 msgstr "Piesă"
 
-#: ../plugins/gtkui/interface.c:1978 ../plugins/gtkui/deadbeef.glade.h:97
+#: ../plugins/gtkui/interface.c:1980 ../plugins/gtkui/deadbeef.glade.h:97
 msgid "Processing:"
 msgstr "Se procesează:"
 
-#: ../plugins/gtkui/interface.c:1987 ../plugins/gtkui/plcommon.c:1840
-#: ../translation/plugins.c:58 ../plugins/gtkui/widgets.c:3942
+#: ../plugins/gtkui/interface.c:1989 ../plugins/gtkui/plcommon.c:1909
+#: ../translation/plugins.c:106 ../plugins/gtkui/widgets.c:3969
+#, no-c-format
 msgid "None"
 msgstr "Fără"
 
-#: ../plugins/gtkui/interface.c:1988
+#: ../plugins/gtkui/interface.c:1990
 msgid "Apply gain"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1989
+#: ../plugins/gtkui/interface.c:1991
 msgid "Apply gain and prevent clipping according to peak"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1990
+#: ../plugins/gtkui/interface.c:1992
 msgid "Only prevent clipping"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2003 ../plugins/gtkui/interface.c:2037
+#: ../plugins/gtkui/interface.c:2005 ../plugins/gtkui/interface.c:2039
 #: ../plugins/gtkui/deadbeef.glade.h:102
 msgid "-12 dB"
 msgstr "-12 dB"
 
-#: ../plugins/gtkui/interface.c:2013 ../plugins/gtkui/interface.c:2047
+#: ../plugins/gtkui/interface.c:2015 ../plugins/gtkui/interface.c:2049
 #: ../plugins/gtkui/deadbeef.glade.h:103
 msgid "+12 dB"
 msgstr "+12 dB"
 
-#: ../plugins/gtkui/interface.c:2017 ../plugins/gtkui/deadbeef.glade.h:104
+#: ../plugins/gtkui/interface.c:2019 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Preamp with RG info:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2024 ../plugins/gtkui/deadbeef.glade.h:105
+#: ../plugins/gtkui/interface.c:2026 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Preamp without RG info:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2051 ../plugins/gtkui/deadbeef.glade.h:106
+#: ../plugins/gtkui/interface.c:2053 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "<b>ReplayGain</b>"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2060 ../plugins/gtkui/deadbeef.glade.h:107
+#: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Add files from command line (or file manager) to this playlist:"
 msgstr "Fișierele adăugate extern intră în lista de redare:"
 
-#: ../plugins/gtkui/interface.c:2069 ../plugins/gtkui/deadbeef.glade.h:108
+#: ../plugins/gtkui/interface.c:2071 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Resume previous session on startup"
 msgstr "La pornire se reîncarcă sesiunea precedentă"
 
-#: ../plugins/gtkui/interface.c:2073 ../plugins/gtkui/deadbeef.glade.h:109
+#: ../plugins/gtkui/interface.c:2075 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Don't add from archives when adding folders"
 msgstr "La adăugarea de directoare nu se adaugă fișiere  din arhive"
 
-#: ../plugins/gtkui/interface.c:2077 ../plugins/gtkui/deadbeef.glade.h:110
+#: ../plugins/gtkui/interface.c:2079 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "\"Stop after current track\" option will switch off after triggering"
 msgstr "Opțiunea de oprire după piesa actuală nu persistă"
 
-#: ../plugins/gtkui/interface.c:2081 ../plugins/gtkui/deadbeef.glade.h:111
+#: ../plugins/gtkui/interface.c:2083 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "\"Stop after current album\" option will switch off after triggering"
 msgstr "Opțiunea de oprire după albumul actual nu persistă"
 
-#: ../plugins/gtkui/interface.c:2085 ../plugins/gtkui/deadbeef.glade.h:112
-#: ../translation/plugins.c:87
+#: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:112
+#: ../translation/plugins.c:170
+#, no-c-format
 msgid "Playback"
 msgstr "Redare"
 
-#: ../plugins/gtkui/interface.c:2106 ../plugins/gtkui/interface.c:3050
+#: ../plugins/gtkui/interface.c:2108 ../plugins/gtkui/interface.c:3060
 #: ../plugins/gtkui/deadbeef.glade.h:113 ../plugins/converter/interface.c:680
 #: ../plugins/converter/converter.glade.h:52
 msgid "Configure"
 msgstr "Configurare"
 
-#: ../plugins/gtkui/interface.c:2141 ../plugins/gtkui/deadbeef.glade.h:114
+#: ../plugins/gtkui/interface.c:2143 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "DSP Chain Preset"
 msgstr "Prestabiliri lanț DSP:"
 
-#: ../plugins/gtkui/interface.c:2153 ../plugins/gtkui/deadbeef.glade.h:115
+#: ../plugins/gtkui/interface.c:2155 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "_Load"
 msgstr "Înca_rcă"
 
-#: ../plugins/gtkui/interface.c:2157 ../plugins/gtkui/deadbeef.glade.h:116
+#: ../plugins/gtkui/interface.c:2159 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "DSP"
 msgstr "Procesare"
 
-#: ../plugins/gtkui/interface.c:2171 ../plugins/gtkui/deadbeef.glade.h:117
+#: ../plugins/gtkui/interface.c:2173 ../plugins/gtkui/deadbeef.glade.h:117
+msgid "Minimize to tray on startup"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2177 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Close minimizes to tray"
 msgstr "Minimizare în zona de notificare la închiderea ferestrei"
 
-#: ../plugins/gtkui/interface.c:2175 ../plugins/gtkui/deadbeef.glade.h:118
+#: ../plugins/gtkui/interface.c:2181 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Hide system tray icon"
 msgstr "Fără iconiță în zona de notificare"
 
-#: ../plugins/gtkui/interface.c:2179 ../plugins/gtkui/deadbeef.glade.h:119
+#: ../plugins/gtkui/interface.c:2185 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
 msgstr "Detecție automată pentru codarea japoneză SHIFT-JIS"
 
-#: ../plugins/gtkui/interface.c:2183 ../plugins/gtkui/deadbeef.glade.h:120
+#: ../plugins/gtkui/interface.c:2189 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Enable Russian CP1251 detection and recoding"
 msgstr "Activează detecția și recodarea pentru CP1251 (Rusia)"
 
-#: ../plugins/gtkui/interface.c:2187 ../plugins/gtkui/deadbeef.glade.h:121
+#: ../plugins/gtkui/interface.c:2193 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Enable Chinese CP936 detection and recoding"
 msgstr "Activează detecția si recodarea pentru CP936 (China)"
 
-#: ../plugins/gtkui/interface.c:2195 ../plugins/gtkui/deadbeef.glade.h:122
+#: ../plugins/gtkui/interface.c:2201 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Interface refresh rate (times per second):"
 msgstr "Frecvență de reîmprospătare a interfeței (per secundă):"
 
-#: ../plugins/gtkui/interface.c:2209 ../plugins/gtkui/deadbeef.glade.h:123
+#: ../plugins/gtkui/interface.c:2215 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Titlebar text while playing:"
 msgstr "Text în bara de titlu la redare:"
 
-#: ../plugins/gtkui/interface.c:2223 ../plugins/gtkui/deadbeef.glade.h:124
+#: ../plugins/gtkui/interface.c:2229 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Titlebar text while stopped:"
 msgstr "Text în bara de titlu în pauză:"
 
-#: ../plugins/gtkui/interface.c:2237 ../plugins/gtkui/deadbeef.glade.h:125
+#: ../plugins/gtkui/interface.c:2243 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "GUI Plugin (changing requires restart):"
 msgstr "Modul interfață grafică (modificările necesită repornire):"
 
-#: ../plugins/gtkui/interface.c:2245 ../plugins/gtkui/deadbeef.glade.h:126
+#: ../plugins/gtkui/interface.c:2251 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Display selection playback time in status bar"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2249 ../plugins/gtkui/deadbeef.glade.h:127
+#: ../plugins/gtkui/interface.c:2255 ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Player"
 msgstr "Lector"
 
 #. plugins/pltbrowser/pltbrowser.c
-#: ../plugins/gtkui/interface.c:2258 ../plugins/gtkui/deadbeef.glade.h:128
-#: ../translation/plugins.c:209
+#: ../plugins/gtkui/interface.c:2264 ../plugins/gtkui/deadbeef.glade.h:129
+#: ../translation/plugins.c:405
+#, no-c-format
 msgid "Close playlists with middle mouse button"
 msgstr "Închide listele de redare cu butonul de clic mijloc"
 
-#: ../plugins/gtkui/interface.c:2262 ../plugins/gtkui/deadbeef.glade.h:129
+#: ../plugins/gtkui/interface.c:2268 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Hide \"Remove From Disk\" context menu item"
 msgstr "Fără „Ștergere de pe disc” în meniul contextual"
 
-#: ../plugins/gtkui/interface.c:2266 ../plugins/gtkui/deadbeef.glade.h:130
+#: ../plugins/gtkui/interface.c:2272 ../plugins/gtkui/deadbeef.glade.h:131
+msgid ""
+"Switch to the next song when the currently played one is removed from disk"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2276 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Auto-name playlists when adding a single folder"
 msgstr "Denumire automată pentru liste la adăugarea unui singur director"
 
-#: ../plugins/gtkui/interface.c:2270 ../plugins/gtkui/deadbeef.glade.h:131
+#: ../plugins/gtkui/interface.c:2280 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Auto-resize columns to fit the window"
 msgstr "Dimensionare automată a coloanelor pentru a se încadra în fereastră"
 
-#: ../plugins/gtkui/interface.c:2278 ../plugins/gtkui/deadbeef.glade.h:132
+#: ../plugins/gtkui/interface.c:2288 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Group spacing:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2288 ../plugins/gtkui/deadbeef.glade.h:133
+#: ../plugins/gtkui/interface.c:2298 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "pixels"
 msgstr "pixeli"
 
-#: ../plugins/gtkui/interface.c:2296 ../plugins/gtkui/deadbeef.glade.h:135
+#: ../plugins/gtkui/interface.c:2306 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "GUI/Misc"
 msgstr "GUI/Altele"
 
-#: ../plugins/gtkui/interface.c:2311 ../plugins/gtkui/interface.c:2355
-#: ../plugins/gtkui/deadbeef.glade.h:136
+#: ../plugins/gtkui/interface.c:2321 ../plugins/gtkui/interface.c:2365
+#: ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Override"
 msgstr "Suprascriere"
 
-#: ../plugins/gtkui/interface.c:2320 ../plugins/gtkui/deadbeef.glade.h:137
+#: ../plugins/gtkui/interface.c:2330 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Bars"
 msgstr "Bare"
 
-#: ../plugins/gtkui/interface.c:2327 ../plugins/gtkui/deadbeef.glade.h:138
+#: ../plugins/gtkui/interface.c:2337 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Background (EQ)"
 msgstr "Fundal (EG)"
 
-#: ../plugins/gtkui/interface.c:2346 ../plugins/gtkui/deadbeef.glade.h:139
+#: ../plugins/gtkui/interface.c:2356 ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Seekbar/Volumebar/EQ"
 msgstr "Bara de sărire/Bara de volum/EG"
 
-#: ../plugins/gtkui/interface.c:2371 ../plugins/gtkui/deadbeef.glade.h:140
+#: ../plugins/gtkui/interface.c:2381 ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Base:"
 msgstr "Bază:"
 
-#: ../plugins/gtkui/interface.c:2384 ../plugins/gtkui/deadbeef.glade.h:141
+#: ../plugins/gtkui/interface.c:2394 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Dark:"
 msgstr "Întunecat:"
 
-#: ../plugins/gtkui/interface.c:2397 ../plugins/gtkui/deadbeef.glade.h:142
+#: ../plugins/gtkui/interface.c:2407 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Light:"
 msgstr "Luminos:"
 
-#: ../plugins/gtkui/interface.c:2410 ../plugins/gtkui/deadbeef.glade.h:143
+#: ../plugins/gtkui/interface.c:2420 ../plugins/gtkui/deadbeef.glade.h:145
 msgid "Middle:"
 msgstr "Mijloc:"
 
-#: ../plugins/gtkui/interface.c:2417 ../plugins/gtkui/deadbeef.glade.h:144
+#: ../plugins/gtkui/interface.c:2427 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "Text:"
 msgstr "Text:"
 
-#: ../plugins/gtkui/interface.c:2442 ../plugins/gtkui/interface.c:2456
-#: ../plugins/gtkui/interface.c:2713 ../plugins/gtkui/interface.c:2719
-#: ../plugins/gtkui/deadbeef.glade.h:145
+#: ../plugins/gtkui/interface.c:2452 ../plugins/gtkui/interface.c:2466
+#: ../plugins/gtkui/interface.c:2723 ../plugins/gtkui/interface.c:2729
+#: ../plugins/gtkui/deadbeef.glade.h:147
 msgid "Bold"
 msgstr "Aldin"
 
-#: ../plugins/gtkui/interface.c:2446 ../plugins/gtkui/interface.c:2460
-#: ../plugins/gtkui/interface.c:2725 ../plugins/gtkui/interface.c:2731
-#: ../plugins/gtkui/deadbeef.glade.h:146
+#: ../plugins/gtkui/interface.c:2456 ../plugins/gtkui/interface.c:2470
+#: ../plugins/gtkui/interface.c:2735 ../plugins/gtkui/interface.c:2741
+#: ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Italic"
 msgstr "Cursiv"
 
-#: ../plugins/gtkui/interface.c:2470 ../plugins/gtkui/deadbeef.glade.h:147
+#: ../plugins/gtkui/interface.c:2480 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "Playing text:"
 msgstr "Text în redare:"
 
-#: ../plugins/gtkui/interface.c:2477 ../plugins/gtkui/deadbeef.glade.h:148
+#: ../plugins/gtkui/interface.c:2487 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "Selected text:"
 msgstr "Text selectat:"
 
-#: ../plugins/gtkui/interface.c:2490 ../plugins/gtkui/deadbeef.glade.h:149
+#: ../plugins/gtkui/interface.c:2500 ../plugins/gtkui/deadbeef.glade.h:151
 msgid "Tab strip"
 msgstr "Portiunea filei"
 
-#: ../plugins/gtkui/interface.c:2524 ../plugins/gtkui/deadbeef.glade.h:150
+#: ../plugins/gtkui/interface.c:2534 ../plugins/gtkui/deadbeef.glade.h:152
 msgid "Normal track(s):"
 msgstr "Pistă(e) normale:"
 
-#: ../plugins/gtkui/interface.c:2537 ../plugins/gtkui/interface.c:2699
-#: ../plugins/gtkui/deadbeef.glade.h:151
+#: ../plugins/gtkui/interface.c:2547 ../plugins/gtkui/interface.c:2709
+#: ../plugins/gtkui/deadbeef.glade.h:153
 msgid "Playing track:"
 msgstr "Pistă în redare:"
 
-#: ../plugins/gtkui/interface.c:2550 ../plugins/gtkui/interface.c:2706
-#: ../plugins/gtkui/deadbeef.glade.h:152
+#: ../plugins/gtkui/interface.c:2560 ../plugins/gtkui/interface.c:2716
+#: ../plugins/gtkui/deadbeef.glade.h:154
 msgid "Selected track(s):"
 msgstr "Piste selectate:"
 
-#: ../plugins/gtkui/interface.c:2563 ../plugins/gtkui/deadbeef.glade.h:153
+#: ../plugins/gtkui/interface.c:2573 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "Columns:"
 msgstr "Coloane:"
 
-#: ../plugins/gtkui/interface.c:2582 ../plugins/gtkui/deadbeef.glade.h:154
+#: ../plugins/gtkui/interface.c:2592 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "Group header:"
 msgstr "Antetul grupului:"
 
-#: ../plugins/gtkui/interface.c:2607 ../plugins/gtkui/deadbeef.glade.h:155
+#: ../plugins/gtkui/interface.c:2617 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "<b>Foreground:</b>"
 msgstr "<b>Prim plan:</b>"
 
-#: ../plugins/gtkui/interface.c:2632 ../plugins/gtkui/deadbeef.glade.h:156
+#: ../plugins/gtkui/interface.c:2642 ../plugins/gtkui/deadbeef.glade.h:158
 msgid "Even:"
 msgstr "Par:"
 
-#: ../plugins/gtkui/interface.c:2639 ../plugins/gtkui/deadbeef.glade.h:157
+#: ../plugins/gtkui/interface.c:2649 ../plugins/gtkui/deadbeef.glade.h:159
 msgid "Odd:"
 msgstr "Impar:"
 
-#: ../plugins/gtkui/interface.c:2652 ../plugins/gtkui/deadbeef.glade.h:158
+#: ../plugins/gtkui/interface.c:2662 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "Selected:"
 msgstr "Selectat:"
 
-#: ../plugins/gtkui/interface.c:2665 ../plugins/gtkui/deadbeef.glade.h:159
+#: ../plugins/gtkui/interface.c:2675 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "Cursor:"
 msgstr "Cursor:"
 
-#: ../plugins/gtkui/interface.c:2684 ../plugins/gtkui/deadbeef.glade.h:160
+#: ../plugins/gtkui/interface.c:2694 ../plugins/gtkui/deadbeef.glade.h:162
 msgid "<b>Background:</b>"
 msgstr "<b>Fundal:</b>"
 
-#: ../plugins/gtkui/interface.c:2689 ../plugins/gtkui/deadbeef.glade.h:161
+#: ../plugins/gtkui/interface.c:2699 ../plugins/gtkui/deadbeef.glade.h:163
 msgid "Override (loses GTK treeview theming, but speeds up rendering)"
 msgstr "Rescrie (inlatura GTK tema treeview, dar accelereaza redarea)"
 
-#: ../plugins/gtkui/interface.c:2741 ../plugins/gtkui/deadbeef.glade.h:162
+#: ../plugins/gtkui/interface.c:2751 ../plugins/gtkui/deadbeef.glade.h:164
 msgid "Appearance"
 msgstr "Aspect"
 
-#: ../plugins/gtkui/interface.c:2750 ../plugins/gtkui/deadbeef.glade.h:163
+#: ../plugins/gtkui/interface.c:2760 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "Enable Proxy Server"
 msgstr "Activare servitor proxy"
 
-#: ../plugins/gtkui/interface.c:2758 ../plugins/gtkui/deadbeef.glade.h:164
+#: ../plugins/gtkui/interface.c:2768 ../plugins/gtkui/deadbeef.glade.h:166
 msgid "Proxy Server Address:"
 msgstr "Adresă servitor proxy:"
 
-#: ../plugins/gtkui/interface.c:2772 ../plugins/gtkui/deadbeef.glade.h:165
+#: ../plugins/gtkui/interface.c:2782 ../plugins/gtkui/deadbeef.glade.h:167
 msgid "Proxy Server Port:"
 msgstr "Port servitor proxy:"
 
-#: ../plugins/gtkui/interface.c:2786 ../plugins/gtkui/deadbeef.glade.h:166
+#: ../plugins/gtkui/interface.c:2796 ../plugins/gtkui/deadbeef.glade.h:168
 msgid "Proxy Type:"
 msgstr "Tip proxy:"
 
-#: ../plugins/gtkui/interface.c:2805 ../plugins/gtkui/deadbeef.glade.h:167
+#: ../plugins/gtkui/interface.c:2815 ../plugins/gtkui/deadbeef.glade.h:169
 msgid "Proxy Username:"
 msgstr "Utilizator proxy:"
 
-#: ../plugins/gtkui/interface.c:2818 ../plugins/gtkui/deadbeef.glade.h:168
+#: ../plugins/gtkui/interface.c:2828 ../plugins/gtkui/deadbeef.glade.h:170
 msgid "Proxy Password:"
 msgstr "Parolă proxy:"
 
-#: ../plugins/gtkui/interface.c:2836 ../plugins/gtkui/deadbeef.glade.h:169
+#: ../plugins/gtkui/interface.c:2846 ../plugins/gtkui/deadbeef.glade.h:171
 msgid "HTTP User Agent:"
 msgstr "HTTP User Agent:"
 
-#: ../plugins/gtkui/interface.c:2849 ../plugins/gtkui/interface.c:4724
-#: ../plugins/gtkui/deadbeef.glade.h:170
+#: ../plugins/gtkui/interface.c:2859 ../plugins/gtkui/interface.c:4742
+#: ../plugins/gtkui/deadbeef.glade.h:172
 msgid "Edit Content-Type Mapping"
 msgstr "Editează mapările Content-Type"
 
-#: ../plugins/gtkui/interface.c:2853 ../plugins/gtkui/deadbeef.glade.h:171
+#: ../plugins/gtkui/interface.c:2863 ../plugins/gtkui/deadbeef.glade.h:173
 msgid "Network"
 msgstr "Rețea"
 
-#: ../plugins/gtkui/interface.c:2866 ../plugins/gtkui/deadbeef.glade.h:172
+#: ../plugins/gtkui/interface.c:2876 ../plugins/gtkui/deadbeef.glade.h:174
 msgid "Assigned Hotkeys:"
 msgstr "Acceleratori folosiți:"
 
-#: ../plugins/gtkui/interface.c:2901 ../plugins/gtkui/interface.c:4885
-#: ../plugins/gtkui/deadbeef.glade.h:173
+#: ../plugins/gtkui/interface.c:2911 ../plugins/gtkui/interface.c:4903
+#: ../plugins/gtkui/deadbeef.glade.h:175
 msgid "Action:"
 msgstr "Acțiune:"
 
-#: ../plugins/gtkui/interface.c:2906 ../plugins/gtkui/interface.c:2919
-#: ../plugins/gtkui/interface.c:4889 ../plugins/gtkui/deadbeef.glade.h:174
+#: ../plugins/gtkui/interface.c:2916 ../plugins/gtkui/interface.c:2929
+#: ../plugins/gtkui/interface.c:4907 ../plugins/gtkui/deadbeef.glade.h:176
 msgid "<Not set>"
 msgstr "<Nesetat>"
 
-#: ../plugins/gtkui/interface.c:2914 ../plugins/gtkui/deadbeef.glade.h:175
+#: ../plugins/gtkui/interface.c:2924 ../plugins/gtkui/deadbeef.glade.h:177
 msgid "Key combination:"
 msgstr "Combinație de taste:"
 
-#: ../plugins/gtkui/interface.c:2923 ../plugins/gtkui/deadbeef.glade.h:176
+#: ../plugins/gtkui/interface.c:2933 ../plugins/gtkui/deadbeef.glade.h:178
 msgid "Global hotkey"
 msgstr "Accelerator global"
 
-#: ../plugins/gtkui/interface.c:2935 ../plugins/gtkui/deadbeef.glade.h:177
+#: ../plugins/gtkui/interface.c:2945 ../plugins/gtkui/deadbeef.glade.h:179
 msgid ""
 "Use the Apply button to save your changes,\n"
 "or the Revert button to undo your changes.\n"
 "The changes will NOT be saved\n"
 "if you don't press Apply."
-msgstr ""
-"Utilizați butonul „Aplică” pentru a salva modificările ori butonul "
-"„Restaurează” pentru a le anula. Modificările nu vor fi salvate\n"
-"dacă nu folosiți butonul „Aplică”."
+msgstr "Utilizați butonul „Aplică” pentru a salva modificările ori butonul „Restaurează” pentru a le anula. Modificările nu vor fi salvate\ndacă nu folosiți butonul „Aplică”."
 
-#: ../plugins/gtkui/interface.c:2972 ../plugins/gtkui/deadbeef.glade.h:181
+#: ../plugins/gtkui/interface.c:2982 ../plugins/gtkui/deadbeef.glade.h:183
 msgid "_Defaults"
 msgstr "_Implicit"
 
-#: ../plugins/gtkui/interface.c:2976 ../plugins/gtkui/deadbeef.glade.h:182
+#: ../plugins/gtkui/interface.c:2986 ../plugins/gtkui/deadbeef.glade.h:184
 msgid "Hotkeys"
 msgstr "Acceleratori"
 
-#: ../plugins/gtkui/interface.c:3007 ../plugins/gtkui/deadbeef.glade.h:183
+#: ../plugins/gtkui/interface.c:3017 ../plugins/gtkui/deadbeef.glade.h:185
 msgid "Version: "
 msgstr "Versiune:"
 
-#: ../plugins/gtkui/interface.c:3071 ../plugins/gtkui/deadbeef.glade.h:184
+#: ../plugins/gtkui/interface.c:3081 ../plugins/gtkui/deadbeef.glade.h:186
 #: ../translation/extra.c:16
 msgid "Copyright"
 msgstr "Drepturi de autor"
 
-#: ../plugins/gtkui/interface.c:3081 ../plugins/gtkui/deadbeef.glade.h:185
+#: ../plugins/gtkui/interface.c:3091 ../plugins/gtkui/deadbeef.glade.h:187
 #: ../plugins/gtkui/ctmapping.c:131
 msgid "Plugins"
 msgstr "Module"
 
-#: ../plugins/gtkui/interface.c:3815 ../plugins/gtkui/deadbeef.glade.h:186
+#: ../plugins/gtkui/interface.c:3833 ../plugins/gtkui/deadbeef.glade.h:188
 msgid "URL:"
 msgstr "URL:"
 
-#: ../plugins/gtkui/interface.c:3829 ../plugins/gtkui/interface.c:5015
-#: ../plugins/gtkui/interface.c:5043 ../plugins/gtkui/plcommon.c:1215
-#: ../plugins/gtkui/deadbeef.glade.h:187
+#: ../plugins/gtkui/interface.c:3847 ../plugins/gtkui/interface.c:5033
+#: ../plugins/gtkui/interface.c:5061 ../plugins/gtkui/plcommon.c:1214
+#: ../plugins/gtkui/deadbeef.glade.h:189
 msgid "Set Custom Title"
 msgstr "Stabilire titlu personalizat"
 
-#: ../plugins/gtkui/interface.c:3933 ../plugins/gtkui/deadbeef.glade.h:188
+#: ../plugins/gtkui/interface.c:3951 ../plugins/gtkui/deadbeef.glade.h:190
 msgid "Group By ..."
 msgstr "Grupează după ..."
 
-#: ../plugins/gtkui/interface.c:4057 ../plugins/gtkui/deadbeef.glade.h:189
+#: ../plugins/gtkui/interface.c:4075 ../plugins/gtkui/deadbeef.glade.h:191
 msgid "Sort by ..."
 msgstr "Sortează după ..."
 
-#: ../plugins/gtkui/interface.c:4073 ../plugins/gtkui/deadbeef.glade.h:190
+#: ../plugins/gtkui/interface.c:4091 ../plugins/gtkui/deadbeef.glade.h:192
 msgid "Format"
 msgstr "Format"
 
-#: ../plugins/gtkui/interface.c:4103
+#: ../plugins/gtkui/interface.c:4114 ../plugins/gtkui/deadbeef.glade.h:193
+msgid "Order"
+msgstr "Ordine"
+
+#: ../plugins/gtkui/interface.c:4121
 msgid "Ascending"
 msgstr "Crescătoare"
 
-#: ../plugins/gtkui/interface.c:4104
+#: ../plugins/gtkui/interface.c:4122
 msgid "Descending"
 msgstr "Descrescătoare"
 
-#: ../plugins/gtkui/interface.c:4157 ../plugins/gtkui/deadbeef.glade.h:193
+#: ../plugins/gtkui/interface.c:4175 ../plugins/gtkui/deadbeef.glade.h:196
 #: ../plugins/converter/interface.c:781
 #: ../plugins/converter/converter.glade.h:53
 msgid "Select DSP Plugin"
 msgstr "Selectare modul DSP"
 
-#: ../plugins/gtkui/interface.c:4173 ../plugins/gtkui/deadbeef.glade.h:194
-#: ../plugins/converter/convgui.c:1479 ../plugins/converter/interface.c:797
+#: ../plugins/gtkui/interface.c:4191 ../plugins/gtkui/deadbeef.glade.h:197
+#: ../plugins/converter/convgui.c:1488 ../plugins/converter/interface.c:797
 #: ../plugins/gtkui/dspconfig.c:144 ../plugins/converter/converter.glade.h:54
 msgid "Plugin"
 msgstr "Modul"
 
-#: ../plugins/gtkui/interface.c:4258 ../plugins/gtkui/deadbeef.glade.h:195
+#: ../plugins/gtkui/interface.c:4276 ../plugins/gtkui/deadbeef.glade.h:198
 msgid "Tag Writer Settings"
 msgstr "Opțiuni pentru scrierea etichetelor"
 
-#: ../plugins/gtkui/interface.c:4289 ../plugins/gtkui/deadbeef.glade.h:196
+#: ../plugins/gtkui/interface.c:4307 ../plugins/gtkui/deadbeef.glade.h:199
 msgid "Write ID3v2"
 msgstr "Scrie ID3v2"
 
-#: ../plugins/gtkui/interface.c:4293 ../plugins/gtkui/interface.c:4420
-#: ../plugins/gtkui/deadbeef.glade.h:197
+#: ../plugins/gtkui/interface.c:4311 ../plugins/gtkui/interface.c:4438
+#: ../plugins/gtkui/deadbeef.glade.h:200
 msgid "Write ID3v1"
 msgstr "Scrie ID3v1"
 
-#: ../plugins/gtkui/interface.c:4297 ../plugins/gtkui/interface.c:4376
-#: ../plugins/gtkui/interface.c:4416 ../plugins/gtkui/deadbeef.glade.h:198
+#: ../plugins/gtkui/interface.c:4315 ../plugins/gtkui/interface.c:4394
+#: ../plugins/gtkui/interface.c:4434 ../plugins/gtkui/deadbeef.glade.h:201
 msgid "Write APEv2"
 msgstr "Scrie APEv2"
 
-#: ../plugins/gtkui/interface.c:4305 ../plugins/gtkui/interface.c:4384
-#: ../plugins/gtkui/deadbeef.glade.h:199
+#: ../plugins/gtkui/interface.c:4323 ../plugins/gtkui/interface.c:4402
+#: ../plugins/gtkui/deadbeef.glade.h:202
 msgid "Strip ID3v2"
 msgstr "Șterge ID3v2"
 
-#: ../plugins/gtkui/interface.c:4309 ../plugins/gtkui/interface.c:4432
-#: ../plugins/gtkui/deadbeef.glade.h:200
+#: ../plugins/gtkui/interface.c:4327 ../plugins/gtkui/interface.c:4450
+#: ../plugins/gtkui/deadbeef.glade.h:203
 msgid "Strip ID3v1"
 msgstr "Șterge ID3v1"
 
-#: ../plugins/gtkui/interface.c:4313 ../plugins/gtkui/interface.c:4388
-#: ../plugins/gtkui/interface.c:4428 ../plugins/gtkui/deadbeef.glade.h:201
+#: ../plugins/gtkui/interface.c:4331 ../plugins/gtkui/interface.c:4406
+#: ../plugins/gtkui/interface.c:4446 ../plugins/gtkui/deadbeef.glade.h:204
 msgid "Strip APEv2"
 msgstr "Șterge APEv2"
 
-#: ../plugins/gtkui/interface.c:4321 ../plugins/gtkui/deadbeef.glade.h:202
+#: ../plugins/gtkui/interface.c:4339 ../plugins/gtkui/deadbeef.glade.h:205
 msgid "ID3v2 version"
 msgstr "Versiune ID3v2"
 
-#: ../plugins/gtkui/interface.c:4328
+#: ../plugins/gtkui/interface.c:4346
 msgid "2.3 (Recommended)"
 msgstr "2.3 (recomandată)"
 
-#: ../plugins/gtkui/interface.c:4329
+#: ../plugins/gtkui/interface.c:4347
 msgid "2.4"
 msgstr "2.4"
 
-#: ../plugins/gtkui/interface.c:4335 ../plugins/gtkui/deadbeef.glade.h:205
+#: ../plugins/gtkui/interface.c:4353 ../plugins/gtkui/deadbeef.glade.h:208
 msgid "ID3v1 character encoding (default is iso8859-1)"
 msgstr "Codare ID3v1 (implicit iso8859-1)"
 
-#: ../plugins/gtkui/interface.c:4372 ../plugins/gtkui/deadbeef.glade.h:206
+#: ../plugins/gtkui/interface.c:4390 ../plugins/gtkui/deadbeef.glade.h:209
 msgid "Write ID3v2.4"
 msgstr "Scrie ID3v2.4"
 
-#: ../plugins/gtkui/interface.c:4574 ../plugins/gtkui/deadbeef.glade.h:207
+#: ../plugins/gtkui/interface.c:4592 ../plugins/gtkui/deadbeef.glade.h:210
 msgid "Content-Type Mapping"
 msgstr "Mapăre Content-Type"
 
-#: ../plugins/gtkui/interface.c:4597 ../plugins/gtkui/deadbeef.glade.h:208
+#: ../plugins/gtkui/interface.c:4615 ../plugins/gtkui/deadbeef.glade.h:211
 msgid ""
 "This table defines the binding between network stream content types and "
 "DeaDBeeF decoder plugins. For example, mp3 files can have content type "
 "\"audio/x-mpeg\", and need to be decoded by DeaDBeeF's own \"stdmpg\" "
 "plugin, or \"ffmpeg\" plugin."
-msgstr ""
-"Acest tabel definește asocierile dintre tipurile de conținut ale fluxurilor "
-"de rețea și modulele DeaDBeeF. De exemplu, fișierele MP3 pot avea tipul de "
-"conținut „audio/x-mpeg” și pot fi decodate de către modulele „stdmpg” ori "
-"„ffmpeg”."
+msgstr "Acest tabel definește asocierile dintre tipurile de conținut ale fluxurilor de rețea și modulele DeaDBeeF. De exemplu, fișierele MP3 pot avea tipul de conținut „audio/x-mpeg” și pot fi decodate de către modulele „stdmpg” ori „ffmpeg”."
 
-#: ../plugins/gtkui/interface.c:4645 ../plugins/gtkui/deadbeef.glade.h:209
+#: ../plugins/gtkui/interface.c:4663 ../plugins/gtkui/deadbeef.glade.h:212
 msgid "Reset to defaults"
 msgstr "Restabilește la implicite"
 
-#: ../plugins/gtkui/interface.c:4740 ../plugins/gtkui/deadbeef.glade.h:210
+#: ../plugins/gtkui/interface.c:4758 ../plugins/gtkui/deadbeef.glade.h:213
 msgid "Content-Type:"
 msgstr "Tip de conținut:"
 
-#: ../plugins/gtkui/interface.c:4753 ../plugins/gtkui/deadbeef.glade.h:211
+#: ../plugins/gtkui/interface.c:4771 ../plugins/gtkui/deadbeef.glade.h:214
 msgid "Plugins:"
 msgstr "Extensii:"
 
-#: ../plugins/gtkui/interface.c:4821 ../plugins/gtkui/deadbeef.glade.h:212
+#: ../plugins/gtkui/interface.c:4839 ../plugins/gtkui/deadbeef.glade.h:215
 msgid "Button properties"
 msgstr "Proprietățile butonului"
 
-#: ../plugins/gtkui/interface.c:4836 ../plugins/gtkui/deadbeef.glade.h:213
+#: ../plugins/gtkui/interface.c:4854 ../plugins/gtkui/deadbeef.glade.h:216
 msgid "Color:"
 msgstr "Culoare:"
 
-#: ../plugins/gtkui/interface.c:4860 ../plugins/gtkui/deadbeef.glade.h:214
+#: ../plugins/gtkui/interface.c:4878 ../plugins/gtkui/deadbeef.glade.h:217
 msgid "Icon:"
 msgstr "Pictogramă:"
 
-#: ../plugins/gtkui/interface.c:4872 ../plugins/gtkui/deadbeef.glade.h:215
+#: ../plugins/gtkui/interface.c:4890 ../plugins/gtkui/deadbeef.glade.h:218
 msgid "Label:"
 msgstr "Etichetă:"
 
-#: ../plugins/gtkui/interface.c:4953 ../plugins/gtkui/deadbeef.glade.h:216
+#: ../plugins/gtkui/interface.c:4971 ../plugins/gtkui/deadbeef.glade.h:219
 msgid "Select action"
 msgstr "Alege acțiune"
 
-#: ../plugins/gtkui/interface.c:5037 ../plugins/gtkui/deadbeef.glade.h:217
+#: ../plugins/gtkui/interface.c:5055 ../plugins/gtkui/deadbeef.glade.h:220
 msgid ""
 "This dialog allows setting custom title for any track. This is most useful "
-"for radio stations. An option to set the custom title is also present in the "
-"\"Add Location\" dialog. The title itself is visible in columns displaying "
+"for radio stations. An option to set the custom title is also present in the"
+" \"Add Location\" dialog. The title itself is visible in columns displaying "
 "the \"Artist\" metadata field. It should look like \"[custom] artist\" if "
 "the Artist field is present, or just \"custom\" otherwise."
-msgstr ""
-"Acest dialog permite setarea de titlu personalizat pentru orice pista Acest "
-"lucru este cel mai util pentru posturile de radio. O opțiune pentru a seta "
-"titlul personalizat este de asemenea prezent in caseta \"Adaugare Locatie\". "
-"Titlul in sine este vizibil în coloanele care afiseaza campul de metadate "
-"\"Artist\". Ar trebui sa arate ca \"[personalizat] artist\", in cazul în "
-"care campul Artist este prezent, sau pur și simplu \"personalizat\" in caz "
-"contrar."
+msgstr "Acest dialog permite setarea de titlu personalizat pentru orice pista Acest lucru este cel mai util pentru posturile de radio. O opțiune pentru a seta titlul personalizat este de asemenea prezent in caseta \"Adaugare Locatie\". Titlul in sine este vizibil în coloanele care afiseaza campul de metadate \"Artist\". Ar trebui sa arate ca \"[personalizat] artist\", in cazul în care campul Artist este prezent, sau pur și simplu \"personalizat\" in caz contrar."
 
-#: ../plugins/gtkui/interface.c:5093 ../plugins/gtkui/deadbeef.glade.h:218
-#: ../translation/plugins.c:75 ../plugins/shellexecui/interface.c:70
+#: ../plugins/gtkui/interface.c:5111 ../plugins/gtkui/deadbeef.glade.h:221
+#: ../translation/plugins.c:146 ../plugins/shellexecui/interface.c:70
 #: ../plugins/shellexecui/shellexec.glade.h:5
+#, no-c-format
 msgid "Edit"
 msgstr "Editare"
 
-#: ../plugins/gtkui/interface.c:5097 ../plugins/gtkui/deadbeef.glade.h:219
+#: ../plugins/gtkui/interface.c:5115 ../plugins/gtkui/deadbeef.glade.h:222
 msgid "Edit (in place)"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:5109 ../plugins/gtkui/deadbeef.glade.h:220
+#: ../plugins/gtkui/interface.c:5127 ../plugins/gtkui/deadbeef.glade.h:223
 msgid "Add new field..."
 msgstr "Adăugare câmp nou..."
 
-#: ../plugins/gtkui/interface.c:5157 ../plugins/gtkui/deadbeef.glade.h:221
+#: ../plugins/gtkui/interface.c:5175 ../plugins/gtkui/deadbeef.glade.h:224
 msgid "Edit Value"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:5170 ../plugins/gtkui/deadbeef.glade.h:222
+#: ../plugins/gtkui/interface.c:5188 ../plugins/gtkui/deadbeef.glade.h:225
 msgid "Field name:"
 msgstr "Nume câmp:"
 
-#: ../plugins/gtkui/interface.c:5181 ../plugins/gtkui/deadbeef.glade.h:223
+#: ../plugins/gtkui/interface.c:5199 ../plugins/gtkui/deadbeef.glade.h:226
 msgid "Field value:"
 msgstr "Valoare câmp:"
 
-#: ../plugins/gtkui/interface.c:5238 ../plugins/gtkui/deadbeef.glade.h:224
+#: ../plugins/gtkui/interface.c:5256 ../plugins/gtkui/deadbeef.glade.h:227
 msgid "DeaDBeeF Log"
 msgstr "Jurnal DeaDBeeF"
 
-#: ../plugins/gtkui/interface.c:5267 ../plugins/gtkui/deadbeef.glade.h:225
+#: ../plugins/gtkui/interface.c:5285 ../plugins/gtkui/deadbeef.glade.h:228
 msgid "Clear"
 msgstr "Curăță"
 
-#: ../plugins/gtkui/interface.c:5304 ../plugins/gtkui/deadbeef.glade.h:226
+#: ../plugins/gtkui/interface.c:5322 ../plugins/gtkui/deadbeef.glade.h:229
 msgid "ReplayGain Scan Progress"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:5315 ../plugins/gtkui/deadbeef.glade.h:227
+#: ../plugins/gtkui/interface.c:5333 ../plugins/gtkui/deadbeef.glade.h:230
 msgid "Current File:"
 msgstr "Fișier actual:"
 
-#: ../plugins/gtkui/interface.c:5333 ../plugins/gtkui/interface.c:5393
-#: ../plugins/gtkui/deadbeef.glade.h:228 ../plugins/gtkui/rg.c:313
+#: ../plugins/gtkui/interface.c:5351 ../plugins/gtkui/interface.c:5411
+#: ../plugins/gtkui/deadbeef.glade.h:231 ../plugins/gtkui/rg.c:310
 msgid "Status"
 msgstr "Stare"
 
-#: ../plugins/gtkui/interface.c:5340 ../plugins/gtkui/interface.c:5404
-#: ../plugins/gtkui/deadbeef.glade.h:229
+#: ../plugins/gtkui/interface.c:5358 ../plugins/gtkui/interface.c:5422
+#: ../plugins/gtkui/deadbeef.glade.h:232
 msgid "Cancel"
 msgstr "Renunță"
 
-#: ../plugins/gtkui/interface.c:5372 ../plugins/gtkui/deadbeef.glade.h:230
+#: ../plugins/gtkui/interface.c:5390 ../plugins/gtkui/deadbeef.glade.h:233
 msgid "ReplayGain Scan Results"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:5400 ../plugins/gtkui/deadbeef.glade.h:231
+#: ../plugins/gtkui/interface.c:5418 ../plugins/gtkui/deadbeef.glade.h:234
 msgid "Update File Tags"
 msgstr ""
 
-#: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:650
+#: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:651
 msgid "Artist / Album"
 msgstr "Artist / Album"
 
-#: ../plugins/gtkui/mainplaylist.c:232 ../plugins/gtkui/search.c:651
+#: ../plugins/gtkui/mainplaylist.c:232 ../plugins/gtkui/search.c:652
 msgid "Track No"
 msgstr "Nr. piesă"
 
-#: ../plugins/gtkui/mainplaylist.c:234 ../plugins/gtkui/plcommon.c:95
-#: ../plugins/gtkui/search.c:653 ../plugins/pltbrowser/pltbrowser.c:414
-#: ../plugins/pltbrowser/pltbrowser.c:936
+#: ../plugins/gtkui/mainplaylist.c:234 ../plugins/gtkui/plcommon.c:101
+#: ../plugins/gtkui/search.c:654 ../plugins/pltbrowser/pltbrowser.c:414
+#: ../plugins/pltbrowser/pltbrowser.c:941
 msgid "Duration"
 msgstr "Durată"
 
-#: ../plugins/gtkui/plcommon.c:87
+#: ../plugins/gtkui/plcommon.c:93
 msgid "Item Index"
 msgstr "Index de elemente"
 
-#: ../plugins/gtkui/plcommon.c:88 ../plugins/pltbrowser/pltbrowser.c:412
+#: ../plugins/gtkui/plcommon.c:94 ../plugins/pltbrowser/pltbrowser.c:412
 msgid "Playing"
 msgstr "În redare"
 
-#: ../plugins/gtkui/plcommon.c:89
+#: ../plugins/gtkui/plcommon.c:95
 msgid "Album Art"
 msgstr "Copertă album"
 
-#: ../plugins/gtkui/plcommon.c:90
+#: ../plugins/gtkui/plcommon.c:96
 msgid "Artist - Album"
 msgstr "Artist - Album"
 
-#: ../plugins/gtkui/plcommon.c:94
+#: ../plugins/gtkui/plcommon.c:100
 msgid "Year"
 msgstr "An"
 
-#: ../plugins/gtkui/plcommon.c:96 ../translation/extra.c:8
+#: ../plugins/gtkui/plcommon.c:102 ../translation/extra.c:8
 msgid "Track Number"
 msgstr "Numărul piesei"
 
-#: ../plugins/gtkui/plcommon.c:97 ../translation/extra.c:5
+#: ../plugins/gtkui/plcommon.c:103 ../translation/extra.c:5
 msgid "Band / Album Artist"
 msgstr "Formație / Album Artist"
 
-#: ../plugins/gtkui/plcommon.c:98 ../translation/extra.c:21
+#: ../plugins/gtkui/plcommon.c:104 ../translation/extra.c:21
 msgid "Codec"
 msgstr "Codec"
 
-#: ../plugins/gtkui/plcommon.c:99
+#: ../plugins/gtkui/plcommon.c:105
 msgid "Bitrate"
 msgstr "Rata de biți"
 
-#: ../plugins/gtkui/plcommon.c:936 ../plugins/gtkui/plcommon.c:1045
-#: ../plugins/gtkui/pltmenu.c:427
+#: ../plugins/gtkui/plcommon.c:935 ../plugins/gtkui/plcommon.c:1044
+#: ../plugins/gtkui/pltmenu.c:470
 msgid "_Paste"
 msgstr "Li_pește"
 
-#: ../plugins/gtkui/plcommon.c:990 ../translation/plugins.c:159
+#: ../plugins/gtkui/plcommon.c:989 ../translation/plugins.c:311
+#, no-c-format
 msgid "Add To Playback Queue"
 msgstr "Adăugare în coada de redare"
 
-#: ../plugins/gtkui/plcommon.c:994 ../translation/plugins.c:158
+#: ../plugins/gtkui/plcommon.c:993 ../translation/plugins.c:309
+#, no-c-format
 msgid "Remove From Playback Queue"
 msgstr "Ștergere din coada de redare"
 
 #. plugins/hotkeys/hotkeys.c
-#: ../plugins/gtkui/plcommon.c:1016 ../translation/plugins.c:127
+#: ../plugins/gtkui/plcommon.c:1015 ../translation/plugins.c:247
+#, no-c-format
 msgid "Reload Metadata"
 msgstr "Reîncarcare metadate"
 
-#: ../plugins/gtkui/plcommon.c:1025 ../plugins/gtkui/pltmenu.c:403
+#: ../plugins/gtkui/plcommon.c:1024 ../plugins/gtkui/pltmenu.c:446
 msgid "Cu_t"
 msgstr "_Taie"
 
-#: ../plugins/gtkui/plcommon.c:1035 ../plugins/gtkui/pltmenu.c:415
+#: ../plugins/gtkui/plcommon.c:1034 ../plugins/gtkui/pltmenu.c:458
 msgid "_Copy"
 msgstr "_Copiază"
 
-#: ../plugins/gtkui/plcommon.c:1079 ../translation/plugins.c:79
+#: ../plugins/gtkui/plcommon.c:1078 ../translation/plugins.c:154
+#, no-c-format
 msgid "Remove From Disk"
 msgstr "Ștergere de pe disc"
 
-#: ../plugins/gtkui/plcommon.c:1663 ../plugins/gtkui/plcommon.c:1805
+#: ../plugins/gtkui/plcommon.c:1732 ../plugins/gtkui/plcommon.c:1874
 msgid "Add column"
 msgstr "Adăugare coloană"
 
-#: ../plugins/gtkui/plcommon.c:1705 ../plugins/gtkui/plcommon.c:1809
+#: ../plugins/gtkui/plcommon.c:1774 ../plugins/gtkui/plcommon.c:1878
 msgid "Edit column"
 msgstr "Editare coloană"
 
-#: ../plugins/gtkui/plcommon.c:1813
+#: ../plugins/gtkui/plcommon.c:1882
 msgid "Remove column"
 msgstr "Ștergere coloană"
 
-#: ../plugins/gtkui/plcommon.c:1828
+#: ../plugins/gtkui/plcommon.c:1897
 msgid "Pin groups when scrolling"
 msgstr "Fixează grupurile la defilare"
 
-#: ../plugins/gtkui/plcommon.c:1833
+#: ../plugins/gtkui/plcommon.c:1902
 msgid "Group by"
 msgstr "Grupează după"
 
-#: ../plugins/gtkui/plcommon.c:1844
+#: ../plugins/gtkui/plcommon.c:1913
 msgid "Artist/Date/Album"
 msgstr "Artist/Dată/Album"
 
@@ -1361,12 +1395,11 @@ msgstr "Configurare %s"
 msgid "Default Audio Device"
 msgstr "Dispozitiv audio implicit"
 
-#: ../plugins/gtkui/prefwin.c:453
+#: ../plugins/gtkui/prefwin.c:467
 msgid "You modified the hotkeys settings, but didn't save your changes."
-msgstr ""
-"Ați schimbat opțiunile tastelor rapide, dar nu ați salvat modificările."
+msgstr "Ați schimbat opțiunile tastelor rapide, dar nu ați salvat modificările."
 
-#: ../plugins/gtkui/prefwin.c:455
+#: ../plugins/gtkui/prefwin.c:469
 msgid "Are you sure you want to continue without saving?"
 msgstr "Sigur doriți să continuați fără să salvați?"
 
@@ -1378,7 +1411,7 @@ msgstr "Adăugare fișiere..."
 msgid "Initializing..."
 msgstr "Inițializare..."
 
-#: ../plugins/gtkui/search.c:658
+#: ../plugins/gtkui/search.c:659
 msgid "Search [(%list_total% results)]"
 msgstr "Căutare [(%list_total% rezultate)]"
 
@@ -1395,221 +1428,212 @@ msgstr "Sigur doriți să închideți fereastra?"
 msgid "[Multiple values] "
 msgstr "[Valori multiple]"
 
-#: ../plugins/gtkui/trkproperties.c:376 ../plugins/gtkui/trkproperties.c:391
-#: ../plugins/gtkui/widgets.c:2563
+#: ../plugins/gtkui/trkproperties.c:374 ../plugins/gtkui/trkproperties.c:389
+#: ../plugins/gtkui/widgets.c:2585
 msgid "Key"
 msgstr "Cheie"
 
-#: ../plugins/gtkui/trkproperties.c:377 ../plugins/gtkui/trkproperties.c:392
-#: ../plugins/gtkui/widgets.c:2565
+#: ../plugins/gtkui/trkproperties.c:375 ../plugins/gtkui/trkproperties.c:390
+#: ../plugins/gtkui/widgets.c:2587
 msgid "Value"
 msgstr "Valoare"
 
-#: ../plugins/gtkui/trkproperties.c:411
+#: ../plugins/gtkui/trkproperties.c:409
 msgid "[Multiple values]"
 msgstr "[Valori multiple]"
 
-#: ../plugins/gtkui/trkproperties.c:620
+#: ../plugins/gtkui/trkproperties.c:635
 msgid "Writing tags..."
 msgstr "Se scriu etichetele..."
 
-#: ../plugins/gtkui/trkproperties.c:871
+#: ../plugins/gtkui/trkproperties.c:890
 msgid "Field name"
 msgstr "Nume câmp"
 
-#: ../plugins/gtkui/trkproperties.c:874
+#: ../plugins/gtkui/trkproperties.c:893
 msgid "Name:"
 msgstr "Nume:"
 
-#: ../plugins/gtkui/trkproperties.c:886
+#: ../plugins/gtkui/trkproperties.c:905
 msgid "Field names must not start with : or _"
 msgstr "Numele câmpurilor nu pot începe cu : sau _"
 
-#: ../plugins/gtkui/trkproperties.c:887 ../plugins/gtkui/trkproperties.c:926
+#: ../plugins/gtkui/trkproperties.c:906 ../plugins/gtkui/trkproperties.c:945
 msgid "Cannot add field"
 msgstr "Nu s-a putut adăuga câmpul"
 
-#: ../plugins/gtkui/trkproperties.c:925
+#: ../plugins/gtkui/trkproperties.c:944
 msgid "Field with such name already exists, please try different name."
 msgstr "Un câmp cu acest nume există deja, încercați să-l redenumiți."
 
-#: ../main.c:103
+#: ../main.c:122
 #, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
 msgstr "Utilizare: deadbeef [opțiuni] [--] [fișier(e)]\n"
 
-#: ../main.c:104
+#: ../main.c:123
 #, c-format
 msgid "Options:\n"
 msgstr "Opțiuni:\n"
 
-#: ../main.c:105
+#: ../main.c:124
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
 msgstr "   --help  sau -h     Arată acest mesaj de ajutor și ieși\n"
 
-#: ../main.c:106
+#: ../main.c:125
 #, c-format
 msgid "   --quit             Quit player\n"
 msgstr "   --quit             Ieșire din lector\n"
 
-#: ../main.c:107
+#: ../main.c:126
 #, c-format
 msgid "   --version          Print version info and exit\n"
 msgstr "   --version          Arată detaliile versiunii și ieși\n"
 
-#: ../main.c:108
+#: ../main.c:127
 #, c-format
 msgid "   --play             Start playback\n"
 msgstr "   --play             Pornește redarea\n"
 
-#: ../main.c:109
+#: ../main.c:128
 #, c-format
 msgid "   --stop             Stop playback\n"
 msgstr "   --stop             Oprește redarea\n"
 
-#: ../main.c:110
+#: ../main.c:129
 #, c-format
 msgid "   --pause            Pause playback\n"
 msgstr "   --pause            Pune pauză redării\n"
 
-#: ../main.c:111
+#: ../main.c:130
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
 msgstr "   --toggle-pause     Comută starea de pauză\n"
 
-#: ../main.c:112
+#: ../main.c:131
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr ""
-"   --play-pause       Pornește redarea dacă e cazul sau comută starea de "
-"pauză\n"
+msgstr "   --play-pause       Pornește redarea dacă e cazul sau comută starea de pauză\n"
 
-#: ../main.c:113
+#: ../main.c:132
 #, c-format
 msgid "   --next             Next song in playlist\n"
 msgstr "   --next             Piesa următoare în lista de redare\n"
 
-#: ../main.c:114
+#: ../main.c:133
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
 msgstr "   --prev             Piesa precedentă în lista de redare\n"
 
-#: ../main.c:115
+#: ../main.c:134
 #, c-format
 msgid "   --random           Random song in playlist\n"
 msgstr "   --random           Piesă aleatoare din lista de redare\n"
 
-#: ../main.c:116
+#: ../main.c:135
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
 msgstr "   --queue            Adaugă fișiere la lista de redare existentă\n"
 
-#: ../main.c:117
+#: ../main.c:136
 #, c-format
-msgid ""
-"   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr ""
-"   --gui MODUL        Precizează ce modul GUI să fie utilizat, implicit "
-"\"GTK2\"\n"
+msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
+msgstr "   --gui MODUL        Precizează ce modul GUI să fie utilizat, implicit \"GTK2\"\n"
 
-#: ../main.c:118
+#: ../main.c:137
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
-"   --nowplaying FMT   Arată în ieșirea standard numele formatat al piesei\n"
+msgstr "   --nowplaying FMT   Arată în ieșirea standard numele formatat al piesei\n"
 
-#: ../main.c:119
+#: ../main.c:138
 #, c-format
 msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
-msgstr ""
-"                      Sintaxă FMT prefixată cu %%: [a]rtist, [t]itlu, "
-"al[b]um,\n"
-"                      [l]ungime, [n]umăr piesă, [y] pentru an, "
-"[c]omentariu,\n"
-"                      d[r]epturi de autor, durată r[e]dată\n"
+msgstr "                      Sintaxă FMT prefixată cu %%: [a]rtist, [t]itlu, al[b]um,\n                      [l]ungime, [n]umăr piesă, [y] pentru an, [c]omentariu,\n                      d[r]epturi de autor, durată r[e]dată\n"
 
-#: ../main.c:122
+#: ../main.c:141
 #, c-format
 msgid ""
 "                      example: --nowplaying \"%%a - %%t\" should print "
 "\"artist - title\"\n"
-msgstr ""
-"exemplu: --redareacum \"%%a - %%t\" ar trebui sa arate \"artist - titlu\"\n"
+msgstr "exemplu: --redareacum \"%%a - %%t\" ar trebui sa arate \"artist - titlu\"\n"
 
-#: ../main.c:123
+#: ../main.c:142
 #, c-format
 msgid "                      for more info, see %s\n"
 msgstr "                      pentru mai multe detalii, consultați %s\n"
 
-#: ../main.c:124
+#: ../main.c:143
 #, c-format
 msgid "                      NOTE: --nowplaying is deprecated.\n"
 msgstr "NOTA: --redareacum nu mai este folosit.\n"
 
-#: ../main.c:125
+#: ../main.c:144
 #, c-format
 msgid ""
 "   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
 "title formatting\n"
-msgstr ""
-"--redareacum-tf FMT Afiseaza numele piesei formatate catre stdout, folosind "
-"noua formatare de titlu\n"
+msgstr "--redareacum-tf FMT Afiseaza numele piesei formatate catre stdout, folosind noua formatare de titlu\n"
 
-#: ../main.c:126
+#: ../main.c:145
 #, c-format
 msgid ""
-"                      FMT syntax: http://github.com/DeaDBeeF-Player/deadbeef/"
-"wiki/Title-formatting-2.0\n"
+"                      FMT syntax: http://github.com/DeaDBeeF-"
+"Player/deadbeef/wiki/Title-formatting-2.0\n"
 msgstr ""
 
-#: ../main.c:127
+#: ../main.c:146
 #, c-format
 msgid ""
 "                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
 "should print \"artist - title\"\n"
-msgstr ""
-"exemplu: --redareacum-tf \"%%artist%% - %%titlu%%\" ar trebui sa arate "
-"\"artist - titlu\"\n"
+msgstr "exemplu: --redareacum-tf \"%%artist%% - %%titlu%%\" ar trebui sa arate \"artist - titlu\"\n"
 
-#: ../main.c:128
+#: ../main.c:147
 #, c-format
 msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
 msgstr ""
 
-#: ../main.c:129
+#: ../main.c:148
 #, c-format
 msgid ""
-"                      The NUM parameter can be specified in percents (if no "
-"suffix) or dB [-50, 0].\n"
+"                      The NUM parameter can be specified in percents "
+"(absolute value or increment/decrement)\n"
 msgstr ""
 
-#: ../main.c:130
+#: ../main.c:149
 #, c-format
-msgid "                      Examples: --volume 80 or --volume -20dB\n"
+msgid "                      or in dB [-50, 0] (if with suffix).\n"
 msgstr ""
 
-#: ../playlist.c:482 ../playlist.c:2246
+#: ../main.c:150
+#, c-format
+msgid ""
+"                      Examples: --volume 80, --volume +10, --volume -5 or "
+"--volume -20dB\n"
+msgstr ""
+
+#: ../playlist.c:480 ../playlist.c:2317
 msgid "Default"
 msgstr "Implicit"
 
-#: ../playlist.c:2911
+#: ../playlist.c:3002
 msgid "Mono"
 msgstr "Mono"
 
-#: ../playlist.c:2911
+#: ../playlist.c:3002
 msgid "Stereo"
 msgstr "Stereo"
 
-#: ../playlist.c:3427
+#: ../playlist.c:3520
 msgid "Yes"
 msgstr "Da"
 
-#: ../playlist.c:3427
+#: ../playlist.c:3520
 msgid "No"
 msgstr "Nu"
 
@@ -1618,10 +1642,7 @@ msgid ""
 "Left\n"
 "Right\n"
 "Center"
-msgstr ""
-"Stânga\n"
-"Dreapta\n"
-"Centrală"
+msgstr "Stânga\nDreapta\nCentrală"
 
 #: ../plugins/gtkui/deadbeef.glade.h:94
 msgid ""
@@ -1638,31 +1659,24 @@ msgid ""
 "Only prevent clipping"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:191
+#: ../plugins/gtkui/deadbeef.glade.h:194
 msgid ""
 "Ascending\n"
 "Descending"
-msgstr ""
-"Ascendent\n"
-"Descendent"
+msgstr "Ascendent\nDescendent"
 
-#: ../plugins/gtkui/deadbeef.glade.h:203
+#: ../plugins/gtkui/deadbeef.glade.h:206
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr ""
-"2.3 (Recomandat)\n"
-"2.4"
+msgstr "2.3 (Recomandat)\n2.4"
 
-#: ../plugins/wildmidi/wildmidiplug.c:191
+#: ../plugins/wildmidi/wildmidiplug.c:192
 #, c-format
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
-msgstr ""
-"wildmidi: nu s-a găsit fișierul de configurare freepats. Instalați pachetul "
-"timidity-freepats sau specificați calea către freepats.cfg în opțiunile "
-"modulului."
+msgstr "wildmidi: nu s-a găsit fișierul de configurare freepats. Instalați pachetul timidity-freepats sau specificați calea către freepats.cfg în opțiunile modulului."
 
 #: ../translation/extra.c:3
 msgid "Track Title"
@@ -1717,869 +1731,1062 @@ msgid "Embedded Cuesheet"
 msgstr "Cuesheet încorporat"
 
 #. plugins/adplug/plugin.c
-#: ../translation/plugins.c:2
+#: ../translation/plugins.c:3
+#, no-c-format
 msgid "Prefer Ken emu over Satoh (surround won't work)"
 msgstr "Preferă Ken emu înaintea Satoh (fără surround)"
 
-#: ../translation/plugins.c:3
+#: ../translation/plugins.c:5
+#, no-c-format
 msgid "Enable surround"
 msgstr "Activare surround"
 
 #. plugins/alsa/alsa.c
-#: ../translation/plugins.c:5
+#: ../translation/plugins.c:8
+#, no-c-format
 msgid "Use ALSA resampling"
 msgstr "Utilizează reeșantionare ALSA"
 
-#: ../translation/plugins.c:6
+#: ../translation/plugins.c:10
+#, no-c-format
 msgid "Preferred buffer size"
 msgstr "Mărime preferată pentru memoria tampon"
 
-#: ../translation/plugins.c:7
+#: ../translation/plugins.c:12
+#, no-c-format
 msgid "Preferred period size"
 msgstr "Mărime preferată pentru perioadă"
 
 #. plugins/artwork-legacy/artwork.c
-#: ../translation/plugins.c:9
+#: ../translation/plugins.c:15
+#, no-c-format
 msgid "Refresh cover art"
 msgstr ""
 
-#: ../translation/plugins.c:10
+#: ../translation/plugins.c:17
+#, no-c-format
 msgid "Cache update period (in hours, 0=never)"
 msgstr ""
 
-#: ../translation/plugins.c:11
+#: ../translation/plugins.c:19
+#, no-c-format
 msgid "Fetch from embedded tags"
 msgstr "Extrage din etichetele încorporate"
 
-#: ../translation/plugins.c:12
+#: ../translation/plugins.c:21
+#, no-c-format
 msgid "Fetch from local folder"
 msgstr "Extrage din directorul local"
 
-#: ../translation/plugins.c:13
+#: ../translation/plugins.c:23
+#, no-c-format
 msgid "Fetch from Last.fm"
 msgstr ""
 
-#: ../translation/plugins.c:14
+#: ../translation/plugins.c:25
+#, no-c-format
 msgid "Fetch from MusicBrainz"
 msgstr ""
 
-#: ../translation/plugins.c:15
+#: ../translation/plugins.c:27
+#, no-c-format
 msgid "Fetch from Albumart.org"
 msgstr ""
 
-#: ../translation/plugins.c:16
+#: ../translation/plugins.c:29
+#, no-c-format
 msgid "Fetch from World of Spectrum (AY files only)"
 msgstr ""
 
-#: ../translation/plugins.c:17
+#: ../translation/plugins.c:31
+#, no-c-format
 msgid "When no artwork is found"
 msgstr ""
 
-#: ../translation/plugins.c:18
+#: ../translation/plugins.c:33
+#, no-c-format
 msgid "leave blank"
 msgstr ""
 
-#: ../translation/plugins.c:19
+#: ../translation/plugins.c:35
+#, no-c-format
 msgid "use DeaDBeeF default cover"
 msgstr ""
 
-#: ../translation/plugins.c:20
+#: ../translation/plugins.c:37
+#, no-c-format
 msgid "display custom image"
 msgstr ""
 
-#: ../translation/plugins.c:21
+#: ../translation/plugins.c:39
+#, no-c-format
 msgid "Custom image path"
 msgstr ""
 
-#: ../translation/plugins.c:22
+#: ../translation/plugins.c:41
+#, no-c-format
 msgid "Scale artwork towards longer side"
 msgstr "Scalează copertele după lungime"
 
 #. plugins/artwork/artwork.c
-#: ../translation/plugins.c:24
+#: ../translation/plugins.c:44
+#, no-c-format
 msgid "Disable disk cache"
 msgstr ""
 
-#: ../translation/plugins.c:25
+#: ../translation/plugins.c:46
+#, no-c-format
 msgid "Save extracted covers to music folders"
 msgstr ""
 
-#: ../translation/plugins.c:26
+#: ../translation/plugins.c:48
+#, no-c-format
 msgid "Local file mask"
 msgstr ""
 
-#: ../translation/plugins.c:27
+#: ../translation/plugins.c:50
+#, no-c-format
 msgid "Artwork folders"
 msgstr ""
 
 #. plugins/cdda/cdda.c
-#: ../translation/plugins.c:29
+#: ../translation/plugins.c:53
+#, no-c-format
 msgid "CD drive to load"
 msgstr ""
 
-#: ../translation/plugins.c:30
+#: ../translation/plugins.c:55
+#, no-c-format
 msgid "Audio CD Drive"
 msgstr ""
 
-#: ../translation/plugins.c:31
+#: ../translation/plugins.c:57
+#, no-c-format
 msgid "File"
 msgstr ""
 
-#: ../translation/plugins.c:32
+#: ../translation/plugins.c:59
+#, no-c-format
 msgid "Add Audio CD"
 msgstr "Adăugare CD audio"
 
-#: ../translation/plugins.c:33
+#: ../translation/plugins.c:61
+#, no-c-format
 msgid "Use CDDB/FreeDB"
 msgstr "Utilizează CDDB/FreeDB"
 
-#: ../translation/plugins.c:34
+#: ../translation/plugins.c:63
+#, no-c-format
 msgid "Prefer CD-Text over CDDB"
 msgstr "Preferă CD-Text înaintea CDDB"
 
-#: ../translation/plugins.c:35
+#: ../translation/plugins.c:65
+#, no-c-format
 msgid "CDDB url (e.g. 'freedb.org')"
 msgstr "Servitor CDDB (de ex. „freedb.org”)"
 
-#: ../translation/plugins.c:36
+#: ../translation/plugins.c:67
+#, no-c-format
 msgid "CDDB port number (e.g. '888')"
 msgstr "Port CDDB (de ex. „888”)"
 
-#: ../translation/plugins.c:37
+#: ../translation/plugins.c:69
+#, no-c-format
 msgid "Use CDDB protocol"
 msgstr ""
 
-#: ../translation/plugins.c:38
+#: ../translation/plugins.c:71
+#, no-c-format
 msgid "Enable NRG image support"
 msgstr "Activează suportul pentru imagini NRG"
 
-#: ../translation/plugins.c:39
+#: ../translation/plugins.c:73
+#, no-c-format
 msgid "Drive speed for normal playback"
 msgstr ""
 
-#: ../translation/plugins.c:40
+#: ../translation/plugins.c:75
+#, no-c-format
 msgid "1x"
 msgstr ""
 
-#: ../translation/plugins.c:41
+#: ../translation/plugins.c:77
+#, no-c-format
 msgid "2x"
 msgstr ""
 
-#: ../translation/plugins.c:42
+#: ../translation/plugins.c:79
+#, no-c-format
 msgid "4x"
 msgstr ""
 
-#: ../translation/plugins.c:43
+#: ../translation/plugins.c:81
+#, no-c-format
 msgid "8x"
 msgstr ""
 
-#: ../translation/plugins.c:44
+#: ../translation/plugins.c:83
+#, no-c-format
 msgid "16x"
 msgstr ""
 
-#: ../translation/plugins.c:45
+#: ../translation/plugins.c:85
+#, no-c-format
 msgid "Max"
 msgstr ""
 
-#: ../translation/plugins.c:46
+#: ../translation/plugins.c:87
+#, no-c-format
 msgid "Use cdparanoia error correction when ripping"
 msgstr ""
 
 #. plugins/converter/convgui.c
-#: ../translation/plugins.c:48
+#: ../translation/plugins.c:90
+#, no-c-format
 msgid "Convert"
 msgstr "Convertire"
 
 #. plugins/dsp_libsrc/src.c
-#: ../translation/plugins.c:50
+#: ../translation/plugins.c:93
+#, no-c-format
 msgid "Autodetect samplerate from output device"
 msgstr ""
 
-#: ../translation/plugins.c:51
+#: ../translation/plugins.c:95
+#, no-c-format
 msgid "Set samplerate directly"
 msgstr ""
 
-#: ../translation/plugins.c:52
+#: ../translation/plugins.c:97
+#, no-c-format
 msgid "Quality / Algorithm"
 msgstr "Calitate / Algoritm"
 
 #. plugins/dumb/cdumb.c
-#: ../translation/plugins.c:54
-msgid "Resampling quality (0..5, higher is better)"
+#: ../translation/plugins.c:100
+#, no-c-format
+msgid "Resampling quality"
 msgstr ""
 
-#: ../translation/plugins.c:55
-msgid "8-bit output (default is 16)"
-msgstr "Output 8-bit (implicit e 16)"
-
-#: ../translation/plugins.c:56
-msgid "Internal DUMB volume (0..128)"
+#: ../translation/plugins.c:102
+#, no-c-format
+msgid "Internal DUMB volume"
 msgstr ""
 
-#: ../translation/plugins.c:57
-#, fuzzy
+#: ../translation/plugins.c:104
+#, no-c-format
 msgid "Volume ramping"
-msgstr "Bară de volum"
+msgstr ""
 
-#: ../translation/plugins.c:59
+#: ../translation/plugins.c:108
+#, no-c-format
 msgid "On/Off Only"
 msgstr ""
 
-#: ../translation/plugins.c:60
+#: ../translation/plugins.c:110
+#, no-c-format
 msgid "Full"
 msgstr ""
 
+#: ../translation/plugins.c:112
+#, no-c-format
+msgid "8-bit output"
+msgstr ""
+
 #. plugins/ffmpeg/ffmpeg.c
-#: ../translation/plugins.c:62
+#: ../translation/plugins.c:115
+#, no-c-format
 msgid "Use all extensions supported by ffmpeg"
 msgstr ""
 
-#: ../translation/plugins.c:63
+#: ../translation/plugins.c:117
+#, no-c-format
 msgid "File Extensions (separate with ';')"
 msgstr "Extensii de fișiere (separate prin ;)"
 
+#. plugins/flac/flac.c
+#: ../translation/plugins.c:120
+#, no-c-format
+msgid "Ignore bad header errors"
+msgstr ""
+
+#: ../translation/plugins.c:122
+#, no-c-format
+msgid "Ignore unparsable stream errors"
+msgstr ""
+
 #. plugins/gme/cgme.c
-#: ../translation/plugins.c:65
+#: ../translation/plugins.c:125
+#, no-c-format
 msgid "Max song length (in minutes)"
 msgstr "Durată maximă pentru o piesă (în minute)"
 
-#: ../translation/plugins.c:66
+#: ../translation/plugins.c:127
+#, no-c-format
 msgid "Fadeout length (seconds)"
 msgstr "Durata estompării audio (sec)"
 
-#: ../translation/plugins.c:67
+#: ../translation/plugins.c:129
+#, no-c-format
 msgid "Play loops nr. of times (if available)"
 msgstr "Numărul de repetări pentru un loop (dacă e cazul)"
 
-#: ../translation/plugins.c:68
+#: ../translation/plugins.c:131
+#, no-c-format
 msgid "ColecoVision BIOS (for SGC file format)"
 msgstr ""
 
 #. plugins/gtkui/gtkui.c
-#: ../translation/plugins.c:70
+#: ../translation/plugins.c:134
+#, no-c-format
 msgid "ReplayGain"
 msgstr ""
 
-#: ../translation/plugins.c:71
+#: ../translation/plugins.c:136
+#, no-c-format
 msgid "Remove ReplayGain Information"
 msgstr ""
 
-#: ../translation/plugins.c:72
+#: ../translation/plugins.c:138
+#, no-c-format
 msgid "Scan Selection As Albums (By Tags)"
 msgstr ""
 
-#: ../translation/plugins.c:73
+#: ../translation/plugins.c:140
+#, no-c-format
 msgid "Scan Selection As Single Album"
 msgstr ""
 
-#: ../translation/plugins.c:74
+#: ../translation/plugins.c:142
+#, no-c-format
 msgid "Scan Per-file Track Gain"
 msgstr ""
 
-#: ../translation/plugins.c:76
-msgid "Deselect All"
-msgstr ""
-
-#: ../translation/plugins.c:77
-msgid "Select All"
-msgstr ""
-
-#: ../translation/plugins.c:80
-msgid "Add Location"
-msgstr ""
-
-#: ../translation/plugins.c:81
-msgid "Add Folder(s)"
-msgstr ""
-
-#: ../translation/plugins.c:82
-msgid "Add File(s)"
-msgstr ""
-
-#: ../translation/plugins.c:83
-msgid "Open File(s)"
-msgstr ""
-
-#: ../translation/plugins.c:86
-msgid "Show Help Page"
-msgstr ""
-
-#: ../translation/plugins.c:88
-msgid "Cycle Playback Looping Mode"
-msgstr ""
-
-#: ../translation/plugins.c:89
-msgid "Playback Looping - Don't loop"
-msgstr ""
-
-#: ../translation/plugins.c:90
-msgid "Playback Looping - Single track"
-msgstr ""
-
-#: ../translation/plugins.c:91
-msgid "Playback Looping - All"
-msgstr ""
-
-#: ../translation/plugins.c:92
-msgid "Cycle Playback Order"
-msgstr ""
-
-#: ../translation/plugins.c:93
-msgid "Playback Order - Random"
-msgstr ""
-
-#: ../translation/plugins.c:94
-msgid "Playback Order - Shuffle albums"
-msgstr ""
-
-#: ../translation/plugins.c:95
-msgid "Playback Order - Shuffle tracks"
-msgstr ""
-
-#: ../translation/plugins.c:96
-msgid "Playback Order - Linear"
-msgstr ""
-
-#: ../translation/plugins.c:97
-msgid "Toggle Cursor Follows Playback"
-msgstr ""
-
-#: ../translation/plugins.c:98
-msgid "Toggle Scroll Follows Playback"
-msgstr ""
-
-#: ../translation/plugins.c:99
-msgid "View"
-msgstr ""
-
-#: ../translation/plugins.c:100
-msgid "Show\\/Hide menu"
-msgstr ""
-
-#: ../translation/plugins.c:101
-msgid "Show\\/Hide statusbar"
-msgstr ""
-
-#: ../translation/plugins.c:102
-msgid "Toggle Design Mode"
-msgstr ""
-
-#: ../translation/plugins.c:104
-msgid "Sort Custom"
-msgstr ""
-
-#: ../translation/plugins.c:105
-msgid "Crop Selected"
-msgstr ""
-
-#: ../translation/plugins.c:106
-msgid "Remove Track(s) From Playlist"
-msgstr ""
-
-#: ../translation/plugins.c:107
-msgid "Save Playlist"
-msgstr ""
-
-#: ../translation/plugins.c:108 ../plugins/gtkui/actionhandlers.c:740
-msgid "Load Playlist"
-msgstr "Încarcă listă de redare"
-
-#: ../translation/plugins.c:109
-msgid "Remove Current Playlist"
-msgstr ""
-
-#: ../translation/plugins.c:111
-msgid "Show\\/Hide Equalizer"
-msgstr ""
-
-#: ../translation/plugins.c:112
-msgid "Hide Equalizer"
-msgstr ""
-
-#: ../translation/plugins.c:113
-msgid "Show Equalizer"
-msgstr ""
-
-#: ../translation/plugins.c:114
-msgid "Show\\/Hide Player Window"
-msgstr ""
-
-#: ../translation/plugins.c:115
-msgid "Hide Player Window"
-msgstr ""
-
-#: ../translation/plugins.c:116
-msgid "Show Player Window"
-msgstr ""
-
-#: ../translation/plugins.c:117
-msgid "Find"
-msgstr ""
-
-#: ../translation/plugins.c:118
-msgid "Show\\/Hide Log window"
-msgstr ""
-
-#: ../translation/plugins.c:119
-msgid "Ask confirmation to delete files from disk"
-msgstr "Cere confirmare pentru ștergerea fișierelor de pe disc"
-
-#: ../translation/plugins.c:120
-msgid "Status icon volume control sensitivity"
-msgstr "Prag de control al volumului prin iconița din zona de notificare"
-
-#: ../translation/plugins.c:121
-msgid "Custom status icon"
-msgstr "Iconiță personalizată pentru zona de notificare"
-
-#: ../translation/plugins.c:122
-msgid "Run gtk_init with --sync (debug mode)"
-msgstr "Execută gtk_init cu --sync (mod de depanare)"
-
-#: ../translation/plugins.c:123
-msgid "Add separators between plugin context menu items"
-msgstr "Adaugă separatori între elementele modulelor din meniul contextual"
-
-#: ../translation/plugins.c:124
-msgid "Use unicode chars instead of images for track state"
-msgstr ""
-
-#: ../translation/plugins.c:125
-msgid "Disable seekbar overlay text"
-msgstr ""
-
-#: ../translation/plugins.c:128
-msgid "Jump To Currently Playing Track"
-msgstr ""
-
-#: ../translation/plugins.c:129
-msgid "Skip to"
-msgstr "Sări la"
-
-#: ../translation/plugins.c:130
-msgid "Previous genre"
-msgstr "Genul precedent"
-
-#: ../translation/plugins.c:131
-msgid "Previous composer"
-msgstr "Compozitorul precedent"
-
-#: ../translation/plugins.c:132
-msgid "Previous artist"
-msgstr "Artistul precedent"
-
-#: ../translation/plugins.c:133
-msgid "Previous album"
-msgstr "Albumul precedent"
-
-#: ../translation/plugins.c:134
-msgid "Next genre"
-msgstr "Genul următor"
-
-#: ../translation/plugins.c:135
-msgid "Next composer"
-msgstr "Compozitorul următor"
-
-#: ../translation/plugins.c:136
-msgid "Next artist"
-msgstr "Artistul următor"
-
-#: ../translation/plugins.c:137
-msgid "Next album"
-msgstr "Albumul următor"
-
-#: ../translation/plugins.c:138
-msgid "Next Playlist"
-msgstr ""
-
-#: ../translation/plugins.c:139
-msgid "Prev Playlist"
-msgstr ""
-
-#: ../translation/plugins.c:140
-msgid "Switch To Playlist 10"
-msgstr ""
-
-#: ../translation/plugins.c:141
-msgid "Switch To Playlist 9"
-msgstr ""
-
-#: ../translation/plugins.c:142
-msgid "Switch To Playlist 8"
-msgstr ""
-
-#: ../translation/plugins.c:143
-msgid "Switch To Playlist 7"
-msgstr ""
-
 #: ../translation/plugins.c:144
-msgid "Switch To Playlist 6"
-msgstr ""
-
-#: ../translation/plugins.c:145
-msgid "Switch To Playlist 5"
-msgstr ""
-
-#: ../translation/plugins.c:146
-msgid "Switch To Playlist 4"
-msgstr ""
-
-#: ../translation/plugins.c:147
-msgid "Switch To Playlist 3"
+#, no-c-format
+msgid "Scan Per-file Track Gain If Not Scanned"
 msgstr ""
 
 #: ../translation/plugins.c:148
-msgid "Switch To Playlist 2"
-msgstr ""
-
-#: ../translation/plugins.c:149
-msgid "Switch To Playlist 1"
+#, no-c-format
+msgid "Deselect All"
 msgstr ""
 
 #: ../translation/plugins.c:150
-msgid "Sort Randomize"
-msgstr ""
-
-#: ../translation/plugins.c:151
-msgid "Sort By Date"
-msgstr ""
-
-#: ../translation/plugins.c:152
-msgid "Sort By Artist"
-msgstr ""
-
-#: ../translation/plugins.c:153
-msgid "Sort By Album"
-msgstr ""
-
-#: ../translation/plugins.c:154
-msgid "Sort By Track Number"
-msgstr ""
-
-#: ../translation/plugins.c:155
-msgid "Sort By Title"
+#, no-c-format
+msgid "Select All"
 msgstr ""
 
 #: ../translation/plugins.c:156
-msgid "Invert Selection"
+#, no-c-format
+msgid "Add Location"
 msgstr ""
 
-#: ../translation/plugins.c:157
-msgid "Clear Playlist"
+#: ../translation/plugins.c:158
+#, no-c-format
+msgid "Add Folder(s)"
 msgstr ""
 
 #: ../translation/plugins.c:160
-msgid "Toggle In Playback Queue"
-msgstr ""
-
-#: ../translation/plugins.c:161
-msgid "Move"
+#, no-c-format
+msgid "Add File(s)"
 msgstr ""
 
 #: ../translation/plugins.c:162
-msgid "Move Tracks Down"
+#, no-c-format
+msgid "Open File(s)"
 msgstr ""
 
-#: ../translation/plugins.c:163
-msgid "Move Tracks Up"
-msgstr ""
-
-#: ../translation/plugins.c:164
-msgid "Toggle Mute"
-msgstr ""
-
-#: ../translation/plugins.c:169
-msgid "Toggle Pause"
-msgstr ""
-
-#: ../translation/plugins.c:170
-msgid "Play\\/Pause"
+#: ../translation/plugins.c:168
+#, no-c-format
+msgid "Show Help Page"
 msgstr ""
 
 #: ../translation/plugins.c:172
-msgid "Seek 1s Forward"
-msgstr ""
-
-#: ../translation/plugins.c:173
-msgid "Seek 1s Backward"
+#, no-c-format
+msgid "Cycle Repeat Mode"
 msgstr ""
 
 #: ../translation/plugins.c:174
-msgid "Seek 5s Forward"
-msgstr ""
-
-#: ../translation/plugins.c:175
-msgid "Seek 5s Backward"
+#, no-c-format
+msgid "Repeat - Off"
 msgstr ""
 
 #: ../translation/plugins.c:176
-#, c-format
-msgid "Seek 1% Forward"
-msgstr ""
-
-#: ../translation/plugins.c:177
-msgid "Seek 1% Backward"
+#, no-c-format
+msgid "Repeat - Single Track"
 msgstr ""
 
 #: ../translation/plugins.c:178
-#, c-format
-msgid "Seek 5% Forward"
-msgstr ""
-
-#: ../translation/plugins.c:179
-msgid "Seek 5% Backward"
+#, no-c-format
+msgid "Repeat - All"
 msgstr ""
 
 #: ../translation/plugins.c:180
-msgid "Volume Up"
-msgstr ""
-
-#: ../translation/plugins.c:181
-msgid "Volume Down"
+#, no-c-format
+msgid "Cycle Shuffle Mode"
 msgstr ""
 
 #: ../translation/plugins.c:182
+#, no-c-format
+msgid "Shuffle - Random Tracks"
+msgstr ""
+
+#: ../translation/plugins.c:184
+#, no-c-format
+msgid "Shuffle - Albums"
+msgstr ""
+
+#: ../translation/plugins.c:186
+#, no-c-format
+msgid "Shuffle - Tracks"
+msgstr ""
+
+#: ../translation/plugins.c:188
+#, no-c-format
+msgid "Shuffle - Off"
+msgstr ""
+
+#: ../translation/plugins.c:190
+#, no-c-format
+msgid "Toggle Cursor Follows Playback"
+msgstr ""
+
+#: ../translation/plugins.c:192
+#, no-c-format
+msgid "Toggle Scroll Follows Playback"
+msgstr ""
+
+#: ../translation/plugins.c:194
+#, no-c-format
+msgid "View"
+msgstr ""
+
+#: ../translation/plugins.c:196
+#, no-c-format
+msgid "Show\\/Hide menu"
+msgstr ""
+
+#: ../translation/plugins.c:198
+#, no-c-format
+msgid "Show\\/Hide statusbar"
+msgstr ""
+
+#: ../translation/plugins.c:200
+#, no-c-format
+msgid "Toggle Design Mode"
+msgstr ""
+
+#: ../translation/plugins.c:204
+#, no-c-format
+msgid "Sort Custom"
+msgstr ""
+
+#: ../translation/plugins.c:206
+#, no-c-format
+msgid "Crop Selected"
+msgstr ""
+
+#: ../translation/plugins.c:208
+#, no-c-format
+msgid "Remove Track(s) From Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:210
+#, no-c-format
+msgid "Save Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:212 ../plugins/gtkui/actionhandlers.c:626
+#, no-c-format
+msgid "Load Playlist"
+msgstr "Încarcă listă de redare"
+
+#: ../translation/plugins.c:214
+#, no-c-format
+msgid "Remove Current Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:218
+#, no-c-format
+msgid "Show\\/Hide Equalizer"
+msgstr ""
+
+#: ../translation/plugins.c:220
+#, no-c-format
+msgid "Hide Equalizer"
+msgstr ""
+
+#: ../translation/plugins.c:222
+#, no-c-format
+msgid "Show Equalizer"
+msgstr ""
+
+#: ../translation/plugins.c:224
+#, no-c-format
+msgid "Show\\/Hide Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:226
+#, no-c-format
+msgid "Hide Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:228
+#, no-c-format
+msgid "Show Player Window"
+msgstr ""
+
+#: ../translation/plugins.c:230
+#, no-c-format
+msgid "Find"
+msgstr ""
+
+#: ../translation/plugins.c:232
+#, no-c-format
+msgid "Show\\/Hide Log window"
+msgstr ""
+
+#: ../translation/plugins.c:234
+#, no-c-format
+msgid "Ask confirmation to delete files from disk"
+msgstr "Cere confirmare pentru ștergerea fișierelor de pe disc"
+
+#: ../translation/plugins.c:236
+#, no-c-format
+msgid "Status icon volume control sensitivity"
+msgstr "Prag de control al volumului prin iconița din zona de notificare"
+
+#: ../translation/plugins.c:238
+#, no-c-format
+msgid "Custom status icon"
+msgstr "Iconiță personalizată pentru zona de notificare"
+
+#: ../translation/plugins.c:240
+#, no-c-format
+msgid "Add separators between plugin context menu items"
+msgstr "Adaugă separatori între elementele modulelor din meniul contextual"
+
+#: ../translation/plugins.c:242
+#, no-c-format
+msgid "Use unicode chars instead of images for track state"
+msgstr ""
+
+#: ../translation/plugins.c:244
+#, no-c-format
+msgid "Disable seekbar overlay text"
+msgstr ""
+
+#: ../translation/plugins.c:249
+#, no-c-format
+msgid "Jump To Currently Playing Track"
+msgstr ""
+
+#: ../translation/plugins.c:251
+#, no-c-format
+msgid "Skip to"
+msgstr "Sări la"
+
+#: ../translation/plugins.c:253
+#, no-c-format
+msgid "Previous genre"
+msgstr "Genul precedent"
+
+#: ../translation/plugins.c:255
+#, no-c-format
+msgid "Previous composer"
+msgstr "Compozitorul precedent"
+
+#: ../translation/plugins.c:257
+#, no-c-format
+msgid "Previous artist"
+msgstr "Artistul precedent"
+
+#: ../translation/plugins.c:259
+#, no-c-format
+msgid "Previous album"
+msgstr "Albumul precedent"
+
+#: ../translation/plugins.c:261
+#, no-c-format
+msgid "Next genre"
+msgstr "Genul următor"
+
+#: ../translation/plugins.c:263
+#, no-c-format
+msgid "Next composer"
+msgstr "Compozitorul următor"
+
+#: ../translation/plugins.c:265
+#, no-c-format
+msgid "Next artist"
+msgstr "Artistul următor"
+
+#: ../translation/plugins.c:267
+#, no-c-format
+msgid "Next album"
+msgstr "Albumul următor"
+
+#: ../translation/plugins.c:269
+#, no-c-format
+msgid "Next Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:271
+#, no-c-format
+msgid "Prev Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:273
+#, no-c-format
+msgid "Switch To Playlist 10"
+msgstr ""
+
+#: ../translation/plugins.c:275
+#, no-c-format
+msgid "Switch To Playlist 9"
+msgstr ""
+
+#: ../translation/plugins.c:277
+#, no-c-format
+msgid "Switch To Playlist 8"
+msgstr ""
+
+#: ../translation/plugins.c:279
+#, no-c-format
+msgid "Switch To Playlist 7"
+msgstr ""
+
+#: ../translation/plugins.c:281
+#, no-c-format
+msgid "Switch To Playlist 6"
+msgstr ""
+
+#: ../translation/plugins.c:283
+#, no-c-format
+msgid "Switch To Playlist 5"
+msgstr ""
+
+#: ../translation/plugins.c:285
+#, no-c-format
+msgid "Switch To Playlist 4"
+msgstr ""
+
+#: ../translation/plugins.c:287
+#, no-c-format
+msgid "Switch To Playlist 3"
+msgstr ""
+
+#: ../translation/plugins.c:289
+#, no-c-format
+msgid "Switch To Playlist 2"
+msgstr ""
+
+#: ../translation/plugins.c:291
+#, no-c-format
+msgid "Switch To Playlist 1"
+msgstr ""
+
+#: ../translation/plugins.c:293
+#, no-c-format
+msgid "Sort Randomize"
+msgstr ""
+
+#: ../translation/plugins.c:295
+#, no-c-format
+msgid "Sort By Date"
+msgstr ""
+
+#: ../translation/plugins.c:297
+#, no-c-format
+msgid "Sort By Artist"
+msgstr ""
+
+#: ../translation/plugins.c:299
+#, no-c-format
+msgid "Sort By Album"
+msgstr ""
+
+#: ../translation/plugins.c:301
+#, no-c-format
+msgid "Sort By Track Number"
+msgstr ""
+
+#: ../translation/plugins.c:303
+#, no-c-format
+msgid "Sort By Title"
+msgstr ""
+
+#: ../translation/plugins.c:305
+#, no-c-format
+msgid "Invert Selection"
+msgstr ""
+
+#: ../translation/plugins.c:307
+#, no-c-format
+msgid "Clear Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:313
+#, no-c-format
+msgid "Toggle In Playback Queue"
+msgstr ""
+
+#: ../translation/plugins.c:315
+#, no-c-format
+msgid "Move"
+msgstr ""
+
+#: ../translation/plugins.c:317
+#, no-c-format
+msgid "Move Tracks Down"
+msgstr ""
+
+#: ../translation/plugins.c:319
+#, no-c-format
+msgid "Move Tracks Up"
+msgstr ""
+
+#: ../translation/plugins.c:321
+#, no-c-format
+msgid "Toggle Mute"
+msgstr ""
+
+#: ../translation/plugins.c:331
+#, no-c-format
+msgid "Toggle Pause"
+msgstr ""
+
+#: ../translation/plugins.c:333
+#, no-c-format
+msgid "Play\\/Pause"
+msgstr ""
+
+#: ../translation/plugins.c:337
+#, no-c-format
+msgid "Seek 1s Forward"
+msgstr ""
+
+#: ../translation/plugins.c:339
+#, no-c-format
+msgid "Seek 1s Backward"
+msgstr ""
+
+#: ../translation/plugins.c:341
+#, no-c-format
+msgid "Seek 5s Forward"
+msgstr ""
+
+#: ../translation/plugins.c:343
+#, no-c-format
+msgid "Seek 5s Backward"
+msgstr ""
+
+#: ../translation/plugins.c:345
+#, no-c-format
+msgid "Seek 1% Forward"
+msgstr ""
+
+#: ../translation/plugins.c:347
+#, no-c-format
+msgid "Seek 1% Backward"
+msgstr ""
+
+#: ../translation/plugins.c:349
+#, no-c-format
+msgid "Seek 5% Forward"
+msgstr ""
+
+#: ../translation/plugins.c:351
+#, no-c-format
+msgid "Seek 5% Backward"
+msgstr ""
+
+#: ../translation/plugins.c:353
+#, no-c-format
+msgid "Volume Up"
+msgstr ""
+
+#: ../translation/plugins.c:355
+#, no-c-format
+msgid "Volume Down"
+msgstr ""
+
+#: ../translation/plugins.c:357
+#, no-c-format
 msgid "Toggle Stop After Current Track"
 msgstr ""
 
-#: ../translation/plugins.c:183
+#: ../translation/plugins.c:359
+#, no-c-format
 msgid "Toggle Stop After Current Album"
 msgstr ""
 
 #. plugins/lastfm/lastfm.c
-#: ../translation/plugins.c:185
+#: ../translation/plugins.c:362
+#, no-c-format
 msgid "Lookup On Last.fm"
 msgstr ""
 
-#: ../translation/plugins.c:186
+#: ../translation/plugins.c:364
+#, no-c-format
 msgid "Enable scrobbler"
 msgstr "Activare Scrobbler"
 
-#: ../translation/plugins.c:187
+#: ../translation/plugins.c:366
+#, no-c-format
 msgid "Disable nowplaying"
 msgstr "Dezactivare „nowplaying”"
 
-#: ../translation/plugins.c:188
+#: ../translation/plugins.c:368
+#, no-c-format
 msgid "Username"
 msgstr "Utilizator"
 
-#: ../translation/plugins.c:189
+#: ../translation/plugins.c:370
+#, no-c-format
 msgid "Password"
 msgstr "Parolă"
 
-#: ../translation/plugins.c:190
+#: ../translation/plugins.c:372
+#, no-c-format
 msgid "Scrobble URL"
 msgstr "URL Scrobble"
 
-#: ../translation/plugins.c:191
+#: ../translation/plugins.c:374
+#, no-c-format
 msgid "Prefer Album Artist over Artist field"
 msgstr "Preferă câmpul Artist al albumului"
 
-#: ../translation/plugins.c:192
+#: ../translation/plugins.c:376
+#, no-c-format
 msgid "Send MusicBrainz ID"
 msgstr ""
 
-#: ../translation/plugins.c:193
+#: ../translation/plugins.c:378
+#, no-c-format
 msgid "Submit tracks shorter than 30 seconds (not recommended)"
 msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
-#: ../translation/plugins.c:195
-msgid "Left mix:"
+#: ../translation/plugins.c:381
+#, no-c-format
+msgid "Left mix"
 msgstr ""
 
-#: ../translation/plugins.c:196
-msgid "Right mix:"
+#: ../translation/plugins.c:383
+#, no-c-format
+msgid "Right mix"
 msgstr ""
 
 #. plugins/mp3/mp3.c
-#: ../translation/plugins.c:198
+#: ../translation/plugins.c:386
+#, no-c-format
 msgid "Force 16 bit output"
 msgstr ""
 
-#: ../translation/plugins.c:199
+#: ../translation/plugins.c:388
+#, no-c-format
 msgid "Backend"
 msgstr ""
 
-#: ../translation/plugins.c:202
+#: ../translation/plugins.c:393
+#, no-c-format
 msgid "Notification title format"
 msgstr "Format pentru titlul notificării"
 
-#: ../translation/plugins.c:203
+#: ../translation/plugins.c:395
+#, no-c-format
 msgid "Notification content format"
 msgstr "Format pentru conținutul notificării"
 
-#: ../translation/plugins.c:204
+#: ../translation/plugins.c:397
+#, no-c-format
 msgid "Show album art"
 msgstr "Arată copertele albumelor"
 
-#: ../translation/plugins.c:205
+#: ../translation/plugins.c:399
+#, no-c-format
 msgid "Album art size (px)"
 msgstr "Mărime pentru copertele albumelor (px)"
 
 #. plugins/oss/oss.c
-#: ../translation/plugins.c:207
+#: ../translation/plugins.c:402
+#, no-c-format
 msgid "Device file"
 msgstr "Fișierul dispozitivului"
 
-#: ../translation/plugins.c:210
+#: ../translation/plugins.c:407
+#, no-c-format
 msgid "Highlight current playlist"
 msgstr ""
 
-#: ../translation/plugins.c:211
+#: ../translation/plugins.c:409
+#, no-c-format
 msgid "Play on double-click"
 msgstr ""
 
+#. plugins/portaudio/portaudio.c
+#: ../translation/plugins.c:412
+#, no-c-format
+msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
+msgstr ""
+
+#: ../translation/plugins.c:414
+#, no-c-format
+msgid "Device name encoding"
+msgstr ""
+
+#: ../translation/plugins.c:416
+#, no-c-format
+msgid "ASCII / UTF-8"
+msgstr ""
+
+#: ../translation/plugins.c:418
+#, no-c-format
+msgid "cp1250"
+msgstr ""
+
+#: ../translation/plugins.c:420
+#, no-c-format
+msgid "Defined below"
+msgstr ""
+
+#: ../translation/plugins.c:422
+#, no-c-format
+msgid "Custom device name encoding"
+msgstr ""
+
 #. plugins/pulse/pulse.c
-#: ../translation/plugins.c:213
-msgid "PulseAudio server"
-msgstr "Servitor PulseAudio"
+#: ../translation/plugins.c:425
+#, no-c-format
+msgid "PulseAudio server (leave empty for default)"
+msgstr ""
 
 #. plugins/sc68/in_sc68.c
-#: ../translation/plugins.c:215
+#: ../translation/plugins.c:428
+#, no-c-format
 msgid "Default song length (in minutes)"
 msgstr ""
 
-#: ../translation/plugins.c:216
+#: ../translation/plugins.c:430
+#, no-c-format
 msgid "Samplerate"
 msgstr "Rată de eșantionare"
 
-#: ../translation/plugins.c:217
+#: ../translation/plugins.c:432
+#, no-c-format
 msgid "Skip when shorter than (sec)"
 msgstr ""
 
 #. plugins/shellexecui/shellexecui.c
-#: ../translation/plugins.c:219
+#: ../translation/plugins.c:435
+#, no-c-format
 msgid "Configure Custom Shell Commands"
 msgstr "Comenzi shell personalizate…"
 
 #. plugins/shn/shn.c
-#: ../translation/plugins.c:221
+#: ../translation/plugins.c:438
+#, no-c-format
 msgid "Relative seek table path"
 msgstr "Cale relativă pentru tabelul de căutare"
 
-#: ../translation/plugins.c:222
+#: ../translation/plugins.c:440
+#, no-c-format
 msgid "Absolute seek table path"
 msgstr "Cale absolută pentru tabelul de căutare"
 
-#: ../translation/plugins.c:223
+#: ../translation/plugins.c:442
+#, no-c-format
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr "Inversează biții audio (comutați dacă auziți doar zgomot alb)"
 
 #. plugins/sid/plugin.c
-#: ../translation/plugins.c:225
+#: ../translation/plugins.c:445
+#, no-c-format
 msgid "Enable HVSC Songlength DB"
 msgstr "Activare HVSC Songlength DB"
 
-#: ../translation/plugins.c:226
-msgid "Songlengths.txt (from HVSC)"
-msgstr "Songlengths.txt (din HVSC)"
+#: ../translation/plugins.c:447
+#, no-c-format
+msgid "Full path to Songlengths.md5/.txt"
+msgstr ""
 
-#: ../translation/plugins.c:227
+#: ../translation/plugins.c:449
+#, no-c-format
 msgid "Bits per sample"
 msgstr ""
 
-#: ../translation/plugins.c:228
-msgid "Mono synth"
-msgstr ""
-
-#: ../translation/plugins.c:229
+#: ../translation/plugins.c:451
+#, no-c-format
 msgid "Default song length (sec)"
 msgstr "Lungime implicită pentru piese (sec)"
 
-#. plugins/sndio/sndio.c
-#: ../translation/plugins.c:231
-msgid "Device"
-msgstr ""
-
-#: ../translation/plugins.c:232
-msgid "Buffer size (ms)"
+#: ../translation/plugins.c:453
+#, no-c-format
+msgid "Mono synth"
 msgstr ""
 
 #. plugins/supereq/supereq.c
-#: ../translation/plugins.c:234
+#: ../translation/plugins.c:456
+#, no-c-format
 msgid "Preamp"
 msgstr ""
 
-#: ../translation/plugins.c:235
-msgid "55 Hz"
+#: ../translation/plugins.c:458
+#, no-c-format
+msgid "1.2K"
 msgstr ""
 
-#: ../translation/plugins.c:236
-msgid "77 Hz"
+#: ../translation/plugins.c:460
+#, no-c-format
+msgid "1.8K"
 msgstr ""
 
-#: ../translation/plugins.c:237
-msgid "110 Hz"
+#: ../translation/plugins.c:462
+#, no-c-format
+msgid "2.5K"
 msgstr ""
 
-#: ../translation/plugins.c:238
-msgid "156 Hz"
+#: ../translation/plugins.c:464
+#, no-c-format
+msgid "3.5K"
 msgstr ""
 
-#: ../translation/plugins.c:239
-msgid "220 Hz"
+#: ../translation/plugins.c:466
+#, no-c-format
+msgid "5K"
 msgstr ""
 
-#: ../translation/plugins.c:240
-msgid "311 Hz"
+#: ../translation/plugins.c:468
+#, no-c-format
+msgid "7K"
 msgstr ""
 
-#: ../translation/plugins.c:241
-msgid "440 Hz"
+#: ../translation/plugins.c:470
+#, no-c-format
+msgid "10K"
 msgstr ""
 
-#: ../translation/plugins.c:242
-msgid "622 Hz"
+#: ../translation/plugins.c:472
+#, no-c-format
+msgid "14K"
 msgstr ""
 
-#: ../translation/plugins.c:243
-msgid "880 Hz"
-msgstr ""
-
-#: ../translation/plugins.c:244
-msgid "1.2 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:245
-msgid "1.8 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:246
-msgid "2.5 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:247
-msgid "3.5 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:248
-msgid "5 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:249
-msgid "7 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:250
-msgid "10 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:251
-msgid "14 kHz"
-msgstr ""
-
-#: ../translation/plugins.c:252
-msgid "20 kHz"
+#: ../translation/plugins.c:474
+#, no-c-format
+msgid "20K"
 msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
-#: ../translation/plugins.c:254
-msgid "Emulate track change events (for scrobbling)"
+#: ../translation/plugins.c:477
+#, no-c-format
+msgid "Enable logging"
 msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
-#: ../translation/plugins.c:256
+#: ../translation/plugins.c:480
+#, no-c-format
 msgid "Timidity++ bank configuration file"
 msgstr "Fișier de configurare a bancurilor Timidity++"
 
@@ -2608,69 +2815,67 @@ msgstr "Eroare de convertire"
 msgid "Converting..."
 msgstr "În convertire..."
 
-#: ../plugins/converter/convgui.c:689
+#: ../plugins/converter/convgui.c:692
 msgid "Select folder..."
 msgstr "Selectați un director..."
 
-#: ../plugins/converter/convgui.c:955
+#: ../plugins/converter/convgui.c:958
 msgid "Failed to save encoder preset"
 msgstr "Nu s-au putut salva prestabilirile codorului"
 
-#: ../plugins/converter/convgui.c:957 ../plugins/converter/convgui.c:1516
+#: ../plugins/converter/convgui.c:960 ../plugins/converter/convgui.c:1531
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
-msgstr ""
-"Verificați drepturile pentru directorul cu presetări, alegeți un alt titlu "
-"sau eliberați mai mult spațiu pe disc"
+msgstr "Verificați drepturile pentru directorul cu presetări, alegeți un alt titlu sau eliberați mai mult spațiu pe disc"
 
-#: ../plugins/converter/convgui.c:957 ../plugins/converter/convgui.c:1516
+#: ../plugins/converter/convgui.c:960 ../plugins/converter/convgui.c:1531
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr "Există deja o prestabilire cu acest nume. Alegeți un alt titlu."
 
-#: ../plugins/converter/convgui.c:958 ../plugins/converter/convgui.c:1517
+#: ../plugins/converter/convgui.c:961 ../plugins/converter/convgui.c:1532
 #: ../plugins/gtkui/ctmapping.c:202 ../plugins/gtkui/ctmapping.c:230
 #: ../plugins/gtkui/ctmapping.c:262
 msgid "Error"
 msgstr "Eroare"
 
-#: ../plugins/converter/convgui.c:1012 ../plugins/converter/convgui.c:1150
+#: ../plugins/converter/convgui.c:1015 ../plugins/converter/convgui.c:1159
 msgid "Add new encoder"
 msgstr "Adăugare codor nou"
 
-#: ../plugins/converter/convgui.c:1042
+#: ../plugins/converter/convgui.c:1045
 msgid "Edit encoder"
 msgstr "Editare codor"
 
-#: ../plugins/converter/convgui.c:1074 ../plugins/converter/convgui.c:1651
+#: ../plugins/converter/convgui.c:1077 ../plugins/converter/convgui.c:1673
 msgid "Remove preset"
 msgstr "Elimină prestabilire"
 
-#: ../plugins/converter/convgui.c:1076 ../plugins/converter/convgui.c:1653
+#: ../plugins/converter/convgui.c:1079 ../plugins/converter/convgui.c:1675
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr "Această acțiune va șterge prestabilirea selectată. Sigur doriți asta?"
 
-#: ../plugins/converter/convgui.c:1165
+#: ../plugins/converter/convgui.c:1174
 msgid "Encoders"
 msgstr "Codoare"
 
-#: ../plugins/converter/convgui.c:1240 ../plugins/gtkui/dspconfig.c:191
+#: ../plugins/converter/convgui.c:1249 ../plugins/gtkui/dspconfig.c:191
 msgid "Add plugin to DSP chain"
 msgstr "Adaugare modul în lanțul DSP"
 
-#: ../plugins/converter/convgui.c:1515
+#: ../plugins/converter/convgui.c:1530
 msgid "Failed to save DSP preset"
 msgstr "Nu s-a putut salva prestabilirea DSP"
 
-#: ../plugins/converter/convgui.c:1579 ../plugins/converter/convgui.c:1617
+#: ../plugins/converter/convgui.c:1594 ../plugins/converter/convgui.c:1639
 msgid "New DSP Preset"
 msgstr "Nouă prestabilire DSP"
 
-#: ../plugins/converter/convgui.c:1701
+#: ../plugins/converter/convgui.c:1723
 msgid "Edit DSP Preset"
 msgstr "Editare prestabilire DSP"
 
-#: ../plugins/converter/convgui.c:1721
+#: ../plugins/converter/convgui.c:1743
 msgid "DSP Presets"
 msgstr "Prestabiliri DSP"
 
@@ -2804,9 +3009,7 @@ msgstr "Linie de comandă:"
 msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
-msgstr ""
-"Exemplu: lame - %o\n"
-"%i pentru fișierul input, %o pentru fișierul rezultat, - pentru stdin"
+msgstr "Exemplu: lame - %o\n%i pentru fișierul input, %o pentru fișierul rezultat, - pentru stdin"
 
 #: ../plugins/converter/interface.c:469
 #: ../plugins/converter/converter.glade.h:34
@@ -2814,9 +3017,7 @@ msgstr ""
 msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
-msgstr ""
-"<small>%o - nume fișier rezultat\n"
-"%i - nume fișier temporar de input</small>"
+msgstr "<small>%o - nume fișier rezultat\n%i - nume fișier temporar de input</small>"
 
 #: ../plugins/converter/interface.c:478
 #: ../plugins/converter/converter.glade.h:36
@@ -2893,6 +3094,34 @@ msgstr "Adăugare"
 msgid "Couldn't find pixmap file: %s"
 msgstr "Nu s-a putut găsi fișierul pixmap: %s"
 
+#: ../plugins/gtkui/fileman.c:316 ../plugins/gtkui/fileman.c:410
+msgid "Supported sound formats"
+msgstr "Formate de sunet suportate"
+
+#: ../plugins/gtkui/fileman.c:344 ../plugins/gtkui/fileman.c:421
+msgid "All files (*)"
+msgstr "Toate fișierele (*)"
+
+#: ../plugins/gtkui/fileman.c:455 ../plugins/gtkui/fileman.c:499
+msgid "Supported playlist formats"
+msgstr ""
+
+#: ../plugins/gtkui/fileman.c:462
+msgid "All files"
+msgstr ""
+
+#: ../plugins/gtkui/fileman.c:505
+msgid "Other files (*)"
+msgstr "Alte fișiere (*)"
+
+#: ../plugins/gtkui/fileman.c:516
+msgid "DeaDBeeF playlist files (*.dbpl)"
+msgstr "Fișiere de listă DeadBeeF (*.dbpl)"
+
+#: ../plugins/gtkui/fileman.c:560
+msgid "Follow symlinks"
+msgstr "Urmărește legăturile"
+
 #: ../plugins/converter/converter.glade.h:14
 msgid ""
 "Keep source format\n"
@@ -2901,23 +3130,14 @@ msgid ""
 "24 bit signed int\n"
 "32 bit signed int\n"
 "32 bit float"
-msgstr ""
-"Păstrează formatul original\n"
-"8 bit signed int\n"
-"16 bit signed int\n"
-"24 bit signed int\n"
-"32 bit signed int\n"
-"32 bit float"
+msgstr "Păstrează formatul original\n8 bit signed int\n16 bit signed int\n24 bit signed int\n32 bit signed int\n32 bit float"
 
 #: ../plugins/converter/converter.glade.h:21
 msgid ""
 "Skip\n"
 "Prompt\n"
 "Overwrite"
-msgstr ""
-"Sari\n"
-"Arata\n"
-"Rescrie"
+msgstr "Sari\nArata\nRescrie"
 
 #: ../plugins/converter/converter.glade.h:37
 msgid ""
@@ -2953,10 +3173,7 @@ msgid ""
 "Arbitrary shell command. Will be executed in the shell context which the "
 "main application was started from. Title formatting can be used. Example: "
 "xdg-open %D"
-msgstr ""
-"O comandă shell oarecare ce va fi executată în interpretorul shell în care a "
-"fost pornit DeaDBeeF. Se poate utiliza formatarea titlului. De exemplu: xdg-"
-"open %D"
+msgstr "O comandă shell oarecare ce va fi executată în interpretorul shell în care a fost pornit DeaDBeeF. Se poate utiliza formatarea titlului. De exemplu: xdg-open %D"
 
 #: ../plugins/shellexecui/interface.c:185
 #: ../plugins/shellexecui/shellexec.glade.h:11
@@ -2971,11 +3188,9 @@ msgstr "Nume arbitrar, de exemplu „Comanda mea shell”"
 #: ../plugins/shellexecui/interface.c:205
 #: ../plugins/shellexecui/shellexec.glade.h:13
 msgid ""
-"Command ID, normally it should be something short, for example \"youtube_open"
-"\". It must be unique."
-msgstr ""
-"Numele comenzii, în mod obișnuit ar trebui să fie ceva scurt, de exemplu "
-"\"youtube_open\". Trebuie să fie unic."
+"Command ID, normally it should be something short, for example "
+"\"youtube_open\". It must be unique."
+msgstr "Numele comenzii, în mod obișnuit ar trebui să fie ceva scurt, de exemplu \"youtube_open\". Trebuie să fie unic."
 
 #: ../plugins/shellexecui/interface.c:208
 #: ../plugins/shellexecui/shellexec.glade.h:15
@@ -3033,16 +3248,13 @@ msgid ""
 "<small>If you want to add the command to main menu, make sure that title "
 "contains the menu path like this: \"File/My Command\", where File is the "
 "menu name in the English version.</small>"
-msgstr ""
-"<small>Dacă doriți să adăugați comanda în meniul principal, asigurați-vă că "
-"titlul conține calea din meniu, de exemplu „File/Comanda Mea”, unde «File» "
-"este numele în engleză al elementului din meniu.</small>"
+msgstr "<small>Dacă doriți să adăugați comanda în meniul principal, asigurați-vă că titlul conține calea din meniu, de exemplu „File/Comanda Mea”, unde «File» este numele în engleză al elementului din meniu.</small>"
 
 #: ../plugins/shellexecui/shellexecui.c:96
 msgid "Add Command"
 msgstr "Adăugare coloană"
 
-#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:865
+#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:869
 msgid "Delete"
 msgstr "Ștergere"
 
@@ -3071,57 +3283,56 @@ msgstr "Comanda shell nu poate fi goală.\n"
 msgid "Invalid Values"
 msgstr "Valori nevalide"
 
-#: ../plugins/gtkui/actionhandlers.c:116
-msgid "Supported sound formats"
-msgstr "Formate de sunet suportate"
-
-#: ../plugins/gtkui/actionhandlers.c:127
-msgid "All files (*)"
-msgstr "Toate fișierele (*)"
-
-#: ../plugins/gtkui/actionhandlers.c:135
+#: ../plugins/gtkui/actionhandlers.c:55
 msgid "Open file(s)..."
 msgstr "Deschide fișier(e)..."
 
-#: ../plugins/gtkui/actionhandlers.c:174
+#: ../plugins/gtkui/actionhandlers.c:70
 msgid "Add file(s) to playlist..."
 msgstr "Adaugă fișier(e) în listă..."
 
-#: ../plugins/gtkui/actionhandlers.c:220
+#: ../plugins/gtkui/actionhandlers.c:85
 msgid "Add folder(s) to playlist..."
 msgstr "Adaugă dosar(e) în listă..."
 
-#: ../plugins/gtkui/actionhandlers.c:225
-msgid "Follow symlinks"
-msgstr "Urmărește legăturile"
-
-#: ../plugins/gtkui/actionhandlers.c:472
+#: ../plugins/gtkui/actionhandlers.c:304
 msgid "help.txt"
 msgstr "help.txt"
 
-#: ../plugins/gtkui/actionhandlers.c:551
+#: ../plugins/gtkui/actionhandlers.c:412
+msgid ""
+" The files will be lost.\n"
+"\n"
+"(This dialog can be turned off in GTKUI plugin settings)"
+msgstr ""
+
+#: ../plugins/gtkui/actionhandlers.c:417
+#, c-format
+msgid "Do you really want to delete the selected file?%s"
+msgstr ""
+
+#: ../plugins/gtkui/actionhandlers.c:419
+#, c-format
+msgid "Do you really want to delete all %d selected files?%s"
+msgstr ""
+
+#: ../plugins/gtkui/actionhandlers.c:424
+#, c-format
+msgid "Do you really want to delete all %d files from the current playlist?%s"
+msgstr ""
+
+#: ../plugins/gtkui/actionhandlers.c:427
+#, c-format
+msgid "Do you really want to delete the currently playing file?%s"
+msgstr ""
+
+#: ../plugins/gtkui/actionhandlers.c:430
 msgid "Delete files from disk"
 msgstr "Șterge fișierele de pe disc"
 
-#: ../plugins/gtkui/actionhandlers.c:552
-msgid ""
-"Files will be lost. Proceed?\n"
-"(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
-"Fișierele se vor pierde. Continui?\n"
-"(Acest mesaj poate fi dezactivat în stabilirile modulului GTKUI)"
-
-#: ../plugins/gtkui/actionhandlers.c:755
-msgid "Other files (*)"
-msgstr "Alte fișiere (*)"
-
-#: ../plugins/gtkui/actionhandlers.c:789
+#: ../plugins/gtkui/actionhandlers.c:648
 msgid "Save Playlist As"
 msgstr "Salvează lista de redare ca"
-
-#: ../plugins/gtkui/actionhandlers.c:800
-msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr "Fișiere de listă DeadBeeF (*.dbpl)"
 
 #: ../plugins/gtkui/ctmapping.c:129
 msgid "Content-Type"
@@ -3133,143 +3344,160 @@ msgstr "Valoare nevalidă."
 
 #: ../plugins/gtkui/ctmapping.c:200
 msgid ""
-"Content-type and Plugins fields must be non-empty, and comply with the "
-"rules.\n"
+"Content-type and Plugins fields must be non-empty, and comply with the rules.\n"
 "Example content-type: 'audio/mpeg'.\n"
 "Example plugin ids: 'stdmpg ffmpeg'.\n"
 "Spaces must be used as separators in plugin ids list.\n"
 "Content type should be only letters, numbers and '-' sign.\n"
 "Plugin id can contain only letters and numbers."
-msgstr ""
-"Tipul de conținut si câmpurile extensiilor trebuie să fie completate și să "
-"respecte regulile.\n"
-"Exemplu de tip de conținut: 'audio/mpeg'.\n"
-"Exemplu de id de extensie: 'stdmpg ffmpeg'.\n"
-"Spațiile trebuie folosite ca separatori în lista de id-uri de extensii.\n"
-"Tipul de conținut trebuie să aiba doar litere, numere și semnul '-'.\n"
-"ID-ul de extensie poate conține doar litere și numere."
+msgstr "Tipul de conținut si câmpurile extensiilor trebuie să fie completate și să respecte regulile.\nExemplu de tip de conținut: 'audio/mpeg'.\nExemplu de id de extensie: 'stdmpg ffmpeg'.\nSpațiile trebuie folosite ca separatori în lista de id-uri de extensii.\nTipul de conținut trebuie să aiba doar litere, numere și semnul '-'.\nID-ul de extensie poate conține doar litere și numere."
 
 #: ../plugins/gtkui/ctmapping.c:228 ../plugins/gtkui/ctmapping.c:260
 msgid "Nothing is selected."
 msgstr "Nu s-a selectat nimic."
 
-#: ../plugins/gtkui/widgets.c:487
+#: ../plugins/gtkui/widgets.c:489
 #, c-format
 msgid "Widget \"%s\" is not available"
 msgstr "Widgetul „%s” nu este disponibil"
 
-#: ../plugins/gtkui/widgets.c:840
+#: ../plugins/gtkui/widgets.c:844
 msgid "Replace with..."
 msgstr "Înlocuiește cu..."
 
-#: ../plugins/gtkui/widgets.c:845
+#: ../plugins/gtkui/widgets.c:849
 msgid "Insert..."
 msgstr "Adaugă..."
 
-#: ../plugins/gtkui/widgets.c:872
+#: ../plugins/gtkui/widgets.c:876
 msgid "Cut"
 msgstr "Taie"
 
-#: ../plugins/gtkui/widgets.c:879
+#: ../plugins/gtkui/widgets.c:883
 msgid "Copy"
 msgstr "Copiază"
 
-#: ../plugins/gtkui/widgets.c:886
+#: ../plugins/gtkui/widgets.c:890
 msgid "Paste"
 msgstr "Lipește"
 
-#: ../plugins/gtkui/widgets.c:1012
+#: ../plugins/gtkui/widgets.c:1017
 msgid "Multiple widgets of this type are not supported"
 msgstr "Nu există suport pentru mai multe widgeturi de acest tip"
 
-#: ../plugins/gtkui/widgets.c:1271
+#: ../plugins/gtkui/widgets.c:1292
 msgid "Proportional Sizing"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1283
+#: ../plugins/gtkui/widgets.c:1304
 msgid "Lock Top Pane Height"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1286
+#: ../plugins/gtkui/widgets.c:1307
 msgid "Lock Left Pane Width"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1299
+#: ../plugins/gtkui/widgets.c:1320
 msgid "Lock Bottom Pane Height"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1302
+#: ../plugins/gtkui/widgets.c:1323
 msgid "Lock Right Pane Width"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1546 ../plugins/gtkui/widgets.c:1661
+#: ../plugins/gtkui/widgets.c:1567 ../plugins/gtkui/widgets.c:1682
 msgid "Rename Tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1668
+#: ../plugins/gtkui/widgets.c:1689
 msgid "Remove Tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1675 ../plugins/gtkui/widgets.c:1854
+#: ../plugins/gtkui/widgets.c:1696 ../plugins/gtkui/widgets.c:1876
 msgid "Add New Tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1684
+#: ../plugins/gtkui/widgets.c:1705
 msgid "Move Tab Left"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1691
+#: ../plugins/gtkui/widgets.c:1712
 msgid "Move Tab Right"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2344 ../plugins/gtkui/widgets.c:2522
-#: ../plugins/pltbrowser/pltbrowser.c:878
+#: ../plugins/gtkui/widgets.c:2366 ../plugins/gtkui/widgets.c:2544
+#: ../plugins/pltbrowser/pltbrowser.c:883
 msgid "Show Column Headers"
 msgstr "Arată titlul coloanelor"
 
-#: ../plugins/gtkui/widgets.c:3565
+#: ../plugins/gtkui/widgets.c:3591
 msgid "Expand Box by 1 Item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3570
+#: ../plugins/gtkui/widgets.c:3596
 msgid "Shrink Box by 1 Item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3575
+#: ../plugins/gtkui/widgets.c:3601
 msgid "Homogeneous"
 msgstr "Omogen"
 
-#: ../plugins/gtkui/widgets.c:3615
+#: ../plugins/gtkui/widgets.c:3641
 msgid "Expand"
 msgstr "Extinde"
 
-#: ../plugins/gtkui/widgets.c:3623
+#: ../plugins/gtkui/widgets.c:3649
 msgid "Fill"
 msgstr "Umple"
 
-#: ../plugins/gtkui/widgets.c:4022
+#: ../plugins/gtkui/widgets.c:4049
 msgid "Configure Button"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4301
+#: ../plugins/gtkui/widgets.c:4328
 msgid "Voices:"
 msgstr "Voci:"
 
-#: ../plugins/gtkui/pltmenu.c:63 ../plugins/gtkui/pltmenu.c:376
+#: ../plugins/gtkui/pltmenu.c:63 ../plugins/gtkui/pltmenu.c:403
 msgid "Rename Playlist"
 msgstr "Redenumește lista de redare"
 
-#: ../plugins/gtkui/pltmenu.c:383
+#: ../plugins/gtkui/pltmenu.c:90
+msgid "Removing playlist"
+msgstr ""
+
+#: ../plugins/gtkui/pltmenu.c:91
+#, c-format
+msgid "Do you really want to remove the playlist '%s'?"
+msgstr ""
+
+#: ../plugins/gtkui/pltmenu.c:410
 msgid "Remove Playlist"
 msgstr "Înlătură lista de redare"
 
-#: ../plugins/gtkui/pltmenu.c:390
+#: ../plugins/gtkui/pltmenu.c:417
 msgid "Add New Playlist"
 msgstr "Adaugă o nouă listă de redare"
 
-#: ../plugins/gtkui/pltmenu.c:394
+#: ../plugins/gtkui/pltmenu.c:421
 msgid "Duplicate Playlist"
 msgstr "Duplică lista de redare"
+
+#: ../plugins/gtkui/pltmenu.c:433
+msgid "Enable Autosort"
+msgstr ""
+
+#: ../plugins/pltbrowser/pltbrowser.c:177
+msgid " (paused)"
+msgstr ""
+
+#: ../plugins/pltbrowser/pltbrowser.c:180
+msgid " (stopped)"
+msgstr ""
+
+#: ../plugins/pltbrowser/pltbrowser.c:183
+msgid " (playing)"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3277,97 +3505,58 @@ msgid "%dd %d:%02d:%02d"
 msgstr "%dd %d:%02d:%02d"
 
 #: ../plugins/pltbrowser/pltbrowser.c:413
-#: ../plugins/pltbrowser/pltbrowser.c:931
+#: ../plugins/pltbrowser/pltbrowser.c:936
 msgid "Items"
 msgstr "Elemente"
 
-#: ../plugins/pltbrowser/pltbrowser.c:922 ../plugins/gtkui/rg.c:312
+#: ../plugins/pltbrowser/pltbrowser.c:927 ../plugins/gtkui/rg.c:309
 msgid "Name"
 msgstr "Nume"
 
-#: ../plugins/pltbrowser/pltbrowser.c:925
+#: ../plugins/pltbrowser/pltbrowser.c:930
 msgid "♫"
 msgstr "♫"
 
-#: ../plugins/pltbrowser/pltbrowser.c:983
+#: ../plugins/pltbrowser/pltbrowser.c:988
 msgid "Playlist browser"
 msgstr "Navigare în listele de redare"
 
-#: ../tf.c:1525
+#: ../tf.c:2199
 msgid "mono"
 msgstr "mono"
 
-#: ../tf.c:1528 ../tf.c:1532
+#: ../tf.c:2202 ../tf.c:2206
 msgid "stereo"
 msgstr "stereo"
 
-#: ../plugins/gtkui/rg.c:284
+#: ../plugins/gtkui/rg.c:281
 msgid "Updating File Tags Progress"
 msgstr ""
 
-#: ../plugins/gtkui/rg.c:314
+#: ../plugins/gtkui/rg.c:311
 msgid "Album Gain"
 msgstr ""
 
-#: ../plugins/gtkui/rg.c:315
+#: ../plugins/gtkui/rg.c:312
 msgid "Track Gain"
 msgstr ""
 
-#: ../plugins/gtkui/rg.c:316
+#: ../plugins/gtkui/rg.c:313
 msgid "Album Peak"
 msgstr "Vârf album"
 
-#: ../plugins/gtkui/rg.c:317
+#: ../plugins/gtkui/rg.c:314
 msgid "Track Peak"
 msgstr "Vârf pistă"
 
-#: ../plugins/gtkui/rg.c:320
+#: ../plugins/gtkui/rg.c:317
 msgid "Success"
 msgstr "Succes"
 
-#: ../plugins/gtkui/rg.c:321
+#: ../plugins/gtkui/rg.c:318
 msgid "File not found"
 msgstr "Fișierul nu a fost găsit"
 
-#: ../plugins/gtkui/rg.c:322
+#: ../plugins/gtkui/rg.c:319
 msgid "Invalid file"
 msgstr "Fișierul nu este valid"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "Căutare pe Last.fm"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "Eliberează dispozitivul la oprirea redării"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "Soluție alternativă pentru problema ratei de eșantionare OSS4"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "Perioadă de actualizare pentru cache (ore)"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "Mască pentru fișierele local cu coperte"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "Extrage de la Last.fm"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "Extrage de la albumart.org"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "Preferă protocolul CDDB înaintea HTTP"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "Calitatea reeșantionării (0-2, 2 e calitate maximă)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "Biți per eșantion (8 sau 16)"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "Rată de eșantionare țintă"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr "Rată de eșantionare automată (suprascrie rata țintă)"
-
-#~ msgid "Disable gapless playback (faster scanning)"
-#~ msgstr "Dezactivează redarea continuă (scanare mai rapidă)"

@@ -46,7 +46,7 @@ dsp_preset_load (const char *fname, ddb_dsp_context_t **head) {
         return -1;
     }
     int err = 1;
-    FILE *fp = fopen (fname, "rt");
+    FILE *fp = fopen (fname, "rb");
     if (!fp) {
         return -1;
     }
@@ -56,11 +56,11 @@ dsp_preset_load (const char *fname, ddb_dsp_context_t **head) {
     char temp[100];
     for (;;) {
         // plugin {
-        int err = fscanf (fp, "%99s {\n", temp);
-        if (err == EOF) {
+        int fscanf_res = fscanf (fp, "%99s {\n", temp);
+        if (fscanf_res == EOF) {
             break;
         }
-        else if (1 != err) {
+        else if (1 != fscanf_res) {
             fprintf (stderr, "error plugin name\n");
             goto error;
         }
@@ -94,7 +94,7 @@ dsp_preset_load (const char *fname, ddb_dsp_context_t **head) {
             if (!strcmp (temp, "}\n")) {
                 break;
             }
-            else if (1 != sscanf (temp, "\t%1000[^\n]\n", value)) {
+            else if (1 != sscanf (temp, "\t%100[^\n]\n", value)) {
                 fprintf (stderr, "error loading param %d\n", n);
                 goto error;
             }
@@ -122,7 +122,7 @@ error:
 
 int
 dsp_preset_save (const char *path, ddb_dsp_context_t *head) {
-    FILE *fp = fopen (path, "w+t");
+    FILE *fp = fopen (path, "w+b");
     if (!fp) {
         return -1;
     }

@@ -37,7 +37,7 @@ const NSInteger GRIDSIZE = 16;
         checker = [[NSImage alloc] initWithSize:NSMakeSize (12, 12)];
         [checker lockFocus];
 
-        [[NSColor lightGrayColor] set];
+        [NSColor.lightGrayColor set];
         [NSBezierPath strokeLineFromPoint:NSMakePoint(0, 0) toPoint:NSMakePoint(1,1)];
         
         [checker unlockFocus];

@@ -40,125 +40,21 @@
 #include "trkproperties.h"
 #include "callbacks.h"
 #include <sys/stat.h>
+#include "gtkui_api.h"
 
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
 
 extern GtkWidget *mainwin;
 extern DB_functions_t *deadbeef;
-
-static gboolean
-file_filter_func (const GtkFileFilterInfo *filter_info, gpointer data) {
-    // get ext
-    const char *p = strrchr (filter_info->filename, '.');
-    if (!p) {
-        return FALSE;
-    }
-    p++;
-
-    // get beginning of fname
-    const char *fn = strrchr (filter_info->filename, '/');
-    if (!fn) {
-        fn = filter_info->filename;
-    }
-    else {
-        fn++;
-    }
-
-    if (!strcasecmp (p, "cue")) {
-        return TRUE;
-    }
-
-    DB_decoder_t **codecs = deadbeef->plug_get_decoder_list ();
-    for (int i = 0; codecs[i]; i++) {
-        if (codecs[i]->exts && codecs[i]->insert) {
-            const char **exts = codecs[i]->exts;
-            for (int e = 0; exts[e]; e++) {
-                if (!strcasecmp (exts[e], p)) {
-                    return TRUE;
-                }
-            }
-        }
-        if (codecs[i]->prefixes && codecs[i]->insert) {
-            const char **prefixes = codecs[i]->prefixes;
-            for (int e = 0; prefixes[e]; e++) {
-                if (!strncasecmp (prefixes[e], fn, strlen(prefixes[e])) && *(fn + strlen (prefixes[e])) == '.') {
-                    return TRUE;
-                }
-            }
-        }
-    }
-#if 0
-    if (!strcasecmp (p, "pls")) {
-        return TRUE;
-    }
-    if (!strcasecmp (p, "m3u")) {
-        return TRUE;
-    }
-#endif
-
-    // test container (vfs) formats
-    DB_vfs_t **vfsplugs = deadbeef->plug_get_vfs_list ();
-    for (int i = 0; vfsplugs[i]; i++) {
-        if (vfsplugs[i]->is_container) {
-            if (vfsplugs[i]->is_container (filter_info->filename)) {
-                return TRUE;
-            }
-        }
-    }
-
-    return FALSE;
-}
-
-static GtkFileFilter *
-set_file_filter (GtkWidget *dlg, const char *name) {
-    if (!name) {
-        name = _("Supported sound formats");
-    }
-
-    GtkFileFilter* flt;
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, name);
-
-    gtk_file_filter_add_custom (flt, GTK_FILE_FILTER_FILENAME, file_filter_func, NULL, NULL);
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
-    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, _("All files (*)"));
-    gtk_file_filter_add_pattern (flt, "*");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
-    return flt;
-}
+extern ddb_gtkui_t plugin;
+#define trace(...) { deadbeef->log_detailed (&plugin.gui.plugin, 0, __VA_ARGS__); }
 
 gboolean
 action_open_files_handler_cb (void *userdata) {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Open file(s)..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
-
-    set_file_filter (dlg, NULL);
-
-    gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
-    // restore folder
-    deadbeef->conf_lock ();
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("filechooser.lastdir", ""));
-    deadbeef->conf_unlock ();
-    int response = gtk_dialog_run (GTK_DIALOG (dlg));
-    // store folder
-    gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
-    if (folder) {
-        deadbeef->conf_set_str ("filechooser.lastdir", folder);
-        g_free (folder);
-    }
-    if (response == GTK_RESPONSE_OK)
-    {
-        deadbeef->pl_clear ();
-        GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
-        gtk_widget_destroy (dlg);
-        if (lst) {
-            gtkui_open_files (lst);
-        }
-    }
-    else {
-        gtk_widget_destroy (dlg);
+    GSList *lst = show_file_chooser(_("Open file(s)..."), GTKUI_FILECHOOSER_OPENFILE, TRUE);
+    if (lst) {
+        gtkui_open_files (lst);
     }
     return FALSE;
 }
@@ -171,33 +67,9 @@ action_open_files_handler (struct DB_plugin_action_s *action, int ctx) {
 
 gboolean
 action_add_files_handler_cb (void *user_data) {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Add file(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
-
-    set_file_filter (dlg, NULL);
-
-    gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
-
-    // restore folder
-    deadbeef->conf_lock ();
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("filechooser.lastdir", ""));
-    deadbeef->conf_unlock ();
-    int response = gtk_dialog_run (GTK_DIALOG (dlg));
-    // store folder
-    gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
-    if (folder) {
-        deadbeef->conf_set_str ("filechooser.lastdir", folder);
-        g_free (folder);
-    }
-    if (response == GTK_RESPONSE_OK)
-    {
-        GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
-        gtk_widget_destroy (dlg);
-        if (lst) {
-            gtkui_add_files (lst);
-        }
-    }
-    else {
-        gtk_widget_destroy (dlg);
+    GSList *lst = show_file_chooser(_("Add file(s) to playlist..."), GTKUI_FILECHOOSER_OPENFILE, TRUE);
+    if (lst) {
+        gtkui_add_files (lst);
     }
     return FALSE;
 }
@@ -208,56 +80,11 @@ action_add_files_handler (struct DB_plugin_action_s *action, int ctx) {
     return 0;
 }
 
-static void
-on_follow_symlinks_toggled         (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-    deadbeef->conf_set_int ("add_folders_follow_symlinks", gtk_toggle_button_get_active (togglebutton));
-}
-
 gboolean
 action_add_folders_handler_cb (void *user_data) {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Add folder(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
-
-    GtkWidget *box = gtk_hbox_new (FALSE, 8);
-    gtk_widget_show (box);
-
-    GtkWidget *check = gtk_check_button_new_with_mnemonic (_("Follow symlinks"));
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check), deadbeef->conf_get_int ("add_folders_follow_symlinks", 0));
-    g_signal_connect ((gpointer) check, "toggled",
-            G_CALLBACK (on_follow_symlinks_toggled),
-            NULL);
-    gtk_widget_show (check);
-    gtk_box_pack_start (GTK_BOX (box), check, FALSE, FALSE, 0);
-
-    gtk_file_chooser_set_extra_widget (GTK_FILE_CHOOSER (dlg), box);
-
-// gtk devs broke this in 3.6 - thanks guys
-//  set_file_filter (dlg, NULL);
-
-    gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
-    // restore folder
-    deadbeef->conf_lock ();
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("filechooser.lastdir", ""));
-    deadbeef->conf_unlock ();
-    int response = gtk_dialog_run (GTK_DIALOG (dlg));
-    // store folder
-    gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
-    if (folder) {
-        deadbeef->conf_set_str ("filechooser.lastdir", folder);
-        g_free (folder);
-    }
-    if (response == GTK_RESPONSE_OK)
-    {
-        //gchar *folder = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
-        GSList *lst = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dlg));
-        gtk_widget_destroy (dlg);
-        if (lst) {
-            gtkui_add_dirs (lst);
-        }
-    }
-    else {
-        gtk_widget_destroy (dlg);
+    GSList *lst = show_file_chooser(_("Add folder(s) to playlist..."), GTKUI_FILECHOOSER_OPENFOLDER, TRUE);
+    if (lst) {
+        gtkui_add_dirs (lst);
     }
     return FALSE;
 }
@@ -389,6 +216,8 @@ action_hide_mainwin_handler (struct DB_plugin_action_s *action, int ctx) {
     return 0;
 }
 
+// FIXME: this functionality was supposed to be enabled in 0.7.0, but was forgotten
+#ifndef DISABLE_CUSTOM_TITLE
 static void
 on_toggle_set_custom_title (GtkToggleButton *togglebutton, gpointer user_data) {
     gboolean active = gtk_toggle_button_get_active (togglebutton);
@@ -399,6 +228,7 @@ on_toggle_set_custom_title (GtkToggleButton *togglebutton, gpointer user_data) {
 
     deadbeef->conf_save ();
 }
+#endif
 
 gboolean
 action_add_location_handler_cb (void *user_data) {
@@ -441,6 +271,8 @@ action_add_location_handler_cb (void *user_data) {
                     if (it && deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
                         deadbeef->pl_replace_meta (it, ":CUSTOM_TITLE", gtk_entry_get_text (GTK_ENTRY (ct)));
                     }
+#else
+#   pragma unused(it)
 #endif
                     if (tail) {
                         deadbeef->pl_item_unref (tail);
@@ -510,7 +342,6 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, int ctx) {
         deadbeef->plt_unref (plt_curr);
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        int success = 0;
         deadbeef->pl_lock ();
         DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
         if (it) {
@@ -519,7 +350,7 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, int ctx) {
                 int idx = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
                 if (idx != -1) {
                     deadbeef->plt_remove_item (plt, it);
-                    deadbeef->pl_save_current ();
+                    deadbeef->plt_save_config (plt);
                     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
                 }
                 deadbeef->plt_unref (plt);
@@ -531,25 +362,73 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, int ctx) {
     return 0;
 }
 
-void
-delete_and_remove_track (const char *uri, ddb_playlist_t *plt, ddb_playItem_t *it) {
-    int res = unlink (uri);
+static void
+_remove_file_from_all_playlists (const char *search_uri) {
+    // The caller is responsible for pl_lock
+    int n = deadbeef->plt_get_count ();
+    for (int i = 0; i < n; ++i) {
+        ddb_playlist_t *plt = deadbeef->plt_get_for_idx (i);
+        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+        while (it) {
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            const char *uri = deadbeef->pl_find_meta (it, ":URI");
+            if (strcmp (uri, search_uri) == 0) {
+                deadbeef->plt_remove_item (plt, it);
+            }
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+
+        deadbeef->plt_unref (plt);
+    }
+}
+
+static void
+_delete_and_remove_track_from_all_playlists (const char *uri, ddb_playlist_t *plt, ddb_playItem_t *it) {
+    (void)unlink (uri);
 
     // check if file exists
     struct stat buf;
     memset (&buf, 0, sizeof (buf));
     int stat_res = stat (uri, &buf);
+    
     if (stat_res != 0) {
-        deadbeef->plt_remove_item (plt, it);
+        _remove_file_from_all_playlists (uri);
+    } else {
+        trace ("Failed to delete file: %s\n", uri);
     }
 }
 
 gboolean
 action_delete_from_disk_handler_cb (void *data) {
-    int ctx = (intptr_t)data;
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (!plt) {
+        return FALSE;
+    }
+    
+    int ctx = (int)(intptr_t)data;
     if (deadbeef->conf_get_int ("gtkui.delete_files_ask", 1)) {
+        char buf[1000];
+        const char *buf2 = _(" The files will be lost.\n\n(This dialog can be turned off in GTKUI plugin settings)");
+
+        if (ctx == DDB_ACTION_CTX_SELECTION) {
+            int selected_files = deadbeef->pl_getselcount ();
+            if (selected_files == 1) {
+                snprintf(buf, sizeof (buf), _("Do you really want to delete the selected file?%s"), buf2);
+            } else {
+                snprintf(buf, sizeof (buf), _("Do you really want to delete all %d selected files?%s"), selected_files, buf2);
+            }
+        }
+        else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
+            int files = deadbeef->plt_get_item_count (plt, PL_MAIN);
+            snprintf(buf, sizeof (buf), _("Do you really want to delete all %d files from the current playlist?%s"), files, buf2);
+        }
+        else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
+            snprintf(buf, sizeof (buf), _("Do you really want to delete the currently playing file?%s"), buf2);
+        }
+
         GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Delete files from disk"));
-        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Files will be lost. Proceed?\n(This dialog can be turned off in GTKUI plugin settings)"));
+        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), "%s", buf);
         gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
 
         int response = gtk_dialog_run (GTK_DIALOG (dlg));
@@ -558,67 +437,99 @@ action_delete_from_disk_handler_cb (void *data) {
             return FALSE;
         }
     }
-
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (!plt) {
-        return FALSE;
-    }
     deadbeef->pl_lock ();
 
+    DB_playItem_t **tracklist = NULL;
+    unsigned trackcount = 0;
+    
+    DB_playItem_t *it_current_song = deadbeef->streamer_get_playing_track ();
+    int idx_current_song = -1;
     if (ctx == DDB_ACTION_CTX_SELECTION) {
+        unsigned selcount = deadbeef->plt_getselcount (plt);
+        tracklist = calloc (selcount, sizeof (DB_playItem_t *));
         DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
         while (it) {
+            if (trackcount == selcount) {
+                break;
+            }
             DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (uri)) {
-                delete_and_remove_track (uri, plt, it);
+                if (it == it_current_song) {
+                    idx_current_song = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
+                }
+                deadbeef->pl_item_ref (it);
+                tracklist[trackcount++] = it;
             }
             deadbeef->pl_item_unref (it);
             it = next;
         }
-
-        deadbeef->pl_save_current ();
     }
     else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
+        unsigned count = deadbeef->plt_get_item_count (plt, PL_MAIN);
+        tracklist = calloc (count, sizeof (DB_playItem_t *));
         DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
         while (it) {
-            const char *uri = deadbeef->pl_find_meta (it, ":URI");
-            if (deadbeef->is_local_file (uri)) {
-                delete_and_remove_track (uri, plt, it);
-// FIXME: this dialog should allow something like "cancel" and "ignore all", then
-// it will be usable
-//                else {
-//                    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, _("Can't delete the file. Perhaps it doesn't exist, read-only, or part of read-only VFS, or all of the above."));
-//                    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), uri);
-//                    gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
-//
-//                    int response = gtk_dialog_run (GTK_DIALOG (dlg));
-//                    gtk_widget_destroy (dlg);
-//                }
+            if (trackcount == count) {
+                break;
             }
             DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            const char *uri = deadbeef->pl_find_meta (it, ":URI");
+            if (deadbeef->is_local_file (uri)) {
+                deadbeef->pl_item_ref (it);
+                tracklist[trackcount++] = it;
+            }
             deadbeef->pl_item_unref (it);
             it = next;
         }
-
-        deadbeef->pl_save_current ();
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
         DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
         if (it) {
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->is_local_file (uri)) {
-                int idx = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
+                int idx = idx_current_song = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
                 if (idx != -1) {
-                    delete_and_remove_track (uri, plt, it);
+                    tracklist = calloc (1, sizeof (DB_playItem_t *));
+                    deadbeef->pl_item_ref (it);
+                    tracklist[trackcount++] = it;
                 }
             }
             deadbeef->pl_item_unref (it);
         }
     }
+
+    if (tracklist) {
+        for (unsigned i = 0; i < trackcount; i++) {
+            const char *uri = deadbeef->pl_find_meta (tracklist[i], ":URI");
+            _delete_and_remove_track_from_all_playlists (uri, plt, tracklist[i]);
+            deadbeef->pl_item_unref (tracklist[i]);
+        }
+        free (tracklist);
+        tracklist = NULL;
+    }
+    
+    if (deadbeef->conf_get_int ("gtkui.skip_deleted_songs", 0) 
+        && deadbeef->plt_get_item_idx (plt, it_current_song, PL_MAIN) == -1 
+        && deadbeef->streamer_get_current_playlist () == deadbeef->plt_get_curr_idx () 
+        && deadbeef->get_output ()->state () == OUTPUT_STATE_PLAYING) {
+        
+        if (idx_current_song != -1 
+            && deadbeef->playqueue_get_count () == 0 
+            && deadbeef->streamer_get_shuffle () == DDB_SHUFFLE_OFF) {
+            deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, idx_current_song, 0);
+        }
+        else {
+            deadbeef->sendmessage(DB_EV_NEXT, 0, 0, 0);
+        }
+    }
+
+    deadbeef->pl_save_all ();
+    if (it_current_song) {
+        deadbeef->pl_item_unref (it_current_song);
+    }
     deadbeef->pl_unlock ();
     deadbeef->plt_unref (plt);
-
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     return FALSE;
 }
@@ -692,30 +603,6 @@ action_cursor_follows_playback_handler (DB_plugin_action_t *act, int ctx) {
     return 0;
 }
 
-static gboolean
-playlist_filter_func (const GtkFileFilterInfo *filter_info, gpointer data) {
-    // get ext
-    const char *p = strrchr (filter_info->filename, '.');
-    if (!p) {
-        return FALSE;
-    }
-    p++;
-    DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();
-    for (int i = 0; plug[i]; i++) {
-        if (plug[i]->extensions && plug[i]->load) {
-            const char **exts = plug[i]->extensions;
-            if (exts) {
-                for (int e = 0; exts[e]; e++) {
-                    if (!strcasecmp (exts[e], p)) {
-                        return TRUE;
-                    }
-                }
-            }
-        }
-    }
-    return FALSE;
-}
-
 static void
 load_playlist_thread (void *data) {
     char *fname = data;
@@ -724,7 +611,7 @@ load_playlist_thread (void *data) {
         if (!deadbeef->plt_add_files_begin (plt, 0)) {
             deadbeef->plt_clear (plt);
             int abort = 0;
-            DB_playItem_t *it = deadbeef->plt_load2 (0, plt, NULL, fname, &abort, NULL, NULL);
+            (void)deadbeef->plt_load2 (0, plt, NULL, fname, &abort, NULL, NULL);
             deadbeef->plt_save_config (plt);
             deadbeef->plt_add_files_end (plt, 0);
         }
@@ -734,46 +621,18 @@ load_playlist_thread (void *data) {
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
-
 gboolean
 action_load_playlist_handler_cb (void *data) {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Load Playlist"), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+    GSList *lst = show_file_chooser(_("Load Playlist"), GTKUI_FILECHOOSER_LOADPLAYLIST, FALSE);
 
-    // restore folder
-    deadbeef->conf_lock ();
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("filechooser.playlist.lastdir", ""));
-    deadbeef->conf_unlock ();
-
-    GtkFileFilter* flt;
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, "Supported playlist formats");
-    gtk_file_filter_add_custom (flt, GTK_FILE_FILTER_FILENAME, playlist_filter_func, NULL, NULL);
-    gtk_file_filter_add_pattern (flt, "*.dbpl");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
-    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, _("Other files (*)"));
-    gtk_file_filter_add_pattern (flt, "*");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
-
-    int res = gtk_dialog_run (GTK_DIALOG (dlg));
-    // store folder
-    gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
-    if (folder) {
-        deadbeef->conf_set_str ("filechooser.playlist.lastdir", folder);
-        g_free (folder);
-    }
-    if (res == GTK_RESPONSE_OK)
+    if (lst)
     {
-        gchar *fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
-        gtk_widget_destroy (dlg);
+        gchar *fname = g_slist_nth_data (lst, 0);
         if (fname) {
             uintptr_t tid = deadbeef->thread_start (load_playlist_thread, fname);
             deadbeef->thread_detach (tid);
         }
-    }
-    else {
-        gtk_widget_destroy (dlg);
+        g_slist_free(lst);
     }
     return FALSE;
 }
@@ -786,48 +645,12 @@ action_load_playlist_handler (DB_plugin_action_t *act, int ctx) {
 
 gboolean
 action_save_playlist_handler_cb (void *data) {
-    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Save Playlist As"), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
+    GSList *lst = show_file_chooser(_("Save Playlist As"), GTKUI_FILECHOOSER_SAVEPLAYLIST, FALSE);
 
-    gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dlg), TRUE);
-    gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dlg), "untitled.dbpl");
-    // restore folder
-    deadbeef->conf_lock ();
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("filechooser.playlist.lastdir", ""));
-    deadbeef->conf_unlock ();
 
-    GtkFileFilter* flt;
-    flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, _("DeaDBeeF playlist files (*.dbpl)"));
-    gtk_file_filter_add_pattern (flt, "*.dbpl");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
-    DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();
-    for (int i = 0; plug[i]; i++) {
-        if (plug[i]->extensions && plug[i]->load) {
-            const char **exts = plug[i]->extensions;
-            if (exts && plug[i]->save) {
-                for (int e = 0; exts[e]; e++) {
-                    char s[100];
-                    flt = gtk_file_filter_new ();
-                    gtk_file_filter_set_name (flt, exts[e]);
-                    snprintf (s, sizeof (s), "*.%s", exts[e]);
-                    gtk_file_filter_add_pattern (flt, s);
-                    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
-                }
-            }
-        }
-    }
-
-    int res = gtk_dialog_run (GTK_DIALOG (dlg));
-    // store folder
-    gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
-    if (folder) {
-        deadbeef->conf_set_str ("filechooser.playlist.lastdir", folder);
-        g_free (folder);
-    }
-    if (res == GTK_RESPONSE_OK)
+    if (lst)
     {
-        gchar *fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
-        gtk_widget_destroy (dlg);
+        gchar *fname = g_slist_nth_data (lst, 0);
 
         if (fname) {
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -839,10 +662,8 @@ action_save_playlist_handler_cb (void *data) {
                 deadbeef->plt_unref (plt);
             }
             g_free (fname);
+            g_slist_free(lst);
         }
-    }
-    else {
-        gtk_widget_destroy (dlg);
     }
     return FALSE;
 }
@@ -1098,18 +919,18 @@ action_playback_order_linear_handler(DB_plugin_action_t *act, int ctx) {
 
 gboolean
 action_playback_order_cycle_handler_cb (void *data) {
-    int ord = deadbeef->conf_get_int ("playback.order", PLAYBACK_ORDER_LINEAR);
-    switch (ord) {
-    case PLAYBACK_ORDER_LINEAR:
+    int shuffle = deadbeef->streamer_get_shuffle ();
+    switch (shuffle) {
+    case DDB_SHUFFLE_OFF:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_shuffle")), 1);
         break;
-    case PLAYBACK_ORDER_SHUFFLE_TRACKS:
+    case DDB_SHUFFLE_TRACKS:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_shuffle_albums")), 1);
         break;
-    case PLAYBACK_ORDER_SHUFFLE_ALBUMS:
+    case DDB_SHUFFLE_ALBUMS:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_random")), 1);
         break;
-    case PLAYBACK_ORDER_RANDOM:
+    case DDB_SHUFFLE_RANDOM:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_linear")), 1);
         break;
     }
@@ -1124,15 +945,15 @@ action_playback_order_cycle_handler(DB_plugin_action_t *act, int ctx) {
 
 gboolean
 action_playback_loop_cycle_handler_cb (void *data) {
-    int ord = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL);
-    switch (ord) {
-    case PLAYBACK_MODE_LOOP_ALL:
+    int repeat = deadbeef->streamer_get_repeat ();
+    switch (repeat) {
+    case DDB_REPEAT_ALL:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_single")), 1);
         break;
-    case PLAYBACK_MODE_LOOP_SINGLE:
+    case DDB_REPEAT_SINGLE:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_disable")), 1);
         break;
-    case PLAYBACK_MODE_NOLOOP:
+    case DDB_REPEAT_OFF:
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_all")), 1);
         break;
     }

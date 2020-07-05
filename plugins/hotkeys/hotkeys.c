@@ -25,7 +25,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#ifndef __APPLE__
+#if defined(__MINGW32__) || defined(__APPLE__)
+#define NO_XLIB_H
+#endif
+#ifndef NO_XLIB_H
 #include <X11/Xlib.h>
 #endif
 #include <ctype.h>
@@ -44,7 +47,7 @@
 static DB_hotkeys_plugin_t plugin;
 DB_functions_t *deadbeef;
 
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
 static int finished;
 static Display *disp;
 static intptr_t loop_tid;
@@ -56,7 +59,7 @@ static int need_reset = 0;
 typedef struct {
     const char *name;
     int keysym;
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
     int keycode; // after mapping
 #endif
 } xkey_t;
@@ -69,7 +72,7 @@ static xkey_t keys[] = {
 
 typedef struct command_s {
     int keycode;
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
     int x11_keycode;
 #endif
     int modifier;
@@ -81,7 +84,7 @@ typedef struct command_s {
 static command_t commands [MAX_COMMAND_COUNT];
 static int command_count = 0;
 
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
 static void
 init_mapped_keycodes (Display *disp, Atom *syms, int first_kk, int last_kk, int ks_per_kk) {
     int i, ks;
@@ -227,7 +230,7 @@ find_action_by_name (const char *command) {
     return actions;
 }
 
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
 static int
 get_x11_keycode (const char *name, Atom *syms, int first_kk, int last_kk, int ks_per_kk) {
     int i, ks;
@@ -349,7 +352,7 @@ read_config (void) {
                 else {
                     // lookup name table
                     cmd_entry->keycode = get_keycode (p);
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
                     cmd_entry->x11_keycode = get_x11_keycode (p, syms, first_kk, last_kk, ks_per_kk);
                     trace ("%s: kc=%d, xkc=%d\n", p, cmd_entry->keycode, cmd_entry->x11_keycode);
 #endif
@@ -373,7 +376,7 @@ read_config (void) {
 out:
         item = deadbeef->conf_find ("hotkey.", item);
     }
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
     XFree (syms);
     int i;
     // need to grab it here to prevent gdk_x_error from being called while we're
@@ -414,7 +417,7 @@ hotkeys_load (DB_functions_t *api) {
 static void
 cleanup () {
     command_count = 0;
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
     if (disp) {
         XCloseDisplay (disp);
         disp = NULL;
@@ -422,7 +425,7 @@ cleanup () {
 #endif
 }
 
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
 static int
 x_err_handler (Display *d, XErrorEvent *evt) {
 #if 0
@@ -502,7 +505,7 @@ hotkeys_event_loop (void *unused) {
 
 static int
 hotkeys_connect (void) {
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
     finished = 0;
     loop_tid = 0;
     disp = XOpenDisplay (NULL);
@@ -532,7 +535,7 @@ hotkeys_connect (void) {
 
 static int
 hotkeys_disconnect (void) {
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
     if (loop_tid) {
         finished = 1;
         deadbeef->thread_join (loop_tid);
@@ -579,7 +582,7 @@ hotkeys_get_action_for_keycombo (int key, int mods, int isglobal, int *ctx) {
 
 void
 hotkeys_reset (void) {
-#ifndef __APPLE__
+#ifndef NO_XLIB_H
     need_reset = 1;
     trace ("hotkeys: reset flagged\n");
 #endif
@@ -589,7 +592,7 @@ int
 action_play_cb (struct DB_plugin_action_s *action, int ctx) {
     // NOTE: this function is copied as on_playbtn_clicked in gtkui
     DB_output_t *output = deadbeef->get_output ();
-    if (output->state () == OUTPUT_STATE_PAUSED) {
+    if (output->state () == DDB_PLAYBACK_STATE_PAUSED) {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         int cur = deadbeef->plt_get_cursor (plt, PL_MAIN);
         if (cur != -1) {
@@ -654,8 +657,8 @@ action_toggle_pause_cb (struct DB_plugin_action_s *action, int ctx) {
 
 int
 action_play_pause_cb (struct DB_plugin_action_s *action, int ctx) {
-    int state = deadbeef->get_output ()->state ();
-    if (state == OUTPUT_STATE_PLAYING) {
+    ddb_playback_state_t state = deadbeef->get_output ()->state ();
+    if (state == DDB_PLAYBACK_STATE_PLAYING) {
         deadbeef->sendmessage (DB_EV_PAUSE, 0, 0, 0);
     }
     else {
@@ -678,7 +681,11 @@ action_seek_5p_forward_cb (struct DB_plugin_action_s *action, int ctx) {
         float dur = deadbeef->pl_get_item_duration (it);
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
-            deadbeef->sendmessage (DB_EV_SEEK, 0, (pos + dur * 0.05f) * 1000, 0);
+            pos += dur * 0.05f;
+            if (pos > dur) {
+                pos = dur;
+            }
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(pos * 1000), 0);
         }
         deadbeef->pl_item_unref (it);
     }
@@ -694,12 +701,11 @@ action_seek_5p_backward_cb (struct DB_plugin_action_s *action, int ctx) {
         float dur = deadbeef->pl_get_item_duration (it);
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
-            pos = (pos - dur * 0.05f) * 1000;
+            pos -= dur * 0.05f;
             if (pos < 0) {
                 pos = 0;
             }
-
-            deadbeef->sendmessage (DB_EV_SEEK, 0, pos, 0);
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(pos * 1000), 0);
         }
         deadbeef->pl_item_unref (it);
     }
@@ -715,7 +721,11 @@ action_seek_1p_forward_cb (struct DB_plugin_action_s *action, int ctx) {
         float dur = deadbeef->pl_get_item_duration (it);
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
-            deadbeef->sendmessage (DB_EV_SEEK, 0, (pos + dur * 0.01f) * 1000, 0);
+            pos += dur * 0.01f;
+            if (pos > dur) {
+                pos = dur;
+            }
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(pos * 1000), 0);
         }
         deadbeef->pl_item_unref (it);
     }
@@ -731,11 +741,11 @@ action_seek_1p_backward_cb (struct DB_plugin_action_s *action, int ctx) {
         float dur = deadbeef->pl_get_item_duration (it);
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
-            pos = (pos - dur * 0.01f) * 1000;
+            pos -= dur * 0.01f;
             if (pos < 0) {
                 pos = 0;
             }
-            deadbeef->sendmessage (DB_EV_SEEK, 0, pos, 0);
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(pos * 1000), 0);
         }
         deadbeef->pl_item_unref (it);
     }
@@ -752,10 +762,13 @@ seek_sec (float sec) {
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
             pos += sec;
+            if (pos > dur) {
+                pos = dur;
+            }
             if (pos < 0) {
                 pos = 0;
             }
-            deadbeef->sendmessage (DB_EV_SEEK, 0, pos * 1000, 0);
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(pos * 1000), 0);
         }
         deadbeef->pl_item_unref (it);
     }

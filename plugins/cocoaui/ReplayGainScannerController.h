@@ -24,7 +24,7 @@
 #import <Cocoa/Cocoa.h>
 #include "../../deadbeef.h"
 
-@interface ReplayGainScannerController : NSWindowController
+@interface ReplayGainScannerController : NSWindowController<NSWindowDelegate,NSTableViewDataSource>
 
 @property (strong) IBOutlet NSPanel *scanProgressWindow;
 @property (strong) IBOutlet NSPanel *updateTagsProgressWindow;

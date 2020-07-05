@@ -44,7 +44,7 @@ int
 pl_common_is_album_art_column (void *user_data);
 
 void
-pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height);
+pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int min_y, int next_y, int x, int y, int width, int height);
 
 void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter);
@@ -77,10 +77,10 @@ void
 pl_common_free_col_info (void *data);
 
 int
-pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int size);
+pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int size, int index);
 
 void
-pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height);
+pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height, int group_depth);
 
 void
 pl_common_selection_changed (DdbListview *ps, int iter, DB_playItem_t *it);
@@ -89,7 +89,7 @@ void
 pl_common_col_sort (int sort_order, int iter, void *user_data);
 
 void
-pl_common_set_group_format (DdbListview *listview, char *format_conf);
+pl_common_set_group_format (DdbListview *listview, const char *format_conf, const char *artwork_level_conf, const char *subgroup_padding_conf);
 
 // import old playlist configuration from "playlist.%02d" syntax with old title
 // formatting to the new JSON syntax with new title formatting

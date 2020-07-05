@@ -267,8 +267,6 @@ trkproperties_fill_meta (GtkListStore *store, DB_playItem_t **tracks, int numtra
     const char **keys = NULL;
     int nkeys = trkproperties_build_key_list (&keys, 0, tracks, numtracks);
 
-    int k;
-
     // add "standard" fields
     for (int i = 0; trkproperties_types[i]; i += 2) {
         add_field (store, trkproperties_types[i], _(trkproperties_types[i+1]), 0, tracks, numtracks);
@@ -414,9 +412,6 @@ show_track_properties_dlg (int ctx, ddb_playlist_t *plt) {
     g_object_set (G_OBJECT (rend_text2), "editable", TRUE, NULL);
 
     GtkWidget *widget = trackproperties;
-    GtkWidget *w;
-    const char *meta;
-
     trkproperties_fill_metadata ();
 
     gtk_widget_set_sensitive (lookup_widget (widget, "write_tags"), TRUE);
@@ -452,10 +447,31 @@ set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoi
             while (*e && *e != ';') {
                 e++;
             }
-            char *v = malloc (e-p+1);
-            memcpy (v, p, e-p);
-            v[e-p] = 0;
-            values[n++] = v;
+
+            // trim
+            const char *rb = p;
+            const char *re = e-1;
+            while (rb <= re) {
+                if ((uint8_t)(*rb) > 0x20) {
+                    break;
+                }
+                rb++;
+            }
+            while (re >= rb) {
+                if ((uint8_t)(*re) > 0x20) {
+                    break;
+                }
+                re--;
+            }
+
+            if (rb <= re) {
+                re++;
+                char *v = malloc (re-rb+1);
+                memcpy (v, rb, re-rb);
+                v[re-rb] = 0;
+                values[n++] = v;
+            }
+
             if (!*e) {
                 break;
             }
@@ -465,18 +481,17 @@ set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoi
         for (int i = 0; i < numtracks; i++) {
             deadbeef->pl_delete_meta (tracks[i], skey);
             if (*svalue) {
-                const char *oldvalue= deadbeef->pl_find_meta_raw (tracks[i], skey);
-                for (n = 0; n < num_values; n++) {
-                    if (values[n] && *values[n]) {
-                        deadbeef->pl_append_meta (tracks[i], skey, values[n]);
+                for (int k = 0; k < n; k++) {
+                    if (values[k] && *values[k]) {
+                        deadbeef->pl_append_meta (tracks[i], skey, values[k]);
                     }
                 }
             }
         }
 
-        for (n = 0; n < num_values; n++) {
-            if (values[n]) {
-                free (values[n]);
+        for (int k = 0; k < n; k++) {
+            if (values[k]) {
+                free (values[k]);
             }
         }
         free (values);
@@ -643,6 +658,9 @@ on_metalist_button_press_event         (GtkWidget       *widget,
 {
     if (event->button == 3) {
         GtkWidget *menu = create_trkproperties_popup_menu ();
+        if (numtracks != 1) {
+            gtk_widget_set_sensitive (lookup_widget (menu, "trkproperties_edit"), FALSE);
+        }
         gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
         gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, event->button, gtk_get_current_event_time());
     }
@@ -718,7 +736,7 @@ on_trkproperties_edit_activate          (GtkMenuItem     *menuitem,
     free (uppercase_key);
 
     GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
-    gtk_text_buffer_set_text (buffer, svalue, strlen (svalue));
+    gtk_text_buffer_set_text (buffer, svalue, (gint)strlen (svalue));
     gtk_text_view_set_buffer (GTK_TEXT_VIEW (lookup_widget (dlg, "field_value")), buffer);
 
     g_value_unset (&key);
@@ -907,7 +925,7 @@ on_trkproperties_add_new_field_activate
             }
 
             if (!dup) {
-                int l = strlen (text);
+                size_t l = strlen (text);
                 char title[l+3];
                 snprintf (title, sizeof (title), "<%s>", text);
                 const char *value = "";
@@ -975,7 +993,6 @@ on_trkproperties_crop_activate         (GtkMenuItem     *menuitem,
     GtkTreeModel *model = gtk_tree_view_get_model (treeview);
 
     GtkTreeIter iter;
-    GtkTreeIter next;
     gboolean res = gtk_tree_model_get_iter_first (model, &iter);
     while (res) {
         int getnext = 1;
@@ -983,8 +1000,6 @@ on_trkproperties_crop_activate         (GtkMenuItem     *menuitem,
         if (gtk_tree_path_compare (path, iter_path)) {
             GValue key = {0,};
             gtk_tree_model_get_value (model, &iter, 2, &key);
-            const char *skey = g_value_get_string (&key);
-
 
             GValue value = {0,};
             gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 2, &value);

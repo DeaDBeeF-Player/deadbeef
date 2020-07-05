@@ -25,7 +25,7 @@
 #import "AppDelegate.h"
 #include "deadbeef.h"
 
-DB_functions_t *deadbeef;
+extern DB_functions_t *deadbeef;
 
 BOOL g_CanQuit = NO;
 
@@ -36,8 +36,10 @@ int cocoaui_start(void) {
 }
 
 int cocoaui_stop(void) {
-    g_CanQuit = YES;
-    [NSApp terminate:g_appDelegate];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        g_CanQuit = YES;
+        [NSApp terminate:g_appDelegate];
+    });
     return 0;
 }
 

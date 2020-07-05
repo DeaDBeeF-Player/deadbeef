@@ -69,11 +69,8 @@ typedef struct {
 // allocate codec control structure
 static DB_fileinfo_t *
 wmaplug_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (wmaplug_info_t));
-    wmaplug_info_t *info = (wmaplug_info_t *)_info;
-    memset (info, 0, sizeof (wmaplug_info_t));
-
-    return _info;
+    wmaplug_info_t *info = calloc (sizeof (wmaplug_info_t), 1);
+    return &info->info;
 }
 
 static DB_fileinfo_t *
@@ -83,13 +80,11 @@ wmaplug_open2 (uint32_t hints, DB_playItem_t *it) {
         return NULL;
     }
 
-    DB_fileinfo_t *_info = malloc (sizeof (wmaplug_info_t));
-    wmaplug_info_t *info = (wmaplug_info_t *)_info;
-    memset (info, 0, sizeof (wmaplug_info_t));
+    wmaplug_info_t *info = calloc (sizeof (wmaplug_info_t), 1);
     info->open2_was_used = 1;
     info->info.file = file;
 
-    return _info;
+    return &info->info;
 }
 
 int get_asf_metadata(DB_FILE *fd, DB_playItem_t *it, asf_waveformatex_t *wfx, int64_t *first_frame_offset);

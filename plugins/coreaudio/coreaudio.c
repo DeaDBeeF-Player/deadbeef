@@ -23,7 +23,6 @@
 
 #include "../../deadbeef.h"
 #include <AudioUnit/AudioUnit.h>
-#include <CoreAudio/CoreAudio.h>
 #include <AudioToolbox/AudioToolbox.h>
 
 static DB_functions_t *deadbeef;
@@ -31,7 +30,7 @@ static DB_output_t plugin;
 
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
-static int state = OUTPUT_STATE_STOPPED;
+static ddb_playback_state_t state = DDB_PLAYBACK_STATE_STOPPED;
 static uint64_t mutex;
 
 // audiounit impl
@@ -54,7 +53,12 @@ ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const A
 
 static int
 ca_free (void);
-
+static int
+ca_init (void);
+static int
+ca_play (void);
+static int
+ca_pause (void);
 
 static UInt32
 GetNumberAvailableNominalSampleRateRanges()
@@ -93,31 +97,31 @@ get_avail_samplerates(void)
 
         avail_samplerates = malloc (sizeof (int) * num);
         for (int i = 0; i < num; i++) {
-            avail_samplerates[i] = nsrs[i].mMinimum;
+            avail_samplerates[i] = (int)nsrs[i].mMinimum;
         }
         num_avail_samplerates = num;
         free (nsrs);
     }
 }
 
-static int
-get_best_samplerate (int samplerate) {
-    // score1 = modulo -- 0 is best
-    // score2 = denominator -- 1 is perfect match
-    // score3 = distance
+int
+get_best_samplerate (int samplerate, int *avail_samplerates, int count) {
+    int64_t nearest = 0;
+    int index = -1;
 
-    int64_t highscore = 0;
-    int64_t index = -1;
+    for (int i = 0; i < count; i++) {
+        // score is based on distance and modulo, with slightly more weight put on distance
+        int64_t dist = llabs(avail_samplerates[i] - samplerate);
+        int64_t mod = samplerate > avail_samplerates[i] ? (samplerate % avail_samplerates[i]) : (avail_samplerates[i] % samplerate);
+        int64_t score = dist*2+mod;
 
-    for (int i = 0; i < num_avail_samplerates; i++) {
-        int64_t modulo = samplerate % avail_samplerates[i]; // 20 bit
-        int64_t denominator = samplerate / avail_samplerates[i]; // 7 bit
-        int64_t dist = abs(samplerate - avail_samplerates[i]); // 20 bit
+        // upscaling is generally better than downscaling
+        if (avail_samplerates[i] < samplerate) {
+            score *= 100;
+        }
 
-        int64_t score = (modulo<<27) | (denominator<<20) | dist;
-
-        if (index == -1 || score < highscore) {
-            highscore = score;
+        if (index == -1 || score < nearest) {
+            nearest = score;
             index = i;
         }
     }
@@ -132,7 +136,7 @@ ca_apply_format (void) {
     UInt32 sz;
     deadbeef->mutex_lock (mutex);
     if (req_format.mSampleRate > 0) {
-        req_format.mSampleRate = get_best_samplerate (req_format.mSampleRate);
+        req_format.mSampleRate = get_best_samplerate ((int)req_format.mSampleRate, avail_samplerates, num_avail_samplerates);
 
         // setting nominal samplerate doesn't work in most cases, and requires some timing trickery
 #if 0
@@ -186,11 +190,81 @@ error:
     return res;
 }
 
+OSStatus callbackFunction(AudioObjectID inObjectID,
+                          UInt32 inNumberAddresses,
+                          const AudioObjectPropertyAddress inAddresses[],
+                          void *inClientData) {
+    ddb_playback_state_t st = state;
+    ca_free ();
+    ca_init ();
+    if (st == DDB_PLAYBACK_STATE_PLAYING) {
+        ca_play();
+    }
+    else if (st == DDB_PLAYBACK_STATE_PAUSED) {
+        ca_pause();
+    }
+    return noErr;
+}
+
+static void
+ca_get_deviceid (void) {
+    device_id = -1;
+
+    char newdev[100];
+    deadbeef->conf_get_str ("coreaudio_soundcard", "", newdev, sizeof (newdev));
+
+    AudioObjectPropertyAddress propertyAddress = {
+        kAudioHardwarePropertyDevices,
+        kAudioObjectPropertyScopeGlobal,
+        kAudioObjectPropertyElementMaster
+    };
+
+    UInt32 dataSize = 0;
+    OSStatus status = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &propertyAddress, 0, NULL, &dataSize);
+    if(kAudioHardwareNoError != status) {
+        trace ("AudioObjectGetPropertyDataSize (kAudioHardwarePropertyDevices) failed: %i\n", status);
+        return;
+    }
+
+    UInt32 deviceCount = dataSize / sizeof(AudioDeviceID);
+
+    AudioDeviceID *audioDevices = malloc(dataSize);
+
+    status = AudioObjectGetPropertyData(kAudioObjectSystemObject, &propertyAddress, 0, NULL, &dataSize, audioDevices);
+    if(kAudioHardwareNoError != status) {
+        trace ("AudioObjectGetPropertyData (kAudioHardwarePropertyDevices) failed: %i\n", status);
+        free(audioDevices);
+        return;
+    }
+
+    // find device with specified name
+    propertyAddress.mScope = kAudioDevicePropertyScopeOutput;
+    for(UInt32 i = 0; i < deviceCount; ++i) {
+        // Query device name
+        CFStringRef deviceName = NULL;
+        dataSize = sizeof(deviceName);
+        propertyAddress.mSelector = kAudioDevicePropertyDeviceNameCFString;
+        status = AudioObjectGetPropertyData(audioDevices[i], &propertyAddress, 0, NULL, &dataSize, &deviceName);
+        if(kAudioHardwareNoError != status) {
+            trace ("AudioObjectGetPropertyData (kAudioDevicePropertyDeviceNameCFString) failed: %i\n", status);
+            continue;
+        }
+
+        char buf[100];
+        CFStringGetCString(deviceName, buf, sizeof(buf), kCFStringEncodingUTF8);
+        if (!strcmp (buf, newdev)) {
+            device_id = audioDevices[i];
+            break;
+        }
+    }
+
+    free(audioDevices);
+
+}
+
 static int
 ca_init (void) {
     OSStatus err;
-    
-    ca_free ();
     UInt32 sz;
     char device_name[128];
     AudioObjectPropertyAddress theAddress = {
@@ -199,11 +273,16 @@ ca_init (void) {
         kAudioObjectPropertyElementMaster
     };
 
-    sz = sizeof(device_id);
-    err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &sz, &device_id);
-    if (err != noErr) {
-        trace ("AudioObjectGetPropertyData kAudioHardwarePropertyDefaultOutputDevice: %x\n", err);
-        return -1;
+    ca_free ();
+
+    ca_get_deviceid ();
+    if (device_id == -1) {
+        sz = sizeof(device_id);
+        err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &sz, &device_id);
+        if (err != noErr) {
+            trace ("AudioObjectGetPropertyData kAudioHardwarePropertyDefaultOutputDevice: %x\n", err);
+            return -1;
+        }
     }
 
     get_avail_samplerates ();
@@ -257,7 +336,16 @@ ca_init (void) {
 
     ca_fmtchanged(device_id, 1, &theAddress, NULL);
 
-    state = OUTPUT_STATE_STOPPED;
+    AudioObjectPropertyAddress outputDeviceAddress = {
+        kAudioHardwarePropertyDefaultOutputDevice,
+        kAudioObjectPropertyScopeGlobal,
+        kAudioObjectPropertyElementMaster
+    };
+    AudioObjectAddPropertyListener(kAudioObjectSystemObject,
+                                   &outputDeviceAddress,
+                                   &callbackFunction, nil);
+
+    state = DDB_PLAYBACK_STATE_STOPPED;
 
     return 0;
 }
@@ -352,15 +440,15 @@ ca_play (void) {
     }
 
     deadbeef->mutex_lock (mutex);
-    if (state != OUTPUT_STATE_PLAYING) {
+    if (state != DDB_PLAYBACK_STATE_PLAYING) {
         err = AudioDeviceStart (device_id, ca_buffer_callback);
         if (err != noErr) {
             trace ("AudioDeviceStart: %x\n", err);
-            state = OUTPUT_STATE_STOPPED;
+            state = DDB_PLAYBACK_STATE_STOPPED;
             deadbeef->mutex_unlock (mutex);
             return -1;
         }
-        state = OUTPUT_STATE_PLAYING;
+        state = DDB_PLAYBACK_STATE_PLAYING;
     }
     deadbeef->mutex_unlock (mutex);
 
@@ -374,9 +462,9 @@ ca_stop (void) {
         return 0;
     }
     deadbeef->mutex_lock (mutex);
-    if (state != OUTPUT_STATE_STOPPED) {
+    if (state != DDB_PLAYBACK_STATE_STOPPED) {
         err = AudioDeviceStop (device_id, ca_buffer_callback);
-        state = OUTPUT_STATE_STOPPED;
+        state = DDB_PLAYBACK_STATE_STOPPED;
         if (err != noErr) {
             trace ("AudioDeviceStop: %x\n", err);
             deadbeef->mutex_unlock (mutex);
@@ -399,12 +487,12 @@ ca_pause (void) {
 
     deadbeef->mutex_lock (mutex);
 
-    if (state != OUTPUT_STATE_PAUSED) {
-        state = OUTPUT_STATE_PAUSED;
+    if (state != DDB_PLAYBACK_STATE_PAUSED) {
+        state = DDB_PLAYBACK_STATE_PAUSED;
         err = AudioDeviceStop (device_id, ca_buffer_callback);
         if (err != noErr) {
             trace ("AudioDeviceStop: %x\n", err);
-            state = OUTPUT_STATE_STOPPED;
+            state = DDB_PLAYBACK_STATE_STOPPED;
             deadbeef->mutex_unlock (mutex);
             return -1;
         }
@@ -437,7 +525,7 @@ ca_fmtchanged (AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioOb
         plugin.fmt.bps = device_format.mBitsPerChannel;
         plugin.fmt.channels = device_format.mChannelsPerFrame;
         plugin.fmt.is_float = 1;
-        plugin.fmt.samplerate = device_format.mSampleRate;
+        plugin.fmt.samplerate = (int)device_format.mSampleRate;
         plugin.fmt.channelmask = 0;
         for (int i = 0; i < plugin.fmt.channels; i++) {
             plugin.fmt.channelmask |= (1<<i);
@@ -455,7 +543,7 @@ ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const A
     char *buffer = outOutputData->mBuffers[0].mData;
     sz = outOutputData->mBuffers[0].mDataByteSize;
 
-    if (state == OUTPUT_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1)) {
+    if (state == DDB_PLAYBACK_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1)) {
         int br = deadbeef->streamer_read (buffer, sz);
         if (br < 0) {
             br = 0;
@@ -476,9 +564,85 @@ ca_unpause (void) {
     return ca_play ();
 }
 
-static int
+static ddb_playback_state_t
 ca_state (void) {
     return state;
+}
+
+static void ca_enum_soundcards (void (*callback)(const char *name, const char *desc, void*), void *userdata) {
+    AudioObjectPropertyAddress propertyAddress = {
+        kAudioHardwarePropertyDevices,
+        kAudioObjectPropertyScopeGlobal,
+        kAudioObjectPropertyElementMaster
+    };
+
+    UInt32 dataSize = 0;
+    OSStatus status = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &propertyAddress, 0, NULL, &dataSize);
+    if(kAudioHardwareNoError != status) {
+        trace ("AudioObjectGetPropertyDataSize (kAudioHardwarePropertyDevices) failed: %i\n", status);
+        return;
+    }
+
+    UInt32 deviceCount = dataSize / sizeof(AudioDeviceID);
+
+    AudioDeviceID *audioDevices = malloc(dataSize);
+
+    status = AudioObjectGetPropertyData(kAudioObjectSystemObject, &propertyAddress, 0, NULL, &dataSize, audioDevices);
+    if(kAudioHardwareNoError != status) {
+        trace ("AudioObjectGetPropertyData (kAudioHardwarePropertyDevices) failed: %i\n", status);
+        free(audioDevices);
+        return;
+    }
+
+    // Iterate through all the devices and determine which are output-capable
+    propertyAddress.mScope = kAudioDevicePropertyScopeOutput;
+    for(UInt32 i = 0; i < deviceCount; ++i) {
+        // Query device UID
+        CFStringRef deviceUID = NULL;
+        dataSize = sizeof(deviceUID);
+        propertyAddress.mSelector = kAudioDevicePropertyDeviceUID;
+        status = AudioObjectGetPropertyData(audioDevices[i], &propertyAddress, 0, NULL, &dataSize, &deviceUID);
+        if(kAudioHardwareNoError != status) {
+            trace ("AudioObjectGetPropertyData (kAudioDevicePropertyDeviceUID) failed: %i\n", status);
+            continue;
+        }
+
+        // Query device name
+        CFStringRef deviceName = NULL;
+        dataSize = sizeof(deviceName);
+        propertyAddress.mSelector = kAudioDevicePropertyDeviceNameCFString;
+        status = AudioObjectGetPropertyData(audioDevices[i], &propertyAddress, 0, NULL, &dataSize, &deviceName);
+        if(kAudioHardwareNoError != status) {
+            trace ("AudioObjectGetPropertyData (kAudioDevicePropertyDeviceNameCFString) failed: %i\n", status);
+            continue;
+        }
+
+        // test for number of channels
+        dataSize = 0;
+        propertyAddress.mSelector = kAudioDevicePropertyStreamConfiguration;
+        status = AudioObjectGetPropertyDataSize(audioDevices[i], &propertyAddress, 0, NULL, &dataSize);
+        if(kAudioHardwareNoError != status) {
+            trace ("AudioObjectGetPropertyDataSize (kAudioDevicePropertyStreamConfiguration) failed: %i\n", status);
+            continue;
+        }
+
+        AudioBufferList *bufferList = malloc(dataSize);
+        status = AudioObjectGetPropertyData(audioDevices[i], &propertyAddress, 0, NULL, &dataSize, bufferList);
+        if(kAudioHardwareNoError != status || 0 == bufferList->mNumberBuffers) {
+            free(bufferList);
+            continue;
+        }
+
+        if (callback) {
+            char buf[100];
+            CFStringGetCString(deviceName, buf, sizeof(buf), kCFStringEncodingUTF8);
+            callback (buf, "", userdata);
+        }
+
+        free(bufferList);
+    }
+
+    free(audioDevices);
 }
 
 static int
@@ -534,6 +698,7 @@ static DB_output_t plugin = {
     .pause = ca_pause,
     .unpause = ca_unpause,
     .state = ca_state,
+    .enum_soundcards = ca_enum_soundcards,
     .plugin.start = ca_plugin_start,
     .plugin.stop = ca_plugin_stop,
 };

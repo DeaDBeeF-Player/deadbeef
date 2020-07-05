@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 #include "wildmidi_lib.h"
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
@@ -53,9 +54,8 @@ typedef struct {
 
 DB_fileinfo_t *
 wmidi_open (uint32_t hints) {
-    DB_fileinfo_t *_info = (DB_fileinfo_t *)malloc (sizeof (wmidi_info_t));
-    memset (_info, 0, sizeof (wmidi_info_t));
-    return _info;
+    wmidi_info_t *info = calloc (sizeof (wmidi_info_t), 1);
+    return &info->info;
 }
 
 static int
@@ -70,10 +70,11 @@ wmidi_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     wmidi_info_t *info = (wmidi_info_t *)_info;
 
     deadbeef->pl_lock ();
-    info->m = WildMidi_Open (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    info->m = WildMidi_Open (uri);
     if (!info->m) {
-        trace ("wmidi: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
+        trace ("wmidi: failed to open %s\n", uri);
         return -1;
     }
 
@@ -213,7 +214,7 @@ wildmidi_load (DB_functions_t *api) {
     return DB_PLUGIN (&wmidi_plugin);
 }
 
-static const char *exts[] = { "mid",NULL };
+static const char *exts[] = { "mid","midi",NULL };
 
 static const char settings_dlg[] =
     "property \"Timidity++ bank configuration file\" file wildmidi.config \"" DEFAULT_TIMIDITY_CONFIG "\";\n"

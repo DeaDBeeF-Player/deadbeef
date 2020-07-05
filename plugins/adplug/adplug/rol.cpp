@@ -14,239 +14,326 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * rol.h - ROL Player by OPLx <oplx@yahoo.com>
+ * rol.cpp - ROL Player by OPLx <oplx@yahoo.com>
  *
- * Visit:  http://tenacity.hispeed.com/aomit/oplx/
+ * Source references ADLIB.C from Adlib MSC SDK.
  */
-#include <string.h>
+#include <cstring>
+#include <algorithm>
+
 #include "rol.h"
 #include "debug.h"
 
+#if !defined(UINT8_MAX)
+    typedef signed char    int8_t;
+    typedef short          int16_t;
+    typedef int            int32_t;
+    typedef unsigned char  uint8_t;
+    typedef unsigned short uint16_t;
+    typedef unsigned int   uint32_t;
+#endif
 
-int   const CrolPlayer::kSizeofDataRecord    =  30;
-int   const CrolPlayer::kMaxTickBeat         =  60;
-int   const CrolPlayer::kSilenceNote         = -12;
-int   const CrolPlayer::kNumMelodicVoices    =  9;
-int   const CrolPlayer::kNumPercussiveVoices = 11;
-int   const CrolPlayer::kBassDrumChannel     =  6;
-int   const CrolPlayer::kSnareDrumChannel    =  7;
-int   const CrolPlayer::kTomtomChannel       =  8;
-int   const CrolPlayer::kTomtomFreq          =  2;//4;
-int   const CrolPlayer::kSnareDrumFreq       =  2;//kTomtomFreq + 7;
-float const CrolPlayer::kDefaultUpdateTme    = 18.2f;
-float const CrolPlayer::kPitchFactor         = 400.0f;
-
-static const unsigned char drum_table[4] = {0x14, 0x12, 0x15, 0x11};
-
-CrolPlayer::uint16 const CrolPlayer::kNoteTable[12] = 
-{ 
-    340, // C
-    363, // C#
-    385, // D
-    408, // D#
-    432, // E
-    458, // F
-    485, // F#
-    514, // G
-    544, // G#
-    577, // A
-    611, // A#
-    647  // B
+ //---------------------------------------------------------
+static uint32_t const skMidPitch             = 0x2000U;
+static int16_t  const skNrStepPitch          = 25; // 25 steps within a half-tone for pitch bend
+static int16_t  const skVersionMajor         = 4;
+static int16_t  const skVersionMinor         = 0;
+static uint8_t  const skMaxVolume            = 0x7FU;
+static uint8_t  const skMaxNotes             = 96U;
+static uint8_t  const skCarrierOpOffset      = 3U;
+static uint8_t  const skNumSemitonesInOctave = 12U;
+//---------------------------------------------------------
+static uint8_t const skOPL2_WaveCtrlBaseAddress      = 0x01U; // Test LSI / Enable waveform control
+static uint8_t const skOPL2_AaMultiBaseAddress       = 0x20U; // Amp Mod / Vibrato / EG type / Key Scaling / Multiple
+static uint8_t const skOPL2_KSLTLBaseAddress         = 0x40U; // Key scaling level / Operator output level
+static uint8_t const skOPL2_ArDrBaseAddress          = 0x60U; // Attack Rate / Decay Rate
+static uint8_t const skOPL2_SlrrBaseAddress          = 0x80U; // Sustain Level / Release Rate
+static uint8_t const skOPL2_FreqLoBaseAddress        = 0xA0U; // Frequency (low 8 bits)
+static uint8_t const skOPL2_KeyOnFreqHiBaseAddress   = 0xB0U; // Key On / Octave / Frequency (high 2 bits)
+static uint8_t const skOPL2_AmVibRhythmBaseAddress   = 0xBDU; // AM depth / Vibrato depth / Rhythm control
+static uint8_t const skOPL2_FeedConBaseAddress       = 0xC0U; // Feedback strength / Connection type
+static uint8_t const skOPL2_WaveformBaseAddress      = 0xE0U; // Waveform select
+//---------------------------------------------------------
+static uint8_t const skOPL2_EnableWaveformSelectMask = 0x20U;
+static uint8_t const skOPL2_KeyOnMask                = 0x20U;
+static uint8_t const skOPL2_RhythmMask               = 0x20U;
+static uint8_t const skOPL2_KSLMask                  = 0xC0U;
+static uint8_t const skOPL2_TLMask                   = 0x3FU;
+static uint8_t const skOPL2_TLMinLevel               = 0x3FU;
+static uint8_t const skOPL2_FNumLSBMask              = 0xFFU;
+static uint8_t const skOPL2_FNumMSBMask              = 0x03U;
+static uint8_t const skOPL2_FNumMSBShift             = 0x08U;
+static uint8_t const skOPL2_BlockNumberShift         = 0x02U;
+//---------------------------------------------------------
+static uint8_t const skNoteOctave[skMaxNotes] =
+{
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+    5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+    6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7
 };
+//---------------------------------------------------------
+static uint8_t const skNoteIndex[skMaxNotes] =
+{
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+};
+//---------------------------------------------------------
+// Table below generated by initialize_fnum_table function (from Adlib Music SDK).
+static uint16_t const skFNumNotes[skNrStepPitch][skNumSemitonesInOctave] =
+{
+    343, 364, 385, 408, 433, 459, 486, 515, 546, 579, 614, 650,
+    344, 365, 387, 410, 434, 460, 488, 517, 548, 581, 615, 652,
+    345, 365, 387, 410, 435, 461, 489, 518, 549, 582, 617, 653,
+    346, 366, 388, 411, 436, 462, 490, 519, 550, 583, 618, 655,
+    346, 367, 389, 412, 437, 463, 491, 520, 551, 584, 619, 657,
+    347, 368, 390, 413, 438, 464, 492, 522, 553, 586, 621, 658,
+    348, 369, 391, 415, 439, 466, 493, 523, 554, 587, 622, 660,
+    349, 370, 392, 415, 440, 467, 495, 524, 556, 589, 624, 661,
+    350, 371, 393, 416, 441, 468, 496, 525, 557, 590, 625, 663,
+    351, 372, 394, 417, 442, 469, 497, 527, 558, 592, 627, 665,
+    351, 372, 395, 418, 443, 470, 498, 528, 559, 593, 628, 666,
+    352, 373, 396, 419, 444, 471, 499, 529, 561, 594, 630, 668,
+    353, 374, 397, 420, 445, 472, 500, 530, 562, 596, 631, 669,
+    354, 375, 398, 421, 447, 473, 502, 532, 564, 597, 633, 671,
+    355, 376, 398, 422, 448, 474, 503, 533, 565, 599, 634, 672,
+    356, 377, 399, 423, 449, 475, 504, 534, 566, 600, 636, 674,
+    356, 378, 400, 424, 450, 477, 505, 535, 567, 601, 637, 675,
+    357, 379, 401, 425, 451, 478, 506, 537, 569, 603, 639, 677,
+    358, 379, 402, 426, 452, 479, 507, 538, 570, 604, 640, 679,
+    359, 380, 403, 427, 453, 480, 509, 539, 571, 606, 642, 680,
+    360, 381, 404, 428, 454, 481, 510, 540, 572, 607, 643, 682,
+    360, 382, 405, 429, 455, 482, 511, 541, 574, 608, 645, 683,
+    361, 383, 406, 430, 456, 483, 512, 543, 575, 610, 646, 685,
+    362, 384, 407, 431, 457, 484, 513, 544, 577, 611, 648, 687,
+    363, 385, 408, 432, 458, 485, 514, 545, 578, 612, 649, 688
+};
+//---------------------------------------------------------
+static uint8_t const drum_op_table[4] = { 0x14, 0x12, 0x15, 0x11 };
+//---------------------------------------------------------
+static inline float fmin(int const a, int const b)
+{
+    return static_cast<float>(a < b ? a : b);
+}
+//---------------------------------------------------------
+int   const CrolPlayer::kSizeofDataRecord    = 30;
+int   const CrolPlayer::kMaxTickBeat         = 60;
+int   const CrolPlayer::kSilenceNote         = -12;
+int   const CrolPlayer::kNumMelodicVoices    = 9;
+int   const CrolPlayer::kNumPercussiveVoices = 11;
+int   const CrolPlayer::kBassDrumChannel     = 6;
+int   const CrolPlayer::kSnareDrumChannel    = 7;
+int   const CrolPlayer::kTomtomChannel       = 8;
+int   const CrolPlayer::kTomTomNote          = 24;
+int   const CrolPlayer::kTomTomToSnare       = 7; // 7 half-tones between voice 7 & 8
+int   const CrolPlayer::kSnareNote           = CrolPlayer::kTomTomNote + CrolPlayer::kTomTomToSnare;
+float const CrolPlayer::kDefaultUpdateTme    = 18.2f;
 
 /*** public methods **************************************/
 
-CPlayer *CrolPlayer::factory(Copl *newopl)
+CPlayer * CrolPlayer::factory(Copl * pNewOpl)
 {
-  return new CrolPlayer(newopl);
+  return new CrolPlayer(pNewOpl);
 }
 //---------------------------------------------------------
-CrolPlayer::CrolPlayer(Copl *newopl)
-: CPlayer         ( newopl )
-  ,rol_header      ( NULL )
-  ,mNextTempoEvent ( 0 )
-  ,mCurrTick       ( 0 )
-  ,mTimeOfLastNote ( 0 )
-  ,mRefresh        ( kDefaultUpdateTme )
-  ,bdRegister      ( 0 )
-  ,n_voice_data(0)
-  ,n_tempo_events(0)
-  ,n_used_ins(0)
+CrolPlayer::CrolPlayer(Copl * const pNewOpl)
+    : CPlayer            (pNewOpl)
+    , mpROLHeader        (NULL)
+    , mpOldFNumFreqPtr   (NULL)
+    , mTempoEvents       ()
+    , mVoiceData         ()
+    , mInstrumentList    ()
+    , mFNumFreqPtrList   (kNumPercussiveVoices, skFNumNotes[0])
+    , mHalfToneOffset    (kNumPercussiveVoices, 0)
+    , mVolumeCache       (kNumPercussiveVoices, skMaxVolume)
+    , mKSLTLCache        (kNumPercussiveVoices, 0)
+    , mNoteCache         (kNumPercussiveVoices, 0)
+    , mKOnOctFNumCache   (kNumMelodicVoices, 0)
+    , mKeyOnCache        (kNumPercussiveVoices, false)
+    , mRefresh           (kDefaultUpdateTme)
+    , mOldPitchBendLength(~0)
+    , mPitchRangeStep    (skNrStepPitch)
+    , mNextTempoEvent    (0)
+    , mCurrTick          (0)
+    , mTimeOfLastNote    (0)
+    , mOldHalfToneOffset (0)
+    , mAMVibRhythmCache  (0)
 {
-    int n;
-
-    mTempoEvents = 0;
-    voice_data = 0;
-    ins_list = 0;
-
-    memset(bxRegister,  0, sizeof(bxRegister) );
-    memset(volumeCache, 0, sizeof(volumeCache) );
-    memset(freqCache,   0, sizeof(freqCache) );
-
-    for(n=0; n<11; n++)
-      pitchCache[n]=1.0f;    
 }
 //---------------------------------------------------------
 CrolPlayer::~CrolPlayer()
 {
-    if( rol_header != NULL )
+    if (mpROLHeader != NULL)
     {
-        delete rol_header;
-        rol_header=NULL;
+        delete mpROLHeader;
+        mpROLHeader = NULL;
     }
-
-    delete[] mTempoEvents;
-    delete[] voice_data;
-    delete[] ins_list;
 }
 //---------------------------------------------------------
-bool CrolPlayer::load(const char *filename, const CFileProvider &fp)
+bool CrolPlayer::load(const std::string & filename, const CFileProvider & fp)
 {
-    binistream *f = fp.open(filename); if(!f) return false;
+    binistream *f = fp.open(filename);
 
-    char fn[strlen(filename)+12];
+    if (!f)
+    {
+        return false;
+    }
+
+    char *fn = new char[filename.length()+13];
     int i;
-    const char * bnk_filename;
+    std::string bnk_filename;
 
-    AdPlug_LogWrite("*** CrolPlayer::load(f, \"%s\") ***\n", filename);
-    strcpy(fn,filename);
-    int len = strlen(fn)-1;
-    for (i=len; i>=0; i--) {
-        if (fn[i] == '/' || fn[i] == '\\') {
+    AdPlug_LogWrite("*** CrolPlayer::load(f, \"%s\") ***\n", filename.c_str());
+    strcpy(fn,filename.data());
+    for (i = strlen(fn) - 1; i >= 0; i--)
+    {
+        if (fn[i] == '/' || fn[i] == '\\')
+        {
             break;
         }
     }
     strcpy(fn+i+1,"standard.bnk");
     bnk_filename = fn;
-    AdPlug_LogWrite("bnk_filename = \"%s\"\n",bnk_filename);
+    delete [] fn;
+    AdPlug_LogWrite("bnk_filename = \"%s\"\n",bnk_filename.c_str());
 
-    rol_header = new SRolHeader;
-    memset( rol_header, 0, sizeof(SRolHeader) );
+    mpROLHeader = new SRolHeader;
+    memset(mpROLHeader, 0, sizeof(SRolHeader));
 
-    rol_header->version_major = f->readInt( 2 );
-    rol_header->version_minor = f->readInt( 2 );
+    mpROLHeader->version_major = static_cast<uint16_t>(f->readInt(2));
+    mpROLHeader->version_minor = static_cast<uint16_t>(f->readInt(2));
 
     // Version check
-    if(rol_header->version_major != 0 || rol_header->version_minor != 4) {
-      AdPlug_LogWrite("Unsupported file version %d.%d or not a ROL file!\n",
-	       rol_header->version_major, rol_header->version_minor);
-      AdPlug_LogWrite("--- CrolPlayer::load ---\n");
-      fp.close(f);
-      return false;
+    if ((mpROLHeader->version_major != skVersionMinor) || (mpROLHeader->version_minor != skVersionMajor))
+    {
+        AdPlug_LogWrite("Unsupported file version %d.%d or not a ROL file!\n",
+                        mpROLHeader->version_major, mpROLHeader->version_minor);
+        AdPlug_LogWrite("--- CrolPlayer::load ---\n");
+        fp.close(f);
+        return false;
     }
 
-    f->seek( 40, binio::Add );
+    f->readString(mpROLHeader->comment, ROL_COMMENT_SIZE);
+    mpROLHeader->comment[ROL_COMMENT_SIZE - 1] = 0;
+    mpROLHeader->ticks_per_beat    = static_cast<uint16_t>(f->readInt(2));
+    mpROLHeader->beats_per_measure = static_cast<uint16_t>(f->readInt(2));
+    mpROLHeader->edit_scale_y      = static_cast<uint16_t>(f->readInt(2));
+    mpROLHeader->edit_scale_x      = static_cast<uint16_t>(f->readInt(2));
 
-    rol_header->ticks_per_beat    = f->readInt( 2 );
-    rol_header->beats_per_measure = f->readInt( 2 );
-    rol_header->edit_scale_y      = f->readInt( 2 );
-    rol_header->edit_scale_x      = f->readInt( 2 );
+    f->seek(ROL_UNUSED1_SIZE, binio::Add); // Seek past 'SRolHeader.(unused1)' field of the header.
 
-    f->seek( 1, binio::Add );
+    mpROLHeader->mode = static_cast<uint8_t>(f->readInt(1));
 
-    rol_header->mode = f->readInt(1);
+    f->seek(ROL_UNUSED2_SIZE + ROL_FILLER0_SIZE + ROL_FILLER1_SIZE, binio::Add); // Seek past 'SRolHeader.(unused2, filler0, filler1)' field of header
 
-    f->seek( 90+38+15, binio::Add );
+    mpROLHeader->basic_tempo = static_cast<float>(f->readFloat(binio::Single));
 
-    rol_header->basic_tempo = f->readFloat( binio::Single );
-
-    load_tempo_events( f );
+    load_tempo_events(f);
 
     mTimeOfLastNote = 0;
 
-    if( load_voice_data( f, bnk_filename, fp ) != true )
+    if (load_voice_data(f, bnk_filename, fp) != true)
     {
       AdPlug_LogWrite("CrolPlayer::load_voice_data(f) failed!\n");
       AdPlug_LogWrite("--- CrolPlayer::load ---\n");
 
-      fp.close( f );
+      fp.close(f);
       return false;
     }
 
-    fp.close( f );
+    fp.close(f);
 
-    rewind( 0 );
+    rewind(0);
     AdPlug_LogWrite("--- CrolPlayer::load ---\n");
-
     return true;
 }
 //---------------------------------------------------------
 bool CrolPlayer::update()
 {
-    if( mNextTempoEvent < n_tempo_events &&
-        mTempoEvents[mNextTempoEvent].time == mCurrTick )
+    if ((mNextTempoEvent < mTempoEvents.size()) &&
+        (mTempoEvents[mNextTempoEvent].time == mCurrTick))
     {
-        SetRefresh( mTempoEvents[mNextTempoEvent].multiplier );
+        SetRefresh(mTempoEvents[mNextTempoEvent].multiplier);
         ++mNextTempoEvent;
     }
 
+    TVoiceData::iterator curr = mVoiceData.begin();
+    TVoiceData::iterator end  = mVoiceData.end();
+    int voice                 = 0;
 
-    int curr = 0;
-    int end  = n_voice_data;
-
-    while( curr < end )
+    while(curr != end)
     {
-        UpdateVoice( curr, voice_data[curr] );
+        UpdateVoice(voice, *curr);
         ++curr;
+        ++voice;
     }
 
     ++mCurrTick;
 
-    if( mCurrTick > mTimeOfLastNote )
+    if (mCurrTick > mTimeOfLastNote)
     {
         return false;
     }
 
     return true;
-    //return ( mCurrTick > mTimeOfLastNote ) ? false : true;
 }
 //---------------------------------------------------------
-void CrolPlayer::rewind( int subsong )
+void CrolPlayer::rewind(int subsong)
 {
-    int curr = 0;
-    while( curr < n_voice_data )
+    TVoiceData::iterator curr = mVoiceData.begin();
+    TVoiceData::iterator end  = mVoiceData.end();
+
+    while(curr != end)
     {
-        CVoiceData &voice = voice_data[curr];
+        CVoiceData & voice = *curr;
 
         voice.Reset();
         ++curr;
     }
 
-    memset(bxRegister,  0, sizeof(bxRegister) );
-    memset(volumeCache, 0, sizeof(volumeCache) );
-
-    bdRegister = 0;
-
-    opl->init();        // initialize to melodic by default
-    opl->write(1,0x20); // Enable waveform select (bit 5)
-
-    if( rol_header->mode == 0 )
-    {
-        opl->write( 0xbd, 0x20 ); // select rhythm mode (bit 5)
-        bdRegister = 0x20;
-
-        SetFreq( kTomtomChannel,    24 );
-        SetFreq( kSnareDrumChannel, 31 );
-    }
+    mHalfToneOffset  = TInt16Vector(kNumPercussiveVoices, 0);
+    mVolumeCache     = TUInt8Vector(kNumPercussiveVoices, skMaxVolume);
+    mKSLTLCache      = TUInt8Vector(kNumPercussiveVoices, 0);
+    mNoteCache       = TUInt8Vector(kNumPercussiveVoices, 0);
+    mKOnOctFNumCache = TUInt8Vector(kNumMelodicVoices, 0);
+    mKeyOnCache      = TBoolVector(kNumPercussiveVoices, false);
 
     mNextTempoEvent = 0;
-    mCurrTick       = 0;
+    mCurrTick = 0;
+    mAMVibRhythmCache = 0;
+
+    opl->init();         // initialize to melodic by default
+    opl->write(skOPL2_WaveCtrlBaseAddress, skOPL2_EnableWaveformSelectMask); // Enable waveform select
+
+    if (mpROLHeader->mode == 0)
+    {
+        mAMVibRhythmCache = skOPL2_RhythmMask;
+        opl->write(skOPL2_AmVibRhythmBaseAddress, mAMVibRhythmCache); // Enable rhythm mode
+
+        SetFreq(kTomtomChannel, kTomTomNote);
+        SetFreq(kSnareDrumChannel, kSnareNote);
+    }
 
     SetRefresh(1.0f);
 }
 //---------------------------------------------------------
-inline float fmin( int const a, int const b )
-{
-    return static_cast<float>( a < b ? a : b );
-}
-//---------------------------------------------------------
 void CrolPlayer::SetRefresh( float const multiplier )
 {
-    float const tickBeat = fmin(kMaxTickBeat, rol_header->ticks_per_beat);
+    float const tickBeat = static_cast<float>(fmin(kMaxTickBeat, mpROLHeader->ticks_per_beat));
 
-    mRefresh =  (tickBeat*rol_header->basic_tempo*multiplier) / 60.0f;
+    mRefresh = (tickBeat*mpROLHeader->basic_tempo*multiplier) / 60.0f;
 }
 //---------------------------------------------------------
 float CrolPlayer::getrefresh()
@@ -254,20 +341,28 @@ float CrolPlayer::getrefresh()
     return mRefresh;
 }
 //---------------------------------------------------------
-void CrolPlayer::UpdateVoice( int const voice, CVoiceData &voiceData )
+void CrolPlayer::UpdateVoice(int const voice, CVoiceData & voiceData)
 {
-    if( !voiceData.n_note_events || (voiceData.mEventStatus & CVoiceData::kES_NoteEnd) )
+    TNoteEvents const & nEvents = voiceData.note_events;
+
+    if (nEvents.empty() || (voiceData.mEventStatus & CVoiceData::kES_NoteEnd))
     {
         return; // no note data to process, don't bother doing anything.
     }
 
-    if( !(voiceData.mEventStatus & CVoiceData::kES_InstrEnd ) &&
-        voiceData.instrument_events[voiceData.next_instrument_event].time == mCurrTick )
+    TInstrumentEvents const & iEvents = voiceData.instrument_events;
+    TVolumeEvents     const & vEvents = voiceData.volume_events;
+    TPitchEvents      const & pEvents = voiceData.pitch_events;
+
+    if ((voiceData.mEventStatus & CVoiceData::kES_InstrEnd) == 0)
     {
-        if( voiceData.next_instrument_event < voiceData.n_instrument_events )
+        if (voiceData.next_instrument_event < iEvents.size())
         {
-            send_ins_data_to_chip( voice, voiceData.instrument_events[voiceData.next_instrument_event].ins_index );
-            ++voiceData.next_instrument_event;
+            if (iEvents[voiceData.next_instrument_event].time == mCurrTick)
+            {
+                send_ins_data_to_chip(voice, iEvents[voiceData.next_instrument_event].ins_index);
+                ++voiceData.next_instrument_event;
+            }
         }
         else
         {
@@ -275,18 +370,20 @@ void CrolPlayer::UpdateVoice( int const voice, CVoiceData &voiceData )
         }
     }
 
-    if( !(voiceData.mEventStatus & CVoiceData::kES_VolumeEnd ) &&
-        voiceData.volume_events[voiceData.next_volume_event].time == mCurrTick )
+    if ((voiceData.mEventStatus & CVoiceData::kES_VolumeEnd) == 0)
     {
-      SVolumeEvent const &volumeEvent = voiceData.volume_events[voiceData.next_volume_event];
-
-        if(  voiceData.next_volume_event < voiceData.n_volume_events )
+        if (voiceData.next_volume_event < vEvents.size())
         {
-            int const volume = (int)(63.0f*(1.0f - volumeEvent.multiplier));
+            if (vEvents[voiceData.next_volume_event].time == mCurrTick)
+            {
+                SVolumeEvent const & volumeEvent = vEvents[voiceData.next_volume_event];
 
-            SetVolume( voice, volume );
+                uint8_t const volume = (uint8_t)(skMaxVolume * volumeEvent.multiplier);
 
-            ++voiceData.next_volume_event; // move to next volume event
+                SetVolume(voice, volume);
+
+                ++voiceData.next_volume_event; // move to next volume event
+            }
         }
         else
         {
@@ -294,37 +391,39 @@ void CrolPlayer::UpdateVoice( int const voice, CVoiceData &voiceData )
         }        
     }
 
-    if( voiceData.mForceNote || voiceData.current_note_duration > voiceData.mNoteDuration-1 )
+    if (voiceData.mForceNote || (voiceData.current_note_duration > voiceData.mNoteDuration-1))
     {
-        if( mCurrTick != 0 )
+        if (mCurrTick != 0)
         {
             ++voiceData.current_note;
         }
 
-        if( voiceData.current_note < voiceData.n_note_events )
+        if (voiceData.current_note < nEvents.size())
         {
-            SNoteEvent const &noteEvent = voiceData.note_events[voiceData.current_note];
+            SNoteEvent const & noteEvent = nEvents[voiceData.current_note];
 
-            SetNote( voice, noteEvent.number );
+            SetNote(voice, noteEvent.number);
             voiceData.current_note_duration = 0;
             voiceData.mNoteDuration         = noteEvent.duration;
             voiceData.mForceNote            = false;
         }
         else
         {
-            SetNote( voice, kSilenceNote );
+            SetNote(voice, kSilenceNote);
             voiceData.mEventStatus |= CVoiceData::kES_NoteEnd;
             return;
         }
     }
 
-    if( !(voiceData.mEventStatus & CVoiceData::kES_PitchEnd ) &&
-        voiceData.pitch_events[voiceData.next_pitch_event].time == mCurrTick )
+    if ((voiceData.mEventStatus & CVoiceData::kES_PitchEnd) == 0)
     {
-        if( voiceData.next_pitch_event < voiceData.n_pitch_events )
+        if ( voiceData.next_pitch_event < pEvents.size() )
         {
-            SetPitch(voice,voiceData.pitch_events[voiceData.next_pitch_event].variation);
-            ++voiceData.next_pitch_event;
+            if (pEvents[voiceData.next_pitch_event].time == mCurrTick)
+            {
+                SetPitch(voice, pEvents[voiceData.next_pitch_event].variation);
+                ++voiceData.next_pitch_event;
+            }
         }
         else
         {
@@ -335,168 +434,226 @@ void CrolPlayer::UpdateVoice( int const voice, CVoiceData &voiceData )
     ++voiceData.current_note_duration;
 }
 //---------------------------------------------------------
-void CrolPlayer::SetNote( int const voice, int const note )
+void CrolPlayer::SetNote(int const voice, int const note)
 {
-    if( voice < kBassDrumChannel || rol_header->mode )
+    if ((voice < kBassDrumChannel) || mpROLHeader->mode)
     {
-        SetNoteMelodic( voice, note );
+        SetNoteMelodic(voice, note);
     }
     else
     {
-        SetNotePercussive( voice, note );
+        SetNotePercussive(voice, note);
     }
 }
 //---------------------------------------------------------
-void CrolPlayer::SetNotePercussive( int const voice, int const note )
+void CrolPlayer::SetNotePercussive(int const voice, int const note)
 {
-    int const bit_pos = 4-voice+kBassDrumChannel;
+    int const channel_bit_mask = 1 << (4-voice+kBassDrumChannel);
 
-    bdRegister &= ~( 1<<bit_pos );
-    opl->write( 0xbd, bdRegister );
+    mAMVibRhythmCache &= ~channel_bit_mask;
+    opl->write(skOPL2_AmVibRhythmBaseAddress, mAMVibRhythmCache);
+    mKeyOnCache[voice] = false;
 
-    if( note != kSilenceNote )
+    if (note != kSilenceNote)
     {
-        switch( voice )
+        switch(voice)
         {
             case kTomtomChannel:
-                SetFreq( kSnareDrumChannel, note+7 );
+                SetFreq(kTomtomChannel, note);
+                SetFreq(kSnareDrumChannel, note + kTomTomToSnare);
+                break;
+
             case kBassDrumChannel:
-                SetFreq( voice, note );
+                SetFreq(voice, note);
+                break;
+            default:
+                // Does nothing
                 break;
         }
 
-        bdRegister |= 1<<bit_pos;
-        opl->write( 0xbd, bdRegister );
+        mKeyOnCache[voice] = true;
+        mAMVibRhythmCache |= channel_bit_mask;
+        opl->write(skOPL2_AmVibRhythmBaseAddress, mAMVibRhythmCache);
     }
 }
 //---------------------------------------------------------
-void CrolPlayer::SetNoteMelodic( int const voice, int const note )
+void CrolPlayer::SetNoteMelodic(int const voice, int const note)
 {
-    opl->write( 0xb0+voice, bxRegister[voice] & ~0x20 );
+    opl->write(skOPL2_KeyOnFreqHiBaseAddress + voice, mKOnOctFNumCache[voice] & ~skOPL2_KeyOnMask);
+    mKeyOnCache[voice] = false;
 
-    if( note != kSilenceNote )
+    if (note != kSilenceNote)
     {
-        SetFreq( voice, note, true );
+        SetFreq(voice, note, true);
     }
 }
 //---------------------------------------------------------
-void CrolPlayer::SetPitch(int const voice, real32 const variation)
+// From Adlib Music SDK's ADLIB.C ...
+void CrolPlayer::ChangePitch(int voice, uint16_t const pitchBend)
 {
-  pitchCache[voice] = variation;
-  freqCache[voice] += (uint16)((((float)freqCache[voice])*(variation-1.0f)) / kPitchFactor);
+    int32_t const pitchBendLength = (int32_t)(pitchBend - skMidPitch) * mPitchRangeStep;
 
-  opl->write(0xa0+voice,freqCache[voice] & 0xff);
-}
-//---------------------------------------------------------
-void CrolPlayer::SetFreq( int const voice, int const note, bool const keyOn )
-{
-    uint16 freq = kNoteTable[note%12] + ((note/12) << 10);
-    freq += (uint16)((((float)freq)*(pitchCache[voice]-1.0f))/kPitchFactor);
-
-    freqCache[voice] = freq;
-    bxRegister[voice] = ((freq >> 8) & 0x1f);
-
-    opl->write( 0xa0+voice, freq & 0xff );
-    opl->write( 0xb0+voice, bxRegister[voice] | (keyOn ? 0x20 : 0x0) );
-}
-//---------------------------------------------------------
-void CrolPlayer::SetVolume( int const voice, int const volume )
-{
-    volumeCache[voice] = (volumeCache[voice] &0xc0) | volume;
-
-    int const op_offset = ( voice < kSnareDrumChannel || rol_header->mode ) ? 
-                          op_table[voice]+3 : drum_table[voice-kSnareDrumChannel];
-
-    opl->write( 0x40+op_offset, volumeCache[voice] );
-}
-//---------------------------------------------------------
-void CrolPlayer::send_ins_data_to_chip( int const voice, int const ins_index )
-{
-    SRolInstrument &instrument = ins_list[ins_index].instrument;
-
-    send_operator( voice, instrument.modulator, instrument.carrier );
-}
-//---------------------------------------------------------
-void CrolPlayer::send_operator( int const voice, SOPL2Op const &modulator,  SOPL2Op const &carrier )
-{
-    if( voice < kSnareDrumChannel || rol_header->mode )
+    if (mOldPitchBendLength == pitchBendLength)
     {
-        int const op_offset = op_table[voice];
-
-        opl->write( 0x20+op_offset, modulator.ammulti  );
-        opl->write( 0x40+op_offset, modulator.ksltl    );
-        opl->write( 0x60+op_offset, modulator.ardr     );
-        opl->write( 0x80+op_offset, modulator.slrr     );
-        opl->write( 0xc0+voice    , modulator.fbc      );
-        opl->write( 0xe0+op_offset, modulator.waveform );
-
-        volumeCache[voice] = (carrier.ksltl & 0xc0) | volumeCache[voice] & 0x3f;
-
-        opl->write( 0x23+op_offset, carrier.ammulti  );
-        opl->write( 0x43+op_offset, volumeCache[voice]    );
-        opl->write( 0x63+op_offset, carrier.ardr     );
-        opl->write( 0x83+op_offset, carrier.slrr     );
-//        opl->write( 0xc3+voice    , carrier.fbc      ); <- don't bother writing this.
-        opl->write( 0xe3+op_offset, carrier.waveform );
+        // optimisation ...
+        mFNumFreqPtrList[voice] = mpOldFNumFreqPtr;
+        mHalfToneOffset[voice] = mOldHalfToneOffset;
     }
     else
     {
-        int const op_offset = drum_table[voice-kSnareDrumChannel];
-
-        volumeCache[voice] = (modulator.ksltl & 0xc0) | volumeCache[voice] & 0x3f;
-
-        opl->write( 0x20+op_offset, modulator.ammulti  );
-        opl->write( 0x40+op_offset, volumeCache[voice]      );
-        opl->write( 0x60+op_offset, modulator.ardr     );
-        opl->write( 0x80+op_offset, modulator.slrr     );
-        opl->write( 0xc0+voice    , modulator.fbc      );
-        opl->write( 0xe0+op_offset, modulator.waveform );
+        int16_t const pitchStepDir = pitchBendLength / skMidPitch;
+        int16_t delta;
+        if (pitchStepDir < 0)
+        {
+            int16_t const pitchStepDown = skNrStepPitch - 1 - pitchStepDir;
+            mOldHalfToneOffset = mHalfToneOffset[voice] = -(pitchStepDown / skNrStepPitch);
+            delta = (pitchStepDown - skNrStepPitch + 1) % skNrStepPitch;
+            if (delta)
+            {
+                delta = skNrStepPitch - delta;
+            }
+        }
+        else
+        {
+            mOldHalfToneOffset = mHalfToneOffset[voice] = pitchStepDir / skNrStepPitch;
+            delta = pitchStepDir % skNrStepPitch;
+        }
+        mpOldFNumFreqPtr = mFNumFreqPtrList[voice] = skFNumNotes[delta];
+        mOldPitchBendLength = pitchBendLength;
     }
 }
 //---------------------------------------------------------
-void CrolPlayer::load_tempo_events( binistream *f )
+void CrolPlayer::SetPitch(int const voice, float const variation)
 {
-    int16 const num_tempo_events = f->readInt( 2 );
+    if ((voice < kBassDrumChannel) || mpROLHeader->mode)
+    {
+        uint16_t const pitchBend = (variation == 1.0f) ? skMidPitch : static_cast<uint16_t>((0x3fff >> 1) * variation);
 
-    mTempoEvents = new STempoEvent[num_tempo_events];
-    memset (mTempoEvents, 0, sizeof (STempoEvent) * num_tempo_events);
+        ChangePitch(voice, pitchBend);
+        SetFreq(voice, mNoteCache[voice], mKeyOnCache[voice]);
+    }
+}
+//---------------------------------------------------------
+void CrolPlayer::SetFreq(int const voice, int const note, bool const keyOn)
+{
+    int const biased_note = std::max(0, std::min((skMaxNotes-1), note + mHalfToneOffset[voice]));
 
-    for(int i=0; i<num_tempo_events; ++i)
+    uint16_t const frequency = *(mFNumFreqPtrList[voice] + skNoteIndex[biased_note]);
+
+    mNoteCache[voice] = note;
+    mKeyOnCache[voice] = keyOn;
+
+    mKOnOctFNumCache[voice] = (skNoteOctave[biased_note] << skOPL2_BlockNumberShift) | ((frequency >> skOPL2_FNumMSBShift) & skOPL2_FNumMSBMask);
+
+    opl->write(skOPL2_FreqLoBaseAddress + voice, frequency & skOPL2_FNumLSBMask);
+    opl->write(skOPL2_KeyOnFreqHiBaseAddress + voice, mKOnOctFNumCache[voice] | (keyOn ? skOPL2_KeyOnMask : 0x0));
+}
+//---------------------------------------------------------
+uint8_t CrolPlayer::GetKSLTL(int const voice) const
+{
+    uint16_t kslTL = skOPL2_TLMinLevel - (mKSLTLCache[voice] & skOPL2_TLMask); // amplitude
+
+    kslTL = mVolumeCache[voice] * kslTL;
+    kslTL += kslTL + skMaxVolume;	// round off to 0.5
+    kslTL = skOPL2_TLMinLevel - (kslTL / (2 * skMaxVolume));
+
+    kslTL |= mKSLTLCache[voice] & skOPL2_KSLMask;
+
+    return static_cast<uint8_t>(kslTL);
+}
+//---------------------------------------------------------
+void CrolPlayer::SetVolume(int const voice, uint8_t const volume)
+{
+    uint8_t const op_offset = (voice < kSnareDrumChannel || mpROLHeader->mode) ? op_table[voice] + skCarrierOpOffset : drum_op_table[voice - kSnareDrumChannel];
+
+    mVolumeCache[voice] = volume;
+
+    opl->write(skOPL2_KSLTLBaseAddress + op_offset, GetKSLTL(voice));
+}
+//---------------------------------------------------------
+void CrolPlayer::send_ins_data_to_chip(int const voice, int const ins_index)
+{
+    SRolInstrument const & instrument = mInstrumentList[ins_index].instrument;
+
+    send_operator(voice, instrument.modulator, instrument.carrier);
+}
+//---------------------------------------------------------
+void CrolPlayer::send_operator(int const voice, SOPL2Op const & modulator,  SOPL2Op const & carrier)
+{
+    if ((voice < kSnareDrumChannel) || mpROLHeader->mode)
+    {
+        uint8_t const op_offset = op_table[voice];
+
+        opl->write(skOPL2_AaMultiBaseAddress  + op_offset, modulator.ammulti);
+        opl->write(skOPL2_KSLTLBaseAddress    + op_offset, modulator.ksltl);
+        opl->write(skOPL2_ArDrBaseAddress     + op_offset, modulator.ardr);
+        opl->write(skOPL2_SlrrBaseAddress     + op_offset, modulator.slrr);
+        opl->write(skOPL2_FeedConBaseAddress  + voice    , modulator.fbc);
+        opl->write(skOPL2_WaveformBaseAddress + op_offset, modulator.waveform);
+
+        mKSLTLCache[voice] = carrier.ksltl;
+
+        opl->write(skOPL2_AaMultiBaseAddress  + op_offset + skCarrierOpOffset, carrier.ammulti);
+        opl->write(skOPL2_KSLTLBaseAddress    + op_offset + skCarrierOpOffset, GetKSLTL(voice));
+        opl->write(skOPL2_ArDrBaseAddress     + op_offset + skCarrierOpOffset, carrier.ardr);
+        opl->write(skOPL2_SlrrBaseAddress     + op_offset + skCarrierOpOffset, carrier.slrr);
+        opl->write(skOPL2_WaveformBaseAddress + op_offset + skCarrierOpOffset, carrier.waveform);
+    }
+    else
+    {
+        uint8_t const op_offset = drum_op_table[voice-kSnareDrumChannel];
+
+        mKSLTLCache[voice] = modulator.ksltl;
+
+        opl->write(skOPL2_AaMultiBaseAddress  + op_offset, modulator.ammulti);
+        opl->write(skOPL2_KSLTLBaseAddress    + op_offset, GetKSLTL(voice));
+        opl->write(skOPL2_ArDrBaseAddress     + op_offset, modulator.ardr);
+        opl->write(skOPL2_SlrrBaseAddress     + op_offset, modulator.slrr);
+        opl->write(skOPL2_WaveformBaseAddress + op_offset, modulator.waveform);
+    }
+}
+//---------------------------------------------------------
+void CrolPlayer::load_tempo_events(binistream *f)
+{
+    int16_t const num_tempo_events = static_cast<uint16_t>(f->readInt(2));
+
+    mTempoEvents.reserve(num_tempo_events);
+
+    for (int i=0; i<num_tempo_events; ++i)
     {
         STempoEvent event;
 
-        event.time       = f->readInt( 2 );
-        event.multiplier = f->readFloat( binio::Single );
-        mTempoEvents[n_tempo_events++] = event;
+        event.time       = static_cast<int16_t>(f->readInt(2));
+        event.multiplier = static_cast<float>(f->readFloat(binio::Single));
+        mTempoEvents.push_back(event);
     }
 }
 //---------------------------------------------------------
-bool CrolPlayer::load_voice_data( binistream *f, const char *bnk_filename, const CFileProvider &fp )
+bool CrolPlayer::load_voice_data(binistream *f, std::string const &bnk_filename, const CFileProvider &fp)
 {
     SBnkHeader bnk_header;
-    memset (&bnk_header, 0, sizeof (bnk_header));
-    binistream *bnk_file = fp.open( bnk_filename);
+    binistream *bnk_file = fp.open(bnk_filename.c_str());
 
-    if( bnk_file )
+    if (bnk_file)
     {
-        load_bnk_info( bnk_file, bnk_header );
+        load_bnk_info(bnk_file, bnk_header);
 
-        int const numVoices = rol_header->mode ? kNumMelodicVoices : kNumPercussiveVoices;
-        voice_data = new CVoiceData[numVoices];
+        int const numVoices = mpROLHeader->mode ? kNumMelodicVoices : kNumPercussiveVoices;
 
-        for(int i=0; i<numVoices; ++i)
+        mVoiceData.reserve(numVoices);
+        for (int i=0; i<numVoices; ++i)
         {
-            CVoiceData &voice = voice_data[n_voice_data++];
+            CVoiceData voice;
 
-            load_note_events( f, voice );
-            load_instrument_events( f, voice, bnk_file, bnk_header );
-            load_volume_events( f, voice );
-            load_pitch_events( f, voice );
+            load_note_events(f, voice);
+            load_instrument_events(f, voice, bnk_file, bnk_header);
+            load_volume_events(f, voice);
+            load_pitch_events(f, voice);
 
+            mVoiceData.push_back(voice);
         }
 
         fp.close(bnk_file);
-        delete[] bnk_header.ins_name_list;
 
         return true;
     }
@@ -504,207 +661,223 @@ bool CrolPlayer::load_voice_data( binistream *f, const char *bnk_filename, const
     return false;
 }
 //---------------------------------------------------------
-void CrolPlayer::load_note_events( binistream *f, CVoiceData &voice )
+void CrolPlayer::load_note_events(binistream *f, CVoiceData & voice)
 {
-    f->seek( 15, binio::Add );
+    f->seek(ROL_FILLER_SIZE, binio::Add);
 
-    int16 const time_of_last_note = f->readInt( 2 );
+    int16_t const time_of_last_note = static_cast<int16_t>(f->readInt(2));
 
-    if( time_of_last_note != 0 )
+    if (time_of_last_note != 0)
     {
-        int16 total_duration     = 0;
+        TNoteEvents & note_events = voice.note_events;
+        int16_t total_duration    = 0;
 
         do
         {
-            SNoteEvent &event = voice.note_events[voice.n_note_events++];
+            SNoteEvent event;
 
-            event.number   = f->readInt( 2 );
-            event.duration = f->readInt( 2 );
+            event.number   = static_cast<int16_t>(f->readInt(2));
+            event.duration = static_cast<int16_t>(f->readInt(2));
 
             event.number += kSilenceNote; // adding -12
 
-            total_duration += event.duration;
-        } while( total_duration < time_of_last_note );
+            note_events.push_back(event);
 
-        if( time_of_last_note > mTimeOfLastNote )
+            total_duration += event.duration;
+        } while (total_duration < time_of_last_note);
+
+        if (time_of_last_note > mTimeOfLastNote)
         {
             mTimeOfLastNote = time_of_last_note;
         }
     }
 
-    f->seek( 15, binio::Add );
+    f->seek(ROL_FILLER_SIZE, binio::Add);
 }
 //---------------------------------------------------------
-void CrolPlayer::load_instrument_events( binistream *f, CVoiceData &voice,
-                                         binistream *bnk_file, SBnkHeader const &bnk_header )
+void CrolPlayer::load_instrument_events(binistream *f, CVoiceData & voice,
+                                        binistream *bnk_file, SBnkHeader const & bnk_header)
 {
-    int16 const number_of_instrument_events = f->readInt( 2 );
-    voice.instrument_events = new SInstrumentEvent[number_of_instrument_events];
-    memset (voice.instrument_events, 0, sizeof (SInstrumentEvent) * number_of_instrument_events);
+    int16_t const number_of_instrument_events = static_cast<int16_t>(f->readInt(2));
 
-    for(int i=0; i<number_of_instrument_events; ++i)
+    TInstrumentEvents & instrument_events = voice.instrument_events;
+
+    instrument_events.reserve(number_of_instrument_events);
+
+    for (int16_t i = 0; i < number_of_instrument_events; ++i)
     {
-        SInstrumentEvent &event = voice.instrument_events[voice.n_instrument_events++];
-        event.time = f->readInt( 2 );
-        f->readString( event.name, 9 );
+        SInstrumentEvent event;
+        event.time = static_cast<int16_t>(f->readInt(2));
+        f->readString(event.name, ROL_MAX_NAME_SIZE);
 
-	    const char * event_name = event.name;
-        event.ins_index = load_rol_instrument( bnk_file, bnk_header, event_name );
+        std::string event_name = event.name;
+        if (std::find(usedInstruments.begin(), usedInstruments.end(), event_name) == usedInstruments.end())
+            usedInstruments.push_back(event_name);
+        event.ins_index = load_rol_instrument(bnk_file, bnk_header, event_name);
 
-        f->seek( 1+2, binio::Add );
+        instrument_events.push_back(event);
+
+        f->seek(ROL_INSTRUMENT_EVENT_FILLER_SIZE, binio::Add);
     }
 
-    f->seek( 15, binio::Add );
+    f->seek(ROL_FILLER_SIZE, binio::Add);
 }
 //---------------------------------------------------------
-void CrolPlayer::load_volume_events( binistream *f, CVoiceData &voice )
+void CrolPlayer::load_volume_events(binistream *f, CVoiceData & voice)
 {
-    int16 const number_of_volume_events = f->readInt( 2 );
-    voice.volume_events = new SVolumeEvent[number_of_volume_events];
-    memset (voice.volume_events, 0, sizeof (SVolumeEvent) * number_of_volume_events);
+    int16_t const number_of_volume_events = static_cast<int16_t>(f->readInt(2));
 
-    for(int i=0; i<number_of_volume_events; ++i)
+    TVolumeEvents & volume_events = voice.volume_events;
+
+    volume_events.reserve(number_of_volume_events);
+
+    for (int i=0; i<number_of_volume_events; ++i)
     {
-        SVolumeEvent &event = voice.volume_events[voice.n_volume_events++];
-        event.time       = f->readInt( 2 );
-        event.multiplier = f->readFloat( binio::Single );
+        SVolumeEvent event;
+        event.time       = static_cast<int16_t>(f->readInt(2));
+        event.multiplier = static_cast<float>(f->readFloat(binio::Single));
+
+        volume_events.push_back(event);
     }
 
-    f->seek( 15, binio::Add );
+    f->seek(ROL_FILLER_SIZE, binio::Add);
 }
 //---------------------------------------------------------
-void CrolPlayer::load_pitch_events( binistream *f, CVoiceData &voice )
+void CrolPlayer::load_pitch_events(binistream *f, CVoiceData & voice)
 {
-    int16 const number_of_pitch_events = f->readInt( 2 );
-    voice.pitch_events = new SPitchEvent[number_of_pitch_events];
-    memset (voice.pitch_events, 0, sizeof (SPitchEvent) * number_of_pitch_events);
+    int16_t const number_of_pitch_events = static_cast<int16_t>(f->readInt(2));
 
-    for(int i=0; i<number_of_pitch_events; ++i)
+    TPitchEvents & pitch_events = voice.pitch_events;
+
+    pitch_events.reserve(number_of_pitch_events);
+
+    for (int i=0; i<number_of_pitch_events; ++i)
     {
-        SPitchEvent &event = voice.pitch_events[voice.n_pitch_events++];
-        event.time      = f->readInt( 2 );
-        event.variation = f->readFloat( binio::Single );
+        SPitchEvent event;
+        event.time      = static_cast<int16_t>(f->readInt(2));
+        event.variation = static_cast<float>(f->readFloat(binio::Single));
+
+        pitch_events.push_back(event);
     }
 }
 //---------------------------------------------------------
-bool CrolPlayer::load_bnk_info( binistream *f, SBnkHeader &header )
+bool CrolPlayer::load_bnk_info(binistream *f, SBnkHeader & header)
 {
-  header.version_major = f->readInt(1);
-  header.version_minor = f->readInt(1);
-  f->readString( header.signature, 6 );
+    header.version_major = static_cast<uint8_t>(f->readInt(1));
+    header.version_minor = static_cast<uint8_t>(f->readInt(1));
+    f->readString(header.signature, ROL_BNK_SIGNATURE_SIZE);
 
-  header.number_of_list_entries_used  = f->readInt( 2 );
-  header.total_number_of_list_entries = f->readInt( 2 );
+    header.number_of_list_entries_used  = static_cast<uint16_t>(f->readInt(2));
+    header.total_number_of_list_entries = static_cast<uint16_t>(f->readInt(2));
 
-  header.abs_offset_of_name_list = f->readInt( 4 );
-  header.abs_offset_of_data      = f->readInt( 4 );
+    header.abs_offset_of_name_list = static_cast<int32>(f->readInt(4));
+    header.abs_offset_of_data      = static_cast<int32>(f->readInt(4));
 
-  f->seek( header.abs_offset_of_name_list, binio::Set );
+    f->seek(header.abs_offset_of_name_list, binio::Set);
 
-  header.ins_name_list = new SInstrumentName[header.number_of_list_entries_used];
-  memset (header.ins_name_list, 0, sizeof (SInstrumentName) * header.number_of_list_entries_used);
+    TInstrumentNames & ins_name_list = header.ins_name_list;
+    ins_name_list.reserve(header.number_of_list_entries_used);
 
-  for(int i=0; i<header.number_of_list_entries_used; ++i)
+    for (uint16_t i=0; i<header.number_of_list_entries_used; ++i)
     {
-      SInstrumentName &instrument = header.ins_name_list[header.n_ins_names++];
+        SInstrumentName instrument;
 
-      instrument.index = f->readInt( 2 );
-      instrument.record_used = f->readInt(1);
-      f->readString( instrument.name, 9 );
+        instrument.index = static_cast<uint16_t>(f->readInt(2));
+        instrument.record_used = static_cast<uint8_t>(f->readInt(1));
+        f->readString(instrument.name, ROL_MAX_NAME_SIZE);
+
+        ins_name_list.push_back( instrument );
     }
 
-    // preallocate space for instruments
-    ins_list = new SUsedList[header.number_of_list_entries_used * 2];
-    memset (ins_list, 0, sizeof (SUsedList) * header.number_of_list_entries_used * 2);
-
-  return true;
+    return true;
 }
 //---------------------------------------------------------
-int CrolPlayer::load_rol_instrument( binistream *f, SBnkHeader const &header, const char * name )
+int CrolPlayer::load_rol_instrument(binistream *f, SBnkHeader const & header, std::string const & name)
 {
-    int const ins_index = get_ins_index( name );
+    TInstrumentNames const & ins_name_list = header.ins_name_list;
 
-    if( ins_index != -1 )
+    int const ins_index = get_ins_index(name);
+
+    if (ins_index != -1)
     {
         return ins_index;
     }
 
-    if (n_used_ins >= header.n_ins_names * 2) {
-        AdPlug_LogWrite("*** CrolPlayer::load_rol_instrument out of memory***\n");
-        return -1;
-    }
+    SInstrument usedInstrument;
+    usedInstrument.name = name;
 
-    // find instrument struct by name to get file pos
-    int ipos;
-    for (ipos = 0; ipos < header.n_ins_names; ipos++) {
-        if (!stricmp (name, header.ins_name_list[ipos].name)) {
-            break;
-        }
-    }
-    if (ipos < header.n_ins_names && ipos >= 0) {
-        int const seekOffs = header.abs_offset_of_data + (header.ins_name_list[ipos].index*kSizeofDataRecord);
-        f->seek( seekOffs, binio::Set );
-    }
+    typedef TInstrumentNames::const_iterator TInsIter;
+    typedef std::pair<TInsIter, TInsIter>    TInsIterPair;
 
-    SUsedList &usedIns = ins_list[n_used_ins++];
-    usedIns.name = name; // no strdup, pointing to SInstrumentEvent name
+    TInsIterPair const range = std::equal_range(ins_name_list.begin(), 
+                                                ins_name_list.end(), 
+                                                name, 
+                                                StringCompare());
 
-    if (ipos < header.n_ins_names && ipos >= 0) {
-        read_rol_instrument( f, usedIns.instrument );
+    if (range.first != range.second)
+    {
+        int const seekOffs = header.abs_offset_of_data + (range.first->index * kSizeofDataRecord);
+        f->seek(seekOffs, binio::Set);
+
+        read_rol_instrument(f, usedInstrument.instrument);
     }
-    else {
+    else
+    {
         // set up default instrument data here
-        memset( &usedIns.instrument, 0, sizeof(SRolInstrument) );
+        memset(&usedInstrument.instrument, 0, sizeof(SRolInstrument));
     }
-    return n_used_ins-1;
+
+    mInstrumentList.push_back( usedInstrument );
+
+    return mInstrumentList.size()-1;
 }
 //---------------------------------------------------------
-int CrolPlayer::get_ins_index( const char * const &name ) const
+int CrolPlayer::get_ins_index(std::string const & name) const
 {
-    for(unsigned int i=0; i<n_used_ins; ++i)
+    for (size_t index = 0; index<mInstrumentList.size(); ++index)
     {
-        if( stricmp(ins_list[i].name, name) == 0 )
+        if (stricmp(mInstrumentList[index].name.c_str(), name.c_str()) == 0)
         {
-            return i;
+            return index;
         }
     }
 
     return -1;
 }
 //---------------------------------------------------------
-void CrolPlayer::read_rol_instrument( binistream *f, SRolInstrument &ins )
+void CrolPlayer::read_rol_instrument(binistream * f, SRolInstrument & instrument)
 {
-  ins.mode = f->readInt(1);
-  ins.voice_number = f->readInt(1);
+    instrument.mode = static_cast<uint8_t>(f->readInt(1));
+    instrument.voice_number = static_cast<uint8_t>(f->readInt(1));
 
-  read_fm_operator( f, ins.modulator );
-  read_fm_operator( f, ins.carrier );
+    read_fm_operator(f, instrument.modulator);
+    read_fm_operator(f, instrument.carrier);
 
-  ins.modulator.waveform = f->readInt(1);
-  ins.carrier.waveform = f->readInt(1);
+    instrument.modulator.waveform = static_cast<uint8_t>(f->readInt(1));
+    instrument.carrier.waveform = static_cast<uint8_t>(f->readInt(1));
 }
 //---------------------------------------------------------
-void CrolPlayer::read_fm_operator( binistream *f, SOPL2Op &opl2_op )
+void CrolPlayer::read_fm_operator(binistream *f, SOPL2Op &opl2_op)
 {
-  SFMOperator fm_op;
+    SFMOperator fm_op;
 
-  fm_op.key_scale_level = f->readInt(1);
-  fm_op.freq_multiplier = f->readInt(1);
-  fm_op.feed_back = f->readInt(1);
-  fm_op.attack_rate = f->readInt(1);
-  fm_op.sustain_level = f->readInt(1);
-  fm_op.sustaining_sound = f->readInt(1);
-  fm_op.decay_rate = f->readInt(1);
-  fm_op.release_rate = f->readInt(1);
-  fm_op.output_level = f->readInt(1);
-  fm_op.amplitude_vibrato = f->readInt(1);
-  fm_op.frequency_vibrato = f->readInt(1);
-  fm_op.envelope_scaling = f->readInt(1);
-  fm_op.fm_type = f->readInt(1);
+    fm_op.key_scale_level = static_cast<uint8_t>(f->readInt(1));
+    fm_op.freq_multiplier = static_cast<uint8_t>(f->readInt(1));
+    fm_op.feed_back = static_cast<uint8_t>(f->readInt(1));
+    fm_op.attack_rate = static_cast<uint8_t>(f->readInt(1));
+    fm_op.sustain_level = static_cast<uint8_t>(f->readInt(1));
+    fm_op.sustaining_sound = static_cast<uint8_t>(f->readInt(1));
+    fm_op.decay_rate = static_cast<uint8_t>(f->readInt(1));
+    fm_op.release_rate = static_cast<uint8_t>(f->readInt(1));
+    fm_op.output_level = static_cast<uint8_t>(f->readInt(1));
+    fm_op.amplitude_vibrato = static_cast<uint8_t>(f->readInt(1));
+    fm_op.frequency_vibrato = static_cast<uint8_t>(f->readInt(1));
+    fm_op.envelope_scaling = static_cast<uint8_t>(f->readInt(1));
+    fm_op.fm_type = static_cast<uint8_t>(f->readInt(1));
 
-  opl2_op.ammulti = fm_op.amplitude_vibrato << 7 | fm_op.frequency_vibrato << 6 | fm_op.sustaining_sound << 5 | fm_op.envelope_scaling << 4 | fm_op.freq_multiplier;
-  opl2_op.ksltl   = fm_op.key_scale_level   << 6 | fm_op.output_level;
-  opl2_op.ardr    = fm_op.attack_rate       << 4 | fm_op.decay_rate;
-  opl2_op.slrr    = fm_op.sustain_level     << 4 | fm_op.release_rate;
-  opl2_op.fbc     = fm_op.feed_back         << 1 | (fm_op.fm_type ^ 1);
+    opl2_op.ammulti = fm_op.amplitude_vibrato << 7 | fm_op.frequency_vibrato << 6 | fm_op.sustaining_sound << 5 | fm_op.envelope_scaling << 4 | fm_op.freq_multiplier;
+    opl2_op.ksltl   = fm_op.key_scale_level   << 6 | fm_op.output_level;
+    opl2_op.ardr    = fm_op.attack_rate       << 4 | fm_op.decay_rate;
+    opl2_op.slrr    = fm_op.sustain_level     << 4 | fm_op.release_rate;
+    opl2_op.fbc     = fm_op.feed_back         << 1 | (fm_op.fm_type ^ 1);
 }

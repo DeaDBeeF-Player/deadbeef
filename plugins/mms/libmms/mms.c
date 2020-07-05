@@ -39,6 +39,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -1109,6 +1110,11 @@ int static mms_choose_best_streams(mms_io_t *io, mms_t *this) {
     }
   }
 
+  if (this->streams[0].stream_id < 0) {
+    lprintf("mms: invalid stream id: %d\n", this->streams[0].stream_id);
+    return 0;
+  }
+
   lprintf("mms: send command 0x33\n");
   if (!send_command (io, this, 0x33, this->num_stream_ids, 
                      0xFFFF | this->streams[0].stream_id << 16, 
@@ -1147,7 +1153,7 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, in
     return NULL;
 
   /* FIXME: needs proper error-signalling work */
-  this = (mms_t*) malloc (sizeof (mms_t));
+  this = (mms_t*) calloc (1, sizeof (mms_t));
 
   this->url             = strdup (url);
   this->s               = -1;

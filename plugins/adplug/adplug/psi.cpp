@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * [xad] PSI player, by Riven the Mage <riven@ok.ru>
  */
@@ -166,9 +166,9 @@ float CxadpsiPlayer::xadplayer_getrefresh()
   return 70.0f;
 }
 
-const char * CxadpsiPlayer::xadplayer_gettype()
+std::string CxadpsiPlayer::xadplayer_gettype()
 {
-  return "xad: psi player";
+  return std::string("xad: psi player");
 }
 
 unsigned int CxadpsiPlayer::xadplayer_getinstruments()

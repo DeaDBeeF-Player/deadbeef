@@ -38,6 +38,7 @@
 #include <assert.h>
 #include <math.h>
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 
 #ifdef TARGET_ANDROID
 int posix_memalign (void **memptr, size_t alignment, size_t size) {
@@ -61,19 +62,6 @@ static DB_functions_t *deadbeef;
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
-
-static inline unsigned int bytestream_get_buffer(const uint8_t **b, uint8_t *dst, unsigned int size)
-{
-    memcpy(dst, *b, size);
-    (*b) += size;
-    return size;
-}
-
-static inline void bytestream_put_buffer(uint8_t **b, const uint8_t *src, unsigned int size)
-{
-    memcpy(*b, src, size);
-    (*b) += size;
-}
 
 static inline uint8_t bytestream_get_byte (const uint8_t **ptr) {
     uint8_t v = *(*ptr);
@@ -306,12 +294,6 @@ read_uint16(DB_FILE *fp, uint16_t* x)
 
 
 inline static int
-read_int16(DB_FILE *fp, int16_t* x)
-{
-    return read_uint16(fp, (uint16_t*)x);
-}
-
-inline static int
 read_uint32(DB_FILE *fp, uint32_t* x)
 {
     unsigned char tmp[4];
@@ -386,7 +368,6 @@ static int
 ape_read_header(DB_FILE *fp, APEContext *ape)
 {
     int i;
-    int total_blocks;
 
     /* TODO: Skip any leading junk such as id3v2 tags */
     ape->junklength = 0;
@@ -539,7 +520,7 @@ ape_read_header(DB_FILE *fp, APEContext *ape)
         fprintf (stderr, "ape: Too many frames: %d\n", ape->totalframes);
         return -1;
     }
-    ape->frames       = malloc(ape->totalframes * sizeof(APEFrame));
+    ape->frames = calloc(ape->totalframes, sizeof(APEFrame));
     if(!ape->frames)
         return -1;
     ape->firstframe   = ape->junklength + ape->descriptorlength + ape->headerlength + ape->seektablelength + ape->wavheaderlength;
@@ -551,7 +532,7 @@ ape_read_header(DB_FILE *fp, APEContext *ape)
         ape->totalsamples += ape->blocksperframe * (ape->totalframes - 1);
 
     if (ape->seektablelength > 0) {
-        ape->seektable = malloc(ape->seektablelength);
+        ape->seektable = calloc (1, ape->seektablelength);
         for (i = 0; i < ape->seektablelength / sizeof(uint32_t); i++) {
             if (read_uint32 (fp, &ape->seektable[i]) < 0) {
                 return -1;
@@ -563,9 +544,11 @@ ape_read_header(DB_FILE *fp, APEContext *ape)
     ape->frames[0].nblocks = ape->blocksperframe;
     ape->frames[0].skip    = 0;
     for (i = 1; i < ape->totalframes; i++) {
-        ape->frames[i].pos      = ape->seektable[i]; //ape->frames[i-1].pos + ape->blocksperframe;
+        if (ape->seektablelength > 0) {
+            ape->frames[i].pos = ape->seektable[i];
+        }
         ape->frames[i].nblocks  = ape->blocksperframe;
-        ape->frames[i - 1].size = ape->frames[i].pos - ape->frames[i - 1].pos;
+        ape->frames[i - 1].size = (int)(ape->frames[i].pos - ape->frames[i - 1].pos);
         ape->frames[i].skip     = (ape->frames[i].pos - ape->frames[0].pos) & 3;
     }
     ape->frames[ape->totalframes - 1].size    = ape->finalframeblocks * 4;
@@ -585,8 +568,6 @@ ape_read_header(DB_FILE *fp, APEContext *ape)
 #if ENABLE_DEBUG
     fprintf (stderr, "ape: Decoding file - v%d.%02d, compression level %d\n", ape->fileversion / 1000, (ape->fileversion % 1000) / 10, ape->compressiontype);
 #endif
-
-    total_blocks = (ape->totalframes == 0) ? 0 : ((ape->totalframes - 1) * ape->blocksperframe) + ape->finalframeblocks;
 
     return 0;
 }
@@ -644,7 +625,7 @@ static int ape_read_packet(DB_FILE *fp, APEContext *ape_ctx)
     int sz = PACKET_BUFFER_SIZE-8;
     sz = min (sz, ape->frames[ape->currentframe].size);
 //    fprintf (stderr, "readsize: %d, packetsize: %d\n", sz, ape->frames[ape->currentframe].size);
-    ret = deadbeef->fread (ape->packet_data + extra_size, 1, sz, fp);
+    deadbeef->fread (ape->packet_data + extra_size, 1, sz, fp);
     ape->packet_sizeleft = ape->frames[ape->currentframe].size - sz + 8;
     ape->packet_remaining = sz+8;
 
@@ -690,9 +671,8 @@ ffap_free (DB_fileinfo_t *_info)
 
 static DB_fileinfo_t *
 ffap_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (ape_info_t));
-    memset (_info, 0, sizeof (ape_info_t));
-    return _info;
+    ape_info_t *info = calloc (sizeof (ape_info_t), 1);
+    return &info->info;
 }
 
 static int
@@ -701,8 +681,9 @@ ffap_init (DB_fileinfo_t *_info, DB_playItem_t *it)
     ape_info_t *info = (ape_info_t*)_info;
 
     deadbeef->pl_lock ();
-    info->fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    info->fp = deadbeef->fopen (uri);
     if (!info->fp) {
         return -1;
     }
@@ -979,16 +960,7 @@ static inline int ape_decode_value(APEContext * ctx, APERice *rice)
                */
             lo_bits = (nbits - 16);
 
-            // {{{ unrolled base_hi = range_decode_culfreq(ctx, (pivot >> lo_bits) + 1)
-            range_dec_normalize(ctx);
-            ctx->rc.help = ctx->rc.range / ((pivot >> lo_bits) + 1);
-            if (unlikely (ctx->rc.help == 0)) {
-                trace ("rc.help=0\n");
-                ctx->error = 1;
-                return 0;
-            }
-            base_hi = ctx->rc.low / ctx->rc.help;
-            // }}}
+            base_hi = range_decode_culfreq(ctx, (pivot >> lo_bits) + 1);
             range_decode_update(ctx, 1, base_hi);
 
             base_lo = range_decode_culshift(ctx, lo_bits);
@@ -997,15 +969,7 @@ static inline int ape_decode_value(APEContext * ctx, APERice *rice)
             base = (base_hi << lo_bits) + base_lo;
         }
         else {
-            // {{{ unrolled base = range_decode_culfreq(ctx, pivot)
-            range_dec_normalize(ctx);
-            ctx->rc.help = ctx->rc.range / pivot;
-            if (unlikely (ctx->rc.help == 0)) {
-                ctx->error = 1;
-                return 0;
-            }
-            base = ctx->rc.low / ctx->rc.help;
-            // }}}
+            base = range_decode_culfreq(ctx, pivot);
             range_decode_update(ctx, 1, base);
         }
 
@@ -1855,8 +1819,9 @@ ffap_seek (DB_fileinfo_t *_info, float seconds) {
 
 static int ffap_read_metadata (DB_playItem_t *it) {
     deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    DB_FILE *fp = deadbeef->fopen (uri);
     if (!fp) {
         return -1;
     }

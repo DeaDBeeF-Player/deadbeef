@@ -29,6 +29,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "../../deadbeef.h"
 #include "ebur128/ebur128.h"
@@ -54,7 +55,7 @@ rg_calc_thread(void *ctx) {
     DB_fileinfo_t *fileinfo = NULL;
 
     char *buffer = NULL;
-    char *bufferf = NULL;
+    float *bufferf = NULL;
 
     track_state_t *st = (track_state_t *)ctx;
     if (st->settings->pabort && *(st->settings->pabort)) {
@@ -73,106 +74,104 @@ rg_calc_thread(void *ctx) {
     if (dec) {
         fileinfo = dec->open (DDB_DECODER_HINT_RAW_SIGNAL);
 
-        if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (st->settings->tracks[st->track_index])) != 0) {
+        if (!fileinfo || dec->init (fileinfo, DB_PLAYITEM (st->settings->tracks[st->track_index])) != 0) {
             st->settings->results[st->track_index].scan_result = DDB_RG_SCAN_RESULT_FILE_NOT_FOUND;
             goto error;
         }
 
-        if (fileinfo) {
-            st->gain_state[st->track_index] = ebur128_init(fileinfo->fmt.channels, fileinfo->fmt.samplerate, EBUR128_MODE_I);
-            st->peak_state[st->track_index] = ebur128_init(fileinfo->fmt.channels, fileinfo->fmt.samplerate, EBUR128_MODE_SAMPLE_PEAK);
+        st->gain_state[st->track_index] = ebur128_init(fileinfo->fmt.channels, fileinfo->fmt.samplerate, EBUR128_MODE_I);
+        st->peak_state[st->track_index] = ebur128_init(fileinfo->fmt.channels, fileinfo->fmt.samplerate, EBUR128_MODE_SAMPLE_PEAK);
 
-            // speaker mask mapping from WAV to EBUR128
-            static const int chmap[18] = {
-                EBUR128_LEFT,
-                EBUR128_RIGHT,
-                EBUR128_CENTER,
-                EBUR128_UNUSED,
-                EBUR128_LEFT_SURROUND,
-                EBUR128_RIGHT_SURROUND,
-                EBUR128_LEFT_SURROUND,
-                EBUR128_RIGHT_SURROUND,
-                EBUR128_CENTER,
-                EBUR128_LEFT_SURROUND,
-                EBUR128_RIGHT_SURROUND,
-                EBUR128_CENTER,
-                EBUR128_LEFT_SURROUND,
-                EBUR128_CENTER,
-                EBUR128_RIGHT_SURROUND,
-                EBUR128_LEFT_SURROUND,
-                EBUR128_CENTER,
-                EBUR128_RIGHT_SURROUND,
-            };
+        // speaker mask mapping from WAV to EBUR128
+        static const int chmap[18] = {
+            EBUR128_LEFT,
+            EBUR128_RIGHT,
+            EBUR128_CENTER,
+            EBUR128_UNUSED,
+            EBUR128_LEFT_SURROUND,
+            EBUR128_RIGHT_SURROUND,
+            EBUR128_LEFT_SURROUND,
+            EBUR128_RIGHT_SURROUND,
+            EBUR128_CENTER,
+            EBUR128_LEFT_SURROUND,
+            EBUR128_RIGHT_SURROUND,
+            EBUR128_CENTER,
+            EBUR128_LEFT_SURROUND,
+            EBUR128_CENTER,
+            EBUR128_RIGHT_SURROUND,
+            EBUR128_LEFT_SURROUND,
+            EBUR128_CENTER,
+            EBUR128_RIGHT_SURROUND,
+        };
 
-            uint32_t channelmask = fileinfo->fmt.channelmask;
+        uint32_t channelmask = fileinfo->fmt.channelmask;
 
-            // first 18 speaker positions are known, the rest will be marked as UNUSED
-            int ch = 0;
-            for (int i = 0; i < 32 && ch < fileinfo->fmt.channels; i++) {
-                if (i < 18) {
-                    if (channelmask & (1<<i))
-                    {
-                        ebur128_set_channel (st->gain_state[st->track_index], ch, chmap[i]);
-                        ebur128_set_channel (st->peak_state[st->track_index], ch, chmap[i]);
-                        ch++;
-                    }
-                }
-                else {
-                    ebur128_set_channel (st->gain_state[st->track_index], ch, EBUR128_UNUSED);
-                    ebur128_set_channel (st->peak_state[st->track_index], ch, EBUR128_UNUSED);
+        // first 18 speaker positions are known, the rest will be marked as UNUSED
+        int ch = 0;
+        for (int i = 0; i < 32 && ch < fileinfo->fmt.channels; i++) {
+            if (i < 18) {
+                if (channelmask & (1<<i))
+                {
+                    ebur128_set_channel (st->gain_state[st->track_index], ch, chmap[i]);
+                    ebur128_set_channel (st->peak_state[st->track_index], ch, chmap[i]);
                     ch++;
                 }
             }
-
-            int samplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
-
-            int bs = 2000 * samplesize;
-            ddb_waveformat_t fmt;
-
-            buffer = malloc (bs);
-
-            if (!fileinfo->fmt.is_float) {
-                bufferf = malloc (2000 * sizeof (float) * fileinfo->fmt.channels);
-                memcpy (&fmt, &fileinfo->fmt, sizeof (fmt));
-                fmt.bps = 32;
-                fmt.is_float = 1;
-            }
             else {
-                bufferf = buffer;
+                ebur128_set_channel (st->gain_state[st->track_index], ch, EBUR128_UNUSED);
+                ebur128_set_channel (st->peak_state[st->track_index], ch, EBUR128_UNUSED);
+                ch++;
+            }
+        }
+
+        int samplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
+
+        int bs = 2000 * samplesize;
+        ddb_waveformat_t fmt;
+
+        buffer = malloc (bs);
+
+        if (!fileinfo->fmt.is_float) {
+            bufferf = malloc (2000 * sizeof (float) * fileinfo->fmt.channels);
+            memcpy (&fmt, &fileinfo->fmt, sizeof (fmt));
+            fmt.bps = 32;
+            fmt.is_float = 1;
+        }
+        else {
+            bufferf = (float *)buffer;
+        }
+
+        int eof = 0;
+        for (;;) {
+            if (eof) {
+                break;
+            }
+            if (st->settings->pabort && *(st->settings->pabort)) {
+                break;
             }
 
-            int eof = 0;
-            for (;;) {
-                if (eof) {
-                    break;
-                }
-                if (st->settings->pabort && *(st->settings->pabort)) {
-                    break;
-                }
+            int sz = dec->read (fileinfo, buffer, bs); // read one block
 
-                int sz = dec->read (fileinfo, buffer, bs); // read one block
+            deadbeef->mutex_lock (st->settings->sync_mutex);
+            int samplesize = fileinfo->fmt.channels * (fileinfo->fmt.bps >> 3);
+            int numsamples = sz / samplesize;
+            st->settings->cd_samples_processed += numsamples * 44100 / fileinfo->fmt.samplerate;
+            deadbeef->mutex_unlock (st->settings->sync_mutex);
 
-                deadbeef->mutex_lock (st->settings->sync_mutex);
-                int samplesize = fileinfo->fmt.channels * (fileinfo->fmt.bps >> 3);
-                int numsamples = sz / samplesize;
-                st->settings->cd_samples_processed += numsamples * 44100 / fileinfo->fmt.samplerate;
-                deadbeef->mutex_unlock (st->settings->sync_mutex);
-
-                if (sz != bs) {
-                    eof = 1;
-                }
-
-                // convert from native output to float,
-                // only if the input is not float already
-                if (!fileinfo->fmt.is_float) {
-                    deadbeef->pcm_convert (&fileinfo->fmt, buffer, &fmt, bufferf, sz);
-                }
-
-                int frames = sz / samplesize;
-
-                ebur128_add_frames_float (st->gain_state[st->track_index], (float*) bufferf, frames); // collect data
-                ebur128_add_frames_float (st->peak_state[st->track_index], (float*) bufferf, frames); // collect data
+            if (sz != bs) {
+                eof = 1;
             }
+
+            // convert from native output to float,
+            // only if the input is not float already
+            if (!fileinfo->fmt.is_float) {
+                deadbeef->pcm_convert (&fileinfo->fmt, buffer, &fmt, (char *)bufferf, sz);
+            }
+
+            int frames = sz / samplesize;
+
+            ebur128_add_frames_float (st->gain_state[st->track_index], bufferf, frames); // collect data
+            ebur128_add_frames_float (st->peak_state[st->track_index], bufferf, frames); // collect data
         }
 
         if (!st->settings->pabort || !(*(st->settings->pabort))) {
@@ -195,7 +194,6 @@ rg_calc_thread(void *ctx) {
             // calculate track loudness
             double loudness = st->settings->ref_loudness;
             ebur128_loudness_global (st->gain_state[st->track_index], &loudness);
-
             /*
              * EBUR128 sets the target level to -23 LUFS = 84dB
              * -> -23 - loudness = track gain to get to 84dB
@@ -203,7 +201,9 @@ rg_calc_thread(void *ctx) {
              * The old implementation of RG used 89dB, most people still use that
              * -> the above + (loudness - 84) = track gain to get to 89dB (or user specified)
              */
-            st->settings->results[st->track_index].track_gain = -23 - loudness + st->settings->ref_loudness - 84;
+            if (loudness != -HUGE_VAL) {
+                st->settings->results[st->track_index].track_gain = -23 - loudness + st->settings->ref_loudness - 84;
+            }
         }
     }
 
@@ -213,7 +213,7 @@ error:
         dec->free (fileinfo);
     }
 
-    if (buffer && buffer != bufferf) {
+    if (buffer && buffer != (char *)bufferf) {
         free (buffer);
         buffer = NULL;
     }

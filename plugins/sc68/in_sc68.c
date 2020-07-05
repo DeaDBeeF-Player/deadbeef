@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 #include "sc68/sc68.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -48,10 +49,8 @@ static const char * exts[] = { "sndh", "snd", "sc68", NULL };
 // allocate codec control structure
 static DB_fileinfo_t *
 in_sc68_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (in_sc68_info_t));
-    in_sc68_info_t *info = (in_sc68_info_t *)_info;
-    memset (info, 0, sizeof (in_sc68_info_t));
-    return _info;
+    in_sc68_info_t *info = calloc (sizeof (in_sc68_info_t), 1);
+    return &info->info;
 }
 
 // prepare to decode the track, fill in mandatory plugin fields
@@ -67,9 +66,9 @@ in_sc68_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     // Load an sc68 file.
     deadbeef->pl_lock ();
-    const char *fname = deadbeef->pl_find_meta (it, ":URI");
-    int res = sc68_load_uri(info->sc68, fname);
+    const char *fname = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    int res = sc68_load_uri(info->sc68, fname);
 
     if (res) {
         return -1;
@@ -300,9 +299,9 @@ in_sc68_read_metadata (DB_playItem_t *it) {
 
     // Load an sc68 file.
     deadbeef->pl_lock ();
-    const char *fname = deadbeef->pl_find_meta (it, ":URI");
-    int res = sc68_load_uri (sc68, fname);
+    const char *fname = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    int res = sc68_load_uri (sc68, fname);
 
     if (res) {
         return -1;
@@ -334,7 +333,7 @@ in_sc68_start (void) {
     }
 
     char datadir[PATH_MAX];
-    snprintf (datadir, sizeof (datadir), "%s/data68", deadbeef->get_system_dir (DDB_SYS_DIR_PLUGIN));
+    snprintf (datadir, sizeof (datadir), "%s/data68", deadbeef->get_system_dir (DDB_SYS_DIR_PLUGIN_RESOURCES));
     sc68_cntl (0, SC68_SET_OPT_STR, "share-path", datadir);
 
     return 0;

@@ -78,7 +78,7 @@ static void apply_conf (GtkWidget *w, ddb_dialog_t *conf) {
     char token[MAX_TOKEN];
     const char *script = conf->layout;
     parser_line = 1;
-    while (script = gettoken (script, token)) {
+    while ((script = gettoken (script, token))) {
         if (strcmp (token, "property")) {
             fprintf (stderr, "invalid token while loading plugin %s config dialog: %s at line %d\n", conf->title, token, parser_line);
             break;
@@ -98,7 +98,7 @@ static void apply_conf (GtkWidget *w, ddb_dialog_t *conf) {
         if (!strncmp (type, "hbox[", 5) || !strncmp (type, "vbox[", 5)) {
             // skip to ;
             char semicolon[MAX_TOKEN];
-            while (script = gettoken_warn_eof (script, semicolon)) {
+            while ((script = gettoken_warn_eof (script, semicolon))) {
                 if (!strcmp (semicolon, ";")) {
                     break;
                 }
@@ -489,7 +489,7 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
                     gtk_range_set_inverted (GTK_RANGE (prop), TRUE);
                 }
                 gtk_range_set_value (GTK_RANGE (prop), (gdouble)atof (value));
-                gtk_scale_set_value_pos (GTK_SCALE (prop), GTK_POS_RIGHT);
+                gtk_scale_set_value_pos (GTK_SCALE (prop), vertical?GTK_POS_BOTTOM:GTK_POS_RIGHT);
             }
             label = gtk_label_new (_(labeltext));
             gtk_widget_show (label);
@@ -522,7 +522,7 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
             g_object_set_data (G_OBJECT (win), key, prop);
         }
         if (cont) {
-            gtk_box_pack_start (GTK_BOX (widgets[ncurr]), cont, FALSE, FALSE, 0);
+            gtk_box_pack_start (GTK_BOX (widgets[ncurr]), cont, FALSE, TRUE, 0);
         }
     }
 

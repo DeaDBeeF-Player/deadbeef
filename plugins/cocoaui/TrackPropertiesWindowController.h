@@ -23,7 +23,7 @@
 #import <Cocoa/Cocoa.h>
 #include "deadbeef.h"
 
-@interface TrackPropertiesWindowController : NSWindowController
+@interface TrackPropertiesWindowController : NSWindowController<NSWindowDelegate,NSTableViewDelegate,NSTableViewDataSource>
 
 - (void)setPlaylist:(ddb_playlist_t *)plt;
 - (void)fill;

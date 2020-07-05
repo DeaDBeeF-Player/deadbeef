@@ -60,7 +60,7 @@
 #include "wos.h"
 #include "cache.h"
 #include "artwork.h"
-#include "mp4ff.h"
+#include "mp4tagutil.h"
 
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(...)
@@ -1195,6 +1195,25 @@ scan_local_path (char *mask, const char *cache_path, const char *local_path, con
     return -1;
 }
 
+static void
+extract_relative_path_from_mask (const char *mask, const char *local_path, char *trimmed_mask, char *full_local_path)
+{
+    strcpy (trimmed_mask, mask);
+    strcpy (full_local_path, local_path);
+
+    if (!mask[0] || mask[0] == '/' || mask[strlen (mask)-1] == '/')
+        return;
+
+    const char *end_of_path_in_mask = strrchr (mask, '/');
+    if (end_of_path_in_mask == NULL)
+        return;
+
+    if (full_local_path[strlen (full_local_path)-1] != '/')
+        strcat (full_local_path, "/");
+    strncat (full_local_path, mask, (size_t)(end_of_path_in_mask - mask));
+    strcpy (trimmed_mask, end_of_path_in_mask+1);
+}
+
 static int
 local_image_file (const char *cache_path, const char *local_path, const char *uri, DB_vfs_t *vfsplug)
 {
@@ -1212,12 +1231,31 @@ local_image_file (const char *cache_path, const char *local_path, const char *ur
     }
 
     for (char *mask = filemask; mask < filemask_end; mask += strlen (mask)+1) {
-        if (mask[0] && !scan_local_path (mask, cache_path, local_path, uri, vfsplug)) {
+        if (!mask[0])
+            continue;
+
+        int is_found = 0;
+        if (strrchr (mask, '/')) {
+            char *trimmed_mask = (char *)malloc (strlen (mask) + 1);
+            char *full_local_path = (char *)malloc (strlen (local_path) + strlen (mask) + 1);
+
+            extract_relative_path_from_mask (mask, local_path, trimmed_mask, full_local_path);
+            is_found = !scan_local_path (trimmed_mask, cache_path, full_local_path, uri, vfsplug);
+
+            free (trimmed_mask);
+            free (full_local_path);
+        }
+        else {
+            is_found = !scan_local_path (mask, cache_path, local_path, uri, vfsplug);
+        }
+
+        if (is_found) {
             return 0;
         }
     }
     if (!scan_local_path ("*.jpg", cache_path, local_path, uri, vfsplug) ||
-        !scan_local_path ("*.jpeg", cache_path, local_path, uri, vfsplug)) {
+        !scan_local_path ("*.jpeg", cache_path, local_path, uri, vfsplug) ||
+        !scan_local_path ("*.png", cache_path, local_path, uri, vfsplug)) {
         return 0;
     }
 
@@ -1289,7 +1327,7 @@ id3v2_artwork (const DB_id3v2_frame_t *f, int minor_version)
 //        trace ("artwork: unsupported mime type: %s\n", data);
 //        return NULL;
 //    }
-    if (*mime_end != 3) {
+    if (*mime_end != 3 && *mime_end != 0) {
         trace ("artwork: picture type=%d\n", *mime_end);
         return NULL;
     }
@@ -1508,56 +1546,73 @@ apev2_extract_art (const char *fname, const char *outname) {
     return err;
 }
 
-static uint32_t
-mp4_fp_read (void *user_data, void *buffer, uint32_t length) {
-    DB_FILE* stream = user_data;
-    uint32_t ret = (uint32_t)deadbeef->fread (buffer, 1, length, stream);
-    return ret;
-}
-
-static uint32_t
-mp4_fp_seek (void *user_data, uint64_t position) {
-    DB_FILE* stream = user_data;
-    return deadbeef->fseek (stream, (int64_t)position, SEEK_SET);
-}
-
 static int
 mp4_extract_art (const char *fname, const char *outname) {
+    int ret = -1;
+    mp4p_atom_t *mp4file = NULL;
+    DB_FILE* fp = NULL;
+    uint8_t* image_blob = NULL;
+
     if (!strcasestr (fname, ".mp4") && !strcasestr (fname, ".m4a") && !strcasestr (fname, ".m4b")) {
         return -1;
     }
 
-    int ret = 0;
-    DB_FILE* fp = deadbeef->fopen (fname);
+    fp = deadbeef->fopen (fname);
     if (!fp) {
-        return -1;
+        goto error;
     }
 
-    mp4ff_callback_t cb = {
-        .read = mp4_fp_read,
-        .write = NULL,
-        .seek = mp4_fp_seek,
-        .truncate = NULL,
-        .user_data = fp
-    };
-    mp4ff_t *mp4 = mp4ff_open_read_coveronly (&cb);
-    if (!mp4) {
+    mp4p_file_callbacks_t callbacks = {0};
+    callbacks.ptrhandle = fp;
+    mp4_init_ddb_file_callbacks (&callbacks);
+    mp4file = mp4p_open(&callbacks);
+    if (!mp4file) {
+        goto error;
+    }
+
+    mp4p_atom_t *covr = mp4_get_cover_atom(mp4file);
+    if (!covr) {
+        goto error;
+    }
+
+    mp4p_ilst_meta_t *data = covr->data;
+
+    uint32_t sz = data->data_size;
+    image_blob = malloc (sz);
+    if (data->blob) {
+        image_blob = memcpy (image_blob, data->blob, sz);
+    }
+    else if (data->values) {
+        uint16_t *v = data->values;
+        for (size_t i = 0; i < sz/2; i++, v++) {
+            image_blob[i*2+0] = (*v) >> 8;
+            image_blob[i*2+1] = (*v) & 0xff;
+        }
+    }
+    else {
+        goto error;
+    }
+
+    trace ("will write mp4 cover art (%u bytes) into %s\n", sz, outname);
+    if (!write_file (outname, (char *)image_blob, sz)) {
+        ret = 0;
+    }
+    free (image_blob);
+    image_blob = NULL;
+
+error:
+    if (image_blob) {
+        free(image_blob);
+        image_blob = NULL;
+    }
+    if (mp4file) {
+        mp4p_atom_free_list (mp4file);
+        mp4file = NULL;
+    }
+    if (fp) {
         deadbeef->fclose (fp);
-        return -1;
+        fp = NULL;
     }
-
-    mp4ff_cover_art_t* art_list = mp4ff_cover_get (mp4);
-    if (!art_list->tail) {
-        ret = -1;
-    } else {
-        uint32_t sz = art_list->tail->size;
-        char* image_blob = art_list->tail->data;
-        trace ("will write mp4 cover art (%u bytes) into %s\n", sz, outname);
-        write_file (outname, image_blob, sz);
-    }
-
-    mp4ff_close (mp4);
-    deadbeef->fclose (fp);
     return ret;
 }
 
@@ -1699,6 +1754,29 @@ process_query (const cover_query_t *query)
         }
     }
 
+    if (artwork_enable_local && deadbeef->is_local_file (query->fname)) {
+        char *fname_copy = strdup (query->fname);
+        if (fname_copy) {
+            char *vfs_fname = vfs_path (fname_copy);
+            if (vfs_fname) {
+                /* Search inside scannable VFS containers */
+                DB_vfs_t *plugin = scandir_plug (vfs_fname);
+                if (plugin && !local_image_file (cache_path, vfs_fname, fname_copy, plugin)) {
+                    free (fname_copy);
+                    return 1;
+                }
+            }
+
+            /* Search in file directory */
+            if (!local_image_file (cache_path, dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL)) {
+                free (fname_copy);
+                return 1;
+            }
+
+            free (fname_copy);
+        }
+    }
+
     if (artwork_enable_embedded && deadbeef->is_local_file (query->fname)) {
 #ifdef USE_METAFLAC
         // try to load embedded from flac metadata
@@ -1724,29 +1802,6 @@ process_query (const cover_query_t *query)
         trace ("trying to load artwork from mp4 tag for %s\n", query->fname);
         if (!mp4_extract_art (query->fname, cache_path)) {
             return 1;
-        }
-    }
-
-    if (artwork_enable_local && deadbeef->is_local_file (query->fname)) {
-        char *fname_copy = strdup (query->fname);
-        if (fname_copy) {
-            char *vfs_fname = vfs_path (fname_copy);
-            if (vfs_fname) {
-                /* Search inside scannable VFS containers */
-                DB_vfs_t *plugin = scandir_plug (vfs_fname);
-                if (plugin && !local_image_file (cache_path, vfs_fname, fname_copy, plugin)) {
-                    free (fname_copy);
-                    return 1;
-                }
-            }
-
-            /* Search in file directory */
-            if (!local_image_file (cache_path, dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL)) {
-                free (fname_copy);
-                return 1;
-            }
-
-            free (fname_copy);
         }
     }
 

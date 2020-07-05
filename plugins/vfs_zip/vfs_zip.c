@@ -101,6 +101,9 @@ vfs_zip_open (const char *fname) {
         }
         memset (&st, 0, sizeof (st));
 
+        while (*colon == '/') {
+            colon++;
+        }
         int res = zip_stat(z, colon, 0, &st);
         if (res != 0) {
             zip_close (z);
@@ -113,8 +116,6 @@ vfs_zip_open (const char *fname) {
     if (!z) {
         return NULL;
     }
-
-    fname = colon;
 
     struct zip_file *zf = zip_fopen_index (z, st.index, 0);
     if (!zf) {
@@ -296,7 +297,7 @@ vfs_zip_scandir (const char *dir, struct dirent ***namelist, int (*selector) (co
         struct dirent entry;
         strncpy(entry.d_name, nm, sizeof(entry.d_name)-1);
         entry.d_name[sizeof(entry.d_name)-1] = '\0';
-        if (!selector || selector && selector(&entry)) {
+        if (!selector || selector(&entry)) {
             (*namelist)[num_files] = calloc(1, sizeof(struct dirent));
             strcpy((*namelist)[num_files]->d_name, entry.d_name);
             num_files++;

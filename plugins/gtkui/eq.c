@@ -28,6 +28,7 @@
 #include "gtkui.h"
 #include "support.h"
 #include "ddbequalizer.h"
+#include "../../shared/eqpreset.h"
 
 static GtkWidget *eqcont;
 static GtkWidget *eqwin;
@@ -161,29 +162,30 @@ on_save_preset_clicked                  (GtkMenuItem       *menuitem,
         gtk_widget_destroy (dlg);
 
         if (fname) {
-            FILE *fp = fopen (fname, "w+b");
-            if (fp) {
-                ddb_dsp_context_t *eq = get_supereq ();
-                if (eq) {
-                    char fv[100];
-                    float v;
-                    for (int i = 0; i < 18; i++) {
-                        eq->plugin->get_param (eq, i+1, fv, sizeof (fv));
-                        v = atof (fv);
-                        fprintf (fp, "%f\n", v);
-                    }
-                    eq->plugin->get_param (eq, 0, fv, sizeof (fv));
-                    v = atof (fv);
-                    fprintf (fp, "%f\n", v);
-                }
-                fclose (fp);
-            }
+            eq_preset_save (fname);
             g_free (fname);
         }
     }
     else {
         gtk_widget_destroy (dlg);
     }
+}
+
+static void
+eq_preset_apply (float preamp, float values[18]) {
+    // apply and save config
+    ddb_dsp_context_t *eq = get_supereq ();
+    if (!eq) {
+        return;
+    }
+    set_param (eq, 0, preamp);
+    ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), preamp);
+    for (int i = 0; i < 18; i++) {
+        ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, values[i]);
+        set_param (eq, i+1, values[i]);
+    }
+    gtk_widget_queue_draw (eqwin);
+    deadbeef->streamer_dsp_chain_save ();
 }
 
 void
@@ -213,37 +215,13 @@ on_load_preset_clicked                  (GtkMenuItem       *menuitem,
     {
         gchar *fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
         if (fname) {
-            FILE *fp = fopen (fname, "rt");
-            if (fp) {
-                float vals[19]; // float dBs
-                int i = 0;
-                while (i < 19) {
-                    char tmp[20];
-                    char *out = fgets (tmp, sizeof (tmp), fp);
-                    if (!out) {
-                        break;
-                    }
-                    vals[i] = atof (tmp);
-                    i++;
-                }
-                fclose (fp);
-                if (i == 19) {
-                    // apply and save config
-                    ddb_dsp_context_t *eq = get_supereq ();
-                    if (eq) {
-                        set_param (eq, 0, vals[18]);
-                        ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), vals[18]);
-                        for (int i = 0; i < 18; i++) {
-                            ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, vals[i]);
-                            set_param (eq, i+1, vals[i]);
-                        }
-                        gtk_widget_queue_draw (eqwin);
-                        deadbeef->streamer_dsp_chain_save ();
-                    }
-                }
-                else {
-                    fprintf (stderr, "[eq] corrupted DeaDBeeF preset file, discarded\n");
-                }
+            float preamp;
+            float values[18];
+            if (!eq_preset_load (fname, &preamp, values)) {
+                eq_preset_apply(preamp, values);
+            }
+            else {
+                fprintf (stderr, "[eq] corrupted DeaDBeeF preset file, discarded\n");
             }
             g_free (fname);
         }
@@ -279,38 +257,14 @@ on_import_fb2k_preset_clicked                  (GtkButton       *button,
     {
         gchar *fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
         if (fname) {
-            FILE *fp = fopen (fname, "rt");
-            if (fp) {
-                int vals[18]; // integer dBs
-                int i = 0;
-                while (i < 18) {
-                    char tmp[20];
-                    char *out = fgets (tmp, sizeof (tmp), fp);
-                    if (!out) {
-                        break;
-                    }
-                    vals[i] = atoi (tmp);
-                    i++;
-                }
-                fclose (fp);
-                if (i == 18) {
-                    // apply and save config
-                    ddb_dsp_context_t *eq = get_supereq ();
-                    if (eq) {
-                        set_param (eq, 0, 0);
-                        ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), 0);
-                        for (int i = 0; i < 18; i++) {
-                            ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, vals[i]);
-                            set_param (eq, i+1, vals[i]);
-                        }
-                        gtk_widget_queue_draw (eqwin);
-                        deadbeef->streamer_dsp_chain_save ();
-                    }
-                }
-                else {
-                    fprintf (stderr, "[eq] corrupted Foobar2000 preset file, discarded\n");
-                }
+            float values[18];
+            if (!eq_preset_load_fb2k (fname, values)) {
+                eq_preset_apply (0, values);
             }
+            else {
+                fprintf (stderr, "[eq] corrupted Foobar2000 preset file, discarded\n");
+            }
+
             g_free (fname);
         }
     }

@@ -17,6 +17,12 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#ifdef HAVE_CONFIG_H
+#include "../../config.h"
+#endif
+#ifdef HAVE_ALLOCA_H
+#include <alloca.h>
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -36,6 +42,14 @@ static DB_functions_t *deadbeef;
 #define LFM_CLIENTID "ddb"
 #define SCROBBLER_URL_LFM "http://post.audioscrobbler.com"
 #define SCROBBLER_URL_LIBRE "http://turtle.libre.fm"
+
+#if defined(__MINGW32__)
+#define LOOKUP_URL_FORMAT "cmd /c start http://www.last.fm/music/%s/_/%s"
+#elif defined(__APPLE__)
+#define LOOKUP_URL_FORMAT "open 'http://www.last.fm/music/%s/_/%s' &"
+#else
+#define LOOKUP_URL_FORMAT "xdg-open 'http://www.last.fm/music/%s/_/%s' &"
+#endif
 
 static char lfm_user[100];
 static char lfm_pass[100];
@@ -60,8 +74,8 @@ lastfm_load (DB_functions_t *api) {
 }
 
 #define MAX_REPLY 4096
-static char lfm_reply[MAX_REPLY];
-static int lfm_reply_sz;
+static uint8_t lfm_reply[MAX_REPLY];
+static size_t lfm_reply_sz;
 static char lfm_err[CURL_ERROR_SIZE];
 
 static char lfm_nowplaying[2048]; // packet for nowplaying, or ""
@@ -95,17 +109,13 @@ lastfm_curl_res (void *ptr, size_t size, size_t nmemb, void *stream)
         trace ("lfm: lastfm_curl_res: aborting current request\n");
         return 0;
     }
-    int len = size * nmemb;
+    size_t len = size * nmemb;
     if (lfm_reply_sz + len >= MAX_REPLY) {
         trace ("reply is too large. stopping.\n");
         return 0;
     }
     memcpy (lfm_reply + lfm_reply_sz, ptr, len);
     lfm_reply_sz += len;
-//    char s[size*nmemb+1];
-//    memcpy (s, ptr, size*nmemb);
-//    s[size*nmemb] = 0;
-//    trace ("got from net: %s\n", s);
     return len;
 }
 
@@ -218,10 +228,10 @@ auth (void) {
     uint8_t sig[16];
     char passmd5[33];
     char token[100];
-    deadbeef->md5 (sig, lfm_pass, strlen (lfm_pass));
+    deadbeef->md5 (sig, lfm_pass, (int)strlen (lfm_pass));
     deadbeef->md5_to_str (passmd5, sig);
     snprintf (token, sizeof (token), "%s%d", passmd5, (int)timestamp);
-    deadbeef->md5 (sig, token, strlen (token));
+    deadbeef->md5 (sig, token, (int)strlen (token));
     deadbeef->md5_to_str (token, sig);
 
     deadbeef->conf_lock ();
@@ -236,7 +246,7 @@ auth (void) {
     int status = curl_req_send (req, NULL);
     if (!status) {
         // check status and extract session id, nowplaying url, submission url
-        if (strncmp (lfm_reply, "OK", 2)) {
+        if (strncmp ((char *)lfm_reply, "OK", 2)) {
             uint8_t *p = lfm_reply;
             while (*p && *p >= 0x20) {
                 p++;
@@ -263,7 +273,7 @@ auth (void) {
             trace ("scrobbler session id is too large (%d).\n", (int)(end-p));
             goto fail;
         }
-        strncpy (lfm_sess, p, 32);
+        strncpy (lfm_sess, (char *)p, 32);
         lfm_sess[32] = 0;
         trace ("obtained scrobbler session: %s\n", lfm_sess);
         p = end;
@@ -284,7 +294,7 @@ auth (void) {
             trace ("scrobbler nowplaying url is too long %d:\n", (int)(end-p));
             goto fail;
         }
-        strncpy (lfm_nowplaying_url, p, end-p);
+        strncpy (lfm_nowplaying_url, (char *)p, end-p);
         lfm_nowplaying_url[end-p] = 0;
         trace ("obtained scrobbler nowplaying url: %s\n", lfm_nowplaying_url);
         p = end;
@@ -305,7 +315,7 @@ auth (void) {
             trace ("scrobbler submission url is too long: %d\n", (int)(end-p));
             goto fail;
         }
-        strncpy (lfm_submission_url, p, end-p);
+        strncpy (lfm_submission_url, (char *)p, end-p);
         lfm_submission_url[end-p] = 0;
         trace ("obtained scrobbler submission url: %s\n", lfm_submission_url);
         p = end;
@@ -327,10 +337,10 @@ fail:
 static int
 lfm_fetch_song_info (DB_playItem_t *song, float playtime, char *a, char *t, char *b, float *l, char *n, char *m) {
     if (deadbeef->conf_get_int ("lastfm.prefer_album_artist", 0)) {
-        if (!deadbeef->pl_get_meta (song, "band", a, META_FIELD_SIZE)) {
-            if (!deadbeef->pl_get_meta (song, "album artist", a, META_FIELD_SIZE)) {
-                if (!deadbeef->pl_get_meta (song, "albumartist", a, META_FIELD_SIZE)) {
-                    if (!deadbeef->pl_get_meta (song, "artist", a, META_FIELD_SIZE)) {
+        if (!deadbeef->pl_get_meta_with_override (song, "band", a, META_FIELD_SIZE)) {
+            if (!deadbeef->pl_get_meta_with_override (song, "album artist", a, META_FIELD_SIZE)) {
+                if (!deadbeef->pl_get_meta_with_override (song, "albumartist", a, META_FIELD_SIZE)) {
+                    if (!deadbeef->pl_get_meta_with_override (song, "artist", a, META_FIELD_SIZE)) {
                         return -1;
                     }
                 }
@@ -338,20 +348,20 @@ lfm_fetch_song_info (DB_playItem_t *song, float playtime, char *a, char *t, char
         }
     }
     else {
-        if (!deadbeef->pl_get_meta (song, "artist", a, META_FIELD_SIZE)) {
-            if (!deadbeef->pl_get_meta (song, "band", a, META_FIELD_SIZE)) {
-                if (!deadbeef->pl_get_meta (song, "album artist", a, META_FIELD_SIZE)) {
-                    if (!deadbeef->pl_get_meta (song, "albumartist", a, META_FIELD_SIZE)) {
+        if (!deadbeef->pl_get_meta_with_override (song, "artist", a, META_FIELD_SIZE)) {
+            if (!deadbeef->pl_get_meta_with_override (song, "band", a, META_FIELD_SIZE)) {
+                if (!deadbeef->pl_get_meta_with_override (song, "album artist", a, META_FIELD_SIZE)) {
+                    if (!deadbeef->pl_get_meta_with_override (song, "albumartist", a, META_FIELD_SIZE)) {
                         return -1;
                     }
                 }
             }
         }
     }
-    if (!deadbeef->pl_get_meta (song, "title", t, META_FIELD_SIZE)) {
+    if (!deadbeef->pl_get_meta_with_override (song, "title", t, META_FIELD_SIZE)) {
         return -1;
     }
-    if (!deadbeef->pl_get_meta (song, "album", b, META_FIELD_SIZE)) {
+    if (!deadbeef->pl_get_meta_with_override (song, "album", b, META_FIELD_SIZE)) {
         *b = 0;
     }
     *l = deadbeef->pl_get_item_duration (song);
@@ -361,10 +371,10 @@ lfm_fetch_song_info (DB_playItem_t *song, float playtime, char *a, char *t, char
     if (*l < 30 && deadbeef->conf_get_int ("lastfm.submit_tiny_tracks", 0)) {
         *l = 30;
     }
-    if (!deadbeef->pl_get_meta (song, "track", n, META_FIELD_SIZE)) {
+    if (!deadbeef->pl_get_meta_with_override (song, "track", n, META_FIELD_SIZE)) {
         *n = 0;
     }
-    if (!deadbeef->conf_get_int ("lastfm.mbid", 0) || !deadbeef->pl_get_meta (song, "musicbrainz_trackid", m, META_FIELD_SIZE)) {
+    if (!deadbeef->conf_get_int ("lastfm.mbid", 0) || !deadbeef->pl_get_meta_with_override (song, "musicbrainz_trackid", m, META_FIELD_SIZE)) {
         *m = 0;
     }
     return 0;
@@ -372,8 +382,8 @@ lfm_fetch_song_info (DB_playItem_t *song, float playtime, char *a, char *t, char
 
 // returns number of encoded chars on success, or -1 in case of error
 static int
-lfm_uri_encode (char *out, int outl, const char *str) {
-    int l = outl;
+lfm_uri_encode (char *out, size_t outl, const char *str) {
+    size_t l = outl;
     //trace ("lfm_uri_encode %p %d %s\n", out, outl, str);
     while (*str && *((uint8_t*)str) >= 32) {
         if (outl <= 1) {
@@ -405,7 +415,7 @@ lfm_uri_encode (char *out, int outl, const char *str) {
         }
     }
     *out = 0;
-    return l - outl;
+    return (int)(l - outl);
 }
 
 // returns number of encoded chars on success
@@ -413,7 +423,7 @@ lfm_uri_encode (char *out, int outl, const char *str) {
 static int
 lfm_add_keyvalue_uri_encoded (char **out, int *outl, const char *key, const char *value) {
     int ll = *outl;
-    int keyl = strlen (key);
+    size_t keyl = strlen (key);
     if (*outl <= keyl+1) {
         return -1;
     }
@@ -569,10 +579,10 @@ lastfm_songchanged (ddb_event_trackchange_t *ev, uintptr_t data) {
 
 #endif
 
-    if (!deadbeef->pl_meta_exists (ev->from, "artist")
-            || !deadbeef->pl_meta_exists (ev->from, "title")
+    if (!deadbeef->pl_meta_exists_with_override (ev->from, "artist")
+            || !deadbeef->pl_meta_exists_with_override (ev->from, "title")
        ) {
-        trace ("lfm: not enough metadata for submission, artist=%s, title=%s, album=%s\n", deadbeef->pl_find_meta (ev->from, "artist"), deadbeef->pl_find_meta (ev->from, "title"), deadbeef->pl_find_meta (ev->from, "album"));
+        trace ("lfm: not enough metadata for submission, artist=%s, title=%s, album=%s\n", deadbeef->pl_find_meta_with_override (ev->from, "artist"), deadbeef->pl_find_meta_with_override (ev->from, "title"), deadbeef->pl_find_meta_with_override (ev->from, "album"));
         return 0;
     }
     deadbeef->mutex_lock (lfm_mutex);
@@ -603,16 +613,16 @@ lfm_send_nowplaying (void) {
     trace ("auth successful! setting nowplaying\n");
     char s[SESS_ID_MAX + 4];
     snprintf (s, sizeof (s), "s=%s&", lfm_sess);
-    int l = strlen (lfm_nowplaying);
+    size_t l = strlen (lfm_nowplaying);
     strcpy (lfm_nowplaying+l, s);
     trace ("content:\n%s\n", lfm_nowplaying);
 #if !LFM_NOSEND
     for (int attempts = 2; attempts > 0; attempts--) {
         int status = curl_req_send (lfm_nowplaying_url, lfm_nowplaying);
         if (!status) {
-            if (strncmp (lfm_reply, "OK", 2)) {
+            if (strncmp ((char *)lfm_reply, "OK", 2)) {
                 trace ("nowplaying failed, response:\n%s\n", lfm_reply);
-                if (!strncmp (lfm_reply, "BADSESSION", 7)) {
+                if (!strncmp ((char *)lfm_reply, "BADSESSION", 7)) {
                     trace ("got badsession; trying to restore session...\n");
                     lfm_sess[0] = 0;
                     curl_req_cleanup ();
@@ -675,9 +685,9 @@ lfm_send_submissions (void) {
     for (int attempts = 2; attempts > 0; attempts--) {
         int status = curl_req_send (lfm_submission_url, req);
         if (!status) {
-            if (strncmp (lfm_reply, "OK", 2)) {
+            if (strncmp ((char *)lfm_reply, "OK", 2)) {
                 trace ("submission failed, response:\n%s\n", lfm_reply);
-                if (!strncmp (lfm_reply, "BADSESSION", 7)) {
+                if (!strncmp ((char *)lfm_reply, "BADSESSION", 7)) {
                     trace ("got badsession; trying to restore session...\n");
                     lfm_sess[0] = 0;
                     curl_req_cleanup ();
@@ -796,8 +806,7 @@ lastfm_stop (void) {
 }
 
 static int
-lfm_action_lookup (DB_plugin_action_t *action, int ctx)
-{
+lfm_action_lookup (DB_plugin_action_t *action, ddb_action_context_t ctx) {
     char *command = NULL;
     DB_playItem_t *it = NULL;
     char artist[META_FIELD_SIZE];
@@ -826,15 +835,15 @@ lfm_action_lookup (DB_plugin_action_t *action, int ctx)
         goto out;
     }
 
-    if (!deadbeef->pl_get_meta (it, "artist", artist, sizeof (artist))) {
+    if (!deadbeef->pl_get_meta_with_override (it, "artist", artist, sizeof (artist))) {
         goto out;
     }
-    if (!deadbeef->pl_get_meta (it, "title", title, sizeof (title))) {
+    if (!deadbeef->pl_get_meta_with_override (it, "title", title, sizeof (title))) {
         goto out;
     }
 
-    int la = strlen (artist) * 3 + 1;
-    int lt = strlen (title) * 3 + 1;
+    size_t la = strlen (artist) * 3 + 1;
+    size_t lt = strlen (title) * 3 + 1;
     char *eartist = alloca (la);
     char *etitle = alloca (lt);
 
@@ -846,11 +855,11 @@ lfm_action_lookup (DB_plugin_action_t *action, int ctx)
         goto out;
     }
 
-    if (-1 == asprintf (&command, "xdg-open 'http://www.last.fm/music/%s/_/%s' &", eartist, etitle)) {
+    if (-1 == asprintf (&command, LOOKUP_URL_FORMAT, eartist, etitle)) {
         goto out;
     }
 
-    int res = system (command);
+    system (command);
 out:
     if (it) {
         deadbeef->pl_item_unref (it);
@@ -874,8 +883,8 @@ lfm_get_actions (DB_playItem_t *it)
 {
     deadbeef->pl_lock ();
     if (!it ||
-        !deadbeef->pl_meta_exists (it, "artist") ||
-        !deadbeef->pl_meta_exists (it, "title"))
+        !deadbeef->pl_find_meta_with_override (it, "artist") ||
+        !deadbeef->pl_find_meta_with_override (it, "title"))
     {
         lookup_action.flags |= DB_ACTION_DISABLED;
     }

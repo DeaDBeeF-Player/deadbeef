@@ -139,4 +139,10 @@ junk_get_tail_size (DB_FILE *fp);
 void
 junk_get_tag_offsets (DB_FILE *fp, uint32_t *head, uint32_t *tail);
 
+unsigned
+junk_stars_from_popm_rating (uint8_t rating);
+
+uint8_t
+junk_popm_rating_from_stars (unsigned stars);
+
 #endif // __JUNKLIB_H

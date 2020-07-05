@@ -49,7 +49,7 @@ Finnish
  Juhani <juhaninumminen0@gmail.com>
 
 French
- Charles Monzat <superboa@hotmail.fr>
+ Charles Monzat <c.monzat@laposte.net>
  Cilyan Olowen <gaknar@gmail.com>
 
 Gallegan
@@ -82,9 +82,6 @@ Ganda
 Lithuanian
  Algimantas Margevičius <margevicius.algimantas@gmail.com>
  Julius <zadintuvas@gmail.com>
-
-Bokmal, Norwegian
- Sam <wilsonsamm@hotmail.com>
 
 Dutch
  depaz <depazzz@gmail.com>

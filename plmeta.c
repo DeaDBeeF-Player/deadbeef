@@ -27,12 +27,34 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include "playlist.h"
+#include "plmeta.h"
 #include "deadbeef.h"
 #include "metacache.h"
 
 #define LOCK {pl_lock();}
 #define UNLOCK {pl_unlock();}
+
+DB_metaInfo_t *
+pl_meta_for_key_with_override (playItem_t *it, const char *key) {
+    pl_ensure_lock ();
+    DB_metaInfo_t *m = it->meta;
+
+    // try to find an override
+    while (m) {
+        if (m->key[0] == '!' && !strcasecmp (key, m->key+1)) {
+            return m;
+        }
+        m = m->next;
+    }
+
+    m = it->meta;
+    while (m) {
+        if (key && !strcasecmp (key, m->key)) {
+            return m;
+        }
+        m = m->next;
+    }
+    return NULL;}
 
 
 DB_metaInfo_t *
@@ -217,6 +239,9 @@ _combine_into_unique_multivalue (const char *value1, int size1, const char *valu
 // skip duplicates
 void
 pl_append_meta_full (playItem_t *it, const char *key, const char *value, int size) {
+    if (!value || size == 0 || *value == 0) {
+        return;
+    }
     pl_lock ();
     DB_metaInfo_t *m = pl_meta_for_key (it, key);
     if (!m) {
@@ -331,10 +356,20 @@ pl_find_meta (playItem_t *it, const char *key) {
 
     m = it->meta;
     while (m) {
-        if (!strcasecmp (key, m->key)) {
+        if (key && !strcasecmp (key, m->key)) {
             return m->value;
         }
         m = m->next;
+    }
+    return NULL;
+}
+
+const char *
+pl_find_meta_with_override (playItem_t *it, const char *key) {
+    pl_ensure_lock ();
+    DB_metaInfo_t *m = pl_meta_for_key_with_override(it, key);
+    if (m) {
+        return m->value;
     }
     return NULL;
 }
@@ -367,7 +402,7 @@ float
 pl_find_meta_float (playItem_t *it, const char *key, float def) {
     pl_lock ();
     const char *val = pl_find_meta (it, key);
-    float res = val ? atof (val) : def;
+    float res = val ? (float)atof (val) : def;
     pl_unlock ();
     return res;
 }
@@ -424,6 +459,14 @@ pl_delete_all_meta (playItem_t *it) {
         }
         m = next;
     }
+
+    // delete replaygain fields
+    extern const char *ddb_internal_rg_keys[];
+    pl_delete_meta(it, ddb_internal_rg_keys[DDB_REPLAYGAIN_ALBUMGAIN]);
+    pl_delete_meta(it, ddb_internal_rg_keys[DDB_REPLAYGAIN_ALBUMPEAK]);
+    pl_delete_meta(it, ddb_internal_rg_keys[DDB_REPLAYGAIN_TRACKGAIN]);
+    pl_delete_meta(it, ddb_internal_rg_keys[DDB_REPLAYGAIN_TRACKPEAK]);
+
     uint32_t f = pl_get_item_flags (it);
     f &= ~DDB_TAG_MASK;
     pl_set_item_flags (it, f);
@@ -440,6 +483,20 @@ pl_get_meta (playItem_t *it, const char *key, char *val, int size) {
         return 0;
     }
     strncpy (val, v, size);
+    pl_unlock ();
+    return 1;
+}
+
+int
+pl_get_meta_with_override (playItem_t *it, const char *key, char *val, size_t size) {
+    *val = 0;
+    pl_lock ();
+    DB_metaInfo_t *meta = pl_meta_for_key_with_override (it, key);
+    if (!meta) {
+        pl_unlock ();
+        return 0;
+    }
+    strncpy (val, meta->value, size);
     pl_unlock ();
     return 1;
 }
@@ -462,6 +519,14 @@ int
 pl_meta_exists (playItem_t *it, const char *key) {
     pl_lock ();
     const char *v = pl_find_meta (it, key);
+    pl_unlock ();
+    return v ? 1 : 0;
+}
+
+int
+pl_meta_exists_with_override (playItem_t *it, const char *key) {
+    pl_lock ();
+    const char *v = pl_find_meta_with_override (it, key);
     pl_unlock ();
     return v ? 1 : 0;
 }

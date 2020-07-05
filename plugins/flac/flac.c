@@ -54,11 +54,10 @@ static DB_functions_t *deadbeef;
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define BUFFERSIZE 100000
-
 typedef struct {
     DB_fileinfo_t info;
     FLAC__StreamDecoder *decoder;
+    int buffersize;
     char *buffer;
     int remaining; // bytes remaining in buffer from last read
     int64_t startsample;
@@ -134,7 +133,13 @@ cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *fra
 
     int channels = _info->fmt.channels;
     int samplesize = channels * _info->fmt.bps / 8;
-    int bufsize = BUFFERSIZE - info->remaining;
+    int bytesize = frame->header.blocksize * samplesize;
+    if (info->buffersize < bytesize) {
+        info->buffersize = bytesize;
+        info->buffer = realloc (info->buffer, bytesize);
+    }
+
+    int bufsize = info->buffersize - info->remaining;
     int bufsamples = bufsize / samplesize;
     int nsamples = min (bufsamples, frame->header.blocksize);
 
@@ -238,11 +243,22 @@ static void
 cflac_error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data) {
     DB_fileinfo_t *_info = (DB_fileinfo_t *)client_data;
     flac_info_t *info = (flac_info_t *)_info;
-    if (status != FLAC__STREAM_DECODER_ERROR_STATUS_LOST_SYNC
-            && status != FLAC__STREAM_DECODER_ERROR_STATUS_FRAME_CRC_MISMATCH) {
-        trace ("cflac: got error callback: %s\n", FLAC__StreamDecoderErrorStatusString[status]);
-        info->flac_critical_error = 1;
+    if (status == FLAC__STREAM_DECODER_ERROR_STATUS_LOST_SYNC
+        || status == FLAC__STREAM_DECODER_ERROR_STATUS_FRAME_CRC_MISMATCH) {
+        return;
     }
+
+    if (status == FLAC__STREAM_DECODER_ERROR_STATUS_BAD_HEADER
+        && deadbeef->conf_get_int ("flac.ignore_bad_header_errors", 0)) {
+        return;
+    }
+
+    if (status == FLAC__STREAM_DECODER_ERROR_STATUS_UNPARSEABLE_STREAM
+        && deadbeef->conf_get_int ("flac.ignore_unparsable_stream_errors", 0)) {
+        return;
+    }
+    trace ("cflac: got error callback: %s\n", FLAC__StreamDecoderErrorStatusString[status]);
+    info->flac_critical_error = 1;
 }
 
 static void
@@ -277,11 +293,12 @@ cflac_open2 (uint32_t hints, DB_playItem_t *it) {
     }
 
     deadbeef->pl_lock();
-    info->file = deadbeef->fopen(deadbeef->pl_find_meta(it, ":URI"));
-    if (!info->file) {
-        trace("cflac_open2 failed to open file %s\n", deadbeef->pl_find_meta(it, ":URI"));
-    }
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock();
+    info->file = deadbeef->fopen(uri);
+    if (!info->file) {
+        trace("cflac_open2 failed to open file %s\n", uri);
+    }
 
     return (DB_fileinfo_t *)info;
 }
@@ -293,10 +310,11 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     if (!info->file) {
         deadbeef->pl_lock ();
-        info->file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+	const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
         deadbeef->pl_unlock ();
+        info->file = deadbeef->fopen (uri);
         if (!info->file) {
-            trace ("cflac_init failed to open file %s\n", deadbeef->pl_find_meta(it, ":URI"));
+            trace ("cflac_init failed to open file %s\n", uri);
             return -1;
         }
     }
@@ -380,7 +398,8 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     deadbeef->pl_unlock ();
 
-    info->buffer = malloc (BUFFERSIZE);
+    info->buffersize = 100000;
+    info->buffer = malloc (info->buffersize);
     info->remaining = 0;
     int64_t endsample = deadbeef->pl_item_get_endsample (it);
     if (endsample > 0) {
@@ -444,6 +463,7 @@ cflac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
         }
     }
+
     int initsize = size;
     do {
         if (info->remaining) {
@@ -457,7 +477,7 @@ cflac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
             info->remaining -= sz;
             int n = sz / samplesize;
-            info->currentsample += sz / samplesize;
+            info->currentsample += n;
             _info->readpos += (float)n / _info->fmt.samplerate;
         }
         if (!size) {
@@ -589,6 +609,7 @@ static const char *metainfo[] = {
     "COPYRIGHT", "copyright",
     "ORIGINALDATE","original_release_time",
     "ORIGINALYEAR","original_release_year",
+    "ALBUMARTIST", "ALBUM ARTIST",
     NULL
 };
 
@@ -1006,8 +1027,9 @@ cflac_read_metadata (DB_playItem_t *it) {
         return -1;
     }
     deadbeef->pl_lock ();
-    DB_FILE *file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    DB_FILE *file = deadbeef->fopen (uri);
     if (!file) {
         return -1;
     }
@@ -1069,6 +1091,7 @@ error:
 
     return err;
 }
+
 #if USE_OGGEDIT
 int
 cflac_write_metadata_ogg (DB_playItem_t *it, FLAC__StreamMetadata_VorbisComment *vc)
@@ -1091,6 +1114,7 @@ cflac_write_metadata_ogg (DB_playItem_t *it, FLAC__StreamMetadata_VorbisComment 
     return 0;
 }
 #endif
+
 int
 cflac_write_metadata (DB_playItem_t *it) {
     int err = -1;
@@ -1138,6 +1162,7 @@ cflac_write_metadata (DB_playItem_t *it) {
     } while (FLAC__metadata_iterator_next (iter));
 
     if (data) {
+        // delete existing fields
         FLAC__StreamMetadata_VorbisComment *vc = &data->data.vorbis_comment;
         int vc_comments = vc->num_comments;
         for (int i = 0; i < vc_comments; i++) {
@@ -1176,16 +1201,9 @@ cflac_write_metadata (DB_playItem_t *it) {
         }
         const char *val = m->value;
         if (val && *val) {
-            while (val) {
-                const char *next = strchr (val, '\n');
-                size_t l;
-                if (next) {
-                    l = next - val;
-                    next++;
-                }
-                else {
-                    l = strlen (val);
-                }
+            const char *end = val + m->valuesize;
+            while (val < end) {
+                size_t l = strlen (val);
                 if (l > 0) {
                     char s[100+l+1];
                     int n = snprintf (s, sizeof (s), "%s=", metainfo[i] ? metainfo[i] : m->key);
@@ -1197,17 +1215,17 @@ cflac_write_metadata (DB_playItem_t *it) {
                     };
                     FLAC__metadata_object_vorbiscomment_append_comment (data, ent, 1);
                 }
-                val = next;
+                val += l+1;
             }
         }
         m = m->next;
     }
 
     static const char *tag_rg_names[] = {
-        "replaygain_album_gain",
-        "replaygain_album_peak",
-        "replaygain_track_gain",
-        "replaygain_track_peak",
+        "REPLAYGAIN_ALBUM_GAIN",
+        "REPLAYGAIN_ALBUM_PEAK",
+        "REPLAYGAIN_TRACK_GAIN",
+        "REPLAYGAIN_TRACK_PEAK",
         NULL
     };
 
@@ -1225,7 +1243,17 @@ cflac_write_metadata (DB_playItem_t *it) {
         if (deadbeef->pl_find_meta (it, ddb_internal_rg_keys[n])) {
             float value = deadbeef->pl_get_item_replaygain (it, n);
             char s[100];
-            snprintf (s, sizeof (s), "%s=%f", tag_rg_names[n], value);
+            // https://wiki.hydrogenaud.io/index.php?title=ReplayGain_2.0_specification#Metadata_format
+            switch (n) {
+            case DDB_REPLAYGAIN_ALBUMGAIN:
+            case DDB_REPLAYGAIN_TRACKGAIN:
+                snprintf (s, sizeof (s), "%s=%.2f dB", tag_rg_names[n], value);
+                break;
+            case DDB_REPLAYGAIN_ALBUMPEAK:
+            case DDB_REPLAYGAIN_TRACKPEAK:
+                snprintf (s, sizeof (s), "%s=%.6f", tag_rg_names[n], value);
+                break;
+            }
             FLAC__StreamMetadata_VorbisComment_Entry ent = {
                 .length = (FLAC__uint32)strlen (s),
                 .entry = (FLAC__byte*)s
@@ -1260,6 +1288,12 @@ error:
 
     return err;
 }
+
+static const char configdialog[] =
+    "property \"Ignore bad header errors\" checkbox flac.ignore_bad_header_errors 0;\n"
+    "property \"Ignore unparsable stream errors\" checkbox flac.ignore_unparsable_stream_errors 0;\n"
+;
+
 
 static const char *exts[] = { "flac", "oga", NULL };
 
@@ -1305,6 +1339,7 @@ static DB_decoder_t plugin = {
         "SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
+    .plugin.configdialog = configdialog,
     .open = cflac_open,
     .open2 = cflac_open2,
     .init = cflac_init,

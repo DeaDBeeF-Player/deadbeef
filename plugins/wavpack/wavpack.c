@@ -27,16 +27,23 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifdef HAVE_CONFIG_H
+#include "../../config.h"
+#endif
 #include <string.h>
 #if defined(TINYWV) || defined(OSX_BUILD)
 #include <wavpack.h>
 #else
 #include <wavpack/wavpack.h>
 #endif
+#ifdef HAVE_ALLOCA_H
+#include <alloca.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -117,34 +124,35 @@ static WavpackStreamReader wsr = {
 
 static DB_fileinfo_t *
 wv_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (wvctx_t));
-    memset (_info, 0, sizeof (wvctx_t));
-    return _info;
+    wvctx_t *info = calloc (sizeof (wvctx_t), 1);
+    return &info->info;
 }
 
 static int
 wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     wvctx_t *info = (wvctx_t *)_info;
     deadbeef->pl_lock ();
-    info->file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    info->file = deadbeef->fopen (uri);
     if (!info->file) {
         return -1;
     }
 
 #ifndef TINYWV
     deadbeef->pl_lock ();
-    const char *uri = deadbeef->pl_find_meta (it, ":URI");
+    uri = deadbeef->pl_find_meta (it, ":URI");
     char *c_fname = alloca (strlen (uri) + 2);
     if (c_fname) {
         strcpy (c_fname, uri);
+        deadbeef->pl_unlock ();
         strcat (c_fname, "c");
         info->c_file = deadbeef->fopen (c_fname);
     }
     else {
+        deadbeef->pl_unlock ();
         fprintf (stderr, "wavpack warning: failed to alloc memory for correction file name\n");
     }
-    deadbeef->pl_unlock ();
 #endif
 
     char error[80];
@@ -376,8 +384,9 @@ wv_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 int
 wv_read_metadata (DB_playItem_t *it) {
     deadbeef->pl_lock ();
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    DB_FILE *fp = deadbeef->fopen (uri);
     if (!fp) {
         return -1;
     }

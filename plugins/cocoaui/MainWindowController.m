@@ -21,12 +21,57 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#import "DdbPlaceholderWidget.h"
+#import "DesignableViewController.h"
+#import "GuiPreferencesWindowController.h"
 #import "MainWindowController.h"
+#import "PlaylistViewController.h"
 #import "PreferencesWindowController.h"
-#include "../../deadbeef.h"
+#include "deadbeef.h"
 #include <sys/time.h>
 
 extern DB_functions_t *deadbeef;
+
+@interface TrackPositionFormatter : NSFormatter
+
+- (NSString *)stringForObjectValue:(NSControl *)obj;
+
+- (BOOL)getObjectValue:(out id  _Nullable *)obj forString:(NSString *)string errorDescription:(out NSString * _Nullable *)error;
+
+@end
+
+@implementation TrackPositionFormatter
+
+- (NSString *)stringForObjectValue:(NSControl *)obj {
+
+    DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
+    if (!track) {
+        return @"--:--:--";
+    }
+
+    double pos = obj.doubleValue / 100;
+    float duration = 0;
+    duration = deadbeef->pl_get_item_duration (track);
+    double time = duration * pos;
+    int hr = time/3600;
+    int mn = (time-hr*3600)/60;
+    int sc = round(time-hr*3600-mn*60);
+
+    NSString *res = [NSString stringWithFormat:@"%02d:%02d:%02d", hr, mn, sc];
+
+    deadbeef->pl_item_unref (track);
+
+    return res;
+}
+
+- (BOOL)getObjectValue:(out id  _Nullable __autoreleasing *)obj forString:(NSString *)string errorDescription:(out NSString * _Nullable __autoreleasing *)error {
+    *error = @"error";
+    return NO;
+}
+
+@end
+
+#pragma mark -
 
 
 @interface MainWindowController () {
@@ -36,31 +81,57 @@ extern DB_functions_t *deadbeef;
     char *_statusbar_playing_script;
     int _prevSeekBarPos;
 }
-@end
 
-@interface NSView (AppKitDetails)
-- (void)_addKnownSubview:(NSView *)subview;
+@property (weak) IBOutlet NSView *designableContainerView;
+
 @end
 
 
 @implementation MainWindowController
 
-- (void)dealloc {
-    [self cleanup];
-}
-
 - (void)cleanup {
+    // not releasing this timer explicitly causes a reference cycle
     if (_updateTimer) {
         [_updateTimer invalidate];
         _updateTimer = nil;
     }
-    [self freeTitleBarConfig];
 
-    [_playlistViewController cleanup];
+    [self.rootViewController cleanup];
+}
+
+- (void)dealloc {
+    [self cleanup];
+    [self freeTitleBarConfig];
 }
 
 - (void)windowDidLoad {
     [super windowDidLoad];
+
+    PlaylistViewController *pvc = [[PlaylistViewController alloc] initWithNibName:nil bundle:nil];
+    PlaylistView *view = [PlaylistView new];
+    pvc.view = view;
+    [pvc setup];
+    self.rootViewController = pvc;
+
+    view.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.designableContainerView addSubview:view];
+
+    [view.topAnchor constraintEqualToAnchor:self.designableContainerView.topAnchor].active = YES;
+    [view.bottomAnchor constraintEqualToAnchor:self.designableContainerView.bottomAnchor].active = YES;
+    [view.leadingAnchor constraintEqualToAnchor:self.designableContainerView.leadingAnchor].active = YES;
+    [view.trailingAnchor constraintEqualToAnchor:self.designableContainerView.trailingAnchor].active = YES;
+
+    // seekbar value formatter
+    self.seekBar.formatter = [TrackPositionFormatter new];
+
+    // add tab strip to the window titlebar
+    NSTitlebarAccessoryViewController* vc = [NSTitlebarAccessoryViewController new];
+
+    vc.view = _tabStrip;
+    vc.fullScreenMinHeight = _tabStrip.bounds.size.height;
+    vc.layoutAttribute = NSLayoutAttributeBottom;
+
+    [self.window addTitlebarAccessoryViewController:vc];
 
     _updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
     [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];
@@ -68,8 +139,6 @@ extern DB_functions_t *deadbeef;
 
 // update status bar and window title
 static char sb_text[512];
-static char sbitrate[20] = "";
-static struct timeval last_br_update;
 
 #define _(x) x
 
@@ -77,12 +146,12 @@ static struct timeval last_br_update;
     DB_output_t *output = deadbeef->get_output ();
     char sbtext_new[512] = "-";
     
-    float pl_totaltime = deadbeef->pl_get_totaltime ();
+    float pl_totaltime = roundf(deadbeef->pl_get_totaltime ());
     int daystotal = (int)pl_totaltime / (3600*24);
     int hourtotal = ((int)pl_totaltime / 3600) % 24;
     int mintotal = ((int)pl_totaltime/60) % 60;
     int sectotal = ((int)pl_totaltime) % 60;
-    
+
     char totaltime_str[512] = "";
     if (daystotal == 0) {
         snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
@@ -96,7 +165,7 @@ static struct timeval last_br_update;
     
     DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
     
-    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track)) {
+    if (!output || (output->state () == DDB_PLAYBACK_STATE_STOPPED || !track)) {
         snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
     }
     else {
@@ -113,7 +182,7 @@ static struct timeval last_br_update;
     
     if (strcmp (sbtext_new, sb_text)) {
         strcpy (sb_text, sbtext_new);
-        [[self statusBar] setStringValue:[NSString stringWithUTF8String:sb_text]];
+        [self statusBar].stringValue = [NSString stringWithUTF8String:sb_text];
     }
     
     if (track) {
@@ -141,7 +210,7 @@ static struct timeval last_br_update;
         int cmp =(int)(perc*4000);
         if (cmp != _prevSeekBarPos) {
             _prevSeekBarPos = cmp;
-            [_seekBar setFloatValue:perc];
+            _seekBar.floatValue = perc;
         }
     }
 
@@ -149,14 +218,14 @@ static struct timeval last_br_update;
     if (!trk || dur < 0) {
         st = NO;
     }
-    if ([_seekBar isEnabled] != st) {
-        [_seekBar setEnabled:st];
+    if (_seekBar.isEnabled != st) {
+        _seekBar.enabled = st;
     }
 }
 
 - (void)frameUpdate:(id)userData
 {
-    if (![[self window] isVisible]) {
+    if (![self.window isVisible]) {
         return;
     }
 
@@ -171,20 +240,20 @@ static struct timeval last_br_update;
     }
 }
 
-- (IBAction)seekBarAction:(id)sender {
+- (IBAction)seekBarAction:(DdbSeekBar *)sender {
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (trk) {
         float dur = deadbeef->pl_get_item_duration (trk);
         if (dur >= 0) {
-            float time = [(NSSlider*)sender floatValue] / 100.f;
+            float time = sender.floatValue / 100.f;
             time *= dur;
-            deadbeef->sendmessage (DB_EV_SEEK, 0, time * 1000, 0);
+            deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(time * 1000), 0);
         }
         deadbeef->pl_item_unref (trk);
     }
 }
 
-- (IBAction)volumeBarAction:(id)sender {
+- (IBAction)volumeBarAction:(NSControl *)sender {
     float range = -deadbeef->volume_get_min_db ();
     float volume = [(NSSlider*)sender floatValue] / 100.f * range - range;
     if (volume < -range) {
@@ -195,8 +264,8 @@ static struct timeval last_br_update;
     }
 
     deadbeef->volume_set_db (volume);
-    int db = volume;
-    [sender setToolTip:[NSString stringWithFormat:@"%s%ddB", db < 0 ? "" : "+", db]];
+    int db = (int)volume;
+    sender.toolTip = [NSString stringWithFormat:@"%s%ddB", db < 0 ? "" : "+", db];
 }
 
 - (IBAction)tbClicked:(id)sender {
@@ -228,40 +297,10 @@ static struct timeval last_br_update;
     }
 }
 
-- (IBAction)renamePlaylistAction:(id)sender {
-    ddb_playlist_t *plt = deadbeef->plt_get_for_idx ([_tabStrip clickedTab]);
-    int l = deadbeef->plt_get_title (plt, NULL, 0);
-    char buf[l+1];
-    deadbeef->plt_get_title (plt, buf, (int)sizeof buf);
-    deadbeef->plt_unref (plt);
-    [_renamePlaylistTitle setStringValue:[NSString stringWithUTF8String:buf]];
-    [NSApp beginSheet:self.renamePlaylistWindow modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(didEndRenamePlaylist:returnCode:contextInfo:) contextInfo:nil];
-}
-
-- (void)didEndRenamePlaylist:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    [sheet orderOut:self];
-
-    if (returnCode == NSOKButton) {
-        ddb_playlist_t *plt = deadbeef->plt_get_for_idx ([_tabStrip clickedTab]);
-        deadbeef->plt_set_title (plt, [[_renamePlaylistTitle stringValue] UTF8String]);
-        deadbeef->plt_save_config (plt);
-        deadbeef->plt_unref (plt);
-    }
-}
-
-- (IBAction)renamePlaylistCancelAction:(id)sender {
-    [NSApp endSheet:self.renamePlaylistWindow returnCode:NSCancelButton];
-}
-
-- (IBAction)renamePlaylistOKAction:(id)sender {
-    [NSApp endSheet:self.renamePlaylistWindow returnCode:NSOKButton];
-}
-
 - (void)updateVolumeBar {
     float range = -deadbeef->volume_get_min_db ();
-    int vol = (deadbeef->volume_get_db () + range) / range * 100;
-    [[self volumeBar] setFloatValue:vol];
+    float vol = (deadbeef->volume_get_db () + range) / range * 100;
+    [self volumeBar].floatValue = vol;
 }
 
 - (void)freeTitleBarConfig {
@@ -313,7 +352,7 @@ static struct timeval last_br_update;
         deadbeef->pl_item_unref (ctx.it);
     }
 
-    [[self window] setTitle:[NSString stringWithUTF8String:buffer]];
+    self.window.title = [NSString stringWithUTF8String:buffer];
 }
 
 @end

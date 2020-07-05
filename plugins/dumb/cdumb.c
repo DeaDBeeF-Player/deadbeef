@@ -31,6 +31,7 @@
 #include "internal/it.h"
 #include "modloader.h"
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -64,11 +65,9 @@ cdumb_startrenderer (DB_fileinfo_t *_info);
 
 static DB_fileinfo_t *
 cdumb_open (uint32_t hints) {
-    DB_fileinfo_t *_info = malloc (sizeof (dumb_info_t));
-    dumb_info_t *info = (dumb_info_t *)_info;
-    memset (_info, 0, sizeof (dumb_info_t));
+    dumb_info_t *info = calloc (sizeof (dumb_info_t), 1);
     info->can_loop = hints & DDB_DECODER_HINT_CAN_LOOP;
-    return _info;
+    return &info->info;
 }
 
 static int
@@ -76,19 +75,17 @@ cdumb_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     trace ("cdumb_init %s\n", deadbeef->pl_find_meta (it, ":URI"));
     dumb_info_t *info = (dumb_info_t *)_info;
 
-	int is_dos, is_it, is_ptcompat;
-	deadbeef->pl_lock ();
-    {
-        const char *uri = deadbeef->pl_find_meta (it, ":URI");
-        const char *ext = uri + strlen (uri) - 1;
-        while (*ext != '.' && ext > uri) {
-            ext--;
-        }
-        ext++;
-        const char *ftype;
-        info->duh = g_open_module (uri, &is_it, &is_dos, &is_ptcompat, 0, &ftype);
-    }
+    int is_dos, is_it, is_ptcompat;
+    deadbeef->pl_lock ();
+    const char *uri = strdupa(deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    const char *ext = uri + strlen (uri) - 1;
+    while (*ext != '.' && ext > uri) {
+        ext--;
+    }
+    ext++;
+    const char *ftype;
+    info->duh = g_open_module (uri, &is_it, &is_dos, &is_ptcompat, 0, &ftype);
 
     dumb_it_do_initial_runthrough (info->duh);
 
@@ -242,7 +239,7 @@ cdumb_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         conf_resampling_quality = deadbeef->conf_get_int ("dumb.resampling_quality", 4);
         conf_ramping_style = deadbeef->conf_get_int ("dumb.volume_ramping", 2);
         conf_global_volume = deadbeef->conf_get_int ("dumb.globalvolume", 64);
-        conf_play_forever = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL) == PLAYBACK_MODE_LOOP_SINGLE;
+        conf_play_forever = deadbeef->streamer_get_repeat () == DDB_REPEAT_SINGLE;
         break;
     }
     return 0;
@@ -327,12 +324,11 @@ cdumb_read_metadata (DB_playItem_t *it) {
     int is_ptcompat;
 
     deadbeef->pl_lock ();
-    {
-        const char *fname = deadbeef->pl_find_meta (it, ":URI");
-        const char *ftype;
-        duh = g_open_module(fname, &is_it, &is_dos, &is_ptcompat, 0, &ftype);
-    }
+    const char *fname = strdupa(deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    const char *ftype;
+    duh = g_open_module(fname, &is_it, &is_dos, &is_ptcompat, 0, &ftype);
+
     if (!duh) {
         unload_duh (duh);
         return -1;
@@ -448,7 +444,7 @@ cdumb_start (void) {
     conf_resampling_quality = deadbeef->conf_get_int ("dumb.resampling_quality", 4);
     conf_ramping_style = deadbeef->conf_get_int ("dumb.volume_ramping", 2);
     conf_global_volume = deadbeef->conf_get_int ("dumb.globalvolume", 64);
-    conf_play_forever = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL) == PLAYBACK_MODE_LOOP_SINGLE;
+    conf_play_forever = deadbeef->streamer_get_repeat () == DDB_REPEAT_SINGLE;
     return 0;
 }
 
@@ -459,10 +455,10 @@ cdumb_stop (void) {
 }
 
 static const char settings_dlg[] =
-    "property \"Resampling quality (0..5, higher is better)\" spinbtn[0,5,1] dumb.resampling_quality 4;\n"
-    "property \"8-bit output (default is 16)\" checkbox dumb.8bitoutput 0;\n"
-    "property \"Internal DUMB volume (0..128)\" spinbtn[0,128,16] dumb.globalvolume 64;\n"
+    "property \"Resampling quality\" spinbtn[0,5,1] dumb.resampling_quality 4;\n"
+    "property \"Internal DUMB volume\" spinbtn[0,128,16] dumb.globalvolume 64;\n"
     "property \"Volume ramping\" select[3] dumb.volume_ramping 0 None \"On/Off Only\" \"Full\";\n"
+    "property \"8-bit output\" checkbox dumb.8bitoutput 0;\n"
 ;
 
 // define plugin interface

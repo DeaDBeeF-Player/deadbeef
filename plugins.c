@@ -24,6 +24,7 @@
 
   Alexey Yakovenko waker@users.sourceforge.net
 */
+#include <ctype.h>
 #include <dirent.h>
 #include <dlfcn.h>
 #include <assert.h>
@@ -45,6 +46,7 @@
 #include "messagepump.h"
 #include "threading.h"
 #include "playlist.h"
+#include "plmeta.h"
 #include "volume.h"
 #include "streamer.h"
 #include "common.h"
@@ -60,6 +62,7 @@
 #include "sort.h"
 #include "logger.h"
 #include "replaygain.h"
+#include "playmodes.h"
 #ifdef __APPLE__
 #include "cocoautil.h"
 #endif
@@ -77,6 +80,8 @@ DB_plugin_t main_plugin = {
 
 #if defined(HAVE_COCOAUI) || defined(OSX_APPBUNDLE)
 #define PLUGINEXT ".dylib"
+#elif defined __MINGW32__
+#define PLUGINEXT ".dll"
 #else
 #define PLUGINEXT ".so"
 #endif
@@ -498,6 +503,15 @@ static DB_functions_t deadbeef_api = {
 
     .plt_is_loading_cue = (int (*)(ddb_playlist_t *))plt_is_loading_cue,
 
+    .streamer_set_shuffle = streamer_set_shuffle,
+    .streamer_get_shuffle = streamer_get_shuffle,
+    .streamer_set_repeat = streamer_set_repeat,
+    .streamer_get_repeat = streamer_get_repeat,
+
+    .pl_meta_for_key_with_override = (DB_metaInfo_t *(*) (ddb_playItem_t *it, const char *key))pl_meta_for_key_with_override,
+    .pl_find_meta_with_override = (const char *(*) (ddb_playItem_t *it, const char *key))pl_find_meta_with_override,
+    .pl_get_meta_with_override = (int (*) (ddb_playItem_t *it, const char *key, char *val, size_t size))pl_get_meta_with_override,
+    .pl_meta_exists_with_override = (int (*) (ddb_playItem_t *it, const char *key))pl_meta_exists_with_override,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -542,6 +556,8 @@ plug_get_system_dir (int dir_id) {
         return dbpixmapdir;
     case DDB_SYS_DIR_CACHE:
         return dbcachedir;
+    case DDB_SYS_DIR_PLUGIN_RESOURCES:
+        return dbresourcedir;
     }
     return NULL;
 }
@@ -637,6 +653,7 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
                     dlclose (p->handle);
                 }
                 free (p);
+                break;
             }
             else {
                 trace_err ("found copy of plugin \"%s\" (%s), but newer version is already loaded\n", plugin_api->id, plugin_api->name)
@@ -648,7 +665,7 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
 #if !DISABLE_VERSIONCHECK
     if (plugin_api->api_vmajor != 0 || plugin_api->api_vminor != 0) {
         // version check enabled
-        if (DB_API_VERSION_MAJOR != 9 && DB_API_VERSION_MINOR != 9) {
+        if (DB_API_VERSION_MAJOR != 9 || DB_API_VERSION_MINOR != 9) {
             if (plugin_api->api_vmajor != DB_API_VERSION_MAJOR || plugin_api->api_vminor > DB_API_VERSION_MINOR) {
                 trace_err ("WARNING: plugin \"%s\" wants API v%d.%d (got %d.%d), will not be loaded\n", plugin_api->name, plugin_api->api_vmajor, plugin_api->api_vminor, DB_API_VERSION_MAJOR, DB_API_VERSION_MINOR);
                 return -1;
@@ -823,7 +840,7 @@ load_gui_plugin (const char **plugdirs) {
             trace ("found selected GUI plugin: %s\n", g_gui_names[i]);
             for (int n = 0; plugdirs[n]; n++) {
                 snprintf (name, sizeof (name), "ddb_gui_%s" PLUGINEXT, conf_gui_plug);
-                if (!load_plugin (plugdirs[n], name, strlen (name))) {
+                if (!load_plugin (plugdirs[n], name, (int)strlen (name))) {
                     return 0;
                 }
             }
@@ -836,7 +853,7 @@ load_gui_plugin (const char **plugdirs) {
     for (int i = 0; g_gui_names[i]; i++) {
         for (int n = 0; plugdirs[n]; n++) {
             snprintf (name, sizeof (name), "ddb_gui_%s" PLUGINEXT, g_gui_names[i]);
-            if (!load_plugin (plugdirs[n], name, strlen (name))) {
+            if (!load_plugin (plugdirs[n], name, (int)strlen (name))) {
                 return 0;
             }
             else {
@@ -875,7 +892,7 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
         {
             // skip hidden files and fallback plugins
             while (namelist[i]->d_name[0] != '.'
-#if !defined(ANDROID) && !defined(HAVE_COCOAUI)
+#if !defined(ANDROID) && !defined(OSX_APPBUNDLE)
                     && !strstr (namelist[i]->d_name, ".fallback.")
 #elif !defined(ANDROID)
                     && !strstr (namelist[i]->d_name, "libdeadbeef")
@@ -952,7 +969,7 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
 
                 if (!gui_scan) {
                     if (0 != load_plugin (plugdir, d_name, (int)l)) {
-                        trace_err ("plugin %s not found or failed to load\n", d_name);
+                        trace ("plugin %s not found or failed to load\n", d_name);
                     }
                 }
                 break;
@@ -972,21 +989,21 @@ plug_load_all (void) {
 
     background_jobs_mutex = mutex_create ();
 
-    const char *dirname = deadbeef->get_plugin_dir ();
+    const char *dirname = plug_get_system_dir (DDB_SYS_DIR_PLUGIN);
 
     // remember how many plugins to skip if called Nth time
     plugin_t *prev_plugins_tail = plugins_tail;
 
 #ifdef OSX_APPBUNDLE
     char libpath[PATH_MAX];
-    int res = cocoautil_get_library_path (libpath, sizeof (libpath));
+    int res = cocoautil_get_application_support_path (libpath, sizeof (libpath));
     if (!res) {
-        strncat (libpath, "/deadbeef/plugins", sizeof (libpath) - strlen (libpath) - 1);
+        strncat (libpath, "/Deadbeef/Plugins", sizeof (libpath) - strlen (libpath) - 1);
     }
     const char *plugins_dirs[] = { dirname, !res ? libpath : NULL, NULL };
 #else
 #ifndef ANDROID
-    char *xdg_local_home = getenv ("XDG_LOCAL_HOME");
+    char *xdg_local_home = getenv (LOCALDIR);
     char xdg_plugin_dir[1024];
     char xdg_plugin_dir_explicit_arch[1024];
 
@@ -994,7 +1011,7 @@ plug_load_all (void) {
         strncpy (xdg_plugin_dir, xdg_local_home, sizeof (xdg_plugin_dir));
         xdg_plugin_dir[sizeof(xdg_plugin_dir)-1] = 0;
     } else {
-        char *homedir = getenv ("HOME");
+        char *homedir = getenv (HOMEDIR);
 
         if (!homedir) {
             trace_err ("plug_load_all: warning: unable to find home directory\n");
@@ -1004,12 +1021,19 @@ plug_load_all (void) {
             // multilib support:
             // 1. load from lib$ARCH if present
             // 2. load from lib if present
-            int written = snprintf (xdg_plugin_dir, sizeof (xdg_plugin_dir), "%s/.local/lib/deadbeef", homedir);
+            int written = snprintf (xdg_plugin_dir, sizeof (xdg_plugin_dir), LOCAL_PLUGINS_DIR, homedir);
             if (written > sizeof (xdg_plugin_dir)) {
                 trace_err ("warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
                 xdg_plugin_dir[0] = 0;
             }
-            written = snprintf (xdg_plugin_dir_explicit_arch, sizeof (xdg_plugin_dir_explicit_arch), "%s/.local/lib%d/deadbeef", homedir, (int)(sizeof (long) * 8));
+#ifdef __x86_64__
+#define ARCH_BITS 64
+#elif defined(__i386__)
+#define ARCH_BITS 32
+#else
+#define ARCH_BITS (int)(sizeof (long) * 8)
+#endif
+            written = snprintf (xdg_plugin_dir_explicit_arch, sizeof (xdg_plugin_dir_explicit_arch), LOCAL_ARCH_PLUGINS_DIR, homedir, ARCH_BITS);
             if (written > sizeof (xdg_plugin_dir_explicit_arch)) {
                 trace_err ("warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
                 xdg_plugin_dir_explicit_arch[0] = 0;
@@ -1305,7 +1329,7 @@ plug_unload_all (void) {
 void
 plug_set_output (DB_output_t *out) {
     output_plugin = out;
-    conf_set_str ("output_plugin", output_plugin->plugin.name);
+    conf_set_str ("output_plugin", output_plugin->plugin.id);
     trace ("selected output plugin: %s\n", output_plugin->plugin.name);
 }
 
@@ -1358,14 +1382,15 @@ static DB_output_t *
 _select_output_plugin (void) {
 #ifndef ANDROID
     char outplugname[100];
-#ifdef HAVE_COCOAUI
-    conf_get_str ("output_plugin", "CoreAudio", outplugname, sizeof (outplugname));
+#ifdef OSX_APPBUNDLE
+    conf_get_str ("output_plugin", "coreaudio", outplugname, sizeof (outplugname));
 #else
-    conf_get_str ("output_plugin", "ALSA output plugin", outplugname, sizeof (outplugname));
+    conf_get_str ("output_plugin", "alsa", outplugname, sizeof (outplugname));
 #endif
     for (int i = 0; g_output_plugins[i]; i++) {
         DB_output_t *p = g_output_plugins[i];
-        if (!strcmp (p->plugin.name, outplugname)) {
+        if (!strcmp (p->plugin.id, outplugname)
+            || !strcmp (p->plugin.name, outplugname)) {
             return p;
         }
     }
@@ -1462,6 +1487,9 @@ plug_is_local_file (const char *fname) {
 
     const char *f = fname;
     for (; *f; f++) {
+        if (*f != ':' && !isalpha (*f)) {
+            break;
+        }
         if (!strncmp (f, "://", 3)) {
             DB_vfs_t **plug = plug_get_vfs_list ();
             for (int i = 0; plug[i]; i++) {
@@ -1480,6 +1508,74 @@ plug_is_local_file (const char *fname) {
 
     return 1;
 }
+
+static int is_url (const char *path_or_url) {
+    const char *f = path_or_url;
+    for (; *f; f++) {
+        if (*f != ':' && !isalpha (*f)) {
+            break; // not a URL
+        }
+        if (!strncmp (f, "://", 3)) {
+            return 1; // some URL
+        }
+    }
+    return 0;
+}
+
+int
+is_relative_path_posix (const char *path_or_url) {
+    // file url?
+    if (!strncasecmp (path_or_url, "file://", 7)) {
+        path_or_url += 7;
+    }
+
+    // other url?
+    if (is_url (path_or_url)) {
+        return 0;
+    }
+
+    // path starts with a '/'?
+    return *path_or_url != '/';
+}
+
+int
+is_relative_path_win32 (const char *path_or_url) {
+    // file url?
+    if (!strncasecmp (path_or_url, "file://", 7)) {
+        path_or_url += 7;
+    }
+    else {
+        // other url?
+        if (is_url (path_or_url)) {
+            return 0;
+        }
+    }
+
+    // absolute paths start with "C:\" (or any other letter)
+    // UNC paths can also be absolute (starting with "\\")
+    // NOTE: this test won't cover \\? relative path and absolute path starting with "\"
+    if (strlen (path_or_url) >= 3) {
+        if (isalpha(path_or_url[0]) && path_or_url[1] == ':' && (path_or_url[2] == '\\' || path_or_url[2] == '/')) {
+            return 0;
+        }
+        else if (path_or_url[0] == '\\' && path_or_url[1] == '\\') {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+#ifndef _WIN32
+int
+is_relative_path (const char *path_or_url) {
+    return is_relative_path_posix (path_or_url);
+}
+#else
+int
+is_relative_path (const char *path_or_url) {
+    return is_relative_path_win32 (path_or_url);
+}
+#endif
 
 void
 background_job_increment (void) {

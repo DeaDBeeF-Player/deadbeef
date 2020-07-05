@@ -14,12 +14,17 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * dro2.cpp - DOSBox Raw OPL v2.0 player by Adam Nielsen <malvineous@shikadi.net>
  */
 
-#include <string.h>
+/*
+ * Copyright (c) 2017 Wraithverge <liam82067@yahoo.com>
+ * - Finalized support for displaying arbitrary Tag data.
+ */
+
+#include <cstring>
 #include <stdio.h>
 
 #include "dro2.h"
@@ -42,7 +47,7 @@ Cdro2Player::~Cdro2Player()
 	if (this->piConvTable) delete[] this->piConvTable;
 }
 
-bool Cdro2Player::load(const char * filename, const CFileProvider &fp)
+bool Cdro2Player::load(const std::string &filename, const CFileProvider &fp)
 {
 	binistream *f = fp.open(filename);
 	if (!f) return false;
@@ -79,9 +84,48 @@ bool Cdro2Player::load(const char * filename, const CFileProvider &fp)
 	this->piConvTable = new uint8_t[this->iConvTableLen];
 	f->readString((char *)this->piConvTable, this->iConvTableLen);
 
+	// Read the OPL data.
 	this->data = new uint8_t[this->iLength];
 	f->readString((char *)this->data, this->iLength);
 
+	title[0] = 0;
+	author[0] = 0;
+	desc[0] = 0;
+	int tagsize = fp.filesize(f) - f->pos();
+	if (tagsize >= 3)
+	{
+		// The arbitrary Tag Data section begins here.
+		if ((uint8_t)f->readInt(1) != 0xFF ||
+			(uint8_t)f->readInt(1) != 0xFF ||
+			(uint8_t)f->readInt(1) != 0x1A)
+		{
+			// Tag data does not present or truncated.
+			goto end_section;
+		}
+
+		// "title" is maximum 40 characters long.
+		f->readString(title, 40, 0);
+
+		// Skip "author" if Tag marker byte is missing.
+		if (f->readInt(1) != 0x1B) {
+			f->seek(-1, binio::Add);
+			goto desc_section;
+		}
+
+		// "author" is maximum 40 characters long.
+		f->readString(author, 40, 0);
+
+	desc_section:
+		// Skip "desc" if Tag marker byte is missing.
+		if (f->readInt(1) != 0x1C) {
+			goto end_section;
+		}
+
+		// "desc" is now maximum 1023 characters long (it was 140).
+		f->readString(desc, 1023, 0);
+	}
+
+end_section:
 	fp.close(f);
 	rewind(0);
 
@@ -125,14 +169,14 @@ bool Cdro2Player::update()
 
 	// This won't result in endless-play using Adplay, but IMHO that code belongs
 	// in Adplay itself, not here.
-  return this->iPos < this->iLength;
+	return this->iPos < this->iLength;
 }
 
 void Cdro2Player::rewind(int subsong)
 {
 	this->iDelay = 0;
 	this->iPos = 0;
-  opl->init(); 
+	opl->init(); 
 }
 
 float Cdro2Player::getrefresh()

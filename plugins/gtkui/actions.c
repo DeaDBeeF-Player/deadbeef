@@ -98,7 +98,7 @@ add_mainmenu_actions (void)
             continue;
 
         DB_plugin_action_t *actions = plugins[i]->get_actions (NULL);
-        DB_plugin_action_t *action;
+        DB_plugin_action_t *action = NULL;
 
         for (action = actions; action; action = action->next)
         {
@@ -127,7 +127,7 @@ add_mainmenu_actions (void)
             char *prev_title = NULL;
 
             GtkWidget *current = menubar;
-            GtkWidget *previous;
+            GtkWidget *previous = NULL;
 
             while (1)
             {
@@ -145,9 +145,9 @@ add_mainmenu_actions (void)
                     gtk_widget_show (actionitem);
 
                     /* Here we have special cases for different submenus */
-                    if (0 == strcmp ("File", prev_title))
+                    if (prev_title && 0 == strcmp ("File", prev_title))
                         gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 5);
-                    else if (0 == strcmp ("Edit", prev_title))
+                    else if (prev_title && 0 == strcmp ("Edit", prev_title))
                         gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 7);
                     else {
                         gtk_container_add (GTK_CONTAINER (current), actionitem);
@@ -170,7 +170,7 @@ add_mainmenu_actions (void)
                 {
                     GtkWidget *newitem;
 
-                    newitem = gtk_menu_item_new_with_mnemonic (ptr);
+                    newitem = gtk_menu_item_new_with_mnemonic (_(ptr));
                     gtk_widget_show (newitem);
 
                     //If we add new submenu in main bar, add it before 'Help'

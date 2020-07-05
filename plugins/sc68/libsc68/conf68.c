@@ -194,8 +194,11 @@ int config68_save(const char * confname)
     vfs68_t * os=0;
     const int sizeof_config_hd = sizeof(config_header)-1;
 
-    strncpy(tmp, "sc68://config/", sizeof(tmp));
-    strncat(tmp, confname, sizeof(tmp));
+    int tmp_remaining = sizeof(tmp) - 1;
+    const char prefix[] = "sc68://config/";
+    strncpy(tmp, prefix, tmp_remaining);
+    tmp_remaining -= sizeof(prefix) - 1;
+    strncat(tmp, confname, tmp_remaining);
     os = uri68_vfs(tmp, 2, 0);
     err = vfs68_open(os);
     if (!err) {
@@ -254,8 +257,10 @@ static int load_from_registry(const char * confname)
       continue;
 
     for (k=0; k<2; ++k) {
-      strncpy(path, paths[k], sizeof(path));
-      strncat(path, opt->name, sizeof(path));
+      int path_remaining = sizeof(path) - 1;
+      strncpy(path, paths[k], path_remaining);
+      path_remaining -= strlen(paths[k]);
+      strncat(path, opt->name, path_remaining);
 
       TRACE68(config68_cat, "conf68: trying -- '%s'\n", path);
       switch (opt->type) {

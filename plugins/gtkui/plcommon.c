@@ -49,6 +49,12 @@
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
 
+#define SUBGROUP_DELIMITER "|||"
+
+#if !GTK_CHECK_VERSION(3,22,0)
+#define gtk_menu_popup_at_pointer(menu,trigger_event) gtk_menu_popup(menu, NULL, NULL, NULL, NULL, 3, gtk_get_current_event_time())
+#endif
+
 typedef struct {
     int id;
     char *format;
@@ -139,9 +145,15 @@ pl_common_init(void)
 void
 pl_common_free (void)
 {
-    g_object_unref(play16_pixbuf);
-    g_object_unref(pause16_pixbuf);
-    g_object_unref(buffering16_pixbuf);
+    if (play16_pixbuf) {
+        g_object_unref(play16_pixbuf);
+    }
+    if (pause16_pixbuf) {
+        g_object_unref(pause16_pixbuf);
+    }
+    if (buffering16_pixbuf) {
+        g_object_unref(buffering16_pixbuf);
+    }
 }
 
 static col_info_t *
@@ -153,19 +165,6 @@ create_col_info (DdbListview *listview, int id) {
     info->new_cover_size = -1;
     info->listview = listview;
     return info;
-}
-
-static gboolean
-coverart_release_cb (void *user_data) {
-    col_info_t *info = user_data;
-    g_object_unref(info->listview->list);
-    free(user_data);
-    return FALSE;
-}
-
-static void
-coverart_release (void *user_data) {
-    g_idle_add(coverart_release_cb, user_data);
 }
 
 void
@@ -187,14 +186,11 @@ pl_common_free_col_info (void *data) {
     if (info->sort_bytecode) {
         free (info->sort_bytecode);
     }
-    if (pl_common_is_album_art_column(info)) {
-        g_object_ref(info->listview->list);
-        queue_cover_callback(coverart_release, info);
-        if (info->cover_load_timeout_id) {
-            g_source_remove(info->cover_load_timeout_id);
-            info->cover_load_timeout_id = 0;
-        }
+    if (info->cover_load_timeout_id) {
+        g_source_remove(info->cover_load_timeout_id);
+        info->cover_load_timeout_id = 0;
     }
+    free (info);
 }
 
 #define COL_CONF_BUFFER_SIZE 10000
@@ -214,7 +210,7 @@ pl_common_rewrite_column_config (DdbListview *listview, const char *name) {
         col_info_t *info;
         int color_override;
         GdkColor color;
-        ddb_listview_column_get_info (listview, i, &title, &width, &align, NULL, &color_override, &color, (void **)&info);
+        ddb_listview_column_get_info (listview, i, &title, &width, &align, NULL, NULL, &color_override, &color, (void **)&info);
 
         char *esctitle = parser_escape_string (title);
         char *escformat = info->format ? parser_escape_string (info->format) : NULL;
@@ -354,7 +350,7 @@ static void
 cover_draw_anything (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr, void *user_data) {
     GdkPixbuf *pixbuf = get_cover_art(it, -1, -1, NULL, NULL);
     if (!pixbuf) {
-        pixbuf = get_cover_art(it, width, width, cover_invalidate, user_data);
+        pixbuf = get_cover_art(it, width, height, cover_invalidate, user_data);
     }
     if (pixbuf) {
         cover_draw_cairo(pixbuf, x, min_y, max_y, width, height, cr, CAIRO_FILTER_FAST);
@@ -364,7 +360,7 @@ cover_draw_anything (DB_playItem_t *it, int x, int min_y, int max_y, int width, 
 
 static void
 cover_draw_exact (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr, void *user_data) {
-    GdkPixbuf *pixbuf = get_cover_art(it, width, width, cover_invalidate, user_data);
+    GdkPixbuf *pixbuf = get_cover_art(it, width, height, cover_invalidate, user_data);
     if (!pixbuf) {
         pixbuf = get_cover_art(it, -1, -1, NULL, NULL);
     }
@@ -375,7 +371,7 @@ cover_draw_exact (DB_playItem_t *it, int x, int min_y, int max_y, int width, int
 }
 
 void
-pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height) {
+pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int min_y, int next_y, int x, int y, int width, int height) {
     int art_width = width - ART_PADDING_HORZ * 2;
     int art_height = height - ART_PADDING_VERT * 2;
     if (art_width < 8 || art_height < 8 || !it) {
@@ -385,7 +381,7 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it,
     col_info_t *info = user_data;
 
     int art_x = x + ART_PADDING_HORZ;
-    int min_y = (pinned ? listview->grouptitle_height : y) + ART_PADDING_VERT;
+    min_y += ART_PADDING_VERT;
     if (info->cover_size == art_width) {
         cover_draw_exact(it, art_x, min_y, next_y, art_width, art_height, cr, user_data);
     }
@@ -410,7 +406,7 @@ convert_escapetext_to_pango_attrlist (char *text, float *fg, float *bg, float *h
     PangoAttrList *lst = pango_attr_list_new ();
     char *pin = text;
     int x,y,a=0;
-    PangoAttribute *attr;
+    PangoAttribute *attr = NULL;
     int index=0;
     while (*pin) {
         int pos=0;
@@ -419,10 +415,10 @@ convert_escapetext_to_pango_attrlist (char *text, float *fg, float *bg, float *h
             memmove(pin, pin+pos, strlen(pin+pos)+1);
             a += y;
 
-            if (a == 0) {
+            if (attr && a == 0) {
                 attr->end_index = index+1;
                 pango_attr_list_insert (lst, attr);
-            } else if (y >= 1 && y <= 3) {
+            } else if (a != 0 && y >= 1 && y <= 3) {
                 const float blend[] = {.50f, .25f, 0};
                 int r = CHANNEL_BLENDR(highlight[0], fg[0], blend[y-1]) * 65535;
                 int g = CHANNEL_BLENDR(highlight[1], fg[1], blend[y-1]) * 65535;
@@ -430,7 +426,7 @@ convert_escapetext_to_pango_attrlist (char *text, float *fg, float *bg, float *h
 
                 attr = pango_attr_foreground_new (r, g, b);
                 attr->start_index = index;
-            } else if (y >= -3 && y <= -1) {
+            } else if (a != 0 && y >= -3 && y <= -1) {
                 const float blend[] = {.30f, .60f, .80f};
                 int r = CHANNEL_BLENDR(fg[0], bg[0], blend[-y-1]) * 65535;
                 int g = CHANNEL_BLENDR(fg[1], bg[1], blend[-y-1]) * 65535;
@@ -454,7 +450,7 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
     DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
 
     if (!gtkui_unicode_playstate && it && it == playing_track && info->id == DB_COLUMN_PLAYING) {
-        int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
+        int paused = deadbeef->get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
         GdkPixbuf *pixbuf;
         if (paused) {
@@ -466,15 +462,18 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
         else {
             pixbuf = buffering16_pixbuf;
         }
-        gdk_cairo_set_source_pixbuf (cr, pixbuf, x + width/2 - 8, y + height/2 - 8);
-        cairo_rectangle (cr, x + width/2 - 8, y + height/2 - 8, 16, 16);
-        cairo_fill (cr);
+
+        if (pixbuf) {
+            gdk_cairo_set_source_pixbuf (cr, pixbuf, x + width/2 - 8, y + height/2 - 8);
+            cairo_rectangle (cr, x + width/2 - 8, y + height/2 - 8, 16, 16);
+            cairo_fill (cr);
+        }
     }
     else if (it) {
         char text[1024] = "";
-        int is_dimmed;
+        int is_dimmed = 0;
         if (it == playing_track && info->id == DB_COLUMN_PLAYING) {
-            int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
+            int paused = deadbeef->get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED;
             int buffering = !deadbeef->streamer_ok_to_read (-1);
             if (paused) {
                 strcpy (text, "||");
@@ -646,7 +645,7 @@ find_popup (GtkWidget *widget)
 
 static DdbListview *
 get_context_menu_listview (GtkMenuItem *menuitem) {
-    return DDB_LISTVIEW (g_object_get_data (G_OBJECT (gtk_widget_get_parent (GTK_WIDGET (menuitem))), "ps"));
+    return DDB_LISTVIEW (g_object_get_data (G_OBJECT (find_popup (GTK_WIDGET (menuitem))), "ps"));
 }
 
 static int
@@ -912,7 +911,7 @@ popup_menu_position_func (GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gp
     }
     if (it) {
         // get Y position
-        *y = ddb_listview_get_row_pos (lv, idx) + winy;
+        *y = ddb_listview_get_row_pos (lv, idx, NULL) + winy;
         lv->binding->unref (it);
     }
     else {
@@ -954,8 +953,7 @@ list_empty_region_context_menu (DdbListview *listview) {
             G_CALLBACK (on_paste_activate),
             NULL);
 
-    gtk_menu_attach_to_widget (GTK_MENU (playlist_menu), GTK_WIDGET (listview), NULL);
-    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+    gtk_menu_popup_at_pointer (GTK_MENU (playlist_menu), NULL);
 }
 
 void
@@ -1265,8 +1263,34 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
             G_CALLBACK (properties_activate),
             NULL);
 
-    gtk_menu_attach_to_widget (GTK_MENU (playlist_menu), GTK_WIDGET (listview), NULL);
-    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+    gtk_menu_popup_at_pointer (GTK_MENU (playlist_menu), NULL);
+}
+
+static char *
+strtok_stringdelim_r (char *str, const char *delim,  char **next_start)
+{
+    char *end;
+
+    if (*next_start) {
+        str = *next_start;
+    }
+
+    if (!str || str[0] == 0) {
+        *next_start = NULL;
+        return NULL;
+    }
+
+    char *next = strstr(str, delim);
+
+    if (next) {
+        *next = 0;
+        *next_start = next + strlen(delim);
+    }
+    else {
+        *next_start = str + strlen(str);
+    }
+
+    return str;
 }
 
 static void
@@ -1275,20 +1299,50 @@ groups_changed (DdbListview *listview, const char *format)
     if (!format) {
         return;
     }
-    if (listview->group_format) {
-        free(listview->group_format);
+    DdbListviewGroupFormat *fmt = listview->group_formats;
+    while (fmt) {
+        DdbListviewGroupFormat *next_fmt = fmt->next;
+        free (fmt->format);
+        free (fmt->bytecode);
+        free (fmt);
+        fmt = next_fmt;
     }
-    if (listview->group_title_bytecode) {
-        free(listview->group_title_bytecode);
-        listview->group_title_bytecode = NULL;
-    }
+    listview->group_formats = NULL;
     char *esc_format = parser_escape_string (format);
     char quoted_format[strlen (esc_format) + 3];
     snprintf (quoted_format, sizeof (quoted_format), "\"%s\"", esc_format);
     listview->binding->groups_changed (quoted_format);
     free (esc_format);
-    listview->group_format = strdup (format);
-    listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
+
+    char *mutable_format = strdup (format);
+    fmt = NULL;
+    char *saveptr = NULL;
+    char *token;
+    while ((token = strtok_stringdelim_r(mutable_format, SUBGROUP_DELIMITER, &saveptr)) != NULL) {
+        if (strlen(token) > 0) {
+            DdbListviewGroupFormat *new_fmt = calloc(sizeof(DdbListviewGroupFormat), 1);
+            if (!fmt) {
+                listview->group_formats = new_fmt;
+                fmt = listview->group_formats;
+            }
+            else {
+                fmt->next = new_fmt;
+                fmt = fmt->next;
+            }
+            fmt->format = strdup (token);
+            fmt->bytecode = deadbeef->tf_compile (fmt->format);
+        }
+    }
+    free (mutable_format);
+
+    // always have at least one
+    if (!listview->group_formats) {
+        listview->group_formats = calloc(sizeof(DdbListviewGroupFormat), 1);
+        fmt = listview->group_formats;
+        fmt->format = strdup ("");
+        fmt->bytecode = deadbeef->tf_compile (fmt->format);
+    }
+
     ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_LIST);
 }
 
@@ -1386,7 +1440,7 @@ list_handle_keypress (DdbListview *ps, int keyval, int state, int iter) {
     if (state & GDK_SHIFT_MASK) {
         if (cursor != prev) {
             int newscroll = ps->scrollpos;
-            int cursor_scroll = ddb_listview_get_row_pos (ps, cursor);
+            int cursor_scroll = ddb_listview_get_row_pos (ps, cursor, NULL);
             if (cursor_scroll < ps->scrollpos) {
                 newscroll = cursor_scroll;
             }
@@ -1468,6 +1522,19 @@ on_group_by_artist_activate            (GtkMenuItem     *menuitem,
     groups_changed (get_context_menu_listview (menuitem), "%artist%");
 }
 
+
+static void
+_make_format (char *format, size_t size, DdbListviewGroupFormat *fmt) {
+    format[0] = 0;
+    while (fmt) {
+        if (format[0] != 0) {
+            strncat(format, SUBGROUP_DELIMITER, size - strlen(format) - 1);
+        }
+        strncat(format, fmt->format, size - strlen(format) - 1);
+        fmt = fmt->next;
+    }
+}
+
 static void
 on_group_by_custom_activate            (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
@@ -1478,12 +1545,11 @@ on_group_by_custom_activate            (GtkMenuItem     *menuitem,
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
     GtkWidget *entry = lookup_widget (dlg, "format");
-    if (listview->group_format) {
-        gtk_entry_set_text (GTK_ENTRY (entry), listview->group_format);
-    }
-    else {
-        gtk_entry_set_text (GTK_ENTRY (entry), "");
-    }
+    char format[1024];
+
+    _make_format(format, sizeof (format), listview->group_formats);
+
+    gtk_entry_set_text (GTK_ENTRY (entry), format);
 //    gtk_window_set_title (GTK_WINDOW (dlg), "Group by");
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
 
@@ -1597,7 +1663,7 @@ pl_common_load_column_config (DdbListview *listview, const char *key) {
             inf->sort_format = strdup (ssort_format);
             inf->sort_bytecode = deadbeef->tf_compile (inf->sort_format);
         }
-        ddb_listview_column_append (listview, stitle, iwidth, ialign, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, icolor_override, gdkcolor, inf);
+        ddb_listview_column_append (listview, stitle, iwidth, ialign, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, inf->id == DB_COLUMN_ALBUM_ART, icolor_override, gdkcolor, inf);
     }
     json_decref(root);
     return 0;
@@ -1688,7 +1754,7 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
         int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
         DdbListview *listview = get_context_menu_listview (menuitem);
         int before = get_context_menu_column (menuitem);
-        ddb_listview_column_insert (listview, before, title, 100, align, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, clr_override, clr, inf);
+        ddb_listview_column_insert (listview, before, title, 100, align, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, inf->id == DB_COLUMN_ALBUM_ART, clr_override, clr, inf);
         ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL);
     }
     gtk_widget_destroy (dlg);
@@ -1715,7 +1781,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
     col_info_t *inf;
     int color_override;
     GdkColor color;
-    int res = ddb_listview_column_get_info (listview, active_column, &title, &width, &align_right, NULL, &color_override, &color, (void **)&inf);
+    int res = ddb_listview_column_get_info (listview, active_column, &title, &width, &align_right, NULL, NULL, &color_override, &color, (void **)&inf);
     if (res == -1) {
         trace ("attempted to edit non-existing column\n");
         return;
@@ -1766,7 +1832,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         gtk_color_button_get_color (GTK_COLOR_BUTTON (lookup_widget (dlg, "color")), &clr);
 
         init_column (inf, id, format, sort_format);
-        ddb_listview_column_set_info (listview, active_column, title, width, align, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, clr_override, clr, inf);
+        ddb_listview_column_set_info (listview, active_column, title, width, align, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, inf->id == DB_COLUMN_ALBUM_ART, clr_override, clr, inf);
 
         ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST);
     }
@@ -1896,8 +1962,7 @@ pl_common_header_context_menu (DdbListview *ps, int column) {
     g_object_set_data (G_OBJECT (menu), "ps", ps);
     g_object_set_data (G_OBJECT (menu), "column", GINT_TO_POINTER (column));
 
-    gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (ps), NULL);
-    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 3, gtk_get_current_event_time());
+    gtk_menu_popup_at_pointer (GTK_MENU (menu), NULL);
 }
 
 void
@@ -1914,22 +1979,30 @@ pl_common_add_column_helper (DdbListview *listview, const char *title, int width
     inf->sort_format = strdup (sort_format);
     inf->sort_bytecode = deadbeef->tf_compile (inf->sort_format);
     GdkColor color = { 0, 0, 0, 0 };
-    ddb_listview_column_append (listview, title, width, align_right, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, 0, color, inf);
+    ddb_listview_column_append (listview, title, width, align_right, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, inf->id == DB_COLUMN_ALBUM_ART, 0, color, inf);
 }
 
 int
-pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int size) {
-    if (!listview->group_format || !listview->group_format[0]) {
+pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int size, int index) {
+    if (!listview->group_formats->format || !listview->group_formats->format[0]) {
         return -1;
     }
-    if (listview->group_title_bytecode) {
+    DdbListviewGroupFormat *fmt = listview->group_formats;
+    while (index > 0) {
+        index--;
+        fmt = fmt->next;
+        if (fmt == NULL) {
+            return -1;
+        }
+    }
+    if (fmt->bytecode) {
         ddb_tf_context_t ctx = {
             ._size = sizeof (ddb_tf_context_t),
             .it = it,
             .plt = deadbeef->plt_get_curr (),
             .flags = DDB_TF_CONTEXT_NO_DYNAMIC,
         };
-        deadbeef->tf_eval (&ctx, listview->group_title_bytecode, str, size);
+        deadbeef->tf_eval (&ctx, fmt->bytecode, str, size);
         if (ctx.plt) {
             deadbeef->plt_unref (ctx.plt);
             ctx.plt = NULL;
@@ -1944,14 +2017,18 @@ pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int s
             *lb = 0;
         }
     }
-    return 0;
+    return fmt->next == NULL ? 0 : 1;
 }
 
 void
-pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height) {
-    if (listview->group_format && listview->group_format[0]) {
+pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height, int group_depth) {
+    if (listview->group_formats->format && listview->group_formats->format[0]) {
         char str[1024] = "";
-        if (listview->group_title_bytecode) {
+        DdbListviewGroupFormat *fmt = listview->group_formats;
+        while (group_depth--) {
+            fmt = fmt->next;
+        }
+        if (fmt->bytecode) {
             ddb_tf_context_t ctx = {
                 ._size = sizeof (ddb_tf_context_t),
                 .it = it,
@@ -1959,7 +2036,7 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
                 .flags = DDB_TF_CONTEXT_NO_DYNAMIC,
                 .iter = iter,
             };
-            deadbeef->tf_eval (&ctx, listview->group_title_bytecode, str, sizeof (str));
+            deadbeef->tf_eval (&ctx, fmt->bytecode, str, sizeof (str));
             if (ctx.plt) {
                 deadbeef->plt_unref (ctx.plt);
                 ctx.plt = NULL;
@@ -2022,13 +2099,43 @@ pl_common_col_sort (int sort_order, int iter, void *user_data) {
 }
 
 void
-pl_common_set_group_format (DdbListview *listview, char *format_conf) {
+pl_common_set_group_format (DdbListview *listview, const char *format_conf, const char *artwork_level_conf,  const char *subgroup_padding_conf) {
     deadbeef->conf_lock ();
     char *format = strdup (deadbeef->conf_get_str_fast (format_conf, ""));
+    listview->artwork_subgroup_level = deadbeef->conf_get_int (artwork_level_conf, 0);
+    listview->subgroup_title_padding = deadbeef->conf_get_int (subgroup_padding_conf, 10);
     deadbeef->conf_unlock ();
     parser_unescape_quoted_string (format);
-    listview->group_format = format;
-    listview->group_title_bytecode = deadbeef->tf_compile (listview->group_format);
+    listview->group_formats = NULL;
+
+    DdbListviewGroupFormat *fmt = NULL;
+    char *saveptr = NULL;
+    char *token;
+    while ((token = strtok_stringdelim_r(format, SUBGROUP_DELIMITER, &saveptr)) != NULL) {
+        if (strlen(token) > 0) {
+            DdbListviewGroupFormat *new_fmt = calloc(sizeof(DdbListviewGroupFormat), 1);
+            if (!fmt) {
+                listview->group_formats = new_fmt;
+                fmt = listview->group_formats;
+            }
+            else {
+                fmt->next = new_fmt;
+                fmt = fmt->next;
+            }
+            fmt->format = strdup (token);
+            fmt->bytecode = deadbeef->tf_compile (fmt->format);
+        }
+    }
+
+    free (format);
+
+    // always have at least one
+    if (!listview->group_formats) {
+        listview->group_formats = calloc(sizeof(DdbListviewGroupFormat), 1);
+        fmt = listview->group_formats;
+        fmt->format = strdup ("");
+        fmt->bytecode = deadbeef->tf_compile (fmt->format);
+    }
 }
 
 static int

@@ -47,7 +47,6 @@ extern int gtkui_italic_selected_tracks;
 extern int gtkui_italic_tracks;
 extern int gtkui_italic_current_track;
 
-extern int gtkui_is_retina;
 extern int gtkui_unicode_playstate;
 extern int gtkui_disable_seekbar_overlay;
 
@@ -166,7 +165,7 @@ void
 gtkui_run_preferences_dlg (void);
 
 int
-gtkui_get_gui_refresh_rate ();
+gtkui_get_gui_refresh_rate (void);
 
 void
 gtkui_titlebar_tf_init (void);
@@ -183,4 +182,18 @@ gtkui_mainwin_init(void);
 void
 gtkui_mainwin_free(void);
 
+static void
+init_widget_layout (void);
+
+enum GtkuiFileChooserType {
+    GTKUI_FILECHOOSER_OPENFILE,
+    GTKUI_FILECHOOSER_OPENFOLDER,
+    GTKUI_FILECHOOSER_LOADPLAYLIST,
+    GTKUI_FILECHOOSER_SAVEPLAYLIST
+};
+
+GSList *
+show_file_chooser (const gchar          *title,
+                   enum GtkuiFileChooserType type,
+                   gboolean             select_multiple);
 #endif

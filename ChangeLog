@@ -1,3 +1,168 @@
+version 1.8.4
+	Soundtouch plugin has been updated, and is now included in the releases
+	Added %last_modified% title formatting keyword (Cristian Ciocaltea)
+	Fixed stack overflow bug in converter
+	Fixed buffer overflow bug in mp3 parser
+	Fixed handling of leading forward shash character in zipper file names
+	Fixed handling user-specified file mask in artwork plugin
+	Fixed CBR MP3 scanning performance
+	Fixed stack overflow in title formatting tint range calculation
+	Fixed pulseaudio plugin configuration backwards compatibility issue
+	Fixed last.fm scrobbling of streaming shoutcast tracks
+	Fixed deadlock when loading cuesheets which recursively reference themselves
+	Fixed a false-positive when detecting free format MP3 files
+	Fixed skipping unsupported fields in cuesheets
+	Fixed a regression which caused MP3 tag editing to crash when text can't be represented as CP1252
+	Fixed playback of certain network streams
+	Fixed handling of ID3v2 COMM frame content description data
+
+version 1.8.3
+	Fixed a CD Text reading issue
+	Added title formatting functions: len2, longer, longest, padcut, padcut_right, progress, progress2, right, roman, rot13, shortest, strchr, stricmp, strrchr, strstr, substr, tab, trim (esainane@github)
+	Fixed a bunch of memory bugs in title formatting (esainane@github)
+	Added optional automatic playlist sorting (kpcee@github)
+	Added title formatting value %playback_time_ms% (nonoo@github)
+	Added an option to start deadbeef hidden / minimized to tray (kpcee@github)
+	Fixed %_path_raw% to always produce an URI (Evgeny Kravchenko)
+	Fixed rounding of %selection_playback_time% (kpcee@github)
+	Fixed a memory leak in AAC plugin
+	Fixed crash when removing playlist from UI layout (Nicolai Syvertsen)
+	Added logging of plugin load errors
+	Added an option to replaygain scan all unscanned files in playlist (kpcee@github)
+	Added detecting and ignoring freeformat MP3 files
+	Removed logging of playlist load debug messages
+	Fixed playback stuttering after deleting files
+	Fixed deleting files using playlist tab context menu
+	Fixed saving playlist after deleting files
+	Fixed saving playlist after replaygain scan
+	Fixed a bunch of crashes and memory leaks when opening playlist context menu (Christian Boxdörfer)
+	Fixed a performance issue when seeking in MP3 files
+	Fixed a bunch of issues with Repeat and Shuffle implementation
+	Fixed handling of in-stream HTTP headers for streaming audio
+	Fixed a bunch of bugs in HTTP stream interruption
+	Fixed semicolon-separated values handling in track properties dialog
+	Fixed choosing next track when the currently playing track was removed
+	Fixed seeking out of bounds using hotkeys
+	Fixed saving opus header gain when no replaygain info is present
+	Improved remove from disk dialog (kpcee@github)
+	Fixed ID3v2 TLAN (LANGUAGE) and TMED (MEDIA TYPE) mapping to be consistent with other formats
+	Fixed replaygain bug causing it to be ON by default
+	Fixed bug in elapsed time calculation in replaygain scanner UI
+	Fixed a stack overflow bug when writing ID3v1
+	Added ID3v2 POPM rating support, both reading and writing
+	Fixed an issue with splitters not reaching the view edges
+	Fixed single-quote escaping issue in ShellExec
+	Fixed Add Location dialog not adding URLs
+	Fixed ffmpeg file handle leak
+	Added remove playlist confirmation dialog in GTK UI (kpcee@github)
+	Fixed DTS channel count metadata
+	Fixed loading MP3 album art of APIC type=0 (Other)
+	Added album art fallback to png (jakesfr@github)
+	Fixed ALSA hanging after audio format change
+	Fixed handling "ICY 200 OK" status in vfs-curl (thesame)
+	Improved EQ UI layout in the DSP settings
+	Fixed streamer being stuck in buffering mode when trying to play deleted files
+
+version 1.8.2
+	Volume control from command line supports increment syntax (by eauno1re@github)
+	Fixed writing multi-value fields into FLAC tags
+	Map ALBUMARTIST field to ALBUM ARTIST field in FLAC
+	Fixed sound output plugin selection bug in GTK UI
+	Fixed crash when opening files of 0 size
+	Fixed UI freeze when nullout plugin is selected
+	Fixed a regression in restoring the last selected folder in GTK file chooser
+
+version 1.8.1
+	Fixed audio freeze while sorting
+	Fixed crash when resuming playback of a file that's been deleted
+	Fixed error messages when loading PLS playlist with relative paths
+	Fixed adjusting shuffle queue after a user initiated track change
+	Write Album Artist field into Ogg files as "ALBUMARTIST"
+	Load external album covers before embedded
+	Removed the unmaintained sndio plugin
+	Fixed localization of status bar
+	Added experimental subgrouping support in playlist, via using `|||` separator for each subsequent nested group, when using Group by -> Custom (by ToadKing)
+	Added new title formatting functions `$stripprefix` and `$swapprefix` (by ToadKing)
+	Changed supereq DSP configuration to be more compact horizontally and to have more slider precision
+	Updated Repeat and Shuffle hotkey names to match the menus
+	Fixed rounding bug of total playtime in statusbar
+	Fixed design mode splitter handles dragging beyond the window edges
+	Fixed setting album art size based on larger dimension (by ToadKing)
+	Fixed regression causing custom layouts with splitters look wrong
+	Added FLAC plugin option to ignore corrupted stream errors
+	Fixed supereq reentrancy bug, potentially causing crash after changing audio output configuration
+	Fixed reloading replaygain info
+	Fixed writing replaygain info to APEv2 tags
+
+version 1.8.0
+	added Opus support
+	added ReplayGain Scanner
+	added proper tracks+cue support (in cooperation with wdlkmpx)
+	added/improved MP4 tag reading and writing
+	added loading embedded album art from MP4 files
+	added File Copy and File Move converter presets
+	added Log Window displaying error information from various sources (in cooperation with Saivert)
+	improved replaygain configuration and runtime behavior
+	fixed replaygain support in Converter
+	improved reading, storing and editing multi-value tag fields
+	added GBS support to Game_Music_Emu (kode54)
+	added SGC support to Game_Music_Emu
+	fixed clipping prevention for mp3, replaygain is applied before clipping
+	fixed vfz_zip handling of colons in filenames
+	fixed wma decoding precision error
+	fixed issues with playing very short files
+	fixed a number of known issues in the Converter
+	UI splitter proportional resizing (cboxdoerfer)
+	added to title formatting: $num, %_path_raw%, %_playlist_name%, $replace, $upper, $lower, %playback_bitrate%, $repeat, $insert, $len, <<<>>>, >>><<<, $pad, $pad_right (saivert)
+	added support for dim and bright text in playlist columns (saivert)
+	improved detecting GTK theme colors for custom widgets
+	added new multiline tag editing dialog for individual values
+	added Copy&Paste in playlist (cboxdoerfer)
+	added localization support for plugin UI
+	added Drag'n'drop support from deadbeef to other applications (cboxdoerfer)
+	fixed a number of ogg file tagging issues (kode54)
+	fixed multiple crash bugs in AdPlug plugin
+	added UMX module support, ported from foo_dumb
+	updated Game_Music_Emu and VGMplay (kode54)
+	added an option to Converter, to copy the files if the format doesn't change
+	added a configuration option `gtkui.start_hidden`, to start the player with hidden main window (Radics Péter)
+	added a converter option to retag the files after copying
+	added a context menu action for duplicating playlists (Alex Couture-Beil)
+	fixed a number of fadeout issues in Game_Music_Emu
+	fixed musepack seeking issue
+	fixed loading album covers from ID3v2.2
+	fixed mp3 bitrate calculation bug for incomplete files with LAME header
+	improved large file support with many internal values converted to use 64 bits for sample counts
+	use title formatting for displaying status bar text
+	added %seltime% title formatting value, for displaying playback time of selected tracks (Thomas Ross)
+	added reading SONGWRITER field from cue sheets (wdlkmpx)
+	added playlist group spacing configuration (saivert)
+	improved mp3 USLT lyrics support (in copperation with Ignat Loskutov)
+	improved playlist browser configurability (Jakub Wasylków)
+	added hotkey action for opening track properties (Jakub Wasylków)
+	added hotkey actions for add/remove/toggle in playqueue (Jakub Wasylków)
+	added --volume command line option (Saivert)
+	improved ISRC and subindex handling in CUE (wdlkmpx)
+	added hotkey actions to move selected tracks up/down (Jakub Wasylków)
+	fixed memory access bugs in config handling and supereq (github/tsowa)
+	added charset detection based on the whole ID3v2 tag content
+	added automatic charset detection for cdtext (Jakub Wasylków)
+	added configuration for output samplerate setting
+	removed fast scanning mp3 option, since it was too inaccurate
+	improved detection of PSF files, to disambiguate them against other files which use the same extension
+	added Edit In Place and Crop options to the track properties menu
+	fixed WildMidi playback of some MID files playing more than 1024 simultaneous notes
+	fixed playing stereo APE files with single-channel silence
+	added wavpack version 5 support with DSD
+	fixed performance issue when reading AdPlug's HSC files
+	fixed loading audio files from GVFS volumes
+	fixed handling of cuesheets in zip files
+	fixed writing tags into tiny ogg files
+	fixed handling FLAC files with huge block sizes over 100KB
+	replaced mp3 parsing code with the new library, which is more reliable and tested, and can handle even more obscure mp3 files
+	renamed Looping and Order menus to Repeat and Shuffle, respectively
+	fixed loading larger Songlenths.txt in sid plugin, and added support for Songlengths.md5
+
 version 0.7.2 
 	fixed title formatting %filename% crash
 	fixed streaming of aac content in mp4 container

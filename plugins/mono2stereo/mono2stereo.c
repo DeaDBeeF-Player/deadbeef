@@ -132,8 +132,8 @@ m2s_get_param (ddb_dsp_context_t *ctx, int p, char *val, int sz) {
 }
 
 static const char settings_dlg[] =
-    "property \"Left mix:\" hscale[0,1,0.001] 0 1;\n"
-    "property \"Right mix:\" hscale[0,1,0.001] 1 1;\n"
+    "property \"Left mix\" hscale[0,1,0.001] 0 1;\n"
+    "property \"Right mix\" hscale[0,1,0.001] 1 1;\n"
 ;
 
 static DB_dsp_t plugin = {
