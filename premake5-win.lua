@@ -4,6 +4,12 @@ workspace "deadbeef"
    configurations { "debug", "release", "debug32", "release32" }
    platforms { "Windows" }
    defaultplatform "Windows"
+
+newoption {
+  trigger = "version-override",
+  description = "override version with today's date",
+}
+
 defines {
     "VERSION=\"" .. get_version() .. "\"",
     "_GNU_SOURCE",

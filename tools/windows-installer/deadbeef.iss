@@ -1,26 +1,27 @@
-#define MyAppName "DeaDBeeF for Windows"
+#define MyAppName "DeaDBeeF"
 #define MyAppNameShort "DeaDBeeF"
 ; Version based on date
-#define MyAppVersion GetDateTimeString('yyyy-mm-dd', '', '');
+; #define MyAppVersion GetDateTimeString('yyyy-mm-dd', '', '');
 ; Version defined manually
 ;#define MyAppVersion "1.8.0"
 ; Version saved in deadbeef source ('PORTABLE' file)
-;#define VerFile FileOpen("../../PORTABLE")
-;#define MyAppVersion FileRead(VerFile)
-;#expr FileClose(VerFile)
+#define VerFile FileOpen("../../PORTABLE_VERSION")
+#define MyAppVersion FileRead(VerFile)
+#expr FileClose(VerFile)
 ;#undef VerFile
 
 ;#define DEBUG
 
-#define MyAppPublisher "kuba_160"
-#define MyAppURL "https://deadbeef-for-windows.github.io/"
+#define MyAppPublisher "DeaDBeeF"
+#define MyAppURL "https://deadbeef.sourceforge.net"
 #define MyAppExeName "deadbeef.exe"
 
 #ifdef DEBUG
 #define BuildPath "..\..\bin\debug"
-#define MyAppVersion MyAppVersion + "-DEBUG"
+#define OutputSuffix "windows-x86_64_DEBUG"
 #else
 #define BuildPath "..\..\bin\release"
+#define OutputSuffix "windows-x86_64"
 #endif
 #define IconPath "deadbeef.bmp"
 
@@ -41,7 +42,7 @@ DefaultDirName={pf}\DeaDBeeF
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 DisableDirPage=no
-OutputBaseFilename=deadbeef-{#MyAppVersion}
+OutputBaseFilename=deadbeef-{#MyAppVersion}-{#OutputSuffix}
 Compression=lzma
 SolidCompression=yes
 WizardSmallImageFile=deadbeef.bmp
