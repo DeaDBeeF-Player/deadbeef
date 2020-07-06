@@ -1518,6 +1518,8 @@
 		2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D62C0C51E4C9ACA005F9482 /* streamreader.c */; };
 		2D7DE4A61E64CD7700AA0F83 /* dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 4DC96E6D1E4CC9670093CFD3 /* dsp.c */; };
 		2D7F38031B2858AC00692A7B /* JunklibTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D7F38021B2858AC00692A7B /* JunklibTests.m */; };
+		2D8030CD24B261A400539F9F /* MediaLibraryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8030CC24B261A400539F9F /* MediaLibraryItem.h */; };
+		2D8030CF24B261AA00539F9F /* MediaLibraryWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8030CE24B261A900539F9F /* MediaLibraryWindowController.h */; };
 		2D828E5419E5679800EE874F /* Search.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D828E5319E5679800EE874F /* Search.xib */; };
 		2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D828E5919E56B4D00EE874F /* SearchViewController.h */; };
 		2D828E5C19E56B4D00EE874F /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D828E5A19E56B4D00EE874F /* SearchViewController.m */; };
@@ -4987,6 +4989,8 @@
 		2D7C37EC1B2C40520029DE0A /* libogglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libogglib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libvorbislib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7F38021B2858AC00692A7B /* JunklibTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JunklibTests.m; sourceTree = "<group>"; };
+		2D8030CC24B261A400539F9F /* MediaLibraryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaLibraryItem.h; sourceTree = "<group>"; };
+		2D8030CE24B261A900539F9F /* MediaLibraryWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaLibraryWindowController.h; sourceTree = "<group>"; };
 		2D828E5319E5679800EE874F /* Search.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Search.xib; sourceTree = "<group>"; };
 		2D828E5919E56B4D00EE874F /* SearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchViewController.h; sourceTree = "<group>"; };
 		2D828E5A19E56B4D00EE874F /* SearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchViewController.m; sourceTree = "<group>"; };
@@ -10898,7 +10902,9 @@
 				2DA30B7D23F1C9A3003D22E3 /* PropertySheetContentView.h */,
 				2DA30B7E23F1C9A3003D22E3 /* PropertySheetContentView.m */,
 				2D887BE424B1C86D0078392F /* MediaLibraryItem.m */,
+				2D8030CC24B261A400539F9F /* MediaLibraryItem.h */,
 				2D887BE524B1C86D0078392F /* MediaLibraryWindowController.m */,
+				2D8030CE24B261A900539F9F /* MediaLibraryWindowController.h */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -12212,6 +12218,7 @@
 				2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
 				2DA273782406ED4100FB9BE1 /* GuiPreferencesWindowController.h in Headers */,
+				2D8030CF24B261AA00539F9F /* MediaLibraryWindowController.h in Headers */,
 				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
 				2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */,
 				2DEF494419C4DB4100B718C1 /* PlaylistView.h in Headers */,
@@ -12249,6 +12256,7 @@
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
 				2DF55C432270FF7E002C44DC /* ScriptablePropertySheetDataSource.h in Headers */,
 				2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */,
+				2D8030CD24B261A400539F9F /* MediaLibraryItem.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
 				2DA30E7424032550001BAB8A /* NetworkPreferencesViewController.h in Headers */,
 				2D9BD6792405A81600C02D60 /* SoundPreferencesViewController.h in Headers */,
