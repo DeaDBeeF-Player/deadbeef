@@ -77,7 +77,9 @@ extern DB_functions_t *deadbeef;
 @interface MainWindowController () {
     NSTimer *_updateTimer;
     char *_titlebar_playing_script;
+    char *_titlebar_playing_subtitle_script;
     char *_titlebar_stopped_script;
+    char *_titlebar_stopped_subtitle_script;
     char *_statusbar_playing_script;
     int _prevSeekBarPos;
 }
@@ -328,8 +330,14 @@ static char sb_text[512];
     deadbeef->conf_get_str ("cocoaui.titlebar_playing", DEFAULT_TITLEBAR_PLAYING_VALUE, script, sizeof (script));
     _titlebar_playing_script = deadbeef->tf_compile (script);
 
+    deadbeef->conf_get_str ("cocoaui.titlebar_subtitle_playing", DEFAULT_TITLEBAR_SUBTITLE_PLAYING_VALUE, script, sizeof (script));
+    _titlebar_playing_subtitle_script = deadbeef->tf_compile (script);
+
     deadbeef->conf_get_str ("cocoaui.titlebar_stopped", DEFAULT_TITLEBAR_STOPPED_VALUE, script, sizeof (script));
     _titlebar_stopped_script = deadbeef->tf_compile (script);
+
+    deadbeef->conf_get_str ("cocoaui.titlebar_stopped", DEFAULT_TITLEBAR_SUBTITLE_STOPPED_VALUE, script, sizeof (script));
+    _titlebar_stopped_subtitle_script = deadbeef->tf_compile (script);
 
     _statusbar_playing_script = deadbeef->tf_compile ("$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length%");
 }
@@ -345,14 +353,23 @@ static char sb_text[512];
         .iter = PL_MAIN,
     };
 
-    char buffer[200];
-    deadbeef->tf_eval (&ctx, ctx.it ? _titlebar_playing_script : _titlebar_stopped_script, buffer, sizeof (buffer));
+    char titleBuffer[200];
+    deadbeef->tf_eval (&ctx, ctx.it ? _titlebar_playing_script : _titlebar_stopped_script, titleBuffer, sizeof (titleBuffer));
+
+    char subtitleBuffer[200];
+    deadbeef->tf_eval (&ctx, ctx.it ? _titlebar_playing_subtitle_script : _titlebar_stopped_subtitle_script, subtitleBuffer, sizeof (subtitleBuffer));
 
     if (ctx.it) {
         deadbeef->pl_item_unref (ctx.it);
     }
 
-    self.window.title = [NSString stringWithUTF8String:buffer];
+    // FIXME: 11.0 availability check doesn't work in big sur beta
+    if (@available(macOS 10.16, *)) {
+        self.window.title = [NSString stringWithUTF8String:titleBuffer];
+        self.window.subtitle = [NSString stringWithUTF8String:subtitleBuffer];
+    } else {
+        self.window.title = [NSString stringWithFormat:@"%s%s%s", subtitleBuffer, (titleBuffer[0] && subtitleBuffer[0]) ? " - " : "", titleBuffer];
+    }
 }
 
 @end

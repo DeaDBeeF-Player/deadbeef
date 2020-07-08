@@ -8,8 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-#define DEFAULT_TITLEBAR_PLAYING_VALUE "%artist% - %title% - DeaDBeeF-%_deadbeef_version%"
-#define DEFAULT_TITLEBAR_STOPPED_VALUE "DeaDBeeF-%_deadbeef_version%"
+#define DEFAULT_TITLEBAR_PLAYING_VALUE "DeaDBeeF"
+#define DEFAULT_TITLEBAR_SUBTITLE_PLAYING_VALUE "%artist% - %title%"
+#define DEFAULT_TITLEBAR_STOPPED_VALUE "DeaDBeeF"
+#define DEFAULT_TITLEBAR_SUBTITLE_STOPPED_VALUE "Stopped"
 
 NS_ASSUME_NONNULL_BEGIN
 

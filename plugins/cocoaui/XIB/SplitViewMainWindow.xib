@@ -61,6 +61,9 @@
                         <customView key="view" id="Cf3-e3-qXV" userLabel="DdbSeekbar" customClass="DdbSeekBar">
                             <rect key="frame" x="0.0" y="14" width="163" height="26"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <connections>
+                                <action selector="seekBarAction:" target="-2" id="6xm-l3-mAx"/>
+                            </connections>
                         </customView>
                         <connections>
                             <outlet property="customView" destination="Cf3-e3-qXV" id="8eX-zJ-jDK"/>
@@ -104,6 +107,9 @@
                             <rect key="frame" x="0.0" y="14" width="96" height="21"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="upx-Mu-ZBK"/>
+                            <connections>
+                                <action selector="volumeBarAction:" target="-2" id="Fc2-nX-JZk"/>
+                            </connections>
                         </slider>
                     </toolbarItem>
                 </allowedToolbarItems>
