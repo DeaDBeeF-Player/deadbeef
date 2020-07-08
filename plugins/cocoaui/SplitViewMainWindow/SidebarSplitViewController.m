@@ -22,7 +22,7 @@
 @dynamic splitView ;
 
 - (void)viewDidLoad {
-
+    self.splitView.wantsLayer = YES;
     
     NSSplitViewItem* sidebarItem = [SidebarSplitViewItem splitViewItemWithViewController:self.sidebarViewController];
     sidebarItem.canCollapse = YES;

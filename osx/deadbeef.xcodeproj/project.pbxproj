@@ -1447,6 +1447,8 @@
 		2D747E3A24B64E7600BBB987 /* SidebarSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D747E3624B64E7600BBB987 /* SidebarSplitViewController.m */; };
 		2D747E3B24B64E7600BBB987 /* SidebarSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D747E3724B64E7600BBB987 /* SidebarSplitViewController.h */; };
 		2D747E3D24B64E9300BBB987 /* SplitViewMainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D747E3C24B64E9300BBB987 /* SplitViewMainWindow.xib */; };
+		2D747E4024B6580A00BBB987 /* MainWindowSidebarViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D747E3E24B6580A00BBB987 /* MainWindowSidebarViewController.h */; };
+		2D747E4124B6580A00BBB987 /* MainWindowSidebarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D747E3F24B6580A00BBB987 /* MainWindowSidebarViewController.m */; };
 		2D74926A1CCFF9AE00D3A59E /* ffap.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32F9EA19A63441000FFDE0 /* ffap.dylib */; };
 		2D74926B1CCFF9AE00D3A59E /* mp3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; };
 		2D74926C1CCFF9AE00D3A59E /* flac.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA6219A646C0000FFDE0 /* flac.dylib */; };
@@ -4995,6 +4997,8 @@
 		2D747E3624B64E7600BBB987 /* SidebarSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SidebarSplitViewController.m; sourceTree = "<group>"; };
 		2D747E3724B64E7600BBB987 /* SidebarSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SidebarSplitViewController.h; sourceTree = "<group>"; };
 		2D747E3C24B64E9300BBB987 /* SplitViewMainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SplitViewMainWindow.xib; sourceTree = "<group>"; };
+		2D747E3E24B6580A00BBB987 /* MainWindowSidebarViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainWindowSidebarViewController.h; sourceTree = "<group>"; };
+		2D747E3F24B6580A00BBB987 /* MainWindowSidebarViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainWindowSidebarViewController.m; sourceTree = "<group>"; };
 		2D7492861CCFFE7700D3A59E /* TestData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TestData; sourceTree = "<group>"; };
 		2D7C37EC1B2C40520029DE0A /* libogglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libogglib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libvorbislib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8915,6 +8919,8 @@
 		2D747E2424B64E3400BBB987 /* SplitViewMainWindow */ = {
 			isa = PBXGroup;
 			children = (
+				2D747E3E24B6580A00BBB987 /* MainWindowSidebarViewController.h */,
+				2D747E3F24B6580A00BBB987 /* MainWindowSidebarViewController.m */,
 				2D747E3724B64E7600BBB987 /* SidebarSplitViewController.h */,
 				2D747E3624B64E7600BBB987 /* SidebarSplitViewController.m */,
 				2D747E3424B64E7500BBB987 /* SidebarSplitViewItem.h */,
@@ -12281,6 +12287,7 @@
 				2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */,
 				2D8030CD24B261A400539F9F /* MediaLibraryItem.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
+				2D747E4024B6580A00BBB987 /* MainWindowSidebarViewController.h in Headers */,
 				2DA30E7424032550001BAB8A /* NetworkPreferencesViewController.h in Headers */,
 				2D9BD6792405A81600C02D60 /* SoundPreferencesViewController.h in Headers */,
 				2D90EF992438A5A600AF6F4B /* ScriptableErrorViewer.h in Headers */,
@@ -15414,6 +15421,7 @@
 				2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */,
 				2DDBA26123E5EA3800051320 /* PlaylistLocalDragDropHolder.m in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
+				2D747E4124B6580A00BBB987 /* MainWindowSidebarViewController.m in Sources */,
 				2DF55C442270FF7E002C44DC /* ScriptablePropertySheetDataSource.m in Sources */,
 				2DA225A023F041B00033F411 /* DesignableViewController.m in Sources */,
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,
