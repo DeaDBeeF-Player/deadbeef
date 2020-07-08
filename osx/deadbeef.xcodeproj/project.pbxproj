@@ -1442,6 +1442,11 @@
 		2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D72047419DF2971000989C6 /* PlaylistViewController.h */; };
 		2D72047719DF2971000989C6 /* PlaylistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D72047519DF2971000989C6 /* PlaylistViewController.m */; };
 		2D72AE5E1CFE1F7500103AAE /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D72AE5D1CFE1F7500103AAE /* ImageIO.framework */; };
+		2D747E3824B64E7600BBB987 /* SidebarSplitViewItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D747E3424B64E7500BBB987 /* SidebarSplitViewItem.h */; };
+		2D747E3924B64E7600BBB987 /* SidebarSplitViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D747E3524B64E7600BBB987 /* SidebarSplitViewItem.m */; };
+		2D747E3A24B64E7600BBB987 /* SidebarSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D747E3624B64E7600BBB987 /* SidebarSplitViewController.m */; };
+		2D747E3B24B64E7600BBB987 /* SidebarSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D747E3724B64E7600BBB987 /* SidebarSplitViewController.h */; };
+		2D747E3D24B64E9300BBB987 /* SplitViewMainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D747E3C24B64E9300BBB987 /* SplitViewMainWindow.xib */; };
 		2D74926A1CCFF9AE00D3A59E /* ffap.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32F9EA19A63441000FFDE0 /* ffap.dylib */; };
 		2D74926B1CCFF9AE00D3A59E /* mp3.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; };
 		2D74926C1CCFF9AE00D3A59E /* flac.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 4D32FA6219A646C0000FFDE0 /* flac.dylib */; };
@@ -4985,6 +4990,11 @@
 		2D72047419DF2971000989C6 /* PlaylistViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaylistViewController.h; sourceTree = "<group>"; };
 		2D72047519DF2971000989C6 /* PlaylistViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaylistViewController.m; sourceTree = "<group>"; };
 		2D72AE5D1CFE1F7500103AAE /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		2D747E3424B64E7500BBB987 /* SidebarSplitViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SidebarSplitViewItem.h; sourceTree = "<group>"; };
+		2D747E3524B64E7600BBB987 /* SidebarSplitViewItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SidebarSplitViewItem.m; sourceTree = "<group>"; };
+		2D747E3624B64E7600BBB987 /* SidebarSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SidebarSplitViewController.m; sourceTree = "<group>"; };
+		2D747E3724B64E7600BBB987 /* SidebarSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SidebarSplitViewController.h; sourceTree = "<group>"; };
+		2D747E3C24B64E9300BBB987 /* SplitViewMainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SplitViewMainWindow.xib; sourceTree = "<group>"; };
 		2D7492861CCFFE7700D3A59E /* TestData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TestData; sourceTree = "<group>"; };
 		2D7C37EC1B2C40520029DE0A /* libogglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libogglib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libvorbislib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8325,6 +8335,7 @@
 				2D651D06227227A000375AE2 /* ScriptableNodeEditorWindow.xib */,
 				2D651D1B22722AD200375AE2 /* ScriptableSelectView.xib */,
 				2D828E5319E5679800EE874F /* Search.xib */,
+				2D747E3C24B64E9300BBB987 /* SplitViewMainWindow.xib */,
 				2DC80A8E1A9222F800C9397F /* TrackProperties.xib */,
 			);
 			path = XIB;
@@ -8899,6 +8910,17 @@
 				2D71F1B324AE799B00E753D3 /* mp4pTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		2D747E2424B64E3400BBB987 /* SplitViewWindow */ = {
+			isa = PBXGroup;
+			children = (
+				2D747E3724B64E7600BBB987 /* SidebarSplitViewController.h */,
+				2D747E3624B64E7600BBB987 /* SidebarSplitViewController.m */,
+				2D747E3424B64E7500BBB987 /* SidebarSplitViewItem.h */,
+				2D747E3524B64E7600BBB987 /* SidebarSplitViewItem.m */,
+			);
+			path = SplitViewWindow;
 			sourceTree = "<group>";
 		};
 		2D887BC524B1C82A0078392F /* medialib */ = {
@@ -10864,6 +10886,7 @@
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
+				2D747E2424B64E3400BBB987 /* SplitViewWindow */,
 				2DD5262E2062F1DF002609C5 /* help-cocoa.txt */,
 				2D9FA3972404551F00276E00 /* Designable */,
 				4D2362B218395D0300C9E818 /* Images */,
@@ -12262,6 +12285,7 @@
 				2D9BD6792405A81600C02D60 /* SoundPreferencesViewController.h in Headers */,
 				2D90EF992438A5A600AF6F4B /* ScriptableErrorViewer.h in Headers */,
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
+				2D747E3B24B64E7600BBB987 /* SidebarSplitViewController.h in Headers */,
 				2D0A6B1B237718DA00252E6D /* playmodes.h in Headers */,
 				2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */,
@@ -12273,6 +12297,7 @@
 				2DA30B7F23F1C9A3003D22E3 /* PropertySheetContentView.h in Headers */,
 				2DB2F73F240466AF00F7C000 /* PluginsPreferencesViewController.h in Headers */,
 				2DA2259F23F041B00033F411 /* DesignableViewController.h in Headers */,
+				2D747E3824B64E7600BBB987 /* SidebarSplitViewItem.h in Headers */,
 				2D04C3C02433B0FD003C2AAC /* growableBuffer.h in Headers */,
 				2D986142226C816000BAACB1 /* BrowseButton.h in Headers */,
 				2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */,
@@ -13931,6 +13956,7 @@
 				4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */,
 				4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */,
 				4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */,
+				2D747E3D24B64E9300BBB987 /* SplitViewMainWindow.xib in Resources */,
 				4D2A6CA4183BC29400AC6BF5 /* btnstopTemplate.pdf in Resources */,
 				4D2A6CA1183BC29400AC6BF5 /* btnnextTemplate.pdf in Resources */,
 				2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */,
@@ -15368,6 +15394,7 @@
 				2DA30B8023F1C9A3003D22E3 /* PropertySheetContentView.m in Sources */,
 				2D98613F226C814100BAACB1 /* PropertySheetViewController.m in Sources */,
 				2DA30E7A2403292D001BAB8A /* PlaybackPreferencesViewController.m in Sources */,
+				2D747E3A24B64E7600BBB987 /* SidebarSplitViewController.m in Sources */,
 				2DA2738A2406FBD800FB9BE1 /* DspPreferencesViewController.m in Sources */,
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
 				2DB2F740240466AF00F7C000 /* PluginsPreferencesViewController.m in Sources */,
@@ -15381,6 +15408,7 @@
 				2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */,
 				2D9C0C26238DC2C100CE8C10 /* GroupByCustomWindowController.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* SearchViewController.m in Sources */,
+				2D747E3924B64E7600BBB987 /* SidebarSplitViewItem.m in Sources */,
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
 				2D71C26B1DC88E5C00247CEF /* ScriptableTableDataSource.m in Sources */,
 				2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */,

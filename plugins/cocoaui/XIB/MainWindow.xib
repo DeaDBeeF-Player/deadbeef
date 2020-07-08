@@ -62,7 +62,7 @@
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="B7B3A6E3-A418-464C-AAF3-D9D0B5687BBF" label="Custom View" paletteLabel="Custom View" tag="-1" id="OXm-XA-qXT" userLabel="Custom Seekbar" customClass="CustomToolbarItem">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="300" height="26"/>
+                        <size key="minSize" width="163" height="26"/>
                         <size key="maxSize" width="1000" height="26"/>
                         <customView key="view" id="paF-TY-fCE" userLabel="DdbSeekbar" customClass="DdbSeekBar">
                             <rect key="frame" x="0.0" y="14" width="163" height="26"/>
@@ -83,21 +83,11 @@
                             <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="mDy-zS-nlC">
                                 <font key="font" metaFont="system"/>
                                 <segments>
-                                    <segment image="btnprevTemplate" imageScaling="proportionallyUpOrDown" width="24">
-                                        <nil key="label"/>
-                                    </segment>
-                                    <segment image="btnplayTemplate" imageScaling="proportionallyUpOrDown" width="24" tag="1">
-                                        <nil key="label"/>
-                                    </segment>
-                                    <segment image="btnpauseTemplate" imageScaling="proportionallyUpOrDown" width="24">
-                                        <nil key="label"/>
-                                    </segment>
-                                    <segment image="btnstopTemplate" imageScaling="proportionallyUpOrDown" width="24">
-                                        <nil key="label"/>
-                                    </segment>
-                                    <segment image="btnnextTemplate" imageScaling="proportionallyUpOrDown" width="24">
-                                        <nil key="label"/>
-                                    </segment>
+                                    <segment image="btnprevTemplate" imageScaling="proportionallyUpOrDown" width="24"/>
+                                    <segment image="btnplayTemplate" imageScaling="proportionallyUpOrDown" width="24" tag="1"/>
+                                    <segment image="btnpauseTemplate" imageScaling="proportionallyUpOrDown" width="24"/>
+                                    <segment image="btnstopTemplate" imageScaling="proportionallyUpOrDown" width="24"/>
+                                    <segment image="btnnextTemplate" imageScaling="proportionallyUpOrDown" width="24"/>
                                 </segments>
                             </segmentedCell>
                             <connections>

@@ -652,7 +652,7 @@ static int
 ml_connect (void) {
     //tid = deadbeef->thread_start_low_priority (scanner_thread, NULL);
 
-#if 1
+#if 0
     struct timeval tm1, tm2;
     gettimeofday (&tm1, NULL);
     scanner_thread(NULL);

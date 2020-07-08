@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17132.0.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17132.0.2"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="MainWindowController">
+            <connections>
+                <outlet property="buttonBar" destination="OIq-Is-HDq" id="OKm-ZW-cKu"/>
+                <outlet property="designableContainerView" destination="pUF-Dy-KtC" id="L55-7z-fbM"/>
+                <outlet property="seekBar" destination="Cf3-e3-qXV" id="2s7-fO-DVZ"/>
+                <outlet property="tabStrip" destination="Sp3-ZT-72r" id="xN3-el-uvI"/>
+                <outlet property="volumeBar" destination="GfK-FT-xmA" id="l7u-hZ-dzR"/>
+                <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="DeaDBeeF" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="mainwin" animationBehavior="default" toolbarStyle="unified" id="F0z-JX-Cv5">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" fullSizeContentView="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="729" height="450"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
+            <view key="contentView" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="729" height="450"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <subviews>
+                    <splitView wantsLayer="YES" autosaveName="MainWindowSplitView" dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7fy-hF-oeO">
+                        <rect key="frame" x="0.0" y="0.0" width="729" height="450"/>
+                        <subviews>
+                            <customView fixedFrame="YES" id="J6H-mS-fcf">
+                                <rect key="frame" x="0.0" y="0.0" width="205" height="450"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                            </customView>
+                            <customView fixedFrame="YES" id="MTg-ZJ-GDG">
+                                <rect key="frame" x="206" y="0.0" width="523" height="450"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                            </customView>
+                        </subviews>
+                        <holdingPriorities>
+                            <real value="250"/>
+                            <real value="250"/>
+                        </holdingPriorities>
+                    </splitView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="7fy-hF-oeO" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" id="VQR-mn-L8d"/>
+                    <constraint firstItem="7fy-hF-oeO" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" id="WUh-ej-3VT"/>
+                    <constraint firstAttribute="trailing" secondItem="7fy-hF-oeO" secondAttribute="trailing" id="Wnx-Cm-p7z"/>
+                    <constraint firstAttribute="bottom" secondItem="7fy-hF-oeO" secondAttribute="bottom" id="YNx-0N-oeF"/>
+                </constraints>
+            </view>
+            <toolbar key="toolbar" implicitIdentifier="AC52D12D-4000-4B08-A065-07D723AB5954" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="HZu-Ne-Wux">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="B7B3A6E3-A418-464C-AAF3-D9D0B5687BBF" label="Custom View" paletteLabel="Custom View" tag="-1" id="J23-QU-u9D" userLabel="Custom Seekbar" customClass="CustomToolbarItem">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="163" height="26"/>
+                        <size key="maxSize" width="1000" height="26"/>
+                        <customView key="view" id="Cf3-e3-qXV" userLabel="DdbSeekbar" customClass="DdbSeekBar">
+                            <rect key="frame" x="0.0" y="14" width="163" height="26"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        </customView>
+                        <connections>
+                            <outlet property="customView" destination="Cf3-e3-qXV" id="8eX-zJ-jDK"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="5BC003E8-E444-40E9-BE77-B0900BC6FF5D" label="Custom View" paletteLabel="Custom View" sizingBehavior="auto" id="frz-kQ-skG">
+                        <nil key="toolTip"/>
+                        <segmentedControl key="view" verticalHuggingPriority="750" id="OIq-Is-HDq">
+                            <rect key="frame" x="0.0" y="14" width="130" height="24"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="aMH-2l-4rG">
+                                <font key="font" metaFont="system"/>
+                                <segments>
+                                    <segment image="btnprevTemplate" imageScaling="proportionallyUpOrDown" width="24">
+                                        <nil key="label"/>
+                                    </segment>
+                                    <segment image="btnplayTemplate" imageScaling="proportionallyUpOrDown" width="24" tag="1">
+                                        <nil key="label"/>
+                                    </segment>
+                                    <segment image="btnpauseTemplate" imageScaling="proportionallyUpOrDown" width="24">
+                                        <nil key="label"/>
+                                    </segment>
+                                    <segment image="btnstopTemplate" imageScaling="proportionallyUpOrDown" width="24">
+                                        <nil key="label"/>
+                                    </segment>
+                                    <segment image="btnnextTemplate" imageScaling="proportionallyUpOrDown" width="24">
+                                        <nil key="label"/>
+                                    </segment>
+                                </segments>
+                            </segmentedCell>
+                            <connections>
+                                <action selector="tbClicked:" target="-2" id="eO7-Kf-VA3"/>
+                            </connections>
+                        </segmentedControl>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="0D19120C-6CE3-44D9-88AF-A6AC3500FF97" label="Custom View" paletteLabel="Custom View" id="swP-ZR-Qps">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="96" height="21"/>
+                        <size key="maxSize" width="96" height="28"/>
+                        <slider key="view" verticalHuggingPriority="750" id="GfK-FT-xmA">
+                            <rect key="frame" x="0.0" y="14" width="96" height="21"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="upx-Mu-ZBK"/>
+                        </slider>
+                    </toolbarItem>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="frz-kQ-skG"/>
+                    <toolbarItem reference="J23-QU-u9D"/>
+                    <toolbarItem reference="swP-ZR-Qps"/>
+                </defaultToolbarItems>
+            </toolbar>
+            <connections>
+                <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
+            </connections>
+            <point key="canvasLocation" x="324.5" y="-13"/>
+        </window>
+        <viewController identifier="MainWindowSplitViewController" id="xuH-au-Yba" customClass="SidebarSplitViewController">
+            <connections>
+                <outlet property="bodyViewController" destination="Fq8-H0-Fvi" id="sdY-WC-1fb"/>
+                <outlet property="sidebarViewController" destination="CYL-XF-y3k" id="fHe-Ej-ajk"/>
+                <outlet property="splitView" destination="7fy-hF-oeO" id="0gc-Nh-mMt"/>
+                <outlet property="view" destination="7fy-hF-oeO" id="tN2-UM-mM7"/>
+            </connections>
+        </viewController>
+        <viewController id="CYL-XF-y3k" userLabel="Outline View Controller">
+            <connections>
+                <outlet property="view" destination="VJY-8N-XhM" id="6WU-hH-tXa"/>
+            </connections>
+        </viewController>
+        <viewController id="Fq8-H0-Fvi" userLabel="Detail View Controller">
+            <connections>
+                <outlet property="view" destination="pUF-Dy-KtC" id="ZsB-hW-ZOY"/>
+            </connections>
+        </viewController>
+        <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="VJY-8N-XhM" userLabel="Sidebar View">
+            <rect key="frame" x="0.0" y="0.0" width="237" height="270"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <clipView key="contentView" id="Eiv-XJ-7B1">
+                <rect key="frame" x="0.0" y="0.0" width="237" height="270"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <subviews>
+                    <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="13" outlineTableColumn="hGa-Fg-yZI" id="Ffb-Ma-ZiG">
+                        <rect key="frame" x="0.0" y="0.0" width="237" height="270"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <size key="intercellSpacing" width="17" height="0.0"/>
+                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                        <tableColumns>
+                            <tableColumn width="205" minWidth="40" maxWidth="1000" id="hGa-Fg-yZI">
+                                <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
+                                    <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                </tableHeaderCell>
+                                <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" title="Text Cell" id="ccU-Nn-tH5">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                <prototypeCellViews>
+                                    <tableCellView id="1H4-f5-afD">
+                                        <rect key="frame" x="18" y="0.0" width="200" height="24"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        <subviews>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oMO-Cn-w8T">
+                                                <rect key="frame" x="0.0" y="4" width="200" height="16"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="ziT-k4-oha">
+                                                    <font key="font" usesAppearanceFont="YES"/>
+                                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                        </subviews>
+                                        <connections>
+                                            <outlet property="textField" destination="oMO-Cn-w8T" id="rKK-aO-bhz"/>
+                                        </connections>
+                                    </tableCellView>
+                                </prototypeCellViews>
+                            </tableColumn>
+                        </tableColumns>
+                    </outlineView>
+                </subviews>
+            </clipView>
+            <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="r3A-WF-3pN">
+                <rect key="frame" x="1" y="119" width="223" height="15"/>
+                <autoresizingMask key="autoresizingMask"/>
+            </scroller>
+            <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="y1g-5p-6pP">
+                <rect key="frame" x="224" y="17" width="15" height="102"/>
+                <autoresizingMask key="autoresizingMask"/>
+            </scroller>
+            <point key="canvasLocation" x="-255" y="-194"/>
+        </scrollView>
+        <customView id="pUF-Dy-KtC" userLabel="Detail View">
+            <rect key="frame" x="0.0" y="0.0" width="163" height="96"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <point key="canvasLocation" x="-639" y="350"/>
+        </customView>
+        <window title="Rename Playlist" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="xAc-PG-wWm" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="139" y="81" width="276" height="89"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
+            <view key="contentView" id="hK5-7B-hHN">
+                <rect key="frame" x="0.0" y="0.0" width="276" height="89"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4U9-Z1-kw8">
+                        <rect key="frame" x="18" y="52" width="106" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Rename Playlist:" id="5Z2-q6-E47">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lDx-qD-91B">
+                        <rect key="frame" x="130" y="49" width="126" height="22"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="JgM-Ry-C7d">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="w4G-eV-Tfx">
+                        <rect key="frame" x="203" y="13" width="59" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0mk-Qz-Hgw">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="renamePlaylistOKAction:" target="Sp3-ZT-72r" id="IJ8-oB-wNT"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yu6-SB-gFD">
+                        <rect key="frame" x="121" y="13" width="82" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="AzD-8q-G0b">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="renamePlaylistCancelAction:" target="Sp3-ZT-72r" id="e2N-NT-ITT"/>
+                        </connections>
+                    </button>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="486" y="279.5"/>
+        </window>
+        <customView id="Sp3-ZT-72r" customClass="DdbTabStrip">
+            <rect key="frame" x="0.0" y="0.0" width="1086" height="24"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+            <subviews>
+                <box hidden="YES" horizontalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="pXm-qp-FgI">
+                    <rect key="frame" x="685" y="-37" width="5" height="96"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                </box>
+            </subviews>
+            <connections>
+                <outlet property="hiddenVertLine" destination="pXm-qp-FgI" id="KnT-wu-mBE"/>
+                <outlet property="renamePlaylistTitle" destination="lDx-qD-91B" id="gHc-rj-FHz"/>
+                <outlet property="renamePlaylistWindow" destination="xAc-PG-wWm" id="4zs-Be-zLc"/>
+            </connections>
+            <point key="canvasLocation" x="-150" y="154"/>
+        </customView>
+    </objects>
+    <resources>
+        <image name="btnnextTemplate" width="75" height="75"/>
+        <image name="btnpauseTemplate" width="75" height="75"/>
+        <image name="btnplayTemplate" width="75" height="75"/>
+        <image name="btnprevTemplate" width="75" height="75"/>
+        <image name="btnstopTemplate" width="75" height="75"/>
+    </resources>
+</document>
