@@ -8912,7 +8912,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		2D747E2424B64E3400BBB987 /* SplitViewWindow */ = {
+		2D747E2424B64E3400BBB987 /* SplitViewMainWindow */ = {
 			isa = PBXGroup;
 			children = (
 				2D747E3724B64E7600BBB987 /* SidebarSplitViewController.h */,
@@ -8920,7 +8920,7 @@
 				2D747E3424B64E7500BBB987 /* SidebarSplitViewItem.h */,
 				2D747E3524B64E7600BBB987 /* SidebarSplitViewItem.m */,
 			);
-			path = SplitViewWindow;
+			path = SplitViewMainWindow;
 			sourceTree = "<group>";
 		};
 		2D887BC524B1C82A0078392F /* medialib */ = {
@@ -10886,7 +10886,7 @@
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
-				2D747E2424B64E3400BBB987 /* SplitViewWindow */,
+				2D747E2424B64E3400BBB987 /* SplitViewMainWindow */,
 				2DD5262E2062F1DF002609C5 /* help-cocoa.txt */,
 				2D9FA3972404551F00276E00 /* Designable */,
 				4D2362B218395D0300C9E818 /* Images */,
