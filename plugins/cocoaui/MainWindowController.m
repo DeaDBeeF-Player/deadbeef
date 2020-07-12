@@ -118,7 +118,18 @@ extern DB_functions_t *deadbeef;
     view.translatesAutoresizingMaskIntoConstraints = NO;
     [self.designableContainerView addSubview:view];
 
-    [view.topAnchor constraintEqualToAnchor:self.designableContainerView.topAnchor].active = YES;
+    NSLayoutYAxisAnchor *topAnchor;
+    if (self.window.contentLayoutGuide) {
+        // HACK: this is not well-documented and not safe.
+        // This code constrains the contentview to contentLayoutGuide object,
+        // in order to avoid clipping of the playlist header view.
+        // The information was obtained from https://developer.apple.com/videos/play/wwdc2016/239/
+        topAnchor = [self.window.contentLayoutGuide valueForKey:@"topAnchor"];
+    }
+    else {
+        topAnchor = self.designableContainerView.topAnchor;
+    }
+    [view.topAnchor constraintEqualToAnchor:topAnchor].active = YES;
     [view.bottomAnchor constraintEqualToAnchor:self.designableContainerView.bottomAnchor].active = YES;
     [view.leadingAnchor constraintEqualToAnchor:self.designableContainerView.leadingAnchor].active = YES;
     [view.trailingAnchor constraintEqualToAnchor:self.designableContainerView.trailingAnchor].active = YES;

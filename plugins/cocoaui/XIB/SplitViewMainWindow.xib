@@ -146,7 +146,7 @@
         <scrollView autoresizesSubviews="NO" wantsLayer="YES" misplaced="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="VJY-8N-XhM" userLabel="Sidebar View">
             <rect key="frame" x="0.0" y="0.0" width="237" height="273"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <clipView key="contentView" wantsLayer="YES" id="Eiv-XJ-7B1">
+            <clipView key="contentView" wantsLayer="YES" drawsBackground="NO" id="Eiv-XJ-7B1">
                 <rect key="frame" x="0.0" y="0.0" width="237" height="273"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
@@ -175,7 +175,7 @@
                                         <subviews>
                                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="36a-Ya-ygF">
                                                 <rect key="frame" x="3" y="0.0" width="17" height="17"/>
-                                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" catalog="system" id="koY-Ve-UZ4"/>
+                                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" id="koY-Ve-UZ4"/>
                                             </imageView>
                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" ambiguous="YES" misplaced="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kSE-up-gaa">
                                                 <rect key="frame" x="25" y="0.0" width="175" height="17"/>
@@ -312,11 +312,11 @@ Gw
                 <outlet property="renamePlaylistTitle" destination="lDx-qD-91B" id="gHc-rj-FHz"/>
                 <outlet property="renamePlaylistWindow" destination="xAc-PG-wWm" id="4zs-Be-zLc"/>
             </connections>
-            <point key="canvasLocation" x="-150" y="154"/>
+            <point key="canvasLocation" x="-804" y="194"/>
         </customView>
     </objects>
     <resources>
-        <image name="NSActionTemplate" catalog="system" width="17" height="15"/>
+        <image name="NSActionTemplate" width="17" height="15"/>
         <image name="btnnextTemplate" width="75" height="75"/>
         <image name="btnpauseTemplate" width="75" height="75"/>
         <image name="btnplayTemplate" width="75" height="75"/>
