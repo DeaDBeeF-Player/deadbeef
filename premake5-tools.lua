@@ -227,7 +227,7 @@ end
 -- Returns deadbeef version which is stored in ./PORTABLE_VERSION
 -- WINDOWS: Return current date
 function get_version ()
-	if os.host() == "windows" then
+	if _OPTIONS["version-override"] ~= nil then
 		date = os.date("%Y-%m-%d")
 		fp = io.open ("PORTABLE_VERSION","w")
 		io.output (fp)

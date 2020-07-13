@@ -4,6 +4,12 @@ workspace "deadbeef"
    configurations { "debug", "release", "debug32", "release32" }
    platforms { "Windows" }
    defaultplatform "Windows"
+
+newoption {
+  trigger = "version-override",
+  description = "override version with today's date",
+}
+
 defines {
     "VERSION=\"" .. get_version() .. "\"",
     "_GNU_SOURCE",
@@ -439,6 +445,7 @@ project "ddb_gui_GTK2"
    }
 
     pkgconfig ("gtk+-2.0 jansson")
+    defines ("GLIB_DISABLE_DEPRECATION_WARNINGS")
 
     filter "configurations:debug32 or release32"
 
@@ -477,6 +484,7 @@ project "ddb_gui_GTK3"
 
    pkgconfig("gtk+-3.0 jansson")
    -- links { "jansson", "gtk-3", "gdk-3", "pangocairo-1.0", "pango-1.0", "atk-1.0", "cairo-gobject", "cairo", "gdk_pixbuf-2.0", "gio-2.0", "gobject-2.0", "gthread-2.0", "glib-2.0" }
+   defines ("GLIB_DISABLE_DEPRECATION_WARNINGS")
 
     filter "configurations:debug32 or release32"
 
