@@ -62,8 +62,8 @@
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="B7B3A6E3-A418-464C-AAF3-D9D0B5687BBF" label="Custom View" paletteLabel="Custom View" tag="-1" id="OXm-XA-qXT" userLabel="Custom Seekbar" customClass="CustomToolbarItem">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="300" height="26"/>
-                        <size key="maxSize" width="1000" height="26"/>
+                        <size key="minSize" width="163" height="26"/>
+                        <size key="maxSize" width="20000" height="26"/>
                         <customView key="view" id="paF-TY-fCE" userLabel="DdbSeekbar" customClass="DdbSeekBar">
                             <rect key="frame" x="0.0" y="14" width="163" height="26"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
