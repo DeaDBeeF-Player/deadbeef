@@ -123,6 +123,7 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         mp4p_atom_t *alac_atom = mp4p_atom_find (info->trak, "trak/mdia/minf/stbl/stsd/alac");
         if (alac_atom && mp4p_trak_playable(info->trak)) {
             alac = alac_atom->data;
+            info->alac_samplerate = alac->sample_rate;
             break;
         }
         info->trak = info->trak->next;
@@ -361,6 +362,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         mp4p_atom_t *alac_atom = mp4p_atom_find (info.trak, "trak/mdia/minf/stbl/stsd/alac");
         if (alac_atom && mp4p_trak_playable(info.trak)) {
             alac = alac_atom->data;
+            info.alac_samplerate = alac->sample_rate;
             break;
         }
         info.trak = info.trak->next;
