@@ -35,4 +35,22 @@ case "$TRAVIS_OS_NAME" in
         zip -r deadbeef-$VERSION-osx-x86_64.zip DeaDBeeF.app || exit 1
         cd ../../..
     ;;
+    windows)
+        git clone https://github.com/kuba160/deadbeef-windows-deps.git
+        wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha15/premake-5.0.0-alpha15-windows.zip && unzip premake-5.0.0-alpha15-windows.zip
+        $mingw64 ./premake5 --os=linux --file=premake5-win.lua --standard gmake
+        $mingw64 make config=release_windows
+        $mingw64 make config=debug_windows
+        cp -r deadbeef-windows-deps/Windows-10 bin/debug/share/themes/Windows-10
+        cp -r deadbeef-windows-deps/Windows-10 bin/release/share/themes/Windows-10
+        cp -r deadbeef-windows-deps/Windows-10-Icons bin/debug/share/icons/Windows-10-Icons
+        cp -r deadbeef-windows-deps/Windows-10-Icons bin/release/share/icons/Windows-10-Icons
+        echo "making zip packages"
+        VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
+        mv bin/release bin/deadbeef-x86_64 && (cd bin && $msys2 zip -q -r deadbeef-$VERSION-windows-x86_64.zip deadbeef-x86_64/) && mv bin/deadbeef-x86_64 bin/release
+        mv bin/debug bin/deadbeef-x86_64 && (cd bin && $msys2 zip -q -r deadbeef-$VERSION-windows-x86_64_DEBUG.zip deadbeef-x86_64/) && mv bin/deadbeef-x86_64 bin/debug
+        echo "making installer packages"
+        /C/ProgramData/chocolatey/bin/ISCC.exe "//Obin" "//Qp" tools/windows-installer/deadbeef.iss
+        /C/ProgramData/chocolatey/bin/ISCC.exe "//DDEBUG" "//Obin" "//Qp" tools/windows-installer/deadbeef.iss
+    ;;
 esac
