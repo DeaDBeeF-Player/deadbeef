@@ -135,8 +135,6 @@ static int close_btn_right_offs = 16;
 
     self.autoresizesSubviews = YES;
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleResizeNotification) name:NSViewFrameDidChangeNotification object:self];
-
     [self setupTrackingArea];
 
     self.scrollPos = deadbeef->conf_get_int ("cocoaui.tabscroll", 0);
@@ -793,7 +791,12 @@ plt_get_title_wrapper (int plt) {
     [self addTrackingArea:_trackingArea];
 }
 
-- (void)handleResizeNotification {
+- (void)setFrame:(NSRect)frame {
+    [super setFrame:frame];
+    [self frameDidChange];
+}
+
+- (void)frameDidChange {
     [self calculateTabDimensions];
     [self recalculateNeedArrows];
     [self adjustHScroll];
@@ -913,7 +916,7 @@ plt_get_title_wrapper (int plt) {
         dispatch_async(dispatch_get_main_queue(), ^{
             switch (_id) {
             case DB_EV_PLAYLISTSWITCHED:
-                [self performSelectorOnMainThread:@selector(handleResizeNotification) withObject:nil waitUntilDone:NO];
+                [self performSelectorOnMainThread:@selector(frameDidChange) withObject:nil waitUntilDone:NO];
                 self.needsDisplay = YES;
                 break;
             case DB_EV_PLAYLISTCHANGED:
