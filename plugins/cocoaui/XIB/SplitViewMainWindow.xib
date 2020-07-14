@@ -9,8 +9,9 @@
         <customObject id="-2" userLabel="File's Owner" customClass="MainWindowController">
             <connections>
                 <outlet property="buttonBar" destination="OIq-Is-HDq" id="OKm-ZW-cKu"/>
-                <outlet property="designableContainerView" destination="pUF-Dy-KtC" id="L55-7z-fbM"/>
+                <outlet property="designableContainerView" destination="1HX-cv-ywg" id="8m0-j0-42K"/>
                 <outlet property="seekBar" destination="Cf3-e3-qXV" id="2s7-fO-DVZ"/>
+                <outlet property="statusBar" destination="LE0-vb-KUv" id="dRO-Jw-DcN"/>
                 <outlet property="tabStrip" destination="Sp3-ZT-72r" id="xN3-el-uvI"/>
                 <outlet property="volumeBar" destination="GfK-FT-xmA" id="l7u-hZ-dzR"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
@@ -235,9 +236,31 @@
             <point key="canvasLocation" x="-255" y="-194"/>
         </scrollView>
         <customView id="pUF-Dy-KtC" userLabel="Detail View">
-            <rect key="frame" x="0.0" y="0.0" width="163" height="96"/>
+            <rect key="frame" x="0.0" y="0.0" width="443" height="296"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <point key="canvasLocation" x="-639" y="350"/>
+            <subviews>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LE0-vb-KUv">
+                    <rect key="frame" x="1" y="2" width="441" height="11"/>
+                    <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="left" title="Label" usesSingleLineMode="YES" id="Vhq-0d-TFU">
+                        <font key="font" metaFont="label" size="9"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="1HX-cv-ywg">
+                    <rect key="frame" x="0.0" y="15" width="443" height="281"/>
+                </customView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="1HX-cv-ywg" firstAttribute="leading" secondItem="pUF-Dy-KtC" secondAttribute="leading" id="3TB-GO-ZGq"/>
+                <constraint firstAttribute="trailing" secondItem="1HX-cv-ywg" secondAttribute="trailing" id="EWO-wK-Wmp"/>
+                <constraint firstItem="LE0-vb-KUv" firstAttribute="leading" secondItem="pUF-Dy-KtC" secondAttribute="leading" constant="3" id="Fjc-el-kHC"/>
+                <constraint firstItem="LE0-vb-KUv" firstAttribute="top" secondItem="1HX-cv-ywg" secondAttribute="bottom" constant="2" id="FlL-x8-DB4"/>
+                <constraint firstAttribute="trailing" secondItem="LE0-vb-KUv" secondAttribute="trailing" constant="3" id="MDL-FE-obD"/>
+                <constraint firstAttribute="bottom" secondItem="LE0-vb-KUv" secondAttribute="bottom" constant="2" id="Q4l-qW-mJd"/>
+                <constraint firstItem="1HX-cv-ywg" firstAttribute="top" secondItem="pUF-Dy-KtC" secondAttribute="top" id="kic-0D-Tvh"/>
+            </constraints>
+            <point key="canvasLocation" x="-499.5" y="450"/>
         </customView>
         <window title="Rename Playlist" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="xAc-PG-wWm" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
