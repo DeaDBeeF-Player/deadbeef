@@ -10,11 +10,6 @@
 
 extern DB_functions_t *deadbeef;
 
-enum {
-    LV_ROOT,
-    LV_LIST_ITEMS,
-};
-
 @implementation MediaLibraryItem {
     MediaLibraryItem *parent;
     NSString *_stringValue;

@@ -570,8 +570,8 @@ scanner_thread (void *none) {
     }
 
     printf ("adding dir: %s\n", musicdir);
-    deadbeef->plt_clear (ml_playlist);
-    deadbeef->plt_insert_dir (ml_playlist, NULL, musicdir, &scanner_terminate, add_file_info_cb, NULL);
+//    deadbeef->plt_clear (ml_playlist);
+//    deadbeef->plt_insert_dir (ml_playlist, NULL, musicdir, &scanner_terminate, add_file_info_cb, NULL);
     _ml_state = DDB_MEDIALIB_STATE_INDEXING;
     ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
     ml_index ();
@@ -585,9 +585,7 @@ scanner_thread (void *none) {
     ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
 
     // prefer to not save the intermediate scan results
-    if (!scanner_terminate) {
-        deadbeef->plt_save (ml_playlist, NULL, NULL, plpath, NULL, NULL, NULL);
-    }
+    deadbeef->plt_save (ml_playlist, NULL, NULL, plpath, NULL, NULL, NULL);
 
     _ml_state = DDB_MEDIALIB_STATE_IDLE;
     ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
@@ -652,7 +650,7 @@ static int
 ml_connect (void) {
     //tid = deadbeef->thread_start_low_priority (scanner_thread, NULL);
 
-#if 0
+#if 1
     struct timeval tm1, tm2;
     gettimeofday (&tm1, NULL);
     scanner_thread(NULL);

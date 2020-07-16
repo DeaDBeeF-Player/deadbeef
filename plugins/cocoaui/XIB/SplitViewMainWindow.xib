@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17132.0.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17132" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17132.0.2"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17132"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -24,7 +24,7 @@
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="667" height="298"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
-            <view key="contentView" wantsLayer="YES" misplaced="YES" id="se5-gp-TjO">
+            <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="667" height="298"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
@@ -32,13 +32,13 @@
                         <rect key="frame" x="0.0" y="15" width="667" height="283"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="J6H-mS-fcf">
-                                <rect key="frame" x="0.0" y="0.0" width="0.0" height="283"/>
+                                <rect key="frame" x="0.0" y="0.0" width="100" height="283"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="BpO-2e-oxQ"/>
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="MTg-ZJ-GDG">
-                                <rect key="frame" x="1" y="0.0" width="666" height="283"/>
+                                <rect key="frame" x="101" y="0.0" width="566" height="283"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="V3U-Kv-B9E"/>
                                 </constraints>
@@ -188,7 +188,7 @@
                                 </textFieldCell>
                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                 <prototypeCellViews>
-                                    <tableCellView identifier="cellId" id="EBG-cr-yK2">
+                                    <tableCellView identifier="ImageTextCell" id="EBG-cr-yK2">
                                         <rect key="frame" x="18" y="0.0" width="113" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
@@ -215,7 +215,7 @@
                                             <outlet property="textField" destination="kSE-up-gaa" id="xjs-wY-kN9"/>
                                         </connections>
                                     </tableCellView>
-                                    <tableCellView identifier="groupCellId" id="1H4-f5-afD">
+                                    <tableCellView identifier="TextCell" id="1H4-f5-afD">
                                         <rect key="frame" x="18" y="17" width="113" height="24"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>

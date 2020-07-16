@@ -17,11 +17,10 @@
 - (id)initRoot:(ddb_medialib_item_t *)list;
 - (id)initNode:(ddb_medialib_item_t *)item parent:(MediaLibraryItem *)parent;
 
-- (NSUInteger)numberOfChildren;
+@property (nonatomic,readonly) NSUInteger numberOfChildren;
 - (MediaLibraryItem *)childAtIndex:(NSUInteger)index;
 
-- (NSArray *)children;
-
-- (NSString *)stringValue;
+@property (nonatomic,readonly) NSArray *children;
+@property (nonatomic,readonly) NSString *stringValue;
 
 @end
