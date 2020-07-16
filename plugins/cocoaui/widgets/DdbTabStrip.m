@@ -56,6 +56,9 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic,readonly) NSDictionary *titleAttributesSelected;
 
 @property (nonatomic) BOOL playlistConfirmationAlertOpen;
+
+@property (nonatomic) BOOL dragReallyBegan;
+
 @end
 
 @implementation DdbTabStrip
@@ -319,7 +322,7 @@ plt_get_title_wrapper (int plt) {
     [[NSGraphicsContext currentContext] restoreGraphicsState];
 
     // close button
-    if (idx == _pointedTab && _dragging == -1) {
+    if (idx == _pointedTab && (_dragging == -1 || !self.dragReallyBegan)) {
         NSRect atRect = [self getTabCloseRect:area];
         NSPoint from = atRect.origin;
         from.x += 2;
@@ -659,6 +662,7 @@ plt_get_title_wrapper (int plt) {
         _prev_x = _dragpt.x;
         _tab_moved = 0;
         _movepos = coord.x - _dragpt.x;
+        self.dragReallyBegan = NO;
     }
 }
 
@@ -819,6 +823,7 @@ plt_get_title_wrapper (int plt) {
     }
     if (!_prepare && _dragging >= 0) {
         _movepos = coord.x - _dragpt.x;
+        self.dragReallyBegan = YES;
 
         // find closest tab to the left
         int idx;
