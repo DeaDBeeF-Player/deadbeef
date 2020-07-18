@@ -75,6 +75,8 @@ const char *cue_field_map[] = {
 };
 #define MAX_EXTRA_TAGS_FROM_CUE ((sizeof(cue_field_map) / sizeof(cue_field_map[0])))
 
+#define CUE_FIELD_LEN 255
+
 typedef struct {
     // initial values
     const char *fname; // cue of parent file name
@@ -93,9 +95,11 @@ typedef struct {
     // intermediate / output values
     char fullpath[PATH_MAX]; // current file name to be split
 
-    char cuefields[CUE_MAX_FIELDS][255];
-    char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][255];
+    char cuefields[CUE_MAX_FIELDS][CUE_FIELD_LEN];
+    char extra_tags[MAX_EXTRA_TAGS_FROM_CUE][CUE_FIELD_LEN];
     int extra_tag_index;
+    char extra_track_tags[MAX_EXTRA_TAGS_FROM_CUE][CUE_FIELD_LEN];
+    int extra_track_tag_index;
 
     int64_t numsamples;
     int samplerate;
@@ -273,23 +277,32 @@ pl_cue_set_track_field_values(playItem_t *it, cueparser_t *cue) {
         pl_add_meta (it, "ISRC", cue->cuefields[CUE_FIELD_ISRC]);
     }
     if (cue->cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_GAIN][0]) {
-        pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (cue->cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_GAIN]));
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, (float)atof (cue->cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_GAIN]));
     }
     if (cue->cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_PEAK][0]) {
-        pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (cue->cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_PEAK]));
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, (float)atof (cue->cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_PEAK]));
     }
     if (cue->cuefields[CUE_FIELD_REPLAYGAIN_TRACK_GAIN][0]) {
-        pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (cue->cuefields[CUE_FIELD_REPLAYGAIN_TRACK_GAIN]));
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, (float)atof (cue->cuefields[CUE_FIELD_REPLAYGAIN_TRACK_GAIN]));
     }
     if (cue->cuefields[CUE_FIELD_REPLAYGAIN_TRACK_PEAK][0]) {
-        pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (cue->cuefields[CUE_FIELD_REPLAYGAIN_TRACK_PEAK]));
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, (float)atof (cue->cuefields[CUE_FIELD_REPLAYGAIN_TRACK_PEAK]));
     }
+
     // add extra tags to tracks
     for (int y = 0; y < cue->extra_tag_index; y += 2) {
         if (cue->extra_tags[y+1]) {
             pl_add_meta (it, cue->extra_tags[y], cue->extra_tags[y+1]);
         }
     }
+    for (int y = 0; y < cue->extra_track_tag_index; y += 2) {
+        if (cue->extra_track_tags[y+1]) {
+            pl_add_meta (it, cue->extra_track_tags[y], cue->extra_track_tags[y+1]);
+        }
+    }
+    cue->extra_track_tag_index = 0;
+    memset (cue->extra_track_tags, 0, sizeof (cue->extra_track_tags));
+
     // generated "total tracks" field
     pl_add_meta(it, "numtracks", cue->cuefields[CUE_FIELD_TOTALTRACKS]);
 
@@ -317,7 +330,7 @@ pl_cue_reset_per_track_fields(char cuefields[CUE_MAX_FIELDS][255]) {
 static int
 pl_cue_get_field_value(cueparser_t *cue) {
     if (!strncasecmp (cue->p, "FILE ", 5)) {
-        pl_get_qvalue_from_cue (cue->p + 5, sizeof (cue->cuefields[CUE_FIELD_FILE]), cue->cuefields[CUE_FIELD_FILE], cue->charset);
+        pl_get_qvalue_from_cue (cue->p + 5, CUE_FIELD_LEN, cue->cuefields[CUE_FIELD_FILE], cue->charset);
         const char *ext = strrchr (cue->cuefields[CUE_FIELD_FILE], '.');
         if (ext && !strcasecmp(ext, ".cue")) {
             trace_err("Cuesheet %s refers to another cuesheet, which is not allowed\n", cue->fname);
@@ -328,87 +341,102 @@ pl_cue_get_field_value(cueparser_t *cue) {
     else if (!strncasecmp (cue->p, "TRACK ", 6)) {
         // this requires some post-processing
         // and the previous value must not be lost..
-        //pl_get_value_from_cue (p + 6, sizeof (cuefields[CUE_FIELD_TRACK]), cuefields[CUE_FIELD_TRACK]);
         return CUE_FIELD_TRACK;
     }
     else if (!strncasecmp (cue->p, "PERFORMER ", 10)) {
         if (!cue->cuefields[CUE_FIELD_TRACK][0]) {
-            pl_get_qvalue_from_cue (cue->p + 10, sizeof (cue->cuefields[CUE_FIELD_ALBUM_PERFORMER]), cue->cuefields[CUE_FIELD_ALBUM_PERFORMER], cue->charset);
+            pl_get_qvalue_from_cue (cue->p + 10, CUE_FIELD_LEN, cue->cuefields[CUE_FIELD_ALBUM_PERFORMER], cue->charset);
             return CUE_FIELD_ALBUM_PERFORMER;
         }
         else {
-             pl_get_qvalue_from_cue (cue->p + 10, sizeof (cue->cuefields[CUE_FIELD_PERFORMER]), cue->cuefields[CUE_FIELD_PERFORMER], cue->charset);
+             pl_get_qvalue_from_cue (cue->p + 10, CUE_FIELD_LEN, cue->cuefields[CUE_FIELD_PERFORMER], cue->charset);
              return CUE_FIELD_PERFORMER;
         }
     }
     else if (!strncasecmp (cue->p, "SONGWRITER ", 11)) {
         if (!cue->cuefields[CUE_FIELD_TRACK][0]) {
-            pl_get_qvalue_from_cue (cue->p + 11, sizeof (cue->cuefields[CUE_FIELD_ALBUM_SONGWRITER]), cue->cuefields[CUE_FIELD_ALBUM_SONGWRITER], cue->charset);
+            pl_get_qvalue_from_cue (cue->p + 11, CUE_FIELD_LEN, cue->cuefields[CUE_FIELD_ALBUM_SONGWRITER], cue->charset);
             return CUE_FIELD_ALBUM_SONGWRITER;
         }
         else {
-            pl_get_qvalue_from_cue (cue->p + 11, sizeof (cue->cuefields[CUE_FIELD_SONGWRITER]), cue->cuefields[CUE_FIELD_SONGWRITER], cue->charset);
+            pl_get_qvalue_from_cue (cue->p + 11, CUE_FIELD_LEN, cue->cuefields[CUE_FIELD_SONGWRITER], cue->charset);
             return CUE_FIELD_SONGWRITER;
         }
     }
     else if (!strncasecmp (cue->p, "TITLE ", 6)) {
         if (!cue->have_track && !cue->cuefields[CUE_FIELD_ALBUM_TITLE][0]) {
-            pl_get_qvalue_from_cue (cue->p + 6, sizeof (cue->cuefields[CUE_FIELD_ALBUM_TITLE]), cue->cuefields[CUE_FIELD_ALBUM_TITLE], cue->charset);
+            pl_get_qvalue_from_cue (cue->p + 6, CUE_FIELD_LEN, cue->cuefields[CUE_FIELD_ALBUM_TITLE], cue->charset);
             return CUE_FIELD_ALBUM_TITLE;
         }
         else {
-            pl_get_qvalue_from_cue (cue->p + 6, sizeof (cue->cuefields[CUE_FIELD_TITLE]), cue->cuefields[CUE_FIELD_TITLE], cue->charset);
+            pl_get_qvalue_from_cue (cue->p + 6, CUE_FIELD_LEN, cue->cuefields[CUE_FIELD_TITLE], cue->charset);
             return CUE_FIELD_TITLE;
         }
     }
     else if (!strncasecmp (cue->p, "REM REPLAYGAIN_ALBUM_GAIN ", 26)) {
-        pl_get_value_from_cue (cue->p + 26, sizeof (cue->cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_GAIN]), cue->cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_GAIN]);
+        pl_get_value_from_cue (cue->p + 26, CUE_FIELD_LEN, cue->cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_GAIN]);
         return CUE_FIELD_REPLAYGAIN_ALBUM_GAIN;
     }
     else if (!strncasecmp (cue->p, "REM REPLAYGAIN_ALBUM_PEAK ", 26)) {
-        pl_get_value_from_cue (cue->p + 26, sizeof (cue->cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_PEAK]), cue->cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_PEAK]);
+        pl_get_value_from_cue (cue->p + 26, CUE_FIELD_LEN, cue->cuefields[CUE_FIELD_REPLAYGAIN_ALBUM_PEAK]);
         return CUE_FIELD_REPLAYGAIN_ALBUM_PEAK;
     }
     else if (!strncasecmp (cue->p, "REM REPLAYGAIN_TRACK_GAIN ", 26)) {
-        pl_get_value_from_cue (cue->p + 26, sizeof (cue->cuefields[CUE_FIELD_REPLAYGAIN_TRACK_GAIN]), cue->cuefields[CUE_FIELD_REPLAYGAIN_TRACK_GAIN]);
+        pl_get_value_from_cue (cue->p + 26, CUE_FIELD_LEN, cue->cuefields[CUE_FIELD_REPLAYGAIN_TRACK_GAIN]);
         return CUE_FIELD_REPLAYGAIN_TRACK_GAIN;
     }
     else if (!strncasecmp (cue->p, "REM REPLAYGAIN_TRACK_PEAK ", 26)) {
-        pl_get_value_from_cue (cue->p + 26, sizeof (cue->cuefields[CUE_FIELD_REPLAYGAIN_TRACK_PEAK]), cue->cuefields[CUE_FIELD_REPLAYGAIN_TRACK_PEAK]);
+        pl_get_value_from_cue (cue->p + 26, CUE_FIELD_LEN, cue->cuefields[CUE_FIELD_REPLAYGAIN_TRACK_PEAK]);
         return CUE_FIELD_REPLAYGAIN_TRACK_PEAK;
     }
     else if (!strncasecmp (cue->p, "PREGAP ", 7)) {
-        pl_get_value_from_cue (cue->p + 7, sizeof (cue->cuefields[CUE_FIELD_PREGAP]), cue->cuefields[CUE_FIELD_PREGAP]);
+        pl_get_value_from_cue (cue->p + 7, CUE_FIELD_LEN, cue->cuefields[CUE_FIELD_PREGAP]);
         return CUE_FIELD_PREGAP;
     }
     else if (!strncasecmp (cue->p, "INDEX 00 ", 9)) {
-        pl_get_value_from_cue (cue->p + 9, sizeof (cue->cuefields[CUE_FIELD_INDEX00]), cue->cuefields[CUE_FIELD_INDEX00]);
+        pl_get_value_from_cue (cue->p + 9, CUE_FIELD_LEN, cue->cuefields[CUE_FIELD_INDEX00]);
         return CUE_FIELD_INDEX00;
     }
     else if (!strncasecmp (cue->p, "INDEX 01 ", 9)) {
-        pl_get_value_from_cue (cue->p + 9, sizeof (cue->cuefields[CUE_FIELD_INDEX01]), cue->cuefields[CUE_FIELD_INDEX01]);
+        pl_get_value_from_cue (cue->p + 9, CUE_FIELD_LEN, cue->cuefields[CUE_FIELD_INDEX01]);
         return CUE_FIELD_INDEX01;
     }
     else if (!strncasecmp (cue->p, "INDEX ", 6)) {
         // INDEX 02, INDEX 03, INDEX 04, etc...
         // for practical purposes, store value of INDEX XX in fields[CUE_FIELD_INDEX01]
-        pl_get_value_from_cue (cue->p + 9, sizeof (cue->cuefields[CUE_FIELD_INDEX01]), cue->cuefields[CUE_FIELD_INDEX01]);
+        pl_get_value_from_cue (cue->p + 9, CUE_FIELD_LEN, cue->cuefields[CUE_FIELD_INDEX01]);
         return CUE_FIELD_INDEX_X;
     }
     else if (!strncasecmp (cue->p, "ISRC ", 5)) {
-        pl_get_value_from_cue (cue->p + 5, sizeof (cue->cuefields[CUE_FIELD_ISRC]), cue->cuefields[CUE_FIELD_ISRC]);
+        pl_get_value_from_cue (cue->p + 5, CUE_FIELD_LEN, cue->cuefields[CUE_FIELD_ISRC]);
         return CUE_FIELD_ISRC;
     }
     else {
         // determine and get extra tags
-        if (!cue->have_track) {
-            for (int m = 0; cue_field_map[m]; m += 2) {
-                if (!strncasecmp (cue->p, cue_field_map[m], strlen(cue_field_map[m]))) {
-                    strcpy(cue->extra_tags[cue->extra_tag_index],cue_field_map[m+1]);
-                    pl_get_qvalue_from_cue (cue->p + strlen(cue_field_map[m]), sizeof(cue->extra_tags[cue->extra_tag_index+1]), cue->extra_tags[cue->extra_tag_index+1], cue->charset);
+        for (int m = 0; cue_field_map[m]; m += 2) {
+            if (!strncasecmp (cue->p, cue_field_map[m], strlen(cue_field_map[m]))) {
+                char *key = NULL;
+                char *value = NULL;
+                if (!cue->have_track) {
+                    if (cue->extra_tag_index >= MAX_EXTRA_TAGS_FROM_CUE) {
+                        break;
+                    }
+                    key = cue->extra_tags[cue->extra_tag_index];
+                    value = cue->extra_tags[cue->extra_tag_index+1];
                     cue->extra_tag_index = cue->extra_tag_index + 2;
-                    return CUE_MAX_FIELDS;
                 }
+                else {
+                    if (cue->extra_track_tag_index >= MAX_EXTRA_TAGS_FROM_CUE) {
+                        break;
+                    }
+                    key = cue->extra_track_tags[cue->extra_track_tag_index];
+                    value = cue->extra_track_tags[cue->extra_track_tag_index+1];
+                    cue->extra_track_tag_index = cue->extra_track_tag_index + 2;
+                }
+
+                strcpy(key,cue_field_map[m+1]);
+                pl_get_qvalue_from_cue (cue->p + strlen(cue_field_map[m]), CUE_FIELD_LEN, value, cue->charset);
+                return CUE_MAX_FIELDS;
             }
         }
 
@@ -688,7 +716,7 @@ plt_process_cue_track (playlist_t *plt, cueparser_t *cue) {
 
     playItem_t *it = pl_item_alloc_init (cue->fullpath, cue->dec);
     pl_set_meta_int (it, ":TRACKNUM", atoi (cue->cuefields[CUE_FIELD_TRACK]));
-    pl_item_set_startsample (it, cue->currsample + f_pregap * cue->samplerate);
+    pl_item_set_startsample (it, cue->currsample + (int64_t)(f_pregap * cue->samplerate));
     pl_item_set_endsample (it, -1); // will be filled by next read, or by decoder
     pl_replace_meta (it, ":FILETYPE", cue->filetype);
 
@@ -784,7 +812,7 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
     }
 
 
-    snprintf(cue.cuefields[CUE_FIELD_TOTALTRACKS], sizeof(cue.cuefields[CUE_FIELD_TOTALTRACKS]), "%d", cue.ncuetracks);
+    snprintf(cue.cuefields[CUE_FIELD_TOTALTRACKS], CUE_FIELD_LEN, "%d", cue.ncuetracks);
 
     int filefield = 0;
 
@@ -829,7 +857,7 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
             float sec = cue.cuefields[CUE_FIELD_INDEX01][0] ? pl_cue_parse_time (cue.cuefields[CUE_FIELD_INDEX01]) : 0;
             // that's the startsample of the current track, and endsample-1 of the next one.
             // relative to the beginning of previous file
-            int64_t val = pl_item_get_startsample (cue.origin) + sec * cue.samplerate;
+            int64_t val = pl_item_get_startsample (cue.origin) + (int64_t)(sec * cue.samplerate);
             if (val > cue.currsample) {
                 cue.currsample = val;
             }
@@ -862,7 +890,7 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
             }
 
             pl_cue_reset_per_track_fields(cue.cuefields);
-            pl_get_value_from_cue (cue.p + 6, sizeof (cue.cuefields[CUE_FIELD_TRACK]), cue.cuefields[CUE_FIELD_TRACK]);
+            pl_get_value_from_cue (cue.p + 6, CUE_FIELD_LEN, cue.cuefields[CUE_FIELD_TRACK]);
             cue.have_track = 1;
         }
 
