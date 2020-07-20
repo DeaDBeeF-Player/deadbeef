@@ -1008,7 +1008,6 @@
 		2D48DBFC2269B731002CACFD /* rg_scanner.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D48DBFD2269B731002CACFD /* medialib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D48DBFE2269B731002CACFD /* artwork.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D621F831CD92C9000EB6D22 /* artwork.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2D48DBFF2269B731002CACFD /* libmp4ff.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D48DC002269B731002CACFD /* adplug.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D652FCB1CE79E8500163808 /* adplug.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D48DC012269B731002CACFD /* ffmpeg.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D48DC022269B731002CACFD /* psf.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DFD50951C9715B800961D19 /* psf.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -1804,6 +1803,7 @@
 		2DA66EC81EDF4EF800E20989 /* StreamerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66EC71EDF4EF800E20989 /* StreamerTests.m */; };
 		2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66EC91EDF4F2C00E20989 /* fakeout.c */; };
 		2DA66ECE1EDF501000E20989 /* fakein.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66ECC1EDF501000E20989 /* fakein.c */; };
+		2DA9777524C5EC27002405DA /* gtk3.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2DA9777424C5EC26002405DA /* gtk3.xcconfig */; };
 		2DAA4C141AAF88FF00519559 /* TitleFormattingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA4C131AAF88FF00519559 /* TitleFormattingTests.m */; };
 		2DACBB241A40CEB100CCF401 /* mp3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DAD80A12416DBB100EB3075 /* CustomToolbarItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAD809F2416DBB100EB3075 /* CustomToolbarItem.h */; };
@@ -2054,7 +2054,6 @@
 		2DE3B7E22269BF3100AFF9AE /* namedicons.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5BB2269BB4300AFF9AE /* namedicons.h */; };
 		2DE3B7E32269BF3100AFF9AE /* wingeom.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5C02269BB4300AFF9AE /* wingeom.c */; };
 		2DE3B7E42269BF3100AFF9AE /* search.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5C22269BB4300AFF9AE /* search.c */; };
-		2DE3B7E52269BF3100AFF9AE /* retina.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5C42269BB4300AFF9AE /* retina.h */; };
 		2DE3B7E62269BF3100AFF9AE /* tfimport.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5C62269BB4300AFF9AE /* tfimport.c */; };
 		2DE3B7E72269BF3100AFF9AE /* interface.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5C72269BB4300AFF9AE /* interface.h */; };
 		2DE3B7E82269BF3100AFF9AE /* gtkui.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5CA2269BB4300AFF9AE /* gtkui.c */; };
@@ -2088,7 +2087,6 @@
 		2DE3B8042269BF3100AFF9AE /* gtkuigl.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5FC2269BB4300AFF9AE /* gtkuigl.c */; };
 		2DE3B8052269BF3100AFF9AE /* pluginconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5FD2269BB4300AFF9AE /* pluginconf.h */; };
 		2DE3B8062269BF3100AFF9AE /* search.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B6622269BB4300AFF9AE /* search.h */; };
-		2DE3B8072269BF3100AFF9AE /* retina.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B6632269BB4300AFF9AE /* retina.m */; };
 		2DE3B8082269BF3100AFF9AE /* wingeom.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B68E2269BB4300AFF9AE /* wingeom.h */; };
 		2DE3B8092269BF3100AFF9AE /* namedicons.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B6912269BB4300AFF9AE /* namedicons.c */; };
 		2DE3B80A2269BF3100AFF9AE /* widgets.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B6952269BB4300AFF9AE /* widgets.c */; };
@@ -3498,7 +3496,6 @@
 				2D48DBFC2269B731002CACFD /* rg_scanner.dylib in Copy Plugins */,
 				2D48DBFD2269B731002CACFD /* medialib.dylib in Copy Plugins */,
 				2D48DBFE2269B731002CACFD /* artwork.dylib in Copy Plugins */,
-				2D48DBFF2269B731002CACFD /* libmp4ff.dylib in Copy Plugins */,
 				2D48DC002269B731002CACFD /* adplug.dylib in Copy Plugins */,
 				2D48DC012269B731002CACFD /* ffmpeg.dylib in Copy Plugins */,
 				2D48DC022269B731002CACFD /* psf.dylib in Copy Plugins */,
@@ -5402,6 +5399,7 @@
 		2DA66ECD1EDF501000E20989 /* fakein.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fakein.h; sourceTree = "<group>"; };
 		2DA6F89B19A5332D002151EB /* escape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = escape.c; sourceTree = "<group>"; };
 		2DA6F89F19A53334002151EB /* escape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = escape.h; sourceTree = "<group>"; };
+		2DA9777424C5EC26002405DA /* gtk3.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = gtk3.xcconfig; sourceTree = "<group>"; };
 		2DAA4C081AAF88DE00519559 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DAA4C0B1AAF88DE00519559 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2DAA4C131AAF88FF00519559 /* TitleFormattingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TitleFormattingTests.m; sourceTree = "<group>"; };
@@ -5657,7 +5655,6 @@
 		2DE3B5BB2269BB4300AFF9AE /* namedicons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = namedicons.h; sourceTree = "<group>"; };
 		2DE3B5C02269BB4300AFF9AE /* wingeom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wingeom.c; sourceTree = "<group>"; };
 		2DE3B5C22269BB4300AFF9AE /* search.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = search.c; sourceTree = "<group>"; };
-		2DE3B5C42269BB4300AFF9AE /* retina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = retina.h; sourceTree = "<group>"; };
 		2DE3B5C62269BB4300AFF9AE /* tfimport.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tfimport.c; sourceTree = "<group>"; };
 		2DE3B5C72269BB4300AFF9AE /* interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interface.h; sourceTree = "<group>"; };
 		2DE3B5CA2269BB4300AFF9AE /* gtkui.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gtkui.c; sourceTree = "<group>"; };
@@ -5691,7 +5688,6 @@
 		2DE3B5FC2269BB4300AFF9AE /* gtkuigl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gtkuigl.c; sourceTree = "<group>"; };
 		2DE3B5FD2269BB4300AFF9AE /* pluginconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pluginconf.h; sourceTree = "<group>"; };
 		2DE3B6622269BB4300AFF9AE /* search.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = search.h; sourceTree = "<group>"; };
-		2DE3B6632269BB4300AFF9AE /* retina.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = retina.m; sourceTree = "<group>"; };
 		2DE3B68E2269BB4300AFF9AE /* wingeom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wingeom.h; sourceTree = "<group>"; };
 		2DE3B6912269BB4300AFF9AE /* namedicons.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = namedicons.c; sourceTree = "<group>"; };
 		2DE3B6952269BB4300AFF9AE /* widgets.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = widgets.c; sourceTree = "<group>"; };
@@ -9601,6 +9597,14 @@
 			path = NowPlayable;
 			sourceTree = "<group>";
 		};
+		2DA9777324C5EC26002405DA /* configuration */ = {
+			isa = PBXGroup;
+			children = (
+				2DA9777424C5EC26002405DA /* gtk3.xcconfig */,
+			);
+			path = configuration;
+			sourceTree = "<group>";
+		};
 		2DAA4C091AAF88DE00519559 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -9921,7 +9925,6 @@
 				2DE3B5BB2269BB4300AFF9AE /* namedicons.h */,
 				2DE3B5C02269BB4300AFF9AE /* wingeom.c */,
 				2DE3B5C22269BB4300AFF9AE /* search.c */,
-				2DE3B5C42269BB4300AFF9AE /* retina.h */,
 				2DE3B5C62269BB4300AFF9AE /* tfimport.c */,
 				2DE3B5C72269BB4300AFF9AE /* interface.h */,
 				2DE3B5CA2269BB4300AFF9AE /* gtkui.c */,
@@ -9955,7 +9958,6 @@
 				2DE3B5FC2269BB4300AFF9AE /* gtkuigl.c */,
 				2DE3B5FD2269BB4300AFF9AE /* pluginconf.h */,
 				2DE3B6622269BB4300AFF9AE /* search.h */,
-				2DE3B6632269BB4300AFF9AE /* retina.m */,
 				2DE3B68E2269BB4300AFF9AE /* wingeom.h */,
 				2DE3B6912269BB4300AFF9AE /* namedicons.c */,
 				2DE3B6952269BB4300AFF9AE /* widgets.c */,
@@ -10093,6 +10095,7 @@
 		4D1B3E7118379829003E6066 = {
 			isa = PBXGroup;
 			children = (
+				2DA9777324C5EC26002405DA /* configuration */,
 				2D9E5BFE24AE6AAD0099B108 /* external */,
 				2DCD78AD19A6658C00EA50FA /* icons */,
 				4D1B514C1837EF7C003E6066 /* plugins */,
@@ -11951,7 +11954,6 @@
 				2DE3B7FC2269BF3100AFF9AE /* ddbseekbar.h in Headers */,
 				2DE3B7DE2269BF3100AFF9AE /* ddbvolumebar.h in Headers */,
 				2DE3B7FF2269BF3100AFF9AE /* dspconfig.h in Headers */,
-				2DE3B7E52269BF3100AFF9AE /* retina.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13903,6 +13905,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DE3B5762269B80900AFF9AE /* Images.xcassets in Resources */,
+				2DA9777524C5EC27002405DA /* gtk3.xcconfig in Resources */,
 				2DE3B8292269C62F00AFF9AE /* pixmaps in Resources */,
 				2D48DC2F2269B731002CACFD /* convpresets in Resources */,
 				2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */,
@@ -15244,7 +15247,6 @@
 				2DE3B7DD2269BF3100AFF9AE /* dspconfig.c in Sources */,
 				2DE3B80A2269BF3100AFF9AE /* widgets.c in Sources */,
 				2DE3B7D92269BF1700AFF9AE /* pluginconf.c in Sources */,
-				2DE3B8072269BF3100AFF9AE /* retina.m in Sources */,
 				2DE3B7EA2269BF3100AFF9AE /* trkproperties.c in Sources */,
 				2DE3B7CB2269BF1300AFF9AE /* ctmapping.c in Sources */,
 			);
@@ -18646,6 +18648,7 @@
 		};
 		2DA04E8223B6A4320070AC01 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DA9777424C5EC26002405DA /* gtk3.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -18690,7 +18693,8 @@
 				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/jansson/2.12/lib;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ljansson";
+				OTHER_CFLAGS = "$(JANSSON_CFLAGS)";
+				OTHER_LDFLAGS = "$(JANSSON_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -18699,6 +18703,7 @@
 		};
 		2DA04E8323B6A4320070AC01 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DA9777424C5EC26002405DA /* gtk3.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -18738,7 +18743,8 @@
 				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/jansson/2.12/lib;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ljansson";
+				OTHER_CFLAGS = "$(JANSSON_CFLAGS)";
+				OTHER_LDFLAGS = "$(JANSSON_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -18747,6 +18753,7 @@
 		};
 		2DA04E9F23B6A4960070AC01 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DA9777424C5EC26002405DA /* gtk3.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -18820,20 +18827,8 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = (
-					"-lgtk-3",
-					"-lgdk-3",
-					"-lpangocairo-1.0",
-					"-lpango-1.0",
-					"-latk-1.0",
-					"-lcairo-gobject",
-					"-lcairo",
-					"-lgdk_pixbuf-2.0",
-					"-lgio-2.0",
-					"-lgobject-2.0",
-					"-lglib-2.0",
-					"-lintl",
-				);
+				OTHER_CFLAGS = "$(GTK3_CFLAGS)";
+				OTHER_LDFLAGS = "$(GTK3_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -18842,6 +18837,7 @@
 		};
 		2DA04EA023B6A4960070AC01 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DA9777424C5EC26002405DA /* gtk3.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -18910,20 +18906,8 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = (
-					"-lgtk-3",
-					"-lgdk-3",
-					"-lpangocairo-1.0",
-					"-lpango-1.0",
-					"-latk-1.0",
-					"-lcairo-gobject",
-					"-lcairo",
-					"-lgdk_pixbuf-2.0",
-					"-lgio-2.0",
-					"-lgobject-2.0",
-					"-lglib-2.0",
-					"-lintl",
-				);
+				OTHER_CFLAGS = "$(GTK3_CFLAGS)";
+				OTHER_LDFLAGS = "$(GTK3_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -19333,6 +19317,7 @@
 		};
 		2DE3B7BB2269BC3500AFF9AE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DA9777424C5EC26002405DA /* gtk3.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -19369,56 +19354,16 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"/usr/local/Cellar/gtk+3/3.24.8/include/gtk-3.0",
-					"/usr/local/Cellar/glib/2.60.1/include/gio-unix-2.0",
-					/usr/local/Cellar/cairo/1.16.0/include/cairo,
-					/usr/local/Cellar/libepoxy/1.5.3/include,
-					"/usr/local/Cellar/pango/1.42.4_1/include/pango-1.0",
-					/usr/local/Cellar/harfbuzz/2.4.0_1/include/harfbuzz,
-					/usr/local/Cellar/graphite2/1.3.13/include,
-					"/usr/local/Cellar/pango/1.42.4_1/include/pango-1.0",
-					/usr/local/Cellar/fribidi/1.0.5/include/fribidi,
-					"/usr/local/Cellar/atk/2.32.0/include/atk-1.0",
-					/usr/local/Cellar/cairo/1.16.0/include/cairo,
-					"/usr/local/Cellar/pixman/0.38.4/include/pixman-1",
-					/usr/local/Cellar/fontconfig/2.13.1/include,
-					/usr/local/opt/freetype/include/freetype2,
-					/usr/local/Cellar/libpng/1.6.37/include/libpng16,
-					"/usr/local/Cellar/gdk-pixbuf/2.38.1/include/gdk-pixbuf-2.0",
-					/usr/local/Cellar/glib/2.60.1/include,
-					"/usr/local/Cellar/libffi/3.2.1/lib/libffi-3.2.1/include",
-					"/usr/local/Cellar/glib/2.60.1/include/glib-2.0",
-					"/usr/local/Cellar/glib/2.60.1/lib/glib-2.0/include",
-					/usr/local/opt/gettext/include,
-					/usr/local/Cellar/pcre/8.43/include,
-					/usr/local/Cellar/jansson/2.12/include,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"/usr/local/Cellar/gtk+3/3.24.8/lib",
-					/usr/local/Cellar/pango/1.42.4_1/lib,
-					/usr/local/Cellar/atk/2.32.0/lib,
-					/usr/local/Cellar/cairo/1.16.0/lib,
-					"/usr/local/Cellar/gdk-pixbuf/2.38.1/lib",
-					/usr/local/Cellar/glib/2.60.1/lib,
-					/usr/local/opt/gettext/lib,
-					/usr/local/Cellar/jansson/2.12/lib,
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"$(GTK3_CFLAGS)",
+					"$(JANSSON_CFLAGS)",
+				);
 				OTHER_LDFLAGS = (
-					"-lgtk-3",
-					"-lgdk-3",
-					"-lpangocairo-1.0",
-					"-lpango-1.0",
-					"-latk-1.0",
-					"-lcairo-gobject",
-					"-lcairo",
-					"-lgdk_pixbuf-2.0",
-					"-lgio-2.0",
-					"-lgobject-2.0",
-					"-lglib-2.0",
-					"-lintl",
-					"-ljansson\n",
+					"$(GTK3_LDFLAGS)",
+					"$(JANSSON_LDFLAGS)",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -19429,6 +19374,7 @@
 		};
 		2DE3B7BC2269BC3500AFF9AE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DA9777424C5EC26002405DA /* gtk3.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -19464,56 +19410,16 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"/usr/local/Cellar/gtk+3/3.24.8/include/gtk-3.0",
-					"/usr/local/Cellar/glib/2.60.1/include/gio-unix-2.0",
-					/usr/local/Cellar/cairo/1.16.0/include/cairo,
-					/usr/local/Cellar/libepoxy/1.5.3/include,
-					"/usr/local/Cellar/pango/1.42.4_1/include/pango-1.0",
-					/usr/local/Cellar/harfbuzz/2.4.0_1/include/harfbuzz,
-					/usr/local/Cellar/graphite2/1.3.13/include,
-					"/usr/local/Cellar/pango/1.42.4_1/include/pango-1.0",
-					/usr/local/Cellar/fribidi/1.0.5/include/fribidi,
-					"/usr/local/Cellar/atk/2.32.0/include/atk-1.0",
-					/usr/local/Cellar/cairo/1.16.0/include/cairo,
-					"/usr/local/Cellar/pixman/0.38.4/include/pixman-1",
-					/usr/local/Cellar/fontconfig/2.13.1/include,
-					/usr/local/opt/freetype/include/freetype2,
-					/usr/local/Cellar/libpng/1.6.37/include/libpng16,
-					"/usr/local/Cellar/gdk-pixbuf/2.38.1/include/gdk-pixbuf-2.0",
-					/usr/local/Cellar/glib/2.60.1/include,
-					"/usr/local/Cellar/libffi/3.2.1/lib/libffi-3.2.1/include",
-					"/usr/local/Cellar/glib/2.60.1/include/glib-2.0",
-					"/usr/local/Cellar/glib/2.60.1/lib/glib-2.0/include",
-					/usr/local/opt/gettext/include,
-					/usr/local/Cellar/pcre/8.43/include,
-					/usr/local/Cellar/jansson/2.12/include,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"/usr/local/Cellar/gtk+3/3.24.8/lib",
-					/usr/local/Cellar/pango/1.42.4_1/lib,
-					/usr/local/Cellar/atk/2.32.0/lib,
-					/usr/local/Cellar/cairo/1.16.0/lib,
-					"/usr/local/Cellar/gdk-pixbuf/2.38.1/lib",
-					/usr/local/Cellar/glib/2.60.1/lib,
-					/usr/local/opt/gettext/lib,
-					/usr/local/Cellar/jansson/2.12/lib,
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"$(GTK3_CFLAGS)",
+					"$(JANSSON_CFLAGS)",
+				);
 				OTHER_LDFLAGS = (
-					"-lgtk-3",
-					"-lgdk-3",
-					"-lpangocairo-1.0",
-					"-lpango-1.0",
-					"-latk-1.0",
-					"-lcairo-gobject",
-					"-lcairo",
-					"-lgdk_pixbuf-2.0",
-					"-lgio-2.0",
-					"-lgobject-2.0",
-					"-lglib-2.0",
-					"-lintl",
-					"-ljansson\n",
+					"$(GTK3_LDFLAGS)",
+					"$(JANSSON_LDFLAGS)",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -19613,6 +19519,7 @@
 		};
 		2DE3B8762269F68C00AFF9AE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DA9777424C5EC26002405DA /* gtk3.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -19688,20 +19595,10 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "$(GTK3_CFLAGS)";
 				OTHER_LDFLAGS = (
-					"-lgtk-3",
-					"-lgdk-3",
-					"-lpangocairo-1.0",
-					"-lpango-1.0",
-					"-latk-1.0",
-					"-lcairo-gobject",
-					"-lcairo",
-					"-lgdk_pixbuf-2.0",
-					"-lgio-2.0",
-					"-lgobject-2.0",
-					"-lglib-2.0",
-					"-lintl",
-					"-ljansson",
+					"$(GTK3_LDFLAGS)",
+					"$(JANSSON_LDFLAGS)",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -19712,6 +19609,7 @@
 		};
 		2DE3B8772269F68C00AFF9AE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DA9777424C5EC26002405DA /* gtk3.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -19782,20 +19680,10 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "$(GTK3_CFLAGS)";
 				OTHER_LDFLAGS = (
-					"-lgtk-3",
-					"-lgdk-3",
-					"-lpangocairo-1.0",
-					"-lpango-1.0",
-					"-latk-1.0",
-					"-lcairo-gobject",
-					"-lcairo",
-					"-lgdk_pixbuf-2.0",
-					"-lgio-2.0",
-					"-lgobject-2.0",
-					"-lglib-2.0",
-					"-lintl",
-					"-ljansson",
+					"$(GTK3_LDFLAGS)",
+					"$(JANSSON_LDFLAGS)",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
