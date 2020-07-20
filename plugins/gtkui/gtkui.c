@@ -55,9 +55,6 @@
 #include "gtkui_api.h"
 #include "wingeom.h"
 #include "widgets.h"
-#ifdef __APPLE__
-#include "retina.h"
-#endif
 #include "actionhandlers.h"
 #include "clipboard.h"
 #include "hotkeys.h"
