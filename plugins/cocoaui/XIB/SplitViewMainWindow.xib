@@ -32,13 +32,13 @@
                         <rect key="frame" x="0.0" y="15" width="667" height="283"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="J6H-mS-fcf">
-                                <rect key="frame" x="0.0" y="0.0" width="100" height="283"/>
+                                <rect key="frame" x="0.0" y="0.0" width="300" height="283"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="BpO-2e-oxQ"/>
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="MTg-ZJ-GDG">
-                                <rect key="frame" x="101" y="0.0" width="566" height="283"/>
+                                <rect key="frame" x="301" y="0.0" width="366" height="283"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="V3U-Kv-B9E"/>
                                 </constraints>
@@ -163,13 +163,13 @@
                 <outlet property="view" destination="pUF-Dy-KtC" id="ZsB-hW-ZOY"/>
             </connections>
         </viewController>
-        <scrollView autoresizesSubviews="NO" wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VJY-8N-XhM" userLabel="Sidebar View">
+        <scrollView autoresizesSubviews="NO" wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="17" horizontalPageScroll="10" verticalLineScroll="17" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VJY-8N-XhM" userLabel="Sidebar View">
             <rect key="frame" x="0.0" y="0.0" width="300" height="279"/>
             <clipView key="contentView" wantsLayer="YES" drawsBackground="NO" id="Eiv-XJ-7B1">
                 <rect key="frame" x="0.0" y="0.0" width="300" height="279"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <outlineView wantsLayer="YES" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="13" outlineTableColumn="hGa-Fg-yZI" id="Ffb-Ma-ZiG">
+                    <outlineView wantsLayer="YES" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="13" outlineTableColumn="hGa-Fg-yZI" id="Ffb-Ma-ZiG">
                         <rect key="frame" x="0.0" y="0.0" width="300" height="279"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <size key="intercellSpacing" width="17" height="0.0"/>

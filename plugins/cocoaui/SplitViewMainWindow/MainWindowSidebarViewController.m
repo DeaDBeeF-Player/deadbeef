@@ -15,13 +15,14 @@ extern DB_functions_t *deadbeef;
 
 @interface MainWindowSidebarViewController () <NSOutlineViewDelegate,NSOutlineViewDataSource>
 
-@property (nonatomic) NSArray<NSString *> *groups;
+@property (nonatomic) NSString *libraryItem;
+@property (nonatomic) MediaLibraryItem *medialibRootItem;
+
 @property (nonatomic) NSArray<NSString *> *groupItems;
 @property (weak) IBOutlet NSOutlineView *outlineView;
 
 @property (nonatomic) ddb_medialib_plugin_t *medialibPlugin;
 @property (nonatomic) ddb_medialib_item_t *medialibItemTree;
-@property (nonatomic) MediaLibraryItem *medialibRootItem;
 
 
 @end
@@ -35,10 +36,7 @@ extern DB_functions_t *deadbeef;
         return nil;
     }
 
-    self.groups = @[
-        @"Library",
-        @"All Music",
-    ];
+    self.libraryItem = @"Library";
 
     self.groupItems = @[
         @"Genres",
@@ -62,9 +60,8 @@ static void _medialib_listener (int event, void *user_data) {
     self.medialibPlugin->add_listener (_medialib_listener, (__bridge void *)self);
     [self initializeTreeView:0];
 
-    for (NSString *group in self.groups) {
-        [self.outlineView expandItem:group];
-    }
+    [self.outlineView expandItem:self.libraryItem];
+    [self.outlineView expandItem:self.medialibRootItem];
 }
 
 - (void)initializeTreeView:(int)index {
@@ -122,9 +119,9 @@ static void _medialib_listener (int event, void *user_data) {
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
     if (item == nil) {
-        return self.groups.count;
+        return 2;
     }
-    else if ([self.groups containsObject:item]) {
+    else if (item == self.libraryItem) {
         return self.groupItems.count;
     }
     else if ([item isKindOfClass:MediaLibraryItem.class]) {
@@ -140,7 +137,7 @@ static void _medialib_listener (int event, void *user_data) {
         MediaLibraryItem *mlItem = item;
         return mlItem.numberOfChildren > 0;
     }
-    else if (item == nil || [self.groups containsObject:item]) {
+    else if (item == nil || item == self.libraryItem || item == self.medialibRootItem) {
         return YES;
     }
     return NO;
@@ -155,22 +152,22 @@ static void _medialib_listener (int event, void *user_data) {
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
-    if ([self.groups containsObject:item] || item == self.medialibRootItem) {
+    if (item == self.libraryItem || item == self.medialibRootItem) {
         return NO;
     }
     return YES;
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isGroupItem:(id)item {
-    return [self.groups containsObject:item] || item == self.medialibRootItem;
+    return item == self.libraryItem || item == self.medialibRootItem;
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
     if (item == nil) {
-        if (index == 0) {
-            return self.groups[index];
-        }
-        else {
+        switch (index) {
+        case 0:
+            return self.libraryItem;
+        case 1:
             return self.medialibRootItem;
         }
     }
@@ -178,18 +175,18 @@ static void _medialib_listener (int event, void *user_data) {
         MediaLibraryItem *mlItem = item;
         return [mlItem childAtIndex:index];
     }
-    else if (item == self.groups[0]) {
+    else if (item == self.libraryItem) {
         return self.groupItems[index];
     }
 
-    return [NSString stringWithFormat:@"Playlist %d", (int)index];
+    return [NSString stringWithFormat:@"Error %d", (int)index];
 }
 
 #pragma mark - NSOutlineViewDelegate
 
 - (nullable NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(nullable NSTableColumn *)tableColumn item:(id)item {
     NSTableCellView *view;
-    if ([self.groups containsObject:item] || [item isKindOfClass:MediaLibraryItem.class]) {
+    if (item == self.libraryItem || [item isKindOfClass:MediaLibraryItem.class]) {
         view = [outlineView makeViewWithIdentifier:@"TextCell" owner:self];
     }
     else {
