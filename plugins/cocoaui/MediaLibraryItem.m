@@ -36,6 +36,9 @@ extern DB_functions_t *deadbeef;
 }
 
 - (NSUInteger)numberOfChildren {
+    if (!_item) {
+        return 0;
+    }
     return _item->num_children;
 }
 
@@ -56,6 +59,9 @@ extern DB_functions_t *deadbeef;
 }
 
 - (NSString *)stringValue {
+    if (!_item) {
+        return @"";
+    }
     if (_item->num_children) {
         _stringValue = [NSString stringWithFormat:@"%@ (%d)", [NSString stringWithUTF8String:_item->text], _item->num_children];
     }

@@ -58,6 +58,7 @@ static void _medialib_listener (int event, void *user_data) {
 - (void)viewDidLoad {
     self.medialibPlugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
     self.medialibPlugin->add_listener (_medialib_listener, (__bridge void *)self);
+//    self.medialibRootItem = [MediaLibraryItem initTree:NULL];
     [self initializeTreeView:0];
 
     [self.outlineView expandItem:self.libraryItem];
@@ -80,38 +81,51 @@ static void _medialib_listener (int event, void *user_data) {
     self.medialibRootItem = [MediaLibraryItem initTree:self.medialibItemTree];
 }
 
+- (void)updateMedialibStatus:(NSTableCellView *)view {
+    int state = self.medialibPlugin->scanner_state ();
+    switch (state) {
+    case DDB_MEDIALIB_STATE_LOADING:
+        view.textField.stringValue = @"Loading...";
+        break;
+    case DDB_MEDIALIB_STATE_SCANNING:
+        view.textField.stringValue = @"Scanning...";
+        break;
+    case DDB_MEDIALIB_STATE_INDEXING:
+        view.textField.stringValue = @"Indexing...";
+        break;
+    case DDB_MEDIALIB_STATE_SAVING:
+        view.textField.stringValue = @"Saving...";
+        break;
+    default:
+        view.textField.stringValue = self.medialibRootItem.stringValue;
+        break;
+    }
+}
+
 - (void)medialibEvent:(int)event {
     if (event == DDB_MEDIALIB_EVENT_CHANGED) {
         [self initializeTreeView:3];
     }
     else if (event == DDB_MEDIALIB_EVENT_SCANNER) {
-//        int state = self.medialibPlugin->scanner_state ();
-//        if (state != DDB_MEDIALIB_STATE_IDLE) {
+        int state = self.medialibPlugin->scanner_state ();
+        if (state != DDB_MEDIALIB_STATE_IDLE) {
 //            [_scannerActiveIndicator startAnimation:self];
-//
-//            switch (state) {
-//            case DDB_MEDIALIB_STATE_LOADING:
-//                [_scannerActiveState setStringValue:@"Loading..."];
-//                break;
-//            case DDB_MEDIALIB_STATE_SCANNING:
-//                [_scannerActiveState setStringValue:@"Scanning..."];
-//                break;
-//            case DDB_MEDIALIB_STATE_INDEXING:
-//                [_scannerActiveState setStringValue:@"Indexing..."];
-//                break;
-//            case DDB_MEDIALIB_STATE_SAVING:
-//                [_scannerActiveState setStringValue:@"Saving..."];
-//                break;
-//            default:
-//                [_scannerActiveState setStringValue:@""];
-//                break;
-//            }
+
+            NSInteger row = [self.outlineView rowForItem:self.medialibRootItem];
+            if (row < 0) {
+                return;
+            }
+            NSTableCellView *view = [[self.outlineView rowViewAtRow:row makeIfNecessary:NO]  viewAtColumn:0];
+
+
+            [self updateMedialibStatus:view];
+
 //            [_scannerActiveState setHidden:NO];
-//        }
-//        else {
+        }
+        else {
 //            [_scannerActiveIndicator stopAnimation:self];
 //            [_scannerActiveState setHidden:YES];
-//        }
+        }
     }
 }
 
@@ -215,7 +229,12 @@ static void _medialib_listener (int event, void *user_data) {
     }
     if ([item isKindOfClass:MediaLibraryItem.class]) {
         MediaLibraryItem *mlItem = item;
-        view.textField.stringValue = mlItem.stringValue;
+        if (item == self.medialibRootItem) {
+            [self updateMedialibStatus:view];
+        }
+        else {
+            view.textField.stringValue = mlItem.stringValue;
+        }
     }
     else {
         view.textField.stringValue = item;
