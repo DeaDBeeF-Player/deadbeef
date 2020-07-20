@@ -34,7 +34,7 @@
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="J6H-mS-fcf">
                                 <rect key="frame" x="0.0" y="0.0" width="100" height="283"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="BpO-2e-oxQ"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="BpO-2e-oxQ"/>
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="MTg-ZJ-GDG">
@@ -72,7 +72,7 @@
                     <constraint firstAttribute="trailing" secondItem="Yc4-pv-Wup" secondAttribute="trailing" constant="8" id="ycs-1W-YMK"/>
                 </constraints>
             </view>
-            <toolbar key="toolbar" implicitIdentifier="AC52D12D-4000-4B08-A065-07D723AB5954" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="HZu-Ne-Wux">
+            <toolbar key="toolbar" implicitIdentifier="AC52D12D-4000-4B08-A065-07D723AB5954" centeredItem="J23-QU-u9D" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="regular" id="HZu-Ne-Wux">
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="B7B3A6E3-A418-464C-AAF3-D9D0B5687BBF" label="Custom View" paletteLabel="Custom View" tag="-1" id="J23-QU-u9D" userLabel="Custom Seekbar" customClass="CustomToolbarItem">
                         <nil key="toolTip"/>
@@ -89,7 +89,7 @@
                             <outlet property="customView" destination="Cf3-e3-qXV" id="8eX-zJ-jDK"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="5BC003E8-E444-40E9-BE77-B0900BC6FF5D" label="Custom View" paletteLabel="Custom View" sizingBehavior="auto" id="frz-kQ-skG">
+                    <toolbarItem implicitItemIdentifier="5BC003E8-E444-40E9-BE77-B0900BC6FF5D" label="Custom View" paletteLabel="Custom View" visibilityPriority="2" sizingBehavior="auto" id="frz-kQ-skG">
                         <nil key="toolTip"/>
                         <segmentedControl key="view" verticalHuggingPriority="750" id="OIq-Is-HDq">
                             <rect key="frame" x="0.0" y="14" width="130" height="24"/>
@@ -164,19 +164,19 @@
             </connections>
         </viewController>
         <scrollView autoresizesSubviews="NO" wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VJY-8N-XhM" userLabel="Sidebar View">
-            <rect key="frame" x="0.0" y="0.0" width="150" height="279"/>
+            <rect key="frame" x="0.0" y="0.0" width="300" height="279"/>
             <clipView key="contentView" wantsLayer="YES" drawsBackground="NO" id="Eiv-XJ-7B1">
-                <rect key="frame" x="0.0" y="0.0" width="150" height="279"/>
+                <rect key="frame" x="0.0" y="0.0" width="300" height="279"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <outlineView wantsLayer="YES" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="13" outlineTableColumn="hGa-Fg-yZI" id="Ffb-Ma-ZiG">
-                        <rect key="frame" x="0.0" y="0.0" width="150" height="279"/>
+                        <rect key="frame" x="0.0" y="0.0" width="300" height="279"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <size key="intercellSpacing" width="17" height="0.0"/>
                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                         <tableColumns>
-                            <tableColumn width="118" minWidth="40" maxWidth="1000" id="hGa-Fg-yZI">
+                            <tableColumn width="268" minWidth="40" maxWidth="1000" id="hGa-Fg-yZI">
                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -189,7 +189,7 @@
                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                 <prototypeCellViews>
                                     <tableCellView identifier="ImageTextCell" id="EBG-cr-yK2">
-                                        <rect key="frame" x="18" y="0.0" width="113" height="17"/>
+                                        <rect key="frame" x="18" y="0.0" width="263" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="36a-Ya-ygF">
@@ -216,11 +216,11 @@
                                         </connections>
                                     </tableCellView>
                                     <tableCellView identifier="TextCell" id="1H4-f5-afD">
-                                        <rect key="frame" x="18" y="17" width="113" height="24"/>
+                                        <rect key="frame" x="18" y="17" width="263" height="24"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oMO-Cn-w8T">
-                                                <rect key="frame" x="0.0" y="4" width="113" height="16"/>
+                                                <rect key="frame" x="0.0" y="4" width="263" height="16"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="ziT-k4-oha">
                                                     <font key="font" usesAppearanceFont="YES"/>
@@ -246,7 +246,7 @@
             </clipView>
             <constraints>
                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="J2Y-XB-v3r"/>
-                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="XTH-Ox-zGq"/>
+                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="XTH-Ox-zGq"/>
             </constraints>
             <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="r3A-WF-3pN">
                 <rect key="frame" x="1" y="119" width="223" height="15"/>
