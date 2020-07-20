@@ -37,6 +37,7 @@ extern DB_functions_t *deadbeef;
 
     self.groups = @[
         @"Library",
+        @"All Music",
     ];
 
     self.groupItems = @[
@@ -44,7 +45,6 @@ extern DB_functions_t *deadbeef;
         @"Albums",
         @"Artists",
         @"Folders",
-        @"All Music",
     ];
 
     return self;
@@ -155,28 +155,30 @@ static void _medialib_listener (int event, void *user_data) {
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
-    if ([self.groups containsObject:item]) {
+    if ([self.groups containsObject:item] || item == self.medialibRootItem) {
         return NO;
     }
     return YES;
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isGroupItem:(id)item {
-    return [self.groups containsObject:item];
+    return [self.groups containsObject:item] || item == self.medialibRootItem;
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
     if (item == nil) {
-        return self.groups[index];
+        if (index == 0) {
+            return self.groups[index];
+        }
+        else {
+            return self.medialibRootItem;
+        }
     }
     else if ([item isKindOfClass:MediaLibraryItem.class]) {
         MediaLibraryItem *mlItem = item;
         return [mlItem childAtIndex:index];
     }
     else if (item == self.groups[0]) {
-        if (index == 4) {
-            return self.medialibRootItem;
-        }
         return self.groupItems[index];
     }
 
@@ -194,7 +196,24 @@ static void _medialib_listener (int event, void *user_data) {
         view = [outlineView makeViewWithIdentifier:@"ImageTextCell" owner:self];
 
         if (@available(macOS 10.16, *)) {
-            view.imageView.image = [NSImage imageWithSystemSymbolName:@"play.circle" accessibilityDescription:nil];
+            NSString *name;
+            if (item == self.groupItems[0]) {
+                name = @"guitars";
+            }
+            else if (item == self.groupItems[1]) {
+                name = @"music.note.list";
+
+            }
+            else if (item == self.groupItems[2]) {
+                name = @"music.mic";
+            }
+            else if (item == self.groupItems[3]) {
+                name = @"folder";
+            }
+
+            if (name) {
+                view.imageView.image = [NSImage imageWithSystemSymbolName:name accessibilityDescription:nil];
+            }
         }
     }
     if ([item isKindOfClass:MediaLibraryItem.class]) {
@@ -212,10 +231,12 @@ static void _medialib_listener (int event, void *user_data) {
 
     NSUInteger idx = [self.groupItems indexOfObject:item];
     if (idx != NSNotFound) {
-        [self.outlineView removeItemsAtIndexes:[NSIndexSet indexSetWithIndex:4] inParent:self.groups[0] withAnimation:NSTableViewAnimationEffectNone];
+        [self.outlineView beginUpdates];
+        [self.outlineView removeItemsAtIndexes:[NSIndexSet indexSetWithIndex:1] inParent:nil withAnimation:NSTableViewAnimationEffectNone];
         [self initializeTreeView:(int)idx];
-        [self.outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:4] inParent:self.groups[0] withAnimation:NSTableViewAnimationEffectNone];
+        [self.outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:1] inParent:nil withAnimation:NSTableViewAnimationEffectNone];
         [self.outlineView expandItem:self.medialibRootItem];
+        [self.outlineView endUpdates];
     }
 }
 
