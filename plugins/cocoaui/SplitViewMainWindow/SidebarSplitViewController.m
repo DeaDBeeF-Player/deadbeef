@@ -42,6 +42,8 @@
     }
 
     [super viewDidLoad];
+
+    self.splitView.autosaveName = @"MainWindowSplitView";
 }
 
 @end

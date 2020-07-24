@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17132" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17140" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17132"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17140"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -28,7 +28,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="667" height="298"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <splitView wantsLayer="YES" autosaveName="MainWindowSplitView" dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7fy-hF-oeO">
+                    <splitView wantsLayer="YES" autosaveName="" dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7fy-hF-oeO">
                         <rect key="frame" x="0.0" y="15" width="667" height="283"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="J6H-mS-fcf">
@@ -189,7 +189,7 @@
                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                 <prototypeCellViews>
                                     <tableCellView identifier="ImageTextCell" id="EBG-cr-yK2">
-                                        <rect key="frame" x="18" y="0.0" width="263" height="17"/>
+                                        <rect key="frame" x="8" y="0.0" width="268" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="36a-Ya-ygF">
@@ -216,11 +216,11 @@
                                         </connections>
                                     </tableCellView>
                                     <tableCellView identifier="TextCell" id="1H4-f5-afD">
-                                        <rect key="frame" x="18" y="17" width="263" height="24"/>
+                                        <rect key="frame" x="8" y="17" width="268" height="24"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oMO-Cn-w8T">
-                                                <rect key="frame" x="0.0" y="4" width="263" height="16"/>
+                                                <rect key="frame" x="0.0" y="4" width="268" height="16"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="ziT-k4-oha">
                                                     <font key="font" usesAppearanceFont="YES"/>
@@ -351,7 +351,7 @@ Gw
         </customView>
     </objects>
     <resources>
-        <image name="NSActionTemplate" width="17" height="15"/>
+        <image name="NSActionTemplate" width="15" height="15"/>
         <image name="btnnextTemplate" width="75" height="75"/>
         <image name="btnpauseTemplate" width="75" height="75"/>
         <image name="btnplayTemplate" width="75" height="75"/>
