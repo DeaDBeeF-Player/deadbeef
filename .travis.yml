@@ -18,7 +18,7 @@ matrix:
           sudo: required
         - os: osx
           osx_image: xcode11.5
-        - os: windows
+          #        - os: windows
 
 git:
   submodules: true
