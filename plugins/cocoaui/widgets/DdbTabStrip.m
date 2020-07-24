@@ -29,7 +29,6 @@
 extern DB_functions_t *deadbeef;
 
 @interface DdbTabStrip () {
-    int _hscrollpos;
     int _dragging;
     int _prepare;
     int _movepos;
@@ -56,6 +55,8 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) int tab_clicked;
 @property (weak) IBOutlet NSTextField *renamePlaylistTitle;
 @property (nonatomic) BOOL needScroll;
+@property (nonatomic) CGFloat scrollPos;
+@property (nonatomic,readonly) int fullWidth;
 
 @end
 
@@ -87,6 +88,15 @@ static int close_btn_right_offs = 16;
     return _titleAttributes;
 }
 
+- (NSColor *)accentColor {
+    if (@available(macOS 10.14, *)) {
+        return NSColor.controlAccentColor;
+    }
+    else {
+        return NSColor.alternateSelectedControlColor;
+    }
+}
+
 - (NSDictionary *)titleAttributesSelected {
     if (!_titleAttributesSelected) {
         NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
@@ -94,10 +104,11 @@ static int close_btn_right_offs = 16;
         textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
         NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize] weight:NSFontWeightSemibold];
+        NSColor *textColor = self.accentColor;
         _titleAttributesSelected = @{
                              NSParagraphStyleAttributeName: textStyle,
                              NSFontAttributeName:font,
-                             NSForegroundColorAttributeName:NSColor.controlTextColor
+                             NSForegroundColorAttributeName:textColor
                              };
     }
     return _titleAttributesSelected;
@@ -136,9 +147,8 @@ plt_get_title_wrapper (int plt) {
 }
 
 - (int)tabWidthForIndex:(int)tab {
-    int selected = deadbeef->plt_get_curr_idx ();
     NSString *title = plt_get_title_wrapper (tab);
-    NSSize sz = [title sizeWithAttributes:(tab == selected ? self.titleAttributesSelected : self.titleAttributes)];
+    NSSize sz = [title sizeWithAttributes:self.titleAttributesSelected];
     int w = (int)sz.width;
     w += text_left_padding + text_right_padding;
     if (w < min_tab_size) {
@@ -172,7 +182,7 @@ plt_get_title_wrapper (int plt) {
     }
 }
 
-- (int)getFullWidth {
+- (int)fullWidth {
     int fullwidth = 0;
     int cnt = deadbeef->plt_get_count ();
     for (int idx = 0; idx < cnt; idx++) {
@@ -186,31 +196,30 @@ plt_get_title_wrapper (int plt) {
     return fullwidth;
 }
 
-- (void)setScrollPos:(int)scrollPos {
-    _hscrollpos = scrollPos;
+- (void)setScrollPos:(CGFloat)scrollPos {
+    _scrollPos = MAX(0, MIN(self.fullWidth - NSWidth(self.bounds), scrollPos));
+    deadbeef->conf_set_int ("cocoaui.tabscroll", _scrollPos);
 }
 
 - (void)scrollToTabInt:(int)tab redraw:(BOOL)redraw {
     int w = tabs_left_margin;
     int cnt = deadbeef->plt_get_count ();
     NSSize a = self.bounds.size;
-    int boundary = a.width + _hscrollpos;
+    int boundary = a.width + self.scrollPos;
     for (int idx = 0; idx < cnt; idx++) {
         int tab_w = [self tabWidthForIndex:idx];
         if (idx == cnt-1) {
             tab_w += 3;
         }
         if (idx == tab) {
-            if (w < _hscrollpos) {
+            if (w < self.scrollPos) {
                 self.scrollPos = w;
-                deadbeef->conf_set_int ("cocoaui.tabscroll", _hscrollpos);
                 if (redraw) {
                     self.needsDisplay = YES;
                 }
             }
             else if (w + tab_w >= boundary) {
-                self.scrollPos = _hscrollpos + (w + tab_w) - boundary;
-                deadbeef->conf_set_int ("cocoaui.tabscroll", _hscrollpos);
+                self.scrollPos = self.scrollPos + (w + tab_w) - boundary;
                 if (redraw) {
                     self.needsDisplay = YES;
                 }
@@ -221,10 +230,13 @@ plt_get_title_wrapper (int plt) {
     }
 }
 
+- (CGFloat)clippedScrollPos:(CGFloat)scrollPos {
+    return MAX(0, MIN(self.fullWidth - NSWidth(self.bounds), scrollPos));
+}
+
 - (void)adjustHScroll {
     if (deadbeef->plt_get_count () > 0) {
-        self.scrollPos = 0;
-        deadbeef->conf_set_int ("cocoaui.tabscroll", _hscrollpos);
+        self.scrollPos = [self clippedScrollPos:self.scrollPos];
     }
     [self mouseMovedHandler];
 }
@@ -238,38 +250,44 @@ plt_get_title_wrapper (int plt) {
     // rectangular tabs
     tabRect.size.height++;
 
-    if (!sel) {
-        [[NSColor.blackColor colorWithAlphaComponent:idx == _pointedTab?0.2:0.1] set];
+    // tab background
+    if (sel) {
+        NSColor *backgroundColor;
+        backgroundColor = [self.accentColor colorWithAlphaComponent:0.3];
+        [backgroundColor set];
+
         NSRect rc = tabRect;
-        rc.size.width -= 1;
+        rc.origin.x -= 1;
+        rc.size.width += 1;
         NSBezierPath *tab = [NSBezierPath bezierPathWithRect:rc];
         [tab fill];
     }
+
+
+    // tab divider
     NSColor *clr = [_hiddenVertLine borderColor];
     [[clr colorWithAlphaComponent:0.5] set];
     NSBezierPath *line = [NSBezierPath bezierPath];
-    [line moveToPoint:NSMakePoint(tabRect.origin.x + tabRect.size.width-0.5, tabRect.origin.y-1.5)];
-    [line lineToPoint:NSMakePoint(tabRect.origin.x + tabRect.size.width-0.5, tabRect.origin.y+tabRect.size.height-1)];
+    [line moveToPoint:NSMakePoint(tabRect.origin.x + tabRect.size.width-0.5, tabRect.origin.y+5)];
+    [line lineToPoint:NSMakePoint(tabRect.origin.x + tabRect.size.width-0.5, tabRect.origin.y+tabRect.size.height-10)];
     if (sel && _dragging >= 0) {
-        [line moveToPoint:NSMakePoint(tabRect.origin.x-0.5, tabRect.origin.y-1.5)];
-        [line lineToPoint:NSMakePoint(tabRect.origin.x-0.5, tabRect.origin.y+tabRect.size.height-1)];
+        [line moveToPoint:NSMakePoint(tabRect.origin.x-0.5, tabRect.origin.y+5)];
+        [line lineToPoint:NSMakePoint(tabRect.origin.x-0.5, tabRect.origin.y+tabRect.size.height-10)];
     }
     [line stroke];
 
     // tab title
-    int textoffs = sel ? 1 : 0;
-
     NSDictionary *attrs = sel ? self.titleAttributesSelected : self.titleAttributes;
 
     NSString *tab_title = plt_get_title_wrapper (idx);
 
-    [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + text_vert_offset + textoffs - 10, area.size.width - (text_left_padding + text_right_padding - 1), area.size.height) withAttributes:attrs];
+    [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + text_vert_offset - 10, area.size.width - (text_left_padding + text_right_padding - 1), area.size.height) withAttributes:attrs];
 
     [[NSGraphicsContext currentContext] restoreGraphicsState];
 
     // close button
     if (idx == _pointedTab && (_dragging == -1 || !self.dragReallyBegan)) {
-        NSRect atRect = [self getTabCloseRect:area];
+        NSRect atRect = [self tabCloseButtonRectForTabRect:area];
         NSPoint from = atRect.origin;
         from.x += 2;
         from.y += 2;
@@ -297,7 +315,7 @@ plt_get_title_wrapper (int plt) {
     text_right_padding = h - 3 + 5;
 }
 
-- (NSRect)getTabRect:(int)xPos tabWidth:(int)tabWidth tabHeight:(int)tabHeight {
+- (NSRect)tabRectForXPos:(int)xPos width:(int)tabWidth height:(int)tabHeight {
     return NSMakeRect(xPos, tab_vert_padding, tabWidth, tabHeight);
 
 }
@@ -306,7 +324,7 @@ plt_get_title_wrapper (int plt) {
 {
     [super drawRect:dirtyRect];
     int cnt = deadbeef->plt_get_count ();
-    int hscroll = _hscrollpos;
+    int hscroll = self.scrollPos;
     
     int x = -hscroll;
     int w = 0;
@@ -346,7 +364,7 @@ plt_get_title_wrapper (int plt) {
     if (_dragging < 0 || _prepare || tab_selected != _dragging) {
         idx = tab_selected;
         w = widths[tab_selected];
-        selectedTabRect = [self getTabRect:x tabWidth:w tabHeight:self.bounds.size.height];
+        selectedTabRect = [self tabRectForXPos:x width:w height:self.bounds.size.height];
         [self drawTab:idx area:selectedTabRect selected:YES];
     }
     else {
@@ -363,7 +381,7 @@ plt_get_title_wrapper (int plt) {
                 }
                 if (w > 0) {
                     // ***** draw dragging tab here *****
-                    selectedTabRect = [self getTabRect:x tabWidth:w tabHeight:self.bounds.size.height];
+                    selectedTabRect = [self tabRectForXPos:x width:w height:self.bounds.size.height];
                     [self drawTab:tab_selected area:selectedTabRect selected:YES];
 
                     NSBezierPath *clipPath = [NSBezierPath bezierPath];
@@ -393,7 +411,7 @@ plt_get_title_wrapper (int plt) {
     int c = tab_selected == -1 ? cnt : tab_selected;
     for (idx = 0; idx < c; idx++) {
         w = widths[idx];
-        NSRect area = [self getTabRect:x tabWidth:w tabHeight:self.bounds.size.height];
+        NSRect area = [self tabRectForXPos:x width:w height:self.bounds.size.height];
         [self drawTab:idx area:area selected:NO];
         x += w - tab_overlap_size;
     }
@@ -406,7 +424,7 @@ plt_get_title_wrapper (int plt) {
         for (idx = cnt-1; idx > tab_selected; idx--) {
             w = widths[idx];
             x -= w - tab_overlap_size;
-            NSRect area = [self getTabRect:x tabWidth:w tabHeight:self.bounds.size.height];
+            NSRect area = [self tabRectForXPos:x width:w height:self.bounds.size.height];
             [self drawTab:idx area:area selected:NO];
         }
     }
@@ -420,7 +438,7 @@ plt_get_title_wrapper (int plt) {
     for (int idx = 0; idx < cnt; idx++) {
         int w = [self tabWidthForIndex:tab];
         if (idx == tab) {
-            return NSMakeRect(width - _hscrollpos, 0, w, self.frame.size.height);
+            return NSMakeRect(width - self.scrollPos, 0, w, self.frame.size.height);
         }
         width += w - tab_overlap_size;
     }
@@ -428,7 +446,7 @@ plt_get_title_wrapper (int plt) {
 }
 
 -(int)tabUnderCursor:(int)x {
-    int hscroll = _hscrollpos;
+    int hscroll = self.scrollPos;
 
     int idx;
     int cnt = deadbeef->plt_get_count ();
@@ -485,18 +503,14 @@ plt_get_title_wrapper (int plt) {
 }
 
 -(void)scrollWheel:(NSEvent*)event {
-    if (event.deltaY < 0 || event.deltaX < 0)
-    {
-        [self scrollRight];
-    }
-    else if (event.deltaY > 0 || event.deltaX > 0)
-    {
-        [self scrollLeft];
-    }
+    CGFloat newScroll = self.scrollPos + event.deltaY;
+    newScroll -= event.deltaY * 2;
+    self.scrollPos = [self clippedScrollPos:newScroll];
+    self.needsDisplay = YES;
 }
 
--(NSRect)getTabCloseRect:(NSRect)area {
-    NSPoint from = NSMakePoint(area.origin.x + area.size.width - tab_overlap_size - close_btn_right_offs + 0.5, area.origin.y + 7.5);
+-(NSRect)tabCloseButtonRectForTabRect:(NSRect)tabRect {
+    NSPoint from = NSMakePoint(tabRect.origin.x + tabRect.size.width - tab_overlap_size - close_btn_right_offs + 0.5, tabRect.origin.y + 10);
     NSRect atRect;
     atRect.origin = from;
     atRect.origin.x -= 2;
@@ -506,7 +520,7 @@ plt_get_title_wrapper (int plt) {
 }
 
 - (BOOL)handleClickedTabCloseRect {
-    int hscroll = _hscrollpos;
+    int hscroll = self.scrollPos;
     int x = -hscroll + tabs_left_margin;
     int idx;
     for (idx = 0; idx < self.tab_clicked; idx++) {
@@ -515,9 +529,9 @@ plt_get_title_wrapper (int plt) {
     }
     int w = [self tabWidthForIndex:_tab_clicked];
 
-    NSRect tabRect = [self getTabRect:x tabWidth:w tabHeight:self.bounds.size.height];
+    NSRect tabRect = [self tabRectForXPos:x width:w height:self.bounds.size.height];
 
-    NSRect atRect = [self getTabCloseRect:tabRect];
+    NSRect atRect = [self tabCloseButtonRectForTabRect:tabRect];
 
     if (!NSPointInRect(_lastMouseCoord, atRect)) {
         return NO;
@@ -559,7 +573,7 @@ plt_get_title_wrapper (int plt) {
             [self scrollToTab:_tab_clicked];
         }
 
-        int hscroll = _hscrollpos;
+        int hscroll = self.scrollPos;
         int x = -hscroll + tabs_left_margin;
         int idx;
         for (idx = 0; idx < _tab_clicked; idx++) {
@@ -586,6 +600,9 @@ plt_get_title_wrapper (int plt) {
         alert.informativeText = [NSString stringWithFormat:@"Do you really want to remove the playlist '%@'?", plt_get_title_wrapper (_tab_clicked)];
         [alert addButtonWithTitle:@"No"];
         [alert addButtonWithTitle:@"Yes"];
+        if (@available(macOS 10.16, *)) {
+            alert.buttons[1].hasDestructiveAction = YES;
+        }
 
         self.playlistConfirmationAlertOpen = YES;
 
@@ -739,7 +756,7 @@ plt_get_title_wrapper (int plt) {
 
         // find closest tab to the left
         int idx;
-        int hscroll = _hscrollpos;
+        int hscroll = self.scrollPos;
         int x = -hscroll + tabs_left_margin;
         int inspos = -1;
         int cnt = deadbeef->plt_get_count ();
@@ -829,7 +846,8 @@ plt_get_title_wrapper (int plt) {
         dispatch_async(dispatch_get_main_queue(), ^{
             switch (_id) {
             case DB_EV_PLAYLISTSWITCHED:
-                [self performSelectorOnMainThread:@selector(frameDidChange) withObject:nil waitUntilDone:NO];
+                [self frameDidChange];
+                [self scrollToTab:deadbeef->plt_get_curr_idx()];
                 self.needsDisplay = YES;
                 break;
             case DB_EV_PLAYLISTCHANGED:
