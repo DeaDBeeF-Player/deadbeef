@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#include "../../deadbeef.h"
-#include "../medialib/medialib.h"
+#include "../../../deadbeef.h"
+#include "../../medialib/medialib.h"
 
 @interface MediaLibraryItem : NSObject
 

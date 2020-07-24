@@ -59,7 +59,6 @@ AppDelegate *g_appDelegate;
 @property (nonatomic) LogWindowController *logWindow;
 @property (nonatomic) HelpWindowController *helpWindow;
 @property (nonatomic) EqualizerWindowController *equalizerWindow;
-@property (nonatomic) MediaLibraryWindowController *mediaLibraryWindow;
 
 @property (nonatomic) NSMenuItem *dockMenuNPHeading;
 @property (nonatomic) NSMenuItem *dockMenuNPTitle;
@@ -168,7 +167,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [self initMainWindow];
     [self initSearchWindow];
     [self initLogWindow];
-    [self initMediaLibraryWindow];
 }
 
 - (void)initMainWindow {
@@ -216,11 +214,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
         [_equalizerWindowToggleMenuItem bind:@"state" toObject:_equalizerWindow.window withKeyPath:@"visible" options:nil];
         _equalizerWindow.window.excludedFromWindowsMenu = YES;
     }
-}
-
-- (void)initMediaLibraryWindow {
-    _mediaLibraryWindow = [[MediaLibraryWindowController alloc] initWithWindowNibName:@"MediaLibrary"];
-    [[_mediaLibraryWindow window] setIsVisible:YES];
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {

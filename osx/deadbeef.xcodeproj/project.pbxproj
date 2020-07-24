@@ -1525,7 +1525,6 @@
 		2D7DE4A61E64CD7700AA0F83 /* dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 4DC96E6D1E4CC9670093CFD3 /* dsp.c */; };
 		2D7F38031B2858AC00692A7B /* JunklibTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D7F38021B2858AC00692A7B /* JunklibTests.m */; };
 		2D8030CD24B261A400539F9F /* MediaLibraryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8030CC24B261A400539F9F /* MediaLibraryItem.h */; };
-		2D8030CF24B261AA00539F9F /* MediaLibraryWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8030CE24B261A900539F9F /* MediaLibraryWindowController.h */; };
 		2D828E5419E5679800EE874F /* Search.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D828E5319E5679800EE874F /* Search.xib */; };
 		2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D828E5919E56B4D00EE874F /* SearchViewController.h */; };
 		2D828E5C19E56B4D00EE874F /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D828E5A19E56B4D00EE874F /* SearchViewController.m */; };
@@ -1535,7 +1534,6 @@
 		2D86AFC71C358CDD0018C174 /* dial68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D86AFC21C358CDD0018C174 /* dial68.c */; };
 		2D86AFC81C358CDD0018C174 /* dial68.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D86AFC31C358CDD0018C174 /* dial68.h */; };
 		2D887BE624B1C86D0078392F /* MediaLibraryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D887BE424B1C86D0078392F /* MediaLibraryItem.m */; };
-		2D887BE724B1C86D0078392F /* MediaLibraryWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D887BE524B1C86D0078392F /* MediaLibraryWindowController.m */; };
 		2D887BE924B1CB650078392F /* MediaLibrary.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D887BE824B1CB650078392F /* MediaLibrary.xib */; };
 		2D887BEA24B1CB790078392F /* medialib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D887BCD24B1C82A0078392F /* medialib.h */; };
 		2D88E9F21B2AF6850072FD43 /* vorbis.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88E9F11B2AF6850072FD43 /* vorbis.c */; };
@@ -5001,7 +4999,6 @@
 		2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libvorbislib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7F38021B2858AC00692A7B /* JunklibTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JunklibTests.m; sourceTree = "<group>"; };
 		2D8030CC24B261A400539F9F /* MediaLibraryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaLibraryItem.h; sourceTree = "<group>"; };
-		2D8030CE24B261A900539F9F /* MediaLibraryWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaLibraryWindowController.h; sourceTree = "<group>"; };
 		2D828E5319E5679800EE874F /* Search.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Search.xib; sourceTree = "<group>"; };
 		2D828E5919E56B4D00EE874F /* SearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchViewController.h; sourceTree = "<group>"; };
 		2D828E5A19E56B4D00EE874F /* SearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchViewController.m; sourceTree = "<group>"; };
@@ -5013,7 +5010,6 @@
 		2D887BC724B1C82A0078392F /* medialib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = medialib.c; sourceTree = "<group>"; };
 		2D887BCD24B1C82A0078392F /* medialib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = medialib.h; sourceTree = "<group>"; };
 		2D887BE424B1C86D0078392F /* MediaLibraryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryItem.m; sourceTree = "<group>"; };
-		2D887BE524B1C86D0078392F /* MediaLibraryWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryWindowController.m; sourceTree = "<group>"; };
 		2D887BE824B1CB650078392F /* MediaLibrary.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MediaLibrary.xib; sourceTree = "<group>"; };
 		2D88E9ED1B2AF6640072FD43 /* vorbis.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = vorbis.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D88E9F11B2AF6850072FD43 /* vorbis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vorbis.c; path = plugins/vorbis/vorbis.c; sourceTree = "<group>"; };
@@ -8925,6 +8921,15 @@
 			path = SplitViewMainWindow;
 			sourceTree = "<group>";
 		};
+		2D76285224CB29F20029C98C /* MediaLibrary */ = {
+			isa = PBXGroup;
+			children = (
+				2D887BE424B1C86D0078392F /* MediaLibraryItem.m */,
+				2D8030CC24B261A400539F9F /* MediaLibraryItem.h */,
+			);
+			path = MediaLibrary;
+			sourceTree = "<group>";
+		};
 		2D887BC524B1C82A0078392F /* medialib */ = {
 			isa = PBXGroup;
 			children = (
@@ -10896,13 +10901,14 @@
 			isa = PBXGroup;
 			children = (
 				2DD5262E2062F1DF002609C5 /* help-cocoa.txt */,
-				2D747E2424B64E3400BBB987 /* SplitViewMainWindow */,
 				2D9FA3972404551F00276E00 /* Designable */,
 				4D2362B218395D0300C9E818 /* Images */,
+				2D76285224CB29F20029C98C /* MediaLibrary */,
 				2DA3720B2370B7C3005E64A3 /* NowPlayable */,
 				2D9FA3862404515500276E00 /* Preferences */,
 				2DDBA26623E5FBA000051320 /* Playlist */,
 				2D9FA3952404526800276E00 /* Scriptable */,
+				2D747E2424B64E3400BBB987 /* SplitViewMainWindow */,
 				2D0B1C8619C5CF4A00CED0B5 /* Supporting files */,
 				2D46220D226DBA2A003997E9 /* Utility */,
 				2DE1D3DF19B11286009B5BC6 /* Widgets */,
@@ -10933,10 +10939,6 @@
 				2DEBA1D023E207A3000E4135 /* EqualizerWindowController.m */,
 				2DA30B7D23F1C9A3003D22E3 /* PropertySheetContentView.h */,
 				2DA30B7E23F1C9A3003D22E3 /* PropertySheetContentView.m */,
-				2D887BE424B1C86D0078392F /* MediaLibraryItem.m */,
-				2D8030CC24B261A400539F9F /* MediaLibraryItem.h */,
-				2D887BE524B1C86D0078392F /* MediaLibraryWindowController.m */,
-				2D8030CE24B261A900539F9F /* MediaLibraryWindowController.h */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -12249,7 +12251,6 @@
 				2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
 				2DA273782406ED4100FB9BE1 /* GuiPreferencesWindowController.h in Headers */,
-				2D8030CF24B261AA00539F9F /* MediaLibraryWindowController.h in Headers */,
 				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
 				2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */,
 				2DEF494419C4DB4100B718C1 /* PlaylistView.h in Headers */,
@@ -15372,7 +15373,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
-				2D887BE724B1C86D0078392F /* MediaLibraryWindowController.m in Sources */,
 				2DEF494519C4DB4100B718C1 /* PlaylistView.m in Sources */,
 				2DA225B123F0425C0033F411 /* DesignableView.m in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
