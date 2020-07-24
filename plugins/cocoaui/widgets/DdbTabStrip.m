@@ -29,14 +29,10 @@
 extern DB_functions_t *deadbeef;
 
 @interface DdbTabStrip () {
-    NSButton *_scrollLeftBtn;
-    NSButton *_scrollRightBtn;
-    BOOL _needArrows;
     int _hscrollpos;
     int _dragging;
     int _prepare;
     int _movepos;
-    int _tab_clicked;
     int _scroll_direction;
     NSPoint _dragpt;
     int _prev_x;
@@ -48,16 +44,18 @@ extern DB_functions_t *deadbeef;
     NSRect _closeTabButtonRect;
     BOOL _closeTabCapture;
 
-    NSDictionary *_titleAttributes;
-    NSDictionary *_titleAttributesSelected;
 }
 
-@property (nonatomic,readonly) NSDictionary *titleAttributes;
-@property (nonatomic,readonly) NSDictionary *titleAttributesSelected;
+@property (nonatomic) NSDictionary *titleAttributes;
+@property (nonatomic) NSDictionary *titleAttributesSelected;
 
 @property (nonatomic) BOOL playlistConfirmationAlertOpen;
 
 @property (nonatomic) BOOL dragReallyBegan;
+
+@property (nonatomic) int tab_clicked;
+@property (weak) IBOutlet NSTextField *renamePlaylistTitle;
+@property (nonatomic) BOOL needScroll;
 
 @end
 
@@ -72,7 +70,6 @@ static int tab_vert_padding = 1;
 static int min_tab_size = 80;
 static int max_tab_size = 200;
 static int close_btn_right_offs = 16;
-#define arrow_widget_width (self.frame.size.height)
 
 - (NSDictionary *)titleAttributes {
     if (!_titleAttributes) {
@@ -111,32 +108,11 @@ static int close_btn_right_offs = 16;
     self = [super initWithFrame:frame];
     // Initialization code here.
     _dragging = -1;
-    _tab_clicked = -1;
-
-    _scrollLeftBtn = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, frame.size.height, frame.size.height)];
-    _scrollLeftBtn.bordered = NO;
-    _scrollLeftBtn.image = [NSImage imageNamed:NSImageNameGoLeftTemplate];
-    ((NSButtonCell *)[_scrollLeftBtn cell]).imageScaling = NSImageScaleProportionallyDown;
-    _scrollLeftBtn.hidden = YES;
-    _scrollLeftBtn.autoresizingMask = NSViewMaxXMargin;
-    _scrollLeftBtn.target = self;
-    _scrollLeftBtn.action = @selector(scrollLeft);
-    [self addSubview:_scrollLeftBtn];
-
-    _scrollRightBtn = [[NSButton alloc] initWithFrame:NSMakeRect(frame.size.width-frame.size.height, 0, frame.size.height, frame.size.height)];
-    _scrollRightBtn.bordered = NO;
-    _scrollRightBtn.image = [NSImage imageNamed:NSImageNameGoRightTemplate];
-    ((NSButtonCell *)[_scrollLeftBtn cell]).imageScaling = NSImageScaleProportionallyDown;
-    _scrollRightBtn.hidden = YES;
-    _scrollRightBtn.autoresizingMask = NSViewMinXMargin;
-    _scrollRightBtn.target = self;
-    _scrollRightBtn.action = @selector(scrollRight);
-    [self addSubview:_scrollRightBtn];
+    self.tab_clicked = -1;
+    self.autoresizesSubviews = NO;
 
     _lastMouseCoord.x = -100000;
     _pointedTab = -1;
-
-    self.autoresizesSubviews = YES;
 
     [self setupTrackingArea];
 
@@ -174,32 +150,26 @@ plt_get_title_wrapper (int plt) {
     return w;
 }
 
-- (void)recalculateNeedArrows {
-    BOOL origValue = _needArrows;
-    _needArrows = NO;
+- (void)recalculateNeedScroll {
+    BOOL origValue = self.needScroll;
+    self.needScroll = NO;
     int cnt = deadbeef->plt_get_count ();
     int w = 0;
     NSRect a = self.bounds;
     for (int idx = 0; idx < cnt; idx++) {
         w += [self tabWidthForIndex:idx] - tab_overlap_size;
         if (w >= a.size.width) {
-            _needArrows = YES;
+            self.needScroll = YES;
             break;
         }
     }
     w += tab_overlap_size + 3;
     if (w >= a.size.width) {
-        _needArrows = YES;
+        self.needScroll = YES;
     }
-    if (origValue != _needArrows) {
-        _scrollLeftBtn.hidden = !_needArrows;
-        _scrollRightBtn.hidden = !_needArrows;
+    if (origValue != self.needScroll) {
         [self needsDisplay];
     }
-}
-
-- (BOOL)needArrows {
-    return _needArrows;
 }
 
 - (int)getFullWidth {
@@ -220,17 +190,11 @@ plt_get_title_wrapper (int plt) {
     _hscrollpos = scrollPos;
 }
 
-- (void)updateScrollButtons {
-    int tab_selected = deadbeef->plt_get_curr_idx ();
-    _scrollLeftBtn.enabled = tab_selected > 0;
-    _scrollRightBtn.enabled = tab_selected < deadbeef->plt_get_count ()-1;
-}
-
 - (void)scrollToTabInt:(int)tab redraw:(BOOL)redraw {
     int w = tabs_left_margin;
     int cnt = deadbeef->plt_get_count ();
     NSSize a = self.bounds.size;
-    int boundary = a.width - arrow_widget_width*2 + _hscrollpos;
+    int boundary = a.width + _hscrollpos;
     for (int idx = 0; idx < cnt; idx++) {
         int tab_w = [self tabWidthForIndex:idx];
         if (idx == cnt-1) {
@@ -255,30 +219,12 @@ plt_get_title_wrapper (int plt) {
         }
         w += tab_w - tab_overlap_size;
     }
-    [self updateScrollButtons];
 }
 
 - (void)adjustHScroll {
     if (deadbeef->plt_get_count () > 0) {
-        BOOL need_arrows = [self needArrows];
-        if (need_arrows) {
-            NSSize a = self.bounds.size;
-            int w = 0;
-            int cnt = deadbeef->plt_get_count ();
-            for (int idx = 0; idx < cnt; idx++) {
-                w += [self tabWidthForIndex:idx] - tab_overlap_size;
-            }
-            w += tab_overlap_size + 3;
-            if (_hscrollpos > w - (a.width - arrow_widget_width*2)) {
-                self.scrollPos = w - (a.width - arrow_widget_width*2);
-                deadbeef->conf_set_int ("cocoaui.tabscroll", _hscrollpos);
-            }
-            [self scrollToTabInt:deadbeef->plt_get_curr_idx () redraw:NO];
-        }
-        else {
-            self.scrollPos = 0;
-            deadbeef->conf_set_int ("cocoaui.tabscroll", _hscrollpos);
-        }
+        self.scrollPos = 0;
+        deadbeef->conf_set_int ("cocoaui.tabscroll", _hscrollpos);
     }
     [self mouseMovedHandler];
 }
@@ -342,11 +288,6 @@ plt_get_title_wrapper (int plt) {
     }
 }
 
-- (void)clipTabArea {
-    NSRect rect = NSMakeRect(self.frame.size.height, 0, self.frame.size.width - self.frame.size.height*2, self.frame.size.height);
-    [NSBezierPath clipRect:rect];
-}
-
 - (void)calculateTabDimensions {
     NSSize a = self.bounds.size;
 
@@ -366,11 +307,6 @@ plt_get_title_wrapper (int plt) {
     [super drawRect:dirtyRect];
     int cnt = deadbeef->plt_get_count ();
     int hscroll = _hscrollpos;
-    
-    int need_arrows = [self needArrows];
-    if (need_arrows) {
-        hscroll -= arrow_widget_width;
-    }
     
     int x = -hscroll;
     int w = 0;
@@ -397,10 +333,7 @@ plt_get_title_wrapper (int plt) {
         widths[idx] = [self tabWidthForIndex:idx];
     }
     
-    [[NSGraphicsContext currentContext] saveGraphicsState];
-    if ([self needArrows]) {
-        [self clipTabArea];
-    }
+    [NSGraphicsContext.currentContext saveGraphicsState];
 
     // draw selected
     // calc position for drawin selected tab
@@ -477,9 +410,8 @@ plt_get_title_wrapper (int plt) {
             [self drawTab:idx area:area selected:NO];
         }
     }
-    if ([self needArrows]) {
-        [[NSGraphicsContext currentContext] restoreGraphicsState];
-    }
+
+    [NSGraphicsContext.currentContext restoreGraphicsState];
 }
 
 -(NSRect)tabRectForIndex:(int)tab {
@@ -488,7 +420,7 @@ plt_get_title_wrapper (int plt) {
     for (int idx = 0; idx < cnt; idx++) {
         int w = [self tabWidthForIndex:tab];
         if (idx == tab) {
-            return NSMakeRect(width - _hscrollpos + ([self needArrows] ? arrow_widget_width : 0), 0, w, self.frame.size.height);
+            return NSMakeRect(width - _hscrollpos, 0, w, self.frame.size.height);
         }
         width += w - tab_overlap_size;
     }
@@ -497,13 +429,6 @@ plt_get_title_wrapper (int plt) {
 
 -(int)tabUnderCursor:(int)x {
     int hscroll = _hscrollpos;
-    BOOL need_arrows = [self needArrows];
-    if (need_arrows) {
-        hscroll -= arrow_widget_width;
-    }
-    if (need_arrows && (x < arrow_widget_width || x >= self.frame.size.width - arrow_widget_width)) {
-        return -1;
-    }
 
     int idx;
     int cnt = deadbeef->plt_get_count ();
@@ -553,7 +478,7 @@ plt_get_title_wrapper (int plt) {
 
 -(void)closePointedTab {
     if (_pointedTab != -1) {
-        _tab_clicked = _pointedTab;
+        self.tab_clicked = _pointedTab;
         _pointedTab = -1;
         [self closePlaylist:self];
     }
@@ -582,12 +507,9 @@ plt_get_title_wrapper (int plt) {
 
 - (BOOL)handleClickedTabCloseRect {
     int hscroll = _hscrollpos;
-    if ([self needArrows]) {
-        hscroll -= arrow_widget_width;
-    }
     int x = -hscroll + tabs_left_margin;
     int idx;
-    for (idx = 0; idx < _tab_clicked; idx++) {
+    for (idx = 0; idx < self.tab_clicked; idx++) {
         int width = [self tabWidthForIndex:idx];
         x += width - tab_overlap_size;
     }
@@ -612,14 +534,7 @@ plt_get_title_wrapper (int plt) {
     _lastMouseCoord = coord;
     _tab_clicked = [self tabUnderCursor:coord.x];
     if (event.type == NSEventTypeLeftMouseDown) {
-        if ([self needArrows]) {
-            NSSize a = self.bounds.size;
-            if (coord.x < arrow_widget_width || coord.x >= a.width - arrow_widget_width) {
-                [super mouseDown:event];
-                return;
-            }
-        }
-    
+
         if (_tab_clicked != -1) {
             if ([self handleClickedTabCloseRect]) {
                 return;
@@ -640,14 +555,11 @@ plt_get_title_wrapper (int plt) {
         }
 
         // adjust scroll if clicked tab spans border
-        if ([self needArrows]) {
+        if (self.needScroll) {
             [self scrollToTab:_tab_clicked];
         }
 
         int hscroll = _hscrollpos;
-        if ([self needArrows]) {
-            hscroll -= arrow_widget_width;
-        }
         int x = -hscroll + tabs_left_margin;
         int idx;
         for (idx = 0; idx < _tab_clicked; idx++) {
@@ -682,11 +594,11 @@ plt_get_title_wrapper (int plt) {
             if (returnCode == NSAlertFirstButtonReturn) {
                 return;
             }
-            deadbeef->plt_remove (_tab_clicked);
+            deadbeef->plt_remove (self.tab_clicked);
             int playlist = deadbeef->plt_get_curr_idx ();
             deadbeef->conf_set_int ("playlist.current", playlist);
             [self scrollToTab:playlist];
-            _tab_clicked = -1;
+            self.tab_clicked = -1;
         }];
     }
 }
@@ -802,7 +714,7 @@ plt_get_title_wrapper (int plt) {
 
 - (void)frameDidChange {
     [self calculateTabDimensions];
-    [self recalculateNeedArrows];
+    [self recalculateNeedScroll];
     [self adjustHScroll];
     [self setupTrackingArea];
 }
@@ -828,10 +740,6 @@ plt_get_title_wrapper (int plt) {
         // find closest tab to the left
         int idx;
         int hscroll = _hscrollpos;
-        BOOL need_arrows = [self needArrows];
-        if (need_arrows) {
-            hscroll -= arrow_widget_width;
-        }
         int x = -hscroll + tabs_left_margin;
         int inspos = -1;
         int cnt = deadbeef->plt_get_count ();
@@ -942,10 +850,10 @@ plt_get_title_wrapper (int plt) {
     int l = deadbeef->plt_get_title (plt, NULL, 0);
     char buf[l+1];
     deadbeef->plt_get_title (plt, buf, (int)sizeof buf);
-    _renamePlaylistTitle.stringValue = [NSString stringWithUTF8String:buf];
+    self.renamePlaylistTitle.stringValue = [NSString stringWithUTF8String:buf];
     [self.window beginSheet:self.renamePlaylistWindow completionHandler:^(NSModalResponse returnCode) {
         if (returnCode == NSModalResponseOK) {
-            deadbeef->plt_set_title (plt, [[_renamePlaylistTitle stringValue] UTF8String]);
+            deadbeef->plt_set_title (plt, [[self.renamePlaylistTitle stringValue] UTF8String]);
             deadbeef->plt_save_config (plt);
             deadbeef->plt_unref (plt);
         }
