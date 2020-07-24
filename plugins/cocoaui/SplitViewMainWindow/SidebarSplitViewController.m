@@ -32,7 +32,7 @@
     [self insertSplitViewItem:sidebarItem atIndex:0];
 
     NSSplitViewItem* bodyItem = [NSSplitViewItem splitViewItemWithViewController:self.bodyViewController];
-    bodyItem.canCollapse = YES;
+    bodyItem.canCollapse = NO;
     [self insertSplitViewItem:bodyItem atIndex:1];
 
     if (@available(macOS 10.16, *)) {
