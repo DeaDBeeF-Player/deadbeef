@@ -27,8 +27,6 @@
 #import "TrackPropertiesWindowController.h"
 #import "ConverterWindowController.h"
 
-#define PLT_MAX_COLUMNS 100
-
 typedef struct {
     char *title;
     int type; // predefined col type
@@ -41,10 +39,10 @@ typedef struct {
     int sort_order;
 } plt_col_info_t;
 
-@interface PlaylistViewController : DesignableViewController<DdbListviewDelegate,NSMenuDelegate> {
-    plt_col_info_t _columns[PLT_MAX_COLUMNS];
-    int _ncolumns;
-}
+@interface PlaylistViewController : DesignableViewController<DdbListviewDelegate,NSMenuDelegate>
+
+@property (nonatomic) plt_col_info_t *columns;
+@property (nonatomic) int ncolumns;
 
 - (void)setup;
 - (int)playlistIter;

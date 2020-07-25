@@ -68,6 +68,9 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic,readonly) const char *groupByConfStr;
 @property (nonatomic) NSString *groupStr;
 
+@property (nonatomic) int columnsAllocated;
+
+
 @end
 
 @implementation PlaylistViewController
@@ -87,6 +90,8 @@ extern DB_functions_t *deadbeef;
 
     PlaylistView *lv = (PlaylistView *)self.view;
     [lv.contentView cleanup];
+
+    [self freeColumns];
 
     // don't wait for an automatic autorelease,
     // this would cause deadbeef's track refcount checker to run before the objects are really released
@@ -117,14 +122,14 @@ extern DB_functions_t *deadbeef;
         self.editColumnWindowController = [[EditColumnWindowController alloc] initWithWindowNibName:@"EditColumnPanel"];
     }
 
-    uint8_t *c = _columns[self.menuColumn].text_color;
+    uint8_t *c = self.columns[self.menuColumn].text_color;
     NSColor *color = [NSColor colorWithDeviceRed:c[0]/255.f green:c[1]/255.f blue:c[2]/255.f alpha:c[3]/255.f];
 
-    [self.editColumnWindowController initEditColumnSheetWithTitle:[NSString stringWithUTF8String:_columns[self.menuColumn].title]
-                                                             type:_columns[self.menuColumn].type
-                                                           format:[NSString stringWithUTF8String:_columns[self.menuColumn].format]
-                                                        alignment:_columns[self.menuColumn].alignment
-                                                     setTextColor:_columns[self.menuColumn].set_text_color
+    [self.editColumnWindowController initEditColumnSheetWithTitle:[NSString stringWithUTF8String:self.columns[self.menuColumn].title]
+                                                             type:self.columns[self.menuColumn].type
+                                                           format:[NSString stringWithUTF8String:self.columns[self.menuColumn].format]
+                                                        alignment:self.columns[self.menuColumn].alignment
+                                                     setTextColor:self.columns[self.menuColumn].set_text_color
                                                         textColor:color];
 
 
@@ -210,16 +215,16 @@ extern DB_functions_t *deadbeef;
     lv.headerView.needsDisplay = YES;
     lv.contentView.needsDisplay = YES;
 
-    NSMutableArray *columns = [[NSMutableArray alloc] initWithCapacity:_ncolumns];
-    for (int i = 0; i < _ncolumns; i++) {
-        uint8_t *col = _columns[i].text_color;
+    NSMutableArray *columns = [[NSMutableArray alloc] initWithCapacity:self.ncolumns];
+    for (int i = 0; i < self.ncolumns; i++) {
+        uint8_t *col = self.columns[i].text_color;
         NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
-                              [NSString stringWithUTF8String:_columns[i].title], @"title"
-                              , [NSString stringWithFormat:@"%d", _columns[i].type], @"id"
-                              , [NSString stringWithUTF8String:_columns[i].format], @"format"
-                              , [NSString stringWithFormat:@"%d", _columns[i].size], @"size"
-                              , [NSNumber numberWithInt:_columns[i].alignment], @"alignment"
-                              , [NSNumber numberWithInt:_columns[i].set_text_color], @"set_text_color"
+                              [NSString stringWithUTF8String:self.columns[i].title], @"title"
+                              , [NSString stringWithFormat:@"%d", self.columns[i].type], @"id"
+                              , [NSString stringWithUTF8String:self.columns[i].format], @"format"
+                              , [NSString stringWithFormat:@"%d", self.columns[i].size], @"size"
+                              , [NSNumber numberWithInt:self.columns[i].alignment], @"alignment"
+                              , [NSNumber numberWithInt:self.columns[i].set_text_color], @"set_text_color"
                               , [NSString stringWithFormat:@"#%02x%02x%02x%02x", col[3], col[0], col[1], col[2]], @"text_color"
                               , nil];
         [columns addObject:dict];
@@ -283,7 +288,7 @@ extern DB_functions_t *deadbeef;
     [self initColumn:idx
            withTitle:self.editColumnWindowController.titleTextField.stringValue.UTF8String
               withId:(int)type
-            withSize:_columns[idx].size
+            withSize:self.columns[idx].size
           withFormat:self.editColumnWindowController.formatTextField.stringValue.UTF8String
        withAlignment:(int)self.editColumnWindowController.alignmentPopUpButton.indexOfSelectedItem withSetColor:(self.editColumnWindowController.setColorButton.state == NSOnState)
            withColor:rgba];
@@ -383,61 +388,65 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)freeColumns {
-    for (int i = 0; i < _ncolumns; i++) {
-        if (_columns[i].title) {
-            free (_columns[i].title);
+    for (int i = 0; i < self.ncolumns; i++) {
+        if (self.columns[i].title) {
+            free (self.columns[i].title);
         }
-        if (_columns[i].format) {
-            free (_columns[i].format);
+        if (self.columns[i].format) {
+            free (self.columns[i].format);
         }
-        if (_columns[i].bytecode) {
-            deadbeef->tf_free (_columns[i].bytecode);
+        if (self.columns[i].bytecode) {
+            deadbeef->tf_free (self.columns[i].bytecode);
         }
     }
-    memset (_columns, 0, sizeof (_columns));
-    _ncolumns = 0;
+    free (self.columns);
+    self.columns = NULL;
+    self.ncolumns = 0;
+    self.columnsAllocated = 0;
 }
 
 - (int)insertColumn:(int)beforeIdx {
-    if (_ncolumns == PLT_MAX_COLUMNS) {
-        return -1;
+    if (self.ncolumns >= self.columnsAllocated) {
+        self.columnsAllocated += 10;
+        self.columns = realloc(self.columns, sizeof (plt_col_info_t) * self.columnsAllocated);
     }
-    if (beforeIdx >= 0 && beforeIdx < _ncolumns) {
-        memmove (&_columns[beforeIdx+1], &_columns[beforeIdx], (_ncolumns - beforeIdx) * sizeof (plt_col_info_t));
+
+    if (beforeIdx >= 0 && beforeIdx < self.ncolumns) {
+        memmove (&self.columns[beforeIdx+1], &self.columns[beforeIdx], (self.ncolumns - beforeIdx) * sizeof (plt_col_info_t));
     }
-    _ncolumns++;
-    int idx = beforeIdx >= 0 ? beforeIdx : _ncolumns-1;
-    _columns[idx].size = 100;
+    self.ncolumns++;
+    int idx = beforeIdx >= 0 ? beforeIdx : self.ncolumns-1;
+    self.columns[idx].size = 100;
     return idx;
 }
 
 - (void)initColumn:(int)idx withTitle:(const char *)title withId:(int)_id withSize:(int)size withFormat:(const char *)format withAlignment:(int)alignment withSetColor:(BOOL)setColor withColor:(uint8_t *)color {
-    _columns[idx].type = _id;
-    _columns[idx].title = strdup (title);
-    _columns[idx].format = format ? strdup (format) : NULL;
-    _columns[idx].size = size;
-    _columns[idx].alignment = alignment;
+    self.columns[idx].type = _id;
+    self.columns[idx].title = strdup (title);
+    self.columns[idx].format = format ? strdup (format) : NULL;
+    self.columns[idx].size = size;
+    self.columns[idx].alignment = alignment;
     if (format) {
-        _columns[idx].bytecode = deadbeef->tf_compile (format);
+        self.columns[idx].bytecode = deadbeef->tf_compile (format);
     }
-    _columns[idx].set_text_color = setColor;
-    _columns[idx].text_color[0] = color[0];
-    _columns[idx].text_color[1] = color[1];
-    _columns[idx].text_color[2] = color[2];
-    _columns[idx].text_color[3] = color[3];
+    self.columns[idx].set_text_color = setColor;
+    self.columns[idx].text_color[0] = color[0];
+    self.columns[idx].text_color[1] = color[1];
+    self.columns[idx].text_color[2] = color[2];
+    self.columns[idx].text_color[3] = color[3];
 }
 
 - (void)removeColumnAtIndex:(int)idx {
     char *sortColumnTitle = NULL;
     if (self.sortColumn >= 0) {
-        sortColumnTitle = _columns[self.sortColumn].title;
+        sortColumnTitle = self.columns[self.sortColumn].title;
 
     }
 
-    if (idx != _ncolumns-1) {
-        memmove (&_columns[idx], &_columns[idx+1], (_ncolumns-idx) * sizeof (plt_col_info_t));
+    if (idx != self.ncolumns-1) {
+        memmove (&self.columns[idx], &self.columns[idx+1], (self.ncolumns-idx) * sizeof (plt_col_info_t));
     }
-    _ncolumns--;
+    self.ncolumns--;
 
     self.sortColumn = [self columnIndexForTitle:sortColumnTitle];
 }
@@ -476,7 +485,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (BOOL)isAlbumArtColumn:(DdbListviewCol_t)col {
-    return _columns[col].type == DB_COLUMN_ALBUM_ART;
+    return self.columns[col].type == DB_COLUMN_ALBUM_ART;
 }
 
 - (void)loadColumns:(NSArray *)cols {
@@ -530,8 +539,9 @@ extern DB_functions_t *deadbeef;
             r, g, b, a
         };
 
-        [self initColumn:_ncolumns withTitle:title withId:colId withSize:size withFormat:fmt withAlignment:alignment withSetColor:setcolor withColor:rgba];
-        _ncolumns++;
+        int colIdx = self.ncolumns;
+        [self insertColumn:self.ncolumns];
+        [self initColumn:colIdx withTitle:title withId:colId withSize:size withFormat:fmt withAlignment:alignment withSetColor:setcolor withColor:rgba];
     }];
 }
 
@@ -544,7 +554,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (int)columnCount {
-    return _ncolumns;
+    return self.ncolumns;
 }
 
 - (int)rowCount {
@@ -583,24 +593,24 @@ extern DB_functions_t *deadbeef;
 }
 
 - (int)columnWidth:(DdbListviewCol_t)col {
-    return _columns[col].size;
+    return self.columns[col].size;
 }
 
 - (int)columnGroupHeight:(DdbListviewCol_t)col {
-    return _columns[col].size - ART_PADDING_HORZ*2;
+    return self.columns[col].size - ART_PADDING_HORZ*2;
 }
 
 - (void)setColumnWidth:(int)width forColumn:(DdbListviewCol_t)col {
-    _columns[col].size = width;
+    self.columns[col].size = width;
 }
 
 - (int)columnMinHeight:(DdbListviewCol_t)col {
-    return _columns[col].type == DB_COLUMN_ALBUM_ART;
+    return self.columns[col].type == DB_COLUMN_ALBUM_ART;
 }
 
 - (int)columnIndexForTitle:(const char *)title {
-    for (int i = 0; i < _ncolumns; i++) {
-        if (_columns[i].title == title) {
+    for (int i = 0; i < self.ncolumns; i++) {
+        if (self.columns[i].title == title) {
             return i;
         }
     }
@@ -612,20 +622,20 @@ extern DB_functions_t *deadbeef;
 
     char *sortColumnTitle = NULL;
     if (self.sortColumn >= 0) {
-        sortColumnTitle = _columns[self.sortColumn].title;
+        sortColumnTitle = self.columns[self.sortColumn].title;
 
     }
 
     while (col < to) {
-        memcpy (&tmp, &_columns[col], sizeof (plt_col_info_t));
-        memmove (&_columns[col], &_columns[col+1], sizeof (plt_col_info_t));
-        memcpy (&_columns[col+1], &tmp, sizeof (plt_col_info_t));
+        memcpy (&tmp, &self.columns[col], sizeof (plt_col_info_t));
+        memmove (&self.columns[col], &self.columns[col+1], sizeof (plt_col_info_t));
+        memcpy (&self.columns[col+1], &tmp, sizeof (plt_col_info_t));
         col++;
     }
     while (col > to) {
-        memcpy (&tmp, &_columns[col], sizeof (plt_col_info_t));
-        memmove (&_columns[col], &_columns[col-1], sizeof (plt_col_info_t));
-        memcpy (&_columns[col-1], &tmp, sizeof (plt_col_info_t));
+        memcpy (&tmp, &self.columns[col], sizeof (plt_col_info_t));
+        memmove (&self.columns[col], &self.columns[col-1], sizeof (plt_col_info_t));
+        memcpy (&self.columns[col-1], &tmp, sizeof (plt_col_info_t));
         col--;
     }
 
@@ -711,7 +721,7 @@ extern DB_functions_t *deadbeef;
 
     DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
 
-    if (_columns[col].type == DB_COLUMN_PLAYING && playing_track && (DB_playItem_t *)row == playing_track) {
+    if (self.columns[col].type == DB_COLUMN_PLAYING && playing_track && (DB_playItem_t *)row == playing_track) {
         NSImage *img = NULL;
         int paused = deadbeef->get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
@@ -751,18 +761,18 @@ extern DB_functions_t *deadbeef;
         deadbeef->pl_item_unref (playing_track);
     }
 
-    if (_columns[col].bytecode) {
+    if (self.columns[col].bytecode) {
         ddb_tf_context_t ctx = {
             ._size = sizeof (ddb_tf_context_t),
             .it = (DB_playItem_t *)row,
             .plt = deadbeef->plt_get_curr (),
-            .id = _columns[col].type,
+            .id = self.columns[col].type,
             .idx = idx,
             .flags = DDB_TF_CONTEXT_HAS_ID|DDB_TF_CONTEXT_HAS_INDEX|DDB_TF_CONTEXT_TEXT_DIM,
         };
 
         char text[1024] = "";
-        deadbeef->tf_eval (&ctx, _columns[col].bytecode, text, sizeof (text));
+        deadbeef->tf_eval (&ctx, self.columns[col].bytecode, text, sizeof (text));
 
         rect.origin.x += CELL_HPADDING;
         rect.size.width -= CELL_HPADDING;
@@ -895,7 +905,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         [image drawInRect:NSMakeRect(art_x, ypos, art_width, h)];
     }
     else {
-        plt_col_info_t *c = &_columns[(int)col];
+        plt_col_info_t *c = &self.columns[(int)col];
         CGFloat h = art_width;
         CGFloat w = size.width / (size.height / h);
         if (c->alignment == 1) {
@@ -1324,16 +1334,16 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 }
 
 - (void)sortColumn:(DdbListviewCol_t)column {
-    plt_col_info_t *c = &_columns[(int)column];
+    plt_col_info_t *c = &self.columns[(int)column];
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
 
     if (self.sortColumn != column) {
-        _columns[column].sort_order = 0;
+        self.columns[column].sort_order = 0;
     }
     self.sortColumn = (int)column;
-    _columns[column].sort_order = 1 - _columns[column].sort_order;
+    self.columns[column].sort_order = 1 - self.columns[column].sort_order;
 
-    deadbeef->plt_sort_v2 (plt, PL_MAIN, c->type, c->format, _columns[column].sort_order);
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, c->type, c->format, self.columns[column].sort_order);
     deadbeef->plt_unref (plt);
 
     PlaylistView *lv = (PlaylistView *)self.view;
@@ -1430,11 +1440,11 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 }
 
 - (NSString *)columnTitleAtIndex:(NSUInteger)index {
-    return [NSString stringWithUTF8String:_columns[index].title];
+    return [NSString stringWithUTF8String:self.columns[index].title];
 }
 
 - (enum ddb_sort_order_t)columnSortOrderAtIndex:(NSUInteger)index {
-    return _columns[index].sort_order;
+    return self.columns[index].sort_order;
 }
 
 

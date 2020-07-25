@@ -88,7 +88,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)sortColumn:(DdbListviewCol_t)column withOrder:(int)order {
-    plt_col_info_t *c = &_columns[(int)column];
+    plt_col_info_t *c = &self.columns[(int)column];
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->plt_sort_v2 (plt, PL_SEARCH, c->type, c->format, order-1);
     deadbeef->plt_unref (plt);
