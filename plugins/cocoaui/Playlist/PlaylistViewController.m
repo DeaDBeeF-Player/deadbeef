@@ -46,20 +46,31 @@ extern DB_functions_t *deadbeef;
 
 @interface PlaylistViewController()
 
+@property (nonatomic) NSImage *playTpl;
+@property (nonatomic) NSImage *pauseTpl;
+@property (nonatomic) NSImage *bufTpl;
+@property (nonatomic) NSDictionary *cellTextAttrsDictionary;
+@property (nonatomic) NSDictionary *cellSelectedTextAttrsDictionary;
+@property (nonatomic) NSDictionary *groupTextAttrsDictionary;
+@property (nonatomic) TrackPropertiesWindowController *trkProperties;
+@property (nonatomic) int menuColumn;
+
+@property (nonatomic) char *groupBytecode;
+@property (nonatomic) BOOL pinGroups;
+
+
 @property (nonatomic, strong) NSTimer *playPosUpdateTimer;
 @property (nonatomic, assign) DB_playItem_t *playPosUpdateTrack;
 @property (nonatomic) EditColumnWindowController *editColumnWindowController;
 @property (nonatomic) GroupByCustomWindowController *groupByCustomWindowController;
 @property (nonatomic) int sortColumn;
-@property (nonatomic) ddb_medialib_plugin_t *medialib;
+@property (nonatomic) ddb_medialib_plugin_t *medialibPlugin;
+@property (nonatomic,readonly) const char *groupByConfStr;
+@property (nonatomic) NSString *groupStr;
 
 @end
 
-@implementation PlaylistViewController {
-    char *_group_str;
-    char *_group_bytecode;
-    BOOL _pin_groups;
-}
+@implementation PlaylistViewController
 
 - (void)cleanup {
     [self clearGrouping];
@@ -80,7 +91,7 @@ extern DB_functions_t *deadbeef;
     // don't wait for an automatic autorelease,
     // this would cause deadbeef's track refcount checker to run before the objects are really released
     @autoreleasepool {
-        _trkProperties = nil;
+        self.trkProperties = nil;
     }
 }
 
@@ -93,7 +104,7 @@ extern DB_functions_t *deadbeef;
 
     [self.view.window beginSheet:self.editColumnWindowController.window completionHandler:^(NSModalResponse returnCode) {
         if (returnCode == NSModalResponseOK) {
-            int idx = [self insertColumn:_menuColumn];
+            int idx = [self insertColumn:self.menuColumn];
             if (idx >= 0) {
                 [self updateColumn:idx];
             }
@@ -106,20 +117,20 @@ extern DB_functions_t *deadbeef;
         self.editColumnWindowController = [[EditColumnWindowController alloc] initWithWindowNibName:@"EditColumnPanel"];
     }
 
-    uint8_t *c = _columns[_menuColumn].text_color;
+    uint8_t *c = _columns[self.menuColumn].text_color;
     NSColor *color = [NSColor colorWithDeviceRed:c[0]/255.f green:c[1]/255.f blue:c[2]/255.f alpha:c[3]/255.f];
 
-    [self.editColumnWindowController initEditColumnSheetWithTitle:[NSString stringWithUTF8String:_columns[_menuColumn].title]
-                                                             type:_columns[_menuColumn].type
-                                                           format:[NSString stringWithUTF8String:_columns[_menuColumn].format]
-                                                        alignment:_columns[_menuColumn].alignment
-                                                     setTextColor:_columns[_menuColumn].set_text_color
+    [self.editColumnWindowController initEditColumnSheetWithTitle:[NSString stringWithUTF8String:_columns[self.menuColumn].title]
+                                                             type:_columns[self.menuColumn].type
+                                                           format:[NSString stringWithUTF8String:_columns[self.menuColumn].format]
+                                                        alignment:_columns[self.menuColumn].alignment
+                                                     setTextColor:_columns[self.menuColumn].set_text_color
                                                         textColor:color];
 
 
     [self.view.window beginSheet:self.editColumnWindowController.window completionHandler:^(NSModalResponse returnCode) {
         if (returnCode == NSModalResponseOK) {
-            int idx = _menuColumn;
+            int idx = self.menuColumn;
             if (idx >= 0) {
                 [self updateColumn:idx];
             }
@@ -129,50 +140,47 @@ extern DB_functions_t *deadbeef;
 
 
 - (void)menuRemoveColumn:(id)sender {
-    if (_menuColumn >= 0) {
-        [self removeColumnAtIndex:_menuColumn];
+    if (self.menuColumn >= 0) {
+        [self removeColumnAtIndex:self.menuColumn];
         [self columnsChanged];
     }
 }
 
 - (void)menuTogglePinGroups:(NSButton *)sender {
-    _pin_groups = sender.state == NSOnState ? 0 : 1;
-    sender.state = _pin_groups?NSOnState:NSOffState;
-    deadbeef->conf_set_int ([self pinGroupsConfStr], _pin_groups);
+    self.pinGroups = sender.state == NSOnState ? 0 : 1;
+    sender.state = self.pinGroups?NSOnState:NSOffState;
+    deadbeef->conf_set_int ([self pinGroupsConfStr], self.pinGroups);
     PlaylistView *lv = (PlaylistView *)self.view;
     [lv.contentView updatePinnedGroup];
 }
 
 - (void)clearGrouping {
-    if (_group_str) {
-        free (_group_str);
-        _group_str = NULL;
-    }
-    if (_group_bytecode) {
-        deadbeef->tf_free (_group_bytecode);
-        _group_bytecode = NULL;
+    self.groupStr = NULL;
+    if (self.groupBytecode) {
+        deadbeef->tf_free (self.groupBytecode);
+        self.groupBytecode = NULL;
     }
 }
 
 - (void)menuGroupByNone:(id)sender {
     [self clearGrouping];
-    deadbeef->conf_remove_items ([self groupByConfStr]);
+    deadbeef->conf_remove_items (self.groupByConfStr);
     PlaylistView *lv = (PlaylistView *)self.view;
     [lv.contentView reloadData];
 }
 
 - (void)menuGroupByArtistDateAlbum:(id)sender {
     [self clearGrouping];
-    _group_str = strdup ("%album artist% - ['['%year%']' ]%album%");
-    deadbeef->conf_set_str ([self groupByConfStr], _group_str);
+    self.groupStr = @"%album artist% - ['['%year%']' ]%album%";
+    deadbeef->conf_set_str (self.groupByConfStr, self.groupStr.UTF8String);
     PlaylistView *lv = (PlaylistView *)self.view;
     [lv.contentView reloadData];
 }
 
 - (void)menuGroupByArtist:(id)sender {
     [self clearGrouping];
-    _group_str = strdup ("%artist%");
-    deadbeef->conf_set_str ([self groupByConfStr], _group_str);
+    self.groupStr = @"%artist%";
+    deadbeef->conf_set_str (self.groupByConfStr, self.groupStr.UTF8String);
     PlaylistView *lv = (PlaylistView *)self.view;
     [lv.contentView reloadData];
 }
@@ -183,14 +191,14 @@ extern DB_functions_t *deadbeef;
     }
 
     char buf[1000];
-    deadbeef->conf_get_str ([self groupByConfStr], "", buf, sizeof (buf));
+    deadbeef->conf_get_str (self.groupByConfStr, "", buf, sizeof (buf));
     [self.groupByCustomWindowController initWithFormat:[NSString stringWithUTF8String:buf]];
 
     [self.view.window beginSheet:self.groupByCustomWindowController.window completionHandler:^(NSModalResponse returnCode) {
         if (returnCode == NSModalResponseOK) {
             [self clearGrouping];
-            _group_str = strdup (self.groupByCustomWindowController.formatTextField.stringValue.UTF8String);
-            deadbeef->conf_set_str([self groupByConfStr], _group_str);
+            self.groupStr = self.groupByCustomWindowController.formatTextField.stringValue;
+            deadbeef->conf_set_str([self groupByConfStr], self.groupStr.UTF8String);
             PlaylistView *lv = (PlaylistView *)self.view;
             [lv.contentView reloadData];
         }
@@ -309,9 +317,9 @@ extern DB_functions_t *deadbeef;
     else {
         [self loadColumns:json];
     }
-    _playTpl = [[NSImage imageNamed:@"btnplayTemplate.pdf"] flippedImage];
-    _pauseTpl = [[NSImage imageNamed:@"btnpauseTemplate.pdf"] flippedImage];
-    _bufTpl = [[NSImage imageNamed:@"bufferingTemplate.pdf"] flippedImage];
+    self.playTpl = [[NSImage imageNamed:@"btnplayTemplate.pdf"] flippedImage];
+    self.pauseTpl = [[NSImage imageNamed:@"btnpauseTemplate.pdf"] flippedImage];
+    self.bufTpl = [[NSImage imageNamed:@"bufferingTemplate.pdf"] flippedImage];
 
     NSMutableParagraphStyle *textStyle = [NSParagraphStyle.defaultParagraphStyle mutableCopy];
     textStyle.alignment = NSTextAlignmentLeft;
@@ -320,21 +328,21 @@ extern DB_functions_t *deadbeef;
 
     int rowheight = 18;
 
-    _groupTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+    self.groupTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
                                  [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
                                  , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
                                  , NSColor.controlTextColor, NSForegroundColorAttributeName
                                  , textStyle, NSParagraphStyleAttributeName
                                  , nil];
 
-    _cellTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+    self.cellTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
                                 [NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
                                 , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
                                 , NSColor.controlTextColor, NSForegroundColorAttributeName
                                 , textStyle, NSParagraphStyleAttributeName
                                 , nil];
 
-    _cellSelectedTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
+    self.cellSelectedTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
                                         , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
                                         , NSColor.alternateSelectedControlTextColor, NSForegroundColorAttributeName
                                         , textStyle, NSParagraphStyleAttributeName
@@ -343,13 +351,13 @@ extern DB_functions_t *deadbeef;
 
     // initialize group by str
     deadbeef->conf_lock ();
-    const char *group_by = deadbeef->conf_get_str_fast ([self groupByConfStr], NULL);
+    const char *group_by = deadbeef->conf_get_str_fast (self.groupByConfStr, NULL);
     if (group_by) {
-        _group_str = strdup (group_by);
+        self.groupStr = [NSString stringWithUTF8String:group_by];
     }
     deadbeef->conf_unlock ();
 
-    _pin_groups = deadbeef->conf_get_int ([self pinGroupsConfStr], 0);
+    self.pinGroups = deadbeef->conf_get_int ([self pinGroupsConfStr], 0);
 }
 
 - (const char *)groupByConfStr {
@@ -436,7 +444,7 @@ extern DB_functions_t *deadbeef;
 
 // pass col=-1 for "empty space", e.g. when appending new col
 - (NSMenu *)contextMenuForColumn:(DdbListviewCol_t)col withEvent:(NSEvent*)theEvent forView:(NSView *)view {
-    _menuColumn = (int)col;
+    self.menuColumn = (int)col;
     NSMenu *menu = [[NSMenu alloc] initWithTitle:@"ColumnMenu"];
     menu.delegate = self;
     menu.autoenablesItems = NO;
@@ -445,7 +453,7 @@ extern DB_functions_t *deadbeef;
         [menu insertItemWithTitle:@"Edit Column" action:@selector(menuEditColumn:) keyEquivalent:@"" atIndex:1].target = self;
         [menu insertItemWithTitle:@"Remove Column" action:@selector(menuRemoveColumn:) keyEquivalent:@"" atIndex:2].target = self;
         NSMenuItem *item = [menu insertItemWithTitle:@"Pin Groups When Scrolling" action:@selector(menuTogglePinGroups:) keyEquivalent:@"" atIndex:3];
-        item.state = _pin_groups?NSOnState:NSOffState;
+        item.state = self.pinGroups?NSOnState:NSOffState;
         item.target = self;
 
         [menu insertItem:[NSMenuItem separatorItem] atIndex:4];
@@ -488,9 +496,9 @@ extern DB_functions_t *deadbeef;
             title = [title_s UTF8String];
         }
 
-        int _id = -1;
+        int colId = -1;
         if (id_s) {
-            _id = (int)[id_s integerValue];
+            colId = (int)[id_s integerValue];
         }
 
         const char *fmt = NULL;
@@ -522,7 +530,7 @@ extern DB_functions_t *deadbeef;
             r, g, b, a
         };
 
-        [self initColumn:_ncolumns withTitle:title withId:_id withSize:size withFormat:fmt withAlignment:alignment withSetColor:setcolor withColor:rgba];
+        [self initColumn:_ncolumns withTitle:title withId:colId withSize:size withFormat:fmt withAlignment:alignment withSetColor:setcolor withColor:rgba];
         _ncolumns++;
     }];
 }
@@ -708,13 +716,13 @@ extern DB_functions_t *deadbeef;
         int paused = deadbeef->get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
         if (paused) {
-            img = _pauseTpl;
+            img = self.pauseTpl;
         }
         else if (!buffering) {
-            img = _playTpl;
+            img = self.playTpl;
         }
         else {
-            img = _bufTpl;
+            img = self.bufTpl;
         }
 
         NSColor *imgColor = sel ? NSColor.alternateSelectedControlTextColor : NSColor.controlTextColor;
@@ -760,7 +768,7 @@ extern DB_functions_t *deadbeef;
         rect.size.width -= CELL_HPADDING;
 
         if (text[0]) {
-            NSDictionary *attributes = sel?_cellSelectedTextAttrsDictionary:_cellTextAttrsDictionary;
+            NSDictionary *attributes = sel?self.cellSelectedTextAttrsDictionary:self.cellTextAttrsDictionary;
             NSColor *foreground = attributes[NSForegroundColorAttributeName];
 
             NSMutableAttributedString *attrString = [self stringWithTintAttributesFromString:text initialAttributes:attributes                                                     foregroundColor:foreground backgroundColor:background];
@@ -809,9 +817,9 @@ extern DB_functions_t *deadbeef;
     };
 
     char text[1024] = "";
-    deadbeef->tf_eval (&ctx, _group_bytecode, text, sizeof (text));
+    deadbeef->tf_eval (&ctx, self.groupBytecode, text, sizeof (text));
 
-    NSMutableAttributedString *attrString = [self stringWithTintAttributesFromString:text initialAttributes:_groupTextAttrsDictionary foregroundColor:_groupTextAttrsDictionary[NSForegroundColorAttributeName] backgroundColor:NSColor.controlBackgroundColor];
+    NSMutableAttributedString *attrString = [self stringWithTintAttributesFromString:text initialAttributes:self.groupTextAttrsDictionary foregroundColor:self.groupTextAttrsDictionary[NSForegroundColorAttributeName] backgroundColor:NSColor.controlBackgroundColor];
 
     NSSize size = [attrString size];
 
@@ -904,10 +912,10 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     deadbeef->pl_set_selected ((DB_playItem_t *)row, state);
 // FIXME: test code: remove this before merging to master
     if (state) {
-        if (!_medialib) {
-            _medialib = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
+        if (!self.medialibPlugin) {
+            self.medialibPlugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
         }
-        DB_playItem_t *it = _medialib->find_track ((DB_playItem_t *)row);
+        DB_playItem_t *it = self.medialibPlugin->find_track ((DB_playItem_t *)row);
         if (it) {
             deadbeef->pl_item_unref (it);
         }
@@ -933,11 +941,11 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 }
 
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row {
-    if (!_group_str) {
+    if (!self.groupStr) {
         return nil;
     }
-    if (!_group_bytecode) {
-        _group_bytecode = deadbeef->tf_compile (_group_str);
+    if (!self.groupBytecode) {
+        self.groupBytecode = deadbeef->tf_compile (self.groupStr.UTF8String);
     }
 
     ddb_tf_context_t ctx = {
@@ -947,7 +955,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     };
     char buf[1024];
     NSString *ret = @"";
-    if (deadbeef->tf_eval (&ctx, _group_bytecode, buf, sizeof (buf)) > 0) {
+    if (deadbeef->tf_eval (&ctx, self.groupBytecode, buf, sizeof (buf)) > 0) {
         ret = [NSString stringWithUTF8String:buf];
         if (!ret) {
             ret = @"";
@@ -957,10 +965,6 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         deadbeef->plt_unref (ctx.plt);
     }
     return ret;
-}
-
-- (BOOL)pinGroups {
-    return _pin_groups;
 }
 
 - (int)modificationIdx {
@@ -1228,14 +1232,14 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 }
 
 - (void)trackProperties {
-    if (!_trkProperties) {
-        _trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
+    if (!self.trkProperties) {
+        self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
     }
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    _trkProperties.playlist =  plt;
+    self.trkProperties.playlist =  plt;
     deadbeef->plt_unref (plt);
-    [_trkProperties fill];
-    [_trkProperties showWindow:self];
+    [self.trkProperties fill];
+    [self.trkProperties showWindow:self];
 }
 
 - (void)addToPlaybackQueue {

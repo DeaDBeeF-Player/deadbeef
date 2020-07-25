@@ -44,14 +44,6 @@ typedef struct {
 @interface PlaylistViewController : DesignableViewController<DdbListviewDelegate,NSMenuDelegate> {
     plt_col_info_t _columns[PLT_MAX_COLUMNS];
     int _ncolumns;
-    int _menuColumn;
-    NSImage *_playTpl;
-    NSImage *_pauseTpl;
-    NSImage *_bufTpl;
-    NSDictionary *_cellTextAttrsDictionary;
-    NSDictionary *_cellSelectedTextAttrsDictionary;
-    NSDictionary *_groupTextAttrsDictionary;
-    TrackPropertiesWindowController *_trkProperties;
 }
 
 - (void)setup;
