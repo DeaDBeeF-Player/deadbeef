@@ -26,9 +26,6 @@
 
 @interface SearchViewController : PlaylistViewController
 
-@property (unsafe_unretained) IBOutlet NSTextField *entry;
-@property (unsafe_unretained) IBOutlet PlaylistView *listview;
-
 - (void)reset;
 
 @end

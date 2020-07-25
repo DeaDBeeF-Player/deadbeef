@@ -39,14 +39,12 @@ typedef struct {
     int sort_order;
 } plt_col_info_t;
 
-@interface PlaylistViewController : DesignableViewController<DdbListviewDelegate,NSMenuDelegate>
+@interface PlaylistViewController : DesignableViewController
 
-@property (nonatomic) plt_col_info_t *columns;
-@property (nonatomic) int ncolumns;
+@property (nonatomic,readonly) plt_col_info_t *columns;
+@property (nonatomic,readonly) int ncolumns;
 
 - (void)setup;
-- (int)playlistIter;
-
 - (void)cleanup;
 
 @end

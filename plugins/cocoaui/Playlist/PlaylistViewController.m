@@ -44,7 +44,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface PlaylistViewController()
+@interface PlaylistViewController() <DdbListviewDelegate,NSMenuDelegate>
 
 @property (nonatomic) NSImage *playTpl;
 @property (nonatomic) NSImage *pauseTpl;
@@ -67,9 +67,11 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) ddb_medialib_plugin_t *medialibPlugin;
 @property (nonatomic,readonly) const char *groupByConfStr;
 @property (nonatomic) NSString *groupStr;
+@property (nonatomic,readonly) int playlistIter;
 
+@property (nonatomic,readwrite) plt_col_info_t *columns;
+@property (nonatomic,readwrite) int ncolumns;
 @property (nonatomic) int columnsAllocated;
-
 
 @end
 

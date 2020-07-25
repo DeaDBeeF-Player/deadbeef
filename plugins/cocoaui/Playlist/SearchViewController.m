@@ -26,6 +26,14 @@
 
 extern DB_functions_t *deadbeef;
 
+@interface SearchViewController()
+
+@property (unsafe_unretained) IBOutlet NSTextField *entry;
+@property (unsafe_unretained) IBOutlet PlaylistView *listview;
+
+@end
+
+
 @implementation SearchViewController
 
 #define DEFAULT_COLUMNS "[{\"title\":\"Artist - Album\", \"format\":\"$if(%album artist%,%album artist%,Unknown Artist)[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track number%\", \"size\":\"50\"}, {\"title\":\"Track Title\", \"format\":\"%title%\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"
@@ -35,7 +43,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)writeColumnConfig:(NSString *)config {
-    deadbeef->conf_set_str ("cocoaui.search_columns", [config UTF8String]);
+    deadbeef->conf_set_str ("cocoaui.search_columns", config.UTF8String);
 }
 
 - (int)playlistIter {
@@ -82,8 +90,8 @@ extern DB_functions_t *deadbeef;
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SEARCHRESULT, 0);
         deadbeef->plt_unref (plt);
     }
-    _entry.stringValue = @"";
-    [_entry becomeFirstResponder];
+    self.entry.stringValue = @"";
+    [self.entry becomeFirstResponder];
 
 }
 
