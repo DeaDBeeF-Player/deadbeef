@@ -94,7 +94,6 @@
         if (width < 0) {
             width = 0;
         }
-//        [self.headerTextColor set]; // FIXME -- check if needed
 
         [[delegate columnTitleAtIndex:col] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y-2, width, rect.size.height-2) withAttributes:self.titleAttributes];
 
