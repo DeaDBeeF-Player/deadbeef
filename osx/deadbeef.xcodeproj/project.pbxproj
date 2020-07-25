@@ -1825,6 +1825,10 @@
 		2DB96AA519ABB50300E318A8 /* src_zoh.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB96A9A19ABB50300E318A8 /* src_zoh.c */; };
 		2DB96AA819ABB52200E318A8 /* dsp_libsrc.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DB96A8019ABB47C00E318A8 /* dsp_libsrc.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DB96AAB19ABB53200E318A8 /* libsamplerate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DB96A8A19ABB4C600E318A8 /* libsamplerate.a */; };
+		2DBC62D624CCDEFC00AA20BF /* VisualizationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBC62D424CCDEFC00AA20BF /* VisualizationViewController.h */; };
+		2DBC62D724CCDEFC00AA20BF /* VisualizationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DBC62D524CCDEFC00AA20BF /* VisualizationViewController.m */; };
+		2DBC62DA24CCDFB200AA20BF /* VisualizationView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBC62D824CCDFB200AA20BF /* VisualizationView.h */; };
+		2DBC62DB24CCDFB200AA20BF /* VisualizationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DBC62D924CCDFB200AA20BF /* VisualizationView.m */; };
 		2DBCB725240AE0BE0012F178 /* tftintutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBCB71F240ADCC10012F178 /* tftintutil.h */; };
 		2DBCB726240AE28E0012F178 /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DBCB720240ADCC10012F178 /* tftintutil.c */; };
 		2DBF129D22DE53D200D59073 /* icy2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D565AB21A40BCE200CE1F5D /* icy2utf8.c */; };
@@ -5420,6 +5424,10 @@
 		2DB96A9819ABB50300E318A8 /* src_linear.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src_linear.c; path = "deps/libsamplerate-0.1.8/src/src_linear.c"; sourceTree = "<group>"; };
 		2DB96A9919ABB50300E318A8 /* src_sinc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src_sinc.c; path = "deps/libsamplerate-0.1.8/src/src_sinc.c"; sourceTree = "<group>"; };
 		2DB96A9A19ABB50300E318A8 /* src_zoh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src_zoh.c; path = "deps/libsamplerate-0.1.8/src/src_zoh.c"; sourceTree = "<group>"; };
+		2DBC62D424CCDEFC00AA20BF /* VisualizationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisualizationViewController.h; sourceTree = "<group>"; };
+		2DBC62D524CCDEFC00AA20BF /* VisualizationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisualizationViewController.m; sourceTree = "<group>"; };
+		2DBC62D824CCDFB200AA20BF /* VisualizationView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisualizationView.h; sourceTree = "<group>"; };
+		2DBC62D924CCDFB200AA20BF /* VisualizationView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisualizationView.m; sourceTree = "<group>"; };
 		2DBCB71F240ADCC10012F178 /* tftintutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tftintutil.h; sourceTree = "<group>"; };
 		2DBCB720240ADCC10012F178 /* tftintutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tftintutil.c; sourceTree = "<group>"; };
 		2DC1CD44240EEB8F000776DB /* rol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rol.cpp; sourceTree = "<group>"; };
@@ -9680,6 +9688,17 @@
 			name = libsamplerate;
 			sourceTree = "<group>";
 		};
+		2DBC62D324CCDEE800AA20BF /* Visualization */ = {
+			isa = PBXGroup;
+			children = (
+				2DBC62D424CCDEFC00AA20BF /* VisualizationViewController.h */,
+				2DBC62D524CCDEFC00AA20BF /* VisualizationViewController.m */,
+				2DBC62D824CCDFB200AA20BF /* VisualizationView.h */,
+				2DBC62D924CCDFB200AA20BF /* VisualizationView.m */,
+			);
+			path = Visualization;
+			sourceTree = "<group>";
+		};
 		2DCB281819E8616E008E9DF6 /* m3u */ = {
 			isa = PBXGroup;
 			children = (
@@ -10911,6 +10930,7 @@
 				2D747E2424B64E3400BBB987 /* SplitViewMainWindow */,
 				2D0B1C8619C5CF4A00CED0B5 /* Supporting files */,
 				2D46220D226DBA2A003997E9 /* Utility */,
+				2DBC62D324CCDEE800AA20BF /* Visualization */,
 				2DE1D3DF19B11286009B5BC6 /* Widgets */,
 				2D6202AF1B90800A00594746 /* XIB */,
 				4DA72BD91838EAAB00A98C62 /* AppDelegate.h */,
@@ -12256,6 +12276,7 @@
 				2DEF494419C4DB4100B718C1 /* PlaylistView.h in Headers */,
 				4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */,
 				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
+				2DBC62D624CCDEFC00AA20BF /* VisualizationViewController.h in Headers */,
 				2DA273892406FBD800FB9BE1 /* DspPreferencesViewController.h in Headers */,
 				2DAD80A12416DBB100EB3075 /* CustomToolbarItem.h in Headers */,
 				2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */,
@@ -12277,6 +12298,7 @@
 				2D9F6534241BE78C00D9D16E /* SeekbarOverlay.h in Headers */,
 				2D3CD9372409A091005875A9 /* PinnedGroupTitleView.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
+				2DBC62DA24CCDFB200AA20BF /* VisualizationView.h in Headers */,
 				2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */,
 				2DA30E602402D1B1001BAB8A /* ctmap.h in Headers */,
 				2DEBA1D223E207A3000E4135 /* EqualizerWindowController.h in Headers */,
@@ -15389,6 +15411,7 @@
 				2DA273792406ED4100FB9BE1 /* GuiPreferencesWindowController.m in Sources */,
 				2DDBA26523E5F14A00051320 /* PlaylistHeaderView.m in Sources */,
 				2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */,
+				2DBC62D724CCDEFC00AA20BF /* VisualizationViewController.m in Sources */,
 				2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */,
 				2DDF87DA24027DA500CA8E91 /* PluginActionMenuItem.m in Sources */,
 				2DAD80A22416DBB100EB3075 /* CustomToolbarItem.m in Sources */,
@@ -15405,6 +15428,7 @@
 				2DA30E7A2403292D001BAB8A /* PlaybackPreferencesViewController.m in Sources */,
 				2D747E3A24B64E7600BBB987 /* SidebarSplitViewController.m in Sources */,
 				2DA2738A2406FBD800FB9BE1 /* DspPreferencesViewController.m in Sources */,
+				2DBC62DB24CCDFB200AA20BF /* VisualizationView.m in Sources */,
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
 				2DB2F740240466AF00F7C000 /* PluginsPreferencesViewController.m in Sources */,
 				2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */,

@@ -151,6 +151,11 @@
                 <outlet property="view" destination="VJY-8N-XhM" id="6WU-hH-tXa"/>
             </connections>
         </viewController>
+        <viewController id="zGp-Xb-2Fw" customClass="VisualizationViewController">
+            <connections>
+                <outlet property="view" destination="4HZ-lE-1O4" id="Rwb-y0-4nZ"/>
+            </connections>
+        </viewController>
         <viewController id="Fq8-H0-Fvi" userLabel="Detail View Controller">
             <connections>
                 <outlet property="view" destination="pUF-Dy-KtC" id="ZsB-hW-ZOY"/>
@@ -277,20 +282,30 @@
                             </connections>
                         </customView>
                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="1HX-cv-ywg">
-                            <rect key="frame" x="0.0" y="0.0" width="485" height="249"/>
+                            <rect key="frame" x="0.0" y="100" width="485" height="149"/>
                             <constraints>
                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="Jko-Ev-D1e"/>
                                 <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="UV6-J9-Up9"/>
+                            </constraints>
+                        </customView>
+                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="4HZ-lE-1O4" userLabel="VisualizationView" customClass="VisualizationView">
+                            <rect key="frame" x="0.0" y="0.0" width="485" height="100"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="100" id="D3e-C9-ruX"/>
                             </constraints>
                         </customView>
                     </subviews>
                     <constraints>
                         <constraint firstAttribute="trailing" secondItem="Sp3-ZT-72r" secondAttribute="trailing" id="2cP-Jb-A7t"/>
                         <constraint firstItem="1HX-cv-ywg" firstAttribute="top" secondItem="Sp3-ZT-72r" secondAttribute="bottom" id="3ds-vQ-VxW"/>
+                        <constraint firstItem="4HZ-lE-1O4" firstAttribute="top" secondItem="1HX-cv-ywg" secondAttribute="bottom" id="3jS-E3-8Ms"/>
                         <constraint firstAttribute="trailing" secondItem="1HX-cv-ywg" secondAttribute="trailing" id="8dv-pf-Lum"/>
-                        <constraint firstAttribute="bottom" secondItem="1HX-cv-ywg" secondAttribute="bottom" id="JsA-3K-nfk"/>
+                        <constraint firstAttribute="bottom" secondItem="1HX-cv-ywg" secondAttribute="bottom" priority="750" id="JsA-3K-nfk"/>
                         <constraint firstItem="Sp3-ZT-72r" firstAttribute="leading" secondItem="IV1-Va-yS4" secondAttribute="leading" id="XGQ-37-GBs"/>
                         <constraint firstItem="1HX-cv-ywg" firstAttribute="leading" secondItem="IV1-Va-yS4" secondAttribute="leading" id="aYw-Mf-7pR"/>
+                        <constraint firstAttribute="trailing" secondItem="4HZ-lE-1O4" secondAttribute="trailing" id="dLh-L8-FgT"/>
+                        <constraint firstAttribute="bottom" secondItem="4HZ-lE-1O4" secondAttribute="bottom" id="e9f-D0-5pn"/>
+                        <constraint firstItem="4HZ-lE-1O4" firstAttribute="leading" secondItem="IV1-Va-yS4" secondAttribute="leading" id="we9-th-SSR"/>
                         <constraint firstItem="Sp3-ZT-72r" firstAttribute="top" secondItem="IV1-Va-yS4" secondAttribute="top" id="yfd-b8-W4i"/>
                     </constraints>
                 </customView>
