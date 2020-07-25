@@ -611,6 +611,7 @@ plt_get_title_wrapper (int plt) {
         [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
             self.playlistConfirmationAlertOpen = NO;
             if (returnCode == NSAlertFirstButtonReturn) {
+                self.needsDisplay = YES;
                 return;
             }
             deadbeef->plt_remove (self.tab_clicked);
@@ -618,6 +619,7 @@ plt_get_title_wrapper (int plt) {
             deadbeef->conf_set_int ("playlist.current", playlist);
             [self scrollToTab:playlist];
             self.tab_clicked = -1;
+            self.needsDisplay = YES;
         }];
     }
 }
@@ -865,7 +867,8 @@ plt_get_title_wrapper (int plt) {
 }
 
 - (IBAction)renamePlaylistAction:(id)sender {
-    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (_tab_clicked);
+    int clicked = _tab_clicked;
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (clicked);
     int l = deadbeef->plt_get_title (plt, NULL, 0);
     char buf[l+1];
     deadbeef->plt_get_title (plt, buf, (int)sizeof buf);
@@ -875,6 +878,7 @@ plt_get_title_wrapper (int plt) {
             deadbeef->plt_set_title (plt, [[self.renamePlaylistTitle stringValue] UTF8String]);
             deadbeef->plt_save_config (plt);
             deadbeef->plt_unref (plt);
+            [self scrollToTab:clicked];
         }
     }];
 }
