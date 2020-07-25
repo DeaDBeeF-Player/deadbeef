@@ -600,9 +600,11 @@ plt_get_title_wrapper (int plt) {
         alert.informativeText = [NSString stringWithFormat:@"Do you really want to remove the playlist '%@'?", plt_get_title_wrapper (_tab_clicked)];
         [alert addButtonWithTitle:@"No"];
         [alert addButtonWithTitle:@"Yes"];
+#if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101600
         if (@available(macOS 10.16, *)) {
             alert.buttons[1].hasDestructiveAction = YES;
         }
+#endif
 
         self.playlistConfirmationAlertOpen = YES;
 
