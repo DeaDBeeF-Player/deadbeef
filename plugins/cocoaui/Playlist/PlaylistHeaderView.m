@@ -9,6 +9,7 @@
 #import "PlaylistView.h"
 #import "PlaylistHeaderView.h"
 #import "PlaylistContentView.h"
+#include "deadbeef.h"
 
 @interface PlaylistHeaderView() {
     int _orig_col_width;
@@ -22,9 +23,50 @@
     NSColor *_separatorColor;
 }
 
+@property (nonatomic) BOOL isKeyWindow;
+@property (nonatomic,readonly) NSColor *headerTextColor;
+@property (nonatomic,nullable) NSDictionary *titleAttributesCurrent;
+@property (nonatomic,readonly) NSDictionary *titleAttributes;
+
 @end
 
 @implementation PlaylistHeaderView
+
+- (NSColor *)headerTextColor {
+    NSColor *textColor = NSColor.controlTextColor;
+    if (!self.isKeyWindow) {
+        textColor = [textColor colorWithAlphaComponent:0.7];
+    }
+    return textColor;
+}
+
+- (void)updateTextAttributes {
+    if (self.window.isKeyWindow == self.isKeyWindow && self.titleAttributesCurrent) {
+        return;
+    }
+
+    self.isKeyWindow = self.window.isKeyWindow;
+
+    NSMutableParagraphStyle *textStyle = [NSParagraphStyle.defaultParagraphStyle mutableCopy];
+
+    textStyle.alignment = NSTextAlignmentLeft;
+    textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+
+    self.titleAttributesCurrent = @{
+        NSFontAttributeName:[NSFont controlContentFontOfSize:NSFont.smallSystemFontSize],
+        NSBaselineOffsetAttributeName: @0,
+        NSForegroundColorAttributeName: self.headerTextColor,
+        NSParagraphStyleAttributeName: textStyle
+    };
+
+}
+
+- (NSDictionary *)titleAttributes {
+    [self updateTextAttributes];
+
+    return self.titleAttributesCurrent;
+}
+
 - (PlaylistHeaderView *)initWithFrame:(NSRect)rect {
     self = [super initWithFrame:rect];
     _dragging = -1;
@@ -38,6 +80,44 @@
 
 - (void)setListView:(PlaylistView *)lv {
     self.listview = lv;
+}
+
+- (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect {
+    id <DdbListviewDelegate> delegate = [self.listview delegate];
+    int columnCount = delegate.columnCount;
+    int sortColumnIndex = delegate.sortColumnIndex;
+    if (col < columnCount) {
+        CGFloat width = rect.size.width-6;
+        if (col == sortColumnIndex) {
+            width -= 16;
+        }
+        if (width < 0) {
+            width = 0;
+        }
+//        [self.headerTextColor set]; // FIXME -- check if needed
+
+        [[delegate columnTitleAtIndex:col] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y-2, width, rect.size.height-2) withAttributes:self.titleAttributes];
+
+        enum ddb_sort_order_t sortOrder = [delegate columnSortOrderAtIndex:col];
+
+
+        if (col == sortColumnIndex) {
+            [[NSColor.controlTextColor highlightWithLevel:0.5] set];
+            NSBezierPath *path = [NSBezierPath new];
+            path.lineWidth = 2;
+            if (sortOrder == DDB_SORT_ASCENDING) {
+                [path moveToPoint:NSMakePoint(rect.origin.x+4+width+4, rect.origin.y+10)];
+                [path lineToPoint:NSMakePoint(rect.origin.x+4+width+8, rect.origin.y+10+4)];
+                [path lineToPoint:NSMakePoint(rect.origin.x+4+width+12, rect.origin.y+10)];
+            }
+            else if (sortOrder == DDB_SORT_DESCENDING) {
+                [path moveToPoint:NSMakePoint(rect.origin.x+4+width+4, rect.origin.y+10+4)];
+                [path lineToPoint:NSMakePoint(rect.origin.x+4+width+8, rect.origin.y+10)];
+                [path lineToPoint:NSMakePoint(rect.origin.x+4+width+12, rect.origin.y+10+4)];
+            }
+            [path stroke];
+        }
+    }
 }
 
 - (void)drawRect:(NSRect)dirtyRect {
@@ -60,7 +140,7 @@
         NSRect colRect = NSMakeRect(x, 0, w, self.frame.size.height);
         if (_dragging != col) {
             if (CGRectIntersectsRect(dirtyRect, colRect)) {
-                [delegate drawColumnHeader:col inRect:colRect];
+                [self drawColumnHeader:col inRect:colRect];
             }
         }
         [_separatorColor set];
@@ -80,7 +160,7 @@
                 [[NSColor.whiteColor colorWithAlphaComponent:0.4] set];
                 [NSBezierPath fillRect:colRect];
 
-                [delegate drawColumnHeader:col inRect:colRect];
+                [self drawColumnHeader:col inRect:colRect];
                 [_separatorColor set];
                 [NSBezierPath fillRect:NSMakeRect(colRect.origin.x, colRect.origin.y,1,colRect.size.height)];
                 [NSBezierPath fillRect:NSMakeRect(colRect.origin.x + colRect.size.width - 1, colRect.origin.y,1,colRect.size.height)];

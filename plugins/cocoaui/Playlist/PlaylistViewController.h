@@ -48,7 +48,6 @@ typedef struct {
     NSImage *_playTpl;
     NSImage *_pauseTpl;
     NSImage *_bufTpl;
-    NSDictionary *_colTextAttrsDictionary;
     NSDictionary *_cellTextAttrsDictionary;
     NSDictionary *_cellSelectedTextAttrsDictionary;
     NSDictionary *_groupTextAttrsDictionary;

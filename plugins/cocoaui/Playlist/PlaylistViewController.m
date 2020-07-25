@@ -313,17 +313,7 @@ extern DB_functions_t *deadbeef;
     _pauseTpl = [[NSImage imageNamed:@"btnpauseTemplate.pdf"] flippedImage];
     _bufTpl = [[NSImage imageNamed:@"bufferingTemplate.pdf"] flippedImage];
 
-    NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-
-    textStyle.alignment = NSTextAlignmentLeft;
-    textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
-
-    _colTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont smallSystemFontSize]], NSFontAttributeName
-                               , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                               , NSColor.controlTextColor, NSForegroundColorAttributeName
-                               , textStyle, NSParagraphStyleAttributeName
-                               , nil];
-
+    NSMutableParagraphStyle *textStyle = [NSParagraphStyle.defaultParagraphStyle mutableCopy];
     textStyle.alignment = NSTextAlignmentLeft;
     textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
@@ -656,38 +646,6 @@ extern DB_functions_t *deadbeef;
 
 - (void)unrefRow:(DdbListviewRow_t)row {
     deadbeef->pl_item_unref ((DB_playItem_t *)row);
-}
-
-- (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect {
-    if (col < self.columnCount) {
-        CGFloat width = rect.size.width-6;
-        if (col == self.sortColumn) {
-            width -= 16;
-        }
-        if (width < 0) {
-            width = 0;
-        }
-        [NSColor.controlTextColor set];
-        [[NSString stringWithUTF8String:_columns[col].title] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y-2, width, rect.size.height-2) withAttributes:_colTextAttrsDictionary];
-
-
-        if (col == self.sortColumn) {
-            [[NSColor.controlTextColor highlightWithLevel:0.5] set];
-            NSBezierPath *path = [NSBezierPath new];
-            path.lineWidth = 2;
-            if (_columns[col].sort_order == DDB_SORT_ASCENDING) {
-                [path moveToPoint:NSMakePoint(rect.origin.x+4+width+4, rect.origin.y+10)];
-                [path lineToPoint:NSMakePoint(rect.origin.x+4+width+8, rect.origin.y+10+4)];
-                [path lineToPoint:NSMakePoint(rect.origin.x+4+width+12, rect.origin.y+10)];
-            }
-            else if (_columns[col].sort_order == DDB_SORT_DESCENDING) {
-                [path moveToPoint:NSMakePoint(rect.origin.x+4+width+4, rect.origin.y+10+4)];
-                [path lineToPoint:NSMakePoint(rect.origin.x+4+width+8, rect.origin.y+10)];
-                [path lineToPoint:NSMakePoint(rect.origin.x+4+width+12, rect.origin.y+10+4)];
-            }
-            [path stroke];
-        }
-    }
 }
 
 - (NSMutableAttributedString *)stringWithTintAttributesFromString:(const char *)inputString initialAttributes:(NSDictionary *)attributes foregroundColor:(NSColor *)foregroundColor backgroundColor:(NSColor *)backgroundColor {
@@ -1462,6 +1420,21 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
         deadbeef->plt_unref (plt);
     }
 }
+
+- (int)sortColumnIndex {
+    return self.sortColumn;
+}
+
+- (NSString *)columnTitleAtIndex:(NSUInteger)index {
+    return [NSString stringWithUTF8String:_columns[index].title];
+}
+
+- (enum ddb_sort_order_t)columnSortOrderAtIndex:(NSUInteger)index {
+    return _columns[index].sort_order;
+}
+
+
+#pragma mark -
 
 - (void)rgRemove:(id)sender {
     int count;

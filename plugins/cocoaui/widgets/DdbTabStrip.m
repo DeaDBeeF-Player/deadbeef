@@ -45,6 +45,7 @@ extern DB_functions_t *deadbeef;
 
 }
 
+@property (nonatomic,readonly) NSColor *tabTextColor;
 @property (nonatomic,nullable) NSDictionary *titleAttributesCurrent;
 @property (nonatomic,readonly) NSDictionary *titleAttributes;
 @property (nonatomic) BOOL isDarkMode;
