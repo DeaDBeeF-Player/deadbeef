@@ -374,11 +374,13 @@ static char sb_text[512];
         deadbeef->pl_item_unref (ctx.it);
     }
 
-    // FIXME: 11.0 availability check doesn't work in big sur beta
+#if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101600
     if (@available(macOS 10.16, *)) {
         self.window.title = [NSString stringWithUTF8String:titleBuffer];
         self.window.subtitle = [NSString stringWithUTF8String:subtitleBuffer];
-    } else {
+    } else
+#endif
+    {
         self.window.title = [NSString stringWithFormat:@"%s%s%s", subtitleBuffer, (titleBuffer[0] && subtitleBuffer[0]) ? " - " : "", titleBuffer];
     }
 }
