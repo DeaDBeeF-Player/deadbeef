@@ -63,9 +63,9 @@ extern DB_functions_t *deadbeef;
 @implementation DdbTabStrip
 
 static int text_left_padding = 15;
-static int text_right_padding = 0; // calculated from widget height
+static int text_right_padding = 30;
 static int text_vert_offset = 4;
-static int tab_overlap_size = 0; // approximately widget_height/2
+static int tab_overlap_size = 0;
 static int tabs_left_margin = 0;
 static int tab_vert_padding = 1;
 static int min_tab_size = 80;
@@ -114,10 +114,25 @@ static int close_btn_right_offs = 16;
     return _titleAttributesSelected;
 }
 
-- (id)initWithFrame:(NSRect)frame
-{
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    self = [super initWithCoder:coder];
+    if (!self) {
+        return nil;
+    }
+    [self setup];
+    return self;
+}
+
+- (id)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
-    // Initialization code here.
+    if (!self) {
+        return nil;
+    }
+    [self setup];
+    return self;
+}
+
+- (void)setup {
     _dragging = -1;
     self.tab_clicked = -1;
     self.autoresizesSubviews = NO;
@@ -127,10 +142,9 @@ static int close_btn_right_offs = 16;
 
     [self setupTrackingArea];
 
-    self.scrollPos = deadbeef->conf_get_int ("cocoaui.tabscroll", 0);
+    [self scrollToTabInt:deadbeef->plt_get_curr_idx() redraw:NO];
 
     [self registerForDraggedTypes:[NSArray arrayWithObjects:ddbPlaylistItemsUTIType, NSFilenamesPboardType, nil]];
-    return self;
 }
 
 static NSString *
@@ -198,7 +212,6 @@ plt_get_title_wrapper (int plt) {
 
 - (void)setScrollPos:(CGFloat)scrollPos {
     _scrollPos = MAX(0, MIN(self.fullWidth - NSWidth(self.bounds), scrollPos));
-    deadbeef->conf_set_int ("cocoaui.tabscroll", _scrollPos);
 }
 
 - (void)scrollToTabInt:(int)tab redraw:(BOOL)redraw {
@@ -230,13 +243,9 @@ plt_get_title_wrapper (int plt) {
     }
 }
 
-- (CGFloat)clippedScrollPos:(CGFloat)scrollPos {
-    return MAX(0, MIN(self.fullWidth - NSWidth(self.bounds), scrollPos));
-}
-
 - (void)adjustHScroll {
     if (deadbeef->plt_get_count () > 0) {
-        self.scrollPos = [self clippedScrollPos:self.scrollPos];
+        self.scrollPos = _scrollPos;
     }
     [self mouseMovedHandler];
 }
@@ -304,15 +313,6 @@ plt_get_title_wrapper (int plt) {
         [NSBezierPath strokeLineFromPoint: from toPoint: to ];
         [NSBezierPath strokeLineFromPoint: NSMakePoint(from.x, to.y) toPoint: NSMakePoint(to.x, from.y) ];
     }
-}
-
-- (void)calculateTabDimensions {
-    NSSize a = self.bounds.size;
-
-    int h = a.height;
-
-    tab_overlap_size = 0;//(h-4)/2;
-    text_right_padding = h - 3 + 5;
 }
 
 - (NSRect)tabRectForXPos:(int)xPos width:(int)tabWidth height:(int)tabHeight {
@@ -504,8 +504,8 @@ plt_get_title_wrapper (int plt) {
 
 -(void)scrollWheel:(NSEvent*)event {
     CGFloat newScroll = self.scrollPos + event.deltaY;
-    newScroll -= event.deltaY * 2;
-    self.scrollPos = [self clippedScrollPos:newScroll];
+    newScroll -= event.deltaY * 4;
+    self.scrollPos = newScroll;
     self.needsDisplay = YES;
 }
 
@@ -730,7 +730,6 @@ plt_get_title_wrapper (int plt) {
 }
 
 - (void)frameDidChange {
-    [self calculateTabDimensions];
     [self recalculateNeedScroll];
     [self adjustHScroll];
     [self setupTrackingArea];
