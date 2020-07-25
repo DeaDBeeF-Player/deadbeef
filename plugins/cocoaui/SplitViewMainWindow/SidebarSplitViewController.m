@@ -35,7 +35,7 @@
     bodyItem.canCollapse = NO;
     [self insertSplitViewItem:bodyItem atIndex:1];
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= __MAC_10_16
+#if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101600
     if (@available(macOS 10.16, *)) {
         self.trackingItem = [NSTrackingSeparatorToolbarItem trackingSeparatorToolbarItemWithIdentifier:NSToolbarSidebarTrackingSeparatorItemIdentifier splitView:self.splitView dividerIndex:0];
 
