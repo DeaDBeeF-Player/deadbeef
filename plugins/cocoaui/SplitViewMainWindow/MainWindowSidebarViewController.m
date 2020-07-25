@@ -206,6 +206,7 @@ static void _medialib_listener (int event, void *user_data) {
     else {
         view = [outlineView makeViewWithIdentifier:@"ImageTextCell" owner:self];
 
+#if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101600
         if (@available(macOS 10.16, *)) {
             NSString *name;
             if (item == self.groupItems[0]) {
@@ -225,6 +226,9 @@ static void _medialib_listener (int event, void *user_data) {
             if (name) {
                 view.imageView.image = [NSImage imageWithSystemSymbolName:name accessibilityDescription:nil];
             }
+#else
+            // FIXME: image fallback for previous macOS versions
+#endif
         }
     }
     if ([item isKindOfClass:MediaLibraryItem.class]) {
