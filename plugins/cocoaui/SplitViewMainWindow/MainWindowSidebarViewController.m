@@ -226,10 +226,10 @@ static void _medialib_listener (int event, void *user_data) {
             if (name) {
                 view.imageView.image = [NSImage imageWithSystemSymbolName:name accessibilityDescription:nil];
             }
+        }
 #else
             // FIXME: image fallback for previous macOS versions
 #endif
-        }
     }
     if ([item isKindOfClass:MediaLibraryItem.class]) {
         MediaLibraryItem *mlItem = item;
