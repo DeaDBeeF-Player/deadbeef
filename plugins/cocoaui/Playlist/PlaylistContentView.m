@@ -83,7 +83,7 @@ static int grouptitleheight = 22;
 
 #pragma mark - Drag and drop
 
-- (void) drawLineIndicator:(NSRect)dirtyRect yy:(int)yy  {
+- (void)drawLineIndicator:(NSRect)dirtyRect yy:(int)yy  {
 
     int yyline = yy;
     float indicatorLineWith = 1.f;
@@ -141,15 +141,14 @@ static int grouptitleheight = 22;
 
     NSPasteboard *pboard = [sender draggingPasteboard];
 
-    DdbListviewGroup_t *grp;
-    int grp_index;
     int sel;
 
     NSPoint draggingLocation = [self convertPoint:[sender draggingLocation] fromView:nil];
     id<DdbListviewDelegate> delegate = self.delegate;
 
     DdbListviewRow_t row = [delegate invalidRow];
-    if ( -1 != [self pickPoint:draggingLocation.y group:&grp groupIndex:&grp_index index:&sel]) {
+    sel = [self dragInsertPointForYPos:draggingLocation.y];
+    if (-1 != sel) {
         row = [delegate rowForIndex:sel];
     }
 
@@ -330,9 +329,22 @@ static int grouptitleheight = 22;
 
     BOOL focused = [self.window isKeyWindow];
 
+    int dragIdx = -1;
+    if (_draggingInView) {
+        dragIdx = [self dragInsertPointForYPos:_lastDragLocation.y];
+    }
+
     while (grp && grp_y < clip_y + clip_h) {
         DdbListviewRow_t it = grp->head;
         [self.delegate refRow:it];
+
+        if (clip_y <= grp_y + title_height) {
+            // draw group title
+            if (title_height > 0) {
+                [self drawGroupTitle:grp grp_y:grp_y title_height:title_height];
+            }
+        }
+
 
         int ii = 0;
         for (int i = 0, yy = grp_y + title_height; it && i < grp->num_items && yy < clip_y + clip_h; i++, yy += rowheight) {
@@ -367,13 +379,8 @@ static int grouptitleheight = 22;
                 }
 
                 // draw dnd line
-                if (_draggingInView) {
-                    if ( _lastDragLocation.y > self.fullheight ) {
-                        [self drawLineIndicator:dirtyRect yy: self.fullheight];
-                    }
-                    else if ( _lastDragLocation.y > yy && _lastDragLocation.y < yy + rowheight ) {
-                        [self drawLineIndicator:dirtyRect yy:yy];
-                    }
+                if (dragIdx != -1 && dragIdx == idx + i) {
+                    [self drawLineIndicator:dirtyRect yy:yy];
                 }
 
             }
@@ -391,13 +398,6 @@ static int grouptitleheight = 22;
         // draw album art
         int grp_next_y = grp_y + grp->height;
         [self renderAlbumArtForGroup:grp groupIndex:groupIndex isPinnedGroup:NO nextGroupCoord:grp_next_y yPos:grp_y + title_height viewportY:dirtyRect.origin.y clipRegion:dirtyRect];
-
-        if (clip_y <= grp_y + title_height) {
-            // draw group title
-            if (title_height > 0) {
-                [self drawGroupTitle:grp grp_y:grp_y title_height:title_height];
-            }
-        }
 
         idx += grp->num_items;
         grp_y += grp->height;
@@ -879,6 +879,37 @@ static int grouptitleheight = 22;
 
     _area_selection_start = sel;
     _area_selection_end = sel;
+}
+
+- (int)dragInsertPointForYPos:(CGFloat)y {
+    int idx = 0;
+    int grp_y = 0;
+    int gidx = 0;
+    [self groupCheck];
+    DdbListviewGroup_t *grp = _groups;
+    while (grp) {
+        int h = grp->height;
+        if (y >= grp_y - _grouptitle_height/2 && y < grp_y + h - rowheight/2) {
+            y -= grp_y;
+            // over title
+            if (y < _grouptitle_height) {
+                return idx;
+            }
+            // within group
+            else if (y < _grouptitle_height + grp->num_items * rowheight - rowheight/2) {
+                return idx + (int)((y - _grouptitle_height + rowheight/2) / rowheight);
+            }
+            // just before the next group
+            else {
+                return idx + grp->num_items;
+            }
+        }
+        grp_y += grp->height;
+        idx += grp->num_items;
+        grp = grp->next;
+        gidx++;
+    }
+    return -1;
 }
 
 - (int)pickPoint:(CGFloat)y group:(DdbListviewGroup_t **)group groupIndex:(int *)group_idx index:(int *)global_idx {
