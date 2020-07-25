@@ -146,6 +146,8 @@ extern DB_functions_t *deadbeef;
 
     [self.window addTitlebarAccessoryViewController:vc];
 
+    _tabStrip.frame = NSMakeRect(0,0,NSWidth(_tabStrip.frame),24);
+
     _updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
     [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];
 }

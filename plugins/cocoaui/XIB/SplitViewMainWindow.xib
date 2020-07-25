@@ -332,7 +332,7 @@ Gw
         </window>
         <customView id="Sp3-ZT-72r" customClass="DdbTabStrip">
             <rect key="frame" x="0.0" y="0.0" width="1086" height="24"/>
-            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
             <subviews>
                 <box hidden="YES" horizontalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="pXm-qp-FgI">
                     <rect key="frame" x="685" y="-37" width="5" height="96"/>

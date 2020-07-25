@@ -45,8 +45,15 @@ extern DB_functions_t *deadbeef;
 
 }
 
-@property (nonatomic) NSDictionary *titleAttributes;
-@property (nonatomic) NSDictionary *titleAttributesSelected;
+@property (nonatomic,nullable) NSDictionary *titleAttributesCurrent;
+@property (nonatomic,readonly) NSDictionary *titleAttributes;
+@property (nonatomic) BOOL isDarkMode;
+@property (nonatomic) BOOL isKeyWindow;
+@property (nonatomic,nullable) NSDictionary *titleAttributesSelectedCurrent;
+@property (nonatomic,readonly) NSDictionary *titleAttributesSelected;
+@property (nonatomic) NSColor *tabBackgroundColorDark;
+@property (nonatomic) NSColor *tabBackgroundColorLight;
+@property (nonatomic,readonly) NSColor *tabBackgroundColor;
 
 @property (nonatomic) BOOL playlistConfirmationAlertOpen;
 
@@ -71,22 +78,6 @@ static int min_tab_size = 80;
 static int max_tab_size = 200;
 static int close_btn_left_offs = 8;
 
-- (NSDictionary *)titleAttributes {
-    if (!_titleAttributes) {
-        NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        textStyle.alignment = NSTextAlignmentLeft;
-        textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
-
-        NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize] weight:NSFontWeightMedium];
-        _titleAttributes = @{
-                                NSParagraphStyleAttributeName: textStyle,
-                                NSFontAttributeName:font,
-                                NSForegroundColorAttributeName:NSColor.controlTextColor
-                                };
-    }
-    return _titleAttributes;
-}
-
 - (NSColor *)accentColor {
     if (@available(macOS 10.14, *)) {
         return NSColor.controlAccentColor;
@@ -96,21 +87,73 @@ static int close_btn_left_offs = 8;
     }
 }
 
-- (NSDictionary *)titleAttributesSelected {
-    if (!_titleAttributesSelected) {
-        NSMutableParagraphStyle *textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        textStyle.alignment = NSTextAlignmentLeft;
-        textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
-
-        NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize] weight:NSFontWeightSemibold];
-        NSColor *textColor = self.accentColor;
-        _titleAttributesSelected = @{
-                             NSParagraphStyleAttributeName: textStyle,
-                             NSFontAttributeName:font,
-                             NSForegroundColorAttributeName:textColor
-                             };
+- (NSColor *)tabTextColor {
+    NSColor *textColor = NSColor.controlTextColor;
+    if (!self.isKeyWindow) {
+        textColor = [textColor colorWithAlphaComponent:0.7];
     }
-    return _titleAttributesSelected;
+    return textColor;
+}
+
+- (void)updateTitleAttributes {
+    NSString *osxMode = [NSUserDefaults.standardUserDefaults stringForKey:@"AppleInterfaceStyle"];
+    BOOL isDarkMode = [osxMode isEqualToString:@"Dark"];
+
+    if (isDarkMode == self.isDarkMode && self.window.isKeyWindow == self.isKeyWindow && self.titleAttributesCurrent) {
+        return;
+    }
+
+    self.isDarkMode = isDarkMode;
+    self.isKeyWindow = self.window.isKeyWindow;
+
+    NSMutableParagraphStyle *textStyle = [NSParagraphStyle.defaultParagraphStyle mutableCopy];
+    textStyle.alignment = NSTextAlignmentLeft;
+    textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+
+    NSFont *font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize weight:NSFontWeightSemibold];
+    NSColor *textColor = self.isDarkMode ? NSColor.controlTextColor : self.accentColor;
+
+    self.titleAttributesSelectedCurrent = @{
+        NSParagraphStyleAttributeName: textStyle,
+        NSFontAttributeName:font,
+        NSForegroundColorAttributeName:textColor
+    };
+
+    textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    textStyle.alignment = NSTextAlignmentLeft;
+    textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+
+    font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize] weight:NSFontWeightMedium];
+    textColor = self.tabTextColor;
+
+    self.titleAttributesCurrent = @{
+        NSParagraphStyleAttributeName: textStyle,
+        NSFontAttributeName:font,
+        NSForegroundColorAttributeName:textColor
+    };
+}
+
+- (NSDictionary *)titleAttributes {
+    [self updateTitleAttributes];
+
+    return self.titleAttributesCurrent;
+}
+
+- (NSDictionary *)titleAttributesSelected {
+    [self updateTitleAttributes];
+
+    return self.titleAttributesSelectedCurrent;
+}
+
+- (NSColor *)tabBackgroundColor {
+    NSString *osxMode = [NSUserDefaults.standardUserDefaults stringForKey:@"AppleInterfaceStyle"];
+    BOOL isKey = self.window.isKeyWindow;
+    if ([osxMode isEqualToString:@"Dark"]) {
+        return [self.accentColor colorWithAlphaComponent:isKey?0.5:0.3];
+    }
+    else {
+        return [self.accentColor colorWithAlphaComponent:(isKey?0.3:0.2)];
+    }
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
@@ -144,6 +187,19 @@ static int close_btn_left_offs = 8;
     [self scrollToTabInt:deadbeef->plt_get_curr_idx() redraw:NO];
 
     [self registerForDraggedTypes:[NSArray arrayWithObjects:ddbPlaylistItemsUTIType, NSFilenamesPboardType, nil]];
+
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                             selector:@selector(windowDidBecomeKey:)
+                                                 name:NSWindowDidBecomeKeyNotification
+                                               object:self.window];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                             selector:@selector(windowDidBecomeKey:)
+                                                 name:NSWindowDidResignKeyNotification
+                                               object:self.window];
+}
+
+- (void)windowDidBecomeKey:(id)sender {
+    self.needsDisplay = YES;
 }
 
 static NSString *
@@ -260,8 +316,7 @@ plt_get_title_wrapper (int plt) {
 
     // tab background
     if (sel) {
-        NSColor *backgroundColor;
-        backgroundColor = [self.accentColor colorWithAlphaComponent:0.3];
+        NSColor *backgroundColor = self.tabBackgroundColor;
         [backgroundColor set];
 
         NSRect rc = tabRect;
@@ -306,10 +361,17 @@ plt_get_title_wrapper (int plt) {
         to.y+=8;
         if (NSPointInRect (_lastMouseCoord, atRect)) {
             NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:atRect xRadius:1 yRadius:1];
-            [[NSColor.controlTextColor colorWithAlphaComponent:_closeTabCapture?0.4:0.2] set];
+            CGFloat alpha = _closeTabCapture?0.4:0.2;
+            if (!self.isKeyWindow) {
+                alpha *= 0.7;
+            }
+
+            NSColor *closeButtonBackgroundColor = [NSColor.controlTextColor colorWithAlphaComponent:alpha];
+
+            [closeButtonBackgroundColor set];
             [path fill];
         }
-        [NSColor.controlTextColor set];
+        [self.tabTextColor set];
         NSBezierPath.defaultLineWidth = 2;
         [NSBezierPath strokeLineFromPoint: from toPoint: to ];
         [NSBezierPath strokeLineFromPoint: NSMakePoint(from.x, to.y) toPoint: NSMakePoint(to.x, from.y) ];
