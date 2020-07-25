@@ -64,7 +64,6 @@ extern DB_functions_t *deadbeef;
 
 static int text_left_padding = 15;
 static int text_right_padding = 30;
-static int text_vert_offset = 4;
 static int tab_overlap_size = 0;
 static int tabs_left_margin = 0;
 static int tab_vert_padding = 1;
@@ -290,7 +289,9 @@ plt_get_title_wrapper (int plt) {
 
     NSString *tab_title = plt_get_title_wrapper (idx);
 
-    [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + text_vert_offset - 10, area.size.width - (text_left_padding + text_right_padding - 1), area.size.height) withAttributes:attrs];
+    NSSize size = [tab_title sizeWithAttributes:attrs];
+
+    [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + area.size.height/2 - size.height/2, area.size.width - (text_left_padding + text_right_padding - 1), size.height) withAttributes:attrs];
 
     [[NSGraphicsContext currentContext] restoreGraphicsState];
 
@@ -510,11 +511,10 @@ plt_get_title_wrapper (int plt) {
 }
 
 -(NSRect)tabCloseButtonRectForTabRect:(NSRect)tabRect {
-    NSPoint from = NSMakePoint(tabRect.origin.x + tabRect.size.width - tab_overlap_size - close_btn_right_offs + 0.5, tabRect.origin.y + 10);
+    NSPoint from = NSMakePoint(tabRect.origin.x + tabRect.size.width - tab_overlap_size - close_btn_right_offs + 0.5, tabRect.origin.y + tabRect.size.height/2 - 6);
     NSRect atRect;
     atRect.origin = from;
     atRect.origin.x -= 2;
-    atRect.origin.y -= 2;
     atRect.size = NSMakeSize(12, 12);
     return atRect;
 }
