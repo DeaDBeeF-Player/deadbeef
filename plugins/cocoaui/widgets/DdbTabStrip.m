@@ -62,14 +62,14 @@ extern DB_functions_t *deadbeef;
 
 @implementation DdbTabStrip
 
-static int text_left_padding = 15;
-static int text_right_padding = 30;
+static int text_left_padding = 24;
+static int text_right_padding = 24;
 static int tab_overlap_size = 0;
 static int tabs_left_margin = 0;
 static int tab_vert_padding = 1;
 static int min_tab_size = 80;
 static int max_tab_size = 200;
-static int close_btn_right_offs = 16;
+static int close_btn_left_offs = 8;
 
 - (NSDictionary *)titleAttributes {
     if (!_titleAttributes) {
@@ -511,7 +511,7 @@ plt_get_title_wrapper (int plt) {
 }
 
 -(NSRect)tabCloseButtonRectForTabRect:(NSRect)tabRect {
-    NSPoint from = NSMakePoint(tabRect.origin.x + tabRect.size.width - tab_overlap_size - close_btn_right_offs + 0.5, tabRect.origin.y + tabRect.size.height/2 - 6);
+    NSPoint from = NSMakePoint(tabRect.origin.x + close_btn_left_offs + 0.5, tabRect.origin.y + tabRect.size.height/2 - 6);
     NSRect atRect;
     atRect.origin = from;
     atRect.origin.x -= 2;
