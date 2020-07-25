@@ -85,6 +85,7 @@ extern DB_functions_t *deadbeef;
 }
 
 @property (weak) IBOutlet NSView *designableContainerView;
+@property (weak) IBOutlet NSView *playlistWithTabsView;
 
 @end
 
@@ -117,36 +118,39 @@ extern DB_functions_t *deadbeef;
 
     view.translatesAutoresizingMaskIntoConstraints = NO;
     [self.designableContainerView addSubview:view];
+    [view.topAnchor constraintEqualToAnchor:self.designableContainerView.topAnchor].active = YES;
+    [view.bottomAnchor constraintEqualToAnchor:self.designableContainerView.bottomAnchor].active = YES;
+    [view.leadingAnchor constraintEqualToAnchor:self.designableContainerView.leadingAnchor].active = YES;
+    [view.trailingAnchor constraintEqualToAnchor:self.designableContainerView.trailingAnchor].active = YES;
+
 
     NSLayoutYAxisAnchor *topAnchor;
-    if (self.window.contentLayoutGuide) {
+    if (self.window.contentLayoutGuide && self.playlistWithTabsView) {
         // HACK: this is not well-documented and not safe.
         // This code constrains the contentview to contentLayoutGuide object,
         // in order to avoid clipping of the playlist header view.
         // The information was obtained from https://developer.apple.com/videos/play/wwdc2016/239/
         topAnchor = [self.window.contentLayoutGuide valueForKey:@"topAnchor"];
-    }
-    else {
-        topAnchor = self.designableContainerView.topAnchor;
-    }
-    [view.topAnchor constraintEqualToAnchor:topAnchor].active = YES;
-    [view.bottomAnchor constraintEqualToAnchor:self.designableContainerView.bottomAnchor].active = YES;
-    [view.leadingAnchor constraintEqualToAnchor:self.designableContainerView.leadingAnchor].active = YES;
-    [view.trailingAnchor constraintEqualToAnchor:self.designableContainerView.trailingAnchor].active = YES;
 
+        NSLayoutConstraint *constraint = [self.playlistWithTabsView.topAnchor constraintEqualToAnchor:topAnchor];
+        constraint.priority = NSLayoutPriorityRequired;
+        constraint.active = YES;
+    }
     // seekbar value formatter
     self.seekBar.formatter = [TrackPositionFormatter new];
 
-    // add tab strip to the window titlebar
-    NSTitlebarAccessoryViewController* vc = [NSTitlebarAccessoryViewController new];
+    if (!self.tabStrip.superview) {
+        // add tab strip to the window titlebar
+        NSTitlebarAccessoryViewController* vc = [NSTitlebarAccessoryViewController new];
 
-    vc.view = _tabStrip;
-    vc.fullScreenMinHeight = _tabStrip.bounds.size.height;
-    vc.layoutAttribute = NSLayoutAttributeBottom;
+        vc.view = _tabStrip;
+        vc.fullScreenMinHeight = _tabStrip.bounds.size.height;
+        vc.layoutAttribute = NSLayoutAttributeBottom;
 
-    [self.window addTitlebarAccessoryViewController:vc];
+        [self.window addTitlebarAccessoryViewController:vc];
 
-    _tabStrip.frame = NSMakeRect(0,0,NSWidth(_tabStrip.frame),24);
+        _tabStrip.frame = NSMakeRect(0,0,NSWidth(_tabStrip.frame),24);
+    }
 
     _updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
     [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];
