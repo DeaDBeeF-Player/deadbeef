@@ -112,8 +112,9 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
         if (saPeaks[i] < saBars[i]) {
             saPeaks[i] = saBars[i];
         }
-
     }
+
+    free (spectrumData);
 }
 
 //func drawSaGrid (context : CGContext) {
