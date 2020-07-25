@@ -73,7 +73,7 @@
     _sizing = -1;
     _separatorColor = [NSColor.headerColor colorWithAlphaComponent:0.5];
     NSTrackingAreaOptions options = NSTrackingInVisibleRect | NSTrackingCursorUpdate | NSTrackingMouseMoved | NSTrackingActiveInActiveApp;
-    NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:self.bounds options:options owner:self userInfo:nil];
+    NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:NSZeroRect options:options owner:self userInfo:nil];
     [self addTrackingArea:area];
     return self;
 }
@@ -175,14 +175,13 @@
     [self cursorUpdate:event];
 }
 
-- (void)cursorUpdate:(NSEvent *)event
-{
+- (void)cursorUpdate:(NSEvent *)event {
     id <DdbListviewDelegate> delegate = [self.listview delegate];
     NSScrollView *sv = [self.listview.contentView enclosingScrollView];
     NSRect rc = [sv documentVisibleRect];
     CGFloat x = -rc.origin.x;
     int idx = 0;
-    NSPoint pt = [self convertPoint:[event locationInWindow] fromView:self];
+    NSPoint pt = [self convertPoint:[event locationInWindow] fromView:nil];
     for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
         x += w;
