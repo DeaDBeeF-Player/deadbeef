@@ -16984,7 +16984,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/ffmpeg/include\"",
 				);
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/deps/ffmpeg/lib",
@@ -17015,7 +17015,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/ffmpeg/include\"",
 				);
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/deps/ffmpeg/lib",
@@ -17049,7 +17049,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/libsndfile-1.0.25/src\"",
 				);
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -17075,7 +17075,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/libsndfile-1.0.25/src\"",
 				);
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -17788,8 +17788,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "USE_TAGGING=1";
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INSTALL_PATH = "@executable_path/../Resources";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -17812,8 +17811,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "USE_TAGGING=1";
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INSTALL_PATH = "@executable_path/../Resources";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -18288,8 +18286,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 				);
-				INSTALL_PATH = "@executable_path/../Resources";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MACH_O_TYPE = mh_dylib;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -18315,8 +18312,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 				);
-				INSTALL_PATH = "@executable_path/../Resources";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MACH_O_TYPE = mh_dylib;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -18333,7 +18329,6 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "-";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DYLIB_INSTALL_NAME_BASE = "$(INSTALL_PATH)";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -18349,8 +18344,7 @@
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
 				);
-				INSTALL_PATH = "@executable_path/../Resources";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MACH_O_TYPE = mh_dylib;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -18367,7 +18361,6 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
-				DYLIB_INSTALL_NAME_BASE = "$(INSTALL_PATH)";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -18379,8 +18372,7 @@
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
 				);
-				INSTALL_PATH = "@executable_path/../Resources";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MACH_O_TYPE = mh_dylib;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -18463,8 +18455,7 @@
 					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 				);
-				INSTALL_PATH = "@executable_path/../Resources";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MACH_O_TYPE = mh_dylib;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -18489,8 +18480,7 @@
 					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 				);
-				INSTALL_PATH = "@executable_path/../Resources";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MACH_O_TYPE = mh_dylib;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -19944,6 +19934,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/../PlugIns";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 			};
@@ -19995,6 +19986,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/../PlugIns";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 			};
 			name = Release;
@@ -20042,7 +20034,6 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				INFOPLIST_FILE = "../plugins/cocoaui/deadbeef-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.deadbeef.DeaDBeeF;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -20094,7 +20085,6 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				INFOPLIST_FILE = "../plugins/cocoaui/deadbeef-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.deadbeef.DeaDBeeF;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -20127,7 +20117,7 @@
 					"$(SRCROOT)/deps/libogg-1.3.1/include",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MACH_O_TYPE = mh_dylib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -20157,7 +20147,7 @@
 					"$(SRCROOT)/deps/libogg-1.3.1/include",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MACH_O_TYPE = mh_dylib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -20228,7 +20218,6 @@
 					"$(SRCROOT)/deps/libmad-0.15.1b",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 			};
@@ -20252,7 +20241,6 @@
 					"$(SRCROOT)/deps/libmad-0.15.1b",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 			};
@@ -20590,8 +20578,7 @@
 					"\"$(SRCROOT)/deps/opus-1.2.1\"",
 					"\"$(SRCROOT)/deps/opus-1.2.1/celt\"",
 				);
-				INSTALL_PATH = "@executable_path/../Resources";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -20673,8 +20660,7 @@
 					"\"$(SRCROOT)/deps/opus-1.2.1\"",
 					"\"$(SRCROOT)/deps/opus-1.2.1/celt\"",
 				);
-				INSTALL_PATH = "@executable_path/../Resources";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -20723,8 +20709,7 @@
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 					"\"$(SRCROOT)/deps/opus-1.2.1/include\"",
 				);
-				INSTALL_PATH = "@executable_path/../Resources";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -20768,8 +20753,7 @@
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 					"\"$(SRCROOT)/deps/opus-1.2.1/include\"",
 				);
-				INSTALL_PATH = "@executable_path/../Resources";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Resources/$(EXECUTABLE_PATH)";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
