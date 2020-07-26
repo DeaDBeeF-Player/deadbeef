@@ -436,6 +436,7 @@ public:
   int _flags;
 
   uint8 *_soundData;
+  size_t soundDataSize;
 
   uint8 _soundIdTable[0x10];
   Channel _channels[10];
@@ -565,6 +566,9 @@ int AdlibDriver::snd_startSong(va_list &list) {
   _flagTrigger = 1;
 
   uint8 *ptr = getProgram(songId);
+  if (ptr >= _soundData + soundDataSize) {
+    return 0;
+  }
   uint8 chan = *ptr;
 
   if ((songId << 1) != 0) {
@@ -616,6 +620,9 @@ int AdlibDriver::snd_readByte(va_list &list) {
   int a = va_arg(list, int);
   int b = va_arg(list, int);
   uint8 *ptr = getProgram(a) + b;
+  if (ptr >= _soundData + soundDataSize) {
+    return 0;
+  }
   return *ptr;
 }
 
@@ -624,6 +631,9 @@ int AdlibDriver::snd_writeByte(va_list &list) {
   int b = va_arg(list, int);
   int c = va_arg(list, int);
   uint8 *ptr = getProgram(a) + b;
+  if (ptr >= _soundData + soundDataSize) {
+    return 0;
+  }
   uint8 oldValue = *ptr;
   *ptr = (uint8)c;
   return oldValue;
@@ -688,8 +698,20 @@ void AdlibDriver::callback() {
 void AdlibDriver::setupPrograms() {
   while (_lastProcessed != _soundsPlaying) {
     uint8 *ptr = getProgram(_soundIdTable[_lastProcessed]);
+    if (ptr >= _soundData + soundDataSize) {
+      return;
+    }
     uint8 chan = *ptr++;
+    if (ptr >= _soundData + soundDataSize) {
+      return;
+    }
+    if (chan >= 10) {
+      return;
+    }
     uint8 priority = *ptr++;
+    if (ptr >= _soundData + soundDataSize) {
+      return;
+    }
 
     // Only start this sound if its priority is higher than the one
     // already playing.
@@ -1297,6 +1319,9 @@ int AdlibDriver::update_setupProgram(uint8 *&dataptr, Channel &channel, uint8 va
     return 0;
 
   uint8 *ptr = getProgram(value);
+  if (ptr >= _soundData + soundDataSize) {
+    return 0;
+  }
   uint8 chan = *ptr++;
   uint8 priority = *ptr++;
 
@@ -1410,7 +1435,11 @@ int AdlibDriver::update_waitForEndOfProgram(uint8 *&dataptr, Channel &channel, u
 }
 
 int AdlibDriver::update_setupInstrument(uint8 *&dataptr, Channel &channel, uint8 value) {
-  setupInstrument(_curRegOffset, getInstrument(value), channel);
+  uint8 *instrument = getInstrument(value);
+  if (instrument >= _soundData + soundDataSize) {
+    return 0;
+  }
+  setupInstrument(_curRegOffset, instrument, channel);
   return 0;
 }
 
@@ -2463,6 +2492,7 @@ bool CadlPlayer::load(const std::string &filename, const CFileProvider &fp)
   file_data = p = 0;
   file_size = 0;
 
+  _driver->soundDataSize = soundDataSize;
   _driver->callback(4, _soundDataPtr);
 
   // 	_soundFileLoaded = file;
