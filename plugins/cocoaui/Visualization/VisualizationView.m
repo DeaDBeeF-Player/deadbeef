@@ -169,10 +169,13 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
 
 - (void)drawSpectrumAnalyzer:(CGContextRef)context {
     CGFloat bw = NSWidth(self.bounds)/(CGFloat)NUM_BARS;
-    CGFloat rgbaBar[] = {0.3,0.5,0.4,1}; // bars color
-    CGColorRef cBar = CGColorCreate(CGColorSpaceCreateDeviceRGB(), rgbaBar);
-    CGContextSetFillColorWithColor(context, cBar);
-    CFRelease(cBar);
+    NSColor *cBar;
+    if (@available(macOS 10.14, *)) {
+        cBar = NSColor.controlAccentColor;
+    } else {
+        cBar = NSColor.alternateSelectedControlColor;
+    }
+    CGContextSetFillColorWithColor(context, cBar.CGColor);
     for (int i = 0; i < NUM_BARS; i++) {
         CGFloat bh = (CGFloat)saBars[i] * NSHeight(self.bounds);
 //        int pIdx = i * 255 / NUM_BARS;
