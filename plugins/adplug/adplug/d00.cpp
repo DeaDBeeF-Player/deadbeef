@@ -88,6 +88,7 @@ bool Cd00Player::load(const std::string &filename, const CFileProvider &fp)
   filesize = fp.filesize(f); f->seek(0);
   filedata = new char [filesize + 1];			// 1 byte is needed for old-style DataInfo block
   f->readString((char *)filedata, filesize);
+  filedata[filesize] = 0;
   fp.close(f);
   if(!ver1) {	// version 2 and above
     header = (struct d00header *)filedata;
