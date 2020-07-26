@@ -11,7 +11,8 @@
 
 extern DB_functions_t *deadbeef;
 
-#define NUM_BARS 60
+#define NUM_BARS 84
+#define LOWER_BOUND -70
 
 @interface VisualizationView() {
     float saBars[NUM_BARS];
@@ -42,7 +43,7 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
     deadbeef->vis_spectrum_listen((__bridge void *)(self), vis_callback);
     memset (saBars, 0, sizeof (saBars));
     memset (saPeaks, 0, sizeof (saPeaks));
-    saLowerBound = -70;
+    saLowerBound = LOWER_BOUND;
 
     return self;
 }
@@ -117,45 +118,58 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
     free (spectrumData);
 }
 
-//func drawSaGrid (context : CGContext) {
-//    // vert lines, octaves
-//    let gridColor = UIColor.white.withAlphaComponent(0.8)
-//    context.setStrokeColor(gridColor.cgColor)
-//    for i in stride(from: 12, to: saBars.count, by: 12) {
-//        let x = CGFloat(i)*bounds.width/CGFloat(saBars.count)
-//        context.addLines(between: [CGPoint(x: x, y: 0), CGPoint(x: x, y: bounds.height-1)])
-//    }
-//    context.strokePath()
-//
-//    let paragraphStyle = NSMutableParagraphStyle()
-//    paragraphStyle.alignment = .left
-//
-//    let attrs = [NSAttributedString.Key.font: UIFont(name: "HelveticaNeue", size: bounds.width/40)!, NSAttributedString.Key.paragraphStyle: paragraphStyle,
-//                 NSAttributedString.Key.foregroundColor: gridColor]
-//    for i in stride(from: 0, through: saBars.count, by: 12) {
-//        let string = "A"+String(3+i/12)
-//        let x = CGFloat(i)*(bounds.width-1)/CGFloat(saBars.count) + 4
-//        string.draw(with: CGRect(x: x, y: 0, width: 448, height: 448), options: .usesLineFragmentOrigin, attributes: attrs, context: nil)
-//    }
-//
-//    // horz lines, db scale
-//    let lower = -floor(SettingsManager.shared.saLowerBound)
-//    for db in stride(from: 10, through: lower, by: 10) {
-//        let y = CGFloat(db / lower) * bounds.height
-//        if y >= bounds.height {
-//            break
-//        }
-//        context.addLines(between: [CGPoint(x: 0, y: y), CGPoint(x: bounds.width-1, y: y)])
-//
-//        let string = String(Int(-db))+" dB"
-//        string.draw(with: CGRect(x: 0, y: y, width: 448, height: 448), options: .usesLineFragmentOrigin, attributes: attrs, context: nil)
-//    }
-//    context.strokePath()
-//}
+- (void)drawSaGrid:(CGContextRef)context {
+    // vert lines, octaves
+    NSColor *gridColor = [NSColor.whiteColor colorWithAlphaComponent:0.8];
+    CGContextSetStrokeColorWithColor(context, gridColor.CGColor);
+    for (int i = 12; i < NUM_BARS; i += 12) {
+        CGFloat x = (CGFloat)i * NSWidth(self.bounds) / (CGFloat)NUM_BARS;
+        CGPoint points[] = {
+            CGPointMake(x, 0),
+            CGPointMake(x, NSHeight(self.bounds)-1)
+        };
+        CGContextAddLines(context, points, 2);
+    }
+    CGContextStrokePath(context);
+
+    NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
+    paragraphStyle.alignment = NSTextAlignmentLeft;
+
+    NSDictionary *attrs = @{
+        NSFontAttributeName: [NSFont fontWithName:@"HelveticaNeue" size:10],
+        NSParagraphStyleAttributeName: paragraphStyle,
+        NSForegroundColorAttributeName: gridColor
+    };
+
+    for (int i = 0; i < NUM_BARS; i += 12) {
+        NSString *string = [NSString stringWithFormat:@"A%d", 3+i/10];
+        CGFloat x = (CGFloat)i*(NSWidth(self.bounds)-1)/(CGFloat)NUM_BARS + 4;
+        [string drawAtPoint:NSMakePoint(x, NSHeight(self.bounds)-12) withAttributes:attrs];
+    }
+
+    // horz lines, db scale
+    CGFloat lower = -floor(LOWER_BOUND);
+    for (int db = 10; db < lower; db += 10) {
+        CGFloat y = (CGFloat)(db / lower) * NSHeight(self.bounds);
+        if (y >= NSHeight(self.bounds)) {
+            break;
+        }
+
+        CGPoint points[] = {
+            CGPointMake(0, y),
+            CGPointMake(NSWidth(self.bounds)-1, y)
+        };
+        CGContextAddLines(context, points, 2);
+
+        NSString *string = [NSString stringWithFormat:@"%d dB", -db];
+        [string drawAtPoint:NSMakePoint(0, NSHeight(self.bounds)-y-12) withAttributes:attrs];
+    }
+    CGContextStrokePath(context);
+}
 
 - (void)drawSpectrumAnalyzer:(CGContextRef)context {
     CGFloat bw = NSWidth(self.bounds)/(CGFloat)NUM_BARS;
-    CGFloat rgbaBar[] = {0,1,1,1}; // bars color
+    CGFloat rgbaBar[] = {0.3,0.5,0.4,1}; // bars color
     CGColorRef cBar = CGColorCreate(CGColorSpaceCreateDeviceRGB(), rgbaBar);
     CGContextSetFillColorWithColor(context, cBar);
     CFRelease(cBar);
@@ -172,15 +186,13 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
         CGContextAddRect(context, CGRectMake((CGFloat)i*bw+1, bh, bw-2, 2));
     }
 
-    CGFloat rgbaPeak[] = {1,1,1,1}; // peaks color
+    CGFloat rgbaPeak[] = {0.8,0.8,0.8,1}; // peaks color
     CGColorRef cPeak = CGColorCreate(CGColorSpaceCreateDeviceRGB(), rgbaPeak);
     CGContextSetFillColorWithColor(context, cPeak);
     CFRelease(cPeak);
     CGContextFillPath(context);
 
-//    if SettingsManager.shared.saShowGrid {
-//        drawSaGrid (context:context)
-//    }
+    [self drawSaGrid:context];
 }
 
 - (void)drawRect:(NSRect)dirtyRect {
