@@ -785,6 +785,8 @@ ml_remove_listener (int listener_id) {
     ml_listeners_userdatas[listener_id] = NULL;
 }
 
+// for each album item, the following is evaluated, and can be precalculated:
+// * pl_find_meta (field) / tf_eval (field)
 static void
 get_list_of_albums_for_item (ddb_medialib_item_t *libitem, const char *field, int field_tf) {
     if (!artist_album_bc) {
