@@ -201,7 +201,7 @@ static char sb_text[512];
     
     if (strcmp (sbtext_new, sb_text)) {
         strcpy (sb_text, sbtext_new);
-        [self statusBar].stringValue = [NSString stringWithUTF8String:sb_text];
+        self.statusBar.stringValue = [NSString stringWithUTF8String:sb_text];
     }
     
     if (track) {

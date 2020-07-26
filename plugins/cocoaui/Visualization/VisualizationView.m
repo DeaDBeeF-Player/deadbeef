@@ -24,6 +24,10 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) int channels;
 @property (nonatomic) float *fftData;
 @property (nonatomic) int nframes;
+@property (nonatomic) NSDictionary *textAttrs;
+@property (nonatomic) NSColor *barColor;
+@property (nonatomic) NSColor *peakColor;
+
 @end
 
 @implementation VisualizationView
@@ -44,6 +48,24 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
     memset (saBars, 0, sizeof (saBars));
     memset (saPeaks, 0, sizeof (saPeaks));
     saLowerBound = LOWER_BOUND;
+
+    NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
+    paragraphStyle.alignment = NSTextAlignmentLeft;
+    NSColor *gridColor = [NSColor.whiteColor colorWithAlphaComponent:0.8];
+
+    self.textAttrs = @{
+        NSFontAttributeName: [NSFont fontWithName:@"HelveticaNeue" size:10],
+        NSParagraphStyleAttributeName: paragraphStyle,
+        NSForegroundColorAttributeName: gridColor
+    };
+
+    self.peakColor = [NSColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1];
+
+    if (@available(macOS 10.14, *)) {
+        self.barColor = NSColor.controlAccentColor;
+    } else {
+        self.barColor = NSColor.alternateSelectedControlColor;
+    }
 
     return self;
 }
@@ -85,11 +107,11 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
 
     for (int i = 0; i < NUM_BARS; i++) {
         // first attenuate bars and peaks
-        saBars[i] -= 1/50.0f;
+        saBars[i] -= 1/50.0f*2;
         if (saBars[i] < 0) {
             saBars[i] = 0;
         }
-        saPeaks[i] -= 0.5/60.0f;
+        saPeaks[i] -= 0.5/60.0f*2;
         if (saPeaks[i] < 0) {
             saPeaks[i] = 0;
         }
@@ -132,23 +154,14 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
     }
     CGContextStrokePath(context);
 
-    NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
-    paragraphStyle.alignment = NSTextAlignmentLeft;
-
-    NSDictionary *attrs = @{
-        NSFontAttributeName: [NSFont fontWithName:@"HelveticaNeue" size:10],
-        NSParagraphStyleAttributeName: paragraphStyle,
-        NSForegroundColorAttributeName: gridColor
-    };
-
     for (int i = 0; i < NUM_BARS; i += 12) {
         NSString *string = [NSString stringWithFormat:@"A%d", 3+i/10];
         CGFloat x = (CGFloat)i*(NSWidth(self.bounds)-1)/(CGFloat)NUM_BARS + 4;
-        [string drawAtPoint:NSMakePoint(x, NSHeight(self.bounds)-12) withAttributes:attrs];
+        [string drawAtPoint:NSMakePoint(x, NSHeight(self.bounds)-12) withAttributes:self.textAttrs];
     }
 
     // horz lines, db scale
-    CGFloat lower = -floor(LOWER_BOUND);
+    CGFloat lower = -floor(saLowerBound);
     for (int db = 10; db < lower; db += 10) {
         CGFloat y = (CGFloat)(db / lower) * NSHeight(self.bounds);
         if (y >= NSHeight(self.bounds)) {
@@ -162,37 +175,29 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
         CGContextAddLines(context, points, 2);
 
         NSString *string = [NSString stringWithFormat:@"%d dB", -db];
-        [string drawAtPoint:NSMakePoint(0, NSHeight(self.bounds)-y-12) withAttributes:attrs];
+        [string drawAtPoint:NSMakePoint(0, NSHeight(self.bounds)-y-12) withAttributes:self.textAttrs];
     }
     CGContextStrokePath(context);
 }
 
 - (void)drawSpectrumAnalyzer:(CGContextRef)context {
     CGFloat bw = NSWidth(self.bounds)/(CGFloat)NUM_BARS;
-    NSColor *cBar;
-    if (@available(macOS 10.14, *)) {
-        cBar = NSColor.controlAccentColor;
-    } else {
-        cBar = NSColor.alternateSelectedControlColor;
-    }
-    CGContextSetFillColorWithColor(context, cBar.CGColor);
+    CGContextSetFillColorWithColor(context, self.barColor.CGColor);
     for (int i = 0; i < NUM_BARS; i++) {
         CGFloat bh = (CGFloat)saBars[i] * NSHeight(self.bounds);
 //        int pIdx = i * 255 / NUM_BARS;
 //        let r = colorPalette[1][pIdx*4+0]
 //        let g = colorPalette[1][pIdx*4+1]
 //        let b = colorPalette[1][pIdx*4+2]
-        CGContextFillRect(context, CGRectMake((CGFloat)i*bw+1, 0, bw-2, bh));
+        CGContextAddRect(context, CGRectMake((CGFloat)i*bw+1, 0, bw-2, bh));
     }
+    CGContextFillPath(context);
     for (int i = 0; i < NUM_BARS; i++) {
         CGFloat bh = (CGFloat)saPeaks[i] * NSHeight(self.bounds);
         CGContextAddRect(context, CGRectMake((CGFloat)i*bw+1, bh, bw-2, 2));
     }
 
-    CGFloat rgbaPeak[] = {0.8,0.8,0.8,1}; // peaks color
-    CGColorRef cPeak = CGColorCreate(CGColorSpaceCreateDeviceRGB(), rgbaPeak);
-    CGContextSetFillColorWithColor(context, cPeak);
-    CFRelease(cPeak);
+    CGContextSetFillColorWithColor(context, self.peakColor.CGColor);
     CGContextFillPath(context);
 
     [self drawSaGrid:context];
