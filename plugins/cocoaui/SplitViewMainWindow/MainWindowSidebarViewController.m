@@ -24,6 +24,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) ddb_medialib_plugin_t *medialibPlugin;
 @property (nonatomic) ddb_medialib_item_t *medialibItemTree;
 
+@property (nonatomic) NSInteger lastSelectedIndex;
 
 @end
 
@@ -104,7 +105,7 @@ static void _medialib_listener (int event, void *user_data) {
 
 - (void)medialibEvent:(int)event {
     if (event == DDB_MEDIALIB_EVENT_CHANGED) {
-        [self initializeTreeView:3];
+        [self filterChanged];
     }
     else if (event == DDB_MEDIALIB_EVENT_SCANNER) {
         int state = self.medialibPlugin->scanner_state ();
@@ -246,17 +247,22 @@ static void _medialib_listener (int event, void *user_data) {
     return view;
 }
 
+- (void)filterChanged {
+    [self.outlineView beginUpdates];
+    [self.outlineView removeItemsAtIndexes:[NSIndexSet indexSetWithIndex:1] inParent:nil withAnimation:NSTableViewAnimationEffectNone];
+    [self initializeTreeView:(int)self.lastSelectedIndex];
+    [self.outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:1] inParent:nil withAnimation:NSTableViewAnimationEffectNone];
+    [self.outlineView expandItem:self.medialibRootItem];
+    [self.outlineView endUpdates];
+}
+
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
     id item = [self.outlineView itemAtRow:self.outlineView.selectedRow];
 
     NSUInteger idx = [self.groupItems indexOfObject:item];
     if (idx != NSNotFound) {
-        [self.outlineView beginUpdates];
-        [self.outlineView removeItemsAtIndexes:[NSIndexSet indexSetWithIndex:1] inParent:nil withAnimation:NSTableViewAnimationEffectNone];
-        [self initializeTreeView:(int)idx];
-        [self.outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:1] inParent:nil withAnimation:NSTableViewAnimationEffectNone];
-        [self.outlineView expandItem:self.medialibRootItem];
-        [self.outlineView endUpdates];
+        self.lastSelectedIndex = idx;
+        [self filterChanged];
     }
 }
 
