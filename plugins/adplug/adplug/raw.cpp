@@ -134,6 +134,8 @@ bool CrawPlayer::update()
   do {
     setspeed = false;
 
+    if (this->pos >= this->length) return false;
+
     switch(this->data[this->pos].command) {
     case 0:
       this->del = this->data[this->pos].param - 1;
