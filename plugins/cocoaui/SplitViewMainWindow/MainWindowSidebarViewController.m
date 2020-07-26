@@ -59,11 +59,11 @@ static void _medialib_listener (int event, void *user_data) {
 - (void)viewDidLoad {
     self.medialibPlugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
     self.medialibPlugin->add_listener (_medialib_listener, (__bridge void *)self);
-//    self.medialibRootItem = [MediaLibraryItem initTree:NULL];
-    [self initializeTreeView:0];
 
     [self.outlineView expandItem:self.libraryItem];
     [self.outlineView expandItem:self.medialibRootItem];
+    [self initializeTreeView:0];
+    [self updateMedialibStatus];
 }
 
 - (void)initializeTreeView:(int)index {
@@ -82,7 +82,7 @@ static void _medialib_listener (int event, void *user_data) {
     self.medialibRootItem = [MediaLibraryItem initTree:self.medialibItemTree];
 }
 
-- (void)updateMedialibStatus:(NSTableCellView *)view {
+- (void)updateMedialibStatusForView:(NSTableCellView *)view {
     int state = self.medialibPlugin->scanner_state ();
     switch (state) {
     case DDB_MEDIALIB_STATE_LOADING:
@@ -103,6 +103,17 @@ static void _medialib_listener (int event, void *user_data) {
     }
 }
 
+- (void)updateMedialibStatus {
+    NSInteger row = [self.outlineView rowForItem:self.medialibRootItem];
+    if (row < 0) {
+        return;
+    }
+    NSTableCellView *view = [[self.outlineView rowViewAtRow:row makeIfNecessary:NO]  viewAtColumn:0];
+
+
+    [self updateMedialibStatusForView:view];
+}
+
 - (void)medialibEvent:(int)event {
     if (event == DDB_MEDIALIB_EVENT_CHANGED) {
         [self filterChanged];
@@ -112,14 +123,7 @@ static void _medialib_listener (int event, void *user_data) {
         if (state != DDB_MEDIALIB_STATE_IDLE) {
 //            [_scannerActiveIndicator startAnimation:self];
 
-            NSInteger row = [self.outlineView rowForItem:self.medialibRootItem];
-            if (row < 0) {
-                return;
-            }
-            NSTableCellView *view = [[self.outlineView rowViewAtRow:row makeIfNecessary:NO]  viewAtColumn:0];
-
-
-            [self updateMedialibStatus:view];
+            [self updateMedialibStatus];
 
 //            [_scannerActiveState setHidden:NO];
         }
@@ -235,7 +239,7 @@ static void _medialib_listener (int event, void *user_data) {
     if ([item isKindOfClass:MediaLibraryItem.class]) {
         MediaLibraryItem *mlItem = item;
         if (item == self.medialibRootItem) {
-            [self updateMedialibStatus:view];
+            [self updateMedialibStatusForView:view];
         }
         else {
             view.textField.stringValue = mlItem.stringValue;

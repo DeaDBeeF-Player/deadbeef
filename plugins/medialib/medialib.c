@@ -624,7 +624,7 @@ scanner_thread (void *none) {
     deadbeef->plt_insert_dir (plt, NULL, musicdir, &scanner_terminate, add_file_info_cb, NULL);
     _ml_state = DDB_MEDIALIB_STATE_INDEXING;
     ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
-//    deadbeef->plt_save (plt, NULL, NULL, plpath, NULL, NULL, NULL);
+    deadbeef->plt_save (plt, NULL, NULL, plpath, NULL, NULL, NULL);
 
     ml_notify_listeners (DDB_MEDIALIB_EVENT_CHANGED);
 
