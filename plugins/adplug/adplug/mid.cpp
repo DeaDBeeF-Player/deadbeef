@@ -433,6 +433,9 @@ void CmidPlayer::midi_fm_volume(int voice, int volume)
 
 void CmidPlayer::midi_fm_playnote(int voice, int note, int volume)
 {
+    if (note < 0) {
+        note = 0;
+    }
     int freq=fnums[note%12];
     int oct=note/12;
 	int c;
