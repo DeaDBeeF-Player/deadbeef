@@ -171,8 +171,9 @@ get_track_uri (const char *uri, const char *subsong, char *out, int size) {
     }
 }
 
+/// When it is null, it's expected that the bucket will be added, without any associated tracks
 static ml_string_t *
-hash_add (ml_string_t **hash, const char *val, DB_playItem_t *it) {
+hash_add (ml_string_t **hash, const char *val, DB_playItem_t /* nullable */ *it) {
     uint32_t h = hash_for_ptr ((void *)val) & (ML_HASH_SIZE-1);
     ml_string_t *s = hash_find_for_hashkey(hash, val, h);
     ml_string_t *retval = NULL;
@@ -184,6 +185,10 @@ hash_add (ml_string_t **hash, const char *val, DB_playItem_t *it) {
         deadbeef->metacache_add_string (val);
         hash[h] = s;
         retval = s;
+    }
+
+    if (!it) {
+        return retval;
     }
 
     ml_collection_item_t *item = calloc (1, sizeof (ml_collection_item_t));
@@ -204,11 +209,8 @@ hash_add (ml_string_t **hash, const char *val, DB_playItem_t *it) {
 }
 
 static ml_string_t *
-ml_reg_col (ml_collection_t *coll, const char *c, DB_playItem_t *it) {
+ml_reg_col (ml_collection_t *coll, const char /* nonnull */ *c, DB_playItem_t *it) {
     int need_unref = 0;
-    if (!c) {
-        c = deadbeef->metacache_add_string ("");
-    }
     ml_string_t *s = hash_add (coll->hash, c, it);
     if (s) {
         if (coll->tail) {
@@ -384,7 +386,6 @@ ml_free_db (void) {
 // Subsequent indexing should be done on the fly, using fileadd listener.
 static void
 ml_index (ddb_playlist_t *plt) {
-    deadbeef->mutex_lock (mutex);
     ml_free_db();
 
     fprintf (stderr, "building index...\n");
@@ -401,6 +402,14 @@ ml_index (ddb_playlist_t *plt) {
     db.folders_tree = calloc (1, sizeof (ml_tree_node_t));
     db.folders_tree->text = deadbeef->metacache_add_string ("");
 
+    int has_unknown_artist = 0;
+    int has_unknown_album = 0;
+    int has_unknown_genre = 0;
+
+    const char *unknown_artist = deadbeef->metacache_add_string("Unknown Artist");
+    const char *unknown_album = deadbeef->metacache_add_string("Unknown Album");
+    const char *unknown_genre = deadbeef->metacache_add_string("Unknown Genre");
+
     DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
     while (it && !scanner_terminate) {
         ml_entry_t *en = calloc (1, sizeof (ml_entry_t));
@@ -409,6 +418,14 @@ ml_index (ddb_playlist_t *plt) {
 
         const char *title = deadbeef->pl_find_meta (it, "title");
         const char *artist = deadbeef->pl_find_meta (it, "artist");
+
+        if (!artist) {
+            artist = unknown_artist;
+        }
+
+        if (artist == unknown_artist) {
+            has_unknown_artist = 1;
+        }
 
         if (deadbeef->pl_get_item_flags (it) & DDB_IS_SUBTRACK) {
             const char *subsong = deadbeef->pl_find_meta (it, ":TRACKNUM");
@@ -430,9 +447,25 @@ ml_index (ddb_playlist_t *plt) {
         // FIXME: album needs to be a combination of album + artist for indexing / library
         // That implies that album+artist strings need to be cached/indexed
         const char *album = deadbeef->pl_find_meta (it, "album");
+
+        if (!album) {
+            album = unknown_album;
+        }
+
+        if (album == unknown_album) {
+            has_unknown_album = 1;
+        }
+
         const char *genre = deadbeef->pl_find_meta (it, "genre");
 
-        deadbeef->mutex_lock (mutex);
+        if (!genre) {
+            genre = unknown_genre;
+        }
+
+        if (genre == unknown_genre) {
+            has_unknown_genre = 1;
+        }
+
         ml_string_t *alb = ml_reg_col (&db.albums, album, it);
         ml_string_t *art = ml_reg_col (&db.artists, artist, it);
         ml_string_t *gnr = ml_reg_col (&db.genres, genre, it);
@@ -494,12 +527,26 @@ ml_index (ddb_playlist_t *plt) {
         uint32_t hash = hash_for_ptr ((void *)en->file);
         en->bucket_next = db.filename_hash[hash];
         db.filename_hash[hash] = en;
-        deadbeef->mutex_unlock (mutex);
 
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         deadbeef->pl_item_unref (it);
         it = next;
     }
+
+    // Add unknown artist / album / genre, if necessary
+    if (!has_unknown_artist) {
+        ml_reg_col (&db.artists, unknown_artist, NULL);
+    }
+    if (!has_unknown_album) {
+        ml_reg_col (&db.albums, unknown_album, NULL);
+    }
+    if (!has_unknown_genre) {
+        ml_reg_col (&db.genres, unknown_genre, NULL);
+    }
+
+    deadbeef->metacache_remove_string (unknown_artist);
+    deadbeef->metacache_remove_string (unknown_album);
+    deadbeef->metacache_remove_string (unknown_genre);
 
     int nalb = 0;
     int nart = 0;
@@ -514,7 +561,6 @@ ml_index (ddb_playlist_t *plt) {
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
 
     fprintf (stderr, "index build time: %f seconds (%d albums, %d artists, %d genres, %d folders)\n", ms / 1000.f, nalb, nart, ngnr, nfld);
-    deadbeef->mutex_unlock (mutex);
 }
 
 static void
@@ -772,7 +818,10 @@ ml_remove_listener (int listener_id) {
 }
 
 static void
-get_albums_for_collection_group_by_field (ddb_medialib_item_t *root, ml_collection_t *coll, const char *field, int field_tf) {
+get_albums_for_collection_group_by_field (ddb_medialib_item_t *root, ml_collection_t *coll, const char *field, int field_tf, const char /* nonnull */ *default_field_value) {
+
+    default_field_value = deadbeef->metacache_add_string (default_field_value);
+
     if (!artist_album_bc) {
         artist_album_bc = deadbeef->tf_compile ("[%artist% - ]%album%");
     }
@@ -817,24 +866,16 @@ get_albums_for_collection_group_by_field (ddb_medialib_item_t *root, ml_collecti
         }
 
         if (!track_field) {
-            track_field = "";
+            track_field = default_field_value;
         }
 
         // Find the "bucket of this album - e.g. a genre or an artist
+        // NOTE: multiple albums may belong to the same bucket
         ml_string_t *s = NULL;
         for (s = coll->head; s; s = s->next) {
             if (track_field == s->text) {
                 break;
             }
-        }
-
-        if (!s) {
-            // FIXME: this means that a track doesn't have the field corresponding to the bucket.
-            // E.g. no genre, or no artist. The bucket must be added upfront.
-            if (mc_str_for_track_field) {
-                deadbeef->metacache_remove_string (mc_str_for_track_field);
-            }
-            continue;
         }
 
         // Add all of the album's tracks into that bucket
@@ -917,6 +958,9 @@ get_albums_for_collection_group_by_field (ddb_medialib_item_t *root, ml_collecti
             deadbeef->metacache_remove_string (mc_str_for_track_field);
         }
     }
+
+    deadbeef->metacache_remove_string (default_field_value);
+
     if (tf) {
         deadbeef->tf_free (tf);
     }
@@ -1070,11 +1114,11 @@ ml_get_list (const char *index) {
     }
     else if (type == artist) {
         // list of albums for artist
-        get_albums_for_collection_group_by_field (root, coll, "artist", 0);
+        get_albums_for_collection_group_by_field (root, coll, "artist", 0, "Unknown Artist");
     }
     else if (type == genre) {
         // list of albums for genre
-        get_albums_for_collection_group_by_field (root, coll, "genre", 0);
+        get_albums_for_collection_group_by_field (root, coll, "genre", 0, "Unknown Genre");
     }
     else if (type == album) {
         // list of tracks for album
