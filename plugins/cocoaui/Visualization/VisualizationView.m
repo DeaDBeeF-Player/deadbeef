@@ -155,7 +155,7 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
     CGContextStrokePath(context);
 
     for (int i = 0; i < NUM_BARS; i += 12) {
-        NSString *string = [NSString stringWithFormat:@"A%d", 3+i/10];
+        NSString *string = [NSString stringWithFormat:@"A%d", 3+i/12];
         CGFloat x = (CGFloat)i*(NSWidth(self.bounds)-1)/(CGFloat)NUM_BARS + 4;
         [string drawAtPoint:NSMakePoint(x, NSHeight(self.bounds)-12) withAttributes:self.textAttrs];
     }
