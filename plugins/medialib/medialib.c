@@ -615,7 +615,7 @@ scanner_thread (void *none) {
 
     _ml_load_playlist(plpath);
 
-    return; // disable refresh on startup
+//    return; // disable refresh on startup
 
     struct timeval tm1, tm2;
 

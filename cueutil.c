@@ -33,7 +33,7 @@
 #include "plmeta.h"
 #include "junklib.h"
 #include "vfs.h"
-
+#include "playlist.h"
 #include "cueutil.h"
 
 #define SKIP_BLANK_CUE_TRACKS 0
@@ -90,6 +90,7 @@ typedef struct {
     int ncuefiles; // number of FILEs in cue
     int ncuetracks; // number of TRACKs in cue
     const char *cue_fname; // just the filename of cue file (or parent file)
+    playlist_t *target_playlist; // for filtering
     playlist_t *temp_plt; // temporary playlist, for loading tracks before splitting
 
     // intermediate / output values
@@ -543,6 +544,16 @@ _file_present_in_namelist (const char *fullpath, cueparser_t *cue) {
 
 
 static int
+cue_addfile_filter (cueparser_t *cue) {
+    ddb_file_found_data_t dt;
+    dt.filename = cue->fullpath;
+    dt.plt = (ddb_playlist_t *)cue->target_playlist;
+    dt.is_dir = 0;
+    int res = fileadd_filter_test (&dt);
+    return res;
+}
+
+static int
 _load_nextfile (cueparser_t *cue) {
     cue->origin = NULL;
     char *audio_file = cue->cuefields[CUE_FIELD_FILE];
@@ -577,7 +588,10 @@ _load_nextfile (cueparser_t *cue) {
                         if (!strncasecmp (cue->cue_fname, cue->namelist[i]->d_name, l-4)) {
                             // have to try loading each of these files
                             snprintf (cue->fullpath, sizeof (cue->fullpath), "%s/%s", cue->dirname, cue->namelist[i]->d_name);
-                            cue->origin = plt_insert_file2 (-1, cue->temp_plt, NULL, cue->fullpath, NULL, NULL, NULL);
+                            int res = cue_addfile_filter(cue);
+                            if (res >= 0) {
+                                cue->origin = plt_insert_file2 (-1, cue->temp_plt, NULL, cue->fullpath, NULL, NULL, NULL);
+                            }
                             if (cue->origin) {
                                 image_found = 1;
                                 cue->namelist[i]->d_name[0] = 0;
@@ -602,7 +616,12 @@ _load_nextfile (cueparser_t *cue) {
                             && cue->namelist[i]->d_name[ext-audio_file] == '.') {
                             // have to try loading each of these files
                             snprintf (cue->fullpath, sizeof (cue->fullpath), "%s/%s", cue->dirname, cue->namelist[i]->d_name);
-                            cue->origin = plt_insert_file2 (-1, cue->temp_plt, NULL, cue->fullpath, NULL, NULL, NULL);
+
+                            // adding to temp playlist will fail file add filters, so need to call this manually here
+                            int res = cue_addfile_filter(cue);
+                            if (res >= 0) {
+                                cue->origin = plt_insert_file2 (-1, cue->temp_plt, NULL, cue->fullpath, NULL, NULL, NULL);
+                            }
                             if (cue->origin) {
                                 cue->namelist[i]->d_name[0] = 0;
                                 break;
@@ -624,7 +643,11 @@ _load_nextfile (cueparser_t *cue) {
     }
 
     if (cue->fullpath[0] && !cue->origin) {
-        cue->origin = plt_insert_file2 (-1, cue->temp_plt, NULL, cue->fullpath, NULL, NULL, NULL);
+        // adding to temp playlist will fail file add filters, so need to call this manually here
+        int res = cue_addfile_filter (cue);
+        if (res >= 0) {
+            cue->origin = plt_insert_file2 (-1, cue->temp_plt, NULL, cue->fullpath, NULL, NULL, NULL);
+        }
         if (cue->origin) {
             // mark the file as used
             if (cue->namelist) {
@@ -780,6 +803,8 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
     cue.dirname = dirname;
     cue.namelist = namelist;
     cue.n = n;
+
+    cue.target_playlist = plt;
 
     cue.temp_plt = calloc (1, sizeof (playlist_t));
     cue.temp_plt->loading_cue = 1;

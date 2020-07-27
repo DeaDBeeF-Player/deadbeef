@@ -529,4 +529,7 @@ pl_item_set_endsample (playItem_t *it, int64_t sample);
 int
 plt_is_loading_cue (playlist_t *plt);
 
+int
+fileadd_filter_test (ddb_file_found_data_t *data);
+
 #endif // __PLAYLIST_H

@@ -846,7 +846,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
 static playItem_t *
 plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
 
-static int
+int
 fileadd_filter_test (ddb_file_found_data_t *data) {
     for (ddb_fileadd_filter_t *f = file_add_filters; f; f = f->next) {
         int res = f->callback (data, f->user_data);
