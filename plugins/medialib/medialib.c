@@ -49,6 +49,9 @@ typedef struct ml_string_s {
     ml_collection_item_t *items_tail;
     struct ml_string_s *bucket_next;
     struct ml_string_s *next;
+
+    ddb_medialib_item_t *coll_item; // The item associated with collection string, used while building a list
+    ddb_medialib_item_t *coll_item_tail; // Tail of the children list of coll_item, used while building a list
 } ml_string_t;
 
 typedef struct ml_entry_s {
@@ -130,6 +133,8 @@ static void *ml_listeners_userdatas[MAX_LISTENERS];
 
 static int _ml_state = DDB_MEDIALIB_STATE_IDLE;
 
+static void
+ml_free_list (ddb_medialib_item_t *list);
 
 static uint32_t
 hash_for_ptr (void *ptr) {
@@ -764,8 +769,130 @@ ml_remove_listener (int listener_id) {
     ml_listeners_userdatas[listener_id] = NULL;
 }
 
-// for each album item, the following is evaluated, and can be precalculated:
-// * pl_find_meta (field) / tf_eval (field)
+static void
+get_albums_for_collection_group_by_field (ddb_medialib_item_t *root, ml_collection_t *coll, const char *field, int field_tf) {
+    if (!artist_album_bc) {
+        artist_album_bc = deadbeef->tf_compile ("[%artist% - ]%album%");
+    }
+    if (!title_bc) {
+        title_bc = deadbeef->tf_compile ("[%tracknumber%. ]%title%");
+    }
+
+    ml_string_t *album = db.albums.head;
+    char text[1024];
+
+    char *tf = NULL;
+    if (field_tf) {
+        tf = deadbeef->tf_compile (field);
+    }
+
+    ddb_medialib_item_t *root_tail = NULL;
+
+    for (int i = 0; i < db.albums.count; i++, album = album->next) {
+        if (!album->items_count) {
+            continue;
+        }
+
+        ddb_medialib_item_t *album_item = NULL;
+        ddb_medialib_item_t *album_tail = NULL;
+
+        ml_collection_item_t *album_coll_item = album->items;
+        for (int j = 0; j < album->items_count; j++, album_coll_item = album_coll_item->next) {
+            DB_playItem_t *it = album_coll_item->it;
+            ddb_tf_context_t ctx = {
+                ._size = sizeof (ddb_tf_context_t),
+                .flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK,
+                .it = it,
+            };
+
+            const char *track_field = NULL;
+            if (!tf) {
+                track_field = deadbeef->pl_find_meta (it, field);
+            }
+            else {
+                deadbeef->tf_eval (&ctx, tf, text, sizeof (text));
+                track_field = text;
+            }
+
+            if (!track_field) {
+                track_field = "";
+            }
+
+            for (ml_string_t *s = coll->head; s; s = s->next) {
+                // FIXME: strcasecmp might work better, but the parent list must use case-insensitive filtering first.
+                if (strcmp (track_field, s->text)) {
+                    continue;
+                }
+                int append = 0;
+                if (!s->coll_item) {
+                    s->coll_item = calloc (1, sizeof (ddb_medialib_item_t));
+                    s->coll_item->text = deadbeef->metacache_add_string (s->text);
+                    append = 1;
+                }
+                ddb_medialib_item_t *libitem = s->coll_item;
+
+                if (!album_item) {
+                    album_item = calloc (1, sizeof (ddb_medialib_item_t));
+                    if (s->coll_item_tail) {
+                        s->coll_item_tail->next = album_item;
+                        s->coll_item_tail = album_item;
+                    }
+                    else {
+                        s->coll_item_tail = libitem->children = album_item;
+                    }
+
+                    deadbeef->tf_eval (&ctx, artist_album_bc, text, sizeof (text));
+
+                    album_item->text = deadbeef->metacache_add_string (text);
+                    libitem->num_children++;
+                }
+
+                ddb_medialib_item_t *track_item = calloc(1, sizeof (ddb_medialib_item_t));
+
+                if (album_tail) {
+                    album_tail->next = track_item;
+                    album_tail = track_item;
+                }
+                else {
+                    album_tail = album_item->children = track_item;
+                }
+                album_item->num_children++;
+
+                ddb_tf_context_t ctx = {
+                    ._size = sizeof (ddb_tf_context_t),
+                    .flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK,
+                    .it = it,
+                };
+
+                deadbeef->tf_eval (&ctx, title_bc, text, sizeof (text));
+
+                track_item->text = deadbeef->metacache_add_string (text);
+
+                if (!libitem->children) {
+                    ml_free_list (libitem);
+                    s->coll_item = NULL;
+                    s->coll_item_tail = NULL;
+                    continue;
+                }
+
+                if (append) {
+                    if (root_tail) {
+                        root_tail->next = libitem;
+                        root_tail = libitem;
+                    }
+                    else {
+                        root_tail = root->children = libitem;
+                    }
+                    root->num_children++;
+                }
+            }
+        }
+    }
+    if (tf) {
+        deadbeef->tf_free (tf);
+    }
+}
+
 static void
 get_list_of_albums_for_item (ddb_medialib_item_t *libitem, const char *field, int field_tf) {
     if (!artist_album_bc) {
@@ -960,9 +1087,6 @@ get_subfolders_for_folder (ddb_medialib_item_t *folderitem, ml_tree_node_t *fold
     }
 }
 
-static void
-ml_free_list (ddb_medialib_item_t *list);
-
 static ddb_medialib_item_t *
 ml_get_list (const char *index) {
     ml_collection_t *coll = NULL;
@@ -998,46 +1122,53 @@ ml_get_list (const char *index) {
     ddb_medialib_item_t *root = calloc (1, sizeof (ddb_medialib_item_t));
     root->text = deadbeef->metacache_add_string ("All Music");
 
+    // make sure no dangling pointers from previos run
+    for (ml_string_t *s = coll->head; s; s = s->next) {
+        s->coll_item = NULL;
+    }
+
     if (type == folder) {
         get_subfolders_for_folder(root, db.folders_tree);
     }
     else {
-        // top level list (e.g. list of genres)
-        ddb_medialib_item_t *tail = NULL;
-        ddb_medialib_item_t *parent = root;
-        for (ml_string_t *s = coll->head; s; s = s->next) {
-            ddb_medialib_item_t *item = calloc (1, sizeof (ddb_medialib_item_t));
+        if (type == artist) {
+            // list of albums for artist
+//            item->text = deadbeef->metacache_add_string (s->text);
+            get_albums_for_collection_group_by_field (root, coll, "%artist%", 1);
+        }
+        else {
+            // top level list (e.g. list of genres)
+            ddb_medialib_item_t *tail = NULL;
+            ddb_medialib_item_t *parent = root;
+            for (ml_string_t *s = coll->head; s; s = s->next) {
+                ddb_medialib_item_t *item = calloc (1, sizeof (ddb_medialib_item_t));
 
-            switch (type) {
-            case genre:
-                // list of albums for genre
-                item->text = deadbeef->metacache_add_string (s->text);
-                get_list_of_albums_for_item (item, "genre", 0);
-                break;
-            case artist:
-                // list of albums for artist
-                item->text = deadbeef->metacache_add_string (s->text);
-                get_list_of_albums_for_item (item, "%artist%", 1);
-                break;
-            case album:
-                // list of tracks for album
-                get_list_of_tracks_for_album (item, s);
-                break;
-            }
+                switch (type) {
+                case genre:
+                    // list of albums for genre
+                    item->text = deadbeef->metacache_add_string (s->text);
+                    get_list_of_albums_for_item (item, "genre", 0);
+                    break;
+                case album:
+                    // list of tracks for album
+                    get_list_of_tracks_for_album (item, s);
+                    break;
+                }
 
-            if (!item->children) {
-                ml_free_list (item);
-                continue;
-            }
+                if (!item->children) {
+                    ml_free_list (item);
+                    continue;
+                }
 
-            if (tail) {
-                tail->next = item;
-                tail = item;
+                if (tail) {
+                    tail->next = item;
+                    tail = item;
+                }
+                else {
+                    tail = parent->children = item;
+                }
+                parent->num_children++;
             }
-            else {
-                tail = parent->children = item;
-            }
-            parent->num_children++;
         }
     }
 
@@ -1052,23 +1183,21 @@ ml_get_list (const char *index) {
 
 static void
 ml_free_list (ddb_medialib_item_t *list) {
-    if (list->children) {
-        ml_free_list(list->children);
-        list->children = NULL;
-    }
-    while (list->next) {
-        ddb_medialib_item_t *item = list->next;
-        ddb_medialib_item_t *next = item->next;
-        if (item->text) {
-            deadbeef->metacache_remove_string (item->text);
+    while (list) {
+        ddb_medialib_item_t *next = list->next;
+        if (list->children) {
+            ml_free_list(list->children);
+            list->children = NULL;
         }
-        if (item->track) {
-            deadbeef->pl_item_unref (item->track);
+        if (list->track) {
+            deadbeef->pl_item_unref (list->track);
         }
-        free (item);
-        list->next = next;
+        if (list->text) {
+            deadbeef->metacache_remove_string (list->text);
+        }
+        free (list);
+        list = next;
     }
-    free (list);
 }
 
 static DB_playItem_t *
