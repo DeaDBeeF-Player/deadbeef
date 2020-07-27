@@ -664,6 +664,11 @@ enum {
     // the caller supports text dimming functions
     DDB_TF_CONTEXT_TEXT_DIM = 16,
 #endif
+    // since 1.13
+#if (DDB_API_LEVEL >= 13)
+    // the caller guarantees that metadata access is thread safe
+    DDB_TF_CONTEXT_NO_MUTEX_LOCK = 32,
+#endif
 };
 
 // since 1.10

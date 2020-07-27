@@ -797,6 +797,7 @@ get_list_of_albums_for_item (ddb_medialib_item_t *libitem, const char *field, in
             DB_playItem_t *it = album_coll_item->it;
             ddb_tf_context_t ctx = {
                 ._size = sizeof (ddb_tf_context_t),
+                .flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK,
                 .it = it,
             };
 
@@ -844,6 +845,7 @@ get_list_of_albums_for_item (ddb_medialib_item_t *libitem, const char *field, in
 
                 ddb_tf_context_t ctx = {
                     ._size = sizeof (ddb_tf_context_t),
+                    .flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK,
                     .it = it,
                 };
 
@@ -877,6 +879,7 @@ get_list_of_tracks_for_album (ddb_medialib_item_t *libitem, ml_string_t *album) 
         DB_playItem_t *it = album_coll_item->it;
         ddb_tf_context_t ctx = {
             ._size = sizeof (ddb_tf_context_t),
+            .flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK,
             .it = it,
         };
 
@@ -937,6 +940,7 @@ get_subfolders_for_folder (ddb_medialib_item_t *folderitem, ml_tree_node_t *fold
 #endif
             ddb_tf_context_t ctx = {
                 ._size = sizeof (ddb_tf_context_t),
+                .flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK,
                 .it = i->it,
             };
             char text[1000];

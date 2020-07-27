@@ -2616,7 +2616,9 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 // special cases
                 // most if not all of this stuff is to make tf scripts
                 // compatible with fb2k syntax
-                pl_lock ();
+                if (!(ctx->flags&DDB_TF_CONTEXT_NO_MUTEX_LOCK)) {
+                    pl_lock ();
+                }
                 const char *val = NULL;
                 int needs_free = 0;
                 const char *aa_fields[] = { "album artist", "albumartist", "band", "artist", "composer", "performer", NULL };
@@ -3162,7 +3164,9 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     out += l;
                     outlen -= l;
                 }
-                pl_unlock ();
+                if (!(ctx->flags&DDB_TF_CONTEXT_NO_MUTEX_LOCK)) {
+                    pl_unlock ();
+                }
                 if (!skip_out && !val && fail_on_undef) {
                     return -1;
                 }
