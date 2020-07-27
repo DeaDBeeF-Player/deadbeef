@@ -1029,8 +1029,11 @@ ml_get_list (const char *index) {
     root->text = deadbeef->metacache_add_string ("All Music");
 
     // make sure no dangling pointers from previos run
-    for (ml_string_t *s = coll->head; s; s = s->next) {
-        s->coll_item = NULL;
+    if (coll) {
+        for (ml_string_t *s = coll->head; s; s = s->next) {
+            s->coll_item = NULL;
+            s->coll_item_tail = NULL;
+        }
     }
 
     if (type == folder) {
@@ -1066,6 +1069,14 @@ ml_get_list (const char *index) {
                 tail = parent->children = item;
             }
             parent->num_children++;
+        }
+    }
+
+    // cleanup
+    if (coll) {
+        for (ml_string_t *s = coll->head; s; s = s->next) {
+            s->coll_item = NULL;
+            s->coll_item_tail = NULL;
         }
     }
 
