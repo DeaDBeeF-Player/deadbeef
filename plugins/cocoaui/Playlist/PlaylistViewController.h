@@ -24,7 +24,6 @@
 #import <Cocoa/Cocoa.h>
 #import "DesignableViewController.h"
 #import "PlaylistView.h"
-#import "TrackPropertiesWindowController.h"
 #import "ConverterWindowController.h"
 
 typedef struct {

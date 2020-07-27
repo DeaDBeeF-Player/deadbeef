@@ -21,9 +21,9 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 #import "TrackPropertiesWindowController.h"
-#include "../../deadbeef.h"
-#include "../../utf8.h"
-#include "../../shared/trkproperties_shared.h"
+#include "deadbeef.h"
+#include "utf8.h"
+#include "trkproperties_shared.h"
 
 // Max length of a string displayed in the TableView
 // If a string is longer -- it gets clipped, and appended with " (…)", like with linebreaks

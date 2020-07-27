@@ -22,19 +22,17 @@
 */
 
 #import "DdbShared.h"
-#import "ConverterWindowController.h"
 #import "CoverManager.h"
 #import "EditColumnWindowController.h"
 #import "GroupByCustomWindowController.h"
 #import "NSImage+Additions.h"
 #import "PlaylistViewController.h"
 #import "PlaylistView.h"
-#import "ReplayGainScannerController.h"
-#import "NSMenu+ActionItems.h"
+#import "TrackPropertiesWindowController.h"
+#import "TrackContextMenu.h"
 #import "tftintutil.h"
 
 #include "deadbeef.h"
-#include "rg_scanner.h"
 #include "medialib.h"
 #include "utf8.h"
 
@@ -44,7 +42,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface PlaylistViewController() <DdbListviewDelegate,NSMenuDelegate>
+@interface PlaylistViewController() <DdbListviewDelegate,TrackContextMenuDelegate>
 
 @property (nonatomic) NSImage *playTpl;
 @property (nonatomic) NSImage *pauseTpl;
@@ -1239,101 +1237,6 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     return [super sendMessage:_id ctx:ctx p1:p1 p2:p2];
 }
 
-- (void)convertSelection {
-    [ConverterWindowController runConverter:DDB_ACTION_CTX_SELECTION];
-}
-
-- (void)trackProperties {
-    if (!self.trkProperties) {
-        self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
-    }
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    self.trkProperties.playlist =  plt;
-    deadbeef->plt_unref (plt);
-    [self.trkProperties fill];
-    [self.trkProperties showWindow:self];
-}
-
-- (void)addToPlaybackQueue {
-    int iter = [self playlistIter];
-    DB_playItem_t *it = deadbeef->pl_get_first(iter);
-    while (it) {
-        if (deadbeef->pl_is_selected (it)) {
-            deadbeef->playqueue_push (it);
-        }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, iter);
-        deadbeef->pl_item_unref (it);
-        it = next;
-    }
-}
-
-- (void)removeFromPlaybackQueue {
-    int iter = [self playlistIter];
-    DB_playItem_t *it = deadbeef->pl_get_first(iter);
-    while (it) {
-        if (deadbeef->pl_is_selected (it)) {
-            deadbeef->playqueue_remove (it);
-        }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, iter);
-        deadbeef->pl_item_unref (it);
-        it = next;
-    }
-}
-
-- (void)forEachTrack:(BOOL (^)(DB_playItem_t *it))block forIter:(int)iter {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->pl_lock ();
-    DB_playItem_t *it = deadbeef->pl_get_first (iter);
-    while (it) {
-        BOOL res = block (it);
-        if (!res) {
-            deadbeef->pl_item_unref (it);
-            break;
-        }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, iter);
-        deadbeef->pl_item_unref (it);
-        it = next;
-    }
-
-    deadbeef->pl_unlock ();
-    deadbeef->plt_unref (plt);
-}
-
-- (void)reloadMetadata {
-    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-    while (it) {
-        deadbeef->pl_lock ();
-        char decoder_id[100];
-        const char *dec = deadbeef->pl_find_meta (it, ":DECODER");
-        if (dec) {
-            strncpy (decoder_id, dec, sizeof (decoder_id));
-        }
-        int match = deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) && dec;
-        deadbeef->pl_unlock ();
-
-        if (match) {
-            uint32_t f = deadbeef->pl_get_item_flags (it);
-            if (!(f & DDB_IS_SUBTRACK)) {
-                f &= ~DDB_TAG_MASK;
-                deadbeef->pl_set_item_flags (it, f);
-                DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
-                for (int i = 0; decoders[i]; i++) {
-                    if (!strcmp (decoders[i]->plugin.id, decoder_id)) {
-                        if (decoders[i]->read_metadata) {
-                            decoders[i]->read_metadata (it);
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-        deadbeef->pl_item_unref (it);
-        it = next;
-    }
-    deadbeef->pl_save_current();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-}
 
 - (void)sortColumn:(DdbListviewCol_t)column {
     plt_col_info_t *c = &self.columns[(int)column];
@@ -1450,177 +1353,19 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 }
 
 
-#pragma mark -
-
-- (void)rgRemove:(id)sender {
-    int count;
-    DB_playItem_t **tracks = [self getSelectedTracksForRg:&count withRgTags:YES];
-    if (!tracks) {
-        return;
-    }
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (plt) {
-        deadbeef->plt_modified (plt);
-        deadbeef->plt_unref (plt);
-    }
-    [ReplayGainScannerController removeRgTagsFromTracks:tracks count:count];
-}
-
-- (void)rgScanAlbum:(id)sender {
-    [self rgScan:DDB_RG_SCAN_MODE_SINGLE_ALBUM];
-}
-
-- (void)rgScanAlbumsAuto:(id)sender {
-    [self rgScan:DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS];
-}
-
-- (void)rgScanTracks:(id)sender {
-    [self rgScan:DDB_RG_SCAN_MODE_TRACK];
-}
-
-- (DB_playItem_t **)getSelectedTracksForRg:(int *)pcount withRgTags:(BOOL)withRgTags {
-   ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->pl_lock ();
-    DB_playItem_t __block **tracks = NULL;
-    int numtracks = deadbeef->plt_getselcount (plt);
-    if (!numtracks) {
-        deadbeef->pl_unlock ();
-        return NULL;
-    }
-
-    ddb_replaygain_settings_t __block s;
-    s._size = sizeof (ddb_replaygain_settings_t);
-
-    tracks = calloc (numtracks, sizeof (DB_playItem_t *));
-    int __block n = 0;
-    [self forEachTrack:^(DB_playItem_t *it) {
-        if (deadbeef->pl_is_selected (it)) {
-            assert (n < numtracks);
-            BOOL hasRgTags = NO;
-            if (withRgTags) {
-                deadbeef->replaygain_init_settings (&s, it);
-                if (s.has_album_gain || s.has_track_gain) {
-                    hasRgTags = YES;
-                }
-            }
-            if (!withRgTags || hasRgTags) {
-                deadbeef->pl_item_ref (it);
-                tracks[n++] = it;
-            }
-        }
-        return YES;
-    }  forIter:PL_MAIN];
-    deadbeef->pl_unlock ();
-    deadbeef->plt_unref (plt);
-
-    if (!n) {
-        free (tracks);
-        return NULL;
-    }
-    *pcount = n;
-    return tracks;
-}
-
-- (void)rgScan:(int)mode {
-    int count;
-    DB_playItem_t **tracks = [self getSelectedTracksForRg:&count withRgTags:NO];
-    if (!tracks) {
-        return;
-    }
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (plt) {
-        deadbeef->plt_modified (plt);
-        deadbeef->plt_unref (plt);
-    }
-    [ReplayGainScannerController runScanner:mode forTracks:tracks count:count];
-}
-
-- (void)addPluginActions:(NSMenu *)theMenu {
-    DB_playItem_t *track = NULL;
-    int selcount = self.selectedCount;
-
-    if (selcount == 1) {
-        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-        while (it) {
-            if (deadbeef->pl_is_selected (it)) {
-                break;
-            }
-            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-
-            deadbeef->pl_item_unref (it);
-            it = next;
-        }
-        track = it;
-    }
-
-    [theMenu addActionItemsForContext:DDB_ACTION_CTX_SELECTION track:track filter:^BOOL(DB_plugin_action_t * _Nonnull action) {
-
-        return (selcount==1 && (action->flags&DB_ACTION_SINGLE_TRACK)) || (selcount > 1 && (action->flags&DB_ACTION_MULTIPLE_TRACKS));
-    }];
-}
-
 - (NSMenu *)contextMenuForEvent:(NSEvent *)event forView:(NSView *)view {
-    NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Playlist Context Menu"];
-    BOOL enabled = [self selectedCount] != 0;
+    return [TrackContextMenu trackContextMenu:deadbeef->plt_get_curr() iter:self.playlistIter delegate:self];
+}
 
-    [theMenu insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0].enabled = enabled;
-
-    NSMenu *rgMenu = [[NSMenu alloc] initWithTitle:@"ReplayGain"];
-    rgMenu.delegate = self;
-    rgMenu.autoenablesItems = NO;
-
-    BOOL __block has_rg_info = NO;
-    BOOL __block can_be_rg_scanned = NO;
-    if (enabled) {
-        ddb_replaygain_settings_t __block s;
-        s._size = sizeof (ddb_replaygain_settings_t);
-
-        [self forEachTrack:^(DB_playItem_t *it){
-            if (deadbeef->pl_is_selected (it)) {
-                if (deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI"))) {
-                    if (deadbeef->pl_get_item_duration (it) > 0) {
-                        can_be_rg_scanned = YES;
-                    }
-                    deadbeef->replaygain_init_settings (&s, it);
-                    if (s.has_album_gain || s.has_track_gain) {
-                        has_rg_info = YES;
-                        return NO;
-                    }
-                }
-            }
-            return YES;
-        } forIter:PL_MAIN];
+- (void)trackProperties {
+    if (!self.trkProperties) {
+        self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
     }
-
-    [rgMenu addItemWithTitle:@"Scan Per-file Track Gain" action:@selector(rgScanTracks:) keyEquivalent:@""].enabled = can_be_rg_scanned;
-    [rgMenu addItemWithTitle:@"Scan Selection As Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@""].enabled = can_be_rg_scanned;
-    [rgMenu addItemWithTitle:@"Scan Selection As Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@""].enabled = can_be_rg_scanned;
-    [rgMenu addItemWithTitle:@"Remove ReplayGain Information" action:@selector(rgRemove:) keyEquivalent:@""].enabled = has_rg_info;
-
-    NSMenuItem *rgMenuItem = [[NSMenuItem alloc] initWithTitle:@"ReplayGain" action:nil keyEquivalent:@""];
-    rgMenuItem.enabled = enabled;
-    rgMenuItem.submenu = rgMenu;
-    [theMenu addItem:rgMenuItem];
-
-    [theMenu addItemWithTitle:@"Add To Playback Queue" action:@selector(addToPlaybackQueue) keyEquivalent:@""].enabled = enabled;
-
-    [theMenu addItemWithTitle:@"Remove From Playback Queue" action:@selector(removeFromPlaybackQueue) keyEquivalent:@""].enabled = enabled;
-
-    [theMenu addItem:NSMenuItem.separatorItem];
-
-    [theMenu addItem:NSMenuItem.separatorItem];
-
-    [theMenu addItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@""].enabled = enabled;
-
-    [self addPluginActions:theMenu];
-
-    [theMenu addItem:NSMenuItem.separatorItem];
-
-    [theMenu addItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@""].enabled = enabled;
-
-    theMenu.autoenablesItems = NO;
-
-    return theMenu;
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    self.trkProperties.playlist =  plt;
+    deadbeef->plt_unref (plt);
+    [self.trkProperties fill];
+    [self.trkProperties showWindow:self];
 }
 
 @end
