@@ -1,6 +1,6 @@
 /*
     Media Library plugin for DeaDBeeF Player
-    Copyright (C) 2009-2017 Alexey Yakovenko
+    Copyright (C) 2009-2020 Alexey Yakovenko
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -805,13 +805,14 @@ get_albums_for_collection_group_by_field (ddb_medialib_item_t *root, ml_collecti
                 .it = it,
             };
 
+            const char *mc_str_for_track_field = NULL;
             const char *track_field = NULL;
             if (!tf) {
                 track_field = deadbeef->pl_find_meta (it, field);
             }
             else {
                 deadbeef->tf_eval (&ctx, tf, text, sizeof (text));
-                track_field = text;
+                track_field = mc_str_for_track_field = deadbeef->metacache_add_string (text);
             }
 
             if (!track_field) {
@@ -819,8 +820,7 @@ get_albums_for_collection_group_by_field (ddb_medialib_item_t *root, ml_collecti
             }
 
             for (ml_string_t *s = coll->head; s; s = s->next) {
-                // FIXME: strcasecmp might work better, but the parent list must use case-insensitive filtering first.
-                if (strcmp (track_field, s->text)) {
+                if (track_field != s->text) {
                     continue;
                 }
                 int append = 0;
@@ -885,6 +885,10 @@ get_albums_for_collection_group_by_field (ddb_medialib_item_t *root, ml_collecti
                     }
                     root->num_children++;
                 }
+            }
+
+            if (mc_str_for_track_field) {
+                deadbeef->metacache_remove_string (mc_str_for_track_field);
             }
         }
     }
@@ -1164,7 +1168,7 @@ static ddb_medialib_plugin_t plugin = {
     .plugin.plugin.descr = "Scans disk for music files and manages them as database",
     .plugin.plugin.copyright = 
         "Media Library plugin for DeaDBeeF Player\n"
-        "Copyright (C) 2009-2017 Alexey Yakovenko\n"
+        "Copyright (C) 2009-2020 Alexey Yakovenko\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
         "warranty.  In no event will the authors be held liable for any damages\n"
