@@ -29,6 +29,8 @@
 #include "../../deadbeef.h"
 #include "medialib.h"
 
+//#define FILTER_PERF 1 // measure / log file add filtering performance
+
 static DB_functions_t *deadbeef;
 
 static int filter_id;
@@ -332,27 +334,6 @@ ml_notify_listeners (int event);
 static void
 ml_index (ddb_playlist_t *plt);
 
-static int
-add_file_info_cb (DB_playItem_t *it, void *data) {
-//    fprintf (stderr, "added %s                                 \r", deadbeef->pl_find_meta (it, ":URI"));
-
-    // lets reindex and notify listeners once in a while
-#if 0 // FIXME: do we need to re-index while we're scanning? probably not.
-    scanner_file_idx++;
-    printf ("%d\n", scanner_file_idx);
-    if (scanner_file_idx >= 100) {
-        scanner_file_idx = 0;
-        _ml_state = DDB_MEDIALIB_STATE_INDEXING;
-        ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
-        ml_index ();
-        ml_notify_listeners (DDB_MEDIALIB_EVENT_CHANGED);
-        _ml_state = DDB_MEDIALIB_STATE_SCANNING;
-        ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
-    }
-#endif
-    return 0;
-}
-
 static void
 ml_free_db (void) {
     fprintf (stderr, "clearing index...\n");
@@ -621,7 +602,7 @@ scanner_thread (void *none) {
     deadbeef->mutex_unlock (mutex);
 
     // update & index the cloned playlist
-    deadbeef->plt_insert_dir (plt, NULL, musicdir, &scanner_terminate, add_file_info_cb, NULL);
+    deadbeef->plt_insert_dir (plt, NULL, musicdir, &scanner_terminate, NULL, NULL);
     _ml_state = DDB_MEDIALIB_STATE_INDEXING;
     ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
     deadbeef->plt_save (plt, NULL, NULL, plpath, NULL, NULL, NULL);
@@ -648,8 +629,6 @@ scanner_thread (void *none) {
     ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
 }
 
-#define FILTER_PERF 1
-
 // intention is to skip the files which are already indexed
 // how to speed this up:
 // first check if a folder exists (early out?)
@@ -673,7 +652,7 @@ ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
         return 0;
     }
 
-    uint32_t hash = hash_for_ptr(s);
+    uint32_t hash = hash_for_ptr((void *)s);
 
     if (!db.filename_hash[hash]) {
         deadbeef->metacache_remove_string (s);
