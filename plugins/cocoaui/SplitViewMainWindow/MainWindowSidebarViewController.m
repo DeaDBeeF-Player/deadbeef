@@ -79,7 +79,7 @@ static void _medialib_listener (int event, void *user_data) {
         self.medialibItemTree = NULL;
     }
     self.medialibItemTree = self.medialibPlugin->get_list (indexNames[index]);
-    self.medialibRootItem = [MediaLibraryItem initTree:self.medialibItemTree];
+    self.medialibRootItem = [[MediaLibraryItem alloc] initWithItem:self.medialibItemTree];
 }
 
 - (void)updateMedialibStatusForView:(NSTableCellView *)view {

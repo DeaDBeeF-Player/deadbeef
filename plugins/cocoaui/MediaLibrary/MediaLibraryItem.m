@@ -11,39 +11,28 @@
 extern DB_functions_t *deadbeef;
 
 @implementation MediaLibraryItem {
-    MediaLibraryItem *parent;
     NSString *_stringValue;
 
     ddb_medialib_item_t *_item;
     NSMutableArray *_children;
 }
 
-+ (id)initTree:(ddb_medialib_item_t *)tree {
-    MediaLibraryItem *rootItem = [[MediaLibraryItem alloc] initRoot:tree];
-    return rootItem;
+- (instancetype)init {
+    static ddb_medialib_item_t item;
+    return [self initWithItem:&item];
 }
 
-- (id)initRoot:(ddb_medialib_item_t *)tree {
-    self = [self init];
-    _item = tree;
-    return self;
-}
-
-- (id)initNode:(ddb_medialib_item_t *)item parent:(MediaLibraryItem *)parent{
-    self = [self init];
+- (id)initWithItem:(ddb_medialib_item_t *)item {
     _item = item;
     return self;
 }
 
 - (NSUInteger)numberOfChildren {
-    if (!_item) {
-        return 0;
-    }
     return _item->num_children;
 }
 
 - (MediaLibraryItem *)childAtIndex:(NSUInteger)index {
-    return [[self children] objectAtIndex:index];
+    return [self.children objectAtIndex:index];
 }
 
 - (NSArray *)children {
@@ -51,7 +40,7 @@ extern DB_functions_t *deadbeef;
         _children = [[NSMutableArray alloc] initWithCapacity:_item->num_children];
         ddb_medialib_item_t *c = _item->children;
         for (int i = 0; i < _item->num_children; i++) {
-            _children[i] = [[MediaLibraryItem alloc] initNode:c parent:self];
+            _children[i] = [[MediaLibraryItem alloc] initWithItem:c];
             c = c->next;
         }
     }

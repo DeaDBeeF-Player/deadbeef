@@ -10,12 +10,11 @@
 #include "../../../deadbeef.h"
 #include "../../medialib/medialib.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface MediaLibraryItem : NSObject
 
-+ (id)initTree:(ddb_medialib_item_t *)list;
-
-- (id)initRoot:(ddb_medialib_item_t *)list;
-- (id)initNode:(ddb_medialib_item_t *)item parent:(MediaLibraryItem *)parent;
+- (id)initWithItem:(ddb_medialib_item_t *)item NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic,readonly) NSUInteger numberOfChildren;
 - (MediaLibraryItem *)childAtIndex:(NSUInteger)index;
@@ -24,3 +23,5 @@
 @property (nonatomic,readonly) NSString *stringValue;
 
 @end
+
+NS_ASSUME_NONNULL_END
