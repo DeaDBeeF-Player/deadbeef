@@ -1555,6 +1555,11 @@ typedef struct {
     int (*pl_get_meta_with_override) (ddb_playItem_t *it, const char *key, char *val, size_t size);
     int (*pl_meta_exists_with_override) (DB_playItem_t *it, const char *key);
 #endif
+
+// since 1.13
+#if (DDB_API_LEVEL >= 13)
+    void (*plt_item_set_selected)(ddb_playlist_t *plt, ddb_playItem_t *it, int sel);
+#endif
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this

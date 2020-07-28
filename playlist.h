@@ -532,4 +532,7 @@ plt_is_loading_cue (playlist_t *plt);
 int
 fileadd_filter_test (ddb_file_found_data_t *data);
 
+void
+pl_set_selected_in_playlist (playlist_t *playlist, playItem_t *it, int sel);
+
 #endif // __PLAYLIST_H

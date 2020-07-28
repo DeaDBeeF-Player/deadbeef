@@ -71,6 +71,8 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic,readwrite) int ncolumns;
 @property (nonatomic) int columnsAllocated;
 
+@property (nonatomic) TrackContextMenu *trackContextMenu;
+
 @end
 
 @implementation PlaylistViewController
@@ -380,6 +382,9 @@ extern DB_functions_t *deadbeef;
 - (void)setup {
     PlaylistView *lv = (PlaylistView *)self.view;
     lv.delegate = self;
+
+    self.trackContextMenu = [TrackContextMenu new];
+    self.trackContextMenu.delegate = self;
 
     self.sortColumn = -1;
 
@@ -1354,8 +1359,11 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 
 
 - (NSMenu *)contextMenuForEvent:(NSEvent *)event forView:(NSView *)view {
-    return [TrackContextMenu trackContextMenu:deadbeef->plt_get_curr() iter:self.playlistIter delegate:self];
+    [self.trackContextMenu update:deadbeef->plt_get_curr() iter:self.playlistIter];
+    return self.trackContextMenu;
 }
+
+#pragma mark - TrackContextMenuDelegate
 
 - (void)trackProperties {
     if (!self.trkProperties) {
@@ -1366,6 +1374,11 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     deadbeef->plt_unref (plt);
     [self.trkProperties fill];
     [self.trkProperties showWindow:self];
+}
+
+- (void)playlistChanged {
+    deadbeef->pl_save_current();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 @end

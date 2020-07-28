@@ -62,10 +62,12 @@ typedef struct ddb_medialib_plugin_s {
     void (*free_list) (ddb_medialib_item_t *list);
 
     // Find the same track in DB
-    DB_playItem_t *(*find_track) (DB_playItem_t *track);
+    ddb_playItem_t *(*find_track) (ddb_playItem_t *track);
 
     // whether scanner/indexer is active
     int (*scanner_state) (void);
+
+    ddb_playlist_t *(*playlist) (void);
 } ddb_medialib_plugin_t;
 
 #endif /* medialib_h */

@@ -60,4 +60,8 @@ extern DB_functions_t *deadbeef;
     return _stringValue;
 }
 
+- (ddb_playItem_t *)playItem {
+    return _item->track;
+}
+
 @end

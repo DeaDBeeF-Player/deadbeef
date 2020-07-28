@@ -2370,7 +2370,7 @@ pl_load_all (void) {
     return err;
 }
 
-static inline void
+void
 pl_set_selected_in_playlist (playlist_t *playlist, playItem_t *it, int sel)
 {
     it->selected = sel;

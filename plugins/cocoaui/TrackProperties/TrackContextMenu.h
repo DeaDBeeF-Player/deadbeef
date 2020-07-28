@@ -14,12 +14,13 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol TrackContextMenuDelegate <NSMenuDelegate>
 
 - (void)trackProperties;
+- (void)playlistChanged;
 
 @end
 
 @interface TrackContextMenu : NSMenu
 
-+ (TrackContextMenu *)trackContextMenu:(ddb_playlist_t *)playlist iter:(int)playlistIter delegate:(id<TrackContextMenuDelegate>)delegate;
+- (void)update:(ddb_playlist_t *)playlist iter:(int)playlistIter;
 
 @end
 

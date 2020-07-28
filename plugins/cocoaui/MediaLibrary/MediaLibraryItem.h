@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,readonly) NSArray *children;
 @property (nonatomic,readonly) NSString *stringValue;
 
+@property (nonatomic,readonly) ddb_playItem_t *playItem;
+
 @end
 
 NS_ASSUME_NONNULL_END

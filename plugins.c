@@ -512,6 +512,8 @@ static DB_functions_t deadbeef_api = {
     .pl_find_meta_with_override = (const char *(*) (ddb_playItem_t *it, const char *key))pl_find_meta_with_override,
     .pl_get_meta_with_override = (int (*) (ddb_playItem_t *it, const char *key, char *val, size_t size))pl_get_meta_with_override,
     .pl_meta_exists_with_override = (int (*) (ddb_playItem_t *it, const char *key))pl_meta_exists_with_override,
+
+    .plt_item_set_selected = (void (*)(ddb_playlist_t *plt, ddb_playItem_t *it, int sel))pl_set_selected_in_playlist,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

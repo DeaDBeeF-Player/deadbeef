@@ -6,14 +6,16 @@
 //  Copyright © 2020 Alexey Yakovenko. All rights reserved.
 //
 
-#import "MediaLibraryOutlineViewController.h"
 #import "deadbeef.h"
 #import "medialib.h"
 #import "MediaLibraryItem.h"
+#import "MediaLibraryOutlineViewController.h"
+#import "TrackContextMenu.h"
+#import "TrackPropertiesWindowController.h"
 
 extern DB_functions_t *deadbeef;
 
-@interface MediaLibraryOutlineViewController()
+@interface MediaLibraryOutlineViewController() <TrackContextMenuDelegate>
 
 @property (nonatomic) NSString *libraryItem;
 @property (nonatomic) int listenerId;
@@ -27,6 +29,8 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) ddb_medialib_item_t *medialibItemTree;
 
 @property (nonatomic) NSInteger lastSelectedIndex;
+
+@property (nonatomic) TrackPropertiesWindowController *trkProperties;
 
 @end
 
@@ -45,7 +49,7 @@ extern DB_functions_t *deadbeef;
     self.outlineView = outlineView;
     self.outlineView.dataSource = self;
     self.outlineView.delegate = self;
-    
+
     self.libraryItem = @"Library";
 
     self.groupItems = @[
@@ -57,6 +61,9 @@ extern DB_functions_t *deadbeef;
 
     self.medialibPlugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
     self.listenerId = self.medialibPlugin->add_listener (_medialib_listener, (__bridge void *)self);
+
+    self.outlineView.menu = [TrackContextMenu new];
+    self.outlineView.menu.delegate = self;
 
     [self.outlineView expandItem:self.libraryItem];
     [self.outlineView expandItem:self.medialibRootItem];
@@ -282,6 +289,58 @@ static void _medialib_listener (int event, void *user_data) {
     }
 }
 
+#pragma mark - TrackContextMenuDelegate
+
+- (void)trackProperties {
+    if (!self.trkProperties) {
+        self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
+    }
+    ddb_playlist_t *plt = self.medialibPlugin->playlist();
+    self.trkProperties.playlist =  plt;
+    deadbeef->plt_unref (plt);
+    [self.trkProperties fill];
+    [self.trkProperties showWindow:self];
+}
+
+- (void)playlistChanged {
+    // FIXME
+}
+
+- (void)menuNeedsUpdate:(TrackContextMenu *)menu {
+    NSInteger row = -1;
+    ddb_playlist_t *plt = self.medialibPlugin->playlist();
+    MediaLibraryItem *item;
+    ddb_playItem_t *playItem = NULL;
+
+    if (!plt) {
+        goto disabled;
+    }
+
+    deadbeef->plt_deselect_all (plt);
+
+    row = self.outlineView.clickedRow;
+    if (row == -1) {
+        goto disabled;
+    }
+
+    item = [self.outlineView itemAtRow:row];
+    if (!item || ![item isKindOfClass:MediaLibraryItem.class]) {
+        goto disabled;
+    }
+
+    playItem = item.playItem;
+    if (!playItem) {
+        goto disabled;
+    }
+
+    deadbeef->plt_item_set_selected (plt, playItem, 1);
+
+disabled:
+    [((TrackContextMenu *)self.outlineView.menu) update:self.medialibPlugin->playlist() iter:PL_MAIN];
+
+    // FIXME: the menu operates on the specified playlist, with its own selection, which can change while the menu is open
+    // Therefore, it's better to create a separate list of playItems for the menu consumption.
+}
 
 
 @end

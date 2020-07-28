@@ -934,6 +934,8 @@ get_albums_for_collection_group_by_field (ddb_medialib_item_t *root, ml_collecti
             deadbeef->tf_eval (&ctx, title_bc, text, sizeof (text));
 
             track_item->text = deadbeef->metacache_add_string (text);
+            deadbeef->pl_item_ref (it);
+            track_item->track = it;
 
             if (!libitem->children) {
                 ml_free_list (libitem);
@@ -1220,6 +1222,19 @@ static int ml_scanner_state (void) {
     return _ml_state;
 }
 
+static ddb_playlist_t *ml_get_playlist (void) {
+    deadbeef->mutex_lock (mutex);
+
+    if (ml_playlist) {
+        deadbeef->plt_ref (ml_playlist);
+    }
+
+    ddb_playlist_t *res = ml_playlist;
+
+    deadbeef->mutex_unlock (mutex);
+    return res;
+}
+
 static int
 ml_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
@@ -1269,6 +1284,7 @@ static ddb_medialib_plugin_t plugin = {
     .free_list = ml_free_list,
     .find_track = ml_find_track,
     .scanner_state = ml_scanner_state,
+    .playlist = ml_get_playlist,
 };
 
 DB_plugin_t *

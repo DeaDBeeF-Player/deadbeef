@@ -21,78 +21,91 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) ddb_playlist_t *playlist;
 @property (nonatomic) int playlistIter;
 
+@property (nonatomic) NSMenuItem *reloadMetadataItem;
+@property (nonatomic) NSMenuItem *rgMenuItem;
+@property (nonatomic) NSMenuItem *addToQueueItem;
+@property (nonatomic) NSMenuItem *removeFromQueueItem;
+@property (nonatomic) NSMenuItem *convertItem;
+
+@property (nonatomic) NSMenuItem *rgScanPerFileItem;
+@property (nonatomic) NSMenuItem *rgScanAsSingleAlbumItem;
+@property (nonatomic) NSMenuItem *rgScanAsAlbumsItem;
+@property (nonatomic) NSMenuItem *rgRemoveInformationItem;
+
+@property (nonatomic) NSMenuItem *trackPropertiesItem;
+
 @end
 
 @implementation TrackContextMenu
 
-+ (TrackContextMenu *)trackContextMenu:(ddb_playlist_t *)playlist iter:(int)playlistIter delegate:(id<TrackContextMenuDelegate>)delegate {
-    return [[TrackContextMenu alloc] initPlaylistContextMenu:playlist iter:playlistIter delegate:delegate];
-}
-
-- (NSMenu *)initPlaylistContextMenu:(ddb_playlist_t *)playlist iter:(int)playlistIter delegate:(id<TrackContextMenuDelegate>)delegate {
+- (instancetype)init
+{
     self = [super init];
     if (!self) {
         return nil;
     }
 
-    self.playlist = playlist;
-    self.playlistIter = playlistIter;
-
-    self.delegate = delegate;
-
-
-    BOOL enabled = self.selectedCount != 0;
-
-    NSMenuItem *reloadMetadata = [self insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0];
-    reloadMetadata.enabled = enabled;
-    reloadMetadata.target = self;
-
+    self.reloadMetadataItem = [self insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0];
     NSMenu *rgMenu = [[NSMenu alloc] initWithTitle:@"ReplayGain"];
     rgMenu.autoenablesItems = NO;
 
-    BOOL has_rg_info = NO;
-    BOOL can_be_rg_scanned = NO;
-    if (enabled) {
-        [self menuRGState:&can_be_rg_scanned hasRGInfo:&has_rg_info];
-    }
+    self.rgScanPerFileItem = [rgMenu addItemWithTitle:@"Scan Per-file Track Gain" action:@selector(rgScanTracks:) keyEquivalent:@""];
+    self.rgScanAsSingleAlbumItem = [rgMenu addItemWithTitle:@"Scan Selection As Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@""];
+    self.rgScanAsAlbumsItem = [rgMenu addItemWithTitle:@"Scan Selection As Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@""];
+    self.rgRemoveInformationItem = [rgMenu addItemWithTitle:@"Remove ReplayGain Information" action:@selector(rgRemove:) keyEquivalent:@""];
 
-    [rgMenu addItemWithTitle:@"Scan Per-file Track Gain" action:@selector(rgScanTracks:) keyEquivalent:@""].enabled = can_be_rg_scanned;
-    [rgMenu addItemWithTitle:@"Scan Selection As Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@""].enabled = can_be_rg_scanned;
-    [rgMenu addItemWithTitle:@"Scan Selection As Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@""].enabled = can_be_rg_scanned;
-    [rgMenu addItemWithTitle:@"Remove ReplayGain Information" action:@selector(rgRemove:) keyEquivalent:@""].enabled = has_rg_info;
+    self.rgMenuItem = [[NSMenuItem alloc] initWithTitle:@"ReplayGain" action:nil keyEquivalent:@""];
+    self.rgMenuItem.submenu = rgMenu;
+    [self addItem:self.rgMenuItem];
 
-    NSMenuItem *rgMenuItem = [[NSMenuItem alloc] initWithTitle:@"ReplayGain" action:nil keyEquivalent:@""];
-    rgMenuItem.enabled = enabled;
-    rgMenuItem.submenu = rgMenu;
-    [self addItem:rgMenuItem];
+    self.addToQueueItem = [self addItemWithTitle:@"Add To Playback Queue" action:@selector(addToPlaybackQueue) keyEquivalent:@""];
+    self.addToQueueItem.target = self;
 
-    NSMenuItem *addToQueueItem = [self addItemWithTitle:@"Add To Playback Queue" action:@selector(addToPlaybackQueue) keyEquivalent:@""];
-    addToQueueItem.target = self;
-    addToQueueItem.enabled = enabled;
-
-    NSMenuItem *removeFromQueueItem = [self addItemWithTitle:@"Remove From Playback Queue" action:@selector(removeFromPlaybackQueue) keyEquivalent:@""];
-    removeFromQueueItem.target = self;
-    removeFromQueueItem.enabled = enabled;
+    self.removeFromQueueItem = [self addItemWithTitle:@"Remove From Playback Queue" action:@selector(removeFromPlaybackQueue) keyEquivalent:@""];
+    self.removeFromQueueItem.target = self;
 
     [self addItem:NSMenuItem.separatorItem];
 
     [self addItem:NSMenuItem.separatorItem];
 
-    NSMenuItem *convertItem = [self addItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@""];
-    convertItem.target = self;
-    convertItem.enabled = enabled;
+    self.convertItem = [self addItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@""];
+    self.convertItem.target = self;
 
     [self addPluginActions];
 
     [self addItem:NSMenuItem.separatorItem];
 
-    NSMenuItem *trackPropertiesItem = [self addItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@""];
-    trackPropertiesItem.target = delegate;
-    trackPropertiesItem.enabled = enabled;
+    self.trackPropertiesItem = [self addItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@""];
 
     self.autoenablesItems = NO;
 
     return self;
+}
+
+- (void)update:(ddb_playlist_t *)playlist iter:(int)playlistIter {
+    self.playlist = playlist;
+    self.playlistIter = playlistIter;
+
+    BOOL enabled = self.selectedCount != 0;
+    self.reloadMetadataItem.enabled = enabled;
+    self.reloadMetadataItem.target = self;
+    BOOL has_rg_info = NO;
+    BOOL can_be_rg_scanned = NO;
+    if (enabled) {
+        [self menuRGState:&can_be_rg_scanned hasRGInfo:&has_rg_info];
+    }
+    self.rgMenuItem.enabled = enabled;
+
+    self.rgScanPerFileItem.enabled = can_be_rg_scanned;
+    self.rgScanAsSingleAlbumItem.enabled = can_be_rg_scanned;
+    self.rgScanAsAlbumsItem.enabled = can_be_rg_scanned;
+    self.rgRemoveInformationItem.enabled = has_rg_info;
+
+
+    self.addToQueueItem.enabled = enabled;
+    self.removeFromQueueItem.enabled = enabled;
+    self.convertItem.enabled = enabled;
+    self.trackPropertiesItem.enabled = enabled;
 }
 
 - (void)menuRGState:(BOOL *)canBeRGScanned hasRGInfo:(BOOL *)hasRGInfo {
@@ -122,11 +135,11 @@ extern DB_functions_t *deadbeef;
 }
 
 - (int)selectedCount {
-    return deadbeef->pl_getselcount();
+    return deadbeef->plt_getselcount(self.playlist);
 }
 
 - (void)reloadMetadata {
-    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    DB_playItem_t *it = deadbeef->plt_get_first (self.playlist, PL_MAIN);
     while (it) {
         deadbeef->pl_lock ();
         char decoder_id[100];
@@ -157,8 +170,7 @@ extern DB_functions_t *deadbeef;
         deadbeef->pl_item_unref (it);
         it = next;
     }
-    deadbeef->pl_save_current();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    [((id<TrackContextMenuDelegate>)self.delegate) playlistChanged];
 }
 
 #pragma mark -
@@ -192,7 +204,7 @@ extern DB_functions_t *deadbeef;
 - (void)forEachTrack:(BOOL (^)(DB_playItem_t *it))block forIter:(int)iter {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->pl_lock ();
-    DB_playItem_t *it = deadbeef->pl_get_first (iter);
+    DB_playItem_t *it = deadbeef->plt_get_first (self.playlist, iter);
     while (it) {
         BOOL res = block (it);
         if (!res) {
@@ -266,11 +278,12 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)addPluginActions {
+#if 0 // FIXME: this part of the menu needs to be rebuilt on each menu invocation
     DB_playItem_t *track = NULL;
     int selcount = self.selectedCount;
 
     if (selcount == 1) {
-        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+        DB_playItem_t *it = deadbeef->plt_get_first (self.playlist, PL_MAIN);
         while (it) {
             if (deadbeef->pl_is_selected (it)) {
                 break;
@@ -287,6 +300,7 @@ extern DB_functions_t *deadbeef;
 
         return (selcount==1 && (action->flags&DB_ACTION_SINGLE_TRACK)) || (selcount > 1 && (action->flags&DB_ACTION_MULTIPLE_TRACKS));
     }];
+#endif
 }
 
 #pragma mark -
@@ -297,7 +311,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)addToPlaybackQueue {
     int iter = [self playlistIter];
-    DB_playItem_t *it = deadbeef->pl_get_first(iter);
+    DB_playItem_t *it = deadbeef->plt_get_first(self.playlist, iter);
     while (it) {
         if (deadbeef->pl_is_selected (it)) {
             deadbeef->playqueue_push (it);
@@ -310,7 +324,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)removeFromPlaybackQueue {
     int iter = [self playlistIter];
-    DB_playItem_t *it = deadbeef->pl_get_first(iter);
+    DB_playItem_t *it = deadbeef->plt_get_first(self.playlist, iter);
     while (it) {
         if (deadbeef->pl_is_selected (it)) {
             deadbeef->playqueue_remove (it);
