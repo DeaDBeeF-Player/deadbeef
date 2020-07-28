@@ -48,7 +48,6 @@ extern DB_functions_t *deadbeef;
     reloadMetadata.target = self;
 
     NSMenu *rgMenu = [[NSMenu alloc] initWithTitle:@"ReplayGain"];
-    rgMenu.delegate = self;
     rgMenu.autoenablesItems = NO;
 
     BOOL has_rg_info = NO;
@@ -89,6 +88,8 @@ extern DB_functions_t *deadbeef;
 
     NSMenuItem *trackPropertiesItem = [self addItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@""];
     trackPropertiesItem.target = delegate;
+    trackPropertiesItem.enabled = enabled;
+
     self.autoenablesItems = NO;
 
     return self;
