@@ -336,6 +336,7 @@ static void _medialib_listener (int event, void *user_data) {
     deadbeef->plt_item_set_selected (plt, playItem, 1);
 
 disabled:
+    // FIXME: playlist ref is retained, needs a release
     [((TrackContextMenu *)self.outlineView.menu) update:self.medialibPlugin->playlist() iter:PL_MAIN];
 
     // FIXME: the menu operates on the specified playlist, with its own selection, which can change while the menu is open
