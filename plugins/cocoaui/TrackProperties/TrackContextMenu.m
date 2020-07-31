@@ -106,6 +106,7 @@ extern DB_functions_t *deadbeef;
     self.removeFromQueueItem.enabled = enabled;
     self.convertItem.enabled = enabled;
     self.trackPropertiesItem.enabled = enabled;
+    self.trackPropertiesItem.target = self;
 }
 
 - (void)menuRGState:(BOOL *)canBeRGScanned hasRGInfo:(BOOL *)hasRGInfo {
@@ -333,6 +334,10 @@ extern DB_functions_t *deadbeef;
         deadbeef->pl_item_unref (it);
         it = next;
     }
+}
+
+- (void)trackProperties {
+    [((id<TrackContextMenuDelegate>)self.delegate) trackProperties];
 }
 
 @end
