@@ -69,6 +69,7 @@ typedef struct {
     mp3packet_t ref_packet; // packet representing the stream format
 
     int have_xing_header;
+    int have_xing_nframes;
     int vbr_type;
 
     // FIXME: these fields should be filled/used only for network streams of finite length

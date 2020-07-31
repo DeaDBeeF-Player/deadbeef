@@ -255,6 +255,7 @@ _check_xing_header (mp3info_t *info, mp3packet_t *packet, uint8_t *buffer, int b
         uint32_t nframes = READ_UINT32();
         info->totalsamples = nframes * packet->samples_per_frame;
         info->have_duration = 1;
+        info->have_xing_nframes = 1;
     }
     if (flags & BYTES_FLAG) {
         READ_UINT32();
@@ -582,7 +583,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
             // we still need to fetch a few packets to get averages right.
             // 200 packets give a pretty accurate value, and correspond
             // to less than 40KB or data
-            if (info->have_xing_header && seek_to_sample < 0 && !(flags & MP3_PARSE_FULLSCAN) && info->npackets >= 200) {
+            if (info->have_xing_nframes && seek_to_sample < 0 && !(flags & MP3_PARSE_FULLSCAN) && info->npackets >= 200) {
                 goto end;
             }
             // Calculate CBR duration from file size
