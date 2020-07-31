@@ -1559,6 +1559,8 @@ typedef struct {
 // since 1.13
 #if (DDB_API_LEVEL >= 13)
     void (*plt_item_set_selected)(ddb_playlist_t *plt, ddb_playItem_t *it, int sel);
+    ddb_playlist_t * (*plt_find_by_name) (const char *name);
+    ddb_playlist_t * (*plt_append) (const char *title);
 #endif
 } DB_functions_t;
 

@@ -70,6 +70,9 @@ extern DB_functions_t *deadbeef;
     [self initializeTreeView:0];
     [self updateMedialibStatus];
 
+    self.outlineView.doubleAction = @selector(outlineViewDoubleAction:);
+    self.outlineView.target = self;
+
     return self;
 }
 
@@ -150,6 +153,40 @@ static void _medialib_listener (int event, void *user_data) {
             //            [_scannerActiveIndicator stopAnimation:self];
             //            [_scannerActiveState setHidden:YES];
         }
+    }
+}
+
+- (void)outlineViewDoubleAction:(NSOutlineView *)sender {
+    ddb_playlist_t *curr_plt = NULL;
+    if (deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1)) {
+        char str[200];
+        deadbeef->conf_get_str ("cli_add_playlist_name", "Default", str, sizeof (str));
+        curr_plt = deadbeef->plt_find_by_name (str);
+        if (!curr_plt) {
+            curr_plt = deadbeef->plt_append (str);
+        }
+    }
+    if (!curr_plt) {
+        return;
+    }
+
+    deadbeef->plt_set_curr (curr_plt);
+    deadbeef->plt_clear(curr_plt);
+
+    ddb_playItem_t *playItem;
+    ddb_playlist_t *plt;
+    [self selectedPlayItem:&playItem plt:&plt];
+
+    if (playItem) {
+        ddb_playItem_t *it = deadbeef->pl_item_alloc();
+        deadbeef->pl_item_copy (it, playItem);
+        deadbeef->plt_insert_item (curr_plt, NULL, it);
+        deadbeef->pl_item_unref (it);
+        deadbeef->sendmessage(DB_EV_PLAY_NUM, 0, 0, 0);
+    }
+
+    if (plt) {
+        deadbeef->plt_unref (plt);
     }
 }
 
@@ -306,38 +343,50 @@ static void _medialib_listener (int event, void *user_data) {
     // FIXME
 }
 
-- (void)menuNeedsUpdate:(TrackContextMenu *)menu {
-    NSInteger row = -1;
-    ddb_playlist_t *plt = self.medialibPlugin->playlist();
-    MediaLibraryItem *item;
-    ddb_playItem_t *playItem = NULL;
+- (void)selectedPlayItem:(ddb_playItem_t **)playItem plt:(ddb_playlist_t **)plt {
+    *playItem = NULL;
+    *plt = NULL;
 
-    if (!plt) {
-        goto disabled;
+    NSInteger row = -1;
+    *plt = self.medialibPlugin->playlist();
+    MediaLibraryItem *item;
+    *playItem = NULL;
+
+    if (!*plt) {
+        return;
     }
 
-    deadbeef->plt_deselect_all (plt);
+    deadbeef->plt_deselect_all (*plt);
 
     row = self.outlineView.clickedRow;
     if (row == -1) {
-        goto disabled;
+        deadbeef->plt_unref (*plt);
+        *plt = NULL;
+        return;
     }
 
     item = [self.outlineView itemAtRow:row];
     if (!item || ![item isKindOfClass:MediaLibraryItem.class]) {
-        goto disabled;
+        deadbeef->plt_unref (*plt);
+        *plt = NULL;
+        return;
     }
 
-    playItem = item.playItem;
-    if (!playItem) {
-        goto disabled;
+    *playItem = item.playItem;
+}
+
+- (void)menuNeedsUpdate:(TrackContextMenu *)menu {
+    ddb_playlist_t * plt;
+    ddb_playItem_t * playItem;
+    [self selectedPlayItem:&playItem plt:&plt];
+    if (playItem && plt) {
+        deadbeef->plt_item_set_selected (plt, playItem, 1);
     }
 
-    deadbeef->plt_item_set_selected (plt, playItem, 1);
-
-disabled:
-    // FIXME: playlist ref is retained, needs a release
-    [((TrackContextMenu *)self.outlineView.menu) update:self.medialibPlugin->playlist() iter:PL_MAIN];
+    if (plt) {
+        [((TrackContextMenu *)self.outlineView.menu) update:self.medialibPlugin->playlist() iter:PL_MAIN];
+        deadbeef->plt_unref (plt);
+    }
 
     // FIXME: the menu operates on the specified playlist, with its own selection, which can change while the menu is open
     // Therefore, it's better to create a separate list of playItems for the menu consumption.

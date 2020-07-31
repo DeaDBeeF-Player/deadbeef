@@ -433,6 +433,14 @@ plt_add (int before, const char *title) {
     return before;
 }
 
+playlist_t *
+plt_append (const char *title) {
+    plt_add(plt_get_count(), title);
+    playlist_t *p;
+    for (p = playlists_head; p && p->next; p = p->next);
+    return p;
+}
+
 // NOTE: caller must ensure that configuration is saved after that call
 void
 plt_remove (int plt) {
@@ -534,6 +542,16 @@ plt_find (const char *name) {
     return -1;
 }
 
+playlist_t *
+plt_find_by_name (const char *name) {
+    playlist_t *p = playlists_head;
+    for (; p; p = p->next) {
+        if (!strcmp (p->title, name)) {
+            return p;
+        }
+    }
+    return NULL;
+}
 
 void
 plt_set_curr (playlist_t *plt) {

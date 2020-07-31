@@ -145,11 +145,17 @@ plt_get_sel_count (int plt);
 int
 plt_add (int before, const char *title);
 
+playlist_t *
+plt_append (const char *title);
+
 void
 plt_remove (int plt);
 
 int
 plt_find (const char *name);
+
+playlist_t *
+plt_find_by_name (const char *name);
 
 void
 plt_set_curr_idx (int plt);
