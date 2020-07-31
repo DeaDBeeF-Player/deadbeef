@@ -1998,6 +1998,28 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
     playItem_t *it = NULL;
     playItem_t *last_added = NULL;
 
+    #ifdef __MINGW32__
+    if (!strncmp (fname, "file://", 7)) {
+        fname += 7;
+    }
+    // replace backslashes with normal slashes
+    char fname_conv[strlen(fname)+1];
+    if (strchr(fname, '\\')) {
+        trace ("plt_load_int: backslash(es) detected: %s\n", fname);
+        strcpy (fname_conv, fname);
+        char *slash_p = fname_conv;
+        while (slash_p = strchr(slash_p, '\\')) {
+            *slash_p = '/';
+            slash_p++;
+        }
+        fname = fname_conv;
+    }
+    // path should start with "X:/", not "/X:/", fixing to avoid file opening problems
+    if (fname[0] == '/' && isalpha(fname[1]) && fname[2] == ':') {
+        fname++;
+    }
+    #endif
+
     // try plugins 1st
     char *escaped = uri_unescape (fname, (int)strlen (fname));
     if (escaped) {
