@@ -63,21 +63,6 @@ int make_cache_root_path (char *path, const size_t size)
 {
     const char *ddb_cache = deadbeef->get_system_dir (DDB_SYS_DIR_CACHE);
 
-    #ifdef __MINGW32__
-    // replace backslashes with normal slashes
-    char ddb_cache_conv[strlen(xdg_cache)+1];
-    if (strchr(ddb_cache, '\\')) {
-        trace ("make_cache_root_path: backslash(es) detected: %s\n", ddb_cache);
-        strcpy (ddb_cache_conv, ddb_cache);
-        char *slash_p = ddb_cache_conv;
-        while (slash_p = strchr(slash_p, '\\')) {
-            *slash_p = '/';
-            slash_p++;
-        }
-        ddb_cache = ddb_cache_conv;
-    }
-    #endif
-
     if (strlen(ddb_cache) >= size) {
         trace ("Cache root path truncated at %d bytes\n", (int)size);
         return -1;
