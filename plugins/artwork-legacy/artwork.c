@@ -2143,7 +2143,7 @@ artwork_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 }
 
 static int
-invalidate_playitem_cache (DB_plugin_action_t *action, int ctx)
+invalidate_playitem_cache (DB_plugin_action_t *action, ddb_action_context_t ctx)
 {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (!plt)
