@@ -78,10 +78,12 @@ int make_cache_root_path (char *path, const size_t size)
     }
     #endif
 
-    const char *cache_root = ddb_cache ? ddb_cache : getenv (HOMEDIR);
-    if (snprintf (path, size, ddb_cache ? "%s" : "%s/.cache/deadbeef/", cache_root) >= size) {
+    if (strlen(ddb_cache) >= size) {
         trace ("Cache root path truncated at %d bytes\n", (int)size);
         return -1;
+    }
+    else {
+        strcpy (path, ddb_cache);
     }
     return 0;
 }
