@@ -954,10 +954,6 @@ make_cache_path2 (char *path, int size, const char *fname, const char *album, co
     #endif
 
     int max_album_chars = min (NAME_MAX, size - strlen (path)) - sizeof ("1.jpg.part");
-    #ifdef __MINGW32__
-    // override char limit todo
-    max_album_chars = 250;
-    #endif
     if (max_album_chars <= 0) {
         trace ("Path buffer not long enough for %s and filename\n", path);
         return -1;
