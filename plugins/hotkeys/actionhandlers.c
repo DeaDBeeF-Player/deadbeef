@@ -31,7 +31,7 @@
 extern DB_functions_t *deadbeef;
 
 int
-action_jump_to_current_handler (DB_plugin_action_t *act, int ctx) {
+action_jump_to_current_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     deadbeef->sendmessage (DB_EV_TRACKFOCUSCURRENT, 0, 0, 0);
     return 0;
 }
@@ -159,43 +159,43 @@ skip_to_next_helper (const char *meta) {
 }
 
 int
-action_skip_to_next_album_handler (DB_plugin_action_t *act, int ctx) {
+action_skip_to_next_album_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     skip_to_next_helper ("album");
     return 0;
 }
 
 int
-action_skip_to_next_genre_handler (DB_plugin_action_t *act, int ctx) {
+action_skip_to_next_genre_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     skip_to_next_helper ("genre");
     return 0;
 }
 
 int
-action_skip_to_next_composer_handler (DB_plugin_action_t *act, int ctx) {
+action_skip_to_next_composer_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     skip_to_next_helper ("composer");
     return 0;
 }
 
 int
-action_skip_to_prev_album_handler (DB_plugin_action_t *act, int ctx) {
+action_skip_to_prev_album_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     skip_to_prev_helper ("album");
     return 0;
 }
 
 int
-action_skip_to_prev_genre_handler (DB_plugin_action_t *act, int ctx) {
+action_skip_to_prev_genre_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     skip_to_prev_helper ("genre");
     return 0;
 }
 
 int
-action_skip_to_prev_composer_handler (DB_plugin_action_t *act, int ctx) {
+action_skip_to_prev_composer_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     skip_to_prev_helper ("composer");
     return 0;
 }
 
 int
-action_skip_to_next_artist_handler (DB_plugin_action_t *act, int ctx) {
+action_skip_to_next_artist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     deadbeef->pl_lock ();
     DB_output_t *output = deadbeef->get_output ();
     if (output->state () == DDB_PLAYBACK_STATE_STOPPED) {
@@ -250,7 +250,7 @@ action_skip_to_next_artist_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_skip_to_prev_artist_handler (DB_plugin_action_t *act, int ctx) {
+action_skip_to_prev_artist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     deadbeef->pl_lock ();
     DB_output_t *output = deadbeef->get_output ();
     if (output->state () == DDB_PLAYBACK_STATE_STOPPED) {
@@ -315,7 +315,7 @@ action_skip_to_prev_artist_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_reload_metadata_handler (DB_plugin_action_t *act, int ctx) {
+action_reload_metadata_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
         deadbeef->pl_lock ();
@@ -358,7 +358,7 @@ action_reload_metadata_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_next_playlist_handler (DB_plugin_action_t *act, int ctx) {
+action_next_playlist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int tab = deadbeef->plt_get_curr_idx ();
 
     if (tab == deadbeef->plt_get_count ()-1) {
@@ -375,7 +375,7 @@ action_next_playlist_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_prev_playlist_handler (DB_plugin_action_t *act, int ctx) {
+action_prev_playlist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int tab = deadbeef->plt_get_curr_idx ();
 
     if (tab == 0) {
@@ -392,7 +392,7 @@ action_prev_playlist_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_playlist1_handler (DB_plugin_action_t *act, int ctx) {
+action_playlist1_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 0;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
@@ -402,7 +402,7 @@ action_playlist1_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_playlist2_handler (DB_plugin_action_t *act, int ctx) {
+action_playlist2_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 1;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
@@ -412,7 +412,7 @@ action_playlist2_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_playlist3_handler (DB_plugin_action_t *act, int ctx) {
+action_playlist3_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 2;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
@@ -422,7 +422,7 @@ action_playlist3_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_playlist4_handler (DB_plugin_action_t *act, int ctx) {
+action_playlist4_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 3;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
@@ -432,7 +432,7 @@ action_playlist4_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_playlist5_handler (DB_plugin_action_t *act, int ctx) {
+action_playlist5_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 4;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
@@ -442,7 +442,7 @@ action_playlist5_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_playlist6_handler (DB_plugin_action_t *act, int ctx) {
+action_playlist6_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 5;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
@@ -452,7 +452,7 @@ action_playlist6_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_playlist7_handler (DB_plugin_action_t *act, int ctx) {
+action_playlist7_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 6;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
@@ -462,7 +462,7 @@ action_playlist7_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_playlist8_handler (DB_plugin_action_t *act, int ctx) {
+action_playlist8_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 7;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
@@ -472,7 +472,7 @@ action_playlist8_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_playlist9_handler (DB_plugin_action_t *act, int ctx) {
+action_playlist9_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 8;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
@@ -482,7 +482,7 @@ action_playlist9_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_playlist10_handler (DB_plugin_action_t *act, int ctx) {
+action_playlist10_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 9;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
@@ -492,7 +492,7 @@ action_playlist10_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_sort_randomize_handler (DB_plugin_action_t *act, int ctx) {
+action_sort_randomize_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM);
     deadbeef->plt_unref (plt);
@@ -501,7 +501,7 @@ action_sort_randomize_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_sort_by_date_handler (DB_plugin_action_t *act, int ctx) {
+action_sort_by_date_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%year%", DDB_SORT_ASCENDING);
     deadbeef->plt_unref (plt);
@@ -510,7 +510,7 @@ action_sort_by_date_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_sort_by_artist_handler (DB_plugin_action_t *act, int ctx) {
+action_sort_by_artist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%artist%", DDB_SORT_ASCENDING);
     deadbeef->plt_unref (plt);
@@ -519,7 +519,7 @@ action_sort_by_artist_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_sort_by_album_handler (DB_plugin_action_t *act, int ctx) {
+action_sort_by_album_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%album%", DDB_SORT_ASCENDING);
     deadbeef->plt_unref (plt);
@@ -528,7 +528,7 @@ action_sort_by_album_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_sort_by_tracknr_handler (DB_plugin_action_t *act, int ctx) {
+action_sort_by_tracknr_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%tracknumber%", DDB_SORT_ASCENDING);
     deadbeef->plt_unref (plt);
@@ -537,7 +537,7 @@ action_sort_by_tracknr_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_sort_by_title_handler (DB_plugin_action_t *act, int ctx) {
+action_sort_by_title_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, "%title%", DDB_SORT_ASCENDING);
     deadbeef->plt_unref (plt);
@@ -546,7 +546,7 @@ action_sort_by_title_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_invert_selection_handler (DB_plugin_action_t *act, int ctx) {
+action_invert_selection_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     deadbeef->pl_lock ();
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
@@ -566,7 +566,7 @@ action_invert_selection_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_clear_playlist_handler (DB_plugin_action_t *act, int ctx) {
+action_clear_playlist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     deadbeef->pl_clear ();
     deadbeef->pl_save_current ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
@@ -574,7 +574,7 @@ action_clear_playlist_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_toggle_in_playqueue_handler (DB_plugin_action_t *act, int ctx) {
+action_toggle_in_playqueue_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     ddb_playlist_t *plt = deadbeef->action_get_playlist ();
 
     DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
@@ -596,7 +596,7 @@ action_toggle_in_playqueue_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_move_tracks_up_handler (DB_plugin_action_t *act, int ctx) {
+action_move_tracks_up_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     deadbeef->pl_lock ();
 
     ddb_playlist_t *plt = deadbeef->action_get_playlist ();
@@ -650,7 +650,7 @@ action_move_tracks_up_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_move_tracks_down_handler (DB_plugin_action_t *act, int ctx) {
+action_move_tracks_down_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     deadbeef->pl_lock ();
 
     ddb_playlist_t *plt = deadbeef->action_get_playlist ();
@@ -702,7 +702,7 @@ action_move_tracks_down_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_add_to_playqueue_handler (DB_plugin_action_t *act, int ctx) {
+action_add_to_playqueue_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     ddb_playlist_t *plt = deadbeef->action_get_playlist ();
 
     DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
@@ -721,7 +721,7 @@ action_add_to_playqueue_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_remove_from_playqueue_handler (DB_plugin_action_t *act, int ctx) {
+action_remove_from_playqueue_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     ddb_playlist_t *plt = deadbeef->action_get_playlist ();
 
     DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
@@ -739,7 +739,7 @@ action_remove_from_playqueue_handler (DB_plugin_action_t *act, int ctx) {
 }
 
 int
-action_toggle_mute_handler (DB_plugin_action_t *act, int ctx) {
+action_toggle_mute_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int mute = 1-deadbeef->audio_is_mute ();
     deadbeef->audio_set_mute (mute);
     return 0;

@@ -81,6 +81,9 @@ int enable_shift_jis_detection = 0;
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
+#ifndef _O_BINARY
+#define _O_BINARY 0
+#endif
 
 // mapping between ddb metadata names and id3v2/apev2 names
 #define FRAME_MAPPINGS 5
@@ -4668,7 +4671,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
     if (stat(fname, &stat_struct) != 0) {
         stat_struct.st_mode = 00640;
     }
-    out = open (tmppath, O_CREAT | O_LARGEFILE | O_WRONLY, stat_struct.st_mode);
+    out = open (tmppath, O_CREAT | O_LARGEFILE | O_WRONLY | _O_BINARY, stat_struct.st_mode);
     trace ("will write tags into %s\n", tmppath);
     if (out < 0) {
         fprintf (stderr, "cmp3_write_metadata: failed to open temp file %s\n", tmppath);

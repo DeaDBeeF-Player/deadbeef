@@ -25,111 +25,111 @@
 #define __HOTKEYS_ACTIONHANDLERS_H
 
 int
-action_jump_to_current_handler (DB_plugin_action_t *act, int ctx);
+action_jump_to_current_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_skip_to_next_album_handler (DB_plugin_action_t *act, int ctx);
+action_skip_to_next_album_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_skip_to_next_artist_handler (DB_plugin_action_t *act, int ctx);
+action_skip_to_next_artist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_skip_to_next_composer_handler (DB_plugin_action_t *act, int ctx);
+action_skip_to_next_composer_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_skip_to_next_genre_handler (DB_plugin_action_t *act, int ctx);
+action_skip_to_next_genre_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_skip_to_prev_album_handler (DB_plugin_action_t *act, int ctx);
+action_skip_to_prev_album_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_skip_to_prev_artist_handler (DB_plugin_action_t *act, int ctx);
+action_skip_to_prev_artist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_skip_to_prev_composer_handler (DB_plugin_action_t *act, int ctx);
+action_skip_to_prev_composer_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_skip_to_prev_genre_handler (DB_plugin_action_t *act, int ctx);
+action_skip_to_prev_genre_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_reload_metadata_handler (DB_plugin_action_t *act, int ctx);
+action_reload_metadata_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_next_playlist_handler (DB_plugin_action_t *act, int ctx);
+action_next_playlist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_prev_playlist_handler (DB_plugin_action_t *act, int ctx);
+action_prev_playlist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_playlist1_handler (DB_plugin_action_t *act, int ctx);
+action_playlist1_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_playlist2_handler (DB_plugin_action_t *act, int ctx);
+action_playlist2_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_playlist3_handler (DB_plugin_action_t *act, int ctx);
+action_playlist3_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_playlist4_handler (DB_plugin_action_t *act, int ctx);
+action_playlist4_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_playlist5_handler (DB_plugin_action_t *act, int ctx);
+action_playlist5_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_playlist6_handler (DB_plugin_action_t *act, int ctx);
+action_playlist6_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_playlist7_handler (DB_plugin_action_t *act, int ctx);
+action_playlist7_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_playlist8_handler (DB_plugin_action_t *act, int ctx);
+action_playlist8_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_playlist9_handler (DB_plugin_action_t *act, int ctx);
+action_playlist9_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_playlist10_handler (DB_plugin_action_t *act, int ctx);
+action_playlist10_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_sort_randomize_handler (DB_plugin_action_t *act, int ctx);
+action_sort_randomize_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_sort_by_date_handler (DB_plugin_action_t *act, int ctx);
+action_sort_by_date_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_sort_by_artist_handler (DB_plugin_action_t *act, int ctx);
+action_sort_by_artist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_sort_by_album_handler (DB_plugin_action_t *act, int ctx);
+action_sort_by_album_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_sort_by_tracknr_handler (DB_plugin_action_t *act, int ctx);
+action_sort_by_tracknr_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_sort_by_title_handler (DB_plugin_action_t *act, int ctx);
+action_sort_by_title_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_invert_selection_handler (DB_plugin_action_t *act, int ctx);
+action_invert_selection_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_clear_playlist_handler (DB_plugin_action_t *act, int ctx);
+action_clear_playlist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_toggle_in_playqueue_handler (DB_plugin_action_t *act, int ctx);
+action_toggle_in_playqueue_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_move_tracks_up_handler (DB_plugin_action_t *act, int ctx);
+action_move_tracks_up_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_move_tracks_down_handler (DB_plugin_action_t *act, int ctx);
+action_move_tracks_down_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_add_to_playqueue_handler (DB_plugin_action_t *act, int ctx);
+action_add_to_playqueue_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_remove_from_playqueue_handler (DB_plugin_action_t *act, int ctx);
+action_remove_from_playqueue_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
-action_toggle_mute_handler (DB_plugin_action_t *act, int ctx);
+action_toggle_mute_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 #endif
