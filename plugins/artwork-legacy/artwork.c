@@ -60,7 +60,7 @@
 #include "wos.h"
 #include "cache.h"
 #include "artwork.h"
-#include "mp4tagutil.h"
+#include "../../shared/mp4tagutil.h"
 
 #define trace(...) { fprintf (stderr, __VA_ARGS__); }
 //#define trace(...)
