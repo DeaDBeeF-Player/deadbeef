@@ -20,98 +20,142 @@
 
     3. This notice may not be removed or altered from any source distribution.
 */
-#include <dirent.h>
 #include <stdlib.h>
-#include <string.h>
+#include <dirent.h>
+#include <errno.h>
 #include <windows.h>
-#include <stdio.h>
-#include "utils.h"
 
-#define DIRENT_CHUNK 64
-// TODO: no selector or cmp support
+//#include "common.h" // for trace_err()
+
+static void set_convert_errno (void) {
+    // Is there like a debug assert instead in this project?
+    /*if (GetLastError() != ERROR_NO_UNICODE_TRANSLATION) {
+        // Sad days =(
+        trace_err ("The scandir implementation is using a bad argument for encoding conversion!\n");
+    }*/
+    _set_errno (EILSEQ);
+}
+
+static void free_namelist (struct dirent **names, int count) {
+    for (int i = 0; i < count; i++) {
+        free (names[i]);
+    }
+    free (names);
+}
+
 int scandir (const char      *dirname_o,
              struct dirent ***namelist_to,
              int            (*selector) (const struct dirent *),
              int            (*cmp) (const struct dirent **, const struct dirent **)) {
-
-    struct dirent ** namelist = malloc (sizeof(struct dirent *) * DIRENT_CHUNK);
-    if (!namelist) {
+    if (dirname_o == NULL) {
         return -1;
     }
 
+    int sErr = errno; // Don't disturb errno unless there is an error.
 
-    char dirname[strlen(dirname_o)+1];
-    strcpy(dirname, dirname_o);
-    // convert any '/' characters to '\\'
-    {
-        char * slash = dirname;
-        while (slash = strchr(slash, '/'))
-            *slash = '\\';
-    }
-    // convert dirname to wchar
-    int dirname_w_len = strlen(dirname) * 2 + 8;
-    wchar_t dirname_w[dirname_w_len];
-    int iconv_ret = win_charset_conv (dirname, strlen(dirname) + 1, (char *) dirname_w, dirname_w_len, "UTF-8", "WCHAR_T");
-    wcscat (dirname_w,L"\\*.*");
-    // FindFirstFileW: P:\ATH\*.*
-
-    WIN32_FIND_DATAW fData;
-    HANDLE hFind = FindFirstFileW (dirname_w, &fData);
-    if (INVALID_HANDLE_VALUE == hFind) {
+    // setting arg cchWideChar to zero will return the length in codepoints, and
+    // it also includes str terminator in the length
+    int utf16_points = MultiByteToWideChar (CP_UTF8, MB_ERR_INVALID_CHARS, dirname_o, -1, NULL, 0);
+    if (utf16_points < 1) {
+        set_convert_errno ();
         return -1;
     }
-    else {
-        int struct_count = 0, alloc_multiplier = 1;
-        // for each file
-        while (1) {
-                // skip dots
-                if (wcscmp(fData.cFileName, L".") != 0 && wcscmp(fData.cFileName, L"..") != 0) {
-                    // mem
-                    if (struct_count == DIRENT_CHUNK * alloc_multiplier) {
-                        struct dirent **namelist_orig = namelist;
-                        namelist = realloc (namelist, sizeof(struct dirent *) * DIRENT_CHUNK * ++alloc_multiplier);
-                        if (!namelist) {
-                            // no more space, free what we allocated
-                            int j;
-                            for (j = 0; j < struct_count; j++) {
-                                free(namelist_orig[j]);
-                            }
-                            free (namelist_orig);
-                            struct_count = -1;
-                            break;
-                        }
-                    }
-                    // entry
-                    struct dirent * tmp = (struct dirent *) malloc (sizeof(struct dirent));
-                    if (!tmp) {
-                        break;
-                    }
-                    size_t len_l = (wcslen (fData.cFileName) + 1) * 2; // 16-bit => 2-byte
-                    size_t len_r = len_l * 2;
-                    char string_tmp[len_r];
-                    int ret = win_charset_conv ((char *) fData.cFileName, len_l, string_tmp, len_r, "WCHAR_T", "UTF-8");
-                    if (ret == -1) {
-                        // failed to UTF-8-fy string, abort entry
-                        free (tmp);
-                        continue;
-                    }
-                    else {
-                        // entry
-                        strcpy (tmp->d_name,string_tmp);
-                        // no d_type on windows
-                        //tmp->d_type = DT_REG; // treat everything as file (TODO)
-                        namelist[struct_count++] = tmp;
-                    }
-                }
-                // next file, stop if last
-                if (FindNextFileW(hFind, &fData) == 0) {
-                    break;
-                }
+
+    // Add 4 for enough room for '\*.*'
+    wchar_t dir_wide[utf16_points + 4];
+    memset (dir_wide, 0, sizeof(wchar_t) * (utf16_points + 4));
+    int ret = MultiByteToWideChar (CP_UTF8, MB_ERR_INVALID_CHARS, dirname_o, -1, dir_wide, utf16_points);
+    if (ret < 1) {
+        // I don't see how this could fail if the first call succeeded, but check anyways.
+        set_convert_errno ();
+        return -1;
+    }
+
+    // Windows can accept forward slashes since like windows 2000. However,
+    // converting makes debugging on windows more canonical/idiomatic.
+    wchar_t *slash = dir_wide;
+    while ((slash = wcschr(slash, '/'))) {
+        *slash = '\\';
+    }
+
+    // Append `\*.*`, and for such a simple append let's just do it here.
+    dir_wide[utf16_points - 1] = '\\';
+    dir_wide[utf16_points + 0] = '*';
+    dir_wide[utf16_points + 1] = '.';
+    dir_wide[utf16_points + 2] = '*';
+
+    WIN32_FIND_DATAW fData = { 0 };
+    HANDLE           hFind = FindFirstFileW (dir_wide, &fData);
+    if (hFind == INVALID_HANDLE_VALUE) {
+        if (GetLastError () == ERROR_FILE_NOT_FOUND) {
+            _set_errno (ENOENT);
         }
-        FindClose(hFind);
-        *namelist_to = namelist;
-        //printf("scandir: %d\n",struct_count);
-        return struct_count;
+        else {
+            _set_errno (EACCES);
+        }
+        return -1;
     }
-    return -1;
+
+    // Begin searching/scanning the directory
+    struct dirent** names    = NULL;
+    size_t          capacity = 0;
+    int             count    = 0;
+    do {
+        wchar_t* name = fData.cFileName;
+        // Skip the special file names `.` and `..`
+        if (name[0] == '.' && (name[1] == 0 || (name[1] == '.' && name[2] == 0))) {
+            continue;
+        }
+        struct dirent tDir = { 0 };
+        // cchWideChar can be -1 for null terminated
+        int ret = WideCharToMultiByte (CP_UTF8, WC_ERR_INVALID_CHARS, name, -1, tDir.d_name, sizeof(tDir.d_name) - 1, NULL, NULL);
+        // Encoding conversion for the unicode string failed
+        if (ret < 1) {
+            free_namelist (names, count);
+            set_convert_errno ();
+            FindClose (hFind); // Don't forget to close
+            return -1;
+        }
+        if (selector && selector (&tDir)) {
+            continue;
+        }
+        //MessageBox(0, tDir.d_name, "Variable", 0);
+
+        struct dirent* cDir = malloc (sizeof(struct dirent));
+        if (cDir == NULL) {
+            // Free before setting errno since it can set errno
+            free_namelist (names, count);
+            _set_errno (ENOMEM);
+            FindClose (hFind);
+            return -1;
+        }
+        memcpy (cDir, &tDir, sizeof(struct dirent));
+
+        // Check we have room
+        if (count == capacity) {
+            capacity = capacity == 0 ? 16 : capacity << 1;
+            struct dirent** new = realloc (names, capacity * sizeof(struct dirent*));
+            if (new == NULL) {
+                free (cDir);
+                free_namelist (names, count);
+                _set_errno (ENOMEM);
+                FindClose(hFind);
+                return -1;
+            }
+            names = new;
+        }
+        names[count] = cDir;
+        count++;
+    } while (FindNextFileW (hFind, &fData));
+    FindClose (hFind);
+
+    // Now sort if we have a comparison callback
+    if (cmp != NULL) {
+        qsort (names, count, sizeof(struct dirent*), (int (*)(const void*, const void*))cmp);
+    }
+    if (namelist_to) {
+        *namelist_to = names;
+    }
+    _set_errno (sErr);
+    return count;
 }
