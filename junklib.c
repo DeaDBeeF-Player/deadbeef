@@ -4668,7 +4668,12 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
     if (stat(fname, &stat_struct) != 0) {
         stat_struct.st_mode = 00640;
     }
-    out = open (tmppath, O_CREAT | O_LARGEFILE | O_WRONLY, stat_struct.st_mode);
+#ifdef __MINGW32__
+    static int extraflags = _O_BINARY;
+#else
+    static int extraflags = 0;
+#endif
+    out = open (tmppath, O_CREAT | O_LARGEFILE | O_WRONLY | extraflags, stat_struct.st_mode);
     trace ("will write tags into %s\n", tmppath);
     if (out < 0) {
         fprintf (stderr, "cmp3_write_metadata: failed to open temp file %s\n", tmppath);
