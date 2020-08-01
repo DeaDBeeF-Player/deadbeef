@@ -62,8 +62,8 @@
 #include "artwork.h"
 #include "../../shared/mp4tagutil.h"
 
-#define trace(...) { fprintf (stderr, __VA_ARGS__); }
-//#define trace(...)
+//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+#define trace(...)
 
 DB_functions_t *deadbeef;
 static DB_artwork_plugin_t plugin;
@@ -1226,6 +1226,7 @@ local_image_file (const char *cache_path, const char *local_path, const char *ur
     if (!artwork_filemask) {
         return -1;
     }
+
     trace ("scanning %s for artwork\n", local_path);
     char filemask[strlen (artwork_filemask)+1];
     strcpy (filemask, artwork_filemask);
