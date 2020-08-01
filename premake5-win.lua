@@ -29,7 +29,7 @@ newoption {
 }
 
 if _OPTIONS["standard"] ~= nil then
-  plugins_to_disable = {"plugin-artwork", "plugin-converter", "plugin-converter_gtk2",
+  plugins_to_disable = {"plugin-converter", "plugin-converter_gtk2",
                         "plugin-converter_gtk3","plugin-ffmpeg","plugin-waveout",
                         "plugin-wildmidi", "plugin-soundtouch" }
   for i,v in ipairs(plugins_to_disable) do
