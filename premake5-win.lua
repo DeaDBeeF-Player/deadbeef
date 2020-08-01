@@ -1051,7 +1051,8 @@ project "artwork_plugin"
 
    files {
        "plugins/artwork-legacy/*.c",
-       "plugins/libmp4ff/*.c"
+       "shared/mp4tagutil.h",
+       "shared/mp4tagutil.c"
    }
 
    excludes {
@@ -1060,7 +1061,7 @@ project "artwork_plugin"
    includedirs { "../libmp4ff" }
 
    defines { "USE_OGG=1", "USE_VFS_CURL", "USE_METAFLAC", "USE_MP4FF", "USE_TAGGING=1" }
-   links { "jpeg", "png", "z", "FLAC", "ogg" }
+   links { "jpeg", "png", "z", "FLAC", "ogg", "mp4p" }
 end
 
 if option ("plugin-supereq") then
