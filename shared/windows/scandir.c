@@ -116,7 +116,7 @@ int scandir (const char      *dirname_o,
             FindClose (hFind); // Don't forget to close
             return -1;
         }
-        if (selector && selector (&tDir)) {
+        if (selector && !selector (&tDir)) {
             continue;
         }
         //MessageBox(0, tDir.d_name, "Variable", 0);
