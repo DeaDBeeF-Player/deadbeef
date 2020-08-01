@@ -79,7 +79,7 @@ int make_cache_root_path (char *path, const size_t size)
     #endif
 
     const char *cache_root = xdg_cache ? xdg_cache : getenv (HOMEDIR);
-    if (snprintf (path, size, xdg_cache ? "%s/deadbeef/" : "%s/.cache/deadbeef/", cache_root) >= size) {
+    if (snprintf (path, size, xdg_cache ? "%s" : "%s/.cache/deadbeef/", cache_root) >= size) {
         trace ("Cache root path truncated at %d bytes\n", (int)size);
         return -1;
     }
