@@ -62,8 +62,8 @@
 #include "artwork.h"
 #include "mp4tagutil.h"
 
-//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
-#define trace(...)
+#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+//#define trace(...)
 
 DB_functions_t *deadbeef;
 static DB_artwork_plugin_t plugin;

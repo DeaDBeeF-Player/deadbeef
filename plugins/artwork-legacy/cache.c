@@ -36,8 +36,8 @@
 #include "artwork_internal.h"
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(...)
 
 extern DB_functions_t *deadbeef;
 
