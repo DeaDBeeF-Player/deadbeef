@@ -516,6 +516,9 @@ static DB_functions_t deadbeef_api = {
     .plt_item_set_selected = (void (*)(ddb_playlist_t *plt, ddb_playItem_t *it, int sel))pl_set_selected_in_playlist,
     .plt_find_by_name = (ddb_playlist_t * (*) (const char *name))plt_find_by_name,
     .plt_append = (ddb_playlist_t * (*) (const char *title))plt_append,
+
+    .plt_get_head_item = (ddb_playItem_t * (*) (ddb_playlist_t *p, int iter))plt_get_head_item,
+    .plt_get_tail_item = (ddb_playItem_t * (*) (ddb_playlist_t *p, int iter))plt_get_tail_item,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

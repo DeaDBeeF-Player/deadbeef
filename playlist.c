@@ -332,15 +332,32 @@ plt_get_count (void) {
     return playlists_count;
 }
 
+playItem_t *plt_get_head_item(playlist_t *p, int iter) {
+    pl_lock ();
+    playItem_t *head = p->head[iter];
+    if (head) {
+        pl_item_ref (head);
+    }
+    pl_unlock ();
+    return head;
+}
+
+playItem_t *plt_get_tail_item(playlist_t *p, int iter) {
+    pl_lock ();
+    playItem_t *tail = p->tail[iter];
+    if (tail) {
+        pl_item_ref (tail);
+    }
+    pl_unlock ();
+    return tail;
+}
+
 playItem_t *
 plt_get_head (int plt) {
     playlist_t *p = playlists_head;
     for (int i = 0; p && i <= plt; i++, p = p->next) {
         if (i == plt) {
-            if (p->head[PL_MAIN]) {
-                pl_item_ref (p->head[PL_MAIN]);
-            }
-            return p->head[PL_MAIN];
+            return plt_get_head_item(p, PL_MAIN);
         }
     }
     return NULL;

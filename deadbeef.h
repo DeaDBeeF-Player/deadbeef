@@ -135,6 +135,18 @@ extern "C" {
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
 #endif
 
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 13)
+#define DEPRECATED_113 DDB_DEPRECATED("since deadbeef API 1.13")
+#else
+#define DEPRECATED_113
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 12)
+#define DEPRECATED_112 DDB_DEPRECATED("since deadbeef API 1.12")
+#else
+#define DEPRECATED_112
+#endif
+
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 11)
 #define DEPRECATED_111 DDB_DEPRECATED("since deadbeef API 1.11")
 #else
@@ -816,7 +828,7 @@ typedef struct {
     int (*plt_get_count) (void);
 
     // 1st item in playlist nr. 'plt'
-    DB_playItem_t * (*plt_get_head) (int plt);
+    DB_playItem_t * (*plt_get_head) (int plt) DEPRECATED_113;
 
     // nr. of selected items in playlist nr. 'plt'
     int (*plt_get_sel_count) (int plt);
@@ -1561,6 +1573,8 @@ typedef struct {
     void (*plt_item_set_selected)(ddb_playlist_t *plt, ddb_playItem_t *it, int sel);
     ddb_playlist_t * (*plt_find_by_name) (const char *name);
     ddb_playlist_t * (*plt_append) (const char *title);
+    ddb_playItem_t * (*plt_get_head_item) (ddb_playlist_t *p, int iter);
+    ddb_playItem_t * (*plt_get_tail_item) (ddb_playlist_t *p, int iter);
 #endif
 } DB_functions_t;
 

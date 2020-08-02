@@ -541,4 +541,10 @@ fileadd_filter_test (ddb_file_found_data_t *data);
 void
 pl_set_selected_in_playlist (playlist_t *playlist, playItem_t *it, int sel);
 
+playItem_t *
+plt_get_head_item(playlist_t *p, int iter);
+
+playItem_t *
+plt_get_tail_item(playlist_t *p, int iter);
+
 #endif // __PLAYLIST_H
