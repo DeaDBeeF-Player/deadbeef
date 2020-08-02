@@ -87,5 +87,5 @@ echo "gui_plugin GTK3" >> "$1/config/config"
 
 # ca-certs
 
-mkdir "$1/share/ssl"
+mkdir -p "$1/share/ssl"
 cp -ru "/mingw64/ssl/certs" "$1/share/ssl/"
