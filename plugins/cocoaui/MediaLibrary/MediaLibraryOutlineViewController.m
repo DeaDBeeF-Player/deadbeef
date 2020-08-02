@@ -8,6 +8,7 @@
 
 #import "deadbeef.h"
 #import "medialib.h"
+#import "MediaLibrarySelectorCellView.h"
 #import "MediaLibraryItem.h"
 #import "MediaLibraryOutlineViewController.h"
 #import "TrackContextMenu.h"
@@ -15,14 +16,14 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface MediaLibraryOutlineViewController() <TrackContextMenuDelegate>
+@interface MediaLibraryOutlineViewController() <TrackContextMenuDelegate,MediaLibraryFilterSelectorCellViewDelegate>
 
-@property (nonatomic) NSString *libraryItem;
+@property (nonatomic) NSString *libraryPopupItem;
+
 @property (nonatomic) int listenerId;
 
 @property (nonatomic) MediaLibraryItem *medialibRootItem;
 
-@property (nonatomic) NSArray<NSString *> *groupItems;
 @property (nonatomic) NSOutlineView *outlineView;
 
 @property (nonatomic) ddb_medialib_plugin_t *medialibPlugin;
@@ -50,14 +51,7 @@ extern DB_functions_t *deadbeef;
     self.outlineView.dataSource = self;
     self.outlineView.delegate = self;
 
-    self.libraryItem = @"Library";
-
-    self.groupItems = @[
-        @"Genres",
-        @"Albums",
-        @"Artists",
-        @"Folders",
-    ];
+    self.libraryPopupItem = @"Popup";
 
     self.medialibPlugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
     self.listenerId = self.medialibPlugin->add_listener (_medialib_listener, (__bridge void *)self);
@@ -65,7 +59,6 @@ extern DB_functions_t *deadbeef;
     self.outlineView.menu = [TrackContextMenu new];
     self.outlineView.menu.delegate = self;
 
-    [self.outlineView expandItem:self.libraryItem];
     [self.outlineView expandItem:self.medialibRootItem];
     [self initializeTreeView:0];
     [self updateMedialibStatus];
@@ -196,9 +189,6 @@ static void _medialib_listener (int event, void *user_data) {
     if (item == nil) {
         return 2;
     }
-    else if (item == self.libraryItem) {
-        return self.groupItems.count;
-    }
     else if ([item isKindOfClass:MediaLibraryItem.class]) {
         MediaLibraryItem *mlItem = item;
         return mlItem.numberOfChildren;
@@ -212,36 +202,21 @@ static void _medialib_listener (int event, void *user_data) {
         MediaLibraryItem *mlItem = item;
         return mlItem.numberOfChildren > 0;
     }
-    else if (item == nil || item == self.libraryItem || item == self.medialibRootItem) {
+    else if (item == nil || item == self.medialibRootItem) {
         return YES;
     }
     return NO;
 }
 
-- (BOOL)outlineView:(NSOutlineView *)outlineView shouldShowOutlineCellForItem:(id)item {
-    if ([item isKindOfClass:MediaLibraryItem.class]) {
-        MediaLibraryItem *mlItem = item;
-        return mlItem.numberOfChildren > 0;
-    }
-    return NO;
-}
-
-- (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
-    if (item == self.libraryItem || item == self.medialibRootItem) {
-        return NO;
-    }
-    return YES;
-}
-
 - (BOOL)outlineView:(NSOutlineView *)outlineView isGroupItem:(id)item {
-    return item == self.libraryItem || item == self.medialibRootItem;
+    return item == self.medialibRootItem;
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
     if (item == nil) {
         switch (index) {
         case 0:
-            return self.libraryItem;
+            return self.libraryPopupItem;
         case 1:
             return self.medialibRootItem;
         }
@@ -249,9 +224,6 @@ static void _medialib_listener (int event, void *user_data) {
     else if ([item isKindOfClass:MediaLibraryItem.class]) {
         MediaLibraryItem *mlItem = item;
         return [mlItem childAtIndex:index];
-    }
-    else if (item == self.libraryItem) {
-        return self.groupItems[index];
     }
 
     return [NSString stringWithFormat:@"Error %d", (int)index];
@@ -261,38 +233,8 @@ static void _medialib_listener (int event, void *user_data) {
 
 - (nullable NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(nullable NSTableColumn *)tableColumn item:(id)item {
     NSTableCellView *view;
-    if (item == self.libraryItem || [item isKindOfClass:MediaLibraryItem.class]) {
-        view = [outlineView makeViewWithIdentifier:@"TextCell" owner:self];
-    }
-    else {
-        view = [outlineView makeViewWithIdentifier:@"ImageTextCell" owner:self];
-
-#if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101600
-        if (@available(macOS 10.16, *)) {
-            NSString *name;
-            if (item == self.groupItems[0]) {
-                name = @"guitars";
-            }
-            else if (item == self.groupItems[1]) {
-                name = @"music.note.list";
-
-            }
-            else if (item == self.groupItems[2]) {
-                name = @"music.mic";
-            }
-            else if (item == self.groupItems[3]) {
-                name = @"folder";
-            }
-
-            if (name) {
-                view.imageView.image = [NSImage imageWithSystemSymbolName:name accessibilityDescription:nil];
-            }
-        }
-#else
-        // FIXME: image fallback for previous macOS versions
-#endif
-    }
     if ([item isKindOfClass:MediaLibraryItem.class]) {
+        view = [outlineView makeViewWithIdentifier:@"TextCell" owner:self];
         MediaLibraryItem *mlItem = item;
         if (item == self.medialibRootItem) {
             [self updateMedialibStatusForView:view];
@@ -301,8 +243,14 @@ static void _medialib_listener (int event, void *user_data) {
             view.textField.stringValue = mlItem.stringValue;
         }
     }
-    else {
-        view.textField.stringValue = item;
+    else if (item == self.libraryPopupItem) {
+        view = [outlineView makeViewWithIdentifier:@"FilterSelectorCell" owner:self];
+        MediaLibrarySelectorCellView *selectorCellView = (MediaLibrarySelectorCellView *)view;
+        selectorCellView.delegate = self;
+        [selectorCellView.popupButton selectItemAtIndex:self.lastSelectedIndex];
+        if (view.textField) {
+            view.textField.stringValue = item;
+        }
     }
     return view;
 }
@@ -314,16 +262,6 @@ static void _medialib_listener (int event, void *user_data) {
     [self.outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:1] inParent:nil withAnimation:NSTableViewAnimationEffectNone];
     [self.outlineView expandItem:self.medialibRootItem];
     [self.outlineView endUpdates];
-}
-
-- (void)outlineViewSelectionDidChange:(NSNotification *)notification {
-    id item = [self.outlineView itemAtRow:self.outlineView.selectedRow];
-
-    NSUInteger idx = [self.groupItems indexOfObject:item];
-    if (idx != NSNotFound) {
-        self.lastSelectedIndex = idx;
-        [self filterChanged];
-    }
 }
 
 #pragma mark - TrackContextMenuDelegate
@@ -390,6 +328,27 @@ static void _medialib_listener (int event, void *user_data) {
 
     // FIXME: the menu operates on the specified playlist, with its own selection, which can change while the menu is open
     // Therefore, it's better to create a separate list of playItems for the menu consumption.
+}
+
+- (NSIndexSet *)outlineView:(NSOutlineView *)outlineView selectionIndexesForProposedSelection:(NSIndexSet *)proposedSelectionIndexes {
+    NSMutableIndexSet *selectionIndexes = [NSMutableIndexSet new];
+
+    // prevent selecting filter items
+    [proposedSelectionIndexes enumerateIndexesUsingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
+        id item = [self.outlineView itemAtRow:row];
+        if (item != self.libraryPopupItem
+            && item != self.medialibRootItem) {
+            [selectionIndexes addIndex:row];
+        }
+    }];
+    return selectionIndexes;
+}
+
+#pragma mark - MediaLibraryFilterSelectorCellViewDelegate
+
+- (void)filterSelectorChanged:(MediaLibrarySelectorCellView *)cellView {
+    self.lastSelectedIndex = cellView.popupButton.indexOfSelectedItem;
+    [self filterChanged];
 }
 
 

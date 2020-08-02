@@ -1795,6 +1795,8 @@
 		2DA30E7524032550001BAB8A /* NetworkPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30E7324032550001BAB8A /* NetworkPreferencesViewController.m */; };
 		2DA30E792403292D001BAB8A /* PlaybackPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA30E772403292D001BAB8A /* PlaybackPreferencesViewController.h */; };
 		2DA30E7A2403292D001BAB8A /* PlaybackPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30E782403292D001BAB8A /* PlaybackPreferencesViewController.m */; };
+		2DA32B1524D6D83C00D96C84 /* MediaLibrarySelectorCellView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA32B1324D6D83C00D96C84 /* MediaLibrarySelectorCellView.h */; };
+		2DA32B1624D6D83C00D96C84 /* MediaLibrarySelectorCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA32B1424D6D83C00D96C84 /* MediaLibrarySelectorCellView.m */; };
 		2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA372192370B854005E64A3 /* NowPlayable.h */; };
 		2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA3721A2370B854005E64A3 /* NowPlayable.m */; };
 		2DA5E331238DB0C4005832B7 /* EditColumnPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */; };
@@ -5393,6 +5395,8 @@
 		2DA30E7324032550001BAB8A /* NetworkPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NetworkPreferencesViewController.m; sourceTree = "<group>"; };
 		2DA30E772403292D001BAB8A /* PlaybackPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaybackPreferencesViewController.h; sourceTree = "<group>"; };
 		2DA30E782403292D001BAB8A /* PlaybackPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaybackPreferencesViewController.m; sourceTree = "<group>"; };
+		2DA32B1324D6D83C00D96C84 /* MediaLibrarySelectorCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaLibrarySelectorCellView.h; sourceTree = "<group>"; };
+		2DA32B1424D6D83C00D96C84 /* MediaLibrarySelectorCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaLibrarySelectorCellView.m; sourceTree = "<group>"; };
 		2DA372192370B854005E64A3 /* NowPlayable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NowPlayable.h; sourceTree = "<group>"; };
 		2DA3721A2370B854005E64A3 /* NowPlayable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NowPlayable.m; sourceTree = "<group>"; };
 		2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditColumnPanel.xib; sourceTree = "<group>"; };
@@ -8045,6 +8049,7 @@
 		2D0B1C8619C5CF4A00CED0B5 /* Supporting files */ = {
 			isa = PBXGroup;
 			children = (
+				2DD5262E2062F1DF002609C5 /* help-cocoa.txt */,
 				4DA72BE61838EAAB00A98C62 /* main.m */,
 				4DA72BDE1838EAAB00A98C62 /* deadbeef-Info.plist */,
 				4DA72BDF1838EAAB00A98C62 /* deadbeef-Prefix.pch */,
@@ -8940,6 +8945,8 @@
 		2D76285224CB29F20029C98C /* MediaLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				2DA32B1324D6D83C00D96C84 /* MediaLibrarySelectorCellView.h */,
+				2DA32B1424D6D83C00D96C84 /* MediaLibrarySelectorCellView.m */,
 				2D887BE424B1C86D0078392F /* MediaLibraryItem.m */,
 				2D8030CC24B261A400539F9F /* MediaLibraryItem.h */,
 				2D8EE27224D03601005C5B4B /* MediaLibraryOutlineViewController.h */,
@@ -10940,8 +10947,6 @@
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
-				2DB52F6A24CF7CB50046D516 /* TrackProperties */,
-				2DD5262E2062F1DF002609C5 /* help-cocoa.txt */,
 				2D9FA3972404551F00276E00 /* Designable */,
 				4D2362B218395D0300C9E818 /* Images */,
 				2D76285224CB29F20029C98C /* MediaLibrary */,
@@ -10951,6 +10956,7 @@
 				2D9FA3952404526800276E00 /* Scriptable */,
 				2D747E2424B64E3400BBB987 /* SplitViewMainWindow */,
 				2D0B1C8619C5CF4A00CED0B5 /* Supporting files */,
+				2DB52F6A24CF7CB50046D516 /* TrackProperties */,
 				2D46220D226DBA2A003997E9 /* Utility */,
 				2DBC62D324CCDEE800AA20BF /* Visualization */,
 				2DE1D3DF19B11286009B5BC6 /* Widgets */,
@@ -12332,6 +12338,7 @@
 				2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */,
 				2D8030CD24B261A400539F9F /* MediaLibraryItem.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
+				2DA32B1524D6D83C00D96C84 /* MediaLibrarySelectorCellView.h in Headers */,
 				2D747E4024B6580A00BBB987 /* MainWindowSidebarViewController.h in Headers */,
 				2DA30E7424032550001BAB8A /* NetworkPreferencesViewController.h in Headers */,
 				2D9BD6792405A81600C02D60 /* SoundPreferencesViewController.h in Headers */,
@@ -15443,6 +15450,7 @@
 				2D651D18227227C300375AE2 /* ScriptableNodeEditorWindowController.m in Sources */,
 				2D8EE27524D03601005C5B4B /* MediaLibraryOutlineViewController.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
+				2DA32B1624D6D83C00D96C84 /* MediaLibrarySelectorCellView.m in Sources */,
 				2D90EF9A2438A5A600AF6F4B /* ScriptableErrorViewer.m in Sources */,
 				2D1A564B1D9FFB10005E5CDD /* ReplayGainScannerController.m in Sources */,
 				2DF55C2A2270F415002C44DC /* ScriptableSelectViewController.m in Sources */,
