@@ -60,7 +60,7 @@ action_open_files_handler_cb (void *userdata) {
 }
 
 int
-action_open_files_handler (struct DB_plugin_action_s *action, int ctx) {
+action_open_files_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     gdk_threads_add_idle (action_open_files_handler_cb, NULL);
     return 0;
 }
@@ -75,7 +75,7 @@ action_add_files_handler_cb (void *user_data) {
 }
 
 int
-action_add_files_handler (struct DB_plugin_action_s *action, int ctx) {
+action_add_files_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     gdk_threads_add_idle (action_add_files_handler_cb, NULL);
     return 0;
 }
@@ -90,7 +90,7 @@ action_add_folders_handler_cb (void *user_data) {
 }
 
 int
-action_add_folders_handler (struct DB_plugin_action_s *action, int ctx) {
+action_add_folders_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     gdk_threads_add_idle (action_add_folders_handler_cb, NULL);
     return 0;
 }
@@ -102,7 +102,7 @@ action_quit_handler_cb (void *user_data) {
 }
 
 int
-action_quit_handler (DB_plugin_action_t *act, int ctx) {
+action_quit_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_quit_handler_cb, NULL);
     return 0;
 }
@@ -125,7 +125,7 @@ action_deselect_all_handler_cb (void *user_data) {
 }
 
 int
-action_deselect_all_handler (struct DB_plugin_action_s *action, int ctx) {
+action_deselect_all_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     g_idle_add (action_deselect_all_handler_cb, NULL);
     return 0;
 }
@@ -138,7 +138,7 @@ action_select_all_handler_cb (void *user_data) {
 }
 
 int
-action_select_all_handler (struct DB_plugin_action_s *action, int ctx) {
+action_select_all_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     g_idle_add (action_select_all_handler_cb, NULL);
     return 0;
 }
@@ -154,13 +154,13 @@ action_new_playlist_handler_cb (void *user_data) {
 }
 
 int
-action_new_playlist_handler (struct DB_plugin_action_s *action, int ctx) {
+action_new_playlist_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     gdk_threads_add_idle (action_new_playlist_handler_cb, NULL);
     return 0;
 }
 
 int
-action_remove_current_playlist_handler (struct DB_plugin_action_s *action, int ctx) {
+action_remove_current_playlist_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     int idx = deadbeef->plt_get_curr_idx ();
     if (idx != -1) {
         deadbeef->plt_remove (idx);
@@ -175,7 +175,7 @@ action_toggle_mainwin_handler_cb (void *user_data) {
 }
 
 int
-action_toggle_mainwin_handler (struct DB_plugin_action_s *action, int ctx) {
+action_toggle_mainwin_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     g_idle_add (action_toggle_mainwin_handler_cb, NULL);
     return 0;
 }
@@ -196,7 +196,7 @@ action_show_mainwin_handler_cb (void *user_data) {
 }
 
 int
-action_show_mainwin_handler (struct DB_plugin_action_s *action, int ctx) {
+action_show_mainwin_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     g_idle_add (action_show_mainwin_handler_cb, NULL);
     return 0;
 }
@@ -211,7 +211,7 @@ action_hide_mainwin_handler_cb (void *user_data) {
 }
 
 int
-action_hide_mainwin_handler (struct DB_plugin_action_s *action, int ctx) {
+action_hide_mainwin_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     g_idle_add (action_hide_mainwin_handler_cb, NULL);
     return 0;
 }
@@ -291,7 +291,7 @@ action_add_location_handler_cb (void *user_data) {
 }
 
 int
-action_add_location_handler (DB_plugin_action_t *act, int ctx) {
+action_add_location_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     gdk_threads_add_idle (action_add_location_handler_cb, NULL);
     return 0;
 }
@@ -307,13 +307,13 @@ action_show_help_handler_cb (void *user_data) {
 }
 
 int
-action_show_help_handler (DB_plugin_action_t *act, int ctx) {
+action_show_help_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     gdk_threads_add_idle (action_show_help_handler_cb, NULL);
     return 0;
 }
 
 int
-action_remove_from_playlist_handler (DB_plugin_action_t *act, int ctx) {
+action_remove_from_playlist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     if (ctx == DDB_ACTION_CTX_SELECTION) {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         if (plt) {
@@ -406,7 +406,7 @@ action_delete_from_disk_handler_cb (void *data) {
         return FALSE;
     }
     
-    int ctx = (int)(intptr_t)data;
+    ddb_action_context_t ctx = (int)(intptr_t)data;
     if (deadbeef->conf_get_int ("gtkui.delete_files_ask", 1)) {
         char buf[1000];
         const char *buf2 = _(" The files will be lost.\n\n(This dialog can be turned off in GTKUI plugin settings)");
@@ -535,13 +535,13 @@ action_delete_from_disk_handler_cb (void *data) {
 }
 
 int
-action_delete_from_disk_handler (DB_plugin_action_t *act, int ctx) {
+action_delete_from_disk_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     gdk_threads_add_idle (action_delete_from_disk_handler_cb, (void *)(intptr_t)ctx);
     return 0;
 }
 
 typedef struct {
-    int ctx;
+    ddb_action_context_t ctx;
     ddb_playlist_t *plt;
 } trkproperties_action_ctx_t;
 
@@ -555,7 +555,7 @@ action_show_track_properties_handler_cb (void *data) {
 }
 
 int
-action_show_track_properties_handler (DB_plugin_action_t *act, int ctx) {
+action_show_track_properties_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     trkproperties_action_ctx_t *data = calloc (1, sizeof (trkproperties_action_ctx_t));
     data->ctx = ctx;
     data->plt = deadbeef->action_get_playlist ();
@@ -570,7 +570,7 @@ action_find_handler_cb (void *data) {
 }
 
 int
-action_find_handler (DB_plugin_action_t *act, int ctx) {
+action_find_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     gdk_threads_add_idle (action_find_handler_cb, NULL);
     return 0;
 }
@@ -584,7 +584,7 @@ action_scroll_follows_playback_handler_cb (void *data) {
 }
 
 int
-action_scroll_follows_playback_handler (DB_plugin_action_t *act, int ctx) {
+action_scroll_follows_playback_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_scroll_follows_playback_handler_cb, NULL);
     return 0;
 }
@@ -598,7 +598,7 @@ action_cursor_follows_playback_handler_cb (void *data) {
 }
 
 int
-action_cursor_follows_playback_handler (DB_plugin_action_t *act, int ctx) {
+action_cursor_follows_playback_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_cursor_follows_playback_handler_cb, NULL);
     return 0;
 }
@@ -638,7 +638,7 @@ action_load_playlist_handler_cb (void *data) {
 }
 
 int
-action_load_playlist_handler (DB_plugin_action_t *act, int ctx) {
+action_load_playlist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     gdk_threads_add_idle (action_load_playlist_handler_cb, NULL);
     return 0;
 }
@@ -669,7 +669,7 @@ action_save_playlist_handler_cb (void *data) {
 }
 
 int
-action_save_playlist_handler (DB_plugin_action_t *act, int ctx) {
+action_save_playlist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     gdk_threads_add_idle (action_save_playlist_handler_cb, NULL);
     return 0;
 }
@@ -684,7 +684,7 @@ action_toggle_menu_handler_cb (void *data) {
 }
 
 int
-action_toggle_menu_handler (DB_plugin_action_t *act, int ctx) {
+action_toggle_menu_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_toggle_menu_handler_cb, NULL);
     return 0;
 }
@@ -703,7 +703,7 @@ action_toggle_statusbar_handler_cb (void *data) {
 }
 
 int
-action_toggle_statusbar_handler (DB_plugin_action_t *act, int ctx) {
+action_toggle_statusbar_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_toggle_statusbar_handler_cb, NULL);
     return 0;
 }
@@ -718,7 +718,7 @@ action_toggle_designmode_handler_cb (void *data) {
 }
 
 int
-action_toggle_designmode_handler (DB_plugin_action_t *act, int ctx) {
+action_toggle_designmode_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_toggle_designmode_handler_cb, NULL);
     return 0;
 }
@@ -730,7 +730,7 @@ action_preferences_handler_cb (void *data) {
 }
 
 int
-action_preferences_handler (DB_plugin_action_t *act, int ctx) {
+action_preferences_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     gdk_threads_add_idle (action_preferences_handler_cb, NULL);
     return 0;
 }
@@ -773,13 +773,13 @@ action_sort_custom_handler_cb (void *data) {
 }
 
 int
-action_sort_custom_handler (DB_plugin_action_t *act, int ctx) {
+action_sort_custom_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     gdk_threads_add_idle (action_sort_custom_handler_cb, NULL);
     return 0;
 }
 
 int
-action_crop_selected_handler (DB_plugin_action_t *act, int ctx) {
+action_crop_selected_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     deadbeef->pl_crop_selected ();
     deadbeef->pl_save_current ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
@@ -796,7 +796,7 @@ action_toggle_eq_handler_cb (void *data) {
 }
 
 int
-action_toggle_eq_handler (DB_plugin_action_t *act, int ctx) {
+action_toggle_eq_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_toggle_eq_handler_cb, NULL);
     return 0;
 }
@@ -812,7 +812,7 @@ action_show_eq_handler_cb (void *data) {
 }
 
 int
-action_show_eq_handler(DB_plugin_action_t *act, int ctx) {
+action_show_eq_handler(DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_show_eq_handler_cb, NULL);
     return 0;
 }
@@ -828,7 +828,7 @@ action_hide_eq_handler_cb (void *data) {
 }
 
 int
-action_hide_eq_handler(DB_plugin_action_t *act, int ctx) {
+action_hide_eq_handler(DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_hide_eq_handler_cb, NULL);
     return 0;
 }
@@ -840,7 +840,7 @@ action_playback_loop_off_handler_cb (void *data) {
 }
 
 int
-action_playback_loop_off_handler(DB_plugin_action_t *act, int ctx) {
+action_playback_loop_off_handler(DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_playback_loop_off_handler_cb, NULL);
     return 0;
 }
@@ -852,7 +852,7 @@ action_playback_loop_single_handler_cb (void *data) {
 }
 
 int
-action_playback_loop_single_handler(DB_plugin_action_t *act, int ctx) {
+action_playback_loop_single_handler(DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_playback_loop_single_handler_cb, NULL);
     return 0;
 }
@@ -864,7 +864,7 @@ action_playback_loop_all_handler_cb (void *data) {
 }
 
 int
-action_playback_loop_all_handler(DB_plugin_action_t *act, int ctx) {
+action_playback_loop_all_handler(DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_playback_loop_all_handler_cb, NULL);
     return 0;
 }
@@ -876,7 +876,7 @@ action_playback_order_random_handler_cb (void *data) {
 }
 
 int
-action_playback_order_random_handler(DB_plugin_action_t *act, int ctx) {
+action_playback_order_random_handler(DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_playback_order_random_handler_cb, NULL);
     return 0;
 }
@@ -888,7 +888,7 @@ action_playback_order_shuffle_albums_handler_cb (void *data) {
 }
 
 int
-action_playback_order_shuffle_albums_handler(DB_plugin_action_t *act, int ctx) {
+action_playback_order_shuffle_albums_handler(DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_playback_order_shuffle_albums_handler_cb, NULL);
     return 0;
 }
@@ -900,7 +900,7 @@ action_playback_order_shuffle_handler_cb (void *data) {
 }
 
 int
-action_playback_order_shuffle_handler(DB_plugin_action_t *act, int ctx) {
+action_playback_order_shuffle_handler(DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_playback_order_shuffle_handler_cb, NULL);
     return 0;
 }
@@ -912,7 +912,7 @@ action_playback_order_linear_handler_cb (void *data) {
 }
 
 int
-action_playback_order_linear_handler(DB_plugin_action_t *act, int ctx) {
+action_playback_order_linear_handler(DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_playback_order_linear_handler_cb, NULL);
     return 0;
 }
@@ -938,7 +938,7 @@ action_playback_order_cycle_handler_cb (void *data) {
 }
 
 int
-action_playback_order_cycle_handler(DB_plugin_action_t *act, int ctx) {
+action_playback_order_cycle_handler(DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_playback_order_cycle_handler_cb, NULL);
     return 0;
 }
@@ -961,7 +961,7 @@ action_playback_loop_cycle_handler_cb (void *data) {
 }
 
 int
-action_playback_loop_cycle_handler(DB_plugin_action_t *act, int ctx) {
+action_playback_loop_cycle_handler(DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_playback_loop_cycle_handler_cb, NULL);
     return 0;
 }
@@ -973,7 +973,7 @@ action_toggle_logwindow_handler_cb (void *data) {
 }
 
 int
-action_toggle_logwindow_handler(DB_plugin_action_t *act, int ctx) {
+action_toggle_logwindow_handler(DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_toggle_logwindow_handler_cb, NULL);
     return 0;
 }

@@ -29,7 +29,7 @@ newoption {
 }
 
 if _OPTIONS["standard"] ~= nil then
-  plugins_to_disable = {"plugin-artwork", "plugin-converter", "plugin-converter_gtk2",
+  plugins_to_disable = {"plugin-converter", "plugin-converter_gtk2",
                         "plugin-converter_gtk3","plugin-ffmpeg","plugin-waveout",
                         "plugin-wildmidi", "plugin-soundtouch" }
   for i,v in ipairs(plugins_to_disable) do
@@ -208,6 +208,171 @@ project "aac_plugin"
    }
 
    links { "faad", "mp4p" }
+end
+
+if option ("plugin-adplug") then
+project "adplug_plugin"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+   targetname "adplug"
+
+   files {
+       "plugins/adplug/plugin.c",
+       "plugins/adplug/adplug-db.cpp",
+       "plugins/adplug/libbinio/binfile.h",
+       "plugins/adplug/libbinio/binio.h",
+       "plugins/adplug/libbinio/binstr.h",
+       "plugins/adplug/libbinio/binwrap.h",
+       "plugins/adplug/libbinio/binfile.cpp",
+       "plugins/adplug/libbinio/binio.cpp",
+       "plugins/adplug/libbinio/binstr.cpp",
+       "plugins/adplug/libbinio/binwrap.cpp",
+       "plugins/adplug/adplug/a2m.cpp",
+       "plugins/adplug/adplug/a2m.h",
+       "plugins/adplug/adplug/adl.cpp",
+       "plugins/adplug/adplug/adl.h",
+       "plugins/adplug/adplug/adlib.cpp",
+       "plugins/adplug/adplug/adlib.h",
+       "plugins/adplug/adplug/adlibemu.h",
+       "plugins/adplug/adplug/adplug.cpp",
+       "plugins/adplug/adplug/adplug.h",
+       "plugins/adplug/adplug/adtrack.cpp",
+       "plugins/adplug/adplug/adtrack.h",
+       "plugins/adplug/adplug/amd.cpp",
+       "plugins/adplug/adplug/amd.h",
+       "plugins/adplug/adplug/analopl.cpp",
+       "plugins/adplug/adplug/analopl.h",
+       "plugins/adplug/adplug/bam.cpp",
+       "plugins/adplug/adplug/bam.h",
+       "plugins/adplug/adplug/bmf.cpp",
+       "plugins/adplug/adplug/bmf.h",
+       "plugins/adplug/adplug/cff.cpp",
+       "plugins/adplug/adplug/cff.h",
+       "plugins/adplug/adplug/cmf.cpp",
+       "plugins/adplug/adplug/cmf.h",
+       "plugins/adplug/adplug/cmfmcsop.cpp",
+       "plugins/adplug/adplug/cmfmcsop.h",
+       "plugins/adplug/adplug/d00.cpp",
+       "plugins/adplug/adplug/d00.h",
+       "plugins/adplug/adplug/database.cpp",
+       "plugins/adplug/adplug/database.h",
+       "plugins/adplug/adplug/debug.h",
+       "plugins/adplug/adplug/dfm.cpp",
+       "plugins/adplug/adplug/dfm.h",
+       "plugins/adplug/adplug/diskopl.cpp",
+       "plugins/adplug/adplug/diskopl.h",
+       "plugins/adplug/adplug/dmo.cpp",
+       "plugins/adplug/adplug/dmo.h",
+       "plugins/adplug/adplug/dro.cpp",
+       "plugins/adplug/adplug/dro.h",
+       "plugins/adplug/adplug/dro2.cpp",
+       "plugins/adplug/adplug/dro2.h",
+       "plugins/adplug/adplug/dtm.cpp",
+       "plugins/adplug/adplug/dtm.h",
+       "plugins/adplug/adplug/emuopl.cpp",
+       "plugins/adplug/adplug/emuopl.h",
+       "plugins/adplug/adplug/flash.cpp",
+       "plugins/adplug/adplug/flash.h",
+       "plugins/adplug/adplug/fmc.cpp",
+       "plugins/adplug/adplug/fmc.h",
+       "plugins/adplug/adplug/fmopl.h",
+       "plugins/adplug/adplug/fprovide.cpp",
+       "plugins/adplug/adplug/fprovide.h",
+       "plugins/adplug/adplug/got.cpp",
+       "plugins/adplug/adplug/got.h",
+       "plugins/adplug/adplug/herad.cpp",
+       "plugins/adplug/adplug/herad.h",
+       "plugins/adplug/adplug/hsc.cpp",
+       "plugins/adplug/adplug/hsc.h",
+       "plugins/adplug/adplug/hsp.cpp",
+       "plugins/adplug/adplug/hsp.h",
+       "plugins/adplug/adplug/hybrid.cpp",
+       "plugins/adplug/adplug/hybrid.h",
+       "plugins/adplug/adplug/hyp.cpp",
+       "plugins/adplug/adplug/hyp.h",
+       "plugins/adplug/adplug/imf.cpp",
+       "plugins/adplug/adplug/imf.h",
+       "plugins/adplug/adplug/jbm.cpp",
+       "plugins/adplug/adplug/jbm.h",
+       "plugins/adplug/adplug/kemuopl.h",
+       "plugins/adplug/adplug/ksm.cpp",
+       "plugins/adplug/adplug/ksm.h",
+       "plugins/adplug/adplug/lds.cpp",
+       "plugins/adplug/adplug/lds.h",
+       "plugins/adplug/adplug/mad.cpp",
+       "plugins/adplug/adplug/mad.h",
+       "plugins/adplug/adplug/mdi.cpp",
+       "plugins/adplug/adplug/mdi.h",
+       "plugins/adplug/adplug/mid.cpp",
+       "plugins/adplug/adplug/mid.h",
+       "plugins/adplug/adplug/mididata.h",
+       "plugins/adplug/adplug/mkj.cpp",
+       "plugins/adplug/adplug/mkj.h",
+       "plugins/adplug/adplug/msc.cpp",
+       "plugins/adplug/adplug/msc.h",
+       "plugins/adplug/adplug/mtk.cpp",
+       "plugins/adplug/adplug/mtk.h",
+       "plugins/adplug/adplug/mus.cpp",
+       "plugins/adplug/adplug/mus.h",
+       "plugins/adplug/adplug/nemuopl.cpp",
+       "plugins/adplug/adplug/nemuopl.h",
+       "plugins/adplug/adplug/nukedopl.h",
+       "plugins/adplug/adplug/opl.h",
+       "plugins/adplug/adplug/player.cpp",
+       "plugins/adplug/adplug/player.h",
+       "plugins/adplug/adplug/players.cpp",
+       "plugins/adplug/adplug/players.h",
+       "plugins/adplug/adplug/protrack.cpp",
+       "plugins/adplug/adplug/protrack.h",
+       "plugins/adplug/adplug/psi.cpp",
+       "plugins/adplug/adplug/psi.h",
+       "plugins/adplug/adplug/rad.cpp",
+       "plugins/adplug/adplug/rad.h",
+       "plugins/adplug/adplug/rat.cpp",
+       "plugins/adplug/adplug/rat.h",
+       "plugins/adplug/adplug/raw.cpp",
+       "plugins/adplug/adplug/raw.h",
+       "plugins/adplug/adplug/realopl.cpp",
+       "plugins/adplug/adplug/realopl.h",
+       "plugins/adplug/adplug/rix.cpp",
+       "plugins/adplug/adplug/rix.h",
+       "plugins/adplug/adplug/rol.cpp",
+       "plugins/adplug/adplug/rol.h",
+       "plugins/adplug/adplug/s3m.cpp",
+       "plugins/adplug/adplug/s3m.h",
+       "plugins/adplug/adplug/sa2.cpp",
+       "plugins/adplug/adplug/sa2.h",
+       "plugins/adplug/adplug/silentopl.h",
+       "plugins/adplug/adplug/sng.cpp",
+       "plugins/adplug/adplug/sng.h",
+       "plugins/adplug/adplug/sop.cpp",
+       "plugins/adplug/adplug/sop.h",
+       "plugins/adplug/adplug/surroundopl.cpp",
+       "plugins/adplug/adplug/surroundopl.h",
+       "plugins/adplug/adplug/temuopl.cpp",
+       "plugins/adplug/adplug/temuopl.h",
+       "plugins/adplug/adplug/u6m.cpp",
+       "plugins/adplug/adplug/u6m.h",
+       "plugins/adplug/adplug/version.h",
+       "plugins/adplug/adplug/vgm.cpp",
+       "plugins/adplug/adplug/vgm.h",
+       "plugins/adplug/adplug/wemuopl.h",
+       "plugins/adplug/adplug/woodyopl.cpp",
+       "plugins/adplug/adplug/woodyopl.h",
+       "plugins/adplug/adplug/xad.cpp",
+       "plugins/adplug/adplug/xad.h",
+       "plugins/adplug/adplug/xsm.cpp",
+       "plugins/adplug/adplug/xsm.h",
+       "plugins/adplug/adplug/adlibemu.c",
+       "plugins/adplug/adplug/debug.c",
+       "plugins/adplug/adplug/fmopl.c",
+       "plugins/adplug/adplug/nukedopl.c"
+   }
+   defines { "stricmp=strcasecmp" }
+   includedirs { "plugins/adplug/adplug", "plugins/adplug/libbinio" }
+   links { "stdc++" }
 end
 
 if option ("plugin-alac") then
@@ -886,7 +1051,8 @@ project "artwork_plugin"
 
    files {
        "plugins/artwork-legacy/*.c",
-       "plugins/libmp4ff/*.c"
+       "shared/mp4tagutil.h",
+       "shared/mp4tagutil.c"
    }
 
    excludes {
@@ -895,7 +1061,7 @@ project "artwork_plugin"
    includedirs { "../libmp4ff" }
 
    defines { "USE_OGG=1", "USE_VFS_CURL", "USE_METAFLAC", "USE_MP4FF", "USE_TAGGING=1" }
-   links { "jpeg", "png", "z", "FLAC", "ogg" }
+   links { "jpeg", "png", "z", "FLAC", "ogg", "mp4p" }
 end
 
 if option ("plugin-supereq") then

@@ -26,6 +26,10 @@
 #include "utils.h"
 
 int rename_windows(const char * oldfile_c, const char * newfile_c){
+    // early stage validation
+    if (!oldfile_c || !newfile_c || !oldfile_c[0] || !newfile_c[0]) {
+        return -1;
+    }
     char oldfile[strlen(oldfile_c)+1];
     strcpy(oldfile, oldfile_c);
     // convert any '/' characters to '\\'
@@ -57,6 +61,7 @@ int rename_windows(const char * oldfile_c, const char * newfile_c){
             wchar_t * last = wcsrchr (dir, '\\');
             if (!last) {
                 // fail?
+                return -1;
             }
             *last = 0;
             _wmkdir (dir);

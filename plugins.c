@@ -1562,7 +1562,7 @@ is_relative_path_win32 (const char *path_or_url) {
         if (isalpha(path_or_url[0]) && path_or_url[1] == ':' && (path_or_url[2] == '\\' || path_or_url[2] == '/')) {
             return 0;
         }
-        else if (path_or_url[0] == '\\' && path_or_url[1] == '\\') {
+        else if ((path_or_url[0] == '\\' && path_or_url[1] == '\\') || (path_or_url[0] == '/' && path_or_url[1] == '/')) {
             return 0;
         }
     }

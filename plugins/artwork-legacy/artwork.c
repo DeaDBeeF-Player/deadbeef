@@ -60,7 +60,7 @@
 #include "wos.h"
 #include "cache.h"
 #include "artwork.h"
-#include "mp4tagutil.h"
+#include "../../shared/mp4tagutil.h"
 
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(...)
@@ -881,7 +881,7 @@ esc_char (char c) {
         return '\\';
     }
 #else
-    if (c == '\\') {
+    if (c == '/' || c == ':' || c == '|' || c == '*' || c == '\\' || c == '\"' || c == '<' || c == '>' || c == '?') {
         return '_';
     }
 #endif
@@ -943,9 +943,15 @@ make_cache_path2 (char *path, int size, const char *fname, const char *album, co
         artist = "Unknown artist";
     }
 
+    #ifdef __MINGW32__
+    if (make_cache_dir_path (path, size, artist, img_size)) {
+        return -1;
+    }
+    #else
     if (make_cache_dir_path (path, size-NAME_MAX, artist, img_size)) {
         return -1;
     }
+    #endif
 
     int max_album_chars = min (NAME_MAX, size - strlen (path)) - sizeof ("1.jpg.part");
     if (max_album_chars <= 0) {
@@ -2134,7 +2140,7 @@ artwork_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 }
 
 static int
-invalidate_playitem_cache (DB_plugin_action_t *action, int ctx)
+invalidate_playitem_cache (DB_plugin_action_t *action, ddb_action_context_t ctx)
 {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (!plt)

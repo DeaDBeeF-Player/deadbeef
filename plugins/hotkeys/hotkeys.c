@@ -76,7 +76,7 @@ typedef struct command_s {
     int x11_keycode;
 #endif
     int modifier;
-    int ctx;
+    ddb_action_context_t ctx;
     int isglobal;
     DB_plugin_action_t *action;
 } command_t;
@@ -125,7 +125,7 @@ trim (char* s)
 }
 
 static void
-cmd_invoke_plugin_command (DB_plugin_action_t *action, int ctx)
+cmd_invoke_plugin_command (DB_plugin_action_t *action, ddb_action_context_t ctx)
 {
     if (action->callback) {
         if (ctx == DDB_ACTION_CTX_MAIN) {
@@ -589,7 +589,7 @@ hotkeys_reset (void) {
 }
 
 int
-action_play_cb (struct DB_plugin_action_s *action, int ctx) {
+action_play_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     // NOTE: this function is copied as on_playbtn_clicked in gtkui
     DB_output_t *output = deadbeef->get_output ();
     if (output->state () == DDB_PLAYBACK_STATE_PAUSED) {
@@ -632,31 +632,31 @@ action_play_cb (struct DB_plugin_action_s *action, int ctx) {
 }
 
 int
-action_prev_cb (struct DB_plugin_action_s *action, int ctx) {
+action_prev_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     deadbeef->sendmessage (DB_EV_PREV, 0, 0, 0);
     return 0;
 }
 
 int
-action_next_cb (struct DB_plugin_action_s *action, int ctx) {
+action_next_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     deadbeef->sendmessage (DB_EV_NEXT, 0, 0, 0);
     return 0;
 }
 
 int
-action_stop_cb (struct DB_plugin_action_s *action, int ctx) {
+action_stop_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     deadbeef->sendmessage (DB_EV_STOP, 0, 0, 0);
     return 0;
 }
 
 int
-action_toggle_pause_cb (struct DB_plugin_action_s *action, int ctx) {
+action_toggle_pause_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     deadbeef->sendmessage (DB_EV_TOGGLE_PAUSE, 0, 0, 0);
     return 0;
 }
 
 int
-action_play_pause_cb (struct DB_plugin_action_s *action, int ctx) {
+action_play_pause_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     ddb_playback_state_t state = deadbeef->get_output ()->state ();
     if (state == DDB_PLAYBACK_STATE_PLAYING) {
         deadbeef->sendmessage (DB_EV_PAUSE, 0, 0, 0);
@@ -668,13 +668,13 @@ action_play_pause_cb (struct DB_plugin_action_s *action, int ctx) {
 }
 
 int
-action_play_random_cb (struct DB_plugin_action_s *action, int ctx) {
+action_play_random_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     deadbeef->sendmessage (DB_EV_PLAY_RANDOM, 0, 0, 0);
     return 0;
 }
 
 int
-action_seek_5p_forward_cb (struct DB_plugin_action_s *action, int ctx) {
+action_seek_5p_forward_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     deadbeef->pl_lock ();
     DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
     if (it) {
@@ -694,7 +694,7 @@ action_seek_5p_forward_cb (struct DB_plugin_action_s *action, int ctx) {
 }
 
 int
-action_seek_5p_backward_cb (struct DB_plugin_action_s *action, int ctx) {
+action_seek_5p_backward_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     deadbeef->pl_lock ();
     DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
     if (it) {
@@ -714,7 +714,7 @@ action_seek_5p_backward_cb (struct DB_plugin_action_s *action, int ctx) {
 }
 
 int
-action_seek_1p_forward_cb (struct DB_plugin_action_s *action, int ctx) {
+action_seek_1p_forward_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     deadbeef->pl_lock ();
     DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
     if (it) {
@@ -734,7 +734,7 @@ action_seek_1p_forward_cb (struct DB_plugin_action_s *action, int ctx) {
 }
 
 int
-action_seek_1p_backward_cb (struct DB_plugin_action_s *action, int ctx) {
+action_seek_1p_backward_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     deadbeef->pl_lock ();
     DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
     if (it) {
@@ -777,39 +777,39 @@ seek_sec (float sec) {
 }
 
 int
-action_seek_1s_forward_cb (struct DB_plugin_action_s *action, int ctx) {
+action_seek_1s_forward_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     return seek_sec (1.f);
 }
 
 int
-action_seek_1s_backward_cb (struct DB_plugin_action_s *action, int ctx) {
+action_seek_1s_backward_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     return seek_sec (-1.f);
 }
 
 int
-action_seek_5s_forward_cb (struct DB_plugin_action_s *action, int ctx) {
+action_seek_5s_forward_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     return seek_sec (5.f);
 }
 
 int
-action_seek_5s_backward_cb (struct DB_plugin_action_s *action, int ctx) {
+action_seek_5s_backward_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     return seek_sec (-5.f);
 }
 
 int
-action_volume_up_cb (struct DB_plugin_action_s *action, int ctx) {
+action_volume_up_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     deadbeef->volume_set_db (deadbeef->volume_get_db () + 1);
     return 0;
 }
 
 int
-action_volume_down_cb (struct DB_plugin_action_s *action, int ctx) {
+action_volume_down_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     deadbeef->volume_set_db (deadbeef->volume_get_db () - 1);
     return 0;
 }
 
 int
-action_toggle_stop_after_current_cb (struct DB_plugin_action_s *action, int ctx) {
+action_toggle_stop_after_current_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     int var = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
     var = 1 - var;
     deadbeef->conf_set_int ("playlist.stop_after_current", var);
@@ -818,7 +818,7 @@ action_toggle_stop_after_current_cb (struct DB_plugin_action_s *action, int ctx)
 }
 
 int
-action_toggle_stop_after_album_cb (struct DB_plugin_action_s *action, int ctx) {
+action_toggle_stop_after_album_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     int var = deadbeef->conf_get_int ("playlist.stop_after_album", 0);
     var = 1 - var;
     deadbeef->conf_set_int ("playlist.stop_after_album", var);
