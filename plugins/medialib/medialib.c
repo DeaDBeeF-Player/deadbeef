@@ -632,26 +632,8 @@ scanner_thread (void *none) {
 
     ddb_playlist_t *plt = deadbeef->plt_alloc("medialib");
 
-    // clone playlist for update
     deadbeef->mutex_lock (mutex);
-
-    ddb_playItem_t *it = deadbeef->plt_get_first (ml_playlist, PL_MAIN);
-    ddb_playItem_t *tail = NULL;
-    while (it) {
-        ddb_playItem_t *next = deadbeef->pl_get_next(it, PL_MAIN);
-
-        ddb_playItem_t *copy = deadbeef->pl_item_alloc();
-        deadbeef->pl_item_copy (copy, it);
-        deadbeef->plt_insert_item(plt, tail, copy);
-        tail = copy;
-        deadbeef->pl_item_unref (copy);
-
-        deadbeef->pl_item_unref (it);
-        it = next;
-    }
-
     ml_filter_state.plt = plt;
-
     deadbeef->mutex_unlock (mutex);
 
     // update & index the cloned playlist
@@ -700,8 +682,12 @@ ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
     gettimeofday (&tm1, NULL);
 #endif
 
+    deadbeef->mutex_lock (mutex);
+
     const char *s = deadbeef->metacache_get_string (data->filename);
     if (!s) {
+        deadbeef->mutex_unlock (mutex);
+
         return 0;
     }
 
@@ -709,6 +695,8 @@ ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
 
     if (!db.filename_hash[hash]) {
         deadbeef->metacache_remove_string (s);
+        deadbeef->mutex_unlock (mutex);
+
         return 0;
     }
 
@@ -716,6 +704,24 @@ ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
     while (en) {
         if (en->file == s) {
             res = -1;
+
+            // move from current to new playlist
+            ml_string_t *str = hash_find (db.track_uris.hash, s);
+            if (str) {
+                for (ml_collection_item_t *item = str->items; item; item = item->next) {
+                    deadbeef->pl_item_ref (item->it);
+                    deadbeef->plt_remove_item (ml_playlist, item->it);
+
+                    ddb_playItem_t *tail = deadbeef->plt_get_tail_item (data->plt, PL_MAIN);
+
+                    deadbeef->plt_insert_item (data->plt, tail, item->it);
+                    deadbeef->pl_item_unref (item->it);
+
+                    if (tail) {
+                        deadbeef->pl_item_unref (tail);
+                    }
+                }
+            }
             break;
         }
         en = en->bucket_next;
@@ -734,6 +740,8 @@ ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
 #endif
 
     deadbeef->metacache_remove_string (s);
+    deadbeef->mutex_unlock (mutex);
+
 
     return res;
 }
