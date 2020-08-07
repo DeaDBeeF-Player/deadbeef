@@ -1012,6 +1012,7 @@ get_list_of_tracks_for_album (ddb_medialib_item_t *libitem, ml_string_t *album) 
             deadbeef->tf_eval (&ctx, artist_album_bc, text, sizeof (text));
 
             album_item->text = deadbeef->metacache_add_string (text);
+            album_item->track = it;
         }
 
         ddb_medialib_item_t *track_item = calloc(1, sizeof (ddb_medialib_item_t));
@@ -1071,6 +1072,7 @@ get_subfolders_for_folder (ddb_medialib_item_t *folderitem, ml_tree_node_t *fold
             deadbeef->tf_eval (&ctx, title_bc, text, sizeof (text));
 
             trackitem->text = deadbeef->metacache_add_string (text);
+            trackitem->track = i->it;
 
             if (tail) {
                 tail->next = trackitem;
