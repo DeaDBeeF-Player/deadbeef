@@ -632,12 +632,14 @@ scanner_thread (void *none) {
 
     ddb_playlist_t *plt = deadbeef->plt_alloc("medialib");
 
-    deadbeef->mutex_lock (mutex);
+    // doesn't need to be protected by mutex -- this is only supposed to be accessed on the scan thread
     ml_filter_state.plt = plt;
-    deadbeef->mutex_unlock (mutex);
 
     // update & index the cloned playlist
     deadbeef->plt_insert_dir (plt, NULL, musicdir, &scanner_terminate, NULL, NULL);
+
+    ml_filter_state.plt = NULL;
+
     _ml_state = DDB_MEDIALIB_STATE_INDEXING;
     ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
     deadbeef->plt_save (plt, NULL, NULL, plpath, NULL, NULL, NULL);
@@ -709,6 +711,12 @@ ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
             ml_string_t *str = hash_find (db.track_uris.hash, s);
             if (str) {
                 for (ml_collection_item_t *item = str->items; item; item = item->next) {
+                    // Because of cuesheets, the same track may get added multiple times,
+                    // since all items reference the same filename.
+                    // Check if this track is still in ml_playlist
+                    if (deadbeef->plt_get_item_idx (ml_playlist, item->it, PL_MAIN) == -1) {
+                        continue;
+                    }
                     deadbeef->pl_item_ref (item->it);
                     deadbeef->plt_remove_item (ml_playlist, item->it);
 
