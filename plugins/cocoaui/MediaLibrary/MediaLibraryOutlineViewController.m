@@ -313,18 +313,46 @@ static void _medialib_listener (int event, void *user_data) {
     *playItem = item.playItem;
 }
 
-- (void)menuNeedsUpdate:(TrackContextMenu *)menu {
-    ddb_playlist_t * plt;
-    ddb_playItem_t * playItem;
-    [self selectedPlayItem:&playItem plt:&plt];
-    if (playItem && plt) {
-        deadbeef->plt_item_set_selected (plt, playItem, 1);
+- (void)selectClickedRows {
+    ddb_playlist_t *plt = self.medialibPlugin->playlist();
+    if (!plt) {
+        return;
     }
 
-    if (plt) {
-        [((TrackContextMenu *)self.outlineView.menu) update:self.medialibPlugin->playlist() iter:PL_MAIN];
-        deadbeef->plt_unref (plt);
+    deadbeef->plt_deselect_all (plt);
+
+    [self.outlineView.selectedRowIndexes enumerateIndexesUsingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
+        MediaLibraryItem *item = [self.outlineView itemAtRow:row];
+        if (item && [item isKindOfClass:MediaLibraryItem.class]) {
+            ddb_playItem_t *it = item.playItem;
+            deadbeef->pl_set_selected (it, 1);
+        }
+    }];
+
+    // add clicked row
+    NSInteger clickedRow = self.outlineView.clickedRow;
+    if (clickedRow != -1) {
+        MediaLibraryItem *item = [self.outlineView itemAtRow:clickedRow];
+        if (item && [item isKindOfClass:MediaLibraryItem.class]) {
+            ddb_playItem_t *it = item.playItem;
+            deadbeef->pl_set_selected (it, 1);
+        }
     }
+
+
+    deadbeef->plt_unref (plt);
+}
+
+- (void)menuNeedsUpdate:(TrackContextMenu *)menu {
+    ddb_playlist_t *plt = self.medialibPlugin->playlist();
+    if (!plt) {
+        return;
+    }
+
+    [self selectClickedRows];
+
+    [((TrackContextMenu *)self.outlineView.menu) update:self.medialibPlugin->playlist() iter:PL_MAIN];
+    deadbeef->plt_unref (plt);
 
     // FIXME: the menu operates on the specified playlist, with its own selection, which can change while the menu is open
     // Therefore, it's better to create a separate list of playItems for the menu consumption.
