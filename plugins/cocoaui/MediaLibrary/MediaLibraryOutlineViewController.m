@@ -313,6 +313,20 @@ static void _medialib_listener (int event, void *user_data) {
     *playItem = item.playItem;
 }
 
+- (void)selectItemRecursively:(MediaLibraryItem *)item {
+    if (![item isKindOfClass:MediaLibraryItem.class]) {
+        return;
+    }
+    ddb_playItem_t *it = item.playItem;
+    if (it) {
+        deadbeef->pl_set_selected (it, 1);
+    }
+
+    for (NSUInteger i = 0; i < item.numberOfChildren; i++) {
+        [self selectItemRecursively:item.children[i]];
+    }
+}
+
 - (void)selectClickedRows {
     ddb_playlist_t *plt = self.medialibPlugin->playlist();
     if (!plt) {
@@ -322,21 +336,13 @@ static void _medialib_listener (int event, void *user_data) {
     deadbeef->plt_deselect_all (plt);
 
     [self.outlineView.selectedRowIndexes enumerateIndexesUsingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
-        MediaLibraryItem *item = [self.outlineView itemAtRow:row];
-        if (item && [item isKindOfClass:MediaLibraryItem.class]) {
-            ddb_playItem_t *it = item.playItem;
-            deadbeef->pl_set_selected (it, 1);
-        }
+        [self selectItemRecursively:[self.outlineView itemAtRow:row]];
     }];
 
     // add clicked row
     NSInteger clickedRow = self.outlineView.clickedRow;
     if (clickedRow != -1) {
-        MediaLibraryItem *item = [self.outlineView itemAtRow:clickedRow];
-        if (item && [item isKindOfClass:MediaLibraryItem.class]) {
-            ddb_playItem_t *it = item.playItem;
-            deadbeef->pl_set_selected (it, 1);
-        }
+        [self selectItemRecursively:[self.outlineView itemAtRow:clickedRow]];
     }
 
 
