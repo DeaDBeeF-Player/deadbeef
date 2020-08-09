@@ -177,7 +177,7 @@ int startup_fixes(char *out_p) {
     // FIX 3: set path to certs for curl
     // curl can't find certs by default
     if (getenv("CURL_CA_BUNDLE") == NULL) {
-        char capath[PATH_MAX];
+        char capath[PATH_MAX + strlen("CURL_CA_BUNDLE=\\share\\ssl\\certs\\ca-bundle.crt")];
         strcpy (capath,"CURL_CA_BUNDLE=");
         strcat (capath, out_p);
         *(strrchr(capath,'\\')+1) = 0;
