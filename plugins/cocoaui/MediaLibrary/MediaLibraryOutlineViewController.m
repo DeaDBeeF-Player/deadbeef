@@ -7,10 +7,12 @@
 //
 
 #import "deadbeef.h"
+#import "DdbShared.h"
 #import "medialib.h"
 #import "MediaLibrarySelectorCellView.h"
 #import "MediaLibraryItem.h"
 #import "MediaLibraryOutlineViewController.h"
+#import "PlaylistLocalDragDropHolder.h"
 #import "TrackContextMenu.h"
 #import "TrackPropertiesWindowController.h"
 
@@ -50,6 +52,7 @@ extern DB_functions_t *deadbeef;
     self.outlineView = outlineView;
     self.outlineView.dataSource = self;
     self.outlineView.delegate = self;
+    [self.outlineView registerForDraggedTypes:@[ddbPlaylistItemsUTIType]];
 
     self.libraryPopupItem = @"Popup";
 
@@ -229,6 +232,31 @@ static void _medialib_listener (int event, void *user_data) {
     return [NSString stringWithFormat:@"Error %d", (int)index];
 }
 
+
+#pragma mark - NSOutlineViewDataSource - Drag and drop
+
+- (id<NSPasteboardWriting>)outlineView:(NSOutlineView *)outlineView pasteboardWriterForItem:(MediaLibraryItem *)item {
+    if (![item isKindOfClass:MediaLibraryItem.class]) {
+        return nil;
+    }
+    ddb_playlist_t *plt = self.medialibPlugin->playlist();
+    int idx = deadbeef->plt_get_item_idx (plt, item.playItem, PL_MAIN);
+    deadbeef->plt_unref (plt);
+    if (idx < 0) {
+        return nil;
+    }
+    return [[PlaylistLocalDragDropHolder alloc] initWithMedialibItemIndex:idx];
+}
+
+
+- (NSDragOperation)outlineView:(NSOutlineView *)outlineView validateDrop:(id<NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(NSInteger)index {
+    return NSDragOperationNone;
+}
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView acceptDrop:(id<NSDraggingInfo>)info item:(id)item childIndex:(NSInteger)index {
+    return NO;
+}
+
 #pragma mark - NSOutlineViewDelegate
 
 - (nullable NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(nullable NSTableColumn *)tableColumn item:(id)item {
@@ -384,6 +412,8 @@ static void _medialib_listener (int event, void *user_data) {
     self.lastSelectedIndex = cellView.popupButton.indexOfSelectedItem;
     [self filterChanged];
 }
+
+
 
 
 @end

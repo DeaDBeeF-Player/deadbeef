@@ -157,20 +157,24 @@ static int grouptitleheight = 22;
         NSDictionary *options = [NSDictionary dictionary];
         NSArray *draggedItems = [pboard readObjectsForClasses:classes options:options];
 
-        PlaylistLocalDragDropHolder *holder = [draggedItems firstObject];
-        NSInteger from_playlist = holder.playlistIdx;
-        uint32_t *indices = calloc (sizeof (uint32_t), holder.count);
-        int i = 0;
-        for (NSNumber * number in holder.itemsIndices) {
-            indices[i] = (uint32_t)number.unsignedIntValue;
-            ++i;
+        for (PlaylistLocalDragDropHolder *holder in draggedItems) {
+            NSInteger from_playlist = holder.playlistIdx;
+            if (holder.isMedialib) {
+                from_playlist = PLAYLIST_INDEX_MEDIALIB;
+            }
+            uint32_t *indices = calloc (sizeof (uint32_t), holder.itemsIndices.count);
+            int i = 0;
+            for (NSNumber * number in holder.itemsIndices) {
+                indices[i] = (uint32_t)number.unsignedIntValue;
+                ++i;
+            }
+
+            NSUInteger length = holder.itemsIndices.count;
+
+            NSDragOperation op = sender.draggingSourceOperationMask;
+            [delegate dropItems:(int)from_playlist before:row indices:indices count:(int)length copy:(op==NSDragOperationCopy || holder.isMedialib)];
+            free(indices);
         }
-
-        int length = holder.count;
-
-        NSDragOperation op = sender.draggingSourceOperationMask;
-        [delegate dropItems:(int)from_playlist before:row indices:indices count:length copy:op==NSDragOperationCopy];
-        free(indices);
     }
     else if ( [[pboard types] containsObject:NSFilenamesPboardType] ) {
 
