@@ -176,7 +176,7 @@ action_toggle_mainwin_handler_cb (void *user_data) {
 
 int
 action_toggle_mainwin_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
-    g_timeout_add (200, action_toggle_mainwin_handler_cb, NULL);
+    g_timeout_add (500, action_toggle_mainwin_handler_cb, NULL);
     return 0;
 }
 
