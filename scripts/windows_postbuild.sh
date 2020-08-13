@@ -84,3 +84,8 @@ done
 
 echo "output_plugin PortAudio output plugin" > "$1/config/config"
 echo "gui_plugin GTK3" >> "$1/config/config"
+
+# ca-certs
+
+mkdir -p "$1/share/ssl"
+cp -ru "/mingw64/ssl/certs" "$1/share/ssl/"

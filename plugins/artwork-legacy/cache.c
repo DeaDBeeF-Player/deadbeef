@@ -63,13 +63,12 @@ int make_cache_root_path (char *path, const size_t size)
 {
     const char *ddb_cache = deadbeef->get_system_dir (DDB_SYS_DIR_CACHE);
 
-    if (strlen(ddb_cache) >= size) {
+    int ret = snprintf (path, size, (ddb_cache[strlen(ddb_cache)-1] == '/') ? "%s" : "%s/", ddb_cache);
+    if (ret >= 0 && ret > size) {
         trace ("Cache root path is too long (>%d bytes)\n", (int)size);
         return -1;
     }
-    else {
-        strcpy (path, ddb_cache);
-    }
+
     return 0;
 }
 

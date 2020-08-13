@@ -660,6 +660,9 @@ http_thread_func (void *ctx) {
         headers = curl_slist_append (headers, "Icy-Metadata:1");
         curl_easy_setopt (curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt (curl, CURLOPT_HTTP200ALIASES, ok_aliases);
+#ifdef __MINGW32__
+        curl_easy_setopt (curl,CURLOPT_CAINFO, getenv("CURL_CA_BUNDLE"));
+#endif
         if (fp->pos > 0 && fp->length >= 0) {
             curl_easy_setopt (curl, CURLOPT_RESUME_FROM, (long)fp->pos);
         }

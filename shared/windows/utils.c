@@ -174,6 +174,17 @@ int startup_fixes(char *out_p) {
     // since gtk 3.24.12 on windows (msys) client-side decorations are not forced, we need to disable them
     putenv ("GTK_CSD=0");
 
+    // FIX 3: set path to certs for curl
+    // curl can't find certs by default
+    if (getenv("CURL_CA_BUNDLE") == NULL) {
+        char capath[PATH_MAX + strlen("CURL_CA_BUNDLE=\\share\\ssl\\certs\\ca-bundle.crt")];
+        strcpy (capath,"CURL_CA_BUNDLE=");
+        strcat (capath, out_p);
+        *(strrchr(capath,'\\')+1) = 0;
+        strcat (capath, "share\\ssl\\certs\\ca-bundle.crt");
+        putenv (capath);
+    }
+
     // End of fixes
     return ret;
 }
