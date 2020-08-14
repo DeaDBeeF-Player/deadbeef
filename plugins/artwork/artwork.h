@@ -73,6 +73,7 @@ typedef struct ddb_cover_info_s {
     char filepath[PATH_MAX];
     char album[1000];
     char artist[1000];
+    int cover_found; // set to 1 if the cover was found
 
     int refc; // Reference count, to allow sending the same cover to multiple callbacks
 

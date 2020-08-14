@@ -1775,7 +1775,7 @@ recheck_missing_artwork (const char *input_fname, const time_t placeholder_mtime
 // Found in cache: path is returned
 // Embedded cover: !cache_disabled ? save_to_cash&return_path : return blob
 // Web cover: save_to_local ? save_to_local&return_path : ( !cache_disabled ? save_to_cache&return_path : NOP )
-static int
+static void
 process_query (ddb_cover_info_t *cover)
 {
     char cache_path_buf[PATH_MAX];
@@ -1809,14 +1809,16 @@ process_query (ddb_cover_info_t *cover)
                 DB_vfs_t *plugin = scandir_plug (vfs_fname);
                 if (plugin && !local_image_file (vfs_fname, fname_copy, plugin, cover)) {
                     free (fname_copy);
-                    return 1;
+                    cover->cover_found = 1;
+                    return;
                 }
             }
 
             /* Search in file directory */
             if (!local_image_file (dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL, cover)) {
                 free (fname_copy);
-                return 1;
+                cover->cover_found = 1;
+                return;
             }
 
             free (fname_copy);
@@ -1828,31 +1830,36 @@ process_query (ddb_cover_info_t *cover)
         // try to load embedded from flac metadata
         trace ("trying to load artwork from Flac tag for %s\n", cover->filepath);
         if (!flac_extract_art (cache_path, cover)) {
-            return 1;
+            cover->cover_found = 1;
+            return;
         }
 #endif
 
         // try to load embedded from id3v2
         trace ("trying to load artwork from id3v2 tag for %s\n", cover->filepath);
         if (!id3_extract_art (cache_path, cover)) {
-            return 1;
+            cover->cover_found = 1;
+            return;
         }
 
         // try to load embedded from apev2
         trace ("trying to load artwork from apev2 tag for %s\n", cover->filepath);
         if (!apev2_extract_art (cache_path, cover)) {
-            return 1;
+            cover->cover_found = 1;
+            return;
         }
 
         // try to load embedded from mp4
         trace ("trying to load artwork from mp4 tag for %s\n", cover->filepath);
         if (!mp4_extract_art (cache_path, cover)) {
-            return 1;
+            cover->cover_found = 1;
+            return;
         }
     }
 
     if (!cache_path) {
-        return 0;
+        cover->cover_found = 0;
+        return;
     }
 
 #ifdef USE_VFS_CURL
@@ -1860,16 +1867,19 @@ process_query (ddb_cover_info_t *cover)
     if (artwork_enable_wos && strlen (cover->filepath) > 3 && !strcasecmp (cover->filepath+strlen (cover->filepath)-3, ".ay")) {
         if (!fetch_from_wos (cover->album, cache_path)) {
             cover->image_filename = strdup(cache_path);
-            return 1;
+            cover->cover_found = 1;
+            return;
         }
         if (errno == ECONNABORTED) {
-            return 0;
+            cover->cover_found = 0;
+            return;
         }
     }
 
     int res = web_lookups (cache_path, cover);
     if (res >= 0) {
-        return res;
+        cover->cover_found = res;
+        return;
     }
 
     /* Try stripping parenthesised text off the end of the album name */
@@ -1879,7 +1889,8 @@ process_query (ddb_cover_info_t *cover)
         int res = web_lookups (cache_path, cover);
         *p = '(';
         if (res >= 0) {
-            return res;
+            cover->cover_found = res;
+            return;
         }
     }
 #endif
@@ -1887,7 +1898,7 @@ process_query (ddb_cover_info_t *cover)
     /* Touch placeholder */
     write_file (cache_path, NULL, 0);
 
-    return 0;
+    cover->cover_found = 0;
 }
 
 static void
@@ -2062,18 +2073,17 @@ fetcher_thread (void *none)
             deadbeef->tf_eval (&ctx, artist_tf, cover->artist, sizeof (cover->artist));
 
             // check the cache
-            int cover_found = 0;
             ddb_cover_info_t *cached_cover = cover_cache_find (cover);
             if (cached_cover) {
                 cached_cover->timestamp = time(NULL);
                 cover_info_free(cover);
                 cover = cached_cover;
-                cover_found = 1;
                 cover->refc++;
             }
             else {
-                cover_found = process_query (cover);
+                process_query (cover);
             }
+            int cover_found = cover->cover_found;
 
             deadbeef->mutex_lock (queue_mutex);
             cover_query_t *query = query_pop ();
@@ -2099,7 +2109,6 @@ fetcher_thread (void *none)
             }
             else {
                 trace ("artwork fetcher: no cover art found\n");
-                free (cover);
                 send_query_callbacks (query->callbacks, NULL);
             }
             query_free (query);
