@@ -283,8 +283,8 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     MediaLibraryCoverQueryData *data = (__bridge_transfer MediaLibraryCoverQueryData *)(query->user_data);
     if (!error) {
         NSImage *image;
-        if (cover->filename) {
-            image = [[NSImage alloc] initByReferencingFile:[NSString stringWithUTF8String:cover->filename]];
+        if (cover->image_filename) {
+            image = [[NSImage alloc] initByReferencingFile:[NSString stringWithUTF8String:cover->image_filename]];
         }
         else if (cover->blob) {
             NSData *blobData = [NSData dataWithBytes:cover->blob length:cover->blob_size];
@@ -320,16 +320,21 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
                 image = nil;
             }
         }
-        data.item.coverImage = image;
 
+        self.artworkPlugin->cover_info_free (cover);
+        cover = NULL;
 
-        NSInteger row = [self.outlineView rowForItem:data.item];
-        if (row >= 0) {
-            NSTableCellView *cellView = [[self.outlineView rowViewAtRow:row makeIfNecessary:NO] viewAtColumn:0];
-            if (cellView) {
-                cellView.imageView.image = image;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            data.item.coverImage = image;
+
+            NSInteger row = [self.outlineView rowForItem:data.item];
+            if (row >= 0) {
+                NSTableCellView *cellView = [[self.outlineView rowViewAtRow:row makeIfNecessary:NO] viewAtColumn:0];
+                if (cellView) {
+                    cellView.imageView.image = image;
+                }
             }
-        }
+        });
     }
 
     deadbeef->pl_item_unref (query->track);

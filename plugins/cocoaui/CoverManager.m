@@ -91,8 +91,8 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
         img = [[NSImage alloc] initWithData:data];
         data = nil;
     }
-    if (!img && cover && cover->filename) {
-        img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->filename]];
+    if (!img && cover && cover->image_filename) {
+        img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->image_filename]];
     }
     if (!img) {
         img = [cm defaultCover];
