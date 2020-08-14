@@ -2134,6 +2134,8 @@
 		2DF16CC01DCB6335007D7F05 /* supereq.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF16CBB1DCB6335007D7F05 /* supereq.c */; };
 		2DF1ED691DAA376B00E23298 /* decomp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF1ED671DAA376B00E23298 /* decomp.h */; };
 		2DF1ED6A1DAA376B00E23298 /* alac.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF1ED681DAA376B00E23298 /* alac.c */; };
+		2DF3D08024E70775008D966E /* MediaLibraryCoverQueryData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF3D07E24E70775008D966E /* MediaLibraryCoverQueryData.h */; };
+		2DF3D08124E70775008D966E /* MediaLibraryCoverQueryData.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF3D07F24E70775008D966E /* MediaLibraryCoverQueryData.m */; };
 		2DF55C292270F415002C44DC /* ScriptableSelectViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF55C272270F415002C44DC /* ScriptableSelectViewController.h */; };
 		2DF55C2A2270F415002C44DC /* ScriptableSelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF55C282270F415002C44DC /* ScriptableSelectViewController.m */; };
 		2DF55C3F2270FCB9002C44DC /* ScriptableNodeEditorViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF55C3D2270FCB9002C44DC /* ScriptableNodeEditorViewController.h */; };
@@ -5737,6 +5739,8 @@
 		2DF16CBB1DCB6335007D7F05 /* supereq.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = supereq.c; sourceTree = "<group>"; };
 		2DF1ED671DAA376B00E23298 /* decomp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decomp.h; sourceTree = "<group>"; };
 		2DF1ED681DAA376B00E23298 /* alac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alac.c; sourceTree = "<group>"; };
+		2DF3D07E24E70775008D966E /* MediaLibraryCoverQueryData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaLibraryCoverQueryData.h; sourceTree = "<group>"; };
+		2DF3D07F24E70775008D966E /* MediaLibraryCoverQueryData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryCoverQueryData.m; sourceTree = "<group>"; };
 		2DF55C272270F415002C44DC /* ScriptableSelectViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableSelectViewController.h; sourceTree = "<group>"; };
 		2DF55C282270F415002C44DC /* ScriptableSelectViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptableSelectViewController.m; sourceTree = "<group>"; };
 		2DF55C3D2270FCB9002C44DC /* ScriptableNodeEditorViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableNodeEditorViewController.h; sourceTree = "<group>"; };
@@ -8945,6 +8949,8 @@
 		2D76285224CB29F20029C98C /* MediaLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				2DF3D07E24E70775008D966E /* MediaLibraryCoverQueryData.h */,
+				2DF3D07F24E70775008D966E /* MediaLibraryCoverQueryData.m */,
 				2DA32B1324D6D83C00D96C84 /* MediaLibrarySelectorCellView.h */,
 				2DA32B1424D6D83C00D96C84 /* MediaLibrarySelectorCellView.m */,
 				2D887BE424B1C86D0078392F /* MediaLibraryItem.m */,
@@ -12291,6 +12297,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4DC96E701E4CC9670093CFD3 /* dsp.h in Headers */,
+				2DF3D08024E70775008D966E /* MediaLibraryCoverQueryData.h in Headers */,
 				2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */,
 				2DF55C3F2270FCB9002C44DC /* ScriptableNodeEditorViewController.h in Headers */,
 				2DDBA26423E5F14A00051320 /* PlaylistHeaderView.h in Headers */,
@@ -15485,6 +15492,7 @@
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,
 				2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */,
 				2DDBA24E23E5E66D00051320 /* PlaylistContentView.m in Sources */,
+				2DF3D08124E70775008D966E /* MediaLibraryCoverQueryData.m in Sources */,
 				2D72047719DF2971000989C6 /* PlaylistViewController.m in Sources */,
 				2D54915822B1711E000FE7E3 /* HelpWindowController.m in Sources */,
 				2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */,

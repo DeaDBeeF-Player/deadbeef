@@ -212,14 +212,15 @@
                                         <rect key="frame" x="11" y="48" width="262" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
-                                            <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jxw-E6-UZ5">
-                                                <rect key="frame" x="3" y="0.0" width="17" height="17"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="jxw-E6-UZ5">
+                                                <rect key="frame" x="0.0" y="-4" width="17" height="23"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" secondItem="jxw-E6-UZ5" secondAttribute="height" multiplier="1:1" id="uYX-Py-MST"/>
+                                                </constraints>
                                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" catalog="system" id="pYd-An-Pr7"/>
                                             </imageView>
-                                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7jZ-WS-Ehz">
-                                                <rect key="frame" x="25" y="0.0" width="237" height="17"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7jZ-WS-Ehz">
+                                                <rect key="frame" x="25" y="0.0" width="239" height="16"/>
                                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="PZA-yM-DYX">
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -227,6 +228,15 @@
                                                 </textFieldCell>
                                             </textField>
                                         </subviews>
+                                        <constraints>
+                                            <constraint firstItem="jxw-E6-UZ5" firstAttribute="top" secondItem="Cph-I1-FGf" secondAttribute="top" constant="1" id="4ik-i5-Xnl"/>
+                                            <constraint firstItem="7jZ-WS-Ehz" firstAttribute="leading" secondItem="jxw-E6-UZ5" secondAttribute="trailing" constant="10" id="K6M-4h-i1x"/>
+                                            <constraint firstAttribute="trailing" secondItem="7jZ-WS-Ehz" secondAttribute="trailing" id="NqA-8J-jdm"/>
+                                            <constraint firstAttribute="bottom" secondItem="jxw-E6-UZ5" secondAttribute="bottom" constant="-1" id="YDq-MJ-nT4"/>
+                                            <constraint firstItem="7jZ-WS-Ehz" firstAttribute="centerY" secondItem="jxw-E6-UZ5" secondAttribute="centerY" id="gDQ-2N-FHO"/>
+                                            <constraint firstItem="jxw-E6-UZ5" firstAttribute="leading" secondItem="Cph-I1-FGf" secondAttribute="leading" id="n8b-Cf-UGt"/>
+                                            <constraint firstItem="jxw-E6-UZ5" firstAttribute="centerY" secondItem="Cph-I1-FGf" secondAttribute="centerY" constant="1" id="yTE-P0-XEI"/>
+                                        </constraints>
                                         <connections>
                                             <outlet property="imageView" destination="jxw-E6-UZ5" id="2GU-Se-TmT"/>
                                             <outlet property="textField" destination="7jZ-WS-Ehz" id="ZaX-S8-dsT"/>

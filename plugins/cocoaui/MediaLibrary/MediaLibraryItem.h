@@ -24,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic,readonly) ddb_playItem_t *playItem;
 
+@property (nonatomic) NSImage *coverImage;
+
 @end
 
 NS_ASSUME_NONNULL_END

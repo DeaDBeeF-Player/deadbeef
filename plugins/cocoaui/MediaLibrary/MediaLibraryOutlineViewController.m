@@ -9,8 +9,10 @@
 #import "deadbeef.h"
 #import "DdbShared.h"
 #import "medialib.h"
+#import "artwork.h"
 #import "MediaLibrarySelectorCellView.h"
 #import "MediaLibraryItem.h"
+#import "MediaLibraryCoverQueryData.h"
 #import "MediaLibraryOutlineViewController.h"
 #import "PlaylistLocalDragDropHolder.h"
 #import "TrackContextMenu.h"
@@ -29,6 +31,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSOutlineView *outlineView;
 
 @property (nonatomic) ddb_medialib_plugin_t *medialibPlugin;
+@property (nonatomic) ddb_artwork_plugin_t *artworkPlugin;
 @property (nonatomic) ddb_medialib_item_t *medialibItemTree;
 
 @property (nonatomic) NSInteger lastSelectedIndex;
@@ -57,6 +60,7 @@ extern DB_functions_t *deadbeef;
     self.libraryPopupItem = @"Popup";
 
     self.medialibPlugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
+    self.artworkPlugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
     self.listenerId = self.medialibPlugin->add_listener (_medialib_listener, (__bridge void *)self);
 
     self.outlineView.menu = [TrackContextMenu new];
@@ -259,16 +263,95 @@ static void _medialib_listener (int event, void *user_data) {
 
 #pragma mark - NSOutlineViewDelegate
 
+static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
+    if (!error) {
+        MediaLibraryCoverQueryData *data = (__bridge_transfer MediaLibraryCoverQueryData *)(query->user_data);
+
+        NSImage *image;
+        if (cover->filename) {
+            image = [[NSImage alloc] initByReferencingFile:[NSString stringWithUTF8String:cover->filename]];
+        }
+        else if (cover->blob) {
+            NSData *blobData = [NSData dataWithBytes:cover->blob length:cover->blob_size];
+            image = [[NSImage alloc] initWithData:blobData];
+        }
+
+        if (image) {
+
+            // resize
+            CGFloat scale;
+            NSSize size = image.size;
+            if (size.width > size.height) {
+                scale = 24/size.width;
+            }
+            else {
+                scale = 24/size.height;
+            }
+            size.width *= scale;
+            size.height *= scale;
+
+            if (size.width >= 1 && size.height >= 1) {
+                NSImage *smallImage = [[NSImage alloc] initWithSize:size];
+                [smallImage lockFocus];
+                [image setSize:size];
+                NSGraphicsContext.currentContext.imageInterpolation = NSImageInterpolationHigh;
+                [image drawAtPoint:NSZeroPoint fromRect:CGRectMake(0, 0, size.width, size.height) operation:NSCompositingOperationCopy fraction:1.0];
+                [smallImage unlockFocus];
+                image = smallImage;
+            }
+            else {
+                image = nil;
+            }
+        }
+        data.item.coverImage = image;
+
+
+        NSInteger row = [data.outlineView rowForItem:data.item];
+        if (row >= 0) {
+            NSTableCellView *cellView = [[data.outlineView rowViewAtRow:row makeIfNecessary:NO] viewAtColumn:0];
+            cellView.imageView.image = image;
+        }
+    }
+
+    deadbeef->pl_item_unref (query->track);
+    free (query);
+}
+
 - (nullable NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(nullable NSTableColumn *)tableColumn item:(id)item {
     NSTableCellView *view;
     if ([item isKindOfClass:MediaLibraryItem.class]) {
-        view = [outlineView makeViewWithIdentifier:@"TextCell" owner:self];
         MediaLibraryItem *mlItem = item;
+        ddb_playItem_t *it = mlItem.playItem;
+        if (!it) {
+            view = [outlineView makeViewWithIdentifier:@"TextCell" owner:self];
+        }
+        else {
+            view = [outlineView makeViewWithIdentifier:@"ImageTextCell" owner:self];
+        }
         if (item == self.medialibRootItem) {
             [self updateMedialibStatusForView:view];
         }
         else {
             view.textField.stringValue = mlItem.stringValue;
+
+            if (it) {
+                if (mlItem.coverImage) {
+                    view.imageView.image = mlItem.coverImage;
+                }
+                else {
+                    view.imageView.image = nil;
+                    ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
+                    query->_size = sizeof (ddb_cover_query_t);
+                    MediaLibraryCoverQueryData *data = [MediaLibraryCoverQueryData new];
+                    data.item = mlItem;
+                    data.outlineView = self.outlineView;
+                    query->user_data = (__bridge_retained void *)(data);
+                    query->flags = DDB_ARTWORK_FLAG_NO_CACHE|DDB_ARTWORK_FLAG_LOAD_BLOB;
+                    query->track = it;
+                    deadbeef->pl_item_ref (it);
+                    self.artworkPlugin->cover_get(query, cover_get_callback);
+                }
+            }
         }
     }
     else if (item == self.libraryPopupItem) {
