@@ -35,12 +35,14 @@
     bodyItem.canCollapse = NO;
     [self insertSplitViewItem:bodyItem atIndex:1];
 
+#if 0 // FIXME: broken in Big Sur beta4
 #if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101600
     if (@available(macOS 10.16, *)) {
         self.trackingItem = [NSTrackingSeparatorToolbarItem trackingSeparatorToolbarItemWithIdentifier:NSToolbarSidebarTrackingSeparatorItemIdentifier splitView:self.splitView dividerIndex:0];
 
         [self.view.window.toolbar insertItemWithItemIdentifier:NSToolbarSidebarTrackingSeparatorItemIdentifier atIndex:1];
     }
+#endif
 #endif
 
     [super viewDidLoad];
