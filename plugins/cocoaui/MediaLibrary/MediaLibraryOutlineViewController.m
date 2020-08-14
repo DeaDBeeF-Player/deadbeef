@@ -38,6 +38,8 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) TrackPropertiesWindowController *trkProperties;
 
+@property (nonatomic) NSMutableDictionary<NSString *,NSImage *> *albumArtCache;
+
 @end
 
 @implementation MediaLibraryOutlineViewController
@@ -72,6 +74,8 @@ extern DB_functions_t *deadbeef;
 
     self.outlineView.doubleAction = @selector(outlineViewDoubleAction:);
     self.outlineView.target = self;
+
+    self.albumArtCache = [NSMutableDictionary new];
 
     return self;
 }
@@ -264,9 +268,20 @@ static void _medialib_listener (int event, void *user_data) {
 #pragma mark - NSOutlineViewDelegate
 
 static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
-    if (!error) {
-        MediaLibraryCoverQueryData *data = (__bridge_transfer MediaLibraryCoverQueryData *)(query->user_data);
+    MediaLibraryCoverQueryData *data = (__bridge MediaLibraryCoverQueryData *)(query->user_data);
+    [data.viewController coverGetCallbackWithQuery:query coverInfo:cover error:error];
+}
 
+- (NSString *)albumArtCacheKeyForTrack:(ddb_playItem_t *)track {
+    const char *artist = deadbeef->pl_find_meta (track, "artist") ?: "Unknown Artist";
+    const char *album = deadbeef->pl_find_meta (track, "album") ?: "Unknown Album";
+
+    return [NSString stringWithFormat:@"artist:%s;album:%s", artist, album];
+}
+
+- (void)coverGetCallbackWithQuery:(ddb_cover_query_t *)query coverInfo:(ddb_cover_info_t *)cover error:(int)error {
+    MediaLibraryCoverQueryData *data = (__bridge_transfer MediaLibraryCoverQueryData *)(query->user_data);
+    if (!error) {
         NSImage *image;
         if (cover->filename) {
             image = [[NSImage alloc] initByReferencingFile:[NSString stringWithUTF8String:cover->filename]];
@@ -298,6 +313,8 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
                 [image drawAtPoint:NSZeroPoint fromRect:CGRectMake(0, 0, size.width, size.height) operation:NSCompositingOperationCopy fraction:1.0];
                 [smallImage unlockFocus];
                 image = smallImage;
+                NSString *key = [self albumArtCacheKeyForTrack:query->track];
+                self.albumArtCache[key] = image;
             }
             else {
                 image = nil;
@@ -306,10 +323,12 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
         data.item.coverImage = image;
 
 
-        NSInteger row = [data.outlineView rowForItem:data.item];
+        NSInteger row = [self.outlineView rowForItem:data.item];
         if (row >= 0) {
-            NSTableCellView *cellView = [[data.outlineView rowViewAtRow:row makeIfNecessary:NO] viewAtColumn:0];
-            cellView.imageView.image = image;
+            NSTableCellView *cellView = [[self.outlineView rowViewAtRow:row makeIfNecessary:NO] viewAtColumn:0];
+            if (cellView) {
+                cellView.imageView.image = image;
+            }
         }
     }
 
@@ -339,17 +358,24 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
                     view.imageView.image = mlItem.coverImage;
                 }
                 else {
-                    view.imageView.image = nil;
-                    ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
-                    query->_size = sizeof (ddb_cover_query_t);
-                    MediaLibraryCoverQueryData *data = [MediaLibraryCoverQueryData new];
-                    data.item = mlItem;
-                    data.outlineView = self.outlineView;
-                    query->user_data = (__bridge_retained void *)(data);
-                    query->flags = DDB_ARTWORK_FLAG_NO_CACHE|DDB_ARTWORK_FLAG_LOAD_BLOB;
-                    query->track = it;
-                    deadbeef->pl_item_ref (it);
-                    self.artworkPlugin->cover_get(query, cover_get_callback);
+                    NSString *key = [self albumArtCacheKeyForTrack:it];
+                    NSImage *image = self.albumArtCache[key];
+                    if (image) {
+                        view.imageView.image = image;
+                    }
+                    else {
+                        view.imageView.image = nil;
+                        ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
+                        query->_size = sizeof (ddb_cover_query_t);
+                        MediaLibraryCoverQueryData *data = [MediaLibraryCoverQueryData new];
+                        data.item = mlItem;
+                        data.viewController = self;
+                        query->user_data = (__bridge_retained void *)(data);
+                        query->flags = DDB_ARTWORK_FLAG_NO_CACHE|DDB_ARTWORK_FLAG_LOAD_BLOB;
+                        query->track = it;
+                        deadbeef->pl_item_ref (it);
+                        self.artworkPlugin->cover_get(query, cover_get_callback);
+                    }
                 }
             }
         }

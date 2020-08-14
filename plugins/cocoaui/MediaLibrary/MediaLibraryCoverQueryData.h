@@ -9,13 +9,14 @@
 #import <AppKit/AppKit.h>
 
 @class MediaLibraryItem;
+@class MediaLibraryOutlineViewController;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MediaLibraryCoverQueryData : NSObject
 
 @property (nonatomic) MediaLibraryItem *item;
-@property (nonatomic) NSOutlineView *outlineView;
+@property (nonatomic) MediaLibraryOutlineViewController *viewController;
 
 @end
 

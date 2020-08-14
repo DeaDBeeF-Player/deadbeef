@@ -8,11 +8,15 @@
 
 #import <AppKit/AppKit.h>
 
+struct ddb_cover_query_s;
+struct ddb_cover_info_s;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MediaLibraryOutlineViewController : NSObject<NSOutlineViewDataSource,NSOutlineViewDelegate>
 
 - (instancetype)initWithOutlineView:(NSOutlineView *)outlineView NS_DESIGNATED_INITIALIZER;
+- (void)coverGetCallbackWithQuery:(struct ddb_cover_query_s *)query coverInfo:(struct ddb_cover_info_s *)cover error:(int)error;
 
 @end
 
