@@ -1247,11 +1247,10 @@ typedef struct {
     const char * (*metacache_add_string) (const char *str);
     void (*metacache_remove_string) (const char *str);
 
-    // increase/decrease reference count for a string in metadata cache, such as
-    // the ones returned by pl_find_meta
-    // FIXME: these 2 methods are not used anywhere, and are strange. Need to deprecate / remove.
-    void (*metacache_ref) (const char *str);
-    void (*metacache_unref) (const char *str);
+    // These functions are broken, and should not be used.
+    // Use metacache_add_string/metacache_remove_string instead.
+    void (*metacache_ref) (const char *str) DEPRECATED_113;
+    void (*metacache_unref) (const char *str) DEPRECATED_113;
 
     // this function must return original un-overriden value (ignoring the keys prefixed with '!')
     // it's not thread-safe, and must be used under the same conditions as the

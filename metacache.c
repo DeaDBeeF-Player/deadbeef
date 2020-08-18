@@ -139,12 +139,14 @@ metacache_remove_string (const char *str) {
     return metacache_remove_value (str, strlen (str) + 1);
 }
 
+// DEPRECATED_113
 void
 metacache_ref (const char *str) {
     uint32_t *refc = (uint32_t *)(str-5);
     (*refc)++;
 }
 
+// DEPRECATED_113
 void
 metacache_unref (const char *str) {
     uint32_t *refc = (uint32_t *)(str-5);
