@@ -1249,6 +1249,7 @@ typedef struct {
 
     // increase/decrease reference count for a string in metadata cache, such as
     // the ones returned by pl_find_meta
+    // FIXME: these 2 methods are not used anywhere, and are strange. Need to deprecate / remove.
     void (*metacache_ref) (const char *str);
     void (*metacache_unref) (const char *str);
 

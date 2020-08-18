@@ -425,17 +425,21 @@ ml_index (ddb_playlist_t *plt) {
             continue;
         }
 
-        // FIXME: album needs to be a combination of album + artist for indexing / library
-        // That implies that album+artist strings need to be cached/indexed
+        // Get a combined cached artist/album string
         const char *album = deadbeef->pl_find_meta (it, "album");
+
+        char artistalbum[1000] = "";
 
         if (!album) {
             album = unknown_album;
-        }
-
-        if (album == unknown_album) {
             has_unknown_album = 1;
         }
+        else {
+            snprintf (artistalbum, sizeof (artistalbum), "artist:%s;album:%s", artist, album);
+            album = artistalbum;
+        }
+
+        album = deadbeef->metacache_add_string (album);
 
         const char *genre = deadbeef->pl_find_meta (it, "genre");
 
@@ -448,6 +452,10 @@ ml_index (ddb_playlist_t *plt) {
         }
 
         ml_string_t *alb = ml_reg_col (&db.albums, album, it);
+
+        deadbeef->metacache_remove_string (album);
+        album = NULL;
+
         ml_string_t *art = ml_reg_col (&db.artists, artist, it);
         ml_string_t *gnr = ml_reg_col (&db.genres, genre, it);
 
