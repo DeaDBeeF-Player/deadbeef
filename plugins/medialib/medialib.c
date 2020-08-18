@@ -35,6 +35,7 @@ static DB_functions_t *deadbeef;
 
 static int filter_id;
 static char *artist_album_bc;
+static char *artist_album_id_bc;
 static char *title_bc;
 
 typedef struct ml_collection_item_s {
@@ -427,19 +428,19 @@ ml_index (ddb_playlist_t *plt) {
 
         // Get a combined cached artist/album string
         const char *album = deadbeef->pl_find_meta (it, "album");
-
-        char artistalbum[1000] = "";
-
         if (!album) {
-            album = unknown_album;
             has_unknown_album = 1;
         }
-        else {
-            snprintf (artistalbum, sizeof (artistalbum), "artist:%s;album:%s", artist, album);
-            album = artistalbum;
-        }
 
-        album = deadbeef->metacache_add_string (album);
+        char artistalbum[1000] = "";
+        ddb_tf_context_t ctx = {
+            ._size = sizeof (ddb_tf_context_t),
+            .flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK,
+            .it = it,
+        };
+
+        deadbeef->tf_eval (&ctx, artist_album_id_bc, artistalbum, sizeof (artistalbum));
+        album = deadbeef->metacache_add_string (artistalbum);
 
         const char *genre = deadbeef->pl_find_meta (it, "genre");
 
@@ -761,6 +762,10 @@ ml_connect (void) {
 
 static int
 ml_start (void) {
+    artist_album_bc = deadbeef->tf_compile ("[%album artist% - ]%album%");
+    title_bc = deadbeef->tf_compile ("[%tracknumber%. ]%title%");
+    artist_album_id_bc = deadbeef->tf_compile ("artist=$if2(%album artist%,Unknown Artist);album=$if2(%album%,Unknown Album)");
+
     mutex = deadbeef->mutex_create ();
     filter_id = deadbeef->register_fileadd_filter (ml_fileadd_filter, &ml_filter_state);
     return 0;
@@ -788,6 +793,11 @@ ml_stop (void) {
     if (artist_album_bc) {
         deadbeef->tf_free (artist_album_bc);
         artist_album_bc = NULL;
+    }
+
+    if (artist_album_id_bc) {
+        deadbeef->tf_free (artist_album_id_bc);
+        artist_album_id_bc = NULL;
     }
 
     if (title_bc) {
@@ -826,13 +836,6 @@ static void
 get_albums_for_collection_group_by_field (ddb_medialib_item_t *root, ml_collection_t *coll, const char *field, int field_tf, const char /* nonnull */ *default_field_value) {
 
     default_field_value = deadbeef->metacache_add_string (default_field_value);
-
-    if (!artist_album_bc) {
-        artist_album_bc = deadbeef->tf_compile ("[%artist% - ]%album%");
-    }
-    if (!title_bc) {
-        title_bc = deadbeef->tf_compile ("[%tracknumber%. ]%title%");
-    }
 
     ml_string_t *album = db.albums.head;
     char text[1024];
@@ -975,13 +978,6 @@ get_albums_for_collection_group_by_field (ddb_medialib_item_t *root, ml_collecti
 
 static void
 get_list_of_tracks_for_album (ddb_medialib_item_t *libitem, ml_string_t *album) {
-    if (!artist_album_bc) {
-        artist_album_bc = deadbeef->tf_compile ("[%artist% - ]%album%");
-    }
-    if (!title_bc) {
-        title_bc = deadbeef->tf_compile ("[%tracknumber%. ]%title%");
-    }
-
     char text[1024];
 
     ddb_medialib_item_t *album_item = NULL;
