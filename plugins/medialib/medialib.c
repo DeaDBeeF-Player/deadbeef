@@ -157,24 +157,14 @@ hash_find_for_hashkey (ml_string_t **hash, const char *val, uint32_t h) {
 
 static ml_string_t *
 hash_find (ml_string_t **hash, const char *val) {
-    uint32_t h = hash_for_ptr ((void *)val) & (ML_HASH_SIZE-1);
+    uint32_t h = hash_for_ptr ((void *)val);
     return hash_find_for_hashkey(hash, val, h);
-}
-
-static void
-get_track_uri (const char *uri, const char *subsong, char *out, int size) {
-    if (subsong) {
-        snprintf (out, size, "%s#%s", subsong, uri);
-    }
-    else {
-        snprintf (out, size, "%s", uri);
-    }
 }
 
 /// When it is null, it's expected that the bucket will be added, without any associated tracks
 static ml_string_t *
 hash_add (ml_string_t **hash, const char *val, DB_playItem_t /* nullable */ *it) {
-    uint32_t h = hash_for_ptr ((void *)val) & (ML_HASH_SIZE-1);
+    uint32_t h = hash_for_ptr ((void *)val);
     ml_string_t *s = hash_find_for_hashkey(hash, val, h);
     ml_string_t *retval = NULL;
     if (!s) {
@@ -396,7 +386,6 @@ ml_index (ddb_playlist_t *plt) {
     ml_entry_t *tail = NULL;
 
     char folder[PATH_MAX];
-    char track_uri[PATH_MAX];
 
     const char *musicdir = deadbeef->conf_get_str_fast ("medialib.path", NULL);
     db.folders_tree = calloc (1, sizeof (ml_tree_node_t));
@@ -425,14 +414,6 @@ ml_index (ddb_playlist_t *plt) {
 
         if (artist == unknown_artist) {
             has_unknown_artist = 1;
-        }
-
-        if (deadbeef->pl_get_item_flags (it) & DDB_IS_SUBTRACK) {
-            const char *subsong = deadbeef->pl_find_meta (it, ":TRACKNUM");
-            get_track_uri(uri, subsong, track_uri, sizeof (track_uri));
-        }
-        else {
-            get_track_uri(uri, NULL, track_uri, sizeof (track_uri));
         }
 
         if (strncmp (musicdir, uri, strlen (musicdir))) {
@@ -471,7 +452,7 @@ ml_index (ddb_playlist_t *plt) {
         ml_string_t *gnr = ml_reg_col (&db.genres, genre, it);
 
         ml_cached_string_t *cs = calloc (1, sizeof (ml_cached_string_t));
-        cs->s = deadbeef->metacache_add_string (track_uri);
+        cs->s = deadbeef->metacache_add_string (uri);
         cs->next = db.cached_strings;
 
         ml_string_t *trkuri = ml_reg_col (&db.track_uris, cs->s, it);
@@ -1206,22 +1187,33 @@ ml_find_track (DB_playItem_t *it) {
     char track_uri[PATH_MAX];
     const char *uri = deadbeef->pl_find_meta (it, ":URI");
 
+    const char *subsong = NULL;
     if (deadbeef->pl_get_item_flags (it) & DDB_IS_SUBTRACK) {
-        const char *subsong = deadbeef->pl_find_meta (it, ":TRACKNUM");
-        get_track_uri(uri, subsong, track_uri, sizeof (track_uri));
+        subsong = deadbeef->pl_find_meta (it, ":TRACKNUM");
     }
-    else {
-        get_track_uri(uri, NULL, track_uri, sizeof (track_uri));
-    }
-
     printf ("find lib track for key: %s\n", track_uri);
     const char *key = deadbeef->metacache_add_string (track_uri);
 
     ml_string_t *s = hash_find (db.track_uris.hash, key);
 
+    ml_collection_item_t *item = NULL;
     if (s) {
-        uri = deadbeef->pl_find_meta (s->items->it, ":URI");
-        printf ("Found lib track %p (%s) for input track %p\n", s->items->it, uri, it);
+        // find the one with correct subsong
+        item = s->items;
+        while (item) {
+            if (!subsong) {
+                break;
+            }
+            const char *item_subsong = deadbeef->pl_find_meta (it, ":TRACKNUM");
+            if (item_subsong == subsong) {
+                break;
+            }
+            item = item->next;
+        }
+    }
+    if (item) {
+        uri = deadbeef->pl_find_meta (item->it, ":URI");
+        printf ("Found lib track %p (%s) for input track %p\n", item->it, uri, it);
     }
     else {
         printf ("Track not found in lib: %s\n", key);
