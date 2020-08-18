@@ -345,7 +345,10 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     NSTableCellView *view;
     if ([item isKindOfClass:MediaLibraryItem.class]) {
         MediaLibraryItem *mlItem = item;
-        ddb_playItem_t *it = mlItem.playItem;
+        ddb_playItem_t *it = NULL;
+        if (mlItem.numberOfChildren) {
+            it = [mlItem childAtIndex:0].playItem;
+        }
         if (!it) {
             view = [outlineView makeViewWithIdentifier:@"TextCell" owner:self];
         }
