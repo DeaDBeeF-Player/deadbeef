@@ -480,13 +480,13 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 
     deadbeef->plt_deselect_all (plt);
 
-    [self.outlineView.selectedRowIndexes enumerateIndexesUsingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
-        [self selectItemRecursively:[self.outlineView itemAtRow:row]];
-    }];
-
-    // add clicked row
     NSInteger clickedRow = self.outlineView.clickedRow;
-    if (clickedRow != -1) {
+    if (clickedRow != -1 && [self.outlineView isRowSelected:clickedRow]) {
+        [self.outlineView.selectedRowIndexes enumerateIndexesUsingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
+            [self selectItemRecursively:[self.outlineView itemAtRow:row]];
+        }];
+    }
+    else if (clickedRow != -1) {
         [self selectItemRecursively:[self.outlineView itemAtRow:clickedRow]];
     }
 
