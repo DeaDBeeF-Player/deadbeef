@@ -21,11 +21,11 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <sys/time.h>
-#include <string.h>
-#include <stdlib.h>
 #include <limits.h>
-#include <assert.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/time.h>
 #include "../../deadbeef.h"
 #include "medialib.h"
 
@@ -632,6 +632,22 @@ scanner_thread (void *none) {
 
     _ml_state = DDB_MEDIALIB_STATE_INDEXING;
     ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
+
+    // set current time as timestamp
+    time_t timestamp = time(NULL);
+    char stimestamp[100];
+    snprintf (stimestamp, sizeof (stimestamp), "%lld", (int64_t)timestamp);
+    deadbeef->mutex_lock (mutex);
+    ddb_playItem_t *it = deadbeef->plt_get_head_item (plt, PL_MAIN);
+    while (it) {
+        deadbeef->pl_replace_meta (it, ":MEDIALIB_SCAN_TIME", stimestamp);
+        ddb_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    deadbeef->mutex_unlock (mutex);
+
+
     deadbeef->plt_save (plt, NULL, NULL, plpath, NULL, NULL, NULL);
 
     ml_notify_listeners (DDB_MEDIALIB_EVENT_CHANGED);
@@ -674,6 +690,12 @@ ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
     gettimeofday (&tm1, NULL);
 #endif
 
+    time_t mtime = 0;
+    struct stat st = {0};
+    if (stat (data->filename, &st) == 0) {
+        mtime = st.st_mtime;
+    }
+
     deadbeef->mutex_lock (mutex);
 
     const char *s = deadbeef->metacache_get_string (data->filename);
@@ -700,6 +722,25 @@ ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
             // move from current to new playlist
             ml_string_t *str = hash_find (db.track_uris.hash, s);
             if (str) {
+                for (ml_collection_item_t *item = str->items; item; item = item->next) {
+                    const char *stimestamp = deadbeef->pl_find_meta (item->it, ":MEDIALIB_SCAN_TIME");
+                    if (!stimestamp) {
+                        // no scan time
+                        deadbeef->mutex_unlock (mutex);
+                        return 0;
+                    }
+                    int64_t timestamp;
+                    if (sscanf (stimestamp, "%lld", &timestamp) != 1) {
+                        // parse error
+                        deadbeef->mutex_unlock (mutex);
+                        return 0;
+                    }
+                    if (timestamp < mtime) {
+                        deadbeef->mutex_unlock (mutex);
+                        return 0;
+                    }
+                }
+
                 for (ml_collection_item_t *item = str->items; item; item = item->next) {
                     // Because of cuesheets, the same track may get added multiple times,
                     // since all items reference the same filename.
