@@ -67,6 +67,9 @@ AppDelegate *g_appDelegate;
 
 @property (nonatomic) NSInteger firstSelected;
 
+@property (readwrite, strong) NSStatusItem *statusItem;
+
+
 
 @end
 
@@ -255,6 +258,24 @@ main_cleanup_and_quit (void);
     main_cleanup_and_quit();
 }
 
+- (void)activateStatusMenu {
+    if (!self.statusItem) {
+        self.statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
+        [self.statusItem setHighlightMode:YES];
+        [self.statusItem setEnabled:YES];
+        
+        [self.statusItem setToolTip:@"Play/pause DeadBeaf"];
+        [self.statusItem setTitle:@"⏯"];
+        self.statusItem.button.target = self;
+        self.statusItem.button.action = @selector(onStatusItemClicked:);
+    }
+}
+
+- (void)onStatusItemClicked:(id)sender {
+    NSLog(@":::statusItem CLICKED:::");
+    deadbeef->sendmessage(DB_EV_TOGGLE_PAUSE, 0, 0, 0);
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // high sierra would terminate the app on SIGPIPE by default, which breaks converter error handling
@@ -275,6 +296,7 @@ main_cleanup_and_quit (void);
 #endif
 
     [self updateDockNowPlaying];
+    [self activateStatusMenu];
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag{
