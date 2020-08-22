@@ -387,7 +387,10 @@ static char sb_text[512];
     } else
 #endif
     {
-        self.window.title = [NSString stringWithFormat:@"%s%s%s", subtitleBuffer, (titleBuffer[0] && subtitleBuffer[0]) ? " - " : "", titleBuffer];
+        NSString *title = [NSString stringWithUTF8String:titleBuffer];
+        NSString *subTitle = [NSString stringWithUTF8String:subtitleBuffer];
+
+        self.window.title = [NSString stringWithFormat:@"%@%@%@", subTitle, (titleBuffer[0] && subtitleBuffer[0]) ? @" - " : @"", title];
     }
 }
 
