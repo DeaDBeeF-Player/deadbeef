@@ -264,7 +264,7 @@ main_cleanup_and_quit (void);
         [self.statusItem setHighlightMode:YES];
         [self.statusItem setEnabled:YES];
         
-        [self.statusItem setToolTip:@"Play/pause DeadBeaf"];
+        [self.statusItem setToolTip:@"Play/pause DeaDBeeF"];
         [self.statusItem setTitle:@"⏯"];
         self.statusItem.button.target = self;
         self.statusItem.button.action = @selector(onStatusItemClicked:);
@@ -272,8 +272,18 @@ main_cleanup_and_quit (void);
 }
 
 - (void)onStatusItemClicked:(id)sender {
-    NSLog(@":::statusItem CLICKED:::");
     deadbeef->sendmessage(DB_EV_TOGGLE_PAUSE, 0, 0, 0);
+    // show window
+    [NSApp activateIgnoringOtherApps:YES];
+    
+    // restore window if minimized
+    for(NSWindow* win in [NSApp windows])
+    {
+        if([win isMiniaturized])
+        {
+            [win deminiaturize:self];
+        }
+    }
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
