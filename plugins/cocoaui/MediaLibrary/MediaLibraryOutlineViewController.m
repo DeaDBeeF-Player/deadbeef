@@ -68,8 +68,9 @@ extern DB_functions_t *deadbeef;
     self.outlineView.menu = [TrackContextMenu new];
     self.outlineView.menu.delegate = self;
 
-    [self.outlineView expandItem:self.medialibRootItem];
     [self initializeTreeView:0];
+    [self.outlineView expandItem:self.medialibRootItem];
+
     [self updateMedialibStatus];
 
     self.outlineView.doubleAction = @selector(outlineViewDoubleAction:);
@@ -401,12 +402,9 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 }
 
 - (void)filterChanged {
-    [self.outlineView beginUpdates];
-    [self.outlineView removeItemsAtIndexes:[NSIndexSet indexSetWithIndex:1] inParent:nil withAnimation:NSTableViewAnimationEffectNone];
     [self initializeTreeView:(int)self.lastSelectedIndex];
-    [self.outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:1] inParent:nil withAnimation:NSTableViewAnimationEffectNone];
+    [self.outlineView reloadData];
     [self.outlineView expandItem:self.medialibRootItem];
-    [self.outlineView endUpdates];
 }
 
 #pragma mark - TrackContextMenuDelegate
