@@ -74,6 +74,7 @@
 #include "threading.h"
 #include "messagepump.h"
 #include "streamer.h"
+#include "playmodes.h"
 #include "conf.h"
 #include "volume.h"
 #include "plugins.h"
@@ -1315,6 +1316,9 @@ main (int argc, char *argv[]) {
     if (plug_load_all ()) { // required to add files to playlist from commandline
         exit (-1);
     }
+
+    streamer_playmodes_init ();
+
     pl_load_all ();
 
     // execute server commands in local context

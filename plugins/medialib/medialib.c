@@ -1082,13 +1082,6 @@ get_subfolders_for_folder (ddb_medialib_item_t *folderitem, ml_tree_node_t *fold
     if (folder->items) {
         for (ml_collection_item_t *i = folder->items; i; i = i->next) {
             ddb_medialib_item_t *trackitem = calloc (1, sizeof (ddb_medialib_item_t));
-#if 0 // filename is pretty useless
-            const char *uri = deadbeef->pl_find_meta (i->it, ":URI");
-            const char *slash = strrchr (uri, '/');
-            if (slash) {
-                uri = slash+1;
-            }
-#endif
             ddb_tf_context_t ctx = {
                 ._size = sizeof (ddb_tf_context_t),
                 .flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK,

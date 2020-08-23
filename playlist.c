@@ -3949,34 +3949,50 @@ pl_configchanged (void) {
 
 int64_t
 pl_item_get_startsample (playItem_t *it) {
+    int64_t res;
+    pl_lock ();
     if (!it->has_startsample64) {
-        return it->startsample;
+        res = it->startsample;
     }
-    return it->startsample64;
+    else {
+        res = it->startsample64;
+    }
+    pl_unlock();
+    return res;
 }
 
 int64_t
 pl_item_get_endsample (playItem_t *it) {
+    int64_t res = 0;
+    pl_lock ();
     if (!it->has_endsample64) {
-        return it->endsample;
+        res = it->endsample;
     }
-    return it->endsample64;
+    else {
+        res = it->endsample64;
+    }
+    pl_unlock();
+    return res;
 }
 
 void
 pl_item_set_startsample (playItem_t *it, int64_t sample) {
+    pl_lock ();
     it->startsample64 = sample;
     it->startsample = sample >= 0x7fffffff ? 0x7fffffff : (int32_t)sample;
     it->has_startsample64 = 1;
     pl_set_meta_int64 (it, ":STARTSAMPLE", sample);
+    pl_unlock ();
 }
 
 void
 pl_item_set_endsample (playItem_t *it, int64_t sample) {
+    pl_lock ();
     it->endsample64 = sample;
     it->endsample = sample >= 0x7fffffff ? 0x7fffffff : (int32_t)sample;
     it->has_endsample64 = 1;
     pl_set_meta_int64 (it, ":ENDSAMPLE", sample);
+    pl_unlock();
 }
 
 int

@@ -102,7 +102,7 @@ cmp3_open (uint32_t hints) {
         info->want_16bit = 1;
     }
 
-    if (hints & (1<<31)) {
+    if (hints & (1UL<<31)) {
         info->mp3flags |= MP3_PARSE_ESTIMATE_DURATION;
     }
     return &info->info;

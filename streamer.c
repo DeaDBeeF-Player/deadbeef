@@ -1282,7 +1282,9 @@ streamer_set_nextsong (int song, int startpaused) {
 
 void
 streamer_set_seek (float pos) {
+    streamer_lock();
     last_seekpos = pos;
+    streamer_unlock();
     handler_push (handler, STR_EV_SEEK, 0, *((uint32_t *)&pos), 0);
 }
 
@@ -1406,7 +1408,9 @@ handle_track_change (playItem_t *from, playItem_t *track) {
     // otherwise the track is the first one, and playpos is pre-set
     playtime = 0;
     avg_bitrate = -1;
+    streamer_lock();
     last_seekpos = -1;
+    streamer_unlock();
     if (playing_track) {
         send_songstarted (playing_track);
     }

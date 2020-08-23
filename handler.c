@@ -143,6 +143,9 @@ handler_pop (handler_t *h, uint32_t *id, uintptr_t *ctx, uint32_t *p1, uint32_t 
 
 int
 handler_hasmessages (handler_t *h) {
-    return h->mqueue ? 1 : 0;
+    mutex_lock (h->mutex);
+    int res = h->mqueue ? 1 : 0;
+    mutex_unlock (h->mutex);
+    return res;
 }
 

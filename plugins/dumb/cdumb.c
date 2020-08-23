@@ -439,12 +439,6 @@ dumb_register_db_vfs (void) {
 int
 cdumb_start (void) {
     dumb_register_db_vfs ();
-    conf_bps = deadbeef->conf_get_int ("dumb.8bitoutput", 0) ? 8 : 16;
-    conf_samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
-    conf_resampling_quality = deadbeef->conf_get_int ("dumb.resampling_quality", 4);
-    conf_ramping_style = deadbeef->conf_get_int ("dumb.volume_ramping", 2);
-    conf_global_volume = deadbeef->conf_get_int ("dumb.globalvolume", 64);
-    conf_play_forever = deadbeef->streamer_get_repeat () == DDB_REPEAT_SINGLE;
     return 0;
 }
 

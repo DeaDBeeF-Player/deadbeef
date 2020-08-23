@@ -4,6 +4,12 @@
 #include "deadbeef.h"
 
 void
+streamer_playmodes_init (void);
+
+void
+streamer_playmodes_free (void);
+
+void
 streamer_set_shuffle (ddb_shuffle_t shuffle);
 
 ddb_shuffle_t

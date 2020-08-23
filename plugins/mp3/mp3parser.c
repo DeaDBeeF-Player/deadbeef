@@ -91,7 +91,7 @@ _parse_packet (mp3packet_t * restrict packet, uint8_t * restrict fb) {
         }
     }
     // found frame
-    hdr = (0xff<<24) | (sync << 16);
+    hdr = 0xff000000 | (sync << 16);
     sync = fb[2];
     hdr |= sync << 8;
     sync = fb[3];

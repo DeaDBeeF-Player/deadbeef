@@ -3351,6 +3351,7 @@ tf_compile_func (tf_compiler_t *c) {
             memmove (arglens+num_args+1, arglens+num_args, c->o - start - num_args*sizeof(uint16_t));
             c->o += 2;
             // store arg length
+            // FIXME: `arglens` comes in a byte stream without 16 bit alignment, this may cause unaligned access and crash.
             arglens[*start] = (uint16_t)len;
             (*start)++; // num args++
             argstart = c->o;

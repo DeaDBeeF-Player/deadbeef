@@ -480,9 +480,6 @@ static const char * exts[]=
 
 static int
 cgme_start (void) {
-    conf_fadeout = deadbeef->conf_get_int ("gme.fadeout", 10);
-    conf_loopcount = deadbeef->conf_get_int ("gme.loopcount", 2);
-    conf_play_forever = deadbeef->streamer_get_repeat () == DDB_REPEAT_SINGLE;
     return 0;
 }
 
