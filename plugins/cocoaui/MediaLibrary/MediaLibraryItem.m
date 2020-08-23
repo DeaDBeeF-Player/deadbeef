@@ -51,6 +51,10 @@ extern DB_functions_t *deadbeef;
 
             int n1 = atoi (deadbeef->pl_find_meta (obj1.playItem, "track") ?: "0");
             int n2 = atoi (deadbeef->pl_find_meta (obj2.playItem, "track") ?: "0");
+            int d1 = atoi (deadbeef->pl_find_meta (obj1.playItem, "disc") ?: "0") + 1;
+            int d2 = atoi (deadbeef->pl_find_meta (obj2.playItem, "disc") ?: "0") + 1;
+            n1 = d1 * 10000 + n1;
+            n2 = d2 * 10000 + n2;
             if (n1 == n2) {
                 return NSOrderedSame;
             }
