@@ -26,6 +26,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/time.h>
+#include <jansson.h>
 #include "../../deadbeef.h"
 #include "medialib.h"
 
@@ -125,6 +126,9 @@ typedef struct {
 static ml_filter_state_t ml_filter_state;
 
 static ml_db_t db; // this is the index, which can be rebuilt from the playlist at any given time
+
+// FIXME: need to json_decref(musicpaths_json) on quit / reload
+static json_t *musicpaths_json;
 
 static uintptr_t mutex;
 
@@ -373,6 +377,18 @@ ml_free_db (void) {
     memset (&db, 0, sizeof (db));
 }
 
+static json_t *
+_ml_get_music_paths () {
+    const char *paths = deadbeef->conf_get_str_fast ("medialib.paths", NULL);
+    if (!paths) {
+        return NULL;
+    }
+    json_error_t error;
+    json_t *json = json_loads (paths, 0, &error);
+
+    return json;
+}
+
 // This should be called only on pre-existing ml playlist.
 // Subsequent indexing should be done on the fly, using fileadd listener.
 static void
@@ -388,7 +404,9 @@ ml_index (ddb_playlist_t *plt) {
 
     char folder[PATH_MAX];
 
-    const char *musicdir = deadbeef->conf_get_str_fast ("medialib.path", NULL);
+    if (!musicpaths_json) {
+        musicpaths_json = _ml_get_music_paths();
+    }
     db.folders_tree = calloc (1, sizeof (ml_tree_node_t));
     db.folders_tree->text = deadbeef->metacache_add_string ("");
 
@@ -417,7 +435,23 @@ ml_index (ddb_playlist_t *plt) {
             has_unknown_artist = 1;
         }
 
-        if (strncmp (musicdir, uri, strlen (musicdir))) {
+        // find relative uri, or discard from library
+        const char *reluri = NULL;
+        for (int i = 0; i < json_array_size(musicpaths_json); i++) {
+            json_t *data = json_array_get (musicpaths_json, i);
+            if (!json_is_string (data)) {
+                break;
+            }
+            const char *musicdir = json_string_value (data);
+            if (!strncmp (musicdir, uri, strlen (musicdir))) {
+                reluri = uri + strlen (musicdir);
+                if (*reluri == '/') {
+                    reluri++;
+                }
+                break;
+            }
+        }
+        if (!reluri) {
             // uri doesn't match musicdir, remove from db
             DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             deadbeef->plt_remove_item (plt, it);
@@ -425,7 +459,6 @@ ml_index (ddb_playlist_t *plt) {
             it = next;
             continue;
         }
-
         // Get a combined cached artist/album string
         const char *album = deadbeef->pl_find_meta (it, "album");
         if (!album) {
@@ -466,10 +499,6 @@ ml_index (ddb_playlist_t *plt) {
 
         ml_string_t *trkuri = ml_reg_col (&db.track_uris, cs->s, it);
 
-        const char *reluri = uri + strlen (musicdir);
-        if (*reluri == '/') {
-            reluri++;
-        }
         char *fn = strrchr (reluri, '/');
         ml_string_t *fld = NULL;
         if (fn) {
@@ -613,20 +642,26 @@ scanner_thread (void *none) {
     ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
     gettimeofday (&tm1, NULL);
 
-    const char *musicdir = deadbeef->conf_get_str_fast ("medialib.path", NULL);
-    if (!musicdir) {
-        return;
+    if (!musicpaths_json) {
+        musicpaths_json = _ml_get_music_paths();
     }
 
-    printf ("adding dir: %s\n", musicdir);
-
     ddb_playlist_t *plt = deadbeef->plt_alloc("medialib");
-
     // doesn't need to be protected by mutex -- this is only supposed to be accessed on the scan thread
     ml_filter_state.plt = plt;
 
-    // update & index the cloned playlist
-    deadbeef->plt_insert_dir (plt, NULL, musicdir, &scanner_terminate, NULL, NULL);
+    for (int i = 0; i < json_array_size(musicpaths_json); i++) {
+        json_t *data = json_array_get (musicpaths_json, i);
+        if (!json_is_string (data)) {
+            break;
+        }
+        const char *musicdir = json_string_value (data);
+
+        printf ("adding dir: %s\n", musicdir);
+
+        // update & index the cloned playlist
+        deadbeef->plt_insert_dir (plt, NULL, musicdir, &scanner_terminate, NULL, NULL);
+    }
 
     ml_filter_state.plt = NULL;
 

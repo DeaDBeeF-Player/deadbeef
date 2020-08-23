@@ -5413,6 +5413,7 @@
 		2DA66ECD1EDF501000E20989 /* fakein.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fakein.h; sourceTree = "<group>"; };
 		2DA6F89B19A5332D002151EB /* escape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = escape.c; sourceTree = "<group>"; };
 		2DA6F89F19A53334002151EB /* escape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = escape.h; sourceTree = "<group>"; };
+		2DA8897024F2F3ED00477344 /* jansson.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = jansson.xcconfig; sourceTree = "<group>"; };
 		2DA9777424C5EC26002405DA /* gtk3.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = gtk3.xcconfig; sourceTree = "<group>"; };
 		2DAA4C081AAF88DE00519559 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DAA4C0B1AAF88DE00519559 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -9643,6 +9644,7 @@
 			isa = PBXGroup;
 			children = (
 				2DA9777424C5EC26002405DA /* gtk3.xcconfig */,
+				2DA8897024F2F3ED00477344 /* jansson.xcconfig */,
 			);
 			path = configuration;
 			sourceTree = "<group>";
@@ -17893,6 +17895,7 @@
 		};
 		2D3A4BB61D631530002C7098 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DA8897024F2F3ED00477344 /* jansson.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -17912,6 +17915,8 @@
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_CFLAGS = "$(JANSSON_CFLAGS)";
+				OTHER_LDFLAGS = "$(JANSSON_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = macosx;
@@ -17920,6 +17925,7 @@
 		};
 		2D3A4BB71D631530002C7098 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DA8897024F2F3ED00477344 /* jansson.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -17934,6 +17940,8 @@
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "$(JANSSON_CFLAGS)";
+				OTHER_LDFLAGS = "$(JANSSON_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = macosx;
