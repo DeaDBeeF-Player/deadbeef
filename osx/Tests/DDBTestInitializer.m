@@ -13,16 +13,18 @@
 #include "logger.h"
 #include "vfs.h"
 #include "plugins.h"
+#include "playmodes.h"
 
 @implementation DDBTestInitializer
 - (id)init {
-    NSString *resPath = [[NSBundle bundleForClass:[self class]] resourcePath];
-    const char *str = [resPath UTF8String];
+    NSString *resPath = [NSBundle bundleForClass:self.class].resourcePath;
+    const char *str = resPath.UTF8String;
     strcpy (dbplugindir, str);
 
     ddb_logger_init ();
     conf_init ();
     conf_enable_saving (0);
+    streamer_playmodes_init();
     pl_init ();
 
     if (plug_load_all ()) { // required to add files to playlist from commandline
