@@ -8,35 +8,18 @@
 
 #import "MediaLibrarySelectorCellView.h"
 
-@interface MediaLibrarySelectorCellView()
-
-@property (nonatomic,readwrite) NSPopUpButton *popupButton;
-
-@end
-
 @implementation MediaLibrarySelectorCellView
 
-- (instancetype)initWithCoder:(NSCoder *)coder
-{
-    self = [super initWithCoder:coder];
-    if (!self) {
-        return nil;
-    }
+- (void)awakeFromNib {
+    [self.popupButton removeAllItems];
 
-    self.popupButton = [[NSPopUpButton alloc] initWithFrame:self.bounds];
     [self.popupButton addItemWithTitle:@"Genres"];
     [self.popupButton addItemWithTitle:@"Albums"];
     [self.popupButton addItemWithTitle:@"Artists"];
     [self.popupButton addItemWithTitle:@"Folders"];
 
-    self.popupButton.autoresizingMask = NSViewMinXMargin | NSViewWidthSizable | NSViewMaxXMargin | NSViewMinYMargin | NSViewHeightSizable | NSViewMaxYMargin;
-
     self.popupButton.action = @selector(popupButtonAction:);
     self.popupButton.target = self;
-
-    [self addSubview:self.popupButton];
-
-    return self;
 }
 
 - (void)popupButtonAction:(NSPopUpButton *)sender {

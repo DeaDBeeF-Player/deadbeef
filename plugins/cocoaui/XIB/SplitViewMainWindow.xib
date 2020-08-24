@@ -207,6 +207,40 @@
                                     <tableCellView identifier="FilterSelectorCell" id="Rk1-gk-vB8" userLabel="popup" customClass="MediaLibrarySelectorCellView">
                                         <rect key="frame" x="11" y="24" width="262" height="24"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        <subviews>
+                                            <popUpButton horizontalHuggingPriority="249" verticalHuggingPriority="750" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="HiC-Av-HZt">
+                                                <rect key="frame" x="14" y="-1" width="138" height="24"/>
+                                                <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="0P5-9Y-HNY" id="bVL-L2-hUa">
+                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="menu"/>
+                                                    <menu key="menu" id="kyb-s0-uJm">
+                                                        <items>
+                                                            <menuItem title="Item 1" state="on" id="0P5-9Y-HNY"/>
+                                                            <menuItem title="Item 2" id="gfq-5K-62D"/>
+                                                            <menuItem title="Item 3" id="yRg-Hu-vY2"/>
+                                                        </items>
+                                                    </menu>
+                                                </popUpButtonCell>
+                                            </popUpButton>
+                                            <button toolTip="Configure" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="g73-tS-yMi">
+                                                <rect key="frame" x="147" y="-5" width="106" height="32"/>
+                                                <buttonCell key="cell" type="push" title="Configure" bezelStyle="rounded" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="BXp-on-KAq">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                            </button>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="HiC-Av-HZt" firstAttribute="centerY" secondItem="Rk1-gk-vB8" secondAttribute="centerY" id="8ce-mi-OIW"/>
+                                            <constraint firstItem="g73-tS-yMi" firstAttribute="bottom" secondItem="HiC-Av-HZt" secondAttribute="bottom" id="A5B-K0-ziE"/>
+                                            <constraint firstItem="HiC-Av-HZt" firstAttribute="leading" secondItem="Rk1-gk-vB8" secondAttribute="leading" constant="16" id="AwO-f6-nHp"/>
+                                            <constraint firstAttribute="trailing" secondItem="g73-tS-yMi" secondAttribute="trailing" constant="16" id="ela-2o-86M"/>
+                                            <constraint firstItem="g73-tS-yMi" firstAttribute="top" secondItem="HiC-Av-HZt" secondAttribute="top" id="h6k-lo-Tpv"/>
+                                            <constraint firstItem="g73-tS-yMi" firstAttribute="leading" secondItem="HiC-Av-HZt" secondAttribute="trailing" constant="5" id="xzf-Zg-Yfg"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="popupButton" destination="HiC-Av-HZt" id="v0P-zk-69h"/>
+                                        </connections>
                                     </tableCellView>
                                     <tableCellView identifier="ImageTextCell" id="Cph-I1-FGf" userLabel="ImageTextCell">
                                         <rect key="frame" x="11" y="48" width="262" height="17"/>

@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MediaLibrarySelectorCellView : NSTableCellView
 
 @property (nonatomic,weak) id<MediaLibraryFilterSelectorCellViewDelegate> delegate;
-@property (nonatomic,readonly) NSPopUpButton *popupButton;
+@property (strong) IBOutlet  NSPopUpButton *popupButton;
 
 @end
 
