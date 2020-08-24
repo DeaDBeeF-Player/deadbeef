@@ -127,7 +127,6 @@ static ml_filter_state_t ml_filter_state;
 
 static ml_db_t db; // this is the index, which can be rebuilt from the playlist at any given time
 
-// FIXME: need to json_decref(musicpaths_json) on quit / reload
 static json_t *musicpaths_json;
 
 static uintptr_t mutex;
@@ -404,9 +403,6 @@ ml_index (ddb_playlist_t *plt) {
 
     char folder[PATH_MAX];
 
-    if (!musicpaths_json) {
-        musicpaths_json = _ml_get_music_paths();
-    }
     db.folders_tree = calloc (1, sizeof (ml_tree_node_t));
     db.folders_tree->text = deadbeef->metacache_add_string ("");
 
@@ -838,6 +834,8 @@ ml_connect (void) {
 
 static int
 ml_start (void) {
+    musicpaths_json = _ml_get_music_paths();
+
     artist_album_bc = deadbeef->tf_compile ("[%album artist% - ]%album%");
     title_bc = deadbeef->tf_compile ("[%tracknumber%. ]%title%");
     artist_album_id_bc = deadbeef->tf_compile ("artist=$if2(%album artist%,Unknown Artist);album=$if2(%album%,Unknown Album)");
@@ -885,6 +883,12 @@ ml_stop (void) {
         deadbeef->mutex_free (mutex);
         mutex = 0;
     }
+
+    if (musicpaths_json) {
+        json_decref(musicpaths_json);
+        musicpaths_json = NULL;
+    }
+
     printf ("medialib cleanup done\n");
 
     return 0;
@@ -1323,6 +1327,28 @@ ml_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
 }
 
+static unsigned
+ml_folder_count (void) {
+    deadbeef->mutex_lock (mutex);
+    unsigned res = (unsigned)json_array_size(musicpaths_json);
+    deadbeef->mutex_unlock (mutex);
+    return res;
+}
+
+static void
+ml_folder_for_index (int index, char *folder, size_t size) {
+    deadbeef->mutex_lock (mutex);
+    json_t *data = json_array_get (musicpaths_json, index);
+    *folder = 0;
+    if (json_is_string (data)) {
+        const char *musicdir = json_string_value (data);
+        strncat(folder, musicdir, size);
+    }
+
+    deadbeef->mutex_unlock (mutex);
+}
+
+
 // define plugin interface
 static ddb_medialib_plugin_t plugin = {
     .plugin.plugin.api_vmajor = DB_API_VERSION_MAJOR,
@@ -1368,6 +1394,8 @@ static ddb_medialib_plugin_t plugin = {
     .find_track = ml_find_track,
     .scanner_state = ml_scanner_state,
     .playlist = ml_get_playlist,
+    .folder_count = ml_folder_count,
+    .folder_for_index = ml_folder_for_index,
 };
 
 DB_plugin_t *

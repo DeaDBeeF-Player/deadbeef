@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17154"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -36,7 +36,7 @@
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                 <tableColumns>
-                                    <tableColumn editable="NO" width="342" minWidth="40" maxWidth="1000" id="uXK-Fd-IrU">
+                                    <tableColumn editable="NO" width="333" minWidth="40" maxWidth="1000" id="uXK-Fd-IrU">
                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -80,7 +80,7 @@
                         </subviews>
                     </clipView>
                     <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="fmZ-z5-wuy">
-                        <rect key="frame" x="1" y="91" width="23" height="15"/>
+                        <rect key="frame" x="1" y="145" width="345" height="15"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                     <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="hLq-A2-VYd">
@@ -96,7 +96,7 @@
                     </buttonCell>
                 </button>
                 <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zeQ-XA-rPj">
-                    <rect key="frame" x="0.0" y="-1" width="125" height="23"/>
+                    <rect key="frame" x="0.0" y="-1" width="131" height="23"/>
                     <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="momentary" id="JxR-I5-JXJ">
                         <font key="font" metaFont="system"/>
                         <segments>
@@ -111,7 +111,7 @@
                     </connections>
                 </segmentedControl>
                 <segmentedControl hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="66e-Rv-oF4">
-                    <rect key="frame" x="329" y="-1" width="18" height="23"/>
+                    <rect key="frame" x="331" y="-1" width="16" height="23"/>
                     <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="momentary" id="NbT-BH-MNL">
                         <font key="font" metaFont="system"/>
                         <segments>
@@ -143,17 +143,17 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="167" y="107" width="591" height="300"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
             <value key="minSize" type="size" width="541" height="259"/>
-            <view key="contentView" id="QU9-W9-bL8">
-                <rect key="frame" x="0.0" y="0.0" width="591" height="299"/>
+            <view key="contentView" misplaced="YES" id="QU9-W9-bL8">
+                <rect key="frame" x="0.0" y="0.0" width="591" height="300"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OuH-IF-bmv">
-                        <rect key="frame" x="20" y="49" width="551" height="230"/>
+                        <rect key="frame" x="20" y="48" width="551" height="230"/>
                         <clipView key="contentView" id="zcI-Og-GmQ" customClass="FlippedClipView">
                             <rect key="frame" x="1" y="1" width="549" height="228"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TeJ-pI-xP9" customClass="PropertySheetContentView">
                                     <rect key="frame" x="0.0" y="0.0" width="549" height="228"/>
@@ -174,7 +174,7 @@
                         </scroller>
                     </scrollView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jhk-dg-GGO">
-                        <rect key="frame" x="502" y="13" width="75" height="32"/>
+                        <rect key="frame" x="497" y="13" width="81" height="32"/>
                         <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iD7-Jv-2LO">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -187,7 +187,7 @@ Gw
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="y6m-T7-vjz">
-                        <rect key="frame" x="359" y="13" width="143" height="32"/>
+                        <rect key="frame" x="350" y="13" width="149" height="32"/>
                         <buttonCell key="cell" type="push" title="Reset to defaults" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hQb-Jj-k5B">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>

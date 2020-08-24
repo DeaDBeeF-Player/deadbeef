@@ -850,10 +850,19 @@ main_cleanup_and_quit (void);
         }
     }
 }
+
 - (IBAction)openPrefWindow:(id)sender {
     if (!_prefWindow) {
         _prefWindow = [[PreferencesWindowController alloc] initWithWindowNibName:@"Preferences"];
     }
+    [_prefWindow showWindow:self];
+}
+
+- (IBAction)openMedialibPrefs:(id)sender {
+    if (!_prefWindow) {
+        _prefWindow = [[PreferencesWindowController alloc] initWithWindowNibName:@"Preferences"];
+    }
+    [_prefWindow switchToTab:@"Medialib"];
     [_prefWindow showWindow:self];
 }
 

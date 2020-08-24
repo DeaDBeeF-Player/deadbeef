@@ -27,4 +27,6 @@
 
 - (void)outputDeviceChanged;
 
+- (void)switchToTab:(NSString *)identifier;
+
 @end

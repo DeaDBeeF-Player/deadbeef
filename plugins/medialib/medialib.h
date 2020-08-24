@@ -68,6 +68,9 @@ typedef struct ddb_medialib_plugin_s {
     int (*scanner_state) (void);
 
     ddb_playlist_t *(*playlist) (void);
+
+    unsigned (*folder_count)(void);
+    void (*folder_for_index)(int index, char *folder, size_t size);
 } ddb_medialib_plugin_t;
 
 #endif /* medialib_h */

@@ -1664,6 +1664,8 @@
 		2D9D363824A5280000CF2035 /* pitch_sse.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D9C607C1FDEBCF500D83CEF /* pitch_sse.h */; };
 		2D9D363924A5280000CF2035 /* pitch_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D9C60751FDEBCF500D83CEF /* pitch_sse2.c */; };
 		2D9E5C6724AE6DE60099B108 /* wcwidth.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9E5C0124AE6AAD0099B108 /* wcwidth.c */; };
+		2D9E905124F453960037D323 /* MediaLibraryPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9E904F24F453960037D323 /* MediaLibraryPreferencesViewController.h */; };
+		2D9E905224F453960037D323 /* MediaLibraryPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9E905024F453960037D323 /* MediaLibraryPreferencesViewController.m */; };
 		2D9F6534241BE78C00D9D16E /* SeekbarOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */; };
 		2D9F6535241BE78C00D9D16E /* SeekbarOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */; };
 		2D9FFA251D7588A700D1B5F8 /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6965371D74338A00EB99D8 /* mp4tagutil.c */; };
@@ -5266,6 +5268,8 @@
 		2D9D368C24A52C2B00CF2035 /* warped_autocorrelation_FIX.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = warped_autocorrelation_FIX.c; sourceTree = "<group>"; };
 		2D9E5C0024AE6AAD0099B108 /* wcwidth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = wcwidth.h; sourceTree = "<group>"; };
 		2D9E5C0124AE6AAD0099B108 /* wcwidth.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = wcwidth.c; sourceTree = "<group>"; };
+		2D9E904F24F453960037D323 /* MediaLibraryPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaLibraryPreferencesViewController.h; sourceTree = "<group>"; };
+		2D9E905024F453960037D323 /* MediaLibraryPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryPreferencesViewController.m; sourceTree = "<group>"; };
 		2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SeekbarOverlay.h; sourceTree = "<group>"; };
 		2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SeekbarOverlay.m; sourceTree = "<group>"; };
 		2DA04E8123B6A4320070AC01 /* shellexec.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = shellexec.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8964,6 +8968,8 @@
 				2D8030CC24B261A400539F9F /* MediaLibraryItem.h */,
 				2D8EE27224D03601005C5B4B /* MediaLibraryOutlineViewController.h */,
 				2D8EE27324D03601005C5B4B /* MediaLibraryOutlineViewController.m */,
+				2D9E904F24F453960037D323 /* MediaLibraryPreferencesViewController.h */,
+				2D9E905024F453960037D323 /* MediaLibraryPreferencesViewController.m */,
 			);
 			path = MediaLibrary;
 			sourceTree = "<group>";
@@ -12364,6 +12370,7 @@
 				2D0A6B1B237718DA00252E6D /* playmodes.h in Headers */,
 				2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */,
+				2D9E905124F453960037D323 /* MediaLibraryPreferencesViewController.h in Headers */,
 				2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */,
 				2D49857F1D5CF13F00E4D985 /* LogWindowController.h in Headers */,
 				2D98613E226C814100BAACB1 /* PropertySheetViewController.h in Headers */,
@@ -15451,6 +15458,7 @@
 				2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */,
 				2DA30E7524032550001BAB8A /* NetworkPreferencesViewController.m in Sources */,
 				2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */,
+				2D9E905224F453960037D323 /* MediaLibraryPreferencesViewController.m in Sources */,
 				2D887BE624B1C86D0078392F /* MediaLibraryItem.m in Sources */,
 				2D3CD9382409A091005875A9 /* PinnedGroupTitleView.m in Sources */,
 				2D46221E226DBA57003997E9 /* FlippedClipView.m in Sources */,

@@ -28,6 +28,7 @@
 #import "PluginsPreferencesViewController.h"
 #import "PreferencesWindowController.h"
 #import "SoundPreferencesViewController.h"
+#import "MediaLibraryPreferencesViewController.h"
 
 @interface PreferencesWindowController ()
 
@@ -39,6 +40,10 @@
 @property (strong) IBOutlet PlaybackPreferencesViewController *playbackViewController;
 @property (strong) IBOutlet NetworkPreferencesViewController *networkViewController;
 @property (strong) IBOutlet PluginsPreferencesViewController *pluginsViewController;
+@property (strong) IBOutlet MediaLibraryPreferencesViewController *mediaLibraryPreferencesViewController;
+
+@property (nonatomic) NSString *initialTabIdentifier;
+
 
 @end
 
@@ -50,7 +55,14 @@
     _toolbar.delegate = self;
     _toolbar.selectedItemIdentifier = @"Sound";
 
-    [self switchToView:self.playbackViewController.view];
+    if (self.initialTabIdentifier) {
+        _toolbar.selectedItemIdentifier = self.initialTabIdentifier;
+        self.initialTabIdentifier = nil;
+        [self switchToView:self.mediaLibraryPreferencesViewController.view];
+    }
+    else {
+        [self switchToView:self.playbackViewController.view];
+    }
 }
 
 - (void)showWindow:(id)sender {
@@ -65,6 +77,7 @@
             @"Playback",
             @"DSP",
             @"GUI",
+            @"Medialib",
             @"Network",
             @"Plugins",
             nil];
@@ -105,9 +118,22 @@
     [self switchToView:self.pluginsViewController.view];
 }
 
+- (IBAction)medialibAction:(id)sender {
+    [self switchToView:self.mediaLibraryPreferencesViewController.view];
+}
+
 - (void)outputDeviceChanged {
     [self.soundViewController outputDeviceChanged];
 }
 
+- (void)switchToTab:(NSString *)identifier {
+    if (!self.window) {
+        self.initialTabIdentifier = identifier;
+    }
+    else {
+        _toolbar.selectedItemIdentifier = identifier;
+        [self switchToView:self.mediaLibraryPreferencesViewController.view];
+    }
+}
 
 @end
