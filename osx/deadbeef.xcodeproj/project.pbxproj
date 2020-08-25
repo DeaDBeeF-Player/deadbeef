@@ -2138,8 +2138,6 @@
 		2DF1ED6A1DAA376B00E23298 /* alac.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF1ED681DAA376B00E23298 /* alac.c */; };
 		2DF3D08024E70775008D966E /* MediaLibraryCoverQueryData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF3D07E24E70775008D966E /* MediaLibraryCoverQueryData.h */; };
 		2DF3D08124E70775008D966E /* MediaLibraryCoverQueryData.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF3D07F24E70775008D966E /* MediaLibraryCoverQueryData.m */; };
-		2DF3D09324E70FD3008D966E /* MediaLibraryAlbumArtCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF3D09124E70FD3008D966E /* MediaLibraryAlbumArtCache.h */; };
-		2DF3D09424E70FD3008D966E /* MediaLibraryAlbumArtCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF3D09224E70FD3008D966E /* MediaLibraryAlbumArtCache.m */; };
 		2DF55C292270F415002C44DC /* ScriptableSelectViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF55C272270F415002C44DC /* ScriptableSelectViewController.h */; };
 		2DF55C2A2270F415002C44DC /* ScriptableSelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF55C282270F415002C44DC /* ScriptableSelectViewController.m */; };
 		2DF55C3F2270FCB9002C44DC /* ScriptableNodeEditorViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF55C3D2270FCB9002C44DC /* ScriptableNodeEditorViewController.h */; };
@@ -5748,8 +5746,6 @@
 		2DF1ED681DAA376B00E23298 /* alac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alac.c; sourceTree = "<group>"; };
 		2DF3D07E24E70775008D966E /* MediaLibraryCoverQueryData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaLibraryCoverQueryData.h; sourceTree = "<group>"; };
 		2DF3D07F24E70775008D966E /* MediaLibraryCoverQueryData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryCoverQueryData.m; sourceTree = "<group>"; };
-		2DF3D09124E70FD3008D966E /* MediaLibraryAlbumArtCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaLibraryAlbumArtCache.h; sourceTree = "<group>"; };
-		2DF3D09224E70FD3008D966E /* MediaLibraryAlbumArtCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryAlbumArtCache.m; sourceTree = "<group>"; };
 		2DF55C272270F415002C44DC /* ScriptableSelectViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableSelectViewController.h; sourceTree = "<group>"; };
 		2DF55C282270F415002C44DC /* ScriptableSelectViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptableSelectViewController.m; sourceTree = "<group>"; };
 		2DF55C3D2270FCB9002C44DC /* ScriptableNodeEditorViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableNodeEditorViewController.h; sourceTree = "<group>"; };
@@ -8958,8 +8954,6 @@
 		2D76285224CB29F20029C98C /* MediaLibrary */ = {
 			isa = PBXGroup;
 			children = (
-				2DF3D09124E70FD3008D966E /* MediaLibraryAlbumArtCache.h */,
-				2DF3D09224E70FD3008D966E /* MediaLibraryAlbumArtCache.m */,
 				2DF3D07E24E70775008D966E /* MediaLibraryCoverQueryData.h */,
 				2DF3D07F24E70775008D966E /* MediaLibraryCoverQueryData.m */,
 				2DA32B1324D6D83C00D96C84 /* MediaLibrarySelectorCellView.h */,
@@ -12377,7 +12371,6 @@
 				2DDF87ED2402845C00CA8E91 /* NSMenu+ActionItems.h in Headers */,
 				2D642EB01AE9152E00FC1F7B /* sort.h in Headers */,
 				2DA30B7F23F1C9A3003D22E3 /* PropertySheetContentView.h in Headers */,
-				2DF3D09324E70FD3008D966E /* MediaLibraryAlbumArtCache.h in Headers */,
 				2DB52F7C24CF7CF20046D516 /* TrackContextMenu.h in Headers */,
 				2DB2F73F240466AF00F7C000 /* PluginsPreferencesViewController.h in Headers */,
 				2DA2259F23F041B00033F411 /* DesignableViewController.h in Headers */,
@@ -15506,7 +15499,6 @@
 				2D747E4124B6580A00BBB987 /* MainWindowSidebarViewController.m in Sources */,
 				2DF55C442270FF7E002C44DC /* ScriptablePropertySheetDataSource.m in Sources */,
 				2DA225A023F041B00033F411 /* DesignableViewController.m in Sources */,
-				2DF3D09424E70FD3008D966E /* MediaLibraryAlbumArtCache.m in Sources */,
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,
 				2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */,
 				2DDBA24E23E5E66D00051320 /* PlaylistContentView.m in Sources */,
