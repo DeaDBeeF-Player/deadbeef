@@ -1327,6 +1327,8 @@ ml_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
 }
 
+#pragma mark - folder access
+
 static unsigned
 ml_folder_count (void) {
     deadbeef->mutex_lock (mutex);
@@ -1336,7 +1338,7 @@ ml_folder_count (void) {
 }
 
 static void
-ml_folder_for_index (int index, char *folder, size_t size) {
+ml_folder_at_index (int index, char *folder, size_t size) {
     deadbeef->mutex_lock (mutex);
     json_t *data = json_array_get (musicpaths_json, index);
     *folder = 0;
@@ -1346,6 +1348,30 @@ ml_folder_for_index (int index, char *folder, size_t size) {
     }
 
     deadbeef->mutex_unlock (mutex);
+}
+
+static void
+ml_set_folders (const char **folders, size_t count) {
+    deadbeef->mutex_lock (mutex);
+
+    json_array_clear(musicpaths_json);
+    for (int i = 0; i < count; i++) {
+        json_t *value = json_string(folders[i]);
+        json_array_append(musicpaths_json, value);
+    }
+
+    char *dump = json_dumps(musicpaths_json, JSON_COMPACT);
+
+    // FIXME: notify scanner about changes
+
+    deadbeef->mutex_unlock (mutex);
+
+    if (dump) {
+        deadbeef->conf_set_str ("medialib.paths", dump);
+        free (dump);
+        dump = NULL;
+        deadbeef->conf_save();
+    }
 }
 
 
@@ -1395,7 +1421,8 @@ static ddb_medialib_plugin_t plugin = {
     .scanner_state = ml_scanner_state,
     .playlist = ml_get_playlist,
     .folder_count = ml_folder_count,
-    .folder_for_index = ml_folder_for_index,
+    .folder_at_index = ml_folder_at_index,
+    .set_folders = ml_set_folders,
 };
 
 DB_plugin_t *

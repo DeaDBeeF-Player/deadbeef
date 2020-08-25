@@ -69,8 +69,11 @@ typedef struct ddb_medialib_plugin_s {
 
     ddb_playlist_t *(*playlist) (void);
 
+#pragma mark - folder access
+
     unsigned (*folder_count)(void);
-    void (*folder_for_index)(int index, char *folder, size_t size);
+    void (*folder_at_index)(int index, char *folder, size_t size);
+    void (*set_folders) (const char **folders, size_t count);
 } ddb_medialib_plugin_t;
 
 #endif /* medialib_h */
