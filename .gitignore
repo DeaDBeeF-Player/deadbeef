@@ -88,3 +88,4 @@ osx/build
 *.make
 Makefile
 *.a
+docker-artifacts

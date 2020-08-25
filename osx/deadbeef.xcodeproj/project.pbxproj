@@ -1807,6 +1807,8 @@
 		2DA66EC81EDF4EF800E20989 /* StreamerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66EC71EDF4EF800E20989 /* StreamerTests.m */; };
 		2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66EC91EDF4F2C00E20989 /* fakeout.c */; };
 		2DA66ECE1EDF501000E20989 /* fakein.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66ECC1EDF501000E20989 /* fakein.c */; };
+		2DA84F7E24F58915003507A2 /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
+		2DA84F7F24F5892A003507A2 /* libjansson.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DA9777524C5EC27002405DA /* gtk3.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2DA9777424C5EC26002405DA /* gtk3.xcconfig */; };
 		2DAA4C141AAF88FF00519559 /* TitleFormattingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA4C131AAF88FF00519559 /* TitleFormattingTests.m */; };
 		2DACBB241A40CEB100CCF401 /* mp3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -3187,6 +3189,20 @@
 			remoteGlobalIDString = 2DA24B4A19E724C200E34920;
 			remoteInfo = vfs_curl;
 		};
+		2DA84F7A24F58894003507A2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2DA84F7624F58894003507A2 /* jansson.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2DA84F4624F5876A003507A2;
+			remoteInfo = jansson;
+		};
+		2DA84F7C24F5890F003507A2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2DA84F7624F58894003507A2 /* jansson.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DA84F4524F5876A003507A2;
+			remoteInfo = jansson;
+		};
 		2DB96AA619ABB51300E318A8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -3473,6 +3489,7 @@
 				2DE1B21D24A89E090070CD7C /* libavcodec.dylib in Copy Plugins */,
 				2DE1B21E24A89E0B0070CD7C /* libavformat.dylib in Copy Plugins */,
 				2DE1B21F24A89E0D0070CD7C /* libavutil.dylib in Copy Plugins */,
+				2DA84F7F24F5892A003507A2 /* libjansson.dylib in Copy Plugins */,
 			);
 			name = "Copy Plugins";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5415,6 +5432,7 @@
 		2DA66ECD1EDF501000E20989 /* fakein.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fakein.h; sourceTree = "<group>"; };
 		2DA6F89B19A5332D002151EB /* escape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = escape.c; sourceTree = "<group>"; };
 		2DA6F89F19A53334002151EB /* escape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = escape.h; sourceTree = "<group>"; };
+		2DA84F7624F58894003507A2 /* jansson.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = jansson.xcodeproj; path = jansson/jansson.xcodeproj; sourceTree = "<group>"; };
 		2DA8897024F2F3ED00477344 /* jansson.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = jansson.xcconfig; sourceTree = "<group>"; };
 		2DA9777424C5EC26002405DA /* gtk3.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = gtk3.xcconfig; sourceTree = "<group>"; };
 		2DAA4C081AAF88DE00519559 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6373,6 +6391,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DA84F7E24F58915003507A2 /* libjansson.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9405,6 +9424,7 @@
 		2D9E5BFE24AE6AAD0099B108 /* external */ = {
 			isa = PBXGroup;
 			children = (
+				2DA84F7624F58894003507A2 /* jansson.xcodeproj */,
 				2D71F1AB24AE799B00E753D3 /* mp4p.xcodeproj */,
 				2D9E5BFF24AE6AAD0099B108 /* wcwidth */,
 			);
@@ -9638,6 +9658,14 @@
 				2DA3721A2370B854005E64A3 /* NowPlayable.m */,
 			);
 			path = NowPlayable;
+			sourceTree = "<group>";
+		};
+		2DA84F7724F58894003507A2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2DA84F7B24F58894003507A2 /* libjansson.dylib */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		2DA9777324C5EC26002405DA /* configuration */ = {
@@ -12812,6 +12840,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DA84F7D24F5890F003507A2 /* PBXTargetDependency */,
 			);
 			name = medialib;
 			productName = medialib;
@@ -13794,6 +13823,10 @@
 					ProjectRef = 2D65D9891E0A930400FD1C8A /* FDK.xcodeproj */;
 				},
 				{
+					ProductGroup = 2DA84F7724F58894003507A2 /* Products */;
+					ProjectRef = 2DA84F7624F58894003507A2 /* jansson.xcodeproj */;
+				},
+				{
 					ProductGroup = 2D00FE6C2435392E000FC130 /* Products */;
 					ProjectRef = 2D4459D21C04F28800230939 /* libzip.xcodeproj */;
 				},
@@ -13956,6 +13989,13 @@
 			fileType = wrapper.cfbundle;
 			path = mp4pTests.xctest;
 			remoteRef = 2D71F1B224AE799B00E753D3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2DA84F7B24F58894003507A2 /* libjansson.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = libjansson.dylib;
+			remoteRef = 2DA84F7A24F58894003507A2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		2DDFABCD2438E56000E13E85 /* libFDK.a */ = {
@@ -16276,6 +16316,11 @@
 			target = 2DA24B4A19E724C200E34920 /* vfs_curl */;
 			targetProxy = 2DA24BA119E72A0000E34920 /* PBXContainerItemProxy */;
 		};
+		2DA84F7D24F5890F003507A2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = jansson;
+			targetProxy = 2DA84F7C24F5890F003507A2 /* PBXContainerItemProxy */;
+		};
 		2DB96AA719ABB51300E318A8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2DB96A7F19ABB47C00E318A8 /* dsp_libsrc */;
@@ -17895,7 +17940,6 @@
 		};
 		2D3A4BB61D631530002C7098 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2DA8897024F2F3ED00477344 /* jansson.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -17914,18 +17958,19 @@
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_CFLAGS = "$(JANSSON_CFLAGS)";
-				OTHER_LDFLAGS = "$(JANSSON_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
-				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
 		2D3A4BB71D631530002C7098 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2DA8897024F2F3ED00477344 /* jansson.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -17939,12 +17984,14 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = "$(JANSSON_CFLAGS)";
-				OTHER_LDFLAGS = "$(JANSSON_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
