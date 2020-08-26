@@ -438,7 +438,7 @@ ca_prevent_sleep (void) {
     IOPMAssertionID assertionID = 0;
     CFStringRef reasonForActivity= CFSTR("Deadbeef playback");
 
-    IOReturn success = IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep,
+    IOReturn success = IOPMAssertionCreateWithName(kIOPMAssertionTypeNoIdleSleep,
                                                    kIOPMAssertionLevelOn, reasonForActivity, &assertionID);
     if (success == kIOReturnSuccess) {
         sleep_prevented = 1;
