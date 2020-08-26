@@ -435,6 +435,9 @@ static int sleep_prevented = 0;
 
 static void
 ca_prevent_sleep (void) {
+    if (sleep_prevented) {
+        return; // already preventing
+    }
     IOPMAssertionID assertionID = 0;
     CFStringRef reasonForActivity= CFSTR("Deadbeef playback");
 
