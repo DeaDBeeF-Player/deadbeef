@@ -24,6 +24,7 @@
 #include "../../deadbeef.h"
 #include <AudioUnit/AudioUnit.h>
 #include <AudioToolbox/AudioToolbox.h>
+#import <IOKit/pwr_mgt/IOPMLib.h>
 
 static DB_functions_t *deadbeef;
 static DB_output_t plugin;
@@ -96,7 +97,7 @@ get_avail_samplerates(void)
         AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &dataSize, nsrs);
 
         avail_samplerates = malloc (sizeof (int) * num);
-        for (int i = 0; i < num; i++) {
+        for (int i = 0; i < (int)num; i++) {
             avail_samplerates[i] = (int)nsrs[i].mMinimum;
         }
         num_avail_samplerates = num;
@@ -105,18 +106,18 @@ get_avail_samplerates(void)
 }
 
 int
-get_best_samplerate (int samplerate, int *avail_samplerates, int count) {
+get_best_samplerate (int samplerate, int *all_samplerates, int count) {
     int64_t nearest = 0;
     int index = -1;
 
     for (int i = 0; i < count; i++) {
         // score is based on distance and modulo, with slightly more weight put on distance
-        int64_t dist = llabs(avail_samplerates[i] - samplerate);
-        int64_t mod = samplerate > avail_samplerates[i] ? (samplerate % avail_samplerates[i]) : (avail_samplerates[i] % samplerate);
+        int64_t dist = llabs(all_samplerates[i] - samplerate);
+        int64_t mod = samplerate > all_samplerates[i] ? (samplerate % all_samplerates[i]) : (all_samplerates[i] % samplerate);
         int64_t score = dist*2+mod;
 
         // upscaling is generally better than downscaling
-        if (avail_samplerates[i] < samplerate) {
+        if (all_samplerates[i] < samplerate) {
             score *= 100;
         }
 
@@ -126,7 +127,7 @@ get_best_samplerate (int samplerate, int *avail_samplerates, int count) {
         }
     }
 
-    return avail_samplerates[index];
+    return all_samplerates[index];
 }
 
 static int
@@ -208,7 +209,7 @@ OSStatus callbackFunction(AudioObjectID inObjectID,
 
 static void
 ca_get_deviceid (void) {
-    device_id = -1;
+    device_id = 0;
 
     char newdev[100];
     deadbeef->conf_get_str ("coreaudio_soundcard", "", newdev, sizeof (newdev));
@@ -276,7 +277,7 @@ ca_init (void) {
     ca_free ();
 
     ca_get_deviceid ();
-    if (device_id == -1) {
+    if (device_id == 0) {
         sz = sizeof(device_id);
         err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &sz, &device_id);
         if (err != noErr) {
@@ -354,7 +355,7 @@ static int
 ca_free (void) {
     OSStatus err;
     
-    if (device_id) {
+    if (device_id != 0) {
         deadbeef->mutex_lock (mutex);
         AudioObjectPropertyAddress theAddress = { kAudioDevicePropertyStreamFormat,
             kAudioDevicePropertyScopeOutput,
@@ -422,18 +423,43 @@ ca_setformat (ddb_waveformat_t *fmt) {
     req_format.mChannelsPerFrame = fmt->channels;
     req_format.mBitsPerChannel = bps;
 
-    if (device_id) {
+    if (device_id != 0) {
         return ca_apply_format ();
     }
 
     return -1;
 }
 
+static IOPMAssertionID assertion_id = 0;
+static int sleep_prevented = 0;
+
+static void
+ca_prevent_sleep (void) {
+    IOPMAssertionID assertionID = 0;
+    CFStringRef reasonForActivity= CFSTR("Deadbeef playback");
+
+    IOReturn success = IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep,
+                                                   kIOPMAssertionLevelOn, reasonForActivity, &assertionID);
+    if (success == kIOReturnSuccess) {
+        sleep_prevented = 1;
+        assertion_id = assertionID;
+    }
+}
+
+static void
+ca_allow_sleep (void) {
+    if (sleep_prevented) {
+        IOPMAssertionRelease(assertion_id);
+        assertion_id = 0;
+        sleep_prevented = 0;
+    }
+}
+
 static int
 ca_play (void) {
     OSStatus err;
-    
-    if (!device_id) {
+
+    if (device_id == 0) {
         if (ca_init()) {
             return -1;
         }
@@ -452,15 +478,20 @@ ca_play (void) {
     }
     deadbeef->mutex_unlock (mutex);
 
+    ca_prevent_sleep ();
+
     return 0;
 }
 
 static int
 ca_stop (void) {
+    ca_allow_sleep ();
+
     OSStatus err;
-    if (!device_id) {
+    if (device_id == 0) {
         return 0;
     }
+
     deadbeef->mutex_lock (mutex);
     if (state != DDB_PLAYBACK_STATE_STOPPED) {
         err = AudioDeviceStop (device_id, ca_buffer_callback);
@@ -479,7 +510,7 @@ ca_stop (void) {
 static int
 ca_pause (void) {
     OSStatus err;
-    if (!device_id) {
+    if (device_id == 0) {
         if (ca_init()) {
             return -1;
         }
@@ -548,7 +579,7 @@ ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const A
         if (br < 0) {
             br = 0;
         }
-        if (br < sz) {
+        if (br < (int)sz) {
             memset (buffer+br, 0, sz-br);
         }
     }
