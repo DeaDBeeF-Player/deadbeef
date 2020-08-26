@@ -260,9 +260,6 @@ send_songfinished (playItem_t *trk) {
 
 static void
 send_trackchanged (playItem_t *from, playItem_t *to) {
-    if (from == to) {
-        return;
-    }
     ddb_event_trackchange_t *event = (ddb_event_trackchange_t *)messagepump_event_alloc (DB_EV_SONGCHANGED);
     event->playtime = playtime;
     event->started_timestamp = started_timestamp;
