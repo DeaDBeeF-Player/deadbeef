@@ -83,9 +83,9 @@ extern DB_functions_t *deadbeef;
         [NSUserDefaults.standardUserDefaults setObject:panel.directoryURL.absoluteString forKey:kMedialibBrowseInitialFolder];
         if (result == NSModalResponseOK) {
             [self.tableView beginUpdates];
-            for (NSURL *path in panel.URLs) {
+            for (NSURL *url in panel.URLs) {
                 [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:index] withAnimation:NSTableViewAnimationEffectFade];
-                [self.folders insertObject:path.absoluteString atIndex:index];
+                [self.folders insertObject:url.path atIndex:index];
                 index++;
             }
             [self.tableView endUpdates];
