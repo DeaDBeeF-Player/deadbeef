@@ -665,6 +665,9 @@ scanner_thread (void *none) {
     char **medialib_paths = get_medialib_paths (&medialib_paths_count);
 
     if (!medialib_paths) {
+        if (!ml_playlist) {
+            ml_playlist = deadbeef->plt_alloc("medialib");
+        }
         deadbeef->plt_clear (ml_playlist);
         ml_index (ml_playlist);
     }
