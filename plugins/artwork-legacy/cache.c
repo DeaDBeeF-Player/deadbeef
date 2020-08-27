@@ -61,28 +61,14 @@ void cache_unlock (void)
 
 int make_cache_root_path (char *path, const size_t size)
 {
-    const char *xdg_cache = deadbeef->get_system_dir (DDB_SYS_DIR_CACHE);
+    const char *ddb_cache = deadbeef->get_system_dir (DDB_SYS_DIR_CACHE);
 
-    #ifdef __MINGW32__
-    // replace backslashes with normal slashes
-    char xdg_cache_conv[strlen(xdg_cache)+1];
-    if (strchr(xdg_cache, '\\')) {
-        trace ("make_cache_root_path: backslash(es) detected: %s\n", xdg_cache);
-        strcpy (xdg_cache_conv, xdg_cache);
-        char *slash_p = xdg_cache_conv;
-        while (slash_p = strchr(slash_p, '\\')) {
-            *slash_p = '/';
-            slash_p++;
-        }
-        xdg_cache = xdg_cache_conv;
-    }
-    #endif
-
-    const char *cache_root = xdg_cache ? xdg_cache : getenv (HOMEDIR);
-    if (snprintf (path, size, xdg_cache ? "%s/deadbeef/" : "%s/.cache/deadbeef/", cache_root) >= size) {
-        trace ("Cache root path truncated at %d bytes\n", (int)size);
+    int ret = snprintf (path, size, (ddb_cache[strlen(ddb_cache)-1] == '/') ? "%s" : "%s/", ddb_cache);
+    if (ret >= 0 && ret > size) {
+        trace ("Cache root path is too long (>%d bytes)\n", (int)size);
         return -1;
     }
+
     return 0;
 }
 

@@ -842,6 +842,7 @@ extern DB_functions_t *deadbeef;
     strRect.origin.x += 5;
     strRect.origin.y = strRect.origin.y + strRect.size.height / 2 - size.height / 2;
     strRect.size.height = size.height;
+    strRect.size.width -= 10;
     [attrString drawInRect:strRect];
 
     if (ctx.plt) {

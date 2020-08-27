@@ -1228,6 +1228,20 @@ main (int argc, char *argv[]) {
 //    trace ("plugindir: %s\n", dbplugindir);
 //    trace ("pixmapdir: %s\n", dbpixmapdir);
 
+#ifdef __MINGW32__
+    char *directories[] = {dbconfdir, dbinstalldir, dbdocdir, dbplugindir, dbpixmapdir, dbcachedir, dbresourcedir, NULL};
+    for (int i = 0; directories[i] != NULL; i++) {
+        // replace backslashes with normal slashes
+        if (strchr(directories[i], '\\')) {
+            char *slash_p = directories[i];
+            while (slash_p = strchr(slash_p, '\\')) {
+                *slash_p = '/';
+                slash_p++;
+            }
+        }
+    }
+#endif
+
     mkdir (dbconfdir, 0755);
 
     int size = 0;
