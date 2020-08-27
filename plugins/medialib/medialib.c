@@ -327,7 +327,6 @@ ml_free_tree (ml_tree_node_t *node) {
 
 static uintptr_t tid;
 static int scanner_terminate;
-static int scanner_file_idx = 0;
 
 static void
 ml_notify_listeners (int event);
@@ -621,40 +620,79 @@ _ml_load_playlist (const char *plpath) {
     ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
 }
 
+// Get a copy of medialib folder paths
+static char **
+get_medialib_paths (size_t *medialib_paths_count) {
+    if (!musicpaths_json) {
+        musicpaths_json = _ml_get_music_paths();
+    }
+
+    char **medialib_paths = NULL;
+    size_t count = 0;
+
+    count = json_array_size(musicpaths_json);
+    if (count == 0) {
+        return NULL;
+    }
+
+    medialib_paths = calloc (sizeof (char *), count);
+
+    for (int i = 0; i < count; i++) {
+        json_t *data = json_array_get (musicpaths_json, i);
+        if (!json_is_string (data)) {
+            continue;
+        }
+        medialib_paths[i] = strdup (json_string_value (data));
+    }
+
+    *medialib_paths_count = count;
+
+    return medialib_paths;
+}
+
+static void free_medialib_paths (char **medialib_paths, size_t medialib_paths_count) {
+    for (int i = 0; i < medialib_paths_count; i++) {
+        free (medialib_paths[i]);
+    }
+    free (medialib_paths);
+}
+
 static void
 scanner_thread (void *none) {
-    scanner_file_idx = 0;
+    deadbeef->mutex_lock (mutex);
+
+    size_t medialib_paths_count;
+    char **medialib_paths = get_medialib_paths (&medialib_paths_count);
+
+    if (!medialib_paths) {
+        deadbeef->plt_clear (ml_playlist);
+        ml_index (ml_playlist);
+    }
+    deadbeef->mutex_unlock (mutex);
+
+    if (!medialib_paths) {
+        return;
+    }
 
     char plpath[PATH_MAX];
     snprintf (plpath, sizeof (plpath), "%s/medialib.dbpl", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG));
 
     _ml_load_playlist(plpath);
 
-//    return; // disable refresh on startup
-
     struct timeval tm1, tm2;
 
     _ml_state = DDB_MEDIALIB_STATE_SCANNING;
     ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
-    gettimeofday (&tm1, NULL);
 
-    if (!musicpaths_json) {
-        musicpaths_json = _ml_get_music_paths();
-    }
+    gettimeofday (&tm1, NULL);
 
     ddb_playlist_t *plt = deadbeef->plt_alloc("medialib");
     // doesn't need to be protected by mutex -- this is only supposed to be accessed on the scan thread
     ml_filter_state.plt = plt;
 
-    for (int i = 0; i < json_array_size(musicpaths_json); i++) {
-        json_t *data = json_array_get (musicpaths_json, i);
-        if (!json_is_string (data)) {
-            break;
-        }
-        const char *musicdir = json_string_value (data);
-
+    for (int i = 0; i < medialib_paths_count; i++) {
+        const char *musicdir = medialib_paths[i];
         printf ("adding dir: %s\n", musicdir);
-
         // update & index the cloned playlist
         deadbeef->plt_insert_dir (plt, NULL, musicdir, &scanner_terminate, NULL, NULL);
     }
@@ -701,6 +739,8 @@ scanner_thread (void *none) {
 
     _ml_state = DDB_MEDIALIB_STATE_IDLE;
     ml_notify_listeners (DDB_MEDIALIB_EVENT_SCANNER);
+
+    free_medialib_paths (medialib_paths, medialib_paths_count);
 }
 
 // intention is to skip the files which are already indexed
@@ -834,7 +874,9 @@ ml_connect (void) {
 
 static int
 ml_start (void) {
-    musicpaths_json = _ml_get_music_paths();
+    if (!musicpaths_json) {
+        musicpaths_json = _ml_get_music_paths();
+    }
 
     artist_album_bc = deadbeef->tf_compile ("[%album artist% - ]%album%");
     title_bc = deadbeef->tf_compile ("[%tracknumber%. ]%title%");
