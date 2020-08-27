@@ -955,7 +955,7 @@ ml_remove_listener (int listener_id) {
 }
 
 static void
-get_albums_for_collection_group_by_field (ddb_medialib_item_t *root, ml_collection_t *coll, const char *field, int field_tf, const char /* nonnull */ *default_field_value) {
+get_albums_for_collection_group_by_field (ddb_medialib_item_t *root, ml_collection_t *coll, const char *field, int field_tf, const char /* nonnull */ *default_field_value, int selected) {
 
     default_field_value = deadbeef->metacache_add_string (default_field_value);
 
@@ -1011,6 +1011,9 @@ get_albums_for_collection_group_by_field (ddb_medialib_item_t *root, ml_collecti
         // Add all of the album's tracks into that bucket
         ml_collection_item_t *album_coll_item = album->items;
         for (int j = 0; j < album->items_count; j++, album_coll_item = album_coll_item->next) {
+            if (selected && !deadbeef->pl_is_selected (album_coll_item->it)) {
+                continue;
+            }
             int append = 0;
             if (!s->coll_item) {
                 s->coll_item = calloc (1, sizeof (ddb_medialib_item_t));
@@ -1099,7 +1102,7 @@ get_albums_for_collection_group_by_field (ddb_medialib_item_t *root, ml_collecti
 }
 
 static void
-get_list_of_tracks_for_album (ddb_medialib_item_t *libitem, ml_string_t *album) {
+get_list_of_tracks_for_album (ddb_medialib_item_t *libitem, ml_string_t *album, int selected) {
     char text[1024];
 
     ddb_medialib_item_t *album_item = NULL;
@@ -1108,6 +1111,9 @@ get_list_of_tracks_for_album (ddb_medialib_item_t *libitem, ml_string_t *album) 
     ml_collection_item_t *album_coll_item = album->items;
     for (int j = 0; j < album->items_count; j++, album_coll_item = album_coll_item->next) {
         DB_playItem_t *it = album_coll_item->it;
+        if (selected && !deadbeef->pl_is_selected(it)) {
+            continue;
+        }
         ddb_tf_context_t ctx = {
             ._size = sizeof (ddb_tf_context_t),
             .flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK,
@@ -1140,7 +1146,7 @@ get_list_of_tracks_for_album (ddb_medialib_item_t *libitem, ml_string_t *album) 
 }
 
 static void
-get_subfolders_for_folder (ddb_medialib_item_t *folderitem, ml_tree_node_t *folder) {
+get_subfolders_for_folder (ddb_medialib_item_t *folderitem, ml_tree_node_t *folder, int selected) {
     if (!folderitem->text) {
         folderitem->text = deadbeef->metacache_add_string (folder->text);
     }
@@ -1149,7 +1155,7 @@ get_subfolders_for_folder (ddb_medialib_item_t *folderitem, ml_tree_node_t *fold
     if (folder->children) {
         for (ml_tree_node_t *c = folder->children; c; c = c->next) {
             ddb_medialib_item_t *subfolder = calloc (1, sizeof (ddb_medialib_item_t));
-            get_subfolders_for_folder (subfolder, c);
+            get_subfolders_for_folder (subfolder, c, selected);
             if (tail) {
                 tail->next = subfolder;
                 tail = subfolder;
@@ -1162,6 +1168,9 @@ get_subfolders_for_folder (ddb_medialib_item_t *folderitem, ml_tree_node_t *fold
     }
     if (folder->items) {
         for (ml_collection_item_t *i = folder->items; i; i = i->next) {
+            if (selected && !deadbeef->pl_is_selected(i->it)) {
+                continue;
+            }
             ddb_medialib_item_t *trackitem = calloc (1, sizeof (ddb_medialib_item_t));
             ddb_tf_context_t ctx = {
                 ._size = sizeof (ddb_tf_context_t),
@@ -1187,7 +1196,7 @@ get_subfolders_for_folder (ddb_medialib_item_t *folderitem, ml_tree_node_t *fold
 }
 
 static ddb_medialib_item_t *
-ml_get_list (const char *index) {
+ml_get_list (const char *index, const char *filter) {
     ml_collection_t *coll = NULL;
 
     enum {album, artist, genre, folder};
@@ -1213,6 +1222,13 @@ ml_get_list (const char *index) {
         return NULL;
     }
 
+    int selected = 0;
+    if (filter) {
+        deadbeef->plt_search_reset (ml_playlist);
+        deadbeef->plt_search_process2 (ml_playlist, filter, 1);
+        selected = 1;
+    }
+
     deadbeef->mutex_lock (mutex);
 
     struct timeval tm1, tm2;
@@ -1230,15 +1246,15 @@ ml_get_list (const char *index) {
     }
 
     if (type == folder) {
-        get_subfolders_for_folder(root, db.folders_tree);
+        get_subfolders_for_folder(root, db.folders_tree, selected);
     }
     else if (type == artist) {
         // list of albums for artist
-        get_albums_for_collection_group_by_field (root, coll, "artist", 0, "Unknown Artist");
+        get_albums_for_collection_group_by_field (root, coll, "artist", 0, "Unknown Artist", selected);
     }
     else if (type == genre) {
         // list of albums for genre
-        get_albums_for_collection_group_by_field (root, coll, "genre", 0, "Unknown Genre");
+        get_albums_for_collection_group_by_field (root, coll, "genre", 0, "Unknown Genre", selected);
     }
     else if (type == album) {
         // list of tracks for album
@@ -1247,7 +1263,7 @@ ml_get_list (const char *index) {
         for (ml_string_t *s = coll->head; s; s = s->next) {
             ddb_medialib_item_t *item = calloc (1, sizeof (ddb_medialib_item_t));
 
-            get_list_of_tracks_for_album (item, s);
+            get_list_of_tracks_for_album (item, s, selected);
 
             if (!item->children) {
                 ml_free_list (item);

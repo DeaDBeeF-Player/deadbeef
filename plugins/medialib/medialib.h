@@ -58,7 +58,7 @@ typedef struct ddb_medialib_plugin_s {
     int (*add_listener)(ddb_medialib_listener_t listener, void *user_data);
     void (*remove_listener)(int listener_id);
 
-    ddb_medialib_item_t * (*get_list)(const char *index);
+    ddb_medialib_item_t * (*get_list)(const char *index, const char *filter);
     void (*free_list) (ddb_medialib_item_t *list);
 
     // Find the same track in DB

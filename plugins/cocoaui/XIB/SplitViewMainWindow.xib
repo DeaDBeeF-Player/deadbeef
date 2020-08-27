@@ -167,7 +167,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="285" height="279"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <outlineView wantsLayer="YES" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" tableStyle="sourceList" selectionHighlightStyle="sourceList" columnReordering="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="hGa-Fg-yZI" id="Ffb-Ma-ZiG">
+                    <outlineView wantsLayer="YES" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" tableStyle="sourceList" selectionHighlightStyle="sourceList" columnReordering="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="hGa-Fg-yZI" id="Ffb-Ma-ZiG" customClass="MediaLibraryOutlineView">
                         <rect key="frame" x="0.0" y="0.0" width="285" height="279"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <size key="intercellSpacing" width="3" height="0.0"/>
@@ -204,8 +204,34 @@
                                             <outlet property="textField" destination="oMO-Cn-w8T" id="rKK-aO-bhz"/>
                                         </connections>
                                     </tableCellView>
-                                    <tableCellView identifier="FilterSelectorCell" id="Rk1-gk-vB8" userLabel="popup" customClass="MediaLibrarySelectorCellView">
-                                        <rect key="frame" x="11" y="24" width="262" height="24"/>
+                                    <tableCellView identifier="SearchCell" id="Xz8-E9-guw" customClass="MediaLibrarySearchCellView">
+                                        <rect key="frame" x="11" y="24" width="262" height="17"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        <subviews>
+                                            <searchField wantsLayer="YES" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D45-ia-et7">
+                                                <rect key="frame" x="16" y="-2" width="230" height="22"/>
+                                                <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" sendsSearchStringImmediately="YES" id="6v2-UT-iqs">
+                                                    <font key="font" metaFont="system"/>
+                                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </searchFieldCell>
+                                                <connections>
+                                                    <action selector="searchFieldAction:" target="Xz8-E9-guw" id="Q3h-Oh-cYw"/>
+                                                    <outlet property="delegate" destination="Xz8-E9-guw" id="wUO-c7-ZTJ"/>
+                                                </connections>
+                                            </searchField>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="D45-ia-et7" firstAttribute="centerY" secondItem="Xz8-E9-guw" secondAttribute="centerY" id="0rb-9A-TD0"/>
+                                            <constraint firstAttribute="trailing" secondItem="D45-ia-et7" secondAttribute="trailing" constant="16" id="VUK-ou-UU1"/>
+                                            <constraint firstItem="D45-ia-et7" firstAttribute="leading" secondItem="Xz8-E9-guw" secondAttribute="leading" constant="16" id="ttT-br-Tu4"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="searchField" destination="D45-ia-et7" id="rkC-rX-tdO"/>
+                                        </connections>
+                                    </tableCellView>
+                                    <tableCellView identifier="FilterSelectorCell" id="Rk1-gk-vB8" customClass="MediaLibrarySelectorCellView">
+                                        <rect key="frame" x="11" y="41" width="262" height="24"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <popUpButton horizontalHuggingPriority="249" verticalHuggingPriority="750" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="HiC-Av-HZt">
@@ -246,7 +272,7 @@
                                         </connections>
                                     </tableCellView>
                                     <tableCellView identifier="ImageTextCell" id="Cph-I1-FGf" userLabel="ImageTextCell">
-                                        <rect key="frame" x="11" y="48" width="262" height="17"/>
+                                        <rect key="frame" x="11" y="65" width="262" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="jxw-E6-UZ5">

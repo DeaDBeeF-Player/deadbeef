@@ -42,7 +42,6 @@ extern DB_functions_t *deadbeef;
 
     self.medialibPlugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
 
-
     self.folders = [NSMutableArray new];
 
     [self initializeList];

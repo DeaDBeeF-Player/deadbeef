@@ -10,12 +10,15 @@
 
 extern DB_functions_t *deadbeef;
 
-@implementation MediaLibraryItem {
+@interface MediaLibraryItem() {
     NSString *_stringValue;
 
     ddb_medialib_item_t *_item;
     NSMutableArray *_children;
 }
+@end
+
+@implementation MediaLibraryItem
 
 - (instancetype)init {
     static ddb_medialib_item_t item;

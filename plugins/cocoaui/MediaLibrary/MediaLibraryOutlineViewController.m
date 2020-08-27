@@ -11,6 +11,7 @@
 #import "medialib.h"
 #import "artwork.h"
 #import "MediaLibrarySelectorCellView.h"
+#import "MediaLibrarySearchCellView.h"
 #import "MediaLibraryItem.h"
 #import "MediaLibraryCoverQueryData.h"
 #import "MediaLibraryOutlineViewController.h"
@@ -20,13 +21,18 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface MediaLibraryOutlineViewController() <TrackContextMenuDelegate,MediaLibraryFilterSelectorCellViewDelegate>
+@interface MediaLibraryOutlineViewController() <TrackContextMenuDelegate,MediaLibraryFilterSelectorCellViewDelegate,MediaLibrarySearchCellViewDelegate>
 
-@property (nonatomic) NSString *libraryPopupItem;
+@property (nonatomic) NSString *selectorItem;
+@property (nonatomic) NSString *searchItem;
+@property (nonatomic) MediaLibraryItem *medialibRootItem;
+
+@property (nullable, nonatomic) NSString *searchString;
+
+@property (nonatomic) NSArray *topLevelItems;
+@property (nonatomic) BOOL outlineViewInitialized;
 
 @property (nonatomic) int listenerId;
-
-@property (nonatomic) MediaLibraryItem *medialibRootItem;
 
 @property (nonatomic) NSOutlineView *outlineView;
 
@@ -59,7 +65,8 @@ extern DB_functions_t *deadbeef;
     self.outlineView.delegate = self;
     [self.outlineView registerForDraggedTypes:@[ddbPlaylistItemsUTIType]];
 
-    self.libraryPopupItem = @"Popup";
+    self.selectorItem = @"Popup";
+    self.searchItem = @"Search Field";
 
     self.medialibPlugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
     self.artworkPlugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
@@ -100,13 +107,37 @@ static void _medialib_listener (int event, void *user_data) {
         "artist",
         "folder",
     };
-    self.medialibRootItem = nil;
+
+    NSInteger itemIndex = NSNotFound;
+    if (self.outlineViewInitialized) {
+        itemIndex = [self.topLevelItems indexOfObject:self.medialibRootItem];
+        [self.outlineView removeItemsAtIndexes:[NSIndexSet indexSetWithIndex:itemIndex] inParent:nil withAnimation:NSTableViewAnimationEffectNone];
+        self.medialibRootItem = nil;
+        self.topLevelItems = nil;
+    }
+
     if (self.medialibItemTree) {
         self.medialibPlugin->free_list (self.medialibItemTree);
         self.medialibItemTree = NULL;
     }
-    self.medialibItemTree = self.medialibPlugin->get_list (indexNames[index]);
+    self.medialibItemTree = self.medialibPlugin->get_list (indexNames[index], self.searchString ? self.searchString.UTF8String : NULL);
     self.medialibRootItem = [[MediaLibraryItem alloc] initWithItem:self.medialibItemTree];
+
+    self.topLevelItems = @[
+        self.selectorItem,
+        self.searchItem,
+        self.medialibRootItem,
+    ];
+
+    if (self.outlineViewInitialized) {
+        [self.outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:itemIndex] inParent:nil withAnimation:NSTableViewAnimationEffectNone];
+    }
+
+    if (!self.outlineViewInitialized) {
+        [self.outlineView reloadData];
+    }
+
+    self.outlineViewInitialized = YES;
 }
 
 - (void)updateMedialibStatusForView:(NSTableCellView *)view {
@@ -199,7 +230,7 @@ static void _medialib_listener (int event, void *user_data) {
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
     if (item == nil) {
-        return 2;
+        return self.topLevelItems.count;
     }
     else if ([item isKindOfClass:MediaLibraryItem.class]) {
         MediaLibraryItem *mlItem = item;
@@ -226,12 +257,7 @@ static void _medialib_listener (int event, void *user_data) {
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
     if (item == nil) {
-        switch (index) {
-        case 0:
-            return self.libraryPopupItem;
-        case 1:
-            return self.medialibRootItem;
-        }
+        return self.topLevelItems[index];
     }
     else if ([item isKindOfClass:MediaLibraryItem.class]) {
         MediaLibraryItem *mlItem = item;
@@ -389,7 +415,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
             }
         }
     }
-    else if (item == self.libraryPopupItem) {
+    else if (item == self.selectorItem) {
         view = [outlineView makeViewWithIdentifier:@"FilterSelectorCell" owner:self];
         MediaLibrarySelectorCellView *selectorCellView = (MediaLibrarySelectorCellView *)view;
         selectorCellView.delegate = self;
@@ -398,13 +424,17 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
             view.textField.stringValue = item;
         }
     }
+    else if (item == self.searchItem) {
+        view = [outlineView makeViewWithIdentifier:@"SearchCell" owner:self];
+        MediaLibrarySearchCellView *searchCellView = (MediaLibrarySearchCellView *)view;
+        searchCellView.delegate = self;
+    }
     return view;
 }
 
 - (void)filterChanged {
     [self initializeTreeView:(int)self.lastSelectedIndex];
-    [self.outlineView reloadData];
-    [self.outlineView expandItem:self.medialibRootItem];
+    [self.outlineView expandItem:self.medialibRootItem expandChildren:self.searchString!=nil];
 }
 
 #pragma mark - TrackContextMenuDelegate
@@ -513,8 +543,9 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     // prevent selecting filter items
     [proposedSelectionIndexes enumerateIndexesUsingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
         id item = [self.outlineView itemAtRow:row];
-        if (item != self.libraryPopupItem
-            && item != self.medialibRootItem) {
+        if (item != self.selectorItem
+            && item != self.medialibRootItem
+            && item != self.searchItem) {
             [selectionIndexes addIndex:row];
         }
     }];
@@ -528,7 +559,15 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     [self filterChanged];
 }
 
-
-
+#pragma mark - MediaLibrarySearchCellViewDelegate
+- (void)mediaLibrarySearchCellViewTextChanged:(nonnull NSString *)text {
+    if ([text isEqualToString:@""]) {
+        self.searchString = nil;
+    }
+    else {
+        self.searchString = text;
+    }
+    [self filterChanged];
+}
 
 @end
