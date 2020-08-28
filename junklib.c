@@ -600,10 +600,11 @@ ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, const c
 
                         ConversionResult res = ConvertUTF16toUTF8 ((const UTF16**)&src, (const UTF16 *)(src+2), (UTF8**)&dst, dst+5, strictConversion);
                         if (res == conversionOK) {
-                            if (src - utf8_val < outlen-len) {
-                                memcpy (out, utf8_val, src - utf8_val);
-                                out += src - utf8_val;
-                                len += src - utf8_val;
+                            size_t converted_len = dst - utf8_val;
+                            if (converted_len < outlen-len) {
+                                memcpy (out, utf8_val, converted_len);
+                                out += converted_len;
+                                len += converted_len;
                                 inlen -= 2;
                                 in += 2;
                             }
