@@ -64,7 +64,7 @@ extern DB_functions_t *deadbeef;
     self.outlineView = outlineView;
     self.outlineView.dataSource = self;
     self.outlineView.delegate = self;
-    [self.outlineView registerForDraggedTypes:@[ddbPlaylistItemsUTIType]];
+    [self.outlineView registerForDraggedTypes:@[ddbMedialibItemUTIType]];
 
     self.selectorItem = @"Popup";
     self.searchItem = @"Search Field";

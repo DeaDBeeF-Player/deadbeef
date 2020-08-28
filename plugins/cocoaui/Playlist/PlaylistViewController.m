@@ -1340,6 +1340,30 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     }
 }
 
+- (void)dropPlayItems:(DdbListviewRow_t *)items before:(DdbListviewRow_t)before count:(int)count {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+
+    deadbeef->pl_lock ();
+
+    ddb_playItem_t *after = before ? deadbeef->pl_get_prev((ddb_playItem_t *)before, PL_MAIN) : deadbeef->plt_get_tail_item (plt, PL_MAIN);
+
+    for (int i = 0; i < count; i++) {
+        ddb_playItem_t *it = (ddb_playItem_t *)items[i];
+
+        ddb_playItem_t *copy = deadbeef->pl_item_alloc();
+        deadbeef->pl_item_copy (copy, it);
+        deadbeef->plt_insert_item (plt, after, copy);
+        deadbeef->pl_item_unref (copy);
+        after = copy;
+    }
+
+    deadbeef->pl_unlock ();
+
+    deadbeef->plt_save_config (plt);
+    deadbeef->plt_unref (plt);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+}
+
 - (void)scrollChanged:(CGFloat)pos {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {

@@ -77,6 +77,7 @@ typedef struct DdbListviewGroup_s {
 - (void)sortColumn:(DdbListviewCol_t)column;
 - (void)dropItems:(int)from_playlist before:(DdbListviewRow_t)before indices:(uint32_t *)indices count:(int)count copy:(BOOL)copy;
 - (void)externalDropItems:(NSArray *)paths after:(DdbListviewRow_t)after;
+- (void)dropPlayItems:(DdbListviewRow_t *)items before:(DdbListviewRow_t)before count:(int)count;
 - (void)scrollChanged:(CGFloat)scrollpos;
 
 - (NSString *)columnTitleAtIndex:(NSUInteger)index;

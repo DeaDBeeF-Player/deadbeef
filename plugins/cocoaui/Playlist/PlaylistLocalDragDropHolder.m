@@ -8,7 +8,6 @@
 
 #import "PlaylistLocalDragDropHolder.h"
 #import "DdbShared.h"
-#include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -50,7 +49,6 @@ extern DB_functions_t *deadbeef;
 }
 
 + (NSPasteboardReadingOptions)readingOptionsForType:(NSString *)type pasteboard:(NSPasteboard *)pasteboard {
-
     return NSPasteboardReadingAsKeyedArchive;
 }
 

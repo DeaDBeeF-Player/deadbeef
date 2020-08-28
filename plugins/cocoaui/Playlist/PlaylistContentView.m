@@ -10,6 +10,7 @@
 #import "PlaylistContentView.h"
 #import "PlaylistView.h"
 #import "DdbShared.h"
+#import "MedialibItemDragDropHolder.h"
 #import "PlaylistLocalDragDropHolder.h"
 #include "deadbeef.h"
 
@@ -57,7 +58,7 @@ static int grouptitleheight = 22;
 
     self.groups_build_idx = -1;
 
-    [self registerForDraggedTypes:[NSArray arrayWithObjects:ddbPlaylistItemsUTIType, NSFilenamesPboardType, nil]];
+    [self registerForDraggedTypes:[NSArray arrayWithObjects:ddbPlaylistItemsUTIType, ddbMedialibItemUTIType, NSFilenamesPboardType, nil]];
 
     _pinnedGroupTitleView = [PinnedGroupTitleView new];
     _pinnedGroupTitleView.hidden = YES;
@@ -152,10 +153,10 @@ static int grouptitleheight = 22;
         row = [delegate rowForIndex:sel];
     }
 
-    if ( [[pboard types] containsObject:ddbPlaylistItemsUTIType ] ) {
+    if ([pboard.types containsObject:ddbPlaylistItemsUTIType]) {
         NSArray *classes = [[NSArray alloc] initWithObjects:[PlaylistLocalDragDropHolder class], nil];
         NSDictionary *options = [NSDictionary dictionary];
-        NSArray *draggedItems = [pboard readObjectsForClasses:classes options:options];
+        NSArray<PlaylistLocalDragDropHolder *> *draggedItems = [pboard readObjectsForClasses:classes options:options];
 
         for (PlaylistLocalDragDropHolder *holder in draggedItems) {
             NSInteger from_playlist = holder.playlistIdx;
@@ -173,7 +174,24 @@ static int grouptitleheight = 22;
             free(indices);
         }
     }
-    else if ( [[pboard types] containsObject:NSFilenamesPboardType] ) {
+    if ([pboard.types containsObject:ddbMedialibItemUTIType]) {
+        NSArray *classes = [[NSArray alloc] initWithObjects:[MedialibItemDragDropHolder class], nil];
+        NSDictionary *options = [NSDictionary dictionary];
+        NSArray<MedialibItemDragDropHolder *> *draggedItems = [pboard readObjectsForClasses:classes options:options];
+
+        NSInteger count = draggedItems.count;
+        DdbListviewRow_t *items = calloc (count, sizeof (DdbListviewRow_t));
+        size_t itemCount = 0;
+        for (MedialibItemDragDropHolder *holder in draggedItems) {
+            ddb_playItem_t *it = holder.playItem;
+            if (it) {
+                items[itemCount++] = (DdbListviewRow_t)it;
+            }
+        }
+        [delegate dropPlayItems:items before:row count:(int)itemCount];
+        free (items);
+    }
+    else if ([pboard.types containsObject:NSFilenamesPboardType]) {
 
         NSArray *paths = [pboard propertyListForType:NSFilenamesPboardType];
         if (row != [delegate invalidRow]) {
@@ -183,7 +201,7 @@ static int grouptitleheight = 22;
         else {
             // no selected row, add to end
             DdbListviewRow_t lastRow = [delegate rowForIndex:([delegate rowCount]-1)];
-            [delegate externalDropItems:paths after: lastRow];
+            [delegate externalDropItems:paths after:lastRow];
         }
     }
 
