@@ -1415,6 +1415,10 @@ static void
 ml_set_folders (const char **folders, size_t count) {
     deadbeef->mutex_lock (mutex);
 
+    if (!musicpaths_json) {
+        musicpaths_json = json_array();
+    }
+
     json_array_clear(musicpaths_json);
     for (int i = 0; i < count; i++) {
         json_t *value = json_string(folders[i]);
