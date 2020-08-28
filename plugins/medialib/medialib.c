@@ -273,6 +273,9 @@ ml_reg_item_in_folder (ml_tree_node_t *node, const char *path, DB_playItem_t *it
     }
 
     int len = (int)(slash - path);
+    if (len == 0 && !strcmp (path, "/")) {
+        len = 1;
+    }
 
     // node -- find existing child node with this name
     for (ml_tree_node_t *c = node->children; c; c = c->next) {
@@ -499,14 +502,17 @@ ml_index (ddb_playlist_t *plt) {
         if (fn) {
             memcpy (folder, reluri, fn-reluri);
             folder[fn-reluri] = 0;
-            const char *s = deadbeef->metacache_add_string (folder);
-            //fld = ml_reg_col (&db.folders, s, it);
-
-            // add to tree
-            ml_reg_item_in_folder (db.folders_tree, s, it);
-
-            deadbeef->metacache_remove_string (s);
         }
+        else {
+            strcpy (folder, "/");
+        }
+        const char *s = deadbeef->metacache_add_string (folder);
+        //fld = ml_reg_col (&db.folders, s, it);
+
+        // add to tree
+        ml_reg_item_in_folder (db.folders_tree, s, it);
+
+        deadbeef->metacache_remove_string (s);
 
         // uri and title are not indexed, only a part of track list,
         // that's why they have an extra ref for each entry
