@@ -15,6 +15,8 @@ extern DB_functions_t *deadbeef;
 @interface NowPlayable()
 
 @property (nonatomic) NSTimer *updateTimer;
+@property (nonatomic) char *artist_tf;
+@property (nonatomic) char *album_tf;
 
 @end
 
@@ -26,6 +28,10 @@ extern DB_functions_t *deadbeef;
     if (!self) {
         return nil;
     }
+
+    _artist_tf = deadbeef->tf_compile ("$if2(%artist%,Unknown Artist)");
+    _album_tf = deadbeef->tf_compile ("$if2(%album%,Unknown Album)");
+
 
     MPNowPlayingInfoCenter *infoCenter = [MPNowPlayingInfoCenter defaultCenter];
     infoCenter.nowPlayingInfo = @{
@@ -55,8 +61,8 @@ extern DB_functions_t *deadbeef;
     __weak NowPlayable *weakSelf = self;
 
     self.updateTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
-        NowPlayable *self = weakSelf;
-        if (!self) {
+        NowPlayable *nowPlayable = weakSelf;
+        if (!nowPlayable) {
             return;
         }
 
@@ -75,12 +81,27 @@ extern DB_functions_t *deadbeef;
             else {
                 info[MPNowPlayingInfoPropertyIsLiveStream] = @YES;
             }
+
+            // song info
+            char text[1000];
+            deadbeef->pl_get_meta (it, "title", text, sizeof (text));
+            info[MPMediaItemPropertyTitle] = [NSString stringWithUTF8String:text];
+
+            ddb_tf_context_t ctx = {
+                ._size = sizeof (ddb_tf_context_t),
+                .flags = DDB_TF_CONTEXT_NO_DYNAMIC|DDB_TF_CONTEXT_MULTILINE,
+                .it = it
+            };
+
+            deadbeef->tf_eval (&ctx, nowPlayable.artist_tf, text, sizeof (text));
+            info[MPMediaItemPropertyArtist] = [NSString stringWithUTF8String:text];
+            deadbeef->tf_eval (&ctx, nowPlayable.album_tf, text, sizeof (text));
+            info[MPMediaItemPropertyAlbumTitle] = [NSString stringWithUTF8String:text];
+
             deadbeef->pl_item_unref (it);
         }
 
         info[MPNowPlayingInfoPropertyMediaType] = @(MPNowPlayingInfoMediaTypeAudio);
-
-        MPNowPlayingInfoCenter *infoCenter = [MPNowPlayingInfoCenter defaultCenter];
 
         infoCenter.nowPlayingInfo = info;
 
@@ -112,6 +133,9 @@ extern DB_functions_t *deadbeef;
     [commandCenter.nextTrackCommand removeTarget:self];
     [commandCenter.previousTrackCommand removeTarget:self];
     [commandCenter.changePlaybackPositionCommand removeTarget:self];
+
+    deadbeef->tf_free (_artist_tf);
+    deadbeef->tf_free (_album_tf);
 }
 
 - (MPRemoteCommandHandlerStatus)togglePlayPauseCommand:(MPRemoteCommandEvent *)sender {
