@@ -159,9 +159,6 @@ static int grouptitleheight = 22;
 
         for (PlaylistLocalDragDropHolder *holder in draggedItems) {
             NSInteger from_playlist = holder.playlistIdx;
-            if (holder.isMedialib) {
-                from_playlist = PLAYLIST_INDEX_MEDIALIB;
-            }
             uint32_t *indices = calloc (sizeof (uint32_t), holder.itemsIndices.count);
             int i = 0;
             for (NSNumber * number in holder.itemsIndices) {
@@ -172,7 +169,7 @@ static int grouptitleheight = 22;
             NSUInteger length = holder.itemsIndices.count;
 
             NSDragOperation op = sender.draggingSourceOperationMask;
-            [delegate dropItems:(int)from_playlist before:row indices:indices count:(int)length copy:(op==NSDragOperationCopy || holder.isMedialib)];
+            [delegate dropItems:(int)from_playlist before:row indices:indices count:(int)length copy:op==NSDragOperationCopy];
             free(indices);
         }
     }

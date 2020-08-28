@@ -1267,13 +1267,7 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     ddb_playlist_t *from = NULL;
 
-    if (from_playlist == PLAYLIST_INDEX_MEDIALIB) {
-        ddb_medialib_plugin_t *medialibPlugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
-        from = medialibPlugin->playlist();
-    }
-    else {
-        from = deadbeef->plt_get_for_idx(from_playlist);
-    }
+    from = deadbeef->plt_get_for_idx(from_playlist);
 
     if (copy) {
         deadbeef->plt_copy_items (plt, PL_MAIN, from, (DB_playItem_t *)before, indices, count);
@@ -1381,7 +1375,6 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     self.trkProperties.playlist =  plt;
     deadbeef->plt_unref (plt);
-    [self.trkProperties fill];
     [self.trkProperties showWindow:self];
 }
 

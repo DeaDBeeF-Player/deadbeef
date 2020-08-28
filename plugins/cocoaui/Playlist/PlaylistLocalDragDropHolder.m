@@ -32,7 +32,6 @@ extern DB_functions_t *deadbeef;
     if (self) {
         _playlistIdx = [aDecoder decodeIntegerForKey:@"Playlist"];
         _itemsIndices = [aDecoder decodeObjectOfClass:[NSArray class] forKey:@"Items"];
-        _isMedialib = [aDecoder decodeBoolForKey:@"isMedialib"];
     }
 
     return self;
@@ -41,7 +40,6 @@ extern DB_functions_t *deadbeef;
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeInteger:_playlistIdx forKey:@"Playlist"];
     [aCoder encodeObject:_itemsIndices forKey:@"Items"];
-    [aCoder encodeBool:_isMedialib forKey:@"isMedialib"];
 }
 
 
@@ -101,19 +99,6 @@ extern DB_functions_t *deadbeef;
     }
     _itemsIndices = (NSArray*) indices;
     deadbeef->pl_unlock ();
-    return self;
-}
-
-- (instancetype)initWithMedialibItemIndex:(NSUInteger)index {
-    self = [super init];
-    if (!self) {
-        return nil;
-    }
-
-    self.playlistIdx = -1;
-    self.isMedialib = YES;
-    self.itemsIndices = @[ @(index) ];
-
     return self;
 }
 

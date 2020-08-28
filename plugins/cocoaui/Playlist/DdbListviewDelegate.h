@@ -9,8 +9,6 @@
 #ifndef DdbListviewDelegate_h
 #define DdbListviewDelegate_h
 
-#define PLAYLIST_INDEX_MEDIALIB 9999
-
 typedef intptr_t DdbListviewRow_t;
 typedef intptr_t DdbListviewCol_t;
 

@@ -23,10 +23,12 @@
 #import <Cocoa/Cocoa.h>
 #include "deadbeef.h"
 
+@class MediaLibraryItem;
+
 @interface TrackPropertiesWindowController : NSWindowController<NSWindowDelegate,NSTableViewDelegate,NSTableViewDataSource>
 
-- (void)setPlaylist:(ddb_playlist_t *)plt;
-- (void)fill;
+@property (nonatomic) ddb_playlist_t *playlist;
+@property (nonatomic) NSArray<MediaLibraryItem *> *mediaLibraryItems;
 
 @property (unsafe_unretained) BOOL modified;
 @property (unsafe_unretained) BOOL singleValueSelected;

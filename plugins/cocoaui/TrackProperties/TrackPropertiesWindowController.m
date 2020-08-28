@@ -20,6 +20,7 @@
 
     3. This notice may not be removed or altered from any source distribution.
 */
+#import "MediaLibraryItem.h"
 #import "TrackPropertiesWindowController.h"
 #include "deadbeef.h"
 #include "utf8.h"
@@ -130,7 +131,6 @@ extern DB_functions_t *deadbeef;
 @interface TrackPropertiesWindowController ()
 
 @property (nonatomic) int iter;
-@property (nonatomic) ddb_playlist_t *last_plt;
 @property (nonatomic) DB_playItem_t **tracks;
 @property (nonatomic) int numtracks;
 @property (nonatomic) NSMutableArray *store;
@@ -144,13 +144,20 @@ extern DB_functions_t *deadbeef;
 @implementation TrackPropertiesWindowController
 
 - (void)setPlaylist:(ddb_playlist_t *)plt {
-    if (self.last_plt) {
-        deadbeef->plt_unref (self.last_plt);
+    if (_playlist) {
+        deadbeef->plt_unref (_playlist);
     }
-    self.last_plt = plt;
-    if (self.last_plt) {
-        deadbeef->plt_ref (self.last_plt);
+    _playlist = plt;
+    if (_playlist) {
+        deadbeef->plt_ref (_playlist);
     }
+
+    [self reloadContent];
+}
+
+- (void)setMediaLibraryItems:(NSArray<MediaLibraryItem *> *)mediaLibraryItems {
+    _mediaLibraryItems = mediaLibraryItems;
+    [self reloadContent];
 }
 
 - (void)freeTrackList {
@@ -159,9 +166,9 @@ extern DB_functions_t *deadbeef;
 
 - (void)dealloc {
     [self freeTrackList];
-    if (self.last_plt) {
-        deadbeef->plt_unref (self.last_plt);
-        self.last_plt = NULL;
+    if (_playlist) {
+        deadbeef->plt_unref (_playlist);
+        _playlist = NULL;
     }
 }
 
@@ -172,7 +179,7 @@ extern DB_functions_t *deadbeef;
 
     self.store = [NSMutableArray new];
     self.propstore = [NSMutableArray new];
-    [self fill];
+    [self reloadContent];
     self.metadataTableView.dataSource = self;
     self.propertiesTableView.dataSource = self;
     self.metadataTableView.delegate = self;
@@ -298,12 +305,30 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     deadbeef->pl_unlock ();
 }
 
-- (void)fill {
+- (void)reloadContent {
+    if (!self.window) {
+        return;
+    }
     self.close_after_writing = NO;
 
     [self freeTrackList];
 
-    [self buildTrackListForCtx:DDB_ACTION_CTX_SELECTION forPlaylist:self.last_plt];
+    if (self.playlist) {
+        [self buildTrackListForCtx:DDB_ACTION_CTX_SELECTION forPlaylist:self.playlist];
+    }
+    else if (self.mediaLibraryItems) {
+        NSInteger count = self.mediaLibraryItems.count;
+        _tracks = calloc (count, sizeof (DB_playItem_t *));
+        _numtracks = 0;
+
+        for (NSInteger i = 0; i < count; i++) {
+            ddb_playItem_t *it = self.mediaLibraryItems[i].playItem;
+            if (it) {
+                deadbeef->pl_item_ref (it);
+                _tracks[_numtracks++] = it;
+            }
+        }
+    }
 
     NSString *fname;
 
@@ -633,7 +658,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
     deadbeef->pl_save_current();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    [self fill];
+    [self reloadContent];
 }
 
 - (IBAction)cancelTrackPropertiesAction:(id)sender {

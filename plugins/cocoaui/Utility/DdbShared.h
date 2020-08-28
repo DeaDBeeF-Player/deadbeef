@@ -25,6 +25,7 @@
 #define deadbeef_DdbShared_h
 
 extern NSString * const ddbPlaylistItemsUTIType;
+extern NSString * const ddbMedialibItemUTIType;
 
 int
 cocoaui_add_new_playlist (void);

@@ -15,7 +15,7 @@
 #import "MediaLibraryItem.h"
 #import "MediaLibraryCoverQueryData.h"
 #import "MediaLibraryOutlineViewController.h"
-#import "PlaylistLocalDragDropHolder.h"
+#import "MedialibItemDragDropHolder.h"
 #import "TrackContextMenu.h"
 #import "TrackPropertiesWindowController.h"
 
@@ -41,6 +41,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) ddb_medialib_item_t *medialibItemTree;
 
 @property (nonatomic) NSInteger lastSelectedIndex;
+@property (nonatomic) NSMutableArray<MediaLibraryItem *> *selectedItems;
 
 @property (nonatomic) TrackPropertiesWindowController *trkProperties;
 
@@ -84,6 +85,8 @@ extern DB_functions_t *deadbeef;
     self.outlineView.target = self;
 
     self.albumArtCache = [NSMutableDictionary new];
+
+    self.selectedItems = [NSMutableArray new];
 
     return self;
 }
@@ -209,9 +212,7 @@ static void _medialib_listener (int event, void *user_data) {
     deadbeef->plt_set_curr (curr_plt);
     deadbeef->plt_clear(curr_plt);
 
-    ddb_playItem_t *playItem;
-    ddb_playlist_t *plt;
-    [self selectedPlayItem:&playItem plt:&plt];
+    ddb_playItem_t *playItem = [self selectedPlayItem];
 
     if (playItem) {
         ddb_playItem_t *it = deadbeef->pl_item_alloc();
@@ -219,10 +220,6 @@ static void _medialib_listener (int event, void *user_data) {
         deadbeef->plt_insert_item (curr_plt, NULL, it);
         deadbeef->pl_item_unref (it);
         deadbeef->sendmessage(DB_EV_PLAY_NUM, 0, 0, 0);
-    }
-
-    if (plt) {
-        deadbeef->plt_unref (plt);
     }
 }
 
@@ -274,13 +271,7 @@ static void _medialib_listener (int event, void *user_data) {
     if (![item isKindOfClass:MediaLibraryItem.class]) {
         return nil;
     }
-    ddb_playlist_t *plt = self.medialibPlugin->playlist();
-    int idx = deadbeef->plt_get_item_idx (plt, item.playItem, PL_MAIN);
-    deadbeef->plt_unref (plt);
-    if (idx < 0) {
-        return nil;
-    }
-    return [[PlaylistLocalDragDropHolder alloc] initWithMedialibItemIndex:idx];
+    return [[MedialibItemDragDropHolder alloc] initWithItem:item.playItem];
 }
 
 
@@ -443,10 +434,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     if (!self.trkProperties) {
         self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
     }
-    ddb_playlist_t *plt = self.medialibPlugin->playlist();
-    self.trkProperties.playlist =  plt;
-    deadbeef->plt_unref (plt);
-    [self.trkProperties fill];
+    self.trkProperties.mediaLibraryItems = self.selectedItems;
     [self.trkProperties showWindow:self];
 }
 
@@ -454,87 +442,50 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     // FIXME
 }
 
-- (void)selectedPlayItem:(ddb_playItem_t **)playItem plt:(ddb_playlist_t **)plt {
-    *playItem = NULL;
-    *plt = NULL;
-
+- (ddb_playItem_t *)selectedPlayItem {
     NSInteger row = -1;
-    *plt = self.medialibPlugin->playlist();
     MediaLibraryItem *item;
-    *playItem = NULL;
-
-    if (!*plt) {
-        return;
-    }
-
-    deadbeef->plt_deselect_all (*plt);
 
     row = self.outlineView.clickedRow;
     if (row == -1) {
-        deadbeef->plt_unref (*plt);
-        *plt = NULL;
-        return;
+        return NULL;
     }
 
     item = [self.outlineView itemAtRow:row];
     if (!item || ![item isKindOfClass:MediaLibraryItem.class]) {
-        deadbeef->plt_unref (*plt);
-        *plt = NULL;
-        return;
+        return NULL;
     }
 
-    *playItem = item.playItem;
+    return item.playItem;
 }
 
-- (void)selectItemRecursively:(MediaLibraryItem *)item {
+- (void)addSelectedItemsRecursively:(MediaLibraryItem *)item {
     if (![item isKindOfClass:MediaLibraryItem.class]) {
         return;
     }
+
     ddb_playItem_t *it = item.playItem;
     if (it) {
-        deadbeef->pl_set_selected (it, 1);
+        [self.selectedItems addObject:item];
     }
 
     for (NSUInteger i = 0; i < item.numberOfChildren; i++) {
-        [self selectItemRecursively:item.children[i]];
+        [self addSelectedItemsRecursively:item.children[i]];
     }
-}
-
-- (void)selectClickedRows {
-    ddb_playlist_t *plt = self.medialibPlugin->playlist();
-    if (!plt) {
-        return;
-    }
-
-    deadbeef->plt_deselect_all (plt);
-
-    NSInteger clickedRow = self.outlineView.clickedRow;
-    if (clickedRow != -1 && [self.outlineView isRowSelected:clickedRow]) {
-        [self.outlineView.selectedRowIndexes enumerateIndexesUsingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
-            [self selectItemRecursively:[self.outlineView itemAtRow:row]];
-        }];
-    }
-    else if (clickedRow != -1) {
-        [self selectItemRecursively:[self.outlineView itemAtRow:clickedRow]];
-    }
-
-
-    deadbeef->plt_unref (plt);
 }
 
 - (void)menuNeedsUpdate:(TrackContextMenu *)menu {
-    ddb_playlist_t *plt = self.medialibPlugin->playlist();
-    if (!plt) {
-        return;
+    [self.selectedItems removeAllObjects];
+    NSInteger clickedRow = self.outlineView.clickedRow;
+    if (clickedRow != -1 && [self.outlineView isRowSelected:clickedRow]) {
+        [self.outlineView.selectedRowIndexes enumerateIndexesUsingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
+            [self addSelectedItemsRecursively:[self.outlineView itemAtRow:row]];
+        }];
+    }
+    else if (clickedRow != -1) {
+        [self addSelectedItemsRecursively:[self.outlineView itemAtRow:clickedRow]];
     }
 
-    [self selectClickedRows];
-
-    [((TrackContextMenu *)self.outlineView.menu) update:self.medialibPlugin->playlist() iter:PL_MAIN];
-    deadbeef->plt_unref (plt);
-
-    // FIXME: the menu operates on the specified playlist, with its own selection, which can change while the menu is open
-    // Therefore, it's better to create a separate list of playItems for the menu consumption.
 }
 
 - (NSIndexSet *)outlineView:(NSOutlineView *)outlineView selectionIndexesForProposedSelection:(NSIndexSet *)proposedSelectionIndexes {

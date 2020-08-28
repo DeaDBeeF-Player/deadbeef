@@ -1377,19 +1377,6 @@ static int ml_scanner_state (void) {
     return _ml_state;
 }
 
-static ddb_playlist_t *ml_get_playlist (void) {
-    deadbeef->mutex_lock (mutex);
-
-    if (ml_playlist) {
-        deadbeef->plt_ref (ml_playlist);
-    }
-
-    ddb_playlist_t *res = ml_playlist;
-
-    deadbeef->mutex_unlock (mutex);
-    return res;
-}
-
 static int
 ml_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
@@ -1491,7 +1478,6 @@ static ddb_medialib_plugin_t plugin = {
     .free_list = ml_free_list,
     .find_track = ml_find_track,
     .scanner_state = ml_scanner_state,
-    .playlist = ml_get_playlist,
     .folder_count = ml_folder_count,
     .folder_at_index = ml_folder_at_index,
     .set_folders = ml_set_folders,

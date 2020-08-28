@@ -76,6 +76,7 @@ extern DB_functions_t *deadbeef;
     [self addItem:NSMenuItem.separatorItem];
 
     self.trackPropertiesItem = [self addItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@""];
+    self.trackPropertiesItem.target = self;
 
     self.autoenablesItems = NO;
 

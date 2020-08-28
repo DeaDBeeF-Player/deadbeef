@@ -26,6 +26,7 @@
 #import "deadbeef.h"
 
 NSString * const ddbPlaylistItemsUTIType = @"org.deadbeef.playlistItems";
+NSString * const ddbMedialibItemUTIType = @"org.deadbeef.medialibItem";
 
 extern DB_functions_t *deadbeef;
 

@@ -52,6 +52,13 @@ enum {
     DDB_MEDIALIB_STATE_SAVING,
 };
 
+//typedef struct ddb_medialib_source_s {
+//    const char *(*source_name)(void);
+//
+//
+//
+//} ddb_medialib_source_t;
+//
 typedef struct ddb_medialib_plugin_s {
     DB_misc_t plugin;
 
@@ -66,8 +73,6 @@ typedef struct ddb_medialib_plugin_s {
 
     // whether scanner/indexer is active
     int (*scanner_state) (void);
-
-    ddb_playlist_t *(*playlist) (void);
 
 #pragma mark - folder access
 
