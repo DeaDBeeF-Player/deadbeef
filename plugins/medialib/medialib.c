@@ -1144,6 +1144,7 @@ get_list_of_tracks_for_album (ddb_medialib_item_t *libitem, ml_string_t *album, 
         deadbeef->tf_eval (&ctx, title_bc, text, sizeof (text));
 
         track_item->text = deadbeef->metacache_add_string (text);
+        deadbeef->pl_item_ref (it);
         track_item->track = it;
     }
 }
