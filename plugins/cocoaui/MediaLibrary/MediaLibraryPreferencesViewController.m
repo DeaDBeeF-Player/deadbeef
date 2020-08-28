@@ -88,6 +88,7 @@ extern DB_functions_t *deadbeef;
                 index++;
             }
             [self.tableView endUpdates];
+            [self applyChanges];
         }
     }];
 
@@ -100,14 +101,11 @@ extern DB_functions_t *deadbeef;
     NSInteger index = self.tableView.selectedRowIndexes.firstIndex;
     [self.tableView removeRowsAtIndexes:self.tableView.selectedRowIndexes withAnimation:NSTableViewAnimationEffectFade];
     [self.folders removeObjectAtIndex:index];
+
+    [self applyChanges];
 }
 
-- (IBAction)resetAction:(id)sender {
-    [self initializeList];
-    [self.tableView reloadData];
-}
-
-- (IBAction)applyAction:(id)sender {
+- (void)applyChanges {
     const char **paths = self.folders.count ? calloc (sizeof (char *), self.folders.count) : NULL;
     for (NSUInteger i = 0; i < self.folders.count; i++) {
         paths[i] = self.folders[i].UTF8String;
