@@ -1167,6 +1167,20 @@ project "tta"
    }
 end
 
+if option ("plugin-medialib") then
+project "medialib"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/medialib/medialib.c",
+       "plugins/medialib/medialib.h"
+   }
+
+   pkgconfig ("jansson")
+end
 
 project "translations"
    kind "Utility"
