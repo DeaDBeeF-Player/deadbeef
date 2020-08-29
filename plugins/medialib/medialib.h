@@ -52,33 +52,35 @@ enum {
     DDB_MEDIALIB_STATE_SAVING,
 };
 
-//typedef struct ddb_medialib_source_s {
-//    const char *(*source_name)(void);
-//
-//
-//
-//} ddb_medialib_source_t;
-//
+typedef void *ddb_medialib_source_t;
+
 typedef struct ddb_medialib_plugin_s {
     DB_misc_t plugin;
 
-    int (*add_listener)(ddb_medialib_listener_t listener, void *user_data);
-    void (*remove_listener)(int listener_id);
+    const char *(*source_name)(void);
 
-    ddb_medialib_item_t * (*get_list)(const char *index, const char *filter);
-    void (*free_list) (ddb_medialib_item_t *list);
+    /// @param source_path: a unique name to identify the instance, this will be used to prefix individual instance configuration files, caches, etc.
+    ddb_medialib_source_t (*create_source) (const char *source_path);
+    void (*free_source) (ddb_medialib_source_t source);
+
+    int (*add_listener)(ddb_medialib_source_t source, ddb_medialib_listener_t listener, void *user_data);
+    void (*remove_listener)(ddb_medialib_source_t source, int listener_id);
+
+    ddb_medialib_item_t * (*create_list)(ddb_medialib_source_t source, const char *query, const char *filter);
+    void (*free_list) (ddb_medialib_source_t source, ddb_medialib_item_t *list);
 
     // Find the same track in DB
-    ddb_playItem_t *(*find_track) (ddb_playItem_t *track);
+    // FIXME: this is not used, and possibly is unnecessary
+//    ddb_playItem_t *(*find_track) (ddb_playItem_t *track);
 
     // whether scanner/indexer is active
-    int (*scanner_state) (void);
+    int (*scanner_state) (ddb_medialib_source_t source);
 
-#pragma mark - folder access
+#pragma mark - Configuration
 
-    unsigned (*folder_count)(void);
-    void (*folder_at_index)(int index, char *folder, size_t size);
-    void (*set_folders) (const char **folders, size_t count);
+    unsigned (*folder_count)(ddb_medialib_source_t source);
+    void (*folder_at_index)(ddb_medialib_source_t source, int index, char *folder, size_t size);
+    void (*set_folders) (ddb_medialib_source_t source, const char **folders, size_t count);
 } ddb_medialib_plugin_t;
 
 #endif /* medialib_h */

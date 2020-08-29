@@ -10,6 +10,7 @@
 #import "DdbShared.h"
 #import "medialib.h"
 #import "artwork.h"
+#import "AppDelegate.h"
 #import "MediaLibrarySelectorCellView.h"
 #import "MediaLibrarySearchCellView.h"
 #import "MediaLibraryItem.h"
@@ -37,7 +38,9 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSOutlineView *outlineView;
 
 @property (nonatomic) ddb_medialib_plugin_t *medialibPlugin;
+@property (nonatomic,readonly) ddb_medialib_source_t medialibSource;
 @property (nonatomic) ddb_artwork_plugin_t *artworkPlugin;
+
 @property (nonatomic) ddb_medialib_item_t *medialibItemTree;
 
 @property (nonatomic) NSInteger lastSelectedIndex;
@@ -50,6 +53,11 @@ extern DB_functions_t *deadbeef;
 @end
 
 @implementation MediaLibraryOutlineViewController
+
+- (ddb_medialib_source_t)medialibSource {
+    AppDelegate *appDelegate = NSApplication.sharedApplication.delegate;
+    return appDelegate.mediaLibraryManager.source;
+}
 
 - (instancetype)init {
     return [self initWithOutlineView:[NSOutlineView new]];
@@ -71,7 +79,7 @@ extern DB_functions_t *deadbeef;
 
     self.medialibPlugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
     self.artworkPlugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
-    self.listenerId = self.medialibPlugin->add_listener (_medialib_listener, (__bridge void *)self);
+    self.listenerId = self.medialibPlugin->add_listener (self.medialibSource, _medialib_listener, (__bridge void *)self);
 
     self.outlineView.menu = [TrackContextMenu new];
     self.outlineView.menu.delegate = self;
@@ -92,8 +100,9 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)dealloc {
-    self.medialibPlugin->remove_listener (self.listenerId);
-
+    self.medialibPlugin->remove_listener (self.medialibSource, self.listenerId);
+    self.listenerId = -1;
+    self.medialibPlugin = NULL;
 }
 
 static void _medialib_listener (int event, void *user_data) {
@@ -120,10 +129,10 @@ static void _medialib_listener (int event, void *user_data) {
     }
 
     if (self.medialibItemTree) {
-        self.medialibPlugin->free_list (self.medialibItemTree);
+        self.medialibPlugin->free_list (self.medialibSource, self.medialibItemTree);
         self.medialibItemTree = NULL;
     }
-    self.medialibItemTree = self.medialibPlugin->get_list (indexNames[index], self.searchString ? self.searchString.UTF8String : NULL);
+    self.medialibItemTree = self.medialibPlugin->create_list (self.medialibSource, indexNames[index], self.searchString ? self.searchString.UTF8String : NULL);
     self.medialibRootItem = [[MediaLibraryItem alloc] initWithItem:self.medialibItemTree];
 
     self.topLevelItems = @[
@@ -144,7 +153,7 @@ static void _medialib_listener (int event, void *user_data) {
 }
 
 - (void)updateMedialibStatusForView:(NSTableCellView *)view {
-    int state = self.medialibPlugin->scanner_state ();
+    int state = self.medialibPlugin->scanner_state (self.medialibSource);
     switch (state) {
     case DDB_MEDIALIB_STATE_LOADING:
         view.textField.stringValue = @"Loading...";
@@ -180,7 +189,7 @@ static void _medialib_listener (int event, void *user_data) {
         [self filterChanged];
     }
     else if (event == DDB_MEDIALIB_EVENT_SCANNER) {
-        int state = self.medialibPlugin->scanner_state ();
+        int state = self.medialibPlugin->scanner_state (self.medialibSource);
         if (state != DDB_MEDIALIB_STATE_IDLE) {
             //            [_scannerActiveIndicator startAnimation:self];
 

@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "AppDelegate.h"
 #import "MediaLibraryPreferencesViewController.h"
 #include "deadbeef.h"
 #include "medialib.h"
@@ -20,18 +21,24 @@ extern DB_functions_t *deadbeef;
 @property (weak) IBOutlet NSTableView *tableView;
 
 @property (nonatomic) ddb_medialib_plugin_t *medialibPlugin;
+@property (nonatomic,readonly) ddb_medialib_source_t medialibSource;
 @property (nonatomic) NSMutableArray<NSString *> *folders;
 
 @end
 
 @implementation MediaLibraryPreferencesViewController
 
+- (ddb_medialib_source_t)medialibSource {
+    AppDelegate *appDelegate = NSApplication.sharedApplication.delegate;
+    return appDelegate.mediaLibraryManager.source;
+}
+
 - (void)initializeList {
     [self.folders removeAllObjects];
-    NSInteger count = (NSInteger)self.medialibPlugin->folder_count();
+    NSInteger count = (NSInteger)self.medialibPlugin->folder_count(self.medialibSource);
     for (NSInteger i = 0; i < count; i++) {
         char folder[PATH_MAX];
-        self.medialibPlugin->folder_at_index((int)i, folder, sizeof (folder));
+        self.medialibPlugin->folder_at_index(self.medialibSource, (int)i, folder, sizeof (folder));
 
         [self.folders addObject:[NSString stringWithUTF8String:folder]];
     }
@@ -111,7 +118,7 @@ extern DB_functions_t *deadbeef;
         paths[i] = self.folders[i].UTF8String;
     }
 
-    self.medialibPlugin->set_folders (paths, self.folders.count);
+    self.medialibPlugin->set_folders (self.medialibSource, paths, self.folders.count);
 
     free (paths);
 }

@@ -67,6 +67,7 @@ AppDelegate *g_appDelegate;
 
 @property (nonatomic) NSInteger firstSelected;
 
+@property (nonatomic,readwrite) MediaLibraryManager *mediaLibraryManager;
 
 @end
 
@@ -163,6 +164,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 }
 
 - (void)awakeFromNib {
+    self.mediaLibraryManager = [MediaLibraryManager new];
     [self initMainMenu];
     [self initMainWindow];
     [self initSearchWindow];
@@ -253,6 +255,7 @@ main_cleanup_and_quit (void);
         // MainWindowController is not released
         [_mainWindow cleanup];
     }
+    self.mediaLibraryManager = nil;
     main_cleanup_and_quit();
 }
 

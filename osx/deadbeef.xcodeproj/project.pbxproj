@@ -1819,6 +1819,8 @@
 		2DAD80A22416DBB100EB3075 /* CustomToolbarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAD80A02416DBB100EB3075 /* CustomToolbarItem.m */; };
 		2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */; };
 		2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */; };
+		2DB1641A24FAB13400034E11 /* MediaLibraryManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB1641824FAB13400034E11 /* MediaLibraryManager.h */; };
+		2DB1641B24FAB13400034E11 /* MediaLibraryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB1641924FAB13400034E11 /* MediaLibraryManager.m */; };
 		2DB2F73F240466AF00F7C000 /* PluginsPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB2F73D240466AF00F7C000 /* PluginsPreferencesViewController.h */; };
 		2DB2F740240466AF00F7C000 /* PluginsPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */; };
 		2DB52F7C24CF7CF20046D516 /* TrackContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB52F7A24CF7CF20046D516 /* TrackContextMenu.h */; };
@@ -5452,6 +5454,8 @@
 		2DAD80A02416DBB100EB3075 /* CustomToolbarItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomToolbarItem.m; sourceTree = "<group>"; };
 		2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesWindowController.h; sourceTree = "<group>"; };
 		2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrackPropertiesWindowController.m; sourceTree = "<group>"; };
+		2DB1641824FAB13400034E11 /* MediaLibraryManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaLibraryManager.h; sourceTree = "<group>"; };
+		2DB1641924FAB13400034E11 /* MediaLibraryManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryManager.m; sourceTree = "<group>"; };
 		2DB2F73D240466AF00F7C000 /* PluginsPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginsPreferencesViewController.h; sourceTree = "<group>"; };
 		2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginsPreferencesViewController.m; sourceTree = "<group>"; };
 		2DB52F7A24CF7CF20046D516 /* TrackContextMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackContextMenu.h; sourceTree = "<group>"; };
@@ -8992,6 +8996,8 @@
 				2DF3D07F24E70775008D966E /* MediaLibraryCoverQueryData.m */,
 				2D887BE424B1C86D0078392F /* MediaLibraryItem.m */,
 				2D8030CC24B261A400539F9F /* MediaLibraryItem.h */,
+				2DB1641824FAB13400034E11 /* MediaLibraryManager.h */,
+				2DB1641924FAB13400034E11 /* MediaLibraryManager.m */,
 				2DDE52A424F821630096EF80 /* MediaLibraryOutlineView.h */,
 				2DDE52A524F821630096EF80 /* MediaLibraryOutlineView.m */,
 				2D8EE27224D03601005C5B4B /* MediaLibraryOutlineViewController.h */,
@@ -12379,6 +12385,7 @@
 				2D1A564A1D9FFB10005E5CDD /* ReplayGainScannerController.h in Headers */,
 				2DA5E341238DB1A8005832B7 /* EditColumnWindowController.h in Headers */,
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
+				2DB1641A24FAB13400034E11 /* MediaLibraryManager.h in Headers */,
 				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
 				2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */,
 				2DA225B023F0425C0033F411 /* DesignableView.h in Headers */,
@@ -15544,6 +15551,7 @@
 				2D98613F226C814100BAACB1 /* PropertySheetViewController.m in Sources */,
 				2DA30E7A2403292D001BAB8A /* PlaybackPreferencesViewController.m in Sources */,
 				2D747E3A24B64E7600BBB987 /* SidebarSplitViewController.m in Sources */,
+				2DB1641B24FAB13400034E11 /* MediaLibraryManager.m in Sources */,
 				2DA2738A2406FBD800FB9BE1 /* DspPreferencesViewController.m in Sources */,
 				2DBC62DB24CCDFB200AA20BF /* VisualizationView.m in Sources */,
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,

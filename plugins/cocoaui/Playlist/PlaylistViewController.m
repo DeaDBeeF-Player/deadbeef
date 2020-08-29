@@ -926,16 +926,6 @@ static void coverAvailCallback (NSImage *__strong img, void *user_data) {
 
 - (void)selectRow:(DdbListviewRow_t)row withState:(BOOL)state {
     deadbeef->pl_set_selected ((DB_playItem_t *)row, state);
-// FIXME: test code: remove this before merging to master
-    if (state) {
-        if (!self.medialibPlugin) {
-            self.medialibPlugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
-        }
-        DB_playItem_t *it = self.medialibPlugin->find_track ((DB_playItem_t *)row);
-        if (it) {
-            deadbeef->pl_item_unref (it);
-        }
-    }
 }
 
 - (BOOL)rowSelected:(DdbListviewRow_t)row {
