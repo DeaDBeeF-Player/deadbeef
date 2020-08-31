@@ -596,8 +596,8 @@ static void
 _ml_load_playlist (medialib_source_t *source, const char *plpath) {
     struct timeval tm1, tm2;
 
-    source->_ml_state = DDB_MEDIALIB_STATE_LOADING;
-    ml_notify_listeners (source, DDB_MEDIALIB_EVENT_SCANNER);
+    source->_ml_state = DDB_MEDIASOURCE_STATE_LOADING;
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
 
     ddb_playlist_t *plt = deadbeef->plt_alloc ("medialib");
 
@@ -607,8 +607,8 @@ _ml_load_playlist (medialib_source_t *source, const char *plpath) {
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
     fprintf (stderr, "ml playlist load time: %f seconds\n", ms / 1000.f);
 
-    source->_ml_state = DDB_MEDIALIB_STATE_INDEXING;
-    ml_notify_listeners (source, DDB_MEDIALIB_EVENT_SCANNER);
+    source->_ml_state = DDB_MEDIASOURCE_STATE_INDEXING;
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
 
     deadbeef->mutex_lock (source->mutex);
     if (source->ml_playlist) {
@@ -620,9 +620,9 @@ _ml_load_playlist (medialib_source_t *source, const char *plpath) {
     }
     deadbeef->mutex_unlock (source->mutex);
 
-    source->_ml_state = DDB_MEDIALIB_STATE_IDLE;
-    ml_notify_listeners (source, DDB_MEDIALIB_EVENT_CHANGED);
-    ml_notify_listeners (source, DDB_MEDIALIB_EVENT_SCANNER);
+    source->_ml_state = DDB_MEDIASOURCE_STATE_IDLE;
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_CONTENT_CHANGED);
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
 }
 
 // Get a copy of medialib folder paths
@@ -691,8 +691,8 @@ scanner_thread (void *ctx) {
 
     struct timeval tm1, tm2;
 
-    source->_ml_state = DDB_MEDIALIB_STATE_SCANNING;
-    ml_notify_listeners (source, DDB_MEDIALIB_EVENT_SCANNER);
+    source->_ml_state = DDB_MEDIASOURCE_STATE_SCANNING;
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
 
     gettimeofday (&tm1, NULL);
 
@@ -709,8 +709,8 @@ scanner_thread (void *ctx) {
 
     source->ml_filter_state.plt = NULL;
 
-    source->_ml_state = DDB_MEDIALIB_STATE_INDEXING;
-    ml_notify_listeners (source, DDB_MEDIALIB_EVENT_SCANNER);
+    source->_ml_state = DDB_MEDIASOURCE_STATE_INDEXING;
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
 
     // set current time as timestamp
     time_t timestamp = time(NULL);
@@ -729,14 +729,14 @@ scanner_thread (void *ctx) {
 
     deadbeef->plt_save (plt, NULL, NULL, plpath, NULL, NULL, NULL);
 
-    ml_notify_listeners (source, DDB_MEDIALIB_EVENT_CHANGED);
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_CONTENT_CHANGED);
 
     gettimeofday (&tm2, NULL);
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
     fprintf (stderr, "scan time: %f seconds (%d tracks)\n", ms / 1000.f, deadbeef->plt_get_item_count (source->ml_playlist, PL_MAIN));
 
-    source->_ml_state = DDB_MEDIALIB_STATE_SAVING;
-    ml_notify_listeners (source, DDB_MEDIALIB_EVENT_SCANNER);
+    source->_ml_state = DDB_MEDIASOURCE_STATE_SAVING;
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
 
     // update the current ml playlist and index transactionally
     deadbeef->mutex_lock (source->mutex);
@@ -747,8 +747,8 @@ scanner_thread (void *ctx) {
     ml_index (source, source->ml_playlist);
     deadbeef->mutex_unlock (source->mutex);
 
-    source->_ml_state = DDB_MEDIALIB_STATE_IDLE;
-    ml_notify_listeners (source, DDB_MEDIALIB_EVENT_SCANNER);
+    source->_ml_state = DDB_MEDIASOURCE_STATE_IDLE;
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
 
     free_medialib_paths (medialib_paths, medialib_paths_count);
 }
@@ -1464,7 +1464,7 @@ static ddb_medialib_plugin_t plugin = {
     .plugin.plugin.api_vminor = DB_API_VERSION_MINOR,
     .plugin.plugin.version_major = DDB_MEDIALIB_VERSION_MAJOR,
     .plugin.plugin.version_minor = DDB_MEDIALIB_VERSION_MINOR,
-    .plugin.plugin.type = DB_PLUGIN_MISC,
+    .plugin.plugin.type = DB_PLUGIN_MEDIASOURCE,
     .plugin.plugin.id = "medialib",
     .plugin.plugin.name = "Media Library",
     .plugin.plugin.descr = "Scans disk for music files and manages them as database",
@@ -1496,14 +1496,14 @@ static ddb_medialib_plugin_t plugin = {
     .plugin.plugin.stop = ml_stop,
 //    .plugin.plugin.configdialog = settings_dlg,
     .plugin.plugin.message = ml_message,
-    .create_source = ml_create_source,
-    .free_source = ml_free_source,
-    .add_listener = ml_add_listener,
-    .remove_listener = ml_remove_listener,
-    .create_list = ml_create_list,
-    .free_list = ml_free_list,
+    .plugin.create_source = ml_create_source,
+    .plugin.free_source = ml_free_source,
+    .plugin.add_listener = ml_add_listener,
+    .plugin.remove_listener = ml_remove_listener,
+    .plugin.create_list = ml_create_list,
+    .plugin.free_list = ml_free_list,
     //.find_track = ml_find_track,
-    .scanner_state = ml_scanner_state,
+    .plugin.scanner_state = ml_scanner_state,
     .folder_count = ml_folder_count,
     .folder_at_index = ml_folder_at_index,
     .set_folders = ml_set_folders,

@@ -27,55 +27,8 @@
 #define DDB_MEDIALIB_VERSION_MAJOR 1
 #define DDB_MEDIALIB_VERSION_MINOR 0
 
-typedef struct ddb_medialib_item_s {
-    const char *text; // e.g. the genre
-
-    DB_playItem_t *track; // NULL in non-leaf nodes
-
-    struct ddb_medialib_item_s *next;
-    struct ddb_medialib_item_s *children;
-    int num_children;
-} ddb_medialib_item_t;
-
-enum {
-    DDB_MEDIALIB_EVENT_CHANGED = 1,
-    DDB_MEDIALIB_EVENT_SCANNER = 2,
-};
-
-typedef void (* ddb_medialib_listener_t)(int event, void *user_data);
-
-enum {
-    DDB_MEDIALIB_STATE_IDLE,
-    DDB_MEDIALIB_STATE_LOADING,
-    DDB_MEDIALIB_STATE_SCANNING,
-    DDB_MEDIALIB_STATE_INDEXING,
-    DDB_MEDIALIB_STATE_SAVING,
-};
-
-typedef void *ddb_medialib_source_t;
-
 typedef struct ddb_medialib_plugin_s {
-    DB_misc_t plugin;
-
-    const char *(*source_name)(void);
-
-    /// @param source_path: a unique name to identify the instance, this will be used to prefix individual instance configuration files, caches, etc.
-    ddb_medialib_source_t (*create_source) (const char *source_path);
-    void (*free_source) (ddb_medialib_source_t source);
-
-    int (*add_listener)(ddb_medialib_source_t source, ddb_medialib_listener_t listener, void *user_data);
-    void (*remove_listener)(ddb_medialib_source_t source, int listener_id);
-
-    ddb_medialib_item_t * (*create_list)(ddb_medialib_source_t source, const char *query, const char *filter);
-    void (*free_list) (ddb_medialib_source_t source, ddb_medialib_item_t *list);
-
-    // Find the same track in DB
-    // FIXME: this is not used, and possibly is unnecessary
-//    ddb_playItem_t *(*find_track) (ddb_playItem_t *track);
-
-    // whether scanner/indexer is active
-    int (*scanner_state) (ddb_medialib_source_t source);
-
+    DB_mediasource_t plugin;
 #pragma mark - Configuration
 
     unsigned (*folder_count)(ddb_medialib_source_t source);

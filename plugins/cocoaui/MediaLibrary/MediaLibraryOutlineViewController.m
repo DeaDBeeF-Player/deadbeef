@@ -79,7 +79,7 @@ extern DB_functions_t *deadbeef;
 
     self.medialibPlugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
     self.artworkPlugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
-    self.listenerId = self.medialibPlugin->add_listener (self.medialibSource, _medialib_listener, (__bridge void *)self);
+    self.listenerId = self.medialibPlugin->plugin.add_listener (self.medialibSource, _medialib_listener, (__bridge void *)self);
 
     self.outlineView.menu = [TrackContextMenu new];
     self.outlineView.menu.delegate = self;
@@ -100,12 +100,12 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)dealloc {
-    self.medialibPlugin->remove_listener (self.medialibSource, self.listenerId);
+    self.medialibPlugin->plugin.remove_listener (self.medialibSource, self.listenerId);
     self.listenerId = -1;
     self.medialibPlugin = NULL;
 }
 
-static void _medialib_listener (int event, void *user_data) {
+static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
     MediaLibraryOutlineViewController *ctl = (__bridge MediaLibraryOutlineViewController *)user_data;
     dispatch_async(dispatch_get_main_queue(), ^{
         [ctl medialibEvent:event];
@@ -129,10 +129,10 @@ static void _medialib_listener (int event, void *user_data) {
     }
 
     if (self.medialibItemTree) {
-        self.medialibPlugin->free_list (self.medialibSource, self.medialibItemTree);
+        self.medialibPlugin->plugin.free_list (self.medialibSource, self.medialibItemTree);
         self.medialibItemTree = NULL;
     }
-    self.medialibItemTree = self.medialibPlugin->create_list (self.medialibSource, indexNames[index], self.searchString ? self.searchString.UTF8String : NULL);
+    self.medialibItemTree = self.medialibPlugin->plugin.create_list (self.medialibSource, indexNames[index], self.searchString ? self.searchString.UTF8String : NULL);
     self.medialibRootItem = [[MediaLibraryItem alloc] initWithItem:self.medialibItemTree];
 
     self.topLevelItems = @[
@@ -153,18 +153,18 @@ static void _medialib_listener (int event, void *user_data) {
 }
 
 - (void)updateMedialibStatusForView:(NSTableCellView *)view {
-    int state = self.medialibPlugin->scanner_state (self.medialibSource);
+    int state = self.medialibPlugin->plugin.scanner_state (self.medialibSource);
     switch (state) {
-    case DDB_MEDIALIB_STATE_LOADING:
+    case DDB_MEDIASOURCE_STATE_LOADING:
         view.textField.stringValue = @"Loading...";
         break;
-    case DDB_MEDIALIB_STATE_SCANNING:
+    case DDB_MEDIASOURCE_STATE_SCANNING:
         view.textField.stringValue = @"Scanning...";
         break;
-    case DDB_MEDIALIB_STATE_INDEXING:
+    case DDB_MEDIASOURCE_STATE_INDEXING:
         view.textField.stringValue = @"Indexing...";
         break;
-    case DDB_MEDIALIB_STATE_SAVING:
+    case DDB_MEDIASOURCE_STATE_SAVING:
         view.textField.stringValue = @"Saving...";
         break;
     default:
@@ -184,13 +184,13 @@ static void _medialib_listener (int event, void *user_data) {
     [self updateMedialibStatusForView:view];
 }
 
-- (void)medialibEvent:(int)event {
-    if (event == DDB_MEDIALIB_EVENT_CHANGED) {
+- (void)medialibEvent:(ddb_mediasource_event_type_t)event {
+    if (event == DDB_MEDIASOURCE_EVENT_CONTENT_CHANGED) {
         [self filterChanged];
     }
-    else if (event == DDB_MEDIALIB_EVENT_SCANNER) {
-        int state = self.medialibPlugin->scanner_state (self.medialibSource);
-        if (state != DDB_MEDIALIB_STATE_IDLE) {
+    else if (event == DDB_MEDIASOURCE_EVENT_STATE_CHANGED) {
+        int state = self.medialibPlugin->plugin.scanner_state (self.medialibSource);
+        if (state != DDB_MEDIASOURCE_STATE_IDLE) {
             //            [_scannerActiveIndicator startAnimation:self];
 
             [self updateMedialibStatus];

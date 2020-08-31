@@ -336,6 +336,9 @@ enum {
     DB_PLUGIN_VFS     = 5,
     DB_PLUGIN_PLAYLIST = 6,
     DB_PLUGIN_GUI = 7,
+#if (DDB_API_LEVEL >= 13)
+    DB_PLUGIN_MEDIASOURCE = 8,
+#endif
 };
 
 // output plugin states
@@ -2060,6 +2063,55 @@ typedef struct DB_playlist_s {
     DB_playItem_t * (*load2) (int visibility, ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort);
 #endif
 } DB_playlist_t;
+
+
+typedef struct ddb_medialib_item_s {
+    const char *text; // e.g. the genre
+
+    DB_playItem_t *track; // NULL in non-leaf nodes
+
+    struct ddb_medialib_item_s *next;
+    struct ddb_medialib_item_s *children;
+    int num_children;
+} ddb_medialib_item_t;
+
+typedef enum {
+    DDB_MEDIASOURCE_EVENT_CONTENT_CHANGED = 1,
+    DDB_MEDIASOURCE_EVENT_STATE_CHANGED = 1,
+} ddb_mediasource_event_type_t;
+
+typedef enum {
+    DDB_MEDIASOURCE_STATE_IDLE,
+    DDB_MEDIASOURCE_STATE_LOADING,
+    DDB_MEDIASOURCE_STATE_SCANNING,
+    DDB_MEDIASOURCE_STATE_INDEXING,
+    DDB_MEDIASOURCE_STATE_SAVING,
+} ddb_mediasource_state_t;
+
+typedef void (* ddb_medialib_listener_t)(ddb_mediasource_event_type_t event, void *user_data);
+typedef void *ddb_medialib_source_t;
+
+// Mediasource plugin
+// Purpose is to provide access to external media sources.
+// It's used for the built-in media library plugin.
+typedef struct {
+    DB_plugin_t plugin;
+
+    const char *(*source_name)(void);
+
+    /// @param source_path: a unique name to identify the instance, this will be used to prefix individual instance configuration files, caches, etc.
+    ddb_medialib_source_t (*create_source) (const char *source_path);
+    void (*free_source) (ddb_medialib_source_t source);
+
+    int (*add_listener)(ddb_medialib_source_t source, ddb_medialib_listener_t listener, void *user_data);
+    void (*remove_listener)(ddb_medialib_source_t source, int listener_id);
+
+    ddb_medialib_item_t * (*create_list)(ddb_medialib_source_t source, const char *query, const char *filter);
+    void (*free_list) (ddb_medialib_source_t source, ddb_medialib_item_t *list);
+
+    // whether scanner/indexer is active
+    ddb_mediasource_state_t (*scanner_state) (ddb_medialib_source_t source);
+} DB_mediasource_t;
 
 #undef DDB_DEPRECATED
 #undef DEPRECATED
