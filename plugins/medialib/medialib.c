@@ -140,7 +140,7 @@ typedef struct medialib_source_s {
 } medialib_source_t;
 
 static void
-ml_free_list (ddb_medialib_source_t source, ddb_medialib_item_t *list);
+ml_free_list (ddb_mediasource_source_t source, ddb_medialib_item_t *list);
 
 static uint32_t
 hash_for_ptr (void *ptr) {
@@ -912,7 +912,7 @@ ml_stop (void) {
 }
 
 static int
-ml_add_listener (ddb_medialib_source_t _source, ddb_medialib_listener_t listener, void *user_data) {
+ml_add_listener (ddb_mediasource_source_t _source, ddb_medialib_listener_t listener, void *user_data) {
     medialib_source_t *source = (medialib_source_t *)_source;
 
     for (int i = 0; i < MAX_LISTENERS; i++) {
@@ -926,7 +926,7 @@ ml_add_listener (ddb_medialib_source_t _source, ddb_medialib_listener_t listener
 }
 
 static void
-ml_remove_listener (ddb_medialib_source_t _source, int listener_id) {
+ml_remove_listener (ddb_mediasource_source_t _source, int listener_id) {
     medialib_source_t *source = (medialib_source_t *)_source;
 
     source->ml_listeners[listener_id] = NULL;
@@ -1176,7 +1176,7 @@ get_subfolders_for_folder (ddb_medialib_item_t *folderitem, ml_tree_node_t *fold
 }
 
 static ddb_medialib_item_t *
-ml_create_list (ddb_medialib_source_t _source, const char *index, const char *filter) {
+ml_create_list (ddb_mediasource_source_t _source, const char *index, const char *filter) {
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_collection_t *coll = NULL;
 
@@ -1280,7 +1280,7 @@ ml_create_list (ddb_medialib_source_t _source, const char *index, const char *fi
 }
 
 static void
-ml_free_list (ddb_medialib_source_t source, ddb_medialib_item_t *list) {
+ml_free_list (ddb_mediasource_source_t source, ddb_medialib_item_t *list) {
     while (list) {
         ddb_medialib_item_t *next = list->next;
         if (list->children) {
@@ -1346,7 +1346,7 @@ ml_find_track (medialib_source_t *source, DB_playItem_t *it) {
 }
 #endif
 
-static int ml_scanner_state (ddb_medialib_source_t _source) {
+static ddb_mediasource_state_t ml_scanner_state (ddb_mediasource_source_t _source) {
     medialib_source_t *source = (medialib_source_t *)_source;
     return source->_ml_state;
 }
@@ -1359,7 +1359,7 @@ ml_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 #pragma mark - folder access
 
 static unsigned
-ml_folder_count (ddb_medialib_source_t _source) {
+ml_folder_count (ddb_mediasource_source_t _source) {
     medialib_source_t *source = (medialib_source_t *)_source;
     deadbeef->mutex_lock (source->mutex);
     unsigned res = (unsigned)json_array_size(source->musicpaths_json);
@@ -1368,7 +1368,7 @@ ml_folder_count (ddb_medialib_source_t _source) {
 }
 
 static void
-ml_folder_at_index (ddb_medialib_source_t _source, int index, char *folder, size_t size) {
+ml_folder_at_index (ddb_mediasource_source_t _source, int index, char *folder, size_t size) {
     medialib_source_t *source = (medialib_source_t *)_source;
     deadbeef->mutex_lock (source->mutex);
     json_t *data = json_array_get (source->musicpaths_json, index);
@@ -1382,7 +1382,7 @@ ml_folder_at_index (ddb_medialib_source_t _source, int index, char *folder, size
 }
 
 static void
-ml_set_folders (ddb_medialib_source_t _source, const char **folders, size_t count) {
+ml_set_folders (ddb_mediasource_source_t _source, const char **folders, size_t count) {
     medialib_source_t *source = (medialib_source_t *)_source;
     deadbeef->mutex_lock (source->mutex);
 
@@ -1410,7 +1410,7 @@ ml_set_folders (ddb_medialib_source_t _source, const char **folders, size_t coun
     }
 }
 
-static ddb_medialib_source_t
+static ddb_mediasource_source_t
 ml_create_source (const char *source_path) {
     medialib_source_t *source = calloc (1, sizeof (medialib_source_t));
 
@@ -1423,11 +1423,11 @@ ml_create_source (const char *source_path) {
     source->tid = deadbeef->thread_start_low_priority (scanner_thread, source);
 
 
-    return (ddb_medialib_source_t)source;
+    return (ddb_mediasource_source_t)source;
 }
 
 static void
-ml_free_source (ddb_medialib_source_t _source) {
+ml_free_source (ddb_mediasource_source_t _source) {
     medialib_source_t *source = (medialib_source_t *)_source;
     if (source->tid) {
         source->scanner_terminate = 1;

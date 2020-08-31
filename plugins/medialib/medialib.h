@@ -31,9 +31,9 @@ typedef struct ddb_medialib_plugin_s {
     DB_mediasource_t plugin;
 #pragma mark - Configuration
 
-    unsigned (*folder_count)(ddb_medialib_source_t source);
-    void (*folder_at_index)(ddb_medialib_source_t source, int index, char *folder, size_t size);
-    void (*set_folders) (ddb_medialib_source_t source, const char **folders, size_t count);
+    unsigned (*folder_count)(ddb_mediasource_source_t source);
+    void (*folder_at_index)(ddb_mediasource_source_t source, int index, char *folder, size_t size);
+    void (*set_folders) (ddb_mediasource_source_t source, const char **folders, size_t count);
 } ddb_medialib_plugin_t;
 
 #endif /* medialib_h */

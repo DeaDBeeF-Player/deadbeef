@@ -21,14 +21,14 @@ extern DB_functions_t *deadbeef;
 @property (weak) IBOutlet NSTableView *tableView;
 
 @property (nonatomic) ddb_medialib_plugin_t *medialibPlugin;
-@property (nonatomic,readonly) ddb_medialib_source_t medialibSource;
+@property (nonatomic,readonly) ddb_mediasource_source_t medialibSource;
 @property (nonatomic) NSMutableArray<NSString *> *folders;
 
 @end
 
 @implementation MediaLibraryPreferencesViewController
 
-- (ddb_medialib_source_t)medialibSource {
+- (ddb_mediasource_source_t)medialibSource {
     AppDelegate *appDelegate = NSApplication.sharedApplication.delegate;
     return appDelegate.mediaLibraryManager.source;
 }

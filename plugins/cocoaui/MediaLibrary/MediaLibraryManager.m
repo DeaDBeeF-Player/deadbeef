@@ -13,7 +13,7 @@ extern DB_functions_t *deadbeef;
 @interface MediaLibraryManager()
 
 @property (nonatomic) DB_mediasource_t *medialibPlugin;
-@property (nonatomic,readwrite) ddb_medialib_source_t source;
+@property (nonatomic,readwrite) ddb_mediasource_source_t source;
 
 @end
 

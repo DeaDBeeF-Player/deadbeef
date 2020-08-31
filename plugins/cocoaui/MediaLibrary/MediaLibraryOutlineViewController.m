@@ -38,7 +38,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSOutlineView *outlineView;
 
 @property (nonatomic) ddb_medialib_plugin_t *medialibPlugin;
-@property (nonatomic,readonly) ddb_medialib_source_t medialibSource;
+@property (nonatomic,readonly) ddb_mediasource_source_t medialibSource;
 @property (nonatomic) ddb_artwork_plugin_t *artworkPlugin;
 
 @property (nonatomic) ddb_medialib_item_t *medialibItemTree;
@@ -54,7 +54,7 @@ extern DB_functions_t *deadbeef;
 
 @implementation MediaLibraryOutlineViewController
 
-- (ddb_medialib_source_t)medialibSource {
+- (ddb_mediasource_source_t)medialibSource {
     AppDelegate *appDelegate = NSApplication.sharedApplication.delegate;
     return appDelegate.mediaLibraryManager.source;
 }

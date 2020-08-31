@@ -2089,7 +2089,7 @@ typedef enum {
 } ddb_mediasource_state_t;
 
 typedef void (* ddb_medialib_listener_t)(ddb_mediasource_event_type_t event, void *user_data);
-typedef void *ddb_medialib_source_t;
+typedef void *ddb_mediasource_source_t;
 
 // Mediasource plugin
 // Purpose is to provide access to external media sources.
@@ -2100,17 +2100,17 @@ typedef struct {
     const char *(*source_name)(void);
 
     /// @param source_path: a unique name to identify the instance, this will be used to prefix individual instance configuration files, caches, etc.
-    ddb_medialib_source_t (*create_source) (const char *source_path);
-    void (*free_source) (ddb_medialib_source_t source);
+    ddb_mediasource_source_t (*create_source) (const char *source_path);
+    void (*free_source) (ddb_mediasource_source_t source);
 
-    int (*add_listener)(ddb_medialib_source_t source, ddb_medialib_listener_t listener, void *user_data);
-    void (*remove_listener)(ddb_medialib_source_t source, int listener_id);
+    int (*add_listener)(ddb_mediasource_source_t source, ddb_medialib_listener_t listener, void *user_data);
+    void (*remove_listener)(ddb_mediasource_source_t source, int listener_id);
 
-    ddb_medialib_item_t * (*create_list)(ddb_medialib_source_t source, const char *query, const char *filter);
-    void (*free_list) (ddb_medialib_source_t source, ddb_medialib_item_t *list);
+    ddb_medialib_item_t * (*create_list)(ddb_mediasource_source_t source, const char *query, const char *filter);
+    void (*free_list) (ddb_mediasource_source_t source, ddb_medialib_item_t *list);
 
     // whether scanner/indexer is active
-    ddb_mediasource_state_t (*scanner_state) (ddb_medialib_source_t source);
+    ddb_mediasource_state_t (*scanner_state) (ddb_mediasource_source_t source);
 } DB_mediasource_t;
 
 #undef DDB_DEPRECATED
