@@ -2064,6 +2064,11 @@ typedef struct DB_playlist_s {
 #endif
 } DB_playlist_t;
 
+#if (DDB_API_LEVEL >= 13)
+
+// Mediasource plugin
+// The purpose is to provide access to external media sources.
+// It's used for the built-in media library plugin.
 
 typedef struct ddb_medialib_item_s {
     const char *text; // e.g. the genre
@@ -2091,9 +2096,6 @@ typedef enum {
 typedef void (* ddb_medialib_listener_t)(ddb_mediasource_event_type_t event, void *user_data);
 typedef void *ddb_mediasource_source_t;
 
-// Mediasource plugin
-// Purpose is to provide access to external media sources.
-// It's used for the built-in media library plugin.
 typedef struct {
     DB_plugin_t plugin;
 
@@ -2112,6 +2114,8 @@ typedef struct {
     // whether scanner/indexer is active
     ddb_mediasource_state_t (*scanner_state) (ddb_mediasource_source_t source);
 } DB_mediasource_t;
+
+#endif
 
 #undef DDB_DEPRECATED
 #undef DEPRECATED
