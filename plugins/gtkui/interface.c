@@ -1605,6 +1605,7 @@ create_prefwin (void)
   GtkWidget *minimize_on_startup;
   GtkWidget *pref_close_send_to_tray;
   GtkWidget *hide_tray_icon;
+  GtkWidget *move_to_trash;
   GtkWidget *enable_shift_jis_recoding;
   GtkWidget *enable_cp1251_recoding;
   GtkWidget *enable_cp936_recoding;
@@ -2181,6 +2182,10 @@ create_prefwin (void)
   hide_tray_icon = gtk_check_button_new_with_mnemonic (_("Hide system tray icon"));
   gtk_widget_show (hide_tray_icon);
   gtk_box_pack_start (GTK_BOX (vbox9), hide_tray_icon, FALSE, FALSE, 0);
+
+  move_to_trash = gtk_check_button_new_with_mnemonic (_("Delete from disk should use Trash"));
+  gtk_widget_show (move_to_trash);
+  gtk_box_pack_start (GTK_BOX (vbox9), move_to_trash, FALSE, FALSE, 0);
 
   enable_shift_jis_recoding = gtk_check_button_new_with_mnemonic (_("Enable Japanese SHIFT-JIS detection and recoding"));
   gtk_widget_show (enable_shift_jis_recoding);
@@ -3198,6 +3203,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) hide_tray_icon, "toggled",
                     G_CALLBACK (on_hide_tray_icon_toggled),
                     NULL);
+  g_signal_connect ((gpointer) move_to_trash, "clicked",
+                    G_CALLBACK (on_move_to_trash_clicked),
+                    NULL);
   g_signal_connect ((gpointer) enable_shift_jis_recoding, "toggled",
                     G_CALLBACK (on_enable_shift_jis_recoding_toggled),
                     NULL);
@@ -3489,6 +3497,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, minimize_on_startup, "minimize_on_startup");
   GLADE_HOOKUP_OBJECT (prefwin, pref_close_send_to_tray, "pref_close_send_to_tray");
   GLADE_HOOKUP_OBJECT (prefwin, hide_tray_icon, "hide_tray_icon");
+  GLADE_HOOKUP_OBJECT (prefwin, move_to_trash, "move_to_trash");
   GLADE_HOOKUP_OBJECT (prefwin, enable_shift_jis_recoding, "enable_shift_jis_recoding");
   GLADE_HOOKUP_OBJECT (prefwin, enable_cp1251_recoding, "enable_cp1251_recoding");
   GLADE_HOOKUP_OBJECT (prefwin, enable_cp936_recoding, "enable_cp936_recoding");
