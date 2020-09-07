@@ -41,6 +41,7 @@
 #include "callbacks.h"
 #include <sys/stat.h>
 #include "gtkui_api.h"
+#include <gio/gio.h>
 
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
@@ -385,7 +386,14 @@ _remove_file_from_all_playlists (const char *search_uri) {
 
 static void
 _delete_and_remove_track_from_all_playlists (const char *uri, ddb_playlist_t *plt, ddb_playItem_t *it) {
-    (void)unlink (uri);
+
+    if (deadbeef->conf_get_int ("gtkui.move_to_trash", 1)) {
+        GFile *file = g_file_new_for_path (uri);
+        g_file_trash (file, NULL, NULL);
+        g_object_unref (file);
+    } else {
+        (void)unlink (uri);
+    }
 
     // check if file exists
     struct stat buf;
@@ -409,7 +417,9 @@ action_delete_from_disk_handler_cb (void *data) {
     ddb_action_context_t ctx = (int)(intptr_t)data;
     if (deadbeef->conf_get_int ("gtkui.delete_files_ask", 1)) {
         char buf[1000];
-        const char *buf2 = _(" The files will be lost.\n\n(This dialog can be turned off in GTKUI plugin settings)");
+        const char *buf2 = deadbeef->conf_get_int ("gtkui.move_to_trash", 1) ?
+        _(" The files will be moved to trash.\n\n(This dialog can be turned off in GTKUI plugin settings)") : 
+        _(" The files will be lost.\n\n(This dialog can be turned off in GTKUI plugin settings)");
 
         if (ctx == DDB_ACTION_CTX_SELECTION) {
             int selected_files = deadbeef->pl_getselcount ();
