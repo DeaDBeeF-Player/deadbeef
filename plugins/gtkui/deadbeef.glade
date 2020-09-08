@@ -3775,6 +3775,26 @@ Only prevent clipping</property>
 		  </child>
 
 		  <child>
+		    <widget class="GtkCheckButton" id="move_to_trash">
+		      <property name="visible">True</property>
+		      <property name="can_focus">True</property>
+		      <property name="label" translatable="yes">Delete from disk should use Trash</property>
+		      <property name="use_underline">True</property>
+		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <property name="focus_on_click">True</property>
+		      <property name="active">False</property>
+		      <property name="inconsistent">False</property>
+		      <property name="draw_indicator">True</property>
+		      <signal name="clicked" handler="on_move_to_trash_clicked" last_modification_time="Tue, 08 Sep 2020 11:46:13 GMT"/>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">False</property>
+		      <property name="fill">False</property>
+		    </packing>
+		  </child>
+
+		  <child>
 		    <widget class="GtkCheckButton" id="enable_shift_jis_recoding">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
