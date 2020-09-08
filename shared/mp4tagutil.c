@@ -273,7 +273,7 @@ _mp4tagutil_add_metadata_fields(mp4p_atom_t *ilst, DB_playItem_t *it) {
         mp4p_atom_append (ilst, mp4p_ilst_create_track_disc ("trkn", itrack, inumtracks));
     }
     if (idisc || inumdiscs) {
-        mp4p_atom_append (ilst, mp4p_ilst_create_track_disc ("disk", itrack, inumdiscs));
+        mp4p_atom_append (ilst, mp4p_ilst_create_track_disc ("disk", idisc, inumdiscs));
     }
 
     static const char *tag_rg_names[] = {
