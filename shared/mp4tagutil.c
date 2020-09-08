@@ -113,8 +113,8 @@ _remove_known_fields (mp4p_atom_t *ilst) {
         for (int i = 0; _mp4_atom_map[i]; i += 2) {
             // NOTE: atom names are case sensitive,
             // but custom fields are not
-            if ((!meta->custom && !strcmp (type, _mp4_atom_map[i]))
-                || (meta->custom && !strcasecmp (meta->name, _mp4_atom_map[i]))) {
+            if ((!meta->custom && !strcmp (type, _mp4_atom_map[i])) // all non-custom mapped fields
+                || (meta->custom && meta->data_version_flags == 1)) { // all custom text fields
                 mp4p_atom_remove_subatom (ilst, meta_atom);
                 break;
             }
@@ -273,7 +273,7 @@ _mp4tagutil_add_metadata_fields(mp4p_atom_t *ilst, DB_playItem_t *it) {
         mp4p_atom_append (ilst, mp4p_ilst_create_track_disc ("trkn", itrack, inumtracks));
     }
     if (idisc || inumdiscs) {
-        mp4p_atom_append (ilst, mp4p_ilst_create_track_disc ("disk", itrack, inumtracks));
+        mp4p_atom_append (ilst, mp4p_ilst_create_track_disc ("disk", idisc, inumdiscs));
     }
 
     static const char *tag_rg_names[] = {
@@ -325,7 +325,7 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
 
     mp4p_atom_t *mp4file_orig = mp4file;
 
-    mp4file = mp4p_atom_clone (mp4file_orig);
+    mp4file = mp4p_atom_clone_list (mp4file_orig);
 
     mp4p_atom_t *meta = NULL;
     mp4p_atom_t *ilst = NULL;
@@ -356,8 +356,6 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     else {
         // cleanup the pre-existing keyvalue list
         _remove_known_fields (ilst);
-
-        // FIXME: delete all fields which are not mapped, but present in the track
     }
 
     _mp4tagutil_add_metadata_fields(ilst, it);
