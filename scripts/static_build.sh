@@ -39,19 +39,32 @@ else
     exit 1
 fi
 
-cd tools/apbuild
-./apinit || exit 1
-cd ../../
+if [[ "$1" == "--clang" ]] ; then
+    export CC=clang
+    export CXX=clang++
+    export OBJC=clang
+    # using clang requires system libstdc++, so remove from staticdeps
+    rm static-deps/lib-x86-64/lib/libstdc*
+else
+    cd tools/apbuild
+    ./apinit || exit 1
+    cd ../../
+    export APBUILD_STATIC_LIBGCC=1
+    export APBUILD_CXX1=1
+    export CC=$AP/apgcc
+    export CXX=$AP/apgcc
+    export OBJC=$AP/apgcc
+fi
 
-export APBUILD_STATIC_LIBGCC=1
-export APBUILD_CXX1=1
-export CC=$AP/apgcc
-export CXX=$AP/apgcc
-export OBJC=$AP/apgcc
 
 ./autogen.sh || exit 1
 
-./configure CFLAGS="$CFLAGS -O3 -D_FORTIFY_SOURCE=0" CXXFLAGS="$CXXFLAGS -O3 -D_FORTIFY_SOURCE=0" LDFLAGS="$LDFLAGS" $CONFIGURE_FLAGS --enable-staticlink --disable-artwork-imlib2 --prefix=/opt/deadbeef || exit 1
+./configure CFLAGS="$CFLAGS -O3 -D_FORTIFY_SOURCE=0" CXXFLAGS="$CXXFLAGS -O3 -D_FORTIFY_SOURCE=0" LDFLAGS="$LDFLAGS" $CONFIGURE_FLAGS --enable-staticlink --disable-artwork-imlib2 --prefix=/opt/deadbeef || {
+    # store failed config.log in portable dir, which is mapped to
+    # docker-artifacts when using docker.
+    cp config.log ./portable/
+    exit 1
+}
 sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
 sed -i 's/hardcode_into_libs=yes/hardcode_into_libs=no/g' libtool
 make clean

@@ -14,7 +14,10 @@ case "$TRAVIS_OS_NAME" in
 #        ARCH=i686 ./scripts/static_build.sh || exit 1
 #        ARCH=i686 ./scripts/portable_package_static.sh || exit 1
         echo "building for x86_64"
-        ARCH=x86_64 ./scripts/static_build.sh || exit 1
+        if [[ "$1" == "--clang" ]] ; then
+            CLANG_FLAG="--clang"
+        fi
+        ARCH=x86_64 ./scripts/static_build.sh $CLANG_FLAG || exit 1
         ARCH=x86_64 ./scripts/portable_package_static.sh || exit 1
         echo "making deb package"
         ARCH=x86_64 ./tools/packages/debian.sh || exit 1
