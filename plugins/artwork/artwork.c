@@ -68,34 +68,23 @@
 #include "mp4tagutil.h"
 #include "../../strdupa.h"
 
+#include <dispatch/dispatch.h>
+
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin.plugin, 0, __VA_ARGS__); }
 
 DB_functions_t *deadbeef;
 static ddb_artwork_plugin_t plugin;
 
-// list of callbacks + queries for the same cover
-typedef struct cover_callback_s {
-    ddb_cover_callback_t cb;
-    ddb_cover_query_t *info;
-    struct cover_callback_s *next;
-} cover_callback_t;
+static dispatch_queue_t fetch_queue;
+static dispatch_queue_t sync_queue;
 
-// list of unique queries
-typedef struct cover_query_s {
-    cover_callback_t *callbacks;
-    struct cover_query_s *next;
-} cover_query_t;
-
-static cover_query_t *queue;
-static cover_query_t *queue_tail;
+static int64_t last_job_idx;
+static int64_t cancellation_idx;
 
 #define MAX_COVERS_IN_CACHE 20
 static ddb_cover_info_t *cover_cache[MAX_COVERS_IN_CACHE];
 
 static int terminate;
-static intptr_t tid;
-static uintptr_t queue_mutex;
-static uintptr_t queue_cond;
 
 #ifdef ANDROID
 #define DEFAULT_DISABLE_CACHE 1
@@ -1002,102 +991,10 @@ make_cache_path (const char *filepath, const char *album, const char *artist, ch
     return 0;
 }
 
-static void
-query_free (cover_query_t *query)
-{
-    free (query);
-}
-
-static void
-cache_reset_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
-    /* All scaled artwork is now (including this second) obsolete */
-    deadbeef->mutex_lock (queue_mutex);
-
-    if (query->user_data == &cache_reset_time) {
-        /* All artwork is now (including this second) obsolete */
-        deadbeef->conf_set_int64 ("artwork.cache_reset_time", cache_reset_time);
-        deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
-    }
-    deadbeef->mutex_unlock (queue_mutex);
-
-    /* Wait for a new second to start before proceeding */
-    while (time (NULL) == cache_reset_time) {
-        usleep (100000);
-    }
-}
-
-static cover_callback_t *
-new_query_callback (ddb_cover_callback_t cb, ddb_cover_query_t *info) {
-    if (!cb) {
-        return NULL;
-    }
-
-    cover_callback_t *callback = calloc (1, sizeof (cover_callback_t));
-    if (!callback) {
-        trace ("artwork callback alloc failed\n");
-        cb (-1, info, NULL);
-        return NULL;
-    }
-
-    callback->cb = cb;
-    callback->info = info;
-    callback->next = NULL;
-    return callback;
-}
-
 static int
 strings_equal (const char *s1, const char *s2)
 {
     return (s1 == s2) || (s1 && s2 && !strcasecmp (s1, s2));
-}
-
-static int
-queries_equal (ddb_cover_query_t *q1, ddb_cover_query_t *q2) {
-    if (q1->track == q2->track) {
-        return 1;
-    }
-    return 0;
-}
-
-static void
-enqueue_query (ddb_cover_query_t *new_query, const ddb_cover_callback_t cb)
-{
-    for (cover_query_t *q = queue; q; q = q->next) {
-        if (queries_equal (new_query, q->callbacks->info)) {
-            // append top existing pending query
-            cover_callback_t **last_callback = &q->callbacks;
-            while (*last_callback && (*last_callback)->cb != cache_reset_callback) {
-                last_callback = & (*last_callback)->next;
-            }
-            if (!*last_callback) {
-                *last_callback = new_query_callback (cb, new_query);
-                return;
-            }
-        }
-    }
-
-    // add new query
-    cover_query_t *q = calloc (1, sizeof (cover_query_t));
-    if (q) {
-        q->callbacks = new_query_callback (cb, new_query);
-    }
-
-    if (!q) {
-        if (cb) {
-            cb (-1, new_query, NULL);
-        }
-
-        return;
-    }
-
-    if (queue_tail) {
-        queue_tail->next = q;
-    }
-    else {
-        queue = q;
-    }
-    queue_tail = q;
-    deadbeef->cond_signal (queue_cond);
 }
 
 static char *filter_custom_mask = NULL;
@@ -1902,41 +1799,11 @@ process_query (ddb_cover_info_t *cover)
 }
 
 static void
-send_query_callbacks (cover_callback_t *callback, ddb_cover_info_t *cover) {
-    if (cover) {
-        cover_callback_t *c = callback;
-        while (c) {
-            cover->refc++;
-            c = c->next;
-        }
-    }
-    while (callback) {
-        callback->cb (cover ? 0 : -1, callback->info, cover);
-        cover_callback_t *next = callback->next;
-        free (callback);
-        callback = next;
-    }
-}
-
-static cover_query_t *
-query_pop (void) {
-    cover_query_t *query = queue;
-    queue = queue ? queue->next : NULL;
-    if (!queue) {
-        queue_tail = NULL;
-    }
-    return query;
-}
-
-static void
 queue_clear (void) {
-    while (queue) {
-        cover_query_t *next = queue->next;
-        send_query_callbacks (queue->callbacks, NULL);
-        query_free (queue);
-        queue = next;
-    }
-    queue_tail = NULL;
+    artwork_abort_http_request ();
+    dispatch_sync(sync_queue, ^{
+        cancellation_idx = last_job_idx++;
+    });
 }
 
 static void
@@ -2017,125 +1884,101 @@ cover_cache_find (ddb_cover_info_t * cover) {
 }
 
 static void
-fetcher_thread (void *none)
-{
-#ifdef __linux__
-    prctl (PR_SET_NAME, "deadbeef-artwork", 0, 0, 0, 0);
-#endif
-
-    /* Loop until external terminate command */
-    deadbeef->mutex_lock (queue_mutex);
-    while (!terminate) {
-        trace ("artwork fetcher: waiting for signal ...\n");
-        // FIXME: use deadbeef->cond_wait
-        pthread_cond_wait ((pthread_cond_t *)queue_cond, (pthread_mutex_t *)queue_mutex);
-        trace ("artwork fetcher: cond signaled, process queue\n");
-
-        /* Loop until queue is empty */
-        while (queue) {
-            deadbeef->mutex_unlock (queue_mutex);
-
-            ddb_cover_query_t *info = queue->callbacks->info;
-
-            if (!info->track) {
-                deadbeef->mutex_lock (queue_mutex);
-                cover_query_t *query = query_pop ();
-                deadbeef->mutex_unlock (queue_mutex);
-
-                send_query_callbacks (query->callbacks, NULL);
-                query_free (query);
-
-                /* Look for what to do next */
-                deadbeef->mutex_lock (queue_mutex);
-                continue;
-            }
-
-            /* Process this query, hopefully writing a file into cache */
-            ddb_cover_info_t *cover = calloc (sizeof (ddb_cover_info_t), 1);
-            cover->refc = 1;
-            cover->timestamp = time(NULL);
-
-            if (!album_tf) {
-                album_tf = deadbeef->tf_compile ("%album%");
-            }
-            if (!artist_tf) {
-                artist_tf = deadbeef->tf_compile ("%artist%");
-            }
-
-            deadbeef->pl_lock ();
-            strncat (cover->filepath, deadbeef->pl_find_meta (info->track, ":URI"), sizeof(cover->filepath) - strlen(cover->filepath) - 1);
-            deadbeef->pl_unlock ();
-
-            ddb_tf_context_t ctx;
-            ctx._size = sizeof (ddb_tf_context_t);
-            ctx.it = info->track;
-            deadbeef->tf_eval (&ctx, album_tf, cover->album, sizeof (cover->album));
-            deadbeef->tf_eval (&ctx, artist_tf, cover->artist, sizeof (cover->artist));
-
-            // check the cache
-            ddb_cover_info_t *cached_cover = cover_cache_find (cover);
-            if (cached_cover) {
-                cached_cover->timestamp = time(NULL);
-                cover_info_free(cover);
-                cover = cached_cover;
-                cover->refc++;
-            }
-            else {
-                process_query (cover);
-            }
-            int cover_found = cover->cover_found;
-
-            deadbeef->mutex_lock (queue_mutex);
-            cover_query_t *query = query_pop ();
-            deadbeef->mutex_unlock (queue_mutex);
-
-            if (!query) {
-                if (cover) {
-                    cover_info_free(cover);
-                    cover = NULL;
-                }
-                break;
-            }
-
-            // cache cover info
-            if (!cached_cover) {
-                cover_update_cache (cover);
-            }
-
-            /* Make all the callbacks (and free the chain), with data if a file was written */
-            if (cover_found) {
-                trace ("artwork fetcher: cover art file found: %s\n", cover->image_filename);
-                send_query_callbacks (query->callbacks, cover);
-            }
-            else {
-                trace ("artwork fetcher: no cover art found\n");
-                send_query_callbacks (query->callbacks, NULL);
-            }
-            query_free (query);
-            cover_info_free(cover);
-            cover = NULL;
-
-            /* Look for what to do next */
-            deadbeef->mutex_lock (queue_mutex);
-        }
-    }
-    deadbeef->mutex_unlock (queue_mutex);
-    trace ("artwork fetcher: terminate thread\n");
-}
-
-static void
 cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
-    deadbeef->mutex_lock (queue_mutex);
-    enqueue_query (query, callback);
-    deadbeef->mutex_unlock (queue_mutex);
+    __block int cancel_query = 0;
+    __block int64_t job_idx = 0;
+    dispatch_sync(sync_queue, ^{
+        if (terminate) {
+            cancel_query = 1;
+            return;
+        }
+
+        job_idx = last_job_idx++;
+    });
+
+    if (cancel_query) {
+        callback(-1, query, NULL);
+        return;
+    }
+
+    dispatch_async(fetch_queue, ^{
+        if (!query->track) {
+            callback (-1, query, NULL);
+            return;
+        }
+
+        __block int cancel_job = 0;
+        dispatch_sync(sync_queue, ^{
+            if (job_idx < cancellation_idx) {
+                cancel_job = 1;
+            }
+        });
+
+        if (cancel_job) {
+            callback (-1, query, NULL);
+            return;
+        }
+
+
+        /* Process this query, hopefully writing a file into cache */
+        ddb_cover_info_t *cover = calloc (sizeof (ddb_cover_info_t), 1);
+        cover->refc = 1;
+        cover->timestamp = time(NULL);
+
+        if (!album_tf) {
+            album_tf = deadbeef->tf_compile ("%album%");
+        }
+        if (!artist_tf) {
+            artist_tf = deadbeef->tf_compile ("%artist%");
+        }
+
+        deadbeef->pl_lock ();
+        strncat (cover->filepath, deadbeef->pl_find_meta (query->track, ":URI"), sizeof(cover->filepath) - strlen(cover->filepath) - 1);
+        deadbeef->pl_unlock ();
+
+        ddb_tf_context_t ctx;
+        ctx._size = sizeof (ddb_tf_context_t);
+        ctx.it = query->track;
+        deadbeef->tf_eval (&ctx, album_tf, cover->album, sizeof (cover->album));
+        deadbeef->tf_eval (&ctx, artist_tf, cover->artist, sizeof (cover->artist));
+
+        // check the cache
+        ddb_cover_info_t *cached_cover = cover_cache_find (cover);
+        if (cached_cover) {
+            cached_cover->timestamp = time(NULL);
+            cover_info_free(cover);
+            cover = cached_cover;
+            cover->refc++;
+        }
+        else {
+            process_query (cover);
+        }
+        int cover_found = cover->cover_found;
+
+        // cache cover info
+        if (!cached_cover) {
+            cover_update_cache (cover);
+        }
+
+        /* Make all the callbacks (and free the chain), with data if a file was written */
+        if (cover_found) {
+            trace ("artwork fetcher: cover art file found: %s\n", cover->image_filename);
+            cover->refc++;
+            callback (0, query, cover);
+        }
+        else {
+            trace ("artwork fetcher: no cover art found\n");
+            callback (-1, query, NULL);
+        }
+        cover_info_free(cover);
+        cover = NULL;
+    });
 }
 
 static void
 artwork_reset (void) {
     trace ("artwork: reset queue\n");
-    deadbeef->mutex_lock (queue_mutex);
     queue_clear ();
-    deadbeef->mutex_unlock (queue_mutex);
 }
 
 static void
@@ -2233,18 +2076,18 @@ artwork_configchanged (void)
         strcmp(old_artwork_filemask, artwork_filemask) ||
         strcmp(old_artwork_folders, artwork_folders)
         ) {
-        trace ("artwork config changed, invalidating cache...\n");
-        deadbeef->mutex_lock (queue_mutex);
 
-        // Submit a query for NULL image, with a callback that would reset the cache,
-        // on the correct thread.
-        ddb_cover_query_t *q = calloc (sizeof (ddb_cover_query_t), 1);
-        q->user_data = &cache_reset_time;
-        enqueue_query (q, cache_reset_callback);
-        q = NULL;
+        dispatch_async(fetch_queue, ^{
+            /* All artwork is now (including this second) obsolete */
+            deadbeef->conf_set_int64 ("artwork.cache_reset_time", cache_reset_time);
+            deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
 
-        artwork_abort_http_request ();
-        deadbeef->mutex_unlock (queue_mutex);
+            /* Wait for a new second to start before proceeding */
+            while (time (NULL) == cache_reset_time) {
+                usleep (100000);
+            }
+        });
+        queue_clear();
     }
     free (old_artwork_filemask);
     free (old_artwork_folders);
@@ -2319,33 +2162,19 @@ artwork_get_actions (DB_playItem_t *it)
 }
 
 static int
-artwork_plugin_stop (void)
-{
-    if (tid) {
-        trace ("Stopping fetcher thread ... \n");
-        deadbeef->mutex_lock (queue_mutex);
-        queue_clear ();
-        terminate = 1;
-        deadbeef->cond_signal (queue_cond);
-        while (queue) {
-            artwork_abort_http_request ();
-            deadbeef->mutex_unlock (queue_mutex);
-            usleep (10000);
-            deadbeef->mutex_lock (queue_mutex);
-        }
-        deadbeef->mutex_unlock (queue_mutex);
-        deadbeef->thread_join (tid);
-        tid = 0;
-        trace ("Fetcher thread stopped\n");
-    }
-    if (queue_mutex) {
-        deadbeef->mutex_free (queue_mutex);
-        queue_mutex = 0;
-    }
-    if (queue_cond) {
-        deadbeef->cond_free (queue_cond);
-        queue_cond = 0;
-    }
+artwork_plugin_stop (void) {
+    dispatch_sync(sync_queue, ^{
+        terminate = 1; // prevent any new items from being scheduled
+    });
+    queue_clear ();
+    artwork_abort_http_request ();
+
+    dispatch_sync(fetch_queue, ^{
+        // wait for the queue to finish all jobs
+    });
+
+    dispatch_release(fetch_queue);
+    dispatch_release(sync_queue);
 
     cover_cache_free ();
 
@@ -2381,15 +2210,8 @@ artwork_plugin_start (void)
 #endif
 
     terminate = 0;
-    queue_mutex = deadbeef->mutex_create_nonrecursive ();
-    queue_cond = deadbeef->cond_create ();
-    if (queue_mutex && queue_cond) {
-        tid = deadbeef->thread_start_low_priority (fetcher_thread, NULL);
-    }
-    if (!tid) {
-        artwork_plugin_stop ();
-        return -1;
-    }
+    fetch_queue = dispatch_queue_create("ArtworkFetchQueue", DISPATCH_QUEUE_SERIAL);
+    sync_queue = dispatch_queue_create("ArtworkSyncQueue", DISPATCH_QUEUE_SERIAL);
 
     start_cache_cleaner ();
 
