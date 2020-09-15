@@ -245,6 +245,15 @@ AS_IF([test "${enable_gtk2}" = "yes" -o "${enable_gtk3}" = "yes" -o "${enable_sh
     ])
 ])
 
+AS_IF([test "${enable_staticlink}" != "no"], [
+    ], [
+    AC_CHECK_LIB([dispatch], [main], [HAVE_DISPATCH=yes])
+])
+DISPATCH_CFLAGS=-fblocks
+DISPATCH_LIBS=-ldispatch
+AC_SUBST(DISPATCH_CFLAGS)
+AC_SUBST(DISPATCH_LIBS)
+
 AS_IF([test "${enable_gtk2}" = "yes"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         GTK2_DEPS_CFLAGS="${GTK2_216_CFLAGS}"

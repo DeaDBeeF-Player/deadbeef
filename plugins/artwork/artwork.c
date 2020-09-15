@@ -1317,8 +1317,8 @@ artwork_plugin_start (void)
 #endif
 
     terminate = 0;
-    fetch_queue = dispatch_queue_create("ArtworkFetchQueue", DISPATCH_QUEUE_SERIAL);
-    sync_queue = dispatch_queue_create("ArtworkSyncQueue", DISPATCH_QUEUE_SERIAL);
+    fetch_queue = dispatch_queue_create("ArtworkFetchQueue", NULL);
+    sync_queue = dispatch_queue_create("ArtworkSyncQueue", NULL);
 
     start_cache_cleaner ();
 

@@ -23,6 +23,7 @@
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
+#include <dispatch/dispatch.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -60,10 +61,10 @@ static char lfm_sess[SESS_ID_MAX];
 static char lfm_nowplaying_url[256];
 static char lfm_submission_url[256];
 
-static uintptr_t lfm_mutex;
-static uintptr_t lfm_cond;
-static int lfm_stopthread;
-static intptr_t lfm_tid;
+static int terminate;
+static dispatch_queue_t sync_queue;
+static dispatch_queue_t request_queue;
+
 
 #define META_FIELD_SIZE 200
 
@@ -78,16 +79,11 @@ static uint8_t lfm_reply[MAX_REPLY];
 static size_t lfm_reply_sz;
 static char lfm_err[CURL_ERROR_SIZE];
 
-static char lfm_nowplaying[2048]; // packet for nowplaying, or ""
-#define LFM_SUBMISSION_QUEUE_SIZE 50
+static void
+lfm_submit (ddb_playItem_t *it, time_t started_timestamp, float playtime);
 
-typedef struct {
-    DB_playItem_t *it;
-    time_t started_timestamp;
-    float playtime;
-} subm_item_t;
-
-static subm_item_t lfm_subm_queue[LFM_SUBMISSION_QUEUE_SIZE];
+static void
+lfm_send_nowplaying (const char *lfm_nowplaying);
 
 static void
 lfm_update_auth (void) {
@@ -105,7 +101,11 @@ lfm_update_auth (void) {
 static size_t
 lastfm_curl_res (void *ptr, size_t size, size_t nmemb, void *stream)
 {
-    if (lfm_stopthread) {
+    __block int need_cancel = 0;
+    dispatch_sync(sync_queue, ^{
+        need_cancel = terminate;
+    });
+    if (need_cancel) {
         trace ("lfm: lastfm_curl_res: aborting current request\n");
         return 0;
     }
@@ -121,7 +121,11 @@ lastfm_curl_res (void *ptr, size_t size, size_t nmemb, void *stream)
 
 static int
 lfm_curl_control (void *stream, double dltotal, double dlnow, double ultotal, double ulnow) {
-    if (lfm_stopthread) {
+    __block int need_cancel = 0;
+    dispatch_sync(sync_queue, ^{
+        need_cancel = terminate;
+    });
+    if (need_cancel) {
         trace ("lfm: aborting current request\n");
         return -1;
     }
@@ -536,16 +540,27 @@ lastfm_songstarted (ddb_event_track_t *ev, uintptr_t data) {
     if (!deadbeef->conf_get_int ("lastfm.enable", 0)) {
         return 0;
     }
-    deadbeef->mutex_lock (lfm_mutex);
-    if (lfm_format_uri (-1, ev->track, lfm_nowplaying, sizeof (lfm_nowplaying), ev->started_timestamp, 120) < 0) {
-        lfm_nowplaying[0] = 0;
-    }
-//    trace ("%s\n", lfm_nowplaying);
-    deadbeef->mutex_unlock (lfm_mutex);
-    if (lfm_nowplaying[0]) {
-        deadbeef->cond_signal (lfm_cond);
-    }
 
+    ddb_playItem_t *it = ev->track;
+    time_t started_timestamp = ev->started_timestamp;
+    deadbeef->pl_item_ref (it);
+    dispatch_async(request_queue, ^{
+        __block int need_cancel = 0;
+        dispatch_sync(sync_queue, ^{
+            need_cancel = terminate;
+        });
+        if (need_cancel) {
+            return;
+        }
+        char lfm_nowplaying[2048];
+        if (lfm_format_uri (-1, it, lfm_nowplaying, sizeof (lfm_nowplaying), started_timestamp, 120) > 0) {
+            // try to send nowplaying
+            if (lfm_nowplaying[0] && !deadbeef->conf_get_int ("lastfm.disable_np", 0)) {
+                lfm_send_nowplaying (lfm_nowplaying);
+            }
+        }
+        deadbeef->pl_item_unref (it);
+    });
     return 0;
 }
 
@@ -585,36 +600,31 @@ lastfm_songchanged (ddb_event_trackchange_t *ev, uintptr_t data) {
         trace ("lfm: not enough metadata for submission, artist=%s, title=%s, album=%s\n", deadbeef->pl_find_meta_with_override (ev->from, "artist"), deadbeef->pl_find_meta_with_override (ev->from, "title"), deadbeef->pl_find_meta_with_override (ev->from, "album"));
         return 0;
     }
-    deadbeef->mutex_lock (lfm_mutex);
-    // find free place in queue
-    for (int i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
-        if (!lfm_subm_queue[i].it) {
-            trace ("lfm: song is now in queue for submission\n");
-            lfm_subm_queue[i].it = ev->from;
-            lfm_subm_queue[i].started_timestamp = ev->started_timestamp;
-            lfm_subm_queue[i].playtime = ev->playtime;
-            deadbeef->pl_item_ref (ev->from);
-            break;
-        }
-    }
-    deadbeef->mutex_unlock (lfm_mutex);
-    deadbeef->cond_signal (lfm_cond);
+
+    ddb_playItem_t *it = ev->from;
+    deadbeef->pl_item_ref (it);
+    time_t started_timestamp = ev->started_timestamp;
+
+    dispatch_async(request_queue, ^{
+        lfm_submit (it, started_timestamp, ev->playtime);
+    });
 
     return 0;
 }
 
 static void
-lfm_send_nowplaying (void) {
+lfm_send_nowplaying (const char *nowplaying_uri) {
     if (auth () < 0) {
         trace ("auth failed! nowplaying cancelled.\n");
-        lfm_nowplaying[0] = 0;
         return;
     }
     trace ("auth successful! setting nowplaying\n");
     char s[SESS_ID_MAX + 4];
     snprintf (s, sizeof (s), "s=%s&", lfm_sess);
-    size_t l = strlen (lfm_nowplaying);
-    strcpy (lfm_nowplaying+l, s);
+
+    char lfm_nowplaying[2048] = "";
+
+    snprintf (lfm_nowplaying, sizeof (lfm_nowplaying), "%s%s", nowplaying_uri, s);
     trace ("content:\n%s\n", lfm_nowplaying);
 #if !LFM_NOSEND
     for (int attempts = 2; attempts > 0; attempts--) {
@@ -632,7 +642,7 @@ lfm_send_nowplaying (void) {
                     }
                     trace ("success! retrying send nowplaying...\n");
                     snprintf (s, sizeof (s), "s=%s&", lfm_sess);
-                    strcpy (lfm_nowplaying+l, s);
+                    snprintf (lfm_nowplaying, sizeof (lfm_nowplaying), "%s%s", nowplaying_uri, s);
                     continue; // retry with new session
                 }
             }
@@ -644,32 +654,23 @@ lfm_send_nowplaying (void) {
         break;
     }
 #endif
-    lfm_nowplaying[0] = 0;
 }
 
 static void
-lfm_send_submissions (void) {
-    trace ("lfm_send_submissions\n");
-    int i;
+lfm_send_submission (ddb_playItem_t *it, time_t started_timestamp, float playtime) {
+    trace ("lfm_send_submission\n");
     char req[1024*50];
     int idx = 0;
     char *r = req;
     int len = sizeof (req);
-    int res;
-    deadbeef->mutex_lock (lfm_mutex);
-    for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
-        if (lfm_subm_queue[i].it) {
-            res = lfm_format_uri (idx, lfm_subm_queue[i].it, r, len, lfm_subm_queue[i].started_timestamp, lfm_subm_queue[i].playtime);
-            if (res < 0) {
-                trace ("lfm: failed to format uri\n");
-                return;
-            }
-            len -= res;
-            r += res;
-            idx++;
-        }
+    int res = lfm_format_uri (idx, it, r, len, started_timestamp, playtime);
+    if (res < 0) {
+        trace ("lfm: failed to format uri\n");
+        return;
     }
-    deadbeef->mutex_unlock (lfm_mutex);
+    len -= res;
+    r += res;
+    idx++;
     if (!idx) {
         return;
     }
@@ -700,66 +701,32 @@ lfm_send_submissions (void) {
                     continue; // retry with new session
                 }
             }
-            else {
-                trace ("submission successful, response:\n%s\n", lfm_reply);
-                deadbeef->mutex_lock (lfm_mutex);
-                for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
-                    if (lfm_subm_queue[i].it) {
-                        deadbeef->pl_item_unref (lfm_subm_queue[i].it);
-                        lfm_subm_queue[i].it = NULL;
-                        lfm_subm_queue[i].started_timestamp = 0;
-                    }
-                }
-                deadbeef->mutex_unlock (lfm_mutex);
-            }
+            deadbeef->pl_item_unref (it);
         }
         curl_req_cleanup ();
         break;
     }
 #else
     trace ("submission successful (NOSEND=1):\n");
-    deadbeef->mutex_lock (lfm_mutex);
-    for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
-        if (lfm_subm_queue[i].it) {
-            deadbeef->pl_item_unref (lfm_subm_queue[i].it);
-            lfm_subm_queue[i].it = NULL;
-            lfm_subm_queue[i].started_timestamp = 0;
-
-        }
-    }
-    deadbeef->mutex_unlock (lfm_mutex);
+    deadbeef->pl_item_unref (it);
 #endif
 }
 
 static void
-lfm_thread (void *ctx) {
-    //trace ("lfm_thread started\n");
-    for (;;) {
-        if (lfm_stopthread) {
-            deadbeef->mutex_unlock (lfm_mutex);
-            trace ("lfm_thread end\n");
-            return;
-        }
-        trace ("lfm wating for cond...\n");
-        deadbeef->cond_wait (lfm_cond, lfm_mutex);
-        if (lfm_stopthread) {
-            deadbeef->mutex_unlock (lfm_mutex);
-            trace ("lfm_thread end[2]\n");
-            return;
-        }
-        trace ("cond signalled!\n");
-        deadbeef->mutex_unlock (lfm_mutex);
-
-        if (!deadbeef->conf_get_int ("lastfm.enable", 0)) {
-            continue;
-        }
-        trace ("lfm sending nowplaying...\n");
-        lfm_send_submissions ();
-        // try to send nowplaying
-        if (lfm_nowplaying[0] && !deadbeef->conf_get_int ("lastfm.disable_np", 0)) {
-            lfm_send_nowplaying ();
-        }
+lfm_submit (ddb_playItem_t *it, time_t started_timestamp, float playtime) {
+    __block int need_cancel = 0;
+    dispatch_sync(sync_queue, ^{
+        need_cancel = terminate;
+    });
+    if (need_cancel) {
+        return;
     }
+
+    if (!deadbeef->conf_get_int ("lastfm.enable", 0)) {
+        return;
+    }
+    trace ("lfm sending submissions...\n");
+    lfm_send_submission (it, started_timestamp, playtime);
 }
 
 static int
@@ -777,13 +744,9 @@ lfm_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 
 static int
 lastfm_start (void) {
-    if (lfm_mutex) {
-        return -1;
-    }
-    lfm_stopthread = 0;
-    lfm_mutex = deadbeef->mutex_create_nonrecursive ();
-    lfm_cond = deadbeef->cond_create ();
-    lfm_tid = deadbeef->thread_start (lfm_thread, NULL);
+    terminate = 0;
+    request_queue = dispatch_queue_create("LastfmRequestQueue", NULL);
+    sync_queue = dispatch_queue_create("LastfmSyncQueue", NULL);
 
     return 0;
 }
@@ -791,17 +754,15 @@ lastfm_start (void) {
 static int
 lastfm_stop (void) {
     trace ("lastfm_stop\n");
-    if (lfm_mutex) {
-        lfm_stopthread = 1;
+    dispatch_sync(sync_queue, ^{
+        terminate = 1; // prevent any new items from being scheduled
+    });
+    dispatch_sync(request_queue, ^{
+        // wait for the queue to finish all jobs
+    });
 
-        trace ("lfm_stop signalling cond\n");
-        deadbeef->cond_signal (lfm_cond);
-        trace ("waiting for thread to finish\n");
-        deadbeef->thread_join (lfm_tid);
-        lfm_tid = 0;
-        deadbeef->cond_free (lfm_cond);
-        deadbeef->mutex_free (lfm_mutex);
-    }
+    dispatch_release(request_queue);
+    dispatch_release(sync_queue);
     return 0;
 }
 
