@@ -330,6 +330,7 @@
 					HAVE_STDINT_H,
 				);
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../osx/deps/jansson-2.13.1/src\"";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -344,6 +345,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_STDINT_H;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../osx/deps/jansson-2.13.1/src\"";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
