@@ -2008,6 +2008,13 @@
 		2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
 		2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */; };
 		2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */; };
+		2DD81B2E25152C32008C716C /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
+		2DD81B6E25152C61008C716C /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
+		2DD81BAE25152D0D008C716C /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
+		2DD81CBB25152DC0008C716C /* play_16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DD81C2E25152D86008C716C /* play_16.png */; };
+		2DD81CFB25152DC1008C716C /* pause_16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DD81C2F25152D86008C716C /* pause_16.png */; };
+		2DD81CFC25152DC3008C716C /* noartwork.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DD81C3125152D86008C716C /* noartwork.png */; };
+		2DD81CFD25152DC5008C716C /* buffering_16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DD81C3325152D86008C716C /* buffering_16.png */; };
 		2DD877A31C370C7100CC94FB /* ferror68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD877A21C370C7100CC94FB /* ferror68.c */; };
 		2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDBA24B23E5E66D00051320 /* PlaylistContentView.h */; };
 		2DDBA24E23E5E66D00051320 /* PlaylistContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDBA24C23E5E66D00051320 /* PlaylistContentView.m */; };
@@ -2125,7 +2132,6 @@
 		2DE3B8162269C0A400AFF9AE /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D93DC521AADFEEF003D2D8D /* pluginsettings.c */; };
 		2DE3B8172269C0A400AFF9AE /* pluginsettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D93DC531AADFEEF003D2D8D /* pluginsettings.h */; };
 		2DE3B81E2269C0EA00AFF9AE /* utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B49E81837EC49003E6066 /* utf8.c */; };
-		2DE3B8292269C62F00AFF9AE /* pixmaps in Resources */ = {isa = PBXBuildFile; fileRef = 2DE3B8282269C62F00AFF9AE /* pixmaps */; };
 		2DE3B85E2269CA1500AFF9AE /* actionhandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B8422269CA1500AFF9AE /* actionhandlers.h */; };
 		2DE3B8622269CA1500AFF9AE /* hotkeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B8482269CA1500AFF9AE /* hotkeys.h */; };
 		2DE3B8642269CA1500AFF9AE /* actionhandlers.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B84C2269CA1500AFF9AE /* actionhandlers.c */; };
@@ -3453,6 +3459,19 @@
 				2D71F1B624AE7A1A00E753D3 /* mp4p.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DD81CBA25152DA9008C716C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = pixmaps;
+			dstSubfolderSpec = 7;
+			files = (
+				2DD81CFD25152DC5008C716C /* buffering_16.png in CopyFiles */,
+				2DD81CBB25152DC0008C716C /* play_16.png in CopyFiles */,
+				2DD81CFB25152DC1008C716C /* pause_16.png in CopyFiles */,
+				2DD81CFC25152DC3008C716C /* noartwork.png in CopyFiles */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2DE1B22024A89E550070CD7C /* Copy Plugins */ = {
@@ -5660,6 +5679,10 @@
 		2DD5262E2062F1DF002609C5 /* help-cocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "help-cocoa.txt"; sourceTree = "<group>"; };
 		2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbSeekBar.h; sourceTree = "<group>"; };
 		2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbSeekBar.m; sourceTree = "<group>"; };
+		2DD81C2E25152D86008C716C /* play_16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = play_16.png; sourceTree = "<group>"; };
+		2DD81C2F25152D86008C716C /* pause_16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pause_16.png; sourceTree = "<group>"; };
+		2DD81C3125152D86008C716C /* noartwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noartwork.png; sourceTree = "<group>"; };
+		2DD81C3325152D86008C716C /* buffering_16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buffering_16.png; sourceTree = "<group>"; };
 		2DD877A21C370C7100CC94FB /* ferror68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ferror68.c; sourceTree = "<group>"; };
 		2DD9EF0419A5089F00189344 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoautil.h; sourceTree = "<group>"; };
 		2DD9EF0519A5089F00189344 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoautil.m; sourceTree = "<group>"; };
@@ -5768,7 +5791,6 @@
 		2DE3B6952269BB4300AFF9AE /* widgets.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = widgets.c; sourceTree = "<group>"; };
 		2DE3B6962269BB4300AFF9AE /* support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = support.h; sourceTree = "<group>"; };
 		2DE3B7B92269BC3500AFF9AE /* ddb_gui_GTK3.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ddb_gui_GTK3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		2DE3B8282269C62F00AFF9AE /* pixmaps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = pixmaps; path = ../../pixmaps; sourceTree = "<group>"; };
 		2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = hotkeys.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DE3B8422269CA1500AFF9AE /* actionhandlers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = actionhandlers.h; sourceTree = "<group>"; };
 		2DE3B8482269CA1500AFF9AE /* hotkeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hotkeys.h; sourceTree = "<group>"; };
@@ -6543,6 +6565,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DD81B2E25152C32008C716C /* libjansson.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6613,6 +6636,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DD81B6E25152C61008C716C /* libjansson.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6627,6 +6651,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DD81BAE25152D0D008C716C /* libjansson.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9974,6 +9999,18 @@
 			path = ../icons/1024x1024;
 			sourceTree = "<group>";
 		};
+		2DD81C2D25152D86008C716C /* pixmaps */ = {
+			isa = PBXGroup;
+			children = (
+				2DD81C2E25152D86008C716C /* play_16.png */,
+				2DD81C2F25152D86008C716C /* pause_16.png */,
+				2DD81C3125152D86008C716C /* noartwork.png */,
+				2DD81C3325152D86008C716C /* buffering_16.png */,
+			);
+			name = pixmaps;
+			path = ../../pixmaps;
+			sourceTree = "<group>";
+		};
 		2DDBA26623E5FBA000051320 /* Playlist */ = {
 			isa = PBXGroup;
 			children = (
@@ -10032,7 +10069,7 @@
 		2DE3B5772269BB4300AFF9AE /* gtkui */ = {
 			isa = PBXGroup;
 			children = (
-				2DE3B8282269C62F00AFF9AE /* pixmaps */,
+				2DD81C2D25152D86008C716C /* pixmaps */,
 				2DE3B5782269BB4300AFF9AE /* eq.c */,
 				2DE3B57A2269BB4300AFF9AE /* progress.h */,
 				2DE3B57D2269BB4300AFF9AE /* ddblistview.c */,
@@ -12935,6 +12972,7 @@
 				2D48DC362269B731002CACFD /* Headers */,
 				2DE1B37024A8B34D0070CD7C /* Copy Plugins */,
 				2DE1B37124A8B3A20070CD7C /* Copy SC68 replays */,
+				2DD81CBA25152DA9008C716C /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -14074,7 +14112,6 @@
 			files = (
 				2DE3B5762269B80900AFF9AE /* Images.xcassets in Resources */,
 				2DA9777524C5EC27002405DA /* gtk3.xcconfig in Resources */,
-				2DE3B8292269C62F00AFF9AE /* pixmaps in Resources */,
 				2D48DC2F2269B731002CACFD /* convpresets in Resources */,
 				2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */,
 				2D48DC352269B731002CACFD /* help-cocoa.txt in Resources */,
@@ -18873,12 +18910,11 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					/usr/local/Cellar/jansson/2.12/include,
+					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/jansson/2.12/lib;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = "$(JANSSON_CFLAGS)";
 				OTHER_LDFLAGS = "$(JANSSON_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -18923,12 +18959,11 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					/usr/local/Cellar/jansson/2.12/include,
+					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/jansson/2.12/lib;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = "$(JANSSON_CFLAGS)";
 				OTHER_LDFLAGS = "$(JANSSON_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -19539,6 +19574,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -19595,6 +19631,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -19766,7 +19803,7 @@
 					"/usr/local/Cellar/glib/2.60.1/lib/glib-2.0/include",
 					/usr/local/opt/gettext/include,
 					/usr/local/Cellar/pcre/8.43/include,
-					/usr/local/Cellar/jansson/2.12/include,
+					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"/usr/local/Cellar/gtk+3/3.24.8/lib",
@@ -19851,7 +19888,7 @@
 					"/usr/local/Cellar/glib/2.60.1/lib/glib-2.0/include",
 					/usr/local/opt/gettext/include,
 					/usr/local/Cellar/pcre/8.43/include,
-					/usr/local/Cellar/jansson/2.12/include,
+					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"/usr/local/Cellar/gtk+3/3.24.8/lib",
