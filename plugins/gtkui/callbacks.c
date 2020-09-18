@@ -202,23 +202,24 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     // local hotkeys
-    GdkModifierType consumed;
+    GdkModifierType consumed_modifiers;
     guint accel_key;
-    gdk_keymap_translate_keyboard_state (gdk_keymap_get_default (), event->hardware_keycode, event->state, 0, &accel_key, NULL, NULL, &consumed);
+
+    guint accel_mods = event->state & gtk_accelerator_get_default_mod_mask ();
+
+    GdkDisplay *display = gtk_widget_get_display (widget);
+
+    gdk_keymap_translate_keyboard_state (gdk_keymap_get_for_display (display), event->hardware_keycode, accel_mods & (~GDK_SHIFT_MASK), 0, &accel_key, NULL, NULL, &consumed_modifiers);
     if (accel_key == GDK_ISO_Left_Tab)
         accel_key = GDK_Tab;
-    int mods = event->state & gtk_accelerator_get_default_mod_mask ();
-    mods &= ~(consumed&~GDK_SHIFT_MASK);
-    int lower = gdk_keyval_to_lower (accel_key);
-    if (lower != accel_key) {
-        accel_key = lower;
-    }
     trace ("pressed: keycode: %x, mods: %x, hw: %x, translated: %x\n", event->keyval, mods, event->hardware_keycode, accel_key);
+
+    accel_mods &= ~(consumed_modifiers&~GDK_SHIFT_MASK);
 
     DB_plugin_t *hkplug = deadbeef->plug_get_for_id ("hotkeys");
     if (hkplug) {
         int ctx;
-        DB_plugin_action_t *act = ((DB_hotkeys_plugin_t *)hkplug)->get_action_for_keycombo (accel_key, mods, 0, &ctx);
+        DB_plugin_action_t *act = ((DB_hotkeys_plugin_t *)hkplug)->get_action_for_keycombo (accel_key, accel_mods, 0, &ctx);
         if (act && act->callback2) {
             trace ("executing action %s in ctx %d\n", act->name, ctx);
             act->callback2 (act, ctx);
