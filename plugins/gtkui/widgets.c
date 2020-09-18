@@ -3571,6 +3571,7 @@ on_hvbox_shrink (GtkMenuItem *menuitem, gpointer user_data) {
     for (c = w->children; c && c->next; c = c->next);
     if (c) {
         w_remove (w, c);
+        w_destroy (c);
     }
     if (!w->children) {
         w_append (w, w_create ("placeholder"));
