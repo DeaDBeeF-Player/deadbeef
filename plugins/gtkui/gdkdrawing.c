@@ -375,6 +375,27 @@ color_dump (const char *name, GdkColor *c) {
     printf ("%s: %x %x %x\n", name, c->red>>8, c->green>>8, c->blue>>8);
 }
 
+static guint16
+color_lerp_component (guint16 from, guint16 to, float factor) {
+    int32_t result = (int32_t)from + (int32_t)(((int32_t)to - (int32_t)from) * factor);
+    if (result < 0) {
+        return 0;
+    }
+    else if (result > 0xffff) {
+        return 0xffff;
+    }
+    return (guint16)result;
+}
+
+static GdkColor
+color_lerp (GdkColor from, GdkColor to, float factor) {
+    GdkColor result;
+    result.red = color_lerp_component(from.red, to.red, factor);
+    result.green = color_lerp_component(from.green, to.green, factor);
+    result.blue = color_lerp_component(from.blue, to.blue, factor);
+    return result;
+}
+
 void
 gtkui_init_theme_colors (void) {
     if (!theme_entry) {
