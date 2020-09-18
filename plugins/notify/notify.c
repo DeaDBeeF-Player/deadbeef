@@ -17,6 +17,7 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 #include <dbus/dbus.h>
+#include <dispatch/dispatch.h>
 #include "../../deadbeef.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,9 +29,12 @@
 #define E_NOTIFICATION_INTERFACE "org.freedesktop.Notifications"
 #define E_NOTIFICATION_PATH "/org/freedesktop/Notifications"
 
-DB_functions_t *deadbeef;
-DB_misc_t plugin;
-DB_artwork_plugin_t *artwork_plugin;
+static DB_functions_t *deadbeef;
+static DB_misc_t plugin;
+static DB_artwork_plugin_t *artwork_plugin;
+static dispatch_queue_t queue;
+static DB_playItem_t *last_track = NULL;
+static time_t request_timer = 0;
 
 static dbus_uint32_t replaces_id = 0;
 
@@ -41,9 +45,10 @@ static char *tf_title;
 static char *tf_content;
 
 static void
-notify_thread (void *ctx) {
+show_notification (DB_playItem_t *track);
 
-    DBusMessage *msg = (DBusMessage*) ctx;
+static void
+notify_send (DBusMessage *msg) {
     DBusMessage *reply = NULL;
 
     DBusError error;
@@ -53,7 +58,7 @@ notify_thread (void *ctx) {
         fprintf(stderr, "connection failed: %s",error.message);
         dbus_error_free(&error);
         dbus_message_unref (msg);
-        deadbeef->thread_exit(NULL);
+        return;
     }
 
     reply = dbus_connection_send_with_reply_and_block (conn, msg, -1, &error);
@@ -61,7 +66,7 @@ notify_thread (void *ctx) {
         fprintf(stderr, "send_with_reply_and_block error: (%s)\n", error.message); 
         dbus_error_free(&error);
         dbus_message_unref (msg);
-        deadbeef->thread_exit(NULL);
+        return;
     }
 
     if (reply != NULL) {
@@ -86,8 +91,6 @@ notify_thread (void *ctx) {
 
     dbus_message_unref (msg);
     dbus_connection_unref (conn);
-    deadbeef->thread_exit(NULL);
-
 }
 
 static void
@@ -150,28 +153,31 @@ esc_xml (const char *cmd, char *esc, int size) {
     *dst = 0;
 }
 
-static void show_notification (DB_playItem_t *track);
-static DB_playItem_t *last_track = NULL;
-static time_t request_timer = 0;
-
 static void
 cover_avail_callback (const char *fname, const char *artist, const char *album, void *user_data) {
     if (!fname) {
         // Give up
         return;
     }
+    if (time (NULL) - request_timer >= 4) {
+        return;
+    }
+
     deadbeef->pl_lock ();
-    if (last_track && (time (NULL) - request_timer < 4)) {
-        show_notification (last_track);
-    }
-    if (last_track) {
-        deadbeef->pl_item_unref (last_track);
-        last_track = NULL;
-    }
+    ddb_playItem_t *track = last_track;
+    last_track = NULL;
     deadbeef->pl_unlock ();
+
+    if (track) {
+        dispatch_async (queue, ^{
+            show_notification (track);
+            deadbeef->pl_item_unref (track);
+        });
+    }
 }
 
-static void show_notification (DB_playItem_t *track) {
+static void
+show_notification (DB_playItem_t *track) {
     char title[1024];
     char content[1024];
 
@@ -238,16 +244,11 @@ static void show_notification (DB_playItem_t *track) {
     dbus_message_iter_close_container(&iter, &sub);
 
     dbus_message_iter_append_basic(&iter, DBUS_TYPE_INT32, &v_timeout);
-
-    intptr_t tid = 0;
-    if ((tid=deadbeef->thread_start(notify_thread, msg)) != 0) {
-        dbus_message_ref (msg);
-        deadbeef->thread_detach (tid);  
-    }
-    dbus_message_unref (msg);
     if (v_iconname) {
         free (v_iconname);
     }
+
+    notify_send (msg);
 }
 
 static int
@@ -255,7 +256,11 @@ on_songstarted (ddb_event_track_t *ev) {
     if (ev->track && deadbeef->conf_get_int ("notify.enable", 0)) {
         DB_playItem_t *track = ev->track;
         if (track) {
-            show_notification (track);
+            deadbeef->pl_item_ref (track);
+            dispatch_async (queue, ^{
+                show_notification (track);
+                deadbeef->pl_item_unref (track);
+            });
         }
     }
     return 0;
@@ -304,6 +309,7 @@ import_legacy_tf (const char *key_from, const char *key_to) {
 
 int
 notify_start (void) {
+    queue = dispatch_queue_create("OSDNotifyQueue", NULL);
     import_legacy_tf ("notify.format", "notify.format_title_tf");
     import_legacy_tf ("notify.format_content", "notify.format_content_tf");
     return 0;
@@ -311,6 +317,9 @@ notify_start (void) {
 
 int
 notify_stop (void) {
+    dispatch_release(queue);
+    queue = NULL;
+
     deadbeef->pl_lock ();
     if (last_track) {
         deadbeef->pl_item_unref (last_track);
@@ -349,7 +358,7 @@ static const char settings_dlg[] =
     "property \"Album art size (px)\" entry notify.albumart_size 64;\n"
 ;
 
-DB_misc_t plugin = {
+static DB_misc_t plugin = {
     DDB_PLUGIN_SET_API_VERSION
     .plugin.type = DB_PLUGIN_MISC,
     .plugin.version_major = 1,
