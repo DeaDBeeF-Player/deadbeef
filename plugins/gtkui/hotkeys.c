@@ -764,25 +764,19 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
     edited = FALSE;
     cleared = FALSE;
 
+    accel_mods = event->state & gtk_accelerator_get_default_mod_mask ();
+
     gdk_keymap_translate_keyboard_state (gdk_keymap_get_for_display (display),
-            event->hardware_keycode, event->state,
+            event->hardware_keycode, accel_mods & (~GDK_SHIFT_MASK),
             0, &accel_key, NULL, NULL, &consumed_modifiers);
 
     if (accel_key == GDK_ISO_Left_Tab) 
         accel_key = GDK_Tab;
 
-    accel_mods = event->state & gtk_accelerator_get_default_mod_mask ();
 
-    /* Filter consumed modifiers 
+    /* Filter consumed modifiers
     */
     accel_mods &= ~(consumed_modifiers&~GDK_SHIFT_MASK);
-
-    /* Put shift back if it changed the case of the key, not otherwise.
-    */
-    int lower = gdk_keyval_to_lower (accel_key);
-    if (lower != accel_key) {
-        accel_key = lower;
-    }
 
     char name[1000];
     gtk_button_set_label (GTK_BUTTON (widget), _(""));
