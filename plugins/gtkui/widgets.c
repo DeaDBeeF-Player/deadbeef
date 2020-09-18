@@ -2389,7 +2389,7 @@ w_tabbed_playlist_create (void) {
     w->tabstrip = DDB_TABSTRIP (tabstrip);
     gtk_widget_show (tabstrip);
     GtkWidget *list = ddb_listview_new ();
-    gtk_widget_set_size_request (vbox, 100, 100);
+    gtk_widget_set_size_request (vbox, 250, 100);
     w->plt.list = (DdbListview *)list;
     gtk_widget_show (list);
 
