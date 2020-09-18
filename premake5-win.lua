@@ -4,6 +4,7 @@ workspace "deadbeef"
    configurations { "debug", "release", "debug32", "release32" }
    platforms { "Windows" }
    defaultplatform "Windows"
+   toolset "clang"
 
 newoption {
   trigger = "version-override",
