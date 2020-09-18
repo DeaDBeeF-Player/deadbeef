@@ -91,23 +91,9 @@ static int headerheight = 23;
         synchronizedContentView.postsBoundsChangedNotifications = YES;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(scrollChanged:) name:NSViewBoundsDidChangeNotification object:synchronizedContentView];
 
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(windowDidBecomeKey:)
-                                                     name:NSWindowDidBecomeKeyNotification
-                                                   object:self.window];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(windowDidBecomeKey:)
-                                                     name:NSWindowDidResignKeyNotification
-                                                   object:self.window];
     }
     return self;
 }
-
-- (void)windowDidBecomeKey:(id)sender {
-    self.headerView.needsDisplay = YES;
-    self.contentView.needsDisplay = YES;
-}
-
 
 - (void)scrollChanged:(id)notification {
     self.headerView.needsDisplay = YES;

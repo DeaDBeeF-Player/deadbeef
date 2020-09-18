@@ -316,6 +316,16 @@ static int grouptitleheight = 22;
     [self updatePinnedGroup];
 }
 
+- (BOOL)becomeFirstResponder {
+    self.needsDisplay = YES;
+    return YES;
+}
+
+- (BOOL)resignFirstResponder {
+    self.needsDisplay = YES;
+    return YES;
+}
+
 - (void)drawListView:(NSRect)dirtyRect {
     id<DdbListviewDelegate> delegate = self.delegate;
 
@@ -346,7 +356,7 @@ static int grouptitleheight = 22;
 
     int title_height = [self grouptitle_height];
 
-    BOOL focused = [self.window isKeyWindow];
+    BOOL focused = self == self.window.firstResponder;
 
     int dragIdx = -1;
     if (_draggingInView) {

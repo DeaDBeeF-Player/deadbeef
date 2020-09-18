@@ -75,11 +75,21 @@
     NSTrackingAreaOptions options = NSTrackingInVisibleRect | NSTrackingCursorUpdate | NSTrackingMouseMoved | NSTrackingActiveInActiveApp;
     NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:NSZeroRect options:options owner:self userInfo:nil];
     [self addTrackingArea:area];
+
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(windowDidBecomeOrResignKey:)
+                                               name:NSWindowDidBecomeKeyNotification
+                                             object:self.window];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(windowDidBecomeOrResignKey:)
+                                               name:NSWindowDidResignKeyNotification
+                                             object:self.window];
+
     return self;
 }
 
-- (void)setListView:(PlaylistView *)lv {
-    self.listview = lv;
+- (void)windowDidBecomeOrResignKey:(NSNotification *)notification {
+    self.needsDisplay = YES;
 }
 
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect {
