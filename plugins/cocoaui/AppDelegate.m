@@ -172,8 +172,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 }
 
 - (void)initMainWindow {
-//    _mainWindow = [[MainWindowController alloc] initWithWindowNibName:@"MainWindow"];
-    _mainWindow = [[MainWindowController alloc] initWithWindowNibName:@"SplitViewMainWindow"];
+    _mainWindow = [[MainWindowController alloc] initWithWindowNibName:@"MainWindow"];
     _mainWindow.shouldCascadeWindows = NO;
     _mainWindow.window.releasedWhenClosed = NO;
     _mainWindow.window.excludedFromWindowsMenu = YES;
