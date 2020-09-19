@@ -44,6 +44,9 @@ ldd "$1/plugins/"*.dll "$1/deadbeef.exe" | awk 'NF == 4 {print $3}; NF == 2 {pri
 
 cp -uv `cat .libraries.tmp` "$1/"
 
+# libdispatch
+cp -uv xdispatch_ddb/lib/* "$1/"
+
 # gdk_pixbuf libs
 for i in /mingw32 /mingw64 /usr; do
 	cp -ru $i/lib/gdk-pixbuf-2.0 "$1/lib/gdk-pixbuf-2.0" 2>>/dev/null | true
