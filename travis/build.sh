@@ -40,10 +40,14 @@ case "$TRAVIS_OS_NAME" in
     ;;
     windows)
         STATICDEPS_URL="http://sourceforge.net/projects/deadbeef/files/staticdeps/ddb-xdispatch-win-latest.zip/download"
+        echo "downloading xdispatch_ddb..."
         wget -q "$STATICDEPS_URL" -O ddb-xdispatch-win-latest.zip || exit 1
+        echo "unpacking xdispatch_ddb..."
         $mingw64 unzip ddb-xdispatch-win-latest.zip || exit 1
+        echo "downloading windows deps..."
         git clone https://github.com/kuba160/deadbeef-windows-deps.git
         wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha15/premake-5.0.0-alpha15-windows.zip && unzip premake-5.0.0-alpha15-windows.zip
+        echo "building for x86_64"
         $mingw64 ./premake5 --os=linux --file=premake5-win.lua --standard gmake
         $mingw64 make config=release_windows || exit 1
         $mingw64 make config=debug_windows || exit 1
