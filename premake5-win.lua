@@ -4,6 +4,7 @@ workspace "deadbeef"
    configurations { "debug", "release", "debug32", "release32" }
    platforms { "Windows" }
    defaultplatform "Windows"
+   toolset "clang"
 
 newoption {
   trigger = "version-override",
@@ -46,7 +47,6 @@ filter "configurations:debug or debug32"
   symbols "On"
 
 filter "configurations:debug or release"
-  buildoptions { "-fPIC" }
   includedirs { "plugins/libmp4ff", "static-deps/lib-x86-64/include/x86_64-linux-gnu", "static-deps/lib-x86-64/include"  }
   libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib" }
 
@@ -62,14 +62,22 @@ filter "configurations:release32 or release"
 
 filter "system:Windows"
   buildoptions { "-include shared/windows/mingw32_layer.h", "-fno-builtin"}
-  includedirs { "shared/windows/include", "/mingw64/include/opus", "external/mp4p/include" }
-  libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib" }
+  includedirs { "shared/windows/include", "/mingw64/include/opus", "external/mp4p/include", "xdispatch_ddb/include" }
+  libdirs { "static-deps/lib-x86-64/lib/x86_64-linux-gnu", "static-deps/lib-x86-64/lib", "xdispatch_ddb/lib" }
   defines { "USE_STDIO", "HAVE_ICONV", "_POSIX_C_SOURCE" }
 
   if nls() then
     links {"intl"}
   end
   links { "ws2_32", "psapi", "shlwapi", "iconv", "libwin", "dl"}
+
+-- clang preset in premake5 does not support icon compiling, define it here
+filter 'files:**.rc'
+   buildcommands {
+      'windres -O coff -o "%{cfg.objdir}/%{file.basename}.o" "%{file.relpath}"'
+   }
+   buildoutputs { '%{cfg.objdir}/%{file.basename}.o' }
+
 
 project "libwin"
    kind "StaticLib"
@@ -1110,6 +1118,7 @@ end
 if option ("plugin-lastfm", "libcurl") then
 project "lastfm"
    kind "SharedLib"
+   buildoptions {"-fblocks"}
    language "C"
    targetdir "bin/%{cfg.buildcfg}/plugins"
    targetprefix ""
@@ -1118,6 +1127,7 @@ project "lastfm"
        "plugins/lastfm/*.h",
        "plugins/lastfm/*.c"
    }
+   links {"dispatch", "BlocksRuntime"}
    pkgconfig ("libcurl")
 end
 
@@ -1167,6 +1177,20 @@ project "tta"
    }
 end
 
+if option ("plugin-medialib") then
+project "medialib"
+   kind "SharedLib"
+   language "C"
+   targetdir "bin/%{cfg.buildcfg}/plugins"
+   targetprefix ""
+
+   files {
+       "plugins/medialib/medialib.c",
+       "plugins/medialib/medialib.h"
+   }
+
+   pkgconfig ("jansson")
+end
 
 project "translations"
    kind "Utility"
