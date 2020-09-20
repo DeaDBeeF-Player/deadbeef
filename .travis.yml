@@ -3,7 +3,7 @@ language: c
 matrix:
     include:
         - os: linux
-          dist: bionic
+          dist: trusty
           addons:
             apt:
               packages:
@@ -13,7 +13,7 @@ matrix:
               - intltool
               - libc6-dev
               - yasm
-              - libglib2.0-dev-bin
+              - libglib2.0-bin
               - fakeroot
               - clang
               - libblocksruntime-dev

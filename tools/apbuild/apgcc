@@ -16,6 +16,9 @@ use Cwd;
 use Apbuild::GCC;
 use Apbuild::Utils;
 
+my $cc = 'clang';
+my $cxx = 'clang++';
+
 # Don't forget to bump the version in Makefile too.
 our $APBUILD_VERSION = "2.0.9";
 
@@ -42,7 +45,7 @@ if ($ENV{APBUILD_CXX_MODE}) {
 	# - Set only APBUILD_CXX2 -> use 'g++' as default for APBUILD_CXX1, and enable double compiling.
 
 	if (empty($ENV{APBUILD_CXX1}) && empty($ENV{APBUILD_CXX2})) {
-		$gcc = new Apbuild::GCC('g++');
+		$gcc = new Apbuild::GCC($cxx);
 
 	} elsif (!empty($ENV{APBUILD_CXX1}) && !empty($ENV{APBUILD_CXX2})) {
 		$gcc = new Apbuild::GCC($ENV{APBUILD_CXX1});
@@ -52,12 +55,12 @@ if ($ENV{APBUILD_CXX_MODE}) {
 		$gcc = new Apbuild::GCC($ENV{APBUILD_CXX1});
 
 	} elsif (!empty($ENV{APBUILD_CXX2})) {
-		$gcc = new Apbuild::GCC('g++');
+		$gcc = new Apbuild::GCC($cxx);
 		$gxx2 = new Apbuild::GCC($ENV{APBUILD_CXX2});
 	}
 
 } else {
-	my $gcc_command = 'gcc';
+	my $gcc_command = $cc;
 	$gcc_command = $ENV{APBUILD_CC} if (!empty($ENV{APBUILD_CC}));
 	$gcc = new Apbuild::GCC($gcc_command);
 }

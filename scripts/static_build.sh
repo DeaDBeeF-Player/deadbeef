@@ -39,23 +39,18 @@ else
     exit 1
 fi
 
-if [[ "$1" == "--clang" ]] ; then
-    export CC=clang
-    export CXX=clang++
-    export OBJC=clang
-    # using clang requires system libstdc++, so remove from staticdeps
-    rm static-deps/lib-x86-64/lib/libstdc*
-else
-    cd tools/apbuild
-    ./apinit || exit 1
-    cd ../../
-    export APBUILD_STATIC_LIBGCC=1
-    export APBUILD_CXX1=1
-    export CC=$AP/apgcc
-    export CXX=$AP/apgcc
-    export OBJC=$AP/apgcc
-fi
+# using clang requires higher version of libstdc++, than provided in staticdeps, so remove it
+rm static-deps/lib-x86-64/lib/libstdc*
 
+# setup apgcc environment
+cd tools/apbuild
+./apinit || exit 1
+cd ../../
+export APBUILD_STATIC_LIBGCC=1
+export APBUILD_CXX1=1
+export CC=$AP/apgcc
+export CXX=$AP/apgcc
+export OBJC=$AP/apgcc
 
 ./autogen.sh || exit 1
 
