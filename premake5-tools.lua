@@ -5,6 +5,7 @@ function pkgconfig (pkgname)
   links { pkgconfig_libs (pkgname) }
   includedirs { pkgconfig_includedirs (pkgname) }
   libdirs { pkgconfig_libdirs (pkgname) }
+  buildoptions { pkgconfig_cflags (pkgname) }
 end
 
 -- Returns true if package is installed
@@ -66,6 +67,22 @@ function pkgconfig_libs (pkgname)
     tab2[i] = string.sub (v, 3)
     tab2[i] = tab2[i] .. " " -- fix problems when project name is same as library
     -- this will favor linking with library than with itself
+  end
+  return tab2
+end
+
+-- Returns cflags for pkgname
+function pkgconfig_cflags (pkgname)
+  command = "pkg-config --cflags-only-other " .. pkgname
+  returnval = os.outputof (command)
+  if (returnval == nil)
+  then
+    error ("pkg-config failed for " .. pkgname)
+  end
+  parts = string.explode (returnval, " ")
+  tab2 = {}
+  for i, v in ipairs(parts) do
+    tab2[i] = v
   end
   return tab2
 end
