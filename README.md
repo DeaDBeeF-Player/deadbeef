@@ -25,7 +25,7 @@ Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy develo
 * Remember to get submodules: `git submodule update --init`
 * Install dependencies, as listed in the README file
 * Run `./autogen.sh` to bootstrap
-* Run `./configure`, followed with `make` and `sudo make install`.
+* Run `CC=clang CXX=clang++ ./configure`, followed with `make` and `sudo make install`.
 * For more information about the build process, read the generated INSTALL file and the output of `./configure --help`.
 
 ### macOS (COCOA version)
