@@ -9768,13 +9768,13 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		2DA9777324C5EC26002405DA /* configuration */ = {
+		2DA9777324C5EC26002405DA /* xcodeconfig */ = {
 			isa = PBXGroup;
 			children = (
 				2DA9777424C5EC26002405DA /* gtk3.xcconfig */,
 				2DA8897024F2F3ED00477344 /* jansson.xcconfig */,
 			);
-			path = configuration;
+			path = xcodeconfig;
 			sourceTree = "<group>";
 		};
 		2DAA4C091AAF88DE00519559 /* Tests */ = {
@@ -10309,7 +10309,7 @@
 		4D1B3E7118379829003E6066 = {
 			isa = PBXGroup;
 			children = (
-				2DA9777324C5EC26002405DA /* configuration */,
+				2DA9777324C5EC26002405DA /* xcodeconfig */,
 				2D9E5BFE24AE6AAD0099B108 /* external */,
 				2DCD78AD19A6658C00EA50FA /* icons */,
 				4D1B514C1837EF7C003E6066 /* plugins */,
