@@ -1,4 +1,4 @@
-FROM deadbeef-builder-clang-player
+FROM deadbeef-builder-player-clang-18.04
 
 WORKDIR /usr/src/deadbeef
 COPY . /usr/src/deadbeef
