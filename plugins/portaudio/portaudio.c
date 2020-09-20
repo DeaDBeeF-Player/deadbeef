@@ -233,6 +233,10 @@ portaudio_init (void) {
 static int
 portaudio_setformat (ddb_waveformat_t *fmt) {
     trace("> portaudio_setformat\n");
+    // "Empty"/broken track detection
+    if (!fmt->channels || !fmt->bps) {
+        return -1;
+    }
     // Enqueue format switch and save new fmt under requested_fmt
     memcpy (&requested_fmt, fmt, sizeof (ddb_waveformat_t));
     dispatch_async (stream_queue, ^{
@@ -277,7 +281,7 @@ portaudio_setformat (ddb_waveformat_t *fmt) {
 
             err = Pa_IsFormatSupported (NULL, &stream_parameters, plugin.fmt.samplerate);
             if (err != paNoError) {
-                trace ("Unsupported format. %s\n", Pa_GetErrorText(err));
+                warn ("Unsupported format. %s\n", Pa_GetErrorText(err));
                 // even if it failed -- continue
             }
         });
