@@ -20,16 +20,17 @@ Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy develo
 
 ### Linux, BSD and similar (GTK/*NIX version)
 
-* Install git, GCC toolchain
-* Install autoconf, automake, libtool, intltool, autopoint
-* Remember to get submodules: ```git submodule update --init```
-* Run ```./autogen.sh``` to bootstrap
-* Read the generated INSTALL file and ```./configure --help``` for instructions
-* See the README file for more information
+* See the README file for detailed instructions, dependencies, etc.
+* Install git, Clang toolchain
+* Remember to get submodules: `git submodule update --init`
+* Install dependencies, as listed in the README file
+* Run `./autogen.sh` to bootstrap
+* Run `./configure`, followed with `make` and `sudo make install`.
+* For more information about the build process, read the generated INSTALL file and the output of `./configure --help`.
 
 ### macOS (COCOA version)
 
-* Install Xcode, 10.0 or higher.
+* Install Xcode. The latest one is the best, but older versions will usually keep working for a year or two.
 * Run `sudo xcode-select --install` - This will configure git and command line build tools
 * Clone the deadbeef git repository
 * Remember to get submodules: ```git submodule update --init```
