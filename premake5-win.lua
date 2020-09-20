@@ -576,6 +576,8 @@ project "portaudio"
        "plugins/portaudio/*.h",
        "plugins/portaudio/*.c",
    }
+   buildoptions {"-fblocks"}
+   links {"BlocksRuntime", "dispatch"}
    pkgconfig ("portaudio-2.0")
 end
 
