@@ -1,30 +1,44 @@
 TABLE OF CONTENTS
 
-1. compiling, dependencies, etc
-2. licensing
+1. Build dependencies
+2. Runtime dependencies
+3. Licensing
 
 ==========================================================
 
-1. compiling, dependencies, etc
+1. Build dependencies
 
-* first you need to install dependencies. full list is provided at the end of this section for your convenience
+Here's the bare minimum list of things which are expected to be installed to build Deadbeef.
+Usually, you also need to install all runtime dependencies before building as well, see the next section for details.
 
-* you will need intltool to be installed. if you don't need translations -- run ./configure --disable-nls (in this case you won't need to install intltool, as long as the configure script is already generated)
+* Clang: GCC is not supported, you need clang
+* libdispatch
+* libblockruntime
+* Yasm: required to build assembly portions of ffap plugin on supported platforms (x86, x86_64)
+* intltool: required for localization. If you don't need translations -- run ./configure --disable-nls (in this case you won't need to install intltool, as long as the configure script is already generated)
 
-* if you want to build from git - install autoconf, automake, libtool, intltool, autopoint, then run ./autogen.sh to bootstrap
+1.1 Compiling from git
 
-* run "./configure --help", and read it.
+If you're building from git, more things are needed:
 
-* now you're ready to configure the build process -- run "./configure --prefix=/usr", and wait until it finishes. you may want to change prefix to another value. consult INSTALL file for more info.
+* autoconf
+* automake,
+* libtool,
+* autopoint
 
-* make sure all plugins which you want have "Yes" status in the list that's printed by configure. if not -- install missing dependencies, and rerun configure. that is especially important for GTKUI, and ALSA or OSS plugins. make sure you have both. otherwise you won't get GUI and/or sound output.
+Run ./autogen.sh to generate configure script
 
-* after satisfying all dependencies, run "make -j5" (change -j number to suit your number of CPUs/cores, e.g. 5 is quite good for single CPU dual-core machines). it is a good idea to do it as normal user (this step doesn't require root privileges).
+1.2 Compiling
 
-* after build finishes, run "make install" as root
+* Set CC and CXX environment variables to clang and clang++ respectively.
+* Run `./configure --prefix=/usr`, and wait until it finishes. you may want to change prefix to another value. consult INSTALL file for more info. If you're new to the process, it may help to run `./configure --help`.
+* Make sure all desired plugins have "Yes" status in the list that's printed by configure. If not -- install missing dependencies, and rerun configure. This is especially important for GTKUI, and ALSA or OSS plugins. Otherwise you won't get GUI and/or sound output.
+* After satisfying all dependencies, run "make -j5" (change -j number to suit your number of CPUs/cores, e.g. 5 is quite good for single CPU dual-core machines).
+* After the build finishes, run "make install" as root
 
-full list of dependencies is below.
-most of them are optional, which means deadbeef will build and run without them, but to make it useful - you'd probably need at least GTK UI plugin and some audio codecs built.
+2. Runtime dependencies
+
+Many of the dependencies listed here are optional, which means deadbeef will build and run without them, but to make it useful - you'd probably need at least GTK UI plugin and some audio codecs built.
 
     libsamplerate: for dsp_libsrc plugin (resampler)
     gtk+-2.0 >= 2.16 (+ gthread, + glib): GTK+ 2.0 user interface
@@ -49,11 +63,11 @@ most of them are optional, which means deadbeef will build and run without them,
     faad2: for AAC plugin
     zlib: for Audio Overload plugin (psf, psf2, etc), GME (for vgz)
     libzip: for vfs_zip plugin
-    yasm: required to build assembly portions of ffap plugin on supported platforms (x86, x86_64)
+    libdispatch
+    libblockruntime
 
-actual package names for your Linux distribution may vary.
+The actual package names for your Linux distribution may vary.
 
-
-2. licensing
+3. Licensing
 
 DeaDBeeF core uses ZLIB license. See COPYING in each subdirectory for details.
