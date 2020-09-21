@@ -6,8 +6,10 @@ workspace "deadbeef"
    toolset "clang"
    filter "system:Windows"
      defaultplatform "Windows"
+     removeplatforms "Linux"
    filter "system:not Windows"
      defaultplatform "Linux"
+     removeplatforms "Windows"
 
 newoption {
   trigger = "version-override",
@@ -156,6 +158,7 @@ project "liboggedit"
   }
   filter "platforms:not Windows"
     buildoptions {"-fPIC"}
+
 -- DeaDBeeF
 
 project "deadbeef"
@@ -183,7 +186,7 @@ project "deadbeef"
     "LOCALEDIR=\"donotuse\""
   }
   links { "m", "pthread", "dl"}
-  filter "system:Windows"
+  filter "platforms:Windows"
     files {
       "icons/deadbeef-icon.rc",
       "shared/windows/Resources.rc"
@@ -973,6 +976,7 @@ project "pulse_plugin"
   files {
     "plugins/pulse/pulse.c"
   }
+  pkgconfig ("libpulse-simple")
 end
 
 if option ("plugin-sc68") then
@@ -1248,14 +1252,15 @@ project "wavpack_plugin"
   links {"wavpack"}
 end
 
-if option ("plugin-ffmpeg") then
+if option ("plugin-ffmpeg", "libavformat") then
 project "ffmpeg"
   targetname "ffmpeg"
   files {
     "plugins/ffmpeg/*.h",
     "plugins/ffmpeg/*.c",
   }
-  links {"avcodec", "pthread", "avformat", "avcodec", "avutil", "z", "opencore-amrnb", "opencore-amrwb", "opus"}
+  pkgconfig ("libavformat")
+  -- links {"avcodec", "pthread", "avformat", "avcodec", "avutil", "z", "opencore-amrnb", "opencore-amrwb", "opus"}
 end
 
 if option ("plugin-vorbis", "vorbisfile vorbis ogg") then
