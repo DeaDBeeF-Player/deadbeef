@@ -141,7 +141,7 @@ project "mp4p"
     "external/mp4p/src/*.c",
   }
   includedirs { "external/mp4p/include" }
-  filter "system:not Windows"
+  filter "platforms:not Windows"
     buildoptions {"-fPIC"}
 
 project "liboggedit"
@@ -153,7 +153,7 @@ project "liboggedit"
     "plugins/liboggedit/*.c",
     "plugins/liboggedit/*.h"
   }
-  filter "system:not Windows"
+  filter "platforms:not Windows"
     buildoptions {"-fPIC"}
 -- DeaDBeeF
 
