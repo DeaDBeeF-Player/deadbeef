@@ -31,8 +31,8 @@ done
 cp -uv translation/help.ru.txt  "$1/doc/"
 
 # Libraries
-rm -fv "$1/plugins/*.lib" | true
-rm -fv "$1/libwin.lib" | true
+rm -fv "$1"/plugins/*.lib | true
+rm -fv "$1"/*.lib | true
 
 ldd "$1/plugins/"*.dll "$1/deadbeef.exe" | awk 'NF == 4 {print $3}; NF == 2 {print $1}' \
 									 | grep -iv "???" \
