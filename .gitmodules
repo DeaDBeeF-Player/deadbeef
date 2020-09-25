@@ -4,3 +4,6 @@
 [submodule "external/mp4p"]
 	path = external/mp4p
 	url = https://github.com/DeaDBeeF-Player/mp4p.git
+[submodule "External/apbuild"]
+	path = External/apbuild
+	url = https://github.com/DeaDBeeF-Player/apbuild.git

@@ -2,7 +2,7 @@
 VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
 ORIGIN=`pwd | perl -ne 'chomp and print'`
 STATIC_DEPS=static-deps
-AP=$ORIGIN/tools/apbuild
+AP=$ORIGIN/external/apbuild
 #ARCH=`uname -m | perl -ne 'chomp and print'`
 if [[ "$ARCH" == "i686" ]]; then
     export CFLAGS="-m32 -I$ORIGIN/$STATIC_DEPS/lib-x86-32/include"
@@ -43,11 +43,12 @@ fi
 rm static-deps/lib-x86-64/lib/libstdc*
 
 # setup apgcc environment
-cd tools/apbuild
+cd external/apbuild
 ./apinit || exit 1
 cd ../../
 export APBUILD_STATIC_LIBGCC=1
 export APBUILD_CXX1=1
+export APGCC_USE_CLANG=1
 export CC=$AP/apgcc
 export CXX=$AP/apgcc
 export OBJC=$AP/apgcc

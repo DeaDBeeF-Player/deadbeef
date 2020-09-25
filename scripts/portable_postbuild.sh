@@ -99,6 +99,12 @@ cp -r plugins/sc68/.libs/in_sc68.so $OUTDIR/plugins/
 mkdir -p  $OUTDIR/plugins/data68/Replay
 cp -r plugins/sc68/file68/data68/Replay/*.bin $OUTDIR/plugins/data68/Replay/
 
+# dynamic libs
+mkdir -p $OUTDIR/lib
+cp -r static-deps/lib-x86-64/lib/libBlocksRuntime.so* $OUTDIR/lib/
+cp -r static-deps/lib-x86-64/lib/libkqueue.so* $OUTDIR/lib/
+cp -r static-deps/lib-x86-64/lib/libdispatch.so* $OUTDIR/lib/
+
 # translations
 mkdir -p $OUTDIR/locale
 for i in po/*.gmo ; do
