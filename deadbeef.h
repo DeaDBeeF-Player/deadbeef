@@ -647,7 +647,13 @@ typedef struct {
 
 // since 1.5
 #if (DDB_API_LEVEL >= 5)
+#ifdef __APPLE__
+// FIXME: this is an API breaking change, so shouldn't be merged to master.
+// It's added purely to experiment with FFT on a branch.
+#define DDB_FREQ_BANDS 2048
+#else
 #define DDB_FREQ_BANDS 256
+#endif
 #define DDB_FREQ_MAX_CHANNELS 9
 typedef struct ddb_audio_data_s {
     const ddb_waveformat_t *fmt;
