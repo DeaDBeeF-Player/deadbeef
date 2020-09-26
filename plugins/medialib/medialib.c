@@ -1162,6 +1162,7 @@ get_subfolders_for_folder (ddb_medialib_item_t *folderitem, ml_tree_node_t *fold
 
             trackitem->text = deadbeef->metacache_add_string (text);
             trackitem->track = i->it;
+            deadbeef->pl_item_ref (i->it);
 
             if (tail) {
                 tail->next = trackitem;
