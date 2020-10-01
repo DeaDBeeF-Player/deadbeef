@@ -2622,7 +2622,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 const char *val = NULL;
                 int needs_free = 0;
                 const char *aa_fields[] = { "album artist", "albumartist", "band", "artist", "composer", "performer", NULL };
-                const char *a_fields[] = { "artist", "album artist", "albumartist", "composer", "performer", NULL };
+                const char *a_fields[] = { "artist", "album artist", "albumartist", "band", "composer", "performer", NULL };
                 const char *alb_fields[] = { "album", "venue", NULL };
 
                 // set to 1 if special case handler successfully wrote the output
