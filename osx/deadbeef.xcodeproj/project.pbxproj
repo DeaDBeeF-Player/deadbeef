@@ -1826,6 +1826,14 @@
 		2DAD80A22416DBB100EB3075 /* CustomToolbarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAD80A02416DBB100EB3075 /* CustomToolbarItem.m */; };
 		2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */; };
 		2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */; };
+		2DB05E36252E3CF10090635E /* iconSoundTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05E26252E3CF10090635E /* iconSoundTemplate.pdf */; };
+		2DB05E77252E3F3E0090635E /* iconPluginsTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05E76252E3F3E0090635E /* iconPluginsTemplate.pdf */; };
+		2DB05EB8252E47A00090635E /* iconNetworkTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05EB7252E47A00090635E /* iconNetworkTemplate.pdf */; };
+		2DB05EF9252E4A9D0090635E /* iconAppearanceTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05EF8252E4A9C0090635E /* iconAppearanceTemplate.pdf */; };
+		2DB05F3A252E4DDB0090635E /* iconPlaybackTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05F39252E4DDB0090635E /* iconPlaybackTemplate.pdf */; };
+		2DB05F7B252E4F170090635E /* iconLibraryTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05F7A252E4F160090635E /* iconLibraryTemplate.pdf */; };
+		2DB05FBC252E50FD0090635E /* iconDSPTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05FBB252E50FC0090635E /* iconDSPTemplate.pdf */; };
+		2DB05FFD252E53220090635E /* iconGUISettingsTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05FFC252E53220090635E /* iconGUISettingsTemplate.pdf */; };
 		2DB1641A24FAB13400034E11 /* MediaLibraryManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB1641824FAB13400034E11 /* MediaLibraryManager.h */; };
 		2DB1641B24FAB13400034E11 /* MediaLibraryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB1641924FAB13400034E11 /* MediaLibraryManager.m */; };
 		2DB2F73F240466AF00F7C000 /* PluginsPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB2F73D240466AF00F7C000 /* PluginsPreferencesViewController.h */; };
@@ -5508,6 +5516,14 @@
 		2DAD80A02416DBB100EB3075 /* CustomToolbarItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomToolbarItem.m; sourceTree = "<group>"; };
 		2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesWindowController.h; sourceTree = "<group>"; };
 		2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrackPropertiesWindowController.m; sourceTree = "<group>"; };
+		2DB05E26252E3CF10090635E /* iconSoundTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = iconSoundTemplate.pdf; sourceTree = "<group>"; };
+		2DB05E76252E3F3E0090635E /* iconPluginsTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = iconPluginsTemplate.pdf; sourceTree = "<group>"; };
+		2DB05EB7252E47A00090635E /* iconNetworkTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = iconNetworkTemplate.pdf; sourceTree = "<group>"; };
+		2DB05EF8252E4A9C0090635E /* iconAppearanceTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = iconAppearanceTemplate.pdf; sourceTree = "<group>"; };
+		2DB05F39252E4DDB0090635E /* iconPlaybackTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = iconPlaybackTemplate.pdf; sourceTree = "<group>"; };
+		2DB05F7A252E4F160090635E /* iconLibraryTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = iconLibraryTemplate.pdf; sourceTree = "<group>"; };
+		2DB05FBB252E50FC0090635E /* iconDSPTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = iconDSPTemplate.pdf; sourceTree = "<group>"; };
+		2DB05FFC252E53220090635E /* iconGUISettingsTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = iconGUISettingsTemplate.pdf; sourceTree = "<group>"; };
 		2DB1641824FAB13400034E11 /* MediaLibraryManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaLibraryManager.h; sourceTree = "<group>"; };
 		2DB1641924FAB13400034E11 /* MediaLibraryManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryManager.m; sourceTree = "<group>"; };
 		2DB2F73D240466AF00F7C000 /* PluginsPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginsPreferencesViewController.h; sourceTree = "<group>"; };
@@ -10632,6 +10648,14 @@
 		4D2362B218395D0300C9E818 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				2DB05E26252E3CF10090635E /* iconSoundTemplate.pdf */,
+				2DB05E76252E3F3E0090635E /* iconPluginsTemplate.pdf */,
+				2DB05EB7252E47A00090635E /* iconNetworkTemplate.pdf */,
+				2DB05EF8252E4A9C0090635E /* iconAppearanceTemplate.pdf */,
+				2DB05F39252E4DDB0090635E /* iconPlaybackTemplate.pdf */,
+				2DB05F7A252E4F160090635E /* iconLibraryTemplate.pdf */,
+				2DB05FBB252E50FC0090635E /* iconDSPTemplate.pdf */,
+				2DB05FFC252E53220090635E /* iconGUISettingsTemplate.pdf */,
 				2DDBDA2B2436678700C12A75 /* btnduplicateTemplate.pdf */,
 				4D2A6C9D183BC29400AC6BF5 /* btnnextTemplate.pdf */,
 				4D2A6C9E183BC29400AC6BF5 /* btnpauseTemplate.pdf */,
@@ -14196,26 +14220,34 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DDBDA392436678700C12A75 /* btnduplicateTemplate.pdf in Resources */,
+				2DB05F7B252E4F170090635E /* iconLibraryTemplate.pdf in Resources */,
 				2D8D96B11D1091F900A5C7E6 /* noartwork.png in Resources */,
 				2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */,
 				4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */,
 				4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */,
 				4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */,
+				2DB05FBC252E50FD0090635E /* iconDSPTemplate.pdf in Resources */,
+				2DB05F3A252E4DDB0090635E /* iconPlaybackTemplate.pdf in Resources */,
 				2D747E3D24B64E9300BBB987 /* SplitViewMainWindow.xib in Resources */,
+				2DB05EF9252E4A9D0090635E /* iconAppearanceTemplate.pdf in Resources */,
 				4D2A6CA4183BC29400AC6BF5 /* btnstopTemplate.pdf in Resources */,
 				4D2A6CA1183BC29400AC6BF5 /* btnnextTemplate.pdf in Resources */,
+				2DB05E77252E3F3E0090635E /* iconPluginsTemplate.pdf in Resources */,
 				2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */,
 				4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */,
 				2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */,
 				2DF622BB1B335FF100C70C7D /* convpresets in Resources */,
+				2DB05EB8252E47A00090635E /* iconNetworkTemplate.pdf in Resources */,
 				2D17F8461AB3391A00AF2853 /* MainMenu.xib in Resources */,
 				2D11E8B41AA0E3DD00A67A20 /* MainWindow.xib in Resources */,
 				2D9C0C15238DC0E700CE8C10 /* GroupByCustomWindow.xib in Resources */,
+				2DB05FFD252E53220090635E /* iconGUISettingsTemplate.pdf in Resources */,
 				2DEBA1D423E207A3000E4135 /* EqualizerWindowController.xib in Resources */,
 				2D828E5419E5679800EE874F /* Search.xib in Resources */,
 				2D3EBD9D1A9379BD00E5E255 /* Preferences.xib in Resources */,
 				2DA5E331238DB0C4005832B7 /* EditColumnPanel.xib in Resources */,
 				4DE28473205BE0B20023063E /* HelpViewer.xib in Resources */,
+				2DB05E36252E3CF10090635E /* iconSoundTemplate.pdf in Resources */,
 				2D2351281B13922400A62936 /* Converter.xib in Resources */,
 				2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */,
 				2D887BE924B1CB650078392F /* MediaLibrary.xib in Resources */,
