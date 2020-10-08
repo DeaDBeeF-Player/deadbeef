@@ -742,6 +742,8 @@
 		2D1DC09F1DCB3B7500441A08 /* alac_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D1DC09E1DCB3B7500441A08 /* alac_plugin.c */; };
 		2D1E215724F9826C00E2895D /* MedialibItemDragDropHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1E215524F9826C00E2895D /* MedialibItemDragDropHolder.h */; };
 		2D1E215824F9826C00E2895D /* MedialibItemDragDropHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1E215624F9826C00E2895D /* MedialibItemDragDropHolder.m */; };
+		2D1F58B1252FAECD00794834 /* metadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1F58AF252FAECD00794834 /* metadata.h */; };
+		2D1F58B2252FAECD00794834 /* metadata.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F58B0252FAECD00794834 /* metadata.c */; };
 		2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */; };
 		2D20D12523F099F4008ACBE6 /* NSImage+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D20D12323F099F4008ACBE6 /* NSImage+Additions.m */; };
 		2D22F75919E13850009C631E /* csid.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F6F719E137A6009C631E /* csid.h */; };
@@ -4429,6 +4431,8 @@
 		2D1DC09E1DCB3B7500441A08 /* alac_plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alac_plugin.c; sourceTree = "<group>"; };
 		2D1E215524F9826C00E2895D /* MedialibItemDragDropHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MedialibItemDragDropHolder.h; sourceTree = "<group>"; };
 		2D1E215624F9826C00E2895D /* MedialibItemDragDropHolder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MedialibItemDragDropHolder.m; sourceTree = "<group>"; };
+		2D1F58AF252FAECD00794834 /* metadata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = metadata.h; sourceTree = "<group>"; };
+		2D1F58B0252FAECD00794834 /* metadata.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = metadata.c; sourceTree = "<group>"; };
 		2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSImage+Additions.h"; sourceTree = "<group>"; };
 		2D20D12323F099F4008ACBE6 /* NSImage+Additions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSImage+Additions.m"; sourceTree = "<group>"; };
 		2D22F6F719E137A6009C631E /* csid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = csid.h; sourceTree = "<group>"; };
@@ -10223,6 +10227,15 @@
 			path = Playlist;
 			sourceTree = "<group>";
 		};
+		2DDD75EF25E14FC200FA6FE5 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				2D1F58B0252FAECD00794834 /* metadata.c */,
+				2D1F58AF252FAECD00794834 /* metadata.h */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		2DDFABC92438E56000E13E85 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -10478,6 +10491,7 @@
 				4D1B3E7C18379829003E6066 /* Frameworks */,
 				4D1B3E7B18379829003E6066 /* Products */,
 				2D48DC5C2269B732002CACFD /* DeaDBeeF GTK3.plist */,
+				2DDD75EF25E14FC200FA6FE5 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 0;
@@ -12635,6 +12649,7 @@
 				2DF3D08024E70775008D966E /* MediaLibraryCoverQueryData.h in Headers */,
 				2D1E215724F9826C00E2895D /* MedialibItemDragDropHolder.h in Headers */,
 				2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */,
+				2D1F58B1252FAECD00794834 /* metadata.h in Headers */,
 				2DF55C3F2270FCB9002C44DC /* ScriptableNodeEditorViewController.h in Headers */,
 				2DDBA26423E5F14A00051320 /* PlaylistHeaderView.h in Headers */,
 				2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */,
@@ -15834,6 +15849,7 @@
 			files = (
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
 				2DEF494519C4DB4100B718C1 /* PlaylistView.m in Sources */,
+				2D1F58B2252FAECD00794834 /* metadata.c in Sources */,
 				2DA225B123F0425C0033F411 /* DesignableView.m in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
 				2DB52F7D24CF7CF20046D516 /* TrackContextMenu.m in Sources */,
