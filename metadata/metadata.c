@@ -87,15 +87,22 @@ _get_item_create_if_needed (ddb_keyValueList_t *md, const char *itemName, int cr
     dispatch_sync(md->data_queue, ^{
         ddb_keyValueHashItem_t *item = md->itemHash[hash];
 
+        const char *cached_name = NULL;
         for (; item; item = item->hashNext) {
-            if (item->name == itemName) {
+            if (!cached_name) {
+                cached_name = metacache_add_string(itemName);
+            }
+            if (item->name == cached_name) {
                 break;
             }
         }
 
         if (!item && create_if_needed) {
+            if (!cached_name) {
+                cached_name = metacache_add_string(itemName);
+            }
             item = calloc (1, sizeof (ddb_keyValueHashItem_t));
-            item->name = metacache_add_string (itemName);
+            item->name = cached_name;
             item->index = md->nextItemIndex++;
             md->itemHash[hash] = item;
             if (md->itemListTail) {
@@ -105,6 +112,9 @@ _get_item_create_if_needed (ddb_keyValueList_t *md, const char *itemName, int cr
                 md->itemListHead = item;
             }
             md->itemListTail = item;
+        }
+        else if (cached_name) {
+            metacache_remove_string(cached_name);
         }
 
         result = item;
