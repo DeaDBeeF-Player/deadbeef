@@ -11,6 +11,7 @@ typedef enum ddb_keyValueFlags_e {
 
 typedef struct ddb_keyValue_s {
     struct ddb_keyValue_s *next;
+    uint64_t itemIndex;
     const char *key;
     const char *value;
     size_t valuesize;
@@ -35,8 +36,10 @@ enum {
     DDB_KEYVALUE_HASH_SIZE = 1024
 };
 
-typedef struct ddb_keyValueHashItem_s {
-    struct ddb_keyValueHashItem_s *next;
+typedef struct ddb_keyValueItem_s {
+    struct ddb_keyValueItem_s *hashNext;
+    struct ddb_keyValueItem_s *listNext;
+    uint64_t index;
     const char *name; // expected to be composed of Album:Artist:Dics:Track:Title
     ddb_keyValue_t *keyValues;
 } ddb_keyValueHashItem_t;
@@ -44,6 +47,9 @@ typedef struct ddb_keyValueHashItem_s {
 /// Thread-safe unordered set of key-values
 typedef struct {
     ddb_keyValueHashItem_t *itemHash[DDB_KEYVALUE_HASH_SIZE]; // only access in data_queue
+    ddb_keyValueHashItem_t *itemListHead; // only access in data_queue
+    ddb_keyValueHashItem_t *itemListTail; // only access in data_queue
+    uint64_t nextItemIndex;
 
     /// IO Queue
     char *filename;
