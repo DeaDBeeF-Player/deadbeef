@@ -63,13 +63,62 @@ _meta_set_value (ddb_keyValue_t *m, const char *value, size_t size) {
     }
 }
 
+static uint32_t
+_hash_sdbm (const char *str, size_t len) {
+    uint32_t h = 0;
+    int c;
+
+    const char *end = str+len;
+
+    while (str < end) {
+        c = *str++;
+        h = c + (h << 6) + (h << 16) - h;
+    }
+
+    return h;
+}
+
+static ddb_keyValueHashItem_t *
+_get_item_create_if_needed (ddb_keyValueList_t *md, const char *itemName, int create_if_needed) {
+    uint32_t hash = _hash_sdbm (itemName, strlen (itemName)) % DDB_KEYVALUE_HASH_SIZE;
+
+    __block ddb_keyValueHashItem_t *result = NULL;
+
+    dispatch_sync(md->data_queue, ^{
+        ddb_keyValueHashItem_t *item = md->itemHash[hash];
+
+        for (; item; item = item->next) {
+            if (item->name == itemName) {
+                break;
+            }
+        }
+
+        if (!item && create_if_needed) {
+            item = calloc (1, sizeof (ddb_keyValueHashItem_t));
+            item->name = metacache_add_string (itemName);
+            md->itemHash[hash] = item;
+        }
+
+        result = item;
+    });
+
+    return result;
+}
+
+static ddb_keyValueHashItem_t *
+_get_item (ddb_keyValueList_t *md, const char *itemName) {
+    return _get_item_create_if_needed(md, itemName, 1);
+}
+
 static ddb_keyValue_t *
-_add_empty_meta_for_key (ddb_keyValueList_t *md, const char *key) {
+_add_empty_meta_for_key (ddb_keyValueList_t *md, const char *itemName, const char *key) {
+    ddb_keyValueHashItem_t *item = _get_item(md, itemName);
+
     // check if it's already set
     ddb_keyValue_t *normaltail = NULL;
     ddb_keyValue_t *propstart = NULL;
     ddb_keyValue_t *tail = NULL;
-    ddb_keyValue_t *m = md->head;
+    ddb_keyValue_t *m = item->keyValues;
     while (m) {
         if (!strcasecmp (key, m->key)) {
             // duplicate key
@@ -88,7 +137,7 @@ _add_empty_meta_for_key (ddb_keyValueList_t *md, const char *key) {
         normaltail->next = m;
     }
     else {
-        md->head = m;
+        item->keyValues = m;
     }
 
     return m;
@@ -134,12 +183,8 @@ _combine_into_unique_multivalue (const char *value1, size_t size1, const char *v
 }
 
 static void
-_add_meta (ddb_keyValueList_t *md, const char *key, const char *value) {
-    if (!value || !*value) {
-        return;
-    }
-
-    md_add_with_size (md, key, value, strlen (value) + 1);
+_add_meta (ddb_keyValueList_t *md, const char *itemName, const char *key, const char *value) {
+    md_add_with_size (md, itemName, key, value, strlen (value) + 1);
 }
 
 void
@@ -150,8 +195,9 @@ _meta_free_values (ddb_keyValue_t *meta) {
 }
 
 ddb_keyValue_t *
-_meta_for_key (ddb_keyValueList_t *md, const char *key) {
-    ddb_keyValue_t *m = md->head;
+_meta_for_key (ddb_keyValueList_t *md, const char *itemName, const char *key) {
+    ddb_keyValueHashItem_t *item = _get_item(md, itemName);
+    ddb_keyValue_t *m = item->keyValues;
     while (m) {
         if (!strcasecmp (key, m->key)) {
             return m;
@@ -303,7 +349,7 @@ md_free (ddb_keyValueList_t *md) {
 #pragma mark Metadata queries
 
 void
-md_add_with_size (ddb_keyValueList_t *md, const char *key, const char *value, size_t valuesize) {
+md_add_with_size (ddb_keyValueList_t *md, const char *itemName, const char *key, const char *value, size_t valuesize) {
     if (!value || !*value) {
         return;
     }
@@ -311,7 +357,7 @@ md_add_with_size (ddb_keyValueList_t *md, const char *key, const char *value, si
     __block ddb_keyValue_t *meta_copy;
 
     dispatch_sync(md->data_queue, ^{
-        ddb_keyValue_t *meta = _add_empty_meta_for_key (md, key);
+        ddb_keyValue_t *meta = _add_empty_meta_for_key (md, itemName, key);
         if (!meta) {
             return;
         }
@@ -325,12 +371,12 @@ md_add_with_size (ddb_keyValueList_t *md, const char *key, const char *value, si
 }
 
 void
-md_append_value (ddb_keyValueList_t *md, const char *key, const char *value) {
-    md_append_with_size(md, key, value, strlen (value)+1);
+md_append_value (ddb_keyValueList_t *md, const char *itemName, const char *key, const char *value) {
+    md_append_with_size(md, itemName, key, value, strlen (value)+1);
 }
 
 void
-md_append_with_size (ddb_keyValueList_t *md, const char *key, const char *value, size_t valuesize) {
+md_append_with_size (ddb_keyValueList_t *md, const char *itemName, const char *key, const char *value, size_t valuesize) {
     if (!value || valuesize == 0 || *value == 0) {
         return;
     }
@@ -338,9 +384,9 @@ md_append_with_size (ddb_keyValueList_t *md, const char *key, const char *value,
     __block ddb_keyValue_t *meta_copy;
     __block ddb_keyValueOperationType_t type;
     dispatch_sync(md->data_queue, ^{
-        ddb_keyValue_t *m = _meta_for_key (md, key);
+        ddb_keyValue_t *m = _meta_for_key (md, itemName, key);
         if (!m) {
-            m = _add_empty_meta_for_key(md, key);
+            m = _add_empty_meta_for_key(md, itemName, key);
         }
 
         if (!m->value) {
@@ -371,10 +417,10 @@ md_append_with_size (ddb_keyValueList_t *md, const char *key, const char *value,
 }
 
 const char *
-md_find_value (ddb_keyValueList_t *md, const char *key, char *value, size_t valuesize) {
+md_find_value (ddb_keyValueList_t *md, const char *itemName, const char *key, char *value, size_t valuesize) {
     __block const char *res = NULL;
     dispatch_sync(md->data_queue, ^{
-        ddb_keyValue_t *m = _meta_for_key (md, key);
+        ddb_keyValue_t *m = _meta_for_key (md, itemName, key);
         if (!m) {
             return;
         }
@@ -393,42 +439,42 @@ md_find_value (ddb_keyValueList_t *md, const char *key, char *value, size_t valu
 }
 
 int
-md_find_value_int (ddb_keyValueList_t *md, const char *key, int def) {
+md_find_value_int (ddb_keyValueList_t *md, const char *itemName, const char *key, int def) {
     __block int res = 0;
     dispatch_sync(md->data_queue, ^{
-        ddb_keyValue_t *m = _meta_for_key (md, key);
+        ddb_keyValue_t *m = _meta_for_key (md, itemName, key);
         res = (m && m->value) ? atoi (m->value) : def;
     });
     return res;
 }
 
 int64_t
-md_find_value_int64 (ddb_keyValueList_t *md, const char *key, int64_t def) {
+md_find_value_int64 (ddb_keyValueList_t *md, const char *itemName, const char *key, int64_t def) {
     __block int64_t res = 0;
     dispatch_sync(md->data_queue, ^{
-        ddb_keyValue_t *m = _meta_for_key (md, key);
+        ddb_keyValue_t *m = _meta_for_key (md, itemName, key);
         res = (m && m->value) ? atoll (m->value) : def;
     });
     return res;
 }
 
 float
-md_find_value_float (ddb_keyValueList_t *md, const char *key, float def) {
+md_find_value_float (ddb_keyValueList_t *md, const char *itemName, const char *key, float def) {
     __block float res = 0;
     dispatch_sync(md->data_queue, ^{
-        ddb_keyValue_t *m = _meta_for_key (md, key);
+        ddb_keyValue_t *m = _meta_for_key (md, itemName, key);
         res = (m && m->value) ? (float)atof (m->value) : def;
     });
     return res;
 }
 
 void
-md_replace_value (ddb_keyValueList_t *md, const char *key, const char *value) {
+md_replace_value (ddb_keyValueList_t *md, const char *itemName, const char *key, const char *value) {
     __block ddb_keyValue_t *meta_copy = NULL;
 
     dispatch_sync(md->data_queue, ^{
         // check if it's already set
-        ddb_keyValue_t *m = _meta_for_key (md, key);
+        ddb_keyValue_t *m = _meta_for_key (md, itemName, key);
 
         if (m) {
             _meta_free_values (m);
@@ -439,7 +485,7 @@ md_replace_value (ddb_keyValueList_t *md, const char *key, const char *value) {
             return;
         }
         else {
-            _add_meta (md, key, value);
+            _add_meta (md, itemName, key, value);
         }
     });
 
@@ -449,40 +495,42 @@ md_replace_value (ddb_keyValueList_t *md, const char *key, const char *value) {
 }
 
 void
-md_set_value_int (ddb_keyValueList_t *md, const char *key, int value) {
+md_set_value_int (ddb_keyValueList_t *md, const char *itemName, const char *key, int value) {
     char s[20];
     snprintf (s, sizeof (s), "%d", value);
-    md_replace_value (md, key, s);
+    md_replace_value (md, itemName, key, s);
 }
 
 void
-md_set_value_int64 (ddb_keyValueList_t *md, const char *key, int64_t value) {
+md_set_value_int64 (ddb_keyValueList_t *md, const char *itemName, const char *key, int64_t value) {
     char s[20];
     snprintf (s, sizeof (s), "%lld", value);
-    md_replace_value (md, key, s);
+    md_replace_value (md, itemName, key, s);
 }
 
 void
-md_set_value_float (ddb_keyValueList_t *md, const char *key, float value) {
+md_set_value_float (ddb_keyValueList_t *md, const char *itemName, const char *key, float value) {
     char s[20];
     snprintf (s, sizeof (s), "%f", value);
-    md_replace_value (md, key, s);
+    md_replace_value (md, itemName, key, s);
 }
 
 void
-md_delete_value (ddb_keyValueList_t *md, const char *key) {
+md_delete_value (ddb_keyValueList_t *md, const char *itemName, const char *key) {
     __block ddb_keyValue_t *meta_copy = NULL;
 
     dispatch_sync(md->data_queue, ^{
+        ddb_keyValueHashItem_t *item = _get_item_create_if_needed (md, itemName, 0);
+
         ddb_keyValue_t *prev = NULL;
-        ddb_keyValue_t *m = md->head;
+        ddb_keyValue_t *m = item->keyValues;
         while (m) {
             if (!strcasecmp (key, m->key)) {
                 if (prev) {
                     prev->next = m->next;
                 }
                 else {
-                    md->head = m->next;
+                    item->keyValues = m->next;
                 }
                 m->next = NULL;
                 meta_copy = m;
@@ -500,20 +548,34 @@ md_delete_value (ddb_keyValueList_t *md, const char *key) {
 void
 md_delete_all_values (ddb_keyValueList_t *md) {
     dispatch_sync(md->data_queue, ^{
-        ddb_keyValue_t *m = md->head;
-        ddb_keyValue_t *prev = NULL;
-        while (m) {
-            ddb_keyValue_t *next = m->next;
-            if (prev) {
-                prev->next = next;
+        for (int i = 0; i < DDB_KEYVALUE_HASH_SIZE; i++) {
+            ddb_keyValueHashItem_t *item = md->itemHash[i];
+            if (!item) {
+                continue;
             }
-            else {
-                md->head = next;
+
+            while (item) {
+                ddb_keyValueHashItem_t *nextItem = item->next;
+                ddb_keyValue_t *m = item->keyValues;
+                ddb_keyValue_t *prev = NULL;
+                while (m) {
+                    ddb_keyValue_t *next = m->next;
+                    if (prev) {
+                        prev->next = next;
+                    }
+                    else {
+                        item->keyValues = next;
+                    }
+                    _keyValueFree(m);
+                    m = next;
+                }
+                item->keyValues = NULL;
+                metacache_remove_string(item->name);
+                free (item);
+                item = nextItem;
             }
-            _keyValueFree(m);
-            m = next;
+            md->itemHash[i] = NULL;
         }
-        md->head = NULL;
     });
 }
 
@@ -521,10 +583,10 @@ md_delete_all_values (ddb_keyValueList_t *md) {
 // since when querying such flag -- need to immediately follow
 // with an operation, to make it transactional
 int
-md_value_exists (ddb_keyValueList_t *md, const char *key) {
+md_value_exists (ddb_keyValueList_t *md, const char *itemName, const char *key) {
     __block ddb_keyValue_t *m = NULL;
     dispatch_sync(md->data_queue, ^{
-        m = _meta_for_key (md, key);
+        m = _meta_for_key (md, itemName, key);
     });
     return m ? 1 : 0;
 }
