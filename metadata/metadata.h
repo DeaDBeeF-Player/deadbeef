@@ -32,6 +32,18 @@ typedef struct ddb_keyValueIoOperation_s {
     ddb_keyValue_t *keyValue;
 } ddb_keyValueIoOperation_t;
 
+typedef void *ddb_keyValueDataStream_t;
+
+typedef struct ddb_keyValueDataStreamInterface_s {
+    ddb_keyValueDataStream_t (*open) (const char *filename, int write);
+    int (*close) (ddb_keyValueDataStream_t);
+    ssize_t (*read) (ddb_keyValueDataStream_t stream, void *ptr, size_t size);
+    ssize_t (*write) (ddb_keyValueDataStream_t stream, void *ptr, size_t size);
+    off_t (*seek) (ddb_keyValueDataStream_t stream, off_t offset, int whence);
+    off_t (*tell) (ddb_keyValueDataStream_t stream); // could be implemented via `lseek(fd, 0, SEEK_CUR)`
+    int (*truncate) (ddb_keyValueDataStream_t stream, off_t length);
+} ddb_keyValueDataStreamInterface_t;
+
 enum {
     DDB_KEYVALUE_HASH_SIZE = 1024
 };
@@ -53,6 +65,7 @@ typedef struct {
 
     /// IO Queue
     char *filename;
+    ddb_keyValueDataStreamInterface_t *dataStreamInterface;
     int multiple_io_operations_mode;
     ddb_keyValueIoOperation_t *io_operations; // only aссess in sync queue
     ddb_keyValueIoOperation_t *io_operations_tail;
@@ -67,7 +80,7 @@ ddb_keyValueList_t *
 md_alloc (void);
 
 void
-md_init (ddb_keyValueList_t *md);
+md_init_with_filename (ddb_keyValueList_t *md, const char *filename, ddb_keyValueDataStreamInterface_t *dataStreamInterface);
 
 void
 md_deinit (ddb_keyValueList_t *md);
