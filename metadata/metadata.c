@@ -87,7 +87,7 @@ _get_item_create_if_needed (ddb_keyValueList_t *md, const char *itemName, int cr
     dispatch_sync(md->data_queue, ^{
         ddb_keyValueHashItem_t *item = md->itemHash[hash];
 
-        for (; item; item = item->next) {
+        for (; item; item = item->hashNext) {
             if (item->name == itemName) {
                 break;
             }
@@ -96,7 +96,15 @@ _get_item_create_if_needed (ddb_keyValueList_t *md, const char *itemName, int cr
         if (!item && create_if_needed) {
             item = calloc (1, sizeof (ddb_keyValueHashItem_t));
             item->name = metacache_add_string (itemName);
+            item->index = md->nextItemIndex++;
             md->itemHash[hash] = item;
+            if (md->itemListTail) {
+                md->itemListTail->listNext = item;
+            }
+            else {
+                md->itemListHead = item;
+            }
+            md->itemListTail = item;
         }
 
         result = item;
@@ -130,6 +138,7 @@ _add_empty_meta_for_key (ddb_keyValueList_t *md, const char *itemName, const cha
     }
     // add
     m = calloc (1, sizeof (DB_metaInfo_t));
+    m->itemIndex = item->index;
     m->key = metacache_add_string (key);
 
     m->next = propstart;
@@ -210,6 +219,7 @@ _meta_for_key (ddb_keyValueList_t *md, const char *itemName, const char *key) {
 ddb_keyValue_t *
 _meta_copy (ddb_keyValue_t *meta) {
     ddb_keyValue_t *kv = calloc (1, sizeof (ddb_keyValue_t));
+    kv->itemIndex = meta->itemIndex;
     kv->key = metacache_add_string(meta->key);
     kv->value = metacache_add_value(meta->value, meta->valuesize);
     kv->valuesize = meta->valuesize;
@@ -548,34 +558,30 @@ md_delete_value (ddb_keyValueList_t *md, const char *itemName, const char *key) 
 void
 md_delete_all_values (ddb_keyValueList_t *md) {
     dispatch_sync(md->data_queue, ^{
-        for (int i = 0; i < DDB_KEYVALUE_HASH_SIZE; i++) {
-            ddb_keyValueHashItem_t *item = md->itemHash[i];
-            if (!item) {
-                continue;
-            }
+        ddb_keyValueHashItem_t *item = md->itemListHead;
 
-            while (item) {
-                ddb_keyValueHashItem_t *nextItem = item->next;
-                ddb_keyValue_t *m = item->keyValues;
-                ddb_keyValue_t *prev = NULL;
-                while (m) {
-                    ddb_keyValue_t *next = m->next;
-                    if (prev) {
-                        prev->next = next;
-                    }
-                    else {
-                        item->keyValues = next;
-                    }
-                    _keyValueFree(m);
-                    m = next;
+        while (item) {
+            ddb_keyValueHashItem_t *nextItem = item->listNext;
+            ddb_keyValue_t *m = item->keyValues;
+            ddb_keyValue_t *prev = NULL;
+            while (m) {
+                ddb_keyValue_t *next = m->next;
+                if (prev) {
+                    prev->next = next;
                 }
-                item->keyValues = NULL;
-                metacache_remove_string(item->name);
-                free (item);
-                item = nextItem;
+                else {
+                    item->keyValues = next;
+                }
+                _keyValueFree(m);
+                m = next;
             }
-            md->itemHash[i] = NULL;
+            item->keyValues = NULL;
+            metacache_remove_string(item->name);
+            free (item);
+            item = nextItem;
         }
+        md->itemListHead = md->itemListTail = NULL;
+        memset (md->itemHash, 0, sizeof (md->itemHash));
     });
 }
 
