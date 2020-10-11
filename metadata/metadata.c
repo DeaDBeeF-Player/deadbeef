@@ -5,10 +5,6 @@
 #include "metadata.h"
 #include "threading.h"
 
-#ifndef __linux__
-#define O_LARGEFILE 0
-#endif
-
 #pragma mark - Util
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -254,12 +250,31 @@ _io_execute_operation (ddb_keyValueList_t * restrict md, ddb_keyValueIoOperation
     switch (type) {
     case DDB_KV_OPERATION_TYPE_ADD:
         // FIXME
+
+        // calculate size
+        // create a buffer
+        // append to file
+
         break;
     case DDB_KV_OPERATION_TYPE_UPDATE:
         // FIXME
+
+        // calculate size
+        // create a buffer
+        // seek to known existing position
+        // if new size <= old size:
+        //  overwrite, leave padding as needed
+        // else
+        //  mark as deleted
+        //  append to file
+
         break;
     case DDB_KV_OPERATION_TYPE_DELETE:
         // FIXME
+
+        // seek to known existing position
+        // mark as deleted
+
         break;
     }
 }
@@ -270,8 +285,9 @@ _io_execute_operations (ddb_keyValueList_t *md, void (^completion_handler)(int e
     md->io_operations = NULL;
 
     dispatch_async(md->io_operation_execution_queue, ^{
-        int fd = open (md->filename, O_CREAT|O_RDWR|O_LARGEFILE);
-        off_t offs = lseek(fd, 0, SEEK_END);
+        ddb_keyValueDataStream_t file = md->dataStreamInterface->open(md->filename, 1);
+        off_t offs = md->dataStreamInterface->seek(file, 0, SEEK_END);
+
         if (offs == -1) {
             completion_handler (-1);
             return;
@@ -287,7 +303,7 @@ _io_execute_operations (ddb_keyValueList_t *md, void (^completion_handler)(int e
             _io_execute_operation (md, op);
         }
 
-        close(fd);
+        int closeRes = md->dataStreamInterface->close(file);
 
         // free all operations
         while (head) {
@@ -299,7 +315,7 @@ _io_execute_operations (ddb_keyValueList_t *md, void (^completion_handler)(int e
             head = next;
         }
 
-        completion_handler (0);
+        completion_handler (closeRes);
     });
 }
 
@@ -340,10 +356,14 @@ md_alloc (void) {
 }
 
 void
-md_init (ddb_keyValueList_t *md) {
+md_init_with_filename (ddb_keyValueList_t *md, const char *filename, ddb_keyValueDataStreamInterface_t *dataStreamInterface) {
+    md->filename = strdup (filename);
+    dataStreamInterface = dataStreamInterface;
     md->data_queue = dispatch_queue_create("MetadataQueue", NULL);
     md->io_operation_sync_queue = dispatch_queue_create("MetadataOpSyncQueue", NULL);
     md->io_operation_execution_queue = dispatch_queue_create("MetadataOpExecuteQueue", NULL);
+
+    // FIXME: load the file
 }
 
 void
