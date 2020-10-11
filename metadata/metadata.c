@@ -197,11 +197,6 @@ _combine_into_unique_multivalue (const char *value1, size_t size1, const char *v
     return buf;
 }
 
-static void
-_add_meta (ddb_keyValueList_t *md, const char *itemName, const char *key, const char *value) {
-    md_add_with_size (md, itemName, key, value, strlen (value) + 1);
-}
-
 void
 _meta_free_values (ddb_keyValue_t *meta) {
     metacache_remove_value (meta->value, meta->valuesize);
@@ -525,7 +520,7 @@ md_replace_value (ddb_keyValueList_t *md, const char *itemName, const char *key,
             return;
         }
         else {
-            _add_meta (md, itemName, key, value);
+            md_add_with_size (md, itemName, key, value, strlen (value) + 1);
         }
     });
 
