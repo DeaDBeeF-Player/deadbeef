@@ -28,7 +28,7 @@ typedef enum ddb_keyValueOperationType_e {
 typedef struct ddb_keyValueIoOperation_s {
     struct ddb_keyValueIoOperation_s *next;
     ddb_keyValueOperationType_t type;
-    ddb_keyValue_t keyValue;
+    ddb_keyValue_t *keyValue;
 } ddb_keyValueIoOperation_t;
 
 /// Thread-safe unordered set of key-values
@@ -37,7 +37,10 @@ typedef struct {
     ddb_keyValue_t *head; // only access in data_queue
 
     /// IO Queue
+    char *filename;
+    int multiple_io_operations_mode;
     ddb_keyValueIoOperation_t *io_operations; // only aссess in sync queue
+    ddb_keyValueIoOperation_t *io_operations_tail;
 
     /// Dispatch queues
     dispatch_queue_t data_queue; // for accessing the `head` keyvalue list
@@ -60,8 +63,6 @@ md_free (ddb_keyValueList_t *md);
 void
 md_add_with_size (ddb_keyValueList_t *md, const char *key, const char *value, size_t valuesize);
 
-// if it already exists, append new value(s)
-// otherwise, call md_add_value
 void
 md_append_value (ddb_keyValueList_t *md, const char *key, const char *value);
 
