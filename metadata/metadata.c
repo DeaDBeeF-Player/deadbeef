@@ -5,6 +5,10 @@
 #include "metadata.h"
 #include "threading.h"
 
+#ifndef __linux__
+#define O_LARGEFILE 0
+#endif
+
 #pragma mark - Util
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -157,6 +161,109 @@ _meta_for_key (ddb_keyValueList_t *md, const char *key) {
     return NULL;
 }
 
+ddb_keyValue_t *
+_meta_copy (ddb_keyValue_t *meta) {
+    ddb_keyValue_t *kv = calloc (1, sizeof (ddb_keyValue_t));
+    kv->key = metacache_add_string(meta->key);
+    kv->value = metacache_add_value(meta->value, meta->valuesize);
+    kv->valuesize = meta->valuesize;
+    kv->file_offs = meta->file_offs;
+    kv->chunk_size = meta->chunk_size;
+    kv->flags = meta->flags;
+    return kv;
+}
+
+void
+_keyValueFree (ddb_keyValue_t *keyValue) {
+    metacache_remove_string (keyValue->key);
+    _meta_free_values (keyValue);
+    free (keyValue);
+}
+
+#pragma mark IO Operations
+
+static void
+_io_execute_operation (ddb_keyValueList_t * restrict md, ddb_keyValueIoOperation_t * restrict op) {
+    ddb_keyValueOperationType_t type = op->type;
+    switch (type) {
+    case DDB_KV_OPERATION_TYPE_ADD:
+        // FIXME
+        break;
+    case DDB_KV_OPERATION_TYPE_UPDATE:
+        // FIXME
+        break;
+    case DDB_KV_OPERATION_TYPE_DELETE:
+        // FIXME
+        break;
+    }
+}
+
+static void
+_io_execute_operations (ddb_keyValueList_t *md, void (^completion_handler)(int error)) {
+    ddb_keyValueIoOperation_t *ops = md->io_operations;
+    md->io_operations = NULL;
+
+    dispatch_async(md->io_operation_execution_queue, ^{
+        int fd = open (md->filename, O_CREAT|O_RDWR|O_LARGEFILE);
+        off_t offs = lseek(fd, 0, SEEK_END);
+        if (offs == -1) {
+            completion_handler (-1);
+            return;
+        }
+        if (offs == 0) {
+            // FIXME: write header
+        }
+
+        ddb_keyValueIoOperation_t *head = ops;
+
+        for (ddb_keyValueIoOperation_t *op = head; op; op = op->next) {
+            // execute the op
+            _io_execute_operation (md, op);
+        }
+
+        close(fd);
+
+        // free all operations
+        while (head) {
+            ddb_keyValueIoOperation_t *op = head;
+            ddb_keyValueIoOperation_t *next = op->next;
+
+            _keyValueFree (op->keyValue);
+
+            head = next;
+        }
+
+        completion_handler (0);
+    });
+}
+
+static void
+_io_operation_append (ddb_keyValueList_t *md, ddb_keyValueIoOperation_t *op) {
+    dispatch_sync(md->io_operation_sync_queue, ^{
+        if (md->io_operations_tail) {
+            md->io_operations_tail->next = op;
+        }
+        else {
+            md->io_operations = op;
+        }
+        md->io_operations_tail = op;
+
+        if (!md->multiple_io_operations_mode) {
+            // execute immediately
+            _io_execute_operations(md, ^(int error) {
+            });
+        }
+    });
+}
+
+static void
+_io_operation_keyvalue_append (ddb_keyValueList_t *md, ddb_keyValue_t *meta, ddb_keyValueOperationType_t operation_type) {
+    ddb_keyValueIoOperation_t *op = calloc(1, sizeof (ddb_keyValueIoOperation_t));
+    op->type = operation_type;
+    op->keyValue = meta;
+    _io_operation_append(md, op);
+}
+
 #pragma mark - Public functions
 
 #pragma mark Managing
@@ -169,6 +276,8 @@ md_alloc (void) {
 void
 md_init (ddb_keyValueList_t *md) {
     md->data_queue = dispatch_queue_create("MetadataQueue", NULL);
+    md->io_operation_sync_queue = dispatch_queue_create("MetadataOpSyncQueue", NULL);
+    md->io_operation_execution_queue = dispatch_queue_create("MetadataOpExecuteQueue", NULL);
 }
 
 void
@@ -178,6 +287,12 @@ md_deinit (ddb_keyValueList_t *md) {
     });
     dispatch_release(md->data_queue);
     md->data_queue = NULL;
+    dispatch_release(md->io_operation_sync_queue);
+    md->io_operation_sync_queue = NULL;
+    dispatch_release(md->io_operation_execution_queue);
+    md->io_operation_execution_queue = NULL;
+    free (md->filename);
+    md->filename = NULL;
 }
 
 void
@@ -193,6 +308,8 @@ md_add_with_size (ddb_keyValueList_t *md, const char *key, const char *value, si
         return;
     }
 
+    __block ddb_keyValue_t *meta_copy;
+
     dispatch_sync(md->data_queue, ^{
         ddb_keyValue_t *meta = _add_empty_meta_for_key (md, key);
         if (!meta) {
@@ -200,7 +317,11 @@ md_add_with_size (ddb_keyValueList_t *md, const char *key, const char *value, si
         }
 
         _meta_set_value (meta, value, valuesize);
+
+        meta_copy = _meta_copy (meta);
     });
+
+    _io_operation_keyvalue_append (md, meta_copy, DDB_KV_OPERATION_TYPE_ADD);
 }
 
 void
@@ -213,6 +334,9 @@ md_append_with_size (ddb_keyValueList_t *md, const char *key, const char *value,
     if (!value || valuesize == 0 || *value == 0) {
         return;
     }
+
+    __block ddb_keyValue_t *meta_copy;
+    __block ddb_keyValueOperationType_t type;
     dispatch_sync(md->data_queue, ^{
         ddb_keyValue_t *m = _meta_for_key (md, key);
         if (!m) {
@@ -221,6 +345,8 @@ md_append_with_size (ddb_keyValueList_t *md, const char *key, const char *value,
 
         if (!m->value) {
             _meta_set_value (m, value, valuesize);
+            meta_copy = _meta_copy (m);
+            type = DDB_KV_OPERATION_TYPE_ADD;
             return;
         }
 
@@ -235,7 +361,13 @@ md_append_with_size (ddb_keyValueList_t *md, const char *key, const char *value,
         m->value = metacache_add_value (buf, buflen);
         m->valuesize = (int)buflen;
         free (buf);
+        meta_copy = _meta_copy (m);
+        type = DDB_KV_OPERATION_TYPE_UPDATE;
     });
+
+    if (meta_copy) {
+        _io_operation_keyvalue_append (md, meta_copy, type);
+    }
 }
 
 const char *
@@ -292,6 +424,8 @@ md_find_value_float (ddb_keyValueList_t *md, const char *key, float def) {
 
 void
 md_replace_value (ddb_keyValueList_t *md, const char *key, const char *value) {
+    __block ddb_keyValue_t *meta_copy = NULL;
+
     dispatch_sync(md->data_queue, ^{
         // check if it's already set
         ddb_keyValue_t *m = _meta_for_key (md, key);
@@ -301,12 +435,17 @@ md_replace_value (ddb_keyValueList_t *md, const char *key, const char *value) {
             int l = (int)strlen (value) + 1;
             m->value = metacache_add_value(value, l);
             m->valuesize = l;
+            meta_copy = _meta_copy (m);
             return;
         }
         else {
             _add_meta (md, key, value);
         }
     });
+
+    if (meta_copy) {
+        _io_operation_keyvalue_append (md, meta_copy, DDB_KV_OPERATION_TYPE_UPDATE);
+    }
 }
 
 void
@@ -332,6 +471,8 @@ md_set_value_float (ddb_keyValueList_t *md, const char *key, float value) {
 
 void
 md_delete_value (ddb_keyValueList_t *md, const char *key) {
+    __block ddb_keyValue_t *meta_copy = NULL;
+
     dispatch_sync(md->data_queue, ^{
         ddb_keyValue_t *prev = NULL;
         ddb_keyValue_t *m = md->head;
@@ -343,15 +484,17 @@ md_delete_value (ddb_keyValueList_t *md, const char *key) {
                 else {
                     md->head = m->next;
                 }
-                metacache_remove_string (m->key);
-                _meta_free_values(m);
-                free (m);
-                break;
+                m->next = NULL;
+                meta_copy = m;
+                return;
             }
             prev = m;
             m = m->next;
         }
     });
+    if (meta_copy) {
+        _io_operation_keyvalue_append (md, meta_copy, DDB_KV_OPERATION_TYPE_DELETE);
+    }
 }
 
 void
@@ -367,9 +510,7 @@ md_delete_all_values (ddb_keyValueList_t *md) {
             else {
                 md->head = next;
             }
-            metacache_remove_string (m->key);
-            _meta_free_values (m);
-            free (m);
+            _keyValueFree(m);
             m = next;
         }
         md->head = NULL;
