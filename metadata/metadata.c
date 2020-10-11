@@ -5,6 +5,10 @@
 #include "metadata.h"
 #include "threading.h"
 
+#pragma mark - Util
+
+#define min(x,y) ((x)<(y)?(x):(y))
+
 #pragma mark - Private functions
 
 static char *
@@ -55,7 +59,6 @@ _meta_set_value (ddb_keyValue_t *m, const char *value, size_t size) {
     }
 }
 
-// NOTE: this has to be different from plmeta, since we don't need overrides here.
 static ddb_keyValue_t *
 _add_empty_meta_for_key (ddb_keyValueList_t *md, const char *key) {
     // check if it's already set
@@ -132,7 +135,7 @@ _add_meta (ddb_keyValueList_t *md, const char *key, const char *value) {
         return;
     }
 
-    md_add_meta_full (md, key, value, strlen (value) + 1);
+    md_add_with_size (md, key, value, strlen (value) + 1);
 }
 
 void
@@ -140,6 +143,18 @@ _meta_free_values (ddb_keyValue_t *meta) {
     metacache_remove_value (meta->value, meta->valuesize);
     meta->value = NULL;
     meta->valuesize = 0;
+}
+
+ddb_keyValue_t *
+_meta_for_key (ddb_keyValueList_t *md, const char *key) {
+    ddb_keyValue_t *m = md->head;
+    while (m) {
+        if (!strcasecmp (key, m->key)) {
+            return m;
+        }
+        m = m->next;
+    }
+    return NULL;
 }
 
 #pragma mark - Public functions
@@ -153,277 +168,223 @@ md_alloc (void) {
 
 void
 md_init (ddb_keyValueList_t *md) {
-    md->mutex = mutex_create ();
+    md->data_queue = dispatch_queue_create("MetadataQueue", NULL);
+}
+
+void
+md_deinit (ddb_keyValueList_t *md) {
+    dispatch_sync(md->data_queue, ^{
+        md_delete_all_values(md);
+    });
+    dispatch_release(md->data_queue);
+    md->data_queue = NULL;
 }
 
 void
 md_free (ddb_keyValueList_t *md) {
-    md_delete_all_meta(md);
-    if (md->mutex) {
-        mutex_free (md->mutex);
-        md->mutex = 0;
-    }
     free (md);
-}
-
-#pragma mark Locking
-
-void
-md_lock (ddb_keyValueList_t *md) {
-    mutex_lock(md->mutex);
-}
-
-void
-md_unlock (ddb_keyValueList_t *md) {
-    mutex_unlock(md->mutex);
 }
 
 #pragma mark Metadata queries
 
 void
-md_add_meta_full (ddb_keyValueList_t *md, const char *key, const char *value, size_t valuesize) {
+md_add_with_size (ddb_keyValueList_t *md, const char *key, const char *value, size_t valuesize) {
     if (!value || !*value) {
         return;
     }
 
-    ddb_keyValue_t *meta = _add_empty_meta_for_key (md, key);
-    if (!meta) {
-        return;
-    }
+    dispatch_sync(md->data_queue, ^{
+        ddb_keyValue_t *meta = _add_empty_meta_for_key (md, key);
+        if (!meta) {
+            return;
+        }
 
-    _meta_set_value (meta, value, valuesize);
-}
-
-// if it already exists, append new value(s)
-// otherwise, call md_add_meta
-void
-md_append_meta (ddb_keyValueList_t *md, const char *key, const char *value) {
-    md_append_meta_full(md, key, value, strlen (value)+1);
+        _meta_set_value (meta, value, valuesize);
+    });
 }
 
 void
-md_append_meta_full (ddb_keyValueList_t *md, const char *key, const char *value, size_t valuesize) {
+md_append_value (ddb_keyValueList_t *md, const char *key, const char *value) {
+    md_append_with_size(md, key, value, strlen (value)+1);
+}
+
+void
+md_append_with_size (ddb_keyValueList_t *md, const char *key, const char *value, size_t valuesize) {
     if (!value || valuesize == 0 || *value == 0) {
         return;
     }
-    md_lock (md);
-    ddb_keyValue_t *m = md_meta_for_key (md, key);
-    if (!m) {
-        m = _add_empty_meta_for_key(md, key);
-    }
-
-    if (!m->value) {
-        _meta_set_value (m, value, valuesize);
-        md_unlock (md);
-        return;
-    }
-
-    size_t buflen;
-    char *buf = _combine_into_unique_multivalue(m->value, m->valuesize, value, valuesize, &buflen);
-
-    if (!buf) {
-        md_unlock (md);
-        return;
-    }
-
-    metacache_remove_value (m->value, m->valuesize);
-    m->value = metacache_add_value (buf, buflen);
-    m->valuesize = (int)buflen;
-    free (buf);
-    md_unlock (md);
-}
-
-// must be used in explicit md_lock/unlock block
-// that makes it possible to avoid copying metadata on every access
-// md_find_meta may return overriden value (where the key is prefixed with '!')
-const char *
-md_find_meta (ddb_keyValueList_t *md, const char *key) {
-    ddb_keyValue_t *m = md->head;
-
-    while (m) {
-        if (key && !strcasecmp (key, m->key)) {
-            return m->value;
+    dispatch_sync(md->data_queue, ^{
+        ddb_keyValue_t *m = _meta_for_key (md, key);
+        if (!m) {
+            m = _add_empty_meta_for_key(md, key);
         }
-        m = m->next;
-    }
-    return NULL;
+
+        if (!m->value) {
+            _meta_set_value (m, value, valuesize);
+            return;
+        }
+
+        size_t buflen;
+        char *buf = _combine_into_unique_multivalue(m->value, m->valuesize, value, valuesize, &buflen);
+
+        if (!buf) {
+            return;
+        }
+
+        metacache_remove_value (m->value, m->valuesize);
+        m->value = metacache_add_value (buf, buflen);
+        m->valuesize = (int)buflen;
+        free (buf);
+    });
 }
 
 const char *
-md_find_meta_raw (ddb_keyValueList_t *md, const char *key) {
-    ddb_keyValue_t *m = md_meta_for_key (md, key);
-    return m ? m->value : NULL;
+md_find_value (ddb_keyValueList_t *md, const char *key, char *value, size_t valuesize) {
+    __block const char *res = NULL;
+    dispatch_sync(md->data_queue, ^{
+        ddb_keyValue_t *m = _meta_for_key (md, key);
+        if (!m) {
+            return;
+        }
+
+        *value = 0;
+        size_t size = m->valuesize;
+        if (size >= valuesize) {
+            size = valuesize-1;
+        }
+        memcpy (value, m->value, size);
+        value[size] = 0;
+
+        res = value;
+    });
+    return res;
 }
 
 int
-md_find_meta_int (ddb_keyValueList_t *md, const char *key, int def) {
-    md_lock (md);
-    const char *val = md_find_meta (md, key);
-    int res = val ? atoi (val) : def;
-    md_unlock (md);
+md_find_value_int (ddb_keyValueList_t *md, const char *key, int def) {
+    __block int res = 0;
+    dispatch_sync(md->data_queue, ^{
+        ddb_keyValue_t *m = _meta_for_key (md, key);
+        res = (m && m->value) ? atoi (m->value) : def;
+    });
     return res;
 }
 
 int64_t
-md_find_meta_int64 (ddb_keyValueList_t *md, const char *key, int64_t def) {
-    md_lock (md);
-    const char *val = md_find_meta (md, key);
-    int64_t res = val ? atoll (val) : def;
-    md_unlock (md);
+md_find_value_int64 (ddb_keyValueList_t *md, const char *key, int64_t def) {
+    __block int64_t res = 0;
+    dispatch_sync(md->data_queue, ^{
+        ddb_keyValue_t *m = _meta_for_key (md, key);
+        res = (m && m->value) ? atoll (m->value) : def;
+    });
     return res;
 }
 
 float
-md_find_meta_float (ddb_keyValueList_t *md, const char *key, float def) {
-    md_lock (md);
-    const char *val = md_find_meta (md, key);
-    float res = val ? (float)atof (val) : def;
-    md_unlock (md);
+md_find_value_float (ddb_keyValueList_t *md, const char *key, float def) {
+    __block float res = 0;
+    dispatch_sync(md->data_queue, ^{
+        ddb_keyValue_t *m = _meta_for_key (md, key);
+        res = (m && m->value) ? (float)atof (m->value) : def;
+    });
     return res;
 }
 
 void
-md_replace_meta (ddb_keyValueList_t *md, const char *key, const char *value) {
-    md_lock (md);
-    // check if it's already set
-    ddb_keyValue_t *m = md_meta_for_key (md, key);
+md_replace_value (ddb_keyValueList_t *md, const char *key, const char *value) {
+    dispatch_sync(md->data_queue, ^{
+        // check if it's already set
+        ddb_keyValue_t *m = _meta_for_key (md, key);
 
-    if (m) {
-        _meta_free_values (m);
-        int l = (int)strlen (value) + 1;
-        m->value = metacache_add_value(value, l);
-        m->valuesize = l;
-        md_unlock (md);
-        return;
-    }
-    else {
-        _add_meta (md, key, value);
-    }
-    md_unlock (md);
-}
-
-void
-md_set_meta_int (ddb_keyValueList_t *md, const char *key, int value) {
-    char s[20];
-    snprintf (s, sizeof (s), "%d", value);
-    md_replace_meta (md, key, s);
-}
-
-void
-md_set_meta_int64 (ddb_keyValueList_t *md, const char *key, int64_t value) {
-    char s[20];
-    snprintf (s, sizeof (s), "%lld", value);
-    md_replace_meta (md, key, s);
-}
-
-void
-md_set_meta_float (ddb_keyValueList_t *md, const char *key, float value) {
-    char s[20];
-    snprintf (s, sizeof (s), "%f", value);
-    md_replace_meta (md, key, s);
-}
-
-void
-md_delete_meta (ddb_keyValueList_t *md, const char *key) {
-    md_lock (md);
-    ddb_keyValue_t *prev = NULL;
-    ddb_keyValue_t *m = md->head;
-    while (m) {
-        if (!strcasecmp (key, m->key)) {
-            if (prev) {
-                prev->next = m->next;
-            }
-            else {
-                md->head = m->next;
-            }
-            metacache_remove_string (m->key);
-            _meta_free_values(m);
-            free (m);
-            break;
-        }
-        prev = m;
-        m = m->next;
-    }
-    md_unlock (md);
-}
-
-void
-md_delete_all_meta (ddb_keyValueList_t *md) {
-    md_lock (md);
-    ddb_keyValue_t *m = md->head;
-    ddb_keyValue_t *prev = NULL;
-    while (m) {
-        ddb_keyValue_t *next = m->next;
-        if (prev) {
-            prev->next = next;
+        if (m) {
+            _meta_free_values (m);
+            int l = (int)strlen (value) + 1;
+            m->value = metacache_add_value(value, l);
+            m->valuesize = l;
+            return;
         }
         else {
-            md->head = next;
+            _add_meta (md, key, value);
         }
-        metacache_remove_string (m->key);
-        _meta_free_values (m);
-        free (m);
-        m = next;
-    }
-
-    md_unlock(md);
-}
-
-int
-md_get_meta (ddb_keyValueList_t *md, const char *key, char *val, size_t size) {
-    *val = 0;
-    md_lock (md);
-    const char *v = md_find_meta (md, key);
-    if (!v) {
-        md_unlock (md);
-        return 0;
-    }
-    strncpy (val, v, size);
-    md_unlock (md);
-    return 1;
-}
-
-int
-md_get_meta_raw (ddb_keyValueList_t *md, const char *key, char *val, size_t size) {
-    *val = 0;
-    md_lock (md);
-    const char *v = md_find_meta_raw (md, key);
-    if (!v) {
-        md_unlock (md);
-        return 0;
-    }
-    strncpy (val, v, size);
-    md_unlock (md);
-    return 1;
-}
-
-int
-md_meta_exists (ddb_keyValueList_t *md, const char *key) {
-    md_lock (md);
-    const char *v = md_find_meta (md, key);
-    md_unlock (md);
-    return v ? 1 : 0;
-}
-
-ddb_keyValue_t *
-md_meta_for_key (ddb_keyValueList_t *md, const char *key) {
-    ddb_keyValue_t *m = md->head;
-    while (m) {
-        if (!strcasecmp (key, m->key)) {
-            return m;
-        }
-        m = m->next;
-    }
-    return NULL;
+    });
 }
 
 void
-md_add_meta_copy (ddb_keyValueList_t *md, DB_metaInfo_t *meta) {
-    ddb_keyValue_t *m = _add_empty_meta_for_key (md, meta->key);
-    if (!m) {
-        return; // dupe
-    }
-
-    m->value = metacache_add_value (meta->value, meta->valuesize);
-    m->valuesize = meta->valuesize;
+md_set_value_int (ddb_keyValueList_t *md, const char *key, int value) {
+    char s[20];
+    snprintf (s, sizeof (s), "%d", value);
+    md_replace_value (md, key, s);
 }
+
+void
+md_set_value_int64 (ddb_keyValueList_t *md, const char *key, int64_t value) {
+    char s[20];
+    snprintf (s, sizeof (s), "%lld", value);
+    md_replace_value (md, key, s);
+}
+
+void
+md_set_value_float (ddb_keyValueList_t *md, const char *key, float value) {
+    char s[20];
+    snprintf (s, sizeof (s), "%f", value);
+    md_replace_value (md, key, s);
+}
+
+void
+md_delete_value (ddb_keyValueList_t *md, const char *key) {
+    dispatch_sync(md->data_queue, ^{
+        ddb_keyValue_t *prev = NULL;
+        ddb_keyValue_t *m = md->head;
+        while (m) {
+            if (!strcasecmp (key, m->key)) {
+                if (prev) {
+                    prev->next = m->next;
+                }
+                else {
+                    md->head = m->next;
+                }
+                metacache_remove_string (m->key);
+                _meta_free_values(m);
+                free (m);
+                break;
+            }
+            prev = m;
+            m = m->next;
+        }
+    });
+}
+
+void
+md_delete_all_values (ddb_keyValueList_t *md) {
+    dispatch_sync(md->data_queue, ^{
+        ddb_keyValue_t *m = md->head;
+        ddb_keyValue_t *prev = NULL;
+        while (m) {
+            ddb_keyValue_t *next = m->next;
+            if (prev) {
+                prev->next = next;
+            }
+            else {
+                md->head = next;
+            }
+            metacache_remove_string (m->key);
+            _meta_free_values (m);
+            free (m);
+            m = next;
+        }
+        md->head = NULL;
+    });
+}
+
+// FIXME: it's questionable whether this is necessary,
+// since when querying such flag -- need to immediately follow
+// with an operation, to make it transactional
+int
+md_value_exists (ddb_keyValueList_t *md, const char *key) {
+    __block ddb_keyValue_t *m = NULL;
+    dispatch_sync(md->data_queue, ^{
+        m = _meta_for_key (md, key);
+    });
+    return m ? 1 : 0;
+}
+
