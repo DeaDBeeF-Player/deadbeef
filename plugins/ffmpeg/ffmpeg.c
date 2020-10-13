@@ -87,16 +87,6 @@ static DB_functions_t *deadbeef;
 
 static char * exts[EXT_MAX+1] = {NULL};
 
-enum {
-    FT_ALAC = 0,
-    FT_WMA = 1,
-    FT_ATRAC3 = 2,
-    FT_VQF = 3,
-    FT_AC3 = 4,
-    FT_AMR = 5,
-    FT_UNKNOWN = 5
-};
-
 typedef struct {
     DB_fileinfo_t info;
     AVCodec *codec;

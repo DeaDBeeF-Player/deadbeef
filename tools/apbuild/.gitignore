@@ -1,6 +1,0 @@
-allsym
-glibc2.4.syms
-output
-syms
-syms-to-header
-
