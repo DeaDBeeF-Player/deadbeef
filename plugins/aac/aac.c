@@ -1022,6 +1022,7 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             return after;
         }
         else if (res > 0) { // mp4 but not aac
+            deadbeef->fclose (fp);
             return NULL;
         }
     }
