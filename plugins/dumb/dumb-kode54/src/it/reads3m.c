@@ -149,7 +149,7 @@ static int it_s3m_read_sample_data(IT_SAMPLE *sample, int ffi, unsigned char pac
 	long datasize = sample->length;
 	if (sample->flags & IT_SAMPLE_STEREO) datasize <<= 1;
 
-	sample->data = malloc(datasize * (sample->flags & IT_SAMPLE_16BIT ? 2 : 1));
+	sample->data = calloc(datasize * (sample->flags & IT_SAMPLE_16BIT ? 2 : 1), 1);
 	if (!sample->data)
 		return -1;
 
@@ -177,7 +177,7 @@ static int it_s3m_read_sample_data(IT_SAMPLE *sample, int ffi, unsigned char pac
 			((signed char *)sample->data)[n] = dumbfile_getc(f);
 
 	if (dumbfile_error(f))
-		return -1;
+		return 0;
 
 	if (ffi != 1) {
 		/* Convert to signed. */
@@ -233,7 +233,7 @@ static int it_s3m_read_pattern(IT_PATTERN *pattern, DUMBFILE *f, unsigned char *
 
 	length = dumbfile_igetw(f);
 	
-	if (dumbfile_error(f) || !length)
+	if (dumbfile_error(f))
 		return -1;
 
 	pattern->n_rows = 0;
