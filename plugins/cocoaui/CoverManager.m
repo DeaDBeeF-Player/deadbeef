@@ -31,15 +31,24 @@ static CoverManager *g_DefaultCoverManager = nil;
 
 #define CACHE_SIZE 20
 
-@implementation CoverManager {
-    ddb_artwork_plugin_t *_artwork_plugin;
-    NSImage *_defaultCover;
+@interface CoverManager() {
     NSMutableDictionary *_cachedCovers[CACHE_SIZE];
-    char *_name_tf;
 }
+
+@property (nonatomic) ddb_artwork_plugin_t *artwork_plugin;
+@property (nonatomic,readwrite) NSImage *defaultCover;
+@property (nonatomic) char *name_tf;
+
+@end
+
+@implementation CoverManager
 
 - (void)dealloc {
     deadbeef->tf_free (_name_tf);
+    _name_tf = NULL;
+    for (int i = 0; i < CACHE_SIZE; i++) {
+        _cachedCovers[i] = nil;
+    }
 }
 
 + (CoverManager *)defaultCoverManager {
@@ -61,10 +70,6 @@ static CoverManager *g_DefaultCoverManager = nil;
     return self;
 }
 
-- (NSImage *)defaultCover {
-    return _defaultCover;
-}
-
 - (NSString *)hashForTrack:(DB_playItem_t *)track  {
     ddb_tf_context_t ctx = {
         ._size = sizeof (ddb_tf_context_t),
@@ -73,7 +78,7 @@ static CoverManager *g_DefaultCoverManager = nil;
     };
 
     char buffer[PATH_MAX];
-    deadbeef->tf_eval (&ctx, _name_tf, buffer, sizeof (buffer));
+    deadbeef->tf_eval (&ctx, self.name_tf, buffer, sizeof (buffer));
     return [NSString stringWithUTF8String:buffer];
 }
 
@@ -143,12 +148,30 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
     }
 
 //    NSLog (@"+ %@", hash);
-    NSMutableDictionary *d = [[NSMutableDictionary alloc] initWithObjectsAndKeys:hash, @"hash", t, @"ts", img, @"img", nil];
+    NSMutableDictionary *d = [[NSMutableDictionary alloc] initWithObjectsAndKeys:hash, @"hash", t, @"ts", nil];
+    if (img != nil) {
+        d[@"img"] = img;
+    }
     _cachedCovers[i_min] = d;
 }
 
+- (void)dumpCache {
+    for (int i = 0; i < CACHE_SIZE; i++) {
+        NSLog(@"%@", _cachedCovers[i]);
+    }
+}
+
+- (NSDictionary *)findInCache:(NSString *)key {
+    for (int i = 0; i < CACHE_SIZE; i++) {
+        if ([_cachedCovers[i][@"hash"] isEqualToString:key]) {
+            return _cachedCovers[i];
+        }
+    }
+    return nil;
+}
+
 - (NSImage *)getCoverForTrack:(DB_playItem_t *)track withCallbackWhenReady:(void (*) (NSImage *img, void *user_data))callback withUserDataForCallback:(void *)user_data {
-    if (!_artwork_plugin) {
+    if (!self.artwork_plugin) {
         callback (nil, user_data);
         return nil;
     }
@@ -165,7 +188,6 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
         }
     }
 
-//    NSLog (@"! %@", hash);
     ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
     query->_size = sizeof (ddb_cover_query_t);
     query->track = track;
@@ -176,7 +198,8 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
     info->real_user_data = user_data;
     query->user_data = info;
 
-    _artwork_plugin->cover_get (query, cover_loaded_callback);
+    [self addCoverForTrack:query->track withImage:nil];
+    self.artwork_plugin->cover_get (query, cover_loaded_callback);
 
     return nil;
 }
