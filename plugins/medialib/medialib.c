@@ -1204,14 +1204,14 @@ ml_create_list (ddb_mediasource_source_t _source, const char *index, const char 
         return NULL;
     }
 
+    deadbeef->mutex_lock (source->mutex);
+
     int selected = 0;
-    if (filter) {
+    if (filter && source->ml_playlist) {
         deadbeef->plt_search_reset (source->ml_playlist);
         deadbeef->plt_search_process2 (source->ml_playlist, filter, 1);
         selected = 1;
     }
-
-    deadbeef->mutex_lock (source->mutex);
 
     struct timeval tm1, tm2;
     gettimeofday (&tm1, NULL);
