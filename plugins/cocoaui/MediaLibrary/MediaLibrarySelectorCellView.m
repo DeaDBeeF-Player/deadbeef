@@ -6,18 +6,12 @@
 //  Copyright © 2020 Alexey Yakovenko. All rights reserved.
 //
 
+#include "deadbeef.h"
 #import "MediaLibrarySelectorCellView.h"
 
 @implementation MediaLibrarySelectorCellView
 
 - (void)awakeFromNib {
-    [self.popupButton removeAllItems];
-
-    [self.popupButton addItemWithTitle:@"Genres"];
-    [self.popupButton addItemWithTitle:@"Albums"];
-    [self.popupButton addItemWithTitle:@"Artists"];
-    [self.popupButton addItemWithTitle:@"Folders"];
-
     self.popupButton.action = @selector(popupButtonAction:);
     self.popupButton.target = self;
 }
