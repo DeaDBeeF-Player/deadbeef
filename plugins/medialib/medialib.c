@@ -1176,31 +1176,33 @@ get_subfolders_for_folder (ddb_medialib_item_t *folderitem, ml_tree_node_t *fold
     }
 }
 
+typedef enum {
+    SEL_ALBUMS = 1,
+    SEL_ARTISTS = 2,
+    SEL_GENRES = 3,
+    SEL_FOLDERS = 4,
+} medialibSelector_t;
+
 static ddb_medialib_item_t *
-ml_create_list (ddb_mediasource_source_t _source, const char *index, const char *filter) {
+ml_create_list (ddb_mediasource_source_t _source, ddb_mediasource_list_selector_t selector, const char *filter) {
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_collection_t *coll = NULL;
 
-    enum {album, artist, genre, folder};
+    medialibSelector_t index = (medialibSelector_t)selector;
 
-    int type = -1;
-
-    if (!strcmp (index, "album")) {
+    switch (index) {
+    case SEL_ALBUMS:
         coll = &source->db.albums;
-        type = album;
-    }
-    else if (!strcmp (index, "artist")) {
+        break;
+    case SEL_ARTISTS:
         coll = &source->db.artists;
-        type = artist;
-    }
-    else if (!strcmp (index, "genre")) {
+        break;
+    case SEL_GENRES:
         coll = &source->db.genres;
-        type = genre;
-    }
-    else if (!strcmp (index, "folder")) {
-        type = folder;
-    }
-    else {
+        break;
+    case SEL_FOLDERS:
+        break;
+    default:
         return NULL;
     }
 
@@ -1227,18 +1229,18 @@ ml_create_list (ddb_mediasource_source_t _source, const char *index, const char 
         }
     }
 
-    if (type == folder) {
+    if (index == SEL_FOLDERS) {
         get_subfolders_for_folder(root, source->db.folders_tree, selected);
     }
-    else if (type == artist) {
+    else if (index == SEL_ARTISTS) {
         // list of albums for artist
         get_albums_for_collection_group_by_field (source, root, coll, "artist", 0, "Unknown Artist", selected);
     }
-    else if (type == genre) {
+    else if (index == SEL_GENRES) {
         // list of albums for genre
         get_albums_for_collection_group_by_field (source, root, coll, "genre", 0, "Unknown Genre", selected);
     }
-    else if (type == album) {
+    else if (index == SEL_ALBUMS) {
         // list of tracks for album
         ddb_medialib_item_t *tail = NULL;
         ddb_medialib_item_t *parent = root;
@@ -1458,6 +1460,36 @@ ml_free_source (ddb_mediasource_source_t _source) {
     }
 }
 
+static ddb_mediasource_list_selector_t *
+ml_get_selectors (ddb_mediasource_source_t source) {
+    static ddb_mediasource_list_selector_t selectors[] = {
+        (ddb_mediasource_list_selector_t)SEL_ALBUMS,
+        (ddb_mediasource_list_selector_t)SEL_ARTISTS,
+        (ddb_mediasource_list_selector_t)SEL_GENRES,
+        (ddb_mediasource_list_selector_t)SEL_FOLDERS,
+    };
+    return selectors;
+}
+
+static void ml_free_selectors (ddb_mediasource_source_t source, ddb_mediasource_list_selector_t *selectors) {
+    // the list is predefined, nothing to free
+}
+
+static const char *
+ml_get_name_for_selector (ddb_mediasource_source_t source, ddb_mediasource_list_selector_t selector) {
+    medialibSelector_t index = (medialibSelector_t)selector;
+    switch (index) {
+    case SEL_ALBUMS:
+        return "Albums";
+    case SEL_ARTISTS:
+        return "Artists";
+    case SEL_GENRES:
+        return "Genres";
+    case SEL_FOLDERS:
+        return "Folders";
+    }
+    return NULL;
+}
 
 // define plugin interface
 static ddb_medialib_plugin_t plugin = {
@@ -1499,6 +1531,9 @@ static ddb_medialib_plugin_t plugin = {
     .plugin.plugin.message = ml_message,
     .plugin.create_source = ml_create_source,
     .plugin.free_source = ml_free_source,
+    .plugin.get_selectors = ml_get_selectors,
+    .plugin.free_selectors = ml_free_selectors,
+    .plugin.get_name_for_selector = ml_get_name_for_selector,
     .plugin.add_listener = ml_add_listener,
     .plugin.remove_listener = ml_remove_listener,
     .plugin.create_list = ml_create_list,
