@@ -2140,6 +2140,7 @@ typedef enum {
 
 typedef void (* ddb_medialib_listener_t)(ddb_mediasource_event_type_t event, void *user_data);
 typedef void *ddb_mediasource_source_t;
+typedef void *ddb_mediasource_list_selector_t;
 
 typedef struct {
     DB_plugin_t plugin;
@@ -2150,13 +2151,17 @@ typedef struct {
     ddb_mediasource_source_t (*create_source) (const char *source_path);
     void (*free_source) (ddb_mediasource_source_t source);
 
+    ddb_mediasource_list_selector_t *(*get_selectors)(ddb_mediasource_source_t source);
+    void (*free_selectors)(ddb_mediasource_source_t source, ddb_mediasource_list_selector_t *selectors);
+    const char *(*get_name_for_selector)(ddb_mediasource_source_t source, ddb_mediasource_list_selector_t selector);
+
     int (*add_listener)(ddb_mediasource_source_t source, ddb_medialib_listener_t listener, void *user_data);
     void (*remove_listener)(ddb_mediasource_source_t source, int listener_id);
 
-    ddb_medialib_item_t * (*create_list)(ddb_mediasource_source_t source, const char *query, const char *filter);
+    ddb_medialib_item_t * (*create_list)(ddb_mediasource_source_t source, ddb_mediasource_source_t selector, const char *filter);
     void (*free_list) (ddb_mediasource_source_t source, ddb_medialib_item_t *list);
 
-    // whether scanner/indexer is active
+    /// Whether the scanner/indexer is active
     ddb_mediasource_state_t (*scanner_state) (ddb_mediasource_source_t source);
 } DB_mediasource_t;
 
