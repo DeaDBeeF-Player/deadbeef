@@ -315,28 +315,24 @@ set_file_filter (GtkFileChooser *dlg, const char *name) {
     if (!name) {
         name = _("Supported sound formats");
     }
-    static char extlist[10000];
-
-    // Build extension list
-    if (extlist[0] == '\0') {
-        DB_decoder_t **codecs = deadbeef->plug_get_decoder_list ();
-        for (int i = 0; codecs[i]; i++) {
-            if (codecs[i]->exts && codecs[i]->insert) {
-                const char **exts = codecs[i]->exts;
-                for (int e = 0; exts[e]; e++) {
-                    char buf[100];
-                    snprintf (buf, sizeof (buf), "*.%s;", exts[e]);
-                    strcat (extlist, buf);
-                }
-            }
-        }
-    }
 
     GtkFileFilter* flt;
 
     flt = gtk_file_filter_new ();
     gtk_file_filter_set_name (flt, name);
-    gtk_file_filter_add_pattern (flt, extlist);
+
+    // Add supported extensions
+        DB_decoder_t **codecs = deadbeef->plug_get_decoder_list ();
+        for (int i = 0; codecs[i]; i++) {
+            if (codecs[i]->exts && codecs[i]->insert) {
+                const char **exts = codecs[i]->exts;
+                char buf[100];
+                for (int e = 0; exts[e]; e++) {
+                    snprintf (buf, sizeof (buf), "*.%s", exts[e]);
+                    gtk_file_filter_add_pattern (flt, buf);
+                }
+            }
+        }
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
 

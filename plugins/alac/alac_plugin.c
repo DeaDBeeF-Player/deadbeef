@@ -111,8 +111,7 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     int bps = 0;
     float duration = 0;
 
-    DB_FILE *file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
-    info->mp4reader.ptrhandle = file;
+    info->mp4reader.ptrhandle = info->file;
     mp4_init_ddb_file_callbacks (&info->mp4reader);
     info->mp4file = mp4p_open(&info->mp4reader);
 
