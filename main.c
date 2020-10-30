@@ -523,7 +523,7 @@ int db_socket_set_unix (struct sockaddr_un *remote, int *len) {
     *len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
 #else
     char *socketdirenv = getenv ("DDB_SOCKET_DIR");
-    snprintf (remote->sun_path, sizeof (remote->sun_path), "%s/socket", socketdirenv ? socketdirenv : dbconfdir);
+    snprintf (remote->sun_path, sizeof (remote->sun_path), "%s/socket", socketdirenv ? socketdirenv : dbruntimedir);
     *len = offsetof(struct sockaddr_un, sun_path) + (int)strlen (remote->sun_path);
 #endif
     return s;
