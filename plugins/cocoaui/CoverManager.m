@@ -183,6 +183,7 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
             NSString *hashVal = d[@"hash"];
             if ([hashVal isEqualToString:hash]) {
                 d[@"ts"] = [NSNumber numberWithLong:time (NULL)];
+                callback (nil, user_data);
                 return d[@"img"];
             }
         }
