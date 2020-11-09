@@ -26,12 +26,25 @@
 
 extern DB_functions_t *deadbeef;
 
+@interface LogWindowController()
+
+@property (nonatomic) BOOL wasShown;
+
+@end
+
 @implementation LogWindowController
 
 - (void)windowDidLoad {
     [super windowDidLoad];
 
     deadbeef->log_viewer_register (_cocoaui_logger_callback, (__bridge void *)(self));
+}
+
+- (void)windowDidChangeOcclusionState:(NSNotification *)notification {
+    if (!self.wasShown) {
+        [self.textView scrollRangeToVisible:NSMakeRange(self.textView.string.length, 0)];
+        self.wasShown = YES;
+    }
 }
 
 - (void)dealloc {
@@ -49,14 +62,14 @@ extern DB_functions_t *deadbeef;
         scroll = YES;
     }
 
-    [[_textView textStorage] appendAttributedString:attr];
+    [self.textView.textStorage appendAttributedString:attr];
     if (scroll) {
-        [_textView scrollRangeToVisible:NSMakeRange([[_textView string] length], 0)];
+        [self.textView scrollRangeToVisible:NSMakeRange(self.textView.string.length, 0)];
     }
 }
 
 - (IBAction)clearAction:(id)sender {
-    _textView.textStorage.attributedString =  [[NSAttributedString alloc] initWithString:@"" attributes:@{NSForegroundColorAttributeName:NSColor.controlTextColor}];
+    self.textView.textStorage.attributedString =  [[NSAttributedString alloc] initWithString:@"" attributes:@{NSForegroundColorAttributeName:NSColor.controlTextColor}];
 }
 
 static void
