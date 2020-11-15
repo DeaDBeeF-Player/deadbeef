@@ -1141,8 +1141,10 @@ gtkui_show_log_window_internal(gboolean show) {
 
 #if GTK_CHECK_VERSION(3,10,0)
 #if USE_GTK_APPLICATION
-    g_simple_action_set_state ( deadbeef_app_get_log_action (gapp),
-        g_variant_new_boolean (show));
+    GSimpleAction *act = deadbeef_app_get_log_action (gapp);
+    if (act) {
+        g_simple_action_set_state (act, g_variant_new_boolean (show));
+    }
 #endif
 #endif
 }
