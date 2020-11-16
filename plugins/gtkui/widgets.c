@@ -235,6 +235,7 @@ typedef struct {
 typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *textview;
+    int scroll_bottomed;
 } w_logviewer_t;
 
 static int w_logviewer_instancecount;
@@ -4358,6 +4359,22 @@ w_logviewer_init (struct ddb_gtkui_widget_s *widget) {
     gtk_text_buffer_set_text (buffer, "Log\n", -1);
 }
 
+static void
+w_logviewer_scroll_changed (GtkAdjustment *adjustment, gpointer user_data)
+{
+    w_logviewer_t *w = (w_logviewer_t *)user_data;
+
+    if (gtk_adjustment_get_value (adjustment) >=
+        gtk_adjustment_get_upper (adjustment) -
+        gtk_adjustment_get_page_size (adjustment) - 1e-12)
+    {
+        w->scroll_bottomed = 1;
+    } else {
+        w->scroll_bottomed= 0;
+    }
+}
+
+
 static gboolean
 logviewer_addtext_cb (gpointer data) {
     logviewer_addtexts_t *s = (logviewer_addtexts_t *)data;
@@ -4377,9 +4394,7 @@ logviewer_addtext_cb (gpointer data) {
         gtk_text_buffer_insert(buffer, &iter, "\n", 1);
     }
     GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment ( GTK_SCROLLED_WINDOW (scrolled_window));
-    if (gtk_adjustment_get_value(adjustment) >=
-        gtk_adjustment_get_upper(adjustment) -
-        gtk_adjustment_get_page_size(adjustment) -1e-12 ) {
+    if (w->scroll_bottomed) {
         gtk_text_buffer_get_end_iter(buffer, &iter);
         GtkTextMark *mark = gtk_text_buffer_create_mark (buffer, NULL, &iter, FALSE);
         gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (w->textview), mark);
@@ -4431,6 +4446,10 @@ w_logviewer_create (void) {
     gtk_container_add (GTK_CONTAINER (scroll), w->textview);
 
     w_override_signals (w->base.widget, w);
+
+    GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment ( GTK_SCROLLED_WINDOW (scroll));
+    w->scroll_bottomed=1;
+    g_signal_connect (adjustment, "value-changed", G_CALLBACK (w_logviewer_scroll_changed), w);
 
     deadbeef->log_viewer_register (logviewer_logger_callback, w);
 
