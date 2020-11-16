@@ -1166,9 +1166,27 @@ on_gtkui_log_window_delete (GtkWidget *widget, GdkEventAny *event, GtkWidget **p
     return TRUE; // don't destroy window
 }
 
+static int logwindow_scroll_bottomed=1;
+
+void
+logwindow_scroll_changed (GtkAdjustment *adjustment, gpointer user_data)
+{
+    if (gtk_adjustment_get_value (adjustment) >=
+        gtk_adjustment_get_upper (adjustment) -
+        gtk_adjustment_get_page_size (adjustment) - 1e-12)
+    {
+        logwindow_scroll_bottomed = 1;
+    } else {
+        logwindow_scroll_bottomed = 0;
+    }
+}
+
 GtkWidget *
 gtkui_create_log_window (void) {
     GtkWidget *pwindow = create_log_window ();
+    GtkWidget *scrolledwindow14=lookup_widget(pwindow, "scrolledwindow14");
+    GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment ( GTK_SCROLLED_WINDOW (scrolledwindow14));
+    g_signal_connect (adjustment, "value-changed", G_CALLBACK (logwindow_scroll_changed), NULL);
     g_signal_connect (pwindow, "delete_event", G_CALLBACK (on_gtkui_log_window_delete), pwindow);
     gtk_window_set_transient_for (GTK_WINDOW (pwindow), GTK_WINDOW (mainwin));
     return pwindow;
@@ -1198,9 +1216,7 @@ logwindow_addtext_cb (gpointer data) {
         gtk_text_buffer_insert(buffer, &iter, "\n", 1);
     }
     GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment ( GTK_SCROLLED_WINDOW (scrolledwindow14));
-    if (gtk_adjustment_get_value(adjustment) >=
-        gtk_adjustment_get_upper(adjustment) -
-        gtk_adjustment_get_page_size(adjustment) -1e-12 ) {
+    if (logwindow_scroll_bottomed) {
         gtk_text_buffer_get_end_iter(buffer, &iter);
         GtkTextMark *mark = gtk_text_buffer_create_mark (buffer, NULL, &iter, FALSE);
         gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (textview), mark);
