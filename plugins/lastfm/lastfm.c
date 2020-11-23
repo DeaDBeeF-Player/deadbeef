@@ -550,6 +550,7 @@ lastfm_songstarted (ddb_event_track_t *ev, uintptr_t data) {
             need_cancel = terminate;
         });
         if (need_cancel) {
+            deadbeef->pl_item_unref (it);
             return;
         }
         char lfm_nowplaying[2048];
@@ -602,11 +603,12 @@ lastfm_songchanged (ddb_event_trackchange_t *ev, uintptr_t data) {
     }
 
     ddb_playItem_t *it = ev->from;
-    deadbeef->pl_item_ref (it);
+    deadbeef->pl_item_ref (it); // unreffed by lfm_submit
     time_t started_timestamp = ev->started_timestamp;
+    float playtime = ev->playtime;
 
     dispatch_async(request_queue, ^{
-        lfm_submit (it, started_timestamp, ev->playtime);
+        lfm_submit (it, started_timestamp, playtime);
     });
 
     return 0;
@@ -666,19 +668,23 @@ lfm_send_submission (ddb_playItem_t *it, time_t started_timestamp, float playtim
     int res = lfm_format_uri (idx, it, r, len, started_timestamp, playtime);
     if (res < 0) {
         trace ("lfm: failed to format uri\n");
+        deadbeef->pl_item_unref (it);
         return;
     }
     len -= res;
     r += res;
     idx++;
     if (!idx) {
+        deadbeef->pl_item_unref (it);
         return;
     }
     if (auth () < 0) {
+        deadbeef->pl_item_unref (it);
         return;
     }
     res = snprintf (r, len, "s=%s&", lfm_sess);
     if (res > len) {
+        deadbeef->pl_item_unref (it);
         return;
     }
     trace ("submission req string:\n%s\n", req);
@@ -701,11 +707,11 @@ lfm_send_submission (ddb_playItem_t *it, time_t started_timestamp, float playtim
                     continue; // retry with new session
                 }
             }
-            deadbeef->pl_item_unref (it);
         }
         curl_req_cleanup ();
         break;
     }
+    deadbeef->pl_item_unref (it);
 #else
     trace ("submission successful (NOSEND=1):\n");
     deadbeef->pl_item_unref (it);
@@ -719,10 +725,12 @@ lfm_submit (ddb_playItem_t *it, time_t started_timestamp, float playtime) {
         need_cancel = terminate;
     });
     if (need_cancel) {
+        deadbeef->pl_item_unref (it);
         return;
     }
 
     if (!deadbeef->conf_get_int ("lastfm.enable", 0)) {
+        deadbeef->pl_item_unref (it);
         return;
     }
     trace ("lfm sending submissions...\n");
