@@ -23,7 +23,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface LogWindowController : NSWindowController
+@interface LogWindowController : NSWindowController<NSWindowDelegate>
 
 @property (unsafe_unretained) IBOutlet NSTextView *textView;
 @property (unsafe_unretained) IBOutlet NSClipView *clipView;

@@ -859,7 +859,7 @@ typedef struct {
     int grp;
 } cover_avail_info_t;
 
-static void coverAvailCallback (NSImage *__strong img, void *user_data) {
+static void coverAvailCallback (NSImage *img, void *user_data) {
     cover_avail_info_t *info = user_data;
     PlaylistViewController *ctl = (__bridge_transfer PlaylistViewController *)info->ctl;
     PlaylistView *lv = (PlaylistView *)ctl.view;

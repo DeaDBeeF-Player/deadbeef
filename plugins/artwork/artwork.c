@@ -260,7 +260,7 @@ static int
 scan_local_path (char *mask, const char *local_path, const char *uri, DB_vfs_t *vfsplug, ddb_cover_info_t *cover)
 {
     filter_custom_mask = mask;
-    struct dirent **files;
+    struct dirent **files = NULL;
     int (* custom_scandir)(const char *, struct dirent ***, int (*)(const struct dirent *), int (*)(const struct dirent **, const struct dirent **));
     custom_scandir = vfsplug ? vfsplug->scandir : scandir;
     int files_count = custom_scandir (local_path, &files, filter_custom, NULL);
@@ -281,6 +281,7 @@ scan_local_path (char *mask, const char *local_path, const char *uri, DB_vfs_t *
         return err;
     }
 
+    free (files);
     return -1;
 }
 
@@ -296,7 +297,7 @@ filter_strcasecmp (const struct dirent *f)
 static char *
 get_case_insensitive_path (const char *local_path, const char *subfolder, DB_vfs_t *vfsplug) {
     filter_strcasecmp_name = subfolder;
-    struct dirent **files;
+    struct dirent **files = NULL;
     int (* custom_scandir)(const char *, struct dirent ***, int (*)(const struct dirent *), int (*)(const struct dirent **, const struct dirent **));
     custom_scandir = vfsplug ? vfsplug->scandir : scandir;
     int files_count = custom_scandir (local_path, &files, filter_strcasecmp, NULL);
@@ -312,6 +313,7 @@ get_case_insensitive_path (const char *local_path, const char *subfolder, DB_vfs
 
         return ret;
     }
+    free (files);
     return NULL;
 }
 
