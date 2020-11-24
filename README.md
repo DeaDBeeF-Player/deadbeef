@@ -54,7 +54,7 @@ Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy develo
 	```pacman -S mingw-w64-x86_64-jansson mingw-w64-x86_64-gtk3 mingw-w64-x86_64-gtk2 mingw-w64-x86_64-mpg123 mingw-w64-x86_64-flac mingw-w64-x86_64-portaudio```
 * Check [Windows plugin status](https://github.com/DeaDBeeF-Player/deadbeef/wiki/Windows-plugin-status) for other plugins dependencies and its functionality
 * Ensure that you are in mingw64 shell (run mingw64.exe) and clone this repo
-* From deadbeef main directory run ```premake5.exe --file=premake5-win.lua --standard gmake2``` using your corresponding path to ```premake5.exe```
+* From deadbeef main directory run ```premake5 --standard gmake2``` using your corresponding path to ```premake5.exe```
 * Compile with ```make config=debug_windows``` (debug version) or ```make config=release_windows``` (strip/normal version)
 * Binaries will be placed in ```bin/debug``` or ```bin/release```
 * GTK3 uses [Windows-10](https://github.com/B00merang-Project/Windows-10) theme and [Windows-10-Icons](https://github.com/B00merang-Artwork/Windows-10) by default. If they are not in msys2 tree, then they must be placed manually in ```share/icons``` and ```share/themes```. Eventually you get different theme and set it in ```etc/gtk-3.0/settings.ini``` file.
