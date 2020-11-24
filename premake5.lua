@@ -30,7 +30,7 @@ if _OPTIONS["standard"] ~= nil then
   plugins_to_disable = {"plugin-converter", "plugin-converter_gtk2",
                         "plugin-converter_gtk3","plugin-ffmpeg","plugin-waveout",
                         "plugin-wildmidi", "plugin-soundtouch", "plugin-sid", "plugin-gme",
-                        "plugin-mms", "plugin-cdda", "plugin-medialib"}
+                        "plugin-mms", "plugin-cdda", "plugin-sc68", "plugin-vtx", "plugin-medialib"}
   for i,v in ipairs(plugins_to_disable) do
     if _OPTIONS[v] == nil then
       _OPTIONS[v] = "disabled"
@@ -153,8 +153,7 @@ project "liboggedit"
   targetdir "bin/%{cfg.buildcfg}/"
   targetprefix ""
   files {
-    "plugins/liboggedit/*.c",
-    "plugins/liboggedit/*.h"
+    "plugins/liboggedit/*.c"
   }
   filter "platforms:not Windows"
     buildoptions {"-fPIC"}
@@ -166,16 +165,11 @@ project "deadbeef"
   kind (ddb_type)
   targetdir "bin/%{cfg.buildcfg}"
   files {
-    "*.h",
     "*.c",
-    "md5/*.h",
     "md5/*.c",
-    "plugins/libparser/*.h",
     "plugins/libparser/*.c",
     "external/wcwidth/wcwidth.c",
-    "external/wcwidth/wcwidth.h",
     "shared/ctmap.c",
-    "shared/ctmap.h"
   }
   defines {
     "PORTABLE=1",
@@ -196,22 +190,19 @@ local mp3_v = option ("plugin-mp3", "libmpg123", "mad")
 if mp3_v then
 project "mp3"
   files {
-    "plugins/mp3/mp3.h",
     "plugins/mp3/mp3.c",
     "plugins/mp3/mp3parser.c"
   }
   if mp3_v["libmpg123"] then
     files {
-      "plugins/mp3/mp3_mpg123.c",
-      "plugins/mp3/mp3_mpg123.h"
+      "plugins/mp3/mp3_mpg123.c"
     }
     defines { "USE_LIBMPG123=1" }
     links {"mpg123"}
   end
   if mp3_v["mad"] then
     files {
-      "plugins/mp3/mp3_mad.c",
-      "plugins/mp3/mp3_mad.h"
+      "plugins/mp3/mp3_mad.c"
     }
     defines {"USE_LIBMAD=1"}
     links {"mad"}
@@ -238,10 +229,6 @@ project "aac_plugin"
     "plugins/aac/aac_decoder_faad2.c",
     "plugins/aac/aac_decoder_wrap.c",
     "plugins/aac/aac_parser.c",
-    "plugins/aac/aac_decoder_faad2.h",
-    "plugins/aac/aac_decoder_protocol.h",
-    "plugins/aac/aac_parser.h",
-    "shared/mp4tagutil.h",
     "shared/mp4tagutil.c"
   }
   links { "faad", "mp4p" }
@@ -253,154 +240,10 @@ project "adplug_plugin"
   files {
     "plugins/adplug/plugin.c",
     "plugins/adplug/adplug-db.cpp",
-    "plugins/adplug/libbinio/binfile.h",
-    "plugins/adplug/libbinio/binio.h",
-    "plugins/adplug/libbinio/binstr.h",
-    "plugins/adplug/libbinio/binwrap.h",
-    "plugins/adplug/libbinio/binfile.cpp",
-    "plugins/adplug/libbinio/binio.cpp",
-    "plugins/adplug/libbinio/binstr.cpp",
-    "plugins/adplug/libbinio/binwrap.cpp",
-    "plugins/adplug/adplug/a2m.cpp",
-    "plugins/adplug/adplug/a2m.h",
-    "plugins/adplug/adplug/adl.cpp",
-    "plugins/adplug/adplug/adl.h",
-    "plugins/adplug/adplug/adlib.cpp",
-    "plugins/adplug/adplug/adlib.h",
-    "plugins/adplug/adplug/adlibemu.h",
-    "plugins/adplug/adplug/adplug.cpp",
-    "plugins/adplug/adplug/adplug.h",
-    "plugins/adplug/adplug/adtrack.cpp",
-    "plugins/adplug/adplug/adtrack.h",
-    "plugins/adplug/adplug/amd.cpp",
-    "plugins/adplug/adplug/amd.h",
-    "plugins/adplug/adplug/analopl.cpp",
-    "plugins/adplug/adplug/analopl.h",
-    "plugins/adplug/adplug/bam.cpp",
-    "plugins/adplug/adplug/bam.h",
-    "plugins/adplug/adplug/bmf.cpp",
-    "plugins/adplug/adplug/bmf.h",
-    "plugins/adplug/adplug/cff.cpp",
-    "plugins/adplug/adplug/cff.h",
-    "plugins/adplug/adplug/cmf.cpp",
-    "plugins/adplug/adplug/cmf.h",
-    "plugins/adplug/adplug/cmfmcsop.cpp",
-    "plugins/adplug/adplug/cmfmcsop.h",
-    "plugins/adplug/adplug/d00.cpp",
-    "plugins/adplug/adplug/d00.h",
-    "plugins/adplug/adplug/database.cpp",
-    "plugins/adplug/adplug/database.h",
-    "plugins/adplug/adplug/debug.h",
-    "plugins/adplug/adplug/dfm.cpp",
-    "plugins/adplug/adplug/dfm.h",
-    "plugins/adplug/adplug/diskopl.cpp",
-    "plugins/adplug/adplug/diskopl.h",
-    "plugins/adplug/adplug/dmo.cpp",
-    "plugins/adplug/adplug/dmo.h",
-    "plugins/adplug/adplug/dro.cpp",
-    "plugins/adplug/adplug/dro.h",
-    "plugins/adplug/adplug/dro2.cpp",
-    "plugins/adplug/adplug/dro2.h",
-    "plugins/adplug/adplug/dtm.cpp",
-    "plugins/adplug/adplug/dtm.h",
-    "plugins/adplug/adplug/emuopl.cpp",
-    "plugins/adplug/adplug/emuopl.h",
-    "plugins/adplug/adplug/flash.cpp",
-    "plugins/adplug/adplug/flash.h",
-    "plugins/adplug/adplug/fmc.cpp",
-    "plugins/adplug/adplug/fmc.h",
-    "plugins/adplug/adplug/fmopl.h",
-    "plugins/adplug/adplug/fprovide.cpp",
-    "plugins/adplug/adplug/fprovide.h",
-    "plugins/adplug/adplug/got.cpp",
-    "plugins/adplug/adplug/got.h",
-    "plugins/adplug/adplug/herad.cpp",
-    "plugins/adplug/adplug/herad.h",
-    "plugins/adplug/adplug/hsc.cpp",
-    "plugins/adplug/adplug/hsc.h",
-    "plugins/adplug/adplug/hsp.cpp",
-    "plugins/adplug/adplug/hsp.h",
-    "plugins/adplug/adplug/hybrid.cpp",
-    "plugins/adplug/adplug/hybrid.h",
-    "plugins/adplug/adplug/hyp.cpp",
-    "plugins/adplug/adplug/hyp.h",
-    "plugins/adplug/adplug/imf.cpp",
-    "plugins/adplug/adplug/imf.h",
-    "plugins/adplug/adplug/jbm.cpp",
-    "plugins/adplug/adplug/jbm.h",
-    "plugins/adplug/adplug/kemuopl.h",
-    "plugins/adplug/adplug/ksm.cpp",
-    "plugins/adplug/adplug/ksm.h",
-    "plugins/adplug/adplug/lds.cpp",
-    "plugins/adplug/adplug/lds.h",
-    "plugins/adplug/adplug/mad.cpp",
-    "plugins/adplug/adplug/mad.h",
-    "plugins/adplug/adplug/mdi.cpp",
-    "plugins/adplug/adplug/mdi.h",
-    "plugins/adplug/adplug/mid.cpp",
-    "plugins/adplug/adplug/mid.h",
-    "plugins/adplug/adplug/mididata.h",
-    "plugins/adplug/adplug/mkj.cpp",
-    "plugins/adplug/adplug/mkj.h",
-    "plugins/adplug/adplug/msc.cpp",
-    "plugins/adplug/adplug/msc.h",
-    "plugins/adplug/adplug/mtk.cpp",
-    "plugins/adplug/adplug/mtk.h",
-    "plugins/adplug/adplug/mus.cpp",
-    "plugins/adplug/adplug/mus.h",
-    "plugins/adplug/adplug/nemuopl.cpp",
-    "plugins/adplug/adplug/nemuopl.h",
-    "plugins/adplug/adplug/nukedopl.h",
-    "plugins/adplug/adplug/opl.h",
-    "plugins/adplug/adplug/player.cpp",
-    "plugins/adplug/adplug/player.h",
-    "plugins/adplug/adplug/players.cpp",
-    "plugins/adplug/adplug/players.h",
-    "plugins/adplug/adplug/protrack.cpp",
-    "plugins/adplug/adplug/protrack.h",
-    "plugins/adplug/adplug/psi.cpp",
-    "plugins/adplug/adplug/psi.h",
-    "plugins/adplug/adplug/rad.cpp",
-    "plugins/adplug/adplug/rad.h",
-    "plugins/adplug/adplug/rat.cpp",
-    "plugins/adplug/adplug/rat.h",
-    "plugins/adplug/adplug/raw.cpp",
-    "plugins/adplug/adplug/raw.h",
-    "plugins/adplug/adplug/realopl.cpp",
-    "plugins/adplug/adplug/realopl.h",
-    "plugins/adplug/adplug/rix.cpp",
-    "plugins/adplug/adplug/rix.h",
-    "plugins/adplug/adplug/rol.cpp",
-    "plugins/adplug/adplug/rol.h",
-    "plugins/adplug/adplug/s3m.cpp",
-    "plugins/adplug/adplug/s3m.h",
-    "plugins/adplug/adplug/sa2.cpp",
-    "plugins/adplug/adplug/sa2.h",
-    "plugins/adplug/adplug/silentopl.h",
-    "plugins/adplug/adplug/sng.cpp",
-    "plugins/adplug/adplug/sng.h",
-    "plugins/adplug/adplug/sop.cpp",
-    "plugins/adplug/adplug/sop.h",
-    "plugins/adplug/adplug/surroundopl.cpp",
-    "plugins/adplug/adplug/surroundopl.h",
-    "plugins/adplug/adplug/temuopl.cpp",
-    "plugins/adplug/adplug/temuopl.h",
-    "plugins/adplug/adplug/u6m.cpp",
-    "plugins/adplug/adplug/u6m.h",
-    "plugins/adplug/adplug/version.h",
-    "plugins/adplug/adplug/vgm.cpp",
-    "plugins/adplug/adplug/vgm.h",
-    "plugins/adplug/adplug/wemuopl.h",
-    "plugins/adplug/adplug/woodyopl.cpp",
-    "plugins/adplug/adplug/woodyopl.h",
-    "plugins/adplug/adplug/xad.cpp",
-    "plugins/adplug/adplug/xad.h",
-    "plugins/adplug/adplug/xsm.cpp",
-    "plugins/adplug/adplug/xsm.h",
-    "plugins/adplug/adplug/adlibemu.c",
-    "plugins/adplug/adplug/debug.c",
-    "plugins/adplug/adplug/fmopl.c",
-    "plugins/adplug/adplug/nukedopl.c"
+    "plugins/adplug/libbinio/*.c",
+    "plugins/adplug/libbinio/*.cpp",
+    "plugins/adplug/adplug/*.c",
+    "plugins/adplug/adplug/*.cpp"
   }
   defines {"stricmp=strcasecmp"}
   includedirs {"plugins/adplug/adplug", "plugins/adplug/libbinio"}
@@ -413,8 +256,6 @@ project "alac_plugin"
   files {
     "plugins/alac/alac_plugin.c",
     "plugins/alac/alac.c",
-    "plugins/alac/decomp.h",
-    "shared/mp4tagutil.h",
     "shared/mp4tagutil.c"
   }
   links {"faad", "mp4p"}
@@ -454,20 +295,7 @@ project "dca_plugin"
     "plugins/dca/gettimeofday.c",
     "plugins/dca/parse.c",
     "plugins/dca/bitstream.c",
-    "plugins/dca/downmix.c",
-    "plugins/dca/audio_out.h",
-    "plugins/dca/dca.h",
-    "plugins/dca/dts.h",
-    "plugins/dca/gettimeofday.h",
-    "plugins/dca/tendra.h",
-    "plugins/dca/dca_internal.h",
-    "plugins/dca/tables_adpcm.h",
-    "plugins/dca/tables_fir.h",
-    "plugins/dca/tables.h",
-    "plugins/dca/tables_huffman.h",
-    "plugins/dca/tables_quantization.h",
-    "plugins/dca/tables_vq.h",
-    "plugins/dca/bitstream.h"
+    "plugins/dca/downmix.c"
   }
   prebuildcommands {"touch plugins/dca/config.h"}
   postbuildcommands {"rm plugins/dca/config.h"}
@@ -475,116 +303,18 @@ end
 
 if option ("plugin-dumb") then
 project "dumb_plugin"
-  targetname "dumb"
+  targetname "ddb_dumb"
   files {
-    "plugins/dumb/dumb-kode54/src/it/loadmod2.c",
-    "plugins/dumb/dumb-kode54/src/it/itorder.c",
-    "plugins/dumb/dumb-kode54/src/it/readokt2.c",
-    "plugins/dumb/dumb-kode54/src/it/readptm.c",
-    "plugins/dumb/dumb-kode54/src/it/loadxm.c",
-    "plugins/dumb/dumb-kode54/src/it/ptmeffect.c",
-    "plugins/dumb/dumb-kode54/src/it/loadany2.c",
-    "plugins/dumb/dumb-kode54/src/it/loadokt2.c",
-    "plugins/dumb/dumb-kode54/src/it/loadasy.c",
-    "plugins/dumb/dumb-kode54/src/it/readasy.c",
-    "plugins/dumb/dumb-kode54/src/it/loadpsm2.c",
-    "plugins/dumb/dumb-kode54/src/it/readstm.c",
-    "plugins/dumb/dumb-kode54/src/it/readxm2.c",
-    "plugins/dumb/dumb-kode54/src/it/readmod.c",
-    "plugins/dumb/dumb-kode54/src/it/readam.c",
-    "plugins/dumb/dumb-kode54/src/it/loadoldpsm2.c",
-    "plugins/dumb/dumb-kode54/src/it/loadxm2.c",
-    "plugins/dumb/dumb-kode54/src/it/loadmod.c",
-    "plugins/dumb/dumb-kode54/src/it/loadany.c",
-    "plugins/dumb/dumb-kode54/src/it/loadmtm.c",
-    "plugins/dumb/dumb-kode54/src/it/itrender.c",
-    "plugins/dumb/dumb-kode54/src/it/loadasy2.c",
-    "plugins/dumb/dumb-kode54/src/it/readpsm.c",
-    "plugins/dumb/dumb-kode54/src/it/itload.c",
-    "plugins/dumb/dumb-kode54/src/it/loadriff2.c",
-    "plugins/dumb/dumb-kode54/src/it/itread.c",
-    "plugins/dumb/dumb-kode54/src/it/loadmtm2.c",
-    "plugins/dumb/dumb-kode54/src/it/loadriff.c",
-    "plugins/dumb/dumb-kode54/src/it/readmtm.c",
-    "plugins/dumb/dumb-kode54/src/it/reads3m.c",
-    "plugins/dumb/dumb-kode54/src/it/itload2.c",
-    "plugins/dumb/dumb-kode54/src/it/readxm.c",
-    "plugins/dumb/dumb-kode54/src/it/loadpsm.c",
-    "plugins/dumb/dumb-kode54/src/it/readany2.c",
-    "plugins/dumb/dumb-kode54/src/it/loadamf.c",
-    "plugins/dumb/dumb-kode54/src/it/loadptm2.c",
-    "plugins/dumb/dumb-kode54/src/it/readokt.c",
-    "plugins/dumb/dumb-kode54/src/it/itread2.c",
-    "plugins/dumb/dumb-kode54/src/it/itmisc.c",
-    "plugins/dumb/dumb-kode54/src/it/loadokt.c",
-    "plugins/dumb/dumb-kode54/src/it/loads3m.c",
-    "plugins/dumb/dumb-kode54/src/it/loadptm.c",
-    "plugins/dumb/dumb-kode54/src/it/readdsmf.c",
-    "plugins/dumb/dumb-kode54/src/it/readamf2.c",
-    "plugins/dumb/dumb-kode54/src/it/itunload.c",
-    "plugins/dumb/dumb-kode54/src/it/readmod2.c",
-    "plugins/dumb/dumb-kode54/src/it/readamf.c",
-    "plugins/dumb/dumb-kode54/src/it/readoldpsm.c",
-    "plugins/dumb/dumb-kode54/src/it/loadamf2.c",
-    "plugins/dumb/dumb-kode54/src/it/read6692.c",
-    "plugins/dumb/dumb-kode54/src/it/read669.c",
-    "plugins/dumb/dumb-kode54/src/it/readriff.c",
-    "plugins/dumb/dumb-kode54/src/it/readany.c",
-    "plugins/dumb/dumb-kode54/src/it/load669.c",
-    "plugins/dumb/dumb-kode54/src/it/loadstm2.c",
-    "plugins/dumb/dumb-kode54/src/it/loadstm.c",
-    "plugins/dumb/dumb-kode54/src/it/load6692.c",
-    "plugins/dumb/dumb-kode54/src/it/readstm2.c",
-    "plugins/dumb/dumb-kode54/src/it/reads3m2.c",
-    "plugins/dumb/dumb-kode54/src/it/loads3m2.c",
-    "plugins/dumb/dumb-kode54/src/it/loadoldpsm.c",
-    "plugins/dumb/dumb-kode54/src/it/xmeffect.c",
-    "plugins/dumb/dumb-kode54/src/helpers/riff.c",
-    "plugins/dumb/dumb-kode54/src/helpers/memfile.c",
-    "plugins/dumb/dumb-kode54/src/helpers/silence.c",
-    "plugins/dumb/dumb-kode54/src/helpers/stdfile.c",
-    "plugins/dumb/dumb-kode54/src/helpers/clickrem.c",
-    "plugins/dumb/dumb-kode54/src/helpers/tarray.c",
-    "plugins/dumb/dumb-kode54/src/helpers/resample.c",
-    "plugins/dumb/dumb-kode54/src/helpers/barray.c",
-    "plugins/dumb/dumb-kode54/src/helpers/lpc.c",
-    "plugins/dumb/dumb-kode54/src/helpers/resampler.c",
-    "plugins/dumb/dumb-kode54/src/helpers/sampbuf.c",
-    "plugins/dumb/dumb-kode54/src/core/unload.c",
-    "plugins/dumb/dumb-kode54/src/core/loadduh.c",
-    "plugins/dumb/dumb-kode54/src/core/duhlen.c",
-    "plugins/dumb/dumb-kode54/src/core/register.c",
-    "plugins/dumb/dumb-kode54/src/core/rawsig.c",
-    "plugins/dumb/dumb-kode54/src/core/rendduh.c",
-    "plugins/dumb/dumb-kode54/src/core/makeduh.c",
-    "plugins/dumb/dumb-kode54/src/core/duhtag.c",
-    "plugins/dumb/dumb-kode54/src/core/readduh.c",
-    "plugins/dumb/dumb-kode54/src/core/dumbfile.c",
-    "plugins/dumb/dumb-kode54/src/core/atexit.c",
-    "plugins/dumb/dumb-kode54/src/core/rendsig.c",
-    "plugins/dumb/dumb-kode54/src/tools/it/modulus.h",
-    "plugins/dumb/dumb-kode54/include/internal/it.h",
-    "plugins/dumb/dumb-kode54/include/internal/dumb.h",
-    "plugins/dumb/dumb-kode54/include/internal/barray.h",
-    "plugins/dumb/dumb-kode54/include/internal/tarray.h",
-    "plugins/dumb/dumb-kode54/include/internal/resampler.h",
-    "plugins/dumb/dumb-kode54/include/internal/riff.h",
-    "plugins/dumb/dumb-kode54/include/internal/lpc.h",
-    "plugins/dumb/dumb-kode54/include/internal/dumbfile.h",
-    "plugins/dumb/dumb-kode54/include/internal/stack_alloc.h",
-    "plugins/dumb/dumb-kode54/include/dumb.h",
+    "plugins/dumb/dumb-kode54/src/it/*.c",
+    "plugins/dumb/dumb-kode54/src/helpers/*.c",
+    "plugins/dumb/dumb-kode54/src/core/*.c",
     "plugins/dumb/dumb-kode54/src/helpers/resample.inc",
     "plugins/dumb/dumb-kode54/src/helpers/resamp2.inc",
     "plugins/dumb/dumb-kode54/src/helpers/resamp3.inc",
     "plugins/dumb/modloader.cpp",
-    "plugins/dumb/modloader.h",
-    "plugins/dumb/umr.h",
-    "plugins/dumb/unmo3.h",
     "plugins/dumb/unrealfmt.cpp",
     "plugins/dumb/unrealfmtdata.cpp",
-    "plugins/dumb/urf.h",
     "plugins/dumb/cdumb.c",
-    "plugins/dumb/cdumb.h",
     "plugins/dumb/dumb-kode54/src/helpers/resampler_sse2.c"
   }
   includedirs {
@@ -606,7 +336,6 @@ project "gme_plugin"
   files {
     "plugins/gme/cgme.c",
     "plugins/gme/gmewrap.cpp",
-    "plugins/gme/gmewrap.h",
     "plugins/gme/game-music-emu-0.6pre/gme/Ay_Apu.cpp",
     "plugins/gme/game-music-emu-0.6pre/gme/Ay_Core.cpp",
     "plugins/gme/game-music-emu-0.6pre/gme/Ay_Cpu.cpp",
@@ -755,168 +484,11 @@ project "gme_plugin"
     "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/yam.c",
     "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/resampler.c",
     "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/VGMPlay.c",
-    "plugins/gme/game-music-emu-0.6pre/gme/Ay_Apu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Ay_Core.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Ay_Emu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Blip_Buffer.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Blip_Buffer_impl.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Blip_Buffer_impl2.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Bml_Parser.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Classic_Emu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Data_Reader.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Downsampler.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Dual_Resampler.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Effects_Buffer.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Fir_Resampler.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Gb_Apu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Gb_Cpu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Gb_Cpu_run.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Gb_Oscs.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Gbs_Core.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Gbs_Emu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Gme_File.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Gme_Loader.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Gym_Emu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Hes_Apu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Hes_Apu_Adpcm.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Hes_Core.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Hes_Cpu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Hes_Cpu_run.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Hes_Emu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Kss_Core.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Kss_Emu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Kss_Scc_Apu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/M3u_Playlist.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Multi_Buffer.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Music_Emu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Nes_Apu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Nes_Cpu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Nes_Cpu_run.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Nes_Fds_Apu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Nes_Fme7_Apu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Nes_Mmc5_Apu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Nes_Namco_Apu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Nes_Oscs.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Nes_Vrc6_Apu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Nes_Vrc7_Apu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Nsf_Core.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Nsf_Emu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Nsf_Impl.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Nsfe_Emu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Opl_Apu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Resampler.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Rom_Data.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Sap_Apu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Sap_Core.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Sap_Emu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Sgc_Core.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Sgc_Emu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Sgc_Impl.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Sms_Apu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Sms_Fm_Apu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Spc_Emu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Spc_Filter.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Spc_Sfm.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Track_Filter.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Upsampler.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Vgm_Core.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Vgm_Emu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Ym2413_Emu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Ym2612_Emu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Z80_Cpu.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/Z80_Cpu_run.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/adlib.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/blargg_common.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/blargg_config.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/blargg_endian.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/blargg_errors.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/blargg_source.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/gme.h",
-    "plugins/gme/game-music-emu-0.6pre/gme/gme_custom_dprintf.h",
     "plugins/gme/game-music-emu-0.6pre/gme/higan/dsp/dsp.hpp",
-    "plugins/gme/game-music-emu-0.6pre/gme/higan/dsp/SPC_DSP.h",
     "plugins/gme/game-music-emu-0.6pre/gme/higan/processor/spc700/memory.hpp",
     "plugins/gme/game-music-emu-0.6pre/gme/higan/processor/spc700/registers.hpp",
     "plugins/gme/game-music-emu-0.6pre/gme/higan/processor/spc700/spc700.hpp",
-    "plugins/gme/game-music-emu-0.6pre/gme/higan/smp/smp.hpp",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/ChipMapper.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/2151intf.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/2203intf.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/2413intf.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/2413tone.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/2608intf.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/2610intf.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/2612intf.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/262intf.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/281btone.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/3526intf.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/3812intf.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/8950intf.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/adlibemu.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/ay8910.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/ay_intf.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/c140.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/c352.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/c6280.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/c6280intf.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/ChipIncl.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/dac_control.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/emu2149.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/emu2413.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/emutypes.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/es5503.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/es5506.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/fm.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/fmopl.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/gb.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/iremga20.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/k051649.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/k053260.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/k054539.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/mamedef.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/multipcm.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/nes_apu.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/nes_defs.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/nes_intf.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/np_nes_apu.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/np_nes_dmc.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/np_nes_fds.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/okim6258.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/okim6295.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/Ootake_PSG.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/opl.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/panning.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/pokey.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/pwm.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/qsound.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/rf5c68.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/saa1099.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/scd_pcm.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/scsp.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/segapcm.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/sn76489.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/sn76496.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/sn764intf.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/upd7759.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/vrc7tone.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/vsu.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/ws_audio.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/ws_initialIo.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/x1_010.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/ym2151.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/ym2413.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/ym2612.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/ymdeltat.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/ymf262.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/ymf271.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/ymf278b.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/ymz280b.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/chips/yam.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/resampler.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/stdbool.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/VGMFile.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/VGMPlay.h",
-    "plugins/gme/game-music-emu-0.6pre/vgmplay/VGMPlay/VGMPlay_Intf.h",
+    "plugins/gme/game-music-emu-0.6pre/gme/higan/smp/smp.hpp"
   }
   includedirs {
     "plugins/gme/game-music-emu-0.6pre/gme/",
@@ -936,15 +508,7 @@ project "mms_plugin"
   "plugins/mms/libmms/mms.c",
   "plugins/mms/libmms/mmsh.c",
   "plugins/mms/libmms/mmsx.c",
-  "plugins/mms/libmms/uri.c",
-  "plugins/mms/libmms/asfheader.h",
-  "plugins/mms/libmms/bswap.h",
-  "plugins/mms/libmms/mms-common.h",
-  "plugins/mms/libmms/mms.h",
-  "plugins/mms/libmms/mmsh.h",
-  "plugins/mms/libmms/mmsio.h",
-  "plugins/mms/libmms/mmsx.h",
-  "plugins/mms/libmms/uri.h"
+  "plugins/mms/libmms/uri.c"
   }
   includedirs {
     "plugins/mms/"
@@ -984,136 +548,28 @@ project "sc68_plugin"
   targetname "sc68"
   files {
     "plugins/sc68/in_sc68.c",
-    "plugins/sc68/file68/src/gzip68.c",
-    "plugins/sc68/file68/src/vfs68.c",
-    "plugins/sc68/file68/src/ice68.c",
-    "plugins/sc68/file68/src/vfs68_ao.c",
-    "plugins/sc68/file68/src/vfs68_null.c",
-    "plugins/sc68/file68/src/replay.inc.h",
-    "plugins/sc68/file68/src/msg68.c",
-    "plugins/sc68/file68/src/timedb68.c",
-    "plugins/sc68/file68/src/timedb.inc.h",
-    "plugins/sc68/file68/src/init68.c",
-    "plugins/sc68/file68/src/vfs68_z.c",
-    "plugins/sc68/file68/src/replay68.c",
-    "plugins/sc68/file68/src/registry68.c",
-    "plugins/sc68/file68/src/uri68.c",
-    "plugins/sc68/file68/src/rsc68.c",
-    "plugins/sc68/file68/src/vfs68_fd.c",
-    "plugins/sc68/file68/src/vfs68_file.c",
-    "plugins/sc68/file68/src/vfs68_mem.c",
-    "plugins/sc68/file68/src/file68.c",
-    "plugins/sc68/file68/src/string68.c",
-    "plugins/sc68/file68/src/endian68.c",
-    "plugins/sc68/file68/src/vfs68_curl.c",
-    "plugins/sc68/file68/src/option68.c",
-    "plugins/sc68/file68/src/ferror68.c",
-    "plugins/sc68/file68/sc68/file68_vfs_ao.h",
-    "plugins/sc68/file68/sc68/file68.h",
-    "plugins/sc68/file68/sc68/file68_ord.h",
-    "plugins/sc68/file68/sc68/file68_tag.h",
-    "plugins/sc68/file68/sc68/file68_vfs_curl.h",
-    "plugins/sc68/file68/sc68/file68_str.h",
-    "plugins/sc68/file68/sc68/file68_features.h",
-    "plugins/sc68/file68/sc68/file68_vfs_def.h",
-    "plugins/sc68/file68/sc68/file68_msg.h",
-    "plugins/sc68/file68/sc68/file68_vfs_file.h",
-    "plugins/sc68/file68/sc68/file68_api.h",
-    "plugins/sc68/file68/sc68/file68_chk.h",
-    "plugins/sc68/file68/sc68/file68_ice.h",
-    "plugins/sc68/file68/sc68/file68_err.h",
-    "plugins/sc68/file68/sc68/file68_opt.h",
-    "plugins/sc68/file68/sc68/file68_vfs_mem.h",
-    "plugins/sc68/file68/sc68/file68_rsc.h",
-    "plugins/sc68/file68/sc68/file68_zip.h",
-    "plugins/sc68/file68/sc68/file68_vfs_null.h",
-    "plugins/sc68/file68/sc68/file68_tdb.h",
-    "plugins/sc68/file68/sc68/file68_reg.h",
-    "plugins/sc68/file68/sc68/file68_vfs_fd.h",
-    "plugins/sc68/file68/sc68/file68_vfs.h",
-    "plugins/sc68/file68/sc68/file68_uri.h",
-    "plugins/sc68/file68/sc68/file68_vfs_z.h",
-    "plugins/sc68/libsc68/dial68/dial68.h",
-    "plugins/sc68/libsc68/dial68/dial68.c",
-    "plugins/sc68/libsc68/dial68/dial_conf.c",
-    "plugins/sc68/libsc68/dial68/dial_finf.c",
-    "plugins/sc68/libsc68/dial68/dial_tsel.c",
-    "plugins/sc68/unice68/unice68.h",
+    "plugins/sc68/file68/src/*.c",
+    "plugins/sc68/libsc68/dial68/*.c",
     "plugins/sc68/unice68/unice68_unpack.c",
     "plugins/sc68/unice68/unice68_pack.c",
     "plugins/sc68/unice68/unice68_version.c",
     "plugins/sc68/libsc68/conf68.c",
     "plugins/sc68/libsc68/api68.c",
     "plugins/sc68/libsc68/mixer68.c",
-    "plugins/sc68/libsc68/io68/io68_api.h",
-    "plugins/sc68/libsc68/io68/paulaemul.c",
-    "plugins/sc68/libsc68/io68/io68.h",
-    "plugins/sc68/libsc68/io68/shifter_io.h",
-    "plugins/sc68/libsc68/io68/ym_envel.c",
-    "plugins/sc68/libsc68/io68/mfp_io.h",
-    "plugins/sc68/libsc68/io68/ym_dump.h",
-    "plugins/sc68/libsc68/io68/ym_blep.h",
-    "plugins/sc68/libsc68/io68/ymemul.c",
-    "plugins/sc68/libsc68/io68/mwemul.h",
-    "plugins/sc68/libsc68/io68/ymoutorg.h",
-    "plugins/sc68/libsc68/io68/shifter_io.c",
-    "plugins/sc68/libsc68/io68/paula_io.c",
-    "plugins/sc68/libsc68/io68/mw_io.c",
-    "plugins/sc68/libsc68/io68/mw_io.h",
-    "plugins/sc68/libsc68/io68/mfpemul.h",
-    "plugins/sc68/libsc68/io68/paula_io.h",
-    "plugins/sc68/libsc68/io68/ym_dump.c",
-    "plugins/sc68/libsc68/io68/mfp_io.c",
-    "plugins/sc68/libsc68/io68/mwemul.c",
-    "plugins/sc68/libsc68/io68/paulaemul.h",
-    "plugins/sc68/libsc68/io68/ym_fixed_vol.h",
-    "plugins/sc68/libsc68/io68/ym_io.c",
-    "plugins/sc68/libsc68/io68/io68.c",
-    "plugins/sc68/libsc68/io68/ym_puls.h",
-    "plugins/sc68/libsc68/io68/ym_blep.c",
-    "plugins/sc68/libsc68/io68/ymemul.h",
-    "plugins/sc68/libsc68/io68/ymout2k9.h",
-    "plugins/sc68/libsc68/io68/default.h",
-    "plugins/sc68/libsc68/io68/mfpemul.c",
-    "plugins/sc68/libsc68/io68/ym_io.h",
-    "plugins/sc68/libsc68/io68/ym_puls.c",
+    "plugins/sc68/libsc68/io68/*.c",
     "plugins/sc68/libsc68/libsc68.c",
-    "plugins/sc68/libsc68/emu68/inl68_datamove.h",
     "plugins/sc68/libsc68/emu68/lines68.c",
-    "plugins/sc68/libsc68/emu68/lines68.h",
-    "plugins/sc68/libsc68/emu68/inl68_bitmanip.h",
-    "plugins/sc68/libsc68/emu68/inst68.h",
-    "plugins/sc68/libsc68/emu68/inl68_progctrl.h",
-    "plugins/sc68/libsc68/emu68/cc68.h",
-    "plugins/sc68/libsc68/emu68/macro68.h",
-    "plugins/sc68/libsc68/emu68/mem68.h",
-    "plugins/sc68/libsc68/emu68/error68.h",
     "plugins/sc68/libsc68/emu68/ioplug68.c",
-    "plugins/sc68/libsc68/emu68/inl68_logic.h",
     "plugins/sc68/libsc68/emu68/mem68.c",
-    "plugins/sc68/libsc68/emu68/assert68.h",
     "plugins/sc68/libsc68/emu68/getea68.c",
-    "plugins/sc68/libsc68/emu68/inl68_exception.h",
     "plugins/sc68/libsc68/emu68/inst68.c",
     "plugins/sc68/libsc68/emu68/emu68.c",
-    "plugins/sc68/libsc68/emu68/srdef68.h",
-    "plugins/sc68/libsc68/emu68/type68.h",
-    "plugins/sc68/libsc68/emu68/struct68.h",
     "plugins/sc68/libsc68/emu68/error68.c",
-    "plugins/sc68/libsc68/emu68/excep68.h",
-    "plugins/sc68/libsc68/emu68/emu68.h",
-    "plugins/sc68/libsc68/emu68/inl68_shifting.h",
-    "plugins/sc68/libsc68/emu68/inl68_arithmetic.h",
-    "plugins/sc68/libsc68/emu68/inl68_bcd.h",
-    "plugins/sc68/libsc68/emu68/inl68_systctrl.h",
-    "plugins/sc68/libsc68/emu68/emu68_api.h",
-    "plugins/sc68/libsc68/emu68/ioplug68.h",
-    "plugins/sc68/libsc68/sc68/trap68.h",
-    "plugins/sc68/libsc68/sc68/conf68.h",
-    "plugins/sc68/libsc68/sc68/sc68.h",
-    "plugins/sc68/libsc68/sc68/mixer68.h",
-    "plugins/sc68/desa68/desa68.h",
     "plugins/sc68/desa68/desa68.c"
+  }
+  excludes {
+    "plugins/sc68/libsc68/io68/ym_atarist_table.c",
+    "plugins/sc68/libsc68/io68/ym_linear_table.c"
   }
   includedirs {
     "plugins/sc68/file68",
@@ -1161,7 +617,7 @@ end
 
 if option ("plugin-shn") then
 project "shn_plugin"
-  targetname "shn"
+  targetname "ddb_shn"
   files {
     "plugins/shn/array.c",
     "plugins/shn/convert.c",
@@ -1171,13 +627,12 @@ project "shn_plugin"
     "plugins/shn/shn.c",
     "plugins/shn/shn.h",
     "plugins/shn/shorten.c",
-    "plugins/shn/shorten.h",
     "plugins/shn/sulawalaw.c",
     "plugins/shn/vario.c",
-    "plugins/shn/wave.c",
-    "plugins/shn/bitshift.h"
+    "plugins/shn/wave.c"
   }
   buildoptions {"-include stdint.h"}
+  links {"m"}
 end
 
 if option ("plugin-vfs_zip", "libzip") then
@@ -1193,9 +648,6 @@ project "vtx"
   files {
     "plugins/vtx/vtx.c",
     "plugins/vtx/ay8912.c",
-    "plugins/vtx/ayemu_8912.h",
-    "plugins/vtx/ayemu.h",
-    "plugins/vtx/ayemu_vtxfile.h",
     "plugins/vtx/lh5dec.c",
     "plugins/vtx/vtxfile.c"
   }
@@ -1208,25 +660,12 @@ project "wma"
     "plugins/wma/wma_plugin.c",
     "plugins/wma/asfheader.c",
     "plugins/wma/libasf/asf.c",
-    "plugins/wma/libasf/asf.h",
     "plugins/wma/libwma/wmafixed.c",
     "plugins/wma/libwma/wmadeci.c",
     "plugins/wma/libwma/fft-ffmpeg.c",
     "plugins/wma/libwma/mdct_lookup.c",
     "plugins/wma/libwma/mdct.c",
     "plugins/wma/libwma/ffmpeg_bitstream.c",
-    "plugins/wma/libwma/asm_arm.h",
-    "plugins/wma/libwma/fft-ffmpeg_arm.h",
-    "plugins/wma/libwma/types.h",
-    "plugins/wma/libwma/codeclib_misc.h",
-    "plugins/wma/libwma/fft.h",
-    "plugins/wma/libwma/wmadata.h",
-    "plugins/wma/libwma/ffmpeg_get_bits.h",
-    "plugins/wma/libwma/mdct.h",
-    "plugins/wma/libwma/wmadec.h",
-    "plugins/wma/libwma/ffmpeg_intreadwrite.h",
-    "plugins/wma/libwma/mdct_lookup.h",
-    "plugins/wma/libwma/wmafixed.h",
   }
   includedirs {"plugins/wma"}
 end
@@ -1235,7 +674,6 @@ if option ("plugin-flac", "flac ogg") then
 project "flac_plugin"
   targetname "flac"
   files {
-    "plugins/flac/*.h",
     "plugins/flac/*.c"
   }
   defines {"HAVE_OGG_STREAM_FLUSH_FILL"}
@@ -1246,7 +684,6 @@ if option ("plugin-wavpack", "wavpack") then
 project "wavpack_plugin"
   targetname "wavpack"
   files {
-    "plugins/wavpack/*.h",
     "plugins/wavpack/*.c",
   }
   links {"wavpack"}
@@ -1256,7 +693,6 @@ if option ("plugin-ffmpeg", "libavformat") then
 project "ffmpeg"
   targetname "ffmpeg"
   files {
-    "plugins/ffmpeg/*.h",
     "plugins/ffmpeg/*.c",
   }
   pkgconfig ("libavformat")
@@ -1267,7 +703,6 @@ if option ("plugin-vorbis", "vorbisfile vorbis ogg") then
 project "vorbis_plugin"
   targetname "vorbis"
   files {
-    "plugins/vorbis/*.h",
     "plugins/vorbis/*.c"
   }
   defines {"HAVE_OGG_STREAM_FLUSH_FILL"}
@@ -1282,7 +717,6 @@ if option ("plugin-opus", "opusfile opus ogg") then
 project "opus_plugin"
   targetname "opus"
   files {
-    "plugins/opus/*.h",
     "plugins/opus/*.c"
   }
   defines {"HAVE_OGG_STREAM_FLUSH_FILL"}
@@ -1299,7 +733,6 @@ end
 if option ("plugin-ffap") then
 project "ffap"
   files {
-    "plugins/ffap/*.h",
     "plugins/ffap/*.c",
     "plugins/ffap/dsputil_yasm.asm",
   }
@@ -1309,9 +742,7 @@ end
 if option ("plugin-hotkeys") then
 project "hotkeys"
   files {
-    "plugins/hotkeys/*.h",
     "plugins/hotkeys/*.c",
-    "plugins/libparser/*.h",
     "plugins/libparser/*.c"
   }
   filter "system:not windows"
@@ -1329,7 +760,6 @@ end
 if option ("plugin-portaudio", "portaudio-2.0") then
 project "portaudio"
   files {
-    "plugins/portaudio/*.h",
     "plugins/portaudio/*.c"
   }
   buildoptions {"-fblocks"}
@@ -1340,7 +770,6 @@ end
 if option ("plugin-waveout") then
 project "waveout"
   files {
-    "plugins/waveout/*.h",
     "plugins/waveout/*.c"
   }
   links {"winmm", "ksuser"}
@@ -1350,15 +779,10 @@ end
 if option ("plugin-gtk2", "gtk+-2.0 jansson") then
 project "ddb_gui_GTK2"
   files {
-    "plugins/gtkui/*.h",
     "plugins/gtkui/*.c",
     "shared/eqpreset.c",
-    "shared/eqpreset.h",
-    "shared/pluginsettings.h",
     "shared/pluginsettings.c",
-    "shared/trkproperties_shared.h",
     "shared/trkproperties_shared.c",
-    "plugins/libparser/parser.h",
     "plugins/libparser/parser.c",
     "utf8.c"
   }
@@ -1377,15 +801,10 @@ end
 if option ("plugin-gtk3", "gtk+-3.0 jansson") then
 project "ddb_gui_GTK3"
   files {
-    "plugins/gtkui/*.h",
     "plugins/gtkui/*.c",
     "shared/eqpreset.c",
-    "shared/eqpreset.h",
-    "shared/pluginsettings.h",
     "shared/pluginsettings.c",
-    "shared/trkproperties_shared.h",
     "shared/trkproperties_shared.c",
-    "plugins/libparser/parser.h",
     "plugins/libparser/parser.c",
     "utf8.c"
   }
@@ -1405,9 +824,7 @@ end
 if option ("plugin-rg_scanner") then
 project "rg_scanner"
   files {
-    "plugins/rg_scanner/*.h",
     "plugins/rg_scanner/*.c",
-    "plugins/rg_scanner/ebur128/*.h",
     "plugins/rg_scanner/ebur128/*.c"
   }
 end
@@ -1416,7 +833,6 @@ if option ("plugin-converter") then
 project "converter"
   files {
     "plugins/converter/converter.c",
-    "shared/mp4tagutil.h",
     "shared/mp4tagutil.c"
   }
   links {"mp4p"}
@@ -1426,9 +842,7 @@ if option ("plugin-shellexec", "jansson") then
 project "shellexec"
   files {
     "plugins/shellexec/shellexec.c",
-    "plugins/shellexec/shellexec.h",
-    "plugins/shellexec/shellexecutil.c",
-    "plugins/shellexec/shellexecutil.h"
+    "plugins/shellexec/shellexecutil.c"
   }
   pkgconfig("jansson")
 end
@@ -1437,8 +851,7 @@ if option ("plugin-sndfile", "sndfile") then
 project "sndfile_plugin"
   targetname "sndfile"
   files {
-    "plugins/sndfile/*.c",
-    "plugins/sndfile/*.h",
+    "plugins/sndfile/*.c"
   }
   links {"sndfile"}
 end
@@ -1532,7 +945,6 @@ if option ("plugin-m3u") then
 project "m3u"
   files {
     "plugins/m3u/*.c",
-    "plugins/m3u/*.h",
   }
 end
 
@@ -1540,7 +952,6 @@ if option ("plugin-vfs_curl", "libcurl") then
 project "vfs_curl"
   files {
     "plugins/vfs_curl/*.c",
-    "plugins/vfs_curl/*.h",
   }
   links {"curl"}
 end
@@ -1603,10 +1014,7 @@ project "shellexecui_gtk2"
     "plugins/shellexecui/shellexecui.c",
     "plugins/shellexecui/interface.c",
     "plugins/shellexecui/support.c",
-    "plugins/shellexecui/callbacks.c",
-    "plugins/shellexecui/interface.h",
-    "plugins/shellexecui/support.h",
-    "plugins/shellexecui/callbacks.h"
+    "plugins/shellexecui/callbacks.c"
   }
   pkgconfig ("gtk+-2.0 jansson")
 end
@@ -1617,10 +1025,7 @@ project "shellexecui_gtk3"
     "plugins/shellexecui/shellexecui.c",
     "plugins/shellexecui/interface.c",
     "plugins/shellexecui/support.c",
-    "plugins/shellexecui/callbacks.c",
-    "plugins/shellexecui/interface.h",
-    "plugins/shellexecui/support.h",
-    "plugins/shellexecui/callbacks.h"
+    "plugins/shellexecui/callbacks.c"
   }
   pkgconfig ("gtk+-3.0 jansson")
 end
@@ -1629,9 +1034,7 @@ if option ("plugin-wildmidi") then
 project "wildmidi_plugin"
   targetname "wildmidi"
   files {
-    "plugins/wildmidi/*.h",
     "plugins/wildmidi/*.c",
-    "plugins/wildmidi/src/*.h",
     "plugins/wildmidi/src/*.c"
   }
   excludes {
@@ -1655,18 +1058,7 @@ project "musepack_plugin"
     "plugins/musepack/requant.c",
     "plugins/musepack/streaminfo.c",
     "plugins/musepack/synth_filter.c",
-    "plugins/musepack/crc32.c",
-    "plugins/musepack/decoder.h",
-    "plugins/musepack/huffman.h",
-    "plugins/musepack/internal.h",
-    "plugins/musepack/mpc_bits_reader.h",
-    "plugins/musepack/mpc/mpcdec.h",
-    "plugins/musepack/mpcdec_math.h",
-    "plugins/musepack/mpc/reader.h",
-    "plugins/musepack/requant.h",
-    "plugins/musepack/mpc/streaminfo.h",
-    "plugins/musepack/mpc/mpc_types.h",
-    "plugins/musepack/mpc/minimax.h"
+    "plugins/musepack/crc32.c"
   }
   includedirs {"plugins/musepack"}
   links {"m"}
@@ -1677,7 +1069,6 @@ project "artwork_plugin"
   targetname "artwork"
   files {
     "plugins/artwork-legacy/*.c",
-    "shared/mp4tagutil.h",
     "shared/mp4tagutil.c"
   }
   includedirs {"../libmp4ff"}
@@ -1706,7 +1097,6 @@ end
 if option ("plugin-nullout") then
 project "nullout"
   files {
-    "plugins/nullout/*.h",
     "plugins/nullout/*.c"
   }
 end
@@ -1714,7 +1104,6 @@ end
 if option ("plugin-lastfm", "libcurl") then
 project "lastfm"
   files {
-    "plugins/lastfm/*.h",
     "plugins/lastfm/*.c"
   }
   buildoptions {"-fblocks"}
@@ -1728,22 +1117,7 @@ project "ddb_soundtouch"
   files {
     "plugins/soundtouch/plugin.c",
     "plugins/soundtouch/st.cpp",
-    "plugins/soundtouch/soundtouch/source/SoundTouch/AAFilter.cpp",
-    "plugins/soundtouch/soundtouch/source/SoundTouch/BPMDetect.cpp",
-    "plugins/soundtouch/soundtouch/source/SoundTouch/FIFOSampleBuffer.cpp",
-    "plugins/soundtouch/soundtouch/source/SoundTouch/FIRFilter.cpp",
-    "plugins/soundtouch/soundtouch/source/SoundTouch/InterpolateCubic.cpp",
-    "plugins/soundtouch/soundtouch/source/SoundTouch/InterpolateLinear.cpp",
-    "plugins/soundtouch/soundtouch/source/SoundTouch/InterpolateShannon.cpp",
-    "plugins/soundtouch/soundtouch/source/SoundTouch/PeakFinder.cpp",
-    "plugins/soundtouch/soundtouch/source/SoundTouch/RateTransposer.cpp",
-    "plugins/soundtouch/soundtouch/source/SoundTouch/SoundTouch.cpp",
-    "plugins/soundtouch/soundtouch/source/SoundTouch/SoundTouch.sln",
-    "plugins/soundtouch/soundtouch/source/SoundTouch/SoundTouch.vcxproj",
-    "plugins/soundtouch/soundtouch/source/SoundTouch/TDStretch.cpp",
-    "plugins/soundtouch/soundtouch/source/SoundTouch/cpu_detect_x86.cpp",
-    "plugins/soundtouch/soundtouch/source/SoundTouch/mmx_optimized.cpp",
-    "plugins/soundtouch/soundtouch/source/SoundTouch/sse_optimized.cpp"
+    "plugins/soundtouch/soundtouch/source/SoundTouch/*.cpp"
   }
 end
 
@@ -1751,17 +1125,14 @@ if option ("plugin-tta") then
 project "tta"
   files {
     "plugins/tta/ttaplug.c",
-    "plugins/tta/filter.h",
-    "plugins/tta/ttadec.c",
-    "plugins/tta/ttadec.h"
+    "plugins/tta/ttadec.c"
   }
 end
 
 if option ("plugin-medialib") then
 project "medialib"
   files {
-    "plugins/medialib/medialib.c",
-    "plugins/medialib/medialib.h"
+    "plugins/medialib/medialib.c"
   }
   pkgconfig ("jansson")
 end
