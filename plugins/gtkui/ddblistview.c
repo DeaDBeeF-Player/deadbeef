@@ -593,11 +593,48 @@ ddb_listview_reconf_scrolling (void *ps) {
 }
 
 static void
+ddb_listview_update_scroll_ref_point (DdbListview *ps);
+
+static void
+set_fwidth (DdbListview *ps, float list_width);
+
+static void
+autoresize_columns (DdbListview *listview, int list_width, int list_height);
+
+static void
+_update_fwidth (DdbListview *ps, int prev_width) {
+    GtkAllocation a;
+    gtk_widget_get_allocation (GTK_WIDGET (ps), &a);
+    if (ps->lock_columns != -1 && ps->view_realized) {
+        if (!deadbeef->conf_get_int ("gtkui.autoresize_columns", 0) || ps->header_sizing != -1) {
+            set_fwidth (ps, a.width);
+        }
+        else if (a.width != prev_width) {
+            int prev_scrollpos = ps->scrollpos;
+            ddb_listview_update_scroll_ref_point (ps);
+            if (ps->fwidth == -1) {
+                set_fwidth (ps, prev_width);
+            }
+            autoresize_columns (ps, a.width, a.height);
+        }
+    }
+}
+
+static gboolean
+_initial_resizing_finished (void *ctx) {
+    DdbListview *ps = ctx;
+    ps->view_realized = 1;
+    GtkAllocation a;
+    gtk_widget_get_allocation (GTK_WIDGET (ps), &a);
+    _update_fwidth (ps, a.width);
+    return FALSE;
+}
+
+static void
 ddb_listview_list_realize                    (GtkWidget       *widget,
         gpointer         user_data)
 {
     DdbListview *listview = DDB_LISTVIEW(g_object_get_data(G_OBJECT(widget), "owner"));
-    listview->handle_first_configure = 1;
     if (listview->binding->drag_n_drop) {
         GtkTargetEntry entry = {
             .target = TARGET_PLAYITEMS,
@@ -609,6 +646,9 @@ ddb_listview_list_realize                    (GtkWidget       *widget,
         gtk_drag_dest_add_uri_targets (widget);
     }
     ddb_listview_update_fonts(listview);
+
+    // defer column autoresizing until after the initial window resizing settles down
+    g_timeout_add (100, _initial_resizing_finished, listview);
 }
 
 static int
@@ -1084,7 +1124,7 @@ ddb_listview_list_expose_event (GtkWidget *widget, GdkEventExpose *event, gpoint
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data(G_OBJECT (widget), "owner"));
 
-    if (!list_is_realized (ps)) {
+    if (!ps->view_realized) {
         return FALSE; // drawing was called too early
     }
 
@@ -2770,10 +2810,6 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
     // the values in event->width/height are broken since GTK-3.22.1, so let's use widget's allocation instead, and hope this is reliable.
     GtkAllocation a;
     gtk_widget_get_allocation (GTK_WIDGET (widget), &a);
-    if (ps->handle_first_configure) {
-        ps->handle_first_configure = 0;
-        prev_width = a.width;
-    }
 
     if (a.width != prev_width || a.height != ps->list_height) {
         ps->list_width = a.width;
@@ -2784,19 +2820,7 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
         ddb_listview_list_update_total_width (ps, total_columns_width(ps), a.width);
     }
 
-    if (ps->lock_columns != -1) {
-        if (!deadbeef->conf_get_int ("gtkui.autoresize_columns", 0) || ps->header_sizing != -1) {
-            set_fwidth (ps, a.width);
-        }
-        else if (a.width != prev_width) {
-            int prev_scrollpos = ps->scrollpos;
-            ddb_listview_update_scroll_ref_point (ps);
-            if (ps->fwidth == -1) {
-                set_fwidth (ps, prev_width);
-            }
-            autoresize_columns (ps, a.width, a.height);
-        }
-    }
+    _update_fwidth (ps, prev_width);
 
     return FALSE;
 }

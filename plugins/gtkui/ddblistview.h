@@ -185,7 +185,7 @@ struct _DdbListview {
     int header_prepare;
     int col_autoresize;
     float fwidth;
-    int handle_first_configure;
+    int view_realized;
 
     struct _DdbListviewColumn *columns;
     gboolean lock_columns;
