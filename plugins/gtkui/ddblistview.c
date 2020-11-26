@@ -597,6 +597,7 @@ ddb_listview_list_realize                    (GtkWidget       *widget,
         gpointer         user_data)
 {
     DdbListview *listview = DDB_LISTVIEW(g_object_get_data(G_OBJECT(widget), "owner"));
+    listview->handle_first_configure = 1;
     if (listview->binding->drag_n_drop) {
         GtkTargetEntry entry = {
             .target = TARGET_PLAYITEMS,
@@ -2769,6 +2770,10 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
     // the values in event->width/height are broken since GTK-3.22.1, so let's use widget's allocation instead, and hope this is reliable.
     GtkAllocation a;
     gtk_widget_get_allocation (GTK_WIDGET (widget), &a);
+    if (ps->handle_first_configure) {
+        ps->handle_first_configure = 0;
+        prev_width = a.width;
+    }
 
     if (a.width != prev_width || a.height != ps->list_height) {
         ps->list_width = a.width;
