@@ -3904,7 +3904,7 @@
 		2D00F7142435354F000FC130 /* Data_Reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Data_Reader.h; sourceTree = "<group>"; };
 		2D00F7152435354F000FC130 /* Nes_Cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nes_Cpu.h; sourceTree = "<group>"; };
 		2D00F7162435354F000FC130 /* Hes_Apu_Adpcm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hes_Apu_Adpcm.cpp; sourceTree = "<group>"; };
-		2D00F7172435354F000FC130 /* blargg_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blargg_common.h; sourceTree = "<group>"; };
+		2D00F7172435354F000FC130 /* blargg_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blargg_common.h; sourceTree = "<group>"; usesTabs = 1; };
 		2D00F7182435354F000FC130 /* Multi_Buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Multi_Buffer.cpp; sourceTree = "<group>"; };
 		2D00F7192435354F000FC130 /* Ay_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ay_Emu.cpp; sourceTree = "<group>"; };
 		2D00F71A2435354F000FC130 /* Sgc_Impl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sgc_Impl.cpp; sourceTree = "<group>"; };
