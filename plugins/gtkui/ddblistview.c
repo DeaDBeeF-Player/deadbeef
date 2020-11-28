@@ -627,6 +627,7 @@ _initial_resizing_finished (void *ctx) {
     GtkAllocation a;
     gtk_widget_get_allocation (GTK_WIDGET (ps), &a);
     _update_fwidth (ps, a.width);
+    gtk_widget_queue_draw (GTK_WIDGET(ps));
     return FALSE;
 }
 
