@@ -392,11 +392,13 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     // calculate final size of moov
     mp4p_atom_update_size (moov);
 
-    // remove old padding
+    // remove old padding, only if moov is in the beginning
     mp4p_atom_t *next = NULL;
     while (padding && !mp4p_atom_type_compare(padding, "free")) {
         next = padding->next;
-        mp4p_atom_remove_sibling(mp4file, padding, 1);
+        if (padding->pos < mdat->pos) {
+            mp4p_atom_remove_sibling(mp4file, padding, 1);
+        }
         padding = next;
     }
     padding = NULL;
@@ -422,11 +424,6 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     }
     // moov doesn't fit -- put to the end of file
     else {
-        // prepare padding
-        padding = mp4p_atom_new ("free");
-        padding->pos = moov->pos;
-        padding->size = (uint32_t)(eop->pos - moov->pos);
-
         mp4p_atom_remove_sibling(mp4file, moov, 0);
         mp4p_atom_t *tail = mp4file;
         while (tail->next) {
@@ -435,12 +432,18 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
         tail->next = moov;
         moov->pos = tail->pos + tail->size;
 
-        // insert padding before eop
-        for (mp4p_atom_t *before = mp4file; before; before = before->next) {
-            if (before->next == eop) {
-                before->next = padding;
-                padding->next = eop;
-                break;
+        // replace old moov with padding, only if moov is in the beginning
+        if (moov->pos < mdat->pos) {
+            padding = mp4p_atom_new ("free");
+            padding->pos = moov->pos;
+            padding->size = (uint32_t)(eop->pos - moov->pos);
+
+            for (mp4p_atom_t *before = mp4file; before; before = before->next) {
+                if (before->next == eop) {
+                    before->next = padding;
+                    padding->next = eop;
+                    break;
+                }
             }
         }
     }
