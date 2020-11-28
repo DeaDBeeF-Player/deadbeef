@@ -1,4 +1,4 @@
-FROM deadbeef-builder-player-distro
+FROM deadbeef-builder-player-clang-14.04-distro
 
 WORKDIR /usr/src/deadbeef
 COPY . /usr/src/deadbeef
