@@ -1,8 +1,8 @@
 version 1.8.5
 	Added the new ISO/IEC Base Media File Format library MP4P for working with MP4 files, which removes MP4FF dependency
+	Added support for additional per-track metadata in cuesheets
 	Fixed ALAC bug whiuch caused division by zero exception
 	Fixed cuesheet parser bug caused by unknown/unsupported field names
-	Added support for additional per-track metadata in cuesheets
 	Fixed a series of bugs in the Adplug plugin
 	Fixed a bug when parsing MP3 Xing/Info header, reading incorrect packet count
 	Fixed a number of bugs in artwork plugin, especially affecting the Windows version (Jakub Wasylków, Keith Cancel)
@@ -14,7 +14,7 @@ version 1.8.5
 	Fixed on-screen notification bug when too many notifications accumulated at the same time, spawning too many threads
 	Fixed a bug, causing the Band field to be missing from %artist% specifier when using title formatting
 	Fixed bugs leaking file handles in AAC and ALAC plugins (Thomas Jepp)
-	Added support for reading and playing certain non-conformant S3M files
+	Fixed handling certain non-conformant S3M files
 	Fixed a bug where resizing the log window caused the auto-scroll to stop working (Nicolai Syvertsen)
 
 version 1.8.4
