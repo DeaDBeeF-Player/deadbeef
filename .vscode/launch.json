@@ -36,6 +36,18 @@
             "environment": [],
             "externalConsole": true,
             "MIMode": "gdb"
+        },
+        {
+            "name": "(gdb) Launch Debug Linux (Autotools)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/usr/local/bin/deadbeef",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb"
         }
     ]
 }
