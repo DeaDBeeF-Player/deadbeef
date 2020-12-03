@@ -248,6 +248,8 @@ typedef struct {
 static int design_mode;
 static ddb_gtkui_widget_t *rootwidget;
 
+static const char associated_widget_data_id[] = "uiwidget";
+
 //// common functions
 
 void
@@ -680,17 +682,18 @@ w_save (void) {
 
 static void
 on_replace_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    ddb_gtkui_widget_t *ui_widget = g_object_get_data(menuitem, associated_widget_data_id);
     for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
         if (cr->type == user_data) {
             // hack for single-instance
             // first replace with a placeholder, so that the original widget is destroyed
             // then do the real replacement
             ddb_gtkui_widget_t *w = w_create ("placeholder");
-            w_replace (current_widget->parent, current_widget, w);
-            current_widget = w;
+            w_replace (ui_widget->parent, ui_widget, w);
+            ui_widget = w;
             w = w_create (user_data);
-            w_replace (current_widget->parent, current_widget, w);
-            current_widget = w;
+            w_replace (ui_widget->parent, ui_widget, w);
+            ui_widget = w;
         }
     }
     w_save ();
@@ -698,71 +701,75 @@ on_replace_activate (GtkMenuItem *menuitem, gpointer user_data) {
 
 static void
 on_delete_activate (GtkMenuItem *menuitem, gpointer user_data) {
-    ddb_gtkui_widget_t *parent = current_widget->parent;
-    if (!strcmp (current_widget->type, "placeholder")) {
+    ddb_gtkui_widget_t *ui_widget = user_data;
+    ddb_gtkui_widget_t *parent = ui_widget->parent;
+    if (!strcmp (ui_widget->type, "placeholder")) {
         return;
     }
     if (parent->replace) {
-        parent->replace (parent, current_widget, w_create ("placeholder"));
+        parent->replace (parent, ui_widget, w_create ("placeholder"));
     }
     else {
-        w_remove (parent, current_widget);
-        w_destroy (current_widget);
-        current_widget = w_create ("placeholder");
-        w_append (parent, current_widget);
+        w_remove (parent, ui_widget);
+        w_destroy (ui_widget);
+        ui_widget = w_create ("placeholder");
+        w_append (parent, ui_widget);
     }
     w_save ();
 }
 
 static void
 on_cut_activate (GtkMenuItem *menuitem, gpointer user_data) {
-    ddb_gtkui_widget_t *parent = current_widget->parent;
-    if (!strcmp (current_widget->type, "placeholder")) {
+    ddb_gtkui_widget_t *ui_widget = user_data;
+    ddb_gtkui_widget_t *parent = ui_widget->parent;
+    if (!strcmp (ui_widget->type, "placeholder")) {
         return;
     }
     // save hierarchy to string
     paste_buffer[0] = 0;
-    save_widget_to_string (paste_buffer, sizeof (paste_buffer), current_widget);
+    save_widget_to_string (paste_buffer, sizeof (paste_buffer), ui_widget);
 
     if (parent->replace) {
-        parent->replace (parent, current_widget, w_create ("placeholder"));
+        parent->replace (parent, ui_widget, w_create ("placeholder"));
     }
     else {
-        w_remove (parent, current_widget);
-        w_destroy (current_widget);
-        current_widget = w_create ("placeholder");
-        w_append (parent, current_widget);
+        w_remove (parent, ui_widget);
+        w_destroy (ui_widget);
+        ui_widget = w_create ("placeholder");
+        w_append (parent, ui_widget);
     }
     w_save ();
 }
 
 static void
 on_copy_activate (GtkMenuItem *menuitem, gpointer user_data) {
-    ddb_gtkui_widget_t *parent = current_widget->parent;
-    if (!strcmp (current_widget->type, "placeholder")) {
+    ddb_gtkui_widget_t *ui_widget = user_data;
+    ddb_gtkui_widget_t *parent = ui_widget->parent;
+    if (!strcmp (ui_widget->type, "placeholder")) {
         return;
     }
     // save hierarchy to string
     paste_buffer[0] = 0;
-    save_widget_to_string (paste_buffer, sizeof (paste_buffer), current_widget);
+    save_widget_to_string (paste_buffer, sizeof (paste_buffer), ui_widget);
 }
 
 static void
 on_paste_activate (GtkMenuItem *menuitem, gpointer user_data) {
-    ddb_gtkui_widget_t *parent = current_widget->parent;
+    ddb_gtkui_widget_t *ui_widget = user_data;
+    ddb_gtkui_widget_t *parent = ui_widget->parent;
     if (!paste_buffer[0]) {
         return;
     }
 
     ddb_gtkui_widget_t *w = w_create ("placeholder");
-    w_replace (current_widget->parent, current_widget, w);
-    current_widget = w;
+    w_replace (parent, ui_widget, w);
+    ui_widget = w;
 
     w = NULL;
     w_create_from_string (paste_buffer, &w);
-    w_replace (parent, current_widget, w);
+    w_replace (parent, ui_widget, w);
     w_save ();
-    current_widget = w;
+    ui_widget = w;
 }
 
 void
@@ -802,6 +809,92 @@ add_menu_separator (GtkWidget *menu)
     gtk_widget_set_sensitive (separator, FALSE);
 }
 
+static GtkWidget *
+create_widget_menu(ddb_gtkui_widget_t *ui_widget) {
+    GtkWidget *menu;
+    GtkWidget *submenu;
+    GtkWidget *item;
+    menu = gtk_menu_new ();
+
+    const char *widget_title = w_get_title (ui_widget);
+    if (widget_title) {
+        // Add title of widget at the top of the menu
+        item = gtk_menu_item_new_with_mnemonic (widget_title);
+        gtk_widget_show (item);
+        gtk_widget_set_sensitive (item, FALSE);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+
+        add_menu_separator (menu);
+    }
+
+    if (strcmp (ui_widget->type, "placeholder")) {
+        item = gtk_menu_item_new_with_mnemonic (_("Replace with..."));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+    }
+    else {
+        item = gtk_menu_item_new_with_mnemonic (_("Insert..."));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+    }
+
+    submenu = gtk_menu_new ();
+    gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
+
+    for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
+        if (cr->title) {
+            item = gtk_menu_item_new_with_mnemonic (cr->title);
+            gtk_widget_show (item);
+            gtk_container_add (GTK_CONTAINER (submenu), item);
+            g_object_set_data(item, associated_widget_data_id, ui_widget);
+            g_signal_connect ((gpointer) item, "activate",
+                    G_CALLBACK (on_replace_activate),
+                    (void *)cr->type);
+        }
+    }
+
+    if (strcmp (ui_widget->type, "placeholder")) {
+        item = gtk_menu_item_new_with_mnemonic (_("Delete"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_delete_activate),
+                ui_widget);
+
+        item = gtk_menu_item_new_with_mnemonic (_("Cut"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_cut_activate),
+                ui_widget);
+
+        item = gtk_menu_item_new_with_mnemonic (_("Copy"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_copy_activate),
+                ui_widget);
+    }
+
+    item = gtk_menu_item_new_with_mnemonic (_("Paste"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "activate",
+            G_CALLBACK (on_paste_activate),
+            ui_widget);
+
+    if (ui_widget->initmenu) {
+        add_menu_separator (menu);
+        ui_widget->initmenu (ui_widget, menu);
+    }
+    if (ui_widget->parent && ui_widget->parent->initchildmenu) {
+        add_menu_separator (menu);
+        ui_widget->parent->initchildmenu (ui_widget, menu);
+    }
+
+    return menu;
+}
+
 gboolean
 w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
     if (!design_mode || !TEST_RIGHT_CLICK(event)) {
@@ -825,83 +918,18 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
 
     gtk_widget_set_app_paintable (widget, TRUE);
     gtk_widget_queue_draw (((ddb_gtkui_widget_t *)user_data)->widget);
+
     GtkWidget *menu;
-    GtkWidget *submenu;
-    GtkWidget *item;
-    menu = gtk_menu_new ();
+    menu = create_widget_menu(current_widget);
 
-    const char *widget_title = w_get_title (current_widget);
-    if (widget_title) {
-        // Add title of widget at the top of the menu
-        item = gtk_menu_item_new_with_mnemonic (widget_title);
-        gtk_widget_show (item);
-        gtk_widget_set_sensitive (item, FALSE);
-        gtk_container_add (GTK_CONTAINER (menu), item);
-
+    if (current_widget->parent && strcmp(current_widget->parent->type, "box")) {
+        GtkWidget *item, *submenu;
         add_menu_separator (menu);
-    }
-
-    if (strcmp (current_widget->type, "placeholder")) {
-        item = gtk_menu_item_new_with_mnemonic (_("Replace with..."));
+        item = gtk_menu_item_new_with_mnemonic (_("Parent"));
         gtk_widget_show (item);
+        submenu = create_widget_menu (current_widget->parent);
+        gtk_menu_item_set_submenu (item, submenu);
         gtk_container_add (GTK_CONTAINER (menu), item);
-    }
-    else {
-        item = gtk_menu_item_new_with_mnemonic (_("Insert..."));
-        gtk_widget_show (item);
-        gtk_container_add (GTK_CONTAINER (menu), item);
-    }
-
-    submenu = gtk_menu_new ();
-    gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
-
-    for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
-        if (cr->title) {
-            item = gtk_menu_item_new_with_mnemonic (cr->title);
-            gtk_widget_show (item);
-            gtk_container_add (GTK_CONTAINER (submenu), item);
-            g_signal_connect ((gpointer) item, "activate",
-                    G_CALLBACK (on_replace_activate),
-                    (void *)cr->type);
-        }
-    }
-
-    if (strcmp (current_widget->type, "placeholder")) {
-        item = gtk_menu_item_new_with_mnemonic (_("Delete"));
-        gtk_widget_show (item);
-        gtk_container_add (GTK_CONTAINER (menu), item);
-        g_signal_connect ((gpointer) item, "activate",
-                G_CALLBACK (on_delete_activate),
-                NULL);
-
-        item = gtk_menu_item_new_with_mnemonic (_("Cut"));
-        gtk_widget_show (item);
-        gtk_container_add (GTK_CONTAINER (menu), item);
-        g_signal_connect ((gpointer) item, "activate",
-                G_CALLBACK (on_cut_activate),
-                NULL);
-
-        item = gtk_menu_item_new_with_mnemonic (_("Copy"));
-        gtk_widget_show (item);
-        gtk_container_add (GTK_CONTAINER (menu), item);
-        g_signal_connect ((gpointer) item, "activate",
-                G_CALLBACK (on_copy_activate),
-                NULL);
-    }
-    item = gtk_menu_item_new_with_mnemonic (_("Paste"));
-    gtk_widget_show (item);
-    gtk_container_add (GTK_CONTAINER (menu), item);
-    g_signal_connect ((gpointer) item, "activate",
-            G_CALLBACK (on_paste_activate),
-            NULL);
-
-    if (current_widget->initmenu) {
-        add_menu_separator (menu);
-        current_widget->initmenu (current_widget, menu);
-    }
-    if (current_widget->parent && current_widget->parent->initchildmenu) {
-        add_menu_separator (menu);
-        current_widget->parent->initchildmenu (current_widget, menu);
     }
 
     g_signal_connect ((gpointer) menu, "deactivate", G_CALLBACK (w_menu_deactivate), user_data);
