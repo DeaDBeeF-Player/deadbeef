@@ -248,6 +248,8 @@ typedef struct {
 static int design_mode;
 static ddb_gtkui_widget_t *rootwidget;
 
+static const char associated_widget_data_id[] = "uiwidget";
+
 //// common functions
 
 void
@@ -680,7 +682,7 @@ w_save (void) {
 
 static void
 on_replace_activate (GtkMenuItem *menuitem, gpointer user_data) {
-    ddb_gtkui_widget_t *ui_widget = g_object_get_data(menuitem, "uiwidget");
+    ddb_gtkui_widget_t *ui_widget = g_object_get_data(menuitem, associated_widget_data_id);
     for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
         if (cr->type == user_data) {
             // hack for single-instance
@@ -844,7 +846,7 @@ create_widget_menu(ddb_gtkui_widget_t *ui_widget) {
             item = gtk_menu_item_new_with_mnemonic (cr->title);
             gtk_widget_show (item);
             gtk_container_add (GTK_CONTAINER (submenu), item);
-            g_object_set_data(item, "uiwidget", ui_widget);
+            g_object_set_data(item, associated_widget_data_id, ui_widget);
             g_signal_connect ((gpointer) item, "activate",
                     G_CALLBACK (on_replace_activate),
                     (void *)cr->type);
