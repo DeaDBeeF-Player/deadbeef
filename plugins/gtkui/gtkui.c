@@ -424,6 +424,12 @@ gtkui_titlebar_tf_init (void) {
     statusbar_stopped_bc = deadbeef->tf_compile (statusbar_stopped_tf);
 }
 
+static gboolean
+set_title_cb (gpointer data) {
+    gtkui_set_titlebar (NULL);
+    return FALSE;
+}
+
 void
 gtkui_set_titlebar (DB_playItem_t *it) {
     if (!it) {
@@ -450,6 +456,11 @@ gtkui_set_titlebar (DB_playItem_t *it) {
         deadbeef->pl_item_unref (it);
     }
     set_tray_tooltip (str);
+    if (ctx.update > 0) {
+        g_timeout_add(ctx.update, set_title_cb, NULL);
+    } else if (ctx.update < 0) {
+        g_idle_add(set_title_cb, NULL);
+    }
 }
 
 static gboolean
@@ -816,11 +827,6 @@ gtkui_pl_add_files_end (void);
 DB_playItem_t *
 gtkui_plt_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
-static gboolean
-set_title_cb (gpointer data) {
-    gtkui_set_titlebar (NULL);
-    return FALSE;
-}
 
 static int
 is_current_playlist (DB_playItem_t *it) {
