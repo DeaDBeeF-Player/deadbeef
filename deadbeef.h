@@ -1714,8 +1714,7 @@ typedef struct DB_plugin_s {
     // it is called after all plugin's start method was executed
     // can be NULL
     // NOTE for GUI plugin developers: don't initialize your widgets/windows in
-    // the connect method. look for up-to-date information on wiki:
-    // http://github.com/DeaDBeeF-Player/deadbeef/wiki/Porting-GUI-plugins-to-deadbeef-from-0.5.x-to-0.6.0
+    // the connect method.
     int (*connect) (void);
 
     // opposite of connect, will be called before stop, while all plugins are still
