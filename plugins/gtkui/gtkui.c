@@ -85,6 +85,7 @@ GtkWidget *logwindow;
 static int gtkui_accept_messages = 0;
 
 static gint refresh_timeout = 0;
+static guint set_title_timeout_id;
 
 int fileadded_listener_id;
 int fileadd_beginend_listener_id;
@@ -457,9 +458,7 @@ gtkui_set_titlebar (DB_playItem_t *it) {
     }
     set_tray_tooltip (str);
     if (ctx.update > 0) {
-        g_timeout_add(ctx.update, set_title_cb, NULL);
-    } else if (ctx.update < 0) {
-        g_idle_add(set_title_cb, NULL);
+        set_title_timeout_id = g_timeout_add(ctx.update, set_title_cb, NULL);
     }
 }
 
@@ -1384,6 +1383,11 @@ gtkui_mainwin_free(void) {
     if (refresh_timeout) {
         g_source_remove (refresh_timeout);
         refresh_timeout = 0;
+    }
+
+    if (set_title_timeout_id) {
+        g_source_remove (set_title_timeout_id);
+        set_title_timeout_id = 0;
     }
 
     clipboard_free_current ();
