@@ -1,6 +1,8 @@
 version 1.8.5
 	Added the new ISO/IEC Base Media File Format library MP4P for working with MP4 files, which removes MP4FF dependency
 	Added support for additional per-track metadata in cuesheets
+	Added updating titlebar when displaying playback position (Nicolai Syvertsen)
+	Added a more convenient way to edit container widgets in design mode (Nicolai Syvertsen)
 	Fixed ALAC bug whiuch caused division by zero exception
 	Fixed cuesheet parser bug caused by unknown/unsupported field names
 	Fixed a series of bugs in the Adplug plugin
@@ -16,6 +18,7 @@ version 1.8.5
 	Fixed bugs leaking file handles in AAC and ALAC plugins (Thomas Jepp)
 	Fixed handling certain non-conformant S3M files
 	Fixed a bug where resizing the log window caused the auto-scroll to stop working (Nicolai Syvertsen)
+	Fixed album shuffle bug, causing the same album to repeat after the last track of the album has finished
 
 version 1.8.4
 	Soundtouch plugin has been updated, and is now included in the releases
