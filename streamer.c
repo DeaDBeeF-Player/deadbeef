@@ -1295,16 +1295,17 @@ update_stop_after_current (void) {
 }
 
 static void
-streamer_next (ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
-    playItem_t *next = NULL;
+streamer_next (ddb_shuffle_t shuffle, ddb_repeat_t repeat, playItem_t *next) {
     if (playing_track) {
         if (repeat == DDB_REPEAT_SINGLE) { // song finished, loop mode is "loop 1 track"
             next = playing_track;
-            pl_item_ref (next);
         }
     }
     if (!next) {
         next = get_next_track (streaming_track, shuffle, repeat);
+    }
+    else {
+        pl_item_ref (next);
     }
     stream_track (next, 0);
     if (next) {
@@ -1487,7 +1488,7 @@ _streamer_requeue_after_current (ddb_repeat_t repeat, ddb_shuffle_t shuffle) {
         pl_item_ref (streaming_track);
     }
     streamer_unlock ();
-    streamer_next (shuffle, repeat);
+    streamer_next (shuffle, repeat, NULL);
 }
 
 static void
@@ -1643,6 +1644,8 @@ streamer_thread (void *unused) {
         if (res < 0 || last) {
             // error or eof
 
+            playItem_t *next = NULL;
+
             // handle stop after current
             int stop = 0;
             if (block->last) {
@@ -1650,7 +1653,7 @@ streamer_thread (void *unused) {
                     stop = 1;
                 }
                 else {
-                    playItem_t *next = get_next_track(playing_track, shuffle, repeat);
+                    next = get_next_track(playing_track, shuffle, repeat);
 
                     if (stop_after_album_check (playing_track, next)) {
                         stop = 1;
@@ -1666,7 +1669,7 @@ streamer_thread (void *unused) {
                 stream_track (NULL, 0);
             }
             else {
-                streamer_next (shuffle, repeat);
+                streamer_next (shuffle, repeat, next);
             }
         }
 
@@ -2603,6 +2606,7 @@ _streamer_mark_album_played_up_to (playItem_t *item) {
     pl_lock ();
     const char *alb = pl_find_meta_raw (item, "album");
     const char *art = pl_find_meta_raw (item, "artist");
+    item->played = 1;
     playItem_t *next = item->prev[PL_MAIN];
     while (next) {
         if (alb == pl_find_meta_raw (next, "album") && art == pl_find_meta_raw (next, "artist")) {
