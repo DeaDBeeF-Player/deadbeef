@@ -296,8 +296,6 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
 
     streamer_set_playing_track (it);
     if (playing_track) {
-        playing_track->played = 1;
-
         streamer_set_last_played (playing_track);
 
         playItem_t *qnext = playqueue_getnext();
@@ -867,6 +865,7 @@ stream_track (playItem_t *it, int startpaused) {
         pl_item_ref (from);
     }
     if (to) {
+        to->played = 1;
         pl_item_ref (to);
     }
 
@@ -1092,8 +1091,6 @@ m3u_error:
                 close (fd);
             }
 
-            it->played = 1;
-
             if (!startpaused) {
                 streamer_play_failed (it);
             }
@@ -1172,7 +1169,6 @@ m3u_error:
 
         if (!dec) {
             trace ("no decoder in playitem!\n");
-            it->played = 1;
 
             if (!startpaused) {
                 streamer_play_failed (it);
@@ -1653,9 +1649,9 @@ streamer_thread (void *unused) {
                     stop = 1;
                 }
                 else {
-                    next = get_next_track(playing_track, shuffle, repeat);
+                    next = get_next_track(streaming_track, shuffle, repeat);
 
-                    if (stop_after_album_check (playing_track, next)) {
+                    if (stop_after_album_check (streaming_track, next)) {
                         stop = 1;
                     }
 
