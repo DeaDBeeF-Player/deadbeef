@@ -19,6 +19,7 @@ version 1.8.5
 	Fixed handling certain non-conformant S3M files
 	Fixed a bug where resizing the log window caused the auto-scroll to stop working (Nicolai Syvertsen)
 	Fixed album shuffle bug, causing the same album to repeat after the last track of the album has finished
+	Fixed shuffle bug causing short tracks to repeat
 
 version 1.8.4
 	Soundtouch plugin has been updated, and is now included in the releases
