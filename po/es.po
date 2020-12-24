@@ -25,8 +25,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-15 20:41+0200\n"
-"PO-Revision-Date: 2020-03-06 12:12+0000\n"
+"POT-Creation-Date: 2020-06-27 11:08+0200\n"
+"PO-Revision-Date: 2020-08-15 10:51+0000\n"
 "Last-Translator: Toni Estévez <toni.estevez@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/deadbeef-player/deadbeef-player/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -1980,7 +1980,7 @@ msgstr "Calidad del remuestreo"
 #: ../translation/plugins.c:102
 #, no-c-format
 msgid "Internal DUMB volume"
-msgstr ""
+msgstr "Volumen DUMB interno"
 
 #: ../translation/plugins.c:104
 #, no-c-format
@@ -2017,12 +2017,12 @@ msgstr "Extensiones de archivos (separadas por «;»)"
 #: ../translation/plugins.c:120
 #, no-c-format
 msgid "Ignore bad header errors"
-msgstr ""
+msgstr "Ignorar los errores de encabezado incorrecto"
 
 #: ../translation/plugins.c:122
 #, no-c-format
 msgid "Ignore unparsable stream errors"
-msgstr ""
+msgstr "Ignorar los errores de transmisión que no se pueden analizar"
 
 #. plugins/gme/cgme.c
 #: ../translation/plugins.c:125
@@ -2074,7 +2074,7 @@ msgstr "Explorar la ganancia de pista por archivo"
 #: ../translation/plugins.c:144
 #, no-c-format
 msgid "Scan Per-file Track Gain If Not Scanned"
-msgstr ""
+msgstr "Explorar la ganancia de pista por archivo si no se ha explorado"
 
 #: ../translation/plugins.c:148
 #, no-c-format
@@ -2745,47 +2745,47 @@ msgstr "Preamplificador"
 #: ../translation/plugins.c:458
 #, no-c-format
 msgid "1.2K"
-msgstr ""
+msgstr "1.2K"
 
 #: ../translation/plugins.c:460
 #, no-c-format
 msgid "1.8K"
-msgstr ""
+msgstr "1.8K"
 
 #: ../translation/plugins.c:462
 #, no-c-format
 msgid "2.5K"
-msgstr ""
+msgstr "2.5K"
 
 #: ../translation/plugins.c:464
 #, no-c-format
 msgid "3.5K"
-msgstr ""
+msgstr "3.5K"
 
 #: ../translation/plugins.c:466
 #, no-c-format
 msgid "5K"
-msgstr ""
+msgstr "5K"
 
 #: ../translation/plugins.c:468
 #, no-c-format
 msgid "7K"
-msgstr ""
+msgstr "7K"
 
 #: ../translation/plugins.c:470
 #, no-c-format
 msgid "10K"
-msgstr ""
+msgstr "10K"
 
 #: ../translation/plugins.c:472
 #, no-c-format
 msgid "14K"
-msgstr ""
+msgstr "14K"
 
 #: ../translation/plugins.c:474
 #, no-c-format
 msgid "20K"
-msgstr ""
+msgstr "20K"
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:477

@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-15 20:41+0200\n"
-"PO-Revision-Date: 2020-05-12 13:58+0000\n"
+"POT-Creation-Date: 2020-06-27 11:08+0200\n"
+"PO-Revision-Date: 2020-12-08 20:08+0000\n"
 "Last-Translator: Jonatan Nyberg <jonatan.nyberg.karl@gmail.com>\n"
 "Language-Team: Swedish (http://www.transifex.com/deadbeef-player/deadbeef-player/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -372,7 +372,7 @@ msgstr "Datum"
 
 #: ../plugins/gtkui/interface.c:279 ../plugins/gtkui/deadbeef.glade.h:25
 msgid "Random"
-msgstr "Slumpa"
+msgstr "Slumpmässig"
 
 #: ../plugins/gtkui/interface.c:283 ../plugins/gtkui/plcommon.c:106
 #: ../plugins/gtkui/plcommon.c:1921 ../plugins/gtkui/deadbeef.glade.h:26
@@ -395,7 +395,7 @@ msgstr "Statusrad"
 
 #: ../plugins/gtkui/interface.c:307 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Equalizer"
-msgstr "Utjämnare"
+msgstr "Frekvenskorrigerare"
 
 #: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Design mode"
@@ -523,7 +523,7 @@ msgstr "Nästa"
 #: ../translation/plugins.c:335
 #, no-c-format
 msgid "Play Random"
-msgstr "Spela slumpad"
+msgstr "Spela slumpmässig"
 
 #: ../plugins/gtkui/interface.c:843 ../plugins/gtkui/deadbeef.glade.h:60
 msgid "About"
@@ -631,11 +631,11 @@ msgstr "_OK"
 
 #: ../plugins/gtkui/interface.c:1814 ../plugins/gtkui/deadbeef.glade.h:83
 msgid "Output plugin:"
-msgstr "Instick för uppspelning:"
+msgstr "Utmatningsinsticksmodul:"
 
 #: ../plugins/gtkui/interface.c:1827 ../plugins/gtkui/deadbeef.glade.h:84
 msgid "Output device:"
-msgstr "Enhet för uppspelning:"
+msgstr "Utmatningsenhet:"
 
 #: ../plugins/gtkui/interface.c:1836 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Always convert 8 bit audio to 16 bit"
@@ -683,7 +683,7 @@ msgstr "Spår"
 
 #: ../plugins/gtkui/interface.c:1980 ../plugins/gtkui/deadbeef.glade.h:97
 msgid "Processing:"
-msgstr "Bearbetar:"
+msgstr "Bearbeta:"
 
 #: ../plugins/gtkui/interface.c:1989 ../plugins/gtkui/plcommon.c:1909
 #: ../translation/plugins.c:106 ../plugins/gtkui/widgets.c:3969
@@ -697,7 +697,7 @@ msgstr "Applicera vinst"
 
 #: ../plugins/gtkui/interface.c:1991
 msgid "Apply gain and prevent clipping according to peak"
-msgstr "Applicera vinst och förhindra klippning enligt topp"
+msgstr "Applicera förstärkning och förhindra klippning beroende på topp"
 
 #: ../plugins/gtkui/interface.c:1992
 msgid "Only prevent clipping"
@@ -715,11 +715,11 @@ msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:2019 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Preamp with RG info:"
-msgstr ""
+msgstr "Förförstärkare med RG-info:"
 
 #: ../plugins/gtkui/interface.c:2026 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Preamp without RG info:"
-msgstr ""
+msgstr "Förförstärkare utan RG-info:"
 
 #: ../plugins/gtkui/interface.c:2053 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "<b>ReplayGain</b>"
@@ -739,11 +739,11 @@ msgstr "Lägg inte till från arkiv när du lägger till mappar"
 
 #: ../plugins/gtkui/interface.c:2079 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "\"Stop after current track\" option will switch off after triggering"
-msgstr "\"Stoppa efter aktuellt spår\" alternativet stängs av efter utlösning"
+msgstr "Alternativet \"Stoppa efter aktuellt spår\" stängs av efter utlösning"
 
 #: ../plugins/gtkui/interface.c:2083 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "\"Stop after current album\" option will switch off after triggering"
-msgstr "\"Stoppa efter aktuellt album\" alternativet stängs av efter utlösning"
+msgstr "Alternativet \"Stoppa efter aktuellt album\" stängs av efter utlösning"
 
 #: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:112
 #: ../translation/plugins.c:170
@@ -759,7 +759,7 @@ msgstr "Anpassa"
 
 #: ../plugins/gtkui/interface.c:2143 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "DSP Chain Preset"
-msgstr "Inställningar för DSP-kedja"
+msgstr "Förinställningar för DSP-kedja"
 
 #: ../plugins/gtkui/interface.c:2155 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "_Load"
@@ -771,7 +771,7 @@ msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2173 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Minimize to tray on startup"
-msgstr ""
+msgstr "Minimera till systemfältetet vid uppstart"
 
 #: ../plugins/gtkui/interface.c:2177 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Close minimizes to tray"
@@ -811,7 +811,7 @@ msgstr "GUI-insticksmodul (ändring kräver omstart):"
 
 #: ../plugins/gtkui/interface.c:2251 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Display selection playback time in status bar"
-msgstr "Visa markerings uppspelningstid i statusfältet"
+msgstr "Visa uppspelningstid för markering i statusfältet"
 
 #: ../plugins/gtkui/interface.c:2255 ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Player"
@@ -826,12 +826,12 @@ msgstr "Stäng spellistor med mitten musknappen"
 
 #: ../plugins/gtkui/interface.c:2268 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr "Dölj \"Ta bort från disk\" i kontextmenyn"
+msgstr "Dölj \"Ta bort från disk\" i snabbmenyn"
 
 #: ../plugins/gtkui/interface.c:2272 ../plugins/gtkui/deadbeef.glade.h:131
 msgid ""
 "Switch to the next song when the currently played one is removed from disk"
-msgstr ""
+msgstr "Byt till nästa låt när den spelade numret tas bort från disken"
 
 #: ../plugins/gtkui/interface.c:2276 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Auto-name playlists when adding a single folder"
@@ -839,7 +839,7 @@ msgstr "Namnge spellistor automatiskt när du lägger till en enda mapp"
 
 #: ../plugins/gtkui/interface.c:2280 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Auto-resize columns to fit the window"
-msgstr "Automatiskt ändra storlek på kolumner för att passa fönstret"
+msgstr "Ändra storlek på kolumner automatiskt så att de passar fönstret"
 
 #: ../plugins/gtkui/interface.c:2288 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Group spacing:"
@@ -856,7 +856,7 @@ msgstr "GUI/Övrigt"
 #: ../plugins/gtkui/interface.c:2321 ../plugins/gtkui/interface.c:2365
 #: ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Override"
-msgstr "Överbrygga"
+msgstr "Åsidosätt"
 
 #: ../plugins/gtkui/interface.c:2330 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Bars"
@@ -1166,7 +1166,7 @@ msgid ""
 "DeaDBeeF decoder plugins. For example, mp3 files can have content type "
 "\"audio/x-mpeg\", and need to be decoded by DeaDBeeF's own \"stdmpg\" "
 "plugin, or \"ffmpeg\" plugin."
-msgstr ""
+msgstr "Denna tabell definierar bindningen mellan nätverksströminnehållstyper och DeaDBeeF-avkodarinsticksmoduler. Till exempel kan mp3-filer ha innehållstyp \"audio/x-mpeg\" och måste avkodas av DeaDBeeFs egna \"stdmpg\"-insticksmodul eller \"ffmpeg\"-insticksmodul."
 
 #: ../plugins/gtkui/interface.c:4663 ../plugins/gtkui/deadbeef.glade.h:212
 msgid "Reset to defaults"
@@ -1207,7 +1207,7 @@ msgid ""
 " \"Add Location\" dialog. The title itself is visible in columns displaying "
 "the \"Artist\" metadata field. It should look like \"[custom] artist\" if "
 "the Artist field is present, or just \"custom\" otherwise."
-msgstr ""
+msgstr "I den här dialogrutan kan du ställa in anpassad titel för alla spår. Detta är mest användbart för radiostationer. Ett alternativ för att ställa in den anpassade titeln finns också i dialogrutan \"Lägg till plats\". Titeln i sig är synlig i kolumner som visar metadatafältet \"Artist\". Det ska se ut som \"[anpassad] artist\" om fältet Artist är närvarande, eller bara \"anpassad\" annars."
 
 #: ../plugins/gtkui/interface.c:5111 ../plugins/gtkui/deadbeef.glade.h:221
 #: ../translation/plugins.c:146 ../plugins/shellexecui/interface.c:70
@@ -1516,17 +1516,17 @@ msgstr "   --play-pause       Starta uppspelningen om den är stoppad, växla pa
 #: ../main.c:132
 #, c-format
 msgid "   --next             Next song in playlist\n"
-msgstr "   --next             Nästa spår i spellista\n"
+msgstr "   --next             Nästa låt i spellista\n"
 
 #: ../main.c:133
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr "   --prev             Föregående spår i spellista\n"
+msgstr "   --prev             Föregående låt i spellista\n"
 
 #: ../main.c:134
 #, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr "   --random           Slumpa spår i spellista\n"
+msgstr "   --random           Slumpmässig låt i spellista\n"
 
 #: ../main.c:135
 #, c-format
@@ -1536,7 +1536,7 @@ msgstr "   --queue            Lägg till fil(er) i nuvarande spellista\n"
 #: ../main.c:136
 #, c-format
 msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr ""
+msgstr "   --gui PLUGIN       Berättar vilken GUI-insticksmoudl som ska användas, standard är \"GTK2\"\n"
 
 #: ../main.c:137
 #, c-format
@@ -1573,14 +1573,14 @@ msgstr "                      OBS: --nowplaying är föråldrad.\n"
 msgid ""
 "   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
 "title formatting\n"
-msgstr ""
+msgstr "   --nowplaying-tf FMT  Skriv ut formaterat spårnamn till stdout med den nya titelformateringen\n"
 
 #: ../main.c:145
 #, c-format
 msgid ""
 "                      FMT syntax: http://github.com/DeaDBeeF-"
 "Player/deadbeef/wiki/Title-formatting-2.0\n"
-msgstr ""
+msgstr "                      FMT-syntax: http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"
 
 #: ../main.c:146
 #, c-format
@@ -1592,26 +1592,26 @@ msgstr "                      exempel: --nowplaying-tf \"%%artist%% - %%title%%\
 #: ../main.c:147
 #, c-format
 msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
-msgstr ""
+msgstr "   --volume [NUM]     Skriv ut eller ställ in volymnivå för deadbeef.\n"
 
 #: ../main.c:148
 #, c-format
 msgid ""
 "                      The NUM parameter can be specified in percents "
 "(absolute value or increment/decrement)\n"
-msgstr ""
+msgstr "                      NUM-parametern kan anges i procent (absolut värde eller ökning/minskning)\n"
 
 #: ../main.c:149
 #, c-format
 msgid "                      or in dB [-50, 0] (if with suffix).\n"
-msgstr ""
+msgstr "                      eller i dB [-50, 0] (om med suffix).\n"
 
 #: ../main.c:150
 #, c-format
 msgid ""
 "                      Examples: --volume 80, --volume +10, --volume -5 or "
 "--volume -20dB\n"
-msgstr ""
+msgstr "                      Exempel: --volume 80, --volume +10, --volume -5 or --volume -20dB\n"
 
 #: ../playlist.c:480 ../playlist.c:2317
 msgid "Default"
@@ -1653,7 +1653,7 @@ msgid ""
 "Apply gain\n"
 "Apply gain and prevent clipping according to peak\n"
 "Only prevent clipping"
-msgstr ""
+msgstr "Ingen\nApplicera förstärkning\nApplicera förstärkning och förhindra klippning beroende på topp\nUndvik endast klippning"
 
 #: ../plugins/gtkui/deadbeef.glade.h:194
 msgid ""
@@ -1672,7 +1672,7 @@ msgstr "2.3 (rekomenderad)\n2.4"
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
-msgstr "wildmidi: inställningsfilen för freepats hittades inte. Vänligen installera paketet timidity-freepats eller ange sökväg till freepats.cfg i inställningarna för instick."
+msgstr "wildmidi: inställningsfilen för freepats hittades inte. Vänligen installera paketet timidity-freepats eller ange sökväg till freepats.cfg i inställningarna för insticksmodulen."
 
 #: ../translation/extra.c:3
 msgid "Track Title"
@@ -1708,7 +1708,7 @@ msgstr "Kommentar"
 
 #: ../translation/extra.c:15
 msgid "Encoder / Vendor"
-msgstr ""
+msgstr "Kodare / Leverantör"
 
 #: ../translation/extra.c:17
 msgid "Location"
@@ -1838,7 +1838,7 @@ msgstr "Spara extraherade omslag till musikmappar"
 #: ../translation/plugins.c:48
 #, no-c-format
 msgid "Local file mask"
-msgstr ""
+msgstr "Lokal filmask"
 
 #: ../translation/plugins.c:50
 #, no-c-format
@@ -1962,12 +1962,12 @@ msgstr "Kvalitet / Algoritm"
 #: ../translation/plugins.c:100
 #, no-c-format
 msgid "Resampling quality"
-msgstr ""
+msgstr "Omsamplingskvalitet"
 
 #: ../translation/plugins.c:102
 #, no-c-format
 msgid "Internal DUMB volume"
-msgstr ""
+msgstr "Intern DUMB-volym"
 
 #: ../translation/plugins.c:104
 #, no-c-format
@@ -1987,7 +1987,7 @@ msgstr "Full"
 #: ../translation/plugins.c:112
 #, no-c-format
 msgid "8-bit output"
-msgstr ""
+msgstr "8-bitars utmatning"
 
 #. plugins/ffmpeg/ffmpeg.c
 #: ../translation/plugins.c:115
@@ -2004,12 +2004,12 @@ msgstr "Filtillägg (separade med ';')"
 #: ../translation/plugins.c:120
 #, no-c-format
 msgid "Ignore bad header errors"
-msgstr ""
+msgstr "Ignorera fel för dåliga rubrik"
 
 #: ../translation/plugins.c:122
 #, no-c-format
 msgid "Ignore unparsable stream errors"
-msgstr ""
+msgstr "Ignorera fel för otolkningsbar ström"
 
 #. plugins/gme/cgme.c
 #: ../translation/plugins.c:125
@@ -2020,12 +2020,12 @@ msgstr "Max låtlängd (i minuter)"
 #: ../translation/plugins.c:127
 #, no-c-format
 msgid "Fadeout length (seconds)"
-msgstr ""
+msgstr "Uttoningslängd (sekunder)"
 
 #: ../translation/plugins.c:129
 #, no-c-format
 msgid "Play loops nr. of times (if available)"
-msgstr ""
+msgstr "Spela slingor antal gånger (om tillgängligt)"
 
 #: ../translation/plugins.c:131
 #, no-c-format
@@ -2101,7 +2101,7 @@ msgstr "Visa hjälpsida"
 #: ../translation/plugins.c:172
 #, no-c-format
 msgid "Cycle Repeat Mode"
-msgstr ""
+msgstr "Cykelrepetitionsläge"
 
 #: ../translation/plugins.c:174
 #, no-c-format
@@ -2121,7 +2121,7 @@ msgstr "Upprepa - Alla"
 #: ../translation/plugins.c:180
 #, no-c-format
 msgid "Cycle Shuffle Mode"
-msgstr ""
+msgstr "Cykelblandningsläge"
 
 #: ../translation/plugins.c:182
 #, no-c-format
@@ -2146,12 +2146,12 @@ msgstr "Blanda - Av"
 #: ../translation/plugins.c:190
 #, no-c-format
 msgid "Toggle Cursor Follows Playback"
-msgstr ""
+msgstr "Växla markör följer uppspelning"
 
 #: ../translation/plugins.c:192
 #, no-c-format
 msgid "Toggle Scroll Follows Playback"
-msgstr ""
+msgstr "Växla rullning följer uppspelning"
 
 #: ../translation/plugins.c:194
 #, no-c-format
@@ -2206,17 +2206,17 @@ msgstr "Ta bort aktuell spellista"
 #: ../translation/plugins.c:218
 #, no-c-format
 msgid "Show\\/Hide Equalizer"
-msgstr "Visa\\/Dölj utjämnaren"
+msgstr "Visa\\/Dölj frekvenskorrigerare"
 
 #: ../translation/plugins.c:220
 #, no-c-format
 msgid "Hide Equalizer"
-msgstr "Dölj utjämnaren"
+msgstr "Dölj frekvenskorrigerare"
 
 #: ../translation/plugins.c:222
 #, no-c-format
 msgid "Show Equalizer"
-msgstr "Visa utjämnaren"
+msgstr "Visa frekvenskorrigerare"
 
 #: ../translation/plugins.c:224
 #, no-c-format
@@ -2246,7 +2246,7 @@ msgstr "Visa\\/Dölj loggfönster"
 #: ../translation/plugins.c:234
 #, no-c-format
 msgid "Ask confirmation to delete files from disk"
-msgstr "Fråga innan radering av filer från disk"
+msgstr "Bekräfta för att ta bort filer från disk"
 
 #: ../translation/plugins.c:236
 #, no-c-format
@@ -2261,17 +2261,17 @@ msgstr "Anpassad statusikon"
 #: ../translation/plugins.c:240
 #, no-c-format
 msgid "Add separators between plugin context menu items"
-msgstr ""
+msgstr "Lägg till avskiljare mellan poster i snabbmenyn för insticksmoduler"
 
 #: ../translation/plugins.c:242
 #, no-c-format
 msgid "Use unicode chars instead of images for track state"
-msgstr ""
+msgstr "Använd unicode-tecken istället för bilder för spårtillstånd"
 
 #: ../translation/plugins.c:244
 #, no-c-format
 msgid "Disable seekbar overlay text"
-msgstr ""
+msgstr "Inaktivera sökfältets överläggstext"
 
 #: ../translation/plugins.c:249
 #, no-c-format
@@ -2579,7 +2579,7 @@ msgstr "Höger mix"
 #: ../translation/plugins.c:386
 #, no-c-format
 msgid "Force 16 bit output"
-msgstr "Tvinga 16 bit utgång"
+msgstr "Tvinga 16 bitars utmatning"
 
 #: ../translation/plugins.c:388
 #, no-c-format
@@ -2589,12 +2589,12 @@ msgstr "Bakände"
 #: ../translation/plugins.c:393
 #, no-c-format
 msgid "Notification title format"
-msgstr ""
+msgstr "Titelformat för aviseringar"
 
 #: ../translation/plugins.c:395
 #, no-c-format
 msgid "Notification content format"
-msgstr ""
+msgstr "Innehållsformat för aviseringar"
 
 #: ../translation/plugins.c:397
 #, no-c-format
@@ -2615,7 +2615,7 @@ msgstr "Enhetsfil"
 #: ../translation/plugins.c:407
 #, no-c-format
 msgid "Highlight current playlist"
-msgstr ""
+msgstr "Markera aktuell spellista"
 
 #: ../translation/plugins.c:409
 #, no-c-format
@@ -2626,7 +2626,7 @@ msgstr "Spela på dubbelklick"
 #: ../translation/plugins.c:412
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
-msgstr ""
+msgstr "Buffertstorlek (-1 för att använda optimalt värde valt av portaudio)"
 
 #: ../translation/plugins.c:414
 #, no-c-format
@@ -2679,7 +2679,7 @@ msgstr "Hoppa över när kortare än (sek)"
 #: ../translation/plugins.c:435
 #, no-c-format
 msgid "Configure Custom Shell Commands"
-msgstr ""
+msgstr "Konfigurera anpassade skalkommandon"
 
 #. plugins/shn/shn.c
 #: ../translation/plugins.c:438
@@ -2727,7 +2727,7 @@ msgstr "Mono-synth"
 #: ../translation/plugins.c:456
 #, no-c-format
 msgid "Preamp"
-msgstr ""
+msgstr "Förförstärkare"
 
 #: ../translation/plugins.c:458
 #, no-c-format
@@ -2861,19 +2861,19 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:1530
 msgid "Failed to save DSP preset"
-msgstr ""
+msgstr "Det gick inte att spara DSP-förinställning"
 
 #: ../plugins/converter/convgui.c:1594 ../plugins/converter/convgui.c:1639
 msgid "New DSP Preset"
-msgstr ""
+msgstr "Ny DSP-förinställning"
 
 #: ../plugins/converter/convgui.c:1723
 msgid "Edit DSP Preset"
-msgstr ""
+msgstr "Redigera DSP-förinställning"
 
 #: ../plugins/converter/convgui.c:1743
 msgid "DSP Presets"
-msgstr ""
+msgstr "DSP-förinställningar"
 
 #: ../plugins/converter/interface.c:103
 #: ../plugins/converter/converter.glade.h:1
@@ -2903,7 +2903,7 @@ msgstr "Återtagga efter kopiering"
 #: ../plugins/converter/interface.c:140
 #: ../plugins/converter/converter.glade.h:6
 msgid "Output file name:"
-msgstr "Utgångsfilnamn:"
+msgstr "Utmatningsfilnamn:"
 
 #: ../plugins/converter/interface.c:151
 #: ../plugins/converter/converter.glade.h:8
@@ -2911,7 +2911,7 @@ msgstr "Utgångsfilnamn:"
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default ([%tracknumber%. ][%artist% - ]%title%)."
-msgstr ""
+msgstr "Tillägg (t.ex. .mp3) läggs till automatiskt.\nLämna fältet tomt för standard ([%tracknumber%. ][%artist% - ]%title%)."
 
 #: ../plugins/converter/interface.c:164
 #: ../plugins/converter/converter.glade.h:10
@@ -2921,7 +2921,7 @@ msgstr "Kodare:"
 #: ../plugins/converter/interface.c:188
 #: ../plugins/converter/converter.glade.h:11
 msgid "DSP preset:"
-msgstr ""
+msgstr "DSP-förinställning:"
 
 #: ../plugins/converter/interface.c:211
 #: ../plugins/converter/converter.glade.h:12
@@ -2977,7 +2977,7 @@ msgstr "Skriv över"
 #: ../plugins/converter/interface.c:402
 #: ../plugins/converter/converter.glade.h:24
 msgid "Edit Encoder Preset"
-msgstr ""
+msgstr "Redigera förinställning för kodare"
 
 #: ../plugins/converter/interface.c:425
 #: ../plugins/converter/converter.glade.h:26
@@ -3070,12 +3070,12 @@ msgstr "<b>Taggskrivare</b>"
 #: ../plugins/converter/interface.c:637
 #: ../plugins/converter/converter.glade.h:47
 msgid "DSP Preset Editor"
-msgstr ""
+msgstr "DSP-förinställningsredigerare"
 
 #: ../plugins/converter/interface.c:660
 #: ../plugins/converter/converter.glade.h:49
 msgid "Untitled DSP Preset"
-msgstr ""
+msgstr "Namnlös DSP-förinställning"
 
 #: ../plugins/converter/interface.c:672
 #: ../plugins/converter/converter.glade.h:50
@@ -3100,7 +3100,7 @@ msgstr "Alla filer (*)"
 
 #: ../plugins/gtkui/fileman.c:455 ../plugins/gtkui/fileman.c:499
 msgid "Supported playlist formats"
-msgstr ""
+msgstr "Spellistformat som stöds"
 
 #: ../plugins/gtkui/fileman.c:462
 msgid "All files"
@@ -3133,7 +3133,7 @@ msgid ""
 "Skip\n"
 "Prompt\n"
 "Overwrite"
-msgstr ""
+msgstr "Hoppa över\nFråga\nSkriv över"
 
 #: ../plugins/converter/converter.glade.h:37
 msgid ""
@@ -3244,7 +3244,7 @@ msgid ""
 "<small>If you want to add the command to main menu, make sure that title "
 "contains the menu path like this: \"File/My Command\", where File is the "
 "menu name in the English version.</small>"
-msgstr ""
+msgstr "<small>Om du vill lägga till kommandot i huvudmenyn, se till att titeln innehåller menysökvägen så här: \"File/My Command\", där File är menynamnet i den engelska versionen.</small>"
 
 #: ../plugins/shellexecui/shellexecui.c:96
 msgid "Add Command"
@@ -3256,7 +3256,7 @@ msgstr "Ta bort"
 
 #: ../plugins/shellexecui/shellexecui.c:141
 msgid "This action will delete the selected shell command. Are you sure?"
-msgstr ""
+msgstr "Den här åtgärden tar bort det valda skalkommandot. Är du säker?"
 
 #: ../plugins/shellexecui/shellexecui.c:143
 msgid "Confirm Remove"
@@ -3264,15 +3264,15 @@ msgstr "Bekräfta borttagning"
 
 #: ../plugins/shellexecui/shellexecui.c:229
 msgid "ID must be non-empty and unique.\n"
-msgstr ""
+msgstr "ID måste vara tomt och unikt.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:235
 msgid "Title must be non-empty.\n"
-msgstr ""
+msgstr "Titeln kan inte vara tom.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:241
 msgid "Shell Command must be non-empty.\n"
-msgstr ""
+msgstr "Skalkommandot kan inte vara tomt.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:248
 #: ../plugins/shellexecui/shellexecui.c:252
@@ -3300,7 +3300,7 @@ msgid ""
 " The files will be lost.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr " Filerna kommer att gå förlorade.\n\n(Den här dialogrutan kan stängas av i GTKUI-insticksmodulsinställningar)"
+msgstr " Filerna kommer att gå förlorade.\n\n(Den här dialogrutan kan stängas av i inställningarna för GTKUI-insticksmodulen)"
 
 #: ../plugins/gtkui/actionhandlers.c:417
 #, c-format
@@ -3387,19 +3387,19 @@ msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1304
 msgid "Lock Top Pane Height"
-msgstr ""
+msgstr "Lås toppanelens höjd"
 
 #: ../plugins/gtkui/widgets.c:1307
 msgid "Lock Left Pane Width"
-msgstr ""
+msgstr "Lås vänsterpanelens bredd"
 
 #: ../plugins/gtkui/widgets.c:1320
 msgid "Lock Bottom Pane Height"
-msgstr ""
+msgstr "Lås bottenpanelens höjd"
 
 #: ../plugins/gtkui/widgets.c:1323
 msgid "Lock Right Pane Width"
-msgstr ""
+msgstr "Lås vänsterpanelens bredd"
 
 #: ../plugins/gtkui/widgets.c:1567 ../plugins/gtkui/widgets.c:1682
 msgid "Rename Tab"
@@ -3460,12 +3460,12 @@ msgstr "Byt namn på spellista"
 
 #: ../plugins/gtkui/pltmenu.c:90
 msgid "Removing playlist"
-msgstr ""
+msgstr "Tar bort spellista"
 
 #: ../plugins/gtkui/pltmenu.c:91
 #, c-format
 msgid "Do you really want to remove the playlist '%s'?"
-msgstr ""
+msgstr "Vill du verkligen ta bort spellistan \"%s\"?"
 
 #: ../plugins/gtkui/pltmenu.c:410
 msgid "Remove Playlist"

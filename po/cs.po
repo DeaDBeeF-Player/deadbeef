@@ -10,9 +10,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-15 20:41+0200\n"
-"PO-Revision-Date: 2020-03-03 18:38+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2020-06-27 11:08+0200\n"
+"PO-Revision-Date: 2020-10-18 19:02+0000\n"
+"Last-Translator: Joe Bliss <pcpepik0@gmail.com>\n"
 "Language-Team: Czech (http://www.transifex.com/deadbeef-player/deadbeef-player/language/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -122,11 +122,11 @@ msgstr "Pozastaveno"
 
 #: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:422
 msgid "bit"
-msgstr ""
+msgstr "bit"
 
 #: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:419
 msgid "selection playtime"
-msgstr ""
+msgstr "čas přehrávání výběru"
 
 #: ../plugins/gtkui/gtkui.c:419 ../plugins/gtkui/gtkui.c:423
 msgid "Stopped"
@@ -156,7 +156,7 @@ msgstr "Kopie %s (%d)"
 #. register widget types
 #: ../plugins/gtkui/gtkui.c:1227
 msgid "Playlist with tabs"
-msgstr "Playlist se záložkami"
+msgstr "Playlist s pásem karet"
 
 #: ../plugins/gtkui/gtkui.c:1228 ../plugins/gtkui/interface.c:2302
 #: ../plugins/gtkui/interface.c:2747 ../plugins/gtkui/deadbeef.glade.h:136
@@ -177,7 +177,7 @@ msgstr "Karty"
 
 #: ../plugins/gtkui/gtkui.c:1235
 msgid "Playlist tabs"
-msgstr "Záložky playlistu"
+msgstr "Karty playlistu"
 
 #: ../plugins/gtkui/gtkui.c:1236
 msgid "Selection properties"
@@ -193,7 +193,7 @@ msgstr "Křivka"
 
 #: ../plugins/gtkui/gtkui.c:1239
 msgid "Spectrum"
-msgstr "Spektrální analyzér"
+msgstr "Spektrum"
 
 #: ../plugins/gtkui/gtkui.c:1240
 msgid "HBox"
@@ -334,7 +334,7 @@ msgstr "_Hledat"
 
 #: ../plugins/gtkui/interface.c:252 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Sort by"
-msgstr "Třídit dle"
+msgstr "Řadit dle"
 
 #: ../plugins/gtkui/interface.c:259 ../plugins/gtkui/mainplaylist.c:233
 #: ../plugins/gtkui/plcommon.c:99 ../plugins/gtkui/prefwin.c:446
@@ -418,7 +418,7 @@ msgstr "Vypnuto"
 
 #: ../plugins/gtkui/interface.c:339 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Tracks"
-msgstr "Skladby"
+msgstr "Stopy"
 
 #: ../plugins/gtkui/interface.c:345 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Albums"
@@ -426,7 +426,7 @@ msgstr "Alba"
 
 #: ../plugins/gtkui/interface.c:351 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Random Tracks"
-msgstr "Náhodné skladby"
+msgstr "Náhodné stopy"
 
 #: ../plugins/gtkui/interface.c:357 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
@@ -434,11 +434,11 @@ msgstr "Opakování"
 
 #: ../plugins/gtkui/interface.c:364 ../plugins/gtkui/deadbeef.glade.h:40
 msgid "All Tracks"
-msgstr ""
+msgstr "Všechny stopy"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:41
 msgid "One Track"
-msgstr ""
+msgstr "Jedna stopa"
 
 #: ../plugins/gtkui/interface.c:382 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -450,7 +450,7 @@ msgstr "Sledovat kurzorem přehrávání"
 
 #: ../plugins/gtkui/interface.c:391 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current track"
-msgstr "Zastavit po aktuální skladbě"
+msgstr "Zastavit po aktuální stopě"
 
 #: ../plugins/gtkui/interface.c:395 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Stop after current album"
@@ -467,7 +467,7 @@ msgstr "_Nápověda"
 
 #: ../plugins/gtkui/interface.c:423 ../plugins/gtkui/deadbeef.glade.h:48
 msgid "_ChangeLog"
-msgstr "_Přehled změn"
+msgstr "Přehled _změn"
 
 #: ../plugins/gtkui/interface.c:432 ../plugins/gtkui/deadbeef.glade.h:49
 msgid "_GPLv2"
@@ -537,7 +537,7 @@ msgstr "Konec"
 #: ../plugins/gtkui/deadbeef.glade.h:63 ../translation/plugins.c:164
 #, no-c-format
 msgid "Track Properties"
-msgstr "Vlastnosti skladby"
+msgstr "Vlastnosti stopy"
 
 #: ../plugins/gtkui/interface.c:1067 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Location:"
@@ -588,11 +588,11 @@ msgstr "Formát:"
 
 #: ../plugins/gtkui/interface.c:1389 ../plugins/gtkui/deadbeef.glade.h:76
 msgid "Sort format:"
-msgstr ""
+msgstr "Formát řazení:"
 
 #: ../plugins/gtkui/interface.c:1398 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "(if non-empty)"
-msgstr ""
+msgstr "(není-li prázdný)"
 
 #: ../plugins/gtkui/interface.c:1406 ../plugins/gtkui/deadbeef.glade.h:78
 msgid "Alignment:"
@@ -645,19 +645,19 @@ msgstr "Vždy převést 16 bit audio na 24 bit"
 
 #: ../plugins/gtkui/interface.c:1861 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Target samplerate:"
-msgstr ""
+msgstr "Cílová vzorkovací frekvence:"
 
 #: ../plugins/gtkui/interface.c:1894 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "For multiples of 48KHz (96K, 192K, ...):"
-msgstr ""
+msgstr "Pro násobky 48KHz (96K, 192K, ...):"
 
 #: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "For multiples of 44.1KHz (88.2K, 176.4K, ...):"
-msgstr ""
+msgstr "Pro násobky 44.1KHz (88.2K, 176.4K, ...):"
 
 #: ../plugins/gtkui/interface.c:1928 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Based on input samplerate"
-msgstr ""
+msgstr "Založeno na vstupní vzorkovací frekvenci"
 
 #: ../plugins/gtkui/interface.c:1932 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Override samplerate"
@@ -669,19 +669,19 @@ msgstr "Zvuk"
 
 #: ../plugins/gtkui/interface.c:1963 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Source mode:"
-msgstr ""
+msgstr "Režim zdroje:"
 
 #: ../plugins/gtkui/interface.c:1972
 msgid "By playback order"
-msgstr ""
+msgstr "Dle pořadí přehrávání"
 
 #: ../plugins/gtkui/interface.c:1973
 msgid "Track"
-msgstr "Skladba"
+msgstr "Stopa"
 
 #: ../plugins/gtkui/interface.c:1980 ../plugins/gtkui/deadbeef.glade.h:97
 msgid "Processing:"
-msgstr ""
+msgstr "Zpracování:"
 
 #: ../plugins/gtkui/interface.c:1989 ../plugins/gtkui/plcommon.c:1909
 #: ../translation/plugins.c:106 ../plugins/gtkui/widgets.c:3969
@@ -691,15 +691,15 @@ msgstr "Žádné"
 
 #: ../plugins/gtkui/interface.c:1990
 msgid "Apply gain"
-msgstr ""
+msgstr "Použít zesílení"
 
 #: ../plugins/gtkui/interface.c:1991
 msgid "Apply gain and prevent clipping according to peak"
-msgstr ""
+msgstr "Použít zesílení a zabránit clippingu v závislosti na vrcholu"
 
 #: ../plugins/gtkui/interface.c:1992
 msgid "Only prevent clipping"
-msgstr ""
+msgstr "Pouze zabránit clippingu"
 
 #: ../plugins/gtkui/interface.c:2005 ../plugins/gtkui/interface.c:2039
 #: ../plugins/gtkui/deadbeef.glade.h:102
@@ -713,15 +713,15 @@ msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:2019 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Preamp with RG info:"
-msgstr ""
+msgstr "Předzesílení s RG informacemi:"
 
 #: ../plugins/gtkui/interface.c:2026 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Preamp without RG info:"
-msgstr ""
+msgstr "Předzesílení bez RG informací:"
 
 #: ../plugins/gtkui/interface.c:2053 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "<b>ReplayGain</b>"
-msgstr ""
+msgstr "<b>ReplayGain</b>"
 
 #: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Add files from command line (or file manager) to this playlist:"
@@ -737,7 +737,7 @@ msgstr "Ignorovat archivy během přidávání adresářů"
 
 #: ../plugins/gtkui/interface.c:2079 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "\"Stop after current track\" option will switch off after triggering"
-msgstr "Volba \"Zastavit po aktuální skladbě\" se po provedení deaktivuje"
+msgstr "Volba \"Zastavit po aktuální stopě\" se po provedení deaktivuje"
 
 #: ../plugins/gtkui/interface.c:2083 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "\"Stop after current album\" option will switch off after triggering"
@@ -824,12 +824,12 @@ msgstr "Zavírat playlisty prostředním tlačítkem myši"
 
 #: ../plugins/gtkui/interface.c:2268 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr "Skrýt položku \"Smazat z disku\" z kontextového menu"
+msgstr "Skrýt položku \"Odstranit z disku\" z kontextového menu"
 
 #: ../plugins/gtkui/interface.c:2272 ../plugins/gtkui/deadbeef.glade.h:131
 msgid ""
 "Switch to the next song when the currently played one is removed from disk"
-msgstr ""
+msgstr "Přepnout na následující skladbu pokud je aktuálně přehrávaná odstraněna z disku"
 
 #: ../plugins/gtkui/interface.c:2276 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Auto-name playlists when adding a single folder"
@@ -910,7 +910,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2500 ../plugins/gtkui/deadbeef.glade.h:151
 msgid "Tab strip"
-msgstr ""
+msgstr "Lišta karet"
 
 #: ../plugins/gtkui/interface.c:2534 ../plugins/gtkui/deadbeef.glade.h:152
 msgid "Normal track(s):"
@@ -919,12 +919,12 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:2547 ../plugins/gtkui/interface.c:2709
 #: ../plugins/gtkui/deadbeef.glade.h:153
 msgid "Playing track:"
-msgstr ""
+msgstr "Přehrávaná stopa:"
 
 #: ../plugins/gtkui/interface.c:2560 ../plugins/gtkui/interface.c:2716
 #: ../plugins/gtkui/deadbeef.glade.h:154
 msgid "Selected track(s):"
-msgstr ""
+msgstr "Vybraná stopa(y):"
 
 #: ../plugins/gtkui/interface.c:2573 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "Columns:"
@@ -1071,7 +1071,7 @@ msgstr "Seskupit dle ..."
 
 #: ../plugins/gtkui/interface.c:4075 ../plugins/gtkui/deadbeef.glade.h:191
 msgid "Sort by ..."
-msgstr "Třídit dle ..."
+msgstr "Řadit dle ..."
 
 #: ../plugins/gtkui/interface.c:4091 ../plugins/gtkui/deadbeef.glade.h:192
 msgid "Format"
@@ -1103,7 +1103,7 @@ msgstr "Zásuvný modul"
 
 #: ../plugins/gtkui/interface.c:4276 ../plugins/gtkui/deadbeef.glade.h:198
 msgid "Tag Writer Settings"
-msgstr "Nastavení autora popisku"
+msgstr "Nastavení zápisu značek"
 
 #: ../plugins/gtkui/interface.c:4307 ../plugins/gtkui/deadbeef.glade.h:199
 msgid "Write ID3v2"
@@ -1244,7 +1244,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:5322 ../plugins/gtkui/deadbeef.glade.h:229
 msgid "ReplayGain Scan Progress"
-msgstr ""
+msgstr "Průběh skenování ReplayGain"
 
 #: ../plugins/gtkui/interface.c:5333 ../plugins/gtkui/deadbeef.glade.h:230
 msgid "Current File:"
@@ -1262,11 +1262,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:5390 ../plugins/gtkui/deadbeef.glade.h:233
 msgid "ReplayGain Scan Results"
-msgstr ""
+msgstr "Výsledky skenování ReplayGain"
 
 #: ../plugins/gtkui/interface.c:5418 ../plugins/gtkui/deadbeef.glade.h:234
 msgid "Update File Tags"
-msgstr ""
+msgstr "Aktualizovat značky souboru"
 
 #: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:651
 msgid "Artist / Album"
@@ -1274,7 +1274,7 @@ msgstr "Umělec / Album"
 
 #: ../plugins/gtkui/mainplaylist.c:232 ../plugins/gtkui/search.c:652
 msgid "Track No"
-msgstr "Skladba č."
+msgstr "Stopa č"
 
 #: ../plugins/gtkui/mainplaylist.c:234 ../plugins/gtkui/plcommon.c:101
 #: ../plugins/gtkui/search.c:654 ../plugins/pltbrowser/pltbrowser.c:414
@@ -1321,7 +1321,7 @@ msgstr ""
 #: ../plugins/gtkui/plcommon.c:935 ../plugins/gtkui/plcommon.c:1044
 #: ../plugins/gtkui/pltmenu.c:470
 msgid "_Paste"
-msgstr ""
+msgstr "V_ložit"
 
 #: ../plugins/gtkui/plcommon.c:989 ../translation/plugins.c:311
 #, no-c-format
@@ -1341,11 +1341,11 @@ msgstr "Znovu načíst metadata"
 
 #: ../plugins/gtkui/plcommon.c:1024 ../plugins/gtkui/pltmenu.c:446
 msgid "Cu_t"
-msgstr ""
+msgstr "_Vyjmout"
 
 #: ../plugins/gtkui/plcommon.c:1034 ../plugins/gtkui/pltmenu.c:458
 msgid "_Copy"
-msgstr ""
+msgstr "_Kopírovat"
 
 #: ../plugins/gtkui/plcommon.c:1078 ../translation/plugins.c:154
 #, no-c-format
@@ -1407,11 +1407,11 @@ msgstr "Inicializuje se..."
 
 #: ../plugins/gtkui/search.c:659
 msgid "Search [(%list_total% results)]"
-msgstr ""
+msgstr "Hledání [(%list_total% výsledků)]"
 
 #: ../plugins/gtkui/trkproperties.c:100
 msgid "You've modified data for this track."
-msgstr "Byla změněna data této skladby."
+msgstr "Byla změněna data této stopy."
 
 #: ../plugins/gtkui/trkproperties.c:102
 msgid "Really close the window?"
@@ -1438,7 +1438,7 @@ msgstr "[Vícenásobné hodnoty] "
 
 #: ../plugins/gtkui/trkproperties.c:635
 msgid "Writing tags..."
-msgstr "Zapisují se tagy..."
+msgstr "Zapisují se značky..."
 
 #: ../plugins/gtkui/trkproperties.c:890
 msgid "Field name"
@@ -1539,7 +1539,7 @@ msgstr "--gui PLUGIN Určí, který zásuvný modul GUI bude použit, výchozí 
 #: ../main.c:137
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "   --nowplaying FMT   Zapsat zformátovaný název skladby do stdout\n"
+msgstr "   --nowplaying FMT   Zapsat zformátovaný název stopy do stdout\n"
 
 #: ../main.c:138
 #, c-format
@@ -1571,7 +1571,7 @@ msgstr "Pozn.: --nowplaying se již nepoužívá.\n"
 msgid ""
 "   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
 "title formatting\n"
-msgstr ""
+msgstr "   --nowplaying-tf FMT Zapsat zformátovaný název stopy do stdout, s použitím nového formátování názvu\n"
 
 #: ../main.c:145
 #, c-format
@@ -1643,7 +1643,7 @@ msgid ""
 "By playback order\n"
 "Track\n"
 "Album"
-msgstr ""
+msgstr "Dle pořadí přehrávání\nStopa\nAlbum"
 
 #: ../plugins/gtkui/deadbeef.glade.h:98
 msgid ""
@@ -1651,7 +1651,7 @@ msgid ""
 "Apply gain\n"
 "Apply gain and prevent clipping according to peak\n"
 "Only prevent clipping"
-msgstr ""
+msgstr "Žádné\nPoužít zesílení\nPoužít zesílení a zabránit clippingu v závislosti na vrcholu\nPouze zabránit clippingu"
 
 #: ../plugins/gtkui/deadbeef.glade.h:194
 msgid ""
@@ -1718,7 +1718,7 @@ msgstr "Subtrack rejstřík"
 
 #: ../translation/extra.c:19
 msgid "Tag Type(s)"
-msgstr "Typ(y) popisků"
+msgstr "Typ(y) značek"
 
 #: ../translation/extra.c:20
 msgid "Embedded Cuesheet"
@@ -1765,7 +1765,7 @@ msgstr ""
 #: ../translation/plugins.c:19
 #, no-c-format
 msgid "Fetch from embedded tags"
-msgstr "Získat z vložených popisků"
+msgstr "Získat z vložených značek"
 
 #: ../translation/plugins.c:21
 #, no-c-format
@@ -1975,7 +1975,7 @@ msgstr ""
 #: ../translation/plugins.c:108
 #, no-c-format
 msgid "On/Off Only"
-msgstr ""
+msgstr "Pouze Zap/Vyp"
 
 #: ../translation/plugins.c:110
 #, no-c-format
@@ -2034,32 +2034,32 @@ msgstr ""
 #: ../translation/plugins.c:134
 #, no-c-format
 msgid "ReplayGain"
-msgstr ""
+msgstr "ReplayGain"
 
 #: ../translation/plugins.c:136
 #, no-c-format
 msgid "Remove ReplayGain Information"
-msgstr ""
+msgstr "Odstranit ReplayGain informaci"
 
 #: ../translation/plugins.c:138
 #, no-c-format
 msgid "Scan Selection As Albums (By Tags)"
-msgstr ""
+msgstr "Skenovat výběr jako alba (dle značek)"
 
 #: ../translation/plugins.c:140
 #, no-c-format
 msgid "Scan Selection As Single Album"
-msgstr ""
+msgstr "Skenovat výběr jako jedno album"
 
 #: ../translation/plugins.c:142
 #, no-c-format
 msgid "Scan Per-file Track Gain"
-msgstr ""
+msgstr "Skenovat zesílení stopy"
 
 #: ../translation/plugins.c:144
 #, no-c-format
 msgid "Scan Per-file Track Gain If Not Scanned"
-msgstr ""
+msgstr "Skenovat zesílení stopy nebylo-li skenováno"
 
 #: ../translation/plugins.c:148
 #, no-c-format
@@ -2099,57 +2099,57 @@ msgstr "Zobrazit nápovědu"
 #: ../translation/plugins.c:172
 #, no-c-format
 msgid "Cycle Repeat Mode"
-msgstr ""
+msgstr "Přepnout režim opakování"
 
 #: ../translation/plugins.c:174
 #, no-c-format
 msgid "Repeat - Off"
-msgstr ""
+msgstr "Opakování - Vypnuto"
 
 #: ../translation/plugins.c:176
 #, no-c-format
 msgid "Repeat - Single Track"
-msgstr ""
+msgstr "Opakování - Jedna stopa"
 
 #: ../translation/plugins.c:178
 #, no-c-format
 msgid "Repeat - All"
-msgstr ""
+msgstr "Opakování - Vše"
 
 #: ../translation/plugins.c:180
 #, no-c-format
 msgid "Cycle Shuffle Mode"
-msgstr ""
+msgstr "Přepnout náhodný režim"
 
 #: ../translation/plugins.c:182
 #, no-c-format
 msgid "Shuffle - Random Tracks"
-msgstr ""
+msgstr "Náhodně - Náhodné stopy"
 
 #: ../translation/plugins.c:184
 #, no-c-format
 msgid "Shuffle - Albums"
-msgstr ""
+msgstr "Náhodně - Alba"
 
 #: ../translation/plugins.c:186
 #, no-c-format
 msgid "Shuffle - Tracks"
-msgstr ""
+msgstr "Náhodně - Stopy"
 
 #: ../translation/plugins.c:188
 #, no-c-format
 msgid "Shuffle - Off"
-msgstr ""
+msgstr "Náhodně - Vypnuto"
 
 #: ../translation/plugins.c:190
 #, no-c-format
 msgid "Toggle Cursor Follows Playback"
-msgstr ""
+msgstr "Přepnout sledovat kurzorem přehrávání"
 
 #: ../translation/plugins.c:192
 #, no-c-format
 msgid "Toggle Scroll Follows Playback"
-msgstr ""
+msgstr "Přepnout posun s přehráváním"
 
 #: ../translation/plugins.c:194
 #, no-c-format
@@ -2174,7 +2174,7 @@ msgstr ""
 #: ../translation/plugins.c:204
 #, no-c-format
 msgid "Sort Custom"
-msgstr ""
+msgstr "Vlastní řazení"
 
 #: ../translation/plugins.c:206
 #, no-c-format
@@ -2184,12 +2184,12 @@ msgstr ""
 #: ../translation/plugins.c:208
 #, no-c-format
 msgid "Remove Track(s) From Playlist"
-msgstr ""
+msgstr "Odstranit stopu(y) z playlistu"
 
 #: ../translation/plugins.c:210
 #, no-c-format
 msgid "Save Playlist"
-msgstr ""
+msgstr "Uložit playlist"
 
 #: ../translation/plugins.c:212 ../plugins/gtkui/actionhandlers.c:626
 #, no-c-format
@@ -2199,7 +2199,7 @@ msgstr "Načíst playlist"
 #: ../translation/plugins.c:214
 #, no-c-format
 msgid "Remove Current Playlist"
-msgstr ""
+msgstr "Odebrat aktuální playlist"
 
 #: ../translation/plugins.c:218
 #, no-c-format
@@ -2264,7 +2264,7 @@ msgstr "Přidat oddělovače mezi položky kontextového menu zásuvných modul�
 #: ../translation/plugins.c:242
 #, no-c-format
 msgid "Use unicode chars instead of images for track state"
-msgstr ""
+msgstr "Použít unicode znaky namísto obrázků pro stav stopy"
 
 #: ../translation/plugins.c:244
 #, no-c-format
@@ -2274,12 +2274,12 @@ msgstr ""
 #: ../translation/plugins.c:249
 #, no-c-format
 msgid "Jump To Currently Playing Track"
-msgstr ""
+msgstr "Přeskočit na přehrávanou stopu"
 
 #: ../translation/plugins.c:251
 #, no-c-format
 msgid "Skip to"
-msgstr ""
+msgstr "Přeskočit na"
 
 #: ../translation/plugins.c:253
 #, no-c-format
@@ -2324,92 +2324,92 @@ msgstr ""
 #: ../translation/plugins.c:269
 #, no-c-format
 msgid "Next Playlist"
-msgstr ""
+msgstr "Následující playlist"
 
 #: ../translation/plugins.c:271
 #, no-c-format
 msgid "Prev Playlist"
-msgstr ""
+msgstr "Předchozí playlist"
 
 #: ../translation/plugins.c:273
 #, no-c-format
 msgid "Switch To Playlist 10"
-msgstr ""
+msgstr "Přepnout na playlist 10"
 
 #: ../translation/plugins.c:275
 #, no-c-format
 msgid "Switch To Playlist 9"
-msgstr ""
+msgstr "Přepnout na playlist 9"
 
 #: ../translation/plugins.c:277
 #, no-c-format
 msgid "Switch To Playlist 8"
-msgstr ""
+msgstr "Přepnout na playlist 8"
 
 #: ../translation/plugins.c:279
 #, no-c-format
 msgid "Switch To Playlist 7"
-msgstr ""
+msgstr "Přepnout na playlist 7"
 
 #: ../translation/plugins.c:281
 #, no-c-format
 msgid "Switch To Playlist 6"
-msgstr ""
+msgstr "Přepnout na playlist 6"
 
 #: ../translation/plugins.c:283
 #, no-c-format
 msgid "Switch To Playlist 5"
-msgstr ""
+msgstr "Přepnout na playlist 5"
 
 #: ../translation/plugins.c:285
 #, no-c-format
 msgid "Switch To Playlist 4"
-msgstr ""
+msgstr "Přepnout na playlist 4"
 
 #: ../translation/plugins.c:287
 #, no-c-format
 msgid "Switch To Playlist 3"
-msgstr ""
+msgstr "Přepnout na playlist 3"
 
 #: ../translation/plugins.c:289
 #, no-c-format
 msgid "Switch To Playlist 2"
-msgstr ""
+msgstr "Přepnout na playlist 2"
 
 #: ../translation/plugins.c:291
 #, no-c-format
 msgid "Switch To Playlist 1"
-msgstr ""
+msgstr "Přepnout na playlist 1"
 
 #: ../translation/plugins.c:293
 #, no-c-format
 msgid "Sort Randomize"
-msgstr ""
+msgstr "Řadit náhodně"
 
 #: ../translation/plugins.c:295
 #, no-c-format
 msgid "Sort By Date"
-msgstr ""
+msgstr "Řadit dle data"
 
 #: ../translation/plugins.c:297
 #, no-c-format
 msgid "Sort By Artist"
-msgstr ""
+msgstr "Řadit dle umělce"
 
 #: ../translation/plugins.c:299
 #, no-c-format
 msgid "Sort By Album"
-msgstr ""
+msgstr "Řadit dle alba"
 
 #: ../translation/plugins.c:301
 #, no-c-format
 msgid "Sort By Track Number"
-msgstr ""
+msgstr "Řadit dle čísla stopy"
 
 #: ../translation/plugins.c:303
 #, no-c-format
 msgid "Sort By Title"
-msgstr ""
+msgstr "Řadit dle názvu"
 
 #: ../translation/plugins.c:305
 #, no-c-format
@@ -2419,7 +2419,7 @@ msgstr ""
 #: ../translation/plugins.c:307
 #, no-c-format
 msgid "Clear Playlist"
-msgstr ""
+msgstr "Vyčistit playlist"
 
 #: ../translation/plugins.c:313
 #, no-c-format
@@ -2434,12 +2434,12 @@ msgstr ""
 #: ../translation/plugins.c:317
 #, no-c-format
 msgid "Move Tracks Down"
-msgstr ""
+msgstr "Posunout stopy dolů"
 
 #: ../translation/plugins.c:319
 #, no-c-format
 msgid "Move Tracks Up"
-msgstr ""
+msgstr "Posunout stopy nahoru"
 
 #: ../translation/plugins.c:321
 #, no-c-format
@@ -2509,7 +2509,7 @@ msgstr ""
 #: ../translation/plugins.c:357
 #, no-c-format
 msgid "Toggle Stop After Current Track"
-msgstr ""
+msgstr "Přepnout zastavení po aktuální stopě"
 
 #: ../translation/plugins.c:359
 #, no-c-format
@@ -2560,7 +2560,7 @@ msgstr ""
 #: ../translation/plugins.c:378
 #, no-c-format
 msgid "Submit tracks shorter than 30 seconds (not recommended)"
-msgstr ""
+msgstr "Předložit stopy kratší než 30 sekund (nedoporučováno)"
 
 #. plugins/mono2stereo/mono2stereo.c
 #: ../translation/plugins.c:381
@@ -2613,7 +2613,7 @@ msgstr "Soubor zařízení"
 #: ../translation/plugins.c:407
 #, no-c-format
 msgid "Highlight current playlist"
-msgstr ""
+msgstr "Zvýraznit aktuální playlist"
 
 #: ../translation/plugins.c:409
 #, no-c-format
@@ -2671,7 +2671,7 @@ msgstr "Vzorkovací frekvence"
 #: ../translation/plugins.c:432
 #, no-c-format
 msgid "Skip when shorter than (sec)"
-msgstr ""
+msgstr "Přeskočit pokud kratší než (s)"
 
 #. plugins/shellexecui/shellexecui.c
 #: ../translation/plugins.c:435
@@ -2896,7 +2896,7 @@ msgstr ""
 #: ../plugins/converter/interface.c:132
 #: ../plugins/converter/converter.glade.h:5
 msgid "Re-tag after copy"
-msgstr ""
+msgstr "Přeznačkovat po zkopírování"
 
 #: ../plugins/converter/interface.c:140
 #: ../plugins/converter/converter.glade.h:6
@@ -2909,7 +2909,7 @@ msgstr "Název výstupního souboru:"
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default ([%tracknumber%. ][%artist% - ]%title%)."
-msgstr ""
+msgstr "Přípona (např. .mp3) bude připojena automaticky.\nPonechte pole prázdné pro výchozí ([%tracknumber%. ][%artist% - ]%title%)."
 
 #: ../plugins/converter/interface.c:164
 #: ../plugins/converter/converter.glade.h:10
@@ -3063,7 +3063,7 @@ msgstr ""
 #: ../plugins/converter/interface.c:550
 #: ../plugins/converter/converter.glade.h:46
 msgid "<b>Tag writer</b>"
-msgstr "<b>Autor popisku</b>"
+msgstr "<b>Zápis značek</b>"
 
 #: ../plugins/converter/interface.c:637
 #: ../plugins/converter/converter.glade.h:47
@@ -3098,7 +3098,7 @@ msgstr "Všechny soubory  (*)"
 
 #: ../plugins/gtkui/fileman.c:455 ../plugins/gtkui/fileman.c:499
 msgid "Supported playlist formats"
-msgstr ""
+msgstr "Podporované formáty playlistů"
 
 #: ../plugins/gtkui/fileman.c:462
 msgid "All files"
@@ -3184,7 +3184,7 @@ msgstr "Jakýkoliv název, například \"Můj příkaz shellu\""
 msgid ""
 "Command ID, normally it should be something short, for example "
 "\"youtube_open\". It must be unique."
-msgstr "ID příkazu, mělo by to být něco krátkého, například \"youtube_otevřít\". Musí být unikátní."
+msgstr "ID příkazu, mělo by být něco krátkého, například \"youtube_otevřít\". Musí být unikátní."
 
 #: ../plugins/shellexecui/interface.c:208
 #: ../plugins/shellexecui/shellexec.glade.h:15
@@ -3298,27 +3298,27 @@ msgid ""
 " The files will be lost.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr " Soubory budou ztraceny.\n\n(Tento dialog lze vypnout v nastavení zásuvného modulu GTKUI)"
 
 #: ../plugins/gtkui/actionhandlers.c:417
 #, c-format
 msgid "Do you really want to delete the selected file?%s"
-msgstr ""
+msgstr "Opravdu smazat označený soubor?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:419
 #, c-format
 msgid "Do you really want to delete all %d selected files?%s"
-msgstr ""
+msgstr "Opravdu smazat všech %d označených souborů?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:424
 #, c-format
 msgid "Do you really want to delete all %d files from the current playlist?%s"
-msgstr ""
+msgstr "Opravdu smazat všech %dsouborů z aktuálního playlistu?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:427
 #, c-format
 msgid "Do you really want to delete the currently playing file?%s"
-msgstr ""
+msgstr "Opravdu smazat aktuálně přehrávaný soubor?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:430
 msgid "Delete files from disk"
@@ -3401,23 +3401,23 @@ msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1567 ../plugins/gtkui/widgets.c:1682
 msgid "Rename Tab"
-msgstr ""
+msgstr "Přejmenovat kartu"
 
 #: ../plugins/gtkui/widgets.c:1689
 msgid "Remove Tab"
-msgstr ""
+msgstr "Odstranit kartu"
 
 #: ../plugins/gtkui/widgets.c:1696 ../plugins/gtkui/widgets.c:1876
 msgid "Add New Tab"
-msgstr ""
+msgstr "Přidat novou kartu"
 
 #: ../plugins/gtkui/widgets.c:1705
 msgid "Move Tab Left"
-msgstr ""
+msgstr "Přesunout kartu doleva"
 
 #: ../plugins/gtkui/widgets.c:1712
 msgid "Move Tab Right"
-msgstr ""
+msgstr "Přesunout kartu doprava"
 
 #: ../plugins/gtkui/widgets.c:2366 ../plugins/gtkui/widgets.c:2544
 #: ../plugins/pltbrowser/pltbrowser.c:883
@@ -3458,12 +3458,12 @@ msgstr "Přejmenovat playlist"
 
 #: ../plugins/gtkui/pltmenu.c:90
 msgid "Removing playlist"
-msgstr ""
+msgstr "Odstraňování playlistu"
 
 #: ../plugins/gtkui/pltmenu.c:91
 #, c-format
 msgid "Do you really want to remove the playlist '%s'?"
-msgstr ""
+msgstr "Opravdu odstranit playlist '%s'?"
 
 #: ../plugins/gtkui/pltmenu.c:410
 msgid "Remove Playlist"
@@ -3475,11 +3475,11 @@ msgstr "Přidat nový playlist"
 
 #: ../plugins/gtkui/pltmenu.c:421
 msgid "Duplicate Playlist"
-msgstr ""
+msgstr "Duplikovat playlist"
 
 #: ../plugins/gtkui/pltmenu.c:433
 msgid "Enable Autosort"
-msgstr ""
+msgstr "Povolit automatické řazení"
 
 #: ../plugins/pltbrowser/pltbrowser.c:177
 msgid " (paused)"
@@ -3491,7 +3491,7 @@ msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:183
 msgid " (playing)"
-msgstr ""
+msgstr "(přehrávání)"
 
 #: ../plugins/pltbrowser/pltbrowser.c:219
 #, c-format
@@ -3513,7 +3513,7 @@ msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:988
 msgid "Playlist browser"
-msgstr ""
+msgstr "Prohlížeč playlistů"
 
 #: ../tf.c:2199
 msgid "mono"
@@ -3525,15 +3525,15 @@ msgstr ""
 
 #: ../plugins/gtkui/rg.c:281
 msgid "Updating File Tags Progress"
-msgstr ""
+msgstr "Probíhá aktualizace značek souborů"
 
 #: ../plugins/gtkui/rg.c:311
 msgid "Album Gain"
-msgstr ""
+msgstr "Zesílení alba"
 
 #: ../plugins/gtkui/rg.c:312
 msgid "Track Gain"
-msgstr ""
+msgstr "Zesílení stopy"
 
 #: ../plugins/gtkui/rg.c:313
 msgid "Album Peak"
@@ -3541,7 +3541,7 @@ msgstr ""
 
 #: ../plugins/gtkui/rg.c:314
 msgid "Track Peak"
-msgstr ""
+msgstr "Vrchol stopy"
 
 #: ../plugins/gtkui/rg.c:317
 msgid "Success"

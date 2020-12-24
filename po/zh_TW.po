@@ -11,13 +11,14 @@
 # Julian Lai <laichiaheng@outlook.com>, 2015-2017,2019
 # Louis Chen <louistw@uab.edu>, 2019
 # PCMan <pcman.tw@gmail.com>, 2010
+# 鍾宏慶 <earlycat@gmail.com>, 2020
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-15 20:41+0200\n"
-"PO-Revision-Date: 2020-03-03 18:38+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2020-06-27 11:08+0200\n"
+"PO-Revision-Date: 2020-11-01 15:47+0000\n"
+"Last-Translator: 鍾宏慶 <earlycat@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/deadbeef-player/deadbeef-player/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -33,7 +34,7 @@ msgstr "關於 DeaDBeeF %s"
 #: ../plugins/gtkui/callbacks.c:371
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr "DeaDBeeF %s ChangeLog"
+msgstr "DeaDBeeF %s 更新日誌"
 
 #: ../plugins/gtkui/callbacks.c:631
 #, c-format
@@ -774,7 +775,7 @@ msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2173 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Minimize to tray on startup"
-msgstr ""
+msgstr "在啟動時縮小至工具列"
 
 #: ../plugins/gtkui/interface.c:2177 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Close minimizes to tray"
@@ -834,7 +835,7 @@ msgstr "隱藏「自磁碟刪除」選項"
 #: ../plugins/gtkui/interface.c:2272 ../plugins/gtkui/deadbeef.glade.h:131
 msgid ""
 "Switch to the next song when the currently played one is removed from disk"
-msgstr ""
+msgstr "當前播放的曲目從磁碟刪除時自動跳至下一首"
 
 #: ../plugins/gtkui/interface.c:2276 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Auto-name playlists when adding a single folder"
@@ -1965,7 +1966,7 @@ msgstr "品質 / 演算法"
 #: ../translation/plugins.c:100
 #, no-c-format
 msgid "Resampling quality"
-msgstr ""
+msgstr "重新取樣品質"
 
 #: ../translation/plugins.c:102
 #, no-c-format
@@ -1990,7 +1991,7 @@ msgstr "完整"
 #: ../translation/plugins.c:112
 #, no-c-format
 msgid "8-bit output"
-msgstr ""
+msgstr "8位元輸出"
 
 #. plugins/ffmpeg/ffmpeg.c
 #: ../translation/plugins.c:115
@@ -2007,12 +2008,12 @@ msgstr "檔案副檔名（以 ; 分隔）"
 #: ../translation/plugins.c:120
 #, no-c-format
 msgid "Ignore bad header errors"
-msgstr ""
+msgstr "忽略錯誤標頭訊息"
 
 #: ../translation/plugins.c:122
 #, no-c-format
 msgid "Ignore unparsable stream errors"
-msgstr ""
+msgstr "忽略無法剖析串流錯誤"
 
 #. plugins/gme/cgme.c
 #: ../translation/plugins.c:125
@@ -3308,22 +3309,22 @@ msgstr ""
 #: ../plugins/gtkui/actionhandlers.c:417
 #, c-format
 msgid "Do you really want to delete the selected file?%s"
-msgstr ""
+msgstr "%s真的要刪除選中的檔案嗎?"
 
 #: ../plugins/gtkui/actionhandlers.c:419
 #, c-format
 msgid "Do you really want to delete all %d selected files?%s"
-msgstr ""
+msgstr "真的要刪除所有 %d 選中的檔案?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:424
 #, c-format
 msgid "Do you really want to delete all %d files from the current playlist?%s"
-msgstr ""
+msgstr "真的要從目前播放清單%s 刪除所有檔案? %d "
 
 #: ../plugins/gtkui/actionhandlers.c:427
 #, c-format
 msgid "Do you really want to delete the currently playing file?%s"
-msgstr ""
+msgstr "真的要刪除目前播放中的檔案?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:430
 msgid "Delete files from disk"
@@ -3463,12 +3464,12 @@ msgstr "重新命名播放清單"
 
 #: ../plugins/gtkui/pltmenu.c:90
 msgid "Removing playlist"
-msgstr ""
+msgstr "移除播放清單"
 
 #: ../plugins/gtkui/pltmenu.c:91
 #, c-format
 msgid "Do you really want to remove the playlist '%s'?"
-msgstr ""
+msgstr "真的要移除播放清單 '%s'?"
 
 #: ../plugins/gtkui/pltmenu.c:410
 msgid "Remove Playlist"
@@ -3484,7 +3485,7 @@ msgstr "複製播放清單"
 
 #: ../plugins/gtkui/pltmenu.c:433
 msgid "Enable Autosort"
-msgstr ""
+msgstr "啟用自動排序"
 
 #: ../plugins/pltbrowser/pltbrowser.c:177
 msgid " (paused)"

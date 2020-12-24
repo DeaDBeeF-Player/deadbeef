@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-15 20:41+0200\n"
-"PO-Revision-Date: 2020-04-12 20:09+0000\n"
+"POT-Creation-Date: 2020-06-27 11:08+0200\n"
+"PO-Revision-Date: 2020-09-07 09:26+0000\n"
 "Last-Translator: Charles Monzat <c.monzat@laposte.net>\n"
 "Language-Team: French (http://www.transifex.com/deadbeef-player/deadbeef-player/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -2633,7 +2633,7 @@ msgstr "Démarrer la lecture avec un double-clic"
 #: ../translation/plugins.c:412
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
-msgstr ""
+msgstr "Taille du tampon (-1 pour utiliser la valeur optimale choisie par portaudio)"
 
 #: ../translation/plugins.c:414
 #, no-c-format
@@ -2739,47 +2739,47 @@ msgstr "Préampli"
 #: ../translation/plugins.c:458
 #, no-c-format
 msgid "1.2K"
-msgstr ""
+msgstr "1,2 K"
 
 #: ../translation/plugins.c:460
 #, no-c-format
 msgid "1.8K"
-msgstr ""
+msgstr "1,8 K"
 
 #: ../translation/plugins.c:462
 #, no-c-format
 msgid "2.5K"
-msgstr ""
+msgstr "2,5 K"
 
 #: ../translation/plugins.c:464
 #, no-c-format
 msgid "3.5K"
-msgstr ""
+msgstr "3,5 K"
 
 #: ../translation/plugins.c:466
 #, no-c-format
 msgid "5K"
-msgstr ""
+msgstr "5 K"
 
 #: ../translation/plugins.c:468
 #, no-c-format
 msgid "7K"
-msgstr ""
+msgstr "7 K"
 
 #: ../translation/plugins.c:470
 #, no-c-format
 msgid "10K"
-msgstr ""
+msgstr "10 K"
 
 #: ../translation/plugins.c:472
 #, no-c-format
 msgid "14K"
-msgstr ""
+msgstr "14 K"
 
 #: ../translation/plugins.c:474
 #, no-c-format
 msgid "20K"
-msgstr ""
+msgstr "20 K"
 
 #. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:477
@@ -3467,7 +3467,7 @@ msgstr "Renommer la liste de lecture"
 
 #: ../plugins/gtkui/pltmenu.c:90
 msgid "Removing playlist"
-msgstr ""
+msgstr "Suppression de la liste de lecture"
 
 #: ../plugins/gtkui/pltmenu.c:91
 #, c-format

@@ -10,14 +10,15 @@
 # Burak <public@burakgarci.net>, 2013,2017
 # Ercan PEKER <bahadiroglu33@gmail.com>, 2017
 # Mustafa Levent Fidancı <mustafaleventfidanci@gmail.com>, 2020
+# Mustafa Levent Fidancı <mustafaleventfidanci@gmail.com>, 2020
 # Numan Demirdöğen <if.gnu.linux@gmail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-15 20:41+0200\n"
-"PO-Revision-Date: 2020-04-15 17:52+0000\n"
-"Last-Translator: abc Def <hdogan1974@gmail.com>\n"
+"POT-Creation-Date: 2020-06-27 11:08+0200\n"
+"PO-Revision-Date: 2020-08-29 16:21+0000\n"
+"Last-Translator: Mustafa Levent Fidancı <mustafaleventfidanci@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/deadbeef-player/deadbeef-player/language/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -774,7 +775,7 @@ msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2173 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Minimize to tray on startup"
-msgstr ""
+msgstr "Başlangıçta tepsiye küçült"
 
 #: ../plugins/gtkui/interface.c:2177 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Close minimizes to tray"
@@ -834,7 +835,7 @@ msgstr "\"Diskten Kaldır\" menü ögesini gösterme"
 #: ../plugins/gtkui/interface.c:2272 ../plugins/gtkui/deadbeef.glade.h:131
 msgid ""
 "Switch to the next song when the currently played one is removed from disk"
-msgstr ""
+msgstr "Çalınan şarkı diskten kaldırıldığında sonraki şarkıya geç"
 
 #: ../plugins/gtkui/interface.c:2276 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Auto-name playlists when adding a single folder"
@@ -1602,7 +1603,7 @@ msgstr " --ses [NUM] Deadbeef ses seviyesini yazdırın veya ayarlayın.\n"
 msgid ""
 "                      The NUM parameter can be specified in percents "
 "(absolute value or increment/decrement)\n"
-msgstr ""
+msgstr "NUM parametresi yüzde cinsinden belirtilebilir (mutlak değer veya artış/azalma)\n"
 
 #: ../main.c:149
 #, c-format
@@ -1965,7 +1966,7 @@ msgstr "Kalite / Algoritma"
 #: ../translation/plugins.c:100
 #, no-c-format
 msgid "Resampling quality"
-msgstr ""
+msgstr "Yeniden örnekleme kalitesi"
 
 #: ../translation/plugins.c:102
 #, no-c-format
@@ -2007,12 +2008,12 @@ msgstr "Dosya Uzantıları (';' ile ayırın)"
 #: ../translation/plugins.c:120
 #, no-c-format
 msgid "Ignore bad header errors"
-msgstr ""
+msgstr "Bozuk başlık hatalarını yoksay"
 
 #: ../translation/plugins.c:122
 #, no-c-format
 msgid "Ignore unparsable stream errors"
-msgstr ""
+msgstr "Çözümlenemeyen akış hatalarını yok say"
 
 #. plugins/gme/cgme.c
 #: ../translation/plugins.c:125
@@ -2449,12 +2450,12 @@ msgstr "Parçaları Yukarı Taşı"
 #: ../translation/plugins.c:321
 #, no-c-format
 msgid "Toggle Mute"
-msgstr ""
+msgstr "Sesi Aç/Kapa"
 
 #: ../translation/plugins.c:331
 #, no-c-format
 msgid "Toggle Pause"
-msgstr ""
+msgstr "Duraklatmayı Aç/Kapa"
 
 #: ../translation/plugins.c:333
 #, no-c-format
@@ -3303,27 +3304,27 @@ msgid ""
 " The files will be lost.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "Dosyalar kaybolacak\n\n(Bu iletişim kutusu GTKUI eklenti ayarlarından kapatılabilir)"
 
 #: ../plugins/gtkui/actionhandlers.c:417
 #, c-format
 msgid "Do you really want to delete the selected file?%s"
-msgstr ""
+msgstr "Seçilen dosyayı gerçekten silmek istiyor musunuz? %s"
 
 #: ../plugins/gtkui/actionhandlers.c:419
 #, c-format
 msgid "Do you really want to delete all %d selected files?%s"
-msgstr ""
+msgstr "Tüm seçilen dosyaları %d gerçekten silmek istiyor musunuz?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:424
 #, c-format
 msgid "Do you really want to delete all %d files from the current playlist?%s"
-msgstr ""
+msgstr "Geçerli oynatma listesindeki tüm dosyaları %d gerçekten silmek istiyor musunuz?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:427
 #, c-format
 msgid "Do you really want to delete the currently playing file?%s"
-msgstr ""
+msgstr "Şu anda çalan dosyayı gerçekten silmek istiyor musunuz?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:430
 msgid "Delete files from disk"
@@ -3468,7 +3469,7 @@ msgstr "Oynatma listesini kaldır"
 #: ../plugins/gtkui/pltmenu.c:91
 #, c-format
 msgid "Do you really want to remove the playlist '%s'?"
-msgstr ""
+msgstr "Oynatma listesini gerçekten kaldırmak istiyor musunuz '%s'?"
 
 #: ../plugins/gtkui/pltmenu.c:410
 msgid "Remove Playlist"

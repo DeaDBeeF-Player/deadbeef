@@ -12,7 +12,7 @@
 # copycat <copycat@onlinehome.de>, 2016
 # copycat <copycat@onlinehome.de>, 2016
 # toemmesoft <development@toemmesoft.de>, 2014
-# Fyrenic <fyrenic@protonmail.com>, 2018
+# a287ca4390ac1060252ff7344e07cfb3_ddf63c0 <12d9bb92f00a9c2841133eeaac7a25bb_727560>, 2018
 # Zykure <zykure@web.de>, 2013
 # Josua Stingelin <josuast@hotmail.com>, 2016
 # oxyd24foo <oxyd24@yopmail.com>, 2019
@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-15 20:41+0200\n"
+"POT-Creation-Date: 2020-06-27 11:08+0200\n"
 "PO-Revision-Date: 2020-05-01 05:54+0000\n"
 "Last-Translator: aer <aer66@mail.de>\n"
 "Language-Team: German (http://www.transifex.com/deadbeef-player/deadbeef-player/language/de/)\n"
