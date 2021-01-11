@@ -70,7 +70,9 @@ make V=1 -j8 DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION || exit 1
 export DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION
 make DESTDIR=$DESTDIR install || exit 1
 mkdir -p $LIBRARY_PATH
-cp $LIBRARY_PATH/libdispatch.so $LIBRARY_PATH/libkqueue.so $LIBRARY_PATH/libBlocksRuntime.so $DESTDIR/opt/deadbeef/lib/ || exit 1
+cp -r $LIBRARY_PATH/libBlocksRuntime.so* $DESTDIR/opt/deadbeef/lib/
+cp -r $LIBRARY_PATH/libkqueue.so* $DESTDIR/opt/deadbeef/lib/
+cp -r $LIBRARY_PATH/libdispatch.so* $DESTDIR/opt/deadbeef/lib/
 
 MACHINE_TYPE=`uname -m`
 if [ ${MACHINE_TYPE} == 'x86_64' ]; then
