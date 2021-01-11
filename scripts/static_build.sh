@@ -9,7 +9,7 @@ if [[ "$ARCH" == "i686" ]]; then
     export CXXFLAGS=$CFLAGS
     export LDFLAGS="-m32 -L$ORIGIN/$STATIC_DEPS/lib-x86-32/lib -L$ORIGIN/$STATIC_DEPS/lib-x86-32/lib/i386-linux-gnu"
     export CONFIGURE_FLAGS="--build=i686-unknown-linux-gnu"
-    export LD_LIBRARY_PATH="$ORIGIN/$STATIC_DEPS/lib-x86-32/lib"
+    export LIBRARY_PATH="$ORIGIN/$STATIC_DEPS/lib-x86-32/lib"
     export PKG_CONFIG_PATH="$ORIGIN/$STATIC_DEPS/lib-x86-32/lib/pkgconfig"
     export GTK_ROOT_310="$ORIGIN/$STATIC_DEPS/lib-x86-32/gtk-3.10.8";
     export GTK_ROOT_216="$ORIGIN/$STATIC_DEPS/lib-x86-32/gtk-2.16.0";
@@ -24,7 +24,7 @@ elif [[ "$ARCH" == "x86_64" ]]; then
     export CFLAGS="-m64 -I$ORIGIN/$STATIC_DEPS/lib-x86-64/include"
     export LDFLAGS="-m64 -L$ORIGIN/$STATIC_DEPS/lib-x86-64/lib -L$ORIGIN/$STATIC_DEPS/lib-x86-64/lib/x86_64-linux-gnu"
     export CONFIGURE_FLAGS="--build=x86_64-unknown-linux-gnu"
-    export LD_LIBRARY_PATH="$ORIGIN/$STATIC_DEPS/lib-x86-64/lib"
+    export LIBRARY_PATH="$ORIGIN/$STATIC_DEPS/lib-x86-64/lib"
     export PKG_CONFIG_PATH="$ORIGIN/$STATIC_DEPS/lib-x86-64/lib/pkgconfig"
     export GTK_ROOT_310="$ORIGIN/$STATIC_DEPS/lib-x86-64/gtk-3.10.8";
     export GTK_ROOT_216="$ORIGIN/$STATIC_DEPS/lib-x86-64/gtk-2.16.0";
@@ -38,6 +38,8 @@ else
     echo unknown arch $ARCH
     exit 1
 fi
+
+export LD_LIBRARY_PATH=$LIBRARY_PATH
 
 # using clang requires higher version of libstdc++, than provided in staticdeps, so remove it
 rm static-deps/lib-x86-64/lib/libstdc*
@@ -65,7 +67,12 @@ sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
 sed -i 's/hardcode_into_libs=yes/hardcode_into_libs=no/g' libtool
 make clean
 make V=1 -j8 DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION || exit 1
-make DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION install || exit 1
+export DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION
+make DESTDIR=$DESTDIR install || exit 1
+mkdir -p $LIBRARY_PATH
+cp -r $LIBRARY_PATH/libBlocksRuntime.so* $DESTDIR/opt/deadbeef/lib/
+cp -r $LIBRARY_PATH/libkqueue.so* $DESTDIR/opt/deadbeef/lib/
+cp -r $LIBRARY_PATH/libdispatch.so* $DESTDIR/opt/deadbeef/lib/
 
 MACHINE_TYPE=`uname -m`
 if [ ${MACHINE_TYPE} == 'x86_64' ]; then
