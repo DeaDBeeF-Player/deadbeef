@@ -1166,7 +1166,10 @@ main (int argc, char *argv[]) {
             return -1;
         }
 #endif
-        mkdir (dbplugindir, 0755);
+        mkdir (dbresourcedir, 0755);
+    }
+    else {
+        strcpy (dbresourcedir, dbplugindir);
     }
 
     // Get doc and pixmaps dirs
