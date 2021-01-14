@@ -1,3 +1,6 @@
+version 1.8.6
+	Fixed loading encoder presets in non-portable builds
+
 version 1.8.5
 	Added the new ISO/IEC Base Media File Format library MP4P for working with MP4 files, which removes MP4FF dependency
 	Added support for additional per-track metadata in cuesheets
