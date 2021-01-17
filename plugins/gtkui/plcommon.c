@@ -2066,12 +2066,16 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
             draw_set_fg_color (&listview->grpctx, rgb);
         }
         int ew;
-        draw_text_custom (&listview->grpctx, x + 5, y + height/2 - draw_get_listview_rowheight (&listview->grpctx)/2 + 3, -1, 0, DDB_GROUP_FONT, 0, 0, str);
-        draw_get_layout_extents (&listview->grpctx, &ew, NULL);
-        int len = strlen (str);
-        int line_x = x + 5 + ew + (len ? ew / len / 2 : 0);
-        if (line_x < x + width) {
-            draw_line (&listview->grpctx, line_x, y+height/2, x+width, y+height/2);
+        int text_width = width-x-10;
+        if (text_width > 0) {
+            draw_text_custom (&listview->grpctx, x + 5, y + height/2 - draw_get_listview_rowheight (&listview->grpctx)/2 + 3, text_width, 0, DDB_GROUP_FONT, 0, 0, str);
+            draw_get_layout_extents (&listview->grpctx, &ew, NULL);
+
+            int len = strlen (str);
+            int line_x = x + 10 + ew + (len ? ew / len / 2 : 0);
+            if (line_x+20 < x + width) {
+                draw_line (&listview->grpctx, line_x, y+height/2, x+width, y+height/2);
+            }
         }
     }
 }
