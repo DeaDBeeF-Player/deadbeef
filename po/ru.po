@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Alexey Yakovenko <wakeroid@gmail.com>, 2013-2014,2016-2019
+# Alexey Yakovenko <wakeroid@gmail.com>, 2013-2014,2016-2019,2021
 # AlexL <loginov.alex.valer@gmail.com>, 2016-2020
 # Andrei Stepanov, 2014
 # Andrei Stepanov <adem4ik@gmail.com>, 2014,2020
@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-17 14:07+0100\n"
-"PO-Revision-Date: 2021-01-17 13:09+0000\n"
+"POT-Creation-Date: 2021-01-21 20:35+0100\n"
+"PO-Revision-Date: 2021-01-17 13:15+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/deadbeef-player/deadbeef-player/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -786,7 +786,7 @@ msgstr "Не показывать значок в трее"
 
 #: ../plugins/gtkui/interface.c:2186 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Delete from disk should use Trash"
-msgstr ""
+msgstr "Удалять файлы в Корзину"
 
 #: ../plugins/gtkui/interface.c:2190 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
@@ -3307,7 +3307,7 @@ msgid ""
 " The files will be moved to trash.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "Файлы будут удаляться в корзину.\n\n(Этот диалог можно отключить в настройках плагина GTKUI)"
 
 #: ../plugins/gtkui/actionhandlers.c:422
 msgid ""
@@ -3393,7 +3393,7 @@ msgstr "Вставить"
 
 #: ../plugins/gtkui/widgets.c:928
 msgid "Parent"
-msgstr ""
+msgstr "Предок"
 
 #: ../plugins/gtkui/widgets.c:1046
 msgid "Multiple widgets of this type are not supported"

@@ -4,15 +4,15 @@
 # 
 # Translators:
 # Glenn de Groot, 2010
-# Heimen Stoffels <vistausss@outlook.com>, 2019-2020
+# Heimen Stoffels <vistausss@outlook.com>, 2019-2021
 # Pjotr, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-17 14:07+0100\n"
-"PO-Revision-Date: 2021-01-17 13:09+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2021-01-21 20:35+0100\n"
+"PO-Revision-Date: 2021-01-17 16:53+0000\n"
+"Last-Translator: Heimen Stoffels <vistausss@outlook.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/deadbeef-player/deadbeef-player/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -781,7 +781,7 @@ msgstr "Systeemvakpictogram verbergen"
 
 #: ../plugins/gtkui/interface.c:2186 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Delete from disk should use Trash"
-msgstr ""
+msgstr "Prullenbak gebruiken bij 'Verwijderen van schijf'"
 
 #: ../plugins/gtkui/interface.c:2190 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
@@ -3302,7 +3302,7 @@ msgid ""
 " The files will be moved to trash.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr " De bestanden worden verplaatst naar de prullenbak.\n\n(dit venster kan worden uitgeschakeld in de GTKUI-plug-in-instellingen)"
 
 #: ../plugins/gtkui/actionhandlers.c:422
 msgid ""
@@ -3388,7 +3388,7 @@ msgstr "Plakken"
 
 #: ../plugins/gtkui/widgets.c:928
 msgid "Parent"
-msgstr ""
+msgstr "Bovenliggend"
 
 #: ../plugins/gtkui/widgets.c:1046
 msgid "Multiple widgets of this type are not supported"

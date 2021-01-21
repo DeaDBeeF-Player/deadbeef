@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Kjell Cato Heskjestad <cato@heskjestad.xyz>, 2019-2020
+# Kjell Cato Heskjestad <cato@heskjestad.xyz>, 2019-2021
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-17 14:07+0100\n"
-"PO-Revision-Date: 2021-01-17 13:09+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2021-01-21 20:35+0100\n"
+"PO-Revision-Date: 2021-01-19 15:49+0000\n"
+"Last-Translator: Kjell Cato Heskjestad <cato@heskjestad.xyz>\n"
 "Language-Team: Norwegian Bokmål (http://www.transifex.com/deadbeef-player/deadbeef-player/language/nb/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -779,7 +779,7 @@ msgstr "Skjul ikon i systemkurven"
 
 #: ../plugins/gtkui/interface.c:2186 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Delete from disk should use Trash"
-msgstr ""
+msgstr "Sletting fra disk skal bruke søppelkurven"
 
 #: ../plugins/gtkui/interface.c:2190 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
@@ -3300,7 +3300,7 @@ msgid ""
 " The files will be moved to trash.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "Filene vil flyttes til søppelkurven.\n\n(Dette dialogvinduet kan slås av i innstillingene til GTKUI-tillegget)"
 
 #: ../plugins/gtkui/actionhandlers.c:422
 msgid ""
@@ -3386,7 +3386,7 @@ msgstr "Lim inn"
 
 #: ../plugins/gtkui/widgets.c:928
 msgid "Parent"
-msgstr ""
+msgstr "Forelder"
 
 #: ../plugins/gtkui/widgets.c:1046
 msgid "Multiple widgets of this type are not supported"
