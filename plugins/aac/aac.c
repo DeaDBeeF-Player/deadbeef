@@ -439,6 +439,9 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
     int initsize = size;
 
+    size_t bitrate_bytes = 0;
+    size_t bitrate_samples = 0;
+
     while (size > 0) {
         // skip decoded samples
         if (info->skipsamples > 0 && info->out_remaining > 0) {
@@ -566,7 +569,6 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 info->eof = 1;
                 break;
             }
-
             info->mp4sample++;
 
             samples = aacDecoderDecodeFrame (info->dec, &info->frame_info, mp4packet, size);
@@ -578,6 +580,9 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 trace ("aac: ascDecoderDecodeFrame returned NULL\n");
                 break;
             }
+
+            bitrate_bytes += info->frame_info.bytesconsumed;
+            bitrate_samples += info->frame_info.samples / info->frame_info.channels;
         }
         else {
             if (info->remaining < AAC_MAX_PACKET_SIZE) {
@@ -591,6 +596,8 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
             trace ("NeAACDecDecode %d bytes\n", info->remaining)
             samples = aacDecoderDecodeFrame (info->dec, &info->frame_info, info->buffer, info->remaining);
+            bitrate_bytes += info->frame_info.bytesconsumed;
+            bitrate_samples += info->frame_info.samples / info->frame_info.channels;
             trace ("samples =%p\n", samples);
             if (!samples) {
 //                trace ("NeAACDecDecode failed with error %s (%d), consumed=%d\n", NeAACDecGetErrorMessage(info->frame_info.error), (int)info->frame_info.error, (int)info->frame_info.bytesconsumed);
@@ -624,6 +631,11 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     }
 
     info->currentsample += (initsize-size) / samplesize;
+    long bitrate = 0;
+    if (bitrate_samples > 0) {
+        bitrate = bitrate_bytes * 8 * _info->fmt.samplerate / bitrate_samples / 1000;
+    }
+    deadbeef->streamer_set_bitrate ((int)bitrate);
 
     return initsize-size;
 }
