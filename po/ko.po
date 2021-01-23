@@ -3,16 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# JungHee Lee <daemul72@gmail.com>, 2020
-# JungHee Lee <daemul72@gmail.com>, 2019-2020
+# Bruce Lee <daemul72@gmail.com>, 2020
+# Bruce Lee <daemul72@gmail.com>, 2019-2020
 # ieukori <ieukori@gmail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-27 11:08+0200\n"
-"PO-Revision-Date: 2020-05-20 11:07+0000\n"
-"Last-Translator: JungHee Lee <daemul72@gmail.com>\n"
+"POT-Creation-Date: 2021-01-21 20:35+0100\n"
+"PO-Revision-Date: 2021-01-17 13:09+0000\n"
+"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/deadbeef-player/deadbeef-player/language/ko/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,25 +20,25 @@ msgstr ""
 "Language: ko\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../plugins/gtkui/callbacks.c:358
+#: ../plugins/gtkui/callbacks.c:359
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "DeaDBeeF %s 정보"
 
-#: ../plugins/gtkui/callbacks.c:371
+#: ../plugins/gtkui/callbacks.c:372
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s 변경 로그"
 
-#: ../plugins/gtkui/callbacks.c:631
+#: ../plugins/gtkui/callbacks.c:632
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "DeaDBeeF 번역"
 
-#: ../plugins/gtkui/callbacks.c:642 ../plugins/gtkui/interface.c:976
+#: ../plugins/gtkui/callbacks.c:643 ../plugins/gtkui/interface.c:976
 #: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:166
 #: ../plugins/converter/convgui.c:1781 ../plugins/converter/convgui.c:1789
-#: ../plugins/gtkui/actionhandlers.c:305
+#: ../plugins/gtkui/actionhandlers.c:306
 #, no-c-format
 msgid "Help"
 msgstr "도움말"
@@ -102,153 +102,153 @@ msgstr "밴드 0으로"
 msgid "Presets"
 msgstr "프리셋"
 
-#: ../plugins/gtkui/gtkui.c:159 ../tf.c:2529
+#: ../plugins/gtkui/gtkui.c:157 ../tf.c:2529
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1일 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:162 ../tf.c:2532
+#: ../plugins/gtkui/gtkui.c:160 ../tf.c:2532
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d일 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:208
+#: ../plugins/gtkui/gtkui.c:206
 msgid "total playtime"
 msgstr "전체 재생시간"
 
-#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:422
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
 msgid "Paused"
 msgstr "일시정지됨"
 
-#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:422
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
 msgid "bit"
 msgstr "비트"
 
-#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:419
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:417
 msgid "selection playtime"
 msgstr "선택 재생시간"
 
-#: ../plugins/gtkui/gtkui.c:419 ../plugins/gtkui/gtkui.c:423
+#: ../plugins/gtkui/gtkui.c:417 ../plugins/gtkui/gtkui.c:421
 msgid "Stopped"
 msgstr "중지됨"
 
-#: ../plugins/gtkui/gtkui.c:686 ../translation/plugins.c:216
+#: ../plugins/gtkui/gtkui.c:693 ../translation/plugins.c:216
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:72
 #, no-c-format
 msgid "New Playlist"
 msgstr "새 재생목록"
 
-#: ../plugins/gtkui/gtkui.c:689 ../plugins/pltbrowser/pltbrowser.c:75
+#: ../plugins/gtkui/gtkui.c:696 ../plugins/pltbrowser/pltbrowser.c:75
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "새 재생목록 (%d)"
 
-#: ../plugins/gtkui/gtkui.c:746
+#: ../plugins/gtkui/gtkui.c:753
 #, c-format
 msgid "Copy of %s"
 msgstr "복사: %s"
 
-#: ../plugins/gtkui/gtkui.c:749
+#: ../plugins/gtkui/gtkui.c:756
 #, c-format
 msgid "Copy of %s (%d)"
 msgstr "복사: %s (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1227
+#: ../plugins/gtkui/gtkui.c:1247
 msgid "Playlist with tabs"
 msgstr "탭으로 표시된 재생목록"
 
-#: ../plugins/gtkui/gtkui.c:1228 ../plugins/gtkui/interface.c:2302
-#: ../plugins/gtkui/interface.c:2747 ../plugins/gtkui/deadbeef.glade.h:136
+#: ../plugins/gtkui/gtkui.c:1248 ../plugins/gtkui/interface.c:2307
+#: ../plugins/gtkui/interface.c:2752 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Playlist"
 msgstr "재생목록"
 
-#: ../plugins/gtkui/gtkui.c:1231
+#: ../plugins/gtkui/gtkui.c:1251
 msgid "Splitter (top and bottom)"
 msgstr "분할 (상 - 하)"
 
-#: ../plugins/gtkui/gtkui.c:1232
+#: ../plugins/gtkui/gtkui.c:1252
 msgid "Splitter (left and right)"
 msgstr "분할 (좌 - 우)"
 
-#: ../plugins/gtkui/gtkui.c:1234
+#: ../plugins/gtkui/gtkui.c:1254
 msgid "Tabs"
 msgstr "탭"
 
-#: ../plugins/gtkui/gtkui.c:1235
+#: ../plugins/gtkui/gtkui.c:1255
 msgid "Playlist tabs"
 msgstr "재생목록 탭"
 
-#: ../plugins/gtkui/gtkui.c:1236
+#: ../plugins/gtkui/gtkui.c:1256
 msgid "Selection properties"
 msgstr "선택한 곡의 정보"
 
-#: ../plugins/gtkui/gtkui.c:1237
+#: ../plugins/gtkui/gtkui.c:1257
 msgid "Album art display"
 msgstr "앨범아트 표시"
 
-#: ../plugins/gtkui/gtkui.c:1238
+#: ../plugins/gtkui/gtkui.c:1258
 msgid "Scope"
 msgstr "스코프"
 
-#: ../plugins/gtkui/gtkui.c:1239
+#: ../plugins/gtkui/gtkui.c:1259
 msgid "Spectrum"
 msgstr "스펙트럼"
 
-#: ../plugins/gtkui/gtkui.c:1240
+#: ../plugins/gtkui/gtkui.c:1260
 msgid "HBox"
 msgstr "가로영역"
 
-#: ../plugins/gtkui/gtkui.c:1241
+#: ../plugins/gtkui/gtkui.c:1261
 msgid "VBox"
 msgstr "세로영역"
 
-#: ../plugins/gtkui/gtkui.c:1242 ../plugins/gtkui/widgets.c:3872
-#: ../plugins/gtkui/widgets.c:3959
+#: ../plugins/gtkui/gtkui.c:1262 ../plugins/gtkui/widgets.c:3902
+#: ../plugins/gtkui/widgets.c:3989
 msgid "Button"
 msgstr "버튼"
 
-#: ../plugins/gtkui/gtkui.c:1243
+#: ../plugins/gtkui/gtkui.c:1263
 msgid "Seekbar"
 msgstr "진행막대"
 
-#: ../plugins/gtkui/gtkui.c:1244
+#: ../plugins/gtkui/gtkui.c:1264
 msgid "Playback controls"
 msgstr "재생 조절"
 
-#: ../plugins/gtkui/gtkui.c:1245
+#: ../plugins/gtkui/gtkui.c:1265
 msgid "Volume bar"
 msgstr "음량 조절"
 
-#: ../plugins/gtkui/gtkui.c:1246
+#: ../plugins/gtkui/gtkui.c:1266
 msgid "Chiptune voices"
 msgstr "FM 신디사이저"
 
-#: ../plugins/gtkui/gtkui.c:1247
+#: ../plugins/gtkui/gtkui.c:1267
 msgid "Log viewer"
 msgstr "로그 뷰어"
 
-#: ../plugins/gtkui/gtkui.c:1434
+#: ../plugins/gtkui/gtkui.c:1459
 msgid "Failed while reading help file"
 msgstr "도움말 파일을 읽는 동안 실패했습니다"
 
-#: ../plugins/gtkui/gtkui.c:1444
+#: ../plugins/gtkui/gtkui.c:1469
 msgid "Failed to load help file"
 msgstr "도움말 파일을 불러오지 못했습니다"
 
-#: ../plugins/gtkui/gtkui.c:1457
+#: ../plugins/gtkui/gtkui.c:1482
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks"
 " will be cancelled or interrupted. This may result in data loss."
 msgstr "재생기가 백그라운드에서 실행 중입니다. 지금 종료하면 작업이 취소되거나 중단됩니다. 이로 인해 데이터가 손실될 수 있습니다."
 
-#: ../plugins/gtkui/gtkui.c:1459
+#: ../plugins/gtkui/gtkui.c:1484
 msgid "Do you still want to quit?"
 msgstr "중지하시겠습니까?"
 
-#: ../plugins/gtkui/gtkui.c:1460 ../plugins/gtkui/prefwin.c:470
+#: ../plugins/gtkui/gtkui.c:1485 ../plugins/gtkui/prefwin.c:473
 #: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1080
-#: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:432
+#: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:442
 #: ../plugins/gtkui/pltmenu.c:92
 msgid "Warning"
 msgstr "경고"
@@ -269,7 +269,7 @@ msgstr "파일 추가"
 msgid "Add folder(s)"
 msgstr "폴더 추가"
 
-#: ../plugins/gtkui/interface.c:168 ../plugins/gtkui/interface.c:3818
+#: ../plugins/gtkui/interface.c:168 ../plugins/gtkui/interface.c:3827
 #: ../plugins/gtkui/deadbeef.glade.h:5
 msgid "Add location"
 msgstr "위치 추가"
@@ -314,7 +314,7 @@ msgstr "선택 반전"
 msgid "Selection"
 msgstr "선택"
 
-#: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/interface.c:5119
+#: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/interface.c:5128
 #: ../plugins/gtkui/plcommon.c:1071 ../plugins/gtkui/deadbeef.glade.h:16
 #: ../plugins/converter/interface.c:676
 #: ../plugins/converter/converter.glade.h:51
@@ -323,7 +323,7 @@ msgstr "선택"
 msgid "Remove"
 msgstr "제거"
 
-#: ../plugins/gtkui/interface.c:244 ../plugins/gtkui/interface.c:5123
+#: ../plugins/gtkui/interface.c:244 ../plugins/gtkui/interface.c:5132
 #: ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Crop"
 msgstr "자르기"
@@ -337,7 +337,7 @@ msgid "Sort by"
 msgstr "정렬 기준"
 
 #: ../plugins/gtkui/interface.c:259 ../plugins/gtkui/mainplaylist.c:233
-#: ../plugins/gtkui/plcommon.c:99 ../plugins/gtkui/prefwin.c:446
+#: ../plugins/gtkui/plcommon.c:99 ../plugins/gtkui/prefwin.c:449
 #: ../plugins/gtkui/search.c:653 ../plugins/gtkui/deadbeef.glade.h:20
 #: ../plugins/converter/convgui.c:1184 ../plugins/converter/convgui.c:1752
 #: ../plugins/converter/interface.c:653
@@ -350,7 +350,7 @@ msgstr "제목"
 msgid "Track number"
 msgstr "곡 번호"
 
-#: ../plugins/gtkui/interface.c:267 ../plugins/gtkui/interface.c:1974
+#: ../plugins/gtkui/interface.c:267 ../plugins/gtkui/interface.c:1975
 #: ../plugins/gtkui/plcommon.c:98 ../plugins/gtkui/deadbeef.glade.h:22
 #: ../translation/extra.c:6
 msgid "Album"
@@ -377,7 +377,7 @@ msgstr "랜덤"
 msgid "Custom"
 msgstr "사용자 지정"
 
-#: ../plugins/gtkui/interface.c:292 ../plugins/gtkui/interface.c:1793
+#: ../plugins/gtkui/interface.c:292 ../plugins/gtkui/interface.c:1794
 #: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:202
 #, no-c-format
 msgid "Preferences"
@@ -564,11 +564,11 @@ msgstr "메타정보"
 msgid "Properties"
 msgstr "속성"
 
-#: ../plugins/gtkui/interface.c:1335 ../plugins/gtkui/interface.c:3715
+#: ../plugins/gtkui/interface.c:1335 ../plugins/gtkui/interface.c:3724
 #: ../plugins/gtkui/deadbeef.glade.h:72 ../plugins/converter/interface.c:418
 #: ../plugins/converter/converter.glade.h:25
 #: ../plugins/shellexecui/interface.c:163
-#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1570
+#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1599
 #: ../plugins/gtkui/pltmenu.c:66
 msgid "Title:"
 msgstr "제목:"
@@ -581,7 +581,7 @@ msgstr "새 컬럼 제목을 여기에 입력하십시오"
 msgid "Type:"
 msgstr "유형:"
 
-#: ../plugins/gtkui/interface.c:1364 ../plugins/gtkui/interface.c:3966
+#: ../plugins/gtkui/interface.c:1364 ../plugins/gtkui/interface.c:3975
 #: ../plugins/gtkui/deadbeef.glade.h:75
 msgid "Format:"
 msgstr "형식:"
@@ -610,422 +610,426 @@ msgstr "오른쪽"
 msgid "Center"
 msgstr "가운데"
 
-#: ../plugins/gtkui/interface.c:1422 ../plugins/gtkui/interface.c:4866
+#: ../plugins/gtkui/interface.c:1422 ../plugins/gtkui/interface.c:4875
 #: ../plugins/gtkui/deadbeef.glade.h:82
 msgid "Text color:"
 msgstr "텍스트 색상:"
 
-#: ../plugins/gtkui/interface.c:1451 ../plugins/gtkui/interface.c:3746
-#: ../plugins/gtkui/interface.c:3877 ../plugins/gtkui/interface.c:4007
+#: ../plugins/gtkui/interface.c:1451 ../plugins/gtkui/interface.c:3755
+#: ../plugins/gtkui/interface.c:3886 ../plugins/gtkui/interface.c:4016
 #: ../plugins/gtkui/deadbeef.glade.h:70
 msgid "_Cancel"
 msgstr "취소(_C)"
 
-#: ../plugins/gtkui/interface.c:1472 ../plugins/gtkui/interface.c:3767
-#: ../plugins/gtkui/interface.c:3898 ../plugins/gtkui/interface.c:4028
+#: ../plugins/gtkui/interface.c:1472 ../plugins/gtkui/interface.c:3776
+#: ../plugins/gtkui/interface.c:3907 ../plugins/gtkui/interface.c:4037
 #: ../plugins/gtkui/deadbeef.glade.h:71
 msgid "_OK"
 msgstr "확인(_O)"
 
-#: ../plugins/gtkui/interface.c:1814 ../plugins/gtkui/deadbeef.glade.h:83
+#: ../plugins/gtkui/interface.c:1815 ../plugins/gtkui/deadbeef.glade.h:83
 msgid "Output plugin:"
 msgstr "출력 플러그인:"
 
-#: ../plugins/gtkui/interface.c:1827 ../plugins/gtkui/deadbeef.glade.h:84
+#: ../plugins/gtkui/interface.c:1828 ../plugins/gtkui/deadbeef.glade.h:84
 msgid "Output device:"
 msgstr "출력 장치:"
 
-#: ../plugins/gtkui/interface.c:1836 ../plugins/gtkui/deadbeef.glade.h:85
+#: ../plugins/gtkui/interface.c:1837 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Always convert 8 bit audio to 16 bit"
 msgstr "항상 8비트 오디오를 16비트로 변환"
 
-#: ../plugins/gtkui/interface.c:1840 ../plugins/gtkui/deadbeef.glade.h:86
+#: ../plugins/gtkui/interface.c:1841 ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Always convert 16 bit audio to 24 bit"
 msgstr "항상 16비트 오디오를 24비트로 변환"
 
-#: ../plugins/gtkui/interface.c:1861 ../plugins/gtkui/deadbeef.glade.h:87
+#: ../plugins/gtkui/interface.c:1862 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Target samplerate:"
 msgstr "대상 샘플레이트:"
 
-#: ../plugins/gtkui/interface.c:1894 ../plugins/gtkui/deadbeef.glade.h:88
+#: ../plugins/gtkui/interface.c:1895 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "For multiples of 48KHz (96K, 192K, ...):"
 msgstr "48KHz의 배수 (96K, 192K, ...):"
 
-#: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:89
+#: ../plugins/gtkui/interface.c:1914 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "For multiples of 44.1KHz (88.2K, 176.4K, ...):"
 msgstr "44.1KHz의 배수 (88.2K, 176.4K, ...):"
 
-#: ../plugins/gtkui/interface.c:1928 ../plugins/gtkui/deadbeef.glade.h:90
+#: ../plugins/gtkui/interface.c:1929 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Based on input samplerate"
 msgstr "입력 샘플레이트에 기반함"
 
-#: ../plugins/gtkui/interface.c:1932 ../plugins/gtkui/deadbeef.glade.h:91
+#: ../plugins/gtkui/interface.c:1933 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Override samplerate"
 msgstr "샘플레이트 재정의"
 
-#: ../plugins/gtkui/interface.c:1936 ../plugins/gtkui/deadbeef.glade.h:92
+#: ../plugins/gtkui/interface.c:1937 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Sound"
 msgstr "소리"
 
-#: ../plugins/gtkui/interface.c:1963 ../plugins/gtkui/deadbeef.glade.h:93
+#: ../plugins/gtkui/interface.c:1964 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Source mode:"
 msgstr "원본 모드:"
 
-#: ../plugins/gtkui/interface.c:1972
+#: ../plugins/gtkui/interface.c:1973
 msgid "By playback order"
 msgstr "재생 순서별"
 
-#: ../plugins/gtkui/interface.c:1973
+#: ../plugins/gtkui/interface.c:1974
 msgid "Track"
 msgstr "곡"
 
-#: ../plugins/gtkui/interface.c:1980 ../plugins/gtkui/deadbeef.glade.h:97
+#: ../plugins/gtkui/interface.c:1981 ../plugins/gtkui/deadbeef.glade.h:97
 msgid "Processing:"
 msgstr "처리 중:"
 
-#: ../plugins/gtkui/interface.c:1989 ../plugins/gtkui/plcommon.c:1909
-#: ../translation/plugins.c:106 ../plugins/gtkui/widgets.c:3969
+#: ../plugins/gtkui/interface.c:1990 ../plugins/gtkui/plcommon.c:1909
+#: ../translation/plugins.c:106 ../plugins/gtkui/widgets.c:3999
 #, no-c-format
 msgid "None"
 msgstr "없음"
 
-#: ../plugins/gtkui/interface.c:1990
+#: ../plugins/gtkui/interface.c:1991
 msgid "Apply gain"
 msgstr "게인 적용"
 
-#: ../plugins/gtkui/interface.c:1991
+#: ../plugins/gtkui/interface.c:1992
 msgid "Apply gain and prevent clipping according to peak"
 msgstr "피크에 따라 게인 적용 및 클리핑 방지"
 
-#: ../plugins/gtkui/interface.c:1992
+#: ../plugins/gtkui/interface.c:1993
 msgid "Only prevent clipping"
 msgstr "클리핑만 방지"
 
-#: ../plugins/gtkui/interface.c:2005 ../plugins/gtkui/interface.c:2039
+#: ../plugins/gtkui/interface.c:2006 ../plugins/gtkui/interface.c:2040
 #: ../plugins/gtkui/deadbeef.glade.h:102
 msgid "-12 dB"
 msgstr "-12 dB"
 
-#: ../plugins/gtkui/interface.c:2015 ../plugins/gtkui/interface.c:2049
+#: ../plugins/gtkui/interface.c:2016 ../plugins/gtkui/interface.c:2050
 #: ../plugins/gtkui/deadbeef.glade.h:103
 msgid "+12 dB"
 msgstr "+12 dB"
 
-#: ../plugins/gtkui/interface.c:2019 ../plugins/gtkui/deadbeef.glade.h:104
+#: ../plugins/gtkui/interface.c:2020 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Preamp with RG info:"
 msgstr "RG 정보가 있는 프리앰프:"
 
-#: ../plugins/gtkui/interface.c:2026 ../plugins/gtkui/deadbeef.glade.h:105
+#: ../plugins/gtkui/interface.c:2027 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Preamp without RG info:"
 msgstr "RG 정보가 없는 프리앰프:"
 
-#: ../plugins/gtkui/interface.c:2053 ../plugins/gtkui/deadbeef.glade.h:106
+#: ../plugins/gtkui/interface.c:2054 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "<b>ReplayGain</b>"
 msgstr "<b>리플레이게인</b>"
 
-#: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/deadbeef.glade.h:107
+#: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Add files from command line (or file manager) to this playlist:"
 msgstr "명령행(또는 파일 관리자)의 파일을 이 재생 목록에 추가:"
 
-#: ../plugins/gtkui/interface.c:2071 ../plugins/gtkui/deadbeef.glade.h:108
+#: ../plugins/gtkui/interface.c:2072 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Resume previous session on startup"
 msgstr "이전의 상태를 시작할 때 자동으로 되살림"
 
-#: ../plugins/gtkui/interface.c:2075 ../plugins/gtkui/deadbeef.glade.h:109
+#: ../plugins/gtkui/interface.c:2076 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Don't add from archives when adding folders"
 msgstr "폴더를 추가할 때 압축파일에서 추가하지 마십시오"
 
-#: ../plugins/gtkui/interface.c:2079 ../plugins/gtkui/deadbeef.glade.h:110
+#: ../plugins/gtkui/interface.c:2080 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "\"Stop after current track\" option will switch off after triggering"
 msgstr "사용한 후 \"현재 재생 곡이 끝난 후 중지\" 옵션이 꺼집니다"
 
-#: ../plugins/gtkui/interface.c:2083 ../plugins/gtkui/deadbeef.glade.h:111
+#: ../plugins/gtkui/interface.c:2084 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "\"Stop after current album\" option will switch off after triggering"
 msgstr "사용한 후 \"현재 재생 앨범이 끝난 후 중지\" 옵션이 꺼집니다"
 
-#: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:112
+#: ../plugins/gtkui/interface.c:2088 ../plugins/gtkui/deadbeef.glade.h:112
 #: ../translation/plugins.c:170
 #, no-c-format
 msgid "Playback"
 msgstr "재생"
 
-#: ../plugins/gtkui/interface.c:2108 ../plugins/gtkui/interface.c:3060
+#: ../plugins/gtkui/interface.c:2109 ../plugins/gtkui/interface.c:3065
 #: ../plugins/gtkui/deadbeef.glade.h:113 ../plugins/converter/interface.c:680
 #: ../plugins/converter/converter.glade.h:52
 msgid "Configure"
 msgstr "설정"
 
-#: ../plugins/gtkui/interface.c:2143 ../plugins/gtkui/deadbeef.glade.h:114
+#: ../plugins/gtkui/interface.c:2144 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "DSP Chain Preset"
 msgstr "DSP 체인 프리셋"
 
-#: ../plugins/gtkui/interface.c:2155 ../plugins/gtkui/deadbeef.glade.h:115
+#: ../plugins/gtkui/interface.c:2156 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "_Load"
 msgstr "불러오기(_L)"
 
-#: ../plugins/gtkui/interface.c:2159 ../plugins/gtkui/deadbeef.glade.h:116
+#: ../plugins/gtkui/interface.c:2160 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "DSP"
 msgstr "DSP"
 
-#: ../plugins/gtkui/interface.c:2173 ../plugins/gtkui/deadbeef.glade.h:117
+#: ../plugins/gtkui/interface.c:2174 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Minimize to tray on startup"
 msgstr "시작할 때 트레이에 최소화"
 
-#: ../plugins/gtkui/interface.c:2177 ../plugins/gtkui/deadbeef.glade.h:118
+#: ../plugins/gtkui/interface.c:2178 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Close minimizes to tray"
 msgstr "트레이로 최소화"
 
-#: ../plugins/gtkui/interface.c:2181 ../plugins/gtkui/deadbeef.glade.h:119
+#: ../plugins/gtkui/interface.c:2182 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Hide system tray icon"
 msgstr "시스템 트레이 아이콘 감추기"
 
-#: ../plugins/gtkui/interface.c:2185 ../plugins/gtkui/deadbeef.glade.h:120
+#: ../plugins/gtkui/interface.c:2186 ../plugins/gtkui/deadbeef.glade.h:120
+msgid "Delete from disk should use Trash"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2190 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
 msgstr "일본어 SHIFT-JIS 감지 및 레코딩 사용가능"
 
-#: ../plugins/gtkui/interface.c:2189 ../plugins/gtkui/deadbeef.glade.h:121
+#: ../plugins/gtkui/interface.c:2194 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Enable Russian CP1251 detection and recoding"
 msgstr "러시아 CP1251 감지 및 레코딩 사용가능"
 
-#: ../plugins/gtkui/interface.c:2193 ../plugins/gtkui/deadbeef.glade.h:122
+#: ../plugins/gtkui/interface.c:2198 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Enable Chinese CP936 detection and recoding"
 msgstr "중국어 CP936 감지 및 레코딩 사용가능"
 
-#: ../plugins/gtkui/interface.c:2201 ../plugins/gtkui/deadbeef.glade.h:123
+#: ../plugins/gtkui/interface.c:2206 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Interface refresh rate (times per second):"
 msgstr "인터페이스 새로고침 속도 (초당 시간):"
 
-#: ../plugins/gtkui/interface.c:2215 ../plugins/gtkui/deadbeef.glade.h:124
+#: ../plugins/gtkui/interface.c:2220 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Titlebar text while playing:"
 msgstr "재생하는 동안 제목표시줄 텍스트:"
 
-#: ../plugins/gtkui/interface.c:2229 ../plugins/gtkui/deadbeef.glade.h:125
+#: ../plugins/gtkui/interface.c:2234 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Titlebar text while stopped:"
 msgstr "중지된 동안 제목표시줄 텍스트:"
 
-#: ../plugins/gtkui/interface.c:2243 ../plugins/gtkui/deadbeef.glade.h:126
+#: ../plugins/gtkui/interface.c:2248 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "GUI Plugin (changing requires restart):"
 msgstr "GUI 플러그인 (변경시 재시작 필요):"
 
-#: ../plugins/gtkui/interface.c:2251 ../plugins/gtkui/deadbeef.glade.h:127
+#: ../plugins/gtkui/interface.c:2256 ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Display selection playback time in status bar"
 msgstr "상태표시줄에 선택 재생 시간 표시"
 
-#: ../plugins/gtkui/interface.c:2255 ../plugins/gtkui/deadbeef.glade.h:128
+#: ../plugins/gtkui/interface.c:2260 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Player"
 msgstr "재생기"
 
 #. plugins/pltbrowser/pltbrowser.c
-#: ../plugins/gtkui/interface.c:2264 ../plugins/gtkui/deadbeef.glade.h:129
+#: ../plugins/gtkui/interface.c:2269 ../plugins/gtkui/deadbeef.glade.h:130
 #: ../translation/plugins.c:405
 #, no-c-format
 msgid "Close playlists with middle mouse button"
 msgstr "가운데 단추로 재생목록 닫기"
 
-#: ../plugins/gtkui/interface.c:2268 ../plugins/gtkui/deadbeef.glade.h:130
+#: ../plugins/gtkui/interface.c:2273 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Hide \"Remove From Disk\" context menu item"
 msgstr "\"디스크에서 제거\" 메뉴 보이지 않기"
 
-#: ../plugins/gtkui/interface.c:2272 ../plugins/gtkui/deadbeef.glade.h:131
+#: ../plugins/gtkui/interface.c:2277 ../plugins/gtkui/deadbeef.glade.h:132
 msgid ""
 "Switch to the next song when the currently played one is removed from disk"
 msgstr "현재 재생 중인 곡이 디스크에서 제거되면 다음 노래로 전환"
 
-#: ../plugins/gtkui/interface.c:2276 ../plugins/gtkui/deadbeef.glade.h:132
+#: ../plugins/gtkui/interface.c:2281 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Auto-name playlists when adding a single folder"
 msgstr "추가된 폴더의 이름을 재생목록 이름으로 사용"
 
-#: ../plugins/gtkui/interface.c:2280 ../plugins/gtkui/deadbeef.glade.h:133
+#: ../plugins/gtkui/interface.c:2285 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Auto-resize columns to fit the window"
 msgstr "창크기에 맞춰 가로줄 자동 맞춤"
 
-#: ../plugins/gtkui/interface.c:2288 ../plugins/gtkui/deadbeef.glade.h:134
+#: ../plugins/gtkui/interface.c:2293 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Group spacing:"
 msgstr "그룹 간격:"
 
-#: ../plugins/gtkui/interface.c:2298 ../plugins/gtkui/deadbeef.glade.h:135
+#: ../plugins/gtkui/interface.c:2303 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "pixels"
 msgstr "픽셀"
 
-#: ../plugins/gtkui/interface.c:2306 ../plugins/gtkui/deadbeef.glade.h:137
+#: ../plugins/gtkui/interface.c:2311 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "GUI/Misc"
 msgstr "GUI/기타"
 
-#: ../plugins/gtkui/interface.c:2321 ../plugins/gtkui/interface.c:2365
-#: ../plugins/gtkui/deadbeef.glade.h:138
+#: ../plugins/gtkui/interface.c:2326 ../plugins/gtkui/interface.c:2370
+#: ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Override"
 msgstr "덮어쓰기"
 
-#: ../plugins/gtkui/interface.c:2330 ../plugins/gtkui/deadbeef.glade.h:139
+#: ../plugins/gtkui/interface.c:2335 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Bars"
 msgstr "표시줄"
 
-#: ../plugins/gtkui/interface.c:2337 ../plugins/gtkui/deadbeef.glade.h:140
+#: ../plugins/gtkui/interface.c:2342 ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Background (EQ)"
 msgstr "배경 (EQ)"
 
-#: ../plugins/gtkui/interface.c:2356 ../plugins/gtkui/deadbeef.glade.h:141
+#: ../plugins/gtkui/interface.c:2361 ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Seekbar/Volumebar/EQ"
 msgstr "탐색/음량조절/EQ"
 
-#: ../plugins/gtkui/interface.c:2381 ../plugins/gtkui/deadbeef.glade.h:142
+#: ../plugins/gtkui/interface.c:2386 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Base:"
 msgstr "기본:"
 
-#: ../plugins/gtkui/interface.c:2394 ../plugins/gtkui/deadbeef.glade.h:143
+#: ../plugins/gtkui/interface.c:2399 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Dark:"
 msgstr "어두운 색상:"
 
-#: ../plugins/gtkui/interface.c:2407 ../plugins/gtkui/deadbeef.glade.h:144
+#: ../plugins/gtkui/interface.c:2412 ../plugins/gtkui/deadbeef.glade.h:145
 msgid "Light:"
 msgstr "밝은 색상:"
 
-#: ../plugins/gtkui/interface.c:2420 ../plugins/gtkui/deadbeef.glade.h:145
+#: ../plugins/gtkui/interface.c:2425 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "Middle:"
 msgstr "중간 색상:"
 
-#: ../plugins/gtkui/interface.c:2427 ../plugins/gtkui/deadbeef.glade.h:146
+#: ../plugins/gtkui/interface.c:2432 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "Text:"
 msgstr "텍스트:"
 
-#: ../plugins/gtkui/interface.c:2452 ../plugins/gtkui/interface.c:2466
-#: ../plugins/gtkui/interface.c:2723 ../plugins/gtkui/interface.c:2729
-#: ../plugins/gtkui/deadbeef.glade.h:147
+#: ../plugins/gtkui/interface.c:2457 ../plugins/gtkui/interface.c:2471
+#: ../plugins/gtkui/interface.c:2728 ../plugins/gtkui/interface.c:2734
+#: ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Bold"
 msgstr "굵게"
 
-#: ../plugins/gtkui/interface.c:2456 ../plugins/gtkui/interface.c:2470
-#: ../plugins/gtkui/interface.c:2735 ../plugins/gtkui/interface.c:2741
-#: ../plugins/gtkui/deadbeef.glade.h:148
+#: ../plugins/gtkui/interface.c:2461 ../plugins/gtkui/interface.c:2475
+#: ../plugins/gtkui/interface.c:2740 ../plugins/gtkui/interface.c:2746
+#: ../plugins/gtkui/deadbeef.glade.h:149
 msgid "Italic"
 msgstr "기울임꼴"
 
-#: ../plugins/gtkui/interface.c:2480 ../plugins/gtkui/deadbeef.glade.h:149
+#: ../plugins/gtkui/interface.c:2485 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "Playing text:"
 msgstr "재생중인 텍스트:"
 
-#: ../plugins/gtkui/interface.c:2487 ../plugins/gtkui/deadbeef.glade.h:150
+#: ../plugins/gtkui/interface.c:2492 ../plugins/gtkui/deadbeef.glade.h:151
 msgid "Selected text:"
 msgstr "선택된 텍스트:"
 
-#: ../plugins/gtkui/interface.c:2500 ../plugins/gtkui/deadbeef.glade.h:151
+#: ../plugins/gtkui/interface.c:2505 ../plugins/gtkui/deadbeef.glade.h:152
 msgid "Tab strip"
 msgstr "탭 스트립"
 
-#: ../plugins/gtkui/interface.c:2534 ../plugins/gtkui/deadbeef.glade.h:152
+#: ../plugins/gtkui/interface.c:2539 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "Normal track(s):"
 msgstr "정상적인 곡:"
 
-#: ../plugins/gtkui/interface.c:2547 ../plugins/gtkui/interface.c:2709
-#: ../plugins/gtkui/deadbeef.glade.h:153
+#: ../plugins/gtkui/interface.c:2552 ../plugins/gtkui/interface.c:2714
+#: ../plugins/gtkui/deadbeef.glade.h:154
 msgid "Playing track:"
 msgstr "재생중인 곡:"
 
-#: ../plugins/gtkui/interface.c:2560 ../plugins/gtkui/interface.c:2716
-#: ../plugins/gtkui/deadbeef.glade.h:154
+#: ../plugins/gtkui/interface.c:2565 ../plugins/gtkui/interface.c:2721
+#: ../plugins/gtkui/deadbeef.glade.h:155
 msgid "Selected track(s):"
 msgstr "선택된 곡:"
 
-#: ../plugins/gtkui/interface.c:2573 ../plugins/gtkui/deadbeef.glade.h:155
+#: ../plugins/gtkui/interface.c:2578 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "Columns:"
 msgstr "컬럼:"
 
-#: ../plugins/gtkui/interface.c:2592 ../plugins/gtkui/deadbeef.glade.h:156
+#: ../plugins/gtkui/interface.c:2597 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "Group header:"
 msgstr "그룹 헤더:"
 
-#: ../plugins/gtkui/interface.c:2617 ../plugins/gtkui/deadbeef.glade.h:157
+#: ../plugins/gtkui/interface.c:2622 ../plugins/gtkui/deadbeef.glade.h:158
 msgid "<b>Foreground:</b>"
 msgstr "<b>전면:</b>"
 
-#: ../plugins/gtkui/interface.c:2642 ../plugins/gtkui/deadbeef.glade.h:158
+#: ../plugins/gtkui/interface.c:2647 ../plugins/gtkui/deadbeef.glade.h:159
 msgid "Even:"
 msgstr "짝수:"
 
-#: ../plugins/gtkui/interface.c:2649 ../plugins/gtkui/deadbeef.glade.h:159
+#: ../plugins/gtkui/interface.c:2654 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "Odd:"
 msgstr "홀수:"
 
-#: ../plugins/gtkui/interface.c:2662 ../plugins/gtkui/deadbeef.glade.h:160
+#: ../plugins/gtkui/interface.c:2667 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "Selected:"
 msgstr "선택됨:"
 
-#: ../plugins/gtkui/interface.c:2675 ../plugins/gtkui/deadbeef.glade.h:161
+#: ../plugins/gtkui/interface.c:2680 ../plugins/gtkui/deadbeef.glade.h:162
 msgid "Cursor:"
 msgstr "커서:"
 
-#: ../plugins/gtkui/interface.c:2694 ../plugins/gtkui/deadbeef.glade.h:162
+#: ../plugins/gtkui/interface.c:2699 ../plugins/gtkui/deadbeef.glade.h:163
 msgid "<b>Background:</b>"
 msgstr "<b>배경:</b>"
 
-#: ../plugins/gtkui/interface.c:2699 ../plugins/gtkui/deadbeef.glade.h:163
+#: ../plugins/gtkui/interface.c:2704 ../plugins/gtkui/deadbeef.glade.h:164
 msgid "Override (loses GTK treeview theming, but speeds up rendering)"
 msgstr "덮어쓰기(GTK 트리뷰 장식이 없어지지만 그리는 속도는 빨라짐)"
 
-#: ../plugins/gtkui/interface.c:2751 ../plugins/gtkui/deadbeef.glade.h:164
+#: ../plugins/gtkui/interface.c:2756 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "Appearance"
 msgstr "모양새"
 
-#: ../plugins/gtkui/interface.c:2760 ../plugins/gtkui/deadbeef.glade.h:165
+#: ../plugins/gtkui/interface.c:2765 ../plugins/gtkui/deadbeef.glade.h:166
 msgid "Enable Proxy Server"
 msgstr "프록시 서버 사용가능"
 
-#: ../plugins/gtkui/interface.c:2768 ../plugins/gtkui/deadbeef.glade.h:166
+#: ../plugins/gtkui/interface.c:2773 ../plugins/gtkui/deadbeef.glade.h:167
 msgid "Proxy Server Address:"
 msgstr "프록시 서버 주소:"
 
-#: ../plugins/gtkui/interface.c:2782 ../plugins/gtkui/deadbeef.glade.h:167
+#: ../plugins/gtkui/interface.c:2787 ../plugins/gtkui/deadbeef.glade.h:168
 msgid "Proxy Server Port:"
 msgstr "프록시 서버 포트:"
 
-#: ../plugins/gtkui/interface.c:2796 ../plugins/gtkui/deadbeef.glade.h:168
+#: ../plugins/gtkui/interface.c:2801 ../plugins/gtkui/deadbeef.glade.h:169
 msgid "Proxy Type:"
 msgstr "프록시 종류:"
 
-#: ../plugins/gtkui/interface.c:2815 ../plugins/gtkui/deadbeef.glade.h:169
+#: ../plugins/gtkui/interface.c:2820 ../plugins/gtkui/deadbeef.glade.h:170
 msgid "Proxy Username:"
 msgstr "프록시 사용자 이름:"
 
-#: ../plugins/gtkui/interface.c:2828 ../plugins/gtkui/deadbeef.glade.h:170
+#: ../plugins/gtkui/interface.c:2833 ../plugins/gtkui/deadbeef.glade.h:171
 msgid "Proxy Password:"
 msgstr "프록시 비밀번호:"
 
-#: ../plugins/gtkui/interface.c:2846 ../plugins/gtkui/deadbeef.glade.h:171
+#: ../plugins/gtkui/interface.c:2851 ../plugins/gtkui/deadbeef.glade.h:172
 msgid "HTTP User Agent:"
 msgstr "HTTP 사용자 에이전트:"
 
-#: ../plugins/gtkui/interface.c:2859 ../plugins/gtkui/interface.c:4742
-#: ../plugins/gtkui/deadbeef.glade.h:172
+#: ../plugins/gtkui/interface.c:2864 ../plugins/gtkui/interface.c:4751
+#: ../plugins/gtkui/deadbeef.glade.h:173
 msgid "Edit Content-Type Mapping"
 msgstr "콘텐츠 유형 매핑 편집"
 
-#: ../plugins/gtkui/interface.c:2863 ../plugins/gtkui/deadbeef.glade.h:173
+#: ../plugins/gtkui/interface.c:2868 ../plugins/gtkui/deadbeef.glade.h:174
 msgid "Network"
 msgstr "네트워크"
 
-#: ../plugins/gtkui/interface.c:2876 ../plugins/gtkui/deadbeef.glade.h:174
+#: ../plugins/gtkui/interface.c:2881 ../plugins/gtkui/deadbeef.glade.h:175
 msgid "Assigned Hotkeys:"
 msgstr "할당된 단축키:"
 
-#: ../plugins/gtkui/interface.c:2911 ../plugins/gtkui/interface.c:4903
-#: ../plugins/gtkui/deadbeef.glade.h:175
+#: ../plugins/gtkui/interface.c:2916 ../plugins/gtkui/interface.c:4912
+#: ../plugins/gtkui/deadbeef.glade.h:176
 msgid "Action:"
 msgstr "동작:"
 
-#: ../plugins/gtkui/interface.c:2916 ../plugins/gtkui/interface.c:2929
-#: ../plugins/gtkui/interface.c:4907 ../plugins/gtkui/deadbeef.glade.h:176
+#: ../plugins/gtkui/interface.c:2921 ../plugins/gtkui/interface.c:2934
+#: ../plugins/gtkui/interface.c:4916 ../plugins/gtkui/deadbeef.glade.h:177
 msgid "<Not set>"
 msgstr "<Not set>"
 
-#: ../plugins/gtkui/interface.c:2924 ../plugins/gtkui/deadbeef.glade.h:177
+#: ../plugins/gtkui/interface.c:2929 ../plugins/gtkui/deadbeef.glade.h:178
 msgid "Key combination:"
 msgstr "키 조합:"
 
-#: ../plugins/gtkui/interface.c:2933 ../plugins/gtkui/deadbeef.glade.h:178
+#: ../plugins/gtkui/interface.c:2938 ../plugins/gtkui/deadbeef.glade.h:179
 msgid "Global hotkey"
 msgstr "전역 단축키"
 
-#: ../plugins/gtkui/interface.c:2945 ../plugins/gtkui/deadbeef.glade.h:179
+#: ../plugins/gtkui/interface.c:2950 ../plugins/gtkui/deadbeef.glade.h:180
 msgid ""
 "Use the Apply button to save your changes,\n"
 "or the Revert button to undo your changes.\n"
@@ -1033,132 +1037,132 @@ msgid ""
 "if you don't press Apply."
 msgstr "적용 버튼을 누르면 변경된 것이 저장되고,\n되될리기 버튼을 누르면 변경된 것이 저장되지 않습니다.\n적용버튼을 누르지 않을 경우\n변경된 것은 저장되지 않습니다."
 
-#: ../plugins/gtkui/interface.c:2982 ../plugins/gtkui/deadbeef.glade.h:183
+#: ../plugins/gtkui/interface.c:2987 ../plugins/gtkui/deadbeef.glade.h:184
 msgid "_Defaults"
 msgstr "기본(_D)"
 
-#: ../plugins/gtkui/interface.c:2986 ../plugins/gtkui/deadbeef.glade.h:184
+#: ../plugins/gtkui/interface.c:2991 ../plugins/gtkui/deadbeef.glade.h:185
 msgid "Hotkeys"
 msgstr "단축키"
 
-#: ../plugins/gtkui/interface.c:3017 ../plugins/gtkui/deadbeef.glade.h:185
+#: ../plugins/gtkui/interface.c:3022 ../plugins/gtkui/deadbeef.glade.h:186
 msgid "Version: "
 msgstr "버전: "
 
-#: ../plugins/gtkui/interface.c:3081 ../plugins/gtkui/deadbeef.glade.h:186
+#: ../plugins/gtkui/interface.c:3086 ../plugins/gtkui/deadbeef.glade.h:187
 #: ../translation/extra.c:16
 msgid "Copyright"
 msgstr "저작권"
 
-#: ../plugins/gtkui/interface.c:3091 ../plugins/gtkui/deadbeef.glade.h:187
+#: ../plugins/gtkui/interface.c:3096 ../plugins/gtkui/deadbeef.glade.h:188
 #: ../plugins/gtkui/ctmapping.c:131
 msgid "Plugins"
 msgstr "플러그인"
 
-#: ../plugins/gtkui/interface.c:3833 ../plugins/gtkui/deadbeef.glade.h:188
+#: ../plugins/gtkui/interface.c:3842 ../plugins/gtkui/deadbeef.glade.h:189
 msgid "URL:"
 msgstr "URL:"
 
-#: ../plugins/gtkui/interface.c:3847 ../plugins/gtkui/interface.c:5033
-#: ../plugins/gtkui/interface.c:5061 ../plugins/gtkui/plcommon.c:1214
-#: ../plugins/gtkui/deadbeef.glade.h:189
+#: ../plugins/gtkui/interface.c:3856 ../plugins/gtkui/interface.c:5042
+#: ../plugins/gtkui/interface.c:5070 ../plugins/gtkui/plcommon.c:1214
+#: ../plugins/gtkui/deadbeef.glade.h:190
 msgid "Set Custom Title"
 msgstr "사용자 지정 제목 설정"
 
-#: ../plugins/gtkui/interface.c:3951 ../plugins/gtkui/deadbeef.glade.h:190
+#: ../plugins/gtkui/interface.c:3960 ../plugins/gtkui/deadbeef.glade.h:191
 msgid "Group By ..."
 msgstr "그룹별 기준 ..."
 
-#: ../plugins/gtkui/interface.c:4075 ../plugins/gtkui/deadbeef.glade.h:191
+#: ../plugins/gtkui/interface.c:4084 ../plugins/gtkui/deadbeef.glade.h:192
 msgid "Sort by ..."
 msgstr "정렬 기준 ..."
 
-#: ../plugins/gtkui/interface.c:4091 ../plugins/gtkui/deadbeef.glade.h:192
+#: ../plugins/gtkui/interface.c:4100 ../plugins/gtkui/deadbeef.glade.h:193
 msgid "Format"
 msgstr "형식"
 
-#: ../plugins/gtkui/interface.c:4114 ../plugins/gtkui/deadbeef.glade.h:193
+#: ../plugins/gtkui/interface.c:4123 ../plugins/gtkui/deadbeef.glade.h:194
 msgid "Order"
 msgstr "순서"
 
-#: ../plugins/gtkui/interface.c:4121
+#: ../plugins/gtkui/interface.c:4130
 msgid "Ascending"
 msgstr "내림차순"
 
-#: ../plugins/gtkui/interface.c:4122
+#: ../plugins/gtkui/interface.c:4131
 msgid "Descending"
 msgstr "오름차순"
 
-#: ../plugins/gtkui/interface.c:4175 ../plugins/gtkui/deadbeef.glade.h:196
+#: ../plugins/gtkui/interface.c:4184 ../plugins/gtkui/deadbeef.glade.h:197
 #: ../plugins/converter/interface.c:781
 #: ../plugins/converter/converter.glade.h:53
 msgid "Select DSP Plugin"
 msgstr "DSP 플러그인 선택"
 
-#: ../plugins/gtkui/interface.c:4191 ../plugins/gtkui/deadbeef.glade.h:197
+#: ../plugins/gtkui/interface.c:4200 ../plugins/gtkui/deadbeef.glade.h:198
 #: ../plugins/converter/convgui.c:1488 ../plugins/converter/interface.c:797
 #: ../plugins/gtkui/dspconfig.c:144 ../plugins/converter/converter.glade.h:54
 msgid "Plugin"
 msgstr "플러그인"
 
-#: ../plugins/gtkui/interface.c:4276 ../plugins/gtkui/deadbeef.glade.h:198
+#: ../plugins/gtkui/interface.c:4285 ../plugins/gtkui/deadbeef.glade.h:199
 msgid "Tag Writer Settings"
 msgstr "태그 편집기 설정"
 
-#: ../plugins/gtkui/interface.c:4307 ../plugins/gtkui/deadbeef.glade.h:199
+#: ../plugins/gtkui/interface.c:4316 ../plugins/gtkui/deadbeef.glade.h:200
 msgid "Write ID3v2"
 msgstr "ID3v2으로 쓰기"
 
-#: ../plugins/gtkui/interface.c:4311 ../plugins/gtkui/interface.c:4438
-#: ../plugins/gtkui/deadbeef.glade.h:200
+#: ../plugins/gtkui/interface.c:4320 ../plugins/gtkui/interface.c:4447
+#: ../plugins/gtkui/deadbeef.glade.h:201
 msgid "Write ID3v1"
 msgstr "ID3v1으로 쓰기"
 
-#: ../plugins/gtkui/interface.c:4315 ../plugins/gtkui/interface.c:4394
-#: ../plugins/gtkui/interface.c:4434 ../plugins/gtkui/deadbeef.glade.h:201
+#: ../plugins/gtkui/interface.c:4324 ../plugins/gtkui/interface.c:4403
+#: ../plugins/gtkui/interface.c:4443 ../plugins/gtkui/deadbeef.glade.h:202
 msgid "Write APEv2"
 msgstr "APEv2로 쓰기"
 
-#: ../plugins/gtkui/interface.c:4323 ../plugins/gtkui/interface.c:4402
-#: ../plugins/gtkui/deadbeef.glade.h:202
+#: ../plugins/gtkui/interface.c:4332 ../plugins/gtkui/interface.c:4411
+#: ../plugins/gtkui/deadbeef.glade.h:203
 msgid "Strip ID3v2"
 msgstr "ID3v2 없애기"
 
-#: ../plugins/gtkui/interface.c:4327 ../plugins/gtkui/interface.c:4450
-#: ../plugins/gtkui/deadbeef.glade.h:203
+#: ../plugins/gtkui/interface.c:4336 ../plugins/gtkui/interface.c:4459
+#: ../plugins/gtkui/deadbeef.glade.h:204
 msgid "Strip ID3v1"
 msgstr "ID3v1 없애기"
 
-#: ../plugins/gtkui/interface.c:4331 ../plugins/gtkui/interface.c:4406
-#: ../plugins/gtkui/interface.c:4446 ../plugins/gtkui/deadbeef.glade.h:204
+#: ../plugins/gtkui/interface.c:4340 ../plugins/gtkui/interface.c:4415
+#: ../plugins/gtkui/interface.c:4455 ../plugins/gtkui/deadbeef.glade.h:205
 msgid "Strip APEv2"
 msgstr "APEv2 없애기"
 
-#: ../plugins/gtkui/interface.c:4339 ../plugins/gtkui/deadbeef.glade.h:205
+#: ../plugins/gtkui/interface.c:4348 ../plugins/gtkui/deadbeef.glade.h:206
 msgid "ID3v2 version"
 msgstr "ID3v2 버전"
 
-#: ../plugins/gtkui/interface.c:4346
+#: ../plugins/gtkui/interface.c:4355
 msgid "2.3 (Recommended)"
 msgstr "2.3 (권장)"
 
-#: ../plugins/gtkui/interface.c:4347
+#: ../plugins/gtkui/interface.c:4356
 msgid "2.4"
 msgstr "2.4"
 
-#: ../plugins/gtkui/interface.c:4353 ../plugins/gtkui/deadbeef.glade.h:208
+#: ../plugins/gtkui/interface.c:4362 ../plugins/gtkui/deadbeef.glade.h:209
 msgid "ID3v1 character encoding (default is iso8859-1)"
 msgstr "ID3v1 문자 인코딩 (기본: iso8859-1)"
 
-#: ../plugins/gtkui/interface.c:4390 ../plugins/gtkui/deadbeef.glade.h:209
+#: ../plugins/gtkui/interface.c:4399 ../plugins/gtkui/deadbeef.glade.h:210
 msgid "Write ID3v2.4"
 msgstr "ID3v2.4로 쓰기"
 
-#: ../plugins/gtkui/interface.c:4592 ../plugins/gtkui/deadbeef.glade.h:210
+#: ../plugins/gtkui/interface.c:4601 ../plugins/gtkui/deadbeef.glade.h:211
 msgid "Content-Type Mapping"
 msgstr "콘텐츠 유형 매핑"
 
-#: ../plugins/gtkui/interface.c:4615 ../plugins/gtkui/deadbeef.glade.h:211
+#: ../plugins/gtkui/interface.c:4624 ../plugins/gtkui/deadbeef.glade.h:212
 msgid ""
 "This table defines the binding between network stream content types and "
 "DeaDBeeF decoder plugins. For example, mp3 files can have content type "
@@ -1166,39 +1170,39 @@ msgid ""
 "plugin, or \"ffmpeg\" plugin."
 msgstr "아래의 표는 네트워크로 전달되는 스트림의 형식과 DeadBeef의 디코더 플러그인 사이의 연결을 설정하는 것입니다. 예를 들어 .mp3 파일이 \"audio/x-mpeg\"라는 컨텐츠 유형으로 전달될 때, DeaDBeeF에 내장된 \"stdmpg\" 플러그인을 사용하거나 \"ffmpeg\" 플러그인을 사용하도록 설정할 수 있습니다."
 
-#: ../plugins/gtkui/interface.c:4663 ../plugins/gtkui/deadbeef.glade.h:212
+#: ../plugins/gtkui/interface.c:4672 ../plugins/gtkui/deadbeef.glade.h:213
 msgid "Reset to defaults"
 msgstr "기본으로 되돌리기"
 
-#: ../plugins/gtkui/interface.c:4758 ../plugins/gtkui/deadbeef.glade.h:213
+#: ../plugins/gtkui/interface.c:4767 ../plugins/gtkui/deadbeef.glade.h:214
 msgid "Content-Type:"
 msgstr "콘텐츠 유형:"
 
-#: ../plugins/gtkui/interface.c:4771 ../plugins/gtkui/deadbeef.glade.h:214
+#: ../plugins/gtkui/interface.c:4780 ../plugins/gtkui/deadbeef.glade.h:215
 msgid "Plugins:"
 msgstr "플러그인:"
 
-#: ../plugins/gtkui/interface.c:4839 ../plugins/gtkui/deadbeef.glade.h:215
+#: ../plugins/gtkui/interface.c:4848 ../plugins/gtkui/deadbeef.glade.h:216
 msgid "Button properties"
 msgstr "버튼 속성"
 
-#: ../plugins/gtkui/interface.c:4854 ../plugins/gtkui/deadbeef.glade.h:216
+#: ../plugins/gtkui/interface.c:4863 ../plugins/gtkui/deadbeef.glade.h:217
 msgid "Color:"
 msgstr "색상:"
 
-#: ../plugins/gtkui/interface.c:4878 ../plugins/gtkui/deadbeef.glade.h:217
+#: ../plugins/gtkui/interface.c:4887 ../plugins/gtkui/deadbeef.glade.h:218
 msgid "Icon:"
 msgstr "아이콘:"
 
-#: ../plugins/gtkui/interface.c:4890 ../plugins/gtkui/deadbeef.glade.h:218
+#: ../plugins/gtkui/interface.c:4899 ../plugins/gtkui/deadbeef.glade.h:219
 msgid "Label:"
 msgstr "레이블:"
 
-#: ../plugins/gtkui/interface.c:4971 ../plugins/gtkui/deadbeef.glade.h:219
+#: ../plugins/gtkui/interface.c:4980 ../plugins/gtkui/deadbeef.glade.h:220
 msgid "Select action"
 msgstr "동작 선택"
 
-#: ../plugins/gtkui/interface.c:5055 ../plugins/gtkui/deadbeef.glade.h:220
+#: ../plugins/gtkui/interface.c:5064 ../plugins/gtkui/deadbeef.glade.h:221
 msgid ""
 "This dialog allows setting custom title for any track. This is most useful "
 "for radio stations. An option to set the custom title is also present in the"
@@ -1207,64 +1211,64 @@ msgid ""
 "the Artist field is present, or just \"custom\" otherwise."
 msgstr "이 다이얼로그는 어떤 곡이든 사용자가 정의한 제목을 표시하도록 할 수 있습니다. 인터넷 라디오 제목을 쓸 때 유용합니다. 사용자 지정 제목은 \"장소 추가\" 다이얼로그를 사용할 수도 있습니다.컬럼에 나타나는 제목은 \"아티스트\" 항목에 나타나게 되고, \"[사용자지정] 아티스트\"의 형식으로 보여지게 됩니다. 그러나 컬럼 안에 \"아티스트\" 항목이 존재하지 않는다면 그냥 \"사용자 지정\"으로 나타나게 될 것입니다."
 
-#: ../plugins/gtkui/interface.c:5111 ../plugins/gtkui/deadbeef.glade.h:221
+#: ../plugins/gtkui/interface.c:5120 ../plugins/gtkui/deadbeef.glade.h:222
 #: ../translation/plugins.c:146 ../plugins/shellexecui/interface.c:70
 #: ../plugins/shellexecui/shellexec.glade.h:5
 #, no-c-format
 msgid "Edit"
 msgstr "편집"
 
-#: ../plugins/gtkui/interface.c:5115 ../plugins/gtkui/deadbeef.glade.h:222
+#: ../plugins/gtkui/interface.c:5124 ../plugins/gtkui/deadbeef.glade.h:223
 msgid "Edit (in place)"
 msgstr "편집 (제자리)"
 
-#: ../plugins/gtkui/interface.c:5127 ../plugins/gtkui/deadbeef.glade.h:223
+#: ../plugins/gtkui/interface.c:5136 ../plugins/gtkui/deadbeef.glade.h:224
 msgid "Add new field..."
 msgstr "새 필드 추가..."
 
-#: ../plugins/gtkui/interface.c:5175 ../plugins/gtkui/deadbeef.glade.h:224
+#: ../plugins/gtkui/interface.c:5184 ../plugins/gtkui/deadbeef.glade.h:225
 msgid "Edit Value"
 msgstr "값 편집"
 
-#: ../plugins/gtkui/interface.c:5188 ../plugins/gtkui/deadbeef.glade.h:225
+#: ../plugins/gtkui/interface.c:5197 ../plugins/gtkui/deadbeef.glade.h:226
 msgid "Field name:"
 msgstr "필드 이름:"
 
-#: ../plugins/gtkui/interface.c:5199 ../plugins/gtkui/deadbeef.glade.h:226
+#: ../plugins/gtkui/interface.c:5208 ../plugins/gtkui/deadbeef.glade.h:227
 msgid "Field value:"
 msgstr "필드 값:"
 
-#: ../plugins/gtkui/interface.c:5256 ../plugins/gtkui/deadbeef.glade.h:227
+#: ../plugins/gtkui/interface.c:5265 ../plugins/gtkui/deadbeef.glade.h:228
 msgid "DeaDBeeF Log"
 msgstr "DeaDBeeF 로그"
 
-#: ../plugins/gtkui/interface.c:5285 ../plugins/gtkui/deadbeef.glade.h:228
+#: ../plugins/gtkui/interface.c:5294 ../plugins/gtkui/deadbeef.glade.h:229
 msgid "Clear"
 msgstr "지우기"
 
-#: ../plugins/gtkui/interface.c:5322 ../plugins/gtkui/deadbeef.glade.h:229
+#: ../plugins/gtkui/interface.c:5331 ../plugins/gtkui/deadbeef.glade.h:230
 msgid "ReplayGain Scan Progress"
 msgstr "리플레이게인 검색 진행률"
 
-#: ../plugins/gtkui/interface.c:5333 ../plugins/gtkui/deadbeef.glade.h:230
+#: ../plugins/gtkui/interface.c:5342 ../plugins/gtkui/deadbeef.glade.h:231
 msgid "Current File:"
 msgstr "현재 파일:"
 
-#: ../plugins/gtkui/interface.c:5351 ../plugins/gtkui/interface.c:5411
-#: ../plugins/gtkui/deadbeef.glade.h:231 ../plugins/gtkui/rg.c:310
+#: ../plugins/gtkui/interface.c:5360 ../plugins/gtkui/interface.c:5420
+#: ../plugins/gtkui/deadbeef.glade.h:232 ../plugins/gtkui/rg.c:310
 msgid "Status"
 msgstr "상태"
 
-#: ../plugins/gtkui/interface.c:5358 ../plugins/gtkui/interface.c:5422
-#: ../plugins/gtkui/deadbeef.glade.h:232
+#: ../plugins/gtkui/interface.c:5367 ../plugins/gtkui/interface.c:5431
+#: ../plugins/gtkui/deadbeef.glade.h:233
 msgid "Cancel"
 msgstr "취소"
 
-#: ../plugins/gtkui/interface.c:5390 ../plugins/gtkui/deadbeef.glade.h:233
+#: ../plugins/gtkui/interface.c:5399 ../plugins/gtkui/deadbeef.glade.h:234
 msgid "ReplayGain Scan Results"
 msgstr "리플레이게인 검색 결과"
 
-#: ../plugins/gtkui/interface.c:5418 ../plugins/gtkui/deadbeef.glade.h:234
+#: ../plugins/gtkui/interface.c:5427 ../plugins/gtkui/deadbeef.glade.h:235
 msgid "Update File Tags"
 msgstr "파일 태그 업데이트"
 
@@ -1389,11 +1393,11 @@ msgstr "%s 설정"
 msgid "Default Audio Device"
 msgstr "기본 오디오 장치"
 
-#: ../plugins/gtkui/prefwin.c:467
+#: ../plugins/gtkui/prefwin.c:470
 msgid "You modified the hotkeys settings, but didn't save your changes."
 msgstr "단축키를 변경했지만 아직 저장하지 않았습니다."
 
-#: ../plugins/gtkui/prefwin.c:469
+#: ../plugins/gtkui/prefwin.c:472
 msgid "Are you sure you want to continue without saving?"
 msgstr "저장하지 않고 계속 할까요?"
 
@@ -1423,12 +1427,12 @@ msgid "[Multiple values] "
 msgstr "[여러 값] "
 
 #: ../plugins/gtkui/trkproperties.c:374 ../plugins/gtkui/trkproperties.c:389
-#: ../plugins/gtkui/widgets.c:2585
+#: ../plugins/gtkui/widgets.c:2614
 msgid "Key"
 msgstr "키"
 
 #: ../plugins/gtkui/trkproperties.c:375 ../plugins/gtkui/trkproperties.c:390
-#: ../plugins/gtkui/widgets.c:2587
+#: ../plugins/gtkui/widgets.c:2616
 msgid "Value"
 msgstr "값"
 
@@ -1460,88 +1464,88 @@ msgstr "필드를 추가할 수 없습니다"
 msgid "Field with such name already exists, please try different name."
 msgstr "이러한 이름의 필드가 이미 존재하므로 다른 이름을 시도해 보십시오."
 
-#: ../main.c:122
+#: ../main.c:127
 #, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
 msgstr "사용법: deadbeef [옵션] [--] [파일]\n"
 
-#: ../main.c:123
+#: ../main.c:128
 #, c-format
 msgid "Options:\n"
 msgstr "옵션:\n"
 
-#: ../main.c:124
+#: ../main.c:129
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
 msgstr "   --help  or  -h     도움말(이 메시지) 출력\n"
 
-#: ../main.c:125
+#: ../main.c:130
 #, c-format
 msgid "   --quit             Quit player\n"
 msgstr "   --quit             프로그램 종료\n"
 
-#: ../main.c:126
+#: ../main.c:131
 #, c-format
 msgid "   --version          Print version info and exit\n"
 msgstr "   --version          버전정보를 보임\n"
 
-#: ../main.c:127
+#: ../main.c:132
 #, c-format
 msgid "   --play             Start playback\n"
 msgstr "   --play             재생 시작\n"
 
-#: ../main.c:128
+#: ../main.c:133
 #, c-format
 msgid "   --stop             Stop playback\n"
 msgstr "   --stop             멈춤\n"
 
-#: ../main.c:129
+#: ../main.c:134
 #, c-format
 msgid "   --pause            Pause playback\n"
 msgstr "   --pause            일시정지\n"
 
-#: ../main.c:130
+#: ../main.c:135
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
 msgstr "   --toggle-pause     전환 일시정지\n"
 
-#: ../main.c:131
+#: ../main.c:136
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
 msgstr "   --play-pause       중지된 경우 재생 시작, 그렇지 않으면 일시 중지 전환\n"
 
-#: ../main.c:132
+#: ../main.c:137
 #, c-format
 msgid "   --next             Next song in playlist\n"
 msgstr "   --next             재생목록의 다음 노래\n"
 
-#: ../main.c:133
+#: ../main.c:138
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
 msgstr "   --prev             재생목록의 이전 노래\n"
 
-#: ../main.c:134
+#: ../main.c:139
 #, c-format
 msgid "   --random           Random song in playlist\n"
 msgstr "   --random           재생목록의 노래 랜덤\n"
 
-#: ../main.c:135
+#: ../main.c:140
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
 msgstr "   --queue            재생목록에 파일 추가\n"
 
-#: ../main.c:136
+#: ../main.c:141
 #, c-format
 msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
 msgstr "   --gui PLUGIN       사용할 GUI 플러그인을 알려주며, 기본값은 \"GTK2\" 입니다.\n"
 
-#: ../main.c:137
+#: ../main.c:142
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
 msgstr "   --nowplaying FMT   포맷된 곡 이름을 표준출력으로 인쇄\n"
 
-#: ../main.c:138
+#: ../main.c:143
 #, c-format
 msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
@@ -1549,85 +1553,85 @@ msgid ""
 "                      copy[r]ight, [e]lapsed\n"
 msgstr "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n                      [l]ength, track[n]umber, [y]ear, [c]omment,\n                      copy[r]ight, [e]lapsed\n"
 
-#: ../main.c:141
+#: ../main.c:146
 #, c-format
 msgid ""
 "                      example: --nowplaying \"%%a - %%t\" should print "
 "\"artist - title\"\n"
 msgstr "                      예제: --nowplaying \"%%a - %%t\" 하면 \"아티스트 - 제목\"으로 나타납니다\n"
 
-#: ../main.c:142
+#: ../main.c:147
 #, c-format
 msgid "                      for more info, see %s\n"
 msgstr "                      자세한 내용은 %s를 참조하십시오\n"
 
-#: ../main.c:143
+#: ../main.c:148
 #, c-format
 msgid "                      NOTE: --nowplaying is deprecated.\n"
 msgstr "                      NOTE: --nowplaying은 삭제되었습니다.\n"
 
-#: ../main.c:144
+#: ../main.c:149
 #, c-format
 msgid ""
 "   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
 "title formatting\n"
 msgstr "   --nowplaying-tf FMT  새 제목 형식을 사용하여 포맷된 곡 이름을 표준출력으로 인쇄\n"
 
-#: ../main.c:145
+#: ../main.c:150
 #, c-format
 msgid ""
 "                      FMT syntax: http://github.com/DeaDBeeF-"
 "Player/deadbeef/wiki/Title-formatting-2.0\n"
 msgstr "                      FMT syntax: http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"
 
-#: ../main.c:146
+#: ../main.c:151
 #, c-format
 msgid ""
 "                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
 "should print \"artist - title\"\n"
 msgstr "                      예제: --nowplaying-tf \"%%artist%% - %%title%%\" 하면 \"아티스트 - 제목\"으로 표시됩니다\n"
 
-#: ../main.c:147
+#: ../main.c:152
 #, c-format
 msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
 msgstr "   --volume [NUM]     Deadbeef 음량 단계 인쇄 또는 설정.\n"
 
-#: ../main.c:148
+#: ../main.c:153
 #, c-format
 msgid ""
 "                      The NUM parameter can be specified in percents "
 "(absolute value or increment/decrement)\n"
 msgstr "                      NUM 매개변수를 백분율로 지정할 수 있음 (절대 값 또는 증가/감소)\n"
 
-#: ../main.c:149
+#: ../main.c:154
 #, c-format
 msgid "                      or in dB [-50, 0] (if with suffix).\n"
 msgstr "                      또는 dB [-50, 0] (suffix가 있는 경우).\n"
 
-#: ../main.c:150
+#: ../main.c:155
 #, c-format
 msgid ""
 "                      Examples: --volume 80, --volume +10, --volume -5 or "
 "--volume -20dB\n"
 msgstr "                      예제: --volume 80, --volume +10, --volume -5 or --volume -20dB\n"
 
-#: ../playlist.c:480 ../playlist.c:2317
+#: ../playlist.c:505 ../playlist.c:2379
 msgid "Default"
 msgstr "기본"
 
-#: ../playlist.c:3002
+#: ../playlist.c:3064
 msgid "Mono"
 msgstr "모노"
 
-#: ../playlist.c:3002
+#: ../playlist.c:3064
 msgid "Stereo"
 msgstr "스테레오"
 
-#: ../playlist.c:3520
+#: ../playlist.c:3582
 msgid "Yes"
 msgstr "예"
 
-#: ../playlist.c:3520
+#: ../playlist.c:3582
 msgid "No"
 msgstr "아니오"
 
@@ -1653,13 +1657,13 @@ msgid ""
 "Only prevent clipping"
 msgstr "없음\n게인 적용\n피크에 따라 게인 적용 및 클리핑 방지\n클리핑만 방지"
 
-#: ../plugins/gtkui/deadbeef.glade.h:194
+#: ../plugins/gtkui/deadbeef.glade.h:195
 msgid ""
 "Ascending\n"
 "Descending"
 msgstr "내림차순\n오름차순"
 
-#: ../plugins/gtkui/deadbeef.glade.h:206
+#: ../plugins/gtkui/deadbeef.glade.h:207
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
@@ -2191,7 +2195,7 @@ msgstr "재생목록에서 곡 제거"
 msgid "Save Playlist"
 msgstr "재생목록 저장"
 
-#: ../translation/plugins.c:212 ../plugins/gtkui/actionhandlers.c:626
+#: ../translation/plugins.c:212 ../plugins/gtkui/actionhandlers.c:636
 #, no-c-format
 msgid "Load Playlist"
 msgstr "재생목록 불러오기"
@@ -3088,31 +3092,31 @@ msgstr "추가"
 msgid "Couldn't find pixmap file: %s"
 msgstr "픽스맵 파일을 찾을 수 없습니다: %s"
 
-#: ../plugins/gtkui/fileman.c:316 ../plugins/gtkui/fileman.c:410
+#: ../plugins/gtkui/fileman.c:316 ../plugins/gtkui/fileman.c:406
 msgid "Supported sound formats"
 msgstr "지원하는 음악 형식"
 
-#: ../plugins/gtkui/fileman.c:344 ../plugins/gtkui/fileman.c:421
+#: ../plugins/gtkui/fileman.c:340 ../plugins/gtkui/fileman.c:417
 msgid "All files (*)"
 msgstr "모든 파일 (*)"
 
-#: ../plugins/gtkui/fileman.c:455 ../plugins/gtkui/fileman.c:499
+#: ../plugins/gtkui/fileman.c:451 ../plugins/gtkui/fileman.c:495
 msgid "Supported playlist formats"
 msgstr "지원되는 재생목록 형식"
 
-#: ../plugins/gtkui/fileman.c:462
+#: ../plugins/gtkui/fileman.c:458
 msgid "All files"
 msgstr "모든 파일"
 
-#: ../plugins/gtkui/fileman.c:505
+#: ../plugins/gtkui/fileman.c:501
 msgid "Other files (*)"
 msgstr "모든 파일 (*)"
 
-#: ../plugins/gtkui/fileman.c:516
+#: ../plugins/gtkui/fileman.c:512
 msgid "DeaDBeeF playlist files (*.dbpl)"
 msgstr "DeaDBeeF 재생목록 파일 (*.dbpl)"
 
-#: ../plugins/gtkui/fileman.c:560
+#: ../plugins/gtkui/fileman.c:556
 msgid "Follow symlinks"
 msgstr "바로가기를 따라가기"
 
@@ -3248,7 +3252,7 @@ msgstr "<small>기본 메뉴에 명령을 추가하려면 제목에 다음과 �
 msgid "Add Command"
 msgstr "명령 추가"
 
-#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:869
+#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:857
 msgid "Delete"
 msgstr "삭제"
 
@@ -3277,54 +3281,61 @@ msgstr "셸 명령어가 비어있지 않습니다.\n"
 msgid "Invalid Values"
 msgstr "잘못된 값"
 
-#: ../plugins/gtkui/actionhandlers.c:55
+#: ../plugins/gtkui/actionhandlers.c:56
 msgid "Open file(s)..."
 msgstr "파일 열기..."
 
-#: ../plugins/gtkui/actionhandlers.c:70
+#: ../plugins/gtkui/actionhandlers.c:71
 msgid "Add file(s) to playlist..."
 msgstr "재생목록에 파일 추가..."
 
-#: ../plugins/gtkui/actionhandlers.c:85
+#: ../plugins/gtkui/actionhandlers.c:86
 msgid "Add folder(s) to playlist..."
 msgstr "재생목록에 폴더 추가..."
 
-#: ../plugins/gtkui/actionhandlers.c:304
+#: ../plugins/gtkui/actionhandlers.c:305
 msgid "help.txt"
 msgstr "help.ko.txt"
 
-#: ../plugins/gtkui/actionhandlers.c:412
+#: ../plugins/gtkui/actionhandlers.c:421
+msgid ""
+" The files will be moved to trash.\n"
+"\n"
+"(This dialog can be turned off in GTKUI plugin settings)"
+msgstr ""
+
+#: ../plugins/gtkui/actionhandlers.c:422
 msgid ""
 " The files will be lost.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr " 파일이 손실됩니다.\n\n(이 대화 상자는 GTKUI 플러그인 설정에서 해제할 수 있습니다)"
 
-#: ../plugins/gtkui/actionhandlers.c:417
+#: ../plugins/gtkui/actionhandlers.c:427
 #, c-format
 msgid "Do you really want to delete the selected file?%s"
 msgstr "선택한 파일을 삭제하시겠습니까?%s"
 
-#: ../plugins/gtkui/actionhandlers.c:419
+#: ../plugins/gtkui/actionhandlers.c:429
 #, c-format
 msgid "Do you really want to delete all %d selected files?%s"
 msgstr "모든 %d 선택 파일을 삭제하시겠습니까?%s"
 
-#: ../plugins/gtkui/actionhandlers.c:424
+#: ../plugins/gtkui/actionhandlers.c:434
 #, c-format
 msgid "Do you really want to delete all %d files from the current playlist?%s"
 msgstr "현재 재생 목록에서 모든 %d 파일을 삭제하시겠습니까?%s"
 
-#: ../plugins/gtkui/actionhandlers.c:427
+#: ../plugins/gtkui/actionhandlers.c:437
 #, c-format
 msgid "Do you really want to delete the currently playing file?%s"
 msgstr "현재 재생 중인 파일을 삭제하시겠습니까?%s"
 
-#: ../plugins/gtkui/actionhandlers.c:430
+#: ../plugins/gtkui/actionhandlers.c:440
 msgid "Delete files from disk"
 msgstr "디스크에서 파일 삭제"
 
-#: ../plugins/gtkui/actionhandlers.c:648
+#: ../plugins/gtkui/actionhandlers.c:658
 msgid "Save Playlist As"
 msgstr "다른 이름으로 재생목록 저장"
 
@@ -3350,105 +3361,109 @@ msgstr "컨텐츠 유형 및 플러그인 필드는 비어 있지 않아야 하�
 msgid "Nothing is selected."
 msgstr "선택된 항목이 없습니다."
 
-#: ../plugins/gtkui/widgets.c:489
+#: ../plugins/gtkui/widgets.c:492
 #, c-format
 msgid "Widget \"%s\" is not available"
 msgstr "\"%s\" 위젯은 사용할 수 없습니다"
 
-#: ../plugins/gtkui/widgets.c:844
+#: ../plugins/gtkui/widgets.c:831
 msgid "Replace with..."
 msgstr "바꾸기..."
 
-#: ../plugins/gtkui/widgets.c:849
+#: ../plugins/gtkui/widgets.c:836
 msgid "Insert..."
 msgstr "끼워넣기..."
 
-#: ../plugins/gtkui/widgets.c:876
+#: ../plugins/gtkui/widgets.c:864
 msgid "Cut"
 msgstr "자르기"
 
-#: ../plugins/gtkui/widgets.c:883
+#: ../plugins/gtkui/widgets.c:871
 msgid "Copy"
 msgstr "복사하기"
 
-#: ../plugins/gtkui/widgets.c:890
+#: ../plugins/gtkui/widgets.c:879
 msgid "Paste"
 msgstr "붙여넣기"
 
-#: ../plugins/gtkui/widgets.c:1017
+#: ../plugins/gtkui/widgets.c:928
+msgid "Parent"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:1046
 msgid "Multiple widgets of this type are not supported"
 msgstr "이런 형식의 여러 위젯은 지원하지 않습니다"
 
-#: ../plugins/gtkui/widgets.c:1292
+#: ../plugins/gtkui/widgets.c:1321
 msgid "Proportional Sizing"
 msgstr "비례 크기 조정"
 
-#: ../plugins/gtkui/widgets.c:1304
+#: ../plugins/gtkui/widgets.c:1333
 msgid "Lock Top Pane Height"
 msgstr "상단 창 높이 잠금"
 
-#: ../plugins/gtkui/widgets.c:1307
+#: ../plugins/gtkui/widgets.c:1336
 msgid "Lock Left Pane Width"
 msgstr "왼쪽 창 너비 잠금"
 
-#: ../plugins/gtkui/widgets.c:1320
+#: ../plugins/gtkui/widgets.c:1349
 msgid "Lock Bottom Pane Height"
 msgstr "하단 창 높이 잠금"
 
-#: ../plugins/gtkui/widgets.c:1323
+#: ../plugins/gtkui/widgets.c:1352
 msgid "Lock Right Pane Width"
 msgstr "오른쪽 창 너비 잠금"
 
-#: ../plugins/gtkui/widgets.c:1567 ../plugins/gtkui/widgets.c:1682
+#: ../plugins/gtkui/widgets.c:1596 ../plugins/gtkui/widgets.c:1711
 msgid "Rename Tab"
 msgstr "탭 이름변경"
 
-#: ../plugins/gtkui/widgets.c:1689
+#: ../plugins/gtkui/widgets.c:1718
 msgid "Remove Tab"
 msgstr "탭 제거"
 
-#: ../plugins/gtkui/widgets.c:1696 ../plugins/gtkui/widgets.c:1876
+#: ../plugins/gtkui/widgets.c:1725 ../plugins/gtkui/widgets.c:1905
 msgid "Add New Tab"
 msgstr "새 탭 추가"
 
-#: ../plugins/gtkui/widgets.c:1705
+#: ../plugins/gtkui/widgets.c:1734
 msgid "Move Tab Left"
 msgstr "탭 왼쪽 이동"
 
-#: ../plugins/gtkui/widgets.c:1712
+#: ../plugins/gtkui/widgets.c:1741
 msgid "Move Tab Right"
 msgstr "탭 오른쪽 이동"
 
-#: ../plugins/gtkui/widgets.c:2366 ../plugins/gtkui/widgets.c:2544
+#: ../plugins/gtkui/widgets.c:2395 ../plugins/gtkui/widgets.c:2573
 #: ../plugins/pltbrowser/pltbrowser.c:883
 msgid "Show Column Headers"
 msgstr "컬럼 제목 보이기"
 
-#: ../plugins/gtkui/widgets.c:3591
+#: ../plugins/gtkui/widgets.c:3621
 msgid "Expand Box by 1 Item"
 msgstr "1개 항목으로 박스 확장"
 
-#: ../plugins/gtkui/widgets.c:3596
+#: ../plugins/gtkui/widgets.c:3626
 msgid "Shrink Box by 1 Item"
 msgstr "1개 항목으로 박스 축소"
 
-#: ../plugins/gtkui/widgets.c:3601
+#: ../plugins/gtkui/widgets.c:3631
 msgid "Homogeneous"
 msgstr "같은 종류"
 
-#: ../plugins/gtkui/widgets.c:3641
+#: ../plugins/gtkui/widgets.c:3671
 msgid "Expand"
 msgstr "확장"
 
-#: ../plugins/gtkui/widgets.c:3649
+#: ../plugins/gtkui/widgets.c:3679
 msgid "Fill"
 msgstr "채우기"
 
-#: ../plugins/gtkui/widgets.c:4049
+#: ../plugins/gtkui/widgets.c:4079
 msgid "Configure Button"
 msgstr "버튼 설정"
 
-#: ../plugins/gtkui/widgets.c:4328
+#: ../plugins/gtkui/widgets.c:4358
 msgid "Voices:"
 msgstr "음성:"
 
