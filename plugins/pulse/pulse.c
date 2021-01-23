@@ -34,7 +34,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
 #include "../../deadbeef.h"
 
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
@@ -166,7 +165,10 @@ static int pulse_init(void)
     deadbeef->mutex_lock (mutex);
     state = DDB_PLAYBACK_STATE_STOPPED;
     trace ("pulse_terminate=%d\n", pulse_terminate);
-    assert (!pulse_terminate);
+    if (pulse_terminate) {
+        deadbeef->mutex_unlock (mutex);
+        return -1;
+    }
 
     if (requested_fmt.samplerate != 0) {
         memcpy (&plugin.fmt, &requested_fmt, sizeof (ddb_waveformat_t));
