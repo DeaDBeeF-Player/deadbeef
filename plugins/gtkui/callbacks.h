@@ -313,10 +313,6 @@ on_pref_replaygain_clicked             (GtkButton       *button,
                                         gpointer         user_data);
 
 void
-on_pref_replaygain_scale_clicked       (GtkButton       *button,
-                                        gpointer         user_data);
-
-void
 on_pref_close_send_to_tray_clicked     (GtkButton       *button,
                                         gpointer         user_data);
 

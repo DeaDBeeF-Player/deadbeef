@@ -569,15 +569,6 @@ on_pref_replaygain_processing_changed  (GtkComboBox     *combobox,
 
 
 void
-on_pref_replaygain_scale_clicked       (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
-    deadbeef->conf_set_int ("replaygain_scale", active);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-}
-
-void
 on_replaygain_preamp_value_changed     (GtkRange        *range,
                                         gpointer         user_data)
 {
