@@ -767,10 +767,19 @@ aac_load_itunes_chapters (aac_info_t *info, mp4p_chap_t *chap, /* out */ int *nu
         }
 
         mp4p_atom_t *stts_atom = mp4p_atom_find(trak_atom, "trak/mdia/minf/stbl/stts");
+        mp4p_atom_t *mdhd_atom = mp4p_atom_find(trak_atom, "trak/mdia/mdhd");
         mp4p_atom_t *stbl_atom = mp4p_atom_find(trak_atom, "trak/mdia/minf/stbl");
         mp4p_atom_t *stsz_atom = mp4p_atom_find(stbl_atom, "stbl/stsz");
+        if (stts_atom == NULL || mdhd_atom == NULL || stbl_atom == NULL || stsz_atom == NULL) {
+            return NULL;
+        }
 
+        mp4p_mdhd_t *mdhd = mdhd_atom->data;
         mp4p_stsz_t *stsz = stsz_atom->data;
+
+        if (mdhd->time_scale == 0) {
+            return NULL;
+        }
 
         aac_chapter_t *chapters = calloc (stsz->number_of_entries, sizeof (aac_chapter_t));
         *num_chapters = 0;
@@ -795,7 +804,7 @@ aac_load_itunes_chapters (aac_info_t *info, mp4p_chap_t *chap, /* out */ int *nu
                 chapters[*num_chapters].title = strndup ((const char *)&buffer[2], len);
             }
             chapters[*num_chapters].startsample = (int)curr_sample;
-            uint64_t samplecount = mp4p_stts_sample_duration(stts_atom, sample) * samplerate / info->aac_samplerate;
+            uint64_t samplecount = mp4p_stts_sample_duration(stts_atom, sample) / mdhd->time_scale * samplerate;
             curr_sample += samplecount;
             chapters[*num_chapters].endsample = (int)curr_sample - 1;
             free (buffer);
