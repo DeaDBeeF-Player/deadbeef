@@ -20,20 +20,17 @@
 */
 
 /*
-    Configuration scheme:
+    Configuration options:
 
-    shellexec.NN shcmd:title:name:flags
-    
-    @shcmd is the command executed by the shell
+    command: the command executed by the shell
         formating directives are allowed, see
         format_shell_command function
 
-    @title is the title of command displayed in UI
+    title: the title of command displayed in the UI
 
-    @name used for referencing command, for example in hotkeys
-        configuration
+    name: used for referencing plugin actions
 
-    @flags comma-separated of command flags, allowed flags are:
+    flags: a list of flags:
         single - command allowed for single track
         multiple - command allowerd for multiple tracks
         local - command allowed for local files
@@ -254,111 +251,13 @@ shx_save_actions (void)
     char *str = json_dumps (json, 0);
     json_decref (json);
     if (str) {
-        deadbeef->conf_set_str("shellexec_config_wip", str);
+        deadbeef->conf_set_str("shellexec_config", str);
         free (str);
         deadbeef->conf_save();
     }
     else {
         fprintf (stderr, "shellexec: failed to save json configuration\n");
     }
-}
-
-/* The 0.6.2 format spec, for better import understanding:
-
-    Syntax in the config file:
-    shellexec.NN shcmd:title:name:flag1,flag2,flag3,...
-    NN is any (unique) number, e.g. 01, 02, 03, etc
-    shcmd is the command to execute, supports title formatting
-    title is the name of command displayed in UI (context menu)
-    name used for referencing commands from other plugins, e.g hotkeys
-    flags are comma-separated list of items, allowed items are:
-        single - command allowed only for single track
-        local - command allowed only for local files
-        remote - command allowed only for non-local files
-    EXAMPLE: shellexec.00 notify-send "%a - %t":Show selected track:notify:single
-    this would show the name of selected track in notification popup"
-*/
-
-static Shx_action_t*
-shx_get_actions_legacy ()
-{
-    Shx_action_t *action_list = NULL;
-    Shx_action_t *prev = NULL;
-    DB_conf_item_t *item = deadbeef->conf_find ("shellexec.", NULL);
-    while (item)
-    {
-        size_t l = strlen (item->value) + 1;
-        char tmp[l];
-        strcpy (tmp, item->value);
-        trace ("Shellexec: %s\n", tmp);
-
-        char *args[4] = {0};
-
-        int idx = 0;
-        char *p = tmp;
-        while (idx < 4 && p) {
-            char *e = shx_find_sep (p);
-            args[idx++] = p;
-            if (!e) {
-                break;
-            }
-            *e = 0;
-            p = e+1;
-        }
-
-        if (idx < 2)
-        {
-            fprintf (stderr, "Shellexec: need at least command and title (%s)\n", item->value);
-            continue;
-        }
-
-        const char *command = trim (args[0]);
-        const char *title = trim (args[1]);
-        const char *name = trim (args[2]);
-        const char *flags = trim (args[3]);
-        if (!name) {
-            name = "noname";
-        }
-        if (!flags) {
-            flags = "local,single";
-        }
-
-        Shx_action_t *action = calloc (sizeof (Shx_action_t), 1);
-
-        action->parent.title = strdup (title);
-        action->parent.name = strdup (name);
-        action->shcommand = strdup (command);
-        action->parent.callback2 = (DB_plugin_action_callback2_t)shx_callback;
-        action->parent.next = NULL;
-        action->parent.flags |= DB_ACTION_ADD_MENU;
-
-        action->shx_flags = 0;
-
-        if (strstr (flags, "local"))
-            action->shx_flags |= SHX_ACTION_LOCAL_ONLY;
-
-        if (strstr (flags, "remote"))
-            action->shx_flags |= SHX_ACTION_REMOTE_ONLY;
-
-        if (strstr (flags, "single"))
-            action->parent.flags |= DB_ACTION_SINGLE_TRACK;
-
-        if (strstr (flags, "multiple"))
-            action->parent.flags |= DB_ACTION_MULTIPLE_TRACKS;
-
-        if (strstr (flags, "common"))
-            action->parent.flags |= DB_ACTION_COMMON;
-
-        if (prev)
-            prev->parent.next = (DB_plugin_action_t *)action;
-        prev = action;
-
-        if (!action_list)
-            action_list = action;
-
-        item = deadbeef->conf_find ("shellexec.", item);
-    }
-    return action_list;
 }
 
 static Shx_action_t *
@@ -511,7 +410,12 @@ static int
 shx_start ()
 {
     deadbeef->conf_lock ();
-    const char *conf = deadbeef->conf_get_str_fast ("shellexec_config_wip", NULL);
+    const char *conf = deadbeef->conf_get_str_fast ("shellexec_config", NULL);
+    if (!conf) {
+        // added right after 1.8.6 release:
+        // the `shellexec_config_wip` was used from 2016 to 2021, so this needs to be here for migration
+        deadbeef->conf_get_str_fast ("shellexec_config_wip", NULL);
+    }
     if (conf) {
         json_error_t err;
         json_t *json = json_loads (conf, 0, &err);
@@ -521,12 +425,6 @@ shx_start ()
         }
         else {
             fprintf (stderr, "shellexec: json parser error at line %d:\n%s\n", err.line, err.text);
-        }
-    }
-    else {
-        actions = shx_get_actions_legacy ();
-        if (actions) {
-            shx_save_actions ();
         }
     }
     deadbeef->conf_unlock ();
