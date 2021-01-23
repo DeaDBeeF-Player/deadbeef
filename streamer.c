@@ -2050,7 +2050,6 @@ viz_process (char * restrict bytes, int bytes_size, DB_output_t *output) {
                         audio_data[DDB_FREQ_BANDS * 2 * c + audio_data_fill + s] = temp_audio_data[(in_frames-remaining + s) * audio_data_channels + c];
                     }
                 }
-                //            memcpy (&audio_data[audio_data_fill], &temp_audio_data[in_frames-remaining], sz * sizeof (float));
                 audio_data_fill += sz;
                 remaining -= sz;
                 if (audio_data_fill == DDB_FREQ_BANDS * 2) {
