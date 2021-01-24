@@ -1824,6 +1824,10 @@
 		2DACBB241A40CEB100CCF401 /* mp3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DAD80A12416DBB100EB3075 /* CustomToolbarItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAD809F2416DBB100EB3075 /* CustomToolbarItem.h */; };
 		2DAD80A22416DBB100EB3075 /* CustomToolbarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAD80A02416DBB100EB3075 /* CustomToolbarItem.m */; };
+		2DAE701925BDDC3300E40154 /* deletefromdisk.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAE701725BDDC3300E40154 /* deletefromdisk.h */; };
+		2DAE701A25BDDC3300E40154 /* deletefromdisk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DAE701825BDDC3300E40154 /* deletefromdisk.c */; };
+		2DAE706925BDE55D00E40154 /* deletefromdisk.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAE701725BDDC3300E40154 /* deletefromdisk.h */; };
+		2DAE706A25BDE55D00E40154 /* deletefromdisk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DAE701825BDDC3300E40154 /* deletefromdisk.c */; };
 		2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */; };
 		2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */; };
 		2DB05E36252E3CF10090635E /* iconSoundTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05E26252E3CF10090635E /* iconSoundTemplate.pdf */; };
@@ -5514,6 +5518,8 @@
 		2DAA4C131AAF88FF00519559 /* TitleFormattingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TitleFormattingTests.m; sourceTree = "<group>"; };
 		2DAD809F2416DBB100EB3075 /* CustomToolbarItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomToolbarItem.h; sourceTree = "<group>"; };
 		2DAD80A02416DBB100EB3075 /* CustomToolbarItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomToolbarItem.m; sourceTree = "<group>"; };
+		2DAE701725BDDC3300E40154 /* deletefromdisk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = deletefromdisk.h; sourceTree = "<group>"; };
+		2DAE701825BDDC3300E40154 /* deletefromdisk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = deletefromdisk.c; sourceTree = "<group>"; };
 		2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesWindowController.h; sourceTree = "<group>"; };
 		2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrackPropertiesWindowController.m; sourceTree = "<group>"; };
 		2DB05E26252E3CF10090635E /* iconSoundTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = iconSoundTemplate.pdf; sourceTree = "<group>"; };
@@ -9452,6 +9458,8 @@
 				2DA30E5F2402D1B1001BAB8A /* ctmap.c */,
 				2D04C3BE2433B0FD003C2AAC /* growableBuffer.h */,
 				2D04C3BF2433B0FD003C2AAC /* growableBuffer.c */,
+				2DAE701725BDDC3300E40154 /* deletefromdisk.h */,
+				2DAE701825BDDC3300E40154 /* deletefromdisk.c */,
 			);
 			path = shared;
 			sourceTree = "<group>";
@@ -11327,6 +11335,7 @@
 				2D135EF1226E47AA00BAAE84 /* scriptable_dsp.h in Headers */,
 				2D448A851D5C5C6500B43F12 /* logger.h in Headers */,
 				2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */,
+				2DAE701925BDDC3300E40154 /* deletefromdisk.h in Headers */,
 				2DBCB725240AE0BE0012F178 /* tftintutil.h in Headers */,
 				2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */,
 			);
@@ -12178,6 +12187,7 @@
 				2DE3B8172269C0A400AFF9AE /* pluginsettings.h in Headers */,
 				2DE3B7E92269BF3100AFF9AE /* ctmapping.h in Headers */,
 				2DE3B7FD2269BF3100AFF9AE /* rg.h in Headers */,
+				2DAE706925BDE55D00E40154 /* deletefromdisk.h in Headers */,
 				2DE3B8032269BF3100AFF9AE /* plcommon.h in Headers */,
 				2DE3B7C12269BF1300AFF9AE /* progress.h in Headers */,
 				2DE3B7F22269BF3100AFF9AE /* eq.h in Headers */,
@@ -14401,6 +14411,7 @@
 				2D01D7CE1AB2219C00BCD3C4 /* pluginsettings.c in Sources */,
 				2D01D7D71AB2219C00BCD3C4 /* handler.c in Sources */,
 				2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */,
+				2DAE701A25BDDC3300E40154 /* deletefromdisk.c in Sources */,
 				2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */,
 				2D01D7E41AB2219C00BCD3C4 /* utf8.c in Sources */,
 				2D01D7D11AB2219C00BCD3C4 /* playqueue.c in Sources */,
@@ -15504,6 +15515,7 @@
 				2DE3B7E82269BF3100AFF9AE /* gtkui.c in Sources */,
 				2DE3B8042269BF3100AFF9AE /* gtkuigl.c in Sources */,
 				2DE3B7C22269BF1300AFF9AE /* ddblistview.c in Sources */,
+				2DAE706A25BDE55D00E40154 /* deletefromdisk.c in Sources */,
 				2DE3B8162269C0A400AFF9AE /* pluginsettings.c in Sources */,
 				2DE3B7E42269BF3100AFF9AE /* search.c in Sources */,
 				2DE3B7EC2269BF3100AFF9AE /* ddbequalizer.c in Sources */,

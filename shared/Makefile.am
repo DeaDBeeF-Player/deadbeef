@@ -1,4 +1,4 @@
-noinst_LIBRARIES = libmp4tagutil.a libtrkpropertiesutil.a libeqpreset.a libctmap.a
+noinst_LIBRARIES = libmp4tagutil.a libtrkpropertiesutil.a libeqpreset.a libctmap.a libdeletefromdisk.a
 
 libmp4tagutil_a_SOURCES = mp4tagutil.h mp4tagutil.c
 libmp4tagutil_a_CFLAGS = -fPIC -std=c99 -I@top_srcdir@/external/mp4p/include
@@ -12,3 +12,5 @@ libeqpreset_a_CFLAGS = -fPIC -std=c99
 libctmap_a_SOURCES = ctmap.h ctmap.c
 libctmap_a_CFLAGS = -fPIC -std=c99
 
+libdeletefromdisk_a_SOURCES = deletefromdisk.h deletefromdisk.c
+libdeletefromdisk_a_CFLAGS = -fPIC -std=c99
