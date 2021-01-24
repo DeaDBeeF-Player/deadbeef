@@ -657,6 +657,9 @@ http_thread_func (void *ctx) {
         // enable up to 10 redirects
         curl_easy_setopt (curl, CURLOPT_FOLLOWLOCATION, 1);
         curl_easy_setopt (curl, CURLOPT_MAXREDIRS, 10);
+
+        curl_easy_setopt (curl, CURLOPT_CONNECTTIMEOUT, 10);
+
         headers = curl_slist_append (headers, "Icy-Metadata:1");
         curl_easy_setopt (curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt (curl, CURLOPT_HTTP200ALIASES, ok_aliases);
