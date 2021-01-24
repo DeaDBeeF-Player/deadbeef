@@ -113,17 +113,7 @@ get_keycode (const char* name) {
     return 0;
 }
 
-static char*
-trim (char* s)
-{
-    char *h, *t;
-    
-    for (h = s; *h == ' ' || *h == '\t'; h++);
-    for (t = s + strlen (s); *t == ' ' || *t == '\t'; t--);
-    * (t+1) = 0;
-    return h;
-}
-
+#ifndef NO_XLIB_H
 static void
 cmd_invoke_plugin_command (DB_plugin_action_t *action, ddb_action_context_t ctx)
 {
@@ -206,6 +196,7 @@ cmd_invoke_plugin_command (DB_plugin_action_t *action, ddb_action_context_t ctx)
         action->callback2 (action, ctx);
     }
 }
+#endif
 
 static DB_plugin_action_t *
 find_action_by_name (const char *command) {
@@ -1064,7 +1055,7 @@ static DB_plugin_action_t action_invert_selection = {
     .name = "invert_selection",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_invert_selection_handler,
-    .next = &action_sort_by_tracknr
+    .next = &action_sort_by_title
 };
 
 static DB_plugin_action_t action_clear_playlist = {
