@@ -27,6 +27,11 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) BOOL hideRemoveFromDisk;
 @property (nonatomic) BOOL namePlaylistFromFolder;
 
+// Delete From Disk
+@property (nonatomic) BOOL deleteFromDiskUseBin;
+@property (nonatomic) BOOL deleteFromDiskEnableConfirmationDialog;
+@property (nonatomic) BOOL deleteFromDiskSkipDeletedTracks;
+
 @end
 
 @implementation GuiPreferencesWindowController
@@ -50,6 +55,11 @@ extern DB_functions_t *deadbeef;
     _mmbDeletePlaylist =  deadbeef->conf_get_int ("cocoaui.mmb_delete_playlist", 1) ? YES : NO;
     _hideRemoveFromDisk =  deadbeef->conf_get_int ("cocoaui.hide_remove_from_disk", 0) ? YES : NO;
     _namePlaylistFromFolder =  deadbeef->conf_get_int ("cocoaui.name_playlist_from_folder", 1) ? YES : NO;
+
+    // delete from disk
+    _deleteFromDiskUseBin = deadbeef->conf_get_int ("cocoaui.delete_use_bin", 1) ? YES : NO;
+    _deleteFromDiskEnableConfirmationDialog = deadbeef->conf_get_int ("cocoaui.delete_files_confirm", 1) ? YES : NO;
+    _deleteFromDiskSkipDeletedTracks = deadbeef->conf_get_int ("cocoaui.skip_deleted_tracks", 0) ? YES : NO;
 
     return self;
 }
@@ -105,6 +115,25 @@ extern DB_functions_t *deadbeef;
 - (void)setNamePlaylistFromFolder:(BOOL)namePlaylistFromFolder {
     _namePlaylistFromFolder = namePlaylistFromFolder;
     deadbeef->conf_set_int ("cocoaui.name_playlist_from_folder", namePlaylistFromFolder);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+
+- (void)setDeleteFromDiskUseBin:(BOOL)deleteFromDiskUseBin {
+    _deleteFromDiskUseBin = deleteFromDiskUseBin;
+    deadbeef->conf_set_int ("cocoaui.delete_use_bin", deleteFromDiskUseBin);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (void)setDeleteFromDiskEnableConfirmationDialog:(BOOL)deleteFromDiskEnableConfirmationDialog {
+    _deleteFromDiskEnableConfirmationDialog = deleteFromDiskEnableConfirmationDialog;
+    deadbeef->conf_set_int ("cocoaui.delete_files_confirm", deleteFromDiskEnableConfirmationDialog);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (void)setDeleteFromDiskSkipDeletedTracks:(BOOL)deleteFromDiskSkipDeletedTracks {
+    _deleteFromDiskSkipDeletedTracks = deleteFromDiskSkipDeletedTracks;
+    deadbeef->conf_set_int ("cocoaui.skip_deleted_tracks", deleteFromDiskSkipDeletedTracks);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 

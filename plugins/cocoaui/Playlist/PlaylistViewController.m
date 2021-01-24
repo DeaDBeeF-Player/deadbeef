@@ -384,6 +384,7 @@ extern DB_functions_t *deadbeef;
     lv.delegate = self;
 
     self.trackContextMenu = [TrackContextMenu new];
+    self.trackContextMenu.view = self.view;
     self.trackContextMenu.delegate = self;
 
     self.sortColumn = -1;

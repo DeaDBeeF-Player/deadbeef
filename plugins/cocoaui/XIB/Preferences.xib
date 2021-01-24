@@ -22,11 +22,11 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView identifier="GUI_Misc" id="MUz-8x-xuE" userLabel="Gui View">
-            <rect key="frame" x="0.0" y="0.0" width="485" height="237"/>
+            <rect key="frame" x="0.0" y="0.0" width="485" height="255"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <tabView translatesAutoresizingMaskIntoConstraints="NO" id="Kew-j7-aa9">
-                    <rect key="frame" x="13" y="10" width="459" height="213"/>
+                    <rect key="frame" x="13" y="10" width="459" height="231"/>
                     <font key="font" metaFont="system"/>
                     <tabViewItems>
                         <tabViewItem label="Player" identifier="1" id="0mG-vg-fx3">
@@ -166,11 +166,11 @@
                         </tabViewItem>
                         <tabViewItem label="Playlist" identifier="2" id="Bas-Mn-ob1">
                             <view key="view" id="tbJ-9l-ZFL">
-                                <rect key="frame" x="10" y="33" width="439" height="147"/>
+                                <rect key="frame" x="10" y="33" width="439" height="185"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="mQR-r2-hgB">
-                                        <rect key="frame" x="18" y="127" width="403" height="18"/>
+                                        <rect key="frame" x="18" y="164" width="401" height="18"/>
                                         <buttonCell key="cell" type="check" title="Close playlists with middle mouse button" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="vbQ-dU-f2J">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -180,7 +180,7 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="5ti-KG-6jS">
-                                        <rect key="frame" x="18" y="107" width="403" height="18"/>
+                                        <rect key="frame" x="18" y="142" width="401" height="18"/>
                                         <buttonCell key="cell" type="check" title="Hide the &quot;Remove from disk&quot; context menu item" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="3fF-la-mG4">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -190,7 +190,7 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="va0-Vc-fXe">
-                                        <rect key="frame" x="18" y="87" width="403" height="18"/>
+                                        <rect key="frame" x="18" y="120" width="401" height="18"/>
                                         <buttonCell key="cell" type="check" title="Auto-name playlists when adding a single folder" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Ejz-uG-nxa">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -199,17 +199,73 @@
                                             <binding destination="jtP-FH-nkX" name="value" keyPath="self.namePlaylistFromFolder" id="uJE-i4-0xv"/>
                                         </connections>
                                     </button>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="p2Y-PO-L5O">
+                                        <rect key="frame" x="18" y="63" width="401" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Use Recycle Bin" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="cjY-a5-Gbj">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="jtP-FH-nkX" name="value" keyPath="deleteFromDiskUseBin" id="wrP-J4-LgU"/>
+                                        </connections>
+                                    </button>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hyY-IL-s4f">
+                                        <rect key="frame" x="18" y="41" width="401" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Display a confirmation warning dialog" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="klO-kO-Na9">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="jtP-FH-nkX" name="value" keyPath="deleteFromDiskEnableConfirmationDialog" id="3Z2-ga-0sb"/>
+                                        </connections>
+                                    </button>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="PBl-HV-gCa">
+                                        <rect key="frame" x="18" y="19" width="401" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Skip playing track if it's deleted" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="l1L-sL-vfs">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="jtP-FH-nkX" name="value" keyPath="deleteFromDiskSkipDeletedTracks" id="q5x-QZ-0et"/>
+                                        </connections>
+                                    </button>
+                                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="gbe-10-ftY">
+                                        <rect key="frame" x="20" y="110" width="399" height="5"/>
+                                    </box>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FW6-jn-RQA">
+                                        <rect key="frame" x="18" y="88" width="114" height="16"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Delete From Disk" id="mo3-CR-le4">
+                                            <font key="font" metaFont="systemBold"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstItem="p2Y-PO-L5O" firstAttribute="trailing" secondItem="va0-Vc-fXe" secondAttribute="trailing" id="0Gs-Is-n36"/>
+                                    <constraint firstAttribute="bottom" secondItem="PBl-HV-gCa" secondAttribute="bottom" constant="20" symbolic="YES" id="1tA-Ct-c3s"/>
+                                    <constraint firstItem="FW6-jn-RQA" firstAttribute="top" secondItem="gbe-10-ftY" secondAttribute="bottom" constant="8" symbolic="YES" id="4kA-hn-z8a"/>
                                     <constraint firstItem="mQR-r2-hgB" firstAttribute="leading" secondItem="tbJ-9l-ZFL" secondAttribute="leading" constant="20" id="A9D-Tu-IOA"/>
+                                    <constraint firstItem="p2Y-PO-L5O" firstAttribute="top" secondItem="FW6-jn-RQA" secondAttribute="bottom" constant="8" symbolic="YES" id="Aj8-gS-5TR"/>
+                                    <constraint firstItem="5ti-KG-6jS" firstAttribute="top" secondItem="mQR-r2-hgB" secondAttribute="bottom" constant="6" symbolic="YES" id="Amk-IG-zT7"/>
+                                    <constraint firstItem="p2Y-PO-L5O" firstAttribute="leading" secondItem="va0-Vc-fXe" secondAttribute="leading" id="BeL-av-5kB"/>
                                     <constraint firstAttribute="trailing" secondItem="mQR-r2-hgB" secondAttribute="trailing" constant="20" id="C8H-d8-WTv"/>
-                                    <constraint firstItem="va0-Vc-fXe" firstAttribute="firstBaseline" secondItem="5ti-KG-6jS" secondAttribute="baseline" constant="20" id="GHi-4W-yIC"/>
+                                    <constraint firstItem="hyY-IL-s4f" firstAttribute="trailing" secondItem="p2Y-PO-L5O" secondAttribute="trailing" id="FSR-sW-1Nh"/>
+                                    <constraint firstItem="FW6-jn-RQA" firstAttribute="leading" secondItem="gbe-10-ftY" secondAttribute="leading" id="JdW-pI-pvQ"/>
+                                    <constraint firstItem="hyY-IL-s4f" firstAttribute="leading" secondItem="p2Y-PO-L5O" secondAttribute="leading" id="N3b-mO-ZXU"/>
+                                    <constraint firstItem="gbe-10-ftY" firstAttribute="leading" secondItem="va0-Vc-fXe" secondAttribute="leading" id="Nb0-K9-N80"/>
                                     <constraint firstItem="va0-Vc-fXe" firstAttribute="trailing" secondItem="5ti-KG-6jS" secondAttribute="trailing" id="Tzs-Z1-GIn"/>
+                                    <constraint firstItem="gbe-10-ftY" firstAttribute="trailing" secondItem="va0-Vc-fXe" secondAttribute="trailing" id="UH8-4p-KAK"/>
                                     <constraint firstItem="5ti-KG-6jS" firstAttribute="leading" secondItem="mQR-r2-hgB" secondAttribute="leading" id="ZI7-80-xEx"/>
                                     <constraint firstItem="va0-Vc-fXe" firstAttribute="leading" secondItem="5ti-KG-6jS" secondAttribute="leading" id="ZWl-Ja-yku"/>
                                     <constraint firstItem="5ti-KG-6jS" firstAttribute="trailing" secondItem="mQR-r2-hgB" secondAttribute="trailing" id="amj-1W-bwZ"/>
                                     <constraint firstItem="mQR-r2-hgB" firstAttribute="top" secondItem="tbJ-9l-ZFL" secondAttribute="top" constant="4" id="fkV-kw-IOy"/>
-                                    <constraint firstItem="5ti-KG-6jS" firstAttribute="firstBaseline" secondItem="mQR-r2-hgB" secondAttribute="baseline" constant="20" id="sna-wf-eAx"/>
+                                    <constraint firstItem="hyY-IL-s4f" firstAttribute="top" secondItem="p2Y-PO-L5O" secondAttribute="bottom" constant="6" symbolic="YES" id="gLm-uL-r8D"/>
+                                    <constraint firstItem="PBl-HV-gCa" firstAttribute="trailing" secondItem="hyY-IL-s4f" secondAttribute="trailing" id="gtU-k8-6cE"/>
+                                    <constraint firstItem="PBl-HV-gCa" firstAttribute="top" secondItem="hyY-IL-s4f" secondAttribute="bottom" constant="6" symbolic="YES" id="pKE-b6-tDg"/>
+                                    <constraint firstItem="gbe-10-ftY" firstAttribute="top" secondItem="va0-Vc-fXe" secondAttribute="bottom" constant="8" symbolic="YES" id="tvk-eh-kie"/>
+                                    <constraint firstItem="va0-Vc-fXe" firstAttribute="top" secondItem="5ti-KG-6jS" secondAttribute="bottom" constant="6" symbolic="YES" id="xwf-Hi-szR"/>
+                                    <constraint firstItem="PBl-HV-gCa" firstAttribute="leading" secondItem="hyY-IL-s4f" secondAttribute="leading" id="ybH-jS-odD"/>
                                 </constraints>
                             </view>
                         </tabViewItem>
@@ -1545,7 +1601,7 @@ Gw
                     <rect key="frame" x="20" y="40" width="440" height="213"/>
                     <clipView key="contentView" id="do0-5z-Q8M">
                         <rect key="frame" x="1" y="1" width="438" height="211"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" id="0Ov-kf-8Ci">
                                 <rect key="frame" x="0.0" y="0.0" width="438" height="211"/>
