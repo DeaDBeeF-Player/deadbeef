@@ -534,6 +534,14 @@ hotkeys_connect (void) {
 }
 
 static int
+hotkeys_message(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    if (id == DB_EV_PLUGINSLOADED) {
+        hotkeys_connect();
+    }
+    return 0;
+}
+
+static int
 hotkeys_disconnect (void) {
 #ifndef NO_XLIB_H
     if (loop_tid) {
@@ -1311,10 +1319,10 @@ static DB_hotkeys_plugin_t plugin = {
     ,
     .misc.plugin.website = "http://deadbeef.sf.net",
     .misc.plugin.get_actions = hotkeys_get_actions,
-    .misc.plugin.start = hotkeys_connect,
     .misc.plugin.stop = hotkeys_disconnect,
     .get_name_for_keycode = hotkeys_get_name_for_keycode,
     .get_action_for_keycombo = hotkeys_get_action_for_keycombo,
     .reset = hotkeys_reset,
+    .misc.plugin.message = hotkeys_message,
 };
 
