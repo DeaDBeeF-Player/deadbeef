@@ -118,7 +118,7 @@ filter 'files:**.asm'
 project "libwin"
   kind "StaticLib"
   language "C"
-  targetdir "bin/%{cfg.buildcfg}/"
+  targetdir "."
   files {
     "shared/windows/fopen.c",
     "shared/windows/mingw32_layer.h",
@@ -138,7 +138,7 @@ project "libwin"
 project "mp4p"
   kind "StaticLib"
   language "C"
-  targetdir "bin/%{cfg.buildcfg}/"
+  targetdir "."
   targetprefix ""
   files {
     "external/mp4p/src/*.c",
@@ -150,7 +150,7 @@ project "mp4p"
 project "liboggedit"
   kind "StaticLib"
   language "C"
-  targetdir "bin/%{cfg.buildcfg}/"
+  targetdir "."
   targetprefix ""
   files {
     "plugins/liboggedit/*.c"
@@ -161,7 +161,7 @@ project "liboggedit"
 project "libdeletefromdisk"
   kind "StaticLib"
   language "C"
-  targetdir "bin/%{cfg.buildcfg}/"
+  targetdir "."
   targetprefix ""
   files {
     "shared/deletefromdisk.c"
