@@ -1,10 +1,6 @@
 name: Build for macOS
 
-on:
-  push:
-    branches: [ ghactions ]
-  pull_request:
-    branches: [ ghactions ]
+on: [ push, pull_request ]
 
 jobs:
   build:
@@ -15,6 +11,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       with:
-        submodules: recursive
+        submodules: true
     - name: build
       run: TRAVIS_OS_NAME=osx travis/build.sh
