@@ -1,0 +1,28 @@
+name: Build for Windows
+on: [ push, pull_request ]
+jobs:
+  build:
+    name: Windows
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+    - name: Install msys2
+      uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: >-
+          mingw-w64-x86_64-toolchain mingw-w64-x86_64-libzip mingw-w64-x86_64-pkg-config mingw-w64-x86_64-dlfcn
+          git make tar unzip xz zip mingw-w64-x86_64-clang mingw-w64-x86_64-libblocksruntime
+          mingw-w64-x86_64-jansson mingw-w64-x86_64-gtk3 mingw-w64-x86_64-gtk2 mingw-w64-x86_64-mpg123
+          mingw-w64-x86_64-flac mingw-w64-x86_64-curl mingw-w64-x86_64-portaudio mingw-w64-x86_64-faad2 mingw-w64-x86_64-flac
+          mingw-w64-x86_64-wavpack mingw-w64-x86_64-libvorbis mingw-w64-x86_64-libogg mingw-w64-x86_64-opusfile mingw-w64-x86_64-opus
+          mingw-w64-x86_64-libsndfile mingw-w64-x86_64-libsamplerate mingw-w64-x86_64-yasm rsync
+    - name: Build
+      shell: msys2 {0}
+      run: TRAVIS_OS_NAME=windows travis/build.sh
+#    - name: Upload
+#      shell: msys2 {0}
+#      run: TRAVIS_OS_NAME=windows travis/upload.sh
