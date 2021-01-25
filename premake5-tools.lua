@@ -64,9 +64,11 @@ function pkgconfig_libs (pkgname)
   parts = string.explode (returnval, " ")
   tab2 = {}
   for i, v in ipairs(parts) do
-    tab2[i] = string.sub (v, 3)
-    tab2[i] = tab2[i] .. " " -- fix problems when project name is same as library
-    -- this will favor linking with library than with itself
+    if (v ~= nil and v ~= '') then
+      tab2[i] = string.sub (v, 3)
+      tab2[i] = tab2[i] .. " " -- fix problems when project name is same as library
+      -- this will favor linking with library than with itself
+    end
   end
   return tab2
 end
