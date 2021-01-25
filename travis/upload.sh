@@ -6,7 +6,7 @@ ssh-add travis/id_rsa || exit 1
 
 SSHOPTS="ssh -o StrictHostKeyChecking=no"
 
-VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
+VERSION=`tr -d '\r' < PORTABLE_VERSION`
 
 case "$TRAVIS_OS_NAME" in
     linux)
