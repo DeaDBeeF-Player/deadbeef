@@ -1,12 +1,29 @@
-echo Decrtypting id_rsa...
-openssl aes-256-cbc -K $encrypted_b1899526f957_key -iv $encrypted_b1899526f957_iv -in travis/id_rsa.enc -out travis/id_rsa -d || exit 1
+echo Decrypting id_rsa...
+
+mkdir -p sshconfig
+
+if [ ! -z $gh_rsa_key ]; then
+    openssl aes-256-cbc -K $gh_rsa_key -iv $gh_rsa_iv -in .github/id_rsa.enc -out sshconfig/id_rsa -d || exit 1
+elif [ ! -z $encrypted_b1899526f957_key ]; then
+    openssl aes-256-cbc -K $encrypted_b1899526f957_key -iv $encrypted_b1899526f957_iv -in travis/id_rsa.enc -out sshconfig/id_rsa -d || exit 1
+else
+    echo "SSH key is not available, upload cancelled"
+    exit 0
+fi
+
 eval "$(ssh-agent -s)"
-chmod 600 travis/id_rsa
-ssh-add travis/id_rsa || exit 1
+chmod 600 sshconfig/id_rsa
+ssh-add sshconfig/id_rsa || exit 1
 
 SSHOPTS="ssh -o StrictHostKeyChecking=no"
 
 VERSION=`tr -d '\r' < PORTABLE_VERSION`
+
+if [ ! -z $GITHUB_REF ]; then
+    TRAVIS_BRANCH=${GITHUB_REF#"refs/heads/"}
+    echo "Ref: $GITHUB_REF"
+    echo "Branch: $TRAVIS_BRANCH"
+fi
 
 case "$TRAVIS_OS_NAME" in
     linux)

@@ -11,15 +11,15 @@ jobs:
     - name: Install necessary packages
       run: |
         apt-get -qq update
-        apt-get install -y -qq autopoint automake autoconf intltool libc6-dev yasm libglib2.0-bin perl wget zip bzip2 make libtool pkg-config fakeroot clang
+        apt-get install -y -qq autopoint automake autoconf intltool libc6-dev yasm libglib2.0-bin perl wget zip bzip2 make libtool pkg-config fakeroot clang openssh-client rsync
     - name: Checkout
       uses: actions/checkout@v1
       with:
         submodules: true
     - name: Build
-      run: TRAVIS_OS_NAME=linux ./travis/build.sh
-#    - name: Run ./travis/upload.sh
-#      shell: bash {0}
-#      run: |
-#        export TRAVIS_OS_NAME=linux
-#        source ./travis/upload.sh
+      run: TRAVIS_OS_NAME=linux travis/build.sh
+    - name: Upload
+      env:
+          gh_rsa_key: ${{ secrets.GH_ENCRYPTED_RSA_KEY }}
+          gh_rsa_iv: ${{ secrets.GH_ENCRYPTED_RSA_IV }}
+      run: TRAVIS_OS_NAME=linux travis/upload.sh
