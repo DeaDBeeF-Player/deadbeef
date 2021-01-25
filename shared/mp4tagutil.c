@@ -430,7 +430,6 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
             tail = tail->next;
         }
         tail->next = moov;
-        moov->pos = tail->pos + tail->size;
 
         // replace old moov with padding, only if moov is in the beginning
         if (moov->pos < mdat->pos) {
@@ -446,6 +445,7 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
                 }
             }
         }
+        moov->pos = tail->pos + tail->size;
     }
 
 //    printf ("------------orig\n");
@@ -521,6 +521,10 @@ mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     }
 
     for (mp4p_atom_t *meta_atom = ilst->subatoms; meta_atom; meta_atom = meta_atom->next) {
+        if (!meta_atom->write) {
+            // When the atom is not writable, it indicates it wasn't parsed
+            continue;
+        }
         got_itunes_tags = 1;
 
         mp4p_ilst_meta_t *meta = meta_atom->data;
