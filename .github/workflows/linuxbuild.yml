@@ -1,0 +1,25 @@
+name: Build for Linux
+
+on: [ push, pull_request ]
+
+jobs:
+  build:
+    name: Linux
+    runs-on: ubuntu-latest
+    container: ubuntu:14.04
+    steps:
+    - name: Install necessary packages
+      run: |
+        apt-get -qq update
+        apt-get install -y -qq autopoint automake autoconf intltool libc6-dev yasm libglib2.0-bin perl wget zip bzip2 make libtool pkg-config fakeroot clang
+    - name: Checkout
+      uses: actions/checkout@v1
+      with:
+        submodules: true
+    - name: Build
+      run: TRAVIS_OS_NAME=linux ./travis/build.sh
+#    - name: Run ./travis/upload.sh
+#      shell: bash {0}
+#      run: |
+#        export TRAVIS_OS_NAME=linux
+#        source ./travis/upload.sh
