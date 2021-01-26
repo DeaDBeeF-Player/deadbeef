@@ -8,7 +8,9 @@ More info is [here](http://deadbeef.sf.net).
 
 ## Download development builds
 
-[![Build Status](https://travis-ci.org/DeaDBeeF-Player/deadbeef.svg?branch=master)](https://travis-ci.org/DeaDBeeF-Player/deadbeef)
+[![Linux Build Status](https://github.com/DeaDBeeF-Player/deadbeef/workflows/Build%20for%20Linux/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions?query=workflow%3A%22Build+for+Linux%22)
+[![Windows Build Status](https://github.com/DeaDBeeF-Player/deadbeef/workflows/Build%20for%20Windows/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions?query=workflow%3A%22Build+for+Windows%22)
+[![macOS Build Status](https://github.com/DeaDBeeF-Player/deadbeef/workflows/Build%20for%20macOS/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions?query=workflow%3A%22Build+for+macOS%22)
 
 [Download the latest GNU/Linux builds](https://sourceforge.net/projects/deadbeef/files/travis/linux/)
 
