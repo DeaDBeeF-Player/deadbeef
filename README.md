@@ -1,24 +1,31 @@
 ## About
 
-DeaDBeeF is a music player for \*nix-like systems and OS X.
+DeaDBeeF is a multiple-platform music player for desktop operating systems.
 
-More info is [here](http://deadbeef.sf.net).
+[The Official Website](http://deadbeef.sf.net).
 
-[Join us on slack](https://deadbeef-slack.herokuapp.com)
+If you wish to chat with developers, join us on [Slack](https://deadbeef-slack.herokuapp.com), or [Discord](https://discord.gg/bsXR4Njy).
 
-## Download development builds
+## Download official releases (only GNU/Linux and Windows)
+
+[Downloads Page](https://deadbeef.sourceforge.io/download.html)
+
+## Download nightly (development) builds
+
+<sub><sup>NOTE: The macOS version has not been officially released, and has many unresolved issues and unimplemented features</sup></sub>
 
 [![Linux Build Status](https://github.com/DeaDBeeF-Player/deadbeef/workflows/Build%20for%20Linux/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions?query=workflow%3A%22Build+for+Linux%22)
 [![Windows Build Status](https://github.com/DeaDBeeF-Player/deadbeef/workflows/Build%20for%20Windows/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions?query=workflow%3A%22Build+for+Windows%22)
 [![macOS Build Status](https://github.com/DeaDBeeF-Player/deadbeef/workflows/Build%20for%20macOS/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions?query=workflow%3A%22Build+for+macOS%22)
 
-[Download the latest GNU/Linux builds](https://sourceforge.net/projects/deadbeef/files/travis/linux/)
+[Nightly GNU/Linux Builds](https://sourceforge.net/projects/deadbeef/files/travis/linux/master/)
 
-Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy development. Don't put your expectations too high yet.
+[Nightly Windows Builds](https://sourceforge.net/projects/deadbeef/files/travis/windows/master/)
 
-[Download the latest OSX build](https://sourceforge.net/projects/deadbeef/files/travis/osx/)
+[Nightly macOS Builds](https://sourceforge.net/projects/deadbeef/files/travis/osx/master/)
 
-## Compiling
+
+## Building DeaDBeeF from source
 
 ### Linux, BSD and similar (GTK/*NIX version)
 
@@ -30,7 +37,7 @@ Whilst OSX/Cocoa version can be used, it is unfinished and is under heavy develo
 * Run `CC=clang CXX=clang++ ./configure`, followed with `make` and `sudo make install`.
 * For more information about the build process, read the generated INSTALL file and the output of `./configure --help`.
 
-### macOS (COCOA version)
+### macOS
 
 * Install Xcode. The latest one is the best, but older versions will usually keep working for a year or two.
 * Run `sudo xcode-select --install` - This will configure git and command line build tools
