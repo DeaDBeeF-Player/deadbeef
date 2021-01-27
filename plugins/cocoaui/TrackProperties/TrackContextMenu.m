@@ -37,7 +37,7 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) NSMenuItem *trackPropertiesItem;
 
-@property (nonatomic) ddbDeleteFromDiskTrackList_t selectedTracksList;
+@property (nonatomic) ddbUtilTrackList_t selectedTracksList;
 @property (nonatomic) ddbDeleteFromDiskController_t deleteFromDiskController;
 
 @end
@@ -102,7 +102,7 @@ extern DB_functions_t *deadbeef;
     }
 
     if (_selectedTracksList) {
-        ddbDeleteFromDiskTrackListFree(_selectedTracksList);
+        ddbUtilTrackListFree(_selectedTracksList);
         _selectedTracksList = NULL;
     }
 
@@ -142,7 +142,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)updateWithTrackList:(ddb_playItem_t **)tracks count:(NSUInteger)count playlist:(ddb_playlist_t *)plt {
     if (_selectedTracksList) {
-        ddbDeleteFromDiskTrackListFree(_selectedTracksList);
+        ddbUtilTrackListFree(_selectedTracksList);
         _selectedTracksList = NULL;
     }
     if (_deleteFromDiskController) {
@@ -150,7 +150,7 @@ extern DB_functions_t *deadbeef;
         _deleteFromDiskController = NULL;
     }
     if (tracks) {
-        _selectedTracksList = ddbDeleteFromDiskTrackListInitWithWithTracks( ddbDeleteFromDiskTrackListAlloc(), plt, DDB_ACTION_CTX_SELECTION, tracks, (unsigned)count);
+        _selectedTracksList = ddbUtilTrackListInitWithWithTracks( ddbUtilTrackListAlloc(), plt, DDB_ACTION_CTX_SELECTION, tracks, (unsigned)count);
     }
 }
 
@@ -244,8 +244,8 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)forEachTrack:(BOOL (^)(DB_playItem_t *it))block {
-    ddb_playItem_t **tracks = ddbDeleteFromDiskTrackListGetTracks (self.selectedTracksList);
-    int count = ddbDeleteFromDiskTrackListGetTrackCount(self.selectedTracksList);
+    ddb_playItem_t **tracks = ddbUtilTrackListGetTracks (self.selectedTracksList);
+    int count = ddbUtilTrackListGetTrackCount(self.selectedTracksList);
 
     for (int i = 0; i < count; i++) {
         BOOL res = block (tracks[i]);
@@ -256,7 +256,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (DB_playItem_t **)getSelectedTracksForRg:(int *)pcount withRgTags:(BOOL)withRgTags {
-    int numtracks = ddbDeleteFromDiskTrackListGetTrackCount(self.selectedTracksList);
+    int numtracks = ddbUtilTrackListGetTrackCount(self.selectedTracksList);
     if (!numtracks) {
         return NULL;
     }
@@ -333,8 +333,8 @@ extern DB_functions_t *deadbeef;
 #pragma mark -
 
 - (void)convertSelection {
-    ddb_playItem_t **tracks = ddbDeleteFromDiskTrackListGetTracks(self.selectedTracksList);
-    unsigned count = ddbDeleteFromDiskTrackListGetTrackCount(self.selectedTracksList);
+    ddb_playItem_t **tracks = ddbUtilTrackListGetTracks(self.selectedTracksList);
+    unsigned count = ddbUtilTrackListGetTrackCount(self.selectedTracksList);
     [ConverterWindowController runConverterWithTracks:tracks count:count playlist:self.playlist];
 }
 

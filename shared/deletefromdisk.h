@@ -11,8 +11,21 @@
 
 #include "../deadbeef.h"
 
+#pragma mark - UtilTrackList
+
+typedef void *ddbUtilTrackList_t;
+
+ddbUtilTrackList_t ddbUtilTrackListAlloc (void);
+ddbUtilTrackList_t ddbUtilTrackListInitWithPlaylist (ddbUtilTrackList_t trackList, ddb_playlist_t *plt, ddb_action_context_t ctx);
+ddbUtilTrackList_t ddbUtilTrackListInitWithWithTracks (ddbUtilTrackList_t trackList, ddb_playlist_t *plt, ddb_action_context_t ctx, ddb_playItem_t **tracks, unsigned count);
+void ddbUtilTrackListFree (ddbUtilTrackList_t trackList);
+
+ddb_playItem_t **ddbUtilTrackListGetTracks (ddbUtilTrackList_t trackList);
+unsigned ddbUtilTrackListGetTrackCount (ddbUtilTrackList_t trackList);
+
+#pragma mark - DeleteFromDiskController
+
 typedef void *ddbDeleteFromDiskController_t;
-typedef void *ddbDeleteFromDiskTrackList_t;
 
 typedef void (*ddbDeleteFromDiskControllerWarningCallback_t)(ddbDeleteFromDiskController_t ctl, int shouldCancel);
 
@@ -22,24 +35,14 @@ typedef struct {
     void (*completed) (ddbDeleteFromDiskController_t ctl);
 } ddbDeleteFromDiskControllerDelegate_t;
 
-#pragma mark - DeleteFromDiskController
 ddbDeleteFromDiskController_t ddbDeleteFromDiskControllerAlloc (void);
 ddbDeleteFromDiskController_t ddbDeleteFromDiskControllerInitWithPlaylist (ddbDeleteFromDiskController_t ctl, ddb_playlist_t *plt, ddb_action_context_t ctx);
-ddbDeleteFromDiskController_t ddbDeleteFromDiskControllerInitWithTrackList (ddbDeleteFromDiskController_t ctl, ddbDeleteFromDiskTrackList_t trackList);
+ddbDeleteFromDiskController_t ddbDeleteFromDiskControllerInitWithTrackList (ddbDeleteFromDiskController_t ctl, ddbUtilTrackList_t trackList);
 void ddbDeleteFromDiskControllerFree (ddbDeleteFromDiskController_t ctl);
 
 void ddbDeleteFromDiskControllerSetShouldSkipDeletedTracks (ddbDeleteFromDiskController_t ctl, int shouldSkipDeletedTracks);
 void ddbDeleteFromDiskControllerSetUserData (ddbDeleteFromDiskController_t ctl, void *userData);
 void *ddbDeleteFromDiskControllerGetUserData (ddbDeleteFromDiskController_t ctl);
 void ddbDeleteFromDiskControllerRunWithDelegate (ddbDeleteFromDiskController_t ctl, ddbDeleteFromDiskControllerDelegate_t delegate);
-
-#pragma mark - DeleteFromDiskTrackList
-ddbDeleteFromDiskTrackList_t ddbDeleteFromDiskTrackListAlloc (void);
-ddbDeleteFromDiskTrackList_t ddbDeleteFromDiskTrackListInitWithPlaylist (ddbDeleteFromDiskTrackList_t trackList, ddb_playlist_t *plt, ddb_action_context_t ctx);
-ddbDeleteFromDiskTrackList_t ddbDeleteFromDiskTrackListInitWithWithTracks (ddbDeleteFromDiskTrackList_t trackList, ddb_playlist_t *plt, ddb_action_context_t ctx, ddb_playItem_t **tracks, unsigned count);
-void ddbDeleteFromDiskTrackListFree (ddbDeleteFromDiskTrackList_t trackList);
-
-ddb_playItem_t **ddbDeleteFromDiskTrackListGetTracks (ddbDeleteFromDiskTrackList_t trackList);
-unsigned ddbDeleteFromDiskTrackListGetTrackCount (ddbDeleteFromDiskTrackList_t trackList);
 
 #endif /* deletefromdisk_h */
