@@ -24,9 +24,7 @@
 #import <Foundation/Foundation.h>
 #import "DdbWidget.h"
 
-@interface DdbWidgetManager : NSObject {
-    NSMutableArray *_regWidgets;
-}
+@interface DdbWidgetManager : NSObject
 
 + (DdbWidgetManager *)defaultWidgetManager;
 - (void)addWidget:(DdbWidget *)widget;

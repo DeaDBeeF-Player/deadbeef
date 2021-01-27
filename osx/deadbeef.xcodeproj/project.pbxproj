@@ -979,6 +979,8 @@
 		2D3420E61D0856F0004C136A /* mp4sample.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177561A0E8A3D004BC222 /* mp4sample.c */; };
 		2D3420E71D0856F0004C136A /* mp4tagupdate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177571A0E8A3D004BC222 /* mp4tagupdate.c */; };
 		2D3420E81D0856F0004C136A /* mp4util.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177581A0E8A3D004BC222 /* mp4util.c */; };
+		2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */; };
+		2D3992E225C2038700CFA936 /* WeakRefWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3992E025C2038700CFA936 /* WeakRefWrapper.m */; };
 		2D3A4BBD1D6315D6002C7098 /* medialib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D3CD9372409A091005875A9 /* PinnedGroupTitleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3CD9352409A091005875A9 /* PinnedGroupTitleView.h */; };
 		2D3CD9382409A091005875A9 /* PinnedGroupTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3CD9362409A091005875A9 /* PinnedGroupTitleView.m */; };
@@ -4645,6 +4647,8 @@
 		2D2A135A19B647CF00AD1EB7 /* gme.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = gme.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D2A14F019B64F2900AD1EB7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		2D3420DC1D0856D5004C136A /* libmp4ff.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmp4ff.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WeakRefWrapper.h; sourceTree = "<group>"; };
+		2D3992E025C2038700CFA936 /* WeakRefWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WeakRefWrapper.m; sourceTree = "<group>"; };
 		2D3A4BB41D631530002C7098 /* medialib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = medialib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D3CD9352409A091005875A9 /* PinnedGroupTitleView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PinnedGroupTitleView.h; sourceTree = "<group>"; };
 		2D3CD9362409A091005875A9 /* PinnedGroupTitleView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PinnedGroupTitleView.m; sourceTree = "<group>"; };
@@ -8448,6 +8452,8 @@
 				2DDF87D824027DA500CA8E91 /* PluginActionMenuItem.m */,
 				2DBCB71F240ADCC10012F178 /* tftintutil.h */,
 				2DBCB720240ADCC10012F178 /* tftintutil.c */,
+				2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */,
+				2D3992E025C2038700CFA936 /* WeakRefWrapper.m */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -11335,6 +11341,7 @@
 				2D135EF1226E47AA00BAAE84 /* scriptable_dsp.h in Headers */,
 				2D448A851D5C5C6500B43F12 /* logger.h in Headers */,
 				2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */,
+				2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */,
 				2DAE701925BDDC3300E40154 /* deletefromdisk.h in Headers */,
 				2DBCB725240AE0BE0012F178 /* tftintutil.h in Headers */,
 				2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */,
@@ -14433,6 +14440,7 @@
 				2D01D7D41AB2219C00BCD3C4 /* conf.c in Sources */,
 				2D01D7D61AB2219C00BCD3C4 /* fft.c in Sources */,
 				2D135EF0226E47AA00BAAE84 /* scriptable.c in Sources */,
+				2D3992E225C2038700CFA936 /* WeakRefWrapper.m in Sources */,
 				2D01D7E31AB2219C00BCD3C4 /* threading_pthread.c in Sources */,
 				2D01D7DF1AB2219C00BCD3C4 /* premix.c in Sources */,
 				2D01D7DC1AB2219C00BCD3C4 /* plmeta.c in Sources */,

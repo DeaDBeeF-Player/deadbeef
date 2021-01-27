@@ -176,7 +176,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [self initEqualizerWindow];
 
     [self bind];
-    self.rootViewController = self.mainWindow.rootViewController;
 
 }
 
@@ -249,8 +248,6 @@ main_cleanup_and_quit (void);
 
 - (void)applicationWillTerminate:(NSNotification *)notification {
     @autoreleasepool {
-        self.rootViewController = nil;
-
         [ConverterWindowController cleanup];
         [ReplayGainScannerController cleanup];
         [_searchWindow close];
@@ -706,7 +703,7 @@ main_cleanup_and_quit (void);
 {
     [[DdbWidgetManager defaultWidgetManager] widgetMessage:_id ctx:ctx p1:p1 p2:p2];
 
-    [g_appDelegate.rootViewController sendMessage:_id ctx:ctx p1:p1 p2:p2];
+    [g_appDelegate.mainWindow.rootViewController sendMessage:_id ctx:ctx p1:p1 p2:p2];
     [(DesignableViewController *)(g_appDelegate.searchWindow.viewController) sendMessage:_id ctx:ctx p1:p1 p2:p2];
 
     if (_id == DB_EV_CONFIGCHANGED) {
