@@ -2,10 +2,10 @@ name: Build for Windows
 on: [ push, pull_request ]
 jobs:
   build:
-    name: Windows
+    name: CI for Windows
     runs-on: windows-latest
     steps:
-    - name: Checkout
+    - name: Checkout for Windows
       uses: actions/checkout@v2
       with:
         submodules: true
@@ -20,10 +20,10 @@ jobs:
           mingw-w64-x86_64-flac mingw-w64-x86_64-curl mingw-w64-x86_64-portaudio mingw-w64-x86_64-faad2 mingw-w64-x86_64-flac
           mingw-w64-x86_64-wavpack mingw-w64-x86_64-libvorbis mingw-w64-x86_64-libogg mingw-w64-x86_64-opusfile mingw-w64-x86_64-opus
           mingw-w64-x86_64-libsndfile mingw-w64-x86_64-libsamplerate mingw-w64-x86_64-yasm rsync
-    - name: Build
+    - name: Build for Windows
       shell: msys2 {0}
       run: TRAVIS_OS_NAME=windows travis/build.sh
-    - name: Upload
+    - name: Upload for Windows
       env:
           gh_rsa_key: ${{ secrets.GH_ENCRYPTED_RSA_KEY }}
           gh_rsa_iv: ${{ secrets.GH_ENCRYPTED_RSA_IV }}
