@@ -86,7 +86,7 @@ typedef struct {
  * String functions: Returns the number of bytes in the output buffer,
  *                   not including a null terminator, which is not written.
  * Integer functions: As with string functions. Returns a number in string format.
- * Boolean functions: Returns a postive value to indicate truthiness,
+ * Boolean functions: Returns a positive value to indicate truthiness,
  *                    but with an empty output string (*out == 0).
  *
  * In any context, -1 indicates an error.
