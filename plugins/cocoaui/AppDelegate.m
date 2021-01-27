@@ -59,6 +59,7 @@ AppDelegate *g_appDelegate;
 @property (nonatomic) LogWindowController *logWindow;
 @property (nonatomic) HelpWindowController *helpWindow;
 @property (nonatomic) EqualizerWindowController *equalizerWindow;
+@property (weak) IBOutlet NSMenuItem *equalizerMenuItem;
 
 @property (nonatomic) NSMenuItem *dockMenuNPHeading;
 @property (nonatomic) NSMenuItem *dockMenuNPTitle;
@@ -68,6 +69,9 @@ AppDelegate *g_appDelegate;
 @property (nonatomic) NSInteger firstSelected;
 
 @property (nonatomic,readwrite) MediaLibraryManager *mediaLibraryManager;
+
+@property (nonatomic) DesignableViewController *rootViewController;
+
 
 @end
 
@@ -169,6 +173,11 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [self initMainWindow];
     [self initSearchWindow];
     [self initLogWindow];
+    [self initEqualizerWindow];
+
+    [self bind];
+    self.rootViewController = self.mainWindow.rootViewController;
+
 }
 
 - (void)initMainWindow {
@@ -177,7 +186,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     _mainWindow.window.releasedWhenClosed = NO;
     _mainWindow.window.excludedFromWindowsMenu = YES;
     _mainWindow.window.isVisible = YES;
-    [_mainWindowToggleMenuItem bind:@"state" toObject:_mainWindow.window withKeyPath:@"visible" options:nil];
 }
 
 - (void)initSearchWindow {
@@ -187,7 +195,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 
 - (void)initLogWindow {
     _logWindow = [[LogWindowController alloc] initWithWindowNibName:@"Log"];
-    [_logWindowToggleMenuItem bind:@"state" toObject:_logWindow.window withKeyPath:@"visible" options:nil];
     _logWindow.window.excludedFromWindowsMenu = YES;
 }
 
@@ -212,7 +219,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 - (void)initEqualizerWindow {
     if (!_equalizerWindow) {
         _equalizerWindow = [[EqualizerWindowController alloc] initWithWindowNibName:@"EqualizerWindowController"];
-        [_equalizerWindowToggleMenuItem bind:@"state" toObject:_equalizerWindow.window withKeyPath:@"visible" options:nil];
         _equalizerWindow.window.excludedFromWindowsMenu = YES;
     }
 }
@@ -243,6 +249,8 @@ main_cleanup_and_quit (void);
 
 - (void)applicationWillTerminate:(NSNotification *)notification {
     @autoreleasepool {
+        self.rootViewController = nil;
+
         [ConverterWindowController cleanup];
         [ReplayGainScannerController cleanup];
         [_searchWindow close];
@@ -251,11 +259,29 @@ main_cleanup_and_quit (void);
         [self.logWindow close];
         self.logWindow = nil;
 
-        // MainWindowController is not released
+        [self unbind];
         [_mainWindow cleanup];
+        [self.mainWindow.window close];
+        self.mainWindow = nil;
     }
     self.mediaLibraryManager = nil;
     main_cleanup_and_quit();
+}
+
+- (void)bind {
+    [_mainWindowToggleMenuItem bind:@"state" toObject:_mainWindow.window withKeyPath:@"visible" options:nil];
+    [_logWindowToggleMenuItem bind:@"state" toObject:_logWindow.window withKeyPath:@"visible" options:nil];
+    [_equalizerWindowToggleMenuItem bind:@"state" toObject:_equalizerWindow.window withKeyPath:@"visible" options:nil];
+    [_equalizerMenuItem bind:@"hidden" toObject:self withKeyPath:@"equalizerAvailable" options:@{
+        NSValueTransformerNameBindingOption:NSNegateBooleanTransformerName
+    }];
+}
+
+- (void)unbind {
+    [_mainWindowToggleMenuItem unbind:@"state"];
+    [_logWindowToggleMenuItem unbind:@"state"];
+    [_equalizerWindowToggleMenuItem unbind:@"state"];
+    [_equalizerMenuItem unbind:@"hidden"];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -323,7 +349,6 @@ main_cleanup_and_quit (void);
 }
 
 - (IBAction)showEqualizerWindowAction:(id)sender {
-    [self initEqualizerWindow];
     BOOL vis = ![_equalizerWindow.window isVisible];
     _equalizerWindow.window.isVisible = vis;
     if (vis) {
@@ -681,7 +706,7 @@ main_cleanup_and_quit (void);
 {
     [[DdbWidgetManager defaultWidgetManager] widgetMessage:_id ctx:ctx p1:p1 p2:p2];
 
-    [g_appDelegate.mainWindow.rootViewController sendMessage:_id ctx:ctx p1:p1 p2:p2];
+    [g_appDelegate.rootViewController sendMessage:_id ctx:ctx p1:p1 p2:p2];
     [(DesignableViewController *)(g_appDelegate.searchWindow.viewController) sendMessage:_id ctx:ctx p1:p1 p2:p2];
 
     if (_id == DB_EV_CONFIGCHANGED) {

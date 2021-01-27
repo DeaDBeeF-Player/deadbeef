@@ -21,7 +21,6 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic,readonly) int selectedCount;
 @property (nonatomic) ddb_playlist_t *playlist;
-@property (nonatomic) int playlistIter;
 
 @property (nonatomic) NSMenuItem *reloadMetadataItem;
 @property (nonatomic) NSMenuItem *rgMenuItem;
@@ -38,14 +37,14 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) NSMenuItem *trackPropertiesItem;
 
+@property (nonatomic) ddbDeleteFromDiskTrackList_t selectedTracksList;
 @property (nonatomic) ddbDeleteFromDiskController_t deleteFromDiskController;
 
 @end
 
 @implementation TrackContextMenu
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
     if (!self) {
         return nil;
@@ -56,9 +55,13 @@ extern DB_functions_t *deadbeef;
     rgMenu.autoenablesItems = NO;
 
     self.rgScanPerFileItem = [rgMenu addItemWithTitle:@"Scan Per-file Track Gain" action:@selector(rgScanTracks:) keyEquivalent:@""];
+    self.rgScanPerFileItem.target = self;
     self.rgScanAsSingleAlbumItem = [rgMenu addItemWithTitle:@"Scan Selection As Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@""];
+    self.rgScanAsSingleAlbumItem.target = self;
     self.rgScanAsAlbumsItem = [rgMenu addItemWithTitle:@"Scan Selection As Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@""];
+    self.rgScanAsAlbumsItem.target = self;
     self.rgRemoveInformationItem = [rgMenu addItemWithTitle:@"Remove ReplayGain Information" action:@selector(rgRemove:) keyEquivalent:@""];
+    self.rgScanAsAlbumsItem.target = self;
 
     self.rgMenuItem = [[NSMenuItem alloc] initWithTitle:@"ReplayGain" action:nil keyEquivalent:@""];
     self.rgMenuItem.submenu = rgMenu;
@@ -92,10 +95,28 @@ extern DB_functions_t *deadbeef;
     return self;
 }
 
-- (void)update:(ddb_playlist_t *)playlist iter:(int)playlistIter {
-    self.playlist = playlist;
-    self.playlistIter = playlistIter;
+- (void)dealloc {
+    if (_deleteFromDiskController) {
+        ddbDeleteFromDiskControllerFree(_deleteFromDiskController);
+        _deleteFromDiskController = NULL;
+    }
 
+    if (_selectedTracksList) {
+        ddbDeleteFromDiskTrackListFree(_selectedTracksList);
+        _selectedTracksList = NULL;
+    }
+
+    if (_playlist) {
+        deadbeef->plt_unref (_playlist);
+        _playlist = NULL;
+    }
+}
+
+- (void)update:(ddb_playlist_t *)playlist {
+    self.playlist = playlist;
+    if (playlist) {
+        deadbeef->plt_ref (playlist);
+    }
     BOOL enabled = self.selectedCount != 0;
     self.reloadMetadataItem.enabled = enabled;
     self.reloadMetadataItem.target = self;
@@ -119,6 +140,20 @@ extern DB_functions_t *deadbeef;
     self.trackPropertiesItem.target = self;
 }
 
+- (void)updateWithTrackList:(ddb_playItem_t **)tracks count:(NSUInteger)count playlist:(ddb_playlist_t *)plt {
+    if (_selectedTracksList) {
+        ddbDeleteFromDiskTrackListFree(_selectedTracksList);
+        _selectedTracksList = NULL;
+    }
+    if (_deleteFromDiskController) {
+        ddbDeleteFromDiskControllerFree(_deleteFromDiskController);
+        _deleteFromDiskController = NULL;
+    }
+    if (tracks) {
+        _selectedTracksList = ddbDeleteFromDiskTrackListInitWithWithTracks( ddbDeleteFromDiskTrackListAlloc(), plt, DDB_ACTION_CTX_SELECTION, tracks, (unsigned)count);
+    }
+}
+
 - (void)menuRGState:(BOOL *)canBeRGScanned hasRGInfo:(BOOL *)hasRGInfo {
     BOOL __block has_rg_info = NO;
     BOOL __block can_be_rg_scanned = NO;
@@ -139,7 +174,7 @@ extern DB_functions_t *deadbeef;
             }
         }
         return YES;
-    } forIter:PL_MAIN];
+    }];
 
     *canBeRGScanned = can_be_rg_scanned;
     *hasRGInfo = has_rg_info;
@@ -150,16 +185,13 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)reloadMetadata {
-    DB_playItem_t *it = deadbeef->plt_get_first (self.playlist, PL_MAIN);
-    while (it) {
-        deadbeef->pl_lock ();
+    [self forEachTrack:^BOOL(DB_playItem_t *it) {
         char decoder_id[100];
         const char *dec = deadbeef->pl_find_meta (it, ":DECODER");
         if (dec) {
             strncpy (decoder_id, dec, sizeof (decoder_id));
         }
         int match = deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) && dec;
-        deadbeef->pl_unlock ();
 
         if (match) {
             uint32_t f = deadbeef->pl_get_item_flags (it);
@@ -177,10 +209,9 @@ extern DB_functions_t *deadbeef;
                 }
             }
         }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-        deadbeef->pl_item_unref (it);
-        it = next;
-    }
+        return YES;
+    }];
+
     [((id<TrackContextMenuDelegate>)self.delegate) playlistChanged];
 }
 
@@ -212,59 +243,44 @@ extern DB_functions_t *deadbeef;
     [self rgScan:DDB_RG_SCAN_MODE_TRACK];
 }
 
-- (void)forEachTrack:(BOOL (^)(DB_playItem_t *it))block forIter:(int)iter {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->pl_lock ();
-    DB_playItem_t *it = deadbeef->plt_get_first (self.playlist, iter);
-    while (it) {
-        BOOL res = block (it);
-        if (!res) {
-            deadbeef->pl_item_unref (it);
-            break;
-        }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, iter);
-        deadbeef->pl_item_unref (it);
-        it = next;
-    }
+- (void)forEachTrack:(BOOL (^)(DB_playItem_t *it))block {
+    ddb_playItem_t **tracks = ddbDeleteFromDiskTrackListGetTracks (self.selectedTracksList);
+    int count = ddbDeleteFromDiskTrackListGetTrackCount(self.selectedTracksList);
 
-    deadbeef->pl_unlock ();
-    deadbeef->plt_unref (plt);
+    for (int i = 0; i < count; i++) {
+        BOOL res = block (tracks[i]);
+        if (!res) {
+            return;
+        }
+    }
 }
 
 - (DB_playItem_t **)getSelectedTracksForRg:(int *)pcount withRgTags:(BOOL)withRgTags {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->pl_lock ();
-    DB_playItem_t __block **tracks = NULL;
-    int numtracks = deadbeef->plt_getselcount (plt);
+    int numtracks = ddbDeleteFromDiskTrackListGetTrackCount(self.selectedTracksList);
     if (!numtracks) {
-        deadbeef->pl_unlock ();
         return NULL;
     }
 
     ddb_replaygain_settings_t __block s;
     s._size = sizeof (ddb_replaygain_settings_t);
 
-    tracks = calloc (numtracks, sizeof (DB_playItem_t *));
+    ddb_playItem_t __block **tracks = calloc (sizeof (ddb_playItem_t *), numtracks);
     int __block n = 0;
     [self forEachTrack:^(DB_playItem_t *it) {
-        if (deadbeef->pl_is_selected (it)) {
-            assert (n < numtracks);
-            BOOL hasRgTags = NO;
-            if (withRgTags) {
-                deadbeef->replaygain_init_settings (&s, it);
-                if (s.has_album_gain || s.has_track_gain) {
-                    hasRgTags = YES;
-                }
-            }
-            if (!withRgTags || hasRgTags) {
-                deadbeef->pl_item_ref (it);
-                tracks[n++] = it;
+        assert (n < numtracks);
+        BOOL hasRgTags = NO;
+        if (withRgTags) {
+            deadbeef->replaygain_init_settings (&s, it);
+            if (s.has_album_gain || s.has_track_gain) {
+                hasRgTags = YES;
             }
         }
+        if (!withRgTags || hasRgTags) {
+            deadbeef->pl_item_ref (it);
+            tracks[n++] = it;
+        }
         return YES;
-    }  forIter:PL_MAIN];
-    deadbeef->pl_unlock ();
-    deadbeef->plt_unref (plt);
+    }];
 
     if (!n) {
         free (tracks);
@@ -317,7 +333,9 @@ extern DB_functions_t *deadbeef;
 #pragma mark -
 
 - (void)convertSelection {
-    [ConverterWindowController runConverter:DDB_ACTION_CTX_SELECTION];
+    ddb_playItem_t **tracks = ddbDeleteFromDiskTrackListGetTracks(self.selectedTracksList);
+    unsigned count = ddbDeleteFromDiskTrackListGetTrackCount(self.selectedTracksList);
+    [ConverterWindowController runConverterWithTracks:tracks count:count playlist:self.playlist];
 }
 
 #pragma mark - Delete from Disk
@@ -434,7 +452,12 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl) {
 
     ddb_action_context_t ctx = DDB_ACTION_CTX_SELECTION;
 
-    self.deleteFromDiskController = ddbDeleteFromDiskControllerInitWithPlaylist(ddbDeleteFromDiskControllerAlloc(), plt, ctx);
+    if (self.selectedTracksList) {
+        self.deleteFromDiskController = ddbDeleteFromDiskControllerInitWithTrackList(self.deleteFromDiskController, self.selectedTracksList);
+    }
+    else {
+        self.deleteFromDiskController = ddbDeleteFromDiskControllerInitWithPlaylist(ddbDeleteFromDiskControllerAlloc(), plt, ctx);
+    }
 
     ddbDeleteFromDiskControllerSetShouldSkipDeletedTracks(self.deleteFromDiskController, deadbeef->conf_get_int ("cocoaui.skip_deleted_tracks", 0));
     ddbDeleteFromDiskControllerSetUserData(self.deleteFromDiskController, (__bridge void *)(self));
@@ -448,29 +471,17 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl) {
 
 
 - (void)addToPlaybackQueue {
-    int iter = [self playlistIter];
-    DB_playItem_t *it = deadbeef->plt_get_first(self.playlist, iter);
-    while (it) {
-        if (deadbeef->pl_is_selected (it)) {
-            deadbeef->playqueue_push (it);
-        }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, iter);
-        deadbeef->pl_item_unref (it);
-        it = next;
-    }
+    [self forEachTrack:^BOOL(DB_playItem_t *it) {
+        deadbeef->playqueue_push (it);
+        return YES;
+    }];
 }
 
 - (void)removeFromPlaybackQueue {
-    int iter = [self playlistIter];
-    DB_playItem_t *it = deadbeef->plt_get_first(self.playlist, iter);
-    while (it) {
-        if (deadbeef->pl_is_selected (it)) {
-            deadbeef->playqueue_remove (it);
-        }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, iter);
-        deadbeef->pl_item_unref (it);
-        it = next;
-    }
+    [self forEachTrack:^BOOL(DB_playItem_t *it) {
+        deadbeef->playqueue_remove (it);
+        return YES;
+    }];
 }
 
 - (void)trackProperties {

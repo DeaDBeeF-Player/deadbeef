@@ -31,12 +31,12 @@
 
 @interface MainWindowController : NSWindowController
 
-@property (nonatomic) DesignableViewController *rootViewController;
-
 @property (unsafe_unretained) IBOutlet DdbTabStrip *tabStrip;
 @property (unsafe_unretained) IBOutlet NSTextField *statusBar;
 @property (unsafe_unretained) IBOutlet DdbSeekBar *seekBar;
 @property (unsafe_unretained) IBOutlet NSSlider *volumeBar;
+
+@property (nonatomic, readonly) DesignableViewController *rootViewController;
 
 - (IBAction)seekBarAction:(id)sender;
 - (IBAction)volumeBarAction:(id)sender;

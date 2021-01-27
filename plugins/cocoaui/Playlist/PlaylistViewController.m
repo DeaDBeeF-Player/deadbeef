@@ -77,6 +77,11 @@ extern DB_functions_t *deadbeef;
 
 @implementation PlaylistViewController
 
+- (void)dealloc
+{
+    self.trackContextMenu = nil;
+}
+
 - (void)cleanup {
     [self clearGrouping];
 
@@ -1377,7 +1382,47 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
 
 
 - (NSMenu *)contextMenuForEvent:(NSEvent *)event forView:(NSView *)view {
-    [self.trackContextMenu update:deadbeef->plt_get_curr() iter:self.playlistIter];
+    ddb_playItem_t **tracks = NULL;
+
+    ddb_playlist_t *plt = deadbeef->plt_get_curr();
+
+    deadbeef->pl_lock ();
+
+    NSInteger count = deadbeef->plt_getselcount(plt);
+    if (count) {
+        NSInteger idx = 0;
+        tracks = calloc (sizeof (ddb_playItem_t *), count);
+
+        ddb_playItem_t *it = deadbeef->plt_get_first (plt, self.playlistIter);
+        while (it) {
+            ddb_playItem_t *next = deadbeef->pl_get_next (it, self.playlistIter);
+            if (deadbeef->pl_is_selected (it)) {
+                tracks[idx++] = it;
+            }
+            else {
+                deadbeef->pl_item_unref (it);
+            }
+            it = next;
+        }
+    }
+
+    deadbeef->pl_unlock ();
+
+    [self.trackContextMenu updateWithTrackList:tracks count:count playlist:plt];
+    [self.trackContextMenu update:plt];
+
+    if (plt) {
+        deadbeef->plt_unref (plt);
+        plt = NULL;
+    }
+
+    if (tracks) {
+        for (NSInteger i = 0; i < count; i++) {
+            deadbeef->pl_item_unref (tracks[i]);
+        }
+        free (tracks);
+    }
+
     return self.trackContextMenu;
 }
 

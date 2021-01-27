@@ -21,7 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface TrackContextMenu : NSMenu
 
 @property (nonatomic,weak) NSView *view; // the view to associate with this menu
-- (void)update:(ddb_playlist_t *)playlist iter:(int)playlistIter;
+
+- (void)update:(ddb_playlist_t *)playlist;
+- (void)updateWithTrackList:(ddb_playItem_t * _Nullable * _Nonnull)tracks count:(NSUInteger)count playlist:(nullable ddb_playlist_t *)plt;
 
 @end
 

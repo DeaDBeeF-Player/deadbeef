@@ -86,6 +86,7 @@ extern DB_functions_t *deadbeef;
 
 @property (weak) IBOutlet NSView *designableContainerView;
 @property (weak) IBOutlet NSView *playlistWithTabsView;
+@property (nonatomic, readwrite) DesignableViewController *rootViewController;
 
 @end
 
@@ -98,8 +99,7 @@ extern DB_functions_t *deadbeef;
         [_updateTimer invalidate];
         _updateTimer = nil;
     }
-
-    [self.rootViewController cleanup];
+    self.rootViewController = nil;
 }
 
 - (void)dealloc {
@@ -114,6 +114,7 @@ extern DB_functions_t *deadbeef;
     PlaylistView *view = [PlaylistView new];
     pvc.view = view;
     [pvc setup];
+
     self.rootViewController = pvc;
 
     view.translatesAutoresizingMaskIntoConstraints = NO;
@@ -153,7 +154,14 @@ extern DB_functions_t *deadbeef;
         _tabStrip.frame = NSMakeRect(0,0,NSWidth(_tabStrip.frame),24);
     }
 
-    _updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
+    __weak MainWindowController *weakself = self;
+    _updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f repeats:YES block:^(NSTimer * _Nonnull timer) {
+        MainWindowController *strongself = weakself;
+        if (strongself) {
+            [self frameUpdate];
+        }
+    }];
+
     [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];
 }
 
@@ -243,8 +251,7 @@ static char sb_text[512];
     }
 }
 
-- (void)frameUpdate:(id)userData
-{
+- (void)frameUpdate {
     if (![self.window isVisible]) {
         return;
     }

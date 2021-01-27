@@ -1463,13 +1463,14 @@ pl_getcount (int iter) {
 
 int
 plt_getselcount (playlist_t *playlist) {
-    // FIXME: slow!
+    LOCK;
     int cnt = 0;
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         if (it->selected) {
             cnt++;
         }
     }
+    UNLOCK;
     return cnt;
 }
 

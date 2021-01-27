@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -603,11 +603,6 @@ CA
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="showEqualizerWindowAction:" target="494" id="mzB-oW-LUz"/>
-                                    <binding destination="494" name="hidden" keyPath="self.equalizerAvailable" id="kSh-aP-sx1">
-                                        <dictionary key="options">
-                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                        </dictionary>
-                                    </binding>
                                 </connections>
                             </menuItem>
                             <menuItem title="Log Window" id="0kj-VC-KFs">
@@ -646,6 +641,7 @@ CA
                 <outlet property="customSortPanel" destination="vHm-fI-UgZ" id="e7O-Nh-WwI"/>
                 <outlet property="descendingSortMode" destination="a0b-O2-r16" id="jve-MJ-Pfo"/>
                 <outlet property="dockMenu" destination="891-Kp-BFs" id="DTX-sh-Bko"/>
+                <outlet property="equalizerMenuItem" destination="bdf-d2-ZyP" id="asd-T5-d2A"/>
                 <outlet property="equalizerWindowToggleMenuItem" destination="bdf-d2-ZyP" id="heH-WD-edM"/>
                 <outlet property="logWindowToggleMenuItem" destination="0kj-VC-KFs" id="oPf-z6-Bk7"/>
                 <outlet property="loopAll" destination="bp3-Nw-TaR" id="t92-xv-gTj"/>
@@ -666,7 +662,7 @@ CA
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="167" y="107" width="364" height="93"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
             <value key="minSize" type="size" width="364" height="85"/>
             <value key="maxSize" type="size" width="2000" height="86"/>
             <view key="contentView" id="KVu-0k-T7v">
@@ -727,7 +723,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="163" y="199" width="368" height="68"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
             <view key="contentView" id="UsQ-WG-CU4">
                 <rect key="frame" x="0.0" y="0.0" width="368" height="68"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -763,7 +759,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="167" y="107" width="327" height="120"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
             <value key="minSize" type="size" width="327" height="120"/>
             <view key="contentView" id="30A-nz-a9e">
                 <rect key="frame" x="0.0" y="0.0" width="327" height="120"/>

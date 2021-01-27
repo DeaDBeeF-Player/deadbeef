@@ -25,16 +25,19 @@ typedef struct {
 
 typedef struct {
     ddbDeleteFromDiskTrackListData_t *trackList;
-    int shouldSkipDeletedTracks;
+    unsigned shouldSkipDeletedTracks;
+    unsigned trackListUnowned;
     void *userData;
     ddbDeleteFromDiskControllerDelegate_t delegate;
 } ddbDeleteFromDiskControllerData_t;
 
-ddbDeleteFromDiskTrackList_t ddbDeleteFromDiskTrackListAlloc (void) {
+ddbDeleteFromDiskTrackList_t
+ddbDeleteFromDiskTrackListAlloc (void) {
     return calloc (sizeof (ddbDeleteFromDiskTrackListData_t), 1);
 }
 
-ddbDeleteFromDiskTrackList_t ddbDeleteFromDiskTrackListInitWithPlaylist (ddbDeleteFromDiskTrackList_t trackList, ddb_playlist_t *plt, ddb_action_context_t ctx) {
+ddbDeleteFromDiskTrackList_t
+ddbDeleteFromDiskTrackListInitWithPlaylist (ddbDeleteFromDiskTrackList_t trackList, ddb_playlist_t *plt, ddb_action_context_t ctx) {
     ddbDeleteFromDiskTrackListData_t *data = trackList;
 
     data->ctx = ctx;
@@ -103,6 +106,29 @@ ddbDeleteFromDiskTrackList_t ddbDeleteFromDiskTrackListInitWithPlaylist (ddbDele
     return trackList;
 }
 
+ddbDeleteFromDiskTrackList_t
+ddbDeleteFromDiskTrackListInitWithWithTracks (ddbDeleteFromDiskTrackList_t trackList, ddb_playlist_t *plt, ddb_action_context_t ctx, ddb_playItem_t **tracks, unsigned count) {
+    ddbDeleteFromDiskTrackListData_t *data = trackList;
+
+    data->ctx = ctx;
+    if (plt) {
+        data->plt = plt;
+        deadbeef->plt_ref (plt);
+    }
+
+    if (tracks) {
+        data->tracklist = calloc (sizeof (ddb_playItem_t *), count);
+        for (int i = 0; i < count; i++) {
+            ddb_playItem_t *track = tracks[i];
+            deadbeef->pl_item_ref (track);
+            data->tracklist[i] = track;
+        }
+    }
+    data->trackcount = count;
+
+    return trackList;
+}
+
 void ddbDeleteFromDiskTrackListFree (ddbDeleteFromDiskTrackList_t trackList) {
     ddbDeleteFromDiskTrackListData_t *data = trackList;
 
@@ -124,6 +150,18 @@ void ddbDeleteFromDiskTrackListFree (ddbDeleteFromDiskTrackList_t trackList) {
     free (data);
 }
 
+ddb_playItem_t **
+ddbDeleteFromDiskTrackListGetTracks (ddbDeleteFromDiskTrackList_t trackList) {
+    ddbDeleteFromDiskTrackListData_t *data = trackList;
+    return data->tracklist;
+}
+
+unsigned
+ddbDeleteFromDiskTrackListGetTrackCount (ddbDeleteFromDiskTrackList_t trackList) {
+    ddbDeleteFromDiskTrackListData_t *data = trackList;
+    return data->trackcount;
+}
+
 #pragma mark - Controller
 
 ddbDeleteFromDiskController_t ddbDeleteFromDiskControllerAlloc (void) {
@@ -139,6 +177,7 @@ ddbDeleteFromDiskController_t ddbDeleteFromDiskControllerInitWithPlaylist (ddbDe
 ddbDeleteFromDiskController_t ddbDeleteFromDiskControllerInitWithTrackList (ddbDeleteFromDiskController_t ctl, ddbDeleteFromDiskTrackList_t trackList) {
     ddbDeleteFromDiskControllerData_t *data = ctl;
     data->trackList = trackList;
+    data->trackListUnowned = 1;
     return ctl;
 }
 
@@ -243,6 +282,8 @@ void ddbDeleteFromDiskControllerRunWithDelegate (ddbDeleteFromDiskController_t c
 
 void ddbDeleteFromDiskControllerFree (ddbDeleteFromDiskController_t ctl) {
     ddbDeleteFromDiskControllerData_t *data = ctl;
-    ddbDeleteFromDiskTrackListFree(data->trackList);
+    if (data->trackList && !data->trackListUnowned) {
+        ddbDeleteFromDiskTrackListFree(data->trackList);
+    }
     free (data);
 }

@@ -46,6 +46,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSInteger lastSelectedIndex;
 @property (nonatomic) NSMutableArray<MediaLibraryItem *> *selectedItems;
 
+@property (nonatomic) TrackContextMenu *trackContextMenu;
 @property (nonatomic) TrackPropertiesWindowController *trkProperties;
 
 @property (nonatomic) NSMutableDictionary<NSString *,NSImage *> *albumArtCache;
@@ -81,7 +82,8 @@ extern DB_functions_t *deadbeef;
     self.artworkPlugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
     self.listenerId = self.medialibPlugin->plugin.add_listener (self.medialibSource, _medialib_listener, (__bridge void *)self);
 
-    self.outlineView.menu = [TrackContextMenu new];
+    self.trackContextMenu = [TrackContextMenu new];
+    self.outlineView.menu = self.trackContextMenu;
     self.outlineView.menu.delegate = self;
 
     [self initializeTreeView:0];
@@ -495,6 +497,20 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
         [self addSelectedItemsRecursively:[self.outlineView itemAtRow:clickedRow]];
     }
 
+
+    ddb_playItem_t **tracks = NULL;
+    NSInteger count = 0;
+
+    if (self.selectedItems.count) {
+        tracks = calloc (sizeof (ddb_playItem_t *), self.selectedItems.count);
+        for (MediaLibraryItem *item in self.selectedItems) {
+            tracks[count++] = item.playItem;
+        }
+    }
+
+    [self.trackContextMenu updateWithTrackList:tracks count:count playlist:NULL];
+
+    free (tracks);
 }
 
 - (NSIndexSet *)outlineView:(NSOutlineView *)outlineView selectionIndexesForProposedSelection:(NSIndexSet *)proposedSelectionIndexes {
