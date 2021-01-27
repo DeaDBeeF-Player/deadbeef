@@ -266,7 +266,7 @@ version 0.7.0
 	mp3: fixed xing header parsing, length calculation issues
 	favor album artist over artist in "stop after current album" mode
 	gme: fixed SAP file duration and improved looping handling
-	sid: automatic detection of HVSC SongLengths.txt from sid file pathes
+	sid: automatic detection of HVSC SongLengths.txt from sid file paths
 	gtkui: added Tabs widget in Design mode (Christian Boxdörfer)
 	added sc68 plugin for playing Atari ST music
 	added on-demand initialization to wild-midi, to speed up player init
@@ -378,7 +378,7 @@ version 0.6.1
 	fixed mp3 duration rounding bug
 	fixed incorrect scroll/cursor after deleting playlists
 	added support for loading plugins from ~/.local/lib{32|64}/deadbeef, depending on running deadbeef build version
-	fixed bug imposing 256 byte limit on file pathes in archives
+	fixed bug imposing 256 byte limit on file paths in archives
 	fixed column autoresize issues
 	removed libstdc++ hacks from C++ plugins
 	fixed "Remove from disk" menu item not being hidden by corresponding option
@@ -453,7 +453,7 @@ version 0.5.6
 	show blank instead of "?" when a metadata field is absent
 	fixed local album cover files search order, it's alphabetical now
 	alsa: added a hack/work-around to prevent releasing sound device when a user switches between tracks
-	m3u: improved handling of relative file pathes
+	m3u: improved handling of relative file paths
 	converter: fixed handling "/" in filenames; fixed tag-writing to files which have special characters
 	fixed resuming last session in shuffle albums mode
 	fixed several libmms freeze/hang/crash bugs
@@ -839,7 +839,7 @@ version 0.3.2
 	fixed sse2 issues on i686 architecture
 	added 24-bit ape support (thanks to Rockbox project)
 	added support for custom scrobbler url to last.fm plugin (e.g. libre.fm)
-	added Play Queue funtionality to playlist (context menu)
+	added Play Queue functionality to playlist (context menu)
 	added average/approximate bitrate display to statusbar
 	new "cursor follows playback" feature
 	new "stop after current track" feature

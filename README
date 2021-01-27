@@ -51,7 +51,7 @@ Many of the dependencies listed here are optional, which means deadbeef will bui
     libjpeg and libpng: for artwork plugin (when imlib2 is not installed, or --disable-artwork-imlib2 is used)
     libmad (optional): for mp3 plugin
     libmpg123 (optional): for mp3 plugin
-        NOTE: the mp3 plugin has multiple backends since deadbeef 0.7, both libmad and libmpg123 are supported at the same time, and can be selected by the user from plugin configuration dialog. At least one of them is required to satify mp3 plugin dependencies. But having both is preferred. 
+        NOTE: the mp3 plugin has multiple backends since deadbeef 0.7, both libmad and libmpg123 are supported at the same time, and can be selected by the user from plugin configuration dialog. At least one of them is required to satisfy mp3 plugin dependencies. But having both is preferred. 
     libFLAC: for flac plugin
     wavpack: for wavpack plugin
     libsndfile: for sndfile plugin

@@ -477,7 +477,7 @@ enum {
 
     DB_EV_VOLUMECHANGED = 16, // volume was changed
     DB_EV_OUTPUTCHANGED = 17, // sound output plugin changed
-    DB_EV_PLAYLISTSWITCHED = 18, // playlist switch occured
+    DB_EV_PLAYLISTSWITCHED = 18, // playlist switch occurred
     DB_EV_SEEK = 19, // seek current track to position p1 (ms)
     DB_EV_ACTIONSCHANGED = 20, // plugin actions were changed, e.g. for reinitializing gui
     DB_EV_DSPCHAINCHANGED = 21, // emitted when any parameter of the main dsp chain has been changed
@@ -1249,7 +1249,7 @@ typedef struct {
     void (*metacache_ref) (const char *str) DEPRECATED_113;
     void (*metacache_unref) (const char *str) DEPRECATED_113;
 
-    // this function must return original un-overriden value (ignoring the keys prefixed with '!')
+    // this function must return original un-overridden value (ignoring the keys prefixed with '!')
     // it's not thread-safe, and must be used under the same conditions as the
     // pl_find_meta
     const char *(*pl_find_meta_raw) (DB_playItem_t *it, const char *key);
@@ -1793,7 +1793,7 @@ enum {
     DDB_DECODER_HINT_CAN_LOOP = 0x4,
 #endif
 #if (DDB_API_LEVEL >= 10)
-    // Don't modify the stream (e.g. no replaygain, clipping, etc), provide the maximum possible precision, preferrably in float32.
+    // Don't modify the stream (e.g. no replaygain, clipping, etc), provide the maximum possible precision, preferably in float32.
     // Supposed to be used by converter, replaygain scanner, etc.
     DDB_DECODER_HINT_RAW_SIGNAL = 0x8,
 #endif
