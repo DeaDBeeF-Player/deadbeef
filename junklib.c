@@ -3570,7 +3570,6 @@ junklib_id3v2_sync_frame (uint8_t *data, int size) {
         *writeptr = *data;
         if (data[0] == 0xff && size >= 2 && data[1] == 0) {
             data++;
-            size--;
         }
         writeptr++;
         data++;
