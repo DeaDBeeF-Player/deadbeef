@@ -3562,14 +3562,17 @@ junk_apev2_free (DB_apev2_tag_t *tag) {
     }
 }
 
-int
-junklib_id3v2_sync_frame (uint8_t *data, int size) {
+static int
+junklib_id3v2_sync_frame (int version_major, uint8_t *data, int size) {
     char *writeptr = data;
     int written = 0;
     while (size > 0) {
         *writeptr = *data;
         if (data[0] == 0xff && size >= 2 && data[1] == 0) {
             data++;
+            if (version_major == 4) {
+                size--;
+            }
         }
         writeptr++;
         data++;
@@ -4370,7 +4373,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             }
             int synched_size = sz;
             if (unsync) {
-                synched_size = junklib_id3v2_sync_frame (readptr, sz);
+                synched_size = junklib_id3v2_sync_frame (version_major, readptr, sz);
                 trace ("size: %d/%d\n", synched_size, sz);
             }
 
@@ -4501,7 +4504,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             }
             int synched_size = sz;
             if (unsync) {
-                synched_size = junklib_id3v2_sync_frame (readptr, sz);
+                synched_size = junklib_id3v2_sync_frame (version_major, readptr, sz);
             }
 
             DB_id3v2_frame_t *frm = malloc (sizeof (DB_id3v2_frame_t) + sz);
