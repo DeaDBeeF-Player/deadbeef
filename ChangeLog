@@ -1,3 +1,14 @@
+version 1.8.7
+	Fixed: Pulseaudio crash after a non-critical recoverable error
+	Fixed: Hotkeys were sometimes not connecting to the correct UI plugins
+	Fixed: Hotkey action "Sort by title" was missing
+	Fixed: Unsupported ID3v2 frames are converted to supported frames instead of discarding
+	Fixed: MP4 crash when encountering unknown metadata fields
+	Fixed: Off-by-one error when loading unsynchronized ID3v2.3 and 2.2 tags
+	Fixed: Parsing ALAC M4A files without relying on legacy 24-byte magic cookie
+	Fixed: Saving the player resume state whenever a song finishes playing
+	Fixed: ALSA deadlock / distortion bug caused by changing audio format at a wrong moment
+
 version 1.8.6
 	Fixed loading encoder presets in non-portable builds
 	Fix truncation of long group titles in the playlist
