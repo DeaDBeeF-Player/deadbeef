@@ -819,6 +819,10 @@ player_mainloop (void) {
                         streamer_notify_track_deleted ();
                         break;
                     }
+                case DB_EV_SONGFINISHED:
+                    save_resume_state();
+                    conf_save();
+                    break;
                 }
             }
             if (msg >= DB_EV_FIRST && ctx) {
