@@ -109,7 +109,6 @@ static time_t started_timestamp; // result of calling time(NULL)
 static playItem_t *streaming_track;
 static playItem_t *last_played; // this is the last track that was played, should avoid setting this to NULL
 
-static int _format_change_wait;
 static ddb_waveformat_t prev_output_format; // last format that was sent to output via streamer_set_output_format
 static ddb_waveformat_t last_block_fmt; // input file format corresponding to the current output
 
@@ -1588,19 +1587,6 @@ streamer_thread (void *unused) {
             continue;
         }
 
-        if (_format_change_wait) {
-            streamer_lock ();
-            streamblock_t *block = streamreader_get_curr_block();
-            if (block) {
-                if (memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
-                    streamer_set_output_format (&block->fmt);
-                    memcpy (&last_block_fmt, &block->fmt, sizeof (ddb_waveformat_t));
-                }
-            }
-            _format_change_wait = 0;
-            streamer_unlock ();
-        }
-
         _update_buffering_state ();
 
         if (!fileinfo_curr) {
@@ -2082,11 +2068,6 @@ streamer_read (char *bytes, int size) {
 #endif
     DB_output_t *output = plug_get_output ();
 
-    if (_format_change_wait) {
-        memset (bytes, 0, size);
-        return size;
-    }
-
     streamer_lock ();
     streamblock_t *block = streamreader_get_curr_block();
     if (!block) {
@@ -2136,7 +2117,9 @@ streamer_read (char *bytes, int size) {
     // empty buffer and the next block format differs? request format change!
 
     if (!_outbuffer_remaining && block && memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
-        _format_change_wait = 1;
+        streamer_set_output_format (&block->fmt);
+        memcpy (&last_block_fmt, &block->fmt, sizeof (ddb_waveformat_t));
+
         streamer_unlock();
         memset (bytes, 0, size);
         return size;
