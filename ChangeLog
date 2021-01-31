@@ -4,6 +4,7 @@ version 1.8.7
 	Fixed: Hotkey action "Sort by title" was missing
 	Fixed: Unsupported ID3v2 frames are converted to supported frames instead of discarding
 	Fixed: MP4 crash when encountering unknown metadata fields
+	Fixed: Writing MP4 tags would corrupt the metadata, if the moov box is moving to the end of file
 	Fixed: Off-by-one error when loading unsynchronized ID3v2.3 and 2.2 tags
 	Fixed: Parsing ALAC M4A files without relying on legacy 24-byte magic cookie
 	Fixed: Saving the player resume state whenever a song finishes playing
@@ -11,7 +12,7 @@ version 1.8.7
 
 version 1.8.6
 	Fixed loading encoder presets in non-portable builds
-	Fix truncation of long group titles in the playlist
+	Fixed truncation of long group titles in the playlist
 
 version 1.8.5
 	Added the new ISO/IEC Base Media File Format library MP4P for working with MP4 files, which removes MP4FF dependency
