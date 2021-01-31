@@ -432,6 +432,8 @@ open_error:
 
 static int
 _setformat_apply (void) {
+    _setformat_requested = 0;
+
     trace ("palsa_setformat %dbit %s %dch %dHz channelmask=%X\n", requested_fmt.bps, requested_fmt.is_float ? "float" : "int", requested_fmt.channels, requested_fmt.samplerate, requested_fmt.channelmask);
     if (!audio
         || !memcmp (&requested_fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
@@ -633,7 +635,6 @@ palsa_thread (void *context) {
         int res = 0;
         if (_setformat_requested) {
             res = _setformat_apply ();
-            _setformat_requested = 0;
         }
 
         if (res != 0) {
