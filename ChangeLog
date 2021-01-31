@@ -5,7 +5,7 @@ version 1.8.7
 	Fixed: Unsupported ID3v2 frames are converted to supported frames instead of discarding
 	Fixed: MP4 crash when encountering unknown metadata fields
 	Fixed: Writing MP4 tags would corrupt the metadata, if the moov box is moving to the end of file
-	Fixed: Off-by-one error when loading unsynchronized ID3v2.3 and 2.2 tags
+	Fixed: Off-by-one error when loading unsynchronized ID3v2.3 and 2.2 tags (sktt@github)
 	Fixed: Parsing ALAC M4A files without relying on legacy 24-byte magic cookie
 	Fixed: Saving the player resume state whenever a song finishes playing
 	Fixed: ALSA deadlock / distortion bug caused by changing audio format at a wrong moment
