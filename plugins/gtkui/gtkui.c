@@ -1318,7 +1318,13 @@ gtkui_mainwin_init(void) {
         // try loading icon from $prefix/deadbeef.png (for static build)
         char iconpath[1024];
         snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_system_dir(DDB_SYS_DIR_PREFIX));
-        gtk_window_set_icon_from_file (GTK_WINDOW (mainwin), iconpath, NULL);
+        struct stat st = {0};
+        if (stat (iconpath, &st)) {
+            snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_system_dir(DDB_SYS_DIR_PLUGIN_RESOURCES));
+        }
+        if (!stat (iconpath, &st)) {
+            gtk_window_set_icon_from_file (GTK_WINDOW (mainwin), iconpath, NULL);
+        }
     }
 
     gtkui_on_configchanged (NULL);
