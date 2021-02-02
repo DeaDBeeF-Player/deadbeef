@@ -396,6 +396,7 @@ _warningMessageForCtx (ddbDeleteFromDiskController_t ctl, ddb_action_context_t c
         gtk_widget_destroy (dlg);
         if (response != GTK_RESPONSE_YES) {
             callback(ctl, 1);
+            return;
         }
     }
 
@@ -460,6 +461,25 @@ action_delete_from_disk_handler_cb (void *data) {
     deadbeef->plt_unref (plt);
 
     return FALSE;
+}
+
+void
+delete_from_disk_with_track_list (ddbUtilTrackList_t trackList) {
+    if (_deleteCtl) {
+        return;
+    }
+
+    ddbDeleteFromDiskControllerDelegate_t delegate = {
+        .warningMessageForCtx = _warningMessageForCtx,
+        .deleteFile = _deleteFile,
+        .completed = _deleteCompleted,
+    };
+
+    _deleteCtl =  ddbDeleteFromDiskControllerInitWithTrackList(ddbDeleteFromDiskControllerAlloc(), trackList);
+
+    ddbDeleteFromDiskControllerSetShouldSkipDeletedTracks(_deleteCtl, deadbeef->conf_get_int ("gtkui.skip_deleted_songs", 0));
+
+    ddbDeleteFromDiskControllerRunWithDelegate(_deleteCtl, delegate);
 }
 
 int

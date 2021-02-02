@@ -24,6 +24,8 @@
 #ifndef __ACTIONHANDLERS_H
 #define __ACTIONHANDLERS_H
 
+#include "../../shared/deletefromdisk.h"
+
 gboolean
 action_open_files_handler_cb (void *userdata);
 
@@ -212,5 +214,8 @@ action_playback_loop_cycle_handler(DB_plugin_action_t *act, ddb_action_context_t
 
 int
 action_toggle_logwindow_handler(DB_plugin_action_t *act, ddb_action_context_t ctx);
+
+void
+delete_from_disk_with_track_list (ddbUtilTrackList_t trackList);
 
 #endif

@@ -21,24 +21,25 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#include <jansson.h>
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <gdk/gdkkeysyms.h>
 #include "gtkui.h"
-#include "plcommon.h"
-#include "coverart.h"
-#include "drawing.h"
-#include "trkproperties.h"
-#include "support.h"
-#include "interface.h"
+#include "../../strdupa.h"
 #include "../libparser/parser.h"
+#include "../../shared/deletefromdisk.h"
 #include "actions.h"
 #include "actionhandlers.h"
 #include "clipboard.h"
-#include "../../strdupa.h"
-#include <jansson.h>
-#include <math.h>
+#include "coverart.h"
+#include "drawing.h"
+#include "interface.h"
+#include "plcommon.h"
+#include "support.h"
+#include "trkproperties.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -84,7 +85,47 @@ struct pl_preset_column_format {
 
 #define PRESET_COLUMN_NUMITEMS 14
 
-struct pl_preset_column_format pl_preset_column_formats[PRESET_COLUMN_NUMITEMS];
+static struct pl_preset_column_format pl_preset_column_formats[PRESET_COLUMN_NUMITEMS];
+
+static ddbUtilTrackList_t _menuTrackList;
+
+static void
+_capture_selected_track_list (void) {
+    if (_menuTrackList != NULL) {
+        ddbUtilTrackListFree(_menuTrackList);
+        _menuTrackList = NULL;
+    }
+
+    ddb_playItem_t **tracks = NULL;
+
+    ddb_playlist_t *plt = deadbeef->plt_get_curr();
+
+    deadbeef->pl_lock ();
+
+    int count = deadbeef->plt_getselcount(plt);
+    if (count) {
+        int idx = 0;
+        tracks = calloc (sizeof (ddb_playItem_t *), count);
+
+        ddb_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+        while (it) {
+            ddb_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            if (deadbeef->pl_is_selected (it)) {
+                tracks[idx++] = it;
+            }
+            else {
+                deadbeef->pl_item_unref (it);
+            }
+            it = next;
+        }
+    }
+
+    _menuTrackList = ddbUtilTrackListInitWithWithTracks(ddbUtilTrackListAlloc(), plt, DDB_ACTION_CTX_SELECTION, tracks, count);
+
+    deadbeef->pl_unlock ();
+
+    deadbeef->plt_unref (plt);
+}
 
 static void
 init_preset_column_struct(void) {
@@ -153,6 +194,11 @@ pl_common_free (void)
     }
     if (buffering16_pixbuf) {
         g_object_unref(buffering16_pixbuf);
+    }
+
+    if (_menuTrackList) {
+        ddbUtilTrackListFree(_menuTrackList);
+        _menuTrackList = NULL;
     }
 }
 
@@ -870,7 +916,7 @@ static void
 on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    action_delete_from_disk_handler_cb ((void *)(intptr_t)DDB_ACTION_CTX_SELECTION);
+    delete_from_disk_with_track_list(_menuTrackList);
 }
 
 static void
@@ -888,39 +934,6 @@ actionitem_activate (GtkMenuItem     *menuitem,
 #define HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
     g_object_ref (widget), (GDestroyNotify) g_object_unref)
-
-
-#if 0
-// experimental code to position the popup at the item
-static void
-popup_menu_position_func (GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data) {
-    // find 1st selected item
-    DdbListview *lv = user_data;
-    int winx, winy;
-    gdk_window_get_position (gtk_widget_get_window (GTK_WIDGET (lv->list)), &winx, &winy);
-    DdbListviewIter it = lv->binding->head ();
-    int idx = 0;
-    while (it) {
-        if (lv->binding->is_selected (it)) {
-            break;
-        }
-        DdbListviewIter next = lv->binding->next (it);
-        lv->binding->unref (it);
-        it = next;
-        idx++;
-    }
-    if (it) {
-        // get Y position
-        *y = ddb_listview_get_row_pos (lv, idx, NULL) + winy;
-        lv->binding->unref (it);
-    }
-    else {
-        *y = winy; // mouse_y
-    }
-    *x = winx; // mouse_x
-    *push_in = TRUE;
-}
-#endif
 
 void
 list_empty_region_context_menu (DdbListview *listview) {
@@ -958,6 +971,8 @@ list_empty_region_context_menu (DdbListview *listview) {
 
 void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter) {
+    _capture_selected_track_list();
+
     clicked_idx = deadbeef->pl_get_idx_of (it);
     GtkWidget *playlist_menu;
     GtkWidget *add_to_playback_queue1;
