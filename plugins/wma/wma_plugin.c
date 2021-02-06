@@ -425,6 +425,7 @@ wmaplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     int64_t l = deadbeef->fgetlength (fp);
     deadbeef->fclose (fp);
+    fp = NULL;
 
     int64_t i_count = (l - first_frame_offset) / wfx.packet_size;
 
@@ -443,7 +444,6 @@ wmaplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it,  totalsamples, wfx.rate);
     if (cue) {
         deadbeef->pl_item_unref (it);
-        deadbeef->fclose (fp);
         return cue;
     }
 
