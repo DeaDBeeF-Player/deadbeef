@@ -20372,7 +20372,6 @@
 				CODE_SIGN_IDENTITY = "-";
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
 					"HAVE_LROUND=1",
 					"VERSION=\\\"0.0.0\\\"",
 					"HAVE_SYS_PARAM_H=1",
