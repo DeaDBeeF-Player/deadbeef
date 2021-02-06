@@ -9,6 +9,7 @@ version 1.8.7
 	Fixed: Parsing ALAC M4A files without relying on legacy 24-byte magic cookie
 	Fixed: Saving the player resume state whenever a song finishes playing
 	Fixed: ALSA deadlock / distortion bug caused by changing audio format at a wrong moment
+	Fixed: WMA+CUE crash
 
 version 1.8.6
 	Fixed loading encoder presets in non-portable builds

@@ -1,3 +1,4 @@
+#!/bin/bash
 echo Decrypting id_rsa...
 
 mkdir -p sshconfig
@@ -21,8 +22,9 @@ VERSION=`tr -d '\r' < PORTABLE_VERSION`
 
 if [ ! -z $GITHUB_REF ]; then
     TRAVIS_BRANCH=${GITHUB_REF#"refs/heads/"}
+    TRAVIS_BRANCH=${TRAVIS_BRANCH#"refs/tags/"}
     echo "Ref: $GITHUB_REF"
-    echo "Branch: $TRAVIS_BRANCH"
+    echo "Branch/Tag: $TRAVIS_BRANCH"
 fi
 
 case "$TRAVIS_OS_NAME" in
