@@ -90,7 +90,7 @@
     char *out_buf;
     int out_size;
 
-    int res = dsp_apply_simple_downsampler (96000, 2, input, sizeof (input), 48000, &out_buf, &out_size);
+    int res = dsp_apply_simple_downsampler (96000, 2, input, (int)sizeof (input), 48000, &out_buf, &out_size);
 
     XCTAssert(res == 4*2*2, @"The actual output is: %d", res);
     XCTAssert(out_size == 4*2, @"The actual output is: %d", out_size);
@@ -102,7 +102,7 @@
     char *out_buf;
     int out_size;
 
-    int res = dsp_apply_simple_downsampler (192000, 2, input, sizeof (input), 48000, &out_buf, &out_size);
+    int res = dsp_apply_simple_downsampler (192000, 2, input, (int)sizeof (input), 48000, &out_buf, &out_size);
 
     XCTAssert(res == 4*2*2, @"The actual output is: %d", res);
     XCTAssert(out_size == 2*2, @"The actual output is: %d", out_size);
