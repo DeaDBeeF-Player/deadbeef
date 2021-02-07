@@ -862,8 +862,6 @@
 		2D2351281B13922400A62936 /* Converter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D2351271B13922400A62936 /* Converter.xib */; };
 		2D27AEE81D9D871600842D76 /* rg_scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D27AEE61D9D871600842D76 /* rg_scanner.c */; };
 		2D27AEE91D9D871600842D76 /* rg_scanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D27AEE71D9D871600842D76 /* rg_scanner.h */; };
-		2D27AEED1D9D873E00842D76 /* ebur128.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D27AEEB1D9D873E00842D76 /* ebur128.c */; };
-		2D27AEEE1D9D873E00842D76 /* ebur128.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D27AEEC1D9D873E00842D76 /* ebur128.h */; };
 		2D27AEF11D9D877D00842D76 /* rg_scanner.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D28F0481C283BF7004A6E7B /* aac_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D28F0451C283BF7004A6E7B /* aac_parser.c */; };
 		2D28F0491C283BF7004A6E7B /* aac_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D28F0461C283BF7004A6E7B /* aac_parser.h */; };
@@ -1809,6 +1807,8 @@
 		2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA3721A2370B854005E64A3 /* NowPlayable.m */; };
 		2DA59D9125D00A8E00947C19 /* M3UTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA59D9025D00A8E00947C19 /* M3UTests.m */; };
 		2DA59DD125D00A9A00947C19 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
+		2DA5A3CC25D01CB800947C19 /* ebur128.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D27AEEB1D9D873E00842D76 /* ebur128.c */; };
+		2DA5A4D025D01CDF00947C19 /* libebur128.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA5A34825D01CA500947C19 /* libebur128.a */; };
 		2DA5E331238DB0C4005832B7 /* EditColumnPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */; };
 		2DA5E341238DB1A8005832B7 /* EditColumnWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA5E33F238DB1A8005832B7 /* EditColumnWindowController.h */; };
 		2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E340238DB1A8005832B7 /* EditColumnWindowController.m */; };
@@ -3232,6 +3232,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2DA24B4A19E724C200E34920;
 			remoteInfo = vfs_curl;
+		};
+		2DA5A4CE25D01CDA00947C19 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DA5A34725D01CA500947C19;
+			remoteInfo = ebur128;
 		};
 		2DA84F7A24F58894003507A2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -5503,6 +5510,7 @@
 		2DA3721A2370B854005E64A3 /* NowPlayable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NowPlayable.m; sourceTree = "<group>"; };
 		2DA59D9025D00A8E00947C19 /* M3UTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3UTests.m; sourceTree = "<group>"; };
 		2DA59E1125D00C6200947C19 /* m3u.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = m3u.h; sourceTree = "<group>"; };
+		2DA5A34825D01CA500947C19 /* libebur128.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libebur128.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditColumnPanel.xib; sourceTree = "<group>"; };
 		2DA5E33F238DB1A8005832B7 /* EditColumnWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditColumnWindowController.h; sourceTree = "<group>"; };
 		2DA5E340238DB1A8005832B7 /* EditColumnWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditColumnWindowController.m; sourceTree = "<group>"; };
@@ -6464,6 +6472,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DA5A4D025D01CDF00947C19 /* libebur128.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6653,6 +6662,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D977F451CA4B1F3006DBE79 /* libcurl.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DA5A34625D01CA500947C19 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10424,6 +10440,7 @@
 				2DA04E8123B6A4320070AC01 /* shellexec.dylib */,
 				2DA04E9D23B6A4960070AC01 /* shellexecui_gtk3.dylib */,
 				2D00F23F2434DE4E000FC130 /* ddb_soundtouch.dylib */,
+				2DA5A34825D01CA500947C19 /* libebur128.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -11484,7 +11501,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D27AEEE1D9D873E00842D76 /* ebur128.h in Headers */,
 				2D27AEE91D9D871600842D76 /* rg_scanner.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12136,6 +12152,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2DA24B4919E724C200E34920 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DA5A34425D01CA500947C19 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -12927,6 +12950,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DA5A4CF25D01CDA00947C19 /* PBXTargetDependency */,
 			);
 			name = rg_scanner;
 			productName = rg_scanner;
@@ -13383,6 +13407,23 @@
 			productName = vfs_curl;
 			productReference = 2DA24B4B19E724C200E34920 /* vfs_curl.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
+		};
+		2DA5A34725D01CA500947C19 /* ebur128 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DA5A34925D01CA500947C19 /* Build configuration list for PBXNativeTarget "ebur128" */;
+			buildPhases = (
+				2DA5A34425D01CA500947C19 /* Headers */,
+				2DA5A34525D01CA500947C19 /* Sources */,
+				2DA5A34625D01CA500947C19 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ebur128;
+			productName = ebur128;
+			productReference = 2DA5A34825D01CA500947C19 /* libebur128.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 		2DAA4C071AAF88DE00519559 /* Tests */ = {
 			isa = PBXNativeTarget;
@@ -13926,6 +13967,10 @@
 					2DA24B4A19E724C200E34920 = {
 						CreatedOnToolsVersion = 6.0.1;
 					};
+					2DA5A34725D01CA500947C19 = {
+						CreatedOnToolsVersion = 12.3;
+						ProvisioningStyle = Automatic;
+					};
 					2DAA4C071AAF88DE00519559 = {
 						CreatedOnToolsVersion = 6.1.1;
 						LastSwiftMigration = "";
@@ -14031,6 +14076,7 @@
 				2D1DC0951DCB39EC00441A08 /* ddb_mono2stereo */,
 				07765D631C279B7D00F5F4BC /* ddb_shn */,
 				2D00F23E2434DE4E000FC130 /* ddb_soundtouch */,
+				2DA5A34725D01CA500947C19 /* ebur128 */,
 				2D28F0541C283C75004A6E7B /* faad2 */,
 				4D32FA6119A646C0000FFDE0 /* flac */,
 				4D32F9A619A63094000FFDE0 /* flaclib */,
@@ -14661,7 +14707,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D27AEE81D9D871600842D76 /* rg_scanner.c in Sources */,
-				2D27AEED1D9D873E00842D76 /* ebur128.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15434,6 +15479,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DA24B5119E724E100E34920 /* vfs_curl.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DA5A34525D01CA500947C19 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DA5A3CC25D01CB800947C19 /* ebur128.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16510,6 +16563,11 @@
 			isa = PBXTargetDependency;
 			target = 2DA24B4A19E724C200E34920 /* vfs_curl */;
 			targetProxy = 2DA24BA119E72A0000E34920 /* PBXContainerItemProxy */;
+		};
+		2DA5A4CF25D01CDA00947C19 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DA5A34725D01CA500947C19 /* ebur128 */;
+			targetProxy = 2DA5A4CE25D01CDA00947C19 /* PBXContainerItemProxy */;
 		};
 		2DA84F7D24F5890F003507A2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -19482,6 +19540,62 @@
 			};
 			name = Release;
 		};
+		2DA5A34A25D01CA500947C19 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				WARNING_CFLAGS = "-Wno-unreachable-code";
+			};
+			name = Debug;
+		};
+		2DA5A34B25D01CA500947C19 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				WARNING_CFLAGS = "-Wno-unreachable-code";
+			};
+			name = Release;
+		};
 		2DAA4C111AAF88DF00519559 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -21523,6 +21637,15 @@
 			buildConfigurations = (
 				2DA24B4D19E724C200E34920 /* Debug */,
 				2DA24B4E19E724C200E34920 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DA5A34925D01CA500947C19 /* Build configuration list for PBXNativeTarget "ebur128" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DA5A34A25D01CA500947C19 /* Debug */,
+				2DA5A34B25D01CA500947C19 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
