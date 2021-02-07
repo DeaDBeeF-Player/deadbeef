@@ -527,19 +527,19 @@ csid_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                     meta = "title";
                     title_added = 1;
                 }
-                deadbeef->pl_add_meta (it, meta, convstr (sidinfo.infoString[0], strlen (sidinfo.infoString[0]), temp, sizeof (temp)));
+                deadbeef->pl_add_meta (it, meta, convstr (sidinfo.infoString[0], (int)strlen (sidinfo.infoString[0]), temp, sizeof (temp)));
             }
             if (i >= 2 && sidinfo.infoString[1] && sidinfo.infoString[1][0]) {
-                deadbeef->pl_add_meta (it, "artist", convstr (sidinfo.infoString[1], strlen (sidinfo.infoString[1]), temp, sizeof (temp)));
+                deadbeef->pl_add_meta (it, "artist", convstr (sidinfo.infoString[1], (int)strlen (sidinfo.infoString[1]), temp, sizeof (temp)));
             }
             if (i >= 3 && sidinfo.infoString[2] && sidinfo.infoString[2][0]) {
-                deadbeef->pl_add_meta (it, "copyright", convstr (sidinfo.infoString[2], strlen (sidinfo.infoString[2]), temp, sizeof (temp)));
+                deadbeef->pl_add_meta (it, "copyright", convstr (sidinfo.infoString[2], (int)strlen (sidinfo.infoString[2]), temp, sizeof (temp)));
             }
 
             for (int j = 3; j < i; j++)
             {
                 if (sidinfo.infoString[j] && sidinfo.infoString[j][0]) {
-                    deadbeef->pl_add_meta (it, "info", convstr (sidinfo.infoString[j], strlen (sidinfo.infoString[j]), temp, sizeof (temp)));
+                    deadbeef->pl_add_meta (it, "info", convstr (sidinfo.infoString[j], (int)strlen (sidinfo.infoString[j]), temp, sizeof (temp)));
                 }
             }
             char trk[10];
