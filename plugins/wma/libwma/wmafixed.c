@@ -174,7 +174,7 @@ fixed64 fixdiv64(fixed64 x, fixed64 y)
      
  long fsincos(unsigned long phase, fixed32 *cos)     
  {   
-     int32_t x, x1, y, y1;   
+     int64_t x, x1, y, y1;
      unsigned long z, z1;    
      int i;  
      
@@ -216,7 +216,7 @@ fixed64 fixdiv64(fixed64 x, fixed64 y)
      }   
      
      if (cos)    
-         *cos = x;   
+         *cos = (int32_t)x;   
      
      return y;   
  }
