@@ -45,6 +45,7 @@ mp3_mad_free (mp3_info_t *info) {
     mad_stream_finish (&info->mad_stream);
 }
 
+#if 0
 /****************************************************************************
  * Converts a sample from libmad's fixed point number format to a signed	*
  * short (16 bits).															*
@@ -82,6 +83,7 @@ MadFixedToSshort(mad_fixed_t Fixed)
     Fixed=Fixed>>(MAD_F_FRACBITS-15);
     return((signed short)Fixed);
 }
+#endif
 
 static inline float
 MadFixedToFloat (mad_fixed_t Fixed) {
@@ -90,6 +92,7 @@ MadFixedToFloat (mad_fixed_t Fixed) {
 
 #define MadErrorString(x) mad_stream_errorstr(x)
 
+#if 0
 static void
 mp3_mad_decode_int16 (mp3_info_t *info) {
     // copy synthesized samples into readbuffer
@@ -142,6 +145,7 @@ mp3_mad_decode_int16 (mp3_info_t *info) {
         }
     }
 }
+#endif
 
 void
 mp3_mad_consume_decoded_data (mp3_info_t *info) {
@@ -211,9 +215,9 @@ mp3_mad_decode_next_packet (mp3_info_t *info) {
                 info->input_remaining_bytes = info->mad_stream.bufend - info->mad_stream.next_frame;
                 memmove (info->input, info->mad_stream.next_frame, info->input_remaining_bytes);
             }
-            int size = READBUFFER - info->input_remaining_bytes;
-            int bytesread = 0;
-            uint8_t *bytes = info->input + info->input_remaining_bytes;
+            long size = READBUFFER - info->input_remaining_bytes;
+            size_t bytesread = 0;
+            uint8_t *bytes = (uint8_t *)(info->input + info->input_remaining_bytes);
             bytesread = deadbeef->fread (bytes, 1, size, info->file);
             if (!bytesread) {
                 // add guard
@@ -226,7 +230,7 @@ mp3_mad_decode_next_packet (mp3_info_t *info) {
                 bytes += bytesread;
             }
             bytesread += info->input_remaining_bytes;
-            mad_stream_buffer(&info->mad_stream,info->input,bytesread);
+            mad_stream_buffer(&info->mad_stream,(const unsigned char *)info->input,bytesread);
             if (info->mad_stream.buffer==NULL) {
                 // check sync bits
                 if (bytes[0] != 0xff || (bytes[1]&(3<<5)) != (3<<5)) {
@@ -268,7 +272,7 @@ mp3_mad_decode_next_packet (mp3_info_t *info) {
 
         // synthesize single frame
         info->decoded_samples_remaining = info->mad_synth.pcm.length;
-        deadbeef->streamer_set_bitrate (info->mad_frame.header.bitrate/1000);
+        deadbeef->streamer_set_bitrate ((int)(info->mad_frame.header.bitrate/1000));
         break;
     }
     

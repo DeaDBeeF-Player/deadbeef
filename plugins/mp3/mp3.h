@@ -75,7 +75,7 @@ typedef struct {
             struct mad_stream mad_stream;
             struct mad_frame mad_frame;
             struct mad_synth mad_synth;
-            int input_remaining_bytes;
+            long input_remaining_bytes;
         };
 #endif
 #ifdef USE_LIBMPG123
