@@ -156,7 +156,7 @@ tta_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
 
         if (size > 0 && !info->remaining) {
-            info->remaining = get_samples (&info->tta, info->buffer);
+            info->remaining = get_samples (&info->tta, (unsigned char *)info->buffer);
             if (info->remaining <= 0) {
                 break;
             }
@@ -185,7 +185,6 @@ tta_seek_sample (DB_fileinfo_t *_info, int sample) {
 
 static int
 tta_seek (DB_fileinfo_t *_info, float time) {
-    tta_info_t *info = (tta_info_t *)_info;
     return tta_seek_sample (_info, time * _info->fmt.samplerate);
 }
 
