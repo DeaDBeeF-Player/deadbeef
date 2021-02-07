@@ -46,7 +46,7 @@ typedef struct {
     DB_fileinfo_t info;
     ayemu_vtx_t *decoder;
     ayemu_ay_t ay;
-    char regs[AY_FRAME_SIZE];
+    ayemu_ay_reg_frame_t regs;
     int vtx_pos;
     int left;
     int rate;
@@ -160,7 +160,7 @@ ayemu_vtx_get_next_frame (vtx_info_t *info)
         return 0;
     }
     int n;
-    char *p = info->decoder->regdata + info->vtx_pos;
+    unsigned char *p = info->decoder->regdata + info->vtx_pos;
     for(n = 0 ; n < AY_FRAME_SIZE ; n++, p += numframes) {
         info->regs[n] = *p;
     }
@@ -220,7 +220,7 @@ vtx_seek_sample (DB_fileinfo_t *_info, int sample) {
     }
     // copy register data
     int n;
-    char *p = info->decoder->regdata + info->vtx_pos;
+    unsigned char *p = info->decoder->regdata + info->vtx_pos;
     for(n = 0 ; n < AY_FRAME_SIZE ; n++, p += num_frames) {
         info->regs[n] = *p;
     }
