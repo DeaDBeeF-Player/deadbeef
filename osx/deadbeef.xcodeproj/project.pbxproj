@@ -968,15 +968,6 @@
 		2D2A14BA19B6485200AD1EB7 /* gme.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D2A14F119B64F2900AD1EB7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2D3138251D08AB3400CBD871 /* artwork.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D621F831CD92C9000EB6D22 /* artwork.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2D3420E01D0856F0004C136A /* mp4ff_int_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9177501A0E8A3D004BC222 /* mp4ff_int_types.h */; };
-		2D3420E11D0856F0004C136A /* mp4ff.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9177511A0E8A3D004BC222 /* mp4ff.h */; };
-		2D3420E21D0856F0004C136A /* mp4ffint.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9177521A0E8A3D004BC222 /* mp4ffint.h */; };
-		2D3420E31D0856F0004C136A /* mp4atom.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177531A0E8A3D004BC222 /* mp4atom.c */; };
-		2D3420E41D0856F0004C136A /* mp4ff.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177541A0E8A3D004BC222 /* mp4ff.c */; };
-		2D3420E51D0856F0004C136A /* mp4meta.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177551A0E8A3D004BC222 /* mp4meta.c */; };
-		2D3420E61D0856F0004C136A /* mp4sample.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177561A0E8A3D004BC222 /* mp4sample.c */; };
-		2D3420E71D0856F0004C136A /* mp4tagupdate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177571A0E8A3D004BC222 /* mp4tagupdate.c */; };
-		2D3420E81D0856F0004C136A /* mp4util.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9177581A0E8A3D004BC222 /* mp4util.c */; };
 		2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */; };
 		2D3992E225C2038700CFA936 /* WeakRefWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3992E025C2038700CFA936 /* WeakRefWrapper.m */; };
 		2D3A4BBD1D6315D6002C7098 /* medialib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -4675,7 +4666,6 @@
 		2D28F0C41C283CAC004A6E7B /* tns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tns.h; sourceTree = "<group>"; };
 		2D2A135A19B647CF00AD1EB7 /* gme.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = gme.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D2A14F019B64F2900AD1EB7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		2D3420DC1D0856D5004C136A /* libmp4ff.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmp4ff.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WeakRefWrapper.h; sourceTree = "<group>"; };
 		2D3992E025C2038700CFA936 /* WeakRefWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WeakRefWrapper.m; sourceTree = "<group>"; };
 		2D3A4BB41D631530002C7098 /* medialib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = medialib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6518,13 +6508,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D2A14F119B64F2900AD1EB7 /* libz.dylib in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2D3420D91D0856D5004C136A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10453,7 +10436,6 @@
 				2D621FE81CD92FA400EB6D22 /* libjpeg.dylib */,
 				2D6220A01CD933D800EB6D22 /* libpng.dylib */,
 				2D652FCB1CE79E8500163808 /* adplug.dylib */,
-				2D3420DC1D0856D5004C136A /* libmp4ff.dylib */,
 				2D3A4BB41D631530002C7098 /* medialib.dylib */,
 				2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */,
 				2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */,
@@ -11784,16 +11766,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2D3420DA1D0856D5004C136A /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2D3420E11D0856F0004C136A /* mp4ff.h in Headers */,
-				2D3420E01D0856F0004C136A /* mp4ff_int_types.h in Headers */,
-				2D3420E21D0856F0004C136A /* mp4ffint.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		2D3A4BB21D631530002C7098 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -13047,23 +13019,6 @@
 			productReference = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		2D3420DB1D0856D5004C136A /* mp4ff */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2D3420DD1D0856D5004C136A /* Build configuration list for PBXNativeTarget "mp4ff" */;
-			buildPhases = (
-				2D3420D81D0856D5004C136A /* Sources */,
-				2D3420D91D0856D5004C136A /* Frameworks */,
-				2D3420DA1D0856D5004C136A /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = mp4ff;
-			productName = mp4ff;
-			productReference = 2D3420DC1D0856D5004C136A /* libmp4ff.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
 		2D3A4BB31D631530002C7098 /* medialib */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D3A4BB51D631530002C7098 /* Build configuration list for PBXNativeTarget "medialib" */;
@@ -13965,9 +13920,6 @@
 					2D28F0541C283C75004A6E7B = {
 						CreatedOnToolsVersion = 6.2;
 					};
-					2D3420DB1D0856D5004C136A = {
-						CreatedOnToolsVersion = 6.2;
-					};
 					2D3A4BB31D631530002C7098 = {
 						CreatedOnToolsVersion = 7.3.1;
 					};
@@ -14149,7 +14101,6 @@
 				2D3A4BB31D631530002C7098 /* medialib */,
 				07765E041C28558B00F5F4BC /* mmslib */,
 				07765E221C28559600F5F4BC /* mms */,
-				2D3420DB1D0856D5004C136A /* mp4ff */,
 				4D32FA4F19A64577000FFDE0 /* mp3 */,
 				2D917E771A4046FE00C3EB44 /* mpg123 */,
 				07021FD91C27551D00FC9AF9 /* musepack */,
@@ -14982,19 +14933,6 @@
 				2D00F8EF24353551000FC130 /* Nsfe_Emu.cpp in Sources */,
 				2D00F90C24353551000FC130 /* np_nes_apu.c in Sources */,
 				2D00F91B24353551000FC130 /* ymf271.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2D3420D81D0856D5004C136A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2D3420E31D0856F0004C136A /* mp4atom.c in Sources */,
-				2D3420E41D0856F0004C136A /* mp4ff.c in Sources */,
-				2D3420E51D0856F0004C136A /* mp4meta.c in Sources */,
-				2D3420E71D0856F0004C136A /* mp4tagupdate.c in Sources */,
-				2D3420E61D0856F0004C136A /* mp4sample.c in Sources */,
-				2D3420E81D0856F0004C136A /* mp4util.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18218,51 +18156,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				USE_HEADERMAP = NO;
-			};
-			name = Release;
-		};
-		2D3420DE1D0856D5004C136A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "-";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = "USE_TAGGING=1";
-				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
-				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				RUN_CLANG_STATIC_ANALYZER = NO;
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		2D3420DF1D0856D5004C136A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = "USE_TAGGING=1";
-				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				RUN_CLANG_STATIC_ANALYZER = NO;
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -21628,15 +21521,6 @@
 			buildConfigurations = (
 				2D2A135C19B647CF00AD1EB7 /* Debug */,
 				2D2A135D19B647CF00AD1EB7 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		2D3420DD1D0856D5004C136A /* Build configuration list for PBXNativeTarget "mp4ff" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2D3420DE1D0856D5004C136A /* Debug */,
-				2D3420DF1D0856D5004C136A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
