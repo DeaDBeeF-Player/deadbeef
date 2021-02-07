@@ -945,7 +945,7 @@ static void OPL_INLINE clipit8(Bit32s ival, Bit8s* outval) {
 			*outval = 0;
 		}
 	} else {
-		*outval = 255;
+		*outval = -1;
 	}
 }
 
