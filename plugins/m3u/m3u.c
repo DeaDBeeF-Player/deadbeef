@@ -47,44 +47,25 @@ skipspaces (const uint8_t *p, const uint8_t *end) {
     return p;
 }
 
-static DB_playItem_t *
-load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
+DB_playItem_t *
+load_m3u_from_buffer(DB_playItem_t *after, const char *buffer, int64_t sz, int (*cb)(DB_playItem_t *, void *), const char *fname, int *pabort, ddb_playlist_t *plt, void *user_data) {
     const char *slash = strrchr (fname, '/');
-    trace ("enter pl_insert_m3u\n");
-    // skip all empty lines and comments
-    DB_FILE *fp = deadbeef->fopen (fname);
-    if (!fp) {
-        trace ("failed to open file %s\n", fname);
-        return NULL;
-    }
-    int sz = deadbeef->fgetlength (fp);
-    trace ("loading m3u...\n");
-    uint8_t *membuffer = malloc (sz);
-    if (!membuffer) {
-        deadbeef->fclose (fp);
-        trace ("failed to allocate %d bytes to read the file %s\n", sz, fname);
-        return NULL;
-    }
-    uint8_t *buffer = membuffer;
-    deadbeef->fread (buffer, 1, sz, fp);
-    deadbeef->fclose (fp);
-
-    if (sz >= 3 && buffer[0] == 0xef && buffer[1] == 0xbb && buffer[2] == 0xbf) {
+    if (sz >= 3 && (uint8_t)buffer[0] == 0xef && (uint8_t)buffer[1] == 0xbb && (uint8_t)buffer[2] == 0xbf) {
         buffer += 3;
         sz -= 3;
     }
     int line = 0;
     int read_extm3u = 0;
 
-    const uint8_t *p = buffer;
-    const uint8_t *end = buffer+sz;
-    const uint8_t *e;
+    const char *p = buffer;
+    const char *end = buffer+sz;
+    const char *e;
     int length = -1;
     char title[1000] = "";
     char artist[1000] = "";
     while (p < end) {
         line++;
-        p = skipspaces (p, end);
+        p = (const char *)skipspaces ((const uint8_t *)p, (const uint8_t *)end);
         if (p >= end) {
             break;
         }
@@ -100,11 +81,11 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                     memset (artist, 0, sizeof (artist));
                     p += 8;
                     e = p;
-                    while (e < end && *e >= 0x20) {
+                    while (e < end && ((uint8_t)(*e)) >= 0x20) {
                         e++;
                     }
-                    int n = e-p;
-                    uint8_t nm[n+1];
+                    long n = e-p;
+                    char nm[n+1];
                     memcpy (nm, p, n);
                     nm[n] = 0;
                     length = atoi (nm);
@@ -114,6 +95,9 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                     }
                     if (*c == ',') {
                         c++;
+                        while (*c && ((uint8_t)*c) <= 0x20) {
+                            c++;
+                        }
                         const char *dash = NULL;
                         const char *newdash = strstr (c, " - ");
 
@@ -125,7 +109,7 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                         if (dash) {
                             strncpy (title, dash+3, sizeof (title)-1);
                             title[sizeof(title)-1] = 0;
-                            int l = dash - c;
+                            long l = dash - c;
                             strncpy (artist, c, min(l, sizeof (artist)));
                             artist[sizeof(artist)-1] = 0;
                         }
@@ -137,7 +121,7 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                     }
                 }
             }
-            while (p < end && *p >= 0x20) {
+            while (p < end && ((uint8_t)(*p)) >= 0x20) {
                 p++;
             }
             if (p >= end) {
@@ -146,11 +130,11 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             continue;
         }
         e = p;
-        while (e < end && *e >= 0x20) {
+        while (e < end && ((uint8_t)(*e)) >= 0x20) {
             e++;
         }
-        int n = e-p;
-        uint8_t nm[n+1];
+        long n = e-p;
+        char nm[n+1];
         memcpy (nm, p, n);
         nm[n] = 0;
 
@@ -158,7 +142,7 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             const char *cs = deadbeef->junk_detect_charset (title);
             if (cs) {
                 char tmp[1000];
-                if (deadbeef->junk_iconv (title, strlen (title), tmp, sizeof (tmp), cs, "utf-8") >= 0) {
+                if (deadbeef->junk_iconv (title, (int)strlen (title), tmp, sizeof (tmp), cs, "utf-8") >= 0) {
                     strcpy (title, tmp);
                 }
             }
@@ -167,7 +151,7 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             const char *cs = deadbeef->junk_detect_charset (artist);
             if (cs) {
                 char tmp[1000];
-                if (deadbeef->junk_iconv (artist, strlen (artist), tmp, sizeof (tmp), cs, "utf-8") >= 0) {
+                if (deadbeef->junk_iconv (artist, (int)strlen (artist), tmp, sizeof (tmp), cs, "utf-8") >= 0) {
                     strcpy (artist, tmp);
                 }
             }
@@ -179,7 +163,7 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             is_fullpath = 1;
         }
         else {
-            uint8_t *p = strstr (nm, "://");
+            char *p = strstr (nm, "://");
             if (p) {
                 p--;
                 while (p >= nm) {
@@ -212,7 +196,7 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             memset (artist, 0, sizeof (artist));
         }
         else {
-            int l = strlen (nm);
+            size_t l = strlen (nm);
             char fullpath[slash - fname + l + 2];
             memcpy (fullpath, fname, slash - fname + 1);
             strcpy (fullpath + (slash - fname + 1), nm);
@@ -223,7 +207,6 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             after = it;
         }
         if (pabort && *pabort) {
-            free (membuffer);
             return after;
         }
         p = e;
@@ -231,6 +214,32 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             break;
         }
     }
+
+    return after;
+}
+
+static DB_playItem_t *
+load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
+    trace ("enter pl_insert_m3u\n");
+    // skip all empty lines and comments
+    DB_FILE *fp = deadbeef->fopen (fname);
+    if (!fp) {
+        trace ("failed to open file %s\n", fname);
+        return NULL;
+    }
+    int64_t sz = deadbeef->fgetlength (fp);
+    trace ("loading m3u...\n");
+    char *membuffer = malloc (sz);
+    if (!membuffer) {
+        deadbeef->fclose (fp);
+        trace ("failed to allocate %d bytes to read the file %s\n", sz, fname);
+        return NULL;
+    }
+    char *buffer = membuffer;
+    deadbeef->fread (buffer, 1, sz, fp);
+    deadbeef->fclose (fp);
+
+    after = load_m3u_from_buffer(after, buffer, sz, cb, fname, pabort, plt, user_data);
     trace ("leave pl_insert_m3u\n");
     free (membuffer);
     return after;
@@ -252,7 +261,7 @@ pls_insert_file (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, c
         slash = strrchr (fname, '/');
     }
     if (slash) {
-        int l = strlen (uri);
+        size_t l = strlen (uri);
         char fullpath[slash - fname + l + 2];
         memcpy (fullpath, fname, slash - fname + 1);
         strcpy (fullpath + (slash - fname + 1), uri);
@@ -278,7 +287,7 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         trace ("failed to open file %s\n", fname);
         return NULL;
     }
-    int sz = deadbeef->fgetlength (fp);
+    int64_t sz = deadbeef->fgetlength (fp);
     deadbeef->rewind (fp);
     uint8_t *buffer = malloc (sz);
     if (!buffer) {
@@ -289,15 +298,15 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
     deadbeef->fread (buffer, 1, sz, fp);
     deadbeef->fclose (fp);
     // 1st line must be "[playlist]"
-    const uint8_t *p = buffer;
-    const uint8_t *end = buffer+sz;
+    const char *p = (const char *)buffer;
+    const char *end = (const char *)buffer+sz;
     if (strncasecmp (p, "[playlist]", 10)) {
         trace ("file %s doesn't begin with [playlist]\n", fname);
         free (buffer);
         return NULL;
     }
     p += 10;
-    p = skipspaces (p, end);
+    p = (const char *)skipspaces ((const uint8_t *)p, (const uint8_t *)end);
     if (p >= end) {
         trace ("file %s finished before numberofentries had been read\n", fname);
         free (buffer);
@@ -309,15 +318,15 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
     char length[20] = "";
     int lastidx = -1;
     while (p < end) {
-        p = skipspaces (p, end);
+        p = (const char *)skipspaces ((const uint8_t *)p, (const uint8_t *)end);
         if (p >= end) {
             break;
         }
         if (end-p < 6) {
             break;
         }
-        const uint8_t *e;
-        int n;
+        const char *e;
+        long n;
         if (!strncasecmp (p, "file", 4)) {
             int idx = atoi (p + 4);
             if (uri[0] && idx != lastidx && lastidx != -1) {
@@ -339,14 +348,14 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                 p++;
             }
             p++;
-            while (p < end && *p <= 0x20) {
+            while (p < end && ((uint8_t)(*p)) <= 0x20) {
                 p++;
             }
             if (p >= end) {
                 break;
             }
             e = p;
-            while (e < end && *e >= 0x20) {
+            while (e < end && ((uint8_t)(*e)) >= 0x20) {
                 e++;
             }
             n = e-p;
@@ -379,14 +388,14 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                 p++;
             }
             p++;
-            while (p < end && *p <= 0x20) {
+            while (p < end && ((uint8_t)(*p)) <= 0x20) {
                 p++;
             }
             if (p >= end) {
                 break;
             }
             e = p;
-            while (e < end && *e >= 0x20) {
+            while (e < end && ((uint8_t)(*e)) >= 0x20) {
                 e++;
             }
             n = e-p;
@@ -423,7 +432,7 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                 break;
             }
             e = p;
-            while (e < end && *e >= 0x20) {
+            while (e < end && ((uint8_t)(*e)) >= 0x20) {
                 e++;
             }
             n = e-p;
@@ -434,11 +443,11 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         else {
             trace ("pls: skipping unrecognized entry in pls file: %s\n", p);
             e = p;
-            while (e < end && *e >= 0x20) {
+            while (e < end && ((uint8_t)(*e)) >= 0x20) {
                 e++;
             }
         }
-        while (e < end && *e < 0x20) {
+        while (e < end && ((uint8_t)(*e)) < 0x20) {
             e++;
         }
         p = e;

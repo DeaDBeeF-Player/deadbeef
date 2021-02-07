@@ -1807,6 +1807,8 @@
 		2DA32B1624D6D83C00D96C84 /* MediaLibrarySelectorCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA32B1424D6D83C00D96C84 /* MediaLibrarySelectorCellView.m */; };
 		2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA372192370B854005E64A3 /* NowPlayable.h */; };
 		2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA3721A2370B854005E64A3 /* NowPlayable.m */; };
+		2DA59D9125D00A8E00947C19 /* M3UTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA59D9025D00A8E00947C19 /* M3UTests.m */; };
+		2DA59DD125D00A9A00947C19 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
 		2DA5E331238DB0C4005832B7 /* EditColumnPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */; };
 		2DA5E341238DB1A8005832B7 /* EditColumnWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA5E33F238DB1A8005832B7 /* EditColumnWindowController.h */; };
 		2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E340238DB1A8005832B7 /* EditColumnWindowController.m */; };
@@ -5499,6 +5501,8 @@
 		2DA32B1424D6D83C00D96C84 /* MediaLibrarySelectorCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaLibrarySelectorCellView.m; sourceTree = "<group>"; };
 		2DA372192370B854005E64A3 /* NowPlayable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NowPlayable.h; sourceTree = "<group>"; };
 		2DA3721A2370B854005E64A3 /* NowPlayable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NowPlayable.m; sourceTree = "<group>"; };
+		2DA59D9025D00A8E00947C19 /* M3UTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3UTests.m; sourceTree = "<group>"; };
+		2DA59E1125D00C6200947C19 /* m3u.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = m3u.h; sourceTree = "<group>"; };
 		2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditColumnPanel.xib; sourceTree = "<group>"; };
 		2DA5E33F238DB1A8005832B7 /* EditColumnWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditColumnWindowController.h; sourceTree = "<group>"; };
 		2DA5E340238DB1A8005832B7 /* EditColumnWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditColumnWindowController.m; sourceTree = "<group>"; };
@@ -9831,6 +9835,7 @@
 				2D15721523785BD900985E47 /* VfsCurlTests.m */,
 				2DA04EF123B6A81A0070AC01 /* ShellexecTests.m */,
 				2D04C3D02433B3B9003C2AAC /* GrowableBufferTests.m */,
+				2DA59D9025D00A8E00947C19 /* M3UTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -9901,6 +9906,7 @@
 			isa = PBXGroup;
 			children = (
 				2DCB281919E86183008E9DF6 /* m3u.c */,
+				2DA59E1125D00C6200947C19 /* m3u.h */,
 			);
 			name = m3u;
 			path = plugins/m3u;
@@ -15436,6 +15442,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DE7A8FB1CA493CE00318A9F /* CuesheetTests.m in Sources */,
+				2DA59DD125D00A9A00947C19 /* m3u.c in Sources */,
+				2DA59D9125D00A8E00947C19 /* M3UTests.m in Sources */,
 				2D0A6B0B2376E12200252E6D /* TrackSwitchingTests.m in Sources */,
 				2D15722423785BEC00985E47 /* vfs_curl.c in Sources */,
 				4D6CF18E20EB7A9900811034 /* mp3parser.c in Sources */,
