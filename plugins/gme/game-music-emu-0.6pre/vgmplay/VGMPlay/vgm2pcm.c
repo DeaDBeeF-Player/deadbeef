@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     
     sampleBuffer = (WAVE_16BS*)malloc(SAMPLESIZE * p->SampleRate);
     if (sampleBuffer == NULL) {
-        fprintf(stderr, "vgm2pcm: error: failed to allocate %u bytes of memory\n", SAMPLESIZE * p->SampleRate);
+        fprintf(stderr, "vgm2pcm: error: failed to allocate %u bytes of memory\n", (unsigned)(SAMPLESIZE * p->SampleRate));
         return 1;
     }
 
