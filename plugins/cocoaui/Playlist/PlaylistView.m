@@ -78,8 +78,8 @@ static int headerheight = 23;
 
         [lcv.leadingAnchor constraintEqualToAnchor:sv.contentView.leadingAnchor].active = YES;
         [lcv.topAnchor constraintEqualToAnchor:sv.contentView.topAnchor].active = YES;
-        [lcv.trailingAnchor constraintGreaterThanOrEqualToAnchor:sv.contentView.trailingAnchor].active = YES;
-        [lcv.bottomAnchor constraintGreaterThanOrEqualToAnchor:sv.contentView.bottomAnchor].active = YES;
+        [lcv.widthAnchor constraintGreaterThanOrEqualToAnchor:sv.contentView.widthAnchor].active = YES;
+        [lcv.heightAnchor constraintGreaterThanOrEqualToAnchor:sv.contentView.heightAnchor].active = YES;
 
         sv.hasVerticalScroller = YES;
         sv.hasHorizontalScroller = YES;

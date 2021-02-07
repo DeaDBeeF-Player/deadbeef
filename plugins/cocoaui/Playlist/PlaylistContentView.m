@@ -45,9 +45,10 @@ static int grouptitleheight = 22;
 @property (nonatomic) int scroll_direction;
 @property (nonatomic) int scroll_pointer_y;
 
-@property (nonatomic) NSSize contentSize;
-
 @property (nonatomic) PinnedGroupTitleView *pinnedGroupTitleView;
+
+@property (nonatomic) NSLayoutConstraint *widthConstraint;
+@property (nonatomic) NSLayoutConstraint *heightConstraint;
 
 @end
 
@@ -1352,16 +1353,22 @@ static int grouptitleheight = 22;
         _fullwidth += [_delegate columnWidth:c];
     }
 
-    self.contentSize = NSMakeSize(_fullwidth, _fullheight);
-    // FIXME: this causes a crash
-    [self invalidateIntrinsicContentSize];
+    if (!self.widthConstraint) {
+        self.widthConstraint = [self.widthAnchor constraintGreaterThanOrEqualToConstant:_fullwidth];
+        self.heightConstraint = [self.heightAnchor constraintGreaterThanOrEqualToConstant:_fullheight];
+        self.widthConstraint.priority = NSLayoutPriorityDefaultHigh;
+        self.heightConstraint.priority = NSLayoutPriorityDefaultHigh;
+        self.widthConstraint.active = YES;
+        self.heightConstraint.active = YES;
+    }
+    else {
+        self.widthConstraint.constant = _fullwidth;
+        self.heightConstraint.constant = _fullheight;
+    }
 
     [self updatePinnedGroup];
 }
 
-- (NSSize)intrinsicContentSize {
-    return self.contentSize;
-}
 
 @end
 
