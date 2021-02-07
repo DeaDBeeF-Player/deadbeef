@@ -97,7 +97,7 @@ psfplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     deadbeef->pl_lock ();
-    info->decoder = ao_start (info->type, deadbeef->pl_find_meta (it, ":URI"), (uint8 *)info->filebuffer, info->filesize);
+    info->decoder = ao_start (info->type, deadbeef->pl_find_meta (it, ":URI"), (uint8 *)info->filebuffer, (uint32)info->filesize);
     deadbeef->pl_unlock ();
     if (!info->decoder) {
         trace ("psf: ao_start failed\n");
@@ -190,14 +190,14 @@ psfplug_add_meta (DB_playItem_t *it, const char *key, const char *value, const c
 //    const char *res = NULL;
     char tmp[200];
     // check utf8
-    if (deadbeef->junk_recode (value, strlen (value), tmp, sizeof (tmp), "utf-8") >= 0) {
+    if (deadbeef->junk_recode (value, (int)strlen (value), tmp, sizeof (tmp), "utf-8") >= 0) {
         if (key) {
             deadbeef->pl_add_meta (it, key, value);
         }
 //        res = value;
     }
     // check shift-jis
-    if (deadbeef->junk_recode (value, strlen (value), tmp, sizeof (tmp), "SHIFT-JIS") >= 0) {
+    if (deadbeef->junk_recode (value, (int)strlen (value), tmp, sizeof (tmp), "SHIFT-JIS") >= 0) {
         if (key) {
             deadbeef->pl_add_meta (it, key, tmp);
         }

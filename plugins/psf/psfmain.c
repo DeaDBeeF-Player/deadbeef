@@ -61,7 +61,7 @@ static struct
 int ao_get_lib(char *filename, uint8 **buffer, uint64 *length)
 {
 	uint8 *filebuf;
-	uint32 size;
+	int64_t size;
 	DB_FILE *auxfile;
 
 	auxfile = deadbeef->fopen(filename);
@@ -80,7 +80,7 @@ int ao_get_lib(char *filename, uint8 **buffer, uint64 *length)
 	if (!filebuf)
 	{
 		deadbeef->fclose(auxfile);
-		printf("ERROR: could not allocate %d bytes of memory\n", size);
+		printf("ERROR: could not allocate %lld bytes of memory\n", size);
 		return AO_FAIL;
 	}
 

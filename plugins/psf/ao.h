@@ -10,6 +10,7 @@
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
 #endif
+#include <limits.h>
 
 #define AO_SUCCESS					1
 #define AO_FAIL						0
