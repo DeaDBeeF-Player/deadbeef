@@ -329,6 +329,7 @@
 					"$(inherited)",
 					HAVE_STDINT_H,
 				);
+				GCC_WARN_UNUSED_FUNCTION = NO;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../osx/deps/jansson-2.13.1/src\"";
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -344,6 +345,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_STDINT_H;
+				GCC_WARN_UNUSED_FUNCTION = NO;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../osx/deps/jansson-2.13.1/src\"";
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
