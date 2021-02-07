@@ -72,12 +72,12 @@ int32_t wv_read_stream(void *buf, int32_t sz, void *file_handle) {
 #else
 int32_t wv_read_bytes(void *id, void *data, int32_t bcount) {
 //    trace ("wv_read_bytes\n");
-    return deadbeef->fread (data, 1, bcount, id);
+    return (int32_t)deadbeef->fread (data, 1, bcount, id);
 }
 
 uint32_t wv_get_pos(void *id) {
 //    trace ("wv_get_pos\n");
-    return deadbeef->ftell (id);
+    return (uint32_t)deadbeef->ftell (id);
 }
 
 int wv_set_pos_abs(void *id, uint32_t pos) {
@@ -91,7 +91,7 @@ int wv_set_pos_rel(void *id, int32_t delta, int mode) {
 int wv_push_back_byte(void *id, int c) {
 //    trace ("wv_push_back_byte\n");
     deadbeef->fseek (id, -1, SEEK_CUR);
-    return deadbeef->ftell (id);
+    return (int)deadbeef->ftell (id);
 }
 uint32_t wv_get_length(void *id) {
 //    trace ("wv_get_length\n");
@@ -99,7 +99,7 @@ uint32_t wv_get_length(void *id) {
     deadbeef->fseek (id, 0, SEEK_END);
     size_t sz = deadbeef->ftell (id);
     deadbeef->fseek (id, pos, SEEK_SET);
-    return sz;
+    return (uint32_t)sz;
 }
 int wv_can_seek(void *id) {
 //    trace ("wv_can_seek\n");
@@ -227,7 +227,7 @@ wv_read (DB_fileinfo_t *_info, char *bytes, int size) {
     int currentsample = WavpackGetSampleIndex (info->ctx);
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     if (size / samplesize + currentsample > info->endsample) {
-        size = (info->endsample - currentsample + 1) * samplesize;
+        size = (int)((info->endsample - currentsample + 1) * samplesize);
         trace ("wv: size truncated to %d bytes (%d samples), cursample=%d, endsample=%d\n", size, info->endsample - currentsample + 1, currentsample, info->endsample);
         if (size <= 0) {
             return 0;
@@ -288,7 +288,7 @@ static int
 wv_seek_sample (DB_fileinfo_t *_info, int sample) {
 #ifndef TINYWV
     wvctx_t *info = (wvctx_t *)_info;
-    WavpackSeekSample (info->ctx, sample + info->startsample);
+    WavpackSeekSample (info->ctx, (uint32_t)(sample + info->startsample));
     _info->readpos = (float)(WavpackGetSampleIndex (info->ctx) - info->startsample) / WavpackGetSampleRate (info->ctx);
 #endif
     return 0;
