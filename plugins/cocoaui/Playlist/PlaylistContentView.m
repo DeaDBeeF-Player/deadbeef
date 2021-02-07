@@ -1353,7 +1353,10 @@ static int grouptitleheight = 22;
     }
 
     self.contentSize = NSMakeSize(_fullwidth, _fullheight);
+    // FIXME: this causes a crash
     [self invalidateIntrinsicContentSize];
+
+    [self updatePinnedGroup];
 }
 
 - (NSSize)intrinsicContentSize {
