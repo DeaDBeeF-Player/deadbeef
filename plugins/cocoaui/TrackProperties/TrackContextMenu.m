@@ -140,7 +140,7 @@ extern DB_functions_t *deadbeef;
     self.trackPropertiesItem.target = self;
 }
 
-- (void)updateWithTrackList:(ddb_playItem_t **)tracks count:(NSUInteger)count playlist:(ddb_playlist_t *)plt {
+- (void)updateWithTrackList:(ddb_playItem_t **)tracks count:(NSUInteger)count playlist:(ddb_playlist_t *)plt currentTrack:(ddb_playItem_t *)currentTrack currentTrackIdx:(int)currentTrackIdx {
     if (_selectedTracksList) {
         ddbUtilTrackListFree(_selectedTracksList);
         _selectedTracksList = NULL;
@@ -150,7 +150,7 @@ extern DB_functions_t *deadbeef;
         _deleteFromDiskController = NULL;
     }
     if (tracks) {
-        _selectedTracksList = ddbUtilTrackListInitWithWithTracks( ddbUtilTrackListAlloc(), plt, DDB_ACTION_CTX_SELECTION, tracks, (unsigned)count);
+        _selectedTracksList = ddbUtilTrackListInitWithWithTracks( ddbUtilTrackListAlloc(), plt, DDB_ACTION_CTX_SELECTION, tracks, (unsigned)count, currentTrack, currentTrackIdx);
     }
 }
 
@@ -453,7 +453,7 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl) {
     ddb_action_context_t ctx = DDB_ACTION_CTX_SELECTION;
 
     if (self.selectedTracksList) {
-        self.deleteFromDiskController = ddbDeleteFromDiskControllerInitWithTrackList(self.deleteFromDiskController, self.selectedTracksList);
+        self.deleteFromDiskController = ddbDeleteFromDiskControllerInitWithTrackList(ddbDeleteFromDiskControllerAlloc(), self.selectedTracksList);
     }
     else {
         self.deleteFromDiskController = ddbDeleteFromDiskControllerInitWithPlaylist(ddbDeleteFromDiskControllerAlloc(), plt, ctx);

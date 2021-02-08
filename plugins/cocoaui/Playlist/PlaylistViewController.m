@@ -1388,7 +1388,11 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
 
     deadbeef->pl_lock ();
 
+    ddb_playItem_t *current = deadbeef->streamer_get_playing_track ();
+    int current_idx = -1;
+
     NSInteger count = deadbeef->plt_getselcount(plt);
+    int all_idx = 0;
     if (count) {
         NSInteger idx = 0;
         tracks = calloc (sizeof (ddb_playItem_t *), count);
@@ -1396,6 +1400,9 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
         ddb_playItem_t *it = deadbeef->plt_get_first (plt, self.playlistIter);
         while (it) {
             ddb_playItem_t *next = deadbeef->pl_get_next (it, self.playlistIter);
+            if (current != NULL && it == current) {
+                current_idx = all_idx;
+            }
             if (deadbeef->pl_is_selected (it)) {
                 tracks[idx++] = it;
             }
@@ -1403,13 +1410,19 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
                 deadbeef->pl_item_unref (it);
             }
             it = next;
+            all_idx++;
         }
     }
 
     deadbeef->pl_unlock ();
 
-    [self.trackContextMenu updateWithTrackList:tracks count:count playlist:plt];
+    [self.trackContextMenu updateWithTrackList:tracks count:count playlist:plt currentTrack:current currentTrackIdx:current_idx];
     [self.trackContextMenu update:plt];
+
+    if (current) {
+        deadbeef->pl_item_unref (current);
+        current = NULL;
+    }
 
     if (plt) {
         deadbeef->plt_unref (plt);

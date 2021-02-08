@@ -508,7 +508,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
         }
     }
 
-    [self.trackContextMenu updateWithTrackList:tracks count:count playlist:NULL];
+    [self.trackContextMenu updateWithTrackList:tracks count:count playlist:NULL currentTrack:NULL currentTrackIdx:-1];
 
     free (tracks);
 }

@@ -102,7 +102,11 @@ _capture_selected_track_list (void) {
 
     deadbeef->pl_lock ();
 
+    ddb_playItem_t *current = deadbeef->streamer_get_playing_track ();
+    int current_idx = -1;
+
     int count = deadbeef->plt_getselcount(plt);
+    int all_idx = 0;
     if (count) {
         int idx = 0;
         tracks = calloc (sizeof (ddb_playItem_t *), count);
@@ -110,6 +114,9 @@ _capture_selected_track_list (void) {
         ddb_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
         while (it) {
             ddb_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            if (current != NULL && it == current) {
+                current_idx = all_idx;
+            }
             if (deadbeef->pl_is_selected (it)) {
                 tracks[idx++] = it;
             }
@@ -117,10 +124,17 @@ _capture_selected_track_list (void) {
                 deadbeef->pl_item_unref (it);
             }
             it = next;
+            all_idx++;
         }
     }
 
-    _menuTrackList = ddbUtilTrackListInitWithWithTracks(ddbUtilTrackListAlloc(), plt, DDB_ACTION_CTX_SELECTION, tracks, count);
+
+    _menuTrackList = ddbUtilTrackListInitWithWithTracks(ddbUtilTrackListAlloc(), plt, DDB_ACTION_CTX_SELECTION, tracks, count, current, current_idx);
+
+    if (current) {
+        deadbeef->pl_item_unref (current);
+        current = NULL;
+    }
 
     deadbeef->pl_unlock ();
 

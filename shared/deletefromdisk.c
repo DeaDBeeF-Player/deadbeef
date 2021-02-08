@@ -107,7 +107,7 @@ ddbUtilTrackListInitWithPlaylist (ddbUtilTrackList_t trackList, ddb_playlist_t *
 }
 
 ddbUtilTrackList_t
-ddbUtilTrackListInitWithWithTracks (ddbUtilTrackList_t trackList, ddb_playlist_t *plt, ddb_action_context_t ctx, ddb_playItem_t **tracks, unsigned count) {
+ddbUtilTrackListInitWithWithTracks (ddbUtilTrackList_t trackList, ddb_playlist_t *plt, ddb_action_context_t ctx, ddb_playItem_t **tracks, unsigned count, ddb_playItem_t *currentTrack, int currentTrackIdx) {
     ddbUtilTrackListData_t *data = trackList;
 
     data->ctx = ctx;
@@ -115,6 +115,9 @@ ddbUtilTrackListInitWithWithTracks (ddbUtilTrackList_t trackList, ddb_playlist_t
         data->plt = plt;
         deadbeef->plt_ref (plt);
     }
+
+    data->it_current_song = currentTrack;
+    data->idx_current_song = currentTrackIdx;
 
     if (tracks) {
         data->tracklist = calloc (sizeof (ddb_playItem_t *), count);

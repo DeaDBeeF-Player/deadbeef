@@ -17,7 +17,7 @@ typedef void *ddbUtilTrackList_t;
 
 ddbUtilTrackList_t ddbUtilTrackListAlloc (void);
 ddbUtilTrackList_t ddbUtilTrackListInitWithPlaylist (ddbUtilTrackList_t trackList, ddb_playlist_t *plt, ddb_action_context_t ctx);
-ddbUtilTrackList_t ddbUtilTrackListInitWithWithTracks (ddbUtilTrackList_t trackList, ddb_playlist_t *plt, ddb_action_context_t ctx, ddb_playItem_t **tracks, unsigned count);
+ddbUtilTrackList_t ddbUtilTrackListInitWithWithTracks (ddbUtilTrackList_t trackList, ddb_playlist_t *plt, ddb_action_context_t ctx, ddb_playItem_t **tracks, unsigned count, ddb_playItem_t *currentTrack, int currentTrackIdx);
 void ddbUtilTrackListFree (ddbUtilTrackList_t trackList);
 
 ddb_playItem_t **ddbUtilTrackListGetTracks (ddbUtilTrackList_t trackList);
