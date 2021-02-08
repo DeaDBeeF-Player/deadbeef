@@ -1226,6 +1226,9 @@ void *aica_start(const void *config)
 
 void aica_stop(struct _AICA *AICA)
 {
+    if (!AICA) {
+        return;
+    }
     if (AICA->buffertmpl) {
         free (AICA->buffertmpl);
     }
