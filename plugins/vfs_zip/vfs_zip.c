@@ -46,12 +46,12 @@ typedef struct {
     struct zip* z;
     struct zip_file *zf;
     int64_t offset;
-    int index;
+    zip_uint64_t index;
     int64_t size;
 
 #if ENABLE_CACHE
     uint8_t buffer[ZIP_BUFFER_SIZE];
-    int buffer_remaining;
+    zip_int64_t buffer_remaining;
     int buffer_pos;
 #endif
 } ddb_zip_file_t;
@@ -157,13 +157,13 @@ vfs_zip_read (void *ptr, size_t size, size_t nmemb, DB_FILE *f) {
     while (sz) {
         if (zf->buffer_remaining == 0) {
             zf->buffer_pos = 0;
-            int rb = zip_fread (zf->zf, zf->buffer, ZIP_BUFFER_SIZE);
+            zip_int64_t rb = zip_fread (zf->zf, zf->buffer, ZIP_BUFFER_SIZE);
             if (rb <= 0) {
                 break;
             }
             zf->buffer_remaining = rb;
         }
-        int from_buf = min (sz, zf->buffer_remaining);
+        size_t from_buf = min (sz, zf->buffer_remaining);
         memcpy (ptr, zf->buffer+zf->buffer_pos, from_buf);
         zf->buffer_remaining -= from_buf;
         zf->buffer_pos += from_buf;
@@ -240,7 +240,7 @@ vfs_zip_seek (DB_FILE *f, int64_t offset, int whence) {
     char buf[4096];
     int64_t n = offset - zf->offset;
     while (n > 0) {
-        int sz = min (n, sizeof (buf));
+        int64_t sz = min (n, sizeof (buf));
         ssize_t rb = zip_fread (zf->zf, buf, sz);
         n -= rb;
         assert (n >= 0);
