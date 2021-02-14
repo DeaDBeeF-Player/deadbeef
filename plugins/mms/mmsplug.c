@@ -97,7 +97,7 @@ mms_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
         return connect_err;
     }
     MMS_FILE *fp = (MMS_FILE *)stream;
-    int res = mmsx_read ((mms_io_t *)fp->io, fp->stream, ptr, size * nmemb);
+    int res = mmsx_read ((mms_io_t *)fp->io, fp->stream, ptr, (int)(size * nmemb));
     fp->pos += res;
     if (fp->need_abort) {
         return -1;
