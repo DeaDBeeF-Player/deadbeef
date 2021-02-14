@@ -280,7 +280,7 @@ inline static int
 read_uint16(DB_FILE *fp, uint16_t* x)
 {
     unsigned char tmp[2];
-    int n;
+    size_t n;
 
     n = deadbeef->fread(tmp, 1, 2, fp);
 
@@ -297,7 +297,7 @@ inline static int
 read_uint32(DB_FILE *fp, uint32_t* x)
 {
     unsigned char tmp[4];
-    int n;
+    size_t n;
 
     n = deadbeef->fread(tmp, 1, 4, fp);
 
@@ -378,7 +378,7 @@ ape_read_header(DB_FILE *fp, APEContext *ape)
     if (memcmp (ape->magic, "MAC ", 4))
         return -1;
 
-    if (read_uint16 (fp, &ape->fileversion) < 0) {
+    if (read_uint16 (fp, (uint16_t *)&ape->fileversion) < 0) {
         return -1;
     }
 
@@ -388,7 +388,7 @@ ape_read_header(DB_FILE *fp, APEContext *ape)
     }
 
     if (ape->fileversion >= 3980) {
-        if (read_uint16 (fp, &ape->padding1) < 0) {
+        if (read_uint16 (fp, (uint16_t *)&ape->padding1) < 0) {
             return -1;
         }
         if (read_uint32 (fp, &ape->descriptorlength) < 0) {
@@ -590,7 +590,6 @@ static inline const uint32_t bswap_32(uint32_t x)
 
 static int ape_read_packet(DB_FILE *fp, APEContext *ape_ctx)
 {
-    int ret;
     int nblocks;
     APEContext *ape = ape_ctx;
     uint32_t extra_size = 8;
@@ -1454,7 +1453,7 @@ ape_decode_frame(DB_fileinfo_t *_info, void *data, int *data_size)
     int nblocks;
     int i, n;
     int blockstodecode;
-    int bytes_used;
+    long bytes_used;
     int samplesize = _info->fmt.bps/8 * s->channels;;
 
     /* should not happen but who knows */
@@ -1511,8 +1510,8 @@ ape_decode_frame(DB_fileinfo_t *_info, void *data, int *data_size)
             sz = min (sz, s->packet_sizeleft);
             sz = sz&~3;
             uint8_t *p = s->packet_data + s->packet_remaining;
-            int r = deadbeef->fread (p, 1, sz, info->fp);
-            bswap_buf((uint32_t*)p, (const uint32_t*)p, r >> 2);
+            size_t r = deadbeef->fread (p, 1, sz, info->fp);
+            bswap_buf((uint32_t*)p, (const uint32_t*)p, (int)r >> 2);
             s->packet_sizeleft -= r;
             s->packet_remaining += r;
             //fprintf (stderr, "read more %d bytes for current packet, sizeleft=%d, packet_remaining=%d\n", r, packet_sizeleft, packet_remaining);
@@ -1619,7 +1618,7 @@ error:
     s->ptr -= bytes_used;
     s->last_ptr = s->ptr;
 
-    return bytes_used;
+    return (int)bytes_used;
 }
 
 static DB_playItem_t *
@@ -1717,7 +1716,7 @@ ffap_read (DB_fileinfo_t *_info, char *buffer, int size) {
     int samplesize = _info->fmt.bps / 8 * info->ape_ctx.channels;
 
     if (info->ape_ctx.currentsample + size / samplesize > info->endsample) {
-        size = (info->endsample - info->ape_ctx.currentsample + 1) * samplesize;
+        size = (int)((info->endsample - info->ape_ctx.currentsample + 1) * samplesize);
         trace ("size truncated to %d bytes (%d samples), cursample=%d, info->endsample=%d, totalsamples=%d\n", size, size / samplesize, info->ape_ctx.currentsample, info->endsample, info->ape_ctx.totalsamples);
         if (size <= 0) {
             return 0;
