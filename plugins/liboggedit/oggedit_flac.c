@@ -74,14 +74,14 @@ static ogg_packet **headers_alloc(ogg_packet **headers, const size_t packets)
     return new_headers;
 }
 
-static ogg_packet **metadata_block_packets(DB_FILE *in, ogg_sync_state *oy, const off_t offset, char **vendor, int *res)
+static ogg_packet **metadata_block_packets(DB_FILE *in, ogg_sync_state *oy, const off_t offset, char **vendor, int64_t *res)
 {
     ogg_stream_state os;
     ogg_page og;
     if ((*res = init_read_stream(in, oy, &os, &og, offset, FLACNAME)) <= OGGEDIT_EOF)
         return NULL;
 
-    int pages = 1;
+    int64_t pages = 1;
     size_t packets = 0;
     ogg_packet **headers = NULL;
     while ((headers = headers_alloc(headers, packets)) &&
@@ -132,7 +132,7 @@ static long write_metadata_block_packets(FILE *out, const int64_t serial, const 
         return OGGEDIT_ALLOCATION_FAILURE;
 
     ogg_stream_state os;
-    if (ogg_stream_init(&os, serial))
+    if (ogg_stream_init(&os, (int)serial))
         return OGGEDIT_FAILED_TO_INIT_STREAM;
     os.b_o_s = 1;
     os.pageno = 1;
@@ -148,7 +148,7 @@ static long write_metadata_block_packets(FILE *out, const int64_t serial, const 
 
 off_t oggedit_write_flac_metadata(DB_FILE *in, const char *fname, const off_t offset, const int num_tags, char **tags)
 {
-    off_t res;
+    int64_t res;
     char tempname[PATH_MAX] = "";
     ogg_packet **headers = NULL;
     char *vendor = NULL;
@@ -163,7 +163,7 @@ off_t oggedit_write_flac_metadata(DB_FILE *in, const char *fname, const off_t of
     }
 
     /* See if we can write the tags packet directly into the existing file ... */
-    if (!(headers = metadata_block_packets(in, &oy, offset, &vendor, (int *)&res)))
+    if (!(headers = metadata_block_packets(in, &oy, offset, &vendor, &res)))
         goto cleanup;
     const off_t stream_size_k = in->vfs->getlength(in) / 1000; // use file size for now
     const size_t metadata_size = 4 + vc_size(vendor, num_tags, tags);
@@ -209,7 +209,7 @@ off_t oggedit_write_flac_metadata(DB_FILE *in, const char *fname, const off_t of
 
     /* If we have tempfile, copy the remaining pages */
     if (*tempname) {
-        flac_serial = copy_remaining_pages(in, out, &oy, flac_serial, pageno);
+        flac_serial = copy_remaining_pages(in, out, &oy, flac_serial, (uint32_t)pageno);
         if (flac_serial <= OGGEDIT_EOF) {
             res = flac_serial;
             goto cleanup;

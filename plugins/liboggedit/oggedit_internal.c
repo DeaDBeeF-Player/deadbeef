@@ -288,7 +288,7 @@ int64_t flush_stream(FILE *out, ogg_stream_state *os)
         if (!write_page(out, &og))
             return OGGEDIT_WRITE_ERROR;
 
-    const int64_t pageno = ogg_stream_check(os) ? OGGEDIT_FLUSH_FAILED : int32_to_unsigned(ogg_page_pageno(&og));
+    const int64_t pageno = ogg_stream_check(os) ? OGGEDIT_FLUSH_FAILED : int32_to_unsigned((int32_t)ogg_page_pageno(&og));
     ogg_stream_clear(os);
     return pageno;
 }

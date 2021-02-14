@@ -100,7 +100,8 @@ static char *btoa(const unsigned char *binary, const size_t binary_length)
         p[2] = b64[chunk>>6 & 0x3f];
         p[1] = b64[chunk>>12 & 0x3f];
         p[0] = b64[chunk>>18 & 0x3f];
-        p+=4, q+=3;
+        p+=4;
+        q+=3;
     }
 
     if (q < binary_end) {
