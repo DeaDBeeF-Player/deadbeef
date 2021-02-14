@@ -765,7 +765,7 @@
 		2D00FE6B243538BB000FC130 /* sfendian.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D00FDB0243538BB000FC130 /* sfendian.h */; };
 		2D00FE93243539AA000FC130 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D8C8D3F1C43116A008ACE29 /* libz.tbd */; };
 		2D00FE94243539CB000FC130 /* libzip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D00FE7F2435392E000FC130 /* libzip.framework */; };
-		2D00FE95243539CB000FC130 /* libzip.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2D00FE7F2435392E000FC130 /* libzip.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		2D00FE95243539CB000FC130 /* libzip.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2D00FE7F2435392E000FC130 /* libzip.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2D01D7CE1AB2219C00BCD3C4 /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D93DC521AADFEEF003D2D8D /* pluginsettings.c */; };
 		2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ED81837EC44003E6066 /* ConvertUTF.c */; };
 		2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F871837EC44003E6066 /* md5.c */; };
@@ -1850,7 +1850,6 @@
 		2DA7C234251003A20080963D /* artwork_png.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA7C232251003A20080963D /* artwork_png.c */; };
 		2DA84F7E24F58915003507A2 /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
 		2DA84F7F24F5892A003507A2 /* libjansson.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DA9777524C5EC27002405DA /* gtk3.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2DA9777424C5EC26002405DA /* gtk3.xcconfig */; };
 		2DAA4C141AAF88FF00519559 /* TitleFormattingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA4C131AAF88FF00519559 /* TitleFormattingTests.m */; };
 		2DACBB241A40CEB100CCF401 /* mp3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DAD80A12416DBB100EB3075 /* CustomToolbarItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAD809F2416DBB100EB3075 /* CustomToolbarItem.h */; };
@@ -13873,7 +13872,7 @@
 		4D1B3E7218379829003E6066 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1150;
+				LastUpgradeCheck = 1240;
 				ORGANIZATIONNAME = "Alexey Yakovenko";
 				TargetAttributes = {
 					2D00F23E2434DE4E000FC130 = {
@@ -14242,7 +14241,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DE3B5762269B80900AFF9AE /* Images.xcassets in Resources */,
-				2DA9777524C5EC27002405DA /* gtk3.xcconfig in Resources */,
 				2D48DC2F2269B731002CACFD /* convpresets in Resources */,
 				2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */,
 			);
@@ -20514,6 +20512,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -20568,6 +20567,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
