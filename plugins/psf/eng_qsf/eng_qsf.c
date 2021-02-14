@@ -356,6 +356,9 @@ int32 qsf_gen(qsf_synth_t *s, int16 *buffer, uint32 samples)
 
 int32 qsf_stop(void *handle)
 {
+    if (handle == NULL) {
+        return AO_SUCCESS;
+    }
     qsf_synth_t *s = (qsf_synth_t *)handle;
 	free(s->Z80ROM);
 	free(s->QSamples);
