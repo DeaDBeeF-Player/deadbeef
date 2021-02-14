@@ -35,16 +35,17 @@ static ddb_rg_scanner_t *_rg;
 
 static NSMutableArray *g_rgControllers;
 
-@interface ReplayGainScannerController ()
+@interface ReplayGainScannerController () {
+    ddb_rg_scanner_settings_t _rg_settings;
+    struct timeval _rg_start_tv;
+}
+@property (nonatomic) int abort_flag;
+@property (nonatomic) BOOL abortTagWriting;
+
 - (void)progress:(int)current;
 @end
 
-@implementation ReplayGainScannerController {
-    ddb_rg_scanner_settings_t _rg_settings;
-    int _abort_flag;
-    struct timeval _rg_start_tv;
-    BOOL _abortTagWriting;
-}
+@implementation ReplayGainScannerController
 
 + (BOOL)initPlugin {
     if (_rg) {
@@ -159,11 +160,16 @@ static NSMutableArray *g_rgControllers;
     [self progress:0];
 
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    __weak ReplayGainScannerController *weakSelf = self;
     dispatch_async(aQueue, ^{
-        _rg->scan (&_rg_settings);
+        ReplayGainScannerController *strongSelf = weakSelf;
+        if (self == nil) {
+            return;
+        }
+        _rg->scan (&self->_rg_settings);
         deadbeef->background_job_decrement ();
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (_abort_flag) {
+            if (strongSelf.abort_flag) {
                 [self dismissController:self];
                 return;
             }
@@ -186,26 +192,31 @@ static NSMutableArray *g_rgControllers;
     _updateTagsProgressWindow.isVisible = YES;
     _abortTagWriting = NO;
 
+    __weak ReplayGainScannerController *weakSelf = self;
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
-        for (int i = 0; i < _rg_settings.num_tracks; i++) {
-            _rg->remove (_rg_settings.tracks[i]);
-            if (_abortTagWriting) {
+        ReplayGainScannerController *strongSelf = weakSelf;
+        if (strongSelf == nil) {
+            return;
+        }
+        for (int i = 0; i < strongSelf->_rg_settings.num_tracks; i++) {
+            _rg->remove (strongSelf->_rg_settings.tracks[i]);
+            if (strongSelf.abortTagWriting) {
                 break;
             }
             dispatch_async(dispatch_get_main_queue(), ^{
                 // progress
                 deadbeef->pl_lock ();
-                NSString *path = [NSString stringWithUTF8String:deadbeef->pl_find_meta_raw (_rg_settings.tracks[i], ":URI")];
+                NSString *path = [NSString stringWithUTF8String:deadbeef->pl_find_meta_raw (strongSelf->_rg_settings.tracks[i], ":URI")];
                 deadbeef->pl_unlock ();
-                _updateTagsProgressText.stringValue = path;
-                _updateTagsProgressIndicator.doubleValue = (double)i/_rg_settings.num_tracks*100;
+                strongSelf.updateTagsProgressText.stringValue = path;
+                strongSelf.updateTagsProgressIndicator.doubleValue = (double)i/strongSelf->_rg_settings.num_tracks*100;
             });
         }
         deadbeef->pl_save_all ();
         deadbeef->background_job_decrement ();
         dispatch_async(dispatch_get_main_queue(), ^{
-            [_updateTagsProgressWindow close];
+            [strongSelf.updateTagsProgressWindow close];
             [self dismissController:self];
         });
     });
@@ -284,32 +295,39 @@ static NSMutableArray *g_rgControllers;
 
     _abortTagWriting = NO;
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+
+    __weak ReplayGainScannerController *weakSelf = self;
+
     dispatch_async(aQueue, ^{
-        for (int i = 0; i < _rg_settings.num_tracks; i++) {
-            if (_abortTagWriting) {
+        ReplayGainScannerController *strongSelf = weakSelf;
+        if (strongSelf == nil) {
+            return;
+        }
+        for (int i = 0; i < strongSelf->_rg_settings.num_tracks; i++) {
+            if (strongSelf.abortTagWriting) {
                 break;
             }
 
-            if (_rg_settings.results[i].scan_result == DDB_RG_SCAN_RESULT_SUCCESS) {
+            if (strongSelf->_rg_settings.results[i].scan_result == DDB_RG_SCAN_RESULT_SUCCESS) {
                 deadbeef->pl_lock ();
-                NSString *path = [NSString stringWithUTF8String:deadbeef->pl_find_meta_raw (_rg_settings.tracks[i], ":URI")];
+                NSString *path = [NSString stringWithUTF8String:deadbeef->pl_find_meta_raw (strongSelf->_rg_settings.tracks[i], ":URI")];
                 deadbeef->pl_unlock ();
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    _updateTagsProgressText.stringValue = path;
-                    _updateTagsProgressIndicator.doubleValue = (double)i/_rg_settings.num_tracks*100;
+                    strongSelf.updateTagsProgressText.stringValue = path;
+                    strongSelf.updateTagsProgressIndicator.doubleValue = (double)i/strongSelf->_rg_settings.num_tracks*100;
                 });
 
                 uint32_t flags = (1<<DDB_REPLAYGAIN_TRACKGAIN)|(1<<DDB_REPLAYGAIN_TRACKPEAK);
-                if (_rg_settings.mode != DDB_RG_SCAN_MODE_TRACK) {
+                if (strongSelf->_rg_settings.mode != DDB_RG_SCAN_MODE_TRACK) {
                     flags |= (1<<DDB_REPLAYGAIN_ALBUMGAIN)|(1<<DDB_REPLAYGAIN_ALBUMPEAK);
                 }
-                _rg->apply (_rg_settings.tracks[i], flags, _rg_settings.results[i].track_gain, _rg_settings.results[i].track_peak, _rg_settings.results[i].album_gain, _rg_settings.results[i].album_peak);
+                _rg->apply (strongSelf->_rg_settings.tracks[i], flags, strongSelf->_rg_settings.results[i].track_gain, strongSelf->_rg_settings.results[i].track_peak, strongSelf->_rg_settings.results[i].album_gain, strongSelf->_rg_settings.results[i].album_peak);
             }
         }
         deadbeef->pl_save_all ();
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.window endSheet:_updateTagsProgressWindow returnCode:NSModalResponseOK];
+            [self.window endSheet:strongSelf.updateTagsProgressWindow returnCode:NSModalResponseOK];
             [self dismissController:self];
         });
     });

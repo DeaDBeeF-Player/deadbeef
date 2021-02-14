@@ -543,10 +543,6 @@ static int grouptitleheight = 22;
 
     int prev = cursor;
     if (sel != -1) {
-        // if (rowspan) {
-        //     sel -= grp_index;
-        // }
-
         delegate.cursor = sel;
         DdbListviewRow_t it = [delegate rowForIndex:sel];
         if (it) {
@@ -574,22 +570,22 @@ static int grouptitleheight = 22;
     }
     else if (event.buttonNumber == 0 && (event.modifierFlags & NSEventModifierFlagShift)) {
         // select range
-        int cursor = sel;
-        if (cursor == -1) {
+        int sel_cursor = sel;
+        if (sel_cursor == -1) {
             // find group
             DdbListviewGroup_t *g = self.groups;
             int idx = 0;
             while (g) {
                 if (g == grp) {
-                    cursor = idx - 1;
+                    sel_cursor = idx - 1;
                     break;
                 }
                 idx += g->num_items;
                 g = g->next;
             }
         }
-        int start = MIN (prev, cursor);
-        int end = MAX (prev, cursor);
+        int start = MIN (prev, sel_cursor);
+        int end = MAX (prev, sel_cursor);
         int idx = 0;
         for (DdbListviewRow_t it = [delegate firstRow]; it != [delegate invalidRow]; idx++) {
             if (idx >= start && idx <= end) {

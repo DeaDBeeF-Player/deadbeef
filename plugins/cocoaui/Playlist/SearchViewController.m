@@ -26,7 +26,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface SearchViewController()
+@interface SearchViewController() <NSControlTextEditingDelegate>
 
 @property (unsafe_unretained) IBOutlet NSTextField *entry;
 @property (unsafe_unretained) IBOutlet PlaylistView *listview;

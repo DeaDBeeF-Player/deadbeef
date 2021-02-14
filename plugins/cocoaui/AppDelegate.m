@@ -98,7 +98,7 @@ AppDelegate *g_appDelegate;
     
     ddb_shuffle_t shuffle = deadbeef->streamer_get_shuffle ();
     for (ddb_shuffle_t i = 0; shuffle_items[i]; i++) {
-        shuffle_items[i].state = i==shuffle?NSOnState:NSOffState;
+        shuffle_items[i].state = i==shuffle?NSControlStateValueOn:NSControlStateValueOff;
     }
     
     NSMenuItem *repeat_items[] = {
@@ -110,16 +110,16 @@ AppDelegate *g_appDelegate;
     
     ddb_repeat_t repeat = deadbeef->streamer_get_repeat ();
     for (ddb_repeat_t i = 0; repeat_items[i]; i++) {
-        repeat_items[i].state = i==repeat?NSOnState:NSOffState;
+        repeat_items[i].state = i==repeat?NSControlStateValueOn:NSControlStateValueOff;
     }
     
-    _scrollFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)?NSOnState:NSOffState;
-    _cursorFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)?NSOnState:NSOffState;
+    _scrollFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)?NSControlStateValueOn:NSControlStateValueOff;
+    _cursorFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)?NSControlStateValueOn:NSControlStateValueOff;
     
-    _stopAfterCurrent.state = deadbeef->conf_get_int ("playlist.stop_after_current", 0)?NSOnState:NSOffState;
-    _stopAfterCurrentAlbum.state = deadbeef->conf_get_int ("playlist.stop_after_album", 0)?NSOnState:NSOffState;
+    _stopAfterCurrent.state = deadbeef->conf_get_int ("playlist.stop_after_current", 0)?NSControlStateValueOn:NSControlStateValueOff;
+    _stopAfterCurrentAlbum.state = deadbeef->conf_get_int ("playlist.stop_after_album", 0)?NSControlStateValueOn:NSControlStateValueOff;
 
-    _descendingSortMode.state = deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSOnState : NSOffState;
+    _descendingSortMode.state = deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSControlStateValueOn : NSControlStateValueOff;
 
     [self volumeChanged];
 
@@ -473,7 +473,7 @@ main_cleanup_and_quit (void);
     _addLocationTextField.stringValue = @"";
     [_mainWindow.window beginSheet:_addLocationPanel completionHandler:^(NSModalResponse returnCode) {
         if (returnCode == NSModalResponseOK) {
-            NSString *text = [_addLocationTextField stringValue];
+            NSString *text = [self.addLocationTextField stringValue];
 
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
             if (!deadbeef->plt_add_files_begin (plt, 0)) {
@@ -512,7 +512,7 @@ main_cleanup_and_quit (void);
 
 - (void)sortPlaylistByTF:(const char *)tf {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, tf, _descendingSortMode.state == NSOffState ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, tf, _descendingSortMode.state == NSControlStateValueOff ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
@@ -550,15 +550,15 @@ main_cleanup_and_quit (void);
     deadbeef->pl_lock ();
     _customSortEntry.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.custom_sort_tf", "")];
     deadbeef->pl_unlock ();
-    _customSortDescending.state = deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSOnState : NSOffState;
+    _customSortDescending.state = deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSControlStateValueOn : NSControlStateValueOff;
     [_mainWindow.window beginSheet:_customSortPanel completionHandler:^(NSModalResponse returnCode) {
-        NSInteger state = _customSortDescending.state;
-        _descendingSortMode.state =  state;
-        deadbeef->conf_set_int ("cocoaui.sort_desc", state == NSOnState ? 1 : 0);
-        deadbeef->conf_set_str ("cocoaui.custom_sort_tf", [[_customSortEntry stringValue] UTF8String]);
+        NSInteger state = self.customSortDescending.state;
+        self.descendingSortMode.state =  state;
+        deadbeef->conf_set_int ("cocoaui.sort_desc", state == NSControlStateValueOn ? 1 : 0);
+        deadbeef->conf_set_str ("cocoaui.custom_sort_tf", [[self.customSortEntry stringValue] UTF8String]);
 
         if (returnCode == NSModalResponseOK) {
-            [self sortPlaylistByTF:[[_customSortEntry stringValue] UTF8String]];
+            [self sortPlaylistByTF:self.customSortEntry.stringValue.UTF8String];
         }
         deadbeef->conf_save ();
     }];
@@ -576,7 +576,7 @@ main_cleanup_and_quit (void);
 - (IBAction)toggleDescendingSortOrderAction:(id)sender {
     int st = !deadbeef->conf_get_int ("cocoaui.sort_desc", 0);
     deadbeef->conf_set_int ("cocoaui.sort_desc", st);
-    _descendingSortMode.state = st ? NSOnState : NSOffState;
+    _descendingSortMode.state = st ? NSControlStateValueOn : NSControlStateValueOff;
     deadbeef->conf_save ();
 }
 

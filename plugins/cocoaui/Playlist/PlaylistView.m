@@ -85,7 +85,6 @@ static int headerheight = 23;
         sv.hasHorizontalScroller = YES;
         sv.autohidesScrollers = YES;
         sv.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin|NSViewHeightSizable;
-        sv.contentView.copiesOnScroll = NO;
 
         NSView *synchronizedContentView = [sv contentView];
         synchronizedContentView.postsBoundsChangedNotifications = YES;

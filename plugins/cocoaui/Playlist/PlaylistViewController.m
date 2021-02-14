@@ -159,8 +159,8 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)menuTogglePinGroups:(NSButton *)sender {
-    self.pinGroups = sender.state == NSOnState ? 0 : 1;
-    sender.state = self.pinGroups?NSOnState:NSOffState;
+    self.pinGroups = sender.state == NSControlStateValueOn ? 0 : 1;
+    sender.state = self.pinGroups?NSControlStateValueOn:NSControlStateValueOff;
     deadbeef->conf_set_int ([self pinGroupsConfStr], self.pinGroups);
     PlaylistView *lv = (PlaylistView *)self.view;
     [lv.contentView updatePinnedGroup];
@@ -297,7 +297,7 @@ extern DB_functions_t *deadbeef;
               withId:(int)type
             withSize:self.columns[idx].size
           withFormat:self.editColumnWindowController.formatTextField.stringValue.UTF8String
-       withAlignment:(int)self.editColumnWindowController.alignmentPopUpButton.indexOfSelectedItem withSetColor:(self.editColumnWindowController.setColorButton.state == NSOnState)
+       withAlignment:(int)self.editColumnWindowController.alignmentPopUpButton.indexOfSelectedItem withSetColor:(self.editColumnWindowController.setColorButton.state == NSControlStateValueOn)
            withColor:rgba];
     [self columnsChanged];
 }
@@ -473,7 +473,7 @@ extern DB_functions_t *deadbeef;
         [menu insertItemWithTitle:@"Edit Column" action:@selector(menuEditColumn:) keyEquivalent:@"" atIndex:1].target = self;
         [menu insertItemWithTitle:@"Remove Column" action:@selector(menuRemoveColumn:) keyEquivalent:@"" atIndex:2].target = self;
         NSMenuItem *item = [menu insertItemWithTitle:@"Pin Groups When Scrolling" action:@selector(menuTogglePinGroups:) keyEquivalent:@"" atIndex:3];
-        item.state = self.pinGroups?NSOnState:NSOffState;
+        item.state = self.pinGroups?NSControlStateValueOn:NSControlStateValueOff;
         item.target = self;
 
         [menu insertItem:[NSMenuItem separatorItem] atIndex:4];
@@ -748,7 +748,7 @@ extern DB_functions_t *deadbeef;
 
         NSColor *imgColor = sel ? NSColor.alternateSelectedControlTextColor : NSColor.controlTextColor;
 
-        CGContextRef c = [[NSGraphicsContext currentContext] graphicsPort];
+        CGContextRef c = [[NSGraphicsContext currentContext] CGContext];
         CGContextSaveGState(c);
 
         NSRect maskRect = rect;

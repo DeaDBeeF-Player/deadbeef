@@ -1529,7 +1529,6 @@
 		2D86AFC71C358CDD0018C174 /* dial68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D86AFC21C358CDD0018C174 /* dial68.c */; };
 		2D86AFC81C358CDD0018C174 /* dial68.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D86AFC31C358CDD0018C174 /* dial68.h */; };
 		2D887BE624B1C86D0078392F /* MediaLibraryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D887BE424B1C86D0078392F /* MediaLibraryItem.m */; };
-		2D887BE924B1CB650078392F /* MediaLibrary.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D887BE824B1CB650078392F /* MediaLibrary.xib */; };
 		2D887BEA24B1CB790078392F /* medialib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D887BCD24B1C82A0078392F /* medialib.h */; };
 		2D88E9F21B2AF6850072FD43 /* vorbis.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88E9F11B2AF6850072FD43 /* vorbis.c */; };
 		2D88EA041B2AF6DD0072FD43 /* oggedit_art.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88E9FC1B2AF6DD0072FD43 /* oggedit_art.c */; };
@@ -5135,7 +5134,6 @@
 		2D887BC724B1C82A0078392F /* medialib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = medialib.c; sourceTree = "<group>"; };
 		2D887BCD24B1C82A0078392F /* medialib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = medialib.h; sourceTree = "<group>"; };
 		2D887BE424B1C86D0078392F /* MediaLibraryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryItem.m; sourceTree = "<group>"; };
-		2D887BE824B1CB650078392F /* MediaLibrary.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MediaLibrary.xib; sourceTree = "<group>"; };
 		2D88E9ED1B2AF6640072FD43 /* vorbis.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = vorbis.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D88E9F11B2AF6850072FD43 /* vorbis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vorbis.c; path = plugins/vorbis/vorbis.c; sourceTree = "<group>"; };
 		2D88E9F71B2AF6BC0072FD43 /* liboggedit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liboggedit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8516,7 +8514,6 @@
 				2D49856E1D5CF0E900E4D985 /* Log.xib */,
 				2D17F8451AB3391A00AF2853 /* MainMenu.xib */,
 				2D11E8B11AA0E3DD00A67A20 /* MainWindow.xib */,
-				2D887BE824B1CB650078392F /* MediaLibrary.xib */,
 				2D3EBD9C1A9379BD00E5E255 /* Preferences.xib */,
 				2D1A56391D9FF9A4005E5CDD /* ReplayGain.xib */,
 				2D651D19227227FA00375AE2 /* ScriptableNodeEditorView.xib */,
@@ -14324,7 +14321,6 @@
 				2DB05E36252E3CF10090635E /* iconSoundTemplate.pdf in Resources */,
 				2D2351281B13922400A62936 /* Converter.xib in Resources */,
 				2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */,
-				2D887BE924B1CB650078392F /* MediaLibrary.xib in Resources */,
 				2D49856F1D5CF0E900E4D985 /* Log.xib in Resources */,
 				2D651D1A227227FA00375AE2 /* ScriptableNodeEditorView.xib in Resources */,
 				2D1A563A1D9FF9A4005E5CDD /* ReplayGain.xib in Resources */,

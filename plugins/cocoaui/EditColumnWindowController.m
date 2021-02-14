@@ -88,7 +88,7 @@
 }
 
 - (IBAction)addColumnSetColorChanged:(NSButton *)sender {
-    self.colorWell.enabled = sender.state == NSOnState;
+    self.colorWell.enabled = sender.state == NSControlStateValueOn;
 }
 
 - (IBAction)addColumnCancel:(id)sender {

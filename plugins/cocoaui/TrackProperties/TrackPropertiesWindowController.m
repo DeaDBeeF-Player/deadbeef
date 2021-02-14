@@ -678,32 +678,32 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (IBAction)mp3WriteID3v2Action:(NSButton *)sender {
-    deadbeef->conf_set_int ("mp3.write_id3v2", sender.state == NSOnState);
+    deadbeef->conf_set_int ("mp3.write_id3v2", sender.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 }
 
 - (IBAction)mp3WriteID3v1Action:(NSButton *)sender {
-    deadbeef->conf_set_int ("mp3.write_id3v1", sender.state == NSOnState);
+    deadbeef->conf_set_int ("mp3.write_id3v1", sender.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 }
 
 - (IBAction)mp3WriteAPEv2Action:(NSButton *)sender {
-    deadbeef->conf_set_int ("mp3.write_apev2", sender.state == NSOnState);
+    deadbeef->conf_set_int ("mp3.write_apev2", sender.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 }
 
 - (IBAction)mp3StripID3v2Action:(NSButton *)sender {
-    deadbeef->conf_set_int ("mp3.strip_id3v2", sender.state == NSOnState);
+    deadbeef->conf_set_int ("mp3.strip_id3v2", sender.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 }
 
 - (IBAction)mp3StripID3v1Action:(NSButton *)sender {
-    deadbeef->conf_set_int ("mp3.strip_id3v1", sender.state == NSOnState);
+    deadbeef->conf_set_int ("mp3.strip_id3v1", sender.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 }
 
 - (IBAction)mp3StripAPEv2Action:(NSButton *)sender {
-    deadbeef->conf_set_int ("mp3.strip_apev2", sender.state == NSOnState);
+    deadbeef->conf_set_int ("mp3.strip_apev2", sender.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 }
 
@@ -719,42 +719,42 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (IBAction)apeWriteID3v2Action:(NSButton *)sender {
-    deadbeef->conf_set_int ("ape.write_id3v2", sender.state == NSOnState);
+    deadbeef->conf_set_int ("ape.write_id3v2", sender.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 }
 
 - (IBAction)apeWriteAPEv2Action:(NSButton *)sender {
-    deadbeef->conf_set_int ("ape.write_apev2", sender.state == NSOnState);
+    deadbeef->conf_set_int ("ape.write_apev2", sender.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 }
 
 - (IBAction)apeStripID3v2Action:(NSButton *)sender {
-    deadbeef->conf_set_int ("ape.strip_id3v2", sender.state == NSOnState);
+    deadbeef->conf_set_int ("ape.strip_id3v2", sender.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 }
 
 - (IBAction)apeStripAPEv2Action:(NSButton *)sender {
-    deadbeef->conf_set_int ("ape.strip_apev2", sender.state == NSOnState);
+    deadbeef->conf_set_int ("ape.strip_apev2", sender.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 }
 
 - (IBAction)wvWriteAPEv2Action:(NSButton *)sender {
-    deadbeef->conf_set_int ("wv.write_apev2", sender.state == NSOnState);
+    deadbeef->conf_set_int ("wv.write_apev2", sender.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 }
 
 - (IBAction)wvWriteID3v1Action:(NSButton *)sender {
-    deadbeef->conf_set_int ("wv.write_id3v1", sender.state == NSOnState);
+    deadbeef->conf_set_int ("wv.write_id3v1", sender.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 }
 
 - (IBAction)wvStripAPEv2Action:(NSButton *)sender {
-    deadbeef->conf_set_int ("wv.strip_apev2", sender.state == NSOnState);
+    deadbeef->conf_set_int ("wv.strip_apev2", sender.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 }
 
 - (IBAction)wvStripID3v1Action:(NSButton *)sender {
-    deadbeef->conf_set_int ("wv.strip_id3v1", sender.state == NSOnState);
+    deadbeef->conf_set_int ("wv.strip_id3v1", sender.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 }
 

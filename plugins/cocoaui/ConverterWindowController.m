@@ -33,7 +33,7 @@
 extern DB_functions_t *deadbeef;
 static NSString *default_format = @"[%tracknumber%. ][%artist% - ]%title%";
 
-@interface ConverterWindowController () <ScriptableSelectDelegate,ScriptableItemDelegate>
+@interface ConverterWindowController () <ScriptableSelectDelegate,ScriptableItemDelegate,NSControlTextEditingDelegate>
 
 @property (nonatomic) ddb_converter_t *converter_plugin;
 
@@ -165,13 +165,13 @@ static NSMutableArray *g_converterControllers;
 
     self.outputFolder.stringValue = [NSString stringWithUTF8String:out_folder];
     self.outputFileName.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("converter.output_file", "")];
-    self.preserveFolderStructure.state = deadbeef->conf_get_int ("converter.preserve_folder_structure", 0) ? NSOnState : NSOffState;
+    self.preserveFolderStructure.state = deadbeef->conf_get_int ("converter.preserve_folder_structure", 0) ? NSControlStateValueOn : NSControlStateValueOff;
     self.bypassSameFormat.state = deadbeef->conf_get_int ("converter.bypass_same_format", 0);
     self.retagAfterCopy.state = deadbeef->conf_get_int ("converter.retag_after_copy", 0);
-    self.retagAfterCopy.enabled = self.bypassSameFormat.state == NSOnState;
+    self.retagAfterCopy.enabled = self.bypassSameFormat.state == NSControlStateValueOn;
 
     int write_to_source_folder = deadbeef->conf_get_int ("converter.write_to_source_folder", 0);
-    self.writeToSourceFolder.state = write_to_source_folder ? NSOnState : NSOffState;
+    self.writeToSourceFolder.state = write_to_source_folder ? NSControlStateValueOn : NSControlStateValueOff;
     self.outputFolder.enabled = !write_to_source_folder;
     self.preserveFolderStructure.enabled = !write_to_source_folder;
 
@@ -198,19 +198,19 @@ static NSMutableArray *g_converterControllers;
 
 - (IBAction)preserveFolderStructureChanged:(id)sender {
     [self updateFilenamesPreview];
-    deadbeef->conf_set_int ("converter.preserve_folder_structure", self.preserveFolderStructure.state == NSOnState);
+    deadbeef->conf_set_int ("converter.preserve_folder_structure", self.preserveFolderStructure.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 }
 
 - (IBAction)bypassSameFormatChanged:(id)sender {
-    deadbeef->conf_set_int ("converter.bypass_same_format", self.bypassSameFormat.state == NSOnState);
+    deadbeef->conf_set_int ("converter.bypass_same_format", self.bypassSameFormat.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 
-    self.retagAfterCopy.enabled = self.bypassSameFormat.state == NSOnState;
+    self.retagAfterCopy.enabled = self.bypassSameFormat.state == NSControlStateValueOn;
 }
 
 - (IBAction)retagAfterCopyChanged:(id)sender {
-    deadbeef->conf_set_int ("converter.retag_after_copy", self.retagAfterCopy.state == NSOnState);
+    deadbeef->conf_set_int ("converter.retag_after_copy", self.retagAfterCopy.state == NSControlStateValueOn);
     deadbeef->conf_save ();
 }
 
@@ -237,7 +237,7 @@ static NSMutableArray *g_converterControllers;
         if (it) {
             char outpath[PATH_MAX];
 
-            self.converter_plugin->get_output_path2 (it, self.convert_playlist, [[_outputFolder stringValue] UTF8String], [outfile UTF8String], encoder_preset, self.preserveFolderStructure.state == NSOnState, "", self.writeToSourceFolder.state == NSOnState, outpath, sizeof (outpath));
+            self.converter_plugin->get_output_path2 (it, self.convert_playlist, [[_outputFolder stringValue] UTF8String], [outfile UTF8String], encoder_preset, self.preserveFolderStructure.state == NSControlStateValueOn, "", self.writeToSourceFolder.state == NSControlStateValueOn, outpath, sizeof (outpath));
 
             [convert_items_preview addObject:[NSString stringWithUTF8String:outpath]];
         }
@@ -248,7 +248,7 @@ static NSMutableArray *g_converterControllers;
 
 - (IBAction)writeToSourceFolderChanged:(NSButton *)sender {
     [self updateFilenamesPreview];
-    int active = sender.state == NSOnState;
+    int active = sender.state == NSControlStateValueOn;
     deadbeef->conf_set_int ("converter.write_to_source_folder", active);
     deadbeef->conf_save ();
     self.outputFolder.enabled = !active;
@@ -381,9 +381,9 @@ static NSMutableArray *g_converterControllers;
         self.outfile = default_format;
     }
 
-    self.preserve_folder_structure = self.preserveFolderStructure.state == NSOnState;
+    self.preserve_folder_structure = self.preserveFolderStructure.state == NSControlStateValueOn;
 
-    self.write_to_source_folder = self.writeToSourceFolder.state == NSOnState;
+    self.write_to_source_folder = self.writeToSourceFolder.state == NSControlStateValueOn;
 
     self.overwrite_action = (int)[_fileExistsAction indexOfSelectedItem];
 
@@ -498,8 +498,8 @@ static NSMutableArray *g_converterControllers;
         .output_is_float = self.output_is_float,
         .encoder_preset = self.encoder_preset,
         .dsp_preset = self.dsp_preset,
-        .bypass_conversion_on_same_format = (self.bypassSameFormatState == NSOnState),
-        .rewrite_tags_after_copy = (self.retagAfterCopyState == NSOnState),
+        .bypass_conversion_on_same_format = (self.bypassSameFormatState == NSControlStateValueOn),
+        .rewrite_tags_after_copy = (self.retagAfterCopyState == NSControlStateValueOn),
     };
 
     for (int n = 0; n < self.convert_items_count; n++) {

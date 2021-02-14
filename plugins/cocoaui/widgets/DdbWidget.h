@@ -31,16 +31,17 @@
 @property BOOL inDesignMode;
 
 // methods which can be overriden
-- (void)widgetInit;
-- (NSString *)widgetSave;
-- (NSString *)widgetLoad:(NSString *)type;
-- (void)widgetDestroy;
-- (void)widgetAppend:(DdbWidget *)child;
-- (void)widgetRemove:(DdbWidget *)child;
-- (void)widgetReplace:(DdbWidget *)child withWidget:(DdbWidget *)newChild;
-- (NSView *)widgetGetContainer;
 - (int)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
-- (void)widgetInitMenu:(NSMenu *)menu;
-- (void)widgetInitChildMenu:(NSMenu *)menu;
+
+//- (void)widgetInit;
+//- (NSString *)widgetSave;
+//- (NSString *)widgetLoad:(NSString *)type;
+//- (void)widgetDestroy;
+//- (void)widgetAppend:(DdbWidget *)child;
+//- (void)widgetRemove:(DdbWidget *)child;
+//- (void)widgetReplace:(DdbWidget *)child withWidget:(DdbWidget *)newChild;
+//- (NSView *)widgetGetContainer;
+//- (void)widgetInitMenu:(NSMenu *)menu;
+//- (void)widgetInitChildMenu:(NSMenu *)menu;
 
 @end

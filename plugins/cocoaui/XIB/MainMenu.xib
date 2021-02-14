@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -663,8 +662,6 @@ CA
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="167" y="107" width="364" height="93"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
-            <value key="minSize" type="size" width="364" height="85"/>
-            <value key="maxSize" type="size" width="2000" height="86"/>
             <view key="contentView" id="KVu-0k-T7v">
                 <rect key="frame" x="0.0" y="0.0" width="364" height="93"/>
                 <autoresizingMask key="autoresizingMask"/>
