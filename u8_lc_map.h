@@ -1,5 +1,5 @@
-/* C code produced by gperf version 3.0.4 */
-/* Command-line: gperf -c -t -H u8_lc_hash -N u8_lc_in_word_set u8_lc_map.txt  */
+/* ANSI-C code produced by gperf version 3.0.3 */
+/* Command-line: /Applications/Xcode_12_4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/gperf -E -L ANSI-C -c -t -H u8_lc_hash -N u8_lc_in_word_set u8_lc_map.txt  */
 /* Computed positions: -k'1-2,$' */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
@@ -26,7 +26,7 @@
       && ('w' == 119) && ('x' == 120) && ('y' == 121) && ('z' == 122) \
       && ('{' == 123) && ('|' == 124) && ('}' == 125) && ('~' == 126))
 /* The character set is not based on ISO-646.  */
-error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gnu-gperf@gnu.org>."
+#error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gnu-gperf@gnu.org>."
 #endif
 
 #line 1 "u8_lc_map.txt"
@@ -34,12 +34,6 @@ struct u8_case_map_t {
     const char *name;
     const char *lower;
 };
-
-#define TOTAL_KEYWORDS 1007
-#define MIN_WORD_LENGTH 1
-#define MAX_WORD_LENGTH 4
-#define MIN_HASH_VALUE 1
-#define MAX_HASH_VALUE 2519
 /* maximum key range = 2519, duplicates = 0 */
 
 #ifdef __GNUC__
@@ -50,9 +44,7 @@ inline
 #endif
 #endif
 static unsigned int
-u8_lc_hash (str, len)
-     register const char *str;
-     register unsigned int len;
+u8_lc_hash (register const char *str, register unsigned int len)
 {
   static unsigned short asso_values[] =
     {
@@ -85,7 +77,7 @@ u8_lc_hash (str, len)
       2520, 2520, 2520, 2520, 2520, 2520, 2520, 2520, 2520, 2520,
       2520, 2520
     };
-  register int hval = len;
+  register unsigned int hval = len;
 
   switch (hval)
     {
@@ -99,17 +91,18 @@ u8_lc_hash (str, len)
   return hval + asso_values[(unsigned char)str[len - 1]];
 }
 
-#ifdef __GNUC__
-__inline
-#if defined __GNUC_STDC_INLINE__ || defined __GNUC_GNU_INLINE__
-__attribute__ ((__gnu_inline__))
-#endif
-#endif
 struct u8_case_map_t *
-u8_lc_in_word_set (str, len)
-     register const char *str;
-     register unsigned int len;
+u8_lc_in_word_set (register const char *str, register unsigned int len)
 {
+  enum
+    {
+      TOTAL_KEYWORDS = 1007,
+      MIN_WORD_LENGTH = 1,
+      MAX_WORD_LENGTH = 4,
+      MIN_HASH_VALUE = 1,
+      MAX_HASH_VALUE = 2519
+    };
+
   static struct u8_case_map_t wordlist[] =
     {
       {""},
@@ -2695,9 +2688,9 @@ u8_lc_in_word_set (str, len)
 
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {
-      register int key = u8_lc_hash (str, len);
+      unsigned int key = u8_lc_hash (str, len);
 
-      if (key <= MAX_HASH_VALUE && key >= 0)
+      if (key <= MAX_HASH_VALUE)
         {
           register const char *s = wordlist[key].name;
 
