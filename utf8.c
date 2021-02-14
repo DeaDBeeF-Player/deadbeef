@@ -45,7 +45,12 @@
 #include "utf8.h"
 #include "u8_lc_map.h"
 #undef TOTAL_KEYWORDS
+#undef MAX_WORD_LENGTH
+#undef MAX_HASH_VALUE
 #include "u8_uc_map.h"
+#undef TOTAL_KEYWORDS
+#undef MAX_WORD_LENGTH
+#undef MAX_HASH_VALUE
 
 static const uint32_t offsetsFromUTF8[6] = {
     0x00000000UL, 0x00003080UL, 0x000E2080UL,
