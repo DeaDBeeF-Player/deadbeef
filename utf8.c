@@ -44,6 +44,7 @@
 #include "ctype.h"
 #include "utf8.h"
 #include "u8_lc_map.h"
+#undef TOTAL_KEYWORDS
 #include "u8_uc_map.h"
 
 static const uint32_t offsetsFromUTF8[6] = {

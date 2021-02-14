@@ -2053,6 +2053,10 @@ typedef struct DB_playlist_s {
 
     // since 1.5
 #if (DDB_API_LEVEL >= 5)
+    // NOTE: load2 is not used by any existing plugins, and its purpose it lost in history.
+    // Supposedly, it was added to support plugins which could implement cuesheet loading
+    // as a playlist format, which didn't work out.
+    // Generally, it's not recommended to use this, as the behavior is undefined.
     DB_playItem_t * (*load2) (int visibility, ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort);
 #endif
 } DB_playlist_t;

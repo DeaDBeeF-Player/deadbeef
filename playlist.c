@@ -102,20 +102,20 @@
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
-static int playlists_count = 0;
-static playlist_t *playlists_head = NULL;
-static playlist_t *playlist = NULL; // current playlist
-static int plt_loading = 0; // disable sending event about playlist switch, config regen, etc
+static int _playlists_count = 0;
+static playlist_t *_playlists_head = NULL;
+static playlist_t *_current_playlist = NULL; // current playlist
+static int _plt_loading = 0; // disable sending event about playlist switch, config regen, etc
 
 #if !DISABLE_LOCKING
-static uintptr_t mutex;
+static uintptr_t _playlist_mutex;
 #endif
 
 #define LOCK {pl_lock();}
 #define UNLOCK {pl_unlock();}
 
 // used at startup to prevent crashes
-static playlist_t dummy_playlist = {
+static playlist_t _dummy_playlist = {
     .refc = 1
 };
 
@@ -154,19 +154,19 @@ static ddb_fileadd_beginend_listener_t *file_add_beginend_listeners;
 
 void
 pl_reshuffle_all (void) {
-    for (playlist_t *plt = playlists_head; plt; plt = plt->next) {
+    for (playlist_t *plt = _playlists_head; plt; plt = plt->next) {
         plt_reshuffle (plt, NULL, NULL);
     }
 }
 
 int
 pl_init (void) {
-    if (playlist) {
+    if (_current_playlist) {
         return 0; // avoid double init
     }
-    playlist = &dummy_playlist;
+    _current_playlist = &_dummy_playlist;
 #if !DISABLE_LOCKING
-    mutex = mutex_create ();
+    _playlist_mutex = mutex_create ();
 #endif
     return 0;
 }
@@ -175,10 +175,10 @@ void
 pl_free (void) {
     LOCK;
     playqueue_clear ();
-    plt_loading = 1;
-    while (playlists_head) {
+    _plt_loading = 1;
+    while (_playlists_head) {
 
-        for (playItem_t *it = playlists_head->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+        for (playItem_t *it = _playlists_head->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
             if (it->_refc > 1) {
                 fprintf (stderr, "\033[0;31mWARNING: playitem %p %s(%s) has refc=%d at delete time\033[37;0m\n", it, pl_find_meta_raw (it, ":URI"), pl_find_meta_raw (it, "track"), it->_refc);
             }
@@ -188,15 +188,15 @@ pl_free (void) {
 
         plt_remove (0);
     }
-    plt_loading = 0;
+    _plt_loading = 0;
     UNLOCK;
 #if !DISABLE_LOCKING
-    if (mutex) {
-        mutex_free (mutex);
-        mutex = 0;
+    if (_playlist_mutex) {
+        mutex_free (_playlist_mutex);
+        _playlist_mutex = 0;
     }
 #endif
-    playlist = NULL;
+    _current_playlist = NULL;
 }
 
 #if DEBUG_LOCKING
@@ -210,7 +210,7 @@ pthread_t pl_lock_tid = 0;
 void
 pl_lock (void) {
 #if !DISABLE_LOCKING
-    mutex_lock (mutex);
+    mutex_lock (_playlist_mutex);
 #if DETECT_PL_LOCK_RC
     pl_lock_tid = pthread_self ();
     tids[ntids++] = pl_lock_tid;
@@ -237,7 +237,7 @@ pl_unlock (void) {
         pl_lock_tid = 0;
     }
 #endif
-    mutex_unlock (mutex);
+    mutex_unlock (_playlist_mutex);
 #if DEBUG_LOCKING
     pl_lock_cnt--;
     printf ("pcnt: %d\n", pl_lock_cnt);
@@ -250,7 +250,7 @@ pl_item_free (playItem_t *it);
 
 static void
 plt_gen_conf (void) {
-    if (plt_loading) {
+    if (_plt_loading) {
         return;
     }
     LOCK;
@@ -258,7 +258,7 @@ plt_gen_conf (void) {
     int i;
     conf_remove_items ("playlist.tab.");
 
-    playlist_t *p = playlists_head;
+    playlist_t *p = _playlists_head;
     for (i = 0; i < cnt; i++, p = p->next) {
         char s[100];
         snprintf (s, sizeof (s), "playlist.tab.%05d", i);
@@ -273,16 +273,16 @@ plt_gen_conf (void) {
 
 playlist_t *
 plt_get_list (void) {
-    return playlists_head;
+    return _playlists_head;
 }
 
 playlist_t *
 plt_get_curr (void) {
     LOCK;
-    if (!playlist) {
-        playlist = playlists_head;
+    if (!_current_playlist) {
+        _current_playlist = _playlists_head;
     }
-    playlist_t *plt = playlist;
+    playlist_t *plt = _current_playlist;
     if (plt) {
         plt_ref (plt);
         assert (plt->refc > 1);
@@ -294,7 +294,7 @@ plt_get_curr (void) {
 playlist_t *
 plt_get_for_idx (int idx) {
     LOCK;
-    playlist_t *p = playlists_head;
+    playlist_t *p = _playlists_head;
     for (int i = 0; p && i <= idx; i++, p = p->next) {
         if (i == idx) {
             plt_ref (p);
@@ -329,7 +329,7 @@ plt_unref (playlist_t *plt) {
 
 int
 plt_get_count (void) {
-    return playlists_count;
+    return _playlists_count;
 }
 
 playItem_t *plt_get_head_item(playlist_t *p, int iter) {
@@ -354,7 +354,7 @@ playItem_t *plt_get_tail_item(playlist_t *p, int iter) {
 
 playItem_t *
 plt_get_head (int plt) {
-    playlist_t *p = playlists_head;
+    playlist_t *p = _playlists_head;
     for (int i = 0; p && i <= plt; i++, p = p->next) {
         if (i == plt) {
             return plt_get_head_item(p, PL_MAIN);
@@ -365,7 +365,7 @@ plt_get_head (int plt) {
 
 int
 plt_get_sel_count (int plt) {
-    playlist_t *p = playlists_head;
+    playlist_t *p = _playlists_head;
     for (int i = 0; p && i <= plt; i++, p = p->next) {
         if (i == plt) {
             return plt_getselcount (p);
@@ -391,10 +391,9 @@ plt_add (int before, const char *title) {
 
     LOCK;
     playlist_t *p_before = NULL;
-    playlist_t *p_after = playlists_head;
+    playlist_t *p_after = _playlists_head;
 
-    int i;
-    for (i = 0; i < before; i++) {
+    for (int i = 0; i < before; i++) {
         if (i >= before+1) {
             break;
         }
@@ -403,7 +402,7 @@ plt_add (int before, const char *title) {
             p_after = p_after->next;
         }
         else {
-            p_after = playlists_head;
+            p_after = _playlists_head;
         }
     }
 
@@ -411,16 +410,16 @@ plt_add (int before, const char *title) {
         p_before->next = plt;
     }
     else {
-        playlists_head = plt;
+        _playlists_head = plt;
     }
     plt->next = p_after;
-    playlists_count++;
+    _playlists_count++;
 
-    if (!playlist) {
-        playlist = plt;
-        if (!plt_loading) {
+    if (!_current_playlist) {
+        _current_playlist = plt;
+        if (!_plt_loading) {
             // shift files
-            for (int i = playlists_count-1; i >= before+1; i--) {
+            for (int i = _playlists_count-1; i >= before+1; i--) {
                 char path1[PATH_MAX];
                 char path2[PATH_MAX];
                 if (snprintf (path1, sizeof (path1), "%s/playlists/%d.dbpl", dbconfdir, i) > sizeof (path1)) {
@@ -441,7 +440,7 @@ plt_add (int before, const char *title) {
     UNLOCK;
 
     plt_gen_conf ();
-    if (!plt_loading) {
+    if (!_plt_loading) {
         plt_save_n (before);
         conf_save ();
         messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
@@ -454,21 +453,23 @@ playlist_t *
 plt_append (const char *title) {
     plt_add(plt_get_count(), title);
     playlist_t *p;
-    for (p = playlists_head; p && p->next; p = p->next);
+    for (p = _playlists_head; p && p->next; p = p->next);
     return p;
 }
 
 // NOTE: caller must ensure that configuration is saved after that call
 void
 plt_remove (int plt) {
-    int i;
-    assert (plt >= 0 && plt < playlists_count);
     LOCK;
+    if (plt < 0 || plt >= _playlists_count) {
+        UNLOCK;
+        return;
+    }
 
     // find playlist and notify streamer
-    playlist_t *p = playlists_head;
+    playlist_t *p = _playlists_head;
     playlist_t *prev = NULL;
-    for (i = 0; p && i < plt; i++) {
+    for (int i = 0; p && i < plt; i++) {
         prev = p;
         p = p->next;
     }
@@ -479,9 +480,9 @@ plt_remove (int plt) {
     }
 
     streamer_notify_playlist_deleted (p);
-    if (!plt_loading) {
+    if (!_plt_loading) {
         // move files (will decrease number of files by 1)
-        for (int i = plt+1; i < playlists_count; i++) {
+        for (int i = plt+1; i < _playlists_count; i++) {
             char path1[PATH_MAX];
             char path2[PATH_MAX];
             if (snprintf (path1, sizeof (path1), "%s/playlists/%d.dbpl", dbconfdir, i-1) > sizeof (path1)) {
@@ -499,10 +500,10 @@ plt_remove (int plt) {
         }
     }
 
-    if (!plt_loading && (playlists_head && !playlists_head->next)) {
+    if (!_plt_loading && (_playlists_head && !_playlists_head->next)) {
         pl_clear ();
-        free (playlist->title);
-        playlist->title = strdup (_("Default"));
+        free (_current_playlist->title);
+        _current_playlist->title = strdup (_("Default"));
         UNLOCK;
         plt_gen_conf ();
         conf_save ();
@@ -511,37 +512,34 @@ plt_remove (int plt) {
         messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_DELETED, 0);
         return;
     }
-    if (i != plt) {
-        trace ("plt_remove %d failed\n", i);
-    }
     if (p) {
         if (!prev) {
-            playlists_head = p->next;
+            _playlists_head = p->next;
         }
         else {
             prev->next = p->next;
         }
     }
     playlist_t *next = p->next;
-    playlist_t *old = playlist;
-    playlist = p;
-    playlist = old;
-    if (p == playlist) {
+    playlist_t *old = _current_playlist;
+    _current_playlist = p;
+    _current_playlist = old;
+    if (p == _current_playlist) {
         if (next) {
-            playlist = next;
+            _current_playlist = next;
         }
         else {
-            playlist = prev ? prev : playlists_head;
+            _current_playlist = prev ? prev : _playlists_head;
         }
     }
 
     plt_unref (p);
-    playlists_count--;
+    _playlists_count--;
     UNLOCK;
 
     plt_gen_conf ();
     conf_save ();
-    if (!plt_loading) {
+    if (!_plt_loading) {
         messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
         messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_DELETED, 0);
    }
@@ -549,7 +547,7 @@ plt_remove (int plt) {
 
 int
 plt_find (const char *name) {
-    playlist_t *p = playlists_head;
+    playlist_t *p = _playlists_head;
     int i = -1;
     for (i = 0; p; i++, p = p->next) {
         if (!strcmp (p->title, name)) {
@@ -561,7 +559,7 @@ plt_find (const char *name) {
 
 playlist_t *
 plt_find_by_name (const char *name) {
-    playlist_t *p = playlists_head;
+    playlist_t *p = _playlists_head;
     for (; p; p = p->next) {
         if (!strcmp (p->title, name)) {
             return p;
@@ -573,9 +571,9 @@ plt_find_by_name (const char *name) {
 void
 plt_set_curr (playlist_t *plt) {
     LOCK;
-    if (plt != playlist) {
-        playlist = plt ? plt : &dummy_playlist;
-        if (!plt_loading) {
+    if (plt != _current_playlist) {
+        _current_playlist = plt ? plt : &_dummy_playlist;
+        if (!_plt_loading) {
             messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
             conf_set_int ("playlist.current", plt_get_curr_idx ());
             conf_save ();
@@ -588,13 +586,13 @@ void
 plt_set_curr_idx (int plt) {
     int i;
     LOCK;
-    playlist_t *p = playlists_head;
+    playlist_t *p = _playlists_head;
     for (i = 0; p && p->next && i < plt; i++) {
         p = p->next;
     }
-    if (p != playlist) {
-        playlist = p;
-        if (!plt_loading) {
+    if (p != _current_playlist) {
+        _current_playlist = p;
+        if (!_plt_loading) {
             messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
             conf_set_int ("playlist.current", plt);
             conf_save ();
@@ -607,9 +605,9 @@ int
 plt_get_curr_idx(void) {
     int i;
     LOCK;
-    playlist_t *p = playlists_head;
-    for (i = 0; p && i < playlists_count; i++) {
-        if (p == playlist) {
+    playlist_t *p = _playlists_head;
+    for (i = 0; p && i < _playlists_count; i++) {
+        if (p == _current_playlist) {
             UNLOCK;
             return i;
         }
@@ -623,8 +621,8 @@ int
 plt_get_idx_of (playlist_t *plt) {
     int i;
     LOCK;
-    playlist_t *p = playlists_head;
-    for (i = 0; p && i < playlists_count; i++) {
+    playlist_t *p = _playlists_head;
+    for (i = 0; p && i < _playlists_count; i++) {
         if (p == plt) {
             UNLOCK;
             return i;
@@ -657,7 +655,7 @@ plt_set_title (playlist_t *p, const char *title) {
     plt_gen_conf ();
     UNLOCK;
     conf_save ();
-    if (!plt_loading) {
+    if (!_plt_loading) {
         messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_TITLE, 0);
     }
     return 0;
@@ -705,9 +703,8 @@ plt_move (int from, int to) {
     if (from == to) {
         return;
     }
-    int i;
     LOCK;
-    playlist_t *p = playlists_head;
+    playlist_t *p = _playlists_head;
 
     playlist_t *pfrom = NULL;
     playlist_t *prev = NULL;
@@ -728,8 +725,8 @@ plt_move (int from, int to) {
 
     struct stat st;
     int err = stat (path1, &st);
-    if (!err) {
-        int err = rename (path1, temp);
+    if (err == 0) {
+        err = rename (path1, temp);
         if (err != 0) {
             fprintf (stderr, "playlist rename %s->%s failed: %s\n", path1, temp, strerror (errno));
             UNLOCK;
@@ -738,14 +735,14 @@ plt_move (int from, int to) {
     }
 
     // remove 'from' from list
-    for (i = 0; p && i <= from; i++) {
+    for (int i = 0; p && i <= from; i++) {
         if (i == from) {
             pfrom = p;
             if (prev) {
                 prev->next = p->next;
             }
             else {
-                playlists_head = p->next;
+                _playlists_head = p->next;
             }
             break;
         }
@@ -759,7 +756,7 @@ plt_move (int from, int to) {
     }
 
     // shift files to fill the gap
-    for (int i = from; i < playlists_count-1; i++) {
+    for (int i = from; i < _playlists_count-1; i++) {
         char path2[PATH_MAX];
         if (snprintf (path1, sizeof (path1), "%s/playlists/%d.dbpl", dbconfdir, i) > sizeof (path1)) {
             fprintf (stderr, "error: failed to make path string for playlist file\n");
@@ -769,16 +766,16 @@ plt_move (int from, int to) {
             fprintf (stderr, "error: failed to make path string for playlist file\n");
             continue;
         }
-        int err = stat (path2, &st);
-        if (!err) {
-            int err = rename (path2, path1);
+        err = stat (path2, &st);
+        if (err == 0) {
+            err = rename (path2, path1);
             if (err != 0) {
                 fprintf (stderr, "playlist rename %s->%s failed: %s\n", path2, path1, strerror (errno));
             }
         }
     }
     // open new gap
-    for (int i = playlists_count-2; i >= to; i--) {
+    for (int i = _playlists_count-2; i >= to; i--) {
         char path2[PATH_MAX];
         if (snprintf (path1, sizeof (path1), "%s/playlists/%d.dbpl", dbconfdir, i) > sizeof (path1)) {
             fprintf (stderr, "error: failed to make path string for playlist file\n");
@@ -788,9 +785,9 @@ plt_move (int from, int to) {
             fprintf (stderr, "error: failed to make path string for playlist file\n");
             continue;
         }
-        int err = stat (path1, &st);
-        if (!err) {
-            int err = rename (path1, path2);
+        err = stat (path1, &st);
+        if (err == 0) {
+            err = rename (path1, path2);
             if (err != 0) {
                 fprintf (stderr, "playlist rename %s->%s failed: %s\n", path1, path2, strerror (errno));
             }
@@ -801,9 +798,9 @@ plt_move (int from, int to) {
         fprintf (stderr, "error: failed to make path string for playlist file\n");
     }
     else {
-        int err = stat (temp, &st);
-        if (!err) {
-            int err = rename (temp, path1);
+        err = stat (temp, &st);
+        if (err == 0) {
+            err = rename (temp, path1);
             if (err != 0) {
                 fprintf (stderr, "playlist rename %s->%s failed: %s\n", temp, path1, strerror (errno));
             }
@@ -813,13 +810,13 @@ plt_move (int from, int to) {
     // move pointers
     if (to == 0) {
         // insert 'from' as head
-        pfrom->next = playlists_head;
-        playlists_head = pfrom;
+        pfrom->next = _playlists_head;
+        _playlists_head = pfrom;
     }
     else {
         // insert 'from' in the middle
-        p = playlists_head;
-        for (i = 0; p && i < to; i++) {
+        p = _playlists_head;
+        for (int i = 0; p && i < to; i++) {
             if (i == to-1) {
                 playlist_t *next = p->next;
                 p->next = pfrom;
@@ -850,17 +847,17 @@ plt_clear (playlist_t *plt) {
 void
 pl_clear (void) {
     LOCK;
-    plt_clear (playlist);
+    plt_clear (_current_playlist);
     UNLOCK;
 }
 
 
 playItem_t * /* insert internal cuesheet - called by plugins */
-plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate) {
-    if (playlist->loading_cue) {
+plt_insert_cue_from_buffer (playlist_t *plt, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate) {
+    if (plt->loading_cue) {
         // means it was called from _load_cue
-        playlist->cue_numsamples = numsamples;
-        playlist->cue_samplerate = samplerate;
+        plt->cue_numsamples = numsamples;
+        plt->cue_samplerate = samplerate;
     }
     return NULL;
 }
@@ -893,18 +890,18 @@ fileadd_filter_test (ddb_file_found_data_t *data) {
 }
 
 static playItem_t *
-plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+plt_insert_file_int (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     if (!fname || !(*fname)) {
         return NULL;
     }
 
     // check if that is supported container format
-    if (!playlist->ignore_archives) {
+    if (!plt->ignore_archives) {
         DB_vfs_t **vfsplugs = plug_get_vfs_list ();
         for (int i = 0; vfsplugs[i]; i++) {
             if (vfsplugs[i]->is_container) {
                 if (vfsplugs[i]->is_container (fname)) {
-                    playItem_t *it = plt_insert_dir_int (visibility, playlist, vfsplugs[i], after, fname, pabort, cb, user_data);
+                    playItem_t *it = plt_insert_dir_int (visibility, plt, vfsplugs[i], after, fname, pabort, cb, user_data);
                     if (it) {
                         return it;
                     }
@@ -975,7 +972,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
 
             playItem_t *it = pl_item_alloc_init (fname, NULL);
             pl_replace_meta (it, ":FILETYPE", "content");
-            after = plt_insert_item (addfiles_playlist ? addfiles_playlist : playlist, after, it);
+            after = plt_insert_item (addfiles_playlist ? addfiles_playlist : plt, after, it);
             pl_item_unref (it);
             return after;
         }
@@ -1022,7 +1019,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
 
     // handle cue files
     if (!strcasecmp (eol, "cue")) {
-        playItem_t *inserted = plt_load_cue_file(playlist, after, fname, NULL, NULL, 0);
+        playItem_t *inserted = plt_load_cue_file(plt, after, fname, NULL, NULL, 0);
         return inserted;
     }
 
@@ -1039,7 +1036,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
                     if (!filter_done) {
                         ddb_file_found_data_t dt;
                         dt.filename = fname;
-                        dt.plt = (ddb_playlist_t *)playlist;
+                        dt.plt = (ddb_playlist_t *)plt;
                         dt.is_dir = 0;
                         if (fileadd_filter_test (&dt) < 0) {
                             return NULL;
@@ -1049,7 +1046,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
 
                     file_recognized = 1;
 
-                    playItem_t *inserted = (playItem_t *)decoders[i]->insert ((ddb_playlist_t *)playlist, DB_PLAYITEM (after), fname);
+                    playItem_t *inserted = (playItem_t *)decoders[i]->insert ((ddb_playlist_t *)plt, DB_PLAYITEM (after), fname);
                     if (inserted != NULL) {
                         if (cb && cb (inserted, user_data) < 0) {
                             *pabort = 1;
@@ -1058,7 +1055,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
                             ddb_fileadd_data_t d;
                             memset (&d, 0, sizeof (d));
                             d.visibility = visibility;
-                            d.plt = (ddb_playlist_t *)playlist;
+                            d.plt = (ddb_playlist_t *)plt;
                             d.track = (ddb_playItem_t *)inserted;
                             for (ddb_fileadd_listener_t *l = file_add_listeners; l; l = l->next) {
                                 if (pabort && l->callback (&d, l->user_data) < 0) {
@@ -1079,7 +1076,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
                     if (!filter_done) {
                         ddb_file_found_data_t dt;
                         dt.filename = fname;
-                        dt.plt = (ddb_playlist_t *)playlist;
+                        dt.plt = (ddb_playlist_t *)plt;
                         dt.is_dir = 0;
                         if (fileadd_filter_test (&dt) < 0) {
                             return NULL;
@@ -1088,7 +1085,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
                     }
 
                     file_recognized = 1;
-                    playItem_t *inserted = (playItem_t *)decoders[i]->insert ((ddb_playlist_t *)playlist, DB_PLAYITEM (after), fname);
+                    playItem_t *inserted = (playItem_t *)decoders[i]->insert ((ddb_playlist_t *)plt, DB_PLAYITEM (after), fname);
                     if (inserted != NULL) {
                         if (cb && cb (inserted, user_data) < 0) {
                             *pabort = 1;
@@ -1097,7 +1094,7 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
                             ddb_fileadd_data_t d;
                             memset (&d, 0, sizeof (d));
                             d.visibility = visibility;
-                            d.plt = (ddb_playlist_t *)playlist;
+                            d.plt = (ddb_playlist_t *)plt;
                             d.track = (ddb_playItem_t *)inserted;
                             for (ddb_fileadd_listener_t *l = file_add_listeners; l; l = l->next) {
                                 if (l->callback (&d, l->user_data) < 0) {
@@ -1119,8 +1116,8 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
 }
 
 playItem_t *
-plt_insert_file (playlist_t *playlist, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    return plt_insert_file_int (0, playlist, after, fname, pabort, cb, user_data);
+plt_insert_file (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+    return plt_insert_file_int (0, plt, after, fname, pabort, cb, user_data);
 }
 
 static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
@@ -1187,7 +1184,7 @@ _get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *v
 }
 
 static playItem_t *
-plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+plt_insert_dir_int (int visibility, playlist_t *plt, DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     if (!strncmp (dirname, "file://", 7)) {
         dirname += 7;
     }
@@ -1215,7 +1212,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         return NULL;
     }
 
-    if (!playlist->follow_symlinks && !vfs) {
+    if (!plt->follow_symlinks && !vfs) {
         struct stat buf;
         lstat (dirname, &buf);
         if (S_ISLNK(buf.st_mode)) {
@@ -1225,7 +1222,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
 
     ddb_file_found_data_t dt;
     dt.filename = dirname;
-    dt.plt = (ddb_playlist_t *)playlist;
+    dt.plt = (ddb_playlist_t *)plt;
     dt.is_dir = 1;
     if (fileadd_filter_test (&dt) < 0) {
         return NULL;
@@ -1283,7 +1280,7 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
         int i = cuefiles[c];
         _get_fullname_and_dir (fullname, sizeof (fullname), fulldir, sizeof(fulldir), vfs, dirname, namelist[i]->d_name);
 
-        playItem_t *inserted = plt_load_cue_file (playlist, after, fullname, fulldir, namelist, n);
+        playItem_t *inserted = plt_load_cue_file (plt, after, fullname, fulldir, namelist, n);
         namelist[i]->d_name[0] = 0;
 
         if (inserted) {
@@ -1305,10 +1302,10 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
             _get_fullname_and_dir (fullname, sizeof (fullname), NULL, 0, vfs, dirname, namelist[i]->d_name);
             playItem_t *inserted = NULL;
             if (!vfs) {
-                inserted = plt_insert_dir_int (visibility, playlist, vfs, after, fullname, pabort, cb, user_data);
+                inserted = plt_insert_dir_int (visibility, plt, vfs, after, fullname, pabort, cb, user_data);
             }
             if (!inserted) {
-                inserted = plt_insert_file_int (visibility, playlist, after, fullname, pabort, cb, user_data);
+                inserted = plt_insert_file_int (visibility, plt, after, fullname, pabort, cb, user_data);
             }
 
             if (inserted) {
@@ -1451,12 +1448,12 @@ plt_get_item_count (playlist_t *plt, int iter) {
 int
 pl_getcount (int iter) {
     LOCK;
-    if (!playlist) {
+    if (!_current_playlist) {
         UNLOCK;
         return 0;
     }
 
-    int cnt = playlist->count[iter];
+    int cnt = _current_playlist->count[iter];
     UNLOCK;
     return cnt;
 }
@@ -1477,7 +1474,7 @@ plt_getselcount (playlist_t *playlist) {
 int
 pl_getselcount (void) {
     LOCK;
-    int cnt = plt_getselcount (playlist);
+    int cnt = plt_getselcount (_current_playlist);
     UNLOCK;
     return cnt;
 }
@@ -1503,7 +1500,7 @@ plt_get_item_for_idx (playlist_t *playlist, int idx, int iter) {
 playItem_t *
 pl_get_for_idx_and_iter (int idx, int iter) {
     LOCK;
-    playItem_t *it = plt_get_item_for_idx (playlist, idx, iter);
+    playItem_t *it = plt_get_item_for_idx (_current_playlist, idx, iter);
     UNLOCK;
     return it;
 }
@@ -1538,7 +1535,7 @@ pl_get_idx_of (playItem_t *it) {
 int
 pl_get_idx_of_iter (playItem_t *it, int iter) {
     LOCK;
-    int idx = plt_get_item_idx (playlist, it, iter);
+    int idx = plt_get_item_idx (_current_playlist, it, iter);
     UNLOCK;
     return idx;
 }
@@ -1614,7 +1611,7 @@ plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
 
 playItem_t *
 pl_insert_item (playItem_t *after, playItem_t *it) {
-    return plt_insert_item (addfiles_playlist ? addfiles_playlist : playlist, after, it);
+    return plt_insert_item (addfiles_playlist ? addfiles_playlist : _current_playlist, after, it);
 }
 
 void
@@ -1723,7 +1720,7 @@ plt_delete_selected (playlist_t *playlist) {
 int
 pl_delete_selected (void) {
     LOCK;
-    int ret = plt_delete_selected (playlist);
+    int ret = plt_delete_selected (_current_playlist);
     UNLOCK;
     return ret;
 }
@@ -1744,8 +1741,18 @@ plt_crop_selected (playlist_t *playlist) {
 void
 pl_crop_selected (void) {
     LOCK;
-    plt_crop_selected (playlist);
+    plt_crop_selected (_current_playlist);
     UNLOCK;
+}
+
+static uint16_t
+length_to_uint16 (size_t len) {
+    return (uint16_t)min(0xffff, len);
+}
+
+static uint8_t
+length_to_uint8 (size_t len) {
+    return (uint8_t)min(0xff, len);
 }
 
 int
@@ -1761,7 +1768,7 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
                 if (exts && plug[i]->save) {
                     for (int e = 0; exts[e]; e++) {
                         if (!strcasecmp (exts[e], ext+1)) {
-                            int res = plug[i]->save ((ddb_playlist_t *)plt, fname, (DB_playItem_t *)playlist->head[PL_MAIN], NULL);
+                            int res = plug[i]->save ((ddb_playlist_t *)plt, fname, (DB_playItem_t *)_current_playlist->head[PL_MAIN], NULL);
                             UNLOCK;
                             return res;
                         }
@@ -1801,17 +1808,17 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
             cb(it, user_data);
         }
 #if (PLAYLIST_MINOR_VER==2)
-        const char *fname = pl_find_meta_raw (it, ":URI");
-        l = strlen (fname);
+        const char *item_uri = pl_find_meta_raw (it, ":URI");
+        l = length_to_uint16(strlen (item_uri));
         if (fwrite (&l, 1, 2, fp) != 2) {
             goto save_fail;
         }
-        if (fwrite (fname, 1, l, fp) != l) {
+        if (fwrite (item_uri, 1, l, fp) != l) {
             goto save_fail;
         }
         const char *decoder_id = pl_find_meta_raw (it, ":DECODER");
         if (decoder_id) {
-            ll = strlen (decoder_id);
+            ll = length_to_uint8(strlen (decoder_id));
             if (fwrite (&ll, 1, 1, fp) != 1) {
                 goto save_fail;
             }
@@ -1826,7 +1833,7 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
                 goto save_fail;
             }
         }
-        l = pl_find_meta_int (it, ":TRACKNUM", 0);
+        l = length_to_uint8(pl_find_meta_int (it, ":TRACKNUM", 0));
         if (fwrite (&l, 1, 2, fp) != 2) {
             goto save_fail;
         }
@@ -1845,7 +1852,7 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
         if (!filetype) {
             filetype = "";
         }
-        uint8_t ft = strlen (filetype);
+        uint8_t ft = length_to_uint8(strlen (filetype));
         if (fwrite (&ft, 1, 1, fp) != 1) {
             goto save_fail;
         }
@@ -1891,7 +1898,7 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
                 continue; // skip reserved names
             }
 
-            l = strlen (m->key);
+            l = length_to_uint16(strlen (m->key));
             if (fwrite (&l, 1, 2, fp) != 2) {
                 goto save_fail;
             }
@@ -1900,7 +1907,8 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
                     goto save_fail;
                 }
             }
-            l = m->valuesize-1;
+            int value_length = max(0, m->valuesize - 1);
+            l = length_to_uint16(value_length);
             if (fwrite (&l, 1, 2, fp) != 2) {
                 goto save_fail;
             }
@@ -1924,7 +1932,7 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
 
     for (m = plt->meta; m; m = m->next) {
         uint16_t l;
-        l = strlen (m->key);
+        l = length_to_uint16(strlen (m->key));
         if (fwrite (&l, 1, 2, fp) != 2) {
             goto save_fail;
         }
@@ -1933,7 +1941,7 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
                 goto save_fail;
             }
         }
-        l = strlen (m->value);
+        l = length_to_uint16(strlen (m->value));
         if (fwrite (&l, 1, 2, fp) != 2) {
             goto save_fail;
         }
@@ -1971,7 +1979,7 @@ plt_save_n (int n) {
     LOCK;
     int err = 0;
 
-    plt_loading = 1;
+    _plt_loading = 1;
     if (snprintf (path, sizeof (path), "%s/playlists/%d.dbpl", dbconfdir, n) > sizeof (path)) {
         fprintf (stderr, "error: failed to make path string for playlist file\n");
         UNLOCK;
@@ -1980,9 +1988,9 @@ plt_save_n (int n) {
 
     int i;
     playlist_t *plt;
-    for (i = 0, plt = playlists_head; plt && i < n; i++, plt = plt->next);
+    for (i = 0, plt = _playlists_head; plt && i < n; i++, plt = plt->next);
     err = plt_save (plt, NULL, NULL, path, NULL, NULL, NULL);
-    plt_loading = 0;
+    _plt_loading = 0;
     UNLOCK;
     return err;
 }
@@ -2003,13 +2011,13 @@ pl_save_all (void) {
     mkdir (path, 0755);
 
     LOCK;
-    playlist_t *p = playlists_head;
+    playlist_t *p = _playlists_head;
     int i;
     int cnt = plt_get_count ();
     int err = 0;
 
     plt_gen_conf ();
-    plt_loading = 1;
+    _plt_loading = 1;
     for (i = 0; i < cnt; i++, p = p->next) {
         if (snprintf (path, sizeof (path), "%s/playlists/%d.dbpl", dbconfdir, i) > sizeof (path)) {
             fprintf (stderr, "error: failed to make path string for playlist file\n");
@@ -2024,7 +2032,7 @@ pl_save_all (void) {
             break;
         }
     }
-    plt_loading = 0;
+    _plt_loading = 0;
     UNLOCK;
     return err;
 }
@@ -2071,14 +2079,14 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
         for (p = 0; plug[p]; p++) {
             for (e = 0; plug[p]->extensions[e]; e++) {
                 if (plug[p]->load && !strcasecmp (ext, plug[p]->extensions[e])) {
-                    DB_playItem_t *it = NULL;
+                    DB_playItem_t *loaded_it = NULL;
                     if (cb || (plug[p]->load && !plug[p]->load2)) {
-                        it = plug[p]->load ((ddb_playlist_t *)plt, (DB_playItem_t *)after, fname, pabort, (int (*)(DB_playItem_t *, void *))cb, user_data);
+                        loaded_it = plug[p]->load ((ddb_playlist_t *)plt, (DB_playItem_t *)after, fname, pabort, (int (*)(DB_playItem_t *, void *))cb, user_data);
                     }
-                    else if (plug[p]->load2) {
-                        plug[p]->load2 (visibility, (ddb_playlist_t *)plt, (DB_playItem_t *)after, fname, pabort);
+                    else if (plug[p]->plugin.api_vminor >= 5 && plug[p]->load2) {
+                        loaded_it = plug[p]->load2 (visibility, (ddb_playlist_t *)plt, (DB_playItem_t *)after, fname, pabort);
                     }
-                    return (playItem_t *)it;
+                    return (playItem_t *)loaded_it;
                 }
             }
         }
@@ -2131,12 +2139,12 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
             if (fread (&l, 1, 2, fp) != 2) {
                 goto load_fail;
             }
-            char fname[l+1];
-            if (fread (fname, 1, l, fp) != l) {
+            char uri[l+1];
+            if (fread (uri, 1, l, fp) != l) {
                 goto load_fail;
             }
-            fname[l] = 0;
-            pl_add_meta (it, ":URI", fname);
+            uri[l] = 0;
+            pl_add_meta (it, ":URI", uri);
             // decoder
             uint8_t ll;
             if (fread (&ll, 1, 1, fp) != 1) {
@@ -2387,7 +2395,7 @@ pl_load_all (void) {
         return 0;
     }
     LOCK;
-    plt_loading = 1;
+    _plt_loading = 1;
     while (it) {
         if (!err) {
             if (plt_add (plt_get_count (), it->value) < 0) {
@@ -2421,7 +2429,7 @@ pl_load_all (void) {
         i++;
     }
     plt_set_curr_idx (0);
-    plt_loading = 0;
+    _plt_loading = 0;
     plt_gen_conf ();
     messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
     UNLOCK;
@@ -2447,7 +2455,7 @@ plt_select_all (playlist_t *playlist) {
 void
 pl_select_all (void) {
     LOCK;
-    plt_select_all (playlist);
+    plt_select_all (_current_playlist);
     UNLOCK;
 }
 
@@ -2651,9 +2659,9 @@ void
 pl_format_time (float t, char *dur, int size) {
     if (t >= 0) {
         t = roundf (t);
-        int hourdur = t / (60 * 60);
-        int mindur = (t - hourdur * 60 * 60) / 60;
-        int secdur = t - hourdur*60*60 - mindur * 60;
+        int hourdur = (int)floor(t / (60 * 60));
+        int mindur = (int)floor((t - hourdur * 60 * 60) / 60);
+        int secdur = (int)floor(t - hourdur*60*60 - mindur * 60);
 
         if (hourdur) {
             snprintf (dur, size, "%d:%02d:%02d", hourdur, mindur, secdur);
@@ -2809,10 +2817,10 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                         }
                         const char *end = strrchr (start, '.');
                         if (end) {
-                            int n = (int)(end-start);
-                            n = min (n, sizeof (dirname)-1);
-                            strncpy (dirname, start, n);
-                            dirname[n] = 0;
+                            int m = (int)(end-start);
+                            m = min (m, sizeof (dirname)-1);
+                            strncpy (dirname, start, m);
+                            dirname[m] = 0;
                             meta = dirname;
                         }
                         else {
@@ -3040,22 +3048,22 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             }
             else if (*fmt == 'L') {
                 float l = 0;
-                for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-                    if (it->selected) {
-                        l += it->_duration;
+                for (playItem_t *trk = _current_playlist->head[PL_MAIN]; trk; trk = trk->next[PL_MAIN]) {
+                    if (trk->selected) {
+                        l += trk->_duration;
                     }
                 }
                 pl_format_time (l, tmp, sizeof(tmp));
                 meta = tmp;
             }
             else if (*fmt == 'X') {
-                int n = 0;
-                for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-                    if (it->selected) {
-                        n++;
+                int m = 0;
+                for (playItem_t *trk = _current_playlist->head[PL_MAIN]; trk; trk = trk->next[PL_MAIN]) {
+                    if (trk->selected) {
+                        m++;
                     }
                 }
-                snprintf (tmp, sizeof (tmp), "%d", n);
+                snprintf (tmp, sizeof (tmp), "%d", m);
                 meta = tmp;
             }
             else if (*fmt == 'Z') {
@@ -3178,7 +3186,7 @@ plt_get_totaltime (playlist_t *playlist) {
 float
 pl_get_totaltime (void) {
     LOCK;
-    float t = plt_get_totaltime (playlist);
+    float t = plt_get_totaltime (_current_playlist);
     UNLOCK;
     return t;
 }
@@ -3216,7 +3224,7 @@ pl_set_selected (playItem_t *it, int sel) {
     // If the item is in another playlist -- this call will make selection playback time
     // to be recalculated for the current playlist, next time it's requested,
     // while the same value will be off in the playlist which the item belongs to.
-    pl_set_selected_in_playlist(playlist, it, sel);
+    pl_set_selected_in_playlist(_current_playlist, it, sel);
     UNLOCK;
 }
 
@@ -3240,7 +3248,7 @@ plt_get_first (playlist_t *playlist, int iter) {
 playItem_t *
 pl_get_first (int iter) {
     LOCK;
-    playItem_t *it = plt_get_first (playlist, iter);
+    playItem_t *it = plt_get_first (_current_playlist, iter);
     UNLOCK;
     return it;
 }
@@ -3257,7 +3265,7 @@ plt_get_last (playlist_t *playlist, int iter) {
 playItem_t *
 pl_get_last (int iter) {
     LOCK;
-    playItem_t *it = plt_get_last (playlist, iter);
+    playItem_t *it = plt_get_last (_current_playlist, iter);
     UNLOCK;
     return it;
 }
@@ -3291,7 +3299,7 @@ plt_get_cursor (playlist_t *playlist, int iter) {
 int
 pl_get_cursor (int iter) {
     LOCK;
-    int c = plt_get_cursor (playlist, iter);
+    int c = plt_get_cursor (_current_playlist, iter);
     UNLOCK;
     return c;
 }
@@ -3304,7 +3312,7 @@ plt_set_cursor (playlist_t *playlist, int iter, int cursor) {
 void
 pl_set_cursor (int iter, int cursor) {
     LOCK;
-    plt_set_cursor (playlist, iter, cursor);
+    plt_set_cursor (_current_playlist, iter, cursor);
     UNLOCK;
 }
 
@@ -3519,7 +3527,7 @@ plt_search_process2 (playlist_t *playlist, const char *text, int select_results)
                         }
                         value += len+1;
                     } while (value < end);
-                    *((char *)m->value-1) = match;
+                    *((char *)m->value-1) = (int8_t)match;
                     if (match > 0) {
                         break;
                     }
@@ -3587,7 +3595,7 @@ pl_set_item_flags (playItem_t *it, uint32_t flags) {
 playlist_t *
 pl_get_playlist (playItem_t *it) {
     LOCK;
-    playlist_t *p = playlists_head;
+    playlist_t *p = _playlists_head;
     while (p) {
         int idx = plt_get_item_idx (p, it, PL_MAIN);
         if (idx != -1) {
@@ -3655,7 +3663,7 @@ int
 plt_get_idx (playlist_t *plt) {
     int i;
     playlist_t *p;
-    for (i = 0, p = playlists_head; p && p != plt; i++, p = p->next);
+    for (i = 0, p = _playlists_head; p && p != plt; i++, p = p->next);
     if (p == 0) {
         return -1;
     }

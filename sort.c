@@ -86,9 +86,9 @@ strcasecmp_numeric (const char *a, const char *b) {
 static int
 pl_sort_compare_str (playItem_t *a, playItem_t *b) {
     if (pl_sort_is_duration) {
-        float dur_a = a->_duration * 100000;
-        float dur_b = b->_duration * 100000;
-        return !pl_sort_ascending ? dur_b - dur_a : dur_a - dur_b;
+        int64_t dur_a = (int64_t)((double)a->_duration * 100000);
+        int64_t dur_b = (int64_t)((double)b->_duration * 100000);
+        return !pl_sort_ascending ? (int)(dur_b - dur_a) : (int)(dur_a - dur_b);
     }
     else if (pl_sort_is_track) {
         int t1;
@@ -159,7 +159,7 @@ plt_sort_random (playlist_t *playlist, int iter) {
     //randomize array
     for (int swap_a = 0; swap_a < playlist_count - 1; swap_a++) {
         //select random item above swap_a-1
-        const int swap_b = swap_a + (rand() / (float)RAND_MAX * (playlist_count - swap_a));
+        const int swap_b = (int)(swap_a + (rand() / (float)RAND_MAX * (playlist_count - swap_a)));
 
         //swap a with b
         playItem_t* const swap_temp = array[swap_a];

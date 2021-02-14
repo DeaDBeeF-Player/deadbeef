@@ -78,12 +78,12 @@ db_to_amp (float dB) {
 //    return pow (10, dB/20.f);
     // thanks to he for this hack
     const float ln10=2.3025850929940002f;
-    return exp(ln10*dB/20.f);
+    return (float)exp(ln10*dB/20.f);
 }
 
 float
 amp_to_db (float amp) {
-    return 20*log10 (amp);
+    return (float)(20*log10 (amp));
 }
 
 float
