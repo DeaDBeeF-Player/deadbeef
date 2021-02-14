@@ -57,7 +57,7 @@ pcm_write_samples_8_to_16 (const ddb_waveformat_t * restrict inputfmt, const cha
             if (channelmap[c] < 0) {
                 continue;
             }
-            *((int16_t*)(output + 2 * c)) = (int16_t)(*(input + channelmap[c])) << 8;
+            *((int16_t*)(output + 2 * c)) = (int16_t)(*(input + channelmap[c]) << 8);
         }
         input += inputfmt->channels;
         output += outputsamplesize;
@@ -371,7 +371,7 @@ pcm_write_samples_float_to_8 (const ddb_waveformat_t * restrict inputfmt, const 
             }
             int8_t *out = (int8_t*)(output + c);
             float sample = *((float*)(input + channelmap[c] * 4));
-            int isample = sample * 0x80;
+            int isample = ftoi(sample * 0x80);
             if (isample > 0x7f) {
                 isample = 0x7f;
             }
@@ -455,7 +455,7 @@ pcm_write_samples_float_to_32 (const ddb_waveformat_t * restrict inputfmt, const
             else if (fsample < -1.f) {
                 fsample = -1.f;
             }
-            int32_t sample = fsample * (float)0x80000000;
+            int32_t sample = ftoi(fsample * (float)0x80000000);
             *((int32_t *)(output + 4 * c)) = sample;
         }
         input += 4 * inputfmt->channels;
