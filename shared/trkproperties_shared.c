@@ -209,7 +209,7 @@ string_append_multivalue (char *out, int size, DB_metaInfo_t *meta, int *clipped
     const char *p = meta->value;
     const char *end = p + meta->valuesize;
     while (p < end) {
-        size_t l = strlen (p) + 1;
+        int l = (int)strlen (p) + 1;
         if (l > size) {
             l = size-1;
             *clipped = 1;
