@@ -748,7 +748,7 @@ shn_read (DB_fileinfo_t *_info, char *bytes, int size) {
     shn_fileinfo_t *info = (shn_fileinfo_t *)_info;
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     if (info->currentsample + size / samplesize > info->endsample) {
-        size = (info->endsample - info->currentsample + 1) * samplesize;
+        size = (int)((info->endsample - info->currentsample + 1) * samplesize);
         if (size <= 0) {
             return 0;
         }
@@ -811,7 +811,7 @@ shn_seek_sample (DB_fileinfo_t *_info, int sample) {
     if (info->shnfile->vars.seek_table_entries == NO_SEEK_TABLE) {
         // seek by skipping samples from the start
         if (sample > info->currentsample) {
-            info->skipsamples = sample - info->currentsample;
+            info->skipsamples = (int)(sample - info->currentsample);
         }
         else {
             // restart
@@ -849,7 +849,7 @@ shn_seek_sample (DB_fileinfo_t *_info, int sample) {
 
     info->bitshift = shn_uchar_to_ushort_le(seek_info->data+22);
 
-    seekto_offset = shn_uchar_to_ulong_le(seek_info->data+8) + info->shnfile->vars.seek_offset;
+    seekto_offset = (ulong)(shn_uchar_to_ulong_le(seek_info->data+8) + info->shnfile->vars.seek_offset);
 
     deadbeef->fseek(info->shnfile->vars.fd,(slong)seekto_offset,SEEK_SET);
     deadbeef->fread((uchar*) info->shnfile->decode_state->getbuf, 1, BUFSIZ, info->shnfile->vars.fd);
@@ -911,9 +911,9 @@ shn_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->pl_add_meta (it, ":FILETYPE", "Shorten");
     deadbeef->plt_set_item_duration (plt, it, tmp_file->wave_header.length);
 
-    int apeerr = deadbeef->junk_apev2_read (it, tmp_file->vars.fd);
-    int v2err = deadbeef->junk_id3v2_read (it, tmp_file->vars.fd);
-    int v1err = deadbeef->junk_id3v1_read (it, tmp_file->vars.fd);
+    deadbeef->junk_apev2_read (it, tmp_file->vars.fd);
+    deadbeef->junk_id3v2_read (it, tmp_file->vars.fd);
+    deadbeef->junk_id3v1_read (it, tmp_file->vars.fd);
 
     char s[100];
     snprintf (s, sizeof (s), "%lld", fsize);

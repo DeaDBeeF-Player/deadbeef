@@ -44,7 +44,7 @@ void var_get_init(shn_file *this_shn)
 ulong word_get(shn_file *this_shn)
 {
   ulong buffer;
-  int bytes;
+  size_t bytes;
 
   if(this_shn->decode_state->nbyteget < 4)
   {
