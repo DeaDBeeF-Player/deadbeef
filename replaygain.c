@@ -92,37 +92,37 @@ replaygain_init_settings (ddb_replaygain_settings_t *settings, playItem_t *it) {
 
     if (settings->processing_flags & DDB_RG_PROCESSING_GAIN) {
         if (albumgain) {
-            settings->albumgain = db_to_amp(atof (albumgain));
+            settings->albumgain = db_to_amp((float)atof (albumgain));
             settings->has_album_gain = 1;
         }
         else if (trackgain) {
-            settings->albumgain = db_to_amp(atof (trackgain));
+            settings->albumgain = db_to_amp((float)atof (trackgain));
             settings->has_album_gain = 1;
         }
 
         if (trackgain) {
-            settings->trackgain = db_to_amp(atof (trackgain));
+            settings->trackgain = db_to_amp((float)atof (trackgain));
             settings->has_track_gain = 1;
         }
         else if (albumgain) {
-            settings->trackgain = db_to_amp(atof (albumgain));
+            settings->trackgain = db_to_amp((float)atof (albumgain));
             settings->has_track_gain = 1;
         }
     }
 
     if (settings->processing_flags & DDB_RG_PROCESSING_PREVENT_CLIPPING) {
         if (albumpeak) {
-            settings->albumpeak = atof (albumpeak);
+            settings->albumpeak = (float)atof (albumpeak);
         }
         else if (trackpeak) {
-            settings->albumpeak = atof (trackpeak);
+            settings->albumpeak = (float)atof (trackpeak);
         }
 
         if (trackpeak) {
-            settings->trackpeak = atof (trackpeak);
+            settings->trackpeak = (float)atof (trackpeak);
         }
         else if (albumpeak) {
-            settings->trackpeak = atof (albumpeak);
+            settings->trackpeak = (float)atof (albumpeak);
         }
     }
 
@@ -151,25 +151,25 @@ get_int_volume (ddb_replaygain_settings_t *settings) {
     switch (mode) {
     case DDB_RG_SOURCE_MODE_TRACK:
         if (!settings->has_track_gain) {
-            vol = settings->preamp_without_rg * 1000;
+            vol = (int)(settings->preamp_without_rg * 1000);
         } else {
-            vol = settings->preamp_with_rg * settings->trackgain * 1000;
+            vol = (int)(settings->preamp_with_rg * settings->trackgain * 1000);
         }
         if (settings->processing_flags & DDB_RG_PROCESSING_PREVENT_CLIPPING) {
             if (vol * settings->trackpeak > 1000) {
-                vol = 1000 / settings->trackpeak;
+                vol = (int)(1000 / settings->trackpeak);
             }
         }
         break;
     case DDB_RG_SOURCE_MODE_ALBUM:
         if (!settings->has_album_gain) {
-            vol = settings->preamp_without_rg *  1000;
+            vol = (int)(settings->preamp_without_rg *  1000);
         } else {
-            vol = settings->preamp_with_rg * settings->albumgain * 1000;
+            vol = (int)(settings->preamp_with_rg * settings->albumgain * 1000);
         }
         if (settings->processing_flags & DDB_RG_PROCESSING_PREVENT_CLIPPING) {
             if (vol * settings->albumpeak > 1000) {
-                vol = 1000 / settings->albumpeak;
+                vol = (int)(1000 / settings->albumpeak);
             }
         }
         break;
