@@ -34,16 +34,16 @@
 #include "conf.h"
 #include "premix.h"
 
-static ddb_dsp_context_t *dsp_chain;
-static DB_dsp_t *eqplug;
-static ddb_dsp_context_t *eq;
-static int dsp_on = 0;
+static ddb_dsp_context_t *_current_dsp_chain;
+static DB_dsp_t *_eqplug;
+static ddb_dsp_context_t *_eq;
+static int _dsp_on = 0;
 
-static char *dsp_input_buffer;
-static int dsp_input_buffer_size;
+static char *_dsp_input_buffer;
+static int _dsp_input_buffer_size;
 
-static char *dsp_temp_buffer;
-static int dsp_temp_buffer_size;
+static char *_dsp_temp_buffer;
+static int _dsp_temp_buffer_size;
 
 // how much bigger should read-buffer be to allow upsampling.
 // e.g. 8000Hz -> 192000Hz upsampling requires 24x buffer size,
@@ -59,19 +59,19 @@ free_dsp_buffers (void);
 
 void
 dsp_free (void) {
-    dsp_chain_free (dsp_chain);
-    dsp_chain = NULL;
+    dsp_chain_free (_current_dsp_chain);
+    _current_dsp_chain = NULL;
 
     free_dsp_buffers ();
 
-    eqplug = NULL;
-    eq = NULL;
+    _eqplug = NULL;
+    _eq = NULL;
 }
 
 void
 dsp_reset (void) {
     // reset dsp
-    ddb_dsp_context_t *dsp = dsp_chain;
+    ddb_dsp_context_t *dsp = _current_dsp_chain;
     while (dsp) {
         if (dsp->plugin->reset) {
             dsp->plugin->reset (dsp);
@@ -83,35 +83,35 @@ dsp_reset (void) {
 static char *
 ensure_dsp_input_buffer (int size) {
     if (!size) {
-        if (dsp_input_buffer) {
-            free (dsp_input_buffer);
-            dsp_input_buffer = NULL;
+        if (_dsp_input_buffer) {
+            free (_dsp_input_buffer);
+            _dsp_input_buffer = NULL;
         }
         return 0;
     }
-    if (size != dsp_input_buffer_size) {
-        dsp_input_buffer = realloc (dsp_input_buffer, size);
-        dsp_input_buffer_size = size;
+    if (size != _dsp_input_buffer_size) {
+        _dsp_input_buffer = realloc (_dsp_input_buffer, size);
+        _dsp_input_buffer_size = size;
     }
-    return dsp_input_buffer;
+    return _dsp_input_buffer;
 }
 
 static char *
 ensure_dsp_temp_buffer (int size) {
     if (!size) {
-        if (dsp_temp_buffer) {
-            free (dsp_temp_buffer);
-            dsp_temp_buffer = NULL;
+        if (_dsp_temp_buffer) {
+            free (_dsp_temp_buffer);
+            _dsp_temp_buffer = NULL;
         }
-        dsp_temp_buffer_size = 0;
+        _dsp_temp_buffer_size = 0;
         return NULL;
     }
-    if (size != dsp_temp_buffer_size) {
-        dsp_temp_buffer = realloc (dsp_temp_buffer, size);
-        dsp_temp_buffer_size = size;
+    if (size != _dsp_temp_buffer_size) {
+        _dsp_temp_buffer = realloc (_dsp_temp_buffer, size);
+        _dsp_temp_buffer_size = size;
     }
-    assert (dsp_temp_buffer);
-    return dsp_temp_buffer;
+    assert (_dsp_temp_buffer);
+    return _dsp_temp_buffer;
 }
 
 static void
@@ -122,7 +122,7 @@ free_dsp_buffers (void) {
 
 ddb_dsp_context_t *
 streamer_get_dsp_chain (void) {
-    return dsp_chain;
+    return _current_dsp_chain;
 }
 
 ddb_dsp_context_t *
@@ -143,9 +143,9 @@ dsp_clone (ddb_dsp_context_t *from) {
 void
 streamer_set_dsp_chain_real (ddb_dsp_context_t *chain) {
     streamer_lock ();
-    dsp_chain_free (dsp_chain);
-    dsp_chain = chain;
-    eq = NULL;
+    dsp_chain_free (_current_dsp_chain);
+    _current_dsp_chain = chain;
+    _eq = NULL;
 
     streamer_dsp_postinit ();
     streamer_dsp_chain_save();
@@ -178,11 +178,11 @@ streamer_dsp_chain_load (const char *fname) {
     for (;;) {
         // plugin enabled {
         int enabled = 0;
-        int err = fscanf (fp, "%99s %d {\n", temp, &enabled);
-        if (err == EOF) {
+        int res = fscanf (fp, "%99s %d {\n", temp, &enabled);
+        if (res == EOF) {
             break;
         }
-        else if (2 != err) {
+        else if (2 != res) {
             fprintf (stderr, "error plugin name\n");
             goto error;
         }
@@ -292,7 +292,7 @@ int
 streamer_dsp_chain_save (void) {
     char fname[PATH_MAX];
     snprintf (fname, sizeof (fname), "%s/dspconfig", plug_get_config_dir ());
-    return streamer_dsp_chain_save_internal (fname, dsp_chain);
+    return streamer_dsp_chain_save_internal (fname, _current_dsp_chain);
 }
 
 void
@@ -302,26 +302,26 @@ streamer_dsp_postinit (void) {
     // if not -- we add our own
 
     // eq plug
-    if (eqplug) {
+    if (_eqplug) {
         ddb_dsp_context_t *p;
 
-        for (p = dsp_chain; p; p = p->next) {
+        for (p = _current_dsp_chain; p; p = p->next) {
             if (!strcmp (p->plugin->plugin.id, "supereq")) {
                 break;
             }
         }
         if (p) {
-            eq = p;
+            _eq = p;
         }
         else {
-            eq = eqplug->open ();
-            eq->enabled = 0;
-            eq->next = dsp_chain;
-            dsp_chain = eq;
+            _eq = _eqplug->open ();
+            _eq->enabled = 0;
+            _eq->next = _current_dsp_chain;
+            _current_dsp_chain = _eq;
         }
 
     }
-    ddb_dsp_context_t *ctx = dsp_chain;
+    ddb_dsp_context_t *ctx = _current_dsp_chain;
     while (ctx) {
         if (ctx->enabled) {
             break;
@@ -329,10 +329,10 @@ streamer_dsp_postinit (void) {
         ctx = ctx->next;
     }
     if (ctx) {
-        dsp_on = 1;
+        _dsp_on = 1;
     }
     else if (!ctx) {
-        dsp_on = 0;
+        _dsp_on = 0;
     }
 
 }
@@ -342,8 +342,8 @@ streamer_dsp_init (void) {
     // load dsp chain from file
     char fname[PATH_MAX];
     snprintf (fname, sizeof (fname), "%s/dspconfig", plug_get_config_dir ());
-    dsp_chain = streamer_dsp_chain_load (fname);
-    if (!dsp_chain) {
+    _current_dsp_chain = streamer_dsp_chain_load (fname);
+    if (!_current_dsp_chain) {
         // first run, let's add resampler
         DB_dsp_t *src = (DB_dsp_t *)plug_get_for_id ("SRC");
         if (src) {
@@ -352,29 +352,29 @@ streamer_dsp_init (void) {
             src->set_param (inst, 0, "48000"); // samplerate
             src->set_param (inst, 1, "2"); // quality=SINC_FASTEST
             src->set_param (inst, 2, "1"); // auto
-            inst->next = dsp_chain;
-            dsp_chain = inst;
+            inst->next = _current_dsp_chain;
+            _current_dsp_chain = inst;
         }
     }
 
-    eqplug = (DB_dsp_t *)plug_get_for_id ("supereq");
+    _eqplug = (DB_dsp_t *)plug_get_for_id ("supereq");
     streamer_dsp_postinit ();
 
     // load legacy eq settings from pre-0.5
-    if (eq && eqplug && conf_find ("eq.", NULL)) {
-        eq->enabled = deadbeef->conf_get_int ("eq.enable", 0);
+    if (_eq && _eqplug && conf_find ("eq.", NULL)) {
+        _eq->enabled = deadbeef->conf_get_int ("eq.enable", 0);
         char s[50];
 
         // 0.4.4 was writing buggy settings, need to multiply by 2 to compensate
         conf_get_str ("eq.preamp", "0", s, sizeof (s));
         snprintf (s, sizeof (s), "%f", atof(s)*2);
-        eqplug->set_param (eq, 0, s);
+        _eqplug->set_param (_eq, 0, s);
         for (int i = 0; i < 18; i++) {
             char key[100];
             snprintf (key, sizeof (key), "eq.band%d", i);
             conf_get_str (key, "0", s, sizeof (s));
             snprintf (s, sizeof (s), "%f", atof(s)*2);
-            eqplug->set_param (eq, 1+i, s);
+            _eqplug->set_param (_eq, 1+i, s);
         }
         // delete obsolete settings
         conf_remove_items ("eq.");
@@ -394,9 +394,9 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
     dspfmt.is_float = 1;
 
     int can_bypass = 0;
-    if (dsp_on) {
+    if (_dsp_on) {
         // check if DSP can be passed through
-        ddb_dsp_context_t *dsp = dsp_chain;
+        ddb_dsp_context_t *dsp = _current_dsp_chain;
         while (dsp) {
             if (dsp->enabled) {
                 if (dsp->plugin->plugin.api_vminor >= 1) {
@@ -415,7 +415,7 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
         }
     }
 
-    if (!dsp_on || can_bypass) {
+    if (!_dsp_on || can_bypass) {
         return 0;
     }
 
@@ -431,7 +431,7 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
     // convert to float
     /*int tempsize = */pcm_convert (input_fmt, input, &dspfmt, tempbuf, inputsize);
     int nframes = inputsize / inputsamplesize;
-    ddb_dsp_context_t *dsp = dsp_chain;
+    ddb_dsp_context_t *dsp = _current_dsp_chain;
     float ratio = 1.f;
     int maxframes = tempbuf_size / dspsamplesize;
     while (dsp) {
@@ -455,9 +455,9 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
 void
 dsp_get_output_format (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt) {
     memcpy (out_fmt, in_fmt, sizeof (ddb_waveformat_t));
-    if (dsp_on) {
+    if (_dsp_on) {
         // check if DSP can be passed through
-        ddb_dsp_context_t *dsp = dsp_chain;
+        ddb_dsp_context_t *dsp = _current_dsp_chain;
         while (dsp) {
             if (dsp->enabled) {
                 float ratio;
