@@ -335,14 +335,14 @@ cp1251_to_utf8(const uint8_t *in, int inlen, uint8_t *out, int outlen) {
 	for(int i = 0; i < inlen && out < end - 4; i++) {
 		long c = utf[*in++];
 		if (c < 0x80) {
-			*out++ = c;
+			*out++ = (uint8_t)c;
 		}
 		else if (c < 0x800) {
-			*out++ = (c >> 6) | 0xc0;
+			*out++ = (uint8_t)((c >> 6) | 0xc0);
 			*out++ = (c & 0x3f) | 0x80;
 		}
 		else if( c < 0x10000 ) {
-			*out++ = (c >> 12) | 0xe0;
+			*out++ = (uint8_t)((c >> 12) | 0xe0);
 			*out++ = ((c >> 6) & 0x3f) | 0x80;
 			*out++ = (c & 0x3f) | 0x80;
 		}
@@ -445,7 +445,7 @@ junk_utf8_to_cp1252(const uint8_t *in, int inlen, uint8_t *out, int outlen) {
             int i;
             for (i = 0; cp1252_charset[i]; i++) {
                 if (strlen (cp1252_charset[i]) == idx && !memcmp (in, cp1252_charset[i], idx)) {
-                    *out++ = i + 0x80;
+                    *out++ = (uint8_t)(i + 0x80);
                     outlen--;
                     break;
                 }
@@ -573,19 +573,19 @@ ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, const c
             }
         }
         else if (!strcasecmp (cs_in, "SHIFT-JIS")) {
-            int len = 0;
-            while (inlen > 0 && len < outlen) {
+            int sj_len = 0;
+            while (inlen > 0 && sj_len < outlen) {
                 if (*in > 0) {
                     *out++ = *in++;
                     inlen--;
-                    len++;
+                    sj_len++;
                 }
                 else if (inlen < 2) {
                     return -1;
                 }
                 else {
                     // find character in table
-                    uint16_t c = (((uint8_t*)in)[0] << 8) | ((uint8_t*)in)[1];
+                    uint16_t c = (uint16_t)((((uint8_t*)in)[0] << 8) | ((uint8_t*)in)[1]);
                     int i;
                     for (i = 0; sj_to_unicode[i]; i += 2) {
                         if (c == sj_to_unicode[i]) {
@@ -601,10 +601,10 @@ ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, const c
                         ConversionResult res = ConvertUTF16toUTF8 ((const UTF16**)&src, (const UTF16 *)(src+2), (UTF8**)&dst, dst+5, strictConversion);
                         if (res == conversionOK) {
                             size_t converted_len = dst - utf8_val;
-                            if (converted_len < outlen-len) {
+                            if (converted_len < outlen-sj_len) {
                                 memcpy (out, utf8_val, converted_len);
                                 out += converted_len;
-                                len += converted_len;
+                                sj_len += converted_len;
                                 inlen -= 2;
                                 in += 2;
                             }
@@ -1286,7 +1286,7 @@ junk_id3v1_write2 (int fd, playItem_t *it, const char *enc) {
     // tracknum
     meta = pl_find_meta (it, "track");
     if (meta) {
-        tracknum = atoi (meta);
+        tracknum = (uint8_t)min(0xff, atoi (meta));
     }
 
     // find genre
@@ -1294,7 +1294,7 @@ junk_id3v1_write2 (int fd, playItem_t *it, const char *enc) {
     if (meta) {
         for (int i = 0; junk_genretbl[i]; i++) {
             if (!strcasecmp (meta, junk_genretbl[i])) {
-                genreid = i;
+                genreid = (uint8_t)i;
                 break;
             }
         }
@@ -1369,7 +1369,7 @@ junk_id3v1_write (FILE *fp, playItem_t *it, const char *enc) {
     // tracknum
     meta = pl_find_meta (it, "track");
     if (meta) {
-        tracknum = atoi (meta);
+        tracknum = (uint8_t)min(0xff, atoi (meta));
     }
 
     // find genre
@@ -1377,7 +1377,7 @@ junk_id3v1_write (FILE *fp, playItem_t *it, const char *enc) {
     if (meta) {
         for (int i = 0; junk_genretbl[i]; i++) {
             if (!strcasecmp (meta, junk_genretbl[i])) {
-                genreid = i;
+                genreid = (uint8_t)i;
                 break;
             }
         }
@@ -1602,19 +1602,19 @@ junk_apev2_add_frame (playItem_t *it, DB_apev2_tag_t *tag_store, DB_apev2_frame_
 
             if (!frame_mapping[m]) {
                 if (!strncasecmp (key, "replaygain_album_gain", 21)) {
-                    pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (value));
+                    pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, (float)atof (value));
                     trace ("album_gain=%s\n", value);
                 }
                 else if (!strncasecmp (key, "replaygain_album_peak", 21)) {
-                    pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (value));
+                    pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, (float)atof (value));
                     trace ("album_peak=%s\n", value);
                 }
                 else if (!strncasecmp (key, "replaygain_track_gain", 21)) {
-                    pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (value));
+                    pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, (float)atof (value));
                     trace ("track_gain=%s\n", value);
                 }
                 else if (!strncasecmp (key, "replaygain_track_peak", 21)) {
-                    pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (value));
+                    pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, (float)atof (value));
                     trace ("track_peak=%s\n", value);
                 }
                 else {
@@ -2043,7 +2043,7 @@ junk_id3v2_add_text_frame2 (DB_id3v2_tag_t *tag, const char *frame_id, const cha
 
     trace ("junklib: setting id3v2.%d text frame '%s' = '%s'\n", tag->version[0], frame_id, value);
 
-    int encoding = 0;
+    uint8_t encoding = 0;
 
     int outlen = -1;
     if (tag->version[0] == 4) {
@@ -2134,7 +2134,7 @@ junk_id3v2_add_comment_frame (DB_id3v2_tag_t *tag, const char *frame_id, const c
     size_t buffersize = inputsize * 4;
     char *buffer = malloc (buffersize);
 
-    int enc = 0;
+    uint8_t enc = 0;
     int l;
 
     if (tag->version[0] == 4) {
@@ -2240,8 +2240,8 @@ junk_id3v2_add_txxx_frame (DB_id3v2_tag_t *tag, const char *key, const char *val
 
     size_t outsize = (keylen + valuelen) * 4 + 1;
     uint8_t *out = malloc (outsize);
-    int encoding = 0;
 
+    uint8_t encoding = 0;
 
     int res;
 
@@ -2401,7 +2401,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
         // convert flags
         uint8_t flags[2];
         // 1st byte (status flags) is the same, but shifted by 1 bit to the left
-        flags[0] = f24->flags[0] << 1;
+        flags[0] = (uint8_t)(f24->flags[0] << 1);
         
         // 2nd byte (format flags) is quite different
         // 2.4 format is %0h00kmnp (6:grouping, 3:compression, 2:encryption, 1:unsync, 0:datalen)
@@ -3691,18 +3691,18 @@ static int junk_id3v2_load_rva2 (int version_major, playItem_t *it, uint8_t *rea
 
     if (!strcasecmp (rva_desc, "album")) {
         if (!pl_find_meta (it, ddb_internal_rg_keys[DDB_REPLAYGAIN_ALBUMGAIN])) {
-            pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, (float)volume_adjust / 512.0);
+            pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, volume_adjust / 512.f);
         }
         if (!pl_find_meta (it, ddb_internal_rg_keys[DDB_REPLAYGAIN_ALBUMPEAK]) && peak_val) {
-            pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, (float)peak_val / 32767.0); /* NOTE: this is a guess based on mp3gain 1.5.2 written tags */
+            pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, peak_val / 32767.f); /* NOTE: this is a guess based on mp3gain 1.5.2 written tags */
         }
     }
     else if (!strcasecmp (rva_desc, "track")) {
         if (!pl_find_meta (it, ddb_internal_rg_keys[DDB_REPLAYGAIN_TRACKGAIN])) {
-            pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, (float)volume_adjust / 512.0);
+            pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, volume_adjust / 512.f);
         }
         if (!pl_find_meta (it, ddb_internal_rg_keys[DDB_REPLAYGAIN_TRACKPEAK]) && peak_val) {
-            pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, (float)peak_val / 32767.0);
+            pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, peak_val / 32767.f);
         }
     }
 
@@ -4138,11 +4138,11 @@ junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, D
 
     // parse basic 2.2 text frames
     else if (version_major == 2) {
-        int added = 0;
+        int txx_added = 0;
         if (strcmp (frameid, "TXX")) {
             for (int f = 0; frame_mapping[f]; f++) {
                 if (frame_mapping[f+MAP_ID3V22] && !strcmp (frameid, frame_mapping[f+MAP_ID3V22])) {
-                    added = 1;
+                    txx_added = 1;
                     if (synched_size > MAX_TEXT_FRAME_SIZE) {
                         trace ("frame %s is too big, discard\n", frameid);
                         break;
@@ -4172,7 +4172,7 @@ junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, D
             }
         }
 
-        if (added) {
+        if (txx_added) {
             return 0;
         }
 
@@ -4737,7 +4737,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         if (id3v2_size <= 0 || strip_id3v2 || deadbeef->junk_id3v2_read_full (NULL, &id3v2, fp) != 0) {
             deadbeef->junk_id3v2_free (&id3v2);
             memset (&id3v2, 0, sizeof (id3v2));
-            id3v2.version[0] = id3v2_version;
+            id3v2.version[0] = (uint8_t)id3v2_version;
         }
         // convert to required version
         while (id3v2.version[0] != id3v2_version) {
