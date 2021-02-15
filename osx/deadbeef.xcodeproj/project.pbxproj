@@ -20989,7 +20989,9 @@
 				CODE_SIGN_IDENTITY = "-";
 				EXECUTABLE_PREFIX = "";
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../plugins/dumb/dumb-kode54/include",
@@ -20997,6 +20999,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
+				WARNING_CFLAGS = "-Wno-strict-prototypes";
 			};
 			name = Debug;
 		};
@@ -21007,7 +21010,9 @@
 				CODE_SIGN_IDENTITY = "-";
 				EXECUTABLE_PREFIX = "";
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../plugins/dumb/dumb-kode54/include",
@@ -21015,6 +21020,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
+				WARNING_CFLAGS = "-Wno-strict-prototypes";
 			};
 			name = Release;
 		};
