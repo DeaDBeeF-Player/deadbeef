@@ -105,7 +105,7 @@ typedef struct
    parameter. Structure is referenced, not copied, must remain valid for entire
    usage period. Passing NULL reverts to default, POSIX based implementation */
 void mms_set_default_io_impl(const mms_io_t *io);
-const mms_io_t* mms_get_default_io_impl();
+const mms_io_t* mms_get_default_io_impl(void);
 
 #ifdef __cplusplus
 }
