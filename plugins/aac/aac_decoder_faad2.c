@@ -52,22 +52,22 @@ aacDecoderInitRaw_FAAD2 (aacDecoderHandle_t *_dec, uint8_t *buff, size_t buffSiz
     return 0;
 }
 
-static const uint8_t *
-aacDecoderGetASC_FAAD2 (aacDecoderHandle_t *_dec) {
-    faad2Decoder_t *dec = (faad2Decoder_t *)_dec;
-    NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (dec->dec);
-    return (uint8_t *)conf;
-}
-
-static int
-aacDecoderSetASC_FAAD2 (aacDecoderHandle_t *_dec, const uint8_t *asc) {
-    faad2Decoder_t *dec = (faad2Decoder_t *)_dec;
-    long res = NeAACDecSetConfiguration (dec->dec, (NeAACDecConfigurationPtr)asc);
-    if (res < 0) {
-        return -1;
-    }
-    return 0;
-}
+//static const uint8_t *
+//aacDecoderGetASC_FAAD2 (aacDecoderHandle_t *_dec) {
+//    faad2Decoder_t *dec = (faad2Decoder_t *)_dec;
+//    NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (dec->dec);
+//    return (uint8_t *)conf;
+//}
+//
+//static int
+//aacDecoderSetASC_FAAD2 (aacDecoderHandle_t *_dec, const uint8_t *asc) {
+//    faad2Decoder_t *dec = (faad2Decoder_t *)_dec;
+//    long res = NeAACDecSetConfiguration (dec->dec, (NeAACDecConfigurationPtr)asc);
+//    if (res < 0) {
+//        return -1;
+//    }
+//    return 0;
+//}
 
 static uint8_t *
 ascDecoderDecodeFrame_FAAD2 (aacDecoderHandle_t *_dec, aacDecoderFrameInfo_t *frameInfo, const uint8_t *buffer, size_t bufferSize) {
