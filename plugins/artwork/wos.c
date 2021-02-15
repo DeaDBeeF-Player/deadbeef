@@ -34,7 +34,7 @@
 #define trace(...)
 
 void
-strcopy_escape (char *dst, int d_len, const char *src, int n) {
+strcopy_escape (char *dst, int d_len, const char *src, size_t n) {
     char *e = dst + d_len - 1;
     const char *se = src + n;
     while (dst < e && *src && src < se) {

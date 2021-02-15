@@ -54,7 +54,7 @@ int fetch_from_albumart_org (const char *artist, const char *album, const char *
 
     trace("fetch_from_albumart_org: %s\n", url);
     char buffer[10000];
-    const size_t size = artwork_http_request(url, buffer, sizeof(buffer));
+    /*const size_t size = */artwork_http_request(url, buffer, sizeof(buffer));
     char *img = strstr (buffer, "http://ecx.images-amazon.com/images/I/");
     if (!img) {
         trace ("fetch_from_albumart_org: image url not found in response from (%d bytes)\n", size);
