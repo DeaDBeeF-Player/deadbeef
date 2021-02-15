@@ -100,6 +100,7 @@ sndfile_open (uint32_t hints) {
 }
 
 
+#if 0
 // taken from libsndfile
 #define     ARRAY_LEN(x)    ((int) (sizeof (x) / sizeof ((x) [0])))
 /* This stores which bit in dwChannelMask maps to which channel */
@@ -155,7 +156,7 @@ wavex_gen_channel_mask (const int *chan_map, int channels)
 
     return mask ;
 } /* wavex_gen_channel_mask */
-
+#endif
 
 static int
 sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
