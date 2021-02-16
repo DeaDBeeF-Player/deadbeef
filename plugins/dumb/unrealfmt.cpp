@@ -346,7 +346,7 @@ void upkg::get_imports(void)
 void upkg::get_type(char *buf, int e, int d)
 {
 	int i, j, index;
-	signed long tmp;
+	signed long tmp = 0;
 	char *chtmp;
 
 	index = 0;

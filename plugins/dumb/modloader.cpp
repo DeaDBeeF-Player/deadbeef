@@ -270,8 +270,7 @@ DUH * g_open_module(const char * path, int *is_it, int *is_dos, int *is_ptcompat
              ptr[0] == 'P' && ptr[1] == 'S' &&
              ptr[2] == 'M' && ptr[3] == ' ')
     {
-        int start_order;
-        duh = dumb_read_psm_quick(f, start_order);
+        duh = dumb_read_psm_quick(f, 0);
         *ftype = "PSM";
     }
     else if (size >= 4 &&

@@ -257,7 +257,7 @@ int resampler_run_sinc_sse(resampler * r, float ** out_, float * out_end)
             // accumulate in extended precision
             float kernel_sum = 0.0;
             __m128 kernel[SINC_WIDTH / 2];
-            __m128 temp1, temp2;
+            __m128 temp1 = _mm_setzero_ps(), temp2;
             __m128 samplex = _mm_setzero_ps();
             float *kernelf = (float*)(&kernel);
             int i = SINC_WIDTH;
