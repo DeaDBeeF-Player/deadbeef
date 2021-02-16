@@ -503,14 +503,11 @@ static void AICA_Init(struct _AICA *AICA, const struct AICAinterface *intf)
 			AICA->Master=0;
 		}
 
-		if (intf->region)
-		{
-			AICA->AICARAM = &intf->cpu->dc_ram[0];
-			AICA->AICARAM_LENGTH = 2*1024*1024;
-			AICA->DSP.AICARAM = (UINT16 *)AICA->AICARAM;
-			AICA->DSP.AICARAM_LENGTH =  (2*1024*1024)/2;
-			AICA->cpu = intf->cpu;
-		}
+        AICA->AICARAM = &intf->cpu->dc_ram[0];
+        AICA->AICARAM_LENGTH = 2*1024*1024;
+        AICA->DSP.AICARAM = (UINT16 *)AICA->AICARAM;
+        AICA->DSP.AICARAM_LENGTH =  (2*1024*1024)/2;
+        AICA->cpu = intf->cpu;
 	}
 
 	for(i=0;i<0x400;++i)

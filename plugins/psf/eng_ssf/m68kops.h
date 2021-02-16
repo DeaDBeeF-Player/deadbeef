@@ -1971,7 +1971,7 @@ void m68k_op_unpk_16_mm_ay7(m68ki_cpu_core *cpu);
 void m68k_op_unpk_16_mm_axy7(m68ki_cpu_core *cpu);
 void m68k_op_unpk_16_mm(m68ki_cpu_core *cpu);
 /* Build the opcode handler table */
-void m68ki_build_opcode_table();
+void m68ki_build_opcode_table(void);
 
 extern void (*m68ki_instruction_jump_table[0x10000])(m68ki_cpu_core *cpu); /* opcode handler jump table */
 extern unsigned char m68ki_cycles[][0x10000];

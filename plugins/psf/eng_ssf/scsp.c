@@ -463,14 +463,11 @@ static void SCSP_Init(struct _SCSP *SCSP, const struct SCSPinterface *intf)
 			SCSP->Master=0;
 		}
 
-		if (intf->region)
-		{
-			SCSP->SCSPRAM = (unsigned char *)intf->region[0];
-			SCSP->SCSPRAM_LENGTH = 512*1024;
-			SCSP->DSP.SCSPRAM = (UINT16 *)SCSP->SCSPRAM;
-			SCSP->DSP.SCSPRAM_LENGTH =  (512*1024)/2;
-//			SCSP->SCSPRAM += intf->roffset;
-		}
+        SCSP->SCSPRAM = (unsigned char *)intf->region[0];
+        SCSP->SCSPRAM_LENGTH = 512*1024;
+        SCSP->DSP.SCSPRAM = (UINT16 *)SCSP->SCSPRAM;
+        SCSP->DSP.SCSPRAM_LENGTH =  (512*1024)/2;
+//        SCSP->SCSPRAM += intf->roffset;
 	}
 
 	for(i=0;i<0x400;++i)

@@ -356,18 +356,15 @@ void *psf_start(const char *path, uint8 *buffer, uint32 length)
 	// patch illegal Chocobo Dungeon 2 code - CaitSith2 put a jump in the delay slot from a BNE
 	// and rely on Highly Experimental's buggy-ass CPU to rescue them.  Verified on real hardware
 	// that the initial code is wrong.
-	if (s->c->inf_game)
-	{
-		if (!strcmp(s->c->inf_game, "Chocobo Dungeon 2"))
-		{
-			if (s->mips_cpu->psx_ram[0xbc090/4] == LE32(0x0802f040))
-			{
-		 		s->mips_cpu->psx_ram[0xbc090/4] = LE32(0);
-				s->mips_cpu->psx_ram[0xbc094/4] = LE32(0x0802f040);
-				s->mips_cpu->psx_ram[0xbc098/4] = LE32(0);
-			}
-		}
-	}
+    if (!strcmp(s->c->inf_game, "Chocobo Dungeon 2"))
+    {
+        if (s->mips_cpu->psx_ram[0xbc090/4] == LE32(0x0802f040))
+        {
+            s->mips_cpu->psx_ram[0xbc090/4] = LE32(0);
+            s->mips_cpu->psx_ram[0xbc094/4] = LE32(0x0802f040);
+            s->mips_cpu->psx_ram[0xbc098/4] = LE32(0);
+        }
+    }
 
 //	psx_ram[0x118b8/4] = LE32(0);	// crash 2 hack
 
