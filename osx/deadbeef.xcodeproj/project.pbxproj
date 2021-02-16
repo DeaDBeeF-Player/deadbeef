@@ -17925,6 +17925,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
+				WARNING_CFLAGS = "-Wno-undefined-bool-conversion";
 			};
 			name = Debug;
 		};
@@ -17962,6 +17963,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
+				WARNING_CFLAGS = "-Wno-undefined-bool-conversion";
 			};
 			name = Release;
 		};
@@ -17990,6 +17992,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
+				WARNING_CFLAGS = "-Wno-undefined-bool-conversion";
 			};
 			name = Debug;
 		};
@@ -18018,6 +18021,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
+				WARNING_CFLAGS = "-Wno-undefined-bool-conversion";
 			};
 			name = Release;
 		};
