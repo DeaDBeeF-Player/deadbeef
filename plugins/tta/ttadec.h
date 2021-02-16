@@ -81,7 +81,7 @@ typedef unsigned char byte;
 #endif
 
 #define PREDICTOR1(x, k)	((int)((((uint64)x << k) - x) >> k))
-#define DEC(x)			(((x)&1)?(++(x)>>1):(-(x)>>1))
+#define DEC(x)			(((x)&1)?(((x)+1)>>1):(-(x)>>1))
 
 typedef struct {
 	unsigned int TTAid;
