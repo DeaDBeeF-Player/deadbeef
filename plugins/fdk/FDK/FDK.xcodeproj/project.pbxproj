@@ -1272,11 +1272,11 @@
 			};
 			buildConfigurationList = 2D65D6E91E0A910B00FD1C8A /* Build configuration list for PBXProject "FDK" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
+				Base,
 			);
 			mainGroup = 2D65D6E51E0A910B00FD1C8A;
 			productRefGroup = 2D65D6EF1E0A910B00FD1C8A /* Products */;
