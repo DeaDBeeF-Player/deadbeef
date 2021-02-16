@@ -103,15 +103,15 @@ typedef void (*memfunc68_t)(emu68_t * const);
 #define WORD_MSK ( (int68_t) 0xFFFF0000 )
 #define LONG_MSK ( (int68_t) 0x00000000 )
 
-#define NRM_BYTE_MSK ( (int68_t) ( (int68_t) 0x000000FF << BYTE_FIX ) )
-#define NRM_WORD_MSK ( (int68_t) ( (int68_t) 0x0000FFFF << WORD_FIX ) )
-#define NRM_LONG_MSK ( (int68_t) ( (int68_t) 0xFFFFFFFF << LONG_FIX ) )
+#define NRM_BYTE_MSK ( (int68_t) ( (int68_t) (0x000000FFU << BYTE_FIX) ) )
+#define NRM_WORD_MSK ( (int68_t) ( (int68_t) (0x0000FFFFU << WORD_FIX) ) )
+#define NRM_LONG_MSK ( (int68_t) ( (int68_t) (0xFFFFFFFFU << LONG_FIX) ) )
 /* L={7,15,31} */
 #define NRM_MSK(L)   ( (int68_t) ( (int68_t) ((int68_t) 1 << SIGN_BIT) >> (L)))
 
-#define NRM_BYTE_ONE ( (int68_t) ( (int68_t) 0x00000001 << BYTE_FIX ) )
-#define NRM_WORD_ONE ( (int68_t) ( (int68_t) 0x00000001 << WORD_FIX ) )
-#define NRM_LONG_ONE ( (int68_t) ( (int68_t) 0x00000001 << LONG_FIX ) )
+#define NRM_BYTE_ONE ( (int68_t) ( (int68_t) (0x00000001U << BYTE_FIX) ) )
+#define NRM_WORD_ONE ( (int68_t) ( (int68_t) (0x00000001U << WORD_FIX) ) )
+#define NRM_LONG_ONE ( (int68_t) ( (int68_t) (0x00000001U << LONG_FIX) ) )
 
 #endif
 

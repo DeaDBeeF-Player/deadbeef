@@ -19525,6 +19525,7 @@
 					"-Wno-unreachable-code",
 					"-Wno-unused-value",
 					"-Wno-multichar",
+					"-Wno-null-dereference",
 				);
 			};
 			name = Debug;
@@ -19591,6 +19592,7 @@
 					"-Wno-unreachable-code",
 					"-Wno-unused-value",
 					"-Wno-multichar",
+					"-Wno-null-dereference",
 				);
 			};
 			name = Release;

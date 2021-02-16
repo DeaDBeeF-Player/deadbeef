@@ -112,7 +112,7 @@ static int ifdopen(vfs68_t * vfs)
   int imode;
   vfs68_fd_t * isf = (vfs68_fd_t *)vfs;
 
-  if (!isf->name || isf->fd != -1) {
+  if (isf->fd != -1) {
     return -1;
   }
 
