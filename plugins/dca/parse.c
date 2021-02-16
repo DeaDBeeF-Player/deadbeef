@@ -681,7 +681,7 @@ static int dca_subframe_header (dca_state_t * state)
                 state->joint_scale_factor[j][k] = scale;/*joint_scale_table[scale];*/
             }
 
-            if (!state->debug_flag & 0x02)
+            if (!(state->debug_flag & 0x02))
             {
                 fprintf (stderr, "Joint stereo coding not supported\n");
                 state->debug_flag |= 0x02;
@@ -951,7 +951,7 @@ static int dca_subsubframe (dca_state_t * state)
              * for this subsubframe. */
             int m;
 
-            if (!state->debug_flag & 0x01)
+            if (!(state->debug_flag & 0x01))
             {
                 trace ("Stream with high frequencies VQ coding\n");
                 state->debug_flag |= 0x01;
