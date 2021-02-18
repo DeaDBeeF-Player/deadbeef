@@ -44,7 +44,6 @@
 static DB_decoder_t plugin;
 DB_functions_t *deadbeef;
 
-#define OUT_BUFFER_SIZE 1024*8*2 // AAC frame can be 1024 or 960 samples, up to 8 channels, 2 bytes each
 #define AAC_MAX_PACKET_SIZE 768*8 // setting max input packet size, to have some headroom
 
 #define MP4FILE mp4ff_t *
@@ -100,7 +99,8 @@ typedef struct {
     int remaining;
 
     // buffer with decoded samples
-    uint8_t out_buffer[OUT_BUFFER_SIZE];
+    uint8_t *out_buffer;
+    size_t out_buffer_size;
     int out_remaining;
     int num_errors;
     char *samplebuffer;
@@ -625,6 +625,10 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
 
         if (info->frame_info.samples > 0) {
+            if (info->out_buffer_size < info->frame_info.samples * 2) {
+                info->out_buffer_size = info->frame_info.samples * 2;
+                info->out_buffer = realloc (info->out_buffer, info->out_buffer_size);
+            }
             memcpy (info->out_buffer, samples, info->frame_info.samples * 2);
             info->out_remaining = (int)(info->frame_info.samples / info->frame_info.channels);
         }
