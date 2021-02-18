@@ -597,7 +597,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             trace ("NeAACDecDecode %d bytes\n", info->remaining)
             samples = aacDecoderDecodeFrame (info->dec, &info->frame_info, info->buffer, info->remaining);
             bitrate_bytes += info->frame_info.bytesconsumed;
-            bitrate_samples += info->frame_info.samples / info->frame_info.channels;
+            bitrate_samples += info->frame_info.channels > 0 ? info->frame_info.samples / info->frame_info.channels : 0;
             trace ("samples =%p\n", samples);
             if (!samples) {
 //                trace ("NeAACDecDecode failed with error %s (%d), consumed=%d\n", NeAACDecGetErrorMessage(info->frame_info.error), (int)info->frame_info.error, (int)info->frame_info.bytesconsumed);
