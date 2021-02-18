@@ -416,6 +416,7 @@ aac_free (DB_fileinfo_t *_info) {
         if (info->dec) {
             aacDecoderClose (info->dec);
         }
+        free (info->out_buffer);
         free (info);
     }
 }
