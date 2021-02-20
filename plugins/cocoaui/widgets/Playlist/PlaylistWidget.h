@@ -9,9 +9,14 @@
 #import <Foundation/Foundation.h>
 #import "WidgetBase.h"
 
+// HACK: we still require access to the view controller from main window, because ARC cleanup is bugged, and we need to call cleanup method directly
+@class PlaylistViewController;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface PlaylistWidget : WidgetBase<WidgetProtocol>
+
+@property (nonatomic,readonly) PlaylistViewController *viewController;
 
 @end
 
