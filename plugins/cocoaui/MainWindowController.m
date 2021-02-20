@@ -25,7 +25,6 @@
 #import "GuiPreferencesWindowController.h"
 #import "MainWindowController.h"
 #import "PlaylistWidget.h"
-#import "PlaylistViewController.h"
 #import "PreferencesWindowController.h"
 #import "TrackPositionFormatter.h"
 #include "deadbeef.h"
@@ -58,9 +57,6 @@ extern DB_functions_t *deadbeef;
         [_updateTimer invalidate];
         _updateTimer = nil;
     }
-    // FIXME: HACK: this should not be needed, since PlaylistViewController dealloc is supposed to handle everything,
-    // but for some reason some stuff remains unreleased if we rely on dealloc to call this method.
-    [((PlaylistWidget *)self.rootWidget).viewController cleanup];
     self.rootWidget = nil;
 }
 

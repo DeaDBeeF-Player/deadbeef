@@ -146,12 +146,11 @@ static int grouptitleheight = 22;
     int sel;
 
     NSPoint draggingLocation = [self convertPoint:[sender draggingLocation] fromView:nil];
-    id<DdbListviewDelegate> delegate = self.delegate;
 
-    DdbListviewRow_t row = [delegate invalidRow];
+    DdbListviewRow_t row = [self.dataModel invalidRow];
     sel = [self dragInsertPointForYPos:draggingLocation.y];
     if (-1 != sel) {
-        row = [delegate rowForIndex:sel];
+        row = [self.dataModel rowForIndex:sel];
     }
 
     if ([pboard.types containsObject:ddbPlaylistItemsUTIType]) {
@@ -171,7 +170,7 @@ static int grouptitleheight = 22;
             NSUInteger length = holder.itemsIndices.count;
 
             NSDragOperation op = sender.draggingSourceOperationMask;
-            [delegate dropItems:(int)from_playlist before:row indices:indices count:(int)length copy:op==NSDragOperationCopy];
+            [self.delegate dropItems:(int)from_playlist before:row indices:indices count:(int)length copy:op==NSDragOperationCopy];
             free(indices);
         }
     }
@@ -189,25 +188,25 @@ static int grouptitleheight = 22;
                 items[itemCount++] = (DdbListviewRow_t)it;
             }
         }
-        [delegate dropPlayItems:items before:row count:(int)itemCount];
+        [self.delegate dropPlayItems:items before:row count:(int)itemCount];
         free (items);
     }
     else if ([pboard.types containsObject:NSFilenamesPboardType]) {
 
         NSArray *paths = [pboard propertyListForType:NSFilenamesPboardType];
-        if (row != [delegate invalidRow]) {
+        if (row != [self.dataModel invalidRow]) {
             // add before selected row
-            [delegate externalDropItems:paths after: [delegate rowForIndex:sel-1] ];
+            [self.delegate externalDropItems:paths after: [self.dataModel rowForIndex:sel-1] ];
         }
         else {
             // no selected row, add to end
-            DdbListviewRow_t lastRow = [delegate rowForIndex:([delegate rowCount]-1)];
-            [delegate externalDropItems:paths after:lastRow];
+            DdbListviewRow_t lastRow = [self.dataModel rowForIndex:([self.dataModel rowCount]-1)];
+            [self.delegate externalDropItems:paths after:lastRow];
         }
     }
 
-    if (row != [delegate invalidRow]) {
-        [delegate unrefRow:row];
+    if (row != [self.dataModel invalidRow]) {
+        [self.dataModel unrefRow:row];
     }
     _draggingInView = NO;
     return YES;
@@ -236,7 +235,6 @@ static int grouptitleheight = 22;
                      viewportY:(CGFloat)viewportY
                     clipRegion:(NSRect)clip {
     int x = 0;
-    id<DdbListviewDelegate> delegate = self.delegate;
 
     int title_height = [self grouptitle_height];
     for (DdbListviewCol_t col = [self.delegate firstColumn];
@@ -250,7 +248,7 @@ static int grouptitleheight = 22;
             [clr set];
             [NSBezierPath fillRect:NSMakeRect (x, y, w, grp_next_y - y)];
             if (title_height > 0) {
-                [delegate drawAlbumArtForGroup:grp groupIndex:groupIndex inColumn:col isPinnedGroup:isPinnedGroup nextGroupCoord:grp_next_y xPos:x yPos:y viewportY:viewportY width:w height:grp->height];
+                [self.delegate drawAlbumArtForGroup:grp groupIndex:groupIndex inColumn:col isPinnedGroup:isPinnedGroup nextGroupCoord:grp_next_y xPos:x yPos:y viewportY:viewportY width:w height:grp->height];
             }
         }
         x += w;
@@ -260,7 +258,6 @@ static int grouptitleheight = 22;
 #pragma mark - Drawing
 
 - (void)drawGroupTitle:(DdbListviewGroup_t *)grp grp_y:(int)grp_y title_height:(int)title_height {
-    id<DdbListviewDelegate> delegate = self.delegate;
     NSRect groupRect = NSMakeRect(0, grp_y, self.frame.size.width, title_height);
     NSColor *clr = [NSColor.controlAlternatingRowBackgroundColors objectAtIndex:0];
     [clr set];
@@ -268,7 +265,7 @@ static int grouptitleheight = 22;
     [NSColor.greenColor set];
 #endif
     [NSBezierPath fillRect:groupRect];
-    [delegate drawGroupTitle:grp->head inRect:groupRect];
+    [self.delegate drawGroupTitle:grp->head inRect:groupRect];
 }
 
 - (void)updatePinnedGroup {
@@ -328,8 +325,6 @@ static int grouptitleheight = 22;
 }
 
 - (void)drawListView:(NSRect)dirtyRect {
-    id<DdbListviewDelegate> delegate = self.delegate;
-
     [self groupCheck];
 
     DdbListviewGroup_t *grp = [self groups];
@@ -349,10 +344,10 @@ static int grouptitleheight = 22;
         groupIndex++;
     }
 
-    int cursor = [delegate cursor];
-    DdbListviewRow_t cursor_it = [delegate invalidRow];
+    int cursor = [self.dataModel cursor];
+    DdbListviewRow_t cursor_it = [self.dataModel invalidRow];
     if (cursor != -1) {
-        cursor_it = [delegate rowForIndex:cursor];
+        cursor_it = [self.dataModel rowForIndex:cursor];
     }
 
     int title_height = [self grouptitle_height];
@@ -366,7 +361,7 @@ static int grouptitleheight = 22;
 
     while (grp && grp_y < clip_y + clip_h) {
         DdbListviewRow_t it = grp->head;
-        [self.delegate refRow:it];
+        [self.dataModel refRow:it];
 
         if (clip_y <= grp_y + title_height) {
             // draw group title
@@ -396,7 +391,7 @@ static int grouptitleheight = 22;
                 }
 
                 if (x < dirtyRect.size.width) {
-                    [self.delegate drawCell:idx+i forRow:it forColumn:[delegate invalidColumn] inRect:NSMakeRect(x, yy, dirtyRect.size.width-x, rowheight-1) focused:focused];
+                    [self.delegate drawCell:idx+i forRow:it forColumn:[self.delegate invalidColumn] inRect:NSMakeRect(x, yy, dirtyRect.size.width-x, rowheight-1) focused:focused];
                 }
 
                 if (it == cursor_it) {
@@ -414,15 +409,15 @@ static int grouptitleheight = 22;
                 }
 
             }
-            DdbListviewRow_t next = [self.delegate nextRow:it];
-            [self.delegate unrefRow:it];
+            DdbListviewRow_t next = [self.dataModel nextRow:it];
+            [self.dataModel unrefRow:it];
             it = next;
-            if (it == [delegate invalidRow]) {
+            if (it == [self.dataModel invalidRow]) {
                 break; // sanity check, in case groups were not rebuilt yet
             }
         }
-        if (it != [delegate invalidRow]) {
-            [self.delegate unrefRow:it];
+        if (it != [self.dataModel invalidRow]) {
+            [self.dataModel unrefRow:it];
         }
 
         // draw album art
@@ -443,8 +438,8 @@ static int grouptitleheight = 22;
 //    }
 //        [self drawGroupTitle:pin_grp grp_y:pinnedGrpPos title_height:title_height];
 
-    if (cursor_it != [delegate invalidRow]) {
-        [delegate unrefRow:cursor_it];
+    if (cursor_it != [self.dataModel invalidRow]) {
+        [self.dataModel unrefRow:cursor_it];
     }
 }
 
@@ -460,7 +455,7 @@ static int grouptitleheight = 22;
     // draw rows below the real list
     if ([self fullheight] < dirtyRect.origin.y + dirtyRect.size.height) {
         int y = [self fullheight];
-        int ii = [self.delegate rowCount]+1;
+        int ii = [self.dataModel rowCount]+1;
         while (y < dirtyRect.origin.y + dirtyRect.size.height) {
             if (y + rowheight >= dirtyRect.origin.y) {
                 NSColor *clr = [NSColor.controlAlternatingRowBackgroundColors objectAtIndex:ii % 2];
@@ -497,8 +492,7 @@ static int grouptitleheight = 22;
             [self mouseDown:event];
         }
 
-        id<DdbListviewDelegate> delegate = self.delegate;
-        return [delegate contextMenuForEvent:event forView:self];
+        return [self.delegate contextMenuForEvent:event forView:self];
     }
     return nil;
 }
@@ -515,9 +509,7 @@ static int grouptitleheight = 22;
 
     [self groupCheck];
 
-    id<DdbListviewDelegate> delegate = self.delegate;
-
-    if (![delegate rowCount]) {
+    if (![self.dataModel rowCount]) {
         return;
     }
 
@@ -532,24 +524,24 @@ static int grouptitleheight = 22;
         return;
     }
 
-    int cursor = [delegate cursor];
+    int cursor = [self.dataModel cursor];
 
     if (event.clickCount == 2 && event.buttonNumber == 0) {
         if (sel != -1 && cursor != -1) {
-            [delegate activate:cursor];
+            [self.dataModel activate:cursor];
         }
         return;
     }
 
     int prev = cursor;
     if (sel != -1) {
-        delegate.cursor = sel;
-        DdbListviewRow_t it = [delegate rowForIndex:sel];
+        self.dataModel.cursor = sel;
+        DdbListviewRow_t it = [self.dataModel rowForIndex:sel];
         if (it) {
             [self drawRow:sel];
-            [delegate unrefRow:it];
+            [self.dataModel unrefRow:it];
         }
-        self.shift_sel_anchor = [delegate cursor];
+        self.shift_sel_anchor = [self.dataModel cursor];
     }
 
     // single selection
@@ -559,12 +551,12 @@ static int grouptitleheight = 22;
     else if (event.buttonNumber == 0 && (event.modifierFlags & NSEventModifierFlagCommand)) {
         // toggle selection
         if (sel != -1) {
-            DdbListviewRow_t it = [delegate rowForIndex:sel];
-            if (it != [delegate invalidRow]) {
-                [delegate selectRow:it withState:![delegate rowSelected:it]];
+            DdbListviewRow_t it = [self.dataModel rowForIndex:sel];
+            if (it != [self.dataModel invalidRow]) {
+                [self.dataModel selectRow:it withState:![self.dataModel rowSelected:it]];
                 [self drawRow:sel];
-                [delegate selectionChanged:it];
-                [delegate unrefRow:it];
+                [self.delegate selectionChanged:it];
+                [self.dataModel unrefRow:it];
             }
         }
     }
@@ -587,27 +579,27 @@ static int grouptitleheight = 22;
         int start = MIN (prev, sel_cursor);
         int end = MAX (prev, sel_cursor);
         int idx = 0;
-        for (DdbListviewRow_t it = [delegate firstRow]; it != [delegate invalidRow]; idx++) {
+        for (DdbListviewRow_t it = [self.dataModel firstRow]; it != [self.dataModel invalidRow]; idx++) {
             if (idx >= start && idx <= end) {
-                if (![delegate rowSelected:it]) {
-                    [delegate selectRow:it withState:YES];
+                if (![self.dataModel rowSelected:it]) {
+                    [self.dataModel selectRow:it withState:YES];
                     [self drawRow:idx];
-                    [delegate selectionChanged:it];
+                    [self.delegate selectionChanged:it];
                 }
             }
             else {
-                if ([delegate rowSelected:it]) {
-                    [delegate selectRow:it withState:NO];
+                if ([self.dataModel rowSelected:it]) {
+                    [self.dataModel selectRow:it withState:NO];
                     [self drawRow:idx];
-                    [delegate selectionChanged:it];
+                    [self.delegate selectionChanged:it];
                 }
             }
-            DdbListviewRow_t next = [delegate nextRow:it];
-            [delegate unrefRow:it];
+            DdbListviewRow_t next = [self.dataModel nextRow:it];
+            [self.dataModel unrefRow:it];
             it = next;
         }
     }
-    cursor = [delegate cursor];
+    cursor = [self.dataModel cursor];
     if (cursor != -1 && sel == -1) {
         [self drawRow:cursor];
     }
@@ -629,17 +621,17 @@ static int grouptitleheight = 22;
             self.needsDisplay = YES;
         }
         else {
-            _delegate.cursor = -1;
-            DdbListviewRow_t it = [_delegate firstRow];
+            self.dataModel.cursor = -1;
+            DdbListviewRow_t it = [self.dataModel firstRow];
             int idx = 0;
-            while (it != [_delegate invalidRow]) {
-                if ([_delegate rowSelected:it]) {
-                    [_delegate selectRow:it withState:NO];
+            while (it != [self.dataModel invalidRow]) {
+                if ([self.dataModel rowSelected:it]) {
+                    [self.dataModel selectRow:it withState:NO];
                     [self drawRow:idx];
-                    [_delegate selectionChanged:it];
+                    [self.delegate selectionChanged:it];
                 }
-                DdbListviewRow_t next = [_delegate nextRow:it];
-                [_delegate unrefRow:it];
+                DdbListviewRow_t next = [self.dataModel nextRow:it];
+                [self.dataModel unrefRow:it];
                 it = next;
                 idx++;
             }
@@ -707,7 +699,7 @@ static int grouptitleheight = 22;
                 sel = 0;
             }
             else {
-                sel = [_delegate rowCount] - 1;
+                sel = [self.dataModel rowCount] - 1;
             }
         }
         else if (sel == -1) {
@@ -740,9 +732,9 @@ static int grouptitleheight = 22;
                 }
             }
         }
-        int prev = [_delegate cursor];
+        int prev = [self.dataModel cursor];
         if (sel != -1) {
-            _delegate.cursor = sel;
+            self.dataModel.cursor = sel;
         }
         {
             // select range of items
@@ -771,53 +763,53 @@ static int grouptitleheight = 22;
             int process_end = MAX (end, _area_selection_end);
 #define NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW 10
             idx=process_start;
-            DdbListviewRow_t it = [_delegate rowForIndex:idx];
+            DdbListviewRow_t it = [self.dataModel rowForIndex:idx];
             for (; it && idx <= process_end; idx++) {
-                int selected = [_delegate rowSelected:it];
+                int selected = [self.dataModel rowSelected:it];
                 if (idx >= start && idx <= end) {
                     if (!selected) {
-                        [_delegate selectRow:it withState:YES];
+                        [self.dataModel selectRow:it withState:YES];
                         nchanged++;
                         if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
                             [self drawRow:idx];
-                            [_delegate selectionChanged:it];
+                            [self.delegate selectionChanged:it];
                         }
                     }
                 }
                 else if (selected) {
-                    [_delegate selectRow:it withState:NO];
+                    [self.dataModel selectRow:it withState:NO];
                     nchanged++;
                     if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
                         [self drawRow:idx];
-                        [_delegate selectionChanged:it];
+                        [self.delegate selectionChanged:it];
                     }
                 }
-                DdbListviewRow_t next = [_delegate nextRow:it];
-                [_delegate unrefRow:it];
+                DdbListviewRow_t next = [self.dataModel nextRow:it];
+                [self.dataModel unrefRow:it];
                 it = next;
             }
-            if (it != [_delegate invalidRow]) {
-                [_delegate unrefRow:it];
+            if (it != [self.dataModel invalidRow]) {
+                [self.dataModel unrefRow:it];
             }
             if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
                 self.needsDisplay = YES;
-                [_delegate selectionChanged:it]; // that means "selection changed a lot, redraw everything
+                [self.delegate selectionChanged:it]; // that means "selection changed a lot, redraw everything
             }
             _area_selection_start = start;
             _area_selection_end = end;
         }
         if (sel != -1 && sel != prev) {
             if (prev != -1) {
-                DdbListviewRow_t it = [_delegate rowForIndex:prev];
-                if (it != [_delegate invalidRow]) {
+                DdbListviewRow_t it = [self.dataModel rowForIndex:prev];
+                if (it != [self.dataModel invalidRow]) {
                     [self drawRow:prev];
-                    [_delegate unrefRow:it];
+                    [self.dataModel unrefRow:it];
                 }
             }
-            DdbListviewRow_t it = [_delegate rowForIndex:sel];
-            if (it != [_delegate invalidRow]) {
+            DdbListviewRow_t it = [self.dataModel rowForIndex:sel];
+            if (it != [self.dataModel invalidRow]) {
                 [self drawRow:sel];
-                [_delegate unrefRow:it];
+                [self.dataModel unrefRow:it];
             }
         }
     }
@@ -838,41 +830,41 @@ static int grouptitleheight = 22;
         // clicked empty space, deselect everything
         [self deselectAll];
     }
-    else if ((sel != -1 && grp && grp_index == -1) || (pt.y <= _grouptitle_height + vis.origin.y && [_delegate pinGroups]) || album_art_column) {
+    else if ((sel != -1 && grp && grp_index == -1) || (pt.y <= _grouptitle_height + vis.origin.y && [self.delegate pinGroups]) || album_art_column) {
         // clicked group title, select group
         DdbListviewRow_t it;
         int idx = 0;
         int cnt = -1;
-        for (it = [_delegate firstRow]; it != [_delegate invalidRow]; idx++) {
+        for (it = [self.dataModel firstRow]; it != [self.dataModel invalidRow]; idx++) {
             if (it == grp->head) {
                 cnt = grp->num_items;
                 cnt = grp->num_items;
             }
             if (cnt > 0) {
-                if (![_delegate rowSelected:it]) {
-                    [_delegate selectRow:it withState:YES];
+                if (![self.dataModel rowSelected:it]) {
+                    [self.dataModel selectRow:it withState:YES];
                     [self drawRow:idx];
-                    [_delegate selectionChanged:it];
+                    [self.delegate selectionChanged:it];
                 }
                 cnt--;
             }
             else {
-                if ([_delegate rowSelected:it]) {
-                    [_delegate selectRow:it withState:NO];
+                if ([self.dataModel rowSelected:it]) {
+                    [self.dataModel selectRow:it withState:NO];
                     [self drawRow:idx];
-                    [_delegate selectionChanged:it];
+                    [self.delegate selectionChanged:it];
                 }
             }
-            DdbListviewRow_t next = [_delegate nextRow:it];
-            [_delegate unrefRow:it];
+            DdbListviewRow_t next = [self.dataModel nextRow:it];
+            [self.dataModel unrefRow:it];
             it = next;
         }
     }
     else {
         // clicked specific item - select, or start drag-n-drop
-        DdbListviewRow_t it = [_delegate rowForIndex:sel];
-        if (it == [_delegate invalidRow] || ![_delegate rowSelected:it]
-            || (![_delegate hasDND] && button == 1)) // HACK: don't reset selection by right click in search window
+        DdbListviewRow_t it = [self.dataModel rowForIndex:sel];
+        if (it == [self.dataModel invalidRow] || ![self.dataModel rowSelected:it]
+            || (![self.delegate hasDND] && button == 1)) // HACK: don't reset selection by right click in search window
         {
             // reset selection, and set it to single item
             [self selectSingle:sel];
@@ -880,28 +872,28 @@ static int grouptitleheight = 22;
             if (dnd) {
                 _areaselect = 1;
                 _areaselect_y = pt.y;
-                _shift_sel_anchor = [_delegate cursor];
+                _shift_sel_anchor = [self.dataModel cursor];
             }
         }
         else if (dnd) {
             _dragwait = YES;
         }
-        [_delegate unrefRow:it];
+        [self.dataModel unrefRow:it];
     }
 }
 
 - (void)selectSingle:(int)sel {
 
-    DdbListviewRow_t sel_it = [_delegate rowForIndex:sel];
-    if (sel_it == [_delegate invalidRow]) {
+    DdbListviewRow_t sel_it = [self.dataModel rowForIndex:sel];
+    if (sel_it == [self.dataModel invalidRow]) {
         return;
     }
 
-    [_delegate deselectAll];
-    [_delegate selectRow:sel_it withState:YES];
-    [_delegate unrefRow:sel_it];
+    [self.dataModel deselectAll];
+    [self.dataModel selectRow:sel_it withState:YES];
+    [self.dataModel unrefRow:sel_it];
 
-    [_delegate selectionChanged:[_delegate invalidRow]];
+    [self.delegate selectionChanged:[self.dataModel invalidRow]];
 
     _area_selection_start = sel;
     _area_selection_end = sel;
@@ -982,7 +974,7 @@ static int grouptitleheight = 22;
         return;            // reject dead keys
     if ( [theArrow length] == 1 ) {
 
-        int prev = [_delegate cursor];
+        int prev = [self.dataModel cursor];
         int cursor = prev;
 
         NSScrollView *sv = self.enclosingScrollView;
@@ -992,10 +984,10 @@ static int grouptitleheight = 22;
         switch (keyChar) {
             case NSDownArrowFunctionKey:
                 if (theEvent.modifierFlags & NSEventModifierFlagCommand) {
-                    cursor = [_delegate rowCount]-1;
+                    cursor = [self.dataModel rowCount]-1;
                 }
                 else {
-                    if (cursor < [_delegate rowCount]-1) {
+                    if (cursor < [self.dataModel rowCount]-1) {
                         cursor++;
                     }
                 }
@@ -1008,7 +1000,7 @@ static int grouptitleheight = 22;
                     if (cursor > 0) {
                         cursor--;
                     }
-                    else if (cursor < 0 && [_delegate rowCount] > 0) {
+                    else if (cursor < 0 && [self.dataModel rowCount] > 0) {
                             cursor = 0;
                     }
                 }
@@ -1033,7 +1025,7 @@ static int grouptitleheight = 22;
 
         if ([theEvent modifierFlags] & NSEventModifierFlagShift) {
             if (cursor != prev) {
-                _delegate.cursor = cursor;
+                self.dataModel.cursor = cursor;
                 self.scrollForPos = [self rowPosForIndex:cursor];
                 // select all between shift_sel_anchor and deadbeef->pl_get_cursor (ps->iterator)
                 int start = MIN (cursor, _shift_sel_anchor);
@@ -1042,27 +1034,27 @@ static int grouptitleheight = 22;
                 int nchanged = 0;
                 int idx = 0;
                 DdbListviewRow_t it;
-                for (it = [_delegate firstRow]; it != [_delegate invalidRow]; idx++) {
+                for (it = [self.dataModel firstRow]; it != [self.dataModel invalidRow]; idx++) {
                     if (idx >= start && idx <= end) {
-                        [_delegate selectRow:it withState:YES];
+                        [self.dataModel selectRow:it withState:YES];
                         if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
                             [self drawRow:idx];
-                            [_delegate selectionChanged:it];
+                            [self.delegate selectionChanged:it];
                         }
                     }
-                    else if ([_delegate rowSelected:it]) {
-                        [_delegate selectRow:it withState:NO];
+                    else if ([self.dataModel rowSelected:it]) {
+                        [self.dataModel selectRow:it withState:NO];
                         if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
                             [self drawRow:idx];
-                            [_delegate selectionChanged:it];
+                            [self.delegate selectionChanged:it];
                         }
                     }
-                    DdbListviewRow_t next = [_delegate nextRow:it];
-                    [_delegate unrefRow:it];
+                    DdbListviewRow_t next = [self.dataModel nextRow:it];
+                    [self.dataModel unrefRow:it];
                     it = next;
                 }
                 if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
-                    [_delegate selectionChanged:[_delegate invalidRow]];
+                    [self.delegate selectionChanged:[self.dataModel invalidRow]];
                 }
             }
         }
@@ -1076,27 +1068,27 @@ static int grouptitleheight = 22;
 - (void)deselectAll {
     DdbListviewRow_t it;
     int idx = 0;
-    for (it = [_delegate firstRow]; it != [_delegate invalidRow]; idx++) {
-        if ([_delegate rowSelected:it]) {
-            [_delegate selectRow:it withState:NO];
+    for (it = [self.dataModel firstRow]; it != [self.dataModel invalidRow]; idx++) {
+        if ([self.dataModel rowSelected:it]) {
+            [self.dataModel selectRow:it withState:NO];
             [self drawRow:idx];
-            [_delegate selectionChanged:it];
+            [self.delegate selectionChanged:it];
         }
-        DdbListviewRow_t next = [_delegate nextRow:it];
-        [_delegate unrefRow:it];
+        DdbListviewRow_t next = [self.dataModel nextRow:it];
+        [self.dataModel unrefRow:it];
         it = next;
     }
 }
 
 - (void)setCursor:(int)cursor noscroll:(BOOL)noscroll {
-    _delegate.cursor = cursor;
+    self.dataModel.cursor = cursor;
 
-    DdbListviewRow_t row = [_delegate rowForIndex:cursor];
-    if (row != [_delegate invalidRow] && ![_delegate rowSelected:row]) {
+    DdbListviewRow_t row = [self.dataModel rowForIndex:cursor];
+    if (row != [self.dataModel invalidRow] && ![self.dataModel rowSelected:row]) {
         [self selectSingle:cursor];
     }
-    if (row != [_delegate invalidRow]) {
-        [_delegate unrefRow:row];
+    if (row != [self.dataModel invalidRow]) {
+        [self.dataModel unrefRow:row];
     }
 
     if (!noscroll) {
@@ -1109,8 +1101,8 @@ static int grouptitleheight = 22;
 
 - (void)freeGroups {
     while (_groups) {
-        if (_groups->head != [_delegate invalidRow]) {
-            [_delegate unrefRow:_groups->head];
+        if (_groups->head != [self.dataModel invalidRow]) {
+            [self.dataModel unrefRow:_groups->head];
         }
         DdbListviewGroup_t *next = _groups->next;
         free (_groups);
@@ -1119,7 +1111,7 @@ static int grouptitleheight = 22;
 }
 
 - (void)initGroups {
-    self.groups_build_idx = [_delegate modificationIdx];
+    self.groups_build_idx = [self.dataModel modificationIdx];
 
     [self freeGroups];
 
@@ -1131,20 +1123,20 @@ static int grouptitleheight = 22;
     NSString *curr;
 
     int min_height= 0;
-    for (DdbListviewCol_t c = [_delegate firstColumn]; c != [_delegate invalidColumn]; c = [_delegate nextColumn:c]) {
-        if ([_delegate columnMinHeight:c] && [_delegate columnWidth:c] > min_height) {
-            min_height = [_delegate columnGroupHeight:c];
+    for (DdbListviewCol_t c = [self.delegate firstColumn]; c != [self.delegate invalidColumn]; c = [self.delegate nextColumn:c]) {
+        if ([self.delegate columnMinHeight:c] && [self.delegate columnWidth:c] > min_height) {
+            min_height = [self.delegate columnGroupHeight:c];
         }
-        _fullwidth += [_delegate columnWidth:c];
+        _fullwidth += [self.delegate columnWidth:c];
     }
 
     _grouptitle_height = grouptitleheight;
 
     deadbeef->pl_lock ();
     int idx = 0;
-    DdbListviewRow_t it = [_delegate firstRow];
-    while (it != [_delegate invalidRow]) {
-        curr = [_delegate rowGroupStr:it];
+    DdbListviewRow_t it = [self.dataModel firstRow];
+    while (it != [self.dataModel invalidRow]) {
+        curr = [self.delegate rowGroupStr:it];
 
         if (!curr) {
             _grouptitle_height = 0;
@@ -1167,20 +1159,20 @@ static int grouptitleheight = 22;
             memset (grp, 0, sizeof (DdbListviewGroup_t));
             grp->head = it;
             grp->head_idx = idx;
-            [_delegate refRow:it];
+            [self.dataModel refRow:it];
             grp->num_items = 0;
             grp->height = _grouptitle_height;
         }
         grp->height += rowheight;
         grp->num_items++;
-        DdbListviewRow_t next = [_delegate nextRow:it];
-        [_delegate unrefRow:it];
+        DdbListviewRow_t next = [self.dataModel nextRow:it];
+        [self.dataModel unrefRow:it];
         it = next;
         idx++;
     }
     deadbeef->pl_unlock ();
-    if (it != [_delegate invalidRow]) {
-        [_delegate unrefRow:it];
+    if (it != [self.dataModel invalidRow]) {
+        [self.dataModel unrefRow:it];
     }
     if (grp) {
         if (grp->height - _grouptitle_height < min_height) {
@@ -1192,7 +1184,7 @@ static int grouptitleheight = 22;
 }
 
 - (void)groupCheck {
-    if ([_delegate modificationIdx] != self.groups_build_idx) {
+    if ([self.dataModel modificationIdx] != self.groups_build_idx) {
         [self initGroups];
     }
 }
@@ -1212,8 +1204,8 @@ static int grouptitleheight = 22;
     rect->origin.y = 0;
 
     int totalwidth = 0;
-    for (DdbListviewCol_t col = [_delegate firstColumn]; col != [_delegate invalidColumn]; col = [_delegate nextColumn:col]) {
-        totalwidth += [_delegate columnWidth:col];
+    for (DdbListviewCol_t col = [self.delegate firstColumn]; col != [self.delegate invalidColumn]; col = [self.delegate nextColumn:col]) {
+        totalwidth += [self.delegate columnWidth:col];
     }
 
     while (grp) {
@@ -1223,7 +1215,7 @@ static int grouptitleheight = 22;
             int idx_in_group = row - idx;
             *pgrp = grp;
             *even = (idx2 + 1 + idx_in_group) & 1;
-            *cursor = (row == [_delegate cursor]) ? 1 : 0;
+            *cursor = (row == [self.dataModel cursor]) ? 1 : 0;
             *group_y = idx_in_group * rowheight;
             rect->origin.x = 0;
             rect->origin.y += _grouptitle_height + (row - idx) * rowheight;
@@ -1291,10 +1283,10 @@ static int grouptitleheight = 22;
     CGFloat scrollpos = vis.origin.y;
     CGFloat newscroll = scrollpos;
 
-    if (![_delegate pinGroups] && pos < scrollpos) {
+    if (![self.delegate pinGroups] && pos < scrollpos) {
         newscroll = pos;
     }
-    else if ([_delegate pinGroups] && pos < scrollpos + _grouptitle_height) {
+    else if ([self.delegate pinGroups] && pos < scrollpos + _grouptitle_height) {
         newscroll = pos - _grouptitle_height;
     }
     else if (pos + rowheight >= scrollpos + vis.size.height) {
@@ -1345,8 +1337,8 @@ static int grouptitleheight = 22;
 
 - (void)updateContentFrame {
     _fullwidth = 0;
-    for (DdbListviewCol_t c = [_delegate firstColumn]; c != [_delegate invalidColumn]; c = [_delegate nextColumn:c]) {
-        _fullwidth += [_delegate columnWidth:c];
+    for (DdbListviewCol_t c = [self.delegate firstColumn]; c != [self.delegate invalidColumn]; c = [self.delegate nextColumn:c]) {
+        _fullwidth += [self.delegate columnWidth:c];
     }
 
     if (!self.widthConstraint) {

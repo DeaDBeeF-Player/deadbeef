@@ -28,9 +28,20 @@
 @property (nonatomic,nullable) NSDictionary *titleAttributesCurrent;
 @property (nonatomic,readonly) NSDictionary *titleAttributes;
 
+@property (nonatomic,readonly) id<DdbListviewDelegate> delegate;
+@property (nonatomic,readonly) id<DdbListviewDataModelProtocol> dataModel;
+
 @end
 
 @implementation PlaylistHeaderView
+
+- (id<DdbListviewDelegate>)delegate {
+    return self.listview.delegate;
+}
+
+- (id<DdbListviewDataModelProtocol>)dataModel {
+    return self.listview.dataModel;
+}
 
 - (NSColor *)headerTextColor {
     NSColor *textColor = NSColor.controlTextColor;
@@ -93,9 +104,8 @@
 }
 
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect {
-    id <DdbListviewDelegate> delegate = [self.listview delegate];
-    int columnCount = delegate.columnCount;
-    int sortColumnIndex = delegate.sortColumnIndex;
+    int columnCount = self.delegate.columnCount;
+    int sortColumnIndex = self.delegate.sortColumnIndex;
     if (col < columnCount) {
         CGFloat width = rect.size.width-6;
         if (col == sortColumnIndex) {
@@ -105,9 +115,9 @@
             width = 0;
         }
 
-        [[delegate columnTitleAtIndex:col] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y-2, width, rect.size.height-2) withAttributes:self.titleAttributes];
+        [[self.delegate columnTitleAtIndex:col] drawInRect:NSMakeRect(rect.origin.x+4, rect.origin.y-2, width, rect.size.height-2) withAttributes:self.titleAttributes];
 
-        enum ddb_sort_order_t sortOrder = [delegate columnSortOrderAtIndex:col];
+        enum ddb_sort_order_t sortOrder = [self.delegate columnSortOrderAtIndex:col];
 
 
         if (col == sortColumnIndex) {
@@ -143,7 +153,7 @@
     id <DdbListviewDelegate> delegate = [self.listview delegate];
 
     CGFloat x = -rc.origin.x;
-    for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
+    for (DdbListviewCol_t col = [self.delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
 
         NSRect colRect = NSMakeRect(x, 0, w, self.frame.size.height);
@@ -158,7 +168,7 @@
     }
 
     x = -rc.origin.x;
-    for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
+    for (DdbListviewCol_t col = [self.delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
 
         CGFloat cx = x;
