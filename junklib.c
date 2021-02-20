@@ -151,6 +151,7 @@ static const char *frame_mapping[] = {
     "PRODUCED_NOTICE", NULL, "TPRO", NULL, NULL,
     "musicbrainz_trackid", NULL, NULL, NULL, NULL,
     "rating", NULL, NULL, NULL, NULL,
+    "DISCSUBTITLE", "TSST", "TSST", NULL, "DiscSubtitle",
     NULL
 };
 
@@ -2323,7 +2324,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
     // TODO: "TIPL" IPLS with conversion to non-text format
 
     const char *text_frames[] = {
-        "TALB", "TBPM", "TCOM", "TCON", "TCOP", "TDLY", "TENC", "TEXT", "TFLT", "TIT1", "TIT2", "TIT3", "TKEY", "TLAN", "TLEN", "TMED", "TOAL", "TOFN", "TOLY", "TOPE", "TOWN", "TPE1", "TPE2", "TPE3", "TPE4", "TPOS", "TPUB", "TRCK", "TRSN", "TRSO", "TSRC", "TSSE", "TXXX", "TDRC", NULL
+        "TALB", "TBPM", "TCOM", "TCON", "TCOP", "TDLY", "TENC", "TEXT", "TFLT", "TIT1", "TIT2", "TIT3", "TKEY", "TLAN", "TLEN", "TMED", "TOAL", "TOFN", "TOLY", "TOPE", "TOWN", "TPE1", "TPE2", "TPE3", "TPE4", "TPOS", "TPUB", "TRCK", "TRSN", "TRSO", "TSRC", "TSSE", "TSST", "TXXX", "TDRC", NULL
     };
 
     for (f24 = tag24->frames; f24; f24 = f24->next) {
@@ -3034,11 +3035,11 @@ junk_id3v2_convert_apev2_to_24 (DB_apev2_tag_t *ape, DB_id3v2_tag_t *tag24) {
     }
 
     const char *text_keys[] = {
-        "Title", "Subtitle", "Artist", "Album", "Publisher", "Conductor", "Track", "Composer", "Copyright", "Genre", "Disc", "ISRC", "Language", "Year", NULL
+        "Title", "Subtitle", "Artist", "Album", "Publisher", "Conductor", "Track", "Composer", "Copyright", "Genre", "Disc", "ISRC", "Language", "Year", "DiscSubtitle", NULL
     };
 
     const char *text_keys_24[] = {
-        "TIT2", "TIT3", "TPE1", "TALB", "TPUB", "TPE3", "TRCK", "TCOM", "TCOP", "TCON", "TPOS", "TSRC", "TLAN", "TDRC"
+        "TIT2", "TIT3", "TPE1", "TALB", "TPUB", "TPE3", "TRCK", "TCOM", "TCOP", "TCON", "TPOS", "TSRC", "TLAN", "TDRC", "TSST"
     };
 
     const char *comm_frames[] = {
