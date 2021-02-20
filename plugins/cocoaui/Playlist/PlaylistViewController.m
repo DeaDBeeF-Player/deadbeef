@@ -1270,7 +1270,7 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
             });
         }
     }
-    return [super sendMessage:_id ctx:ctx p1:p1 p2:p2];
+    return 0;
 }
 
 

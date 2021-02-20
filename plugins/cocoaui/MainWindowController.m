@@ -21,8 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import "DdbPlaceholderWidget.h"
-#import "DesignableViewController.h"
+#import "WidgetFactory.h"
 #import "GuiPreferencesWindowController.h"
 #import "MainWindowController.h"
 #import "PlaylistViewController.h"
@@ -45,7 +44,7 @@ extern DB_functions_t *deadbeef;
 
 @property (weak) IBOutlet NSView *designableContainerView;
 @property (weak) IBOutlet NSView *playlistWithTabsView;
-@property (nonatomic, readwrite) DesignableViewController *rootViewController;
+@property (nonatomic, readwrite) id<WidgetProtocol> rootWidget;
 
 @end
 
@@ -60,8 +59,8 @@ extern DB_functions_t *deadbeef;
     }
     // FIXME: this should not be needed, since PlaylistViewController dealloc is supposed to handle everything,
     // but for some reason some stuff remains unreleased if we rely on dealloc to call this method.
-    [self.rootViewController cleanup];
-    self.rootViewController = nil;
+//    [self.rootViewController cleanup];
+    self.rootWidget = nil;
 }
 
 - (void)dealloc {
@@ -79,12 +78,8 @@ extern DB_functions_t *deadbeef;
     }
 #endif
 
-    PlaylistViewController *pvc = [[PlaylistViewController alloc] initWithNibName:nil bundle:nil];
-    PlaylistView *view = [PlaylistView new];
-    pvc.view = view;
-    [pvc setup];
-
-    self.rootViewController = pvc;
+    self.rootWidget = [WidgetFactory.sharedFactory createWidgetWithType:@"Playlist"];
+    PlaylistView *view = (PlaylistView *)self.rootWidget.view;
 
     view.translatesAutoresizingMaskIntoConstraints = NO;
     [self.designableContainerView addSubview:view];
