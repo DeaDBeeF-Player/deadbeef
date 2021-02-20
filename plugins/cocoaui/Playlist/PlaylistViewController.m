@@ -65,13 +65,14 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) ddb_medialib_plugin_t *medialibPlugin;
 @property (nonatomic,readonly) const char *groupByConfStr;
 @property (nonatomic) NSString *groupStr;
-@property (nonatomic,readonly) int playlistIter;
 
 @property (nonatomic,readwrite) plt_col_info_t *columns;
 @property (nonatomic,readwrite) int ncolumns;
 @property (nonatomic) int columnsAllocated;
 
 @property (nonatomic) TrackContextMenu *trackContextMenu;
+
+@property (nonatomic) PlaylistDataModel *dataModel;
 
 @end
 
@@ -80,6 +81,7 @@ extern DB_functions_t *deadbeef;
 - (void)dealloc
 {
     self.trackContextMenu = nil;
+    [self cleanup];
 }
 
 - (void)cleanup {
@@ -316,10 +318,6 @@ extern DB_functions_t *deadbeef;
     deadbeef->conf_set_str ("cocoaui.columns", [config UTF8String]);
 }
 
-- (int)playlistIter {
-    return PL_MAIN;
-}
-
 - (void)initContent {
     NSString *cols = [self getColumnConfig];
     NSData *data = [cols dataUsingEncoding:NSUTF8StringEncoding];
@@ -391,6 +389,8 @@ extern DB_functions_t *deadbeef;
 - (void)setup {
     PlaylistView *lv = (PlaylistView *)self.view;
     lv.delegate = self;
+    self.dataModel = [[PlaylistDataModel alloc] initWithIter:self.playlistIter];
+    lv.dataModel = self.dataModel;
 
     self.trackContextMenu = [TrackContextMenu new];
     self.trackContextMenu.view = self.view;
@@ -560,39 +560,8 @@ extern DB_functions_t *deadbeef;
     }];
 }
 
-- (void)lock {
-    deadbeef->pl_lock ();
-}
-
-- (void)unlock {
-    deadbeef->pl_unlock ();
-}
-
 - (int)columnCount {
     return self.ncolumns;
-}
-
-- (int)rowCount {
-    return deadbeef->pl_getcount ([self playlistIter]);
-}
-
-- (int)cursor {
-    return deadbeef->pl_get_cursor([self playlistIter]);
-}
-
-- (void)setCursor:(int)cursor {
-    deadbeef->pl_set_cursor ([self playlistIter], cursor);
-}
-
-- (void)activate:(int)idx {
-    DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (idx, [self playlistIter]);
-    if (it) {
-        int i = deadbeef->pl_get_idx_of (it);
-        if (i != -1) {
-            deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, i, 0);
-        }
-        deadbeef->pl_item_unref (it);
-    }
 }
 
 - (DdbListviewCol_t)firstColumn {
@@ -655,30 +624,6 @@ extern DB_functions_t *deadbeef;
     }
 
     self.sortColumn = [self columnIndexForTitle:sortColumnTitle];
-}
-
-- (DdbListviewRow_t)firstRow {
-    return (DdbListviewRow_t)deadbeef->pl_get_first([self playlistIter]);
-}
-
-- (DdbListviewRow_t)nextRow:(DdbListviewRow_t)row {
-    return (DdbListviewRow_t)deadbeef->pl_get_next((DB_playItem_t *)row, [self playlistIter]);
-}
-
-- (DdbListviewRow_t)invalidRow {
-    return 0;
-}
-
-- (DdbListviewRow_t)rowForIndex:(int)idx {
-    return (DdbListviewRow_t)deadbeef->pl_get_for_idx_and_iter (idx, [self playlistIter]);
-}
-
-- (void)refRow:(DdbListviewRow_t)row {
-    deadbeef->pl_item_ref ((DB_playItem_t *)row);
-}
-
-- (void)unrefRow:(DdbListviewRow_t)row {
-    deadbeef->pl_item_unref ((DB_playItem_t *)row);
 }
 
 - (NSMutableAttributedString *)stringWithTintAttributesFromString:(const char *)inputString initialAttributes:(NSDictionary *)attributes foregroundColor:(NSColor *)foregroundColor backgroundColor:(NSColor *)backgroundColor {
@@ -956,71 +901,9 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     }
 }
 
-- (void)selectRow:(DdbListviewRow_t)row withState:(BOOL)state {
-    deadbeef->pl_set_selected ((DB_playItem_t *)row, state);
-}
-
-- (BOOL)rowSelected:(DdbListviewRow_t)row {
-    return deadbeef->pl_is_selected ((DB_playItem_t *)row);
-}
-
-- (void)deselectAll {
-    deadbeef->pl_lock ();
-    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-    while (it) {
-        if (deadbeef->pl_is_selected (it)) {
-            deadbeef->pl_set_selected (it, 0);
-        }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-        deadbeef->pl_item_unref (it);
-        it = next;
-    }
-    deadbeef->pl_unlock ();
-}
-
-- (NSString *)rowGroupStr:(DdbListviewRow_t)row {
-    if (!self.groupStr) {
-        return nil;
-    }
-    if (!self.groupBytecode) {
-        self.groupBytecode = deadbeef->tf_compile (self.groupStr.UTF8String);
-    }
-
-    ddb_tf_context_t ctx = {
-        ._size = sizeof (ddb_tf_context_t),
-        .it = (DB_playItem_t *)row,
-        .plt = deadbeef->plt_get_curr(),
-    };
-    char buf[1024];
-    NSString *ret = @"";
-    if (deadbeef->tf_eval (&ctx, self.groupBytecode, buf, sizeof (buf)) > 0) {
-        ret = [NSString stringWithUTF8String:buf];
-        if (!ret) {
-            ret = @"";
-        }
-    }
-    if (ctx.plt) {
-        deadbeef->plt_unref (ctx.plt);
-    }
-    return ret;
-}
-
-- (int)modificationIdx {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    int res = plt ? deadbeef->plt_get_modification_idx (plt) : 0;
-    if (plt) {
-        deadbeef->plt_unref (plt);
-    }
-    return res;
-}
-
 - (void)selectionChanged:(DdbListviewRow_t)row {
     PlaylistView *lv = (PlaylistView *)self.view;
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, (uintptr_t)lv, DDB_PLAYLIST_CHANGE_SELECTION, 0);
-}
-
-- (int)selectedCount {
-    return deadbeef->pl_getselcount();
 }
 
 - (BOOL)hasDND {
@@ -1488,6 +1371,37 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
 - (void)playlistChanged {
     deadbeef->pl_save_current();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+}
+
+- (NSString *)rowGroupStr:(DdbListviewRow_t)row {
+    if (!self.groupStr) {
+        return nil;
+    }
+    if (!self.groupBytecode) {
+        self.groupBytecode = deadbeef->tf_compile (self.groupStr.UTF8String);
+    }
+
+    ddb_tf_context_t ctx = {
+        ._size = sizeof (ddb_tf_context_t),
+        .it = (DB_playItem_t *)row,
+        .plt = deadbeef->plt_get_curr(),
+    };
+    char buf[1024];
+    NSString *ret = @"";
+    if (deadbeef->tf_eval (&ctx, self.groupBytecode, buf, sizeof (buf)) > 0) {
+        ret = [NSString stringWithUTF8String:buf];
+        if (!ret) {
+            ret = @"";
+        }
+    }
+    if (ctx.plt) {
+        deadbeef->plt_unref (ctx.plt);
+    }
+    return ret;
+}
+
+- (int)playlistIter {
+    return PL_MAIN;
 }
 
 @end

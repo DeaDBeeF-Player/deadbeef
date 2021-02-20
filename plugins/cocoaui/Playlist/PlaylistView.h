@@ -30,5 +30,6 @@
 @property (nonatomic,readonly) PlaylistHeaderView *headerView;
 @property (nonatomic,readonly) PlaylistContentView *contentView;
 @property (weak,nonatomic) id<DdbListviewDelegate> delegate;
+@property (weak,nonatomic) id<DdbListviewDataModelProtocol> dataModel;
 
 @end
