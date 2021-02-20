@@ -22,7 +22,6 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#import "DesignableViewController.h"
 #import "PlaylistView.h"
 #import "ConverterWindowController.h"
 
@@ -38,12 +37,13 @@ typedef struct {
     int sort_order;
 } plt_col_info_t;
 
-@interface PlaylistViewController : DesignableViewController
+@interface PlaylistViewController : NSViewController
 
 @property (nonatomic,readonly) plt_col_info_t *columns;
 @property (nonatomic,readonly) int ncolumns;
 
 - (void)setup;
 - (void)cleanup;
+- (int)sendMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
 @end
