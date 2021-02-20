@@ -1580,10 +1580,6 @@
 		2DA04EF823B6AAA40070AC01 /* shellexecutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA04EF523B6AA6E0070AC01 /* shellexecutil.c */; };
 		2DA0ACE91AA71516007EDD43 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2DA0ACEE1AA71E7C007EDD43 /* in_sc68.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DA2259F23F041B00033F411 /* DesignableViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA2259D23F041B00033F411 /* DesignableViewController.h */; };
-		2DA225A023F041B00033F411 /* DesignableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA2259E23F041B00033F411 /* DesignableViewController.m */; };
-		2DA225B023F0425C0033F411 /* DesignableView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA225AE23F0425C0033F411 /* DesignableView.h */; };
-		2DA225B123F0425C0033F411 /* DesignableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA225AF23F0425C0033F411 /* DesignableView.m */; };
 		2DA24AE119E7203A00E34920 /* asyn-ares.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A0F19E7203700E34920 /* asyn-ares.c */; };
 		2DA24AE219E7203A00E34920 /* asyn-thread.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A1019E7203700E34920 /* asyn-thread.c */; };
 		2DA24AE319E7203A00E34920 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A1119E7203700E34920 /* base64.c */; };
@@ -2086,6 +2082,24 @@
 		2DDBDA392436678700C12A75 /* btnduplicateTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DDBDA2B2436678700C12A75 /* btnduplicateTemplate.pdf */; };
 		2DDD764425E1506100FA6FE5 /* metadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD764225E1506100FA6FE5 /* metadata.h */; };
 		2DDD764525E1506100FA6FE5 /* metadata.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD764325E1506100FA6FE5 /* metadata.c */; };
+		2DDD76C825E152BF00FA6FE5 /* WidgetDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD76C625E152BF00FA6FE5 /* WidgetDefs.h */; };
+		2DDD76C925E152BF00FA6FE5 /* WidgetDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD76C625E152BF00FA6FE5 /* WidgetDefs.h */; };
+		2DDD778E25E153D000FA6FE5 /* WidgetFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD778C25E153D000FA6FE5 /* WidgetFactory.h */; };
+		2DDD778F25E153D000FA6FE5 /* WidgetFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD778C25E153D000FA6FE5 /* WidgetFactory.h */; };
+		2DDD779025E153D000FA6FE5 /* WidgetFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD778D25E153D000FA6FE5 /* WidgetFactory.m */; };
+		2DDD779125E153D000FA6FE5 /* WidgetFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD778D25E153D000FA6FE5 /* WidgetFactory.m */; };
+		2DDD781625E1578C00FA6FE5 /* SplitterWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD781425E1578C00FA6FE5 /* SplitterWidget.h */; };
+		2DDD781725E1578C00FA6FE5 /* SplitterWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD781425E1578C00FA6FE5 /* SplitterWidget.h */; };
+		2DDD781825E1578C00FA6FE5 /* SplitterWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD781525E1578C00FA6FE5 /* SplitterWidget.m */; };
+		2DDD781925E1578C00FA6FE5 /* SplitterWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD781525E1578C00FA6FE5 /* SplitterWidget.m */; };
+		2DDD789C25E15C9E00FA6FE5 /* WidgetBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD789A25E15C9E00FA6FE5 /* WidgetBase.h */; };
+		2DDD789D25E15C9E00FA6FE5 /* WidgetBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD789A25E15C9E00FA6FE5 /* WidgetBase.h */; };
+		2DDD789E25E15C9E00FA6FE5 /* WidgetBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD789B25E15C9E00FA6FE5 /* WidgetBase.m */; };
+		2DDD789F25E15C9E00FA6FE5 /* WidgetBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD789B25E15C9E00FA6FE5 /* WidgetBase.m */; };
+		2DDD796325E15ED200FA6FE5 /* PlaylistWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */; };
+		2DDD796425E15ED200FA6FE5 /* PlaylistWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */; };
+		2DDD796525E15ED200FA6FE5 /* PlaylistWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */; };
+		2DDD796625E15ED200FA6FE5 /* PlaylistWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */; };
 		2DDE529324F81A870096EF80 /* MediaLibrarySearchCellView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDE529124F81A870096EF80 /* MediaLibrarySearchCellView.h */; };
 		2DDE529424F81A870096EF80 /* MediaLibrarySearchCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDE529224F81A870096EF80 /* MediaLibrarySearchCellView.m */; };
 		2DDE52A624F821630096EF80 /* MediaLibraryOutlineView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDE52A424F821630096EF80 /* MediaLibraryOutlineView.h */; };
@@ -2112,8 +2126,8 @@
 		2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3DC19B11283009B5BC6 /* DdbWidget.m */; };
 		2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3E019B114CD009B5BC6 /* DdbWidgetManager.h */; };
 		2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3E119B114CD009B5BC6 /* DdbWidgetManager.m */; };
-		2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3E419B11539009B5BC6 /* DdbPlaceholderWidget.h */; };
-		2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3E519B11539009B5BC6 /* DdbPlaceholderWidget.m */; };
+		2DE1D3E619B11539009B5BC6 /* PlaceholderWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3E419B11539009B5BC6 /* PlaceholderWidget.h */; };
+		2DE1D3E719B11539009B5BC6 /* PlaceholderWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3E519B11539009B5BC6 /* PlaceholderWidget.m */; };
 		2DE3B5762269B80900AFF9AE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BE51838EAAB00A98C62 /* Images.xcassets */; };
 		2DE3B7BF2269BCAB00AFF9AE /* ddb_gui_GTK3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE3B7B92269BC3500AFF9AE /* ddb_gui_GTK3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DE3B7C02269BF1300AFF9AE /* eq.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5782269BB4300AFF9AE /* eq.c */; };
@@ -5290,10 +5304,6 @@
 		2DA04EF523B6AA6E0070AC01 /* shellexecutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = shellexecutil.c; sourceTree = "<group>"; };
 		2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = in_sc68.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA0ACEA1AA7162C007EDD43 /* in_sc68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = in_sc68.c; sourceTree = "<group>"; };
-		2DA2259D23F041B00033F411 /* DesignableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DesignableViewController.h; sourceTree = "<group>"; };
-		2DA2259E23F041B00033F411 /* DesignableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DesignableViewController.m; sourceTree = "<group>"; };
-		2DA225AE23F0425C0033F411 /* DesignableView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DesignableView.h; sourceTree = "<group>"; };
-		2DA225AF23F0425C0033F411 /* DesignableView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DesignableView.m; sourceTree = "<group>"; };
 		2DA2499E19E71FEB00E34920 /* libcurl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcurl.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA24A0F19E7203700E34920 /* asyn-ares.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "asyn-ares.c"; path = "osx/deps/curl-7.38.0/lib/asyn-ares.c"; sourceTree = "<group>"; };
 		2DA24A1019E7203700E34920 /* asyn-thread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "asyn-thread.c"; path = "osx/deps/curl-7.38.0/lib/asyn-thread.c"; sourceTree = "<group>"; };
@@ -5807,6 +5817,15 @@
 		2DDBDA2B2436678700C12A75 /* btnduplicateTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = btnduplicateTemplate.pdf; sourceTree = "<group>"; };
 		2DDD764225E1506100FA6FE5 /* metadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = metadata.h; sourceTree = "<group>"; };
 		2DDD764325E1506100FA6FE5 /* metadata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = metadata.c; sourceTree = "<group>"; };
+		2DDD76C625E152BF00FA6FE5 /* WidgetDefs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WidgetDefs.h; sourceTree = "<group>"; };
+		2DDD778C25E153D000FA6FE5 /* WidgetFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WidgetFactory.h; sourceTree = "<group>"; };
+		2DDD778D25E153D000FA6FE5 /* WidgetFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WidgetFactory.m; sourceTree = "<group>"; };
+		2DDD781425E1578C00FA6FE5 /* SplitterWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitterWidget.h; sourceTree = "<group>"; };
+		2DDD781525E1578C00FA6FE5 /* SplitterWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SplitterWidget.m; sourceTree = "<group>"; };
+		2DDD789A25E15C9E00FA6FE5 /* WidgetBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WidgetBase.h; sourceTree = "<group>"; };
+		2DDD789B25E15C9E00FA6FE5 /* WidgetBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WidgetBase.m; sourceTree = "<group>"; };
+		2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistWidget.h; sourceTree = "<group>"; };
+		2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistWidget.m; sourceTree = "<group>"; };
 		2DDE529124F81A870096EF80 /* MediaLibrarySearchCellView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaLibrarySearchCellView.h; sourceTree = "<group>"; };
 		2DDE529224F81A870096EF80 /* MediaLibrarySearchCellView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaLibrarySearchCellView.m; sourceTree = "<group>"; };
 		2DDE52A424F821630096EF80 /* MediaLibraryOutlineView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaLibraryOutlineView.h; sourceTree = "<group>"; };
@@ -5828,8 +5847,8 @@
 		2DE1D3DC19B11283009B5BC6 /* DdbWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbWidget.m; sourceTree = "<group>"; };
 		2DE1D3E019B114CD009B5BC6 /* DdbWidgetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbWidgetManager.h; sourceTree = "<group>"; };
 		2DE1D3E119B114CD009B5BC6 /* DdbWidgetManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbWidgetManager.m; sourceTree = "<group>"; };
-		2DE1D3E419B11539009B5BC6 /* DdbPlaceholderWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbPlaceholderWidget.h; sourceTree = "<group>"; };
-		2DE1D3E519B11539009B5BC6 /* DdbPlaceholderWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbPlaceholderWidget.m; sourceTree = "<group>"; };
+		2DE1D3E419B11539009B5BC6 /* PlaceholderWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceholderWidget.h; sourceTree = "<group>"; };
+		2DE1D3E519B11539009B5BC6 /* PlaceholderWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceholderWidget.m; sourceTree = "<group>"; };
 		2DE3B5782269BB4300AFF9AE /* eq.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = eq.c; sourceTree = "<group>"; };
 		2DE3B57A2269BB4300AFF9AE /* progress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = progress.h; sourceTree = "<group>"; };
 		2DE3B57D2269BB4300AFF9AE /* ddblistview.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ddblistview.c; sourceTree = "<group>"; };
@@ -9541,17 +9560,6 @@
 			path = Scriptable;
 			sourceTree = "<group>";
 		};
-		2D9FA3972404551F00276E00 /* Designable */ = {
-			isa = PBXGroup;
-			children = (
-				2DA2259D23F041B00033F411 /* DesignableViewController.h */,
-				2DA2259E23F041B00033F411 /* DesignableViewController.m */,
-				2DA225AE23F0425C0033F411 /* DesignableView.h */,
-				2DA225AF23F0425C0033F411 /* DesignableView.m */,
-			);
-			path = Designable;
-			sourceTree = "<group>";
-		};
 		2DA04E9223B6A4370070AC01 /* shellexec */ = {
 			isa = PBXGroup;
 			children = (
@@ -10237,6 +10245,33 @@
 			path = metadata;
 			sourceTree = "<group>";
 		};
+		2DDD77D225E154E300FA6FE5 /* Placeholder */ = {
+			isa = PBXGroup;
+			children = (
+				2DE1D3E419B11539009B5BC6 /* PlaceholderWidget.h */,
+				2DE1D3E519B11539009B5BC6 /* PlaceholderWidget.m */,
+			);
+			path = Placeholder;
+			sourceTree = "<group>";
+		};
+		2DDD781325E1577A00FA6FE5 /* Splitter */ = {
+			isa = PBXGroup;
+			children = (
+				2DDD781425E1578C00FA6FE5 /* SplitterWidget.h */,
+				2DDD781525E1578C00FA6FE5 /* SplitterWidget.m */,
+			);
+			path = Splitter;
+			sourceTree = "<group>";
+		};
+		2DDD796025E15EBD00FA6FE5 /* Playlist */ = {
+			isa = PBXGroup;
+			children = (
+				2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */,
+				2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */,
+			);
+			path = Playlist;
+			sourceTree = "<group>";
+		};
 		2DDFABC92438E56000E13E85 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -10248,10 +10283,11 @@
 		2DE1D3DF19B11286009B5BC6 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
+				2DDD77D225E154E300FA6FE5 /* Placeholder */,
+				2DDD796025E15EBD00FA6FE5 /* Playlist */,
+				2DDD781325E1577A00FA6FE5 /* Splitter */,
 				2DAD809F2416DBB100EB3075 /* CustomToolbarItem.h */,
 				2DAD80A02416DBB100EB3075 /* CustomToolbarItem.m */,
-				2DE1D3E419B11539009B5BC6 /* DdbPlaceholderWidget.h */,
-				2DE1D3E519B11539009B5BC6 /* DdbPlaceholderWidget.m */,
 				2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */,
 				2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */,
 				2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */,
@@ -10262,6 +10298,11 @@
 				2DE1D3E119B114CD009B5BC6 /* DdbWidgetManager.m */,
 				2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */,
 				2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */,
+				2DDD789A25E15C9E00FA6FE5 /* WidgetBase.h */,
+				2DDD789B25E15C9E00FA6FE5 /* WidgetBase.m */,
+				2DDD76C625E152BF00FA6FE5 /* WidgetDefs.h */,
+				2DDD778C25E153D000FA6FE5 /* WidgetFactory.h */,
+				2DDD778D25E153D000FA6FE5 /* WidgetFactory.m */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -11294,7 +11335,6 @@
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
-				2D9FA3972404551F00276E00 /* Designable */,
 				4D2362B218395D0300C9E818 /* Images */,
 				2D76285224CB29F20029C98C /* MediaLibrary */,
 				2DA3720B2370B7C3005E64A3 /* NowPlayable */,
@@ -11485,6 +11525,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DDD76C925E152BF00FA6FE5 /* WidgetDefs.h in Headers */,
 				2D4020901F27BD7200D4EA4F /* cueutil.h in Headers */,
 				2D135EF1226E47AA00BAAE84 /* scriptable_dsp.h in Headers */,
 				2DDD764425E1506100FA6FE5 /* metadata.h in Headers */,
@@ -11493,7 +11534,11 @@
 				2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */,
 				2DAA402E269AF864006D2754 /* TrackPositionFormatter.h in Headers */,
 				2DAE701925BDDC3300E40154 /* deletefromdisk.h in Headers */,
+				2DDD778F25E153D000FA6FE5 /* WidgetFactory.h in Headers */,
+				2DDD781725E1578C00FA6FE5 /* SplitterWidget.h in Headers */,
 				2DBCB725240AE0BE0012F178 /* tftintutil.h in Headers */,
+				2DDD789D25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
+				2DDD796425E15ED200FA6FE5 /* PlaylistWidget.h in Headers */,
 				2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12648,6 +12693,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4DC96E701E4CC9670093CFD3 /* dsp.h in Headers */,
+				2DDD76C825E152BF00FA6FE5 /* WidgetDefs.h in Headers */,
 				2DF3D08024E70775008D966E /* MediaLibraryCoverQueryData.h in Headers */,
 				2D1E215724F9826C00E2895D /* MedialibItemDragDropHolder.h in Headers */,
 				2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */,
@@ -12657,25 +12703,27 @@
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
 				2DA273782406ED4100FB9BE1 /* GuiPreferencesWindowController.h in Headers */,
 				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
+				2DDD789C25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
 				2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */,
 				2DEF494419C4DB4100B718C1 /* PlaylistView.h in Headers */,
 				4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */,
 				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
 				2DBC62D624CCDEFC00AA20BF /* VisualizationViewController.h in Headers */,
 				2DA273892406FBD800FB9BE1 /* DspPreferencesViewController.h in Headers */,
+				2DDD778E25E153D000FA6FE5 /* WidgetFactory.h in Headers */,
 				2DAD80A12416DBB100EB3075 /* CustomToolbarItem.h in Headers */,
 				2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */,
 				2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */,
 				2DEBA1BF23E203B9000E4135 /* eqpreset.h in Headers */,
 				2D6D81EF1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h in Headers */,
-				2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */,
+				2DE1D3E619B11539009B5BC6 /* PlaceholderWidget.h in Headers */,
+				2DDD781625E1578C00FA6FE5 /* SplitterWidget.h in Headers */,
 				2D1A564A1D9FFB10005E5CDD /* ReplayGainScannerController.h in Headers */,
 				2DA5E341238DB1A8005832B7 /* EditColumnWindowController.h in Headers */,
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
 				2DB1641A24FAB13400034E11 /* MediaLibraryManager.h in Headers */,
 				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
 				2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */,
-				2DA225B023F0425C0033F411 /* DesignableView.h in Headers */,
 				2D651D17227227C300375AE2 /* ScriptableNodeEditorWindowController.h in Headers */,
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
 				2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */,
@@ -12710,6 +12758,7 @@
 				2D8EE27424D03601005C5B4B /* MediaLibraryOutlineViewController.h in Headers */,
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
 				2D747E3B24B64E7600BBB987 /* SidebarSplitViewController.h in Headers */,
+				2DDD796325E15ED200FA6FE5 /* PlaylistWidget.h in Headers */,
 				2D0A6B1B237718DA00252E6D /* playmodes.h in Headers */,
 				2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */,
@@ -12722,7 +12771,6 @@
 				2DA30B7F23F1C9A3003D22E3 /* PropertySheetContentView.h in Headers */,
 				2DB52F7C24CF7CF20046D516 /* TrackContextMenu.h in Headers */,
 				2DB2F73F240466AF00F7C000 /* PluginsPreferencesViewController.h in Headers */,
-				2DA2259F23F041B00033F411 /* DesignableViewController.h in Headers */,
 				2D747E3824B64E7600BBB987 /* SidebarSplitViewItem.h in Headers */,
 				2D04C3C02433B0FD003C2AAC /* growableBuffer.h in Headers */,
 				2D986142226C816000BAACB1 /* BrowseButton.h in Headers */,
@@ -14606,6 +14654,7 @@
 				2D01D7E71AB2219C00BCD3C4 /* volume.c in Sources */,
 				2D01D7E61AB2219C00BCD3C4 /* vfs_stdio.c in Sources */,
 				2D01D7D91AB2219C00BCD3C4 /* messagepump.c in Sources */,
+				2DDD789F25E15C9E00FA6FE5 /* WidgetBase.m in Sources */,
 				2D01D7D81AB2219C00BCD3C4 /* junklib.c in Sources */,
 				2D0A549223E8CC9500E0F978 /* eqpreset.c in Sources */,
 				2D01D7D31AB2219C00BCD3C4 /* escape.c in Sources */,
@@ -14616,6 +14665,7 @@
 				2D135EF0226E47AA00BAAE84 /* scriptable.c in Sources */,
 				2D01D7E31AB2219C00BCD3C4 /* threading_pthread.c in Sources */,
 				2D01D7DF1AB2219C00BCD3C4 /* premix.c in Sources */,
+				2DDD796625E15ED200FA6FE5 /* PlaylistWidget.m in Sources */,
 				2D01D7DC1AB2219C00BCD3C4 /* plmeta.c in Sources */,
 				2D01D7D51AB2219C00BCD3C4 /* dsppreset.c in Sources */,
 				2D04C3CF2433B147003C2AAC /* growableBuffer.c in Sources */,
@@ -14623,10 +14673,12 @@
 				2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */,
 				2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */,
 				2D40208F1F27BD7200D4EA4F /* cueutil.c in Sources */,
+				2DDD779125E153D000FA6FE5 /* WidgetFactory.m in Sources */,
 				2DBCB726240AE28E0012F178 /* tftintutil.c in Sources */,
 				2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */,
 				2D7DE4A61E64CD7700AA0F83 /* dsp.c in Sources */,
 				2D01D7D21AB2219C00BCD3C4 /* tf.c in Sources */,
+				2DDD781925E1578C00FA6FE5 /* SplitterWidget.m in Sources */,
 				2D01D7E11AB2219C00BCD3C4 /* ringbuf.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -15851,9 +15903,9 @@
 			files = (
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
 				2DEF494519C4DB4100B718C1 /* PlaylistView.m in Sources */,
-				2DA225B123F0425C0033F411 /* DesignableView.m in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
 				2DB52F7D24CF7CF20046D516 /* TrackContextMenu.m in Sources */,
+				2DDD796525E15ED200FA6FE5 /* PlaylistWidget.m in Sources */,
 				2DF55C402270FCB9002C44DC /* ScriptableNodeEditorViewController.m in Sources */,
 				2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */,
 				2D9BD67A2405A81600C02D60 /* SoundPreferencesViewController.m in Sources */,
@@ -15882,16 +15934,19 @@
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
 				2DA32B1624D6D83C00D96C84 /* MediaLibrarySelectorCellView.m in Sources */,
 				2D90EF9A2438A5A600AF6F4B /* ScriptableErrorViewer.m in Sources */,
+				2DDD781825E1578C00FA6FE5 /* SplitterWidget.m in Sources */,
 				2D1A564B1D9FFB10005E5CDD /* ReplayGainScannerController.m in Sources */,
 				2DF55C2A2270F415002C44DC /* ScriptableSelectViewController.m in Sources */,
-				2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */,
+				2DE1D3E719B11539009B5BC6 /* PlaceholderWidget.m in Sources */,
 				2DDE52A724F821630096EF80 /* MediaLibraryOutlineView.m in Sources */,
+				2DDD779025E153D000FA6FE5 /* WidgetFactory.m in Sources */,
 				2DA30B8023F1C9A3003D22E3 /* PropertySheetContentView.m in Sources */,
 				2D98613F226C814100BAACB1 /* PropertySheetViewController.m in Sources */,
 				2DA30E7A2403292D001BAB8A /* PlaybackPreferencesViewController.m in Sources */,
 				2D747E3A24B64E7600BBB987 /* SidebarSplitViewController.m in Sources */,
 				2DB1641B24FAB13400034E11 /* MediaLibraryManager.m in Sources */,
 				2DAA4040269AF879006D2754 /* TrackPositionFormatter.m in Sources */,
+				2DDD789E25E15C9E00FA6FE5 /* WidgetBase.m in Sources */,
 				2DA2738A2406FBD800FB9BE1 /* DspPreferencesViewController.m in Sources */,
 				2DAB1A3126A5FB9C00EA8B8F /* PreferencesPluginEntry.m in Sources */,
 				2DBC62DB24CCDFB200AA20BF /* VisualizationView.m in Sources */,
@@ -15915,7 +15970,6 @@
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
 				2D747E4124B6580A00BBB987 /* MainWindowSidebarViewController.m in Sources */,
 				2DF55C442270FF7E002C44DC /* ScriptablePropertySheetDataSource.m in Sources */,
-				2DA225A023F041B00033F411 /* DesignableViewController.m in Sources */,
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,
 				2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */,
 				2DDBA24E23E5E66D00051320 /* PlaylistContentView.m in Sources */,

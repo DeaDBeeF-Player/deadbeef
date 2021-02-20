@@ -27,7 +27,7 @@
 #import "PlaylistView.h"
 #import "DdbSeekBar.h"
 
-@class DesignableViewController;
+@protocol WidgetProtocol;
 
 @interface MainWindowController : NSWindowController
 
@@ -36,7 +36,7 @@
 @property (unsafe_unretained) IBOutlet DdbSeekBar *seekBar;
 @property (unsafe_unretained) IBOutlet NSSlider *volumeBar;
 
-@property (nonatomic, readonly) DesignableViewController *rootViewController;
+@property (nonatomic, readonly) id<WidgetProtocol> rootWidget;
 
 - (IBAction)seekBarAction:(id)sender;
 - (IBAction)volumeBarAction:(id)sender;
