@@ -1467,6 +1467,7 @@ ml_get_selectors (ddb_mediasource_source_t source) {
         (ddb_mediasource_list_selector_t)SEL_ARTISTS,
         (ddb_mediasource_list_selector_t)SEL_GENRES,
         (ddb_mediasource_list_selector_t)SEL_FOLDERS,
+        0
     };
     return selectors;
 }
