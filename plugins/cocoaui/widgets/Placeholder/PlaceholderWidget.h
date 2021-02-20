@@ -21,10 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import "DdbWidget.h"
+#import "WidgetBase.h"
 
-@interface DdbPlaceholderWidget : DdbWidget
-
-@property NSImage *checker;
-
+@interface PlaceholderWidget : WidgetBase<WidgetProtocol>
 @end

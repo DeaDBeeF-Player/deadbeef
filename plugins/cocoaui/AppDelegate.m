@@ -31,6 +31,7 @@
 #import "HelpWindowController.h"
 #import "EqualizerWindowController.h"
 #import "NSMenu+ActionItems.h"
+#import "WidgetDefs.h"
 #include "conf.h"
 #include "streamer.h"
 #include "junklib.h"
@@ -70,7 +71,7 @@ AppDelegate *g_appDelegate;
 
 @property (nonatomic,readwrite) MediaLibraryManager *mediaLibraryManager;
 
-@property (nonatomic) DesignableViewController *rootViewController;
+@property (nonatomic) id<WidgetProtocol> rootWidget;
 
 
 @end
@@ -708,8 +709,8 @@ main_cleanup_and_quit (void);
 {
     [[DdbWidgetManager defaultWidgetManager] widgetMessage:_id ctx:ctx p1:p1 p2:p2];
 
-    [g_appDelegate.mainWindow.rootViewController sendMessage:_id ctx:ctx p1:p1 p2:p2];
-    [(DesignableViewController *)(g_appDelegate.searchWindow.viewController) sendMessage:_id ctx:ctx p1:p1 p2:p2];
+    [g_appDelegate.mainWindow.rootWidget message:_id ctx:ctx p1:p1 p2:p2];
+    [g_appDelegate.searchWindow.viewController sendMessage:_id ctx:ctx p1:p1 p2:p2];
 
     if (_id == DB_EV_CONFIGCHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(configChanged) withObject:nil waitUntilDone:NO];
