@@ -2100,6 +2100,10 @@
 		2DDD796425E15ED200FA6FE5 /* PlaylistWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */; };
 		2DDD796525E15ED200FA6FE5 /* PlaylistWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */; };
 		2DDD796625E15ED200FA6FE5 /* PlaylistWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */; };
+		2DDD7ABB25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD7AB925E1830F00FA6FE5 /* PlaylistDataModel.h */; };
+		2DDD7ABC25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD7AB925E1830F00FA6FE5 /* PlaylistDataModel.h */; };
+		2DDD7ABD25E1831000FA6FE5 /* PlaylistDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD7ABA25E1830F00FA6FE5 /* PlaylistDataModel.m */; };
+		2DDD7ABE25E1831000FA6FE5 /* PlaylistDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD7ABA25E1830F00FA6FE5 /* PlaylistDataModel.m */; };
 		2DDE529324F81A870096EF80 /* MediaLibrarySearchCellView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDE529124F81A870096EF80 /* MediaLibrarySearchCellView.h */; };
 		2DDE529424F81A870096EF80 /* MediaLibrarySearchCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDE529224F81A870096EF80 /* MediaLibrarySearchCellView.m */; };
 		2DDE52A624F821630096EF80 /* MediaLibraryOutlineView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDE52A424F821630096EF80 /* MediaLibraryOutlineView.h */; };
@@ -5826,6 +5830,8 @@
 		2DDD789B25E15C9E00FA6FE5 /* WidgetBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WidgetBase.m; sourceTree = "<group>"; };
 		2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistWidget.h; sourceTree = "<group>"; };
 		2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistWidget.m; sourceTree = "<group>"; };
+		2DDD7AB925E1830F00FA6FE5 /* PlaylistDataModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistDataModel.h; sourceTree = "<group>"; };
+		2DDD7ABA25E1830F00FA6FE5 /* PlaylistDataModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistDataModel.m; sourceTree = "<group>"; };
 		2DDE529124F81A870096EF80 /* MediaLibrarySearchCellView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaLibrarySearchCellView.h; sourceTree = "<group>"; };
 		2DDE529224F81A870096EF80 /* MediaLibrarySearchCellView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaLibrarySearchCellView.m; sourceTree = "<group>"; };
 		2DDE52A424F821630096EF80 /* MediaLibraryOutlineView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaLibraryOutlineView.h; sourceTree = "<group>"; };
@@ -10225,6 +10231,8 @@
 				2D828E5A19E56B4D00EE874F /* SearchViewController.m */,
 				2D60108B1A9CDF06000136AF /* SearchWindowController.h */,
 				2D60108C1A9CDF06000136AF /* SearchWindowController.m */,
+				2DDD7AB925E1830F00FA6FE5 /* PlaylistDataModel.h */,
+				2DDD7ABA25E1830F00FA6FE5 /* PlaylistDataModel.m */,
 			);
 			path = Playlist;
 			sourceTree = "<group>";
@@ -11529,6 +11537,7 @@
 				2D4020901F27BD7200D4EA4F /* cueutil.h in Headers */,
 				2D135EF1226E47AA00BAAE84 /* scriptable_dsp.h in Headers */,
 				2DDD764425E1506100FA6FE5 /* metadata.h in Headers */,
+				2DDD7ABC25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */,
 				2D448A851D5C5C6500B43F12 /* logger.h in Headers */,
 				2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */,
 				2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */,
@@ -12746,6 +12755,7 @@
 				2D71C26A1DC88E5C00247CEF /* ScriptableTableDataSource.h in Headers */,
 				2DAB1A3026A5FB9C00EA8B8F /* PreferencesPluginEntry.h in Headers */,
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
+				2DDD7ABB25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */,
 				2DF55C432270FF7E002C44DC /* ScriptablePropertySheetDataSource.h in Headers */,
 				2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */,
 				2D8030CD24B261A400539F9F /* MediaLibraryItem.h in Headers */,
@@ -14661,6 +14671,7 @@
 				2DDD764525E1506100FA6FE5 /* metadata.c in Sources */,
 				2D01D7DA1AB2219C00BCD3C4 /* metacache.c in Sources */,
 				2D01D7D41AB2219C00BCD3C4 /* conf.c in Sources */,
+				2DDD7ABE25E1831000FA6FE5 /* PlaylistDataModel.m in Sources */,
 				2D01D7D61AB2219C00BCD3C4 /* fft.c in Sources */,
 				2D135EF0226E47AA00BAAE84 /* scriptable.c in Sources */,
 				2D01D7E31AB2219C00BCD3C4 /* threading_pthread.c in Sources */,
@@ -15905,6 +15916,7 @@
 				2DEF494519C4DB4100B718C1 /* PlaylistView.m in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
 				2DB52F7D24CF7CF20046D516 /* TrackContextMenu.m in Sources */,
+				2DDD7ABD25E1831000FA6FE5 /* PlaylistDataModel.m in Sources */,
 				2DDD796525E15ED200FA6FE5 /* PlaylistWidget.m in Sources */,
 				2DF55C402270FCB9002C44DC /* ScriptableNodeEditorViewController.m in Sources */,
 				2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */,

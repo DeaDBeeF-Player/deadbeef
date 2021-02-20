@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PlaylistContentView : NSView
 
 @property (nonatomic, weak) id<DdbListviewDelegate> delegate;
+@property (nonatomic, weak) id<DdbListviewDataModelProtocol> dataModel;
 @property (nonatomic,readonly) int grouptitle_height;
 
 - (void)cleanup;
