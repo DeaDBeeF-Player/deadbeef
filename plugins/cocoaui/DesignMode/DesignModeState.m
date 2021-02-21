@@ -7,6 +7,15 @@
 //
 
 #import "DesignModeState.h"
+#import "WidgetFactory.h"
+#import "WidgetMenuBuilder.h"
+
+@interface DesignModeState()
+
+@property (nonatomic) id<WidgetFactoryProtocol> widgetFactory;
+@property (nonatomic) id<WidgetMenuBuilderProtocol> menuBuilder;
+
+@end
 
 @implementation DesignModeState
 
@@ -14,10 +23,23 @@
     static DesignModeState *instance;
 
     if (instance == nil) {
-        instance = [DesignModeState new];
+        instance = [[DesignModeState alloc] initWithWidgetFactory:WidgetFactory.sharedFactory menuBuilder:WidgetMenuBuilder.sharedInstance];
     }
 
     return instance;
+}
+
+- (instancetype)initWithWidgetFactory:(nullable id<WidgetFactoryProtocol>)widgetFactory menuBuilder:(nullable id<WidgetMenuBuilderProtocol>)menuBuilder {
+    self = [super init];
+
+    if (self == nil) {
+        return nil;
+    }
+
+    _widgetFactory = widgetFactory;
+    _menuBuilder = menuBuilder;
+
+    return self;
 }
 
 @end

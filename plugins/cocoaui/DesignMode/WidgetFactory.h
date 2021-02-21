@@ -17,6 +17,9 @@ typedef id<WidgetProtocol>_Nonnull(^WidgetInstantiatorBlockType)(void);
 
 @property (nonatomic,class,readonly) WidgetFactory *sharedFactory;
 
+@property (nonatomic,readonly) id<WidgetFactoryProtocol> widgetFactory;
+@property (nonatomic,readonly) id<WidgetMenuBuilderProtocol> menuBuilder;
+
 - (nullable id<WidgetProtocol>)createWidgetWithType:(NSString *)type;
 - (void)registerType:(NSString *)type instantiatorBlock:(WidgetInstantiatorBlockType)instantiatorBlock;
 - (void)unregisterType:(NSString *)type;
