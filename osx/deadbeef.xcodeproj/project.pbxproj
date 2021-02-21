@@ -8142,24 +8142,6 @@
 			path = plugins/ffmpeg;
 			sourceTree = "<group>";
 		};
-		2D046F2725E2B16400F68459 /* DesignModeEventHandler */ = {
-			isa = PBXGroup;
-			children = (
-				2D046F3725E2B17700F68459 /* DesignModeEventHandler.h */,
-				2D046F3825E2B17700F68459 /* DesignModeEventHandler.m */,
-			);
-			path = DesignModeEventHandler;
-			sourceTree = "<group>";
-		};
-		2D04700325E2D96900F68459 /* WidgetMenuBuilder */ = {
-			isa = PBXGroup;
-			children = (
-				2D04701325E2D97D00F68459 /* WidgetMenuBuilder.h */,
-				2D04701425E2D97D00F68459 /* WidgetMenuBuilder.m */,
-			);
-			path = WidgetMenuBuilder;
-			sourceTree = "<group>";
-		};
 		2D05A8351B4BE5C4004C913D /* sndfile */ = {
 			isa = PBXGroup;
 			children = (
@@ -8385,41 +8367,30 @@
 			path = codebook;
 			sourceTree = "<group>";
 		};
-		2D30D0B125E2A5CA0023A299 /* DesignModeState */ = {
-			isa = PBXGroup;
-			children = (
-				2D30D0B225E2A5DD0023A299 /* DesignModeState.h */,
-				2D30D0B325E2A5DD0023A299 /* DesignModeState.m */,
-			);
-			path = DesignModeState;
-			sourceTree = "<group>";
-		};
 		2D30D13625E2A6B40023A299 /* DesignMode */ = {
 			isa = PBXGroup;
 			children = (
-				2D04700325E2D96900F68459 /* WidgetMenuBuilder */,
-				2D046F2725E2B16400F68459 /* DesignModeEventHandler */,
-				2D30D25025E2A8980023A299 /* WidgetTopLevelView */,
-				2D30D0B125E2A5CA0023A299 /* DesignModeState */,
-				2DDD77D225E154E300FA6FE5 /* Placeholder */,
-				2DDD796025E15EBD00FA6FE5 /* Playlist */,
-				2DDD781325E1577A00FA6FE5 /* Splitter */,
 				2DDD76C625E152BF00FA6FE5 /* DesignModeDefs.h */,
+				2D046F3725E2B17700F68459 /* DesignModeEventHandler.h */,
+				2D046F3825E2B17700F68459 /* DesignModeEventHandler.m */,
+				2D30D0B225E2A5DD0023A299 /* DesignModeState.h */,
+				2D30D0B325E2A5DD0023A299 /* DesignModeState.m */,
+				2DE1D3E419B11539009B5BC6 /* PlaceholderWidget.h */,
+				2DE1D3E519B11539009B5BC6 /* PlaceholderWidget.m */,
+				2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */,
+				2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */,
+				2DDD781425E1578C00FA6FE5 /* SplitterWidget.h */,
+				2DDD781525E1578C00FA6FE5 /* SplitterWidget.m */,
 				2DDD789A25E15C9E00FA6FE5 /* WidgetBase.h */,
 				2DDD789B25E15C9E00FA6FE5 /* WidgetBase.m */,
 				2DDD778C25E153D000FA6FE5 /* WidgetFactory.h */,
 				2DDD778D25E153D000FA6FE5 /* WidgetFactory.m */,
-			);
-			path = DesignMode;
-			sourceTree = "<group>";
-		};
-		2D30D25025E2A8980023A299 /* WidgetTopLevelView */ = {
-			isa = PBXGroup;
-			children = (
+				2D04701325E2D97D00F68459 /* WidgetMenuBuilder.h */,
+				2D04701425E2D97D00F68459 /* WidgetMenuBuilder.m */,
 				2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */,
 				2D30D20B25E2A8930023A299 /* WidgetTopLevelView.m */,
 			);
-			path = WidgetTopLevelView;
+			path = DesignMode;
 			sourceTree = "<group>";
 		};
 		2D35E30C1AA7AC4B0077FBD1 /* dial68 */ = {
@@ -10330,33 +10301,6 @@
 				2DDD764325E1506100FA6FE5 /* metadata.c */,
 			);
 			path = metadata;
-			sourceTree = "<group>";
-		};
-		2DDD77D225E154E300FA6FE5 /* Placeholder */ = {
-			isa = PBXGroup;
-			children = (
-				2DE1D3E419B11539009B5BC6 /* PlaceholderWidget.h */,
-				2DE1D3E519B11539009B5BC6 /* PlaceholderWidget.m */,
-			);
-			path = Placeholder;
-			sourceTree = "<group>";
-		};
-		2DDD781325E1577A00FA6FE5 /* Splitter */ = {
-			isa = PBXGroup;
-			children = (
-				2DDD781425E1578C00FA6FE5 /* SplitterWidget.h */,
-				2DDD781525E1578C00FA6FE5 /* SplitterWidget.m */,
-			);
-			path = Splitter;
-			sourceTree = "<group>";
-		};
-		2DDD796025E15EBD00FA6FE5 /* Playlist */ = {
-			isa = PBXGroup;
-			children = (
-				2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */,
-				2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */,
-			);
-			path = Playlist;
 			sourceTree = "<group>";
 		};
 		2DDFABC92438E56000E13E85 /* Products */ = {
