@@ -11,6 +11,7 @@
 #import "PlaceholderWidget.h"
 #import "SplitterWidget.h"
 #import "WidgetFactory.h"
+#import "WidgetMenuBuilder.h"
 
 @interface WidgetFactory()
 
@@ -24,15 +25,14 @@
 {
     if (self == [WidgetFactory class]) {
         [WidgetFactory.sharedFactory registerType:@"Placeholder" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
-            return [[PlaceholderWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance];
+            return [[PlaceholderWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance menuBuilder:WidgetMenuBuilder.sharedInstance];
         }];
         [WidgetFactory.sharedFactory registerType:@"Playlist" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
-            return [[PlaylistWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance];
+            return [[PlaylistWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance menuBuilder:WidgetMenuBuilder.sharedInstance];
         }];
         [WidgetFactory.sharedFactory registerType:@"Splitter" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
-            return [[SplitterWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance];
+            return [[SplitterWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance menuBuilder:WidgetMenuBuilder.sharedInstance];
         }];
-
     }
 }
 
@@ -70,8 +70,13 @@
 - (void)registerType:(NSString *)type instantiatorBlock:(WidgetInstantiatorBlockType)instantiatorBlock {
     self.registeredWidgets[type] = instantiatorBlock;
 }
+
 - (void)unregisterType:(NSString *)type {
     [self.registeredWidgets removeObjectForKey:type];
+}
+
+- (NSArray<NSString *> *)types {
+    return [self.registeredWidgets.allKeys sortedArrayUsingSelector:@selector(isEqualToString:)];
 }
 
 @end

@@ -28,15 +28,16 @@ const NSInteger GRIDSIZE = 16;
 
 @interface PlaceholderWidget()
 
-@property (nonatomic) NSView *view;
+@property (nonatomic) NSView *placeholderView;
+@property (nonatomic) CALayer *backgroundLayer;
+@property (nonatomic) id<WidgetProtocol> containedWidget;
 
 @end
 
 @implementation PlaceholderWidget
 
-- (instancetype)init
-{
-    self = [super init];
+- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState menuBuilder:(nullable id<WidgetMenuBuilderProtocol>)menuBuilder {
+    self = [super initWithDesignModeState:designModeState menuBuilder:menuBuilder];
     if (self == nil) {
         return nil;
     }
@@ -50,9 +51,17 @@ const NSInteger GRIDSIZE = 16;
 
     [checker unlockFocus];
 
-    self.view = [[NSView alloc] initWithFrame:NSZeroRect];
-    self.view.layer = [CALayer new];
-    self.view.layer.backgroundColor = [NSColor colorWithPatternImage:checker].CGColor;
+    _placeholderView = [[NSView alloc] initWithFrame:NSZeroRect];
+    _backgroundLayer = [CALayer new];
+    _backgroundLayer.backgroundColor = [NSColor colorWithPatternImage:checker].CGColor;
+    _placeholderView.layer = _backgroundLayer;
+
+    _placeholderView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.topLevelView addSubview:_placeholderView];
+    [_placeholderView.leadingAnchor constraintEqualToAnchor:self.topLevelView.leadingAnchor].active = YES;
+    [_placeholderView.trailingAnchor constraintEqualToAnchor:self.topLevelView.trailingAnchor].active = YES;
+    [_placeholderView.topAnchor constraintEqualToAnchor:self.topLevelView.topAnchor].active = YES;
+    [_placeholderView.bottomAnchor constraintEqualToAnchor:self.topLevelView.bottomAnchor].active = YES;
 
     return self;
 }
@@ -62,28 +71,37 @@ const NSInteger GRIDSIZE = 16;
 }
 
 - (void)appendChild:(id<WidgetProtocol>)child {
-    if (self.view.subviews.count != 0) {
+    if (self.placeholderView.subviews.count != 0) {
         return;
     }
 
-    [self.view addSubview:child.view];
+    _placeholderView.layer = nil;
+
+    self.containedWidget = child;
+    [self.placeholderView addSubview:child.view];
     child.parentWidget = self;
 
-    [child.view.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor].active = YES;
-    [child.view.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor].active = YES;
-    [child.view.topAnchor constraintEqualToAnchor:self.view.topAnchor].active = YES;
-    [child.view.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor].active = YES;
+    [child.view.leadingAnchor constraintEqualToAnchor:self.placeholderView.leadingAnchor].active = YES;
+    [child.view.trailingAnchor constraintEqualToAnchor:self.placeholderView.trailingAnchor].active = YES;
+    [child.view.topAnchor constraintEqualToAnchor:self.placeholderView.topAnchor].active = YES;
+    [child.view.bottomAnchor constraintEqualToAnchor:self.placeholderView.bottomAnchor].active = YES;
 }
 
 - (void)removeChild:(id<WidgetProtocol>)child {
-    if (self.view.subviews.count != 0 && self.view.subviews.firstObject == child) {
+    if (self.placeholderView.subviews.count != 0 && self.placeholderView.subviews.firstObject == child) {
         [child.view removeFromSuperview];
+        child.parentWidget = nil;
+        _placeholderView.layer = nil;
     }
 }
 
 - (void)replaceChild:(id<WidgetProtocol>)child withChild:(id<WidgetProtocol>)newChild {
     [self removeChild:child];
     [self appendChild:newChild];
+}
+
+- (BOOL)canInsert {
+    return YES;
 }
 
 @end

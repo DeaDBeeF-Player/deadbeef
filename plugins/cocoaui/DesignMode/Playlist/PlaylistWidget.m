@@ -17,8 +17,8 @@
 
 @implementation PlaylistWidget
 
-- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState {
-    self = [super initWithDesignModeState:designModeState];
+- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState menuBuilder:(nullable id<WidgetMenuBuilderProtocol>)menuBuilder {
+    self = [super initWithDesignModeState:designModeState menuBuilder:menuBuilder];
     if (self == nil) {
         return nil;
     }

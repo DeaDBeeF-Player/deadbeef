@@ -21,6 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#import "DesignModeState.h"
 #import "WidgetFactory.h"
 #import "GuiPreferencesWindowController.h"
 #import "MainWindowController.h"
@@ -75,7 +76,10 @@ extern DB_functions_t *deadbeef;
     }
 #endif
 
-    self.rootWidget = [WidgetFactory.sharedFactory createWidgetWithType:@"Playlist"];
+    self.rootWidget = [WidgetFactory.sharedFactory createWidgetWithType:@"Placeholder"];
+    id<WidgetProtocol> playlistWidget = [WidgetFactory.sharedFactory createWidgetWithType:@"Playlist"];
+    [self.rootWidget appendChild:playlistWidget];
+
     NSView *view = self.rootWidget.view;
 
     view.translatesAutoresizingMaskIntoConstraints = NO;
@@ -85,7 +89,9 @@ extern DB_functions_t *deadbeef;
     [view.leadingAnchor constraintEqualToAnchor:self.designableContainerView.leadingAnchor].active = YES;
     [view.trailingAnchor constraintEqualToAnchor:self.designableContainerView.trailingAnchor].active = YES;
 
-    [self.rootWidget makeFirstResponder];
+    if ([self.rootWidget respondsToSelector:@selector(makeFirstResponder)]) {
+        [self.rootWidget makeFirstResponder];
+    }
 
     NSLayoutYAxisAnchor *topAnchor;
     if (self.window.contentLayoutGuide && self.playlistWithTabsView) {
@@ -226,6 +232,10 @@ static char sb_text[512];
     if (trk) {
         deadbeef->pl_item_unref (trk);
     }
+}
+
+- (IBAction)toggleDesignModeAction:(id)sender {
+    DesignModeState.sharedInstance.enabled = !DesignModeState.sharedInstance.enabled;
 }
 
 - (IBAction)seekBarAction:(DdbSeekBar *)sender {

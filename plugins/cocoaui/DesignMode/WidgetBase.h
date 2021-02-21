@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WidgetBase : NSObject
 
-- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithDesignModeState:(nullable id<DesignModeStateProtocol>)designModeState menuBuilder:(nullable id<WidgetMenuBuilderProtocol>)menuBuilder NS_DESIGNATED_INITIALIZER;
 
 @property (nullable,nonatomic,weak) id<WidgetProtocol> parentWidget;
 @property (nullable,nonatomic) NSMutableArray<id<WidgetProtocol>> *childWidgets;
