@@ -2108,7 +2108,6 @@ typedef struct DB_playlist_s {
 // NOTE: Media source API is a work in progress, and is disabled int this version of source code.
 // This is to prevent plugin devs from releasing media source plugins, before this API is finalized.
 // Use the appropriate development branch to test media source plugins.
-#if DDB_ENABLE_MEDIA_SOURCE_API
 #if (DDB_API_LEVEL >= 13)
 
 // Mediasource plugin
@@ -2165,7 +2164,6 @@ typedef struct {
     ddb_mediasource_state_t (*scanner_state) (ddb_mediasource_source_t source);
 } DB_mediasource_t;
 
-#endif
 #endif
 
 #undef DDB_DEPRECATED
