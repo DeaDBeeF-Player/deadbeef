@@ -28,12 +28,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@protocol DesignModeStateProtocol
-
-@property (nonatomic) BOOL enabled;
-
-@end
-
 @protocol WidgetFactoryProtocol
 - (nullable id<WidgetProtocol>)createWidgetWithType:(NSString *)type;
 @property (nonatomic,readonly) NSArray<NSString *> *types;
@@ -42,6 +36,14 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol WidgetMenuBuilderProtocol
 
 - (NSMenu *)menuForWidget:(id<WidgetProtocol>)widget;
+
+@end
+
+@protocol DesignModeStateProtocol
+
+@property (nonatomic) BOOL enabled;
+@property (nonatomic,readonly) id<WidgetFactoryProtocol> widgetFactory;
+@property (nonatomic,readonly) id<WidgetMenuBuilderProtocol> menuBuilder;
 
 @end
 
