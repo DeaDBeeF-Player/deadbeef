@@ -116,7 +116,11 @@ ddbUtilTrackListInitWithWithTracks (ddbUtilTrackList_t trackList, ddb_playlist_t
         deadbeef->plt_ref (plt);
     }
 
+    if (currentTrack) {
+        deadbeef->pl_item_ref (currentTrack);
+    }
     data->it_current_song = currentTrack;
+
     data->idx_current_song = currentTrackIdx;
 
     if (tracks) {
