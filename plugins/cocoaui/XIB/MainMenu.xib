@@ -449,6 +449,13 @@ CA
                                     <action selector="toggleFullScreen:" target="-1" id="E5l-9A-pd9"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="Bjr-3s-Ckv"/>
+                            <menuItem title="Design Mode" id="iSe-xr-mRs">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleDesignModeAction:" target="-1" id="Cvh-A7-ULb"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>

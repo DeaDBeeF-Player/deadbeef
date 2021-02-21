@@ -11,12 +11,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol WidgetProtocol
+@protocol WidgetProtocol<NSObject>
 
 @required
 - (NSString *)serializedString;
 - (NSView *)view;
 @property (nullable,nonatomic,weak) id<WidgetProtocol> parentWidget;
+@property (nonatomic,readonly) BOOL canInsert;
 
 @optional
 - (void)makeFirstResponder;
@@ -29,13 +30,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol DesignModeStateProtocol
 
-@property (nonatomic,getter=isEnabled) BOOL enabled;
+@property (nonatomic) BOOL enabled;
 
 @end
 
 @protocol WidgetFactoryProtocol
 - (nullable id<WidgetProtocol>)createWidgetWithType:(NSString *)type;
+@property (nonatomic,readonly) NSArray<NSString *> *types;
 @end
 
+@protocol WidgetMenuBuilderProtocol
+
+- (NSMenu *)menuForWidget:(id<WidgetProtocol>)widget;
+
+@end
 
 NS_ASSUME_NONNULL_END

@@ -22,7 +22,7 @@
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-    self = [super initWithFrame:frame];
+    self = [self initWithDesignModeState:nil];
     if (self == nil) {
         return nil;
     }
@@ -32,7 +32,7 @@
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
-    self = [super initWithCoder:coder];
+    self = [self initWithDesignModeState:nil];
     if (self == nil) {
         return nil;
     }
@@ -48,6 +48,10 @@
     _designModeState = designModeState;
     [self setup];
     return self;
+}
+
+- (NSMenu *)menu {
+    return self.delegate.menu;
 }
 
 - (void)setup {
@@ -66,7 +70,7 @@
 }
 
 - (void)rightMouseDown:(NSEvent *)event {
-    if (!self.designModeState.isEnabled) {
+    if (!self.designModeState.enabled) {
         return;
     }
     [self.selectionOverlayView removeFromSuperview];
@@ -75,13 +79,24 @@
     [self.selectionOverlayView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor].active = YES;
     [self.selectionOverlayView.topAnchor constraintEqualToAnchor:self.topAnchor].active = YES;
     [self.selectionOverlayView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor].active = YES;
+
+    [super rightMouseDown: event];
+    [self.selectionOverlayView removeFromSuperview];
 }
 
 - (void)rightMouseUp:(NSEvent *)event {
-    if (!self.designModeState.isEnabled) {
+    if (!self.designModeState.enabled) {
         return;
     }
     [self.selectionOverlayView removeFromSuperview];
+}
+
+- (BOOL)wantsLayer {
+    return NO;
+}
+
+- (void)drawRect:(NSRect)dirtyRect {
+    [super drawRect:dirtyRect];
 }
 
 @end

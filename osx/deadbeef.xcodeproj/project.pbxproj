@@ -700,6 +700,8 @@
 		2D046F3A25E2B17700F68459 /* DesignModeEventHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D046F3825E2B17700F68459 /* DesignModeEventHandler.m */; };
 		2D046F7D25E2B55200F68459 /* MainWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D046F7B25E2B55200F68459 /* MainWindow.h */; };
 		2D046F7E25E2B55200F68459 /* MainWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D046F7C25E2B55200F68459 /* MainWindow.m */; };
+		2D04701525E2D97D00F68459 /* WidgetMenuBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D04701325E2D97D00F68459 /* WidgetMenuBuilder.h */; };
+		2D04701625E2D97D00F68459 /* WidgetMenuBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D04701425E2D97D00F68459 /* WidgetMenuBuilder.m */; };
 		2D04C3C02433B0FD003C2AAC /* growableBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D04C3BE2433B0FD003C2AAC /* growableBuffer.h */; };
 		2D04C3CF2433B147003C2AAC /* growableBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D04C3BF2433B0FD003C2AAC /* growableBuffer.c */; };
 		2D04C3D12433B3B9003C2AAC /* GrowableBufferTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D04C3D02433B3B9003C2AAC /* GrowableBufferTests.m */; };
@@ -2097,7 +2099,6 @@
 		2DDD778E25E153D000FA6FE5 /* WidgetFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD778C25E153D000FA6FE5 /* WidgetFactory.h */; };
 		2DDD778F25E153D000FA6FE5 /* WidgetFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD778C25E153D000FA6FE5 /* WidgetFactory.h */; };
 		2DDD779025E153D000FA6FE5 /* WidgetFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD778D25E153D000FA6FE5 /* WidgetFactory.m */; };
-		2DDD779125E153D000FA6FE5 /* WidgetFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD778D25E153D000FA6FE5 /* WidgetFactory.m */; };
 		2DDD781625E1578C00FA6FE5 /* SplitterWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD781425E1578C00FA6FE5 /* SplitterWidget.h */; };
 		2DDD781725E1578C00FA6FE5 /* SplitterWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD781425E1578C00FA6FE5 /* SplitterWidget.h */; };
 		2DDD781825E1578C00FA6FE5 /* SplitterWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD781525E1578C00FA6FE5 /* SplitterWidget.m */; };
@@ -4418,6 +4419,8 @@
 		2D046F3825E2B17700F68459 /* DesignModeEventHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DesignModeEventHandler.m; sourceTree = "<group>"; };
 		2D046F7B25E2B55200F68459 /* MainWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainWindow.h; sourceTree = "<group>"; };
 		2D046F7C25E2B55200F68459 /* MainWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainWindow.m; sourceTree = "<group>"; };
+		2D04701325E2D97D00F68459 /* WidgetMenuBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WidgetMenuBuilder.h; sourceTree = "<group>"; };
+		2D04701425E2D97D00F68459 /* WidgetMenuBuilder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WidgetMenuBuilder.m; sourceTree = "<group>"; };
 		2D04C3BE2433B0FD003C2AAC /* growableBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = growableBuffer.h; sourceTree = "<group>"; };
 		2D04C3BF2433B0FD003C2AAC /* growableBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = growableBuffer.c; sourceTree = "<group>"; };
 		2D04C3D02433B3B9003C2AAC /* GrowableBufferTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GrowableBufferTests.m; sourceTree = "<group>"; };
@@ -8145,6 +8148,15 @@
 			path = DesignModeEventHandler;
 			sourceTree = "<group>";
 		};
+		2D04700325E2D96900F68459 /* WidgetMenuBuilder */ = {
+			isa = PBXGroup;
+			children = (
+				2D04701325E2D97D00F68459 /* WidgetMenuBuilder.h */,
+				2D04701425E2D97D00F68459 /* WidgetMenuBuilder.m */,
+			);
+			path = WidgetMenuBuilder;
+			sourceTree = "<group>";
+		};
 		2D05A8351B4BE5C4004C913D /* sndfile */ = {
 			isa = PBXGroup;
 			children = (
@@ -8382,6 +8394,7 @@
 		2D30D13625E2A6B40023A299 /* DesignMode */ = {
 			isa = PBXGroup;
 			children = (
+				2D04700325E2D96900F68459 /* WidgetMenuBuilder */,
 				2D046F2725E2B16400F68459 /* DesignModeEventHandler */,
 				2D30D25025E2A8980023A299 /* WidgetTopLevelView */,
 				2D30D0B125E2A5CA0023A299 /* DesignModeState */,
@@ -12772,6 +12785,7 @@
 				2DA273782406ED4100FB9BE1 /* GuiPreferencesWindowController.h in Headers */,
 				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
 				2DDD789C25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
+				2D04701525E2D97D00F68459 /* WidgetMenuBuilder.h in Headers */,
 				2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */,
 				2DEF494419C4DB4100B718C1 /* PlaylistView.h in Headers */,
 				4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */,
@@ -14748,7 +14762,6 @@
 				2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */,
 				2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */,
 				2D40208F1F27BD7200D4EA4F /* cueutil.c in Sources */,
-				2DDD779125E153D000FA6FE5 /* WidgetFactory.m in Sources */,
 				2DBCB726240AE28E0012F178 /* tftintutil.c in Sources */,
 				2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */,
 				2D7DE4A61E64CD7700AA0F83 /* dsp.c in Sources */,
@@ -16040,6 +16053,7 @@
 				2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */,
 				2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */,
 				2D9C0C26238DC2C100CE8C10 /* GroupByCustomWindowController.m in Sources */,
+				2D04701625E2D97D00F68459 /* WidgetMenuBuilder.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* SearchViewController.m in Sources */,
 				2D747E3924B64E7600BBB987 /* SidebarSplitViewItem.m in Sources */,
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,

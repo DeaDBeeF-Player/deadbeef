@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PlaylistWidget : WidgetBase<WidgetProtocol>
+@interface PlaylistWidget : WidgetBase
 
 @end
 
