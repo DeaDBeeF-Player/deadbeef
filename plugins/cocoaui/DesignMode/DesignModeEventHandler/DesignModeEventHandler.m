@@ -41,9 +41,8 @@
         return NO;
     }
 
-    NSPoint contentViewPoint = [event.window.contentView convertPoint:event.locationInWindow fromView:nil];
-    NSPoint superViewPoint = [event.window.contentView convertPoint:contentViewPoint toView:event.window.contentView.superview];
-    NSView *hitView = [event.window.contentView hitTest:superViewPoint];
+    NSPoint contentViewPoint = [event.window.contentView.superview convertPoint:event.locationInWindow fromView:nil];
+    NSView *hitView = [event.window.contentView hitTest:contentViewPoint];
     NSInteger count = 5;
     while (count-- > 0 && hitView) {
         if ([hitView isKindOfClass:WidgetTopLevelView.class]) {
