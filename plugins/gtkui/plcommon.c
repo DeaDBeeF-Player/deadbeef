@@ -107,8 +107,8 @@ _capture_selected_track_list (void) {
 
     int count = deadbeef->plt_getselcount(plt);
     int all_idx = 0;
+    int idx = 0;
     if (count) {
-        int idx = 0;
         tracks = calloc (sizeof (ddb_playItem_t *), count);
 
         ddb_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
@@ -134,6 +134,10 @@ _capture_selected_track_list (void) {
     if (current) {
         deadbeef->pl_item_unref (current);
         current = NULL;
+    }
+
+    for (int i = 0; i < idx; i++) {
+        deadbeef->pl_item_unref (tracks[i]);
     }
 
     deadbeef->pl_unlock ();
