@@ -25,13 +25,16 @@
 {
     if (self == [WidgetFactory class]) {
         [WidgetFactory.sharedFactory registerType:@"Placeholder" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
-            return [[PlaceholderWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance menuBuilder:WidgetMenuBuilder.sharedInstance];
+            return [[PlaceholderWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance];
         }];
         [WidgetFactory.sharedFactory registerType:@"Playlist" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
-            return [[PlaylistWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance menuBuilder:WidgetMenuBuilder.sharedInstance];
+            return [[PlaylistWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance];
         }];
-        [WidgetFactory.sharedFactory registerType:@"Splitter" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
-            return [[SplitterWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance menuBuilder:WidgetMenuBuilder.sharedInstance];
+        [WidgetFactory.sharedFactory registerType:@"Splitter (top and bottom)" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+            return [[SplitterWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance vertical:NO];
+        }];
+        [WidgetFactory.sharedFactory registerType:@"Splitter (left and right)" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+            return [[SplitterWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance vertical:YES];
         }];
     }
 }

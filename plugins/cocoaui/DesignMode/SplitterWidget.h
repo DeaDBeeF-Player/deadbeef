@@ -13,6 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SplitterWidget : WidgetBase<WidgetProtocol>
 
+- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState vertical:(BOOL)vertical;
+
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -10,21 +10,21 @@
 #import "WidgetBase.h"
 #import "WidgetTopLevelView.h"
 
-@interface WidgetBase() <WidgetTopLevelViewDelegate,WidgetProtocol>
+@interface WidgetBase() <WidgetTopLevelViewDelegate>
 
 @property (nonatomic) id<DesignModeStateProtocol> designModeState;
-@property (nonatomic) id<WidgetMenuBuilderProtocol> menuBuilder;
 @property (nonatomic,readwrite) WidgetTopLevelView *topLevelView;
+@property (nullable,nonatomic) NSMutableArray<id<WidgetProtocol>> *childWidgets;
 
 @end
 
 @implementation WidgetBase
 
 - (instancetype)init {
-    return [self initWithDesignModeState:nil menuBuilder:nil];
+    return [self initWithDesignModeState:nil];
 }
 
-- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState menuBuilder:(id<WidgetMenuBuilderProtocol>)menuBuilder {
+- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState {
     self = [super init];
 
     if (self == nil) {
@@ -32,7 +32,6 @@
     }
 
     _designModeState = designModeState;
-    _menuBuilder = menuBuilder;
 
     _childWidgets = [NSMutableArray new];
     _topLevelView = [[WidgetTopLevelView alloc] initWithDesignModeState:designModeState];
@@ -61,7 +60,16 @@
 }
 
 - (NSMenu *)menu {
-    return [self.menuBuilder menuForWidget:self];
+    return [self.designModeState.menuBuilder menuForWidget:self];
 }
+
+- (void)appendChild:(id<WidgetProtocol>)child {
+    [self.childWidgets addObject:child];
+}
+
+- (void)removeChild:(id<WidgetProtocol>)child {
+    [self.childWidgets removeObject:child];
+}
+
 
 @end
