@@ -64,8 +64,14 @@
     [blur setValue:@(1) forKey:kCIInputRadiusKey];
     _selectionOverlayView.layer.backgroundFilters = [NSArray arrayWithObject:blur];
 
-    _selectionOverlayView.layer.backgroundColor = [NSColor.blueColor colorWithAlphaComponent:0.7].CGColor;
-    _selectionOverlayView.layer.borderColor = NSColor.blueColor.CGColor;
+    NSColor *viewColor;
+    if (@available(macOS 10.14, *)) {
+        viewColor = NSColor.controlAccentColor;
+    } else {
+        viewColor = NSColor.alternateSelectedControlColor;
+    }
+    _selectionOverlayView.layer.backgroundColor = [viewColor colorWithAlphaComponent:0.7].CGColor;
+    _selectionOverlayView.layer.borderColor = viewColor.CGColor;
     _selectionOverlayView.layer.borderWidth = 1;
 }
 
