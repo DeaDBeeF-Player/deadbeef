@@ -129,6 +129,8 @@ _capture_selected_track_list (void) {
     }
 
 
+    deadbeef->pl_unlock ();
+
     _menuTrackList = ddbUtilTrackListInitWithWithTracks(ddbUtilTrackListAlloc(), plt, DDB_ACTION_CTX_SELECTION, tracks, count, current, current_idx);
 
     if (current) {
@@ -140,7 +142,7 @@ _capture_selected_track_list (void) {
         deadbeef->pl_item_unref (tracks[i]);
     }
 
-    deadbeef->pl_unlock ();
+    free (tracks);
 
     deadbeef->plt_unref (plt);
 }
