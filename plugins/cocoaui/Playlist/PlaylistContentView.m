@@ -1357,6 +1357,5 @@ static int grouptitleheight = 22;
     [self updatePinnedGroup];
 }
 
-
 @end
 

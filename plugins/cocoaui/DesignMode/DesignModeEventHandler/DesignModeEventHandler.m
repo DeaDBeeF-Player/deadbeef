@@ -37,7 +37,7 @@
         return NO;
     }
 
-    if (!self.designModeState.isEnabled) {
+    if (!self.designModeState.enabled) {
         return NO;
     }
 

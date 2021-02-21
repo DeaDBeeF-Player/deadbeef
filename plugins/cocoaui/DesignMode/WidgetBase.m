@@ -10,9 +10,10 @@
 #import "WidgetBase.h"
 #import "WidgetTopLevelView.h"
 
-@interface WidgetBase()
+@interface WidgetBase() <WidgetTopLevelViewDelegate,WidgetProtocol>
 
 @property (nonatomic) id<DesignModeStateProtocol> designModeState;
+@property (nonatomic) id<WidgetMenuBuilderProtocol> menuBuilder;
 @property (nonatomic,readwrite) WidgetTopLevelView *topLevelView;
 
 @end
@@ -20,10 +21,10 @@
 @implementation WidgetBase
 
 - (instancetype)init {
-    return [self initWithDesignModeState:[DesignModeState new]];
+    return [self initWithDesignModeState:nil menuBuilder:nil];
 }
 
-- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState {
+- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState menuBuilder:(id<WidgetMenuBuilderProtocol>)menuBuilder {
     self = [super init];
 
     if (self == nil) {
@@ -31,9 +32,12 @@
     }
 
     _designModeState = designModeState;
+    _menuBuilder = menuBuilder;
+
     _childWidgets = [NSMutableArray new];
     _topLevelView = [[WidgetTopLevelView alloc] initWithDesignModeState:designModeState];
     _topLevelView.translatesAutoresizingMaskIntoConstraints = NO;
+    _topLevelView.delegate = self;
 
     return self;
 }
@@ -46,6 +50,18 @@
 
 - (NSView *)view {
     return self.topLevelView;
+}
+
+- (nonnull NSString *)serializedString {
+    return @"";
+}
+
+- (BOOL)canInsert {
+    return NO;
+}
+
+- (NSMenu *)menu {
+    return [self.menuBuilder menuForWidget:self];
 }
 
 @end
