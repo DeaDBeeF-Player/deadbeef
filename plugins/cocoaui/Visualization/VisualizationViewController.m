@@ -16,14 +16,20 @@
 
 @implementation VisualizationViewController
 
+- (void)dealloc {
+    [self.tickTimer invalidate];
+}
+
 - (instancetype)init {
     self = [super init];
     if (self == nil) {
         return nil;
     }
 
+    __weak VisualizationViewController *weakSelf = self;
     self.tickTimer = [NSTimer scheduledTimerWithTimeInterval:1/30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
-        self.view.needsDisplay = YES;
+        VisualizationViewController *strongSelf = weakSelf;
+        strongSelf.view.needsDisplay = YES;
     }];
 
     return self;
