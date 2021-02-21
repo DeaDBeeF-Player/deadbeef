@@ -9,6 +9,7 @@
 #import "DesignModeState.h"
 #import "PlaylistWidget.h"
 #import "PlaceholderWidget.h"
+#import "SpectrumAnalyzerWidget.h"
 #import "SplitterWidget.h"
 #import "WidgetFactory.h"
 #import "WidgetMenuBuilder.h"
@@ -35,6 +36,9 @@
         }];
         [WidgetFactory.sharedFactory registerType:@"Splitter (left and right)" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
             return [[SplitterWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance vertical:YES];
+        }];
+        [WidgetFactory.sharedFactory registerType:@"Spectrum Analyzer" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+            return [[SpectrumAnalyzerWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance];
         }];
     }
 }

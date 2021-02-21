@@ -1,4 +1,4 @@
-//
+    //
 //  VisualizationViewController.m
 //  DeaDBeeF
 //
@@ -16,12 +16,17 @@
 
 @implementation VisualizationViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
+- (instancetype)init {
+    self = [super init];
+    if (self == nil) {
+        return nil;
+    }
 
     self.tickTimer = [NSTimer scheduledTimerWithTimeInterval:1/30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
         self.view.needsDisplay = YES;
     }];
+
+    return self;
 }
 
 @end
