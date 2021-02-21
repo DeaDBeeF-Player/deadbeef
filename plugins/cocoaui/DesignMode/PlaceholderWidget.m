@@ -71,7 +71,7 @@ const NSInteger GRIDSIZE = 16;
 }
 
 - (void)appendChild:(id<WidgetProtocol>)child {
-    if (self.placeholderView.subviews.count != 0) {
+    if (self.containedWidget != nil) {
         return;
     }
 
@@ -88,10 +88,11 @@ const NSInteger GRIDSIZE = 16;
 }
 
 - (void)removeChild:(id<WidgetProtocol>)child {
-    if (self.placeholderView.subviews.count != 0 && self.placeholderView.subviews.firstObject == child) {
+    if (self.placeholderView.subviews.count != 0 && self.containedWidget == child) {
         [child.view removeFromSuperview];
         child.parentWidget = nil;
-        _placeholderView.layer = nil;
+        self.containedWidget = nil;
+        _placeholderView.layer = self.backgroundLayer;
     }
 }
 
