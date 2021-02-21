@@ -36,8 +36,8 @@ const NSInteger GRIDSIZE = 16;
 
 @implementation PlaceholderWidget
 
-- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState menuBuilder:(nullable id<WidgetMenuBuilderProtocol>)menuBuilder {
-    self = [super initWithDesignModeState:designModeState menuBuilder:menuBuilder];
+- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState {
+    self = [super initWithDesignModeState:designModeState];
     if (self == nil) {
         return nil;
     }
@@ -85,6 +85,7 @@ const NSInteger GRIDSIZE = 16;
     [child.view.trailingAnchor constraintEqualToAnchor:self.placeholderView.trailingAnchor].active = YES;
     [child.view.topAnchor constraintEqualToAnchor:self.placeholderView.topAnchor].active = YES;
     [child.view.bottomAnchor constraintEqualToAnchor:self.placeholderView.bottomAnchor].active = YES;
+    [super appendChild:child];
 }
 
 - (void)removeChild:(id<WidgetProtocol>)child {
@@ -93,6 +94,7 @@ const NSInteger GRIDSIZE = 16;
         child.parentWidget = nil;
         self.containedWidget = nil;
         _placeholderView.layer = self.backgroundLayer;
+        [super removeChild:child];
     }
 }
 
