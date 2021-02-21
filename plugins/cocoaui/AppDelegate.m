@@ -24,6 +24,7 @@
 #import "AppDelegate.h"
 #import "dispatch/dispatch.h"
 #import "DdbWidgetManager.h"
+#import "DesignModeState.h"
 #import "ReplayGainScannerController.h"
 #import "DdbShared.h"
 #import "NowPlayable.h"
@@ -72,6 +73,8 @@ AppDelegate *g_appDelegate;
 @property (nonatomic,readwrite) MediaLibraryManager *mediaLibraryManager;
 
 @property (nonatomic) id<WidgetProtocol> rootWidget;
+@property (weak) IBOutlet NSMenuItem *designModeMenuItem;
+@property DesignModeState *designModeState;
 
 
 @end
@@ -169,6 +172,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 }
 
 - (void)awakeFromNib {
+    self.designModeState = DesignModeState.sharedInstance;
     self.mediaLibraryManager = [MediaLibraryManager new];
     [self initMainMenu];
     [self initMainWindow];
@@ -204,6 +208,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [self.mainMenu addActionItemsForContext:DDB_ACTION_CTX_MAIN track:nil filter:^BOOL(DB_plugin_action_t * _Nonnull action) {
         return (action->flags & (DB_ACTION_COMMON|DB_ACTION_ADD_MENU)) == (DB_ACTION_COMMON|DB_ACTION_ADD_MENU);
     }];
+    self.designModeMenuItem.state = self.designModeState.enabled ? NSControlStateValueOn : NSControlStateValueOff;
 }
 
 - (BOOL)equalizerAvailable {
@@ -292,7 +297,7 @@ main_cleanup_and_quit (void);
 
     // initialize gui from settings
     [self configChanged];
-    
+
     deadbeef->listen_file_add_beginend (fileadd_begin, fileadd_end, NULL);
     deadbeef->listen_file_added (file_added, NULL);
 
@@ -908,6 +913,11 @@ main_cleanup_and_quit (void);
     if (![_helpWindow.window isVisible]) {
         [_helpWindow showWindow:self];
     }
+}
+
+- (IBAction)toggleDesignModeAction:(id)sender {
+    self.designModeState.enabled = !self.designModeState.enabled;
+    self.designModeMenuItem.state = self.designModeState.enabled ? NSControlStateValueOn : NSControlStateValueOff;
 }
 
 @end

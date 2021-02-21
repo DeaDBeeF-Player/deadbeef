@@ -37,13 +37,30 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
     [view updateFFTData:data];
 }
 
-- (instancetype)initWithCoder:(NSCoder *)coder
+- (instancetype)initWithFrame:(NSRect)frame
 {
-    self = [super initWithCoder:coder];
-    if (!self) {
+    self = [super initWithFrame:frame];
+    if (self == nil) {
         return nil;
     }
 
+    [self setup];
+
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    self = [super initWithCoder:coder];
+    if (self == nil) {
+        return nil;
+    }
+
+    [self setup];
+
+    return self;
+}
+
+- (void)setup {
     deadbeef->vis_spectrum_listen((__bridge void *)(self), vis_callback);
     memset (saBars, 0, sizeof (saBars));
     memset (saPeaks, 0, sizeof (saPeaks));
@@ -69,8 +86,6 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
     {
         self.barColor = NSColor.alternateSelectedControlColor;
     }
-
-    return self;
 }
 
 - (void)dealloc
