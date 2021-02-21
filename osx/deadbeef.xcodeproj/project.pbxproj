@@ -697,6 +697,10 @@
 		2D026DB21CAC5DE300E27961 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DB11CAC5DE300E27961 /* libiconv.dylib */; };
 		2D026DB61CAC5E0E00E27961 /* VideoDecodeAcceleration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DB51CAC5E0E00E27961 /* VideoDecodeAcceleration.framework */; };
 		2D026DB81CAC5E8100E27961 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DB71CAC5E8100E27961 /* Security.framework */; };
+		2D046F3925E2B17700F68459 /* DesignModeEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D046F3725E2B17700F68459 /* DesignModeEventHandler.h */; };
+		2D046F3A25E2B17700F68459 /* DesignModeEventHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D046F3825E2B17700F68459 /* DesignModeEventHandler.m */; };
+		2D046F7D25E2B55200F68459 /* MainWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D046F7B25E2B55200F68459 /* MainWindow.h */; };
+		2D046F7E25E2B55200F68459 /* MainWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D046F7C25E2B55200F68459 /* MainWindow.m */; };
 		2D04C3C02433B0FD003C2AAC /* growableBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D04C3BE2433B0FD003C2AAC /* growableBuffer.h */; };
 		2D04C3CF2433B147003C2AAC /* growableBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D04C3BF2433B0FD003C2AAC /* growableBuffer.c */; };
 		2D04C3D12433B3B9003C2AAC /* GrowableBufferTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D04C3D02433B3B9003C2AAC /* GrowableBufferTests.m */; };
@@ -873,6 +877,10 @@
 		2D2A14F119B64F2900AD1EB7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2D30D0B425E2A5DD0023A299 /* DesignModeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D30D0B225E2A5DD0023A299 /* DesignModeState.h */; };
 		2D30D0B525E2A5DD0023A299 /* DesignModeState.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30D0B325E2A5DD0023A299 /* DesignModeState.m */; };
+		2D30D20C25E2A8930023A299 /* WidgetTopLevelView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */; };
+		2D30D20D25E2A8930023A299 /* WidgetTopLevelView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */; };
+		2D30D20E25E2A8930023A299 /* WidgetTopLevelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30D20B25E2A8930023A299 /* WidgetTopLevelView.m */; };
+		2D30D20F25E2A8930023A299 /* WidgetTopLevelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30D20B25E2A8930023A299 /* WidgetTopLevelView.m */; };
 		2D3138251D08AB3400CBD871 /* artwork.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D621F831CD92C9000EB6D22 /* artwork.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */; };
 		2D3A4BBD1D6315D6002C7098 /* medialib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -4408,6 +4416,10 @@
 		2D026DB31CAC5DEC00E27961 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
 		2D026DB51CAC5E0E00E27961 /* VideoDecodeAcceleration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoDecodeAcceleration.framework; path = System/Library/Frameworks/VideoDecodeAcceleration.framework; sourceTree = SDKROOT; };
 		2D026DB71CAC5E8100E27961 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		2D046F3725E2B17700F68459 /* DesignModeEventHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DesignModeEventHandler.h; sourceTree = "<group>"; };
+		2D046F3825E2B17700F68459 /* DesignModeEventHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DesignModeEventHandler.m; sourceTree = "<group>"; };
+		2D046F7B25E2B55200F68459 /* MainWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainWindow.h; sourceTree = "<group>"; };
+		2D046F7C25E2B55200F68459 /* MainWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainWindow.m; sourceTree = "<group>"; };
 		2D04C3BE2433B0FD003C2AAC /* growableBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = growableBuffer.h; sourceTree = "<group>"; };
 		2D04C3BF2433B0FD003C2AAC /* growableBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = growableBuffer.c; sourceTree = "<group>"; };
 		2D04C3D02433B3B9003C2AAC /* GrowableBufferTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GrowableBufferTests.m; sourceTree = "<group>"; };
@@ -4584,6 +4596,8 @@
 		2D2A14F019B64F2900AD1EB7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		2D30D0B225E2A5DD0023A299 /* DesignModeState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DesignModeState.h; sourceTree = "<group>"; };
 		2D30D0B325E2A5DD0023A299 /* DesignModeState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DesignModeState.m; sourceTree = "<group>"; };
+		2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WidgetTopLevelView.h; sourceTree = "<group>"; };
+		2D30D20B25E2A8930023A299 /* WidgetTopLevelView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WidgetTopLevelView.m; sourceTree = "<group>"; };
 		2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WeakRefWrapper.h; sourceTree = "<group>"; };
 		2D3992E025C2038700CFA936 /* WeakRefWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WeakRefWrapper.m; sourceTree = "<group>"; };
 		2D3A4BB41D631530002C7098 /* medialib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = medialib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8125,6 +8139,15 @@
 			path = plugins/ffmpeg;
 			sourceTree = "<group>";
 		};
+		2D046F2725E2B16400F68459 /* DesignModeEventHandler */ = {
+			isa = PBXGroup;
+			children = (
+				2D046F3725E2B17700F68459 /* DesignModeEventHandler.h */,
+				2D046F3825E2B17700F68459 /* DesignModeEventHandler.m */,
+			);
+			path = DesignModeEventHandler;
+			sourceTree = "<group>";
+		};
 		2D05A8351B4BE5C4004C913D /* sndfile */ = {
 			isa = PBXGroup;
 			children = (
@@ -8362,6 +8385,8 @@
 		2D30D13625E2A6B40023A299 /* DesignMode */ = {
 			isa = PBXGroup;
 			children = (
+				2D046F2725E2B16400F68459 /* DesignModeEventHandler */,
+				2D30D25025E2A8980023A299 /* WidgetTopLevelView */,
 				2D30D0B125E2A5CA0023A299 /* DesignModeState */,
 				2DDD77D225E154E300FA6FE5 /* Placeholder */,
 				2DDD796025E15EBD00FA6FE5 /* Playlist */,
@@ -8373,6 +8398,15 @@
 				2DDD778D25E153D000FA6FE5 /* WidgetFactory.m */,
 			);
 			path = DesignMode;
+			sourceTree = "<group>";
+		};
+		2D30D25025E2A8980023A299 /* WidgetTopLevelView */ = {
+			isa = PBXGroup;
+			children = (
+				2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */,
+				2D30D20B25E2A8930023A299 /* WidgetTopLevelView.m */,
+			);
+			path = WidgetTopLevelView;
 			sourceTree = "<group>";
 		};
 		2D35E30C1AA7AC4B0077FBD1 /* dial68 */ = {
@@ -11383,6 +11417,8 @@
 				2D6202AF1B90800A00594746 /* XIB */,
 				4DA72BD91838EAAB00A98C62 /* AppDelegate.h */,
 				4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */,
+				2D046F7B25E2B55200F68459 /* MainWindow.h */,
+				2D046F7C25E2B55200F68459 /* MainWindow.m */,
 				2D11E8AF1AA0E3DD00A67A20 /* MainWindowController.h */,
 				2D11E8B01AA0E3DD00A67A20 /* MainWindowController.m */,
 				2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */,
@@ -11561,6 +11597,7 @@
 				2DDD76C925E152BF00FA6FE5 /* DesignModeDefs.h in Headers */,
 				2D4020901F27BD7200D4EA4F /* cueutil.h in Headers */,
 				2D135EF1226E47AA00BAAE84 /* scriptable_dsp.h in Headers */,
+				2D30D20D25E2A8930023A299 /* WidgetTopLevelView.h in Headers */,
 				2DDD764425E1506100FA6FE5 /* metadata.h in Headers */,
 				2DDD7ABC25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */,
 				2D448A851D5C5C6500B43F12 /* logger.h in Headers */,
@@ -12783,9 +12820,11 @@
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
 				2DDD7ABB25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */,
 				2DF55C432270FF7E002C44DC /* ScriptablePropertySheetDataSource.h in Headers */,
+				2D30D20C25E2A8930023A299 /* WidgetTopLevelView.h in Headers */,
 				2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */,
 				2D8030CD24B261A400539F9F /* MediaLibraryItem.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
+				2D046F7D25E2B55200F68459 /* MainWindow.h in Headers */,
 				2DA32B1524D6D83C00D96C84 /* MediaLibrarySelectorCellView.h in Headers */,
 				2D747E4024B6580A00BBB987 /* MainWindowSidebarViewController.h in Headers */,
 				2DA30E7424032550001BAB8A /* NetworkPreferencesViewController.h in Headers */,
@@ -12806,6 +12845,7 @@
 				2D642EB01AE9152E00FC1F7B /* sort.h in Headers */,
 				2DA30B7F23F1C9A3003D22E3 /* PropertySheetContentView.h in Headers */,
 				2DB52F7C24CF7CF20046D516 /* TrackContextMenu.h in Headers */,
+				2D046F3925E2B17700F68459 /* DesignModeEventHandler.h in Headers */,
 				2DB2F73F240466AF00F7C000 /* PluginsPreferencesViewController.h in Headers */,
 				2D747E3824B64E7600BBB987 /* SidebarSplitViewItem.h in Headers */,
 				2D04C3C02433B0FD003C2AAC /* growableBuffer.h in Headers */,
@@ -14701,6 +14741,7 @@
 				2D01D7D61AB2219C00BCD3C4 /* fft.c in Sources */,
 				2D135EF0226E47AA00BAAE84 /* scriptable.c in Sources */,
 				2D01D7E31AB2219C00BCD3C4 /* threading_pthread.c in Sources */,
+				2D30D20F25E2A8930023A299 /* WidgetTopLevelView.m in Sources */,
 				2D01D7DF1AB2219C00BCD3C4 /* premix.c in Sources */,
 				2DDD796625E15ED200FA6FE5 /* PlaylistWidget.m in Sources */,
 				2D01D7DC1AB2219C00BCD3C4 /* plmeta.c in Sources */,
@@ -15948,6 +15989,7 @@
 				2DF55C402270FCB9002C44DC /* ScriptableNodeEditorViewController.m in Sources */,
 				2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */,
 				2D9BD67A2405A81600C02D60 /* SoundPreferencesViewController.m in Sources */,
+				2D30D20E25E2A8930023A299 /* WidgetTopLevelView.m in Sources */,
 				2DDF87EE2402845C00CA8E91 /* NSMenu+ActionItems.m in Sources */,
 				2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */,
 				2DA30E7524032550001BAB8A /* NetworkPreferencesViewController.m in Sources */,
@@ -15958,6 +16000,7 @@
 				2D46221E226DBA57003997E9 /* FlippedClipView.m in Sources */,
 				2DA273792406ED4100FB9BE1 /* GuiPreferencesWindowController.m in Sources */,
 				2DDBA26523E5F14A00051320 /* PlaylistHeaderView.m in Sources */,
+				2D046F3A25E2B17700F68459 /* DesignModeEventHandler.m in Sources */,
 				2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */,
 				2DAA4041269AF880006D2754 /* WeakRefWrapper.m in Sources */,
 				2DBC62D724CCDEFC00AA20BF /* VisualizationViewController.m in Sources */,
@@ -16008,6 +16051,7 @@
 				2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */,
 				2DDBA26123E5EA3800051320 /* PlaylistLocalDragDropHolder.m in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
+				2D046F7E25E2B55200F68459 /* MainWindow.m in Sources */,
 				2D747E4124B6580A00BBB987 /* MainWindowSidebarViewController.m in Sources */,
 				2DF55C442270FF7E002C44DC /* ScriptablePropertySheetDataSource.m in Sources */,
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,

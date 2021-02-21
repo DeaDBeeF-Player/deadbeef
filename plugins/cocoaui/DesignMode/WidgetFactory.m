@@ -6,10 +6,11 @@
 //  Copyright © 2021 Alexey Yakovenko. All rights reserved.
 //
 
-#import "WidgetFactory.h"
+#import "DesignModeState.h"
 #import "PlaylistWidget.h"
 #import "PlaceholderWidget.h"
 #import "SplitterWidget.h"
+#import "WidgetFactory.h"
 
 @interface WidgetFactory()
 
@@ -23,13 +24,13 @@
 {
     if (self == [WidgetFactory class]) {
         [WidgetFactory.sharedFactory registerType:@"Placeholder" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
-            return [PlaceholderWidget new];
+            return [[PlaceholderWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance];
         }];
         [WidgetFactory.sharedFactory registerType:@"Playlist" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
-            return [PlaylistWidget new];
+            return [[PlaylistWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance];
         }];
         [WidgetFactory.sharedFactory registerType:@"Splitter" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
-            return [SplitterWidget new];
+            return [[SplitterWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance];
         }];
 
     }

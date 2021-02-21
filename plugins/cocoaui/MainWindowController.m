@@ -76,7 +76,7 @@ extern DB_functions_t *deadbeef;
 #endif
 
     self.rootWidget = [WidgetFactory.sharedFactory createWidgetWithType:@"Playlist"];
-    PlaylistView *view = (PlaylistView *)self.rootWidget.view;
+    NSView *view = self.rootWidget.view;
 
     view.translatesAutoresizingMaskIntoConstraints = NO;
     [self.designableContainerView addSubview:view];
@@ -85,7 +85,7 @@ extern DB_functions_t *deadbeef;
     [view.leadingAnchor constraintEqualToAnchor:self.designableContainerView.leadingAnchor].active = YES;
     [view.trailingAnchor constraintEqualToAnchor:self.designableContainerView.trailingAnchor].active = YES;
 
-    [view.window makeFirstResponder:view.contentView];
+    [self.rootWidget makeFirstResponder];
 
     NSLayoutYAxisAnchor *topAnchor;
     if (self.window.contentLayoutGuide && self.playlistWithTabsView) {

@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable,nonatomic,weak) id<WidgetProtocol> parentWidget;
 
 @optional
+- (void)makeFirstResponder;
 - (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 - (void)appendChild:(id<WidgetProtocol>)child;
 - (void)removeChild:(id<WidgetProtocol>)child;
@@ -26,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@protocol DesignModeProtocol
+@protocol DesignModeStateProtocol
 
 @property (nonatomic,getter=isEnabled) BOOL enabled;
 
