@@ -1,5 +1,5 @@
 //
-//  DesignModeState.h
+//  DesignModeEventHandler.h
 //  DeaDBeeF
 //
 //  Created by Alexey Yakovenko on 21/02/2021.
@@ -11,10 +11,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DesignModeState : NSObject<DesignModeStateProtocol>
+@interface DesignModeEventHandler : NSObject
 
-@property (nonatomic,class,readonly) DesignModeState *sharedInstance;
-@property (nonatomic,getter=isEnabled) BOOL enabled;
+- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState NS_DESIGNATED_INITIALIZER;
+- (BOOL)sendEvent:(NSEvent *)event;
 
 @end
 
