@@ -31,7 +31,7 @@
 #import "HelpWindowController.h"
 #import "EqualizerWindowController.h"
 #import "NSMenu+ActionItems.h"
-#import "WidgetDefs.h"
+#import "DesignModeDefs.h"
 #include "conf.h"
 #include "streamer.h"
 #include "junklib.h"
