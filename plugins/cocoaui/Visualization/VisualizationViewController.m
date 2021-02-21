@@ -27,10 +27,12 @@
     }
 
     __weak VisualizationViewController *weakSelf = self;
-    self.tickTimer = [NSTimer scheduledTimerWithTimeInterval:1/30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
+    self.tickTimer = [NSTimer timerWithTimeInterval:1/30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
         VisualizationViewController *strongSelf = weakSelf;
         strongSelf.view.needsDisplay = YES;
     }];
+
+    [[NSRunLoop currentRunLoop] addTimer:self.tickTimer forMode:NSRunLoopCommonModes];
 
     return self;
 }
