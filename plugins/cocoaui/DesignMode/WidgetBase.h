@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "WidgetDefs.h"
+#import "DesignModeDefs.h"
 #import "WidgetFactory.h"
 
 NS_ASSUME_NONNULL_BEGIN

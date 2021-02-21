@@ -26,6 +26,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@protocol DesignModeProtocol
+
+@property (nonatomic,getter=isEnabled) BOOL enabled;
+
+@end
+
 @protocol WidgetFactoryProtocol
 - (nullable id<WidgetProtocol>)createWidgetWithType:(NSString *)type;
 @end
