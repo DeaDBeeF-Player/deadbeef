@@ -452,7 +452,7 @@ CA
                             <menuItem title="Design Mode" id="iSe-xr-mRs">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="toggleDesignModeAction:" target="-1" id="Cvh-A7-ULb"/>
+                                    <action selector="toggleDesignModeAction:" target="-1" id="v2Q-nC-hTZ"/>
                                 </connections>
                             </menuItem>
                         </items>
@@ -646,6 +646,7 @@ CA
                 <outlet property="customSortEntry" destination="bJK-ZQ-GBB" id="ZRk-XY-0ex"/>
                 <outlet property="customSortPanel" destination="vHm-fI-UgZ" id="e7O-Nh-WwI"/>
                 <outlet property="descendingSortMode" destination="a0b-O2-r16" id="jve-MJ-Pfo"/>
+                <outlet property="designModeMenuItem" destination="iSe-xr-mRs" id="5h8-Ov-edq"/>
                 <outlet property="dockMenu" destination="891-Kp-BFs" id="DTX-sh-Bko"/>
                 <outlet property="equalizerMenuItem" destination="bdf-d2-ZyP" id="asd-T5-d2A"/>
                 <outlet property="equalizerWindowToggleMenuItem" destination="bdf-d2-ZyP" id="heH-WD-edM"/>

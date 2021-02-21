@@ -1044,6 +1044,10 @@
 		2D5D9C5A24A7FB0200D632E4 /* libavformat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D5D9C5724A7FB0200D632E4 /* libavformat.dylib */; };
 		2D5D9C5B24A7FB0200D632E4 /* libavutil.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D5D9C5824A7FB0200D632E4 /* libavutil.dylib */; };
 		2D5D9C5C24A7FB0200D632E4 /* libavcodec.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D5D9C5924A7FB0200D632E4 /* libavcodec.dylib */; };
+		2D5F05F025E306BC000A588C /* SpectrumAnalyzerWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5F05EE25E306BC000A588C /* SpectrumAnalyzerWidget.h */; };
+		2D5F05F125E306BC000A588C /* SpectrumAnalyzerWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5F05EE25E306BC000A588C /* SpectrumAnalyzerWidget.h */; };
+		2D5F05F225E306BC000A588C /* SpectrumAnalyzerWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5F05EF25E306BC000A588C /* SpectrumAnalyzerWidget.m */; };
+		2D5F05F325E306BC000A588C /* SpectrumAnalyzerWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5F05EF25E306BC000A588C /* SpectrumAnalyzerWidget.m */; };
 		2D5FC3E5251004420019278B /* artwork_imlib2.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5FC3E3251004420019278B /* artwork_imlib2.h */; };
 		2D5FC3E6251004420019278B /* artwork_imlib2.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5FC3E4251004420019278B /* artwork_imlib2.c */; };
 		2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D60108B1A9CDF06000136AF /* SearchWindowController.h */; };
@@ -4709,6 +4713,8 @@
 		2D5D9C5824A7FB0200D632E4 /* libavutil.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.dylib; path = deps/ffmpeg/lib/libavutil.dylib; sourceTree = "<group>"; };
 		2D5D9C5924A7FB0200D632E4 /* libavcodec.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.dylib; path = deps/ffmpeg/lib/libavcodec.dylib; sourceTree = "<group>"; };
 		2D5DD91C246C697800734047 /* plmeta.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = plmeta.h; sourceTree = "<group>"; };
+		2D5F05EE25E306BC000A588C /* SpectrumAnalyzerWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumAnalyzerWidget.h; sourceTree = "<group>"; };
+		2D5F05EF25E306BC000A588C /* SpectrumAnalyzerWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumAnalyzerWidget.m; sourceTree = "<group>"; };
 		2D5FC3E3251004420019278B /* artwork_imlib2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = artwork_imlib2.h; sourceTree = "<group>"; };
 		2D5FC3E4251004420019278B /* artwork_imlib2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = artwork_imlib2.c; sourceTree = "<group>"; };
 		2D60108B1A9CDF06000136AF /* SearchWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchWindowController.h; sourceTree = "<group>"; };
@@ -8381,6 +8387,8 @@
 				2DE1D3E519B11539009B5BC6 /* PlaceholderWidget.m */,
 				2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */,
 				2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */,
+				2D5F05EE25E306BC000A588C /* SpectrumAnalyzerWidget.h */,
+				2D5F05EF25E306BC000A588C /* SpectrumAnalyzerWidget.m */,
 				2DDD781425E1578C00FA6FE5 /* SplitterWidget.h */,
 				2DDD781525E1578C00FA6FE5 /* SplitterWidget.m */,
 				2DDD789A25E15C9E00FA6FE5 /* WidgetBase.h */,
@@ -11571,6 +11579,7 @@
 				2DDD789D25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
 				2DDD796425E15ED200FA6FE5 /* PlaylistWidget.h in Headers */,
 				2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */,
+				2D5F05F125E306BC000A588C /* SpectrumAnalyzerWidget.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12768,6 +12777,7 @@
 				2D3CD9372409A091005875A9 /* PinnedGroupTitleView.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
 				2DBC62DA24CCDFB200AA20BF /* VisualizationView.h in Headers */,
+				2D5F05F025E306BC000A588C /* SpectrumAnalyzerWidget.h in Headers */,
 				2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */,
 				2DA30E602402D1B1001BAB8A /* ctmap.h in Headers */,
 				2DEBA1D223E207A3000E4135 /* EqualizerWindowController.h in Headers */,
@@ -14712,6 +14722,7 @@
 				2D01D7E01AB2219C00BCD3C4 /* replaygain.c in Sources */,
 				2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */,
 				2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */,
+				2D5F05F325E306BC000A588C /* SpectrumAnalyzerWidget.m in Sources */,
 				2D40208F1F27BD7200D4EA4F /* cueutil.c in Sources */,
 				2DBCB726240AE28E0012F178 /* tftintutil.c in Sources */,
 				2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */,
@@ -15988,6 +15999,7 @@
 				2D747E3A24B64E7600BBB987 /* SidebarSplitViewController.m in Sources */,
 				2DB1641B24FAB13400034E11 /* MediaLibraryManager.m in Sources */,
 				2DAA4040269AF879006D2754 /* TrackPositionFormatter.m in Sources */,
+				2D5F05F225E306BC000A588C /* SpectrumAnalyzerWidget.m in Sources */,
 				2DDD789E25E15C9E00FA6FE5 /* WidgetBase.m in Sources */,
 				2DA2738A2406FBD800FB9BE1 /* DspPreferencesViewController.m in Sources */,
 				2DAB1A3126A5FB9C00EA8B8F /* PreferencesPluginEntry.m in Sources */,
