@@ -10,9 +10,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol WidgetTopLevelViewDelegate
+
+@property (nullable,nonatomic,readonly) NSMenu *menu;
+
+@end
+
 @interface WidgetTopLevelView : NSView
 
-- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState NS_DESIGNATED_INITIALIZER;
+@property (weak,nonatomic) id<WidgetTopLevelViewDelegate> delegate;
+
+- (instancetype)initWithDesignModeState:(nullable id<DesignModeStateProtocol>)designModeState NS_DESIGNATED_INITIALIZER;
 
 @end
 
