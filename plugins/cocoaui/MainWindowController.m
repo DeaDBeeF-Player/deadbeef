@@ -22,7 +22,7 @@
 */
 
 #import "DesignModeState.h"
-#import "WidgetFactory.h"
+#import "DesignModeDeps.h"
 #import "GuiPreferencesWindowController.h"
 #import "MainWindowController.h"
 #import "PlaylistWidget.h"
@@ -45,7 +45,6 @@ extern DB_functions_t *deadbeef;
 
 @property (weak) IBOutlet NSView *designableContainerView;
 @property (weak) IBOutlet NSView *playlistWithTabsView;
-@property (nonatomic, readwrite) id<WidgetProtocol> rootWidget;
 
 @property (weak) NSMenuItem *designModeMenuItem;
 
@@ -60,7 +59,7 @@ extern DB_functions_t *deadbeef;
         [_updateTimer invalidate];
         _updateTimer = nil;
     }
-    self.rootWidget = nil;
+    [DesignModeDeps cleanup];
 }
 
 - (void)dealloc {
@@ -78,11 +77,7 @@ extern DB_functions_t *deadbeef;
     }
 #endif
 
-    self.rootWidget = [WidgetFactory.sharedFactory createWidgetWithType:@"Placeholder"];
-    id<WidgetProtocol> playlistWidget = [WidgetFactory.sharedFactory createWidgetWithType:@"Playlist"];
-    [self.rootWidget appendChild:playlistWidget];
-
-    NSView *view = self.rootWidget.view;
+    NSView *view = DesignModeState.sharedInstance.rootWidget.view;
 
     view.translatesAutoresizingMaskIntoConstraints = NO;
     [self.designableContainerView addSubview:view];

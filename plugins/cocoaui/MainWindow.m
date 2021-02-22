@@ -8,7 +8,7 @@
 
 #import "MainWindow.h"
 #import "DesignModeEventHandler.h"
-#import "DesignModeState.h"
+#import "DesignModeDeps.h"
 
 @interface MainWindow()
 
@@ -20,7 +20,7 @@
 @implementation MainWindow
 
 - (void)awakeFromNib {
-    _designModeEventHandler = [[DesignModeEventHandler alloc] initWithDesignModeState:DesignModeState.sharedInstance];
+    _designModeEventHandler = [[DesignModeEventHandler alloc] initWithDeps:DesignModeDeps.sharedInstance];
 }
 
 - (void)sendEvent:(NSEvent *)event {

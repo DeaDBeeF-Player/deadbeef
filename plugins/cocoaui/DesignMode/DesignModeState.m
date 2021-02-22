@@ -7,13 +7,16 @@
 //
 
 #import "DesignModeState.h"
-#import "WidgetFactory.h"
-#import "WidgetMenuBuilder.h"
+#import "DesignModeDeps.h"
+#include "deadbeef.h"
+
+extern DB_functions_t *deadbeef;
 
 @interface DesignModeState()
 
-@property (nonatomic) id<WidgetFactoryProtocol> widgetFactory;
-@property (nonatomic) id<WidgetMenuBuilderProtocol> menuBuilder;
+@property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
+@property (nonatomic,readwrite) id<WidgetProtocol> rootWidget;
+
 
 @end
 
@@ -23,23 +26,69 @@
     static DesignModeState *instance;
 
     if (instance == nil) {
-        instance = [[DesignModeState alloc] initWithWidgetFactory:WidgetFactory.sharedFactory menuBuilder:WidgetMenuBuilder.sharedInstance];
+        instance = [[DesignModeState alloc] initWithDeps:DesignModeDeps.sharedInstance];
     }
 
     return instance;
 }
 
-- (instancetype)initWithWidgetFactory:(nullable id<WidgetFactoryProtocol>)widgetFactory menuBuilder:(nullable id<WidgetMenuBuilderProtocol>)menuBuilder {
+- (instancetype)init {
+    return [self initWithDeps: nil];
+}
+
+- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
     self = [super init];
 
     if (self == nil) {
         return nil;
     }
 
-    _widgetFactory = widgetFactory;
-    _menuBuilder = menuBuilder;
+    _deps = deps;
+
+    self.rootWidget = [deps.factory createWidgetWithType:@"Placeholder"];
+
+    char *layout = malloc (100000);
+    deadbeef->conf_get_str ("cocoaui.layout", "", layout, 100000);
+    NSString *strLayout = [NSString stringWithUTF8String:layout];
+    free (layout);
+
+    NSData *data = [strLayout dataUsingEncoding:NSUTF8StringEncoding];
+
+    NSError *err = nil;
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&err];
+
+    id<WidgetProtocol> layoutWidget;
+    if (json && [json isKindOfClass:NSDictionary.class]) {
+        layoutWidget = [deps.serializer loadFromDictionary:json];
+    }
+
+    if (!layoutWidget) {
+        layoutWidget = [deps.serializer loadFromDictionary:@{
+            @"type":@"Playlist"
+        }];
+    }
+
+
+    if (!layoutWidget) {
+        // bummer...
+    }
+
+    [self.rootWidget appendChild:layoutWidget];
 
     return self;
+}
+
+
+- (void)layoutDidChange {
+    NSDictionary *dict = [self.deps.serializer saveWidgetToDictionary:self.rootWidget.childWidgets.firstObject];
+
+    NSError *err;
+    NSData *dt = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&err];
+    NSString *json = [[NSString alloc] initWithData:dt encoding:NSUTF8StringEncoding];
+
+    deadbeef->conf_set_str ("cocoaui.layout", json.UTF8String);
+    deadbeef->conf_save ();
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 @end

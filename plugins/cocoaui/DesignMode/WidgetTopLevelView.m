@@ -14,7 +14,7 @@
 @interface WidgetTopLevelView()
 
 @property (nonatomic) NSView *selectionOverlayView;
-@property (nonatomic) id<DesignModeStateProtocol> designModeState;
+@property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
 
 @end
 
@@ -22,7 +22,7 @@
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-    self = [self initWithDesignModeState:nil];
+    self = [self initWithDeps:nil];
     if (self == nil) {
         return nil;
     }
@@ -32,7 +32,7 @@
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
-    self = [self initWithDesignModeState:nil];
+    self = [self initWithDeps:nil];
     if (self == nil) {
         return nil;
     }
@@ -40,12 +40,12 @@
     return self;
 }
 
-- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState {
+- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
     self = [super initWithFrame:NSZeroRect];
     if (self == nil) {
         return nil;
     }
-    _designModeState = designModeState;
+    _deps = deps;
     [self setup];
     return self;
 }
@@ -76,7 +76,7 @@
 }
 
 - (void)rightMouseDown:(NSEvent *)event {
-    if (!self.designModeState.enabled) {
+    if (!self.deps.state.enabled) {
         return;
     }
     [self.selectionOverlayView removeFromSuperview];
@@ -91,7 +91,7 @@
 }
 
 - (void)rightMouseUp:(NSEvent *)event {
-    if (!self.designModeState.enabled) {
+    if (!self.deps.state.enabled) {
         return;
     }
     [self.selectionOverlayView removeFromSuperview];

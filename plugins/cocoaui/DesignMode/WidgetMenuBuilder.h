@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic,class,readonly) WidgetMenuBuilder *sharedInstance;
 
-- (instancetype)initWithWidgetFactory:(nullable id<WidgetFactoryProtocol>)widgetFactory NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithDeps:(nullable id<DesignModeDepsProtocol>)deps NS_DESIGNATED_INITIALIZER;
 - (NSMenu *)menuForWidget:(id<WidgetProtocol>)widget;
 
 @end

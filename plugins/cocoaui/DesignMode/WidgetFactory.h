@@ -15,11 +15,14 @@ typedef id<WidgetProtocol>_Nonnull(^WidgetInstantiatorBlockType)(void);
 
 @interface WidgetFactory : NSObject<WidgetFactoryProtocol>
 
-@property (nonatomic,class,readonly) WidgetFactory *sharedFactory;
+@property (nonatomic,class,readonly) WidgetFactory *sharedInstance;
 
 @property (nonatomic,readonly) id<WidgetFactoryProtocol> widgetFactory;
 @property (nonatomic,readonly) id<WidgetMenuBuilderProtocol> menuBuilder;
 
+- (instancetype)initWithDeps:(nullable id<DesignModeDepsProtocol>)deps NS_DESIGNATED_INITIALIZER;
+
+- (void)registerAllTypes;
 - (nullable id<WidgetProtocol>)createWidgetWithType:(NSString *)type;
 - (void)registerType:(NSString *)type instantiatorBlock:(WidgetInstantiatorBlockType)instantiatorBlock;
 - (void)unregisterType:(NSString *)type;
