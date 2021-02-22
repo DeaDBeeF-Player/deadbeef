@@ -17,8 +17,12 @@
 
 @implementation PlaylistWidget
 
-- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState {
-    self = [super initWithDesignModeState:designModeState];
++ (NSString *)widgetType {
+    return @"Playlist";
+}
+
+- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
+    self = [super initWithDeps:deps];
     if (self == nil) {
         return nil;
     }
@@ -36,10 +40,6 @@
     [view.bottomAnchor constraintEqualToAnchor:self.topLevelView.bottomAnchor].active = YES;
 
     return self;
-}
-
-- (nonnull NSString *)serializedString {
-    return @"{}";
 }
 
 - (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {

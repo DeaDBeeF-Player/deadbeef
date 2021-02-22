@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DesignModeEventHandler : NSObject
 
-- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps NS_DESIGNATED_INITIALIZER;
 - (BOOL)sendEvent:(NSEvent *)event;
 
 @end

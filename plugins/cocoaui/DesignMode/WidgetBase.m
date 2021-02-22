@@ -12,33 +12,42 @@
 
 @interface WidgetBase() <WidgetTopLevelViewDelegate>
 
-@property (nonatomic) id<DesignModeStateProtocol> designModeState;
+@property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
+
 @property (nonatomic,readwrite) WidgetTopLevelView *topLevelView;
-@property (nullable,nonatomic) NSMutableArray<id<WidgetProtocol>> *childWidgets;
+@property (nullable,nonatomic,readwrite) NSMutableArray<id<WidgetProtocol>> *childWidgets;
 
 @end
 
 @implementation WidgetBase
 
 - (instancetype)init {
-    return [self initWithDesignModeState:nil];
+    return [self initWithDeps:nil];
 }
 
-- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState {
+- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
     self = [super init];
 
     if (self == nil) {
         return nil;
     }
 
-    _designModeState = designModeState;
+    _deps = deps;
 
     _childWidgets = [NSMutableArray new];
-    _topLevelView = [[WidgetTopLevelView alloc] initWithDesignModeState:designModeState];
+    _topLevelView = [[WidgetTopLevelView alloc] initWithDeps:deps];
     _topLevelView.translatesAutoresizingMaskIntoConstraints = NO;
     _topLevelView.delegate = self;
 
     return self;
+}
+
++ (NSString *)widgetType {
+    return @"base";
+}
+
+- (NSString *)widgetType {
+    return self.class.widgetType;
 }
 
 - (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
@@ -51,16 +60,18 @@
     return self.topLevelView;
 }
 
-- (nonnull NSString *)serializedString {
-    return @"";
+- (BOOL)deserializeFromSettingsDictionary:(NSDictionary *)dictionary {
+    return YES;
 }
-
+- (NSDictionary *)serializedSettingsDictionary {
+    return nil;
+}
 - (BOOL)canInsert {
     return NO;
 }
 
 - (NSMenu *)menu {
-    return [self.designModeState.menuBuilder menuForWidget:self];
+    return [self.deps.menuBuilder menuForWidget:self];
 }
 
 - (void)appendChild:(id<WidgetProtocol>)child {
@@ -70,6 +81,5 @@
 - (void)removeChild:(id<WidgetProtocol>)child {
     [self.childWidgets removeObject:child];
 }
-
 
 @end

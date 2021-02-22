@@ -20,16 +20,20 @@
 
 @implementation SplitterWidget
 
-- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState vertical:(BOOL)vertical {
-    self = [super initWithDesignModeState:designModeState];
++ (NSString *)widgetType {
+    return @"Splitter";
+}
+
+- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps vertical:(BOOL)vertical {
+    self = [super initWithDeps:deps];
     if (self == nil) {
         return nil;
     }
 
     _splitView = [[NSSplitView alloc] initWithFrame:NSZeroRect];
     _splitView.vertical = vertical;
-    _pane1 = [designModeState.widgetFactory createWidgetWithType:@"Placeholder"];
-    _pane2 = [designModeState.widgetFactory createWidgetWithType:@"Placeholder"];
+    _pane1 = [deps.factory createWidgetWithType:@"Placeholder"];
+    _pane2 = [deps.factory createWidgetWithType:@"Placeholder"];
 
     [super appendChild:_pane1];
     [super appendChild:_pane2];
@@ -44,10 +48,6 @@
     [_splitView.bottomAnchor constraintEqualToAnchor:self.topLevelView.bottomAnchor].active = YES;
 
     return self;
-}
-
-- (nonnull NSString *)serializedString { 
-    return @"{}";
 }
 
 @end

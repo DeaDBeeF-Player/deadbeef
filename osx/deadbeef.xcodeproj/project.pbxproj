@@ -1577,6 +1577,14 @@
 		2D9E5C6724AE6DE60099B108 /* wcwidth.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9E5C0124AE6AAD0099B108 /* wcwidth.c */; };
 		2D9E905124F453960037D323 /* MediaLibraryPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9E904F24F453960037D323 /* MediaLibraryPreferencesViewController.h */; };
 		2D9E905224F453960037D323 /* MediaLibraryPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9E905024F453960037D323 /* MediaLibraryPreferencesViewController.m */; };
+		2D9EBAAB25E44A0700255592 /* WidgetSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EBAA925E44A0700255592 /* WidgetSerializer.h */; };
+		2D9EBAAC25E44A0700255592 /* WidgetSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EBAA925E44A0700255592 /* WidgetSerializer.h */; };
+		2D9EBAAD25E44A0700255592 /* WidgetSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9EBAAA25E44A0700255592 /* WidgetSerializer.m */; };
+		2D9EBAAE25E44A0700255592 /* WidgetSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9EBAAA25E44A0700255592 /* WidgetSerializer.m */; };
+		2D9EBB7125E45BAA00255592 /* DesignModeDeps.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EBB6F25E45BAA00255592 /* DesignModeDeps.h */; };
+		2D9EBB7225E45BAA00255592 /* DesignModeDeps.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EBB6F25E45BAA00255592 /* DesignModeDeps.h */; };
+		2D9EBB7325E45BAA00255592 /* DesignModeDeps.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9EBB7025E45BAA00255592 /* DesignModeDeps.m */; };
+		2D9EBB7425E45BAA00255592 /* DesignModeDeps.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9EBB7025E45BAA00255592 /* DesignModeDeps.m */; };
 		2D9F6534241BE78C00D9D16E /* SeekbarOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */; };
 		2D9F6535241BE78C00D9D16E /* SeekbarOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */; };
 		2D9FFA251D7588A700D1B5F8 /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6965371D74338A00EB99D8 /* mp4tagutil.c */; };
@@ -5320,6 +5328,10 @@
 		2D9E5C0124AE6AAD0099B108 /* wcwidth.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = wcwidth.c; sourceTree = "<group>"; };
 		2D9E904F24F453960037D323 /* MediaLibraryPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaLibraryPreferencesViewController.h; sourceTree = "<group>"; };
 		2D9E905024F453960037D323 /* MediaLibraryPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryPreferencesViewController.m; sourceTree = "<group>"; };
+		2D9EBAA925E44A0700255592 /* WidgetSerializer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WidgetSerializer.h; sourceTree = "<group>"; };
+		2D9EBAAA25E44A0700255592 /* WidgetSerializer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WidgetSerializer.m; sourceTree = "<group>"; };
+		2D9EBB6F25E45BAA00255592 /* DesignModeDeps.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DesignModeDeps.h; sourceTree = "<group>"; };
+		2D9EBB7025E45BAA00255592 /* DesignModeDeps.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DesignModeDeps.m; sourceTree = "<group>"; };
 		2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SeekbarOverlay.h; sourceTree = "<group>"; };
 		2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SeekbarOverlay.m; sourceTree = "<group>"; };
 		2DA04E8123B6A4320070AC01 /* shellexec.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = shellexec.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8379,6 +8391,8 @@
 			isa = PBXGroup;
 			children = (
 				2DDD76C625E152BF00FA6FE5 /* DesignModeDefs.h */,
+				2D9EBB6F25E45BAA00255592 /* DesignModeDeps.h */,
+				2D9EBB7025E45BAA00255592 /* DesignModeDeps.m */,
 				2D046F3725E2B17700F68459 /* DesignModeEventHandler.h */,
 				2D046F3825E2B17700F68459 /* DesignModeEventHandler.m */,
 				2D30D0B225E2A5DD0023A299 /* DesignModeState.h */,
@@ -8397,6 +8411,8 @@
 				2DDD778D25E153D000FA6FE5 /* WidgetFactory.m */,
 				2D04701325E2D97D00F68459 /* WidgetMenuBuilder.h */,
 				2D04701425E2D97D00F68459 /* WidgetMenuBuilder.m */,
+				2D9EBAA925E44A0700255592 /* WidgetSerializer.h */,
+				2D9EBAAA25E44A0700255592 /* WidgetSerializer.m */,
 				2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */,
 				2D30D20B25E2A8930023A299 /* WidgetTopLevelView.m */,
 			);
@@ -11567,6 +11583,7 @@
 				2D135EF1226E47AA00BAAE84 /* scriptable_dsp.h in Headers */,
 				2D30D20D25E2A8930023A299 /* WidgetTopLevelView.h in Headers */,
 				2DDD764425E1506100FA6FE5 /* metadata.h in Headers */,
+				2D9EBB7225E45BAA00255592 /* DesignModeDeps.h in Headers */,
 				2DDD7ABC25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */,
 				2D448A851D5C5C6500B43F12 /* logger.h in Headers */,
 				2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */,
@@ -11579,6 +11596,7 @@
 				2DDD789D25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
 				2DDD796425E15ED200FA6FE5 /* PlaylistWidget.h in Headers */,
 				2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */,
+				2D9EBAAC25E44A0700255592 /* WidgetSerializer.h in Headers */,
 				2D5F05F125E306BC000A588C /* SpectrumAnalyzerWidget.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12749,12 +12767,14 @@
 				2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */,
 				2DEF494419C4DB4100B718C1 /* PlaylistView.h in Headers */,
 				4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */,
+				2D9EBAAB25E44A0700255592 /* WidgetSerializer.h in Headers */,
 				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
 				2DBC62D624CCDEFC00AA20BF /* VisualizationViewController.h in Headers */,
 				2DA273892406FBD800FB9BE1 /* DspPreferencesViewController.h in Headers */,
 				2DDD778E25E153D000FA6FE5 /* WidgetFactory.h in Headers */,
 				2DAD80A12416DBB100EB3075 /* CustomToolbarItem.h in Headers */,
 				2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */,
+				2D9EBB7125E45BAA00255592 /* DesignModeDeps.h in Headers */,
 				2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */,
 				2DEBA1BF23E203B9000E4135 /* eqpreset.h in Headers */,
 				2D6D81EF1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h in Headers */,
@@ -14704,6 +14724,7 @@
 				2D01D7D91AB2219C00BCD3C4 /* messagepump.c in Sources */,
 				2DDD789F25E15C9E00FA6FE5 /* WidgetBase.m in Sources */,
 				2D01D7D81AB2219C00BCD3C4 /* junklib.c in Sources */,
+				2D9EBB7425E45BAA00255592 /* DesignModeDeps.m in Sources */,
 				2D0A549223E8CC9500E0F978 /* eqpreset.c in Sources */,
 				2D01D7D31AB2219C00BCD3C4 /* escape.c in Sources */,
 				2DDD764525E1506100FA6FE5 /* metadata.c in Sources */,
@@ -14714,6 +14735,7 @@
 				2D135EF0226E47AA00BAAE84 /* scriptable.c in Sources */,
 				2D01D7E31AB2219C00BCD3C4 /* threading_pthread.c in Sources */,
 				2D30D20F25E2A8930023A299 /* WidgetTopLevelView.m in Sources */,
+				2D9EBAAE25E44A0700255592 /* WidgetSerializer.m in Sources */,
 				2D01D7DF1AB2219C00BCD3C4 /* premix.c in Sources */,
 				2DDD796625E15ED200FA6FE5 /* PlaylistWidget.m in Sources */,
 				2D01D7DC1AB2219C00BCD3C4 /* plmeta.c in Sources */,
@@ -15985,6 +16007,7 @@
 				2D651D18227227C300375AE2 /* ScriptableNodeEditorWindowController.m in Sources */,
 				2D8EE27524D03601005C5B4B /* MediaLibraryOutlineViewController.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
+				2D9EBB7325E45BAA00255592 /* DesignModeDeps.m in Sources */,
 				2DA32B1624D6D83C00D96C84 /* MediaLibrarySelectorCellView.m in Sources */,
 				2D90EF9A2438A5A600AF6F4B /* ScriptableErrorViewer.m in Sources */,
 				2DDD781825E1578C00FA6FE5 /* SplitterWidget.m in Sources */,
@@ -16035,6 +16058,7 @@
 				2D54915822B1711E000FE7E3 /* HelpWindowController.m in Sources */,
 				2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */,
 				2D986143226C816000BAACB1 /* BrowseButton.m in Sources */,
+				2D9EBAAD25E44A0700255592 /* WidgetSerializer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

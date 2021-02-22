@@ -6,12 +6,12 @@
 //  Copyright © 2021 Alexey Yakovenko. All rights reserved.
 //
 
+#import "DesignModeDeps.h"
 #import "WidgetMenuBuilder.h"
-#import "WidgetFactory.h"
 
 @interface WidgetMenuBuilder()
 
-@property (nonatomic) id<WidgetFactoryProtocol> widgetFactory;
+@property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
 @property (nonatomic,weak) id<WidgetProtocol> activeWidget;
 
 @end
@@ -21,23 +21,23 @@
 + (WidgetMenuBuilder *)sharedInstance {
     static WidgetMenuBuilder *instance;
     if (instance == nil) {
-        instance = [[WidgetMenuBuilder alloc] initWithWidgetFactory:WidgetFactory.sharedFactory];
+        instance = [[WidgetMenuBuilder alloc] initWithDeps:DesignModeDeps.sharedInstance];
     }
     return instance;
 }
 
 - (instancetype)init {
-    return [self initWithWidgetFactory:nil];
+    return [self initWithDeps:nil];
 }
 
-- (instancetype)initWithWidgetFactory:(id<WidgetFactoryProtocol>)widgetFactory {
+- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
     self = [super init];
 
     if (self == nil) {
         return nil;
     }
 
-    _widgetFactory = widgetFactory;
+    _deps = deps;
 
     return self;
 }
@@ -63,7 +63,7 @@
     menuCreate.autoenablesItems = NO;
     itemCreate.submenu = menuCreate;
 
-    NSArray<NSString *> *types = self.widgetFactory.types;
+    NSArray<NSString *> *types = self.deps.factory.types;
 
     for (NSString *type in types) {
         if ([type isEqualToString:@"Placeholder"]) {
@@ -99,7 +99,7 @@
 
 - (void)createWidget:(NSMenuItem *)sender {
     NSString *type = sender.representedObject;
-    id<WidgetProtocol> widget = [self.widgetFactory createWidgetWithType:type];
+    id<WidgetProtocol> widget = [self.deps.factory createWidgetWithType:type];
 
     id<WidgetProtocol> activeWidget = self.activeWidget;
 
@@ -112,6 +112,8 @@
             [parentWidget replaceChild:activeWidget withChild:widget];
         }
     }
+
+    [self.deps.state layoutDidChange];
 }
 
 - (void)deleteWidget:(NSMenuItem *)sender {
@@ -120,6 +122,7 @@
 
     if (activeWidget != nil && parentWidget != nil) {
         [parentWidget removeChild:activeWidget];
+        [self.deps.state layoutDidChange];
     }
 }
 

@@ -14,10 +14,15 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol WidgetProtocol<NSObject>
 
 @required
-- (NSString *)serializedString;
-- (NSView *)view;
+@property (class,nonatomic,readonly) NSString *widgetType;
+@property (nonatomic,readonly) NSString *widgetType;
 @property (nullable,nonatomic,weak) id<WidgetProtocol> parentWidget;
 @property (nonatomic,readonly) BOOL canInsert;
+@property (nullable,nonatomic,readonly) NSMutableArray<id<WidgetProtocol>> *childWidgets;
+
+- (nullable NSDictionary *)serializedSettingsDictionary;
+- (BOOL)deserializeFromSettingsDictionary:(nullable NSDictionary *)dictionary;
+- (NSView *)view;
 
 @optional
 - (void)makeFirstResponder;
@@ -42,7 +47,24 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol DesignModeStateProtocol
 
 @property (nonatomic) BOOL enabled;
-@property (nonatomic,readonly) id<WidgetFactoryProtocol> widgetFactory;
+@property (nonatomic,readonly) id<WidgetProtocol> rootWidget;
+
+- (void)layoutDidChange;
+
+@end
+
+@protocol WidgetSerializerProtocol
+
+- (nullable NSDictionary *)saveWidgetToDictionary:(id<WidgetProtocol>)widget;
+- (nullable id<WidgetProtocol>)loadFromDictionary:(NSDictionary *)dictionary;
+
+@end
+
+@protocol DesignModeDepsProtocol
+
+@property (nonatomic,readonly) id<DesignModeStateProtocol> state;
+@property (nonatomic,readonly) id<WidgetFactoryProtocol> factory;
+@property (nonatomic,readonly) id<WidgetSerializerProtocol> serializer;
 @property (nonatomic,readonly) id<WidgetMenuBuilderProtocol> menuBuilder;
 
 @end

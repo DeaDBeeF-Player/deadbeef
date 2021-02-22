@@ -7,28 +7,28 @@
 //
 
 #import "DesignModeEventHandler.h"
-#import "DesignModeState.h"
+#import "DesignModeDeps.h"
 #import "WidgetTopLevelView.h"
 
 @interface DesignModeEventHandler()
 
-@property (nonatomic) id<DesignModeStateProtocol> designModeState;
+@property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
 
 @end
 
 @implementation DesignModeEventHandler
 
 - (instancetype)init {
-    return [self initWithDesignModeState: DesignModeState.sharedInstance];
+    return [self initWithDeps: DesignModeDeps.sharedInstance];
 }
 
 
-- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState {
+- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
     self = [super init];
     if (self == nil) {
         return nil;
     }
-    _designModeState = designModeState;
+    _deps = deps;
     return self;
 }
 
@@ -37,7 +37,7 @@
         return NO;
     }
 
-    if (!self.designModeState.enabled) {
+    if (!self.deps.state.enabled) {
         return NO;
     }
 
