@@ -43,17 +43,6 @@
             [[DdbWidgetManager defaultWidgetManager] addWidget:self];
             _registered = YES;
         }
-#if 0
-        // Initialization code here.
-        NSMenu *menu = [[NSMenu alloc] initWithTitle:@"WidgetMenu"];
-        [menu insertItemWithTitle:@"Insert" action:@selector(widgetInsert:) keyEquivalent:@"" atIndex:0];
-        [menu insertItemWithTitle:@"Delete" action:@selector(widgetDelete:) keyEquivalent:@"" atIndex:1];
-        [menu insertItemWithTitle:@"Cut" action:@selector(widgetCut:) keyEquivalent:@"" atIndex:2];
-        [menu insertItemWithTitle:@"Copy" action:@selector(widgetCopy:) keyEquivalent:@"" atIndex:3];
-        [menu insertItemWithTitle:@"Paste" action:@selector(widgetPaste:) keyEquivalent:@"" atIndex:4];
-        menu.delegate = self;
-        self.menu = menu;
-#endif
     }
     return self;
 }
@@ -66,26 +55,8 @@
 {
     [super drawRect:dirtyRect];
     return;
-    if (self.inDesignMode) {
-        [[NSColor colorWithDeviceRed:0 green:0 blue:1 alpha:0.3f] set];
-        [NSBezierPath fillRect:dirtyRect];
-    }
 }
 
-
-- (void)menuWillOpen:(NSMenu *)menu
-{
-    return;
-    self.inDesignMode = YES;
-    self.needsDisplay = YES;
-}
-
-- (void)menuDidClose:(NSMenu *)menu
-{
-    return;
-    self.inDesignMode = NO;
-    self.needsDisplay = YES;
-}
 
 - (int)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
     return 0;
