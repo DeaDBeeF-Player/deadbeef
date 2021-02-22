@@ -6,63 +6,66 @@
 //  Copyright © 2021 Alexey Yakovenko. All rights reserved.
 //
 
-#import "DesignModeState.h"
 #import "PlaylistWidget.h"
 #import "PlaceholderWidget.h"
 #import "SpectrumAnalyzerWidget.h"
 #import "SplitterWidget.h"
-#import "WidgetFactory.h"
-#import "WidgetMenuBuilder.h"
+#import "DesignModeDeps.h"
 
 @interface WidgetFactory()
 
+@property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
 @property NSMutableDictionary<NSString *,WidgetInstantiatorBlockType> *registeredWidgets;
 
 @end
 
 @implementation WidgetFactory
 
-+ (void)initialize
-{
-    if (self == [WidgetFactory class]) {
-        [WidgetFactory.sharedFactory registerType:@"Placeholder" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
-            return [[PlaceholderWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance];
-        }];
-        [WidgetFactory.sharedFactory registerType:@"Playlist" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
-            return [[PlaylistWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance];
-        }];
-        [WidgetFactory.sharedFactory registerType:@"Splitter (top and bottom)" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
-            return [[SplitterWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance vertical:NO];
-        }];
-        [WidgetFactory.sharedFactory registerType:@"Splitter (left and right)" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
-            return [[SplitterWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance vertical:YES];
-        }];
-        [WidgetFactory.sharedFactory registerType:@"Spectrum Analyzer" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
-            return [[SpectrumAnalyzerWidget alloc] initWithDesignModeState:DesignModeState.sharedInstance];
-        }];
-    }
-}
-
-+ (WidgetFactory *)sharedFactory {
++ (WidgetFactory *)sharedInstance {
     static WidgetFactory *instance;
 
     if (instance == nil) {
-        instance = [WidgetFactory new];
+        instance = [[WidgetFactory alloc] initWithDeps:DesignModeDeps.sharedInstance];
     }
 
     return instance;
 }
 
-- (instancetype)init
-{
+- (instancetype)init {
+    return [self initWithDeps:nil];
+}
+
+- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
     self = [super init];
     if (self == nil) {
         return nil;
     }
 
+    _deps = deps;
     _registeredWidgets = [NSMutableDictionary new];
 
+    [self registerAllTypes];
+
     return self;
+}
+
+
+- (void)registerAllTypes {
+    [self registerType:@"Placeholder" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+        return [[PlaceholderWidget alloc] initWithDeps:self.deps];
+    }];
+    [self registerType:@"Playlist" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+        return [[PlaylistWidget alloc] initWithDeps:self.deps];
+    }];
+    [self registerType:@"Splitter (top and bottom)" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+        return [[SplitterWidget alloc] initWithDeps:self.deps vertical:NO];
+    }];
+    [self registerType:@"Splitter (left and right)" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+        return [[SplitterWidget alloc] initWithDeps:self.deps vertical:YES];
+    }];
+    [self registerType:@"Spectrum Analyzer" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+        return [[SpectrumAnalyzerWidget alloc] initWithDeps:self.deps];
+    }];
 }
 
 - (nullable id<WidgetProtocol>)createWidgetWithType:(NSString *)type {
