@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (weak,nonatomic) id<WidgetTopLevelViewDelegate> delegate;
 
-- (instancetype)initWithDesignModeState:(nullable id<DesignModeStateProtocol>)designModeState NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithDeps:(nullable id<DesignModeDepsProtocol>)deps NS_DESIGNATED_INITIALIZER;
 
 @end
 

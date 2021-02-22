@@ -36,8 +36,12 @@ const NSInteger GRIDSIZE = 16;
 
 @implementation PlaceholderWidget
 
-- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState {
-    self = [super initWithDesignModeState:designModeState];
++ (NSString *)widgetType {
+    return @"Placeholder";
+}
+
+- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
+    self = [super initWithDeps:deps];
     if (self == nil) {
         return nil;
     }
@@ -64,10 +68,6 @@ const NSInteger GRIDSIZE = 16;
     [_placeholderView.bottomAnchor constraintEqualToAnchor:self.topLevelView.bottomAnchor].active = YES;
 
     return self;
-}
-
-- (nonnull NSString *)serializedString {
-    return @"{}";
 }
 
 - (void)appendChild:(id<WidgetProtocol>)child {

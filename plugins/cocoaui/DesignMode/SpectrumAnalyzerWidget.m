@@ -19,8 +19,12 @@
 
 @implementation SpectrumAnalyzerWidget
 
-- (instancetype)initWithDesignModeState:(id<DesignModeStateProtocol>)designModeState {
-    self = [super initWithDesignModeState:designModeState];
++ (NSString *)widgetType {
+    return @"SpectrumAnalyzer";
+}
+
+- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
+    self = [super initWithDeps:deps];
     if (self == nil) {
         return nil;
     }
