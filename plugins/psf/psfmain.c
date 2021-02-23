@@ -260,3 +260,20 @@ int
 ao_command (uint32 type, void *handle, int32 command, int32 param) {
 	return (*types[type].command)(handle, command, param);
 }
+
+void
+ao_getlibpath (const char *path, const char *libname, char *libpath, int size) {
+    const char *e = strrchr (path, '\\');
+    if (!e) {
+        e = strrchr (path, '/');
+    }
+    if (e) {
+        e++;
+        memcpy (libpath, path, e-path);
+        libpath[e-path] = 0;
+        strcat (libpath, libname);
+    }
+    else {
+        strcpy (libpath, libname);
+    }
+}
