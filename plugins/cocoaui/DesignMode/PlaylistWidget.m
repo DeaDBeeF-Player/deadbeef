@@ -46,9 +46,10 @@
     [self.viewController sendMessage:_id ctx:ctx p1:p1 p2:p2];
 }
 
-- (void)makeFirstResponder {
+- (BOOL)makeFirstResponder {
     PlaylistView *playlistView = (PlaylistView *)self.viewController.view;
     [playlistView.window makeFirstResponder:playlistView.contentView];
+    return YES;
 }
 
 @end
