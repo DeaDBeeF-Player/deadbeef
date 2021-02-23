@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSView *)view;
 
 @optional
-- (void)makeFirstResponder;
+- (BOOL)makeFirstResponder;
 - (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 - (void)appendChild:(id<WidgetProtocol>)child;
 - (void)removeChild:(id<WidgetProtocol>)child;
