@@ -66,7 +66,7 @@
 - (NSDictionary *)serializedSettingsDictionary {
     return nil;
 }
-- (BOOL)canInsert {
+- (BOOL)isPlaceholder {
     return NO;
 }
 
@@ -76,10 +76,22 @@
 
 - (void)appendChild:(id<WidgetProtocol>)child {
     [self.childWidgets addObject:child];
+    child.parentWidget = self;
 }
 
 - (void)removeChild:(id<WidgetProtocol>)child {
     [self.childWidgets removeObject:child];
+    child.parentWidget = nil;
+}
+
+- (void)insertChild:(id<WidgetProtocol>)child atIndex:(NSInteger)position {
+    [self.childWidgets insertObject:child atIndex:position];
+    child.parentWidget = self;
+}
+
+- (void)replaceChild:(id<WidgetProtocol>)child withChild:(id<WidgetProtocol>)newChild {
+    [self removeChild:child];
+    [self appendChild:newChild];
 }
 
 @end

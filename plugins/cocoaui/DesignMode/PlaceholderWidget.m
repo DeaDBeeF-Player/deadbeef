@@ -98,12 +98,7 @@ const NSInteger GRIDSIZE = 16;
     }
 }
 
-- (void)replaceChild:(id<WidgetProtocol>)child withChild:(id<WidgetProtocol>)newChild {
-    [self removeChild:child];
-    [self appendChild:newChild];
-}
-
-- (BOOL)canInsert {
+- (BOOL)isPlaceholder {
     return YES;
 }
 

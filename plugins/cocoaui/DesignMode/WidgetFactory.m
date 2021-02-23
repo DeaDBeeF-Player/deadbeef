@@ -51,10 +51,10 @@
 
 
 - (void)registerAllTypes {
-    [self registerType:@"Placeholder" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+    [self registerType:PlaceholderWidget.widgetType instantiatorBlock:^id<WidgetProtocol> _Nonnull{
         return [[PlaceholderWidget alloc] initWithDeps:self.deps];
     }];
-    [self registerType:@"Playlist" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+    [self registerType:PlaylistWidget.widgetType instantiatorBlock:^id<WidgetProtocol> _Nonnull{
         return [[PlaylistWidget alloc] initWithDeps:self.deps];
     }];
     [self registerType:@"Splitter (top and bottom)" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
@@ -63,7 +63,7 @@
     [self registerType:@"Splitter (left and right)" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
         return [[SplitterWidget alloc] initWithDeps:self.deps vertical:YES];
     }];
-    [self registerType:@"Spectrum Analyzer" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+    [self registerType:SpectrumAnalyzerWidget.widgetType instantiatorBlock:^id<WidgetProtocol> _Nonnull{
         return [[SpectrumAnalyzerWidget alloc] initWithDeps:self.deps];
     }];
 }
