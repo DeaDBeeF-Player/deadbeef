@@ -37,6 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol WidgetFactoryProtocol
 - (nullable id<WidgetProtocol>)createWidgetWithType:(NSString *)type;
 @property (nonatomic,readonly) NSArray<NSString *> *types;
+- (nullable NSString *)displayNameForType:(NSString *)type;
 @end
 
 @protocol WidgetMenuBuilderProtocol

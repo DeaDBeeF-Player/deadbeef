@@ -11,11 +11,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SplitterWidget : WidgetBase<WidgetProtocol>
-
-- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps vertical:(BOOL)vertical;
-
-
+@interface HSplitterWidget : WidgetBase<WidgetProtocol>
 @end
+
+@interface VSplitterWidget : HSplitterWidget<WidgetProtocol>
+@end
+
 
 NS_ASSUME_NONNULL_END

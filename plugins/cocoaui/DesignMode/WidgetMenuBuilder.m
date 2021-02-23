@@ -70,7 +70,8 @@
         if ([type isEqualToString:@"Placeholder"]) {
             continue;
         }
-        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:type action:nil keyEquivalent:@""];
+        NSString *displayName = [self.deps.factory displayNameForType:type];
+        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:displayName action:nil keyEquivalent:@""];
         item.target = self;
         item.action = @selector(createWidget:);
         item.representedObject = type;
