@@ -24,7 +24,7 @@ typedef id<WidgetProtocol>_Nonnull(^WidgetInstantiatorBlockType)(void);
 
 - (void)registerAllTypes;
 - (nullable id<WidgetProtocol>)createWidgetWithType:(NSString *)type;
-- (void)registerType:(NSString *)type instantiatorBlock:(WidgetInstantiatorBlockType)instantiatorBlock;
+- (void)registerType:(NSString *)type displayName:(NSString *)displayName instantiatorBlock:(WidgetInstantiatorBlockType)instantiatorBlock;
 - (void)unregisterType:(NSString *)type;
 
 @end

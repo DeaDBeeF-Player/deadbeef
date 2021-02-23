@@ -10,20 +10,24 @@
 #import "WidgetFactory.h"
 #import "PlaceholderWidget.h"
 
-@interface SplitterWidget()
+@interface HSplitterWidget()
 
 @property (nonatomic) NSSplitView *splitView;
 @property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
 
 @end
 
-@implementation SplitterWidget
+@implementation HSplitterWidget
 
 + (NSString *)widgetType {
-    return @"Splitter";
+    return @"HSplitter";
 }
 
-- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps vertical:(BOOL)vertical {
+- (BOOL)isVertical {
+    return NO;
+}
+
+- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
     self = [super initWithDeps:deps];
     if (self == nil) {
         return nil;
@@ -32,7 +36,7 @@
     _deps = deps;
 
     _splitView = [[NSSplitView alloc] initWithFrame:NSZeroRect];
-    _splitView.vertical = vertical;
+    _splitView.vertical = !self.isVertical; // The NSSplitView.vertical means the divider line orientation
 
     id<WidgetProtocol> pane1 = [deps.factory createWidgetWithType:PlaceholderWidget.widgetType];
     id<WidgetProtocol> pane2 = [deps.factory createWidgetWithType:PlaceholderWidget.widgetType];
@@ -87,6 +91,19 @@
     }
     child.parentWidget = nil;
     newChild.parentWidget = self;
+}
+
+@end
+
+
+@implementation VSplitterWidget
+
++ (NSString *)widgetType {
+    return @"VSplitter";
+}
+
+- (BOOL)isVertical {
+    return YES;
 }
 
 @end
