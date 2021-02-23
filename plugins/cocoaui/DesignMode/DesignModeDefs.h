@@ -17,19 +17,20 @@ NS_ASSUME_NONNULL_BEGIN
 @property (class,nonatomic,readonly) NSString *widgetType;
 @property (nonatomic,readonly) NSString *widgetType;
 @property (nullable,nonatomic,weak) id<WidgetProtocol> parentWidget;
-@property (nonatomic,readonly) BOOL canInsert;
+@property (nonatomic,readonly) BOOL isPlaceholder;
 @property (nullable,nonatomic,readonly) NSMutableArray<id<WidgetProtocol>> *childWidgets;
 
 - (nullable NSDictionary *)serializedSettingsDictionary;
 - (BOOL)deserializeFromSettingsDictionary:(nullable NSDictionary *)dictionary;
 - (NSView *)view;
+- (void)appendChild:(id<WidgetProtocol>)child;
+- (void)removeChild:(id<WidgetProtocol>)child;
+- (void)insertChild:(id<WidgetProtocol>)child atIndex:(NSInteger)position;
+- (void)replaceChild:(id<WidgetProtocol>)child withChild:(id<WidgetProtocol>)newChild;
+- (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
 @optional
 - (BOOL)makeFirstResponder;
-- (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
-- (void)appendChild:(id<WidgetProtocol>)child;
-- (void)removeChild:(id<WidgetProtocol>)child;
-- (void)replaceChild:(id<WidgetProtocol>)child withChild:(id<WidgetProtocol>)newChild;
 
 @end
 

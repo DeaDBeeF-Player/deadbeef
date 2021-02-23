@@ -48,10 +48,11 @@
     NSMenu *menu = [NSMenu new];
     menu.autoenablesItems = NO;
 
-    BOOL canInsert = widget.canInsert;
+    BOOL isPlaceholder = widget.isPlaceholder;
 
+    // placeholder: always replace, unless root
     NSMenuItem *itemCreate;
-    if (!canInsert) {
+    if (!isPlaceholder) {
         itemCreate = [[NSMenuItem alloc] initWithTitle:@"Replace with…" action:nil keyEquivalent:@""];
     }
     else {
@@ -78,7 +79,7 @@
 
     [menu addItem: NSMenuItem.separatorItem];
 
-    if (!canInsert) {
+    if (!isPlaceholder) {
         NSMenuItem *itemDelete = [[NSMenuItem alloc] initWithTitle:@"Delete" action:nil keyEquivalent:@""];
         itemDelete.target = self;
         itemDelete.action = @selector(deleteWidget:);
@@ -103,7 +104,8 @@
 
     id<WidgetProtocol> activeWidget = self.activeWidget;
 
-    if (activeWidget.canInsert) {
+    if (activeWidget.parentWidget == nil) {
+        [activeWidget removeChild:activeWidget.childWidgets.firstObject];
         [activeWidget appendChild:widget];
     }
     else {
