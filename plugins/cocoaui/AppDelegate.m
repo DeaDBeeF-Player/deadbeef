@@ -710,7 +710,7 @@ main_cleanup_and_quit (void);
 {
     [[DdbWidgetManager defaultWidgetManager] widgetMessage:_id ctx:ctx p1:p1 p2:p2];
 
-    [g_appDelegate.mainWindow.rootWidget message:_id ctx:ctx p1:p1 p2:p2];
+    [DesignModeState.sharedInstance.rootWidget message:_id ctx:ctx p1:p1 p2:p2];
     [g_appDelegate.searchWindow.viewController sendMessage:_id ctx:ctx p1:p1 p2:p2];
 
     if (_id == DB_EV_CONFIGCHANGED) {

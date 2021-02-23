@@ -36,8 +36,6 @@
 @property (unsafe_unretained) IBOutlet DdbSeekBar *seekBar;
 @property (unsafe_unretained) IBOutlet NSSlider *volumeBar;
 
-@property (nonatomic, readonly) id<WidgetProtocol> rootWidget;
-
 - (IBAction)seekBarAction:(id)sender;
 - (IBAction)volumeBarAction:(id)sender;
 @property (unsafe_unretained) IBOutlet NSSegmentedControl *buttonBar;
