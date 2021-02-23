@@ -62,23 +62,6 @@ static void spu_update (unsigned char* pSound,long lBytes,void *data)
 	memcpy(s->spu_pOutput, pSound, lBytes);
 }
 
-void
-ao_getlibpath (const char *path, const char *libname, char *libpath, int size) {
-    const char *e = strrchr (path, ':');
-    if (!e) {
-        e = strrchr (path, '/');
-    }
-    if (e) {
-        e++;
-        memcpy (libpath, path, e-path);
-        libpath[e-path] = 0;
-        strcat (libpath, libname);
-    }
-    else {
-        strcpy (libpath, libname);
-    }
-}
-
 void *psf_start(const char *path, uint8 *buffer, uint32 length)
 {
     psf_synth_t *s = malloc (sizeof (psf_synth_t));
