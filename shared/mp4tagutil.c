@@ -342,13 +342,22 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     }
 
     if (!udta) {
-        // udta not found at all -- append to moov, it needs to be the last one.
+        // delete any udta without meta
+        for (;;) {
+            mp4p_atom_t *invalid_udta = mp4p_atom_find(moov, "moov/udta");
+            if (!invalid_udta) {
+                break;
+            }
+            mp4p_atom_remove_subatom(moov, invalid_udta);
+        }
+
+        // create new udta
         udta = mp4p_atom_append (moov, mp4p_atom_new ("udta"));
     }
 
     if (!meta) {
         // append meta/hdlr/ilst if needed
-        meta = mp4p_atom_append (udta, mp4p_atom_new ("meta"));
+        meta = mp4p_atom_append (udta, mp4p_meta_create_atom());
         mp4p_atom_t *hdlr = mp4p_atom_append (meta, mp4p_atom_new ("hdlr"));
         mp4p_hdlr_init (hdlr, "\0\0\0\0", "mdir", "appl");
         ilst = mp4p_atom_append (meta, mp4p_atom_new ("ilst"));
