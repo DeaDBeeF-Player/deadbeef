@@ -62,13 +62,8 @@
 - (BOOL)loadWidget:(id<WidgetProtocol>)widget fromDictionary:(NSDictionary *)dictionary {
     NSDictionary *settings = dictionary[@"settings"];
 
-    BOOL loaded = NO;
     if ([settings isKindOfClass:NSDictionary.class]) {
-        loaded = [widget deserializeFromSettingsDictionary:settings];
-    }
-
-    if (!loaded) {
-        return NO;
+        [widget deserializeFromSettingsDictionary:settings];
     }
 
     NSArray *children = dictionary[@"children"];
