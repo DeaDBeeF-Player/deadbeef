@@ -21,10 +21,6 @@
 
 @implementation WidgetBase
 
-- (instancetype)init {
-    return [self initWithDeps:nil];
-}
-
 - (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
     self = [super init];
 

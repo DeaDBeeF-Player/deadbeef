@@ -16,7 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,class,readonly) DesignModeState *sharedInstance;
 @property (nonatomic) BOOL enabled;
 
-- (instancetype)initWithDeps:(nullable id<DesignModeDepsProtocol>)deps NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps NS_DESIGNATED_INITIALIZER;
 
 @end
 

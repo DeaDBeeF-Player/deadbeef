@@ -44,10 +44,6 @@
     return instance;
 }
 
-- (instancetype)init {
-    return [self initWithDeps:nil];
-}
-
 - (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
     self = [super init];
     if (self == nil) {
