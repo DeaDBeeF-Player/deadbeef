@@ -32,10 +32,6 @@ extern DB_functions_t *deadbeef;
     return instance;
 }
 
-- (instancetype)init {
-    return [self initWithDeps: nil];
-}
-
 - (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
     self = [super init];
 

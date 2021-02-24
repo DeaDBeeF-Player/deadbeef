@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic,class,readonly) WidgetSerializer *sharedInstance;
 
-- (instancetype)initWithDeps:(nullable id<DesignModeDepsProtocol>)deps;
+- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps;
 
 - (nullable NSDictionary *)saveWidgetToDictionary:(id<WidgetProtocol>)widget;
 - (nullable id<WidgetProtocol>)loadFromDictionary:(NSDictionary *)dictionary;
