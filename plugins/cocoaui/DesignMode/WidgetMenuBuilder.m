@@ -43,12 +43,29 @@
 }
 
 - (NSMenu *)menuForWidget:(id<WidgetProtocol>)widget {
+    self.activeWidget = nil;
+    NSString *widgetType = widget.widgetType;
+    if (widgetType == nil) {
+        return nil;
+    }
+
+    NSString *displayName = [self.deps.factory displayNameForType:widgetType];
+    if (displayName == nil) {
+        return nil;
+    }
+
     self.activeWidget = widget;
 
     NSMenu *menu = [NSMenu new];
     menu.autoenablesItems = NO;
 
     BOOL isPlaceholder = widget.isPlaceholder;
+
+    // Title
+    NSMenuItem *itemTitle = [[NSMenuItem alloc] initWithTitle:displayName action:nil keyEquivalent:@""];
+    itemTitle.enabled = NO;
+    [menu addItem:itemTitle];
+    [menu addItem: NSMenuItem.separatorItem];
 
     // placeholder: always replace, unless root
     NSMenuItem *itemCreate;
