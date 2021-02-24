@@ -20,7 +20,8 @@ typedef id<WidgetProtocol>_Nonnull(^WidgetInstantiatorBlockType)(void);
 @property (nonatomic,readonly) id<WidgetFactoryProtocol> widgetFactory;
 @property (nonatomic,readonly) id<WidgetMenuBuilderProtocol> menuBuilder;
 
-- (instancetype)initWithDeps:(nullable id<DesignModeDepsProtocol>)deps NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps NS_DESIGNATED_INITIALIZER;
 
 - (void)registerAllTypes;
 - (nullable id<WidgetProtocol>)createWidgetWithType:(NSString *)type;
