@@ -72,7 +72,6 @@ AppDelegate *g_appDelegate;
 
 @property (nonatomic,readwrite) MediaLibraryManager *mediaLibraryManager;
 
-@property (nonatomic) id<WidgetProtocol> rootWidget;
 @property (weak) IBOutlet NSMenuItem *designModeMenuItem;
 @property DesignModeState *designModeState;
 
@@ -80,6 +79,17 @@ AppDelegate *g_appDelegate;
 @end
 
 @implementation AppDelegate
+- (instancetype)init {
+    self = [super init];
+    if (self == nil) {
+        return nil;
+    }
+
+    // initialize design mode, to avoid random background thread calls
+    __unused id<DesignModeStateProtocol> state = DesignModeState.sharedInstance;
+
+    return self;
+}
 
 - (void)volumeChanged {
     [_mainWindow updateVolumeBar];
@@ -288,8 +298,7 @@ main_cleanup_and_quit (void);
     [_equalizerMenuItem unbind:@"hidden"];
 }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
-{
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // high sierra would terminate the app on SIGPIPE by default, which breaks converter error handling
     signal(SIGPIPE, SIG_IGN);
 
@@ -714,8 +723,10 @@ main_cleanup_and_quit (void);
 {
     [[DdbWidgetManager defaultWidgetManager] widgetMessage:_id ctx:ctx p1:p1 p2:p2];
 
-    [DesignModeState.sharedInstance.rootWidget message:_id ctx:ctx p1:p1 p2:p2];
-    [g_appDelegate.searchWindow.viewController sendMessage:_id ctx:ctx p1:p1 p2:p2];
+    if (g_appDelegate) {
+        [DesignModeState.sharedInstance.rootWidget message:_id ctx:ctx p1:p1 p2:p2];
+        [g_appDelegate.searchWindow.viewController sendMessage:_id ctx:ctx p1:p1 p2:p2];
+    }
 
     if (_id == DB_EV_CONFIGCHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(configChanged) withObject:nil waitUntilDone:NO];
