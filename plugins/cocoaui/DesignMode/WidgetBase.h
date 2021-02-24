@@ -15,7 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WidgetBase : NSObject<WidgetProtocol>
 
-- (instancetype)initWithDeps:(nullable id<DesignModeDepsProtocol>)deps NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps NS_DESIGNATED_INITIALIZER;
 
 @property (nullable,nonatomic,weak) id<WidgetProtocol> parentWidget;
 @property (nonatomic,readonly) NSView *topLevelView;

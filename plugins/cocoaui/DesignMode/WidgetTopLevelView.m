@@ -20,26 +20,6 @@
 
 @implementation WidgetTopLevelView
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    self = [self initWithDeps:nil];
-    if (self == nil) {
-        return nil;
-    }
-    [self setup];
-    return self;
-}
-
-- (instancetype)initWithCoder:(NSCoder *)coder
-{
-    self = [self initWithDeps:nil];
-    if (self == nil) {
-        return nil;
-    }
-    [self setup];
-    return self;
-}
-
 - (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
     self = [super initWithFrame:NSZeroRect];
     if (self == nil) {
