@@ -71,6 +71,7 @@
         return YES;
     }
 
+    NSInteger index = 0;
     for (id child in children) {
         if (![child isKindOfClass:NSDictionary.class]) {
             continue;
@@ -78,8 +79,15 @@
         NSDictionary *childDictionary = child;
         id<WidgetProtocol> childWidget = [self loadFromDictionary:childDictionary];
         if (childWidget != nil) {
-            [widget appendChild:childWidget];
+
+            if ((NSInteger)widget.childWidgets.count > index) {
+                [widget replaceChild:widget.childWidgets[index] withChild:childWidget];
+            }
+            else {
+                [widget appendChild:childWidget];
+            }
         }
+        index += 1;
     }
     return YES;
 }
