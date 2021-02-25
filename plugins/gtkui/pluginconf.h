@@ -30,4 +30,7 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
 int
 gtkui_run_dialog_root (ddb_dialog_t *conf, uint32_t buttons, int (*callback)(int button, void *ctx), void *ctx);
 
+void
+gtkui_make_dialog (GtkWidget *win, GtkWidget *containervbox, ddb_dialog_t *conf);
+
 #endif

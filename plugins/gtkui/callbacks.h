@@ -1419,3 +1419,22 @@ on_minimize_on_startup_clicked         (GtkButton       *button,
 void
 on_move_to_trash_clicked               (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_plugin_conf_tab_btn_clicked         (GtkRadioButton       *button,
+                                        gpointer         user_data);
+
+void
+on_plugin_info_tab_btn_clicked         (GtkRadioButton       *button,
+                                        gpointer         user_data);
+
+void
+on_plugin_license_tab_btn_clicked      (GtkRadioButton       *button,
+                                        gpointer         user_data);
+
+
+void
+on_plugin_notebook_switch_page         (GtkNotebook     *notebook,
+                                        GtkWidget       *page,
+                                        guint            page_num,
+                                        gpointer         user_data);

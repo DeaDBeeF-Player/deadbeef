@@ -1767,6 +1767,18 @@ create_prefwin (void)
   GtkWidget *hpaned1;
   GtkWidget *scrolledwindow2;
   GtkWidget *pref_pluginlist;
+  GtkWidget *vbox54;
+  GtkWidget *hbox149;
+  GtkWidget *label169;
+  GtkWidget *plugin_tabbtn_hbox;
+  GtkWidget *plugin_conf_tab_btn;
+  GSList *plugin_conf_tab_btn_group = NULL;
+  GtkWidget *plugin_info_tab_btn;
+  GtkWidget *plugin_license_tab_btn;
+  GtkWidget *label168;
+  GtkWidget *plugin_notebook;
+  GtkWidget *plug_conf_dlg_scrolledwindow;
+  GtkWidget *label170;
   GtkWidget *vbox12;
   GtkWidget *hbox103;
   GtkWidget *label130;
@@ -1774,17 +1786,11 @@ create_prefwin (void)
   GtkWidget *scrolledwindow8;
   GtkWidget *plug_description;
   GtkWidget *hbox20;
-  GtkWidget *configure_plugin;
-  GtkWidget *alignment15;
-  GtkWidget *hbox56;
-  GtkWidget *image394;
-  GtkWidget *label92;
-  GtkWidget *plug_copyright;
-  GtkWidget *alignment20;
-  GtkWidget *hbox88;
-  GtkWidget *image521;
-  GtkWidget *label117;
   GtkWidget *weblink;
+  GtkWidget *label171;
+  GtkWidget *scrolledwindow16;
+  GtkWidget *plug_license;
+  GtkWidget *label172;
   GtkWidget *label3;
   GtkWidget *dialog_action_area2;
   GtkWidget *closebutton1;
@@ -3010,10 +3016,67 @@ create_prefwin (void)
   gtk_container_add (GTK_CONTAINER (scrolledwindow2), pref_pluginlist);
   gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (pref_pluginlist), TRUE);
 
+  vbox54 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox54);
+  gtk_paned_pack2 (GTK_PANED (hpaned1), vbox54, TRUE, TRUE);
+
+  hbox149 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox149);
+  gtk_box_pack_start (GTK_BOX (vbox54), hbox149, FALSE, FALSE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (hbox149), 6);
+
+  label169 = gtk_label_new ("");
+  gtk_widget_show (label169);
+  gtk_box_pack_start (GTK_BOX (hbox149), label169, TRUE, TRUE, 0);
+
+  plugin_tabbtn_hbox = gtk_hbox_new (TRUE, 5);
+  gtk_widget_show (plugin_tabbtn_hbox);
+  gtk_box_pack_start (GTK_BOX (hbox149), plugin_tabbtn_hbox, FALSE, TRUE, 0);
+
+  plugin_conf_tab_btn = gtk_radio_button_new_with_mnemonic (NULL, _("Configuration"));
+  gtk_widget_show (plugin_conf_tab_btn);
+  gtk_box_pack_start (GTK_BOX (plugin_tabbtn_hbox), plugin_conf_tab_btn, TRUE, TRUE, 0);
+  gtk_radio_button_set_group (GTK_RADIO_BUTTON (plugin_conf_tab_btn), plugin_conf_tab_btn_group);
+  plugin_conf_tab_btn_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (plugin_conf_tab_btn));
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (plugin_conf_tab_btn), TRUE);
+  gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (plugin_conf_tab_btn), FALSE);
+
+  plugin_info_tab_btn = gtk_radio_button_new_with_mnemonic (NULL, _("Info"));
+  gtk_widget_show (plugin_info_tab_btn);
+  gtk_box_pack_start (GTK_BOX (plugin_tabbtn_hbox), plugin_info_tab_btn, TRUE, TRUE, 0);
+  gtk_radio_button_set_group (GTK_RADIO_BUTTON (plugin_info_tab_btn), plugin_conf_tab_btn_group);
+  plugin_conf_tab_btn_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (plugin_info_tab_btn));
+  gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (plugin_info_tab_btn), FALSE);
+
+  plugin_license_tab_btn = gtk_radio_button_new_with_mnemonic (NULL, _("License"));
+  gtk_widget_show (plugin_license_tab_btn);
+  gtk_box_pack_start (GTK_BOX (plugin_tabbtn_hbox), plugin_license_tab_btn, TRUE, TRUE, 0);
+  gtk_radio_button_set_group (GTK_RADIO_BUTTON (plugin_license_tab_btn), plugin_conf_tab_btn_group);
+  plugin_conf_tab_btn_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (plugin_license_tab_btn));
+  gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (plugin_license_tab_btn), FALSE);
+
+  label168 = gtk_label_new ("");
+  gtk_widget_show (label168);
+  gtk_box_pack_start (GTK_BOX (hbox149), label168, TRUE, TRUE, 0);
+
+  plugin_notebook = gtk_notebook_new ();
+  gtk_widget_show (plugin_notebook);
+  gtk_box_pack_start (GTK_BOX (vbox54), plugin_notebook, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (plugin_notebook), 6);
+  gtk_notebook_set_show_border (GTK_NOTEBOOK (plugin_notebook), FALSE);
+
+  plug_conf_dlg_scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (plug_conf_dlg_scrolledwindow);
+  gtk_container_add (GTK_CONTAINER (plugin_notebook), plug_conf_dlg_scrolledwindow);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (plug_conf_dlg_scrolledwindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+  label170 = gtk_label_new (_("Configuration"));
+  gtk_widget_show (label170);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (plugin_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (plugin_notebook), 0), label170);
+
   vbox12 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox12);
-  gtk_paned_pack2 (GTK_PANED (hpaned1), vbox12, TRUE, TRUE);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox12), 12);
+  gtk_container_add (GTK_CONTAINER (plugin_notebook), vbox12);
 
   hbox103 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox103);
@@ -3045,53 +3108,31 @@ create_prefwin (void)
   gtk_widget_show (hbox20);
   gtk_box_pack_start (GTK_BOX (vbox12), hbox20, FALSE, FALSE, 0);
 
-  configure_plugin = gtk_button_new ();
-  gtk_widget_show (configure_plugin);
-  gtk_box_pack_start (GTK_BOX (hbox20), configure_plugin, TRUE, FALSE, 0);
-  gtk_widget_set_sensitive (configure_plugin, FALSE);
-
-  alignment15 = gtk_alignment_new (0.5, 0.5, 0, 0);
-  gtk_widget_show (alignment15);
-  gtk_container_add (GTK_CONTAINER (configure_plugin), alignment15);
-
-  hbox56 = gtk_hbox_new (FALSE, 2);
-  gtk_widget_show (hbox56);
-  gtk_container_add (GTK_CONTAINER (alignment15), hbox56);
-
-  image394 = gtk_image_new_from_stock ("gtk-preferences", GTK_ICON_SIZE_BUTTON);
-  gtk_widget_show (image394);
-  gtk_box_pack_start (GTK_BOX (hbox56), image394, FALSE, FALSE, 0);
-
-  label92 = gtk_label_new_with_mnemonic (_("Configure"));
-  gtk_widget_show (label92);
-  gtk_box_pack_start (GTK_BOX (hbox56), label92, FALSE, FALSE, 0);
-
-  plug_copyright = gtk_button_new ();
-  gtk_widget_show (plug_copyright);
-  gtk_box_pack_start (GTK_BOX (hbox20), plug_copyright, TRUE, FALSE, 0);
-  gtk_widget_set_sensitive (plug_copyright, FALSE);
-
-  alignment20 = gtk_alignment_new (0.5, 0.5, 0, 0);
-  gtk_widget_show (alignment20);
-  gtk_container_add (GTK_CONTAINER (plug_copyright), alignment20);
-
-  hbox88 = gtk_hbox_new (FALSE, 2);
-  gtk_widget_show (hbox88);
-  gtk_container_add (GTK_CONTAINER (alignment20), hbox88);
-
-  image521 = gtk_image_new_from_stock ("gtk-about", GTK_ICON_SIZE_BUTTON);
-  gtk_widget_show (image521);
-  gtk_box_pack_start (GTK_BOX (hbox88), image521, FALSE, FALSE, 0);
-
-  label117 = gtk_label_new_with_mnemonic (_("Copyright"));
-  gtk_widget_show (label117);
-  gtk_box_pack_start (GTK_BOX (hbox88), label117, FALSE, FALSE, 0);
-
   weblink = create_plugin_weblink ("weblink", "", "", 0, 0);
   gtk_widget_show (weblink);
   gtk_box_pack_start (GTK_BOX (hbox20), weblink, TRUE, FALSE, 0);
   gtk_widget_set_can_focus(weblink, FALSE);
   gtk_widget_set_can_default(weblink, FALSE);
+
+  label171 = gtk_label_new (_("Info"));
+  gtk_widget_show (label171);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (plugin_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (plugin_notebook), 1), label171);
+
+  scrolledwindow16 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow16);
+  gtk_container_add (GTK_CONTAINER (plugin_notebook), scrolledwindow16);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow16), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow16), GTK_SHADOW_IN);
+
+  plug_license = gtk_text_view_new ();
+  gtk_widget_show (plug_license);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow16), plug_license);
+  gtk_text_view_set_editable (GTK_TEXT_VIEW (plug_license), FALSE);
+  gtk_text_view_set_cursor_visible (GTK_TEXT_VIEW (plug_license), FALSE);
+
+  label172 = gtk_label_new (_("License"));
+  gtk_widget_show (label172);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (plugin_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (plugin_notebook), 2), label172);
 
   label3 = gtk_label_new (_("Plugins"));
   gtk_widget_show (label3);
@@ -3407,11 +3448,17 @@ create_prefwin (void)
   g_signal_connect ((gpointer) pref_pluginlist, "row_activated",
                     G_CALLBACK (on_pref_pluginlist_row_activated),
                     NULL);
-  g_signal_connect ((gpointer) configure_plugin, "clicked",
-                    G_CALLBACK (on_configure_plugin_clicked),
+  g_signal_connect ((gpointer) plugin_conf_tab_btn, "clicked",
+                    G_CALLBACK (on_plugin_conf_tab_btn_clicked),
                     NULL);
-  g_signal_connect ((gpointer) plug_copyright, "clicked",
-                    G_CALLBACK (on_plug_copyright_clicked),
+  g_signal_connect ((gpointer) plugin_info_tab_btn, "clicked",
+                    G_CALLBACK (on_plugin_info_tab_btn_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) plugin_license_tab_btn, "clicked",
+                    G_CALLBACK (on_plugin_license_tab_btn_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) plugin_notebook, "switch_page",
+                    G_CALLBACK (on_plugin_notebook_switch_page),
                     NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
@@ -3658,6 +3705,17 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hpaned1, "hpaned1");
   GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow2, "scrolledwindow2");
   GLADE_HOOKUP_OBJECT (prefwin, pref_pluginlist, "pref_pluginlist");
+  GLADE_HOOKUP_OBJECT (prefwin, vbox54, "vbox54");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox149, "hbox149");
+  GLADE_HOOKUP_OBJECT (prefwin, label169, "label169");
+  GLADE_HOOKUP_OBJECT (prefwin, plugin_tabbtn_hbox, "plugin_tabbtn_hbox");
+  GLADE_HOOKUP_OBJECT (prefwin, plugin_conf_tab_btn, "plugin_conf_tab_btn");
+  GLADE_HOOKUP_OBJECT (prefwin, plugin_info_tab_btn, "plugin_info_tab_btn");
+  GLADE_HOOKUP_OBJECT (prefwin, plugin_license_tab_btn, "plugin_license_tab_btn");
+  GLADE_HOOKUP_OBJECT (prefwin, label168, "label168");
+  GLADE_HOOKUP_OBJECT (prefwin, plugin_notebook, "plugin_notebook");
+  GLADE_HOOKUP_OBJECT (prefwin, plug_conf_dlg_scrolledwindow, "plug_conf_dlg_scrolledwindow");
+  GLADE_HOOKUP_OBJECT (prefwin, label170, "label170");
   GLADE_HOOKUP_OBJECT (prefwin, vbox12, "vbox12");
   GLADE_HOOKUP_OBJECT (prefwin, hbox103, "hbox103");
   GLADE_HOOKUP_OBJECT (prefwin, label130, "label130");
@@ -3665,17 +3723,11 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow8, "scrolledwindow8");
   GLADE_HOOKUP_OBJECT (prefwin, plug_description, "plug_description");
   GLADE_HOOKUP_OBJECT (prefwin, hbox20, "hbox20");
-  GLADE_HOOKUP_OBJECT (prefwin, configure_plugin, "configure_plugin");
-  GLADE_HOOKUP_OBJECT (prefwin, alignment15, "alignment15");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox56, "hbox56");
-  GLADE_HOOKUP_OBJECT (prefwin, image394, "image394");
-  GLADE_HOOKUP_OBJECT (prefwin, label92, "label92");
-  GLADE_HOOKUP_OBJECT (prefwin, plug_copyright, "plug_copyright");
-  GLADE_HOOKUP_OBJECT (prefwin, alignment20, "alignment20");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox88, "hbox88");
-  GLADE_HOOKUP_OBJECT (prefwin, image521, "image521");
-  GLADE_HOOKUP_OBJECT (prefwin, label117, "label117");
   GLADE_HOOKUP_OBJECT (prefwin, weblink, "weblink");
+  GLADE_HOOKUP_OBJECT (prefwin, label171, "label171");
+  GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow16, "scrolledwindow16");
+  GLADE_HOOKUP_OBJECT (prefwin, plug_license, "plug_license");
+  GLADE_HOOKUP_OBJECT (prefwin, label172, "label172");
   GLADE_HOOKUP_OBJECT (prefwin, label3, "label3");
   GLADE_HOOKUP_OBJECT_NO_REF (prefwin, dialog_action_area2, "dialog_action_area2");
   GLADE_HOOKUP_OBJECT (prefwin, closebutton1, "closebutton1");

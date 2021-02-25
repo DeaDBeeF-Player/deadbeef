@@ -458,7 +458,11 @@ gtkui_run_preferences_dlg (void) {
 #endif
     gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
 
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "configure_plugin"), FALSE);
+
+    // We do this here so one can leave the tabs visible in the Glade designer for convenience.
+    GtkNotebook *notebook = GTK_NOTEBOOK (lookup_widget (w, "plugin_notebook"));
+    gtk_notebook_set_show_tabs(notebook, FALSE);
+    gtk_notebook_set_current_page(notebook, 0);
 
     // hotkeys
     prefwin_init_hotkeys (prefwin);
@@ -638,6 +642,11 @@ on_mmb_delete_playlist_toggled         (GtkToggleButton *togglebutton,
 }
 
 void
+gtkui_conf_get_str (const char *key, char *value, int len, const char *def) {
+    deadbeef->conf_get_str (key, def, value, len);
+}
+
+void
 on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
                                         gpointer         user_data)
 {
@@ -680,46 +689,35 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
         gtk_widget_set_sensitive (link, FALSE);
     }
 
-    GtkWidget *cpr = lookup_widget (w, "plug_copyright");
+    GtkTextView *lictv = GTK_TEXT_VIEW (lookup_widget (w, "plug_license"));
     if (p->copyright) {
-        gtk_widget_set_sensitive (cpr, TRUE);
+        GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
+
+        gtk_text_buffer_set_text (buffer, p->copyright, strlen(p->copyright));
+        gtk_text_view_set_buffer (GTK_TEXT_VIEW (lictv), buffer);
+        g_object_unref (buffer);
     }
     else {
-        gtk_widget_set_sensitive (cpr, FALSE);
+        gtk_text_view_set_buffer(lictv, NULL);
     }
 
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "configure_plugin"), p->configdialog ? TRUE : FALSE);
-}
 
-void
-gtkui_conf_get_str (const char *key, char *value, int len, const char *def) {
-    deadbeef->conf_get_str (key, def, value, len);
-}
+    GtkWidget *container = (lookup_widget (w, "plug_conf_dlg_scrolledwindow"));
+    GtkWidget *child = gtk_bin_get_child (GTK_BIN (container));
+    if (child)
+        gtk_widget_destroy(child);
 
-void
-on_configure_plugin_clicked            (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    GtkWidget *w = prefwin;
-    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (treeview, &path, &col);
-    if (!path || !col) {
-        // reset
-        return;
-    }
-    int *indices = gtk_tree_path_get_indices (path);
-    DB_plugin_t **plugins = deadbeef->plug_get_list ();
-    DB_plugin_t *p = plugins[*indices];
     if (p->configdialog) {
-        ddb_dialog_t conf = {
+         ddb_dialog_t conf = {
             .title = p->name,
             .layout = p->configdialog,
             .set_param = deadbeef->conf_set_str,
             .get_param = gtkui_conf_get_str,
         };
-        gtkui_run_dialog (prefwin, &conf, 0, NULL, NULL);
+        GtkWidget *box = gtk_vbox_new(FALSE, 0);
+        gtk_widget_show (box);
+        gtkui_make_dialog (NULL, box, &conf);
+        gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (container), box);
     }
 }
 
@@ -730,8 +728,67 @@ on_pref_pluginlist_row_activated       (GtkTreeView     *treeview,
                                         gpointer         user_data)
 {
     GtkWidget *w = prefwin;
-    GtkButton *btn = GTK_BUTTON (lookup_widget (w, "configure_plugin"));
-    gtk_button_clicked(btn);
+    GtkNotebook *notebook = GTK_NOTEBOOK (lookup_widget (w, "plugin_notebook"));
+    gtk_notebook_set_current_page (notebook, 0);
+}
+
+void
+on_plugin_conf_tab_btn_clicked         (GtkRadioButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *w = prefwin;
+    GtkNotebook *notebook = GTK_NOTEBOOK (lookup_widget (w, "plugin_notebook"));
+    gtk_notebook_set_current_page (notebook, 0);
+}
+
+
+void
+on_plugin_info_tab_btn_clicked         (GtkRadioButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *w = prefwin;
+    GtkNotebook *notebook = GTK_NOTEBOOK (lookup_widget (w, "plugin_notebook"));
+    gtk_notebook_set_current_page (notebook, 1);
+}
+
+
+void
+on_plugin_license_tab_btn_clicked      (GtkRadioButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *w = prefwin;
+    GtkNotebook *notebook = GTK_NOTEBOOK (lookup_widget (w, "plugin_notebook"));
+    gtk_notebook_set_current_page (notebook, 2);
+}
+
+//  This code is only here so you can programmatically switch page
+//  of the notebook and have the radio buttons update accordingly.
+void
+on_plugin_notebook_switch_page         (GtkNotebook     *notebook,
+                                        GtkWidget       *page,
+                                        guint            page_num,
+                                        gpointer         user_data)
+{
+    GtkWidget *w = prefwin;
+    GtkToggleButton *plugin_conf_tab_btn = GTK_TOGGLE_BUTTON (lookup_widget (w, "plugin_conf_tab_btn"));
+    GtkToggleButton *plugin_info_tab_btn = GTK_TOGGLE_BUTTON (lookup_widget (w, "plugin_info_tab_btn"));
+    GtkToggleButton *plugin_license_tab_btn = GTK_TOGGLE_BUTTON (lookup_widget (w, "plugin_license_tab_btn"));
+
+    GSignalMatchType mask = G_SIGNAL_MATCH_DETAIL | G_SIGNAL_MATCH_DATA;
+    GQuark detail = g_quark_from_static_string ("switch_page");
+    g_signal_handlers_block_matched ((gpointer)notebook, mask, detail, 0, NULL, NULL, NULL);
+
+    switch (page_num) {
+        case 0:
+        gtk_toggle_button_set_active (plugin_conf_tab_btn, 1);
+        break;
+        case 1:
+        gtk_toggle_button_set_active (plugin_info_tab_btn, 1);
+        break;
+        case 2:
+        gtk_toggle_button_set_active (plugin_license_tab_btn, 1);
+    }
+    g_signal_handlers_unblock_matched ((gpointer)notebook, mask, detail, 0, NULL, NULL, NULL);
 }
 
 static void
