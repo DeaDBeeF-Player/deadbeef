@@ -131,7 +131,7 @@ static void apply_conf (GtkWidget *w, ddb_dialog_t *conf) {
         }
 
         // fetch data
-        GtkWidget *widget = lookup_widget (w, key);
+        GtkWidget *widget = g_object_get_data (w, key);
         if (widget) {
             if (!strcmp (type, "entry") || !strcmp (type, "password")) {
                 conf->set_param (key, gtk_entry_get_text (GTK_ENTRY (widget)));
@@ -196,6 +196,12 @@ prop_changed (GtkWidget *editable, gpointer user_data) {
     gtk_dialog_set_response_sensitive (GTK_DIALOG (user_data), GTK_RESPONSE_APPLY, TRUE);
 }
 
+static void
+prop_changed_apply_conf (GtkWidget *editable, gpointer user_data) {
+    ddb_dialog_t *conf = (ddb_dialog_t*)g_object_get_data(G_OBJECT (user_data), "dialog_conf_struct");
+    apply_conf (GTK_WIDGET (user_data), conf);
+}
+
 int
 ddb_button_from_gtk_response (int response) {
     switch (response) {
@@ -228,57 +234,25 @@ backout_pack_level(int ncurr, int *pack)
     return ncurr;
 }
 
-int
-gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, int (*callback)(int button, void *ctx), void *ctx) {
-    if (!parentwin) {
-        parentwin = mainwin;
-    }
-    // create window
-    char title[200];
-    snprintf (title, sizeof (title), _("Configure %s"), conf->title);
-    GtkWidget *win;
-    if (!buttons) {
-        win = gtk_dialog_new_with_buttons (title, GTK_WINDOW (parentwin), GTK_DIALOG_MODAL, GTK_STOCK_APPLY, GTK_RESPONSE_APPLY, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-        gtk_dialog_set_default_response (GTK_DIALOG (win), GTK_RESPONSE_OK);
-    }
-    else {
-        win = gtk_dialog_new_with_buttons (title, GTK_WINDOW (parentwin), GTK_DIALOG_MODAL, NULL);
-        if (buttons & (1<<ddb_button_ok)) {
-            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_OK, GTK_RESPONSE_OK);
-        }
-        if (buttons & (1<<ddb_button_cancel)) {
-            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
-        }
-        if (buttons & (1<<ddb_button_close)) {
-            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
-        }
-        if (buttons & (1<<ddb_button_apply)) {
-            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_APPLY, GTK_RESPONSE_APPLY);
-        }
-        if (buttons & (1<<ddb_button_yes)) {
-            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_YES, GTK_RESPONSE_YES);
-        }
-        if (buttons & (1<<ddb_button_no)) {
-            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_NO, GTK_RESPONSE_NO);
-        }
-    }
-    gtk_window_set_type_hint (GTK_WINDOW (win), GDK_WINDOW_TYPE_HINT_DIALOG);
-    gtk_container_set_border_width (GTK_CONTAINER(win), 12);
 
-    gtk_window_set_title (GTK_WINDOW (win), title);
-    gtk_window_set_modal (GTK_WINDOW (win), TRUE);
-    gtk_window_set_transient_for (GTK_WINDOW (win), GTK_WINDOW (parentwin));
-
+void
+gtkui_make_dialog (GtkWidget *win, GtkWidget *containervbox, ddb_dialog_t *conf) {
     GtkWidget *widgets[100] = {NULL};
     int pack[100] = {0};
     int ncurr = 0;
 
-    widgets[ncurr] = gtk_dialog_get_content_area (GTK_DIALOG (win));
-    gtk_box_set_spacing (GTK_BOX (widgets[ncurr]), 8);
-    GtkWidget *action_area = gtk_dialog_get_action_area (GTK_DIALOG (win));
-    gtk_widget_show (action_area);
-    gtk_button_box_set_layout (GTK_BUTTON_BOX (action_area), GTK_BUTTONBOX_END);
+    int isdialog;
+    if (!win) {
+        win = containervbox;
+        isdialog = 0;
+    } else {
+        isdialog = 1;
+    }
 
+    g_object_set_data_full(win, "dialog_conf_struct", g_memdup(conf, sizeof(ddb_dialog_t)), g_free);
+
+    widgets[ncurr] = containervbox;
+    gtk_box_set_spacing (GTK_BOX (widgets[ncurr]), 8);
 
     // parse script
     char token[MAX_TOKEN];
@@ -388,7 +362,7 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
             gtk_widget_show (label);
             prop = gtk_entry_new ();
             gtk_entry_set_activates_default (GTK_ENTRY (prop), TRUE);
-            g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), win);
+            g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (isdialog?prop_changed:prop_changed_apply_conf), win);
             gtk_widget_show (prop);
             gtk_entry_set_text (GTK_ENTRY (prop), value);
 
@@ -398,7 +372,7 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
         }
         else if (!strcmp (type, "checkbox")) {
             prop = gtk_check_button_new_with_label (_(labeltext));
-            g_signal_connect (G_OBJECT (prop), "toggled", G_CALLBACK (prop_changed), win);
+            g_signal_connect (G_OBJECT (prop), "toggled", G_CALLBACK (isdialog?prop_changed:prop_changed_apply_conf), win);
             gtk_widget_show (prop);
             int val = atoi (value);
             gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (prop), val);
@@ -410,14 +384,14 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
                 prop = gtk_file_chooser_button_new (_(labeltext), GTK_FILE_CHOOSER_ACTION_OPEN);
                 gtk_widget_show (prop);
                 gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (prop), value);
-                g_signal_connect (G_OBJECT (prop), "file-set", G_CALLBACK (prop_changed), win);
+                g_signal_connect (G_OBJECT (prop), "file-set", G_CALLBACK (isdialog?prop_changed:prop_changed_apply_conf), win);
             }
             else {
                 cont = gtk_hbox_new (FALSE, 2);
                 gtk_widget_show (cont);
                 prop = gtk_entry_new ();
                 gtk_entry_set_activates_default (GTK_ENTRY (prop), TRUE);
-                g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), win);
+                g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (isdialog?prop_changed:prop_changed_apply_conf), win);
                 gtk_widget_show (prop);
                 gtk_editable_set_editable (GTK_EDITABLE (prop), FALSE);
                 gtk_entry_set_text (GTK_ENTRY (prop), value);
@@ -454,7 +428,7 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
             }
             gtk_combo_box_set_active (GTK_COMBO_BOX (prop), atoi (value));
             g_signal_connect ((gpointer) prop, "changed",
-                    G_CALLBACK (prop_changed),
+                    G_CALLBACK (isdialog?prop_changed:prop_changed_apply_conf),
                     win);
         }
         else if (!strncmp (type, "hscale[", 7) || !strncmp (type, "vscale[", 7) || !strncmp (type, "spinbtn[", 8)) {
@@ -493,7 +467,7 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
             }
             label = gtk_label_new (_(labeltext));
             gtk_widget_show (label);
-            g_signal_connect (G_OBJECT (prop), "value-changed", G_CALLBACK (prop_changed), win);
+            g_signal_connect (G_OBJECT (prop), "value-changed", G_CALLBACK (isdialog?prop_changed:prop_changed_apply_conf), win);
             gtk_widget_show (prop);
         }
 
@@ -525,6 +499,55 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
             gtk_box_pack_start (GTK_BOX (widgets[ncurr]), cont, FALSE, TRUE, 0);
         }
     }
+
+}
+
+int
+gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, int (*callback)(int button, void *ctx), void *ctx) {
+    if (!parentwin) {
+        parentwin = mainwin;
+    }
+    // create window
+    char title[200];
+    snprintf (title, sizeof (title), _("Configure %s"), conf->title);
+    GtkWidget *win;
+    if (!buttons) {
+        win = gtk_dialog_new_with_buttons (title, GTK_WINDOW (parentwin), GTK_DIALOG_MODAL, GTK_STOCK_APPLY, GTK_RESPONSE_APPLY, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+        gtk_dialog_set_default_response (GTK_DIALOG (win), GTK_RESPONSE_OK);
+    }
+    else {
+        win = gtk_dialog_new_with_buttons (title, GTK_WINDOW (parentwin), GTK_DIALOG_MODAL, NULL);
+        if (buttons & (1<<ddb_button_ok)) {
+            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_OK, GTK_RESPONSE_OK);
+        }
+        if (buttons & (1<<ddb_button_cancel)) {
+            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+        }
+        if (buttons & (1<<ddb_button_close)) {
+            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
+        }
+        if (buttons & (1<<ddb_button_apply)) {
+            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_APPLY, GTK_RESPONSE_APPLY);
+        }
+        if (buttons & (1<<ddb_button_yes)) {
+            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_YES, GTK_RESPONSE_YES);
+        }
+        if (buttons & (1<<ddb_button_no)) {
+            gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_NO, GTK_RESPONSE_NO);
+        }
+    }
+    gtk_window_set_type_hint (GTK_WINDOW (win), GDK_WINDOW_TYPE_HINT_DIALOG);
+    gtk_container_set_border_width (GTK_CONTAINER(win), 12);
+
+    gtk_window_set_title (GTK_WINDOW (win), title);
+    gtk_window_set_modal (GTK_WINDOW (win), TRUE);
+    gtk_window_set_transient_for (GTK_WINDOW (win), GTK_WINDOW (parentwin));
+
+    GtkWidget *action_area = gtk_dialog_get_action_area (GTK_DIALOG (win));
+    gtk_widget_show (action_area);
+    gtk_button_box_set_layout (GTK_BUTTON_BOX (action_area), GTK_BUTTONBOX_END);
+
+    gtkui_make_dialog (win, gtk_dialog_get_content_area (GTK_DIALOG (win)), conf);
 
     int response;
     do {
