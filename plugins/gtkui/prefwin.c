@@ -464,6 +464,12 @@ gtkui_run_preferences_dlg (void) {
     gtk_notebook_set_show_tabs(notebook, FALSE);
     gtk_notebook_set_current_page(notebook, 0);
 
+    // Some styling changes since Glade doesn't support setting it
+#if GTK_CHECK_VERSION(3,12,0)
+    GtkHButtonBox *bbox = GTK_NOTEBOOK (lookup_widget (w, "plugin_tabbtn_hbtnbox"));
+    gtk_button_box_set_layout (bbox, GTK_BUTTONBOX_EXPAND);
+#endif
+
     // hotkeys
     prefwin_init_hotkeys (prefwin);
 
@@ -702,7 +708,7 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
     }
 
 
-    GtkWidget *container = (lookup_widget (w, "plug_conf_dlg_scrolledwindow"));
+    GtkWidget *container = (lookup_widget (w, "plug_conf_dlg_viewport"));
     GtkWidget *child = gtk_bin_get_child (GTK_BIN (container));
     if (child)
         gtk_widget_destroy(child);
@@ -717,7 +723,8 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
         GtkWidget *box = gtk_vbox_new(FALSE, 0);
         gtk_widget_show (box);
         gtkui_make_dialog (NULL, box, &conf);
-        gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (container), box);
+        gtk_widget_set_size_request(box, 200, -1);
+        gtk_container_add (GTK_CONTAINER (container), box);
     }
 }
 

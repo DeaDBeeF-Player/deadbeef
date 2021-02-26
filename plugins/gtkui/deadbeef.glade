@@ -6847,6 +6847,7 @@ if you don't press Apply.</property>
 	      <property name="border_width">12</property>
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
+	      <property name="position">0</property>
 
 	      <child>
 		<widget class="GtkScrolledWindow" id="scrolledwindow2">
@@ -6895,7 +6896,7 @@ if you don't press Apply.</property>
 		      <property name="spacing">0</property>
 
 		      <child>
-			<widget class="GtkLabel" id="label169">
+			<widget class="GtkLabel" id="fillerlabel1">
 			  <property name="visible">True</property>
 			  <property name="label" translatable="yes"></property>
 			  <property name="use_underline">False</property>
@@ -6915,15 +6916,15 @@ if you don't press Apply.</property>
 			<packing>
 			  <property name="padding">0</property>
 			  <property name="expand">True</property>
-			  <property name="fill">True</property>
+			  <property name="fill">False</property>
 			</packing>
 		      </child>
 
 		      <child>
-			<widget class="GtkHBox" id="plugin_tabbtn_hbox">
+			<widget class="GtkHButtonBox" id="plugin_tabbtn_hbtnbox">
 			  <property name="visible">True</property>
-			  <property name="homogeneous">True</property>
-			  <property name="spacing">5</property>
+			  <property name="layout_style">GTK_BUTTONBOX_DEFAULT_STYLE</property>
+			  <property name="spacing">0</property>
 
 			  <child>
 			    <widget class="GtkRadioButton" id="plugin_conf_tab_btn">
@@ -6938,11 +6939,6 @@ if you don't press Apply.</property>
 			      <property name="draw_indicator">False</property>
 			      <signal name="clicked" handler="on_plugin_conf_tab_btn_clicked" last_modification_time="Thu, 25 Feb 2021 11:17:56 GMT"/>
 			    </widget>
-			    <packing>
-			      <property name="padding">0</property>
-			      <property name="expand">True</property>
-			      <property name="fill">True</property>
-			    </packing>
 			  </child>
 
 			  <child>
@@ -6959,11 +6955,6 @@ if you don't press Apply.</property>
 			      <property name="group">plugin_conf_tab_btn</property>
 			      <signal name="clicked" handler="on_plugin_info_tab_btn_clicked" last_modification_time="Thu, 25 Feb 2021 11:18:04 GMT"/>
 			    </widget>
-			    <packing>
-			      <property name="padding">0</property>
-			      <property name="expand">True</property>
-			      <property name="fill">True</property>
-			    </packing>
 			  </child>
 
 			  <child>
@@ -6980,22 +6971,17 @@ if you don't press Apply.</property>
 			      <property name="group">plugin_conf_tab_btn</property>
 			      <signal name="clicked" handler="on_plugin_license_tab_btn_clicked" last_modification_time="Thu, 25 Feb 2021 11:18:08 GMT"/>
 			    </widget>
-			    <packing>
-			      <property name="padding">0</property>
-			      <property name="expand">True</property>
-			      <property name="fill">True</property>
-			    </packing>
 			  </child>
 			</widget>
 			<packing>
 			  <property name="padding">0</property>
 			  <property name="expand">False</property>
-			  <property name="fill">True</property>
+			  <property name="fill">False</property>
 			</packing>
 		      </child>
 
 		      <child>
-			<widget class="GtkLabel" id="label168">
+			<widget class="GtkLabel" id="fillerlabel2">
 			  <property name="visible">True</property>
 			  <property name="label" translatable="yes"></property>
 			  <property name="use_underline">False</property>
@@ -7015,7 +7001,7 @@ if you don't press Apply.</property>
 			<packing>
 			  <property name="padding">0</property>
 			  <property name="expand">True</property>
-			  <property name="fill">True</property>
+			  <property name="fill">False</property>
 			</packing>
 		      </child>
 		    </widget>
@@ -7048,7 +7034,14 @@ if you don't press Apply.</property>
 			  <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
 
 			  <child>
-			    <placeholder/>
+			    <widget class="GtkViewport" id="plug_conf_dlg_viewport">
+			      <property name="visible">True</property>
+			      <property name="shadow_type">GTK_SHADOW_NONE</property>
+
+			      <child>
+				<placeholder/>
+			      </child>
+			    </widget>
 			  </child>
 			</widget>
 			<packing>
@@ -7302,7 +7295,7 @@ if you don't press Apply.</property>
 		  </child>
 		</widget>
 		<packing>
-		  <property name="shrink">True</property>
+		  <property name="shrink">False</property>
 		  <property name="resize">True</property>
 		</packing>
 	      </child>
