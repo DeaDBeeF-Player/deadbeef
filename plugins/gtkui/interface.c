@@ -1769,15 +1769,16 @@ create_prefwin (void)
   GtkWidget *pref_pluginlist;
   GtkWidget *vbox54;
   GtkWidget *hbox149;
-  GtkWidget *label169;
-  GtkWidget *plugin_tabbtn_hbox;
+  GtkWidget *fillerlabel1;
+  GtkWidget *plugin_tabbtn_hbtnbox;
   GtkWidget *plugin_conf_tab_btn;
   GSList *plugin_conf_tab_btn_group = NULL;
   GtkWidget *plugin_info_tab_btn;
   GtkWidget *plugin_license_tab_btn;
-  GtkWidget *label168;
+  GtkWidget *fillerlabel2;
   GtkWidget *plugin_notebook;
   GtkWidget *plug_conf_dlg_scrolledwindow;
+  GtkWidget *plug_conf_dlg_viewport;
   GtkWidget *label170;
   GtkWidget *vbox12;
   GtkWidget *hbox103;
@@ -3002,6 +3003,7 @@ create_prefwin (void)
   gtk_widget_show (hpaned1);
   gtk_container_add (GTK_CONTAINER (notebook), hpaned1);
   gtk_container_set_border_width (GTK_CONTAINER (hpaned1), 12);
+  gtk_paned_set_position (GTK_PANED (hpaned1), 0);
 
   scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow2);
@@ -3018,24 +3020,24 @@ create_prefwin (void)
 
   vbox54 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox54);
-  gtk_paned_pack2 (GTK_PANED (hpaned1), vbox54, TRUE, TRUE);
+  gtk_paned_pack2 (GTK_PANED (hpaned1), vbox54, TRUE, FALSE);
 
   hbox149 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox149);
   gtk_box_pack_start (GTK_BOX (vbox54), hbox149, FALSE, FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (hbox149), 6);
 
-  label169 = gtk_label_new ("");
-  gtk_widget_show (label169);
-  gtk_box_pack_start (GTK_BOX (hbox149), label169, TRUE, TRUE, 0);
+  fillerlabel1 = gtk_label_new ("");
+  gtk_widget_show (fillerlabel1);
+  gtk_box_pack_start (GTK_BOX (hbox149), fillerlabel1, TRUE, FALSE, 0);
 
-  plugin_tabbtn_hbox = gtk_hbox_new (TRUE, 5);
-  gtk_widget_show (plugin_tabbtn_hbox);
-  gtk_box_pack_start (GTK_BOX (hbox149), plugin_tabbtn_hbox, FALSE, TRUE, 0);
+  plugin_tabbtn_hbtnbox = gtk_hbutton_box_new ();
+  gtk_widget_show (plugin_tabbtn_hbtnbox);
+  gtk_box_pack_start (GTK_BOX (hbox149), plugin_tabbtn_hbtnbox, FALSE, FALSE, 0);
 
   plugin_conf_tab_btn = gtk_radio_button_new_with_mnemonic (NULL, _("Configuration"));
   gtk_widget_show (plugin_conf_tab_btn);
-  gtk_box_pack_start (GTK_BOX (plugin_tabbtn_hbox), plugin_conf_tab_btn, TRUE, TRUE, 0);
+  gtk_container_add (GTK_CONTAINER (plugin_tabbtn_hbtnbox), plugin_conf_tab_btn);
   gtk_radio_button_set_group (GTK_RADIO_BUTTON (plugin_conf_tab_btn), plugin_conf_tab_btn_group);
   plugin_conf_tab_btn_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (plugin_conf_tab_btn));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (plugin_conf_tab_btn), TRUE);
@@ -3043,21 +3045,21 @@ create_prefwin (void)
 
   plugin_info_tab_btn = gtk_radio_button_new_with_mnemonic (NULL, _("Info"));
   gtk_widget_show (plugin_info_tab_btn);
-  gtk_box_pack_start (GTK_BOX (plugin_tabbtn_hbox), plugin_info_tab_btn, TRUE, TRUE, 0);
+  gtk_container_add (GTK_CONTAINER (plugin_tabbtn_hbtnbox), plugin_info_tab_btn);
   gtk_radio_button_set_group (GTK_RADIO_BUTTON (plugin_info_tab_btn), plugin_conf_tab_btn_group);
   plugin_conf_tab_btn_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (plugin_info_tab_btn));
   gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (plugin_info_tab_btn), FALSE);
 
   plugin_license_tab_btn = gtk_radio_button_new_with_mnemonic (NULL, _("License"));
   gtk_widget_show (plugin_license_tab_btn);
-  gtk_box_pack_start (GTK_BOX (plugin_tabbtn_hbox), plugin_license_tab_btn, TRUE, TRUE, 0);
+  gtk_container_add (GTK_CONTAINER (plugin_tabbtn_hbtnbox), plugin_license_tab_btn);
   gtk_radio_button_set_group (GTK_RADIO_BUTTON (plugin_license_tab_btn), plugin_conf_tab_btn_group);
   plugin_conf_tab_btn_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (plugin_license_tab_btn));
   gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (plugin_license_tab_btn), FALSE);
 
-  label168 = gtk_label_new ("");
-  gtk_widget_show (label168);
-  gtk_box_pack_start (GTK_BOX (hbox149), label168, TRUE, TRUE, 0);
+  fillerlabel2 = gtk_label_new ("");
+  gtk_widget_show (fillerlabel2);
+  gtk_box_pack_start (GTK_BOX (hbox149), fillerlabel2, TRUE, FALSE, 0);
 
   plugin_notebook = gtk_notebook_new ();
   gtk_widget_show (plugin_notebook);
@@ -3069,6 +3071,11 @@ create_prefwin (void)
   gtk_widget_show (plug_conf_dlg_scrolledwindow);
   gtk_container_add (GTK_CONTAINER (plugin_notebook), plug_conf_dlg_scrolledwindow);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (plug_conf_dlg_scrolledwindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+  plug_conf_dlg_viewport = gtk_viewport_new (NULL, NULL);
+  gtk_widget_show (plug_conf_dlg_viewport);
+  gtk_container_add (GTK_CONTAINER (plug_conf_dlg_scrolledwindow), plug_conf_dlg_viewport);
+  gtk_viewport_set_shadow_type (GTK_VIEWPORT (plug_conf_dlg_viewport), GTK_SHADOW_NONE);
 
   label170 = gtk_label_new (_("Configuration"));
   gtk_widget_show (label170);
@@ -3707,14 +3714,15 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, pref_pluginlist, "pref_pluginlist");
   GLADE_HOOKUP_OBJECT (prefwin, vbox54, "vbox54");
   GLADE_HOOKUP_OBJECT (prefwin, hbox149, "hbox149");
-  GLADE_HOOKUP_OBJECT (prefwin, label169, "label169");
-  GLADE_HOOKUP_OBJECT (prefwin, plugin_tabbtn_hbox, "plugin_tabbtn_hbox");
+  GLADE_HOOKUP_OBJECT (prefwin, fillerlabel1, "fillerlabel1");
+  GLADE_HOOKUP_OBJECT (prefwin, plugin_tabbtn_hbtnbox, "plugin_tabbtn_hbtnbox");
   GLADE_HOOKUP_OBJECT (prefwin, plugin_conf_tab_btn, "plugin_conf_tab_btn");
   GLADE_HOOKUP_OBJECT (prefwin, plugin_info_tab_btn, "plugin_info_tab_btn");
   GLADE_HOOKUP_OBJECT (prefwin, plugin_license_tab_btn, "plugin_license_tab_btn");
-  GLADE_HOOKUP_OBJECT (prefwin, label168, "label168");
+  GLADE_HOOKUP_OBJECT (prefwin, fillerlabel2, "fillerlabel2");
   GLADE_HOOKUP_OBJECT (prefwin, plugin_notebook, "plugin_notebook");
   GLADE_HOOKUP_OBJECT (prefwin, plug_conf_dlg_scrolledwindow, "plug_conf_dlg_scrolledwindow");
+  GLADE_HOOKUP_OBJECT (prefwin, plug_conf_dlg_viewport, "plug_conf_dlg_viewport");
   GLADE_HOOKUP_OBJECT (prefwin, label170, "label170");
   GLADE_HOOKUP_OBJECT (prefwin, vbox12, "vbox12");
   GLADE_HOOKUP_OBJECT (prefwin, hbox103, "hbox103");
