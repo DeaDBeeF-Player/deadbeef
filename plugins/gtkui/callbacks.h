@@ -1438,3 +1438,7 @@ on_plugin_notebook_switch_page         (GtkNotebook     *notebook,
                                         GtkWidget       *page,
                                         guint            page_num,
                                         gpointer         user_data);
+
+void
+on_plugin_conf_reset_btn_clicked       (GtkButton       *button,
+                                        gpointer         user_data);

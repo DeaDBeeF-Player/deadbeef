@@ -24,6 +24,18 @@
 #ifndef __PLUGINCONF_H
 #define __PLUGINCONF_H
 
+
+typedef struct ddb_pluginprefs_dialog_s ddb_pluginprefs_dialog_t;
+
+struct ddb_pluginprefs_dialog_s {
+    ddb_dialog_t dialog_conf;
+
+    GtkWidget *parent;
+    GtkWidget *containerbox; // The container widget (typically a GtkVBox) that holds all the fields.
+
+    void (*prop_changed) (ddb_pluginprefs_dialog_t *make_dialog_conf);
+};
+
 int
 gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, int (*callback)(int button, void *ctx), void *ctx);
 
@@ -31,6 +43,9 @@ int
 gtkui_run_dialog_root (ddb_dialog_t *conf, uint32_t buttons, int (*callback)(int button, void *ctx), void *ctx);
 
 void
-gtkui_make_dialog (GtkWidget *win, GtkWidget *containervbox, ddb_dialog_t *conf);
+gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf);
+
+void
+apply_conf (GtkWidget *w, ddb_dialog_t *conf, int reset_settings);
 
 #endif

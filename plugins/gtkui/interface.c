@@ -1792,6 +1792,9 @@ create_prefwin (void)
   GtkWidget *scrolledwindow16;
   GtkWidget *plug_license;
   GtkWidget *label172;
+  GtkWidget *hseparator7;
+  GtkWidget *plugin_actions_btnbox;
+  GtkWidget *plugin_conf_reset_btn;
   GtkWidget *label3;
   GtkWidget *dialog_action_area2;
   GtkWidget *closebutton1;
@@ -3003,7 +3006,6 @@ create_prefwin (void)
   gtk_widget_show (hpaned1);
   gtk_container_add (GTK_CONTAINER (notebook), hpaned1);
   gtk_container_set_border_width (GTK_CONTAINER (hpaned1), 12);
-  gtk_paned_set_position (GTK_PANED (hpaned1), 0);
 
   scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow2);
@@ -3140,6 +3142,21 @@ create_prefwin (void)
   label172 = gtk_label_new (_("License"));
   gtk_widget_show (label172);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (plugin_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (plugin_notebook), 2), label172);
+
+  hseparator7 = gtk_hseparator_new ();
+  gtk_widget_show (hseparator7);
+  gtk_box_pack_start (GTK_BOX (vbox54), hseparator7, FALSE, TRUE, 0);
+
+  plugin_actions_btnbox = gtk_hbutton_box_new ();
+  gtk_widget_show (plugin_actions_btnbox);
+  gtk_box_pack_start (GTK_BOX (vbox54), plugin_actions_btnbox, FALSE, TRUE, 0);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (plugin_actions_btnbox), GTK_BUTTONBOX_END);
+
+  plugin_conf_reset_btn = gtk_button_new_with_mnemonic (_("Reset to defaults"));
+  gtk_widget_show (plugin_conf_reset_btn);
+  gtk_container_add (GTK_CONTAINER (plugin_actions_btnbox), plugin_conf_reset_btn);
+  gtk_widget_set_sensitive (plugin_conf_reset_btn, FALSE);
+  gtk_widget_set_can_default(plugin_conf_reset_btn, TRUE);
 
   label3 = gtk_label_new (_("Plugins"));
   gtk_widget_show (label3);
@@ -3467,6 +3484,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) plugin_notebook, "switch_page",
                     G_CALLBACK (on_plugin_notebook_switch_page),
                     NULL);
+  g_signal_connect ((gpointer) plugin_conf_reset_btn, "clicked",
+                    G_CALLBACK (on_plugin_conf_reset_btn_clicked),
+                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (prefwin, prefwin, "prefwin");
@@ -3736,6 +3756,9 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow16, "scrolledwindow16");
   GLADE_HOOKUP_OBJECT (prefwin, plug_license, "plug_license");
   GLADE_HOOKUP_OBJECT (prefwin, label172, "label172");
+  GLADE_HOOKUP_OBJECT (prefwin, hseparator7, "hseparator7");
+  GLADE_HOOKUP_OBJECT (prefwin, plugin_actions_btnbox, "plugin_actions_btnbox");
+  GLADE_HOOKUP_OBJECT (prefwin, plugin_conf_reset_btn, "plugin_conf_reset_btn");
   GLADE_HOOKUP_OBJECT (prefwin, label3, "label3");
   GLADE_HOOKUP_OBJECT_NO_REF (prefwin, dialog_action_area2, "dialog_action_area2");
   GLADE_HOOKUP_OBJECT (prefwin, closebutton1, "closebutton1");
