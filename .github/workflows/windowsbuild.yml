@@ -29,3 +29,8 @@ jobs:
           gh_rsa_iv: ${{ secrets.GH_ENCRYPTED_RSA_IV }}
       shell: msys2 {0}
       run: TRAVIS_OS_NAME=windows travis/upload.sh
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: windows
+        path: bin/*DEBUG.zip

@@ -23,3 +23,8 @@ jobs:
           gh_rsa_key: ${{ secrets.GH_ENCRYPTED_RSA_KEY }}
           gh_rsa_iv: ${{ secrets.GH_ENCRYPTED_RSA_IV }}
       run: TRAVIS_OS_NAME=linux travis/upload.sh
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: linux
+        path: portable_out/build/*.tar.bz2
