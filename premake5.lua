@@ -81,6 +81,9 @@ filter "platforms:Windows"
     "-include shared/windows/mingw32_layer.h",
     "-fno-builtin"
   }
+  linkoptions {
+    "-Wl,--export-all-symbols"
+  }
   includedirs {
     "shared/windows/include",
     "/mingw64/include/opus",
