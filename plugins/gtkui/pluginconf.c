@@ -133,6 +133,15 @@ void apply_conf (GtkWidget *w, ddb_dialog_t *conf, int reset_settings) {
 
         if (reset_settings) {
             conf->set_param (key, def);
+
+            // skip to ;
+            char semicolon[MAX_TOKEN];
+            while ((script = gettoken_warn_eof (script, semicolon))) {
+                if (!strcmp (semicolon, ";")) {
+                    break;
+                }
+            }
+            continue;
         } else {
             // fetch data
             GtkWidget *widget = g_object_get_data (w, key);
