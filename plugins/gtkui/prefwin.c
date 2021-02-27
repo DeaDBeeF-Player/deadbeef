@@ -652,6 +652,12 @@ gtkui_conf_get_str (const char *key, char *value, int len, const char *def) {
     deadbeef->conf_get_str (key, def, value, len);
 }
 
+void plugin_pref_prop_changed_cb(ddb_pluginprefs_dialog_t *make_dialog_conf) {
+    apply_conf (GTK_WIDGET (make_dialog_conf->containerbox), &make_dialog_conf->dialog_conf, 0);
+    GtkWidget *resetbtn = lookup_widget (make_dialog_conf->parent, "plugin_conf_reset_btn");
+    gtk_widget_set_sensitive (resetbtn, TRUE);
+}
+
 void
 on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
                                         gpointer         user_data)
@@ -720,12 +726,30 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
             .set_param = deadbeef->conf_set_str,
             .get_param = gtkui_conf_get_str,
         };
+        ddb_pluginprefs_dialog_t make_dialog_conf = {
+            .dialog_conf = conf,
+            .parent = prefwin,
+            .prop_changed = plugin_pref_prop_changed_cb,
+        };
         GtkWidget *box = gtk_vbox_new(FALSE, 0);
         gtk_widget_show (box);
-        gtkui_make_dialog (NULL, box, &conf);
-        gtk_widget_set_size_request(box, 200, -1);
+        if (user_data) {
+            apply_conf (box, &conf, 1);
+        }
+        make_dialog_conf.containerbox = box;
+        gtkui_make_dialog (&make_dialog_conf);
         gtk_container_add (GTK_CONTAINER (container), box);
     }
+}
+
+void
+on_plugin_conf_reset_btn_clicked       (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *w = prefwin;
+    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
+    on_pref_pluginlist_cursor_changed(treeview, 1);
+    gtk_widget_set_sensitive (button, FALSE);
 }
 
 void

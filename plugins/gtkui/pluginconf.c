@@ -73,7 +73,8 @@ on_prop_browse_file (GtkButton *button, gpointer user_data) {
     }
 }
 
-static void apply_conf (GtkWidget *w, ddb_dialog_t *conf) {
+// Apply the configuration. *w is the container that holds the references to the widgets looked up with g_object_get_data(w,...)
+void apply_conf (GtkWidget *w, ddb_dialog_t *conf, int reset_settings) {
     // parse script
     char token[MAX_TOKEN];
     const char *script = conf->layout;
@@ -130,52 +131,56 @@ static void apply_conf (GtkWidget *w, ddb_dialog_t *conf) {
             break;
         }
 
-        // fetch data
-        GtkWidget *widget = g_object_get_data (w, key);
-        if (widget) {
-            if (!strcmp (type, "entry") || !strcmp (type, "password")) {
-                conf->set_param (key, gtk_entry_get_text (GTK_ENTRY (widget)));
-            }
-            else if (!strcmp (type, "file")) {
-                if (deadbeef->conf_get_int ("gtkui.pluginconf.use_filechooser_button", 0)) {
-                    // filechooser
-                    conf->set_param (key, gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (widget)));
-                }
-                else {
+        if (reset_settings) {
+            conf->set_param (key, def);
+        } else {
+            // fetch data
+            GtkWidget *widget = g_object_get_data (w, key);
+            if (widget) {
+                if (!strcmp (type, "entry") || !strcmp (type, "password")) {
                     conf->set_param (key, gtk_entry_get_text (GTK_ENTRY (widget)));
                 }
-            }
-            else if (!strcmp (type, "checkbox")) {
-                conf->set_param (key, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? "1" : "0");
-            }
-            else if (!strncmp (type, "hscale[", 7) || !strncmp (type, "vscale[", 7)) {
-                char s[20];
-                snprintf (s, sizeof (s), "%f", gtk_range_get_value (GTK_RANGE (widget)));
-                conf->set_param (key, s);
-            }
-            else if (!strncmp (type, "spinbtn[", 8)) {
-                char s[20];
-                snprintf (s, sizeof (s), "%f", (float)gtk_spin_button_get_value (GTK_SPIN_BUTTON (widget)));
-                conf->set_param (key, s);
-            }
-            else if (!strncmp (type, "select[", 7)) {
-                int n;
-                if (1 != sscanf (type+6, "[%d]", &n)) {
-                    break;
+                else if (!strcmp (type, "file")) {
+                    if (deadbeef->conf_get_int ("gtkui.pluginconf.use_filechooser_button", 0)) {
+                        // filechooser
+                        conf->set_param (key, gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (widget)));
+                    }
+                    else {
+                        conf->set_param (key, gtk_entry_get_text (GTK_ENTRY (widget)));
+                    }
                 }
-                for (int i = 0; i < n; i++) {
-                    char value[MAX_TOKEN];
-                    script = gettoken_warn_eof (script, value);
+                else if (!strcmp (type, "checkbox")) {
+                    conf->set_param (key, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? "1" : "0");
+                }
+                else if (!strncmp (type, "hscale[", 7) || !strncmp (type, "vscale[", 7)) {
+                    char s[20];
+                    snprintf (s, sizeof (s), "%f", gtk_range_get_value (GTK_RANGE (widget)));
+                    conf->set_param (key, s);
+                }
+                else if (!strncmp (type, "spinbtn[", 8)) {
+                    char s[20];
+                    snprintf (s, sizeof (s), "%f", (float)gtk_spin_button_get_value (GTK_SPIN_BUTTON (widget)));
+                    conf->set_param (key, s);
+                }
+                else if (!strncmp (type, "select[", 7)) {
+                    int n;
+                    if (1 != sscanf (type+6, "[%d]", &n)) {
+                        break;
+                    }
+                    for (int i = 0; i < n; i++) {
+                        char value[MAX_TOKEN];
+                        script = gettoken_warn_eof (script, value);
+                        if (!script) {
+                            break;
+                        }
+                    }
                     if (!script) {
                         break;
                     }
+                    char s[20];
+                    snprintf (s, sizeof (s), "%d", gtk_combo_box_get_active (GTK_COMBO_BOX (widget)));
+                    conf->set_param (key, s);
                 }
-                if (!script) {
-                    break;
-                }
-                char s[20];
-                snprintf (s, sizeof (s), "%d", gtk_combo_box_get_active (GTK_COMBO_BOX (widget)));
-                conf->set_param (key, s);
             }
         }
 
@@ -193,13 +198,12 @@ static void apply_conf (GtkWidget *w, ddb_dialog_t *conf) {
 
 static void
 prop_changed (GtkWidget *editable, gpointer user_data) {
-    gtk_dialog_set_response_sensitive (GTK_DIALOG (user_data), GTK_RESPONSE_APPLY, TRUE);
+    ddb_pluginprefs_dialog_t *conf = (ddb_pluginprefs_dialog_t*)g_object_get_data (G_OBJECT (user_data), "dialog_conf_struct");
+    conf->prop_changed(conf);
 }
 
-static void
-prop_changed_apply_conf (GtkWidget *editable, gpointer user_data) {
-    ddb_dialog_t *conf = (ddb_dialog_t*)g_object_get_data(G_OBJECT (user_data), "dialog_conf_struct");
-    apply_conf (GTK_WIDGET (user_data), conf);
+void run_dialog_prop_changed_cb (ddb_pluginprefs_dialog_t *make_dialog_conf) {
+    gtk_dialog_set_response_sensitive (GTK_DIALOG (make_dialog_conf->parent), GTK_RESPONSE_APPLY, TRUE);
 }
 
 int
@@ -234,22 +238,17 @@ backout_pack_level(int ncurr, int *pack)
     return ncurr;
 }
 
-
 void
-gtkui_make_dialog (GtkWidget *win, GtkWidget *containervbox, ddb_dialog_t *conf) {
+gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
     GtkWidget *widgets[100] = {NULL};
+    ddb_dialog_t *conf = &make_dialog_conf->dialog_conf;
     int pack[100] = {0};
     int ncurr = 0;
 
-    int isdialog;
-    if (!win) {
-        win = containervbox;
-        isdialog = 0;
-    } else {
-        isdialog = 1;
-    }
+    GtkWidget *containervbox = make_dialog_conf->containerbox;
 
-    g_object_set_data_full(win, "dialog_conf_struct", g_memdup(conf, sizeof(ddb_dialog_t)), g_free);
+    // This needs to be set on an object that is tied to the lifetime of the plugin preferences container
+    g_object_set_data_full (containervbox, "dialog_conf_struct", g_memdup (make_dialog_conf, sizeof(ddb_pluginprefs_dialog_t)), g_free);
 
     widgets[ncurr] = containervbox;
     gtk_box_set_spacing (GTK_BOX (widgets[ncurr]), 8);
@@ -361,8 +360,9 @@ gtkui_make_dialog (GtkWidget *win, GtkWidget *containervbox, ddb_dialog_t *conf)
             label = gtk_label_new (_(labeltext));
             gtk_widget_show (label);
             prop = gtk_entry_new ();
+            gtk_entry_set_width_chars (prop, 5);
             gtk_entry_set_activates_default (GTK_ENTRY (prop), TRUE);
-            g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (isdialog?prop_changed:prop_changed_apply_conf), win);
+            g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), containervbox);
             gtk_widget_show (prop);
             gtk_entry_set_text (GTK_ENTRY (prop), value);
 
@@ -372,7 +372,7 @@ gtkui_make_dialog (GtkWidget *win, GtkWidget *containervbox, ddb_dialog_t *conf)
         }
         else if (!strcmp (type, "checkbox")) {
             prop = gtk_check_button_new_with_label (_(labeltext));
-            g_signal_connect (G_OBJECT (prop), "toggled", G_CALLBACK (isdialog?prop_changed:prop_changed_apply_conf), win);
+            g_signal_connect (G_OBJECT (prop), "toggled", G_CALLBACK (prop_changed), containervbox);
             gtk_widget_show (prop);
             int val = atoi (value);
             gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (prop), val);
@@ -384,14 +384,14 @@ gtkui_make_dialog (GtkWidget *win, GtkWidget *containervbox, ddb_dialog_t *conf)
                 prop = gtk_file_chooser_button_new (_(labeltext), GTK_FILE_CHOOSER_ACTION_OPEN);
                 gtk_widget_show (prop);
                 gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (prop), value);
-                g_signal_connect (G_OBJECT (prop), "file-set", G_CALLBACK (isdialog?prop_changed:prop_changed_apply_conf), win);
+                g_signal_connect (G_OBJECT (prop), "file-set", G_CALLBACK (prop_changed), containervbox);
             }
             else {
                 cont = gtk_hbox_new (FALSE, 2);
                 gtk_widget_show (cont);
                 prop = gtk_entry_new ();
                 gtk_entry_set_activates_default (GTK_ENTRY (prop), TRUE);
-                g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (isdialog?prop_changed:prop_changed_apply_conf), win);
+                g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), containervbox);
                 gtk_widget_show (prop);
                 gtk_editable_set_editable (GTK_EDITABLE (prop), FALSE);
                 gtk_entry_set_text (GTK_ENTRY (prop), value);
@@ -428,8 +428,8 @@ gtkui_make_dialog (GtkWidget *win, GtkWidget *containervbox, ddb_dialog_t *conf)
             }
             gtk_combo_box_set_active (GTK_COMBO_BOX (prop), atoi (value));
             g_signal_connect ((gpointer) prop, "changed",
-                    G_CALLBACK (isdialog?prop_changed:prop_changed_apply_conf),
-                    win);
+                    G_CALLBACK (prop_changed),
+                    containervbox);
         }
         else if (!strncmp (type, "hscale[", 7) || !strncmp (type, "vscale[", 7) || !strncmp (type, "spinbtn[", 8)) {
             float min, max, step;
@@ -467,7 +467,7 @@ gtkui_make_dialog (GtkWidget *win, GtkWidget *containervbox, ddb_dialog_t *conf)
             }
             label = gtk_label_new (_(labeltext));
             gtk_widget_show (label);
-            g_signal_connect (G_OBJECT (prop), "value-changed", G_CALLBACK (isdialog?prop_changed:prop_changed_apply_conf), win);
+            g_signal_connect (G_OBJECT (prop), "value-changed", G_CALLBACK (prop_changed), containervbox);
             gtk_widget_show (prop);
         }
 
@@ -493,7 +493,7 @@ gtkui_make_dialog (GtkWidget *win, GtkWidget *containervbox, ddb_dialog_t *conf)
             cont = prop;
         }
         if (prop) {
-            g_object_set_data (G_OBJECT (win), key, prop);
+            g_object_set_data (G_OBJECT (containervbox), key, prop);
         }
         if (cont) {
             gtk_box_pack_start (GTK_BOX (widgets[ncurr]), cont, FALSE, TRUE, 0);
@@ -547,14 +547,20 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
     gtk_widget_show (action_area);
     gtk_button_box_set_layout (GTK_BUTTON_BOX (action_area), GTK_BUTTONBOX_END);
 
-    gtkui_make_dialog (win, gtk_dialog_get_content_area (GTK_DIALOG (win)), conf);
+    ddb_pluginprefs_dialog_t make_dialog_conf = {
+        .dialog_conf = *conf,
+        .parent = win,
+        .containerbox = gtk_dialog_get_content_area (GTK_DIALOG (win)),
+        .prop_changed = run_dialog_prop_changed_cb,
+    };
+    gtkui_make_dialog (&make_dialog_conf);
 
     int response;
     do {
         gtk_dialog_set_response_sensitive (GTK_DIALOG (win), GTK_RESPONSE_APPLY, FALSE);
         response = gtk_dialog_run (GTK_DIALOG (win));
         if (response == GTK_RESPONSE_APPLY || response == GTK_RESPONSE_OK) {
-            apply_conf (win, conf);
+            apply_conf (make_dialog_conf.containerbox, conf, 0);
         }
         if (callback) {
             int btn = ddb_button_from_gtk_response (response);
