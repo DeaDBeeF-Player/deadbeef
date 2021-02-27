@@ -1767,6 +1767,7 @@ create_prefwin (void)
   GtkWidget *hpaned1;
   GtkWidget *scrolledwindow2;
   GtkWidget *pref_pluginlist;
+  GtkWidget *alignment33;
   GtkWidget *vbox54;
   GtkWidget *hbox149;
   GtkWidget *fillerlabel1;
@@ -1792,7 +1793,6 @@ create_prefwin (void)
   GtkWidget *scrolledwindow16;
   GtkWidget *plug_license;
   GtkWidget *label172;
-  GtkWidget *hseparator7;
   GtkWidget *plugin_actions_btnbox;
   GtkWidget *plugin_conf_reset_btn;
   GtkWidget *label3;
@@ -3020,14 +3020,18 @@ create_prefwin (void)
   gtk_container_add (GTK_CONTAINER (scrolledwindow2), pref_pluginlist);
   gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (pref_pluginlist), TRUE);
 
-  vbox54 = gtk_vbox_new (FALSE, 0);
+  alignment33 = gtk_alignment_new (0.5, 0.5, 1, 1);
+  gtk_widget_show (alignment33);
+  gtk_paned_pack2 (GTK_PANED (hpaned1), alignment33, TRUE, FALSE);
+  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment33), 0, 0, 16, 0);
+
+  vbox54 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox54);
-  gtk_paned_pack2 (GTK_PANED (hpaned1), vbox54, TRUE, FALSE);
+  gtk_container_add (GTK_CONTAINER (alignment33), vbox54);
 
   hbox149 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox149);
   gtk_box_pack_start (GTK_BOX (vbox54), hbox149, FALSE, FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox149), 6);
 
   fillerlabel1 = gtk_label_new ("");
   gtk_widget_show (fillerlabel1);
@@ -3066,7 +3070,6 @@ create_prefwin (void)
   plugin_notebook = gtk_notebook_new ();
   gtk_widget_show (plugin_notebook);
   gtk_box_pack_start (GTK_BOX (vbox54), plugin_notebook, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (plugin_notebook), 6);
   gtk_notebook_set_show_border (GTK_NOTEBOOK (plugin_notebook), FALSE);
 
   plug_conf_dlg_scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
@@ -3143,10 +3146,6 @@ create_prefwin (void)
   gtk_widget_show (label172);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (plugin_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (plugin_notebook), 2), label172);
 
-  hseparator7 = gtk_hseparator_new ();
-  gtk_widget_show (hseparator7);
-  gtk_box_pack_start (GTK_BOX (vbox54), hseparator7, FALSE, TRUE, 0);
-
   plugin_actions_btnbox = gtk_hbutton_box_new ();
   gtk_widget_show (plugin_actions_btnbox);
   gtk_box_pack_start (GTK_BOX (vbox54), plugin_actions_btnbox, FALSE, TRUE, 0);
@@ -3155,7 +3154,6 @@ create_prefwin (void)
   plugin_conf_reset_btn = gtk_button_new_with_mnemonic (_("Reset to defaults"));
   gtk_widget_show (plugin_conf_reset_btn);
   gtk_container_add (GTK_CONTAINER (plugin_actions_btnbox), plugin_conf_reset_btn);
-  gtk_widget_set_sensitive (plugin_conf_reset_btn, FALSE);
   gtk_widget_set_can_default(plugin_conf_reset_btn, TRUE);
 
   label3 = gtk_label_new (_("Plugins"));
@@ -3732,6 +3730,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hpaned1, "hpaned1");
   GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow2, "scrolledwindow2");
   GLADE_HOOKUP_OBJECT (prefwin, pref_pluginlist, "pref_pluginlist");
+  GLADE_HOOKUP_OBJECT (prefwin, alignment33, "alignment33");
   GLADE_HOOKUP_OBJECT (prefwin, vbox54, "vbox54");
   GLADE_HOOKUP_OBJECT (prefwin, hbox149, "hbox149");
   GLADE_HOOKUP_OBJECT (prefwin, fillerlabel1, "fillerlabel1");
@@ -3756,7 +3755,6 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow16, "scrolledwindow16");
   GLADE_HOOKUP_OBJECT (prefwin, plug_license, "plug_license");
   GLADE_HOOKUP_OBJECT (prefwin, label172, "label172");
-  GLADE_HOOKUP_OBJECT (prefwin, hseparator7, "hseparator7");
   GLADE_HOOKUP_OBJECT (prefwin, plugin_actions_btnbox, "plugin_actions_btnbox");
   GLADE_HOOKUP_OBJECT (prefwin, plugin_conf_reset_btn, "plugin_conf_reset_btn");
   GLADE_HOOKUP_OBJECT (prefwin, label3, "label3");
