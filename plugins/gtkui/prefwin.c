@@ -466,7 +466,7 @@ gtkui_run_preferences_dlg (void) {
 
     // Some styling changes since Glade doesn't support setting it
 #if GTK_CHECK_VERSION(3,12,0)
-    GtkHButtonBox *bbox = GTK_NOTEBOOK (lookup_widget (w, "plugin_tabbtn_hbtnbox"));
+    GtkButtonBox *bbox = GTK_BUTTON_BOX (lookup_widget (w, "plugin_tabbtn_hbtnbox"));
     gtk_button_box_set_layout (bbox, GTK_BUTTONBOX_EXPAND);
 #endif
 
@@ -733,12 +733,13 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
         };
         GtkWidget *box = gtk_vbox_new(FALSE, 0);
         gtk_widget_show (box);
-        if (user_data) {
+        if (user_data == 1) {
+            fprintf(stderr, "Resetting to defaults!\n"); //DEBUG
             apply_conf (box, &conf, 1);
         }
         make_dialog_conf.containerbox = box;
-        gtkui_make_dialog (&make_dialog_conf);
         gtk_container_add (GTK_CONTAINER (container), box);
+        gtkui_make_dialog (&make_dialog_conf);
     }
 }
 
@@ -749,7 +750,6 @@ on_plugin_conf_reset_btn_clicked       (GtkButton       *button,
     GtkWidget *w = prefwin;
     GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
     on_pref_pluginlist_cursor_changed(treeview, 1);
-    gtk_widget_set_sensitive (button, FALSE);
 }
 
 void
@@ -809,15 +809,20 @@ on_plugin_notebook_switch_page         (GtkNotebook     *notebook,
     GQuark detail = g_quark_from_static_string ("switch_page");
     g_signal_handlers_block_matched ((gpointer)notebook, mask, detail, 0, NULL, NULL, NULL);
 
+    GtkWidget *plugin_actions_btnbox = lookup_widget (w, "plugin_actions_btnbox");
+
     switch (page_num) {
         case 0:
         gtk_toggle_button_set_active (plugin_conf_tab_btn, 1);
+        gtk_widget_show(plugin_actions_btnbox);
         break;
         case 1:
         gtk_toggle_button_set_active (plugin_info_tab_btn, 1);
+        gtk_widget_hide(plugin_actions_btnbox);
         break;
         case 2:
         gtk_toggle_button_set_active (plugin_license_tab_btn, 1);
+        gtk_widget_hide(plugin_actions_btnbox);
     }
     g_signal_handlers_unblock_matched ((gpointer)notebook, mask, detail, 0, NULL, NULL, NULL);
 }

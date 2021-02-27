@@ -189,7 +189,7 @@ void apply_conf (GtkWidget *w, ddb_dialog_t *conf, int reset_settings) {
             break;
         }
         if (strcmp (token, ";")) {
-            fprintf (stderr, "expected `;' while loading plugin %s config dialog: %s at line %d\n", conf->title, token, parser_line);
+            fprintf (stderr, "apply_conf: expected `;' while loading plugin %s config dialog: %s at line %d\n", conf->title, token, parser_line);
             break;
         }
     }
@@ -199,7 +199,7 @@ void apply_conf (GtkWidget *w, ddb_dialog_t *conf, int reset_settings) {
 static void
 prop_changed (GtkWidget *editable, gpointer user_data) {
     ddb_pluginprefs_dialog_t *conf = (ddb_pluginprefs_dialog_t*)g_object_get_data (G_OBJECT (user_data), "dialog_conf_struct");
-    conf->prop_changed(conf);
+    if (conf->prop_changed) conf->prop_changed(conf);
 }
 
 void run_dialog_prop_changed_cb (ddb_pluginprefs_dialog_t *make_dialog_conf) {
@@ -248,7 +248,13 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
     GtkWidget *containervbox = make_dialog_conf->containerbox;
 
     // This needs to be set on an object that is tied to the lifetime of the plugin preferences container
-    g_object_set_data_full (containervbox, "dialog_conf_struct", g_memdup (make_dialog_conf, sizeof(ddb_pluginprefs_dialog_t)), g_free);
+    make_dialog_conf = (ddb_pluginprefs_dialog_t *)g_memdup (make_dialog_conf, sizeof(ddb_pluginprefs_dialog_t));
+    g_object_set_data_full (containervbox, "dialog_conf_struct", make_dialog_conf, g_free);
+
+
+    // Temporarily disable the callback until dialog script has been fully parsed
+    void (*temp_prop_changed) = make_dialog_conf->prop_changed;
+    make_dialog_conf->prop_changed = NULL;
 
     widgets[ncurr] = containervbox;
     gtk_box_set_spacing (GTK_BOX (widgets[ncurr]), 8);
@@ -476,7 +482,7 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
             break;
         }
         if (strcmp (token, ";")) {
-            fprintf (stderr, "expected `;' while loading plugin %s config dialog: %s at line %d\n", conf->title, token, parser_line);
+            fprintf (stderr, "make_dialog: expected `;' while loading plugin %s config dialog: %s at line %d\n", conf->title, token, parser_line);
             break;
         }
 
@@ -499,6 +505,9 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
             gtk_box_pack_start (GTK_BOX (widgets[ncurr]), cont, FALSE, TRUE, 0);
         }
     }
+
+    // Now that all signal handlers are installed, reinstate the callback
+    make_dialog_conf->prop_changed = temp_prop_changed;
 
 }
 
