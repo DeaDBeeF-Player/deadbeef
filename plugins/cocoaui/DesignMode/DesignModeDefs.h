@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol WidgetMenuBuilderProtocol
 
-- (NSMenu *)menuForWidget:(id<WidgetProtocol>)widget;
+- (NSMenu *)menuForWidget:(id<WidgetProtocol>)widget includeParentMenu:(BOOL)includeParentMenu;
 
 @end
 

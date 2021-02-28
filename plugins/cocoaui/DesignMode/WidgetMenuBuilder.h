@@ -17,7 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps NS_DESIGNATED_INITIALIZER;
-- (NSMenu *)menuForWidget:(id<WidgetProtocol>)widget;
 
 @end
 

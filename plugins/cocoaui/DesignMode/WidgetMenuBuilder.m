@@ -11,10 +11,24 @@
 
 static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
 
+#pragma mark -
+
+// To be used as representedObject
+@interface MenuItemData : NSObject
+
+@property (nonatomic,weak) id<WidgetProtocol> targetWidget;
+@property (nonatomic,weak) NSString *createType;
+
+@end
+
+@implementation MenuItemData
+@end
+
+#pragma mark -
+
 @interface WidgetMenuBuilder()
 
 @property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
-@property (nonatomic,weak) id<WidgetProtocol> activeWidget;
 
 @end
 
@@ -40,8 +54,7 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
     return self;
 }
 
-- (NSMenu *)menuForWidget:(id<WidgetProtocol>)widget {
-    self.activeWidget = nil;
+- (NSMenu *)menuForWidget:(id<WidgetProtocol>)widget includeParentMenu:(BOOL)includeParentMenu {
     NSString *widgetType = widget.widgetType;
     if (widgetType == nil) {
         return nil;
@@ -51,8 +64,6 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
     if (displayName == nil) {
         return nil;
     }
-
-    self.activeWidget = widget;
 
     NSMenu *menu = [NSMenu new];
     menu.autoenablesItems = NO;
@@ -81,6 +92,9 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
 
     NSArray<NSString *> *types = self.deps.factory.types;
 
+    MenuItemData *sharedMenuItemData = [MenuItemData new];
+    sharedMenuItemData.targetWidget = widget;
+
     for (NSString *type in types) {
         if ([type isEqualToString:@"Placeholder"]) {
             continue;
@@ -89,27 +103,34 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
         NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:typeDisplayName action:nil keyEquivalent:@""];
         item.target = self;
         item.action = @selector(createWidget:);
-        item.representedObject = type;
+        MenuItemData *data = [MenuItemData new];
+        data.targetWidget = widget;
+        data.createType = type;
+        item.representedObject = data;
         [menuCreate addItem:item];
     }
 
     [menu addItem: NSMenuItem.separatorItem];
 
     NSMenuItem *itemDelete = [[NSMenuItem alloc] initWithTitle:@"Delete" action:@selector(deleteWidget:) keyEquivalent:@""];
+    itemDelete.representedObject = sharedMenuItemData;
     itemDelete.target = self;
     [menu addItem: itemDelete];
 
     NSMenuItem *itemCut = [[NSMenuItem alloc] initWithTitle:@"Cut" action:@selector(cutWidget:) keyEquivalent:@""];
+    itemDelete.representedObject = sharedMenuItemData;
     itemCut.enabled = !isPlaceholder;
     itemCut.target = self;
     [menu addItem: itemCut];
 
     NSMenuItem *itemCopy = [[NSMenuItem alloc] initWithTitle:@"Copy" action:@selector(copyWidget:) keyEquivalent:@""];
+    itemDelete.representedObject = sharedMenuItemData;
     itemCut.enabled = !isPlaceholder;
     itemCopy.target = self;
     [menu addItem: itemCopy];
 
     NSMenuItem *itemPaste = [[NSMenuItem alloc] initWithTitle:@"Paste" action:@selector(pasteWidget:) keyEquivalent:@""];
+    itemDelete.representedObject = sharedMenuItemData;
     itemPaste.target = self;
 
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
@@ -120,22 +141,33 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
 
     [menu addItem: itemPaste];
 
+    if (includeParentMenu) {
+        id<WidgetProtocol> parentWidget = widget.parentWidget;
+        if (parentWidget != nil && parentWidget != self.deps.state.rootWidget) {
+            [menu addItem: NSMenuItem.separatorItem];
+
+            NSMenuItem *itemParent = [[NSMenuItem alloc] initWithTitle:@"Parent…" action:nil keyEquivalent:@""];
+            NSMenu *menuParent = [self menuForWidget:parentWidget includeParentMenu:NO];
+            itemParent.submenu = menuParent;
+
+            [menu addItem:itemParent];
+        }
+    }
+
     // TODO: Widget custom menu (options)
-    // TODO: Parent menu for the child (options)
 
     return menu;
 }
 
-- (void)replaceActiveWidgetWith:(id<WidgetProtocol>)widget {
-    id<WidgetProtocol> activeWidget = self.activeWidget;
-    if (activeWidget.parentWidget == nil) {
-        [activeWidget removeChild:activeWidget.childWidgets.firstObject];
-        [activeWidget appendChild:widget];
+- (void)replaceWidget:(id<WidgetProtocol>)widget withNewWidget:(id<WidgetProtocol>)newWidget {
+    if (widget.parentWidget == nil) {
+        [widget removeChild:widget.childWidgets.firstObject];
+        [widget appendChild:newWidget];
     }
     else {
-        id<WidgetProtocol> parentWidget = activeWidget.parentWidget;
-        if (activeWidget != nil && widget != nil) {
-            [parentWidget replaceChild:activeWidget withChild:widget];
+        id<WidgetProtocol> parentWidget = widget.parentWidget;
+        if (widget != nil && newWidget != nil) {
+            [parentWidget replaceChild:widget withChild:newWidget];
         }
     }
 
@@ -143,19 +175,17 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
 }
 
 - (void)createWidget:(NSMenuItem *)sender {
-    NSString *type = sender.representedObject;
-    id<WidgetProtocol> widget = [self.deps.factory createWidgetWithType:type];
-
-
-    [self replaceActiveWidgetWith:widget];
+    MenuItemData *data = sender.representedObject;
+    id<WidgetProtocol> widget = [self.deps.factory createWidgetWithType:data.createType];
+    [self replaceWidget:data.targetWidget withNewWidget:widget];
 }
 
 - (void)deleteWidget:(NSMenuItem *)sender {
-    id<WidgetProtocol> activeWidget = self.activeWidget;
-    id<WidgetProtocol> parentWidget = activeWidget.parentWidget;
+    MenuItemData *data = sender.representedObject;
+    id<WidgetProtocol> parentWidget = data.targetWidget.parentWidget;
 
-    if (activeWidget != nil && parentWidget != nil) {
-        [parentWidget removeChild:activeWidget];
+    if (data.targetWidget != nil && parentWidget != nil) {
+        [parentWidget removeChild:data.targetWidget];
         [self.deps.state layoutDidChange];
     }
 }
@@ -166,9 +196,9 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
 }
 
 - (void)copyWidget:(NSMenuItem *)sender {
-    id<WidgetProtocol> activeWidget = self.activeWidget;
+    MenuItemData *menuItemdata = sender.representedObject;
 
-    NSDictionary *widgetDict = [self.deps.serializer saveWidgetToDictionary:activeWidget];
+    NSDictionary *widgetDict = [self.deps.serializer saveWidgetToDictionary:menuItemdata.targetWidget];
     NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;
     [pasteboard clearContents];
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:widgetDict];
@@ -192,7 +222,8 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
             return;
         }
 
-        [self replaceActiveWidgetWith:widget];
+        MenuItemData *menuItemdata = sender.representedObject;
+        [self replaceWidget:menuItemdata.targetWidget withNewWidget:widget];
     }
 }
 
