@@ -51,6 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL enabled;
 @property (nonatomic,readonly) id<WidgetProtocol> rootWidget;
 
+- (void)load;
 - (void)layoutDidChange;
 
 @end

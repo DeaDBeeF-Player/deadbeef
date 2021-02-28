@@ -40,8 +40,11 @@ extern DB_functions_t *deadbeef;
     }
 
     _deps = deps;
+    return self;
+}
 
-    self.rootWidget = [deps.factory createWidgetWithType:@"Placeholder"];
+- (void)load {
+    self.rootWidget = [self.deps.factory createWidgetWithType:@"Placeholder"];
 
     char *layout = malloc (100000);
     deadbeef->conf_get_str ("cocoaui.layout", "", layout, 100000);
@@ -55,11 +58,11 @@ extern DB_functions_t *deadbeef;
 
     id<WidgetProtocol> layoutWidget;
     if (json && [json isKindOfClass:NSDictionary.class]) {
-        layoutWidget = [deps.serializer loadFromDictionary:json];
+        layoutWidget = [self.deps.serializer loadFromDictionary:json];
     }
 
     if (!layoutWidget) {
-        layoutWidget = [deps.serializer loadFromDictionary:@{
+        layoutWidget = [self.deps.serializer loadFromDictionary:@{
             @"type":@"Playlist"
         }];
     }
@@ -70,10 +73,7 @@ extern DB_functions_t *deadbeef;
     }
 
     [self.rootWidget appendChild:layoutWidget];
-
-    return self;
 }
-
 
 - (void)layoutDidChange {
     NSDictionary *dict = [self.deps.serializer saveWidgetToDictionary:self.rootWidget.childWidgets.firstObject];
