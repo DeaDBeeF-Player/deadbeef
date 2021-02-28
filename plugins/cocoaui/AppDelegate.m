@@ -87,6 +87,7 @@ AppDelegate *g_appDelegate;
 
     // initialize design mode, to avoid random background thread calls
     __unused id<DesignModeStateProtocol> state = DesignModeState.sharedInstance;
+    [state load];
 
     return self;
 }
