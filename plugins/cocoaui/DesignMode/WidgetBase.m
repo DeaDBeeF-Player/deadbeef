@@ -67,7 +67,7 @@
 }
 
 - (NSMenu *)menu {
-    return [self.deps.menuBuilder menuForWidget:self];
+    return [self.deps.menuBuilder menuForWidget:self includeParentMenu:YES];
 }
 
 - (void)appendChild:(id<WidgetProtocol>)child {
