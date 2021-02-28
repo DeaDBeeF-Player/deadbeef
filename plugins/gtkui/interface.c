@@ -1778,8 +1778,11 @@ create_prefwin (void)
   GtkWidget *plugin_license_tab_btn;
   GtkWidget *fillerlabel2;
   GtkWidget *plugin_notebook;
+  GtkWidget *plugin_conf_tab_vbox;
   GtkWidget *plug_conf_dlg_scrolledwindow;
   GtkWidget *plug_conf_dlg_viewport;
+  GtkWidget *plugin_actions_btnbox;
+  GtkWidget *plugin_conf_reset_btn;
   GtkWidget *label170;
   GtkWidget *vbox12;
   GtkWidget *hbox103;
@@ -1793,8 +1796,6 @@ create_prefwin (void)
   GtkWidget *scrolledwindow16;
   GtkWidget *plug_license;
   GtkWidget *label172;
-  GtkWidget *plugin_actions_btnbox;
-  GtkWidget *plugin_conf_reset_btn;
   GtkWidget *label3;
   GtkWidget *dialog_action_area2;
   GtkWidget *closebutton1;
@@ -3072,15 +3073,28 @@ create_prefwin (void)
   gtk_box_pack_start (GTK_BOX (vbox54), plugin_notebook, TRUE, TRUE, 0);
   gtk_notebook_set_show_border (GTK_NOTEBOOK (plugin_notebook), FALSE);
 
+  plugin_conf_tab_vbox = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (plugin_conf_tab_vbox);
+  gtk_container_add (GTK_CONTAINER (plugin_notebook), plugin_conf_tab_vbox);
+
   plug_conf_dlg_scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (plug_conf_dlg_scrolledwindow);
-  gtk_container_add (GTK_CONTAINER (plugin_notebook), plug_conf_dlg_scrolledwindow);
+  gtk_box_pack_start (GTK_BOX (plugin_conf_tab_vbox), plug_conf_dlg_scrolledwindow, TRUE, TRUE, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (plug_conf_dlg_scrolledwindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
   plug_conf_dlg_viewport = gtk_viewport_new (NULL, NULL);
   gtk_widget_show (plug_conf_dlg_viewport);
   gtk_container_add (GTK_CONTAINER (plug_conf_dlg_scrolledwindow), plug_conf_dlg_viewport);
   gtk_viewport_set_shadow_type (GTK_VIEWPORT (plug_conf_dlg_viewport), GTK_SHADOW_NONE);
+
+  plugin_actions_btnbox = gtk_hbutton_box_new ();
+  gtk_box_pack_start (GTK_BOX (plugin_conf_tab_vbox), plugin_actions_btnbox, FALSE, TRUE, 0);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (plugin_actions_btnbox), GTK_BUTTONBOX_END);
+
+  plugin_conf_reset_btn = gtk_button_new_with_mnemonic (_("Reset to defaults"));
+  gtk_widget_show (plugin_conf_reset_btn);
+  gtk_container_add (GTK_CONTAINER (plugin_actions_btnbox), plugin_conf_reset_btn);
+  gtk_widget_set_can_default(plugin_conf_reset_btn, TRUE);
 
   label170 = gtk_label_new (_("Configuration"));
   gtk_widget_show (label170);
@@ -3145,16 +3159,6 @@ create_prefwin (void)
   label172 = gtk_label_new (_("License"));
   gtk_widget_show (label172);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (plugin_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (plugin_notebook), 2), label172);
-
-  plugin_actions_btnbox = gtk_hbutton_box_new ();
-  gtk_widget_show (plugin_actions_btnbox);
-  gtk_box_pack_start (GTK_BOX (vbox54), plugin_actions_btnbox, FALSE, TRUE, 0);
-  gtk_button_box_set_layout (GTK_BUTTON_BOX (plugin_actions_btnbox), GTK_BUTTONBOX_END);
-
-  plugin_conf_reset_btn = gtk_button_new_with_mnemonic (_("Reset to defaults"));
-  gtk_widget_show (plugin_conf_reset_btn);
-  gtk_container_add (GTK_CONTAINER (plugin_actions_btnbox), plugin_conf_reset_btn);
-  gtk_widget_set_can_default(plugin_conf_reset_btn, TRUE);
 
   label3 = gtk_label_new (_("Plugins"));
   gtk_widget_show (label3);
@@ -3740,8 +3744,11 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, plugin_license_tab_btn, "plugin_license_tab_btn");
   GLADE_HOOKUP_OBJECT (prefwin, fillerlabel2, "fillerlabel2");
   GLADE_HOOKUP_OBJECT (prefwin, plugin_notebook, "plugin_notebook");
+  GLADE_HOOKUP_OBJECT (prefwin, plugin_conf_tab_vbox, "plugin_conf_tab_vbox");
   GLADE_HOOKUP_OBJECT (prefwin, plug_conf_dlg_scrolledwindow, "plug_conf_dlg_scrolledwindow");
   GLADE_HOOKUP_OBJECT (prefwin, plug_conf_dlg_viewport, "plug_conf_dlg_viewport");
+  GLADE_HOOKUP_OBJECT (prefwin, plugin_actions_btnbox, "plugin_actions_btnbox");
+  GLADE_HOOKUP_OBJECT (prefwin, plugin_conf_reset_btn, "plugin_conf_reset_btn");
   GLADE_HOOKUP_OBJECT (prefwin, label170, "label170");
   GLADE_HOOKUP_OBJECT (prefwin, vbox12, "vbox12");
   GLADE_HOOKUP_OBJECT (prefwin, hbox103, "hbox103");
@@ -3755,8 +3762,6 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow16, "scrolledwindow16");
   GLADE_HOOKUP_OBJECT (prefwin, plug_license, "plug_license");
   GLADE_HOOKUP_OBJECT (prefwin, label172, "label172");
-  GLADE_HOOKUP_OBJECT (prefwin, plugin_actions_btnbox, "plugin_actions_btnbox");
-  GLADE_HOOKUP_OBJECT (prefwin, plugin_conf_reset_btn, "plugin_conf_reset_btn");
   GLADE_HOOKUP_OBJECT (prefwin, label3, "label3");
   GLADE_HOOKUP_OBJECT_NO_REF (prefwin, dialog_action_area2, "dialog_action_area2");
   GLADE_HOOKUP_OBJECT (prefwin, closebutton1, "closebutton1");

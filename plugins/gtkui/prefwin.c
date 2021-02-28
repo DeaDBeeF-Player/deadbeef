@@ -654,8 +654,6 @@ gtkui_conf_get_str (const char *key, char *value, int len, const char *def) {
 
 void plugin_pref_prop_changed_cb(ddb_pluginprefs_dialog_t *make_dialog_conf) {
     apply_conf (GTK_WIDGET (make_dialog_conf->containerbox), &make_dialog_conf->dialog_conf, 0);
-    GtkWidget *resetbtn = lookup_widget (make_dialog_conf->parent, "plugin_conf_reset_btn");
-    gtk_widget_set_sensitive (resetbtn, TRUE);
 }
 
 void
@@ -713,6 +711,8 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
         gtk_text_view_set_buffer(lictv, NULL);
     }
 
+    GtkWidget *plugin_actions_btnbox = lookup_widget (w, "plugin_actions_btnbox");
+    GtkToggleButton *plugin_conf_tab_btn = GTK_TOGGLE_BUTTON (lookup_widget (w, "plugin_conf_tab_btn"));
 
     GtkWidget *container = (lookup_widget (w, "plug_conf_dlg_viewport"));
     GtkWidget *child = gtk_bin_get_child (GTK_BIN (container));
@@ -734,12 +734,17 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
         GtkWidget *box = gtk_vbox_new(FALSE, 0);
         gtk_widget_show (box);
         if (user_data == 1) {
-            fprintf(stderr, "Resetting to defaults!\n"); //DEBUG
             apply_conf (box, &conf, 1);
         }
         make_dialog_conf.containerbox = box;
         gtk_container_add (GTK_CONTAINER (container), box);
         gtkui_make_dialog (&make_dialog_conf);
+
+        gtk_widget_show (plugin_actions_btnbox);
+        gtk_widget_set_sensitive (plugin_conf_tab_btn, TRUE);
+    } else {
+        gtk_widget_hide (plugin_actions_btnbox);
+        gtk_widget_set_sensitive (plugin_conf_tab_btn, FALSE);
     }
 }
 
@@ -809,20 +814,15 @@ on_plugin_notebook_switch_page         (GtkNotebook     *notebook,
     GQuark detail = g_quark_from_static_string ("switch_page");
     g_signal_handlers_block_matched ((gpointer)notebook, mask, detail, 0, NULL, NULL, NULL);
 
-    GtkWidget *plugin_actions_btnbox = lookup_widget (w, "plugin_actions_btnbox");
-
     switch (page_num) {
         case 0:
         gtk_toggle_button_set_active (plugin_conf_tab_btn, 1);
-        gtk_widget_show(plugin_actions_btnbox);
         break;
         case 1:
         gtk_toggle_button_set_active (plugin_info_tab_btn, 1);
-        gtk_widget_hide(plugin_actions_btnbox);
         break;
         case 2:
         gtk_toggle_button_set_active (plugin_license_tab_btn, 1);
-        gtk_widget_hide(plugin_actions_btnbox);
     }
     g_signal_handlers_unblock_matched ((gpointer)notebook, mask, detail, 0, NULL, NULL, NULL);
 }
