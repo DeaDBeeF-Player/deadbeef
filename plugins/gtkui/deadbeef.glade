@@ -2310,7 +2310,7 @@ Center</property>
 </widget>
 
 <widget class="GtkDialog" id="prefwin">
-  <property name="border_width">12</property>
+  <property name="border_width">6</property>
   <property name="visible">True</property>
   <property name="title" translatable="yes">Preferences</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
@@ -2357,7 +2357,7 @@ Center</property>
 	</widget>
 	<packing>
 	  <property name="padding">0</property>
-	  <property name="expand">True</property>
+	  <property name="expand">False</property>
 	  <property name="fill">True</property>
 	  <property name="pack_type">GTK_PACK_END</property>
 	</packing>
@@ -2365,6 +2365,7 @@ Center</property>
 
       <child>
 	<widget class="GtkNotebook" id="notebook">
+	  <property name="border_width">6</property>
 	  <property name="visible">True</property>
 	  <property name="can_focus">True</property>
 	  <property name="show_tabs">True</property>

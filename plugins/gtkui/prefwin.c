@@ -712,7 +712,6 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
     }
 
     GtkWidget *plugin_actions_btnbox = lookup_widget (w, "plugin_actions_btnbox");
-    GtkToggleButton *plugin_conf_tab_btn = GTK_TOGGLE_BUTTON (lookup_widget (w, "plugin_conf_tab_btn"));
 
     GtkWidget *container = (lookup_widget (w, "plug_conf_dlg_viewport"));
     GtkWidget *child = gtk_bin_get_child (GTK_BIN (container));
@@ -741,10 +740,8 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
         gtkui_make_dialog (&make_dialog_conf);
 
         gtk_widget_show (plugin_actions_btnbox);
-        gtk_widget_set_sensitive (plugin_conf_tab_btn, TRUE);
     } else {
         gtk_widget_hide (plugin_actions_btnbox);
-        gtk_widget_set_sensitive (plugin_conf_tab_btn, FALSE);
     }
 }
 
