@@ -825,12 +825,20 @@ action_toggle_stop_after_album_cb (struct DB_plugin_action_s *action, ddb_action
     return 0;
 }
 
+static DB_plugin_action_t action_prev_or_restart = {
+    .title = "Playback/Previous or restart current track",
+    .name = "prev_or_restart",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_prev_or_restart_cb,
+    .next = NULL
+};
+
 static DB_plugin_action_t action_reload_metadata = {
     .title = "Reload Metadata",
     .name = "reload_metadata",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback2 = action_reload_metadata_handler,
-    .next = NULL
+    .next = &action_prev_or_restart
 };
 
 static DB_plugin_action_t action_jump_to_current = {
