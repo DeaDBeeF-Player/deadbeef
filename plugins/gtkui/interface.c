@@ -1801,7 +1801,7 @@ create_prefwin (void)
   GtkWidget *closebutton1;
 
   prefwin = gtk_dialog_new ();
-  gtk_container_set_border_width (GTK_CONTAINER (prefwin), 12);
+  gtk_container_set_border_width (GTK_CONTAINER (prefwin), 6);
   gtk_window_set_title (GTK_WINDOW (prefwin), _("Preferences"));
   gtk_window_set_position (GTK_WINDOW (prefwin), GTK_WIN_POS_CENTER);
   gtk_window_set_type_hint (GTK_WINDOW (prefwin), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -1812,6 +1812,7 @@ create_prefwin (void)
   notebook = gtk_notebook_new ();
   gtk_widget_show (notebook);
   gtk_box_pack_start (GTK_BOX (dialog_vbox2), notebook, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (notebook), 6);
   gtk_notebook_set_scrollable (GTK_NOTEBOOK (notebook), TRUE);
 
   vbox10 = gtk_vbox_new (FALSE, 8);
