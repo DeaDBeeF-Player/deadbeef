@@ -744,3 +744,21 @@ action_toggle_mute_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     deadbeef->audio_set_mute (mute);
     return 0;
 }
+
+int
+action_prev_or_restart_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (it) {
+        float dur = deadbeef->pl_get_item_duration (it);
+        deadbeef->pl_item_unref (it);
+        if (dur > 0) {
+            float pos = deadbeef->streamer_get_playpos ();
+            if (pos > 3) {
+                deadbeef->sendmessage (DB_EV_SEEK, 0, 0, 0);
+                return 0;
+            }
+        }
+    }
+    deadbeef->sendmessage (DB_EV_PREV, 0, 0, 0);
+    return 0;
+}
