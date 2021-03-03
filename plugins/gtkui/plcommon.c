@@ -508,7 +508,7 @@ convert_escapetext_to_pango_attrlist (char *text, float *fg, float *bg, float *h
             if (rgb[0] == -1) {
                 attr = pango_attr_foreground_new (fg[0] * 65535, fg[1] * 65535, fg[2] * 65535);
             } else {
-                attr = pango_attr_foreground_new (rgb[0] * 65535, rgb[1] * 65535, rgb[2] * 65535);
+                attr = pango_attr_foreground_new (rgb[0] * 65535 / 255, rgb[1] * 65535 / 255, rgb[2] * 65535 / 255);
             }
             attr->start_index = index;
             attr->end_index = PANGO_ATTR_INDEX_TO_TEXT_END;
