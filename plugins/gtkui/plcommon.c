@@ -474,6 +474,7 @@ convert_escapetext_to_pango_attrlist (char *text, float *fg, float *bg, float *h
     int x,y,a=0;
     PangoAttribute *attr = NULL;
     int index=0;
+    int rgb[3] = {0,};
     while (*pin) {
         int pos=0;
         if ( sscanf(pin, "\033%d;%dm%n", &x, &y, &pos) == 2 && x == DDB_TF_ESC_DIM) {
@@ -501,6 +502,17 @@ convert_escapetext_to_pango_attrlist (char *text, float *fg, float *bg, float *h
                 attr = pango_attr_foreground_new (r, g, b);
                 attr->start_index = index;
             }
+        } else if (sscanf(pin, "\033%d;%d;%d;%dm%n", &x, &rgb[0], &rgb[1], &rgb[2], &pos) == 4 && x == DDB_TF_ESC_RGB) {
+            memmove(pin, pin+pos, strlen(pin+pos)+1);
+
+            if (rgb[0] == -1) {
+                attr = pango_attr_foreground_new (fg[0] * 65535, fg[1] * 65535, fg[2] * 65535);
+            } else {
+                attr = pango_attr_foreground_new (rgb[0] * 65535, rgb[1] * 65535, rgb[2] * 65535);
+            }
+            attr->start_index = index;
+            attr->end_index = PANGO_ATTR_INDEX_TO_TEXT_END;
+            pango_attr_list_insert (lst, attr);
         } else {
             pin++;
             index++;

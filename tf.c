@@ -2388,6 +2388,61 @@ tf_func_hex (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
     return (int)strlen (out);
 }
 
+int
+tf_func_rgb (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 0 && argc != 3) {
+        return -1;
+    }
+
+    int bool_out = 0;
+
+    const char *arg = args;
+    int len;
+
+    int rgb[3];
+
+    if (argc == 3) {
+        int i;
+        for (i = 0; i < 3; i++) {
+            TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
+            if (!isdigit (*out)) {
+                *out = 0;
+                return -1;
+            }
+            rgb[i] = atoi (out);
+            *out = 0;
+
+            arg += arglens[i];
+        }
+    } else {
+        // Use -1 as use fg color marker
+        rgb[0] = rgb[1] = rgb[2] = -1;
+    }
+
+    char rgbseq[20] = "";
+    int rgbseqlen = 0;
+
+    if (ctx->flags & DDB_TF_CONTEXT_TEXT_DIM) {
+        // rgb color esc sequence
+        // `\e2;R;G;Bm`
+        snprintf (rgbseq, sizeof(rgbseq), "\033%d;%d;%d;%dm", DDB_TF_ESC_RGB, rgb[0], rgb[1], rgb[2]);
+        rgbseqlen = (int)strlen (rgbseq);
+
+        if (rgbseqlen > outlen) {
+            return -1;
+        }
+
+        memcpy (out, rgbseq, rgbseqlen);
+        out += rgbseqlen;
+        outlen -= rgbseqlen;
+        if (HAS_DIMMED(ctx)) {
+            ctx->dimmed = 1;
+        }
+    }
+    *out = 0;
+    return rgbseqlen;
+}
+
 tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     // Control flow
     { "if", tf_func_if },
@@ -2463,6 +2518,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     // Track info
     { "meta", tf_func_meta },
     { "channels", tf_func_channels },
+    { "rgb", tf_func_rgb },
     { NULL, NULL }
 };
 
