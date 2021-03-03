@@ -2079,12 +2079,13 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
         while (group_depth--) {
             fmt = fmt->next;
         }
+        int isdimmed=0;
         if (fmt->bytecode) {
             ddb_tf_context_t ctx = {
                 ._size = sizeof (ddb_tf_context_t),
                 .it = it,
                 .plt = deadbeef->plt_get_curr (),
-                .flags = DDB_TF_CONTEXT_NO_DYNAMIC,
+                .flags = DDB_TF_CONTEXT_NO_DYNAMIC | DDB_TF_CONTEXT_TEXT_DIM,
                 .iter = iter,
             };
             deadbeef->tf_eval (&ctx, fmt->bytecode, str, sizeof (str));
@@ -2092,6 +2093,7 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
                 deadbeef->plt_unref (ctx.plt);
                 ctx.plt = NULL;
             }
+            isdimmed = ctx.dimmed;
 
 
             char *lb = strchr (str, '\r');
@@ -2105,21 +2107,52 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
         }
 
         int theming = !gtkui_override_listview_colors ();
+        GdkColor clr;
         if (theming) {
-            GdkColor *clr = &gtk_widget_get_style(theme_treeview)->fg[GTK_STATE_NORMAL];
-            float rgb[] = {clr->red/65535., clr->green/65535., clr->blue/65535.};
-            draw_set_fg_color (&listview->grpctx, rgb);
+            clr = gtk_widget_get_style(theme_treeview)->fg[GTK_STATE_NORMAL];
         }
         else {
-            GdkColor clr;
             gtkui_get_listview_group_text_color (&clr);
-            float rgb[] = {clr.red/65535., clr.green/65535., clr.blue/65535.};
-            draw_set_fg_color (&listview->grpctx, rgb);
         }
+        float rgb[] = {clr.red/65535., clr.green/65535., clr.blue/65535.};
+        draw_set_fg_color (&listview->grpctx, rgb);
+
         int ew;
         int text_width = width-x-10;
         if (text_width > 0) {
-            draw_text_custom (&listview->grpctx, x + 5, y + height/2 - draw_get_listview_rowheight (&listview->grpctx)/2 + 3, text_width, 0, DDB_GROUP_FONT, 0, 0, str);
+            if (isdimmed) {
+                GdkColor *highlight_color;
+                GdkColor hlclr;
+                if (!gtkui_override_listview_colors ()) {
+                    highlight_color = &gtk_widget_get_style(theme_treeview)->fg[GTK_STATE_NORMAL];
+                }
+                else {
+                    highlight_color = (gtkui_get_listview_group_text_color (&hlclr), &hlclr);
+                }
+
+                float highlight[] = {highlight_color->red/65535., highlight_color->green/65535., highlight_color->blue/65535.};
+
+                GdkColor *background_color;
+                GdkColor bgclr;
+
+                if (!gtkui_override_listview_colors ()) {
+                    background_color = &gtk_widget_get_style(theme_treeview)->bg[GTK_STATE_NORMAL];
+                } else {
+                    gtkui_get_listview_odd_row_color (&bgclr);
+                    background_color = &bgclr;
+                }
+                float bg[] = {background_color->red/65535., background_color->green/65535., background_color->blue/65535.};
+
+                PangoAttrList *attrs;
+
+                attrs = convert_escapetext_to_pango_attrlist(str, rgb, bg, highlight);
+                pango_layout_set_attributes (listview->grpctx.pangolayout, attrs);
+                pango_attr_list_unref(attrs);
+                draw_text_custom (&listview->grpctx, x + 5, y + height/2 - draw_get_listview_rowheight (&listview->grpctx)/2 + 3, text_width, 0, DDB_GROUP_FONT, 0, 0, str);
+                pango_layout_set_attributes (listview->grpctx.pangolayout, NULL);
+            } else {
+                draw_text_custom (&listview->grpctx, x + 5, y + height/2 - draw_get_listview_rowheight (&listview->grpctx)/2 + 3, text_width, 0, DDB_GROUP_FONT, 0, 0, str);
+            }
             draw_get_layout_extents (&listview->grpctx, &ew, NULL);
 
             int len = strlen (str);
