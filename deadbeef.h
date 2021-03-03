@@ -684,6 +684,7 @@ enum {
 #if (DDB_API_LEVEL >= 10)
 enum {
     DDB_TF_ESC_DIM = 1,
+    DDB_TF_ESC_RGB = 2,
 };
 #endif
 
