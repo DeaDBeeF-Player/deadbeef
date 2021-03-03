@@ -511,7 +511,11 @@ convert_escapetext_to_pango_attrlist (char *text, float *fg, float *bg, float *h
                 attr = pango_attr_foreground_new (rgb[0] * 65535 / 255, rgb[1] * 65535 / 255, rgb[2] * 65535 / 255);
             }
             attr->start_index = index;
+            #if PANGO_VERSION_CHECK (1,24,0)
             attr->end_index = PANGO_ATTR_INDEX_TO_TEXT_END;
+            #else
+            attr->end_index = G_MAXUINT;
+            #endif
             pango_attr_list_insert (lst, attr);
         } else {
             pin++;
