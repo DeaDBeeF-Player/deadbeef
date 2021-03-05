@@ -368,6 +368,7 @@ show_track_properties_dlg (int ctx, ddb_playlist_t *plt) {
         gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
         GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
         rend_text2 = GTK_CELL_RENDERER (ddb_cell_renderer_text_multiline_new ());
+        g_object_set (G_OBJECT (rend_text2), "editable", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
         g_signal_connect ((gpointer)rend_text2, "edited",
                 G_CALLBACK (on_metadata_edited),
                 store);
@@ -385,7 +386,7 @@ show_track_properties_dlg (int ctx, ddb_playlist_t *plt) {
         gtk_tree_view_set_model (proptree, GTK_TREE_MODEL (propstore));
         GtkCellRenderer *rend_propkey = gtk_cell_renderer_text_new ();
         GtkCellRenderer *rend_propvalue = gtk_cell_renderer_text_new ();
-        g_object_set (G_OBJECT (rend_propvalue), "editable", TRUE, NULL);
+        g_object_set (G_OBJECT (rend_propvalue), "editable", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
         col1 = gtk_tree_view_column_new_with_attributes (_("Key"), rend_propkey, "text", 0, NULL);
         col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend_propvalue, "text", 1, NULL);
         gtk_tree_view_append_column (proptree, col1);

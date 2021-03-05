@@ -447,6 +447,7 @@ static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (Gtk
 
     _g_object_unref0 (buf);
     gtk_widget_set_size_request ((GtkWidget*) textview, cell_area->width, cell_area->height);
+    gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (textview), GTK_WRAP_WORD);
     gtk_widget_show ((GtkWidget*) textview);
     result = GTK_CELL_EDITABLE (textview);
     G_IS_VALUE (&v) ? (g_value_unset (&v), NULL) : NULL;
