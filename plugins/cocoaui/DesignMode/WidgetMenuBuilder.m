@@ -155,6 +155,18 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
     }
 
     // TODO: Widget custom menu (options)
+    NSArray<NSMenuItem *> *additionalMenuItems;
+    if ([widget respondsToSelector:@selector(menuItems)]) {
+        additionalMenuItems = widget.menuItems;
+    }
+
+    if (additionalMenuItems.count) {
+        [menu addItem: NSMenuItem.separatorItem];
+
+        for (NSMenuItem *menuItem in additionalMenuItems) {
+            [menu addItem:menuItem];
+        }
+    }
 
     return menu;
 }
