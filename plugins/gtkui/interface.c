@@ -3475,6 +3475,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) pref_pluginlist, "row_activated",
                     G_CALLBACK (on_pref_pluginlist_row_activated),
                     NULL);
+  g_signal_connect ((gpointer) pref_pluginlist, "button_press_event",
+                    G_CALLBACK (on_pref_pluginlist_button_press_event),
+                    NULL);
   g_signal_connect ((gpointer) plugin_conf_tab_btn, "clicked",
                     G_CALLBACK (on_plugin_conf_tab_btn_clicked),
                     NULL);
@@ -5530,5 +5533,34 @@ create_rg_scan_results (void)
   GLADE_HOOKUP_OBJECT (rg_scan_results, rg_scan_results_cancel, "rg_scan_results_cancel");
 
   return rg_scan_results;
+}
+
+GtkWidget*
+create_plugin_list_popup_menu (void)
+{
+  GtkWidget *plugin_list_popup_menu;
+  GtkWidget *copy_plugin_report_menuitem;
+  GtkWidget *image688;
+
+  plugin_list_popup_menu = gtk_menu_new ();
+
+  copy_plugin_report_menuitem = gtk_image_menu_item_new_with_mnemonic (_("Copy report"));
+  gtk_widget_show (copy_plugin_report_menuitem);
+  gtk_container_add (GTK_CONTAINER (plugin_list_popup_menu), copy_plugin_report_menuitem);
+
+  image688 = gtk_image_new_from_stock ("gtk-copy", GTK_ICON_SIZE_MENU);
+  gtk_widget_show (image688);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (copy_plugin_report_menuitem), image688);
+
+  g_signal_connect ((gpointer) copy_plugin_report_menuitem, "activate",
+                    G_CALLBACK (on_copy_plugin_report_menuitem_activate),
+                    NULL);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (plugin_list_popup_menu, plugin_list_popup_menu, "plugin_list_popup_menu");
+  GLADE_HOOKUP_OBJECT (plugin_list_popup_menu, copy_plugin_report_menuitem, "copy_plugin_report_menuitem");
+  GLADE_HOOKUP_OBJECT (plugin_list_popup_menu, image688, "image688");
+
+  return plugin_list_popup_menu;
 }
 

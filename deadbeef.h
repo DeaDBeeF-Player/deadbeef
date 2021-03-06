@@ -98,7 +98,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 13
+#define DB_API_VERSION_MINOR 14
 
 #if defined(__clang__)
 
@@ -1573,6 +1573,11 @@ typedef struct {
     ddb_playlist_t * (*plt_append) (const char *title);
     ddb_playItem_t * (*plt_get_head_item) (ddb_playlist_t *p, int iter);
     ddb_playItem_t * (*plt_get_tail_item) (ddb_playlist_t *p, int iter);
+#endif
+
+// since 1.14
+#if (DDB_API_LEVEL >= 14)
+    const char* (*plug_get_path_for_plugin_ptr) (struct DB_plugin_s *plugin_ptr);
 #endif
 } DB_functions_t;
 

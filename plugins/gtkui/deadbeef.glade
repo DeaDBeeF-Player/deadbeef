@@ -6873,6 +6873,7 @@ if you don't press Apply.</property>
 		      <property name="hover_expand">False</property>
 		      <signal name="cursor_changed" handler="on_pref_pluginlist_cursor_changed" last_modification_time="Sat, 10 Oct 2009 19:54:17 GMT"/>
 		      <signal name="row_activated" handler="on_pref_pluginlist_row_activated" last_modification_time="Fri, 12 May 2017 18:53:38 GMT"/>
+		      <signal name="button_press_event" handler="on_pref_pluginlist_button_press_event" last_modification_time="Fri, 05 Mar 2021 19:12:00 GMT"/>
 		    </widget>
 		  </child>
 		</widget>
@@ -11052,6 +11053,30 @@ Descending</property>
 	  <property name="expand">False</property>
 	  <property name="fill">True</property>
 	</packing>
+      </child>
+    </widget>
+  </child>
+</widget>
+
+<widget class="GtkMenu" id="plugin_list_popup_menu">
+
+  <child>
+    <widget class="GtkImageMenuItem" id="copy_plugin_report_menuitem">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Copy report</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_copy_plugin_report_menuitem_activate" last_modification_time="Fri, 05 Mar 2021 18:40:56 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image688">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-copy</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
       </child>
     </widget>
   </child>
