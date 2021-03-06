@@ -31,9 +31,6 @@ done
 cp -uv translation/help.ru.txt  "$1/doc/"
 
 # Libraries
-rm -fv "$1"/plugins/*.lib | true
-rm -fv "$1"/*.lib | true
-
 ldd "$1/plugins/"*.dll "$1/deadbeef.exe" | awk 'NF == 4 {print $3}; NF == 2 {print $1}' \
 									 | grep -iv "???" \
 									 | grep -iv "System32" \
@@ -42,10 +39,18 @@ ldd "$1/plugins/"*.dll "$1/deadbeef.exe" | awk 'NF == 4 {print $3}; NF == 2 {pri
 									 | grep -iv "`readlink -f \"$1\"`" \
 									 | sort -u > .libraries.tmp
 
+if [ ! -e "$1/"libssl*.dll ]; then
+	pacman -Ql mingw-w64-x86_64-openssl | grep ".dll" | grep /bin | awk '{print $2}' >> .libraries.tmp
+fi
+
 cp -uv `cat .libraries.tmp` "$1/"
 
 # libdispatch
-cp -uv xdispatch_ddb/lib/* "$1/"
+cp -uv xdispatch_ddb/lib/*.dll "$1/"
+
+# Clean up
+rm -fv "$1"/plugins/*.lib | true
+rm -fv "$1"/*.lib | true
 
 # gdk_pixbuf libs
 for i in /mingw32 /mingw64 /usr; do
