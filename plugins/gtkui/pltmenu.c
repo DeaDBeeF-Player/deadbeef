@@ -58,26 +58,7 @@ static void
 on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *dlg = create_entrydialog ();
-    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
-    gtk_window_set_title (GTK_WINDOW (dlg), _("Rename Playlist"));
-    GtkWidget *e;
-    e = lookup_widget (dlg, "title_label");
-    gtk_label_set_text (GTK_LABEL(e), _("Title:"));
-    e = lookup_widget (dlg, "title");
-    char t[1000];
-    plt_get_title_wrapper (pltmenu_idx, t, sizeof (t));
-    gtk_entry_set_text (GTK_ENTRY (e), t);
-    int res = gtk_dialog_run (GTK_DIALOG (dlg));
-    if (res == GTK_RESPONSE_OK) {
-        const char *text = gtk_entry_get_text (GTK_ENTRY (e));
-        deadbeef->pl_lock ();
-        ddb_playlist_t *p = deadbeef->plt_get_for_idx (pltmenu_idx);
-        deadbeef->plt_set_title (p, text);
-        deadbeef->plt_unref (p);
-        deadbeef->pl_unlock ();
-    }
-    gtk_widget_destroy (dlg);
+    gtkui_rename_current_playlist();
 }
 
 static void
