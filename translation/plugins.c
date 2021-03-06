@@ -213,6 +213,8 @@ _("Load Playlist");
 // xgettext:no-c-format
 _("Remove Current Playlist");
 // xgettext:no-c-format
+_("Rename Current Playlist");
+// xgettext:no-c-format
 _("New Playlist");
 // xgettext:no-c-format
 _("Show\\/Hide Equalizer");

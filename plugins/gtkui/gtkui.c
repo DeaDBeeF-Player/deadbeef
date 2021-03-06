@@ -1896,12 +1896,20 @@ static DB_plugin_action_t action_new_playlist = {
     .next = &action_remove_current_playlist
 };
 
+static DB_plugin_action_t action_rename_current_playlist = {
+    .title = "File/Rename Current Playlist",
+    .name = "rename_current_playlist",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_rename_current_playlist_handler,
+    .next = &action_new_playlist
+};
+
 static DB_plugin_action_t action_toggle_eq = {
     .title = "View/Show\\/Hide Equalizer",
     .name = "toggle_eq",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_toggle_eq_handler,
-    .next = &action_new_playlist
+    .next = &action_rename_current_playlist
 };
 
 static DB_plugin_action_t action_hide_eq = {
