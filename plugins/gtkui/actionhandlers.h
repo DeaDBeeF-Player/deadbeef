@@ -71,6 +71,9 @@ action_new_playlist_handler (struct DB_plugin_action_s *action, ddb_action_conte
 int
 action_remove_current_playlist_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx);
 
+int
+action_rename_current_playlist_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx);
+
 gboolean
 action_toggle_mainwin_handler_cb (void *user_data);
 
