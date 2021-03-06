@@ -634,60 +634,8 @@ on_pltbrowser_key_press_event (GtkWidget *widget,
             }
         }
     }
-
-    //if (event->keyval == GDK_F2) {
-    //    // rename selected playlist
-    //    GtkTreePath *path;
-    //    GtkTreeViewColumn *col;
-    //    gtk_tree_view_get_cursor (GTK_TREE_VIEW (w->tree), &path, NULL);
-    //    col = gtk_tree_view_get_column (GTK_TREE_VIEW (w->tree), COL_NAME);
-    //    if (!path || !col) {
-    //        return FALSE;
-    //    }
-    //    // start editing
-    //    gtk_tree_view_set_cursor_on_cell (GTK_TREE_VIEW (w->tree), path, col, NULL, TRUE);
-    //}
     return FALSE;
 }
-
-/*
-static void
-on_pltbrowser_cell_edititing_started (GtkCellRenderer *renderer,
-                                      GtkCellEditable *editable,
-                                      gchar           *path,
-                                      gpointer         user_data)
-{
-    w_pltbrowser_t *w = user_data;
-    if (deadbeef->conf_get_int ("gtkui.pltbrowser.highlight_curr_plt", 0)
-            && GTK_IS_ENTRY (editable)) {
-        // we need to get rid of the "(playing)" string before editing the playlist name
-        int row = get_treeview_cursor_pos (GTK_TREE_VIEW (w->tree));
-        if (row >= 0) {
-            GtkEntry *entry = GTK_ENTRY (editable);
-            char t[1000];
-            plt_get_title_wrapper (row, t, sizeof (t));
-            gtk_entry_set_text (GTK_ENTRY (entry), t);
-        }
-    }
-}
-
-static void
-on_pltbrowser_cell_edited (GtkCellRendererText *cell,
-                           gchar               *path_string,
-                           gchar               *new_text,
-                           gpointer             user_data)
-{
-    w_pltbrowser_t *w = user_data;
-    int row = get_treeview_cursor_pos (GTK_TREE_VIEW (w->tree));
-    if (row >= 0) {
-        deadbeef->pl_lock ();
-        ddb_playlist_t *p = deadbeef->plt_get_for_idx (row);
-        deadbeef->plt_set_title (p, new_text);
-        deadbeef->plt_unref (p);
-        deadbeef->pl_unlock ();
-    }
-}
-*/
 
 static GtkTreeViewColumn *
 add_treeview_column (w_pltbrowser_t *w, GtkTreeView *tree, int pos, int expand, int align_right, const char *title, int is_pixbuf)
