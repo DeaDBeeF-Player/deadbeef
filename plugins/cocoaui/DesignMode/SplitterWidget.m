@@ -11,7 +11,7 @@
 #import "PlaceholderWidget.h"
 
 typedef NS_ENUM(NSInteger,HoldingMode) {
-    HoldingModeEqual = 0,
+    HoldingModeProportional = 0,
     HoldingModeFirst = 1,
     HoldingModeSecond = 2,
 };
@@ -30,6 +30,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 @property (nonatomic,readonly) CGFloat secondPaneSize;
 
 @property (nonatomic) HoldingMode holdingMode;
+@property (nonatomic) BOOL isLocked;
 
 // deserialized values (consumed once)
 @property (nonatomic) NSDictionary *deserializedSettings;
@@ -110,7 +111,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     }
 
     switch (self.holdingMode) {
-    case HoldingModeEqual:
+    case HoldingModeProportional:
         [self.splitView setPosition:(dividerPosition * splitViewSize) ofDividerAtIndex:0];
         break;
     case HoldingModeFirst:
@@ -159,7 +160,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     CGFloat splitViewSize = self.splitViewSize;
 
     switch (self.holdingMode) {
-    case HoldingModeEqual:
+    case HoldingModeProportional:
         if (splitViewSize > 1) {
             return self.firstPaneSize / splitViewSize;
         }
@@ -173,20 +174,47 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     }
 }
 
+- (HoldingMode)holdingMode {
+    if ([self.splitView holdingPriorityForSubviewAtIndex:0] == NSLayoutPriorityDefaultLow && [self.splitView holdingPriorityForSubviewAtIndex:1] == NSLayoutPriorityDefaultLow) {
+        return HoldingModeProportional;
+    }
+    else if ([self.splitView holdingPriorityForSubviewAtIndex:0] == (NSLayoutPriorityDefaultLow+1)) {
+        return HoldingModeFirst;
+    }
+    else {
+        return HoldingModeSecond;
+    }
+}
+
+- (void)setHoldingMode:(HoldingMode)holdingMode {
+    switch (holdingMode) {
+    case HoldingModeProportional:
+        [self.splitView setHoldingPriority:NSLayoutPriorityDefaultLow forSubviewAtIndex:0];
+        [self.splitView setHoldingPriority:NSLayoutPriorityDefaultLow forSubviewAtIndex:1];
+        break;
+    case HoldingModeFirst:
+        [self.splitView setHoldingPriority:(NSLayoutPriorityDefaultLow+1) forSubviewAtIndex:0];
+        [self.splitView setHoldingPriority:NSLayoutPriorityDefaultLow forSubviewAtIndex:1];
+        break;
+    case HoldingModeSecond:
+        [self.splitView setHoldingPriority:NSLayoutPriorityDefaultLow forSubviewAtIndex:0];
+        [self.splitView setHoldingPriority:(NSLayoutPriorityDefaultLow+1) forSubviewAtIndex:1];
+        break;
+    }
+}
+
 - (NSDictionary *)serializedSettingsDictionary {
     return @{
         @"holdingMode": @(self.holdingMode),
         @"position": @(self.dividerPosition),
+        @"isLocked": @(self.isLocked),
+        @"thickDivider": @(self.splitView.dividerStyle == NSSplitViewDividerStyleThick),
     };
 }
 
 - (BOOL)deserializeFromSettingsDictionary:(NSDictionary *)dictionary {
     self.deserializedSettings = dictionary;
     return YES;
-}
-
-- (void)splitViewDidResizeSubviews:(NSNotification *)notification {
-    [self.deps.state layoutDidChange];
 }
 
 - (void)splitViewBoundsDidChange:(NSNotification *)notification {
@@ -207,7 +235,82 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
         [self updateDividerPosition:position];
     }
 
+    id isLockedObject = self.deserializedSettings[@"isLocked"];
+    if ([isLockedObject isKindOfClass:NSNumber.class]) {
+        NSNumber *isLockedNumber = isLockedObject;
+        self.isLocked = isLockedNumber.boolValue;
+    }
+
+    id thickDividerObject = self.deserializedSettings[@"thickDivider"];
+    if ([thickDividerObject isKindOfClass:NSNumber.class]) {
+        NSNumber *thickDividerNumber = thickDividerObject;
+        self.splitView.dividerStyle = thickDividerNumber.boolValue ? NSSplitViewDividerStyleThick : NSSplitViewDividerStyleThin;
+    }
+
     self.deserializedSettings = nil;
+}
+
+- (NSArray<NSMenuItem *> *)menuItems {
+    NSMenuItem *holdFirst = [[NSMenuItem alloc] initWithTitle:@"Hold First" action:@selector(holdFirstAction:) keyEquivalent:@""];
+    holdFirst.state = self.holdingMode == HoldingModeFirst ? NSControlStateValueOn : NSControlStateValueOff;
+    holdFirst.target = self;
+
+    NSMenuItem *holdSecond = [[NSMenuItem alloc] initWithTitle:@"Hold Second" action:@selector(holdSecondAction:) keyEquivalent:@""];
+    holdSecond.state = self.holdingMode == HoldingModeSecond ? NSControlStateValueOn : NSControlStateValueOff;
+    holdSecond.target = self;
+
+    NSMenuItem *holdProportional = [[NSMenuItem alloc] initWithTitle:@"Proportional" action:@selector(holdProportionalAction:) keyEquivalent:@""];
+    holdProportional.state = self.holdingMode == HoldingModeProportional ? NSControlStateValueOn : NSControlStateValueOff;
+    holdProportional.target = self;
+
+    NSMenuItem *lockItem = [[NSMenuItem alloc] initWithTitle:@"Lock Splitter Position" action:@selector(lockAction:) keyEquivalent:@""];
+    lockItem.state = self.isLocked ? NSControlStateValueOn : NSControlStateValueOff;
+    lockItem.target = self;
+
+    NSMenuItem *dividerSize = [[NSMenuItem alloc] initWithTitle:@"Thick Divider" action:@selector(thickDividerToggleAction:) keyEquivalent:@""];
+    dividerSize.target = self;
+    BOOL isThick = (self.splitView.dividerStyle == NSSplitViewDividerStyleThick);
+    dividerSize.state = isThick ? NSControlStateValueOn : NSControlStateValueOff;
+
+    return @[
+        lockItem,
+        dividerSize,
+        [NSMenuItem separatorItem],
+        holdFirst,
+        holdSecond,
+        holdProportional,
+    ];
+}
+
+- (void)holdFirstAction:(NSMenuItem *)sender {
+    self.holdingMode = HoldingModeFirst;
+}
+
+- (void)holdSecondAction:(NSMenuItem *)sender {
+    self.holdingMode = HoldingModeSecond;
+}
+
+- (void)holdProportionalAction:(NSMenuItem *)sender {
+    self.holdingMode = HoldingModeProportional;
+}
+
+- (void)lockAction:(NSMenuItem *)sender {
+    self.isLocked = !self.isLocked;
+}
+
+- (void)thickDividerToggleAction:(NSMenuItem *)sender {
+    BOOL isThick = (self.splitView.dividerStyle != NSSplitViewDividerStyleThick);
+    self.splitView.dividerStyle = isThick ? NSSplitViewDividerStyleThick : NSSplitViewDividerStyleThin;
+}
+
+#pragma mark - NSSplitViewDelegate
+
+- (void)splitViewDidResizeSubviews:(NSNotification *)notification {
+    [self.deps.state layoutDidChange];
+}
+
+- (CGFloat)splitView:(NSSplitView *)splitView constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)dividerIndex {
+    return self.isLocked ? self.firstPaneSize : proposedPosition;
 }
 
 @end
