@@ -33,6 +33,7 @@
     _visualizationView = [[VisualizationView alloc] initWithFrame:NSZeroRect];
     _visualizationViewController.view = _visualizationView;
     _visualizationViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
+    [_visualizationViewController awakeFromNib];
 
     [self.topLevelView addSubview:_visualizationViewController.view];
     [_visualizationViewController.view.leadingAnchor constraintEqualToAnchor:self.topLevelView.leadingAnchor].active = YES;
