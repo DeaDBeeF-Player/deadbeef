@@ -8,6 +8,8 @@
 
 #import "VisualizationViewController.h"
 
+static void *kHiddenOrHasHiddenAncestorContext = &kHiddenOrHasHiddenAncestorContext;
+
 @interface VisualizationViewController ()
 
 @property (nonatomic) NSTimer *tickTimer;
@@ -17,24 +19,42 @@
 @implementation VisualizationViewController
 
 - (void)dealloc {
+    [self removeObserver:self forKeyPath:@"view.hiddenOrHasHiddenAncestor"];
     [self.tickTimer invalidate];
 }
 
-- (instancetype)init {
-    self = [super init];
-    if (self == nil) {
-        return nil;
+- (void)awakeFromNib {
+    [self addObserver:self forKeyPath:@"view.window.isVisible" options:NSKeyValueObservingOptionInitial context:kHiddenOrHasHiddenAncestorContext];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if (context == kHiddenOrHasHiddenAncestorContext) {
+        if (!self.view.window.isVisible) {
+            [self.tickTimer invalidate];
+            self.tickTimer = nil;
+        }
+        else {
+            __weak VisualizationViewController *weakSelf = self;
+            if (self.tickTimer == nil) {
+                self.tickTimer = [NSTimer timerWithTimeInterval:1/30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
+                    VisualizationViewController *strongSelf = weakSelf;
+                    if (!strongSelf.view.window.isVisible) {
+                        [strongSelf.tickTimer invalidate];
+                        strongSelf.tickTimer = nil;
+                        return;
+                    }
+
+                    strongSelf.view.needsDisplay = YES;
+                }];
+
+                [[NSRunLoop currentRunLoop] addTimer:self.tickTimer forMode:NSRunLoopCommonModes];
+            }
+
+        }
     }
-
-    __weak VisualizationViewController *weakSelf = self;
-    self.tickTimer = [NSTimer timerWithTimeInterval:1/30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
-        VisualizationViewController *strongSelf = weakSelf;
-        strongSelf.view.needsDisplay = YES;
-    }];
-
-    [[NSRunLoop currentRunLoop] addTimer:self.tickTimer forMode:NSRunLoopCommonModes];
-
-    return self;
+    else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 @end
