@@ -172,7 +172,10 @@ action_remove_current_playlist_handler (struct DB_plugin_action_s *action, ddb_a
 
 int
 action_rename_current_playlist_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
-    gtkui_rename_current_playlist();
+    int idx = deadbeef->plt_get_curr_idx ();
+    if (idx != -1) {
+        gtkui_rename_current_playlist(idx);
+    }
     return 0;
 }
 
