@@ -94,6 +94,7 @@ const char *lowprio_plugin_ids[] = {
 // internal plugin list
 typedef struct plugin_s {
     void *handle;
+    char *filepath;
     DB_plugin_t *plugin;
     struct plugin_s *next;
 } plugin_t;
@@ -519,6 +520,8 @@ static DB_functions_t deadbeef_api = {
 
     .plt_get_head_item = (ddb_playItem_t * (*) (ddb_playlist_t *p, int iter))plt_get_head_item,
     .plt_get_tail_item = (ddb_playItem_t * (*) (ddb_playlist_t *p, int iter))plt_get_tail_item,
+
+    .plug_get_path_for_plugin_ptr = (const char* (*) (DB_plugin_t *plugin_ptr))plug_get_path_for_plugin_ptr,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -827,6 +830,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
         dlclose (handle);
         return -1;
     }
+    plugins_tail->filepath = strdup (fullname);
     return 0;
 }
 
@@ -1308,6 +1312,7 @@ plug_unload_all (void) {
         if (plugins->handle) {
             dlclose (plugins->handle);
         }
+        free (plugins->filepath);
         free (plugins);
         plugins = next;
     }
@@ -1482,6 +1487,17 @@ plug_get_for_id (const char *id) {
     for (int c = 0; all_plugins[c]; c++) {
         if (all_plugins[c]->id && !strcmp (id, all_plugins[c]->id)) {
             return all_plugins[c];
+        }
+    }
+    return NULL;
+}
+
+const char *
+plug_get_path_for_plugin_ptr (DB_plugin_t *plugin_ptr) {
+    plugin_t *p;
+    for (p = plugins; p; p = p->next) {
+        if (p->plugin == plugin_ptr) {
+            return p->filepath;
         }
     }
     return NULL;

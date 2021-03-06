@@ -1442,3 +1442,13 @@ on_plugin_notebook_switch_page         (GtkNotebook     *notebook,
 void
 on_plugin_conf_reset_btn_clicked       (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_copy_plugin_report_menuitem_activate
+                                        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+gboolean
+on_pref_pluginlist_button_press_event  (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);

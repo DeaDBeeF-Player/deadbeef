@@ -809,3 +809,38 @@ on_log_window_key_press_event          (GtkWidget       *widget,
     return FALSE;
 }
 
+
+void
+on_copy_plugin_report_menuitem_activate
+                                        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GString *list = g_string_sized_new (1024);
+
+    DB_plugin_t **plugins = deadbeef->plug_get_list ();
+    int i;
+    for (i = 0; plugins[i]; i++) {
+        char *path = deadbeef->plug_get_path_for_plugin_ptr (plugins[i]);
+        g_string_append_printf (list, "%s: %s (%d.%d)\n", path?path: "(builtin)", plugins[i]->name, plugins[i]->version_major, plugins[i]->version_minor);
+    }
+
+    GtkClipboard *clp = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
+    gtk_clipboard_set_text (clp, list->str, -1);
+
+}
+
+
+gboolean
+on_pref_pluginlist_button_press_event  (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    if (event->button == 3) {
+        GtkWidget *menu = create_plugin_list_popup_menu ();
+        gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, event->button, gtk_get_current_event_time());
+    }
+
+    return FALSE;
+}
+
