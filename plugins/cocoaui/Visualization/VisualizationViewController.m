@@ -29,11 +29,7 @@ static void *kHiddenOrHasHiddenAncestorContext = &kHiddenOrHasHiddenAncestorCont
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if (context == kHiddenOrHasHiddenAncestorContext) {
-        if (!self.view.window.isVisible) {
-            [self.tickTimer invalidate];
-            self.tickTimer = nil;
-        }
-        else {
+        if (self.view.window.isVisible) {
             __weak VisualizationViewController *weakSelf = self;
             if (self.tickTimer == nil) {
                 self.tickTimer = [NSTimer timerWithTimeInterval:1/30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
@@ -49,7 +45,6 @@ static void *kHiddenOrHasHiddenAncestorContext = &kHiddenOrHasHiddenAncestorCont
 
                 [[NSRunLoop currentRunLoop] addTimer:self.tickTimer forMode:NSRunLoopCommonModes];
             }
-
         }
     }
     else {
