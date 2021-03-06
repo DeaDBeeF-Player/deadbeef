@@ -82,6 +82,7 @@ ddb_tabstrip_realize (GtkWidget *widget) {
     else
     {
         gtk_widget_set_realized (widget, TRUE);
+        gtk_widget_set_can_focus (widget, TRUE);
 
         attributes.window_type = GDK_WINDOW_CHILD;
         GtkAllocation a;
@@ -96,7 +97,7 @@ ddb_tabstrip_realize (GtkWidget *widget) {
         attributes.colormap = gtk_widget_get_colormap (widget);
 #endif
         attributes.event_mask = gtk_widget_get_events (widget);
-        attributes.event_mask |= GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK;
+        attributes.event_mask |= GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_KEY_PRESS_MASK;
 
         attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL;
 #if !GTK_CHECK_VERSION(3,0,0)
@@ -208,6 +209,10 @@ void
 on_tabstrip_drag_end                   (GtkWidget       *widget,
                                         GdkDragContext  *drag_context);
 
+gboolean
+on_tabstrip_key_press_event            (GtkWidget    *widget,
+                                        GdkEventKey  *event,
+                                        gpointer     user_data);
 static int
 get_tab_under_cursor (DdbTabStrip *ts, int x);
 
@@ -246,6 +251,7 @@ ddb_tabstrip_class_init(DdbTabStripClass *class)
   widget_class->drag_end = on_tabstrip_drag_end;
   widget_class->drag_data_received = on_tabstrip_drag_data_received;
   widget_class->drag_leave = on_tabstrip_drag_leave;
+  widget_class->key_press_event = on_tabstrip_key_press_event;
 }
 
 gboolean
@@ -320,7 +326,7 @@ ddb_tabstrip_init(DdbTabStrip *tabstrip)
     tabstrip->movepos = 0;
     drawctx_init (&tabstrip->drawctx);
 #if GTK_CHECK_VERSION(3,0,0)
-    gtk_widget_set_events (GTK_WIDGET (tabstrip), gtk_widget_get_events (GTK_WIDGET (tabstrip)) | GDK_SCROLL_MASK);
+    gtk_widget_set_events (GTK_WIDGET (tabstrip), gtk_widget_get_events (GTK_WIDGET (tabstrip)) | GDK_SCROLL_MASK | GDK_KEY_PRESS_MASK);
 #endif
 }
 
@@ -774,6 +780,17 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
             bold = gtkui_tabstrip_embolden_selected;
             italic = gtkui_tabstrip_italic_selected;
         }
+        if (gtk_widget_is_focus (GTK_WIDGET (ts))) {
+#if GTK_CHECK_VERSION(3,0,0)
+            gtk_render_focus (gtk_widget_get_style_context (widget), cr, x, y - text_vert_offset, w - ( text_right_padding - 1), 22);
+#else
+            GdkColor clr;
+            gdk_gc_set_rgb_fg_color (gc, (gtkui_get_tabstrip_text_color (&clr), &clr));
+            gdk_gc_set_line_attributes (gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+            gdk_gc_set_dashes (gc, 0, (gint8[]) {1,1}, 2);
+            gdk_draw_rectangle (backbuf, gc, FALSE, x + text_left_padding, y , w - (text_left_padding + text_right_padding - 1), 22);
+#endif
+        }
         draw_text_custom (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding - 1), 0, DDB_TABSTRIP_FONT, bold, italic, tab_title);
     }
     else {
@@ -943,6 +960,9 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
     tab_clicked = get_tab_under_cursor (ts, event->x);
     if (TEST_LEFT_CLICK(event)) {
+        if (tab_clicked == deadbeef->plt_get_curr_idx ()) {
+            gtk_widget_grab_focus (widget);
+        }
         int need_arrows = tabstrip_need_arrows (ts);
         if (need_arrows) {
             GtkAllocation a;
@@ -1231,4 +1251,23 @@ on_tabstrip_drag_motion_event          (GtkWidget       *widget,
 void
 ddb_tabstrip_refresh (DdbTabStrip *ts) {
     gtk_widget_queue_draw (GTK_WIDGET (ts));
+}
+
+gboolean
+on_tabstrip_key_press_event            (GtkWidget    *widget,
+                                        GdkEventKey  *event,
+                                        gpointer     user_data)
+{
+    switch (event->keyval) {
+        case GDK_Left:
+        tabstrip_scroll_left(widget);
+        break;
+        case GDK_Right:
+        tabstrip_scroll_right(widget);
+        break;
+        case GDK_F2:
+        gtkui_rename_current_playlist ();
+        break;
+    }
+    return FALSE;
 }
