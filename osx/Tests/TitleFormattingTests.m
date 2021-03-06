@@ -2334,6 +2334,8 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "\t   hello  \t"), @"The actual output is: %s", buffer);
 }
 
+#pragma mark - Tint
+
 - (void)test_CalculateTintFromString_LeadingTint_Valid {
     char str[] = "\0331;1mhello";
 
@@ -2401,5 +2403,157 @@ static DB_output_t fake_out = {
 
     free (output);
 }
+
+#pragma mark - RGB
+
+- (void)test_CalculateRGBFromString_LeadingRGB_Valid {
+    char str[] = "\0332;20;30;40mhello";
+
+    tint_stop_t tintStops[100];
+
+    char *output;
+    unsigned count = calculate_tint_stops_from_string (str, tintStops, 100, &output);
+
+    XCTAssertEqual (count, 1);
+    XCTAssertTrue(!strcmp(output,"hello"));
+    XCTAssertEqual(tintStops[0].has_rgb, 1);
+    XCTAssertEqual(tintStops[0].r, 20);
+    XCTAssertEqual(tintStops[0].g, 30);
+    XCTAssertEqual(tintStops[0].b, 40);
+
+    free (output);
+}
+
+- (void)test_CalculateRGBFromString_Unterminated_Invalid {
+    char str[] = "\0332;20;30;40hello";
+
+    tint_stop_t tintStops[100];
+
+    char *output;
+    unsigned count = calculate_tint_stops_from_string (str, tintStops, 100, &output);
+
+    XCTAssertEqual (count, 0);
+    XCTAssertTrue(!strcmp(output,"\0332;20;30;40hello"));
+
+    free (output);
+}
+
+- (void)test_CalculateRGBFromString_Negative_Reset {
+    char str[] = "\0332;-20;30;-40mhello";
+
+    tint_stop_t tintStops[100];
+
+    char *output;
+    unsigned count = calculate_tint_stops_from_string (str, tintStops, 100, &output);
+
+    XCTAssertEqual (count, 1);
+    XCTAssertEqual(tintStops[0].has_rgb, 0);
+    XCTAssertTrue(!strcmp(output,"hello"));
+
+    free (output);
+}
+
+- (void)test_CalculateRGBFromString_LargerThan255_Clamped {
+    char str[] = "\0332;1000;30;2000mhello";
+
+    tint_stop_t tintStops[100];
+
+    char *output;
+    unsigned count = calculate_tint_stops_from_string (str, tintStops, 100, &output);
+
+    XCTAssertEqual (count, 1);
+    XCTAssertTrue(!strcmp(output,"hello"));
+    XCTAssertEqual(tintStops[0].has_rgb, 1);
+    XCTAssertEqual(tintStops[0].r, 255);
+    XCTAssertEqual(tintStops[0].g, 30);
+    XCTAssertEqual(tintStops[0].b, 255);
+
+    free (output);
+}
+
+- (void)test_CalculateRGBFromString_TrailingRGB_Valid {
+    char str[] = "hello\0332;20;30;40m";
+
+    tint_stop_t tintStops[100];
+
+    char *output;
+    unsigned count = calculate_tint_stops_from_string (str, tintStops, 100, &output);
+
+    XCTAssertEqual (count, 1);
+    XCTAssertTrue(!strcmp(output,"hello"));
+    XCTAssertEqual(tintStops[0].has_rgb, 1);
+    XCTAssertEqual(tintStops[0].r, 20);
+    XCTAssertEqual(tintStops[0].g, 30);
+    XCTAssertEqual(tintStops[0].b, 40);
+
+    free (output);
+}
+
+- (void)test_CalculateRGBFromString_MultipleRGBLeadingTrailing_Valid {
+    char str[] = "\0332;20;30;40mhello\0332;50;60;70m";
+
+    tint_stop_t tintStops[100];
+
+    char *output;
+    unsigned count = calculate_tint_stops_from_string (str, tintStops, 100, &output);
+
+    XCTAssertEqual (count, 2);
+    XCTAssertTrue(!strcmp(output,"hello"));
+    XCTAssertEqual(tintStops[0].has_rgb, 1);
+    XCTAssertEqual(tintStops[0].r, 20);
+    XCTAssertEqual(tintStops[0].g, 30);
+    XCTAssertEqual(tintStops[0].b, 40);
+    XCTAssertEqual(tintStops[1].has_rgb, 1);
+    XCTAssertEqual(tintStops[1].r, 50);
+    XCTAssertEqual(tintStops[1].g, 60);
+    XCTAssertEqual(tintStops[1].b, 70);
+
+    free (output);
+}
+
+- (void)test_CalculateRGBFromString_MultipleRGBMiddle_Valid {
+    char str[] = "Leading\0332;20;30;40mMiddle\0332;50;60;70mTrailing";
+
+    tint_stop_t tintStops[100];
+
+    char *output;
+    unsigned count = calculate_tint_stops_from_string (str, tintStops, 100, &output);
+
+    XCTAssertEqual (count, 2);
+    XCTAssertTrue(!strcmp(output,"LeadingMiddleTrailing"));
+    XCTAssertEqual(tintStops[0].has_rgb, 1);
+    XCTAssertEqual(tintStops[0].r, 20);
+    XCTAssertEqual(tintStops[0].g, 30);
+    XCTAssertEqual(tintStops[0].b, 40);
+    XCTAssertEqual(tintStops[1].has_rgb, 1);
+    XCTAssertEqual(tintStops[1].r, 50);
+    XCTAssertEqual(tintStops[1].g, 60);
+    XCTAssertEqual(tintStops[1].b, 70);
+
+    free (output);
+}
+
+#pragma mark - Tint + RGB
+
+- (void)test_CalculateRGBFromString_TintWithRGB_Valid {
+    char str[] = "\0331;-3m\0332;20;30;40mHello";
+
+    tint_stop_t tintStops[100];
+
+    char *output;
+    unsigned count = calculate_tint_stops_from_string (str, tintStops, 100, &output);
+
+    XCTAssertEqual (count, 2);
+    XCTAssertTrue(!strcmp(output,"Hello"));
+    XCTAssertEqual(tintStops[0].has_rgb, 0);
+    XCTAssertEqual(tintStops[0].tint, -3);
+    XCTAssertEqual(tintStops[1].has_rgb, 1);
+    XCTAssertEqual(tintStops[1].r, 20);
+    XCTAssertEqual(tintStops[1].g, 30);
+    XCTAssertEqual(tintStops[1].b, 40);
+
+    free (output);
+}
+
 
 @end

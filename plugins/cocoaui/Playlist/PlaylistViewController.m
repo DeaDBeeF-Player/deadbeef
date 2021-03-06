@@ -690,18 +690,24 @@ extern DB_functions_t *deadbeef;
     // add attributes
     for (NSUInteger i = 0; i < numTintStops; i++) {
         int index0 = tintStops[i].index;
-        int tint = tintStops[i].tint;
         NSUInteger len = str.length - index0;
+
+        NSColor *finalColor = foregroundColor;
+        if (tintStops[i].has_rgb) {
+            finalColor = [NSColor colorWithRed:tintStops[i].r/255.0 green:tintStops[i].g/255.0 blue:tintStops[i].b/255.0 alpha:1];
+        }
+
+        int tint = tintStops[i].tint;
 
         CGFloat blend = 1.f + 0.1 * tint;
         if (blend < 0) {
             blend = 0;
         }
 
-        NSColor *tinted = [backgroundColor blendedColorWithFraction:blend ofColor:foregroundColor];
+        finalColor = [backgroundColor blendedColorWithFraction:blend ofColor:finalColor];
 
         [str addAttributes:@{
-            NSForegroundColorAttributeName:tinted
+            NSForegroundColorAttributeName:finalColor
         } range:NSMakeRange(index0, len)];
     }
 

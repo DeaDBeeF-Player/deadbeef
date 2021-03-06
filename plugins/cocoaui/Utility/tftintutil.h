@@ -3,7 +3,13 @@
 
 typedef struct {
     int tint;
+
     int index;
+
+    uint8_t r, g, b;
+
+    unsigned has_rgb: 1;
+    unsigned reset_rgb : 1;
 } tint_stop_t;
 
 unsigned
