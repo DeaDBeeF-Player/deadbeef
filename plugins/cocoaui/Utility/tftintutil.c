@@ -43,8 +43,8 @@ get_tint_from_string(const char *string, size_t len, int *tint) {
 }
 
 unsigned
-calculate_tint_ranges_from_string (const char *inputString, int *tintRanges, unsigned maxRanges, char** plainString) {
-    unsigned numTintRanges = 0;
+calculate_tint_stops_from_string (const char *inputString, tint_stop_t *tintStops, unsigned maxStops, char** plainString) {
+    unsigned numTintStops = 0;
 
     const char *p = inputString;
     char *out = calloc (strlen(inputString) + 1, 1);
@@ -59,10 +59,11 @@ calculate_tint_ranges_from_string (const char *inputString, int *tintRanges, uns
         size_t len = get_tint_from_string(p, remaining, &tint);
 
         if (len != 0) {
-            if (numTintRanges < maxRanges) {
+            if (numTintStops < maxStops) {
                 currentTint += tint;
-                tintRanges[numTintRanges++] = currentTint;
-                tintRanges[numTintRanges++] = index;
+                tintStops[numTintStops].tint = currentTint;
+                tintStops[numTintStops].index = index;
+                numTintStops += 1;
             }
             p += len;
             remaining -= len;
@@ -79,5 +80,5 @@ calculate_tint_ranges_from_string (const char *inputString, int *tintRanges, uns
         index++;
     }
     *out = 0;
-    return numTintRanges;
+    return numTintStops;
 }

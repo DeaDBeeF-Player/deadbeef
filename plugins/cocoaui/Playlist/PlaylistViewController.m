@@ -678,19 +678,19 @@ extern DB_functions_t *deadbeef;
 }
 
 - (NSMutableAttributedString *)stringWithTintAttributesFromString:(const char *)inputString initialAttributes:(NSDictionary *)attributes foregroundColor:(NSColor *)foregroundColor backgroundColor:(NSColor *)backgroundColor {
-    const int maxTintRanges = 100;
-    int tintRanges[maxTintRanges];
-    NSUInteger numTintRanges;
+    const int maxTintStops = 100;
+    tint_stop_t tintStops[maxTintStops];
+    NSUInteger numTintStops;
     char * plainString;
 
-    numTintRanges = calculate_tint_ranges_from_string (inputString, tintRanges, maxTintRanges, &plainString);
+    numTintStops = calculate_tint_stops_from_string (inputString, tintStops, maxTintStops, &plainString);
 
     NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithUTF8String:plainString] attributes:attributes];
 
     // add attributes
-    for (NSUInteger i = 0; i < numTintRanges/2; i++) {
-        int index0 = tintRanges[i*2+1];
-        int tint = tintRanges[i*2+0];
+    for (NSUInteger i = 0; i < numTintStops; i++) {
+        int index0 = tintStops[i].index;
+        int tint = tintStops[i].tint;
         NSUInteger len = str.length - index0;
 
         CGFloat blend = 1.f + 0.1 * tint;
@@ -790,9 +790,15 @@ extern DB_functions_t *deadbeef;
 
         if (text[0]) {
             NSDictionary *attributes = sel?self.cellSelectedTextAttrsDictionary:self.cellTextAttrsDictionary;
-            NSColor *foreground = attributes[NSForegroundColorAttributeName];
+            NSAttributedString *attrString;
+            if (ctx.dimmed) {
+                NSColor *foreground = attributes[NSForegroundColorAttributeName];
 
-            NSMutableAttributedString *attrString = [self stringWithTintAttributesFromString:text initialAttributes:attributes                                                     foregroundColor:foreground backgroundColor:background];
+                attrString = [self stringWithTintAttributesFromString:text initialAttributes:attributes                                                     foregroundColor:foreground backgroundColor:background];
+            }
+            else {
+                attrString = [[NSAttributedString alloc] initWithString:[NSString stringWithUTF8String:text] attributes:attributes];
+            }
             [attrString drawInRect:rect];
         }
 

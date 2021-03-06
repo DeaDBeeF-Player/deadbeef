@@ -2337,15 +2337,15 @@ static DB_output_t fake_out = {
 - (void)test_CalculateTintFromString_LeadingTint_Valid {
     char str[] = "\0331;1mhello";
 
-    int tintRanges[100];
+    tint_stop_t tintStops[100];
 
     char *output;
-    unsigned count = calculate_tint_ranges_from_string (str, tintRanges, 100, &output);
+    unsigned count = calculate_tint_stops_from_string (str, tintStops, 100, &output);
 
-    XCTAssertEqual (count, 2);
+    XCTAssertEqual (count, 1);
     XCTAssertTrue(!strcmp(output,"hello"));
-    XCTAssertEqual(tintRanges[0], 1);
-    XCTAssertEqual(tintRanges[1], 0);
+    XCTAssertEqual(tintStops[0].tint, 1);
+    XCTAssertEqual(tintStops[0].index, 0);
 
     free (output);
 }
@@ -2353,15 +2353,15 @@ static DB_output_t fake_out = {
 - (void)test_CalculateTintFromString_TrailingTint_Valid {
     char str[] = "hello\0331;1m";
 
-    int tintRanges[100];
+    tint_stop_t tintStops[100];
 
     char *output;
-    unsigned count = calculate_tint_ranges_from_string (str, tintRanges, 100, &output);
+    unsigned count = calculate_tint_stops_from_string (str, tintStops, 100, &output);
 
-    XCTAssertEqual (count, 2);
+    XCTAssertEqual (count, 1);
     XCTAssertTrue(!strcmp(output,"hello"));
-    XCTAssertEqual(tintRanges[0], 1);
-    XCTAssertEqual(tintRanges[1], 5);
+    XCTAssertEqual(tintStops[0].tint, 1);
+    XCTAssertEqual(tintStops[0].index, 5);
 
     free (output);
 }
@@ -2369,17 +2369,17 @@ static DB_output_t fake_out = {
 - (void)test_CalculateTintFromString_MultipleTintLeadingTrailing_Valid {
     char str[] = "\0331;-1mhello\0331;1m";
 
-    int tintRanges[100];
+    tint_stop_t tintStops[100];
 
     char *output;
-    unsigned count = calculate_tint_ranges_from_string (str, tintRanges, 100, &output);
+    unsigned count = calculate_tint_stops_from_string (str, tintStops, 100, &output);
 
-    XCTAssertEqual (count, 4);
+    XCTAssertEqual (count, 2);
     XCTAssertTrue(!strcmp(output,"hello"));
-    XCTAssertEqual(tintRanges[0], -1);
-    XCTAssertEqual(tintRanges[1], 0);
-    XCTAssertEqual(tintRanges[2], 0);
-    XCTAssertEqual(tintRanges[3], 5);
+    XCTAssertEqual(tintStops[0].tint, -1);
+    XCTAssertEqual(tintStops[0].index, 0);
+    XCTAssertEqual(tintStops[1].tint, 0);
+    XCTAssertEqual(tintStops[1].index, 5);
 
     free (output);
 }
@@ -2387,17 +2387,17 @@ static DB_output_t fake_out = {
 - (void)test_CalculateTintFromString_MultipleTintMiddle_Valid {
     char str[] = "Leading\0331;-5mMiddle\0331;5mTrailing";
 
-    int tintRanges[100];
+    tint_stop_t tintStops[100];
 
     char *output;
-    unsigned count = calculate_tint_ranges_from_string (str, tintRanges, 100, &output);
+    unsigned count = calculate_tint_stops_from_string (str, tintStops, 100, &output);
 
-    XCTAssertEqual (count, 4);
+    XCTAssertEqual (count, 2);
     XCTAssertTrue(!strcmp(output,"LeadingMiddleTrailing"));
-    XCTAssertEqual(tintRanges[0], -5);
-    XCTAssertEqual(tintRanges[1], 7);
-    XCTAssertEqual(tintRanges[2], 0);
-    XCTAssertEqual(tintRanges[3], 13);
+    XCTAssertEqual(tintStops[0].tint, -5);
+    XCTAssertEqual(tintStops[0].index, 7);
+    XCTAssertEqual(tintStops[1].tint, 0);
+    XCTAssertEqual(tintStops[1].index, 13);
 
     free (output);
 }
