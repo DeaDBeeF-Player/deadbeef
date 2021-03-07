@@ -1280,8 +1280,6 @@ artwork_plugin_stop (void) {
     queue_clear ();
     artwork_abort_http_request ();
 
-    dispatch_suspend(fetch_queue);
-
     dispatch_release(fetch_queue);
     dispatch_release(sync_queue);
 
