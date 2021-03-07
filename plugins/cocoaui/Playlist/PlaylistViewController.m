@@ -121,6 +121,8 @@ extern DB_functions_t *deadbeef;
             int idx = [self insertColumn:self.menuColumn];
             if (idx >= 0) {
                 [self updateColumn:idx];
+                PlaylistView *listview = (PlaylistView *)self.view;
+                [listview.contentView reloadData];
             }
         }
     }];
@@ -147,6 +149,8 @@ extern DB_functions_t *deadbeef;
             int idx = self.menuColumn;
             if (idx >= 0) {
                 [self updateColumn:idx];
+                PlaylistView *listview = (PlaylistView *)self.view;
+                [listview.contentView reloadData];
             }
         }
     }];
@@ -157,6 +161,8 @@ extern DB_functions_t *deadbeef;
     if (self.menuColumn >= 0) {
         [self removeColumnAtIndex:self.menuColumn];
         [self columnsChanged];
+        PlaylistView *listview = (PlaylistView *)self.view;
+        [listview.contentView reloadData];
     }
 }
 
