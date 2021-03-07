@@ -260,7 +260,7 @@ on_songstarted (ddb_event_track_t *ev) {
             deadbeef->pl_item_ref (track);
             if (terminate) {
                 deadbeef->pl_item_unref (track);
-                return;
+                return 0;
             }
             dispatch_async (queue, ^{
                 show_notification (track);
