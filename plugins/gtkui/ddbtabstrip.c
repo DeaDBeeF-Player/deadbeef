@@ -782,13 +782,12 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
         }
         if (gtk_widget_is_focus (GTK_WIDGET (ts))) {
 #if GTK_CHECK_VERSION(3,0,0)
-            gtk_render_focus (gtk_widget_get_style_context (widget), cr, x, y - text_vert_offset, w - ( text_right_padding - 1), 22);
+            gtk_render_focus (gtk_widget_get_style_context (widget), cr, x, y, w - ( text_right_padding - 1), 24);
 #else
-            GdkColor clr;
             gdk_gc_set_rgb_fg_color (gc, (gtkui_get_tabstrip_text_color (&clr), &clr));
             gdk_gc_set_line_attributes (gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
             gdk_gc_set_dashes (gc, 0, (gint8[]) {1,1}, 2);
-            gdk_draw_rectangle (backbuf, gc, FALSE, x + text_left_padding, y , w - (text_left_padding + text_right_padding - 1), 22);
+            gdk_draw_rectangle (backbuf, gc, FALSE, x, y , w - (text_right_padding - 1), 23);
 #endif
         }
         draw_text_custom (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding - 1), 0, DDB_TABSTRIP_FONT, bold, italic, tab_title);
