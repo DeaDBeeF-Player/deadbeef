@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) NSImage *coverImage;
 
+@property (nonatomic) BOOL coverObtained;
+
 @end
 
 NS_ASSUME_NONNULL_END
