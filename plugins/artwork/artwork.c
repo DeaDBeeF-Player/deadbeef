@@ -26,38 +26,38 @@
 #ifdef HAVE_CONFIG_H
     #include "../../config.h"
 #endif
+#include <ctype.h>
+#include <dirent.h>
+#include <dispatch/dispatch.h>
+#include <errno.h>
+#include <fnmatch.h>
+#include <libgen.h>
+#include <limits.h>
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <libgen.h>
-#include <dirent.h>
-#include <unistd.h>
-#include <fnmatch.h>
-#include <pthread.h>
-#include <errno.h>
-#include <sys/stat.h>
-#ifdef __linux__
-    #include <sys/prctl.h>
-#endif
 #if HAVE_SYS_CDEFS_H
-    #include <sys/cdefs.h>
+#include <sys/cdefs.h>
 #endif
-#include <limits.h>
+#ifdef __linux__
+#include <sys/prctl.h>
+#endif
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include "../../deadbeef.h"
-#include "artwork.h"
-#include "artwork_internal.h"
-#include "lastfm.h"
-#include "musicbrainz.h"
-#include "albumartorg.h"
-#include "wos.h"
-#include "cache.h"
-#include "mp4tagutil.h"
-#include "../../strdupa.h"
 #include "artwork_jpeg.h"
 #include "artwork_flac.h"
+#include "albumartorg.h"
+#include "artwork.h"
+#include "artwork_internal.h"
+#include "cache.h"
+#include "lastfm.h"
+#include "musicbrainz.h"
+#include "mp4tagutil.h"
+#include "../../strdupa.h"
+#include "wos.h"
 
-#include <dispatch/dispatch.h>
 
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin.plugin, 0, __VA_ARGS__); }
 
