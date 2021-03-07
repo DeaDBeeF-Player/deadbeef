@@ -323,7 +323,6 @@ notify_start (void) {
 int
 notify_stop (void) {
     terminate = 1;
-    dispatch_suspend (queue);
     dispatch_release (queue);
     queue = NULL;
 
