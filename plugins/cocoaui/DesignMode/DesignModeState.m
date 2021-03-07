@@ -16,7 +16,8 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
 @property (nonatomic,readwrite) id<WidgetProtocol> rootWidget;
-
+@property (nonatomic) BOOL isLoading;
+@property (nonatomic,copy) NSDictionary *previousLayout;
 
 @end
 
@@ -44,6 +45,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)load {
+    self.isLoading = YES;
     self.rootWidget = [self.deps.factory createWidgetWithType:@"Placeholder"];
 
     char *layout = malloc (100000);
@@ -73,10 +75,23 @@ extern DB_functions_t *deadbeef;
     }
 
     [self.rootWidget appendChild:layoutWidget];
+
+    self.previousLayout = json;
+
+    self.isLoading = NO;
 }
 
 - (void)layoutDidChange {
+    if (self.isLoading) {
+        return;
+    }
     NSDictionary *dict = [self.deps.serializer saveWidgetToDictionary:self.rootWidget.childWidgets.firstObject];
+
+    if ([dict isEqual:self.previousLayout]) {
+        return;
+    }
+
+    self.previousLayout = dict;
 
     NSError *err;
     NSData *dt = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&err];
