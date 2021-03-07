@@ -400,16 +400,19 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
                     }
                     else {
                         view.imageView.image = nil;
-                        ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
-                        query->_size = sizeof (ddb_cover_query_t);
-                        MediaLibraryCoverQueryData *data = [MediaLibraryCoverQueryData new];
-                        data.item = mlItem;
-                        data.viewController = self;
-                        query->user_data = (__bridge_retained void *)(data);
-                        query->flags = DDB_ARTWORK_FLAG_NO_CACHE|DDB_ARTWORK_FLAG_LOAD_BLOB;
-                        query->track = it;
-                        deadbeef->pl_item_ref (it);
-                        self.artworkPlugin->cover_get(query, cover_get_callback);
+                        if (!mlItem.coverObtained) {
+                            ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
+                            query->_size = sizeof (ddb_cover_query_t);
+                            MediaLibraryCoverQueryData *data = [MediaLibraryCoverQueryData new];
+                            data.item = mlItem;
+                            data.viewController = self;
+                            query->user_data = (__bridge_retained void *)(data);
+                            query->flags = DDB_ARTWORK_FLAG_NO_CACHE|DDB_ARTWORK_FLAG_LOAD_BLOB;
+                            query->track = it;
+                            deadbeef->pl_item_ref (it);
+                            self.artworkPlugin->cover_get(query, cover_get_callback);
+                            mlItem.coverObtained = YES;
+                        }
                     }
                 }
             }
