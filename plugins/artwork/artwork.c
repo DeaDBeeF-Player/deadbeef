@@ -1066,7 +1066,9 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
 
         // cache cover info
         if (!cached_cover) {
-            cover_update_cache (cover);
+            dispatch_sync (sync_queue, ^{
+                cover_update_cache (cover);
+            });
         }
 
         /* Make all the callbacks (and free the chain), with data if a file was written */
@@ -1278,9 +1280,7 @@ artwork_plugin_stop (void) {
     queue_clear ();
     artwork_abort_http_request ();
 
-    dispatch_sync(fetch_queue, ^{
-        // wait for the queue to finish all jobs
-    });
+    dispatch_suspend(fetch_queue);
 
     dispatch_release(fetch_queue);
     dispatch_release(sync_queue);
@@ -1319,7 +1319,7 @@ artwork_plugin_start (void)
 #endif
 
     terminate = 0;
-    fetch_queue = dispatch_queue_create("ArtworkFetchQueue", NULL);
+    fetch_queue = dispatch_queue_create("ArtworkFetchQueue", DISPATCH_QUEUE_CONCURRENT);
     sync_queue = dispatch_queue_create("ArtworkSyncQueue", NULL);
 
     start_cache_cleaner ();
