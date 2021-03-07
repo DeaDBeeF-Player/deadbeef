@@ -222,6 +222,8 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
         return;
     }
 
+    self.splitView.delegate = nil;
+
     id holdingModeObject = self.deserializedSettings[@"holdingMode"];
     if ([holdingModeObject isKindOfClass:NSNumber.class]) {
         NSNumber *holdingModeNumber = holdingModeObject;
@@ -248,6 +250,8 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     }
 
     self.deserializedSettings = nil;
+
+    self.splitView.delegate = self;
 }
 
 - (NSArray<NSMenuItem *> *)menuItems {
