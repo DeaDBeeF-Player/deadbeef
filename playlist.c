@@ -1126,6 +1126,13 @@ static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
 
 static void
 _get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *vfs, const char *dirname, const char *d_name) {
+    char resolved_dirname[PATH_MAX];
+
+    char *res = realpath (dirname, resolved_dirname);
+    if (res) {
+        dirname = resolved_dirname;
+    }
+
     if (!vfs) {
         // prevent double-slashes
         char *stripped_dirname = strdupa (dirname);
