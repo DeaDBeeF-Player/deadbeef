@@ -284,23 +284,28 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 
 - (void)holdFirstAction:(NSMenuItem *)sender {
     self.holdingMode = HoldingModeFirst;
+    [self.deps.state layoutDidChange];
 }
 
 - (void)holdSecondAction:(NSMenuItem *)sender {
     self.holdingMode = HoldingModeSecond;
+    [self.deps.state layoutDidChange];
 }
 
 - (void)holdProportionalAction:(NSMenuItem *)sender {
     self.holdingMode = HoldingModeProportional;
+    [self.deps.state layoutDidChange];
 }
 
 - (void)lockAction:(NSMenuItem *)sender {
     self.isLocked = !self.isLocked;
+    [self.deps.state layoutDidChange];
 }
 
 - (void)thickDividerToggleAction:(NSMenuItem *)sender {
     BOOL isThick = (self.splitView.dividerStyle != NSSplitViewDividerStyleThick);
     self.splitView.dividerStyle = isThick ? NSSplitViewDividerStyleThick : NSSplitViewDividerStyleThin;
+    [self.deps.state layoutDidChange];
 }
 
 #pragma mark - NSSplitViewDelegate
