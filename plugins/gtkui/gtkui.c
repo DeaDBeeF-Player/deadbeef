@@ -578,6 +578,7 @@ gtkui_get_curr_playlist_mod (void) {
 int
 gtkui_rename_playlist_at_index (int plt_idx) {
     GtkWidget *dlg = create_entrydialog ();
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_title (GTK_WINDOW (dlg), _("Rename Playlist"));
     GtkWidget *e;
