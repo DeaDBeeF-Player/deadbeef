@@ -35,6 +35,7 @@ static DB_artwork_plugin_t *artwork_plugin;
 static dispatch_queue_t queue;
 static DB_playItem_t *last_track = NULL;
 static time_t request_timer = 0;
+static int terminate;
 
 static dbus_uint32_t replaces_id = 0;
 
@@ -257,6 +258,10 @@ on_songstarted (ddb_event_track_t *ev) {
         DB_playItem_t *track = ev->track;
         if (track) {
             deadbeef->pl_item_ref (track);
+            if (terminate) {
+                deadbeef->pl_item_unref (track);
+                return;
+            }
             dispatch_async (queue, ^{
                 show_notification (track);
                 deadbeef->pl_item_unref (track);
@@ -317,7 +322,9 @@ notify_start (void) {
 
 int
 notify_stop (void) {
-    dispatch_release(queue);
+    terminate = 1;
+    dispatch_suspend (queue);
+    dispatch_release (queue);
     queue = NULL;
 
     deadbeef->pl_lock ();
