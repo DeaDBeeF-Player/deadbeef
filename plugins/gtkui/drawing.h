@@ -191,13 +191,13 @@ void
 gtkui_get_listview_cursor_color (GdkColor *clr);
 
 const char*
-gtkui_get_listview_text_font ();
+gtkui_get_listview_text_font (void);
 
 const char *
-gtkui_get_listview_group_text_font ();
+gtkui_get_listview_group_text_font (void);
 
 const char *
-gtkui_get_listview_column_text_font ();
+gtkui_get_listview_column_text_font (void);
 
 void
 gtkui_init_theme_colors (void);
@@ -212,6 +212,6 @@ int
 gtkui_override_tabstrip_colors (void);
 
 const char *
-gtkui_get_tabstrip_text_font  ();
+gtkui_get_tabstrip_text_font  (void);
 
 #endif // __DRAWING_H

@@ -223,7 +223,7 @@ struct _DdbListviewClass {
 
 GType ddb_listview_get_type(void);
 
-GtkWidget * ddb_listview_new();
+GtkWidget * ddb_listview_new(void);
 
 void
 ddb_listview_set_binding (DdbListview *listview, DdbListviewBinding *binding);

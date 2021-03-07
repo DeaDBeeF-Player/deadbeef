@@ -274,7 +274,7 @@ cache_qsort(const void *a, const void *b)
 static int
 timeval_older(const struct timeval *tm1, const struct timeval *tm2)
 {
-    return tm1->tv_sec < tm2->tv_sec || tm1->tv_sec == tm2->tv_sec && tm1->tv_usec < tm2->tv_usec;
+    return tm1->tv_sec < tm2->tv_sec || (tm1->tv_sec == tm2->tv_sec && tm1->tv_usec < tm2->tv_usec);
 }
 
 static void
@@ -427,7 +427,7 @@ get_pixbuf (cache_type_t cache_type, const char *fname, int width, int height) {
     const size_t cache_size = cache_elements(cache_type);
     for (size_t i = 0; i < cache_size && cache[i].pixbuf; i++) {
         /* Look for a cached pixbuf that matches the filename and size required */
-        if (!strcmp(cache[i].fname, fname) && (cache[i].width == -1 || cache[i].width == width && cache[i].height == height)) {
+        if (!strcmp(cache[i].fname, fname) && (cache[i].width == -1 || (cache[i].width == width && cache[i].height == height))) {
             struct stat stat_buf;
             /* Keep the pixbuf for now if the disk file is missing */
             if (stat(fname, &stat_buf) || stat_buf.st_mtime == cache[i].file_time) {

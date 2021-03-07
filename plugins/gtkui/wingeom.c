@@ -32,12 +32,12 @@
 
 void get_deadbeef_monitor_rect (GdkRectangle *rect)
 {
-    GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (mainwin));
 #if GTK_CHECK_VERSION(3,22,0)
     GdkDisplay *display = gdk_window_get_display (gtk_widget_get_window (mainwin));
     GdkMonitor *monitor = gdk_display_get_monitor_at_window (display, gtk_widget_get_window (mainwin));
     gdk_monitor_get_geometry (monitor, rect);
 #else
+    GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (mainwin));
     gint monitor = gdk_screen_get_monitor_at_window (screen, gtk_widget_get_window (mainwin));
     gdk_screen_get_monitor_geometry (screen, monitor, rect);
 #endif

@@ -369,7 +369,7 @@ shellexecui_action_gtk (void *data)
 }
 
 static int
-shellexecui_action_callback(DB_plugin_action_t *action, int ctx) {
+shellexecui_action_callback(DB_plugin_action_t *action, ddb_action_context_t ctx) {
     g_idle_add (shellexecui_action_gtk, NULL);
     return 0;
 }

@@ -106,12 +106,12 @@ clipboard_get_clipboard_data (GtkClipboard *clip, GtkSelectionData *sel, guint i
         g_string_append (uri_list, clip_ctx->cut ? "cut\n" : "copy\n");
         clipboard_write_gnome_uri_list (clip_ctx, uri_list);
         buf = (guchar *)uri_list->str;
-        buf_len = uri_list->len + 1;
+        buf_len = (gint)(uri_list->len + 1);
     }
     else /* text/uri-list format */ {
         clipboard_write_uri_list (clip_ctx, uri_list);
         buf = (guchar *)uri_list->str;
-        buf_len = uri_list->len + 1;
+        buf_len = (gint)(uri_list->len + 1);
     }
     gtk_selection_data_set (sel, target, 8, buf, buf_len);
     g_string_free (uri_list, TRUE);
@@ -250,7 +250,6 @@ clipboard_delete_selected_tracks (ddb_playlist_t *plt)
         return;
     }
 
-    int total_count = deadbeef->plt_get_item_count (plt, PL_MAIN);
     int cursor = deadbeef->plt_delete_selected (plt);
 
     deadbeef->plt_set_cursor (plt, PL_MAIN, cursor);

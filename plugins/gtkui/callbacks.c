@@ -820,7 +820,7 @@ on_copy_plugin_report_menuitem_activate
     DB_plugin_t **plugins = deadbeef->plug_get_list ();
     int i;
     for (i = 0; plugins[i]; i++) {
-        char *path = deadbeef->plug_get_path_for_plugin_ptr (plugins[i]);
+        const char *path = deadbeef->plug_get_path_for_plugin_ptr (plugins[i]);
         g_string_append_printf (list, "%s: %s (%d.%d)\n", path?path: "(builtin)", plugins[i]->name, plugins[i]->version_major, plugins[i]->version_minor);
     }
 

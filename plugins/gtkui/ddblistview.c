@@ -310,7 +310,6 @@ list_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode,
 static void
 ddb_listview_class_init(DdbListviewClass *class)
 {
-    GtkTableClass *widget_class = (GtkTableClass *) class;
     GObjectClass *object_class = (GObjectClass *) class;
     object_class->finalize = ddb_listview_destroy;
 }
@@ -610,7 +609,6 @@ _update_fwidth (DdbListview *ps, int prev_width) {
             set_fwidth (ps, a.width);
         }
         else if (a.width != prev_width) {
-            int prev_scrollpos = ps->scrollpos;
             ddb_listview_update_scroll_ref_point (ps);
             if (ps->fwidth == -1) {
                 set_fwidth (ps, prev_width);
@@ -803,12 +801,6 @@ ddb_listview_list_pickpoint_subgroup (DdbListview *listview, DdbListviewGroup *g
 // item idx may be set to -1 if group title was hit
 static void
 ddb_listview_list_pickpoint (DdbListview *listview, int x, int y, DdbListviewPickContext *pick_ctx) {
-    int idx = 0;
-    int grp_y = 0;
-    const int ry = y - listview->scrollpos;
-    const int grp_title_height = listview->grouptitle_height;
-    const int rowheight = listview->rowheight;
-
     if (y < 0) {
         // area above playlist
         pick_ctx->type = PICK_ABOVE_PLAYLIST;
@@ -1458,7 +1450,7 @@ ddb_listview_list_drag_data_get              (GtkWidget       *widget,
                 it = next_playitem(ps, it);
             }
             GdkAtom target = gtk_selection_data_get_target (selection_data);
-            gtk_selection_data_set (selection_data, target, sizeof (uint32_t) * 8, (gchar *)ptr, (nsel+1) * sizeof (uint32_t));
+            gtk_selection_data_set (selection_data, target, sizeof (uint32_t) * 8, (const guchar *)ptr, (nsel+1) * sizeof (uint32_t));
             free (ptr);
         }
         break;
@@ -1978,8 +1970,8 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
 
     int cursor = ps->binding->cursor ();
     if (type == GDK_2BUTTON_PRESS
-            && fabs(ps->lastpos[0] - ex) < 3
-            && fabs(ps->lastpos[1] - ey) < 3) {
+            && abs(ps->lastpos[0] - ex) < 3
+            && abs(ps->lastpos[1] - ey) < 3) {
         // doubleclick - play this item
         if (pick_ctx.item_idx != -1
             && !ddb_listview_is_empty_region (&pick_ctx)
@@ -2889,7 +2881,7 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
             int right = left + c->width;
             DdbListviewColumn *cc = ps->columns;
             for (int xx = 0, ii = 0; cc; xx += cc->width, cc = cc->next, ii++) {
-                if (ps->header_dragging > ii && left < xx + cc->width/2 || ps->header_dragging < ii && right > xx + cc->width/2) {
+                if ((ps->header_dragging > ii && left < xx + cc->width/2) || (ps->header_dragging < ii && right > xx + cc->width/2)) {
                     ddb_listview_column_move (ps, c, ii);
                     ps->header_dragging = ii;
                     gtk_widget_queue_draw (ps->list);
