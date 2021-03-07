@@ -1259,14 +1259,19 @@ on_tabstrip_key_press_event            (GtkWidget    *widget,
                                         gpointer     user_data)
 {
     switch (event->keyval) {
-        case GDK_Left:
-        tabstrip_scroll_left(widget);
+    case GDK_Left:
+        tabstrip_scroll_left(DDB_TABSTRIP(widget));
         break;
-        case GDK_Right:
-        tabstrip_scroll_right(widget);
+    case GDK_Right:
+        tabstrip_scroll_right(DDB_TABSTRIP(widget));
         break;
-        case GDK_F2:
-        gtkui_rename_current_playlist ();
+    case GDK_F2:
+        {
+            int idx = deadbeef->plt_get_curr_idx ();
+            if (idx != -1) {
+                gtkui_rename_playlist_at_index(idx);
+            }
+        }
         break;
     }
     return FALSE;

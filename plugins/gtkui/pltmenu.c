@@ -59,7 +59,7 @@ on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     if (pltmenu_idx != -1) {
-        gtkui_rename_current_playlist(pltmenu_idx);
+        gtkui_rename_playlist_at_index(pltmenu_idx);
     }
 }
 

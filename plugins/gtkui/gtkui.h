@@ -135,7 +135,7 @@ void
 gtkui_playlist_set_curr (int playlist);
 
 int
-gtkui_rename_current_playlist(int plt_idx);
+gtkui_rename_playlist_at_index(int plt_idx);
 
 int
 gtkui_get_curr_playlist_mod (void);

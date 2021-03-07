@@ -174,7 +174,7 @@ int
 action_rename_current_playlist_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     int idx = deadbeef->plt_get_curr_idx ();
     if (idx != -1) {
-        gtkui_rename_current_playlist(idx);
+        gtkui_rename_playlist_at_index(idx);
     }
     return 0;
 }
