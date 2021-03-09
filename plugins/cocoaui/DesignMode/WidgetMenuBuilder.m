@@ -118,19 +118,19 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
     [menu addItem: itemDelete];
 
     NSMenuItem *itemCut = [[NSMenuItem alloc] initWithTitle:@"Cut" action:@selector(cutWidget:) keyEquivalent:@""];
-    itemDelete.representedObject = sharedMenuItemData;
+    itemCut.representedObject = sharedMenuItemData;
     itemCut.enabled = !isPlaceholder;
     itemCut.target = self;
     [menu addItem: itemCut];
 
     NSMenuItem *itemCopy = [[NSMenuItem alloc] initWithTitle:@"Copy" action:@selector(copyWidget:) keyEquivalent:@""];
-    itemDelete.representedObject = sharedMenuItemData;
-    itemCut.enabled = !isPlaceholder;
+    itemCopy.representedObject = sharedMenuItemData;
+    itemCopy.enabled = !isPlaceholder;
     itemCopy.target = self;
     [menu addItem: itemCopy];
 
     NSMenuItem *itemPaste = [[NSMenuItem alloc] initWithTitle:@"Paste" action:@selector(pasteWidget:) keyEquivalent:@""];
-    itemDelete.representedObject = sharedMenuItemData;
+    itemPaste.representedObject = sharedMenuItemData;
     itemPaste.target = self;
 
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
