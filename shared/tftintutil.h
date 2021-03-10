@@ -1,6 +1,8 @@
 #ifndef __TFTINTUTIL_H
 #define __TFTINTUTIL_H
 
+#include <stdint.h>
+
 typedef struct {
     int tint;
 
