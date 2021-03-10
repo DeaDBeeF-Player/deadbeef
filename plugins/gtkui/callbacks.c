@@ -829,18 +829,3 @@ on_copy_plugin_report_menuitem_activate
 
 }
 
-
-gboolean
-on_pref_pluginlist_button_press_event  (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
-{
-    if (event->button == 3) {
-        GtkWidget *menu = create_plugin_list_popup_menu ();
-        gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, event->button, gtk_get_current_event_time());
-    }
-
-    return FALSE;
-}
-

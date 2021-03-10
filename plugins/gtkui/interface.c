@@ -5542,6 +5542,7 @@ create_plugin_list_popup_menu (void)
   GtkWidget *plugin_list_popup_menu;
   GtkWidget *copy_plugin_report_menuitem;
   GtkWidget *image688;
+  GtkWidget *only_show_plugins_with_configuration1;
 
   plugin_list_popup_menu = gtk_menu_new ();
 
@@ -5553,14 +5554,22 @@ create_plugin_list_popup_menu (void)
   gtk_widget_show (image688);
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (copy_plugin_report_menuitem), image688);
 
+  only_show_plugins_with_configuration1 = gtk_check_menu_item_new_with_mnemonic (_("Only show plugins with configuration"));
+  gtk_widget_show (only_show_plugins_with_configuration1);
+  gtk_container_add (GTK_CONTAINER (plugin_list_popup_menu), only_show_plugins_with_configuration1);
+
   g_signal_connect ((gpointer) copy_plugin_report_menuitem, "activate",
                     G_CALLBACK (on_copy_plugin_report_menuitem_activate),
+                    NULL);
+  g_signal_connect ((gpointer) only_show_plugins_with_configuration1, "activate",
+                    G_CALLBACK (on_only_show_plugins_with_configuration1_activate),
                     NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (plugin_list_popup_menu, plugin_list_popup_menu, "plugin_list_popup_menu");
   GLADE_HOOKUP_OBJECT (plugin_list_popup_menu, copy_plugin_report_menuitem, "copy_plugin_report_menuitem");
   GLADE_HOOKUP_OBJECT (plugin_list_popup_menu, image688, "image688");
+  GLADE_HOOKUP_OBJECT (plugin_list_popup_menu, only_show_plugins_with_configuration1, "only_show_plugins_with_configuration1");
 
   return plugin_list_popup_menu;
 }

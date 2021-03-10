@@ -46,6 +46,17 @@ static GtkWidget *prefwin;
 
 static GSList *output_device_names;
 
+enum {
+    PLUGIN_LIST_COL_TITLE,
+    PLUGIN_LIST_COL_IDX,
+    PLUGIN_LIST_COL_BUILTIN,
+    PLUGIN_LIST_COL_HASCONFIG
+};
+
+static GtkListStore *pluginliststore;
+static GtkTreeModelFilter *pluginliststore_filtered;
+static GtkMenu *pluginlistmenu;
+
 static const char *
 _get_output_soundcard_conf_name (void) {
     static char name[100];
@@ -445,19 +456,43 @@ gtkui_run_preferences_dlg (void) {
         gtk_list_store_set (store, &it, 0, plugins[i]->inactive ? FALSE : TRUE, 1, plugins[i]->name, 2, plugins[i]->nostop ? FALSE : TRUE, -1);
     }
 #else
-    GtkListStore *store = gtk_list_store_new (1, G_TYPE_STRING);
-    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Title"), rend_text, "text", 0, NULL);
-    gtk_tree_view_append_column (tree, col2);
+    // Order is: title, index, builtin, hasconfig
+    GtkListStore *store = gtk_list_store_new (4, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_BOOLEAN);
+    pluginliststore = store;
+    GtkTreeViewColumn *col = gtk_tree_view_column_new_with_attributes (_("Title"), rend_text, "text", PLUGIN_LIST_COL_TITLE, "weight", PLUGIN_LIST_COL_BUILTIN, NULL);
+    gtk_tree_view_append_column (tree, col);
+    gtk_tree_view_set_headers_visible (tree, FALSE);
+    g_object_set (G_OBJECT (rend_text), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+
     DB_plugin_t **plugins = deadbeef->plug_get_list ();
     int i;
+    const char *plugindir = deadbeef->get_system_dir (DDB_SYS_DIR_PLUGIN);
     for (i = 0; plugins[i]; i++) {
         GtkTreeIter it;
+        const char *pluginpath;
         gtk_list_store_append (store, &it);
-        gtk_list_store_set (store, &it, 0, plugins[i]->name, -1);
+        pluginpath = deadbeef->plug_get_path_for_plugin_ptr (plugins[i]);
+        if (!pluginpath) {
+            pluginpath = plugindir;
+        }
+        gtk_list_store_set (store, &it,
+            PLUGIN_LIST_COL_TITLE, plugins[i]->name,
+            PLUGIN_LIST_COL_IDX, i,
+            PLUGIN_LIST_COL_BUILTIN, strstr(pluginpath, plugindir) ? PANGO_WEIGHT_NORMAL : PANGO_WEIGHT_BOLD,
+            PLUGIN_LIST_COL_HASCONFIG, plugins[i]->configdialog ? 1 : 0,
+            -1);
     }
 #endif
+    gtk_tree_sortable_set_sort_column_id (store, PLUGIN_LIST_COL_TITLE, GTK_SORT_ASCENDING);
+
+    // Create a filtered model, then we switch between the two models to show/hide configurable plugins
+    pluginliststore_filtered = gtk_tree_model_filter_new (GTK_TREE_MODEL (store), NULL);
+    gtk_tree_model_filter_set_visible_column (pluginliststore_filtered, PLUGIN_LIST_COL_HASCONFIG);
+
     gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
 
+    pluginlistmenu = create_plugin_list_popup_menu ();
+    gtk_menu_attach_to_widget (GTK_MENU (pluginlistmenu), GTK_WIDGET (tree), NULL);
 
     // We do this here so one can leave the tabs visible in the Glade designer for convenience.
     GtkNotebook *notebook = GTK_NOTEBOOK (lookup_widget (w, "plugin_notebook"));
@@ -491,10 +526,44 @@ gtkui_run_preferences_dlg (void) {
             break;
         }
     }
+
+    g_object_unref (pluginliststore_filtered);
+    pluginliststore_filtered = NULL;
+    g_object_unref (pluginliststore);
+    pluginliststore = NULL;
+
     dsp_setup_free ();
     gtk_widget_destroy (prefwin);
     deadbeef->conf_save ();
     prefwin = NULL;
+}
+
+void
+on_only_show_plugins_with_configuration1_activate
+                                        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *w = prefwin;
+    GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
+    int active = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem));
+    if (active) {
+       gtk_tree_view_set_model (tree, GTK_TREE_MODEL (pluginliststore_filtered));
+    } else {
+       gtk_tree_view_set_model (tree, GTK_TREE_MODEL (pluginliststore));
+    }
+}
+
+gboolean
+on_pref_pluginlist_button_press_event  (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    if (event->button == 3) {
+        gtk_menu_popup (GTK_MENU (pluginlistmenu), NULL, NULL, NULL, NULL, event->button, gtk_get_current_event_time());
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 void
@@ -667,10 +736,19 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
         // reset
         return;
     }
-    int *indices = gtk_tree_path_get_indices (path);
+    GtkTreeIter iter;
+    GtkTreeModel *model;
+    int idx;
+    model = gtk_tree_view_get_model (treeview);
+    if (!gtk_tree_model_get_iter (model, &iter, path)) {
+        return;
+    }
+
+    gtk_tree_model_get (model, &iter, PLUGIN_LIST_COL_IDX, &idx, -1);
+    
     DB_plugin_t **plugins = deadbeef->plug_get_list ();
-    DB_plugin_t *p = plugins[*indices];
-    g_free (indices);
+    DB_plugin_t *p = plugins[idx];
+    
     assert (p);
     GtkWidget *w = prefwin;
     assert (w);
