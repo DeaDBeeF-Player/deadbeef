@@ -40,6 +40,7 @@
 #include "plcommon.h"
 #include "support.h"
 #include "trkproperties.h"
+#include "../../shared/tftintutil.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -468,60 +469,51 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it,
 
 
 PangoAttrList *
-convert_escapetext_to_pango_attrlist (char *text, float *fg, float *bg, float *highlight) {
+convert_escapetext_to_pango_attrlist (char *text, char **plainString, float *fg, float *bg, float *highlight) {
+    const int maxTintStops = 100;
+    tint_stop_t tintStops[maxTintStops];
+    int numTintStops;
+
+    numTintStops = calculate_tint_stops_from_string (text, tintStops, maxTintStops, plainString);
+
+    guint strLength = strlen(*plainString);
+
     PangoAttrList *lst = pango_attr_list_new ();
-    char *pin = text;
-    int x,y,a=0;
     PangoAttribute *attr = NULL;
-    int index=0;
-    int rgb[3] = {0,};
-    while (*pin) {
-        int pos=0;
-        if ( sscanf(pin, "\033%d;%dm%n", &x, &y, &pos) == 2 && x == DDB_TF_ESC_DIM) {
 
-            memmove(pin, pin+pos, strlen(pin+pos)+1);
-            a += y;
+    // add attributes
+    for (guint i = 0; i < numTintStops; i++) {
+        int index0 = tintStops[i].index;
+        guint len = strLength - index0;
 
-            if (attr && a == 0) {
-                attr->end_index = index+1;
-                pango_attr_list_insert (lst, attr);
-            } else if (a != 0 && y >= 1 && y <= 3) {
-                const float blend[] = {.50f, .25f, 0};
-                int r = CHANNEL_BLENDR(highlight[0], fg[0], blend[y-1]) * 65535;
-                int g = CHANNEL_BLENDR(highlight[1], fg[1], blend[y-1]) * 65535;
-                int b = CHANNEL_BLENDR(highlight[2], fg[2], blend[y-1]) * 65535;
-
-                attr = pango_attr_foreground_new (r, g, b);
-                attr->start_index = index;
-            } else if (a != 0 && y >= -3 && y <= -1) {
-                const float blend[] = {.30f, .60f, .80f};
-                int r = CHANNEL_BLENDR(fg[0], bg[0], blend[-y-1]) * 65535;
-                int g = CHANNEL_BLENDR(fg[1], bg[1], blend[-y-1]) * 65535;
-                int b = CHANNEL_BLENDR(fg[2], bg[2], blend[-y-1]) * 65535;
-
-                attr = pango_attr_foreground_new (r, g, b);
-                attr->start_index = index;
-            }
-        } else if (sscanf(pin, "\033%d;%d;%d;%dm%n", &x, &rgb[0], &rgb[1], &rgb[2], &pos) == 4 && x == DDB_TF_ESC_RGB) {
-            memmove(pin, pin+pos, strlen(pin+pos)+1);
-
-            if (rgb[0] == -1) {
-                attr = pango_attr_foreground_new (fg[0] * 65535, fg[1] * 65535, fg[2] * 65535);
-            } else {
-                attr = pango_attr_foreground_new (rgb[0] * 65535 / 255, rgb[1] * 65535 / 255, rgb[2] * 65535 / 255);
-            }
-            attr->start_index = index;
-            #if PANGO_VERSION_CHECK (1,24,0)
-            attr->end_index = PANGO_ATTR_INDEX_TO_TEXT_END;
-            #else
-            attr->end_index = G_MAXUINT;
-            #endif
-            pango_attr_list_insert (lst, attr);
-        } else {
-            pin++;
-            index++;
+        GdkColor finalColor = { .red = fg[0]*65535, .green = fg[1]*65535, .blue = fg[2]*65535};
+        if (tintStops[i].has_rgb) {
+            finalColor.red = tintStops[i].r * 65535/255.;
+            finalColor.green = tintStops[i].g * 65535/255.;
+            finalColor.blue = tintStops[i].b * 65535/255.;
         }
+
+        int tint = tintStops[i].tint;
+
+        if (tint >= 1 && tint <= 3) {
+            const float blend[] = {.50f, .25f, 0};
+            finalColor.red   = CHANNEL_BLENDR(highlight[0], finalColor.red/65535., blend[tint-1]) * 65535;
+            finalColor.green = CHANNEL_BLENDR(highlight[1], finalColor.green/65535., blend[tint-1]) * 65535;
+            finalColor.blue  = CHANNEL_BLENDR(highlight[2], finalColor.blue/65535., blend[tint-1]) * 65535;
+
+        } else if (tint >= -3 && tint <= -1) {
+            const float blend[] = {.30f, .60f, .80f};
+            finalColor.red   = CHANNEL_BLENDR(finalColor.red/65535., bg[0], blend[-tint-1]) * 65535;
+            finalColor.green = CHANNEL_BLENDR(finalColor.green/65535., bg[1], blend[-tint-1]) * 65535;
+            finalColor.blue  = CHANNEL_BLENDR(finalColor.blue/65535., bg[2], blend[-tint-1]) * 65535;
+        }
+
+        attr = pango_attr_foreground_new (finalColor.red, finalColor.green, finalColor.blue);
+        attr->start_index = index0;
+        attr->end_index = index0 + len;
+        pango_attr_list_insert (lst, attr);
     }
+
     return lst;
 }
 
@@ -692,10 +684,12 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
         float bg[] = {background_color->red/65535., background_color->green/65535., background_color->blue/65535.};
 
         if (is_dimmed) {
-            PangoAttrList *attrs = convert_escapetext_to_pango_attrlist(text, fg, bg, highlight);
+            char *plainString;
+            PangoAttrList *attrs = convert_escapetext_to_pango_attrlist(text, &plainString, fg, bg, highlight);
             pango_layout_set_attributes (listview->listctx.pangolayout, attrs);
             pango_attr_list_unref(attrs);
-            draw_text_custom (&listview->listctx, x + 5, y + 3, width-10, align, DDB_LIST_FONT, bold, italic, text);
+            draw_text_custom (&listview->listctx, x + 5, y + 3, width-10, align, DDB_LIST_FONT, bold, italic, plainString);
+            free (plainString);
             pango_layout_set_attributes (listview->listctx.pangolayout, NULL);
         } else {
             draw_text_custom (&listview->listctx, x + 5, y + 3, width-10, align, DDB_LIST_FONT, bold, italic, text);
@@ -2144,11 +2138,13 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
                 float bg[] = {background_color->red/65535., background_color->green/65535., background_color->blue/65535.};
 
                 PangoAttrList *attrs;
+                char *plainString;
 
-                attrs = convert_escapetext_to_pango_attrlist(str, rgb, bg, highlight);
+                attrs = convert_escapetext_to_pango_attrlist(str, &plainString, rgb, bg, highlight);
                 pango_layout_set_attributes (listview->grpctx.pangolayout, attrs);
                 pango_attr_list_unref(attrs);
-                draw_text_custom (&listview->grpctx, x + 5, y + height/2 - draw_get_listview_rowheight (&listview->grpctx)/2 + 3, text_width, 0, DDB_GROUP_FONT, 0, 0, str);
+                draw_text_custom (&listview->grpctx, x + 5, y + height/2 - draw_get_listview_rowheight (&listview->grpctx)/2 + 3, text_width, 0, DDB_GROUP_FONT, 0, 0, plainString);
+                free (plainString);
                 pango_layout_set_attributes (listview->grpctx.pangolayout, NULL);
             } else {
                 draw_text_custom (&listview->grpctx, x + 5, y + height/2 - draw_get_listview_rowheight (&listview->grpctx)/2 + 3, text_width, 0, DDB_GROUP_FONT, 0, 0, str);
