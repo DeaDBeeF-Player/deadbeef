@@ -11080,6 +11080,16 @@ Descending</property>
       </child>
     </widget>
   </child>
+
+  <child>
+    <widget class="GtkCheckMenuItem" id="only_show_plugins_with_configuration1">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Only show plugins with configuration</property>
+      <property name="use_underline">True</property>
+      <property name="active">False</property>
+      <signal name="activate" handler="on_only_show_plugins_with_configuration1_activate" last_modification_time="Wed, 10 Mar 2021 09:56:50 GMT"/>
+    </widget>
+  </child>
 </widget>
 
 </glade-interface>
