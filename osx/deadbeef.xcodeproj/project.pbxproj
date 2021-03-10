@@ -8356,8 +8356,6 @@
 				2DDF87EC2402845C00CA8E91 /* NSMenu+ActionItems.m */,
 				2DDF87D724027DA500CA8E91 /* PluginActionMenuItem.h */,
 				2DDF87D824027DA500CA8E91 /* PluginActionMenuItem.m */,
-				2DBCB71F240ADCC10012F178 /* tftintutil.h */,
-				2DBCB720240ADCC10012F178 /* tftintutil.c */,
 				2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */,
 				2D3992E025C2038700CFA936 /* WeakRefWrapper.m */,
 			);
@@ -9369,6 +9367,8 @@
 				2D6965381D74338A00EB99D8 /* mp4tagutil.h */,
 				2D93DC521AADFEEF003D2D8D /* pluginsettings.c */,
 				2D93DC531AADFEEF003D2D8D /* pluginsettings.h */,
+				2DBCB720240ADCC10012F178 /* tftintutil.c */,
+				2DBCB71F240ADCC10012F178 /* tftintutil.h */,
 				2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */,
 				2D92D0551CD513AA00CD53F0 /* trkproperties_shared.h */,
 			);
