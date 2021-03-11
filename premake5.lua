@@ -172,6 +172,17 @@ project "libdeletefromdisk"
   filter "platforms:not Windows"
     buildoptions {"-fPIC"}
 
+project "libtftintutil"
+  kind "StaticLib"
+  language "C"
+  targetdir "."
+  targetprefix ""
+  files {
+    "shared/tftintutil.c"
+  }
+  filter "platforms:not Windows"
+    buildoptions {"-fPIC"}
+
 -- DeaDBeeF
 
 project "deadbeef"
@@ -809,7 +820,7 @@ project "ddb_gui_GTK2"
     "plugins/libparser"
   }
   pkgconfig ("gtk+-2.0 jansson")
-  links {"libdeletefromdisk"}
+  links {"libdeletefromdisk", "libtftintutil"}
   defines ("GLIB_DISABLE_DEPRECATION_WARNINGS")
 end
 
@@ -833,7 +844,7 @@ project "ddb_gui_GTK3"
   }
 
   pkgconfig("gtk+-3.0 jansson")
-  links {"libdeletefromdisk"}
+  links {"libdeletefromdisk", "libtftintutil"}
   defines ("GLIB_DISABLE_DEPRECATION_WARNINGS")
 end
 
