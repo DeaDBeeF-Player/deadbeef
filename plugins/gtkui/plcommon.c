@@ -567,8 +567,11 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
                 .iter = iter,
                 .id = info->id,
                 .idx = idx,
-                .flags = DDB_TF_CONTEXT_HAS_ID | DDB_TF_CONTEXT_HAS_INDEX | DDB_TF_CONTEXT_TEXT_DIM,
+                .flags = DDB_TF_CONTEXT_HAS_ID | DDB_TF_CONTEXT_HAS_INDEX,
             };
+            if (!deadbeef->pl_is_selected (it)) {
+                ctx.flags |= DDB_TF_CONTEXT_TEXT_DIM;
+            }
             deadbeef->tf_eval (&ctx, info->bytecode, text, sizeof (text));
             is_dimmed = ctx.dimmed;
             if (ctx.update > 0) {
