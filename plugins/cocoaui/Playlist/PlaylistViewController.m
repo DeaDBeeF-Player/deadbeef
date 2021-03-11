@@ -687,6 +687,8 @@ extern DB_functions_t *deadbeef;
 
     NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithUTF8String:plainString] attributes:attributes];
 
+    NSColor *highlightColor = NSColor.alternateSelectedControlColor;
+
     // add attributes
     for (NSUInteger i = 0; i < numTintStops; i++) {
         int index0 = tintStops[i].index;
@@ -698,13 +700,18 @@ extern DB_functions_t *deadbeef;
         }
 
         int tint = tintStops[i].tint;
-
-        CGFloat blend = 1.f + 0.1 * tint;
-        if (blend < 0) {
-            blend = 0;
+        if (tint < 0) {
+            tint = MAX(tint, -3);
+            const CGFloat factors[] = {.30f, .60f, .80f};
+            CGFloat blend = factors[3+tint];
+            finalColor = [backgroundColor blendedColorWithFraction:blend ofColor:finalColor];
         }
-
-        finalColor = [backgroundColor blendedColorWithFraction:blend ofColor:finalColor];
+        else if (tint > 0) {
+            tint = MIN (tint, 3);
+            const CGFloat factors[] = {0, .25f, .50f};
+            CGFloat blend = factors[tint-1];
+            finalColor = [finalColor blendedColorWithFraction:blend ofColor:highlightColor];
+        }
 
         [str addAttributes:@{
             NSForegroundColorAttributeName:finalColor
@@ -785,8 +792,11 @@ extern DB_functions_t *deadbeef;
             .plt = deadbeef->plt_get_curr (),
             .id = self.columns[col].type,
             .idx = idx,
-            .flags = DDB_TF_CONTEXT_HAS_ID|DDB_TF_CONTEXT_HAS_INDEX|DDB_TF_CONTEXT_TEXT_DIM,
+            .flags = DDB_TF_CONTEXT_HAS_ID|DDB_TF_CONTEXT_HAS_INDEX,
         };
+        if (!sel) {
+            ctx.flags |= DDB_TF_CONTEXT_TEXT_DIM;
+        }
 
         char text[1024] = "";
         deadbeef->tf_eval (&ctx, self.columns[col].bytecode, text, sizeof (text));
