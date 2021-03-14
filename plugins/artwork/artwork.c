@@ -982,9 +982,7 @@ cover_cache_find (ddb_cover_info_t * cover) {
 
         ddb_cover_info_t *cached_cover = cover_cache[i];
 
-        // FIXME: this would only find cached covers by album/artist.
-        // Need special handling for filepath ones.
-        if (!strcmp (cover->album, cached_cover->album) && !strcmp(cover->artist, cached_cover->artist)) {
+        if (!strcmp (cover->filepath, cached_cover->filepath)) {
             return cached_cover;
         }
     }
