@@ -710,6 +710,9 @@ dts_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     return after;
 error:
     if (state) {
+        if (state->state) {
+            dca_free(state->state);
+        }
         free (state);
     }
     if (fp) {
