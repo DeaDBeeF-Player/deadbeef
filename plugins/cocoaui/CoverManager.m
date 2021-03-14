@@ -31,10 +31,18 @@ static CoverManager *g_DefaultCoverManager = nil;
 
 #define CACHE_SIZE 20
 
-@interface CoverManager() {
-    NSMutableDictionary *_cachedCovers[CACHE_SIZE];
-}
+@interface CachedCover : NSObject
+@property (nullable, nonatomic) NSImage *image;
+@end
 
+@implementation CachedCover
+@end
+
+#pragma mark -
+
+@interface CoverManager()
+
+@property (nonatomic) NSCache<NSString *,CachedCover *> *cachedCovers;
 @property (nonatomic) ddb_artwork_plugin_t *artwork_plugin;
 @property (nonatomic,readwrite) NSImage *defaultCover;
 @property (nonatomic) char *name_tf;
@@ -46,9 +54,6 @@ static CoverManager *g_DefaultCoverManager = nil;
 - (void)dealloc {
     deadbeef->tf_free (_name_tf);
     _name_tf = NULL;
-    for (int i = 0; i < CACHE_SIZE; i++) {
-        _cachedCovers[i] = nil;
-    }
 }
 
 + (CoverManager *)defaultCoverManager {
@@ -62,6 +67,9 @@ static CoverManager *g_DefaultCoverManager = nil;
     self = [super init];
     _artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
     _defaultCover = [NSImage imageNamed:@"noartwork.png"];
+
+    _cachedCovers = [NSCache new];
+    _cachedCovers.countLimit = CACHE_SIZE;
 
     // Each file may contain its own album art, therefore we can't really cache them easily by album/artist/title.
     // This however would duplicate the same image, for every track in every album, if the custom grouping is set per file.
@@ -125,51 +133,10 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
 - (void)addCoverForTrack:(ddb_playItem_t *)track withImage:(NSImage *)img {
     NSString *hash = [self hashForTrack:track];
 
-    NSNumber *t = [NSNumber numberWithLong:time (NULL)];
-    int i_min = 0;
-    BOOL foundEmpty = NO;
-    for (int i = 0; i < CACHE_SIZE; i++) {
-        NSMutableDictionary *d = _cachedCovers[i];
-        if (!d && !foundEmpty) {
-            i_min = i;
-            foundEmpty = YES;
-            continue;
-        }
+    CachedCover *cover = [CachedCover new];
+    cover.image = img;
 
-        // same image
-        if ([d[@"hash"] isEqualToString:hash]) {
-            i_min = i;
-            break;
-        }
-
-        // lowest timestamp
-        NSNumber *ts = d[@"ts"];
-        if (!foundEmpty && [ts isLessThan:t]) {
-            i_min = i;
-        }
-    }
-
-//    NSLog (@"+ %@", hash);
-    NSMutableDictionary *d = [[NSMutableDictionary alloc] initWithObjectsAndKeys:hash, @"hash", t, @"ts", nil];
-    if (img != nil) {
-        d[@"img"] = img;
-    }
-    _cachedCovers[i_min] = d;
-}
-
-- (void)dumpCache {
-    for (int i = 0; i < CACHE_SIZE; i++) {
-        NSLog(@"%@", _cachedCovers[i]);
-    }
-}
-
-- (NSDictionary *)findInCache:(NSString *)key {
-    for (int i = 0; i < CACHE_SIZE; i++) {
-        if ([_cachedCovers[i][@"hash"] isEqualToString:key]) {
-            return _cachedCovers[i];
-        }
-    }
-    return nil;
+    [self.cachedCovers setObject:cover forKey:hash];
 }
 
 - (NSImage *)getCoverForTrack:(DB_playItem_t *)track withCallbackWhenReady:(void (*) (NSImage *img, void *user_data))callback withUserDataForCallback:(void *)user_data {
@@ -179,16 +146,10 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
     }
 
     NSString *hash = [self hashForTrack:track];
-    for (int i = 0; i < CACHE_SIZE; i++) {
-        NSMutableDictionary *d = _cachedCovers[i];
-        if (d) {
-            NSString *hashVal = d[@"hash"];
-            if ([hashVal isEqualToString:hash]) {
-                d[@"ts"] = [NSNumber numberWithLong:time (NULL)];
-                callback (nil, user_data);
-                return d[@"img"];
-            }
-        }
+
+    CachedCover *cover = [self.cachedCovers objectForKey:hash];
+    if (cover != nil) {
+        return cover.image;
     }
 
     ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
