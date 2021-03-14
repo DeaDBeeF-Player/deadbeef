@@ -846,6 +846,13 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     cover_avail_info_t *info = user_data;
     PlaylistViewController *ctl = (__bridge_transfer PlaylistViewController *)info->ctl;
     PlaylistView *lv = (PlaylistView *)ctl.view;
+
+    DdbListviewGroup_t *grp = [lv.contentView groupForIndex:info->grp];
+    if (grp != nil) {
+        grp->cachedImage = (__bridge_retained void *)img;
+        grp->hasCachedImage = YES;
+    }
+
     [lv.contentView drawGroup:info->grp];
     free (info);
 }
@@ -865,11 +872,6 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     cover_avail_info_t *inf = calloc (sizeof (cover_avail_info_t), 1);
     inf->ctl = (__bridge_retained void *)self;
     inf->grp = groupIndex;
-    NSImage *image = [[CoverManager defaultCoverManager] getCoverForTrack:it withCallbackWhenReady:coverAvailCallback withUserDataForCallback:inf];
-    if (!image) {
-        // FIXME: the problem here is that if the cover is not found (yet) -- it won't draw anything, but the rect is already invalidated, and will come out as background color
-        return;
-    }
 
     int art_width = width - ART_PADDING_HORZ * 2;
     int art_height = height - ART_PADDING_VERT * 2 - lv.contentView.grouptitle_height;
@@ -877,6 +879,21 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     if (art_width < 8 || art_height < 8 || !it) {
         return;
     }
+
+    NSImage *image;
+
+    if (grp->hasCachedImage) {
+        image = (__bridge NSImage *)grp->cachedImage;
+    }
+    else {
+        image = [[CoverManager defaultCoverManager] getCoverForTrack:it withCallbackWhenReady:coverAvailCallback withUserDataForCallback:inf];
+    }
+    if (!image) {
+        // FIXME: the problem here is that if the cover is not found (yet) -- it won't draw anything, but the rect is already invalidated, and will come out as background color
+        return;
+    }
+
+    NSRect drawRect;
 
     int art_x = x + ART_PADDING_HORZ;
     CGFloat min_y = (pinned ? viewportY+lv.contentView.grouptitle_height : y) + ART_PADDING_VERT;
@@ -887,11 +904,10 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
         ypos = max_y - art_width - ART_PADDING_VERT;
     }
 
-    NSSize size = [image size];
+    NSSize size = image.size;
     if (size.width >= size.height) {
         CGFloat h = size.height / (size.width / art_width);
-//        ypos += art_height/2 - h/2;
-        [image drawInRect:NSMakeRect(art_x, ypos, art_width, h)];
+        drawRect = NSMakeRect(art_x, ypos, art_width, h);
     }
     else {
         plt_col_info_t *c = &self.columns[(int)col];
@@ -903,9 +919,31 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
         else if (c->alignment == 2) {
             art_x += art_width-w;
         }
-        [image drawInRect:NSMakeRect(art_x, ypos, w, h)];
+        drawRect = NSMakeRect(art_x, ypos, w, h);
     }
+
+    if (!grp->cachedImage) {
+        grp->cachedImage = (__bridge_retained void *)image;//[self createCachedImage:image size:drawRect.size];
+        grp->hasCachedImage = YES;
+    }
+
+    [image drawInRect:drawRect];
 }
+
+// FIXME: unused, but can be used for creating smaller image cache and save some RAM
+//- (NSImage *)createCachedImage:(NSImage *)image size:(NSSize)size {
+//    NSSize originalSize = image.size;
+//    if (originalSize.width <= size.width && originalSize.height <= size.height) {
+//        return image;
+//    }
+//    NSImage *cachedImage = [[NSImage alloc] initWithSize:size];
+//    [cachedImage lockFocus];
+//    cachedImage.size = size;
+//    NSGraphicsContext.currentContext.imageInterpolation = NSImageInterpolationHigh;
+//    [image drawInRect:NSMakeRect(0, 0, size.width, size.height) fromRect:CGRectMake(0, 0, originalSize.width, originalSize.height) operation:NSCompositingOperationCopy fraction:1.0];
+//    [cachedImage unlockFocus];
+//    return cachedImage;
+//}
 
 - (void)selectionChanged:(DdbListviewRow_t)row {
     PlaylistView *lv = (PlaylistView *)self.view;
