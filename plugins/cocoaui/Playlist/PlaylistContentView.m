@@ -1110,6 +1110,8 @@ static int grouptitleheight = 22;
             [self.dataModel unrefRow:_groups->head];
         }
         DdbListviewGroup_t *next = _groups->next;
+        __unused NSImage *img = (__bridge_transfer NSImage *)_groups->cachedImage;
+        _groups->cachedImage = NULL;
         free (_groups);
         _groups = next;
     }
@@ -1271,7 +1273,9 @@ static int grouptitleheight = 22;
             NSScrollView *sv = self.enclosingScrollView;
             NSRect vis = [sv documentVisibleRect];
             NSRect rect = NSMakeRect(vis.origin.x, y, vis.size.width, grp->height);
-            self.needsDisplayInRect = rect;
+            if (NSIntersectsRect(vis, rect)) {
+                self.needsDisplayInRect = rect;
+            }
             break;
         }
         i++;
@@ -1408,6 +1412,19 @@ static int grouptitleheight = 22;
         groupIndex++;
     }
     return 0;
+}
+
+- (DdbListviewGroup_t *)groupForIndex:(NSInteger)index {
+    DdbListviewGroup_t *grp = self.groups;
+    int groupIndex = 0;
+    while (grp) {
+        if (groupIndex == index) {
+            return grp;
+        }
+        grp = grp->next;
+        groupIndex++;
+    }
+    return nil;
 }
 
 @end
