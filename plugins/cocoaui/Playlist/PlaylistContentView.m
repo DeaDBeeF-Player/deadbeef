@@ -1273,9 +1273,7 @@ static int grouptitleheight = 22;
             NSScrollView *sv = self.enclosingScrollView;
             NSRect vis = [sv documentVisibleRect];
             NSRect rect = NSMakeRect(vis.origin.x, y, vis.size.width, grp->height);
-            if (NSIntersectsRect(vis, rect)) {
-                self.needsDisplayInRect = rect;
-            }
+            self.needsDisplayInRect = rect;
             break;
         }
         i++;
