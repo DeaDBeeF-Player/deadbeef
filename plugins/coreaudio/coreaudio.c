@@ -253,6 +253,7 @@ ca_get_deviceid (void) {
 
         char buf[100];
         CFStringGetCString(deviceName, buf, sizeof(buf), kCFStringEncodingUTF8);
+        CFRelease(deviceName);
         if (!strcmp (buf, newdev)) {
             device_id = audioDevices[i];
             break;
