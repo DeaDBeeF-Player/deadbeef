@@ -31,6 +31,9 @@
 @property (nonatomic,readonly) id<DdbListviewDelegate> delegate;
 @property (nonatomic,readonly) id<DdbListviewDataModelProtocol> dataModel;
 
+@property (nonatomic) CGFloat scrollGroupOffset;
+@property (nonatomic) NSInteger scrollFirstGroup;
+
 @end
 
 @implementation PlaylistHeaderView
@@ -231,6 +234,7 @@
     self.dragging = [delegate invalidColumn];
     self.sizing = [delegate invalidColumn];
     self.prepare = YES;
+    self.scrollFirstGroup = -1;
 
     int idx = 0;
     for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
@@ -251,6 +255,12 @@
             self.sizing = col;
             self.dragPt = convPt;
             self.origColWidth = [delegate columnWidth:col];
+
+            // find the first visible group and offset,
+            // to preserve visual focus on the first visible row
+            self.scrollGroupOffset = 0;
+            self.scrollFirstGroup = [self.listview.contentView firstVisibleGroupAndOffset:&_scrollGroupOffset];
+
             break;
         }
     }
@@ -269,6 +279,7 @@
     }
     self.dragging = [delegate invalidColumn];
     self.sizing = [delegate invalidColumn];
+    self.scrollFirstGroup = -1;
     self.listview.contentView.needsDisplay = YES;
 }
 
@@ -291,14 +302,21 @@
             CGFloat scroll = -rc.origin.x;
 
             [delegate setColumnWidth:w forColumn:self.sizing];
-            [self.listview.contentView updateContentFrame];
-            self.listview.contentView.needsDisplay = YES;
             self.needsDisplay = YES;
 
             rc = [sv documentVisibleRect];
             scroll += rc.origin.x;
             self.dragPt = NSMakePoint(self.dragPt.x - scroll, self.dragPt.y);
+
             [self.listview.contentView reloadData];
+            [self.listview.contentView updateContentFrame];
+            [self.listview.contentView layoutSubtreeIfNeeded];
+
+            if (self.scrollFirstGroup != -1) {
+                // find the new position of the group, and scroll to it with offset
+                CGFloat scrollPos = [self.listview.contentView groupPositionAtIndex:self.scrollFirstGroup];
+                [self.listview.contentView scrollVerticalPosition:scrollPos - self.scrollGroupOffset];
+            }
         }
     }
     else if (self.dragging != [delegate invalidColumn]) {
