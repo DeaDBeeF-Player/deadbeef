@@ -1357,5 +1357,53 @@ static int grouptitleheight = 22;
     [self updatePinnedGroup];
 }
 
+- (NSInteger)firstVisibleGroupAndOffset:(CGFloat *)offset {
+    NSRect rect = self.enclosingScrollView.documentVisibleRect;
+    DdbListviewGroup_t *grp = self.groups;
+
+    CGFloat clip_y = rect.origin.y;
+
+    int idx = 0;
+    int grp_y = 0;
+    int groupIndex = 0;
+
+    DdbListviewGroup_t *prevGrp = NULL;
+    int prevGrpY = 0;
+
+    while (grp && grp_y < clip_y) {
+        prevGrp = grp;
+        prevGrpY = grp_y;
+        grp_y += grp->height;
+        idx += grp->num_items;
+        grp = grp->next;
+        groupIndex++;
+    }
+
+    if (grp == NULL) {
+        grp = prevGrp;
+        grp_y = prevGrpY;
+        groupIndex -= 1;
+    }
+
+    *offset = grp_y - clip_y;
+
+    return grp ? groupIndex : -1;
+}
+
+- (CGFloat)groupPositionAtIndex:(NSInteger)index {
+    DdbListviewGroup_t *grp = self.groups;
+    int groupIndex = 0;
+    int grp_y = 0;
+    while (grp) {
+        if (groupIndex == index) {
+            return (CGFloat)grp_y;
+        }
+        grp_y += grp->height;
+        grp = grp->next;
+        groupIndex++;
+    }
+    return 0;
+}
+
 @end
 

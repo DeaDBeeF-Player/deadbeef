@@ -33,6 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)scrollChanged:(NSRect)visibleRect;
 - (void)updatePinnedGroup;
 
+- (NSInteger)firstVisibleGroupAndOffset:(CGFloat *)offset;
+- (CGFloat)groupPositionAtIndex:(NSInteger)index;
+
 @end
 
 
