@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DesignModeState : NSObject<DesignModeStateProtocol>
 
 @property (nonatomic,class,readonly) DesignModeState *sharedInstance;
++ (void)freeSharedInstance;
+
 @property (nonatomic) BOOL enabled;
 
 - (instancetype)init NS_UNAVAILABLE;
