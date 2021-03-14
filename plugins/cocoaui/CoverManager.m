@@ -29,7 +29,7 @@ extern DB_functions_t *deadbeef;
 
 static CoverManager *g_DefaultCoverManager = nil;
 
-#define CACHE_SIZE 20
+#define CACHE_SIZE 50
 
 @interface CachedCover : NSObject
 @property (nullable, nonatomic) NSImage *image;
