@@ -8,6 +8,7 @@
 
 #import "VisualizationViewController.h"
 
+static NSString * const kWindowIsVisibleKey = @"view.window.isVisible";
 static void *kHiddenOrHasHiddenAncestorContext = &kHiddenOrHasHiddenAncestorContext;
 
 @interface VisualizationViewController ()
@@ -19,12 +20,12 @@ static void *kHiddenOrHasHiddenAncestorContext = &kHiddenOrHasHiddenAncestorCont
 @implementation VisualizationViewController
 
 - (void)dealloc {
-    [self removeObserver:self forKeyPath:@"view.hiddenOrHasHiddenAncestor"];
+    [self removeObserver:self forKeyPath:kWindowIsVisibleKey];
     [self.tickTimer invalidate];
 }
 
 - (void)awakeFromNib {
-    [self addObserver:self forKeyPath:@"view.window.isVisible" options:NSKeyValueObservingOptionInitial context:kHiddenOrHasHiddenAncestorContext];
+    [self addObserver:self forKeyPath:kWindowIsVisibleKey options:NSKeyValueObservingOptionInitial context:kHiddenOrHasHiddenAncestorContext];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
