@@ -17,6 +17,8 @@ typedef struct DdbListviewGroup_s {
     int32_t min_height;
     int32_t num_items;
     struct DdbListviewGroup_s *next;
+    void *cachedImage; // __bridge_retained NSImage *
+    BOOL hasCachedImage;
 } DdbListviewGroup_t;
 
 @protocol DdbListviewDataModelProtocol<NSObject>

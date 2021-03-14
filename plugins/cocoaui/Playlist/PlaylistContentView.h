@@ -35,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSInteger)firstVisibleGroupAndOffset:(CGFloat *)offset;
 - (CGFloat)groupPositionAtIndex:(NSInteger)index;
+- (nullable DdbListviewGroup_t *)groupForIndex:(NSInteger)index;
 
 @end
 
