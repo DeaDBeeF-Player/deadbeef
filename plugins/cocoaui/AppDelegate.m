@@ -75,7 +75,6 @@ AppDelegate *g_appDelegate;
 @property (weak) IBOutlet NSMenuItem *designModeMenuItem;
 @property DesignModeState *designModeState;
 
-
 @end
 
 @implementation AppDelegate
@@ -278,6 +277,9 @@ main_cleanup_and_quit (void);
         [_mainWindow cleanup];
         [self.mainWindow.window close];
         self.mainWindow = nil;
+
+        self.designModeState = nil;
+        [DesignModeState freeSharedInstance];
     }
     self.mediaLibraryManager = nil;
     main_cleanup_and_quit();

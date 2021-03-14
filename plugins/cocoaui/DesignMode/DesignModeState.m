@@ -12,6 +12,8 @@
 
 extern DB_functions_t *deadbeef;
 
+static DesignModeState *_sharedInstance;
+
 @interface DesignModeState()
 
 @property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
@@ -24,13 +26,15 @@ extern DB_functions_t *deadbeef;
 @implementation DesignModeState
 
 + (DesignModeState *)sharedInstance {
-    static DesignModeState *instance;
-
-    if (instance == nil) {
-        instance = [[DesignModeState alloc] initWithDeps:DesignModeDeps.sharedInstance];
+    if (_sharedInstance == nil) {
+        _sharedInstance = [[DesignModeState alloc] initWithDeps:DesignModeDeps.sharedInstance];
     }
 
-    return instance;
+    return _sharedInstance;
+}
+
++ (void)freeSharedInstance {
+    _sharedInstance = nil;
 }
 
 - (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
