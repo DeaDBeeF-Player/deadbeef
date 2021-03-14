@@ -959,6 +959,7 @@ cover_update_cache (ddb_cover_info_t *cover) {
         emptyIdx = minTimestampIdx;
     }
     cover_cache[emptyIdx] = cover;
+    cover->timestamp = time(NULL);
     cover->refc++;
 }
 
