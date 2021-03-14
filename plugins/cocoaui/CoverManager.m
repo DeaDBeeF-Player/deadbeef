@@ -88,35 +88,37 @@ typedef struct {
 } cover_callback_info_t;
 
 static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
-    // We want to load the images in background, to keep UI responsive
-    CoverManager *cm = [CoverManager defaultCoverManager];
-    NSImage *img = nil;
-    if (!img && cover && cover->blob) {
-        NSData *data = [NSData dataWithBytesNoCopy:cover->blob + cover->blob_image_offset length:cover->blob_image_size freeWhenDone:NO];
-        img = [[NSImage alloc] initWithData:data];
-        data = nil;
-    }
-    if (!img && cover && cover->image_filename) {
-        img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->image_filename]];
-    }
-    if (!img) {
-        img = [cm defaultCover];
-    }
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (img) {
-            [cm addCoverForTrack:query->track withImage:img];
-            cover_callback_info_t *info = query->user_data;
-            info->real_callback (img, info->real_user_data);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        // We want to load the images in background, to keep UI responsive
+        CoverManager *cm = [CoverManager defaultCoverManager];
+        NSImage *img = nil;
+        if (!img && cover && cover->blob) {
+            NSData *data = [NSData dataWithBytesNoCopy:cover->blob + cover->blob_image_offset length:cover->blob_image_size freeWhenDone:NO];
+            img = [[NSImage alloc] initWithData:data];
+            data = nil;
+        }
+        if (!img && cover && cover->image_filename) {
+            img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->image_filename]];
+        }
+        if (!img) {
+            img = [cm defaultCover];
         }
 
-        deadbeef->pl_item_unref (query->track);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (img) {
+                [cm addCoverForTrack:query->track withImage:img];
+                cover_callback_info_t *info = query->user_data;
+                info->real_callback (img, info->real_user_data);
+            }
 
-        if (cover) {
-            cm->_artwork_plugin->cover_info_free (cover);
-        }
+            deadbeef->pl_item_unref (query->track);
 
-        free (query);
+            if (cover) {
+                cm->_artwork_plugin->cover_info_free (cover);
+            }
+
+            free (query);
+        });
     });
 }
 
