@@ -114,6 +114,7 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
 
     NSMenuItem *itemDelete = [[NSMenuItem alloc] initWithTitle:@"Delete" action:@selector(deleteWidget:) keyEquivalent:@""];
     itemDelete.representedObject = sharedMenuItemData;
+    itemDelete.enabled = !isPlaceholder;
     itemDelete.target = self;
     [menu addItem: itemDelete];
 
@@ -154,7 +155,6 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
         }
     }
 
-    // TODO: Widget custom menu (options)
     NSArray<NSMenuItem *> *additionalMenuItems;
     if ([widget respondsToSelector:@selector(menuItems)]) {
         additionalMenuItems = widget.menuItems;
