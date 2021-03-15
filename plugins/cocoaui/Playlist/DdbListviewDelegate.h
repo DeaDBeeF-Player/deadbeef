@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "PlaylistDataModel.h"
 
+@class PlaylistGroup;
+
 typedef intptr_t DdbListviewCol_t;
 
 @protocol DdbListviewDelegate<NSObject>
@@ -37,9 +39,9 @@ typedef intptr_t DdbListviewCol_t;
 
 - (BOOL)isAlbumArtColumn:(DdbListviewCol_t)col;
 
-- (void)drawCell:(int)rowIdx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused;
+- (void)drawCell:(NSUInteger)rowIdx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused;
 - (void)drawGroupTitle:(DdbListviewRow_t)row inRect:(NSRect)rect;
-- (void)drawAlbumArtForGroup:(DdbListviewGroup_t *)group groupIndex:(int)groupIndex inColumn:(DdbListviewCol_t)col isPinnedGroup:(BOOL)pinned nextGroupCoord:(int)grp_next_y xPos:(int)x yPos:(int)y viewportY:(CGFloat)viewportY width:(int)width height:(int)height;
+- (void)drawAlbumArtForGroup:(PlaylistGroup *)group groupIndex:(NSUInteger)groupIndex inColumn:(DdbListviewCol_t)col isPinnedGroup:(BOOL)pinned nextGroupCoord:(int)grp_next_y xPos:(int)x yPos:(int)y viewportY:(CGFloat)viewportY width:(int)width height:(int)height;
 - (void)selectionChanged:(DdbListviewRow_t)row;
 - (NSMenu *)contextMenuForEvent:(NSEvent *)event forView:(NSView *)view;
 - (void)sortColumn:(DdbListviewCol_t)column;

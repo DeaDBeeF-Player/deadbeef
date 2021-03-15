@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PinnedGroupTitleView : NSView
 
-@property (nonatomic) DdbListviewGroup_t *group;
+@property (nonatomic) PlaylistGroup *group;
 @property (nonatomic, weak) id<DdbListviewDelegate> delegate;
 
 @end
