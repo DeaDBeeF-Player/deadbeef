@@ -33,9 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)scrollChanged:(NSRect)visibleRect;
 - (void)updatePinnedGroup;
 
-- (NSInteger)firstVisibleGroupAndOffset:(CGFloat *)offset;
+- (NSInteger)getScrollFocusGroupAndOffset:(CGFloat *)offset;
 - (CGFloat)groupPositionAtIndex:(NSInteger)index;
-- (nullable DdbListviewGroup_t *)groupForIndex:(NSInteger)index;
+- (nullable PlaylistGroup *)groupForIndex:(NSInteger)index;
 
 @end
 

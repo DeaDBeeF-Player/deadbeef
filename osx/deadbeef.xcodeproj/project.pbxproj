@@ -1771,6 +1771,11 @@
 		2DA7C234251003A20080963D /* artwork_png.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA7C232251003A20080963D /* artwork_png.c */; };
 		2DA80C7426C0708200E8EC7F /* CuesheetTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7A8FA1CA493CE00318A9F /* CuesheetTests.m */; };
 		2DA84F7E24F58915003507A2 /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
+		2DA84F7F24F5892A003507A2 /* libjansson.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DA8912125FFEB9B0084860D /* PlaylistGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA8911F25FFEB9B0084860D /* PlaylistGroup.h */; };
+		2DA8912225FFEB9B0084860D /* PlaylistGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA8911F25FFEB9B0084860D /* PlaylistGroup.h */; };
+		2DA8912325FFEB9B0084860D /* PlaylistGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8912025FFEB9B0084860D /* PlaylistGroup.m */; };
+		2DA8912425FFEB9B0084860D /* PlaylistGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8912025FFEB9B0084860D /* PlaylistGroup.m */; };
 		2DA9AB4C25DC31230004593A /* xi.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA9AA4B25DC31220004593A /* xi.c */; };
 		2DA9AB4D25DC31230004593A /* sndfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA9AA4C25DC31220004593A /* sndfile.c */; };
 		2DA9AB4E25DC31230004593A /* sds.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA9AA4D25DC31220004593A /* sds.c */; };
@@ -5485,6 +5490,8 @@
 		2DA7C231251003A20080963D /* artwork_png.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = artwork_png.h; sourceTree = "<group>"; };
 		2DA7C232251003A20080963D /* artwork_png.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = artwork_png.c; sourceTree = "<group>"; };
 		2DA84F7624F58894003507A2 /* jansson.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = jansson.xcodeproj; path = jansson/jansson.xcodeproj; sourceTree = "<group>"; };
+		2DA8911F25FFEB9B0084860D /* PlaylistGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistGroup.h; sourceTree = "<group>"; };
+		2DA8912025FFEB9B0084860D /* PlaylistGroup.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistGroup.m; sourceTree = "<group>"; };
 		2DA9777424C5EC26002405DA /* gtk3.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = gtk3.xcconfig; sourceTree = "<group>"; };
 		2DA9AA4B25DC31220004593A /* xi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xi.c; sourceTree = "<group>"; };
 		2DA9AA4C25DC31220004593A /* sndfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sndfile.c; sourceTree = "<group>"; };
@@ -10307,6 +10314,8 @@
 				2D60108C1A9CDF06000136AF /* SearchWindowController.m */,
 				2DDD7AB925E1830F00FA6FE5 /* PlaylistDataModel.h */,
 				2DDD7ABA25E1830F00FA6FE5 /* PlaylistDataModel.m */,
+				2DA8911F25FFEB9B0084860D /* PlaylistGroup.h */,
+				2DA8912025FFEB9B0084860D /* PlaylistGroup.m */,
 			);
 			path = Playlist;
 			sourceTree = "<group>";
@@ -11583,6 +11592,7 @@
 				2D9EBB7225E45BAA00255592 /* DesignModeDeps.h in Headers */,
 				2DDD7ABC25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */,
 				2D448A851D5C5C6500B43F12 /* logger.h in Headers */,
+				2DA8912225FFEB9B0084860D /* PlaylistGroup.h in Headers */,
 				2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */,
 				2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */,
 				2DAA402E269AF864006D2754 /* TrackPositionFormatter.h in Headers */,
@@ -12831,6 +12841,7 @@
 				2D98613E226C814100BAACB1 /* PropertySheetViewController.h in Headers */,
 				2DDF87ED2402845C00CA8E91 /* NSMenu+ActionItems.h in Headers */,
 				2D642EB01AE9152E00FC1F7B /* sort.h in Headers */,
+				2DA8912125FFEB9B0084860D /* PlaylistGroup.h in Headers */,
 				2DA30B7F23F1C9A3003D22E3 /* PropertySheetContentView.h in Headers */,
 				2DB52F7C24CF7CF20046D516 /* TrackContextMenu.h in Headers */,
 				2D046F3925E2B17700F68459 /* DesignModeEventHandler.h in Headers */,
@@ -14746,6 +14757,7 @@
 				2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */,
 				2D7DE4A61E64CD7700AA0F83 /* dsp.c in Sources */,
 				2D01D7D21AB2219C00BCD3C4 /* tf.c in Sources */,
+				2DA8912425FFEB9B0084860D /* PlaylistGroup.m in Sources */,
 				2DDD781925E1578C00FA6FE5 /* SplitterWidget.m in Sources */,
 				2D01D7E11AB2219C00BCD3C4 /* ringbuf.c in Sources */,
 			);
@@ -16030,6 +16042,7 @@
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
 				2D9F6535241BE78C00D9D16E /* SeekbarOverlay.m in Sources */,
 				2DEBA1D323E207A3000E4135 /* EqualizerWindowController.m in Sources */,
+				2DA8912325FFEB9B0084860D /* PlaylistGroup.m in Sources */,
 				2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */,
 				2D30D0B525E2A5DD0023A299 /* DesignModeState.m in Sources */,
 				2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */,
