@@ -7,6 +7,7 @@
 //
 
 #import "PinnedGroupTitleView.h"
+#import "PlaylistGroup.h"
 
 static int grouptitleheight = 22;
 
@@ -40,7 +41,7 @@ static int grouptitleheight = 22;
     [delegate drawGroupTitle:self.group->head inRect:groupRect];
 }
 
-- (void)setGroup:(DdbListviewGroup_t *)group {
+- (void)setGroup:(PlaylistGroup *)group {
     if (group != _group) {
         _group = group;
         self.needsDisplay = YES;

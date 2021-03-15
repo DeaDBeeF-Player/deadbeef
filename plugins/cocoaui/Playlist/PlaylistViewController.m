@@ -26,6 +26,7 @@
 #import "EditColumnWindowController.h"
 #import "GroupByCustomWindowController.h"
 #import "NSImage+Additions.h"
+#import "PlaylistGroup.h"
 #import "PlaylistViewController.h"
 #import "PlaylistView.h"
 #import "TrackPropertiesWindowController.h"
@@ -678,7 +679,7 @@ extern DB_functions_t *deadbeef;
     return str;
 }
 
-- (void)drawCell:(int)idx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused {
+- (void)drawCell:(NSUInteger)idx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused {
     int sel = deadbeef->pl_is_selected((DB_playItem_t *)row);
     NSColor *background = NSColor.controlBackgroundColor;
     if (sel) {
@@ -746,7 +747,7 @@ extern DB_functions_t *deadbeef;
             .it = (DB_playItem_t *)row,
             .plt = deadbeef->plt_get_curr (),
             .id = self.columns[col].type,
-            .idx = idx,
+            .idx = (int)idx,
             .flags = DDB_TF_CONTEXT_HAS_ID|DDB_TF_CONTEXT_HAS_INDEX,
         };
         if (!sel) {
@@ -789,7 +790,7 @@ extern DB_functions_t *deadbeef;
 
                 if (ctx.plt == curr && trk == self.playPosUpdateTrack) {
                     PlaylistView *lv = (PlaylistView *)self.view;
-                    [lv.contentView drawRow:idx];
+                    [lv.contentView drawRow:(int)idx];
                 }
                 if (trk) {
                     deadbeef->pl_item_unref (trk);
@@ -847,9 +848,9 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     PlaylistViewController *ctl = (__bridge_transfer PlaylistViewController *)info->ctl;
     PlaylistView *lv = (PlaylistView *)ctl.view;
 
-    DdbListviewGroup_t *grp = [lv.contentView groupForIndex:info->grp];
+    PlaylistGroup *grp = [lv.contentView groupForIndex:info->grp];
     if (grp != nil) {
-        grp->cachedImage = (__bridge_retained void *)img;
+        grp->cachedImage = img;
         grp->hasCachedImage = YES;
     }
 
@@ -857,8 +858,8 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     free (info);
 }
 
-- (void)drawAlbumArtForGroup:(DdbListviewGroup_t *)grp
-                  groupIndex:(int)groupIndex
+- (void)drawAlbumArtForGroup:(PlaylistGroup *)grp
+                  groupIndex:(NSUInteger)groupIndex
                   inColumn:(DdbListviewCol_t)col
              isPinnedGroup:(BOOL)pinned
             nextGroupCoord:(int)grp_next_y
@@ -871,7 +872,7 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     DB_playItem_t *it = (DB_playItem_t *)grp->head;
     cover_avail_info_t *inf = calloc (sizeof (cover_avail_info_t), 1);
     inf->ctl = (__bridge_retained void *)self;
-    inf->grp = groupIndex;
+    inf->grp = (int)groupIndex;
 
     int art_width = width - ART_PADDING_HORZ * 2;
     int art_height = height - ART_PADDING_VERT * 2 - lv.contentView.grouptitle_height;
@@ -883,7 +884,7 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     NSImage *image;
 
     if (grp->hasCachedImage) {
-        image = (__bridge NSImage *)grp->cachedImage;
+        image = grp->cachedImage;
     }
     else {
         image = [[CoverManager defaultCoverManager] getCoverForTrack:it withCallbackWhenReady:coverAvailCallback withUserDataForCallback:inf];
@@ -923,7 +924,7 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     }
 
     if (!grp->cachedImage) {
-        grp->cachedImage = (__bridge_retained void *)image;//[self createCachedImage:image size:drawRect.size];
+        grp->cachedImage = image;//[self createCachedImage:image size:drawRect.size];
         grp->hasCachedImage = YES;
     }
 

@@ -8,6 +8,7 @@
 
 #import "PinnedGroupTitleView.h"
 #import "PlaylistContentView.h"
+#import "PlaylistGroup.h"
 #import "PlaylistView.h"
 #import "DdbShared.h"
 #import "MedialibItemDragDropHolder.h"
@@ -37,7 +38,7 @@ static int grouptitleheight = 22;
 
 @property (nonatomic) int shift_sel_anchor;
 
-@property (nonatomic) DdbListviewGroup_t *groups;
+@property (nonatomic) NSMutableArray<PlaylistGroup *> *groups;
 @property (nonatomic,readwrite) int grouptitle_height;
 @property (nonatomic) int groups_build_idx;
 @property (nonatomic) int fullwidth;
@@ -56,6 +57,8 @@ static int grouptitleheight = 22;
 
 - (instancetype)initWithFrame:(NSRect)rect {
     self = [super initWithFrame:rect];
+
+    self.groups = [NSMutableArray new];
 
     self.groups_build_idx = -1;
 
@@ -227,8 +230,8 @@ static int grouptitleheight = 22;
 
 #pragma mark - Album art
 
-- (void)renderAlbumArtForGroup:(DdbListviewGroup_t *)grp
-                    groupIndex:(int)groupIndex
+- (void)renderAlbumArtForGroup:(PlaylistGroup *)grp
+                    groupIndex:(NSInteger)groupIndex
                  isPinnedGroup:(BOOL)isPinnedGroup
                 nextGroupCoord:(int)grp_next_y
                           yPos:(int)y
@@ -257,7 +260,7 @@ static int grouptitleheight = 22;
 
 #pragma mark - Drawing
 
-- (void)drawGroupTitle:(DdbListviewGroup_t *)grp grp_y:(int)grp_y title_height:(int)title_height {
+- (void)drawGroupTitle:(PlaylistGroup *)grp grp_y:(int)grp_y title_height:(int)title_height {
     NSRect groupRect = NSMakeRect(0, grp_y, self.frame.size.width, title_height);
     NSColor *clr = [NSColor.controlAlternatingRowBackgroundColors objectAtIndex:0];
     [clr set];
@@ -268,30 +271,50 @@ static int grouptitleheight = 22;
     [self.delegate drawGroupTitle:grp->head inRect:groupRect];
 }
 
+- (PlaylistGroup *)firstVisibleGroupWithScrollPos:(CGFloat)y groupPosition:(CGFloat *)groupPosition groupIndex:(NSUInteger *)groupIndex trackCount:(NSUInteger *)trackCount {
+    NSUInteger idx = 0;
+    int grp_y = 0;
+    PlaylistGroup *grp = NULL;
+    NSUInteger index = 0;
+    for (index = 0; index < self.groups.count; index++) {
+        grp = self.groups[index];
+        if (grp_y + grp->height >= y) {
+            break;
+        }
+        grp_y += grp->height;
+        idx += grp->num_items;
+    }
+
+    if (groupPosition != NULL) {
+        *groupPosition = grp_y;
+    }
+
+    if (groupIndex != NULL) {
+        *groupIndex = index;
+    }
+
+    if (trackCount != NULL) {
+        *trackCount = idx;
+    }
+    return grp;
+}
+
 - (void)updatePinnedGroup {
     NSScrollView *scrollView = self.enclosingScrollView;
     NSRect visibleRect = [scrollView documentVisibleRect];
 
-    DdbListviewGroup_t *grp = self.groups;
-
     CGFloat scrollPos = visibleRect.origin.y;
 
-    int idx = 0;
-    int grp_y = 0;
-    int groupIndex = 0;
-    while (grp && grp_y + grp->height < scrollPos) {
-        grp_y += grp->height;
-        idx += grp->num_items;
-        grp = grp->next;
-        groupIndex++;
-    }
+    CGFloat grp_y = 0;
+    NSUInteger groupIndex = 0;
+    PlaylistGroup *grp = [self firstVisibleGroupWithScrollPos:scrollPos groupPosition:&grp_y groupIndex:&groupIndex trackCount:NULL];
 
-    if (self.delegate.pinGroups && grp && grp_y < scrollPos && grp_y + grp->height >= scrollPos) {
+    if (self.delegate.pinGroups && grp != nil && grp_y < scrollPos && grp_y + grp->height >= scrollPos) {
         self.pinnedGroupTitleView.hidden = NO;
         self.pinnedGroupTitleView.group = grp;
         CGFloat pos = scrollPos;
         int grp_next_y = grp_y + grp->height;
-        if (grp->next && pos + self.grouptitle_height > grp_next_y) {
+        if (groupIndex != self.groups.count-1 && pos + self.grouptitle_height > grp_next_y) {
             pos = grp_next_y - self.grouptitle_height;
         }
         self.pinnedGroupTitleView.frame = NSMakeRect(0, pos, NSWidth(self.frame), self.grouptitle_height);
@@ -327,22 +350,13 @@ static int grouptitleheight = 22;
 - (void)drawListView:(NSRect)dirtyRect {
     [self groupCheck];
 
-    DdbListviewGroup_t *grp = [self groups];
-
     CGFloat clip_y = dirtyRect.origin.y;
     CGFloat clip_h = dirtyRect.size.height;
 
-
-    // find 1st group
-    int idx = 0;
-    int grp_y = 0;
-    int groupIndex = 0;
-    while (grp && grp_y + grp->height < dirtyRect.origin.y) {
-        grp_y += grp->height;
-        idx += grp->num_items;
-        grp = grp->next;
-        groupIndex++;
-    }
+    CGFloat grp_y = 0;
+    NSUInteger groupIndex = 0;
+    NSUInteger idx = 0;
+    PlaylistGroup *grp = [self firstVisibleGroupWithScrollPos:dirtyRect.origin.y groupPosition:&grp_y groupIndex:&groupIndex trackCount:&idx];
 
     int cursor = [self.dataModel cursor];
     DdbListviewRow_t cursor_it = [self.dataModel invalidRow];
@@ -354,12 +368,13 @@ static int grouptitleheight = 22;
 
     BOOL focused = self == self.window.firstResponder;
 
-    int dragIdx = -1;
+    NSInteger dragIdx = -1;
     if (_draggingInView) {
         dragIdx = [self dragInsertPointForYPos:_lastDragLocation.y];
     }
 
-    while (grp && grp_y < clip_y + clip_h) {
+    while (groupIndex < self.groups.count && grp_y < clip_y + clip_h) {
+        grp = self.groups[groupIndex];
         DdbListviewRow_t it = grp->head;
         [self.dataModel refRow:it];
 
@@ -404,7 +419,7 @@ static int grouptitleheight = 22;
                 }
 
                 // draw dnd line
-                if (dragIdx != -1 && dragIdx == idx + i) {
+                if (dragIdx != -1 && dragIdx == (NSInteger)(idx + i)) {
                     [self drawLineIndicator:dirtyRect yy:yy];
                 }
 
@@ -426,8 +441,7 @@ static int grouptitleheight = 22;
 
         idx += grp->num_items;
         grp_y += grp->height;
-        grp = grp->next;
-        groupIndex++;
+        groupIndex += 1;
     }
 
 //    if (pin_grp) {
@@ -513,7 +527,7 @@ static int grouptitleheight = 22;
         return;
     }
 
-    DdbListviewGroup_t *grp;
+    PlaylistGroup *grp;
     int grp_index;
     int sel;
     NSPoint convPt = [self convertPoint:[event locationInWindow] fromView:nil];
@@ -564,16 +578,13 @@ static int grouptitleheight = 22;
         // select range
         int sel_cursor = sel;
         if (sel_cursor == -1) {
-            // find group
-            DdbListviewGroup_t *g = self.groups;
             int idx = 0;
-            while (g) {
-                if (g == grp) {
+            for (PlaylistGroup *group in self.groups) {
+                if (group == grp) {
                     sel_cursor = idx - 1;
                     break;
                 }
-                idx += g->num_items;
-                g = g->next;
+                idx += group->num_items;
             }
         }
         int start = MIN (prev, sel_cursor);
@@ -612,7 +623,7 @@ static int grouptitleheight = 22;
 {
     if (_dragwait) {
         _dragwait = NO;
-        DdbListviewGroup_t *grp;
+        PlaylistGroup *grp;
         int grp_index;
         int sel;
         NSPoint convPt = [self convertPoint:[event locationInWindow] fromView:nil];
@@ -690,7 +701,7 @@ static int grouptitleheight = 22;
         }
     }
     else if (_areaselect) {
-        DdbListviewGroup_t *grp = NULL;
+        PlaylistGroup *grp = NULL;
         int grp_index;
         int sel;
         if ([self pickPoint:pt.y group:&grp groupIndex:&grp_index index:&sel] == -1) {
@@ -723,8 +734,8 @@ static int grouptitleheight = 22;
                 }
                 else if (_areaselect_y > pt.y) {
                     // above, select 1st track in next group
-                    if (grp->next) {
-                        sel = grp->next->head_idx;
+                    if (grp_index < (int)(self.groups.count-1)) {
+                        sel = self.groups[grp_index+1]->head_idx;
                     }
                 }
                 else {
@@ -743,14 +754,12 @@ static int grouptitleheight = 22;
             if (y == -1) {
                 // find group
                 [self groupCheck];
-                DdbListviewGroup_t *g = _groups;
-                while (g) {
-                    if (g == grp) {
+                for (PlaylistGroup *group in self.groups) {
+                    if (group == grp) {
                         y = idx - 1;
                         break;
                     }
-                    idx += g->num_items;
-                    g = g->next;
+                    idx += group->num_items;
                 }
             }
             int start = MIN (y, _shift_sel_anchor);
@@ -815,7 +824,7 @@ static int grouptitleheight = 22;
     }
 }
 
-- (void)clickSelection:(NSPoint)pt grp:(DdbListviewGroup_t *)grp grp_index:(int)grp_index sel:(int)sel dnd:(BOOL)dnd button:(int)button {
+- (void)clickSelection:(NSPoint)pt grp:(PlaylistGroup *)grp grp_index:(int)grp_index sel:(int)sel dnd:(BOOL)dnd button:(int)button {
 
     _areaselect = 0;
     [self groupCheck];
@@ -902,10 +911,8 @@ static int grouptitleheight = 22;
 - (int)dragInsertPointForYPos:(CGFloat)y {
     int idx = 0;
     int grp_y = 0;
-    int gidx = 0;
     [self groupCheck];
-    DdbListviewGroup_t *grp = _groups;
-    while (grp) {
+    for (PlaylistGroup *grp in self.groups) {
         int h = grp->height;
         if (y >= grp_y - _grouptitle_height/2 && y < grp_y + h - rowheight/2) {
             y -= grp_y;
@@ -924,19 +931,15 @@ static int grouptitleheight = 22;
         }
         grp_y += grp->height;
         idx += grp->num_items;
-        grp = grp->next;
-        gidx++;
     }
     return -1;
 }
 
-- (int)pickPoint:(CGFloat)y group:(DdbListviewGroup_t **)group groupIndex:(int *)group_idx index:(int *)global_idx {
+- (int)pickPoint:(CGFloat)y group:(PlaylistGroup **)group groupIndex:(int *)group_idx index:(int *)global_idx {
     int idx = 0;
     int grp_y = 0;
-    int gidx = 0;
     [self groupCheck];
-    DdbListviewGroup_t *grp = _groups;
-    while (grp) {
+    for (PlaylistGroup *grp in self.groups) {
         int h = grp->height;
         if (y >= grp_y && y < grp_y + h) {
             *group = grp;
@@ -957,8 +960,6 @@ static int grouptitleheight = 22;
         }
         grp_y += grp->height;
         idx += grp->num_items;
-        grp = grp->next;
-        gidx++;
     }
     return -1;
 }
@@ -1105,16 +1106,12 @@ static int grouptitleheight = 22;
 #pragma mark - Grouping
 
 - (void)freeGroups {
-    while (_groups) {
-        if (_groups->head != [self.dataModel invalidRow]) {
-            [self.dataModel unrefRow:_groups->head];
+    for (PlaylistGroup *group in self.groups) {
+        if (group->head != self.dataModel.invalidRow) {
+            [self.dataModel unrefRow:group->head];
         }
-        DdbListviewGroup_t *next = _groups->next;
-        __unused NSImage *img = (__bridge_transfer NSImage *)_groups->cachedImage;
-        _groups->cachedImage = NULL;
-        free (_groups);
-        _groups = next;
     }
+    [self.groups removeAllObjects];
 }
 
 - (void)initGroups {
@@ -1124,7 +1121,7 @@ static int grouptitleheight = 22;
 
     _fullwidth = 0;
     _fullheight = 0;
-    DdbListviewGroup_t *grp = NULL;
+    PlaylistGroup *grp = NULL;
 
     NSString *str;
     NSString *curr;
@@ -1151,19 +1148,18 @@ static int grouptitleheight = 22;
 
         if (!grp || (!curr && grp->num_items >= BLANK_GROUP_SUBDIVISION) || (curr && [str isNotEqualTo:curr])) {
             str = curr;
-            DdbListviewGroup_t *newgroup = malloc (sizeof (DdbListviewGroup_t));
+            PlaylistGroup *newgroup = [PlaylistGroup new];
             if (grp) {
                 if (grp->height - _grouptitle_height < min_height) {
                     grp->height = min_height + _grouptitle_height;
                 }
                 _fullheight += grp->height;
-                grp->next = newgroup;
             }
-            else {
-                _groups = newgroup;
-            }
+
+            [self.groups addObject:newgroup];
+
             grp = newgroup;
-            memset (grp, 0, sizeof (DdbListviewGroup_t));
+
             grp->head = it;
             grp->head_idx = idx;
             [self.dataModel refRow:it];
@@ -1203,9 +1199,8 @@ static int grouptitleheight = 22;
 
 #pragma mark Group drawing
 
-- (int)getDrawInfo:(int)row group:(DdbListviewGroup_t **)pgrp isEven:(int *)even cursor:(int *)cursor group_y:(int *)group_y rect:(NSRect *)rect {
+- (int)getDrawInfo:(int)row group:(PlaylistGroup **)pgrp isEven:(int *)even cursor:(int *)cursor group_y:(int *)group_y rect:(NSRect *)rect {
     [self groupCheck];
-    DdbListviewGroup_t *grp = _groups;
     int idx = 0;
     int idx2 = 0;
     rect->origin.y = 0;
@@ -1215,7 +1210,7 @@ static int grouptitleheight = 22;
         totalwidth += [self.delegate columnWidth:col];
     }
 
-    while (grp) {
+    for (PlaylistGroup *grp in self.groups) {
         int grpheight = grp->height;
         if (idx <= row && idx + grp->num_items > row) {
             // found
@@ -1233,14 +1228,13 @@ static int grouptitleheight = 22;
         rect->origin.y += grpheight;
         idx += grp->num_items;
         idx2 += grp->num_items + 1;
-        grp = grp->next;
     }
     return -1;
 
 }
 
 - (void)drawRow:(int)idx {
-    DdbListviewGroup_t *grp;
+    PlaylistGroup *grp;
     int even;
     int cursor;
     NSRect rect;
@@ -1268,7 +1262,7 @@ static int grouptitleheight = 22;
 - (void)drawGroup:(int)idx {
     int i = 0;
     int y = 0;
-    for (DdbListviewGroup_t *grp = _groups; grp; grp = grp->next) {
+    for (PlaylistGroup *grp in self.groups) {
         if (idx == i) {
             NSScrollView *sv = self.enclosingScrollView;
             NSRect vis = [sv documentVisibleRect];
@@ -1313,15 +1307,13 @@ static int grouptitleheight = 22;
     int y = 0;
     int idx = 0;
     [self groupCheck];
-    DdbListviewGroup_t *grp = _groups;
-    while (grp) {
+    for (PlaylistGroup *grp in self.groups) {
         if (idx + grp->num_items > row_idx) {
             int i = y + _grouptitle_height + (row_idx - idx) * rowheight;
             return i;
         }
         y += grp->height;
         idx += grp->num_items;
-        grp = grp->next;
     }
     return y;
 }
@@ -1364,65 +1356,54 @@ static int grouptitleheight = 22;
     [self updatePinnedGroup];
 }
 
-- (NSInteger)firstVisibleGroupAndOffset:(CGFloat *)offset {
-    NSRect rect = self.enclosingScrollView.documentVisibleRect;
-    DdbListviewGroup_t *grp = self.groups;
+- (NSInteger)getScrollFocusGroupAndOffset:(CGFloat *)offset {
+    if (self.groups.count == 0) {
+        *offset = 0;
+        return -1;
+    }
 
+    NSRect rect = self.enclosingScrollView.documentVisibleRect;
     CGFloat clip_y = rect.origin.y;
 
     int idx = 0;
     int grp_y = 0;
-    int groupIndex = 0;
+    NSUInteger groupIndex = 0;
 
-    DdbListviewGroup_t *prevGrp = NULL;
-    int prevGrpY = 0;
-
-    while (grp && grp_y < clip_y) {
-        prevGrp = grp;
-        prevGrpY = grp_y;
+    while (groupIndex < self.groups.count && grp_y < clip_y) {
+        PlaylistGroup *grp = self.groups[groupIndex];
         grp_y += grp->height;
         idx += grp->num_items;
-        grp = grp->next;
         groupIndex++;
     }
 
-    if (grp == NULL) {
-        grp = prevGrp;
-        grp_y = prevGrpY;
+    if (groupIndex == self.groups.count) {
         groupIndex -= 1;
+        grp_y -= self.groups[groupIndex]->height;
     }
 
     *offset = grp_y - clip_y;
 
-    return grp ? groupIndex : -1;
+    return groupIndex;
 }
 
 - (CGFloat)groupPositionAtIndex:(NSInteger)index {
-    DdbListviewGroup_t *grp = self.groups;
     int groupIndex = 0;
-    int grp_y = 0;
-    while (grp) {
+    CGFloat grp_y = 0;
+    for (PlaylistGroup *grp in self.groups) {
         if (groupIndex == index) {
-            return (CGFloat)grp_y;
+            return grp_y;
         }
         grp_y += grp->height;
-        grp = grp->next;
         groupIndex++;
     }
     return 0;
 }
 
-- (DdbListviewGroup_t *)groupForIndex:(NSInteger)index {
-    DdbListviewGroup_t *grp = self.groups;
-    int groupIndex = 0;
-    while (grp) {
-        if (groupIndex == index) {
-            return grp;
-        }
-        grp = grp->next;
-        groupIndex++;
+- (PlaylistGroup *)groupForIndex:(NSInteger)index {
+    if (index >= (NSInteger)self.groups.count) {
+        return nil;
     }
-    return nil;
+    return self.groups[index];
 }
 
 @end

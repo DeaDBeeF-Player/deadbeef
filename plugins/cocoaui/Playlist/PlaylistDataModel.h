@@ -10,17 +10,6 @@
 
 typedef intptr_t DdbListviewRow_t;
 
-typedef struct DdbListviewGroup_s {
-    DdbListviewRow_t head;
-    int head_idx;
-    int32_t height;
-    int32_t min_height;
-    int32_t num_items;
-    struct DdbListviewGroup_s *next;
-    void *cachedImage; // __bridge_retained NSImage *
-    BOOL hasCachedImage;
-} DdbListviewGroup_t;
-
 @protocol DdbListviewDataModelProtocol<NSObject>
 
 @property (nonatomic,readonly) int rowCount;

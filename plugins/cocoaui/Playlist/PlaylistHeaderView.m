@@ -259,7 +259,7 @@
             // find the first visible group and offset,
             // to preserve visual focus on the first visible row
             self.scrollGroupOffset = 0;
-            self.scrollFirstGroup = [self.listview.contentView firstVisibleGroupAndOffset:&_scrollGroupOffset];
+            self.scrollFirstGroup = [self.listview.contentView getScrollFocusGroupAndOffset:&_scrollGroupOffset];
 
             break;
         }
