@@ -841,6 +841,7 @@ extern DB_functions_t *deadbeef;
 typedef struct {
     void *ctl; // DdbPlaylistViewController ptr (retain)
     int grp;
+    CGFloat albumArtSpaceWidth;
 } cover_avail_info_t;
 
 static void coverAvailCallback (NSImage *img, void *user_data) {
@@ -850,12 +851,25 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
 
     PlaylistGroup *grp = [lv.contentView groupForIndex:info->grp];
     if (grp != nil) {
-        grp->cachedImage = img;
+        NSSize desiredSize = [ctl artworkDesiredSizeForImageSize:img.size albumArtSpaceWidth:info->albumArtSpaceWidth];
+        grp->cachedImage = [ctl createCachedImage:img size:desiredSize];
         grp->hasCachedImage = YES;
     }
 
     [lv.contentView drawGroup:info->grp];
     free (info);
+}
+
+- (NSSize)artworkDesiredSizeForImageSize:(NSSize)imageSize albumArtSpaceWidth:(CGFloat)albumArtSpaceWidth {
+    if (imageSize.width >= imageSize.height) {
+        CGFloat h = imageSize.height / (imageSize.width / albumArtSpaceWidth);
+        return NSMakeSize(albumArtSpaceWidth, h);
+    }
+    else {
+        CGFloat h = albumArtSpaceWidth;
+        CGFloat w = imageSize.width / (imageSize.height / h);
+        return NSMakeSize(w, h);
+    }
 }
 
 - (void)drawAlbumArtForGroup:(PlaylistGroup *)grp
@@ -875,6 +889,8 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     inf->grp = (int)groupIndex;
 
     int art_width = width - ART_PADDING_HORZ * 2;
+    inf->albumArtSpaceWidth = art_width;
+
     int art_height = height - ART_PADDING_VERT * 2 - lv.contentView.grouptitle_height;
 
     if (art_width < 8 || art_height < 8 || !it) {
@@ -906,25 +922,24 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     }
 
     NSSize size = image.size;
+    NSSize desiredSize = [self artworkDesiredSizeForImageSize:size albumArtSpaceWidth:art_width];
+
     if (size.width >= size.height) {
-        CGFloat h = size.height / (size.width / art_width);
-        drawRect = NSMakeRect(art_x, ypos, art_width, h);
+        drawRect = NSMakeRect(art_x, ypos, desiredSize.width, desiredSize.height);
     }
     else {
         plt_col_info_t *c = &self.columns[(int)col];
-        CGFloat h = art_width;
-        CGFloat w = size.width / (size.height / h);
         if (c->alignment == 1) {
-            art_x += art_width/2 - w/2;
+            art_x += art_width/2 - desiredSize.width/2;
         }
         else if (c->alignment == 2) {
-            art_x += art_width-w;
+            art_x += art_width-desiredSize.width;
         }
-        drawRect = NSMakeRect(art_x, ypos, w, h);
+        drawRect = NSMakeRect(art_x, ypos, desiredSize.width, desiredSize.height);
     }
 
     if (!grp->cachedImage) {
-        grp->cachedImage = image;//[self createCachedImage:image size:drawRect.size];
+        grp->cachedImage = [self createCachedImage:image size:desiredSize];
         grp->hasCachedImage = YES;
     }
 
@@ -932,19 +947,19 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
 }
 
 // FIXME: unused, but can be used for creating smaller image cache and save some RAM
-//- (NSImage *)createCachedImage:(NSImage *)image size:(NSSize)size {
-//    NSSize originalSize = image.size;
-//    if (originalSize.width <= size.width && originalSize.height <= size.height) {
-//        return image;
-//    }
-//    NSImage *cachedImage = [[NSImage alloc] initWithSize:size];
-//    [cachedImage lockFocus];
-//    cachedImage.size = size;
-//    NSGraphicsContext.currentContext.imageInterpolation = NSImageInterpolationHigh;
-//    [image drawInRect:NSMakeRect(0, 0, size.width, size.height) fromRect:CGRectMake(0, 0, originalSize.width, originalSize.height) operation:NSCompositingOperationCopy fraction:1.0];
-//    [cachedImage unlockFocus];
-//    return cachedImage;
-//}
+- (NSImage *)createCachedImage:(NSImage *)image size:(NSSize)size {
+    NSSize originalSize = image.size;
+    if (originalSize.width <= size.width && originalSize.height <= size.height) {
+        return image;
+    }
+    NSImage *cachedImage = [[NSImage alloc] initWithSize:size];
+    [cachedImage lockFocus];
+    cachedImage.size = size;
+    NSGraphicsContext.currentContext.imageInterpolation = NSImageInterpolationHigh;
+    [image drawInRect:NSMakeRect(0, 0, size.width, size.height) fromRect:CGRectMake(0, 0, originalSize.width, originalSize.height) operation:NSCompositingOperationCopy fraction:1.0];
+    [cachedImage unlockFocus];
+    return cachedImage;
+}
 
 - (void)selectionChanged:(DdbListviewRow_t)row {
     PlaylistView *lv = (PlaylistView *)self.view;
