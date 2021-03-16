@@ -64,8 +64,8 @@
 DB_functions_t *deadbeef;
 ddb_artwork_plugin_t plugin;
 
-static dispatch_queue_t fetch_queue;
 static dispatch_queue_t sync_queue;
+static dispatch_queue_t process_queue;
 
 static int64_t last_job_idx;
 static int64_t cancellation_idx;
@@ -1009,7 +1009,7 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         return;
     }
 
-    dispatch_async(fetch_queue, ^{
+    dispatch_async(process_queue, ^{
         if (!query->track) {
             callback (-1, query, NULL);
             return;
@@ -1187,7 +1187,7 @@ artwork_configchanged (void)
         strcmp(old_artwork_folders, artwork_folders)
         ) {
 
-        dispatch_async(fetch_queue, ^{
+        dispatch_async(process_queue, ^{
             /* All artwork is now (including this second) obsolete */
             deadbeef->conf_set_int64 ("artwork.cache_reset_time", cache_reset_time);
             deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
@@ -1279,7 +1279,7 @@ artwork_plugin_stop (void) {
     queue_clear ();
     artwork_abort_http_request ();
 
-    dispatch_release(fetch_queue);
+    dispatch_release(process_queue);
     dispatch_release(sync_queue);
 
     cover_cache_free ();
@@ -1316,7 +1316,7 @@ artwork_plugin_start (void)
 #endif
 
     terminate = 0;
-    fetch_queue = dispatch_queue_create("ArtworkFetchQueue", NULL);
+    process_queue = dispatch_queue_create("ArtworkFetchQueue", NULL);
     sync_queue = dispatch_queue_create("ArtworkSyncQueue", NULL);
 
     start_cache_cleaner ();
