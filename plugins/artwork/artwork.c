@@ -792,18 +792,6 @@ process_query (ddb_cover_info_t *cover)
         make_cache_path (cover->filepath, cover->album, cover->artist, cache_path, sizeof (cache_path_buf));
     }
 
-#if 0
-#warning FIXME not needed during development; also this assumes that disk cache is used for everything
-    /* Flood control, don't retry missing artwork for an hour unless something changes */
-    struct stat placeholder_stat;
-    if (!stat (cache_path, &placeholder_stat) && placeholder_stat.st_mtime + 60*60 > time (NULL)) {
-        int recheck = recheck_missing_artwork (filepath, placeholder_stat.st_mtime);
-        if (!recheck) {
-            return 0;
-        }
-    }
-#endif
-
     int islocal = deadbeef->is_local_file (cover->filepath);
 
     if (artwork_enable_local && islocal) {
@@ -863,12 +851,28 @@ process_query (ddb_cover_info_t *cover)
         }
     }
 
+    // Don't allow downloading from the web without disk cache.
+    // Even if saving to music folders is enabled -- we don't want to flood.
+    // Mainly because we don't know if saving to music folder would succeed,
+    // and whether using local covers is turned on.
     if (!cache_path) {
         cover->cover_found = 0;
         return;
     }
 
 #ifdef USE_VFS_CURL
+#if 0
+#warning FIXME not needed during development; also this assumes that disk cache is used for everything
+    /* Flood control, don't retry missing artwork for an hour unless something changes */
+    struct stat placeholder_stat;
+    if (!stat (cache_path, &placeholder_stat) && placeholder_stat.st_mtime + 60*60 > time (NULL)) {
+        int recheck = recheck_missing_artwork (filepath, placeholder_stat.st_mtime);
+        if (!recheck) {
+            return 0;
+        }
+    }
+#endif
+
     /* Web lookups */
     if (artwork_enable_wos && strlen (cover->filepath) > 3 && !strcasecmp (cover->filepath+strlen (cover->filepath)-3, ".ay")) {
         if (!fetch_from_wos (cover->album, cache_path)) {
