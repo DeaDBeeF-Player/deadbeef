@@ -46,7 +46,6 @@
 #include <unistd.h>
 
 #include "../../deadbeef.h"
-#include "artwork_jpeg.h"
 #include "artwork_flac.h"
 #include "albumartorg.h"
 #include "artwork.h"
