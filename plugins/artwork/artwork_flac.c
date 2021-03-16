@@ -20,7 +20,6 @@
 extern DB_functions_t *deadbeef;
 extern ddb_artwork_plugin_t plugin;
 extern int artwork_disable_cache;
-extern int artwork_save_to_music_folders;
 
 #ifdef USE_METAFLAC
 static size_t
