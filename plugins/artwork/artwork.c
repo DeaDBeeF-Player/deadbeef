@@ -63,9 +63,12 @@
 DB_functions_t *deadbeef;
 ddb_artwork_plugin_t plugin;
 
+#define FETCH_CONCURRENT_LIMIT 5
+
 static dispatch_queue_t sync_queue;
 static dispatch_queue_t process_queue;
 static dispatch_queue_t fetch_queue;
+static dispatch_semaphore_t fetch_semaphore;
 
 static int64_t last_job_idx;
 static int64_t cancellation_idx;
@@ -1100,8 +1103,10 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         }
         else {
             // fetch on concurrent fetch queue
+            dispatch_semaphore_wait(fetch_semaphore, DISPATCH_TIME_FOREVER);
             dispatch_async (fetch_queue, ^{
                 process_query (cover);
+                dispatch_semaphore_signal (fetch_semaphore);
                 // continue processing on serial process queue
                 dispatch_async (process_queue, ^{
                     dispatch_sync (sync_queue, ^{
@@ -1311,6 +1316,7 @@ artwork_plugin_stop (void) {
     dispatch_release(fetch_queue);
     dispatch_release(process_queue);
     dispatch_release(sync_queue);
+    dispatch_release(fetch_semaphore);
 
     cover_cache_free ();
 
@@ -1349,6 +1355,7 @@ artwork_plugin_start (void)
     sync_queue = dispatch_queue_create("ArtworkSyncQueue", NULL);
     process_queue = dispatch_queue_create("ArtworkProcessQueue", NULL);
     fetch_queue = dispatch_queue_create("ArtworkFetchQueue", DISPATCH_QUEUE_CONCURRENT);
+    fetch_semaphore = dispatch_semaphore_create(FETCH_CONCURRENT_LIMIT);
 
     start_cache_cleaner ();
 
