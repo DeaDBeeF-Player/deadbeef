@@ -65,6 +65,7 @@ ddb_artwork_plugin_t plugin;
 
 static dispatch_queue_t sync_queue;
 static dispatch_queue_t process_queue;
+static dispatch_queue_t fetch_queue;
 
 static int64_t last_job_idx;
 static int64_t cancellation_idx;
@@ -991,6 +992,23 @@ cover_cache_find (ddb_cover_info_t * cover) {
 }
 
 static void
+callback_and_free (ddb_cover_callback_t callback, ddb_cover_info_t *cover, ddb_cover_query_t *query) {
+    int cover_found = cover->cover_found;
+
+    // Make all the callbacks (and free the chain), with data if a file was written
+    if (cover_found) {
+        trace ("artwork fetcher: cover art file found: %s\n", cover->image_filename);
+        cover->refc++;
+        callback (0, query, cover);
+    }
+    else {
+        trace ("artwork fetcher: no cover art found\n");
+        callback (-1, query, NULL);
+    }
+    cover_info_free (cover);
+}
+
+static void
 cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
     __block int cancel_query = 0;
     __block int64_t job_idx = 0;
@@ -1056,31 +1074,21 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
             cover_info_free(cover);
             cover = cached_cover;
             cover->refc++;
+            callback_and_free (callback, cover, query);
         }
         else {
-            process_query (cover);
-        }
-        int cover_found = cover->cover_found;
-
-        // cache cover info
-        if (!cached_cover) {
-            dispatch_sync (sync_queue, ^{
-                cover_update_cache (cover);
+            // fetch on concurrent fetch queue
+            dispatch_async (fetch_queue, ^{
+                process_query (cover);
+                // continue processing on serial process queue
+                dispatch_async (process_queue, ^{
+                    dispatch_sync (sync_queue, ^{
+                        cover_update_cache (cover);
+                    });
+                    callback_and_free (callback, cover, query);
+                });
             });
         }
-
-        /* Make all the callbacks (and free the chain), with data if a file was written */
-        if (cover_found) {
-            trace ("artwork fetcher: cover art file found: %s\n", cover->image_filename);
-            cover->refc++;
-            callback (0, query, cover);
-        }
-        else {
-            trace ("artwork fetcher: no cover art found\n");
-            callback (-1, query, NULL);
-        }
-        cover_info_free(cover);
-        cover = NULL;
     });
 }
 
@@ -1278,6 +1286,7 @@ artwork_plugin_stop (void) {
     queue_clear ();
     artwork_abort_http_request ();
 
+    dispatch_release(fetch_queue);
     dispatch_release(process_queue);
     dispatch_release(sync_queue);
 
@@ -1315,8 +1324,9 @@ artwork_plugin_start (void)
 #endif
 
     terminate = 0;
-    process_queue = dispatch_queue_create("ArtworkFetchQueue", NULL);
     sync_queue = dispatch_queue_create("ArtworkSyncQueue", NULL);
+    process_queue = dispatch_queue_create("ArtworkProcessQueue", NULL);
+    fetch_queue = dispatch_queue_create("ArtworkFetchQueue", DISPATCH_QUEUE_CONCURRENT);
 
     start_cache_cleaner ();
 

@@ -41,7 +41,6 @@
 
 extern DB_functions_t *deadbeef;
 
-static DB_FILE *http_request;
 static uintptr_t http_mutex;
 
 static DB_FILE *
@@ -57,7 +56,7 @@ new_http_request (const char *url)
     }
 
     deadbeef->mutex_lock (http_mutex);
-    http_request = deadbeef->fopen (url);
+    DB_FILE *http_request = deadbeef->fopen (url);
     deadbeef->mutex_unlock (http_mutex);
     return http_request;
 }
@@ -67,7 +66,6 @@ close_http_request (DB_FILE *request)
 {
     deadbeef->mutex_lock (http_mutex);
     deadbeef->fclose (request);
-    http_request = NULL;
     deadbeef->mutex_unlock (http_mutex);
 }
 
@@ -90,10 +88,11 @@ void artwork_abort_http_request (void)
 {
     if (http_mutex) {
         deadbeef->mutex_lock (http_mutex);
-        if (http_request) {
-            deadbeef->fabort (http_request);
-        }
-        http_request = NULL;
+        // FIXME:
+//        if (http_request) {
+//            deadbeef->fabort (http_request);
+//        }
+//        http_request = NULL;
         deadbeef->mutex_unlock (http_mutex);
     }
 }
