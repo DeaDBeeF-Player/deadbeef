@@ -1048,8 +1048,6 @@
 		2D5F05F125E306BC000A588C /* SpectrumAnalyzerWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5F05EE25E306BC000A588C /* SpectrumAnalyzerWidget.h */; };
 		2D5F05F225E306BC000A588C /* SpectrumAnalyzerWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5F05EF25E306BC000A588C /* SpectrumAnalyzerWidget.m */; };
 		2D5F05F325E306BC000A588C /* SpectrumAnalyzerWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5F05EF25E306BC000A588C /* SpectrumAnalyzerWidget.m */; };
-		2D5FC3E5251004420019278B /* artwork_imlib2.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5FC3E3251004420019278B /* artwork_imlib2.h */; };
-		2D5FC3E6251004420019278B /* artwork_imlib2.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5FC3E4251004420019278B /* artwork_imlib2.c */; };
 		2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D60108B1A9CDF06000136AF /* SearchWindowController.h */; };
 		2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D60108C1A9CDF06000136AF /* SearchWindowController.m */; };
 		2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */; };
@@ -1351,7 +1349,6 @@
 		2D71F1C224AE7A4E00E753D3 /* mp4p.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D71F1B124AE799B00E753D3 /* mp4p.framework */; };
 		2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D72047419DF2971000989C6 /* PlaylistViewController.h */; };
 		2D72047719DF2971000989C6 /* PlaylistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D72047519DF2971000989C6 /* PlaylistViewController.m */; };
-		2D72AE5E1CFE1F7500103AAE /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D72AE5D1CFE1F7500103AAE /* ImageIO.framework */; };
 		2D747E3824B64E7600BBB987 /* SidebarSplitViewItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D747E3424B64E7500BBB987 /* SidebarSplitViewItem.h */; };
 		2D747E3924B64E7600BBB987 /* SidebarSplitViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D747E3524B64E7600BBB987 /* SidebarSplitViewItem.m */; };
 		2D747E3A24B64E7600BBB987 /* SidebarSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D747E3624B64E7600BBB987 /* SidebarSplitViewController.m */; };
@@ -1763,12 +1760,8 @@
 		2DA66EC81EDF4EF800E20989 /* StreamerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66EC71EDF4EF800E20989 /* StreamerTests.m */; };
 		2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66EC91EDF4F2C00E20989 /* fakeout.c */; };
 		2DA66ECE1EDF501000E20989 /* fakein.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66ECC1EDF501000E20989 /* fakein.c */; };
-		2DA7C21C251001910080963D /* artwork_jpeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA7C21A251001910080963D /* artwork_jpeg.h */; };
-		2DA7C21D251001910080963D /* artwork_jpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA7C21B251001910080963D /* artwork_jpeg.c */; };
 		2DA7C22F251002390080963D /* artwork_flac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA7C22D251002390080963D /* artwork_flac.h */; };
 		2DA7C230251002390080963D /* artwork_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA7C22E251002390080963D /* artwork_flac.c */; };
-		2DA7C233251003A20080963D /* artwork_png.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA7C231251003A20080963D /* artwork_png.h */; };
-		2DA7C234251003A20080963D /* artwork_png.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA7C232251003A20080963D /* artwork_png.c */; };
 		2DA84F7E24F58915003507A2 /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
 		2DA84F7F24F5892A003507A2 /* libjansson.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DA8912125FFEB9B0084860D /* PlaylistGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA8911F25FFEB9B0084860D /* PlaylistGroup.h */; };
@@ -4727,8 +4720,6 @@
 		2D5DD91C246C697800734047 /* plmeta.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = plmeta.h; sourceTree = "<group>"; };
 		2D5F05EE25E306BC000A588C /* SpectrumAnalyzerWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumAnalyzerWidget.h; sourceTree = "<group>"; };
 		2D5F05EF25E306BC000A588C /* SpectrumAnalyzerWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumAnalyzerWidget.m; sourceTree = "<group>"; };
-		2D5FC3E3251004420019278B /* artwork_imlib2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = artwork_imlib2.h; sourceTree = "<group>"; };
-		2D5FC3E4251004420019278B /* artwork_imlib2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = artwork_imlib2.c; sourceTree = "<group>"; };
 		2D60108B1A9CDF06000136AF /* SearchWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchWindowController.h; sourceTree = "<group>"; };
 		2D60108C1A9CDF06000136AF /* SearchWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchWindowController.m; sourceTree = "<group>"; };
 		2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbTabStrip.h; sourceTree = "<group>"; };
@@ -5483,12 +5474,8 @@
 		2DA66ECD1EDF501000E20989 /* fakein.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fakein.h; sourceTree = "<group>"; };
 		2DA6F89B19A5332D002151EB /* escape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = escape.c; sourceTree = "<group>"; };
 		2DA6F89F19A53334002151EB /* escape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = escape.h; sourceTree = "<group>"; };
-		2DA7C21A251001910080963D /* artwork_jpeg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = artwork_jpeg.h; sourceTree = "<group>"; };
-		2DA7C21B251001910080963D /* artwork_jpeg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = artwork_jpeg.c; sourceTree = "<group>"; };
 		2DA7C22D251002390080963D /* artwork_flac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = artwork_flac.h; sourceTree = "<group>"; };
 		2DA7C22E251002390080963D /* artwork_flac.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = artwork_flac.c; sourceTree = "<group>"; };
-		2DA7C231251003A20080963D /* artwork_png.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = artwork_png.h; sourceTree = "<group>"; };
-		2DA7C232251003A20080963D /* artwork_png.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = artwork_png.c; sourceTree = "<group>"; };
 		2DA84F7624F58894003507A2 /* jansson.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = jansson.xcodeproj; path = jansson/jansson.xcodeproj; sourceTree = "<group>"; };
 		2DA8911F25FFEB9B0084860D /* PlaylistGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistGroup.h; sourceTree = "<group>"; };
 		2DA8912025FFEB9B0084860D /* PlaylistGroup.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistGroup.m; sourceTree = "<group>"; };
@@ -6668,7 +6655,6 @@
 			files = (
 				2D71F1BC24AE7A3300E753D3 /* mp4p.framework in Frameworks */,
 				2DE1B36F24A8AAD80070CD7C /* libflaclib.dylib in Frameworks */,
-				2D72AE5E1CFE1F7500103AAE /* ImageIO.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8532,12 +8518,6 @@
 				2D621FAF1CD92CC500EB6D22 /* artwork_internal.h */,
 				2DA7C22D251002390080963D /* artwork_flac.h */,
 				2DA7C22E251002390080963D /* artwork_flac.c */,
-				2D5FC3E3251004420019278B /* artwork_imlib2.h */,
-				2D5FC3E4251004420019278B /* artwork_imlib2.c */,
-				2DA7C21A251001910080963D /* artwork_jpeg.h */,
-				2DA7C21B251001910080963D /* artwork_jpeg.c */,
-				2DA7C231251003A20080963D /* artwork_png.h */,
-				2DA7C232251003A20080963D /* artwork_png.c */,
 				2D621FB01CD92CC500EB6D22 /* cache.c */,
 				2D621FB11CD92CC500EB6D22 /* cache.h */,
 				2D621FB31CD92CC500EB6D22 /* escape.c */,
@@ -12041,11 +12021,8 @@
 				2D621FD31CD92CCA00EB6D22 /* cache.h in Headers */,
 				2D621FDE1CD92CCA00EB6D22 /* wos.h in Headers */,
 				2DA7C22F251002390080963D /* artwork_flac.h in Headers */,
-				2DA7C233251003A20080963D /* artwork_png.h in Headers */,
-				2DA7C21C251001910080963D /* artwork_jpeg.h in Headers */,
 				2D621FD11CD92CCA00EB6D22 /* artwork_internal.h in Headers */,
 				2D621FCE1CD92CCA00EB6D22 /* artwork.h in Headers */,
-				2D5FC3E5251004420019278B /* artwork_imlib2.h in Headers */,
 				2D621FD81CD92CCA00EB6D22 /* lastfm.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -15224,15 +15201,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DA7C230251002390080963D /* artwork_flac.c in Sources */,
-				2DA7C21D251001910080963D /* artwork_jpeg.c in Sources */,
 				2D621FD41CD92CCA00EB6D22 /* escape.c in Sources */,
 				2D621FD21CD92CCA00EB6D22 /* cache.c in Sources */,
 				2D621FD01CD92CCA00EB6D22 /* artwork_internal.c in Sources */,
-				2D5FC3E6251004420019278B /* artwork_imlib2.c in Sources */,
 				2D621FDD1CD92CCA00EB6D22 /* wos.c in Sources */,
 				2D621FCD1CD92CCA00EB6D22 /* artwork.c in Sources */,
 				2D5193C824ABBC1600134891 /* mp4tagutil.c in Sources */,
-				2DA7C234251003A20080963D /* artwork_png.c in Sources */,
 				2D621FD71CD92CCA00EB6D22 /* lastfm.c in Sources */,
 				2D621FDB1CD92CCA00EB6D22 /* musicbrainz.c in Sources */,
 				2D621FCA1CD92CCA00EB6D22 /* albumartorg.c in Sources */,
