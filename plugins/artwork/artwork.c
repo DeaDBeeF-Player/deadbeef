@@ -883,21 +883,39 @@ process_query (ddb_cover_info_t *cover)
     }
 
     int res = web_lookups (cache_path, cover);
+    if (res < 0) {
+        /* Try stripping parenthesised text off the end of the album name */
+        char *p = strpbrk (cover->album, "([");
+        if (p) {
+            *p = '\0';
+            res = web_lookups (cache_path, cover);
+            *p = '(';
+        }
+    }
     if (res >= 0) {
         cover->cover_found = res;
-        return;
-    }
 
-    /* Try stripping parenthesised text off the end of the album name */
-    char *p = strpbrk (cover->album, "([");
-    if (p) {
-        *p = '\0';
-        int res = web_lookups (cache_path, cover);
-        *p = '(';
-        if (res >= 0) {
-            cover->cover_found = res;
-            return;
+        if (res && artwork_save_to_music_folders && cover->image_filename) {
+            // save to the music folder (only if not present)
+            char *slash = strrchr (cover->filepath, '/');
+
+            if (!slash) {
+                return;
+            }
+            size_t len = slash - cover->filepath + 1;
+
+            char covername[] = "cover.jpg";  // FIXME: configurable name
+            char coverpath[len + sizeof (covername)];
+            memcpy (coverpath, cover->filepath, len);
+            memcpy (coverpath + len, covername, sizeof (covername));
+
+            struct stat stat_struct;
+            if (stat (coverpath, &stat_struct)) {
+                copy_file(cover->image_filename, coverpath);
+            }
         }
+
+        return;
     }
 #endif
 
@@ -1339,7 +1357,7 @@ static const char settings_dlg[] =
 // on android, cache is always off and music is saved to music folders by default
 #ifndef ANDROID
     "property \"Disable disk cache\" checkbox artwork.disable_cache 0;\n"
-    "property \"Save extracted covers to music folders\" checkbox artwork.save_to_music_folders 0;\n"
+    "property \"Save downloaded covers to music folders\" checkbox artwork.save_to_music_folders 0;\n"
 #endif
     "property \"Fetch from embedded tags\" checkbox artwork.enable_embedded 1;\n"
     "property \"Fetch from local folder\" checkbox artwork.enable_localfolder 1;\n"
