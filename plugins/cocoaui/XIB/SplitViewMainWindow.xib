@@ -64,15 +64,15 @@
                     <constraint firstAttribute="trailing" secondItem="Yc4-pv-Wup" secondAttribute="trailing" constant="8" id="ycs-1W-YMK"/>
                 </constraints>
             </view>
-            <toolbar key="toolbar" implicitIdentifier="AC52D12D-4000-4B08-A065-07D723AB5954" centeredItem="J23-QU-u9D" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="small" id="HZu-Ne-Wux">
+            <toolbar key="toolbar" implicitIdentifier="AC52D12D-4000-4B08-A065-07D723AB5954" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="small" id="HZu-Ne-Wux">
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="B7B3A6E3-A418-464C-AAF3-D9D0B5687BBF" label="Custom View" paletteLabel="Custom View" tag="-1" id="J23-QU-u9D" userLabel="Custom Seekbar" customClass="CustomToolbarItem">
                         <nil key="toolTip"/>
                         <size key="minSize" width="163" height="26"/>
-                        <size key="maxSize" width="1000" height="26"/>
+                        <size key="maxSize" width="10000" height="26"/>
                         <customView key="view" id="Cf3-e3-qXV" userLabel="DdbSeekbar" customClass="DdbSeekBar">
                             <rect key="frame" x="0.0" y="14" width="163" height="26"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                             <connections>
                                 <action selector="seekBarAction:" target="-2" id="6xm-l3-mAx"/>
                             </connections>
@@ -114,11 +114,11 @@
                     <toolbarItem implicitItemIdentifier="0D19120C-6CE3-44D9-88AF-A6AC3500FF97" label="Custom View" paletteLabel="Custom View" id="swP-ZR-Qps">
                         <nil key="toolTip"/>
                         <size key="minSize" width="96" height="21"/>
-                        <size key="maxSize" width="96" height="28"/>
+                        <size key="maxSize" width="96" height="21"/>
                         <slider key="view" verticalHuggingPriority="750" id="GfK-FT-xmA">
                             <rect key="frame" x="0.0" y="14" width="96" height="21"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="upx-Mu-ZBK"/>
+                            <sliderCell key="cell" controlSize="small" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="upx-Mu-ZBK"/>
                             <connections>
                                 <action selector="volumeBarAction:" target="-2" id="Fc2-nX-JZk"/>
                             </connections>
