@@ -46,7 +46,7 @@ strcopy_escape (char *dst, int d_len, const char *src, size_t n) {
     *dst = 0;
 }
 
-#define WOS_URL "http://www.worldofspectrum.org/showscreen.cgi?screen=screens/load/%c/gif/%s.gif"
+#define WOS_URL "http://worldofspectrum.org//scr2gif?file=pub/sinclair/screens/load/%c/scr/%s.scr"
 int fetch_from_wos (const char *title, const char *dest)
 {
     // extract game title from title
