@@ -2405,10 +2405,6 @@ tf_func_rgb (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
         int i;
         for (i = 0; i < 3; i++) {
             TF_EVAL_CHECK(len, ctx, arg, arglens[i], out, outlen, fail_on_undef);
-            if (!isdigit (*out)) {
-                *out = 0;
-                return -1;
-            }
             rgb[i] = atoi (out);
             *out = 0;
 
@@ -2434,7 +2430,6 @@ tf_func_rgb (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
 
         memcpy (out, rgbseq, rgbseqlen);
         out += rgbseqlen;
-        outlen -= rgbseqlen;
         if (HAS_DIMMED(ctx)) {
             ctx->dimmed = 1;
         }
