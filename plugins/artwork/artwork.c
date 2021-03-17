@@ -119,7 +119,7 @@ static char *artwork_folders;
 
 static char *album_tf;
 static char *artist_tf;
-
+static char *title_tf;
 
 // esc_char is needed to prevent using file path separators,
 // e.g. to avoid writing arbitrary files using "../../../filename"
@@ -888,7 +888,7 @@ process_query (ddb_cover_info_t *cover)
 
     /* Web lookups */
     if (artwork_enable_wos && strlen (cover->filepath) > 3 && !strcasecmp (cover->filepath+strlen (cover->filepath)-3, ".ay")) {
-        if (!fetch_from_wos (cover->album, cache_path)) {
+        if (!fetch_from_wos (cover->title, cache_path)) {
             cover->image_filename = strdup(cache_path);
             cover->cover_found = 1;
             return;
@@ -1092,6 +1092,9 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         if (!artist_tf) {
             artist_tf = deadbeef->tf_compile ("%artist%");
         }
+        if (!title_tf) {
+            title_tf = deadbeef->tf_compile ("%title%");
+        }
 
         deadbeef->pl_lock ();
         strncat (cover->filepath, deadbeef->pl_find_meta (query->track, ":URI"), sizeof(cover->filepath) - strlen(cover->filepath) - 1);
@@ -1102,6 +1105,7 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         ctx.it = query->track;
         deadbeef->tf_eval (&ctx, album_tf, cover->album, sizeof (cover->album));
         deadbeef->tf_eval (&ctx, artist_tf, cover->artist, sizeof (cover->artist));
+        deadbeef->tf_eval (&ctx, title_tf, cover->title, sizeof (cover->title));
 
         // check the cache
         ddb_cover_info_t *cached_cover = cover_cache_find (cover);
@@ -1354,9 +1358,15 @@ artwork_plugin_stop (void) {
         deadbeef->tf_free (album_tf);
         album_tf = NULL;
     }
+
     if (artist_tf) {
         deadbeef->tf_free (artist_tf);
         artist_tf = NULL;
+    }
+
+    if (title_tf) {
+        deadbeef->tf_free (title_tf);
+        title_tf = NULL;
     }
 
     stop_cache_cleaner ();
