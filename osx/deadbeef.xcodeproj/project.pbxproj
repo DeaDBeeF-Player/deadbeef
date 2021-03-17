@@ -1052,8 +1052,6 @@
 		2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D60108C1A9CDF06000136AF /* SearchWindowController.m */; };
 		2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */; };
 		2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */; };
-		2D621FCA1CD92CCA00EB6D22 /* albumartorg.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D621FA51CD92CC500EB6D22 /* albumartorg.c */; };
-		2D621FCB1CD92CCA00EB6D22 /* albumartorg.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D621FA61CD92CC500EB6D22 /* albumartorg.h */; };
 		2D621FCD1CD92CCA00EB6D22 /* artwork.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D621FA91CD92CC500EB6D22 /* artwork.c */; };
 		2D621FCE1CD92CCA00EB6D22 /* artwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D621FAA1CD92CC500EB6D22 /* artwork.h */; };
 		2D621FD01CD92CCA00EB6D22 /* artwork_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D621FAE1CD92CC500EB6D22 /* artwork_internal.c */; };
@@ -1064,8 +1062,6 @@
 		2D621FD51CD92CCA00EB6D22 /* escape.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D621FB41CD92CC500EB6D22 /* escape.h */; };
 		2D621FD71CD92CCA00EB6D22 /* lastfm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D621FB71CD92CC500EB6D22 /* lastfm.c */; };
 		2D621FD81CD92CCA00EB6D22 /* lastfm.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D621FB81CD92CC500EB6D22 /* lastfm.h */; };
-		2D621FDB1CD92CCA00EB6D22 /* musicbrainz.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D621FBE1CD92CC500EB6D22 /* musicbrainz.c */; };
-		2D621FDC1CD92CCA00EB6D22 /* musicbrainz.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D621FBF1CD92CC500EB6D22 /* musicbrainz.h */; };
 		2D621FDD1CD92CCA00EB6D22 /* wos.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D621FC01CD92CC500EB6D22 /* wos.c */; };
 		2D621FDE1CD92CCA00EB6D22 /* wos.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D621FC11CD92CC500EB6D22 /* wos.h */; };
 		2D6220421CD9302200EB6D22 /* cderror.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D621FED1CD9302100EB6D22 /* cderror.h */; };
@@ -12015,9 +12011,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D621FDC1CD92CCA00EB6D22 /* musicbrainz.h in Headers */,
 				2D621FD51CD92CCA00EB6D22 /* escape.h in Headers */,
-				2D621FCB1CD92CCA00EB6D22 /* albumartorg.h in Headers */,
 				2D621FD31CD92CCA00EB6D22 /* cache.h in Headers */,
 				2D621FDE1CD92CCA00EB6D22 /* wos.h in Headers */,
 				2DA7C22F251002390080963D /* artwork_flac.h in Headers */,
@@ -15207,8 +15201,6 @@
 				2D621FCD1CD92CCA00EB6D22 /* artwork.c in Sources */,
 				2D5193C824ABBC1600134891 /* mp4tagutil.c in Sources */,
 				2D621FD71CD92CCA00EB6D22 /* lastfm.c in Sources */,
-				2D621FDB1CD92CCA00EB6D22 /* musicbrainz.c in Sources */,
-				2D621FCA1CD92CCA00EB6D22 /* albumartorg.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

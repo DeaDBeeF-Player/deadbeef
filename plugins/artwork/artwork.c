@@ -57,6 +57,8 @@
 #include "../../strdupa.h"
 #include "wos.h"
 
+#define ENABLE_MUSICBRAINZ 0
+#define ENABLE_ALBUMART_ORG 0
 
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin.plugin, 0, __VA_ARGS__); }
 
@@ -94,8 +96,12 @@ static int artwork_enable_embedded;
 static int artwork_enable_local;
 #ifdef USE_VFS_CURL
     static int artwork_enable_lfm;
+#if ENABLE_MUSICBRAINZ
     static int artwork_enable_mb;
+#endif
+#if ENABLE_ALBUMART_ORG
     static int artwork_enable_aao;
+#endif
     static int artwork_enable_wos;
 #endif
 static int scale_towards_longer;
@@ -687,7 +693,8 @@ web_lookups (const char *cache_path, ddb_cover_info_t *cover)
             return 0;
         }
     }
-
+#if ENABLE_MUSICBRAINZ
+    // Albumart.org and Musicbrainz have either changed their APIs, or are broken in general -- therefore disabled.
     if (artwork_enable_mb) {
         if (!fetch_from_musicbrainz (cover->artist, cover->album, cache_path)) {
             cover->image_filename = strdup (cache_path);
@@ -697,7 +704,9 @@ web_lookups (const char *cache_path, ddb_cover_info_t *cover)
             return 0;
         }
     }
+#endif
 
+#if ENABLE_ALBUMART_ORG
     if (artwork_enable_aao) {
         if (!fetch_from_albumart_org (cover->artist, cover->album, cache_path)) {
             cover->image_filename = strdup (cache_path);
@@ -707,6 +716,7 @@ web_lookups (const char *cache_path, ddb_cover_info_t *cover)
             return 0;
         }
     }
+#endif
 #endif
 
     return -1;
@@ -888,41 +898,42 @@ process_query (ddb_cover_info_t *cover)
             return;
         }
     }
-
-    int res = web_lookups (cache_path, cover);
-    if (res < 0) {
-        /* Try stripping parenthesised text off the end of the album name */
-        char *p = strpbrk (cover->album, "([");
-        if (p) {
-            *p = '\0';
-            res = web_lookups (cache_path, cover);
-            *p = '(';
-        }
-    }
-    if (res >= 0) {
-        cover->cover_found = res;
-
-        if (res && artwork_save_to_music_folders && cover->image_filename) {
-            // save to the music folder (only if not present)
-            char *slash = strrchr (cover->filepath, '/');
-
-            if (!slash) {
-                return;
-            }
-            size_t len = slash - cover->filepath + 1;
-
-            char covername[] = "cover.jpg";  // FIXME: configurable name
-            char coverpath[len + sizeof (covername)];
-            memcpy (coverpath, cover->filepath, len);
-            memcpy (coverpath + len, covername, sizeof (covername));
-
-            struct stat stat_struct;
-            if (stat (coverpath, &stat_struct)) {
-                copy_file(cover->image_filename, coverpath);
+    else { // don't attempt to load ay covers from regular music services
+        int res = web_lookups (cache_path, cover);
+        if (res < 0) {
+            /* Try stripping parenthesised text off the end of the album name */
+            char *p = strpbrk (cover->album, "([");
+            if (p) {
+                *p = '\0';
+                res = web_lookups (cache_path, cover);
+                *p = '(';
             }
         }
+        if (res >= 0) {
+            cover->cover_found = res;
 
-        return;
+            if (res && artwork_save_to_music_folders && cover->image_filename) {
+                // save to the music folder (only if not present)
+                char *slash = strrchr (cover->filepath, '/');
+
+                if (!slash) {
+                    return;
+                }
+                size_t len = slash - cover->filepath + 1;
+
+                char covername[] = "cover.jpg";  // FIXME: configurable name
+                char coverpath[len + sizeof (covername)];
+                memcpy (coverpath, cover->filepath, len);
+                memcpy (coverpath + len, covername, sizeof (covername));
+
+                struct stat stat_struct;
+                if (stat (coverpath, &stat_struct)) {
+                    copy_file(cover->image_filename, coverpath);
+                }
+            }
+
+            return;
+        }
     }
 #endif
 
@@ -1160,8 +1171,12 @@ get_fetcher_preferences (void)
     deadbeef->conf_unlock ();
 #ifdef USE_VFS_CURL
     artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
+#if ENABLE_MUSICBRAINZ
     artwork_enable_mb = deadbeef->conf_get_int ("artwork.enable_musicbrainz", 0);
+#endif
+#if ENABLE_ALBUMART_ORG
     artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
+#endif
     artwork_enable_wos = deadbeef->conf_get_int ("artwork.enable_wos", 0);
 #endif
     scale_towards_longer = deadbeef->conf_get_int ("artwork.scale_towards_longer", 1);
@@ -1193,8 +1208,12 @@ artwork_configchanged (void)
     char *old_artwork_folders = strdup(artwork_folders ? artwork_folders : "");
 #ifdef USE_VFS_CURL
     int old_artwork_enable_lfm = artwork_enable_lfm;
+#if ENABLE_MUSICBRAINZ
     int old_artwork_enable_mb = artwork_enable_mb;
+#endif
+#if ENABLE_ALBUMART_ORG
     int old_artwork_enable_aao = artwork_enable_aao;
+#endif
     int old_artwork_enable_wos = artwork_enable_wos;
 #endif
     int old_missing_artwork = missing_artwork;
@@ -1213,8 +1232,12 @@ artwork_configchanged (void)
         old_artwork_enable_local != artwork_enable_local ||
 #ifdef USE_VFS_CURL
         old_artwork_enable_lfm != artwork_enable_lfm ||
+#if ENABLE_MUSICBRAINZ
         old_artwork_enable_mb != artwork_enable_mb ||
+#endif
+#if ENABLE_ALBUMART_ORG
         old_artwork_enable_aao != artwork_enable_aao ||
+#endif
         old_artwork_enable_wos != artwork_enable_wos ||
 #endif
         strcmp(old_artwork_filemask, artwork_filemask) ||
@@ -1376,8 +1399,12 @@ static const char settings_dlg[] =
     "property \"Artwork folders\" entry artwork.folders \"" DEFAULT_FOLDERS "\";\n"
 #ifdef USE_VFS_CURL
     "property \"Fetch from Last.fm\" checkbox artwork.enable_lastfm 0;\n"
+#if ENABLE_MUSICBRAINZ
     "property \"Fetch from MusicBrainz\" checkbox artwork.enable_musicbrainz 0;\n"
+#endif
+#if ENABLE_ALBUMART_ORG
     "property \"Fetch from Albumart.org\" checkbox artwork.enable_albumartorg 0;\n"
+#endif
     "property \"Fetch from World of Spectrum (AY files only)\" checkbox artwork.enable_wos 0;\n"
 #endif
 // android doesn't display any image when cover is not found, and positioning algorithm is really different,
