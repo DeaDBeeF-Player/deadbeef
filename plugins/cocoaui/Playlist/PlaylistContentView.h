@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)cleanup;
 
 - (void)drawRow:(int)idx;
-- (void)drawGroup:(int)idx;
+- (void)drawGroup:(PlaylistGroup *)group;
 
 - (void)setCursor:(int)cursor noscroll:(BOOL)noscroll;
 
