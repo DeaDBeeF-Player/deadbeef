@@ -1254,20 +1254,19 @@ static int grouptitleheight = 22;
     self.needsDisplayInRect = rect;
 }
 
-- (void)drawGroup:(int)idx {
-    int i = 0;
+- (void)drawGroup:(PlaylistGroup *)group {
     int y = 0;
     for (PlaylistGroup *grp in self.groups) {
-        if (idx == i) {
-            NSScrollView *sv = self.enclosingScrollView;
-            NSRect vis = [sv documentVisibleRect];
-            NSRect rect = NSMakeRect(vis.origin.x, y, vis.size.width, grp->height);
-            self.needsDisplayInRect = rect;
+        if (grp == group) {
             break;
         }
-        i++;
         y += grp->height;
     }
+
+    NSScrollView *sv = self.enclosingScrollView;
+    NSRect vis = [sv documentVisibleRect];
+    NSRect rect = NSMakeRect(vis.origin.x, y, vis.size.width, group->height);
+    self.needsDisplayInRect = rect;
 }
 
 #pragma mark - Navigation
