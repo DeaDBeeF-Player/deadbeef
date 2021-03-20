@@ -149,6 +149,8 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
 
     CachedCover *cover = [self.cachedCovers objectForKey:hash];
     if (cover != nil) {
+        // Callback is not executed in this case to avoid double drawing
+        // The caller must release user data if the returned image is not nil.
         return cover.image;
     }
 
