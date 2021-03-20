@@ -840,7 +840,7 @@ extern DB_functions_t *deadbeef;
 
 typedef struct {
     void *ctl; // DdbPlaylistViewController ptr (retain)
-    int grp;
+    void *grp;
     CGFloat albumArtSpaceWidth;
 } cover_avail_info_t;
 
@@ -849,14 +849,14 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     PlaylistViewController *ctl = (__bridge_transfer PlaylistViewController *)info->ctl;
     PlaylistView *lv = (PlaylistView *)ctl.view;
 
-    PlaylistGroup *grp = [lv.contentView groupForIndex:info->grp];
+    PlaylistGroup *grp = (__bridge_transfer PlaylistGroup *)info->grp;
     if (grp != nil) {
         NSSize desiredSize = [ctl artworkDesiredSizeForImageSize:img.size albumArtSpaceWidth:info->albumArtSpaceWidth];
         grp->cachedImage = [ctl createCachedImage:img size:desiredSize];
         grp->hasCachedImage = YES;
     }
 
-    [lv.contentView drawGroup:info->grp];
+    [lv.contentView drawGroup:grp];
     free (info);
 }
 
@@ -886,7 +886,7 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     DB_playItem_t *it = (DB_playItem_t *)grp->head;
     cover_avail_info_t *inf = calloc (sizeof (cover_avail_info_t), 1);
     inf->ctl = (__bridge_retained void *)self;
-    inf->grp = (int)groupIndex;
+    inf->grp = (__bridge_retained void *)grp;
 
     int art_width = width - ART_PADDING_HORZ * 2;
     inf->albumArtSpaceWidth = art_width;
