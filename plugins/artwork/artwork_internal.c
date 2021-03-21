@@ -25,6 +25,7 @@
 #ifdef HAVE_CONFIG_H
     #include "../../config.h"
 #endif
+#include <dispatch/dispatch.h>
 #include <stdlib.h>
 #include <string.h>
 #include <libgen.h>
@@ -40,17 +41,59 @@
 #define trace(...)
 
 extern DB_functions_t *deadbeef;
+extern dispatch_queue_t sync_queue;
+
+#define MAX_REQUESTS FETCH_CONCURRENT_LIMIT
+static DB_FILE *_requests[MAX_REQUESTS]; // all current open requests
 
 static DB_FILE *
 new_http_request (const char *url) {
     errno = 0;
 
     DB_FILE *http_request = deadbeef->fopen (url);
+
+    __block int registered = 0;
+
+    dispatch_sync(sync_queue, ^{
+        for (int i = 0; i < MAX_REQUESTS; i++) {
+            if (_requests[i] == NULL) {
+                _requests[i] = http_request;
+                registered = 1;
+                break;
+            }
+        }
+    });
+
+    if (!registered) {
+        deadbeef->fclose (http_request);
+        trace ("Too many concurrent HTTP requests");
+        return NULL;
+    }
+
     return http_request;
+}
+
+void
+artwork_abort_all_http_requests (void) {
+    dispatch_sync (sync_queue, ^{
+        for (int i = 0; i < MAX_REQUESTS; i++) {
+            if (_requests[i] != NULL) {
+                deadbeef->fabort (_requests[i]);
+            }
+        }
+    });
 }
 
 static void
 close_http_request (DB_FILE *request) {
+    dispatch_sync(sync_queue, ^{
+        for (int i = 0; i < MAX_REQUESTS; i++) {
+            if (_requests[i] == request) {
+                _requests[i] = NULL;
+                break;
+            }
+        }
+    });
     deadbeef->fclose (request);
 }
 
@@ -67,15 +110,6 @@ artwork_http_request (const char *url, char *buffer, const size_t buffer_size) {
     close_http_request (request);
 
     return size;
-}
-
-void
-artwork_abort_http_request (void) {
-        // FIXME:
-//        if (http_request) {
-//            deadbeef->fabort (http_request);
-//        }
-//        http_request = NULL;
 }
 
 static int
