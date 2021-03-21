@@ -1257,7 +1257,7 @@ static int grouptitleheight = 22;
 - (void)drawGroup:(PlaylistGroup *)group {
     int y = 0;
     for (PlaylistGroup *grp in self.groups) {
-        if (grp == group) {
+        if (grp->head == group->head) {
             break;
         }
         y += grp->height;
