@@ -8376,6 +8376,7 @@
 		2D30D13625E2A6B40023A299 /* DesignMode */ = {
 			isa = PBXGroup;
 			children = (
+				2DE5562426075B4200285BF9 /* Widgets */,
 				2DDD76C625E152BF00FA6FE5 /* DesignModeDefs.h */,
 				2D9EBB6F25E45BAA00255592 /* DesignModeDeps.h */,
 				2D9EBB7025E45BAA00255592 /* DesignModeDeps.m */,
@@ -8383,14 +8384,6 @@
 				2D046F3825E2B17700F68459 /* DesignModeEventHandler.m */,
 				2D30D0B225E2A5DD0023A299 /* DesignModeState.h */,
 				2D30D0B325E2A5DD0023A299 /* DesignModeState.m */,
-				2DE1D3E419B11539009B5BC6 /* PlaceholderWidget.h */,
-				2DE1D3E519B11539009B5BC6 /* PlaceholderWidget.m */,
-				2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */,
-				2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */,
-				2D5F05EE25E306BC000A588C /* SpectrumAnalyzerWidget.h */,
-				2D5F05EF25E306BC000A588C /* SpectrumAnalyzerWidget.m */,
-				2DDD781425E1578C00FA6FE5 /* SplitterWidget.h */,
-				2DDD781525E1578C00FA6FE5 /* SplitterWidget.m */,
 				2DDD789A25E15C9E00FA6FE5 /* WidgetBase.h */,
 				2DDD789B25E15C9E00FA6FE5 /* WidgetBase.m */,
 				2DDD778C25E153D000FA6FE5 /* WidgetFactory.h */,
@@ -10448,6 +10441,21 @@
 			);
 			name = pltbrowser;
 			path = plugins/pltbrowser;
+			sourceTree = "<group>";
+		};
+		2DE5562426075B4200285BF9 /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				2DE1D3E419B11539009B5BC6 /* PlaceholderWidget.h */,
+				2DE1D3E519B11539009B5BC6 /* PlaceholderWidget.m */,
+				2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */,
+				2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */,
+				2D5F05EE25E306BC000A588C /* SpectrumAnalyzerWidget.h */,
+				2D5F05EF25E306BC000A588C /* SpectrumAnalyzerWidget.m */,
+				2DDD781425E1578C00FA6FE5 /* SplitterWidget.h */,
+				2DDD781525E1578C00FA6FE5 /* SplitterWidget.m */,
+			);
+			path = Widgets;
 			sourceTree = "<group>";
 		};
 		2DE92F331BAFFB7700F37154 /* wavpack */ = {
