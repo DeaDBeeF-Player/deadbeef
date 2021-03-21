@@ -41,36 +41,21 @@
 
 extern DB_functions_t *deadbeef;
 
-static uintptr_t http_mutex;
-
 static DB_FILE *
-new_http_request (const char *url)
-{
+new_http_request (const char *url) {
     errno = 0;
 
-    if (!http_mutex) {
-        http_mutex = deadbeef->mutex_create_nonrecursive ();
-        if (!http_mutex) {
-            return NULL;
-        }
-    }
-
-    deadbeef->mutex_lock (http_mutex);
     DB_FILE *http_request = deadbeef->fopen (url);
-    deadbeef->mutex_unlock (http_mutex);
     return http_request;
 }
 
 static void
-close_http_request (DB_FILE *request)
-{
-    deadbeef->mutex_lock (http_mutex);
+close_http_request (DB_FILE *request) {
     deadbeef->fclose (request);
-    deadbeef->mutex_unlock (http_mutex);
 }
 
-size_t artwork_http_request (const char *url, char *buffer, const size_t buffer_size)
-{
+size_t
+artwork_http_request (const char *url, char *buffer, const size_t buffer_size) {
     DB_FILE *request = new_http_request (url);
     if (!request) {
         return 0;
@@ -84,22 +69,17 @@ size_t artwork_http_request (const char *url, char *buffer, const size_t buffer_
     return size;
 }
 
-void artwork_abort_http_request (void)
-{
-    if (http_mutex) {
-        deadbeef->mutex_lock (http_mutex);
+void
+artwork_abort_http_request (void) {
         // FIXME:
 //        if (http_request) {
 //            deadbeef->fabort (http_request);
 //        }
 //        http_request = NULL;
-        deadbeef->mutex_unlock (http_mutex);
-    }
 }
 
 static int
-check_dir (const char *path)
-{
+check_dir (const char *path) {
     struct stat stat_struct;
     if (!stat (path, &stat_struct)) {
         return S_ISDIR (stat_struct.st_mode);
@@ -181,8 +161,8 @@ copy_file (const char *in, const char *out) {
     return err;
 }
 
-int write_file (const char *out, const char *data, const size_t data_length)
-{
+int
+write_file (const char *out, const char *data, const size_t data_length) {
     if (!ensure_dir (out)) {
         return -1;
     }
