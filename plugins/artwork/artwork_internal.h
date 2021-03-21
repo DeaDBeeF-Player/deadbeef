@@ -29,8 +29,11 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
+#define FETCH_CONCURRENT_LIMIT 5
+
 size_t artwork_http_request(const char *url, char *buffer, const size_t max_bytes);
-void artwork_abort_http_request(void);
+
+void artwork_abort_all_http_requests (void);
 
 int ensure_dir(const char *path);
 int copy_file (const char *in, const char *out);
