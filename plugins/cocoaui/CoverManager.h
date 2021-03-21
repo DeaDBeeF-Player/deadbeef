@@ -30,5 +30,7 @@
 - (CoverManager *)init;
 @property (nonatomic,readonly) NSImage *defaultCover;
 - (NSImage *)getCoverForTrack:(DB_playItem_t *)track withCallbackWhenReady:(void (*) (NSImage *img, void *user_data))callback withUserDataForCallback:(void *)user_data;
+- (NSImage *)createCachedImage:(NSImage *)image size:(NSSize)size;
+- (NSSize)artworkDesiredSizeForImageSize:(NSSize)imageSize albumArtSpaceWidth:(CGFloat)albumArtSpaceWidth;
 
 @end

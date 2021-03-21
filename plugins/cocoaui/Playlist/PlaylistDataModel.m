@@ -48,6 +48,12 @@ extern DB_functions_t *deadbeef;
 
 - (void)setCursor:(int)cursor {
     deadbeef->pl_set_cursor ([self playlistIter], cursor);
+    DB_playItem_t *it = deadbeef->pl_get_for_idx (cursor);
+    if (it) {
+        ddb_event_track_t *event = (ddb_event_track_t *)deadbeef->event_alloc(DB_EV_CURSOR_MOVED);
+        event->track = it;
+        deadbeef->event_send ((ddb_event_t *)event, PL_MAIN, 0);
+    }
 }
 
 - (void)activate:(int)idx {

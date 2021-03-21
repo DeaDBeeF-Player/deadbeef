@@ -37,6 +37,20 @@ static DesignModeState *_sharedInstance;
     _sharedInstance = nil;
 }
 
+- (void)cleanupWidget:(id<WidgetProtocol>)widget {
+    for (id<WidgetProtocol> childWidget in widget.childWidgets) {
+        [self cleanupWidget:childWidget];
+    }
+    if ([widget respondsToSelector:@selector(cleanup)]) {
+        [widget cleanup];
+    }
+}
+
+- (void)dealloc
+{
+    [self cleanupWidget:_rootWidget];
+}
+
 - (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
     self = [super init];
 
