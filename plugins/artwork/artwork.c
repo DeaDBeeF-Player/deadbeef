@@ -104,7 +104,6 @@ static int artwork_enable_local;
 #endif
     static int artwork_enable_wos;
 #endif
-static int scale_towards_longer;
 static int missing_artwork;
 static char *nocover_path;
 
@@ -1183,7 +1182,6 @@ get_fetcher_preferences (void)
 #endif
     artwork_enable_wos = deadbeef->conf_get_int ("artwork.enable_wos", 0);
 #endif
-    scale_towards_longer = deadbeef->conf_get_int ("artwork.scale_towards_longer", 1);
     missing_artwork = deadbeef->conf_get_int ("artwork.missing_artwork", 1);
     if (missing_artwork == 2) {
         deadbeef->conf_lock ();
@@ -1424,7 +1422,6 @@ static const char settings_dlg[] =
     "property box hbox[1] height=-1;"
     "property \"When no artwork is found\" select[3] artwork.missing_artwork 1 \"leave blank\" \"use DeaDBeeF default cover\" \"display custom image\";"
     "property \"Custom image path\" file artwork.nocover_path \"\";\n"
-    "property \"Scale artwork towards longer side\" checkbox artwork.scale_towards_longer 1;\n"
 #endif
 ;
 
