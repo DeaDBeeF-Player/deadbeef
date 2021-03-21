@@ -2243,6 +2243,10 @@
 		2DE3B8902269F6BA00AFF9AE /* pltbrowser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B87E2269F6B900AFF9AE /* pltbrowser.c */; };
 		2DE3B8932269F6BA00AFF9AE /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B88C2269F6B900AFF9AE /* support.h */; };
 		2DE3B8962269F6D900AFF9AE /* pltbrowser_gtk3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE3B8742269F68B00AFF9AE /* pltbrowser_gtk3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DE5562726075B8400285BF9 /* AlbumArtWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE5562526075B8400285BF9 /* AlbumArtWidget.h */; };
+		2DE5562826075B8400285BF9 /* AlbumArtWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE5562526075B8400285BF9 /* AlbumArtWidget.h */; };
+		2DE5562926075B8400285BF9 /* AlbumArtWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE5562626075B8400285BF9 /* AlbumArtWidget.m */; };
+		2DE5562A26075B8400285BF9 /* AlbumArtWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE5562626075B8400285BF9 /* AlbumArtWidget.m */; };
 		2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */; };
 		2DE92F561BAFFBEE00F37154 /* wavpack.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DEBA1BF23E203B9000E4135 /* eqpreset.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEBA1BD23E203B9000E4135 /* eqpreset.h */; };
@@ -5970,6 +5974,8 @@
 		2DE3B87D2269F6B900AFF9AE /* support.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = support.c; sourceTree = "<group>"; };
 		2DE3B87E2269F6B900AFF9AE /* pltbrowser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pltbrowser.c; sourceTree = "<group>"; };
 		2DE3B88C2269F6B900AFF9AE /* support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = support.h; sourceTree = "<group>"; };
+		2DE5562526075B8400285BF9 /* AlbumArtWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlbumArtWidget.h; sourceTree = "<group>"; };
+		2DE5562626075B8400285BF9 /* AlbumArtWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlbumArtWidget.m; sourceTree = "<group>"; };
 		2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = bufferingTemplate.pdf; sourceTree = "<group>"; };
 		2DE7A8FA1CA493CE00318A9F /* CuesheetTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CuesheetTests.m; sourceTree = "<group>"; };
 		2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wavpack.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -10446,6 +10452,8 @@
 		2DE5562426075B4200285BF9 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
+				2DE5562526075B8400285BF9 /* AlbumArtWidget.h */,
+				2DE5562626075B8400285BF9 /* AlbumArtWidget.m */,
 				2DE1D3E419B11539009B5BC6 /* PlaceholderWidget.h */,
 				2DE1D3E519B11539009B5BC6 /* PlaceholderWidget.m */,
 				2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */,
@@ -11586,6 +11594,7 @@
 				2DDD789D25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
 				2DDD796425E15ED200FA6FE5 /* PlaylistWidget.h in Headers */,
 				2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */,
+				2DE5562826075B8400285BF9 /* AlbumArtWidget.h in Headers */,
 				2D9EBAAC25E44A0700255592 /* WidgetSerializer.h in Headers */,
 				2D5F05F125E306BC000A588C /* SpectrumAnalyzerWidget.h in Headers */,
 			);
@@ -12753,6 +12762,7 @@
 				4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */,
 				2D9EBAAB25E44A0700255592 /* WidgetSerializer.h in Headers */,
 				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
+				2DE5562726075B8400285BF9 /* AlbumArtWidget.h in Headers */,
 				2DBC62D624CCDEFC00AA20BF /* VisualizationViewController.h in Headers */,
 				2DA273892406FBD800FB9BE1 /* DspPreferencesViewController.h in Headers */,
 				2DDD778E25E153D000FA6FE5 /* WidgetFactory.h in Headers */,
@@ -14708,6 +14718,7 @@
 				2D01D7E61AB2219C00BCD3C4 /* vfs_stdio.c in Sources */,
 				2D01D7D91AB2219C00BCD3C4 /* messagepump.c in Sources */,
 				2DDD789F25E15C9E00FA6FE5 /* WidgetBase.m in Sources */,
+				2DE5562A26075B8400285BF9 /* AlbumArtWidget.m in Sources */,
 				2D01D7D81AB2219C00BCD3C4 /* junklib.c in Sources */,
 				2D9EBB7425E45BAA00255592 /* DesignModeDeps.m in Sources */,
 				2D0A549223E8CC9500E0F978 /* eqpreset.c in Sources */,
@@ -15957,6 +15968,7 @@
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
 				2DEF494519C4DB4100B718C1 /* PlaylistView.m in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
+				2DE5562926075B8400285BF9 /* AlbumArtWidget.m in Sources */,
 				2DB52F7D24CF7CF20046D516 /* TrackContextMenu.m in Sources */,
 				2DDD7ABD25E1831000FA6FE5 /* PlaylistDataModel.m in Sources */,
 				2DDD796525E15ED200FA6FE5 /* PlaylistWidget.m in Sources */,

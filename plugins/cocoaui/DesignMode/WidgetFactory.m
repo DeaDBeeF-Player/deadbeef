@@ -6,6 +6,7 @@
 //  Copyright © 2021 Alexey Yakovenko. All rights reserved.
 //
 
+#import "AlbumArtWidget.h"
 #import "PlaylistWidget.h"
 #import "PlaceholderWidget.h"
 #import "SpectrumAnalyzerWidget.h"
@@ -74,6 +75,9 @@
     }];
     [self registerType:SpectrumAnalyzerWidget.widgetType displayName:@"Spectrum Analyzer" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
         return [[SpectrumAnalyzerWidget alloc] initWithDeps:self.deps];
+    }];
+    [self registerType:AlbumArtWidget.widgetType displayName:@"Album Art" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+        return [[AlbumArtWidget alloc] initWithDeps:self.deps];
     }];
 }
 
