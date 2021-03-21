@@ -173,4 +173,30 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
     return nil;
 }
 
+- (NSImage *)createCachedImage:(NSImage *)image size:(NSSize)size {
+    NSSize originalSize = image.size;
+    if (originalSize.width <= size.width && originalSize.height <= size.height) {
+        return image;
+    }
+    NSImage *cachedImage = [[NSImage alloc] initWithSize:size];
+    [cachedImage lockFocus];
+    cachedImage.size = size;
+    NSGraphicsContext.currentContext.imageInterpolation = NSImageInterpolationHigh;
+    [image drawInRect:NSMakeRect(0, 0, size.width, size.height) fromRect:CGRectMake(0, 0, originalSize.width, originalSize.height) operation:NSCompositingOperationCopy fraction:1.0];
+    [cachedImage unlockFocus];
+    return cachedImage;
+}
+
+- (NSSize)artworkDesiredSizeForImageSize:(NSSize)imageSize albumArtSpaceWidth:(CGFloat)albumArtSpaceWidth {
+    if (imageSize.width >= imageSize.height) {
+        CGFloat h = imageSize.height / (imageSize.width / albumArtSpaceWidth);
+        return NSMakeSize(albumArtSpaceWidth, h);
+    }
+    else {
+        CGFloat h = albumArtSpaceWidth;
+        CGFloat w = imageSize.width / (imageSize.height / h);
+        return NSMakeSize(w, h);
+    }
+}
+
 @end
