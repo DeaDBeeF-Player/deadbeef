@@ -1580,6 +1580,8 @@
 		2D9EBB7425E45BAA00255592 /* DesignModeDeps.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9EBB7025E45BAA00255592 /* DesignModeDeps.m */; };
 		2D9F6534241BE78C00D9D16E /* SeekbarOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */; };
 		2D9F6535241BE78C00D9D16E /* SeekbarOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */; };
+		2D9FD9E32607C68500F406D1 /* AlbumArtImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9FD9E12607C68500F406D1 /* AlbumArtImageView.h */; };
+		2D9FD9E42607C68500F406D1 /* AlbumArtImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9FD9E22607C68500F406D1 /* AlbumArtImageView.m */; };
 		2D9FFA251D7588A700D1B5F8 /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6965371D74338A00EB99D8 /* mp4tagutil.c */; };
 		2DA04E9523B6A4520070AC01 /* shellexec.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA04E9323B6A4510070AC01 /* shellexec.h */; };
 		2DA04E9623B6A4520070AC01 /* shellexec.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA04E9423B6A4510070AC01 /* shellexec.c */; };
@@ -5331,6 +5333,8 @@
 		2D9EBB7025E45BAA00255592 /* DesignModeDeps.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DesignModeDeps.m; sourceTree = "<group>"; };
 		2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SeekbarOverlay.h; sourceTree = "<group>"; };
 		2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SeekbarOverlay.m; sourceTree = "<group>"; };
+		2D9FD9E12607C68500F406D1 /* AlbumArtImageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlbumArtImageView.h; sourceTree = "<group>"; };
+		2D9FD9E22607C68500F406D1 /* AlbumArtImageView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlbumArtImageView.m; sourceTree = "<group>"; };
 		2DA04E8123B6A4320070AC01 /* shellexec.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = shellexec.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA04E9323B6A4510070AC01 /* shellexec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shellexec.h; sourceTree = "<group>"; };
 		2DA04E9423B6A4510070AC01 /* shellexec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shellexec.c; sourceTree = "<group>"; };
@@ -8441,6 +8445,8 @@
 		2D46220D226DBA2A003997E9 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				2D9FD9E12607C68500F406D1 /* AlbumArtImageView.h */,
+				2D9FD9E22607C68500F406D1 /* AlbumArtImageView.m */,
 				2D986140226C815F00BAACB1 /* BrowseButton.h */,
 				2D986141226C816000BAACB1 /* BrowseButton.m */,
 				2D061F7B19E9685E00CE6C29 /* DdbShared.h */,
@@ -11596,6 +11602,7 @@
 				2DBCB725240AE0BE0012F178 /* tftintutil.h in Headers */,
 				2DDD789D25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
 				2DDD796425E15ED200FA6FE5 /* PlaylistWidget.h in Headers */,
+				2D9FD9E32607C68500F406D1 /* AlbumArtImageView.h in Headers */,
 				2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */,
 				2DE5562826075B8400285BF9 /* AlbumArtWidget.h in Headers */,
 				2D9EBAAC25E44A0700255592 /* WidgetSerializer.h in Headers */,
@@ -14718,6 +14725,7 @@
 				2D01D7E21AB2219C00BCD3C4 /* streamer.c in Sources */,
 				2D448A841D5C5C6500B43F12 /* logger.c in Sources */,
 				2D01D7E71AB2219C00BCD3C4 /* volume.c in Sources */,
+				2D9FD9E42607C68500F406D1 /* AlbumArtImageView.m in Sources */,
 				2D01D7E61AB2219C00BCD3C4 /* vfs_stdio.c in Sources */,
 				2D01D7D91AB2219C00BCD3C4 /* messagepump.c in Sources */,
 				2DDD789F25E15C9E00FA6FE5 /* WidgetBase.m in Sources */,
