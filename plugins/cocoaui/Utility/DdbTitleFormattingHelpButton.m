@@ -31,7 +31,7 @@
 }
 
 - (void)handleAction:(id)sender {
-    [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString:@"https://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting-2.0"]];
+    [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString:@"https://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0"]];
 }
 
 @end
