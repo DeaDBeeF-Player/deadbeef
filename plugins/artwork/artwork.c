@@ -65,9 +65,7 @@
 DB_functions_t *deadbeef;
 ddb_artwork_plugin_t plugin;
 
-#define FETCH_CONCURRENT_LIMIT 5
-
-static dispatch_queue_t sync_queue;
+dispatch_queue_t sync_queue; // used in artwork_internal, therefore not static
 static dispatch_queue_t process_queue;
 static dispatch_queue_t fetch_queue;
 static dispatch_semaphore_t fetch_semaphore;
@@ -77,8 +75,6 @@ static int64_t cancellation_idx;
 
 #define MAX_COVERS_IN_CACHE 20
 static ddb_cover_info_t *cover_cache[MAX_COVERS_IN_CACHE];
-
-static int terminate;
 
 #ifdef ANDROID
 #define DEFAULT_DISABLE_CACHE 1
@@ -944,7 +940,7 @@ process_query (ddb_cover_info_t *cover)
 
 static void
 queue_clear (void) {
-    artwork_abort_http_request ();
+    artwork_abort_all_http_requests();
     dispatch_sync(sync_queue, ^{
         cancellation_idx = last_job_idx++;
     });
@@ -1048,11 +1044,6 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
     __block int cancel_query = 0;
     __block int64_t job_idx = 0;
     dispatch_sync(sync_queue, ^{
-        if (terminate) {
-            cancel_query = 1;
-            return;
-        }
-
         job_idx = last_job_idx++;
     });
 
@@ -1332,15 +1323,11 @@ artwork_get_actions (DB_playItem_t *it)
 
 static int
 artwork_plugin_stop (void) {
-    dispatch_sync(sync_queue, ^{
-        terminate = 1; // prevent any new items from being scheduled
-    });
     queue_clear ();
-    artwork_abort_http_request ();
 
+    dispatch_release(sync_queue);
     dispatch_release(fetch_queue);
     dispatch_release(process_queue);
-    dispatch_release(sync_queue);
     dispatch_release(fetch_semaphore);
 
     cover_cache_free ();
@@ -1382,7 +1369,6 @@ artwork_plugin_start (void)
     imlib_set_cache_size (0);
 #endif
 
-    terminate = 0;
     sync_queue = dispatch_queue_create("ArtworkSyncQueue", NULL);
     process_queue = dispatch_queue_create("ArtworkProcessQueue", NULL);
     fetch_queue = dispatch_queue_create("ArtworkFetchQueue", DISPATCH_QUEUE_CONCURRENT);
