@@ -118,6 +118,7 @@ calculate_tint_stops_from_string (const char *inputString, tint_stop_t *tintStop
     unsigned has_rgb = 0;
 
     int index = 0;
+    int byteindex = 0;
     while (*p) {
         tint_stop_t stop = {0};
         size_t len = get_stop_from_string(p, remaining, &stop);
@@ -137,6 +138,7 @@ calculate_tint_stops_from_string (const char *inputString, tint_stop_t *tintStop
                 }
                 tintStops[numTintStops].tint = currentTint;
                 tintStops[numTintStops].index = index;
+                tintStops[numTintStops].byteindex = byteindex;
                 tintStops[numTintStops].has_rgb = has_rgb;
                 tintStops[numTintStops].r = currentR;
                 tintStops[numTintStops].g = currentG;
@@ -157,6 +159,7 @@ calculate_tint_stops_from_string (const char *inputString, tint_stop_t *tintStop
         p += i;
         remaining -= i;
         index++;
+        byteindex+=i;
     }
     *out = 0;
     return numTintStops;

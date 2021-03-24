@@ -483,7 +483,7 @@ convert_escapetext_to_pango_attrlist (char *text, char **plainString, float *fg,
 
     // add attributes
     for (guint i = 0; i < numTintStops; i++) {
-        int index0 = tintStops[i].index;
+        int index0 = tintStops[i].byteindex;
         guint len = strLength - index0;
 
         GdkColor finalColor = { .red = fg[0]*65535, .green = fg[1]*65535, .blue = fg[2]*65535};

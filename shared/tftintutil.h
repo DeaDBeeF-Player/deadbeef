@@ -7,6 +7,7 @@ typedef struct {
     int tint;
 
     int index;
+    int byteindex;
 
     uint8_t r, g, b;
 
