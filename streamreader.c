@@ -83,6 +83,9 @@ streamreader_get_next_block (void) {
     if (block_next->pos >= 0) {
         return NULL; // all buffers full
     }
+
+    // FIXME: initialize
+    block_next->is_silent_header = 0;
     return block_next;
 }
 
@@ -166,6 +169,32 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
     else {
         block->last = 0;
     }
+
+    return 0;
+}
+
+int
+streamreader_silence_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t *fileinfo, uint64_t mutex) {
+    curr_block_bitrate = -1;
+    mutex_lock (mutex);
+    block->bitrate = -1;
+    block->pos = 0;
+    memset (block->buf, 0, BLOCK_SIZE);
+    block->size = BLOCK_SIZE;
+
+    memcpy (&block->fmt, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+    block->track = track;
+    block->is_silent_header = 1;
+
+    if (_firstblock) {
+        block->first = 1;
+        _firstblock = 0;
+    }
+    else {
+        block->first = 0;
+    }
+
+    block->last = 0;
 
     return 0;
 }

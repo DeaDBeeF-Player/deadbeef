@@ -83,6 +83,7 @@ static int conf_streamer_use_dependent_samplerate = 0;
 static int conf_streamer_samplerate = 44100;
 static int conf_streamer_samplerate_mult_48 = 48000;
 static int conf_streamer_samplerate_mult_44 = 44100;
+static float conf_format_silence = -1.f;
 
 static int trace_bufferfill = 0;
 
@@ -1519,6 +1520,10 @@ streamer_thread (void *unused) {
     uint32_t id;
     uintptr_t ctx;
     uint32_t p1, p2;
+
+    ddb_waveformat_t prev_block_fmt = {0};
+    double _add_format_silence = .0;
+
     while (!streaming_terminate) {
         struct timeval tm1;
         DB_output_t *output = plug_get_output ();
@@ -1613,8 +1618,25 @@ streamer_thread (void *unused) {
             continue;
         }
 
-        // streamreader_read_block will lock the mutex after success
-        int res = streamreader_read_block (block, streaming_track, fileinfo_curr, mutex);
+        int res = 0;
+
+        // insert silence at the format change
+        if (memcmp (&fileinfo_curr->fmt, &prev_block_fmt, sizeof (ddb_waveformat_t))
+            && conf_format_silence > 0) {
+            memcpy (&prev_block_fmt, &fileinfo_curr->fmt, sizeof (ddb_waveformat_t));
+
+            _add_format_silence = conf_format_silence;
+        }
+        if (_add_format_silence > 0) {
+            res = streamreader_silence_block (block, streaming_track, fileinfo_curr, mutex);
+            int bytes_per_sec = fileinfo_curr->fmt.samplerate * fileinfo_curr->fmt.channels * (fileinfo_curr->fmt.bps / 8);
+            _add_format_silence -= block->size / (double)bytes_per_sec;
+        }
+        else {
+            res = streamreader_read_block (block, streaming_track, fileinfo_curr, mutex);
+        }
+
+        // streamreader has locked the mutex on success
         int last = 0;
 
         if (res >= 0) {
@@ -1834,6 +1856,7 @@ process_output_block (streamblock_t *block, char *bytes) {
     int dspsize = 0;
     float dspratio = 1;
 
+
 #if defined(ANDROID) || defined(HAVE_XGUI)
     // android EQ and resampling require 16 bit, so convert here if needed
     int tempsize = sz * 16 / block->fmt.bps;
@@ -1884,8 +1907,10 @@ process_output_block (streamblock_t *block, char *bytes) {
         memcpy (bytes, dspbytes, sz);
     }
 
-    playpos += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dspratio;
-    playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dspratio;
+    if (!block->is_silent_header) {
+        playpos += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dspratio;
+        playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dspratio;
+    }
 
     if (block->pos >= block->size) {
         streamreader_next_block ();
@@ -2263,6 +2288,8 @@ streamer_configchanged (void) {
     conf_streamer_samplerate = new_conf_streamer_samplerate;
     conf_streamer_samplerate_mult_48 = new_conf_streamer_samplerate_mult_48;
     conf_streamer_samplerate_mult_44 = new_conf_streamer_samplerate_mult_44;
+
+    conf_format_silence = conf_get_float ("streamer.format_change_silence", -1.f);
 
     streamer_unlock ();
 

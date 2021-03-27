@@ -35,6 +35,7 @@ typedef struct streamblock_s {
     int first; // set to 1 for the first buffer of the stream, following the block with last=1
     int last; // set to 1 for last buffer of the stream
     int bitrate;
+    int is_silent_header; // set to 1 if the block represents the added silence
 
     playItem_t *track;
     ddb_waveformat_t fmt;
@@ -58,6 +59,9 @@ streamreader_get_next_block (void);
 // Returns negative value on error.
 int
 streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t *fileinfo, uint64_t mutex);
+
+int
+streamreader_silence_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t *fileinfo, uint64_t mutex);
 
 // Appends (enqueues) the block to the list of blocks containing data.
 // The passed block pointer must be the same as returned by `streamreader_get_next_block`.
