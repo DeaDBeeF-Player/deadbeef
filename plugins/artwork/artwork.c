@@ -508,7 +508,13 @@ id3_extract_art (const char *outname, ddb_cover_info_t *cover) {
                 }
                 if (!artwork_disable_cache) {
                     trace ("will write id3v2 APIC (%d bytes) into %s\n", (int)sz, outname);
-                    if (!write_file (outname, (const char *)image_data, sz)) {
+                    struct stat stat_struct;
+                    if (!stat (outname, &stat_struct) && S_ISREG (stat_struct.st_mode) && stat_struct.st_size > 0) {
+                        cover->image_filename = strdup (outname);
+                        err = 0;
+                        break;
+                    }
+                    else if (!write_file (outname, (const char *)image_data, sz)) {
                         cover->image_filename = strdup(outname);
                         err = 0;
                         break;
@@ -558,7 +564,13 @@ apev2_extract_art (const char *outname, ddb_cover_info_t *cover) {
                 }
                 trace ("will write apev2 cover art (%d bytes) into %s\n", sz, outname);
                 if (!artwork_disable_cache) {
-                    if (!write_file (outname, (const char *)image_data, sz)) {
+                    struct stat stat_struct;
+                    if (!stat (outname, &stat_struct) && S_ISREG (stat_struct.st_mode) && stat_struct.st_size > 0) {
+                        cover->image_filename = strdup (outname);
+                        err = 0;
+                        break;
+                    }
+                    else if (!write_file (outname, (const char *)image_data, sz)) {
                         cover->image_filename = strdup (outname);
                         err = 0;
                         break;
@@ -641,9 +653,18 @@ mp4_extract_art (const char *outname, ddb_cover_info_t *cover) {
 
     trace ("will write mp4 cover art (%u bytes) into %s\n", sz, outname);
     if (!artwork_disable_cache) {
-        if (!write_file (outname, (char *)image_blob, sz)) {
+        struct stat stat_struct;
+        if (!stat (outname, &stat_struct) && S_ISREG (stat_struct.st_mode) && stat_struct.st_size > 0) {
             ret = 0;
             cover->image_filename = strdup (outname);
+        }
+        else if (!write_file (outname, (char *)image_blob, sz)) {
+            ret = 0;
+            cover->image_filename = strdup (outname);
+        }
+        else {
+            trace ("Failed to write mp4 cover to file %s\n");
+            goto error;
         }
         free (image_blob);
         image_blob = NULL;
