@@ -26,6 +26,7 @@
 #endif
 #include <string.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #include "artwork_internal.h"
 #include "escape.h"
 
@@ -39,6 +40,10 @@
 #define IMAGE_END_TAG "</image>"
 int fetch_from_lastfm (const char *artist, const char *album, const char *dest)
 {
+    struct stat stat_struct;
+    if (!stat (dest, &stat_struct) && S_ISREG (stat_struct.st_mode) && stat_struct.st_size > 0) {
+        return 0;
+    }
     if (!artist || !album) {
         return -1;
     }
