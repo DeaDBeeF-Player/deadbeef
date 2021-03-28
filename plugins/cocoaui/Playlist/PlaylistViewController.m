@@ -36,6 +36,7 @@
 #include "deadbeef.h"
 #include "medialib.h"
 #include "utf8.h"
+#include "artwork.h"
 
 #define CELL_HPADDING 4
 #define ART_PADDING_HORZ 8
@@ -75,12 +76,18 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) PlaylistDataModel *dataModel;
 
+@property (nonatomic) ddb_artwork_plugin_t *artwork_plugin;
+
 @end
 
 @implementation PlaylistViewController
 
 - (void)dealloc
 {
+    if (_artwork_plugin != NULL) {
+        _artwork_plugin->remove_listener (artwork_listener, (__bridge void *)self);
+        _artwork_plugin = NULL;
+    }
     self.trackContextMenu = nil;
     [self cleanup];
 }
@@ -108,6 +115,16 @@ extern DB_functions_t *deadbeef;
     @autoreleasepool {
         self.trkProperties = nil;
     }
+}
+
+static void
+artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
+    PlaylistViewController *self = (__bridge PlaylistViewController *)user_data;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [CoverManager.defaultCoverManager resetCache];
+        PlaylistView *listview = (PlaylistView *)self.view;
+        listview.contentView.needsDisplay = YES;
+    });
 }
 
 - (void)menuAddColumn:(id)sender {
@@ -394,6 +411,9 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)setup {
+    _artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
+    _artwork_plugin->add_listener (artwork_listener, (__bridge void *)self);
+
     PlaylistView *lv = (PlaylistView *)self.view;
     lv.delegate = self;
     self.dataModel = [[PlaylistDataModel alloc] initWithIter:self.playlistIter];
