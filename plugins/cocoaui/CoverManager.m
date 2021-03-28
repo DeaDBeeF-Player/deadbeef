@@ -172,6 +172,10 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
     return nil;
 }
 
+- (void)resetCache {
+    [self.cachedCovers removeAllObjects];
+}
+
 - (NSImage *)createCachedImage:(NSImage *)image size:(NSSize)size {
     NSSize originalSize = image.size;
     if (originalSize.width <= size.width && originalSize.height <= size.height) {
