@@ -167,7 +167,6 @@ static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cove
     info->real_user_data = user_data;
     query->user_data = info;
 
-    [self addCoverForTrack:query->track withImage:nil];
     self.artwork_plugin->cover_get (query, cover_loaded_callback);
 
     return nil;
