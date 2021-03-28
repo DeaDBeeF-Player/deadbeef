@@ -31,30 +31,29 @@
 #define DDB_ARTWORK_MAJOR_VERSION 2
 #define DDB_ARTWORK_MINOR_VERSION 0
 
-// The flags below can be used in the `flags` member of the `ddb_cover_query_t` structure,
-// and can be OR'ed together.
-//
-// Example usage: `DDB_ARTWORK_FLAG_NO_FILENAME | DDB_ARTWORK_FLAG_LOAD_BLOB`
-// This indicates that all results must be loaded into memory, and returned as blob.
-//
-// Another example: `DDB_ARTWORK_FLAG_LOAD_BLOB`
-// This indicates that both blob and filename must be returned.
-// However, in some cases filenames are not available, e.g. when loading from tags, with disk cache disabled.
-// In this case filename will be set to NULL.
-
+/// The flags below can be used in the `flags` member of the `ddb_cover_query_t` structure,
+/// and can be OR'ed together.
+///
+/// Example usage: `DDB_ARTWORK_FLAG_NO_FILENAME | DDB_ARTWORK_FLAG_LOAD_BLOB`
+/// This indicates that all results must be loaded into memory, and returned as blob.
+///
+/// Another example: `DDB_ARTWORK_FLAG_LOAD_BLOB`
+/// This indicates that both blob and filename must be returned.
+/// However, in some cases filenames are not available, e.g. when loading from tags, with disk cache disabled.
+/// In this case filename will be set to NULL.
 enum {
-    // Tells that filenames should not be returned
+    /// Tells that filenames should not be returned
     DDB_ARTWORK_FLAG_NO_FILENAME = 0x00000001,
 
-    // Returned artwork can be a blob, i.e. a memory block - that is, entire cover image in memory
+    /// Returned artwork can be a blob, i.e. a memory block - that is, entire cover image in memory
     DDB_ARTWORK_FLAG_LOAD_BLOB = 0x00000002,
 
-    // Don't allow writing files to disk cache, even if the cache is enabled in the settings
+    /// Don't allow writing files to disk cache, even if the cache is enabled in the settings
     DDB_ARTWORK_FLAG_NO_CACHE = 0x00000004,
 };
 
-// This structure needs to be passed to cover_get.
-// It must remain in memory until the callback is called.
+/// This structure needs to be passed to cover_get.
+/// It must remain in memory until the callback is called.
 typedef struct ddb_cover_query_s {
     uint32_t _size; // Must be set to sizeof(ddb_cover_query_t)
 
@@ -69,8 +68,8 @@ typedef struct ddb_cover_query_s {
     char *type; // WIP: front/back/all/..., can be NULL for default (front cover)
 } ddb_cover_query_t;
 
-// This structure is passed to the callback, when the artwork query has been processed.
-// It doesn't need to be freed by the caller
+/// This structure is passed to the callback, when the artwork query has been processed.
+/// It doesn't need to be freed by the caller
 typedef struct ddb_cover_info_s {
     // query info
     time_t timestamp; // Last time when the info was used last time
@@ -94,37 +93,53 @@ typedef struct ddb_cover_info_s {
     struct ddb_cover_info_s *next; // The next image in the chain, or NULL
 } ddb_cover_info_t;
 
-// The `error` is 0 on success, or negative value on failure.
-// The `query` will be the same pointer, as passed to `cover_get`,
-// remember to free it when done with it.
-// The `cover` is a artwork information, e.g. a filename, or a blob,
-// remember for call artwork_plugin->cover_info_free (cover) when done with it.
+/// The `error` is 0 on success, or negative value on failure.
+/// The `query` will be the same pointer, as passed to `cover_get`,
+/// remember to free it when done with it.
+/// The `cover` is a artwork information, e.g. a filename, or a blob,
+/// remember for call artwork_plugin->cover_info_free (cover) when done with it.
 typedef void (*ddb_cover_callback_t) (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover);
+
+typedef enum {
+    /// The listener should reset its artwork cache and redraw.
+    /// If p1 is 0, the entire cache did reset,
+    /// otherwise p1 is ddb_playItem_t pointer,
+    /// and only this one specific track needs to be invalidated.
+    DDB_ARTWORK_SETTINGS_DID_CHANGE = 1,
+} ddb_artwork_listener_event_t;
+
+typedef void (*ddb_artwork_listener_t) (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2);
 
 typedef struct {
     DB_misc_t plugin;
 
-    // The `cover_get` function adds the query into an internal queue,
-    // then the queue gets processed on another thread, i.e. asynchronously.
-    //
-    // When the query is processed, the supplied `callback` is called
-    // with the results in `ddb_cover_info_t` structure.
-    //
-    // The callback is guaranteed to be called,
-    // because the caller is responsible for memory management of the `query` argument.
-    //
-    // The callback is not executed on the same thread, as cover_get.
-    // Avoid running slow blocking code in the callbacks.
+    /// The `cover_get` function adds the query into an internal queue,
+    /// then the queue gets processed on another thread, i.e. asynchronously.
+    ///
+    /// When the query is processed, the supplied `callback` is called
+    /// with the results in `ddb_cover_info_t` structure.
+    ///
+    /// The callback is guaranteed to be called,
+    /// because the caller is responsible for memory management of the `query` argument.
+    ///
+    /// The callback is not executed on the same thread, as cover_get.
+    /// Avoid running slow blocking code in the callbacks.
     void
     (*cover_get) (ddb_cover_query_t *query, ddb_cover_callback_t callback);
 
-    // Clears the current queue, calling the callback with no results for each item.
+    /// Clears the current queue, calling the callback with no results for each item.
     void
     (*reset) (void);
 
-    // Free dynamically allocated data pointed by `cover`.
+    /// Free dynamically allocated data pointed by `cover`.
     void
     (*cover_info_free) (ddb_cover_info_t *cover);
+
+    void
+    (*add_listener) (ddb_artwork_listener_t listener, void *user_data);
+
+    void
+    (*remove_listener) (ddb_artwork_listener_t listener, void *user_data);
 } ddb_artwork_plugin_t;
 
 #endif /*__ARTWORK_H*/
