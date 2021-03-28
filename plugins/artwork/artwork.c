@@ -65,6 +65,10 @@
 DB_functions_t *deadbeef;
 ddb_artwork_plugin_t plugin;
 
+#define MAX_LISTENERS 100
+static ddb_artwork_listener_t listeners[MAX_LISTENERS];
+static void *listeners_userdata[MAX_LISTENERS];
+
 dispatch_queue_t sync_queue; // used in artwork_internal, therefore not static
 static dispatch_queue_t process_queue;
 static dispatch_queue_t fetch_queue;
@@ -1152,8 +1156,29 @@ artwork_reset (void) {
 }
 
 static void
-get_fetcher_preferences (void)
-{
+artwork_add_listener (ddb_artwork_listener_t listener, void *user_data) {
+    for (int i = 0; i < MAX_LISTENERS; i++) {
+        if (listeners[i] == NULL) {
+            listeners[i] = listener;
+            listeners_userdata[i] = user_data;
+            break;
+        }
+    }
+}
+
+void
+artwork_remove_listener (ddb_artwork_listener_t listener, void *user_data) {
+    for (int i = 0; i < MAX_LISTENERS; i++) {
+        if (listeners[i] == listener) {
+            listeners[i] = NULL;
+            listeners_userdata[i] = NULL;
+            break;
+        }
+    }
+}
+
+static void
+get_fetcher_preferences (void) {
     artwork_disable_cache = deadbeef->conf_get_int ("artwork.disable_cache", DEFAULT_DISABLE_CACHE);
     artwork_save_to_music_folders = deadbeef->conf_get_int ("artwork.save_to_music_folders", DEFAULT_SAVE_TO_MUSIC_FOLDERS);
 
@@ -1210,8 +1235,7 @@ get_fetcher_preferences (void)
 }
 
 static void
-artwork_configchanged (void)
-{
+artwork_configchanged (void) {
     cache_configchanged ();
 
     int old_artwork_disable_cache = artwork_disable_cache;
@@ -1236,36 +1260,44 @@ artwork_configchanged (void)
 
     get_fetcher_preferences ();
 
+    int cache_did_reset = 0;
     if (old_artwork_disable_cache != artwork_disable_cache || old_missing_artwork != missing_artwork || old_nocover_path != nocover_path) {
         trace ("artwork config changed, invalidating default artwork...\n");
         default_reset_time = time (NULL);
-        deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+        cache_did_reset = 1;
     }
 
-    if (old_artwork_enable_embedded != artwork_enable_embedded ||
-        old_artwork_enable_local != artwork_enable_local ||
+    if (old_artwork_enable_embedded != artwork_enable_embedded
+        || old_artwork_enable_local != artwork_enable_local
 #ifdef USE_VFS_CURL
-        old_artwork_enable_lfm != artwork_enable_lfm ||
+        || old_artwork_enable_lfm != artwork_enable_lfm
 #if ENABLE_MUSICBRAINZ
-        old_artwork_enable_mb != artwork_enable_mb ||
+        || old_artwork_enable_mb != artwork_enable_mb
 #endif
 #if ENABLE_ALBUMART_ORG
-        old_artwork_enable_aao != artwork_enable_aao ||
+        || old_artwork_enable_aao != artwork_enable_aao
 #endif
-        old_artwork_enable_wos != artwork_enable_wos ||
+        || old_artwork_enable_wos != artwork_enable_wos
 #endif
-        strcmp(old_artwork_filemask, artwork_filemask) ||
-        strcmp(old_artwork_folders, artwork_folders)
+        || strcmp(old_artwork_filemask, artwork_filemask)
+        || strcmp(old_artwork_folders, artwork_folders)
+        || cache_did_reset
         ) {
 
-        dispatch_async(process_queue, ^{
+        dispatch_sync (sync_queue, ^{
             /* All artwork is now (including this second) obsolete */
             deadbeef->conf_set_int64 ("artwork.cache_reset_time", cache_reset_time);
-            deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
 
             /* Wait for a new second to start before proceeding */
             while (time (NULL) == cache_reset_time) {
                 usleep (100000);
+            }
+
+            cover_cache_free ();
+            for (int i = 0; i < MAX_LISTENERS; i++) {
+                if (listeners[i] != NULL) {
+                    listeners[i](DDB_ARTWORK_SETTINGS_DID_CHANGE, listeners_userdata[i], 0, 0);
+                }
             }
         });
         queue_clear();
@@ -1315,13 +1347,18 @@ invalidate_playitem_cache (DB_plugin_action_t *action, ddb_action_context_t ctx)
                 remove_cache_item (cache_path, subdir_path, subdir_name, entry_name);
             }
             deadbeef->pl_unlock ();
+
+            for (int i = 0; i < MAX_LISTENERS; i++) {
+                if (listeners[i] != NULL) {
+                    listeners[i](DDB_ARTWORK_SETTINGS_DID_CHANGE, listeners_userdata[i], (intptr_t)it, 0);
+                }
+            }
         }
         deadbeef->pl_item_unref (it);
         it = deadbeef->pl_get_next (it, PL_MAIN);
     }
     deadbeef->plt_unref (plt);
 
-    deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
     return 0;
 }
 
@@ -1400,8 +1437,6 @@ artwork_plugin_start (void)
     return 0;
 }
 
-#define STR(x) #x
-
 static const char settings_dlg[] =
 // on android, cache is always off and music is saved to music folders by default
 #ifndef ANDROID
@@ -1475,6 +1510,8 @@ ddb_artwork_plugin_t plugin = {
     .cover_get = cover_get,
     .reset = artwork_reset,
     .cover_info_free = cover_info_free,
+    .add_listener = artwork_add_listener,
+    .remove_listener = artwork_remove_listener,
 };
 
 DB_plugin_t *
