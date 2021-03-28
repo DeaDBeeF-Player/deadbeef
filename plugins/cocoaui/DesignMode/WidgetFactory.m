@@ -59,7 +59,7 @@
     return self;
 }
 
-
+// FIXME: should be a separate class
 - (void)registerAllTypes {
     [self registerType:PlaceholderWidget.widgetType displayName:@"Placeholder" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
         return [[PlaceholderWidget alloc] initWithDeps:self.deps];
