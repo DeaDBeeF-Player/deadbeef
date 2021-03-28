@@ -10,6 +10,7 @@
 #import "AlbumArtWidget.h"
 #import "CoverManager.h"
 #import "deadbeef.h"
+#import "artwork.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -17,6 +18,7 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) NSImageView *imageView;
 @property (nonatomic) ddb_playItem_t *track;
+@property (nonatomic) ddb_artwork_plugin_t *artwork_plugin;
 
 @end
 
@@ -26,8 +28,21 @@ extern DB_functions_t *deadbeef;
     return @"AlbumArt";
 }
 
+static void
+artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
+    AlbumArtWidget *self = (__bridge AlbumArtWidget *)user_data;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [CoverManager.defaultCoverManager resetCache];
+        [self update];
+    });
+}
+
 - (void)dealloc
 {
+    if (_artwork_plugin != NULL) {
+        _artwork_plugin->remove_listener (artwork_listener, (__bridge void *)self);
+        _artwork_plugin = NULL;
+    }
     if (self.track != NULL) {
         deadbeef->pl_item_unref (self.track);
         self.track = NULL;
@@ -43,6 +58,9 @@ extern DB_functions_t *deadbeef;
     if (self == nil) {
         return nil;
     }
+
+    _artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
+    _artwork_plugin->add_listener (artwork_listener, (__bridge void *)self);
 
     // create view
     self.imageView = [AlbumArtImageView new];
