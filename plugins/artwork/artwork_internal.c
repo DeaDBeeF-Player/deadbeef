@@ -155,6 +155,12 @@ copy_file (const char *in, const char *out) {
 
     char tmp_out[PATH_MAX];
     snprintf (tmp_out, PATH_MAX, "%s.part", out);
+
+    struct stat stat_struct;
+    if (!stat (tmp_out, &stat_struct) && S_ISREG (stat_struct.st_mode) && stat_struct.st_size > 0) {
+        return 0;
+    }
+
     FILE *fout = fopen (tmp_out, "w+b");
     if (!fout) {
         trace ("artwork: failed to open file %s for writing\n", tmp_out);
