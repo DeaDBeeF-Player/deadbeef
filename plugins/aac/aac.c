@@ -906,7 +906,8 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
             if (aac_atom) {
                 aac = aac_atom->data;
                 info.aac_samplerate = aac->sample_rate;
-                break;
+                if (info.aac_samplerate > 0)
+                    break;
             }
         }
         info.trak = info.trak->next;
