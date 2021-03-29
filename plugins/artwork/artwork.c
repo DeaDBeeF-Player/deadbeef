@@ -1064,6 +1064,85 @@ callback_and_free (ddb_cover_callback_t callback, ddb_cover_info_t *cover, ddb_c
     cover_info_free (cover);
 }
 
+// To handle concurrency correctly, we need to be able to squash the queries
+#define MAX_SQUASHED_QUERIES 50
+typedef struct artwork_query_s {
+    ddb_cover_query_t *queries[MAX_SQUASHED_QUERIES];
+    ddb_cover_callback_t callbacks[MAX_SQUASHED_QUERIES];
+    int query_count;
+    struct artwork_query_s *next;
+} artwork_query_t;
+
+static artwork_query_t *query_head;
+static artwork_query_t *query_tail;
+
+static int
+squash_query(ddb_cover_callback_t callback, ddb_cover_query_t *query) {
+    __block int squashed = 0;
+    dispatch_sync(sync_queue, ^{
+        artwork_query_t *q = query_head;
+        for (; q; q = q->next) {
+            // FIXME: flags and type are ignored!
+            if (query->track == q->queries[0]->track) {
+                squashed = 1;
+                break;
+            }
+        }
+ 
+        if (!q) {
+            // create new
+            q = calloc(1, sizeof (artwork_query_t));
+            if (query_tail) {
+                query_tail->next = q;
+            }
+            else {
+                query_head = query_tail = q;
+            }
+            squashed = 0;
+        }
+        q->queries[q->query_count] = query;
+        q->callbacks[q->query_count] = callback;
+        q->query_count += 1;
+    });
+
+    return squashed;
+}
+
+static void callback_and_free_squashed (ddb_cover_info_t *cover, ddb_cover_query_t *query) {
+    __block artwork_query_t *squashed_queries = NULL;
+    dispatch_sync (sync_queue, ^{
+        cover_update_cache (cover);
+        // remove from queries list
+        artwork_query_t *q = query_head;
+        artwork_query_t *prev = NULL;
+        for (; q; q = q->next) {
+            if (q->queries[0] == query) {
+                break;
+            }
+            prev = q;
+        }
+
+        if (q) {
+            if (prev) {
+                prev->next = q->next;
+            }
+            else {
+                query_head = q->next;
+            }
+            if (q == query_tail) {
+                query_tail = prev;
+            }
+            squashed_queries = q;
+        }
+    });
+    if (squashed_queries != NULL) {
+        for (int i = 0; i < squashed_queries->query_count; i++) {
+            callback_and_free (squashed_queries->callbacks[i], cover, squashed_queries->queries[i]);
+        }
+        free (squashed_queries);
+    }
+}
+
 static void
 cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
     __block int cancel_query = 0;
@@ -1132,6 +1211,11 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
             callback_and_free (callback, cover, query);
         }
         else {
+            // Check if another query for the same thing is already present in the queue, and squash.
+            if (squash_query(callback, query)) {
+                return;
+            }
+
             // fetch on concurrent fetch queue
             dispatch_semaphore_wait(fetch_semaphore, DISPATCH_TIME_FOREVER);
             dispatch_async (fetch_queue, ^{
@@ -1139,10 +1223,7 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
                 dispatch_semaphore_signal (fetch_semaphore);
                 // continue processing on serial process queue
                 dispatch_async (process_queue, ^{
-                    dispatch_sync (sync_queue, ^{
-                        cover_update_cache (cover);
-                    });
-                    callback_and_free (callback, cover, query);
+                    callback_and_free_squashed (cover, query);
                 });
             });
         }
