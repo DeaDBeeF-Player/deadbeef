@@ -29,7 +29,7 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define FETCH_CONCURRENT_LIMIT 1
+#define FETCH_CONCURRENT_LIMIT 5
 
 size_t artwork_http_request(const char *url, char *buffer, const size_t max_bytes);
 
