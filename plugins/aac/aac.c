@@ -905,8 +905,13 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
             mp4p_atom_t *aac_atom = mp4p_atom_find (info.trak, "trak/mdia/minf/stbl/stsd/mp4a");
             if (aac_atom) {
                 aac = aac_atom->data;
-                info.aac_samplerate = aac->sample_rate;
-                break;
+                if (aac->sample_rate != 0) {
+                    info.aac_samplerate = aac->sample_rate;
+                    break;
+                }
+                else {
+                    aac = NULL;
+                }
             }
         }
         info.trak = info.trak->next;
