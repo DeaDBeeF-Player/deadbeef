@@ -352,6 +352,9 @@ sndfile_seek (DB_fileinfo_t *_info, float sec) {
     return sndfile_seek_sample (_info, sec * _info->fmt.samplerate);
 }
 
+static int
+_sndfile_ctx_read_tags (DB_playItem_t *it, SNDFILE *ctx);
+
 static DB_playItem_t *
 sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("adding file %s\n", fname);
@@ -382,8 +385,6 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("calling sf_open_virtual ok\n");
     int64_t totalsamples = inf.frames;
     int samplerate = inf.samplerate;
-    sf_close (info.ctx);
-    deadbeef->fclose (info.file);
 
     float duration = (float)totalsamples / samplerate;
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
@@ -514,10 +515,74 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
 
     deadbeef->pl_add_meta (it, "title", NULL);
+
+    _sndfile_ctx_read_tags (it, info.ctx);
+    sf_close (info.ctx);
+    deadbeef->fclose (info.file);
+
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
 
     return after;
+}
+
+#define     ARRAY_LEN(x)    ((int) (sizeof (x) / sizeof ((x) [0])))
+
+static const struct metamap_s {
+    int str_type;
+    const char* meta_name;
+} metamap_items [] = {
+    { SF_STR_TITLE,         "title" },
+    { SF_STR_COPYRIGHT,     "copyright" } ,
+    { SF_STR_SOFTWARE,      "encoder" },
+    { SF_STR_ARTIST,        "artist" },
+    { SF_STR_COMMENT,       "comment" },
+    { SF_STR_DATE,          "year" },
+    { SF_STR_ALBUM,         "album" },
+    { SF_STR_TRACKNUMBER,   "track" },
+    { SF_STR_GENRE,         "genre" },
+};
+
+static int
+sndfile_read_metadata (DB_playItem_t *it) {
+    DB_fileinfo_t* info = sndfile_open (0);
+    int res = sndfile_init (info, it);
+    if (res) {
+        sndfile_free (info);
+        return -1;
+    }
+    SNDFILE *ctx = ((sndfile_info_t*)info)->ctx;
+    _sndfile_ctx_read_tags (it, ctx);
+
+    sndfile_free (info);
+    return 0;
+}
+
+static int
+_sndfile_ctx_read_tags (DB_playItem_t *it, SNDFILE *ctx)
+{
+    int i;
+    for (i = 0; i < ARRAY_LEN(metamap_items); i++) {
+        const struct metamap_s *kv = &metamap_items[i];
+        const char *meta_str = sf_get_string (ctx, kv->str_type);
+        if (!meta_str)
+            continue ;
+        const char *charset = deadbeef->junk_detect_charset (meta_str);
+        if (charset) {
+            // recode non-UTF-8 metadata string.
+            size_t l = strlen (meta_str);
+            char *recbuf = malloc (l * 4 + 1);
+            int res = deadbeef->junk_recode (meta_str, (int)l, recbuf, (int)(l * 4 + 1), charset);
+            if (res >= 0) {
+                deadbeef->pl_add_meta (it, kv->meta_name, recbuf);
+            }
+            free (recbuf);
+        }
+        else {
+            deadbeef->pl_add_meta (it, kv->meta_name, meta_str);
+        }
+    }
+    return 0;
 }
 
 #define DEFAULT_EXTS "wav;aif;aiff;snd;au;paf;svx;nist;voc;ircam;w64;mat4;mat5;pvf;xi;htk;sds;avr;wavex;sd2;caf;wve"
@@ -625,6 +690,7 @@ static DB_decoder_t plugin = {
     .seek = sndfile_seek,
     .seek_sample = sndfile_seek_sample,
     .insert = sndfile_insert,
+    .read_metadata = sndfile_read_metadata,
     .exts = (const char **)exts,
     .plugin.start = sndfile_start,
     .plugin.stop = sndfile_stop,
