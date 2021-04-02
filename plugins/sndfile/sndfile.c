@@ -255,6 +255,8 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
 static void
 sndfile_free (DB_fileinfo_t *_info) {
+    if (!_info)
+        return ;
     sndfile_info_t *info = (sndfile_info_t*)_info;
     if (info->ctx) {
         sf_close (info->ctx);
@@ -262,7 +264,7 @@ sndfile_free (DB_fileinfo_t *_info) {
     if (info->file) {
         deadbeef->fclose (info->file);
     }
-    memset (&info, 0, sizeof (info));
+    free (_info);
 }
 
 static int
