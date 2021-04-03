@@ -36,6 +36,7 @@ ldd "$1/plugins/"*.dll "$1/deadbeef.exe" | awk 'NF == 4 {print $3}; NF == 2 {pri
 									 | grep -iv "System32" \
 									 | grep -iv "WinSxS" \
 									 | grep -iv "ConEmu" \
+									 | grep -ivx "not" \
 									 | grep -iv "`readlink -f \"$1\"`" \
 									 | sort -u > .libraries.tmp
 
