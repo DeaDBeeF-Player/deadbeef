@@ -362,14 +362,14 @@ static NSMutableArray *g_converterControllers;
     if (_encoder_preset) {
         self.converter_plugin->encoder_preset_free (_encoder_preset);
     }
-    self.encoder_preset = encoder_preset;
+    _encoder_preset = encoder_preset;
 }
 
 - (void)setDsp_preset:(ddb_dsp_preset_t *)dsp_preset {
     if (_dsp_preset) {
         self.converter_plugin->dsp_preset_free (_dsp_preset);
     }
-    self.dsp_preset = dsp_preset;
+    _dsp_preset = dsp_preset;
 }
 
 - (IBAction)okAction:(id)sender {
