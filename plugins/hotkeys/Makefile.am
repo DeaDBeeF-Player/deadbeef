@@ -5,6 +5,6 @@ hotkeys_la_LDFLAGS = -module -avoid-version
 
 EXTRA_hotkeys_la_SOURCES = keysyms.inc
 
-hotkeys_la_LIBADD = $(LDADD) $(HOTKEYS_LIBS) ../libparser/libparser.a
+hotkeys_la_LIBADD = $(LDADD) $(HOTKEYS_LIBS) ../libparser/libparser.la
 AM_CFLAGS = $(CFLAGS) $(HOTKEYS_CFLAGS) -std=c99
 endif

@@ -172,6 +172,7 @@ AC_CHECK_HEADER([alloca.h],[AC_DEFINE([HAVE_ALLOCA_H], [1], [Define if system ha
 dnl check for syslimits.h (BSD)
 AC_CHECK_HEADERS([sys/syslimits.h])
 AC_CHECK_HEADERS([sys/cdefs.h])
+AC_CHECK_HEADERS([sys/wait.h])
 
 AS_IF([test "${enable_portable}" != "no" -a "${enable_staticlink}" != "no"], [
     AC_DEFINE_UNQUOTED([PORTABLE], [1], [Define if building portable version])
