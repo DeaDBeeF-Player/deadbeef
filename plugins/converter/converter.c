@@ -27,6 +27,9 @@
 #if HAVE_SYS_CDEFS_H
 #include <sys/cdefs.h>
 #endif
+#if HAVE_SYS_WAIT_H
+#include <sys/wait.h>
+#endif
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>

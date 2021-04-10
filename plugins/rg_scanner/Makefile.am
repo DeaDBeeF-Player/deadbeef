@@ -5,4 +5,7 @@ rg_scanner_la_LDFLAGS = -module -avoid-version
 
 rg_scanner_la_LIBADD = $(LDADD)
 rg_scanner_la_CFLAGS = -std=c99
+if HAVE_SSE2
+rg_scanner_la_CFLAGS += -msse2 -mfpmath=sse
+endif
 endif

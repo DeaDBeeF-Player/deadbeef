@@ -7,6 +7,9 @@ ddb_soundtouch_la_CFLAGS = $(CFLAGS) -std=c99 -I$(soundtouchpath)/include -I$(so
 ddb_soundtouch_la_LDFLAGS = -module -avoid-version $(NOCPPLIB) -lm
 
 ddb_soundtouch_la_CXXFLAGS = $(CXXFLAGS) -I$(soundtouchpath)/include -I$(soundtouchpath)/source/soundtouch
+if HAVE_SSE2
+ddb_soundtouch_la_CXXFLAGS += -msse2
+endif
 
 ddb_soundtouch_la_SOURCES = \
 	plugin.c\

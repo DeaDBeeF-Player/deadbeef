@@ -5,7 +5,7 @@ flac_la_LDFLAGS = -module -avoid-version -export-symbols-regex flac_load
 
 if HAVE_OGG
 oggedit_def = -DUSE_OGGEDIT=1
-oggedit_lib = ../liboggedit/liboggedit.a $(OGG_LIBS)
+oggedit_lib = ../liboggedit/liboggedit.la $(OGG_LIBS)
 endif
 
 flac_la_LIBADD = $(LDADD) $(FLAC_LIBS) $(oggedit_lib)
