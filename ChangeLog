@@ -20,7 +20,7 @@ version 1.8.5
 	Added support for additional per-track metadata in cuesheets
 	Added updating titlebar when displaying playback position (Nicolai Syvertsen)
 	Added a more convenient way to edit container widgets in design mode (Nicolai Syvertsen)
-	Fixed ALAC bug whiuch caused division by zero exception
+	Fixed ALAC bug which caused division by zero exception
 	Fixed cuesheet parser bug caused by unknown/unsupported field names
 	Fixed a series of bugs in the Adplug plugin
 	Fixed a bug when parsing MP3 Xing/Info header, reading incorrect packet count
