@@ -205,8 +205,37 @@ update_samplerate_widget_sensitivity (int override_sr, int dep_active) {
 
 
 void
+on_prefwin_response_cb (GtkDialog *dialog,
+                        int        response_id,
+                        gpointer   user_data) {
+    if (response_id != GTK_RESPONSE_CLOSE && response_id != GTK_RESPONSE_DELETE_EVENT) {
+        return;
+    }
+
+    if (gtkui_hotkeys_changed) {
+        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (prefwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("You modified the hotkeys settings, but didn't save your changes."));
+        gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (prefwin));
+        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Are you sure you want to continue without saving?"));
+        gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
+        int response = gtk_dialog_run (GTK_DIALOG (dlg));
+        gtk_widget_destroy (dlg);
+        if (response == GTK_RESPONSE_NO) {
+            return;
+        }
+    }
+
+    dsp_setup_free ();
+    gtk_widget_destroy (prefwin);
+    deadbeef->conf_save ();
+    prefwin = NULL;
+    pluginliststore = NULL;
+    pluginliststore_filtered = NULL;
+}
+
+void
 gtkui_run_preferences_dlg (void) {
     if (prefwin) {
+        gtk_window_present_with_time (prefwin, g_get_monotonic_time() / 1000);
         return;
     }
     deadbeef->conf_lock ();
@@ -509,33 +538,12 @@ gtkui_run_preferences_dlg (void) {
     prefwin_init_hotkeys (prefwin);
 
     deadbeef->conf_unlock ();
-    for (;;) {
-        gtk_dialog_run (GTK_DIALOG (prefwin));
-        if (gtkui_hotkeys_changed) {
-            GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (prefwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("You modified the hotkeys settings, but didn't save your changes."));
-            gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (prefwin));
-            gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Are you sure you want to continue without saving?"));
-            gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
-            int response = gtk_dialog_run (GTK_DIALOG (dlg));
-            gtk_widget_destroy (dlg);
-            if (response == GTK_RESPONSE_YES) {
-                break;
-            }
-        }
-        else {
-            break;
-        }
-    }
 
-    g_object_unref (pluginliststore_filtered);
-    pluginliststore_filtered = NULL;
-    g_object_unref (pluginliststore);
-    pluginliststore = NULL;
+    g_signal_connect (GTK_DIALOG (prefwin), "response", G_CALLBACK (on_prefwin_response_cb), NULL);
 
-    dsp_setup_free ();
-    gtk_widget_destroy (prefwin);
-    deadbeef->conf_save ();
-    prefwin = NULL;
+    gtk_window_set_modal (GTK_WINDOW (prefwin), FALSE);
+    gtk_window_set_position (GTK_WINDOW (prefwin), GTK_WIN_POS_CENTER_ON_PARENT);
+    gtk_window_present (GTK_WINDOW (prefwin));
 }
 
 void
