@@ -23,4 +23,10 @@
 #ifndef __CTMAPPING_H
 #define __CTMAPPING_H
 
+void
+ctmapping_setup_init (GtkWidget *prefwin);
+
+void
+ctmapping_setup_free (void);
+
 #endif
