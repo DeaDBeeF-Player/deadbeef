@@ -37,6 +37,7 @@
 #include "ctmapping.h"
 
 static GtkWidget *ctmapping_dlg;
+static GtkWidget *prefwin;
 
 static void
 ctmapping_fill (GtkWidget *dlg) {
@@ -120,7 +121,7 @@ on_edit_content_type_mapping_clicked   (GtkButton       *button,
                                         gpointer         user_data)
 {
     GtkWidget *dlg = create_ctmappingdlg ();
-    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (prefwin));
     ctmapping_dlg = dlg;
 
     GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (dlg, "ctmappinglist"));
@@ -297,3 +298,15 @@ on_ctmapping_reset_clicked             (GtkButton       *button,
     ctmapping_fill (ctmapping_dlg);
 }
 
+void
+ctmapping_setup_init (GtkWidget *_prefwin) {
+    prefwin = _prefwin;
+}
+
+void
+ctmapping_setup_free (void) {
+    if (ctmapping_dlg) {
+        gtk_widget_destroy (ctmapping_dlg);
+    }
+    ctmapping_dlg = NULL;
+}

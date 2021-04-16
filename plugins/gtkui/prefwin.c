@@ -41,6 +41,7 @@
 #include "dspconfig.h"
 #include "wingeom.h"
 #include "hotkeys.h"
+#include "ctmapping.h"
 
 static GtkWidget *prefwin;
 
@@ -225,6 +226,7 @@ on_prefwin_response_cb (GtkDialog *dialog,
     }
 
     dsp_setup_free ();
+    ctmapping_setup_free ();
     gtk_widget_destroy (prefwin);
     deadbeef->conf_save ();
     prefwin = NULL;
@@ -316,6 +318,9 @@ gtkui_run_preferences_dlg (void) {
     
     // dsp
     dsp_setup_init (prefwin);
+
+    // content-type mapping dialog
+    ctmapping_setup_init (prefwin);
 
     // minimize_on_startup
     set_toggle_button("minimize_on_startup", deadbeef->conf_get_int ("gtkui.start_hidden", 0));
