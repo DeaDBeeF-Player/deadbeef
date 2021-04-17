@@ -1267,6 +1267,47 @@ logwindow_logger_callback (struct DB_plugin_s *plugin, uint32_t layers, const ch
     g_idle_add(logwindow_addtext_cb, (gpointer)data);
 }
 
+
+static gboolean
+gtkui_mainwin_drag_motion              (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        guint            time,
+                                        gpointer         user_data)
+{
+    // Don't allow drag from within application
+    if (gtk_drag_get_source_widget (drag_context)) {
+        gdk_drag_status (drag_context, 0, time);
+    }
+
+    return FALSE;
+}
+
+static void
+gtkui_mainwin_drag_data_received       (GtkWidget       *widget,
+                                        GdkDragContext  *drag_context,
+                                        gint             x,
+                                        gint             y,
+                                        GtkSelectionData *data,
+                                        guint            target_type,
+                                        guint            time,
+                                        gpointer         user_data)
+{
+    gchar *ptr=(char*)gtk_selection_data_get_data (data);
+    gint len = gtk_selection_data_get_length (data);
+    if (target_type == TARGET_URILIST) { // uris
+        // this happens when dropped from file manager
+        char *mem = malloc (len+1);
+        memcpy (mem, ptr, len);
+        mem[len] = 0;
+        // we don't pass control structure, but there's only one drag-drop view currently
+        gtkui_receive_fm_drop (NULL, mem, len);
+    }
+
+    gtk_drag_finish (drag_context, TRUE, FALSE, time);
+}
+
 void
 gtkui_mainwin_init(void) {
     // register widget types
@@ -1334,6 +1375,16 @@ gtkui_mainwin_init(void) {
     }
 
     pl_common_init();
+
+    // setup drag-drop target
+    gtk_drag_dest_set (mainwin, GTK_DEST_DEFAULT_ALL, NULL, 0, GDK_ACTION_COPY);
+    gtk_drag_dest_add_uri_targets (mainwin);
+    g_signal_connect ((gpointer) mainwin, "drag_data_received",
+            G_CALLBACK (gtkui_mainwin_drag_data_received),
+            NULL);
+    g_signal_connect ((gpointer) mainwin, "drag_motion",
+            G_CALLBACK (gtkui_mainwin_drag_motion),
+            NULL);
 
     GtkIconTheme *theme = gtk_icon_theme_get_default();
     if (gtk_icon_theme_has_icon(theme, "deadbeef")) {
