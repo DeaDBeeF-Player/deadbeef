@@ -153,6 +153,25 @@ static gboolean ddb_seekbar_real_configure_event (GtkWidget* base, GdkEventConfi
 	return result;
 }
 
+static int
+seek_sec (float sec) {
+    float pos = deadbeef->streamer_get_playpos ();
+    pos += sec;
+    deadbeef->sendmessage (DB_EV_SEEK, 0, (uint32_t)(pos * 1000), 0);
+    return 0;
+}
+
+static gboolean ddb_seekbar_scroll_event(GtkWidget *widget, GdkEventScroll *event) {
+
+    if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
+        seek_sec (5.0f);
+    }
+    else if (event->direction == GDK_SCROLL_DOWN || event->direction == GDK_SCROLL_LEFT) {
+        seek_sec (-5.0f);
+    }
+
+    return FALSE;
+}
 
 DdbSeekbar* ddb_seekbar_construct (GType object_type) {
 	DdbSeekbar * self;
@@ -191,6 +210,7 @@ static void ddb_seekbar_class_init (DdbSeekbarClass * klass) {
 	GTK_WIDGET_CLASS (klass)->button_release_event = ddb_seekbar_real_button_release_event;
 	GTK_WIDGET_CLASS (klass)->motion_notify_event = ddb_seekbar_real_motion_notify_event;
 	GTK_WIDGET_CLASS (klass)->configure_event = ddb_seekbar_real_configure_event;
+    GTK_WIDGET_CLASS (klass)->scroll_event = ddb_seekbar_scroll_event;
 	G_OBJECT_CLASS (klass)->constructor = ddb_seekbar_constructor;
 }
 
