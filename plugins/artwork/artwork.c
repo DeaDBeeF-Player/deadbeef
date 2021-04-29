@@ -365,7 +365,7 @@ local_image_file (const char *local_path, const char *uri, DB_vfs_t *vfsplug, dd
         }
         trace ("scanning %s for artwork\n", path);
         for (char *mask = filemask; mask < filemask_end; mask += strlen (mask)+1) {
-            if (mask[0] && !scan_local_path (mask, path, uri, vfsplug, cover)) {
+            if (mask[0] && path && !scan_local_path (mask, path, uri, vfsplug, cover)) {
                 free (filemask);
                 free (folders);
                 free (path);
