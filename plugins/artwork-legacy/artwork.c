@@ -1389,11 +1389,6 @@ local_image_file (const char *cache_path, const char *local_path, const char *ur
             return 0;
         }
     }
-    if (!scan_local_path ("*.jpg", cache_path, local_path, uri, vfsplug) ||
-        !scan_local_path ("*.jpeg", cache_path, local_path, uri, vfsplug) ||
-        !scan_local_path ("*.png", cache_path, local_path, uri, vfsplug)) {
-        return 0;
-    }
 
     trace ("No cover art files in local folder\n");
     return -1;
