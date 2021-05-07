@@ -122,6 +122,7 @@ Serbian (latin)
 
 Swedish
  Martin <brother@bsnet.se>
+ Jonatan Nyberg
 
 Telugu
  PraveenIlla <mail2ipn@gmail.com>
