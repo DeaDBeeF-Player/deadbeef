@@ -4886,7 +4886,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
 
             // is this a text frame that needs remapping to TXXX?
             if (!noremap) {
-                if (!frame_mapping[mapidx+MAP_ID3V24] && frame_mapping[mapidx+MAP_ID3V24][0] != 'T') {
+                if (!frame_mapping[mapidx+MAP_ID3V24] || frame_mapping[mapidx+MAP_ID3V24][0] != 'T') {
                     noremap = 1;
                 }
             }
