@@ -1,3 +1,4 @@
+#!/bin/bash
 case "$TRAVIS_OS_NAME" in
     linux)
         ls -l .
