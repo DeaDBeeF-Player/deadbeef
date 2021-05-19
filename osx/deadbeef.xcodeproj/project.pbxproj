@@ -1687,6 +1687,7 @@
 		2DA30E7524032550001BAB8A /* NetworkPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30E7324032550001BAB8A /* NetworkPreferencesViewController.m */; };
 		2DA30E792403292D001BAB8A /* PlaybackPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA30E772403292D001BAB8A /* PlaybackPreferencesViewController.h */; };
 		2DA30E7A2403292D001BAB8A /* PlaybackPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30E782403292D001BAB8A /* PlaybackPreferencesViewController.m */; };
+		2DA320F526557874002DD229 /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DBCB720240ADCC10012F178 /* tftintutil.c */; };
 		2DA32B1524D6D83C00D96C84 /* MediaLibrarySelectorCellView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA32B1324D6D83C00D96C84 /* MediaLibrarySelectorCellView.h */; };
 		2DA32B1624D6D83C00D96C84 /* MediaLibrarySelectorCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA32B1424D6D83C00D96C84 /* MediaLibrarySelectorCellView.m */; };
 		2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA372192370B854005E64A3 /* NowPlayable.h */; };
@@ -15709,6 +15710,7 @@
 				2DE3B7D92269BF1700AFF9AE /* pluginconf.c in Sources */,
 				2DE3B7EA2269BF3100AFF9AE /* trkproperties.c in Sources */,
 				2DE3B7CB2269BF1300AFF9AE /* ctmapping.c in Sources */,
+				2DA320F526557874002DD229 /* tftintutil.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
