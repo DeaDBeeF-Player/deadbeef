@@ -254,12 +254,9 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
     [CATransaction commit];
 }
 
-- (void)updateThumb:(NSEvent * _Nonnull)theEvent {
-    CGFloat pos = [self convertPoint:theEvent.locationInWindow fromView:nil].x;
-
-    pos = (pos-3)/(NSWidth(self.frame)-6)*100;
-    pos = MAX(0, MIN(100, pos));
-    self.floatValue = pos;
+- (void)updatePosition:(float)position {
+    position = MAX(0, MIN(100, position));
+    self.floatValue = position;
     self.overlay.text = self.stringValue;
 
     [CATransaction begin];
@@ -275,6 +272,17 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
     }];
 }
 
+- (void)scrollWheel:(NSEvent *)event {
+    [self updatePosition:self.floatValue + event.scrollingDeltaX +  + event.scrollingDeltaY];
+    [self sendAction:self.action to:self.target];
+}
+
+- (float)percentageFromMouseEvent:(NSEvent *)event {
+    float pos = [self convertPoint:event.locationInWindow fromView:nil].x;
+    pos = (pos-3)/(NSWidth(self.frame)-6)*100;
+    return pos;
+}
+
 - (void)mouseDown:(NSEvent *)theEvent {
     if (theEvent.type != NSEventTypeLeftMouseDown) {
         return;
@@ -284,7 +292,7 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
         return;
     }
 
-    [self updateThumb:theEvent];
+    [self updatePosition:[self percentageFromMouseEvent:theEvent]];
 
     self.dragging = YES;
 
@@ -294,7 +302,7 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
         NSEvent *event = [self.window nextEventMatchingMask: NSEventMaskLeftMouseUp | NSEventMaskLeftMouseDragged];
 
         if (event.type == NSEventTypeLeftMouseDragged) {
-            [self updateThumb:event];
+            [self updatePosition:[self percentageFromMouseEvent:event]];
         }
         else if (event.type == NSEventTypeLeftMouseUp) {
             [self sendAction:self.action to:self.target];
