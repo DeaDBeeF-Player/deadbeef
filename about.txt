@@ -2,48 +2,31 @@ DeaDBeeF - The Ultimate Music Player
 Copyright © 2009-2021 Alexey Yakovenko and contributors
 http://deadbeef.sf.net
 
-The contributors:
+Some of the most significant contributors in alphabetical order:
 
+    Alex Dedul <rotmer@gmail.com>
     Alexey A. Smirnov <alexey.smirnov@gmx.com>
-        Debian packaging, patches
-
     Anton Novikov <tonn.post@gmail.com>
-        PulseAudio plugin
-
     Christian Boxdörfer <christian.boxdoerfer@posteo.de>
-        Lots of work on improving the GTK UI
-
+    David Bryant <david@wavpack.com>
+    Derreck <sarumyanxxl@users.sourceforge.net>
     Ian Nartowicz
-        Improved artwork, GTK UI, Converter, CDDA, various codecs, and more
-
+    Igor Murzov <igor@gplsoft.org>
+    Igor Rudchenko <igor@thinkpads.net>
+    Jakub Wasylków <kuba_160@protonmail.com>
+    Jan D. Behrens <zykure@web.de>
+    Kryksyh <druid@foobar2000.ru>
+    Martin Panter
+    Nicolai Syvertsen <saivert@saivert.com>
+    Serghey Kotlyarov <shadowsbrother@gmail.com>
     Sofias <sofias@radikalismus.com>
-        Icon
-
-    starws <starws.box@gmail.com>
-        The best QA dude in the world
-
     Stas Akimushkin <uncle.lag@gmail.com>
-        Original artwork
-
+    Themaister <maister@archlinux.us>
+    Veniamin Gvozdikov <g.veniamin@googlemail.com>
     Viktor Semykin <thesame.ml@gmail.com>
-        Global Hotkeys, CD Audio, Cover Art, ShellExec plugins, lots of patches and suggestions, and the default cover art image
+    starws <starws.box@gmail.com>
 
-    These people have also contributed significantly to the project by sending patches, testing, etc:
-    
-        Alex Dedul <rotmer@gmail.com>
-        David Bryant <david@wavpack.com>
-        Derreck <sarumyanxxl@users.sourceforge.net>
-        Igor Murzov <igor@gplsoft.org>
-        Igor Rudchenko <igor@thinkpads.net>
-        Jan D. Behrens <zykure@web.de>
-        Kryksyh <druid@foobar2000.ru>
-        Martin Panter
-        Serghey Kotlyarov <shadowsbrother@gmail.com>
-        Themaister <maister@archlinux.us>
-        Veniamin Gvozdikov <g.veniamin@googlemail.com>
-        
-
-    If you think your name is missing here, or needs to be removed, please send an email to Alexey Yakovenko <waker@users.sf.net>
+If you think your name is missing here, or needs to be removed, please send an email to Alexey Yakovenko <waker@users.sf.net>
 
 Special Thanks To:
 
@@ -51,10 +34,8 @@ Special Thanks To:
     Jan Marguc
     Olga Belozerova
 
-    and to all the people and anonymous creatures hanging at #deadbeef-player and #deadbeef-ru
 
-
-Bundled libraries:
+The bundled 3rd party libraries:
 
 
 Independent implementation of MD5 (RFC 1321).
@@ -71,4 +52,4 @@ Copyright © Jeff Bezanson
 placed in the public domain Fall 2005
 
 
-For information on libraries used in plugins -- see specific plugin's copyright information.
+For information on the libraries used by the plugins -- please see the specific plugin's copyright information.
