@@ -721,6 +721,24 @@ action_add_to_playqueue_handler (DB_plugin_action_t *act, ddb_action_context_t c
 }
 
 int
+action_prepend_to_playqueue_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
+    ddb_playlist_t *plt = deadbeef->action_get_playlist ();
+
+    DB_playItem_t *it = deadbeef->plt_get_last (plt, PL_MAIN);
+    while (it) {
+        if (ctx == DDB_ACTION_CTX_PLAYLIST || (ctx == DDB_ACTION_CTX_SELECTION && deadbeef->pl_is_selected (it))) {
+            deadbeef->playqueue_insert_at (0, it);
+        }
+        DB_playItem_t *prev = deadbeef->pl_get_prev (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = prev;
+    }
+
+    deadbeef->plt_unref (plt);
+    return 0;
+}
+
+int
 action_remove_from_playqueue_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     ddb_playlist_t *plt = deadbeef->action_get_playlist ();
 

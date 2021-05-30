@@ -826,7 +826,7 @@ action_toggle_stop_after_album_cb (struct DB_plugin_action_s *action, ddb_action
 }
 
 static DB_plugin_action_t action_prev_or_restart = {
-    .title = "Playback/Previous or restart current track",
+    .title = "Playback/Previous or Restart Current Track",
     .name = "prev_or_restart",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_prev_or_restart_cb,
@@ -842,7 +842,7 @@ static DB_plugin_action_t action_reload_metadata = {
 };
 
 static DB_plugin_action_t action_jump_to_current = {
-    .title = "Playback/Jump To Currently Playing Track",
+    .title = "Playback/Jump to Currently Playing Track",
     .name = "jump_to_current_track",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_jump_to_current_handler,
@@ -850,7 +850,7 @@ static DB_plugin_action_t action_jump_to_current = {
 };
 
 static DB_plugin_action_t action_skip_to_prev_genre = {
-    .title = "Playback/Skip to/Previous genre",
+    .title = "Playback/Skip to/Previous Genre",
     .name = "skip_to_prev_genre",
     .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
     .callback2 = action_skip_to_prev_genre_handler,
@@ -858,7 +858,7 @@ static DB_plugin_action_t action_skip_to_prev_genre = {
 };
 
 static DB_plugin_action_t action_skip_to_prev_composer = {
-    .title = "Playback/Skip to/Previous composer",
+    .title = "Playback/Skip to/Previous Composer",
     .name = "skip_to_prev_composer",
     .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
     .callback2 = action_skip_to_prev_composer_handler,
@@ -866,7 +866,7 @@ static DB_plugin_action_t action_skip_to_prev_composer = {
 };
 
 static DB_plugin_action_t action_skip_to_prev_artist = {
-    .title = "Playback/Skip to/Previous artist",
+    .title = "Playback/Skip to/Previous Artist",
     .name = "skip_to_prev_artist",
     .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
     .callback2 = action_skip_to_prev_artist_handler,
@@ -874,7 +874,7 @@ static DB_plugin_action_t action_skip_to_prev_artist = {
 };
 
 static DB_plugin_action_t action_skip_to_prev_album = {
-    .title = "Playback/Skip to/Previous album",
+    .title = "Playback/Skip to/Previous Album",
     .name = "skip_to_prev_album",
     .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
     .callback2 = action_skip_to_prev_album_handler,
@@ -882,7 +882,7 @@ static DB_plugin_action_t action_skip_to_prev_album = {
 };
 
 static DB_plugin_action_t action_skip_to_next_genre = {
-    .title = "Playback/Skip to/Next genre",
+    .title = "Playback/Skip to/Next Genre",
     .name = "skip_to_next_genre",
     .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
     .callback2 = action_skip_to_next_genre_handler,
@@ -890,7 +890,7 @@ static DB_plugin_action_t action_skip_to_next_genre = {
 };
 
 static DB_plugin_action_t action_skip_to_next_composer = {
-    .title = "Playback/Skip to/Next composer",
+    .title = "Playback/Skip to/Next Composer",
     .name = "skip_to_next_composer",
     .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
     .callback2 = action_skip_to_next_composer_handler,
@@ -898,7 +898,7 @@ static DB_plugin_action_t action_skip_to_next_composer = {
 };
 
 static DB_plugin_action_t action_skip_to_next_artist = {
-    .title = "Playback/Skip to/Next artist",
+    .title = "Playback/Skip to/Next Artist",
     .name = "skip_to_next_artist",
     .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
     .callback2 = action_skip_to_next_artist_handler,
@@ -906,7 +906,7 @@ static DB_plugin_action_t action_skip_to_next_artist = {
 };
 
 static DB_plugin_action_t action_skip_to_next_album = {
-    .title = "Playback/Skip to/Next album",
+    .title = "Playback/Skip to/Next Album",
     .name = "skip_to_next_album",
     .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
     .callback2 = action_skip_to_next_album_handler,
@@ -922,7 +922,7 @@ static DB_plugin_action_t action_next_playlist = {
 };
 
 static DB_plugin_action_t action_prev_playlist = {
-    .title = "Prev Playlist",
+    .title = "Previous Playlist",
     .name = "prev_playlist",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_prev_playlist_handler,
@@ -930,7 +930,7 @@ static DB_plugin_action_t action_prev_playlist = {
 };
 
 static DB_plugin_action_t action_playlist10 = {
-    .title = "Switch To Playlist 10",
+    .title = "Switch to Playlist 10",
     .name = "playlist10",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist10_handler,
@@ -938,7 +938,7 @@ static DB_plugin_action_t action_playlist10 = {
 };
 
 static DB_plugin_action_t action_playlist9 = {
-    .title = "Switch To Playlist 9",
+    .title = "Switch to Playlist 9",
     .name = "playlist9",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist9_handler,
@@ -946,7 +946,7 @@ static DB_plugin_action_t action_playlist9 = {
 };
 
 static DB_plugin_action_t action_playlist8 = {
-    .title = "Switch To Playlist 8",
+    .title = "Switch to Playlist 8",
     .name = "playlist8",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist8_handler,
@@ -954,7 +954,7 @@ static DB_plugin_action_t action_playlist8 = {
 };
 
 static DB_plugin_action_t action_playlist7 = {
-    .title = "Switch To Playlist 7",
+    .title = "Switch to Playlist 7",
     .name = "playlist7",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist7_handler,
@@ -962,7 +962,7 @@ static DB_plugin_action_t action_playlist7 = {
 };
 
 static DB_plugin_action_t action_playlist6 = {
-    .title = "Switch To Playlist 6",
+    .title = "Switch to Playlist 6",
     .name = "playlist6",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist6_handler,
@@ -970,7 +970,7 @@ static DB_plugin_action_t action_playlist6 = {
 };
 
 static DB_plugin_action_t action_playlist5 = {
-    .title = "Switch To Playlist 5",
+    .title = "Switch to Playlist 5",
     .name = "playlist5",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist5_handler,
@@ -978,7 +978,7 @@ static DB_plugin_action_t action_playlist5 = {
 };
 
 static DB_plugin_action_t action_playlist4 = {
-    .title = "Switch To Playlist 4",
+    .title = "Switch to Playlist 4",
     .name = "playlist4",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist4_handler,
@@ -986,7 +986,7 @@ static DB_plugin_action_t action_playlist4 = {
 };
 
 static DB_plugin_action_t action_playlist3 = {
-    .title = "Switch To Playlist 3",
+    .title = "Switch to Playlist 3",
     .name = "playlist3",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist3_handler,
@@ -994,7 +994,7 @@ static DB_plugin_action_t action_playlist3 = {
 };
 
 static DB_plugin_action_t action_playlist2 = {
-    .title = "Switch To Playlist 2",
+    .title = "Switch to Playlist 2",
     .name = "playlist2",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist2_handler,
@@ -1002,7 +1002,7 @@ static DB_plugin_action_t action_playlist2 = {
 };
 
 static DB_plugin_action_t action_playlist1 = {
-    .title = "Switch To Playlist 1",
+    .title = "Switch to Playlist 1",
     .name = "playlist1",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist1_handler,
@@ -1018,7 +1018,7 @@ static DB_plugin_action_t action_sort_randomize = {
 };
 
 static DB_plugin_action_t action_sort_by_date = {
-    .title = "Edit/Sort By Date",
+    .title = "Edit/Sort by Date",
     .name = "sort_date",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_sort_by_date_handler,
@@ -1026,7 +1026,7 @@ static DB_plugin_action_t action_sort_by_date = {
 };
 
 static DB_plugin_action_t action_sort_by_artist = {
-    .title = "Edit/Sort By Artist",
+    .title = "Edit/Sort by Artist",
     .name = "sort_artist",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_sort_by_artist_handler,
@@ -1035,7 +1035,7 @@ static DB_plugin_action_t action_sort_by_artist = {
 
 
 static DB_plugin_action_t action_sort_by_album = {
-    .title = "Edit/Sort By Album",
+    .title = "Edit/Sort by Album",
     .name = "sort_album",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_sort_by_album_handler,
@@ -1043,7 +1043,7 @@ static DB_plugin_action_t action_sort_by_album = {
 };
 
 static DB_plugin_action_t action_sort_by_tracknr = {
-    .title = "Edit/Sort By Track Number",
+    .title = "Edit/Sort by Track Number",
     .name = "sort_tracknr",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_sort_by_tracknr_handler,
@@ -1051,7 +1051,7 @@ static DB_plugin_action_t action_sort_by_tracknr = {
 };
 
 static DB_plugin_action_t action_sort_by_title = {
-    .title = "Edit/Sort By Title",
+    .title = "Edit/Sort by Title",
     .name = "sort_title",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_sort_by_title_handler,
@@ -1075,7 +1075,7 @@ static DB_plugin_action_t action_clear_playlist = {
 };
 
 static DB_plugin_action_t action_remove_from_playqueue = {
-    .title = "Playback/Remove From Playback Queue",
+    .title = "Playback/Remove from Playback Queue",
     .name = "remove_from_playback_queue",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback2 = action_remove_from_playqueue_handler,
@@ -1083,19 +1083,27 @@ static DB_plugin_action_t action_remove_from_playqueue = {
 };
 
 static DB_plugin_action_t action_add_to_playqueue = {
-    .title = "Playback/Add To Playback Queue",
+    .title = "Playback/Add to Playback Queue",
     .name = "add_to_playback_queue",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback2 = action_add_to_playqueue_handler,
     .next = &action_remove_from_playqueue
 };
 
+static DB_plugin_action_t action_play_next = {
+    .title = "Playback/Add to Front of Playback Queue",
+    .name = "add_to_front_of_playback_queue",
+    .flags = DB_ACTION_MULTIPLE_TRACKS,
+    .callback2 = action_prepend_to_playqueue_handler,
+    .next = &action_add_to_playqueue
+};
+
 static DB_plugin_action_t action_toggle_in_playqueue = {
-    .title = "Playback/Toggle In Playback Queue",
+    .title = "Playback/Toggle in Playback Queue",
     .name = "toggle_in_playback_queue",
     .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST,
     .callback2 = action_toggle_in_playqueue_handler,
-    .next = &action_add_to_playqueue
+    .next = &action_play_next
 };
 
 static DB_plugin_action_t action_move_tracks_down = {

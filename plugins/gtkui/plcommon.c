@@ -733,7 +733,7 @@ get_context_menu_column (GtkMenuItem *menuitem) {
 }
 
 static void
-add_to_playback_queue1_activate     (GtkMenuItem     *menuitem,
+play_later_activate     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     DdbListview *listview = get_context_menu_listview (menuitem);
@@ -749,7 +749,7 @@ add_to_playback_queue1_activate     (GtkMenuItem     *menuitem,
 }
 
 static void
-add_to_playback_queue2_activate     (GtkMenuItem     *menuitem,
+play_next_activate     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     DdbListview *listview = get_context_menu_listview (menuitem);
@@ -1024,8 +1024,8 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
 
     clicked_idx = deadbeef->pl_get_idx_of (it);
     GtkWidget *playlist_menu;
-    GtkWidget *add_to_playback_queue1;
-    GtkWidget *add_to_playback_queue2;
+    GtkWidget *play_later;
+    GtkWidget *play_next;
     GtkWidget *remove_from_playback_queue1;
     GtkWidget *separator;
     GtkWidget *remove2;
@@ -1051,14 +1051,14 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
     playlist_menu = gtk_menu_new ();
     g_object_set_data (G_OBJECT (playlist_menu), "ps", listview);
 
-    add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Add To Back Of Playback Queue"));
-    gtk_widget_show (add_to_playback_queue1);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), add_to_playback_queue1);
-    
-    add_to_playback_queue2 = gtk_menu_item_new_with_mnemonic (_("Add To Front Of Playback Queue"));
-    gtk_widget_show (add_to_playback_queue2);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), add_to_playback_queue2);
+    play_next = gtk_menu_item_new_with_mnemonic (_("Play Next"));
+    gtk_widget_show (play_next);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), play_next);
 
+    play_later = gtk_menu_item_new_with_mnemonic (_("Play Later"));
+    gtk_widget_show (play_later);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), play_later);
+    
     remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove From Playback Queue"));
     if (listview->binding->sel_count () > 1) {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -1297,11 +1297,11 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
     gtk_widget_show (properties1);
     gtk_container_add (GTK_CONTAINER (playlist_menu), properties1);
 
-    g_signal_connect ((gpointer) add_to_playback_queue1, "activate",
-            G_CALLBACK (add_to_playback_queue1_activate),
+    g_signal_connect ((gpointer) play_later, "activate",
+            G_CALLBACK (play_later_activate),
             NULL);
-    g_signal_connect ((gpointer) add_to_playback_queue2, "activate",
-            G_CALLBACK (add_to_playback_queue2_activate),
+    g_signal_connect ((gpointer) play_next, "activate",
+            G_CALLBACK (play_next_activate),
             NULL);
     g_signal_connect ((gpointer) remove_from_playback_queue1, "activate",
             G_CALLBACK (remove_from_playback_queue_activate),

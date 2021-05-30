@@ -127,6 +127,9 @@ int
 action_add_to_playqueue_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
+action_prepend_to_playqueue_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
+
+int
 action_remove_from_playqueue_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 int
