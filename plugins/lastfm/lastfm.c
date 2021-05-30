@@ -840,7 +840,7 @@ out:
 }
 
 static DB_plugin_action_t lookup_action = {
-    .title = "Lookup On Last.fm",
+    .title = "Lookup on Last.fm",
     .name = "lfm_lookup",
     .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_ADD_MENU,
     .callback2 = lfm_action_lookup,

@@ -50,15 +50,15 @@ extern DB_functions_t *deadbeef;
         return nil;
     }
 
-    self.reloadMetadataItem = [self insertItemWithTitle:@"Reload metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0];
+    self.reloadMetadataItem = [self insertItemWithTitle:@"Reload Metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0];
     NSMenu *rgMenu = [[NSMenu alloc] initWithTitle:@"ReplayGain"];
     rgMenu.autoenablesItems = NO;
 
     self.rgScanPerFileItem = [rgMenu addItemWithTitle:@"Scan Per-file Track Gain" action:@selector(rgScanTracks:) keyEquivalent:@""];
     self.rgScanPerFileItem.target = self;
-    self.rgScanAsSingleAlbumItem = [rgMenu addItemWithTitle:@"Scan Selection As Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@""];
+    self.rgScanAsSingleAlbumItem = [rgMenu addItemWithTitle:@"Scan Selection as Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@""];
     self.rgScanAsSingleAlbumItem.target = self;
-    self.rgScanAsAlbumsItem = [rgMenu addItemWithTitle:@"Scan Selection As Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@""];
+    self.rgScanAsAlbumsItem = [rgMenu addItemWithTitle:@"Scan Selection as Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@""];
     self.rgScanAsAlbumsItem.target = self;
     self.rgRemoveInformationItem = [rgMenu addItemWithTitle:@"Remove ReplayGain Information" action:@selector(rgRemove:) keyEquivalent:@""];
     self.rgScanAsAlbumsItem.target = self;
@@ -67,10 +67,10 @@ extern DB_functions_t *deadbeef;
     self.rgMenuItem.submenu = rgMenu;
     [self addItem:self.rgMenuItem];
 
-    self.addToQueueItem = [self addItemWithTitle:@"Add To Playback Queue" action:@selector(addToPlaybackQueue) keyEquivalent:@""];
+    self.addToQueueItem = [self addItemWithTitle:@"Play Later" action:@selector(addToPlaybackQueue) keyEquivalent:@""];
     self.addToQueueItem.target = self;
 
-    self.removeFromQueueItem = [self addItemWithTitle:@"Remove From Playback Queue" action:@selector(removeFromPlaybackQueue) keyEquivalent:@""];
+    self.removeFromQueueItem = [self addItemWithTitle:@"Remove from Playback Queue" action:@selector(removeFromPlaybackQueue) keyEquivalent:@""];
     self.removeFromQueueItem.target = self;
 
     [self addItem:NSMenuItem.separatorItem];
@@ -80,7 +80,7 @@ extern DB_functions_t *deadbeef;
     self.convertItem = [self addItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@""];
     self.convertItem.target = self;
 
-    self.deleteFromDiskItem = [self addItemWithTitle:@"Delete From Disk" action:@selector(deleteFromDisk) keyEquivalent:@""];
+    self.deleteFromDiskItem = [self addItemWithTitle:@"Delete from Disk" action:@selector(deleteFromDisk) keyEquivalent:@""];
     self.deleteFromDiskItem.target = self;
 
     [self addPluginActions];

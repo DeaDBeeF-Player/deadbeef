@@ -1260,7 +1260,7 @@ artwork_get_actions (DB_playItem_t *it)
         return NULL;
 
     static DB_plugin_action_t context_action = {
-        .title = "Refresh cover art",
+        .title = "Refresh Cover Art",
         .name = "invalidate_playitem_cache",
         .callback2 = invalidate_playitem_cache,
         .flags = DB_ACTION_ADD_MENU | DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS,

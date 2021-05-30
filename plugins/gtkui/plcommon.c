@@ -1059,7 +1059,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
     gtk_widget_show (play_later);
     gtk_container_add (GTK_CONTAINER (playlist_menu), play_later);
     
-    remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove From Playback Queue"));
+    remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove from Playback Queue"));
     if (listview->binding->sel_count () > 1) {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         int pqlen = deadbeef->playqueue_get_count ();
@@ -1144,7 +1144,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
     int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
 
     if (!hide_remove_from_disk) {
-        remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove From Disk"));
+        remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove from Disk"));
         gtk_widget_show (remove_from_disk);
         gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_disk);
     }
