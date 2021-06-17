@@ -72,6 +72,9 @@ Japanese
 
 Kazakh
  Baurzhan Muftakhidinov <baurthefirst@gmail.com>
+ 
+Korean
+ Junghee Lee <daemul72@gmail.com>
 
 Central Khmer
  SatyaN <satyathavy@gmail.com>

@@ -7,13 +7,14 @@
 # Jung Hee Lee <daemul72@gmail.com>, 2020
 # Jung Hee Lee <daemul72@gmail.com>, 2019-2020
 # ieukori <ieukori@gmail.com>, 2016
+# Jung Hee Lee <daemul72@gmail.com>, 2021
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-30 10:50+0200\n"
-"PO-Revision-Date: 2021-05-30 08:50+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2021-06-15 07:31+0000\n"
+"Last-Translator: Jung Hee Lee <daemul72@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/deadbeef-player/deadbeef-player/language/ko/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -34,7 +35,7 @@ msgstr "DeaDBeeF %s 변경 로그"
 #: ../plugins/gtkui/callbacks.c:632
 #, c-format
 msgid "DeaDBeeF Translators"
-msgstr "DeaDBeeF 번역"
+msgstr "DeaDBeeF 번역자"
 
 #: ../plugins/gtkui/callbacks.c:643 ../plugins/gtkui/interface.c:976
 #: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:166
@@ -84,7 +85,7 @@ msgstr "Foobar2000 프리셋 가져오기"
 #: ../plugins/gtkui/eq.c:322 ../translation/plugins.c:393
 #, no-c-format
 msgid "Enable"
-msgstr "사용가능"
+msgstr "활성화"
 
 #: ../plugins/gtkui/eq.c:331
 msgid "Zero All"
@@ -384,7 +385,7 @@ msgstr "날짜"
 
 #: ../plugins/gtkui/interface.c:279 ../plugins/gtkui/deadbeef.glade.h:25
 msgid "Random"
-msgstr "랜덤"
+msgstr "무작위"
 
 #: ../plugins/gtkui/interface.c:283 ../plugins/gtkui/plcommon.c:168
 #: ../plugins/gtkui/plcommon.c:1993 ../plugins/gtkui/deadbeef.glade.h:26
@@ -440,7 +441,7 @@ msgstr "앨범"
 
 #: ../plugins/gtkui/interface.c:351 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Random Tracks"
-msgstr "곡 랜덤"
+msgstr "곡 무작위 재생"
 
 #: ../plugins/gtkui/interface.c:357 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Repeat"
@@ -535,7 +536,7 @@ msgstr "다음"
 #: ../translation/plugins.c:337
 #, no-c-format
 msgid "Play Random"
-msgstr "랜덤 재생"
+msgstr "무작위 재생"
 
 #: ../plugins/gtkui/interface.c:843 ../plugins/gtkui/deadbeef.glade.h:60
 msgid "About"
@@ -758,7 +759,7 @@ msgstr "재생"
 #: ../plugins/converter/interface.c:680
 #: ../plugins/converter/converter.glade.h:52
 msgid "Configure"
-msgstr "설정"
+msgstr "설정하기"
 
 #: ../plugins/gtkui/interface.c:2156 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "DSP Chain Preset"
@@ -790,15 +791,15 @@ msgstr "디스크에서 삭제하려면 휴지통을 사용해야 합니다"
 
 #: ../plugins/gtkui/interface.c:2202 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
-msgstr "일본어 SHIFT-JIS 감지 및 레코딩 사용가능"
+msgstr "일본어 SHIFT-JIS 감지 및 레코딩 활성화"
 
 #: ../plugins/gtkui/interface.c:2206 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr "러시아 CP1251 감지 및 레코딩 사용가능"
+msgstr "러시아 CP1251 감지 및 레코딩 활성화"
 
 #: ../plugins/gtkui/interface.c:2210 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr "중국어 CP936 감지 및 레코딩 사용가능"
+msgstr "중국어 CP936 감지 및 레코딩 활성화"
 
 #: ../plugins/gtkui/interface.c:2218 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Interface refresh rate (times per second):"
@@ -977,7 +978,7 @@ msgstr "모양새"
 
 #: ../plugins/gtkui/interface.c:2777 ../plugins/gtkui/deadbeef.glade.h:166
 msgid "Enable Proxy Server"
-msgstr "프록시 서버 사용가능"
+msgstr "프록시 서버 활성화"
 
 #: ../plugins/gtkui/interface.c:2785 ../plugins/gtkui/deadbeef.glade.h:167
 msgid "Proxy Server Address:"
@@ -1053,17 +1054,17 @@ msgstr "단축키"
 #: ../plugins/gtkui/interface.c:3046 ../plugins/gtkui/interface.c:3100
 #: ../plugins/gtkui/deadbeef.glade.h:186
 msgid "Configuration"
-msgstr ""
+msgstr "환경설정"
 
 #: ../plugins/gtkui/interface.c:3054 ../plugins/gtkui/interface.c:3144
 #: ../plugins/gtkui/deadbeef.glade.h:187
 msgid "Info"
-msgstr ""
+msgstr "정보"
 
 #: ../plugins/gtkui/interface.c:3061 ../plugins/gtkui/interface.c:3160
 #: ../plugins/gtkui/deadbeef.glade.h:188
 msgid "License"
-msgstr ""
+msgstr "라이센스"
 
 #: ../plugins/gtkui/interface.c:3095 ../plugins/gtkui/interface.c:4763
 #: ../plugins/gtkui/deadbeef.glade.h:189
@@ -1087,7 +1088,7 @@ msgstr "URL:"
 #: ../plugins/gtkui/interface.c:5161 ../plugins/gtkui/plcommon.c:1283
 #: ../plugins/gtkui/deadbeef.glade.h:193
 msgid "Set Custom Title"
-msgstr "사용자 지정 제목 설정"
+msgstr "사용자 정의 제목 지정"
 
 #: ../plugins/gtkui/interface.c:4051 ../plugins/gtkui/deadbeef.glade.h:194
 msgid "Group By ..."
@@ -1290,11 +1291,11 @@ msgstr "파일 태그 업데이트"
 
 #: ../plugins/gtkui/interface.c:5549 ../plugins/gtkui/deadbeef.glade.h:238
 msgid "Copy report"
-msgstr ""
+msgstr "보고서 복사"
 
 #: ../plugins/gtkui/interface.c:5557 ../plugins/gtkui/deadbeef.glade.h:239
 msgid "Only show plugins with configuration"
-msgstr ""
+msgstr "환경설정이 있는 플러그인만 표시"
 
 #: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:651
 msgid "Artist / Album"
@@ -1353,15 +1354,15 @@ msgstr "붙여넣기(_P)"
 
 #: ../plugins/gtkui/plcommon.c:1054
 msgid "Play Next"
-msgstr ""
+msgstr "다음 곡 재생"
 
 #: ../plugins/gtkui/plcommon.c:1058
 msgid "Play Later"
-msgstr ""
+msgstr "최신 곡 재생"
 
 #: ../plugins/gtkui/plcommon.c:1062
 msgid "Remove from Playback Queue"
-msgstr ""
+msgstr "재생 대기열에서 제거"
 
 #. plugins/hotkeys/hotkeys.c
 #: ../plugins/gtkui/plcommon.c:1084 ../translation/plugins.c:249
@@ -1379,7 +1380,7 @@ msgstr "복사하기(_C)"
 
 #: ../plugins/gtkui/plcommon.c:1147
 msgid "Remove from Disk"
-msgstr ""
+msgstr "디스크에서 제거"
 
 #: ../plugins/gtkui/plcommon.c:1804 ../plugins/gtkui/plcommon.c:1946
 msgid "Add column"
@@ -1412,7 +1413,7 @@ msgstr "파일 열기..."
 #: ../plugins/gtkui/pluginconf.c:530
 #, c-format
 msgid "Configure %s"
-msgstr "%s 설정"
+msgstr "%s 설정하기"
 
 #: ../plugins/gtkui/prefwin.c:92
 msgid "Default Audio Device"
@@ -1553,7 +1554,7 @@ msgstr "   --prev             재생목록의 이전 노래\n"
 #: ../main.c:139
 #, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr "   --random           재생목록의 노래 랜덤\n"
+msgstr "   --random           재생목록의 음악 무작위 재생\n"
 
 #: ../main.c:140
 #, c-format
@@ -1619,7 +1620,7 @@ msgstr "                      예제: --nowplaying-tf \"%%artist%% - %%title%%\"
 #: ../main.c:152
 #, c-format
 msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
-msgstr "   --volume [NUM]     Deadbeef 음량 단계 인쇄 또는 설정.\n"
+msgstr "   --volume [NUM]     Deadbeef 음량 단계 인쇄 또는 지정\n.\n"
 
 #: ../main.c:153
 #, c-format
@@ -1766,7 +1767,7 @@ msgstr "Satoh보다 Ken emu를 선호 (서라운드 기능 작동하지 않음)"
 #: ../translation/plugins.c:5
 #, no-c-format
 msgid "Enable surround"
-msgstr "서라운드 사용가능"
+msgstr "서라운드 활성화"
 
 #. plugins/alsa/alsa.c
 #: ../translation/plugins.c:8
@@ -1859,7 +1860,7 @@ msgstr "앨범커버를 크기에 맞춤"
 #: ../translation/plugins.c:44
 #, no-c-format
 msgid "Disable disk cache"
-msgstr "디스크 캐시 사용안함"
+msgstr "디스크 캐시 비활성화"
 
 #: ../translation/plugins.c:46
 #, no-c-format
@@ -1910,7 +1911,7 @@ msgstr "CD-Text를 CDDB보다 우선 사용"
 #: ../translation/plugins.c:65
 #, no-c-format
 msgid "CDDB url (e.g. 'freedb.org')"
-msgstr "CDDB url (예: 'freedb.org')"
+msgstr "CDDB URL (예: 'freedb.org')"
 
 #: ../translation/plugins.c:67
 #, no-c-format
@@ -1925,7 +1926,7 @@ msgstr "CDDB 프로토콜 사용"
 #: ../translation/plugins.c:71
 #, no-c-format
 msgid "Enable NRG image support"
-msgstr "NRG image 지원 사용가능"
+msgstr "NRG image 지원 활성화"
 
 #: ../translation/plugins.c:73
 #, no-c-format
@@ -1982,7 +1983,7 @@ msgstr "출력 장치에서 샘플레이트 자동 감지"
 #: ../translation/plugins.c:95
 #, no-c-format
 msgid "Set samplerate directly"
-msgstr "직접 샘플레이트 설정"
+msgstr "샘플링 속도 직접 지정"
 
 #: ../translation/plugins.c:97
 #, no-c-format
@@ -2024,7 +2025,7 @@ msgstr "8비트 출력"
 #: ../translation/plugins.c:115
 #, no-c-format
 msgid "Use all extensions supported by ffmpeg"
-msgstr "ffmpeg에서 지원하는 모든 확장 사용"
+msgstr "FFmpeg에서 지원하는 모든 확장 사용"
 
 #: ../translation/plugins.c:117
 #, no-c-format
@@ -2162,7 +2163,7 @@ msgstr "순서섞기 모드 주기"
 #: ../translation/plugins.c:182
 #, no-c-format
 msgid "Shuffle - Random Tracks"
-msgstr "순서섞기 - 곡 랜덤"
+msgstr "순서섞기 - 곡 무작위"
 
 #: ../translation/plugins.c:184
 #, no-c-format
@@ -2242,7 +2243,7 @@ msgstr "현재 재생목록 제거"
 #: ../translation/plugins.c:216
 #, no-c-format
 msgid "Rename Current Playlist"
-msgstr ""
+msgstr "현재 재생목록 이름변경"
 
 #: ../translation/plugins.c:220
 #, no-c-format
@@ -2312,7 +2313,7 @@ msgstr "곡 상태에 이미지 대신 유니코드 문자 사용"
 #: ../translation/plugins.c:246
 #, no-c-format
 msgid "Disable seekbar overlay text"
-msgstr "탐색막대 오버레이 텍스트 사용안함"
+msgstr "탐색막대 오버레이 텍스트 비활성화"
 
 #: ../translation/plugins.c:251
 #, no-c-format
@@ -2427,7 +2428,7 @@ msgstr "재생 목록 1로 전환"
 #: ../translation/plugins.c:295
 #, no-c-format
 msgid "Sort Randomize"
-msgstr "랜덤화 정렬"
+msgstr "무작위화 정렬"
 
 #: ../translation/plugins.c:297
 #, no-c-format
@@ -2578,12 +2579,12 @@ msgstr "Last.fm에서 조회"
 #: ../translation/plugins.c:366
 #, no-c-format
 msgid "Enable scrobbler"
-msgstr "스크러블러 사용가능"
+msgstr "스크러블러 활성화"
 
 #: ../translation/plugins.c:368
 #, no-c-format
 msgid "Disable nowplaying"
-msgstr "지금 재생 사용안함"
+msgstr "지금 재생 비활성화"
 
 #: ../translation/plugins.c:370
 #, no-c-format
@@ -2730,7 +2731,7 @@ msgstr "(sec)보다 짧을 경우 건너뛰기"
 #: ../translation/plugins.c:437
 #, no-c-format
 msgid "Configure Custom Shell Commands"
-msgstr "사용자 지정 셸 명령 설정"
+msgstr "사용자 정의 셸 명령 설정하기"
 
 #. plugins/shn/shn.c
 #: ../translation/plugins.c:440
@@ -2752,7 +2753,7 @@ msgstr "오디오 바이트 스왑 (들리는 것이 모두 정적인 경우 전
 #: ../translation/plugins.c:447
 #, no-c-format
 msgid "Enable HVSC Songlength DB"
-msgstr "HVSC Songlength DB 사용가능"
+msgstr "HVSC Songlength DB 활성화"
 
 #: ../translation/plugins.c:449
 #, no-c-format
@@ -2829,7 +2830,7 @@ msgstr "20K"
 #: ../translation/plugins.c:479
 #, no-c-format
 msgid "Enable logging"
-msgstr "로깅 사용가능"
+msgstr "로깅 활성화"
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:482
@@ -3043,7 +3044,7 @@ msgstr "출력 파일 확장명:"
 #: ../plugins/converter/interface.c:440
 #: ../plugins/converter/converter.glade.h:28
 msgid "E.g. mp3"
-msgstr "E.g. mp3"
+msgstr "예: mp3"
 
 #: ../plugins/converter/interface.c:448
 #: ../plugins/converter/converter.glade.h:29
@@ -3351,7 +3352,7 @@ msgid ""
 " The files will be moved to trash.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr "파일이 휴지통으로 이동합니다.\n\n(GTKUI 플러그인 설정에서 이 대화 상자를 끌 수 있음)"
+msgstr " 파일이 휴지통으로 이동합니다.\n\n(GTKUI 플러그인 설정에서 이 대화 상자를 끌 수 있음)"
 
 #: ../plugins/gtkui/actionhandlers.c:382
 msgid ""
@@ -3510,7 +3511,7 @@ msgstr "채우기"
 
 #: ../plugins/gtkui/widgets.c:4079
 msgid "Configure Button"
-msgstr "버튼 설정"
+msgstr "버튼 설정하기"
 
 #: ../plugins/gtkui/widgets.c:4361
 msgid "Voices:"
@@ -3539,7 +3540,7 @@ msgstr "재생목록 복제"
 
 #: ../plugins/gtkui/pltmenu.c:422
 msgid "Enable Autosort"
-msgstr "자동정렬 사용가능"
+msgstr "자동정렬 활성화"
 
 #: ../plugins/pltbrowser/pltbrowser.c:177
 msgid " (paused)"
