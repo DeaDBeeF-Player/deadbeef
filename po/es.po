@@ -26,9 +26,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-30 10:50+0200\n"
-"PO-Revision-Date: 2021-05-30 08:50+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2021-06-17 22:38+0200\n"
+"PO-Revision-Date: 2021-05-30 12:29+0000\n"
+"Last-Translator: Toni Estévez <toni.estevez@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/deadbeef-player/deadbeef-player/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -61,7 +61,7 @@ msgstr "Ayuda"
 
 #: ../plugins/gtkui/eq.c:147
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "Guardar ajustes de EQ de DeaDBeeF"
+msgstr "Guardar ajustes del EQ de DeaDBeeF"
 
 #: ../plugins/gtkui/eq.c:154
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
@@ -269,7 +269,7 @@ msgstr "Error al cargar el archivo de ayuda"
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks"
 " will be cancelled or interrupted. This may result in data loss."
-msgstr "El reproductor está actualmente ejecutando tareas en un segundo plano. Si sale ahora, las tareas serán canceladas o interrumpidas. Esto puede ocasionar pérdida de datos."
+msgstr "El reproductor está ejecutando tareas en segundo plano. Si sale ahora, las tareas se cancelarán o se interrumpirán. Esto puede ocasionar la pérdida de datos."
 
 #: ../plugins/gtkui/gtkui.c:1567
 msgid "Do you still want to quit?"
@@ -1068,17 +1068,17 @@ msgstr "Atajos de teclado"
 #: ../plugins/gtkui/interface.c:3046 ../plugins/gtkui/interface.c:3100
 #: ../plugins/gtkui/deadbeef.glade.h:186
 msgid "Configuration"
-msgstr ""
+msgstr "Configuración"
 
 #: ../plugins/gtkui/interface.c:3054 ../plugins/gtkui/interface.c:3144
 #: ../plugins/gtkui/deadbeef.glade.h:187
 msgid "Info"
-msgstr ""
+msgstr "Información"
 
 #: ../plugins/gtkui/interface.c:3061 ../plugins/gtkui/interface.c:3160
 #: ../plugins/gtkui/deadbeef.glade.h:188
 msgid "License"
-msgstr ""
+msgstr "LIcencia"
 
 #: ../plugins/gtkui/interface.c:3095 ../plugins/gtkui/interface.c:4763
 #: ../plugins/gtkui/deadbeef.glade.h:189
@@ -1305,11 +1305,11 @@ msgstr "Actualizar las etiquetas del archivo"
 
 #: ../plugins/gtkui/interface.c:5549 ../plugins/gtkui/deadbeef.glade.h:238
 msgid "Copy report"
-msgstr ""
+msgstr "Copiar el informe"
 
 #: ../plugins/gtkui/interface.c:5557 ../plugins/gtkui/deadbeef.glade.h:239
 msgid "Only show plugins with configuration"
-msgstr ""
+msgstr "Mostrar solo los complementos que tengan configuración"
 
 #: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:651
 msgid "Artist / Album"
@@ -1368,15 +1368,15 @@ msgstr "_Pegar"
 
 #: ../plugins/gtkui/plcommon.c:1054
 msgid "Play Next"
-msgstr ""
+msgstr "Reproducir a continuación"
 
 #: ../plugins/gtkui/plcommon.c:1058
 msgid "Play Later"
-msgstr ""
+msgstr "Reproducir después"
 
 #: ../plugins/gtkui/plcommon.c:1062
 msgid "Remove from Playback Queue"
-msgstr ""
+msgstr "Eliminar de la cola de reproducción"
 
 #. plugins/hotkeys/hotkeys.c
 #: ../plugins/gtkui/plcommon.c:1084 ../translation/plugins.c:249
@@ -1394,7 +1394,7 @@ msgstr "_Copiar"
 
 #: ../plugins/gtkui/plcommon.c:1147
 msgid "Remove from Disk"
-msgstr ""
+msgstr "Eliminar del disco"
 
 #: ../plugins/gtkui/plcommon.c:1804 ../plugins/gtkui/plcommon.c:1946
 msgid "Add column"
@@ -2252,12 +2252,12 @@ msgstr "Cargar la lista de reproducción"
 #: ../translation/plugins.c:214
 #, no-c-format
 msgid "Remove Current Playlist"
-msgstr "Eliminar la lista de reproducción actual"
+msgstr "Eliminar la lista de reproducción"
 
 #: ../translation/plugins.c:216
 #, no-c-format
 msgid "Rename Current Playlist"
-msgstr ""
+msgstr "Renombra la lista de reproducción"
 
 #: ../translation/plugins.c:220
 #, no-c-format
@@ -3388,7 +3388,7 @@ msgstr "¿Seguro que quiere eliminar todos los archivos seleccionados %d?%s"
 #: ../plugins/gtkui/actionhandlers.c:394
 #, c-format
 msgid "Do you really want to delete all %d files from the current playlist?%s"
-msgstr "¿Seguro que quiere eliminar todos los archivos %d de la lista de reproducción actual?%s"
+msgstr "¿Seguro que quiere eliminar los %d archivos de la lista de reproducción actual?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:397
 #, c-format

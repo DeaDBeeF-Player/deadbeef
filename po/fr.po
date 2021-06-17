@@ -19,9 +19,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-30 10:50+0200\n"
-"PO-Revision-Date: 2021-05-30 08:50+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2021-06-17 22:38+0200\n"
+"PO-Revision-Date: 2021-06-07 11:38+0000\n"
+"Last-Translator: Charles Monzat <c.monzat@laposte.net>\n"
 "Language-Team: French (http://www.transifex.com/deadbeef-player/deadbeef-player/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1061,17 +1061,17 @@ msgstr "Raccourcis"
 #: ../plugins/gtkui/interface.c:3046 ../plugins/gtkui/interface.c:3100
 #: ../plugins/gtkui/deadbeef.glade.h:186
 msgid "Configuration"
-msgstr ""
+msgstr "Configuration"
 
 #: ../plugins/gtkui/interface.c:3054 ../plugins/gtkui/interface.c:3144
 #: ../plugins/gtkui/deadbeef.glade.h:187
 msgid "Info"
-msgstr ""
+msgstr "Infos"
 
 #: ../plugins/gtkui/interface.c:3061 ../plugins/gtkui/interface.c:3160
 #: ../plugins/gtkui/deadbeef.glade.h:188
 msgid "License"
-msgstr ""
+msgstr "Licence"
 
 #: ../plugins/gtkui/interface.c:3095 ../plugins/gtkui/interface.c:4763
 #: ../plugins/gtkui/deadbeef.glade.h:189
@@ -1369,7 +1369,7 @@ msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:1062
 msgid "Remove from Playback Queue"
-msgstr ""
+msgstr "Supprimer de la file d’attente de lecture"
 
 #. plugins/hotkeys/hotkeys.c
 #: ../plugins/gtkui/plcommon.c:1084 ../translation/plugins.c:249
@@ -1387,7 +1387,7 @@ msgstr "Co_pier"
 
 #: ../plugins/gtkui/plcommon.c:1147
 msgid "Remove from Disk"
-msgstr ""
+msgstr "Supprimer du disque"
 
 #: ../plugins/gtkui/plcommon.c:1804 ../plugins/gtkui/plcommon.c:1946
 msgid "Add column"
@@ -2250,7 +2250,7 @@ msgstr "Supprimer la liste de lecture actuelle"
 #: ../translation/plugins.c:216
 #, no-c-format
 msgid "Rename Current Playlist"
-msgstr ""
+msgstr "Renommer la liste de lecture actuelle"
 
 #: ../translation/plugins.c:220
 #, no-c-format

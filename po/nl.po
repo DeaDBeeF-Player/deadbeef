@@ -4,15 +4,16 @@
 # 
 # Translators:
 # Glenn de Groot, 2010
+# Heimen Stoffels <vistausss@fastmail.com>, 2021
 # Heimen Stoffels <vistausss@fastmail.com>, 2019-2021
 # Pjotr, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-30 10:50+0200\n"
-"PO-Revision-Date: 2021-05-30 08:50+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2021-06-17 22:38+0200\n"
+"PO-Revision-Date: 2021-05-30 11:57+0000\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/deadbeef-player/deadbeef-player/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -53,7 +54,7 @@ msgstr "DeaDBeef EQ-voorinstellingsbestanden (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:194
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "DeaDBeeF EQ-voorinstelling laden..."
+msgstr "DeaDBeeF EQ-voorinstelling laden…"
 
 #: ../plugins/gtkui/eq.c:198
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
@@ -641,11 +642,11 @@ msgstr "Uitvoerapparaat:"
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Always convert 8 bit audio to 16 bit"
-msgstr "8-bit-audio altijd omzetten naar 16-bit"
+msgstr "8-bit-audio altijd converteren naar 16-bit"
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Always convert 16 bit audio to 24 bit"
-msgstr "16-bit-audio altijd omzetten naar 24-bit"
+msgstr "16-bit-audio altijd converteren naar 24-bit"
 
 #: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Target samplerate:"
@@ -653,11 +654,11 @@ msgstr "Doel-samplesnelheid:"
 
 #: ../plugins/gtkui/interface.c:1907 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "For multiples of 48KHz (96K, 192K, ...):"
-msgstr "Voor meervouden van 48KHz (96K, 192K, ...):"
+msgstr "Voor vermeerderingen van 48KHz (96K, 192K, …):"
 
 #: ../plugins/gtkui/interface.c:1926 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "For multiples of 44.1KHz (88.2K, 176.4K, ...):"
-msgstr "Voor meervouden van 44.1KHz (88.2K, 176.4K, ...):"
+msgstr "Voor vermeerderingen van 44.1KHz (88.2K, 176.4K, …):"
 
 #: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Based on input samplerate"
@@ -741,11 +742,11 @@ msgstr "Niet toevoegen uit archieven bij het toevoegen van mappen"
 
 #: ../plugins/gtkui/interface.c:2092 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "\"Stop after current track\" option will switch off after triggering"
-msgstr "'Stoppen na huidig nummer' wordt uitgeschakeld na triggeren"
+msgstr "‘Stoppen na huidig nummer’ wordt uitgeschakeld na triggeren"
 
 #: ../plugins/gtkui/interface.c:2096 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "\"Stop after current album\" option will switch off after triggering"
-msgstr "'Stoppen na huidig album' wordt uitgeschakeld naar triggeren"
+msgstr "‘Stoppen na huidig album’ wordt uitgeschakeld na triggeren"
 
 #: ../plugins/gtkui/interface.c:2100 ../plugins/gtkui/deadbeef.glade.h:112
 #: ../translation/plugins.c:170
@@ -785,7 +786,7 @@ msgstr "Systeemvakpictogram verbergen"
 
 #: ../plugins/gtkui/interface.c:2198 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Delete from disk should use Trash"
-msgstr "Prullenbak gebruiken bij 'Verwijderen van schijf'"
+msgstr "Prullenbak gebruiken bij ‘Verwijderen van schijf’"
 
 #: ../plugins/gtkui/interface.c:2202 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
@@ -832,7 +833,7 @@ msgstr "Afspeellijsten sluiten met middelste muisknop"
 
 #: ../plugins/gtkui/interface.c:2285 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr "Rechtermuisknopmenu-item 'Verwijderen van schijf' verbergen"
+msgstr "Rechtermuisknopmenu-item ‘Verwijderen van schijf’ verbergen"
 
 #: ../plugins/gtkui/interface.c:2289 ../plugins/gtkui/deadbeef.glade.h:132
 msgid ""
@@ -1039,7 +1040,7 @@ msgid ""
 "or the Revert button to undo your changes.\n"
 "The changes will NOT be saved\n"
 "if you don't press Apply."
-msgstr "Klik op 'Toepassen' om je wijzigingen op te slaan\nof op 'Herstellen' om ze ongedaan te maken.\nDe wijzigingen worden NIET opgeslagen\nzolang je niet op 'Toepassen' klikt."
+msgstr "Klik op ‘Toepassen’ om je wijzigingen op te slaan\nof op ‘Herstellen’ om ze ongedaan te maken.\nDe wijzigingen worden NIET opgeslagen\nzolang je niet op ‘Toepassen’ klikt."
 
 #: ../plugins/gtkui/interface.c:2999 ../plugins/gtkui/deadbeef.glade.h:184
 msgid "_Defaults"
@@ -1052,17 +1053,17 @@ msgstr "Sneltoetsen"
 #: ../plugins/gtkui/interface.c:3046 ../plugins/gtkui/interface.c:3100
 #: ../plugins/gtkui/deadbeef.glade.h:186
 msgid "Configuration"
-msgstr ""
+msgstr "Instellingen"
 
 #: ../plugins/gtkui/interface.c:3054 ../plugins/gtkui/interface.c:3144
 #: ../plugins/gtkui/deadbeef.glade.h:187
 msgid "Info"
-msgstr ""
+msgstr "Informatie"
 
 #: ../plugins/gtkui/interface.c:3061 ../plugins/gtkui/interface.c:3160
 #: ../plugins/gtkui/deadbeef.glade.h:188
 msgid "License"
-msgstr ""
+msgstr "Licentie"
 
 #: ../plugins/gtkui/interface.c:3095 ../plugins/gtkui/interface.c:4763
 #: ../plugins/gtkui/deadbeef.glade.h:189
@@ -1090,11 +1091,11 @@ msgstr "Aangepaste titel instellen"
 
 #: ../plugins/gtkui/interface.c:4051 ../plugins/gtkui/deadbeef.glade.h:194
 msgid "Group By ..."
-msgstr "Groeperen op..."
+msgstr "Groeperen op…"
 
 #: ../plugins/gtkui/interface.c:4175 ../plugins/gtkui/deadbeef.glade.h:195
 msgid "Sort by ..."
-msgstr "Sorteren op..."
+msgstr "Sorteren op…"
 
 #: ../plugins/gtkui/interface.c:4191 ../plugins/gtkui/deadbeef.glade.h:196
 msgid "Format"
@@ -1187,7 +1188,7 @@ msgid ""
 "DeaDBeeF decoder plugins. For example, mp3 files can have content type "
 "\"audio/x-mpeg\", and need to be decoded by DeaDBeeF's own \"stdmpg\" "
 "plugin, or \"ffmpeg\" plugin."
-msgstr "Deze tabel bepaalt de relatie tussen inhoudstypen van netwerkstreams en DeaDBeeF-decoderplug-ins. Voorbeeld: MP3-bestanden kunnen van het type 'audio/x-mpeg' zijn en moeten door DeaDBeeF worden omgezet middels de 'stdmpg'-plug-in of ffmpeg."
+msgstr "Deze tabel bepaalt de relatie tussen inhoudstypen van netwerkstreams en DeaDBeeF-decoderplug-ins. Voorbeeld: mp3-bestanden kunnen van het type ‘audio/x-mpeg’ zijn en moeten door DeaDBeeF worden geconverteerd middels de ‘stdmpg’-plug-in of ffmpeg."
 
 #: ../plugins/gtkui/interface.c:4858 ../plugins/gtkui/deadbeef.glade.h:216
 msgid "Content-Type:"
@@ -1224,7 +1225,7 @@ msgid ""
 " \"Add Location\" dialog. The title itself is visible in columns displaying "
 "the \"Artist\" metadata field. It should look like \"[custom] artist\" if "
 "the Artist field is present, or just \"custom\" otherwise."
-msgstr "Dit venster stelt je in staat om aangepaste titels in te stellen voor nummers. Dit is het nuttigst voor radiostations. Deze optie is ook beschikbaar in het venster 'Locatie toevoegen'. De titel is zichtbaar in kolommen met het 'Artiest'-veld. Als het 'Artiest'-veld zichtbaar is, dan moet het moet worden opgemaakt als '[aangepast] artiest', of anders als 'aangepast'."
+msgstr "Dit venster stelt je in staat om aangepaste namen te geven aan nummers. Dit is het nuttigst voor radiostations. Deze optie is ook beschikbaar in het venster ’Locatie toevoegen’. De titel is zichtbaar in kolommen met het ‘Artiest’-veld. Als het ‘Artiest’-veld zichtbaar is, dan moet het moet worden opgemaakt als ‘[aangepast] artiest’, of anders als ‘aangepast’."
 
 #: ../plugins/gtkui/interface.c:5211 ../plugins/gtkui/deadbeef.glade.h:224
 #: ../translation/plugins.c:146 ../plugins/shellexecui/interface.c:70
@@ -1239,7 +1240,7 @@ msgstr "Bewerken (direct)"
 
 #: ../plugins/gtkui/interface.c:5227 ../plugins/gtkui/deadbeef.glade.h:226
 msgid "Add new field..."
-msgstr "Nieuw veld toevoegen..."
+msgstr "Nieuw veld toevoegen…"
 
 #: ../plugins/gtkui/interface.c:5275 ../plugins/gtkui/deadbeef.glade.h:227
 msgid "Edit Value"
@@ -1289,11 +1290,11 @@ msgstr "Bestandstags bijwerken"
 
 #: ../plugins/gtkui/interface.c:5549 ../plugins/gtkui/deadbeef.glade.h:238
 msgid "Copy report"
-msgstr ""
+msgstr "Rapportage kopiëren"
 
 #: ../plugins/gtkui/interface.c:5557 ../plugins/gtkui/deadbeef.glade.h:239
 msgid "Only show plugins with configuration"
-msgstr ""
+msgstr "Alleen instelbare plug-ins tonen"
 
 #: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:651
 msgid "Artist / Album"
@@ -1315,7 +1316,7 @@ msgstr "Index van elementen"
 
 #: ../plugins/gtkui/plcommon.c:156 ../plugins/pltbrowser/pltbrowser.c:412
 msgid "Playing"
-msgstr "Aan het afspelen"
+msgstr "Je luistert naar"
 
 #: ../plugins/gtkui/plcommon.c:157
 msgid "Album Art"
@@ -1352,15 +1353,15 @@ msgstr "_Plakken"
 
 #: ../plugins/gtkui/plcommon.c:1054
 msgid "Play Next"
-msgstr ""
+msgstr "Hierna afspelen"
 
 #: ../plugins/gtkui/plcommon.c:1058
 msgid "Play Later"
-msgstr ""
+msgstr "Later afspelen"
 
 #: ../plugins/gtkui/plcommon.c:1062
 msgid "Remove from Playback Queue"
-msgstr ""
+msgstr "Verwijderen uit afspeelwachtrij"
 
 #. plugins/hotkeys/hotkeys.c
 #: ../plugins/gtkui/plcommon.c:1084 ../translation/plugins.c:249
@@ -1378,7 +1379,7 @@ msgstr "_Kopiëren"
 
 #: ../plugins/gtkui/plcommon.c:1147
 msgid "Remove from Disk"
-msgstr ""
+msgstr "Verwijderen van schijf"
 
 #: ../plugins/gtkui/plcommon.c:1804 ../plugins/gtkui/plcommon.c:1946
 msgid "Add column"
@@ -1406,7 +1407,7 @@ msgstr "Artiest/Datum/Album"
 
 #: ../plugins/gtkui/pluginconf.c:47
 msgid "Open file..."
-msgstr "Bestand openen..."
+msgstr "Bestand openen…"
 
 #: ../plugins/gtkui/pluginconf.c:530
 #, c-format
@@ -1427,11 +1428,11 @@ msgstr "Weet je zeker dat je wilt doorgaan zonder ze op te slaan?"
 
 #: ../plugins/gtkui/progress.c:62
 msgid "Adding files..."
-msgstr "Bezig met toevoegen van bestanden..."
+msgstr "Bezig met toevoegen van bestanden…"
 
 #: ../plugins/gtkui/progress.c:95
 msgid "Initializing..."
-msgstr "Bezig met initialiseren..."
+msgstr "Bezig met initialiseren…"
 
 #: ../plugins/gtkui/search.c:659
 msgid "Search [(%list_total% results)]"
@@ -1466,7 +1467,7 @@ msgstr "[Meerdere waarden]"
 
 #: ../plugins/gtkui/trkproperties.c:636
 msgid "Writing tags..."
-msgstr "Bezig met schrijven tags..."
+msgstr "Bezig met wegschrijven tags…"
 
 #: ../plugins/gtkui/trkproperties.c:891
 msgid "Field name"
@@ -1562,7 +1563,7 @@ msgstr "   --queue         Bestand(en) toevoegen aan afspeellijst\n"
 #: ../main.c:141
 #, c-format
 msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr "   --gui PLUGIN       Geef op welke GUI-plug-in moet worden gebruikt; standaard is dit 'GTK2'\n"
+msgstr "   --gui PLUGIN       Geef op welke GUI-plug-in moet worden gebruikt - standaard is dit ‘GTK2’\n"
 
 #: ../main.c:142
 #, c-format
@@ -1698,7 +1699,7 @@ msgstr "2.3 (aanbevolen)\n2.4"
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
-msgstr "wildmidi: kan configuratiebestand van freepats niet vinden. Installeer het pakket 'timidity-freepats', of geef het pad naar freepats.cfg op in de plug-in-instellingen."
+msgstr "wildmidi: kan configuratiebestand van freepats niet vinden. Installeer het pakket ‘timidity-freepats’ of voer de locatie van freepats.cfg in in de plug-in-instellingen."
 
 #: ../translation/extra.c:3
 msgid "Track Title"
@@ -1909,12 +1910,12 @@ msgstr "Voorkeur voor CD-tekst boven CDDB"
 #: ../translation/plugins.c:65
 #, no-c-format
 msgid "CDDB url (e.g. 'freedb.org')"
-msgstr "CDDB-url (bijv. 'freedb.org')"
+msgstr "CDDB-url (bijv. ‘freedb.org’)"
 
 #: ../translation/plugins.c:67
 #, no-c-format
 msgid "CDDB port number (e.g. '888')"
-msgstr "CDDB-poortnummer (bijv. '888')"
+msgstr "CDDB-poortnummer (bijv. ‘888’)"
 
 #: ../translation/plugins.c:69
 #, no-c-format
@@ -1970,7 +1971,7 @@ msgstr "cdparanoia-foutcorrectie toepassen tijdens rippen"
 #: ../translation/plugins.c:90
 #, no-c-format
 msgid "Convert"
-msgstr "Omzetten"
+msgstr "Converteren"
 
 #. plugins/dsp_libsrc/src.c
 #: ../translation/plugins.c:93
@@ -2028,7 +2029,7 @@ msgstr "Alle door ffmpeg ondersteunde extensies gebruiken"
 #: ../translation/plugins.c:117
 #, no-c-format
 msgid "File Extensions (separate with ';')"
-msgstr "Bestandextensies (te scheiden met ';')"
+msgstr "Bestandsextensies (gescheiden door ‘;’)"
 
 #. plugins/flac/flac.c
 #: ../translation/plugins.c:120
@@ -2241,7 +2242,7 @@ msgstr "Huidige afspeellijst verwijderen"
 #: ../translation/plugins.c:216
 #, no-c-format
 msgid "Rename Current Playlist"
-msgstr ""
+msgstr "Afspeellijstnaam wijzigen"
 
 #: ../translation/plugins.c:220
 #, no-c-format
@@ -2582,7 +2583,7 @@ msgstr "Scrobblen inschakelen"
 #: ../translation/plugins.c:368
 #, no-c-format
 msgid "Disable nowplaying"
-msgstr "'Nu aan het afspelen' uitschakelen"
+msgstr "‘Je luistert naar’ uitschakelen"
 
 #: ../translation/plugins.c:370
 #, no-c-format
@@ -2847,7 +2848,7 @@ msgstr "Het bestand bestaat al. Wil je het overschrijven?"
 
 #: ../plugins/converter/convgui.c:147
 msgid "Converter warning"
-msgstr "Waarschuwing van omzetter"
+msgstr "Converteerwaarschuwing"
 
 #: ../plugins/converter/convgui.c:321
 msgid "Please select encoder"
@@ -2855,15 +2856,15 @@ msgstr "Kies een codeerder"
 
 #: ../plugins/converter/convgui.c:323
 msgid "Converter error"
-msgstr "Omzettingsfout"
+msgstr "Converteerfout"
 
 #: ../plugins/converter/convgui.c:347
 msgid "Converting..."
-msgstr "Bezig met omzetten..."
+msgstr "Bezig met converteren…"
 
 #: ../plugins/converter/convgui.c:692
 msgid "Select folder..."
-msgstr "Map kiezen..."
+msgstr "Kies een map…"
 
 #: ../plugins/converter/convgui.c:958
 msgid "Failed to save encoder preset"
@@ -2883,7 +2884,7 @@ msgstr "Er is al een voorinstelling met dezelfde naam. Kies een andere naam."
 #: ../plugins/gtkui/ctmapping.c:203 ../plugins/gtkui/ctmapping.c:231
 #: ../plugins/gtkui/ctmapping.c:263
 msgid "Error"
-msgstr "Fout"
+msgstr "Foutmelding"
 
 #: ../plugins/converter/convgui.c:1015 ../plugins/converter/convgui.c:1159
 msgid "Add new encoder"
@@ -3166,7 +3167,7 @@ msgstr "DeaDBeeF-afspeellijstbestanden (*.dbpl)"
 
 #: ../plugins/gtkui/fileman.c:556
 msgid "Follow symlinks"
-msgstr "Symlinks volgen..."
+msgstr "Snelkoppelingen volgen"
 
 #: ../plugins/converter/converter.glade.h:14
 msgid ""
@@ -3229,14 +3230,14 @@ msgstr "ID:"
 #: ../plugins/shellexecui/interface.c:197
 #: ../plugins/shellexecui/shellexec.glade.h:12
 msgid "Free-form name, for example \"My Shell Command\""
-msgstr "Vrije naamkeuze, bijv. 'Mijn shell-opdracht'"
+msgstr "Vrije naamkeuze, bijv. ‘Mijn shell-opdracht’"
 
 #: ../plugins/shellexecui/interface.c:205
 #: ../plugins/shellexecui/shellexec.glade.h:13
 msgid ""
 "Command ID, normally it should be something short, for example "
 "\"youtube_open\". It must be unique."
-msgstr "Opdracht-id. Normaal is dit iets korts, zoals 'youtube_open'. Het moet uniek zijn."
+msgstr "Opdracht-id. Normaal is dit iets korts, zoals ‘youtube_open’. Het moet uniek zijn."
 
 #: ../plugins/shellexecui/interface.c:208
 #: ../plugins/shellexecui/shellexec.glade.h:15
@@ -3294,7 +3295,7 @@ msgid ""
 "<small>If you want to add the command to main menu, make sure that title "
 "contains the menu path like this: \"File/My Command\", where File is the "
 "menu name in the English version.</small>"
-msgstr "<small>Als je de opdracht wilt toevoege aan het hoofdmenu, zorg er dan voor dat de titel het menupad bevat, en wel als volgt: \"Bestand/Mijn opdracht\" - 'Bestand' = de Engelse menunaam.</small>"
+msgstr "<small>Als je de opdracht wilt toevoegen aan het hoofdmenu, zorg er dan voor dat de titel het menupad bevat, en wel als volgt: ‘Bestand/Mijn opdracht’ - ‘Bestand’ = de Engelse menunaam.</small>"
 
 #: ../plugins/shellexecui/shellexecui.c:96
 msgid "Add Command"
@@ -3331,15 +3332,15 @@ msgstr "Ongeldige waarden"
 
 #: ../plugins/gtkui/actionhandlers.c:57
 msgid "Open file(s)..."
-msgstr "Bestand(en) openen..."
+msgstr "Bestand(en) openen…"
 
 #: ../plugins/gtkui/actionhandlers.c:72
 msgid "Add file(s) to playlist..."
-msgstr "Bestand(en) toevoegen aan afspeellijst..."
+msgstr "Bestand(en) toevoegen aan afspeellijst…"
 
 #: ../plugins/gtkui/actionhandlers.c:87
 msgid "Add folder(s) to playlist..."
-msgstr "Map(pen) toevoegen aan afspeellijst..."
+msgstr "Map(pen) toevoegen aan afspeellijst…"
 
 #: ../plugins/gtkui/actionhandlers.c:315
 msgid "help.txt"
@@ -3381,7 +3382,7 @@ msgstr "Weet je zeker dat je het momenteel spelende nummer wilt verwijderen?%s"
 
 #: ../plugins/gtkui/actionhandlers.c:400
 msgid "Delete files from disk"
-msgstr "Bestanden verwijderen van schijf..."
+msgstr "Bestanden verwijderen van schijf"
 
 #: ../plugins/gtkui/actionhandlers.c:605
 msgid "Save Playlist As"
@@ -3403,7 +3404,7 @@ msgid ""
 "Spaces must be used as separators in plugin ids list.\n"
 "Content type should be only letters, numbers and '-' sign.\n"
 "Plugin id can contain only letters and numbers."
-msgstr "De velden 'Inhoudstype' en 'Plug-ins' moeten worden ingevuld overeenkomstig de regels.\nVoorbeeld inhoudstype: 'audio/mpeg'\nVoorbeeld plug-in-id's: 'stdmpg ffmpeg'\nDe plug-ins moeten spatiegescheiden genoteerd worden.\nInhoudstype mag alleen letters, cijfers en '-' bevatten.\nPlug-ins mag alleen letters en cijfers bevatten."
+msgstr "De velden ‘Inhoudstype’ en ‘Plug-ins’ moeten worden ingevuld overeenkomstig de regels.\nVoorbeeld inhoudstype: ‘audio/mpeg’\nVoorbeeld plug-in-id's: ‘stdmpg ffmpeg’\nDe plug-ins moeten spatiegescheiden genoteerd worden.\nInhoudstype mag alleen letters, cijfers en ‘-’ bevatten.\nPlug-ins mag alleen letters en cijfers bevatten."
 
 #: ../plugins/gtkui/ctmapping.c:229 ../plugins/gtkui/ctmapping.c:261
 msgid "Nothing is selected."
@@ -3412,15 +3413,15 @@ msgstr "Er niets geselecteerd."
 #: ../plugins/gtkui/widgets.c:492
 #, c-format
 msgid "Widget \"%s\" is not available"
-msgstr "De widget '%s' is niet beschikbaar"
+msgstr "De widget ‘%s’ is niet beschikbaar"
 
 #: ../plugins/gtkui/widgets.c:831
 msgid "Replace with..."
-msgstr "Vervangen door..."
+msgstr "Vervangen door…"
 
 #: ../plugins/gtkui/widgets.c:836
 msgid "Insert..."
-msgstr "Invoegen..."
+msgstr "Invoegen…"
 
 #: ../plugins/gtkui/widgets.c:864
 msgid "Cut"
@@ -3522,7 +3523,7 @@ msgstr "Afspeellijst verwijderen"
 #: ../plugins/gtkui/pltmenu.c:78
 #, c-format
 msgid "Do you really want to remove the playlist '%s'?"
-msgstr "Weet je zeker dat je de geselecteerde afspeellijst ('%s') wilt verwijderen?"
+msgstr "Weet je zeker dat je de geselecteerde afspeellijst ‘%s’ wilt verwijderen?"
 
 #: ../plugins/gtkui/pltmenu.c:399
 msgid "Remove Playlist"
