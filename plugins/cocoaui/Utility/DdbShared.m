@@ -72,7 +72,7 @@ cocoaui_playlist_set_curr (int playlist) {
 
 NSString *
 conf_get_nsstr (const char *key, const char *def) {
-    char value[1024];
+    char value[4096];
     deadbeef->conf_get_str (key, def, value, sizeof (value));
     return [NSString stringWithUTF8String:value];
 }
