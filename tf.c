@@ -2944,19 +2944,25 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     outlen -= l;
                     skip_out = 1;
                 }
-                else if ((tmp_a = !strcmp (name, "isplaying")) || (tmp_b = !strcmp (name, "ispaused"))) {
+                else if (!strcmp (name, "isplaying")) {
                     playItem_t *playing = streamer_get_playing_track ();
-                    
-                    if (playing && 
-                            (
-                            (tmp_a && plug_get_output ()->state () == DDB_PLAYBACK_STATE_PLAYING)
-                            || (tmp_b && plug_get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED)
-                            )) {
+                    if (playing != NULL && ctx->it == (ddb_playItem_t *)playing) {
                         *out++ = '1';
                         outlen--;
                         skip_out = 1;
                     }
-                    if (playing) {
+                    if (playing != NULL) {
+                        pl_item_unref (playing);
+                    }
+                }
+                else if (!strcmp (name, "ispaused")) {
+                    playItem_t *playing = streamer_get_playing_track ();
+                    if (playing != NULL && ctx->it == (ddb_playItem_t *)playing && plug_get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED) {
+                        *out++ = '1';
+                        outlen--;
+                        skip_out = 1;
+                    }
+                    if (playing != NULL) {
                         pl_item_unref (playing);
                     }
                 }

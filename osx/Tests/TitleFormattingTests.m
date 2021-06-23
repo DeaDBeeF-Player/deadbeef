@@ -69,6 +69,7 @@ static DB_output_t fake_out = {
 - (void)tearDown {
     streamer_set_playing_track (NULL);
     pl_item_unref (it);
+    ctx.it = NULL;
     ctx.plt = NULL;
 
     [super tearDown];
@@ -1271,7 +1272,18 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "1"), @"The actual output is: %s", buffer);
 }
 
-- (void)test_IsPlayingReturnValueTrue_CorrespondsToStringValue {
+- (void)test_isPlaying_StatePlayingAndStreamerTrackNotSameAsCtxTrack_ReturnsNone {
+    streamer_set_playing_track (it);
+    ctx.it = NULL;
+    plug_set_output (&fake_out);
+    fake_out_state_value = DDB_PLAYBACK_STATE_PLAYING;
+    char *bc = tf_compile("$if(%isplaying%,YES,NO) %isplaying%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "NO "), @"The actual output is: %s", buffer);
+}
+
+- (void)test_isPlaying_StatePlayingAndStreamerTrackSameAsCtxTrack_Returns1 {
     streamer_set_playing_track (it);
     plug_set_output (&fake_out);
     fake_out_state_value = DDB_PLAYBACK_STATE_PLAYING;
@@ -1281,7 +1293,7 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "YES 1"), @"The actual output is: %s", buffer);
 }
 
-- (void)test_IsPlayingReturnValueFalse_CorrespondsToStringValue {
+- (void)test_IsPlaying_StateStopped_ReturnsNone {
     plug_set_output (&fake_out);
     fake_out_state_value = DDB_PLAYBACK_STATE_STOPPED;
     char *bc = tf_compile("$if(%isplaying%,YES,NO) %isplaying%");
@@ -1290,7 +1302,39 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "NO "), @"The actual output is: %s", buffer);
 }
 
-- (void)test_IsPausedReturnValueTrue_CorrespondsToStringValue {
+- (void)test_isPaused_StatePlayingAndStreamerTrackNotSameAsCtxTrack_ReturnsNone {
+    streamer_set_playing_track (it);
+    ctx.it = NULL;
+    plug_set_output (&fake_out);
+    fake_out_state_value = DDB_PLAYBACK_STATE_PLAYING;
+    char *bc = tf_compile("$if(%ispaused%,YES,NO) %ispaused%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "NO "), @"The actual output is: %s", buffer);
+}
+
+- (void)test_isPaused_StatePlayingAndStreamerTrackSameAsCtxTrack_ReturnsNone {
+    streamer_set_playing_track (it);
+    plug_set_output (&fake_out);
+    fake_out_state_value = DDB_PLAYBACK_STATE_PLAYING;
+    char *bc = tf_compile("$if(%ispaused%,YES,NO) %ispaused%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "NO "), @"The actual output is: %s", buffer);
+}
+
+- (void)test_isPaused_StatePausedAndStreamerTrackNotSameAsCtxTrack_ReturnsNone {
+    streamer_set_playing_track (it);
+    ctx.it = NULL;
+    plug_set_output (&fake_out);
+    fake_out_state_value = DDB_PLAYBACK_STATE_PAUSED;
+    char *bc = tf_compile("$if(%ispaused%,YES,NO) %ispaused%");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "NO "), @"The actual output is: %s", buffer);
+}
+
+- (void)test_isPaused_StatePausedAndStreamerTrackSameAsCtxTrack_Returns1 {
     streamer_set_playing_track (it);
     plug_set_output (&fake_out);
     fake_out_state_value = DDB_PLAYBACK_STATE_PAUSED;
