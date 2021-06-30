@@ -36,6 +36,17 @@
 #include <string.h>
 #include "../../deadbeef.h"
 
+// PA_RATE_MAX values for newer pulseaudio versions (9.0 and later)
+// use PA_RATE_MAX or 384kHz, whichever is higher
+#if defined(PA_RATE_MAX) && PA_RATE_MAX >= (48000U*8U)
+#define PA_RATE_MAX_NEWER PA_RATE_MAX
+#else
+#define PA_RATE_MAX_NEWER (48000U*8U)
+#endif
+
+// PA_RATE_MAX values for older pulseaudio versions (before 9.0)
+#define PA_RATE_MAX_OLDER (48000U*4U)
+
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
 static DB_output_t plugin;
@@ -73,8 +84,8 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
         plugin.fmt.samplerate = 44100;
         plugin.fmt.channelmask = 3;
     }
-    if (plugin.fmt.samplerate > 192000) {
-        plugin.fmt.samplerate = 192000;
+    if (plugin.fmt.samplerate > PA_RATE_MAX_NEWER) {
+        plugin.fmt.samplerate = PA_RATE_MAX_NEWER;
     }
 
     trace ("format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
@@ -149,6 +160,15 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
     }
 
     s = pa_simple_new(*server ? server : NULL, "Deadbeef", PA_STREAM_PLAYBACK, dev, "Music", &ss, &channel_map, attr, &error);
+
+    // on PA_ERR_INVALID, retry with a lower sample rate if possible
+    if (!s && error == PA_ERR_INVALID && plugin.fmt.samplerate > PA_RATE_MAX_OLDER)
+    {
+        trace ("pulse_simple_new failed with PA_ERR_INVALID, trying again with lower sample rate: %d\n", ss.rate);
+        plugin.fmt.samplerate = PA_RATE_MAX_OLDER;
+        ss.rate = plugin.fmt.samplerate;
+        s = pa_simple_new(*server ? server : NULL, "Deadbeef", PA_STREAM_PLAYBACK, dev, "Music", &ss, &channel_map, attr, &error);
+    }
 
     if (!s)
     {
