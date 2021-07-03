@@ -73,9 +73,6 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
         plugin.fmt.samplerate = 44100;
         plugin.fmt.channelmask = 3;
     }
-    if (plugin.fmt.samplerate > 192000) {
-        plugin.fmt.samplerate = 192000;
-    }
 
     trace ("format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
 
@@ -148,9 +145,19 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
         deadbeef->conf_get_str (CONFSTR_PULSE_SERVERADDR, "", server, sizeof (server));
     }
 
-    s = pa_simple_new(*server ? server : NULL, "Deadbeef", PA_STREAM_PLAYBACK, dev, "Music", &ss, &channel_map, attr, &error);
+    for (;;) {
+        s = pa_simple_new(*server ? server : NULL, "Deadbeef", PA_STREAM_PLAYBACK, dev, "Music", &ss, &channel_map, attr, &error);
 
-    if (!s)
+        if (s != NULL || ss.rate <= 192000) {
+            break;
+        }
+
+        // Older pulseaudio versions couldn't handle more than 192KHz,
+        // so try to lower it down
+        ss.rate = plugin.fmt.samplerate = 192000;
+    }
+
+    if (s == NULL)
     {
         const char *strerr = pa_strerror (error);
         fprintf (stderr, "pa_simple_new failed: %s\n", strerr);
