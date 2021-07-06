@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-17 22:38+0200\n"
+"POT-Creation-Date: 2021-07-06 22:39+0200\n"
 "PO-Revision-Date: 2021-06-01 13:57+0000\n"
 "Last-Translator: heskjestad <cato@heskjestad.xyz>\n"
 "Language-Team: Norwegian Bokmål (http://www.transifex.com/deadbeef-player/deadbeef-player/language/nb/)\n"
@@ -101,12 +101,12 @@ msgstr "Nullstill bånd"
 msgid "Presets"
 msgstr "Oppsett"
 
-#: ../plugins/gtkui/gtkui.c:157 ../tf.c:2580
+#: ../plugins/gtkui/gtkui.c:157 ../tf.c:2584
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 dag %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:160 ../tf.c:2583
+#: ../plugins/gtkui/gtkui.c:160 ../tf.c:2587
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d dager %d:%02d:%02d"
@@ -3573,11 +3573,11 @@ msgstr "♫"
 msgid "Playlist browser"
 msgstr "Spillelistebehandling"
 
-#: ../tf.c:2199
+#: ../tf.c:2203
 msgid "mono"
 msgstr "mono"
 
-#: ../tf.c:2202 ../tf.c:2206
+#: ../tf.c:2206 ../tf.c:2210
 msgid "stereo"
 msgstr "stereo"
 

@@ -3,18 +3,18 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Jung Hee Lee <daemul72@gmail.com>, 2021
-# Jung Hee Lee <daemul72@gmail.com>, 2020
-# Jung Hee Lee <daemul72@gmail.com>, 2019-2020
+# JungHee Lee <daemul72@gmail.com>, 2021
+# JungHee Lee <daemul72@gmail.com>, 2020
+# JungHee Lee <daemul72@gmail.com>, 2019-2020
 # ieukori <ieukori@gmail.com>, 2016
-# Jung Hee Lee <daemul72@gmail.com>, 2020-2021
+# JungHee Lee <daemul72@gmail.com>, 2020-2021
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-17 22:38+0200\n"
+"POT-Creation-Date: 2021-07-06 22:39+0200\n"
 "PO-Revision-Date: 2021-06-15 07:31+0000\n"
-"Last-Translator: Jung Hee Lee <daemul72@gmail.com>\n"
+"Last-Translator: JungHee Lee <daemul72@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/deadbeef-player/deadbeef-player/language/ko/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -104,12 +104,12 @@ msgstr "밴드 0으로"
 msgid "Presets"
 msgstr "프리셋"
 
-#: ../plugins/gtkui/gtkui.c:157 ../tf.c:2580
+#: ../plugins/gtkui/gtkui.c:157 ../tf.c:2584
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1일 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:160 ../tf.c:2583
+#: ../plugins/gtkui/gtkui.c:160 ../tf.c:2587
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d일 %d:%02d:%02d"
@@ -3576,11 +3576,11 @@ msgstr "♫"
 msgid "Playlist browser"
 msgstr "재생목록 찾아보기"
 
-#: ../tf.c:2199
+#: ../tf.c:2203
 msgid "mono"
 msgstr "모노"
 
-#: ../tf.c:2202 ../tf.c:2206
+#: ../tf.c:2206 ../tf.c:2210
 msgid "stereo"
 msgstr "스테레오"
 

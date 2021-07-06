@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-17 22:38+0200\n"
+"POT-Creation-Date: 2021-07-06 22:39+0200\n"
 "PO-Revision-Date: 2021-05-30 08:50+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/deadbeef-player/deadbeef-player/language/zh_TW/)\n"
@@ -108,12 +108,12 @@ msgstr "頻帶歸零"
 msgid "Presets"
 msgstr "預設值"
 
-#: ../plugins/gtkui/gtkui.c:157 ../tf.c:2580
+#: ../plugins/gtkui/gtkui.c:157 ../tf.c:2584
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 天 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:160 ../tf.c:2583
+#: ../plugins/gtkui/gtkui.c:160 ../tf.c:2587
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d 天 %d:%02d:%02d"
@@ -3580,11 +3580,11 @@ msgstr "♫"
 msgid "Playlist browser"
 msgstr "播放清單概覽"
 
-#: ../tf.c:2199
+#: ../tf.c:2203
 msgid "mono"
 msgstr "單聲道"
 
-#: ../tf.c:2202 ../tf.c:2206
+#: ../tf.c:2206 ../tf.c:2210
 msgid "stereo"
 msgstr "立體聲"
 

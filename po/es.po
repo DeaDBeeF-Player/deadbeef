@@ -6,9 +6,9 @@
 # Adolfo Jayme Barrientos, 2013
 # Adolfo Jayme-Barrientos, 2013
 # Adolfo Jayme Barrientos, 2013
-# Adolfo Jayme-Barrientos, 2021
-# Adolfo Jayme-Barrientos, 2013
-# Adolfo Jayme-Barrientos, 2013
+# Adolfo Jayme Barrientos, 2021
+# Adolfo Jayme Barrientos, 2013
+# Adolfo Jayme Barrientos, 2013
 # b0c7556da723b83b1e5bd960cf255433, 2014
 # b0c7556da723b83b1e5bd960cf255433, 2013-2014
 # Charlesles, 2013-2014,2016
@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-17 22:38+0200\n"
+"POT-Creation-Date: 2021-07-06 22:39+0200\n"
 "PO-Revision-Date: 2021-05-30 12:29+0000\n"
 "Last-Translator: Toni Estévez <toni.estevez@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/deadbeef-player/deadbeef-player/language/es/)\n"
@@ -118,12 +118,12 @@ msgstr "Restablecer bandas"
 msgid "Presets"
 msgstr "Preajustes"
 
-#: ../plugins/gtkui/gtkui.c:157 ../tf.c:2580
+#: ../plugins/gtkui/gtkui.c:157 ../tf.c:2584
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 día y %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:160 ../tf.c:2583
+#: ../plugins/gtkui/gtkui.c:160 ../tf.c:2587
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d días y %d:%02d:%02d"
@@ -3590,11 +3590,11 @@ msgstr "♫"
 msgid "Playlist browser"
 msgstr "Navegador de listas de reproducción"
 
-#: ../tf.c:2199
+#: ../tf.c:2203
 msgid "mono"
 msgstr "monoaural"
 
-#: ../tf.c:2202 ../tf.c:2206
+#: ../tf.c:2206 ../tf.c:2210
 msgid "stereo"
 msgstr "estéreo"
 
