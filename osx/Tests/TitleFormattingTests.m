@@ -1471,6 +1471,29 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "DeaDBeeF"), @"The actual output is: %s", buffer);
 }
 
+- (void)test_replace_emptyStringWithEmpty_shouldComplete {
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"Completed"];
+
+    char *bc = tf_compile("$replace(foobar,,)");
+
+    dispatch_async (dispatch_get_global_queue (DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
+        tf_eval (&self->ctx, bc, self->buffer, 1000);
+        tf_free (bc);
+        [expectation fulfill];
+    });
+
+    [self waitForExpectations:@[expectation] timeout:1];
+}
+
+- (void)test_replace_emptyStringWithSomething_shouldProduceOriginalString {
+    char *bc = tf_compile("$replace(foobar,,bar)");
+
+    tf_eval (&self->ctx, bc, self->buffer, 1000);
+    tf_free (bc);
+
+    XCTAssert(!strcmp (buffer, "foobar"), @"The actual output is: %s", buffer);
+}
+
 - (void)test_FilenameExt_ReturnsFilenameWithExt {
     pl_replace_meta (it, ":URI", "/Users/User/MyFile.mod");
     char *bc = tf_compile("%filename_ext%");

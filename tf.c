@@ -549,6 +549,10 @@ tf_func_replace (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const
         int idx = -1; //index of the found needle
 
         for (i = 0; i < (argc - 1) / 2; ++i) {
+            // Check for empty string -- can't replace it with anything
+            if (*lines[i*2+1] == 0) {
+                break;
+            }
             char *found = strstr (iptr, lines[i*2+1]);
             if (found && found - iptr < chunklen) {
                 chunklen = (int)(found - iptr);
