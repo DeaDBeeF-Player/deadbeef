@@ -549,6 +549,10 @@ tf_func_replace (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const
         int idx = -1; //index of the found needle
 
         for (i = 0; i < (argc - 1) / 2; ++i) {
+            // Check for empty string -- can't replace it with anything
+            if (*lines[i*2+1] == 0) {
+                break;
+            }
             char *found = strstr (iptr, lines[i*2+1]);
             if (found && found - iptr < chunklen) {
                 chunklen = (int)(found - iptr);
@@ -2944,19 +2948,25 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     outlen -= l;
                     skip_out = 1;
                 }
-                else if ((tmp_a = !strcmp (name, "isplaying")) || (tmp_b = !strcmp (name, "ispaused"))) {
+                else if (!strcmp (name, "isplaying")) {
                     playItem_t *playing = streamer_get_playing_track ();
-                    
-                    if (playing && 
-                            (
-                            (tmp_a && plug_get_output ()->state () == DDB_PLAYBACK_STATE_PLAYING)
-                            || (tmp_b && plug_get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED)
-                            )) {
+                    if (playing != NULL && ctx->it == (ddb_playItem_t *)playing) {
                         *out++ = '1';
                         outlen--;
                         skip_out = 1;
                     }
-                    if (playing) {
+                    if (playing != NULL) {
+                        pl_item_unref (playing);
+                    }
+                }
+                else if (!strcmp (name, "ispaused")) {
+                    playItem_t *playing = streamer_get_playing_track ();
+                    if (playing != NULL && ctx->it == (ddb_playItem_t *)playing && plug_get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED) {
+                        *out++ = '1';
+                        outlen--;
+                        skip_out = 1;
+                    }
+                    if (playing != NULL) {
                         pl_item_unref (playing);
                     }
                 }

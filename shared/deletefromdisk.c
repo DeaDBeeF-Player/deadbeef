@@ -48,7 +48,6 @@ ddbUtilTrackListInitWithPlaylist (ddbUtilTrackList_t trackList, ddb_playlist_t *
     data->it_current_song = deadbeef->streamer_get_playing_track ();
     data->idx_current_song = -1;
 
-    int idx_current_song = -1;
     if (ctx == DDB_ACTION_CTX_SELECTION) {
         unsigned selcount = deadbeef->plt_getselcount (plt);
         data->tracklist = calloc (selcount, sizeof (DB_playItem_t *));
@@ -61,7 +60,7 @@ ddbUtilTrackListInitWithPlaylist (ddbUtilTrackList_t trackList, ddb_playlist_t *
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (uri)) {
                 if (it == data->it_current_song) {
-                    idx_current_song = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
+                    data->idx_current_song = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
                 }
                 deadbeef->pl_item_ref (it);
                 data->tracklist[data->trackcount++] = it;
@@ -93,8 +92,8 @@ ddbUtilTrackListInitWithPlaylist (ddbUtilTrackList_t trackList, ddb_playlist_t *
         if (it) {
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->is_local_file (uri)) {
-                int idx = idx_current_song = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
-                if (idx != -1) {
+                data->idx_current_song = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
+                if (data->idx_current_song != -1) {
                     data->tracklist = calloc (1, sizeof (DB_playItem_t *));
                     deadbeef->pl_item_ref (it);
                     data->tracklist[data->trackcount++] = it;

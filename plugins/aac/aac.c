@@ -124,15 +124,9 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
     int64_t firstframepos = -1;
     int64_t fsize = -1;
     int offs = 0;
+
     if (!fp->vfs->is_streaming ()) {
-        int skip = deadbeef->junk_get_leading_size (fp);
-        if (skip >= 0) {
-            deadbeef->fseek (fp, skip, SEEK_SET);
-        }
-        fsize = deadbeef->fgetlength (fp);
-        if (skip > 0) {
-            fsize -= skip;
-        }
+        fsize = deadbeef->fgetlength (fp) - deadbeef->ftell(fp);
     }
 
     uint8_t buf[ADTS_HEADER_SIZE*8];
@@ -218,8 +212,14 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
 // returns -1 for error, 0 for aac
 static int
 aac_probe (DB_FILE *fp, float *duration, int *samplerate, int *channels, int64_t *totalsamples) {
-
     deadbeef->rewind (fp);
+    if (!fp->vfs->is_streaming ()) {
+        int skip = deadbeef->junk_get_leading_size (fp);
+        if (skip >= 0) {
+            deadbeef->fseek (fp, skip, SEEK_CUR);
+        }
+    }
+
     if (parse_aac_stream (fp, samplerate, channels, duration, totalsamples) == -1) {
         return -1;
     }
