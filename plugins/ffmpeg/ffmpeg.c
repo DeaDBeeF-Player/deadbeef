@@ -291,11 +291,26 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
         while (info->left_in_packet > 0 && size > 0) {
             int out_size = info->buffer_size;
-            int len;
+            int len = 0;
             //trace ("in: out_size=%d(%d), size=%d\n", out_size, AVCODEC_MAX_AUDIO_FRAME_SIZE, size);
 
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(55, 28, 0)
+            int ret = avcodec_send_packet (info->ctx, &info->pkt);
+            if (ret < 0) {
+                break;
+            }
+            ret = avcodec_receive_frame (info->ctx,info->frame);
+            if (ret < 0 && ret != AVERROR(EAGAIN) && ret != AVERROR_EOF) {
+                break;
+            }
+            else {
+                len = info->pkt.size;
+            }
+#else
             int got_frame = 0;
             len = avcodec_decode_audio4(info->ctx, info->frame, &got_frame, &info->pkt);
+#endif
+
             if (len > 0) {
                 if (ensure_buffer (info, info->frame->nb_samples * (_info->fmt.bps >> 3))) {
                     return -1;
