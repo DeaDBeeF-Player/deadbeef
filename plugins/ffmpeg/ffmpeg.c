@@ -32,38 +32,10 @@
 #include <libavutil/avstring.h>
 
 
-#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(54, 6, 0)
-#define avformat_find_stream_info(ctx,data) av_find_stream_info(ctx)
-#define avcodec_open2(ctx,codec,data) avcodec_open(ctx,codec)
-#endif
-
-#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(55, 16, 101)
-#define avformat_close_input(ctx) {av_close_input_file(*(ctx)); *(ctx) = NULL;}
-#endif
-
-#if LIBAVCODEC_VERSION_INT > AV_VERSION_INT(55, 28, 0)
-#    define avcodec_free_frame(frame) av_frame_free(frame)
-#elif LIBAVCODEC_VERSION_INT > AV_VERSION_INT(54, 59, 100)
-     // has avcodec_free_frame
-#elif LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(53, 40, 0)
-#    define avcodec_free_frame(frame) av_freep(frame) // newest -- av_freep
-#endif
+#define avcodec_free_frame(frame) av_frame_free(frame)
 
 #if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(57, 8, 0)
 #define av_packet_unref(packet) av_free_packet(packet)
-#endif
-
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52, 64, 0)
-#define AVMEDIA_TYPE_AUDIO CODEC_TYPE_AUDIO
-#endif
-
-
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(55, 28, 1)
-#define av_frame_alloc() avcodec_alloc_frame()
-#endif
-
-#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(53, 2, 0)
-#define avformat_open_input(ctx, uri, fmt, options) av_open_input_file(ctx, uri, NULL, fmt, options)
 #endif
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -93,9 +65,7 @@ typedef struct {
     AVCodecContext *ctx;
     AVFormatContext *fctx;
     AVPacket pkt;
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(53, 40, 0)
     AVFrame *frame;
-#endif
     int stream_id;
 
     int left_in_packet;
@@ -176,14 +146,14 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->stream_id = -1;
     info->fctx->max_analyze_duration = AV_TIME_BASE;
     avformat_find_stream_info(info->fctx, NULL);
-    for (i = 0; i < info->fctx->nb_streams; i++)
-    {
-        info->ctx = info->fctx->streams[i]->codec;
-        if (info->ctx->codec_type == AVMEDIA_TYPE_AUDIO)
-        {
-            info->codec = avcodec_find_decoder (info->ctx->codec_id);
+    AVFormatContext *fctx = info->fctx;
+    for (i = 0; i < info->fctx->nb_streams; i++) {
+        if (fctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
+            info->codec = avcodec_find_decoder(fctx->streams[i]->codecpar->codec_id);
             if (info->codec != NULL) {
                 info->stream_id = i;
+                info->ctx = avcodec_alloc_context3 (info->codec);
+                avcodec_parameters_to_context(info->ctx, fctx->streams[i]->codecpar);
                 break;
             }
         }
@@ -269,6 +239,7 @@ ffmpeg_free (DB_fileinfo_t *_info) {
         }
         if (info->ctx) {
             avcodec_close (info->ctx);
+            avcodec_free_context (&info->ctx);
         }
         if (info->fctx) {
             avformat_close_input (&info->fctx);
@@ -323,7 +294,6 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
             int len;
             //trace ("in: out_size=%d(%d), size=%d\n", out_size, AVCODEC_MAX_AUDIO_FRAME_SIZE, size);
 
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(53, 40, 0)
             int got_frame = 0;
             len = avcodec_decode_audio4(info->ctx, info->frame, &got_frame, &info->pkt);
             if (len > 0) {
@@ -361,16 +331,6 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 }
             }
 
-#else
-            if (ensure_buffer (info, 16384)) { // FIXME: how to get the packet size in old ffmpeg?
-                return -1;
-            }
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52,25,0)
-            len = avcodec_decode_audio3 (info->ctx, (int16_t *)info->buffer, &out_size, &info->pkt);
-#else
-            len = avcodec_decode_audio2 (info->ctx, (int16_t *)info->buffer, &out_size, info->pkt.data, info->pkt.size);
-#endif
-#endif
             trace ("out: out_size=%d, len=%d\n", out_size, len);
             if (len <= 0) {
                 break;
@@ -532,49 +492,6 @@ ff_add_track_meta (DB_playItem_t *it, const char *track) {
 
 static int
 ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,43,0)
-    if (!strlen (fctx->title)) {
-        // title is empty, this call will set track title to filename without extension
-        deadbeef->pl_add_meta (it, "title", NULL);
-    }
-    else {
-        deadbeef->pl_add_meta (it, "title", fctx->title);
-    }
-    deadbeef->pl_add_meta (it, "artist", fctx->author);
-    deadbeef->pl_add_meta (it, "album", fctx->album);
-    deadbeef->pl_add_meta (it, "copyright", fctx->copyright);
-    deadbeef->pl_add_meta (it, "comment", fctx->comment);
-    deadbeef->pl_add_meta (it, "genre", fctx->genre);
-
-    char tmp[10];
-    snprintf (tmp, sizeof (tmp), "%d", fctx->year);
-    deadbeef->pl_add_meta (it, "year", tmp);
-    snprintf (tmp, sizeof (tmp), "%d", fctx->track);
-    deadbeef->pl_add_meta (it, "track", tmp);
-#else
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54,23,0)
-    AVMetadata *md = fctx->metadata;
-
-    for (int m = 0; map[m]; m += 2) {
-        AVMetadataTag *tag = NULL;
-        do {
-            tag = av_metadata_get (md, map[m], tag, AV_METADATA_DONT_STRDUP_KEY | AV_METADATA_DONT_STRDUP_VAL);
-            if (tag) {
-                if (!strcmp (map[m+1], "disc")) {
-                    ff_add_disc_meta (it, tag->value);
-                }
-                else if (!strcmp (map[m+1], "track")) {
-                    ff_add_track_meta (it, tag->value);
-                }
-                else {
-                    deadbeef->pl_append_meta (it, map[m+1], tag->value);
-                }
-            }
-
-        } while (tag);
-    }
-#else
-    // ffmpeg-0.11 new metadata format
     AVDictionaryEntry *t = NULL;
     int m;
     for (int i = 0; i < fctx->nb_streams + 1; i++) {
@@ -619,8 +536,6 @@ ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
             }
         }
     }
-#endif
-#endif
     return 0;
 }
 
@@ -648,32 +563,21 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     AVCodec *codec = NULL;
     AVCodecContext *ctx = NULL;
     AVFormatContext *fctx = NULL;
+
     int ret;
     char *uri = NULL;
     int i;
 
     // construct uri
-#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
     uri = strdupa (fname);
-#else
-    uri = alloca (l + sizeof (FF_PROTOCOL_NAME) + 1);
-    memcpy (uri, FF_PROTOCOL_NAME, sizeof (FF_PROTOCOL_NAME)-1);
-    memcpy (uri + sizeof (FF_PROTOCOL_NAME)-1, ":", 1);
-    memcpy (uri + sizeof (FF_PROTOCOL_NAME), fname, l);
-    uri[sizeof (FF_PROTOCOL_NAME) + l] = 0;
-#endif
     trace ("ffmpeg: uri: %s\n", uri);
 
     // open file
-#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
     fctx = avformat_alloc_context ();
     fctx->max_analyze_duration = AV_TIME_BASE;
     if ((ret = avformat_open_input(&fctx, uri, NULL, NULL)) < 0) {
-#else
-    if ((ret = av_open_input_file(&fctx, uri, NULL, 0, NULL)) < 0) {
-#endif
         print_error (uri, ret);
-        return NULL;
+        goto error;
     }
 
     trace ("fctx is %p, ret %d/%s\n", fctx, ret, strerror(-ret));
@@ -687,35 +591,28 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         if (!fctx->streams[i]) {
             continue;
         }
-        ctx = fctx->streams[i]->codec;
-        if (ctx->codec_type ==
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52, 64, 0)
-            AVMEDIA_TYPE_AUDIO)
-#else
-            CODEC_TYPE_AUDIO)
-#endif
-        {
-            codec = avcodec_find_decoder(ctx->codec_id);
+        if (fctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
+            codec = avcodec_find_decoder(fctx->streams[i]->codecpar->codec_id);
             if (codec != NULL) {
+                ctx = avcodec_alloc_context3 (codec);
+                avcodec_parameters_to_context(ctx, fctx->streams[i]->codecpar);
                 break;
             }
         }
     }
-//    AVStream *stream = fctx->streams[i];
 
     if (codec == NULL)
     {
         trace ("ffmpeg can't decode %s\n", fname);
-        avformat_close_input (&fctx);
-        return NULL;
+        goto error;
     }
     trace ("ffmpeg can decode %s\n", fname);
     trace ("ffmpeg: codec=%s, stream=%d\n", codec->name, i);
 
-    if (avcodec_open2 (ctx, codec, NULL) < 0) {
+    int avcodec_open2_ret = avcodec_open2 (ctx, codec, NULL);
+    if (avcodec_open2_ret < 0) {
         trace ("ffmpeg: avcodec_open2 failed\n");
-        avformat_close_input (&fctx);
-        return NULL;
+        goto error;
     }
 
     int bps = av_get_bytes_per_sample (ctx->sample_fmt) * 8;
@@ -727,7 +624,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("ffmpeg: duration is %f\n", duration);
 
     if (bps <= 0 || ctx->channels <= 0 || samplerate <= 0) {
-        return NULL;
+        goto error;
     }
 
     int64_t totalsamples = fctx->duration * samplerate / AV_TIME_BASE;
@@ -772,6 +669,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     // free decoder
     avcodec_close (ctx);
+    avcodec_free_context (&ctx);
     avformat_close_input (&fctx);
 
     DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, samplerate);
@@ -784,6 +682,11 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
     return after;
+error:
+    avcodec_close (ctx);
+    avcodec_free_context (&ctx);
+    avformat_close_input (&fctx);
+    return NULL;
 }
 
 static int
@@ -899,9 +802,6 @@ ffmpeg_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 static int
 ffmpeg_start (void) {
     ffmpeg_init_exts ();
-#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(54, 6, 0)
-    avcodec_register_all ();
-#endif
     av_register_all ();
     return 0;
 }
@@ -917,6 +817,8 @@ ffmpeg_stop (void) {
 
 int
 ffmpeg_read_metadata (DB_playItem_t *it) {
+    int err = -1;
+
     trace ("ffmpeg_read_metadata: fname %s\n", deadbeef->pl_find_meta (it, ":URI"));
     AVCodec *codec = NULL;
     AVCodecContext *ctx = NULL;
@@ -926,21 +828,8 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
     int i;
 
     deadbeef->pl_lock ();
-    {
-        const char *fname = deadbeef->pl_find_meta (it, ":URI");
-#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
-        uri = strdupa (fname);
-#else
-        int l = strlen (fname);
-        uri = alloca (l + sizeof (FF_PROTOCOL_NAME) + 1);
-
-        // construct uri
-        memcpy (uri, FF_PROTOCOL_NAME, sizeof (FF_PROTOCOL_NAME)-1);
-        memcpy (uri + sizeof (FF_PROTOCOL_NAME)-1, ":", 1);
-        memcpy (uri + sizeof (FF_PROTOCOL_NAME), fname, l);
-        uri[sizeof (FF_PROTOCOL_NAME) + l] = 0;
-#endif
-    }
+    const char *fname = deadbeef->pl_find_meta (it, ":URI");
+    uri = strdupa (fname);
     deadbeef->pl_unlock ();
     trace ("ffmpeg: uri: %s\n", uri);
 
@@ -951,34 +840,35 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
     }
 
     avformat_find_stream_info(fctx, NULL);
-    for (i = 0; i < fctx->nb_streams; i++)
-    {
-        ctx = fctx->streams[i]->codec;
-        if (ctx->codec_type == AVMEDIA_TYPE_AUDIO)
-        {
-            codec = avcodec_find_decoder(ctx->codec_id);
-            if (codec != NULL)
+    for (i = 0; i < fctx->nb_streams; i++) {
+        if (fctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
+            codec = avcodec_find_decoder(fctx->streams[i]->codecpar->codec_id);
+            if (codec != NULL) {
+                ctx = avcodec_alloc_context3 (codec);
+                avcodec_parameters_to_context(ctx, fctx->streams[i]->codecpar);
                 break;
+            }
         }
     }
-    if (codec == NULL)
-    {
+    if (codec == NULL) {
         trace ("ffmpeg can't decode %s\n", deadbeef->pl_find_meta (it, ":URI"));
-        avformat_close_input (&fctx);
-        return -1;
+        goto error;
     }
     if (avcodec_open2 (ctx, codec, NULL) < 0) {
         trace ("ffmpeg: avcodec_open2 failed\n");
-        avformat_close_input (&fctx);
-        return -1;
+        goto error;
     }
 
     deadbeef->pl_delete_all_meta (it);
     ffmpeg_read_metadata_internal (it, fctx);
 
+    err = 0;
+error:
+    avcodec_close (ctx);
+    avcodec_free_context (&ctx);
     avformat_close_input (&fctx);
 
-    return 0;
+    return err;
 }
 
 static const char settings_dlg[] =
