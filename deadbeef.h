@@ -1152,8 +1152,9 @@ typedef struct {
     void (*junk_apev2_free) (DB_apev2_tag_t *tag);
     int (*junk_apev2_write) (FILE *fp, DB_apev2_tag_t *tag, int write_header, int write_footer);
 
-    // Returns an offset to the audio packets, after ID3v2 and APEv2 tags.a
+    // Returns an offset to the audio packets, after ID3v2 and APEv2 tags.
     // Only positive values or can be returned.
+    // The position is relative to the current file offset, at the time of the call.
     int (*junk_get_leading_size) (DB_FILE *fp);
     int (*junk_get_leading_size_stdio) (FILE *fp);
 
