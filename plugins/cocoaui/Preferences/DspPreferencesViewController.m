@@ -77,6 +77,15 @@ extern DB_functions_t *deadbeef;
     self.dspNodeEditorViewController.view.frame = _dspNodeEditorContainer.bounds;
     [_dspNodeEditorContainer addSubview:self.dspNodeEditorViewController.view];
 
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(dspChainDidChange:) name:@"DSPChainDidChange" object:nil];
+}
+
+- (void)dspChainDidChange:(NSNotification *)notification {
+    // Posted from the EQ window.
+    // This is unreliable, and instead the controller should listen to DB_EV_DSPCHAINCHANGED
+    self.currentDspChain = scriptableDspPresetFromDspChain (deadbeef->streamer_get_dsp_chain ());
+    self.dspChainDataSource.scriptable = self.currentDspChain;
+    [self.dspNodeEditorViewController reloadData];
 }
 
 #pragma mark - ScriptableNodeEditorCustomButtonsInitializer

@@ -123,6 +123,10 @@ extern DB_functions_t *deadbeef;
     }
 
     eq->enabled = enabled;
+    deadbeef->streamer_dsp_chain_save();
+
+    // a horrible hack to notify the preferences window about the change in the dsp chain
+    [NSNotificationCenter.defaultCenter postNotificationName:@"DSPChainDidChange" object:nil];
 }
 
 - (BOOL)enabled {
@@ -151,6 +155,7 @@ extern DB_functions_t *deadbeef;
     }
     [self.propertySheetViewController reload];
     deadbeef->streamer_dsp_chain_save ();
+    [NSNotificationCenter.defaultCenter postNotificationName:@"DSPChainDidChange" object:nil];
 }
 
 #pragma mark - Button actions
@@ -160,11 +165,15 @@ extern DB_functions_t *deadbeef;
         [self.propertySheetDataSource propertySheet:self.propertySheetViewController setValue:@"0" forKey:[NSString stringWithFormat:@"%d", i] item:nil];
     }
     [self.propertySheetViewController reload];
+    deadbeef->streamer_dsp_chain_save ();
+    [NSNotificationCenter.defaultCenter postNotificationName:@"DSPChainDidChange" object:nil];
 }
 
 - (IBAction)zeroPreampAction:(id)sender {
     [self.propertySheetDataSource propertySheet:self.propertySheetViewController setValue:@"0" forKey:@"0" item:nil];
     [self.propertySheetViewController reload];
+    deadbeef->streamer_dsp_chain_save ();
+    [NSNotificationCenter.defaultCenter postNotificationName:@"DSPChainDidChange" object:nil];
 }
 
 - (IBAction)zeroBandsAction:(id)sender {
@@ -172,6 +181,8 @@ extern DB_functions_t *deadbeef;
         [self.propertySheetDataSource propertySheet:self.propertySheetViewController setValue:@"0" forKey:[NSString stringWithFormat:@"%d", i] item:nil];
     }
     [self.propertySheetViewController reload];
+    deadbeef->streamer_dsp_chain_save ();
+    [NSNotificationCenter.defaultCenter postNotificationName:@"DSPChainDidChange" object:nil];
 }
 
 

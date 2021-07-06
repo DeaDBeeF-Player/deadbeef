@@ -551,6 +551,11 @@ scriptableDspInitContextFromItem(scriptableItem_t *c, ddb_dsp_context_t *ctx, DB
         assert (value);
         dsp->set_param (ctx, i, value);
     }
+    const char *enabled = scriptableItemPropertyValueForKey(c, "enabled");
+
+    // It's assumed that the property always exist,
+    // but if it doesn't - it seems that enabling the node is a better idea.
+    ctx->enabled = enabled ? atoi(enabled) : 1;
 
     if (dsp->configdialog) {
         settings_data_free(&dt);
