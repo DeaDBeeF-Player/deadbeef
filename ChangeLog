@@ -3,6 +3,9 @@ version 1.8.8
 	Fixed: A crash when reading certain AAC files
 	Fixed: Reading and writing metadata in certain MP4 files, which didn't work before
 	Fixed: Finding a cuesheet when the path contains symlink
+	Fixed: %isplaying% and %ispaused% title formatting behavior
+	Fixed: Playback of raw AAC files with ID3v2 tags
+	Fixed: Infinite loop when trying to $replace an empty string using title formatting
 	Added: Handling of Disc subtitle frames in ID3v2 and APE tags (Toad King)
 	Added: New improved plugin preferences UI (Nicolai Syvertsen)
 	Added: Non-modal preferences window (Nicolai Syvertsen)
@@ -16,6 +19,7 @@ version 1.8.8
 	Added: Drag-and-drop on the main window (Nicolai Syvertsen)
 	Added: Using scroll wheel with seek bar (Nicolai Syvertsen)
 	Added: "Play Next" context menu action (Natalie Stewart)
+	Added: Handling samplerates higher than 192KHz to pulseaudio
 
 version 1.8.7
 	Fixed: Pulseaudio crash after a non-critical recoverable error
