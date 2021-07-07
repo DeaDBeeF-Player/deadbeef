@@ -38,13 +38,21 @@
 #define MEGA_IMAGE_TAG "<image size=\"mega\">"
 #define XL_IMAGE_TAG "<image size=\"extralarge\">"
 #define IMAGE_END_TAG "</image>"
-int fetch_from_lastfm (const char *artist, const char *album, const char *dest)
-{
+int fetch_from_lastfm (const char *artist, const char *album, const char *dest) {
     struct stat stat_struct;
-    if (!stat (dest, &stat_struct) && S_ISREG (stat_struct.st_mode) && stat_struct.st_size > 0) {
+    int stat_err = stat (dest, &stat_struct);
+    int is_reg = S_ISREG (stat_struct.st_mode);
+    off_t size = stat_struct.st_size;
+
+    // Is the item in the disk cache?
+    if (!stat_err && is_reg && size > 0) {
         return 0;
     }
     if (!artist || !album) {
+        return -1;
+    }
+
+    if (!*artist || !*album) {
         return -1;
     }
 
