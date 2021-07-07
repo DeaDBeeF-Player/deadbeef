@@ -656,7 +656,7 @@ static DB_output_t fake_out = {
     XCTAssert(!strcmp (buffer, "stereo"), @"The actual output is: %s", buffer);
 }
 
-- (void)test_AndTrueArgs_ReturnsTrue {
+- (void)test_AndTrueArgsWithElse_ReturnsTrue {
     pl_replace_meta (it, "artist", "artist");
     pl_replace_meta (it, "album", "album");
 
@@ -664,6 +664,26 @@ static DB_output_t fake_out = {
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
     XCTAssert(!strcmp (buffer, "true"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_AndTrueArgs_ReturnsTrue {
+    pl_replace_meta (it, "artist", "artist");
+    pl_replace_meta (it, "album", "album");
+
+    char *bc = tf_compile("$if($and(%artist%,%album%),true)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "true"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_AndTrueArgs_ReturnsArtistAlbum {
+    pl_replace_meta (it, "artist", "artist");
+    pl_replace_meta (it, "album", "album");
+
+    char *bc = tf_compile("$if($and(%artist%,%album%),%artist% - %album%)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "artist - album"), @"The actual output is: %s", buffer);
 }
 
 - (void)test_AndTrueAndFalseArgs_ReturnsFalse {
