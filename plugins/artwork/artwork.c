@@ -26,6 +26,7 @@
 #ifdef HAVE_CONFIG_H
     #include "../../config.h"
 #endif
+#include <assert.h>
 #include <ctype.h>
 #include <dirent.h>
 #include <dispatch/dispatch.h>
@@ -699,8 +700,7 @@ error:
 }
 
 static int
-web_lookups (const char *cache_path, ddb_cover_info_t *cover)
-{
+web_lookups (const char *cache_path, ddb_cover_info_t *cover) {
     if (!cache_path) {
         return 0;
     }
@@ -974,7 +974,8 @@ queue_clear (void) {
 
 static void
 cover_info_free (ddb_cover_info_t *cover) {
-    cover->refc--;
+    assert (cover->refc > 0);
+    cover->refc -= 1;
     if (cover->refc != 0) {
         return;
     }
@@ -1049,7 +1050,7 @@ cover_cache_find (ddb_cover_info_t * cover) {
 }
 
 static void
-callback_and_free (ddb_cover_callback_t callback, ddb_cover_info_t *cover, ddb_cover_query_t *query) {
+execute_callback (ddb_cover_callback_t callback, ddb_cover_info_t *cover, ddb_cover_query_t *query) {
     int cover_found = cover->cover_found;
 
     // Make all the callbacks (and free the chain), with data if a file was written
@@ -1062,7 +1063,6 @@ callback_and_free (ddb_cover_callback_t callback, ddb_cover_info_t *cover, ddb_c
         trace ("artwork fetcher: no cover art found\n");
         callback (-1, query, NULL);
     }
-    cover_info_free (cover);
 }
 
 // To handle concurrency correctly, we need to be able to squash the queries
@@ -1120,7 +1120,7 @@ squash_query(ddb_cover_callback_t callback, ddb_cover_query_t *query) {
     dispatch_sync(sync_queue, ^{
         artwork_query_t *q = query_head;
         for (; q; q = q->next) {
-            if (queries_squashable (query, q->queries[0])) {
+            if (queries_squashable (query, q->queries[0]) && q->query_count < MAX_SQUASHED_QUERIES-1) {
                 squashed = 1;
                 break;
             }
@@ -1131,6 +1131,7 @@ squash_query(ddb_cover_callback_t callback, ddb_cover_query_t *query) {
             q = calloc(1, sizeof (artwork_query_t));
             if (query_tail) {
                 query_tail->next = q;
+                query_tail = q;
             }
             else {
                 query_head = query_tail = q;
@@ -1176,10 +1177,11 @@ static void callback_and_free_squashed (ddb_cover_info_t *cover, ddb_cover_query
     // send the result
     if (squashed_queries != NULL) {
         for (int i = 0; i < squashed_queries->query_count; i++) {
-            callback_and_free (squashed_queries->callbacks[i], cover, squashed_queries->queries[i]);
+            execute_callback (squashed_queries->callbacks[i], cover, squashed_queries->queries[i]);
         }
         free (squashed_queries);
     }
+    cover_info_free (cover);
 }
 
 static void
@@ -1247,10 +1249,8 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         ddb_cover_info_t *cached_cover = cover_cache_find (cover);
         if (cached_cover) {
             cached_cover->timestamp = time(NULL);
-            cover->refc++;
-            cover_info_free(cover);
             cover = cached_cover;
-            callback_and_free (callback, cover, query);
+            execute_callback (callback, cover, query);
         }
         else {
             // Check if another query for the same thing is already present in the queue, and squash.
