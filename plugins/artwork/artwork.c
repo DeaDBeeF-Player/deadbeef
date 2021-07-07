@@ -1112,7 +1112,7 @@ static void callback_and_free_squashed (ddb_cover_info_t *cover, ddb_cover_query
     __block artwork_query_t *squashed_queries = NULL;
     dispatch_sync (sync_queue, ^{
         cover_update_cache (cover);
-        // remove from queries list
+        // find & remove from the queries list
         artwork_query_t *q = query_head;
         artwork_query_t *prev = NULL;
         for (; q; q = q->next) {
@@ -1135,6 +1135,8 @@ static void callback_and_free_squashed (ddb_cover_info_t *cover, ddb_cover_query
             squashed_queries = q;
         }
     });
+
+    // send the result
     if (squashed_queries != NULL) {
         for (int i = 0; i < squashed_queries->query_count; i++) {
             callback_and_free (squashed_queries->callbacks[i], cover, squashed_queries->queries[i]);
@@ -1205,9 +1207,9 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         ddb_cover_info_t *cached_cover = cover_cache_find (cover);
         if (cached_cover) {
             cached_cover->timestamp = time(NULL);
+            cover->refc++;
             cover_info_free(cover);
             cover = cached_cover;
-            cover->refc++;
             callback_and_free (callback, cover, query);
         }
         else {
