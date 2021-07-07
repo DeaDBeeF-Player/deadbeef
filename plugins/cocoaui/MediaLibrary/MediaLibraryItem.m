@@ -76,11 +76,13 @@ extern DB_functions_t *deadbeef;
     if (!_item) {
         return @"";
     }
-    if (_item->num_children) {
-        _stringValue = [NSString stringWithFormat:@"%@ (%d)", [NSString stringWithUTF8String:_item->text], _item->num_children];
-    }
-    else {
-        _stringValue = [NSString stringWithFormat:@"%@", [NSString stringWithUTF8String:_item->text]];
+    if (!_stringValue) {
+        if (_item->num_children) {
+            _stringValue = [NSString stringWithFormat:@"%@ (%d)", [NSString stringWithUTF8String:_item->text], _item->num_children];
+        }
+        else {
+            _stringValue = [NSString stringWithFormat:@"%@", [NSString stringWithUTF8String:_item->text]];
+        }
     }
     return _stringValue;
 }
