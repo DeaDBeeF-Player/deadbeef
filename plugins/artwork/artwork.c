@@ -119,6 +119,7 @@ static char *artwork_folders;
 static char *album_tf;
 static char *artist_tf;
 static char *title_tf;
+static char *query_compare_tf;
 
 // esc_char is needed to prevent using file path separators,
 // e.g. to avoid writing arbitrary files using "../../../filename"
@@ -1076,14 +1077,50 @@ typedef struct artwork_query_s {
 static artwork_query_t *query_head;
 static artwork_query_t *query_tail;
 
+
+static int
+queries_squashable (ddb_cover_query_t *query1, ddb_cover_query_t *query2) {
+    if (query1->type != query2->type
+        || query1->flags != query2->flags) {
+        return 0;
+    }
+
+    if (query1->track == query2->track) {
+        return 1;
+    }
+
+    const char *uri1 = deadbeef->pl_find_meta (query1->track, ":URI");
+    const char *uri2 = deadbeef->pl_find_meta (query2->track, ":URI");
+
+    if (uri1 == uri2) {
+        return 1;
+    }
+
+    // if all metadata is defined -- compare tracknr, title, album, artist
+    ddb_tf_context_t ctx;
+    ctx._size = sizeof (ddb_tf_context_t);
+
+    char query1title[1000];
+    char query2title[1000];
+    ctx.it = query1->track;
+    deadbeef->tf_eval (&ctx, query_compare_tf, query1title, sizeof (query1title));
+    ctx.it = query2->track;
+    deadbeef->tf_eval (&ctx, query_compare_tf, query2title, sizeof (query2title));
+
+    if (query1title[0] && query2title[0] && !strcmp (query1title, query2title)) {
+        return 1;
+    }
+
+    return 0;
+}
+
 static int
 squash_query(ddb_cover_callback_t callback, ddb_cover_query_t *query) {
     __block int squashed = 0;
     dispatch_sync(sync_queue, ^{
         artwork_query_t *q = query_head;
         for (; q; q = q->next) {
-            // FIXME: flags and type are ignored!
-            if (query->track == q->queries[0]->track) {
+            if (queries_squashable (query, q->queries[0])) {
                 squashed = 1;
                 break;
             }
@@ -1190,6 +1227,9 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         }
         if (!title_tf) {
             title_tf = deadbeef->tf_compile ("%title%");
+        }
+        if (!query_compare_tf) {
+            query_compare_tf = deadbeef->tf_compile ("$if($and(%title%,%artist%,%album%),%track number% - %title% - %artist% - %album%)");
         }
 
         deadbeef->pl_lock ();
@@ -1493,6 +1533,11 @@ artwork_plugin_stop (void) {
     if (title_tf) {
         deadbeef->tf_free (title_tf);
         title_tf = NULL;
+    }
+
+    if (query_compare_tf) {
+        deadbeef->tf_free (query_compare_tf);
+        query_compare_tf = NULL;
     }
 
     stop_cache_cleaner ();
