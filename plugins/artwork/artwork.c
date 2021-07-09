@@ -816,8 +816,7 @@ recheck_missing_artwork (const char *input_fname, const time_t placeholder_mtime
 // Embedded cover: !cache_disabled ? save_to_cash&return_path : return blob
 // Web cover: save_to_local ? save_to_local&return_path : ( !cache_disabled ? save_to_cache&return_path : NOP )
 static void
-process_query (ddb_cover_info_t *cover)
-{
+process_query (ddb_cover_info_t *cover) {
     char cache_path_buf[PATH_MAX];
     char *cache_path = NULL;
 
