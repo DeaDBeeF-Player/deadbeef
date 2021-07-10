@@ -62,8 +62,9 @@ static char * exts[EXT_MAX+1] = {NULL};
 typedef struct {
     DB_fileinfo_t info;
     AVCodec *codec;
-    AVCodecContext *ctx;
-    AVFormatContext *fctx;
+    AVCodecContext *codec_context;
+    int need_to_free_codec_context;
+    AVFormatContext *format_context;
     AVPacket pkt;
     AVFrame *frame;
     int stream_id;
@@ -89,12 +90,12 @@ ffmpeg_open (uint32_t hints) {
 // ensure that the buffer can contain entire frame of frame_size bytes per channel
 static int
 ensure_buffer (ffmpeg_info_t *info, int frame_size) {
-    if (!info->buffer || info->buffer_size < frame_size * info->ctx->channels) {
+    if (!info->buffer || info->buffer_size < frame_size * info->codec_context->channels) {
         if (info->buffer) {
             free (info->buffer);
             info->buffer = NULL;
         }
-        info->buffer_size = frame_size*info->ctx->channels;
+        info->buffer_size = frame_size*info->codec_context->channels;
         info->left_in_buffer = 0;
         int err = posix_memalign ((void **)&info->buffer, 16, info->buffer_size);
         if (err) {
@@ -103,6 +104,40 @@ ensure_buffer (ffmpeg_info_t *info, int frame_size) {
         }
     }
     return 0;
+}
+
+static int
+_get_audio_codec_from_stream(AVFormatContext *format_context, int stream_index, ffmpeg_info_t *info) {
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 33, 0)
+    if (format_context->streams[stream_index]->codecpar->codec_type != AVMEDIA_TYPE_AUDIO) {
+        return 0;
+    }
+    AVCodec *codec = avcodec_find_decoder(format_context->streams[stream_index]->codecpar->codec_id);
+    if (codec == NULL) {
+        return 0;
+    }
+    info->codec = codec;
+    info->stream_id = stream_index;
+    info->codec_context = avcodec_alloc_context3 (info->codec);
+    info->need_to_free_codec_context = 1;
+    avcodec_parameters_to_context(info->codec_context, format_context->streams[stream_index]->codecpar);
+#else
+    if (format_context->streams[stream_index]->codec->codec_type != AVMEDIA_TYPE_AUDIO) {
+        return 0;
+    }
+    AVCodecContext *ctx = format_context->streams[stream_index]->codec;
+    if (ctx == NULL) {
+        return 0;
+    }
+    AVCodec *codec = avcodec_find_decoder (ctx->codec_id);
+    if (codec == NULL) {
+        return 0;
+    }
+    info->codec_context = ctx;
+    info->codec = codec;
+    info->stream_id = stream_index;
+#endif
+    return 1;
 }
 
 static int
@@ -134,9 +169,9 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     // open file
     trace ("\033[0;31mffmpeg av_open_input_file\033[37;0m\n");
 
-    info->fctx = avformat_alloc_context ();
+    info->format_context = avformat_alloc_context ();
 
-    if ((ret = avformat_open_input(&info->fctx, uri, NULL, NULL)) < 0) {
+    if ((ret = avformat_open_input(&info->format_context, uri, NULL, NULL)) < 0) {
         trace ("\033[0;31minfo->fctx is %p, ret %d/%s\033[0;31m\n", info->fctx, ret, strerror(-ret));
         return -1;
     }
@@ -144,18 +179,12 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     trace ("\033[0;31mffmpeg avformat_find_stream_info\033[37;0m\n");
     info->stream_id = -1;
-    info->fctx->max_analyze_duration = AV_TIME_BASE;
-    avformat_find_stream_info(info->fctx, NULL);
-    AVFormatContext *fctx = info->fctx;
-    for (i = 0; i < info->fctx->nb_streams; i++) {
-        if (fctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
-            info->codec = avcodec_find_decoder(fctx->streams[i]->codecpar->codec_id);
-            if (info->codec != NULL) {
-                info->stream_id = i;
-                info->ctx = avcodec_alloc_context3 (info->codec);
-                avcodec_parameters_to_context(info->ctx, fctx->streams[i]->codecpar);
-                break;
-            }
+    info->format_context->max_analyze_duration = AV_TIME_BASE;
+    avformat_find_stream_info(info->format_context, NULL);
+    AVFormatContext *fctx = info->format_context;
+    for (i = 0; i < info->format_context->nb_streams; i++) {
+        if (_get_audio_codec_from_stream (fctx, i, info)) {
+            break;
         }
     }
 
@@ -167,21 +196,21 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     trace ("ffmpeg can decode %s\n", deadbeef->pl_find_meta (it, ":URI"));
     trace ("ffmpeg: codec=%s, stream=%d\n", info->codec->name, i);
 
-    if (avcodec_open2 (info->ctx, info->codec, NULL) < 0) {
+    if (avcodec_open2 (info->codec_context, info->codec, NULL) < 0) {
         trace ("ffmpeg: avcodec_open2 failed\n");
         return -1;
     }
 
     deadbeef->pl_replace_meta (it, "!FILETYPE", info->codec->name);
 
-    int bps = av_get_bytes_per_sample (info->ctx->sample_fmt)*8;
-    int samplerate = info->ctx->sample_rate;
+    int bps = av_get_bytes_per_sample (info->codec_context->sample_fmt)*8;
+    int samplerate = info->codec_context->sample_rate;
 
-    if (bps <= 0 || info->ctx->channels <= 0 || samplerate <= 0) {
+    if (bps <= 0 || info->codec_context->channels <= 0 || samplerate <= 0) {
         return -1;
     }
 
-    int64_t totalsamples = info->fctx->duration * samplerate / AV_TIME_BASE;
+    int64_t totalsamples = info->format_context->duration * samplerate / AV_TIME_BASE;
     info->left_in_packet = 0;
     info->left_in_buffer = 0;
 
@@ -194,9 +223,9 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->plugin = &plugin;
     _info->readpos = 0;
     _info->fmt.bps = bps;
-    _info->fmt.channels = info->ctx->channels;
+    _info->fmt.channels = info->codec_context->channels;
     _info->fmt.samplerate = samplerate;
-    if (info->ctx->sample_fmt == AV_SAMPLE_FMT_FLT || info->ctx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
+    if (info->codec_context->sample_fmt == AV_SAMPLE_FMT_FLT || info->codec_context->sample_fmt == AV_SAMPLE_FMT_FLTP) {
         _info->fmt.is_float = 1;
     }
 
@@ -223,28 +252,36 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 }
 
 static void
+_free_info_data(ffmpeg_info_t *info) {
+    if (info->frame) {
+        avcodec_free_frame(&info->frame);
+    }
+    if (info->buffer) {
+        free (info->buffer);
+    }
+    // free everything allocated in _init and _read
+    if (info->have_packet) {
+        av_packet_unref (&info->pkt);
+    }
+    if (info->codec_context) {
+        avcodec_close (info->codec_context);
+
+        // The ctx is owned by AVFormatContext in legacy mode
+        if (info->need_to_free_codec_context) {
+            avcodec_free_context (&info->codec_context);
+        }
+    }
+    if (info->format_context) {
+        avformat_close_input (&info->format_context);
+    }
+}
+
+static void
 ffmpeg_free (DB_fileinfo_t *_info) {
     trace ("ffmpeg: free\n");
     ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
     if (info) {
-        if (info->frame) {
-            avcodec_free_frame(&info->frame);
-        }
-        if (info->buffer) {
-            free (info->buffer);
-        }
-        // free everything allocated in _init and _read
-        if (info->have_packet) {
-            av_packet_unref (&info->pkt);
-        }
-        if (info->ctx) {
-            avcodec_close (info->ctx);
-            avcodec_free_context (&info->ctx);
-        }
-        if (info->fctx) {
-            avformat_close_input (&info->fctx);
-        }
-
+        _free_info_data(info);
         free (info);
     }
 }
@@ -254,10 +291,10 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
     trace ("ffmpeg_read_int16 %d\n", size);
     ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
 
-    _info->fmt.channels = info->ctx->channels;
-    _info->fmt.samplerate = info->ctx->sample_rate;
-    _info->fmt.bps = av_get_bytes_per_sample (info->ctx->sample_fmt) * 8;
-    _info->fmt.is_float = (info->ctx->sample_fmt == AV_SAMPLE_FMT_FLT || info->ctx->sample_fmt == AV_SAMPLE_FMT_FLTP);
+    _info->fmt.channels = info->codec_context->channels;
+    _info->fmt.samplerate = info->codec_context->sample_rate;
+    _info->fmt.bps = av_get_bytes_per_sample (info->codec_context->sample_fmt) * 8;
+    _info->fmt.is_float = (info->codec_context->sample_fmt == AV_SAMPLE_FMT_FLT || info->codec_context->sample_fmt == AV_SAMPLE_FMT_FLTP);
 
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
 
@@ -295,11 +332,11 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
             //trace ("in: out_size=%d(%d), size=%d\n", out_size, AVCODEC_MAX_AUDIO_FRAME_SIZE, size);
 
 #if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(55, 28, 0)
-            int ret = avcodec_send_packet (info->ctx, &info->pkt);
+            int ret = avcodec_send_packet (info->codec_context, &info->pkt);
             if (ret < 0) {
                 break;
             }
-            ret = avcodec_receive_frame (info->ctx,info->frame);
+            ret = avcodec_receive_frame (info->codec_context,info->frame);
             if (ret < 0 && ret != AVERROR(EAGAIN) && ret != AVERROR_EOF) {
                 break;
             }
@@ -315,26 +352,26 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 if (ensure_buffer (info, info->frame->nb_samples * (_info->fmt.bps >> 3))) {
                     return -1;
                 }
-                if (av_sample_fmt_is_planar(info->ctx->sample_fmt)) {
+                if (av_sample_fmt_is_planar(info->codec_context->sample_fmt)) {
                     out_size = 0;
-                    for (int c = 0; c < info->ctx->channels; c++) {
+                    for (int c = 0; c < info->codec_context->channels; c++) {
                         for (int i = 0; i < info->frame->nb_samples; i++) {
                             if (_info->fmt.bps == 8) {
-                                info->buffer[i*info->ctx->channels+c] = ((int8_t *)info->frame->extended_data[c])[i];
+                                info->buffer[i*info->codec_context->channels+c] = ((int8_t *)info->frame->extended_data[c])[i];
                                 out_size++;
                             }
                             else if (_info->fmt.bps == 16) {
                                 int16_t outsample = ((int16_t *)info->frame->extended_data[c])[i];
-                                ((int16_t*)info->buffer)[i*info->ctx->channels+c] = outsample;
+                                ((int16_t*)info->buffer)[i*info->codec_context->channels+c] = outsample;
                                 out_size += 2;
                             }
                             else if (_info->fmt.bps == 24) {
-                                memcpy (&info->buffer[(i*info->ctx->channels+c)*3], &((int8_t*)info->frame->extended_data[c])[i*3], 3);
+                                memcpy (&info->buffer[(i*info->codec_context->channels+c)*3], &((int8_t*)info->frame->extended_data[c])[i*3], 3);
                                 out_size += 3;
                             }
                             else if (_info->fmt.bps == 32) {
                                 int32_t sample = ((int32_t *)info->frame->extended_data[c])[i];
-                                ((int32_t*)info->buffer)[i*info->ctx->channels+c] = sample;
+                                ((int32_t*)info->buffer)[i*info->codec_context->channels+c] = sample;
                                 out_size += 4;
                             }
                         }
@@ -367,7 +404,7 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
         int errcount = 0;
         for (;;) {
             int ret;
-            if ((ret = av_read_frame (info->fctx, &info->pkt)) < 0) {
+            if ((ret = av_read_frame (info->format_context, &info->pkt)) < 0) {
                 trace ("ffmpeg: error %d\n", ret);
                 if (ret == AVERROR_EOF || ret == -1) {
                     ret = -1;
@@ -401,7 +438,7 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
             info->left_in_packet = info->pkt.size;
 
             if (info->pkt.duration > 0) {
-                AVRational *time_base = &info->fctx->streams[info->stream_id]->time_base;
+                AVRational *time_base = &info->format_context->streams[info->stream_id]->time_base;
                 float sec = (float)info->pkt.duration * time_base->num / time_base->den;
                 int bitrate = info->pkt.size * 8 / sec;
                 if (bitrate > 0) {
@@ -437,7 +474,7 @@ ffmpeg_seek_sample (DB_fileinfo_t *_info, int sample) {
     trace ("ffmpeg: seek to sample: %d, t: %d\n", sample, (int)tm);
     info->left_in_packet = 0;
     info->left_in_buffer = 0;
-    if (av_seek_frame (info->fctx, -1, tm, AVSEEK_FLAG_ANY) < 0) {
+    if (av_seek_frame (info->format_context, -1, tm, AVSEEK_FLAG_ANY) < 0) {
         trace ("ffmpeg: seek error\n");
         return -1;
     }
@@ -575,9 +612,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     // return track pointer on success
     // return NULL on failure
 
-    AVCodec *codec = NULL;
-    AVCodecContext *ctx = NULL;
-    AVFormatContext *fctx = NULL;
+    ffmpeg_info_t info = {0};
 
     int ret;
     char *uri = NULL;
@@ -588,35 +623,31 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("ffmpeg: uri: %s\n", uri);
 
     // open file
-    fctx = avformat_alloc_context ();
-    fctx->max_analyze_duration = AV_TIME_BASE;
-    if ((ret = avformat_open_input(&fctx, uri, NULL, NULL)) < 0) {
+    info.format_context = avformat_alloc_context ();
+    info.format_context->max_analyze_duration = AV_TIME_BASE;
+    if ((ret = avformat_open_input(&info.format_context, uri, NULL, NULL)) < 0) {
         print_error (uri, ret);
         goto error;
     }
 
-    trace ("fctx is %p, ret %d/%s\n", fctx, ret, strerror(-ret));
-    ret = avformat_find_stream_info(fctx, NULL);
+    trace ("fctx is %p, ret %d/%s\n", info.format_context, ret, strerror(-ret));
+    ret = avformat_find_stream_info(info.format_context, NULL);
     if (ret < 0) {
         trace ("avformat_find_stream_info ret: %d/%s\n", ret, strerror(-ret));
     }
     trace ("nb_streams=%x\n", nb_streams);
-    for (i = 0; i < fctx->nb_streams; i++)
+
+    for (i = 0; i < info.format_context->nb_streams; i++)
     {
-        if (!fctx->streams[i]) {
+        if (!info.format_context->streams[i]) {
             continue;
         }
-        if (fctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
-            codec = avcodec_find_decoder(fctx->streams[i]->codecpar->codec_id);
-            if (codec != NULL) {
-                ctx = avcodec_alloc_context3 (codec);
-                avcodec_parameters_to_context(ctx, fctx->streams[i]->codecpar);
-                break;
-            }
+        if (_get_audio_codec_from_stream(info.format_context, i, &info)) {
+            break;
         }
     }
 
-    if (codec == NULL)
+    if (info.codec == NULL)
     {
         trace ("ffmpeg can't decode %s\n", fname);
         goto error;
@@ -624,28 +655,28 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("ffmpeg can decode %s\n", fname);
     trace ("ffmpeg: codec=%s, stream=%d\n", codec->name, i);
 
-    int avcodec_open2_ret = avcodec_open2 (ctx, codec, NULL);
+    int avcodec_open2_ret = avcodec_open2 (info.codec_context, info.codec, NULL);
     if (avcodec_open2_ret < 0) {
         trace ("ffmpeg: avcodec_open2 failed\n");
         goto error;
     }
 
-    int bps = av_get_bytes_per_sample (ctx->sample_fmt) * 8;
-    int samplerate = ctx->sample_rate;
-    float duration = fctx->duration / (float)AV_TIME_BASE;
+    int bps = av_get_bytes_per_sample (info.codec_context->sample_fmt) * 8;
+    int samplerate = info.codec_context->sample_rate;
+    float duration = info.format_context->duration / (float)AV_TIME_BASE;
 //    float duration = stream->duration * stream->time_base.num / (float)stream->time_base.den;
     trace ("ffmpeg: bits per sample is %d\n", bps);
     trace ("ffmpeg: samplerate is %d\n", samplerate);
     trace ("ffmpeg: duration is %f\n", duration);
 
-    if (bps <= 0 || ctx->channels <= 0 || samplerate <= 0) {
+    if (bps <= 0 || info.codec_context->channels <= 0 || samplerate <= 0) {
         goto error;
     }
 
-    int64_t totalsamples = fctx->duration * samplerate / AV_TIME_BASE;
+    int64_t totalsamples = info.format_context->duration * samplerate / AV_TIME_BASE;
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-    deadbeef->pl_replace_meta (it, ":FILETYPE", codec->name);
+    deadbeef->pl_replace_meta (it, ":FILETYPE", info.codec->name);
 
     if (!deadbeef->is_local_file (fname)) {
         deadbeef->plt_set_item_duration (plt, it, -1);
@@ -655,7 +686,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
 
     // add metainfo
-    ffmpeg_read_metadata_internal (it, fctx);
+    ffmpeg_read_metadata_internal (it, info.format_context);
     
     int64_t fsize = -1;
 
@@ -673,7 +704,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
         snprintf (s, sizeof (s), "%d", bps);
         deadbeef->pl_add_meta (it, ":BPS", s);
-        snprintf (s, sizeof (s), "%d", ctx->channels);
+        snprintf (s, sizeof (s), "%d", info.codec_context->channels);
         deadbeef->pl_add_meta (it, ":CHANNELS", s);
         snprintf (s, sizeof (s), "%d", samplerate);
         deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
@@ -683,9 +714,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
 
     // free decoder
-    avcodec_close (ctx);
-    avcodec_free_context (&ctx);
-    avformat_close_input (&fctx);
+    _free_info_data (&info);
 
     DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, samplerate);
     if (cue) {
@@ -698,9 +727,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->pl_item_unref (it);
     return after;
 error:
-    avcodec_close (ctx);
-    avcodec_free_context (&ctx);
-    avformat_close_input (&fctx);
+    _free_info_data (&info);
     return NULL;
 }
 
@@ -835,9 +862,7 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
     int err = -1;
 
     trace ("ffmpeg_read_metadata: fname %s\n", deadbeef->pl_find_meta (it, ":URI"));
-    AVCodec *codec = NULL;
-    AVCodecContext *ctx = NULL;
-    AVFormatContext *fctx = NULL;
+    ffmpeg_info_t info = {0};
     int ret;
     char *uri = NULL;
     int i;
@@ -849,39 +874,32 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
     trace ("ffmpeg: uri: %s\n", uri);
 
     // open file
-    if ((ret = avformat_open_input(&fctx, uri, NULL, NULL)) < 0) {
-        trace ("fctx is %p, ret %d/%s", fctx, ret, strerror(-ret));
+    if ((ret = avformat_open_input(&info.format_context, uri, NULL, NULL)) < 0) {
+        trace ("fctx is %p, ret %d/%s", info.format_context, ret, strerror(-ret));
         return -1;
     }
 
-    avformat_find_stream_info(fctx, NULL);
-    for (i = 0; i < fctx->nb_streams; i++) {
-        if (fctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
-            codec = avcodec_find_decoder(fctx->streams[i]->codecpar->codec_id);
-            if (codec != NULL) {
-                ctx = avcodec_alloc_context3 (codec);
-                avcodec_parameters_to_context(ctx, fctx->streams[i]->codecpar);
-                break;
-            }
+    avformat_find_stream_info(info.format_context, NULL);
+    for (i = 0; i < info.format_context->nb_streams; i++) {
+        if (_get_audio_codec_from_stream(info.format_context, i, &info)) {
+            break;
         }
     }
-    if (codec == NULL) {
+    if (info.codec == NULL) {
         trace ("ffmpeg can't decode %s\n", deadbeef->pl_find_meta (it, ":URI"));
         goto error;
     }
-    if (avcodec_open2 (ctx, codec, NULL) < 0) {
+    if (avcodec_open2 (info.codec_context, info.codec, NULL) < 0) {
         trace ("ffmpeg: avcodec_open2 failed\n");
         goto error;
     }
 
     deadbeef->pl_delete_all_meta (it);
-    ffmpeg_read_metadata_internal (it, fctx);
+    ffmpeg_read_metadata_internal (it, info.format_context);
 
     err = 0;
 error:
-    avcodec_close (ctx);
-    avcodec_free_context (&ctx);
-    avformat_close_input (&fctx);
+    _free_info_data(&info);
 
     return err;
 }
