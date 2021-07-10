@@ -6,10 +6,10 @@
 //  Copyright © 2020 Alexey Yakovenko. All rights reserved.
 //
 
-
+#import <Foundation/Foundation.h>
 #include "scriptable.h"
 
-typedef NS_CLOSED_ENUM(NSUInteger, ScriptableItemChange) {
+typedef NS_ENUM(NSUInteger, ScriptableItemChange) {
     ScriptableItemChangeCreate,
     ScriptableItemChangeUpdate,
     ScriptableItemChangeDelete,

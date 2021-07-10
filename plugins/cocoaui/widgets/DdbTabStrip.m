@@ -80,10 +80,13 @@ static int max_tab_size = 200;
 static int close_btn_left_offs = 8;
 
 - (NSColor *)accentColor {
+#ifdef MAC_OS_X_VERSION_10_14
     if (@available(macOS 10.14, *)) {
         return NSColor.controlAccentColor;
     }
-    else {
+    else
+#endif
+    {
         return NSColor.alternateSelectedControlColor;
     }
 }

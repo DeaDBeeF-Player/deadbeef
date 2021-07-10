@@ -83,10 +83,13 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 - (void)initColors {
     self.trackBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.42];
     self.trackInactiveBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.2];
+#ifdef MAC_OS_X_VERSION_10_14
     if (@available(macOS 10.14, *)) {
         self.trackPosBackgroundColor = NSColor.controlAccentColor;
     }
-    else {
+    else
+#endif
+    {
         self.trackPosBackgroundColor = [NSColor.alternateSelectedControlColor highlightWithLevel:0.2];
     }
     self.trackPosInactiveBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.4];

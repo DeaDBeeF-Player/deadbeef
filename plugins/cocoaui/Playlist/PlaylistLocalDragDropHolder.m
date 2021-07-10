@@ -62,7 +62,15 @@ extern DB_functions_t *deadbeef;
 - (id)pasteboardPropertyListForType:(NSString *)type {
 
     if( [type isEqualToString:ddbPlaylistItemsUTIType] ) {
-        return [NSKeyedArchiver archivedDataWithRootObject:self];
+#ifdef MAC_OS_X_VERSION_10_14
+        if (@available(macOS 10.13, *)) {
+            return [NSKeyedArchiver archivedDataWithRootObject:self requiringSecureCoding:NO error:nil];
+        }
+        else
+#endif
+        {
+            return [NSKeyedArchiver archivedDataWithRootObject:self];
+        }
     }
 
     return nil;

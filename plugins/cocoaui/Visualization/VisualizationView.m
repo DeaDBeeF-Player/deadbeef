@@ -61,9 +61,12 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
 
     self.peakColor = [NSColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1];
 
+#ifdef MAC_OS_X_VERSION_10_14
     if (@available(macOS 10.14, *)) {
         self.barColor = NSColor.controlAccentColor;
-    } else {
+    } else
+#endif
+    {
         self.barColor = NSColor.alternateSelectedControlColor;
     }
 
