@@ -27,5 +27,6 @@ IB_DESIGNABLE
 @interface DdbSeekBar : NSControl
 
 @property (nonatomic,readonly) BOOL dragging;
+@property (nonatomic) float position;
 
 @end

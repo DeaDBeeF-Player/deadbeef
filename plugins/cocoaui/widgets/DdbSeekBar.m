@@ -27,7 +27,10 @@
 
 static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 
-@interface DdbSeekBar() <CALayerDelegate>
+@interface DdbSeekBar() <CALayerDelegate> {
+    float _position;
+    NSFormatter *_formatter;
+}
 
 @property (nonatomic,readwrite) BOOL dragging;
 
@@ -241,15 +244,15 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 
 - (void)layoutThumbLayer {
     CGFloat y = NSHeight(self.frame)/2;
-    CGFloat x = self.floatValue / 100 * (NSWidth(self.frame)-6);\
+    CGFloat x = self.position / 100 * (NSWidth(self.frame)-6);
     if (!self.thumb.hidden) {
         self.thumb.frame = NSMakeRect(x, y-6, 6, 12);
     }
     self.trackPos.frame = NSMakeRect(3, y-1.5, x, 3);
 }
 
-- (void)setFloatValue:(float)floatValue {
-    [super setFloatValue:floatValue];
+- (void)setPosition:(float)position {
+    _position = position;
 
     [CATransaction begin];
     [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
@@ -259,13 +262,33 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 
 - (void)updatePosition:(float)position {
     position = MAX(0, MIN(100, position));
-    self.floatValue = position;
+    self.position = position;
     self.overlay.text = self.stringValue;
 
     [CATransaction begin];
     [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
     [self layoutThumbLayer];
     [CATransaction commit];
+}
+
+- (float)floatValue {
+    return self.position;
+}
+
+- (double)doubleValue {
+    return (double)self.position;
+}
+
+- (NSString *)stringValue {
+    return [self.formatter stringForObjectValue:self];
+}
+
+- (void)setFormatter:(__kindof NSFormatter *)formatter {
+    _formatter = formatter;
+}
+
+- (NSFormatter *)formatter {
+    return _formatter;
 }
 
 - (void)refreshOverlayTimer {
@@ -276,7 +299,7 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 }
 
 - (void)scrollWheel:(NSEvent *)event {
-    [self updatePosition:self.floatValue + event.scrollingDeltaX +  + event.scrollingDeltaY  ];
+    [self updatePosition:self.floatValue + event.scrollingDeltaX + event.scrollingDeltaY];
     [self sendAction:self.action to:self.target];
 }
 
