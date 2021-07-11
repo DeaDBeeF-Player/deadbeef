@@ -1181,6 +1181,7 @@ typedef enum {
     SEL_ARTISTS = 2,
     SEL_GENRES = 3,
     SEL_FOLDERS = 4,
+    SEL_FILLER = -1UL,
 } medialibSelector_t;
 
 static ddb_medialib_item_t *
@@ -1488,6 +1489,8 @@ ml_get_name_for_selector (ddb_mediasource_source_t source, ddb_mediasource_list_
         return "Genres";
     case SEL_FOLDERS:
         return "Folders";
+    default:
+        break;
     }
     return NULL;
 }
@@ -1532,13 +1535,13 @@ static ddb_medialib_plugin_t plugin = {
     .plugin.plugin.message = ml_message,
     .plugin.create_source = ml_create_source,
     .plugin.free_source = ml_free_source,
-    .plugin.get_selectors = ml_get_selectors,
-    .plugin.free_selectors = ml_free_selectors,
-    .plugin.get_name_for_selector = ml_get_name_for_selector,
+    .plugin.get_selectors_list = ml_get_selectors,
+    .plugin.free_selectors_list = ml_free_selectors,
+    .plugin.selector_name = ml_get_name_for_selector,
     .plugin.add_listener = ml_add_listener,
     .plugin.remove_listener = ml_remove_listener,
-    .plugin.create_list = ml_create_list,
-    .plugin.free_list = ml_free_list,
+    .plugin.create_item_tree = ml_create_list,
+    .plugin.free_item_tree = ml_free_list,
     //.find_track = ml_find_track,
     .plugin.scanner_state = ml_scanner_state,
     .folder_count = ml_folder_count,
