@@ -24,6 +24,8 @@
 #ifndef medialib_h
 #define medialib_h
 
+#include "../../deadbeef.h"
+
 #define DDB_MEDIALIB_VERSION_MAJOR 1
 #define DDB_MEDIALIB_VERSION_MINOR 0
 
@@ -31,8 +33,14 @@ typedef struct ddb_medialib_plugin_s {
     DB_mediasource_t plugin;
 #pragma mark - Configuration
 
+    /// Primarily for debugging and testing, enable or disable reading or writing the database files.
+    /// Default is Enabled.
+    void (*enable_file_operations)(ddb_mediasource_source_t source, int enable);
+
     unsigned (*folder_count)(ddb_mediasource_source_t source);
+
     void (*folder_at_index)(ddb_mediasource_source_t source, int index, char *folder, size_t size);
+
     void (*set_folders) (ddb_mediasource_source_t source, const char **folders, size_t count);
 } ddb_medialib_plugin_t;
 
