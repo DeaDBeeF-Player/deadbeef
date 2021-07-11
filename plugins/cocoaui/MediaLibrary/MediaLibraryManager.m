@@ -28,6 +28,7 @@ extern DB_functions_t *deadbeef;
 
     _medialibPlugin = (DB_mediasource_t *)deadbeef->plug_get_for_id ("medialib");
     _source = self.medialibPlugin->create_source ("deadbeef");
+    self.medialibPlugin->refresh(_source);
 
     return self;
 }
