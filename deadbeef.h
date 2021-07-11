@@ -2107,10 +2107,10 @@ typedef struct DB_playlist_s {
 #endif
 } DB_playlist_t;
 
-// NOTE: Media source API is a work in progress, and is disabled int this version of source code.
+// NOTE: Media source API is a work in progress, and is disabled in this version of source code.
 // This is to prevent plugin devs from releasing media source plugins, before this API is finalized.
 // Use the appropriate development branch to test media source plugins.
-#if (DDB_API_LEVEL >= 13)
+#if (DDB_API_LEVEL >= 13) // FIXME: this must be changed to whatever the API level is at the medialib API freeze time
 
 // Mediasource plugin
 // The purpose is to provide access to external media sources.
@@ -2124,11 +2124,13 @@ typedef struct ddb_medialib_item_s {
     struct ddb_medialib_item_s *next;
     struct ddb_medialib_item_s *children;
     int num_children;
+    // FIXME: add padding / size for extensibility -- this structure is inheritable.
 } ddb_medialib_item_t;
 
 typedef enum {
     DDB_MEDIASOURCE_EVENT_CONTENT_CHANGED = 1,
-    DDB_MEDIASOURCE_EVENT_STATE_CHANGED = 1,
+    DDB_MEDIASOURCE_EVENT_STATE_CHANGED = 2,
+    DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE = 3,
 } ddb_mediasource_event_type_t;
 
 typedef enum {
@@ -2151,7 +2153,22 @@ typedef struct {
     /// Creates a media source. It must be freed after use by calling the @c free_source
     /// @param source_path: a unique name to identify the instance, this will be used to prefix individual instance configuration files, caches, etc.
     ddb_mediasource_source_t (*create_source) (const char *source_path);
+
+    /// Free the @c source created by @c create_source
     void (*free_source) (ddb_mediasource_source_t source);
+
+    /// Enable or disable the source
+    void (*set_source_enabled)(ddb_mediasource_source_t source, int enabled);
+
+    /// Get the enabled state
+    int (*get_source_enabled)(ddb_mediasource_source_t source);
+
+    /// This tells the source to start operating with the current configuration.
+    /// It is supposed to cancel any current operation, and get the new state with the new settings.
+    /// For example, the medialib plugin is supposed to start the scanner (if enabled).
+    /// This source is not supposed to run any operations automatically, and the caller is expected to call refresh
+    /// every time when the plugin configuration changes.
+    void (*refresh)(ddb_mediasource_source_t source);
 
     /// A selector is a token, which can be used to find out all top level items that can be queries from the library.
     /// For example - Folders, Albums, Artists, Genres.
@@ -2180,6 +2197,8 @@ typedef struct {
 
     /// Whether the scanner/indexer is active
     ddb_mediasource_state_t (*scanner_state) (ddb_mediasource_source_t source);
+
+    // FIXME: add padding / size for extensibility -- this structure is inheritable.
 } DB_mediasource_t;
 
 #endif

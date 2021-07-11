@@ -31,6 +31,7 @@ extern DB_functions_t *deadbeef;
         return nil;
     }
     _source = self.medialibPlugin->create_source ("deadbeef");
+    self.medialibPlugin->refresh(_source);
 
     return self;
 }

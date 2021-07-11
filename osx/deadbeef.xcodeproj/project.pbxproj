@@ -1882,6 +1882,10 @@
 		2DAA402E269AF864006D2754 /* TrackPositionFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAA402B269AF864006D2754 /* TrackPositionFormatter.h */; };
 		2DAA4040269AF879006D2754 /* TrackPositionFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA402C269AF864006D2754 /* TrackPositionFormatter.m */; };
 		2DAA4041269AF880006D2754 /* WeakRefWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3992E025C2038700CFA936 /* WeakRefWrapper.m */; };
+		2DAA405B269B6308006D2754 /* MediaLibTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA405A269B6308006D2754 /* MediaLibTests.m */; };
+		2DAA406B269B6360006D2754 /* medialib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F334243531D7000FC130 /* medialib.c */; };
+		2DAA4070269B63A7006D2754 /* medialib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; };
+		2DAA4071269B63B5006D2754 /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
 		2DAA4C141AAF88FF00519559 /* TitleFormattingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA4C131AAF88FF00519559 /* TitleFormattingTests.m */; };
 		2DAB1A3026A5FB9C00EA8B8F /* PreferencesPluginEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAB1A2E26A5FB9C00EA8B8F /* PreferencesPluginEntry.h */; };
 		2DAB1A3126A5FB9C00EA8B8F /* PreferencesPluginEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAB1A2F26A5FB9C00EA8B8F /* PreferencesPluginEntry.m */; };
@@ -3318,6 +3322,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2DA84F4524F5876A003507A2;
 			remoteInfo = jansson;
+		};
+		2DAA406C269B638D006D2754 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2DA84F7624F58894003507A2 /* jansson.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DA84F4524F5876A003507A2;
+			remoteInfo = jansson;
+		};
+		2DAA406E269B6393006D2754 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D3A4BB31D631530002C7098;
+			remoteInfo = medialib;
 		};
 		2DB96AA619ABB51300E318A8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -5631,6 +5649,7 @@
 		2DA9AB4A25DC31230004593A /* sfendian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sfendian.h; sourceTree = "<group>"; };
 		2DAA402B269AF864006D2754 /* TrackPositionFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPositionFormatter.h; sourceTree = "<group>"; };
 		2DAA402C269AF864006D2754 /* TrackPositionFormatter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackPositionFormatter.m; sourceTree = "<group>"; };
+		2DAA405A269B6308006D2754 /* MediaLibTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaLibTests.m; sourceTree = "<group>"; };
 		2DAA4C081AAF88DE00519559 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DAA4C0B1AAF88DE00519559 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2DAA4C131AAF88FF00519559 /* TitleFormattingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TitleFormattingTests.m; sourceTree = "<group>"; };
@@ -6791,6 +6810,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DAA4071269B63B5006D2754 /* libjansson.dylib in Frameworks */,
 				2D01D7ED1AB2222400BCD3C4 /* libddbcore.a in Frameworks */,
 				2D15722723785D0100985E47 /* libcurl.dylib in Frameworks */,
 			);
@@ -10014,29 +10034,30 @@
 			isa = PBXGroup;
 			children = (
 				4D9272CF214156E300E7B4D0 /* PresetManagerData */,
-				2D7492861CCFFE7700D3A59E /* TestData */,
 				2DAA4C0A1AAF88DE00519559 /* Supporting Files */,
-				2DAA4C131AAF88FF00519559 /* TitleFormattingTests.m */,
-				2D7F38021B2858AC00692A7B /* JunklibTests.m */,
+				2D7492861CCFFE7700D3A59E /* TestData */,
+				2D4A9467223EFC6700199551 /* CoreAudioTests.m */,
 				2DE7A8FA1CA493CE00318A9F /* CuesheetTests.m */,
-				2D0F90C11CCFF094003FA197 /* TaggingTests.m */,
-				4D31BECD1E9FB194001D1B89 /* ResamplerTests.m */,
-				2DA66EC71EDF4EF800E20989 /* StreamerTests.m */,
-				4D6CF18C20EB788A00811034 /* MP3DecoderTests.m */,
-				4D6CF17D20EB783900811034 /* MP3ParserTests.m */,
-				2DA66EC91EDF4F2C00E20989 /* fakeout.c */,
-				2DA66ECA1EDF4F2C00E20989 /* fakeout.h */,
 				2DA66ECC1EDF501000E20989 /* fakein.c */,
 				2DA66ECD1EDF501000E20989 /* fakein.h */,
+				2DA66EC91EDF4F2C00E20989 /* fakeout.c */,
+				2DA66ECA1EDF4F2C00E20989 /* fakeout.h */,
 				4D0B0CED20162D95004162DA /* FormatConversionTests.m */,
+				2D04C3D02433B3B9003C2AAC /* GrowableBufferTests.m */,
+				2D7F38021B2858AC00692A7B /* JunklibTests.m */,
+				2DA59D9025D00A8E00947C19 /* M3UTests.m */,
+				2DAA405A269B6308006D2754 /* MediaLibTests.m */,
+				4D6CF18C20EB788A00811034 /* MP3DecoderTests.m */,
+				4D6CF17D20EB783900811034 /* MP3ParserTests.m */,
 				4DC416FD2180919D0056133E /* PlaylistTests.m */,
-				2D4A9467223EFC6700199551 /* CoreAudioTests.m */,
+				4D31BECD1E9FB194001D1B89 /* ResamplerTests.m */,
 				2D135EF3226E47CE00BAAE84 /* SciptableTests.m */,
+				2DA04EF123B6A81A0070AC01 /* ShellexecTests.m */,
+				2DA66EC71EDF4EF800E20989 /* StreamerTests.m */,
+				2D0F90C11CCFF094003FA197 /* TaggingTests.m */,
+				2DAA4C131AAF88FF00519559 /* TitleFormattingTests.m */,
 				2D0A6B0A2376E12200252E6D /* TrackSwitchingTests.m */,
 				2D15721523785BD900985E47 /* VfsCurlTests.m */,
-				2DA04EF123B6A81A0070AC01 /* ShellexecTests.m */,
-				2D04C3D02433B3B9003C2AAC /* GrowableBufferTests.m */,
-				2DA59D9025D00A8E00947C19 /* M3UTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -13678,6 +13699,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DAA406F269B6393006D2754 /* PBXTargetDependency */,
+				2DAA406D269B638D006D2754 /* PBXTargetDependency */,
 				4D6CF19020EB82B200811034 /* PBXTargetDependency */,
 				2D01D7EC1AB2221E00BCD3C4 /* PBXTargetDependency */,
 			);
@@ -14485,6 +14508,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DAA4070269B63A7006D2754 /* medialib.dylib in Resources */,
 				2D74926A1CCFF9AE00D3A59E /* ffap.dylib in Resources */,
 				2D74926B1CCFF9AE00D3A59E /* mp3.dylib in Resources */,
 				2D74926C1CCFF9AE00D3A59E /* flac.dylib in Resources */,
@@ -15772,6 +15796,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DAA405B269B6308006D2754 /* MediaLibTests.m in Sources */,
 				2DA59DD125D00A9A00947C19 /* m3u.c in Sources */,
 				2DA59D9125D00A8E00947C19 /* M3UTests.m in Sources */,
 				2D0A6B0B2376E12200252E6D /* TrackSwitchingTests.m in Sources */,
@@ -15798,6 +15823,7 @@
 				4D31BECE1E9FB194001D1B89 /* ResamplerTests.m in Sources */,
 				2D7F38031B2858AC00692A7B /* JunklibTests.m in Sources */,
 				4D0B0CEE20162D95004162DA /* FormatConversionTests.m in Sources */,
+				2DAA406B269B6360006D2754 /* medialib.c in Sources */,
 				2DA04EF223B6A81A0070AC01 /* ShellexecTests.m in Sources */,
 				4DC416FE2180919D0056133E /* PlaylistTests.m in Sources */,
 			);
@@ -16849,6 +16875,16 @@
 			isa = PBXTargetDependency;
 			name = jansson;
 			targetProxy = 2DA84F7C24F5890F003507A2 /* PBXContainerItemProxy */;
+		};
+		2DAA406D269B638D006D2754 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = jansson;
+			targetProxy = 2DAA406C269B638D006D2754 /* PBXContainerItemProxy */;
+		};
+		2DAA406F269B6393006D2754 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D3A4BB31D631530002C7098 /* medialib */;
+			targetProxy = 2DAA406E269B6393006D2754 /* PBXContainerItemProxy */;
 		};
 		2DB96AA719ABB51300E318A8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -18553,7 +18589,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -18583,7 +18618,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -20026,6 +20060,10 @@
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -20058,6 +20096,10 @@
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -20856,10 +20898,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-				);
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/../PlugIns";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
@@ -20909,10 +20947,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-				);
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/../PlugIns";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 			};
