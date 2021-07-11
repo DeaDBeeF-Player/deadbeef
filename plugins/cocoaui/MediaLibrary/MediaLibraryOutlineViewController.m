@@ -81,7 +81,7 @@ extern DB_functions_t *deadbeef;
     self.searchItem = @"Search Field";
 
     self.medialibPlugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
-    _selectors = self.medialibPlugin->plugin.get_selectors (self.medialibSource);
+    _selectors = self.medialibPlugin->plugin.get_selectors_list (self.medialibSource);
     self.artworkPlugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
     self.listenerId = self.medialibPlugin->plugin.add_listener (self.medialibSource, _medialib_listener, (__bridge void *)self);
 
@@ -106,7 +106,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)dealloc {
     self.medialibPlugin->plugin.remove_listener (self.medialibSource, self.listenerId);
-    self.medialibPlugin->plugin.free_selectors (self.medialibSource, _selectors);
+    self.medialibPlugin->plugin.free_selectors_list (self.medialibSource, _selectors);
     _selectors = NULL;
     self.listenerId = -1;
     self.medialibPlugin = NULL;
@@ -129,10 +129,10 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     }
 
     if (self.medialibItemTree) {
-        self.medialibPlugin->plugin.free_list (self.medialibSource, self.medialibItemTree);
+        self.medialibPlugin->plugin.free_item_tree (self.medialibSource, self.medialibItemTree);
         self.medialibItemTree = NULL;
     }
-    self.medialibItemTree = self.medialibPlugin->plugin.create_list (self.medialibSource, _selectors[index], self.searchString ? self.searchString.UTF8String : NULL);
+    self.medialibItemTree = self.medialibPlugin->plugin.create_item_tree (self.medialibSource, _selectors[index], self.searchString ? self.searchString.UTF8String : NULL);
     self.medialibRootItem = [[MediaLibraryItem alloc] initWithItem:self.medialibItemTree];
 
     self.topLevelItems = @[
@@ -427,7 +427,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 
         // populate the selector popup
         for (int i = 0; _selectors[i]; i++) {
-            const char *name = self.medialibPlugin->plugin.get_name_for_selector (self.medialibSource, _selectors[i]);
+            const char *name = self.medialibPlugin->plugin.selector_name (self.medialibSource, _selectors[i]);
             [selectorCellView.popupButton addItemWithTitle:[NSString stringWithUTF8String:name]];
         }
 
