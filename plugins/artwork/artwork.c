@@ -1505,6 +1505,7 @@ static int
 artwork_plugin_stop (void) {
     queue_clear ();
 
+    // FIXME: abort all requests and wait.
     dispatch_release(sync_queue);
     dispatch_release(fetch_queue);
     dispatch_release(process_queue);

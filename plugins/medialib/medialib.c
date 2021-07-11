@@ -21,18 +21,20 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#include "../../deadbeef.h"
+#include <dispatch/dispatch.h>
+#include <jansson.h>
 #include <limits.h>
+#include "medialib.h"
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <jansson.h>
-#include "../../deadbeef.h"
-#include "medialib.h"
 
 //#define FILTER_PERF 1 // measure / log file add filtering performance
 
 static DB_functions_t *deadbeef;
+static ddb_medialib_plugin_t plugin;
 
 static char *artist_album_bc;
 static char *artist_album_id_bc;
@@ -125,18 +127,27 @@ typedef struct {
 } ml_filter_state_t;
 
 typedef struct medialib_source_s {
-    uintptr_t tid;
+    dispatch_queue_t scanner_queue;
+    dispatch_queue_t sync_queue;
+
+    // The following properties should only be accessed / changed on the sync_queue
     int scanner_terminate;
+    json_t *musicpaths_json;
+    int disable_file_operations;
+
+    /// Whether the source is enabled.
+    /// Disabled means that the scanner should never run, and that queries should return empty tree.
+    /// Only access on sync_queue.
+    int enabled;
 
     ddb_playlist_t *ml_playlist; // this playlist contains the actual data of the media library in plain list
     ml_db_t db; // this is the index, which can be rebuilt from the playlist at any given time
-    json_t *musicpaths_json;
-    uintptr_t mutex;
     ddb_medialib_listener_t ml_listeners[MAX_LISTENERS];
     void *ml_listeners_userdatas[MAX_LISTENERS];
     int _ml_state;
     int filter_id;
     ml_filter_state_t ml_filter_state;
+    char source_conf_prefix[100];
 } medialib_source_t;
 
 static void
@@ -340,11 +351,11 @@ static void
 ml_free_db (medialib_source_t *source) {
     fprintf (stderr, "clearing index...\n");
 
-    deadbeef->mutex_lock (source->mutex);
+    // NOTE: Currently this is called from ml_index, which is executed on sync_queue
     ml_free_col(&source->db.albums);
     ml_free_col(&source->db.artists);
     ml_free_col(&source->db.genres);
-//    ml_free_col(&db.folders);
+    //    ml_free_col(&db.folders);
     ml_free_col(&source->db.track_uris);
 
     while (source->db.folders_tree) {
@@ -372,14 +383,14 @@ ml_free_db (medialib_source_t *source) {
         source->db.cached_strings = next;
     }
 
-    deadbeef->mutex_unlock (source->mutex);
-
     memset (&source->db, 0, sizeof (source->db));
 }
 
 static json_t *
 _ml_get_music_paths (medialib_source_t *source) {
-    const char *paths = deadbeef->conf_get_str_fast ("medialib.paths", NULL);
+    char conf_name[200];
+    snprintf (conf_name, sizeof (conf_name), "%spaths", source->source_conf_prefix);
+    const char *paths = deadbeef->conf_get_str_fast (conf_name, NULL);
     if (!paths) {
         return NULL;
     }
@@ -602,7 +613,9 @@ _ml_load_playlist (medialib_source_t *source, const char *plpath) {
     ddb_playlist_t *plt = deadbeef->plt_alloc ("medialib");
 
     gettimeofday (&tm1, NULL);
-    deadbeef->plt_load2 (-1, plt, NULL, plpath, NULL, NULL, NULL);
+    if (!source->disable_file_operations) {
+        deadbeef->plt_load2 (-1, plt, NULL, plpath, NULL, NULL, NULL);
+    }
     gettimeofday (&tm2, NULL);
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
     fprintf (stderr, "ml playlist load time: %f seconds\n", ms / 1000.f);
@@ -610,15 +623,15 @@ _ml_load_playlist (medialib_source_t *source, const char *plpath) {
     source->_ml_state = DDB_MEDIASOURCE_STATE_INDEXING;
     ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
 
-    deadbeef->mutex_lock (source->mutex);
-    if (source->ml_playlist) {
-        deadbeef->plt_free (source->ml_playlist);
-    }
-    source->ml_playlist = plt;
-    if (source->ml_playlist) {
-        ml_index (source, source->ml_playlist);
-    }
-    deadbeef->mutex_unlock (source->mutex);
+    dispatch_sync(source->sync_queue, ^{
+        if (source->ml_playlist) {
+            deadbeef->plt_free (source->ml_playlist);
+        }
+        source->ml_playlist = plt;
+        if (source->ml_playlist) {
+            ml_index (source, source->ml_playlist);
+        }
+    });
 
     source->_ml_state = DDB_MEDIASOURCE_STATE_IDLE;
     ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_CONTENT_CHANGED);
@@ -663,24 +676,22 @@ static void free_medialib_paths (char **medialib_paths, size_t medialib_paths_co
 }
 
 static void
-scanner_thread (void *ctx) {
-    medialib_source_t *source = ctx;
+scanner_thread (medialib_source_t *source) {
+    __block char **medialib_paths = NULL;
+    __block size_t medialib_paths_count = 0;
+    dispatch_sync(source->sync_queue, ^{
+        medialib_paths = get_medialib_paths (source, &medialib_paths_count);
 
-    deadbeef->mutex_lock (source->mutex);
-
-    size_t medialib_paths_count;
-    char **medialib_paths = get_medialib_paths (source, &medialib_paths_count);
-
-    if (!medialib_paths) {
-        if (!source->ml_playlist) {
-            source->ml_playlist = deadbeef->plt_alloc("medialib");
+        if (!medialib_paths) {
+            if (!source->ml_playlist) {
+                source->ml_playlist = deadbeef->plt_alloc("medialib");
+            }
+            deadbeef->plt_clear (source->ml_playlist);
+            ml_index (source, source->ml_playlist);
         }
-        deadbeef->plt_clear (source->ml_playlist);
-        ml_index (source, source->ml_playlist);
-    }
-    deadbeef->mutex_unlock (source->mutex);
+    });
 
-    if (!medialib_paths) {
+    if (medialib_paths == NULL) {
         return;
     }
 
@@ -714,20 +725,21 @@ scanner_thread (void *ctx) {
 
     // set current time as timestamp
     time_t timestamp = time(NULL);
-    char stimestamp[100];
-    snprintf (stimestamp, sizeof (stimestamp), "%lld", (int64_t)timestamp);
-    deadbeef->mutex_lock (source->mutex);
-    ddb_playItem_t *it = deadbeef->plt_get_head_item (plt, PL_MAIN);
-    while (it) {
-        deadbeef->pl_replace_meta (it, ":MEDIALIB_SCAN_TIME", stimestamp);
-        ddb_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-        deadbeef->pl_item_unref (it);
-        it = next;
+    dispatch_sync(source->sync_queue, ^{
+        char stimestamp[100];
+        snprintf (stimestamp, sizeof (stimestamp), "%lld", (int64_t)timestamp);
+        ddb_playItem_t *it = deadbeef->plt_get_head_item (plt, PL_MAIN);
+        while (it) {
+            deadbeef->pl_replace_meta (it, ":MEDIALIB_SCAN_TIME", stimestamp);
+            ddb_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+    });
+
+    if (!source->disable_file_operations) {
+        deadbeef->plt_save (plt, NULL, NULL, plpath, NULL, NULL, NULL);
     }
-    deadbeef->mutex_unlock (source->mutex);
-
-
-    deadbeef->plt_save (plt, NULL, NULL, plpath, NULL, NULL, NULL);
 
     ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_CONTENT_CHANGED);
 
@@ -739,52 +751,29 @@ scanner_thread (void *ctx) {
     ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
 
     // update the current ml playlist and index transactionally
-    deadbeef->mutex_lock (source->mutex);
-    if (source->ml_playlist) {
-        deadbeef->plt_free (source->ml_playlist);
-    }
-    source->ml_playlist = plt;
-    ml_index (source, source->ml_playlist);
-    deadbeef->mutex_unlock (source->mutex);
+    dispatch_sync(source->sync_queue, ^{
+        if (source->ml_playlist) {
+            deadbeef->plt_free (source->ml_playlist);
+        }
+        source->ml_playlist = plt;
+        ml_index (source, source->ml_playlist);
+    });
 
     source->_ml_state = DDB_MEDIASOURCE_STATE_IDLE;
     ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
 
     free_medialib_paths (medialib_paths, medialib_paths_count);
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE);
 }
 
-// intention is to skip the files which are already indexed
-// how to speed this up:
-// first check if a folder exists (early out?)
+// NOTE: make sure to run on sync_queue
+/// Returns 1 for the files which need to be included in the scan, based on their timestamp and metadata
 static int
-ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
+ml_filter_int (ddb_file_found_data_t *data, time_t mtime, medialib_source_t *source) {
     int res = 0;
-
-    ml_filter_state_t *state = user_data;
-
-    if (!user_data || data->plt != state->plt || data->is_dir) {
-        return 0;
-    }
-
-#if FILTER_PERF
-    struct timeval tm1, tm2;
-    gettimeofday (&tm1, NULL);
-#endif
-
-    time_t mtime = 0;
-    struct stat st = {0};
-    if (stat (data->filename, &st) == 0) {
-        mtime = st.st_mtime;
-    }
-
-    medialib_source_t *source = state->source;
-
-    deadbeef->mutex_lock (source->mutex);
 
     const char *s = deadbeef->metacache_get_string (data->filename);
     if (!s) {
-        deadbeef->mutex_unlock (source->mutex);
-
         return 0;
     }
 
@@ -792,8 +781,6 @@ ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
 
     if (!source->db.filename_hash[hash]) {
         deadbeef->metacache_remove_string (s);
-        deadbeef->mutex_unlock (source->mutex);
-
         return 0;
     }
 
@@ -809,17 +796,14 @@ ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
                     const char *stimestamp = deadbeef->pl_find_meta (item->it, ":MEDIALIB_SCAN_TIME");
                     if (!stimestamp) {
                         // no scan time
-                        deadbeef->mutex_unlock (source->mutex);
                         return 0;
                     }
                     int64_t timestamp;
                     if (sscanf (stimestamp, "%lld", &timestamp) != 1) {
                         // parse error
-                        deadbeef->mutex_unlock (source->mutex);
                         return 0;
                     }
                     if (timestamp < mtime) {
-                        deadbeef->mutex_unlock (source->mutex);
                         return 0;
                     }
                 }
@@ -862,23 +846,44 @@ ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
 #endif
 
     deadbeef->metacache_remove_string (s);
-    deadbeef->mutex_unlock (source->mutex);
+    return -1;
+}
 
+// intention is to skip the files which are already indexed
+// how to speed this up:
+// first check if a folder exists (early out?)
+static int
+ml_fileadd_filter (ddb_file_found_data_t *data, void *user_data) {
+    __block int res = 0;
+
+    ml_filter_state_t *state = user_data;
+
+    if (!user_data || data->plt != state->plt || data->is_dir) {
+        return 0;
+    }
+
+#if FILTER_PERF
+    struct timeval tm1, tm2;
+    gettimeofday (&tm1, NULL);
+#endif
+
+    time_t mtime = 0;
+    struct stat st = {0};
+    if (stat (data->filename, &st) == 0) {
+        mtime = st.st_mtime;
+    }
+
+    medialib_source_t *source = state->source;
+
+    dispatch_sync(source->sync_queue, ^{
+        res = ml_filter_int(data, mtime, source);
+    });
 
     return res;
 }
 
 static int
 ml_connect (void) {
-#if 0
-    struct timeval tm1, tm2;
-    gettimeofday (&tm1, NULL);
-    scanner_thread(NULL);
-    gettimeofday (&tm2, NULL);
-    long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
-    fprintf (stderr, "whole ml init time: %f seconds\n", ms / 1000.f);
-//    exit (0);
-#endif
     return 0;
 }
 
@@ -1185,30 +1190,7 @@ typedef enum {
 } medialibSelector_t;
 
 static ddb_medialib_item_t *
-ml_create_list (ddb_mediasource_source_t _source, ddb_mediasource_list_selector_t selector, const char *filter) {
-    medialib_source_t *source = (medialib_source_t *)_source;
-    ml_collection_t *coll = NULL;
-
-    medialibSelector_t index = (medialibSelector_t)selector;
-
-    switch (index) {
-    case SEL_ALBUMS:
-        coll = &source->db.albums;
-        break;
-    case SEL_ARTISTS:
-        coll = &source->db.artists;
-        break;
-    case SEL_GENRES:
-        coll = &source->db.genres;
-        break;
-    case SEL_FOLDERS:
-        break;
-    default:
-        return NULL;
-    }
-
-    deadbeef->mutex_lock (source->mutex);
-
+_create_item_tree_from_collection(ml_collection_t *coll, const char *filter, medialibSelector_t index, medialib_source_t *source) {
     int selected = 0;
     if (filter && source->ml_playlist) {
         deadbeef->plt_search_reset (source->ml_playlist);
@@ -1278,7 +1260,43 @@ ml_create_list (ddb_mediasource_source_t _source, ddb_mediasource_list_selector_
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
 
     fprintf (stderr, "tree build time: %f seconds\n", ms / 1000.f);
-    deadbeef->mutex_unlock (source->mutex);
+    return root;
+}
+
+static ddb_medialib_item_t *
+ml_create_item_tree (ddb_mediasource_source_t _source, ddb_mediasource_list_selector_t selector, const char *filter) {
+    medialib_source_t *source = (medialib_source_t *)_source;
+
+    __block ddb_medialib_item_t *root = NULL;
+
+    dispatch_sync(source->sync_queue, ^{
+
+        if (!source->enabled) {
+            return;
+        }
+
+        ml_collection_t *coll = NULL;
+
+        medialibSelector_t index = (medialibSelector_t)selector;
+
+        switch (index) {
+        case SEL_ALBUMS:
+            coll = &source->db.albums;
+            break;
+        case SEL_ARTISTS:
+            coll = &source->db.artists;
+            break;
+        case SEL_GENRES:
+            coll = &source->db.genres;
+            break;
+        case SEL_FOLDERS:
+            break;
+        default:
+            return;
+        }
+
+        root = _create_item_tree_from_collection(coll, filter, index, source);
+    });
 
     return root;
 }
@@ -1362,52 +1380,64 @@ ml_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 
 #pragma mark - folder access
 
+static void
+ml_enable_saving(ddb_mediasource_source_t _source, int enable) {
+    medialib_source_t *source = (medialib_source_t *)_source;
+    dispatch_sync(source->sync_queue, ^{
+        source->disable_file_operations = !enable;
+    });
+}
+
 static unsigned
 ml_folder_count (ddb_mediasource_source_t _source) {
     medialib_source_t *source = (medialib_source_t *)_source;
-    deadbeef->mutex_lock (source->mutex);
-    unsigned res = (unsigned)json_array_size(source->musicpaths_json);
-    deadbeef->mutex_unlock (source->mutex);
+    __block unsigned res = 0;
+    dispatch_sync(source->sync_queue, ^{
+        res = (unsigned)json_array_size(source->musicpaths_json);
+    });
     return res;
 }
 
 static void
 ml_folder_at_index (ddb_mediasource_source_t _source, int index, char *folder, size_t size) {
     medialib_source_t *source = (medialib_source_t *)_source;
-    deadbeef->mutex_lock (source->mutex);
-    json_t *data = json_array_get (source->musicpaths_json, index);
-    *folder = 0;
-    if (json_is_string (data)) {
-        const char *musicdir = json_string_value (data);
-        strncat(folder, musicdir, size);
-    }
-
-    deadbeef->mutex_unlock (source->mutex);
+    dispatch_sync(source->sync_queue, ^{
+        json_t *data = json_array_get (source->musicpaths_json, index);
+        *folder = 0;
+        if (json_is_string (data)) {
+            const char *musicdir = json_string_value (data);
+            strncat(folder, musicdir, size);
+        }
+    });
 }
 
 static void
 ml_set_folders (ddb_mediasource_source_t _source, const char **folders, size_t count) {
     medialib_source_t *source = (medialib_source_t *)_source;
-    deadbeef->mutex_lock (source->mutex);
+    __block char *dump = NULL;
 
-    if (!source->musicpaths_json) {
-        source->musicpaths_json = json_array();
-    }
+    dispatch_sync(source->sync_queue, ^{
+        if (!source->musicpaths_json) {
+            source->musicpaths_json = json_array();
+        }
 
-    json_array_clear(source->musicpaths_json);
-    for (int i = 0; i < count; i++) {
-        json_t *value = json_string(folders[i]);
-        json_array_append(source->musicpaths_json, value);
-    }
+        json_array_clear(source->musicpaths_json);
+        for (int i = 0; i < count; i++) {
+            json_t *value = json_string(folders[i]);
+            json_array_append(source->musicpaths_json, value);
+        }
 
-    char *dump = json_dumps(source->musicpaths_json, JSON_COMPACT);
+        dump = json_dumps(source->musicpaths_json, JSON_COMPACT);
 
-    // FIXME: notify scanner about changes
-
-    deadbeef->mutex_unlock (source->mutex);
+        // FIXME: this is not enough to fully prevent queued scans from running.
+        // A counter is necessary, to make sure all queued scanners up to a specific index should abort.
+        source->scanner_terminate = 1; // abort any queued scanners
+    });
 
     if (dump) {
-        deadbeef->conf_set_str ("medialib.paths", dump);
+        char conf_name[200];
+        snprintf (conf_name, sizeof (conf_name), "%spaths", source->source_conf_prefix);
+        deadbeef->conf_set_str (conf_name, dump);
         free (dump);
         dump = NULL;
         deadbeef->conf_save();
@@ -1417,15 +1447,16 @@ ml_set_folders (ddb_mediasource_source_t _source, const char **folders, size_t c
 static ddb_mediasource_source_t
 ml_create_source (const char *source_path) {
     medialib_source_t *source = calloc (1, sizeof (medialib_source_t));
+    snprintf (source->source_conf_prefix, sizeof (source->source_conf_prefix), "medialib.%s.", source_path);
 
     source->musicpaths_json = _ml_get_music_paths(source);
 
-    source->mutex = deadbeef->mutex_create ();
     source->filter_id = deadbeef->register_fileadd_filter (ml_fileadd_filter, &source->ml_filter_state);
     source->ml_filter_state.source = source;
 
-    source->tid = deadbeef->thread_start_low_priority (scanner_thread, source);
-
+    source->sync_queue = dispatch_queue_create("MediaLibSyncQueue", NULL);
+    source->scanner_queue = dispatch_queue_create("MediaLibScanQueue", NULL);
+    source->enabled = 1;
 
     return (ddb_mediasource_source_t)source;
 }
@@ -1433,13 +1464,18 @@ ml_create_source (const char *source_path) {
 static void
 ml_free_source (ddb_mediasource_source_t _source) {
     medialib_source_t *source = (medialib_source_t *)_source;
-    if (source->tid) {
+    dispatch_sync(source->sync_queue, ^{
         source->scanner_terminate = 1;
-        printf ("waiting for scanner thread to finish\n");
-        deadbeef->thread_join (source->tid);
-        printf ("scanner thread finished\n");
-        source->tid = 0;
-    }
+    });
+
+    printf ("waiting for scanner queue to finish\n");
+    dispatch_sync(source->scanner_queue, ^{
+    });
+    printf ("scanner queue finished\n");
+
+    dispatch_release(source->scanner_queue);
+    dispatch_release(source->sync_queue);
+
     if (source->filter_id) {
         deadbeef->unregister_fileadd_filter (source->filter_id);
         source->filter_id = 0;
@@ -1453,11 +1489,6 @@ ml_free_source (ddb_mediasource_source_t _source) {
     if (source->musicpaths_json) {
         json_decref(source->musicpaths_json);
         source->musicpaths_json = NULL;
-    }
-
-    if (source->mutex) {
-        deadbeef->mutex_free (source->mutex);
-        source->mutex = 0;
     }
 }
 
@@ -1493,6 +1524,43 @@ ml_get_name_for_selector (ddb_mediasource_source_t source, ddb_mediasource_list_
         break;
     }
     return NULL;
+}
+
+static void
+ml_set_source_enabled (ddb_mediasource_source_t _source, int enabled) {
+    medialib_source_t *source = (medialib_source_t *)_source;
+    dispatch_sync(source->sync_queue, ^{
+        source->enabled = enabled;
+        if (!enabled) {
+            source->scanner_terminate = 1;
+        }
+    });
+}
+
+static int
+ml_get_source_enabled (ddb_mediasource_source_t _source) {
+    medialib_source_t *source = (medialib_source_t *)_source;
+    __block int enabled = 0;
+    dispatch_sync(source->sync_queue, ^{
+        enabled = source->enabled;
+    });
+    return enabled;
+}
+
+static void
+ml_refresh (ddb_mediasource_source_t _source) {
+    medialib_source_t *source = (medialib_source_t *)_source;
+    dispatch_async(source->scanner_queue, ^{
+        __block int enabled = 0;
+        dispatch_sync(source->sync_queue, ^{
+            source->scanner_terminate = 0;
+            enabled = source->enabled;
+        });
+
+        if (enabled) {
+            scanner_thread(source);
+        }
+    });
 }
 
 // define plugin interface
@@ -1535,15 +1603,19 @@ static ddb_medialib_plugin_t plugin = {
     .plugin.plugin.message = ml_message,
     .plugin.create_source = ml_create_source,
     .plugin.free_source = ml_free_source,
+    .plugin.set_source_enabled = ml_set_source_enabled,
+    .plugin.get_source_enabled = ml_get_source_enabled,
+    .plugin.refresh = ml_refresh,
     .plugin.get_selectors_list = ml_get_selectors,
     .plugin.free_selectors_list = ml_free_selectors,
     .plugin.selector_name = ml_get_name_for_selector,
     .plugin.add_listener = ml_add_listener,
     .plugin.remove_listener = ml_remove_listener,
-    .plugin.create_item_tree = ml_create_list,
+    .plugin.create_item_tree = ml_create_item_tree,
     .plugin.free_item_tree = ml_free_list,
     //.find_track = ml_find_track,
     .plugin.scanner_state = ml_scanner_state,
+    .enable_file_operations = ml_enable_saving,
     .folder_count = ml_folder_count,
     .folder_at_index = ml_folder_at_index,
     .set_folders = ml_set_folders,
