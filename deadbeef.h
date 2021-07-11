@@ -2148,19 +2148,35 @@ typedef struct {
 
     const char *(*source_name)(void);
 
+    /// Creates a media source. It must be freed after use by calling the @c free_source
     /// @param source_path: a unique name to identify the instance, this will be used to prefix individual instance configuration files, caches, etc.
     ddb_mediasource_source_t (*create_source) (const char *source_path);
     void (*free_source) (ddb_mediasource_source_t source);
 
-    ddb_mediasource_list_selector_t *(*get_selectors)(ddb_mediasource_source_t source);
-    void (*free_selectors)(ddb_mediasource_source_t source, ddb_mediasource_list_selector_t *selectors);
-    const char *(*get_name_for_selector)(ddb_mediasource_source_t source, ddb_mediasource_list_selector_t selector);
+    /// A selector is a token, which can be used to find out all top level items that can be queries from the library.
+    /// For example - Folders, Albums, Artists, Genres.
+    /// @return the list of selectors. The caller must free the list after use, by calling @c free_selectors
+    ddb_mediasource_list_selector_t *(*get_selectors_list)(ddb_mediasource_source_t source);
 
+    /// Free the selector list
+    void (*free_selectors_list)(ddb_mediasource_source_t source, ddb_mediasource_list_selector_t *selectors);
+
+    /// Get selector name
+    const char *(*selector_name)(ddb_mediasource_source_t source, ddb_mediasource_list_selector_t selector);
+
+    /// Add a listener
     int (*add_listener)(ddb_mediasource_source_t source, ddb_medialib_listener_t listener, void *user_data);
+
+    /// Remove a listener
     void (*remove_listener)(ddb_mediasource_source_t source, int listener_id);
 
-    ddb_medialib_item_t * (*create_list)(ddb_mediasource_source_t source, ddb_mediasource_source_t selector, const char *filter);
-    void (*free_list) (ddb_mediasource_source_t source, ddb_medialib_item_t *list);
+    /// Create a tree of items for the given @c selector.
+    /// The tree is immutable, and can be used by the caller in any way it needs.
+    /// The caller must free the returned object by calling the @c free_list
+    ddb_medialib_item_t * (*create_item_tree)(ddb_mediasource_source_t source, ddb_mediasource_source_t selector, const char *filter);
+
+    /// Free the tree created by the @c create_list
+    void (*free_item_tree) (ddb_mediasource_source_t source, ddb_medialib_item_t *list);
 
     /// Whether the scanner/indexer is active
     ddb_mediasource_state_t (*scanner_state) (ddb_mediasource_source_t source);
