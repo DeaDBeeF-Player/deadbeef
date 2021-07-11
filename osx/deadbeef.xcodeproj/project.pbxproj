@@ -865,7 +865,6 @@
 		2D2A14F119B64F2900AD1EB7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2D3138251D08AB3400CBD871 /* artwork.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D621F831CD92C9000EB6D22 /* artwork.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */; };
-		2D3992E225C2038700CFA936 /* WeakRefWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3992E025C2038700CFA936 /* WeakRefWrapper.m */; };
 		2D3A4BBD1D6315D6002C7098 /* medialib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D3CD9372409A091005875A9 /* PinnedGroupTitleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3CD9352409A091005875A9 /* PinnedGroupTitleView.h */; };
 		2D3CD9382409A091005875A9 /* PinnedGroupTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3CD9362409A091005875A9 /* PinnedGroupTitleView.m */; };
@@ -1857,6 +1856,10 @@
 		2DA9ABC725DC31230004593A /* float32.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA9AB4725DC31230004593A /* float32.c */; };
 		2DA9ABC825DC31230004593A /* audio_detect.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA9AB4825DC31230004593A /* audio_detect.c */; };
 		2DA9ABC925DC31230004593A /* sfendian.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA9AB4A25DC31230004593A /* sfendian.h */; };
+		2DAA402D269AF864006D2754 /* TrackPositionFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAA402B269AF864006D2754 /* TrackPositionFormatter.h */; };
+		2DAA402E269AF864006D2754 /* TrackPositionFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAA402B269AF864006D2754 /* TrackPositionFormatter.h */; };
+		2DAA4040269AF879006D2754 /* TrackPositionFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA402C269AF864006D2754 /* TrackPositionFormatter.m */; };
+		2DAA4041269AF880006D2754 /* WeakRefWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3992E025C2038700CFA936 /* WeakRefWrapper.m */; };
 		2DAA4C141AAF88FF00519559 /* TitleFormattingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA4C131AAF88FF00519559 /* TitleFormattingTests.m */; };
 		2DACBB241A40CEB100CCF401 /* mp3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DAD80A12416DBB100EB3075 /* CustomToolbarItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAD809F2416DBB100EB3075 /* CustomToolbarItem.h */; };
@@ -5564,6 +5567,8 @@
 		2DA9AB4725DC31230004593A /* float32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = float32.c; sourceTree = "<group>"; };
 		2DA9AB4825DC31230004593A /* audio_detect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio_detect.c; sourceTree = "<group>"; };
 		2DA9AB4A25DC31230004593A /* sfendian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sfendian.h; sourceTree = "<group>"; };
+		2DAA402B269AF864006D2754 /* TrackPositionFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPositionFormatter.h; sourceTree = "<group>"; };
+		2DAA402C269AF864006D2754 /* TrackPositionFormatter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackPositionFormatter.m; sourceTree = "<group>"; };
 		2DAA4C081AAF88DE00519559 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DAA4C0B1AAF88DE00519559 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2DAA4C131AAF88FF00519559 /* TitleFormattingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TitleFormattingTests.m; sourceTree = "<group>"; };
@@ -8343,12 +8348,12 @@
 			children = (
 				2D986140226C815F00BAACB1 /* BrowseButton.h */,
 				2D986141226C816000BAACB1 /* BrowseButton.m */,
+				2D061F7B19E9685E00CE6C29 /* DdbShared.h */,
+				2D061F7919E9685000CE6C29 /* DdbShared.m */,
 				2D6D81ED1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h */,
 				2D6D81EE1CCF9E0B00028788 /* DdbTableViewRightClickActivate.m */,
 				2D524C071B245AE00018C4FA /* DdbTitleFormattingHelpButton.h */,
 				2D524C081B245AE00018C4FA /* DdbTitleFormattingHelpButton.m */,
-				2D061F7919E9685000CE6C29 /* DdbShared.m */,
-				2D061F7B19E9685E00CE6C29 /* DdbShared.h */,
 				2D46221B226DBA57003997E9 /* FlippedClipView.h */,
 				2D46221C226DBA57003997E9 /* FlippedClipView.m */,
 				2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */,
@@ -8357,6 +8362,8 @@
 				2DDF87EC2402845C00CA8E91 /* NSMenu+ActionItems.m */,
 				2DDF87D724027DA500CA8E91 /* PluginActionMenuItem.h */,
 				2DDF87D824027DA500CA8E91 /* PluginActionMenuItem.m */,
+				2DAA402B269AF864006D2754 /* TrackPositionFormatter.h */,
+				2DAA402C269AF864006D2754 /* TrackPositionFormatter.m */,
 				2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */,
 				2D3992E025C2038700CFA936 /* WeakRefWrapper.m */,
 			);
@@ -11452,6 +11459,7 @@
 				2D448A851D5C5C6500B43F12 /* logger.h in Headers */,
 				2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */,
 				2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */,
+				2DAA402E269AF864006D2754 /* TrackPositionFormatter.h in Headers */,
 				2DAE701925BDDC3300E40154 /* deletefromdisk.h in Headers */,
 				2DBCB725240AE0BE0012F178 /* tftintutil.h in Headers */,
 				2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */,
@@ -12647,6 +12655,7 @@
 				2D651D17227227C300375AE2 /* ScriptableNodeEditorWindowController.h in Headers */,
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
 				2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */,
+				2DAA402D269AF864006D2754 /* TrackPositionFormatter.h in Headers */,
 				2DDF87D924027DA500CA8E91 /* PluginActionMenuItem.h in Headers */,
 				2DA30E792403292D001BAB8A /* PlaybackPreferencesViewController.h in Headers */,
 				2D9F6534241BE78C00D9D16E /* SeekbarOverlay.h in Headers */,
@@ -14579,7 +14588,6 @@
 				2D01D7D41AB2219C00BCD3C4 /* conf.c in Sources */,
 				2D01D7D61AB2219C00BCD3C4 /* fft.c in Sources */,
 				2D135EF0226E47AA00BAAE84 /* scriptable.c in Sources */,
-				2D3992E225C2038700CFA936 /* WeakRefWrapper.m in Sources */,
 				2D01D7E31AB2219C00BCD3C4 /* threading_pthread.c in Sources */,
 				2D01D7DF1AB2219C00BCD3C4 /* premix.c in Sources */,
 				2D01D7DC1AB2219C00BCD3C4 /* plmeta.c in Sources */,
@@ -15824,6 +15832,7 @@
 				2DA273792406ED4100FB9BE1 /* GuiPreferencesWindowController.m in Sources */,
 				2DDBA26523E5F14A00051320 /* PlaylistHeaderView.m in Sources */,
 				2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */,
+				2DAA4041269AF880006D2754 /* WeakRefWrapper.m in Sources */,
 				2DBC62D724CCDEFC00AA20BF /* VisualizationViewController.m in Sources */,
 				2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */,
 				2DDF87DA24027DA500CA8E91 /* PluginActionMenuItem.m in Sources */,
@@ -15846,6 +15855,7 @@
 				2DA30E7A2403292D001BAB8A /* PlaybackPreferencesViewController.m in Sources */,
 				2D747E3A24B64E7600BBB987 /* SidebarSplitViewController.m in Sources */,
 				2DB1641B24FAB13400034E11 /* MediaLibraryManager.m in Sources */,
+				2DAA4040269AF879006D2754 /* TrackPositionFormatter.m in Sources */,
 				2DA2738A2406FBD800FB9BE1 /* DspPreferencesViewController.m in Sources */,
 				2DBC62DB24CCDFB200AA20BF /* VisualizationView.m in Sources */,
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
