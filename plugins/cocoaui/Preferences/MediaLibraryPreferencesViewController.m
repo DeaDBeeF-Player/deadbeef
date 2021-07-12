@@ -23,6 +23,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) ddb_medialib_plugin_t *medialibPlugin;
 @property (nonatomic,readonly) ddb_mediasource_source_t medialibSource;
 @property (nonatomic) NSMutableArray<NSString *> *folders;
+@property (nonatomic) BOOL enabled;
 
 @end
 
@@ -53,12 +54,21 @@ extern DB_functions_t *deadbeef;
     }
 
     self.folders = [NSMutableArray new];
+    self.enabled = self.medialibPlugin->plugin.get_source_enabled(self.medialibSource);
 
     [self initializeList];
 }
 
 - (BOOL)isAvailable {
     return self.medialibPlugin != nil;
+}
+
+- (void)setEnabled:(BOOL)enabled {
+    if (enabled != _enabled) {
+        _enabled = enabled;
+        self.medialibPlugin->plugin.set_source_enabled(self.medialibSource, _enabled);
+        self.medialibPlugin->plugin.refresh (self.medialibSource);
+    }
 }
 
 - (IBAction)addRemoveAction:(NSSegmentedControl *)sender {
@@ -126,6 +136,7 @@ extern DB_functions_t *deadbeef;
     }
 
     self.medialibPlugin->set_folders (self.medialibSource, paths, self.folders.count);
+    self.medialibPlugin->plugin.refresh (self.medialibSource);
 
     free (paths);
 }
