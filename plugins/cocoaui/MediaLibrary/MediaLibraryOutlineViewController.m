@@ -185,7 +185,7 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 }
 
 - (void)medialibEvent:(ddb_mediasource_event_type_t)event {
-    if (event == DDB_MEDIASOURCE_EVENT_CONTENT_CHANGED) {
+    if (event == DDB_MEDIASOURCE_EVENT_CONTENT_CHANGED || event == DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE) {
         [self filterChanged];
     }
     else if (event == DDB_MEDIASOURCE_EVENT_STATE_CHANGED) {
