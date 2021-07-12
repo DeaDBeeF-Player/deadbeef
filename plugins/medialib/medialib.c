@@ -132,6 +132,8 @@ typedef struct medialib_source_s {
 
     // The following properties should only be accessed / changed on the sync_queue
     int scanner_terminate;
+    int64_t scanner_current_index;
+    int64_t scanner_cancel_index;
     json_t *musicpaths_json;
     int disable_file_operations;
 
@@ -149,6 +151,12 @@ typedef struct medialib_source_s {
     ml_filter_state_t ml_filter_state;
     char source_conf_prefix[100];
 } medialib_source_t;
+
+typedef struct {
+    int64_t scanner_index; // can be compared with source.scanner_current_index and source.scanner_terminate_index
+    char **medialib_paths;
+    size_t medialib_paths_count;
+}  ml_scanner_configuration_t;
 
 static void
 ml_free_list (ddb_mediasource_source_t source, ddb_medialib_item_t *list);
@@ -465,6 +473,7 @@ ml_index (medialib_source_t *source, ddb_playlist_t *plt) {
             deadbeef->plt_remove_item (plt, it);
             deadbeef->pl_item_unref (it);
             it = next;
+            free (en);
             continue;
         }
         // Get a combined cached artist/album string
@@ -506,6 +515,8 @@ ml_index (medialib_source_t *source, ddb_playlist_t *plt) {
         cs->next = source->db.cached_strings;
 
         ml_string_t *trkuri = ml_reg_col (&source->db.track_uris, cs->s, it);
+        free(cs);
+        cs = NULL;
 
         char *fn = strrchr (reluri, '/');
         ml_string_t *fld = NULL;
@@ -669,32 +680,16 @@ get_medialib_paths (medialib_source_t *source, size_t *medialib_paths_count) {
 }
 
 static void free_medialib_paths (char **medialib_paths, size_t medialib_paths_count) {
-    for (int i = 0; i < medialib_paths_count; i++) {
-        free (medialib_paths[i]);
+    if (medialib_paths) {
+        for (int i = 0; i < medialib_paths_count; i++) {
+            free (medialib_paths[i]);
+        }
     }
     free (medialib_paths);
 }
 
 static void
-scanner_thread (medialib_source_t *source) {
-    __block char **medialib_paths = NULL;
-    __block size_t medialib_paths_count = 0;
-    dispatch_sync(source->sync_queue, ^{
-        medialib_paths = get_medialib_paths (source, &medialib_paths_count);
-
-        if (!medialib_paths) {
-            if (!source->ml_playlist) {
-                source->ml_playlist = deadbeef->plt_alloc("medialib");
-            }
-            deadbeef->plt_clear (source->ml_playlist);
-            ml_index (source, source->ml_playlist);
-        }
-    });
-
-    if (medialib_paths == NULL) {
-        return;
-    }
-
+scanner_thread (medialib_source_t *source, ml_scanner_configuration_t conf) {
     char plpath[PATH_MAX];
     snprintf (plpath, sizeof (plpath), "%s/medialib.dbpl", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG));
 
@@ -711,8 +706,8 @@ scanner_thread (medialib_source_t *source) {
     // doesn't need to be protected by mutex -- this is only supposed to be accessed on the scan thread
     source->ml_filter_state.plt = plt;
 
-    for (int i = 0; i < medialib_paths_count; i++) {
-        const char *musicdir = medialib_paths[i];
+    for (int i = 0; i < conf.medialib_paths_count; i++) {
+        const char *musicdir = conf.medialib_paths[i];
         printf ("adding dir: %s\n", musicdir);
         // update & index the cloned playlist
         deadbeef->plt_insert_dir (plt, NULL, musicdir, &source->scanner_terminate, NULL, NULL);
@@ -762,7 +757,7 @@ scanner_thread (medialib_source_t *source) {
     source->_ml_state = DDB_MEDIASOURCE_STATE_IDLE;
     ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
 
-    free_medialib_paths (medialib_paths, medialib_paths_count);
+    free_medialib_paths (conf.medialib_paths, conf.medialib_paths_count);
     ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE);
 }
 
@@ -983,13 +978,20 @@ get_albums_for_collection_group_by_field (medialib_source_t *source, ddb_mediali
             track_field = default_field_value;
         }
 
-        // Find the "bucket of this album - e.g. a genre or an artist
+        // Find the bucket of this album - e.g. a genre or an artist
         // NOTE: multiple albums may belong to the same bucket
         ml_string_t *s = NULL;
         for (s = coll->head; s; s = s->next) {
             if (track_field == s->text) {
                 break;
             }
+        }
+
+        if (s == NULL) {
+            if (mc_str_for_track_field) {
+                deadbeef->metacache_remove_string (mc_str_for_track_field);
+            }
+            continue;
         }
 
         // Add all of the album's tracks into that bucket
@@ -999,6 +1001,7 @@ get_albums_for_collection_group_by_field (medialib_source_t *source, ddb_mediali
                 continue;
             }
             int append = 0;
+
             if (!s->coll_item) {
                 s->coll_item = calloc (1, sizeof (ddb_medialib_item_t));
                 s->coll_item->text = deadbeef->metacache_add_string (s->text);
@@ -1009,7 +1012,7 @@ get_albums_for_collection_group_by_field (medialib_source_t *source, ddb_mediali
 
             ddb_medialib_item_t *libitem = s->coll_item;
 
-            if (!album_item) {
+            if (!album_item && s->coll_item) {
                 album_item = calloc (1, sizeof (ddb_medialib_item_t));
                 if (s->coll_item_tail) {
                     s->coll_item_tail->next = album_item;
@@ -1270,7 +1273,6 @@ ml_create_item_tree (ddb_mediasource_source_t _source, ddb_mediasource_list_sele
     __block ddb_medialib_item_t *root = NULL;
 
     dispatch_sync(source->sync_queue, ^{
-
         if (!source->enabled) {
             return;
         }
@@ -1428,10 +1430,6 @@ ml_set_folders (ddb_mediasource_source_t _source, const char **folders, size_t c
         }
 
         dump = json_dumps(source->musicpaths_json, JSON_COMPACT);
-
-        // FIXME: this is not enough to fully prevent queued scans from running.
-        // A counter is necessary, to make sure all queued scanners up to a specific index should abort.
-        source->scanner_terminate = 1; // abort any queued scanners
     });
 
     if (dump) {
@@ -1550,15 +1548,56 @@ ml_get_source_enabled (ddb_mediasource_source_t _source) {
 static void
 ml_refresh (ddb_mediasource_source_t _source) {
     medialib_source_t *source = (medialib_source_t *)_source;
+
+    __block int64_t scanner_current_index = -1;
+    dispatch_sync(source->sync_queue, ^{
+        // interrupt plt_insert_dir
+        source->scanner_terminate = 1;
+        // interrupt all queued scanners
+        source->scanner_cancel_index = source->scanner_current_index;
+        source->scanner_current_index += 1;
+        scanner_current_index = source->scanner_current_index;
+    });
+
     dispatch_async(source->scanner_queue, ^{
         __block int enabled = 0;
+        __block int cancel = 0;
         dispatch_sync(source->sync_queue, ^{
+            if (source->scanner_cancel_index >= scanner_current_index) {
+                cancel = 1;
+                return;
+            }
             source->scanner_terminate = 0;
             enabled = source->enabled;
         });
 
+        if (cancel) {
+            return;
+        }
+
         if (enabled) {
-            scanner_thread(source);
+            __block ml_scanner_configuration_t conf = {0};
+            dispatch_sync(source->sync_queue, ^{
+                conf.medialib_paths = get_medialib_paths (source, &conf.medialib_paths_count);
+                if (!conf.medialib_paths) {
+                    // not paths: early out
+                    // empty playlist + empty index
+                    if (!source->ml_playlist) {
+                        source->ml_playlist = deadbeef->plt_alloc("medialib");
+                    }
+                    deadbeef->plt_clear (source->ml_playlist);
+                    ml_index (source, source->ml_playlist);
+                    free_medialib_paths (conf.medialib_paths, conf.medialib_paths_count);
+                    return;
+                }
+            });
+
+            if (conf.medialib_paths == NULL) {
+                ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE);
+                return;
+            }
+
+            scanner_thread(source, conf);
         }
     });
 }
