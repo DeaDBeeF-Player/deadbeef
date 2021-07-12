@@ -263,7 +263,7 @@ AS_IF([test "${enable_gtk2}" = "yes"], [
         AC_SUBST(GTK2_DEPS_LIBS)
         HAVE_GTK2=yes
     ], [
-        PKG_CHECK_MODULES(GTK2_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK2=yes, HAVE_GTK2=no)
+        PKG_CHECK_MODULES(GTK2_DEPS, gtk+-2.0 >= 2.16 gthread-2.0 glib-2.0, HAVE_GTK2=yes, HAVE_GTK2=no)
     ])
 dnl    AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
 dnl    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
