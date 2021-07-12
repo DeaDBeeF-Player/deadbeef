@@ -1568,37 +1568,35 @@ ml_refresh (ddb_mediasource_source_t _source) {
                 return;
             }
             source->scanner_terminate = 0;
-            enabled = source->enabled;
         });
 
         if (cancel) {
             return;
         }
 
-        if (enabled) {
-            __block ml_scanner_configuration_t conf = {0};
-            dispatch_sync(source->sync_queue, ^{
-                conf.medialib_paths = get_medialib_paths (source, &conf.medialib_paths_count);
-                if (!conf.medialib_paths) {
-                    // not paths: early out
-                    // empty playlist + empty index
-                    if (!source->ml_playlist) {
-                        source->ml_playlist = deadbeef->plt_alloc("medialib");
-                    }
-                    deadbeef->plt_clear (source->ml_playlist);
-                    ml_index (source, source->ml_playlist);
-                    free_medialib_paths (conf.medialib_paths, conf.medialib_paths_count);
-                    return;
+        __block ml_scanner_configuration_t conf = {0};
+        dispatch_sync(source->sync_queue, ^{
+            conf.medialib_paths = get_medialib_paths (source, &conf.medialib_paths_count);
+            enabled = source->enabled;
+            if (!conf.medialib_paths || !source->enabled) {
+                // not paths: early out
+                // empty playlist + empty index
+                if (!source->ml_playlist) {
+                    source->ml_playlist = deadbeef->plt_alloc("medialib");
                 }
-            });
-
-            if (conf.medialib_paths == NULL) {
-                ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE);
+                deadbeef->plt_clear (source->ml_playlist);
+                ml_index (source, source->ml_playlist);
+                free_medialib_paths (conf.medialib_paths, conf.medialib_paths_count);
                 return;
             }
+        });
 
-            scanner_thread(source, conf);
+        if (conf.medialib_paths == NULL || !enabled) {
+            ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE);
+            return;
         }
+
+        scanner_thread(source, conf);
     });
 }
 
