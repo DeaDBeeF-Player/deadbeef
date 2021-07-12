@@ -31,6 +31,9 @@ extern DB_functions_t *deadbeef;
 }
 
 - (NSUInteger)numberOfChildren {
+    if (_item == NULL) {
+        return 0;
+    }
     return _item->num_children;
 }
 
