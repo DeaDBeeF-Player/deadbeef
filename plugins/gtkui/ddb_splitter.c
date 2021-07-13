@@ -642,9 +642,10 @@ ddb_splitter_realize (GtkWidget *widget)
             gdk_cursor_unref (attributes.cursor);
         }
 
-        gtk_widget_style_attach (widget);
-        //gtk_style_attach (widget, parent);
-        //widget->style = gtk_style_attach (widget->style, widget->window);
+
+#if !GTK_CHECK_VERSION(3,0,0)
+        widget->style = gtk_style_attach (widget->style, widget->window);
+#endif
 
         if (ddb_splitter_children_visible (splitter)) {
             gdk_window_show (splitter->priv->handle);
