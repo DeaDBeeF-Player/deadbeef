@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,readonly) NSUInteger numberOfChildren;
 - (MediaLibraryItem *)childAtIndex:(NSUInteger)index;
 
-@property (nonatomic,readonly) NSArray *children;
+@property (nonatomic,readonly) NSArray<MediaLibraryItem *> *children;
 @property (nonatomic,readonly) NSString *stringValue;
 
 @property (nonatomic,readonly) ddb_playItem_t *playItem;
