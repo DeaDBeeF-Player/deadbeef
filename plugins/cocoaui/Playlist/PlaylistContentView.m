@@ -182,13 +182,16 @@ static int grouptitleheight = 22;
         NSDictionary *options = [NSDictionary dictionary];
         NSArray<MedialibItemDragDropHolder *> *draggedItems = [pboard readObjectsForClasses:classes options:options];
 
-        NSInteger count = draggedItems.count;
+        NSInteger count = 0;
+        for (MedialibItemDragDropHolder *holder in draggedItems) {
+            count += holder.count;
+        }
         DdbListviewRow_t *items = calloc (count, sizeof (DdbListviewRow_t));
         size_t itemCount = 0;
         for (MedialibItemDragDropHolder *holder in draggedItems) {
-            ddb_playItem_t *it = holder.playItem;
-            if (it) {
-                items[itemCount++] = (DdbListviewRow_t)it;
+            for (NSInteger i = 0; i < holder.count; i++) {
+                ddb_playItem_t *item = holder.items[i];
+                items[itemCount++] = (DdbListviewRow_t)item;
             }
         }
         [self.delegate dropPlayItems:items before:row count:(int)itemCount];

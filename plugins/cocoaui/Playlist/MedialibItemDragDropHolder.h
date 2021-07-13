@@ -9,15 +9,13 @@
 #import <Foundation/Foundation.h>
 #include "deadbeef.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
 @interface MedialibItemDragDropHolder : NSObject<NSPasteboardReading, NSPasteboardWriting, NSSecureCoding>
 
-@property (nullable,nonatomic,readonly) ddb_playItem_t *playItem;
+@property (nonatomic,readonly) ddb_playItem_t * _Nonnull * _Nullable items;
+@property (nonatomic,readonly) NSInteger count;
 
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithItem:(ddb_playItem_t * _Nullable)item NS_DESIGNATED_INITIALIZER;
+- (instancetype _Nonnull)init NS_UNAVAILABLE;
+- (instancetype _Nonnull)initWithItem:(ddb_playItem_t * _Nullable)item;
+- (instancetype _Nonnull)initWithItems:(ddb_playItem_t * _Nonnull * _Nullable)items count:(NSInteger)count NS_DESIGNATED_INITIALIZER;
 
 @end
-
-NS_ASSUME_NONNULL_END
