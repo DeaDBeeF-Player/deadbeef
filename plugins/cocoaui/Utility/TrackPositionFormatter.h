@@ -10,8 +10,8 @@
 
 @interface TrackPositionFormatter : NSFormatter
 
-- (NSString *)stringForObjectValue:(NSControl *)obj;
+- (nullable NSString *)stringForObjectValue:(nullable NSControl *)obj;
 
-- (BOOL)getObjectValue:(out id  _Nullable *)obj forString:(NSString *)string errorDescription:(out NSString * _Nullable *)error;
+- (BOOL)getObjectValue:(out id  _Nullable * _Nullable)obj forString:(NSString * _Nonnull)string errorDescription:(out NSString * _Nullable * _Nullable)error;
 
 @end
