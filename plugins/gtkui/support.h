@@ -149,6 +149,7 @@ gchar *gtk_combo_box_text_get_active_text  (GtkComboBoxText *combo_box);
 
 #define gtk_widget_get_visible(widget) (GTK_WIDGET_VISIBLE(widget))
 #define gtk_widget_get_has_window(widget) (!GTK_WIDGET_NO_WINDOW(widget))
+#define gtk_widget_get_mapped(widget) (GTK_WIDGET_MAPPED(widget))
 void gtk_widget_set_window(GtkWidget *widget, GdkWindow *window);
 #endif
 
