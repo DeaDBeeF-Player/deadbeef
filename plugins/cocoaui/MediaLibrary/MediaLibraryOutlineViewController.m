@@ -273,6 +273,15 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     return [NSString stringWithFormat:@"Error %d", (int)index];
 }
 
+- (void)arrayOfPlayableItemsForItem:(MediaLibraryItem *)item outputArray:(out NSMutableArray<MediaLibraryItem *> *)items {
+    if (item.playItem != NULL) {
+        [items addObject:item];
+    }
+
+    for (MediaLibraryItem *child in item.children) {
+        [self arrayOfPlayableItemsForItem:child outputArray:items];
+    }
+}
 
 #pragma mark - NSOutlineViewDataSource - Drag and drop
 
@@ -280,7 +289,18 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     if (![item isKindOfClass:MediaLibraryItem.class]) {
         return nil;
     }
-    return [[MedialibItemDragDropHolder alloc] initWithItem:item.playItem];
+
+    NSMutableArray<MediaLibraryItem *> *items = [NSMutableArray new];
+    [self arrayOfPlayableItemsForItem:item outputArray:items];
+
+    ddb_playItem_t **playItems = calloc(items.count, sizeof (ddb_playItem_t *));
+    NSInteger count = 0;
+
+    for (MediaLibraryItem *playableItem in items) {
+        playItems[count++] = playableItem.playItem;
+    }
+
+    return [[MedialibItemDragDropHolder alloc] initWithItems:playItems count:count];
 }
 
 
