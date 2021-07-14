@@ -965,8 +965,8 @@ process_query (ddb_cover_info_t *cover) {
 
 static void
 queue_clear (void) {
-    artwork_abort_all_http_requests();
     dispatch_sync(sync_queue, ^{
+        artwork_abort_all_http_requests();
         cancellation_idx = last_job_idx++;
     });
 }
@@ -1096,7 +1096,7 @@ queries_squashable (ddb_cover_query_t *query1, ddb_cover_query_t *query2) {
     }
 
     // if all metadata is defined -- compare tracknr, title, album, artist
-    ddb_tf_context_t ctx;
+    ddb_tf_context_t ctx = {0};
     ctx._size = sizeof (ddb_tf_context_t);
 
     char query1title[1000];
@@ -1147,31 +1147,33 @@ squash_query(ddb_cover_callback_t callback, ddb_cover_query_t *query) {
 
 static void callback_and_free_squashed (ddb_cover_info_t *cover, ddb_cover_query_t *query) {
     __block artwork_query_t *squashed_queries = NULL;
-    dispatch_sync (sync_queue, ^{
-        cover_update_cache (cover);
-        // find & remove from the queries list
-        artwork_query_t *q = query_head;
-        artwork_query_t *prev = NULL;
-        for (; q; q = q->next) {
-            if (q->queries[0] == query) {
-                break;
+    if (sync_queue != NULL) {
+        dispatch_sync (sync_queue, ^{
+            cover_update_cache (cover);
+            // find & remove from the queries list
+            artwork_query_t *q = query_head;
+            artwork_query_t *prev = NULL;
+            for (; q; q = q->next) {
+                if (q->queries[0] == query) {
+                    break;
+                }
+                prev = q;
             }
-            prev = q;
-        }
 
-        if (q) {
-            if (prev) {
-                prev->next = q->next;
+            if (q) {
+                if (prev) {
+                    prev->next = q->next;
+                }
+                else {
+                    query_head = q->next;
+                }
+                if (q == query_tail) {
+                    query_tail = prev;
+                }
+                squashed_queries = q;
             }
-            else {
-                query_head = q->next;
-            }
-            if (q == query_tail) {
-                query_tail = prev;
-            }
-            squashed_queries = q;
-        }
-    });
+        });
+    }
 
     // send the result
     if (squashed_queries != NULL) {
@@ -1202,19 +1204,6 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
             return;
         }
 
-        __block int cancel_job = 0;
-        dispatch_sync(sync_queue, ^{
-            if (job_idx < cancellation_idx) {
-                cancel_job = 1;
-            }
-        });
-
-        if (cancel_job) {
-            callback (-1, query, NULL);
-            return;
-        }
-
-
         /* Process this query, hopefully writing a file into cache */
         ddb_cover_info_t *cover = calloc (sizeof (ddb_cover_info_t), 1);
         cover->refc = 1;
@@ -1237,12 +1226,30 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         strncat (cover->filepath, deadbeef->pl_find_meta (query->track, ":URI"), sizeof(cover->filepath) - strlen(cover->filepath) - 1);
         deadbeef->pl_unlock ();
 
-        ddb_tf_context_t ctx;
+        ddb_tf_context_t ctx = {0};
         ctx._size = sizeof (ddb_tf_context_t);
         ctx.it = query->track;
         deadbeef->tf_eval (&ctx, album_tf, cover->album, sizeof (cover->album));
         deadbeef->tf_eval (&ctx, artist_tf, cover->artist, sizeof (cover->artist));
         deadbeef->tf_eval (&ctx, title_tf, cover->title, sizeof (cover->title));
+
+
+        if (sync_queue == NULL) {
+            callback (-1, query, NULL);
+            return;
+        }
+
+        __block int cancel_job = 0;
+        dispatch_sync(sync_queue, ^{
+            if (job_idx < cancellation_idx) {
+                cancel_job = 1;
+            }
+        });
+
+        if (cancel_job) {
+            callback (-1, query, NULL);
+            return;
+        }
 
         // check the cache
         ddb_cover_info_t *cached_cover = cover_cache_find (cover);
@@ -1259,13 +1266,26 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
 
             // fetch on concurrent fetch queue
             dispatch_semaphore_wait(fetch_semaphore, DISPATCH_TIME_FOREVER);
+            __block int cancel_job = 0;
+            dispatch_sync(sync_queue, ^{
+                if (job_idx < cancellation_idx) {
+                    cancel_job = 1;
+                }
+            });
+
+            if (cancel_job) {
+                callback (-1, query, NULL);
+                dispatch_semaphore_signal (fetch_semaphore);
+                return;
+            }
+
             dispatch_async (fetch_queue, ^{
                 process_query (cover);
+
                 dispatch_semaphore_signal (fetch_semaphore);
-                // continue processing on serial process queue
-                dispatch_async (process_queue, ^{
-                    callback_and_free_squashed (cover, query);
-                });
+
+                // update queue, and notity the caller
+                callback_and_free_squashed (cover, query);
             });
         }
     });
@@ -1454,7 +1474,7 @@ invalidate_playitem_cache (DB_plugin_action_t *action, ddb_action_context_t ctx)
 
             char album[1000];
             char artist[1000];
-            ddb_tf_context_t ctx;
+            ddb_tf_context_t ctx = {0};
             ctx._size = sizeof (ddb_tf_context_t);
             ctx.it = it;
             deadbeef->tf_eval (&ctx, album_tf, album, sizeof (album));
@@ -1505,11 +1525,28 @@ static int
 artwork_plugin_stop (void) {
     queue_clear ();
 
-    // FIXME: abort all requests and wait.
-    dispatch_release(sync_queue);
+    // lock semaphore
+    for (int i = 0; i < FETCH_CONCURRENT_LIMIT; i++) {
+        dispatch_semaphore_wait(fetch_semaphore, DISPATCH_TIME_FOREVER);
+    }
+    printf ("release fetch\n");
     dispatch_release(fetch_queue);
+    fetch_queue = NULL;
+    printf ("release process\n");
     dispatch_release(process_queue);
+    process_queue = NULL;
+    printf ("release sync\n");
+    dispatch_release(sync_queue);
+    sync_queue = NULL;
+
+    // unlock semaphore
+    for (int i = 0; i < FETCH_CONCURRENT_LIMIT; i++) {
+        dispatch_semaphore_signal (fetch_semaphore);
+    }
+    printf ("release fetch_semaphore\n");
     dispatch_release(fetch_semaphore);
+    fetch_semaphore = NULL;
+    printf ("released all\n");
 
     cover_cache_free ();
 
