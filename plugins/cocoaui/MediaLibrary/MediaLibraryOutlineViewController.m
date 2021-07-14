@@ -39,9 +39,9 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) NSOutlineView *outlineView;
 
-@property (nonatomic) ddb_medialib_plugin_t *medialibPlugin;
-@property (nonatomic,readonly) ddb_mediasource_source_t medialibSource;
-@property (nonatomic) ddb_artwork_plugin_t *artworkPlugin;
+@property (atomic) ddb_medialib_plugin_t *medialibPlugin;
+@property (atomic,readonly) ddb_mediasource_source_t medialibSource;
+@property (atomic) ddb_artwork_plugin_t *artworkPlugin;
 
 @property (nonatomic) ddb_medialib_item_t *medialibItemTree;
 
@@ -71,6 +71,8 @@ extern DB_functions_t *deadbeef;
     if (!self) {
         return nil;
     }
+
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(applicationWillQuit:) name:@"ApplicationWillQuit" object:nil];
 
     self.outlineView = outlineView;
     self.outlineView.dataSource = self;
@@ -102,6 +104,10 @@ extern DB_functions_t *deadbeef;
     self.selectedItems = [NSMutableArray new];
 
     return self;
+}
+
+- (void)applicationWillQuit:(NSNotification *)notification {
+    self.medialibPlugin = NULL;
 }
 
 - (void)dealloc {
@@ -185,6 +191,9 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 }
 
 - (void)medialibEvent:(ddb_mediasource_event_type_t)event {
+    if (self.medialibPlugin == NULL) {
+        return;
+    }
     if (event == DDB_MEDIASOURCE_EVENT_CONTENT_CHANGED || event == DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE) {
         [self filterChanged];
     }
