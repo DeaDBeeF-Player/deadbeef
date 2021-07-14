@@ -45,7 +45,7 @@
 #include "../liboggedit/oggedit.h"
 #include "../../strdupa.h"
 
-static DB_decoder_t plugin;
+static ddb_decoder2_t plugin;
 static DB_functions_t *deadbeef;
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -377,7 +377,7 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     // bps/samplerate/channels were set by callbacks
-    _info->plugin = &plugin;
+    _info->plugin = &plugin.decoder;
     _info->readpos = 0;
 
     if (_info->fmt.samplerate <= 0) { // not a FLAC stream
@@ -405,7 +405,7 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (endsample > 0) {
         info->startsample = deadbeef->pl_item_get_startsample (it);
         info->endsample = endsample;
-        if (plugin.seek_sample (_info, 0) < 0) {
+        if (plugin.seek_sample64 (_info, 0) < 0) {
             trace ("cflac_init failed to seek to sample 0\n");
             return -1;
         }
@@ -564,7 +564,7 @@ cflac_read_float32 (DB_fileinfo_t *_info, char *bytes, int size) {
 #endif
 
 static int
-cflac_seek_sample (DB_fileinfo_t *_info, int sample) {
+cflac_seek_sample64 (DB_fileinfo_t *_info, int64_t sample) {
     flac_info_t *info = (flac_info_t *)_info;
     sample += info->startsample;
     info->currentsample = sample;
@@ -577,8 +577,13 @@ cflac_seek_sample (DB_fileinfo_t *_info, int sample) {
 }
 
 static int
+cflac_seek_sample (DB_fileinfo_t *_info, int sample) {
+    return cflac_seek_sample64(_info, sample);
+}
+
+static int
 cflac_seek (DB_fileinfo_t *_info, float time) {
-    return cflac_seek_sample (_info, time * _info->fmt.samplerate);
+    return cflac_seek_sample64 (_info, time * _info->fmt.samplerate);
 }
 
 static FLAC__StreamDecoderWriteStatus
@@ -893,7 +898,7 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     FLAC__stream_decoder_set_md5_checking(decoder, 0);
     FLAC__stream_decoder_set_metadata_respond_all (decoder);
 
-    it = info.it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);;
+    it = info.it = deadbeef->pl_item_alloc_init (fname, plugin.decoder.plugin.id);;
 
     if (isogg) {
         status = FLAC__stream_decoder_init_ogg_stream (decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_length_cb, flac_eof_cb, cflac_init_write_callback, cflac_init_metadata_callback, cflac_init_error_callback, &info);
@@ -1298,15 +1303,17 @@ static const char configdialog[] =
 static const char *exts[] = { "flac", "oga", NULL };
 
 // define plugin interface
-static DB_decoder_t plugin = {
-    DDB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 1,
-    .plugin.version_minor = 0,
-    .plugin.type = DB_PLUGIN_DECODER,
-    .plugin.id = "stdflac",
-    .plugin.name = "FLAC decoder",
-    .plugin.descr = "FLAC decoder using libFLAC",
-    .plugin.copyright =
+static ddb_decoder2_t plugin = {
+    .decoder.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .decoder.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .decoder.plugin.version_major = 1,
+    .decoder.plugin.version_minor = 0,
+    .decoder.plugin.type = DB_PLUGIN_DECODER,
+    .decoder.plugin.flags = DDB_PLUGIN_SUPPORTS_DECODER2,
+    .decoder.plugin.id = "stdflac",
+    .decoder.plugin.name = "FLAC decoder",
+    .decoder.plugin.descr = "FLAC decoder using libFLAC",
+    .decoder.plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko et al.\n"
         "Uses libFLAC (C) Copyright (C) 2000,2001,2002,2003,2004,2005,2006,2007  Josh Coalson\n"
         "Uses libogg Copyright (c) 2002, Xiph.org Foundation\n"
@@ -1338,19 +1345,20 @@ static DB_decoder_t plugin = {
         "NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n"
         "SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n"
     ,
-    .plugin.website = "http://deadbeef.sf.net",
-    .plugin.configdialog = configdialog,
-    .open = cflac_open,
-    .open2 = cflac_open2,
-    .init = cflac_init,
-    .free = cflac_free,
-    .read = cflac_read,
-    .seek = cflac_seek,
-    .seek_sample = cflac_seek_sample,
-    .insert = cflac_insert,
-    .read_metadata = cflac_read_metadata,
-    .write_metadata = cflac_write_metadata,
-    .exts = exts,
+    .decoder.plugin.website = "http://deadbeef.sf.net",
+    .decoder.plugin.configdialog = configdialog,
+    .decoder.open = cflac_open,
+    .decoder.open2 = cflac_open2,
+    .decoder.init = cflac_init,
+    .decoder.free = cflac_free,
+    .decoder.read = cflac_read,
+    .decoder.seek = cflac_seek,
+    .decoder.seek_sample = cflac_seek_sample,
+    .decoder.insert = cflac_insert,
+    .decoder.read_metadata = cflac_read_metadata,
+    .decoder.write_metadata = cflac_write_metadata,
+    .decoder.exts = exts,
+    .seek_sample64 = cflac_seek_sample64,
 };
 
 DB_plugin_t *
