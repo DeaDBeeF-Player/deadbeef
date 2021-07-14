@@ -237,7 +237,11 @@ on_prefwin_response_cb (GtkDialog *dialog,
 void
 gtkui_run_preferences_dlg (void) {
     if (prefwin) {
-        gtk_window_present_with_time (GTK_WINDOW(prefwin), GDK_CURRENT_TIME);
+#if GTK_CHECK_VERSION(2,28,0)
+        gtk_window_present_with_time (prefwin, g_get_monotonic_time() / 1000);
+#else
+        gtk_window_present_with_time (prefwin, GDK_CURRENT_TIME);
+#endif
         return;
     }
     deadbeef->conf_lock ();
