@@ -73,15 +73,14 @@ new_http_request (const char *url) {
     return http_request;
 }
 
+// Make sure to call on sync queue
 void
 artwork_abort_all_http_requests (void) {
-    dispatch_sync (sync_queue, ^{
-        for (int i = 0; i < MAX_REQUESTS; i++) {
-            if (_requests[i] != NULL) {
-                deadbeef->fabort (_requests[i]);
-            }
+    for (int i = 0; i < MAX_REQUESTS; i++) {
+        if (_requests[i] != NULL) {
+            deadbeef->fabort (_requests[i]);
         }
-    });
+    }
 }
 
 static void
