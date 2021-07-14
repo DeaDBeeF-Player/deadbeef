@@ -745,6 +745,9 @@ main_cleanup_and_quit (void);
     else if (_id == DB_EV_OUTPUTCHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(outputDeviceChanged) withObject:nil waitUntilDone:NO];
     }
+    else if (_id == DB_EV_TERMINATE) {
+        [NSNotificationCenter.defaultCenter postNotificationName:@"ApplicationWillQuit" object:nil];
+    }
 
     return 0;
 }
