@@ -135,6 +135,12 @@ extern "C" {
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
 #endif
 
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 14)
+#define DEPRECATED_113 DDB_DEPRECATED("since deadbeef API 1.14")
+#else
+#define DEPRECATED_113
+#endif
+
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 13)
 #define DEPRECATED_113 DDB_DEPRECATED("since deadbeef API 1.13")
 #else
@@ -1683,6 +1689,11 @@ enum {
 
     // Tells the system that the plugin supports replaygain, and streamer should not do it.
     DDB_PLUGIN_FLAG_REPLAYGAIN = 2,
+
+#if (DDB_API_LEVEL >= 14)
+    // Tells that the plugin implements ddb_decoder2_t interface
+    DDB_PLUGIN_SUPPORTS_DECODER2 = 3,
+#endif
 };
 #endif
 
@@ -1861,6 +1872,27 @@ typedef struct DB_decoder_s {
     DB_fileinfo_t *(*open2) (uint32_t hints, DB_playItem_t *it);
 #endif
 } DB_decoder_t;
+
+#if (DDB_API_LEVEL >= 14)
+// extended decoder interface, with 64 bit seeking support
+typedef struct DB_decoder2_s {
+    DB_decoder_t decoder;
+
+    // perform seeking in samples (if possible)
+    // return -1 if failed, or 0 on success
+    // if -1 is returned, that will mean that streamer must skip that song
+    int (*seek_sample64) (DB_fileinfo_t *info, int64_t sample);
+
+    uint32_t reserved1;
+    uint32_t reserved2;
+    uint32_t reserved3;
+    uint32_t reserved4;
+    uint32_t reserved5;
+    uint32_t reserved6;
+    uint32_t reserved7;
+    uint32_t reserved8;
+} ddb_decoder2_t;
+#endif
 
 // output plugin
 typedef struct DB_output_s {
