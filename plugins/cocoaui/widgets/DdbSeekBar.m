@@ -272,6 +272,10 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
     return self.position;
 }
 
+- (void)setFloatValue:(float)value {
+    self.position = value;
+}
+
 - (double)doubleValue {
     return (double)self.position;
 }
