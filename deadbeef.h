@@ -1693,7 +1693,7 @@ enum {
 
 #if (DDB_API_LEVEL >= 14)
     // Tells that the plugin implements ddb_decoder2_t interface
-    DDB_PLUGIN_SUPPORTS_DECODER2 = 3,
+    DDB_PLUGIN_FLAG_IMPLEMENTS_DECODER2 = 4,
 #endif
 };
 #endif
