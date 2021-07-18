@@ -108,6 +108,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)applicationWillQuit:(NSNotification *)notification {
     self.medialibPlugin = NULL;
+    self.artworkPlugin = NULL;
 }
 
 - (void)dealloc {
@@ -377,7 +378,13 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
             }
         }
 
-        self.artworkPlugin->cover_info_free (cover);
+        // FIXME: this is a memory leak
+        if (self.artworkPlugin != NULL) {
+            self.artworkPlugin->cover_info_release (cover);
+        }
+        else {
+            NSLog(@"ERROR: MediaLibraryOutlineViewController: Need to call cover_info_release but artworkPlugin is NULL");
+        }
         cover = NULL;
 
         dispatch_async(dispatch_get_main_queue(), ^{

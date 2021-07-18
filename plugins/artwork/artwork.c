@@ -972,7 +972,7 @@ queue_clear (void) {
 }
 
 static void
-cover_info_free (ddb_cover_info_t *cover) {
+cover_info_release (ddb_cover_info_t *cover) {
     assert (cover->refc > 0);
     cover->refc -= 1;
     if (cover->refc != 0) {
@@ -1011,7 +1011,7 @@ cover_update_cache (ddb_cover_info_t *cover) {
     if (emptyIdx >= 0) {
     }
     else {
-        cover_info_free(cover_cache[minTimestampIdx]);
+        cover_info_release(cover_cache[minTimestampIdx]);
         cover_cache[minTimestampIdx] = NULL;
         emptyIdx = minTimestampIdx;
     }
@@ -1026,7 +1026,7 @@ cover_cache_free (void) {
         if (!cover_cache[i]) {
             continue;
         }
-        cover_info_free(cover_cache[i]);
+        cover_info_release(cover_cache[i]);
         cover_cache[i] = NULL;
     }
 }
@@ -1182,7 +1182,7 @@ static void callback_and_free_squashed (ddb_cover_info_t *cover, ddb_cover_query
         }
         free (squashed_queries);
     }
-    cover_info_free (cover);
+    cover_info_release (cover);
 }
 
 static void
@@ -1674,7 +1674,7 @@ ddb_artwork_plugin_t plugin = {
     .plugin.plugin.get_actions = artwork_get_actions,
     .cover_get = cover_get,
     .reset = artwork_reset,
-    .cover_info_free = cover_info_free,
+    .cover_info_release = cover_info_release,
     .add_listener = artwork_add_listener,
     .remove_listener = artwork_remove_listener,
 };
