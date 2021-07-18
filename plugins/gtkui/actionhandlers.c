@@ -401,6 +401,11 @@ _warningMessageForCtx (ddbDeleteFromDiskController_t ctl, ddb_action_context_t c
         gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), "%s", buf);
         gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
 
+#if GTK_CHECK_VERSION(3,0,0)
+        GtkWidget *btn = gtk_dialog_get_widget_for_response(GTK_MESSAGE_DIALOG(dlg), GTK_RESPONSE_YES);
+        gtk_style_context_add_class (gtk_widget_get_style_context(btn), "destructive-action");
+#endif
+
         int response = gtk_dialog_run (GTK_DIALOG (dlg));
         gtk_widget_destroy (dlg);
         if (response != GTK_RESPONSE_YES) {
