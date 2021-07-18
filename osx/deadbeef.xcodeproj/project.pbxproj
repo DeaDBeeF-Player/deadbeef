@@ -1896,6 +1896,8 @@
 		2DAE706A25BDE55D00E40154 /* deletefromdisk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DAE701825BDDC3300E40154 /* deletefromdisk.c */; };
 		2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */; };
 		2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */; };
+		2DAF900426A4533600C1CA25 /* coverinfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF900226A4533600C1CA25 /* coverinfo.h */; };
+		2DAF900526A4533600C1CA25 /* coverinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF900326A4533600C1CA25 /* coverinfo.c */; };
 		2DB05E36252E3CF10090635E /* iconSoundTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05E26252E3CF10090635E /* iconSoundTemplate.pdf */; };
 		2DB05E77252E3F3E0090635E /* iconPluginsTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05E76252E3F3E0090635E /* iconPluginsTemplate.pdf */; };
 		2DB05EB8252E47A00090635E /* iconNetworkTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05EB7252E47A00090635E /* iconNetworkTemplate.pdf */; };
@@ -5661,6 +5663,8 @@
 		2DAE701825BDDC3300E40154 /* deletefromdisk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = deletefromdisk.c; sourceTree = "<group>"; };
 		2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesWindowController.h; sourceTree = "<group>"; };
 		2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrackPropertiesWindowController.m; sourceTree = "<group>"; };
+		2DAF900226A4533600C1CA25 /* coverinfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = coverinfo.h; sourceTree = "<group>"; };
+		2DAF900326A4533600C1CA25 /* coverinfo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = coverinfo.c; sourceTree = "<group>"; };
 		2DB05E26252E3CF10090635E /* iconSoundTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = iconSoundTemplate.pdf; sourceTree = "<group>"; };
 		2DB05E76252E3F3E0090635E /* iconPluginsTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = iconPluginsTemplate.pdf; sourceTree = "<group>"; };
 		2DB05EB7252E47A00090635E /* iconNetworkTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = iconNetworkTemplate.pdf; sourceTree = "<group>"; };
@@ -8533,20 +8537,22 @@
 		2D621F941CD92CC000EB6D22 /* artwork */ = {
 			isa = PBXGroup;
 			children = (
-				2D621FA91CD92CC500EB6D22 /* artwork.c */,
-				2D621FAA1CD92CC500EB6D22 /* artwork.h */,
+				2D621FA51CD92CC500EB6D22 /* albumartorg.c */,
+				2D621FA61CD92CC500EB6D22 /* albumartorg.h */,
+				2DA7C22E251002390080963D /* artwork_flac.c */,
+				2DA7C22D251002390080963D /* artwork_flac.h */,
 				2D621FAE1CD92CC500EB6D22 /* artwork_internal.c */,
 				2D621FAF1CD92CC500EB6D22 /* artwork_internal.h */,
-				2DA7C22D251002390080963D /* artwork_flac.h */,
-				2DA7C22E251002390080963D /* artwork_flac.c */,
+				2D621FA91CD92CC500EB6D22 /* artwork.c */,
+				2D621FAA1CD92CC500EB6D22 /* artwork.h */,
 				2D621FB01CD92CC500EB6D22 /* cache.c */,
 				2D621FB11CD92CC500EB6D22 /* cache.h */,
+				2DAF900326A4533600C1CA25 /* coverinfo.c */,
+				2DAF900226A4533600C1CA25 /* coverinfo.h */,
 				2D621FB31CD92CC500EB6D22 /* escape.c */,
 				2D621FB41CD92CC500EB6D22 /* escape.h */,
 				2D621FB71CD92CC500EB6D22 /* lastfm.c */,
 				2D621FB81CD92CC500EB6D22 /* lastfm.h */,
-				2D621FA51CD92CC500EB6D22 /* albumartorg.c */,
-				2D621FA61CD92CC500EB6D22 /* albumartorg.h */,
 				2D621FBE1CD92CC500EB6D22 /* musicbrainz.c */,
 				2D621FBF1CD92CC500EB6D22 /* musicbrainz.h */,
 				2D621FC01CD92CC500EB6D22 /* wos.c */,
@@ -12060,6 +12066,7 @@
 				2D621FD31CD92CCA00EB6D22 /* cache.h in Headers */,
 				2D621FDE1CD92CCA00EB6D22 /* wos.h in Headers */,
 				2DA7C22F251002390080963D /* artwork_flac.h in Headers */,
+				2DAF900426A4533600C1CA25 /* coverinfo.h in Headers */,
 				2D621FD11CD92CCA00EB6D22 /* artwork_internal.h in Headers */,
 				2D621FCE1CD92CCA00EB6D22 /* artwork.h in Headers */,
 				2D621FD81CD92CCA00EB6D22 /* lastfm.h in Headers */,
@@ -15252,6 +15259,7 @@
 				2D621FDD1CD92CCA00EB6D22 /* wos.c in Sources */,
 				2D621FCD1CD92CCA00EB6D22 /* artwork.c in Sources */,
 				2D5193C824ABBC1600134891 /* mp4tagutil.c in Sources */,
+				2DAF900526A4533600C1CA25 /* coverinfo.c in Sources */,
 				2D621FD71CD92CCA00EB6D22 /* lastfm.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
