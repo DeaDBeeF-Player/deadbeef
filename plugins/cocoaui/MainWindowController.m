@@ -72,6 +72,13 @@ extern DB_functions_t *deadbeef;
 - (void)windowDidLoad {
     [super windowDidLoad];
 
+    // This doesn't work reliably when set in XIB
+#if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101600
+    if (@available(macOS 10.16, *)) {
+        self.window.toolbarStyle = NSWindowToolbarStyleExpanded;
+    }
+#endif
+
     PlaylistViewController *pvc = [[PlaylistViewController alloc] initWithNibName:nil bundle:nil];
     PlaylistView *view = [PlaylistView new];
     pvc.view = view;

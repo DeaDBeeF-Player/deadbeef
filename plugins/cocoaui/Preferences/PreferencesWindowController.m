@@ -52,6 +52,13 @@
 - (void)windowDidLoad {
     [super windowDidLoad];
 
+    // This doesn't work reliably when set in XIB
+#if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101600
+    if (@available(macOS 10.16, *)) {
+        self.window.toolbarStyle = NSWindowToolbarStylePreference;
+    }
+#endif
+
     _toolbar.delegate = self;
     _toolbar.selectedItemIdentifier = @"Sound";
 
