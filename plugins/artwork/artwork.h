@@ -131,9 +131,9 @@ typedef struct {
     void
     (*reset) (void);
 
-    /// Free dynamically allocated data pointed by `cover`.
+    /// Release the dynamically allocated data pointed by `cover`.
     void
-    (*cover_info_free) (ddb_cover_info_t *cover);
+    (*cover_info_release) (ddb_cover_info_t *cover);
 
     void
     (*add_listener) (ddb_artwork_listener_t listener, void *user_data);

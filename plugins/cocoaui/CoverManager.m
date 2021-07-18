@@ -95,37 +95,51 @@ typedef struct {
     void *real_user_data;
 } cover_callback_info_t;
 
-static void cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        // We want to load the images in background, to keep UI responsive
-        CoverManager *cm = [CoverManager defaultCoverManager];
-        NSImage *img = nil;
-        if (!img && cover && cover->blob) {
-            NSData *data = [NSData dataWithBytesNoCopy:cover->blob + cover->blob_image_offset length:cover->blob_image_size freeWhenDone:NO];
-            img = [[NSImage alloc] initWithData:data];
-            data = nil;
-        }
-        if (!img && cover && cover->image_filename) {
-            img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->image_filename]];
-        }
-        if (!img) {
-            img = [cm defaultCover];
-        }
+- (nullable NSImage *)loadImageFromCover:(nonnull ddb_cover_info_t *)cover {
+    NSImage *img;
 
+    if (!img && cover && cover->blob) {
+        NSData *data = [NSData dataWithBytesNoCopy:cover->blob + cover->blob_image_offset
+                                            length:cover->blob_image_size
+                                      freeWhenDone:NO];
+        img = [[NSImage alloc] initWithData:data];
+        data = nil;
+    }
+    if (!img && cover && cover->image_filename) {
+        img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->image_filename]];
+    }
+    if (!img) {
+        img = self.defaultCover;
+    }
+    return img;
+}
+
+static void
+cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
+    // Load the image on background queue
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        CoverManager *cm = [CoverManager defaultCoverManager];
+        NSImage *img = [cm loadImageFromCover:cover];
+
+        // Update the UI on main queue
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (img) {
+            // FIXME: if the img is nil -- CoverManager should still be updated
+            if (img != nil) {
                 [cm addCoverForTrack:query->track withImage:img];
                 cover_callback_info_t *info = query->user_data;
                 info->real_callback (img, info->real_user_data);
             }
 
+            // Free the query -- it's fast, so it's OK to free it on main queue
             deadbeef->pl_item_unref (query->track);
-
-            if (cover) {
-                cm->_artwork_plugin->cover_info_free (cover);
-            }
-
             free (query);
+
+            // Release the cover on background queue
+            if (cover != NULL) {
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    cm->_artwork_plugin->cover_info_release (cover);
+                });
+            }
         });
     });
 }
