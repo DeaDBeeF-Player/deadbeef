@@ -24,6 +24,7 @@
 #ifndef __ARTWORK_H
 #define __ARTWORK_H
 
+#include <limits.h>
 #include <stdint.h>
 #include <time.h>
 #include "../../deadbeef.h"
@@ -79,8 +80,6 @@ typedef struct ddb_cover_info_s {
     char title[1000];
     int cover_found; // set to 1 if the cover was found
 
-    int refc; // Reference count, to allow sending the same cover to multiple callbacks
-
     char *type; // A type of image, e.g. "front" or "back" (can be NULL)
 
     char *image_filename; // A name of file with the image
@@ -91,6 +90,8 @@ typedef struct ddb_cover_info_s {
     uint64_t blob_image_size; // size of the image at offset
 
     struct ddb_cover_info_s *next; // The next image in the chain, or NULL
+
+    // FIXME: this struct is inheritable, add padding and size
 } ddb_cover_info_t;
 
 /// The `error` is 0 on success, or negative value on failure.

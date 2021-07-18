@@ -379,12 +379,9 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
             }
         }
 
-        // FIXME: this is a memory leak
+        // NOTE: this would not cause a memory leak, since the artwork plugin keeps track of the covers, and will free them at exit
         if (self.artworkPlugin != NULL) {
             self.artworkPlugin->cover_info_release (cover);
-        }
-        else {
-            NSLog(@"ERROR: MediaLibraryOutlineViewController: Need to call cover_info_release but artworkPlugin is NULL");
         }
         cover = NULL;
 

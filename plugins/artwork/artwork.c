@@ -52,6 +52,7 @@
 #include "artwork.h"
 #include "artwork_internal.h"
 #include "cache.h"
+#include "coverinfo.h"
 #include "lastfm.h"
 #include "musicbrainz.h"
 #include "mp4tagutil.h"
@@ -971,23 +972,27 @@ queue_clear (void) {
     });
 }
 
+static ddb_cover_info_t *
+sync_cover_info_alloc (void) {
+    __block ddb_cover_info_t *cover = NULL;
+    dispatch_sync(sync_queue, ^{
+        cover = cover_info_alloc();
+    });
+    return cover;
+}
+
 static void
-cover_info_release (ddb_cover_info_t *cover) {
-    assert (cover->refc > 0);
-    cover->refc -= 1;
-    if (cover->refc != 0) {
-        return;
-    }
-    if (cover->type) {
-        free (cover->type);
-    }
-    if (cover->image_filename) {
-        free (cover->image_filename);
-    }
-    if (cover->blob) {
-        free (cover->blob);
-    }
-    free (cover);
+sync_cover_info_ref (ddb_cover_info_t *cover) {
+    dispatch_sync(sync_queue, ^{
+        cover_info_ref(cover);
+    });
+}
+
+static void
+sync_cover_info_release (ddb_cover_info_t *cover) {
+    dispatch_sync(sync_queue, ^{
+        cover_info_release(cover);
+    });
 }
 
 static void
@@ -1015,7 +1020,7 @@ cover_update_cache (ddb_cover_info_t *cover) {
     }
     cover_cache[emptyIdx] = cover;
     cover->timestamp = time(NULL);
-    cover->refc++;
+    cover_info_ref (cover);
 }
 
 static void
@@ -1053,7 +1058,7 @@ execute_callback (ddb_cover_callback_t callback, ddb_cover_info_t *cover, ddb_co
     // Make all the callbacks (and free the chain), with data if a file was written
     if (cover_found) {
         trace ("artwork fetcher: cover art file found: %s\n", cover->image_filename);
-        cover->refc++;
+        sync_cover_info_ref(cover);
         callback (0, query, cover);
     }
     else {
@@ -1145,33 +1150,31 @@ squash_query(ddb_cover_callback_t callback, ddb_cover_query_t *query) {
 
 static void callback_and_free_squashed (ddb_cover_info_t *cover, ddb_cover_query_t *query) {
     __block artwork_query_t *squashed_queries = NULL;
-    if (sync_queue != NULL) {
-        dispatch_sync (sync_queue, ^{
-            cover_update_cache (cover);
-            // find & remove from the queries list
-            artwork_query_t *q = query_head;
-            artwork_query_t *prev = NULL;
-            for (; q; q = q->next) {
-                if (q->queries[0] == query) {
-                    break;
-                }
-                prev = q;
+    dispatch_sync (sync_queue, ^{
+        cover_update_cache (cover);
+        // find & remove from the queries list
+        artwork_query_t *q = query_head;
+        artwork_query_t *prev = NULL;
+        for (; q; q = q->next) {
+            if (q->queries[0] == query) {
+                break;
             }
+            prev = q;
+        }
 
-            if (q) {
-                if (prev) {
-                    prev->next = q->next;
-                }
-                else {
-                    query_head = q->next;
-                }
-                if (q == query_tail) {
-                    query_tail = prev;
-                }
-                squashed_queries = q;
+        if (q) {
+            if (prev) {
+                prev->next = q->next;
             }
-        });
-    }
+            else {
+                query_head = q->next;
+            }
+            if (q == query_tail) {
+                query_tail = prev;
+            }
+            squashed_queries = q;
+        }
+    });
 
     // send the result
     if (squashed_queries != NULL) {
@@ -1180,7 +1183,7 @@ static void callback_and_free_squashed (ddb_cover_info_t *cover, ddb_cover_query
         }
         free (squashed_queries);
     }
-    cover_info_release (cover);
+    sync_cover_info_release (cover);
 }
 
 static void
@@ -1203,9 +1206,7 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         }
 
         /* Process this query, hopefully writing a file into cache */
-        ddb_cover_info_t *cover = calloc (sizeof (ddb_cover_info_t), 1);
-        cover->refc = 1;
-        cover->timestamp = time(NULL);
+        ddb_cover_info_t *cover = sync_cover_info_alloc();
 
         if (!album_tf) {
             album_tf = deadbeef->tf_compile ("%album%");
@@ -1280,10 +1281,9 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
             dispatch_async (fetch_queue, ^{
                 process_query (cover);
 
-                dispatch_semaphore_signal (fetch_semaphore);
-
                 // update queue, and notity the caller
                 callback_and_free_squashed (cover, query);
+                dispatch_semaphore_signal (fetch_semaphore);
             });
         }
     });
@@ -1548,6 +1548,8 @@ artwork_plugin_stop (void) {
 
     cover_cache_free ();
 
+    cover_info_cleanup();
+
     if (artwork_filemask) {
         free (artwork_filemask);
     }
@@ -1672,7 +1674,7 @@ ddb_artwork_plugin_t plugin = {
     .plugin.plugin.get_actions = artwork_get_actions,
     .cover_get = cover_get,
     .reset = artwork_reset,
-    .cover_info_release = cover_info_release,
+    .cover_info_release = sync_cover_info_release,
     .add_listener = artwork_add_listener,
     .remove_listener = artwork_remove_listener,
 };
