@@ -1008,9 +1008,7 @@ cover_update_cache (ddb_cover_info_t *cover) {
         }
     }
 
-    if (emptyIdx >= 0) {
-    }
-    else {
+    if (emptyIdx < 0) {
         cover_info_release(cover_cache[minTimestampIdx]);
         cover_cache[minTimestampIdx] = NULL;
         emptyIdx = minTimestampIdx;
