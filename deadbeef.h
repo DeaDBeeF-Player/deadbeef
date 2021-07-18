@@ -136,9 +136,9 @@ extern "C" {
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 14)
-#define DEPRECATED_113 DDB_DEPRECATED("since deadbeef API 1.14")
+#define DEPRECATED_114 DDB_DEPRECATED("since deadbeef API 1.14")
 #else
-#define DEPRECATED_113
+#define DEPRECATED_114
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 13)
