@@ -122,7 +122,7 @@ fixed64 fixdiv64(fixed64 x, fixed64 y)
 }
 
 
-     static const long cordic_circular_gain = 0xb2458939; /* 0.607252929 */  
+     static const int32_t cordic_circular_gain = 0xb2458939; /* 0.607252929 */
      
  /* Table of values of atan(2^-i) in 0.32 format fractions of pi where pi = 0xffffffff / 2 */    
  static const unsigned long atan_table[] = {     
@@ -174,7 +174,7 @@ fixed64 fixdiv64(fixed64 x, fixed64 y)
      
  long fsincos(unsigned long phase, fixed32 *cos)     
  {   
-     int64_t x, x1, y, y1;
+     int32_t x, x1, y, y1;
      unsigned long z, z1;    
      int i;  
      
