@@ -1875,8 +1875,11 @@ typedef struct DB_decoder_s {
 } DB_decoder_t;
 
 #if (DDB_API_LEVEL >= 14)
-// extended decoder interface, with 64 bit seeking support
-typedef struct DB_decoder2_s {
+/// Extended decoder interface, with 64 bit seeking support.
+/// Usage:
+///    Use ddb_decoder2_t as your base plugin type
+///    Add DDB_PLUGIN_FLAG_IMPLEMENTS_DECODER2 to your plugin's flags field.
+typedef struct ddb_decoder2_s {
     DB_decoder_t decoder;
 
     // perform seeking in samples (if possible)
