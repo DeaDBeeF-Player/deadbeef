@@ -2562,7 +2562,7 @@
 			outputFiles = (
 				"${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o",
 			);
-			script = "YASM=${PROJECT_DIR}/deps/yasm/yasm\n${YASM} -f macho64 -D ARCH_X86_64 -m amd64 -DPIC -DPREFIX -o ${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o ${INPUT_FILE_PATH}\n\n\n";
+			script = "YASM=\"${PROJECT_DIR}/deps/yasm/yasm\"\n${YASM} -f macho64 -D ARCH_X86_64 -m amd64 -DPIC -DPREFIX -o ${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o ${INPUT_FILE_PATH}\n\n\n";
 		};
 		4D32FA0C19A64275000FFDE0 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
