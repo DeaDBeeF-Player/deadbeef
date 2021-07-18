@@ -1586,6 +1586,7 @@ typedef struct {
 
 // since 1.14
 #if (DDB_API_LEVEL >= 14)
+    // Get full filesystem path to the specified plugin file (.so/.dll/.dylib)
     const char* (*plug_get_path_for_plugin_ptr) (struct DB_plugin_s *plugin_ptr);
 #endif
 } DB_functions_t;
