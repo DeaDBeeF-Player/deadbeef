@@ -109,6 +109,7 @@ extern DB_functions_t *deadbeef;
 - (void)applicationWillQuit:(NSNotification *)notification {
     self.medialibPlugin = NULL;
     self.artworkPlugin = NULL;
+    NSLog(@"MediaLibraryOutlineViewController: received applicationWillQuit notification");
 }
 
 - (void)dealloc {
@@ -434,7 +435,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
                     if (image) {
                         view.imageView.image = image;
                     }
-                    else {
+                    else if (self.artworkPlugin != NULL) {
                         view.imageView.image = nil;
                         if (!mlItem.coverObtained) {
                             ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
