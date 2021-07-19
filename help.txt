@@ -2,7 +2,7 @@ Help file for GTK version of Deadbeef Player (Linux/*BSD and friends)
 
 * LINKS
 
-    main website: http://deadbeef.sf.net
+    main website: https://deadbeef.sourceforge.io
     wiki: https://github.com/DeaDBeeF-Player/deadbeef/wiki
     development website: https://github.com/DeaDBeeF-Player/deadbeef
     info for contributors: https://github.com/DeaDBeeF-Player/deadbeef/blob/master/CONTRIBUTING.md
@@ -26,7 +26,7 @@ Help file for GTK version of Deadbeef Player (Linux/*BSD and friends)
 
     To display album art in the playlist, you need to perform the following steps:
 
-    1. Add new column, and choose the "Album Art" column type
+    1. Add a new column, and choose "Album Art" column type
     2. Right click on the playlist column headers, and in the context menu select "Group by" submenu. Click "Artist/Date/Album", or another option which you prefer.
 
     Another option is to use the album art widget in design mode (View -> Design mode)
