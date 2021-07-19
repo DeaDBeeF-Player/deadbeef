@@ -364,6 +364,7 @@ conf_remove_items (const char *key) {
     DB_conf_item_t *it;
     for (it = conf_items; it; prev = it, it = it->next) {
         if (!strncasecmp (key, it->key, l)) {
+            changed = 1;
             break;
         }
     }
