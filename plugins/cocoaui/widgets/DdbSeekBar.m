@@ -305,6 +305,8 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 - (void)scrollWheel:(NSEvent *)event {
     [self updatePosition:self.floatValue + event.scrollingDeltaX + event.scrollingDeltaY];
     [self sendAction:self.action to:self.target];
+    self.overlay.hidden = NO;
+    [self refreshOverlayTimer];
 }
 
 - (float)percentageFromMouseEvent:(NSEvent *)event {
