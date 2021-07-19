@@ -2,7 +2,7 @@ Help file for Cocoa/macOS version of DeaDBeeF Player
 
 * LINKS
 
-    Main website: http://deadbeef.sf.net
+    Main website: https://deadbeef.sourceforge.io
     Wiki: https://github.com/DeaDBeeF-Player/deadbeef/wiki
     Development website: https://github.com/DeaDBeeF-Player/deadbeef
     Info for contributors: https://github.com/DeaDBeeF-Player/deadbeef/blob/master/CONTRIBUTING.md
@@ -18,7 +18,7 @@ Help file for Cocoa/macOS version of DeaDBeeF Player
     Most settings can be configured through the Preferences dialog.
 
     All configuration is stored in the $HOME/Library/Preferences/deadbeef folder.
-    Individual settings can be tweaked in the $HOME/Library/Preferences/config text file.
+    Individual settings can be tweaked in the $HOME/Library/Preferences/deadbeef/config text file.
 
     You should exit the player before editing this file, or your changes will be overwritten.
 
@@ -26,6 +26,6 @@ Help file for Cocoa/macOS version of DeaDBeeF Player
 
     To display album art in the playlist, you need to perform the following steps:
 
-    1. Add new column, and choose the "Album Art" column type
+    1. Add a new column, and choose "Album Art" column type
     2. Right click on the playlist column headers, and in the context menu select "Group by" submenu. Click "Artist/Date/Album", or another option which you prefer.
 
