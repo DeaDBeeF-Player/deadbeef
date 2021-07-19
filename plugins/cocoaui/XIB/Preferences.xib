@@ -181,7 +181,7 @@
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="5ti-KG-6jS">
                                         <rect key="frame" x="18" y="142" width="401" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Hide the &quot;Remove from disk&quot; context menu item" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="3fF-la-mG4">
+                                        <buttonCell key="cell" type="check" title="Hide the &quot;Delete from Disk&quot; context menu item" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="3fF-la-mG4">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -1032,7 +1032,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" alternatingRowBackgroundColors="YES" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" autosaveName="" rowSizeStyle="automatic" viewBased="YES" id="oDJ-0h-H53">
-                                <rect key="frame" x="0.0" y="0.0" width="198" height="309"/>
+                                <rect key="frame" x="0.0" y="0.0" width="198" height="307"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <size key="intercellSpacing" width="3" height="2"/>
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1621,7 +1621,7 @@ Gw
                     <rect key="frame" x="20" y="40" width="440" height="213"/>
                     <clipView key="contentView" id="do0-5z-Q8M">
                         <rect key="frame" x="1" y="1" width="438" height="211"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" id="0Ov-kf-8Ci">
                                 <rect key="frame" x="0.0" y="0.0" width="438" height="211"/>
