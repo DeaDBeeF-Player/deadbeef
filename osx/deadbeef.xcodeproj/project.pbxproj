@@ -1861,6 +1861,8 @@
 		2DAA4040269AF879006D2754 /* TrackPositionFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA402C269AF864006D2754 /* TrackPositionFormatter.m */; };
 		2DAA4041269AF880006D2754 /* WeakRefWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3992E025C2038700CFA936 /* WeakRefWrapper.m */; };
 		2DAA4C141AAF88FF00519559 /* TitleFormattingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA4C131AAF88FF00519559 /* TitleFormattingTests.m */; };
+		2DAB1A3026A5FB9C00EA8B8F /* PreferencesPluginEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAB1A2E26A5FB9C00EA8B8F /* PreferencesPluginEntry.h */; };
+		2DAB1A3126A5FB9C00EA8B8F /* PreferencesPluginEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAB1A2F26A5FB9C00EA8B8F /* PreferencesPluginEntry.m */; };
 		2DACBB241A40CEB100CCF401 /* mp3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DAD80A12416DBB100EB3075 /* CustomToolbarItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAD809F2416DBB100EB3075 /* CustomToolbarItem.h */; };
 		2DAD80A22416DBB100EB3075 /* CustomToolbarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAD80A02416DBB100EB3075 /* CustomToolbarItem.m */; };
@@ -5572,6 +5574,8 @@
 		2DAA4C081AAF88DE00519559 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DAA4C0B1AAF88DE00519559 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2DAA4C131AAF88FF00519559 /* TitleFormattingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TitleFormattingTests.m; sourceTree = "<group>"; };
+		2DAB1A2E26A5FB9C00EA8B8F /* PreferencesPluginEntry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreferencesPluginEntry.h; sourceTree = "<group>"; };
+		2DAB1A2F26A5FB9C00EA8B8F /* PreferencesPluginEntry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PreferencesPluginEntry.m; sourceTree = "<group>"; };
 		2DAD809F2416DBB100EB3075 /* CustomToolbarItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomToolbarItem.h; sourceTree = "<group>"; };
 		2DAD80A02416DBB100EB3075 /* CustomToolbarItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomToolbarItem.m; sourceTree = "<group>"; };
 		2DAE701725BDDC3300E40154 /* deletefromdisk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = deletefromdisk.h; sourceTree = "<group>"; };
@@ -9496,6 +9500,8 @@
 				2DA30E782403292D001BAB8A /* PlaybackPreferencesViewController.m */,
 				2DB2F73D240466AF00F7C000 /* PluginsPreferencesViewController.h */,
 				2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */,
+				2DAB1A2E26A5FB9C00EA8B8F /* PreferencesPluginEntry.h */,
+				2DAB1A2F26A5FB9C00EA8B8F /* PreferencesPluginEntry.m */,
 				2DCF73B21A952F8900495740 /* PreferencesWindowController.h */,
 				2DCF73B31A952F8900495740 /* PreferencesWindowController.m */,
 				2D9BD6772405A81600C02D60 /* SoundPreferencesViewController.h */,
@@ -12672,6 +12678,7 @@
 				2DDE52A624F821630096EF80 /* MediaLibraryOutlineView.h in Headers */,
 				2DF55C292270F415002C44DC /* ScriptableSelectViewController.h in Headers */,
 				2D71C26A1DC88E5C00247CEF /* ScriptableTableDataSource.h in Headers */,
+				2DAB1A3026A5FB9C00EA8B8F /* PreferencesPluginEntry.h in Headers */,
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
 				2DF55C432270FF7E002C44DC /* ScriptablePropertySheetDataSource.h in Headers */,
 				2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */,
@@ -15857,6 +15864,7 @@
 				2DB1641B24FAB13400034E11 /* MediaLibraryManager.m in Sources */,
 				2DAA4040269AF879006D2754 /* TrackPositionFormatter.m in Sources */,
 				2DA2738A2406FBD800FB9BE1 /* DspPreferencesViewController.m in Sources */,
+				2DAB1A3126A5FB9C00EA8B8F /* PreferencesPluginEntry.m in Sources */,
 				2DBC62DB24CCDFB200AA20BF /* VisualizationView.m in Sources */,
 				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
 				2DB2F740240466AF00F7C000 /* PluginsPreferencesViewController.m in Sources */,

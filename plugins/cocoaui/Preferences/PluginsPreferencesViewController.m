@@ -7,6 +7,7 @@
 //
 
 #import "PluginsPreferencesViewController.h"
+#import "PreferencesPluginEntry.h"
 #import "PropertySheetViewController.h"
 #include "deadbeef.h"
 
@@ -58,17 +59,20 @@ extern DB_functions_t *deadbeef;
 @interface PluginsPreferencesViewController () <NSTableViewDataSource, NSTableViewDelegate>
 
 // Plugins properties
-@property (unsafe_unretained) IBOutlet NSTextField *pluginUnselectedText;
-@property (unsafe_unretained) IBOutlet NSTabView *pluginTabView;
+@property (nonatomic,weak) IBOutlet NSTextField *pluginUnselectedText;
+@property (nonatomic,weak) IBOutlet NSTabView *pluginTabView;
 
-@property (unsafe_unretained) IBOutlet NSTableView *pluginList;
-@property (unsafe_unretained) IBOutlet NSTextField *pluginVersion;
-@property (unsafe_unretained) IBOutlet NSTextView *pluginDescription;
-@property (unsafe_unretained) IBOutlet NSTextView *pluginLicense;
+@property (nonatomic) NSArray<PreferencesPluginEntry *> *pluginList;
 
-@property (strong) IBOutlet PropertySheetViewController *pluginConfViewController;
+@property (nonatomic,weak) IBOutlet NSTableView *pluginsTableView;
+@property (nonatomic,weak) IBOutlet NSTextField *pluginVersion;
+@property (nonatomic,weak) IBOutlet NSTextView *pluginDescription;
+@property (nonatomic,weak) IBOutlet NSTextView *pluginLicense;
 
-@property (weak) IBOutlet NSButton *wwwButton;
+@property (nonatomic,weak) IBOutlet PropertySheetViewController *pluginConfViewController;
+
+@property (nonatomic,weak) IBOutlet NSButton *wwwButton;
+
 - (IBAction)pluginOpenWebsite:(id)sender;
 - (IBAction)pluginConfResetDefaults:(id)sender;
 
@@ -88,8 +92,22 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)initPluginList {
-    self.pluginList.dataSource = self;
-    self.pluginList.delegate = self;
+    NSMutableArray *pluginsArray = [NSMutableArray new];
+
+    DB_plugin_t **plugins = deadbeef->plug_get_list();
+
+    for (int i = 0; plugins[i]; i++) {
+        PreferencesPluginEntry *entry = [PreferencesPluginEntry new];
+        entry.plugin = plugins[i];
+        [pluginsArray addObject:entry];
+    }
+
+    self.pluginList = [pluginsArray sortedArrayUsingComparator:^NSComparisonResult(PreferencesPluginEntry * _Nonnull obj1, PreferencesPluginEntry * _Nonnull obj2) {
+        return strcasecmp (obj1.plugin->name, obj2.plugin->name);
+    }];
+
+    self.pluginsTableView.dataSource = self;
+    self.pluginsTableView.delegate = self;
     self.pluginInfo = -1;
 }
 
@@ -105,7 +123,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)initPluginConfiguration:(NSInteger)idx {
-    DB_plugin_t *p = deadbeef->plug_get_list()[idx];
+    DB_plugin_t *p = self.pluginList[idx].plugin;
 
     self.pluginPropertySheetDataSource = [[PluginConfigPropertySheetDataSource alloc] initWithPlugin:p];
 
@@ -134,13 +152,13 @@ extern DB_functions_t *deadbeef;
     if (idx != -1) {
         _pluginUnselectedText.hidden = YES;
         _pluginTabView.hidden = NO;
-        DB_plugin_t **p = deadbeef->plug_get_list();
-        version = [NSString stringWithFormat:@"%d.%d", p[idx]->version_major, p[idx]->version_minor];
-        if (p[idx]->descr) {
-            description = [NSString stringWithUTF8String:p[idx]->descr];
+        DB_plugin_t *p = self.pluginList[idx].plugin;
+        version = [NSString stringWithFormat:@"%d.%d", p->version_major, p->version_minor];
+        if (p->descr) {
+            description = [NSString stringWithUTF8String:p->descr];
         }
-        if (p[idx]->copyright) {
-            license = [NSString stringWithUTF8String:p[idx]->copyright];
+        if (p->copyright) {
+            license = [NSString stringWithUTF8String:p->copyright];
         }
 
         [self initPluginConfiguration:idx];
@@ -159,21 +177,15 @@ extern DB_functions_t *deadbeef;
 
 // data source for plugin list
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView {
-    DB_plugin_t **p = deadbeef->plug_get_list();
-    int cnt;
-    for (cnt = 0; p[cnt]; cnt++);
-
-    return cnt;
+    return self.pluginList.count;
 }
 
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
-    DB_plugin_t **p = deadbeef->plug_get_list();
-
-    return [NSString stringWithUTF8String: p[rowIndex]->name];
+    return [NSString stringWithUTF8String: self.pluginList[rowIndex].plugin->name];
 }
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
-    self.pluginInfo = [_pluginList selectedRow];
+    self.pluginInfo = [_pluginsTableView selectedRow];
 }
 
 

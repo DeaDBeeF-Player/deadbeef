@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19142.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19142.2"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -1028,7 +1028,7 @@
                     <rect key="frame" x="20" y="20" width="200" height="311"/>
                     <clipView key="contentView" id="Qwb-Aj-8az">
                         <rect key="frame" x="1" y="1" width="198" height="309"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" alternatingRowBackgroundColors="YES" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" autosaveName="" id="oDJ-0h-H53">
                                 <rect key="frame" x="0.0" y="0.0" width="198" height="309"/>
@@ -1100,7 +1100,7 @@
                                         <rect key="frame" x="20" y="51" width="409" height="222"/>
                                         <clipView key="contentView" copiesOnScroll="NO" id="c6E-sw-DGw" customClass="FlippedClipView">
                                             <rect key="frame" x="1" y="1" width="407" height="220"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9eO-pn-WbB" customClass="PropertySheetContentView">
                                                     <rect key="frame" x="0.0" y="0.0" width="407" height="220"/>
@@ -1476,6 +1476,7 @@
                 <string>contentType</string>
                 <string>plugins</string>
             </declaredKeys>
+            <classReference key="objectClass" className="ContentTypeMap"/>
         </arrayController>
         <userDefaultsController representsSharedInstance="YES" id="4c2-YY-bzC"/>
         <viewController id="jtP-FH-nkX" customClass="GuiPreferencesWindowController">
@@ -1504,10 +1505,10 @@
                 <outlet property="pluginConfViewController" destination="MIg-N1-ie7" id="UGa-2A-e4X"/>
                 <outlet property="pluginDescription" destination="RAU-kc-ZWb" id="6Iv-QP-yfo"/>
                 <outlet property="pluginLicense" destination="8p1-kz-NZ1" id="c1y-vH-fLV"/>
-                <outlet property="pluginList" destination="oDJ-0h-H53" id="lwW-gU-heT"/>
                 <outlet property="pluginTabView" destination="bES-gi-vpR" id="CbE-ET-MR2"/>
                 <outlet property="pluginUnselectedText" destination="Oe9-ps-NvQ" id="rG6-Ck-voZ"/>
                 <outlet property="pluginVersion" destination="wDm-op-PV2" id="yiW-hS-MMz"/>
+                <outlet property="pluginsTableView" destination="oDJ-0h-H53" id="lwW-gU-heT"/>
                 <outlet property="view" destination="ZNh-3b-s1L" id="Aag-Jo-0i9"/>
                 <outlet property="wwwButton" destination="cbN-IE-HyD" id="y8M-AM-q7I"/>
             </connections>
@@ -1529,8 +1530,8 @@
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="167" y="89" width="453" height="71"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
-            <view key="contentView" id="da6-wn-fR8">
-                <rect key="frame" x="0.0" y="0.0" width="453" height="79"/>
+            <view key="contentView" misplaced="YES" id="da6-wn-fR8">
+                <rect key="frame" x="0.0" y="-8" width="453" height="79"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="w5H-TF-NxP">
@@ -1599,7 +1600,7 @@ Gw
                     <rect key="frame" x="20" y="40" width="440" height="213"/>
                     <clipView key="contentView" id="do0-5z-Q8M">
                         <rect key="frame" x="1" y="1" width="438" height="211"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" id="0Ov-kf-8Ci">
                                 <rect key="frame" x="0.0" y="0.0" width="438" height="211"/>
