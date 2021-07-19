@@ -20,6 +20,7 @@ version 1.8.8
 	Added: Using scroll wheel with seek bar (Nicolai Syvertsen)
 	Added: "Play Next" context menu action (Natalie Stewart)
 	Added: Handling samplerates higher than 192KHz to pulseaudio
+	Added: Delete from disk dialog will highlight the Delete button as destructive action
 
 version 1.8.7
 	Fixed: Pulseaudio crash after a non-critical recoverable error
