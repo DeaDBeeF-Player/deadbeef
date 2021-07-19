@@ -63,6 +63,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic,weak) IBOutlet NSTabView *pluginTabView;
 
 @property (nonatomic) NSArray<PreferencesPluginEntry *> *pluginList;
+@property (nonatomic) BOOL isShowingConfigurablePlugins;
 
 @property (nonatomic,weak) IBOutlet NSTableView *pluginsTableView;
 @property (nonatomic,weak) IBOutlet NSTextField *pluginVersion;
@@ -89,6 +90,16 @@ extern DB_functions_t *deadbeef;
 
     // Do view setup here.
     [self initPluginList];
+
+    // plugin list context menu
+    NSMenu *menu = [NSMenu new];
+
+    [menu addItemWithTitle:@"Copy report" action:@selector(copyReport:) keyEquivalent:@""];
+    [menu addItemWithTitle:@"Only show plugins with configuration" action:@selector(toggleShowConfigurablePlugins:) keyEquivalent:@""];
+
+    menu.autoenablesItems = NO;
+
+    self.pluginsTableView.menu = menu;
 }
 
 - (void)initPluginList {
@@ -97,6 +108,9 @@ extern DB_functions_t *deadbeef;
     DB_plugin_t **plugins = deadbeef->plug_get_list();
 
     for (int i = 0; plugins[i]; i++) {
+        if (!plugins[i]->configdialog && self.isShowingConfigurablePlugins) {
+            continue;
+        }
         PreferencesPluginEntry *entry = [PreferencesPluginEntry new];
         entry.plugin = plugins[i];
         [pluginsArray addObject:entry];
@@ -111,6 +125,15 @@ extern DB_functions_t *deadbeef;
     self.pluginInfo = -1;
 }
 
+- (void)copyReport:(NSMenuItem *)sender {
+}
+
+- (void)toggleShowConfigurablePlugins:(NSMenuItem *)sender {
+    self.isShowingConfigurablePlugins = !self.isShowingConfigurablePlugins;
+    sender.state = self.isShowingConfigurablePlugins ? NSControlStateValueOn : NSControlStateValueOff;
+    [self initPluginList];
+    [self.pluginsTableView reloadData];
+}
 
 - (IBAction)pluginOpenWebsite:(id)sender {
     if (self.website) {
@@ -193,7 +216,10 @@ extern DB_functions_t *deadbeef;
     }
     BOOL isSystemPlugin = strstr(pluginpath, plugindir) != NULL;
     if (!isSystemPlugin) {
-        view.textField.font = [NSFontManager.sharedFontManager convertFont:view.textField.font toHaveTrait:NSBoldFontMask];
+        view.textField.font = [NSFontManager.sharedFontManager convertFont:[NSFont systemFontOfSize:NSFont.systemFontSize] toHaveTrait:NSBoldFontMask];
+    }
+    else {
+        view.textField.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
     }
 
     return view;
