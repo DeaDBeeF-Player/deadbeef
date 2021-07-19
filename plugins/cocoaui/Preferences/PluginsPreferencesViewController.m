@@ -175,14 +175,32 @@ extern DB_functions_t *deadbeef;
     _pluginLicense.string = license;
 }
 
-// data source for plugin list
+#pragma mark - NSTableViewDataSource
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView {
     return self.pluginList.count;
 }
 
-- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
-    return [NSString stringWithUTF8String: self.pluginList[rowIndex].plugin->name];
+- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
+    NSTableCellView *view = [tableView makeViewWithIdentifier:tableColumn.identifier owner:self];
+    NSString *pluginName = [NSString stringWithUTF8String: self.pluginList[row].plugin->name];
+
+    view.textField.stringValue = pluginName;
+
+    const char *plugindir = deadbeef->get_system_dir (DDB_SYS_DIR_PLUGIN);
+    const char *pluginpath = deadbeef->plug_get_path_for_plugin_ptr (self.pluginList[row].plugin);
+    if (!pluginpath) {
+        pluginpath = plugindir;
+    }
+    BOOL isSystemPlugin = strstr(pluginpath, plugindir) != NULL;
+    if (!isSystemPlugin) {
+        view.textField.font = [NSFontManager.sharedFontManager convertFont:view.textField.font toHaveTrait:NSBoldFontMask];
+    }
+
+    return view;
 }
+
+
+#pragma mark - NSTableViewDelegate
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
     self.pluginInfo = [_pluginsTableView selectedRow];
