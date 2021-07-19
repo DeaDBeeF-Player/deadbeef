@@ -179,6 +179,7 @@ extern DB_functions_t *deadbeef;
     deadbeef->conf_remove_items (self.groupByConfStr);
     PlaylistView *lv = (PlaylistView *)self.view;
     [lv.contentView reloadData];
+    deadbeef->conf_save ();
 }
 
 - (void)menuGroupByArtistDateAlbum:(id)sender {
@@ -187,6 +188,7 @@ extern DB_functions_t *deadbeef;
     deadbeef->conf_set_str (self.groupByConfStr, self.groupStr.UTF8String);
     PlaylistView *lv = (PlaylistView *)self.view;
     [lv.contentView reloadData];
+    deadbeef->conf_save ();
 }
 
 - (void)menuGroupByArtist:(id)sender {
@@ -195,6 +197,7 @@ extern DB_functions_t *deadbeef;
     deadbeef->conf_set_str (self.groupByConfStr, self.groupStr.UTF8String);
     PlaylistView *lv = (PlaylistView *)self.view;
     [lv.contentView reloadData];
+    deadbeef->conf_save ();
 }
 
 - (void)menuGroupByCustom:(id)sender {
@@ -213,6 +216,7 @@ extern DB_functions_t *deadbeef;
             deadbeef->conf_set_str([self groupByConfStr], self.groupStr.UTF8String);
             PlaylistView *lv = (PlaylistView *)self.view;
             [lv.contentView reloadData];
+            deadbeef->conf_save ();
         }
     }];
 }
