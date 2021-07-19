@@ -12,6 +12,8 @@
 extern DB_functions_t *deadbeef;
 
 #define NUM_BARS 84
+
+// FIXME: add UPPER_BOUND, -30dB seems to be reasonable
 #define LOWER_BOUND -70
 
 @interface VisualizationView() {
@@ -130,7 +132,6 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
         if (saBars[i] < 0) {
             saBars[i] = 0;
         }
-
 
         const float a = 9.8f;
         const float t = 1/60.f;
