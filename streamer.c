@@ -2024,6 +2024,15 @@ viz_process (char * restrict bytes, int bytes_size, DB_output_t *output) {
     if (waveform_listeners || spectrum_listeners) {
         int in_frame_size = (output->fmt.bps >> 3) * output->fmt.channels;
         int in_frames = bytes_size / in_frame_size;
+
+        // if the input is larger than buffer, use the tail
+        if (in_frames > DDB_FREQ_BANDS * 2) {
+            bytes += (in_frames - DDB_FREQ_BANDS * 2) * in_frame_size;
+            in_frames = DDB_FREQ_BANDS * 2;
+            bytes_size = DDB_FREQ_BANDS * 2 * in_frame_size;
+        }
+
+        // convert to float
         ddb_waveformat_t out_fmt = {
             .bps = 32,
             .channels = output->fmt.channels,
@@ -2052,34 +2061,39 @@ viz_process (char * restrict bytes, int bytes_size, DB_output_t *output) {
         }
 
         if (spectrum_listeners) {
-            int remaining = in_frames;
-            do {
-                int sz = DDB_FREQ_BANDS * 2 -audio_data_fill;
-                sz = min (sz, remaining);
+            // shift buffer
+            int shift_samples = 0;
+            if (in_frames < DDB_FREQ_BANDS * 2) {
+                shift_samples = DDB_FREQ_BANDS * 2 - in_frames;
                 for (int c = 0; c < audio_data_channels; c++) {
-                    for (int s = 0; s < sz; s++) {
-                        audio_data[DDB_FREQ_BANDS * 2 * c + audio_data_fill + s] = temp_audio_data[(in_frames-remaining + s) * audio_data_channels + c];
-                    }
+                    float *channel = &audio_data[DDB_FREQ_BANDS * 2 * c];
+                    memmove (channel, channel + in_frames * sizeof (float), shift_samples * sizeof (float));
                 }
-                audio_data_fill += sz;
-                remaining -= sz;
-                if (audio_data_fill == DDB_FREQ_BANDS * 2) {
-                    for (int c = 0; c < audio_data_channels; c++) {
-                        calc_freq (&audio_data[DDB_FREQ_BANDS * 2 * c], &freq_data[DDB_FREQ_BANDS * c]);
-                    }
-                    ddb_audio_data_t spectrum_data = {
-                        .fmt = &out_fmt,
-                        .data = freq_data,
-                        .nframes = DDB_FREQ_BANDS
-                    };
-                    mutex_lock (wdl_mutex);
-                    for (wavedata_listener_t *l = spectrum_listeners; l; l = l->next) {
-                        l->callback (l->ctx, &spectrum_data);
-                    }
-                    mutex_unlock (wdl_mutex);
-                    audio_data_fill = 0;
+            }
+
+            // append new samples
+            for (int c = 0; c < audio_data_channels; c++) {
+                float *channel = &audio_data[DDB_FREQ_BANDS * 2 * c];
+                for (int s = 0; s < in_frames; s++) {
+                    channel[s + shift_samples] = temp_audio_data[s * audio_data_channels + c];
                 }
-            } while (remaining > 0);
+            }
+
+            // calc fft
+            for (int c = 0; c < audio_data_channels; c++) {
+                calc_freq (&audio_data[DDB_FREQ_BANDS * 2 * c], &freq_data[DDB_FREQ_BANDS * c]);
+            }
+            ddb_audio_data_t spectrum_data = {
+                .fmt = &out_fmt,
+                .data = freq_data,
+                .nframes = DDB_FREQ_BANDS
+            };
+            mutex_lock (wdl_mutex);
+            for (wavedata_listener_t *l = spectrum_listeners; l; l = l->next) {
+                l->callback (l->ctx, &spectrum_data);
+            }
+            mutex_unlock (wdl_mutex);
+            audio_data_fill = 0;
         }
     }
 }
