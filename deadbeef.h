@@ -650,7 +650,7 @@ typedef struct {
 #ifdef __APPLE__
 // FIXME: this is an API breaking change, so shouldn't be merged to master.
 // It's added purely to experiment with FFT on a branch.
-#define DDB_FREQ_BANDS 2048
+#define DDB_FREQ_BANDS 8192
 #else
 #define DDB_FREQ_BANDS 256
 #endif
