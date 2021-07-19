@@ -201,17 +201,22 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
 - (void)drawSpectrumAnalyzer:(CGContextRef)context {
     CGFloat bw = NSWidth(self.bounds)/(CGFloat)NUM_BARS;
     CGContextSetFillColorWithColor(context, self.barColor.CGColor);
+
+    const CGFloat expand = 2; // how much to expand outside of the view bottom edge
+
+    CGFloat h = NSHeight(self.bounds) + expand;
+
     for (int i = 0; i < NUM_BARS; i++) {
-        CGFloat bh = (CGFloat)saBars[i] * NSHeight(self.bounds);
+        CGFloat bh = (CGFloat)saBars[i] * h;
 //        int pIdx = i * 255 / NUM_BARS;
 //        let r = colorPalette[1][pIdx*4+0]
 //        let g = colorPalette[1][pIdx*4+1]
 //        let b = colorPalette[1][pIdx*4+2]
-        CGContextAddRect(context, CGRectMake((CGFloat)i*bw+1, 0, bw-2, bh));
+        CGContextAddRect(context, CGRectMake((CGFloat)i*bw+1, -expand, bw-2, bh));
     }
     CGContextFillPath(context);
     for (int i = 0; i < NUM_BARS; i++) {
-        CGFloat bh = (CGFloat)saPeaks[i] * NSHeight(self.bounds);
+        CGFloat bh = (CGFloat)saPeaks[i] * h - expand;
         CGContextAddRect(context, CGRectMake((CGFloat)i*bw+1, bh, bw-2, 2));
     }
 
