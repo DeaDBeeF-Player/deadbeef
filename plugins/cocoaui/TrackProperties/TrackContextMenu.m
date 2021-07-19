@@ -412,8 +412,8 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl) {
         alert.alertStyle = NSAlertStyleWarning;
         alert.messageText = @"Delete files from disk";
         alert.informativeText = buf;
-        [alert addButtonWithTitle:@"No"];
-        [alert addButtonWithTitle:@"Yes"];
+        [alert addButtonWithTitle:@"Cancel"];
+        [alert addButtonWithTitle:@"Delete"];
 #if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101600
         if (@available(macOS 10.16, *)) {
             alert.buttons[1].hasDestructiveAction = YES;
