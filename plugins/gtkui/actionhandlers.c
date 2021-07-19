@@ -397,12 +397,16 @@ _warningMessageForCtx (ddbDeleteFromDiskController_t ctl, ddb_action_context_t c
             snprintf(buf, sizeof (buf), _("Do you really want to delete the currently playing file?%s"), buf2);
         }
 
-        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Delete files from disk"));
+        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_NONE, _("Delete files from disk"));
+
+        gtk_dialog_add_button(GTK_DIALOG(dlg), _("Cancel"), GTK_RESPONSE_NO);
+        gtk_dialog_add_button(GTK_DIALOG(dlg), _("Delete"), GTK_RESPONSE_YES);
+
         gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), "%s", buf);
         gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
 
 #if GTK_CHECK_VERSION(3,0,0)
-        GtkWidget *btn = gtk_dialog_get_widget_for_response(GTK_MESSAGE_DIALOG(dlg), GTK_RESPONSE_YES);
+        GtkWidget *btn = gtk_dialog_get_widget_for_response(GTK_DIALOG(dlg), GTK_RESPONSE_YES);
         gtk_style_context_add_class (gtk_widget_get_style_context(btn), "destructive-action");
 #endif
 
