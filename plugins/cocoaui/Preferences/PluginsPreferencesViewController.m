@@ -126,6 +126,20 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)copyReport:(NSMenuItem *)sender {
+    NSString *report = @"";
+
+    DB_plugin_t **plugins = deadbeef->plug_get_list ();
+    int i;
+    for (i = 0; plugins[i]; i++) {
+        const char *path = deadbeef->plug_get_path_for_plugin_ptr (plugins[i]);
+        NSString *strPath = path ? [NSString stringWithUTF8String:path] : @"(builtin)";
+        NSString *name = [NSString stringWithUTF8String:plugins[i]->name];
+
+        report = [report stringByAppendingFormat:@"%@: %@ (%d.%d)\n", strPath, name, plugins[i]->version_major, plugins[i]->version_minor];
+    }
+
+    [NSPasteboard.generalPasteboard clearContents];
+    [NSPasteboard.generalPasteboard setString:report forType:NSStringPboardType];
 }
 
 - (void)toggleShowConfigurablePlugins:(NSMenuItem *)sender {
