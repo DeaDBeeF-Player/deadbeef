@@ -17,6 +17,7 @@ extern DB_functions_t *deadbeef;
 @interface VisualizationView() {
     float saBars[NUM_BARS];
     float saPeaks[NUM_BARS];
+    float saPeaksSpeed[NUM_BARS];
     float saLowerBound;
 }
 
@@ -125,11 +126,17 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
 
     for (int i = 0; i < NUM_BARS; i++) {
         // first attenuate bars and peaks
-        saBars[i] -= 1/50.0f*2;
+        saBars[i] -= 1/50.0f*4;
         if (saBars[i] < 0) {
             saBars[i] = 0;
         }
-        saPeaks[i] -= 0.5/60.0f*2;
+
+
+        const float a = 9.8f;
+        const float t = 1/60.f;
+        saPeaksSpeed[i] = saPeaksSpeed[i] + a * t / 2;
+
+        saPeaks[i] -= saPeaksSpeed[i] * 1/60.f;
         if (saPeaks[i] < 0) {
             saPeaks[i] = 0;
         }
@@ -152,6 +159,7 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
         }
         if (saPeaks[i] < saBars[i]) {
             saPeaks[i] = saBars[i];
+            saPeaksSpeed[i] = 0;
         }
     }
 
