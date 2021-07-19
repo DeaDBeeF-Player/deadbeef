@@ -24,6 +24,7 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) NSMenuItem *reloadMetadataItem;
 @property (nonatomic) NSMenuItem *rgMenuItem;
+@property (nonatomic) NSMenuItem *addToFrontOfQueueItem;
 @property (nonatomic) NSMenuItem *addToQueueItem;
 @property (nonatomic) NSMenuItem *removeFromQueueItem;
 @property (nonatomic) NSMenuItem *convertItem;
@@ -66,6 +67,9 @@ extern DB_functions_t *deadbeef;
     self.rgMenuItem = [[NSMenuItem alloc] initWithTitle:@"ReplayGain" action:nil keyEquivalent:@""];
     self.rgMenuItem.submenu = rgMenu;
     [self addItem:self.rgMenuItem];
+
+    self.addToFrontOfQueueItem = [self addItemWithTitle:@"Play Next" action:@selector(addToFrontOfPlaybackQueue) keyEquivalent:@""];
+    self.addToFrontOfQueueItem.target = self;
 
     self.addToQueueItem = [self addItemWithTitle:@"Play Later" action:@selector(addToPlaybackQueue) keyEquivalent:@""];
     self.addToQueueItem.target = self;
@@ -133,6 +137,7 @@ extern DB_functions_t *deadbeef;
     self.rgRemoveInformationItem.enabled = has_rg_info;
 
 
+    self.addToFrontOfQueueItem.enabled = enabled;
     self.addToQueueItem.enabled = enabled;
     self.removeFromQueueItem.enabled = enabled;
     self.convertItem.enabled = enabled;
@@ -469,6 +474,12 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl) {
 
 #pragma mark - Playback Queue
 
+- (void)addToFrontOfPlaybackQueue {
+    [self forEachTrack:^BOOL(DB_playItem_t *it) {
+        deadbeef->playqueue_insert_at (0, it);
+        return YES;
+    }];
+}
 
 - (void)addToPlaybackQueue {
     [self forEachTrack:^BOOL(DB_playItem_t *it) {

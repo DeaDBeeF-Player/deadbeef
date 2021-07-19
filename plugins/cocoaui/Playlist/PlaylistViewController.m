@@ -1173,6 +1173,14 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
                     }
                 });
             }
+            else if (p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    PlaylistView *listview = (PlaylistView *)self.view;
+                    if (ctx != (uintptr_t)listview) {
+                        listview.contentView.needsDisplay = YES;
+                    }
+                });
+            }
         }
             break;
         case DB_EV_PLAYLISTSWITCHED: {
