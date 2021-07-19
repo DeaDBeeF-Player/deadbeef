@@ -8,7 +8,7 @@
 # Kelvin Cooper <Zhu-Zhe-Yong@live.com>, 2017
 # oupula zheng <3078825@qq.com>, 2017
 # pingplug <pingplug@foxmail.com>, 2016-2018,2021
-# Tramsifex <sunnycode@protonmail.com>, 2020
+# Tramsifex <sunnycode@protonmail.com>, 2020-2021
 # e0c668032ced196bd60f2b6a070d982d_8f72ae0, 2013-2014
 # xdtianyu <xdtianyu@gmail.com>, 2014
 # xdtianyu <xdtianyu@gmail.com>, 2014
@@ -17,9 +17,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-06 22:39+0200\n"
-"PO-Revision-Date: 2021-05-30 08:50+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2021-07-19 19:53+0200\n"
+"PO-Revision-Date: 2021-07-14 09:50+0000\n"
+"Last-Translator: Tramsifex <sunnycode@protonmail.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/deadbeef-player/deadbeef-player/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -268,7 +268,7 @@ msgstr "您仍然要退出吗？"
 
 #: ../plugins/gtkui/gtkui.c:1568 ../plugins/gtkui/prefwin.c:220
 #: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1080
-#: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:402
+#: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:406
 #: ../plugins/gtkui/pltmenu.c:79
 msgid "Warning"
 msgstr "警告"
@@ -357,7 +357,7 @@ msgid "Sort by"
 msgstr "排序依据"
 
 #: ../plugins/gtkui/interface.c:259 ../plugins/gtkui/mainplaylist.c:233
-#: ../plugins/gtkui/plcommon.c:161 ../plugins/gtkui/prefwin.c:496
+#: ../plugins/gtkui/plcommon.c:161 ../plugins/gtkui/prefwin.c:500
 #: ../plugins/gtkui/search.c:653 ../plugins/gtkui/deadbeef.glade.h:20
 #: ../plugins/converter/convgui.c:1184 ../plugins/converter/convgui.c:1752
 #: ../plugins/converter/interface.c:653
@@ -1059,17 +1059,17 @@ msgstr "快捷键"
 #: ../plugins/gtkui/interface.c:3046 ../plugins/gtkui/interface.c:3100
 #: ../plugins/gtkui/deadbeef.glade.h:186
 msgid "Configuration"
-msgstr ""
+msgstr "配置"
 
 #: ../plugins/gtkui/interface.c:3054 ../plugins/gtkui/interface.c:3144
 #: ../plugins/gtkui/deadbeef.glade.h:187
 msgid "Info"
-msgstr ""
+msgstr "信息"
 
 #: ../plugins/gtkui/interface.c:3061 ../plugins/gtkui/interface.c:3160
 #: ../plugins/gtkui/deadbeef.glade.h:188
 msgid "License"
-msgstr ""
+msgstr "许可证"
 
 #: ../plugins/gtkui/interface.c:3095 ../plugins/gtkui/interface.c:4763
 #: ../plugins/gtkui/deadbeef.glade.h:189
@@ -1282,7 +1282,7 @@ msgid "Status"
 msgstr "状态"
 
 #: ../plugins/gtkui/interface.c:5458 ../plugins/gtkui/interface.c:5522
-#: ../plugins/gtkui/deadbeef.glade.h:235
+#: ../plugins/gtkui/deadbeef.glade.h:235 ../plugins/gtkui/actionhandlers.c:402
 msgid "Cancel"
 msgstr "取消"
 
@@ -1296,11 +1296,11 @@ msgstr "更新文件标签"
 
 #: ../plugins/gtkui/interface.c:5549 ../plugins/gtkui/deadbeef.glade.h:238
 msgid "Copy report"
-msgstr ""
+msgstr "复制报告"
 
 #: ../plugins/gtkui/interface.c:5557 ../plugins/gtkui/deadbeef.glade.h:239
 msgid "Only show plugins with configuration"
-msgstr ""
+msgstr "仅显示带有配置的插件"
 
 #: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:651
 msgid "Artist / Album"
@@ -1359,15 +1359,15 @@ msgstr "粘贴(_P)"
 
 #: ../plugins/gtkui/plcommon.c:1054
 msgid "Play Next"
-msgstr ""
+msgstr "播放下一首"
 
 #: ../plugins/gtkui/plcommon.c:1058
 msgid "Play Later"
-msgstr ""
+msgstr "稍后播放"
 
 #: ../plugins/gtkui/plcommon.c:1062
 msgid "Remove from Playback Queue"
-msgstr ""
+msgstr "从播放队列中移除"
 
 #. plugins/hotkeys/hotkeys.c
 #: ../plugins/gtkui/plcommon.c:1084 ../translation/plugins.c:249
@@ -1385,7 +1385,7 @@ msgstr "复制(_C)"
 
 #: ../plugins/gtkui/plcommon.c:1147
 msgid "Remove from Disk"
-msgstr ""
+msgstr "从磁盘中移除"
 
 #: ../plugins/gtkui/plcommon.c:1804 ../plugins/gtkui/plcommon.c:1946
 msgid "Add column"
@@ -2235,7 +2235,7 @@ msgstr "从播放列表移除音轨（们）"
 msgid "Save Playlist"
 msgstr "保存播放列表"
 
-#: ../translation/plugins.c:212 ../plugins/gtkui/actionhandlers.c:583
+#: ../translation/plugins.c:212 ../plugins/gtkui/actionhandlers.c:592
 #, no-c-format
 msgid "Load Playlist"
 msgstr "加载播放列表"
@@ -2248,7 +2248,7 @@ msgstr "移除此播放列表"
 #: ../translation/plugins.c:216
 #, no-c-format
 msgid "Rename Current Playlist"
-msgstr ""
+msgstr "重命名当前播放列表"
 
 #: ../translation/plugins.c:220
 #, no-c-format
@@ -3307,7 +3307,8 @@ msgstr "<small>如果您想向主菜单添加命令，请确保标题中包含�
 msgid "Add Command"
 msgstr "添加命令"
 
-#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:857
+#: ../plugins/shellexecui/shellexecui.c:139
+#: ../plugins/gtkui/actionhandlers.c:403 ../plugins/gtkui/widgets.c:857
 msgid "Delete"
 msgstr "删除"
 
@@ -3390,7 +3391,7 @@ msgstr "您确实要移除当前播放中的文件吗？%s"
 msgid "Delete files from disk"
 msgstr "从磁盘中删除文件"
 
-#: ../plugins/gtkui/actionhandlers.c:605
+#: ../plugins/gtkui/actionhandlers.c:614
 msgid "Save Playlist As"
 msgstr "播放列表另存为"
 

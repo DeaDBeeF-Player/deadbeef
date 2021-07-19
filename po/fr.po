@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-06 22:39+0200\n"
+"POT-Creation-Date: 2021-07-19 19:53+0200\n"
 "PO-Revision-Date: 2021-06-07 11:38+0000\n"
 "Last-Translator: Charles Monzat <c.monzat@laposte.net>\n"
 "Language-Team: French (http://www.transifex.com/deadbeef-player/deadbeef-player/language/fr/)\n"
@@ -270,7 +270,7 @@ msgstr "Voulez-vous toujours quitter ?"
 
 #: ../plugins/gtkui/gtkui.c:1568 ../plugins/gtkui/prefwin.c:220
 #: ../plugins/gtkui/trkproperties.c:103 ../plugins/converter/convgui.c:1080
-#: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:402
+#: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/actionhandlers.c:406
 #: ../plugins/gtkui/pltmenu.c:79
 msgid "Warning"
 msgstr "Avertissement"
@@ -359,7 +359,7 @@ msgid "Sort by"
 msgstr "Trier par"
 
 #: ../plugins/gtkui/interface.c:259 ../plugins/gtkui/mainplaylist.c:233
-#: ../plugins/gtkui/plcommon.c:161 ../plugins/gtkui/prefwin.c:496
+#: ../plugins/gtkui/plcommon.c:161 ../plugins/gtkui/prefwin.c:500
 #: ../plugins/gtkui/search.c:653 ../plugins/gtkui/deadbeef.glade.h:20
 #: ../plugins/converter/convgui.c:1184 ../plugins/converter/convgui.c:1752
 #: ../plugins/converter/interface.c:653
@@ -1284,7 +1284,7 @@ msgid "Status"
 msgstr "Statut"
 
 #: ../plugins/gtkui/interface.c:5458 ../plugins/gtkui/interface.c:5522
-#: ../plugins/gtkui/deadbeef.glade.h:235
+#: ../plugins/gtkui/deadbeef.glade.h:235 ../plugins/gtkui/actionhandlers.c:402
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -2237,7 +2237,7 @@ msgstr "Supprimer la ou les pistes de la liste de lecture"
 msgid "Save Playlist"
 msgstr "Enregistrer la liste de lecture"
 
-#: ../translation/plugins.c:212 ../plugins/gtkui/actionhandlers.c:583
+#: ../translation/plugins.c:212 ../plugins/gtkui/actionhandlers.c:592
 #, no-c-format
 msgid "Load Playlist"
 msgstr "Charger une liste de lecture"
@@ -3309,7 +3309,8 @@ msgstr "<small>Si vous voulez ajouter la commande au menu principal, assurez-vou
 msgid "Add Command"
 msgstr "Ajouter une commande"
 
-#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:857
+#: ../plugins/shellexecui/shellexecui.c:139
+#: ../plugins/gtkui/actionhandlers.c:403 ../plugins/gtkui/widgets.c:857
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -3392,7 +3393,7 @@ msgstr "Voulez-vous vraiment supprimer le fichier en cours de lecture ? %s"
 msgid "Delete files from disk"
 msgstr "Supprimer les fichiers du disque"
 
-#: ../plugins/gtkui/actionhandlers.c:605
+#: ../plugins/gtkui/actionhandlers.c:614
 msgid "Save Playlist As"
 msgstr "Enregistrer la liste de lecture sous"
 
