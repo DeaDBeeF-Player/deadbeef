@@ -1752,6 +1752,8 @@
 		2DA5AAC225D0334100947C19 /* libwavpacklib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA5A93925D0330600947C19 /* libwavpacklib.dylib */; };
 		2DA5AB0625D033AA00947C19 /* libwavpacklib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA5A93925D0330600947C19 /* libwavpacklib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DA5AC1E25D0393C00947C19 /* libwavpacklib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA5A93925D0330600947C19 /* libwavpacklib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DA5C2C226A75B840098AF24 /* viz.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA5C2C026A75B840098AF24 /* viz.h */; };
+		2DA5C2D326A75CEE0098AF24 /* viz.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5C2C126A75B840098AF24 /* viz.c */; };
 		2DA5E331238DB0C4005832B7 /* EditColumnPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */; };
 		2DA5E341238DB1A8005832B7 /* EditColumnWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA5E33F238DB1A8005832B7 /* EditColumnWindowController.h */; };
 		2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E340238DB1A8005832B7 /* EditColumnWindowController.m */; };
@@ -5488,6 +5490,8 @@
 		2DA59E1125D00C6200947C19 /* m3u.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = m3u.h; sourceTree = "<group>"; };
 		2DA5A34825D01CA500947C19 /* libebur128.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libebur128.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA5A93925D0330600947C19 /* libwavpacklib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libwavpacklib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DA5C2C026A75B840098AF24 /* viz.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = viz.h; sourceTree = "<group>"; };
+		2DA5C2C126A75B840098AF24 /* viz.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = viz.c; sourceTree = "<group>"; };
 		2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditColumnPanel.xib; sourceTree = "<group>"; };
 		2DA5E33F238DB1A8005832B7 /* EditColumnWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditColumnWindowController.h; sourceTree = "<group>"; };
 		2DA5E340238DB1A8005832B7 /* EditColumnWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditColumnWindowController.m; sourceTree = "<group>"; };
@@ -10816,6 +10820,8 @@
 				4D1B49EB1837EC49003E6066 /* vfs.h */,
 				4D1B49ED1837EC49003E6066 /* volume.c */,
 				4D1B49EE1837EC49003E6066 /* volume.h */,
+				2DA5C2C026A75B840098AF24 /* viz.h */,
+				2DA5C2C126A75B840098AF24 /* viz.c */,
 			);
 			name = deadbeef;
 			path = ..;
@@ -12824,6 +12830,7 @@
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
 				2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */,
 				2DAA402D269AF864006D2754 /* TrackPositionFormatter.h in Headers */,
+				2DA5C2C226A75B840098AF24 /* viz.h in Headers */,
 				2DDF87D924027DA500CA8E91 /* PluginActionMenuItem.h in Headers */,
 				2DA30E792403292D001BAB8A /* PlaybackPreferencesViewController.h in Headers */,
 				2D9F6534241BE78C00D9D16E /* SeekbarOverlay.h in Headers */,
@@ -14768,6 +14775,7 @@
 				2D01D7D31AB2219C00BCD3C4 /* escape.c in Sources */,
 				2DDD764525E1506100FA6FE5 /* metadata.c in Sources */,
 				2D01D7DA1AB2219C00BCD3C4 /* metacache.c in Sources */,
+				2DA5C2D326A75CEE0098AF24 /* viz.c in Sources */,
 				2D01D7D41AB2219C00BCD3C4 /* conf.c in Sources */,
 				2DDD7ABE25E1831000FA6FE5 /* PlaylistDataModel.m in Sources */,
 				2D01D7D61AB2219C00BCD3C4 /* fft.c in Sources */,
