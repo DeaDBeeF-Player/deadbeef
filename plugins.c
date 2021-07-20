@@ -66,6 +66,7 @@
 #ifdef __APPLE__
 #include "cocoautil.h"
 #endif
+#include "viz.h"
 
 DB_plugin_t main_plugin = {
     .type = DB_PLUGIN_MISC,
@@ -414,10 +415,10 @@ static DB_functions_t deadbeef_api = {
     .plt_get_meta = (int (*) (ddb_playlist_t *handle, const char *key, char *val, int size))plt_get_meta,
     .pl_meta_exists = (int (*) (DB_playItem_t *it, const char *key))pl_meta_exists,
     // ******* new 1.5 APIs ********
-    .vis_waveform_listen = vis_waveform_listen,
-    .vis_waveform_unlisten = vis_waveform_unlisten,
-    .vis_spectrum_listen = vis_spectrum_listen,
-    .vis_spectrum_unlisten = vis_spectrum_unlisten,
+    .vis_waveform_listen = viz_waveform_listen,
+    .vis_waveform_unlisten = viz_waveform_unlisten,
+    .vis_spectrum_listen = viz_spectrum_listen,
+    .vis_spectrum_unlisten = viz_spectrum_unlisten,
     .audio_set_mute = audio_set_mute,
     .audio_is_mute = audio_is_mute,
     .background_job_increment = background_job_increment,
