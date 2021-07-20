@@ -161,18 +161,6 @@ struct handler_s *
 streamer_get_handler (void);
 
 void
-vis_waveform_listen (void *ctx, void (*callback)(void *ctx, ddb_audio_data_t *data));
-
-void
-vis_waveform_unlisten (void *ctx);
-
-void
-vis_spectrum_listen (void *ctx, void (*callback)(void *ctx, ddb_audio_data_t *data));
-
-void
-vis_spectrum_unlisten (void *ctx);
-
-void
 streamer_set_playing_track (playItem_t *it);
 
 // sets a callback function, which would be called before applying software volume
