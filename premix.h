@@ -28,6 +28,8 @@
 #ifndef __PREMIX_H
 #define __PREMIX_H
 
+#include "deadbeef.h"
+
 // @returns number of output bytes
 int
 pcm_convert (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int inputsize);
