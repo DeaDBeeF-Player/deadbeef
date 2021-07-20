@@ -128,7 +128,7 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
 
     for (int i = 0; i < NUM_BARS; i++) {
         // first attenuate bars and peaks
-        saBars[i] -= 1/50.0f*8;
+        saBars[i] -= 1/50.0f*4;
         if (saBars[i] < 0) {
             saBars[i] = 0;
         }
@@ -157,7 +157,7 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
         float newBar = MAX(spectrumData[si*2+0], spectrumData[si*2+1]);
         newBar = MAX(0, MIN(1, newBar));
         float bound = -saLowerBound;
-        newBar = (20*log10(newBar) + bound)/bound*2;
+        newBar = (20*log10(newBar) + bound)/bound;
         newBar = MAX(0, MIN(1, newBar));
 
         if (newBar > saBars[i]) {
