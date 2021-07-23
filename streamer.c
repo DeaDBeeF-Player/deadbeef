@@ -1796,6 +1796,7 @@ streamer_reset (int full) { // must be called when current song changes by exter
     dsp_reset ();
     _outbuffer_remaining = 0;
     streamer_unlock();
+    viz_reset ();
 }
 
 static int

@@ -13,7 +13,7 @@ void
 viz_free (void);
 
 void
-viz_sync (int frames_played);
+viz_reset (void);
 
 void
 viz_waveform_listen (void *ctx, void (*callback)(void *ctx, ddb_audio_data_t *data));

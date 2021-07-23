@@ -27,6 +27,7 @@ static uintptr_t wdl_mutex; // wavedata listener
 static ddb_waveformat_t _current_fmt;
 static float freq_data[DDB_FREQ_BANDS * DDB_FREQ_MAX_CHANNELS];
 static float audio_data[HISTORY_FRAMES * DDB_FREQ_MAX_CHANNELS];
+static int _need_reset = 0;
 static int audio_data_fill = 0; // the fill of the history, and also the position of the last sample sent to the output
 static int audio_data_channels = 0;
 static int read_pos = 0;
@@ -166,6 +167,13 @@ viz_spectrum_unlisten (void *ctx) {
 }
 
 void
+viz_reset (void) {
+    mutex_lock (wdl_mutex);
+    _need_reset = 1;
+    mutex_unlock (wdl_mutex);
+}
+
+void
 viz_process (char * restrict bytes, int bytes_size, DB_output_t *output) {
     if (waveform_listeners || spectrum_listeners) {
         int in_frame_size = (output->fmt.bps >> 3) * output->fmt.channels;
@@ -202,11 +210,14 @@ viz_process (char * restrict bytes, int bytes_size, DB_output_t *output) {
             l->callback (l->ctx, &waveform_data);
         }
 
-        if (out_fmt.channels != audio_data_channels || !spectrum_listeners) {
+        if (_need_reset || out_fmt.channels != audio_data_channels || !spectrum_listeners) {
             // reset
             audio_data_fill = HISTORY_FRAMES;
             read_pos = HISTORY_FRAMES - in_frames;
             audio_data_channels = out_fmt.channels;
+            memset (freq_data, 0, sizeof (freq_data));
+            memset (audio_data, 0, sizeof (audio_data));
+            _need_reset = 0;
         }
 
         if (spectrum_listeners) {

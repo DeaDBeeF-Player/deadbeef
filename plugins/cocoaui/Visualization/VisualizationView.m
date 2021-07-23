@@ -30,6 +30,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSDictionary *textAttrs;
 @property (nonatomic) NSColor *barColor;
 @property (nonatomic) NSColor *peakColor;
+@property (nonatomic) NSColor *gridColor;
 
 @end
 
@@ -71,12 +72,12 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
 
     NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
     paragraphStyle.alignment = NSTextAlignmentLeft;
-    NSColor *gridColor = [NSColor.whiteColor colorWithAlphaComponent:0.8];
+    self.gridColor = [NSColor.whiteColor colorWithAlphaComponent:0.2];
 
     self.textAttrs = @{
         NSFontAttributeName: [NSFont fontWithName:@"HelveticaNeue" size:10],
         NSParagraphStyleAttributeName: paragraphStyle,
-        NSForegroundColorAttributeName: gridColor
+        NSForegroundColorAttributeName: self.gridColor
     };
 
     self.peakColor = [NSColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1];
@@ -128,7 +129,7 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
 
     for (int i = 0; i < NUM_BARS; i++) {
         // first attenuate bars and peaks
-        saBars[i] -= 1/50.0f*4;
+        saBars[i] -= 1/50.0f*3;
         if (saBars[i] < 0) {
             saBars[i] = 0;
         }
@@ -175,8 +176,7 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
 
 - (void)drawSaGrid:(CGContextRef)context {
     // vert lines, octaves
-    NSColor *gridColor = [NSColor.whiteColor colorWithAlphaComponent:0.8];
-    CGContextSetStrokeColorWithColor(context, gridColor.CGColor);
+    CGContextSetStrokeColorWithColor(context, self.gridColor.CGColor);
     for (int i = 12; i < NUM_BARS; i += 12) {
         CGFloat x = (CGFloat)i * NSWidth(self.bounds) / (CGFloat)NUM_BARS;
         CGPoint points[] = {
@@ -184,13 +184,6 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
             CGPointMake(x, NSHeight(self.bounds)-1)
         };
         CGContextAddLines(context, points, 2);
-    }
-    CGContextStrokePath(context);
-
-    for (int i = 0; i < NUM_BARS; i += 12) {
-        NSString *string = [NSString stringWithFormat:@"A%d", 3+i/12];
-        CGFloat x = (CGFloat)i*(NSWidth(self.bounds)-1)/(CGFloat)NUM_BARS + 4;
-        [string drawAtPoint:NSMakePoint(x, NSHeight(self.bounds)-12) withAttributes:self.textAttrs];
     }
 
     // horz lines, db scale
@@ -206,11 +199,26 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
             CGPointMake(NSWidth(self.bounds)-1, y)
         };
         CGContextAddLines(context, points, 2);
+    }
+    CGContextStrokePath(context);
+
+    // octaves text
+    for (int i = 0; i < NUM_BARS; i += 12) {
+        NSString *string = [NSString stringWithFormat:@"A%d", 3+i/12];
+        CGFloat x = (CGFloat)i*(NSWidth(self.bounds)-1)/(CGFloat)NUM_BARS + 4;
+        [string drawAtPoint:NSMakePoint(x, NSHeight(self.bounds)-12) withAttributes:self.textAttrs];
+    }
+
+    // db text
+    for (int db = 10; db < lower; db += 10) {
+        CGFloat y = (CGFloat)(db / lower) * NSHeight(self.bounds);
+        if (y >= NSHeight(self.bounds)) {
+            break;
+        }
 
         NSString *string = [NSString stringWithFormat:@"%d dB", -db];
         [string drawAtPoint:NSMakePoint(0, NSHeight(self.bounds)-y-12) withAttributes:self.textAttrs];
     }
-    CGContextStrokePath(context);
 }
 
 - (void)drawSpectrumAnalyzer:(CGContextRef)context {
