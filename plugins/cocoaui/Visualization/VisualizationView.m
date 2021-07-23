@@ -11,9 +11,12 @@
 
 extern DB_functions_t *deadbeef;
 
-#define NUM_BARS 84
+#define FIRST_NOTE_FREQ 110
+#define NUM_BARS (8*12)
+#define LOWER_BOUND -80
+#define PEAK_DRAW_HEIGHT 1
 
-#define LOWER_BOUND -70
+static double noteFrequencies[NUM_BARS];
 
 @interface VisualizationView() {
     float saBars[NUM_BARS];
@@ -28,8 +31,9 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) float *fftData;
 @property (nonatomic) int nframes;
 @property (nonatomic) NSDictionary *textAttrs;
-@property (nonatomic) NSColor *barColor;
-@property (nonatomic) NSColor *peakColor;
+@property (nonatomic,readonly) NSColor *baseColor;
+@property (nonatomic,readonly) NSColor *barColor;
+@property (nonatomic,readonly) NSColor *peakColor;
 @property (nonatomic) NSColor *gridColor;
 
 @end
@@ -65,6 +69,12 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
 }
 
 - (void)setup {
+    if (noteFrequencies[0] == 0) {
+        for (int i = 0; i < NUM_BARS; i++) {
+            noteFrequencies[i] = pow(1.059463094359,i);
+        }
+    }
+
     deadbeef->vis_spectrum_listen((__bridge void *)(self), vis_callback);
     memset (saBars, 0, sizeof (saBars));
     memset (saPeaks, 0, sizeof (saPeaks));
@@ -80,16 +90,30 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
         NSForegroundColorAttributeName: self.gridColor
     };
 
-    self.peakColor = [NSColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1];
+}
 
+- (NSColor *)baseColor {
 #ifdef MAC_OS_X_VERSION_10_14
     if (@available(macOS 10.14, *)) {
-        self.barColor = NSColor.controlAccentColor;
-    } else
-#endif
-    {
-        self.barColor = NSColor.alternateSelectedControlColor;
+        return NSColor.controlAccentColor;
     }
+#endif
+    return NSColor.alternateSelectedControlColor;
+}
+
+- (NSColor *)barColor {
+    NSColor *tempColor = [self.baseColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+    CGFloat h, s, b, a;
+    [tempColor getHue:&h saturation:&s brightness:&b alpha:&a];
+    return [NSColor colorWithHue:h saturation:s brightness:b*0.7 alpha:1];
+}
+
+- (NSColor *)peakColor {
+    NSColor *tempColor = [self.baseColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+    CGFloat h, s, b, a;
+    [tempColor getHue:&h saturation:&s brightness:&b alpha:&a];
+
+    return [NSColor colorWithHue:h saturation:1 brightness:1 alpha:1];
 }
 
 - (void)dealloc
@@ -150,12 +174,23 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
 
         // now calculate new values
 
-        // convert index to musical note starting with A3 (220Hz)
-        float fn = 220.0*pow(1.059463094359,i);
+        // convert index to musical note starting with A1
+        float fn = FIRST_NOTE_FREQ * noteFrequencies[i];
+        float fn_next_bar = FIRST_NOTE_FREQ * noteFrequencies[i+1];
 
         int si = MIN(sdCount/2-1,(int)(fn/samplerate*(float)(sdCount/2)));
+        int si_end = (int)(fn_next_bar/samplerate*(float)(sdCount/2)) - 1;
+        si_end = MIN(sdCount/2-1,si_end);
+        si_end = MAX(si,si_end);
 
-        float newBar = MAX(spectrumData[si*2+0], spectrumData[si*2+1]);
+        // get peak frequency in the band
+        float newBar = 0;
+        for (int n = si; n <= si_end; n++) {
+            float val = MAX(spectrumData[si*2+0], spectrumData[si*2+1]);
+            if (val > newBar) {
+                newBar = val;
+            }
+        }
         newBar = MAX(0, MIN(1, newBar));
         float bound = -saLowerBound;
         newBar = (20*log10(newBar) + bound)/bound;
@@ -204,7 +239,7 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
 
     // octaves text
     for (int i = 0; i < NUM_BARS; i += 12) {
-        NSString *string = [NSString stringWithFormat:@"A%d", 3+i/12];
+        NSString *string = [NSString stringWithFormat:@"A%d", 1+i/12];
         CGFloat x = (CGFloat)i*(NSWidth(self.bounds)-1)/(CGFloat)NUM_BARS + 4;
         [string drawAtPoint:NSMakePoint(x, NSHeight(self.bounds)-12) withAttributes:self.textAttrs];
     }
@@ -240,7 +275,7 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
     CGContextFillPath(context);
     for (int i = 0; i < NUM_BARS; i++) {
         CGFloat bh = (CGFloat)saPeaks[i] * h - expand;
-        CGContextAddRect(context, CGRectMake((CGFloat)i*bw+1, bh, bw-2, 2));
+        CGContextAddRect(context, CGRectMake((CGFloat)i*bw+1, bh, bw-2, PEAK_DRAW_HEIGHT));
     }
 
     CGContextSetFillColorWithColor(context, self.peakColor.CGColor);
