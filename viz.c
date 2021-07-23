@@ -69,12 +69,21 @@ viz_free (void) {
 
 static void
 _viz_consumer_thread(void *ctx) {
+    int prev_pos = -1;
     for (;;) {
         if (terminate) {
             break;
         }
 
         mutex_lock(wdl_mutex);
+        // avoid processing if no new data arrived
+        if (prev_pos == read_pos) {
+            mutex_unlock(wdl_mutex);
+            usleep (1000000/(int)(FRAME_RATE*1.3));
+            continue;
+        }
+
+        prev_pos = read_pos;
 
         // calc fft
         for (int c = 0; c < audio_data_channels; c++) {
@@ -100,7 +109,7 @@ _viz_consumer_thread(void *ctx) {
         mutex_unlock(wdl_mutex);
 
         // run at 30 fps
-        usleep (1000000/(FRAME_RATE+10));
+        usleep (1000000/(int)(FRAME_RATE*1.3));
     }
 }
 
