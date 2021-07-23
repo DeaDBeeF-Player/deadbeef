@@ -10815,10 +10815,10 @@
 				4D1B49EC1837EC49003E6066 /* vfs_stdio.c */,
 				4D1B49EA1837EC49003E6066 /* vfs.c */,
 				4D1B49EB1837EC49003E6066 /* vfs.h */,
-				4D1B49ED1837EC49003E6066 /* volume.c */,
-				4D1B49EE1837EC49003E6066 /* volume.h */,
 				2DA5C2C026A75B840098AF24 /* viz.h */,
 				2DA5C2C126A75B840098AF24 /* viz.c */,
+				4D1B49ED1837EC49003E6066 /* volume.c */,
+				4D1B49EE1837EC49003E6066 /* volume.h */,
 			);
 			name = deadbeef;
 			path = ..;
