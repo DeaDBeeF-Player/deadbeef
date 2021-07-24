@@ -193,7 +193,7 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output) {
                     read_pos = 0;
                 }
                 for (int c = 0; c < audio_data_channels; c++) {
-                    calc_freq (&audio_data[HISTORY_FRAMES * c + read_pos], &freq_data[DDB_FREQ_BANDS * c]);
+                    fft_calculate (&audio_data[HISTORY_FRAMES * c + read_pos], &freq_data[DDB_FREQ_BANDS * c]);
                 }
                 ddb_audio_data_t spectrum_data = {
                     .fmt = &out_fmt,
