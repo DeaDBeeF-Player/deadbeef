@@ -15,6 +15,7 @@ extern DB_functions_t *deadbeef;
 #define NUM_BARS (8*12)
 #define LOWER_BOUND -80
 #define PEAK_DRAW_HEIGHT 1
+#define A 9.8f
 
 static double noteFrequencies[NUM_BARS];
 
@@ -22,8 +23,10 @@ static double noteFrequencies[NUM_BARS];
     float saBars[NUM_BARS];
     float saPeaks[NUM_BARS];
     float saPeaksSpeed[NUM_BARS];
+    float saBarSpeed[NUM_BARS];
     float saPeaksHold[NUM_BARS];
     float saLowerBound;
+    NSTimeInterval _prevTime;
 }
 
 @property (nonatomic) int samplerate;
@@ -144,29 +147,37 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
     float *spectrumData = NULL;
     int sdCount = 0;
     float samplerate = 0;
+    spectrumData = malloc (self.nframes * sizeof (float));
+    NSTimeInterval currentTime = CFAbsoluteTimeGetCurrent();
+    NSTimeInterval dt = currentTime - _prevTime;
+    _prevTime = currentTime;
+
     @synchronized (self) {
         sdCount = self.nframes;
-        spectrumData = malloc (self.nframes * sizeof (float));
         memcpy (spectrumData, self.fftData, self.nframes * sizeof (float));
         samplerate = self.samplerate;
     }
 
     for (int i = 0; i < NUM_BARS; i++) {
+        const float a = A;
+        const float t = dt;
         // first attenuate bars and peaks
-        saBars[i] -= 1/50.0f*3;
+        saBars[i] -= saBarSpeed[i];
         if (saBars[i] < 0) {
             saBars[i] = 0;
         }
+        saBarSpeed[i] += a * dt / 2;
+        if (saBarSpeed[i] > t*3) {
+            saBarSpeed[i] = t*3;
+        }
 
         if (saPeaksHold[i] > 0) {
-            saPeaksHold[i] -= 1/60.f;
+            saPeaksHold[i] -= t;
         }
         else {
-            const float a = 9.8f;
-            const float t = 1/60.f;
             saPeaksSpeed[i] = saPeaksSpeed[i] + a * t / 2;
 
-            saPeaks[i] -= saPeaksSpeed[i] * 1/60.f;
+            saPeaks[i] -= saPeaksSpeed[i] * t;
             if (saPeaks[i] < 0) {
                 saPeaks[i] = 0;
             }
@@ -198,6 +209,7 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
 
         if (newBar > saBars[i]) {
             saBars[i] = newBar;
+            saBarSpeed[i] = 0;
         }
         if (saPeaks[i] < saBars[i]) {
             saPeaks[i] = saBars[i];
