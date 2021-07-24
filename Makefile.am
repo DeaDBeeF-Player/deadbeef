@@ -59,11 +59,9 @@ deadbeef_SOURCES =\
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
+deadbeef_LDADD = $(LDADD) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread $(DISPATCH_LIBS) $(INTL_LIBS) shared/libctmap.la plugins/libparser/libparser.la
 
-deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread $(INTL_LIBS) shared/libctmap.la plugins/libparser/libparser.la
-
-AM_CFLAGS = $(DEPS_CFLAGS) -std=c99 -DLOCALEDIR=\"@localedir@\"
-AM_CPPFLAGS = $(DEPS_CFLAGS)
+deadbeef_CFLAGS = $(DEPS_CFLAGS) $(DISPATCH_CFLAGS) -std=c99 -DLOCALEDIR=\"@localedir@\"
 
 docsdir = $(docdir)
 
