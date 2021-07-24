@@ -44,7 +44,7 @@ static double noteFrequencies[NUM_BARS];
 
 @implementation VisualizationView
 
-static void vis_callback (void *ctx, ddb_audio_data_t *data) {
+static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     VisualizationView *view = (__bridge VisualizationView *)(ctx);
     [view updateFFTData:data];
 }
@@ -125,7 +125,7 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
     deadbeef->vis_spectrum_unlisten ((__bridge void *)(self));
 }
 
-- (void)updateFFTData:(ddb_audio_data_t *)data {
+- (void)updateFFTData:(const ddb_audio_data_t *)data {
     @synchronized (self) {
         if (self.nframes != data->nframes || self.samplerate != data->fmt->samplerate || self.channels != data->fmt->channels) {
             free (self.fftData);
