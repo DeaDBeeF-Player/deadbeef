@@ -17,7 +17,7 @@
  * the use of this software.
  */
 
-// this version has few changes compared to the original audacious fft.c
+// this version has a few changes compared to the original audacious fft.c
 // please find the original file in audacious
 
 #ifdef HAVE_CONFIG_H
@@ -99,7 +99,7 @@ static void do_fft (float complex a[N])
 }
 
 void
-calc_freq (float *data, float *freq) {
+fft_calculate (float *data, float *freq) {
     generate_tables ();
 
     // fft code shamelessly stolen from audacious
@@ -113,4 +113,8 @@ calc_freq (float *data, float *freq) {
     for (int n = 0; n < N / 2 - 1; n ++)
         freq[n] = 2 * cabsf (a[1 + n]) / N;
     freq[N / 2 - 1] = cabsf(a[N / 2]) / N;
+}
+
+void
+fft_free (void) {
 }

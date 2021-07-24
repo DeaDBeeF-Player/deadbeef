@@ -216,7 +216,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
             }
         }
         else if (newBar < saBarsTargets[i]) {
-            saBarsTargets[i] -= dt * 2;
+            saBarsTargets[i] -= dt * 5;
             if (saBarsTargets[i] < 0) {
                 saBarsTargets[i] = 0;
             }

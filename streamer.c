@@ -55,6 +55,7 @@
 #include "dsp.h"
 #include "playmodes.h"
 #include "viz.h"
+#include "fft.h"
 
 #ifdef trace
 #undef trace
@@ -1752,6 +1753,7 @@ streamer_free (void) {
     mutex_free (mutex);
     mutex = 0;
     viz_free ();
+    fft_free();
 
     streamer_dsp_chain_save();
 
