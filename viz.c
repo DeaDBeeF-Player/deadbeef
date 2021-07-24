@@ -21,7 +21,6 @@ static wavedata_listener_t *waveform_listeners;
 static wavedata_listener_t *spectrum_listeners;
 static uintptr_t wdl_mutex; // wavedata listener
 
-#define FRAME_RATE 30
 #define HISTORY_FRAMES 100000
 
 static ddb_waveformat_t _current_fmt;
@@ -30,11 +29,6 @@ static float audio_data[HISTORY_FRAMES * DDB_FREQ_MAX_CHANNELS];
 static int _need_reset = 0;
 static int audio_data_fill = 0; // the fill of the history, and also the position of the last sample sent to the output
 static int audio_data_channels = 0;
-static int read_pos = 0;
-static int terminate = 0;
-static uintptr_t tid = 0;
-
-static void _viz_consumer_thread(void *ctx);
 
 static float *
 _get_temp_audio_buffer (size_t size) {
@@ -52,65 +46,15 @@ _get_temp_audio_buffer (size_t size) {
 void
 viz_init (void) {
     wdl_mutex = mutex_create ();
-    tid = thread_start(_viz_consumer_thread, NULL);
 }
 
 void
 viz_free (void) {
-    terminate = 1;
-    thread_join (tid);
-    tid = 0;
     mutex_free (wdl_mutex);
     wdl_mutex = 0;
     free (_temp_audio_buffer);
     _temp_audio_buffer = NULL;
     _temp_audio_buffer_size = 0;
-}
-
-static void
-_viz_consumer_thread(void *ctx) {
-    int prev_pos = -1;
-    for (;;) {
-        if (terminate) {
-            break;
-        }
-
-        mutex_lock(wdl_mutex);
-        // avoid processing if no new data arrived
-        if (prev_pos == read_pos) {
-            mutex_unlock(wdl_mutex);
-            usleep (1000000/(int)(FRAME_RATE*1.3));
-            continue;
-        }
-
-        prev_pos = read_pos;
-
-        // calc fft
-        for (int c = 0; c < audio_data_channels; c++) {
-            calc_freq (&audio_data[HISTORY_FRAMES * c + read_pos], &freq_data[DDB_FREQ_BANDS * c]);
-        }
-        ddb_audio_data_t spectrum_data = {
-            .fmt = &_current_fmt,
-            .data = freq_data,
-            .nframes = DDB_FREQ_BANDS
-        };
-        for (wavedata_listener_t *l = spectrum_listeners; l; l = l->next) {
-            l->callback (l->ctx, &spectrum_data);
-        }
-
-        read_pos += _current_fmt.samplerate / FRAME_RATE;
-        if (read_pos > audio_data_fill - DDB_FREQ_BANDS) {
-            read_pos = audio_data_fill - DDB_FREQ_BANDS;
-        }
-        if (read_pos < 0) {
-            read_pos = 0;
-        }
-
-        mutex_unlock(wdl_mutex);
-
-        // run at 30 fps
-        usleep (1000000/(int)(FRAME_RATE*1.3));
-    }
 }
 
 void
@@ -222,7 +166,6 @@ viz_process (char * restrict bytes, int bytes_size, DB_output_t *output) {
         if (_need_reset || out_fmt.channels != audio_data_channels || !spectrum_listeners) {
             // reset
             audio_data_fill = HISTORY_FRAMES;
-            read_pos = HISTORY_FRAMES - in_frames;
             audio_data_channels = out_fmt.channels;
             memset (freq_data, 0, sizeof (freq_data));
             memset (audio_data, 0, sizeof (audio_data));
@@ -241,10 +184,6 @@ viz_process (char * restrict bytes, int bytes_size, DB_output_t *output) {
                     memmove (channel, channel + shift_samples * sizeof (float), (HISTORY_FRAMES - shift_samples) * sizeof (float));
                 }
                 audio_data_fill -= shift_samples;
-                read_pos -= shift_samples;
-                if (read_pos < 0) {
-                    read_pos = 0;
-                }
             }
 
             // append new samples at audio_data_fill
@@ -255,6 +194,23 @@ viz_process (char * restrict bytes, int bytes_size, DB_output_t *output) {
                 }
             }
             audio_data_fill += in_frames;
+        }
+
+        // calc fft
+        int read_pos = audio_data_fill - DDB_FREQ_BANDS * 2;
+        if (read_pos < 0) {
+            read_pos = 0;
+        }
+        for (int c = 0; c < audio_data_channels; c++) {
+            calc_freq (&audio_data[HISTORY_FRAMES * c + read_pos], &freq_data[DDB_FREQ_BANDS * c]);
+        }
+        ddb_audio_data_t spectrum_data = {
+            .fmt = &_current_fmt,
+            .data = freq_data,
+            .nframes = DDB_FREQ_BANDS
+        };
+        for (wavedata_listener_t *l = spectrum_listeners; l; l = l->next) {
+            l->callback (l->ctx, &spectrum_data);
         }
         mutex_unlock (wdl_mutex);
     }
