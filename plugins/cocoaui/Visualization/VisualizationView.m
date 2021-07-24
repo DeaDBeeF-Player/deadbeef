@@ -20,12 +20,13 @@ extern DB_functions_t *deadbeef;
 static double noteFrequencies[NUM_BARS];
 
 @interface VisualizationView() {
-    float saBars[NUM_BARS];
-    float saPeaks[NUM_BARS];
-    float saPeaksSpeed[NUM_BARS];
-    float saBarSpeed[NUM_BARS];
-    float saPeaksHold[NUM_BARS];
-    float saLowerBound;
+    float saBarsTargets[NUM_BARS]; // interpolated bars from FFT data
+    float saBars[NUM_BARS]; // peaked bars falling down
+    float saPeaks[NUM_BARS]; // peaks falling at different rate
+    float saPeaksSpeed[NUM_BARS]; // current speed of the peaks
+    float saBarSpeed[NUM_BARS]; // current speed of the bars
+    float saPeaksHold[NUM_BARS]; // time remaining to hold the peaks
+    float saLowerBound; // lower bound of the graph (NOTE: do not delete -- it can be made configurable)
     NSTimeInterval _prevTime;
 }
 
@@ -175,7 +176,7 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
             saPeaksHold[i] -= t;
         }
         else {
-            saPeaksSpeed[i] = saPeaksSpeed[i] + a * t / 2;
+            saPeaksSpeed[i] += a * t / 2;
 
             saPeaks[i] -= saPeaksSpeed[i] * t;
             if (saPeaks[i] < 0) {
@@ -185,7 +186,7 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
 
         // now calculate new values
 
-        // convert index to musical note starting with A1
+        // convert index to musical note
         float fn = FIRST_NOTE_FREQ * noteFrequencies[i];
         float fn_next_bar = FIRST_NOTE_FREQ * noteFrequencies[i+1];
 
@@ -207,8 +208,23 @@ static void vis_callback (void *ctx, ddb_audio_data_t *data) {
         newBar = (20*log10(newBar) + bound)/bound;
         newBar = MAX(0, MIN(1, newBar));
 
-        if (newBar > saBars[i]) {
-            saBars[i] = newBar;
+        // interpolate fft data
+        if (newBar > saBarsTargets[i]) {
+            saBarsTargets[i] += dt * 2;
+            if (saBarsTargets[i] > newBar) {
+                saBarsTargets[i] = newBar;
+            }
+        }
+        else if (newBar < saBarsTargets[i]) {
+            saBarsTargets[i] -= dt * 2;
+            if (saBarsTargets[i] < 0) {
+                saBarsTargets[i] = 0;
+            }
+        }
+
+        // update bars
+        if (saBarsTargets[i] > saBars[i]) {
+            saBars[i] = saBarsTargets[i];
             saBarSpeed[i] = 0;
         }
         if (saPeaks[i] < saBars[i]) {
