@@ -1293,7 +1293,7 @@ typedef struct {
     // ctx must be unique
     // the waveform data can be arbitrary size
     // the samples are interleaved
-    void (*vis_waveform_listen) (void *ctx, void (*callback)(void *ctx, ddb_audio_data_t *data));
+    void (*vis_waveform_listen) (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data));
     void (*vis_waveform_unlisten) (void *ctx);
 
     // register/unregister for getting continuous spectrum (frequency domain) data
@@ -1302,7 +1302,7 @@ typedef struct {
     // the data always contains DDB_FREQ_BANDS frames
     // max number of channels is DDB_FREQ_MAX_CHANNELS
     // the samples are non-interleaved
-    void (*vis_spectrum_listen) (void *ctx, void (*callback)(void *ctx, ddb_audio_data_t *data));
+    void (*vis_spectrum_listen) (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data));
     void (*vis_spectrum_unlisten) (void *ctx);
 
     // this is useful to mute/unmute audio, and query the muted status, from
