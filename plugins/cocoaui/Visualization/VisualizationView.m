@@ -198,11 +198,10 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
         // get peak frequency in the band
         float newBar = 0;
         for (int n = si; n <= si_end; n++) {
-            float val = MAX(spectrumData[si*2+0], spectrumData[si*2+1]);
-            if (val > newBar) {
-                newBar = val;
-            }
+            newBar += MAX(spectrumData[si*2+0], spectrumData[si*2+1]);;
         }
+        newBar /= si_end-si+1;
+
         newBar = MAX(0, MIN(1, newBar));
         float bound = -saLowerBound;
         newBar = (20*log10(newBar) + bound)/bound;
