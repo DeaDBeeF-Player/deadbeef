@@ -13,7 +13,7 @@ extern DB_functions_t *deadbeef;
 
 #define FIRST_NOTE_FREQ 110
 #define NUM_BARS (8*12)
-#define LOWER_BOUND -80
+#define LOWER_BOUND -60
 #define PEAK_DRAW_HEIGHT 1
 #define A 9.8f
 
@@ -163,13 +163,13 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
         const float a = A;
         const float t = dt;
         // first attenuate bars and peaks
-        saBars[i] -= saBarSpeed[i];
-        if (saBars[i] < 0) {
-            saBars[i] = 0;
-        }
         saBarSpeed[i] += a * dt / 2;
         if (saBarSpeed[i] > t*3) {
             saBarSpeed[i] = t*3;
+        }
+        saBars[i] -= saBarSpeed[i];
+        if (saBars[i] < 0) {
+            saBars[i] = 0;
         }
 
         if (saPeaksHold[i] > 0) {
@@ -208,24 +208,13 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
         newBar = (20*log10(newBar) + bound)/bound;
         newBar = MAX(0, MIN(1, newBar));
 
-        // interpolate fft data
-        if (newBar > saBarsTargets[i]) {
-            saBarsTargets[i] += dt * 2;
-            if (saBarsTargets[i] > newBar) {
-                saBarsTargets[i] = newBar;
-            }
-        }
-        else if (newBar < saBarsTargets[i]) {
-            saBarsTargets[i] -= dt * 5;
-            if (saBarsTargets[i] < 0) {
-                saBarsTargets[i] = 0;
-            }
-        }
+        // low pass
+        saBarsTargets[i] = saBarsTargets[i] + (newBar - saBarsTargets[i]) * 0.9;
 
         // update bars
         if (saBarsTargets[i] > saBars[i]) {
             saBars[i] = saBarsTargets[i];
-            saBarSpeed[i] = 0;
+            saBarSpeed[i] = 10.0;
         }
         if (saPeaks[i] < saBars[i]) {
             saPeaks[i] = saBars[i];
