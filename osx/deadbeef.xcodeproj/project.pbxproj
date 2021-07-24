@@ -9110,6 +9110,14 @@
 			path = unice68;
 			sourceTree = "<group>";
 		};
+		2D6E2CFF26AC3022008FCD4B /* Apple */ = {
+			isa = PBXGroup;
+			children = (
+				2D6E2CE726AC13DF008FCD4B /* fft_accelerate.c */,
+			);
+			path = Apple;
+			sourceTree = "<group>";
+		};
 		2D71F1AC24AE799B00E753D3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -10755,6 +10763,7 @@
 		4D1B3EB31837EC44003E6066 /* deadbeef */ = {
 			isa = PBXGroup;
 			children = (
+				2D6E2CFF26AC3022008FCD4B /* Apple */,
 				4D1B3ED71837EC44003E6066 /* ConvertUTF */,
 				4D1B3F861837EC44003E6066 /* md5 */,
 				2DDD764125E1506100FA6FE5 /* metadata */,
@@ -10774,7 +10783,6 @@
 				4D1B3EE31837EC44003E6066 /* dsppreset.h */,
 				2DA6F89B19A5332D002151EB /* escape.c */,
 				2DA6F89F19A53334002151EB /* escape.h */,
-				2D6E2CE726AC13DF008FCD4B /* fft_accelerate.c */,
 				4D1B3EE71837EC44003E6066 /* fft.c */,
 				4D1B3EE81837EC44003E6066 /* fft.h */,
 				4D1B3EEA1837EC44003E6066 /* handler.c */,
