@@ -25,7 +25,9 @@
 #include "fft.h"
 #include <Accelerate/Accelerate.h>
 
+static float fftDataReal[DDB_FREQ_BANDS*2];
 static float fftDataImaginary[DDB_FREQ_BANDS*2];
+static float hamming[DDB_FREQ_BANDS*2];
 
 static vDSP_DFT_Setup dftSetup;
 
@@ -35,15 +37,17 @@ fft_calculate (const float *data, float *freq) {
 
     if (dftSetup == NULL) {
         dftSetup = vDSP_DFT_zop_CreateSetup(NULL, fftSize, FFT_FORWARD);
+        vDSP_hamm_window(hamming, fftSize, 0);
     }
+
+    vDSP_vmul(data, 1, hamming, 1, fftDataReal, 1, fftSize);
 
     memset (fftDataImaginary, 0, sizeof((fftDataImaginary)));
 
     float outputR[fftSize];
     float outputI[fftSize];
 
-    // TODO: apply hamming window
-    vDSP_DFT_Execute(dftSetup, data, fftDataImaginary, outputR, outputI);
+    vDSP_DFT_Execute(dftSetup, fftDataReal, fftDataImaginary, outputR, outputI);
 
     DSPSplitComplex splitComplex = {
         .realp = outputR,
