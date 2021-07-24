@@ -16,13 +16,13 @@ void
 viz_reset (void);
 
 void
-viz_waveform_listen (void *ctx, void (*callback)(void *ctx, ddb_audio_data_t *data));
+viz_waveform_listen (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data));
 
 void
 viz_waveform_unlisten (void *ctx);
 
 void
-viz_spectrum_listen (void *ctx, void (*callback)(void *ctx, ddb_audio_data_t *data));
+viz_spectrum_listen (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data));
 
 void
 viz_spectrum_unlisten (void *ctx);
