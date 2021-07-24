@@ -204,7 +204,8 @@ project "deadbeef"
     "DOCDIR=\"donotuse\"",
     "LOCALEDIR=\"donotuse\""
   }
-  links { "m", "pthread", "dl"}
+  buildoptions {"-fblocks"}
+  links { "m", "pthread", "dl","dispatch", "BlocksRuntime"}
   filter "platforms:Windows"
     files {
       "icons/deadbeef-icon.rc",
