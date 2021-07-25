@@ -39,10 +39,16 @@ typedef struct {
 void
 ringbuf_init (ringbuf_t *p, char *buffer, size_t size);
 
+void
+ringbuf_flush (ringbuf_t *p);
+
 int
 ringbuf_write (ringbuf_t *p, char *bytes, size_t size);
 
 size_t
 ringbuf_read (ringbuf_t *p, char *bytes, size_t size);
+
+size_t
+ringbuf_read_keep (ringbuf_t *p, char *bytes, size_t size);
 
 #endif
