@@ -73,6 +73,7 @@ typedef struct ddb_analyzer_s {
     float peak_speed_scale;
     float db_upper_bound; // dB value corresponding to the top of the view
     float db_lower_bound; // dB value corresponding to the bottom of the view
+    int octave_bars_step; // how many notes in one bar (default 1)
 
     /// The bars get created / updated by calling @c ddb_analyzer_process.
     /// The same bars get updated on every call to @c ddb_analyzer_tick.
