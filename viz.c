@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <dispatch/dispatch.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,10 +21,10 @@ typedef struct wavedata_listener_s {
 static wavedata_listener_t *waveform_listeners;
 static wavedata_listener_t *spectrum_listeners;
 
-#define HISTORY_FRAMES 100000
+//#define HISTORY_FRAMES 100000
 
 static float freq_data[DDB_FREQ_BANDS * DDB_FREQ_MAX_CHANNELS];
-static float audio_data[HISTORY_FRAMES * DDB_FREQ_MAX_CHANNELS];
+static float audio_data[DDB_FREQ_BANDS * 2 * DDB_FREQ_MAX_CHANNELS];
 static int _need_reset = 0;
 static int audio_data_channels = 0;
 
@@ -163,22 +164,22 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output) {
             }
 
             if (spectrum_listeners) {
-                // shift buffer
+                // convert samples in planar layout
+                assert (in_frames <= DDB_FREQ_BANDS * 2);
                 for (int c = 0; c < audio_data_channels; c++) {
-                    float *channel = &audio_data[HISTORY_FRAMES * c];
-                    memmove (channel, channel + in_frames, (HISTORY_FRAMES - in_frames) * sizeof (float));
-                }
-                // append new samples in planar layout
-                for (int c = 0; c < audio_data_channels; c++) {
-                    float *channel = &audio_data[HISTORY_FRAMES * c + HISTORY_FRAMES - in_frames];
+                    float *channel = &audio_data[DDB_FREQ_BANDS * 2 * c];
                     for (int s = 0; s < in_frames; s++) {
                         channel[s] = data[s * audio_data_channels + c];
+                    }
+                    // pad zeroes
+                    for (int s = in_frames; s < DDB_FREQ_BANDS * 2; s++) {
+                        channel[s] = 0;
                     }
                 }
 
                 // calc fft
                 for (int c = 0; c < audio_data_channels; c++) {
-                    fft_calculate (&audio_data[HISTORY_FRAMES * c + HISTORY_FRAMES - DDB_FREQ_BANDS*2], &freq_data[DDB_FREQ_BANDS * c]);
+                    fft_calculate (&audio_data[DDB_FREQ_BANDS * 2 * c], &freq_data[DDB_FREQ_BANDS * c]);
                 }
                 ddb_audio_data_t spectrum_data = {
                     .fmt = &out_fmt,

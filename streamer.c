@@ -2140,12 +2140,12 @@ streamer_read (char *bytes, int size) {
 #endif
 
 #ifndef ANDROID
-//    size_t viz_buf_size = DDB_FREQ_BANDS * 2 * ss;
-//    char *viz_buffer = malloc(viz_buf_size);
-//    memcpy (viz_buffer, bytes, sz);
-//    viz_buf_size = sz + ringbuf_read_keep(&playback_buffer, viz_buffer+sz, viz_buf_size-sz);
-//
-//    viz_process (viz_buffer, (int)viz_buf_size, output);
+    size_t viz_buf_size = DDB_FREQ_BANDS * 2 * ss;
+    char *viz_buffer = malloc(viz_buf_size);
+    memcpy (viz_buffer, bytes, sz);
+    viz_buf_size = sz + ringbuf_read_keep(&playback_buffer, viz_buffer+sz, viz_buf_size-sz);
+
+    viz_process (viz_buffer, (int)viz_buf_size, output);
 #endif
     return sz;
 }
