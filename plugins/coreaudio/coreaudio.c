@@ -309,7 +309,7 @@ ca_init (void) {
         return -1;
     }
 
-    UInt32 bufsize = 4096;
+    UInt32 bufsize = 1024;
     sz = sizeof (bufsize);
     theAddress.mSelector = kAudioDevicePropertyBufferFrameSize;
     err = AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &bufsize);
