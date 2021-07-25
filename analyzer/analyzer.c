@@ -67,8 +67,9 @@ ddb_analyzer_init (ddb_analyzer_t *analyzer) {
     analyzer->max_freq = 22000;
     analyzer->view_width = 1000;
     analyzer->peak_hold = 10;
-    analyzer->peak_speed_scale = 2000.f;
+    analyzer->peak_speed_scale = 1000.f;
     analyzer->db_lower_bound = -80;
+    analyzer->octave_bars_step = 1;
     return analyzer;
 }
 
@@ -118,7 +119,11 @@ ddb_analyzer_tick (ddb_analyzer_t *analyzer) {
     ddb_analyzer_bar_t *bar = analyzer->bars;
     for (int i = 0; i < analyzer->bar_count; i++, bar++) {
         float norm_h = _interpolate_bin_with_ratio (analyzer, bar->bin, bar->ratio);
-        bar->height = norm_h;
+
+        float bound = -analyzer->db_lower_bound;
+        float height = (20*log10(norm_h) + bound)/bound;
+
+        bar->height = height;
     }
 
     // peaks
@@ -158,7 +163,10 @@ ddb_analyzer_get_draw_data (ddb_analyzer_t *analyzer, int view_width, int view_h
     for (int i = 0; i < analyzer->bar_count; i++, bar++, draw_bar++) {
         float norm_h = _interpolate_bin_with_ratio(analyzer, bar->bin, bar->ratio);
 
-        draw_bar->bar_height = _get_bar_height (analyzer, norm_h, view_height);
+        float bound = -analyzer->db_lower_bound;
+        float height = (20*log10(norm_h) + bound)/bound;
+
+        draw_bar->bar_height = _get_bar_height (analyzer, height, view_height);
         draw_bar->xpos = bar->xpos * view_width;
         draw_bar->peak_ypos = _get_bar_height (analyzer, bar->peak, view_height);
     }
@@ -174,9 +182,7 @@ ddb_analyzer_draw_data_dealloc (ddb_analyzer_draw_data_t *draw_data) {
 
 static float
 _get_bar_height (ddb_analyzer_t *analyzer, float normalized_height, int view_height) {
-    float bound = -analyzer->db_lower_bound;
-    float height = (20*log10(normalized_height) + bound)/bound;
-
+    float height = normalized_height;
     if (height < 0) {
         height = 0;
     }
@@ -237,12 +243,12 @@ _generate_octave_note_bars (ddb_analyzer_t *analyzer) {
         analyzer->bar_count_max = OCTAVES * STEPS;
     }
 
-    ddb_analyzer_band_t *band = analyzer->tempered_scale_bands;
-
     int minBand = -1;
     int maxBand = -1;
 
-    for (int i = 0; i < OCTAVES * STEPS; i++, band++) {
+    for (int i = 0; i < OCTAVES * STEPS; i += analyzer->octave_bars_step) {
+        ddb_analyzer_band_t *band = &analyzer->tempered_scale_bands[i];
+
         if (band->freq < analyzer->min_freq || band->freq > analyzer->max_freq) {
             continue;
         }
