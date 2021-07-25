@@ -25,7 +25,6 @@ static wavedata_listener_t *spectrum_listeners;
 static float freq_data[DDB_FREQ_BANDS * DDB_FREQ_MAX_CHANNELS];
 static float audio_data[HISTORY_FRAMES * DDB_FREQ_MAX_CHANNELS];
 static int _need_reset = 0;
-static int audio_data_fill = 0; // the fill of the history, and also the position of the last sample sent to the output
 static int audio_data_channels = 0;
 
 void
@@ -157,7 +156,6 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output) {
 
             if (_need_reset || out_fmt.channels != audio_data_channels || !spectrum_listeners) {
                 // reset
-                audio_data_fill = HISTORY_FRAMES;
                 audio_data_channels = out_fmt.channels;
                 memset (freq_data, 0, sizeof (freq_data));
                 memset (audio_data, 0, sizeof (audio_data));
@@ -165,35 +163,22 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output) {
             }
 
             if (spectrum_listeners) {
-                // append after audio_data_fill
-
-                int avail = HISTORY_FRAMES - audio_data_fill;
-                if (avail < in_frames) {
-                    // shift buffer
-                    int shift_samples = in_frames - avail;
-                    for (int c = 0; c < audio_data_channels; c++) {
-                        float *channel = &audio_data[HISTORY_FRAMES * c];
-                        memmove (channel, channel + shift_samples * sizeof (float), (HISTORY_FRAMES - shift_samples) * sizeof (float));
-                    }
-                    audio_data_fill -= shift_samples;
-                }
-
-                // append new samples at audio_data_fill
+                // shift buffer
                 for (int c = 0; c < audio_data_channels; c++) {
-                    float *channel = &audio_data[HISTORY_FRAMES * c + audio_data_fill];
+                    float *channel = &audio_data[HISTORY_FRAMES * c];
+                    memmove (channel, channel + in_frames, (HISTORY_FRAMES - in_frames) * sizeof (float));
+                }
+                // append new samples in planar layout
+                for (int c = 0; c < audio_data_channels; c++) {
+                    float *channel = &audio_data[HISTORY_FRAMES * c + HISTORY_FRAMES - in_frames];
                     for (int s = 0; s < in_frames; s++) {
                         channel[s] = data[s * audio_data_channels + c];
                     }
                 }
-                audio_data_fill += in_frames;
 
                 // calc fft
-                int read_pos = audio_data_fill - DDB_FREQ_BANDS * 2;
-                if (read_pos < 0) {
-                    read_pos = 0;
-                }
                 for (int c = 0; c < audio_data_channels; c++) {
-                    fft_calculate (&audio_data[HISTORY_FRAMES * c + read_pos], &freq_data[DDB_FREQ_BANDS * c]);
+                    fft_calculate (&audio_data[HISTORY_FRAMES * c + HISTORY_FRAMES - DDB_FREQ_BANDS*2], &freq_data[DDB_FREQ_BANDS * c]);
                 }
                 ddb_audio_data_t spectrum_data = {
                     .fmt = &out_fmt,
