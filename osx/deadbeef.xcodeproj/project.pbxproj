@@ -2093,6 +2093,8 @@
 		2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCF73B21A952F8900495740 /* PreferencesWindowController.h */; };
 		2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DCF73B31A952F8900495740 /* PreferencesWindowController.m */; };
+		2DD39ED926AD8D1600C5846D /* analyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD39ED726AD8D1600C5846D /* analyzer.h */; };
+		2DD39EDA26AD8D1600C5846D /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD39ED826AD8D1600C5846D /* analyzer.c */; };
 		2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2DD5262E2062F1DF002609C5 /* help-cocoa.txt */; };
 		2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
 		2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */; };
@@ -5872,6 +5874,8 @@
 		2DCD78D319A665CA00EA50FA /* deadbeef.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deadbeef.png; sourceTree = "<group>"; };
 		2DCF73B21A952F8900495740 /* PreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowController.h; sourceTree = "<group>"; };
 		2DCF73B31A952F8900495740 /* PreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesWindowController.m; sourceTree = "<group>"; };
+		2DD39ED726AD8D1600C5846D /* analyzer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = analyzer.h; sourceTree = "<group>"; };
+		2DD39ED826AD8D1600C5846D /* analyzer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = analyzer.c; sourceTree = "<group>"; };
 		2DD5262E2062F1DF002609C5 /* help-cocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "help-cocoa.txt"; sourceTree = "<group>"; };
 		2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbSeekBar.h; sourceTree = "<group>"; };
 		2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbSeekBar.m; sourceTree = "<group>"; };
@@ -10303,6 +10307,15 @@
 			path = ../icons/1024x1024;
 			sourceTree = "<group>";
 		};
+		2DD39EC726AD8CFD00C5846D /* analyzer */ = {
+			isa = PBXGroup;
+			children = (
+				2DD39ED726AD8D1600C5846D /* analyzer.h */,
+				2DD39ED826AD8D1600C5846D /* analyzer.c */,
+			);
+			path = analyzer;
+			sourceTree = "<group>";
+		};
 		2DD81C2D25152D86008C716C /* pixmaps */ = {
 			isa = PBXGroup;
 			children = (
@@ -10760,6 +10773,7 @@
 		4D1B3EB31837EC44003E6066 /* deadbeef */ = {
 			isa = PBXGroup;
 			children = (
+				2DD39EC726AD8CFD00C5846D /* analyzer */,
 				2D6E2CFF26AC3022008FCD4B /* Apple */,
 				4D1B3ED71837EC44003E6066 /* ConvertUTF */,
 				4D1B3F861837EC44003E6066 /* md5 */,
@@ -12807,6 +12821,7 @@
 				2D1E215724F9826C00E2895D /* MedialibItemDragDropHolder.h in Headers */,
 				2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */,
 				2DF55C3F2270FCB9002C44DC /* ScriptableNodeEditorViewController.h in Headers */,
+				2DD39ED926AD8D1600C5846D /* analyzer.h in Headers */,
 				2DDBA26423E5F14A00051320 /* PlaylistHeaderView.h in Headers */,
 				2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
@@ -16064,6 +16079,7 @@
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				2D1E215824F9826C00E2895D /* MedialibItemDragDropHolder.m in Sources */,
 				2D651D18227227C300375AE2 /* ScriptableNodeEditorWindowController.m in Sources */,
+				2DD39EDA26AD8D1600C5846D /* analyzer.c in Sources */,
 				2D8EE27524D03601005C5B4B /* MediaLibraryOutlineViewController.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
 				2D9EBB7325E45BAA00255592 /* DesignModeDeps.m in Sources */,
