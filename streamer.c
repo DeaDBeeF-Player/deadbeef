@@ -2122,11 +2122,13 @@ streamer_read (char *bytes, int size) {
     int ss = output->fmt.channels * output->fmt.bps / 8;
     int max_bytes = output->fmt.samplerate * ss;
 
-    size_t _size = max_bytes - playback_buffer.remaining;
-    char *_bytes = malloc (_size);
-    int res = _streamer_fill_playback_buffer(_bytes, (int)_size);
-    ringbuf_write(&playback_buffer, _bytes, res);
-    free (_bytes);
+    if (max_bytes > playback_buffer.remaining) {
+        size_t _size = max_bytes - playback_buffer.remaining;
+        char *_bytes = malloc (_size);
+        int res = _streamer_fill_playback_buffer(_bytes, (int)_size);
+        ringbuf_write(&playback_buffer, _bytes, res);
+        free (_bytes);
+    }
 
     // consume the necessary amount for playback
     int sz = (int)ringbuf_read(&playback_buffer, bytes, size);
