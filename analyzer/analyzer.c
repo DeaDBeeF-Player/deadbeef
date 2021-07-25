@@ -33,7 +33,7 @@
 #pragma mark - Forward declarations
 
 static void
-_generate_freqency_bars (ddb_analyzer_t *analyzer);
+_generate_frequency_bars (ddb_analyzer_t *analyzer);
 
 static void
 _generate_octave_note_bars (ddb_analyzer_t *analyzer);
@@ -86,25 +86,28 @@ ddb_analyzer_free (ddb_analyzer_t *analyzer) {
 
 void
 ddb_analyzer_process (ddb_analyzer_t *analyzer, int samplerate, int channels, const float *fft_data, int fft_size) {
-    if (channels != analyzer->channels || fft_size != analyzer->fft_size) {
+    int need_regenerate = 0;
+
+    if (channels != analyzer->channels || fft_size != analyzer->fft_size || samplerate != analyzer->samplerate) {
         analyzer->channels = channels;
         analyzer->fft_size = fft_size;
         free (analyzer->fft_data);
         analyzer->fft_data = malloc (fft_size * channels * sizeof (float));
+        need_regenerate = 1;
     }
 
     memcpy (analyzer->fft_data, fft_data, fft_size * channels * sizeof (float));
     analyzer->samplerate = samplerate;
 
-//    _tempered_scale_bands_precalc (analyzer);
-
-    switch (analyzer->mode) {
-    case DDB_ANALYZER_MODE_FREQUENCIES:
-        _generate_freqency_bars (analyzer);
-        break;
-    case DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS:
-        _generate_octave_note_bars (analyzer);
-        break;
+    if (need_regenerate) {
+        switch (analyzer->mode) {
+        case DDB_ANALYZER_MODE_FREQUENCIES:
+            _generate_frequency_bars (analyzer);
+            break;
+        case DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS:
+            _generate_octave_note_bars (analyzer);
+            break;
+        }
     }
 }
 
@@ -114,9 +117,7 @@ ddb_analyzer_tick (ddb_analyzer_t *analyzer) {
     // frequency lines
     ddb_analyzer_bar_t *bar = analyzer->bars;
     for (int i = 0; i < analyzer->bar_count; i++, bar++) {
-        float l = _interpolate_bin_with_ratio (analyzer, bar->bl, bar->rl);
-        float h = _interpolate_bin_with_ratio (analyzer, bar->bh, bar->rh);
-        float norm_h = l > h ? l : h;
+        float norm_h = _interpolate_bin_with_ratio (analyzer, bar->bin, bar->ratio);
         bar->height = norm_h;
     }
 
@@ -155,15 +156,7 @@ ddb_analyzer_get_draw_data (ddb_analyzer_t *analyzer, int view_width, int view_h
     ddb_analyzer_bar_t *bar = analyzer->bars;
     ddb_analuzer_draw_bar_t *draw_bar = draw_data->bars;
     for (int i = 0; i < analyzer->bar_count; i++, bar++, draw_bar++) {
-        float l = _interpolate_bin_with_ratio(analyzer, bar->bl, bar->rl);
-        float h = _interpolate_bin_with_ratio(analyzer, bar->bh, bar->rh);
-        float norm_h = l > h ? l : h;
-
-        // FIXME: channel
-        for ( int j = bar->bl + 1; j < bar->bh; j++ ) {
-            if ( analyzer->fft_data[j] > norm_h )
-                norm_h = analyzer->fft_data[j];
-        }
+        float norm_h = _interpolate_bin_with_ratio(analyzer, bar->bin, bar->ratio);
 
         draw_bar->bar_height = _get_bar_height (analyzer, norm_h, view_height);
         draw_bar->xpos = bar->xpos * view_width;
@@ -195,7 +188,7 @@ _get_bar_height (ddb_analyzer_t *analyzer, float normalized_height, int view_hei
 }
 
 static void
-_generate_freqency_bars (ddb_analyzer_t *analyzer) {
+_generate_frequency_bars (ddb_analyzer_t *analyzer) {
     float min_freq_log = log10 (analyzer->min_freq);
     float max_freq_log = log10 (analyzer->max_freq);
     float view_width = analyzer->view_width;
@@ -223,20 +216,11 @@ _generate_freqency_bars (ddb_analyzer_t *analyzer) {
             ddb_analyzer_bar_t *bar = analyzer->bars + analyzer->bar_count;
 
             bar->xpos = pos / view_width; // normalized position
-            bar->bl = i;
-            bar->bh = i;
-            bar->fl = freq;
-            bar->fh = freq;
-            bar->rl = 0;
-            bar->rh = 0;
+            bar->bin = i;
+            bar->ratio = 0;
             analyzer->bar_count += 1;
 
             prev = pos;
-        }
-        else if (analyzer->bar_count > 0) {
-            // add to the current band
-            analyzer->bars[analyzer->bar_count-1].bh = i;
-            analyzer->bars[analyzer->bar_count-1].fh = freq;
         }
     }
 }
@@ -271,15 +255,20 @@ _generate_octave_note_bars (ddb_analyzer_t *analyzer) {
 
         ddb_analyzer_bar_t *bar = analyzer->bars + analyzer->bar_count;
 
-        int bin = _bin_for_freq_round(analyzer, band->freq);
+        int bin = _bin_for_freq_floor(analyzer, band->freq);
 
-        bar->bl = bin;
-        bar->bh = bin;
-        bar->fl = band->freq;
-        bar->fh = band->freq;
-        bar->rl = 0;
-        bar->rh = 0;
+        bar->bin = bin;
+        bar->ratio = 0;
         analyzer->bar_count += 1;
+
+        int bin2 = bin+1;
+        if (bin2 < analyzer->fft_size) {
+            float p = log10(band->freq);
+            float p1 = log10(_freq_for_bin(analyzer, bin));
+            float p2 = log10(_freq_for_bin(analyzer, bin2));
+            float d = p2-p1;
+            bar->ratio = (p-p1)/d;
+        }
     }
 
     for (int i = 0; i < analyzer->bar_count; i++) {
