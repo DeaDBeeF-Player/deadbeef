@@ -31,9 +31,8 @@ typedef struct {
 
 typedef struct {
     // interpolation data
-    int bl, bh;
-    float fl, fh;
-    float rl, rh;
+    int bin;
+    float ratio;
 
     // normalized position
     float xpos;
