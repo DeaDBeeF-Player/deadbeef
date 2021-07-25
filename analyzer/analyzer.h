@@ -60,32 +60,36 @@ typedef enum {
 }  ddb_analyzer_mode_t;
 
 typedef struct ddb_analyzer_s {
+    // Settings
+
+    float min_freq;
+    float max_freq;
+    ddb_analyzer_mode_t mode;
+
     /// Can be either a real or virtual view width.
     /// The calculated values are normalized,
     /// and are going to be converted to the real view size at the draw time.
     int view_width;
     float peak_hold; // how many frames to hold the peak in place
+    float peak_speed_scale;
     float db_upper_bound; // dB value corresponding to the top of the view
     float db_lower_bound; // dB value corresponding to the bottom of the view
 
-    /// Calculated bars after calling @c ddb_analyzer_process
+    /// The bars get created / updated by calling @c ddb_analyzer_process.
+    /// The same bars get updated on every call to @c ddb_analyzer_tick.
     ddb_analyzer_bar_t *bars;
     int bar_count;
     int bar_count_max;
-
-    // tempered scale data, precalculated from fft pins
-    ddb_analyzer_band_t *tempered_scale_bands;
-
-    // settings from previous process
     int samplerate;
     int channels;
     int fft_size;
     float *fft_data;
 
-    // settings
-    float min_freq;
-    float max_freq;
-    ddb_analyzer_mode_t mode;
+    /// Tempered scale data, precalculated from fft pins
+    ddb_analyzer_band_t *tempered_scale_bands;
+
+    // settings from previous process
+
 } ddb_analyzer_t;
 
 ddb_analyzer_t *ddb_analyzer_alloc (void);
