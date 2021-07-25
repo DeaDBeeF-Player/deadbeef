@@ -12,22 +12,10 @@
 
 extern DB_functions_t *deadbeef;
 
-#define FIRST_NOTE_FREQ 220
-#define NUM_BARS (7*12)
 #define LOWER_BOUND -80
-#define PEAK_DRAW_HEIGHT 1
-#define A 9.8f
-
-static double noteFrequencies[NUM_BARS];
 
 @interface VisualizationView() {
-    float saBars[NUM_BARS]; // peaked bars falling down
-    float saPeaks[NUM_BARS]; // peaks falling at different rate
-    float saPeaksSpeed[NUM_BARS]; // current speed of the peaks
-    float saPeaksHold[NUM_BARS]; // time remaining to hold the peaks
-    float saLowerBound; // lower bound of the graph (NOTE: do not delete -- it can be made configurable)
-    NSTimeInterval _prevTime;
-
+    float saLowerBound;
     ddb_analyzer_t _analyzer;
     ddb_analyzer_draw_data_t _draw_data;
 }
@@ -75,15 +63,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 }
 
 - (void)setup {
-    if (noteFrequencies[0] == 0) {
-        for (int i = 0; i < NUM_BARS; i++) {
-            noteFrequencies[i] = pow(1.059463094359,i);
-        }
-    }
-
     deadbeef->vis_spectrum_listen((__bridge void *)(self), vis_callback);
-    memset (saBars, 0, sizeof (saBars));
-    memset (saPeaks, 0, sizeof (saPeaks));
     saLowerBound = LOWER_BOUND;
 
     NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
@@ -101,6 +81,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     _analyzer.db_lower_bound = LOWER_BOUND;
     _analyzer.peak_hold = 10;
     _analyzer.view_width = 1000;
+    _analyzer.mode = DDB_ANALYZER_MODE_FREQUENCIES; // DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 }
 
 - (NSColor *)baseColor {
@@ -162,74 +143,9 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
 }
 
-- (void)updateSpectrumAnalyzer {
-    float *spectrumData = NULL;
-    int sdCount = 0;
-    float samplerate = 0;
-    NSTimeInterval currentTime = CFAbsoluteTimeGetCurrent();
-    NSTimeInterval dt = currentTime - _prevTime;
-    _prevTime = currentTime;
-
-    @synchronized (self) {
-        sdCount = self.nframes;
-        spectrumData = malloc (sdCount * 2 * sizeof (float));
-        memcpy (spectrumData, self.fftData, sdCount * sizeof (float) * 2);
-        samplerate = self.samplerate;
-    }
-
-    for (int i = 0; i < NUM_BARS; i++) {
-        const float a = A;
-        const float t = dt;
-        if (saPeaksHold[i] > 0) {
-            saPeaksHold[i] -= t;
-        }
-        else {
-            saPeaksSpeed[i] += a * t / 2;
-
-            saPeaks[i] -= saPeaksSpeed[i] * t;
-            if (saPeaks[i] < 0) {
-                saPeaks[i] = 0;
-            }
-        }
-
-        // now calculate new values
-
-        // convert index to musical note
-        float fn = FIRST_NOTE_FREQ * noteFrequencies[i];
-        float fn_next_bar = FIRST_NOTE_FREQ * noteFrequencies[i+1];
-
-        int si = MIN(sdCount/2-1,(int)(fn/samplerate*(float)(sdCount/2)));
-        int si_end = (int)(fn_next_bar/samplerate*(float)(sdCount/2)) - 1;
-        si_end = MIN(sdCount/2-1,si_end);
-        si_end = MAX(si,si_end);
-
-        // get avg frequency in the band
-        float newBar = 0;
-        for (int n = si; n <= si_end; n++) {
-            // max of 2 channels
-            float val = MAX(spectrumData[n], spectrumData[sdCount+n]);
-
-            if (val > newBar) {
-                newBar = val;
-            }
-        }
-
-        float bound = -saLowerBound;
-        newBar = (20*log10(newBar) + bound)/bound;
-        newBar = MAX(0, MIN(1, newBar));
-
-        saBars[i] = newBar;
-        if (saPeaks[i] < saBars[i]) {
-            saPeaks[i] = saBars[i];
-            saPeaksHold[i] = 0.4;
-            saPeaksSpeed[i] = 0;
-        }
-    }
-
-    free (spectrumData);
-}
-
-- (void)drawSaGrid:(CGContextRef)context {
+- (void)drawSaGrid {
+    CGContextRef context = NSGraphicsContext.currentContext.CGContext;
+#define NUM_BARS (7*12)
     // vert lines, octaves
     CGContextSetStrokeColorWithColor(context, self.gridColor.CGColor);
     for (int i = 12; i < NUM_BARS; i += 12) {
@@ -276,34 +192,6 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
 }
 
-- (void)drawSpectrumAnalyzer:(CGContextRef)context {
-    [self drawSaGrid:context];
-
-    CGFloat bw = NSWidth(self.bounds)/(CGFloat)NUM_BARS;
-    CGContextSetFillColorWithColor(context, self.barColor.CGColor);
-
-    const CGFloat expand = 2; // how much to expand outside of the view bottom edge
-
-    CGFloat h = NSHeight(self.bounds) + expand;
-
-    for (int i = 0; i < NUM_BARS; i++) {
-        CGFloat bh = (CGFloat)saBars[i] * h;
-//        int pIdx = i * 255 / NUM_BARS;
-//        let r = colorPalette[1][pIdx*4+0]
-//        let g = colorPalette[1][pIdx*4+1]
-//        let b = colorPalette[1][pIdx*4+2]
-        CGContextAddRect(context, CGRectMake((CGFloat)i*bw+1, -expand, bw-2, bh));
-    }
-    CGContextFillPath(context);
-    for (int i = 0; i < NUM_BARS; i++) {
-        CGFloat bh = (CGFloat)saPeaks[i] * h - expand;
-        CGContextAddRect(context, CGRectMake((CGFloat)i*bw+1, bh, bw-2, PEAK_DRAW_HEIGHT));
-    }
-
-    CGContextSetFillColorWithColor(context, self.peakColor.CGColor);
-    CGContextFillPath(context);
-}
-
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
 
@@ -313,19 +201,16 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     if (self.samplerate == 0) {
         return;
     }
+//    [self drawFFTWithChannel:0];
+//    [self drawFFTWithChannel channel:1];
 
-//    CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-//    [self updateSpectrumAnalyzer];
-//    [self drawSpectrumAnalyzer:context];
-
-//    [self drawFFT:context channel:0];
-//    [self drawFFT:context channel:1];
-
+    [self drawSaGrid];
     [self drawFrequencyLines];
 }
 
 // draw fft for specified channel
-- (void)drawFFT:(CGContextRef)context channel:(int)channel {
+- (void)drawFFTWithChannel:(int)channel {
+    CGContextRef context = NSGraphicsContext.currentContext.CGContext;
     __block int fftSize;
     float *fftData = NULL;
 
@@ -371,21 +256,31 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
 
     CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-    CGContextSetStrokeColorWithColor(context, self.barColor.CGColor);
     ddb_analuzer_draw_bar_t *bar = _draw_data.bars;
     for (int i = 0; i < _draw_data.bar_count; i++, bar++) {
-        CGContextMoveToPoint(context, bar->xpos, 0);
-        CGContextAddLineToPoint(context, bar->xpos, bar->bar_height);
+        if (_analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
+            CGContextMoveToPoint(context, bar->xpos, 0);
+            CGContextAddLineToPoint(context, bar->xpos, bar->bar_height);
+        }
+        else {
+            CGContextAddRect(context, CGRectMake(bar->xpos, 0, _draw_data.bar_width, bar->bar_height));
+        }
     }
-    CGContextStrokePath(context);
+    if (_analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
+        CGContextSetStrokeColorWithColor(context, self.barColor.CGColor);
+        CGContextStrokePath(context);
+    }
+    else {
+        CGContextSetFillColorWithColor(context, self.barColor.CGColor);
+        CGContextFillPath(context);
+    }
 
-    CGContextSetStrokeColorWithColor(context, self.peakColor.CGColor);
     bar = _draw_data.bars;
     for (int i = 0; i < _draw_data.bar_count; i++, bar++) {
-        CGContextMoveToPoint(context, bar->xpos, bar->peak_ypos);
-        CGContextAddLineToPoint(context, bar->xpos, bar->peak_ypos+0.5);
+        CGContextAddRect(context, CGRectMake(bar->xpos, bar->peak_ypos, _draw_data.bar_width, 1));
     }
-    CGContextStrokePath(context);
+    CGContextSetFillColorWithColor(context, self.peakColor.CGColor);
+    CGContextFillPath(context);
 }
 
 @end
