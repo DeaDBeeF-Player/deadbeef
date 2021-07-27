@@ -1986,9 +1986,39 @@ streamer_apply_soft_volume (char *bytes, int sz) {
 }
 
 static int
-_streamer_fill_playback_buffer(char *bytes, int size) {
+_streamer_get_bytes (char *bytes, int size) {
     DB_output_t *output = plug_get_output ();
 
+    char *outbuffer = _get_output_buffer (OUTPUT_BUFFER_SIZE);
+
+    // consume decoded data
+    int sz = min (size, _outbuffer_remaining);
+    if (!sz) {
+        // no data available
+        memset (bytes, 0, size);
+        return size;
+    }
+
+    // clip to frame size
+    int ss = output->fmt.channels * output->fmt.bps / 8;
+    if ((sz % ss) != 0) {
+        sz -= (sz % ss);
+    }
+
+    memcpy (bytes, outbuffer, sz);
+    if (sz < _outbuffer_remaining) {
+        memmove (outbuffer, outbuffer + sz, _outbuffer_remaining - sz);
+    }
+    _outbuffer_remaining -= sz;
+
+    streamer_apply_soft_volume (bytes, sz);
+
+    return sz;
+}
+
+// Decode enough blocks to fill the _output_buffer, and update avg_bitrate
+static void
+_streamer_fill_playback_buffer(void) {
     streamer_lock ();
     streamblock_t *block = streamreader_get_curr_block();
     if (!block) {
@@ -2010,11 +2040,10 @@ _streamer_fill_playback_buffer(char *bytes, int size) {
         streamer_unlock();
 
         if (streaming_track) {
-            memset (bytes, 0, size);
-            return size;
+            return;
         }
         _audio_stall_count++;
-        return 0;
+        return;
     }
 
     _audio_stall_count = 0;
@@ -2040,32 +2069,9 @@ _streamer_fill_playback_buffer(char *bytes, int size) {
         memcpy (&last_block_fmt, &block->fmt, sizeof (ddb_waveformat_t));
 
         streamer_unlock();
-        memset (bytes, 0, size);
-        return size;
+        return;
     }
     streamer_unlock ();
-
-    // consume decoded data
-    int sz = min (size, _outbuffer_remaining);
-    if (!sz) {
-        // no data available
-        memset (bytes, 0, size);
-        return size;
-    }
-
-    // clip to frame size
-    int ss = output->fmt.channels * output->fmt.bps / 8;
-    if ((sz % ss) != 0) {
-        sz -= (sz % ss);
-    }
-
-    char *outbuffer = _get_output_buffer(OUTPUT_BUFFER_SIZE);
-
-    memcpy (bytes, outbuffer, sz);
-    if (sz < _outbuffer_remaining) {
-        memmove (outbuffer, outbuffer + sz, _outbuffer_remaining - sz);
-    }
-    _outbuffer_remaining -= sz;
 
     // approximate bitrate
     if (block_bitrate != -1) {
@@ -2086,12 +2092,8 @@ _streamer_fill_playback_buffer(char *bytes, int size) {
                 }
             }
         }
-//        printf ("apx bitrate: %d (last %d)\n", avg_bitrate, last_bitrate);
+        //        printf ("apx bitrate: %d (last %d)\n", avg_bitrate, last_bitrate);
     }
-
-    streamer_apply_soft_volume (bytes, sz);
-
-    return sz;
 }
 
 int
@@ -2103,28 +2105,17 @@ streamer_read (char *bytes, int size) {
     int max_bytes = output->fmt.samplerate * ss;
 
     // Read into the output buffer
-    int sz = _streamer_fill_playback_buffer(bytes, size);
+    _streamer_fill_playback_buffer();
 
+    // Process
 #ifndef ANDROID
-    // Create the processing buffer
-    char *viz_buffer = malloc (max_bytes);
-
-    // Copy to the processing buffer
-    memcpy (viz_buffer, bytes, sz);
-
     // Read extra bytes from output buffer
-    int want_bytes = max_bytes - sz;
-    int got_bytes = min (_outbuffer_remaining, want_bytes);
-    memcpy (viz_buffer + sz, _output_buffer, got_bytes);
-    streamer_apply_soft_volume (viz_buffer + sz, got_bytes);
-    int viz_buf_size = sz + got_bytes;
-
-    viz_process (viz_buffer, (int)viz_buf_size, output);
-
-    free (viz_buffer);
+    int viz_bytes = min (_outbuffer_remaining, max_bytes);
+    viz_process (_output_buffer, viz_bytes, output);
 #endif
 
-    return sz;
+    // Play
+    return _streamer_get_bytes(bytes, size);
 }
 
 int
