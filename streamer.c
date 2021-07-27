@@ -56,7 +56,6 @@
 #include "playmodes.h"
 #include "viz.h"
 #include "fft.h"
-#include "ringbuf.h"
 
 #ifdef trace
 #undef trace
@@ -142,8 +141,6 @@ static DB_vfs_t *streamer_file_vfs;
 static char *_output_buffer;
 static size_t _output_buffer_size;
 static int _outbuffer_remaining;
-
-static ringbuf_t playback_buffer;
 
 #if defined(HAVE_XGUI) || defined(ANDROID)
 #include "equalizer.h"
@@ -1701,11 +1698,6 @@ streamer_init (void) {
 
     viz_init();
 
-    // 1 sec 8 channel float32 -- max supported
-    const int playback_buffer_size = 192000 * 8 * 4;
-    char *buffer = malloc(playback_buffer_size);
-    ringbuf_init(&playback_buffer, buffer, playback_buffer_size);
-
     streamreader_init();
 
     streamer_dsp_init ();
@@ -1762,8 +1754,6 @@ streamer_free (void) {
     mutex = 0;
     viz_free ();
     fft_free();
-    free (playback_buffer.bytes);
-    memset (&playback_buffer, 0, sizeof (playback_buffer));
 
     streamer_dsp_chain_save();
 
@@ -1809,7 +1799,6 @@ streamer_reset (int full) { // must be called when current song changes by exter
     _outbuffer_remaining = 0;
     streamer_unlock();
     viz_reset ();
-    ringbuf_flush(&playback_buffer);
 }
 
 static int
@@ -2000,8 +1989,6 @@ static int
 _streamer_fill_playback_buffer(char *bytes, int size) {
     DB_output_t *output = plug_get_output ();
 
-    // FIXME: add a wrapper to read enough to fill a buffer of 1 sec, to use that buffer in visualization
-
     streamer_lock ();
     streamblock_t *block = streamreader_get_curr_block();
     if (!block) {
@@ -2035,18 +2022,16 @@ _streamer_fill_playback_buffer(char *bytes, int size) {
     int block_bitrate = -1;
 
     // only decode until the next format change
-    if (!memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
-        // decode enough blocks to fill the output buffer
-        while (block != NULL && _outbuffer_remaining < size && !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
-            char *outbuffer = _get_output_buffer (OUTPUT_BUFFER_SIZE);
-            int rb = process_output_block (block, outbuffer + _outbuffer_remaining);
-            if (rb <= 0) {
-                break;
-            }
-            _outbuffer_remaining += rb;
-            block_bitrate = block->bitrate;
-            block = streamreader_get_curr_block();
+    // decode enough blocks to fill the output buffer
+    while (block != NULL && _outbuffer_remaining <= OUTPUT_BUFFER_SIZE - block->size && !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
+        char *outbuffer = _get_output_buffer (OUTPUT_BUFFER_SIZE);
+        int rb = process_output_block (block, outbuffer + _outbuffer_remaining);
+        if (rb <= 0) {
+            break;
         }
+        _outbuffer_remaining += rb;
+        block_bitrate = block->bitrate;
+        block = streamreader_get_curr_block();
     }
     // empty buffer and the next block format differs? request format change!
 
@@ -2111,44 +2096,34 @@ _streamer_fill_playback_buffer(char *bytes, int size) {
 
 int
 streamer_read (char *bytes, int size) {
-#if 0
-    struct timeval tm1;
-    gettimeofday (&tm1, NULL);
-#endif
-
     DB_output_t *output = plug_get_output ();
 
     // Ensure that the buffer has enough data for analysis
     int ss = output->fmt.channels * output->fmt.bps / 8;
     int max_bytes = output->fmt.samplerate * ss;
 
-    if (max_bytes > playback_buffer.remaining) {
-        size_t _size = max_bytes - playback_buffer.remaining;
-        char *_bytes = malloc (_size);
-        int res = _streamer_fill_playback_buffer(_bytes, (int)_size);
-        ringbuf_write(&playback_buffer, _bytes, res);
-        free (_bytes);
-    }
-
-    // consume the necessary amount for playback
-    int sz = (int)ringbuf_read(&playback_buffer, bytes, size);
-
-#if 0
-    struct timeval tm2;
-    gettimeofday (&tm2, NULL);
-
-    int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
-    printf ("streamer_read took %d ms\n", ms);
-#endif
+    // Read into the output buffer
+    int sz = _streamer_fill_playback_buffer(bytes, size);
 
 #ifndef ANDROID
-    size_t viz_buf_size = DDB_FREQ_BANDS * 2 * ss;
-    char *viz_buffer = malloc(viz_buf_size);
+    // Create the processing buffer
+    char *viz_buffer = malloc (max_bytes);
+
+    // Copy to the processing buffer
     memcpy (viz_buffer, bytes, sz);
-    viz_buf_size = sz + ringbuf_read_keep(&playback_buffer, viz_buffer+sz, viz_buf_size-sz);
+
+    // Read extra bytes from output buffer
+    int want_bytes = max_bytes - sz;
+    int got_bytes = min (_outbuffer_remaining, want_bytes);
+    memcpy (viz_buffer + sz, _output_buffer, got_bytes);
+    streamer_apply_soft_volume (viz_buffer + sz, got_bytes);
+    int viz_buf_size = sz + got_bytes;
 
     viz_process (viz_buffer, (int)viz_buf_size, output);
+
+    free (viz_buffer);
 #endif
+
     return sz;
 }
 
