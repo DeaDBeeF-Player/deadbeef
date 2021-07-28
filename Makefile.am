@@ -53,7 +53,8 @@ deadbeef_SOURCES =\
 	logger.c logger.h\
 	external/wcwidth/wcwidth.c external/wcwidth/wcwidth.h\
 	playmodes.c playmodes.h\
-	viz.c viz.h
+	viz.c viz.h\
+	decodedblock.c decodedblock.h
 	
 #	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
 
