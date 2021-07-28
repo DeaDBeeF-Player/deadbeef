@@ -147,7 +147,7 @@ void
 ddb_analyzer_get_draw_data (ddb_analyzer_t *analyzer, int view_width, int view_height, ddb_analyzer_draw_data_t *draw_data) {
     if (draw_data->bar_count != analyzer->bar_count) {
         free (draw_data->bars);
-        draw_data->bars = calloc (analyzer->bar_count, sizeof (ddb_analuzer_draw_bar_t));
+        draw_data->bars = calloc (analyzer->bar_count, sizeof (ddb_analyzer_draw_bar_t));
         draw_data->bar_count = analyzer->bar_count;
     }
 
@@ -159,7 +159,7 @@ ddb_analyzer_get_draw_data (ddb_analyzer_t *analyzer, int view_width, int view_h
     }
 
     ddb_analyzer_bar_t *bar = analyzer->bars;
-    ddb_analuzer_draw_bar_t *draw_bar = draw_data->bars;
+    ddb_analyzer_draw_bar_t *draw_bar = draw_data->bars;
     for (int i = 0; i < analyzer->bar_count; i++, bar++, draw_bar++) {
         float norm_h = _interpolate_bin_with_ratio(analyzer, bar->bin, bar->ratio);
 

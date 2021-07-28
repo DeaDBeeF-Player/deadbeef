@@ -45,11 +45,11 @@ typedef struct {
     float xpos;
     float peak_ypos;
     float bar_height;
-} ddb_analuzer_draw_bar_t;
+} ddb_analyzer_draw_bar_t;
 
 typedef struct {
     int bar_count;
-    ddb_analuzer_draw_bar_t *bars;
+    ddb_analyzer_draw_bar_t *bars;
     int bar_width;
 } ddb_analyzer_draw_data_t;
 

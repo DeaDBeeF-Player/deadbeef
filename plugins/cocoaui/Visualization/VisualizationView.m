@@ -257,7 +257,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
 
     CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-    ddb_analuzer_draw_bar_t *bar = _draw_data.bars;
+    ddb_analyzer_draw_bar_t *bar = _draw_data.bars;
     for (int i = 0; i < _draw_data.bar_count; i++, bar++) {
         if (_analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
             CGContextMoveToPoint(context, bar->xpos, 0);
