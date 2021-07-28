@@ -52,6 +52,7 @@
 #include "strdupa.h"
 #include "playqueue.h"
 #include "streamreader.h"
+#include "decodedblock.h"
 #include "dsp.h"
 #include "playmodes.h"
 #include "viz.h"
@@ -1698,7 +1699,8 @@ streamer_init (void) {
 
     viz_init();
 
-    streamreader_init();
+    streamreader_init ();
+    decoded_blocks_init ();
 
     streamer_dsp_init ();
 
@@ -1723,6 +1725,7 @@ streamer_free (void) {
     thread_join (streamer_tid);
 
     streamreader_free ();
+    decoded_blocks_free ();
 
     if (first_failed_track) {
         pl_item_unref (first_failed_track);
@@ -1795,6 +1798,7 @@ streamer_reset (int full) { // must be called when current song changes by exter
 
     streamer_lock();
     streamreader_reset ();
+    decoded_blocks_reset();
     dsp_reset ();
     _outbuffer_remaining = 0;
     streamer_unlock();
@@ -1809,13 +1813,14 @@ process_output_block (streamblock_t *block, char *bytes) {
         return 0;
     }
 
-    // handle change of track
-    if (block->last) {
-        update_stop_after_current ();
+    decoded_block_t *decoded_block = decoded_blocks_append();
+    if (decoded_block == NULL) {
+        return 0;
     }
-    if (block->first) {
-        handle_track_change (playing_track, block->track);
-    }
+
+    decoded_block->track = block->track;
+    decoded_block->last = block->last;
+    decoded_block->first = block->first;
 
     // A block with 0 size is a valid block, and needs to be processed as usual (code above this line).
     // But here we do early exit, because there's no data to process in it.
@@ -1886,10 +1891,10 @@ process_output_block (streamblock_t *block, char *bytes) {
         memcpy (bytes, dspbytes, sz);
     }
 
-    if (!block->is_silent_header) {
-        playpos += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dspratio;
-        playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dspratio;
-    }
+    // TODO: do we need to store output->fmt?
+    decoded_block->total_bytes = decoded_block->remaining_bytes = sz;
+    decoded_block->is_silent_header = block->is_silent_header;
+    decoded_block->playback_time = (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dspratio;
 
     if (block->pos >= block->size) {
         streamreader_next_block ();
@@ -2005,7 +2010,46 @@ _streamer_get_bytes (char *bytes, int size) {
         sz -= (sz % ss);
     }
 
-    memcpy (bytes, outbuffer, sz);
+    int rb = sz;
+    char *readptr = outbuffer;
+    char *writeptr = bytes;
+    while (rb > 0) {
+        decoded_block_t *decoded_block = decoded_blocks_current();
+        if (decoded_block == NULL) {
+            break;
+        }
+
+        // handle change of track
+        if (decoded_block->first) {
+            handle_track_change (playing_track, decoded_block->track);
+        }
+
+        if (decoded_block->remaining_bytes != 0) {
+            int got_bytes = min (rb, decoded_block->remaining_bytes);
+            memcpy (writeptr, readptr, got_bytes);
+            readptr += got_bytes;
+            writeptr += got_bytes;
+            rb -= got_bytes;
+
+            decoded_block->remaining_bytes -= got_bytes;
+        }
+
+        if (decoded_block->remaining_bytes == 0) {
+            if (decoded_block->last) {
+                update_stop_after_current ();
+            }
+
+            if (!decoded_block->is_silent_header) {
+                playpos += decoded_block->playback_time;
+                playtime += decoded_block->playback_time;
+            }
+
+            decoded_blocks_next();
+        }
+    }
+
+    sz -= rb; // how many bytes we actually got
+
     if (sz < _outbuffer_remaining) {
         memmove (outbuffer, outbuffer + sz, _outbuffer_remaining - sz);
     }
@@ -2052,8 +2096,10 @@ _streamer_fill_playback_buffer(void) {
 
     // only decode until the next format change
     // decode enough blocks to fill the output buffer
-    while (block != NULL && _outbuffer_remaining <= OUTPUT_BUFFER_SIZE - block->size && !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
-        char *outbuffer = _get_output_buffer (OUTPUT_BUFFER_SIZE);
+    char *outbuffer = _get_output_buffer (OUTPUT_BUFFER_SIZE);
+    while (block != NULL
+           && OUTPUT_BUFFER_SIZE-_outbuffer_remaining >= block->size * 8 // FIXME: hardcoded constant
+           && !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
         int rb = process_output_block (block, outbuffer + _outbuffer_remaining);
         if (rb <= 0) {
             break;

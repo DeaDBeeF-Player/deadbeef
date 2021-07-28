@@ -26,6 +26,12 @@
 
 #include "deadbeef.h"
 
+// how much bigger should read-buffer be to allow upsampling.
+// e.g. 8000Hz -> 192000Hz upsampling requires 24x buffer size,
+// so if we originally request 4096 bytes blocks -
+// that will require 24x buffer size, which is 98304 bytes buffer
+#define MAX_DSP_RATIO 24
+
 void
 dsp_free (void);
 
