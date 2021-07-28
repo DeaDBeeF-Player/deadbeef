@@ -1921,6 +1921,8 @@
 		2DB52F7D24CF7CF20046D516 /* TrackContextMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB52F7B24CF7CF20046D516 /* TrackContextMenu.m */; };
 		2DB951B626B07E7B00602876 /* decodedblock.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB951B426B07E7B00602876 /* decodedblock.h */; };
 		2DB951C726B0874200602876 /* decodedblock.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB951B526B07E7B00602876 /* decodedblock.c */; };
+		2DB951CB26B1E05300602876 /* SpectrumAnalyzerSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB951C926B1E05300602876 /* SpectrumAnalyzerSettings.h */; };
+		2DB951CC26B1E05300602876 /* SpectrumAnalyzerSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB951CA26B1E05300602876 /* SpectrumAnalyzerSettings.m */; };
 		2DB96A8419ABB48300E318A8 /* src.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB96A6A19ABB32E00E318A8 /* src.c */; };
 		2DB96A8519ABB48300E318A8 /* src.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB96A6B19ABB32E00E318A8 /* src.h */; };
 		2DB96A9B19ABB50300E318A8 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB96A9019ABB50300E318A8 /* common.h */; };
@@ -5694,6 +5696,8 @@
 		2DB52F7B24CF7CF20046D516 /* TrackContextMenu.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackContextMenu.m; sourceTree = "<group>"; };
 		2DB951B426B07E7B00602876 /* decodedblock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = decodedblock.h; sourceTree = "<group>"; };
 		2DB951B526B07E7B00602876 /* decodedblock.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = decodedblock.c; sourceTree = "<group>"; };
+		2DB951C926B1E05300602876 /* SpectrumAnalyzerSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumAnalyzerSettings.h; sourceTree = "<group>"; };
+		2DB951CA26B1E05300602876 /* SpectrumAnalyzerSettings.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumAnalyzerSettings.m; sourceTree = "<group>"; };
 		2DB96A6A19ABB32E00E318A8 /* src.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src.c; path = ../plugins/dsp_libsrc/src.c; sourceTree = "<group>"; };
 		2DB96A6B19ABB32E00E318A8 /* src.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = src.h; path = ../plugins/dsp_libsrc/src.h; sourceTree = "<group>"; };
 		2DB96A8019ABB47C00E318A8 /* dsp_libsrc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dsp_libsrc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8428,6 +8432,7 @@
 		2D30D13625E2A6B40023A299 /* DesignMode */ = {
 			isa = PBXGroup;
 			children = (
+				2DB951C826B1E03600602876 /* Models */,
 				2DE5562426075B4200285BF9 /* Widgets */,
 				2DDD76C625E152BF00FA6FE5 /* DesignModeDefs.h */,
 				2D9EBB6F25E45BAA00255592 /* DesignModeDeps.h */,
@@ -10114,6 +10119,15 @@
 				2DB52F7B24CF7CF20046D516 /* TrackContextMenu.m */,
 			);
 			path = TrackProperties;
+			sourceTree = "<group>";
+		};
+		2DB951C826B1E03600602876 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				2DB951C926B1E05300602876 /* SpectrumAnalyzerSettings.h */,
+				2DB951CA26B1E05300602876 /* SpectrumAnalyzerSettings.m */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		2DB96A7619ABB3E500E318A8 /* dsp_libsrc */ = {
@@ -12881,6 +12895,7 @@
 				2DDE52A624F821630096EF80 /* MediaLibraryOutlineView.h in Headers */,
 				2DF55C292270F415002C44DC /* ScriptableSelectViewController.h in Headers */,
 				2D71C26A1DC88E5C00247CEF /* ScriptableTableDataSource.h in Headers */,
+				2DB951CB26B1E05300602876 /* SpectrumAnalyzerSettings.h in Headers */,
 				2DAB1A3026A5FB9C00EA8B8F /* PreferencesPluginEntry.h in Headers */,
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
 				2DDD7ABB25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */,
@@ -16069,6 +16084,7 @@
 				2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */,
 				2DA30E7524032550001BAB8A /* NetworkPreferencesViewController.m in Sources */,
 				2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */,
+				2DB951CC26B1E05300602876 /* SpectrumAnalyzerSettings.m in Sources */,
 				2D9E905224F453960037D323 /* MediaLibraryPreferencesViewController.m in Sources */,
 				2D887BE624B1C86D0078392F /* MediaLibraryItem.m in Sources */,
 				2D3CD9382409A091005875A9 /* PinnedGroupTitleView.m in Sources */,

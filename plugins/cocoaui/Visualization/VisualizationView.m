@@ -82,9 +82,20 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     _analyzer.peak_hold = 10;
     _analyzer.view_width = 1000;
     _analyzer.fractional_bars = 1;
+    _analyzer.octave_bars_step = 2;
     _analyzer.mode = DDB_ANALYZER_MODE_FREQUENCIES;
     _analyzer.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 }
+
+- (void)updateAnalyzerSettings:(SpectrumAnalyzerSettings *)settings {
+    if (_analyzer.mode != settings.mode || _analyzer.octave_bars_step != settings.barGranularity) {
+        _analyzer.mode_did_change = 1;
+    }
+    _analyzer.mode = settings.mode;
+    _analyzer.bar_gap_denominator = settings.distanceBetweenBars;
+    _analyzer.octave_bars_step = settings.barGranularity;
+}
+
 
 - (NSColor *)baseColor {
 #ifdef MAC_OS_X_VERSION_10_14
