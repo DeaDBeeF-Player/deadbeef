@@ -144,13 +144,6 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output) {
         int in_frame_size = (output->fmt.bps >> 3) * output->fmt.channels;
         int in_frames = bytes_size / in_frame_size;
 
-        // if the input is larger than buffer, use the tail
-        if (in_frames > DDB_FREQ_BANDS * 2) {
-            bytes += (in_frames - DDB_FREQ_BANDS * 2) * in_frame_size;
-            in_frames = DDB_FREQ_BANDS * 2;
-            bytes_size = DDB_FREQ_BANDS * 2 * in_frame_size;
-        }
-
         // convert to float
         ddb_waveformat_t out_fmt = {
             .bps = 32,
@@ -161,14 +154,22 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output) {
             .is_bigendian = 0
         };
 
-        size_t data_size = in_frames * out_fmt.channels * sizeof (float);
-        __block float *data = malloc(data_size);
+
+        int process_samples = in_frames;
+        // if the input is smaller than the buffer, pad with zeroes
+        if (process_samples != DDB_FREQ_BANDS * 2) {
+            process_samples = DDB_FREQ_BANDS * 2;
+            bytes_size = process_samples * output->fmt.channels * output->fmt.bps/8;
+        }
+        size_t data_size = process_samples * out_fmt.channels * sizeof (float);
+        __block float *data = calloc(1, data_size);
+
         pcm_convert (&output->fmt, bytes, &out_fmt, (char *)data, bytes_size);
 
         ddb_audio_data_t waveform_data = {
             .fmt = &out_fmt,
             .data = data,
-            .nframes = in_frames
+            .nframes = process_samples
         };
 
         // Pass to async queue for processing and callbacks
@@ -187,14 +188,14 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output) {
 
             if (spectrum_listeners) {
                 // convert samples in planar layout
-                assert (in_frames <= DDB_FREQ_BANDS * 2);
+                assert (process_samples == DDB_FREQ_BANDS * 2);
                 for (int c = 0; c < audio_data_channels; c++) {
                     float *channel = &audio_data[DDB_FREQ_BANDS * 2 * c];
-                    for (int s = 0; s < in_frames; s++) {
+                    for (int s = 0; s < process_samples; s++) {
                         channel[s] = data[s * audio_data_channels + c];
                     }
                     // pad zeroes
-                    for (int s = in_frames; s < DDB_FREQ_BANDS * 2; s++) {
+                    for (int s = process_samples; s < DDB_FREQ_BANDS * 2; s++) {
                         channel[s] = 0;
                     }
                 }
