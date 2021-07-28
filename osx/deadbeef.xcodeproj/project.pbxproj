@@ -1919,6 +1919,8 @@
 		2DB2F740240466AF00F7C000 /* PluginsPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */; };
 		2DB52F7C24CF7CF20046D516 /* TrackContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB52F7A24CF7CF20046D516 /* TrackContextMenu.h */; };
 		2DB52F7D24CF7CF20046D516 /* TrackContextMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB52F7B24CF7CF20046D516 /* TrackContextMenu.m */; };
+		2DB951B626B07E7B00602876 /* decodedblock.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB951B426B07E7B00602876 /* decodedblock.h */; };
+		2DB951C726B0874200602876 /* decodedblock.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB951B526B07E7B00602876 /* decodedblock.c */; };
 		2DB96A8419ABB48300E318A8 /* src.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB96A6A19ABB32E00E318A8 /* src.c */; };
 		2DB96A8519ABB48300E318A8 /* src.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB96A6B19ABB32E00E318A8 /* src.h */; };
 		2DB96A9B19ABB50300E318A8 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB96A9019ABB50300E318A8 /* common.h */; };
@@ -5690,6 +5692,8 @@
 		2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginsPreferencesViewController.m; sourceTree = "<group>"; };
 		2DB52F7A24CF7CF20046D516 /* TrackContextMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackContextMenu.h; sourceTree = "<group>"; };
 		2DB52F7B24CF7CF20046D516 /* TrackContextMenu.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackContextMenu.m; sourceTree = "<group>"; };
+		2DB951B426B07E7B00602876 /* decodedblock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = decodedblock.h; sourceTree = "<group>"; };
+		2DB951B526B07E7B00602876 /* decodedblock.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = decodedblock.c; sourceTree = "<group>"; };
 		2DB96A6A19ABB32E00E318A8 /* src.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src.c; path = ../plugins/dsp_libsrc/src.c; sourceTree = "<group>"; };
 		2DB96A6B19ABB32E00E318A8 /* src.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = src.h; path = ../plugins/dsp_libsrc/src.h; sourceTree = "<group>"; };
 		2DB96A8019ABB47C00E318A8 /* dsp_libsrc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dsp_libsrc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -10788,6 +10792,8 @@
 				2D40208D1F27BD7200D4EA4F /* cueutil.c */,
 				2D40208E1F27BD7200D4EA4F /* cueutil.h */,
 				4D1B3EDF1837EC44003E6066 /* deadbeef.h */,
+				2DB951B426B07E7B00602876 /* decodedblock.h */,
+				2DB951B526B07E7B00602876 /* decodedblock.c */,
 				4DC96E6D1E4CC9670093CFD3 /* dsp.c */,
 				4DC96E6E1E4CC9670093CFD3 /* dsp.h */,
 				4D1B3EE21837EC44003E6066 /* dsppreset.c */,
@@ -12892,6 +12898,7 @@
 				2D8EE27424D03601005C5B4B /* MediaLibraryOutlineViewController.h in Headers */,
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
 				2D747E3B24B64E7600BBB987 /* SidebarSplitViewController.h in Headers */,
+				2DB951B626B07E7B00602876 /* decodedblock.h in Headers */,
 				2DDD796325E15ED200FA6FE5 /* PlaylistWidget.h in Headers */,
 				2D0A6B1B237718DA00252E6D /* playmodes.h in Headers */,
 				2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */,
@@ -14822,6 +14829,7 @@
 				2D40208F1F27BD7200D4EA4F /* cueutil.c in Sources */,
 				2DBCB726240AE28E0012F178 /* tftintutil.c in Sources */,
 				2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */,
+				2DB951C726B0874200602876 /* decodedblock.c in Sources */,
 				2D7DE4A61E64CD7700AA0F83 /* dsp.c in Sources */,
 				2D01D7D21AB2219C00BCD3C4 /* tf.c in Sources */,
 				2DA8912425FFEB9B0084860D /* PlaylistGroup.m in Sources */,
