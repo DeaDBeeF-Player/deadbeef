@@ -1,17 +1,8 @@
-//
-//  VisualizationViewController.h
-//  DeaDBeeF
-//
-//  Created by Alexey Yakovenko on 7/25/20.
-//  Copyright © 2020 Alexey Yakovenko. All rights reserved.
-//
-
 #import <Cocoa/Cocoa.h>
-
-NS_ASSUME_NONNULL_BEGIN
+#import "SpectrumAnalyzerSettings.h"
 
 @interface VisualizationViewController : NSViewController
 
-@end
+@property (nonatomic,nullable) SpectrumAnalyzerSettings *settings;
 
-NS_ASSUME_NONNULL_END
+@end

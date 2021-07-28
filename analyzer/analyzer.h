@@ -63,7 +63,12 @@ typedef struct ddb_analyzer_s {
 
     float min_freq;
     float max_freq;
+
     ddb_analyzer_mode_t mode;
+
+    /// Set to 1 after changing the @c mode or @c octave_bars_step at runtime, to refresh the internal state
+    int mode_did_change;
+
     int fractional_bars;
 
     /// How to calculate the gap between bars. E.g. 10 means bar_width/10. Default is 3.
