@@ -90,12 +90,13 @@ void
 ddb_analyzer_process (ddb_analyzer_t *analyzer, int samplerate, int channels, const float *fft_data, int fft_size) {
     int need_regenerate = 0;
 
-    if (channels != analyzer->channels || fft_size != analyzer->fft_size || samplerate != analyzer->samplerate) {
+    if (analyzer->mode_did_change || channels != analyzer->channels || fft_size != analyzer->fft_size || samplerate != analyzer->samplerate) {
         analyzer->channels = channels;
         analyzer->fft_size = fft_size;
         free (analyzer->fft_data);
         analyzer->fft_data = malloc (fft_size * channels * sizeof (float));
         need_regenerate = 1;
+        analyzer->mode_did_change = 0;
     }
 
     memcpy (analyzer->fft_data, fft_data, fft_size * channels * sizeof (float));

@@ -7,10 +7,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "SpectrumAnalyzerSettings.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface VisualizationView : NSView
+
+- (void)updateAnalyzerSettings:(SpectrumAnalyzerSettings *)settings;
 
 @end
 
