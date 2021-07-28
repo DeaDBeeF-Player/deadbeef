@@ -50,7 +50,7 @@ typedef struct {
 typedef struct {
     int bar_count;
     ddb_analyzer_draw_bar_t *bars;
-    int bar_width;
+    float bar_width;
 } ddb_analyzer_draw_data_t;
 
 typedef enum {
@@ -64,6 +64,12 @@ typedef struct ddb_analyzer_s {
     float min_freq;
     float max_freq;
     ddb_analyzer_mode_t mode;
+    int fractional_bars;
+
+    /// How to calculate the gap between bars. E.g. 10 means bar_width/10. Default is 3.
+    /// If this value is 0, no gap will be created.
+    /// If the gap is >=1, a gap of at least 1px will be created, unless the bar width itself is 1px.
+    int bar_gap_denominator;
 
     /// Can be either a real or virtual view width.
     /// The calculated values are normalized,

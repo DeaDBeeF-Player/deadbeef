@@ -81,6 +81,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     _analyzer.db_lower_bound = LOWER_BOUND;
     _analyzer.peak_hold = 10;
     _analyzer.view_width = 1000;
+    _analyzer.fractional_bars = 1;
     _analyzer.mode = DDB_ANALYZER_MODE_FREQUENCIES;
     _analyzer.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 }
