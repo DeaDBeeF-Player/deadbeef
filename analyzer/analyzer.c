@@ -70,6 +70,7 @@ ddb_analyzer_init (ddb_analyzer_t *analyzer) {
     analyzer->peak_speed_scale = 1000.f;
     analyzer->db_lower_bound = -80;
     analyzer->octave_bars_step = 1;
+    analyzer->bar_gap_denominator = 3;
     return analyzer;
 }
 
@@ -155,7 +156,23 @@ ddb_analyzer_get_draw_data (ddb_analyzer_t *analyzer, int view_width, int view_h
         draw_data->bar_width = 1;
     }
     else if (analyzer->mode == DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS) {
-        draw_data->bar_width = view_width / analyzer->bar_count - 2;
+        if (analyzer->fractional_bars) {
+            float width = (float)view_width / analyzer->bar_count;
+            float gap = analyzer->bar_gap_denominator > 0 ? width/analyzer->bar_gap_denominator : 0;
+            draw_data->bar_width = width - gap;
+        }
+        else {
+            int width = view_width / analyzer->bar_count;
+            int gap = analyzer->bar_gap_denominator > 0 ? width/analyzer->bar_gap_denominator : 0;
+            if (gap < 1) {
+                gap = 1;
+            }
+            if (width <= 1) {
+                width = 1;
+                gap = 0;
+            }
+            draw_data->bar_width = width - gap;
+        }
     }
 
     ddb_analyzer_bar_t *bar = analyzer->bars;
