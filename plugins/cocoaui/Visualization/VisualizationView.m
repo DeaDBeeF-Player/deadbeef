@@ -162,8 +162,6 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
     // horz lines, db scale
     CGContextSetStrokeColorWithColor(context, self.gridColor.CGColor);
-    CGFloat dash[2] = {1, 2};
-    CGContextSetLineDash(context, 0, dash, 2);
     CGFloat lower = -floor(saLowerBound);
     for (int db = 10; db < lower; db += 10) {
         CGFloat y = (CGFloat)(db / lower) * NSHeight(self.bounds);
@@ -177,7 +175,10 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
         };
         CGContextAddLines(context, points, 2);
     }
+    CGFloat dash[2] = {1, 2};
+    CGContextSetLineDash(context, 0, dash, 2);
     CGContextStrokePath(context);
+    CGContextSetLineDash(context, 0, NULL, 0);
 
     // db text
     for (int db = 10; db < lower; db += 10) {
