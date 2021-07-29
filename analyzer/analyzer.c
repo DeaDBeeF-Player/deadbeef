@@ -48,7 +48,7 @@ static float _bin_for_freq_round (ddb_analyzer_t *analyzer, float freq);
 static float _freq_for_bin (ddb_analyzer_t *analyzer, int bin);
 
 static float
-_interpolate_bin_with_ratio (ddb_analyzer_t *analyzer, int bin, float ratio);
+_interpolate_bin_with_ratio (float *fft_data, int bin, float ratio);
 
 static float
 _get_bar_height (ddb_analyzer_t *analyzer, float normalized_height, int view_height);
@@ -129,26 +129,34 @@ ddb_analyzer_tick (ddb_analyzer_t *analyzer) {
         return; // avoid ticks until the next data update
     }
     // frequency lines
-    ddb_analyzer_bar_t *bar = analyzer->bars;
-    for (int i = 0; i < analyzer->bar_count; i++, bar++) {
-        float norm_h = _interpolate_bin_with_ratio (analyzer, bar->bin, bar->ratio);
+    for (int ch = 0; ch < analyzer->channels; ch++) {
+        float *fft_data = analyzer->fft_data + ch * analyzer->fft_size;
+        ddb_analyzer_bar_t *bar = analyzer->bars;
+        for (int i = 0; i < analyzer->bar_count; i++, bar++) {
+            float norm_h = _interpolate_bin_with_ratio (fft_data, bar->bin, bar->ratio);
 
-        // if the bar spans more than one bin, find the max value
-        for (int b = bar->bin+1; b <= bar->last_bin; b++) {
-            float val = analyzer->fft_data[b];
-            if (val > norm_h) {
-                norm_h = val;
+            // if the bar spans more than one bin, find the max value
+            for (int b = bar->bin+1; b <= bar->last_bin; b++) {
+                float val = analyzer->fft_data[b];
+                if (val > norm_h) {
+                    norm_h = val;
+                }
+            }
+
+            float bound = -analyzer->db_lower_bound;
+            float height = (20*log10(norm_h) + bound)/bound;
+
+            if (ch == 0) {
+                bar->height = height;
+            }
+            else if (height > bar->height) {
+                bar->height = height;
             }
         }
-
-        float bound = -analyzer->db_lower_bound;
-        float height = (20*log10(norm_h) + bound)/bound;
-
-        bar->height = height;
     }
 
     // peaks
-    bar = analyzer->bars;
+    ddb_analyzer_bar_t *bar = analyzer->bars;
     for (int i = 0; i < analyzer->bar_count; i++, bar++) {
         if (bar->peak < bar->height) {
             bar->peak = bar->height;
@@ -366,7 +374,6 @@ _tempered_scale_bands_precalc (ddb_analyzer_t *analyzer) {
 }
 
 static float
-_interpolate_bin_with_ratio (ddb_analyzer_t *analyzer, int bin, float ratio) {
-    // FIXME: channel
-    return analyzer->fft_data[bin] + (analyzer->fft_data[bin + 1] - analyzer->fft_data[bin]) * ratio;
+_interpolate_bin_with_ratio (float *fft_data, int bin, float ratio) {
+    return fft_data[bin] + (fft_data[bin + 1] - fft_data[bin]) * ratio;
 }
