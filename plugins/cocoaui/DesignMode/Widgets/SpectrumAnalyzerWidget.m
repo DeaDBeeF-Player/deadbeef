@@ -17,6 +17,7 @@ static void *kBarGranularity = &kBarGranularity;
 
 @interface SpectrumAnalyzerWidget()
 
+@property (nonatomic) id<DesignModeDepsProtocol> deps;
 @property (nonatomic) VisualizationViewController *visualizationViewController;
 @property (nonatomic) VisualizationView *visualizationView;
 @property (nonatomic) SpectrumAnalyzerSettings *settings;
@@ -41,28 +42,9 @@ static void *kBarGranularity = &kBarGranularity;
         return nil;
     }
 
+    _deps = deps;
+
     _settings = [SpectrumAnalyzerSettings new];
-
-    NSString *modeString = self.serializedSettingsDictionary[@"mode"];
-    if ([modeString isKindOfClass:NSString.class]) {
-        if ([modeString isEqualToString:@"frequencies"]) {
-            _settings.mode = DDB_ANALYZER_MODE_FREQUENCIES;
-        }
-        else if ([modeString isEqualToString:@"bars"]) {
-            _settings.mode = DDB_ANALYZER_MODE_FREQUENCIES;
-        }
-    }
-
-    NSNumber *distanceBetweenBarsNumber = self.serializedSettingsDictionary[@"distanceBetweenBars"];
-    if ([distanceBetweenBarsNumber isKindOfClass:NSNumber.class]) {
-        _settings.distanceBetweenBars = distanceBetweenBarsNumber.intValue;
-    }
-
-    NSNumber *barGranularityNumber = self.serializedSettingsDictionary[@"barGranularity"];
-    if ([barGranularityNumber isKindOfClass:NSNumber.class]) {
-        _settings.barGranularity = barGranularityNumber.intValue;
-    }
-
 
     _visualizationViewController = [VisualizationViewController new];
     _visualizationView = [[VisualizationView alloc] initWithFrame:NSZeroRect];
@@ -80,6 +62,10 @@ static void *kBarGranularity = &kBarGranularity;
     [_settings addObserver:self forKeyPath:@"distanceBetweenBars" options:0 context:kDistanceBetweenBarsContext];
     [_settings addObserver:self forKeyPath:@"barGranularity" options:0 context:kBarGranularity];
 
+    self.settings.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
+    self.settings.barGranularity = 1;
+    self.settings.distanceBetweenBars = 3;
+
     _visualizationViewController.settings = _settings;
     [_visualizationView updateAnalyzerSettings:_settings];
 
@@ -90,13 +76,62 @@ static void *kBarGranularity = &kBarGranularity;
     // update the visualization view and save settings
     if (context == kModeContext) {
         [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.deps.state layoutDidChange];
     } else if (context == kDistanceBetweenBarsContext) {
         [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.deps.state layoutDidChange];
     } else if (context == kBarGranularity) {
         [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.deps.state layoutDidChange];
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }
+
+#pragma mark - Overrides
+
+- (NSDictionary *)serializedSettingsDictionary {
+    NSString *mode;
+    switch (self.settings.mode) {
+    case DDB_ANALYZER_MODE_FREQUENCIES:
+        mode = @"frequencies";
+        break;
+    case DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS:
+        mode = @"bands";
+        break;
+    }
+
+    return @{
+        @"mode": mode,
+        @"distanceBetweenBars": @(self.settings.distanceBetweenBars),
+        @"barGranularity": @(self.settings.barGranularity),
+    };
+}
+
+- (BOOL)deserializeFromSettingsDictionary:(NSDictionary *)dictionary {
+    // deserialize
+    NSString *modeString = dictionary[@"mode"];
+    if ([modeString isKindOfClass:NSString.class]) {
+        if ([modeString isEqualToString:@"frequencies"]) {
+            self.settings.mode = DDB_ANALYZER_MODE_FREQUENCIES;
+        }
+        else if ([modeString isEqualToString:@"bars"]) {
+            self.settings.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
+        }
+    }
+
+    NSNumber *distanceBetweenBarsNumber = dictionary[@"distanceBetweenBars"];
+    if ([distanceBetweenBarsNumber isKindOfClass:NSNumber.class]) {
+        self.settings.distanceBetweenBars = distanceBetweenBarsNumber.intValue;
+    }
+
+    NSNumber *barGranularityNumber = dictionary[@"barGranularity"];
+    if ([barGranularityNumber isKindOfClass:NSNumber.class]) {
+        self.settings.barGranularity = barGranularityNumber.intValue;
+    }
+
+    return YES;
+}
+
 
 @end
