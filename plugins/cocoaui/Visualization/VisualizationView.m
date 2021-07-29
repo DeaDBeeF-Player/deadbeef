@@ -68,7 +68,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
     NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
     paragraphStyle.alignment = NSTextAlignmentLeft;
-    self.gridColor = [NSColor.whiteColor colorWithAlphaComponent:0.2];
+    self.gridColor = [NSColor.whiteColor colorWithAlphaComponent:0.4];
 
     self.textAttrs = @{
         NSFontAttributeName: [NSFont fontWithName:@"HelveticaNeue" size:10],
@@ -159,19 +159,11 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 - (void)drawSaGrid {
     CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-#define NUM_BARS (7*12)
-    // vert lines, octaves
-    CGContextSetStrokeColorWithColor(context, self.gridColor.CGColor);
-    for (int i = 12; i < NUM_BARS; i += 12) {
-        CGFloat x = (CGFloat)i * NSWidth(self.bounds) / (CGFloat)NUM_BARS;
-        CGPoint points[] = {
-            CGPointMake(x, 0),
-            CGPointMake(x, NSHeight(self.bounds)-1)
-        };
-        CGContextAddLines(context, points, 2);
-    }
 
     // horz lines, db scale
+    CGContextSetStrokeColorWithColor(context, self.gridColor.CGColor);
+    CGFloat dash[2] = {1, 2};
+    CGContextSetLineDash(context, 0, dash, 2);
     CGFloat lower = -floor(saLowerBound);
     for (int db = 10; db < lower; db += 10) {
         CGFloat y = (CGFloat)(db / lower) * NSHeight(self.bounds);
@@ -187,13 +179,6 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
     CGContextStrokePath(context);
 
-    // octaves text
-    for (int i = 0; i < NUM_BARS; i += 12) {
-        NSString *string = [NSString stringWithFormat:@"A%d", 3+i/12];
-        CGFloat x = (CGFloat)i*(NSWidth(self.bounds)-1)/(CGFloat)NUM_BARS + 4;
-        [string drawAtPoint:NSMakePoint(x, NSHeight(self.bounds)-12) withAttributes:self.textAttrs];
-    }
-
     // db text
     for (int db = 10; db < lower; db += 10) {
         CGFloat y = (CGFloat)(db / lower) * NSHeight(self.bounds);
@@ -204,6 +189,19 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
         NSString *string = [NSString stringWithFormat:@"%d dB", -db];
         [string drawAtPoint:NSMakePoint(0, NSHeight(self.bounds)-y-12) withAttributes:self.textAttrs];
     }
+}
+
+- (void)drawFrequencyLabels {
+    // octaves text
+    for (int i = 0; i < _draw_data.label_freq_count; i++) {
+        if (_draw_data.label_freq_positions < 0) {
+            continue;
+        }
+        NSString *string = [NSString stringWithUTF8String:_draw_data.label_freq_texts[i]];
+        CGFloat x = _draw_data.label_freq_positions[i];
+        [string drawAtPoint:NSMakePoint(x, NSHeight(self.bounds)-12) withAttributes:self.textAttrs];
+    }
+
 }
 
 - (void)drawRect:(NSRect)dirtyRect {
@@ -218,8 +216,14 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 //    [self drawFFTWithChannel:0];
 //    [self drawFFTWithChannel channel:1];
 
+    @synchronized (self) {
+        ddb_analyzer_tick(&_analyzer);
+        ddb_analyzer_get_draw_data(&_analyzer, self.bounds.size.width, self.bounds.size.height, &_draw_data);
+    }
+
     [self drawSaGrid];
-    [self drawFrequencyLines];
+    [self drawFrequencyLabels];
+    [self drawAnalyzer];
 }
 
 // draw fft for specified channel
@@ -263,12 +267,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     free (fftData);
 }
 
-- (void)drawFrequencyLines {
-    @synchronized (self) {
-        ddb_analyzer_tick(&_analyzer);
-        ddb_analyzer_get_draw_data(&_analyzer, self.bounds.size.width, self.bounds.size.height, &_draw_data);
-    }
-
+- (void)drawAnalyzer {
     CGContextRef context = NSGraphicsContext.currentContext.CGContext;
     ddb_analyzer_draw_bar_t *bar = _draw_data.bars;
     for (int i = 0; i < _draw_data.bar_count; i++, bar++) {
