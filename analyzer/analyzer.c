@@ -90,6 +90,14 @@ void
 ddb_analyzer_process (ddb_analyzer_t *analyzer, int samplerate, int channels, const float *fft_data, int fft_size) {
     int need_regenerate = 0;
 
+    if (channels > 2) {
+        channels = 2;
+    }
+
+    if (!analyzer->max_of_stereo_data) {
+        channels = 1;
+    }
+
     if (analyzer->mode_did_change || channels != analyzer->channels || fft_size != analyzer->fft_size || samplerate != analyzer->samplerate) {
         analyzer->channels = channels;
         analyzer->fft_size = fft_size;
@@ -117,10 +125,21 @@ ddb_analyzer_process (ddb_analyzer_t *analyzer, int samplerate, int channels, co
 /// Update bars and peaks for the next frame
 void
 ddb_analyzer_tick (ddb_analyzer_t *analyzer) {
+    if (analyzer->mode_did_change) {
+        return; // avoid ticks until the next data update
+    }
     // frequency lines
     ddb_analyzer_bar_t *bar = analyzer->bars;
     for (int i = 0; i < analyzer->bar_count; i++, bar++) {
         float norm_h = _interpolate_bin_with_ratio (analyzer, bar->bin, bar->ratio);
+
+        // if the bar spans more than one bin, find the max value
+        for (int b = bar->bin+1; b <= bar->last_bin; b++) {
+            float val = analyzer->fft_data[b];
+            if (val > norm_h) {
+                norm_h = val;
+            }
+        }
 
         float bound = -analyzer->db_lower_bound;
         float height = (20*log10(norm_h) + bound)/bound;
@@ -179,10 +198,7 @@ ddb_analyzer_get_draw_data (ddb_analyzer_t *analyzer, int view_width, int view_h
     ddb_analyzer_bar_t *bar = analyzer->bars;
     ddb_analyzer_draw_bar_t *draw_bar = draw_data->bars;
     for (int i = 0; i < analyzer->bar_count; i++, bar++, draw_bar++) {
-        float norm_h = _interpolate_bin_with_ratio(analyzer, bar->bin, bar->ratio);
-
-        float bound = -analyzer->db_lower_bound;
-        float height = (20*log10(norm_h) + bound)/bound;
+        float height = bar->height;
 
         draw_bar->bar_height = _get_bar_height (analyzer, height, view_height);
         draw_bar->xpos = bar->xpos * view_width;
@@ -264,6 +280,7 @@ _generate_octave_note_bars (ddb_analyzer_t *analyzer) {
     int minBand = -1;
     int maxBand = -1;
 
+    ddb_analyzer_bar_t *prev_bar = NULL;
     for (int i = 0; i < OCTAVES * STEPS; i += analyzer->octave_bars_step) {
         ddb_analyzer_band_t *band = &analyzer->tempered_scale_bands[i];
 
@@ -282,9 +299,17 @@ _generate_octave_note_bars (ddb_analyzer_t *analyzer) {
         int bin = _bin_for_freq_floor(analyzer, band->freq);
 
         bar->bin = bin;
+        bar->last_bin = 0;
         bar->ratio = 0;
+
+        // interpolation ratio of next bin of previous bar to the first bin of this bar
+        if (prev_bar && bin-1 > prev_bar->bin) {
+            prev_bar->last_bin = bin-1;
+        }
+
         analyzer->bar_count += 1;
 
+        // get interpolation ratio to the next bin
         int bin2 = bin+1;
         if (bin2 < analyzer->fft_size) {
             float p = log10(band->freq);
@@ -293,6 +318,8 @@ _generate_octave_note_bars (ddb_analyzer_t *analyzer) {
             float d = p2-p1;
             bar->ratio = (p-p1)/d;
         }
+
+        prev_bar = bar;
     }
 
     for (int i = 0; i < analyzer->bar_count; i++) {
