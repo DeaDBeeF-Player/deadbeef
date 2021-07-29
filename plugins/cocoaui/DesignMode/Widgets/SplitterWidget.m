@@ -23,17 +23,16 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 @property (nonatomic) NSSplitView *splitView;
 @property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
 
-@property (nonatomic,readonly) CGFloat dividerPosition;
-@property (nonatomic,readonly) CGFloat viewDividerPosition;
-@property (nonatomic,readonly) CGFloat splitViewSize;
-@property (nonatomic,readonly) CGFloat firstPaneSize;
-@property (nonatomic,readonly) CGFloat secondPaneSize;
-
+@property (nonatomic) CGFloat normalizedDividerPosition;
 @property (nonatomic) HoldingMode holdingMode;
 @property (nonatomic) BOOL isLocked;
 
-// deserialized values (consumed once)
-@property (nonatomic) NSDictionary *deserializedSettings;
+@property (nonatomic) BOOL layoutFinalized; // must be set to true when the splitview gets its final bounds
+
+//@property (nonatomic,readonly) CGFloat viewDividerPosition;
+@property (nonatomic,readonly) CGFloat splitViewSize;
+@property (nonatomic,readonly) CGFloat firstPaneSize;
+@property (nonatomic,readonly) CGFloat secondPaneSize;
 
 
 @end
@@ -58,6 +57,13 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 
     _splitView = [[NSSplitView alloc] initWithFrame:NSZeroRect];
     _splitView.vertical = !self.isVertical; // The NSSplitView.vertical means the divider line orientation
+
+    // Default settings
+
+    // FIXME: accessing _holdingMode fails to compile
+    self.holdingMode = HoldingModeProportional;
+    _normalizedDividerPosition = 0.5;
+    _isLocked = NO;
     _splitView.dividerStyle = NSSplitViewDividerStyleThin;
 
     id<WidgetProtocol> pane1 = [deps.factory createWidgetWithType:PlaceholderWidget.widgetType];
@@ -77,6 +83,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     [_splitView.bottomAnchor constraintEqualToAnchor:self.topLevelView.bottomAnchor].active = YES;
 
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(splitViewBoundsDidChange:) name:NSViewBoundsDidChangeNotification object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(splitViewBoundsDidChange:) name:NSViewFrameDidChangeNotification object:nil];
 
     _splitView.delegate = self;
 
@@ -89,7 +96,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 }
 
 - (void)removeChild:(id<WidgetProtocol>)child {
-    CGFloat dividerPosition = self.dividerPosition;
+    CGFloat normalizedDividerPosition = self.normalizedDividerPosition;
     [super removeChild:child];
     id<WidgetProtocol> pane = [self.deps.factory createWidgetWithType:PlaceholderWidget.widgetType];
     if (self.splitView.arrangedSubviews[0] == child.view) {
@@ -101,14 +108,11 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
         [_splitView insertArrangedSubview:pane.view atIndex:1];
     }
     [super appendChild:pane];
-    [self updateDividerPosition:dividerPosition];
+    [self updateDividerPositionFromNormalized:normalizedDividerPosition];
 }
 
-- (void)updateDividerPosition:(CGFloat)dividerPosition {
+- (void)updateDividerPositionFromNormalized:(CGFloat)dividerPosition {
     CGFloat splitViewSize = self.splitViewSize;
-    if (splitViewSize == 0) {
-        return;
-    }
 
     switch (self.holdingMode) {
     case HoldingModeProportional:
@@ -124,7 +128,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 }
 
 - (void)replaceChild:(id<WidgetProtocol>)child withChild:(id<WidgetProtocol>)newChild {
-    CGFloat dividerPosition = self.dividerPosition;
+    CGFloat dividerPosition = self.normalizedDividerPosition;
 
     if (self.splitView.arrangedSubviews[0] == child.view) {
         [self.splitView removeArrangedSubview:child.view];
@@ -141,7 +145,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     child.parentWidget = nil;
     newChild.parentWidget = self;
 
-    [self updateDividerPosition:dividerPosition];
+    [self updateDividerPositionFromNormalized:dividerPosition];
 }
 
 - (CGFloat)splitViewSize {
@@ -156,21 +160,27 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     return self.splitView.isVertical ? NSWidth(self.splitView.arrangedSubviews[1].frame) : NSHeight(self.splitView.arrangedSubviews[1].frame);
 }
 
-- (CGFloat)dividerPosition {
+- (void)updateNormalizedDividerPosition {
+    if (!self.layoutFinalized) {
+        return;
+    }
     CGFloat splitViewSize = self.splitViewSize;
 
     switch (self.holdingMode) {
     case HoldingModeProportional:
         if (splitViewSize > 1) {
-            return self.firstPaneSize / splitViewSize;
+            self.normalizedDividerPosition = self.firstPaneSize / splitViewSize;
         }
         else {
-            return 0.5;
+            self.normalizedDividerPosition = 0.5;
         }
+        break;
     case HoldingModeFirst:
-        return self.firstPaneSize;
+        self.normalizedDividerPosition = self.firstPaneSize;
+        break;
     case HoldingModeSecond:
-        return self.secondPaneSize;
+        self.normalizedDividerPosition = self.secondPaneSize;
+        break;
     }
 }
 
@@ -206,50 +216,51 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 - (NSDictionary *)serializedSettingsDictionary {
     return @{
         @"holdingMode": @(self.holdingMode),
-        @"position": @(self.dividerPosition),
+        @"position": @(self.normalizedDividerPosition),
         @"isLocked": @(self.isLocked),
         @"thickDivider": @(self.splitView.dividerStyle == NSSplitViewDividerStyleThick),
     };
 }
 
 - (BOOL)deserializeFromSettingsDictionary:(NSDictionary *)dictionary {
-    self.deserializedSettings = dictionary;
-    return YES;
-}
-
-- (void)splitViewBoundsDidChange:(NSNotification *)notification {
-    if (self.deserializedSettings == nil) {
-        return;
-    }
-
-    self.splitView.delegate = nil;
-
-    id holdingModeObject = self.deserializedSettings[@"holdingMode"];
+    id holdingModeObject = dictionary[@"holdingMode"];
     if ([holdingModeObject isKindOfClass:NSNumber.class]) {
         NSNumber *holdingModeNumber = holdingModeObject;
         self.holdingMode = (HoldingMode)holdingModeNumber.integerValue;
     }
 
-    id positionObject = self.deserializedSettings[@"position"];
+    id positionObject = dictionary[@"position"];
     if ([positionObject isKindOfClass:NSNumber.class]) {
         NSNumber *positionNumber = positionObject;
-        CGFloat position = positionNumber.doubleValue;
-        [self updateDividerPosition:position];
+        self.normalizedDividerPosition = positionNumber.doubleValue;
+
+        // Update the splitview if it's ready
+        [self updateDividerPositionFromNormalized:self.normalizedDividerPosition];
     }
 
-    id isLockedObject = self.deserializedSettings[@"isLocked"];
+    id isLockedObject = dictionary[@"isLocked"];
     if ([isLockedObject isKindOfClass:NSNumber.class]) {
         NSNumber *isLockedNumber = isLockedObject;
         self.isLocked = isLockedNumber.boolValue;
     }
 
-    id thickDividerObject = self.deserializedSettings[@"thickDivider"];
+    id thickDividerObject = dictionary[@"thickDivider"];
     if ([thickDividerObject isKindOfClass:NSNumber.class]) {
         NSNumber *thickDividerNumber = thickDividerObject;
         self.splitView.dividerStyle = thickDividerNumber.boolValue ? NSSplitViewDividerStyleThick : NSSplitViewDividerStyleThin;
     }
+    return YES;
+}
 
-    self.deserializedSettings = nil;
+- (void)splitViewBoundsDidChange:(NSNotification *)notification {
+    if (NSEqualSizes(self.splitView.bounds.size, NSZeroSize)
+        || self.layoutFinalized) {
+        return;
+    }
+    self.splitView.delegate = nil;
+
+    self.layoutFinalized = YES;
+    [self updateDividerPositionFromNormalized: self.normalizedDividerPosition];
 
     self.splitView.delegate = self;
 }
@@ -314,7 +325,15 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 
 #pragma mark - NSSplitViewDelegate
 
+// Called when user or the splitview itself resizes subview -- then we need to recalculate the normalized position
+// Update should not occur, if the split view is not fully configured (doesn't have both panes, or the initial position was not applied yet)
 - (void)splitViewDidResizeSubviews:(NSNotification *)notification {
+    CGFloat splitViewSize = self.splitViewSize;
+    if (splitViewSize == 0 || !self.layoutFinalized) {
+        return;
+    }
+
+    [self updateNormalizedDividerPosition];
     [self.deps.state layoutDidChange];
 }
 
