@@ -23,6 +23,8 @@
 #ifndef analyzer_h
 #define analyzer_h
 
+#define DDB_ANALYZER_MAX_LABEL_FREQS 20
+
 typedef struct {
     float freq;
     float ratio;
@@ -52,6 +54,11 @@ typedef struct {
     int bar_count;
     ddb_analyzer_draw_bar_t *bars;
     float bar_width;
+
+    // freq label drawing positions in view space
+    float label_freq_positions[DDB_ANALYZER_MAX_LABEL_FREQS];
+    char label_freq_texts[DDB_ANALYZER_MAX_LABEL_FREQS][4];
+    int label_freq_count;
 } ddb_analyzer_draw_data_t;
 
 typedef enum {
@@ -101,10 +108,13 @@ typedef struct ddb_analyzer_s {
     int fft_size;
     float *fft_data;
 
+    /// Calculated label texts and frequencies
+    float label_freq_positions[DDB_ANALYZER_MAX_LABEL_FREQS];
+    char label_freq_texts[DDB_ANALYZER_MAX_LABEL_FREQS][4];
+    int label_freq_count;
+
     /// Tempered scale data, precalculated from fft pins
     ddb_analyzer_band_t *tempered_scale_bands;
-
-    // settings from previous process
 
 } ddb_analyzer_t;
 
