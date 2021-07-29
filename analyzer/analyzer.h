@@ -32,6 +32,7 @@ typedef struct {
 typedef struct {
     // interpolation data
     int bin;
+    int last_bin;
     float ratio;
 
     // normalized position
@@ -69,7 +70,11 @@ typedef struct ddb_analyzer_s {
     /// Set to 1 after changing the @c mode or @c octave_bars_step at runtime, to refresh the internal state
     int mode_did_change;
 
+    /// Generate fractional bar positions and width. Default is 0.
     int fractional_bars;
+
+    /// Process 2 channels, if available, and use the max value. Default is 0.
+    int max_of_stereo_data;
 
     /// How to calculate the gap between bars. E.g. 10 means bar_width/10. Default is 3.
     /// If this value is 0, no gap will be created.
