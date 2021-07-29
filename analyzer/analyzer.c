@@ -22,6 +22,7 @@
 */
 #include "analyzer.h"
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -31,6 +32,12 @@
 #define C0 16.3515978313 // 440 * pow(ROOT24, -114);
 
 #pragma mark - Forward declarations
+
+static float
+_get_bar_height (ddb_analyzer_t *analyzer, float normalized_height, int view_height);
+
+static void
+_generate_frequency_labels (ddb_analyzer_t *analyzer);
 
 static void
 _generate_frequency_bars (ddb_analyzer_t *analyzer);
@@ -49,9 +56,6 @@ static float _freq_for_bin (ddb_analyzer_t *analyzer, int bin);
 
 static float
 _interpolate_bin_with_ratio (float *fft_data, int bin, float ratio);
-
-static float
-_get_bar_height (ddb_analyzer_t *analyzer, float normalized_height, int view_height);
 
 #pragma mark - Public
 
@@ -101,6 +105,7 @@ ddb_analyzer_process (ddb_analyzer_t *analyzer, int samplerate, int channels, co
     if (analyzer->mode_did_change || channels != analyzer->channels || fft_size != analyzer->fft_size || samplerate != analyzer->samplerate) {
         analyzer->channels = channels;
         analyzer->fft_size = fft_size;
+        analyzer->samplerate = samplerate;
         free (analyzer->fft_data);
         analyzer->fft_data = malloc (fft_size * channels * sizeof (float));
         need_regenerate = 1;
@@ -108,7 +113,6 @@ ddb_analyzer_process (ddb_analyzer_t *analyzer, int samplerate, int channels, co
     }
 
     memcpy (analyzer->fft_data, fft_data, fft_size * channels * sizeof (float));
-    analyzer->samplerate = samplerate;
 
     if (need_regenerate) {
         switch (analyzer->mode) {
@@ -119,6 +123,8 @@ ddb_analyzer_process (ddb_analyzer_t *analyzer, int samplerate, int channels, co
             _generate_octave_note_bars (analyzer);
             break;
         }
+
+        _generate_frequency_labels (analyzer);
     }
 }
 
@@ -212,6 +218,12 @@ ddb_analyzer_get_draw_data (ddb_analyzer_t *analyzer, int view_width, int view_h
         draw_bar->xpos = bar->xpos * view_width;
         draw_bar->peak_ypos = _get_bar_height (analyzer, bar->peak, view_height);
     }
+
+    memcpy (draw_data->label_freq_texts, analyzer->label_freq_texts, sizeof (analyzer->label_freq_texts));
+    for (int i = 0; i < analyzer->label_freq_count; i++) {
+        draw_data->label_freq_positions[i] = analyzer->label_freq_positions[i] * view_width;
+    }
+    draw_data->label_freq_count = analyzer->label_freq_count;
 }
 
 void
@@ -236,6 +248,39 @@ _get_bar_height (ddb_analyzer_t *analyzer, float normalized_height, int view_hei
 }
 
 static void
+_generate_frequency_labels (ddb_analyzer_t *analyzer) {
+    float min_freq_log = log10 (analyzer->min_freq);
+    float max_freq_log = log10 (analyzer->max_freq);
+    float view_width = analyzer->view_width;
+    float width_log = view_width / (max_freq_log - min_freq_log);
+
+    // calculate the distance between any 2 neighbour labels
+    float freq = 64000;
+    float freq2 = 32000;
+    float pos = width_log * (log10(freq) - min_freq_log) / view_width;
+    float pos2 = width_log * (log10(freq2) - min_freq_log) / view_width;
+    float dist = pos - pos2;
+
+    // generate position and text for each label
+    int index = 0;
+    while (freq > 30 && index < DDB_ANALYZER_MAX_LABEL_FREQS) {
+        analyzer->label_freq_positions[index] = pos;
+
+        if (freq < 1000) {
+            snprintf (analyzer->label_freq_texts[index], sizeof(analyzer->label_freq_texts[index]), "%d", (int)round(freq));
+        }
+        else {
+            snprintf (analyzer->label_freq_texts[index], sizeof(analyzer->label_freq_texts[index]), "%dk", ((int)freq)/1000);
+        }
+
+        pos -= dist;
+        freq /= 2;
+        index += 1;
+    }
+    analyzer->label_freq_count = index;
+}
+
+static void
 _generate_frequency_bars (ddb_analyzer_t *analyzer) {
     float min_freq_log = log10 (analyzer->min_freq);
     float max_freq_log = log10 (analyzer->max_freq);
@@ -257,6 +302,8 @@ _generate_frequency_bars (ddb_analyzer_t *analyzer) {
 
     for (int i = minIndex; i <= maxIndex; i++) {
         float freq = _freq_for_bin (analyzer, i);
+
+        // FIXME: only int position!
         int pos = width_log * (log10(freq) - min_freq_log);
 
         if (pos > prev && pos >= 0) {
@@ -377,3 +424,4 @@ static float
 _interpolate_bin_with_ratio (float *fft_data, int bin, float ratio) {
     return fft_data[bin] + (fft_data[bin + 1] - fft_data[bin]) * ratio;
 }
+
