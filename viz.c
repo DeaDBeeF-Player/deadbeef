@@ -154,7 +154,6 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output) {
             .is_bigendian = 0
         };
 
-
         int process_samples = in_frames;
         // if the input is smaller than the buffer, pad with zeroes
         if (process_samples != DDB_FREQ_BANDS * 2) {
