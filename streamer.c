@@ -2051,6 +2051,7 @@ _streamer_get_bytes (char *bytes, int size) {
     sz -= rb; // how many bytes we actually got
 
     if (sz < _outbuffer_remaining) {
+        // FIXME: This is the slowest operation on audio thread, can be optimized with a ring buffer
         memmove (outbuffer, outbuffer + sz, _outbuffer_remaining - sz);
     }
     _outbuffer_remaining -= sz;
