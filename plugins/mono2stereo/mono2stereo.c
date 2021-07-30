@@ -39,6 +39,8 @@ typedef struct {
     ddb_dsp_context_t ctx;
     float leftmix;
     float rightmix;
+    float *buffer;
+    int buffer_nframes;
 } ddb_m2s_t;
 
 ddb_dsp_context_t*
@@ -58,6 +60,7 @@ m2s_close (ddb_dsp_context_t *ctx) {
     ddb_m2s_t *m2s = (ddb_m2s_t *)ctx;
 
     // free instance-specific allocations
+    free (m2s->buffer);
 
     free (m2s);
 }
@@ -67,17 +70,32 @@ m2s_reset (ddb_dsp_context_t *ctx) {
     // use this method to flush dsp buffers, reset filters, etc
 }
 
+static void
+_m2s_alloc_buffer (ddb_m2s_t *m2s, int nframes) {
+    if (m2s->buffer_nframes < nframes) {
+        free (m2s->buffer);
+        m2s->buffer = malloc (nframes * 2 * sizeof (float));
+        m2s->buffer_nframes = nframes;
+    }
+}
+
 int
-m2s_process (ddb_dsp_context_t *ctx, float *samples, int nframes, int maxframes, ddb_waveformat_t *fmt, float *r) {
+m2s_process (ddb_dsp_context_t *ctx, float * restrict samples, int nframes, int maxframes, ddb_waveformat_t * restrict fmt, float * restrict r) {
     if (fmt->channels >= 2) {
         return nframes;
     }
     ddb_m2s_t *m2s = (ddb_m2s_t *)ctx;
 
-    for (int i = nframes-1; i >= 0; i--) {
-        samples[i*2+1] = samples[i] * m2s->rightmix;
-        samples[i*2+0] = samples[i] * m2s->leftmix;
+    _m2s_alloc_buffer(m2s, nframes);
+    float *input = samples;
+    float *output = m2s->buffer;
+    for (int i = 0; i < nframes; i++) {
+        float sample = *input++;
+        *output++ = sample * m2s->leftmix;
+        *output++ = sample * m2s->rightmix;
     }
+    memcpy (samples, m2s->buffer, nframes * 2 * sizeof (float));
+
     fmt->channels = 2;
     fmt->channelmask = 3;
     return nframes;
