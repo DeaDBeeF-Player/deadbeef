@@ -12,6 +12,9 @@
 
 extern DB_functions_t *deadbeef;
 
+static NSString * const kWindowIsVisibleKey = @"window.isVisible";
+static void *kIsVisibleContext = &kIsVisibleContext;
+
 #define LOWER_BOUND -80
 
 @interface VisualizationView() {
@@ -29,6 +32,8 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic,readonly) NSColor *barColor;
 @property (nonatomic,readonly) NSColor *peakColor;
 @property (nonatomic) NSColor *gridColor;
+
+@property (nonatomic) BOOL isListening;
 
 @end
 
@@ -63,7 +68,9 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 }
 
 - (void)setup {
-    deadbeef->vis_spectrum_listen((__bridge void *)(self), vis_callback);
+    [self addObserver:self forKeyPath:kWindowIsVisibleKey options:NSKeyValueObservingOptionInitial context:kIsVisibleContext];
+
+    _isListening = NO;
     saLowerBound = LOWER_BOUND;
 
     NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
@@ -86,6 +93,22 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     _analyzer.max_of_stereo_data = 1;
     _analyzer.mode = DDB_ANALYZER_MODE_FREQUENCIES;
     _analyzer.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    if (context == kIsVisibleContext) {
+        if (!self.isListening && self.window.isVisible) {
+            deadbeef->vis_spectrum_listen((__bridge void *)(self), vis_callback);
+            self.isListening = YES;
+        }
+        else if (self.isListening && !self.window.isVisible) {
+            deadbeef->vis_spectrum_unlisten ((__bridge void *)(self));
+            self.isListening = NO;
+        }
+    }
+    else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 - (void)updateAnalyzerSettings:(SpectrumAnalyzerSettings *)settings {
@@ -123,7 +146,11 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 }
 
 - (void)dealloc {
-    deadbeef->vis_spectrum_unlisten ((__bridge void *)(self));
+    [self removeObserver:self forKeyPath:kWindowIsVisibleKey];
+    if (self.isListening) {
+        deadbeef->vis_spectrum_unlisten ((__bridge void *)(self));
+        self.isListening = NO;
+    }
     ddb_analyzer_dealloc(&_analyzer);
     ddb_analyzer_draw_data_dealloc(&_draw_data);
 }
@@ -207,6 +234,13 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
+
+    // for some reason KVO is not triggered when the window becomes hidden
+    if (self.isListening && !self.window.isVisible) {
+        deadbeef->vis_spectrum_unlisten ((__bridge void *)(self));
+        self.isListening = NO;
+        return;
+    }
 
     [NSColor.blackColor setFill];
     NSRectFill(dirtyRect);
