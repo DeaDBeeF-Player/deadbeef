@@ -2,7 +2,7 @@
 #include "analyzer.h"
 
 static NSString * const kWindowIsVisibleKey = @"view.window.isVisible";
-static void *kHiddenOrHasHiddenAncestorContext = &kHiddenOrHasHiddenAncestorContext;
+static void *kIsVisibleContext = &kIsVisibleContext;
 
 @interface VisualizationViewController ()
 
@@ -18,7 +18,7 @@ static void *kHiddenOrHasHiddenAncestorContext = &kHiddenOrHasHiddenAncestorCont
 }
 
 - (void)awakeFromNib {
-    [self addObserver:self forKeyPath:kWindowIsVisibleKey options:NSKeyValueObservingOptionInitial context:kHiddenOrHasHiddenAncestorContext];
+    [self addObserver:self forKeyPath:kWindowIsVisibleKey options:NSKeyValueObservingOptionInitial context:kIsVisibleContext];
 
     NSMenu *menu = [NSMenu new];
     NSMenuItem *modeMenuItem = [menu addItemWithTitle:@"Mode" action:nil keyEquivalent:@""];
@@ -46,7 +46,7 @@ static void *kHiddenOrHasHiddenAncestorContext = &kHiddenOrHasHiddenAncestorCont
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if (context == kHiddenOrHasHiddenAncestorContext) {
+    if (context == kIsVisibleContext) {
         if (self.view.window.isVisible) {
             __weak VisualizationViewController *weakSelf = self;
             if (self.tickTimer == nil) {
@@ -55,7 +55,6 @@ static void *kHiddenOrHasHiddenAncestorContext = &kHiddenOrHasHiddenAncestorCont
                     if (!strongSelf.view.window.isVisible) {
                         [strongSelf.tickTimer invalidate];
                         strongSelf.tickTimer = nil;
-                        return;
                     }
 
                     strongSelf.view.needsDisplay = YES;
