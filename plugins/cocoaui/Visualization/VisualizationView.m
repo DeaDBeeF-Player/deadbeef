@@ -21,6 +21,8 @@ static void *kIsVisibleContext = &kIsVisibleContext;
     float saLowerBound;
     ddb_analyzer_t _analyzer;
     ddb_analyzer_draw_data_t _draw_data;
+    ddb_waveformat_t _fmt;
+    ddb_audio_data_t _input_data;
 }
 
 @property (nonatomic) NSDictionary *textAttrs;
@@ -68,6 +70,8 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
     _isListening = NO;
     saLowerBound = LOWER_BOUND;
+
+    _input_data.fmt = &_fmt;
 
     NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
     paragraphStyle.alignment = NSTextAlignmentLeft;
@@ -149,11 +153,20 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
     ddb_analyzer_dealloc(&_analyzer);
     ddb_analyzer_draw_data_dealloc(&_draw_data);
+    free ((float *)_input_data.data);
+    _input_data.data = NULL;
 }
 
 - (void)updateFFTData:(const ddb_audio_data_t *)data {
     @synchronized (self) {
-        ddb_analyzer_process(&_analyzer, data->fmt->samplerate, data->fmt->channels, data->data, data->nframes);
+        // copy the input data for later consumption
+        if (_input_data.nframes != data->nframes) {
+            free ((float *)_input_data.data);
+            _input_data.data = malloc (data->nframes * data->fmt->channels * sizeof (float));
+            _input_data.nframes = data->nframes;
+        }
+        memcpy ((ddb_waveformat_t *)_input_data.fmt, data->fmt, sizeof (ddb_waveformat_t));
+        memcpy ((float *)_input_data.data, data->data, data->nframes * data->fmt->channels * sizeof (float));
     }
 }
 
@@ -223,6 +236,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
 
     @synchronized (self) {
+        ddb_analyzer_process(&_analyzer, _input_data.fmt->samplerate, _input_data.fmt->channels, _input_data.data, _input_data.nframes);
         ddb_analyzer_tick(&_analyzer);
         ddb_analyzer_get_draw_data(&_analyzer, self.bounds.size.width, self.bounds.size.height, &_draw_data);
     }
