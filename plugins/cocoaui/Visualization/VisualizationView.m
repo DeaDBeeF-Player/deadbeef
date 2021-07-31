@@ -23,10 +23,6 @@ static void *kIsVisibleContext = &kIsVisibleContext;
     ddb_analyzer_draw_data_t _draw_data;
 }
 
-@property (nonatomic) int samplerate;
-@property (nonatomic) int channels;
-@property (nonatomic) float *fftData;
-@property (nonatomic) int nframes;
 @property (nonatomic) NSDictionary *textAttrs;
 @property (nonatomic,readonly) NSColor *baseColor;
 @property (nonatomic,readonly) NSColor *barColor;
@@ -157,29 +153,6 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 - (void)updateFFTData:(const ddb_audio_data_t *)data {
     @synchronized (self) {
-        if (self.nframes != data->nframes || self.samplerate != data->fmt->samplerate || self.channels != data->fmt->channels) {
-            free (self.fftData);
-            self.fftData = NULL;
-            self.nframes = 0;
-            if (data->fmt->channels != 2) {
-                self.samplerate = 0;
-                return;
-            }
-            self.fftData = calloc (data->nframes * 2, sizeof (float));
-            self.nframes = data->nframes;
-            self.samplerate = data->fmt->samplerate;
-            self.channels = data->fmt->channels;
-        }
-
-#if 0
-        // low pass the spectrum
-        for (int i = 0; i < data->nframes * 2; i++) {
-            self.fftData[i] = self.fftData[i] + (data->data[i] - self.fftData[i]) * 0.7;
-        }
-#endif
-        // copy without smoothing
-        memcpy (self.fftData, data->data, data->nframes*2*sizeof(float));
-
         ddb_analyzer_process(&_analyzer, data->fmt->samplerate, data->fmt->channels, data->data, data->nframes);
     }
 }
@@ -245,11 +218,9 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     [NSColor.blackColor setFill];
     NSRectFill(dirtyRect);
 
-    if (self.samplerate == 0) {
+    if (_analyzer.samplerate == 0) {
         return;
     }
-//    [self drawFFTWithChannel:0];
-//    [self drawFFTWithChannel channel:1];
 
     @synchronized (self) {
         ddb_analyzer_tick(&_analyzer);
@@ -259,47 +230,6 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     [self drawSaGrid];
     [self drawFrequencyLabels];
     [self drawAnalyzer];
-}
-
-// draw fft for specified channel
-- (void)drawFFTWithChannel:(int)channel {
-    CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-    __block int fftSize;
-    float *fftData = NULL;
-
-    @synchronized (self) {
-        fftSize = self.nframes;
-        fftData = malloc (fftSize * sizeof (float));
-        memcpy (fftData, self.fftData + channel * fftSize, fftSize * sizeof (float));
-    }
-
-    CGContextSetStrokeColorWithColor(context, channel == 0 ? NSColor.redColor.CGColor : NSColor.greenColor.CGColor);
-    CGFloat prevBar = 0;
-    for (int i = 0; i < fftSize; i++) {
-        CGFloat bar = 0;
-        if (i == 0) {
-            bar = prevBar = fftData[i];
-        }
-        else {
-            bar = prevBar + (fftData[i] - prevBar) * 0.1;
-            prevBar = bar;
-        }
-        bar = MAX(0, MIN(1, bar));
-        float bound = -saLowerBound;
-        bar = (20*log10(bar) + bound)/bound;
-        bar = MAX(0, MIN(1, bar));
-        CGFloat x = (CGFloat)i/fftSize*self.bounds.size.width;
-        CGFloat y = bar * self.bounds.size.height;
-        if (i == 0) {
-            CGContextMoveToPoint(context, x, y);
-        }
-        else {
-            CGContextAddLineToPoint(context, x, y);
-        }
-    }
-
-    CGContextStrokePath(context);
-    free (fftData);
 }
 
 - (void)drawAnalyzer {
