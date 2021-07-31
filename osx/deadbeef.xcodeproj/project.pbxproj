@@ -756,6 +756,17 @@
 		2D27AEE81D9D871600842D76 /* rg_scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D27AEE61D9D871600842D76 /* rg_scanner.c */; };
 		2D27AEE91D9D871600842D76 /* rg_scanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D27AEE71D9D871600842D76 /* rg_scanner.h */; };
 		2D27AEF11D9D877D00842D76 /* rg_scanner.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D289EEB26B5404800A2BB67 /* dct36_neon64.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D289EEA26B5404800A2BB67 /* dct36_neon64.S */; };
+		2D289EEE26B5406E00A2BB67 /* synth_neon64_float.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D289EEC26B5406D00A2BB67 /* synth_neon64_float.S */; };
+		2D289EEF26B5406E00A2BB67 /* synth_neon64_accurate.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D289EED26B5406E00A2BB67 /* synth_neon64_accurate.S */; };
+		2D289EF226B5407C00A2BB67 /* synth_neon64_s32.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D289EF026B5407B00A2BB67 /* synth_neon64_s32.S */; };
+		2D289EF326B5407C00A2BB67 /* synth_neon64.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D289EF126B5407B00A2BB67 /* synth_neon64.S */; };
+		2D289EF826B540AB00A2BB67 /* dct64_neon64_float.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D289EF426B540AA00A2BB67 /* dct64_neon64_float.S */; };
+		2D289EFB26B540AB00A2BB67 /* dct64_neon64.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D289EF726B540AB00A2BB67 /* dct64_neon64.S */; };
+		2D289F0026B5411500A2BB67 /* synth_stereo_neon64.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D289EFC26B5411300A2BB67 /* synth_stereo_neon64.S */; };
+		2D289F0126B5411500A2BB67 /* synth_stereo_neon64_accurate.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D289EFD26B5411400A2BB67 /* synth_stereo_neon64_accurate.S */; };
+		2D289F0226B5411500A2BB67 /* synth_stereo_neon64_float.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D289EFE26B5411400A2BB67 /* synth_stereo_neon64_float.S */; };
+		2D289F0326B5411500A2BB67 /* synth_stereo_neon64_s32.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D289EFF26B5411400A2BB67 /* synth_stereo_neon64_s32.S */; };
 		2D28F0481C283BF7004A6E7B /* aac_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D28F0451C283BF7004A6E7B /* aac_parser.c */; };
 		2D28F0491C283BF7004A6E7B /* aac_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D28F0461C283BF7004A6E7B /* aac_parser.h */; };
 		2D28F04A1C283BF7004A6E7B /* aac.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D28F0471C283BF7004A6E7B /* aac.c */; };
@@ -4434,6 +4445,17 @@
 		2D27AEE71D9D871600842D76 /* rg_scanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rg_scanner.h; sourceTree = "<group>"; };
 		2D27AEEB1D9D873E00842D76 /* ebur128.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ebur128.c; sourceTree = "<group>"; };
 		2D27AEEC1D9D873E00842D76 /* ebur128.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ebur128.h; sourceTree = "<group>"; };
+		2D289EEA26B5404800A2BB67 /* dct36_neon64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct36_neon64.S; path = "deps/mpg123-1.21.0/src/libmpg123/dct36_neon64.S"; sourceTree = SOURCE_ROOT; };
+		2D289EEC26B5406D00A2BB67 /* synth_neon64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon64_float.S; path = "deps/mpg123-1.21.0/src/libmpg123/synth_neon64_float.S"; sourceTree = SOURCE_ROOT; };
+		2D289EED26B5406E00A2BB67 /* synth_neon64_accurate.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon64_accurate.S; path = "deps/mpg123-1.21.0/src/libmpg123/synth_neon64_accurate.S"; sourceTree = SOURCE_ROOT; };
+		2D289EF026B5407B00A2BB67 /* synth_neon64_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon64_s32.S; path = "deps/mpg123-1.21.0/src/libmpg123/synth_neon64_s32.S"; sourceTree = SOURCE_ROOT; };
+		2D289EF126B5407B00A2BB67 /* synth_neon64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon64.S; path = "deps/mpg123-1.21.0/src/libmpg123/synth_neon64.S"; sourceTree = SOURCE_ROOT; };
+		2D289EF426B540AA00A2BB67 /* dct64_neon64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_neon64_float.S; path = "deps/mpg123-1.21.0/src/libmpg123/dct64_neon64_float.S"; sourceTree = SOURCE_ROOT; };
+		2D289EF726B540AB00A2BB67 /* dct64_neon64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_neon64.S; path = "deps/mpg123-1.21.0/src/libmpg123/dct64_neon64.S"; sourceTree = SOURCE_ROOT; };
+		2D289EFC26B5411300A2BB67 /* synth_stereo_neon64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon64.S; path = "deps/mpg123-1.21.0/src/libmpg123/synth_stereo_neon64.S"; sourceTree = SOURCE_ROOT; };
+		2D289EFD26B5411400A2BB67 /* synth_stereo_neon64_accurate.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon64_accurate.S; path = "deps/mpg123-1.21.0/src/libmpg123/synth_stereo_neon64_accurate.S"; sourceTree = SOURCE_ROOT; };
+		2D289EFE26B5411400A2BB67 /* synth_stereo_neon64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon64_float.S; path = "deps/mpg123-1.21.0/src/libmpg123/synth_stereo_neon64_float.S"; sourceTree = SOURCE_ROOT; };
+		2D289EFF26B5411400A2BB67 /* synth_stereo_neon64_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon64_s32.S; path = "deps/mpg123-1.21.0/src/libmpg123/synth_stereo_neon64_s32.S"; sourceTree = SOURCE_ROOT; };
 		2D28F0411C283BE3004A6E7B /* aac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = aac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D28F0451C283BF7004A6E7B /* aac_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aac_parser.c; sourceTree = "<group>"; };
 		2D28F0461C283BF7004A6E7B /* aac_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aac_parser.h; sourceTree = "<group>"; };
@@ -9259,20 +9281,18 @@
 		2D917E7C1A40470800C3EB44 /* libmpg123 */ = {
 			isa = PBXGroup;
 			children = (
-				2D51999B1A436FD100670717 /* mpg123.h */,
 				2D565A831A40BCE200CE1F5D /* abi_align.h */,
 				2D565A851A40BCE200CE1F5D /* compat.c */,
 				2D565A861A40BCE200CE1F5D /* compat.h */,
-				2D565A8D1A40BCE200CE1F5D /* dct36_x86_64.S */,
-				2D565A9C1A40BCE200CE1F5D /* dct64_x86_64_float.S */,
-				2D565A9D1A40BCE200CE1F5D /* dct64_x86_64.S */,
 				2D6EC2B31A4217C500DD1C72 /* dct36_avx.S */,
+				2D289EEA26B5404800A2BB67 /* dct36_neon64.S */,
+				2D565A8D1A40BCE200CE1F5D /* dct36_x86_64.S */,
 				2D6EC2B51A42187A00DD1C72 /* dct64_avx_float.S */,
 				2D6EC2B61A42187A00DD1C72 /* dct64_avx.S */,
-				2D6EC2BF1A4218DF00DD1C72 /* synth_stereo_avx_accurate.S */,
-				2D6EC2B91A4218CC00DD1C72 /* synth_stereo_avx_float.S */,
-				2D6EC2BB1A4218D300DD1C72 /* synth_stereo_avx_s32.S */,
-				2D6EC2BD1A4218D900DD1C72 /* synth_stereo_avx.S */,
+				2D289EF426B540AA00A2BB67 /* dct64_neon64_float.S */,
+				2D289EF726B540AB00A2BB67 /* dct64_neon64.S */,
+				2D565A9C1A40BCE200CE1F5D /* dct64_x86_64_float.S */,
+				2D565A9D1A40BCE200CE1F5D /* dct64_x86_64.S */,
 				2D565A9E1A40BCE200CE1F5D /* dct64.c */,
 				2D565A9F1A40BCE200CE1F5D /* debug.h */,
 				2D565AA01A40BCE200CE1F5D /* decode.h */,
@@ -9306,6 +9326,7 @@
 				2D565AC11A40BCE200CE1F5D /* libmpg123.c */,
 				2D565AC41A40BCE200CE1F5D /* mangle.h */,
 				2D565AC51A40BCE200CE1F5D /* mpeghead.h */,
+				2D51999B1A436FD100670717 /* mpg123.h */,
 				2D565AC61A40BCE200CE1F5D /* mpg123.h.in */,
 				2D565AC71A40BCE200CE1F5D /* mpg123lib_intern.h */,
 				2D565AC81A40BCE200CE1F5D /* newhuffman.h */,
@@ -9321,10 +9342,22 @@
 				2D565AD41A40BCE200CE1F5D /* synth_8bit.c */,
 				2D565AD51A40BCE200CE1F5D /* synth_8bit.h */,
 				2D565ADD1A40BCE200CE1F5D /* synth_mono.h */,
+				2D289EED26B5406E00A2BB67 /* synth_neon64_accurate.S */,
+				2D289EEC26B5406D00A2BB67 /* synth_neon64_float.S */,
+				2D289EF026B5407B00A2BB67 /* synth_neon64_s32.S */,
+				2D289EF126B5407B00A2BB67 /* synth_neon64.S */,
 				2D565AE61A40BCE200CE1F5D /* synth_ntom.h */,
 				2D565AE71A40BCE200CE1F5D /* synth_real.c */,
 				2D565AE81A40BCE200CE1F5D /* synth_s32.c */,
 				2D565AED1A40BCE200CE1F5D /* synth_sse3d.h */,
+				2D6EC2BF1A4218DF00DD1C72 /* synth_stereo_avx_accurate.S */,
+				2D6EC2B91A4218CC00DD1C72 /* synth_stereo_avx_float.S */,
+				2D6EC2BB1A4218D300DD1C72 /* synth_stereo_avx_s32.S */,
+				2D6EC2BD1A4218D900DD1C72 /* synth_stereo_avx.S */,
+				2D289EFD26B5411400A2BB67 /* synth_stereo_neon64_accurate.S */,
+				2D289EFE26B5411400A2BB67 /* synth_stereo_neon64_float.S */,
+				2D289EFF26B5411400A2BB67 /* synth_stereo_neon64_s32.S */,
+				2D289EFC26B5411300A2BB67 /* synth_stereo_neon64.S */,
 				2D565AFD1A40BCE200CE1F5D /* synth_stereo_x86_64_accurate.S */,
 				2D565AFE1A40BCE200CE1F5D /* synth_stereo_x86_64_float.S */,
 				2D565AFF1A40BCE200CE1F5D /* synth_stereo_x86_64_s32.S */,
@@ -15307,17 +15340,22 @@
 				2D565B551A40BCE200CE1F5D /* readers.c in Sources */,
 				2D565B3F1A40BCE200CE1F5D /* index.c in Sources */,
 				2D565B2D1A40BCE200CE1F5D /* equalizer.c in Sources */,
+				2D289F0226B5411500A2BB67 /* synth_stereo_neon64_float.S in Sources */,
 				2D565B8A1A40BCE200CE1F5D /* synth_x86_64.S in Sources */,
+				2D289F0026B5411500A2BB67 /* synth_stereo_neon64.S in Sources */,
 				2D565B2E1A40BCE200CE1F5D /* feature.c in Sources */,
 				2D6EC2BC1A4218D300DD1C72 /* synth_stereo_avx_s32.S in Sources */,
 				2D6EC2BE1A4218D900DD1C72 /* synth_stereo_avx.S in Sources */,
 				2D565B5A1A40BCE200CE1F5D /* synth_8bit.c in Sources */,
+				2D289F0126B5411500A2BB67 /* synth_stereo_neon64_accurate.S in Sources */,
 				2D565B871A40BCE200CE1F5D /* synth_x86_64_accurate.S in Sources */,
 				2D565B261A40BCE200CE1F5D /* dct64_x86_64.S in Sources */,
 				2D6EC2B41A4217C500DD1C72 /* dct36_avx.S in Sources */,
 				2D565B8B1A40BCE200CE1F5D /* synth.c in Sources */,
 				2D565B2A1A40BCE200CE1F5D /* dither.c in Sources */,
+				2D289EEF26B5406E00A2BB67 /* synth_neon64_accurate.S in Sources */,
 				2D6EC2B71A42187A00DD1C72 /* dct64_avx_float.S in Sources */,
+				2D289EEB26B5404800A2BB67 /* dct36_neon64.S in Sources */,
 				2D565B351A40BCE200CE1F5D /* getcpuflags_x86_64.S in Sources */,
 				2D565B841A40BCE200CE1F5D /* synth_stereo_x86_64_float.S in Sources */,
 				2D565B271A40BCE200CE1F5D /* dct64.c in Sources */,
@@ -15330,18 +15368,24 @@
 				2D565B251A40BCE200CE1F5D /* dct64_x86_64_float.S in Sources */,
 				2D565B4F1A40BCE200CE1F5D /* ntom.c in Sources */,
 				2D565B4A1A40BCE200CE1F5D /* libmpg123.c in Sources */,
+				2D289EF326B5407C00A2BB67 /* synth_neon64.S in Sources */,
 				2D565B461A40BCE200CE1F5D /* layer2.c in Sources */,
 				2D565B391A40BCE200CE1F5D /* icy.c in Sources */,
 				2D565B451A40BCE200CE1F5D /* layer1.c in Sources */,
+				2D289EF826B540AB00A2BB67 /* dct64_neon64_float.S in Sources */,
+				2D289EFB26B540AB00A2BB67 /* dct64_neon64.S in Sources */,
 				2D565B2F1A40BCE200CE1F5D /* format.c in Sources */,
 				2D565B891A40BCE200CE1F5D /* synth_x86_64_s32.S in Sources */,
 				2D565B471A40BCE200CE1F5D /* layer3.c in Sources */,
 				2D565B851A40BCE200CE1F5D /* synth_stereo_x86_64_s32.S in Sources */,
+				2D289EF226B5407C00A2BB67 /* synth_neon64_s32.S in Sources */,
 				2D565B8F1A40BCE200CE1F5D /* tabinit.c in Sources */,
+				2D289EEE26B5406E00A2BB67 /* synth_neon64_float.S in Sources */,
 				2D565B501A40BCE200CE1F5D /* optimize.c in Sources */,
 				2D565B161A40BCE200CE1F5D /* dct36_x86_64.S in Sources */,
 				2DBF129D22DE53D200D59073 /* icy2utf8.c in Sources */,
 				2D6EC2C01A4218DF00DD1C72 /* synth_stereo_avx_accurate.S in Sources */,
+				2D289F0326B5411500A2BB67 /* synth_stereo_neon64_s32.S in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19100,6 +19144,7 @@
 					"*x86*",
 					"*avx*",
 				);
+				"EXCLUDED_SOURCE_FILE_NAMES[arch=x86_64]" = "*neon*";
 				EXECUTABLE_PREFIX = lib;
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=arm64]" = (
 					OPT_NEON64,
@@ -19143,6 +19188,7 @@
 					"*x86*",
 					"*avx*",
 				);
+				"EXCLUDED_SOURCE_FILE_NAMES[arch=x86_64]" = "*neon*";
 				EXECUTABLE_PREFIX = lib;
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=arm64]" = (
 					OPT_NEON64,
