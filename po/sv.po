@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-19 19:53+0200\n"
-"PO-Revision-Date: 2021-05-30 12:30+0000\n"
+"POT-Creation-Date: 2021-08-01 13:38+0200\n"
+"PO-Revision-Date: 2021-07-24 18:15+0000\n"
 "Last-Translator: Jonatan Nyberg <jonatan@autistici.org>\n"
 "Language-Team: Swedish (http://www.transifex.com/deadbeef-player/deadbeef-player/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -36,7 +36,7 @@ msgstr "DeadBeeF %s ändringslogg"
 #: ../plugins/gtkui/callbacks.c:632
 #, c-format
 msgid "DeaDBeeF Translators"
-msgstr "DeaDBeeF översättare"
+msgstr "DeaDBeeF-översättare"
 
 #: ../plugins/gtkui/callbacks.c:643 ../plugins/gtkui/interface.c:976
 #: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:166
@@ -1296,7 +1296,7 @@ msgstr "Kopiera rapport"
 
 #: ../plugins/gtkui/interface.c:5557 ../plugins/gtkui/deadbeef.glade.h:239
 msgid "Only show plugins with configuration"
-msgstr ""
+msgstr "Visa endast insticksmoduler med konfiguration"
 
 #: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:651
 msgid "Artist / Album"
