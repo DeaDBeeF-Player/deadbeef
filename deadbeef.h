@@ -1887,14 +1887,7 @@ typedef struct ddb_decoder2_s {
     // if -1 is returned, that will mean that streamer must skip that song
     int (*seek_sample64) (DB_fileinfo_t *info, int64_t sample);
 
-    uint32_t reserved1;
-    uint32_t reserved2;
-    uint32_t reserved3;
-    uint32_t reserved4;
-    uint32_t reserved5;
-    uint32_t reserved6;
-    uint32_t reserved7;
-    uint32_t reserved8;
+    void *padding[8];
 } ddb_decoder2_t;
 #endif
 
