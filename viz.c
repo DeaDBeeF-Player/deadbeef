@@ -163,7 +163,9 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output) {
         size_t data_size = process_samples * out_fmt.channels * sizeof (float);
         __block float *data = calloc(1, data_size);
 
-        pcm_convert (&output->fmt, bytes, &out_fmt, (char *)data, bytes_size);
+        if (bytes != NULL) {
+            pcm_convert (&output->fmt, bytes, &out_fmt, (char *)data, bytes_size);
+        }
 
         ddb_audio_data_t waveform_data = {
             .fmt = &out_fmt,

@@ -2362,6 +2362,8 @@ play_index (int idx, int startpaused) {
 error:
     output->stop ();
     streamer_reset (1);
+    viz_reset();
+    viz_process(NULL, 0, output);
 
     streamer_lock();
     _handle_playback_stopped ();
