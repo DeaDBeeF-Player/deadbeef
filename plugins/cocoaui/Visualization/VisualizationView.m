@@ -231,7 +231,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     [NSColor.blackColor setFill];
     NSRectFill(dirtyRect);
 
-    if (_analyzer.samplerate == 0) {
+    if (_input_data.nframes == 0) {
         return;
     }
 
