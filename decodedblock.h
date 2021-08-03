@@ -58,6 +58,12 @@ void
 decoded_blocks_next (void);
 
 decoded_block_t *
-decoded_blocks_append(void);
+decoded_blocks_append (void);
+
+int
+decoded_blocks_have_free (void);
+
+float
+decoded_blocks_playback_time_total (void);
 
 #endif /* decodedblock_h */
