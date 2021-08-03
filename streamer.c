@@ -1807,25 +1807,21 @@ streamer_reset (int full) { // must be called when current song changes by exter
 }
 
 static int
-process_output_block (streamblock_t *block, char *bytes) {
+process_output_block (streamblock_t *block, char *bytes, int bytes_available_size) {
     DB_output_t *output = plug_get_output ();
 
     if (block->pos < 0) {
         return 0;
     }
 
-    decoded_block_t *decoded_block = decoded_blocks_append();
-    if (decoded_block == NULL) {
-        return 0;
-    }
-
-    decoded_block->track = block->track;
-    decoded_block->last = block->last;
-    decoded_block->first = block->first;
-
     // A block with 0 size is a valid block, and needs to be processed as usual (code above this line).
     // But here we do early exit, because there's no data to process in it.
     if (!block->size) {
+        decoded_block_t *decoded_block = decoded_blocks_append();
+        decoded_block->track = block->track;
+        decoded_block->last = block->last;
+        decoded_block->first = block->first;
+
         streamreader_next_block ();
         _update_buffering_state ();
         return 0;
@@ -1847,7 +1843,6 @@ process_output_block (streamblock_t *block, char *bytes) {
     int tempsize = sz * 16 / block->fmt.bps;
     int16_t *temp_audio_data = NULL;
     char *input = block->buf + block->pos;
-    block->pos += sz;
     if (block->fmt.bps != 16) {
         temp_audio_data = alloca (tempsize);
         ddb_waveformat_t out_fmt = {
@@ -1875,32 +1870,46 @@ process_output_block (streamblock_t *block, char *bytes) {
     int dsp_res = dsp_apply (&block->fmt, block->buf + block->pos, sz,
                              &datafmt, &dspbytes, &dspsize, &dspratio);
     if (dsp_res) {
-        block->pos += sz;
         sz = dspsize;
     }
     else {
         memcpy (&datafmt, &block->fmt, sizeof (ddb_waveformat_t));
         dspbytes = block->buf+block->pos;
-        block->pos += sz;
     }
 #endif
 
-    if (memcmp (&output->fmt, &datafmt, sizeof (ddb_waveformat_t))) {
+    int need_convert = memcmp (&output->fmt, &datafmt, sizeof (ddb_waveformat_t));
+    int required_size = 0;
+    if (need_convert) {
+        int input_ss = datafmt.channels * datafmt.bps/8;
+        int output_ss = output->fmt.channels * output->fmt.bps/8;
+        required_size = sz / input_ss * output_ss;
+    }
+    else {
+        required_size = sz;
+    }
+
+    // Crash here to catch the buffer issues early, instead of corrupting sound.
+    assert(bytes_available_size >= required_size);
+
+    if (need_convert) {
         sz = pcm_convert (&datafmt, dspbytes, &output->fmt, bytes, sz);
     }
     else {
         memcpy (bytes, dspbytes, sz);
     }
 
-    // TODO: do we need to store output->fmt?
+    decoded_block_t *decoded_block = decoded_blocks_append();
+    decoded_block->track = block->track;
+    decoded_block->last = block->last;
+    decoded_block->first = block->first;
     decoded_block->total_bytes = decoded_block->remaining_bytes = sz;
     decoded_block->is_silent_header = block->is_silent_header;
     decoded_block->playback_time = (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dspratio;
 
-    if (block->pos >= block->size) {
-        streamreader_next_block ();
-        _update_buffering_state ();
-    }
+    block->pos = block->size;
+    streamreader_next_block ();
+    _update_buffering_state ();
 
     return sz;
 }
@@ -2102,9 +2111,9 @@ _streamer_fill_playback_buffer(void) {
     while (block != NULL
            && decoded_blocks_have_free()
            && decoded_blocks_playback_time_total() < conf_playback_buffer_size
-           && OUTPUT_BUFFER_SIZE-_outbuffer_remaining >= block->size * 8 // FIXME: impossible to get decoded size -- instead should decode and check error
+           && OUTPUT_BUFFER_SIZE-_outbuffer_remaining >= block->size * MAX_DSP_RATIO
            && !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
-        int rb = process_output_block (block, outbuffer + _outbuffer_remaining);
+        int rb = process_output_block (block, outbuffer + _outbuffer_remaining, OUTPUT_BUFFER_SIZE - _outbuffer_remaining);
         if (rb <= 0) {
             break;
         }
