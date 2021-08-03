@@ -119,3 +119,37 @@ decoded_blocks_append(void) {
 
     return queued_block;
 }
+
+int
+decoded_blocks_have_free (void) {
+    return _decoded_blocks_free != NULL;
+}
+
+float
+decoded_blocks_playback_time_total (void) {
+    decoded_block_t *first = _decoded_blocks_queued;
+
+    if (first == NULL) {
+        return 0;
+    }
+
+    decoded_block_t *curr = first;
+
+    float time = 0;
+
+    int wrap = 0;
+    while (curr->queued && !(wrap && curr == first)) {
+        time += curr->playback_time;
+
+        if (curr == first) {
+            wrap = 1;
+        }
+
+        curr = curr->next;
+        if (curr == NULL) {
+            curr = _decoded_blocks;
+        }
+    }
+
+    return time;
+}
