@@ -1868,6 +1868,7 @@
 		2DAA4C141AAF88FF00519559 /* TitleFormattingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA4C131AAF88FF00519559 /* TitleFormattingTests.m */; };
 		2DAB1A3026A5FB9C00EA8B8F /* PreferencesPluginEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAB1A2E26A5FB9C00EA8B8F /* PreferencesPluginEntry.h */; };
 		2DAB1A3126A5FB9C00EA8B8F /* PreferencesPluginEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAB1A2F26A5FB9C00EA8B8F /* PreferencesPluginEntry.m */; };
+		2DAC162126B9C0AF0080F8E6 /* samplerate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAC162026B9C0AF0080F8E6 /* samplerate.h */; };
 		2DACBB241A40CEB100CCF401 /* mp3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DAD80A12416DBB100EB3075 /* CustomToolbarItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAD809F2416DBB100EB3075 /* CustomToolbarItem.h */; };
 		2DAD80A22416DBB100EB3075 /* CustomToolbarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAD80A02416DBB100EB3075 /* CustomToolbarItem.m */; };
@@ -1895,11 +1896,9 @@
 		2DB96A8519ABB48300E318A8 /* src.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB96A6B19ABB32E00E318A8 /* src.h */; };
 		2DB96A9B19ABB50300E318A8 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB96A9019ABB50300E318A8 /* common.h */; };
 		2DB96A9D19ABB50300E318A8 /* fastest_coeffs.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB96A9219ABB50300E318A8 /* fastest_coeffs.h */; };
-		2DB96A9E19ABB50300E318A8 /* float_cast.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB96A9319ABB50300E318A8 /* float_cast.h */; };
 		2DB96A9F19ABB50300E318A8 /* high_qual_coeffs.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB96A9419ABB50300E318A8 /* high_qual_coeffs.h */; };
 		2DB96AA019ABB50300E318A8 /* mid_qual_coeffs.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB96A9519ABB50300E318A8 /* mid_qual_coeffs.h */; };
 		2DB96AA119ABB50300E318A8 /* samplerate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB96A9619ABB50300E318A8 /* samplerate.c */; };
-		2DB96AA219ABB50300E318A8 /* samplerate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB96A9719ABB50300E318A8 /* samplerate.h */; };
 		2DB96AA319ABB50300E318A8 /* src_linear.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB96A9819ABB50300E318A8 /* src_linear.c */; };
 		2DB96AA419ABB50300E318A8 /* src_sinc.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB96A9919ABB50300E318A8 /* src_sinc.c */; };
 		2DB96AA519ABB50300E318A8 /* src_zoh.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB96A9A19ABB50300E318A8 /* src_zoh.c */; };
@@ -5584,6 +5583,7 @@
 		2DAA4C131AAF88FF00519559 /* TitleFormattingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TitleFormattingTests.m; sourceTree = "<group>"; };
 		2DAB1A2E26A5FB9C00EA8B8F /* PreferencesPluginEntry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreferencesPluginEntry.h; sourceTree = "<group>"; };
 		2DAB1A2F26A5FB9C00EA8B8F /* PreferencesPluginEntry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PreferencesPluginEntry.m; sourceTree = "<group>"; };
+		2DAC162026B9C0AF0080F8E6 /* samplerate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = samplerate.h; path = "deps/libsamplerate-0.2.1/include/samplerate.h"; sourceTree = "<group>"; };
 		2DAD809F2416DBB100EB3075 /* CustomToolbarItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomToolbarItem.h; sourceTree = "<group>"; };
 		2DAD80A02416DBB100EB3075 /* CustomToolbarItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomToolbarItem.m; sourceTree = "<group>"; };
 		2DAE701725BDDC3300E40154 /* deletefromdisk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = deletefromdisk.h; sourceTree = "<group>"; };
@@ -5608,16 +5608,14 @@
 		2DB96A6B19ABB32E00E318A8 /* src.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = src.h; path = ../plugins/dsp_libsrc/src.h; sourceTree = "<group>"; };
 		2DB96A8019ABB47C00E318A8 /* dsp_libsrc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dsp_libsrc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DB96A8A19ABB4C600E318A8 /* libsamplerate.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsamplerate.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		2DB96A9019ABB50300E318A8 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = "deps/libsamplerate-0.1.8/src/common.h"; sourceTree = "<group>"; };
-		2DB96A9219ABB50300E318A8 /* fastest_coeffs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fastest_coeffs.h; path = "deps/libsamplerate-0.1.8/src/fastest_coeffs.h"; sourceTree = "<group>"; };
-		2DB96A9319ABB50300E318A8 /* float_cast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = float_cast.h; path = "deps/libsamplerate-0.1.8/src/float_cast.h"; sourceTree = "<group>"; };
-		2DB96A9419ABB50300E318A8 /* high_qual_coeffs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = high_qual_coeffs.h; path = "deps/libsamplerate-0.1.8/src/high_qual_coeffs.h"; sourceTree = "<group>"; };
-		2DB96A9519ABB50300E318A8 /* mid_qual_coeffs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mid_qual_coeffs.h; path = "deps/libsamplerate-0.1.8/src/mid_qual_coeffs.h"; sourceTree = "<group>"; };
-		2DB96A9619ABB50300E318A8 /* samplerate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = samplerate.c; path = "deps/libsamplerate-0.1.8/src/samplerate.c"; sourceTree = "<group>"; };
-		2DB96A9719ABB50300E318A8 /* samplerate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = samplerate.h; path = "deps/libsamplerate-0.1.8/src/samplerate.h"; sourceTree = "<group>"; };
-		2DB96A9819ABB50300E318A8 /* src_linear.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src_linear.c; path = "deps/libsamplerate-0.1.8/src/src_linear.c"; sourceTree = "<group>"; };
-		2DB96A9919ABB50300E318A8 /* src_sinc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src_sinc.c; path = "deps/libsamplerate-0.1.8/src/src_sinc.c"; sourceTree = "<group>"; };
-		2DB96A9A19ABB50300E318A8 /* src_zoh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src_zoh.c; path = "deps/libsamplerate-0.1.8/src/src_zoh.c"; sourceTree = "<group>"; };
+		2DB96A9019ABB50300E318A8 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = "deps/libsamplerate-0.2.1/src/common.h"; sourceTree = "<group>"; };
+		2DB96A9219ABB50300E318A8 /* fastest_coeffs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fastest_coeffs.h; path = "deps/libsamplerate-0.2.1/src/fastest_coeffs.h"; sourceTree = "<group>"; };
+		2DB96A9419ABB50300E318A8 /* high_qual_coeffs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = high_qual_coeffs.h; path = "deps/libsamplerate-0.2.1/src/high_qual_coeffs.h"; sourceTree = "<group>"; };
+		2DB96A9519ABB50300E318A8 /* mid_qual_coeffs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mid_qual_coeffs.h; path = "deps/libsamplerate-0.2.1/src/mid_qual_coeffs.h"; sourceTree = "<group>"; };
+		2DB96A9619ABB50300E318A8 /* samplerate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = samplerate.c; path = "deps/libsamplerate-0.2.1/src/samplerate.c"; sourceTree = "<group>"; };
+		2DB96A9819ABB50300E318A8 /* src_linear.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src_linear.c; path = "deps/libsamplerate-0.2.1/src/src_linear.c"; sourceTree = "<group>"; };
+		2DB96A9919ABB50300E318A8 /* src_sinc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src_sinc.c; path = "deps/libsamplerate-0.2.1/src/src_sinc.c"; sourceTree = "<group>"; };
+		2DB96A9A19ABB50300E318A8 /* src_zoh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = src_zoh.c; path = "deps/libsamplerate-0.2.1/src/src_zoh.c"; sourceTree = "<group>"; };
 		2DBC62D424CCDEFC00AA20BF /* VisualizationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisualizationViewController.h; sourceTree = "<group>"; };
 		2DBC62D524CCDEFC00AA20BF /* VisualizationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisualizationViewController.m; sourceTree = "<group>"; };
 		2DBC62D824CCDFB200AA20BF /* VisualizationView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisualizationView.h; sourceTree = "<group>"; };
@@ -10005,11 +10003,10 @@
 			children = (
 				2DB96A9019ABB50300E318A8 /* common.h */,
 				2DB96A9219ABB50300E318A8 /* fastest_coeffs.h */,
-				2DB96A9319ABB50300E318A8 /* float_cast.h */,
 				2DB96A9419ABB50300E318A8 /* high_qual_coeffs.h */,
 				2DB96A9519ABB50300E318A8 /* mid_qual_coeffs.h */,
 				2DB96A9619ABB50300E318A8 /* samplerate.c */,
-				2DB96A9719ABB50300E318A8 /* samplerate.h */,
+				2DAC162026B9C0AF0080F8E6 /* samplerate.h */,
 				2DB96A9819ABB50300E318A8 /* src_linear.c */,
 				2DB96A9919ABB50300E318A8 /* src_sinc.c */,
 				2DB96A9A19ABB50300E318A8 /* src_zoh.c */,
@@ -12290,11 +12287,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DAC162126B9C0AF0080F8E6 /* samplerate.h in Headers */,
 				2DB96A9F19ABB50300E318A8 /* high_qual_coeffs.h in Headers */,
 				2DB96AA019ABB50300E318A8 /* mid_qual_coeffs.h in Headers */,
-				2DB96AA219ABB50300E318A8 /* samplerate.h in Headers */,
 				2DB96A9B19ABB50300E318A8 /* common.h in Headers */,
-				2DB96A9E19ABB50300E318A8 /* float_cast.h in Headers */,
 				2DB96A9D19ABB50300E318A8 /* fastest_coeffs.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -19925,7 +19921,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/deps/libsamplerate-0.1.8/src",
+					"$(SRCROOT)/deps/libsamplerate-0.2.1/include",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -19943,7 +19939,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/deps/libsamplerate-0.1.8/src",
+					"$(SRCROOT)/deps/libsamplerate-0.2.1/include",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -19958,10 +19954,13 @@
 				CODE_SIGN_IDENTITY = "-";
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-					"VERSION=\\\"0.1.8\\\"",
+					HAVE_STDBOOL_H,
 					"PACKAGE=\\\"libsamplerate\\\"",
+					"VERSION=\\\"0.2.1\\\"",
+					ENABLE_SINC_FAST_CONVERTER,
+					ENABLE_SINC_MEDIUM_CONVERTER,
+					ENABLE_SINC_BEST_CONVERTER,
+					HAVE_STDINT_H,
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
@@ -19981,8 +19980,13 @@
 				CODE_SIGN_IDENTITY = "-";
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"VERSION=\\\"0.1.8\\\"",
+					HAVE_STDBOOL_H,
 					"PACKAGE=\\\"libsamplerate\\\"",
+					"VERSION=\\\"0.2.1\\\"",
+					ENABLE_SINC_FAST_CONVERTER,
+					ENABLE_SINC_MEDIUM_CONVERTER,
+					ENABLE_SINC_BEST_CONVERTER,
+					HAVE_STDINT_H,
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
