@@ -86,6 +86,7 @@ static int conf_streamer_samplerate = 44100;
 static int conf_streamer_samplerate_mult_48 = 48000;
 static int conf_streamer_samplerate_mult_44 = 44100;
 static float conf_format_silence = -1.f;
+static float conf_playback_buffer_size = 0.3f;
 
 static int trace_bufferfill = 0;
 
@@ -2099,7 +2100,9 @@ _streamer_fill_playback_buffer(void) {
     // decode enough blocks to fill the output buffer
     char *outbuffer = _get_output_buffer (OUTPUT_BUFFER_SIZE);
     while (block != NULL
-           && OUTPUT_BUFFER_SIZE-_outbuffer_remaining >= block->size * 8 // FIXME: hardcoded constant
+           && decoded_blocks_have_free()
+           && decoded_blocks_playback_time_total() < conf_playback_buffer_size
+           && OUTPUT_BUFFER_SIZE-_outbuffer_remaining >= block->size * 8 // FIXME: impossible to get decoded size -- instead should decode and check error
            && !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
         int rb = process_output_block (block, outbuffer + _outbuffer_remaining);
         if (rb <= 0) {
@@ -2243,6 +2246,15 @@ streamer_configchanged (void) {
     conf_streamer_samplerate_mult_44 = new_conf_streamer_samplerate_mult_44;
 
     conf_format_silence = conf_get_float ("streamer.format_change_silence", -1.f);
+
+    int playback_buffer_size = conf_get_int ("streamer.playback_buffer_size", 300);
+    if (playback_buffer_size < 100) {
+        playback_buffer_size = 100;
+    }
+    else if (playback_buffer_size > 2000) {
+        playback_buffer_size = 2000;
+    }
+    conf_playback_buffer_size = playback_buffer_size / 1000.f;
 
     streamer_unlock ();
 
