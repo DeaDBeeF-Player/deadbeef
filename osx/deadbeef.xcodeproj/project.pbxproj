@@ -1572,6 +1572,8 @@
 		2D9E905124F453960037D323 /* MediaLibraryPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9E904F24F453960037D323 /* MediaLibraryPreferencesViewController.h */; };
 		2D9E905224F453960037D323 /* MediaLibraryPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9E905024F453960037D323 /* MediaLibraryPreferencesViewController.m */; };
 		2D9E9B5126BB1DF000757C71 /* fft_accelerate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E2CE726AC13DF008FCD4B /* fft_accelerate.c */; };
+		2D9E9B5226BB1EDE00757C71 /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD39ED826AD8D1600C5846D /* analyzer.c */; };
+		2D9E9B5526BB207300757C71 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6E2CF926AC157A008FCD4B /* Accelerate.framework */; };
 		2D9EBAAB25E44A0700255592 /* WidgetSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EBAA925E44A0700255592 /* WidgetSerializer.h */; };
 		2D9EBAAC25E44A0700255592 /* WidgetSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EBAA925E44A0700255592 /* WidgetSerializer.h */; };
 		2D9EBAAD25E44A0700255592 /* WidgetSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9EBAAA25E44A0700255592 /* WidgetSerializer.m */; };
@@ -6679,6 +6681,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D9E9B5526BB207300757C71 /* Accelerate.framework in Frameworks */,
 				2D48DBF02269B731002CACFD /* AudioToolbox.framework in Frameworks */,
 				2D48DBF12269B731002CACFD /* Carbon.framework in Frameworks */,
 				2D48DBF22269B731002CACFD /* libddbcore.a in Frameworks */,
@@ -15955,6 +15958,7 @@
 				2DE3B7E32269BF3100AFF9AE /* wingeom.c in Sources */,
 				2DE3B7CF2269BF1700AFF9AE /* tagwritersettings.c in Sources */,
 				2DE3B7E82269BF3100AFF9AE /* gtkui.c in Sources */,
+				2D9E9B5226BB1EDE00757C71 /* analyzer.c in Sources */,
 				2DE3B8042269BF3100AFF9AE /* gtkuigl.c in Sources */,
 				2DE3B7C22269BF1300AFF9AE /* ddblistview.c in Sources */,
 				2DAE706A25BDE55D00E40154 /* deletefromdisk.c in Sources */,
