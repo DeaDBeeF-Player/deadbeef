@@ -30,6 +30,7 @@ static float fftDataImaginary[DDB_FREQ_BANDS*2];
 static float hamming[DDB_FREQ_BANDS*2];
 
 static vDSP_DFT_Setup dftSetup;
+static float sqMagnitudes[DDB_FREQ_BANDS];
 
 void
 fft_calculate (const float *data, float *freq) {
@@ -38,11 +39,10 @@ fft_calculate (const float *data, float *freq) {
     if (dftSetup == NULL) {
         dftSetup = vDSP_DFT_zop_CreateSetup(NULL, fftSize, FFT_FORWARD);
         vDSP_hamm_window(hamming, fftSize, 0);
+        memset (fftDataImaginary, 0, sizeof (fftDataImaginary));
     }
 
     vDSP_vmul(data, 1, hamming, 1, fftDataReal, 1, fftSize);
-
-    memset (fftDataImaginary, 0, sizeof((fftDataImaginary)));
 
     float outputR[fftSize];
     float outputI[fftSize];
@@ -53,12 +53,10 @@ fft_calculate (const float *data, float *freq) {
         .realp = outputR,
         .imagp = outputI
     };
-    float sqMagnitudes[fftSize];
-    memset (sqMagnitudes, 0, sizeof (sqMagnitudes));
-    vDSP_zvmags(&splitComplex, 1, sqMagnitudes, 1, fftSize);
+    vDSP_zvmags(&splitComplex, 1, sqMagnitudes, 1, DDB_FREQ_BANDS);
 
-    for (int i = 0; i < fftSize/2; i++) {
-        freq[i] = (float)(2 * sqrt(sqMagnitudes[i]) / (fftSize / 2));
+    for (int i = 0; i < DDB_FREQ_BANDS; i++) {
+        freq[i] = (float)(2 * sqrt(sqMagnitudes[i]) / DDB_FREQ_BANDS);
     }
 }
 
