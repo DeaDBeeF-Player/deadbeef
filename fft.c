@@ -25,16 +25,16 @@
 #endif
 #include <complex.h>
 #include "deadbeef.h"
+#include "fft.h"
 #include <math.h>
 #include <stdlib.h>
-#include "fft.h"
 
 static int _fft_size;
-static float *_hamming;              /* hamming window, scaled to sum to 1 */
-static int *_reversed;               /* bit-reversal table */
+static float *_hamming;          /* hamming window, scaled to sum to 1 */
+static int *_reversed;           /* bit-reversal table */
 static float complex *_roots;    /* N-th roots of unity */
-static int LOGN; /* log N (base 2) */
-static int N;
+static int LOGN;                 /* log N (base 2) */
+static int N;                    /* _fft_size * 2 */
 
 #ifndef HAVE_LOG2
 static inline float log2(float x) {return (float)log(x)/M_LN2;}
@@ -84,10 +84,10 @@ _init_buffers (int fft_size) {
     if (_fft_size != fft_size) {
         _free_buffers();
         _fft_size = fft_size;
-        _hamming = calloc (fft_size * 2, sizeof (float));
-        _reversed = calloc (fft_size * 2, sizeof (float));
-        _roots = calloc (fft_size, sizeof (float complex));
         N = fft_size * 2;
+        _hamming = calloc (N, sizeof (float));
+        _reversed = calloc (N, sizeof (float));
+        _roots = calloc (fft_size, sizeof (float complex));
         LOGN = (int)log2(N);
         _generate_tables();
     }

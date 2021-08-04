@@ -21,30 +21,34 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#include <Accelerate/Accelerate.h>
 #include "deadbeef.h"
 #include "../fft.h"
-#include <Accelerate/Accelerate.h>
 
 static int _fft_size;
-static float *fftDataReal;
-static float *fftDataImaginary;
-static float *hamming;
-static float *sqMagnitudes;
+static float *_input_real;
+static float *_input_imaginary;
+static float *_output_real;
+static float *_output_imaginary;
+static float *_hamming;
+static float *_sq_mags;
 
-static vDSP_DFT_Setup dftSetup;
+static vDSP_DFT_Setup _dft_setup;
 
 static void
 _init_buffers (int fft_size) {
     if (fft_size != _fft_size) {
         fft_free ();
 
-        fftDataReal = calloc (fft_size * 2, sizeof (float));
-        fftDataImaginary = calloc (fft_size * 2, sizeof (float));
-        hamming = calloc (fft_size * 2, sizeof (float));
-        sqMagnitudes = calloc (fft_size, sizeof (float));
+        _input_real = calloc (fft_size * 2, sizeof (float));
+        _input_imaginary = calloc (fft_size * 2, sizeof (float));
+        _hamming = calloc (fft_size * 2, sizeof (float));
+        _sq_mags = calloc (fft_size, sizeof (float));
+        _output_real = calloc (fft_size * 2, sizeof (float));
+        _output_imaginary = calloc (fft_size * 2, sizeof (float));
 
-        dftSetup = vDSP_DFT_zop_CreateSetup(NULL, fft_size * 2, FFT_FORWARD);
-        vDSP_hamm_window(hamming, fft_size * 2, 0);
+        _dft_setup = vDSP_DFT_zop_CreateSetup(NULL, fft_size * 2, FFT_FORWARD);
+        vDSP_hamm_window(_hamming, fft_size * 2, 0);
 
         _fft_size = fft_size;
     }
@@ -56,37 +60,38 @@ fft_calculate (const float *data, float *freq, int fft_size) {
 
     _init_buffers (fft_size);
 
-    vDSP_vmul(data, 1, hamming, 1, fftDataReal, 1, dft_size);
+    vDSP_vmul(data, 1, _hamming, 1, _input_real, 1, dft_size);
 
-    float outputR[dft_size];
-    float outputI[dft_size];
+    vDSP_DFT_Execute(_dft_setup, _input_real, _input_imaginary, _output_real, _output_imaginary);
 
-    vDSP_DFT_Execute(dftSetup, fftDataReal, fftDataImaginary, outputR, outputI);
-
-    DSPSplitComplex splitComplex = {
-        .realp = outputR,
-        .imagp = outputI
+    DSPSplitComplex split_complex = {
+        .realp = _output_real,
+        .imagp = _output_imaginary
     };
-    vDSP_zvmags(&splitComplex, 1, sqMagnitudes, 1, fft_size);
+    vDSP_zvmags(&split_complex, 1, _sq_mags, 1, fft_size);
 
     for (int i = 0; i < fft_size; i++) {
-        freq[i] = (float)(2 * sqrt(sqMagnitudes[i]) / fft_size);
+        freq[i] = (float)(2 * sqrt(_sq_mags[i]) / fft_size);
     }
 }
 
 void
 fft_free (void) {
-    free (fftDataReal);
-    free (fftDataImaginary);
-    free (hamming);
-    free (sqMagnitudes);
-    if (dftSetup != NULL) {
-        vDSP_DFT_DestroySetup (dftSetup);
+    free (_input_real);
+    free (_input_imaginary);
+    free (_hamming);
+    free (_sq_mags);
+    free (_output_real);
+    free (_output_imaginary);
+    if (_dft_setup != NULL) {
+        vDSP_DFT_DestroySetup (_dft_setup);
     }
-    fftDataReal = NULL;
-    fftDataImaginary = NULL;
-    hamming = NULL;
-    sqMagnitudes = NULL;
-    dftSetup = NULL;
+    _input_real = NULL;
+    _input_imaginary = NULL;
+    _hamming = NULL;
+    _sq_mags = NULL;
+    _dft_setup = NULL;
+    _output_real = NULL;
+    _output_imaginary = NULL;
 }
 
