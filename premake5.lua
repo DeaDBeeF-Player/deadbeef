@@ -833,6 +833,7 @@ project "ddb_gui_GTK3"
     "shared/eqpreset.c",
     "shared/pluginsettings.c",
     "shared/trkproperties_shared.c",
+    "analyzer/analyzer.c",
     "plugins/libparser/parser.c",
     "utf8.c"
   }
