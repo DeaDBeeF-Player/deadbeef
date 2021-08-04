@@ -914,6 +914,7 @@ AC_CONFIG_FILES([
 Makefile
 external/Makefile
 shared/Makefile
+analyzer/Makefile
 pixmaps/Makefile
 icons/Makefile
 plugins/liboggedit/Makefile

@@ -26,7 +26,6 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   widgets.c widgets.h\
 				   ddbseekbar.h ddbequalizer.h ddbcellrenderertextmultiline.h\
 				   ddbseekbar.c ddbequalizer.c ddbcellrenderertextmultiline.c\
-				   gtkuigl.c gtkuigl.h\
                    hotkeys.c hotkeys.h\
                    actionhandlers.c actionhandlers.h\
                    pltmenu.c\
@@ -75,7 +74,7 @@ GTKUI_SOURCES_GTK2 = $(GTKUI_SOURCES)
 ddb_gui_GTK2_la_SOURCES = $(GTKUI_SOURCES_GTK2)
 ddb_gui_GTK2_la_LDFLAGS = -module -avoid-version
 
-ddb_gui_GTK2_la_LIBADD = $(LDADD) $(GTK2_DEPS_LIBS) $(SM_LIBADD) ../libparser/libparser.la ../../shared/libtrkpropertiesutil.la ../../shared/libeqpreset.la ../../shared/libdeletefromdisk.la ../../shared/libtftintutil.la $(JANSSON_LIBS)
+ddb_gui_GTK2_la_LIBADD = $(LDADD) $(GTK2_DEPS_LIBS) $(SM_LIBADD) ../libparser/libparser.la ../../shared/libtrkpropertiesutil.la ../../shared/libeqpreset.la ../../shared/libdeletefromdisk.la ../../shared/libtftintutil.la ../../analyzer/libanalyzer.la $(JANSSON_LIBS)
 
 ddb_gui_GTK2_la_CFLAGS = -std=c99 $(GTK2_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFLAGS) -DDDB_WARN_DEPRECATED=1
 
@@ -87,7 +86,7 @@ GTKUI_SOURCES_GTK3 = deadbeefapp.c deadbeefapp.h $(GTKUI_SOURCES)
 ddb_gui_GTK3_la_LDFLAGS = -module -avoid-version
 
 ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES_GTK3)
-ddb_gui_GTK3_la_LIBADD = $(LDADD) $(GTK3_DEPS_LIBS) $(SM_LIBADD) ../libparser/libparser.la ../../shared/libtrkpropertiesutil.la ../../shared/libeqpreset.la ../../shared/libdeletefromdisk.la ../../shared/libtftintutil.la $(JANSSON_LIBS)
+ddb_gui_GTK3_la_LIBADD = $(LDADD) $(GTK3_DEPS_LIBS) $(SM_LIBADD) ../libparser/libparser.la ../../shared/libtrkpropertiesutil.la ../../shared/libeqpreset.la ../../shared/libdeletefromdisk.la ../../shared/libtftintutil.la ../../analyzer/libanalyzer.la $(JANSSON_LIBS)
 ddb_gui_GTK3_la_CFLAGS = -std=c99 $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFLAGS)
 ddb_gui_GTK3_la_OBJCFLAGS = $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFLAGS)
 
