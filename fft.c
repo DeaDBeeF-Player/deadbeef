@@ -23,21 +23,37 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
+#include <complex.h>
 #include "deadbeef.h"
 #include <math.h>
-#include <complex.h>
+#include <stdlib.h>
+#include "fft.h"
 
-#define N (DDB_FREQ_BANDS * 2)
-
-static float hamming[N];              /* hamming window, scaled to sum to 1 */
-static int reversed[N];               /* bit-reversal table */
-static float complex roots[N / 2];    /* N-th roots of unity */
-static int generated = 0;
+static int _fft_size;
+static float *_hamming;              /* hamming window, scaled to sum to 1 */
+static int *_reversed;               /* bit-reversal table */
+static float complex *_roots;    /* N-th roots of unity */
 static int LOGN; /* log N (base 2) */
+static int N;
+
+#ifndef HAVE_LOG2
+static inline float log2(float x) {return (float)log(x)/M_LN2;}
+#endif
+
+static void
+_free_buffers (void) {
+    free (_hamming);
+    free (_reversed);
+    free (_roots);
+    _hamming = NULL;
+    _reversed = NULL;
+    _roots = NULL;
+}
 
 /* Reverse the order of the lowest LOGN bits in an integer. */
 
-static int bit_reverse (int x)
+static int
+_bit_reverse (int x)
 {
     int y = 0;
 
@@ -50,29 +66,35 @@ static int bit_reverse (int x)
     return y;
 }
 
-#ifndef HAVE_LOG2
-static inline float log2(float x) {return (float)log(x)/M_LN2;}
-#endif
-
 /* Generate lookup tables. */
 
-static void generate_tables (void)
+static void
+_generate_tables (void)
 {
-    if (generated)
-        return;
-
-    LOGN = (int)log2(N);
     for (int n = 0; n < N; n ++)
-        hamming[n] = 1 - 0.85f * cosf (2 * (float)M_PI * n / N);
+        _hamming[n] = 1 - 0.85f * cosf (2 * (float)M_PI * n / N);
     for (int n = 0; n < N; n ++)
-        reversed[n] = bit_reverse (n);
+        _reversed[n] = _bit_reverse (n);
     for (int n = 0; n < N / 2; n ++)
-        roots[n] = cexpf (2 * (float)M_PI * I * n / N);
-
-    generated = 1;
+        _roots[n] = cexpf (2 * (float)M_PI * I * n / N);
 }
 
-static void do_fft (float complex a[N])
+static void
+_init_buffers (int fft_size) {
+    if (_fft_size != fft_size) {
+        _free_buffers();
+        _fft_size = fft_size;
+        _hamming = calloc (fft_size * 2, sizeof (float));
+        _reversed = calloc (fft_size * 2, sizeof (float));
+        _roots = calloc (fft_size, sizeof (float complex));
+        N = fft_size * 2;
+        LOGN = (int)log2(N);
+        _generate_tables();
+    }
+}
+
+static void
+_do_fft (float complex *a)
 {
     int half = 1;       /* (2^s)/2 */
     int inv = N / 2;    /* N/(2^s) */
@@ -87,7 +109,7 @@ static void do_fft (float complex a[N])
             for (int b = 0, r = 0; b < half; b ++, r += inv)
             {
                 float complex even = a[g + b];
-                float complex odd = roots[r] * a[g + half + b];
+                float complex odd = _roots[r] * a[g + half + b];
                 a[g + b] = even + odd;
                 a[g + half + b] = even - odd;
             }
@@ -99,16 +121,16 @@ static void do_fft (float complex a[N])
 }
 
 void
-fft_calculate (float *data, float *freq) {
-    generate_tables ();
+fft_calculate (const float *data, float *freq, int fft_size) {
+    _init_buffers(fft_size);
 
     // fft code shamelessly stolen from audacious
     // thanks, John
     float complex a[N];
     for (int n = 0; n < N; n ++) {
-        a[reversed[n]] = data[n] * hamming[n];
+        a[_reversed[n]] = data[n] * _hamming[n];
     }
-    do_fft(a);
+    _do_fft(a);
 
     for (int n = 0; n < N / 2 - 1; n ++)
         freq[n] = 2 * cabsf (a[1 + n]) / N;
@@ -117,4 +139,5 @@ fft_calculate (float *data, float *freq) {
 
 void
 fft_free (void) {
+    _free_buffers();
 }

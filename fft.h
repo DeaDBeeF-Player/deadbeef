@@ -25,7 +25,7 @@
 #define FFT_H
 
 void
-fft_calculate (const float *data, float *freq);
+fft_calculate (const float *data, float *freq, int fft_size);
 
 void
 fft_free (void);
