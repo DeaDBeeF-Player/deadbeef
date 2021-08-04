@@ -22,30 +22,44 @@
 */
 
 #include "deadbeef.h"
-#include "fft.h"
+#include "../fft.h"
 #include <Accelerate/Accelerate.h>
 
-static float fftDataReal[DDB_FREQ_BANDS*2];
-static float fftDataImaginary[DDB_FREQ_BANDS*2];
-static float hamming[DDB_FREQ_BANDS*2];
+static int _fft_size;
+static float *fftDataReal;
+static float *fftDataImaginary;
+static float *hamming;
+static float *sqMagnitudes;
 
 static vDSP_DFT_Setup dftSetup;
-static float sqMagnitudes[DDB_FREQ_BANDS];
+
+static void
+_init_buffers (int fft_size) {
+    if (fft_size != _fft_size) {
+        fft_free ();
+
+        fftDataReal = calloc (fft_size * 2, sizeof (float));
+        fftDataImaginary = calloc (fft_size * 2, sizeof (float));
+        hamming = calloc (fft_size * 2, sizeof (float));
+        sqMagnitudes = calloc (fft_size, sizeof (float));
+
+        dftSetup = vDSP_DFT_zop_CreateSetup(NULL, fft_size * 2, FFT_FORWARD);
+        vDSP_hamm_window(hamming, fft_size * 2, 0);
+
+        _fft_size = fft_size;
+    }
+}
 
 void
-fft_calculate (const float *data, float *freq) {
-    int fftSize = DDB_FREQ_BANDS*2;
+fft_calculate (const float *data, float *freq, int fft_size) {
+    int dft_size = fft_size * 2;
 
-    if (dftSetup == NULL) {
-        dftSetup = vDSP_DFT_zop_CreateSetup(NULL, fftSize, FFT_FORWARD);
-        vDSP_hamm_window(hamming, fftSize, 0);
-        memset (fftDataImaginary, 0, sizeof (fftDataImaginary));
-    }
+    _init_buffers (fft_size);
 
-    vDSP_vmul(data, 1, hamming, 1, fftDataReal, 1, fftSize);
+    vDSP_vmul(data, 1, hamming, 1, fftDataReal, 1, dft_size);
 
-    float outputR[fftSize];
-    float outputI[fftSize];
+    float outputR[dft_size];
+    float outputI[dft_size];
 
     vDSP_DFT_Execute(dftSetup, fftDataReal, fftDataImaginary, outputR, outputI);
 
@@ -53,18 +67,26 @@ fft_calculate (const float *data, float *freq) {
         .realp = outputR,
         .imagp = outputI
     };
-    vDSP_zvmags(&splitComplex, 1, sqMagnitudes, 1, DDB_FREQ_BANDS);
+    vDSP_zvmags(&splitComplex, 1, sqMagnitudes, 1, fft_size);
 
-    for (int i = 0; i < DDB_FREQ_BANDS; i++) {
-        freq[i] = (float)(2 * sqrt(sqMagnitudes[i]) / DDB_FREQ_BANDS);
+    for (int i = 0; i < fft_size; i++) {
+        freq[i] = (float)(2 * sqrt(sqMagnitudes[i]) / fft_size);
     }
 }
 
 void
 fft_free (void) {
+    free (fftDataReal);
+    free (fftDataImaginary);
+    free (hamming);
+    free (sqMagnitudes);
     if (dftSetup != NULL) {
         vDSP_DFT_DestroySetup (dftSetup);
-        dftSetup = NULL;
     }
+    fftDataReal = NULL;
+    fftDataImaginary = NULL;
+    hamming = NULL;
+    sqMagnitudes = NULL;
+    dftSetup = NULL;
 }
 
