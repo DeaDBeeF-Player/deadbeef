@@ -1598,14 +1598,19 @@ typedef struct {
 #if (DDB_API_LEVEL >= 15)
     /// Register for getting continuous spectrum (frequency domain) data,
     /// mainly for visualization
-    /// @param ctx Associated context, must be unique
-    /// @param callback the callback which will be called every time new fft data is ready
+    /// @param  ctx Associated context, must be unique
+    /// @param  callback The callback which will be called every time new fft data is ready
     ///
     /// Use the @c nframes field in the @c data to get the number of frequency samples.
+    ///
     /// Max number of channels is DDB_FREQ_MAX_CHANNELS.
-    /// The samples are planar-ordered (non-interleaved)
+    ///
+    /// The samples are planar-ordered (non-interleaved).
+    ///
     /// Use vis_spectrum_unlisten to unregister.
-    void (*vis_spectrum_listen2) (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data)) DEPRECATED_115;
+    ///
+    /// Callback will run on a background thread, so make sure to synchronize the data access.
+    void (*vis_spectrum_listen2) (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data));
 #endif
 } DB_functions_t;
 
