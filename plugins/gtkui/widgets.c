@@ -35,9 +35,6 @@
 #include "../libparser/parser.h"
 #include "trkproperties.h"
 #include "coverart.h"
-#if USE_OPENGL
-#include "gtkuigl.h"
-#endif
 #include "namedicons.h"
 #include "hotkeys.h" // for building action treeview
 #include "../../strdupa.h"
@@ -48,6 +45,7 @@
 #include "callbacks.h"
 #include "drawing.h"
 #include "ddb_splitter.h"
+#include "../../analyzer/analyzer.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -155,9 +153,6 @@ typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *drawarea;
     guint drawtimer;
-#if USE_OPENGL
-    GdkGLContext *glcontext;
-#endif
     float *samples;
     int nsamples;
     int resized;
@@ -165,27 +160,18 @@ typedef struct {
     cairo_surface_t *surf;
 } w_scope_t;
 
-// spectrum analyzer based on cairo-spectrum from audacious
-// Copyright (c) 2011 William Pitcock <nenolod@dereferenced.org>
-#define MAX_BANDS DDB_FREQ_BANDS
-#define VIS_DELAY 1
-#define VIS_DELAY_PEAK 10
-#define VIS_FALLOFF 1
-#define VIS_FALLOFF_PEAK 1
-#define BAND_WIDTH 20
 typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *drawarea;
     guint drawtimer;
-#if USE_OPENGL
-    GdkGLContext *glcontext;
-#endif
-    float data[DDB_FREQ_BANDS * DDB_FREQ_MAX_CHANNELS];
-    float xscale[MAX_BANDS + 1];
-    int bars[MAX_BANDS + 1];
-    int delay[MAX_BANDS + 1];
-    int peaks[MAX_BANDS + 1];
-    int delay_peak[MAX_BANDS + 1];
+
+    intptr_t mutex;
+
+    ddb_analyzer_t analyzer;
+    ddb_analyzer_draw_data_t draw_data;
+    ddb_waveformat_t fmt;
+    ddb_audio_data_t input_data;
+
     cairo_surface_t *surf;
 } w_spectrum_t;
 
@@ -2824,12 +2810,6 @@ w_scope_destroy (ddb_gtkui_widget_t *w) {
         g_source_remove (s->drawtimer);
         s->drawtimer = 0;
     }
-#if USE_OPENGL
-    if (s->glcontext) {
-        gdk_gl_context_destroy (s->glcontext);
-        s->glcontext = NULL;
-    }
-#endif
     if (s->surf) {
         cairo_surface_destroy (s->surf);
         s->surf = NULL;
@@ -2852,7 +2832,7 @@ w_scope_draw_cb (void *data) {
 }
 
 static void
-scope_wavedata_listener (void *ctx, ddb_audio_data_t *data) {
+scope_wavedata_listener (void *ctx, const ddb_audio_data_t *data) {
     w_scope_t *w = ctx;
     if (w->nsamples != w->resized) {
         deadbeef->mutex_lock (w->mutex);
@@ -3020,51 +3000,7 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
 gboolean
 scope_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
-#if USE_OPENGL
-    GtkAllocation a;
-    gtk_widget_get_allocation (widget, &a);
-    w_scope_t *w = user_data;
-    int nsamples = a.width;
-    if (w->nsamples != nsamples) {
-        w->resized = nsamples;
-        return FALSE;
-    }
-    float incr = a.width / (float)w->nsamples;
-    float h = a.height;
-    if (h > 50) {
-        h -= 20;
-    }
-    if (h > 100) {
-        h -= 40;
-    }
-    h /= 2;
-    float hh = a.height/2.f;
-
-    GdkGLDrawable *d = gtk_widget_get_gl_drawable (widget);
-    gdk_gl_drawable_gl_begin (d, w->glcontext);
-
-    glClear (GL_COLOR_BUFFER_BIT);
-    glMatrixMode (GL_PROJECTION);
-    glLoadIdentity ();
-    gluOrtho2D(0,a.width,a.height,0);
-    glMatrixMode (GL_MODELVIEW);
-    glViewport (0, 0, a.width, a.height);
-
-    glBegin (GL_LINE_STRIP);
-
-    for (int i = 0; i < w->nsamples; i++) {
-        float y = w->samples[i] * h + hh;
-        glVertex2f (i, y);
-    }
-
-    glEnd();
-    gdk_gl_drawable_swap_buffers (d);
-
-    gdk_gl_drawable_gl_end (d);
-
-#else
     gboolean res = scope_draw_cairo (widget, cr, user_data);
-#endif
     return FALSE;
 }
 
@@ -3083,21 +3019,7 @@ w_scope_init (ddb_gtkui_widget_t *w) {
         g_source_remove (s->drawtimer);
         s->drawtimer = 0;
     }
-#if USE_OPENGL
-    if (!gtkui_gl_init ()) {
-        s->drawtimer = g_timeout_add (33, w_scope_draw_cb, w);
-    }
-#else
     s->drawtimer = g_timeout_add (33, w_scope_draw_cb, w);
-#endif
-}
-
-void
-scope_realize (GtkWidget *widget, gpointer data) {
-    w_scope_t *w = data;
-#if USE_OPENGL
-    w->glcontext = gtk_widget_create_gl_context (w->drawarea, NULL, TRUE, GDK_GL_RGBA_TYPE);
-#endif
 }
 
 ddb_gtkui_widget_t *
@@ -3109,12 +3031,6 @@ w_scope_create (void) {
     w->base.init = w_scope_init;
     w->base.destroy  = w_scope_destroy;
     w->drawarea = gtk_drawing_area_new ();
-#if USE_OPENGL
-    int attrlist[] = {GDK_GL_ATTRIB_LIST_NONE};
-    GdkGLConfig *conf = gdk_gl_config_new_by_mode ((GdkGLConfigMode)(GDK_GL_MODE_RGB |
-                        GDK_GL_MODE_DOUBLE));
-    gboolean cap = gtk_widget_set_gl_capability (w->drawarea, conf, NULL, TRUE, GDK_GL_RGBA_TYPE);
-#endif
 
     w->mutex = deadbeef->mutex_create ();
     gtk_widget_show (w->drawarea);
@@ -3124,7 +3040,6 @@ w_scope_create (void) {
 #else
     g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (scope_draw), w);
 #endif
-    g_signal_connect_after (G_OBJECT (w->drawarea), "realize", G_CALLBACK (scope_realize), w);
     w_override_signals (w->base.widget, w);
     deadbeef->vis_waveform_listen(w, scope_wavedata_listener);
     return (ddb_gtkui_widget_t *)w;
@@ -3143,12 +3058,10 @@ w_spectrum_destroy (ddb_gtkui_widget_t *w) {
         cairo_surface_destroy (s->surf);
         s->surf = NULL;
     }
-#if USE_OPENGL
-    if (s->glcontext) {
-        gdk_gl_context_destroy (s->glcontext);
-        s->glcontext = NULL;
+    if (s->mutex) {
+        deadbeef->mutex_free (s->mutex);
+        s->mutex = 0;
     }
-#endif
 }
 
 gboolean
@@ -3159,18 +3072,20 @@ w_spectrum_draw_cb (void *data) {
 }
 
 
-static void calculate_bands(w_spectrum_t *w, int bands)
-{
-	int i;
-
-	for (i = 0; i <= bands; i++)
-		w->xscale[i] = powf((float)(MAX_BANDS+1), ((float) i / (float) bands)) - 1;
-}
-
 static void
-spectrum_audio_listener (void *ctx, ddb_audio_data_t *data) {
+spectrum_audio_listener (void *ctx, const ddb_audio_data_t *data) {
     w_spectrum_t *w = ctx;
-    memcpy (w->data, data->data, DDB_FREQ_BANDS * sizeof (float));
+
+    deadbeef->mutex_lock (w->mutex);
+    // copy the input data for later consumption
+    if (w->input_data.nframes != data->nframes) {
+        free (w->input_data.data);
+        w->input_data.data = malloc (data->nframes * data->fmt->channels * sizeof (float));
+        w->input_data.nframes = data->nframes;
+    }
+    memcpy (w->input_data.fmt, data->fmt, sizeof (ddb_waveformat_t));
+    memcpy (w->input_data.data, data->data, data->nframes * data->fmt->channels * sizeof (float));
+    deadbeef->mutex_unlock (w->mutex);
 }
 
 static void
@@ -3195,101 +3110,19 @@ static gboolean
 spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     w_spectrum_t *w = user_data;
 
-    ddb_playback_state_t playback_state = deadbeef->get_output ()->state ();
-
-    float *freq = w->data;
+    if (w->input_data.nframes == 0) {
+        return FALSE;
+    }
 
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
 
-    int width, height, bands;
-    bands = a.width/BAND_WIDTH;
-    bands = CLAMP(bands, 4, MAX_BANDS);
-    width = a.width;
-    height = a.height;
-	calculate_bands(w, bands);
+    deadbeef->mutex_lock (w->mutex);
+        ddb_analyzer_process(&w->analyzer, w->input_data.fmt->samplerate, w->input_data.fmt->channels, w->input_data.data, w->input_data.nframes);
+        ddb_analyzer_tick(&w->analyzer);
+        ddb_analyzer_get_draw_data(&w->analyzer, a.width, a.height, &w->draw_data);
+    deadbeef->mutex_unlock(w->mutex);
 
-	for (int i = 0; i <= bands; i ++)
-	{
-		int a = ceil (w->xscale[i]);
-		int b = floor (w->xscale[i + 1]);
-		float n = 0;
-
-		if (b < a)
-			n += freq[b] * (w->xscale[i + 1] - w->xscale[i]);
-		else
-		{
-			if (a > 0)
-				n += freq[a - 1] * (a - w->xscale[i]);
-			for (; a < b; a ++)
-				n += freq[a];
-			if (b < MAX_BANDS)
-				n += freq[b] * (w->xscale[i + 1] - b);
-		}
-
-		/* 40 dB range */
-		int x = 20 * log10 (n * 200);
-		x = CLAMP (x, 0, 40);
-
-		w->bars[i] -= MAX (0, VIS_FALLOFF - w->delay[i]);
-		w->peaks[i] -= MAX (0, VIS_FALLOFF_PEAK - w->delay_peak[i]);;
-
-		if (w->delay[i])
-			w->delay[i]--;
-		if (w->delay_peak[i])
-			w->delay_peak[i]--;
-
-		if (x > w->bars[i])
-		{
-			w->bars[i] = x;
-			w->delay[i] = VIS_DELAY;
-		}
-		if (x > w->peaks[i]) {
-            w->peaks[i] = x;
-            w->delay_peak[i] = VIS_DELAY_PEAK;
-        }
-        if (w->peaks[i] < w->bars[i]) {
-            w->peaks[i] = w->bars[i];
-        }
-	}
-
-#if USE_OPENGL
-    GdkGLDrawable *d = gtk_widget_get_gl_drawable (widget);
-    gdk_gl_drawable_gl_begin (d, w->glcontext);
-
-    glClear (GL_COLOR_BUFFER_BIT);
-    glMatrixMode (GL_PROJECTION);
-    glLoadIdentity ();
-    gluOrtho2D(0,a.width,a.height,0);
-    glMatrixMode (GL_MODELVIEW);
-    glViewport (0, 0, a.width, a.height);
-
-    glBegin (GL_QUADS);
-	float base_s = (height / 40.f);
-
-	for (gint i = 0; i <= bands; i++)
-	{
-		gint x = ((width / bands) * i) + 2;
-        int y = a.height - w->bars[i] * base_s;
-        glColor3f (0, 0.5, 1);
-		glVertex2f (x + 1, y);
-		glVertex2f (x + 1 + (width / bands) - 1, y);
-		glVertex2f (x + 1 + (width / bands) - 1, a.height);
-		glVertex2f (x + 1, a.height);
-
-        // peak
-        glColor3f (1, 1, 1);
-        y = a.height - w->peaks[i] * base_s;
-		glVertex2f (x + 1, y);
-		glVertex2f (x + 1 + (width / bands) - 1, y);
-		glVertex2f (x + 1 + (width / bands) - 1, y+1);
-		glVertex2f (x + 1, y+1);
-	}
-    glEnd();
-    gdk_gl_drawable_swap_buffers (d);
-
-    gdk_gl_drawable_gl_end (d);
-#else
     if (!w->surf || cairo_image_surface_get_width (w->surf) != a.width || cairo_image_surface_get_height (w->surf) != a.height) {
         if (w->surf) {
             cairo_surface_destroy (w->surf);
@@ -3297,7 +3130,6 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         }
         w->surf = cairo_image_surface_create (CAIRO_FORMAT_RGB24, a.width, a.height);
     }
-	float base_s = (height / 40.f);
 
     cairo_surface_flush (w->surf);
     unsigned char *data = cairo_image_surface_get_data (w->surf);
@@ -3307,24 +3139,25 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     int stride = cairo_image_surface_get_stride (w->surf);
     memset (data, 0, a.height * stride);
 
-    int barw = width / bands;
-	for (gint i = 0; i <= bands; i++)
-	{
-		int x = barw * i;
-        int y = a.height - w->bars[i] * base_s;
-        if (y < 0) {
-            y = 0;
+    // TODO: draw grid and labels
+
+    // bars
+    ddb_analyzer_draw_bar_t *bar = w->draw_data.bars;
+    for (int i = 0; i < w->draw_data.bar_count; i++, bar++) {
+        if (w->analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
+            _draw_bar (data, stride, bar->xpos, a.height-bar->bar_height, 1, a.height, 0xff007fff);
         }
-        int bw = barw-1;
-        if (x + bw >= a.width) {
-            bw = a.width-x-1;
+        else {
+            _draw_bar (data, stride, bar->xpos, a.height-bar->bar_height, w->draw_data.bar_width, bar->bar_height, 0xff007fff);
         }
-        _draw_bar (data, stride, x+1, y, bw, a.height-y, 0xff007fff);
-        y = a.height - w->peaks[i] * base_s;
-        if (y < a.height-1) {
-            _draw_bar (data, stride, x + 1, y, bw, 1, 0xffffffff);
-        }
-	}
+    }
+
+    // peaks
+    bar = w->draw_data.bars;
+    for (int i = 0; i < w->draw_data.bar_count; i++, bar++) {
+        _draw_bar (data, stride, bar->xpos, a.height-bar->peak_ypos-1, w->draw_data.bar_width, 1, 0xff7f7fff);
+    }
+
     cairo_surface_mark_dirty (w->surf);
     cairo_save (cr);
     cairo_set_source_surface (cr, w->surf, 0, 0);
@@ -3332,7 +3165,6 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     cairo_fill (cr);
     cairo_restore (cr);
 
-#endif
     return FALSE;
 }
 
@@ -3351,24 +3183,11 @@ w_spectrum_init (ddb_gtkui_widget_t *w) {
         g_source_remove (s->drawtimer);
         s->drawtimer = 0;
     }
-#if USE_OPENGL
-    if (gtkui_gl_init ()) {
-        return;
-    }
-#endif
     ddb_playback_state_t playback_state = deadbeef->get_output ()->state ();
 
     if (playback_state == DDB_PLAYBACK_STATE_PLAYING) { 
         _spectrum_run (w);
     }
-}
-
-void
-spectrum_realize (GtkWidget *widget, gpointer data) {
-    w_spectrum_t *w = data;
-#if USE_OPENGL
-    w->glcontext = gtk_widget_create_gl_context (w->drawarea, NULL, TRUE, GDK_GL_RGBA_TYPE);
-#endif
 }
 
 static int
@@ -3406,12 +3225,6 @@ w_spectrum_create (void) {
     w->base.destroy  = w_spectrum_destroy;
     w->base.message = w_spectrum_message;
     w->drawarea = gtk_drawing_area_new ();
-#if USE_OPENGL
-    int attrlist[] = {GDK_GL_ATTRIB_LIST_NONE};
-    GdkGLConfig *conf = gdk_gl_config_new_by_mode ((GdkGLConfigMode)(GDK_GL_MODE_RGB |
-                        GDK_GL_MODE_DOUBLE));
-    gboolean cap = gtk_widget_set_gl_capability (w->drawarea, conf, NULL, TRUE, GDK_GL_RGBA_TYPE);
-#endif
     gtk_widget_show (w->drawarea);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
 #if !GTK_CHECK_VERSION(3,0,0)
@@ -3419,9 +3232,23 @@ w_spectrum_create (void) {
 #else
     g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (spectrum_draw), w);
 #endif
-    g_signal_connect_after (G_OBJECT (w->drawarea), "realize", G_CALLBACK (spectrum_realize), w);
     w_override_signals (w->base.widget, w);
-    deadbeef->vis_spectrum_listen (w, spectrum_audio_listener);
+
+    w->input_data.fmt = &w->fmt;
+
+    // using the analyzer framework
+    ddb_analyzer_init(&w->analyzer);
+    w->analyzer.db_lower_bound = -80;
+    w->analyzer.peak_hold = 10;
+    w->analyzer.view_width = 1000;
+    w->analyzer.fractional_bars = 0;
+    w->analyzer.octave_bars_step = 2;
+    w->analyzer.max_of_stereo_data = 1;
+    w->analyzer.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
+
+    w->mutex = deadbeef->mutex_create ();
+
+    deadbeef->vis_spectrum_listen2 (w, spectrum_audio_listener);
     return (ddb_gtkui_widget_t *)w;
 }
 

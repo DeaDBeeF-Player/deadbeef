@@ -165,7 +165,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
             _input_data.data = malloc (data->nframes * data->fmt->channels * sizeof (float));
             _input_data.nframes = data->nframes;
         }
-        memcpy ((ddb_waveformat_t *)_input_data.fmt, data->fmt, sizeof (ddb_waveformat_t));
+        memcpy (_input_data.fmt, data->fmt, sizeof (ddb_waveformat_t));
         memcpy (_input_data.data, data->data, data->nframes * data->fmt->channels * sizeof (float));
     }
 }
