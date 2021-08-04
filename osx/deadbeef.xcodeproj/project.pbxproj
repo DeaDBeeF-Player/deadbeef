@@ -2197,7 +2197,6 @@
 		2DE3B7D52269BF1700AFF9AE /* plcommon.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5A12269BB4300AFF9AE /* plcommon.c */; };
 		2DE3B7D62269BF1700AFF9AE /* deadbeefapp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5A32269BB4300AFF9AE /* deadbeefapp.h */; };
 		2DE3B7D72269BF1700AFF9AE /* prefwin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5A42269BB4300AFF9AE /* prefwin.c */; };
-		2DE3B7D82269BF1700AFF9AE /* gtkuigl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5A62269BB4300AFF9AE /* gtkuigl.h */; };
 		2DE3B7D92269BF1700AFF9AE /* pluginconf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5A72269BB4300AFF9AE /* pluginconf.c */; };
 		2DE3B7DA2269BF1700AFF9AE /* callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5AC2269BB4300AFF9AE /* callbacks.h */; };
 		2DE3B7DB2269BF1700AFF9AE /* hotkeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5AD2269BB4300AFF9AE /* hotkeys.h */; };
@@ -2240,7 +2239,6 @@
 		2DE3B8012269BF3100AFF9AE /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5F92269BB4300AFF9AE /* callbacks.c */; };
 		2DE3B8022269BF3100AFF9AE /* deadbeefapp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5FA2269BB4300AFF9AE /* deadbeefapp.c */; };
 		2DE3B8032269BF3100AFF9AE /* plcommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5FB2269BB4300AFF9AE /* plcommon.h */; };
-		2DE3B8042269BF3100AFF9AE /* gtkuigl.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5FC2269BB4300AFF9AE /* gtkuigl.c */; };
 		2DE3B8052269BF3100AFF9AE /* pluginconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5FD2269BB4300AFF9AE /* pluginconf.h */; };
 		2DE3B8062269BF3100AFF9AE /* search.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B6622269BB4300AFF9AE /* search.h */; };
 		2DE3B8082269BF3100AFF9AE /* wingeom.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B68E2269BB4300AFF9AE /* wingeom.h */; };
@@ -5963,7 +5961,6 @@
 		2DE3B5A12269BB4300AFF9AE /* plcommon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plcommon.c; sourceTree = "<group>"; };
 		2DE3B5A32269BB4300AFF9AE /* deadbeefapp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = deadbeefapp.h; sourceTree = "<group>"; };
 		2DE3B5A42269BB4300AFF9AE /* prefwin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = prefwin.c; sourceTree = "<group>"; };
-		2DE3B5A62269BB4300AFF9AE /* gtkuigl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gtkuigl.h; sourceTree = "<group>"; };
 		2DE3B5A72269BB4300AFF9AE /* pluginconf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pluginconf.c; sourceTree = "<group>"; };
 		2DE3B5AC2269BB4300AFF9AE /* callbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = callbacks.h; sourceTree = "<group>"; };
 		2DE3B5AD2269BB4300AFF9AE /* hotkeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hotkeys.h; sourceTree = "<group>"; };
@@ -6006,7 +6003,6 @@
 		2DE3B5F92269BB4300AFF9AE /* callbacks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = callbacks.c; sourceTree = "<group>"; };
 		2DE3B5FA2269BB4300AFF9AE /* deadbeefapp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = deadbeefapp.c; sourceTree = "<group>"; };
 		2DE3B5FB2269BB4300AFF9AE /* plcommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plcommon.h; sourceTree = "<group>"; };
-		2DE3B5FC2269BB4300AFF9AE /* gtkuigl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gtkuigl.c; sourceTree = "<group>"; };
 		2DE3B5FD2269BB4300AFF9AE /* pluginconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pluginconf.h; sourceTree = "<group>"; };
 		2DE3B6622269BB4300AFF9AE /* search.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = search.h; sourceTree = "<group>"; };
 		2DE3B68E2269BB4300AFF9AE /* wingeom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wingeom.h; sourceTree = "<group>"; };
@@ -10456,7 +10452,6 @@
 				2DE3B5A12269BB4300AFF9AE /* plcommon.c */,
 				2DE3B5A32269BB4300AFF9AE /* deadbeefapp.h */,
 				2DE3B5A42269BB4300AFF9AE /* prefwin.c */,
-				2DE3B5A62269BB4300AFF9AE /* gtkuigl.h */,
 				2DE3B5A72269BB4300AFF9AE /* pluginconf.c */,
 				2DE3B5AC2269BB4300AFF9AE /* callbacks.h */,
 				2DE3B5AD2269BB4300AFF9AE /* hotkeys.h */,
@@ -10499,7 +10494,6 @@
 				2DE3B5F92269BB4300AFF9AE /* callbacks.c */,
 				2DE3B5FA2269BB4300AFF9AE /* deadbeefapp.c */,
 				2DE3B5FB2269BB4300AFF9AE /* plcommon.h */,
-				2DE3B5FC2269BB4300AFF9AE /* gtkuigl.c */,
 				2DE3B5FD2269BB4300AFF9AE /* pluginconf.h */,
 				2DE3B6622269BB4300AFF9AE /* search.h */,
 				2DE3B68E2269BB4300AFF9AE /* wingeom.h */,
@@ -12547,7 +12541,6 @@
 				2DE3B7C12269BF1300AFF9AE /* progress.h in Headers */,
 				2DE3B7F22269BF3100AFF9AE /* eq.h in Headers */,
 				2DE3B7DB2269BF1700AFF9AE /* hotkeys.h in Headers */,
-				2DE3B7D82269BF1700AFF9AE /* gtkuigl.h in Headers */,
 				2DE3B8062269BF3100AFF9AE /* search.h in Headers */,
 				2DE3B7F92269BF3100AFF9AE /* coverart.h in Headers */,
 				2DE3B7D42269BF1700AFF9AE /* mainplaylist.h in Headers */,
@@ -15959,7 +15952,6 @@
 				2DE3B7CF2269BF1700AFF9AE /* tagwritersettings.c in Sources */,
 				2DE3B7E82269BF3100AFF9AE /* gtkui.c in Sources */,
 				2D9E9B5226BB1EDE00757C71 /* analyzer.c in Sources */,
-				2DE3B8042269BF3100AFF9AE /* gtkuigl.c in Sources */,
 				2DE3B7C22269BF1300AFF9AE /* ddblistview.c in Sources */,
 				2DAE706A25BDE55D00E40154 /* deletefromdisk.c in Sources */,
 				2DE3B8162269C0A400AFF9AE /* pluginsettings.c in Sources */,
