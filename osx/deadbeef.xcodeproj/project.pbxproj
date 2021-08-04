@@ -1323,7 +1323,6 @@
 		2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6D81EE1CCF9E0B00028788 /* DdbTableViewRightClickActivate.m */; };
 		2D6E2CFA26AC157A008FCD4B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6E2CF926AC157A008FCD4B /* Accelerate.framework */; };
 		2D6E2CFC26AC1617008FCD4B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6E2CF926AC157A008FCD4B /* Accelerate.framework */; };
-		2D6E2CFE26AC1B9B008FCD4B /* fft_accelerate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E2CE726AC13DF008FCD4B /* fft_accelerate.c */; };
 		2D6EC2AF1A42120100DD1C72 /* mp3.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6EC2A71A42076B00DD1C72 /* mp3.h */; };
 		2D6EC2B11A42120E00DD1C72 /* mp3_mpg123.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6EC2A91A4210D800DD1C72 /* mp3_mpg123.c */; };
 		2D6EC2B21A42121100DD1C72 /* mp3_mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6EC2AA1A4210D800DD1C72 /* mp3_mpg123.h */; };
@@ -1571,6 +1570,7 @@
 		2D9E5C6724AE6DE60099B108 /* wcwidth.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9E5C0124AE6AAD0099B108 /* wcwidth.c */; };
 		2D9E905124F453960037D323 /* MediaLibraryPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9E904F24F453960037D323 /* MediaLibraryPreferencesViewController.h */; };
 		2D9E905224F453960037D323 /* MediaLibraryPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9E905024F453960037D323 /* MediaLibraryPreferencesViewController.m */; };
+		2D9E9B4F26BB1CBB00757C71 /* fft_accelerate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E2CE726AC13DF008FCD4B /* fft_accelerate.c */; };
 		2D9EBAAB25E44A0700255592 /* WidgetSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EBAA925E44A0700255592 /* WidgetSerializer.h */; };
 		2D9EBAAC25E44A0700255592 /* WidgetSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EBAA925E44A0700255592 /* WidgetSerializer.h */; };
 		2D9EBAAD25E44A0700255592 /* WidgetSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9EBAAA25E44A0700255592 /* WidgetSerializer.m */; };
@@ -14806,7 +14806,7 @@
 				2D01D7D11AB2219C00BCD3C4 /* playqueue.c in Sources */,
 				2D135EFD226E4E1900BAAE84 /* scriptable_encoder.c in Sources */,
 				2D01D7DB1AB2219C00BCD3C4 /* playlist.c in Sources */,
-				2D6E2CFE26AC1B9B008FCD4B /* fft_accelerate.c in Sources */,
+				2D9E9B4F26BB1CBB00757C71 /* fft_accelerate.c in Sources */,
 				2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */,
 				2D5121C61B01DEFD009F6410 /* sort.c in Sources */,
 				2D9E5C6724AE6DE60099B108 /* wcwidth.c in Sources */,

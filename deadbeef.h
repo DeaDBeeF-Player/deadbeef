@@ -71,7 +71,8 @@ extern "C" {
 // that there's a better replacement in the newer deadbeef versions.
 
 // api version history:
-// 1.13 -- deadbeef-1.9
+// 1.15 -- deadbeef-1.9.0 (medialib branch)
+// 1.14 -- deadbeef-1.8.8
 // 1.12 -- deadbeef-1.8.4
 // 1.11 -- deadbeef-1.8.3
 // 1.10 -- deadbeef-1.8.0
@@ -98,7 +99,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 14
+#define DB_API_VERSION_MINOR 15
 
 #if defined(__clang__)
 
@@ -133,6 +134,12 @@ extern "C" {
 
 #ifndef DDB_API_LEVEL
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 15)
+#define DEPRECATED_115 DDB_DEPRECATED("since deadbeef API 1.15")
+#else
+#define DEPRECATED_115
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 14)
@@ -647,17 +654,11 @@ typedef struct {
 
 // since 1.5
 #if (DDB_API_LEVEL >= 5)
-#ifdef __APPLE__
-// FIXME: this is an API breaking change, so shouldn't be merged to master.
-// It's added purely to experiment with FFT on a branch.
-#define DDB_FREQ_BANDS 4096
-#else
-#define DDB_FREQ_BANDS 256
-#endif
-#define DDB_FREQ_MAX_CHANNELS 9
+static const int DDB_FREQ_BANDS = 256 DEPRECATED_115; // Do not use -- instead use the nframes field
+static const int DDB_FREQ_MAX_CHANNELS = 9;
 typedef struct ddb_audio_data_s {
-    const ddb_waveformat_t *fmt;
-    const float *data;
+    ddb_waveformat_t *fmt;
+    float *data;
     int nframes;
 } ddb_audio_data_t;
 
@@ -1296,13 +1297,18 @@ typedef struct {
     void (*vis_waveform_listen) (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data));
     void (*vis_waveform_unlisten) (void *ctx);
 
+    // This method used to subscribe to updates of FFT size 256
+    // This is no longer available, and starting with API 1.15 does nothing.
+    // Please use vis_spectrum_listen2
+    void (*vis_spectrum_listen) (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data)) DEPRECATED_115;
+
     // register/unregister for getting continuous spectrum (frequency domain) data
     // mainly for visualization
     // ctx must be unique
-    // the data always contains DDB_FREQ_BANDS frames
+    // the nframes field denotes fft size
     // max number of channels is DDB_FREQ_MAX_CHANNELS
-    // the samples are non-interleaved
-    void (*vis_spectrum_listen) (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data));
+    // the samples are planar-ordered, (non-interleaved)
+    void (*vis_spectrum_listen2) (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data)) DEPRECATED_115;
     void (*vis_spectrum_unlisten) (void *ctx);
 
     // this is useful to mute/unmute audio, and query the muted status, from

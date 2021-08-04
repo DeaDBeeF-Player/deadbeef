@@ -98,7 +98,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     if (context == kIsVisibleContext) {
         if (!self.isListening && self.window.isVisible) {
-            deadbeef->vis_spectrum_listen((__bridge void *)(self), vis_callback);
+            deadbeef->vis_spectrum_listen2((__bridge void *)(self), vis_callback);
             self.isListening = YES;
         }
         else if (self.isListening && !self.window.isVisible) {
@@ -153,7 +153,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
     ddb_analyzer_dealloc(&_analyzer);
     ddb_analyzer_draw_data_dealloc(&_draw_data);
-    free ((float *)_input_data.data);
+    free (_input_data.data);
     _input_data.data = NULL;
 }
 
@@ -161,12 +161,12 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     @synchronized (self) {
         // copy the input data for later consumption
         if (_input_data.nframes != data->nframes) {
-            free ((float *)_input_data.data);
+            free (_input_data.data);
             _input_data.data = malloc (data->nframes * data->fmt->channels * sizeof (float));
             _input_data.nframes = data->nframes;
         }
         memcpy ((ddb_waveformat_t *)_input_data.fmt, data->fmt, sizeof (ddb_waveformat_t));
-        memcpy ((float *)_input_data.data, data->data, data->nframes * data->fmt->channels * sizeof (float));
+        memcpy (_input_data.data, data->data, data->nframes * data->fmt->channels * sizeof (float));
     }
 }
 

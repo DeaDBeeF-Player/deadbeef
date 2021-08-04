@@ -135,6 +135,10 @@ static DB_playlist_t *g_playlist_plugins[MAX_PLAYLIST_PLUGINS+1];
 static uintptr_t background_jobs_mutex;
 static int num_background_jobs;
 
+static void
+_viz_spectrum_listen_stub (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data)) {
+}
+
 // deadbeef api
 static DB_functions_t deadbeef_api = {
     .vmajor = DB_API_VERSION_MAJOR,
@@ -417,7 +421,8 @@ static DB_functions_t deadbeef_api = {
     // ******* new 1.5 APIs ********
     .vis_waveform_listen = viz_waveform_listen,
     .vis_waveform_unlisten = viz_waveform_unlisten,
-    .vis_spectrum_listen = viz_spectrum_listen,
+    .vis_spectrum_listen = _viz_spectrum_listen_stub,
+    .vis_spectrum_listen2 = viz_spectrum_listen,
     .vis_spectrum_unlisten = viz_spectrum_unlisten,
     .audio_set_mute = audio_set_mute,
     .audio_is_mute = audio_is_mute,
