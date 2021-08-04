@@ -1302,13 +1302,6 @@ typedef struct {
     // Please use vis_spectrum_listen2
     void (*vis_spectrum_listen) (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data)) DEPRECATED_115;
 
-    // register/unregister for getting continuous spectrum (frequency domain) data
-    // mainly for visualization
-    // ctx must be unique
-    // the nframes field denotes fft size
-    // max number of channels is DDB_FREQ_MAX_CHANNELS
-    // the samples are planar-ordered, (non-interleaved)
-    void (*vis_spectrum_listen2) (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data)) DEPRECATED_115;
     void (*vis_spectrum_unlisten) (void *ctx);
 
     // this is useful to mute/unmute audio, and query the muted status, from
@@ -1600,6 +1593,19 @@ typedef struct {
 #if (DDB_API_LEVEL >= 14)
     // Get full filesystem path to the specified plugin file (.so/.dll/.dylib)
     const char* (*plug_get_path_for_plugin_ptr) (struct DB_plugin_s *plugin_ptr);
+#endif
+
+#if (DDB_API_LEVEL >= 15)
+    /// Register for getting continuous spectrum (frequency domain) data,
+    /// mainly for visualization
+    /// @param ctx Associated context, must be unique
+    /// @param callback the callback which will be called every time new fft data is ready
+    ///
+    /// Use the @c nframes field in the @c data to get the number of frequency samples.
+    /// Max number of channels is DDB_FREQ_MAX_CHANNELS.
+    /// The samples are planar-ordered (non-interleaved)
+    /// Use vis_spectrum_unlisten to unregister.
+    void (*vis_spectrum_listen2) (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data)) DEPRECATED_115;
 #endif
 } DB_functions_t;
 
