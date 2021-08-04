@@ -2,6 +2,7 @@ SUBDIRS = pixmaps\
 		  icons\
 		  external\
 		  shared\
+		  analyzer\
 		  ${PLUGINS_DIRS}\
 		  po\
 		  intl
