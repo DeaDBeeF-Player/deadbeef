@@ -2170,7 +2170,7 @@ streamer_read (char *bytes, int size) {
 #ifndef ANDROID
     // Read extra bytes from output buffer
     int viz_bytes = min (_outbuffer_remaining, max_bytes);
-    viz_process (_output_buffer, viz_bytes, output);
+    viz_process (_output_buffer, viz_bytes, output, 4096); // FIXME: fft size needs to be configurable
 #endif
 
     // Play
@@ -2384,7 +2384,7 @@ error:
     output->stop ();
     streamer_reset (1);
     viz_reset();
-    viz_process(NULL, 0, output);
+    viz_process(NULL, 0, output, 0);
 
     streamer_lock();
     _handle_playback_stopped ();
