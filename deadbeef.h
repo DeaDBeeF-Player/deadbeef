@@ -654,7 +654,7 @@ typedef struct {
 
 // since 1.5
 #if (DDB_API_LEVEL >= 5)
-static const int DDB_FREQ_BANDS = 256 DEPRECATED_115; // Do not use -- instead use the nframes field
+static const int DDB_FREQ_BANDS DEPRECATED_115 = 256; // Do not use -- instead use the nframes field
 static const int DDB_FREQ_MAX_CHANNELS = 9;
 typedef struct ddb_audio_data_s {
     ddb_waveformat_t *fmt;

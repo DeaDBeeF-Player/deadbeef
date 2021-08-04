@@ -809,6 +809,7 @@ project "ddb_gui_GTK2"
     "shared/eqpreset.c",
     "shared/pluginsettings.c",
     "shared/trkproperties_shared.c",
+    "analyzer/analyzer.c",
     "plugins/libparser/parser.c",
     "utf8.c"
   }
