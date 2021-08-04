@@ -3058,6 +3058,12 @@ w_spectrum_destroy (ddb_gtkui_widget_t *w) {
         cairo_surface_destroy (s->surf);
         s->surf = NULL;
     }
+
+    ddb_analyzer_dealloc(&s->analyzer);
+    ddb_analyzer_draw_data_dealloc(&s->draw_data);
+    free (s->input_data.data);
+    s->input_data.data = NULL;
+
     if (s->mutex) {
         deadbeef->mutex_free (s->mutex);
         s->mutex = 0;
