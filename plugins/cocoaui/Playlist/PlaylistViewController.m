@@ -782,6 +782,24 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
         if (text[0]) {
             NSDictionary *attributes = sel?self.cellSelectedTextAttrsDictionary:self.cellTextAttrsDictionary;
+
+            // set text alignment for this specific column
+            NSMutableParagraphStyle *textStyle = [attributes valueForKey:NSParagraphStyleAttributeName];
+            switch (self.columns[col].alignment) {
+                case 0:
+                    textStyle.alignment = NSTextAlignmentLeft;
+                    break;
+                case 1:
+                    textStyle.alignment = NSTextAlignmentCenter;
+                    break;
+                case 2:
+                    textStyle.alignment = NSTextAlignmentRight;
+                    break;
+                default:
+                    textStyle.alignment = NSTextAlignmentLeft;
+                    break;
+            }
+
             NSAttributedString *attrString;
             if (ctx.dimmed) {
                 NSColor *foreground = attributes[NSForegroundColorAttributeName];
@@ -792,6 +810,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                 attrString = [[NSAttributedString alloc] initWithString:[NSString stringWithUTF8String:text] attributes:attributes];
             }
             [attrString drawInRect:rect];
+            textStyle.alignment = NSTextAlignmentLeft;
         }
 
         if (ctx.update > 0) {
