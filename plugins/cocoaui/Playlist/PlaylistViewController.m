@@ -260,7 +260,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                               , [NSString stringWithFormat:@"%d", self.columns[i].type], @"id"
                               , [NSString stringWithUTF8String:self.columns[i].format], @"format"
                               , [NSString stringWithFormat:@"%d", self.columns[i].size], @"size"
-                              , [NSNumber numberWithInt:self.columns[i].alignment], @"alignment"
+                              , [NSNumber numberWithInteger:self.columns[i].alignment], @"alignment"
                               , [NSNumber numberWithInt:self.columns[i].set_text_color], @"set_text_color"
                               , [NSString stringWithFormat:@"#%02x%02x%02x%02x", col[3], col[0], col[1], col[2]], @"text_color"
                               , nil];
@@ -462,7 +462,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     return idx;
 }
 
-- (void)initColumn:(int)idx withTitle:(const char *)title withId:(int)_id withSize:(int)size withFormat:(const char *)format withAlignment:(int)alignment withSetColor:(BOOL)setColor withColor:(uint8_t *)color {
+- (void)initColumn:(int)idx withTitle:(const char *)title withId:(int)_id withSize:(int)size withFormat:(const char *)format withAlignment:(PlaylistColumnAlignment)alignment withSetColor:(BOOL)setColor withColor:(uint8_t *)color {
     self.columns[idx].type = _id;
     self.columns[idx].title = strdup (title);
     self.columns[idx].format = format ? strdup (format) : NULL;
@@ -786,13 +786,13 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             // set text alignment for this specific column
             NSMutableParagraphStyle *textStyle = [attributes valueForKey:NSParagraphStyleAttributeName];
             switch (self.columns[col].alignment) {
-                case 0:
+                case ColumnAlignmentLeft:
                     textStyle.alignment = NSTextAlignmentLeft;
                     break;
-                case 1:
+                case ColumnAlignmentCenter:
                     textStyle.alignment = NSTextAlignmentCenter;
                     break;
-                case 2:
+                case ColumnAlignmentRight:
                     textStyle.alignment = NSTextAlignmentRight;
                     break;
                 default:
@@ -968,10 +968,10 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     }
     else {
         plt_col_info_t *c = &self.columns[(int)col];
-        if (c->alignment == 1) {
+        if (c->alignment == ColumnAlignmentCenter) {
             art_x += art_width/2 - desiredSize.width/2;
         }
-        else if (c->alignment == 2) {
+        else if (c->alignment == ColumnAlignmentRight) {
             art_x += art_width-desiredSize.width;
         }
         drawRect = NSMakeRect(art_x, ypos, desiredSize.width, desiredSize.height);
