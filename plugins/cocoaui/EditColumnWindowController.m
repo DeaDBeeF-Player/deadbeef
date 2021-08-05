@@ -6,6 +6,7 @@
 //  Copyright © 2019 Alexey Yakovenko. All rights reserved.
 //
 
+#import "PlaylistViewController.h"
 #import "EditColumnWindowController.h"
 #import "deadbeef.h"
 
@@ -14,7 +15,7 @@
 @property (nonatomic) NSString *title;
 @property (nonatomic) int type;
 @property (nonatomic) NSString *format;
-@property (nonatomic) int alignment;
+@property (nonatomic) PlaylistColumnAlignment alignment;
 @property (nonatomic) BOOL setTextColor;
 @property (nonatomic) NSColor *textColor;
 
@@ -31,7 +32,7 @@
     [self initEditColumnSheetWithTitle:@""
                                   type:DB_COLUMN_CUSTOM
                                 format:@""
-                             alignment:-1
+                             alignment:ColumnAlignmentLeft
                           setTextColor:NO
                              textColor:NSColor.blackColor];
 }
@@ -67,7 +68,7 @@
 - (void)initEditColumnSheetWithTitle:(NSString *)title
                                 type:(int)inputType
                               format:(NSString *)format
-                           alignment:(int)alignment
+                           alignment:(PlaylistColumnAlignment)alignment
                         setTextColor:(BOOL)setTextColor
                            textColor:(NSColor *)textColor {
 
