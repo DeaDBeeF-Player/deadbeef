@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "PlaylistViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)initEditColumnSheetWithTitle:(NSString *)title
                                 type:(int)type
                               format:(NSString *)format
-                           alignment:(int)alignment
+                           alignment:(PlaylistColumnAlignment)alignment
                         setTextColor:(BOOL)setTextColor
                            textColor:(NSColor *)textColor;
 
