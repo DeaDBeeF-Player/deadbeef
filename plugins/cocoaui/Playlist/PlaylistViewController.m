@@ -778,7 +778,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         deadbeef->tf_eval (&ctx, self.columns[col].bytecode, text, sizeof (text));
 
         rect.origin.x += CELL_HPADDING;
-        rect.size.width -= CELL_HPADDING;
+        rect.size.width -= CELL_HPADDING*2;
 
         if (text[0]) {
             NSDictionary *attributes = sel?self.cellSelectedTextAttrsDictionary:self.cellTextAttrsDictionary;
