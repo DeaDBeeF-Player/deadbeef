@@ -25,12 +25,18 @@
 #import "PlaylistView.h"
 #import "ConverterWindowController.h"
 
+typedef NS_ENUM(NSInteger, PlaylistColumnAlignment) {
+    ColumnAlignmentLeft = 0,
+    ColumnAlignmentCenter = 1,
+    ColumnAlignmentRight = 2,
+};
+
 typedef struct {
     char *title;
     int type; // predefined col type
     char *format;
     int size;
-    int alignment;
+    PlaylistColumnAlignment alignment;
     int set_text_color;
     uint8_t text_color[4];
     char *bytecode;
