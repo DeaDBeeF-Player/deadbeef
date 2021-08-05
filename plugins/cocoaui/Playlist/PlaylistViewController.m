@@ -562,9 +562,9 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             size = (int)[size_s integerValue];
         }
 
-        int alignment = 0;
+        PlaylistColumnAlignment alignment = ColumnAlignmentUnknown;
         if (alignment_n) {
-            alignment = [alignment_n intValue];
+            alignment = (PlaylistColumnAlignment)[alignment_n intValue];
         }
 
         BOOL setcolor = NO;
