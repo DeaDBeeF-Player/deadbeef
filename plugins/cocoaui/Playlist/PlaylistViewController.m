@@ -562,10 +562,15 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             size = (int)[size_s integerValue];
         }
 
-        PlaylistColumnAlignment alignment = ColumnAlignmentUnknown;
+        PlaylistColumnAlignment alignment = ColumnAlignmentLeft;
         if (alignment_n) {
             alignment = (PlaylistColumnAlignment)[alignment_n intValue];
+            
+            if (alignment != ColumnAlignmentLeft && alignment != ColumnAlignmentCenter && alignment != ColumnAlignmentRight) {
+                alignment = ColumnAlignmentLeft;
+            }
         }
+        
 
         BOOL setcolor = NO;
         if (setcolor_n) {

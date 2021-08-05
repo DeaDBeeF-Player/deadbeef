@@ -26,7 +26,6 @@
 #import "ConverterWindowController.h"
 
 typedef NS_ENUM(NSInteger, PlaylistColumnAlignment) {
-    ColumnAlignmentUnknown = -1,
     ColumnAlignmentLeft = 0,
     ColumnAlignmentCenter = 1,
     ColumnAlignmentRight = 2,

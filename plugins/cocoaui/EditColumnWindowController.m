@@ -32,7 +32,7 @@
     [self initEditColumnSheetWithTitle:@""
                                   type:DB_COLUMN_CUSTOM
                                 format:@""
-                             alignment:ColumnAlignmentUnknown
+                             alignment:ColumnAlignmentLeft
                           setTextColor:NO
                              textColor:NSColor.blackColor];
 }
