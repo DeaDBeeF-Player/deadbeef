@@ -1598,8 +1598,8 @@ typedef struct {
 #if (DDB_API_LEVEL >= 15)
     /// Register for getting continuous spectrum (frequency domain) data,
     /// mainly for visualization
-    /// @param  ctx Associated context, must be unique
-    /// @param  callback The callback which will be called every time new fft data is ready
+    /// @param ctx Associated context, must be unique
+    /// @param callback The callback which will be called every time new fft data is ready
     ///
     /// Use the @c nframes field in the @c data to get the number of frequency samples.
     ///
