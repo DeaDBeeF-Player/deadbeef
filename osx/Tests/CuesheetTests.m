@@ -97,7 +97,7 @@
     const char cue[] =
     "FILE \"file.wav\" WAVE\n"
     "TRACK 01 AUDIO\n"
-    "REM COMPOSER \"TEST_COMPOSER\""
+    "REM COMPOSER \"TEST_COMPOSER\"\n"
     "INDEX 01 00:00:00\n"
     "TRACK 02 AUDIO\n"
     "INDEX 01 00:01:00\n";
@@ -120,6 +120,36 @@
 
     const char *composer2 = pl_find_meta(cueItem->next[PL_MAIN], "composer");
     XCTAssert(composer2 == NULL);
+
+    pl_item_unref(cueItem);
+    plt_free (plt);
+}
+
+- (void)test_CueWithTrackGain_SetsCueTrackGainForOneTrack {
+    const char cue[] =
+    "FILE \"file.wav\" WAVE\n"
+    "TRACK 01 AUDIO\n"
+    "REM COMPOSER \"TEST_COMPOSER\"\n"
+    "REM REPLAYGAIN_TRACK_GAIN +1.00 dB\n"
+    "INDEX 01 00:00:00\n"
+    "TRACK 02 AUDIO\n"
+    "INDEX 01 00:01:00\n";
+
+    playlist_t *plt = plt_alloc("test");
+
+    playItem_t *it = pl_item_alloc_init ("testfile.flac", "stdflac");
+    pl_add_meta (it, "cuesheet", cue);
+    plt_process_cue(plt, NULL, it, 60*10*44100, 44100);
+
+    int cnt = plt_get_item_count(plt, PL_MAIN);
+
+    XCTAssertEqual(cnt, 2);
+
+    playItem_t *cueItem = plt_get_first(plt, PL_MAIN);
+
+    const char *trackgain = pl_find_meta (cueItem, ":REPLAYGAIN_TRACKGAIN");
+    XCTAssertTrue(trackgain!=NULL);
+    XCTAssertTrue(!strcmp(trackgain, "1.00 dB"));
 
     pl_item_unref(cueItem);
     plt_free (plt);

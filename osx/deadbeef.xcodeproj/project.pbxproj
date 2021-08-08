@@ -1749,6 +1749,7 @@
 		2DA7C230251002390080963D /* artwork_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA7C22E251002390080963D /* artwork_flac.c */; };
 		2DA7C233251003A20080963D /* artwork_png.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA7C231251003A20080963D /* artwork_png.h */; };
 		2DA7C234251003A20080963D /* artwork_png.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA7C232251003A20080963D /* artwork_png.c */; };
+		2DA80C7426C0708200E8EC7F /* CuesheetTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7A8FA1CA493CE00318A9F /* CuesheetTests.m */; };
 		2DA84F7E24F58915003507A2 /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
 		2DA84F7F24F5892A003507A2 /* libjansson.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DA9AB4C25DC31230004593A /* xi.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA9AA4B25DC31220004593A /* xi.c */; };
@@ -15648,6 +15649,7 @@
 				2DA04EF823B6AAA40070AC01 /* shellexecutil.c in Sources */,
 				2DA66EC81EDF4EF800E20989 /* StreamerTests.m in Sources */,
 				2D135EF4226E47CE00BAAE84 /* SciptableTests.m in Sources */,
+				2DA80C7426C0708200E8EC7F /* CuesheetTests.m in Sources */,
 				2DAA4C141AAF88FF00519559 /* TitleFormattingTests.m in Sources */,
 				2D4A9468223EFC6700199551 /* CoreAudioTests.m in Sources */,
 				4D31BECE1E9FB194001D1B89 /* ResamplerTests.m in Sources */,
