@@ -29,6 +29,7 @@
 #import "PreferencesWindowController.h"
 #import "TrackPositionFormatter.h"
 #include "deadbeef.h"
+#import "DdbShared.h"
 #include <sys/time.h>
 
 extern DB_functions_t *deadbeef;
@@ -378,6 +379,11 @@ static char sb_text[512];
     }
 }
 
-- (IBAction)designModeMenuItem:(id)sender {
+- (IBAction)createNewPlaylistAction:(id)sender {
+    int playlist = cocoaui_add_new_playlist ();
+    if (playlist != -1) {
+        cocoaui_playlist_set_curr (playlist);
+    }
 }
+
 @end

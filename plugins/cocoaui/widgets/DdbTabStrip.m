@@ -627,7 +627,6 @@ plt_get_title_wrapper (int plt) {
                 int playlist = cocoaui_add_new_playlist ();
                 if (playlist != -1) {
                     cocoaui_playlist_set_curr (playlist);
-                    [self scrollToTab:playlist];
                 }
                 return;
             }
