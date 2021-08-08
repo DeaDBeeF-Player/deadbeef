@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -327,7 +328,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="485" height="273"/>
                     <subviews>
                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="Sp3-ZT-72r" customClass="DdbTabStrip">
-                            <rect key="frame" x="0.0" y="249" width="485" height="24"/>
+                            <rect key="frame" x="0.0" y="249" width="452" height="24"/>
                             <subviews>
                                 <box hidden="YES" horizontalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="pXm-qp-FgI">
                                     <rect key="frame" x="177" y="-36" width="5" height="96"/>
@@ -350,14 +351,26 @@
                                 <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="UV6-J9-Up9"/>
                             </constraints>
                         </customView>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Evh-ab-Qa8">
+                            <rect key="frame" x="456" y="251" width="25" height="19"/>
+                            <buttonCell key="cell" type="recessed" title="+" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2NL-f8-Pux">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="systemBold" size="16"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="createNewPlaylistAction:" target="-2" id="hZG-fd-p4l"/>
+                            </connections>
+                        </button>
                     </subviews>
                     <constraints>
-                        <constraint firstAttribute="trailing" secondItem="Sp3-ZT-72r" secondAttribute="trailing" id="2cP-Jb-A7t"/>
                         <constraint firstItem="1HX-cv-ywg" firstAttribute="top" secondItem="Sp3-ZT-72r" secondAttribute="bottom" id="3ds-vQ-VxW"/>
                         <constraint firstAttribute="trailing" secondItem="1HX-cv-ywg" secondAttribute="trailing" id="8dv-pf-Lum"/>
                         <constraint firstAttribute="bottom" secondItem="1HX-cv-ywg" secondAttribute="bottom" priority="750" id="JsA-3K-nfk"/>
+                        <constraint firstItem="Evh-ab-Qa8" firstAttribute="leading" secondItem="Sp3-ZT-72r" secondAttribute="trailing" constant="4" id="NPR-jg-mbN"/>
+                        <constraint firstAttribute="trailing" secondItem="Evh-ab-Qa8" secondAttribute="trailing" constant="4" id="S5z-4a-uo6"/>
                         <constraint firstItem="Sp3-ZT-72r" firstAttribute="leading" secondItem="IV1-Va-yS4" secondAttribute="leading" id="XGQ-37-GBs"/>
                         <constraint firstItem="1HX-cv-ywg" firstAttribute="leading" secondItem="IV1-Va-yS4" secondAttribute="leading" id="aYw-Mf-7pR"/>
+                        <constraint firstItem="Evh-ab-Qa8" firstAttribute="centerY" secondItem="Sp3-ZT-72r" secondAttribute="centerY" id="alq-P2-CKU"/>
                         <constraint firstItem="Sp3-ZT-72r" firstAttribute="top" secondItem="IV1-Va-yS4" secondAttribute="top" id="yfd-b8-W4i"/>
                     </constraints>
                 </customView>
