@@ -21,12 +21,14 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import "DdbWidget.h"
+@interface DdbTabStrip : NSView<NSMenuDelegate>
 
-@interface DdbTabStrip : DdbWidget<NSMenuDelegate>
 - (int)clickedTab;
 @property (weak) IBOutlet NSBox *hiddenVertLine;
 @property (weak) IBOutlet NSPanel *renamePlaylistWindow;
 - (IBAction)renamePlaylistCancelAction:(id)sender;
 - (IBAction)renamePlaylistOKAction:(id)sender;
+
+- (int)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
+
 @end

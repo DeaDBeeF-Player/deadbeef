@@ -2165,10 +2165,6 @@
 		2DE1B36C24A8A6150070CD7C /* Replay in Copy SC68 replays */ = {isa = PBXBuildFile; fileRef = 2DE1B36A24A8A5F20070CD7C /* Replay */; };
 		2DE1B36F24A8AAD80070CD7C /* libflaclib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */; };
 		2DE1B37224A8B3EB0070CD7C /* Replay in Copy SC68 replays */ = {isa = PBXBuildFile; fileRef = 2DE1B36A24A8A5F20070CD7C /* Replay */; };
-		2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */; };
-		2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3DC19B11283009B5BC6 /* DdbWidget.m */; };
-		2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3E019B114CD009B5BC6 /* DdbWidgetManager.h */; };
-		2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3E119B114CD009B5BC6 /* DdbWidgetManager.m */; };
 		2DE1D3E619B11539009B5BC6 /* PlaceholderWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3E419B11539009B5BC6 /* PlaceholderWidget.h */; };
 		2DE1D3E719B11539009B5BC6 /* PlaceholderWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3E519B11539009B5BC6 /* PlaceholderWidget.m */; };
 		2DE3B5762269B80900AFF9AE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BE51838EAAB00A98C62 /* Images.xcassets */; };
@@ -5931,10 +5927,6 @@
 		2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConverterWindowController.h; sourceTree = "<group>"; };
 		2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConverterWindowController.m; sourceTree = "<group>"; };
 		2DE1B36A24A8A5F20070CD7C /* Replay */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Replay; path = data68/Replay; sourceTree = "<group>"; };
-		2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbWidget.h; sourceTree = "<group>"; };
-		2DE1D3DC19B11283009B5BC6 /* DdbWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbWidget.m; sourceTree = "<group>"; };
-		2DE1D3E019B114CD009B5BC6 /* DdbWidgetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbWidgetManager.h; sourceTree = "<group>"; };
-		2DE1D3E119B114CD009B5BC6 /* DdbWidgetManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbWidgetManager.m; sourceTree = "<group>"; };
 		2DE1D3E419B11539009B5BC6 /* PlaceholderWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceholderWidget.h; sourceTree = "<group>"; };
 		2DE1D3E519B11539009B5BC6 /* PlaceholderWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceholderWidget.m; sourceTree = "<group>"; };
 		2DE3B5782269BB4300AFF9AE /* eq.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = eq.c; sourceTree = "<group>"; };
@@ -10408,10 +10400,6 @@
 				2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */,
 				2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */,
 				2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */,
-				2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */,
-				2DE1D3DC19B11283009B5BC6 /* DdbWidget.m */,
-				2DE1D3E019B114CD009B5BC6 /* DdbWidgetManager.h */,
-				2DE1D3E119B114CD009B5BC6 /* DdbWidgetManager.m */,
 				2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */,
 				2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */,
 			);
@@ -12842,7 +12830,6 @@
 				2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
 				2DA273782406ED4100FB9BE1 /* GuiPreferencesWindowController.h in Headers */,
-				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
 				2DDD789C25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
 				2D04701525E2D97D00F68459 /* WidgetMenuBuilder.h in Headers */,
 				2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */,
@@ -12866,7 +12853,6 @@
 				2DA5E341238DB1A8005832B7 /* EditColumnWindowController.h in Headers */,
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
 				2DB1641A24FAB13400034E11 /* MediaLibraryManager.h in Headers */,
-				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
 				2D30D0B425E2A5DD0023A299 /* DesignModeState.h in Headers */,
 				2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */,
 				2D651D17227227C300375AE2 /* ScriptableNodeEditorWindowController.h in Headers */,
@@ -16122,7 +16108,6 @@
 				2DA2738A2406FBD800FB9BE1 /* DspPreferencesViewController.m in Sources */,
 				2DAB1A3126A5FB9C00EA8B8F /* PreferencesPluginEntry.m in Sources */,
 				2DBC62DB24CCDFB200AA20BF /* VisualizationView.m in Sources */,
-				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
 				2DB2F740240466AF00F7C000 /* PluginsPreferencesViewController.m in Sources */,
 				2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */,
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
@@ -16131,7 +16116,6 @@
 				2DA8912325FFEB9B0084860D /* PlaylistGroup.m in Sources */,
 				2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */,
 				2D30D0B525E2A5DD0023A299 /* DesignModeState.m in Sources */,
-				2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */,
 				2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */,
 				2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */,
 				2D9C0C26238DC2C100CE8C10 /* GroupByCustomWindowController.m in Sources */,
