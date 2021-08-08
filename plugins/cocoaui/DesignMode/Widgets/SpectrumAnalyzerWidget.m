@@ -17,7 +17,7 @@ static void *kBarGranularity = &kBarGranularity;
 
 @interface SpectrumAnalyzerWidget()
 
-@property (nonatomic) id<DesignModeDepsProtocol> deps;
+@property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
 @property (nonatomic) VisualizationViewController *visualizationViewController;
 @property (nonatomic) VisualizationView *visualizationView;
 @property (nonatomic) SpectrumAnalyzerSettings *settings;
