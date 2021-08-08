@@ -23,7 +23,6 @@
 
 #import "AppDelegate.h"
 #import "dispatch/dispatch.h"
-#import "DdbWidgetManager.h"
 #import "DesignModeState.h"
 #import "ReplayGainScannerController.h"
 #import "DdbShared.h"
@@ -720,7 +719,7 @@ main_cleanup_and_quit (void);
 
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2
 {
-    [[DdbWidgetManager defaultWidgetManager] widgetMessage:_id ctx:ctx p1:p1 p2:p2];
+    [g_appDelegate.mainWindow.tabStrip widgetMessage:_id ctx:ctx p1:p1 p2:p2];
 
     if (g_appDelegate) {
         [DesignModeState.sharedInstance.rootWidget message:_id ctx:ctx p1:p1 p2:p2];

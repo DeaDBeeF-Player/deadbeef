@@ -21,7 +21,6 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import "DdbWidget.h"
 #import "PlaylistHeaderView.h"
 #import "PlaylistContentView.h"
 
