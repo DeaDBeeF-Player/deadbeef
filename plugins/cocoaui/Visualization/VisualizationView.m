@@ -246,26 +246,33 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     [self drawAnalyzer];
 }
 
-- (void)drawAnalyzer {
+- (void)drawAnalyzerDescreteFrequencies {
     CGContextRef context = NSGraphicsContext.currentContext.CGContext;
     ddb_analyzer_draw_bar_t *bar = _draw_data.bars;
     for (int i = 0; i < _draw_data.bar_count; i++, bar++) {
-        if (_analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
             CGContextMoveToPoint(context, bar->xpos, 0);
             CGContextAddLineToPoint(context, bar->xpos, bar->bar_height);
-        }
-        else {
-            CGContextAddRect(context, CGRectMake(bar->xpos, 0, _draw_data.bar_width, bar->bar_height));
-        }
     }
-    if (_analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
-        CGContextSetStrokeColorWithColor(context, self.barColor.CGColor);
-        CGContextStrokePath(context);
+    CGContextSetStrokeColorWithColor(context, self.barColor.CGColor);
+    CGContextStrokePath(context);
+
+    bar = _draw_data.bars;
+    for (int i = 0; i < _draw_data.bar_count; i++, bar++) {
+        CGContextMoveToPoint(context, bar->xpos-0.5, bar->peak_ypos);
+        CGContextAddLineToPoint(context, bar->xpos+0.5, bar->peak_ypos);
     }
-    else {
-        CGContextSetFillColorWithColor(context, self.barColor.CGColor);
-        CGContextFillPath(context);
+    CGContextSetStrokeColorWithColor(context, self.peakColor.CGColor);
+    CGContextStrokePath(context);
+}
+
+- (void)drawAnalyzerOctaveBands {
+    CGContextRef context = NSGraphicsContext.currentContext.CGContext;
+    ddb_analyzer_draw_bar_t *bar = _draw_data.bars;
+    for (int i = 0; i < _draw_data.bar_count; i++, bar++) {
+        CGContextAddRect(context, CGRectMake(bar->xpos, 0, _draw_data.bar_width, bar->bar_height));
     }
+    CGContextSetFillColorWithColor(context, self.barColor.CGColor);
+    CGContextFillPath(context);
 
     bar = _draw_data.bars;
     for (int i = 0; i < _draw_data.bar_count; i++, bar++) {
@@ -273,6 +280,16 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
     CGContextSetFillColorWithColor(context, self.peakColor.CGColor);
     CGContextFillPath(context);
+}
+
+
+- (void)drawAnalyzer {
+    if (_analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
+        [self drawAnalyzerDescreteFrequencies];
+    }
+    else {
+        [self drawAnalyzerOctaveBands];
+    }
 }
 
 @end
