@@ -232,13 +232,32 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     deadbeef->plt_set_curr (curr_plt);
     deadbeef->plt_clear(curr_plt);
 
-    ddb_playItem_t *playItem = [self selectedPlayItem];
+    MediaLibraryItem *item = [self selectedItem];
+    NSMutableArray<MediaLibraryItem *> *items = [NSMutableArray new];
+    [self arrayOfPlayableItemsForItem:item outputArray:items];
 
-    if (playItem) {
+    int count = 0;
+
+    ddb_playItem_t *prev = NULL;
+    for (item in items) {
+        ddb_playItem_t *playItem = item.playItem;
+        if (playItem == NULL) {
+            continue;
+        }
         ddb_playItem_t *it = deadbeef->pl_item_alloc();
         deadbeef->pl_item_copy (it, playItem);
-        deadbeef->plt_insert_item (curr_plt, NULL, it);
-        deadbeef->pl_item_unref (it);
+        deadbeef->plt_insert_item (curr_plt, prev, it);
+        if (prev != NULL) {
+            deadbeef->pl_item_unref (prev);
+        }
+        prev = it;
+        count += 1;
+    }
+    if (prev != NULL) {
+        deadbeef->pl_item_unref (prev);
+    }
+    prev = NULL;
+    if (count > 0) {
         deadbeef->sendmessage(DB_EV_PLAY_NUM, 0, 0, 0);
     }
 }
@@ -497,7 +516,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     // FIXME
 }
 
-- (ddb_playItem_t *)selectedPlayItem {
+- (MediaLibraryItem *)selectedItem {
     NSInteger row = -1;
     MediaLibraryItem *item;
 
@@ -511,7 +530,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
         return NULL;
     }
 
-    return item.playItem;
+    return item;
 }
 
 - (void)addSelectedItemsRecursively:(MediaLibraryItem *)item {
