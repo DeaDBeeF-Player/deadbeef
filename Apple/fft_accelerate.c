@@ -70,9 +70,11 @@ fft_calculate (const float *data, float *freq, int fft_size) {
     };
     vDSP_zvmags(&split_complex, 1, _sq_mags, 1, fft_size);
 
-    for (int i = 0; i < fft_size; i++) {
-        freq[i] = (float)(2 * sqrt(_sq_mags[i]) / fft_size);
-    }
+    int sq_count = fft_size;
+    vvsqrtf(_sq_mags, _sq_mags, &sq_count);
+
+    float mult = 2.f / fft_size;
+    vDSP_vsmul(_sq_mags, 1, &mult, freq, 1, fft_size);
 }
 
 void
