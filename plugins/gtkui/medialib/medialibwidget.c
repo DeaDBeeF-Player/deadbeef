@@ -22,11 +22,12 @@ typedef struct {
     ddb_gtkui_widget_t base;
     GtkTreeView *tree;
     GtkComboBoxText *selector;
+    GtkEntry *search_entry;
     ddb_medialib_plugin_t *plugin;
     ddb_mediasource_source_t source;
     ddb_mediasource_list_selector_t *selectors;
     int active_selector;
-    char *search_string;
+    char *search_text;
     int listener_id;
     GtkTreeIter root_iter;
     ddb_medialib_item_t *item_tree;
@@ -58,7 +59,7 @@ _reload_content (w_medialib_viewer_t *mlv) {
         mlv->plugin->plugin.free_item_tree (mlv->source, mlv->item_tree);
         mlv->item_tree = NULL;
     }
-    mlv->item_tree = mlv->plugin->plugin.create_item_tree (mlv->source, mlv->selectors[mlv->active_selector], mlv->search_string);
+    mlv->item_tree = mlv->plugin->plugin.create_item_tree (mlv->source, mlv->selectors[mlv->active_selector], mlv->search_text);
 
     // clear
     GtkTreeIter iter;
@@ -70,7 +71,7 @@ _reload_content (w_medialib_viewer_t *mlv) {
     _add_items(mlv, &mlv->root_iter, mlv->item_tree);
 
     GtkTreePath *path = gtk_tree_path_new_from_indices(0, -1);
-    gtk_tree_view_expand_row (mlv->tree, path, FALSE);
+    gtk_tree_view_expand_row (mlv->tree, path, mlv->search_text != NULL);
     gtk_tree_path_free (path);
 }
 
@@ -193,8 +194,23 @@ _active_selector_did_change (GtkComboBox* self, gpointer user_data) {
     int active_selector = gtk_combo_box_get_active(self);
     if (mlv->active_selector != active_selector) {
         mlv->active_selector = active_selector;
-        _reload_content(mlv);
+        _reload_content (mlv);
     }
+}
+
+static void
+_search_text_did_change (GtkEditable *editable, gpointer user_data) {
+    w_medialib_viewer_t *mlv = user_data;
+
+    const gchar *text = gtk_entry_get_text (mlv->search_entry);
+
+    free (mlv->search_text);
+    mlv->search_text = NULL;
+    if (*text) {
+        mlv->search_text = strdup (text);
+    }
+
+    _reload_content (mlv);
 }
 
 ddb_gtkui_widget_t *
@@ -215,6 +231,13 @@ w_medialib_viewer_create (void) {
     w->selector = GTK_COMBO_BOX_TEXT(gtk_combo_box_text_new());
     gtk_widget_show (GTK_WIDGET(w->selector));
     gtk_box_pack_start (GTK_BOX(vbox), GTK_WIDGET(w->selector), FALSE, TRUE, 0);
+
+    w->search_entry = GTK_ENTRY(gtk_entry_new());
+#if GTK_CHECK_VERSION(3,2,0)
+    gtk_entry_set_placeholder_text(w->search_entry, _("Search"));
+#endif
+    gtk_widget_show (GTK_WIDGET(w->search_entry));
+    gtk_box_pack_start (GTK_BOX(vbox), GTK_WIDGET(w->search_entry), FALSE, TRUE, 0);
 
     GtkWidget *scroll = gtk_scrolled_window_new (NULL, NULL);
     gtk_widget_set_can_focus (scroll, FALSE);
@@ -242,6 +265,7 @@ w_medialib_viewer_create (void) {
     gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), FALSE);
 
     g_signal_connect((gpointer)w->selector, "changed", G_CALLBACK (_active_selector_did_change), w);
+    g_signal_connect((gpointer)w->search_entry, "changed", G_CALLBACK (_search_text_did_change), w);
 
 //    w->cc_id = g_signal_connect ((gpointer) w->tree, "cursor_changed",
 //                                 G_CALLBACK (on_pltbrowser_cursor_changed),
