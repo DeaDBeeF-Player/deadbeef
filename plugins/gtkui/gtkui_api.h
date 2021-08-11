@@ -2,7 +2,7 @@
   gtkui_api.h -- API of the DeaDBeeF GTK UI plugin
   http://deadbeef.sourceforge.net
 
-  Copyright (C) 2009-2013 Alexey Yakovenko
+  Copyright (C) 2009-2021 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -24,6 +24,8 @@
 */
 #ifndef __GTKUI_API_H
 #define __GTKUI_API_H
+
+#include <stdint.h>
 
 // gtkui.version_major=2 corresponds to deadbeef 0.6
 // this is the version which has added design mode.

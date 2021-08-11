@@ -37,6 +37,7 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
                    ../../utf8.c\
                    clipboard.c clipboard.h\
 				   rg.c rg.h\
+				   medialib/medialibwidget.c medialib/medialibwidget.h\
 				   $(SM_SOURCES) $(OSXSRC)
 
 sdkdir = $(pkgincludedir)

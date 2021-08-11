@@ -478,7 +478,6 @@ static void
 update_drag (DdbSplitter *splitter)
 {
     gint pos;
-    gint handle_size;
     gint size;
 
     if (splitter->priv->orientation == GTK_ORIENTATION_HORIZONTAL)

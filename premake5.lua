@@ -806,6 +806,7 @@ if option ("plugin-gtk2", "gtk+-2.0 jansson") then
 project "ddb_gui_GTK2"
   files {
     "plugins/gtkui/*.c",
+    "plugins/gtkui/medialib/*.c",
     "shared/eqpreset.c",
     "shared/pluginsettings.c",
     "shared/trkproperties_shared.c",
@@ -830,6 +831,7 @@ if option ("plugin-gtk3", "gtk+-3.0 jansson") then
 project "ddb_gui_GTK3"
   files {
     "plugins/gtkui/*.c",
+    "plugins/gtkui/medialib/*.c",
     "shared/eqpreset.c",
     "shared/pluginsettings.c",
     "shared/trkproperties_shared.c",
