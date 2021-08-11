@@ -60,6 +60,7 @@
 #include "hotkeys.h"
 #include "../hotkeys/hotkeys.h"
 #include "rg.h"
+#include "medialib/medialibwidget.h"
 
 #define USE_GTK_APPLICATION 1
 
@@ -1328,7 +1329,7 @@ gtkui_mainwin_init(void) {
     w_reg_widget (_("Playlist tabs"), 0, w_tabstrip_create, "tabstrip", NULL);
     w_reg_widget (_("Selection properties"), 0, w_selproperties_create, "selproperties", NULL);
     w_reg_widget (_("Album art display"), 0, w_coverart_create, "coverart", NULL);
-    w_reg_widget (_("Scope"), 0, w_scope_create, "scope", NULL);
+    w_reg_widget (_("Oscilloscope"), 0, w_scope_create, "scope", NULL);
     w_reg_widget (_("Spectrum"), 0, w_spectrum_create, "spectrum", NULL);
     w_reg_widget (_("HBox"), 0, w_hbox_create, "hbox", NULL);
     w_reg_widget (_("VBox"), 0, w_vbox_create, "vbox", NULL);
@@ -1338,6 +1339,7 @@ gtkui_mainwin_init(void) {
     w_reg_widget (_("Volume bar"), 0, w_volumebar_create, "volumebar", NULL);
     w_reg_widget (_("Chiptune voices"), 0, w_ctvoices_create, "ctvoices", NULL);
     w_reg_widget (_("Log viewer"), 0, w_logviewer_create, "logviewer", NULL);
+    w_reg_widget (_("Media library viewer"), 0, w_medialib_viewer_create, "medialibviewer", NULL);
 
     mainwin = create_mainwin ();
 

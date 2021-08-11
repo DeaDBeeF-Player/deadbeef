@@ -1765,8 +1765,6 @@
 		2DA66ECE1EDF501000E20989 /* fakein.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66ECC1EDF501000E20989 /* fakein.c */; };
 		2DA7C22F251002390080963D /* artwork_flac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA7C22D251002390080963D /* artwork_flac.h */; };
 		2DA7C230251002390080963D /* artwork_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA7C22E251002390080963D /* artwork_flac.c */; };
-		2DA7C233251003A20080963D /* artwork_png.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA7C231251003A20080963D /* artwork_png.h */; };
-		2DA7C234251003A20080963D /* artwork_png.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA7C232251003A20080963D /* artwork_png.c */; };
 		2DA80C7426C0708200E8EC7F /* CuesheetTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7A8FA1CA493CE00318A9F /* CuesheetTests.m */; };
 		2DA84F7E24F58915003507A2 /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
 		2DA84F7F24F5892A003507A2 /* libjansson.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -2096,6 +2094,8 @@
 		2DCB197C2515F9DF0054BD06 /* ChangeLog in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DCB197B2515F9D90054BD06 /* ChangeLog */; };
 		2DCB281A19E86183008E9DF6 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
 		2DCB281D19E86194008E9DF6 /* m3u.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DCB281419E86162008E9DF6 /* m3u.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DCCCF7E26C43D080034F4BB /* medialibwidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCCCF7C26C43D080034F4BB /* medialibwidget.h */; };
+		2DCCCF8026C43D0E0034F4BB /* medialibwidget.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCCCF7D26C43D080034F4BB /* medialibwidget.c */; };
 		2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCF73B21A952F8900495740 /* PreferencesWindowController.h */; };
 		2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DCF73B31A952F8900495740 /* PreferencesWindowController.m */; };
@@ -5862,6 +5862,8 @@
 		2DCB197B2515F9D90054BD06 /* ChangeLog */ = {isa = PBXFileReference; lastKnownFileType = text; name = ChangeLog; path = ../../ChangeLog; sourceTree = "<group>"; };
 		2DCB281419E86162008E9DF6 /* m3u.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = m3u.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DCB281919E86183008E9DF6 /* m3u.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = m3u.c; sourceTree = "<group>"; };
+		2DCCCF7C26C43D080034F4BB /* medialibwidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = medialibwidget.h; sourceTree = "<group>"; };
+		2DCCCF7D26C43D080034F4BB /* medialibwidget.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibwidget.c; sourceTree = "<group>"; };
 		2DCD78B919A665CA00EA50FA /* deadbeef.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deadbeef.png; sourceTree = "<group>"; };
 		2DCD78BB19A665CA00EA50FA /* deadbeef.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deadbeef.png; sourceTree = "<group>"; };
 		2DCD78BD19A665CA00EA50FA /* deadbeef.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deadbeef.png; sourceTree = "<group>"; };
@@ -10169,6 +10171,15 @@
 			path = plugins/m3u;
 			sourceTree = "<group>";
 		};
+		2DCCCF7B26C43CE80034F4BB /* medialib */ = {
+			isa = PBXGroup;
+			children = (
+				2DCCCF7C26C43D080034F4BB /* medialibwidget.h */,
+				2DCCCF7D26C43D080034F4BB /* medialibwidget.c */,
+			);
+			path = medialib;
+			sourceTree = "<group>";
+		};
 		2DCD78AD19A6658C00EA50FA /* icons */ = {
 			isa = PBXGroup;
 			children = (
@@ -10409,6 +10420,7 @@
 		2DE3B5772269BB4300AFF9AE /* gtkui */ = {
 			isa = PBXGroup;
 			children = (
+				2DCCCF7B26C43CE80034F4BB /* medialib */,
 				2DCB18372515F95C0054BD06 /* about.txt */,
 				2DCB18362515F9530054BD06 /* help.txt */,
 				2DCB18B82515F98E0054BD06 /* translators.txt */,
@@ -12830,6 +12842,7 @@
 				2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
 				2DA273782406ED4100FB9BE1 /* GuiPreferencesWindowController.h in Headers */,
+				2DCCCF7E26C43D080034F4BB /* medialibwidget.h in Headers */,
 				2DDD789C25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
 				2D04701525E2D97D00F68459 /* WidgetMenuBuilder.h in Headers */,
 				2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */,
@@ -15924,6 +15937,7 @@
 				2DE3B8142269C0A400AFF9AE /* trkproperties_shared.c in Sources */,
 				2DE3B7D72269BF1700AFF9AE /* prefwin.c in Sources */,
 				2DE3B7DC2269BF1700AFF9AE /* ddbseekbar.c in Sources */,
+				2DCCCF8026C43D0E0034F4BB /* medialibwidget.c in Sources */,
 				2DE3B7E12269BF3100AFF9AE /* support.c in Sources */,
 				2DE3B7C62269BF1300AFF9AE /* ddbtabstrip.c in Sources */,
 				2DE3B7D22269BF1700AFF9AE /* clipboard.c in Sources */,
