@@ -2854,7 +2854,7 @@ scope_wavedata_listener (void *ctx, const ddb_audio_data_t *data) {
         deadbeef->mutex_unlock (w->mutex);
     }
 
-    if (w->samples) {
+    if (w->samples && w->nsamples) {
         // append
         int nsamples = data->nframes / data->fmt->channels;
         float ratio = data->fmt->samplerate / 44100.f;
@@ -2875,25 +2875,6 @@ scope_wavedata_listener (void *ctx, const ddb_audio_data_t *data) {
     }
 }
 
-#if 0
-// Bresenham's line drawing from http://rosettacode.org
-static inline void
-_draw_line (uint8_t *data, int stride, int x0, int y0, int x1, int y1) {
-    int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
-    int dy = abs(y1-y0), sy = y0<y1 ? 1 : -1;
-    int err = (dx>dy ? dx : -dy)/2, e2;
-
-    for(;;){
-        uint32_t *ptr = (uint32_t*)&data[y0*stride+x0*4];
-        *ptr = 0xffffffff;
-        if (x0==x1 && y0==y1) break;
-        e2 = err;
-        if (e2 >-dx) { err -= dy; x0 += sx; }
-        if (e2 < dy) { err += dx; y0 += sy; }
-    }
-}
-#endif
-
 static inline void
 _draw_vline (uint8_t *data, int stride, int x0, int y0, int y1) {
     if (y0 > y1) {
@@ -2909,21 +2890,6 @@ _draw_vline (uint8_t *data, int stride, int x0, int y0, int y1) {
         uint32_t *ptr = (uint32_t*)&data[y0*stride+x0*4];
         *ptr = 0xffffffff;
         y0++;
-    }
-}
-
-static inline void
-_draw_bar (uint8_t *data, int stride, int x0, int y0, int w, int h, uint32_t color) {
-    int y1 = y0+h-1;
-    int x1 = x0+w-1;
-    uint32_t *ptr = (uint32_t*)&data[y0*stride+x0*4];
-    while (y0 <= y1) {
-        int x = x0;
-        while (x++ <= x1) {
-            *ptr++ = color;
-        }
-        y0++;
-        ptr += stride/4-w;
     }
 }
 
@@ -2955,7 +2921,6 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     memset (data, 0, a.height * stride);
     if (w->samples && a.height > 2) {
         deadbeef->mutex_lock (w->mutex);
-        float incr = a.width / (float)w->nsamples;
         float h = a.height;
         if (h > 50) {
             h -= 20;
@@ -3129,47 +3094,38 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         ddb_analyzer_get_draw_data(&w->analyzer, a.width, a.height, &w->draw_data);
     deadbeef->mutex_unlock(w->mutex);
 
-    if (!w->surf || cairo_image_surface_get_width (w->surf) != a.width || cairo_image_surface_get_height (w->surf) != a.height) {
-        if (w->surf) {
-            cairo_surface_destroy (w->surf);
-            w->surf = NULL;
-        }
-        w->surf = cairo_image_surface_create (CAIRO_FORMAT_RGB24, a.width, a.height);
-    }
-
-    cairo_surface_flush (w->surf);
-    unsigned char *data = cairo_image_surface_get_data (w->surf);
-    if (!data) {
-        return FALSE;
-    }
-    int stride = cairo_image_surface_get_stride (w->surf);
-    memset (data, 0, a.height * stride);
+    cairo_set_source_rgb (cr, 0, 0, 0);
+    cairo_paint (cr);
 
     // TODO: draw grid and labels
 
     // bars
     ddb_analyzer_draw_bar_t *bar = w->draw_data.bars;
+    cairo_set_source_rgb(cr, 0, 0.5, 1);
     for (int i = 0; i < w->draw_data.bar_count; i++, bar++) {
         if (w->analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
-            _draw_bar (data, stride, bar->xpos, a.height-bar->bar_height, 1, a.height, 0xff007fff);
+            cairo_move_to(cr, bar->xpos, a.height-bar->bar_height);
+            cairo_line_to(cr, bar->xpos, a.height-1);
         }
         else {
-            _draw_bar (data, stride, bar->xpos, a.height-bar->bar_height, w->draw_data.bar_width, bar->bar_height, 0xff007fff);
+            cairo_rectangle(cr, bar->xpos, a.height-bar->bar_height, w->draw_data.bar_width, bar->bar_height);
         }
+    }
+
+    if (w->analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
+        cairo_stroke(cr);
+    }
+    else {
+        cairo_fill(cr);
     }
 
     // peaks
     bar = w->draw_data.bars;
+    cairo_set_source_rgb(cr, 0.65, 0.78, 1);
     for (int i = 0; i < w->draw_data.bar_count; i++, bar++) {
-        _draw_bar (data, stride, bar->xpos, a.height-bar->peak_ypos-1, w->draw_data.bar_width, 1, 0xff7f7fff);
+        cairo_rectangle(cr, bar->xpos, a.height-bar->peak_ypos-1, w->draw_data.bar_width, 1);
     }
-
-    cairo_surface_mark_dirty (w->surf);
-    cairo_save (cr);
-    cairo_set_source_surface (cr, w->surf, 0, 0);
-    cairo_rectangle (cr, 0, 0, a.width, a.height);
-    cairo_fill (cr);
-    cairo_restore (cr);
+    cairo_fill(cr);
 
     return FALSE;
 }
