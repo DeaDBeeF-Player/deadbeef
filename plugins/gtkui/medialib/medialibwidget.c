@@ -21,9 +21,12 @@ extern DB_functions_t *deadbeef;
 typedef struct {
     ddb_gtkui_widget_t base;
     GtkTreeView *tree;
+    GtkComboBoxText *selector;
     ddb_medialib_plugin_t *plugin;
     ddb_mediasource_source_t source;
     ddb_mediasource_list_selector_t *selectors;
+    int active_selector;
+    char *search_string;
     int listener_id;
     GtkTreeIter root_iter;
     ddb_medialib_item_t *item_tree;
@@ -55,9 +58,20 @@ _reload_content (w_medialib_viewer_t *mlv) {
         mlv->plugin->plugin.free_item_tree (mlv->source, mlv->item_tree);
         mlv->item_tree = NULL;
     }
-    mlv->item_tree = mlv->plugin->plugin.create_item_tree (mlv->source, mlv->selectors[/*index*/ 0], /*self.searchString ? self.searchString.UTF8String : */NULL);
+    mlv->item_tree = mlv->plugin->plugin.create_item_tree (mlv->source, mlv->selectors[mlv->active_selector], mlv->search_string);
+
+    // clear
+    GtkTreeIter iter;
+    GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
+    if (gtk_tree_model_iter_children(GTK_TREE_MODEL(store), &iter, &mlv->root_iter)) {
+        while (gtk_tree_store_remove(store, &iter));
+    }
 
     _add_items(mlv, &mlv->root_iter, mlv->item_tree);
+
+    GtkTreePath *path = gtk_tree_path_new_from_indices(0, -1);
+    gtk_tree_view_expand_row (mlv->tree, path, FALSE);
+    gtk_tree_path_free (path);
 }
 
 static gboolean
@@ -108,19 +122,16 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
     mlv->selectors = mlv->plugin->plugin.get_selectors_list (mlv->source);
     mlv->listener_id =  mlv->plugin->plugin.add_listener (mlv->source, _medialib_listener, mlv);
 
+    for (int i = 0; mlv->selectors[i]; i++) {
+        gtk_combo_box_text_append_text(mlv->selector, mlv->plugin->plugin.selector_name(mlv->source, mlv->selectors[i]));
+    }
+    gtk_combo_box_set_active(GTK_COMBO_BOX(mlv->selector), 0);
+    mlv->active_selector = 0;
+
     // Root node
     GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
     gtk_tree_store_append (store, &mlv->root_iter, NULL);
     gtk_tree_store_set (store, &mlv->root_iter, COL_ITEM, "All Music", -1);
-
-//    GtkTreeIter child;
-//    gtk_tree_store_append (store, &child, &toplevel);
-//    gtk_tree_store_set (store, &child, COL_ITEM, "Album1", -1);
-//    gtk_tree_store_append (store, &child, &toplevel);
-//    gtk_tree_store_set (store, &child, COL_ITEM, "Album2", -1);
-//    gtk_tree_store_append (store, &child, &toplevel);
-//    gtk_tree_store_set (store, &child, COL_ITEM, "Album3", -1);
-//
 
     _reload_content(mlv);
 }
@@ -176,6 +187,16 @@ add_treeview_column (w_medialib_viewer_t *w, GtkTreeView *tree, int pos, int exp
     return col;
 }
 
+static void
+_active_selector_did_change (GtkComboBox* self, gpointer user_data) {
+    w_medialib_viewer_t *mlv = user_data;
+    int active_selector = gtk_combo_box_get_active(self);
+    if (mlv->active_selector != active_selector) {
+        mlv->active_selector = active_selector;
+        _reload_content(mlv);
+    }
+}
+
 ddb_gtkui_widget_t *
 w_medialib_viewer_create (void) {
     w_medialib_viewer_t *w = calloc (1, sizeof (w_medialib_viewer_t));
@@ -187,10 +208,18 @@ w_medialib_viewer_create (void) {
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
 
+    GtkWidget *vbox = gtk_vbox_new(FALSE, 8);
+    gtk_widget_show (vbox);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), vbox);
+
+    w->selector = GTK_COMBO_BOX_TEXT(gtk_combo_box_text_new());
+    gtk_widget_show (GTK_WIDGET(w->selector));
+    gtk_box_pack_start (GTK_BOX(vbox), GTK_WIDGET(w->selector), FALSE, TRUE, 0);
+
     GtkWidget *scroll = gtk_scrolled_window_new (NULL, NULL);
     gtk_widget_set_can_focus (scroll, FALSE);
     gtk_widget_show (scroll);
-    gtk_container_add (GTK_CONTAINER (w->base.widget), scroll);
+    gtk_box_pack_start (GTK_BOX(vbox), scroll, TRUE, TRUE, 0);
 
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scroll), GTK_SHADOW_ETCHED_IN);
@@ -211,6 +240,8 @@ w_medialib_viewer_create (void) {
 
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), FALSE);
     gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), FALSE);
+
+    g_signal_connect((gpointer)w->selector, "changed", G_CALLBACK (_active_selector_did_change), w);
 
 //    w->cc_id = g_signal_connect ((gpointer) w->tree, "cursor_changed",
 //                                 G_CALLBACK (on_pltbrowser_cursor_changed),
