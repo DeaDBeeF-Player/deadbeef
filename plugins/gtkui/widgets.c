@@ -3081,6 +3081,9 @@ static gboolean
 spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     w_spectrum_t *w = user_data;
 
+    cairo_set_source_rgb (cr, 0, 0, 0);
+    cairo_paint (cr);
+
     if (w->input_data.nframes == 0) {
         return FALSE;
     }
@@ -3093,9 +3096,6 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         ddb_analyzer_tick(&w->analyzer);
         ddb_analyzer_get_draw_data(&w->analyzer, a.width, a.height, &w->draw_data);
     deadbeef->mutex_unlock(w->mutex);
-
-    cairo_set_source_rgb (cr, 0, 0, 0);
-    cairo_paint (cr);
 
     // TODO: draw grid and labels
 

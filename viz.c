@@ -166,14 +166,13 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
         int in_frames = bytes_size / in_frame_size;
 
         // convert to float
-        ddb_waveformat_t out_fmt = {
-            .bps = 32,
-            .channels = output->fmt.channels,
-            .samplerate = output->fmt.samplerate,
-            .channelmask = output->fmt.channelmask,
-            .is_float = 1,
-            .is_bigendian = 0
-        };
+        ddb_waveformat_t *out_fmt = calloc (1, sizeof (ddb_waveformat_t));
+        out_fmt->bps = 32;
+        out_fmt->channels = output->fmt.channels;
+        out_fmt->samplerate = output->fmt.samplerate;
+        out_fmt->channelmask = output->fmt.channelmask;
+        out_fmt->is_float = 1;
+        out_fmt->is_bigendian = 0;
 
         int process_samples = in_frames;
         // if the input is smaller than the buffer, pad with zeroes
@@ -181,28 +180,27 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
             process_samples = fft_size * 2;
             bytes_size = process_samples * output->fmt.channels * output->fmt.bps/8;
         }
-        size_t data_size = process_samples * out_fmt.channels * sizeof (float);
+        size_t data_size = process_samples * out_fmt->channels * sizeof (float);
         __block float *data = calloc(1, data_size);
 
         if (bytes != NULL) {
-            pcm_convert (&output->fmt, bytes, &out_fmt, (char *)data, bytes_size);
+            pcm_convert (&output->fmt, bytes, out_fmt, (char *)data, bytes_size);
         }
 
-        ddb_audio_data_t waveform_data = {
-            .fmt = (ddb_waveformat_t *)&out_fmt,
-            .data = data,
-            .nframes = process_samples
-        };
+        ddb_audio_data_t *waveform_data = calloc(1, sizeof(ddb_audio_data_t));
+        waveform_data->fmt = out_fmt;
+        waveform_data->data = data;
+        waveform_data->nframes = process_samples;
 
         // Pass to async queue for processing and callbacks
         dispatch_async (process_queue, ^{
             for (wavedata_listener_t *l = waveform_listeners; l; l = l->next) {
-                l->callback (l->ctx, &waveform_data);
+                l->callback (l->ctx, waveform_data);
             }
 
-            if (_need_reset || out_fmt.channels != audio_data_channels || !spectrum_listeners) {
+            if (_need_reset || out_fmt->channels != audio_data_channels || !spectrum_listeners) {
                 // reset
-                audio_data_channels = out_fmt.channels;
+                audio_data_channels = out_fmt->channels;
                 memset (_freq_data, 0, sizeof (float) * _fft_size * DDB_FREQ_MAX_CHANNELS);
                 memset (_audio_data, 0, sizeof (float) * _fft_size * 2 * DDB_FREQ_MAX_CHANNELS);
                 _need_reset = 0;
@@ -227,7 +225,7 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
                     fft_calculate (&_audio_data[_fft_size * 2 * c], &_freq_data[_fft_size * c], _fft_size);
                 }
                 ddb_audio_data_t spectrum_data = {
-                    .fmt = (ddb_waveformat_t *)&out_fmt,
+                    .fmt = out_fmt,
                     .data = _freq_data,
                     .nframes = _fft_size
                 };
@@ -237,6 +235,8 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
             }
 
             free (data);
+            free (out_fmt);
+            free (waveform_data);
         });
     });
 }
