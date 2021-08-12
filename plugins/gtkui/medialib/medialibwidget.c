@@ -34,7 +34,8 @@ typedef struct {
 } w_medialib_viewer_t;
 
 enum {
-    COL_ITEM,
+    COL_TITLE,
+    COL_TRACK,
 };
 
 static void
@@ -44,7 +45,7 @@ _add_items (w_medialib_viewer_t *mlv, GtkTreeIter *iter, ddb_medialib_item_t *it
     for (ddb_medialib_item_t *child_item = item->children; child_item; child_item = child_item->next) {
         GtkTreeIter child;
         gtk_tree_store_append (store, &child, iter);
-        gtk_tree_store_set (store, &child, COL_ITEM, child_item->text, -1);
+        gtk_tree_store_set (store, &child, COL_TITLE, child_item->text, COL_TRACK, child_item->track, -1);
 
         if (child_item->children != NULL) {
             _add_items(mlv, &child, child_item);
@@ -132,7 +133,7 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
     // Root node
     GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
     gtk_tree_store_append (store, &mlv->root_iter, NULL);
-    gtk_tree_store_set (store, &mlv->root_iter, COL_ITEM, "All Music", -1);
+    gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("All Music"), -1);
 
     _reload_content(mlv);
 }
@@ -232,6 +233,88 @@ _search_text_did_change (GtkEditable *editable, gpointer user_data) {
     _reload_content (mlv);
 }
 
+static void
+_treeview_row_did_activate (GtkTreeView* self, GtkTreePath* path, GtkTreeViewColumn* column, gpointer user_data) {
+    w_medialib_viewer_t *mlv = user_data;
+
+    GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (mlv->tree));
+    GtkTreeIter iter;
+    if (!gtk_tree_model_get_iter (model, &iter, path)) {
+        return;
+    }
+
+    ddb_playItem_t *track = NULL;
+
+    if (!gtk_tree_model_iter_has_child(model, &iter)) {
+        GValue value = {0};
+        gtk_tree_model_get_value (model, &iter, COL_TRACK, &value);
+
+        track = g_value_get_pointer(&value);
+
+        g_value_unset (&value);
+    }
+
+    ddb_playlist_t *curr_plt = NULL;
+    if (deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1)) {
+        char str[200];
+        deadbeef->conf_get_str ("cli_add_playlist_name", "Default", str, sizeof (str));
+        curr_plt = deadbeef->plt_find_by_name (str);
+        if (!curr_plt) {
+            curr_plt = deadbeef->plt_append (str);
+        }
+    }
+    if (!curr_plt) {
+        return;
+    }
+
+    deadbeef->plt_set_curr (curr_plt);
+    deadbeef->plt_clear(curr_plt);
+
+
+    int count = 0;
+
+    if (track != NULL) {
+        ddb_playItem_t *it = deadbeef->pl_item_alloc();
+        deadbeef->pl_item_copy (it, track);
+        deadbeef->plt_insert_item (curr_plt, NULL, it);
+        count = 1;
+    }
+    else {
+        GtkTreeIter child;
+        if (gtk_tree_model_iter_children (model, &child, &iter)) {
+            ddb_playItem_t *prev = NULL;
+            do {
+                GValue value = {0};
+                gtk_tree_model_get_value (model, &child, COL_TRACK, &value);
+
+                ddb_playItem_t *track = g_value_get_pointer(&value);
+
+                g_value_unset (&value);
+
+                if (track) {
+                    ddb_playItem_t *it = deadbeef->pl_item_alloc();
+                    deadbeef->pl_item_copy (it, track);
+                    deadbeef->plt_insert_item (curr_plt, prev, it);
+                    if (prev != NULL) {
+                        deadbeef->pl_item_unref (prev);
+                    }
+                    prev = it;
+                    count += 1;
+                }
+            } while (gtk_tree_model_iter_next(model, &child));
+
+            if (prev != NULL) {
+                deadbeef->pl_item_unref (prev);
+            }
+            prev = NULL;
+        }
+    }
+
+    if (count > 0) {
+        deadbeef->sendmessage(DB_EV_PLAY_NUM, 0, 0, 0);
+    }
+}
+
 ddb_gtkui_widget_t *
 w_medialib_viewer_create (void) {
     w_medialib_viewer_t *w = calloc (1, sizeof (w_medialib_viewer_t));
@@ -275,17 +358,18 @@ w_medialib_viewer_create (void) {
 
     gtk_container_add (GTK_CONTAINER (scroll), GTK_WIDGET(w->tree));
 
-    GtkTreeStore *store = gtk_tree_store_new (1, G_TYPE_STRING);
+    GtkTreeStore *store = gtk_tree_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
     gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
 
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
-    add_treeview_column (w, GTK_TREE_VIEW (w->tree), COL_ITEM, 1, 0, _("Item"), 0);
+    add_treeview_column (w, GTK_TREE_VIEW (w->tree), COL_TITLE, 1, 0, _("Item"), 0);
 
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), FALSE);
     gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), FALSE);
 
     g_signal_connect((gpointer)w->selector, "changed", G_CALLBACK (_active_selector_did_change), w);
     g_signal_connect((gpointer)w->search_entry, "changed", G_CALLBACK (_search_text_did_change), w);
+    g_signal_connect((gpointer)w->tree, "row-activated", G_CALLBACK (_treeview_row_did_activate), w);
 
 //    w->cc_id = g_signal_connect ((gpointer) w->tree, "cursor_changed",
 //                                 G_CALLBACK (on_pltbrowser_cursor_changed),
