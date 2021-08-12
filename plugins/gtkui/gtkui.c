@@ -61,6 +61,8 @@
 #include "../hotkeys/hotkeys.h"
 #include "rg.h"
 #include "medialib/medialibwidget.h"
+#include "medialib/medialibmanager.h"
+
 
 #define USE_GTK_APPLICATION 1
 
@@ -1664,6 +1666,7 @@ quit_gtk_cb (gpointer nothing) {
     trkproperties_modified = 0;
     trkproperties_destroy ();
     search_destroy ();
+    gtkui_medialib_free();
 #if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
     g_application_quit (G_APPLICATION (gapp));
 #else

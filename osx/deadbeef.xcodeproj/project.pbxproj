@@ -2262,6 +2262,8 @@
 		2DE5562826075B8400285BF9 /* AlbumArtWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE5562526075B8400285BF9 /* AlbumArtWidget.h */; };
 		2DE5562926075B8400285BF9 /* AlbumArtWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE5562626075B8400285BF9 /* AlbumArtWidget.m */; };
 		2DE5562A26075B8400285BF9 /* AlbumArtWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE5562626075B8400285BF9 /* AlbumArtWidget.m */; };
+		2DE55ACE26C5A47F008F33FF /* medialibmanager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE55ACC26C5A47F008F33FF /* medialibmanager.h */; };
+		2DE55ADF26C5A580008F33FF /* medialibmanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE55ACD26C5A47F008F33FF /* medialibmanager.c */; };
 		2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */; };
 		2DE92F561BAFFBEE00F37154 /* wavpack.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DEBA1BF23E203B9000E4135 /* eqpreset.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEBA1BD23E203B9000E4135 /* eqpreset.h */; };
@@ -6017,6 +6019,8 @@
 		2DE3B88C2269F6B900AFF9AE /* support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = support.h; sourceTree = "<group>"; };
 		2DE5562526075B8400285BF9 /* AlbumArtWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlbumArtWidget.h; sourceTree = "<group>"; };
 		2DE5562626075B8400285BF9 /* AlbumArtWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlbumArtWidget.m; sourceTree = "<group>"; };
+		2DE55ACC26C5A47F008F33FF /* medialibmanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = medialibmanager.h; sourceTree = "<group>"; };
+		2DE55ACD26C5A47F008F33FF /* medialibmanager.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibmanager.c; sourceTree = "<group>"; };
 		2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = bufferingTemplate.pdf; sourceTree = "<group>"; };
 		2DE7A8FA1CA493CE00318A9F /* CuesheetTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CuesheetTests.m; sourceTree = "<group>"; };
 		2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wavpack.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -10179,6 +10183,8 @@
 			children = (
 				2DCCCF7C26C43D080034F4BB /* medialibwidget.h */,
 				2DCCCF7D26C43D080034F4BB /* medialibwidget.c */,
+				2DE55ACC26C5A47F008F33FF /* medialibmanager.h */,
+				2DE55ACD26C5A47F008F33FF /* medialibmanager.c */,
 			);
 			path = medialib;
 			sourceTree = "<group>";
@@ -12917,6 +12923,7 @@
 				2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */,
 				2D9E905124F453960037D323 /* MediaLibraryPreferencesViewController.h in Headers */,
+				2DE55ACE26C5A47F008F33FF /* medialibmanager.h in Headers */,
 				2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */,
 				2D49857F1D5CF13F00E4D985 /* LogWindowController.h in Headers */,
 				2D98613E226C814100BAACB1 /* PropertySheetViewController.h in Headers */,
@@ -15946,6 +15953,7 @@
 				2DE3B7C62269BF1300AFF9AE /* ddbtabstrip.c in Sources */,
 				2DE3B7D22269BF1700AFF9AE /* clipboard.c in Sources */,
 				2DE3B7F12269BF3100AFF9AE /* gdkdrawing.c in Sources */,
+				2DE55ADF26C5A580008F33FF /* medialibmanager.c in Sources */,
 				2DE3B7D52269BF1700AFF9AE /* plcommon.c in Sources */,
 				2DE3B7F62269BF3100AFF9AE /* actions.c in Sources */,
 				2DE3B8002269BF3100AFF9AE /* hotkeys.c in Sources */,
