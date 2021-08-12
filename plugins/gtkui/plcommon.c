@@ -731,51 +731,32 @@ get_context_menu_column (GtkMenuItem *menuitem) {
 }
 
 static void
-play_later_activate     (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    DdbListview *listview = get_context_menu_listview (menuitem);
-    DB_playItem_t *it = listview->binding->head ();
-    while (it) {
-        if (deadbeef->pl_is_selected (it)) {
-            deadbeef->playqueue_push (it);
-        }
-        DB_playItem_t *next = listview->binding->next (it);
-        deadbeef->pl_item_unref (it);
-        it = next;
+play_later_activate (GtkMenuItem     *menuitem, gpointer         user_data) {
+    int count = ddbUtilTrackListGetTrackCount(_menuTrackList);
+    ddb_playItem_t **tracks = ddbUtilTrackListGetTracks(_menuTrackList);
+
+    for (int i = 0; i < count; i++) {
+        deadbeef->playqueue_push (tracks[i]);
     }
 }
 
 static void
-play_next_activate     (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    DdbListview *listview = get_context_menu_listview (menuitem);
-    DB_playItem_t *it = listview->binding->tail ();
-    while (it) {
-        if (deadbeef->pl_is_selected (it)) {
-            deadbeef->playqueue_insert_at (0, it);
-        }
-        DB_playItem_t *prev = listview->binding->prev (it);
-        deadbeef->pl_item_unref (it);
-        it = prev;
+play_next_activate (GtkMenuItem     *menuitem, gpointer         user_data) {
+    int count = ddbUtilTrackListGetTrackCount(_menuTrackList);
+    ddb_playItem_t **tracks = ddbUtilTrackListGetTracks(_menuTrackList);
+
+    for (int i = 0; i < count; i++) {
+        deadbeef->playqueue_insert_at (0, tracks[i]);
     }
 }
 
 static void
-remove_from_playback_queue_activate
-                                        (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    DdbListview *listview = get_context_menu_listview (menuitem);
-    DB_playItem_t *it = listview->binding->head ();
-    while (it) {
-        if (deadbeef->pl_is_selected (it)) {
-            deadbeef->playqueue_remove (it);
-        }
-        DB_playItem_t *next = listview->binding->next (it);
-        deadbeef->pl_item_unref (it);
-        it = next;
+remove_from_playback_queue_activate (GtkMenuItem     *menuitem,     gpointer         user_data) {
+    int count = ddbUtilTrackListGetTrackCount(_menuTrackList);
+    ddb_playItem_t **tracks = ddbUtilTrackListGetTracks(_menuTrackList);
+
+    for (int i = 0; i < count; i++) {
+        deadbeef->playqueue_remove (tracks[i]);
     }
 }
 
@@ -813,13 +794,12 @@ on_paste_activate (GtkMenuItem     *menuitem,
 }
 
 static void
-reload_metadata_activate
-                                        (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    DdbListview *listview = get_context_menu_listview (menuitem);
-    DB_playItem_t *it = listview->binding->head ();
-    while (it) {
+reload_metadata_activate (GtkMenuItem     *menuitem, gpointer         user_data) {
+    int count = ddbUtilTrackListGetTrackCount(_menuTrackList);
+    ddb_playItem_t **tracks = ddbUtilTrackListGetTracks(_menuTrackList);
+
+    for (int i = 0; i < count; i++) {
+        ddb_playItem_t *it = tracks[i];
         deadbeef->pl_lock ();
         char decoder_id[100];
         const char *dec = deadbeef->pl_find_meta (it, ":DECODER");
@@ -845,9 +825,6 @@ reload_metadata_activate
                 }
             }
         }
-        DB_playItem_t *next = listview->binding->next (it);
-        deadbeef->pl_item_unref (it);
-        it = next;
     }
     deadbeef->pl_save_current ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
@@ -888,7 +865,13 @@ static void
 on_remove2_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    get_context_menu_listview (menuitem)->binding->delete_selected ();
+    int count = ddbUtilTrackListGetTrackCount(_menuTrackList);
+    ddb_playItem_t **tracks = ddbUtilTrackListGetTracks(_menuTrackList);
+    ddb_playlist_t *plt = ddbUtilTrackListGetPlaylist(_menuTrackList);
+
+    for (int i = 0; i < count; i++) {
+        deadbeef->plt_remove_item (plt, tracks[i]);
+    }
     deadbeef->pl_save_current();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
@@ -1013,10 +996,8 @@ list_empty_region_context_menu (DdbListview *listview) {
     gtk_menu_popup_at_pointer (GTK_MENU (playlist_menu), NULL);
 }
 
-void
-list_context_menu (DdbListview *listview, int iter) {
-    _capture_selected_track_list();
-
+static void
+_run_menu (int show_paste) {
     GtkWidget *playlist_menu;
     GtkWidget *play_later;
     GtkWidget *play_next;
@@ -1042,8 +1023,11 @@ list_context_menu (DdbListview *listview, int iter) {
     GtkWidget *set_custom_title;
 #endif
 
+    int selected_count = ddbUtilTrackListGetTrackCount (_menuTrackList);
+    ddb_playItem_t **tracks = ddbUtilTrackListGetTracks(_menuTrackList);
+
     playlist_menu = gtk_menu_new ();
-    g_object_set_data (G_OBJECT (playlist_menu), "ps", listview);
+//    g_object_set_data (G_OBJECT (playlist_menu), "ps", listview);
 
     play_next = gtk_menu_item_new_with_mnemonic (_("Play Next"));
     gtk_widget_show (play_next);
@@ -1052,18 +1036,18 @@ list_context_menu (DdbListview *listview, int iter) {
     play_later = gtk_menu_item_new_with_mnemonic (_("Play Later"));
     gtk_widget_show (play_later);
     gtk_container_add (GTK_CONTAINER (playlist_menu), play_later);
-    
+
     remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove from Playback Queue"));
-    if (listview->binding->sel_count () > 0) {
+    if (selected_count > 0) {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         int pqlen = deadbeef->playqueue_get_count ();
         int no_playqueue_items = 1;
         for (int i = 0; i < pqlen && no_playqueue_items; i++) {
             DB_playItem_t *pqitem = deadbeef->playqueue_get_item (i);
-            if (deadbeef->pl_get_playlist (pqitem) == plt && listview->binding->is_selected (pqitem)) {
+            if (deadbeef->pl_get_playlist (pqitem) == plt && deadbeef->pl_is_selected (pqitem)) {
                 no_playqueue_items = 0;
             }
-            listview->binding->unref (pqitem);
+            deadbeef->pl_item_unref (pqitem);
         }
         if (no_playqueue_items) {
             gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
@@ -1084,7 +1068,6 @@ list_context_menu (DdbListview *listview, int iter) {
     cut = gtk_image_menu_item_new_with_mnemonic (_("Cu_t"));
     gtk_widget_show (cut);
     gtk_container_add (GTK_CONTAINER (playlist_menu), cut);
-    g_object_set_data (G_OBJECT (cut), "ps", listview);
     gtk_widget_add_accelerator (cut, "activate", accel_group, GDK_x, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
     cut_image = gtk_image_new_from_stock ("gtk-cut", GTK_ICON_SIZE_MENU);
@@ -1094,7 +1077,6 @@ list_context_menu (DdbListview *listview, int iter) {
     copy = gtk_image_menu_item_new_with_mnemonic (_("_Copy"));
     gtk_widget_show (copy);
     gtk_container_add (GTK_CONTAINER (playlist_menu), copy);
-    g_object_set_data (G_OBJECT (copy), "ps", listview);
     gtk_widget_add_accelerator (copy, "activate", accel_group, GDK_c, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
     copy_image = gtk_image_new_from_stock ("gtk-copy", GTK_ICON_SIZE_MENU);
@@ -1102,14 +1084,13 @@ list_context_menu (DdbListview *listview, int iter) {
     gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (copy), copy_image);
 
     paste = gtk_image_menu_item_new_with_mnemonic (_("_Paste"));
-    if (iter != PL_SEARCH) {
+    if (show_paste) {
         gtk_widget_show (paste);
     }
     else {
         gtk_widget_hide (paste);
     }
     gtk_container_add (GTK_CONTAINER (playlist_menu), paste);
-    g_object_set_data (G_OBJECT (paste), "ps", listview);
     gtk_widget_add_accelerator (paste, "activate", accel_group, GDK_v, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
     if (clipboard_is_clipboard_data_available ()) {
@@ -1145,19 +1126,10 @@ list_context_menu (DdbListview *listview, int iter) {
     gtk_container_add (GTK_CONTAINER (playlist_menu), separator);
     gtk_widget_set_sensitive (separator, FALSE);
 
-    int selected_count = 0;
-    DB_playItem_t *pit = listview->binding->head ();
     DB_playItem_t *selected = NULL;
-    while (pit) {
-        if (deadbeef->pl_is_selected (pit))
-        {
-            if (!selected)
-                selected = pit;
-            selected_count++;
-        }
-        DB_playItem_t *next = listview->binding->next (pit);
-        deadbeef->pl_item_unref (pit);
-        pit = next;
+
+    if (selected_count > 0) {
+        selected = tracks[0];
     }
 
     DB_plugin_t **plugins = deadbeef->plug_get_list();
@@ -1247,8 +1219,8 @@ list_context_menu (DdbListview *listview, int iter) {
             gtk_container_add (popup ? GTK_CONTAINER (popup) : GTK_CONTAINER (playlist_menu), actionitem);
 
             g_signal_connect ((gpointer) actionitem, "activate",
-                    G_CALLBACK (actionitem_activate),
-                    action);
+                              G_CALLBACK (actionitem_activate),
+                              action);
             if ((selected_count > 1 && !(action->flags & DB_ACTION_MULTIPLE_TRACKS)) ||
                 (action->flags & DB_ACTION_DISABLED)) {
                 gtk_widget_set_sensitive (GTK_WIDGET (actionitem), FALSE);
@@ -1289,44 +1261,72 @@ list_context_menu (DdbListview *listview, int iter) {
     gtk_container_add (GTK_CONTAINER (playlist_menu), properties1);
 
     g_signal_connect ((gpointer) play_later, "activate",
-            G_CALLBACK (play_later_activate),
-            NULL);
+                      G_CALLBACK (play_later_activate),
+                      NULL);
     g_signal_connect ((gpointer) play_next, "activate",
-            G_CALLBACK (play_next_activate),
-            NULL);
+                      G_CALLBACK (play_next_activate),
+                      NULL);
     g_signal_connect ((gpointer) remove_from_playback_queue1, "activate",
-            G_CALLBACK (remove_from_playback_queue_activate),
-            NULL);
+                      G_CALLBACK (remove_from_playback_queue_activate),
+                      NULL);
     g_signal_connect ((gpointer) reload_metadata, "activate",
-            G_CALLBACK (reload_metadata_activate),
-            NULL);
+                      G_CALLBACK (reload_metadata_activate),
+                      NULL);
     g_signal_connect ((gpointer) cut, "activate",
-            G_CALLBACK (on_cut_activate),
-            NULL);
+                      G_CALLBACK (on_cut_activate),
+                      NULL);
     g_signal_connect ((gpointer) copy, "activate",
-            G_CALLBACK (on_copy_activate),
-            NULL);
+                      G_CALLBACK (on_copy_activate),
+                      NULL);
     g_signal_connect ((gpointer) paste, "activate",
-            G_CALLBACK (on_paste_activate),
-            NULL);
+                      G_CALLBACK (on_paste_activate),
+                      NULL);
     g_signal_connect ((gpointer) remove2, "activate",
-            G_CALLBACK (on_remove2_activate),
-            NULL);
+                      G_CALLBACK (on_remove2_activate),
+                      NULL);
     if (!hide_remove_from_disk && remove_from_disk != NULL) {
         g_signal_connect ((gpointer) remove_from_disk, "activate",
-                G_CALLBACK (on_remove_from_disk_activate),
-                NULL);
+                          G_CALLBACK (on_remove_from_disk_activate),
+                          NULL);
     }
 #ifndef DISABLE_CUSTOM_TITLE
     g_signal_connect ((gpointer) set_custom_title, "activate",
-            G_CALLBACK (on_set_custom_title_activate),
-            listview);
+                      G_CALLBACK (on_set_custom_title_activate),
+                      listview);
 #endif
     g_signal_connect ((gpointer) properties1, "activate",
-            G_CALLBACK (properties_activate),
-            NULL);
+                      G_CALLBACK (properties_activate),
+                      NULL);
 
     gtk_menu_popup_at_pointer (GTK_MENU (playlist_menu), NULL);
+}
+
+
+void
+list_context_menu_with_track_list (ddb_playlist_t *plt, ddb_playItem_t **tracks, int count) {
+    if (_menuTrackList != NULL) {
+        ddbUtilTrackListFree(_menuTrackList);
+        _menuTrackList = NULL;
+    }
+
+    ddb_playItem_t *current = deadbeef->streamer_get_playing_track ();
+    int current_idx = deadbeef->plt_get_item_idx (plt, current, PL_MAIN);
+
+    _menuTrackList = ddbUtilTrackListInitWithWithTracks(ddbUtilTrackListAlloc(), plt, DDB_ACTION_CTX_SELECTION, tracks, count, current, current_idx);
+
+    if (current) {
+        deadbeef->pl_item_unref (current);
+        current = NULL;
+    }
+
+    _run_menu (0);
+}
+
+void
+list_context_menu (DdbListview *listview, int iter) {
+    _capture_selected_track_list();
+
+    _run_menu (iter != PL_SEARCH);
 }
 
 static char *
@@ -2235,93 +2235,4 @@ pl_common_set_group_format (DdbListview *listview, const char *format_conf, cons
         fmt->format = strdup ("");
         fmt->bytecode = deadbeef->tf_compile (fmt->format);
     }
-}
-
-static int
-import_column_from_0_6 (const uint8_t *def, char *json_out, int outsize) {
-    // syntax: "title" "format" id width alignright
-    char token[MAX_TOKEN];
-    const char *p = (const char *)def;
-    char title[MAX_TOKEN];
-    int id;
-    char fmt[MAX_TOKEN];
-    int width;
-    int align;
-
-    *json_out = 0;
-
-    parser_init ();
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        return 0;
-    }
-    strcpy (title, token);
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        return 0;
-    }
-    strcpy (fmt, token);
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        return 0;
-    }
-    id = atoi (token);
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        return 0;
-    }
-    width = atoi (token);
-
-    p = gettoken_warn_eof (p, token);
-    if (!p) {
-        return 0;
-    }
-    align = atoi (token);
-
-    enum {
-        DB_COLUMN_ARTIST_ALBUM = 2,
-        DB_COLUMN_ARTIST = 3,
-        DB_COLUMN_ALBUM = 4,
-        DB_COLUMN_TITLE = 5,
-        DB_COLUMN_DURATION = 6,
-        DB_COLUMN_TRACK = 7,
-    };
-
-    int out_id = -1;
-    const char *format;
-#define MAX_COLUMN_TF 2048
-    char out_tf[MAX_COLUMN_TF];
-
-    // convert IDs from pre-0.4
-    switch (id) {
-    case DB_COLUMN_ARTIST_ALBUM:
-        format = COLUMN_FORMAT_ARTISTALBUM;
-        break;
-    case DB_COLUMN_ARTIST:
-        format = COLUMN_FORMAT_ARTIST;
-        break;
-    case DB_COLUMN_ALBUM:
-        format = COLUMN_FORMAT_ALBUM;
-        break;
-    case DB_COLUMN_TITLE:
-        format = COLUMN_FORMAT_TITLE;
-        break;
-    case DB_COLUMN_DURATION:
-        format = COLUMN_FORMAT_LENGTH;
-        break;
-    case DB_COLUMN_TRACK:
-        format = COLUMN_FORMAT_TRACKNUMBER;
-        break;
-    default:
-        deadbeef->tf_import_legacy (fmt, out_tf, sizeof (out_tf));
-        format = out_tf;
-        out_id = id;
-        break;
-    }
-    int ret = snprintf (json_out, outsize, "{\"title\":\"%s\",\"id\":\"%d\",\"format\":\"%s\",\"size\":\"%d\",\"align\":\"%d\"}", title, out_id, format, width, align);
-    return min (ret, outsize);
 }

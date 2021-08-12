@@ -109,7 +109,6 @@ typedef struct {
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
     gboolean (*list_handle_keypress) (DdbListview *ps, int keyval, int state, int iter);
     void (*selection_changed) (DdbListview *listview, DdbListviewIter it, int idx);
-    void (*delete_selected) (void);
     void (*groups_changed) (const char *format);
     void (*vscroll_changed) (int pos);
     void (*cursor_changed) (int pos);

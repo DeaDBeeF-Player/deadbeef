@@ -168,6 +168,11 @@ ddbUtilTrackListGetTrackCount (ddbUtilTrackList_t trackList) {
     return data->trackcount;
 }
 
+ddb_playlist_t *ddbUtilTrackListGetPlaylist (ddbUtilTrackList_t trackList) {
+    ddbUtilTrackListData_t *data = trackList;
+    return data->plt;
+}
+
 #pragma mark - Controller
 
 ddbDeleteFromDiskController_t ddbDeleteFromDiskControllerAlloc (void) {
