@@ -402,7 +402,7 @@ cover_draw_cairo (GdkPixbuf *pixbuf, int x, int min_y, int max_y, int width, int
     cairo_save(cr);
     cairo_rectangle(cr, x, min_y, width, max_y - min_y);
     cairo_translate (cr, x, real_y);
-    if (pw > width || ph > height || pw < width && ph < height) {
+    if (pw > width || ph > height || (pw < width && ph < height)) {
         const double scale = min(width/(double)pw, height/(double)ph);
         cairo_translate(cr, (width - width*scale)/2., min(min_y, max_y - ph*scale) - real_y);
         cairo_scale(cr, scale, scale);
@@ -476,7 +476,7 @@ convert_escapetext_to_pango_attrlist (char *text, char **plainString, float *fg,
 
     numTintStops = calculate_tint_stops_from_string (text, tintStops, maxTintStops, plainString);
 
-    guint strLength = strlen(*plainString);
+    size_t strLength = strlen(*plainString);
 
     PangoAttrList *lst = pango_attr_list_new ();
     PangoAttribute *attr = NULL;
@@ -484,7 +484,7 @@ convert_escapetext_to_pango_attrlist (char *text, char **plainString, float *fg,
     // add attributes
     for (guint i = 0; i < numTintStops; i++) {
         int index0 = tintStops[i].byteindex;
-        guint len = strLength - index0;
+        size_t len = strLength - index0;
 
         GdkColor finalColor = { .red = fg[0]*65535, .green = fg[1]*65535, .blue = fg[2]*65535};
         if (tintStops[i].has_rgb) {
@@ -510,7 +510,7 @@ convert_escapetext_to_pango_attrlist (char *text, char **plainString, float *fg,
 
         attr = pango_attr_foreground_new (finalColor.red, finalColor.green, finalColor.blue);
         attr->start_index = index0;
-        attr->end_index = index0 + len;
+        attr->end_index = (guint)(index0 + len);
         pango_attr_list_insert (lst, attr);
     }
 
@@ -616,14 +616,14 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
         else {
             GdkColor clr;
             if (deadbeef->pl_is_selected (it)) {
-                color = (gtkui_get_listview_selected_text_color (&clr), &clr);
+                color = ((void)(gtkui_get_listview_selected_text_color (&clr)), &clr);
             }
             else if (it && it == playing_track) {
                 if (fg_clr) {
                     color = fg_clr;
                 }
                 else {
-                    color = (gtkui_get_listview_playing_text_color (&clr), &clr);
+                    color = ((void)(gtkui_get_listview_playing_text_color (&clr)), &clr);
                 }
             }
             else {
@@ -631,7 +631,7 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
                     color = fg_clr;
                 }
                 else {
-                    color = (gtkui_get_listview_text_color (&clr), &clr);
+                    color = ((void)(gtkui_get_listview_text_color (&clr)), &clr);
                 }
             }
         }
@@ -658,7 +658,7 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
             highlight_color = &gtk_widget_get_style(theme_treeview)->fg[GTK_STATE_NORMAL];
         }
         else {
-            highlight_color = (gtkui_get_listview_group_text_color (&hlclr), &hlclr);
+            highlight_color = ((void)(gtkui_get_listview_group_text_color (&hlclr)), &hlclr);
         }
 
         float highlight[] = {highlight_color->red/65535., highlight_color->green/65535., highlight_color->blue/65535.};
@@ -895,6 +895,7 @@ on_remove2_activate                    (GtkMenuItem     *menuitem,
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
+#ifndef DISABLE_CUSTOM_TITLE
 static void
 on_toggle_set_custom_title (GtkToggleButton *togglebutton, gpointer user_data) {
     gboolean active = gtk_toggle_button_get_active (togglebutton);
@@ -906,7 +907,6 @@ on_toggle_set_custom_title (GtkToggleButton *togglebutton, gpointer user_data) {
     deadbeef->conf_save ();
 }
 
-#ifndef DISABLE_CUSTOM_TITLE
 static void
 on_set_custom_title_activate (GtkMenuItem *menuitem, gpointer user_data)
 {
@@ -1029,7 +1029,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
     GtkWidget *remove_from_playback_queue1;
     GtkWidget *separator;
     GtkWidget *remove2;
-    GtkWidget *remove_from_disk;
+    GtkWidget *remove_from_disk = NULL;
     GtkWidget *separator8;
     GtkWidget *cut;
     GtkWidget *cut_image;
@@ -1321,7 +1321,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
     g_signal_connect ((gpointer) remove2, "activate",
             G_CALLBACK (on_remove2_activate),
             NULL);
-    if (!hide_remove_from_disk) {
+    if (!hide_remove_from_disk && remove_from_disk != NULL) {
         g_signal_connect ((gpointer) remove_from_disk, "activate",
                 G_CALLBACK (on_remove_from_disk_activate),
                 NULL);
@@ -1339,10 +1339,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
 }
 
 static char *
-strtok_stringdelim_r (char *str, const char *delim,  char **next_start)
-{
-    char *end;
-
+strtok_stringdelim_r (char *str, const char *delim,  char **next_start) {
     if (*next_start) {
         str = *next_start;
     }
@@ -1803,7 +1800,7 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_title (GTK_WINDOW (dlg), _("Add column"));
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
-    populate_column_id_combo_box (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
+    populate_column_id_combo_box (GTK_COMBO_BOX_TEXT (lookup_widget (dlg, "id")));
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), 0);
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), 0);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "color_override")), 0);
@@ -1845,7 +1842,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_title (GTK_WINDOW (dlg), _("Edit column"));
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
-    populate_column_id_combo_box (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
+    populate_column_id_combo_box (GTK_COMBO_BOX_TEXT (lookup_widget (dlg, "id")));
 
     const char *title;
     int width;
@@ -2148,7 +2145,7 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
                     highlight_color = &gtk_widget_get_style(theme_treeview)->fg[GTK_STATE_NORMAL];
                 }
                 else {
-                    highlight_color = (gtkui_get_listview_group_text_color (&hlclr), &hlclr);
+                    highlight_color = ((void)(gtkui_get_listview_group_text_color (&hlclr)), &hlclr);
                 }
 
                 float highlight[] = {highlight_color->red/65535., highlight_color->green/65535., highlight_color->blue/65535.};
@@ -2178,7 +2175,7 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
             }
             draw_get_layout_extents (&listview->grpctx, &ew, NULL);
 
-            int len = strlen (str);
+            size_t len = strlen (str);
             int line_x = x + 10 + ew + (len ? ew / len / 2 : 0);
             if (line_x+20 < x + width) {
                 draw_line (&listview->grpctx, line_x, y+height/2, x+width, y+height/2);
@@ -2253,7 +2250,7 @@ static int
 import_column_from_0_6 (const uint8_t *def, char *json_out, int outsize) {
     // syntax: "title" "format" id width alignright
     char token[MAX_TOKEN];
-    const char *p = def;
+    const char *p = (const char *)def;
     char title[MAX_TOKEN];
     int id;
     char fmt[MAX_TOKEN];
@@ -2336,43 +2333,4 @@ import_column_from_0_6 (const uint8_t *def, char *json_out, int outsize) {
     }
     int ret = snprintf (json_out, outsize, "{\"title\":\"%s\",\"id\":\"%d\",\"format\":\"%s\",\"size\":\"%d\",\"align\":\"%d\"}", title, out_id, format, width, align);
     return min (ret, outsize);
-}
-
-
-int
-import_column_config_0_6 (const char *oldkeyprefix, const char *newkey) {
-    DB_conf_item_t *col = deadbeef->conf_find (oldkeyprefix, NULL);
-    if (!col) {
-        return 0;
-    }
-
-#define MAX_COLUMN_CONFIG 20000
-    char *json = calloc (1, MAX_COLUMN_CONFIG);
-    char *out = json;
-    int jsonsize = MAX_COLUMN_CONFIG-1;
-
-    *out++ = '[';
-    jsonsize--;
-
-    int idx = 0;
-    while (col) {
-        if (jsonsize < 2) {
-            break;
-        }
-        if (idx != 0) {
-            *out++ = ',';
-            jsonsize--;
-        }
-        int res = import_column_from_0_6 (col->value, out, jsonsize);
-        out += res;
-        jsonsize -= res;
-        col = deadbeef->conf_find (oldkeyprefix, col);
-        idx++;
-    }
-    *out++ = ']';
-    if (*json) {
-        deadbeef->conf_set_str (newkey, json);
-    }
-    free (json);
-    return 0;
 }

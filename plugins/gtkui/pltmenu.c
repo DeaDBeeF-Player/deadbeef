@@ -265,7 +265,6 @@ add_tab_actions (GtkWidget *menu) {
         int count = 0;
         for (action = actions; action; action = action->next)
         {
-            char *tmp = NULL;
             if (!(action->flags & DB_ACTION_MULTIPLE_TRACKS))
                 continue;
 
@@ -379,9 +378,6 @@ gtkui_create_pltmenu (int plt_idx) {
     GtkWidget *paste;
     GtkWidget *paste_image;
     GtkWidget *separator9;
-    GtkWidget *load_playlist1;
-    GtkWidget *save_playlist1;
-    GtkWidget *save_all_playlists1;
 
     GtkAccelGroup *accel_group = NULL;
     accel_group = gtk_accel_group_new ();
@@ -420,7 +416,7 @@ gtkui_create_pltmenu (int plt_idx) {
         }
     }
     autosort = gtk_check_menu_item_new_with_label (_("Enable Autosort"));
-    gtk_check_menu_item_set_active (autosort, autosort_enabled);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM(autosort), autosort_enabled);
     gtk_widget_show (autosort);
     gtk_container_add (GTK_CONTAINER (plmenu), autosort);
     if (pltmenu_idx == -1) {
