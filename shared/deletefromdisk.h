@@ -22,6 +22,7 @@ void ddbUtilTrackListFree (ddbUtilTrackList_t trackList);
 
 ddb_playItem_t **ddbUtilTrackListGetTracks (ddbUtilTrackList_t trackList);
 unsigned ddbUtilTrackListGetTrackCount (ddbUtilTrackList_t trackList);
+ddb_playlist_t *ddbUtilTrackListGetPlaylist (ddbUtilTrackList_t trackList);
 
 #pragma mark - DeleteFromDiskController
 

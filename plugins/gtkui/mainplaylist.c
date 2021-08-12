@@ -126,10 +126,6 @@ static void main_selection_changed (DdbListview *ps, DdbListviewIter it, int idx
     pl_common_selection_changed (ps, PL_MAIN, it);
 }
 
-static void main_delete_selected (void) {
-    deadbeef->pl_delete_selected ();
-}
-
 static void
 main_groups_changed (const char* format) {
     deadbeef->conf_set_str ("gtkui.playlist.group_by_tf", format);
@@ -202,7 +198,6 @@ static DdbListviewBinding main_binding = {
     .header_context_menu = pl_common_header_context_menu,
     .list_context_menu = list_context_menu,
     .list_empty_region_context_menu = list_empty_region_context_menu,
-    .delete_selected = main_delete_selected,
     .vscroll_changed = main_vscroll_changed,
     .modification_idx = gtkui_get_curr_playlist_mod,
 };
