@@ -12,9 +12,10 @@
 #include <string.h>
 #include "../../../deadbeef.h"
 #include "../../../gettext.h"
+#include "../../medialib/medialib.h"
 #include "../support.h"
 #include "medialibwidget.h"
-#include "../../medialib/medialib.h"
+#include "medialibmanager.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -119,8 +120,7 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
     if (mlv->plugin == NULL) {
         return;
     }
-    mlv->source = mlv->plugin->plugin.create_source ("deadbeef");
-    mlv->plugin->plugin.refresh(mlv->source);
+    mlv->source = gtkui_medialib_get_source();
     mlv->selectors = mlv->plugin->plugin.get_selectors_list (mlv->source);
     mlv->listener_id =  mlv->plugin->plugin.add_listener (mlv->source, _medialib_listener, mlv);
 
@@ -151,28 +151,11 @@ w_medialib_viewer_destroy (struct ddb_gtkui_widget_s *w) {
     }
     free (mlv->search_text);
     mlv->search_text = NULL;
-    if (mlv->source) {
-        mlv->plugin->plugin.free_source (mlv->source);
-        mlv->source = NULL;
-    }
 }
 
 static int
 w_medialib_viewer_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
-}
-
-static void
-w_medialib_viewer_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
-//    GtkWidget *item;
-//    item = gtk_check_menu_item_new_with_mnemonic (_("Show Column Headers"));
-//    gtk_widget_show (item);
-//    int showheaders = deadbeef->conf_get_int ("gtkui.pltbrowser.show_headers", 1);
-//    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), showheaders);
-//    gtk_container_add (GTK_CONTAINER (menu), item);
-//    g_signal_connect ((gpointer) item, "toggled",
-//                      G_CALLBACK (on_pltbrowser_showheaders_toggled),
-//                      w);
 }
 
 static GtkTreeViewColumn *
@@ -198,13 +181,6 @@ add_treeview_column (w_medialib_viewer_t *w, GtkTreeView *tree, int pos, int exp
     GtkWidget *label = gtk_label_new (title);
     gtk_tree_view_column_set_widget (col, label);
     gtk_widget_show (label);
-//    GtkWidget *col_button = gtk_widget_get_ancestor(label, GTK_TYPE_BUTTON);
-//    g_signal_connect (col_button, "button-press-event",
-//                      G_CALLBACK (on_pltbrowser_header_clicked),
-//                      w);
-//    g_signal_connect (col, "clicked",
-//                      G_CALLBACK (on_pltbrowser_column_clicked),
-//                      w);
     return col;
 }
 
@@ -323,7 +299,6 @@ w_medialib_viewer_create (void) {
     w->base.init = w_medialib_viewer_init;
     w->base.destroy = w_medialib_viewer_destroy;
     w->base.message = w_medialib_viewer_message;
-    w->base.initmenu = w_medialib_viewer_initmenu;
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
 
@@ -371,30 +346,9 @@ w_medialib_viewer_create (void) {
     g_signal_connect((gpointer)w->search_entry, "changed", G_CALLBACK (_search_text_did_change), w);
     g_signal_connect((gpointer)w->tree, "row-activated", G_CALLBACK (_treeview_row_did_activate), w);
 
-//    w->cc_id = g_signal_connect ((gpointer) w->tree, "cursor_changed",
-//                                 G_CALLBACK (on_pltbrowser_cursor_changed),
-//                                 w);
-//    g_signal_connect ((gpointer) w->tree, "event_after",
-//                      G_CALLBACK (on_pltbrowser_button_press_end_event),
-//                      w);
-//    g_signal_connect ((gpointer) w->tree, "button-press-event",
-//                      G_CALLBACK (on_pltbrowser_button_press_event),
-//                      w);
-//    g_signal_connect ((gpointer) w->tree, "row_activated",
-//                      G_CALLBACK (on_pltbrowser_row_activated),
-//                      w);
-//    g_signal_connect ((gpointer) w->tree, "drag_begin",
-//                      G_CALLBACK (on_pltbrowser_drag_begin_event),
-//                      w);
-//    g_signal_connect ((gpointer) w->tree, "drag_end",
-//                      G_CALLBACK (on_pltbrowser_drag_end_event),
-//                      w);
-//    g_signal_connect ((gpointer) w->tree, "drag_motion",
-//                      G_CALLBACK (on_pltbrowser_drag_motion_event),
-//                      w);
-//    g_signal_connect ((gpointer) w->tree, "key_press_event",
-//                      G_CALLBACK (on_pltbrowser_key_press_event),
-//                      w);
+//    g_signal_connect ((gpointer) w->tree, "drag_begin", G_CALLBACK (_drag_did_begin), w);
+//    g_signal_connect ((gpointer) w->tree, "drag_end",G_CALLBACK (_drag_did_end), w);
+//    g_signal_connect ((gpointer) w->tree, "drag_motion", G_CALLBACK (_drag_motion), w);
 
     w_override_signals (w->base.widget, w);
 
