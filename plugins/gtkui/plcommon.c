@@ -76,8 +76,6 @@ static GdkPixbuf *play16_pixbuf;
 static GdkPixbuf *pause16_pixbuf;
 static GdkPixbuf *buffering16_pixbuf;
 
-static int clicked_idx = -1;
-
 struct pl_preset_column_format {
     enum pl_column_t id;
     char *title;
@@ -972,10 +970,7 @@ static void
 actionitem_activate (GtkMenuItem     *menuitem,
                      DB_plugin_action_t *action)
 {
-    if (action->callback) {
-        gtkui_exec_action_14 (action, clicked_idx);
-    }
-    else {
+    if (action->callback2) {
         action->callback2 (action, DDB_ACTION_CTX_SELECTION);
     }
 }
@@ -1019,10 +1014,9 @@ list_empty_region_context_menu (DdbListview *listview) {
 }
 
 void
-list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter) {
+list_context_menu (DdbListview *listview, int iter) {
     _capture_selected_track_list();
 
-    clicked_idx = deadbeef->pl_get_idx_of (it);
     GtkWidget *playlist_menu;
     GtkWidget *play_later;
     GtkWidget *play_next;
@@ -1060,7 +1054,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
     gtk_container_add (GTK_CONTAINER (playlist_menu), play_later);
     
     remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove from Playback Queue"));
-    if (listview->binding->sel_count () > 1) {
+    if (listview->binding->sel_count () > 0) {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         int pqlen = deadbeef->playqueue_get_count ();
         int no_playqueue_items = 1;
@@ -1074,9 +1068,6 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
         if (no_playqueue_items) {
             gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
         }
-    }
-    else if (deadbeef->playqueue_test (it) == -1) {
-        gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
     }
     gtk_widget_show (remove_from_playback_queue1);
     gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_playback_queue1);

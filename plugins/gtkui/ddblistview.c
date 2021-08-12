@@ -2327,8 +2327,7 @@ ddb_listview_list_popup_menu (GtkWidget *widget, gpointer user_data) {
         it = next_playitem(ps, it);
     }
     if (it) {
-        int sel = ps->binding->get_idx (it);
-        ps->binding->list_context_menu (ps, it, sel, PL_MAIN);
+        ps->binding->list_context_menu (ps, PL_MAIN);
         ps->binding->unref (it);
     }
     else if (ps->binding->list_empty_region_context_menu) {
@@ -3082,7 +3081,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
         if (!ddb_listview_is_empty_region (&pick_ctx)) {
             DdbListviewIter it = ps->binding->get_for_idx (pick_ctx.item_idx);
             if (it) {
-                ps->binding->list_context_menu (ps, it, pick_ctx.item_idx, PL_MAIN);
+                ps->binding->list_context_menu (ps, PL_MAIN);
                 UNREF (it);
             }
         }
