@@ -137,6 +137,25 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
     _reload_content(mlv);
 }
 
+static void
+w_medialib_viewer_destroy (struct ddb_gtkui_widget_s *w) {
+    w_medialib_viewer_t *mlv = (w_medialib_viewer_t *)w;
+    if (mlv->item_tree != NULL) {
+        mlv->plugin->plugin.free_item_tree (mlv->source, mlv->item_tree);
+        mlv->item_tree = NULL;
+    }
+    if (mlv->selectors) {
+        mlv->plugin->plugin.free_selectors_list (mlv->source, mlv->selectors);
+        mlv->selectors = NULL;
+    }
+    free (mlv->search_text);
+    mlv->search_text = NULL;
+    if (mlv->source) {
+        mlv->plugin->plugin.free_source (mlv->source);
+        mlv->source = NULL;
+    }
+}
+
 static int
 w_medialib_viewer_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
@@ -219,6 +238,7 @@ w_medialib_viewer_create (void) {
 
     w->base.widget = gtk_event_box_new ();
     w->base.init = w_medialib_viewer_init;
+    w->base.destroy = w_medialib_viewer_destroy;
     w->base.message = w_medialib_viewer_message;
     w->base.initmenu = w_medialib_viewer_initmenu;
 
