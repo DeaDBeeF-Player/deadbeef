@@ -16,6 +16,7 @@
 #include "../support.h"
 #include "medialibwidget.h"
 #include "medialibmanager.h"
+#include "plcommon.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -291,6 +292,34 @@ _treeview_row_did_activate (GtkTreeView* self, GtkTreePath* path, GtkTreeViewCol
     }
 }
 
+gboolean
+_treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_data) {
+    if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
+        w_medialib_viewer_t *mlv = user_data;
+        GtkTreePath *path;
+
+        if (!gtk_tree_view_get_path_at_pos(mlv->tree,
+                                          event->x, event->y,
+                                          &path, NULL, NULL, NULL)) {
+            return FALSE;
+        }
+
+        GtkTreeIter iter;
+        GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (mlv->tree));
+        GtkTreeSelection *selection = gtk_tree_view_get_selection(mlv->tree);
+        gtk_tree_model_get_iter(model, &iter, path);
+        if (!gtk_tree_selection_iter_is_selected(selection, &iter)) {
+            gtk_tree_selection_unselect_all(selection);
+            gtk_tree_selection_select_path(selection, path);
+        }
+        gtk_tree_path_free(path);
+
+        list_context_menu_with_track_list (NULL, 0);
+        return TRUE;
+    }
+    return FALSE;
+}
+
 ddb_gtkui_widget_t *
 w_medialib_viewer_create (void) {
     w_medialib_viewer_t *w = calloc (1, sizeof (w_medialib_viewer_t));
@@ -342,9 +371,13 @@ w_medialib_viewer_create (void) {
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), FALSE);
     gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), FALSE);
 
+    GtkTreeSelection *selection = gtk_tree_view_get_selection(w->tree);
+    gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
+
     g_signal_connect((gpointer)w->selector, "changed", G_CALLBACK (_active_selector_did_change), w);
     g_signal_connect((gpointer)w->search_entry, "changed", G_CALLBACK (_search_text_did_change), w);
     g_signal_connect((gpointer)w->tree, "row-activated", G_CALLBACK (_treeview_row_did_activate), w);
+    g_signal_connect((gpointer)w->tree, "button_press_event", G_CALLBACK (_treeview_row_mousedown), w);
 
 //    g_signal_connect ((gpointer) w->tree, "drag_begin", G_CALLBACK (_drag_did_begin), w);
 //    g_signal_connect ((gpointer) w->tree, "drag_end",G_CALLBACK (_drag_did_end), w);
