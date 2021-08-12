@@ -577,8 +577,8 @@ search_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIt
 }
 
 void
-search_list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter) {
-    list_context_menu (listview, it, idx, PL_SEARCH);
+search_list_context_menu (DdbListview *listview, int iter) {
+    list_context_menu (listview, PL_SEARCH);
 }
 
 gboolean

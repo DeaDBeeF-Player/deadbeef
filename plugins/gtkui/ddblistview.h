@@ -103,7 +103,7 @@ typedef struct {
     void (*col_free_user_data) (void *user_data);
 
     // callbacks
-    void (*list_context_menu) (DdbListview *listview, DdbListviewIter iter, int idx, int plt_iter);
+    void (*list_context_menu) (DdbListview *listview, int plt_iter);
     void (*list_empty_region_context_menu) (DdbListview *listview);
     void (*header_context_menu) (DdbListview *listview, int col);
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
