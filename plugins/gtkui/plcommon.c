@@ -1303,21 +1303,13 @@ _run_menu (int show_paste) {
 
 
 void
-list_context_menu_with_track_list (ddb_playlist_t *plt, ddb_playItem_t **tracks, int count) {
+list_context_menu_with_track_list (ddb_playItem_t **tracks, int count) {
     if (_menuTrackList != NULL) {
         ddbUtilTrackListFree(_menuTrackList);
         _menuTrackList = NULL;
     }
 
-    ddb_playItem_t *current = deadbeef->streamer_get_playing_track ();
-    int current_idx = deadbeef->plt_get_item_idx (plt, current, PL_MAIN);
-
-    _menuTrackList = ddbUtilTrackListInitWithWithTracks(ddbUtilTrackListAlloc(), plt, DDB_ACTION_CTX_SELECTION, tracks, count, current, current_idx);
-
-    if (current) {
-        deadbeef->pl_item_unref (current);
-        current = NULL;
-    }
+    _menuTrackList = ddbUtilTrackListInitWithWithTracks(ddbUtilTrackListAlloc(), NULL, DDB_ACTION_CTX_SELECTION, tracks, count, NULL, -1);
 
     _run_menu (0);
 }

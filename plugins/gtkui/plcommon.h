@@ -50,6 +50,9 @@ void
 list_context_menu (DdbListview *listview, int iter);
 
 void
+list_context_menu_with_track_list (ddb_playItem_t **tracks, int count);
+
+void
 list_empty_region_context_menu (DdbListview *listview);
 
 gboolean
