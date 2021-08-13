@@ -294,6 +294,10 @@ _treeview_row_did_activate (GtkTreeView* self, GtkTreePath* path, GtkTreeViewCol
 
 gboolean
 _treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_data) {
+    if (w_get_design_mode ()) {
+        return FALSE;
+    }
+
     if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
         w_medialib_viewer_t *mlv = user_data;
         GtkTreePath *path;
