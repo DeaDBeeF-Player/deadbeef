@@ -834,7 +834,9 @@ static void
 properties_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    action_show_track_properties_handler (NULL, DDB_ACTION_CTX_SELECTION);
+    int count = ddbUtilTrackListGetTrackCount(_menuTrackList);
+    ddb_playItem_t **tracks = ddbUtilTrackListGetTracks(_menuTrackList);
+    show_track_properties_dlg_with_track_list (tracks, count);
 }
 
 void

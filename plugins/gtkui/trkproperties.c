@@ -343,18 +343,7 @@ meta_value_transform_func (GtkTreeViewColumn *tree_column,
 }
 
 void
-show_track_properties_dlg (int ctx, ddb_playlist_t *plt) {
-    last_ctx = ctx;
-    deadbeef->plt_ref (plt);
-    if (last_plt) {
-        deadbeef->plt_unref (last_plt);
-    }
-    last_plt = plt;
-
-    trkproperties_free_track_list (&tracks, &numtracks);
-
-    trkproperties_build_track_list_for_ctx (plt, ctx, &tracks, &numtracks);
-
+show_track_properties_dlg_with_current_track_list (void) {
     GtkTreeView *tree;
     GtkTreeView *proptree;
     if (!trackproperties) {
@@ -370,8 +359,8 @@ show_track_properties_dlg (int ctx, ddb_playlist_t *plt) {
         rend_text2 = GTK_CELL_RENDERER (ddb_cell_renderer_text_multiline_new ());
         g_object_set (G_OBJECT (rend_text2), "editable", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
         g_signal_connect ((gpointer)rend_text2, "edited",
-                G_CALLBACK (on_metadata_edited),
-                store);
+                          G_CALLBACK (on_metadata_edited),
+                          store);
         GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Key"), rend_text, "text", 0, NULL);
         GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend_text2, "text", 1, NULL);
 
@@ -419,6 +408,34 @@ show_track_properties_dlg (int ctx, ddb_playlist_t *plt) {
 
     gtk_widget_show (widget);
     gtk_window_present (GTK_WINDOW (widget));
+}
+
+void
+show_track_properties_dlg_with_track_list (ddb_playItem_t **track_list, int count) {
+    trkproperties_free_track_list (&tracks, &numtracks);
+    tracks = calloc (count, sizeof (ddb_playItem_t *));
+    for (int i = 0; i < count; i++) {
+        tracks[i] = track_list[i];
+        deadbeef->pl_item_ref (tracks[i]);
+    }
+    numtracks = count;
+    show_track_properties_dlg_with_current_track_list();
+}
+
+void
+show_track_properties_dlg (int ctx, ddb_playlist_t *plt) {
+    last_ctx = ctx;
+    deadbeef->plt_ref (plt);
+    if (last_plt) {
+        deadbeef->plt_unref (last_plt);
+    }
+    last_plt = plt;
+
+    trkproperties_free_track_list (&tracks, &numtracks);
+
+    trkproperties_build_track_list_for_ctx (plt, ctx, &tracks, &numtracks);
+
+    show_track_properties_dlg_with_current_track_list();
 }
 
 static gboolean
@@ -508,8 +525,8 @@ write_finished_cb (void *ctx) {
     trkproperties_modified = 0;
     if (last_plt) {
         deadbeef->plt_modified (last_plt);
-        show_track_properties_dlg (last_ctx, last_plt);
     }
+    show_track_properties_dlg_with_current_track_list();
 
     return FALSE;
 }
