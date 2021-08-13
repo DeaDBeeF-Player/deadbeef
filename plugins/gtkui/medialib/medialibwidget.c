@@ -292,36 +292,100 @@ _treeview_row_did_activate (GtkTreeView* self, GtkTreePath* path, GtkTreeViewCol
     }
 }
 
+static int
+_collect_tracks_from_iter (GtkTreeModel *model, GtkTreeIter *iter, ddb_playItem_t **tracks, int append_position) {
+    // is it a track?
+    GValue value = {0};
+    gtk_tree_model_get_value (model, iter, COL_TRACK, &value);
+    ddb_playItem_t *track = g_value_get_pointer(&value);
+    g_value_unset (&value);
+
+    if (track) {
+        if (tracks != NULL) {
+            tracks[append_position] = track;
+        }
+        return 1;
+    }
+
+    int count = 0;
+    // recurse into children
+    GtkTreeIter child;
+    if (gtk_tree_model_iter_children (model, &child, iter)) {
+        do {
+            int appended_count = _collect_tracks_from_iter(model, &child, tracks, append_position);
+            count += appended_count;
+            append_position += appended_count;
+        } while (gtk_tree_model_iter_next(model, &child));
+    }
+
+    return count;
+}
+
+static int
+_collect_selected_tracks(GtkTreeModel *model, GtkTreeSelection *selection, ddb_playItem_t **tracks, int append_position) {
+    GList *selected_rows = gtk_tree_selection_get_selected_rows(selection, NULL);
+
+    int count = 0;
+
+    for (GList *row = selected_rows; row; row = row->next) {
+        GtkTreePath *path = (GtkTreePath *)row->data;
+        GtkTreeIter iter;
+        if (!gtk_tree_model_get_iter (model, &iter, path)) {
+            continue;
+        }
+
+        int appended_count = _collect_tracks_from_iter (model, &iter, tracks, append_position);
+        count += appended_count;
+        append_position += appended_count;
+    }
+
+    g_list_free_full (selected_rows, (GDestroyNotify) gtk_tree_path_free);
+    return count;
+}
+
 gboolean
 _treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_data) {
     if (w_get_design_mode ()) {
         return FALSE;
     }
 
-    if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
-        w_medialib_viewer_t *mlv = user_data;
-        GtkTreePath *path;
-
-        if (!gtk_tree_view_get_path_at_pos(mlv->tree,
-                                          event->x, event->y,
-                                          &path, NULL, NULL, NULL)) {
-            return FALSE;
-        }
-
-        GtkTreeIter iter;
-        GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (mlv->tree));
-        GtkTreeSelection *selection = gtk_tree_view_get_selection(mlv->tree);
-        gtk_tree_model_get_iter(model, &iter, path);
-        if (!gtk_tree_selection_iter_is_selected(selection, &iter)) {
-            gtk_tree_selection_unselect_all(selection);
-            gtk_tree_selection_select_path(selection, path);
-        }
-        gtk_tree_path_free(path);
-
-        list_context_menu_with_track_list (NULL, 0);
-        return TRUE;
+    if (event->type != GDK_BUTTON_PRESS || event->button != 3) {
+        return FALSE;
     }
-    return FALSE;
+
+    w_medialib_viewer_t *mlv = user_data;
+    GtkTreePath *path;
+
+    if (!gtk_tree_view_get_path_at_pos(mlv->tree,
+                                      event->x, event->y,
+                                      &path, NULL, NULL, NULL)) {
+        return FALSE;
+    }
+
+    GtkTreeIter iter;
+    GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (mlv->tree));
+    GtkTreeSelection *selection = gtk_tree_view_get_selection(mlv->tree);
+    gtk_tree_model_get_iter(model, &iter, path);
+    if (!gtk_tree_selection_iter_is_selected(selection, &iter)) {
+        gtk_tree_selection_unselect_all(selection);
+        gtk_tree_selection_select_path(selection, path);
+    }
+    gtk_tree_path_free(path);
+
+    // count selected tracks
+    int count = _collect_selected_tracks (model, selection, NULL, 0);
+
+    // create array of tracks
+    ddb_playItem_t **tracks = NULL;
+    if (count > 0) {
+        tracks = calloc (count, sizeof (ddb_playItem_t *));
+        _collect_selected_tracks (model, selection, tracks, 0);
+    }
+
+    list_context_menu_with_track_list (tracks, count);
+    free (tracks);
+
+    return TRUE;
 }
 
 ddb_gtkui_widget_t *
