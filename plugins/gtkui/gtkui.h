@@ -164,9 +164,6 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data);
 
-void
-gtkui_run_preferences_dlg (void);
-
 int
 gtkui_get_gui_refresh_rate (void);
 

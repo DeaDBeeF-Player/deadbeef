@@ -27,9 +27,8 @@
 
 #include "deadbeefapp.h"
 #include "gtkui.h"
+#include "prefwin.h"
 #include "support.h"
-
-
 
 struct _DeadbeefApp
 {
@@ -55,7 +54,7 @@ appmenu_preferences_activated (GSimpleAction *action,
                 GVariant      *parameter,
                 gpointer       user_data)
 {
-    gtkui_run_preferences_dlg ();
+    prefwin_run (-1);
 }
 
 static void
