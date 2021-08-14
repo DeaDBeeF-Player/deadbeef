@@ -1713,6 +1713,17 @@ create_prefwin (void)
   GtkWidget *listview_selected_text_italic;
   GtkWidget *label75;
   GtkWidget *label100;
+  GtkWidget *vbox55;
+  GtkWidget *toggle_medialib_on;
+  GtkWidget *hseparator7;
+  GtkWidget *label174;
+  GtkWidget *vbox56;
+  GtkWidget *scrolledwindow17;
+  GtkWidget *treeview_medialib_folders;
+  GtkWidget *hbox150;
+  GtkWidget *button_medialib_add_folder;
+  GtkWidget *button_medialib_remove_folder;
+  GtkWidget *label173;
   GtkWidget *vbox11;
   GtkWidget *pref_network_enableproxy;
   GtkWidget *hbox13;
@@ -2769,6 +2780,57 @@ create_prefwin (void)
   gtk_widget_show (label100);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 4), label100);
 
+  vbox55 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox55);
+  gtk_container_add (GTK_CONTAINER (notebook), vbox55);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox55), 12);
+
+  toggle_medialib_on = gtk_check_button_new_with_mnemonic (_("Enable media library"));
+  gtk_widget_show (toggle_medialib_on);
+  gtk_box_pack_start (GTK_BOX (vbox55), toggle_medialib_on, FALSE, FALSE, 0);
+
+  hseparator7 = gtk_hseparator_new ();
+  gtk_widget_show (hseparator7);
+  gtk_box_pack_start (GTK_BOX (vbox55), hseparator7, FALSE, FALSE, 0);
+
+  label174 = gtk_label_new (_("Add / remove music folders"));
+  gtk_widget_show (label174);
+  gtk_box_pack_start (GTK_BOX (vbox55), label174, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label174), 0, 0.5);
+
+  vbox56 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox56);
+  gtk_box_pack_start (GTK_BOX (vbox55), vbox56, TRUE, TRUE, 0);
+
+  scrolledwindow17 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow17);
+  gtk_box_pack_start (GTK_BOX (vbox56), scrolledwindow17, TRUE, TRUE, 0);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow17), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow17), GTK_SHADOW_IN);
+
+  treeview_medialib_folders = gtk_tree_view_new ();
+  gtk_widget_show (treeview_medialib_folders);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow17), treeview_medialib_folders);
+  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (treeview_medialib_folders), FALSE);
+
+  hbox150 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox150);
+  gtk_box_pack_start (GTK_BOX (vbox56), hbox150, FALSE, TRUE, 0);
+
+  button_medialib_add_folder = gtk_button_new_with_mnemonic (_("+"));
+  gtk_widget_show (button_medialib_add_folder);
+  gtk_box_pack_start (GTK_BOX (hbox150), button_medialib_add_folder, FALSE, FALSE, 0);
+  gtk_widget_set_size_request (button_medialib_add_folder, 38, -1);
+
+  button_medialib_remove_folder = gtk_button_new_with_mnemonic (_("-"));
+  gtk_widget_show (button_medialib_remove_folder);
+  gtk_box_pack_start (GTK_BOX (hbox150), button_medialib_remove_folder, FALSE, FALSE, 0);
+  gtk_widget_set_size_request (button_medialib_remove_folder, 38, -1);
+
+  label173 = gtk_label_new (_("Media Library"));
+  gtk_widget_show (label173);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 5), label173);
+
   vbox11 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox11);
   gtk_container_add (GTK_CONTAINER (notebook), vbox11);
@@ -2879,7 +2941,7 @@ create_prefwin (void)
 
   label16 = gtk_label_new (_("Network"));
   gtk_widget_show (label16);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 5), label16);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 6), label16);
 
   vbox36 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox36);
@@ -3002,7 +3064,7 @@ create_prefwin (void)
 
   label132 = gtk_label_new (_("Hotkeys"));
   gtk_widget_show (label132);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 6), label132);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 7), label132);
 
   hpaned1 = gtk_hpaned_new ();
   gtk_widget_show (hpaned1);
@@ -3163,7 +3225,7 @@ create_prefwin (void)
 
   label3 = gtk_label_new (_("Plugins"));
   gtk_widget_show (label3);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 7), label3);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 8), label3);
   gtk_misc_set_alignment (GTK_MISC (label3), 0.48, 0.5);
 
   dialog_action_area2 = gtk_dialog_get_action_area (GTK_DIALOG (prefwin));
@@ -3684,6 +3746,17 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, listview_selected_text_italic, "listview_selected_text_italic");
   GLADE_HOOKUP_OBJECT (prefwin, label75, "label75");
   GLADE_HOOKUP_OBJECT (prefwin, label100, "label100");
+  GLADE_HOOKUP_OBJECT (prefwin, vbox55, "vbox55");
+  GLADE_HOOKUP_OBJECT (prefwin, toggle_medialib_on, "toggle_medialib_on");
+  GLADE_HOOKUP_OBJECT (prefwin, hseparator7, "hseparator7");
+  GLADE_HOOKUP_OBJECT (prefwin, label174, "label174");
+  GLADE_HOOKUP_OBJECT (prefwin, vbox56, "vbox56");
+  GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow17, "scrolledwindow17");
+  GLADE_HOOKUP_OBJECT (prefwin, treeview_medialib_folders, "treeview_medialib_folders");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox150, "hbox150");
+  GLADE_HOOKUP_OBJECT (prefwin, button_medialib_add_folder, "button_medialib_add_folder");
+  GLADE_HOOKUP_OBJECT (prefwin, button_medialib_remove_folder, "button_medialib_remove_folder");
+  GLADE_HOOKUP_OBJECT (prefwin, label173, "label173");
   GLADE_HOOKUP_OBJECT (prefwin, vbox11, "vbox11");
   GLADE_HOOKUP_OBJECT (prefwin, pref_network_enableproxy, "pref_network_enableproxy");
   GLADE_HOOKUP_OBJECT (prefwin, hbox13, "hbox13");
