@@ -27,7 +27,7 @@
 
 #include "deadbeefapp.h"
 #include "gtkui.h"
-#include "prefwin.h"
+#include "prefwin/prefwin.h"
 #include "support.h"
 
 struct _DeadbeefApp

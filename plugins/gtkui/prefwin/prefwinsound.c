@@ -24,9 +24,9 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
-#include "../support.h"
 #include <gtk/gtk.h>
-#include "gtkui.h"
+#include "../gtkui.h"
+#include "../support.h"
 #include "prefwin.h"
 #include "prefwinsound.h"
 

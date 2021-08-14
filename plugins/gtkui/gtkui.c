@@ -55,7 +55,7 @@
 #include "medialib/medialibwidget.h"
 #include "plcommon.h"
 #include "pluginconf.h"
-#include "prefwin.h"
+#include "prefwin/prefwin.h"
 #include "progress.h"
 #include "rg.h"
 #include "search.h"
