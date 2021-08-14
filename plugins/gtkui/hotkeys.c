@@ -67,6 +67,18 @@ typedef struct
 
 int gtkui_hotkeys_changed = 0;
 
+enum {
+    TAB_INDEX_SOUND = 0,
+    TAB_INDEX_PLAYBACK = 1,
+    TAB_INDEX_DSP = 2,
+    TAB_INDEX_GUI = 3,
+    TAB_INDEX_APPEARANCE = 4,
+    TAB_INDEX_MEDIALIB = 5,
+    TAB_INDEX_NETWORK = 6,
+    TAB_INDEX_HOTKEYS = 7,
+    TAB_INDEX_PLUGINS = 8,
+};
+
 void
 on_hotkeys_actions_cursor_changed      (GtkTreeView     *treeview,
                                         gpointer         user_data);
@@ -434,7 +446,7 @@ prefwin_init_hotkeys (GtkWidget *_prefwin) {
     DB_plugin_t *hkplug = deadbeef->plug_get_for_id ("hotkeys");
     if (!hkplug) {
         // remove hotkeys tab
-        gtk_notebook_remove_page (GTK_NOTEBOOK (lookup_widget (_prefwin, "notebook")), 6);
+        gtk_notebook_remove_page (GTK_NOTEBOOK (lookup_widget (_prefwin, "notebook")), TAB_INDEX_HOTKEYS);
         return;
     }
 
