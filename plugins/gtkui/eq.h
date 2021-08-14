@@ -24,6 +24,8 @@
 #ifndef __EQ_H
 #define __EQ_H
 
+#include "../../deadbeef.h"
+
 void
 eq_window_show (void);
 

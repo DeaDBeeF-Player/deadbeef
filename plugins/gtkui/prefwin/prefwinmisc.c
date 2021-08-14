@@ -89,3 +89,155 @@ prefwin_init_gui_misc_tab (GtkWidget *_prefwin) {
     }
 }
 
+void
+on_minimize_on_startup_clicked     (GtkButton       *button,
+                                    gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
+    deadbeef->conf_set_int ("gtkui.start_hidden", active);
+    if (active == 1) {
+        prefwin_set_toggle_button("hide_tray_icon", 0);
+        deadbeef->conf_set_int ("gtkui.hide_tray_icon", 0);
+    }
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_move_to_trash_clicked               (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
+    deadbeef->conf_set_int ("gtkui.move_to_trash", active);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_pref_close_send_to_tray_clicked     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
+    deadbeef->conf_set_int ("close_send_to_tray", active);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_hide_tray_icon_toggled              (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (togglebutton);
+    deadbeef->conf_set_int ("gtkui.hide_tray_icon", active);
+    if (active == 1) {
+        prefwin_set_toggle_button("minimize_on_startup", 0);
+        deadbeef->conf_set_int ("gtkui.start_hidden", 0);
+    }
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_mmb_delete_playlist_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("gtkui.mmb_delete_playlist", gtk_toggle_button_get_active (togglebutton));
+}
+
+void
+on_hide_delete_from_disk_toggled       (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("gtkui.hide_remove_from_disk", active);
+}
+
+void
+on_skip_deleted_songs_toggled          (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("gtkui.skip_deleted_songs", active);
+}
+
+void
+on_titlebar_format_playing_changed     (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("gtkui.titlebar_playing_tf", gtk_entry_get_text (GTK_ENTRY (editable)));
+    gtkui_titlebar_tf_init ();
+    gtkui_set_titlebar (NULL);
+}
+
+
+void
+on_titlebar_format_stopped_changed     (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("gtkui.titlebar_stopped_tf", gtk_entry_get_text (GTK_ENTRY (editable)));
+    gtkui_titlebar_tf_init ();
+    gtkui_set_titlebar (NULL);
+}
+
+void
+on_enable_shift_jis_recoding_toggled   (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("junk.enable_shift_jis_detection", active);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_enable_cp1251_recoding_toggled      (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("junk.enable_cp1251_detection", active);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+
+void
+on_enable_cp936_recoding_toggled       (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("junk.enable_cp936_detection", active);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+
+void
+on_auto_name_playlist_from_folder_toggled
+(GtkToggleButton *togglebutton,
+ gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("gtkui.name_playlist_from_folder", active);
+}
+
+void
+on_auto_size_columns_toggled           (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("gtkui.autoresize_columns", gtk_toggle_button_get_active (togglebutton));
+}
+
+void
+on_display_seltime_toggled             (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("gtkui.statusbar_seltime", gtk_toggle_button_get_active (togglebutton));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_listview_group_spacing_value_changed
+(GtkSpinButton   *spinbutton,
+ gpointer         user_data)
+{
+    deadbeef->conf_set_int ("playlist.groups.spacing", gtk_spin_button_get_value_as_int (spinbutton));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, (uintptr_t)"playlist.groups.spacing", 0, 0);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref(plt);
+    }
+}
