@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2015 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2021 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -24,24 +24,35 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
-#include <gtk/gtk.h>
-#include <string.h>
 #include <assert.h>
-#include <stdlib.h>
 #include <gdk/gdkkeysyms.h>
+#include <gtk/gtk.h>
+#include <stdlib.h>
+#include <string.h>
 #include "../../gettext.h"
-#include "gtkui.h"
-#include "support.h"
-#include "interface.h"
 #include "callbacks.h"
-#include "drawing.h"
-#include "eq.h"
-#include "ddblistview.h"
-#include "pluginconf.h"
-#include "dspconfig.h"
-#include "wingeom.h"
-#include "hotkeys.h"
 #include "ctmapping.h"
+#include "ddblistview.h"
+#include "drawing.h"
+#include "dspconfig.h"
+#include "eq.h"
+#include "gtkui.h"
+#include "hotkeys.h"
+#include "interface.h"
+#include "pluginconf.h"
+#include "prefwin.h"
+#include "support.h"
+#include "wingeom.h"
+
+int PREFWIN_TAB_INDEX_SOUND = 0;
+int PREFWIN_TAB_INDEX_PLAYBACK = 1;
+int PREFWIN_TAB_INDEX_DSP = 2;
+int PREFWIN_TAB_INDEX_GUI = 3;
+int PREFWIN_TAB_INDEX_APPEARANCE = 4;
+int PREFWIN_TAB_INDEX_MEDIALIB = 5;
+int PREFWIN_TAB_INDEX_NETWORK = 6;
+int PREFWIN_TAB_INDEX_HOTKEYS = 7;
+int PREFWIN_TAB_INDEX_PLUGINS = 8;
 
 static GtkWidget *prefwin;
 
@@ -219,18 +230,25 @@ on_prefwin_response_cb (GtkDialog *dialog,
     pluginliststore_filtered = NULL;
 }
 
-void
-gtkui_run_preferences_dlg (void) {
-    if (prefwin) {
-#if GTK_CHECK_VERSION(2,28,0)
-        gtk_window_present_with_time (GTK_WINDOW(prefwin), (guint32)(g_get_monotonic_time() / 1000));
-#else
-        gtk_window_present_with_time (prefwin, GDK_CURRENT_TIME);
-#endif
+static void
+_init_prefwin() {
+    if (prefwin != NULL) {
         return;
     }
-    deadbeef->conf_lock ();
     GtkWidget *w = prefwin = create_prefwin ();
+
+    // hide unavailable tabs
+    if (!deadbeef->plug_get_for_id ("hotkeys")) {
+        gtk_notebook_remove_page (GTK_NOTEBOOK (lookup_widget (prefwin, "notebook")), 7);
+        PREFWIN_TAB_INDEX_HOTKEYS = -1;
+    }
+    if (!deadbeef->plug_get_for_id ("medialib")) {
+        gtk_notebook_remove_page (GTK_NOTEBOOK (lookup_widget (prefwin, "notebook")), 5);
+        PREFWIN_TAB_INDEX_MEDIALIB = -1;
+    }
+
+    deadbeef->conf_lock ();
+
     gtk_window_set_transient_for (GTK_WINDOW (w), GTK_WINDOW (mainwin));
 
     GtkComboBox *combobox = NULL;
@@ -251,12 +269,12 @@ gtkui_run_preferences_dlg (void) {
     preferences_fill_soundcards ();
 
     g_signal_connect ((gpointer) combobox, "changed",
-            G_CALLBACK (on_pref_output_plugin_changed),
-            NULL);
+                      G_CALLBACK (on_pref_output_plugin_changed),
+                      NULL);
     GtkWidget *pref_soundcard = lookup_widget (prefwin, "pref_soundcard");
     g_signal_connect ((gpointer) pref_soundcard, "changed",
-            G_CALLBACK (on_pref_soundcard_changed),
-            NULL);
+                      G_CALLBACK (on_pref_soundcard_changed),
+                      NULL);
 
     // 8_to_16
     set_toggle_button("convert8to16", deadbeef->conf_get_int ("streamer.8_to_16", 1));
@@ -304,7 +322,7 @@ gtkui_run_preferences_dlg (void) {
 
     // preamp without rg
     set_scale("global_preamp", deadbeef->conf_get_int ("replaygain.preamp_without_rg", 0));
-    
+
     // dsp
     dsp_setup_init (prefwin);
 
@@ -313,7 +331,7 @@ gtkui_run_preferences_dlg (void) {
 
     // minimize_on_startup
     set_toggle_button("minimize_on_startup", deadbeef->conf_get_int ("gtkui.start_hidden", 0));
-    
+
     // close_send_to_tray
     set_toggle_button("pref_close_send_to_tray", deadbeef->conf_get_int ("close_send_to_tray", 0));
 
@@ -328,7 +346,7 @@ gtkui_run_preferences_dlg (void) {
 
     // hide_delete_from_disk
     set_toggle_button("hide_delete_from_disk", deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0));
-    
+
     // play next song when currently played is deleted
     set_toggle_button("skip_deleted_songs", deadbeef->conf_get_int ("gtkui.skip_deleted_songs", 0));
 
@@ -465,8 +483,8 @@ gtkui_run_preferences_dlg (void) {
     GtkCellRenderer *rend_toggle = gtk_cell_renderer_toggle_new ();
     GtkListStore *store = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_BOOLEAN);
     g_signal_connect ((gpointer)rend_toggle, "toggled",
-            G_CALLBACK (on_plugin_active_toggled),
-            store);
+                      G_CALLBACK (on_plugin_active_toggled),
+                      store);
     GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes ("Active", rend_toggle, "active", 0, "activatable", 2, NULL);
     GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes ("Title", rend_text, "text", 1, NULL);
     gtk_tree_view_append_column (tree, col1);
@@ -499,11 +517,11 @@ gtkui_run_preferences_dlg (void) {
             pluginpath = plugindir;
         }
         gtk_list_store_set (store, &it,
-            PLUGIN_LIST_COL_TITLE, plugins[i]->name,
-            PLUGIN_LIST_COL_IDX, i,
-            PLUGIN_LIST_COL_BUILTIN, strstr(pluginpath, plugindir) ? PANGO_WEIGHT_NORMAL : PANGO_WEIGHT_BOLD,
-            PLUGIN_LIST_COL_HASCONFIG, plugins[i]->configdialog ? 1 : 0,
-            -1);
+                            PLUGIN_LIST_COL_TITLE, plugins[i]->name,
+                            PLUGIN_LIST_COL_IDX, i,
+                            PLUGIN_LIST_COL_BUILTIN, strstr(pluginpath, plugindir) ? PANGO_WEIGHT_NORMAL : PANGO_WEIGHT_BOLD,
+                            PLUGIN_LIST_COL_HASCONFIG, plugins[i]->configdialog ? 1 : 0,
+                            -1);
     }
 #endif
     gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE(store), PLUGIN_LIST_COL_TITLE, GTK_SORT_ASCENDING);
@@ -529,15 +547,32 @@ gtkui_run_preferences_dlg (void) {
 #endif
 
     // hotkeys
-    prefwin_init_hotkeys (prefwin);
+    if (PREFWIN_TAB_INDEX_HOTKEYS != -1) {
+        prefwin_init_hotkeys (prefwin);
+    }
 
     deadbeef->conf_unlock ();
 
     g_signal_connect (GTK_DIALOG (prefwin), "response", G_CALLBACK (on_prefwin_response_cb), NULL);
 
     gtk_window_set_modal (GTK_WINDOW (prefwin), FALSE);
+}
+
+void
+prefwin_run (int tab_index) {
+    _init_prefwin();
+
     gtk_window_set_position (GTK_WINDOW (prefwin), GTK_WIN_POS_CENTER_ON_PARENT);
-    gtk_window_present (GTK_WINDOW (prefwin));
+
+    if (tab_index != -1) {
+        gtk_notebook_set_current_page(GTK_NOTEBOOK (lookup_widget (prefwin, "notebook")), tab_index);
+    }
+
+#if GTK_CHECK_VERSION(2,28,0)
+    gtk_window_present_with_time (GTK_WINDOW(prefwin), (guint32)(g_get_monotonic_time() / 1000));
+#else
+    gtk_window_present_with_time (prefwin, GDK_CURRENT_TIME);
+#endif
 }
 
 void
