@@ -38,4 +38,8 @@ extern int PREFWIN_TAB_INDEX_PLUGINS;
 void
 prefwin_run (int tab_index);
 
+void
+prefwin_fill_soundcards (void);
+
+
 #endif /* prefwin_h */
