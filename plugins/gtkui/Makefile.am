@@ -16,7 +16,8 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   trkproperties.c trkproperties.h\
 				   coverart.c coverart.h\
 				   plcommon.c plcommon.h\
-				   prefwin.c prefwin.h\\
+				   prefwin/prefwin.c prefwin/prefwin.h\
+				   prefwin/prefwinsound.c prefwin/prefwinsound.h\
 				   eq.c eq.h\
 				   actions.c actions.h\
 				   dspconfig.c dspconfig.h\
