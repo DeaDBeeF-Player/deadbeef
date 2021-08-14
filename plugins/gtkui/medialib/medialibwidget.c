@@ -13,6 +13,7 @@
 #include "../../../deadbeef.h"
 #include "../../../gettext.h"
 #include "../../medialib/medialib.h"
+#include "../prefwin/prefwin.h"
 #include "../support.h"
 #include "medialibwidget.h"
 #include "medialibmanager.h"
@@ -398,6 +399,11 @@ _treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_d
     return TRUE;
 }
 
+static void
+_configure_did_activate(GtkButton* self, gpointer user_data) {
+    prefwin_run(PREFWIN_TAB_INDEX_MEDIALIB);
+}
+
 ddb_gtkui_widget_t *
 w_medialib_viewer_create (void) {
     w_medialib_viewer_t *w = calloc (1, sizeof (w_medialib_viewer_t));
@@ -413,9 +419,17 @@ w_medialib_viewer_create (void) {
     gtk_widget_show (vbox);
     gtk_container_add (GTK_CONTAINER (w->base.widget), vbox);
 
+    GtkWidget *hbox = gtk_hbox_new(FALSE, 8);
+    gtk_widget_show (hbox);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
+
     w->selector = GTK_COMBO_BOX_TEXT(gtk_combo_box_text_new());
     gtk_widget_show (GTK_WIDGET(w->selector));
-    gtk_box_pack_start (GTK_BOX(vbox), GTK_WIDGET(w->selector), FALSE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX(hbox), GTK_WIDGET(w->selector), TRUE, TRUE, 0);
+
+    GtkWidget *configure_button = gtk_button_new_with_label(_("Configure"));
+    gtk_widget_show (configure_button);
+    gtk_box_pack_start (GTK_BOX(hbox), configure_button, FALSE, TRUE, 0);
 
     w->search_entry = GTK_ENTRY(gtk_entry_new());
 #if GTK_CHECK_VERSION(3,2,0)
@@ -456,6 +470,7 @@ w_medialib_viewer_create (void) {
     g_signal_connect((gpointer)w->search_entry, "changed", G_CALLBACK (_search_text_did_change), w);
     g_signal_connect((gpointer)w->tree, "row-activated", G_CALLBACK (_treeview_row_did_activate), w);
     g_signal_connect((gpointer)w->tree, "button_press_event", G_CALLBACK (_treeview_row_mousedown), w);
+    g_signal_connect((gpointer)configure_button, "clicked", G_CALLBACK (_configure_did_activate), w);
 
 //    g_signal_connect ((gpointer) w->tree, "drag_begin", G_CALLBACK (_drag_did_begin), w);
 //    g_signal_connect ((gpointer) w->tree, "drag_end",G_CALLBACK (_drag_did_end), w);
