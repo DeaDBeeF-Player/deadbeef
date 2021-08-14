@@ -3589,6 +3589,7 @@
 				2DE1B21D24A89E090070CD7C /* libavcodec.dylib in Copy Plugins */,
 				2DE1B21E24A89E0B0070CD7C /* libavformat.dylib in Copy Plugins */,
 				2DE1B21F24A89E0D0070CD7C /* libavutil.dylib in Copy Plugins */,
+				2DA84F7F24F5892A003507A2 /* libjansson.dylib in Copy Plugins */,
 			);
 			name = "Copy Plugins";
 			runOnlyForDeploymentPostprocessing = 0;
