@@ -1336,6 +1336,8 @@
 		2D6EC2C21A422E8200DD1C72 /* mp3_mad.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6EC2A31A42068F00DD1C72 /* mp3_mad.c */; };
 		2D6EC2C31A422E9100DD1C72 /* mp3_mad.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6EC2A41A42068F00DD1C72 /* mp3_mad.h */; };
 		2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D713FFC1A5D7D5900EFF139 /* playqueue.h */; };
+		2D715C0A26C833570022A8F0 /* prefwinsound.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C0826C833570022A8F0 /* prefwinsound.h */; };
+		2D715C0B26C833570022A8F0 /* prefwinsound.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C0926C833570022A8F0 /* prefwinsound.c */; };
 		2D71C26A1DC88E5C00247CEF /* ScriptableTableDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D71C2681DC88E5C00247CEF /* ScriptableTableDataSource.h */; };
 		2D71C26B1DC88E5C00247CEF /* ScriptableTableDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D71C2691DC88E5C00247CEF /* ScriptableTableDataSource.m */; };
 		2D71F1B624AE7A1A00E753D3 /* mp4p.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 2D71F1B124AE799B00E753D3 /* mp4p.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -5083,6 +5085,8 @@
 		2D713FFB1A5D7D5900EFF139 /* playqueue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = playqueue.c; sourceTree = "<group>"; };
 		2D713FFC1A5D7D5900EFF139 /* playqueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playqueue.h; sourceTree = "<group>"; };
 		2D715BE426C82ACC0022A8F0 /* prefwin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = prefwin.h; sourceTree = "<group>"; };
+		2D715C0826C833570022A8F0 /* prefwinsound.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = prefwinsound.h; sourceTree = "<group>"; };
+		2D715C0926C833570022A8F0 /* prefwinsound.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = prefwinsound.c; sourceTree = "<group>"; };
 		2D71C2681DC88E5C00247CEF /* ScriptableTableDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptableTableDataSource.h; sourceTree = "<group>"; };
 		2D71C2691DC88E5C00247CEF /* ScriptableTableDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScriptableTableDataSource.m; sourceTree = "<group>"; };
 		2D71F1AB24AE799B00E753D3 /* mp4p.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mp4p.xcodeproj; path = mp4p/projects/Xcode/mp4p.xcodeproj; sourceTree = "<group>"; };
@@ -9127,6 +9131,17 @@
 			path = Apple;
 			sourceTree = "<group>";
 		};
+		2D715BF826C833240022A8F0 /* prefwin */ = {
+			isa = PBXGroup;
+			children = (
+				2DE3B5A42269BB4300AFF9AE /* prefwin.c */,
+				2D715BE426C82ACC0022A8F0 /* prefwin.h */,
+				2D715C0826C833570022A8F0 /* prefwinsound.h */,
+				2D715C0926C833570022A8F0 /* prefwinsound.c */,
+			);
+			path = prefwin;
+			sourceTree = "<group>";
+		};
 		2D71F1AC24AE799B00E753D3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -10427,6 +10442,7 @@
 		2DE3B5772269BB4300AFF9AE /* gtkui */ = {
 			isa = PBXGroup;
 			children = (
+				2D715BF826C833240022A8F0 /* prefwin */,
 				2DCCCF7B26C43CE80034F4BB /* medialib */,
 				2DCB18372515F95C0054BD06 /* about.txt */,
 				2DCB18362515F9530054BD06 /* help.txt */,
@@ -10458,7 +10474,6 @@
 				2DE3B59E2269BB4300AFF9AE /* mainplaylist.h */,
 				2DE3B5A12269BB4300AFF9AE /* plcommon.c */,
 				2DE3B5A32269BB4300AFF9AE /* deadbeefapp.h */,
-				2DE3B5A42269BB4300AFF9AE /* prefwin.c */,
 				2DE3B5A72269BB4300AFF9AE /* pluginconf.c */,
 				2DE3B5AC2269BB4300AFF9AE /* callbacks.h */,
 				2DE3B5AD2269BB4300AFF9AE /* hotkeys.h */,
@@ -10507,7 +10522,6 @@
 				2DE3B6912269BB4300AFF9AE /* namedicons.c */,
 				2DE3B6952269BB4300AFF9AE /* widgets.c */,
 				2DE3B6962269BB4300AFF9AE /* support.h */,
-				2D715BE426C82ACC0022A8F0 /* prefwin.h */,
 			);
 			name = gtkui;
 			path = plugins/gtkui;
@@ -12532,6 +12546,7 @@
 				2DE3B7E02269BF3100AFF9AE /* widgets.h in Headers */,
 				2DE3B7D32269BF1700AFF9AE /* drawing.h in Headers */,
 				2DE3B7D62269BF1700AFF9AE /* deadbeefapp.h in Headers */,
+				2D715C0A26C833570022A8F0 /* prefwinsound.h in Headers */,
 				2DE3B7F82269BF3100AFF9AE /* tagwritersettings.h in Headers */,
 				2DE3B8082269BF3100AFF9AE /* wingeom.h in Headers */,
 				2DE3B8052269BF3100AFF9AE /* pluginconf.h in Headers */,
@@ -15937,6 +15952,7 @@
 				2DE3B7DF2269BF3100AFF9AE /* rg.c in Sources */,
 				2DE3B81E2269C0EA00AFF9AE /* utf8.c in Sources */,
 				2DE3B7FA2269BF3100AFF9AE /* fileman.c in Sources */,
+				2D715C0B26C833570022A8F0 /* prefwinsound.c in Sources */,
 				2DE3B7CD2269BF1700AFF9AE /* coverart.c in Sources */,
 				2DE3B7C02269BF1300AFF9AE /* eq.c in Sources */,
 				2DE3B8022269BF3100AFF9AE /* deadbeefapp.c in Sources */,
