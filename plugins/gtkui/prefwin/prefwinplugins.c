@@ -24,13 +24,13 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
+#include <assert.h>
+#include <gtk/gtk.h>
 #include "../support.h"
 #include "../interface.h"
 #include "../ctmapping.h"
 #include "../gtkui.h"
-#include <assert.h>
-#include <gtk/gtk.h>
-#include "pluginconf.h"
+#include "../pluginconf.h"
 #include "prefwin.h"
 #include "prefwinplugins.h"
 

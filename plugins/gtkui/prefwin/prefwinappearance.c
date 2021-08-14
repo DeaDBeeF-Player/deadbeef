@@ -21,9 +21,9 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "../support.h"
 #include <gtk/gtk.h>
-#include "gtkui.h"
+#include "../gtkui.h"
+#include "../support.h"
 #include "prefwin.h"
 #include "prefwinappearance.h"
 
