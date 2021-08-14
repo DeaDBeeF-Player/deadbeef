@@ -41,7 +41,9 @@
 #include "interface.h"
 #include "pluginconf.h"
 #include "prefwin.h"
+#include "prefwinappearance.h"
 #include "prefwinmisc.h"
+#include "prefwinnetwork.h"
 #include "prefwinplayback.h"
 #include "prefwinsound.h"
 #include "support.h"
@@ -163,84 +165,6 @@ on_prefwin_response_cb (GtkDialog *dialog,
 }
 
 static void
-_init_appearance_tab(void) {
-    GtkWidget *w = prefwin;
-    int override = deadbeef->conf_get_int ("gtkui.override_bar_colors", 0);
-    prefwin_set_toggle_button("override_bar_colors", override);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "bar_colors_group"), override);
-
-    // override tabstrip colors
-    override = deadbeef->conf_get_int ("gtkui.override_tabstrip_colors", 0);
-    prefwin_set_toggle_button("override_tabstrip_colors", override);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "tabstrip_colors_group"), override);
-
-    prefwin_set_toggle_button("tabstrip_playing_bold", deadbeef->conf_get_int ("gtkui.tabstrip_embolden_playing", 0));
-    prefwin_set_toggle_button("tabstrip_playing_italic", deadbeef->conf_get_int ("gtkui.tabstrip_italic_playing", 0));
-    prefwin_set_toggle_button("tabstrip_selected_bold", deadbeef->conf_get_int ("gtkui.tabstrip_embolden_selected", 0));
-    prefwin_set_toggle_button("tabstrip_selected_italic", deadbeef->conf_get_int ("gtkui.tabstrip_italic_selected", 0));
-
-    // get default gtk font
-    GtkStyle *style = gtk_widget_get_style (mainwin);
-    const char *gtk_style_font = pango_font_description_to_string (style->font_desc);
-
-    gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "tabstrip_text_font")), deadbeef->conf_get_str_fast ("gtkui.font.tabstrip_text", gtk_style_font));
-
-    // override listview colors
-    override = deadbeef->conf_get_int ("gtkui.override_listview_colors", 0);
-    prefwin_set_toggle_button("override_listview_colors", override);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "listview_colors_group"), override);
-
-    // embolden/italic listview text
-    prefwin_set_toggle_button("listview_selected_text_bold", deadbeef->conf_get_int ("gtkui.embolden_selected_tracks", 0));
-    prefwin_set_toggle_button("listview_selected_text_italic", deadbeef->conf_get_int ("gtkui.italic_selected_tracks", 0));
-    prefwin_set_toggle_button("listview_playing_text_bold", deadbeef->conf_get_int ("gtkui.embolden_current_track", 0));
-    prefwin_set_toggle_button("listview_playing_text_italic", deadbeef->conf_get_int ("gtkui.italic_current_track", 0));
-
-    gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "listview_text_font")), deadbeef->conf_get_str_fast ("gtkui.font.listview_text", gtk_style_font));
-    gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "listview_group_text_font")), deadbeef->conf_get_str_fast ("gtkui.font.listview_group_text", gtk_style_font));
-    gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "listview_column_text_font")), deadbeef->conf_get_str_fast ("gtkui.font.listview_column_text", gtk_style_font));
-
-    // colors
-    prefwin_init_theme_colors ();
-}
-
-static void
-_init_network_tab (void) {
-    GtkWidget *w = prefwin;
-    ctmapping_setup_init (prefwin);
-
-    prefwin_set_toggle_button("pref_network_enableproxy", deadbeef->conf_get_int ("network.proxy", 0));
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_network_proxyaddress")), deadbeef->conf_get_str_fast ("network.proxy.address", ""));
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_network_proxyport")), deadbeef->conf_get_str_fast ("network.proxy.port", "8080"));
-    GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_network_proxytype"));
-    const char *type = deadbeef->conf_get_str_fast ("network.proxy.type", "HTTP");
-    if (!strcasecmp (type, "HTTP")) {
-        prefwin_set_combobox (combobox, 0);
-    }
-    else if (!strcasecmp (type, "HTTP_1_0")) {
-        prefwin_set_combobox (combobox, 1);
-    }
-    else if (!strcasecmp (type, "SOCKS4")) {
-        prefwin_set_combobox (combobox, 2);
-    }
-    else if (!strcasecmp (type, "SOCKS5")) {
-        prefwin_set_combobox (combobox, 3);
-    }
-    else if (!strcasecmp (type, "SOCKS4A")) {
-        prefwin_set_combobox (combobox, 4);
-    }
-    else if (!strcasecmp (type, "SOCKS5_HOSTNAME")) {
-        prefwin_set_combobox (combobox, 5);
-    }
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "proxyuser")), deadbeef->conf_get_str_fast ("network.proxy.username", ""));
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "proxypassword")), deadbeef->conf_get_str_fast ("network.proxy.password", ""));
-
-    char ua[100];
-    deadbeef->conf_get_str ("network.http_user_agent", "deadbeef", ua, sizeof (ua));
-    prefwin_set_entry_text("useragent", ua);
-}
-
-static void
 _init_plugins_tab (void) {
     GtkWidget *w = prefwin;
     GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
@@ -319,7 +243,7 @@ _init_prefwin() {
     prefwin_init_sound_tab (prefwin);
 
     // replaygain_mode
-    prefwin_init_playback_tab(prefwin);
+    prefwin_init_playback_tab (prefwin);
 
     // dsp
     dsp_setup_init (prefwin);
@@ -328,11 +252,11 @@ _init_prefwin() {
     prefwin_init_gui_misc_tab (prefwin);
 
     // override bar colors
-    _init_appearance_tab();
+    prefwin_init_appearance_tab (prefwin);
 
     // network
-    // content-type mapping dialog
-    _init_network_tab ();
+    ctmapping_setup_init (w);
+    prefwin_init_network_tab (prefwin);
 
     // list of plugins
     _init_plugins_tab ();
