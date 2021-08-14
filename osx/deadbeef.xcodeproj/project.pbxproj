@@ -873,7 +873,6 @@
 		2D2A14F119B64F2900AD1EB7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2D3138251D08AB3400CBD871 /* artwork.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D621F831CD92C9000EB6D22 /* artwork.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */; };
-		2D3A4BBD1D6315D6002C7098 /* medialib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D3CD9372409A091005875A9 /* PinnedGroupTitleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3CD9352409A091005875A9 /* PinnedGroupTitleView.h */; };
 		2D3CD9382409A091005875A9 /* PinnedGroupTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3CD9362409A091005875A9 /* PinnedGroupTitleView.m */; };
 		2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2D3E0E1B1B39AAC20007ECC3 /* btnBrowseTemplate.pdf */; };
@@ -2842,13 +2841,6 @@
 			remoteGlobalIDString = 2D621F821CD92C9000EB6D22;
 			remoteInfo = artwork;
 		};
-		2D3A4BBB1D6315CE002C7098 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2D3A4BB31D631530002C7098;
-			remoteInfo = medialib;
-		};
 		2D4459F71C04F2C400230939 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -3555,7 +3547,6 @@
 				2DF16CB61DCB62FD007D7F05 /* supereq.dylib in Copy Plugins */,
 				2D1DC09C1DCB3A1500441A08 /* ddb_mono2stereo.dylib in Copy Plugins */,
 				2D27AEF11D9D877D00842D76 /* rg_scanner.dylib in Copy Plugins */,
-				2D3A4BBD1D6315D6002C7098 /* medialib.dylib in Copy Plugins */,
 				2D3138251D08AB3400CBD871 /* artwork.dylib in Copy Plugins */,
 				2D6530E41CE79F4E00163808 /* adplug.dylib in Copy Plugins */,
 				2D8DA07A1C97184B0044CC15 /* psf.dylib in Copy Plugins */,
@@ -13745,7 +13736,6 @@
 				2DF16CB51DCB62F4007D7F05 /* PBXTargetDependency */,
 				2D1DC09B1DCB3A1000441A08 /* PBXTargetDependency */,
 				2D27AEF01D9D876E00842D76 /* PBXTargetDependency */,
-				2D3A4BBC1D6315CE002C7098 /* PBXTargetDependency */,
 				2D3138241D08AB2700CBD871 /* PBXTargetDependency */,
 				2D6530E31CE79F2900163808 /* PBXTargetDependency */,
 				2DFD51661C9715FA00961D19 /* PBXTargetDependency */,
@@ -16398,11 +16388,6 @@
 			isa = PBXTargetDependency;
 			target = 2D621F821CD92C9000EB6D22 /* artwork */;
 			targetProxy = 2D3138231D08AB2700CBD871 /* PBXContainerItemProxy */;
-		};
-		2D3A4BBC1D6315CE002C7098 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2D3A4BB31D631530002C7098 /* medialib */;
-			targetProxy = 2D3A4BBB1D6315CE002C7098 /* PBXContainerItemProxy */;
 		};
 		2D4459F81C04F2C400230939 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
