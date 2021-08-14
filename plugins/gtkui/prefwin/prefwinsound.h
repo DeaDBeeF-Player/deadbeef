@@ -20,26 +20,11 @@
 
     3. This notice may not be removed or altered from any source distribution.
 */
-#ifndef prefwin_h
-#define prefwin_h
 
-extern int PREFWIN_TAB_INDEX_SOUND;
-extern int PREFWIN_TAB_INDEX_PLAYBACK;
-extern int PREFWIN_TAB_INDEX_DSP;
-extern int PREFWIN_TAB_INDEX_GUI;
-extern int PREFWIN_TAB_INDEX_APPEARANCE;
-extern int PREFWIN_TAB_INDEX_MEDIALIB;
-extern int PREFWIN_TAB_INDEX_NETWORK;
-extern int PREFWIN_TAB_INDEX_HOTKEYS;
-extern int PREFWIN_TAB_INDEX_PLUGINS;
-
-/// Run the Preferences window.
-/// @param tab_index The page index to activate, or -1 to keep the previous one active.
-void
-prefwin_run (int tab_index);
+#ifndef prefwinsound_h
+#define prefwinsound_h
 
 void
-prefwin_fill_soundcards (void);
+prefwin_init_sound_tab (GtkWidget *prefwin);
 
-
-#endif /* prefwin_h */
+#endif /* prefwinsound_h */

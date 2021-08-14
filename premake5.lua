@@ -807,6 +807,7 @@ project "ddb_gui_GTK2"
   files {
     "plugins/gtkui/*.c",
     "plugins/gtkui/medialib/*.c",
+    "plugins/gtkui/prefwin/*.c",
     "shared/eqpreset.c",
     "shared/pluginsettings.c",
     "shared/trkproperties_shared.c",
@@ -832,6 +833,7 @@ project "ddb_gui_GTK3"
   files {
     "plugins/gtkui/*.c",
     "plugins/gtkui/medialib/*.c",
+    "plugins/gtkui/prefwin/*.c",
     "shared/eqpreset.c",
     "shared/pluginsettings.c",
     "shared/trkproperties_shared.c",
