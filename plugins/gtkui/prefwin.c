@@ -92,7 +92,7 @@ gtk_enum_sound_callback (const char *name, const char *desc, void *userdata) {
 }
 
 void
-preferences_fill_soundcards (void) {
+prefwin_fill_soundcards (void) {
     if (!prefwin) {
         return;
     }
@@ -231,30 +231,9 @@ on_prefwin_response_cb (GtkDialog *dialog,
 }
 
 static void
-_init_prefwin() {
-    if (prefwin != NULL) {
-        return;
-    }
-    GtkWidget *w = prefwin = create_prefwin ();
-
-    // hide unavailable tabs
-    if (!deadbeef->plug_get_for_id ("hotkeys")) {
-        gtk_notebook_remove_page (GTK_NOTEBOOK (lookup_widget (prefwin, "notebook")), 7);
-        PREFWIN_TAB_INDEX_HOTKEYS = -1;
-    }
-    if (!deadbeef->plug_get_for_id ("medialib")) {
-        gtk_notebook_remove_page (GTK_NOTEBOOK (lookup_widget (prefwin, "notebook")), 5);
-        PREFWIN_TAB_INDEX_MEDIALIB = -1;
-    }
-
-    deadbeef->conf_lock ();
-
-    gtk_window_set_transient_for (GTK_WINDOW (w), GTK_WINDOW (mainwin));
-
-    GtkComboBox *combobox = NULL;
-
-    // output plugin selection
-    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_output_plugin"));
+_init_sound_tab (void) {
+    GtkWidget *w = prefwin;
+    GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_output_plugin"));
 
     const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", "alsa");
     DB_output_t **out_plugs = deadbeef->plug_get_output_list ();
@@ -266,7 +245,7 @@ _init_prefwin() {
     }
 
     // soundcard (output device) selection
-    preferences_fill_soundcards ();
+    prefwin_fill_soundcards ();
 
     g_signal_connect ((gpointer) combobox, "changed",
                       G_CALLBACK (on_pref_output_plugin_changed),
@@ -296,9 +275,12 @@ _init_prefwin() {
     gtk_entry_set_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (lookup_widget (w, "comboboxentry_sr_mult_44")))), deadbeef->conf_get_str_fast ("streamer.samplerate_mult_44", "44100"));
 
     update_samplerate_widget_sensitivity (override_sr, use_dependent_samplerate);
+}
 
-    // replaygain_mode
-    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_source_mode"));
+static void
+_init_playback_tab (void) {
+    GtkWidget *w = prefwin;
+    GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_source_mode"));
     set_combobox (combobox, deadbeef->conf_get_int ("replaygain.source_mode", 0));
 
     // replaygain_processing
@@ -323,13 +305,28 @@ _init_prefwin() {
     // preamp without rg
     set_scale("global_preamp", deadbeef->conf_get_int ("replaygain.preamp_without_rg", 0));
 
-    // dsp
-    dsp_setup_init (prefwin);
+    // cli playlist
+    int active = deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1);
+    set_toggle_button("cli_add_to_playlist", active);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "cli_playlist_name"), active);
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (prefwin, "cli_playlist_name")), deadbeef->conf_get_str_fast ("cli_add_playlist_name", "Default"));
 
-    // content-type mapping dialog
-    ctmapping_setup_init (prefwin);
+    // resume last session
+    set_toggle_button("resume_last_session", deadbeef->conf_get_int ("resume_last_session", 1));
 
-    // minimize_on_startup
+    // add from archives
+    set_toggle_button("ignore_archives", deadbeef->conf_get_int ("ignore_archives", 1));
+
+    // reset autostop
+    set_toggle_button("reset_autostop", deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0));
+
+    // reset album autostop
+    set_toggle_button("reset_autostopalbum", deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0));
+}
+
+static void
+_init_gui_misc_tab (void) {
+    GtkWidget *w = prefwin;
     set_toggle_button("minimize_on_startup", deadbeef->conf_get_int ("gtkui.start_hidden", 0));
 
     // close_send_to_tray
@@ -357,30 +354,12 @@ _init_prefwin() {
     int val = deadbeef->conf_get_int ("gtkui.refresh_rate", 10);
     set_scale("gui_fps", val);
 
-    // add from archives
-    set_toggle_button("ignore_archives", deadbeef->conf_get_int ("ignore_archives", 1));
-
-    // reset autostop
-    set_toggle_button("reset_autostop", deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0));
-
-    // reset album autostop
-    set_toggle_button("reset_autostopalbum", deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0));
-
     // titlebar text
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_playing")), deadbeef->conf_get_str_fast ("gtkui.titlebar_playing_tf", gtkui_default_titlebar_playing));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_stopped")), deadbeef->conf_get_str_fast ("gtkui.titlebar_stopped_tf", gtkui_default_titlebar_stopped));
 
-    // cli playlist
-    int active = deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1);
-    set_toggle_button("cli_add_to_playlist", active);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "cli_playlist_name"), active);
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (prefwin, "cli_playlist_name")), deadbeef->conf_get_str_fast ("cli_add_playlist_name", "Default"));
-
     // statusbar selection playback time
     set_toggle_button ("display_seltime", deadbeef->conf_get_int ("gtkui.statusbar_seltime", 0));
-
-    // resume last session
-    set_toggle_button("resume_last_session", deadbeef->conf_get_int ("resume_last_session", 1));
 
     // enable shift-jis recoding
     set_toggle_button("enable_shift_jis_recoding", deadbeef->conf_get_int ("junk.enable_shift_jis_detection", 0));
@@ -397,7 +376,7 @@ _init_prefwin() {
     gtk_spin_button_set_value(GTK_SPIN_BUTTON (lookup_widget (w, "listview_group_spacing")), deadbeef->conf_get_int ("playlist.groups.spacing", 0));
 
     // fill gui plugin list
-    combobox = GTK_COMBO_BOX (lookup_widget (w, "gui_plugin"));
+    GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (w, "gui_plugin"));
     const char **names = deadbeef->plug_get_gui_names ();
     for (int i = 0; names[i]; i++) {
         gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), names[i]);
@@ -405,8 +384,11 @@ _init_prefwin() {
             set_combobox (combobox, i);
         }
     }
+}
 
-    // override bar colors
+static void
+_init_appearance_tab(void) {
+    GtkWidget *w = prefwin;
     int override = deadbeef->conf_get_int ("gtkui.override_bar_colors", 0);
     set_toggle_button("override_bar_colors", override);
     gtk_widget_set_sensitive (lookup_widget (prefwin, "bar_colors_group"), override);
@@ -444,12 +426,17 @@ _init_prefwin() {
 
     // colors
     prefwin_init_theme_colors ();
+}
 
-    // network
+static void
+_init_network_tab (void) {
+    GtkWidget *w = prefwin;
+    ctmapping_setup_init (prefwin);
+
     set_toggle_button("pref_network_enableproxy", deadbeef->conf_get_int ("network.proxy", 0));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_network_proxyaddress")), deadbeef->conf_get_str_fast ("network.proxy.address", ""));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_network_proxyport")), deadbeef->conf_get_str_fast ("network.proxy.port", "8080"));
-    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_network_proxytype"));
+    GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_network_proxytype"));
     const char *type = deadbeef->conf_get_str_fast ("network.proxy.type", "HTTP");
     if (!strcasecmp (type, "HTTP")) {
         set_combobox (combobox, 0);
@@ -475,28 +462,13 @@ _init_prefwin() {
     char ua[100];
     deadbeef->conf_get_str ("network.http_user_agent", "deadbeef", ua, sizeof (ua));
     set_entry_text("useragent", ua);
+}
 
-    // list of plugins
+static void
+_init_plugins_tab (void) {
+    GtkWidget *w = prefwin;
     GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
     GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
-#if 0
-    GtkCellRenderer *rend_toggle = gtk_cell_renderer_toggle_new ();
-    GtkListStore *store = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_BOOLEAN);
-    g_signal_connect ((gpointer)rend_toggle, "toggled",
-                      G_CALLBACK (on_plugin_active_toggled),
-                      store);
-    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes ("Active", rend_toggle, "active", 0, "activatable", 2, NULL);
-    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes ("Title", rend_text, "text", 1, NULL);
-    gtk_tree_view_append_column (tree, col1);
-    gtk_tree_view_append_column (tree, col2);
-    DB_plugin_t **plugins = deadbeef->plug_get_list ();
-    int i;
-    for (i = 0; plugins[i]; i++) {
-        GtkTreeIter it;
-        gtk_list_store_append (store, &it);
-        gtk_list_store_set (store, &it, 0, plugins[i]->inactive ? FALSE : TRUE, 1, plugins[i]->name, 2, plugins[i]->nostop ? FALSE : TRUE, -1);
-    }
-#else
     // Order is: title, index, builtin, hasconfig
     GtkListStore *store = gtk_list_store_new (4, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_BOOLEAN);
     pluginliststore = store;
@@ -523,7 +495,6 @@ _init_prefwin() {
                             PLUGIN_LIST_COL_HASCONFIG, plugins[i]->configdialog ? 1 : 0,
                             -1);
     }
-#endif
     gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE(store), PLUGIN_LIST_COL_TITLE, GTK_SORT_ASCENDING);
 
     // Create a filtered model, then we switch between the two models to show/hide configurable plugins
@@ -545,6 +516,50 @@ _init_prefwin() {
     GtkButtonBox *bbox = GTK_BUTTON_BOX (lookup_widget (w, "plugin_tabbtn_hbtnbox"));
     gtk_button_box_set_layout (bbox, GTK_BUTTONBOX_EXPAND);
 #endif
+}
+
+static void
+_init_prefwin() {
+    if (prefwin != NULL) {
+        return;
+    }
+    GtkWidget *w = prefwin = create_prefwin ();
+
+    // hide unavailable tabs
+    if (!deadbeef->plug_get_for_id ("hotkeys")) {
+        gtk_notebook_remove_page (GTK_NOTEBOOK (lookup_widget (prefwin, "notebook")), 7);
+        PREFWIN_TAB_INDEX_HOTKEYS = -1;
+    }
+    if (!deadbeef->plug_get_for_id ("medialib")) {
+        gtk_notebook_remove_page (GTK_NOTEBOOK (lookup_widget (prefwin, "notebook")), 5);
+        PREFWIN_TAB_INDEX_MEDIALIB = -1;
+    }
+
+    gtk_window_set_transient_for (GTK_WINDOW (w), GTK_WINDOW (mainwin));
+
+    deadbeef->conf_lock ();
+
+    // output plugin selection
+    _init_sound_tab();
+
+    // replaygain_mode
+    _init_playback_tab();
+
+    // dsp
+    dsp_setup_init (prefwin);
+
+    // minimize_on_startup
+    _init_gui_misc_tab ();
+
+    // override bar colors
+    _init_appearance_tab();
+
+    // network
+    // content-type mapping dialog
+    _init_network_tab ();
+
+    // list of plugins
+    _init_plugins_tab ();
 
     // hotkeys
     if (PREFWIN_TAB_INDEX_HOTKEYS != -1) {
@@ -556,13 +571,12 @@ _init_prefwin() {
     g_signal_connect (GTK_DIALOG (prefwin), "response", G_CALLBACK (on_prefwin_response_cb), NULL);
 
     gtk_window_set_modal (GTK_WINDOW (prefwin), FALSE);
+    gtk_window_set_position (GTK_WINDOW (prefwin), GTK_WIN_POS_CENTER_ON_PARENT);
 }
 
 void
 prefwin_run (int tab_index) {
     _init_prefwin();
-
-    gtk_window_set_position (GTK_WINDOW (prefwin), GTK_WIN_POS_CENTER_ON_PARENT);
 
     if (tab_index != -1) {
         gtk_notebook_set_current_page(GTK_NOTEBOOK (lookup_widget (prefwin, "notebook")), tab_index);

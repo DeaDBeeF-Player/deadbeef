@@ -22,54 +22,52 @@
 */
 
 
-#include "../../deadbeef.h"
-#include <gtk/gtk.h>
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
 #endif
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-#include <sys/time.h>
-#include <unistd.h>
-#include <sys/stat.h>
 #ifdef __linux__
 #include <sys/prctl.h>
 #endif
+#include <gtk/gtk.h>
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <unistd.h>
+#include "../../deadbeef.h"
 #include "../../gettext.h"
-#include "gtkui.h"
-#include "search.h"
-#include "progress.h"
-#include "interface.h"
-#include "callbacks.h"
-#include "support.h"
-#include "../libparser/parser.h"
-#include "drawing.h"
-#include "trkproperties.h"
-#include "coverart.h"
-#include "plcommon.h"
-#include "ddbtabstrip.h"
-#include "eq.h"
-#include "actions.h"
-#include "pluginconf.h"
-#include "gtkui_api.h"
-#include "wingeom.h"
-#include "widgets.h"
-#include "actionhandlers.h"
-#include "clipboard.h"
-#include "hotkeys.h"
 #include "../hotkeys/hotkeys.h"
-#include "rg.h"
-#include "medialib/medialibwidget.h"
+#include "../libparser/parser.h"
+#include "actionhandlers.h"
+#include "actions.h"
+#include "callbacks.h"
+#include "clipboard.h"
+#include "coverart.h"
+#include "ddbtabstrip.h"
+#include "drawing.h"
+#include "eq.h"
+#include "gtkui.h"
+#include "gtkui_api.h"
+#include "hotkeys.h"
+#include "interface.h"
 #include "medialib/medialibmanager.h"
-
+#include "medialib/medialibwidget.h"
+#include "plcommon.h"
+#include "pluginconf.h"
+#include "prefwin.h"
+#include "progress.h"
+#include "rg.h"
+#include "search.h"
+#include "support.h"
+#include "trkproperties.h"
+#include "widgets.h"
+#include "wingeom.h"
 
 #define USE_GTK_APPLICATION 1
 
-#if GTK_CHECK_VERSION(3,10,0)
-#if USE_GTK_APPLICATION
+#if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
 #include "deadbeefapp.h"
-#endif
 #endif
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -681,7 +679,7 @@ gtkui_on_configchanged (void *data) {
 
 static gboolean
 outputchanged_cb (gpointer nothing) {
-    preferences_fill_soundcards ();
+    prefwin_fill_soundcards ();
     return FALSE;
 }
 
