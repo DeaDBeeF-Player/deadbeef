@@ -46,6 +46,7 @@ static GtkWidget *prefwin;
 static GtkListStore *pluginliststore;
 static GtkTreeModelFilter *pluginliststore_filtered;
 static GtkMenu *pluginlistmenu;
+static GtkWidget *copyright_window;
 
 void
 on_only_show_plugins_with_configuration1_activate
@@ -319,6 +320,50 @@ prefwin_init_plugins_tab (GtkWidget *_prefwin) {
 void
 prefwin_free_plugins (void) {
     prefwin = NULL;
+    copyright_window = NULL;
     pluginliststore = NULL;
     pluginliststore_filtered = NULL;
 }
+
+static void
+show_copyright_window (const char *text, const char *title, GtkWidget **pwindow) {
+    if (*pwindow) {
+        return;
+    }
+    GtkWidget *widget = *pwindow = create_helpwindow ();
+    g_object_set_data (G_OBJECT (widget), "pointer", pwindow);
+    g_signal_connect (widget, "delete_event", G_CALLBACK (on_gtkui_info_window_delete), pwindow);
+    gtk_window_set_title (GTK_WINDOW (widget), title);
+    gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (prefwin));
+    GtkWidget *txt = lookup_widget (widget, "helptext");
+    GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
+
+    gtk_text_buffer_set_text (buffer, text, (gint)strlen(text));
+    gtk_text_view_set_buffer (GTK_TEXT_VIEW (txt), buffer);
+    g_object_unref (buffer);
+    gtk_widget_show (widget);
+}
+
+void
+on_plug_copyright_clicked              (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkTreeView *treeview = GTK_TREE_VIEW(lookup_widget (prefwin, "pref_pluginlist"));
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (treeview, &path, &col);
+    if (!path || !col) {
+        // reset
+        return;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    DB_plugin_t **plugins = deadbeef->plug_get_list ();
+    DB_plugin_t *p = plugins[*indices];
+    g_free (indices);
+    assert (p);
+
+    if (p->copyright) {
+        show_copyright_window (p->copyright, "Copyright", &copyright_window);
+    }
+}
+
