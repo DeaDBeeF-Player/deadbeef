@@ -602,7 +602,7 @@ action_rg_scan_per_file_handler (struct DB_plugin_action_s *action, int ctx) {
 }
 
 int
-action_rg_scan_selection_as_albums_handler (struct DB_plugin_action_s *action, int ctx) {
+action_rg_scan_selection_as_albums_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     int count;
     DB_playItem_t **tracks = _get_action_track_list (action, ctx, &count, 0);
 
@@ -621,7 +621,7 @@ action_rg_scan_selection_as_albums_handler (struct DB_plugin_action_s *action, i
 }
 
 int
-action_rg_scan_selection_as_album_handler (struct DB_plugin_action_s *action, int ctx) {
+action_rg_scan_selection_as_album_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     int count;
     DB_playItem_t **tracks = _get_action_track_list (action, ctx, &count, 0);
 
@@ -663,7 +663,7 @@ _remove_rg_tags (void *ctx) {
 }
 
 int
-action_rg_remove_info_handler (struct DB_plugin_action_s *action, int ctx) {
+action_rg_remove_info_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     if (!_init_plugin ()) {
         return -1;
     }
@@ -699,7 +699,7 @@ action_rg_remove_info_handler (struct DB_plugin_action_s *action, int ctx) {
 }
 
 int
-action_scan_all_tracks_without_rg_handler (struct DB_plugin_action_s *action, int ctx) {
+action_scan_all_tracks_without_rg_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     int count = 0;
     DB_playItem_t **tracks = NULL;
 
