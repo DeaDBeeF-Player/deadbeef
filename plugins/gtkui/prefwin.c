@@ -119,39 +119,24 @@ preferences_fill_soundcards (void) {
 void
 prefwin_init_theme_colors (void) {
     GdkColor clr;
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "bar_background")), (gtkui_get_bar_background_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "bar_foreground")), (gtkui_get_bar_foreground_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_dark")), (gtkui_get_tabstrip_dark_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_mid")), (gtkui_get_tabstrip_mid_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_light")), (gtkui_get_tabstrip_light_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_base")), (gtkui_get_tabstrip_base_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_text")), (gtkui_get_tabstrip_text_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_playing_text")), (gtkui_get_tabstrip_playing_text_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_selected_text")), (gtkui_get_tabstrip_selected_text_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_even_row")), (gtkui_get_listview_even_row_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_odd_row")), (gtkui_get_listview_odd_row_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_selected_row")), (gtkui_get_listview_selection_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_text")), (gtkui_get_listview_text_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_selected_text")), (gtkui_get_listview_selected_text_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_playing_text")), (gtkui_get_listview_playing_text_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_group_text")), (gtkui_get_listview_group_text_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_column_text")), (gtkui_get_listview_column_text_color (&clr), &clr));
-    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_cursor")), (gtkui_get_listview_cursor_color (&clr), &clr));
-}
-
-static void
-unescape_forward_slash (const char *src, char *dst, int size) {
-    char *start = dst;
-    while (*src) {
-        if (dst - start >= size - 1) {
-            break;
-        }
-        if (*src == '\\' && *(src+1) == '/') {
-            src++;
-        }
-        *dst++ = *src++;
-    }
-    *dst = 0;
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "bar_background")), ((void)(gtkui_get_bar_background_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "bar_foreground")), ((void)(gtkui_get_bar_foreground_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_dark")), ((void)(gtkui_get_tabstrip_dark_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_mid")), ((void)(gtkui_get_tabstrip_mid_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_light")), ((void)(gtkui_get_tabstrip_light_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_base")), ((void)(gtkui_get_tabstrip_base_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_text")), ((void)(gtkui_get_tabstrip_text_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_playing_text")), ((void)(gtkui_get_tabstrip_playing_text_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_selected_text")), ((void)(gtkui_get_tabstrip_selected_text_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_even_row")), ((void)(gtkui_get_listview_even_row_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_odd_row")), ((void)(gtkui_get_listview_odd_row_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_selected_row")), ((void)(gtkui_get_listview_selection_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_text")), ((void)(gtkui_get_listview_text_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_selected_text")), ((void)(gtkui_get_listview_selected_text_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_playing_text")), ((void)(gtkui_get_listview_playing_text_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_group_text")), ((void)(gtkui_get_listview_group_text_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_column_text")), ((void)(gtkui_get_listview_column_text_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_cursor")), ((void)(gtkui_get_listview_cursor_color (&clr)), &clr));
 }
 
 static void
@@ -238,7 +223,7 @@ void
 gtkui_run_preferences_dlg (void) {
     if (prefwin) {
 #if GTK_CHECK_VERSION(2,28,0)
-        gtk_window_present_with_time (prefwin, g_get_monotonic_time() / 1000);
+        gtk_window_present_with_time (GTK_WINDOW(prefwin), (guint32)(g_get_monotonic_time() / 1000));
 #else
         gtk_window_present_with_time (prefwin, GDK_CURRENT_TIME);
 #endif
@@ -521,15 +506,15 @@ gtkui_run_preferences_dlg (void) {
             -1);
     }
 #endif
-    gtk_tree_sortable_set_sort_column_id (store, PLUGIN_LIST_COL_TITLE, GTK_SORT_ASCENDING);
+    gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE(store), PLUGIN_LIST_COL_TITLE, GTK_SORT_ASCENDING);
 
     // Create a filtered model, then we switch between the two models to show/hide configurable plugins
-    pluginliststore_filtered = gtk_tree_model_filter_new (GTK_TREE_MODEL (store), NULL);
+    pluginliststore_filtered = GTK_TREE_MODEL_FILTER(gtk_tree_model_filter_new (GTK_TREE_MODEL(store), NULL));
     gtk_tree_model_filter_set_visible_column (pluginliststore_filtered, PLUGIN_LIST_COL_HASCONFIG);
 
     gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
 
-    pluginlistmenu = create_plugin_list_popup_menu ();
+    pluginlistmenu = GTK_MENU(create_plugin_list_popup_menu ());
     gtk_menu_attach_to_widget (GTK_MENU (pluginlistmenu), GTK_WIDGET (tree), NULL);
 
     // We do this here so one can leave the tabs visible in the Glade designer for convenience.
@@ -779,7 +764,7 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
 
         GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
 
-        gtk_text_buffer_set_text (buffer, p->descr, strlen(p->descr));
+        gtk_text_buffer_set_text (buffer, p->descr, (gint)strlen(p->descr));
         gtk_text_view_set_buffer (GTK_TEXT_VIEW (tv), buffer);
         g_object_unref (buffer);
     }
@@ -798,7 +783,7 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
     if (p->copyright) {
         GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
 
-        gtk_text_buffer_set_text (buffer, p->copyright, strlen(p->copyright));
+        gtk_text_buffer_set_text (buffer, p->copyright, (gint)strlen(p->copyright));
         gtk_text_view_set_buffer (GTK_TEXT_VIEW (lictv), buffer);
         g_object_unref (buffer);
     }
@@ -827,7 +812,7 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
         };
         GtkWidget *box = gtk_vbox_new(FALSE, 0);
         gtk_widget_show (box);
-        if (user_data == 1) {
+        if (user_data == (void *)1) {
             apply_conf (box, &conf, 1);
         }
         make_dialog_conf.containerbox = box;
@@ -846,7 +831,7 @@ on_plugin_conf_reset_btn_clicked       (GtkButton       *button,
 {
     GtkWidget *w = prefwin;
     GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
-    on_pref_pluginlist_cursor_changed(treeview, 1);
+    on_pref_pluginlist_cursor_changed(treeview, (void *)1);
 }
 
 void
@@ -1381,7 +1366,7 @@ show_copyright_window (const char *text, const char *title, GtkWidget **pwindow)
     GtkWidget *txt = lookup_widget (widget, "helptext");
     GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
 
-    gtk_text_buffer_set_text (buffer, text, strlen(text));
+    gtk_text_buffer_set_text (buffer, text, (gint)strlen(text));
     gtk_text_view_set_buffer (GTK_TEXT_VIEW (txt), buffer);
     g_object_unref (buffer);
     gtk_widget_show (widget);
