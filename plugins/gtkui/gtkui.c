@@ -1234,20 +1234,18 @@ logwindow_addtext_cb (gpointer data) {
     addtext_struct_t *addtext = (addtext_struct_t *)data;
 
     GtkWidget *textview=lookup_widget(logwindow, "logwindow_textview");
-    GtkWidget *scrolledwindow14=lookup_widget(logwindow, "scrolledwindow14");
     GtkTextBuffer *buffer;
     GtkTextIter iter;
     size_t len;
     len = strlen(addtext->str);
     buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (textview));
     gtk_text_buffer_get_end_iter(buffer, &iter);
-    gtk_text_buffer_insert( buffer, &iter, addtext->str, len );
+    gtk_text_buffer_insert (buffer, &iter, addtext->str, (gint)len);
     // Make sure it ends on a newline
     if (addtext->str[len-1] != '\n') {
         gtk_text_buffer_get_end_iter(buffer, &iter);
         gtk_text_buffer_insert(buffer, &iter, "\n", 1);
     }
-    GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment ( GTK_SCROLLED_WINDOW (scrolledwindow14));
     if (logwindow_scroll_bottomed) {
         gtk_text_buffer_get_end_iter(buffer, &iter);
         GtkTextMark *mark = gtk_text_buffer_create_mark (buffer, NULL, &iter, FALSE);
@@ -1542,17 +1540,17 @@ gtkui_show_info_window (const char *fname, const char *title, GtkWidget **pwindo
         if (fread (buf, 1, s, fp) != s) {
             fprintf (stderr, "error reading help file contents\n");
             const char *error = _("Failed while reading help file");
-            gtk_text_buffer_set_text (buffer, error, strlen (error));
+            gtk_text_buffer_set_text (buffer, error, (int)strlen (error));
         }
         else {
             buf[s] = 0;
-            gtk_text_buffer_set_text (buffer, buf, s);
+            gtk_text_buffer_set_text (buffer, buf, (gint)s);
         }
         fclose (fp);
     }
     else {
         const char *error = _("Failed to load help file");
-        gtk_text_buffer_set_text (buffer, error, strlen (error));
+        gtk_text_buffer_set_text (buffer, error, (gint)strlen (error));
     }
     gtk_text_view_set_buffer (GTK_TEXT_VIEW (txt), buffer);
     g_object_unref (buffer);
