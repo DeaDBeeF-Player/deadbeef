@@ -1342,6 +1342,10 @@
 		2D715C0F26C835E90022A8F0 /* prefwinplayback.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C0D26C835E90022A8F0 /* prefwinplayback.c */; };
 		2D715C1226C836FE0022A8F0 /* prefwinmisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C1026C836FE0022A8F0 /* prefwinmisc.h */; };
 		2D715C1326C836FE0022A8F0 /* prefwinmisc.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1126C836FE0022A8F0 /* prefwinmisc.c */; };
+		2D715C1626C837A80022A8F0 /* prefwinappearance.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C1426C837A80022A8F0 /* prefwinappearance.h */; };
+		2D715C1726C837A80022A8F0 /* prefwinappearance.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1526C837A80022A8F0 /* prefwinappearance.c */; };
+		2D715C1A26C839020022A8F0 /* prefwinnetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C1826C839020022A8F0 /* prefwinnetwork.h */; };
+		2D715C1B26C839020022A8F0 /* prefwinnetwork.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1926C839020022A8F0 /* prefwinnetwork.c */; };
 		2D71C26A1DC88E5C00247CEF /* ScriptableTableDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D71C2681DC88E5C00247CEF /* ScriptableTableDataSource.h */; };
 		2D71C26B1DC88E5C00247CEF /* ScriptableTableDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D71C2691DC88E5C00247CEF /* ScriptableTableDataSource.m */; };
 		2D71F1B624AE7A1A00E753D3 /* mp4p.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 2D71F1B124AE799B00E753D3 /* mp4p.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -5095,6 +5099,10 @@
 		2D715C0D26C835E90022A8F0 /* prefwinplayback.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = prefwinplayback.c; sourceTree = "<group>"; };
 		2D715C1026C836FE0022A8F0 /* prefwinmisc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = prefwinmisc.h; sourceTree = "<group>"; };
 		2D715C1126C836FE0022A8F0 /* prefwinmisc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = prefwinmisc.c; sourceTree = "<group>"; };
+		2D715C1426C837A80022A8F0 /* prefwinappearance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = prefwinappearance.h; sourceTree = "<group>"; };
+		2D715C1526C837A80022A8F0 /* prefwinappearance.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = prefwinappearance.c; sourceTree = "<group>"; };
+		2D715C1826C839020022A8F0 /* prefwinnetwork.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = prefwinnetwork.h; sourceTree = "<group>"; };
+		2D715C1926C839020022A8F0 /* prefwinnetwork.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = prefwinnetwork.c; sourceTree = "<group>"; };
 		2D71C2681DC88E5C00247CEF /* ScriptableTableDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptableTableDataSource.h; sourceTree = "<group>"; };
 		2D71C2691DC88E5C00247CEF /* ScriptableTableDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScriptableTableDataSource.m; sourceTree = "<group>"; };
 		2D71F1AB24AE799B00E753D3 /* mp4p.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mp4p.xcodeproj; path = mp4p/projects/Xcode/mp4p.xcodeproj; sourceTree = "<group>"; };
@@ -9142,14 +9150,18 @@
 		2D715BF826C833240022A8F0 /* prefwin */ = {
 			isa = PBXGroup;
 			children = (
+				2D715C1526C837A80022A8F0 /* prefwinappearance.c */,
+				2D715C1426C837A80022A8F0 /* prefwinappearance.h */,
 				2DE3B5A42269BB4300AFF9AE /* prefwin.c */,
 				2D715BE426C82ACC0022A8F0 /* prefwin.h */,
-				2D715C0826C833570022A8F0 /* prefwinsound.h */,
-				2D715C0926C833570022A8F0 /* prefwinsound.c */,
-				2D715C0C26C835E90022A8F0 /* prefwinplayback.h */,
-				2D715C0D26C835E90022A8F0 /* prefwinplayback.c */,
-				2D715C1026C836FE0022A8F0 /* prefwinmisc.h */,
 				2D715C1126C836FE0022A8F0 /* prefwinmisc.c */,
+				2D715C1026C836FE0022A8F0 /* prefwinmisc.h */,
+				2D715C0D26C835E90022A8F0 /* prefwinplayback.c */,
+				2D715C0C26C835E90022A8F0 /* prefwinplayback.h */,
+				2D715C0926C833570022A8F0 /* prefwinsound.c */,
+				2D715C0826C833570022A8F0 /* prefwinsound.h */,
+				2D715C1826C839020022A8F0 /* prefwinnetwork.h */,
+				2D715C1926C839020022A8F0 /* prefwinnetwork.c */,
 			);
 			path = prefwin;
 			sourceTree = "<group>";
@@ -12561,6 +12573,7 @@
 				2DE3B7D62269BF1700AFF9AE /* deadbeefapp.h in Headers */,
 				2D715C0A26C833570022A8F0 /* prefwinsound.h in Headers */,
 				2DE3B7F82269BF3100AFF9AE /* tagwritersettings.h in Headers */,
+				2D715C1626C837A80022A8F0 /* prefwinappearance.h in Headers */,
 				2DE3B8082269BF3100AFF9AE /* wingeom.h in Headers */,
 				2DE3B8052269BF3100AFF9AE /* pluginconf.h in Headers */,
 				2DE3B7EE2269BF3100AFF9AE /* gtkui_api.h in Headers */,
@@ -12568,6 +12581,7 @@
 				2DE3B7C52269BF1300AFF9AE /* trkproperties.h in Headers */,
 				2DE3B7ED2269BF3100AFF9AE /* ddb_splitter.h in Headers */,
 				2DE3B7FB2269BF3100AFF9AE /* ddb_splitter_size_mode.h in Headers */,
+				2D715C1A26C839020022A8F0 /* prefwinnetwork.h in Headers */,
 				2DE3B80B2269BF3100AFF9AE /* support.h in Headers */,
 				2DE3B8172269C0A400AFF9AE /* pluginsettings.h in Headers */,
 				2DE3B7E92269BF3100AFF9AE /* ctmapping.h in Headers */,
@@ -15963,6 +15977,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D715C1726C837A80022A8F0 /* prefwinappearance.c in Sources */,
 				2DE3B7DF2269BF3100AFF9AE /* rg.c in Sources */,
 				2DE3B81E2269C0EA00AFF9AE /* utf8.c in Sources */,
 				2DE3B7FA2269BF3100AFF9AE /* fileman.c in Sources */,
@@ -16012,6 +16027,7 @@
 				2DE3B7D92269BF1700AFF9AE /* pluginconf.c in Sources */,
 				2DE3B7EA2269BF3100AFF9AE /* trkproperties.c in Sources */,
 				2DE3B7CB2269BF1300AFF9AE /* ctmapping.c in Sources */,
+				2D715C1B26C839020022A8F0 /* prefwinnetwork.c in Sources */,
 				2DA320F526557874002DD229 /* tftintutil.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
