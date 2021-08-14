@@ -263,3 +263,20 @@ prefwin_init_sound_tab (GtkWidget *_prefwin) {
 
     update_samplerate_widget_sensitivity (override_sr, use_dependent_samplerate);
 }
+
+void
+on_convert8to16_toggled                (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("streamer.8_to_16", gtk_toggle_button_get_active (togglebutton));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_convert16to24_toggled                (GtkToggleButton *togglebutton,
+                                         gpointer         user_data)
+{
+    deadbeef->conf_set_int ("streamer.16_to_24", gtk_toggle_button_get_active (togglebutton));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+

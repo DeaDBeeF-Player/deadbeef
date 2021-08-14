@@ -66,3 +66,81 @@ prefwin_init_network_tab (GtkWidget *_prefwin) {
     prefwin_set_entry_text("useragent", ua);
 }
 
+void
+on_pref_network_proxyaddress_changed   (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("network.proxy.address", gtk_entry_get_text (GTK_ENTRY (editable)));
+}
+
+
+void
+on_pref_network_enableproxy_clicked    (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("network.proxy", gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)));
+}
+
+
+void
+on_pref_network_proxyport_changed      (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("network.proxy.port", atoi (gtk_entry_get_text (GTK_ENTRY (editable))));
+}
+
+
+void
+on_pref_network_proxytype_changed      (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+
+    int active = gtk_combo_box_get_active (combobox);
+    switch (active) {
+    case 0:
+        deadbeef->conf_set_str ("network.proxy.type", "HTTP");
+        break;
+    case 1:
+        deadbeef->conf_set_str ("network.proxy.type", "HTTP_1_0");
+        break;
+    case 2:
+        deadbeef->conf_set_str ("network.proxy.type", "SOCKS4");
+        break;
+    case 3:
+        deadbeef->conf_set_str ("network.proxy.type", "SOCKS5");
+        break;
+    case 4:
+        deadbeef->conf_set_str ("network.proxy.type", "SOCKS4A");
+        break;
+    case 5:
+        deadbeef->conf_set_str ("network.proxy.type", "SOCKS5_HOSTNAME");
+        break;
+    default:
+        deadbeef->conf_set_str ("network.proxy.type", "HTTP");
+        break;
+    }
+}
+
+void
+on_proxyuser_changed                   (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("network.proxy.username", gtk_entry_get_text (GTK_ENTRY (editable)));
+}
+
+
+void
+on_proxypassword_changed               (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("network.proxy.password", gtk_entry_get_text (GTK_ENTRY (editable)));
+}
+
+void
+on_useragent_changed                   (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("network.http_user_agent", gtk_entry_get_text (GTK_ENTRY (editable)));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
