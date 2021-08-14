@@ -24,25 +24,26 @@
 #  include <config.h>
 #endif
 
+#include <gio/gio.h>
+#include <gtk/gtk.h>
 #include <stdlib.h>
 #include <string.h>
-#include <gtk/gtk.h>
+#include <sys/stat.h>
 #include <unistd.h>
-#include "../../gettext.h"
 #include "../../deadbeef.h"
+#include "../../gettext.h"
 #include "../../shared/deletefromdisk.h"
-#include "gtkui.h"
-#include "progress.h"
+#include "callbacks.h"
 #include "ddblistview.h"
+#include "gtkui.h"
+#include "gtkui_api.h"
+#include "interface.h"
+#include "prefwin.h"
+#include "progress.h"
 #include "search.h"
 #include "support.h"
-#include "wingeom.h"
-#include "interface.h"
 #include "trkproperties.h"
-#include "callbacks.h"
-#include <sys/stat.h>
-#include "gtkui_api.h"
-#include <gio/gio.h>
+#include "wingeom.h"
 
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
@@ -691,7 +692,7 @@ action_toggle_designmode_handler (DB_plugin_action_t *act, ddb_action_context_t 
 
 gboolean
 action_preferences_handler_cb (void *data) {
-    gtkui_run_preferences_dlg ();
+    prefwin_run (-1);
     return FALSE;
 }
 

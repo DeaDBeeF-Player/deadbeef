@@ -5084,6 +5084,7 @@
 		2D6EC2BF1A4218DF00DD1C72 /* synth_stereo_avx_accurate.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_avx_accurate.S; path = "../../osx/deps/mpg123-1.21.0/src/libmpg123/synth_stereo_avx_accurate.S"; sourceTree = "<group>"; };
 		2D713FFB1A5D7D5900EFF139 /* playqueue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = playqueue.c; sourceTree = "<group>"; };
 		2D713FFC1A5D7D5900EFF139 /* playqueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playqueue.h; sourceTree = "<group>"; };
+		2D715BE426C82ACC0022A8F0 /* prefwin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = prefwin.h; sourceTree = "<group>"; };
 		2D71C2681DC88E5C00247CEF /* ScriptableTableDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptableTableDataSource.h; sourceTree = "<group>"; };
 		2D71C2691DC88E5C00247CEF /* ScriptableTableDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScriptableTableDataSource.m; sourceTree = "<group>"; };
 		2D71F1AB24AE799B00E753D3 /* mp4p.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mp4p.xcodeproj; path = mp4p/projects/Xcode/mp4p.xcodeproj; sourceTree = "<group>"; };
@@ -10509,6 +10510,7 @@
 				2DE3B6912269BB4300AFF9AE /* namedicons.c */,
 				2DE3B6952269BB4300AFF9AE /* widgets.c */,
 				2DE3B6962269BB4300AFF9AE /* support.h */,
+				2D715BE426C82ACC0022A8F0 /* prefwin.h */,
 			);
 			name = gtkui;
 			path = plugins/gtkui;
