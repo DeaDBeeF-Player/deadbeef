@@ -1346,6 +1346,8 @@
 		2D715C1726C837A80022A8F0 /* prefwinappearance.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1526C837A80022A8F0 /* prefwinappearance.c */; };
 		2D715C1A26C839020022A8F0 /* prefwinnetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C1826C839020022A8F0 /* prefwinnetwork.h */; };
 		2D715C1B26C839020022A8F0 /* prefwinnetwork.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1926C839020022A8F0 /* prefwinnetwork.c */; };
+		2D715C1E26C83A010022A8F0 /* prefwinplugins.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C1C26C83A010022A8F0 /* prefwinplugins.h */; };
+		2D715C1F26C83A010022A8F0 /* prefwinplugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1D26C83A010022A8F0 /* prefwinplugins.c */; };
 		2D71C26A1DC88E5C00247CEF /* ScriptableTableDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D71C2681DC88E5C00247CEF /* ScriptableTableDataSource.h */; };
 		2D71C26B1DC88E5C00247CEF /* ScriptableTableDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D71C2691DC88E5C00247CEF /* ScriptableTableDataSource.m */; };
 		2D71F1B624AE7A1A00E753D3 /* mp4p.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 2D71F1B124AE799B00E753D3 /* mp4p.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -5103,6 +5105,8 @@
 		2D715C1526C837A80022A8F0 /* prefwinappearance.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = prefwinappearance.c; sourceTree = "<group>"; };
 		2D715C1826C839020022A8F0 /* prefwinnetwork.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = prefwinnetwork.h; sourceTree = "<group>"; };
 		2D715C1926C839020022A8F0 /* prefwinnetwork.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = prefwinnetwork.c; sourceTree = "<group>"; };
+		2D715C1C26C83A010022A8F0 /* prefwinplugins.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = prefwinplugins.h; sourceTree = "<group>"; };
+		2D715C1D26C83A010022A8F0 /* prefwinplugins.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = prefwinplugins.c; sourceTree = "<group>"; };
 		2D71C2681DC88E5C00247CEF /* ScriptableTableDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptableTableDataSource.h; sourceTree = "<group>"; };
 		2D71C2691DC88E5C00247CEF /* ScriptableTableDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScriptableTableDataSource.m; sourceTree = "<group>"; };
 		2D71F1AB24AE799B00E753D3 /* mp4p.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mp4p.xcodeproj; path = mp4p/projects/Xcode/mp4p.xcodeproj; sourceTree = "<group>"; };
@@ -9150,18 +9154,20 @@
 		2D715BF826C833240022A8F0 /* prefwin */ = {
 			isa = PBXGroup;
 			children = (
-				2D715C1526C837A80022A8F0 /* prefwinappearance.c */,
-				2D715C1426C837A80022A8F0 /* prefwinappearance.h */,
 				2DE3B5A42269BB4300AFF9AE /* prefwin.c */,
 				2D715BE426C82ACC0022A8F0 /* prefwin.h */,
+				2D715C1526C837A80022A8F0 /* prefwinappearance.c */,
+				2D715C1426C837A80022A8F0 /* prefwinappearance.h */,
 				2D715C1126C836FE0022A8F0 /* prefwinmisc.c */,
 				2D715C1026C836FE0022A8F0 /* prefwinmisc.h */,
+				2D715C1926C839020022A8F0 /* prefwinnetwork.c */,
+				2D715C1826C839020022A8F0 /* prefwinnetwork.h */,
 				2D715C0D26C835E90022A8F0 /* prefwinplayback.c */,
 				2D715C0C26C835E90022A8F0 /* prefwinplayback.h */,
+				2D715C1D26C83A010022A8F0 /* prefwinplugins.c */,
+				2D715C1C26C83A010022A8F0 /* prefwinplugins.h */,
 				2D715C0926C833570022A8F0 /* prefwinsound.c */,
 				2D715C0826C833570022A8F0 /* prefwinsound.h */,
-				2D715C1826C839020022A8F0 /* prefwinnetwork.h */,
-				2D715C1926C839020022A8F0 /* prefwinnetwork.c */,
 			);
 			path = prefwin;
 			sourceTree = "<group>";
@@ -12576,6 +12582,7 @@
 				2D715C1626C837A80022A8F0 /* prefwinappearance.h in Headers */,
 				2DE3B8082269BF3100AFF9AE /* wingeom.h in Headers */,
 				2DE3B8052269BF3100AFF9AE /* pluginconf.h in Headers */,
+				2D715C1E26C83A010022A8F0 /* prefwinplugins.h in Headers */,
 				2DE3B7EE2269BF3100AFF9AE /* gtkui_api.h in Headers */,
 				2DE3B7D12269BF1700AFF9AE /* actions.h in Headers */,
 				2DE3B7C52269BF1300AFF9AE /* trkproperties.h in Headers */,
@@ -15987,6 +15994,7 @@
 				2DE3B8022269BF3100AFF9AE /* deadbeefapp.c in Sources */,
 				2DE3B7C92269BF1300AFF9AE /* interface.c in Sources */,
 				2DE3B8092269BF3100AFF9AE /* namedicons.c in Sources */,
+				2D715C1F26C83A010022A8F0 /* prefwinplugins.c in Sources */,
 				2DEBA1CE23E20466000E4135 /* eqpreset.c in Sources */,
 				2DE3B8142269C0A400AFF9AE /* trkproperties_shared.c in Sources */,
 				2DE3B7D72269BF1700AFF9AE /* prefwin.c in Sources */,
