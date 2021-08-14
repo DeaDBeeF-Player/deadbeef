@@ -41,6 +41,7 @@
 #include "interface.h"
 #include "pluginconf.h"
 #include "prefwin.h"
+#include "prefwinplayback.h"
 #include "prefwinsound.h"
 #include "support.h"
 #include "wingeom.h"
@@ -162,52 +163,7 @@ on_prefwin_response_cb (GtkDialog *dialog,
 
 
 
-static void
-_init_playback_tab (void) {
-    GtkWidget *w = prefwin;
-    GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_source_mode"));
-    prefwin_set_combobox (combobox, deadbeef->conf_get_int ("replaygain.source_mode", 0));
 
-    // replaygain_processing
-    combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_replaygain_processing"));
-    int processing_idx = 0;
-    int processing_flags = deadbeef->conf_get_int ("replaygain.processing_flags", 0);
-    if (processing_flags == DDB_RG_PROCESSING_GAIN) {
-        processing_idx = 1;
-    }
-    else if (processing_flags == (DDB_RG_PROCESSING_GAIN|DDB_RG_PROCESSING_PREVENT_CLIPPING)) {
-        processing_idx = 2;
-    }
-    else if (processing_flags == DDB_RG_PROCESSING_PREVENT_CLIPPING) {
-        processing_idx = 3;
-    }
-
-    prefwin_set_combobox (combobox, processing_idx);
-
-    // preamp with rg
-    prefwin_set_scale("replaygain_preamp", deadbeef->conf_get_int ("replaygain.preamp_with_rg", 0));
-
-    // preamp without rg
-    prefwin_set_scale("global_preamp", deadbeef->conf_get_int ("replaygain.preamp_without_rg", 0));
-
-    // cli playlist
-    int active = deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1);
-    prefwin_set_toggle_button("cli_add_to_playlist", active);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "cli_playlist_name"), active);
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (prefwin, "cli_playlist_name")), deadbeef->conf_get_str_fast ("cli_add_playlist_name", "Default"));
-
-    // resume last session
-    prefwin_set_toggle_button("resume_last_session", deadbeef->conf_get_int ("resume_last_session", 1));
-
-    // add from archives
-    prefwin_set_toggle_button("ignore_archives", deadbeef->conf_get_int ("ignore_archives", 1));
-
-    // reset autostop
-    prefwin_set_toggle_button("reset_autostop", deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0));
-
-    // reset album autostop
-    prefwin_set_toggle_button("reset_autostopalbum", deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0));
-}
 
 static void
 _init_gui_misc_tab (void) {
@@ -428,7 +384,7 @@ _init_prefwin() {
     prefwin_init_sound_tab (prefwin);
 
     // replaygain_mode
-    _init_playback_tab();
+    prefwin_init_playback_tab(prefwin);
 
     // dsp
     dsp_setup_init (prefwin);
