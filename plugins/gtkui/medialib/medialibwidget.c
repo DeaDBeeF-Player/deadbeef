@@ -210,88 +210,6 @@ _search_text_did_change (GtkEditable *editable, gpointer user_data) {
     _reload_content (mlv);
 }
 
-static void
-_treeview_row_did_activate (GtkTreeView* self, GtkTreePath* path, GtkTreeViewColumn* column, gpointer user_data) {
-    w_medialib_viewer_t *mlv = user_data;
-
-    GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (mlv->tree));
-    GtkTreeIter iter;
-    if (!gtk_tree_model_get_iter (model, &iter, path)) {
-        return;
-    }
-
-    ddb_playItem_t *track = NULL;
-
-    if (!gtk_tree_model_iter_has_child(model, &iter)) {
-        GValue value = {0};
-        gtk_tree_model_get_value (model, &iter, COL_TRACK, &value);
-
-        track = g_value_get_pointer(&value);
-
-        g_value_unset (&value);
-    }
-
-    ddb_playlist_t *curr_plt = NULL;
-    if (deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1)) {
-        char str[200];
-        deadbeef->conf_get_str ("cli_add_playlist_name", "Default", str, sizeof (str));
-        curr_plt = deadbeef->plt_find_by_name (str);
-        if (!curr_plt) {
-            curr_plt = deadbeef->plt_append (str);
-        }
-    }
-    if (!curr_plt) {
-        return;
-    }
-
-    deadbeef->plt_set_curr (curr_plt);
-    deadbeef->plt_clear(curr_plt);
-
-
-    int count = 0;
-
-    if (track != NULL) {
-        ddb_playItem_t *it = deadbeef->pl_item_alloc();
-        deadbeef->pl_item_copy (it, track);
-        deadbeef->plt_insert_item (curr_plt, NULL, it);
-        count = 1;
-    }
-    else {
-        GtkTreeIter child;
-        if (gtk_tree_model_iter_children (model, &child, &iter)) {
-            ddb_playItem_t *prev = NULL;
-            do {
-                GValue value = {0};
-                gtk_tree_model_get_value (model, &child, COL_TRACK, &value);
-
-                ddb_playItem_t *track = g_value_get_pointer(&value);
-
-                g_value_unset (&value);
-
-                if (track) {
-                    ddb_playItem_t *it = deadbeef->pl_item_alloc();
-                    deadbeef->pl_item_copy (it, track);
-                    deadbeef->plt_insert_item (curr_plt, prev, it);
-                    if (prev != NULL) {
-                        deadbeef->pl_item_unref (prev);
-                    }
-                    prev = it;
-                    count += 1;
-                }
-            } while (gtk_tree_model_iter_next(model, &child));
-
-            if (prev != NULL) {
-                deadbeef->pl_item_unref (prev);
-            }
-            prev = NULL;
-        }
-    }
-
-    if (count > 0) {
-        deadbeef->sendmessage(DB_EV_PLAY_NUM, 0, 0, 0);
-    }
-}
-
 static int
 _collect_tracks_from_iter (GtkTreeModel *model, GtkTreeIter *iter, ddb_playItem_t **tracks, int append_position) {
     // is it a track?
@@ -343,34 +261,114 @@ _collect_selected_tracks(GtkTreeModel *model, GtkTreeSelection *selection, ddb_p
     return count;
 }
 
-gboolean
-_treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_data) {
-    if (w_get_design_mode ()) {
-        return FALSE;
+static void _append_tracks_to_playlist(ddb_playItem_t **tracks, int count, ddb_playlist_t *plt) {
+    ddb_playItem_t *prev = deadbeef->plt_get_tail_item(plt, PL_MAIN);
+    for (int i = 0; i < count; i++) {
+        ddb_playItem_t *it = deadbeef->pl_item_alloc();
+        deadbeef->pl_item_copy (it, tracks[i]);
+        deadbeef->plt_insert_item (plt, prev, it);
+        if (prev != NULL) {
+            deadbeef->pl_item_unref (prev);
+        }
+        prev = it;
     }
-
-    if (event->type != GDK_BUTTON_PRESS || event->button != 3) {
-        return FALSE;
+    if (prev != NULL) {
+        deadbeef->pl_item_unref (prev);
     }
+    prev = NULL;
+}
 
+static ddb_playlist_t *
+_get_target_playlist(void) {
+    ddb_playlist_t *plt = NULL;
+    if (deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1)) {
+        char str[200];
+        deadbeef->conf_get_str ("cli_add_playlist_name", "Default", str, sizeof (str));
+        plt = deadbeef->plt_find_by_name (str);
+        if (plt == NULL) {
+            plt = deadbeef->plt_append (str);
+        }
+    }
+    return plt;
+}
+
+static void
+_treeview_row_did_activate (GtkTreeView* self, GtkTreePath* path, GtkTreeViewColumn* column, gpointer user_data) {
     w_medialib_viewer_t *mlv = user_data;
-    GtkTreePath *path;
 
-    if (!gtk_tree_view_get_path_at_pos(mlv->tree,
-                                      event->x, event->y,
-                                      &path, NULL, NULL, NULL)) {
+    GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (mlv->tree));
+    GtkTreeIter iter;
+    if (!gtk_tree_model_get_iter (model, &iter, path)) {
+        return;
+    }
+
+    ddb_playlist_t *curr_plt = _get_target_playlist();
+    if (curr_plt == NULL) {
+        return;
+    }
+
+    deadbeef->plt_set_curr (curr_plt);
+    deadbeef->plt_clear(curr_plt);
+
+    GtkTreeSelection *selection = gtk_tree_view_get_selection(self);
+
+    // count selected tracks
+    int count = _collect_selected_tracks (model, selection, NULL, 0);
+
+    if (count > 0) {
+        // create array of tracks
+        ddb_playItem_t **tracks = NULL;
+        tracks = calloc (count, sizeof (ddb_playItem_t *));
+        _collect_selected_tracks (model, selection, tracks, 0);
+
+        _append_tracks_to_playlist(tracks, count, curr_plt);
+
+        free (tracks);
+
+        deadbeef->sendmessage(DB_EV_PLAY_NUM, 0, 0, 0);
+    }
+}
+
+static gboolean
+_select_at_position(GtkTreeView *treeview, gint x, gint y) {
+    GtkTreeSelection *selection = gtk_tree_view_get_selection(treeview);
+    GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (treeview));
+
+    GtkTreePath *path;
+    if (!gtk_tree_view_get_path_at_pos(treeview,
+                                       x, y,
+                                       &path, NULL, NULL, NULL)) {
+        gtk_tree_selection_unselect_all(selection);
         return FALSE;
     }
 
     GtkTreeIter iter;
-    GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (mlv->tree));
-    GtkTreeSelection *selection = gtk_tree_view_get_selection(mlv->tree);
     gtk_tree_model_get_iter(model, &iter, path);
     if (!gtk_tree_selection_iter_is_selected(selection, &iter)) {
         gtk_tree_selection_unselect_all(selection);
         gtk_tree_selection_select_path(selection, path);
     }
     gtk_tree_path_free(path);
+    return TRUE;
+}
+
+gboolean
+_treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_data) {
+    if (w_get_design_mode ()) {
+        return FALSE;
+    }
+
+    if (event->type != GDK_BUTTON_PRESS || (event->button != 3 && event->button != 2)) {
+        return FALSE;
+    }
+
+    w_medialib_viewer_t *mlv = user_data;
+    GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (mlv->tree));
+    GtkTreeSelection *selection = gtk_tree_view_get_selection(mlv->tree);
+
+    if (!_select_at_position (mlv->tree, event->x, event->y)) {
+        return FALSE;
+    }
 
     // count selected tracks
     int count = _collect_selected_tracks (model, selection, NULL, 0);
@@ -382,7 +380,19 @@ _treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_d
         _collect_selected_tracks (model, selection, tracks, 0);
     }
 
-    list_context_menu_with_track_list (tracks, count);
+
+    // context menu
+    if (event->button == 3) {
+        list_context_menu_with_track_list (tracks, count);
+    }
+    // append to playlist
+    else if (event->button == 2 && count > 0) {
+        ddb_playlist_t *curr_plt = _get_target_playlist();
+        if (curr_plt != NULL) {
+            deadbeef->plt_set_curr (curr_plt);
+            _append_tracks_to_playlist(tracks, count, curr_plt);
+        }
+    }
     free (tracks);
 
     return TRUE;
