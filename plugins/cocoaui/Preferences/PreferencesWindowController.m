@@ -62,6 +62,11 @@
     _toolbar.delegate = self;
     _toolbar.selectedItemIdentifier = @"Sound";
 
+
+    if (!self.mediaLibraryPreferencesViewController.isAvailable) {
+        [self.toolbar removeItemAtIndex:4];
+    }
+
     if (self.initialTabIdentifier) {
         _toolbar.selectedItemIdentifier = self.initialTabIdentifier;
         self.initialTabIdentifier = nil;
@@ -72,13 +77,7 @@
     }
 }
 
-- (void)showWindow:(id)sender {
-    [super showWindow:sender];
-}
-
-
-- (NSArray *)toolbarSelectableItemIdentifiers: (NSToolbar *)toolbar
-{
+- (NSArray *)toolbarSelectableItemIdentifiers: (NSToolbar *)toolbar {
     return [NSArray arrayWithObjects:
             @"Sound",
             @"Playback",

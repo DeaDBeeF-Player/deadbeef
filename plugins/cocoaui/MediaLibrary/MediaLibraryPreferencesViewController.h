@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MediaLibraryPreferencesViewController : NSViewController
 
+@property (nonatomic,readonly) BOOL isAvailable;
+
 @end
 
 NS_ASSUME_NONNULL_END

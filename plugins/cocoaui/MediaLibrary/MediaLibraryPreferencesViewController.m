@@ -48,10 +48,17 @@ extern DB_functions_t *deadbeef;
     [super viewDidLoad];
 
     self.medialibPlugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
+    if (self.medialibPlugin == nil) {
+        return;
+    }
 
     self.folders = [NSMutableArray new];
 
     [self initializeList];
+}
+
+- (BOOL)isAvailable {
+    return self.medialibPlugin != nil;
 }
 
 - (IBAction)addRemoveAction:(NSSegmentedControl *)sender {
