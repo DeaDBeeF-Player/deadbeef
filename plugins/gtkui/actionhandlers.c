@@ -38,7 +38,7 @@
 #include "gtkui.h"
 #include "gtkui_api.h"
 #include "interface.h"
-#include "prefwin.h"
+#include "prefwin/prefwin.h"
 #include "progress.h"
 #include "search.h"
 #include "support.h"

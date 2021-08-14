@@ -24,10 +24,10 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
-#include "../support.h"
 #include <gtk/gtk.h>
-#include "ctmapping.h"
-#include "gtkui.h"
+#include "../ctmapping.h"
+#include "../gtkui.h"
+#include "../support.h"
 #include "prefwin.h"
 #include "prefwinnetwork.h"
 

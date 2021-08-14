@@ -30,16 +30,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../../../gettext.h"
-#include "callbacks.h"
-#include "ctmapping.h"
-#include "ddblistview.h"
-#include "drawing.h"
-#include "dspconfig.h"
-#include "eq.h"
-#include "gtkui.h"
-#include "hotkeys.h"
-#include "interface.h"
-#include "pluginconf.h"
+#include "../callbacks.h"
+#include "../ctmapping.h"
+#include "../ddblistview.h"
+#include "../drawing.h"
+#include "../dspconfig.h"
+#include "../eq.h"
+#include "../gtkui.h"
+#include "../hotkeys.h"
+#include "../interface.h"
+#include "../pluginconf.h"
+#include "../support.h"
+#include "../wingeom.h"
 #include "prefwin.h"
 #include "prefwinappearance.h"
 #include "prefwinmisc.h"
@@ -47,8 +49,6 @@
 #include "prefwinplayback.h"
 #include "prefwinplugins.h"
 #include "prefwinsound.h"
-#include "support.h"
-#include "wingeom.h"
 
 int PREFWIN_TAB_INDEX_SOUND = 0;
 int PREFWIN_TAB_INDEX_PLAYBACK = 1;
