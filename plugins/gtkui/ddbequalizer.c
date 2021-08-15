@@ -839,7 +839,7 @@ static void ddb_equalizer_instance_init (DdbEqualizer * self) {
 static void ddb_equalizer_finalize (GObject* obj) {
     DdbEqualizer * self;
     self = DDB_EQUALIZER (obj);
-    self->priv->values = (g_free (self->priv->values), NULL);
+    self->priv->values = ((void)(g_free (self->priv->values)), NULL);
     _gdk_cursor_unref0 (self->priv->pointer_cursor);
     G_OBJECT_CLASS (ddb_equalizer_parent_class)->finalize (obj);
 }

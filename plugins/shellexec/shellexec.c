@@ -65,20 +65,6 @@ shellexec_load (DB_functions_t *api) {
     return DB_PLUGIN (&plugin);
 }
 
-static const char*
-trim (char* s)
-{
-    if (!s) {
-        return "";
-    }
-    char *h, *t;
-    
-    for (h = s; *h == ' ' || *h == '\t'; h++);
-    for (t = s + strlen (s)-1; *t == ' ' || *t == '\t'; t--);
-    *(t+1) = 0;
-    return h;
-}
-
 static int shx_exec_track_cmd (Shx_action_t *action, DB_playItem_t *it) {
     char cmd[_POSIX_ARG_MAX];
     if (shellexec_eval_command(action->shcommand, cmd, sizeof (cmd), it) < 0) {
@@ -197,20 +183,6 @@ shx_get_plugin_actions (DB_playItem_t *it)
         }
     }
     return (DB_plugin_action_t *)actions;
-}
-
-static char *
-shx_find_sep (char *str) {
-    while (*str && *str != ':') {
-        if (*str == '"') {
-            str++;
-            while (*str && *str !='"') {
-                str++;
-            }
-        }
-        str++;
-    }
-    return str;
 }
 
 void

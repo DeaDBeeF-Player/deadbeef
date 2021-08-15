@@ -211,8 +211,7 @@ on_tabstrip_drag_end                   (GtkWidget       *widget,
 
 gboolean
 on_tabstrip_key_press_event            (GtkWidget    *widget,
-                                        GdkEventKey  *event,
-                                        gpointer     user_data);
+                                        GdkEventKey  *event);
 static int
 get_tab_under_cursor (DdbTabStrip *ts, int x);
 
@@ -477,7 +476,7 @@ ddb_tabstrip_get_tab_width (DdbTabStrip *ts, int tab) {
     char title[1000];
     plt_get_title_wrapper (tab, title, sizeof (title));
     int h = 0;
-    draw_get_text_extents (&ts->drawctx, title, strlen (title), &width, &h);
+    draw_get_text_extents (&ts->drawctx, title, (int)strlen (title), &width, &h);
     width += text_left_padding + text_right_padding;
     if (width < min_tab_size) {
         width = min_tab_size;
@@ -644,7 +643,6 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
     tab_overlap_size = (h-4)/2;
     text_right_padding = h - 3;
 
-    const char *detail = "button";
     int tab_selected = deadbeef->plt_get_curr_idx ();
     if (tab_selected == -1) {
         return;
@@ -696,7 +694,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
         char title[1000];
         plt_get_title_wrapper (idx, title, sizeof (title));
         int h = 0;
-        draw_get_text_extents (&ts->drawctx, title, strlen (title), &widths[idx], &h);
+        draw_get_text_extents (&ts->drawctx, title, (int)strlen (title), &widths[idx], &h);
         widths[idx] += text_left_padding + text_right_padding;
         if (widths[idx] < min_tab_size) {
             widths[idx] = min_tab_size;
@@ -876,13 +874,12 @@ get_tab_under_cursor (DdbTabStrip *ts, int x) {
     int idx;
     int cnt = deadbeef->plt_get_count ();
     int fw = tabs_left_margin - hscroll;
-    int tab_selected = deadbeef->plt_get_curr_idx ();
     for (idx = 0; idx < cnt; idx++) {
         char title[1000];
         plt_get_title_wrapper (idx, title, sizeof (title));
         int w = 0;
         int h = 0;
-        draw_get_text_extents (&ts->drawctx, title, strlen (title), &w, &h);
+        draw_get_text_extents (&ts->drawctx, title, (int)strlen (title), &w, &h);
         w += text_left_padding + text_right_padding;
         if (w < min_tab_size) {
             w = min_tab_size;
@@ -1188,7 +1185,7 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
 
             int width;
             int height;
-            draw_get_text_extents (&ts->drawctx, s, strlen (s), &width, &height);
+            draw_get_text_extents (&ts->drawctx, s, (int)strlen (s), &width, &height);
             width += text_left_padding + text_right_padding;
             if (width > max_tab_size) {
                 gtk_widget_set_tooltip_text (widget, s);
@@ -1254,8 +1251,7 @@ ddb_tabstrip_refresh (DdbTabStrip *ts) {
 
 gboolean
 on_tabstrip_key_press_event            (GtkWidget    *widget,
-                                        GdkEventKey  *event,
-                                        gpointer     user_data)
+                                        GdkEventKey  *event)
 {
     switch (event->keyval) {
     case GDK_Left:

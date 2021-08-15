@@ -1,6 +1,6 @@
 /*
     Media Library plugin for DeaDBeeF Player
-    Copyright (C) 2009-2020 Alexey Yakovenko
+    Copyright (C) 2009-2021 Alexey Yakovenko
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -1414,7 +1414,7 @@ ml_folder_at_index (ddb_mediasource_source_t _source, int index, char *folder, s
 }
 
 static void
-ml_set_folders (ddb_mediasource_source_t _source, char **folders, size_t count) {
+ml_set_folders (ddb_mediasource_source_t _source, const char **folders, size_t count) {
     medialib_source_t *source = (medialib_source_t *)_source;
     __block char *dump = NULL;
 
@@ -1726,7 +1726,6 @@ static ddb_medialib_plugin_t plugin = {
     .plugin.plugin.connect = ml_connect,
     .plugin.plugin.start = ml_start,
     .plugin.plugin.stop = ml_stop,
-//    .plugin.plugin.configdialog = settings_dlg,
     .plugin.plugin.message = ml_message,
     .plugin.create_source = ml_create_source,
     .plugin.free_source = ml_free_source,

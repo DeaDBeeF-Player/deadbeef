@@ -47,7 +47,7 @@ typedef struct ddb_medialib_plugin_s {
 
     void (*folder_at_index)(ddb_mediasource_source_t source, int index, char *folder, size_t size);
 
-    void (*set_folders) (ddb_mediasource_source_t source, char **folders, size_t count);
+    void (*set_folders) (ddb_mediasource_source_t source, const char **folders, size_t count);
 
     char **(*get_folders) (ddb_mediasource_source_t source, /* out */ size_t *count);
 
