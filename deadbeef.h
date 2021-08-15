@@ -2,7 +2,7 @@
   deadbeef.h -- plugin API of the DeaDBeeF audio player
   http://deadbeef.sourceforge.net
 
-  Copyright (C) 2009-2013 Alexey Yakovenko
+  Copyright (C) 2009-2021 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -349,7 +349,7 @@ enum {
     DB_PLUGIN_VFS     = 5,
     DB_PLUGIN_PLAYLIST = 6,
     DB_PLUGIN_GUI = 7,
-#if (DDB_API_LEVEL >= 13)
+#if (DDB_API_LEVEL >= 15)
     DB_PLUGIN_MEDIASOURCE = 8,
 #endif
 };
@@ -2125,7 +2125,7 @@ typedef struct DB_playlist_s {
 // NOTE: Media source API is a work in progress, and is disabled in this version of source code.
 // This is to prevent plugin devs from releasing media source plugins, before this API is finalized.
 // Use the appropriate development branch to test media source plugins.
-#if (DDB_API_LEVEL >= 13) // FIXME: this must be changed to whatever the API level is at the medialib API freeze time
+#if (DDB_API_LEVEL >= 15)
 
 // Mediasource plugin
 // The purpose is to provide access to external media sources.
@@ -2142,10 +2142,14 @@ typedef struct ddb_medialib_item_s {
     // FIXME: add padding / size for extensibility -- this structure is inheritable.
 } ddb_medialib_item_t;
 
+/// Numbers from 0 to 999 are reserved to base interface, as declared in deadbeef.h
+/// Numbers from 1000 and up can be used by the plugins for additional events.
 typedef enum {
-    DDB_MEDIASOURCE_EVENT_CONTENT_CHANGED = 1,
-    DDB_MEDIASOURCE_EVENT_STATE_CHANGED = 2,
-    DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE = 3,
+    DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE = 0,
+    DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE = 1,
+    DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE = 2,
+    DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE = 3,
+    DDB_MEDIASOURCE_EVENT_SELECTORS_DID_CHANGE = 4,
 } ddb_mediasource_event_type_t;
 
 typedef enum {

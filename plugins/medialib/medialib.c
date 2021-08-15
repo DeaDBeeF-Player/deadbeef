@@ -619,7 +619,7 @@ _ml_load_playlist (medialib_source_t *source, const char *plpath) {
     struct timeval tm1, tm2;
 
     source->_ml_state = DDB_MEDIASOURCE_STATE_LOADING;
-    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE);
 
     ddb_playlist_t *plt = deadbeef->plt_alloc ("medialib");
 
@@ -632,7 +632,7 @@ _ml_load_playlist (medialib_source_t *source, const char *plpath) {
     fprintf (stderr, "ml playlist load time: %f seconds\n", ms / 1000.f);
 
     source->_ml_state = DDB_MEDIASOURCE_STATE_INDEXING;
-    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE);
 
     dispatch_sync(source->sync_queue, ^{
         if (source->ml_playlist) {
@@ -645,8 +645,8 @@ _ml_load_playlist (medialib_source_t *source, const char *plpath) {
     });
 
     source->_ml_state = DDB_MEDIASOURCE_STATE_IDLE;
-    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_CONTENT_CHANGED);
-    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE);
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE);
 }
 
 // Get a copy of medialib folder paths
@@ -698,7 +698,7 @@ scanner_thread (medialib_source_t *source, ml_scanner_configuration_t conf) {
     struct timeval tm1, tm2;
 
     source->_ml_state = DDB_MEDIASOURCE_STATE_SCANNING;
-    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE);
 
     gettimeofday (&tm1, NULL);
 
@@ -716,7 +716,7 @@ scanner_thread (medialib_source_t *source, ml_scanner_configuration_t conf) {
     source->ml_filter_state.plt = NULL;
 
     source->_ml_state = DDB_MEDIASOURCE_STATE_INDEXING;
-    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE);
 
     // set current time as timestamp
     time_t timestamp = time(NULL);
@@ -736,14 +736,14 @@ scanner_thread (medialib_source_t *source, ml_scanner_configuration_t conf) {
         deadbeef->plt_save (plt, NULL, NULL, plpath, NULL, NULL, NULL);
     }
 
-    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_CONTENT_CHANGED);
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE);
 
     gettimeofday (&tm2, NULL);
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
     fprintf (stderr, "scan time: %f seconds (%d tracks)\n", ms / 1000.f, deadbeef->plt_get_item_count (source->ml_playlist, PL_MAIN));
 
     source->_ml_state = DDB_MEDIASOURCE_STATE_SAVING;
-    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE);
 
     // update the current ml playlist and index transactionally
     dispatch_sync(source->sync_queue, ^{
@@ -755,7 +755,7 @@ scanner_thread (medialib_source_t *source, ml_scanner_configuration_t conf) {
     });
 
     source->_ml_state = DDB_MEDIASOURCE_STATE_IDLE;
-    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_CHANGED);
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE);
 
     free_medialib_paths (conf.medialib_paths, conf.medialib_paths_count);
     ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE);
@@ -1414,7 +1414,7 @@ ml_folder_at_index (ddb_mediasource_source_t _source, int index, char *folder, s
 }
 
 static void
-ml_set_folders (ddb_mediasource_source_t _source, const char **folders, size_t count) {
+ml_set_folders (ddb_mediasource_source_t _source, char **folders, size_t count) {
     medialib_source_t *source = (medialib_source_t *)_source;
     __block char *dump = NULL;
 
@@ -1427,6 +1427,7 @@ ml_set_folders (ddb_mediasource_source_t _source, const char **folders, size_t c
         for (int i = 0; i < count; i++) {
             json_t *value = json_string(folders[i]);
             json_array_append(source->musicpaths_json, value);
+            json_decref(value);
         }
 
         dump = json_dumps(source->musicpaths_json, JSON_COMPACT);
@@ -1439,6 +1440,80 @@ ml_set_folders (ddb_mediasource_source_t _source, const char **folders, size_t c
         free (dump);
         dump = NULL;
         deadbeef->conf_save();
+    }
+}
+
+static char **
+ml_get_folders (ddb_mediasource_source_t _source, /* out */ size_t *_count) {
+    medialib_source_t *source = (medialib_source_t *)_source;
+    __block char **folders = NULL;
+    __block size_t count = 0;
+    dispatch_sync(source->sync_queue, ^{
+        count = json_array_size(source->musicpaths_json);
+        folders = calloc (count, sizeof (char *));
+        for (int i = 0; i < count; i++) {
+            json_t *data = json_array_get (source->musicpaths_json, i);
+            if (json_is_string (data)) {
+                folders[i] = strdup (json_string_value (data));
+            }
+        }
+    });
+
+    *_count = count;
+    return folders;
+}
+
+static void
+ml_free_folders (ddb_mediasource_source_t source, char **folders, size_t count) {
+    for (int i = 0; i < count; i++) {
+        free (folders[i]);
+    }
+    free (folders);
+}
+
+static void
+ml_insert_folder_at_index (ddb_mediasource_source_t _source, const char *folder, int index) {
+    medialib_source_t *source = (medialib_source_t *)_source;
+    __block int notify = 0;
+    dispatch_sync(source->sync_queue, ^{
+        json_t *value = json_string(folder);
+        if (-1 != json_array_insert(source->musicpaths_json, index, value)) {
+            notify = 1;
+        }
+        json_decref(value);
+    });
+    if (notify) {
+        ml_notify_listeners (source, DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE);
+    }
+}
+
+static void
+ml_remove_folder_at_index (ddb_mediasource_source_t _source, int index) {
+    medialib_source_t *source = (medialib_source_t *)_source;
+    __block int notify = 0;
+    dispatch_sync(source->sync_queue, ^{
+        if (-1 != json_array_remove(source->musicpaths_json, index)) {
+            notify = 1;
+        }
+    });
+    if (notify) {
+        ml_notify_listeners (source, DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE);
+    }
+}
+
+static void
+ml_append_folder (ddb_mediasource_source_t _source, const char *folder) {
+    medialib_source_t *source = (medialib_source_t *)_source;
+    __block int notify = 0;
+    dispatch_sync(source->sync_queue, ^{
+        json_t *value = json_string(folder);
+        if (-1 != json_array_append(source->musicpaths_json, value)) {
+            notify = 1;
+        }
+        json_decref(value);
+    });
+    if (notify) {
+        ml_notify_listeners (source, DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE);
     }
 }
 
@@ -1526,13 +1601,20 @@ ml_get_name_for_selector (ddb_mediasource_source_t source, ddb_mediasource_list_
 
 static void
 ml_set_source_enabled (ddb_mediasource_source_t _source, int enabled) {
+    __block int notify = 0;
     medialib_source_t *source = (medialib_source_t *)_source;
     dispatch_sync(source->sync_queue, ^{
-        source->enabled = enabled;
-        if (!enabled) {
-            source->scanner_terminate = 1;
+        if (source->enabled != enabled) {
+            source->enabled = enabled;
+            if (!enabled) {
+                source->scanner_terminate = 1;
+            }
+            notify = 1;
         }
     });
+    if (notify) {
+        ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE);
+    }
 }
 
 static int
@@ -1656,6 +1738,11 @@ static ddb_medialib_plugin_t plugin = {
     .folder_count = ml_folder_count,
     .folder_at_index = ml_folder_at_index,
     .set_folders = ml_set_folders,
+    .get_folders = ml_get_folders,
+    .free_folders = ml_free_folders,
+    .insert_folder_at_index = ml_insert_folder_at_index,
+    .remove_folder_at_index = ml_remove_folder_at_index,
+    .append_folder = ml_append_folder,
 };
 
 DB_plugin_t *

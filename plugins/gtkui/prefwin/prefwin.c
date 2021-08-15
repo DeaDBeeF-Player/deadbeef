@@ -44,6 +44,7 @@
 #include "../wingeom.h"
 #include "prefwin.h"
 #include "prefwinappearance.h"
+#include "prefwinmedialib.h"
 #include "prefwinmisc.h"
 #include "prefwinnetwork.h"
 #include "prefwinplayback.h"
@@ -149,6 +150,7 @@ on_prefwin_response_cb (GtkDialog *dialog,
     gtk_widget_destroy (prefwin);
     deadbeef->conf_save ();
     prefwin_free_plugins ();
+    prefwin_free_medialib ();
     prefwin = NULL;
 }
 
@@ -187,6 +189,8 @@ _init_prefwin() {
 
     // override bar colors
     prefwin_init_appearance_tab (prefwin);
+
+    prefwin_init_medialib (prefwin);
 
     // network
     ctmapping_setup_init (w);

@@ -90,13 +90,6 @@ static guint set_title_timeout_id;
 
 int fileadded_listener_id;
 int fileadd_beginend_listener_id;
-// overriden API methods
-#if 0
-int (*gtkui_original_plt_add_dir) (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-int (*gtkui_original_plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-int (*gtkui_original_pl_add_files_begin) (ddb_playlist_t *plt);
-void (*gtkui_original_pl_add_files_end) (void);
-#endif
 
 // cached config variables
 int gtkui_embolden_current_track;
@@ -128,6 +121,9 @@ static char *titlebar_stopped_bc;
 
 static char *statusbar_bc;
 static char *statusbar_stopped_bc;
+
+static void
+init_widget_layout (void);
 
 void
 gtkpl_free (DdbListview *pl) {
