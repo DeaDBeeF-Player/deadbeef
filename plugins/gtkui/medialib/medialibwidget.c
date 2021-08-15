@@ -407,6 +407,39 @@ _configure_did_activate(GtkButton* self, gpointer user_data) {
     prefwin_run(PREFWIN_TAB_INDEX_MEDIALIB);
 }
 
+static void
+_drag_data_get (
+               GtkWidget* widget,
+               GdkDragContext* context,
+               GtkSelectionData* selection_data,
+               guint info,
+               guint time_
+                ) {
+    GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (GTK_TREE_VIEW(widget)));
+    GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
+
+    int count = _collect_selected_tracks(model, selection, NULL, 0);
+    if (count == 0) {
+        return;
+    }
+    ddb_playItem_t **tracks = calloc (count, sizeof (ddb_playItem_t *));
+    _collect_selected_tracks(model, selection, tracks, 0);
+
+    for (int i = 0; i < count; i++) {
+        deadbeef->pl_item_ref (tracks[i]);
+    }
+
+    GdkAtom type = gtk_selection_data_get_target (selection_data);
+    gtk_selection_data_set(selection_data,
+                           type,
+                           sizeof (void *) * 8,
+                           (const guchar *)tracks,
+                           count * sizeof (ddb_playItem_t *));
+
+    free (tracks);
+    tracks = NULL;
+}
+
 ddb_gtkui_widget_t *
 w_medialib_viewer_create (void) {
     w_medialib_viewer_t *w = calloc (1, sizeof (w_medialib_viewer_t));
@@ -449,7 +482,7 @@ w_medialib_viewer_create (void) {
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scroll), GTK_SHADOW_ETCHED_IN);
     w->tree = GTK_TREE_VIEW(gtk_tree_view_new ());
-    gtk_tree_view_set_reorderable (GTK_TREE_VIEW (w->tree), TRUE);
+    gtk_tree_view_set_reorderable (GTK_TREE_VIEW (w->tree), FALSE);
     gtk_tree_view_set_enable_search (GTK_TREE_VIEW (w->tree), TRUE);
     GtkTreeSelection *sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (w->tree));
     gtk_tree_selection_set_mode (sel, GTK_SELECTION_BROWSE);
@@ -475,9 +508,14 @@ w_medialib_viewer_create (void) {
     g_signal_connect((gpointer)w->tree, "button_press_event", G_CALLBACK (_treeview_row_mousedown), w);
     g_signal_connect((gpointer)configure_button, "clicked", G_CALLBACK (_configure_did_activate), w);
 
-//    g_signal_connect ((gpointer) w->tree, "drag_begin", G_CALLBACK (_drag_did_begin), w);
-//    g_signal_connect ((gpointer) w->tree, "drag_end",G_CALLBACK (_drag_did_end), w);
-//    g_signal_connect ((gpointer) w->tree, "drag_motion", G_CALLBACK (_drag_motion), w);
+    GtkTargetEntry entry = {
+        .target = TARGET_PLAYITEM_POINTERS,
+        .flags = GTK_TARGET_SAME_APP,
+        .info = 0
+    };
+    gtk_drag_source_set(GTK_WIDGET (w->tree), GDK_BUTTON1_MASK, &entry, 1, GDK_ACTION_COPY);
+
+    g_signal_connect ((gpointer) w->tree, "drag_data_get", G_CALLBACK (_drag_data_get), w);
 
     w_override_signals (w->base.widget, w);
 

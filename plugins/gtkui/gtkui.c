@@ -122,6 +122,10 @@ static char *titlebar_stopped_bc;
 static char *statusbar_bc;
 static char *statusbar_stopped_bc;
 
+enum {
+    INFO_TARGET_URIS
+};
+
 static void
 init_widget_layout (void);
 
@@ -1291,7 +1295,7 @@ gtkui_mainwin_drag_data_received       (GtkWidget       *widget,
 {
     gchar *ptr=(char*)gtk_selection_data_get_data (data);
     gint len = gtk_selection_data_get_length (data);
-    if (target_type == TARGET_URILIST) { // uris
+    if (target_type == INFO_TARGET_URIS) { // uris
         // this happens when dropped from file manager
         char *mem = malloc (len+1);
         memcpy (mem, ptr, len);

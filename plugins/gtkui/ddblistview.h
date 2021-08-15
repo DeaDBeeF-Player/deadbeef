@@ -31,11 +31,9 @@
 #include "../../deadbeef.h"
 
 // drag and drop targets
-#define TARGET_PLAYITEMS "DDB_PLAYITEM_LIST"
-enum {
-    TARGET_URILIST,
-    TARGET_SAMEWIDGET,
-};
+#define TARGET_PLAYLIST_AND_ITEM_INDEXES "DDB_PLAYLIST_AND_ITEM_INDEXES"
+#define TARGET_URIS "DDB_PLAYLIST_URIS"
+#define TARGET_PLAYITEM_POINTERS "DDB_PLAYITEM_POINTERLIST"
 
 G_BEGIN_DECLS
 
@@ -91,6 +89,7 @@ typedef struct {
 
     void (*drag_n_drop) (DdbListviewIter before, DdbPlaylistHandle playlist_from, uint32_t *indices, int length, int copy);
     void (*external_drag_n_drop) (DdbListviewIter before, char *mem, int length);
+    void (*tracks_copy_drag_n_drop) (DdbListviewIter before, DdbListviewIter *tracks, int count);
 
     void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int x, int y, int width, int height, int group_depth);
     void (*draw_album_art) (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int pinned, int next_y, int x, int y, int width, int height);
