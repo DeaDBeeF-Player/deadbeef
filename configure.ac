@@ -251,7 +251,7 @@ AS_IF([test "${enable_staticlink}" != "no"], [
     AC_CHECK_LIB([dispatch], [main], [HAVE_DISPATCH=yes])
 ])
 DISPATCH_CFLAGS=-fblocks
-DISPATCH_LIBS=-ldispatch
+DISPATCH_LIBS="-ldispatch -lBlocksRuntime"
 AC_SUBST(DISPATCH_CFLAGS)
 AC_SUBST(DISPATCH_LIBS)
 
