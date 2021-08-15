@@ -401,7 +401,7 @@ static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (Gtk
     store = GTK_LIST_STORE (gtk_tree_view_get_model (tv));
     _g_object_ref0 (store);
     gtk_tree_model_get_iter ((GtkTreeModel*) store, &iter, p);
-    G_IS_VALUE (&v) ? (g_value_unset (&v), NULL) : NULL;
+    G_IS_VALUE (&v) ? ((void)(g_value_unset (&v)), NULL) : NULL;
     gtk_tree_model_get_value ((GtkTreeModel*) store, &iter, 3, &v);
     mult = g_value_get_int (&v);
     _g_object_unref0 (self->priv->entry);
@@ -450,7 +450,7 @@ static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (Gtk
     gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (textview), GTK_WRAP_WORD);
     gtk_widget_show ((GtkWidget*) textview);
     result = GTK_CELL_EDITABLE (textview);
-    G_IS_VALUE (&v) ? (g_value_unset (&v), NULL) : NULL;
+    G_IS_VALUE (&v) ? ((void)(g_value_unset (&v)), NULL) : NULL;
     _g_object_unref0 (store);
     _g_object_unref0 (tv);
     _gtk_tree_path_free0 (p);

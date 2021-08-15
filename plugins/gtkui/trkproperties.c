@@ -213,8 +213,8 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
         trkproperties_modified = 1;
     }
 
-    G_IS_VALUE (&value) ? (g_value_unset (&value), NULL) : NULL;
-    G_IS_VALUE (&mult) ? (g_value_unset (&mult), NULL) : NULL;
+    G_IS_VALUE (&value) ? ((void)(g_value_unset (&value)), NULL) : NULL;
+    G_IS_VALUE (&mult) ? ((void)(g_value_unset (&mult)), NULL) : NULL;
     trkproperties_block_keyhandler = 0;
 }
 
@@ -225,7 +225,7 @@ add_field (GtkListStore *store, const char *key, const char *title, int is_prop,
     char val[5000];
     size_t ml = strlen (mult);
     memcpy (val, mult, ml+1);
-    int n = trkproperties_get_field_value (val + ml, sizeof (val) - ml, key, tracks, numtracks);
+    int n = trkproperties_get_field_value (val + ml, (int)(sizeof (val) - ml), key, tracks, numtracks);
 
     GtkTreeIter iter;
     gtk_list_store_append (store, &iter);
