@@ -105,6 +105,37 @@ main_drag_n_drop (DdbListviewIter before, DdbPlaylistHandle from_playlist, uint3
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
+void
+main_tracks_copy_drag_n_drop (DdbListviewIter before, DdbListviewIter *tracks, int count) {
+    deadbeef->pl_lock ();
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+
+    ddb_playItem_t *prev = NULL;
+    if (before != NULL) {
+        deadbeef->pl_get_prev(before, PL_MAIN);
+    }
+    else {
+        prev = deadbeef->plt_get_last (plt, PL_MAIN);
+    }
+
+    for (int i = 0; i < count; i++) {
+        ddb_playItem_t *it = deadbeef->pl_item_alloc();
+        deadbeef->pl_item_copy (it, tracks[i]);
+        deadbeef->plt_insert_item(plt, prev, it);
+        if (prev) {
+            deadbeef->pl_item_unref(prev);
+        }
+        prev = it;
+    }
+    if (prev) {
+        deadbeef->pl_item_unref(prev);
+    }
+    deadbeef->plt_unref (plt);
+    deadbeef->pl_unlock ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+}
+
+
 void main_external_drag_n_drop (DdbListviewIter before, char *mem, int length) {
     gtkui_receive_fm_drop ((DB_playItem_t *)before, mem, length);
 }
@@ -180,6 +211,7 @@ static DdbListviewBinding main_binding = {
 
     .drag_n_drop = main_drag_n_drop,
     .external_drag_n_drop = main_external_drag_n_drop,
+    .tracks_copy_drag_n_drop = main_tracks_copy_drag_n_drop,
 
     .draw_column_data = main_draw_column_data,
     .draw_album_art = pl_common_draw_album_art,

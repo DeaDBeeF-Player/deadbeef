@@ -54,7 +54,7 @@ enum {
 
 static GtkTargetEntry targets[]=
 {
-    {"DDB_URI_LIST", GTK_TARGET_SAME_WIDGET, TARGET_SAMEWIDGET},
+    {TARGET_URIS, GTK_TARGET_SAME_WIDGET, DDB_URI_LIST},
     {"text/uri-list", 0, URI_LIST},
     {"x-special/gnome-copied-files", 0, GNOME_COPIED_FILES},
 };
@@ -98,7 +98,7 @@ clipboard_get_clipboard_data (GtkClipboard *clip, GtkSelectionData *sel, guint i
     GString *uri_list = g_string_sized_new (clip_ctx->num_tracks * 256);
     guchar *buf = NULL;
     gint buf_len = 0;
-    if (info == TARGET_SAMEWIDGET) {
+    if (info == DDB_URI_LIST) {
         buf = (guchar *)clip_ctx;
         buf_len = sizeof (clipboard_data_context_t);
     }

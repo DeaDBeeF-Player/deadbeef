@@ -58,6 +58,12 @@
 //#define REF(it) {if (it) ps->binding->ref (it);}
 #define UNREF(it) {if (it) ps->binding->unref(it);}
 
+enum {
+    INFO_TARGET_URIS, // gtk uses 0 info by default
+    INFO_TARGET_PLAYLIST_ITEM_INDEXES,
+    INFO_TARGET_PLAYITEM_POINTERS,
+};
+
 extern GtkWidget *theme_treeview;
 extern GtkWidget *theme_button;
 
@@ -635,13 +641,20 @@ ddb_listview_list_realize                    (GtkWidget       *widget,
 {
     DdbListview *listview = DDB_LISTVIEW(g_object_get_data(G_OBJECT(widget), "owner"));
     if (listview->binding->drag_n_drop) {
-        GtkTargetEntry entry = {
-            .target = TARGET_PLAYITEMS,
-            .flags = GTK_TARGET_SAME_APP,
-            .info = TARGET_SAMEWIDGET
+        GtkTargetEntry entries[] = {
+            {
+                .target = TARGET_PLAYLIST_AND_ITEM_INDEXES,
+                .flags = GTK_TARGET_SAME_APP,
+                .info = INFO_TARGET_PLAYLIST_ITEM_INDEXES
+            },
+            {
+                .target = TARGET_PLAYITEM_POINTERS,
+                .flags = GTK_TARGET_SAME_APP,
+                .info = INFO_TARGET_PLAYITEM_POINTERS,
+            }
         };
         // setup drag-drop target
-        gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY | GDK_ACTION_MOVE);
+        gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, entries, 2, GDK_ACTION_COPY | GDK_ACTION_MOVE);
         gtk_drag_dest_add_uri_targets (widget);
     }
     ddb_listview_update_fonts(listview);
@@ -1287,7 +1300,7 @@ ddb_listview_list_drag_motion                (GtkWidget       *widget,
     DdbListview *pl = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     ddb_listview_list_track_dragdrop (pl, x, y);
 
-    // NOTE: we need to check whether the source supports TARGET_PLAYITEMS
+    // NOTE: we need to check whether the source supports TARGET_PLAYLIST_AND_ITEM_INDEXES
     // in order to know which GdkDragAction to use
     GList *targets = gdk_drag_context_list_targets (drag_context);
     gboolean source_is_listview = FALSE;
@@ -1295,7 +1308,7 @@ ddb_listview_list_drag_motion                (GtkWidget       *widget,
     for (int i = 0; i < cnt; i++) {
         GdkAtom a = GDK_POINTER_TO_ATOM (g_list_nth_data (targets, i));
         gchar *nm = gdk_atom_name (a);
-        if (!strcmp (nm, TARGET_PLAYITEMS)) {
+        if (!strcmp (nm, TARGET_PLAYLIST_AND_ITEM_INDEXES)) {
             source_is_listview = TRUE;
             g_free (nm);
             break;
@@ -1419,7 +1432,7 @@ ddb_listview_list_drag_data_get              (GtkWidget       *widget,
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
 
     switch (target_type) {
-    case TARGET_URILIST:
+    case INFO_TARGET_URIS:
         {
             // format as URI_LIST
             gchar **uris = ddb_listview_build_drag_uri_list (ps);
@@ -1430,7 +1443,7 @@ ddb_listview_list_drag_data_get              (GtkWidget       *widget,
             }
         }
         break;
-    case TARGET_SAMEWIDGET:
+    case INFO_TARGET_PLAYLIST_ITEM_INDEXES:
         {
             // format as "STRING" consisting of array of pointers
             int nsel = deadbeef->plt_get_sel_count (ps->drag_source_playlist);
@@ -1465,12 +1478,13 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         gint             x,
                                         gint             y,
-                                        GtkSelectionData *data,
-                                        guint            target_type,
+                                        GtkSelectionData *selection_data,
+                                        guint            info,
                                         guint            time,
                                         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
+
     ps->scroll_direction = 0; // interrupt autoscrolling, if on
     ps->scroll_active = 0;
     ps->drag_motion_y = -1;
@@ -1488,9 +1502,27 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
     if (sel != -1) {
         it = ps->binding->get_for_idx (sel);
     }
-    gchar *ptr=(char*)gtk_selection_data_get_data (data);
-    gint len = gtk_selection_data_get_length (data);
-    if (target_type == TARGET_URILIST) { // uris
+
+    GdkAtom target = gtk_selection_data_get_target (selection_data);
+
+    gchar *ptr=(char*)gtk_selection_data_get_data (selection_data);
+    gint len = gtk_selection_data_get_length (selection_data);
+    if (info == INFO_TARGET_PLAYITEM_POINTERS) {
+        ddb_listview_clear_sort (ps);
+
+        DdbListviewIter *tracks = (DdbListviewIter *)ptr;
+        int count = len / sizeof (DdbListviewIter);
+
+        if (ps->binding->tracks_copy_drag_n_drop != NULL) {
+            ps->binding->tracks_copy_drag_n_drop (it, tracks, count);
+        }
+
+        for (int i = 0; i < count; i++) {
+            ps->binding->unref (tracks[i]);
+        }
+        free (ptr);
+    }
+    else if (info == INFO_TARGET_URIS) {
         ddb_listview_clear_sort (ps);
         // this happens when dropped from file manager
         char *mem = malloc (len+1);
@@ -1502,7 +1534,8 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
             UNREF (it);
         }
     }
-    else if (target_type == TARGET_SAMEWIDGET && gtk_selection_data_get_format(data) == 32) { // list of 32bit ints, DDB_URI_LIST target
+    // list of 32bit ints, DDB_URI_LIST target
+    else if (info == INFO_TARGET_PLAYLIST_ITEM_INDEXES) {
         ddb_listview_clear_sort (ps);
         uint32_t *d= (uint32_t *)ptr;
         int plt = *d;
@@ -2272,12 +2305,12 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
             ps->dragwait = 0;
             ps->drag_source_playlist = deadbeef->plt_get_curr_idx ();
             GtkTargetEntry entry = {
-                .target = TARGET_PLAYITEMS,
+                .target = TARGET_PLAYLIST_AND_ITEM_INDEXES,
                 .flags = GTK_TARGET_SAME_WIDGET,
-                .info = TARGET_SAMEWIDGET
+                .info = INFO_TARGET_PLAYLIST_ITEM_INDEXES
             };
             GtkTargetList *lst = gtk_target_list_new (&entry, 1);
-            gtk_target_list_add_uri_targets (lst, TARGET_URILIST);
+            gtk_target_list_add_uri_targets (lst, INFO_TARGET_URIS);
             gtk_drag_begin (widget, lst, GDK_ACTION_COPY | GDK_ACTION_MOVE, 1, (GdkEvent *)ev);
         }
         else if (ps->areaselect) {
