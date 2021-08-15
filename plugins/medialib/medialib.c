@@ -1529,7 +1529,11 @@ ml_create_source (const char *source_path) {
 
     source->sync_queue = dispatch_queue_create("MediaLibSyncQueue", NULL);
     source->scanner_queue = dispatch_queue_create("MediaLibScanQueue", NULL);
-    source->enabled = 1;
+
+    char conf_name[200];
+    snprintf (conf_name, sizeof (conf_name), "%senabled", source->source_conf_prefix);
+
+    source->enabled = deadbeef->conf_get_int (conf_name, 1);
 
     return (ddb_mediasource_source_t)source;
 }
@@ -1609,6 +1613,10 @@ ml_set_source_enabled (ddb_mediasource_source_t _source, int enabled) {
             if (!enabled) {
                 source->scanner_terminate = 1;
             }
+            char conf_name[200];
+            snprintf (conf_name, sizeof (conf_name), "%senabled", source->source_conf_prefix);
+            deadbeef->conf_set_int(conf_name, enabled);
+            deadbeef->conf_save();
             notify = 1;
         }
     });
