@@ -43,6 +43,9 @@ enum {
 
 static void
 _add_items (w_medialib_viewer_t *mlv, GtkTreeIter *iter, ddb_medialib_item_t *item) {
+    if (item == NULL) {
+        return;
+    }
     GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
 
     for (ddb_medialib_item_t *child_item = item->children; child_item; child_item = child_item->next) {
@@ -85,10 +88,10 @@ _medialib_event (void *user_data) {
     if (mlv->plugin == NULL) {
         return FALSE;
     }
-//    if (event == DDB_MEDIASOURCE_EVENT_CONTENT_CHANGED || event == DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE) {
+//    if (event == DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE || event == DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE) {
 //        [self filterChanged];
 //    }
-//    else if (event == DDB_MEDIASOURCE_EVENT_STATE_CHANGED) {
+//    else if (event == DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE) {
 //        int state = self.medialibPlugin->plugin.scanner_state (self.medialibSource);
 //        if (state != DDB_MEDIASOURCE_STATE_IDLE) {
 //            //            [_scannerActiveIndicator startAnimation:self];
@@ -109,7 +112,7 @@ _medialib_event (void *user_data) {
 
 static void
 _medialib_listener(ddb_mediasource_event_type_t event, void *user_data) {
-    if (event == DDB_MEDIASOURCE_EVENT_CONTENT_CHANGED) {
+    if (event == DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE) {
         g_idle_add(_medialib_event, user_data);
     }
 }

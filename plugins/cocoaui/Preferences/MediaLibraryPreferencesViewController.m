@@ -130,7 +130,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)applyChanges {
-    const char **paths = self.folders.count ? calloc (sizeof (char *), self.folders.count) : NULL;
+    const char **paths = self.folders.count ? calloc (self.folders.count, sizeof (char *)) : NULL;
     for (NSUInteger i = 0; i < self.folders.count; i++) {
         paths[i] = self.folders[i].UTF8String;
     }

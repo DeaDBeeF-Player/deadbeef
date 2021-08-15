@@ -196,10 +196,10 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     if (self.medialibPlugin == NULL) {
         return;
     }
-    if (event == DDB_MEDIASOURCE_EVENT_CONTENT_CHANGED || event == DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE) {
+    if (event == DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE || event == DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE) {
         [self filterChanged];
     }
-    else if (event == DDB_MEDIASOURCE_EVENT_STATE_CHANGED) {
+    else if (event == DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE) {
         int state = self.medialibPlugin->plugin.scanner_state (self.medialibSource);
         if (state != DDB_MEDIASOURCE_STATE_IDLE) {
             //            [_scannerActiveIndicator startAnimation:self];

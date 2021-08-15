@@ -29,6 +29,10 @@
 #define DDB_MEDIALIB_VERSION_MAJOR 1
 #define DDB_MEDIALIB_VERSION_MINOR 0
 
+typedef enum {
+    DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE = 1000,
+} ddb_medialib_mediasource_event_type_t;
+
 typedef struct ddb_medialib_plugin_s {
     DB_mediasource_t plugin;
 #pragma mark - Configuration
@@ -37,11 +41,23 @@ typedef struct ddb_medialib_plugin_s {
     /// Default is Enabled.
     void (*enable_file_operations)(ddb_mediasource_source_t source, int enable);
 
+    // The mediasource must be treated as the source of truth for the folders configuration.
+    // Use DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE event to know when the folders change.
     unsigned (*folder_count)(ddb_mediasource_source_t source);
 
     void (*folder_at_index)(ddb_mediasource_source_t source, int index, char *folder, size_t size);
 
-    void (*set_folders) (ddb_mediasource_source_t source, const char **folders, size_t count);
+    void (*set_folders) (ddb_mediasource_source_t source, char **folders, size_t count);
+
+    char **(*get_folders) (ddb_mediasource_source_t source, /* out */ size_t *count);
+
+    void (*free_folders) (ddb_mediasource_source_t source, char **folders, size_t count);
+
+    void (*insert_folder_at_index) (ddb_mediasource_source_t source, const char *folder, int index);
+
+    void (*remove_folder_at_index) (ddb_mediasource_source_t source, int index);
+
+    void (*append_folder) (ddb_mediasource_source_t source, const char *folder);
 } ddb_medialib_plugin_t;
 
 #endif /* medialib_h */
