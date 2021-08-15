@@ -81,7 +81,7 @@ on_save_button_clicked (GtkButton *button,
     gtk_widget_destroy(conf_dlg);
 }
 
-GtkWidget *create_edit_dlg() {
+GtkWidget *create_edit_dlg(void) {
     GtkWidget *dlg = create_shellexec_conf_edit_dialog();
     gtk_window_set_transient_for(GTK_WINDOW(dlg),
                                  GTK_WINDOW(conf_dlg));
@@ -387,7 +387,7 @@ shxui_getactions(DB_playItem_t *it) {
     return &shellexecui_action;
 }
 
-int shxui_connect() {
+int shxui_connect(void) {
     gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id (DDB_GTKUI_PLUGIN_ID);
     if (!gtkui_plugin) {
         fprintf (stderr, "shellexecui: can't find gtkui plugin\n");

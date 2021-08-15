@@ -227,7 +227,6 @@ fill_pltbrowser_rows (gpointer user_data)
 
 static gboolean
 update_pltbrowser_cb (gpointer data) {
-    w_pltbrowser_t *w = data;
     fill_pltbrowser_rows (data);
     return FALSE;
 }
@@ -529,7 +528,6 @@ static gboolean
 on_pltbrowser_column_clicked (GtkTreeViewColumn     *col,
                               gpointer         user_data)
 {
-    w_pltbrowser_t *w = user_data;
     GtkWidget *view = gtk_tree_view_column_get_tree_view (GTK_TREE_VIEW_COLUMN (col));
     int order = gtk_tree_view_column_get_sort_order (GTK_TREE_VIEW_COLUMN (col));
 
@@ -872,7 +870,7 @@ w_pltbrowser_create (void) {
     w->ri_id = g_signal_connect ((gpointer) store, "row_inserted", G_CALLBACK (on_pltbrowser_row_inserted), w);
 
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
-    GtkTreeViewColumn *col1 = add_treeview_column (w, GTK_TREE_VIEW (w->tree), COL_NAME, 1, 0, _("Name"), 0);
+    add_treeview_column (w, GTK_TREE_VIEW (w->tree), COL_NAME, 1, 0, _("Name"), 0);
 
     int show_playing_column = deadbeef->conf_get_int ("gtkui.pltbrowser.show_playing_column", 0);
     w->col_playing = add_treeview_column (w, GTK_TREE_VIEW (w->tree), COL_PLAYING, 0, 1, _("♫"), 1);

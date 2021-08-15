@@ -145,7 +145,7 @@ clipboard_free (GtkClipboard *clipboard,
 }
 
 void
-clipboard_free_current ()
+clipboard_free_current (void)
 {
     if (current_clipboard_refcount > 0) {
         clipboard_free (NULL, current_clipboard_data);
@@ -504,7 +504,7 @@ clipboard_paste_selection (ddb_playlist_t *plt, int ctx)
 }
 
 int
-clipboard_is_clipboard_data_available ()
+clipboard_is_clipboard_data_available (void)
 {
     GdkDisplay *display = mainwin ? gtk_widget_get_display (mainwin) : gdk_display_get_default();
     GtkClipboard *clipboard = gtk_clipboard_get_for_display (display, GDK_SELECTION_CLIPBOARD);
