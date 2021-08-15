@@ -179,9 +179,6 @@ gtkui_mainwin_init(void);
 void
 gtkui_mainwin_free(void);
 
-static void
-init_widget_layout (void);
-
 enum GtkuiFileChooserType {
     GTKUI_FILECHOOSER_OPENFILE,
     GTKUI_FILECHOOSER_OPENFOLDER,
