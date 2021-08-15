@@ -47,6 +47,12 @@ extern GtkWidget *theme_button;
 #define arrow_sz 10
 #define arrow_widget_width (arrow_sz+4)
 
+enum {
+    INFO_TARGET_URIS, // gtk sets this to 0 by default
+    INFO_TARGET_PLAYLIST_ITEM_INDEXES,
+    INFO_TARGET_PLAYITEM_POINTERS,
+};
+
 static void
 ddb_tabstrip_send_configure (DdbTabStrip *darea)
 {
@@ -117,12 +123,19 @@ ddb_tabstrip_realize (GtkWidget *widget) {
     }
 
     ddb_tabstrip_send_configure (DDB_TABSTRIP (widget));
-    GtkTargetEntry entry = {
-        .target = TARGET_PLAYITEMS,
-        .flags = GTK_TARGET_SAME_APP,
-        .info = TARGET_SAMEWIDGET
+    GtkTargetEntry entries[] = {
+        {
+            .target = TARGET_PLAYLIST_AND_ITEM_INDEXES,
+            .flags = GTK_TARGET_SAME_APP,
+            .info = INFO_TARGET_PLAYLIST_ITEM_INDEXES
+        },
+        {
+            .target = TARGET_PLAYITEM_POINTERS,
+            .flags = GTK_TARGET_SAME_APP,
+            .info = INFO_TARGET_PLAYITEM_POINTERS
+        },
     };
-    gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, &entry, 1, GDK_ACTION_COPY | GDK_ACTION_MOVE);
+    gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, entries, 2, GDK_ACTION_COPY | GDK_ACTION_MOVE);
     gtk_drag_dest_add_uri_targets (widget);
     gtk_drag_dest_set_track_motion (widget, TRUE);
 }
@@ -274,7 +287,7 @@ on_tabstrip_drag_data_received         (GtkWidget       *widget,
 {
     gchar *ptr=(char*)gtk_selection_data_get_data (data);
     int len = gtk_selection_data_get_length (data);
-    if (target_type == TARGET_URILIST) { // uris
+    if (target_type == INFO_TARGET_URIS) { // uris
         // this happens when dropped from file manager
         char *mem = malloc (len+1);
         memcpy (mem, ptr, len);
@@ -282,7 +295,7 @@ on_tabstrip_drag_data_received         (GtkWidget       *widget,
         // we don't pass control structure, but there's only one drag-drop view currently
         gtkui_receive_fm_drop (NULL, mem, len);
     }
-    else if (target_type == TARGET_SAMEWIDGET) {
+    else if (target_type == INFO_TARGET_PLAYLIST_ITEM_INDEXES) {
         uint32_t *d= (uint32_t *)ptr;
         int plt = *d;
         d++;
@@ -292,6 +305,9 @@ on_tabstrip_drag_data_received         (GtkWidget       *widget,
             main_drag_n_drop (NULL, p, d, length, gdk_drag_context_get_selected_action (drag_context) == GDK_ACTION_COPY ? 1 : 0);
             deadbeef->plt_unref (p);
         }
+    }
+    else if (target_type == INFO_TARGET_PLAYITEM_POINTERS) {
+        // FIXME!
     }
     gtk_drag_finish (drag_context, TRUE, FALSE, time);
 }
