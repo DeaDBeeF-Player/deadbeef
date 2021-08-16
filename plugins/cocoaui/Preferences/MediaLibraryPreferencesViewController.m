@@ -21,27 +21,48 @@ extern DB_functions_t *deadbeef;
 @property (weak) IBOutlet NSTableView *tableView;
 
 @property (nonatomic) ddb_medialib_plugin_t *medialibPlugin;
-@property (nonatomic,readonly) ddb_mediasource_source_t medialibSource;
-@property (nonatomic) NSMutableArray<NSString *> *folders;
+@property (nonatomic) ddb_mediasource_source_t medialibSource;
 @property (nonatomic) BOOL enabled;
+
+@property (nonatomic) int listenerId;
 
 @end
 
 @implementation MediaLibraryPreferencesViewController
 
-- (ddb_mediasource_source_t)medialibSource {
-    AppDelegate *appDelegate = NSApplication.sharedApplication.delegate;
-    return appDelegate.mediaLibraryManager.source;
+- (void)dealloc
+{
+    _medialibPlugin->plugin.remove_listener (_medialibSource, _listenerId);
+    _listenerId = 0;
 }
 
-- (void)initializeList {
-    [self.folders removeAllObjects];
-    NSInteger count = (NSInteger)self.medialibPlugin->folder_count(self.medialibSource);
-    for (NSInteger i = 0; i < count; i++) {
-        char folder[PATH_MAX];
-        self.medialibPlugin->folder_at_index(self.medialibSource, (int)i, folder, sizeof (folder));
+static void
+_listener (ddb_mediasource_event_type_t _event, void *user_data) {
+    MediaLibraryPreferencesViewController *self = (__bridge MediaLibraryPreferencesViewController *)(user_data);
 
-        [self.folders addObject:[NSString stringWithUTF8String:folder]];
+    if (_event < DDB_MEDIASOURCE_EVENT_MAX) {
+        switch (_event) {
+        case DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE:
+            {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.enabled = self.medialibPlugin->plugin.get_source_enabled(self.medialibSource);
+                });
+            }
+            break;
+        default:
+            break;
+        }
+        return;
+    }
+
+    ddb_medialib_mediasource_event_type_t event = (ddb_medialib_mediasource_event_type_t)_event;
+
+    switch (event) {
+    case DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE:
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+        break;
     }
 }
 
@@ -53,10 +74,12 @@ extern DB_functions_t *deadbeef;
         return;
     }
 
-    self.folders = [NSMutableArray new];
-    self.enabled = self.medialibPlugin->plugin.get_source_enabled(self.medialibSource);
+    AppDelegate *appDelegate = NSApplication.sharedApplication.delegate;
+    self.medialibSource = appDelegate.mediaLibraryManager.source;
 
-    [self initializeList];
+    _listenerId = self.medialibPlugin->plugin.add_listener(self.medialibSource, _listener, (__bridge void *)(self));
+
+    self.enabled = self.medialibPlugin->plugin.get_source_enabled(self.medialibSource);
 }
 
 - (BOOL)isAvailable {
@@ -108,11 +131,10 @@ extern DB_functions_t *deadbeef;
             [self.tableView beginUpdates];
             for (NSURL *url in panel.URLs) {
                 [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:index] withAnimation:NSTableViewAnimationEffectFade];
-                [self.folders insertObject:url.path atIndex:index];
+                self.medialibPlugin->append_folder (self.medialibSource, url.path.UTF8String);
                 index++;
             }
             [self.tableView endUpdates];
-            [self applyChanges];
         }
     }];
 
@@ -124,34 +146,22 @@ extern DB_functions_t *deadbeef;
     }
     NSInteger index = self.tableView.selectedRowIndexes.firstIndex;
     [self.tableView removeRowsAtIndexes:self.tableView.selectedRowIndexes withAnimation:NSTableViewAnimationEffectFade];
-    [self.folders removeObjectAtIndex:index];
-
-    [self applyChanges];
-}
-
-- (void)applyChanges {
-    const char **paths = self.folders.count ? calloc (self.folders.count, sizeof (char *)) : NULL;
-    for (NSUInteger i = 0; i < self.folders.count; i++) {
-        paths[i] = self.folders[i].UTF8String;
-    }
-
-    self.medialibPlugin->set_folders (self.medialibSource, paths, self.folders.count);
-    self.medialibPlugin->plugin.refresh (self.medialibSource);
-
-    free (paths);
+    self.medialibPlugin->remove_folder_at_index(self.medialibSource, (int)index);
 }
 
 #pragma mark NSTableViewDataSource
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
-    return self.folders.count;
+    return self.medialibPlugin->folder_count(self.medialibSource);
 }
 
 #pragma mark - NSTableViewDelegate
 
 - (nullable NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row {
     NSTableCellView *view = [tableView makeViewWithIdentifier:tableColumn.identifier owner:self];
-    view.textField.stringValue = self.folders[row];
+    char folder[PATH_MAX];
+    self.medialibPlugin->folder_at_index(self.medialibSource, (int)row, folder, sizeof (folder));
+    view.textField.stringValue = [NSString stringWithUTF8String:folder];
     return view;
 }
 
