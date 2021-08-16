@@ -1503,8 +1503,6 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         it = ps->binding->get_for_idx (sel);
     }
 
-    GdkAtom target = gtk_selection_data_get_target (selection_data);
-
     gchar *ptr=(char*)gtk_selection_data_get_data (selection_data);
     gint len = gtk_selection_data_get_length (selection_data);
     if (info == INFO_TARGET_PLAYITEM_POINTERS) {
@@ -1520,7 +1518,6 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
         for (int i = 0; i < count; i++) {
             ps->binding->unref (tracks[i]);
         }
-        free (ptr);
     }
     else if (info == INFO_TARGET_URIS) {
         ddb_listview_clear_sort (ps);
