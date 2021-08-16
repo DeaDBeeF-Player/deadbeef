@@ -112,7 +112,7 @@ main_tracks_copy_drag_n_drop (DdbListviewIter before, DdbListviewIter *tracks, i
 
     ddb_playItem_t *prev = NULL;
     if (before != NULL) {
-        deadbeef->pl_get_prev(before, PL_MAIN);
+        prev = deadbeef->pl_get_prev(before, PL_MAIN);
     }
     else {
         prev = deadbeef->plt_get_last (plt, PL_MAIN);
