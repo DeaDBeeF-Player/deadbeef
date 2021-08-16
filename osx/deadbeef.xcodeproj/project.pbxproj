@@ -19692,41 +19692,6 @@
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"/usr/local/Cellar/gtk+3/3.24.8/include/gtk-3.0",
-					"/usr/local/Cellar/glib/2.60.1/include/gio-unix-2.0",
-					/usr/local/Cellar/cairo/1.16.0/include/cairo,
-					/usr/local/Cellar/libepoxy/1.5.3/include,
-					"/usr/local/Cellar/pango/1.42.4_1/include/pango-1.0",
-					/usr/local/Cellar/harfbuzz/2.4.0_1/include/harfbuzz,
-					/usr/local/Cellar/graphite2/1.3.13/include,
-					"/usr/local/Cellar/pango/1.42.4_1/include/pango-1.0",
-					/usr/local/Cellar/fribidi/1.0.5/include/fribidi,
-					"/usr/local/Cellar/atk/2.32.0/include/atk-1.0",
-					/usr/local/Cellar/cairo/1.16.0/include/cairo,
-					"/usr/local/Cellar/pixman/0.38.4/include/pixman-1",
-					/usr/local/Cellar/fontconfig/2.13.1/include,
-					/usr/local/opt/freetype/include/freetype2,
-					/usr/local/Cellar/libpng/1.6.37/include/libpng16,
-					"/usr/local/Cellar/gdk-pixbuf/2.38.1/include/gdk-pixbuf-2.0",
-					/usr/local/Cellar/glib/2.60.1/include,
-					"/usr/local/Cellar/libffi/3.2.1/lib/libffi-3.2.1/include",
-					"/usr/local/Cellar/glib/2.60.1/include/glib-2.0",
-					"/usr/local/Cellar/glib/2.60.1/lib/glib-2.0/include",
-					/usr/local/opt/gettext/include,
-					/usr/local/Cellar/pcre/8.43/include,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"/usr/local/Cellar/gtk+3/3.24.8/lib",
-					/usr/local/Cellar/pango/1.42.4_1/lib,
-					/usr/local/Cellar/atk/2.32.0/lib,
-					/usr/local/Cellar/cairo/1.16.0/lib,
-					"/usr/local/Cellar/gdk-pixbuf/2.38.1/lib",
-					/usr/local/Cellar/glib/2.60.1/lib,
-					/usr/local/opt/gettext/lib,
-				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "$(GTK3_CFLAGS)";
@@ -19771,41 +19736,6 @@
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"/usr/local/Cellar/gtk+3/3.24.8/include/gtk-3.0",
-					"/usr/local/Cellar/glib/2.60.1/include/gio-unix-2.0",
-					/usr/local/Cellar/cairo/1.16.0/include/cairo,
-					/usr/local/Cellar/libepoxy/1.5.3/include,
-					"/usr/local/Cellar/pango/1.42.4_1/include/pango-1.0",
-					/usr/local/Cellar/harfbuzz/2.4.0_1/include/harfbuzz,
-					/usr/local/Cellar/graphite2/1.3.13/include,
-					"/usr/local/Cellar/pango/1.42.4_1/include/pango-1.0",
-					/usr/local/Cellar/fribidi/1.0.5/include/fribidi,
-					"/usr/local/Cellar/atk/2.32.0/include/atk-1.0",
-					/usr/local/Cellar/cairo/1.16.0/include/cairo,
-					"/usr/local/Cellar/pixman/0.38.4/include/pixman-1",
-					/usr/local/Cellar/fontconfig/2.13.1/include,
-					/usr/local/opt/freetype/include/freetype2,
-					/usr/local/Cellar/libpng/1.6.37/include/libpng16,
-					"/usr/local/Cellar/gdk-pixbuf/2.38.1/include/gdk-pixbuf-2.0",
-					/usr/local/Cellar/glib/2.60.1/include,
-					"/usr/local/Cellar/libffi/3.2.1/lib/libffi-3.2.1/include",
-					"/usr/local/Cellar/glib/2.60.1/include/glib-2.0",
-					"/usr/local/Cellar/glib/2.60.1/lib/glib-2.0/include",
-					/usr/local/opt/gettext/include,
-					/usr/local/Cellar/pcre/8.43/include,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"/usr/local/Cellar/gtk+3/3.24.8/lib",
-					/usr/local/Cellar/pango/1.42.4_1/lib,
-					/usr/local/Cellar/atk/2.32.0/lib,
-					/usr/local/Cellar/cairo/1.16.0/lib,
-					"/usr/local/Cellar/gdk-pixbuf/2.38.1/lib",
-					/usr/local/Cellar/glib/2.60.1/lib,
-					/usr/local/opt/gettext/lib,
-				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "$(GTK3_CFLAGS)";
@@ -20621,43 +20551,6 @@
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"/usr/local/Cellar/gtk+3/3.24.8/include/gtk-3.0",
-					"/usr/local/Cellar/glib/2.60.1/include/gio-unix-2.0",
-					/usr/local/Cellar/cairo/1.16.0/include/cairo,
-					/usr/local/Cellar/libepoxy/1.5.3/include,
-					"/usr/local/Cellar/pango/1.42.4_1/include/pango-1.0",
-					/usr/local/Cellar/harfbuzz/2.4.0_1/include/harfbuzz,
-					/usr/local/Cellar/graphite2/1.3.13/include,
-					"/usr/local/Cellar/pango/1.42.4_1/include/pango-1.0",
-					/usr/local/Cellar/fribidi/1.0.5/include/fribidi,
-					"/usr/local/Cellar/atk/2.32.0/include/atk-1.0",
-					/usr/local/Cellar/cairo/1.16.0/include/cairo,
-					"/usr/local/Cellar/pixman/0.38.4/include/pixman-1",
-					/usr/local/Cellar/fontconfig/2.13.1/include,
-					/usr/local/opt/freetype/include/freetype2,
-					/usr/local/Cellar/libpng/1.6.37/include/libpng16,
-					"/usr/local/Cellar/gdk-pixbuf/2.38.1/include/gdk-pixbuf-2.0",
-					/usr/local/Cellar/glib/2.60.1/include,
-					"/usr/local/Cellar/libffi/3.2.1/lib/libffi-3.2.1/include",
-					"/usr/local/Cellar/glib/2.60.1/include/glib-2.0",
-					"/usr/local/Cellar/glib/2.60.1/lib/glib-2.0/include",
-					/usr/local/opt/gettext/include,
-					/usr/local/Cellar/pcre/8.43/include,
-					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"/usr/local/Cellar/gtk+3/3.24.8/lib",
-					/usr/local/Cellar/pango/1.42.4_1/lib,
-					/usr/local/Cellar/atk/2.32.0/lib,
-					/usr/local/Cellar/cairo/1.16.0/lib,
-					"/usr/local/Cellar/gdk-pixbuf/2.38.1/lib",
-					/usr/local/Cellar/glib/2.60.1/lib,
-					/usr/local/opt/gettext/lib,
-					/usr/local/Cellar/jansson/2.12/lib,
-				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "$(GTK3_CFLAGS)";
@@ -20706,43 +20599,6 @@
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"/usr/local/Cellar/gtk+3/3.24.8/include/gtk-3.0",
-					"/usr/local/Cellar/glib/2.60.1/include/gio-unix-2.0",
-					/usr/local/Cellar/cairo/1.16.0/include/cairo,
-					/usr/local/Cellar/libepoxy/1.5.3/include,
-					"/usr/local/Cellar/pango/1.42.4_1/include/pango-1.0",
-					/usr/local/Cellar/harfbuzz/2.4.0_1/include/harfbuzz,
-					/usr/local/Cellar/graphite2/1.3.13/include,
-					"/usr/local/Cellar/pango/1.42.4_1/include/pango-1.0",
-					/usr/local/Cellar/fribidi/1.0.5/include/fribidi,
-					"/usr/local/Cellar/atk/2.32.0/include/atk-1.0",
-					/usr/local/Cellar/cairo/1.16.0/include/cairo,
-					"/usr/local/Cellar/pixman/0.38.4/include/pixman-1",
-					/usr/local/Cellar/fontconfig/2.13.1/include,
-					/usr/local/opt/freetype/include/freetype2,
-					/usr/local/Cellar/libpng/1.6.37/include/libpng16,
-					"/usr/local/Cellar/gdk-pixbuf/2.38.1/include/gdk-pixbuf-2.0",
-					/usr/local/Cellar/glib/2.60.1/include,
-					"/usr/local/Cellar/libffi/3.2.1/lib/libffi-3.2.1/include",
-					"/usr/local/Cellar/glib/2.60.1/include/glib-2.0",
-					"/usr/local/Cellar/glib/2.60.1/lib/glib-2.0/include",
-					/usr/local/opt/gettext/include,
-					/usr/local/Cellar/pcre/8.43/include,
-					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"/usr/local/Cellar/gtk+3/3.24.8/lib",
-					/usr/local/Cellar/pango/1.42.4_1/lib,
-					/usr/local/Cellar/atk/2.32.0/lib,
-					/usr/local/Cellar/cairo/1.16.0/lib,
-					"/usr/local/Cellar/gdk-pixbuf/2.38.1/lib",
-					/usr/local/Cellar/glib/2.60.1/lib,
-					/usr/local/opt/gettext/lib,
-					/usr/local/Cellar/jansson/2.12/lib,
-				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "$(GTK3_CFLAGS)";
