@@ -443,7 +443,7 @@ w_unknown_load (struct ddb_gtkui_widget_s *base, const char *type, const char *s
 static void
 w_unknown_save (struct ddb_gtkui_widget_s *base, char *s, int sz) {
     w_unknown_t *w = (w_unknown_t *)base;
-    int l = strlen (s);
+    size_t l = strlen (s);
     s += l;
     sz -= l;
     snprintf (s, sz, "%s%s {%s}", w->expected_type, w->parms, w->children);
@@ -481,6 +481,7 @@ unknown_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     return TRUE;
 }
 
+#if !GTK_CHECK_VERSION(3,0,0)
 static gboolean
 unknown_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
     cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
@@ -488,6 +489,7 @@ unknown_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_da
     cairo_destroy (cr);
     return res;
 }
+#endif
 
 ddb_gtkui_widget_t *
 w_unknown_create (const char *type) {
@@ -668,7 +670,7 @@ w_save (void) {
 
 static void
 on_replace_activate (GtkMenuItem *menuitem, gpointer user_data) {
-    ddb_gtkui_widget_t *ui_widget = g_object_get_data(menuitem, associated_widget_data_id);
+    ddb_gtkui_widget_t *ui_widget = g_object_get_data(G_OBJECT(menuitem), associated_widget_data_id);
     for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
         if (cr->type == user_data) {
             // hack for single-instance
@@ -730,7 +732,6 @@ on_cut_activate (GtkMenuItem *menuitem, gpointer user_data) {
 static void
 on_copy_activate (GtkMenuItem *menuitem, gpointer user_data) {
     ddb_gtkui_widget_t *ui_widget = user_data;
-    ddb_gtkui_widget_t *parent = ui_widget->parent;
     if (!strcmp (ui_widget->type, "placeholder")) {
         return;
     }
@@ -832,7 +833,7 @@ create_widget_menu(ddb_gtkui_widget_t *ui_widget) {
             item = gtk_menu_item_new_with_mnemonic (cr->title);
             gtk_widget_show (item);
             gtk_container_add (GTK_CONTAINER (submenu), item);
-            g_object_set_data(item, associated_widget_data_id, ui_widget);
+            g_object_set_data(G_OBJECT(item), associated_widget_data_id, ui_widget);
             g_signal_connect ((gpointer) item, "activate",
                     G_CALLBACK (on_replace_activate),
                     (void *)cr->type);
@@ -914,7 +915,7 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
         item = gtk_menu_item_new_with_mnemonic (_("Parent"));
         gtk_widget_show (item);
         submenu = create_widget_menu (current_widget->parent);
-        gtk_menu_item_set_submenu (item, submenu);
+        gtk_menu_item_set_submenu (GTK_MENU_ITEM(item), submenu);
         gtk_container_add (GTK_CONTAINER (menu), item);
     }
 
@@ -1570,9 +1571,6 @@ tabs_remove_tab (gpointer user_data, int tab)
     }
 }
 
-static gboolean
-tab_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
-
 static void
 on_rename_tab_activate (GtkMenuItem *menuitem, gpointer user_data) {
     w_tabs_t *w = user_data;
@@ -1830,7 +1828,6 @@ on_tabs_button_press_event (GtkWidget      *notebook,
     GtkWidget     *page;
     GtkWidget     *label_box;
     GtkAllocation  alloc;
-    gboolean       close_tab;
 
     int event_x, event_y;
     if (!get_event_coordinates_in_widget (notebook, event, &event_x, &event_y)) {
@@ -2242,7 +2239,7 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         if (p1 == DDB_PLAYLIST_CHANGE_CONTENT || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
             g_idle_add (playlist_sort_reset_cb, p->list);
         }
-        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT || p1 == DDB_PLAYLIST_CHANGE_SELECTION && p2 != PL_MAIN || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
+        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT || (p1 == DDB_PLAYLIST_CHANGE_SELECTION && p2 != PL_MAIN) || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
             ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
             if (ev->track) {
                 g_idle_add (trackinfochanged_cb, playlist_trackdata(p->list, ev->track));
@@ -2254,7 +2251,7 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
             g_idle_add (playlist_sort_reset_cb, p->list);
         }
         if (p1 == DDB_PLAYLIST_CHANGE_CONTENT ||
-            p1 == DDB_PLAYLIST_CHANGE_SELECTION && (p2 != PL_MAIN || (DdbListview *)ctx != p->list) ||
+            (p1 == DDB_PLAYLIST_CHANGE_SELECTION && (p2 != PL_MAIN || (DdbListview *)ctx != p->list)) ||
             p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
             g_idle_add (playlist_list_refresh_cb, p->list);
         }
@@ -2523,7 +2520,6 @@ selproperties_selection_changed (gpointer user_data)
 
 static int
 selproperties_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
-    w_selproperties_t *selprop_w = (w_selproperties_t *)w;
     switch (id) {
     case DB_EV_TRACKINFOCHANGED:
     case DB_EV_PLAYLISTCHANGED:
@@ -2673,7 +2669,7 @@ coverart_draw_cairo (GdkPixbuf *pixbuf, GtkAllocation *a, cairo_t *cr, const int
     const int pw = gdk_pixbuf_get_width(pixbuf);
     const int ph = gdk_pixbuf_get_height(pixbuf);
     cairo_rectangle(cr, 0, 0, a->width, a->height);
-    if (pw > a->width || ph > a->height || pw < a->width && ph < a->height) {
+    if (pw > a->width || ph > a->height || (pw < a->width && ph < a->height)) {
         const double scale = min(a->width/(double)pw, a->height/(double)ph);
         cairo_translate(cr, (a->width - a->width*scale)/2., (a->height - a->height*scale)/2.);
         cairo_scale(cr, scale, scale);
@@ -2730,6 +2726,7 @@ coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     return TRUE;
 }
 
+#if !GTK_CHECK_VERSION(3,0,0)
 static gboolean
 coverart_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
     cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
@@ -2737,6 +2734,7 @@ coverart_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
     cairo_destroy (cr);
     return res;
 }
+#endif
 
 static int
 coverart_message (ddb_gtkui_widget_t *base, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
@@ -2965,8 +2963,7 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
 gboolean
 scope_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
-    gboolean res = scope_draw_cairo (widget, cr, user_data);
-    return FALSE;
+    return scope_draw_cairo (widget, cr, user_data);
 }
 
 gboolean
@@ -3639,7 +3636,6 @@ on_button_clicked               (GtkButton       *button,
     w_button_t *w = user_data;
     DB_plugin_t **plugins = deadbeef->plug_get_list();
     int i;
-    int added_entries = 0;
     for (i = 0; plugins[i]; i++) {
         if (!plugins[i]->get_actions) {
             continue;
@@ -4204,16 +4200,14 @@ logviewer_addtext_cb (gpointer data) {
     GtkTextIter iter;
     size_t len;
     len = strlen(s->text_to_add);
-    GtkWidget *scrolled_window = gtk_widget_get_parent (w->textview);
     buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (w->textview));
     gtk_text_buffer_get_end_iter(buffer, &iter);
-    gtk_text_buffer_insert( buffer, &iter, s->text_to_add, len );
+    gtk_text_buffer_insert (buffer, &iter, s->text_to_add, (gint)len);
     // Make sure it ends on a newline
     if (s->text_to_add[len-1] != '\n') {
         gtk_text_buffer_get_end_iter(buffer, &iter);
         gtk_text_buffer_insert(buffer, &iter, "\n", 1);
     }
-    GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment ( GTK_SCROLLED_WINDOW (scrolled_window));
     if (w->scroll_bottomed) {
         gtk_text_buffer_get_end_iter(buffer, &iter);
         GtkTextMark *mark = gtk_text_buffer_create_mark (buffer, NULL, &iter, FALSE);
