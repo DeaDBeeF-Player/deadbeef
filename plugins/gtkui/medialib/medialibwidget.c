@@ -83,37 +83,54 @@ _reload_content (w_medialib_viewer_t *mlv) {
 }
 
 static gboolean
-_medialib_event (void *user_data) {
+_medialib_content_did_change (void *user_data) {
     w_medialib_viewer_t *mlv = user_data;
     if (mlv->plugin == NULL) {
         return FALSE;
     }
-//    if (event == DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE || event == DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE) {
-//        [self filterChanged];
-//    }
-//    else if (event == DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE) {
-//        int state = self.medialibPlugin->plugin.scanner_state (self.medialibSource);
-//        if (state != DDB_MEDIASOURCE_STATE_IDLE) {
-//            //            [_scannerActiveIndicator startAnimation:self];
-//
-//            [self updateMedialibStatus];
-//
-//            //            [_scannerActiveState setHidden:NO];
-//        }
-//        else {
-//            //            [_scannerActiveIndicator stopAnimation:self];
-//            //            [_scannerActiveState setHidden:YES];
-//        }
-//    }
-
     _reload_content (mlv);
+    return FALSE;
+}
+
+static gboolean
+_medialib_state_did_change (void *user_data) {
+    w_medialib_viewer_t *mlv = user_data;
+    ddb_mediasource_state_t state = mlv->plugin->plugin.scanner_state (mlv->source);
+    int enabled = mlv->plugin->plugin.get_source_enabled (mlv->source);
+    GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
+    switch (state) {
+    case DDB_MEDIASOURCE_STATE_IDLE:
+        gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, enabled ? _("All Music") : _("Media Library Is Disabled"), -1);
+        break;
+    case DDB_MEDIASOURCE_STATE_LOADING:
+        gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("Loading..."), -1);
+        break;
+    case DDB_MEDIASOURCE_STATE_SCANNING:
+        gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("Scanning..."), -1);
+        break;
+    case DDB_MEDIASOURCE_STATE_INDEXING:
+        gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("Indexing..."), -1);
+        break;
+    case DDB_MEDIASOURCE_STATE_SAVING:
+        gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("Saving..."), -1);
+        break;
+    }
+
     return FALSE;
 }
 
 static void
 _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
-    if (event == DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE) {
-        g_idle_add (_medialib_event, user_data);
+    switch (event) {
+    case DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE:
+        g_idle_add (_medialib_content_did_change, user_data);
+        break;
+    case DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE:
+    case DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE:
+        g_idle_add (_medialib_state_did_change, user_data);
+        break;
+    case DDB_MEDIASOURCE_EVENT_SELECTORS_DID_CHANGE:
+        break;
     }
 }
 
@@ -124,7 +141,6 @@ static gboolean _selection_func (
                                  gboolean           path_currently_selected,
                                  gpointer           data
                                  ) {
-    w_medialib_viewer_t *mlv = data;
     gint *indices = gtk_tree_path_get_indices(path);
 
     int count = gtk_tree_path_get_depth(path);
@@ -158,11 +174,11 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
     // Root node
     GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
     gtk_tree_store_append (store, &mlv->root_iter, NULL);
-    gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("All Music"), -1);
 
     GtkTreeSelection *selection = gtk_tree_view_get_selection (mlv->tree);
     gtk_tree_selection_set_select_function(selection, _selection_func, mlv, NULL);
 
+    _medialib_state_did_change (mlv);
     _reload_content (mlv);
 }
 
