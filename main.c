@@ -1216,7 +1216,7 @@ main (int argc, char *argv[]) {
             return 0;
         }
         else if (!strcmp (argv[i], "--version")) {
-            trace ("DeaDBeeF " VERSION " Copyright © 2009-2021 Alexey Yakovenko\n");
+            printf ("DeaDBeeF " VERSION " Copyright © 2009-2021 Alexey Yakovenko\n");
             return 0;
         }
         else if (!strcmp (argv[i], "--gui")) {
