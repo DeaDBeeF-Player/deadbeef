@@ -461,24 +461,32 @@ w_medialib_viewer_create (void) {
     gtk_widget_show (vbox);
     gtk_container_add (GTK_CONTAINER (w->base.widget), vbox);
 
-    GtkWidget *hbox = gtk_hbox_new (FALSE, 8);
-    gtk_widget_show (hbox);
-    gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 0);
+    GtkWidget *configure_wrap_hbox = gtk_hbox_new (FALSE, 8);
+    gtk_widget_show (configure_wrap_hbox);
+    gtk_box_pack_start (GTK_BOX (vbox), configure_wrap_hbox, FALSE, TRUE, 0);
+
+    GtkWidget *configure_hbox = gtk_hbox_new (FALSE, 8);
+    gtk_widget_show (configure_hbox);
+    gtk_box_pack_start (GTK_BOX (configure_wrap_hbox), configure_hbox, TRUE, TRUE, 20);
 
     w->selector = GTK_COMBO_BOX_TEXT (gtk_combo_box_text_new ());
     gtk_widget_show (GTK_WIDGET (w->selector));
-    gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (w->selector), TRUE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (configure_hbox), GTK_WIDGET (w->selector), TRUE, TRUE, 0);
 
     GtkWidget *configure_button = gtk_button_new_with_label (_("Configure"));
     gtk_widget_show (configure_button);
-    gtk_box_pack_start (GTK_BOX (hbox), configure_button, FALSE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (configure_hbox), configure_button, FALSE, TRUE, 0);
+
+    GtkWidget *search_hbox = gtk_hbox_new (FALSE, 8);
+    gtk_widget_show (search_hbox);
+    gtk_box_pack_start (GTK_BOX (vbox), search_hbox, FALSE, TRUE, 0);
 
     w->search_entry = GTK_ENTRY (gtk_entry_new ());
 #if GTK_CHECK_VERSION (3,2,0)
     gtk_entry_set_placeholder_text (w->search_entry, _("Search"));
 #endif
     gtk_widget_show (GTK_WIDGET (w->search_entry));
-    gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (w->search_entry), FALSE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (search_hbox), GTK_WIDGET (w->search_entry), TRUE, TRUE, 20);
 
     GtkWidget *scroll = gtk_scrolled_window_new (NULL, NULL);
     gtk_widget_set_can_focus (scroll, FALSE);
