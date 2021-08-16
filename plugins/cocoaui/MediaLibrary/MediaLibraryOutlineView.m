@@ -29,13 +29,36 @@
     }
 
     if (![self isRowSelected:row]) {
-        [self selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+        id item = [self itemAtRow:row];
+        if ([self.delegate respondsToSelector:@selector(outlineView:shouldSelectItem:)]
+            && [self.delegate outlineView:self shouldSelectItem:item]) {
+            [self selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+        }
+        else {
+            return;
+        }
     }
 
     if ([self.delegate respondsToSelector:@selector(mediaLibraryOutlineViewDidActivateAlternative:)]) {
         id<MediaLibraryOutlineViewDelegate> delegate = (id<MediaLibraryOutlineViewDelegate>)self.delegate;
         [delegate mediaLibraryOutlineViewDidActivateAlternative:self];
     }
+}
+
+- (void)rightMouseDown:(NSEvent *)event {
+    if ([self.delegate respondsToSelector:@selector(mediaLibraryOutlineView:shouldDisplayMenuForRow:)]) {
+        id<MediaLibraryOutlineViewDelegate> delegate = (id<MediaLibraryOutlineViewDelegate>)self.delegate;
+
+        NSPoint windowLocation = event.locationInWindow;
+        NSPoint viewLocation = [self convertPoint:windowLocation fromView:nil];
+        NSInteger row = [self rowAtPoint:viewLocation];
+
+        BOOL shouldDisplayMenu = [delegate mediaLibraryOutlineView:self shouldDisplayMenuForRow:row];
+        if (!shouldDisplayMenu) {
+            return;
+        }
+    }
+    [super rightMouseDown:event];
 }
 
 @end

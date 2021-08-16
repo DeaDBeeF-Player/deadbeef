@@ -14,7 +14,7 @@
 
 @optional
 - (void)mediaLibraryOutlineViewDidActivateAlternative:(MediaLibraryOutlineView *)outlineView;
-
+- (BOOL)mediaLibraryOutlineView:(MediaLibraryOutlineView *)outlineView shouldDisplayMenuForRow:(NSInteger)row;
 @end
 
 NS_ASSUME_NONNULL_BEGIN
