@@ -108,11 +108,6 @@ _listener (ddb_mediasource_event_type_t _event, void *user_data) {
 }
 
 - (void)addAction:(id)sender {
-    __block NSInteger index = 0;
-    if (self.tableView.selectedRowIndexes.count != 0) {
-        index = self.tableView.selectedRowIndexes.firstIndex;
-    }
-
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.canChooseDirectories = YES;
     panel.canChooseFiles = NO;
@@ -130,9 +125,8 @@ _listener (ddb_mediasource_event_type_t _event, void *user_data) {
         if (result == NSModalResponseOK) {
             [self.tableView beginUpdates];
             for (NSURL *url in panel.URLs) {
-                [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:index] withAnimation:NSTableViewAnimationEffectFade];
                 self.medialibPlugin->append_folder (self.medialibSource, url.path.UTF8String);
-                index++;
+                self.medialibPlugin->plugin.refresh (self.medialibSource);
             }
             [self.tableView endUpdates];
         }
@@ -141,12 +135,9 @@ _listener (ddb_mediasource_event_type_t _event, void *user_data) {
 }
 
 - (void)removeAction:(id)sender {
-    if (self.tableView.selectedRowIndexes.count == 0) {
-        return;
-    }
     NSInteger index = self.tableView.selectedRowIndexes.firstIndex;
-    [self.tableView removeRowsAtIndexes:self.tableView.selectedRowIndexes withAnimation:NSTableViewAnimationEffectFade];
     self.medialibPlugin->remove_folder_at_index(self.medialibSource, (int)index);
+    self.medialibPlugin->plugin.refresh (self.medialibSource);
 }
 
 #pragma mark NSTableViewDataSource
