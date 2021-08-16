@@ -259,6 +259,11 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 }
 
 - (void)outlineViewDoubleAction:(NSOutlineView *)sender {
+    NSInteger row = self.outlineView.selectedRow;
+    if (row == -1) {
+        return;
+    }
+
     ddb_playlist_t * curr_plt = [self getDestPlaylist];
     if (!curr_plt) {
         return;
@@ -275,6 +280,21 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
         deadbeef->sendmessage(DB_EV_PLAY_NUM, 0, 0, 0);
     }
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, DDB_PLAYLIST_CHANGE_CONTENT, 0, 0);
+}
+
+- (void)filterChanged {
+    [self initializeTreeView:(int)self.lastSelectedIndex];
+    [self.outlineView expandItem:self.medialibRootItem expandChildren:self.searchString!=nil];
+}
+
+- (void)arrayOfPlayableItemsForItem:(MediaLibraryItem *)item outputArray:(out NSMutableArray<MediaLibraryItem *> *)items {
+    if (item.playItem != NULL) {
+        [items addObject:item];
+    }
+
+    for (MediaLibraryItem *child in item.children) {
+        [self arrayOfPlayableItemsForItem:child outputArray:items];
+    }
 }
 
 #pragma mark - NSOutlineViewDataSource
@@ -318,16 +338,6 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     return [NSString stringWithFormat:@"Error %d", (int)index];
 }
 
-- (void)arrayOfPlayableItemsForItem:(MediaLibraryItem *)item outputArray:(out NSMutableArray<MediaLibraryItem *> *)items {
-    if (item.playItem != NULL) {
-        [items addObject:item];
-    }
-
-    for (MediaLibraryItem *child in item.children) {
-        [self arrayOfPlayableItemsForItem:child outputArray:items];
-    }
-}
-
 #pragma mark - NSOutlineViewDataSource - Drag and drop
 
 - (id<NSPasteboardWriting>)outlineView:(NSOutlineView *)outlineView pasteboardWriterForItem:(MediaLibraryItem *)item {
@@ -355,6 +365,10 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView acceptDrop:(id<NSDraggingInfo>)info item:(id)item childIndex:(NSInteger)index {
     return NO;
+}
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
+    return [item isKindOfClass:MediaLibraryItem.class];
 }
 
 #pragma mark - NSOutlineViewDelegate
@@ -512,11 +526,6 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     return view;
 }
 
-- (void)filterChanged {
-    [self initializeTreeView:(int)self.lastSelectedIndex];
-    [self.outlineView expandItem:self.medialibRootItem expandChildren:self.searchString!=nil];
-}
-
 #pragma mark - MediaLibraryOutlineViewDelegate
 
 - (void)mediaLibraryOutlineViewDidActivateAlternative:(MediaLibraryOutlineView *)outlineView {
@@ -534,6 +543,11 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, DDB_PLAYLIST_CHANGE_CONTENT, 0, 0);
 }
 
+- (BOOL)mediaLibraryOutlineView:(MediaLibraryOutlineView *)outlineView shouldDisplayMenuForRow:(NSInteger)row {
+    id item = [self.outlineView itemAtRow:row];
+    return [item isKindOfClass:MediaLibraryItem.class];
+}
+
 #pragma mark - TrackContextMenuDelegate
 
 - (void)trackProperties {
@@ -542,10 +556,6 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     }
     self.trkProperties.mediaLibraryItems = self.selectedItems;
     [self.trkProperties showWindow:self];
-}
-
-- (void)playlistChanged {
-    // FIXME
 }
 
 - (MediaLibraryItem *)selectedItem {
@@ -591,7 +601,6 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     else if (clickedRow != -1) {
         [self addSelectedItemsRecursively:[self.outlineView itemAtRow:clickedRow]];
     }
-
 
     ddb_playItem_t **tracks = NULL;
     NSInteger count = 0;
