@@ -754,11 +754,10 @@ scanner_thread (medialib_source_t *source, ml_scanner_configuration_t conf) {
         ml_index (source, source->ml_playlist);
     });
 
+    free_medialib_paths (conf.medialib_paths, conf.medialib_paths_count);
+
     source->_ml_state = DDB_MEDIASOURCE_STATE_IDLE;
     ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE);
-
-    free_medialib_paths (conf.medialib_paths, conf.medialib_paths_count);
-    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE);
 }
 
 // NOTE: make sure to run on sync_queue
@@ -1627,6 +1626,7 @@ ml_set_source_enabled (ddb_mediasource_source_t _source, int enabled) {
     });
     if (notify) {
         ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE);
+        ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE);
     }
 }
 
@@ -1687,7 +1687,8 @@ ml_refresh (ddb_mediasource_source_t _source) {
         });
 
         if (conf.medialib_paths == NULL || !enabled) {
-            ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE);
+            // content became empty
+            ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE);
             return;
         }
 

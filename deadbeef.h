@@ -2148,16 +2148,15 @@ typedef struct ddb_medialib_item_s {
 } ddb_medialib_item_t;
 
 /// Numbers from 0 to 999 are reserved to base interface, as declared in deadbeef.h
-/// Numbers from 1000 and up can be used by the plugins for additional events.
 typedef enum {
     DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE = 0,
     DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE = 1,
-    DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE = 2,
-    DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE = 3,
-    DDB_MEDIASOURCE_EVENT_SELECTORS_DID_CHANGE = 4,
-
-    DDB_MEDIASOURCE_EVENT_MAX = 1000,
+    DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE = 2,
+    DDB_MEDIASOURCE_EVENT_SELECTORS_DID_CHANGE = 3,
 } ddb_mediasource_event_type_t;
+
+/// Numbers from 1000 and up can be used by the plugins for additional events.
+#define DDB_MEDIASOURCE_EVENT_MAX 1000
 
 typedef enum {
     DDB_MEDIASOURCE_STATE_IDLE,
