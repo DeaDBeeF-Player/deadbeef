@@ -454,6 +454,7 @@ plt_append (const char *title) {
     plt_add(plt_get_count(), title);
     playlist_t *p;
     for (p = _playlists_head; p && p->next; p = p->next);
+    plt_ref (p);
     return p;
 }
 
@@ -562,6 +563,7 @@ plt_find_by_name (const char *name) {
     playlist_t *p = _playlists_head;
     for (; p; p = p->next) {
         if (!strcmp (p->title, name)) {
+            plt_ref (p);
             return p;
         }
     }

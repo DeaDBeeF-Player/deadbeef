@@ -15,4 +15,27 @@
     return YES;
 }
 
+- (void)otherMouseDown:(NSEvent *)event {
+    if ((event.modifierFlags &~ NSEventModifierFlagDeviceIndependentFlagsMask) != 0) {
+        return;
+    }
+
+    NSPoint windowLocation = event.locationInWindow;
+    NSPoint viewLocation = [self convertPoint:windowLocation fromView:nil];
+    NSInteger row = [self rowAtPoint:viewLocation];
+
+    if (row == -1) {
+        return;
+    }
+
+    if (![self isRowSelected:row]) {
+        [self selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+    }
+
+    if ([self.delegate respondsToSelector:@selector(mediaLibraryOutlineViewDidActivateAlternative:)]) {
+        id<MediaLibraryOutlineViewDelegate> delegate = (id<MediaLibraryOutlineViewDelegate>)self.delegate;
+        [delegate mediaLibraryOutlineViewDidActivateAlternative:self];
+    }
+}
+
 @end

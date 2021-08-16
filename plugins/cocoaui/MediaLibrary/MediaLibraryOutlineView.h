@@ -8,6 +8,15 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class MediaLibraryOutlineView;
+
+@protocol MediaLibraryOutlineViewDelegate<NSOutlineViewDelegate>
+
+@optional
+- (void)mediaLibraryOutlineViewDidActivateAlternative:(MediaLibraryOutlineView *)outlineView;
+
+@end
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MediaLibraryOutlineView : NSOutlineView

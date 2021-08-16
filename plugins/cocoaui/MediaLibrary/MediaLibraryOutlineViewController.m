@@ -11,6 +11,7 @@
 #import "medialib.h"
 #import "artwork.h"
 #import "AppDelegate.h"
+#import "MediaLibraryOutlineView.h"
 #import "MediaLibrarySelectorCellView.h"
 #import "MediaLibrarySearchCellView.h"
 #import "MediaLibraryItem.h"
@@ -22,7 +23,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface MediaLibraryOutlineViewController() <TrackContextMenuDelegate,MediaLibraryFilterSelectorCellViewDelegate,MediaLibrarySearchCellViewDelegate> {
+@interface MediaLibraryOutlineViewController() <NSOutlineViewDataSource,MediaLibraryOutlineViewDelegate,TrackContextMenuDelegate,MediaLibraryFilterSelectorCellViewDelegate,MediaLibrarySearchCellViewDelegate> {
     ddb_mediasource_list_selector_t *_selectors;
 }
 
@@ -215,7 +216,7 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     }
 }
 
-- (void)outlineViewDoubleAction:(NSOutlineView *)sender {
+- (ddb_playlist_t *)getDestPlaylist {
     ddb_playlist_t *curr_plt = NULL;
     if (deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1)) {
         char str[200];
@@ -225,20 +226,17 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
             curr_plt = deadbeef->plt_append (str);
         }
     }
-    if (!curr_plt) {
-        return;
-    }
+    return curr_plt;
+}
 
-    deadbeef->plt_set_curr (curr_plt);
-    deadbeef->plt_clear(curr_plt);
-
+- (int)addSelectionToPlaylist:(ddb_playlist_t *)curr_plt {
     MediaLibraryItem *item = [self selectedItem];
     NSMutableArray<MediaLibraryItem *> *items = [NSMutableArray new];
     [self arrayOfPlayableItemsForItem:item outputArray:items];
 
     int count = 0;
 
-    ddb_playItem_t *prev = NULL;
+    ddb_playItem_t *prev = deadbeef->plt_get_last(curr_plt, PL_MAIN);
     for (item in items) {
         ddb_playItem_t *playItem = item.playItem;
         if (playItem == NULL) {
@@ -257,9 +255,26 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
         deadbeef->pl_item_unref (prev);
     }
     prev = NULL;
+    return count;
+}
+
+- (void)outlineViewDoubleAction:(NSOutlineView *)sender {
+    ddb_playlist_t * curr_plt = [self getDestPlaylist];
+    if (!curr_plt) {
+        return;
+    }
+
+    deadbeef->plt_set_curr (curr_plt);
+    deadbeef->plt_clear(curr_plt);
+
+    int count = [self addSelectionToPlaylist:curr_plt];
+
+    deadbeef->plt_unref (curr_plt);
+
     if (count > 0) {
         deadbeef->sendmessage(DB_EV_PLAY_NUM, 0, 0, 0);
     }
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, DDB_PLAYLIST_CHANGE_CONTENT, 0, 0);
 }
 
 #pragma mark - NSOutlineViewDataSource
@@ -502,6 +517,23 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     [self.outlineView expandItem:self.medialibRootItem expandChildren:self.searchString!=nil];
 }
 
+#pragma mark - MediaLibraryOutlineViewDelegate
+
+- (void)mediaLibraryOutlineViewDidActivateAlternative:(MediaLibraryOutlineView *)outlineView {
+    ddb_playlist_t * curr_plt = [self getDestPlaylist];
+    if (!curr_plt) {
+        return;
+    }
+
+    deadbeef->plt_set_curr (curr_plt);
+
+    [self addSelectionToPlaylist:curr_plt];
+
+    deadbeef->plt_unref (curr_plt);
+
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, DDB_PLAYLIST_CHANGE_CONTENT, 0, 0);
+}
+
 #pragma mark - TrackContextMenuDelegate
 
 - (void)trackProperties {
@@ -520,7 +552,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     NSInteger row = -1;
     MediaLibraryItem *item;
 
-    row = self.outlineView.clickedRow;
+    row = self.outlineView.selectedRow;
     if (row == -1) {
         return NULL;
     }
