@@ -400,7 +400,7 @@ _ml_get_music_paths (medialib_source_t *source) {
     snprintf (conf_name, sizeof (conf_name), "%spaths", source->source_conf_prefix);
     const char *paths = deadbeef->conf_get_str_fast (conf_name, NULL);
     if (!paths) {
-        return NULL;
+        return json_array();
     }
     json_error_t error;
     json_t *json = json_loads (paths, 0, &error);
