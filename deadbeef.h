@@ -1584,6 +1584,11 @@ typedef struct {
 #if (DDB_API_LEVEL >= 13)
     void (*plt_item_set_selected)(ddb_playlist_t *plt, ddb_playItem_t *it, int sel);
     ddb_playlist_t * (*plt_find_by_name) (const char *name);
+
+    /// Append a playlist, and return the pointer
+    ///
+    /// NOTE: Before API level 15, this function had a bug and didn't increment reference count.
+    /// It's not recommended to use it unless API level 15 is available.
     ddb_playlist_t * (*plt_append) (const char *title);
     ddb_playItem_t * (*plt_get_head_item) (ddb_playlist_t *p, int iter);
     ddb_playItem_t * (*plt_get_tail_item) (ddb_playlist_t *p, int iter);

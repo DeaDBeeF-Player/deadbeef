@@ -333,6 +333,8 @@ _treeview_row_did_activate (GtkTreeView* self, GtkTreePath* path, GtkTreeViewCol
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
         deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
     }
+
+    deadbeef->plt_unref (curr_plt);
 }
 
 static gboolean
