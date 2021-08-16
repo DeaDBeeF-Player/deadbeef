@@ -117,6 +117,26 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
     }
 }
 
+static gboolean _selection_func (
+                                 GtkTreeSelection  *selection,
+                                 GtkTreeModel      *model,
+                                 GtkTreePath       *path,
+                                 gboolean           path_currently_selected,
+                                 gpointer           data
+                                 ) {
+    w_medialib_viewer_t *mlv = data;
+    gint *indices = gtk_tree_path_get_indices(path);
+
+    int count = gtk_tree_path_get_depth(path);
+
+    // don't select root
+    if (count == 1 && indices[0] == 0) {
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
 static void
 w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
     // observe medialib source
@@ -139,6 +159,9 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
     GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
     gtk_tree_store_append (store, &mlv->root_iter, NULL);
     gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("All Music"), -1);
+
+    GtkTreeSelection *selection = gtk_tree_view_get_selection (mlv->tree);
+    gtk_tree_selection_set_select_function(selection, _selection_func, mlv, NULL);
 
     _reload_content (mlv);
 }
@@ -374,7 +397,6 @@ _treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_d
     GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (mlv->tree));
     GtkTreeSelection *selection = gtk_tree_view_get_selection (mlv->tree);
 
-    // FIXME: this can be avoided by using "event_after"
     if (!_select_at_position (mlv->tree, event->x, event->y)) {
         return FALSE;
     }
@@ -384,11 +406,12 @@ _treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_d
 
     // create array of tracks
     ddb_playItem_t **tracks = NULL;
-    if (count > 0) {
-        tracks = calloc (count, sizeof (ddb_playItem_t *));
-        _collect_selected_tracks (model, selection, tracks, 0);
+    if (count == 0) {
+        return TRUE;
     }
 
+    tracks = calloc (count, sizeof (ddb_playItem_t *));
+    _collect_selected_tracks (model, selection, tracks, 0);
 
     // context menu
     if (event->button == 3) {
@@ -508,7 +531,7 @@ w_medialib_viewer_create (void) {
     gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
 
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
-    add_treeview_column (w, GTK_TREE_VIEW (w->tree), COL_TITLE, 1, 0, _("Item"), 0);
+    add_treeview_column (w, GTK_TREE_VIEW (w->tree), COL_TITLE, 1, 0, "", 0);
 
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), FALSE);
     gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), FALSE);
