@@ -100,7 +100,7 @@ _medialib_state_did_change (void *user_data) {
     GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
     switch (state) {
     case DDB_MEDIASOURCE_STATE_IDLE:
-        gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, enabled ? _("All Music") : _("Media Library Is Disabled"), -1);
+        gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, enabled ? _("All Music") : _("Media library is disabled"), -1);
         break;
     case DDB_MEDIASOURCE_STATE_LOADING:
         gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("Loading..."), -1);

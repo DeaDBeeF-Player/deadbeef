@@ -15,6 +15,7 @@
 
 @property (nonatomic) ddb_medialib_plugin_t *plugin;
 @property (nonatomic) XCTestExpectation *scanCompletedExpectation;
+@property (nonatomic) int waitCount;
 
 @end
 
@@ -24,6 +25,7 @@
     // Put setup code here. This method is called before the invocation of each test method in the class.
     self.plugin = (ddb_medialib_plugin_t *)plug_get_for_id("medialib");
     self.scanCompletedExpectation = [[XCTestExpectation alloc] initWithDescription:@"Scan completed"];
+    self.waitCount = 0;
 }
 
 - (void)tearDown {
@@ -32,9 +34,15 @@
 
 static void
 _listener(ddb_mediasource_event_type_t event, void *user_data) {
-    if (event == DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE) {
+    // The DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE should trigger twice:
+    // on the initial load, and on scan completion.
+    // Wait for the 2nd event.
+    if (event == DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE) {
         MediaLibTests *self = (__bridge MediaLibTests *)(user_data);
-        [self.scanCompletedExpectation fulfill];
+        self.waitCount += 1;
+        if (self.waitCount == 2) {
+            [self.scanCompletedExpectation fulfill];
+        }
     }
 }
 

@@ -162,8 +162,12 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 }
 
 - (void)updateMedialibStatusForView:(NSTableCellView *)view {
-    int state = self.medialibPlugin->plugin.scanner_state (self.medialibSource);
+    ddb_mediasource_state_t state = self.medialibPlugin->plugin.scanner_state (self.medialibSource);
+    int enabled = self.medialibPlugin->plugin.get_source_enabled (self.medialibSource);
     switch (state) {
+    case DDB_MEDIASOURCE_STATE_IDLE:
+        view.textField.stringValue = enabled ? @"All Music" : @"Media library is disabled";
+        break;
     case DDB_MEDIASOURCE_STATE_LOADING:
         view.textField.stringValue = @"Loading...";
         break;
@@ -176,10 +180,7 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     case DDB_MEDIASOURCE_STATE_SAVING:
         view.textField.stringValue = @"Saving...";
         break;
-    default:
-        view.textField.stringValue = self.medialibRootItem.stringValue;
-        break;
-    }
+   }
 }
 
 - (void)updateMedialibStatus {
@@ -197,22 +198,16 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     if (self.medialibPlugin == NULL) {
         return;
     }
-    if (event == DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE || event == DDB_MEDIASOURCE_EVENT_SCAN_DID_COMPLETE) {
+    switch (event) {
+    case DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE:
         [self filterChanged];
-    }
-    else if (event == DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE) {
-        int state = self.medialibPlugin->plugin.scanner_state (self.medialibSource);
-        if (state != DDB_MEDIASOURCE_STATE_IDLE) {
-            //            [_scannerActiveIndicator startAnimation:self];
-
-            [self updateMedialibStatus];
-
-            //            [_scannerActiveState setHidden:NO];
-        }
-        else {
-            //            [_scannerActiveIndicator stopAnimation:self];
-            //            [_scannerActiveState setHidden:YES];
-        }
+        break;
+    case DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE:
+    case DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE:
+        [self updateMedialibStatus];
+        break;
+    case DDB_MEDIASOURCE_EVENT_SELECTORS_DID_CHANGE:
+        break;
     }
 }
 
@@ -556,6 +551,10 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     }
     self.trkProperties.mediaLibraryItems = self.selectedItems;
     [self.trkProperties showWindow:self];
+}
+
+- (void)playlistChanged {
+    // FIXME: this is required by the context menu delegate -- means to reload the items?
 }
 
 - (MediaLibraryItem *)selectedItem {
