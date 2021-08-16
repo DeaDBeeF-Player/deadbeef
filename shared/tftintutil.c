@@ -153,7 +153,7 @@ calculate_tint_stops_from_string (const char *inputString, tint_stop_t *tintStop
             break;
         }
         uint32_t i = 0;
-        u8_nextchar(p, &i);
+        u8_nextchar(p, (int32_t *)&i);
         memcpy (out, p, i);
         out += i;
         p += i;
