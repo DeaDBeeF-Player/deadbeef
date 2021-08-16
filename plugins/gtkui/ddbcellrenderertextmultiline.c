@@ -41,7 +41,7 @@ struct _DdbCellRendererTextMultilinePrivate {
     gulong focus_out_id;
 
     gulong populate_popup_id;
-    gulong entry_menu_popdown_timeout;
+    guint entry_menu_popdown_timeout;
     gboolean in_entry_menu;
 };
 
@@ -70,7 +70,15 @@ enum  {
 };
 static void ddb_cell_renderer_text_multiline_gtk_cell_renderer_text_editing_done (DdbCellEditableTextView* entry, DdbCellRendererTextMultiline* _self_);
 static gboolean ddb_cell_renderer_text_multiline_gtk_cell_renderer_focus_out_event (DdbCellEditableTextView* entry, GdkEvent* event, DdbCellRendererTextMultiline* _self_);
-static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (GtkCellRenderer* base, GdkEvent* event, GtkWidget* widget, const gchar* path, GdkRectangle* background_area, GdkRectangle* cell_area, GtkCellRendererState flags);
+static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (
+                                                                             GtkCellRenderer      *cell,
+                                                                             GdkEvent             *event,
+                                                                             GtkWidget            *widget,
+                                                                             const gchar          *path,
+                                                                             const GdkRectangle   *background_area,
+                                                                             const GdkRectangle   *cell_area,
+                                                                             GtkCellRendererState  flags
+                                                                             );
 DdbCellRendererTextMultiline* ddb_cell_renderer_text_multiline_new (void);
 DdbCellRendererTextMultiline* ddb_cell_renderer_text_multiline_construct (GType object_type);
 static void ddb_cell_renderer_text_multiline_finalize (GObject* obj);
@@ -113,12 +121,6 @@ static void ddb_cell_editable_text_view_real_start_editing (GtkCellEditable* bas
     DdbCellEditableTextView * self;
     self = (DdbCellEditableTextView*) base;
 }
-
-
-#if GTK_CHECK_VERSION(2,20,0)
-static void ddb_cell_editable_text_view_real_editing_canceled (GtkCellRenderer* base) {
-}
-#endif
 
 DdbCellEditableTextView* ddb_cell_editable_text_view_construct (GType object_type) {
     DdbCellEditableTextView * self;
@@ -370,7 +372,15 @@ ddb_cell_renderer_text_multiline_populate_popup (GtkEntry *entry,
             G_CALLBACK (ddb_cell_renderer_text_multiline_popup_unmap), data);
 }
 
-static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (GtkCellRenderer* base, GdkEvent* event, GtkWidget* widget, const gchar* path, GdkRectangle* background_area, GdkRectangle* cell_area, GtkCellRendererState flags) {
+static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (
+                                                                             GtkCellRenderer      *cell,
+                                                                             GdkEvent             *event,
+                                                                             GtkWidget            *widget,
+                                                                             const gchar          *path,
+                                                                             const GdkRectangle   *background_area,
+                                                                             const GdkRectangle   *cell_area,
+                                                                             GtkCellRendererState  flags
+                                                                             ) {
     DdbCellRendererTextMultiline * self;
     DdbCellEditableTextView* textview;
     GValue v = {0};
@@ -385,7 +395,7 @@ static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (Gtk
     gint mult;
 
 
-    self = (DdbCellRendererTextMultiline*) base;
+    self = (DdbCellRendererTextMultiline*) cell;
     g_return_val_if_fail (widget != NULL, NULL);
     g_return_val_if_fail (path != NULL, NULL);
     g_return_val_if_fail (background_area != NULL, NULL);

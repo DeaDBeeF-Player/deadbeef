@@ -73,7 +73,7 @@ run_tagwriter_settings (GtkWidget *parentwindow) {
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "wv_write_id3v1")), wv_write_id3v1);
 
 
-    int response = gtk_dialog_run (GTK_DIALOG (dlg));
+    (void)gtk_dialog_run (GTK_DIALOG (dlg));
     gtk_widget_destroy (dlg);
 }
 

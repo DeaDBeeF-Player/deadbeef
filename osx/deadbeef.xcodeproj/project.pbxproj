@@ -2921,6 +2921,13 @@
 			remoteGlobalIDString = 2D3A4BB31D631530002C7098;
 			remoteInfo = medialib;
 		};
+		2D40E52826CA539E00522C79 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2DA84F7624F58894003507A2 /* jansson.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DA84F4524F5876A003507A2;
+			remoteInfo = jansson;
+		};
 		2D4459F71C04F2C400230939 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -13710,6 +13717,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D40E52926CA539E00522C79 /* PBXTargetDependency */,
 			);
 			name = shellexec;
 			productName = shellexec;
@@ -16730,6 +16738,11 @@
 			target = 2D3A4BB31D631530002C7098 /* medialib */;
 			targetProxy = 2D3A4BBB1D6315CE002C7098 /* PBXContainerItemProxy */;
 		};
+		2D40E52926CA539E00522C79 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = jansson;
+			targetProxy = 2D40E52826CA539E00522C79 /* PBXContainerItemProxy */;
+		};
 		2D4459F81C04F2C400230939 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D4458D81C04F1C000230939 /* vfs_zip */;
@@ -19593,12 +19606,7 @@
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
-				);
-				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/jansson/2.12/lib;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/deps/jansson-2.13.1/src\"";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "$(JANSSON_LDFLAGS)";
@@ -19642,12 +19650,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
-				);
-				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/jansson/2.12/lib;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/deps/jansson-2.13.1/src\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "$(JANSSON_LDFLAGS)";

@@ -93,9 +93,8 @@ unescape_forward_slash (const char *src, char *dst, int size) {
 
 static void
 prettify_forward_slash (const char *src, char *dst, int size) {
-    char *start = dst;
     const char arrow[] = " → ";
-    int larrow = strlen (arrow);
+    size_t larrow = strlen (arrow);
     while (*src && size > 1) {
         if (*src == '\\' && *(src+1) == '/') {
             src++;
@@ -207,7 +206,6 @@ hotkeys_save (void) {
     GtkListStore *hkstore = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (hotkeys)));
     deadbeef->conf_remove_items ("hotkey.key");
 
-    GtkTreePath *path = gtk_tree_path_new_first ();
     GtkTreeIter iter;
     gboolean res = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (hkstore), &iter);
     int i = 1;
@@ -239,7 +237,6 @@ action_tree_append (const char *title, GtkTreeStore *store, GtkTreeIter *root_it
     char *p = t;
     GtkTreeIter i;
     GtkTreeIter newroot;
-    int got_iter = 0;
     for (;;) {
         char *s = strchr (p, '/');
         // find unescaped forward slash
@@ -472,7 +469,7 @@ prefwin_init_hotkeys (GtkWidget *_prefwin) {
 
     gtk_tree_view_set_model (GTK_TREE_VIEW (hotkeys), GTK_TREE_MODEL (hkstore));
 
-    int n_hotkeys = hotkeys_load ();
+    (void)hotkeys_load ();
 }
 
 void
@@ -742,7 +739,6 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
     widget = hotkey_grabber_button;
     GdkModifierType accel_mods = 0;
     guint accel_key;
-    gchar *path;
     gboolean edited;
     gboolean cleared;
     GdkModifierType consumed_modifiers;

@@ -299,15 +299,6 @@ submit_refresh (void) {
     }
 }
 
-static gboolean
-playlistswitch_cb (void) {
-    DdbListview *listview = playlist_visible();
-    if (listview) {
-        ddb_listview_list_setup(listview, 0);
-    }
-    return FALSE;
-}
-
 int
 search_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     DdbListview *listview = playlist_visible();
@@ -338,7 +329,7 @@ search_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
             break;
         }
         case DB_EV_TRACKINFOCHANGED:
-            if (p1 == DDB_PLAYLIST_CHANGE_SELECTION && p2 != PL_SEARCH || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
+            if ((p1 == DDB_PLAYLIST_CHANGE_SELECTION && p2 != PL_SEARCH) || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
                 ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
                 if (ev->track) {
                     deadbeef->pl_item_ref (ev->track);
@@ -350,7 +341,7 @@ search_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
             }
             break;
         case DB_EV_PLAYLISTCHANGED:
-            if (p1 == DDB_PLAYLIST_CHANGE_SELECTION && p2 != PL_SEARCH || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
+            if ((p1 == DDB_PLAYLIST_CHANGE_SELECTION && p2 != PL_SEARCH) || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
                 g_idle_add(list_redraw_cb, listview);
             }
             else if (p1 == DDB_PLAYLIST_CHANGE_CONTENT) {

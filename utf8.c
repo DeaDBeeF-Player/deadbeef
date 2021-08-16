@@ -698,7 +698,7 @@ u8_tolower (const signed char *c, int l, char *out) {
         return 1;
     }
     else {
-        int ll = u8_tolower_slow (c, l, out);
+        int ll = u8_tolower_slow ((const char *)c, l, out);
         if (ll) {
             return ll;
         }
@@ -733,7 +733,7 @@ u8_toupper (const signed char *c, int l, char *out) {
         return 1;
     }
     else {
-        int ll = u8_toupper_slow (c, l, out);
+        int ll = u8_toupper_slow ((const char *)c, l, out);
         if (ll) {
             return ll;
         }
@@ -768,8 +768,8 @@ utfcasestr (const char *s1, const char *s2) {
             char lw2[10];
             u8_nextchar (p1, &i1);
             u8_nextchar (p2, &i2);
-            u8_tolower (p1, i1, lw1);
-            u8_tolower (p2, i2, lw2);
+            u8_tolower ((const signed char *)p1, i1, lw1);
+            u8_tolower ((const signed char *)p2, i2, lw2);
             if (strcmp (lw1, lw2)) {
                 break;
             }
@@ -799,7 +799,7 @@ utfcasestr_fast (const char *s1, const char *s2) {
             char lw1[10];
             u8_nextchar (p1, &i1);
             u8_nextchar (p2, &i2);
-            int l1 = u8_tolower (p1, i1, lw1);
+            int l1 = u8_tolower ((const signed char *)p1, i1, lw1);
             if (memcmp (lw1, p2, min(i2,l1))) {
                 break;
             }
@@ -825,8 +825,8 @@ u8_strcasecmp (const char *a, const char *b) {
         char s1[10], s2[10];
         u8_nextchar (p1, &i1);
         u8_nextchar (p2, &i2);
-        int l1 = u8_tolower (p1, i1, s1);
-        int l2 = u8_tolower (p2, i2, s2);
+        int l1 = u8_tolower ((const signed char *)p1, i1, s1);
+        int l2 = u8_tolower ((const signed char *)p2, i2, s2);
         int res = 0;
         if (l1 != l2) {
             res = l1-l2;

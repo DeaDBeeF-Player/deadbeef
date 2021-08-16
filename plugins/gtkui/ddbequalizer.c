@@ -141,11 +141,6 @@ static void ddb_equalizer_real_realize (GtkWidget* base) {
 }
 
 
-static gpointer _g_object_ref0 (gpointer self) {
-    return self ? g_object_ref (self) : NULL;
-}
-
-
 static gboolean ddb_equalizer_real_draw (GtkWidget *widget, cairo_t *cr) {
     DdbEqualizer *self = DDB_EQUALIZER (widget);
     GdkColor fore_bright_color;
@@ -209,7 +204,7 @@ static gboolean ddb_equalizer_real_draw (GtkWidget *widget, cairo_t *cr) {
     for (i = 0; i < DDB_EQUALIZER_BANDS; i++)
     {
         cairo_save (cr);
-        pango_layout_set_text (l, freqs[i], strlen (freqs[i]));
+        pango_layout_set_text (l, freqs[i], (int)strlen (freqs[i]));
         PangoRectangle ink, log;
         pango_layout_get_pixel_extents (l, &ink, &log);
         int offs = 2;
@@ -236,7 +231,7 @@ static gboolean ddb_equalizer_real_draw (GtkWidget *widget, cairo_t *cr) {
         cairo_save (cr);
         double db = ddb_equalizer_scale(self, (double)(self->priv->mouse_y-1) / (double)(height - self->priv->eq_margin_bottom - 2));
         snprintf (tmp, sizeof (tmp), "%s%.1fdB", db > 0 ? "+" : "", db);
-        pango_layout_set_text (l, tmp, strlen (tmp));
+        pango_layout_set_text (l, tmp, (int)strlen (tmp));
         cairo_move_to (cr, self->priv->eq_margin_left-1, self->priv->mouse_y-3);
         pango_cairo_show_layout (cr, l);
         cairo_restore (cr);
@@ -245,7 +240,7 @@ static gboolean ddb_equalizer_real_draw (GtkWidget *widget, cairo_t *cr) {
     cairo_save (cr);
     double val = ddb_equalizer_scale(self, 1);
     snprintf (tmp, sizeof (tmp), "%s%.1fdB", val > 0 ? "+" : "", val);
-    pango_layout_set_text (l, tmp, strlen(tmp));
+    pango_layout_set_text (l, tmp, (int)strlen(tmp));
     cairo_move_to (cr, self->priv->eq_margin_left-1, height-self->priv->eq_margin_bottom-fontsize);
     pango_cairo_show_layout (cr, l);
     cairo_restore (cr);
@@ -253,7 +248,7 @@ static gboolean ddb_equalizer_real_draw (GtkWidget *widget, cairo_t *cr) {
     cairo_save (cr);
     val = ddb_equalizer_scale(self, 0);
     snprintf (tmp, sizeof (tmp), "%s%.1fdB", val > 0 ? "+" : "", val);
-    pango_layout_set_text (l, tmp, strlen (tmp));
+    pango_layout_set_text (l, tmp, (int)strlen (tmp));
     cairo_move_to (cr, self->priv->eq_margin_left-1, 1);
     pango_cairo_show_layout (cr, l);
     cairo_restore (cr);
@@ -378,7 +373,6 @@ static gboolean ddb_equalizer_in_curve_area (DdbEqualizer* self, gdouble x, gdou
     _tmp10_ = _tmp1_;
     if (_tmp10_) {
         gdouble _tmp11_;
-        GtkAllocation _tmp12_;
         gint _tmp13_;
         gint _tmp14_;
         _tmp11_ = y;

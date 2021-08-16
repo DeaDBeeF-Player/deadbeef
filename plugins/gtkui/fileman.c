@@ -228,7 +228,7 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
         }
         if (pe - p < 4096 && pe - p > 7) {
             char fname[(int)(pe - p)+1];
-            strcopy_special (fname, p, pe-p);
+            strcopy_special (fname, (const char *)p, (int)(pe-p));
             //strncpy (fname, p, pe - p);
             //fname[pe - p] = 0;
             int abort = 0;
@@ -622,6 +622,8 @@ show_file_chooser (const gchar          *title,
         gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dlg), TRUE);
         gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dlg), "untitled.dbpl");
         set_file_filter_saveplaylist(dlg);
+        break;
+    case GTKUI_FILECHOOSER_OPENFOLDER:
         break;
     }
 

@@ -99,7 +99,7 @@ deadbeef_app_startup (GApplication *application) {
     G_APPLICATION_CLASS (deadbeef_app_parent_class)->startup (application);
 
 #if GTK_CHECK_VERSION(3,14,0)
-    int preferappmenu = gtk_application_prefers_app_menu (application);
+    int preferappmenu = gtk_application_prefers_app_menu (GTK_APPLICATION(application));
 #else
     int preferappmenu = 1;
 #endif
@@ -108,7 +108,7 @@ deadbeef_app_startup (GApplication *application) {
         g_action_map_add_action_entries (G_ACTION_MAP (application), app_entries, G_N_ELEMENTS (app_entries), application);
         DEADBEEF_APP (application)->logaction = G_SIMPLE_ACTION (g_action_map_lookup_action ( G_ACTION_MAP (application), "log"));
     } else {
-        gtk_application_set_app_menu (application, NULL);
+        gtk_application_set_app_menu (GTK_APPLICATION(application), NULL);
     }
 
     gtkui_mainwin_init ();
