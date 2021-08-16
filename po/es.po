@@ -6,9 +6,9 @@
 # Adolfo Jayme Barrientos, 2013
 # Adolfo Jayme-Barrientos, 2013
 # Adolfo Jayme Barrientos, 2013
-# Adolfo Jayme Barrientos, 2021
-# Adolfo Jayme Barrientos, 2013
-# Adolfo Jayme Barrientos, 2013
+# Adolfo Jayme-Barrientos, 2021
+# Adolfo Jayme-Barrientos, 2013
+# Adolfo Jayme-Barrientos, 2013
 # b0c7556da723b83b1e5bd960cf255433, 2014
 # b0c7556da723b83b1e5bd960cf255433, 2013-2014
 # Charlesles, 2013-2014,2016
@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-19 19:53+0200\n"
+"POT-Creation-Date: 2021-08-16 11:34+0200\n"
 "PO-Revision-Date: 2021-05-30 12:29+0000\n"
 "Last-Translator: Toni Estévez <toni.estevez@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/deadbeef-player/deadbeef-player/language/es/)\n"

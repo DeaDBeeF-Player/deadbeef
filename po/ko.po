@@ -8,12 +8,13 @@
 # JungHee Lee <daemul72@gmail.com>, 2019-2020
 # ieukori <ieukori@gmail.com>, 2016
 # JungHee Lee <daemul72@gmail.com>, 2020-2021
+# JungHee Lee <daemul72@gmail.com>, 2021
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-19 19:53+0200\n"
-"PO-Revision-Date: 2021-06-15 07:31+0000\n"
+"POT-Creation-Date: 2021-08-16 11:34+0200\n"
+"PO-Revision-Date: 2021-08-07 02:41+0000\n"
 "Last-Translator: JungHee Lee <daemul72@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/deadbeef-player/deadbeef-player/language/ko/)\n"
 "MIME-Version: 1.0\n"
@@ -759,7 +760,7 @@ msgstr "재생"
 #: ../plugins/converter/interface.c:680
 #: ../plugins/converter/converter.glade.h:52
 msgid "Configure"
-msgstr "설정하기"
+msgstr "구성하기"
 
 #: ../plugins/gtkui/interface.c:2156 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "DSP Chain Preset"
@@ -1054,7 +1055,7 @@ msgstr "단축키"
 #: ../plugins/gtkui/interface.c:3046 ../plugins/gtkui/interface.c:3100
 #: ../plugins/gtkui/deadbeef.glade.h:186
 msgid "Configuration"
-msgstr "환경설정"
+msgstr "구성"
 
 #: ../plugins/gtkui/interface.c:3054 ../plugins/gtkui/interface.c:3144
 #: ../plugins/gtkui/deadbeef.glade.h:187
@@ -1088,7 +1089,7 @@ msgstr "URL:"
 #: ../plugins/gtkui/interface.c:5161 ../plugins/gtkui/plcommon.c:1283
 #: ../plugins/gtkui/deadbeef.glade.h:193
 msgid "Set Custom Title"
-msgstr "사용자 정의 제목 지정"
+msgstr "사용자 지정 제목 지정"
 
 #: ../plugins/gtkui/interface.c:4051 ../plugins/gtkui/deadbeef.glade.h:194
 msgid "Group By ..."
@@ -1189,7 +1190,7 @@ msgid ""
 "DeaDBeeF decoder plugins. For example, mp3 files can have content type "
 "\"audio/x-mpeg\", and need to be decoded by DeaDBeeF's own \"stdmpg\" "
 "plugin, or \"ffmpeg\" plugin."
-msgstr "아래의 표는 네트워크로 전달되는 스트림의 형식과 DeadBeef의 디코더 플러그인 사이의 연결을 설정하는 것입니다. 예를 들어 .mp3 파일이 \"audio/x-mpeg\"라는 컨텐츠 유형으로 전달될 때, DeaDBeeF에 내장된 \"stdmpg\" 플러그인을 사용하거나 \"ffmpeg\" 플러그인을 사용하도록 설정할 수 있습니다."
+msgstr "이 표에서는 네트워크 스트림 콘텐츠 유형과 DeaDBeeF 디코더 플러그인 간의 바인딩을 정의합니다. 예를 들어, mp3 파일은 \"audio/x-mpeg\" 콘텐츠 유형을 가질 수 있으며 DeaDBeeF의 자체 \"stdmpg\" 플러그인 또는 \"ffmpeg\" 플러그인으로 디코딩해야 합니다."
 
 #: ../plugins/gtkui/interface.c:4858 ../plugins/gtkui/deadbeef.glade.h:216
 msgid "Content-Type:"
@@ -1226,7 +1227,7 @@ msgid ""
 " \"Add Location\" dialog. The title itself is visible in columns displaying "
 "the \"Artist\" metadata field. It should look like \"[custom] artist\" if "
 "the Artist field is present, or just \"custom\" otherwise."
-msgstr "이 다이얼로그는 어떤 곡이든 사용자가 정의한 제목을 표시하도록 할 수 있습니다. 인터넷 라디오 제목을 쓸 때 유용합니다. 사용자 지정 제목은 \"장소 추가\" 다이얼로그를 사용할 수도 있습니다.컬럼에 나타나는 제목은 \"아티스트\" 항목에 나타나게 되고, \"[사용자지정] 아티스트\"의 형식으로 보여지게 됩니다. 그러나 컬럼 안에 \"아티스트\" 항목이 존재하지 않는다면 그냥 \"사용자 지정\"으로 나타나게 될 것입니다."
+msgstr "이 대화상자를 통해 곡의 사용자 지정 제목을 설정할 수 있습니다. 이것은 인터넷 라디오 제목을 쓸 때 가장 유용합니다. 사용자 지정 제목을 설정하는 옵션은 \"장소 추가\" 대화상자에도 있습니다. 제목 자체는 \"아티스트\" 메타데이터 필드를 표시하는 열에 표시됩니다. 아티스트 필드가 있는 경우, \"[사용자지정] 아티스트\"로 표시되거나 그렇지 않은 경우, \"사용자지정\"으로 표시되어야 합니다."
 
 #: ../plugins/gtkui/interface.c:5211 ../plugins/gtkui/deadbeef.glade.h:224
 #: ../translation/plugins.c:146 ../plugins/shellexecui/interface.c:70
@@ -1295,7 +1296,7 @@ msgstr "보고서 복사"
 
 #: ../plugins/gtkui/interface.c:5557 ../plugins/gtkui/deadbeef.glade.h:239
 msgid "Only show plugins with configuration"
-msgstr "환경설정이 있는 플러그인만 표시"
+msgstr "구성이 있는 플러그인만 표시"
 
 #: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:651
 msgid "Artist / Album"
@@ -1413,7 +1414,7 @@ msgstr "파일 열기..."
 #: ../plugins/gtkui/pluginconf.c:530
 #, c-format
 msgid "Configure %s"
-msgstr "%s 설정하기"
+msgstr "%s 구성하기"
 
 #: ../plugins/gtkui/prefwin.c:92
 msgid "Default Audio Device"
@@ -1762,7 +1763,7 @@ msgstr "임베드된 큐시트"
 #: ../translation/plugins.c:3
 #, no-c-format
 msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr "Satoh보다 Ken emu를 선호 (서라운드 기능 작동하지 않음)"
+msgstr "Satoh보다 Ken emu 선호 (서라운드 작동하지 않음)"
 
 #: ../translation/plugins.c:5
 #, no-c-format
@@ -2731,7 +2732,7 @@ msgstr "(sec)보다 짧을 경우 건너뛰기"
 #: ../translation/plugins.c:437
 #, no-c-format
 msgid "Configure Custom Shell Commands"
-msgstr "사용자 정의 셸 명령 설정하기"
+msgstr "사용자 정의 셸 명령 구성하기"
 
 #. plugins/shn/shn.c
 #: ../translation/plugins.c:440
@@ -2836,7 +2837,7 @@ msgstr "로깅 활성화"
 #: ../translation/plugins.c:482
 #, no-c-format
 msgid "Timidity++ bank configuration file"
-msgstr "Timidity++ 뱅크 환경설정 파일"
+msgstr "Timidity++ 뱅크 구성 파일"
 
 #: ../plugins/converter/convgui.c:91
 #, c-format
@@ -3353,14 +3354,14 @@ msgid ""
 " The files will be moved to trash.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr " 파일이 휴지통으로 이동합니다.\n\n(GTKUI 플러그인 설정에서 이 대화 상자를 끌 수 있음)"
+msgstr " 파일이 휴지통으로 이동합니다.\n\n(GTKUI 플러그인 설정에서 이 대화상자를 끌 수 있음)"
 
 #: ../plugins/gtkui/actionhandlers.c:382
 msgid ""
 " The files will be lost.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr " 파일이 손실됩니다.\n\n(이 대화 상자는 GTKUI 플러그인 설정에서 해제할 수 있습니다)"
+msgstr " 파일이 손실됩니다.\n\n(이 대화상자는 GTKUI 플러그인 설정에서 해제할 수 있음)"
 
 #: ../plugins/gtkui/actionhandlers.c:387
 #, c-format
@@ -3512,7 +3513,7 @@ msgstr "채우기"
 
 #: ../plugins/gtkui/widgets.c:4079
 msgid "Configure Button"
-msgstr "버튼 설정하기"
+msgstr "버튼 구성하기"
 
 #: ../plugins/gtkui/widgets.c:4361
 msgid "Voices:"

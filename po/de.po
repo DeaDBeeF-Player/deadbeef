@@ -5,9 +5,9 @@
 # Translators:
 # aasche <anton.asche@mhinac.de>, 2017,2019
 # aer, 2019
-# aer <aer66@mail.de>, 2019
-# aer <aer66@mail.de>, 2019
-# aer <aer66@mail.de>, 2019-2021
+# aer, 2019
+# aer, 2019
+# aer, 2019-2021
 # aasche <anton.asche@mhinac.de>, 2017,2019
 # copycat <copycat@onlinehome.de>, 2016
 # copycat <copycat@onlinehome.de>, 2016
@@ -26,9 +26,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-19 19:53+0200\n"
-"PO-Revision-Date: 2021-05-30 08:50+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2021-08-16 11:34+0200\n"
+"PO-Revision-Date: 2021-08-02 23:09+0000\n"
+"Last-Translator: aer\n"
 "Language-Team: German (http://www.transifex.com/deadbeef-player/deadbeef-player/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -801,7 +801,7 @@ msgstr "Systemleisten-Icon verstecken"
 
 #: ../plugins/gtkui/interface.c:2198 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Delete from disk should use Trash"
-msgstr ""
+msgstr "In den Papierkorb löschen"
 
 #: ../plugins/gtkui/interface.c:2202 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
@@ -1068,17 +1068,17 @@ msgstr "Tastatur"
 #: ../plugins/gtkui/interface.c:3046 ../plugins/gtkui/interface.c:3100
 #: ../plugins/gtkui/deadbeef.glade.h:186
 msgid "Configuration"
-msgstr ""
+msgstr "Einstellungen"
 
 #: ../plugins/gtkui/interface.c:3054 ../plugins/gtkui/interface.c:3144
 #: ../plugins/gtkui/deadbeef.glade.h:187
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #: ../plugins/gtkui/interface.c:3061 ../plugins/gtkui/interface.c:3160
 #: ../plugins/gtkui/deadbeef.glade.h:188
 msgid "License"
-msgstr ""
+msgstr "Lizenz"
 
 #: ../plugins/gtkui/interface.c:3095 ../plugins/gtkui/interface.c:4763
 #: ../plugins/gtkui/deadbeef.glade.h:189
@@ -1305,11 +1305,11 @@ msgstr "Metadaten aktualisieren"
 
 #: ../plugins/gtkui/interface.c:5549 ../plugins/gtkui/deadbeef.glade.h:238
 msgid "Copy report"
-msgstr ""
+msgstr "Report kopieren"
 
 #: ../plugins/gtkui/interface.c:5557 ../plugins/gtkui/deadbeef.glade.h:239
 msgid "Only show plugins with configuration"
-msgstr ""
+msgstr "Nur Erweiterungen mit Konfigurationsmenü anzeigen"
 
 #: ../plugins/gtkui/mainplaylist.c:231 ../plugins/gtkui/search.c:651
 msgid "Artist / Album"
@@ -1368,15 +1368,15 @@ msgstr "_Einfügen"
 
 #: ../plugins/gtkui/plcommon.c:1054
 msgid "Play Next"
-msgstr ""
+msgstr "Nächsten Titel abspielen"
 
 #: ../plugins/gtkui/plcommon.c:1058
 msgid "Play Later"
-msgstr ""
+msgstr "Titel später abspielen"
 
 #: ../plugins/gtkui/plcommon.c:1062
 msgid "Remove from Playback Queue"
-msgstr ""
+msgstr "Aus Warteschlange entfernen"
 
 #. plugins/hotkeys/hotkeys.c
 #: ../plugins/gtkui/plcommon.c:1084 ../translation/plugins.c:249
@@ -1394,7 +1394,7 @@ msgstr "_Kopieren"
 
 #: ../plugins/gtkui/plcommon.c:1147
 msgid "Remove from Disk"
-msgstr ""
+msgstr "Vom Datenträger löschen"
 
 #: ../plugins/gtkui/plcommon.c:1804 ../plugins/gtkui/plcommon.c:1946
 msgid "Add column"
@@ -2257,7 +2257,7 @@ msgstr "Aktuelle Wiedergabeliste entfernen"
 #: ../translation/plugins.c:216
 #, no-c-format
 msgid "Rename Current Playlist"
-msgstr ""
+msgstr "Aktuelle Wiedergabeliste umbenennen"
 
 #: ../translation/plugins.c:220
 #, no-c-format
@@ -3367,7 +3367,7 @@ msgid ""
 " The files will be moved to trash.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "Dateien werden in den Papierkorb gelöscht.\n\n(Diese Meldung kann in der GTKUI-Erweiterung abgeschaltet werden)"
 
 #: ../plugins/gtkui/actionhandlers.c:382
 msgid ""
@@ -3453,7 +3453,7 @@ msgstr "Einfügen"
 
 #: ../plugins/gtkui/widgets.c:928
 msgid "Parent"
-msgstr ""
+msgstr "Bezug"
 
 #: ../plugins/gtkui/widgets.c:1046
 msgid "Multiple widgets of this type are not supported"
