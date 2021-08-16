@@ -34,17 +34,6 @@ static GtkWidget *eqcont;
 static GtkWidget *eqwin;
 static GtkWidget *eqenablebtn;
 
-static inline float
-db_to_amp (float dB) {
-    const float ln10=2.3025850929940002f;
-    return exp(ln10*dB/20.f);
-}
-
-static inline float
-amp_to_db (float amp) {
-    return 20*log10 (amp);
-}
-
 ddb_dsp_context_t *
 get_supereq (void) {
     ddb_dsp_context_t *dsp = deadbeef->streamer_get_dsp_chain ();

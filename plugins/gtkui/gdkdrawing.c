@@ -370,12 +370,12 @@ gtkui_override_tabstrip_colors (void) {
     return override_tabstrip_colors;
 }
 
+#if 0
 static void
 color_dump (const char *name, GdkColor *c) {
     printf ("%s: %x %x %x\n", name, c->red>>8, c->green>>8, c->blue>>8);
 }
 
-static guint16
 color_lerp_component (guint16 from, guint16 to, float factor) {
     int32_t result = (int32_t)from + (int32_t)(((int32_t)to - (int32_t)from) * factor);
     if (result < 0) {
@@ -395,6 +395,7 @@ color_lerp (GdkColor from, GdkColor to, float factor) {
     result.blue = color_lerp_component(from.blue, to.blue, factor);
     return result;
 }
+#endif
 
 void
 gtkui_init_theme_colors (void) {

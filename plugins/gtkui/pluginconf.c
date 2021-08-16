@@ -144,7 +144,7 @@ void apply_conf (GtkWidget *w, ddb_dialog_t *conf, int reset_settings) {
             continue;
         } else {
             // fetch data
-            GtkWidget *widget = g_object_get_data (w, key);
+            GtkWidget *widget = g_object_get_data (G_OBJECT(w), key);
             if (widget) {
                 if (!strcmp (type, "entry") || !strcmp (type, "password")) {
                     conf->set_param (key, gtk_entry_get_text (GTK_ENTRY (widget)));
@@ -258,7 +258,7 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
 
     // This needs to be set on an object that is tied to the lifetime of the plugin preferences container
     make_dialog_conf = (ddb_pluginprefs_dialog_t *)g_memdup (make_dialog_conf, sizeof(ddb_pluginprefs_dialog_t));
-    g_object_set_data_full (containervbox, "dialog_conf_struct", make_dialog_conf, g_free);
+    g_object_set_data_full (G_OBJECT(containervbox), "dialog_conf_struct", make_dialog_conf, g_free);
 
 
     // Temporarily disable the callback until dialog script has been fully parsed
@@ -272,7 +272,7 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
     char token[MAX_TOKEN];
     const char *script = conf->layout;
     parser_line = 1;
-    while (script = gettoken (script, token)) {
+    while ((script = gettoken (script, token))) {
         if (strcmp (token, "property")) {
             fprintf (stderr, "invalid token while loading plugin %s config dialog: %s at line %d\n", conf->title, token, parser_line);
             break;
@@ -375,7 +375,7 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
             label = gtk_label_new (_(labeltext));
             gtk_widget_show (label);
             prop = gtk_entry_new ();
-            gtk_entry_set_width_chars (prop, 5);
+            gtk_entry_set_width_chars (GTK_ENTRY(prop), 5);
             gtk_entry_set_activates_default (GTK_ENTRY (prop), TRUE);
             g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), containervbox);
             gtk_widget_show (prop);
