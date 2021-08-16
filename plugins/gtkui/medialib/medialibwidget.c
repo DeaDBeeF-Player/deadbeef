@@ -146,6 +146,7 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
 static void
 w_medialib_viewer_destroy (struct ddb_gtkui_widget_s *w) {
     w_medialib_viewer_t *mlv = (w_medialib_viewer_t *)w;
+    mlv->plugin->plugin.remove_listener (mlv->source, mlv->listener_id);
     if (mlv->item_tree != NULL) {
         mlv->plugin->plugin.free_item_tree (mlv->source, mlv->item_tree);
         mlv->item_tree = NULL;
