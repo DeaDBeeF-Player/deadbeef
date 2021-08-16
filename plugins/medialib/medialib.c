@@ -1414,10 +1414,21 @@ ml_folder_at_index (ddb_mediasource_source_t _source, int index, char *folder, s
 }
 
 static void
+_save_folders_config (medialib_source_t *source) {
+    char *dump = json_dumps(source->musicpaths_json, JSON_COMPACT);
+    if (dump) {
+        char conf_name[200];
+        snprintf (conf_name, sizeof (conf_name), "%spaths", source->source_conf_prefix);
+        deadbeef->conf_set_str (conf_name, dump);
+        free (dump);
+        dump = NULL;
+        deadbeef->conf_save();
+    }
+}
+
+static void
 ml_set_folders (ddb_mediasource_source_t _source, const char **folders, size_t count) {
     medialib_source_t *source = (medialib_source_t *)_source;
-    __block char *dump = NULL;
-
     dispatch_sync(source->sync_queue, ^{
         if (!source->musicpaths_json) {
             source->musicpaths_json = json_array();
@@ -1430,17 +1441,8 @@ ml_set_folders (ddb_mediasource_source_t _source, const char **folders, size_t c
             json_decref(value);
         }
 
-        dump = json_dumps(source->musicpaths_json, JSON_COMPACT);
+        _save_folders_config(source);
     });
-
-    if (dump) {
-        char conf_name[200];
-        snprintf (conf_name, sizeof (conf_name), "%spaths", source->source_conf_prefix);
-        deadbeef->conf_set_str (conf_name, dump);
-        free (dump);
-        dump = NULL;
-        deadbeef->conf_save();
-    }
 }
 
 static char **
@@ -1481,6 +1483,7 @@ ml_insert_folder_at_index (ddb_mediasource_source_t _source, const char *folder,
             notify = 1;
         }
         json_decref(value);
+        _save_folders_config(source);
     });
     if (notify) {
         ml_notify_listeners (source, DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE);
@@ -1495,6 +1498,7 @@ ml_remove_folder_at_index (ddb_mediasource_source_t _source, int index) {
         if (-1 != json_array_remove(source->musicpaths_json, index)) {
             notify = 1;
         }
+        _save_folders_config(source);
     });
     if (notify) {
         ml_notify_listeners (source, DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE);
@@ -1511,6 +1515,7 @@ ml_append_folder (ddb_mediasource_source_t _source, const char *folder) {
             notify = 1;
         }
         json_decref(value);
+        _save_folders_config(source);
     });
     if (notify) {
         ml_notify_listeners (source, DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE);
