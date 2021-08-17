@@ -24,7 +24,7 @@
 #include "../../deadbeef.h"
 #include <AudioUnit/AudioUnit.h>
 #include <AudioToolbox/AudioToolbox.h>
-#import <IOKit/pwr_mgt/IOPMLib.h>
+#include <IOKit/pwr_mgt/IOPMLib.h>
 
 static DB_functions_t *deadbeef;
 static DB_output_t plugin;
@@ -33,10 +33,6 @@ static DB_output_t plugin;
 
 static ddb_playback_state_t state = DDB_PLAYBACK_STATE_STOPPED;
 static uint64_t mutex;
-
-// audiounit impl
-#include <AudioUnit/AudioUnit.h>
-#include <AudioToolbox/AudioToolbox.h>
 
 static AudioDeviceID device_id;
 static AudioDeviceIOProcID process_id;
@@ -52,14 +48,10 @@ ca_fmtchanged (AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioOb
 static OSStatus
 ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const AudioBufferList * inInputData, const AudioTimeStamp * inInputTime, AudioBufferList * outOutputData, const AudioTimeStamp * inOutputTime, void * inClientData);
 
-static int
-ca_free (void);
-static int
-ca_init (void);
-static int
-ca_play (void);
-static int
-ca_pause (void);
+static int ca_free (void);
+static int ca_init (void);
+static int ca_play (void);
+static int ca_pause (void);
 
 static UInt32
 GetNumberAvailableNominalSampleRateRanges()
@@ -139,41 +131,12 @@ ca_apply_format (void) {
     if (req_format.mSampleRate > 0) {
         req_format.mSampleRate = get_best_samplerate ((int)req_format.mSampleRate, avail_samplerates, num_avail_samplerates);
 
-        // setting nominal samplerate doesn't work in most cases, and requires some timing trickery
-#if 0
-        AudioObjectPropertyAddress nsr = {
-            kAudioDevicePropertyNominalSampleRate,
-            kAudioObjectPropertyScopeGlobal,
-            kAudioObjectPropertyElementMaster
-        };
-        sz = sizeof(Float64);
-        Float64 sr = req_format.mSampleRate;
-        err = AudioObjectSetPropertyData(device_id, &nsr, 0, NULL, sz, &sr);
-        if (err != noErr) {
-            trace ("AudioObjectSetPropertyData kAudioDevicePropertyNominalSampleRate: %x\n", err);
-        }
-
-        err = AudioObjectGetPropertyData(device_id, &nsr, 0, NULL, &sz, &sr);
-        if (err != noErr) {
-            trace ("AudioObjectGetPropertyData kAudioDevicePropertyNominalSampleRate: %x\n", err);
-        }
-#endif
-
         AudioObjectPropertyAddress theAddress = {
             kAudioDevicePropertyStreamFormat,
             kAudioDevicePropertyScopeOutput,
             kAudioObjectPropertyElementMaster
         };
         sz = sizeof (AudioStreamBasicDescription);
-
-#if 0
-        static AudioStreamBasicDescription current_format;
-        err = AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, &current_format);
-        if (err != noErr) {
-            trace ("AudioObjectGetPropertyData kAudioDevicePropertyStreamFormat: %x\n", err);
-            goto error;
-        }
-#endif
 
         // NOTE: for unsupported formats, this call may cause bogus messages to appear in console / debug output.
         err = AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &req_format);
