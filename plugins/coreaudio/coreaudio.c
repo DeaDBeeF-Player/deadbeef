@@ -29,7 +29,7 @@
 static DB_functions_t *deadbeef;
 static DB_output_t plugin;
 
-#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, DDB_LOG_LAYER_INFO, __VA_ARGS__); }
 
 static ddb_playback_state_t state = DDB_PLAYBACK_STATE_STOPPED;
 static uint64_t mutex;
