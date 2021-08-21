@@ -430,9 +430,11 @@ ml_index (medialib_source_t *source, ddb_playlist_t *plt) {
     int has_unknown_album = 0;
     int has_unknown_genre = 0;
 
-    const char *unknown_artist = deadbeef->metacache_add_string("Unknown Artist");
-    const char *unknown_album = deadbeef->metacache_add_string("Unknown Album");
-    const char *unknown_genre = deadbeef->metacache_add_string("Unknown Genre");
+    // NOTE: these are searched by content when creating item trees,
+    // so the values must be the same, as the ones that actually get to the collections.
+    const char *unknown_artist = deadbeef->metacache_add_string("<?>");
+    const char *unknown_album = deadbeef->metacache_add_string("<?>");
+    const char *unknown_genre = deadbeef->metacache_add_string("<?>");
 
     DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
     while (it && !source->scanner_terminate) {
@@ -932,6 +934,18 @@ ml_remove_listener (ddb_mediasource_source_t _source, int listener_id) {
     source->ml_listeners_userdatas[listener_id] = NULL;
 }
 
+static int _is_blank_text (const char *track_field) {
+    if (!track_field) {
+        return 1;
+    }
+    for (int i = 0; track_field[i]; i++) {
+        if (track_field[i] < 0 || track_field[i] > 0x20) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 static void
 get_albums_for_collection_group_by_field (medialib_source_t *source, ddb_medialib_item_t *root, ml_collection_t *coll, const char *field, int field_tf, const char /* nonnull */ *default_field_value, int selected) {
 
@@ -973,7 +987,7 @@ get_albums_for_collection_group_by_field (medialib_source_t *source, ddb_mediali
             track_field = mc_str_for_track_field = deadbeef->metacache_add_string (text);
         }
 
-        if (!track_field) {
+        if (_is_blank_text (track_field)) {
             track_field = default_field_value;
         }
 
@@ -1110,7 +1124,12 @@ get_list_of_tracks_for_album (ddb_medialib_item_t *libitem, ml_string_t *album, 
             album_item = libitem;
             deadbeef->tf_eval (&ctx, artist_album_bc, text, sizeof (text));
 
-            album_item->text = deadbeef->metacache_add_string (text);
+            if (!_is_blank_text(text)) {
+                album_item->text = deadbeef->metacache_add_string (text);
+            }
+            else {
+                album_item->text = deadbeef->metacache_add_string ("<?>");
+            }
         }
 
         ddb_medialib_item_t *track_item = calloc(1, sizeof (ddb_medialib_item_t));
@@ -1219,11 +1238,11 @@ _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, med
     }
     else if (index == SEL_ARTISTS) {
         // list of albums for artist
-        get_albums_for_collection_group_by_field (source, root, coll, "artist", 0, "Unknown Artist", selected);
+        get_albums_for_collection_group_by_field (source, root, coll, "artist", 0, "<?>", selected);
     }
     else if (index == SEL_GENRES) {
         // list of albums for genre
-        get_albums_for_collection_group_by_field (source, root, coll, "genre", 0, "Unknown Genre", selected);
+        get_albums_for_collection_group_by_field (source, root, coll, "genre", 0, "<?>", selected);
     }
     else if (index == SEL_ALBUMS) {
         // list of tracks for album
