@@ -962,11 +962,7 @@ static DB_misc_t plugin = {
 #else
     .plugin.id = "pltbrowser_gtk2",
 #endif
-#if GTK_CHECK_VERSION(3,0,0)
-    .plugin.name = "Playlist browser GTK3",
-#else
-    .plugin.name = "Playlist browser GTK2",
-#endif
+    .plugin.name = "Playlist Browser",
     .plugin.descr = "Use View -> Design Mode to add playlist browser into main window",
     .plugin.copyright = 
         "Playlist browser widget plugin for DeaDBeeF Player\n"
