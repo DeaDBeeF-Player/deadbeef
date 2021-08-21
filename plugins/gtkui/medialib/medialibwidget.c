@@ -41,6 +41,39 @@ enum {
     COL_TRACK,
 };
 
+static int
+_item_comparator (const void *a, const void *b) {
+    const ddb_medialib_item_t *item1 = *((ddb_medialib_item_t **)a);
+    const ddb_medialib_item_t *item2 = *((ddb_medialib_item_t **)b);
+
+     if (!item1->track || !item2->track) {
+         return strcasecmp (item1->text, item2->text);
+     }
+
+     int n1 = atoi (deadbeef->pl_find_meta (item1->track, "track") ?: "0");
+     int n2 = atoi (deadbeef->pl_find_meta (item2->track, "track") ?: "0");
+     int d1 = atoi (deadbeef->pl_find_meta (item1->track, "disc") ?: "0") + 1;
+     int d2 = atoi (deadbeef->pl_find_meta (item2->track, "disc") ?: "0") + 1;
+     n1 = d1 * 10000 + n1;
+     n2 = d2 * 10000 + n2;
+
+    return n1-n2;
+}
+
+static ddb_medialib_item_t **
+_sorted_children_from_item (ddb_medialib_item_t *item) {
+    ddb_medialib_item_t **children = calloc (item->num_children, sizeof (ddb_medialib_item_t *));
+    ddb_medialib_item_t *c = item->children;
+    for (int i = 0; i < item->num_children; i++) {
+        children[i] = c;
+        c = c->next;
+    }
+
+    qsort (children, item->num_children, sizeof (ddb_medialib_item_t *), _item_comparator);
+
+    return children;
+}
+
 static void
 _add_items (w_medialib_viewer_t *mlv, GtkTreeIter *iter, ddb_medialib_item_t *item) {
     if (item == NULL) {
@@ -48,7 +81,10 @@ _add_items (w_medialib_viewer_t *mlv, GtkTreeIter *iter, ddb_medialib_item_t *it
     }
     GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
 
-    for (ddb_medialib_item_t *child_item = item->children; child_item; child_item = child_item->next) {
+    ddb_medialib_item_t **sorted_items = _sorted_children_from_item (item);
+
+    for (int i = 0; i < item->num_children; i++) {
+        ddb_medialib_item_t *child_item = sorted_items[i];
         GtkTreeIter child;
         gtk_tree_store_append (store, &child, iter);
         if (child_item->num_children > 0) {
@@ -66,6 +102,8 @@ _add_items (w_medialib_viewer_t *mlv, GtkTreeIter *iter, ddb_medialib_item_t *it
             _add_items (mlv, &child, child_item);
         }
     }
+
+    free (sorted_items);
 }
 
 static gboolean
