@@ -51,12 +51,55 @@ _add_items (w_medialib_viewer_t *mlv, GtkTreeIter *iter, ddb_medialib_item_t *it
     for (ddb_medialib_item_t *child_item = item->children; child_item; child_item = child_item->next) {
         GtkTreeIter child;
         gtk_tree_store_append (store, &child, iter);
-        gtk_tree_store_set (store, &child, COL_TITLE, child_item->text, COL_TRACK, child_item->track, -1);
+        if (child_item->num_children > 0) {
+            size_t len = strlen(child_item->text) + 20;
+            char *text = malloc (len + 20);
+            snprintf (text, len, "%s (%d)", child_item->text, child_item->num_children);
+            gtk_tree_store_set (store, &child, COL_TITLE, text, COL_TRACK, child_item->track, -1);
+            free (text);
+        }
+        else {
+            gtk_tree_store_set (store, &child, COL_TITLE, child_item->text, COL_TRACK, child_item->track, -1);
+        }
 
         if (child_item->children != NULL) {
             _add_items (mlv, &child, child_item);
         }
     }
+}
+
+static gboolean
+_medialib_state_did_change (void *user_data) {
+    w_medialib_viewer_t *mlv = user_data;
+    ddb_mediasource_state_t state = mlv->plugin->plugin.scanner_state (mlv->source);
+    int enabled = mlv->plugin->plugin.get_source_enabled (mlv->source);
+    GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
+    switch (state) {
+    case DDB_MEDIASOURCE_STATE_IDLE:
+        if (enabled) {
+            char text[200];
+            snprintf (text, sizeof (text), "%s (%d)", _("All Music"), mlv->item_tree ? mlv->item_tree->num_children : 0);
+            gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, text, -1);
+        }
+        else {
+            gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("Media library is disabled"), -1);
+        }
+        break;
+    case DDB_MEDIASOURCE_STATE_LOADING:
+        gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("Loading..."), -1);
+        break;
+    case DDB_MEDIASOURCE_STATE_SCANNING:
+        gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("Scanning..."), -1);
+        break;
+    case DDB_MEDIASOURCE_STATE_INDEXING:
+        gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("Indexing..."), -1);
+        break;
+    case DDB_MEDIASOURCE_STATE_SAVING:
+        gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("Saving..."), -1);
+        break;
+    }
+
+    return FALSE;
 }
 
 static void
@@ -80,6 +123,8 @@ _reload_content (w_medialib_viewer_t *mlv) {
     GtkTreePath *path = gtk_tree_path_new_from_indices (0, -1);
     gtk_tree_view_expand_row (mlv->tree, path, mlv->search_text != NULL);
     gtk_tree_path_free (path);
+
+    _medialib_state_did_change (mlv);
 }
 
 static gboolean
@@ -89,33 +134,6 @@ _medialib_content_did_change (void *user_data) {
         return FALSE;
     }
     _reload_content (mlv);
-    return FALSE;
-}
-
-static gboolean
-_medialib_state_did_change (void *user_data) {
-    w_medialib_viewer_t *mlv = user_data;
-    ddb_mediasource_state_t state = mlv->plugin->plugin.scanner_state (mlv->source);
-    int enabled = mlv->plugin->plugin.get_source_enabled (mlv->source);
-    GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
-    switch (state) {
-    case DDB_MEDIASOURCE_STATE_IDLE:
-        gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, enabled ? _("All Music") : _("Media library is disabled"), -1);
-        break;
-    case DDB_MEDIASOURCE_STATE_LOADING:
-        gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("Loading..."), -1);
-        break;
-    case DDB_MEDIASOURCE_STATE_SCANNING:
-        gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("Scanning..."), -1);
-        break;
-    case DDB_MEDIASOURCE_STATE_INDEXING:
-        gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("Indexing..."), -1);
-        break;
-    case DDB_MEDIASOURCE_STATE_SAVING:
-        gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, _("Saving..."), -1);
-        break;
-    }
-
     return FALSE;
 }
 
@@ -178,7 +196,6 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
     GtkTreeSelection *selection = gtk_tree_view_get_selection (mlv->tree);
     gtk_tree_selection_set_select_function(selection, _selection_func, mlv, NULL);
 
-    _medialib_state_did_change (mlv);
     _reload_content (mlv);
 }
 
