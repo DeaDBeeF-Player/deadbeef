@@ -1849,10 +1849,11 @@ DB_misc_t plugin = {
     .plugin.version_minor = 2,
     .plugin.type = DB_PLUGIN_MISC,
 #if GTK_CHECK_VERSION(3,0,0)
-    .plugin.name = "Converter GTK3 UI",
+    .plugin.id = "converter-gtk3",
 #else
-    .plugin.name = "Converter GTK2 UI",
+    .plugin.id = "converter-gtk2",
 #endif
+    .plugin.name = "Converter UI",
     .plugin.descr = "GTK User interface for the Converter plugin\n"
         "Usage:\n"
         "· select some tracks in playlist\n"
