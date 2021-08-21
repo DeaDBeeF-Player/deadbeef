@@ -1162,14 +1162,19 @@ get_subfolders_for_folder (ddb_medialib_item_t *folderitem, ml_tree_node_t *fold
         for (ml_tree_node_t *c = folder->children; c; c = c->next) {
             ddb_medialib_item_t *subfolder = calloc (1, sizeof (ddb_medialib_item_t));
             get_subfolders_for_folder (subfolder, c, selected);
-            if (tail) {
-                tail->next = subfolder;
-                tail = subfolder;
+            if (subfolder->num_children > 0) {
+                if (tail) {
+                    tail->next = subfolder;
+                    tail = subfolder;
+                }
+                else {
+                    folderitem->children = tail = subfolder;
+                }
+                folderitem->num_children++;
             }
             else {
-                folderitem->children = tail = subfolder;
+                ml_free_list (NULL, subfolder);
             }
-            folderitem->num_children++;
         }
     }
     if (folder->items) {
@@ -1225,7 +1230,7 @@ _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, med
     ddb_medialib_item_t *root = calloc (1, sizeof (ddb_medialib_item_t));
     root->text = deadbeef->metacache_add_string ("All Music");
 
-    // make sure no dangling pointers from previos run
+    // make sure no dangling pointers from the previous run
     if (coll) {
         for (ml_string_t *s = coll->head; s; s = s->next) {
             s->coll_item = NULL;
