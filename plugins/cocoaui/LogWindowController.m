@@ -29,6 +29,7 @@ extern DB_functions_t *deadbeef;
 @interface LogWindowController()
 
 @property (nonatomic) BOOL wasShown;
+@property (nonatomic) NSDictionary *attributes;
 
 @end
 
@@ -36,6 +37,19 @@ extern DB_functions_t *deadbeef;
 
 - (void)windowDidLoad {
     [super windowDidLoad];
+
+    NSFont *font;
+
+    if (@available(macOS 10.15, *)) {
+        font = [NSFont monospacedSystemFontOfSize:0 weight:NSFontWeightRegular];
+    } else {
+        font = [NSFont systemFontOfSize:0];
+    }
+
+    self.attributes = @{
+        NSForegroundColorAttributeName:NSColor.controlTextColor,
+        NSFontAttributeName: font
+    };
 
     deadbeef->log_viewer_register (_cocoaui_logger_callback, (__bridge void *)(self));
 }
@@ -52,7 +66,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)appendText:(NSString *)text {
-    NSAttributedString* attr = [[NSAttributedString alloc] initWithString:text attributes:@{NSForegroundColorAttributeName:NSColor.controlTextColor}];
+    NSAttributedString* attr = [[NSAttributedString alloc] initWithString:text attributes:self.attributes];
 
     NSRect visibleRect = [_clipView documentVisibleRect];
     NSRect docRect = _textView.frame;
@@ -69,7 +83,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (IBAction)clearAction:(id)sender {
-    self.textView.textStorage.attributedString =  [[NSAttributedString alloc] initWithString:@"" attributes:@{NSForegroundColorAttributeName:NSColor.controlTextColor}];
+    self.textView.textStorage.attributedString =  [[NSAttributedString alloc] initWithString:@"" attributes:self.attributes];
 }
 
 static void

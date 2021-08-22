@@ -26,8 +26,20 @@
     NSURL *path = [[NSBundle mainBundle] URLForResource:@"help-cocoa" withExtension:@"txt"];
     NSString *content = [NSString stringWithContentsOfFile:[path path] encoding:NSUTF8StringEncoding error:nil];
     if (content) {
-        [self.textView.textStorage setAttributedString:
-         [[NSAttributedString alloc] initWithString:content attributes:@{NSForegroundColorAttributeName: NSColor.controlTextColor}]];
+
+        NSFont *font;
+
+        if (@available(macOS 10.15, *)) {
+            font = [NSFont monospacedSystemFontOfSize:0 weight:NSFontWeightRegular];
+        } else {
+            font = [NSFont systemFontOfSize:0];
+        }
+
+        [self.textView.textStorage setAttributedString:[[NSAttributedString alloc] initWithString:content attributes:@{
+             NSForegroundColorAttributeName: NSColor.controlTextColor,
+             NSFontAttributeName: font
+
+         }]];
         self.textView.selectedRange = NSMakeRange(0, 0);
     }
 }
