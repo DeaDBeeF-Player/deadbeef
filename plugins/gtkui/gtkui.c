@@ -1217,6 +1217,12 @@ gtkui_create_log_window (void) {
     GtkWidget *pwindow = create_log_window ();
     GtkWidget *scrolledwindow14=lookup_widget(pwindow, "scrolledwindow14");
     GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment ( GTK_SCROLLED_WINDOW (scrolledwindow14));
+    GtkWidget *textview=lookup_widget(pwindow, "logwindow_textview");
+
+    PangoFontDescription *descr = pango_font_description_from_string("monospace");
+    gtk_widget_modify_font(textview, descr);
+    pango_font_description_free(descr);
+
     g_signal_connect (adjustment, "value-changed", G_CALLBACK (logwindow_scroll_changed), NULL);
     g_signal_connect (pwindow, "delete_event", G_CALLBACK (on_gtkui_log_window_delete), pwindow);
     gtk_window_set_transient_for (GTK_WINDOW (pwindow), GTK_WINDOW (mainwin));
@@ -1529,6 +1535,11 @@ gtkui_show_info_window (const char *fname, const char *title, GtkWidget **pwindo
     gtk_window_set_title (GTK_WINDOW (widget), title);
     gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (mainwin));
     GtkWidget *txt = lookup_widget (widget, "helptext");
+
+    PangoFontDescription *descr = pango_font_description_from_string("monospace");
+    gtk_widget_modify_font(txt, descr);
+    pango_font_description_free(descr);
+
     GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
 
     FILE *fp = fopen (fname, "rb");
