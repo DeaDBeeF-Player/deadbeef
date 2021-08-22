@@ -1242,7 +1242,9 @@ plug_connect_all (void) {
     for (plug = plugins; plug;) {
         if (plug->plugin->connect) {
             if (plug->plugin->connect () < 0) {
-                trace ("plugin %s failed to connect to dependencies, deactivated.\n", plug->plugin->name);
+                // NOTE: This message is confusing, and looks like a serious error.
+                // Potentially, it should be logged at some additional verbose log level.
+                // trace ("plugin %s failed to connect to dependencies, deactivated.\n", plug->plugin->name);
 
                 if (plug->plugin->disconnect) {
                     plug->plugin->disconnect ();
