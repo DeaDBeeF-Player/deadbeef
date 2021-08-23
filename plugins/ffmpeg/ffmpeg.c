@@ -44,7 +44,7 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-static DB_decoder_t plugin;
+static ddb_decoder2_t plugin;
 static DB_functions_t *deadbeef;
 
 #define DEFAULT_EXTS "aa3;oma;ac3;vqf;amr;tak;dsf;dff;wma;3gp;mp4;m4a"
@@ -220,7 +220,7 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->frame = av_frame_alloc();
 
     // fill in mandatory plugin fields
-    _info->plugin = &plugin;
+    _info->plugin = &plugin.decoder;
     _info->readpos = 0;
     _info->fmt.bps = bps;
     _info->fmt.channels = info->codec_context->channels;
@@ -242,7 +242,7 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (endsample > 0) {
         info->startsample = deadbeef->pl_item_get_startsample (it);
         info->endsample = endsample;
-        plugin.seek_sample (_info, 0);
+        plugin.seek_sample64 (_info, 0);
     }
     else {
         info->startsample = 0;
@@ -460,7 +460,7 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
 }
 
 static int
-ffmpeg_seek_sample (DB_fileinfo_t *_info, int sample) {
+ffmpeg_seek_sample64 (DB_fileinfo_t *_info, int64_t sample) {
     ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
     // seek to specified sample (frame)
     // return 0 on success
@@ -486,8 +486,13 @@ ffmpeg_seek_sample (DB_fileinfo_t *_info, int sample) {
 }
 
 static int
+ffmpeg_seek_sample (DB_fileinfo_t *_info, int sample) {
+    return ffmpeg_seek_sample64(_info, sample);
+}
+
+static int
 ffmpeg_seek (DB_fileinfo_t *_info, float time) {
-    return ffmpeg_seek_sample (_info, time * _info->fmt.samplerate);
+    return ffmpeg_seek_sample64 (_info, time * _info->fmt.samplerate);
 }
 
 static const char *map[] = {
@@ -675,7 +680,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     int64_t totalsamples = info.format_context->duration * samplerate / AV_TIME_BASE;
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.decoder.plugin.id);
     deadbeef->pl_replace_meta (it, ":FILETYPE", info.codec->name);
 
     if (!deadbeef->is_local_file (fname)) {
@@ -910,15 +915,17 @@ static const char settings_dlg[] =
 ;
 
 // define plugin interface
-static DB_decoder_t plugin = {
-    DDB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 1,
-    .plugin.version_minor = 2,
-    .plugin.type = DB_PLUGIN_DECODER,
-    .plugin.id = "ffmpeg",
-    .plugin.name = "FFMPEG audio player",
-    .plugin.descr = "decodes audio formats using FFMPEG libavcodec",
-    .plugin.copyright = 
+
+static ddb_decoder2_t plugin = {
+    .decoder.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .decoder.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .decoder.plugin.version_major = 1,
+    .decoder.plugin.version_minor = 2,
+    .decoder.plugin.type = DB_PLUGIN_DECODER,
+    .decoder.plugin.id = "ffmpeg",
+    .decoder.plugin.name = "FFMPEG audio player",
+    .decoder.plugin.descr = "decodes audio formats using FFMPEG libavcodec",
+    .decoder.plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
@@ -935,20 +942,21 @@ static DB_decoder_t plugin = {
         "along with this program; if not, write to the Free Software\n"
         "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
     ,
-    .plugin.website = "http://deadbeef.sf.net",
-    .plugin.start = ffmpeg_start,
-    .plugin.stop = ffmpeg_stop,
-    .plugin.configdialog = settings_dlg,
-    .plugin.message = ffmpeg_message,
-    .open = ffmpeg_open,
-    .init = ffmpeg_init,
-    .free = ffmpeg_free,
-    .read = ffmpeg_read,
-    .seek = ffmpeg_seek,
-    .seek_sample = ffmpeg_seek_sample,
-    .insert = ffmpeg_insert,
-    .read_metadata = ffmpeg_read_metadata,
-    .exts = (const char **)exts,
+    .decoder.plugin.website = "http://deadbeef.sf.net",
+    .decoder.plugin.start = ffmpeg_start,
+    .decoder.plugin.stop = ffmpeg_stop,
+    .decoder.plugin.configdialog = settings_dlg,
+    .decoder.plugin.message = ffmpeg_message,
+    .decoder.open = ffmpeg_open,
+    .decoder.init = ffmpeg_init,
+    .decoder.free = ffmpeg_free,
+    .decoder.read = ffmpeg_read,
+    .decoder.seek = ffmpeg_seek,
+    .decoder.seek_sample = ffmpeg_seek_sample,
+    .decoder.insert = ffmpeg_insert,
+    .decoder.read_metadata = ffmpeg_read_metadata,
+    .decoder.exts = (const char **)exts,
+    .seek_sample64 = ffmpeg_seek_sample64,
 };
 
 DB_plugin_t *
