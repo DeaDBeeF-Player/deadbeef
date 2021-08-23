@@ -30,9 +30,9 @@
 #include "../liboggedit/oggedit.h"
 #include "../../strdupa.h"
 
-#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
+#define trace(...) { deadbeef->log_detailed (&plugin.decoder.plugin, 0, __VA_ARGS__); }
 
-static DB_decoder_t plugin;
+static ddb_decoder2_t plugin;
 static DB_functions_t *deadbeef;
 
 typedef struct {
@@ -228,7 +228,7 @@ set_meta_ll(DB_playItem_t *it, const char *key, const int64_t value)
 }
 
 static int
-opusdec_seek_sample (DB_fileinfo_t *_info, int sample) {
+opusdec_seek_sample64 (DB_fileinfo_t *_info, int64_t sample) {
     opusdec_info_t *info = (opusdec_info_t *)_info;
     if (sample < 0) {
         return -1;
@@ -246,6 +246,11 @@ opusdec_seek_sample (DB_fileinfo_t *_info, int sample) {
     _info->readpos = (float)sample/_info->fmt.samplerate;
     info->next_update = -2;
     return 0;
+}
+
+static int
+opusdec_seek_sample (DB_fileinfo_t *_info, int sample) {
+    return opusdec_seek_sample64(_info, sample);
 }
 
 static int
@@ -292,7 +297,7 @@ opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.channelmask |= 1 << i;
     }
     _info->readpos = 0;
-    _info->plugin = &plugin;
+    _info->plugin = &plugin.decoder;
 
     // set all gain adjustment to 0, because deadbeef is performing that.
     op_set_gain_offset (info->opusfile, OP_ABSOLUTE_GAIN, 0);
@@ -312,7 +317,7 @@ opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         deadbeef->pl_set_meta_int(it, ":TRACKNUM", 0);
     }
     else {
-        opusdec_seek_sample (_info, 0);
+        opusdec_seek_sample64 (_info, 0);
     }
 
     deadbeef->pl_replace_meta (it, "!FILETYPE", "Ogg Opus");
@@ -459,7 +464,7 @@ opusdec_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
 static int
 opusdec_seek (DB_fileinfo_t *_info, float time) {
-    return opusdec_seek_sample (_info, time * _info->fmt.samplerate);
+    return opusdec_seek_sample64 (_info, time * _info->fmt.samplerate);
 }
 
 static off_t
@@ -483,7 +488,7 @@ opusdec_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
     int64_t fsize = deadbeef->fgetlength (fp);
     if (fp->vfs->is_streaming ()) {
-        DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+        DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.decoder.plugin.id);
         deadbeef->plt_set_item_duration (plt, it, -1);
         deadbeef->pl_add_meta (it, "title", NULL);
         after = deadbeef->plt_insert_item (plt, after, it);
@@ -508,7 +513,7 @@ opusdec_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         int64_t totalsamples = op_pcm_total (opusfile, stream);
         const float duration = totalsamples / 48000.f;
 
-        DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+        DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.decoder.plugin.id);
         deadbeef->pl_set_meta_int (it, ":TRACKNUM", stream);
         deadbeef->plt_set_item_duration (plt, it, duration);
         if (nstreams > 1) {
@@ -744,16 +749,17 @@ opusdec_write_metadata (DB_playItem_t *it) {
 
 
 // define plugin interface
-static DB_decoder_t plugin = {
-    DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 1,
-    .plugin.version_minor = 0,
-    .plugin.type = DB_PLUGIN_DECODER,
-    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
-    .plugin.name = "Opus player",
-    .plugin.id = "opus",
-    .plugin.descr = "Opus player based on libogg, libopus and libopusfile.",
-    .plugin.copyright = 
+static ddb_decoder2_t plugin = {
+    .decoder.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .decoder.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .decoder.plugin.version_major = 1,
+    .decoder.plugin.version_minor = 0,
+    .decoder.plugin.type = DB_PLUGIN_DECODER,
+    .decoder.plugin.flags = DDB_PLUGIN_FLAG_LOGGING | DDB_PLUGIN_FLAG_IMPLEMENTS_DECODER2,
+    .decoder.plugin.id = "opus",
+    .decoder.plugin.name = "Opus player",
+    .decoder.plugin.descr = "Opus player based on libogg, libopus and libopusfile.",
+    .decoder.plugin.copyright =
         "deadbeef-opus\n"
         "Copyright (C) 2009-2017 Alexey Yakovenko and other contributors\n"
         "\n"
@@ -780,17 +786,18 @@ static DB_decoder_t plugin = {
         "\n\n\n"
         "liboggedit\n"
         "Copyright (C) 2014 Ian Nartowicz <deadbeef@nartowicz.co.uk>\n",
-    .open = opusdec_open,
-    .open2 = opusdec_open2,
-    .init = opusdec_init,
-    .free = opusdec_free,
-    .read = opusdec_read,
-    .seek = opusdec_seek,
-    .seek_sample = opusdec_seek_sample,
-    .insert = opusdec_insert,
-    .read_metadata = opusdec_read_metadata,
-    .write_metadata = opusdec_write_metadata,
-    .exts = exts,
+    .decoder.open = opusdec_open,
+    .decoder.open2 = opusdec_open2,
+    .decoder.init = opusdec_init,
+    .decoder.free = opusdec_free,
+    .decoder.read = opusdec_read,
+    .decoder.seek = opusdec_seek,
+    .decoder.seek_sample = opusdec_seek_sample,
+    .decoder.insert = opusdec_insert,
+    .decoder.read_metadata = opusdec_read_metadata,
+    .decoder.write_metadata = opusdec_write_metadata,
+    .decoder.exts = exts,
+    .seek_sample64 = opusdec_seek_sample64,
 };
 
 DB_plugin_t *
