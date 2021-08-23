@@ -690,6 +690,11 @@ static void free_medialib_paths (char **medialib_paths, size_t medialib_paths_co
     free (medialib_paths);
 }
 
+static int
+_status_callback (ddb_insert_file_result_t result, const char *fname, void *user_data) {
+    return 0;
+}
+
 static void
 scanner_thread (medialib_source_t *source, ml_scanner_configuration_t conf) {
     char plpath[PATH_MAX];
@@ -712,7 +717,7 @@ scanner_thread (medialib_source_t *source, ml_scanner_configuration_t conf) {
         const char *musicdir = conf.medialib_paths[i];
         printf ("adding dir: %s\n", musicdir);
         // update & index the cloned playlist
-        deadbeef->plt_insert_dir (plt, NULL, musicdir, &source->scanner_terminate, NULL, NULL);
+        deadbeef->plt_insert_dir3 (-1, plt, NULL, musicdir, &source->scanner_terminate, _status_callback, NULL);
     }
 
     source->ml_filter_state.plt = NULL;

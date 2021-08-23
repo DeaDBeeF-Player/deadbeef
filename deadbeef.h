@@ -763,7 +763,19 @@ enum {
     // UI should not auto-show the Log View for this layer.
     DDB_LOG_LAYER_INFO = 1,
 };
+#endif
 
+#if (DDB_API_LEVEL>=15)
+typedef enum {
+    DDB_INSERT_FILE_RESULT_SUCCESS = 0,
+    DDB_INSERT_FILE_RESULT_UNRECOGNIZED_FILE = 1, // File was not unrecognized
+    DDB_INSERT_FILE_RESULT_RECOGNIZED_FAILED = 2, // File extension was recognized, but could not be loaded by decoder
+    DDB_INSERT_FILE_RESULT_RELATIVE_PATH = 3, // File path is relative: unsupported
+    DDB_INSERT_FILE_RESULT_NULL_FILENAME = 4, // File name is NULL
+    DDB_INSERT_FILE_RESULT_ESCAPE_CHARACTERS_IN_FILENAME = 5, // Escape characters are not allowed in filenames
+    DDB_INSERT_FILE_RESULT_NO_FILE_EXTENSION = 6, // File doesn't have an extension
+    DDB_INSERT_FILE_RESULT_CUESHEET_ERROR = 7, // Error while loading cuesheet
+} ddb_insert_file_result_t;
 #endif
 
 // forward decl for plugin struct
@@ -1616,6 +1628,17 @@ typedef struct {
     ///
     /// Callback will run on a background thread, so make sure to synchronize the data access.
     void (*vis_spectrum_listen2) (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data));
+
+
+    ddb_playItem_t *(*plt_insert_dir3) (
+        int visibility,
+        ddb_playlist_t *plt,
+        ddb_playItem_t *after,
+        const char *dirname,
+        int *pabort,
+        int (*callback)(ddb_insert_file_result_t result, const char *filename, void *user_data),
+        void *user_data
+    );
 #endif
 } DB_functions_t;
 

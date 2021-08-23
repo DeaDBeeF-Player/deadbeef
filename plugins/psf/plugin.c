@@ -215,7 +215,7 @@ static DB_playItem_t *
 psfplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
-        trace ("psf: failed to fopen %s\n", fname);
+        trace ("psf: failed to open %s\n", fname);
         return NULL;
     }
 
@@ -243,7 +243,6 @@ psfplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     int type = ao_identify (buffer);
     if (type < 0) {
-        trace ("aosdk can't identify the contents of the file %s\n", fname);
         free (buffer);
         return NULL;
     }
