@@ -470,7 +470,7 @@ ffmpeg_seek_sample64 (DB_fileinfo_t *_info, int64_t sample) {
         info->have_packet = 0;
     }
     sample += info->startsample;
-    int64_t tm = (int64_t)sample/ _info->fmt.samplerate * AV_TIME_BASE;
+    int64_t tm = sample / _info->fmt.samplerate * AV_TIME_BASE;
     trace ("ffmpeg: seek to sample: %d, t: %d\n", sample, (int)tm);
     info->left_in_packet = 0;
     info->left_in_buffer = 0;
