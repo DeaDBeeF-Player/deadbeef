@@ -875,7 +875,17 @@ plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int nums
 }
 
 static playItem_t *
-plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
+plt_insert_dir_int (
+                    int visibility,
+                    playlist_t *playlist,
+                    DB_vfs_t *vfs,
+                    playItem_t *after,
+                    const char *dirname,
+                    int *pabort,
+                    int (*callback)(playItem_t *it, void *data),
+                    int (*callback_with_result)(ddb_insert_file_result_t result, const char *fname, void *user_data),
+                    void *user_data
+                    );
 
 static playItem_t *
 plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
@@ -892,8 +902,20 @@ fileadd_filter_test (ddb_file_found_data_t *data) {
 }
 
 static playItem_t *
-plt_insert_file_int (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+plt_insert_file_int (
+                     int visibility,
+                     playlist_t *plt,
+                     playItem_t *after,
+                     const char *fname,
+                     int *pabort,
+                     int (*callback)(playItem_t *it, void *data),
+                     int (*callback_with_result)(ddb_insert_file_result_t result, const char *fname, void *user_data),
+                     void *user_data
+                     ) {
     if (!fname || !(*fname)) {
+        if (callback_with_result) {
+            callback_with_result(DDB_INSERT_FILE_RESULT_NULL_FILENAME, fname, user_data);
+        }
         return NULL;
     }
 
@@ -903,8 +925,11 @@ plt_insert_file_int (int visibility, playlist_t *plt, playItem_t *after, const c
         for (int i = 0; vfsplugs[i]; i++) {
             if (vfsplugs[i]->is_container) {
                 if (vfsplugs[i]->is_container (fname)) {
-                    playItem_t *it = plt_insert_dir_int (visibility, plt, vfsplugs[i], after, fname, pabort, cb, user_data);
+                    playItem_t *it = plt_insert_dir_int (visibility, plt, vfsplugs[i], after, fname, pabort, callback, NULL, user_data);
                     if (it) {
+                        if (callback_with_result) {
+                            callback_with_result(DDB_INSERT_FILE_RESULT_SUCCESS, fname, user_data);
+                        }
                         return it;
                     }
                 }
@@ -968,6 +993,9 @@ plt_insert_file_int (int visibility, playlist_t *plt, playItem_t *after, const c
             while (fname[i]) {
                 uint32_t c = u8_nextchar (fname, &i);
                 if (c < 0x20) {
+                    if (callback_with_result) {
+                        callback_with_result(DDB_INSERT_FILE_RESULT_NULL_FILENAME, fname, user_data);
+                    }
                     return NULL;
                 }
             }
@@ -976,6 +1004,9 @@ plt_insert_file_int (int visibility, playlist_t *plt, playItem_t *after, const c
             pl_replace_meta (it, ":FILETYPE", "content");
             after = plt_insert_item (addfiles_playlist ? addfiles_playlist : plt, after, it);
             pl_item_unref (it);
+            if (callback_with_result) {
+                callback_with_result(DDB_INSERT_FILE_RESULT_SUCCESS, fname, user_data);
+            }
             return after;
         }
     }
@@ -1009,12 +1040,18 @@ plt_insert_file_int (int visibility, playlist_t *plt, playItem_t *after, const c
 
     // now that it's known we're not dealing with URL, check if it's a relative path
     if (is_relative_path (fname)) {
+        if (callback_with_result) {
+            callback_with_result(DDB_INSERT_FILE_RESULT_RELATIVE_PATH, fname, user_data);
+        }
         return NULL;
     }
 
     // detect decoder
     const char *eol = strrchr (fname, '.');
     if (!eol) {
+        if (callback_with_result) {
+            callback_with_result(DDB_INSERT_FILE_RESULT_NO_FILE_EXTENSION, fname, user_data);
+        }
         return NULL;
     }
     eol++;
@@ -1022,6 +1059,9 @@ plt_insert_file_int (int visibility, playlist_t *plt, playItem_t *after, const c
     // handle cue files
     if (!strcasecmp (eol, "cue")) {
         playItem_t *inserted = plt_load_cue_file(plt, after, fname, NULL, NULL, 0);
+        if (callback_with_result) {
+            callback_with_result(inserted ? DDB_INSERT_FILE_RESULT_SUCCESS : DDB_INSERT_FILE_RESULT_CUESHEET_ERROR, fname, user_data);
+        }
         return inserted;
     }
 
@@ -1050,7 +1090,10 @@ plt_insert_file_int (int visibility, playlist_t *plt, playItem_t *after, const c
 
                     playItem_t *inserted = (playItem_t *)decoders[i]->insert ((ddb_playlist_t *)plt, DB_PLAYITEM (after), fname);
                     if (inserted != NULL) {
-                        if (cb && cb (inserted, user_data) < 0) {
+                        if (callback && callback (inserted, user_data) < 0) {
+                            *pabort = 1;
+                        }
+                        else if (callback_with_result && callback_with_result(DDB_INSERT_FILE_RESULT_SUCCESS, fname, user_data) < 0) {
                             *pabort = 1;
                         }
                         if (file_add_listeners) {
@@ -1089,7 +1132,10 @@ plt_insert_file_int (int visibility, playlist_t *plt, playItem_t *after, const c
                     file_recognized = 1;
                     playItem_t *inserted = (playItem_t *)decoders[i]->insert ((ddb_playlist_t *)plt, DB_PLAYITEM (after), fname);
                     if (inserted != NULL) {
-                        if (cb && cb (inserted, user_data) < 0) {
+                        if (callback && callback (inserted, user_data) < 0) {
+                            *pabort = 1;
+                        }
+                        else if (callback_with_result && callback_with_result(DDB_INSERT_FILE_RESULT_SUCCESS, fname, user_data) < 0) {
                             *pabort = 1;
                         }
                         if (file_add_listeners) {
@@ -1112,14 +1158,22 @@ plt_insert_file_int (int visibility, playlist_t *plt, playItem_t *after, const c
         }
     }
     if (file_recognized) {
-        trace_err ("ERROR: could not load: %s\n", fname);
+        if (callback_with_result) {
+            callback_with_result (DDB_INSERT_FILE_RESULT_RECOGNIZED_FAILED, fname, user_data);
+        }
+        else {
+            trace_err ("ERROR: could not load: %s\n", fname);
+        }
+    }
+    else if (callback_with_result) {
+        callback_with_result (DDB_INSERT_FILE_RESULT_UNRECOGNIZED_FILE, fname, user_data);
     }
     return NULL;
 }
 
 playItem_t *
 plt_insert_file (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    return plt_insert_file_int (0, plt, after, fname, pabort, cb, user_data);
+    return plt_insert_file_int (0, plt, after, fname, pabort, cb, NULL, user_data);
 }
 
 static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
@@ -1193,7 +1247,17 @@ _get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *v
 }
 
 static playItem_t *
-plt_insert_dir_int (int visibility, playlist_t *plt, DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+plt_insert_dir_int (
+                    int visibility,
+                    playlist_t *plt,
+                    DB_vfs_t *vfs,
+                    playItem_t *after,
+                    const char *dirname,
+                    int *pabort,
+                    int (*callback)(playItem_t *it, void *data),
+                    int (*callback_with_result)(ddb_insert_file_result_t result, const char *fname, void *user_data),
+                    void *user_data
+                    ) {
     if (!strncmp (dirname, "file://", 7)) {
         dirname += 7;
     }
@@ -1311,10 +1375,10 @@ plt_insert_dir_int (int visibility, playlist_t *plt, DB_vfs_t *vfs, playItem_t *
             _get_fullname_and_dir (fullname, sizeof (fullname), NULL, 0, vfs, dirname, namelist[i]->d_name);
             playItem_t *inserted = NULL;
             if (!vfs) {
-                inserted = plt_insert_dir_int (visibility, plt, vfs, after, fullname, pabort, cb, user_data);
+                inserted = plt_insert_dir_int (visibility, plt, vfs, after, fullname, pabort, callback, callback_with_result, user_data);
             }
             if (!inserted) {
-                inserted = plt_insert_file_int (visibility, plt, after, fullname, pabort, cb, user_data);
+                inserted = plt_insert_file_int (visibility, plt, after, fullname, pabort, callback, callback_with_result, user_data);
             }
 
             if (inserted) {
@@ -1344,7 +1408,7 @@ plt_insert_dir (playlist_t *playlist, playItem_t *after, const char *dirname, in
     int prev = playlist->ignore_archives;
     playlist->ignore_archives = conf_get_int ("ignore_archives", 1);
 
-    playItem_t *ret = plt_insert_dir_int (0, playlist, NULL, after, dirname, pabort, cb, user_data);
+    playItem_t *ret = plt_insert_dir_int (0, playlist, NULL, after, dirname, pabort, cb, NULL, user_data);
 
     playlist->follow_symlinks = prev_sl;
     playlist->ignore_archives = prev;
@@ -1355,7 +1419,7 @@ plt_insert_dir (playlist_t *playlist, playItem_t *after, const char *dirname, in
 static int
 plt_add_file_int (int visibility, playlist_t *plt, const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data) {
     int abort = 0;
-    playItem_t *it = plt_insert_file_int (visibility, plt, plt->tail[PL_MAIN], fname, &abort, cb, user_data);
+    playItem_t *it = plt_insert_file_int (visibility, plt, plt->tail[PL_MAIN], fname, &abort, cb, NULL, user_data);
     if (it) {
         // pl_insert_file doesn't hold reference, don't unref here
         return 0;
@@ -3792,7 +3856,7 @@ playItem_t *
 pl_item_init (const char *fname) {
     playlist_t plt;
     memset (&plt, 0, sizeof (plt));
-    return plt_insert_file_int (-1, &plt, NULL, fname, NULL, NULL, NULL);
+    return plt_insert_file_int (-1, &plt, NULL, fname, NULL, NULL, NULL, NULL);
 }
 
 int
@@ -3804,7 +3868,7 @@ plt_add_dir2 (int visibility, playlist_t *plt, const char *dirname, int (*callba
     plt->ignore_archives = conf_get_int ("ignore_archives", 1);
 
     int abort = 0;
-    playItem_t *it = plt_insert_dir_int (visibility, plt, NULL, plt->tail[PL_MAIN], dirname, &abort, callback, user_data);
+    playItem_t *it = plt_insert_dir_int (visibility, plt, NULL, plt->tail[PL_MAIN], dirname, &abort, callback, NULL, user_data);
 
     plt->ignore_archives = prev;
     plt->follow_symlinks = prev_sl;
@@ -3817,7 +3881,7 @@ plt_add_dir2 (int visibility, playlist_t *plt, const char *dirname, int (*callba
 
 playItem_t *
 plt_insert_file2 (int visibility, playlist_t *playlist, playItem_t *after, const char *fname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
-    return plt_insert_file_int (visibility, playlist, after, fname, pabort, callback, user_data);
+    return plt_insert_file_int (visibility, playlist, after, fname, pabort, callback, NULL, user_data);
 }
 
 playItem_t *
@@ -3826,7 +3890,20 @@ plt_insert_dir2 (int visibility, playlist_t *plt, playItem_t *after, const char 
     plt->follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
     plt->ignore_archives = conf_get_int ("ignore_archives", 1);
 
-    playItem_t *ret = plt_insert_dir_int (visibility, plt, NULL, after, dirname, pabort, callback, user_data);
+    playItem_t *ret = plt_insert_dir_int (visibility, plt, NULL, after, dirname, pabort, callback, NULL, user_data);
+
+    plt->follow_symlinks = prev_sl;
+    plt->ignore_archives = 0;
+    return ret;
+}
+
+playItem_t *
+plt_insert_dir3 (int visibility, playlist_t *plt, playItem_t *after, const char *dirname, int *pabort, int (*callback)(ddb_insert_file_result_t result, const char *fname, void *user_data), void *user_data) {
+    int prev_sl = plt->follow_symlinks;
+    plt->follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
+    plt->ignore_archives = conf_get_int ("ignore_archives", 1);
+
+    playItem_t *ret = plt_insert_dir_int (visibility, plt, NULL, after, dirname, pabort, NULL, callback, user_data);
 
     plt->follow_symlinks = prev_sl;
     plt->ignore_archives = 0;

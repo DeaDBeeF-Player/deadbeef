@@ -67,7 +67,7 @@ int ao_get_lib(char *filename, uint8 **buffer, uint64 *length)
 	auxfile = deadbeef->fopen(filename);
 	if (!auxfile)
 	{
-		fprintf(stderr, "Unable to find auxiliary file %s\n", filename);
+		trace("PSF: Unable to find auxiliary file %s\n", filename);
 		return AO_FAIL;
 	}
 
