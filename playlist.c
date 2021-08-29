@@ -3616,32 +3616,6 @@ pl_get_playlist (playItem_t *it) {
     return NULL;
 }
 
-// this function must be called when the user starts track manually in shuffle albums mode
-// r is an index of current track
-// mark previous songs in the album as played
-void
-plt_init_shuffle_albums (playlist_t *plt, int r) {
-    pl_lock ();
-    playItem_t *first = plt_get_item_for_idx (plt, r, PL_MAIN);
-    if (!first) {
-        pl_unlock ();
-        return;
-    }
-    if (first->played) {
-        plt_reshuffle (plt, NULL, NULL);
-    }
-    if (first) {
-        int rating = first->shufflerating;
-        playItem_t *it = first->prev[PL_MAIN];
-        pl_item_unref (first);
-        while (it && rating == it->shufflerating) {
-            it->played = 1;
-            it = it->prev[PL_MAIN];
-        }
-    }
-    pl_unlock ();
-}
-
 void
 plt_set_fast_mode (playlist_t *plt, int fast) {
     plt->fast_mode = (unsigned)fast;

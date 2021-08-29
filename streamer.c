@@ -2354,6 +2354,32 @@ _play_track (playItem_t *it, int startpaused) {
     }
 }
 
+static void
+_rebuild_shuffle_albums_after_manual_trigger(playlist_t *plt, playItem_t *it) {
+    plt_reshuffle (plt, NULL, NULL);
+
+    ddb_shuffle_t shuffle = streamer_get_shuffle ();
+    if (shuffle == DDB_SHUFFLE_ALBUMS) {
+        pl_lock ();
+        _streamer_mark_album_played_up_to (it);
+
+        // mark songs from all other albums as played
+        playItem_t *i = plt->head[PL_MAIN];
+        while (i) {
+            if (i->shufflerating != it->shufflerating) {
+                i->played = 1;
+            }
+            i = i->next[PL_MAIN];
+        }
+        pl_unlock ();
+    }
+    else {
+        // This ensures that the manually triggered item becomes first in shuffle queue.
+        // It works because shufflerating is generated using rand(), which gives only numbers in the [0..RAND_MAX] range.
+        it->shufflerating = -1;
+    }
+}
+
 // play track in current playlist by index;
 // negative index will stop playback
 static void
@@ -2381,28 +2407,7 @@ play_index (int idx, int startpaused) {
     pl_unlock();
 
     // rebuild shuffle order
-    plt_reshuffle (plt, NULL, NULL);
-
-    ddb_shuffle_t shuffle = streamer_get_shuffle ();
-    if (shuffle == DDB_SHUFFLE_ALBUMS) {
-        pl_lock ();
-        _streamer_mark_album_played_up_to (it);
-
-        // mark songs from all other albums as played
-        playItem_t *i = plt->head[PL_MAIN];
-        while (i) {
-            if (i->shufflerating != it->shufflerating) {
-                i->played = 1;
-            }
-            i = i->next[PL_MAIN];
-        }
-        pl_unlock ();
-    }
-    else {
-        // This ensures that the manually triggered item becomes first in shuffle queue.
-        // It works because shufflerating is generated using rand(), which gives only numbers in the [0..RAND_MAX] range.
-        it->shufflerating = -1;
-    }
+    _rebuild_shuffle_albums_after_manual_trigger (plt, it);
 
     _play_track(it, startpaused);
 
@@ -2539,6 +2544,10 @@ play_next (int dir, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
         return;
     }
 
+    if (dir == 0) {
+        // rebuild shuffle order
+        _rebuild_shuffle_albums_after_manual_trigger (streamer_playlist, next);
+    }
     _play_track(next, 0);
     pl_item_unref(next);
 }

@@ -434,9 +434,6 @@ playlist_t *
 pl_get_playlist (playItem_t *it);
 
 void
-plt_init_shuffle_albums (playlist_t *plt, int r);
-
-void
 plt_set_fast_mode (playlist_t *plt, int fast);
 
 int
