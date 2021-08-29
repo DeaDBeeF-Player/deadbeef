@@ -638,6 +638,10 @@ main_cleanup_and_quit (void);
     deadbeef->sendmessage(DB_EV_NEXT, 0, 0, 0);
 }
 
+- (IBAction)playRandomAction:(id)sender {
+    deadbeef->sendmessage(DB_EV_PLAY_RANDOM, 0, 0, 0);
+}
+
 - (IBAction)cursorFollowsPlaybackAction:(id)sender {
 }
 
