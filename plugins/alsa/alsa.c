@@ -541,11 +541,12 @@ palsa_stop (void) {
     if (!audio) {
         return 0;
     }
-    LOCK;
 
+    LOCK;
     state = DDB_PLAYBACK_STATE_STOPPED;
-    snd_pcm_drop (audio);
     UNLOCK;
+
+    snd_pcm_drop (audio);
 
     palsa_free ();
     return 0;
