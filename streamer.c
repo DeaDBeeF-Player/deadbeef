@@ -2362,15 +2362,6 @@ _rebuild_shuffle_albums_after_manual_trigger(playlist_t *plt, playItem_t *it) {
     if (shuffle == DDB_SHUFFLE_ALBUMS) {
         pl_lock ();
         _streamer_mark_album_played_up_to (it);
-
-        // mark songs from all other albums as played
-        playItem_t *i = plt->head[PL_MAIN];
-        while (i) {
-            if (i->shufflerating != it->shufflerating) {
-                i->played = 1;
-            }
-            i = i->next[PL_MAIN];
-        }
         pl_unlock ();
     }
     else {
