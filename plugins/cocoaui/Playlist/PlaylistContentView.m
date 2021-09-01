@@ -976,62 +976,67 @@ static int grouptitleheight = 22;
 }
 
 - (void)keyDown:(NSEvent *)theEvent {
-    NSString *theArrow = [theEvent charactersIgnoringModifiers];
+    NSString *eventCharacters = theEvent.charactersIgnoringModifiers;
     unichar keyChar = 0;
-    if ( [theArrow length] == 0 )
+    if (eventCharacters.length == 0 )
         return;            // reject dead keys
-    if ( [theArrow length] == 1 ) {
-
-        int prev = [_delegate cursor];
+    if (eventCharacters.length == 1 ) {
+        int prev = _delegate.cursor;
         int cursor = prev;
 
         NSScrollView *sv = self.enclosingScrollView;
-        NSRect vis = [sv documentVisibleRect];
-        keyChar = [theArrow characterAtIndex:0];
+        NSRect vis = sv.documentVisibleRect;
+        keyChar = [eventCharacters characterAtIndex:0];
 
-        switch (keyChar) {
-            case NSDownArrowFunctionKey:
-                if (theEvent.modifierFlags & NSEventModifierFlagCommand) {
-                    cursor = [_delegate rowCount]-1;
-                }
-                else {
-                    if (cursor < [_delegate rowCount]-1) {
-                        cursor++;
-                    }
-                }
-                break;
-            case NSUpArrowFunctionKey:
-                if (theEvent.modifierFlags & NSEventModifierFlagCommand) {
-                    cursor = 0;
-                }
-                else {
-                    if (cursor > 0) {
-                        cursor--;
-                    }
-                    else if (cursor < 0 && [_delegate rowCount] > 0) {
-                            cursor = 0;
-                    }
-                }
-                break;
-            case NSPageDownFunctionKey: {
-                [self scrollPoint:NSMakePoint(vis.origin.x, vis.origin.y + vis.size.height - rowheight)];
-                break;
-            }
-            case NSPageUpFunctionKey:
-                [self scrollPoint:NSMakePoint(vis.origin.x, vis.origin.y - vis.size.height + rowheight)];
-                break;
-            case NSHomeFunctionKey:
-                [self scrollPoint:NSMakePoint(vis.origin.x, 0)];
-                break;
-            case NSEndFunctionKey:
-                [self scrollPoint:NSMakePoint(vis.origin.x, (self.frame.size.height - sv.contentSize.height))];
-                break;
-            default:
-                [super keyDown:theEvent];
-                return;
+        if (0 == (theEvent.modifierFlags & NSEventModifierFlagDeviceIndependentFlagsMask)
+            && keyChar == 0x0d) { // return key without mods
+            [_delegate activate:cursor];
+            return;
         }
 
-        if ([theEvent modifierFlags] & NSEventModifierFlagShift) {
+        switch (keyChar) {
+        case NSDownArrowFunctionKey:
+            if (theEvent.modifierFlags & NSEventModifierFlagCommand) {
+                cursor = _delegate.rowCount-1;
+            }
+            else {
+                if (cursor < _delegate.rowCount-1) {
+                    cursor++;
+                }
+            }
+            break;
+        case NSUpArrowFunctionKey:
+            if (theEvent.modifierFlags & NSEventModifierFlagCommand) {
+                cursor = 0;
+            }
+            else {
+                if (cursor > 0) {
+                    cursor--;
+                }
+                else if (cursor < 0 && _delegate.rowCount > 0) {
+                    cursor = 0;
+                }
+            }
+            break;
+        case NSPageDownFunctionKey: {
+            [self scrollPoint:NSMakePoint(vis.origin.x, vis.origin.y + vis.size.height - rowheight)];
+            break;
+        }
+        case NSPageUpFunctionKey:
+            [self scrollPoint:NSMakePoint(vis.origin.x, vis.origin.y - vis.size.height + rowheight)];
+            break;
+        case NSHomeFunctionKey:
+            [self scrollPoint:NSMakePoint(vis.origin.x, 0)];
+            break;
+        case NSEndFunctionKey:
+            [self scrollPoint:NSMakePoint(vis.origin.x, (self.frame.size.height - sv.contentSize.height))];
+            break;
+        default:
+            [super keyDown:theEvent];
+            return;
+        }
+
+        if (theEvent.modifierFlags & NSEventModifierFlagShift) {
             if (cursor != prev) {
                 _delegate.cursor = cursor;
                 self.scrollForPos = [self rowPosForIndex:cursor];
@@ -1042,7 +1047,7 @@ static int grouptitleheight = 22;
                 int nchanged = 0;
                 int idx = 0;
                 DdbListviewRow_t it;
-                for (it = [_delegate firstRow]; it != [_delegate invalidRow]; idx++) {
+                for (it = _delegate.firstRow; it != _delegate.invalidRow; idx++) {
                     if (idx >= start && idx <= end) {
                         [_delegate selectRow:it withState:YES];
                         if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
@@ -1062,7 +1067,7 @@ static int grouptitleheight = 22;
                     it = next;
                 }
                 if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
-                    [_delegate selectionChanged:[_delegate invalidRow]];
+                    [_delegate selectionChanged:_delegate.invalidRow];
                 }
             }
         }
