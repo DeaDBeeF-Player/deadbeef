@@ -1190,8 +1190,11 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
 
                     int idx = deadbeef->pl_get_idx_of_iter (it, [self playlistIter]);
                     if (idx != -1) {
-                        [listview.contentView setCursor:idx noscroll:YES];
-                        [listview.contentView scrollToRowWithIndex:idx];
+                        // there's a delay in scrollview layout
+                        dispatch_after(0.01, dispatch_get_main_queue(), ^{
+                            [listview.contentView setCursor:idx noscroll:YES];
+                            [listview.contentView scrollToRowWithIndex:idx];
+                        });
                     }
                     deadbeef->plt_unref (plt);
                     deadbeef->plt_unref (prev_plt);
