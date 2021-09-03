@@ -1089,7 +1089,34 @@ static int grouptitleheight = 22;
     }
 }
 
+- (BOOL)canPartiallyRedrawWithPrevCursor:(int)prevCursor newCursor:(int)cursor {
+    // Special case: if there's only previous and new cursor involved -- redraw only 1 or 2 rows
+    int selCount = self.dataModel.selectedCount;
+    BOOL result = YES;
+    DdbListviewRow_t cursorRow = self.dataModel.invalidRow;
+
+    if (prevCursor != -1) {
+        cursorRow = [self.dataModel rowForIndex:prevCursor];
+    }
+
+    // More than 1 row to redraw?
+    if (selCount > 1
+        || (cursorRow != self.dataModel.invalidRow && selCount == 1 && ![self.dataModel rowSelected:cursorRow])) {
+        // More than 2 items need to be drawn
+        result = NO;
+    }
+
+    if (cursorRow != self.dataModel.invalidRow) {
+        [self.dataModel unrefRow:cursorRow];
+    }
+
+    return result;
+}
+
 - (void)setCursor:(int)cursor noscroll:(BOOL)noscroll {
+    int prevCursor = self.dataModel.cursor;
+    BOOL partialRedraw = [self canPartiallyRedrawWithPrevCursor:prevCursor newCursor:cursor];
+
     self.dataModel.cursor = cursor;
 
     DdbListviewRow_t row = [self.dataModel rowForIndex:cursor];
@@ -1103,7 +1130,18 @@ static int grouptitleheight = 22;
     if (!noscroll) {
         self.scrollForPos = [self rowPosForIndex:cursor];
     }
-    self.needsDisplay = YES;
+
+    if (partialRedraw) {
+        if (prevCursor != -1) {
+            [self drawRow:prevCursor];
+        }
+        if (cursor != -1) {
+            [self drawRow:cursor];
+        }
+    }
+    else {
+        self.needsDisplay = YES;
+    }
 }
 
 #pragma mark - Grouping
