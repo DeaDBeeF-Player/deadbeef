@@ -746,7 +746,7 @@ play_next_activate (GtkMenuItem     *menuitem, gpointer         user_data) {
     ddb_playItem_t **tracks = ddbUtilTrackListGetTracks(_menuTrackList);
 
     for (int i = 0; i < count; i++) {
-        deadbeef->playqueue_insert_at (0, tracks[i]);
+        deadbeef->playqueue_insert_at (i, tracks[i]);
     }
 }
 
