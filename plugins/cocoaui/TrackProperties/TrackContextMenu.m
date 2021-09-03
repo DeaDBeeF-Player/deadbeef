@@ -475,8 +475,9 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl) {
 #pragma mark - Playback Queue
 
 - (void)addToFrontOfPlaybackQueue {
+    __block int n = 0;
     [self forEachTrack:^BOOL(DB_playItem_t *it) {
-        deadbeef->playqueue_insert_at (0, it);
+        deadbeef->playqueue_insert_at (n++, it);
         return YES;
     }];
 }
