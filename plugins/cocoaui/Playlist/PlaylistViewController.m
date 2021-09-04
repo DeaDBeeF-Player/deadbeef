@@ -1059,7 +1059,11 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
 
         [listview.contentView reloadData];
         deadbeef->pl_unlock ();
-        [listview.contentView scrollVerticalPosition:scroll];
+
+        // there's a delay in scrollview layout
+        dispatch_after(0.01, dispatch_get_main_queue(), ^{
+            [listview.contentView scrollVerticalPosition:scroll];
+        });
     }
 }
 
