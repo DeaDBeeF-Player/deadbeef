@@ -24,7 +24,6 @@
 #  include <config.h>
 #endif
 #include <complex.h>
-#include "deadbeef.h"
 #include "fft.h"
 #include <math.h>
 #include <stdlib.h>
