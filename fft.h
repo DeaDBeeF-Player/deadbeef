@@ -24,10 +24,19 @@
 #ifndef FFT_H
 #define FFT_H
 
+#ifdef __cplusplus
+extern "C" {
+}
+#endif
+
 void
 fft_calculate (const float *data, float *freq, int fft_size);
 
 void
 fft_free (void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

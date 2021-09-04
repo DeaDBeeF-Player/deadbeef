@@ -23,6 +23,10 @@
 #ifndef analyzer_h
 #define analyzer_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define DDB_ANALYZER_MAX_LABEL_FREQS 20
 
 typedef struct {
@@ -135,5 +139,9 @@ void ddb_analyzer_tick (ddb_analyzer_t *analyzer);
 void ddb_analyzer_get_draw_data (ddb_analyzer_t *analyzer, int view_width, int view_height, ddb_analyzer_draw_data_t *draw_data);
 
 void ddb_analyzer_draw_data_dealloc (ddb_analyzer_draw_data_t *draw_data);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* analyzer_h */
