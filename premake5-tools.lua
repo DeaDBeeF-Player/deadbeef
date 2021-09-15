@@ -211,6 +211,10 @@ function option (name, ...)
 	return a
 end
 
+function is_enabled (name)
+	return options_dic[name] == "yes"
+end
+
 -- Prints out summary of options and their states
 function print_options ()
 	if _OPTIONS["skip-checks"] ~= nil then
