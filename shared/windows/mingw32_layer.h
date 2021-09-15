@@ -75,6 +75,7 @@
 // used by plugin artwork / defined in libwin
 #ifndef fnmatch
 #define  fnmatch(x,y,z) !PathMatchSpec(y,x)
+#define PathMatchSpec(x,y) PathMatchSpecA(x,y)
 #endif
 
 // used by plugin converter
