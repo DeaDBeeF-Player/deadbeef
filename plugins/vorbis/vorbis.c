@@ -81,6 +81,8 @@ typedef struct {
     int set_bitrate;
     const DB_playItem_t *new_track;
     uint8_t *channel_map;
+    float prev_playpos;
+    time_t started_timestamp;
 } ogg_info_t;
 
 static size_t
@@ -341,6 +343,8 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     deadbeef->pl_replace_meta (it, "!FILETYPE", "Ogg Vorbis");
     info->cur_bit_stream = -1;
 
+    info->started_timestamp = time(NULL);
+
     return 0;
 }
 
@@ -383,6 +387,24 @@ new_streaming_link(ogg_info_t *info, const int new_link)
     if (!info->info.file->vfs->is_streaming () || new_link < 0) {
         return false;
     }
+
+    DB_playItem_t *from = deadbeef->pl_item_alloc ();
+    deadbeef->pl_items_copy_junk (info->it, from, from);
+
+    ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)deadbeef->event_alloc (DB_EV_SONGCHANGED);
+    float playpos = deadbeef->streamer_get_playpos ();
+    ev->from = from;
+    ev->to = info->it;
+    ev->playtime = playpos - info->prev_playpos;
+    ev->started_timestamp = info->started_timestamp;
+    deadbeef->pl_item_ref (ev->from);
+    deadbeef->pl_item_ref (ev->to);
+    deadbeef->event_send ((ddb_event_t *)ev, 0, 0);
+    deadbeef->pl_item_unref (from);
+    from = NULL;
+
+    info->started_timestamp = time(NULL);
+    info->prev_playpos = playpos;
 
     trace ("Streaming link changed from %d to %d\n", info->cur_bit_stream, new_link);
     update_vorbis_comments (info->it, &info->vorbis_file, new_link);
