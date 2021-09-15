@@ -24,8 +24,17 @@
 #include "deadbeef.h"
 
 @class MediaLibraryItem;
+@class TrackPropertiesWindowController;
+
+@protocol TrackPropertiesWindowControllerDelegate
+
+- (void)trackPropertiesWindowControllerDidUpdateTracks:(TrackPropertiesWindowController *)windowController;
+
+@end
 
 @interface TrackPropertiesWindowController : NSWindowController<NSWindowDelegate,NSTableViewDelegate,NSTableViewDataSource>
+
+@property (nonatomic,weak) id<TrackPropertiesWindowControllerDelegate> delegate;
 
 @property (nonatomic) ddb_playlist_t *playlist;
 @property (nonatomic) NSArray<MediaLibraryItem *> *mediaLibraryItems;

@@ -44,7 +44,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface PlaylistViewController() <DdbListviewDelegate,TrackContextMenuDelegate>
+@interface PlaylistViewController() <DdbListviewDelegate,TrackContextMenuDelegate,TrackPropertiesWindowControllerDelegate>
 
 @property (nonatomic) NSImage *playTpl;
 @property (nonatomic) NSImage *pauseTpl;
@@ -1457,6 +1457,7 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
 - (void)trackProperties {
     if (!self.trkProperties) {
         self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
+        self.trkProperties.delegate = self;
     }
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     self.trkProperties.playlist =  plt;
@@ -1498,6 +1499,13 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
 
 - (int)playlistIter {
     return PL_MAIN;
+}
+
+#pragma mark - TrackPropertiesWindowControllerDelegate
+
+- (void)trackPropertiesWindowControllerDidUpdateTracks:(TrackPropertiesWindowController *)windowController {
+    deadbeef->pl_save_current();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 @end

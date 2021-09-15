@@ -52,6 +52,8 @@ extern DB_functions_t *deadbeef;
     }
 
     self.reloadMetadataItem = [self insertItemWithTitle:@"Reload Metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0];
+    self.reloadMetadataItem.target = self;
+
     NSMenu *rgMenu = [[NSMenu alloc] initWithTitle:@"ReplayGain"];
     rgMenu.autoenablesItems = NO;
 

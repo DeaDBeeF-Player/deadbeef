@@ -23,7 +23,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface MediaLibraryOutlineViewController() <NSOutlineViewDataSource,MediaLibraryOutlineViewDelegate,TrackContextMenuDelegate,MediaLibraryFilterSelectorCellViewDelegate,MediaLibrarySearchCellViewDelegate> {
+@interface MediaLibraryOutlineViewController() <NSOutlineViewDataSource,MediaLibraryOutlineViewDelegate,TrackContextMenuDelegate,MediaLibraryFilterSelectorCellViewDelegate,MediaLibrarySearchCellViewDelegate,TrackPropertiesWindowControllerDelegate> {
     ddb_mediasource_list_selector_t *_selectors;
 }
 
@@ -129,6 +129,8 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 }
 
 - (void)initializeTreeView:(int)index {
+    // FIXME: this will cause a re-scan and will collapse the medialib tree.
+    // Need to remember a selected item, and scroll / focus on it.
     NSInteger itemIndex = NSNotFound;
     if (self.outlineViewInitialized) {
         itemIndex = [self.topLevelItems indexOfObject:self.medialibRootItem];
@@ -550,11 +552,18 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
         self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
     }
     self.trkProperties.mediaLibraryItems = self.selectedItems;
+    self.trkProperties.delegate = self;
     [self.trkProperties showWindow:self];
 }
 
 - (void)playlistChanged {
-    // FIXME: this is required by the context menu delegate -- means to reload the items?
+    self.medialibPlugin->plugin.refresh(self.medialibSource);
+}
+
+#pragma mark - TrackPropertiesWindowControllerDelegate
+
+- (void)trackPropertiesWindowControllerDidUpdateTracks:(TrackPropertiesWindowController *)windowController {
+    self.medialibPlugin->plugin.refresh(self.medialibSource);
 }
 
 - (MediaLibraryItem *)selectedItem {

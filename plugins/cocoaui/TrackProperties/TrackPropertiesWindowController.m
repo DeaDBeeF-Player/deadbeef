@@ -518,15 +518,11 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
             deadbeef->plt_unref (plt);
         }
         self.modified = NO;
-// FIXME: update playlist/search/...
-#if 0
-        main_refresh ();
-        search_refresh ();
-        show_track_properties_dlg (last_ctx);
-#endif
         if (self.close_after_writing) {
             [self.window close];
         }
+
+        [self.delegate trackPropertiesWindowControllerDidUpdateTracks:self];
     });
 }
 
