@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithOutlineView:(NSOutlineView *)outlineView NS_DESIGNATED_INITIALIZER;
 - (void)coverGetCallbackWithQuery:(struct ddb_cover_query_s *)query coverInfo:(struct ddb_cover_info_s *)cover error:(int)error;
+- (int)widgetMessage:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
 @end
 

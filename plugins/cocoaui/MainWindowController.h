@@ -26,6 +26,7 @@
 #import "DdbTabStrip.h"
 #import "PlaylistView.h"
 #import "DdbSeekBar.h"
+#import "MainWindowSidebarViewController.h"
 
 @protocol WidgetProtocol;
 
@@ -35,6 +36,8 @@
 @property (unsafe_unretained) IBOutlet NSTextField *statusBar;
 @property (unsafe_unretained) IBOutlet DdbSeekBar *seekBar;
 @property (unsafe_unretained) IBOutlet NSSlider *volumeBar;
+@property (strong) IBOutlet MainWindowSidebarViewController *sidebarOutlineViewController;
+
 
 - (IBAction)seekBarAction:(id)sender;
 - (IBAction)volumeBarAction:(id)sender;

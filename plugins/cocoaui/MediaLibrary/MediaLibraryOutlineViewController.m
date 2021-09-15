@@ -89,6 +89,7 @@ extern DB_functions_t *deadbeef;
     self.listenerId = self.medialibPlugin->plugin.add_listener (self.medialibSource, _medialib_listener, (__bridge void *)self);
 
     self.trackContextMenu = [TrackContextMenu new];
+    self.trackContextMenu.view = self.outlineView;
     self.outlineView.menu = self.trackContextMenu;
     self.outlineView.menu.delegate = self;
 
@@ -292,6 +293,17 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     for (MediaLibraryItem *child in item.children) {
         [self arrayOfPlayableItemsForItem:child outputArray:items];
     }
+}
+
+- (int)widgetMessage:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
+    switch (_id) {
+    case DB_EV_PLAYLISTCHANGED:
+        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT) {
+            self.medialibPlugin->plugin.refresh(self.medialibSource);
+        }
+        break;
+    }
+    return 0;
 }
 
 #pragma mark - NSOutlineViewDataSource
@@ -648,6 +660,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 }
 
 #pragma mark - MediaLibrarySearchCellViewDelegate
+
 - (void)mediaLibrarySearchCellViewTextChanged:(nonnull NSString *)text {
     if ([text isEqualToString:@""]) {
         self.searchString = nil;
@@ -657,5 +670,6 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     }
     [self filterChanged];
 }
+
 
 @end

@@ -275,6 +275,7 @@ _warningCallback (ddbDeleteFromDiskController_t ctl, int shouldCancel) {
         }
     }
 
+    // FIXME: don't need to save playlists if this code is executed for medialib
     deadbeef->pl_save_all ();
     deadbeef->pl_unlock ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);

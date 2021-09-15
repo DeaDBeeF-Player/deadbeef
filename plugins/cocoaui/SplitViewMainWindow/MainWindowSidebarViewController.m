@@ -7,11 +7,9 @@
 //
 
 #import "MainWindowSidebarViewController.h"
-#import "MediaLibraryOutlineViewController.h"
 
 @interface MainWindowSidebarViewController ()
 
-@property (nonatomic) MediaLibraryOutlineViewController *mediaLibraryOutlineViewController;
 @property (weak) IBOutlet NSOutlineView *outlineView;
 
 @end

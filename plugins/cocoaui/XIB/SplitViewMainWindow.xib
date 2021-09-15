@@ -12,6 +12,7 @@
                 <outlet property="designableContainerView" destination="1HX-cv-ywg" id="8m0-j0-42K"/>
                 <outlet property="playlistWithTabsView" destination="IV1-Va-yS4" id="U8R-ir-M7u"/>
                 <outlet property="seekBar" destination="Cf3-e3-qXV" id="2s7-fO-DVZ"/>
+                <outlet property="sidebarOutlineViewController" destination="CYL-XF-y3k" id="9lc-kM-a0E"/>
                 <outlet property="statusBar" destination="Yc4-pv-Wup" id="K9B-e5-BXc"/>
                 <outlet property="tabStrip" destination="Sp3-ZT-72r" id="xN3-el-uvI"/>
                 <outlet property="volumeBar" destination="GfK-FT-xmA" id="l7u-hZ-dzR"/>

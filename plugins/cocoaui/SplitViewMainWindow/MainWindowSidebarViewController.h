@@ -7,10 +7,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "MediaLibraryOutlineViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MainWindowSidebarViewController : NSViewController
+
+@property (nonatomic) MediaLibraryOutlineViewController *mediaLibraryOutlineViewController;
 
 @end
 
