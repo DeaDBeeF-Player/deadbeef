@@ -391,6 +391,9 @@ new_streaming_link(ogg_info_t *info, const int new_link)
     DB_playItem_t *from = deadbeef->pl_item_alloc ();
     deadbeef->pl_items_copy_junk (info->it, from, from);
 
+    trace ("Streaming link changed from %d to %d\n", info->cur_bit_stream, new_link);
+    update_vorbis_comments (info->it, &info->vorbis_file, new_link);
+
     ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)deadbeef->event_alloc (DB_EV_SONGCHANGED);
     float playpos = deadbeef->streamer_get_playpos ();
     ev->from = from;
@@ -406,8 +409,6 @@ new_streaming_link(ogg_info_t *info, const int new_link)
     info->started_timestamp = time(NULL);
     info->prev_playpos = playpos;
 
-    trace ("Streaming link changed from %d to %d\n", info->cur_bit_stream, new_link);
-    update_vorbis_comments (info->it, &info->vorbis_file, new_link);
     send_event (info->it, DB_EV_SONGSTARTED);
     send_event (info->it, DB_EV_TRACKINFOCHANGED);
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);

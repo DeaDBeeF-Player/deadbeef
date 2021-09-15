@@ -48,6 +48,9 @@ typedef struct {
     float next_update;
     DB_playItem_t *it;
     DB_playItem_t *new_track;
+
+    float prev_playpos;
+    time_t started_timestamp;
 } opusdec_info_t;
 
 static const char * exts[] = { "ogg", "opus", "ogv", NULL };
@@ -325,6 +328,8 @@ opusdec_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     info->cur_bit_stream = -1;
 
+    info->started_timestamp = time(NULL);
+
     return 0;
 }
 
@@ -368,7 +373,26 @@ new_streaming_link(opusdec_info_t *info, const int new_link)
         return false;
     }
 
+    DB_playItem_t *from = deadbeef->pl_item_alloc ();
+    deadbeef->pl_items_copy_junk (info->it, from, from);
+
     update_vorbis_comments(info->it, info->opusfile, new_link);
+
+    ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)deadbeef->event_alloc (DB_EV_SONGCHANGED);
+    float playpos = deadbeef->streamer_get_playpos ();
+    ev->from = from;
+    ev->to = info->it;
+    ev->playtime = playpos - info->prev_playpos;
+    ev->started_timestamp = info->started_timestamp;
+    deadbeef->pl_item_ref (ev->from);
+    deadbeef->pl_item_ref (ev->to);
+    deadbeef->event_send ((ddb_event_t *)ev, 0, 0);
+    deadbeef->pl_item_unref (from);
+    from = NULL;
+
+    info->started_timestamp = time(NULL);
+    info->prev_playpos = playpos;
+
     send_event(info->it, DB_EV_SONGSTARTED);
     send_event(info->it, DB_EV_TRACKINFOCHANGED);
     deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
