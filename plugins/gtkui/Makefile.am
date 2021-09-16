@@ -3,6 +3,7 @@ EXTRA_DIST = deadbeef.glade\
 	gtk/menus.ui
 
 GTKUI_SOURCES =    gtkui.c gtkui.h\
+				   gtkui_deletefromdisk.c gtkui_deletefromdisk.h\
 				   callbacks.c interface.c support.c callbacks.h interface.h support.h\
 				   ddblistview.c ddblistview.h\
 				   mainplaylist.c mainplaylist.h\

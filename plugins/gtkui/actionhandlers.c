@@ -37,6 +37,7 @@
 #include "ddblistview.h"
 #include "gtkui.h"
 #include "gtkui_api.h"
+#include "gtkui_deletefromdisk.h"
 #include "interface.h"
 #include "prefwin/prefwin.h"
 #include "progress.h"
@@ -374,75 +375,6 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, ddb_action_context
     return 0;
 }
 
-static void
-_warningMessageForCtx (ddbDeleteFromDiskController_t ctl, ddb_action_context_t ctx, unsigned trackcount, ddbDeleteFromDiskControllerWarningCallback_t callback) {
-    if (deadbeef->conf_get_int ("gtkui.delete_files_ask", 1)) {
-        char buf[1000];
-        const char *buf2 = deadbeef->conf_get_int ("gtkui.move_to_trash", 1) ?
-        _(" The files will be moved to trash.\n\n(This dialog can be turned off in GTKUI plugin settings)") :
-        _(" The files will be lost.\n\n(This dialog can be turned off in GTKUI plugin settings)");
-
-        if (ctx == DDB_ACTION_CTX_SELECTION) {
-            int selected_files = trackcount;
-            if (selected_files == 1) {
-                snprintf(buf, sizeof (buf), _("Do you really want to delete the selected file?%s"), buf2);
-            } else {
-                snprintf(buf, sizeof (buf), _("Do you really want to delete all %d selected files?%s"), selected_files, buf2);
-            }
-        }
-        else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
-            int files = trackcount;
-            snprintf(buf, sizeof (buf), _("Do you really want to delete all %d files from the current playlist?%s"), files, buf2);
-        }
-        else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-            snprintf(buf, sizeof (buf), _("Do you really want to delete the currently playing file?%s"), buf2);
-        }
-
-        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_NONE, _("Delete files from disk"));
-
-        gtk_dialog_add_button(GTK_DIALOG(dlg), _("Cancel"), GTK_RESPONSE_NO);
-        gtk_dialog_add_button(GTK_DIALOG(dlg), _("Delete"), GTK_RESPONSE_YES);
-
-        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), "%s", buf);
-        gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
-
-#if GTK_CHECK_VERSION(3,0,0)
-        GtkWidget *btn = gtk_dialog_get_widget_for_response(GTK_DIALOG(dlg), GTK_RESPONSE_YES);
-        gtk_style_context_add_class (gtk_widget_get_style_context(btn), "destructive-action");
-#endif
-
-        int response = gtk_dialog_run (GTK_DIALOG (dlg));
-        gtk_widget_destroy (dlg);
-        if (response != GTK_RESPONSE_YES) {
-            callback(ctl, 1);
-            return;
-        }
-    }
-
-    callback(ctl, 0);
-}
-
-static int
-_deleteFile (ddbDeleteFromDiskController_t ctl, const char *uri) {
-    if (deadbeef->conf_get_int ("gtkui.move_to_trash", 1)) {
-        GFile *file = g_file_new_for_path (uri);
-        g_file_trash (file, NULL, NULL);
-        g_object_unref (file);
-    } else {
-        (void)unlink (uri);
-    }
-
-    // check if file still exists
-    struct stat buf;
-    memset (&buf, 0, sizeof (buf));
-    int stat_res = stat (uri, &buf);
-
-    if (stat_res == 0) {
-        trace ("Failed to delete file: %s\n", uri);
-        return 0;
-    }
-    return 1;
-}
 
 static ddbDeleteFromDiskController_t _deleteCtl;
 
@@ -459,8 +391,8 @@ action_delete_from_disk_handler_cb (void *data) {
     }
 
     ddbDeleteFromDiskControllerDelegate_t delegate = {
-        .warningMessageForCtx = _warningMessageForCtx,
-        .deleteFile = _deleteFile,
+        .warningMessageForCtx = gtkui_warning_message_for_ctx,
+        .deleteFile = gtkui_delete_file,
         .completed = _deleteCompleted,
     };
 
@@ -481,26 +413,6 @@ action_delete_from_disk_handler_cb (void *data) {
 
     return FALSE;
 }
-
-void
-delete_from_disk_with_track_list (ddbUtilTrackList_t trackList) {
-    if (_deleteCtl) {
-        return;
-    }
-
-    ddbDeleteFromDiskControllerDelegate_t delegate = {
-        .warningMessageForCtx = _warningMessageForCtx,
-        .deleteFile = _deleteFile,
-        .completed = _deleteCompleted,
-    };
-
-    _deleteCtl =  ddbDeleteFromDiskControllerInitWithTrackList(ddbDeleteFromDiskControllerAlloc(), trackList);
-
-    ddbDeleteFromDiskControllerSetShouldSkipDeletedTracks(_deleteCtl, deadbeef->conf_get_int ("gtkui.skip_deleted_songs", 0));
-
-    ddbDeleteFromDiskControllerRunWithDelegate(_deleteCtl, delegate);
-}
-
 int
 action_delete_from_disk_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     gdk_threads_add_idle (action_delete_from_disk_handler_cb, (void *)(intptr_t)ctx);

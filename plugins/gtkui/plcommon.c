@@ -28,6 +28,7 @@
 #include <unistd.h>
 #include <gdk/gdkkeysyms.h>
 #include "gtkui.h"
+#include "gtkui_deletefromdisk.h"
 #include "../../strdupa.h"
 #include "../libparser/parser.h"
 #include "../../shared/deletefromdisk.h"
@@ -847,6 +848,12 @@ _trkproperties_did_reload_metadata (void *user_data) {
 }
 
 static void
+_trkproperties_did_delete_files (void *user_data) {
+    deadbeef->pl_save_all ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+}
+
+static void
 properties_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
@@ -960,6 +967,37 @@ on_set_custom_title_activate (GtkMenuItem *menuitem, gpointer user_data)
     lv->binding->unref (it);
 }
 #endif
+
+static ddbDeleteFromDiskController_t _deleteCtl;
+
+static void
+_deleteCompleted (ddbDeleteFromDiskController_t ctl) {
+    ddbDeleteFromDiskControllerFree(ctl);
+    _deleteCtl = NULL;
+
+    if (_trkproperties_delegate.trkproperties_did_delete_files != NULL) {
+        _trkproperties_delegate.trkproperties_did_delete_files(_trkproperties_delegate.user_data);
+    }
+}
+
+static void
+delete_from_disk_with_track_list (ddbUtilTrackList_t trackList) {
+    if (_deleteCtl) {
+        return;
+    }
+
+    ddbDeleteFromDiskControllerDelegate_t delegate = {
+        .warningMessageForCtx = gtkui_warning_message_for_ctx,
+        .deleteFile = gtkui_delete_file,
+        .completed = _deleteCompleted,
+    };
+
+    _deleteCtl =  ddbDeleteFromDiskControllerInitWithTrackList(ddbDeleteFromDiskControllerAlloc(), trackList);
+
+    ddbDeleteFromDiskControllerSetShouldSkipDeletedTracks(_deleteCtl, deadbeef->conf_get_int ("gtkui.skip_deleted_songs", 0));
+
+    ddbDeleteFromDiskControllerRunWithDelegate(_deleteCtl, delegate);
+}
 
 static void
 on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
@@ -1332,6 +1370,7 @@ list_context_menu_with_track_list (ddb_playItem_t **tracks, int count, trkproper
 
     _trkproperties_delegate.trkproperties_did_update_tracks = delegate->trkproperties_did_update_tracks;
     _trkproperties_delegate.trkproperties_did_reload_metadata = delegate->trkproperties_did_reload_metadata;
+    _trkproperties_delegate.trkproperties_did_delete_files = delegate->trkproperties_did_delete_files;
     _trkproperties_delegate.user_data = delegate->user_data;
 
     _run_menu (0);
@@ -1343,6 +1382,7 @@ list_context_menu (DdbListview *listview, int iter) {
 
     _trkproperties_delegate.trkproperties_did_update_tracks = _trkproperties_did_update_tracks;
     _trkproperties_delegate.trkproperties_did_reload_metadata = _trkproperties_did_reload_metadata;
+    _trkproperties_delegate.trkproperties_did_delete_files = _trkproperties_did_delete_files;
     _trkproperties_delegate.user_data = NULL;
     _run_menu (iter != PL_SEARCH);
 }

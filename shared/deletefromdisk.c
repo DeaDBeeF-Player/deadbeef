@@ -261,7 +261,7 @@ _warningCallback (ddbDeleteFromDiskController_t ctl, int shouldCancel) {
     }
 
     if (data->shouldSkipDeletedTracks
-        && deadbeef->plt_get_item_idx (plt, trackListData->it_current_song, PL_MAIN) == -1
+        && ((plt == NULL) || deadbeef->plt_get_item_idx (plt, trackListData->it_current_song, PL_MAIN) == -1)
         && deadbeef->streamer_get_current_playlist () == deadbeef->plt_get_curr_idx ()
         && deadbeef->get_output ()->state () == OUTPUT_STATE_PLAYING) {
 
@@ -275,11 +275,7 @@ _warningCallback (ddbDeleteFromDiskController_t ctl, int shouldCancel) {
         }
     }
 
-    // FIXME: don't need to save playlists if this code is executed for medialib
-    deadbeef->pl_save_all ();
     deadbeef->pl_unlock ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-
     data->delegate.completed(ctl);
 }
 

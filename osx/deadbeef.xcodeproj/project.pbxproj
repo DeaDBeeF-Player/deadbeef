@@ -1774,6 +1774,8 @@
 		2DA5E331238DB0C4005832B7 /* EditColumnPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */; };
 		2DA5E341238DB1A8005832B7 /* EditColumnWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA5E33F238DB1A8005832B7 /* EditColumnWindowController.h */; };
 		2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E340238DB1A8005832B7 /* EditColumnWindowController.m */; };
+		2DA62BA526F3C8A800ED449A /* gtkui_deletefromdisk.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA62BA326F3C8A800ED449A /* gtkui_deletefromdisk.h */; };
+		2DA62BA626F3C8A800ED449A /* gtkui_deletefromdisk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA62BA426F3C8A800ED449A /* gtkui_deletefromdisk.c */; };
 		2DA66EC81EDF4EF800E20989 /* StreamerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66EC71EDF4EF800E20989 /* StreamerTests.m */; };
 		2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66EC91EDF4F2C00E20989 /* fakeout.c */; };
 		2DA66ECE1EDF501000E20989 /* fakein.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66ECC1EDF501000E20989 /* fakein.c */; };
@@ -5539,6 +5541,8 @@
 		2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditColumnPanel.xib; sourceTree = "<group>"; };
 		2DA5E33F238DB1A8005832B7 /* EditColumnWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditColumnWindowController.h; sourceTree = "<group>"; };
 		2DA5E340238DB1A8005832B7 /* EditColumnWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditColumnWindowController.m; sourceTree = "<group>"; };
+		2DA62BA326F3C8A800ED449A /* gtkui_deletefromdisk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gtkui_deletefromdisk.h; sourceTree = "<group>"; };
+		2DA62BA426F3C8A800ED449A /* gtkui_deletefromdisk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtkui_deletefromdisk.c; sourceTree = "<group>"; };
 		2DA66EC71EDF4EF800E20989 /* StreamerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamerTests.m; sourceTree = "<group>"; };
 		2DA66EC91EDF4F2C00E20989 /* fakeout.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fakeout.c; sourceTree = "<group>"; };
 		2DA66ECA1EDF4F2C00E20989 /* fakeout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fakeout.h; sourceTree = "<group>"; };
@@ -10565,6 +10569,8 @@
 				2DE3B5B72269BB4300AFF9AE /* widgets.h */,
 				2DE3B5C02269BB4300AFF9AE /* wingeom.c */,
 				2DE3B68E2269BB4300AFF9AE /* wingeom.h */,
+				2DA62BA326F3C8A800ED449A /* gtkui_deletefromdisk.h */,
+				2DA62BA426F3C8A800ED449A /* gtkui_deletefromdisk.c */,
 			);
 			name = gtkui;
 			path = plugins/gtkui;
@@ -12615,6 +12621,7 @@
 				2DE3B7DB2269BF1700AFF9AE /* hotkeys.h in Headers */,
 				2DE3B8062269BF3100AFF9AE /* search.h in Headers */,
 				2DE3B7F92269BF3100AFF9AE /* coverart.h in Headers */,
+				2DA62BA526F3C8A800ED449A /* gtkui_deletefromdisk.h in Headers */,
 				2DE3B7D42269BF1700AFF9AE /* mainplaylist.h in Headers */,
 				2DE3B7F02269BF3100AFF9AE /* ddblistview.h in Headers */,
 				2DE3B7D02269BF1700AFF9AE /* actionhandlers.h in Headers */,
@@ -16002,6 +16009,7 @@
 				2D715C1726C837A80022A8F0 /* prefwinappearance.c in Sources */,
 				2DE3B7DF2269BF3100AFF9AE /* rg.c in Sources */,
 				2DE3B81E2269C0EA00AFF9AE /* utf8.c in Sources */,
+				2DA62BA626F3C8A800ED449A /* gtkui_deletefromdisk.c in Sources */,
 				2DE3B7FA2269BF3100AFF9AE /* fileman.c in Sources */,
 				2D715C0B26C833570022A8F0 /* prefwinsound.c in Sources */,
 				2DE3B7CD2269BF1700AFF9AE /* coverart.c in Sources */,
