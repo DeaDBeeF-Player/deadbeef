@@ -35,6 +35,8 @@ m4
 .libs
 *.la
 *.lo
+bin/*
+obj/*
 deadbeef.desktop
 .vimrc
 ddbcellrenderertextmultiline.vapi
