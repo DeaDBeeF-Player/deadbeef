@@ -11,10 +11,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class TrackContextMenu;
+
 @protocol TrackContextMenuDelegate <NSMenuDelegate>
 
-- (void)trackProperties;
-- (void)playlistChanged;
+- (void)trackContextMenuShowTrackProperties:(TrackContextMenu *)trackContextMenu;
+- (void)trackContextMenuDidReloadMetadata:(TrackContextMenu *)trackContextMenu;
+- (void)trackContextMenuDidDeleteFiles:(TrackContextMenu *)trackContextMenu;
 
 @end
 

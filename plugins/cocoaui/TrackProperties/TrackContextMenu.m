@@ -219,7 +219,7 @@ extern DB_functions_t *deadbeef;
         return YES;
     }];
 
-    [((id<TrackContextMenuDelegate>)self.delegate) playlistChanged];
+    [((id<TrackContextMenuDelegate>)self.delegate) trackContextMenuDidReloadMetadata:self];
 }
 
 #pragma mark -
@@ -439,6 +439,7 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl) {
 - (void)deleteCompleted:(ddbDeleteFromDiskController_t)ctl {
     ddbDeleteFromDiskControllerFree(ctl);
     self.deleteFromDiskController = NULL;
+    [((id<TrackContextMenuDelegate>)self.delegate) trackContextMenuDidDeleteFiles:self];
 }
 
 - (void)deleteFromDisk {
@@ -499,7 +500,7 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl) {
 }
 
 - (void)trackProperties {
-    [((id<TrackContextMenuDelegate>)self.delegate) trackProperties];
+    [((id<TrackContextMenuDelegate>)self.delegate) trackContextMenuShowTrackProperties:self];
 }
 
 @end

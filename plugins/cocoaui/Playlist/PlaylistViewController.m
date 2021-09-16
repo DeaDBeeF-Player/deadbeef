@@ -1454,7 +1454,7 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
 
 #pragma mark - TrackContextMenuDelegate
 
-- (void)trackProperties {
+- (void)trackContextMenuDidChangeTrackProperties {
     if (!self.trkProperties) {
         self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
         self.trkProperties.delegate = self;
@@ -1465,10 +1465,17 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     [self.trkProperties showWindow:self];
 }
 
-- (void)playlistChanged {
+- (void)trackContextMenuDidReloadMetadata {
     deadbeef->pl_save_current();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
+
+- (void)trackContextMenuDidDeleteFiles:(TrackContextMenu *)trackContextMenu {
+    deadbeef->pl_save_all ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+}
+
+#pragma mark -
 
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row {
     if (!self.groupStr) {

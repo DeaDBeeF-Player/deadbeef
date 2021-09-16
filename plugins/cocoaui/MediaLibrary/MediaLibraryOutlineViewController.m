@@ -296,13 +296,6 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 }
 
 - (int)widgetMessage:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
-    switch (_id) {
-    case DB_EV_PLAYLISTCHANGED:
-        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT) {
-            self.medialibPlugin->plugin.refresh(self.medialibSource);
-        }
-        break;
-    }
     return 0;
 }
 
@@ -559,7 +552,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 
 #pragma mark - TrackContextMenuDelegate
 
-- (void)trackProperties {
+- (void)trackContextMenuShowTrackProperties:(TrackContextMenu *)trackContextMenu {
     if (!self.trkProperties) {
         self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
     }
@@ -568,7 +561,11 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     [self.trkProperties showWindow:self];
 }
 
-- (void)playlistChanged {
+- (void)trackContextMenuDidReloadMetadata:(TrackContextMenu *)trackContextMenu {
+    self.medialibPlugin->plugin.refresh(self.medialibSource);
+}
+
+- (void)trackContextMenuDidDeleteFiles:(TrackContextMenu *)trackContextMenu {
     self.medialibPlugin->plugin.refresh(self.medialibSource);
 }
 
