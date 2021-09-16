@@ -59,6 +59,10 @@
 #include "../../strdupa.h"
 #include "wos.h"
 
+#ifndef DISPATCH_QUEUE_CONCURRENT
+#define DISPATCH_QUEUE_CONCURRENT NULL
+#endif
+
 #define ENABLE_MUSICBRAINZ 0
 #define ENABLE_ALBUMART_ORG 0
 
