@@ -28,8 +28,19 @@
 
 struct DB_playItem_s;
 
+typedef struct {
+    void (*trkproperties_did_update_tracks)(void *user_data);
+    void (*trkproperties_did_reload_metadata)(void *user_data);
+    void *user_data;
+} trkproperties_delegate_t;
+
 void
 show_track_properties_dlg (int ctx, ddb_playlist_t *plt);
+
+/// Sets the delegate for the currently displayed track properties dialog.
+/// The next call of @c show_track_properties_dlg or similar will reset the delegate to NULL.
+void
+trkproperties_set_delegate (trkproperties_delegate_t *delegate);
 
 void
 trkproperties_destroy (void);
@@ -45,8 +56,5 @@ trkproperties_fill_meta (GtkListStore *store, DB_playItem_t **tracks, int numtra
 
 void
 show_track_properties_dlg_with_track_list (ddb_playItem_t **track_list, int count);
-
-void
-show_track_properties_dlg_with_current_track_list(void);
 
 #endif

@@ -454,6 +454,23 @@ _select_at_position (GtkTreeView *treeview, gint x, gint y) {
     return TRUE;
 }
 
+static void
+_trkproperties_did_change_tracks (void *user_data) {
+    w_medialib_viewer_t *mlv = user_data;
+    mlv->plugin->plugin.refresh (mlv->source);
+}
+
+static void
+_trkproperties_did_reload_metadata (void *user_data) {
+    w_medialib_viewer_t *mlv = user_data;
+    mlv->plugin->plugin.refresh (mlv->source);
+}
+
+static trkproperties_delegate_t _trkproperties_delegate = {
+    .trkproperties_did_update_tracks = _trkproperties_did_change_tracks,
+    .trkproperties_did_reload_metadata = _trkproperties_did_reload_metadata,
+};
+
 gboolean
 _treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_data) {
     if (w_get_design_mode ()) {
@@ -486,7 +503,8 @@ _treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_d
 
     // context menu
     if (event->button == 3) {
-        list_context_menu_with_track_list (tracks, count);
+        _trkproperties_delegate.user_data = mlv;
+        list_context_menu_with_track_list (tracks, count, &_trkproperties_delegate);
     }
     // append to playlist
     else if (event->button == 2 && count > 0) {

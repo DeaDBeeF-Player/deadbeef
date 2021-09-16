@@ -88,6 +88,8 @@ static struct pl_preset_column_format pl_preset_column_formats[PRESET_COLUMN_NUM
 
 static ddbUtilTrackList_t _menuTrackList;
 
+static trkproperties_delegate_t _trkproperties_delegate;
+
 static void
 _capture_selected_track_list (void) {
     if (_menuTrackList != NULL) {
@@ -826,6 +828,20 @@ reload_metadata_activate (GtkMenuItem     *menuitem, gpointer         user_data)
             }
         }
     }
+
+    if (_trkproperties_delegate.trkproperties_did_reload_metadata != NULL) {
+        _trkproperties_delegate.trkproperties_did_reload_metadata (_trkproperties_delegate.user_data);
+    }
+}
+
+static void
+_trkproperties_did_update_tracks (void *user_data) {
+    deadbeef->pl_save_current();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+}
+
+static void
+_trkproperties_did_reload_metadata (void *user_data) {
     deadbeef->pl_save_current ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
@@ -837,6 +853,7 @@ properties_activate                (GtkMenuItem     *menuitem,
     int count = ddbUtilTrackListGetTrackCount(_menuTrackList);
     ddb_playItem_t **tracks = ddbUtilTrackListGetTracks(_menuTrackList);
     show_track_properties_dlg_with_track_list (tracks, count);
+    trkproperties_set_delegate(&_trkproperties_delegate);
 }
 
 void
@@ -1305,13 +1322,17 @@ _run_menu (int show_paste) {
 
 
 void
-list_context_menu_with_track_list (ddb_playItem_t **tracks, int count) {
+list_context_menu_with_track_list (ddb_playItem_t **tracks, int count, trkproperties_delegate_t *delegate) {
     if (_menuTrackList != NULL) {
         ddbUtilTrackListFree(_menuTrackList);
         _menuTrackList = NULL;
     }
 
     _menuTrackList = ddbUtilTrackListInitWithWithTracks(ddbUtilTrackListAlloc(), NULL, DDB_ACTION_CTX_SELECTION, tracks, count, NULL, -1);
+
+    _trkproperties_delegate.trkproperties_did_update_tracks = delegate->trkproperties_did_update_tracks;
+    _trkproperties_delegate.trkproperties_did_reload_metadata = delegate->trkproperties_did_reload_metadata;
+    _trkproperties_delegate.user_data = delegate->user_data;
 
     _run_menu (0);
 }
@@ -1320,6 +1341,9 @@ void
 list_context_menu (DdbListview *listview, int iter) {
     _capture_selected_track_list();
 
+    _trkproperties_delegate.trkproperties_did_update_tracks = _trkproperties_did_update_tracks;
+    _trkproperties_delegate.trkproperties_did_reload_metadata = _trkproperties_did_reload_metadata;
+    _trkproperties_delegate.user_data = NULL;
     _run_menu (iter != PL_SEARCH);
 }
 

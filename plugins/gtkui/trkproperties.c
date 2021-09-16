@@ -61,6 +61,7 @@ static GtkWidget *progressdlg;
 static int progress_aborted;
 static int last_ctx;
 static ddb_playlist_t *last_plt;
+static trkproperties_delegate_t *_delegate;
 
 // Max length of a string displayed in the TableView
 // If a string is longer -- it gets clipped, and appended with " (…)", like with linebreaks
@@ -420,6 +421,7 @@ show_track_properties_dlg_with_track_list (ddb_playItem_t **track_list, int coun
     }
     numtracks = count;
     show_track_properties_dlg_with_current_track_list();
+    _delegate = NULL;
 }
 
 void
@@ -436,7 +438,14 @@ show_track_properties_dlg (int ctx, ddb_playlist_t *plt) {
     trkproperties_build_track_list_for_ctx (plt, ctx, &tracks, &numtracks);
 
     show_track_properties_dlg_with_current_track_list();
+    _delegate = NULL;
 }
+
+void
+trkproperties_set_delegate (trkproperties_delegate_t *delegate) {
+    _delegate = delegate;
+}
+
 
 static gboolean
 set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
@@ -526,6 +535,10 @@ write_finished_cb (void *ctx) {
     if (last_plt) {
         deadbeef->plt_modified (last_plt);
     }
+    if (_delegate != NULL) {
+        _delegate->trkproperties_did_update_tracks (_delegate->user_data);
+    }
+
     show_track_properties_dlg_with_current_track_list();
 
     return FALSE;

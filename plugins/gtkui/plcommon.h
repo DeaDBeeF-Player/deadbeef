@@ -25,6 +25,7 @@
 #define __PLCOLUMNS_H
 
 #include "ddblistview.h"
+#include "trkproperties.h"
 
 #define COLUMN_FORMAT_ARTISTALBUM "$if(%artist%,%artist%,Unknown Artist)[ - %album%]"
 #define COLUMN_FORMAT_ARTIST "$if(%artist%,%artist%,Unknown Artist)"
@@ -50,7 +51,7 @@ void
 list_context_menu (DdbListview *listview, int iter);
 
 void
-list_context_menu_with_track_list (ddb_playItem_t **tracks, int count);
+list_context_menu_with_track_list (ddb_playItem_t **tracks, int count, trkproperties_delegate_t *delegate);
 
 void
 list_empty_region_context_menu (DdbListview *listview);
