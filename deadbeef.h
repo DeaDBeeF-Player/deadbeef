@@ -1746,7 +1746,9 @@ typedef struct DB_plugin_s {
     // can be NULL if plugin doesn't support commandline processing
     // cmdline is 0-separated list of strings, guaranteed to have 0 at the end
     // cmdline_size is number of bytes pointed by cmdline
-    int (*exec_cmdline) (const char *cmdline, int cmdline_size);
+    // fd is file descriptor, send command output there (f. ex. by using dprintf)
+    // returns 0 on success or error code on failure
+    int (*exec_cmdline) (const char *cmdline, int cmdline_size, int fd);
 
     // @returns linked list of actions for the specified track
     // when it is NULL -- the plugin must return list of all actions

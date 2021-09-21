@@ -153,6 +153,9 @@ print_help (void) {
     fprintf (stdout, _("                      The NUM parameter can be specified in percents (absolute value or increment/decrement)\n"));
     fprintf (stdout, _("                      or in dB [-50, 0] (if with suffix).\n"));
     fprintf (stdout, _("                      Examples: --volume 80, --volume +10, --volume -5 or --volume -20dB\n"));
+    fprintf (stdout, _("   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to send commands to deadbeef itself.\n"));
+    fprintf (stdout, _("                      To get plugin specific commands use --plugin=[PLUG] --help\n"));
+    fprintf (stdout, _("   --plugin-list      List all available plugins including indication for plugins that support commands.\n"));
 #ifdef ENABLE_NLS
     bind_textdomain_codeset (PACKAGE, "UTF-8");
 #endif
@@ -376,6 +379,74 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 snprintf (sendback, sbsize, "\1%.0f%% (%.2f dB)", deadbeef->volume_get_db() * 2 + 100 , deadbeef->volume_get_db());
             }
             return 0;
+        }
+        else if (!strncmp(parg, "--plugin=", strlen("--plugin="))) {
+            if (!strcmp(parg + strlen("--plugin="), "main")) {
+                parg += strlen(parg) + 1;
+                continue;
+            }
+
+            // get length until pend or next "--plugin" occurence
+            int parg_len = 0;
+            while ((parg + parg_len) < pend) {
+                if (parg_len && !strncmp(parg + parg_len, "--plugin=", strlen("--plugin="))) {
+                    break;
+                }
+                parg_len += strlen(parg + parg_len) + 1;
+            }
+            parg_len--;
+
+            const char *plugid = parg + strlen("--plugin=");
+            DB_plugin_t *p = plug_get_for_id(plugid);
+            if (p && p->api_vmajor == 1 && p->api_vminor >= 15 && p->exec_cmdline != NULL) {
+                FILE *fp = tmpfile();
+                if (!fp) {
+                    trace_err ("Creating tmpfile failed: %s\n", strerror(errno));
+                    return -1;
+                }
+                int fd = fileno (fp);
+                size_t plugarg_len = parg_len - strlen(parg) - 1;
+                int ret = p->exec_cmdline(parg + strlen(parg) + 1, (int) plugarg_len, fd);
+
+                off_t out_size = lseek(fd, 0, SEEK_END);
+                // copy plugin output to sendback (if any output produced)
+                if ((out_size > 0) && sendback) {
+                    fflush (fp);
+                    rewind (fp);
+                    sendback[0]='\1';
+                    size_t bytes_read = fread (sendback + 1, 1, sbsize - 2, fp);
+                    if (bytes_read > 0) {
+                        sendback[bytes_read + 1] = '\0';
+                    }
+                    else {
+                        trace_err ("Reading tmpfile failed\n");
+                        return -1;
+                    }
+                }
+                fclose (fp);
+                if (ret) {
+                    // TODO have specific error codes sent to client?
+                    sendback[0] = '\2';
+                }
+            }
+            parg += parg_len + 1;
+            continue;
+        }
+        else if (!strcmp(parg, "--plugin-list")) {
+            char out[2048];
+            int out_pos = 0;
+            int i = 0;
+            DB_plugin_t ** plugins = plug_get_list();
+            while (plugins[i] && (2048 - out_pos) >= 0) {
+                const char *format = plugins[i]->exec_cmdline ? "\033[32m%s\033[0m, " : "%s, ";
+                out_pos += snprintf (out + out_pos, 2048 - out_pos, format, plugins[i]->id);
+                i++;
+            }
+            out[out_pos - 1] = '\0';
+            out[out_pos - 2] = '\n';
+            if (sendback) {
+                snprintf (sendback, sbsize, "\1%s", out);
+            }
         }
         else if (parg[0] != '-') {
             break; // unknown option is filename
@@ -1209,11 +1280,17 @@ main (int argc, char *argv[]) {
         }
     }
 
+    const char *plugname = "main";
     for (int i = 1; i < argc; i++) {
+        if (!strncmp (argv[i], "--plugin=", strlen("--plugin="))) {
+            plugname = argv[i] + strlen("--plugin=");
+        }
         // help, version and nowplaying are executed with any filter
         if (!strcmp (argv[i], "--help") || !strcmp (argv[i], "-h")) {
-            print_help ();
-            return 0;
+            if (!strcmp (plugname, "main")) {
+                print_help ();
+                return 0;
+            }
         }
         else if (!strcmp (argv[i], "--version")) {
             printf ("DeaDBeeF " VERSION " Copyright © 2009-2021 Alexey Yakovenko\n");
@@ -1296,11 +1373,12 @@ main (int argc, char *argv[]) {
                 trace_err ("%s\n", out);
             }
         }
+        int exit_code = out[0] ? out[0] - 1 : 0;
         if (out) {
             free (out);
         }
         db_socket_close (s);
-        exit (0);
+        exit (exit_code);
     }
 //    else {
 //        perror ("INFO: failed to connect to existing session:");
