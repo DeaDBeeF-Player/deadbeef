@@ -73,6 +73,9 @@ mkdir -p $LIBRARY_PATH
 cp -r $LIBRARY_PATH/libBlocksRuntime.so* $DESTDIR/opt/deadbeef/lib/
 cp -r $LIBRARY_PATH/libkqueue.so* $DESTDIR/opt/deadbeef/lib/
 cp -r $LIBRARY_PATH/libdispatch.so* $DESTDIR/opt/deadbeef/lib/
+cp -r $LIBRARY_PATH/libcurl.so* $DESTDIR/opt/deadbeef/lib/
+cp -r $LIBRARY_PATH/libmbed*.so* $DESTDIR/opt/deadbeef/lib/
+
 
 MACHINE_TYPE=`uname -m`
 if [ ${MACHINE_TYPE} == 'x86_64' ]; then

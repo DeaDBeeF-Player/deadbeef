@@ -104,6 +104,8 @@ mkdir -p $OUTDIR/lib
 cp -r static-deps/lib-x86-64/lib/libBlocksRuntime.so* $OUTDIR/lib/
 cp -r static-deps/lib-x86-64/lib/libkqueue.so* $OUTDIR/lib/
 cp -r static-deps/lib-x86-64/lib/libdispatch.so* $OUTDIR/lib/
+cp -r static-deps/lib-x86-64/lib/libcurl.so* $OUTDIR/lib/
+cp -r static-deps/lib-x86-64/lib/libmbed*.so* $OUTDIR/lib/
 
 # translations
 mkdir -p $OUTDIR/locale
