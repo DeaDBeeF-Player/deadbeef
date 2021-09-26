@@ -3650,8 +3650,11 @@ tf_compile (const char *script) {
 
     c.i = script;
 
-    uint8_t code[strlen(script) * 3];
-    memset (code, 0, sizeof (code));
+    size_t len = strlen(script);
+    if (len == 0) {
+        return calloc(1,4);
+    }
+    uint8_t *code = calloc(len * 3, 1);
 
     c.o = code;
 
@@ -3660,6 +3663,7 @@ tf_compile (const char *script) {
     while (*(c.i)) {
         if (tf_compile_plain (&c)) {
             trace ("tf: compilation failed <%s>\n", c.i);
+            free (code);
             return NULL;
         }
     }
@@ -3669,6 +3673,9 @@ tf_compile (const char *script) {
     memcpy (out + 4, code, size);
     memset (out + 4 + size, 0, 4); // FIXME: this is the padding for possible buffer overflow bug fix
     *((int32_t *)out) = (int32_t)(size);
+
+    free (code);
+
     return out;
 }
 
