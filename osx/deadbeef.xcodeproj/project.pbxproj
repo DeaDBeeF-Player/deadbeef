@@ -567,7 +567,6 @@
 		2D00F99524353551000FC130 /* emu2413.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F84624353550000FC130 /* emu2413.c */; };
 		2D00F99624353551000FC130 /* VGMPlay_Intf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D00F84724353550000FC130 /* VGMPlay_Intf.h */; };
 		2D00F99824353551000FC130 /* VGMPlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D00F84924353550000FC130 /* VGMPlay.h */; };
-		2D00F99924353551000FC130 /* vgm2pcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F84A24353550000FC130 /* vgm2pcm.c */; };
 		2D00F99A24353551000FC130 /* ChipMapper.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F84C24353550000FC130 /* ChipMapper.c */; };
 		2D00F99C24353551000FC130 /* stdbool.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D00F85024353550000FC130 /* stdbool.h */; };
 		2D00F99D24353551000FC130 /* resampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D00F85124353550000FC130 /* resampler.h */; };
@@ -4231,7 +4230,6 @@
 		2D00F84624353550000FC130 /* emu2413.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = emu2413.c; sourceTree = "<group>"; };
 		2D00F84724353550000FC130 /* VGMPlay_Intf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VGMPlay_Intf.h; sourceTree = "<group>"; };
 		2D00F84924353550000FC130 /* VGMPlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VGMPlay.h; sourceTree = "<group>"; };
-		2D00F84A24353550000FC130 /* vgm2pcm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vgm2pcm.c; sourceTree = "<group>"; };
 		2D00F84C24353550000FC130 /* ChipMapper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ChipMapper.c; sourceTree = "<group>"; };
 		2D00F85024353550000FC130 /* stdbool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdbool.h; sourceTree = "<group>"; };
 		2D00F85124353550000FC130 /* resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resampler.h; sourceTree = "<group>"; };
@@ -7562,7 +7560,6 @@
 				2D00F7BA2435354F000FC130 /* chips */,
 				2D00F84724353550000FC130 /* VGMPlay_Intf.h */,
 				2D00F84924353550000FC130 /* VGMPlay.h */,
-				2D00F84A24353550000FC130 /* vgm2pcm.c */,
 				2D00F84C24353550000FC130 /* ChipMapper.c */,
 				2D00F85024353550000FC130 /* stdbool.h */,
 				2D00F85124353550000FC130 /* resampler.h */,
@@ -14989,7 +14986,6 @@
 				2D00F88424353550000FC130 /* Effects_Buffer.cpp in Sources */,
 				2D00F87624353550000FC130 /* Hes_Apu_Adpcm.cpp in Sources */,
 				2D00F87124353550000FC130 /* Nsf_Core.cpp in Sources */,
-				2D00F99924353551000FC130 /* vgm2pcm.c in Sources */,
 				2D00F89024353550000FC130 /* Nsf_Impl.cpp in Sources */,
 				2D00F89924353550000FC130 /* Sgc_Core.cpp in Sources */,
 				2D00F89124353550000FC130 /* Nes_Fme7_Apu.cpp in Sources */,
