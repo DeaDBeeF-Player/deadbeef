@@ -240,12 +240,14 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
 static void
 w_medialib_viewer_destroy (struct ddb_gtkui_widget_s *w) {
     w_medialib_viewer_t *mlv = (w_medialib_viewer_t *)w;
-    mlv->plugin->plugin.remove_listener (mlv->source, mlv->listener_id);
+    if (mlv->source != NULL) {
+        mlv->plugin->plugin.remove_listener (mlv->source, mlv->listener_id);
+    }
     if (mlv->item_tree != NULL) {
         mlv->plugin->plugin.free_item_tree (mlv->source, mlv->item_tree);
         mlv->item_tree = NULL;
     }
-    if (mlv->selectors) {
+    if (mlv->selectors != NULL) {
         mlv->plugin->plugin.free_selectors_list (mlv->source, mlv->selectors);
         mlv->selectors = NULL;
     }
@@ -563,6 +565,14 @@ w_medialib_viewer_create (void) {
     w->base.message = w_medialib_viewer_message;
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
+
+    ddb_medialib_plugin_t *plugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
+    if (plugin == NULL) {
+        GtkWidget *label = gtk_label_new(_("Media Library plugin is unavailable."));
+        gtk_widget_show (label);
+        gtk_container_add (GTK_CONTAINER (w->base.widget), label);
+        return (ddb_gtkui_widget_t *)w;
+    }
 
     GtkWidget *vbox = gtk_vbox_new (FALSE, 8);
     gtk_widget_show (vbox);
