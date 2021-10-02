@@ -3371,6 +3371,13 @@
 			remoteGlobalIDString = 2DB96A8919ABB4C600E318A8;
 			remoteInfo = samplerate;
 		};
+		2DBF3D97270885C400023138 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2DA84F7624F58894003507A2 /* jansson.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DA84F4524F5876A003507A2;
+			remoteInfo = jansson;
+		};
 		2DC8263C24A7432700DB756B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -14030,6 +14037,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DBF3D98270885C400023138 /* PBXTargetDependency */,
 				2DA5AB0525D033A100947C19 /* PBXTargetDependency */,
 				2D71F1B524AE7A1400E753D3 /* PBXTargetDependency */,
 				2DC8263D24A7432700DB756B /* PBXTargetDependency */,
@@ -17038,6 +17046,11 @@
 			isa = PBXTargetDependency;
 			target = 2DB96A8919ABB4C600E318A8 /* samplerate */;
 			targetProxy = 2DB96AA919ABB52A00E318A8 /* PBXContainerItemProxy */;
+		};
+		2DBF3D98270885C400023138 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = jansson;
+			targetProxy = 2DBF3D97270885C400023138 /* PBXContainerItemProxy */;
 		};
 		2DC8263D24A7432700DB756B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
