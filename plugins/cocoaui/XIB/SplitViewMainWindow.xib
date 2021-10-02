@@ -9,12 +9,10 @@
         <customObject id="-2" userLabel="File's Owner" customClass="MainWindowController">
             <connections>
                 <outlet property="buttonBar" destination="OIq-Is-HDq" id="OKm-ZW-cKu"/>
-                <outlet property="designableContainerView" destination="1HX-cv-ywg" id="8m0-j0-42K"/>
-                <outlet property="playlistWithTabsView" destination="IV1-Va-yS4" id="U8R-ir-M7u"/>
                 <outlet property="seekBar" destination="Cf3-e3-qXV" id="2s7-fO-DVZ"/>
                 <outlet property="sidebarOutlineViewController" destination="CYL-XF-y3k" id="9lc-kM-a0E"/>
+                <outlet property="splitViewController" destination="xuH-au-Yba" id="31g-bm-90R"/>
                 <outlet property="statusBar" destination="Yc4-pv-Wup" id="K9B-e5-BXc"/>
-                <outlet property="tabStrip" destination="Sp3-ZT-72r" id="xN3-el-uvI"/>
                 <outlet property="volumeBar" destination="GfK-FT-xmA" id="l7u-hZ-dzR"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
@@ -140,7 +138,6 @@
         </window>
         <viewController id="xuH-au-Yba" customClass="SidebarSplitViewController">
             <connections>
-                <outlet property="bodyViewController" destination="Fq8-H0-Fvi" id="sdY-WC-1fb"/>
                 <outlet property="sidebarViewController" destination="CYL-XF-y3k" id="fHe-Ej-ajk"/>
                 <outlet property="splitView" destination="7fy-hF-oeO" id="0gc-Nh-mMt"/>
                 <outlet property="view" destination="7fy-hF-oeO" id="tN2-UM-mM7"/>
@@ -152,16 +149,12 @@
                 <outlet property="view" destination="VJY-8N-XhM" id="6WU-hH-tXa"/>
             </connections>
         </viewController>
-        <viewController id="Fq8-H0-Fvi" userLabel="Detail View Controller">
-            <connections>
-                <outlet property="view" destination="pUF-Dy-KtC" id="ZsB-hW-ZOY"/>
-            </connections>
-        </viewController>
+        <viewController id="Fq8-H0-Fvi" userLabel="Detail View Controller"/>
         <scrollView autoresizesSubviews="NO" wantsLayer="YES" misplaced="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VJY-8N-XhM" userLabel="Sidebar View">
             <rect key="frame" x="0.0" y="0.0" width="285" height="275"/>
             <clipView key="contentView" wantsLayer="YES" drawsBackground="NO" id="Eiv-XJ-7B1">
                 <rect key="frame" x="0.0" y="0.0" width="285" height="275"/>
-                <autoresizingMask key="autoresizingMask"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <outlineView wantsLayer="YES" verticalHuggingPriority="750" allowsExpansionToolTips="YES" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="hGa-Fg-yZI" id="Ffb-Ma-ZiG" customClass="MediaLibraryOutlineView">
                         <rect key="frame" x="0.0" y="0.0" width="285" height="275"/>
@@ -322,127 +315,6 @@
             </scroller>
             <point key="canvasLocation" x="-435" y="-309"/>
         </scrollView>
-        <customView translatesAutoresizingMaskIntoConstraints="NO" id="pUF-Dy-KtC" userLabel="Detail View">
-            <rect key="frame" x="0.0" y="0.0" width="485" height="273"/>
-            <subviews>
-                <customView translatesAutoresizingMaskIntoConstraints="NO" id="IV1-Va-yS4">
-                    <rect key="frame" x="0.0" y="0.0" width="485" height="273"/>
-                    <subviews>
-                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="Sp3-ZT-72r" customClass="DdbTabStrip">
-                            <rect key="frame" x="0.0" y="249" width="452" height="24"/>
-                            <subviews>
-                                <box hidden="YES" horizontalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="pXm-qp-FgI">
-                                    <rect key="frame" x="177" y="-36" width="5" height="96"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                </box>
-                            </subviews>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="24" id="Z7g-FS-ljf"/>
-                            </constraints>
-                            <connections>
-                                <outlet property="hiddenVertLine" destination="pXm-qp-FgI" id="KnT-wu-mBE"/>
-                                <outlet property="renamePlaylistTitle" destination="lDx-qD-91B" id="gHc-rj-FHz"/>
-                                <outlet property="renamePlaylistWindow" destination="xAc-PG-wWm" id="4zs-Be-zLc"/>
-                            </connections>
-                        </customView>
-                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="1HX-cv-ywg">
-                            <rect key="frame" x="0.0" y="0.0" width="485" height="249"/>
-                            <constraints>
-                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="Jko-Ev-D1e"/>
-                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="UV6-J9-Up9"/>
-                            </constraints>
-                        </customView>
-                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Evh-ab-Qa8">
-                            <rect key="frame" x="456" y="251" width="25" height="19"/>
-                            <buttonCell key="cell" type="recessed" title="+" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2NL-f8-Pux">
-                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                <font key="font" metaFont="systemBold" size="16"/>
-                            </buttonCell>
-                            <connections>
-                                <action selector="createNewPlaylistAction:" target="-2" id="hZG-fd-p4l"/>
-                            </connections>
-                        </button>
-                    </subviews>
-                    <constraints>
-                        <constraint firstItem="1HX-cv-ywg" firstAttribute="top" secondItem="Sp3-ZT-72r" secondAttribute="bottom" id="3ds-vQ-VxW"/>
-                        <constraint firstAttribute="trailing" secondItem="1HX-cv-ywg" secondAttribute="trailing" id="8dv-pf-Lum"/>
-                        <constraint firstAttribute="bottom" secondItem="1HX-cv-ywg" secondAttribute="bottom" priority="750" id="JsA-3K-nfk"/>
-                        <constraint firstItem="Evh-ab-Qa8" firstAttribute="leading" secondItem="Sp3-ZT-72r" secondAttribute="trailing" constant="4" id="NPR-jg-mbN"/>
-                        <constraint firstAttribute="trailing" secondItem="Evh-ab-Qa8" secondAttribute="trailing" constant="4" id="S5z-4a-uo6"/>
-                        <constraint firstItem="Sp3-ZT-72r" firstAttribute="leading" secondItem="IV1-Va-yS4" secondAttribute="leading" id="XGQ-37-GBs"/>
-                        <constraint firstItem="1HX-cv-ywg" firstAttribute="leading" secondItem="IV1-Va-yS4" secondAttribute="leading" id="aYw-Mf-7pR"/>
-                        <constraint firstItem="Evh-ab-Qa8" firstAttribute="centerY" secondItem="Sp3-ZT-72r" secondAttribute="centerY" id="alq-P2-CKU"/>
-                        <constraint firstItem="Sp3-ZT-72r" firstAttribute="top" secondItem="IV1-Va-yS4" secondAttribute="top" id="yfd-b8-W4i"/>
-                    </constraints>
-                </customView>
-            </subviews>
-            <constraints>
-                <constraint firstItem="IV1-Va-yS4" firstAttribute="top" secondItem="pUF-Dy-KtC" secondAttribute="top" priority="750" id="Cra-13-wfd"/>
-                <constraint firstAttribute="bottom" secondItem="IV1-Va-yS4" secondAttribute="bottom" id="PjJ-JQ-2gB"/>
-                <constraint firstItem="IV1-Va-yS4" firstAttribute="leading" secondItem="pUF-Dy-KtC" secondAttribute="leading" id="S5X-Yp-H7y"/>
-                <constraint firstAttribute="trailing" secondItem="IV1-Va-yS4" secondAttribute="trailing" id="dUy-Ll-lbz"/>
-            </constraints>
-            <point key="canvasLocation" x="-357.5" y="536.5"/>
-        </customView>
-        <window title="Rename Playlist" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="xAc-PG-wWm" customClass="NSPanel">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="139" y="81" width="276" height="89"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
-            <view key="contentView" id="hK5-7B-hHN">
-                <rect key="frame" x="0.0" y="0.0" width="276" height="89"/>
-                <autoresizingMask key="autoresizingMask"/>
-                <subviews>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4U9-Z1-kw8">
-                        <rect key="frame" x="18" y="52" width="106" height="17"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Rename Playlist:" id="5Z2-q6-E47">
-                            <font key="font" metaFont="system"/>
-                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
-                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lDx-qD-91B">
-                        <rect key="frame" x="130" y="49" width="126" height="22"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="JgM-Ry-C7d">
-                            <font key="font" metaFont="system"/>
-                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="w4G-eV-Tfx">
-                        <rect key="frame" x="203" y="13" width="59" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0mk-Qz-Hgw">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-DQ
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="renamePlaylistOKAction:" target="Sp3-ZT-72r" id="IJ8-oB-wNT"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yu6-SB-gFD">
-                        <rect key="frame" x="121" y="13" width="82" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="AzD-8q-G0b">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-Gw
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="renamePlaylistCancelAction:" target="Sp3-ZT-72r" id="e2N-NT-ITT"/>
-                        </connections>
-                    </button>
-                </subviews>
-            </view>
-            <point key="canvasLocation" x="486" y="279.5"/>
-        </window>
     </objects>
     <resources>
         <image name="NSActionTemplate" width="15" height="15"/>

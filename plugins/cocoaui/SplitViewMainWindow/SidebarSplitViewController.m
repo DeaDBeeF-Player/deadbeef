@@ -11,7 +11,6 @@
 @interface SidebarSplitViewController ()
 
 @property IBOutlet NSViewController* sidebarViewController;
-@property IBOutlet NSViewController* bodyViewController;
 
 @property IBOutlet NSSplitView* splitView;
 
@@ -30,6 +29,8 @@
     NSSplitViewItem* sidebarItem = [SidebarSplitViewItem splitViewItemWithViewController:self.sidebarViewController];
     sidebarItem.canCollapse = YES;
     [self insertSplitViewItem:sidebarItem atIndex:0];
+
+    self.bodyViewController = [[MainContentViewController alloc] initWithNibName:@"MainContentViewController" bundle:nil];
 
     NSSplitViewItem* bodyItem = [NSSplitViewItem splitViewItemWithViewController:self.bodyViewController];
     bodyItem.canCollapse = NO;

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="MainContentViewController">
+            <connections>
+                <outlet property="designableView" destination="cCl-GK-N9g" id="nbh-HW-TfV"/>
+                <outlet property="tabStrip" destination="P6m-J5-o7M" id="nna-UL-7To"/>
+                <outlet property="view" destination="dvc-TX-0tT" id="LGb-ac-gnK"/>
+                <outlet property="wrapperView" destination="j6V-eB-xNh" id="dth-mr-pAi"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Rename Playlist" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="Ixi-lc-wwD" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="139" y="81" width="276" height="89"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
+            <view key="contentView" id="1J7-AB-9al">
+                <rect key="frame" x="0.0" y="0.0" width="276" height="89"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CZ3-bm-xYS">
+                        <rect key="frame" x="18" y="52" width="106" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Rename Playlist:" id="v3y-g6-nxx">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j5D-yV-bfp">
+                        <rect key="frame" x="130" y="49" width="126" height="22"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="Eee-KK-jbJ">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LEq-5J-chJ">
+                        <rect key="frame" x="203" y="13" width="59" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="EOJ-ZU-CyR">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="renamePlaylistOKAction:" target="P6m-J5-o7M" id="GTV-mx-JT8"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="llc-UN-QhP">
+                        <rect key="frame" x="121" y="13" width="82" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jsd-KL-zVR">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="renamePlaylistCancelAction:" target="P6m-J5-o7M" id="UTb-UB-fcF"/>
+                        </connections>
+                    </button>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="486" y="279.5"/>
+        </window>
+        <customView translatesAutoresizingMaskIntoConstraints="NO" id="dvc-TX-0tT" userLabel="Detail View">
+            <rect key="frame" x="0.0" y="0.0" width="485" height="273"/>
+            <subviews>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="j6V-eB-xNh">
+                    <rect key="frame" x="0.0" y="0.0" width="485" height="273"/>
+                    <subviews>
+                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="P6m-J5-o7M" customClass="DdbTabStrip">
+                            <rect key="frame" x="0.0" y="249" width="452" height="24"/>
+                            <subviews>
+                                <box hidden="YES" horizontalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="EfE-rF-dzf">
+                                    <rect key="frame" x="177" y="-36" width="5" height="96"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                </box>
+                            </subviews>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="24" id="Iob-hC-bfd"/>
+                            </constraints>
+                            <connections>
+                                <outlet property="hiddenVertLine" destination="EfE-rF-dzf" id="I7e-ar-IpV"/>
+                                <outlet property="renamePlaylistTitle" destination="j5D-yV-bfp" id="39V-XU-sE2"/>
+                                <outlet property="renamePlaylistWindow" destination="Ixi-lc-wwD" id="Cy2-rO-Tuz"/>
+                            </connections>
+                        </customView>
+                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="cCl-GK-N9g">
+                            <rect key="frame" x="0.0" y="0.0" width="485" height="249"/>
+                            <constraints>
+                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="INf-IA-0sk"/>
+                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="OUs-tT-hJR"/>
+                            </constraints>
+                        </customView>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7rM-oP-xy5">
+                            <rect key="frame" x="456" y="251" width="25" height="19"/>
+                            <buttonCell key="cell" type="recessed" title="+" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ivQ-Ab-g1E">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="systemBold" size="16"/>
+                            </buttonCell>
+                        </button>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="P6m-J5-o7M" firstAttribute="top" secondItem="j6V-eB-xNh" secondAttribute="top" id="YOf-5d-YNH"/>
+                        <constraint firstItem="7rM-oP-xy5" firstAttribute="centerY" secondItem="P6m-J5-o7M" secondAttribute="centerY" id="bK7-hg-fB2"/>
+                        <constraint firstAttribute="bottom" secondItem="cCl-GK-N9g" secondAttribute="bottom" priority="750" id="cEO-Nx-vHz"/>
+                        <constraint firstItem="cCl-GK-N9g" firstAttribute="top" secondItem="P6m-J5-o7M" secondAttribute="bottom" id="eHW-UX-Y5n"/>
+                        <constraint firstAttribute="trailing" secondItem="7rM-oP-xy5" secondAttribute="trailing" constant="4" id="g77-AO-ya0"/>
+                        <constraint firstAttribute="trailing" secondItem="cCl-GK-N9g" secondAttribute="trailing" id="pbl-NK-Gv1"/>
+                        <constraint firstItem="P6m-J5-o7M" firstAttribute="leading" secondItem="j6V-eB-xNh" secondAttribute="leading" id="qGX-RX-iEP"/>
+                        <constraint firstItem="cCl-GK-N9g" firstAttribute="leading" secondItem="j6V-eB-xNh" secondAttribute="leading" id="tqj-mi-Dvz"/>
+                        <constraint firstItem="7rM-oP-xy5" firstAttribute="leading" secondItem="P6m-J5-o7M" secondAttribute="trailing" constant="4" id="vk7-4o-d01"/>
+                    </constraints>
+                </customView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="j6V-eB-xNh" firstAttribute="leading" secondItem="dvc-TX-0tT" secondAttribute="leading" id="9tW-fo-JZM"/>
+                <constraint firstItem="j6V-eB-xNh" firstAttribute="top" secondItem="dvc-TX-0tT" secondAttribute="top" priority="750" id="Bjc-8Z-PmC"/>
+                <constraint firstAttribute="bottom" secondItem="j6V-eB-xNh" secondAttribute="bottom" id="RWa-HI-J6B"/>
+                <constraint firstAttribute="trailing" secondItem="j6V-eB-xNh" secondAttribute="trailing" id="bd9-jd-rcJ"/>
+            </constraints>
+            <point key="canvasLocation" x="-357.5" y="536.5"/>
+        </customView>
+    </objects>
+</document>

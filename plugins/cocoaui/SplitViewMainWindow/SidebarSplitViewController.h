@@ -6,10 +6,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "MainContentViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface SidebarSplitViewController : NSSplitViewController
+
+@property IBOutlet MainContentViewController* bodyViewController;
 
 @end
 

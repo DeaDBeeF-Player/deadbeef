@@ -1958,6 +1958,9 @@
 		2DBCB725240AE0BE0012F178 /* tftintutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBCB71F240ADCC10012F178 /* tftintutil.h */; };
 		2DBCB726240AE28E0012F178 /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DBCB720240ADCC10012F178 /* tftintutil.c */; };
 		2DBF129D22DE53D200D59073 /* icy2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D565AB21A40BCE200CE1F5D /* icy2utf8.c */; };
+		2DBF3D40270868D400023138 /* MainContentViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DBF3D3F270868D400023138 /* MainContentViewController.xib */; };
+		2DBF3D4327086AA900023138 /* MainContentViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBF3D4127086AA900023138 /* MainContentViewController.h */; };
+		2DBF3D4427086AA900023138 /* MainContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DBF3D4227086AA900023138 /* MainContentViewController.m */; };
 		2DC1CDD0240EEBA5000776DB /* rol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC1CD44240EEB8F000776DB /* rol.cpp */; };
 		2DC1CDD1240EEBA5000776DB /* nukedopl.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DC1CD45240EEB8F000776DB /* nukedopl.c */; };
 		2DC1CDD2240EEBA5000776DB /* vgm.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC1CD46240EEB8F000776DB /* vgm.h */; };
@@ -5754,6 +5757,9 @@
 		2DBC62D924CCDFB200AA20BF /* VisualizationView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisualizationView.m; sourceTree = "<group>"; };
 		2DBCB71F240ADCC10012F178 /* tftintutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tftintutil.h; sourceTree = "<group>"; };
 		2DBCB720240ADCC10012F178 /* tftintutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tftintutil.c; sourceTree = "<group>"; };
+		2DBF3D3F270868D400023138 /* MainContentViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainContentViewController.xib; sourceTree = "<group>"; };
+		2DBF3D4127086AA900023138 /* MainContentViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainContentViewController.h; sourceTree = "<group>"; };
+		2DBF3D4227086AA900023138 /* MainContentViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainContentViewController.m; sourceTree = "<group>"; };
 		2DC1CD44240EEB8F000776DB /* rol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rol.cpp; sourceTree = "<group>"; };
 		2DC1CD45240EEB8F000776DB /* nukedopl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nukedopl.c; sourceTree = "<group>"; };
 		2DC1CD46240EEB8F000776DB /* vgm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vgm.h; sourceTree = "<group>"; };
@@ -8578,6 +8584,7 @@
 				2D9C0C14238DC0E700CE8C10 /* GroupByCustomWindow.xib */,
 				4DE28470205BE0B20023063E /* HelpViewer.xib */,
 				2D49856E1D5CF0E900E4D985 /* Log.xib */,
+				2DBF3D3F270868D400023138 /* MainContentViewController.xib */,
 				2D17F8451AB3391A00AF2853 /* MainMenu.xib */,
 				2D11E8B11AA0E3DD00A67A20 /* MainWindow.xib */,
 				2D3EBD9C1A9379BD00E5E255 /* Preferences.xib */,
@@ -11543,8 +11550,8 @@
 				4D2362B218395D0300C9E818 /* Images */,
 				2D76285224CB29F20029C98C /* MediaLibrary */,
 				2DA3720B2370B7C3005E64A3 /* NowPlayable */,
-				2D9FA3862404515500276E00 /* Preferences */,
 				2DDBA26623E5FBA000051320 /* Playlist */,
+				2D9FA3862404515500276E00 /* Preferences */,
 				2D9FA3952404526800276E00 /* Scriptable */,
 				2D747E2424B64E3400BBB987 /* SplitViewMainWindow */,
 				2D0B1C8619C5CF4A00CED0B5 /* Supporting files */,
@@ -11555,30 +11562,32 @@
 				2D6202AF1B90800A00594746 /* XIB */,
 				4DA72BD91838EAAB00A98C62 /* AppDelegate.h */,
 				4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */,
-				2D046F7B25E2B55200F68459 /* MainWindow.h */,
-				2D046F7C25E2B55200F68459 /* MainWindow.m */,
-				2D11E8AF1AA0E3DD00A67A20 /* MainWindowController.h */,
-				2D11E8B01AA0E3DD00A67A20 /* MainWindowController.m */,
 				2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */,
 				2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */,
 				2D8D96AC1D10904A00A5C7E6 /* CoverManager.h */,
 				2D8D96AD1D10904A00A5C7E6 /* CoverManager.m */,
-				2D49857D1D5CF13F00E4D985 /* LogWindowController.h */,
-				2D49857E1D5CF13F00E4D985 /* LogWindowController.m */,
-				2D1A56481D9FFB10005E5CDD /* ReplayGainScannerController.h */,
-				2D1A56491D9FFB10005E5CDD /* ReplayGainScannerController.m */,
-				2D98612F226C814000BAACB1 /* PropertySheetViewController.h */,
-				2D98613D226C814000BAACB1 /* PropertySheetViewController.m */,
-				2D54915522B1711E000FE7E3 /* HelpWindowController.h */,
-				2D54915622B1711E000FE7E3 /* HelpWindowController.m */,
 				2DA5E33F238DB1A8005832B7 /* EditColumnWindowController.h */,
 				2DA5E340238DB1A8005832B7 /* EditColumnWindowController.m */,
-				2D9C0C23238DC2C100CE8C10 /* GroupByCustomWindowController.h */,
-				2D9C0C24238DC2C100CE8C10 /* GroupByCustomWindowController.m */,
 				2DEBA1CF23E207A3000E4135 /* EqualizerWindowController.h */,
 				2DEBA1D023E207A3000E4135 /* EqualizerWindowController.m */,
+				2D9C0C23238DC2C100CE8C10 /* GroupByCustomWindowController.h */,
+				2D9C0C24238DC2C100CE8C10 /* GroupByCustomWindowController.m */,
+				2D54915522B1711E000FE7E3 /* HelpWindowController.h */,
+				2D54915622B1711E000FE7E3 /* HelpWindowController.m */,
+				2D49857D1D5CF13F00E4D985 /* LogWindowController.h */,
+				2D49857E1D5CF13F00E4D985 /* LogWindowController.m */,
+				2DBF3D4127086AA900023138 /* MainContentViewController.h */,
+				2DBF3D4227086AA900023138 /* MainContentViewController.m */,
+				2D046F7B25E2B55200F68459 /* MainWindow.h */,
+				2D046F7C25E2B55200F68459 /* MainWindow.m */,
+				2D11E8AF1AA0E3DD00A67A20 /* MainWindowController.h */,
+				2D11E8B01AA0E3DD00A67A20 /* MainWindowController.m */,
 				2DA30B7D23F1C9A3003D22E3 /* PropertySheetContentView.h */,
 				2DA30B7E23F1C9A3003D22E3 /* PropertySheetContentView.m */,
+				2D98612F226C814000BAACB1 /* PropertySheetViewController.h */,
+				2D98613D226C814000BAACB1 /* PropertySheetViewController.m */,
+				2D1A56481D9FFB10005E5CDD /* ReplayGainScannerController.h */,
+				2D1A56491D9FFB10005E5CDD /* ReplayGainScannerController.m */,
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
@@ -12953,6 +12962,7 @@
 				2DAA402D269AF864006D2754 /* TrackPositionFormatter.h in Headers */,
 				2DA5C2C226A75B840098AF24 /* viz.h in Headers */,
 				2DDF87D924027DA500CA8E91 /* PluginActionMenuItem.h in Headers */,
+				2DBF3D4327086AA900023138 /* MainContentViewController.h in Headers */,
 				2DA30E792403292D001BAB8A /* PlaybackPreferencesViewController.h in Headers */,
 				2D9F6534241BE78C00D9D16E /* SeekbarOverlay.h in Headers */,
 				2D3CD9372409A091005875A9 /* PinnedGroupTitleView.h in Headers */,
@@ -14719,6 +14729,7 @@
 				2D9C0C15238DC0E700CE8C10 /* GroupByCustomWindow.xib in Resources */,
 				2DB05FFD252E53220090635E /* iconGUISettingsTemplate.pdf in Resources */,
 				2DEBA1D423E207A3000E4135 /* EqualizerWindowController.xib in Resources */,
+				2DBF3D40270868D400023138 /* MainContentViewController.xib in Resources */,
 				2D828E5419E5679800EE874F /* Search.xib in Resources */,
 				2D3EBD9D1A9379BD00E5E255 /* Preferences.xib in Resources */,
 				2DA5E331238DB0C4005832B7 /* EditColumnPanel.xib in Resources */,
@@ -16192,6 +16203,7 @@
 				2DD39EDA26AD8D1600C5846D /* analyzer.c in Sources */,
 				2D8EE27524D03601005C5B4B /* MediaLibraryOutlineViewController.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
+				2DBF3D4427086AA900023138 /* MainContentViewController.m in Sources */,
 				2D9EBB7325E45BAA00255592 /* DesignModeDeps.m in Sources */,
 				2DA32B1624D6D83C00D96C84 /* MediaLibrarySelectorCellView.m in Sources */,
 				2D90EF9A2438A5A600AF6F4B /* ScriptableErrorViewer.m in Sources */,
@@ -20987,6 +20999,7 @@
 					"HAVE_LOG2=1",
 					"OSX_APPBUNDLE=1",
 					"DISABLE_MM_KEY_GRABBER=1",
+					"ENABLE_MEDIALIB=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
@@ -21038,6 +21051,7 @@
 					"DOCDIR=\\\"donotuse\\\"",
 					"HAVE_LOG2=1",
 					"OSX_APPBUNDLE=1",
+					"ENABLE_MEDIALIB=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;

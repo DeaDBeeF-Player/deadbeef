@@ -31,6 +31,7 @@
 #include "deadbeef.h"
 #import "DdbShared.h"
 #include <sys/time.h>
+#import "SidebarSplitViewController.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -46,6 +47,7 @@ extern DB_functions_t *deadbeef;
 
 @property (weak) IBOutlet NSView *designableContainerView;
 @property (weak) IBOutlet NSView *playlistWithTabsView;
+@property (strong) IBOutlet SidebarSplitViewController *splitViewController;
 
 @property (weak) NSMenuItem *designModeMenuItem;
 
@@ -91,11 +93,30 @@ extern DB_functions_t *deadbeef;
     }
 #endif
 
+#if ENABLE_MEDIALIB
+    self.tabStrip = self.splitViewController.bodyViewController.tabStrip;
+    self.playlistWithTabsView = self.splitViewController.bodyViewController.wrapperView;
+    self.designableContainerView = self.splitViewController.bodyViewController.designableView;
+#else
+    MainContentViewController *contentViewController = [[MainContentViewController alloc] initWithNibName:@"MainContentViewController" bundle:nil];
+    [self.designableContainerView addSubview:contentViewController.view];
+    [NSLayoutConstraint activateConstraints:@[
+        [self.designableContainerView.topAnchor constraintEqualToAnchor:contentViewController.view.topAnchor],
+        [self.designableContainerView.bottomAnchor constraintEqualToAnchor:contentViewController.view.bottomAnchor],
+        [self.designableContainerView.leadingAnchor constraintEqualToAnchor:contentViewController.view.leadingAnchor],
+        [self.designableContainerView.trailingAnchor constraintEqualToAnchor:contentViewController.view.trailingAnchor],
+    ]];
+
+    self.tabStrip = contentViewController.tabStrip;
+    self.designableContainerView = contentViewController.designableView;
+#endif
+
     id<WidgetProtocol> rootWidget = DesignModeState.sharedInstance.rootWidget;
     NSView *view = rootWidget.view;
-
     view.translatesAutoresizingMaskIntoConstraints = NO;
+
     [self.designableContainerView addSubview:view];
+
     [view.topAnchor constraintEqualToAnchor:self.designableContainerView.topAnchor].active = YES;
     [view.bottomAnchor constraintEqualToAnchor:self.designableContainerView.bottomAnchor].active = YES;
     [view.leadingAnchor constraintEqualToAnchor:self.designableContainerView.leadingAnchor].active = YES;

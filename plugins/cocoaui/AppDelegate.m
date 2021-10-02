@@ -194,8 +194,11 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 }
 
 - (void)initMainWindow {
-//    _mainWindow = [[MainWindowController alloc] initWithWindowNibName:@"MainWindow"];
+#if ENABLE_MEDIALIB
     _mainWindow = [[MainWindowController alloc] initWithWindowNibName:@"SplitViewMainWindow"];
+#else
+    _mainWindow = [[MainWindowController alloc] initWithWindowNibName:@"MainWindow"];
+#endif
     _mainWindow.shouldCascadeWindows = NO;
     _mainWindow.window.releasedWhenClosed = NO;
     _mainWindow.window.excludedFromWindowsMenu = YES;
