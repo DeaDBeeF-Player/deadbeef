@@ -20,6 +20,7 @@ plugins/gtkui/gtk/menus.ui
 plugins/gtkui/gtkui.c
 plugins/gtkui/gtkui_deletefromdisk.c
 plugins/gtkui/interface.c
+plugins/gtkui/medialib/medialibwidget.c
 plugins/gtkui/playlist/mainplaylist.c
 plugins/gtkui/playlist/plcommon.c
 plugins/gtkui/playlist/searchplaylist.c
@@ -28,6 +29,7 @@ plugins/gtkui/pltmenu.c
 plugins/gtkui/pluginconf.c
 plugins/gtkui/prefwin/prefwin.c
 plugins/gtkui/prefwin/prefwinappearance.c
+plugins/gtkui/prefwin/prefwinmedialib.c
 plugins/gtkui/prefwin/prefwinmisc.c
 plugins/gtkui/prefwin/prefwinnetwork.c
 plugins/gtkui/prefwin/prefwinplayback.c

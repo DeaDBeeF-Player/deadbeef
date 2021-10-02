@@ -879,6 +879,7 @@
 		2D30D20E25E2A8930023A299 /* WidgetTopLevelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30D20B25E2A8930023A299 /* WidgetTopLevelView.m */; };
 		2D3138251D08AB3400CBD871 /* artwork.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D621F831CD92C9000EB6D22 /* artwork.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */; };
+		2D3A4BBD1D6315D6002C7098 /* medialib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D3CD9372409A091005875A9 /* PinnedGroupTitleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3CD9352409A091005875A9 /* PinnedGroupTitleView.h */; };
 		2D3CD9382409A091005875A9 /* PinnedGroupTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3CD9362409A091005875A9 /* PinnedGroupTitleView.m */; };
 		2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2D3E0E1B1B39AAC20007ECC3 /* btnBrowseTemplate.pdf */; };
@@ -906,6 +907,7 @@
 		2D48DBFA2269B731002CACFD /* supereq.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DF16CB01DCB62D9007D7F05 /* supereq.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D48DBFB2269B731002CACFD /* ddb_mono2stereo.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D48DBFC2269B731002CACFD /* rg_scanner.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D48DBFD2269B731002CACFD /* medialib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D48DBFE2269B731002CACFD /* artwork.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D621F831CD92C9000EB6D22 /* artwork.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D48DC002269B731002CACFD /* adplug.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D652FCB1CE79E8500163808 /* adplug.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D48DC012269B731002CACFD /* ffmpeg.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -963,6 +965,7 @@
 		2D56575D2AED38870014443E /* gtkScriptableListEditWindowController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5657042AED1A7E0014443E /* gtkScriptableListEditWindowController.c */; };
 		2D56580D2AEE64200014443E /* gtkScriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D56580A2AEE63430014443E /* gtkScriptable.c */; };
 		2D56580E2AEE64210014443E /* gtkScriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D56580A2AEE63430014443E /* gtkScriptable.c */; };
+		2D5658372AEE6F620014443E /* medialib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D5659392AF6E2680014443E /* ayemu_8912.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11D3BE1B9DC69C00C7C731 /* ayemu_8912.h */; };
 		2D56593A2AF6E2680014443E /* ayemu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11D3C01B9DC69C00C7C731 /* ayemu.h */; };
 		2D56593B2AF6E2680014443E /* ay8912.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D11D3BD1B9DC69C00C7C731 /* ay8912.c */; };
@@ -1361,6 +1364,7 @@
 		2D715C1E26C83A010022A8F0 /* prefwinplugins.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C1C26C83A010022A8F0 /* prefwinplugins.h */; };
 		2D715C1F26C83A010022A8F0 /* prefwinplugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1D26C83A010022A8F0 /* prefwinplugins.c */; };
 		2D715C3626C8451A0022A8F0 /* prefwinmedialib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C3426C8451A0022A8F0 /* prefwinmedialib.h */; };
+		2D715C3726C8451A0022A8F0 /* prefwinmedialib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C3526C8451A0022A8F0 /* prefwinmedialib.c */; };
 		2D71C26A1DC88E5C00247CEF /* ScriptableTableDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D71C2681DC88E5C00247CEF /* ScriptableTableDataSource.h */; };
 		2D71C26B1DC88E5C00247CEF /* ScriptableTableDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D71C2691DC88E5C00247CEF /* ScriptableTableDataSource.m */; };
 		2D71F1B624AE7A1A00E753D3 /* mp4p.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 2D71F1B124AE799B00E753D3 /* mp4p.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -2259,12 +2263,15 @@
 		2DC656A82744289C00583E14 /* prefwinplugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1D26C83A010022A8F0 /* prefwinplugins.c */; };
 		2DC656AB2744289C00583E14 /* prefwin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5A42269BB4300AFF9AE /* prefwin.c */; };
 		2DC656AC2744289C00583E14 /* ddbseekbar.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5AF2269BB4300AFF9AE /* ddbseekbar.c */; };
+		2DC656AD2744289C00583E14 /* medialibwidget.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCCCF7D26C43D080034F4BB /* medialibwidget.c */; };
 		2DC656AE2744289C00583E14 /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5B82269BB4300AFF9AE /* support.c */; };
 		2DC656AF2744289C00583E14 /* ddbtabstrip.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5812269BB4300AFF9AE /* ddbtabstrip.c */; };
+		2DC656B02744289C00583E14 /* prefwinmedialib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C3526C8451A0022A8F0 /* prefwinmedialib.c */; };
 		2DC656B12744289C00583E14 /* clipboard.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B59B2269BB4300AFF9AE /* clipboard.c */; };
 		2DC656B22744289C00583E14 /* prefwinmisc.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1126C836FE0022A8F0 /* prefwinmisc.c */; };
 		2DC656B32744289C00583E14 /* gdkdrawing.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5D72269BB4300AFF9AE /* gdkdrawing.c */; };
 		2DC656B42744289C00583E14 /* prefwinplayback.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C0D26C835E90022A8F0 /* prefwinplayback.c */; };
+		2DC656B52744289C00583E14 /* medialibmanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE55ACD26C5A47F008F33FF /* medialibmanager.c */; };
 		2DC656B62744289C00583E14 /* plcommon.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5A12269BB4300AFF9AE /* plcommon.c */; };
 		2DC656B72744289C00583E14 /* actions.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5E52269BB4300AFF9AE /* actions.c */; };
 		2DC656B82744289C00583E14 /* hotkeys.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5F72269BB4300AFF9AE /* hotkeys.c */; };
@@ -2436,6 +2443,7 @@
 		2DCB5F3E2A71928600F20ABC /* libzip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D00FE7F2435392E000FC130 /* libzip.framework */; };
 		2DCB5F3F2A71928600F20ABC /* libzip.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 2D00FE7F2435392E000FC130 /* libzip.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2DCCCF7E26C43D080034F4BB /* medialibwidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCCCF7C26C43D080034F4BB /* medialibwidget.h */; };
+		2DCCCF8026C43D0E0034F4BB /* medialibwidget.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCCCF7D26C43D080034F4BB /* medialibwidget.c */; };
 		2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCF73B21A952F8900495740 /* PreferencesWindowController.h */; };
 		2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DCF73B31A952F8900495740 /* PreferencesWindowController.m */; };
@@ -2609,6 +2617,7 @@
 		2DE5562826075B8400285BF9 /* AlbumArtWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE5562526075B8400285BF9 /* AlbumArtWidget.h */; };
 		2DE5562926075B8400285BF9 /* AlbumArtWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE5562626075B8400285BF9 /* AlbumArtWidget.m */; };
 		2DE55ACE26C5A47F008F33FF /* medialibmanager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE55ACC26C5A47F008F33FF /* medialibmanager.h */; };
+		2DE55ADF26C5A580008F33FF /* medialibmanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE55ACD26C5A47F008F33FF /* medialibmanager.c */; };
 		2DE77484275E89DF00890350 /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE7747C275E89DD00890350 /* support.h */; };
 		2DE77486275E89DF00890350 /* convgui.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7747D275E89DD00890350 /* convgui.c */; };
 		2DE77488275E89DF00890350 /* interface.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7747E275E89DE00890350 /* interface.c */; };
@@ -2619,6 +2628,7 @@
 		2DE77496275E8AFB00890350 /* converter_gtk3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE77467275E893400890350 /* converter_gtk3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */; };
 		2DE92F561BAFFBEE00F37154 /* wavpack.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DEAA7CE2789A256005416CA /* MediaLibTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA405A269B6308006D2754 /* MediaLibTests.m */; };
 		2DEBA1D223E207A3000E4135 /* EqualizerWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEBA1CF23E207A3000E4135 /* EqualizerWindowController.h */; };
 		2DEBA1D323E207A3000E4135 /* EqualizerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBA1D023E207A3000E4135 /* EqualizerWindowController.m */; };
 		2DEBA1D423E207A3000E4135 /* EqualizerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DEBA1D123E207A3000E4135 /* EqualizerWindowController.xib */; };
@@ -3264,6 +3274,13 @@
 			remoteGlobalIDString = 2D621F821CD92C9000EB6D22;
 			remoteInfo = artwork;
 		};
+		2D3A4BBB1D6315CE002C7098 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D3A4BB31D631530002C7098;
+			remoteInfo = medialib;
+		};
 		2D40E52826CA539E00522C79 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2DA84F7624F58894003507A2 /* jansson.xcodeproj */;
@@ -3298,6 +3315,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D27AED31D9D86ED00842D76;
 			remoteInfo = rg_scanner;
+		};
+		2D48DB8B2269B731002CACFD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D3A4BB31D631530002C7098;
+			remoteInfo = medialib;
 		};
 		2D48DB8D2269B731002CACFD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3522,6 +3546,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4D9C5AEE1FDEBAAE00D83CEF;
 			remoteInfo = opus;
+		};
+		2D56570A2AED367C0014443E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D3A4BB31D631530002C7098;
+			remoteInfo = medialib;
 		};
 		2D565B971A40C0F300CE1F5D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -4275,6 +4306,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				2D5658372AEE6F620014443E /* medialib.dylib in Copy Plugins */,
 				2DC6574C274428F200583E14 /* ddb_gui_GTK2.dylib in Copy Plugins */,
 				2DC6574D274428F200583E14 /* libwavpacklib.dylib in Copy Plugins */,
 				2DC6574E274428F200583E14 /* ddb_soundtouch.dylib in Copy Plugins */,
@@ -4442,6 +4474,7 @@
 				2DF16CB61DCB62FD007D7F05 /* supereq.dylib in Copy Plugins */,
 				2D1DC09C1DCB3A1500441A08 /* ddb_mono2stereo.dylib in Copy Plugins */,
 				2D27AEF11D9D877D00842D76 /* rg_scanner.dylib in Copy Plugins */,
+				2D3A4BBD1D6315D6002C7098 /* medialib.dylib in Copy Plugins */,
 				2D3138251D08AB3400CBD871 /* artwork.dylib in Copy Plugins */,
 				2D6530E41CE79F4E00163808 /* adplug.dylib in Copy Plugins */,
 				2D8DA07A1C97184B0044CC15 /* psf.dylib in Copy Plugins */,
@@ -4513,6 +4546,7 @@
 				2D48DBFA2269B731002CACFD /* supereq.dylib in Copy Plugins */,
 				2D48DBFB2269B731002CACFD /* ddb_mono2stereo.dylib in Copy Plugins */,
 				2D48DBFC2269B731002CACFD /* rg_scanner.dylib in Copy Plugins */,
+				2D48DBFD2269B731002CACFD /* medialib.dylib in Copy Plugins */,
 				2D48DBFE2269B731002CACFD /* artwork.dylib in Copy Plugins */,
 				2D48DC002269B731002CACFD /* adplug.dylib in Copy Plugins */,
 				2D48DC012269B731002CACFD /* ffmpeg.dylib in Copy Plugins */,
@@ -15095,6 +15129,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D48DB8A2269B731002CACFD /* PBXTargetDependency */,
 				2D48DB8C2269B731002CACFD /* PBXTargetDependency */,
 				2DE77495275E8AF300890350 /* PBXTargetDependency */,
 				2DE3B8952269F6D200AFF9AE /* PBXTargetDependency */,
@@ -15106,6 +15141,7 @@
 				2D48DB842269B731002CACFD /* PBXTargetDependency */,
 				2D48DB862269B731002CACFD /* PBXTargetDependency */,
 				2D48DB882269B731002CACFD /* PBXTargetDependency */,
+				2D48DB8C2269B731002CACFD /* PBXTargetDependency */,
 				2D48DB8E2269B731002CACFD /* PBXTargetDependency */,
 				2D48DB902269B731002CACFD /* PBXTargetDependency */,
 				2D48DB922269B731002CACFD /* PBXTargetDependency */,
@@ -15552,6 +15588,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D56570B2AED367C0014443E /* PBXTargetDependency */,
 				2DC656DF274428F200583E14 /* PBXTargetDependency */,
 				2DC656E1274428F200583E14 /* PBXTargetDependency */,
 				2DC656E5274428F200583E14 /* PBXTargetDependency */,
@@ -15795,6 +15832,7 @@
 				2DF16CB51DCB62F4007D7F05 /* PBXTargetDependency */,
 				2D1DC09B1DCB3A1000441A08 /* PBXTargetDependency */,
 				2D27AEF01D9D876E00842D76 /* PBXTargetDependency */,
+				2D3A4BBC1D6315CE002C7098 /* PBXTargetDependency */,
 				2D3138241D08AB2700CBD871 /* PBXTargetDependency */,
 				2D6530E31CE79F2900163808 /* PBXTargetDependency */,
 				2DFD51661C9715FA00961D19 /* PBXTargetDependency */,
@@ -17801,6 +17839,7 @@
 				2D4A9468223EFC6700199551 /* CoreAudioTests.m in Sources */,
 				4D31BECE1E9FB194001D1B89 /* ResamplerTests.cpp in Sources */,
 				2DB521172AAC68C200B6250A /* scriptable.c in Sources */,
+				2DEAA7CE2789A256005416CA /* MediaLibTests.m in Sources */,
 				2DBF3DC5270A101400023138 /* medialibstate.c in Sources */,
 				2D7F38031B2858AC00692A7B /* JunklibTests.cpp in Sources */,
 				4D0B0CEE20162D95004162DA /* FormatConversionTests.cpp in Sources */,
@@ -17854,13 +17893,16 @@
 				2D5657012AED13F50014443E /* gtkScriptableListEditViewController.c in Sources */,
 				2DC656AB2744289C00583E14 /* prefwin.c in Sources */,
 				2DC656AC2744289C00583E14 /* ddbseekbar.c in Sources */,
+				2DC656AD2744289C00583E14 /* medialibwidget.c in Sources */,
 				2DC656AE2744289C00583E14 /* support.c in Sources */,
 				2DB522FB2AACF14500B6250A /* gtkScriptableSelectViewController.c in Sources */,
 				2DC656AF2744289C00583E14 /* ddbtabstrip.c in Sources */,
+				2DC656B02744289C00583E14 /* prefwinmedialib.c in Sources */,
 				2DC656B12744289C00583E14 /* clipboard.c in Sources */,
 				2DC656B22744289C00583E14 /* prefwinmisc.c in Sources */,
 				2DC656B32744289C00583E14 /* gdkdrawing.c in Sources */,
 				2DC656B42744289C00583E14 /* prefwinplayback.c in Sources */,
+				2DC656B52744289C00583E14 /* medialibmanager.c in Sources */,
 				2DC656B62744289C00583E14 /* plcommon.c in Sources */,
 				2D9793F3276F6D2F0062585E /* albumartwidget.c in Sources */,
 				2D60EB00277235C800C28A44 /* playlistcontroller.c in Sources */,
@@ -17955,13 +17997,16 @@
 				2D5657022AED13F50014443E /* gtkScriptableListEditViewController.c in Sources */,
 				2DE3B7D72269BF1700AFF9AE /* prefwin.c in Sources */,
 				2DE3B7DC2269BF1700AFF9AE /* ddbseekbar.c in Sources */,
+				2DCCCF8026C43D0E0034F4BB /* medialibwidget.c in Sources */,
 				2DE3B7E12269BF3100AFF9AE /* support.c in Sources */,
 				2DB522FC2AACF14500B6250A /* gtkScriptableSelectViewController.c in Sources */,
 				2DE3B7C62269BF1300AFF9AE /* ddbtabstrip.c in Sources */,
+				2D715C3726C8451A0022A8F0 /* prefwinmedialib.c in Sources */,
 				2DE3B7D22269BF1700AFF9AE /* clipboard.c in Sources */,
 				2D715C1326C836FE0022A8F0 /* prefwinmisc.c in Sources */,
 				2DE3B7F12269BF3100AFF9AE /* gdkdrawing.c in Sources */,
 				2D715C0F26C835E90022A8F0 /* prefwinplayback.c in Sources */,
+				2DE55ADF26C5A580008F33FF /* medialibmanager.c in Sources */,
 				2DE3B7D52269BF1700AFF9AE /* plcommon.c in Sources */,
 				2D9793F4276F6D2F0062585E /* albumartwidget.c in Sources */,
 				2D60EB01277235C800C28A44 /* playlistcontroller.c in Sources */,
@@ -18725,6 +18770,11 @@
 			target = 2D621F821CD92C9000EB6D22 /* artwork */;
 			targetProxy = 2D3138231D08AB2700CBD871 /* PBXContainerItemProxy */;
 		};
+		2D3A4BBC1D6315CE002C7098 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D3A4BB31D631530002C7098 /* medialib */;
+			targetProxy = 2D3A4BBB1D6315CE002C7098 /* PBXContainerItemProxy */;
+		};
 		2D40E52926CA539E00522C79 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = jansson;
@@ -18749,6 +18799,11 @@
 			isa = PBXTargetDependency;
 			target = 2D27AED31D9D86ED00842D76 /* rg_scanner */;
 			targetProxy = 2D48DB892269B731002CACFD /* PBXContainerItemProxy */;
+		};
+		2D48DB8A2269B731002CACFD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D3A4BB31D631530002C7098 /* medialib */;
+			targetProxy = 2D48DB8B2269B731002CACFD /* PBXContainerItemProxy */;
 		};
 		2D48DB8C2269B731002CACFD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -18909,6 +18964,11 @@
 			isa = PBXTargetDependency;
 			target = 4D9C5AEE1FDEBAAE00D83CEF /* opus */;
 			targetProxy = 2D48DBCB2269B731002CACFD /* PBXContainerItemProxy */;
+		};
+		2D56570B2AED367C0014443E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D3A4BB31D631530002C7098 /* medialib */;
+			targetProxy = 2D56570A2AED367C0014443E /* PBXContainerItemProxy */;
 		};
 		2D565B981A40C0F300CE1F5D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -22692,6 +22752,7 @@
 					GLIB_DISABLE_DEPRECATION_WARNINGS,
 					GTK_DISABLE_DEPRECATION_WARNINGS,
 					"DDB_WARN_DEPRECATED=1",
+					"ENABLE_MEDIALIB=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -22756,6 +22817,7 @@
 					GLIB_DISABLE_DEPRECATION_WARNINGS,
 					GTK_DISABLE_DEPRECATION_WARNINGS,
 					"DDB_WARN_DEPRECATED=1",
+					"ENABLE_MEDIALIB=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -23017,6 +23079,7 @@
 					GLIB_DISABLE_DEPRECATION_WARNINGS,
 					GTK_DISABLE_DEPRECATION_WARNINGS,
 					"DDB_WARN_DEPRECATED=1",
+					"ENABLE_MEDIALIB=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -23081,6 +23144,7 @@
 					GLIB_DISABLE_DEPRECATION_WARNINGS,
 					GTK_DISABLE_DEPRECATION_WARNINGS,
 					"DDB_WARN_DEPRECATED=1",
+					"ENABLE_MEDIALIB=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -23748,6 +23812,7 @@
 					"DISABLE_MM_KEY_GRABBER=1",
 					"_DEBUG=1",
 					"DDB_ENABLE_SCRIPTABLE=1",
+					"ENABLE_MEDIALIB=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
@@ -23807,6 +23872,7 @@
 					"HAVE_LOG2=1",
 					"OSX_APPBUNDLE=1",
 					"DDB_ENABLE_SCRIPTABLE=1",
+					"ENABLE_MEDIALIB=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;

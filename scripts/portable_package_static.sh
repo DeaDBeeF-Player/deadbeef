@@ -86,6 +86,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/in_sc68.so\
     $PLUGDIR/ddb_soundtouch.so\
     $PLUGDIR/data68\
+    $PLUGDIR/medialib.so\
     $PIXMAPDIR\
     $SRCDIR/locale\
     || exit 1

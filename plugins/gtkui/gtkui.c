@@ -52,10 +52,8 @@
 #include "gtkui_api.h"
 #include "hotkeys.h"
 #include "interface.h"
-#if ENABLE_MEDIALIB
 #include "medialib/medialibmanager.h"
 #include "medialib/medialibwidget.h"
-#endif
 #include "playlist/plcommon.h"
 #include "pluginconf.h"
 #include "prefwin/prefwin.h"
@@ -1835,9 +1833,7 @@ quit_gtk_cb (gpointer nothing) {
     trkproperties_modified = 0;
     trkproperties_destroy ();
     search_destroy ();
-#if ENABLE_MEDIALIB
     gtkui_medialib_free();
-#endif
 #if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
     g_application_quit (G_APPLICATION (gapp));
 #else

@@ -1209,6 +1209,28 @@ project "ddb_dsp_libretro"
   }
 end
 
+if option ("plugin-medialib") then
+project "medialib"
+  files {
+    "plugins/medialib/medialib.c",
+    "plugins/medialib/medialibcommon.c",
+    "plugins/medialib/medialibdb.c",
+    "plugins/medialib/medialibfilesystem_stub.c",
+    "plugins/medialib/medialibscanner.c",
+    "plugins/medialib/medialibsource.c",
+    "plugins/medialib/medialibstate.c",
+    "plugins/medialib/medialibtree.c",
+    "plugins/medialib/scriptable_tfquery.c",
+    "shared/scriptable/scriptable.c"
+  }
+  includedirs {
+    "shared"
+  }
+  pkgconfig ("jansson")
+  buildoptions {"-fblocks"}
+  links {"dispatch", "BlocksRuntime"}
+end
+
 project "translations"
   kind "Utility"
   files {
