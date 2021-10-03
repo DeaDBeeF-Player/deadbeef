@@ -28,6 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) BOOL coverObtained;
 
+@property (nonatomic,readonly) ddb_medialib_item_t *medialibItem;
+
 @end
 
 NS_ASSUME_NONNULL_END

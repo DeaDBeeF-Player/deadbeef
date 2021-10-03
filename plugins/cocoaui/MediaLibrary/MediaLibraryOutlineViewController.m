@@ -130,8 +130,6 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 }
 
 - (void)initializeTreeView:(int)index {
-    // FIXME: this will cause a re-scan and will collapse the medialib tree.
-    // Need to remember a selected item, and scroll / focus on it.
     NSInteger itemIndex = NSNotFound;
     if (self.outlineViewInitialized) {
         itemIndex = [self.topLevelItems indexOfObject:self.medialibRootItem];
@@ -156,12 +154,65 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     if (self.outlineViewInitialized) {
         [self.outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:itemIndex] inParent:nil withAnimation:NSTableViewAnimationEffectNone];
     }
-
     if (!self.outlineViewInitialized) {
         [self.outlineView reloadData];
     }
 
+    // restore selected/expanded state
+    NSMutableIndexSet *selectedRowIndexes = [NSMutableIndexSet new];
+    [self.outlineView beginUpdates];
+    [self restoreSelectedExpandedStateForItem:self.medialibRootItem selectedRows:selectedRowIndexes];
+    [self.outlineView selectRowIndexes:selectedRowIndexes byExtendingSelection:NO];
+    [self.outlineView endUpdates];
+
     self.outlineViewInitialized = YES;
+}
+
+- (void)saveSelectionStateWithItem:(MediaLibraryItem *)item {
+    ddb_medialib_item_t *medialibItem = item.medialibItem;
+    if (medialibItem == NULL) {
+        return;
+    }
+
+    NSInteger rowIndex = [self.outlineView rowForItem:item];
+    if (rowIndex != -1) {
+        BOOL selected = [self.outlineView isRowSelected:rowIndex];
+        BOOL expanded = [self.outlineView isItemExpanded:item];
+        self.medialibPlugin->plugin.set_tree_item_selected (self.medialibSource, medialibItem, selected ? 1 : 0);
+        self.medialibPlugin->plugin.set_tree_item_expanded (self.medialibSource, medialibItem, expanded ? 1 : 0);
+    }
+
+    for (NSUInteger i = 0; i < item.numberOfChildren; i++) {
+        [self saveSelectionStateWithItem:item.children[i]];
+    }
+}
+
+- (void)restoreSelectedExpandedStateForItem:(MediaLibraryItem *)item selectedRows:(NSMutableIndexSet *)selectedRows {
+    ddb_medialib_item_t *medialibItem = item.medialibItem;
+    if (medialibItem == NULL) {
+        return;
+    }
+
+    int selected = self.medialibPlugin->plugin.is_tree_item_selected (self.medialibSource, medialibItem);
+    int expanded = self.medialibPlugin->plugin.is_tree_item_expanded (self.medialibSource, medialibItem);
+
+    if (expanded) {
+        [self.outlineView expandItem:item expandChildren:NO];
+    }
+    else {
+        [self.outlineView collapseItem:item collapseChildren:NO];
+    }
+
+    if (selected) {
+        NSInteger rowIndex = [self.outlineView rowForItem:item];
+        if (rowIndex != -1) {
+            [selectedRows addIndex:rowIndex];
+        }
+    }
+
+    for (NSUInteger i = 0; i < item.numberOfChildren; i++) {
+        [self restoreSelectedExpandedStateForItem:item.children[i] selectedRows:selectedRows];
+    }
 }
 
 - (void)updateMedialibStatusForView:(NSTableCellView *)view {
@@ -526,6 +577,38 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
         searchCellView.delegate = self;
     }
     return view;
+}
+
+- (void)outlineViewItemDidExpand:(NSNotification *)notification {
+    NSObject *object = notification.userInfo[@"NSObject"];
+    if (![object isKindOfClass:MediaLibraryItem.class]) {
+        return;
+    }
+
+    MediaLibraryItem *item = (MediaLibraryItem *)object;
+
+    ddb_medialib_item_t *medialibItem = item.medialibItem;
+    if (medialibItem != NULL) {
+        self.medialibPlugin->plugin.set_tree_item_expanded (self.medialibSource, medialibItem, 1);
+    }
+}
+
+- (void)outlineViewItemDidCollapse:(NSNotification *)notification {
+    NSObject *object = notification.userInfo[@"NSObject"];
+    if (![object isKindOfClass:MediaLibraryItem.class]) {
+        return;
+    }
+
+    MediaLibraryItem *item = (MediaLibraryItem *)object;
+
+    ddb_medialib_item_t *medialibItem = item.medialibItem;
+    if (medialibItem != NULL) {
+        self.medialibPlugin->plugin.set_tree_item_expanded (self.medialibSource, medialibItem, 0);
+    }
+}
+
+- (void)outlineViewSelectionDidChange:(NSNotification *)notification {
+    [self saveSelectionStateWithItem:self.medialibRootItem];
 }
 
 #pragma mark - MediaLibraryOutlineViewDelegate

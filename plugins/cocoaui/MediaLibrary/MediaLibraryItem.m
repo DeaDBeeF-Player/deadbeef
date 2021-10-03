@@ -94,4 +94,8 @@ extern DB_functions_t *deadbeef;
     return _item->track;
 }
 
+- (ddb_medialib_item_t *)medialibItem {
+    return _item;
+}
+
 @end
