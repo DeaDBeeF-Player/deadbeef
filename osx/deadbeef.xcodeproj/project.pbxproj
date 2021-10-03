@@ -1467,7 +1467,6 @@
 		2D86AFC71C358CDD0018C174 /* dial68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D86AFC21C358CDD0018C174 /* dial68.c */; };
 		2D86AFC81C358CDD0018C174 /* dial68.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D86AFC31C358CDD0018C174 /* dial68.h */; };
 		2D887BE624B1C86D0078392F /* MediaLibraryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D887BE424B1C86D0078392F /* MediaLibraryItem.m */; };
-		2D887BEA24B1CB790078392F /* medialib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D887BCD24B1C82A0078392F /* medialib.h */; };
 		2D88E9F21B2AF6850072FD43 /* vorbis.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88E9F11B2AF6850072FD43 /* vorbis.c */; };
 		2D88EA041B2AF6DD0072FD43 /* oggedit_art.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88E9FC1B2AF6DD0072FD43 /* oggedit_art.c */; };
 		2D88EA051B2AF6DD0072FD43 /* oggedit_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88E9FD1B2AF6DD0072FD43 /* oggedit_flac.c */; };
@@ -1975,6 +1974,9 @@
 		2DBF3D40270868D400023138 /* MainContentViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DBF3D3F270868D400023138 /* MainContentViewController.xib */; };
 		2DBF3D4327086AA900023138 /* MainContentViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBF3D4127086AA900023138 /* MainContentViewController.h */; };
 		2DBF3D4427086AA900023138 /* MainContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DBF3D4227086AA900023138 /* MainContentViewController.m */; };
+		2DBF3DB2270A0D0200023138 /* medialibstate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBF3DB0270A0D0200023138 /* medialibstate.h */; };
+		2DBF3DC4270A101000023138 /* medialibstate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DBF3DB1270A0D0200023138 /* medialibstate.c */; };
+		2DBF3DC5270A101400023138 /* medialibstate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DBF3DB1270A0D0200023138 /* medialibstate.c */; };
 		2DC1CDD0240EEBA5000776DB /* rol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC1CD44240EEB8F000776DB /* rol.cpp */; };
 		2DC1CDD1240EEBA5000776DB /* nukedopl.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DC1CD45240EEB8F000776DB /* nukedopl.c */; };
 		2DC1CDD2240EEBA5000776DB /* vgm.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC1CD46240EEB8F000776DB /* vgm.h */; };
@@ -5763,6 +5765,8 @@
 		2DBF3D3F270868D400023138 /* MainContentViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainContentViewController.xib; sourceTree = "<group>"; };
 		2DBF3D4127086AA900023138 /* MainContentViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainContentViewController.h; sourceTree = "<group>"; };
 		2DBF3D4227086AA900023138 /* MainContentViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainContentViewController.m; sourceTree = "<group>"; };
+		2DBF3DB0270A0D0200023138 /* medialibstate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = medialibstate.h; sourceTree = "<group>"; };
+		2DBF3DB1270A0D0200023138 /* medialibstate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibstate.c; sourceTree = "<group>"; };
 		2DC1CD44240EEB8F000776DB /* rol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rol.cpp; sourceTree = "<group>"; };
 		2DC1CD45240EEB8F000776DB /* nukedopl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nukedopl.c; sourceTree = "<group>"; };
 		2DC1CD46240EEB8F000776DB /* vgm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vgm.h; sourceTree = "<group>"; };
@@ -9285,6 +9289,8 @@
 			children = (
 				2D887BC724B1C82A0078392F /* medialib.c */,
 				2D887BCD24B1C82A0078392F /* medialib.h */,
+				2DBF3DB1270A0D0200023138 /* medialibstate.c */,
+				2DBF3DB0270A0D0200023138 /* medialibstate.h */,
 			);
 			name = medialib;
 			path = plugins/medialib;
@@ -12184,7 +12190,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D887BEA24B1CB790078392F /* medialib.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13042,6 +13047,7 @@
 				2DA8912125FFEB9B0084860D /* PlaylistGroup.h in Headers */,
 				2DA30B7F23F1C9A3003D22E3 /* PropertySheetContentView.h in Headers */,
 				2DB52F7C24CF7CF20046D516 /* TrackContextMenu.h in Headers */,
+				2DBF3DB2270A0D0200023138 /* medialibstate.h in Headers */,
 				2D046F3925E2B17700F68459 /* DesignModeEventHandler.h in Headers */,
 				2DB2F73F240466AF00F7C000 /* PluginsPreferencesViewController.h in Headers */,
 				2D747E3824B64E7600BBB987 /* SidebarSplitViewItem.h in Headers */,
@@ -15396,6 +15402,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DBF3DC4270A101000023138 /* medialibstate.c in Sources */,
 				2D00F335243531D7000FC130 /* medialib.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -16012,6 +16019,7 @@
 				2DAA4C141AAF88FF00519559 /* TitleFormattingTests.m in Sources */,
 				2D4A9468223EFC6700199551 /* CoreAudioTests.m in Sources */,
 				4D31BECE1E9FB194001D1B89 /* ResamplerTests.m in Sources */,
+				2DBF3DC5270A101400023138 /* medialibstate.c in Sources */,
 				2D7F38031B2858AC00692A7B /* JunklibTests.m in Sources */,
 				4D0B0CEE20162D95004162DA /* FormatConversionTests.m in Sources */,
 				2DAA406B269B6360006D2754 /* medialib.c in Sources */,

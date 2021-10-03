@@ -26,6 +26,7 @@
 #include <jansson.h>
 #include <limits.h>
 #include "medialib.h"
+#include "medialibstate.h"
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -39,18 +40,6 @@ static ddb_medialib_plugin_t plugin;
 static char *artist_album_bc;
 static char *artist_album_id_bc;
 static char *title_bc;
-
-// Medialibrary owns the following items with `row_id` in the same namespace:
-//   ml_collection_item_t: leaf item, pointing to a track
-//   ml_tree_item_t: a folder node when using Folders selector
-//   ml_string_t: a string identifying a unique Album, Artist or Genre
-
-// How row_id works:
-// A basic autoincrement.
-// The IDs should never be reused.
-// The IDs are not persisted on disk.
-// TODO: when wrap-around occurs, need to clear the state, and reassign row_ids to the whole library.
-// TODO: The client also needs to be notified that the existing row_ids in the ddb_medialib_item_t are invalid.
 
 typedef struct ml_collection_item_s {
     uint64_t row_id;
@@ -77,16 +66,6 @@ typedef struct ml_string_s {
     ml_tree_item_t *coll_item; // The item associated with collection string, used while building a list
     ml_tree_item_t *coll_item_tail; // Tail of the children list of coll_item, used while building a list
 } ml_string_t;
-
-/// This structure owns the selected/expanded state of an item identified by a row_id.
-/// When item is unselected / unexpanded -- the state object is deleted
-/// When an item with row_id is destroyed -- the state object is deleted
-typedef struct ml_collection_item_state_s {
-    uint64_t row_id; // a unique ID of the associated ml_collection_item_t
-    unsigned selected: 1;
-    unsigned expanded: 1;
-    struct ml_collection_item_state_s *next;
-} ml_collection_item_state_t;
 
 typedef struct ml_entry_s {
     const char *file;
@@ -176,7 +155,8 @@ typedef struct medialib_source_s {
     /// Only access on sync_queue.
     int enabled;
 
-    ml_collection_item_state_t *collection_item_state_list; // FIXME: optimize / convert to hash table
+    /// Selected / expanded state
+    ml_collection_state_t state;
 
     ddb_playlist_t *ml_playlist; // this playlist contains the actual data of the media library in plain list
     ml_db_t db; // this is the index, which can be rebuilt from the playlist at any given time
@@ -230,9 +210,6 @@ hash_find (ml_string_t **hash, const char *val) {
     return hash_find_for_hashkey(hash, val, h);
 }
 
-static void
-_collection_item_state_remove(medialib_source_t *source, uint64_t row_id);
-
 static ml_collection_item_t *
 _collection_item_alloc (medialib_source_t *source) {
     ml_collection_item_t *item = calloc (1, sizeof (ml_collection_item_t));
@@ -242,7 +219,7 @@ _collection_item_alloc (medialib_source_t *source) {
 
 static void
 _collection_item_free (medialib_source_t *source, ml_collection_item_t *item) {
-    _collection_item_state_remove (source, item->row_id);
+    ml_item_state_remove (&source->state, item->row_id);
     free (item);
 }
 
@@ -255,7 +232,7 @@ _ml_string_alloc (medialib_source_t *source) {
 
 static void
 _ml_string_free (medialib_source_t *source, ml_string_t *s) {
-    _collection_item_state_remove (source, s->row_id);
+    ml_item_state_remove (&source->state, s->row_id);
     free (s);
 }
 
@@ -269,78 +246,8 @@ _tree_node_alloc (medialib_source_t *source) {
 
 static void
 _tree_node_free (medialib_source_t *source, ml_tree_node_t *node) {
-    _collection_item_state_remove (source, node->row_id);
+    ml_item_state_remove (&source->state, node->row_id);
     free (node);
-}
-
-
-#pragma mark - ml_collection_item_state_t
-
-static ml_collection_item_state_t
-_collection_item_state_for_row_id (medialib_source_t *source, uint64_t row_id) {
-    __block ml_collection_item_state_t result = {0};
-    dispatch_sync(source->sync_queue, ^{
-        for (ml_collection_item_state_t *state = source->collection_item_state_list; state; state = state->next) {
-            if (state->row_id == row_id) {
-                result = *state;
-                return;
-            }
-        }
-    });
-    return result;
-}
-
-static void
-_collection_item_state_remove_with_prev (medialib_source_t *source, ml_collection_item_state_t *prev, ml_collection_item_state_t *state) {
-    if (prev == NULL) {
-        source->collection_item_state_list = state->next;
-    }
-    else {
-        prev->next = state->next;
-    }
-    free (state);
-}
-
-static ml_collection_item_state_t *
-_collection_item_state_find (medialib_source_t *source, uint64_t row_id, ml_collection_item_state_t **pprev) {
-    ml_collection_item_state_t *prev = NULL;
-    for (ml_collection_item_state_t *state = source->collection_item_state_list; state; prev = state, state = state->next) {
-        if (state->row_id == row_id) {
-            *pprev = prev;
-            return state;
-        }
-    }
-    return NULL;
-}
-
-static void
-_collection_item_state_remove(medialib_source_t *source, uint64_t row_id) {
-    ml_collection_item_state_t *prev = NULL;
-    ml_collection_item_state_t *state = _collection_item_state_find(source, row_id, &prev);
-    if (state != NULL) {
-        _collection_item_state_remove_with_prev (source, prev, state);
-    }
-}
-
-static void
-_collection_item_state_update (medialib_source_t *source, uint64_t row_id, ml_collection_item_state_t *state, ml_collection_item_state_t *prev, int selected, int expanded) {
-    if (state != NULL) {
-        if (!selected && !expanded) {
-            _collection_item_state_remove_with_prev (source, prev, state);
-            return;
-        }
-        state->selected = selected;
-        state->expanded = expanded;
-    }
-    else if (selected || expanded) {
-        ml_collection_item_state_t *state = calloc (1, sizeof (ml_collection_item_state_t));
-        state->selected = selected;
-        state->expanded = expanded;
-        state->row_id = row_id;
-
-        state->next = source->collection_item_state_list;
-        source->collection_item_state_list = state;
-    }
 }
 
 #pragma mark -
@@ -1506,7 +1413,10 @@ ml_is_tree_item_selected (ddb_mediasource_source_t _source, ddb_medialib_item_t 
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
     uint64_t row_id = item->row_id;
-    ml_collection_item_state_t state = _collection_item_state_for_row_id(source, row_id);
+    __block ml_collection_item_state_t state;
+    dispatch_sync(source->sync_queue, ^{
+        state = ml_item_state_get (&source->state, row_id);
+    });
     return state.selected;
 }
 
@@ -1517,12 +1427,12 @@ ml_set_tree_item_selected (ddb_mediasource_source_t _source, ddb_medialib_item_t
     uint64_t row_id = item->row_id;
     dispatch_sync(source->sync_queue, ^{
         ml_collection_item_state_t *prev = NULL;
-        ml_collection_item_state_t *state = _collection_item_state_find(source, row_id, &prev);
+        ml_collection_item_state_t *state = ml_item_state_find (&source->state, row_id, &prev);
         int expanded = 0;
         if (state != NULL) {
             expanded = state->expanded;
         }
-        _collection_item_state_update(source, row_id, state, prev, selected, expanded);
+        ml_item_state_update (&source->state, row_id, state, prev, selected, expanded);
     });
 }
 
@@ -1531,7 +1441,10 @@ ml_is_tree_item_expanded (ddb_mediasource_source_t _source, ddb_medialib_item_t 
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
     uint64_t row_id = item->row_id;
-    ml_collection_item_state_t state = _collection_item_state_for_row_id(source, row_id);
+    __block ml_collection_item_state_t state;
+    dispatch_sync(source->sync_queue, ^{
+        state = ml_item_state_get (&source->state, row_id);
+    });
     return state.expanded;
 }
 
@@ -1542,12 +1455,12 @@ ml_set_tree_item_expanded (ddb_mediasource_source_t _source, ddb_medialib_item_t
     uint64_t row_id = item->row_id;
     dispatch_sync(source->sync_queue, ^{
         ml_collection_item_state_t *prev = NULL;
-        ml_collection_item_state_t *state = _collection_item_state_find(source, row_id, &prev);
+        ml_collection_item_state_t *state = ml_item_state_find (&source->state, row_id, &prev);
         int selected = 0;
         if (state != NULL) {
             selected = state->selected;
         }
-        _collection_item_state_update(source, row_id, state, prev, selected, expanded);
+        ml_item_state_update (&source->state, row_id, state, prev, selected, expanded);
     });
 }
 
