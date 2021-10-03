@@ -2198,7 +2198,7 @@ typedef void *ddb_mediasource_list_selector_t;
 typedef struct {
     DB_plugin_t plugin;
 
-    const char *(*source_name)(void);
+    const char *(*source_name) (void);
 
     /// Creates a media source. It must be freed after use by calling the @c free_source
     /// @param source_path: a unique name to identify the instance, this will be used to prefix individual instance configuration files, caches, etc.
@@ -2208,45 +2208,60 @@ typedef struct {
     void (*free_source) (ddb_mediasource_source_t source);
 
     /// Enable or disable the source
-    void (*set_source_enabled)(ddb_mediasource_source_t source, int enabled);
+    void (*set_source_enabled) (ddb_mediasource_source_t source, int enabled);
 
     /// Get the enabled state
-    int (*get_source_enabled)(ddb_mediasource_source_t source);
+    int (*get_source_enabled) (ddb_mediasource_source_t source);
 
     /// This tells the source to start operating with the current configuration.
     /// It is supposed to cancel any current operation, and get the new state with the new settings.
     /// For example, the medialib plugin is supposed to start the scanner (if enabled).
     /// This source is not supposed to run any operations automatically, and the caller is expected to call refresh
     /// every time when the plugin configuration changes.
-    void (*refresh)(ddb_mediasource_source_t source);
+    void (*refresh) (ddb_mediasource_source_t source);
 
     /// A selector is a token, which can be used to find out all top level items that can be queries from the library.
     /// For example - Folders, Albums, Artists, Genres.
     /// @return the list of selectors. The caller must free the list after use, by calling @c free_selectors
-    ddb_mediasource_list_selector_t *(*get_selectors_list)(ddb_mediasource_source_t source);
+    ddb_mediasource_list_selector_t *(*get_selectors_list) (ddb_mediasource_source_t source);
 
     /// Free the selector list
-    void (*free_selectors_list)(ddb_mediasource_source_t source, ddb_mediasource_list_selector_t *selectors);
+    void (*free_selectors_list) (ddb_mediasource_source_t source, ddb_mediasource_list_selector_t *selectors);
 
     /// Get selector name
-    const char *(*selector_name)(ddb_mediasource_source_t source, ddb_mediasource_list_selector_t selector);
+    const char *(*selector_name) (ddb_mediasource_source_t source, ddb_mediasource_list_selector_t selector);
 
     /// Add a listener
-    int (*add_listener)(ddb_mediasource_source_t source, ddb_medialib_listener_t listener, void *user_data);
+    int (*add_listener) (ddb_mediasource_source_t source, ddb_medialib_listener_t listener, void *user_data);
 
     /// Remove a listener
-    void (*remove_listener)(ddb_mediasource_source_t source, int listener_id);
+    void (*remove_listener) (ddb_mediasource_source_t source, int listener_id);
 
     /// Create a tree of items for the given @c selector.
     /// The tree is immutable, and can be used by the caller in any way it needs.
     /// The caller must free the returned object by calling the @c free_list
-    ddb_medialib_item_t * (*create_item_tree)(ddb_mediasource_source_t source, ddb_mediasource_source_t selector, const char *filter);
+    ddb_medialib_item_t * (*create_item_tree) (ddb_mediasource_source_t source, ddb_mediasource_source_t selector, const char *filter);
 
     /// Free the tree created by the @c create_list
     void (*free_item_tree) (ddb_mediasource_source_t source, ddb_medialib_item_t *list);
 
     /// Whether the scanner/indexer is active
     ddb_mediasource_state_t (*scanner_state) (ddb_mediasource_source_t source);
+
+    // It is recommended to use the select/expand methods below
+    // to preserve selected/expanded state across medialib refreshes.
+
+    /// Returns 1 if the specified item is selected, 0 otherwise.
+    int (*is_tree_item_selected) (ddb_mediasource_source_t source, ddb_medialib_item_t *item);
+
+    /// Select/delesect the specified item
+    void (*set_tree_item_selected) (ddb_mediasource_source_t source, ddb_medialib_item_t *item, int selected);
+
+    /// Returns 1 if the specified item is expanded, 0 otherwise
+    int (*is_tree_item_expanded) (ddb_mediasource_source_t source, ddb_medialib_item_t *item);
+
+    /// Expand/collapse the specified item
+    void (*set_tree_item_expanded) (ddb_mediasource_source_t source, ddb_medialib_item_t *item, int expanded);
 
     // FIXME: add padding / size for extensibility -- this structure is inheritable.
 } DB_mediasource_t;
