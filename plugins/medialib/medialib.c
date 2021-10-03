@@ -194,6 +194,14 @@ typedef struct {
     size_t medialib_paths_count;
 }  ml_scanner_configuration_t;
 
+typedef enum {
+    SEL_ALBUMS = 1,
+    SEL_ARTISTS = 2,
+    SEL_GENRES = 3,
+    SEL_FOLDERS = 4,
+    SEL_FILLER = -1UL,
+} medialibSelector_t;
+
 static void
 ml_free_list (ddb_mediasource_source_t source, ddb_medialib_item_t *list);
 
@@ -306,6 +314,15 @@ _collection_item_state_find (medialib_source_t *source, uint64_t row_id, ml_coll
 }
 
 static void
+_collection_item_state_remove(medialib_source_t *source, uint64_t row_id) {
+    ml_collection_item_state_t *prev = NULL;
+    ml_collection_item_state_t *state = _collection_item_state_find(source, row_id, &prev);
+    if (state != NULL) {
+        _collection_item_state_remove_with_prev (source, prev, state);
+    }
+}
+
+static void
 _collection_item_state_update (medialib_source_t *source, uint64_t row_id, ml_collection_item_state_t *state, ml_collection_item_state_t *prev, int selected, int expanded) {
     if (state != NULL) {
         if (!selected && !expanded) {
@@ -383,15 +400,6 @@ ml_reg_col (medialib_source_t *source, ml_collection_t *coll, const char /* nonn
         deadbeef->metacache_remove_string (c);
     }
     return s;
-}
-
-static void
-_collection_item_state_remove(medialib_source_t *source, uint64_t row_id) {
-    ml_collection_item_state_t *prev = NULL;
-    ml_collection_item_state_t *state = _collection_item_state_find(source, row_id, &prev);
-    if (state != NULL) {
-        _collection_item_state_remove_with_prev (source, prev, state);
-    }
 }
 
 static void
@@ -1379,14 +1387,6 @@ get_subfolders_for_folder (ml_tree_item_t *folderitem, ml_tree_node_t *folder, i
     }
 }
 
-typedef enum {
-    SEL_ALBUMS = 1,
-    SEL_ARTISTS = 2,
-    SEL_GENRES = 3,
-    SEL_FOLDERS = 4,
-    SEL_FILLER = -1UL,
-} medialibSelector_t;
-
 static ml_tree_item_t *
 _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, medialibSelector_t index, medialib_source_t *source) {
     int selected = 0;
@@ -1772,6 +1772,8 @@ ml_append_folder (ddb_mediasource_source_t _source, const char *folder) {
         ml_notify_listeners (source, DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE);
     }
 }
+
+#pragma mark -
 
 static ddb_mediasource_source_t
 ml_create_source (const char *source_path) {
