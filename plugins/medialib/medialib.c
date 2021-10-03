@@ -80,7 +80,7 @@ typedef struct ml_string_s {
 
 /// This structure owns the selected/expanded state of an item identified by a row_id.
 /// When item is unselected / unexpanded -- the state object is deleted
-/// TODO: When an item with row_id is destroyed -- the state object is deleted
+/// When an item with row_id is destroyed -- the state object is deleted
 typedef struct ml_collection_item_state_s {
     uint64_t row_id; // a unique ID of the associated ml_collection_item_t
     unsigned selected: 1;
@@ -222,11 +222,20 @@ hash_find (ml_string_t **hash, const char *val) {
     return hash_find_for_hashkey(hash, val, h);
 }
 
+static void
+_collection_item_state_remove(medialib_source_t *source, uint64_t row_id);
+
 static ml_collection_item_t *
 _collection_item_alloc (medialib_source_t *source) {
     ml_collection_item_t *item = calloc (1, sizeof (ml_collection_item_t));
     item->row_id = ++source->row_id;
     return item;
+}
+
+static void
+_collection_item_free (medialib_source_t *source, ml_collection_item_t *item) {
+    _collection_item_state_remove (source, item->row_id);
+    free (item);
 }
 
 static ml_string_t *
@@ -236,12 +245,26 @@ _ml_string_alloc (medialib_source_t *source) {
     return string;
 }
 
+static void
+_ml_string_free (medialib_source_t *source, ml_string_t *s) {
+    _collection_item_state_remove (source, s->row_id);
+    free (s);
+}
+
+
 static ml_tree_node_t *
 _tree_node_alloc (medialib_source_t *source) {
     ml_tree_node_t *node = calloc (1, sizeof(ml_tree_node_t));
     node->row_id = ++source->row_id;
     return node;
 }
+
+static void
+_tree_node_free (medialib_source_t *source, ml_tree_node_t *node) {
+    _collection_item_state_remove (source, node->row_id);
+    free (node);
+}
+
 
 #pragma mark - ml_collection_item_state_t
 
@@ -260,7 +283,7 @@ _collection_item_state_for_row_id (medialib_source_t *source, uint64_t row_id) {
 }
 
 static void
-_collection_item_state_remove (medialib_source_t *source, ml_collection_item_state_t *prev, ml_collection_item_state_t *state) {
+_collection_item_state_remove_with_prev (medialib_source_t *source, ml_collection_item_state_t *prev, ml_collection_item_state_t *state) {
     if (prev == NULL) {
         source->collection_item_state_list = state->next;
     }
@@ -286,7 +309,7 @@ static void
 _collection_item_state_update (medialib_source_t *source, uint64_t row_id, ml_collection_item_state_t *state, ml_collection_item_state_t *prev, int selected, int expanded) {
     if (state != NULL) {
         if (!selected && !expanded) {
-            _collection_item_state_remove (source, prev, state);
+            _collection_item_state_remove_with_prev (source, prev, state);
             return;
         }
         state->selected = selected;
@@ -363,7 +386,16 @@ ml_reg_col (medialib_source_t *source, ml_collection_t *coll, const char /* nonn
 }
 
 static void
-ml_free_col (ml_collection_t *coll) {
+_collection_item_state_remove(medialib_source_t *source, uint64_t row_id) {
+    ml_collection_item_state_t *prev = NULL;
+    ml_collection_item_state_t *state = _collection_item_state_find(source, row_id, &prev);
+    if (state != NULL) {
+        _collection_item_state_remove_with_prev (source, prev, state);
+    }
+}
+
+static void
+ml_free_col (medialib_source_t *source, ml_collection_t *coll) {
     ml_string_t *s = coll->head;
     while (s) {
         ml_string_t *next = s->next;
@@ -371,14 +403,16 @@ ml_free_col (ml_collection_t *coll) {
         while (s->items) {
             ml_collection_item_t *next = s->items->next;
             deadbeef->pl_item_unref (s->items->it);
-            free (s->items);
+            _collection_item_free (source, s->items);
             s->items = next;
         }
 
         if (s->text) {
             deadbeef->metacache_remove_string (s->text);
         }
-        free (s);
+
+
+        _ml_string_free (source, s);
         s = next;
     }
     memset (coll->hash, 0, sizeof (coll->hash));
@@ -448,24 +482,25 @@ ml_reg_item_in_folder (medialib_source_t *source, ml_tree_node_t *node, const ch
 }
 
 static void
-ml_free_tree (ml_tree_node_t *node) {
+ml_free_tree (medialib_source_t *source, ml_tree_node_t *node) {
     while (node->children) {
         ml_tree_node_t *next = node->children->next;
-        ml_free_tree (node->children);
+        ml_free_tree (source, node->children);
         node->children = next;
     }
 
     while (node->items) {
         ml_collection_item_t *next = node->items->next;
         deadbeef->pl_item_unref (node->items->it);
-        free (node->items);
+        _collection_item_free (source, node->items);
         node->items = next;
     }
 
     if (node->text) {
         deadbeef->metacache_remove_string (node->text);
     }
-    free (node);
+
+    _tree_node_free (source, node);
 }
 
 static void
@@ -479,15 +514,15 @@ ml_free_db (medialib_source_t *source) {
     fprintf (stderr, "clearing index...\n");
 
     // NOTE: Currently this is called from ml_index, which is executed on sync_queue
-    ml_free_col(&source->db.albums);
-    ml_free_col(&source->db.artists);
-    ml_free_col(&source->db.genres);
+    ml_free_col(source, &source->db.albums);
+    ml_free_col(source, &source->db.artists);
+    ml_free_col(source, &source->db.genres);
     //    ml_free_col(&db.folders);
-    ml_free_col(&source->db.track_uris);
+    ml_free_col(source, &source->db.track_uris);
 
     while (source->db.folders_tree) {
         ml_tree_node_t *next = source->db.folders_tree->next;
-        ml_free_tree(source->db.folders_tree);
+        ml_free_tree (source, source->db.folders_tree);
         source->db.folders_tree = next;
     }
 
@@ -636,7 +671,7 @@ ml_index (medialib_source_t *source, ddb_playlist_t *plt) {
         cs->next = source->db.cached_strings;
 
         ml_string_t *trkuri = ml_reg_col (source, &source->db.track_uris, cs->s, it);
-        free(cs);
+        free (cs);
         cs = NULL;
 
         char *fn = strrchr (reluri, '/');
@@ -1532,6 +1567,7 @@ ml_free_list (ddb_mediasource_source_t source, ddb_medialib_item_t *list) {
         if (list->text) {
             deadbeef->metacache_remove_string (list->text);
         }
+
         free (list);
         list = next;
     }
