@@ -1454,7 +1454,7 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
 
 #pragma mark - TrackContextMenuDelegate
 
-- (void)trackContextMenuDidChangeTrackProperties {
+- (void)trackContextMenuShowTrackProperties:(TrackContextMenu *)trackContextMenu {
     if (!self.trkProperties) {
         self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
         self.trkProperties.delegate = self;
@@ -1465,7 +1465,7 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     [self.trkProperties showWindow:self];
 }
 
-- (void)trackContextMenuDidReloadMetadata {
+- (void)trackContextMenuDidReloadMetadata:(TrackContextMenu *)trackContextMenu {
     deadbeef->pl_save_current();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
