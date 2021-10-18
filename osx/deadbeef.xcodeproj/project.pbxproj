@@ -5297,15 +5297,6 @@
 		2D90EF972438A5A600AF6F4B /* ScriptableErrorViewer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableErrorViewer.h; sourceTree = "<group>"; };
 		2D90EF982438A5A600AF6F4B /* ScriptableErrorViewer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptableErrorViewer.m; sourceTree = "<group>"; };
 		2D91773F1A0E8966004BC222 /* alac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = alac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D9177501A0E8A3D004BC222 /* mp4ff_int_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4ff_int_types.h; sourceTree = "<group>"; };
-		2D9177511A0E8A3D004BC222 /* mp4ff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4ff.h; sourceTree = "<group>"; };
-		2D9177521A0E8A3D004BC222 /* mp4ffint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4ffint.h; sourceTree = "<group>"; };
-		2D9177531A0E8A3D004BC222 /* mp4atom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp4atom.c; sourceTree = "<group>"; };
-		2D9177541A0E8A3D004BC222 /* mp4ff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp4ff.c; sourceTree = "<group>"; };
-		2D9177551A0E8A3D004BC222 /* mp4meta.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp4meta.c; sourceTree = "<group>"; usesTabs = 1; };
-		2D9177561A0E8A3D004BC222 /* mp4sample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp4sample.c; sourceTree = "<group>"; };
-		2D9177571A0E8A3D004BC222 /* mp4tagupdate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp4tagupdate.c; sourceTree = "<group>"; };
-		2D9177581A0E8A3D004BC222 /* mp4util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp4util.c; sourceTree = "<group>"; };
 		2D917E781A4046FE00C3EB44 /* libmpg123.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmpg123.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trkproperties_shared.c; sourceTree = "<group>"; };
 		2D92D0551CD513AA00CD53F0 /* trkproperties_shared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trkproperties_shared.h; sourceTree = "<group>"; };
@@ -9457,23 +9448,6 @@
 			path = plugins/alac;
 			sourceTree = "<group>";
 		};
-		2D91774F1A0E8A1F004BC222 /* mp4ff */ = {
-			isa = PBXGroup;
-			children = (
-				2D9177501A0E8A3D004BC222 /* mp4ff_int_types.h */,
-				2D9177511A0E8A3D004BC222 /* mp4ff.h */,
-				2D9177521A0E8A3D004BC222 /* mp4ffint.h */,
-				2D9177531A0E8A3D004BC222 /* mp4atom.c */,
-				2D9177541A0E8A3D004BC222 /* mp4ff.c */,
-				2D9177551A0E8A3D004BC222 /* mp4meta.c */,
-				2D9177561A0E8A3D004BC222 /* mp4sample.c */,
-				2D9177571A0E8A3D004BC222 /* mp4tagupdate.c */,
-				2D9177581A0E8A3D004BC222 /* mp4util.c */,
-			);
-			name = mp4ff;
-			path = plugins/libmp4ff;
-			sourceTree = "<group>";
-		};
 		2D917E7C1A40470800C3EB44 /* libmpg123 */ = {
 			isa = PBXGroup;
 			children = (
@@ -10991,7 +10965,6 @@
 				07765E031C28557900F5F4BC /* mms */,
 				2D5423B51DCB38BC00ACBDEB /* mono2stereo */,
 				4D32FA5419A645BB000FFDE0 /* mp3 */,
-				2D91774F1A0E8A1F004BC222 /* mp4ff */,
 				07021FED1C27556500FC9AF9 /* musepack */,
 				4D1B51551837F4E9003E6066 /* nullout */,
 				4D9C5B001FDEBAB800D83CEF /* opus */,
