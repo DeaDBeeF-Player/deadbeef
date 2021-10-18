@@ -1,16 +1,16 @@
-#import "VisualizationViewController.h"
+#import "SpectrumAnalyzerVisualizationViewController.h"
 #include "analyzer.h"
 
 static NSString * const kWindowIsVisibleKey = @"view.window.isVisible";
 static void *kIsVisibleContext = &kIsVisibleContext;
 
-@interface VisualizationViewController ()
+@interface SpectrumAnalyzerVisualizationViewController ()
 
 @property (nonatomic) NSTimer *tickTimer;
 
 @end
 
-@implementation VisualizationViewController
+@implementation SpectrumAnalyzerVisualizationViewController
 
 - (void)dealloc {
     [self removeObserver:self forKeyPath:kWindowIsVisibleKey];
@@ -48,10 +48,10 @@ static void *kIsVisibleContext = &kIsVisibleContext;
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if (context == kIsVisibleContext) {
         if (self.view.window.isVisible) {
-            __weak VisualizationViewController *weakSelf = self;
+            __weak SpectrumAnalyzerVisualizationViewController *weakSelf = self;
             if (self.tickTimer == nil) {
                 self.tickTimer = [NSTimer timerWithTimeInterval:1/30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
-                    VisualizationViewController *strongSelf = weakSelf;
+                    SpectrumAnalyzerVisualizationViewController *strongSelf = weakSelf;
                     if (!strongSelf.view.window.isVisible) {
                         [strongSelf.tickTimer invalidate];
                         strongSelf.tickTimer = nil;

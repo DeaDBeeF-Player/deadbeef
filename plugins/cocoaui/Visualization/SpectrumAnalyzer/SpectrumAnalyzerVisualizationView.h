@@ -1,5 +1,5 @@
 //
-//  VisualizationView.h
+//  SpectrumAnalyzerVisualizationView.h
 //  DeaDBeeF
 //
 //  Created by Alexey Yakovenko on 7/25/20.
@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface VisualizationView : NSView
+@interface SpectrumAnalyzerVisualizationView : NSView
 
 - (void)updateAnalyzerSettings:(SpectrumAnalyzerSettings *)settings;
 

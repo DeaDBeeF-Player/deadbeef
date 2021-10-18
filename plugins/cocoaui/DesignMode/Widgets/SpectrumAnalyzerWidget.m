@@ -7,8 +7,8 @@
 //
 
 #import "SpectrumAnalyzerWidget.h"
-#import "VisualizationViewController.h"
-#import "VisualizationView.h"
+#import "SpectrumAnalyzerVisualizationViewController.h"
+#import "SpectrumAnalyzerVisualizationView.h"
 #import "SpectrumAnalyzerSettings.h"
 
 static void *kModeContext = &kModeContext;
@@ -18,8 +18,8 @@ static void *kBarGranularity = &kBarGranularity;
 @interface SpectrumAnalyzerWidget()
 
 @property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
-@property (nonatomic) VisualizationViewController *visualizationViewController;
-@property (nonatomic) VisualizationView *visualizationView;
+@property (nonatomic) SpectrumAnalyzerVisualizationViewController *visualizationViewController;
+@property (nonatomic) SpectrumAnalyzerVisualizationView *visualizationView;
 @property (nonatomic) SpectrumAnalyzerSettings *settings;
 
 @end
@@ -46,8 +46,8 @@ static void *kBarGranularity = &kBarGranularity;
 
     _settings = [SpectrumAnalyzerSettings new];
 
-    _visualizationViewController = [VisualizationViewController new];
-    _visualizationView = [[VisualizationView alloc] initWithFrame:NSZeroRect];
+    _visualizationViewController = [SpectrumAnalyzerVisualizationViewController new];
+    _visualizationView = [[SpectrumAnalyzerVisualizationView alloc] initWithFrame:NSZeroRect];
     _visualizationViewController.view = _visualizationView;
     _visualizationViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
     [_visualizationViewController awakeFromNib];

@@ -1,12 +1,12 @@
 //
-//  VisualizationView.m
+//  SpectrumAnalyzerVisualizationView.m
 //  DeaDBeeF
 //
 //  Created by Alexey Yakovenko on 7/25/20.
 //  Copyright © 2020 Alexey Yakovenko. All rights reserved.
 //
 
-#import "VisualizationView.h"
+#import "SpectrumAnalyzerVisualizationView.h"
 #include "deadbeef.h"
 #include "analyzer.h"
 
@@ -17,7 +17,7 @@ static void *kIsVisibleContext = &kIsVisibleContext;
 
 #define LOWER_BOUND -80
 
-@interface VisualizationView() {
+@interface SpectrumAnalyzerVisualizationView() {
     float saLowerBound;
     ddb_analyzer_t _analyzer;
     ddb_analyzer_draw_data_t _draw_data;
@@ -35,10 +35,10 @@ static void *kIsVisibleContext = &kIsVisibleContext;
 
 @end
 
-@implementation VisualizationView
+@implementation SpectrumAnalyzerVisualizationView
 
 static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
-    VisualizationView *view = (__bridge VisualizationView *)(ctx);
+    SpectrumAnalyzerVisualizationView *view = (__bridge SpectrumAnalyzerVisualizationView *)(ctx);
     [view updateFFTData:data];
 }
 

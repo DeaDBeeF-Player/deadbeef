@@ -1,7 +1,7 @@
 #import <Cocoa/Cocoa.h>
 #import "SpectrumAnalyzerSettings.h"
 
-@interface VisualizationViewController : NSViewController
+@interface SpectrumAnalyzerVisualizationViewController : NSViewController
 
 @property (nonatomic,nullable) SpectrumAnalyzerSettings *settings;
 
