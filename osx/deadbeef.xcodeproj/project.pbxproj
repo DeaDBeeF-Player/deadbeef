@@ -114,6 +114,18 @@
 		07765E4E1C28562000F5F4BC /* uri.h in Headers */ = {isa = PBXBuildFile; fileRef = 07765E421C28562000F5F4BC /* uri.h */; };
 		07765E501C28563D00F5F4BC /* mmsplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765E4F1C28563D00F5F4BC /* mmsplug.c */; };
 		07765E531C2856DF00F5F4BC /* mms.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 07765E2E1C28559600F5F4BC /* mms.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		0D568528271DC35E0026F700 /* ScopeWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D568526271DC35E0026F700 /* ScopeWidget.h */; };
+		0D568529271DC35E0026F700 /* ScopeWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D568526271DC35E0026F700 /* ScopeWidget.h */; };
+		0D56852A271DC35E0026F700 /* ScopeWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D568527271DC35E0026F700 /* ScopeWidget.m */; };
+		0D56852B271DC35E0026F700 /* ScopeWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D568527271DC35E0026F700 /* ScopeWidget.m */; };
+		0D56852F271DC4280026F700 /* ScopeVisualizationView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D56852D271DC4270026F700 /* ScopeVisualizationView.h */; };
+		0D568530271DC4280026F700 /* ScopeVisualizationView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D56852D271DC4270026F700 /* ScopeVisualizationView.h */; };
+		0D568531271DC4280026F700 /* ScopeVisualizationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D56852E271DC4270026F700 /* ScopeVisualizationView.m */; };
+		0D568532271DC4280026F700 /* ScopeVisualizationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D56852E271DC4270026F700 /* ScopeVisualizationView.m */; };
+		0D56853D271DC6670026F700 /* VisualizationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D56853A271DC6670026F700 /* VisualizationViewController.h */; };
+		0D56853E271DC6670026F700 /* VisualizationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D56853A271DC6670026F700 /* VisualizationViewController.h */; };
+		0D56853F271DC6670026F700 /* VisualizationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D56853B271DC6670026F700 /* VisualizationViewController.m */; };
+		0D568540271DC6670026F700 /* VisualizationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D56853B271DC6670026F700 /* VisualizationViewController.m */; };
 		2D00F2AA2434DEB3000FC130 /* st.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F2772434DE87000FC130 /* st.cpp */; };
 		2D00F2AB2434DEB3000FC130 /* plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F2782434DE87000FC130 /* plugin.c */; };
 		2D00F2E72434F98F000FC130 /* st.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D00F2752434DE87000FC130 /* st.h */; };
@@ -3866,6 +3878,12 @@
 		07765E411C28562000F5F4BC /* uri.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = uri.c; sourceTree = "<group>"; };
 		07765E421C28562000F5F4BC /* uri.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uri.h; sourceTree = "<group>"; };
 		07765E4F1C28563D00F5F4BC /* mmsplug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mmsplug.c; sourceTree = "<group>"; };
+		0D568526271DC35E0026F700 /* ScopeWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopeWidget.h; sourceTree = "<group>"; };
+		0D568527271DC35E0026F700 /* ScopeWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScopeWidget.m; sourceTree = "<group>"; };
+		0D56852D271DC4270026F700 /* ScopeVisualizationView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopeVisualizationView.h; sourceTree = "<group>"; };
+		0D56852E271DC4270026F700 /* ScopeVisualizationView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScopeVisualizationView.m; sourceTree = "<group>"; };
+		0D56853A271DC6670026F700 /* VisualizationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisualizationViewController.h; sourceTree = "<group>"; };
+		0D56853B271DC6670026F700 /* VisualizationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisualizationViewController.m; sourceTree = "<group>"; };
 		2D00F23F2434DE4E000FC130 /* ddb_soundtouch.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ddb_soundtouch.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D00F2752434DE87000FC130 /* st.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = st.h; sourceTree = "<group>"; };
 		2D00F2772434DE87000FC130 /* st.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = st.cpp; sourceTree = "<group>"; };
@@ -7220,6 +7238,24 @@
 			path = SpectrumAnalyzer;
 			sourceTree = "<group>";
 		};
+		0D56852C271DC4160026F700 /* Scope */ = {
+			isa = PBXGroup;
+			children = (
+				0D56852D271DC4270026F700 /* ScopeVisualizationView.h */,
+				0D56852E271DC4270026F700 /* ScopeVisualizationView.m */,
+			);
+			path = Scope;
+			sourceTree = "<group>";
+		};
+		0D568539271DC6550026F700 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				0D56853A271DC6670026F700 /* VisualizationViewController.h */,
+				0D56853B271DC6670026F700 /* VisualizationViewController.m */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
 		2D00F2552434DE87000FC130 /* soundtouch */ = {
 			isa = PBXGroup;
 			children = (
@@ -10201,6 +10237,8 @@
 		2DBC62D324CCDEE800AA20BF /* Visualization */ = {
 			isa = PBXGroup;
 			children = (
+				0D568539271DC6550026F700 /* Shared */,
+				0D56852C271DC4160026F700 /* Scope */,
 				0D568525271DBD6A0026F700 /* SpectrumAnalyzer */,
 			);
 			path = Visualization;
@@ -10586,6 +10624,8 @@
 				2DE1D3E519B11539009B5BC6 /* PlaceholderWidget.m */,
 				2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */,
 				2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */,
+				0D568526271DC35E0026F700 /* ScopeWidget.h */,
+				0D568527271DC35E0026F700 /* ScopeWidget.m */,
 				2D5F05EE25E306BC000A588C /* SpectrumAnalyzerWidget.h */,
 				2D5F05EF25E306BC000A588C /* SpectrumAnalyzerWidget.m */,
 				2DDD781425E1578C00FA6FE5 /* SplitterWidget.h */,
@@ -11728,9 +11768,12 @@
 				2DDD781725E1578C00FA6FE5 /* SplitterWidget.h in Headers */,
 				2DBCB725240AE0BE0012F178 /* tftintutil.h in Headers */,
 				2DDD789D25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
+				0D56853E271DC6670026F700 /* VisualizationViewController.h in Headers */,
+				0D568529271DC35E0026F700 /* ScopeWidget.h in Headers */,
 				2DDD796425E15ED200FA6FE5 /* PlaylistWidget.h in Headers */,
 				2D9FD9E32607C68500F406D1 /* AlbumArtImageView.h in Headers */,
 				2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */,
+				0D568530271DC4280026F700 /* ScopeVisualizationView.h in Headers */,
 				2DE5562826075B8400285BF9 /* AlbumArtWidget.h in Headers */,
 				2D9EBAAC25E44A0700255592 /* WidgetSerializer.h in Headers */,
 				2D5F05F125E306BC000A588C /* SpectrumAnalyzerWidget.h in Headers */,
@@ -12910,6 +12953,7 @@
 				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
 				2DE5562726075B8400285BF9 /* AlbumArtWidget.h in Headers */,
 				2DBC62D624CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.h in Headers */,
+				0D568528271DC35E0026F700 /* ScopeWidget.h in Headers */,
 				2DA273892406FBD800FB9BE1 /* DspPreferencesViewController.h in Headers */,
 				2DDD778E25E153D000FA6FE5 /* WidgetFactory.h in Headers */,
 				2DAD80A12416DBB100EB3075 /* CustomToolbarItem.h in Headers */,
@@ -12942,6 +12986,7 @@
 				2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */,
 				2DA30E602402D1B1001BAB8A /* ctmap.h in Headers */,
 				2DEBA1D223E207A3000E4135 /* EqualizerWindowController.h in Headers */,
+				0D56853D271DC6670026F700 /* VisualizationViewController.h in Headers */,
 				2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */,
 				2D54915722B1711E000FE7E3 /* HelpWindowController.h in Headers */,
 				2DDE529324F81A870096EF80 /* MediaLibrarySearchCellView.h in Headers */,
@@ -12986,6 +13031,7 @@
 				2DB2F73F240466AF00F7C000 /* PluginsPreferencesViewController.h in Headers */,
 				2D747E3824B64E7600BBB987 /* SidebarSplitViewItem.h in Headers */,
 				2D04C3C02433B0FD003C2AAC /* growableBuffer.h in Headers */,
+				0D56852F271DC4280026F700 /* ScopeVisualizationView.h in Headers */,
 				2D986142226C816000BAACB1 /* BrowseButton.h in Headers */,
 				2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */,
 			);
@@ -14861,6 +14907,7 @@
 				2D01D7E41AB2219C00BCD3C4 /* utf8.c in Sources */,
 				2D01D7D11AB2219C00BCD3C4 /* playqueue.c in Sources */,
 				2D135EFD226E4E1900BAAE84 /* scriptable_encoder.c in Sources */,
+				0D56852B271DC35E0026F700 /* ScopeWidget.m in Sources */,
 				2D01D7DB1AB2219C00BCD3C4 /* playlist.c in Sources */,
 				2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */,
 				2D5121C61B01DEFD009F6410 /* sort.c in Sources */,
@@ -14880,6 +14927,7 @@
 				2D0A549223E8CC9500E0F978 /* eqpreset.c in Sources */,
 				2D01D7D31AB2219C00BCD3C4 /* escape.c in Sources */,
 				2DDD764525E1506100FA6FE5 /* metadata.c in Sources */,
+				0D568540271DC6670026F700 /* VisualizationViewController.m in Sources */,
 				2D01D7DA1AB2219C00BCD3C4 /* metacache.c in Sources */,
 				2DA5C2D326A75CEE0098AF24 /* viz.c in Sources */,
 				2D01D7D41AB2219C00BCD3C4 /* conf.c in Sources */,
@@ -14896,6 +14944,7 @@
 				2D01D7E01AB2219C00BCD3C4 /* replaygain.c in Sources */,
 				2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */,
 				2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */,
+				0D568532271DC4280026F700 /* ScopeVisualizationView.m in Sources */,
 				2D5F05F325E306BC000A588C /* SpectrumAnalyzerWidget.m in Sources */,
 				2D40208F1F27BD7200D4EA4F /* cueutil.c in Sources */,
 				2DBCB726240AE28E0012F178 /* tftintutil.c in Sources */,
@@ -16151,6 +16200,7 @@
 				2DA30E7524032550001BAB8A /* NetworkPreferencesViewController.m in Sources */,
 				2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */,
 				2DB951CC26B1E05300602876 /* SpectrumAnalyzerSettings.m in Sources */,
+				0D56853F271DC6670026F700 /* VisualizationViewController.m in Sources */,
 				2D9E905224F453960037D323 /* MediaLibraryPreferencesViewController.m in Sources */,
 				2D887BE624B1C86D0078392F /* MediaLibraryItem.m in Sources */,
 				2D3CD9382409A091005875A9 /* PinnedGroupTitleView.m in Sources */,
@@ -16217,10 +16267,12 @@
 				2DF55C442270FF7E002C44DC /* ScriptablePropertySheetDataSource.m in Sources */,
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,
 				2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */,
+				0D568531271DC4280026F700 /* ScopeVisualizationView.m in Sources */,
 				2DDBA24E23E5E66D00051320 /* PlaylistContentView.m in Sources */,
 				2DF3D08124E70775008D966E /* MediaLibraryCoverQueryData.m in Sources */,
 				2D72047719DF2971000989C6 /* PlaylistViewController.m in Sources */,
 				2D54915822B1711E000FE7E3 /* HelpWindowController.m in Sources */,
+				0D56852A271DC35E0026F700 /* ScopeWidget.m in Sources */,
 				2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */,
 				2D986143226C816000BAACB1 /* BrowseButton.m in Sources */,
 				2D9EBAAD25E44A0700255592 /* WidgetSerializer.m in Sources */,

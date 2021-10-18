@@ -1,24 +1,10 @@
 #import "SpectrumAnalyzerVisualizationViewController.h"
 #include "analyzer.h"
 
-static NSString * const kWindowIsVisibleKey = @"view.window.isVisible";
-static void *kIsVisibleContext = &kIsVisibleContext;
-
-@interface SpectrumAnalyzerVisualizationViewController ()
-
-@property (nonatomic) NSTimer *tickTimer;
-
-@end
-
 @implementation SpectrumAnalyzerVisualizationViewController
 
-- (void)dealloc {
-    [self removeObserver:self forKeyPath:kWindowIsVisibleKey];
-    [self.tickTimer invalidate];
-}
-
 - (void)awakeFromNib {
-    [self addObserver:self forKeyPath:kWindowIsVisibleKey options:NSKeyValueObservingOptionInitial context:kIsVisibleContext];
+    [super awakeFromNib];
 
     NSMenu *menu = [NSMenu new];
     NSMenuItem *modeMenuItem = [menu addItemWithTitle:@"Mode" action:nil keyEquivalent:@""];
@@ -43,30 +29,6 @@ static void *kIsVisibleContext = &kIsVisibleContext;
     [gapSizeMenuItem.submenu addItemWithTitle:@"1/10 Bar" action:@selector(setTenthGap:) keyEquivalent:@""];
 
     self.view.menu = menu;
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if (context == kIsVisibleContext) {
-        if (self.view.window.isVisible) {
-            __weak SpectrumAnalyzerVisualizationViewController *weakSelf = self;
-            if (self.tickTimer == nil) {
-                self.tickTimer = [NSTimer timerWithTimeInterval:1/30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
-                    SpectrumAnalyzerVisualizationViewController *strongSelf = weakSelf;
-                    if (!strongSelf.view.window.isVisible) {
-                        [strongSelf.tickTimer invalidate];
-                        strongSelf.tickTimer = nil;
-                    }
-
-                    strongSelf.view.needsDisplay = YES;
-                }];
-
-                [[NSRunLoop currentRunLoop] addTimer:self.tickTimer forMode:NSRunLoopCommonModes];
-            }
-        }
-    }
-    else {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
 }
 
 #pragma mark - Actions
