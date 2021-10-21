@@ -3,6 +3,7 @@ SUBDIRS = pixmaps\
 		  external\
 		  shared\
 		  analyzer\
+		  scope\
 		  ${PLUGINS_DIRS}\
 		  po\
 		  intl

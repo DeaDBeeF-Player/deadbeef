@@ -909,6 +909,7 @@ Makefile
 external/Makefile
 shared/Makefile
 analyzer/Makefile
+scope/Makefile
 pixmaps/Makefile
 icons/Makefile
 plugins/liboggedit/Makefile

@@ -8,6 +8,7 @@
 
 #import "ScopeVisualizationView.h"
 #include "deadbeef.h"
+#include "scope.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -17,6 +18,8 @@ static void *kIsVisibleContext = &kIsVisibleContext;
 @interface ScopeVisualizationView() {
     ddb_audio_data_t _input_data;
     ddb_waveformat_t _fmt;
+    ddb_scope_t _scope;
+    ddb_scope_draw_data_t _draw_data;
 }
 
 @property (nonatomic) BOOL isListening;
@@ -33,6 +36,12 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 - (void)dealloc {
     [self removeObserver:self forKeyPath:kWindowIsVisibleKey];
+    if (self.isListening) {
+        deadbeef->vis_waveform_unlisten ((__bridge void *)(self));
+        self.isListening = NO;
+    }
+    ddb_scope_dealloc(&_scope);
+    ddb_scope_draw_data_dealloc(&_draw_data);
 }
 
 - (instancetype)initWithFrame:(NSRect)frame
@@ -63,6 +72,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     [self addObserver:self forKeyPath:kWindowIsVisibleKey options:NSKeyValueObservingOptionInitial context:kIsVisibleContext];
     _isListening = NO;
     _input_data.fmt = &_fmt;
+    ddb_scope_init(&_scope);
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
@@ -98,52 +108,20 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
         return;
     }
 
-    CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-    CGFloat pixel_amplitude = self.bounds.size.height/2;
-    CGContextMoveToPoint(context, 0, pixel_amplitude);
     @synchronized (self) {
-        CGFloat incr = self.bounds.size.width / _input_data.nframes;
-        CGFloat xpos = 0;
-        CGFloat ypos_min = 1;
-        CGFloat ypos_max = -1;
-        CGFloat n = 0;
-        for (int i = 0; i < _input_data.nframes; i++) {
-            CGFloat new_xpos = xpos + incr;
-            CGFloat pixel_xpos = floor(xpos);
-            if (floor(new_xpos) > pixel_xpos) {
-                if (n > 0) {
-                    CGFloat ypos = ypos_min * pixel_amplitude + pixel_amplitude;
-                    CGContextAddLineToPoint(context, pixel_xpos, ypos);
-                    ypos = ypos_max * pixel_amplitude + pixel_amplitude;
-                    CGContextAddLineToPoint(context, pixel_xpos, ypos);
-                }
-                n = 0;
-                ypos_min = 1;
-                ypos_max = -1;
-            }
-            xpos = new_xpos;
-            CGFloat sample = 0;
-            int ch = _input_data.fmt->channels;
-            for (int c = 0; c < ch; c++) {
-                sample = _input_data.data[i * _input_data.fmt->channels + c];
-            }
-            sample /= ch;
-            if (sample > ypos_max) {
-                ypos_max = sample;
-            }
-            if (sample < ypos_min) {
-                ypos_min = sample;
-            }
-            n += 1;
-        }
-        if (n > 0) {
-            CGFloat pixel_xpos = self.bounds.size.width-1;
-            CGFloat ypos = ypos_min * pixel_amplitude + pixel_amplitude;
-            CGContextAddLineToPoint(context, pixel_xpos, ypos);
-            ypos = ypos_max * pixel_amplitude + pixel_amplitude;
-            CGContextAddLineToPoint(context, pixel_xpos, ypos);
-        }
+        ddb_scope_process(&_scope, _input_data.fmt->samplerate, _input_data.fmt->channels, _input_data.data, _input_data.nframes);
+        ddb_scope_tick(&_scope);
+        ddb_scope_get_draw_data(&_scope, (int)self.bounds.size.width, (int)self.bounds.size.height, &_draw_data);
     }
+
+    CGContextRef context = NSGraphicsContext.currentContext.CGContext;
+    CGContextMoveToPoint(context, 0, self.bounds.size.height/2);
+    ddb_scope_point_t *point = _draw_data.points;
+    for (int i = 0; i < _draw_data.point_count; i++, point++) {
+        CGContextAddLineToPoint(context, point->x, point->ymin);
+        CGContextAddLineToPoint(context, point->x, point->ymax);
+    }
+
     CGContextSetStrokeColorWithColor(context, self.baseColor.CGColor);
     CGContextStrokePath(context);
 }

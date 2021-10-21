@@ -812,6 +812,7 @@ project "ddb_gui_GTK2"
     "shared/pluginsettings.c",
     "shared/trkproperties_shared.c",
     "analyzer/analyzer.c",
+    "scope/scope.c",
     "plugins/libparser/parser.c",
     "utf8.c"
   }
@@ -838,6 +839,7 @@ project "ddb_gui_GTK3"
     "shared/pluginsettings.c",
     "shared/trkproperties_shared.c",
     "analyzer/analyzer.c",
+    "scope/scope.c",
     "plugins/libparser/parser.c",
     "utf8.c"
   }

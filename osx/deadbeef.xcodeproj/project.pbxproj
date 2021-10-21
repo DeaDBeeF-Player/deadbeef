@@ -126,6 +126,10 @@
 		0D56853E271DC6670026F700 /* VisualizationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D56853A271DC6670026F700 /* VisualizationViewController.h */; };
 		0D56853F271DC6670026F700 /* VisualizationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D56853B271DC6670026F700 /* VisualizationViewController.m */; };
 		0D568540271DC6670026F700 /* VisualizationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D56853B271DC6670026F700 /* VisualizationViewController.m */; };
+		0D56856C272197B30026F700 /* scope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D56856A272197B30026F700 /* scope.h */; };
+		0D56856D272197B30026F700 /* scope.c in Sources */ = {isa = PBXBuildFile; fileRef = 0D56856B272197B30026F700 /* scope.c */; };
+		0D56856E27219F3C0026F700 /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD39ED826AD8D1600C5846D /* analyzer.c */; };
+		0D56856F27219F410026F700 /* scope.c in Sources */ = {isa = PBXBuildFile; fileRef = 0D56856B272197B30026F700 /* scope.c */; };
 		2D00F2AA2434DEB3000FC130 /* st.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F2772434DE87000FC130 /* st.cpp */; };
 		2D00F2AB2434DEB3000FC130 /* plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F2782434DE87000FC130 /* plugin.c */; };
 		2D00F2E72434F98F000FC130 /* st.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D00F2752434DE87000FC130 /* st.h */; };
@@ -2129,7 +2133,6 @@
 		2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCF73B21A952F8900495740 /* PreferencesWindowController.h */; };
 		2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DCF73B31A952F8900495740 /* PreferencesWindowController.m */; };
 		2DD39ED926AD8D1600C5846D /* analyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD39ED726AD8D1600C5846D /* analyzer.h */; };
-		2DD39EDA26AD8D1600C5846D /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD39ED826AD8D1600C5846D /* analyzer.c */; };
 		2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2DD5262E2062F1DF002609C5 /* help-cocoa.txt */; };
 		2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
 		2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */; };
@@ -3884,6 +3887,8 @@
 		0D56852E271DC4270026F700 /* ScopeVisualizationView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScopeVisualizationView.m; sourceTree = "<group>"; };
 		0D56853A271DC6670026F700 /* VisualizationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisualizationViewController.h; sourceTree = "<group>"; };
 		0D56853B271DC6670026F700 /* VisualizationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisualizationViewController.m; sourceTree = "<group>"; };
+		0D56856A272197B30026F700 /* scope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scope.h; sourceTree = "<group>"; };
+		0D56856B272197B30026F700 /* scope.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scope.c; sourceTree = "<group>"; };
 		2D00F23F2434DE4E000FC130 /* ddb_soundtouch.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ddb_soundtouch.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D00F2752434DE87000FC130 /* st.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = st.h; sourceTree = "<group>"; };
 		2D00F2772434DE87000FC130 /* st.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = st.cpp; sourceTree = "<group>"; };
@@ -7254,6 +7259,15 @@
 				0D56853B271DC6670026F700 /* VisualizationViewController.m */,
 			);
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		0D56855A272197A30026F700 /* scope */ = {
+			isa = PBXGroup;
+			children = (
+				0D56856A272197B30026F700 /* scope.h */,
+				0D56856B272197B30026F700 /* scope.c */,
+			);
+			path = scope;
 			sourceTree = "<group>";
 		};
 		2D00F2552434DE87000FC130 /* soundtouch */ = {
@@ -10877,6 +10891,7 @@
 		4D1B3EB31837EC44003E6066 /* deadbeef */ = {
 			isa = PBXGroup;
 			children = (
+				0D56855A272197A30026F700 /* scope */,
 				2DD39EC726AD8CFD00C5846D /* analyzer */,
 				2D6E2CFF26AC3022008FCD4B /* Apple */,
 				4D1B3ED71837EC44003E6066 /* ConvertUTF */,
@@ -13032,6 +13047,7 @@
 				2D747E3824B64E7600BBB987 /* SidebarSplitViewItem.h in Headers */,
 				2D04C3C02433B0FD003C2AAC /* growableBuffer.h in Headers */,
 				0D56852F271DC4280026F700 /* ScopeVisualizationView.h in Headers */,
+				0D56856C272197B30026F700 /* scope.h in Headers */,
 				2D986142226C816000BAACB1 /* BrowseButton.h in Headers */,
 				2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */,
 			);
@@ -16069,6 +16085,7 @@
 				2DE3B7E32269BF3100AFF9AE /* wingeom.c in Sources */,
 				2DE3B7CF2269BF1700AFF9AE /* tagwritersettings.c in Sources */,
 				2DE3B7E82269BF3100AFF9AE /* gtkui.c in Sources */,
+				0D56856F27219F410026F700 /* scope.c in Sources */,
 				2D9E9B5226BB1EDE00757C71 /* analyzer.c in Sources */,
 				2DE3B7C22269BF1300AFF9AE /* ddblistview.c in Sources */,
 				2DAE706A25BDE55D00E40154 /* deletefromdisk.c in Sources */,
@@ -16214,12 +16231,12 @@
 				2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */,
 				2DDF87DA24027DA500CA8E91 /* PluginActionMenuItem.m in Sources */,
 				2DAD80A22416DBB100EB3075 /* CustomToolbarItem.m in Sources */,
+				0D56856D272197B30026F700 /* scope.c in Sources */,
 				2D20D12523F099F4008ACBE6 /* NSImage+Additions.m in Sources */,
 				2DDE529424F81A870096EF80 /* MediaLibrarySearchCellView.m in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				2D1E215824F9826C00E2895D /* MedialibItemDragDropHolder.m in Sources */,
 				2D651D18227227C300375AE2 /* ScriptableNodeEditorWindowController.m in Sources */,
-				2DD39EDA26AD8D1600C5846D /* analyzer.c in Sources */,
 				2D8EE27524D03601005C5B4B /* MediaLibraryOutlineViewController.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
 				2DBF3D4427086AA900023138 /* MainContentViewController.m in Sources */,
@@ -16264,6 +16281,7 @@
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
 				2D046F7E25E2B55200F68459 /* MainWindow.m in Sources */,
 				2D747E4124B6580A00BBB987 /* MainWindowSidebarViewController.m in Sources */,
+				0D56856E27219F3C0026F700 /* analyzer.c in Sources */,
 				2DF55C442270FF7E002C44DC /* ScriptablePropertySheetDataSource.m in Sources */,
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,
 				2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */,
