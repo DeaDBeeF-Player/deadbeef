@@ -4076,12 +4076,7 @@ w_playtb_create (void) {
 static gboolean
 redraw_volumebar_cb (gpointer data) {
     w_volumebar_t *w = data;
-    gtk_widget_queue_draw (w->volumebar);
-    char s[100];
-    int db = deadbeef->volume_get_db ();
-    snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
-    gtk_widget_set_tooltip_text (w->volumebar, s);
-    gtk_widget_trigger_tooltip_query (w->volumebar);
+    ddb_volumebar_update (DDB_VOLUMEBAR (w->volumebar));
     return FALSE;
 }
 
@@ -4103,12 +4098,121 @@ w_volumebar_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t
     return 0;
 }
 
+const char *
+w_volumebar_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
+    if (strcmp (type, "volumebar")) {
+        return NULL;
+    }
+
+    w_volumebar_t *vb = (w_volumebar_t *)w;
+
+    int scale=0;
+
+    char key[MAX_TOKEN], val[MAX_TOKEN];
+    for (;;) {
+        get_keyvalue (s,key,val);
+
+        if (!strcmp (key, "scale")) {
+            scale = atoi (val);
+        }
+    }
+
+    ddb_volumebar_set_scale (DDB_VOLUMEBAR (vb->volumebar), (DdbVolumeBarScale)scale);
+
+    return s;
+}
+
+void
+w_volumebar_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
+    w_volumebar_t *vb = (w_volumebar_t *)w;
+    int scale = ddb_volumebar_get_scale (DDB_VOLUMEBAR (vb->volumebar));
+
+    char spos[100];
+    snprintf (spos, sizeof (spos), " scale=%d", scale);
+    strncat (s, spos, sz);
+}
+
+static void
+w_volumebar_dbscale_activate (GtkWidget *item, struct ddb_gtkui_widget_s *w)
+{
+    DdbVolumeBar *bar =  DDB_VOLUMEBAR (((w_volumebar_t *)w)->volumebar);
+    if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (item))) {
+        ddb_volumebar_set_scale (bar, DDB_VOLUMEBAR_SCALE_DB);
+        ddb_volumebar_update (bar);
+    }
+}
+
+static void
+w_volumebar_linearscale_activate (GtkWidget *item, struct ddb_gtkui_widget_s *w)
+{
+    DdbVolumeBar *bar =  DDB_VOLUMEBAR (((w_volumebar_t *)w)->volumebar);
+    if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (item))) {
+        ddb_volumebar_set_scale (bar, DDB_VOLUMEBAR_SCALE_LINEAR);
+        ddb_volumebar_update (bar);
+    }
+}
+
+static void
+w_volumebar_cubicscale_activate (GtkWidget *item, struct ddb_gtkui_widget_s *w)
+{
+    DdbVolumeBar *bar =  DDB_VOLUMEBAR (((w_volumebar_t *)w)->volumebar);
+    if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (item))) {
+        ddb_volumebar_set_scale (bar, DDB_VOLUMEBAR_SCALE_CUBIC);
+        ddb_volumebar_update (bar);
+    }
+}
+
+static void
+w_volumebar_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    GtkWidget *item;
+    GSList *group = NULL;
+    w_volumebar_t *widget = (w_volumebar_t *)w;
+    int i;
+    DdbVolumeBarScale scale = ddb_volumebar_get_scale (DDB_VOLUMEBAR (widget->volumebar));
+    item = gtk_radio_menu_item_new_with_mnemonic (group, _("_dB Scale"));
+    group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (item));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "toggled",
+            G_CALLBACK (w_volumebar_dbscale_activate),
+            w);
+    if (scale == DDB_VOLUMEBAR_SCALE_DB) {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), TRUE);
+    }
+
+    item = gtk_radio_menu_item_new_with_mnemonic (group, _("_Linear Scale"));
+    group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (item));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "toggled",
+            G_CALLBACK (w_volumebar_linearscale_activate),
+            w);
+    if (scale == DDB_VOLUMEBAR_SCALE_LINEAR) {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), TRUE);
+    }
+
+    item = gtk_radio_menu_item_new_with_mnemonic (group, _("_Cubic Scale"));
+    group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (item));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "toggled",
+            G_CALLBACK (w_volumebar_cubicscale_activate),
+            w);
+    if (scale == DDB_VOLUMEBAR_SCALE_CUBIC) {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), TRUE);
+    }
+
+}
+
 ddb_gtkui_widget_t *
 w_volumebar_create (void) {
     w_volumebar_t *w = malloc (sizeof (w_volumebar_t));
     memset (w, 0, sizeof (w_volumebar_t));
     w->base.widget = gtk_event_box_new ();
     w->base.message = w_volumebar_message;
+    w->base.initmenu = w_volumebar_initmenu;
+    w->base.load = w_volumebar_load;
+    w->base.save = w_volumebar_save;
     w->volumebar = ddb_volumebar_new ();
 #if GTK_CHECK_VERSION(3,0,0)
     gtk_widget_set_events (GTK_WIDGET (w->base.widget), gtk_widget_get_events (GTK_WIDGET (w->base.widget)) | GDK_SCROLL_MASK);
