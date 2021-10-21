@@ -80,7 +80,10 @@ void apply_conf (GtkWidget *w, ddb_dialog_t *conf, int reset_settings) {
     const char *script = conf->layout;
     parser_line = 1;
     while ((script = gettoken (script, token))) {
-        if (strcmp (token, "property")) {
+        int islabel=0;
+        if (!strcmp (token, "label")) {
+            islabel = 1;
+        } else if (strcmp (token, "property")) {
             fprintf (stderr, "invalid token while loading plugin %s config dialog: %s at line %d\n", conf->title, token, parser_line);
             break;
         }
@@ -89,110 +92,119 @@ void apply_conf (GtkWidget *w, ddb_dialog_t *conf, int reset_settings) {
         if (!script) {
             break;
         }
-        char type[MAX_TOKEN];
-        script = gettoken_warn_eof (script, type);
-        if (!script) {
-            break;
-        }
 
-        // skip containers
-        if (!strncmp (type, "hbox[", 5) || !strncmp (type, "vbox[", 5)) {
-            // skip to ;
-            char semicolon[MAX_TOKEN];
-            while ((script = gettoken_warn_eof (script, semicolon))) {
-                if (!strcmp (semicolon, ";")) {
-                    break;
-                }
-            }
-            continue;
-        }
-
-        // ignore layout options
-        char key[MAX_TOKEN];
-        const char *skiptokens[] = { "vert", NULL };
-        for (;;) {
-            script = gettoken_warn_eof (script, key);
-            int i = 0;
-            for (i = 0; skiptokens[i]; i++) {
-                if (!strcmp (key, skiptokens[i])) {
-                    break;
-                }
-            }
-            if (!skiptokens[i]) {
+        if (islabel) {
+            // ignore the align parameter
+            char align[MAX_TOKEN];
+            script = gettoken_warn_eof (script, align);
+            if (!script) {
                 break;
             }
-        }
-        if (!script) {
-            break;
-        }
-        char def[MAX_TOKEN];
-        script = gettoken_warn_eof (script, def);
-        if (!script) {
-            break;
-        }
+        } else {
+            char type[MAX_TOKEN];
+            script = gettoken_warn_eof (script, type);
+            if (!script) {
+                break;
+            }
 
-        if (reset_settings) {
-            conf->set_param (key, def);
+            // skip containers
+            if (!strncmp (type, "hbox[", 5) || !strncmp (type, "vbox[", 5)) {
+                // skip to ;
+                char semicolon[MAX_TOKEN];
+                while ((script = gettoken_warn_eof (script, semicolon))) {
+                    if (!strcmp (semicolon, ";")) {
+                        break;
+                    }
+                }
+                continue;
+            }
 
-            // skip to ;
-            char semicolon[MAX_TOKEN];
-            while ((script = gettoken_warn_eof (script, semicolon))) {
-                if (!strcmp (semicolon, ";")) {
+            // ignore layout options
+            char key[MAX_TOKEN];
+            const char *skiptokens[] = { "vert", NULL };
+            for (;;) {
+                script = gettoken_warn_eof (script, key);
+                int i = 0;
+                for (i = 0; skiptokens[i]; i++) {
+                    if (!strcmp (key, skiptokens[i])) {
+                        break;
+                    }
+                }
+                if (!skiptokens[i]) {
                     break;
                 }
             }
-            continue;
-        } else {
-            // fetch data
-            GtkWidget *widget = g_object_get_data (G_OBJECT(w), key);
-            if (widget) {
-                if (!strcmp (type, "entry") || !strcmp (type, "password")) {
-                    conf->set_param (key, gtk_entry_get_text (GTK_ENTRY (widget)));
-                }
-                else if (!strcmp (type, "file")) {
-                    if (deadbeef->conf_get_int ("gtkui.pluginconf.use_filechooser_button", 0)) {
-                        // filechooser
-                        conf->set_param (key, gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (widget)));
-                    }
-                    else {
-                        conf->set_param (key, gtk_entry_get_text (GTK_ENTRY (widget)));
-                    }
-                }
-                else if (!strcmp (type, "checkbox")) {
-                    conf->set_param (key, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? "1" : "0");
-                }
-                else if (!strncmp (type, "hscale[", 7) || !strncmp (type, "vscale[", 7)) {
-                    char s[20];
-                    snprintf (s, sizeof (s), "%f", gtk_range_get_value (GTK_RANGE (widget)));
-                    conf->set_param (key, s);
-                }
-                else if (!strncmp (type, "spinbtn[", 8)) {
-                    char s[20];
-                    snprintf (s, sizeof (s), "%f", (float)gtk_spin_button_get_value (GTK_SPIN_BUTTON (widget)));
-                    conf->set_param (key, s);
-                }
-                else if (!strncmp (type, "select[", 7)) {
-                    int n;
-                    if (1 != sscanf (type+6, "[%d]", &n)) {
+            if (!script) {
+                break;
+            }
+            char def[MAX_TOKEN];
+            script = gettoken_warn_eof (script, def);
+            if (!script) {
+                break;
+            }
+
+            if (reset_settings) {
+                conf->set_param (key, def);
+
+                // skip to ;
+                char semicolon[MAX_TOKEN];
+                while ((script = gettoken_warn_eof (script, semicolon))) {
+                    if (!strcmp (semicolon, ";")) {
                         break;
                     }
-                    for (int i = 0; i < n; i++) {
-                        char value[MAX_TOKEN];
-                        script = gettoken_warn_eof (script, value);
+                }
+                continue;
+            } else {
+                // fetch data
+                GtkWidget *widget = g_object_get_data (G_OBJECT(w), key);
+                if (widget) {
+                    if (!strcmp (type, "entry") || !strcmp (type, "password")) {
+                        conf->set_param (key, gtk_entry_get_text (GTK_ENTRY (widget)));
+                    }
+                    else if (!strcmp (type, "file")) {
+                        if (deadbeef->conf_get_int ("gtkui.pluginconf.use_filechooser_button", 0)) {
+                            // filechooser
+                            conf->set_param (key, gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (widget)));
+                        }
+                        else {
+                            conf->set_param (key, gtk_entry_get_text (GTK_ENTRY (widget)));
+                        }
+                    }
+                    else if (!strcmp (type, "checkbox")) {
+                        conf->set_param (key, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? "1" : "0");
+                    }
+                    else if (!strncmp (type, "hscale[", 7) || !strncmp (type, "vscale[", 7)) {
+                        char s[20];
+                        snprintf (s, sizeof (s), "%f", gtk_range_get_value (GTK_RANGE (widget)));
+                        conf->set_param (key, s);
+                    }
+                    else if (!strncmp (type, "spinbtn[", 8)) {
+                        char s[20];
+                        snprintf (s, sizeof (s), "%f", (float)gtk_spin_button_get_value (GTK_SPIN_BUTTON (widget)));
+                        conf->set_param (key, s);
+                    }
+                    else if (!strncmp (type, "select[", 7)) {
+                        int n;
+                        if (1 != sscanf (type+6, "[%d]", &n)) {
+                            break;
+                        }
+                        for (int i = 0; i < n; i++) {
+                            char value[MAX_TOKEN];
+                            script = gettoken_warn_eof (script, value);
+                            if (!script) {
+                                break;
+                            }
+                        }
                         if (!script) {
                             break;
                         }
+                        char s[20];
+                        snprintf (s, sizeof (s), "%d", gtk_combo_box_get_active (GTK_COMBO_BOX (widget)));
+                        conf->set_param (key, s);
                     }
-                    if (!script) {
-                        break;
-                    }
-                    char s[20];
-                    snprintf (s, sizeof (s), "%d", gtk_combo_box_get_active (GTK_COMBO_BOX (widget)));
-                    conf->set_param (key, s);
                 }
             }
         }
-
         script = gettoken_warn_eof (script, token);
         if (!script) {
             break;
@@ -273,7 +285,10 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
     const char *script = conf->layout;
     parser_line = 1;
     while ((script = gettoken (script, token))) {
-        if (strcmp (token, "property")) {
+        int islabel=0;
+        if (!strcmp (token, "label")) {
+            islabel = 1;
+        } else if (strcmp (token, "property")) {
             fprintf (stderr, "invalid token while loading plugin %s config dialog: %s at line %d\n", conf->title, token, parser_line);
             break;
         }
@@ -286,204 +301,223 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
         ncurr = backout_pack_level(ncurr, pack);
 
         char type[MAX_TOKEN];
-        script = gettoken_warn_eof (script, type);
-        if (!script) {
-            break;
-        }
-
-        if (!strncmp (type, "hbox[", 5) || !strncmp (type, "vbox[", 5)) {
-            ncurr++;
-            int n = 0;
-            if (1 != sscanf (type+4, "[%d]", &n)) {
-                break;
-            }
-            pack[ncurr] = n;
-
-            int vert = !strncmp (type, "vbox[", 5);
-            int hmg = FALSE;
-            int fill = FALSE;
-            int expand = FALSE;
-            int border = 0;
-            int spacing = 8;
-            int height = 100;
-
-            char param[MAX_TOKEN];
-            for (;;) {
-                script = gettoken_warn_eof (script, param);
-                if (!script) {
-                    break;
-                }
-                if (!strcmp (param, ";")) {
-                    break;
-                }
-                else if (!strcmp (param, "hmg")) {
-                    hmg = TRUE;
-                }
-                else if (!strcmp (param, "fill")) {
-                    fill = TRUE;
-                }
-                else if (!strcmp (param, "expand")) {
-                    expand = TRUE;
-                }
-                else if (!strncmp (param, "border=", 7)) {
-                    border = atoi (param+7);
-                }
-                else if (!strncmp (param, "spacing=", 8)) {
-                    spacing = atoi (param+8);
-                }
-                else if (!strncmp (param, "height=", 7)) {
-                    height = atoi (param+7);
-                }
-            }
-
-            widgets[ncurr] = vert ? gtk_vbox_new (hmg, spacing) : gtk_hbox_new (hmg, spacing);
-            gtk_widget_set_size_request (widgets[ncurr], vert ? height : -1, vert ? -1 : height);
-            gtk_widget_show (widgets[ncurr]);
-            gtk_box_pack_start (GTK_BOX(widgets[ncurr-1]), widgets[ncurr], fill, expand, border);
-            continue;
-        }
-
-        int vertical = 0;
-
-        char key[MAX_TOKEN];
-        for (;;) {
-            script = gettoken_warn_eof (script, key);
-            if (!script) {
-                break;
-            }
-            if (!strcmp (key, "vert")) {
-                vertical = 1;
-            }
-            else {
-                break;
-            }
-        }
-
-        char def[MAX_TOKEN];
-        script = gettoken_warn_eof (script, def);
-        if (!script) {
-            break;
-        }
-
-        // add to dialog
         GtkWidget *label = NULL;
         GtkWidget *prop = NULL;
         GtkWidget *cont = NULL;
-        char value[1000];
-        conf->get_param (key, value, sizeof (value), def);
-        if (!strcmp (type, "entry") || !strcmp (type, "password")) {
-            label = gtk_label_new (_(labeltext));
-            gtk_widget_show (label);
-            prop = gtk_entry_new ();
-            gtk_entry_set_width_chars (GTK_ENTRY(prop), 5);
-            gtk_entry_set_activates_default (GTK_ENTRY (prop), TRUE);
-            g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), containervbox);
-            gtk_widget_show (prop);
-            gtk_entry_set_text (GTK_ENTRY (prop), value);
-
-            if (!strcmp (type, "password")) {
-                gtk_entry_set_visibility (GTK_ENTRY (prop), FALSE);
-            }
-        }
-        else if (!strcmp (type, "checkbox")) {
-            prop = gtk_check_button_new_with_label (_(labeltext));
-            g_signal_connect (G_OBJECT (prop), "toggled", G_CALLBACK (prop_changed), containervbox);
-            gtk_widget_show (prop);
-            int val = atoi (value);
-            gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (prop), val);
-        }
-        else if (!strcmp (type, "file")) {
-            label = gtk_label_new (_(labeltext));
-            gtk_widget_show (label);
-            if (deadbeef->conf_get_int ("gtkui.pluginconf.use_filechooser_button", 0)) {
-                prop = gtk_file_chooser_button_new (_(labeltext), GTK_FILE_CHOOSER_ACTION_OPEN);
-                gtk_widget_show (prop);
-                gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (prop), value);
-                g_signal_connect (G_OBJECT (prop), "file-set", G_CALLBACK (prop_changed), containervbox);
-            }
-            else {
-                cont = gtk_hbox_new (FALSE, 2);
-                gtk_widget_show (cont);
-                prop = gtk_entry_new ();
-                gtk_entry_set_activates_default (GTK_ENTRY (prop), TRUE);
-                g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), containervbox);
-                gtk_widget_show (prop);
-                gtk_editable_set_editable (GTK_EDITABLE (prop), FALSE);
-                gtk_entry_set_text (GTK_ENTRY (prop), value);
-                gtk_box_pack_start (GTK_BOX (cont), prop, TRUE, TRUE, 0);
-                GtkWidget *btn = gtk_button_new_with_label ("…");
-                gtk_widget_show (btn);
-                gtk_box_pack_start (GTK_BOX (cont), btn, FALSE, FALSE, 0);
-                g_signal_connect (G_OBJECT (btn), "clicked", G_CALLBACK (on_prop_browse_file), prop);
-            }
-        }
-        else if (!strncmp (type, "select[", 7)) {
-            int n;
-            if (1 != sscanf (type+6, "[%d]", &n)) {
-                break;
-            }
-
-            label = gtk_label_new (_(labeltext));
-            gtk_widget_show (label);
-
-            prop = gtk_combo_box_text_new ();
-            gtk_widget_show (prop);
-
-            for (int i = 0; i < n; i++) {
-                char entry[MAX_TOKEN];
-                script = gettoken_warn_eof (script, entry);
-                if (!script) {
-                    break;
-                }
-
-                gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (prop), entry);
-            }
+        int vertical;
+        char key[MAX_TOKEN];
+        if (islabel) {
+            char align[MAX_TOKEN];
+            script = gettoken_warn_eof (script, align);
             if (!script) {
                 break;
             }
-            gtk_combo_box_set_active (GTK_COMBO_BOX (prop), atoi (value));
-            g_signal_connect ((gpointer) prop, "changed",
-                    G_CALLBACK (prop_changed),
-                    containervbox);
-        }
-        else if (!strncmp (type, "hscale[", 7) || !strncmp (type, "vscale[", 7) || !strncmp (type, "spinbtn[", 8)) {
-            float min, max, step;
-            const char *args;
-            if (type[0] == 's') {
-                args = type + 7;
-            }
-            else {
-                args = type + 6;
-            }
-            if (3 != sscanf (args, "[%f,%f,%f]", &min, &max, &step)) {
-                break;
-            }
-            int invert = 0;
-            if (min >= max) {
-                float tmp = min;
-                min = max;
-                max = tmp;
-                invert = 1;
-            }
-            if (step <= 0) {
-                step = 1;
-            }
-            if (type[0] == 's') {
-                prop = gtk_spin_button_new_with_range (min, max, step);
-                gtk_spin_button_set_value (GTK_SPIN_BUTTON (prop), atof (value));
-            }
-            else {
-                prop = type[0] == 'h' ? gtk_hscale_new_with_range (min, max, step) : gtk_vscale_new_with_range (min, max, step);
-                if (invert) {
-                    gtk_range_set_inverted (GTK_RANGE (prop), TRUE);
-                }
-                gtk_range_set_value (GTK_RANGE (prop), (gdouble)atof (value));
-                gtk_scale_set_value_pos (GTK_SCALE (prop), vertical?GTK_POS_BOTTOM:GTK_POS_RIGHT);
-            }
             label = gtk_label_new (_(labeltext));
             gtk_widget_show (label);
-            g_signal_connect (G_OBJECT (prop), "value-changed", G_CALLBACK (prop_changed), containervbox);
-            gtk_widget_show (prop);
+            if (!strcmp(align, "left")) {
+                gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+            } else if (!strcmp(align, "center")) {
+                gtk_misc_set_alignment (GTK_MISC (label), 0.5, 0.5);
+            } else if (!strcmp(align, "right")) {
+                gtk_misc_set_alignment (GTK_MISC (label), 1.0, 0.5);
+            }
+        } else {
+            script = gettoken_warn_eof (script, type);
+            if (!script) {
+                break;
+            }
+
+            if (!strncmp (type, "hbox[", 5) || !strncmp (type, "vbox[", 5)) {
+                ncurr++;
+                int n = 0;
+                if (1 != sscanf (type+4, "[%d]", &n)) {
+                    break;
+                }
+                pack[ncurr] = n;
+
+                int vert = !strncmp (type, "vbox[", 5);
+                int hmg = FALSE;
+                int fill = FALSE;
+                int expand = FALSE;
+                int border = 0;
+                int spacing = 8;
+                int height = 100;
+
+                char param[MAX_TOKEN];
+                for (;;) {
+                    script = gettoken_warn_eof (script, param);
+                    if (!script) {
+                        break;
+                    }
+                    if (!strcmp (param, ";")) {
+                        break;
+                    }
+                    else if (!strcmp (param, "hmg")) {
+                        hmg = TRUE;
+                    }
+                    else if (!strcmp (param, "fill")) {
+                        fill = TRUE;
+                    }
+                    else if (!strcmp (param, "expand")) {
+                        expand = TRUE;
+                    }
+                    else if (!strncmp (param, "border=", 7)) {
+                        border = atoi (param+7);
+                    }
+                    else if (!strncmp (param, "spacing=", 8)) {
+                        spacing = atoi (param+8);
+                    }
+                    else if (!strncmp (param, "height=", 7)) {
+                        height = atoi (param+7);
+                    }
+                }
+
+                widgets[ncurr] = vert ? gtk_vbox_new (hmg, spacing) : gtk_hbox_new (hmg, spacing);
+                gtk_widget_set_size_request (widgets[ncurr], vert ? height : -1, vert ? -1 : height);
+                gtk_widget_show (widgets[ncurr]);
+                gtk_box_pack_start (GTK_BOX(widgets[ncurr-1]), widgets[ncurr], fill, expand, border);
+                continue;
+            }
+
+            vertical = 0;
+            char def[MAX_TOKEN];
+
+            for (;;) {
+                script = gettoken_warn_eof (script, key);
+                if (!script) {
+                    break;
+                }
+                if (!strcmp (key, "vert")) {
+                    vertical = 1;
+                }
+                else {
+                    break;
+                }
+            }
+
+            script = gettoken_warn_eof (script, def);
+            if (!script) {
+                break;
+            }
+
+            // add to dialog
+            char value[1000];
+            conf->get_param (key, value, sizeof (value), def);
+            if (!strcmp (type, "entry") || !strcmp (type, "password")) {
+                label = gtk_label_new (_(labeltext));
+                gtk_widget_show (label);
+                prop = gtk_entry_new ();
+                gtk_entry_set_width_chars (GTK_ENTRY(prop), 5);
+                gtk_entry_set_activates_default (GTK_ENTRY (prop), TRUE);
+                g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), containervbox);
+                gtk_widget_show (prop);
+                gtk_entry_set_text (GTK_ENTRY (prop), value);
+
+                if (!strcmp (type, "password")) {
+                    gtk_entry_set_visibility (GTK_ENTRY (prop), FALSE);
+                }
+            }
+            else if (!strcmp (type, "checkbox")) {
+                prop = gtk_check_button_new_with_label (_(labeltext));
+                g_signal_connect (G_OBJECT (prop), "toggled", G_CALLBACK (prop_changed), containervbox);
+                gtk_widget_show (prop);
+                int val = atoi (value);
+                gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (prop), val);
+            }
+            else if (!strcmp (type, "file")) {
+                label = gtk_label_new (_(labeltext));
+                gtk_widget_show (label);
+                if (deadbeef->conf_get_int ("gtkui.pluginconf.use_filechooser_button", 0)) {
+                    prop = gtk_file_chooser_button_new (_(labeltext), GTK_FILE_CHOOSER_ACTION_OPEN);
+                    gtk_widget_show (prop);
+                    gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (prop), value);
+                    g_signal_connect (G_OBJECT (prop), "file-set", G_CALLBACK (prop_changed), containervbox);
+                }
+                else {
+                    cont = gtk_hbox_new (FALSE, 2);
+                    gtk_widget_show (cont);
+                    prop = gtk_entry_new ();
+                    gtk_entry_set_activates_default (GTK_ENTRY (prop), TRUE);
+                    g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), containervbox);
+                    gtk_widget_show (prop);
+                    gtk_editable_set_editable (GTK_EDITABLE (prop), FALSE);
+                    gtk_entry_set_text (GTK_ENTRY (prop), value);
+                    gtk_box_pack_start (GTK_BOX (cont), prop, TRUE, TRUE, 0);
+                    GtkWidget *btn = gtk_button_new_with_label ("…");
+                    gtk_widget_show (btn);
+                    gtk_box_pack_start (GTK_BOX (cont), btn, FALSE, FALSE, 0);
+                    g_signal_connect (G_OBJECT (btn), "clicked", G_CALLBACK (on_prop_browse_file), prop);
+                }
+            }
+            else if (!strncmp (type, "select[", 7)) {
+                int n;
+                if (1 != sscanf (type+6, "[%d]", &n)) {
+                    break;
+                }
+
+                label = gtk_label_new (_(labeltext));
+                gtk_widget_show (label);
+
+                prop = gtk_combo_box_text_new ();
+                gtk_widget_show (prop);
+
+                for (int i = 0; i < n; i++) {
+                    char entry[MAX_TOKEN];
+                    script = gettoken_warn_eof (script, entry);
+                    if (!script) {
+                        break;
+                    }
+
+                    gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (prop), entry);
+                }
+                if (!script) {
+                    break;
+                }
+                gtk_combo_box_set_active (GTK_COMBO_BOX (prop), atoi (value));
+                g_signal_connect ((gpointer) prop, "changed",
+                        G_CALLBACK (prop_changed),
+                        containervbox);
+            }
+            else if (!strncmp (type, "hscale[", 7) || !strncmp (type, "vscale[", 7) || !strncmp (type, "spinbtn[", 8)) {
+                float min, max, step;
+                const char *args;
+                if (type[0] == 's') {
+                    args = type + 7;
+                }
+                else {
+                    args = type + 6;
+                }
+                if (3 != sscanf (args, "[%f,%f,%f]", &min, &max, &step)) {
+                    break;
+                }
+                int invert = 0;
+                if (min >= max) {
+                    float tmp = min;
+                    min = max;
+                    max = tmp;
+                    invert = 1;
+                }
+                if (step <= 0) {
+                    step = 1;
+                }
+                if (type[0] == 's') {
+                    prop = gtk_spin_button_new_with_range (min, max, step);
+                    gtk_spin_button_set_value (GTK_SPIN_BUTTON (prop), atof (value));
+                }
+                else {
+                    prop = type[0] == 'h' ? gtk_hscale_new_with_range (min, max, step) : gtk_vscale_new_with_range (min, max, step);
+                    if (invert) {
+                        gtk_range_set_inverted (GTK_RANGE (prop), TRUE);
+                    }
+                    gtk_range_set_value (GTK_RANGE (prop), (gdouble)atof (value));
+                    gtk_scale_set_value_pos (GTK_SCALE (prop), vertical?GTK_POS_BOTTOM:GTK_POS_RIGHT);
+                }
+                label = gtk_label_new (_(labeltext));
+                gtk_widget_show (label);
+                g_signal_connect (G_OBJECT (prop), "value-changed", G_CALLBACK (prop_changed), containervbox);
+                gtk_widget_show (prop);
+            }
+
         }
 
         script = gettoken_warn_eof (script, token);
@@ -496,7 +530,9 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
         }
 
 
-        if (label && prop) {
+        if (islabel && label) {
+            cont = label;
+        } else if (label && prop) {
             GtkWidget *hbox = NULL;
             hbox = vertical ? gtk_vbox_new (FALSE, 8) : gtk_hbox_new (FALSE, 8);
             gtk_widget_show (hbox);
