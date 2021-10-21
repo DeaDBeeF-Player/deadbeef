@@ -101,25 +101,45 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     CGContextRef context = NSGraphicsContext.currentContext.CGContext;
     @synchronized (self) {
         CGFloat incr = self.bounds.size.width / _input_data.nframes;
+        CGFloat pixel_amplitude = self.bounds.size.height/2;
         CGFloat xpos = 0;
+        CGFloat ypos = 0;
+        CGFloat n = 0;
         for (int i = 0; i < _input_data.nframes; i++) {
-            xpos += incr;
-            CGFloat ypos = 0;
+            CGFloat new_xpos = xpos + incr;
+            CGFloat pixel_xpos = floor(xpos);
+            if (floor(new_xpos) > pixel_xpos) {
+                if (n > 0) {
+                    ypos = ypos / n;
+                    ypos = ypos * pixel_amplitude + pixel_amplitude;
+                    if (pixel_xpos == 0) {
+                        CGContextMoveToPoint(context, pixel_xpos, ypos);
+                    }
+                    else {
+                        CGContextAddLineToPoint(context, pixel_xpos, ypos);
+                    }
+                }
+                n = 0;
+                ypos = 0;
+            }
+            xpos = new_xpos;
+            CGFloat sample = 0;
             int ch = _input_data.fmt->channels;
             for (int c = 0; c < ch; c++) {
-                ypos = _input_data.data[i * _input_data.fmt->channels + c];
+                sample = _input_data.data[i * _input_data.fmt->channels + c];
             }
-            ypos /= ch;
+            sample /= ch;
+            ypos += sample;
+            n += 1;
+        }
+        if (n > 0) {
+            ypos = ypos / n;
             ypos = ypos * self.bounds.size.height/2 + self.bounds.size.height/2;
-
-            if (i == 0) {
-                CGContextMoveToPoint(context, xpos, ypos);
-            }
-            else {
-                CGContextAddLineToPoint(context, xpos, ypos);
-            }
+            CGContextAddLineToPoint(context, xpos, ypos);
         }
     }
+    CGContextSetShouldAntialias(context, false);
+    CGContextSetLineWidth(context, 1);
     CGContextSetStrokeColorWithColor(context, self.baseColor.CGColor);
     CGContextStrokePath(context);
 }
