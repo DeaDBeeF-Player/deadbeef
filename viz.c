@@ -165,7 +165,7 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
         int bytes_size = _bytes_size;
 
         int in_frame_size = (output->fmt.bps >> 3) * output->fmt.channels;
-        int in_frames = bytes_size / in_frame_size;
+        int in_frames = in_frame_size != 0 ? bytes_size / in_frame_size : 0;
 
         // convert to float
         ddb_waveformat_t *out_fmt = calloc (1, sizeof (ddb_waveformat_t));
