@@ -63,8 +63,10 @@ static void
 _init_buffers (int fft_size) {
     if (fft_size != _fft_size) {
         _free_buffers ();
-        _freq_data = calloc(fft_size * DDB_FREQ_MAX_CHANNELS, sizeof (float));
-        _audio_data = calloc(fft_size * 2 * DDB_FREQ_MAX_CHANNELS, sizeof (float));
+        if (fft_size != 0) {
+            _freq_data = calloc(fft_size * DDB_FREQ_MAX_CHANNELS, sizeof (float));
+            _audio_data = calloc(fft_size * 2 * DDB_FREQ_MAX_CHANNELS, sizeof (float));
+        }
         _fft_size = fft_size;
     }
 }
@@ -221,8 +223,10 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
                 }
 
                 // calc fft
-                for (int c = 0; c < audio_data_channels; c++) {
-                    fft_calculate (&_audio_data[_fft_size * 2 * c], &_freq_data[_fft_size * c], _fft_size);
+                if (_audio_data != NULL) {
+                    for (int c = 0; c < audio_data_channels; c++) {
+                        fft_calculate (&_audio_data[_fft_size * 2 * c], &_freq_data[_fft_size * c], _fft_size);
+                    }
                 }
                 ddb_audio_data_t spectrum_data = {
                     .fmt = out_fmt,
