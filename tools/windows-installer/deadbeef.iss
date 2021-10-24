@@ -38,7 +38,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\DeaDBeeF
+DefaultDirName={autopf64}\DeaDBeeF
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 DisableDirPage=no
@@ -48,6 +48,7 @@ SolidCompression=yes
 WizardSmallImageFile=deadbeef.bmp
 UninstallDisplayIcon={app}\{#MyAppExeName}
 ChangesAssociations = yes
+PrivilegesRequiredOverridesAllowed=commandline dialog
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
