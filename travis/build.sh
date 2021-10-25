@@ -7,25 +7,25 @@ case "$TRAVIS_OS_NAME" in
             rm -rf static-deps
             STATICDEPS_URL="http://sourceforge.net/projects/deadbeef/files/staticdeps/ddb-static-deps-latest.tar.bz2/download"
             mkdir static-deps
-            echo "downloading static deps..."
+            echo "Downloading static deps..."
             wget "$STATICDEPS_URL" -O ddb-static-deps.tar.bz2
-            echo "unpacking static deps..."
+            echo "Unpacking static deps..."
             tar jxf ddb-static-deps.tar.bz2 -C static-deps
         fi
 #        echo "building for i686"
 #        ARCH=i686 ./scripts/static_build.sh
 #        ARCH=i686 ./scripts/portable_package_static.sh
-        echo "building for x86_64"
+        echo "Building for x86_64"
         if [[ "$1" == "--clang" ]] ; then
             CLANG_FLAG="--clang"
         fi
         ARCH=x86_64 ./scripts/static_build.sh $CLANG_FLAG
         ARCH=x86_64 ./scripts/portable_package_static.sh
-        echo "making deb package"
+        echo "Making deb package"
         ARCH=x86_64 ./tools/packages/debian.sh
-        echo "making arch package"
+        echo "Making arch package"
         ARCH=x86_64 ./tools/packages/arch.sh
-        echo "running make dist"
+        echo "Running make dist"
         make dist
     ;;
     osx)
@@ -42,14 +42,17 @@ case "$TRAVIS_OS_NAME" in
     ;;
     windows)
         STATICDEPS_URL="http://sourceforge.net/projects/deadbeef/files/staticdeps/ddb-xdispatch-win-latest.zip/download"
-        echo "downloading xdispatch_ddb..."
+        echo "Downloading xdispatch_ddb..."
         wget -q "$STATICDEPS_URL" -O ddb-xdispatch-win-latest.zip
-        echo "unpacking xdispatch_ddb..."
+        echo "Unpacking xdispatch_ddb..."
         $mingw64 unzip ddb-xdispatch-win-latest.zip
-        echo "downloading windows deps..."
+        echo "Downloading windows deps..."
         git clone https://github.com/kuba160/deadbeef-windows-deps.git
         wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha15/premake-5.0.0-alpha15-windows.zip && unzip premake-5.0.0-alpha15-windows.zip
-        echo "building for x86_64"
+        echo "Downgrading openssh"
+        wget http://repo.msys2.org/msys/x86_64/openssh-8.7p1-1-x86_64.pkg.tar.zst
+        pacman --noconfirm -U openssh-8.7p1-1-x86_64.pkg.tar.zst
+        echo "Building for x86_64"
         $mingw64 ./premake5 --standard gmake2
         $mingw64 make config=release_windows CC=clang CXX=clang++
         $mingw64 make config=debug_windows CC=clang CXX=clang++
@@ -57,11 +60,11 @@ case "$TRAVIS_OS_NAME" in
         cp -r deadbeef-windows-deps/Windows-10 bin/release/share/themes/Windows-10
         cp -r deadbeef-windows-deps/Windows-10-Icons bin/debug/share/icons/Windows-10-Icons
         cp -r deadbeef-windows-deps/Windows-10-Icons bin/release/share/icons/Windows-10-Icons
-        echo "making zip packages"
+        echo "Making zip packages"
         VERSION=`tr -d '\r' < PORTABLE_VERSION`
         mv bin/release bin/deadbeef-x86_64 && (cd bin && $msys2 zip -q -r deadbeef-$VERSION-windows-x86_64.zip deadbeef-x86_64/) && mv bin/deadbeef-x86_64 bin/release
         mv bin/debug bin/deadbeef-x86_64 && (cd bin && $msys2 zip -q -r deadbeef-$VERSION-windows-x86_64_DEBUG.zip deadbeef-x86_64/) && mv bin/deadbeef-x86_64 bin/debug
-        echo "making installer packages"
+        echo "Making installer packages"
         /C/ProgramData/chocolatey/bin/ISCC.exe "//Obin" "//Qp" tools/windows-installer/deadbeef.iss
         /C/ProgramData/chocolatey/bin/ISCC.exe "//DDEBUG" "//Obin" "//Qp" tools/windows-installer/deadbeef.iss
     ;;
