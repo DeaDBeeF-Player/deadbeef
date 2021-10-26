@@ -80,15 +80,34 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
     float ypos_max = -1;
     float n = 0;
     int point_index = 0;
+
+    float ymin_prev = pixel_amplitude;
+    float ymax_prev = pixel_amplitude;
+
     for (int i = 0; i < scope->sample_count && point_index < draw_data->point_count; i++) {
         float new_xpos = xpos + incr;
         float pixel_xpos = floor(xpos);
         if (floor(new_xpos) > pixel_xpos) {
             if (n > 0) {
+                float ymin = ypos_min * pixel_amplitude + pixel_amplitude;
+                float ymax = ypos_max * pixel_amplitude + pixel_amplitude;
+                if (ymin > ymax_prev) {
+                    ymin = ymax_prev;
+                }
+                if (ymax < ymin_prev) {
+                    ymax = ymin_prev;
+                }
+                if (ymax - ymin < 1) {
+                    ymin = ymax-1;
+                }
+
                 draw_data->points[point_index].x = pixel_xpos;
-                draw_data->points[point_index].ymin = ypos_min * pixel_amplitude + pixel_amplitude;
-                draw_data->points[point_index].ymax = ypos_max * pixel_amplitude + pixel_amplitude;
+                draw_data->points[point_index].ymin = ymin;
+                draw_data->points[point_index].ymax = ymax;
                 point_index += 1;
+
+                ymin_prev = ymin;
+                ymax_prev = ymax;
             }
             n = 0;
             ypos_min = 1;

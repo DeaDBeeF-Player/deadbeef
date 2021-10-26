@@ -115,10 +115,10 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
 
     CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-    CGContextMoveToPoint(context, 0, self.bounds.size.height/2);
+
     ddb_scope_point_t *point = _draw_data.points;
     for (int i = 0; i < _draw_data.point_count; i++, point++) {
-        CGContextAddLineToPoint(context, point->x, point->ymin);
+        CGContextMoveToPoint(context, point->x, point->ymin);
         CGContextAddLineToPoint(context, point->x, point->ymax);
     }
 
