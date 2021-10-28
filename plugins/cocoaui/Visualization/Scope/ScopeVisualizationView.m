@@ -73,6 +73,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     _isListening = NO;
     _input_data.fmt = &_fmt;
     ddb_scope_init(&_scope);
+    _scope.mode = DDB_SCOPE_MULTICHANNEL;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
@@ -116,12 +117,17 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
     CGContextRef context = NSGraphicsContext.currentContext.CGContext;
 
+    int output_channels = _scope.mode == DDB_SCOPE_MONO ? 1 : _scope.channels;
+
     ddb_scope_point_t *point = _draw_data.points;
-    for (int i = 0; i < _draw_data.point_count; i++, point++) {
-        CGContextMoveToPoint(context, point->x, point->ymin);
-        CGContextAddLineToPoint(context, point->x, point->ymax);
+    for (int ch = 0; ch < output_channels; ch++) {
+        for (int i = 0; i < _draw_data.point_count; i++, point++) {
+            CGContextMoveToPoint(context, i, point->ymin);
+            CGContextAddLineToPoint(context, i, point->ymax);
+        }
     }
 
+    CGContextSetShouldAntialias(context, false);
     CGContextSetStrokeColorWithColor(context, self.baseColor.CGColor);
     CGContextStrokePath(context);
 }

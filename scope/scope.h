@@ -28,17 +28,23 @@
 extern "C" {
 #endif
 
+typedef enum {
+    DDB_SCOPE_MONO,
+    DDB_SCOPE_MULTICHANNEL,
+} ddb_scope_mode_t;
+
 typedef struct {
-    float x;
     float ymin, ymax;
 } ddb_scope_point_t;
 
 typedef struct {
     int point_count;
-    ddb_scope_point_t *points;
+    ddb_scope_point_t *points; // real point count is multiplied by number of channels, in planar layout
 } ddb_scope_draw_data_t;
 
 typedef struct {
+    ddb_scope_mode_t mode;
+    int mode_did_change;
     int samplerate;
     int channels;
     int sample_count;

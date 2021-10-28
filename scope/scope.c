@@ -51,7 +51,9 @@ ddb_scope_free (ddb_scope_t *scope) {
 
 void
 ddb_scope_process (ddb_scope_t * restrict scope, int samplerate, int channels, const float * restrict samples, int sample_count) {
-    if (channels != scope->channels || sample_count != scope->sample_count || samplerate != scope->samplerate) {
+    if (channels != scope->channels
+        || sample_count != scope->sample_count
+        || samplerate != scope->samplerate) {
         scope->channels = channels;
         scope->sample_count = sample_count;
         scope->samplerate = samplerate;
@@ -68,71 +70,86 @@ ddb_scope_tick (ddb_scope_t * restrict scope) {
 
 void
 ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_height, ddb_scope_draw_data_t * restrict draw_data) {
-    if (draw_data->point_count != view_width) {
+    if (scope->mode_did_change
+        || draw_data->point_count != view_width) {
         free (draw_data->points);
-        draw_data->points = calloc (view_width, sizeof (ddb_scope_point_t));
+        int channels = scope->mode == DDB_SCOPE_MONO ? 1 : scope->channels;
+        draw_data->points = calloc (view_width * channels, sizeof (ddb_scope_point_t));
         draw_data->point_count = view_width;
+        scope->mode_did_change = 0;
     }
-    float pixel_amplitude = view_height/2;
     float incr = (float)view_width / scope->sample_count;
-    float xpos = 0;
     float ypos_min = 1;
     float ypos_max = -1;
     float n = 0;
     int point_index = 0;
 
+    int output_channels = scope->mode == DDB_SCOPE_MULTICHANNEL ? scope->channels : 1;
+
+    float channel_height = view_height / output_channels;
+    float pixel_amplitude = channel_height / 2;
+
     float ymin_prev = pixel_amplitude;
     float ymax_prev = pixel_amplitude;
 
-    for (int i = 0; i < scope->sample_count && point_index < draw_data->point_count; i++) {
-        float new_xpos = xpos + incr;
-        float pixel_xpos = floor(xpos);
-        if (floor(new_xpos) > pixel_xpos) {
-            if (n > 0) {
-                float ymin = ypos_min * pixel_amplitude + pixel_amplitude;
-                float ymax = ypos_max * pixel_amplitude + pixel_amplitude;
-                if (ymin > ymax_prev) {
-                    ymin = ymax_prev;
-                }
-                if (ymax < ymin_prev) {
-                    ymax = ymin_prev;
-                }
-                if (ymax - ymin < 1) {
-                    ymin = ymax-1;
-                }
+    for (int output_channel = 0; output_channel < output_channels; output_channel++) {
+        int channel_point_index = 0;
+        float xpos = 0;
+        for (int i = 0; i < scope->sample_count && channel_point_index < draw_data->point_count; i++) {
+            float new_xpos = xpos + incr;
+            float pixel_xpos = floor(xpos);
+            if (floor(new_xpos) > pixel_xpos) {
+                if (n > 0) {
+                    float ymin = (ypos_min * pixel_amplitude + pixel_amplitude) + output_channel * channel_height;
+                    float ymax = (ypos_max * pixel_amplitude + pixel_amplitude) + output_channel * channel_height;
+                    if (ymin > ymax_prev) {
+                        ymin = ymax_prev;
+                    }
+                    if (ymax < ymin_prev) {
+                        ymax = ymin_prev;
+                    }
+                    if (ymax - ymin < 1) {
+                        ymin = ymax-1;
+                    }
 
-                draw_data->points[point_index].x = pixel_xpos;
-                draw_data->points[point_index].ymin = ymin;
-                draw_data->points[point_index].ymax = ymax;
-                point_index += 1;
+                    draw_data->points[point_index].ymin = ymin;
+                    draw_data->points[point_index].ymax = ymax;
+                    point_index += 1;
+                    channel_point_index += 1;
 
-                ymin_prev = ymin;
-                ymax_prev = ymax;
+                    ymin_prev = ymin;
+                    ymax_prev = ymax;
+                }
+                n = 0;
+                ypos_min = 1;
+                ypos_max = -1;
             }
-            n = 0;
-            ypos_min = 1;
-            ypos_max = -1;
+            xpos = new_xpos;
+            float sample = 0;
+            if (scope->mode == DDB_SCOPE_MONO) {
+                int ch = scope->channels;
+                for (int c = 0; c < ch; c++) {
+                    sample = scope->samples[i * scope->channels + c];
+                }
+                sample /= ch;
+            }
+            else if (scope->mode == DDB_SCOPE_MULTICHANNEL) {
+                sample = scope->samples[i * scope->channels + output_channel];
+            }
+            if (sample > ypos_max) {
+                ypos_max = sample;
+            }
+            if (sample < ypos_min) {
+                ypos_min = sample;
+            }
+            n += 1;
         }
-        xpos = new_xpos;
-        float sample = 0;
-        int ch = scope->channels;
-        for (int c = 0; c < ch; c++) {
-            sample = scope->samples[i * scope->channels + c];
+        if (n > 0 && point_index < draw_data->point_count) {
+            draw_data->points[point_index].ymin = ypos_min * pixel_amplitude + pixel_amplitude;
+            draw_data->points[point_index].ymax = ypos_max * pixel_amplitude + pixel_amplitude;
+            point_index += 1;
+            channel_point_index += 1;
         }
-        sample /= ch;
-        if (sample > ypos_max) {
-            ypos_max = sample;
-        }
-        if (sample < ypos_min) {
-            ypos_min = sample;
-        }
-        n += 1;
-    }
-    if (n > 0 && point_index < draw_data->point_count) {
-        draw_data->points[point_index].x = view_width - 1;
-        draw_data->points[point_index].ymin = ypos_min * pixel_amplitude + pixel_amplitude;
-        draw_data->points[point_index].ymax = ypos_max * pixel_amplitude + pixel_amplitude;
-        point_index += 1;
     }
 }
 
