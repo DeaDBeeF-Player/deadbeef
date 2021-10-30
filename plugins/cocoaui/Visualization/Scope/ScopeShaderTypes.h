@@ -25,6 +25,7 @@ struct FragParams
 {
     vector_float4 color;
     vector_uint2 size;
+    float scale;
     int point_count;
     int channels;
 };
