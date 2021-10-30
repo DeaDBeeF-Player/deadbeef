@@ -1582,6 +1582,14 @@
 		2D98B680272B272300E655AE /* ScopeShaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B66E272B272300E655AE /* ScopeShaderTypes.h */; };
 		2D98B681272B272300E655AE /* ScopeShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B67E272B272300E655AE /* ScopeShaders.metal */; };
 		2D98B682272B272300E655AE /* ScopeShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B67E272B272300E655AE /* ScopeShaders.metal */; };
+		2D98B685272D56F100E655AE /* ScopeVisualizationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B683272D56F100E655AE /* ScopeVisualizationViewController.h */; };
+		2D98B686272D56F100E655AE /* ScopeVisualizationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B683272D56F100E655AE /* ScopeVisualizationViewController.h */; };
+		2D98B687272D56F100E655AE /* ScopeVisualizationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B684272D56F100E655AE /* ScopeVisualizationViewController.m */; };
+		2D98B688272D56F100E655AE /* ScopeVisualizationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B684272D56F100E655AE /* ScopeVisualizationViewController.m */; };
+		2D98B68B272D573700E655AE /* ScopeSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B689272D573700E655AE /* ScopeSettings.h */; };
+		2D98B68C272D573700E655AE /* ScopeSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B689272D573700E655AE /* ScopeSettings.h */; };
+		2D98B68D272D573700E655AE /* ScopeSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B68A272D573700E655AE /* ScopeSettings.m */; };
+		2D98B68E272D573700E655AE /* ScopeSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B68A272D573700E655AE /* ScopeSettings.m */; };
 		2D9BD6792405A81600C02D60 /* SoundPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9BD6772405A81600C02D60 /* SoundPreferencesViewController.h */; };
 		2D9BD67A2405A81600C02D60 /* SoundPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BD6782405A81600C02D60 /* SoundPreferencesViewController.m */; };
 		2D9C0C15238DC0E700CE8C10 /* GroupByCustomWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D9C0C14238DC0E700CE8C10 /* GroupByCustomWindow.xib */; };
@@ -5339,6 +5347,10 @@
 		2D986141226C816000BAACB1 /* BrowseButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowseButton.m; sourceTree = "<group>"; };
 		2D98B66E272B272300E655AE /* ScopeShaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopeShaderTypes.h; sourceTree = "<group>"; };
 		2D98B67E272B272300E655AE /* ScopeShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = ScopeShaders.metal; sourceTree = "<group>"; };
+		2D98B683272D56F100E655AE /* ScopeVisualizationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopeVisualizationViewController.h; sourceTree = "<group>"; };
+		2D98B684272D56F100E655AE /* ScopeVisualizationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScopeVisualizationViewController.m; sourceTree = "<group>"; };
+		2D98B689272D573700E655AE /* ScopeSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopeSettings.h; sourceTree = "<group>"; };
+		2D98B68A272D573700E655AE /* ScopeSettings.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScopeSettings.m; sourceTree = "<group>"; };
 		2D999EC32431258700EF68EE /* ScriptableProtocols.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableProtocols.h; sourceTree = "<group>"; };
 		2D9BD6772405A81600C02D60 /* SoundPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SoundPreferencesViewController.h; sourceTree = "<group>"; };
 		2D9BD6782405A81600C02D60 /* SoundPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SoundPreferencesViewController.m; sourceTree = "<group>"; };
@@ -7245,6 +7257,7 @@
 		0D568525271DBD6A0026F700 /* SpectrumAnalyzer */ = {
 			isa = PBXGroup;
 			children = (
+				2DB951C826B1E03600602876 /* Models */,
 				2DBC62D424CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.h */,
 				2DBC62D524CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m */,
 				2DBC62D824CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.h */,
@@ -7256,10 +7269,13 @@
 		0D56852C271DC4160026F700 /* Scope */ = {
 			isa = PBXGroup;
 			children = (
+				2D98B68F272D573C00E655AE /* Models */,
 				2D98B67E272B272300E655AE /* ScopeShaders.metal */,
 				2D98B66E272B272300E655AE /* ScopeShaderTypes.h */,
 				0D56852D271DC4270026F700 /* ScopeVisualizationView.h */,
 				0D56852E271DC4270026F700 /* ScopeVisualizationView.m */,
+				2D98B683272D56F100E655AE /* ScopeVisualizationViewController.h */,
+				2D98B684272D56F100E655AE /* ScopeVisualizationViewController.m */,
 			);
 			path = Scope;
 			sourceTree = "<group>";
@@ -8528,7 +8544,6 @@
 		2D30D13625E2A6B40023A299 /* DesignMode */ = {
 			isa = PBXGroup;
 			children = (
-				2DB951C826B1E03600602876 /* Models */,
 				2DE5562426075B4200285BF9 /* Widgets */,
 				2DDD76C625E152BF00FA6FE5 /* DesignModeDefs.h */,
 				2D9EBB6F25E45BAA00255592 /* DesignModeDeps.h */,
@@ -9642,6 +9657,15 @@
 				2D92D0551CD513AA00CD53F0 /* trkproperties_shared.h */,
 			);
 			path = shared;
+			sourceTree = "<group>";
+		};
+		2D98B68F272D573C00E655AE /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				2D98B689272D573700E655AE /* ScopeSettings.h */,
+				2D98B68A272D573700E655AE /* ScopeSettings.m */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		2D9D359724A522B600CF2035 /* arm */ = {
@@ -11787,6 +11811,7 @@
 				2DDD764425E1506100FA6FE5 /* metadata.h in Headers */,
 				2D9EBB7225E45BAA00255592 /* DesignModeDeps.h in Headers */,
 				2DDD7ABC25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */,
+				2D98B686272D56F100E655AE /* ScopeVisualizationViewController.h in Headers */,
 				2D448A851D5C5C6500B43F12 /* logger.h in Headers */,
 				2DA8912225FFEB9B0084860D /* PlaylistGroup.h in Headers */,
 				2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */,
@@ -11804,6 +11829,7 @@
 				2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */,
 				2D98B680272B272300E655AE /* ScopeShaderTypes.h in Headers */,
 				0D568530271DC4280026F700 /* ScopeVisualizationView.h in Headers */,
+				2D98B68C272D573700E655AE /* ScopeSettings.h in Headers */,
 				2DE5562826075B8400285BF9 /* AlbumArtWidget.h in Headers */,
 				2D9EBAAC25E44A0700255592 /* WidgetSerializer.h in Headers */,
 				2D5F05F125E306BC000A588C /* SpectrumAnalyzerWidget.h in Headers */,
@@ -12987,6 +13013,7 @@
 				2DDD778E25E153D000FA6FE5 /* WidgetFactory.h in Headers */,
 				2DAD80A12416DBB100EB3075 /* CustomToolbarItem.h in Headers */,
 				2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */,
+				2D98B68B272D573700E655AE /* ScopeSettings.h in Headers */,
 				2D9EBB7125E45BAA00255592 /* DesignModeDeps.h in Headers */,
 				2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */,
 				2DEBA1BF23E203B9000E4135 /* eqpreset.h in Headers */,
@@ -13036,6 +13063,7 @@
 				2DA32B1524D6D83C00D96C84 /* MediaLibrarySelectorCellView.h in Headers */,
 				2D98B67F272B272300E655AE /* ScopeShaderTypes.h in Headers */,
 				2D747E4024B6580A00BBB987 /* MainWindowSidebarViewController.h in Headers */,
+				2D98B685272D56F100E655AE /* ScopeVisualizationViewController.h in Headers */,
 				2DA30E7424032550001BAB8A /* NetworkPreferencesViewController.h in Headers */,
 				2D9BD6792405A81600C02D60 /* SoundPreferencesViewController.h in Headers */,
 				2D90EF992438A5A600AF6F4B /* ScriptableErrorViewer.h in Headers */,
@@ -14945,6 +14973,7 @@
 				2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */,
 				2D5121C61B01DEFD009F6410 /* sort.c in Sources */,
 				2D9E5C6724AE6DE60099B108 /* wcwidth.c in Sources */,
+				2D98B688272D56F100E655AE /* ScopeVisualizationViewController.m in Sources */,
 				2DA30E6F2402D29A001BAB8A /* ctmap.c in Sources */,
 				2D9E9B5126BB1DF000757C71 /* fft_accelerate.c in Sources */,
 				2D01D7E21AB2219C00BCD3C4 /* streamer.c in Sources */,
@@ -14977,6 +15006,7 @@
 				2D01D7E01AB2219C00BCD3C4 /* replaygain.c in Sources */,
 				2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */,
 				2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */,
+				2D98B68E272D573700E655AE /* ScopeSettings.m in Sources */,
 				0D568532271DC4280026F700 /* ScopeVisualizationView.m in Sources */,
 				2D5F05F325E306BC000A588C /* SpectrumAnalyzerWidget.m in Sources */,
 				2D40208F1F27BD7200D4EA4F /* cueutil.c in Sources */,
@@ -16241,6 +16271,7 @@
 				2D887BE624B1C86D0078392F /* MediaLibraryItem.m in Sources */,
 				2D3CD9382409A091005875A9 /* PinnedGroupTitleView.m in Sources */,
 				2D46221E226DBA57003997E9 /* FlippedClipView.m in Sources */,
+				2D98B68D272D573700E655AE /* ScopeSettings.m in Sources */,
 				2DA273792406ED4100FB9BE1 /* GuiPreferencesWindowController.m in Sources */,
 				2DDBA26523E5F14A00051320 /* PlaylistHeaderView.m in Sources */,
 				2D046F3A25E2B17700F68459 /* DesignModeEventHandler.m in Sources */,
@@ -16248,6 +16279,7 @@
 				2DAA4041269AF880006D2754 /* WeakRefWrapper.m in Sources */,
 				2DBC62D724CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m in Sources */,
 				2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */,
+				2D98B687272D56F100E655AE /* ScopeVisualizationViewController.m in Sources */,
 				2DDF87DA24027DA500CA8E91 /* PluginActionMenuItem.m in Sources */,
 				2DAD80A22416DBB100EB3075 /* CustomToolbarItem.m in Sources */,
 				0D56856D272197B30026F700 /* scope.c in Sources */,

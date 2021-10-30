@@ -44,8 +44,6 @@ static void *kBarGranularity = &kBarGranularity;
 
     _deps = deps;
 
-    _settings = [SpectrumAnalyzerSettings new];
-
     _visualizationViewController = [SpectrumAnalyzerVisualizationViewController new];
     _visualizationView = [[SpectrumAnalyzerVisualizationView alloc] initWithFrame:NSZeroRect];
     _visualizationViewController.view = _visualizationView;
@@ -58,9 +56,11 @@ static void *kBarGranularity = &kBarGranularity;
     [_visualizationViewController.view.topAnchor constraintEqualToAnchor:self.topLevelView.topAnchor].active = YES;
     [_visualizationViewController.view.bottomAnchor constraintEqualToAnchor:self.topLevelView.bottomAnchor].active = YES;
 
+    _settings = [SpectrumAnalyzerSettings new];
     [_settings addObserver:self forKeyPath:@"mode" options:0 context:kModeContext];
     [_settings addObserver:self forKeyPath:@"distanceBetweenBars" options:0 context:kDistanceBetweenBarsContext];
     [_settings addObserver:self forKeyPath:@"barGranularity" options:0 context:kBarGranularity];
+
 
     self.settings.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
     self.settings.barGranularity = 1;

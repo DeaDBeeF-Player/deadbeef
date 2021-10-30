@@ -22,6 +22,8 @@ static void *kIsVisibleContext = &kIsVisibleContext;
 
 @property (nonatomic) BOOL isListening;
 @property (nonatomic,readonly) NSColor *baseColor;
+@property (nonatomic) ScopeScaleMode scaleMode;
+@property (nonatomic,readonly) CGFloat scaleFactor;
 
 @end
 
@@ -122,6 +124,21 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
 }
 
+- (CGFloat)scaleFactor {
+    switch (self.scaleMode) {
+    case ScopeScaleModeAuto:
+        return 1;
+    case ScopeScaleMode1x:
+        return self.window.backingScaleFactor;
+    case ScopeScaleMode2x:
+        return self.window.backingScaleFactor / 2;
+    case ScopeScaleMode3x:
+        return self.window.backingScaleFactor / 3;
+    case ScopeScaleMode4x:
+        return self.window.backingScaleFactor / 4;
+    }
+}
+
 - (BOOL)updateDrawData {
     // for some reason KVO is not triggered when the window becomes hidden
     if (self.isListening && !self.window.isVisible) {
@@ -134,10 +151,12 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
         return NO;
     }
 
+    CGFloat scale = self.scaleFactor;
+
     @synchronized (self) {
         ddb_scope_process(&_scope, _input_data.fmt->samplerate, _input_data.fmt->channels, _input_data.data, _input_data.nframes);
         ddb_scope_tick(&_scope);
-        ddb_scope_get_draw_data(&_scope, (int)(self.bounds.size.width * self.window.backingScaleFactor), (int)(self.bounds.size.height * self.window.backingScaleFactor), &_draw_data);
+        ddb_scope_get_draw_data(&_scope, (int)(self.bounds.size.width * scale), (int)(self.bounds.size.height * scale), &_draw_data);
     }
 
     return YES;
@@ -192,6 +211,15 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
 #endif
     return NSColor.alternateSelectedControlColor;
+}
+
+- (void)updateScopeSettings:(ScopeSettings *)settings {
+    if (_scope.mode != settings.renderMode) {
+        _scope.mode_did_change = 1;
+    }
+    _scope.mode = settings.renderMode;
+
+    self.scaleMode = settings.scaleMode;
 }
 
 #pragma mark - MTKViewDelegate
@@ -255,7 +283,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
         params.size.y = vp.y;
         params.point_count = _draw_data.point_count;
         params.channels = _scope.mode == DDB_SCOPE_MONO ? 1 : _scope.channels;
-        params.scale = 1;//(float)self.window.backingScaleFactor;
+        params.scale = (float)(self.window.backingScaleFactor / self.scaleFactor);
         [renderEncoder setFragmentBytes:&params length:sizeof (params) atIndex:0];
 
         [renderEncoder setFragmentBytes:_draw_data.points length:_draw_data.point_count * sizeof (ddb_scope_point_t) * params.channels atIndex:1];

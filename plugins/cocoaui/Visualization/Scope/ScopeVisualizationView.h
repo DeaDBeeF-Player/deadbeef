@@ -8,10 +8,13 @@
 
 #import <Cocoa/Cocoa.h>
 #import <MetalKit/MTKView.h>
+#import "ScopeSettings.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ScopeVisualizationView : MTKView
+
+- (void)updateScopeSettings:(ScopeSettings *)settings;
 
 @end
 
