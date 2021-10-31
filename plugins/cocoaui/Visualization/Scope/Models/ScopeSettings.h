@@ -17,12 +17,21 @@ typedef NS_ENUM(NSInteger, ScopeScaleMode) {
     ScopeScaleMode4x,
 };
 
+typedef NS_ENUM(NSInteger, ScopeFragmentDuration) {
+    ScopeFragmentDuration50,
+    ScopeFragmentDuration100,
+    ScopeFragmentDuration200,
+    ScopeFragmentDuration300,
+    ScopeFragmentDuration500,
+};
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ScopeSettings : NSObject
 
 @property (nonatomic) ddb_scope_mode_t renderMode;
 @property (nonatomic) ScopeScaleMode scaleMode;
+@property (nonatomic) ScopeFragmentDuration fragmentDuration;
 
 @end
 

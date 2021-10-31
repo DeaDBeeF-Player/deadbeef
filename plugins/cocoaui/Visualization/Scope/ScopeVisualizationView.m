@@ -150,8 +150,10 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     @synchronized (self) {
         CGFloat scale = self.scaleFactor;
 
-        ddb_scope_tick(&_scope);
-        ddb_scope_get_draw_data(&_scope, (int)(self.bounds.size.width * scale), (int)(self.bounds.size.height * scale), &_draw_data);
+        if (_scope.sample_count != 0) {
+            ddb_scope_tick(&_scope);
+            ddb_scope_get_draw_data(&_scope, (int)(self.bounds.size.width * scale), (int)(self.bounds.size.height * scale), &_draw_data);
+        }
     }
 
     return YES;
@@ -224,6 +226,24 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     _scope.mode = settings.renderMode;
 
     self.scaleMode = settings.scaleMode;
+
+    switch (settings.fragmentDuration) {
+    case ScopeFragmentDuration50:
+        _scope.fragment_duration = 50;
+        break;
+    case ScopeFragmentDuration100:
+        _scope.fragment_duration = 100;
+        break;
+    case ScopeFragmentDuration200:
+        _scope.fragment_duration = 200;
+        break;
+    case ScopeFragmentDuration300:
+        _scope.fragment_duration = 300;
+        break;
+    case ScopeFragmentDuration500:
+        _scope.fragment_duration = 500;
+        break;
+    }
 }
 
 #pragma mark - MTKViewDelegate

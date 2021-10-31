@@ -64,7 +64,7 @@ ddb_scope_process (ddb_scope_t * restrict scope, int samplerate, int channels, c
         scope->sample_count = fragment_sample_count;
         scope->samplerate = samplerate;
         free (scope->samples);
-        scope->samples = malloc (scope->sample_count * channels * sizeof (float));
+        scope->samples = calloc (scope->sample_count * channels, sizeof (float));
     }
 
     // append samples

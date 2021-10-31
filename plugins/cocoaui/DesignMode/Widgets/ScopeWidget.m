@@ -13,6 +13,7 @@
 
 static void *kRenderModeContext = &kRenderModeContext;
 static void *kScaleModeContext = &kScaleModeContext;
+static void *kFragmentDurationContext = &kFragmentDurationContext;
 
 @interface ScopeWidget()
 
@@ -32,6 +33,7 @@ static void *kScaleModeContext = &kScaleModeContext;
 - (void)dealloc {
     [self.settings removeObserver:self forKeyPath:@"renderMode"];
     [self.settings removeObserver:self forKeyPath:@"scaleMode"];
+    [self.settings removeObserver:self forKeyPath:@"fragmentDuration"];
 }
 
 - (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
@@ -57,6 +59,7 @@ static void *kScaleModeContext = &kScaleModeContext;
     _settings = [ScopeSettings new];
     [_settings addObserver:self forKeyPath:@"renderMode" options:0 context:kRenderModeContext];
     [_settings addObserver:self forKeyPath:@"scaleMode" options:0 context:kScaleModeContext];
+    [_settings addObserver:self forKeyPath:@"fragmentDuration" options:0 context:kFragmentDurationContext];
 
     _visualizationViewController.settings = _settings;
     [_visualizationView updateScopeSettings:_settings];
@@ -70,6 +73,9 @@ static void *kScaleModeContext = &kScaleModeContext;
         [self.visualizationView updateScopeSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else if (context == kScaleModeContext) {
+        [self.visualizationView updateScopeSettings:self.settings];
+        [self.deps.state layoutDidChange];
+    } else if (context == kFragmentDurationContext) {
         [self.visualizationView updateScopeSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else {
@@ -109,9 +115,29 @@ static void *kScaleModeContext = &kScaleModeContext;
         break;
     }
 
+    NSString *fragmentDuration;
+    switch (self.settings.fragmentDuration) {
+    case ScopeFragmentDuration50:
+        fragmentDuration = @"50";
+        break;
+    case ScopeFragmentDuration100:
+        fragmentDuration = @"100";
+        break;
+    case ScopeFragmentDuration200:
+        fragmentDuration = @"200";
+        break;
+    case ScopeFragmentDuration300:
+        fragmentDuration = @"300";
+        break;
+    case ScopeFragmentDuration500:
+        fragmentDuration = @"500";
+        break;
+    }
+
     return @{
         @"renderMode": renderMode,
         @"scaleMode": scaleMode,
+        @"fragmentDuration": fragmentDuration,
     };
 }
 
@@ -143,6 +169,25 @@ static void *kScaleModeContext = &kScaleModeContext;
         }
         else if ([scaleModeString isEqualToString:@"4"]) {
             self.settings.scaleMode = ScopeScaleMode4x;
+        }
+    }
+
+    NSString *fragmentDurationString = dictionary[@"fragmentDuration"];
+    if ([fragmentDurationString isKindOfClass:NSString.class]) {
+        if ([fragmentDurationString isEqualToString:@"50"]) {
+            self.settings.fragmentDuration = ScopeFragmentDuration50;
+        }
+        else if ([fragmentDurationString isEqualToString:@"100"]) {
+            self.settings.fragmentDuration = ScopeFragmentDuration100;
+        }
+        else if ([fragmentDurationString isEqualToString:@"200"]) {
+            self.settings.fragmentDuration = ScopeFragmentDuration200;
+        }
+        else if ([fragmentDurationString isEqualToString:@"300"]) {
+            self.settings.fragmentDuration = ScopeFragmentDuration300;
+        }
+        else if ([fragmentDurationString isEqualToString:@"500"]) {
+            self.settings.fragmentDuration = ScopeFragmentDuration500;
         }
     }
 
