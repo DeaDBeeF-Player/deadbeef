@@ -106,10 +106,10 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
     float channel_height = view_height / output_channels;
     float pixel_amplitude = channel_height / 2;
 
-    float ymin_prev = pixel_amplitude;
-    float ymax_prev = pixel_amplitude;
-
     for (int output_channel = 0; output_channel < output_channels; output_channel++) {
+        float ymin_prev = pixel_amplitude + output_channel * channel_height;
+        float ymax_prev = pixel_amplitude + output_channel * channel_height;
+
         int channel_point_index = 0;
         float xpos = 0;
         for (int i = 0; i < scope->sample_count && channel_point_index < draw_data->point_count; i++) {
