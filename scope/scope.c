@@ -51,17 +51,34 @@ ddb_scope_free (ddb_scope_t *scope) {
 
 void
 ddb_scope_process (ddb_scope_t * restrict scope, int samplerate, int channels, const float * restrict samples, int sample_count) {
-    if (channels != scope->channels
-        || sample_count != scope->sample_count
-        || samplerate != scope->samplerate) {
-        scope->channels = channels;
-        scope->sample_count = sample_count;
-        scope->samplerate = samplerate;
-        free (scope->samples);
-        scope->samples = malloc (sample_count * channels * sizeof (float));
+
+    if (scope->fragment_duration == 0) {
+        scope->fragment_duration = 50;
     }
 
-    memcpy (scope->samples, samples, sample_count * channels * sizeof (float));
+    int fragment_sample_count = (float)scope->fragment_duration / 1000.f * samplerate;
+    if (channels != scope->channels
+        || samplerate != scope->samplerate
+        || fragment_sample_count != scope->sample_count) {
+        scope->channels = channels;
+        scope->sample_count = fragment_sample_count;
+        scope->samplerate = samplerate;
+        free (scope->samples);
+        scope->samples = malloc (scope->sample_count * channels * sizeof (float));
+    }
+
+    // append samples
+
+    // input size larger than the buffer? copy the tail.
+    if (sample_count > scope->sample_count) {
+        memcpy (scope->samples, samples + (sample_count - scope->sample_count) * channels, scope->sample_count * channels * sizeof (float));
+    }
+    // otherwise append
+    else {
+        int move_samples = scope->sample_count - sample_count;
+        memmove (scope->samples, scope->samples + (scope->sample_count - move_samples) * channels, move_samples * channels * sizeof(float));
+        memcpy (scope->samples + move_samples * channels, samples, sample_count * channels * sizeof (float));
+    }
 }
 
 void

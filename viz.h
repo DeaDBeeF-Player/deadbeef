@@ -26,7 +26,7 @@
 #include "deadbeef.h"
 
 void
-viz_process (char * restrict bytes, int bytes_size, DB_output_t *output, int fft_size);
+viz_process (char * restrict bytes, int bytes_size, DB_output_t *output, int fft_size, int wave_size);
 
 void
 viz_init (void);

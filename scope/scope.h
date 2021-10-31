@@ -45,6 +45,7 @@ typedef struct {
 typedef struct {
     ddb_scope_mode_t mode;
     int mode_did_change;
+    int fragment_duration; // ms
     int samplerate;
     int channels;
     int sample_count;

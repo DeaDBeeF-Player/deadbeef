@@ -147,14 +147,9 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
         return NO;
     }
 
-    if (_input_data.nframes == 0) {
-        return NO;
-    }
-
-    CGFloat scale = self.scaleFactor;
-
     @synchronized (self) {
-        ddb_scope_process(&_scope, _input_data.fmt->samplerate, _input_data.fmt->channels, _input_data.data, _input_data.nframes);
+        CGFloat scale = self.scaleFactor;
+
         ddb_scope_tick(&_scope);
         ddb_scope_get_draw_data(&_scope, (int)(self.bounds.size.width * scale), (int)(self.bounds.size.height * scale), &_draw_data);
     }
@@ -201,6 +196,15 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
         }
         memcpy (_input_data.fmt, data->fmt, sizeof (ddb_waveformat_t));
         memcpy (_input_data.data, data->data, data->nframes * data->fmt->channels * sizeof (float));
+
+        if (_input_data.nframes == 0) {
+            return;
+        }
+
+        @synchronized (self) {
+            ddb_scope_process(&_scope, _input_data.fmt->samplerate, _input_data.fmt->channels, _input_data.data, _input_data.nframes);
+        }
+
     }
 }
 

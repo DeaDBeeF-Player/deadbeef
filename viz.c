@@ -154,7 +154,7 @@ viz_reset (void) {
 }
 
 void
-viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int fft_size) {
+viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int fft_size, int wave_size) {
     dispatch_sync(sync_queue, ^{
         _init_buffers(fft_size);
         if (!waveform_listeners && !spectrum_listeners) {
@@ -192,7 +192,7 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
         ddb_audio_data_t *waveform_data = calloc(1, sizeof(ddb_audio_data_t));
         waveform_data->fmt = out_fmt;
         waveform_data->data = data;
-        waveform_data->nframes = process_samples;
+        waveform_data->nframes = wave_size;
 
         // Pass to async queue for processing and callbacks
         dispatch_async (process_queue, ^{
