@@ -33,7 +33,7 @@ vertexShader(uint vertexID [[vertex_id]],
 
 fragment float4 fragmentShader(RasterizerData in [[stage_in]], constant FragParams &params [[buffer(0)]], constant float2 *minmax [[buffer(1)]]) {
     float index = floor(in.position.x/params.scale);
-    float y = in.position.y/params.scale;
+    float y = floor(in.position.y / params.scale);
 
     int coffs = 0;
     float line = 0;
@@ -41,7 +41,8 @@ fragment float4 fragmentShader(RasterizerData in [[stage_in]], constant FragPara
         int minmax_index = coffs + index;
         float ymin = minmax[minmax_index].x;
         float ymax = minmax[minmax_index].y;
-        line += step(ymin, y) * step(y, ymax);
+        line += smoothstep(ymin - 1, ymin, y) * smoothstep(-ymax - 1, -ymax, -y);
+//        line += step(ymin, y) * step(-ymax, -y);
         coffs += params.point_count;
     }
 
