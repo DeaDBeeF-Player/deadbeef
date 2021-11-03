@@ -96,8 +96,6 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
         scope->mode_did_change = 0;
     }
     float incr = (float)view_width / scope->sample_count;
-    float ypos_min = 1;
-    float ypos_max = -1;
     float n = 0;
     int point_index = 0;
 
@@ -112,6 +110,8 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
 
         int channel_point_index = 0;
         float xpos = 0;
+        float ypos_min = 1;
+        float ypos_max = -1;
         for (int i = 0; i < scope->sample_count && channel_point_index < draw_data->point_count; i++) {
             float new_xpos = xpos + incr;
             float pixel_xpos = floor(xpos);
@@ -119,14 +119,16 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
                 if (n > 0) {
                     float ymin = (ypos_min * pixel_amplitude + pixel_amplitude) + output_channel * channel_height;
                     float ymax = (ypos_max * pixel_amplitude + pixel_amplitude) + output_channel * channel_height;
-                    if (ymin > ymax_prev) {
-                        ymin = ymax_prev;
-                    }
-                    if (ymax < ymin_prev) {
-                        ymax = ymin_prev;
-                    }
-                    if (ymax - ymin < 1) {
-                        ymin = ymax-1;
+                    if (channel_point_index > 0) {
+                        if (ymin > ymax_prev) {
+                            ymin = ymax_prev;
+                        }
+                        if (ymax < ymin_prev) {
+                            ymax = ymin_prev;
+                        }
+                        if (ymax - ymin < 1) {
+                            ymin = ymax-1;
+                        }
                     }
 
                     draw_data->points[point_index].ymin = ymin;
