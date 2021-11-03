@@ -42,9 +42,11 @@ fragment float4 fragmentShader(RasterizerData in [[stage_in]], constant FragPara
         int minmax_index = coffs + index;
         float ymin = minmax[minmax_index].x;
         float ymax = minmax[minmax_index].y;
-        line = max(line, step(ymin, y) * step(y, ymax));
+        line += step(ymin, y) * step(y, ymax);
         coffs += params.point_count;
     }
+
+    line = clamp(line, 0.f, 1.f);
 
     // ensure the index is in range of the minmax array
     line *= step(index, params.point_count-1);
