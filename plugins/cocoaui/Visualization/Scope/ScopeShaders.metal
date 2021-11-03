@@ -31,7 +31,6 @@ vertexShader(uint vertexID [[vertex_id]],
     return out;
 }
 
-// TODO: is it ok to pass a uniform minmax array of that large size?
 fragment float4 fragmentShader(RasterizerData in [[stage_in]], constant FragParams &params [[buffer(0)]], constant float2 *minmax [[buffer(1)]]) {
     float index = floor(in.position.x/params.scale);
     float y = in.position.y/params.scale;

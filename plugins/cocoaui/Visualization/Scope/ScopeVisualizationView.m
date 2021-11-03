@@ -310,7 +310,11 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
         params.scale = (float)(self.window.backingScaleFactor / self.scaleFactor);
         [renderEncoder setFragmentBytes:&params length:sizeof (params) atIndex:0];
 
-        [renderEncoder setFragmentBytes:_draw_data.points length:_draw_data.point_count * sizeof (ddb_scope_point_t) * params.channels atIndex:1];
+        // Metal documentation states that MTLBuffer should be used for buffers larger than 4K in size.
+        // Alternative is to use setFragmentBytes, which also works, but could have compatibility issues on older hardware.
+        id<MTLBuffer> buffer = [self.device newBufferWithBytes:_draw_data.points length:_draw_data.point_count * sizeof (ddb_scope_point_t) * params.channels options:0];
+
+        [renderEncoder setFragmentBuffer:buffer offset:0 atIndex:1];
 
         // Draw the triangle.
         [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangleStrip
