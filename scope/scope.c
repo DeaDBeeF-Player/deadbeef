@@ -170,6 +170,9 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
             channel_point_index += 1;
         }
     }
+
+    draw_data->mode = scope->mode;
+    draw_data->channels = scope->channels;
 }
 
 void

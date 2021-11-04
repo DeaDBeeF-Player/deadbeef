@@ -45,6 +45,7 @@ static void *kIsVisibleContext = &kIsVisibleContext;
                     strongSelf.view.needsDisplay = YES;
                 }];
 
+                // FIXME: this should not be called for the metal visualizations, since AAPLNSView handles it
                 [[NSRunLoop currentRunLoop] addTimer:self.tickTimer forMode:NSRunLoopCommonModes];
             }
         }

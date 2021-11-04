@@ -13,4 +13,6 @@
 
 @property (nonatomic,nullable) ScopeSettings *settings;
 
+- (void)updateScopeSettings:(nonnull ScopeSettings *)settings;
+
 @end

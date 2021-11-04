@@ -38,6 +38,8 @@ typedef struct {
 } ddb_scope_point_t;
 
 typedef struct {
+    ddb_scope_mode_t mode;
+    int channels;
     int point_count;
     ddb_scope_point_t *points; // real point count is multiplied by number of channels, in planar layout
 } ddb_scope_draw_data_t;

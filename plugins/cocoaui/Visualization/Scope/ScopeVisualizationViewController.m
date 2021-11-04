@@ -6,9 +6,67 @@
 //  Copyright © 2021 Alexey Yakovenko. All rights reserved.
 //
 
+#import "AAPLView.h"
+#import "ScopeRenderer.h"
 #import "ScopeVisualizationViewController.h"
+#include "deadbeef.h"
+#include "scope.h"
 
-@implementation ScopeVisualizationViewController
+extern DB_functions_t *deadbeef;
+
+static NSString * const kWindowIsVisibleKey = @"view.window.isVisible";
+static void *kIsVisibleContext = &kIsVisibleContext;
+
+@interface ScopeVisualizationViewController() <AAPLViewDelegate>
+@property (nonatomic) BOOL isListening;
+@property (nonatomic) ScopeScaleMode scaleMode;
+@property (nonatomic,readonly) CGFloat scaleFactor;
+@end
+
+@implementation ScopeVisualizationViewController {
+    ddb_audio_data_t _input_data;
+    ddb_waveformat_t _fmt;
+    ddb_scope_t _scope;
+    ddb_scope_draw_data_t _draw_data;
+    ScopeRenderer *_renderer;
+}
+
+static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
+    ScopeVisualizationViewController *viewController = (__bridge ScopeVisualizationViewController *)(ctx);
+    [viewController updateScopeData:data];
+}
+
+- (void)updateScopeData:(const ddb_audio_data_t *)data {
+    @synchronized (self) {
+        // copy the input data for later consumption
+        if (_input_data.nframes != data->nframes) {
+            free (_input_data.data);
+            _input_data.data = malloc (data->nframes * data->fmt->channels * sizeof (float));
+            _input_data.nframes = data->nframes;
+        }
+        memcpy (_input_data.fmt, data->fmt, sizeof (ddb_waveformat_t));
+        memcpy (_input_data.data, data->data, data->nframes * data->fmt->channels * sizeof (float));
+
+        if (_input_data.nframes == 0) {
+            return;
+        }
+
+        @synchronized (self) {
+            ddb_scope_process(&_scope, _input_data.fmt->samplerate, _input_data.fmt->channels, _input_data.data, _input_data.nframes);
+        }
+
+    }
+}
+
+- (void)dealloc {
+    [self removeObserver:self forKeyPath:kWindowIsVisibleKey];
+    if (self.isListening) {
+        deadbeef->vis_waveform_unlisten ((__bridge void *)(self));
+        self.isListening = NO;
+    }
+    ddb_scope_dealloc(&_scope);
+    ddb_scope_draw_data_dealloc(&_draw_data);
+}
 
 - (void)awakeFromNib {
     [super awakeFromNib];
@@ -38,6 +96,71 @@
     [fragmentDurationMenuItem.submenu addItemWithTitle:@"500 ms" action:@selector(setFragmentDuration500ms:) keyEquivalent:@""];
 
     self.view.menu = menu;
+
+    [self addObserver:self forKeyPath:kWindowIsVisibleKey options:NSKeyValueObservingOptionInitial context:kIsVisibleContext];
+    _isListening = NO;
+    _input_data.fmt = &_fmt;
+    ddb_scope_init(&_scope);
+    _scope.mode = DDB_SCOPE_MULTICHANNEL;
+
+    id<MTLDevice> device = MTLCreateSystemDefaultDevice();
+
+    AAPLView *view = (AAPLView *)self.view;
+
+    // Set the device for the layer so the layer can create drawable textures that can be rendered to
+    // on this device.
+    view.metalLayer.device = device;
+
+    // Set this class as the delegate to receive resize and render callbacks.
+    view.delegate = self;
+
+    view.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
+
+    _renderer = [[ScopeRenderer alloc] initWithMetalDevice:device
+                                      drawablePixelFormat:view.metalLayer.pixelFormat];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    if (context == kIsVisibleContext) {
+        if (!self.isListening && self.view.window.isVisible) {
+            deadbeef->vis_waveform_listen((__bridge void *)(self), vis_callback);
+            self.isListening = YES;
+        }
+        else if (self.isListening && !self.view.window.isVisible) {
+            deadbeef->vis_waveform_unlisten ((__bridge void *)(self));
+            self.isListening = NO;
+        }
+    }
+    else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+- (void)updateScopeSettings:(ScopeSettings *)settings {
+    if (_scope.mode != settings.renderMode) {
+        _scope.mode_did_change = 1;
+    }
+    _scope.mode = settings.renderMode;
+
+    self.scaleMode = settings.scaleMode;
+
+    switch (settings.fragmentDuration) {
+    case ScopeFragmentDuration50:
+        _scope.fragment_duration = 50;
+        break;
+    case ScopeFragmentDuration100:
+        _scope.fragment_duration = 100;
+        break;
+    case ScopeFragmentDuration200:
+        _scope.fragment_duration = 200;
+        break;
+    case ScopeFragmentDuration300:
+        _scope.fragment_duration = 300;
+        break;
+    case ScopeFragmentDuration500:
+        _scope.fragment_duration = 500;
+        break;
+    }
 }
 
 #pragma mark - Actions
@@ -88,6 +211,56 @@
 
 - (void)setFragmentDuration500ms:(NSMenuItem *)sender {
     self.settings.fragmentDuration = ScopeFragmentDuration500;
+}
+
+- (void)drawableResize:(CGSize)size
+{
+    [_renderer drawableResize:size];
+}
+
+- (CGFloat)scaleFactor {
+    switch (self.scaleMode) {
+    case ScopeScaleModeAuto:
+        return 1;
+    case ScopeScaleMode1x:
+        return self.view.window.backingScaleFactor;
+    case ScopeScaleMode2x:
+        return self.view.window.backingScaleFactor / 2;
+    case ScopeScaleMode3x:
+        return self.view.window.backingScaleFactor / 3;
+    case ScopeScaleMode4x:
+        return self.view.window.backingScaleFactor / 4;
+    }
+}
+
+- (BOOL)updateDrawData {
+    // for some reason KVO is not triggered when the window becomes hidden
+    if (self.isListening && !self.view.window.isVisible) {
+        deadbeef->vis_waveform_unlisten ((__bridge void *)(self));
+        self.isListening = NO;
+        return NO;
+    }
+
+    @synchronized (self) {
+        CGFloat scale = self.scaleFactor;
+
+        if (_scope.sample_count != 0) {
+            ddb_scope_tick(&_scope);
+            ddb_scope_get_draw_data(&_scope, (int)(self.view.bounds.size.width * scale), (int)(self.view.bounds.size.height * scale), &_draw_data);
+        }
+    }
+
+    return YES;
+}
+
+- (void)renderToMetalLayer:(nonnull CAMetalLayer *)layer
+{
+    if (![self updateDrawData]) {
+        return;
+    }
+
+    float scale = (float)(self.view.window.backingScaleFactor / self.scaleFactor);
+    [_renderer renderToMetalLayer:layer drawData:&_draw_data scale:scale];
 }
 
 @end

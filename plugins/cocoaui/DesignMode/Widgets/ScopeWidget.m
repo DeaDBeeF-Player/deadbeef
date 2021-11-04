@@ -6,7 +6,7 @@
 //  Copyright © 2021 Alexey Yakovenko. All rights reserved.
 //
 
-#import "ScopeVisualizationView.h"
+#import "AAPLNSView.h"
 #import "ScopeVisualizationViewController.h"
 #import "ScopeSettings.h"
 #import "ScopeWidget.h"
@@ -19,7 +19,6 @@ static void *kFragmentDurationContext = &kFragmentDurationContext;
 
 @property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
 @property (nonatomic) ScopeVisualizationViewController *visualizationViewController;
-@property (nonatomic) ScopeVisualizationView *visualizationView;
 @property (nonatomic) ScopeSettings *settings;
 
 @end
@@ -45,8 +44,7 @@ static void *kFragmentDurationContext = &kFragmentDurationContext;
     _deps = deps;
 
     _visualizationViewController = [ScopeVisualizationViewController new];
-    _visualizationView = [[ScopeVisualizationView alloc] initWithFrame:NSZeroRect];
-    _visualizationViewController.view = _visualizationView;
+    _visualizationViewController.view = [[AAPLNSView alloc] initWithFrame:NSZeroRect];
     _visualizationViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
     [_visualizationViewController awakeFromNib];
 
@@ -62,7 +60,7 @@ static void *kFragmentDurationContext = &kFragmentDurationContext;
     [_settings addObserver:self forKeyPath:@"fragmentDuration" options:0 context:kFragmentDurationContext];
 
     _visualizationViewController.settings = _settings;
-    [_visualizationView updateScopeSettings:_settings];
+    [_visualizationViewController updateScopeSettings:_settings];
 
     return self;
 }
@@ -70,13 +68,13 @@ static void *kFragmentDurationContext = &kFragmentDurationContext;
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     // update the visualization view and save settings
     if (context == kRenderModeContext) {
-        [self.visualizationView updateScopeSettings:self.settings];
+        [self.visualizationViewController updateScopeSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else if (context == kScaleModeContext) {
-        [self.visualizationView updateScopeSettings:self.settings];
+        [self.visualizationViewController updateScopeSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else if (context == kFragmentDurationContext) {
-        [self.visualizationView updateScopeSettings:self.settings];
+        [self.visualizationViewController updateScopeSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
