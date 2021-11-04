@@ -1575,30 +1575,20 @@
 		2D986142226C816000BAACB1 /* BrowseButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D986140226C815F00BAACB1 /* BrowseButton.h */; };
 		2D986143226C816000BAACB1 /* BrowseButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D986141226C816000BAACB1 /* BrowseButton.m */; };
 		2D98B67F272B272300E655AE /* ScopeShaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B66E272B272300E655AE /* ScopeShaderTypes.h */; };
-		2D98B680272B272300E655AE /* ScopeShaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B66E272B272300E655AE /* ScopeShaderTypes.h */; };
 		2D98B681272B272300E655AE /* ScopeShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B67E272B272300E655AE /* ScopeShaders.metal */; };
-		2D98B682272B272300E655AE /* ScopeShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B67E272B272300E655AE /* ScopeShaders.metal */; };
 		2D98B685272D56F100E655AE /* ScopeVisualizationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B683272D56F100E655AE /* ScopeVisualizationViewController.h */; };
-		2D98B686272D56F100E655AE /* ScopeVisualizationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B683272D56F100E655AE /* ScopeVisualizationViewController.h */; };
 		2D98B687272D56F100E655AE /* ScopeVisualizationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B684272D56F100E655AE /* ScopeVisualizationViewController.m */; };
-		2D98B688272D56F100E655AE /* ScopeVisualizationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B684272D56F100E655AE /* ScopeVisualizationViewController.m */; };
 		2D98B68B272D573700E655AE /* ScopeSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B689272D573700E655AE /* ScopeSettings.h */; };
 		2D98B68C272D573700E655AE /* ScopeSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B689272D573700E655AE /* ScopeSettings.h */; };
 		2D98B68D272D573700E655AE /* ScopeSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B68A272D573700E655AE /* ScopeSettings.m */; };
 		2D98B68E272D573700E655AE /* ScopeSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B68A272D573700E655AE /* ScopeSettings.m */; };
 		2D98B69227347C7C00E655AE /* ScopeRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B69027347C7C00E655AE /* ScopeRenderer.h */; };
-		2D98B69327347C7C00E655AE /* ScopeRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B69027347C7C00E655AE /* ScopeRenderer.h */; };
 		2D98B69427347C7C00E655AE /* ScopeRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B69127347C7C00E655AE /* ScopeRenderer.m */; };
 		2D98B698273482BA00E655AE /* AAPLNSView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B696273482B900E655AE /* AAPLNSView.h */; };
-		2D98B699273482BA00E655AE /* AAPLNSView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B696273482B900E655AE /* AAPLNSView.h */; };
 		2D98B69A273482BA00E655AE /* AAPLNSView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B697273482BA00E655AE /* AAPLNSView.m */; };
-		2D98B69B273482BA00E655AE /* AAPLNSView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B697273482BA00E655AE /* AAPLNSView.m */; };
 		2D98B69E273482F700E655AE /* AAPLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B69C273482F600E655AE /* AAPLView.h */; };
-		2D98B69F273482F700E655AE /* AAPLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B69C273482F600E655AE /* AAPLView.h */; };
 		2D98B6A0273482F700E655AE /* AAPLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B69D273482F700E655AE /* AAPLView.m */; };
-		2D98B6A1273482F700E655AE /* AAPLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B69D273482F700E655AE /* AAPLView.m */; };
 		2D98B6A3273483A700E655AE /* AAPLConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B6A2273483A700E655AE /* AAPLConfig.h */; };
-		2D98B6A4273483A700E655AE /* AAPLConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B6A2273483A700E655AE /* AAPLConfig.h */; };
 		2D9BD6792405A81600C02D60 /* SoundPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9BD6772405A81600C02D60 /* SoundPreferencesViewController.h */; };
 		2D9BD67A2405A81600C02D60 /* SoundPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BD6782405A81600C02D60 /* SoundPreferencesViewController.m */; };
 		2D9C0C15238DC0E700CE8C10 /* GroupByCustomWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D9C0C14238DC0E700CE8C10 /* GroupByCustomWindow.xib */; };
@@ -11830,8 +11820,6 @@
 				2DDD764425E1506100FA6FE5 /* metadata.h in Headers */,
 				2D9EBB7225E45BAA00255592 /* DesignModeDeps.h in Headers */,
 				2DDD7ABC25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */,
-				2D98B6A4273483A700E655AE /* AAPLConfig.h in Headers */,
-				2D98B686272D56F100E655AE /* ScopeVisualizationViewController.h in Headers */,
 				2D448A851D5C5C6500B43F12 /* logger.h in Headers */,
 				2DA8912225FFEB9B0084860D /* PlaylistGroup.h in Headers */,
 				2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */,
@@ -11846,11 +11834,7 @@
 				0D568529271DC35E0026F700 /* ScopeWidget.h in Headers */,
 				2DDD796425E15ED200FA6FE5 /* PlaylistWidget.h in Headers */,
 				2D9FD9E32607C68500F406D1 /* AlbumArtImageView.h in Headers */,
-				2D98B69327347C7C00E655AE /* ScopeRenderer.h in Headers */,
 				2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */,
-				2D98B680272B272300E655AE /* ScopeShaderTypes.h in Headers */,
-				2D98B69F273482F700E655AE /* AAPLView.h in Headers */,
-				2D98B699273482BA00E655AE /* AAPLNSView.h in Headers */,
 				2D98B68C272D573700E655AE /* ScopeSettings.h in Headers */,
 				2DE5562826075B8400285BF9 /* AlbumArtWidget.h in Headers */,
 				2D9EBAAC25E44A0700255592 /* WidgetSerializer.h in Headers */,
@@ -14984,7 +14968,6 @@
 				2D01D7F21AB223CC00BCD3C4 /* parser.c in Sources */,
 				2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */,
 				2D01D7DD1AB2219C00BCD3C4 /* pltmeta.c in Sources */,
-				2D98B682272B272300E655AE /* ScopeShaders.metal in Sources */,
 				2D01D7CE1AB2219C00BCD3C4 /* pluginsettings.c in Sources */,
 				2D01D7D71AB2219C00BCD3C4 /* handler.c in Sources */,
 				2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */,
@@ -14992,14 +14975,12 @@
 				2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */,
 				2D01D7E41AB2219C00BCD3C4 /* utf8.c in Sources */,
 				2D01D7D11AB2219C00BCD3C4 /* playqueue.c in Sources */,
-				2D98B69B273482BA00E655AE /* AAPLNSView.m in Sources */,
 				2D135EFD226E4E1900BAAE84 /* scriptable_encoder.c in Sources */,
 				0D56852B271DC35E0026F700 /* ScopeWidget.m in Sources */,
 				2D01D7DB1AB2219C00BCD3C4 /* playlist.c in Sources */,
 				2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */,
 				2D5121C61B01DEFD009F6410 /* sort.c in Sources */,
 				2D9E5C6724AE6DE60099B108 /* wcwidth.c in Sources */,
-				2D98B688272D56F100E655AE /* ScopeVisualizationViewController.m in Sources */,
 				2DA30E6F2402D29A001BAB8A /* ctmap.c in Sources */,
 				2D9E9B5126BB1DF000757C71 /* fft_accelerate.c in Sources */,
 				2D01D7E21AB2219C00BCD3C4 /* streamer.c in Sources */,
@@ -15010,7 +14991,6 @@
 				2D01D7D91AB2219C00BCD3C4 /* messagepump.c in Sources */,
 				2DDD789F25E15C9E00FA6FE5 /* WidgetBase.m in Sources */,
 				2DE5562A26075B8400285BF9 /* AlbumArtWidget.m in Sources */,
-				2D98B6A1273482F700E655AE /* AAPLView.m in Sources */,
 				2D01D7D81AB2219C00BCD3C4 /* junklib.c in Sources */,
 				2D9EBB7425E45BAA00255592 /* DesignModeDeps.m in Sources */,
 				2D0A549223E8CC9500E0F978 /* eqpreset.c in Sources */,
