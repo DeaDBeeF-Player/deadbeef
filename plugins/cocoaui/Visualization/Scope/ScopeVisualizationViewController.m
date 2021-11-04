@@ -114,7 +114,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     // Set this class as the delegate to receive resize and render callbacks.
     view.delegate = self;
 
-    view.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
+    view.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
 
     _renderer = [[ScopeRenderer alloc] initWithMetalDevice:device
                                       drawablePixelFormat:view.metalLayer.pixelFormat];

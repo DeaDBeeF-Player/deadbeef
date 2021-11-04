@@ -44,7 +44,7 @@
 
 
 - (nonnull instancetype)initWithMetalDevice:(nonnull id<MTLDevice>)device
-                        drawablePixelFormat:(MTLPixelFormat)drawabklePixelFormat
+                        drawablePixelFormat:(MTLPixelFormat)drawablePixelFormat
 {
     self = [super init];
     if (self)
@@ -89,7 +89,7 @@
             pipelineDescriptor.label                           = @"MyPipeline";
             pipelineDescriptor.vertexFunction                  = vertexProgram;
             pipelineDescriptor.fragmentFunction                = fragmentProgram;
-            pipelineDescriptor.colorAttachments[0].pixelFormat = drawabklePixelFormat;
+            pipelineDescriptor.colorAttachments[0].pixelFormat = drawablePixelFormat;
 
             NSError *error;
             _pipelineState = [_device newRenderPipelineStateWithDescriptor:pipelineDescriptor
