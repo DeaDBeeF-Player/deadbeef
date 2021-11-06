@@ -109,12 +109,6 @@ Custom view base class
 
 #if RENDER_ON_MAIN_THREAD
 
-    if(newSize.width == _metalLayer.drawableSize.width &&
-       newSize.height == _metalLayer.drawableSize.height)
-    {
-        return;
-    }
-
     _metalLayer.drawableSize = newSize;
 
     [_delegate drawableResize:newSize];
@@ -124,12 +118,6 @@ Custom view base class
     // a synchronized block to ensure that resize notifications on the delegate are atomic
     @synchronized(_metalLayer)
     {
-        if(newSize.width == _metalLayer.drawableSize.width &&
-           newSize.height == _metalLayer.drawableSize.height)
-        {
-            return;
-        }
-
         _metalLayer.drawableSize = newSize;
 
         [_delegate drawableResize:newSize];
