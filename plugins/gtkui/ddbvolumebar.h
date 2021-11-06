@@ -35,15 +35,19 @@ G_BEGIN_DECLS
 #define DDB_IS_VOLUMEBAR_CLASS(obj) (G_TYPE_CHECK_CLASS_TYPE ((obj), DDB_TYPE_VOLUMEBAR))
 #define DDB_VOLUMEBAR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), DDB_TYPE_VOLUMEBAR, DdbVolumeBarClass))
 
+typedef struct _DdbVolumeBarPrivate DdbVolumeBarPrivate;
 typedef struct _DdbVolumeBar DdbVolumeBar;
 typedef struct _DdbVolumeBarClass DdbVolumeBarClass;
 
 typedef void * DdbVolumeBarIter;
 typedef void * DdbVolumeBarColIter;
 
+typedef enum {DDB_VOLUMEBAR_SCALE_DB, DDB_VOLUMEBAR_SCALE_LINEAR, DDB_VOLUMEBAR_SCALE_CUBIC} DdbVolumeBarScale;
+
 struct _DdbVolumeBar {
     GtkWidget parent;
     int show_dbs;
+    DdbVolumeBarPrivate *priv;
 };
 
 struct _DdbVolumeBarClass {
@@ -55,6 +59,15 @@ GtkWidget * ddb_volumebar_new(void);
 
 void
 ddb_volumebar_init_signals (DdbVolumeBar *vb, GtkWidget *evbox);
+
+DdbVolumeBarScale
+ddb_volumebar_get_scale (const DdbVolumeBar *volumebar);
+
+void
+ddb_volumebar_set_scale (DdbVolumeBar *volumebar, DdbVolumeBarScale scale);
+
+void
+ddb_volumebar_update(DdbVolumeBar *volumebar);
 
 G_END_DECLS
 

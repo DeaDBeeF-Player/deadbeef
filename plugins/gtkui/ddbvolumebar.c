@@ -27,10 +27,26 @@
 #include "gtkui.h"
 #include "interface.h"
 #include "support.h"
+#include <math.h>
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
+struct _DdbVolumeBarPrivate
+{
+    DdbVolumeBarScale scale;
+};
+
 G_DEFINE_TYPE (DdbVolumeBar, ddb_volumebar, GTK_TYPE_WIDGET);
+
+#define DDB_VOLUMEBAR_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
+            DDB_TYPE_VOLUMEBAR, DdbVolumeBarPrivate))
+
+/* Property identifiers */
+enum
+{
+    PROP_0,
+    PROP_SCALE_MODE,
+};
 
 static void
 ddb_volumebar_send_configure (DdbVolumeBar *darea)
@@ -99,9 +115,69 @@ on_volumebar_scroll_event              (GtkWidget       *widget,
 gboolean
 on_volumebar_configure_event (GtkWidget *widget, GdkEventConfigure *event);
 
+GType
+ddb_volumebar_scale_mode_get_type (void)
+{
+    static GType type = G_TYPE_INVALID;
+
+    if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+        static const GEnumValue values[] =
+        {
+            { DDB_VOLUMEBAR_SCALE_DB,   "DDB_VOLUMEBAR_SCALE_DB",   "dB Scale",       },
+            { DDB_VOLUMEBAR_SCALE_LINEAR, "DDB_VOLUMEBAR_SCALE_LINEAR", "Linear scale",     },
+            { DDB_VOLUMEBAR_SCALE_CUBIC,   "DDB_VOLUMEBAR_SCALE_CUBIC", "Cubic scale", },
+            { 0, NULL, NULL, },
+        };
+
+        type = g_enum_register_static ("DdbVolumeBarScaleMode", values);
+    }
+
+    return type;
+}
+
+static void
+ddb_volumebar_get_property (GObject *object,
+                            guint prop_id,
+                            GValue *value,
+                            GParamSpec *pspec)
+{
+    DdbVolumeBar *vb = DDB_VOLUMEBAR (object);
+
+    switch (prop_id) {
+        case PROP_SCALE_MODE:
+            g_value_set_enum (value, ddb_volumebar_get_scale (vb));
+            break;
+
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+            break;
+    }
+}
+
+static void
+ddb_volumebar_set_property (GObject *object,
+                            guint prop_id,
+                            const GValue *value,
+                            GParamSpec *pspec)
+{
+    DdbVolumeBar *vb = DDB_VOLUMEBAR (object);
+
+    switch (prop_id) {
+        case PROP_SCALE_MODE:
+            ddb_volumebar_set_scale (vb, g_value_get_enum (value));
+            break;
+
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+            break;
+    }
+}
+
 static void
 ddb_volumebar_class_init(DdbVolumeBarClass *class)
 {
+  GObjectClass *gobject_class;
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (class);
   widget_class->size_allocate = ddb_volumebar_size_allocate;
 #if GTK_CHECK_VERSION(3,0,0)
@@ -114,6 +190,22 @@ ddb_volumebar_class_init(DdbVolumeBarClass *class)
   widget_class->motion_notify_event = on_volumebar_motion_notify_event;
   widget_class->scroll_event = on_volumebar_scroll_event;
   widget_class->configure_event = on_volumebar_configure_event;
+
+    /* add our private data to the class */
+    g_type_class_add_private (class, sizeof (DdbVolumeBarPrivate));
+    
+    gobject_class = G_OBJECT_CLASS (class);
+    gobject_class->get_property = ddb_volumebar_get_property;
+    gobject_class->set_property = ddb_volumebar_set_property;
+
+
+    g_object_class_install_property (gobject_class,
+            PROP_SCALE_MODE,
+            g_param_spec_enum ("scale-mode",
+                "Scale mode",
+                "The scale mode of the volumebar widget",
+                ddb_volumebar_scale_mode_get_type(), DDB_VOLUMEBAR_SCALE_DB,
+                G_PARAM_READWRITE));
 }
 
 GtkWidget * ddb_volumebar_new() {
@@ -128,6 +220,8 @@ ddb_volumebar_init(DdbVolumeBar *volumebar)
     snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
     gtk_widget_set_tooltip_text (GTK_WIDGET (volumebar), s);
     gtk_widget_set_has_window (GTK_WIDGET (volumebar), FALSE);
+    volumebar->priv = DDB_VOLUMEBAR_GET_PRIVATE (volumebar);
+    volumebar->priv->scale = DDB_VOLUMEBAR_SCALE_DB;
 }
 
 void
@@ -142,11 +236,28 @@ volumebar_draw (GtkWidget *widget, cairo_t *cr) {
     cairo_translate (cr, -allocation.x, -allocation.y);
 #endif
 
-    float range = -deadbeef->volume_get_min_db ();
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
+
+    float range;
+    float vol;
     int n = a.width / 4;
-    float vol = (range + deadbeef->volume_get_db ()) / range * n;
+
+    DdbVolumeBarScale scale = DDB_VOLUMEBAR(widget)->priv->scale;
+
+    switch (scale) {
+        case DDB_VOLUMEBAR_SCALE_DB:
+            range = -deadbeef->volume_get_min_db ();
+            vol = (range + deadbeef->volume_get_db ()) / range * n;
+        break;
+        case DDB_VOLUMEBAR_SCALE_LINEAR:
+            vol = (deadbeef->volume_get_amp () ) * n;
+        break;
+        case DDB_VOLUMEBAR_SCALE_CUBIC:
+            vol = (cbrt(deadbeef->volume_get_amp ()) ) * n;
+        break;
+    }
+
     float h = 17;
 
     GdkColor clr_fg;
@@ -190,6 +301,26 @@ on_volumebar_expose_event                 (GtkWidget       *widget,
 }
 #endif
 
+void
+ddb_volumebar_update(DdbVolumeBar *volumebar)
+{
+    gtk_widget_queue_draw (GTK_WIDGET (volumebar));
+    char s[100];
+    if (volumebar->priv->scale == DDB_VOLUMEBAR_SCALE_DB) {
+        int db = deadbeef->volume_get_db ();
+        snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
+    } else {
+        float volume = deadbeef->volume_get_amp ();
+        if (volumebar->priv->scale == DDB_VOLUMEBAR_SCALE_CUBIC) {
+            volume = cbrt (volume);
+        }
+        int pct = (int)round (volume*100);
+        snprintf (s, sizeof (s), "%d%%", pct);
+    }
+    gtk_widget_set_tooltip_text (GTK_WIDGET (volumebar), s);
+    gtk_widget_trigger_tooltip_query (GTK_WIDGET (volumebar));
+}
+
 gboolean
 on_volumebar_motion_notify_event       (GtkWidget       *widget,
                                         GdkEventMotion  *event)
@@ -197,21 +328,27 @@ on_volumebar_motion_notify_event       (GtkWidget       *widget,
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
     if (event->state & GDK_BUTTON1_MASK) {
-        float range = -deadbeef->volume_get_min_db ();
-        float volume = (event->x - a.x) / a.width * range - range;
-        if (volume > 0) {
-            volume = 0;
-        }
-        if (volume < -range) {
-            volume = -range;
-        }
-        deadbeef->volume_set_db (volume);
+        DdbVolumeBarScale scale = DDB_VOLUMEBAR(widget)->priv->scale;
         char s[100];
-        int db = volume;
-        snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
-        gtk_widget_set_tooltip_text (widget, s);
-        gtk_widget_trigger_tooltip_query (widget);
-        gtk_widget_queue_draw (widget);
+
+        if (scale == DDB_VOLUMEBAR_SCALE_DB) {
+            float range = -deadbeef->volume_get_min_db ();
+            float volume = (event->x - a.x) / a.width * range - range;
+            if (volume > 0) {
+                volume = 0;
+            }
+            if (volume < -range) {
+                volume = -range;
+            }
+            deadbeef->volume_set_db (volume);
+        } else {
+            float volume = (event->x - a.x) / a.width;
+            if (scale == DDB_VOLUMEBAR_SCALE_CUBIC) {
+                volume = volume * volume * volume;
+            }
+            deadbeef->volume_set_amp (volume);
+        }
+        ddb_volumebar_update (DDB_VOLUMEBAR (widget));
     }
     return FALSE;
 }
@@ -223,22 +360,27 @@ on_volumebar_button_press_event        (GtkWidget       *widget,
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
     if (event->button == 1) {
-        float range = -deadbeef->volume_get_min_db ();
-        float volume = (event->x - a.x)/ a.width * range - range;
-        if (volume < -range) {
-            volume = -range;
-        }
-        if (volume > 0) {
-            volume = 0;
-        }
-        deadbeef->volume_set_db (volume);
+        DdbVolumeBarScale scale = DDB_VOLUMEBAR(widget)->priv->scale;
         char s[100];
-        int db = volume;
-        snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
-        gtk_widget_set_tooltip_text (widget, s);
-        gtk_widget_trigger_tooltip_query (widget);
-//        DDB_VOLUMEBAR (widget)->show_dbs = 1;
-        gtk_widget_queue_draw (widget);
+
+        if (scale == DDB_VOLUMEBAR_SCALE_DB) {
+            float range = -deadbeef->volume_get_min_db ();
+            float volume = (event->x - a.x) / a.width * range - range;
+            if (volume > 0) {
+                volume = 0;
+            }
+            if (volume < -range) {
+                volume = -range;
+            }
+            deadbeef->volume_set_db (volume);
+        } else {
+            float volume = (event->x - a.x) / a.width;
+            if (scale == DDB_VOLUMEBAR_SCALE_CUBIC) {
+                volume = volume * volume * volume;
+            }
+            deadbeef->volume_set_amp (volume);
+        }
+        ddb_volumebar_update (DDB_VOLUMEBAR (widget));
     }
     return FALSE;
 }
@@ -259,27 +401,50 @@ gboolean
 on_volumebar_scroll_event              (GtkWidget       *widget,
                                         GdkEventScroll        *event)
 {
-    float range = -deadbeef->volume_get_min_db ();
-    float vol = deadbeef->volume_get_db ();
-    if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
-        vol += 1;
+    DdbVolumeBarScale scale = DDB_VOLUMEBAR(widget)->priv->scale;
+    if (scale == DDB_VOLUMEBAR_SCALE_DB) {
+        float range = -deadbeef->volume_get_min_db ();
+        float vol = deadbeef->volume_get_db ();
+        if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
+            vol += 1;
+        }
+        else if (event->direction == GDK_SCROLL_DOWN || event->direction == GDK_SCROLL_LEFT) {
+            vol -= 1;
+        }
+        if (vol > 0) {
+            vol = 0;
+        }
+        else if (vol < -range) {
+            vol = -range;
+        }
+        deadbeef->volume_set_db (vol);
+    } else {
+        float dbvol = deadbeef->volume_get_amp ();
+        if (scale == DDB_VOLUMEBAR_SCALE_CUBIC) {
+            dbvol = cbrt(dbvol);
+        }
+
+        int vol = (int)round(dbvol*100.0);
+
+        if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
+            vol += 5;
+        }
+        else if (event->direction == GDK_SCROLL_DOWN || event->direction == GDK_SCROLL_LEFT) {
+            vol -= 5;
+        }
+        if (vol > 100) {
+            vol = 100;
+        }
+        else if (vol < 0) {
+            vol = 0;
+        }
+        if (scale == DDB_VOLUMEBAR_SCALE_CUBIC) {
+            deadbeef->volume_set_amp (pow(vol/100.0,3));
+        } else {
+            deadbeef->volume_set_amp (vol/100.0);
+        }
     }
-    else if (event->direction == GDK_SCROLL_DOWN || event->direction == GDK_SCROLL_LEFT) {
-        vol -= 1;
-    }
-    if (vol > 0) {
-        vol = 0;
-    }
-    else if (vol < -range) {
-        vol = -range;
-    }
-    deadbeef->volume_set_db (vol);
-    gtk_widget_queue_draw (widget);
-    char s[100];
-    int db = deadbeef->volume_get_db ();
-    snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
-    gtk_widget_set_tooltip_text (widget, s);
-    gtk_widget_trigger_tooltip_query (widget);
+    ddb_volumebar_update (DDB_VOLUMEBAR (widget));
     return FALSE;
 }
 
@@ -336,3 +501,21 @@ ddb_volumebar_init_signals (DdbVolumeBar *vb, GtkWidget *evbox) {
                     vb);
 }
 
+DdbVolumeBarScale
+ddb_volumebar_get_scale (const DdbVolumeBar *volumebar)
+{
+    g_return_val_if_fail (DDB_IS_VOLUMEBAR (volumebar), DDB_VOLUMEBAR_SCALE_DB);
+    return volumebar->priv->scale;
+}
+
+void
+ddb_volumebar_set_scale (DdbVolumeBar *volumebar, DdbVolumeBarScale scale)
+{
+    g_return_if_fail (DDB_IS_VOLUMEBAR (volumebar));
+
+    if (G_LIKELY (volumebar->priv->scale != scale)) {
+        volumebar->priv->scale = scale;
+        gtk_widget_queue_resize (GTK_WIDGET (volumebar));
+        g_object_notify (G_OBJECT (volumebar), "scale_mode");
+    }
+}
