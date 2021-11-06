@@ -2079,8 +2079,10 @@ ddb_gui_GTK3_load (DB_functions_t *api) {
 
 static const char settings_dlg[] =
     "property \"Ask confirmation to delete files from disk\" checkbox gtkui.delete_files_ask 1;\n"
+    "property \"Status icon settings:\" label l;\n"
     "property \"Status icon volume control sensitivity\" entry gtkui.tray_volume_sensitivity 1;\n"
     "property \"Custom status icon\" entry gtkui.custom_tray_icon \"" TRAY_ICON "\" ;\n"
+    "property \"Misc:\" label l;\n"
     "property \"Add separators between plugin context menu items\" checkbox gtkui.action_separators 0;\n"
     "property \"Use unicode chars instead of images for track state\" checkbox gtkui.unicode_playstate 0;\n"
     "property \"Disable seekbar overlay text\" checkbox gtkui.disable_seekbar_overlay 0;\n"
