@@ -137,6 +137,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 }
 
 - (void)updateScopeSettings:(ScopeSettings *)settings {
+    self.settings = settings;
     if (_scope.mode != settings.renderMode) {
         _scope.mode_did_change = 1;
     }
@@ -261,6 +262,50 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
     float scale = (float)(self.view.window.backingScaleFactor / self.scaleFactor);
     [_renderer renderToMetalLayer:layer drawData:&_draw_data scale:scale];
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
+    if (menuItem.action == @selector(setScaleAuto:) && self.settings.scaleMode == ScopeScaleModeAuto) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setScale1x:) && self.settings.scaleMode == ScopeScaleMode1x) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setScale2x:) && self.settings.scaleMode == ScopeScaleMode2x) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setScale3x:) && self.settings.scaleMode == ScopeScaleMode3x) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setScale4x:) && self.settings.scaleMode == ScopeScaleMode4x) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setFragmentDuration50ms:) && self.settings.fragmentDuration == ScopeFragmentDuration50) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setFragmentDuration100ms:) && self.settings.fragmentDuration == ScopeFragmentDuration100) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setFragmentDuration200ms:) && self.settings.fragmentDuration == ScopeFragmentDuration200) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setFragmentDuration300ms:) && self.settings.fragmentDuration == ScopeFragmentDuration300) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setFragmentDuration500ms:) && self.settings.fragmentDuration == ScopeFragmentDuration500) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setMultichannelRenderingMode:) && self.settings.renderMode == DDB_SCOPE_MULTICHANNEL) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setMonoRenderingMode:) && self.settings.renderMode == DDB_SCOPE_MONO) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else {
+        menuItem.state = NSControlStateValueOff;
+    }
+
+    return YES;
 }
 
 @end

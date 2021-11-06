@@ -87,4 +87,51 @@
     self.settings.distanceBetweenBars = 10;
 }
 
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
+    if (menuItem.action == @selector(setDescreteFrequenciesMode:) && self.settings.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(set12BarsPerOctaveMode:) && self.settings.mode == DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS && self.settings.barGranularity == 2) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(set24BarsPerOctaveMode:) && self.settings.mode == DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS && self.settings.barGranularity == 1) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setNoGap:) && self.settings.distanceBetweenBars == 0) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setHalfGap:) && self.settings.distanceBetweenBars == 2) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setThirdGap:) && self.settings.distanceBetweenBars == 3) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setFourthGap:) && self.settings.distanceBetweenBars == 4) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setFifthGap:) && self.settings.distanceBetweenBars == 5) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setSixthGap:) && self.settings.distanceBetweenBars == 6) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setSeventhGap:) && self.settings.distanceBetweenBars == 7) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setEighthGap:) && self.settings.distanceBetweenBars == 8) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setNinthGap:) && self.settings.distanceBetweenBars == 9) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else if (menuItem.action == @selector(setTenthGap:) && self.settings.distanceBetweenBars == 10) {
+        menuItem.state = NSControlStateValueOn;
+    }
+    else {
+        menuItem.state = NSControlStateValueOff;
+    }
+
+    return YES;
+}
+
 @end
