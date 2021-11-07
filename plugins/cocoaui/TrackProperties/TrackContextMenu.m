@@ -118,7 +118,12 @@ extern DB_functions_t *deadbeef;
     }
 }
 
+- (void)updateMenuItems {
+    self.deleteFromDiskItem.hidden = deadbeef->conf_get_int("cocoaui.hide_remove_from_disk", 0);
+}
+
 - (void)update:(ddb_playlist_t *)playlist {
+    [self updateMenuItems];
     self.playlist = playlist;
     if (playlist) {
         deadbeef->plt_ref (playlist);
@@ -148,6 +153,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)updateWithTrackList:(ddb_playItem_t **)tracks count:(NSUInteger)count playlist:(ddb_playlist_t *)plt currentTrack:(ddb_playItem_t *)currentTrack currentTrackIdx:(int)currentTrackIdx {
+    [self updateMenuItems];
     if (_selectedTracksList) {
         ddbUtilTrackListFree(_selectedTracksList);
         _selectedTracksList = NULL;
