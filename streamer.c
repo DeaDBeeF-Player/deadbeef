@@ -1818,9 +1818,11 @@ process_output_block (streamblock_t *block, char *bytes, int bytes_available_siz
     // But here we do early exit, because there's no data to process in it.
     if (!block->size) {
         decoded_block_t *decoded_block = decoded_blocks_append();
-        decoded_block->track = block->track;
-        decoded_block->last = block->last;
-        decoded_block->first = block->first;
+        if (decoded_block != NULL) {
+            decoded_block->track = block->track;
+            decoded_block->last = block->last;
+            decoded_block->first = block->first;
+        }
 
         streamreader_next_block ();
         _update_buffering_state ();
