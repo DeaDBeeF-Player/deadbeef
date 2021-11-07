@@ -43,8 +43,8 @@
 
 #define SKIP_BYTES(fd,x) {\
     if (x > 0) {\
-        char buf[x];\
-        deadbeef->fread (buf, x, 1, fd);\
+        int64_t offs = deadbeef->ftell(fd);\
+        deadbeef->fseek(fd, offs+x, SEEK_CUR);\
     }\
 }
 
@@ -788,7 +788,7 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
 #endif
                         } else {
                             if (type == 0) { // FIXME: custom fields -- after others work
-                                unsigned char *s = id3buf;
+                                unsigned char *s = id3buf; // FIXME: skip empty
                                 asf_utf16LEdecode(fd, length, &id3buf, &id3buf_remaining);
                                 if (!strcmp (utf8buf, "MusicBrainz/Track Id")) {
                                     strcpy (utf8buf, "musicbrainz_trackid");
