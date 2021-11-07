@@ -125,13 +125,18 @@ void apply_conf (GtkWidget *w, ddb_dialog_t *conf, int reset_settings) {
         if (!script) {
             break;
         }
+
+        int islabel = !strcmp(type, "label");
+
         char def[MAX_TOKEN];
-        script = gettoken_warn_eof (script, def);
-        if (!script) {
-            break;
+        if (!islabel) {
+            script = gettoken_warn_eof (script, def);
+            if (!script) {
+                break;
+            }
         }
 
-        if (reset_settings) {
+        if (!islabel && reset_settings) {
             conf->set_param (key, def);
 
             // skip to ;
@@ -142,7 +147,7 @@ void apply_conf (GtkWidget *w, ddb_dialog_t *conf, int reset_settings) {
                 }
             }
             continue;
-        } else {
+        } else if (!islabel) {
             // fetch data
             GtkWidget *widget = g_object_get_data (G_OBJECT(w), key);
             if (widget) {
@@ -245,6 +250,20 @@ backout_pack_level(int ncurr, int *pack)
         }
     }
     return ncurr;
+}
+
+static int
+check_semicolon(const char **script, char *token, const char *plugintitle)
+{
+    *script = gettoken_warn_eof (*script, token);
+    if (!script) {
+        return -1;
+    }
+    if (strcmp (token, ";")) {
+        fprintf (stderr, "make_dialog: expected `;' while loading plugin %s config dialog: %s at line %d\n", plugintitle, token, parser_line);
+        return -1;
+    }
+    return 0;
 }
 
 void
@@ -357,6 +376,23 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
             else {
                 break;
             }
+        }
+
+        if (!strcmp(type, "label")) {
+            GtkWidget *label = gtk_label_new (_(labeltext));
+            gtk_widget_show (label);
+            if (!strncmp(key, "l", 1)) {
+                gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+            } else if (!strncmp(key, "c", 1)) {
+                gtk_misc_set_alignment (GTK_MISC (label), 0.5, 0.5);
+            } else if (!strncmp(key, "r", 1)) {
+                gtk_misc_set_alignment (GTK_MISC (label), 1.0, 0.5);
+            }
+            gtk_box_pack_start (GTK_BOX (widgets[ncurr]), label, FALSE, TRUE, 0);
+
+            if (check_semicolon(&script, token, conf->title) < 0) break;
+
+            continue;
         }
 
         char def[MAX_TOKEN];
@@ -486,14 +522,7 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
             gtk_widget_show (prop);
         }
 
-        script = gettoken_warn_eof (script, token);
-        if (!script) {
-            break;
-        }
-        if (strcmp (token, ";")) {
-            fprintf (stderr, "make_dialog: expected `;' while loading plugin %s config dialog: %s at line %d\n", conf->title, token, parser_line);
-            break;
-        }
+        if (check_semicolon(&script, token, conf->title) < 0) break;
 
 
         if (label && prop) {
