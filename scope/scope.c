@@ -95,80 +95,108 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
         draw_data->point_count = view_width;
         scope->mode_did_change = 0;
     }
-    float incr = (float)view_width / scope->sample_count;
-    float n = 0;
-    int point_index = 0;
 
-    int output_channels = scope->mode == DDB_SCOPE_MULTICHANNEL ? scope->channels : 1;
+    int output_channels;
+    switch (scope->mode) {
+    case DDB_SCOPE_MONO:
+        output_channels = 1;
+        break;
+    case DDB_SCOPE_MULTICHANNEL:
+        output_channels = scope->channels;
+        break;
+    }
 
     float channel_height = view_height / output_channels;
     float pixel_amplitude = channel_height / 2;
 
-    for (int output_channel = 0; output_channel < output_channels; output_channel++) {
-        float ymin_prev = pixel_amplitude + output_channel * channel_height;
-        float ymax_prev = pixel_amplitude + output_channel * channel_height;
-
-        int channel_point_index = 0;
-        float xpos = 0;
-        float ypos_min = 1;
-        float ypos_max = -1;
-        for (int i = 0; i < scope->sample_count && channel_point_index < draw_data->point_count; i++) {
-            float new_xpos = xpos + incr;
-            float pixel_xpos = floor(xpos);
-            if (floor(new_xpos) > pixel_xpos) {
-                if (n > 0) {
-                    float ymin = (ypos_min * pixel_amplitude + pixel_amplitude) + output_channel * channel_height;
-                    float ymax = (ypos_max * pixel_amplitude + pixel_amplitude) + output_channel * channel_height;
-                    if (channel_point_index > 0) {
-                        if (ymin > ymax_prev) {
-                            ymin = ymax_prev;
-                        }
-                        if (ymax < ymin_prev) {
-                            ymax = ymin_prev;
-                        }
-                        if (ymax - ymin < 1) {
-                            ymin = ymax-1;
-                        }
-                    }
-
-                    draw_data->points[point_index].ymin = ymin;
-                    draw_data->points[point_index].ymax = ymax;
-                    point_index += 1;
-                    channel_point_index += 1;
-
-                    ymin_prev = ymin;
-                    ymax_prev = ymax;
-                }
-                n = 0;
-                ypos_min = 1;
-                ypos_max = -1;
-            }
-            xpos = new_xpos;
-            float sample = 0;
-            if (scope->mode == DDB_SCOPE_MONO) {
-                int ch = scope->channels;
-                for (int c = 0; c < ch; c++) {
-                    sample = scope->samples[i * scope->channels + c];
-                }
-                sample /= ch;
-            }
-            else if (scope->mode == DDB_SCOPE_MULTICHANNEL) {
-                sample = scope->samples[i * scope->channels + output_channel];
-            }
-            if (sample > ypos_max) {
-                ypos_max = sample;
-            }
-            if (sample < ypos_min) {
-                ypos_min = sample;
-            }
-            n += 1;
+    float left = 0;
+    float left_a = 0;
+    float left_b = 0;
+    float leftfrac = 0;
+    for (int i = 0; i < draw_data->point_count; i++) {
+        float right = (float)(i+1) / draw_data->point_count * scope->sample_count;
+        if (right > scope->sample_count-1) {
+            right = scope->sample_count-1;
         }
-        if (n > 0 && point_index < draw_data->point_count) {
-            draw_data->points[point_index].ymin = ypos_min * pixel_amplitude + pixel_amplitude;
-            draw_data->points[point_index].ymax = ypos_max * pixel_amplitude + pixel_amplitude;
-            point_index += 1;
-            channel_point_index += 1;
+
+        float right_a = floor(right);
+        float right_b = ceil(right);
+
+        float rightfrac = right_b-right;
+
+        for (int c = 0; c < output_channels; c++) {
+            draw_data->points[draw_data->point_count * c + i].ymin = 1;
+            draw_data->points[draw_data->point_count * c + i].ymax = -1;
         }
+
+        for (int c = 0; c < scope->channels; c++) {
+            int output_channel;
+
+            switch (scope->mode) {
+            case DDB_SCOPE_MONO:
+                output_channel = 0;
+                break;
+            case DDB_SCOPE_MULTICHANNEL:
+                output_channel = c;
+                break;
+            }
+
+            ddb_scope_point_t *minmax = &draw_data->points[draw_data->point_count * output_channel + i];
+
+            float leftsample_a = scope->samples[(int)left_a * scope->channels + c];
+            float leftsample_b = scope->samples[(int)left_b * scope->channels + c];
+            float leftsample = leftsample_a + (leftsample_b - leftsample_a) * leftfrac;
+
+            if (leftsample > minmax->ymax) {
+                minmax->ymax = leftsample;
+            }
+            if (leftsample < minmax->ymin) {
+                minmax->ymin = leftsample;
+            }
+
+            float rightsample_a = scope->samples[(int)right_a * scope->channels + c];
+            float rightsample_b = scope->samples[(int)right_b * scope->channels + c];
+            float rightsample = rightsample_a + (rightsample_b - rightsample_a) * rightfrac;
+
+            if (rightsample > minmax->ymax) {
+                minmax->ymax = rightsample;
+            }
+            if (rightsample < minmax->ymin) {
+                minmax->ymin = rightsample;
+            }
+
+            for (int n = (int)left_b; n <= (int)right_a; n++) {
+                float sample = scope->samples[n * scope->channels + c];
+
+                if (sample > minmax->ymax) {
+                    minmax->ymax = sample;
+                }
+                if (sample < minmax->ymin) {
+                    minmax->ymin = sample;
+                }
+            }
+
+            int rescale = 0;
+            switch (scope->mode) {
+            case DDB_SCOPE_MONO:
+                if (c == scope->channels - 1) {
+                    rescale = 1;
+                }
+                break;
+            case DDB_SCOPE_MULTICHANNEL:
+                rescale = 1;
+                break;
+            }
+
+            if (rescale) {
+                minmax->ymin = minmax->ymin * pixel_amplitude + pixel_amplitude + channel_height * output_channel;
+                minmax->ymax = minmax->ymax * pixel_amplitude + pixel_amplitude + channel_height * output_channel;
+            }
+        }
+        left = right;
+        left_a = right_a;
+        left_b = right_b;
+        leftfrac = rightfrac;
     }
 
     draw_data->mode = scope->mode;
