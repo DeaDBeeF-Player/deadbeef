@@ -86,7 +86,7 @@ ddb_scope_tick (ddb_scope_t * restrict scope) {
 }
 
 void
-ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_height, ddb_scope_draw_data_t * restrict draw_data) {
+ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_height, int y_axis_flip, ddb_scope_draw_data_t * restrict draw_data) {
     if (scope->mode_did_change
         || draw_data->point_count != view_width) {
         free (draw_data->points);
@@ -189,8 +189,21 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
             }
 
             if (rescale) {
-                minmax->ymin = minmax->ymin * pixel_amplitude + pixel_amplitude + channel_height * output_channel;
-                minmax->ymax = minmax->ymax * pixel_amplitude + pixel_amplitude + channel_height * output_channel;
+                int offs;
+                float ymin;
+                float ymax;
+                if (y_axis_flip) {
+                    offs = output_channel * channel_height;
+                    ymin = -minmax->ymax;
+                    ymax = -minmax->ymin;
+                }
+                else {
+                    offs = (output_channels - output_channel - 1) * channel_height;
+                    ymin = minmax->ymin;
+                    ymax = minmax->ymax;
+                }
+                minmax->ymin = ymin * pixel_amplitude + pixel_amplitude + offs;
+                minmax->ymax = ymax * pixel_amplitude + pixel_amplitude + offs;
             }
         }
         left = right;

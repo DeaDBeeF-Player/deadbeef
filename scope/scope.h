@@ -66,7 +66,7 @@ void ddb_scope_process (ddb_scope_t *scope, int samplerate, int channels, const 
 
 void ddb_scope_tick (ddb_scope_t *scope);
 
-void ddb_scope_get_draw_data (ddb_scope_t *scope, int view_width, int view_height, ddb_scope_draw_data_t *draw_data);
+void ddb_scope_get_draw_data (ddb_scope_t *scope, int view_width, int view_height, int y_axis_flip, ddb_scope_draw_data_t *draw_data);
 
 void ddb_scope_draw_data_dealloc (ddb_scope_draw_data_t *draw_data);
 

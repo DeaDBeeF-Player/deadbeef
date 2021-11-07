@@ -247,7 +247,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
         if (_scope.sample_count != 0) {
             ddb_scope_tick(&_scope);
-            ddb_scope_get_draw_data(&_scope, (int)(self.view.bounds.size.width * scale), (int)(self.view.bounds.size.height * scale), &_draw_data);
+            ddb_scope_get_draw_data(&_scope, (int)(self.view.bounds.size.width * scale), (int)(self.view.bounds.size.height * scale), 1, &_draw_data);
         }
     }
 
