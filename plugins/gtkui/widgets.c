@@ -2852,7 +2852,7 @@ scope_wavedata_listener (void *ctx, const ddb_audio_data_t *data) {
         deadbeef->mutex_unlock (w->mutex);
     }
 
-    if (w->samples && w->nsamples) {
+    if (w->samples != NULL && w->nsamples != 0 && data->fmt->channels != 0) {
         // append
         int nsamples = data->nframes / data->fmt->channels;
         float ratio = data->fmt->samplerate / 44100.f;
