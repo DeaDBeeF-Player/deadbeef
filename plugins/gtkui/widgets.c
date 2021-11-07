@@ -4204,6 +4204,23 @@ w_volumebar_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
 
 }
 
+static gboolean
+on_volumebar_evbox_button_press_event (GtkWidget      *widget,
+                            GdkEventButton *event,
+                            gpointer   user_data)
+{
+    if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
+        GtkWidget *menu;
+
+        menu = gtk_menu_new ();
+        w_volumebar_initmenu (user_data, menu);
+        gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+        return TRUE;
+    }
+    return FALSE;
+}
+
 ddb_gtkui_widget_t *
 w_volumebar_create (void) {
     w_volumebar_t *w = malloc (sizeof (w_volumebar_t));
@@ -4218,6 +4235,7 @@ w_volumebar_create (void) {
     gtk_widget_set_events (GTK_WIDGET (w->base.widget), gtk_widget_get_events (GTK_WIDGET (w->base.widget)) | GDK_SCROLL_MASK);
 #endif
     ddb_volumebar_init_signals (DDB_VOLUMEBAR (w->volumebar), w->base.widget);
+    g_signal_connect ((gpointer) w->base.widget, "button_press_event", G_CALLBACK (on_volumebar_evbox_button_press_event), w);
     gtk_widget_show (w->volumebar);
     gtk_widget_set_size_request (w->base.widget, 70, -1);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->volumebar);
