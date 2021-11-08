@@ -1049,9 +1049,6 @@
 		2D5B51221FF43FC8000AD484 /* liboggedit.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D5D21461A4033FF001D5A79 /* lastfm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5D21451A4033FF001D5A79 /* lastfm.c */; };
 		2D5D214C1A403428001D5A79 /* lastfm.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D5D21401A4033B0001D5A79 /* lastfm.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2D5D9C5A24A7FB0200D632E4 /* libavformat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D5D9C5724A7FB0200D632E4 /* libavformat.dylib */; };
-		2D5D9C5B24A7FB0200D632E4 /* libavutil.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D5D9C5824A7FB0200D632E4 /* libavutil.dylib */; };
-		2D5D9C5C24A7FB0200D632E4 /* libavcodec.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D5D9C5924A7FB0200D632E4 /* libavcodec.dylib */; };
 		2D5F05F025E306BC000A588C /* SpectrumAnalyzerWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5F05EE25E306BC000A588C /* SpectrumAnalyzerWidget.h */; };
 		2D5F05F125E306BC000A588C /* SpectrumAnalyzerWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5F05EE25E306BC000A588C /* SpectrumAnalyzerWidget.h */; };
 		2D5F05F225E306BC000A588C /* SpectrumAnalyzerWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5F05EF25E306BC000A588C /* SpectrumAnalyzerWidget.m */; };
@@ -2145,6 +2142,15 @@
 		2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCF73B21A952F8900495740 /* PreferencesWindowController.h */; };
 		2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DCF73B31A952F8900495740 /* PreferencesWindowController.m */; };
+		2DD376F62739B5DE007AD315 /* libavcodec.58.134.100.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DD376F72739B5DE007AD315 /* libavformat.58.76.100.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DD376F82739B5DE007AD315 /* libavutil.56.70.100.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DD376F92739B5FF007AD315 /* libavcodec.58.134.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */; };
+		2DD376FA2739B601007AD315 /* libavformat.58.76.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */; };
+		2DD376FB2739B603007AD315 /* libavutil.56.70.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */; };
+		2DD376FF2739B865007AD315 /* libavcodec.58.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FC2739B854007AD315 /* libavcodec.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DD377002739B867007AD315 /* libavformat.58.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FE2739B854007AD315 /* libavformat.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DD377012739B869007AD315 /* libavutil.56.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FD2739B854007AD315 /* libavutil.56.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DD39ED926AD8D1600C5846D /* analyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD39ED726AD8D1600C5846D /* analyzer.h */; };
 		2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2DD5262E2062F1DF002609C5 /* help-cocoa.txt */; };
 		2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
@@ -3661,6 +3667,12 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				2DD376FF2739B865007AD315 /* libavcodec.58.dylib in Copy Plugins */,
+				2DD377002739B867007AD315 /* libavformat.58.dylib in Copy Plugins */,
+				2DD377012739B869007AD315 /* libavutil.56.dylib in Copy Plugins */,
+				2DD376F62739B5DE007AD315 /* libavcodec.58.134.100.dylib in Copy Plugins */,
+				2DD376F72739B5DE007AD315 /* libavformat.58.76.100.dylib in Copy Plugins */,
+				2DD376F82739B5DE007AD315 /* libavutil.56.70.100.dylib in Copy Plugins */,
 				2DA5AC1E25D0393C00947C19 /* libwavpacklib.dylib in Copy Plugins */,
 				2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Copy Plugins */,
 				2D00F33124351EDF000FC130 /* ddb_soundtouch.dylib in Copy Plugins */,
@@ -5957,6 +5969,12 @@
 		2DCD78D319A665CA00EA50FA /* deadbeef.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deadbeef.png; sourceTree = "<group>"; };
 		2DCF73B21A952F8900495740 /* PreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowController.h; sourceTree = "<group>"; };
 		2DCF73B31A952F8900495740 /* PreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesWindowController.m; sourceTree = "<group>"; };
+		2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.58.76.100.dylib; path = deps/ffmpeg/lib/libavformat.58.76.100.dylib; sourceTree = "<group>"; };
+		2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.58.134.100.dylib; path = deps/ffmpeg/lib/libavcodec.58.134.100.dylib; sourceTree = "<group>"; };
+		2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.56.70.100.dylib; path = deps/ffmpeg/lib/libavutil.56.70.100.dylib; sourceTree = "<group>"; };
+		2DD376FC2739B854007AD315 /* libavcodec.58.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.58.dylib; path = deps/ffmpeg/lib/libavcodec.58.dylib; sourceTree = "<group>"; };
+		2DD376FD2739B854007AD315 /* libavutil.56.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.56.dylib; path = deps/ffmpeg/lib/libavutil.56.dylib; sourceTree = "<group>"; };
+		2DD376FE2739B854007AD315 /* libavformat.58.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.58.dylib; path = deps/ffmpeg/lib/libavformat.58.dylib; sourceTree = "<group>"; };
 		2DD39ED726AD8D1600C5846D /* analyzer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = analyzer.h; sourceTree = "<group>"; };
 		2DD39ED826AD8D1600C5846D /* analyzer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = analyzer.c; sourceTree = "<group>"; };
 		2DD5262E2062F1DF002609C5 /* help-cocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "help-cocoa.txt"; sourceTree = "<group>"; };
@@ -6631,9 +6649,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D5D9C5A24A7FB0200D632E4 /* libavformat.dylib in Frameworks */,
-				2D5D9C5B24A7FB0200D632E4 /* libavutil.dylib in Frameworks */,
-				2D5D9C5C24A7FB0200D632E4 /* libavcodec.dylib in Frameworks */,
 				83BA8E5F1D542D2700D345EE /* CoreMedia.framework in Frameworks */,
 				83BA8E501D542D0D00D345EE /* VideoToolbox.framework in Frameworks */,
 				2D026DB81CAC5E8100E27961 /* Security.framework in Frameworks */,
@@ -6643,6 +6658,9 @@
 				2D026DAD1CAC5CDF00E27961 /* CoreFoundation.framework in Frameworks */,
 				2D026DAB1CAC5CB900E27961 /* libbz2.dylib in Frameworks */,
 				2D026DA91CAC5CB900E27961 /* libz.dylib in Frameworks */,
+				2DD376F92739B5FF007AD315 /* libavcodec.58.134.100.dylib in Frameworks */,
+				2DD376FA2739B601007AD315 /* libavformat.58.76.100.dylib in Frameworks */,
+				2DD376FB2739B603007AD315 /* libavutil.56.70.100.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10890,6 +10908,12 @@
 		4D1B3E7C18379829003E6066 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2DD376FC2739B854007AD315 /* libavcodec.58.dylib */,
+				2DD376FE2739B854007AD315 /* libavformat.58.dylib */,
+				2DD376FD2739B854007AD315 /* libavutil.56.dylib */,
+				2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */,
+				2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */,
+				2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */,
 				2D6E2CF926AC157A008FCD4B /* Accelerate.framework */,
 				2D76DD3B24F6D693000EDA3E /* IOKit.framework */,
 				2D5D9C5924A7FB0200D632E4 /* libavcodec.dylib */,
@@ -21108,7 +21132,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				INFOPLIST_FILE = "../plugins/cocoaui/deadbeef-Info.plist";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/deps/ffmpeg/lib",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.deadbeef.DeaDBeeF;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
@@ -21159,7 +21186,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				INFOPLIST_FILE = "../plugins/cocoaui/deadbeef-Info.plist";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/deps/ffmpeg/lib",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.deadbeef.DeaDBeeF;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
