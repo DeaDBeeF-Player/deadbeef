@@ -6,7 +6,14 @@ plugins/gtkui/interface.c
 plugins/gtkui/mainplaylist.c
 plugins/gtkui/plcommon.c
 plugins/gtkui/pluginconf.c
-plugins/gtkui/prefwin.c
+plugins/gtkui/prefwin/prefwin.c
+plugins/gtkui/prefwin/prefwinappearance.c
+plugins/gtkui/prefwin/prefwinmedialib.c
+plugins/gtkui/prefwin/prefwinmisc.c
+plugins/gtkui/prefwin/prefwinnetwork.c
+plugins/gtkui/prefwin/prefwinplayback.c
+plugins/gtkui/prefwin/prefwinplugins.c
+plugins/gtkui/prefwin/prefwinsound.c
 plugins/gtkui/progress.c
 plugins/gtkui/search.c
 plugins/gtkui/trkproperties.c
