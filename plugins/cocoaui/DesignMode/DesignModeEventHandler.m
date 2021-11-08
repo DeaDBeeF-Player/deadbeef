@@ -33,7 +33,10 @@
 }
 
 - (BOOL)sendEvent:(NSEvent *)event {
-    if (event.type != NSEventTypeRightMouseDown) {
+    BOOL isRightMouseDown = event.type == NSEventTypeRightMouseDown;
+    BOOL isCtrlLeftMouseDown = event.type == NSEventTypeLeftMouseDown
+        && ((event.modifierFlags & NSEventModifierFlagDeviceIndependentFlagsMask) == NSEventModifierFlagControl);
+    if (!isRightMouseDown && !isCtrlLeftMouseDown) {
         return NO;
     }
 
@@ -52,7 +55,9 @@
     }
 
     if (hitView && count >= 0) {
-        [hitView rightMouseDown:event];
+        if (isRightMouseDown || isCtrlLeftMouseDown) {
+            [hitView rightMouseDown:event];
+        }
         return YES;
     }
 
