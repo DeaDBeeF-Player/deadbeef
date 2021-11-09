@@ -6,17 +6,16 @@
 //  Copyright © 2021 Alexey Yakovenko. All rights reserved.
 //
 
+#import "DdbShared.h"
 #import "MainContentViewController.h"
-
-@interface MainContentViewController ()
-
-@end
 
 @implementation MainContentViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do view setup here.
+- (IBAction)createNewPlaylistAction:(id)sender {
+    int playlist = cocoaui_add_new_playlist ();
+    if (playlist != -1) {
+        cocoaui_playlist_set_curr (playlist);
+    }
 }
 
 @end

@@ -11,9 +11,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface SidebarSplitViewController : NSSplitViewController
-
-@property IBOutlet MainContentViewController* bodyViewController;
-
 @end
 
 NS_ASSUME_NONNULL_END

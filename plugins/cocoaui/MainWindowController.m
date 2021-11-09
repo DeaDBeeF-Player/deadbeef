@@ -45,9 +45,10 @@ extern DB_functions_t *deadbeef;
     int _prevSeekBarPos;
 }
 
-@property (weak) IBOutlet NSView *designableContainerView;
-@property (weak) IBOutlet NSView *playlistWithTabsView;
-@property (strong) IBOutlet SidebarSplitViewController *splitViewController;
+@property (nonatomic,weak) IBOutlet NSView *designableContainerView;
+@property (nonatomic,weak) IBOutlet NSView *playlistWithTabsView;
+@property (nonatomic) IBOutlet SidebarSplitViewController *splitViewController;
+@property (nonatomic) MainContentViewController *mainContentViewController;
 
 @property (weak) NSMenuItem *designModeMenuItem;
 
@@ -98,17 +99,17 @@ extern DB_functions_t *deadbeef;
     self.playlistWithTabsView = self.splitViewController.bodyViewController.wrapperView;
     self.designableContainerView = self.splitViewController.bodyViewController.designableView;
 #else
-    MainContentViewController *contentViewController = [[MainContentViewController alloc] initWithNibName:@"MainContentViewController" bundle:nil];
-    [self.designableContainerView addSubview:contentViewController.view];
+    self.mainContentViewController = [[MainContentViewController alloc] initWithNibName:@"MainContentViewController" bundle:nil];
+    [self.designableContainerView addSubview:self.mainContentViewController.view];
     [NSLayoutConstraint activateConstraints:@[
-        [self.designableContainerView.topAnchor constraintEqualToAnchor:contentViewController.view.topAnchor],
-        [self.designableContainerView.bottomAnchor constraintEqualToAnchor:contentViewController.view.bottomAnchor],
-        [self.designableContainerView.leadingAnchor constraintEqualToAnchor:contentViewController.view.leadingAnchor],
-        [self.designableContainerView.trailingAnchor constraintEqualToAnchor:contentViewController.view.trailingAnchor],
+        [self.designableContainerView.topAnchor constraintEqualToAnchor:self.mainContentViewController.view.topAnchor],
+        [self.designableContainerView.bottomAnchor constraintEqualToAnchor:self.mainContentViewController.view.bottomAnchor],
+        [self.designableContainerView.leadingAnchor constraintEqualToAnchor:self.mainContentViewController.view.leadingAnchor],
+        [self.designableContainerView.trailingAnchor constraintEqualToAnchor:self.mainContentViewController.view.trailingAnchor],
     ]];
 
-    self.tabStrip = contentViewController.tabStrip;
-    self.designableContainerView = contentViewController.designableView;
+    self.tabStrip = self.mainContentViewController.tabStrip;
+    self.designableContainerView = self.mainContentViewController.designableView;
 #endif
 
     id<WidgetProtocol> rootWidget = DesignModeState.sharedInstance.rootWidget;
@@ -397,13 +398,6 @@ static char sb_text[512];
         NSString *subTitle = [NSString stringWithUTF8String:subtitleBuffer];
 
         self.window.title = [NSString stringWithFormat:@"%@%@%@", subTitle, (titleBuffer[0] && subtitleBuffer[0]) ? @" - " : @"", title];
-    }
-}
-
-- (IBAction)createNewPlaylistAction:(id)sender {
-    int playlist = cocoaui_add_new_playlist ();
-    if (playlist != -1) {
-        cocoaui_playlist_set_curr (playlist);
     }
 }
 
