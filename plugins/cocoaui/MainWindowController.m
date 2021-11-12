@@ -222,7 +222,7 @@ static char sb_text[512];
     float perc = 0;
     if (trk) {
         dur = deadbeef->pl_get_item_duration (trk);
-        if (dur >= 0) {
+        if (dur > 0) {
             perc = deadbeef->streamer_get_playpos () / dur * 100.f;
             if (perc < 0) {
                 perc = 0;
@@ -230,6 +230,9 @@ static char sb_text[512];
             else if (perc > 100) {
                 perc = 100;
             }
+        }
+        else {
+            perc = 0;
         }
     }
 
