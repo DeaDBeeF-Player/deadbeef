@@ -95,16 +95,20 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     _analyzer.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 }
 
+- (void)updateVisListening {
+    if (self.isListening && !self.window.isVisible) {
+        deadbeef->vis_spectrum_unlisten ((__bridge void *)(self));
+        self.isListening = NO;
+    }
+    else if (!self.isListening && self.window.isVisible) {
+        deadbeef->vis_spectrum_listen2((__bridge void *)(self), vis_callback);
+        self.isListening = YES;
+    }
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     if (context == kIsVisibleContext) {
-        if (!self.isListening && self.window.isVisible) {
-            deadbeef->vis_spectrum_listen2((__bridge void *)(self), vis_callback);
-            self.isListening = YES;
-        }
-        else if (self.isListening && !self.window.isVisible) {
-            deadbeef->vis_spectrum_unlisten ((__bridge void *)(self));
-            self.isListening = NO;
-        }
+        [self updateVisListening];
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -222,11 +226,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     [super drawRect:dirtyRect];
 
     // for some reason KVO is not triggered when the window becomes hidden
-    if (self.isListening && !self.window.isVisible) {
-        deadbeef->vis_spectrum_unlisten ((__bridge void *)(self));
-        self.isListening = NO;
-        return;
-    }
+    [self updateVisListening];
 
     [NSColor.blackColor setFill];
     NSRectFill(dirtyRect);
@@ -235,10 +235,12 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
         return;
     }
 
-    @synchronized (self) {
-        ddb_analyzer_process(&_analyzer, _input_data.fmt->samplerate, _input_data.fmt->channels, _input_data.data, _input_data.nframes);
-        ddb_analyzer_tick(&_analyzer);
-        ddb_analyzer_get_draw_data(&_analyzer, self.bounds.size.width, self.bounds.size.height, &_draw_data);
+    if (self.isListening) {
+        @synchronized (self) {
+            ddb_analyzer_process(&_analyzer, _input_data.fmt->samplerate, _input_data.fmt->channels, _input_data.data, _input_data.nframes);
+            ddb_analyzer_tick(&_analyzer);
+            ddb_analyzer_get_draw_data(&_analyzer, self.bounds.size.width, self.bounds.size.height, &_draw_data);
+        }
     }
 
     [self drawSaGrid];

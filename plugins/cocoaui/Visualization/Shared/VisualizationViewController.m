@@ -30,29 +30,38 @@ static void *kIsVisibleContext = &kIsVisibleContext;
     [self addObserver:self forKeyPath:kWindowIsVisibleKey options:NSKeyValueObservingOptionInitial context:kIsVisibleContext];
 }
 
+- (void)visibilityDidChange {
+    if (self.view.window.isVisible) {
+        __weak VisualizationViewController *weakSelf = self;
+        if (self.tickTimer == nil) {
+            self.tickTimer = [NSTimer timerWithTimeInterval:1/30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
+                VisualizationViewController *strongSelf = weakSelf;
+                if (!strongSelf.view.window.isVisible) {
+                    [strongSelf.tickTimer invalidate];
+                    strongSelf.tickTimer = nil;
+                }
+
+                strongSelf.view.needsDisplay = YES;
+            }];
+
+            // FIXME: this should not be called for the metal visualizations, since AAPLNSView handles it
+            [[NSRunLoop currentRunLoop] addTimer:self.tickTimer forMode:NSRunLoopCommonModes];
+        }
+    }
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if (context == kIsVisibleContext) {
-        if (self.view.window.isVisible) {
-            __weak VisualizationViewController *weakSelf = self;
-            if (self.tickTimer == nil) {
-                self.tickTimer = [NSTimer timerWithTimeInterval:1/30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
-                    VisualizationViewController *strongSelf = weakSelf;
-                    if (!strongSelf.view.window.isVisible) {
-                        [strongSelf.tickTimer invalidate];
-                        strongSelf.tickTimer = nil;
-                    }
-
-                    strongSelf.view.needsDisplay = YES;
-                }];
-
-                // FIXME: this should not be called for the metal visualizations, since AAPLNSView handles it
-                [[NSRunLoop currentRunLoop] addTimer:self.tickTimer forMode:NSRunLoopCommonModes];
-            }
-        }
+        [self visibilityDidChange];
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }
+
+- (void)viewDidAppear {
+    [self visibilityDidChange];
+}
+
 
 @end

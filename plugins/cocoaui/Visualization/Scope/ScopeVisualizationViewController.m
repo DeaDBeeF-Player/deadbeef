@@ -120,16 +120,20 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
                                       drawablePixelFormat:view.metalLayer.pixelFormat];
 }
 
+- (void)updateVisListening {
+    if (!self.isListening && self.view.window.isVisible) {
+        deadbeef->vis_waveform_listen((__bridge void *)(self), vis_callback);
+        self.isListening = YES;
+    }
+    else if (self.isListening && !self.view.window.isVisible) {
+        deadbeef->vis_waveform_unlisten ((__bridge void *)(self));
+        self.isListening = NO;
+    }
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     if (context == kIsVisibleContext) {
-        if (!self.isListening && self.view.window.isVisible) {
-            deadbeef->vis_waveform_listen((__bridge void *)(self), vis_callback);
-            self.isListening = YES;
-        }
-        else if (self.isListening && !self.view.window.isVisible) {
-            deadbeef->vis_waveform_unlisten ((__bridge void *)(self));
-            self.isListening = NO;
-        }
+        [self updateVisListening];
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -235,10 +239,9 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 }
 
 - (BOOL)updateDrawData {
-    // for some reason KVO is not triggered when the window becomes hidden
-    if (self.isListening && !self.view.window.isVisible) {
-        deadbeef->vis_waveform_unlisten ((__bridge void *)(self));
-        self.isListening = NO;
+    [self updateVisListening];
+
+    if (!self.isListening) {
         return NO;
     }
 
