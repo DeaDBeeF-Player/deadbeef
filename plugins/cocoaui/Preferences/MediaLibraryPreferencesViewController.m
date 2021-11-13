@@ -143,6 +143,11 @@ _listener (ddb_mediasource_event_type_t _event, void *user_data) {
 #pragma mark NSTableViewDataSource
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
+    // This may get called even if medialib is unavaliable, because the viewcontroller is instantiated anyway.
+    // For example, when changing macOS color settings.
+    if (self.medialibPlugin == NULL) {
+        return 0;
+    }
     return self.medialibPlugin->folder_count(self.medialibSource);
 }
 
