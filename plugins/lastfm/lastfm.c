@@ -766,6 +766,8 @@ lastfm_stop (void) {
         terminate = 1; // prevent any new items from being scheduled
     });
 
+    dispatch_sync(request_queue, ^{
+    });
     dispatch_release(request_queue);
     dispatch_release(sync_queue);
     return 0;
