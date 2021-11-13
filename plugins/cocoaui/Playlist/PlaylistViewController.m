@@ -210,7 +210,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
 - (void)menuGroupByArtistDateAlbum:(id)sender {
     [self clearGrouping];
-    self.groupStr = @"%album artist% - ['['%year%']' ]%album%";
+    self.groupStr = @"%album artist% - ['['$year(%date%)']' ]%album%";
     deadbeef->conf_set_str (self.groupByConfStr, self.groupStr.UTF8String);
     PlaylistView *lv = (PlaylistView *)self.view;
     [lv.contentView reloadData];

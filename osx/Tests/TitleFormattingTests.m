@@ -2642,5 +2642,39 @@ static DB_output_t fake_out = {
     free (output);
 }
 
+- (void)test_year_empty_returnNothing {
+    char *bc = tf_compile("$year()");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_year_text_returnNothing {
+    char *bc = tf_compile("$year(abcd)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_year_shorterThan4_returnNothing {
+    char *bc = tf_compile("$year(123)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, ""), @"The actual output is: %s", buffer);
+}
+
+- (void)test_year_Exactly4_returnValue {
+    char *bc = tf_compile("$year(1234)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "1234"), @"The actual output is: %s", buffer);
+}
+
+- (void)test_year_LongerThan4WithText_returnYear {
+    char *bc = tf_compile("$year(9999text)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    XCTAssert(!strcmp (buffer, "9999"), @"The actual output is: %s", buffer);
+}
 
 @end

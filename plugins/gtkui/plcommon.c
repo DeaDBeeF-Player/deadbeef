@@ -1625,7 +1625,7 @@ on_group_by_artist_date_album_activate (GtkMenuItem     *menuitem,
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
     }
-    groups_changed (get_context_menu_listview (menuitem), "%album artist% - ['['%year%']' ]%album%");
+    groups_changed (get_context_menu_listview (menuitem), "%album artist% - ['['$year(%date%)']' ]%album%");
 }
 
 static void

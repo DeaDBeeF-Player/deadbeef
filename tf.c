@@ -2442,6 +2442,35 @@ tf_func_rgb (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
     return rgbseqlen;
 }
 
+int
+tf_func_year (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc != 1) {
+        return -1;
+    }
+
+    int bool_out = 0;
+
+    int len;
+    char temp_str[1000];
+    TF_EVAL_CHECK(len, ctx, args, arglens[0], temp_str, sizeof (temp_str) - 1, fail_on_undef);
+
+    // Shorter than 4 characters? return nothing
+    if (len < 4) {
+        return 0;
+    }
+
+    // First 4 characters are digits? extract
+    for (int i = 0; i < 4; i++) {
+        if (!isdigit(temp_str[i])) {
+            return 0;
+        }
+    }
+
+    memcpy (out, temp_str, 4);
+    return 4;
+}
+
+
 tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     // Control flow
     { "if", tf_func_if },
@@ -2518,6 +2547,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "meta", tf_func_meta },
     { "channels", tf_func_channels },
     { "rgb", tf_func_rgb },
+    { "year", tf_func_year },
     { NULL, NULL }
 };
 
