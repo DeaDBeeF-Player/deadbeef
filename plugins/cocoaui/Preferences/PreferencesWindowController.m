@@ -21,6 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#import "AppearancePreferencesViewController.h"
 #import "DspPreferencesViewController.h"
 #import "GuiPreferencesWindowController.h"
 #import "NetworkPreferencesViewController.h"
@@ -41,6 +42,9 @@
 @property (strong) IBOutlet NetworkPreferencesViewController *networkViewController;
 @property (strong) IBOutlet PluginsPreferencesViewController *pluginsViewController;
 @property (strong) IBOutlet MediaLibraryPreferencesViewController *mediaLibraryPreferencesViewController;
+@property (weak) IBOutlet NSView *appearancePaneContainerView;
+
+@property (nonatomic) AppearancePreferencesViewController *appearancePreferencesViewController;
 
 @property (nonatomic) NSString *initialTabIdentifier;
 
@@ -72,6 +76,16 @@
     if (!enableMedialib) {
         [self.toolbar removeItemAtIndex:4];
     }
+
+    self.appearancePreferencesViewController = [[AppearancePreferencesViewController alloc] initWithNibName:@"AppearancePreferences" bundle:nil];
+    [self.appearancePaneContainerView addSubview:self.appearancePreferencesViewController.view];
+
+    [self.appearancePreferencesViewController.view.leadingAnchor constraintEqualToAnchor:self.appearancePaneContainerView.leadingAnchor].active = YES;
+    [self.appearancePreferencesViewController.view.trailingAnchor constraintEqualToAnchor:self.appearancePaneContainerView.trailingAnchor].active = YES;
+    [self.appearancePreferencesViewController.view.topAnchor constraintEqualToAnchor:self.appearancePaneContainerView.topAnchor].active = YES;
+    [self.appearancePreferencesViewController.view.bottomAnchor constraintEqualToAnchor:self.appearancePaneContainerView.bottomAnchor].active = YES;
+
+
 
     if (self.initialTabIdentifier) {
         _toolbar.selectedItemIdentifier = self.initialTabIdentifier;

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="AppearancePreferencesViewController">
+            <connections>
+                <outlet property="overrideVisualizationBaseColorButton" destination="moT-CU-i09" id="V4U-lL-9gC"/>
+                <outlet property="view" destination="c22-O7-iKe" id="3Yk-qR-xNe"/>
+                <outlet property="visualizationColorWell" destination="h59-z6-4A5" id="dPZ-uj-1Wl"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView translatesAutoresizingMaskIntoConstraints="NO" id="c22-O7-iKe">
+            <rect key="frame" x="0.0" y="0.0" width="348" height="272"/>
+            <subviews>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="moT-CU-i09">
+                    <rect key="frame" x="18" y="235" width="218" height="18"/>
+                    <buttonCell key="cell" type="check" title="Custom visualization base color" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="uL2-re-5Ur">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="overrideVisualizationBaseColorButtonAction:" target="-2" id="yRY-Wj-4fr"/>
+                    </connections>
+                </button>
+                <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="h59-z6-4A5">
+                    <rect key="frame" x="244" y="233" width="84" height="23"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="23" id="0YH-9K-e2R"/>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="qs5-te-MoN"/>
+                    </constraints>
+                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <connections>
+                        <action selector="visualizationColorWellAction:" target="-2" id="nfP-vF-lu3"/>
+                    </connections>
+                </colorWell>
+            </subviews>
+            <constraints>
+                <constraint firstItem="moT-CU-i09" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="20" symbolic="YES" id="Kix-bD-TxZ"/>
+                <constraint firstItem="h59-z6-4A5" firstAttribute="leading" secondItem="moT-CU-i09" secondAttribute="trailing" constant="8" id="LwL-JJ-U7h"/>
+                <constraint firstItem="h59-z6-4A5" firstAttribute="centerY" secondItem="moT-CU-i09" secondAttribute="centerY" id="cS5-vf-3ve"/>
+                <constraint firstItem="moT-CU-i09" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="20" symbolic="YES" id="kVh-dT-xaD"/>
+                <constraint firstAttribute="trailing" secondItem="h59-z6-4A5" secondAttribute="trailing" constant="20" symbolic="YES" id="tSN-XE-1pz"/>
+            </constraints>
+            <point key="canvasLocation" x="79" y="109"/>
+        </customView>
+    </objects>
+</document>

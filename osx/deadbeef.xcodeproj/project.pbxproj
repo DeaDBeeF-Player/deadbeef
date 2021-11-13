@@ -2151,6 +2151,9 @@
 		2DD376FF2739B865007AD315 /* libavcodec.58.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FC2739B854007AD315 /* libavcodec.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DD377002739B867007AD315 /* libavformat.58.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FE2739B854007AD315 /* libavformat.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DD377012739B869007AD315 /* libavutil.56.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FD2739B854007AD315 /* libavutil.56.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DD377432740420C007AD315 /* AppearancePreferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD377422740420C007AD315 /* AppearancePreferences.xib */; };
+		2DD3774627404401007AD315 /* AppearancePreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD3774427404401007AD315 /* AppearancePreferencesViewController.h */; };
+		2DD3774727404401007AD315 /* AppearancePreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD3774527404401007AD315 /* AppearancePreferencesViewController.m */; };
 		2DD39ED926AD8D1600C5846D /* analyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD39ED726AD8D1600C5846D /* analyzer.h */; };
 		2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2DD5262E2062F1DF002609C5 /* help-cocoa.txt */; };
 		2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
@@ -5975,6 +5978,9 @@
 		2DD376FC2739B854007AD315 /* libavcodec.58.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.58.dylib; path = deps/ffmpeg/lib/libavcodec.58.dylib; sourceTree = "<group>"; };
 		2DD376FD2739B854007AD315 /* libavutil.56.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.56.dylib; path = deps/ffmpeg/lib/libavutil.56.dylib; sourceTree = "<group>"; };
 		2DD376FE2739B854007AD315 /* libavformat.58.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.58.dylib; path = deps/ffmpeg/lib/libavformat.58.dylib; sourceTree = "<group>"; };
+		2DD377422740420C007AD315 /* AppearancePreferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AppearancePreferences.xib; sourceTree = "<group>"; };
+		2DD3774427404401007AD315 /* AppearancePreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppearancePreferencesViewController.h; sourceTree = "<group>"; };
+		2DD3774527404401007AD315 /* AppearancePreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppearancePreferencesViewController.m; sourceTree = "<group>"; };
 		2DD39ED726AD8D1600C5846D /* analyzer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = analyzer.h; sourceTree = "<group>"; };
 		2DD39ED826AD8D1600C5846D /* analyzer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = analyzer.c; sourceTree = "<group>"; };
 		2DD5262E2062F1DF002609C5 /* help-cocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "help-cocoa.txt"; sourceTree = "<group>"; };
@@ -8673,6 +8679,7 @@
 		2D6202AF1B90800A00594746 /* XIB */ = {
 			isa = PBXGroup;
 			children = (
+				2DD377422740420C007AD315 /* AppearancePreferences.xib */,
 				2D2351271B13922400A62936 /* Converter.xib */,
 				2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */,
 				2DEBA1D123E207A3000E4135 /* EqualizerWindowController.xib */,
@@ -9798,6 +9805,8 @@
 		2D9FA3862404515500276E00 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
+				2DD3774427404401007AD315 /* AppearancePreferencesViewController.h */,
+				2DD3774527404401007AD315 /* AppearancePreferencesViewController.m */,
 				2DA273872406FBD800FB9BE1 /* DspPreferencesViewController.h */,
 				2DA273882406FBD800FB9BE1 /* DspPreferencesViewController.m */,
 				2DA273762406ED4100FB9BE1 /* GuiPreferencesWindowController.h */,
@@ -13107,6 +13116,7 @@
 				2DDD796325E15ED200FA6FE5 /* PlaylistWidget.h in Headers */,
 				2D0A6B1B237718DA00252E6D /* playmodes.h in Headers */,
 				2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */,
+				2DD3774627404401007AD315 /* AppearancePreferencesViewController.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */,
 				2D9E905124F453960037D323 /* MediaLibraryPreferencesViewController.h in Headers */,
 				2DE55ACE26C5A47F008F33FF /* medialibmanager.h in Headers */,
@@ -14819,6 +14829,7 @@
 				2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */,
 				4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */,
 				4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */,
+				2DD377432740420C007AD315 /* AppearancePreferences.xib in Resources */,
 				4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */,
 				2DB05FBC252E50FD0090635E /* iconDSPTemplate.pdf in Resources */,
 				2DB05F3A252E4DDB0090635E /* iconPlaybackTemplate.pdf in Resources */,
@@ -16328,6 +16339,7 @@
 				2D90EF9A2438A5A600AF6F4B /* ScriptableErrorViewer.m in Sources */,
 				2DDD781825E1578C00FA6FE5 /* SplitterWidget.m in Sources */,
 				2D1A564B1D9FFB10005E5CDD /* ReplayGainScannerController.m in Sources */,
+				2DD3774727404401007AD315 /* AppearancePreferencesViewController.m in Sources */,
 				2DF55C2A2270F415002C44DC /* ScriptableSelectViewController.m in Sources */,
 				2DE1D3E719B11539009B5BC6 /* PlaceholderWidget.m in Sources */,
 				2DDE52A724F821630096EF80 /* MediaLibraryOutlineView.m in Sources */,
