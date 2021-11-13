@@ -14,5 +14,6 @@
 @property (nonatomic,nullable) ScopeSettings *settings;
 
 - (void)updateScopeSettings:(nonnull ScopeSettings *)settings;
+- (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
 @end

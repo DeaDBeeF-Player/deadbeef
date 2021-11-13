@@ -11,18 +11,11 @@
 #import "ScopeRenderer.h"
 #import "ScopeShaderTypes.h"
 
-@interface ScopeRenderer()
-@property (nonatomic,readonly) NSColor *baseColor;
-@end
-
-@implementation ScopeRenderer
-{
+@implementation ScopeRenderer {
     // renderer global ivars
     id <MTLDevice>              _device;
     id <MTLCommandQueue>        _commandQueue;
     id <MTLRenderPipelineState> _pipelineState;
-//    id <MTLBuffer>              _vertices;
-//    id <MTLTexture>             _depthTarget;
 
     // Render pass descriptor which creates a render command encoder to draw to the drawable
     // textures
@@ -33,7 +26,7 @@
     NSUInteger _frameNum;
 }
 
-- (NSColor *)baseColor {
+- (NSColor *)baselor {
 #ifdef MAC_OS_X_VERSION_10_14
     if (@available(macOS 10.14, *)) {
         return NSColor.controlAccentColor;

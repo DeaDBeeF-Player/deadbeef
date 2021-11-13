@@ -133,5 +133,8 @@ static void *kBarGranularity = &kBarGranularity;
     return YES;
 }
 
+- (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
+    [self.visualizationViewController message:_id ctx:ctx p1:p1 p2:p2];
+}
 
 @end

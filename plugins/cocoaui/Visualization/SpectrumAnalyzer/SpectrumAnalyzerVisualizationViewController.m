@@ -1,5 +1,10 @@
+#import "SpectrumAnalyzerVisualizationView.h"
 #import "SpectrumAnalyzerVisualizationViewController.h"
+#import "VisBaseColorUtil.h"
 #include "analyzer.h"
+#include "deadbeef.h"
+
+extern DB_functions_t *deadbeef;
 
 @implementation SpectrumAnalyzerVisualizationViewController
 
@@ -29,6 +34,10 @@
     [gapSizeMenuItem.submenu addItemWithTitle:@"1/10 Bar" action:@selector(setTenthGap:) keyEquivalent:@""];
 
     self.view.menu = menu;
+
+    SpectrumAnalyzerVisualizationView *view = (SpectrumAnalyzerVisualizationView *)self.view;
+
+    view.baseColor = VisBaseColorUtil.shared.baseColor;
 }
 
 #pragma mark - Actions
@@ -132,6 +141,14 @@
     }
 
     return YES;
+}
+
+- (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
+    if (_id == DB_EV_CONFIGCHANGED) {
+        SpectrumAnalyzerVisualizationView *view = (SpectrumAnalyzerVisualizationView *)self.view;
+
+        view.baseColor = VisBaseColorUtil.shared.baseColor;
+    }
 }
 
 @end

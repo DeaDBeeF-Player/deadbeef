@@ -1,5 +1,5 @@
 //
-//  SpectrumAnalyzerVisualizationView.m
+//  SpectrumAnalyzerbaseco.m
 //  DeaDBeeF
 //
 //  Created by Alexey Yakovenko on 7/25/20.
@@ -26,7 +26,6 @@ static void *kIsVisibleContext = &kIsVisibleContext;
 }
 
 @property (nonatomic) NSDictionary *textAttrs;
-@property (nonatomic,readonly) NSColor *baseColor;
 @property (nonatomic,readonly) NSColor *barColor;
 @property (nonatomic,readonly) NSColor *peakColor;
 @property (nonatomic) NSColor *gridColor;
@@ -124,15 +123,6 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     _analyzer.octave_bars_step = settings.barGranularity;
 }
 
-
-- (NSColor *)baseColor {
-#ifdef MAC_OS_X_VERSION_10_14
-    if (@available(macOS 10.14, *)) {
-        return NSColor.controlAccentColor;
-    }
-#endif
-    return NSColor.alternateSelectedControlColor;
-}
 
 - (NSColor *)barColor {
     NSColor *tempColor = [self.baseColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace];

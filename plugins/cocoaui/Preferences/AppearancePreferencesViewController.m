@@ -7,6 +7,7 @@
 //
 
 #import "AppearancePreferencesViewController.h"
+#import "VisBaseColorUtil.h"
 #include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
@@ -26,30 +27,7 @@ extern DB_functions_t *deadbeef;
 
     int override_vis_color = deadbeef->conf_get_int ("cocoaui.vis.override_base_color", 0);
 
-    // fetch accent color as default!
-    NSColor *color;
-#ifdef MAC_OS_X_VERSION_10_14
-    if (@available(macOS 10.14, *)) {
-        color = NSColor.controlAccentColor;
-    }
-#endif
-    color = NSColor.alternateSelectedControlColor;
-
-    char str[100];
-    deadbeef->conf_get_str ("cocoaui.vis.base_color", "", str, sizeof (str));
-    if (str[0]) {
-        NSString *colorString = [NSString stringWithUTF8String:str];
-        NSArray<NSString *> *componentStrings = [colorString componentsSeparatedByString:@" "];
-
-        if (componentStrings.count == 4) {
-            CGFloat components[4];
-            for (int i = 0; i < 4; i++) {
-                components[i] = componentStrings[i].doubleValue;
-            }
-            color = [NSColor colorWithColorSpace:NSColorSpace.sRGBColorSpace components:components count:4];
-        }
-    }
-    self.visualizationColorWell.color = color;
+    self.visualizationColorWell.color = VisBaseColorUtil.shared.baseColor;
 
     [self updateOverrideVisualizationBaseColor:override_vis_color];
 }

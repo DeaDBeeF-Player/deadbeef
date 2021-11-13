@@ -9,6 +9,7 @@
 #import "AAPLView.h"
 #import "ScopeRenderer.h"
 #import "ScopeVisualizationViewController.h"
+#import "VisBaseColorUtil.h"
 #include "deadbeef.h"
 #include "scope.h"
 
@@ -118,6 +119,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
     _renderer = [[ScopeRenderer alloc] initWithMetalDevice:device
                                       drawablePixelFormat:view.metalLayer.pixelFormat];
+    _renderer.baseColor = VisBaseColorUtil.shared.baseColor;
 }
 
 - (void)updateVisListening {
@@ -309,6 +311,12 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
 
     return YES;
+}
+
+- (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
+    if (_id == DB_EV_CONFIGCHANGED) {
+        _renderer.baseColor = VisBaseColorUtil.shared.baseColor;
+    }
 }
 
 @end

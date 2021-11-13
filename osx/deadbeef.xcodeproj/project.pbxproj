@@ -2154,6 +2154,8 @@
 		2DD377432740420C007AD315 /* AppearancePreferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD377422740420C007AD315 /* AppearancePreferences.xib */; };
 		2DD3774627404401007AD315 /* AppearancePreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD3774427404401007AD315 /* AppearancePreferencesViewController.h */; };
 		2DD3774727404401007AD315 /* AppearancePreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD3774527404401007AD315 /* AppearancePreferencesViewController.m */; };
+		2DD3774A27404E11007AD315 /* VisBaseColorUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD3774827404E11007AD315 /* VisBaseColorUtil.h */; };
+		2DD3774B27404E11007AD315 /* VisBaseColorUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD3774927404E11007AD315 /* VisBaseColorUtil.m */; };
 		2DD39ED926AD8D1600C5846D /* analyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD39ED726AD8D1600C5846D /* analyzer.h */; };
 		2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2DD5262E2062F1DF002609C5 /* help-cocoa.txt */; };
 		2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
@@ -5981,6 +5983,8 @@
 		2DD377422740420C007AD315 /* AppearancePreferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AppearancePreferences.xib; sourceTree = "<group>"; };
 		2DD3774427404401007AD315 /* AppearancePreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppearancePreferencesViewController.h; sourceTree = "<group>"; };
 		2DD3774527404401007AD315 /* AppearancePreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppearancePreferencesViewController.m; sourceTree = "<group>"; };
+		2DD3774827404E11007AD315 /* VisBaseColorUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisBaseColorUtil.h; sourceTree = "<group>"; };
+		2DD3774927404E11007AD315 /* VisBaseColorUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisBaseColorUtil.m; sourceTree = "<group>"; };
 		2DD39ED726AD8D1600C5846D /* analyzer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = analyzer.h; sourceTree = "<group>"; };
 		2DD39ED826AD8D1600C5846D /* analyzer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = analyzer.c; sourceTree = "<group>"; };
 		2DD5262E2062F1DF002609C5 /* help-cocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "help-cocoa.txt"; sourceTree = "<group>"; };
@@ -7318,6 +7322,8 @@
 			children = (
 				0D56853A271DC6670026F700 /* VisualizationViewController.h */,
 				0D56853B271DC6670026F700 /* VisualizationViewController.m */,
+				2DD3774827404E11007AD315 /* VisBaseColorUtil.h */,
+				2DD3774927404E11007AD315 /* VisBaseColorUtil.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -13044,6 +13050,7 @@
 				2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */,
 				2DEF494419C4DB4100B718C1 /* PlaylistView.h in Headers */,
 				4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */,
+				2DD3774A27404E11007AD315 /* VisBaseColorUtil.h in Headers */,
 				2D9EBAAB25E44A0700255592 /* WidgetSerializer.h in Headers */,
 				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
 				2DE5562726075B8400285BF9 /* AlbumArtWidget.h in Headers */,
@@ -16322,6 +16329,7 @@
 				2DAA4041269AF880006D2754 /* WeakRefWrapper.m in Sources */,
 				2DBC62D724CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m in Sources */,
 				2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */,
+				2DD3774B27404E11007AD315 /* VisBaseColorUtil.m in Sources */,
 				2D98B687272D56F100E655AE /* ScopeVisualizationViewController.m in Sources */,
 				2DDF87DA24027DA500CA8E91 /* PluginActionMenuItem.m in Sources */,
 				2DAD80A22416DBB100EB3075 /* CustomToolbarItem.m in Sources */,

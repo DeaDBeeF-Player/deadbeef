@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)updateAnalyzerSettings:(SpectrumAnalyzerSettings *)settings;
 
+@property (nonatomic) NSColor *baseColor;
+
 @end
 
 NS_ASSUME_NONNULL_END
