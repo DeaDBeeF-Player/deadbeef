@@ -30,7 +30,6 @@ static void *kIsVisibleContext = &kIsVisibleContext;
 @end
 
 @implementation ScopeVisualizationViewController {
-    ddb_audio_data_t _input_data;
     ddb_waveformat_t _fmt;
     ddb_scope_t _scope;
     ddb_scope_draw_data_t _draw_data;
@@ -44,23 +43,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 - (void)updateScopeData:(const ddb_audio_data_t *)data {
     @synchronized (self) {
-        // copy the input data for later consumption
-        if (_input_data.nframes != data->nframes) {
-            free (_input_data.data);
-            _input_data.data = malloc (data->nframes * data->fmt->channels * sizeof (float));
-            _input_data.nframes = data->nframes;
-        }
-        memcpy (_input_data.fmt, data->fmt, sizeof (ddb_waveformat_t));
-        memcpy (_input_data.data, data->data, data->nframes * data->fmt->channels * sizeof (float));
-
-        if (_input_data.nframes == 0) {
-            return;
-        }
-
-        @synchronized (self) {
-            ddb_scope_process(&_scope, _input_data.fmt->samplerate, _input_data.fmt->channels, _input_data.data, _input_data.nframes);
-        }
-
+        ddb_scope_process(&_scope, data->fmt->samplerate, data->fmt->channels, data->data, data->nframes);
     }
 }
 
@@ -108,7 +91,6 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
     [self addObserver:self forKeyPath:kWindowIsVisibleKey options:NSKeyValueObservingOptionInitial context:kIsVisibleContext];
     _isListening = NO;
-    _input_data.fmt = &_fmt;
     ddb_scope_init(&_scope);
     _scope.mode = DDB_SCOPE_MULTICHANNEL;
 
