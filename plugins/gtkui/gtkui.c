@@ -1337,7 +1337,9 @@ gtkui_mainwin_init(void) {
     w_reg_widget (_("Volume bar"), 0, w_volumebar_create, "volumebar", NULL);
     w_reg_widget (_("Chiptune voices"), 0, w_ctvoices_create, "ctvoices", NULL);
     w_reg_widget (_("Log viewer"), 0, w_logviewer_create, "logviewer", NULL);
+#if ENABLE_MEDIALIB
     w_reg_widget (_("Media library viewer"), 0, w_medialib_viewer_create, "medialibviewer", NULL);
+#endif
 
     mainwin = create_mainwin ();
 
