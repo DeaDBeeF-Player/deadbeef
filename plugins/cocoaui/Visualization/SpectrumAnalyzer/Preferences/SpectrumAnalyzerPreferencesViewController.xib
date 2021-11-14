@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="SpectrumAnalyzerPreferencesViewController">
+            <connections>
+                <outlet property="barColorWell" destination="fED-pF-eD4" id="1S3-wO-7N1"/>
+                <outlet property="peakColorWell" destination="a18-4K-b4k" id="aWH-WE-MYa"/>
+                <outlet property="useCustomBarColorButton" destination="5gQ-wp-oGw" id="a3a-3b-O99"/>
+                <outlet property="useCustomPeakColorButton" destination="9ex-Ot-qaf" id="kxm-pe-rS5"/>
+                <outlet property="view" destination="j5E-1s-OO1" id="fjI-MY-phk"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <view id="j5E-1s-OO1">
+            <rect key="frame" x="0.0" y="0.0" width="349" height="111"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9ex-Ot-qaf">
+                    <rect key="frame" x="6" y="59" width="165" height="18"/>
+                    <buttonCell key="cell" type="check" title="Use custom peak color" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="7SZ-gR-jGB">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="useCustomPeakColorButtonAction:" target="-2" id="lFB-A7-sxZ"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5gQ-wp-oGw">
+                    <rect key="frame" x="6" y="35" width="156" height="18"/>
+                    <buttonCell key="cell" type="check" title="Use custom bar color" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="MZU-JF-cQ1">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="useCustomBarColorButtonAction:" target="-2" id="zIn-Wh-SP7"/>
+                    </connections>
+                </button>
+                <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="a18-4K-b4k">
+                    <rect key="frame" x="297" y="57" width="44" height="23"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="44" id="H1N-WI-GpR"/>
+                        <constraint firstAttribute="height" constant="23" id="eBd-MI-Bc8"/>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="44" id="y0I-5T-Ewr"/>
+                    </constraints>
+                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <connections>
+                        <action selector="peakColorWellAction:" target="-2" id="yBD-nq-rln"/>
+                    </connections>
+                </colorWell>
+                <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="fED-pF-eD4">
+                    <rect key="frame" x="297" y="33" width="44" height="23"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="23" id="kHL-uM-A3D"/>
+                    </constraints>
+                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <connections>
+                        <action selector="barColorWellAction:" target="-2" id="yIE-Cj-Nkt"/>
+                    </connections>
+                </colorWell>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bWM-ep-BAu">
+                    <rect key="frame" x="282" y="1" width="66" height="32"/>
+                    <buttonCell key="cell" type="push" title="Done" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="T6e-pB-Uub">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="doneButtonAction:" target="-2" id="I06-ih-4VJ"/>
+                    </connections>
+                </button>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Hse-tX-LZt">
+                    <rect key="frame" x="6" y="84" width="337" height="19"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="Spectrum Analyzer Preferences" id="UoG-uW-NUx">
+                        <font key="font" textStyle="title3" name=".SFNS-Regular"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="bWM-ep-BAu" secondAttribute="bottom" constant="8" id="0tw-qF-E9T"/>
+                <constraint firstItem="a18-4K-b4k" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9ex-Ot-qaf" secondAttribute="trailing" constant="20" id="7bK-od-A9y"/>
+                <constraint firstItem="Hse-tX-LZt" firstAttribute="leading" secondItem="j5E-1s-OO1" secondAttribute="leading" constant="8" id="9gV-4c-8Cc"/>
+                <constraint firstAttribute="trailing" secondItem="a18-4K-b4k" secondAttribute="trailing" constant="8" id="Bzd-ZO-tou"/>
+                <constraint firstItem="9ex-Ot-qaf" firstAttribute="top" secondItem="Hse-tX-LZt" secondAttribute="bottom" constant="8" id="LH7-9y-IBh"/>
+                <constraint firstAttribute="trailing" secondItem="bWM-ep-BAu" secondAttribute="trailing" constant="8" id="Nln-PT-Vqs"/>
+                <constraint firstItem="9ex-Ot-qaf" firstAttribute="leading" secondItem="j5E-1s-OO1" secondAttribute="leading" constant="8" id="PLj-WJ-Dd7"/>
+                <constraint firstItem="fED-pF-eD4" firstAttribute="trailing" secondItem="a18-4K-b4k" secondAttribute="trailing" id="RCV-dy-YUn"/>
+                <constraint firstItem="5gQ-wp-oGw" firstAttribute="top" secondItem="9ex-Ot-qaf" secondAttribute="bottom" constant="8" id="Tgz-h7-iCb"/>
+                <constraint firstItem="a18-4K-b4k" firstAttribute="centerY" secondItem="9ex-Ot-qaf" secondAttribute="centerY" id="bLx-RB-yUv"/>
+                <constraint firstItem="5gQ-wp-oGw" firstAttribute="leading" secondItem="9ex-Ot-qaf" secondAttribute="leading" id="cYw-AC-QQl"/>
+                <constraint firstItem="fED-pF-eD4" firstAttribute="centerY" secondItem="5gQ-wp-oGw" secondAttribute="centerY" id="gOV-lE-xkQ"/>
+                <constraint firstItem="Hse-tX-LZt" firstAttribute="top" secondItem="j5E-1s-OO1" secondAttribute="top" constant="8" id="lCS-B5-Gyh"/>
+                <constraint firstItem="fED-pF-eD4" firstAttribute="leading" secondItem="a18-4K-b4k" secondAttribute="leading" id="o2m-1B-RRv"/>
+                <constraint firstAttribute="trailing" secondItem="Hse-tX-LZt" secondAttribute="trailing" constant="8" id="qqE-bF-7so"/>
+                <constraint firstItem="bWM-ep-BAu" firstAttribute="top" secondItem="5gQ-wp-oGw" secondAttribute="bottom" constant="8" id="tsP-Jn-VOP"/>
+            </constraints>
+            <point key="canvasLocation" x="76.5" y="-130"/>
+        </view>
+    </objects>
+</document>

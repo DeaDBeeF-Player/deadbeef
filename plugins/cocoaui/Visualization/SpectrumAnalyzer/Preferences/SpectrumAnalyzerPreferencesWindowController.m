@@ -11,7 +11,7 @@
 
 @interface SpectrumAnalyzerPreferencesWindowController ()
 
-@property (strong) IBOutlet SpectrumAnalyzerPreferencesViewController *viewController;
+@property (nonatomic) SpectrumAnalyzerPreferencesViewController *viewController;
 
 @end
 
@@ -20,7 +20,10 @@
 - (void)windowDidLoad {
     [super windowDidLoad];
 
+    self.viewController = [[SpectrumAnalyzerPreferencesViewController alloc] initWithNibName:@"SpectrumAnalyzerPreferencesViewController" bundle:nil];
     self.viewController.settings = self.settings;
+
+    self.contentViewController = self.viewController;
 }
 
 @end

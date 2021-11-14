@@ -14,7 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ScopePreferencesViewController : NSViewController
 
-@property (nonatomic) ScopeSettings *settings;
+@property (nullable, nonatomic) ScopeSettings *settings;
+@property (nullable, nonatomic, weak) NSPopover *popover;
 
 @end
 

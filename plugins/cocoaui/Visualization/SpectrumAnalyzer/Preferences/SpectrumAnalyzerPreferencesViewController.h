@@ -14,8 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SpectrumAnalyzerPreferencesViewController : NSViewController
 
-@property (nonatomic) SpectrumAnalyzerSettings *settings;
-
+@property (nullable, nonatomic) SpectrumAnalyzerSettings *settings;
+@property (nullable, nonatomic, weak) NSPopover *popover;
 
 @end
 

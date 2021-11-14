@@ -1629,7 +1629,6 @@ typedef struct {
     /// Callback will run on a background thread, so make sure to synchronize the data access.
     void (*vis_spectrum_listen2) (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data));
 
-
     ddb_playItem_t *(*plt_insert_dir3) (
         int visibility,
         ddb_playlist_t *plt,

@@ -8,7 +8,6 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="ScopePreferencesWindowController">
             <connections>
-                <outlet property="viewController" destination="hNG-vc-03H" id="IMD-qe-zD0"/>
                 <outlet property="window" destination="6OD-Hy-rhO" id="fm0-ky-2V3"/>
             </connections>
         </customObject>
@@ -29,9 +28,6 @@
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
-                        <connections>
-                            <action selector="useCustomColorButtonAction:" target="hNG-vc-03H" id="Rn9-Iv-5MN"/>
-                        </connections>
                     </button>
                     <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="yNg-0d-irH">
                         <rect key="frame" x="218" y="60" width="44" height="23"/>
@@ -40,9 +36,6 @@
                             <constraint firstAttribute="height" constant="23" id="z2i-1x-0aj"/>
                         </constraints>
                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                        <connections>
-                            <action selector="customColorWellAction:" target="hNG-vc-03H" id="PgE-W1-1V9"/>
-                        </connections>
                     </colorWell>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NEb-2d-ZDo">
                         <rect key="frame" x="203" y="13" width="66" height="32"/>
@@ -50,9 +43,6 @@
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
-                        <connections>
-                            <action selector="doneButtonAction:" target="hNG-vc-03H" id="p47-tw-1c8"/>
-                        </connections>
                     </button>
                 </subviews>
                 <constraints>
@@ -68,12 +58,5 @@
             </view>
             <point key="canvasLocation" x="-174" y="210"/>
         </window>
-        <viewController id="hNG-vc-03H" customClass="ScopePreferencesViewController">
-            <connections>
-                <outlet property="customColorWell" destination="yNg-0d-irH" id="KdL-24-jqN"/>
-                <outlet property="useCustomColorButton" destination="PZO-n7-N0H" id="K1K-ZQ-4bP"/>
-                <outlet property="view" destination="qSF-10-yFu" id="cys-a8-6zg"/>
-            </connections>
-        </viewController>
     </objects>
 </document>

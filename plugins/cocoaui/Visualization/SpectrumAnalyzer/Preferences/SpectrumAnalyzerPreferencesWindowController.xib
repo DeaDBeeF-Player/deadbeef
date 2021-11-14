@@ -8,7 +8,6 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="SpectrumAnalyzerPreferencesWindowController">
             <connections>
-                <outlet property="viewController" destination="dAq-Rb-Yer" id="BwO-gS-LhZ"/>
                 <outlet property="window" destination="CS8-pP-JOJ" id="xOg-Hi-rwR"/>
             </connections>
         </customObject>
@@ -22,85 +21,8 @@
             <view key="contentView" id="bkB-gP-FIm">
                 <rect key="frame" x="0.0" y="0.0" width="291" height="122"/>
                 <autoresizingMask key="autoresizingMask"/>
-                <subviews>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TBP-IG-gXW">
-                        <rect key="frame" x="18" y="85" width="165" height="18"/>
-                        <buttonCell key="cell" type="check" title="Use custom peak color" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Pge-4I-KUG">
-                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="useCustomPeakColorButtonAction:" target="dAq-Rb-Yer" id="mZU-tP-ZjL"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="udS-cj-Ffs">
-                        <rect key="frame" x="18" y="63" width="156" height="18"/>
-                        <buttonCell key="cell" type="check" title="Use custom bar color" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="2Lk-89-0w4">
-                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="useCustomBarColorButtonAction:" target="dAq-Rb-Yer" id="me2-AT-brh"/>
-                        </connections>
-                    </button>
-                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="EPS-9M-Xh9">
-                        <rect key="frame" x="227" y="83" width="44" height="23"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="44" id="1MM-W9-yfU"/>
-                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="44" id="bIc-hw-mZa"/>
-                            <constraint firstAttribute="height" constant="23" id="mTd-yN-5nu"/>
-                        </constraints>
-                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                        <connections>
-                            <action selector="peakColorWellAction:" target="dAq-Rb-Yer" id="aaE-oh-3yE"/>
-                        </connections>
-                    </colorWell>
-                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="Wg3-Da-AAc">
-                        <rect key="frame" x="227" y="61" width="44" height="23"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="23" id="Y3D-6X-sCQ"/>
-                        </constraints>
-                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                        <connections>
-                            <action selector="barColorWellAction:" target="dAq-Rb-Yer" id="ZXP-6r-XMK"/>
-                        </connections>
-                    </colorWell>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1UQ-2G-fVX">
-                        <rect key="frame" x="212" y="13" width="66" height="32"/>
-                        <buttonCell key="cell" type="push" title="Done" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Zwb-M8-tYX">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="doneButtonAction:" target="dAq-Rb-Yer" id="F5Q-mg-SM0"/>
-                        </connections>
-                    </button>
-                </subviews>
-                <constraints>
-                    <constraint firstItem="Wg3-Da-AAc" firstAttribute="centerY" secondItem="udS-cj-Ffs" secondAttribute="centerY" id="1TA-vd-N9a"/>
-                    <constraint firstItem="udS-cj-Ffs" firstAttribute="leading" secondItem="TBP-IG-gXW" secondAttribute="leading" id="2nW-Gf-E7f"/>
-                    <constraint firstItem="TBP-IG-gXW" firstAttribute="top" secondItem="bkB-gP-FIm" secondAttribute="top" constant="20" symbolic="YES" id="BEu-PV-ZhE"/>
-                    <constraint firstItem="TBP-IG-gXW" firstAttribute="leading" secondItem="bkB-gP-FIm" secondAttribute="leading" constant="20" symbolic="YES" id="BvX-kK-L70"/>
-                    <constraint firstAttribute="trailing" secondItem="EPS-9M-Xh9" secondAttribute="trailing" constant="20" symbolic="YES" id="IiS-nq-nVo"/>
-                    <constraint firstItem="Wg3-Da-AAc" firstAttribute="trailing" secondItem="EPS-9M-Xh9" secondAttribute="trailing" id="QSV-cr-0NI"/>
-                    <constraint firstAttribute="trailing" secondItem="1UQ-2G-fVX" secondAttribute="trailing" constant="20" symbolic="YES" id="R53-tn-Ogb"/>
-                    <constraint firstItem="EPS-9M-Xh9" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="TBP-IG-gXW" secondAttribute="trailing" constant="20" id="RRp-u2-rNW"/>
-                    <constraint firstAttribute="bottom" secondItem="1UQ-2G-fVX" secondAttribute="bottom" constant="20" symbolic="YES" id="RvX-gg-O5q"/>
-                    <constraint firstItem="1UQ-2G-fVX" firstAttribute="top" secondItem="udS-cj-Ffs" secondAttribute="bottom" constant="24" id="U3e-A5-qZv"/>
-                    <constraint firstItem="Wg3-Da-AAc" firstAttribute="leading" secondItem="EPS-9M-Xh9" secondAttribute="leading" id="a3v-U2-ouZ"/>
-                    <constraint firstItem="EPS-9M-Xh9" firstAttribute="centerY" secondItem="TBP-IG-gXW" secondAttribute="centerY" id="yYk-GN-f1C"/>
-                </constraints>
             </view>
             <point key="canvasLocation" x="-320.5" y="31"/>
         </window>
-        <viewController id="dAq-Rb-Yer" customClass="SpectrumAnalyzerPreferencesViewController">
-            <connections>
-                <outlet property="barColorWell" destination="Wg3-Da-AAc" id="wfQ-FZ-DFR"/>
-                <outlet property="peakColorWell" destination="EPS-9M-Xh9" id="LjY-hk-Tps"/>
-                <outlet property="useCustomBarColorButton" destination="udS-cj-Ffs" id="ysF-v5-ImR"/>
-                <outlet property="useCustomPeakColorButton" destination="TBP-IG-gXW" id="c16-A8-0os"/>
-                <outlet property="view" destination="bkB-gP-FIm" id="vAt-zt-RYi"/>
-            </connections>
-        </viewController>
     </objects>
 </document>

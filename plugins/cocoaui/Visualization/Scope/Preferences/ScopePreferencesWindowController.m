@@ -11,7 +11,7 @@
 
 @interface ScopePreferencesWindowController ()
 
-@property (strong) IBOutlet ScopePreferencesViewController *viewController;
+@property (nonatomic) ScopePreferencesViewController *viewController;
 
 @end
 
@@ -20,7 +20,10 @@
 - (void)windowDidLoad {
     [super windowDidLoad];
 
+    self.viewController = [[ScopePreferencesViewController alloc] initWithNibName:@"ScopePreferencesViewController" bundle:nil];
     self.viewController.settings = self.settings;
+
+    self.contentViewController = self.viewController;
 }
 
 @end

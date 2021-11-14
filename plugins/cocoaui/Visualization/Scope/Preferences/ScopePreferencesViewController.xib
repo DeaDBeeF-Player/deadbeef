@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="ScopePreferencesViewController">
+            <connections>
+                <outlet property="customColorWell" destination="j3C-y3-CQs" id="mN8-eU-Usv"/>
+                <outlet property="useCustomColorButton" destination="kMR-rt-HIw" id="hox-9o-3n9"/>
+                <outlet property="view" destination="DPS-bt-Ro9" id="EZm-nC-M26"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <view id="DPS-bt-Ro9">
+            <rect key="frame" x="0.0" y="0.0" width="282" height="91"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kMR-rt-HIw">
+                    <rect key="frame" x="6" y="39" width="133" height="18"/>
+                    <buttonCell key="cell" type="check" title="Use custom color" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="UYy-XM-ANs">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="useCustomColorButtonAction:" target="-2" id="L3y-KE-yaz"/>
+                    </connections>
+                </button>
+                <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="j3C-y3-CQs">
+                    <rect key="frame" x="230" y="36" width="44" height="23"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="23" id="abU-t0-CJP"/>
+                        <constraint firstAttribute="width" constant="44" id="oib-8p-3FY"/>
+                    </constraints>
+                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <connections>
+                        <action selector="customColorWellAction:" target="-2" id="cuL-KP-x6Q"/>
+                    </connections>
+                </colorWell>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cjR-V0-F1J">
+                    <rect key="frame" x="215" y="1" width="66" height="32"/>
+                    <buttonCell key="cell" type="push" title="Done" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ass-8W-4zD">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="doneButtonAction:" target="-2" id="9DT-vz-uSO"/>
+                    </connections>
+                </button>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4zE-FW-8wH">
+                    <rect key="frame" x="6" y="64" width="270" height="19"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="Scope Preferences" id="n48-76-pEO">
+                        <font key="font" textStyle="title3" name=".SFNS-Regular"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+            <constraints>
+                <constraint firstItem="4zE-FW-8wH" firstAttribute="leading" secondItem="DPS-bt-Ro9" secondAttribute="leading" constant="8" id="1wY-pj-f4n"/>
+                <constraint firstAttribute="trailing" secondItem="4zE-FW-8wH" secondAttribute="trailing" constant="8" id="4JX-pM-AC2"/>
+                <constraint firstAttribute="bottom" secondItem="cjR-V0-F1J" secondAttribute="bottom" constant="8" id="4ZV-8X-ntd"/>
+                <constraint firstItem="cjR-V0-F1J" firstAttribute="top" secondItem="j3C-y3-CQs" secondAttribute="bottom" constant="8" id="4oL-eD-8f1"/>
+                <constraint firstAttribute="trailing" secondItem="j3C-y3-CQs" secondAttribute="trailing" constant="8" id="DMj-fo-cnj"/>
+                <constraint firstItem="j3C-y3-CQs" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="kMR-rt-HIw" secondAttribute="trailing" constant="8" id="H8u-cJ-61e"/>
+                <constraint firstItem="4zE-FW-8wH" firstAttribute="top" secondItem="DPS-bt-Ro9" secondAttribute="top" constant="8" id="bLd-5D-yrC"/>
+                <constraint firstItem="j3C-y3-CQs" firstAttribute="centerY" secondItem="kMR-rt-HIw" secondAttribute="centerY" id="hfc-L6-7Vk"/>
+                <constraint firstItem="kMR-rt-HIw" firstAttribute="top" secondItem="4zE-FW-8wH" secondAttribute="bottom" constant="8" id="iRV-wl-XVk"/>
+                <constraint firstAttribute="trailing" secondItem="cjR-V0-F1J" secondAttribute="trailing" constant="8" id="r11-g9-4aY"/>
+                <constraint firstItem="kMR-rt-HIw" firstAttribute="leading" secondItem="DPS-bt-Ro9" secondAttribute="leading" constant="8" id="rof-A3-9on"/>
+            </constraints>
+            <point key="canvasLocation" x="139" y="114"/>
+        </view>
+    </objects>
+</document>

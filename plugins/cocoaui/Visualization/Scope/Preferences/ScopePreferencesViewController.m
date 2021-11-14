@@ -17,12 +17,23 @@
 
 @implementation ScopePreferencesViewController
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    if (self.settings != nil) {
+        [self updateFromSettings];
+    }
+}
+
 - (void)setSettings:(ScopeSettings *)settings {
     _settings = settings;
-    if (settings.customColor != nil) {
-        self.customColorWell.color = settings.customColor;
+    [self updateFromSettings];
+}
+
+- (void)updateFromSettings {
+    if (self.settings.customColor != nil) {
+        self.customColorWell.color = self.settings.customColor;
     }
-    [self updateUseCustomColor:settings.useCustomColor];
+    [self updateUseCustomColor:self.settings.useCustomColor];
 }
 
 - (void)updateUseCustomColor:(BOOL)enabled {
@@ -31,7 +42,12 @@
 }
 
 - (IBAction)doneButtonAction:(id)sender {
-    [NSApp endSheet:self.view.window returnCode:NSModalResponseOK];
+    if (self.popover == nil) {
+        [NSApp endSheet:self.view.window returnCode:NSModalResponseOK];
+    }
+    else {
+        [self.popover close];
+    }
 }
 
 - (IBAction)useCustomColorButtonAction:(NSButton *)sender {

@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SpectrumAnalyzerPreferencesWindowController : NSWindowController
 
-@property (nonatomic) SpectrumAnalyzerSettings *settings;
+@property (nullable, nonatomic) SpectrumAnalyzerSettings *settings;
 
 @end
 

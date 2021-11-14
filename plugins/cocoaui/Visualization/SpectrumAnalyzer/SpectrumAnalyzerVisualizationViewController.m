@@ -9,7 +9,10 @@
 extern DB_functions_t *deadbeef;
 
 @interface SpectrumAnalyzerVisualizationViewController()
+
 @property (nonatomic) SpectrumAnalyzerPreferencesWindowController *preferencesWindowController;
+@property (nonatomic) NSPopover *preferencesPopover;
+
 @end
 
 @implementation SpectrumAnalyzerVisualizationViewController
@@ -106,13 +109,21 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)preferences:(NSMenuItem *)sender {
-    self.preferencesWindowController = [[SpectrumAnalyzerPreferencesWindowController alloc] initWithWindowNibName:@"SpectrumAnalyzerPreferencesWindowController"];
+    if (self.preferencesPopover != nil) {
+        [self.preferencesPopover close];
+        self.preferencesPopover = nil;
+    }
 
-    self.preferencesWindowController.settings = self.settings;
+    self.preferencesPopover = [NSPopover new];
+    self.preferencesPopover.behavior = NSPopoverBehaviorTransient;
 
-    [self.view.window beginSheet:self.preferencesWindowController.window completionHandler:^(NSModalResponse returnCode) {
-        self.preferencesWindowController = nil;
-    }];
+    SpectrumAnalyzerPreferencesViewController *preferencesViewController = [[SpectrumAnalyzerPreferencesViewController alloc] initWithNibName:@"SpectrumAnalyzerPreferencesViewController" bundle:nil];
+    preferencesViewController.settings = self.settings;
+    preferencesViewController.popover = self.preferencesPopover;
+
+    self.preferencesPopover.contentViewController = preferencesViewController;
+
+    [self.preferencesPopover showRelativeToRect:NSZeroRect ofView:self.view preferredEdge:NSRectEdgeMaxY];
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem {

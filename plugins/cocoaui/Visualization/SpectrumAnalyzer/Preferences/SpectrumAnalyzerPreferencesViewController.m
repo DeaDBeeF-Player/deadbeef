@@ -21,16 +21,28 @@
 
 @implementation SpectrumAnalyzerPreferencesViewController
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    if (self.settings != nil) {
+        [self updateFromSettings];
+    }
+}
+
 - (void)setSettings:(SpectrumAnalyzerSettings *)settings {
     _settings = settings;
-    if (settings.customPeakColor != nil) {
-        self.peakColorWell.color = settings.customPeakColor;
+    [self updateFromSettings];
+}
+
+- (void)updateFromSettings {
+    if (self.settings.customPeakColor != nil) {
+        self.peakColorWell.color = self.settings.customPeakColor;
     }
-    if (settings.customBarColor != nil) {
-        self.barColorWell.color = settings.customBarColor;
+    if (self.settings.customBarColor != nil) {
+        self.barColorWell.color = self.settings.customBarColor;
     }
-    [self updateUseCustomPeakColor:settings.useCustomPeakColor];
-    [self updateUseCustomBarColor:settings.useCustomBarColor];
+    [self updateUseCustomPeakColor:self.settings.useCustomPeakColor];
+    [self updateUseCustomBarColor:self.settings.useCustomBarColor];
 }
 
 - (void)updateUseCustomPeakColor:(BOOL)enabled {
@@ -44,7 +56,12 @@
 }
 
 - (IBAction)doneButtonAction:(id)sender {
-    [NSApp endSheet:self.view.window returnCode:NSModalResponseOK];
+    if (self.popover == nil) {
+        [NSApp endSheet:self.view.window returnCode:NSModalResponseOK];
+    }
+    else {
+        [self.popover close];
+    }
 }
 
 - (IBAction)useCustomPeakColorButtonAction:(NSButton *)sender {

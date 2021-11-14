@@ -2126,6 +2126,8 @@
 		2DC1CE5A240EEBA6000776DB /* analopl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC1CDCE240EEBA5000776DB /* analopl.h */; };
 		2DC1CE5B240EEBA6000776DB /* rat.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC1CDCF240EEBA5000776DB /* rat.h */; };
 		2DC4199E1B90540A007E3026 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DC4199D1B90540A007E3026 /* Carbon.framework */; };
+		2DC655752741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC655742741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib */; };
+		2DC655862741955A00583E14 /* ScopePreferencesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC655852741955A00583E14 /* ScopePreferencesViewController.xib */; };
 		2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC80A8E1A9222F800C9397F /* TrackProperties.xib */; };
 		2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
@@ -5957,6 +5959,8 @@
 		2DC1CDCE240EEBA5000776DB /* analopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = analopl.h; sourceTree = "<group>"; };
 		2DC1CDCF240EEBA5000776DB /* rat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rat.h; sourceTree = "<group>"; };
 		2DC4199D1B90540A007E3026 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		2DC655742741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SpectrumAnalyzerPreferencesViewController.xib; sourceTree = "<group>"; };
+		2DC655852741955A00583E14 /* ScopePreferencesViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScopePreferencesViewController.xib; sourceTree = "<group>"; };
 		2DC80A8E1A9222F800C9397F /* TrackProperties.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackProperties.xib; sourceTree = "<group>"; };
 		2DCB18362515F9530054BD06 /* help.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = help.txt; path = ../../help.txt; sourceTree = "<group>"; };
 		2DCB18372515F95C0054BD06 /* about.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = about.txt; path = ../../about.txt; sourceTree = "<group>"; };
@@ -10533,6 +10537,7 @@
 			children = (
 				2DD3774F27412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.h */,
 				2DD3775027412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.m */,
+				2DC655742741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib */,
 				2DD377532741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.h */,
 				2DD377542741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.m */,
 				2DD3774D27412C85007AD315 /* SpectrumAnalyzerPreferencesWindowController.xib */,
@@ -10545,6 +10550,7 @@
 			children = (
 				2DD3775E27414BF6007AD315 /* ScopePreferencesViewController.h */,
 				2DD3775F27414BF6007AD315 /* ScopePreferencesViewController.m */,
+				2DC655852741955A00583E14 /* ScopePreferencesViewController.xib */,
 				2DD3775827414BD9007AD315 /* ScopePreferencesWindowController.h */,
 				2DD3775927414BD9007AD315 /* ScopePreferencesWindowController.m */,
 				2DD3775A27414BD9007AD315 /* ScopePreferencesWindowController.xib */,
@@ -14883,6 +14889,7 @@
 				2DDBDA392436678700C12A75 /* btnduplicateTemplate.pdf in Resources */,
 				2DB05F7B252E4F170090635E /* iconLibraryTemplate.pdf in Resources */,
 				2D8D96B11D1091F900A5C7E6 /* noartwork.png in Resources */,
+				2DC655752741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib in Resources */,
 				2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */,
 				4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */,
 				2DD3774E27412C85007AD315 /* SpectrumAnalyzerPreferencesWindowController.xib in Resources */,
@@ -14899,6 +14906,7 @@
 				2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */,
 				4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */,
 				2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */,
+				2DC655862741955A00583E14 /* ScopePreferencesViewController.xib in Resources */,
 				2DF622BB1B335FF100C70C7D /* convpresets in Resources */,
 				2DB05EB8252E47A00090635E /* iconNetworkTemplate.pdf in Resources */,
 				2D17F8461AB3391A00AF2853 /* MainMenu.xib in Resources */,

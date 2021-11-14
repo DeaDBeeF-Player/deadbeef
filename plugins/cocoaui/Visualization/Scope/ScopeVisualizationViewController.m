@@ -7,6 +7,7 @@
 //
 
 #import "AAPLView.h"
+#import "ScopePreferencesViewController.h"
 #import "ScopePreferencesWindowController.h"
 #import "ScopeRenderer.h"
 #import "ScopeVisualizationViewController.h"
@@ -20,10 +21,12 @@ static NSString * const kWindowIsVisibleKey = @"view.window.isVisible";
 static void *kIsVisibleContext = &kIsVisibleContext;
 
 @interface ScopeVisualizationViewController() <AAPLViewDelegate>
+
 @property (nonatomic) BOOL isListening;
 @property (nonatomic) ScopeScaleMode scaleMode;
 @property (nonatomic,readonly) CGFloat scaleFactor;
-@property (nonatomic) ScopePreferencesWindowController *preferencesWindowController;
+@property (nonatomic) NSPopover *preferencesPopover;
+
 @end
 
 @implementation ScopeVisualizationViewController {
@@ -228,13 +231,21 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 }
 
 - (void)preferences:(NSMenuItem *)sender {
-    self.preferencesWindowController = [[ScopePreferencesWindowController alloc] initWithWindowNibName:@"ScopePreferencesWindowController"];
+    if (self.preferencesPopover != nil) {
+        [self.preferencesPopover close];
+        self.preferencesPopover = nil;
+    }
 
-    self.preferencesWindowController.settings = self.settings;
+    self.preferencesPopover = [NSPopover new];
+    self.preferencesPopover.behavior = NSPopoverBehaviorTransient;
 
-    [self.view.window beginSheet:self.preferencesWindowController.window completionHandler:^(NSModalResponse returnCode) {
-        self.preferencesWindowController = nil;
-    }];
+    ScopePreferencesViewController *preferencesViewController = [[ScopePreferencesViewController alloc] initWithNibName:@"ScopePreferencesViewController" bundle:nil];
+    preferencesViewController.settings = self.settings;
+    preferencesViewController.popover = self.preferencesPopover;
+
+    self.preferencesPopover.contentViewController = preferencesViewController;
+
+    [self.preferencesPopover showRelativeToRect:NSZeroRect ofView:self.view preferredEdge:NSRectEdgeMaxY];
 }
 
 - (void)drawableResize:(CGSize)size {
