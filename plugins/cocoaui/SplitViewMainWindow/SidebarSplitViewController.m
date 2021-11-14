@@ -13,7 +13,7 @@
 @property IBOutlet NSViewController* sidebarViewController;
 
 @property IBOutlet NSSplitView* splitView;
-@property MainContentViewController* bodyViewController;
+@property (nonatomic,readwrite) MainContentViewController* bodyViewController;
 @property (nonatomic) id trackingItem;
 
 @end
