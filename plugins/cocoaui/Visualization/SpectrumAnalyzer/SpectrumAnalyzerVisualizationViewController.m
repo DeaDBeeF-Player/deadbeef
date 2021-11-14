@@ -1,10 +1,16 @@
 #import "SpectrumAnalyzerVisualizationView.h"
+#import "SpectrumAnalyzerPreferencesWindowController.h"
+#import "SpectrumAnalyzerPreferencesViewController.h"
 #import "SpectrumAnalyzerVisualizationViewController.h"
-#import "VisBaseColorUtil.h"
+#import "VisualizationSettingsUtil.h"
 #include "analyzer.h"
 #include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
+
+@interface SpectrumAnalyzerVisualizationViewController() <SpectrumAnalyzerPreferencesDelegate>
+@property (nonatomic) SpectrumAnalyzerPreferencesWindowController *preferencesWindowController;
+@end
 
 @implementation SpectrumAnalyzerVisualizationViewController
 
@@ -33,11 +39,14 @@ extern DB_functions_t *deadbeef;
     [gapSizeMenuItem.submenu addItemWithTitle:@"1/9 Bar" action:@selector(setNinthGap:) keyEquivalent:@""];
     [gapSizeMenuItem.submenu addItemWithTitle:@"1/10 Bar" action:@selector(setTenthGap:) keyEquivalent:@""];
 
+    [menu addItem:NSMenuItem.separatorItem];
+    [menu addItemWithTitle:@"Preferences" action:@selector(preferences:) keyEquivalent:@""];
+
     self.view.menu = menu;
 
     SpectrumAnalyzerVisualizationView *view = (SpectrumAnalyzerVisualizationView *)self.view;
 
-    view.baseColor = VisBaseColorUtil.shared.baseColor;
+    view.baseColor = VisualizationSettingsUtil.shared.baseColor;
 }
 
 #pragma mark - Actions
@@ -96,6 +105,17 @@ extern DB_functions_t *deadbeef;
     self.settings.distanceBetweenBars = 10;
 }
 
+- (void)preferences:(NSMenuItem *)sender {
+    self.preferencesWindowController = [[SpectrumAnalyzerPreferencesWindowController alloc] initWithWindowNibName:@"SpectrumAnalyzerPreferencesWindowController"];
+
+    self.preferencesWindowController.preferencesDelegate = self;
+    self.preferencesWindowController.settings = self.settings;
+
+    [self.view.window beginSheet:self.preferencesWindowController.window completionHandler:^(NSModalResponse returnCode) {
+        self.preferencesWindowController = nil;
+    }];
+}
+
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
     if (menuItem.action == @selector(setDescreteFrequenciesMode:) && self.settings.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
         menuItem.state = NSControlStateValueOn;
@@ -147,8 +167,23 @@ extern DB_functions_t *deadbeef;
     if (_id == DB_EV_CONFIGCHANGED) {
         SpectrumAnalyzerVisualizationView *view = (SpectrumAnalyzerVisualizationView *)self.view;
 
-        view.baseColor = VisBaseColorUtil.shared.baseColor;
+        view.baseColor = VisualizationSettingsUtil.shared.baseColor;
     }
+}
+
+#pragma mark - SpectrumAnalyzerPreferencesDelegate
+
+
+- (void)spectrumAnalyzerPreferencesCustomBarColorDidChange:(nonnull NSColor *)color {
+}
+
+- (void)spectrumAnalyzerPreferencesCustomBarColorEnabledDidChange:(BOOL)enabled {
+}
+
+- (void)spectrumAnalyzerPreferencesCustomPeakColorDidChange:(nonnull NSColor *)color {
+}
+
+- (void)spectrumAnalyzerPreferencesCustomPeakColorEnabledDidChange:(BOOL)enabled {
 }
 
 @end

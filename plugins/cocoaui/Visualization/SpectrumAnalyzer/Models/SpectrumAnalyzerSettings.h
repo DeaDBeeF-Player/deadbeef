@@ -17,6 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) int distanceBetweenBars; // WIDTH/x
 @property (nonatomic) int barGranularity; // 24/x
 
+@property (nonatomic) BOOL useCustomPeakColor;
+@property (nonatomic) BOOL useCustomBarColor;
+@property (nonatomic) NSColor *customPeakColor;
+@property (nonatomic) NSColor *customBarColor;
+
 @end
 
 NS_ASSUME_NONNULL_END

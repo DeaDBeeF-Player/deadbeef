@@ -25,6 +25,8 @@ static void *kIsVisibleContext = &kIsVisibleContext;
     ddb_audio_data_t _input_data;
 }
 
+@property (nonatomic) SpectrumAnalyzerSettings *settings;
+
 @property (nonatomic) NSDictionary *textAttrs;
 @property (nonatomic,readonly) NSColor *barColor;
 @property (nonatomic,readonly) NSColor *peakColor;
@@ -115,6 +117,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 }
 
 - (void)updateAnalyzerSettings:(SpectrumAnalyzerSettings *)settings {
+    self.settings = settings;
     if (_analyzer.mode != settings.mode || _analyzer.octave_bars_step != settings.barGranularity) {
         _analyzer.mode_did_change = 1;
     }
@@ -125,6 +128,12 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 
 - (NSColor *)barColor {
+    if (self.settings.useCustomBarColor) {
+        NSColor *color = self.settings.customBarColor;
+        if (color != nil) {
+            return color;
+        }
+    }
     NSColor *tempColor = [self.baseColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
     CGFloat h, s, b, a;
     [tempColor getHue:&h saturation:&s brightness:&b alpha:&a];
@@ -132,6 +141,12 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 }
 
 - (NSColor *)peakColor {
+    if (self.settings.useCustomPeakColor) {
+        NSColor *color = self.settings.customPeakColor;
+        if (color != nil) {
+            return color;
+        }
+    }
     NSColor *tempColor = [self.baseColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
     CGFloat h, s, b, a;
     [tempColor getHue:&h saturation:&s brightness:&b alpha:&a];

@@ -2154,8 +2154,13 @@
 		2DD377432740420C007AD315 /* AppearancePreferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD377422740420C007AD315 /* AppearancePreferences.xib */; };
 		2DD3774627404401007AD315 /* AppearancePreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD3774427404401007AD315 /* AppearancePreferencesViewController.h */; };
 		2DD3774727404401007AD315 /* AppearancePreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD3774527404401007AD315 /* AppearancePreferencesViewController.m */; };
-		2DD3774A27404E11007AD315 /* VisBaseColorUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD3774827404E11007AD315 /* VisBaseColorUtil.h */; };
-		2DD3774B27404E11007AD315 /* VisBaseColorUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD3774927404E11007AD315 /* VisBaseColorUtil.m */; };
+		2DD3774A27404E11007AD315 /* VisualizationSettingsUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD3774827404E11007AD315 /* VisualizationSettingsUtil.h */; };
+		2DD3774B27404E11007AD315 /* VisualizationSettingsUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD3774927404E11007AD315 /* VisualizationSettingsUtil.m */; };
+		2DD3774E27412C85007AD315 /* SpectrumAnalyzerPreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD3774D27412C85007AD315 /* SpectrumAnalyzerPreferencesWindowController.xib */; };
+		2DD3775127412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD3774F27412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.h */; };
+		2DD3775227412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD3775027412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.m */; };
+		2DD377552741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD377532741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.h */; };
+		2DD377562741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD377542741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.m */; };
 		2DD39ED926AD8D1600C5846D /* analyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD39ED726AD8D1600C5846D /* analyzer.h */; };
 		2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2DD5262E2062F1DF002609C5 /* help-cocoa.txt */; };
 		2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
@@ -5983,8 +5988,13 @@
 		2DD377422740420C007AD315 /* AppearancePreferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AppearancePreferences.xib; sourceTree = "<group>"; };
 		2DD3774427404401007AD315 /* AppearancePreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppearancePreferencesViewController.h; sourceTree = "<group>"; };
 		2DD3774527404401007AD315 /* AppearancePreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppearancePreferencesViewController.m; sourceTree = "<group>"; };
-		2DD3774827404E11007AD315 /* VisBaseColorUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisBaseColorUtil.h; sourceTree = "<group>"; };
-		2DD3774927404E11007AD315 /* VisBaseColorUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisBaseColorUtil.m; sourceTree = "<group>"; };
+		2DD3774827404E11007AD315 /* VisualizationSettingsUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisualizationSettingsUtil.h; sourceTree = "<group>"; };
+		2DD3774927404E11007AD315 /* VisualizationSettingsUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisualizationSettingsUtil.m; sourceTree = "<group>"; };
+		2DD3774D27412C85007AD315 /* SpectrumAnalyzerPreferencesWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SpectrumAnalyzerPreferencesWindowController.xib; sourceTree = "<group>"; };
+		2DD3774F27412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumAnalyzerPreferencesViewController.h; sourceTree = "<group>"; };
+		2DD3775027412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumAnalyzerPreferencesViewController.m; sourceTree = "<group>"; };
+		2DD377532741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumAnalyzerPreferencesWindowController.h; sourceTree = "<group>"; };
+		2DD377542741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumAnalyzerPreferencesWindowController.m; sourceTree = "<group>"; };
 		2DD39ED726AD8D1600C5846D /* analyzer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = analyzer.h; sourceTree = "<group>"; };
 		2DD39ED826AD8D1600C5846D /* analyzer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = analyzer.c; sourceTree = "<group>"; };
 		2DD5262E2062F1DF002609C5 /* help-cocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "help-cocoa.txt"; sourceTree = "<group>"; };
@@ -7289,6 +7299,7 @@
 		0D568525271DBD6A0026F700 /* SpectrumAnalyzer */ = {
 			isa = PBXGroup;
 			children = (
+				2DD3774C27412C53007AD315 /* Preferences */,
 				2DB951C826B1E03600602876 /* Models */,
 				2DBC62D424CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.h */,
 				2DBC62D524CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m */,
@@ -7322,8 +7333,8 @@
 			children = (
 				0D56853A271DC6670026F700 /* VisualizationViewController.h */,
 				0D56853B271DC6670026F700 /* VisualizationViewController.m */,
-				2DD3774827404E11007AD315 /* VisBaseColorUtil.h */,
-				2DD3774927404E11007AD315 /* VisBaseColorUtil.m */,
+				2DD3774827404E11007AD315 /* VisualizationSettingsUtil.h */,
+				2DD3774927404E11007AD315 /* VisualizationSettingsUtil.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -10506,6 +10517,18 @@
 			path = ../icons/1024x1024;
 			sourceTree = "<group>";
 		};
+		2DD3774C27412C53007AD315 /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				2DD3774D27412C85007AD315 /* SpectrumAnalyzerPreferencesWindowController.xib */,
+				2DD3774F27412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.h */,
+				2DD3775027412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.m */,
+				2DD377532741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.h */,
+				2DD377542741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.m */,
+			);
+			path = Preferences;
+			sourceTree = "<group>";
+		};
 		2DD39EC726AD8CFD00C5846D /* analyzer */ = {
 			isa = PBXGroup;
 			children = (
@@ -13050,7 +13073,7 @@
 				2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */,
 				2DEF494419C4DB4100B718C1 /* PlaylistView.h in Headers */,
 				4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */,
-				2DD3774A27404E11007AD315 /* VisBaseColorUtil.h in Headers */,
+				2DD3774A27404E11007AD315 /* VisualizationSettingsUtil.h in Headers */,
 				2D9EBAAB25E44A0700255592 /* WidgetSerializer.h in Headers */,
 				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
 				2DE5562726075B8400285BF9 /* AlbumArtWidget.h in Headers */,
@@ -13125,6 +13148,8 @@
 				2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */,
 				2DD3774627404401007AD315 /* AppearancePreferencesViewController.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */,
+				2DD3775127412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.h in Headers */,
+				2DD377552741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.h in Headers */,
 				2D9E905124F453960037D323 /* MediaLibraryPreferencesViewController.h in Headers */,
 				2DE55ACE26C5A47F008F33FF /* medialibmanager.h in Headers */,
 				2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */,
@@ -14835,6 +14860,7 @@
 				2D8D96B11D1091F900A5C7E6 /* noartwork.png in Resources */,
 				2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */,
 				4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */,
+				2DD3774E27412C85007AD315 /* SpectrumAnalyzerPreferencesWindowController.xib in Resources */,
 				4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */,
 				2DD377432740420C007AD315 /* AppearancePreferences.xib in Resources */,
 				4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */,
@@ -16317,6 +16343,7 @@
 				2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */,
 				2DB951CC26B1E05300602876 /* SpectrumAnalyzerSettings.m in Sources */,
 				0D56853F271DC6670026F700 /* VisualizationViewController.m in Sources */,
+				2DD377562741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.m in Sources */,
 				2D9E905224F453960037D323 /* MediaLibraryPreferencesViewController.m in Sources */,
 				2D887BE624B1C86D0078392F /* MediaLibraryItem.m in Sources */,
 				2D3CD9382409A091005875A9 /* PinnedGroupTitleView.m in Sources */,
@@ -16329,7 +16356,7 @@
 				2DAA4041269AF880006D2754 /* WeakRefWrapper.m in Sources */,
 				2DBC62D724CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m in Sources */,
 				2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */,
-				2DD3774B27404E11007AD315 /* VisBaseColorUtil.m in Sources */,
+				2DD3774B27404E11007AD315 /* VisualizationSettingsUtil.m in Sources */,
 				2D98B687272D56F100E655AE /* ScopeVisualizationViewController.m in Sources */,
 				2DDF87DA24027DA500CA8E91 /* PluginActionMenuItem.m in Sources */,
 				2DAD80A22416DBB100EB3075 /* CustomToolbarItem.m in Sources */,
@@ -16354,6 +16381,7 @@
 				2DDD779025E153D000FA6FE5 /* WidgetFactory.m in Sources */,
 				2DA30B8023F1C9A3003D22E3 /* PropertySheetContentView.m in Sources */,
 				2D98613F226C814100BAACB1 /* PropertySheetViewController.m in Sources */,
+				2DD3775227412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.m in Sources */,
 				2DA30E7A2403292D001BAB8A /* PlaybackPreferencesViewController.m in Sources */,
 				2D747E3A24B64E7600BBB987 /* SidebarSplitViewController.m in Sources */,
 				2DB1641B24FAB13400034E11 /* MediaLibraryManager.m in Sources */,

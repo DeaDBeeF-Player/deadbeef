@@ -10,10 +10,15 @@
 #import "SpectrumAnalyzerVisualizationViewController.h"
 #import "SpectrumAnalyzerVisualizationView.h"
 #import "SpectrumAnalyzerSettings.h"
+#import "VisualizationSettingsUtil.h"
 
 static void *kModeContext = &kModeContext;
 static void *kDistanceBetweenBarsContext = &kDistanceBetweenBarsContext;
 static void *kBarGranularity = &kBarGranularity;
+static void *kUseCustomPeakColor = &kUseCustomPeakColor;
+static void *kUseCustomBarColor = &kUseCustomBarColor;
+static void *kCustomPeakColor = &kCustomPeakColor;
+static void *kCustomBarColor = &kCustomBarColor;
 
 @interface SpectrumAnalyzerWidget()
 
@@ -34,6 +39,10 @@ static void *kBarGranularity = &kBarGranularity;
     [self.settings removeObserver:self forKeyPath:@"mode"];
     [self.settings removeObserver:self forKeyPath:@"distanceBetweenBars"];
     [self.settings removeObserver:self forKeyPath:@"barGranularity"];
+    [self.settings removeObserver:self forKeyPath:@"useCustomPeakColor"];
+    [self.settings removeObserver:self forKeyPath:@"useCustomBarColor"];
+    [self.settings removeObserver:self forKeyPath:@"customPeakColor"];
+    [self.settings removeObserver:self forKeyPath:@"customBarColor"];
 }
 
 - (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
@@ -61,6 +70,10 @@ static void *kBarGranularity = &kBarGranularity;
     [_settings addObserver:self forKeyPath:@"distanceBetweenBars" options:0 context:kDistanceBetweenBarsContext];
     [_settings addObserver:self forKeyPath:@"barGranularity" options:0 context:kBarGranularity];
 
+    [_settings addObserver:self forKeyPath:@"useCustomPeakColor" options:0 context:kUseCustomPeakColor];
+    [_settings addObserver:self forKeyPath:@"useCustomBarColor" options:0 context:kUseCustomBarColor];
+    [_settings addObserver:self forKeyPath:@"customPeakColor" options:0 context:kCustomPeakColor];
+    [_settings addObserver:self forKeyPath:@"customBarColor" options:0 context:kCustomBarColor];
 
     self.settings.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
     self.settings.barGranularity = 1;
@@ -83,6 +96,18 @@ static void *kBarGranularity = &kBarGranularity;
     } else if (context == kBarGranularity) {
         [self.visualizationView updateAnalyzerSettings:self.settings];
         [self.deps.state layoutDidChange];
+    } else if (context == kUseCustomPeakColor) {
+        [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.deps.state layoutDidChange];
+    } else if (context == kUseCustomBarColor) {
+        [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.deps.state layoutDidChange];
+    } else if (context == kCustomPeakColor) {
+        [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.deps.state layoutDidChange];
+    } else if (context == kCustomBarColor) {
+        [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.deps.state layoutDidChange];
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
@@ -101,11 +126,22 @@ static void *kBarGranularity = &kBarGranularity;
         break;
     }
 
-    return @{
-        @"mode": mode,
-        @"distanceBetweenBars": @(self.settings.distanceBetweenBars),
-        @"barGranularity": @(self.settings.barGranularity),
-    };
+    NSMutableDictionary *d = [NSMutableDictionary new];
+    d[@"mode"] = mode;
+    d[@"distanceBetweenBars"] = @(self.settings.distanceBetweenBars);
+    d[@"barGranularity"] = @(self.settings.barGranularity);
+    d[@"useCustomPeakColor"] = @(self.settings.useCustomPeakColor);
+    d[@"useCustomBarColor"] = @(self.settings.useCustomBarColor);
+    NSString *customPeakColor = [VisualizationSettingsUtil.shared stringForColor:self.settings.customPeakColor];
+    if (customPeakColor != nil) {
+        d[@"customPeakColor"] = customPeakColor;
+    }
+
+    NSString *customBarColor = [VisualizationSettingsUtil.shared stringForColor:self.settings.customBarColor];
+    if (customBarColor) {
+        d[@"customBarColor"] = customBarColor;
+    }
+    return d.copy;
 }
 
 - (BOOL)deserializeFromSettingsDictionary:(NSDictionary *)dictionary {
@@ -128,6 +164,26 @@ static void *kBarGranularity = &kBarGranularity;
     NSNumber *barGranularityNumber = dictionary[@"barGranularity"];
     if ([barGranularityNumber isKindOfClass:NSNumber.class]) {
         self.settings.barGranularity = barGranularityNumber.intValue;
+    }
+
+    NSNumber *useCustomPeakColorNumber = dictionary[@"useCustomPeakColor"];
+    if ([useCustomPeakColorNumber isKindOfClass:NSNumber.class]) {
+        self.settings.useCustomPeakColor = useCustomPeakColorNumber.boolValue;
+    }
+
+    NSNumber *useCustomBarColorNumber = dictionary[@"useCustomBarColor"];
+    if ([useCustomBarColorNumber isKindOfClass:NSNumber.class]) {
+        self.settings.useCustomBarColor = useCustomBarColorNumber.boolValue;
+    }
+
+    NSString *customPeakColorString = dictionary[@"customPeakColor"];
+    if ([customPeakColorString isKindOfClass:NSString.class]) {
+        self.settings.customPeakColor = [VisualizationSettingsUtil.shared colorForString:customPeakColorString];
+    }
+
+    NSString *customBarColorString = dictionary[@"customBarColor"];
+    if ([customBarColorString isKindOfClass:NSString.class]) {
+        self.settings.customBarColor = [VisualizationSettingsUtil.shared colorForString:customBarColorString];
     }
 
     return YES;

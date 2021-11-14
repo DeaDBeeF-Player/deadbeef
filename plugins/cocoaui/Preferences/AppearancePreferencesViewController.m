@@ -7,7 +7,7 @@
 //
 
 #import "AppearancePreferencesViewController.h"
-#import "VisBaseColorUtil.h"
+#import "VisualizationSettingsUtil.h"
 #include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
@@ -27,7 +27,7 @@ extern DB_functions_t *deadbeef;
 
     int override_vis_color = deadbeef->conf_get_int ("cocoaui.vis.override_base_color", 0);
 
-    self.visualizationColorWell.color = VisBaseColorUtil.shared.baseColor;
+    self.visualizationColorWell.color = VisualizationSettingsUtil.shared.baseColor;
 
     [self updateOverrideVisualizationBaseColor:override_vis_color];
 }
@@ -46,16 +46,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (IBAction)visualizationColorWellAction:(NSColorWell *)sender {
-    NSColor *color = [sender.color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
-
-    CGFloat components[4];
-    [color getComponents:components];
-
-    NSString *colorString = [NSString stringWithFormat:@"%0.2lf %0.2lf %0.2f %0.2lf", components[0], components[1], components[2], components[3]];
-
-    deadbeef->conf_set_str ("cocoaui.vis.base_color", colorString.UTF8String);
-
-    deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+    VisualizationSettingsUtil.shared.baseColor = sender.color;
 }
 
 @end
