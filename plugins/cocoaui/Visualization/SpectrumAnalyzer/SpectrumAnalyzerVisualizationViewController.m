@@ -8,7 +8,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface SpectrumAnalyzerVisualizationViewController() <SpectrumAnalyzerPreferencesDelegate>
+@interface SpectrumAnalyzerVisualizationViewController()
 @property (nonatomic) SpectrumAnalyzerPreferencesWindowController *preferencesWindowController;
 @end
 
@@ -108,7 +108,6 @@ extern DB_functions_t *deadbeef;
 - (void)preferences:(NSMenuItem *)sender {
     self.preferencesWindowController = [[SpectrumAnalyzerPreferencesWindowController alloc] initWithWindowNibName:@"SpectrumAnalyzerPreferencesWindowController"];
 
-    self.preferencesWindowController.preferencesDelegate = self;
     self.preferencesWindowController.settings = self.settings;
 
     [self.view.window beginSheet:self.preferencesWindowController.window completionHandler:^(NSModalResponse returnCode) {
@@ -169,21 +168,6 @@ extern DB_functions_t *deadbeef;
 
         view.baseColor = VisualizationSettingsUtil.shared.baseColor;
     }
-}
-
-#pragma mark - SpectrumAnalyzerPreferencesDelegate
-
-
-- (void)spectrumAnalyzerPreferencesCustomBarColorDidChange:(nonnull NSColor *)color {
-}
-
-- (void)spectrumAnalyzerPreferencesCustomBarColorEnabledDidChange:(BOOL)enabled {
-}
-
-- (void)spectrumAnalyzerPreferencesCustomPeakColorDidChange:(nonnull NSColor *)color {
-}
-
-- (void)spectrumAnalyzerPreferencesCustomPeakColorEnabledDidChange:(BOOL)enabled {
 }
 
 @end

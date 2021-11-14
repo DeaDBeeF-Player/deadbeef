@@ -6,6 +6,7 @@
 //  Copyright © 2021 Alexey Yakovenko. All rights reserved.
 //
 
+#import <AppKit/AppKit.h>
 #import <Foundation/Foundation.h>
 #import "scope.h"
 
@@ -32,6 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) ddb_scope_mode_t renderMode;
 @property (nonatomic) ScopeScaleMode scaleMode;
 @property (nonatomic) ScopeFragmentDuration fragmentDuration;
+@property (nonatomic) BOOL useCustomColor;
+@property (nonatomic) NSColor *customColor;
 
 @end
 

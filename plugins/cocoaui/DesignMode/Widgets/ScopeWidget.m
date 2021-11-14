@@ -10,10 +10,13 @@
 #import "ScopeVisualizationViewController.h"
 #import "ScopeSettings.h"
 #import "ScopeWidget.h"
+#import "VisualizationSettingsUtil.h"
 
 static void *kRenderModeContext = &kRenderModeContext;
 static void *kScaleModeContext = &kScaleModeContext;
 static void *kFragmentDurationContext = &kFragmentDurationContext;
+static void *kUseCustomColorContext = &kUseCustomColorContext;
+static void *kCustomColorContext = &kCustomColorContext;
 
 @interface ScopeWidget()
 
@@ -33,6 +36,8 @@ static void *kFragmentDurationContext = &kFragmentDurationContext;
     [self.settings removeObserver:self forKeyPath:@"renderMode"];
     [self.settings removeObserver:self forKeyPath:@"scaleMode"];
     [self.settings removeObserver:self forKeyPath:@"fragmentDuration"];
+    [self.settings removeObserver:self forKeyPath:@"useCustomColor"];
+    [self.settings removeObserver:self forKeyPath:@"customColor"];
 }
 
 - (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
@@ -58,6 +63,8 @@ static void *kFragmentDurationContext = &kFragmentDurationContext;
     [_settings addObserver:self forKeyPath:@"renderMode" options:0 context:kRenderModeContext];
     [_settings addObserver:self forKeyPath:@"scaleMode" options:0 context:kScaleModeContext];
     [_settings addObserver:self forKeyPath:@"fragmentDuration" options:0 context:kFragmentDurationContext];
+    [_settings addObserver:self forKeyPath:@"useCustomColor" options:0 context:kUseCustomColorContext];
+    [_settings addObserver:self forKeyPath:@"customColor" options:0 context:kCustomColorContext];
 
     _visualizationViewController.settings = _settings;
     [_visualizationViewController updateScopeSettings:_settings];
@@ -74,6 +81,12 @@ static void *kFragmentDurationContext = &kFragmentDurationContext;
         [self.visualizationViewController updateScopeSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else if (context == kFragmentDurationContext) {
+        [self.visualizationViewController updateScopeSettings:self.settings];
+        [self.deps.state layoutDidChange];
+    } else if (context == kUseCustomColorContext) {
+        [self.visualizationViewController updateScopeSettings:self.settings];
+        [self.deps.state layoutDidChange];
+    } else if (context == kCustomColorContext) {
         [self.visualizationViewController updateScopeSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else {
@@ -132,11 +145,18 @@ static void *kFragmentDurationContext = &kFragmentDurationContext;
         break;
     }
 
-    return @{
-        @"renderMode": renderMode,
-        @"scaleMode": scaleMode,
-        @"fragmentDuration": fragmentDuration,
-    };
+    NSMutableDictionary *d = [NSMutableDictionary new];
+
+    d[@"renderMode"] = renderMode;
+    d[@"scaleMode"] = scaleMode;
+    d[@"fragmentDuration"] = fragmentDuration;
+    d[@"useCustomColor"] = @(self.settings.useCustomColor);
+    NSString *customColor = [VisualizationSettingsUtil.shared stringForColor:self.settings.customColor];
+    if (customColor != nil) {
+        d[@"customColor"] = customColor;
+    }
+
+    return d.copy;
 }
 
 - (BOOL)deserializeFromSettingsDictionary:(NSDictionary *)dictionary {
@@ -187,6 +207,16 @@ static void *kFragmentDurationContext = &kFragmentDurationContext;
         else if ([fragmentDurationString isEqualToString:@"500"]) {
             self.settings.fragmentDuration = ScopeFragmentDuration500;
         }
+    }
+
+    NSNumber *useCustomColorNumber = dictionary[@"useCustomColor"];
+    if ([useCustomColorNumber isKindOfClass:NSNumber.class]) {
+        self.settings.useCustomColor = useCustomColorNumber.boolValue;
+    }
+
+    NSString *customColorString = dictionary[@"customColor"];
+    if ([customColorString isKindOfClass:NSString.class]) {
+        self.settings.customColor = [VisualizationSettingsUtil.shared colorForString:customColorString];
     }
 
     return YES;

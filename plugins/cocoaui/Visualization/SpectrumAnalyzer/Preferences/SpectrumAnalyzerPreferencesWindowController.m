@@ -20,7 +20,6 @@
 - (void)windowDidLoad {
     [super windowDidLoad];
 
-    self.viewController.delegate = self.preferencesDelegate;
     self.viewController.settings = self.settings;
 }
 

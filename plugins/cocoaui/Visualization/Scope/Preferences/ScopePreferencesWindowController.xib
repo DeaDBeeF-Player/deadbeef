@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="ScopePreferencesWindowController">
+            <connections>
+                <outlet property="viewController" destination="hNG-vc-03H" id="IMD-qe-zD0"/>
+                <outlet property="window" destination="6OD-Hy-rhO" id="fm0-ky-2V3"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Scope" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" frameAutosaveName="" animationBehavior="default" id="6OD-Hy-rhO" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="167" y="88" width="282" height="100"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
+            <view key="contentView" id="qSF-10-yFu">
+                <rect key="frame" x="0.0" y="0.0" width="282" height="100"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="PZO-n7-N0H">
+                        <rect key="frame" x="18" y="63" width="133" height="18"/>
+                        <buttonCell key="cell" type="check" title="Use custom color" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="wGf-Es-kS9">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="useCustomColorButtonAction:" target="hNG-vc-03H" id="Rn9-Iv-5MN"/>
+                        </connections>
+                    </button>
+                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="yNg-0d-irH">
+                        <rect key="frame" x="218" y="60" width="44" height="23"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="44" id="Y7J-Hf-HJh"/>
+                            <constraint firstAttribute="height" constant="23" id="z2i-1x-0aj"/>
+                        </constraints>
+                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        <connections>
+                            <action selector="customColorWellAction:" target="hNG-vc-03H" id="PgE-W1-1V9"/>
+                        </connections>
+                    </colorWell>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NEb-2d-ZDo">
+                        <rect key="frame" x="203" y="13" width="66" height="32"/>
+                        <buttonCell key="cell" type="push" title="Done" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="okN-3p-ulZ">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="doneButtonAction:" target="hNG-vc-03H" id="p47-tw-1c8"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="yNg-0d-irH" secondAttribute="trailing" constant="20" symbolic="YES" id="3wt-OY-8sL"/>
+                    <constraint firstItem="yNg-0d-irH" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="PZO-n7-N0H" secondAttribute="trailing" constant="8" id="7ql-g1-3f3"/>
+                    <constraint firstItem="yNg-0d-irH" firstAttribute="centerY" secondItem="PZO-n7-N0H" secondAttribute="centerY" id="8pB-Tr-wDV"/>
+                    <constraint firstItem="PZO-n7-N0H" firstAttribute="leading" secondItem="qSF-10-yFu" secondAttribute="leading" constant="20" symbolic="YES" id="EfK-kg-7It"/>
+                    <constraint firstItem="NEb-2d-ZDo" firstAttribute="top" secondItem="yNg-0d-irH" secondAttribute="bottom" constant="20" id="TXz-OX-xUb"/>
+                    <constraint firstItem="PZO-n7-N0H" firstAttribute="top" secondItem="qSF-10-yFu" secondAttribute="top" constant="20" symbolic="YES" id="Zqs-o5-ivF"/>
+                    <constraint firstAttribute="bottom" secondItem="NEb-2d-ZDo" secondAttribute="bottom" constant="20" symbolic="YES" id="aZA-Iv-MNT"/>
+                    <constraint firstAttribute="trailing" secondItem="NEb-2d-ZDo" secondAttribute="trailing" constant="20" symbolic="YES" id="qhu-KV-Wb4"/>
+                </constraints>
+            </view>
+            <point key="canvasLocation" x="-174" y="210"/>
+        </window>
+        <viewController id="hNG-vc-03H" customClass="ScopePreferencesViewController">
+            <connections>
+                <outlet property="customColorWell" destination="yNg-0d-irH" id="KdL-24-jqN"/>
+                <outlet property="useCustomColorButton" destination="PZO-n7-N0H" id="K1K-ZQ-4bP"/>
+                <outlet property="view" destination="qSF-10-yFu" id="cys-a8-6zg"/>
+            </connections>
+        </viewController>
+    </objects>
+</document>

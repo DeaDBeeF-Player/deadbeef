@@ -21,11 +21,6 @@
 
 @implementation SpectrumAnalyzerPreferencesViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-
-}
-
 - (void)setSettings:(SpectrumAnalyzerSettings *)settings {
     _settings = settings;
     if (settings.customPeakColor != nil) {
@@ -48,30 +43,26 @@
     self.useCustomBarColorButton.state = enabled ? NSControlStateValueOn : NSControlStateValueOff;
 }
 
-- (IBAction)doneAction:(id)sender {
+- (IBAction)doneButtonAction:(id)sender {
     [NSApp endSheet:self.view.window returnCode:NSModalResponseOK];
 }
 
 - (IBAction)useCustomPeakColorButtonAction:(NSButton *)sender {
     self.settings.useCustomPeakColor = sender.state == NSControlStateValueOn;
     [self updateUseCustomPeakColor:sender.state == NSControlStateValueOn];
-//    [self.delegate spectrumAnalyzerPreferencesUseCustomPeakColorDidChange:sender.state == NSControlStateValueOn];
 }
 
 - (IBAction)useCustomBarColorButtonAction:(NSButton *)sender {
     self.settings.useCustomBarColor = sender.state == NSControlStateValueOn;
     [self updateUseCustomBarColor:sender.state == NSControlStateValueOn];
-//    [self.delegate spectrumAnalyzerPreferencesUseCustomBarColorDidChange:sender.state == NSControlStateValueOn];
 }
 
 - (IBAction)peakColorWellAction:(NSColorWell *)sender {
     self.settings.customPeakColor = sender.color;
-//    [self.delegate spectrumAnalyzerPreferencesCustomPeakColorDidChange:sender.color];
 }
 
 - (IBAction)barColorWellAction:(NSColorWell *)sender {
     self.settings.customBarColor = sender.color;
-//    [self.delegate spectrumAnalyzerPreferencesCustomBarColorDidChange:sender.color];
 }
 
 @end

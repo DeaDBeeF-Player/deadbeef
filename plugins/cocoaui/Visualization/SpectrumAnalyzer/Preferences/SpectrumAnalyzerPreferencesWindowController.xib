@@ -72,7 +72,7 @@
                             <font key="font" metaFont="system"/>
                         </buttonCell>
                         <connections>
-                            <action selector="doneAction:" target="dAq-Rb-Yer" id="F5Q-mg-SM0"/>
+                            <action selector="doneButtonAction:" target="dAq-Rb-Yer" id="F5Q-mg-SM0"/>
                         </connections>
                     </button>
                 </subviews>

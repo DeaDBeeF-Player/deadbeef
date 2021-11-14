@@ -2161,6 +2161,11 @@
 		2DD3775227412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD3775027412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.m */; };
 		2DD377552741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD377532741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.h */; };
 		2DD377562741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD377542741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.m */; };
+		2DD3775B27414BD9007AD315 /* ScopePreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD3775827414BD9007AD315 /* ScopePreferencesWindowController.h */; };
+		2DD3775C27414BD9007AD315 /* ScopePreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD3775927414BD9007AD315 /* ScopePreferencesWindowController.m */; };
+		2DD3775D27414BD9007AD315 /* ScopePreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD3775A27414BD9007AD315 /* ScopePreferencesWindowController.xib */; };
+		2DD3776027414BF6007AD315 /* ScopePreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD3775E27414BF6007AD315 /* ScopePreferencesViewController.h */; };
+		2DD3776127414BF6007AD315 /* ScopePreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD3775F27414BF6007AD315 /* ScopePreferencesViewController.m */; };
 		2DD39ED926AD8D1600C5846D /* analyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD39ED726AD8D1600C5846D /* analyzer.h */; };
 		2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2DD5262E2062F1DF002609C5 /* help-cocoa.txt */; };
 		2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
@@ -5995,6 +6000,11 @@
 		2DD3775027412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumAnalyzerPreferencesViewController.m; sourceTree = "<group>"; };
 		2DD377532741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumAnalyzerPreferencesWindowController.h; sourceTree = "<group>"; };
 		2DD377542741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumAnalyzerPreferencesWindowController.m; sourceTree = "<group>"; };
+		2DD3775827414BD9007AD315 /* ScopePreferencesWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopePreferencesWindowController.h; sourceTree = "<group>"; };
+		2DD3775927414BD9007AD315 /* ScopePreferencesWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScopePreferencesWindowController.m; sourceTree = "<group>"; };
+		2DD3775A27414BD9007AD315 /* ScopePreferencesWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScopePreferencesWindowController.xib; sourceTree = "<group>"; };
+		2DD3775E27414BF6007AD315 /* ScopePreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopePreferencesViewController.h; sourceTree = "<group>"; };
+		2DD3775F27414BF6007AD315 /* ScopePreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScopePreferencesViewController.m; sourceTree = "<group>"; };
 		2DD39ED726AD8D1600C5846D /* analyzer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = analyzer.h; sourceTree = "<group>"; };
 		2DD39ED826AD8D1600C5846D /* analyzer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = analyzer.c; sourceTree = "<group>"; };
 		2DD5262E2062F1DF002609C5 /* help-cocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "help-cocoa.txt"; sourceTree = "<group>"; };
@@ -7312,6 +7322,7 @@
 		0D56852C271DC4160026F700 /* Scope */ = {
 			isa = PBXGroup;
 			children = (
+				2DD3775727414BC2007AD315 /* Preferences */,
 				2D98B68F272D573C00E655AE /* Models */,
 				2D98B6A2273483A700E655AE /* AAPLConfig.h */,
 				2D98B696273482B900E655AE /* AAPLNSView.h */,
@@ -10520,11 +10531,23 @@
 		2DD3774C27412C53007AD315 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
-				2DD3774D27412C85007AD315 /* SpectrumAnalyzerPreferencesWindowController.xib */,
 				2DD3774F27412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.h */,
 				2DD3775027412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.m */,
 				2DD377532741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.h */,
 				2DD377542741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.m */,
+				2DD3774D27412C85007AD315 /* SpectrumAnalyzerPreferencesWindowController.xib */,
+			);
+			path = Preferences;
+			sourceTree = "<group>";
+		};
+		2DD3775727414BC2007AD315 /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				2DD3775E27414BF6007AD315 /* ScopePreferencesViewController.h */,
+				2DD3775F27414BF6007AD315 /* ScopePreferencesViewController.m */,
+				2DD3775827414BD9007AD315 /* ScopePreferencesWindowController.h */,
+				2DD3775927414BD9007AD315 /* ScopePreferencesWindowController.m */,
+				2DD3775A27414BD9007AD315 /* ScopePreferencesWindowController.xib */,
 			);
 			path = Preferences;
 			sourceTree = "<group>";
@@ -13086,6 +13109,7 @@
 				2DAD80A12416DBB100EB3075 /* CustomToolbarItem.h in Headers */,
 				2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */,
 				2D98B68B272D573700E655AE /* ScopeSettings.h in Headers */,
+				2DD3775B27414BD9007AD315 /* ScopePreferencesWindowController.h in Headers */,
 				2D9EBB7125E45BAA00255592 /* DesignModeDeps.h in Headers */,
 				2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */,
 				2DEBA1BF23E203B9000E4135 /* eqpreset.h in Headers */,
@@ -13116,6 +13140,7 @@
 				2DEBA1D223E207A3000E4135 /* EqualizerWindowController.h in Headers */,
 				0D56853D271DC6670026F700 /* VisualizationViewController.h in Headers */,
 				2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */,
+				2DD3776027414BF6007AD315 /* ScopePreferencesViewController.h in Headers */,
 				2D54915722B1711E000FE7E3 /* HelpWindowController.h in Headers */,
 				2DDE529324F81A870096EF80 /* MediaLibrarySearchCellView.h in Headers */,
 				2D9C0C25238DC2C100CE8C10 /* GroupByCustomWindowController.h in Headers */,
@@ -14884,6 +14909,7 @@
 				2DBF3D40270868D400023138 /* MainContentViewController.xib in Resources */,
 				2D828E5419E5679800EE874F /* Search.xib in Resources */,
 				2D3EBD9D1A9379BD00E5E255 /* Preferences.xib in Resources */,
+				2DD3775D27414BD9007AD315 /* ScopePreferencesWindowController.xib in Resources */,
 				2DA5E331238DB0C4005832B7 /* EditColumnPanel.xib in Resources */,
 				4DE28473205BE0B20023063E /* HelpViewer.xib in Resources */,
 				2DB05E36252E3CF10090635E /* iconSoundTemplate.pdf in Resources */,
@@ -16397,6 +16423,7 @@
 				2D9F6535241BE78C00D9D16E /* SeekbarOverlay.m in Sources */,
 				2DEBA1D323E207A3000E4135 /* EqualizerWindowController.m in Sources */,
 				2DA8912325FFEB9B0084860D /* PlaylistGroup.m in Sources */,
+				2DD3775C27414BD9007AD315 /* ScopePreferencesWindowController.m in Sources */,
 				2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */,
 				2D30D0B525E2A5DD0023A299 /* DesignModeState.m in Sources */,
 				2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */,
@@ -16407,6 +16434,7 @@
 				2D747E3924B64E7600BBB987 /* SidebarSplitViewItem.m in Sources */,
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
 				2D71C26B1DC88E5C00247CEF /* ScriptableTableDataSource.m in Sources */,
+				2DD3776127414BF6007AD315 /* ScopePreferencesViewController.m in Sources */,
 				2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */,
 				2DDBA26123E5EA3800051320 /* PlaylistLocalDragDropHolder.m in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,

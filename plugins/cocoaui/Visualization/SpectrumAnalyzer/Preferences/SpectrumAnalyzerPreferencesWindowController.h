@@ -10,13 +10,10 @@
 
 @class SpectrumAnalyzerSettings;
 
-@protocol SpectrumAnalyzerPreferencesDelegate;
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface SpectrumAnalyzerPreferencesWindowController : NSWindowController
 
-@property (nonatomic,weak) id<SpectrumAnalyzerPreferencesDelegate> preferencesDelegate;
 @property (nonatomic) SpectrumAnalyzerSettings *settings;
 
 @end

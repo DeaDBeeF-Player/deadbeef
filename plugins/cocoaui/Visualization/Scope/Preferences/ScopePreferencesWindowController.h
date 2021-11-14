@@ -1,5 +1,5 @@
 //
-//  SpectrumAnalyzerPreferencesViewController.h
+//  ScopePreferencesWindowController.h
 //  DeaDBeeF
 //
 //  Created by Alexey Yakovenko on 14/11/2021.
@@ -8,14 +8,13 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class SpectrumAnalyzerSettings;
+@class ScopeSettings;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SpectrumAnalyzerPreferencesViewController : NSViewController
+@interface ScopePreferencesWindowController : NSWindowController
 
-@property (nonatomic) SpectrumAnalyzerSettings *settings;
-
+@property (nonatomic) ScopeSettings *settings;
 
 @end
 

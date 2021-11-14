@@ -7,6 +7,7 @@
 //
 
 #import "AAPLView.h"
+#import "ScopePreferencesWindowController.h"
 #import "ScopeRenderer.h"
 #import "ScopeVisualizationViewController.h"
 #import "VisualizationSettingsUtil.h"
@@ -22,6 +23,7 @@ static void *kIsVisibleContext = &kIsVisibleContext;
 @property (nonatomic) BOOL isListening;
 @property (nonatomic) ScopeScaleMode scaleMode;
 @property (nonatomic,readonly) CGFloat scaleFactor;
+@property (nonatomic) ScopePreferencesWindowController *preferencesWindowController;
 @end
 
 @implementation ScopeVisualizationViewController {
@@ -96,6 +98,9 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     [fragmentDurationMenuItem.submenu addItemWithTitle:@"300 ms" action:@selector(setFragmentDuration300ms:) keyEquivalent:@""];
     [fragmentDurationMenuItem.submenu addItemWithTitle:@"500 ms" action:@selector(setFragmentDuration500ms:) keyEquivalent:@""];
 
+    [menu addItem:NSMenuItem.separatorItem];
+    [menu addItemWithTitle:@"Preferences" action:@selector(preferences:) keyEquivalent:@""];
+
     self.view.menu = menu;
 
     [self addObserver:self forKeyPath:kWindowIsVisibleKey options:NSKeyValueObservingOptionInitial context:kIsVisibleContext];
@@ -168,6 +173,8 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
         _scope.fragment_duration = 500;
         break;
     }
+
+    [self updateRendererSettings];
 }
 
 #pragma mark - Actions
@@ -220,8 +227,17 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     self.settings.fragmentDuration = ScopeFragmentDuration500;
 }
 
-- (void)drawableResize:(CGSize)size
-{
+- (void)preferences:(NSMenuItem *)sender {
+    self.preferencesWindowController = [[ScopePreferencesWindowController alloc] initWithWindowNibName:@"ScopePreferencesWindowController"];
+
+    self.preferencesWindowController.settings = self.settings;
+
+    [self.view.window beginSheet:self.preferencesWindowController.window completionHandler:^(NSModalResponse returnCode) {
+        self.preferencesWindowController = nil;
+    }];
+}
+
+- (void)drawableResize:(CGSize)size {
     [_renderer drawableResize:size];
 }
 
@@ -313,9 +329,20 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     return YES;
 }
 
+- (void) updateRendererSettings {
+    NSColor *color;
+    if (self.settings.useCustomColor) {
+        color = self.settings.customColor;
+    }
+    if (color == nil) {
+        color = VisualizationSettingsUtil.shared.baseColor;
+    }
+    _renderer.baseColor = color;
+}
+
 - (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
     if (_id == DB_EV_CONFIGCHANGED) {
-        _renderer.baseColor = VisualizationSettingsUtil.shared.baseColor;
+        [self updateRendererSettings];
     }
 }
 
