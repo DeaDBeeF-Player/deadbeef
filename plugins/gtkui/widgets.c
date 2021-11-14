@@ -46,6 +46,7 @@
 #include "drawing.h"
 #include "ddb_splitter.h"
 #include "../../analyzer/analyzer.h"
+#include "../../scope/scope.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -153,10 +154,12 @@ typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *drawarea;
     guint drawtimer;
-    float *samples;
-    int nsamples;
-    int resized;
+
     intptr_t mutex;
+
+    ddb_scope_t scope;
+    ddb_scope_draw_data_t draw_data;
+
     cairo_surface_t *surf;
 } w_scope_t;
 
@@ -2812,10 +2815,10 @@ w_scope_destroy (ddb_gtkui_widget_t *w) {
         cairo_surface_destroy (s->surf);
         s->surf = NULL;
     }
-    if (s->samples) {
-        free (s->samples);
-        s->samples = NULL;
-    }
+
+    ddb_scope_dealloc(&s->scope);
+    ddb_scope_draw_data_dealloc(&s->draw_data);
+
     if (s->mutex) {
         deadbeef->mutex_free (s->mutex);
         s->mutex = 0;
@@ -2832,45 +2835,10 @@ w_scope_draw_cb (void *data) {
 static void
 scope_wavedata_listener (void *ctx, const ddb_audio_data_t *data) {
     w_scope_t *w = ctx;
-    if (w->nsamples != w->resized) {
-        deadbeef->mutex_lock (w->mutex);
-        float *oldsamples = w->samples;
-        int oldnsamples = w->nsamples;
-        w->samples = NULL;
-        w->nsamples = w->resized;
-        if (w->nsamples > 0) {
-            w->samples = malloc (sizeof (float) * w->nsamples);
-            memset (w->samples, 0, sizeof (float) * w->nsamples);
-            if (oldsamples) {
-                int n = min (oldnsamples, w->nsamples);
-                memcpy (w->samples + w->nsamples - n, oldsamples + oldnsamples - n, n * sizeof (float));
-            }
-        }
-        if (oldnsamples) {
-            free (oldsamples);
-        }
-        deadbeef->mutex_unlock (w->mutex);
-    }
 
-    if (w->samples != NULL && w->nsamples != 0 && data->fmt->channels != 0) {
-        // append
-        int nsamples = data->nframes / data->fmt->channels;
-        float ratio = data->fmt->samplerate / 44100.f;
-        int size = nsamples / ratio;
-
-        int sz = min (w->nsamples, size);
-        int n = w->nsamples-sz;
-
-        memmove (w->samples, w->samples + sz, n * sizeof (float));
-        float pos = 0;
-        for (int i = 0; i < sz && pos < nsamples; i++, pos += ratio) {
-            w->samples[n + i] = data->data[ftoi(pos * data->fmt->channels) * data->fmt->channels + 0];
-            for (int j = 1; j < data->fmt->channels; j++) {
-                w->samples[n + i] += data->data[ftoi(pos * data->fmt->channels) * data->fmt->channels + j];
-            }
-            w->samples[n+i] /= data->fmt->channels;
-        }
-    }
+    deadbeef->mutex_lock (w->mutex);
+    ddb_scope_process(&w->scope, data->fmt->samplerate, data->fmt->channels, data->data, data->nframes);
+    deadbeef->mutex_unlock (w->mutex);
 }
 
 static inline void
@@ -2898,6 +2866,14 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
     w_scope_t *w = user_data;
 
+    float scale = 1;
+
+    if (w->scope.sample_count != 0) {
+        ddb_scope_tick(&w->scope);
+        ddb_scope_get_draw_data(&w->scope, (int)(a.width * scale), (int)(a.height * scale), 1, &w->draw_data);
+    }
+
+
     if (!w->surf || cairo_image_surface_get_width (w->surf) != a.width || cairo_image_surface_get_height (w->surf) != a.height) {
         if (w->surf) {
             cairo_surface_destroy (w->surf);
@@ -2906,10 +2882,6 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         w->surf = cairo_image_surface_create (CAIRO_FORMAT_RGB24, a.width, a.height);
     }
 
-    int nsamples = a.width;
-    if (w->nsamples != nsamples) {
-        w->resized = nsamples;
-    }
     cairo_surface_flush (w->surf);
     unsigned char *data = cairo_image_surface_get_data (w->surf);
     if (!data) {
@@ -2917,36 +2889,19 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     }
     int stride = cairo_image_surface_get_stride (w->surf);
     memset (data, 0, a.height * stride);
-    if (w->samples && a.height > 2) {
-        deadbeef->mutex_lock (w->mutex);
-        float h = a.height;
-        if (h > 50) {
-            h -= 20;
-        }
-        if (h > 100) {
-            h -= 40;
-        }
-        h /= 2;
-        float hh = a.height/2.f;
+    if (w->draw_data.point_count != 0 && a.height > 2) {
 
-        int prev_y = w->samples[0] * h + hh;
-
-        int n = min (w->nsamples, a.width);
-        for (int i = 1; i < n; i++) {
-            int y = ftoi (w->samples[i] * h + hh);
-            if (y < 0) {
-                y = 0;
+        int width = w->draw_data.point_count;
+        ddb_scope_point_t *minmax = w->draw_data.points;
+        int channels = w->draw_data.mode == DDB_SCOPE_MONO ? 1 : w->draw_data.channels;
+        for (int c = 0; c < channels; c++) {
+            for (int x = 0; x < width; x++) {
+                float ymin = min(a.height-1, max(0, minmax->ymin));
+                float ymax = min(a.height-1, max(0, minmax->ymax));
+                _draw_vline (data, stride, x, ymin, ymax);
+                minmax++;
             }
-            if (y >= a.height) {
-                y = a.height-1;
-            }
-            _draw_vline (data, stride, i, prev_y, y);
-            prev_y = y;
         }
-        if (n < a.width) {
-            memset (data + a.height / 2 * stride + n * 4, 0xff, (a.width-n)*4);
-        }
-        deadbeef->mutex_unlock (w->mutex);
     }
     else if (a.height > 0) {
         memset (data + a.height / 2 *stride, 0xff, stride);
@@ -2993,6 +2948,10 @@ w_scope_create (void) {
     w->base.init = w_scope_init;
     w->base.destroy  = w_scope_destroy;
     w->drawarea = gtk_drawing_area_new ();
+
+    ddb_scope_init(&w->scope);
+    w->scope.mode = DDB_SCOPE_MULTICHANNEL;
+    w->scope.fragment_duration = 300;
 
     w->mutex = deadbeef->mutex_create ();
     gtk_widget_show (w->drawarea);
