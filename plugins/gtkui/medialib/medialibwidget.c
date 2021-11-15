@@ -484,7 +484,11 @@ _treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_d
     GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (mlv->tree));
     GtkTreeSelection *selection = gtk_tree_view_get_selection (mlv->tree);
 
-    if (!_select_at_position (mlv->tree, event->x, event->y)) {
+    double x, y;
+    if (!gdk_event_get_position(event, &x, &y)) { // FIXME: GTK4: needs to be wrapped for GTK2
+        return FALSE;
+    }
+    if (!_select_at_position (mlv->tree, x, y)) {
         return FALSE;
     }
 
@@ -607,7 +611,7 @@ w_medialib_viewer_create (void) {
     gtk_widget_show (GTK_WIDGET (w->search_entry));
     gtk_box_pack_start (GTK_BOX (search_hbox), GTK_WIDGET (w->search_entry), TRUE, TRUE, 20);
 
-    GtkWidget *scroll = gtk_scrolled_window_new (NULL, NULL);
+    GtkWidget *scroll = gtk_scrolled_window_new_compat (NULL, NULL);
     gtk_widget_set_can_focus (scroll, FALSE);
     gtk_widget_show (scroll);
     gtk_box_pack_start (GTK_BOX (vbox), scroll, TRUE, TRUE, 0);

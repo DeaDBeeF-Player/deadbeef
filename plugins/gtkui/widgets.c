@@ -1733,6 +1733,8 @@ on_tab_popup_menu (GtkWidget *widget, gpointer user_data)
             w);
 
     gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
+    // FIXME: no event here
+    GdkEvent *event = NULL;
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gdk_event_get_time(event));
 }
 
@@ -1797,6 +1799,8 @@ get_event_coordinates_in_widget (GtkWidget *widget,
 			gint      *x,
 			gint      *y)
 {
+    // FIXME: GTK4
+#if !GTK_CHECK_VERSION(4,0,0)
     GdkWindow *window = event->window;
     gdouble tx, ty;
     tx = event->x;
@@ -1818,6 +1822,7 @@ get_event_coordinates_in_widget (GtkWidget *widget,
     else {
         return FALSE;
     }
+#endif
 }
 
 static gboolean
@@ -2580,7 +2585,7 @@ w_selproperties_create (void) {
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
 
-    GtkWidget *scroll = gtk_scrolled_window_new (NULL, NULL);
+    GtkWidget *scroll = gtk_scrolled_window_new_compat (NULL, NULL);
     gtk_widget_set_can_focus (scroll, FALSE);
     gtk_widget_show (scroll);
     gtk_container_add (GTK_CONTAINER (w->base.widget), scroll);
@@ -4330,7 +4335,7 @@ w_logviewer_create (void) {
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
 
-    GtkWidget *scroll = gtk_scrolled_window_new (NULL, NULL);
+    GtkWidget *scroll = gtk_scrolled_window_new_compat (NULL, NULL);
     gtk_widget_set_can_focus (scroll, FALSE);
     gtk_widget_show (scroll);
     gtk_container_add (GTK_CONTAINER (w->base.widget), scroll);

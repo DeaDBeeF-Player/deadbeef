@@ -71,7 +71,7 @@ create_shellexec_conf_dialog (void)
   gtk_widget_show (edit_button);
   gtk_box_pack_start (GTK_BOX (hbox1), edit_button, TRUE, TRUE, 0);
 
-  scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
+  scrolledwindow = gtk_scrolled_window_new_compat (NULL, NULL);
   gtk_widget_show (scrolledwindow);
   gtk_box_pack_start (GTK_BOX (vbox1), scrolledwindow, TRUE, TRUE, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);

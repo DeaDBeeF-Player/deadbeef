@@ -850,7 +850,7 @@ w_pltbrowser_create (void) {
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
 
-    GtkWidget *scroll = gtk_scrolled_window_new (NULL, NULL);
+    GtkWidget *scroll = gtk_scrolled_window_new_compat (NULL, NULL);
     gtk_widget_set_can_focus (scroll, FALSE);
     gtk_widget_show (scroll);
     gtk_container_add (GTK_CONTAINER (w->base.widget), scroll);

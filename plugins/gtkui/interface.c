@@ -979,7 +979,7 @@ create_helpwindow (void)
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (helpwindow), TRUE);
   gtk_window_set_skip_pager_hint (GTK_WINDOW (helpwindow), TRUE);
 
-  scrolledwindow1 = gtk_scrolled_window_new (NULL, NULL);
+  scrolledwindow1 = gtk_scrolled_window_new_compat (NULL, NULL);
   gtk_widget_show (scrolledwindow1);
   gtk_container_add (GTK_CONTAINER (helpwindow), scrolledwindow1);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow1), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -1074,7 +1074,7 @@ create_trackproperties (void)
   gtk_editable_set_editable (GTK_EDITABLE (filename), FALSE);
   gtk_entry_set_invisible_char (GTK_ENTRY (filename), 8226);
 
-  scrolledwindow5 = gtk_scrolled_window_new (NULL, NULL);
+  scrolledwindow5 = gtk_scrolled_window_new_compat (NULL, NULL);
   gtk_widget_show (scrolledwindow5);
   gtk_box_pack_start (GTK_BOX (vbox16), scrolledwindow5, TRUE, TRUE, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -1165,7 +1165,7 @@ create_trackproperties (void)
   gtk_container_add (GTK_CONTAINER (notebook3), vbox24);
   gtk_container_set_border_width (GTK_CONTAINER (vbox24), 12);
 
-  scrolledwindow6 = gtk_scrolled_window_new (NULL, NULL);
+  scrolledwindow6 = gtk_scrolled_window_new_compat (NULL, NULL);
   gtk_widget_show (scrolledwindow6);
   gtk_box_pack_start (GTK_BOX (vbox24), scrolledwindow6, TRUE, TRUE, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow6), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -2137,7 +2137,7 @@ create_prefwin (void)
   gtk_widget_show (hbox81);
   gtk_box_pack_start (GTK_BOX (vbox29), hbox81, TRUE, TRUE, 0);
 
-  scrolledwindow7 = gtk_scrolled_window_new (NULL, NULL);
+  scrolledwindow7 = gtk_scrolled_window_new_compat (NULL, NULL);
   gtk_widget_show (scrolledwindow7);
   gtk_box_pack_start (GTK_BOX (hbox81), scrolledwindow7, TRUE, TRUE, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow7), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -2802,7 +2802,7 @@ create_prefwin (void)
   gtk_widget_show (vbox56);
   gtk_box_pack_start (GTK_BOX (vbox55), vbox56, TRUE, TRUE, 0);
 
-  scrolledwindow17 = gtk_scrolled_window_new (NULL, NULL);
+  scrolledwindow17 = gtk_scrolled_window_new_compat (NULL, NULL);
   gtk_widget_show (scrolledwindow17);
   gtk_box_pack_start (GTK_BOX (vbox56), scrolledwindow17, TRUE, TRUE, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow17), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -2972,7 +2972,7 @@ create_prefwin (void)
   gtk_container_add (GTK_CONTAINER (hbuttonbox3), hotkey_remove);
   gtk_widget_set_can_default(hotkey_remove, TRUE);
 
-  scrolledwindow9 = gtk_scrolled_window_new (NULL, NULL);
+  scrolledwindow9 = gtk_scrolled_window_new_compat (NULL, NULL);
   gtk_widget_show (scrolledwindow9);
   gtk_box_pack_start (GTK_BOX (vbox36), scrolledwindow9, TRUE, TRUE, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow9), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -3071,7 +3071,7 @@ create_prefwin (void)
   gtk_container_add (GTK_CONTAINER (notebook), hpaned1);
   gtk_container_set_border_width (GTK_CONTAINER (hpaned1), 12);
 
-  scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
+  scrolledwindow2 = gtk_scrolled_window_new_compat (NULL, NULL);
   gtk_widget_show (scrolledwindow2);
   gtk_paned_pack1 (GTK_PANED (hpaned1), scrolledwindow2, FALSE, FALSE);
   gtk_widget_set_size_request (scrolledwindow2, 280, -1);
@@ -3140,7 +3140,7 @@ create_prefwin (void)
   gtk_widget_show (plugin_conf_tab_vbox);
   gtk_container_add (GTK_CONTAINER (plugin_notebook), plugin_conf_tab_vbox);
 
-  plug_conf_dlg_scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
+  plug_conf_dlg_scrolledwindow = gtk_scrolled_window_new_compat (NULL, NULL);
   gtk_widget_show (plug_conf_dlg_scrolledwindow);
   gtk_box_pack_start (GTK_BOX (plugin_conf_tab_vbox), plug_conf_dlg_scrolledwindow, TRUE, TRUE, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (plug_conf_dlg_scrolledwindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -3181,7 +3181,7 @@ create_prefwin (void)
   gtk_editable_set_editable (GTK_EDITABLE (plug_version), FALSE);
   gtk_entry_set_invisible_char (GTK_ENTRY (plug_version), 8226);
 
-  scrolledwindow8 = gtk_scrolled_window_new (NULL, NULL);
+  scrolledwindow8 = gtk_scrolled_window_new_compat (NULL, NULL);
   gtk_widget_show (scrolledwindow8);
   gtk_box_pack_start (GTK_BOX (vbox12), scrolledwindow8, TRUE, TRUE, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow8), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -3207,7 +3207,7 @@ create_prefwin (void)
   gtk_widget_show (label171);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (plugin_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (plugin_notebook), 1), label171);
 
-  scrolledwindow16 = gtk_scrolled_window_new (NULL, NULL);
+  scrolledwindow16 = gtk_scrolled_window_new_compat (NULL, NULL);
   gtk_widget_show (scrolledwindow16);
   gtk_container_add (GTK_CONTAINER (plugin_notebook), scrolledwindow16);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow16), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -4791,7 +4791,7 @@ create_ctmappingdlg (void)
   gtk_widget_show (hbox110);
   gtk_box_pack_start (GTK_BOX (vbox41), hbox110, TRUE, TRUE, 0);
 
-  scrolledwindow11 = gtk_scrolled_window_new (NULL, NULL);
+  scrolledwindow11 = gtk_scrolled_window_new_compat (NULL, NULL);
   gtk_widget_show (scrolledwindow11);
   gtk_box_pack_start (GTK_BOX (hbox110), scrolledwindow11, TRUE, TRUE, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow11), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -5152,7 +5152,7 @@ create_select_action (void)
   gtk_box_pack_start (GTK_BOX (dialog_vbox15), vbox43, TRUE, TRUE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (vbox43), 12);
 
-  scrolledwindow12 = gtk_scrolled_window_new (NULL, NULL);
+  scrolledwindow12 = gtk_scrolled_window_new_compat (NULL, NULL);
   gtk_widget_show (scrolledwindow12);
   gtk_box_pack_start (GTK_BOX (vbox43), scrolledwindow12, TRUE, TRUE, 0);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow12), GTK_SHADOW_IN);
@@ -5374,7 +5374,7 @@ create_edit_tag_value_dlg (void)
   gtk_box_pack_start (GTK_BOX (vbox47), label161, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label161), 0, 0.5);
 
-  scrolledwindow13 = gtk_scrolled_window_new (NULL, NULL);
+  scrolledwindow13 = gtk_scrolled_window_new_compat (NULL, NULL);
   gtk_widget_show (scrolledwindow13);
   gtk_box_pack_start (GTK_BOX (vbox47), scrolledwindow13, TRUE, TRUE, 0);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow13), GTK_SHADOW_IN);
@@ -5436,7 +5436,7 @@ create_log_window (void)
   gtk_widget_show (vbox49);
   gtk_container_add (GTK_CONTAINER (log_window), vbox49);
 
-  scrolledwindow14 = gtk_scrolled_window_new (NULL, NULL);
+  scrolledwindow14 = gtk_scrolled_window_new_compat (NULL, NULL);
   gtk_widget_show (scrolledwindow14);
   gtk_box_pack_start (GTK_BOX (vbox49), scrolledwindow14, TRUE, TRUE, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow14), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -5567,7 +5567,7 @@ create_rg_scan_results (void)
   gtk_container_add (GTK_CONTAINER (rg_scan_results), vbox51);
   gtk_container_set_border_width (GTK_CONTAINER (vbox51), 12);
 
-  scrolledwindow15 = gtk_scrolled_window_new (NULL, NULL);
+  scrolledwindow15 = gtk_scrolled_window_new_compat (NULL, NULL);
   gtk_widget_show (scrolledwindow15);
   gtk_box_pack_start (GTK_BOX (vbox51), scrolledwindow15, TRUE, TRUE, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow15), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);

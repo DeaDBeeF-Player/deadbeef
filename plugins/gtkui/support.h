@@ -199,9 +199,15 @@ void                gtk_widget_get_allocation           (GtkWidget *widget,
 #endif
 
 #ifdef __APPLE__
-#define TEST_LEFT_CLICK(ev) (ev->button==1 && !TEST_RIGHT_CLICK(ev))
-#define TEST_RIGHT_CLICK(ev) (ev->button==3 || (ev->button==1 && (ev->state&(GDK_CONTROL_MASK|GDK_BUTTON3_MASK))))
+#define TEST_LEFT_CLICK(ev) (int button = gdk_button_event_get_button(ev), button==1 && !TEST_RIGHT_CLICK(ev))
+#define TEST_RIGHT_CLICK(ev) (int button = gdk_button_event_get_button(ev), GdkModifierState state = gdk_event_get_modifier_state(ev), button==3 || (button==1 && (ev->state&(GDK_CONTROL_MASK|GDK_BUTTON3_MASK))))
 #else
 #define TEST_LEFT_CLICK(ev) (ev->button==1)
 #define TEST_RIGHT_CLICK(ev) (ev->button==3)
+#endif
+
+#if GTK_CHECK_VERSION (4,0,0)
+#define gtk_scrolled_window_new_compat(x,y) gtk_scrolled_window_new()
+#else
+#define gtk_scrolled_window_new_compat(x,y) gtk_scrolled_window_new(x,y)
 #endif
