@@ -23,6 +23,7 @@
 #include <gtk/gtk.h>
 
 const char * GtkNamedIcons[] = {
+#if !GTK_CHECK_VERSION(4,0,0)
     GTK_STOCK_DIALOG_AUTHENTICATION,
     GTK_STOCK_DIALOG_INFO,
     GTK_STOCK_DIALOG_WARNING,
@@ -116,5 +117,6 @@ const char * GtkNamedIcons[] = {
     GTK_STOCK_ZOOM_FIT,
     GTK_STOCK_ZOOM_IN,
     GTK_STOCK_ZOOM_OUT,
+#endif
     NULL
 };

@@ -110,6 +110,26 @@ typedef struct {
 #define GDK_Page_Up GDK_KEY_Page_Up
 #define GDK_End GDK_KEY_End
 #define GDK_Home GDK_KEY_Home
+#define GDK_KP_Insert GDK_KEY_KP_Insert
+#define GDK_KP_End GDK_KEY_KP_End
+#define GDK_KP_Down GDK_KEY_KP_Down
+#define GDK_KP_Page_Down GDK_KEY_KP_Page_Down
+#define GDK_KP_Left GDK_KEY_KP_Left
+#define GDK_KP_Right GDK_KEY_KP_Right
+#define GDK_KP_Home GDK_KEY_KP_Home
+#define GDK_KP_Up GDK_KEY_KP_Up
+#define GDK_KP_Page_Up GDK_KEY_KP_Page_Up
+
+
+#define GDK_KP_0 GDK_KEY_KP_0
+#define GDK_KP_1 GDK_KEY_KP_1
+#define GDK_KP_2 GDK_KEY_KP_2
+#define GDK_KP_3 GDK_KEY_KP_3
+#define GDK_KP_4 GDK_KEY_KP_4
+#define GDK_KP_6 GDK_KEY_KP_6
+#define GDK_KP_7 GDK_KEY_KP_7
+#define GDK_KP_8 GDK_KEY_KP_8
+#define GDK_KP_9 GDK_KEY_KP_9
 
 typedef void *GtkMenuDetachFunc;
 typedef void *GtkMenuPositionFunc;
@@ -315,4 +335,10 @@ void        gtk_box_query_child_packing (GtkBox         *box,
                                          gboolean       *fill,
                                          guint          *padding,
                                          GtkPackType    *pack_type);
+void        gtk_box_set_child_packing   (GtkBox         *box,
+                                         GtkWidget      *child,
+                                         gboolean        expand,
+                                         gboolean        fill,
+                                         guint           padding,
+                                         GtkPackType     pack_type);
 #endif /* gtk4compat_h */
