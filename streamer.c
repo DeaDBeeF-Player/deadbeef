@@ -1829,6 +1829,11 @@ process_output_block (streamblock_t *block, char *bytes, int bytes_available_siz
         return 0;
     }
 
+    decoded_block_t *decoded_block = decoded_blocks_append();
+    if (decoded_block == NULL) {
+        return 0; // queue is full!
+    }
+
     assert (block->size > block->pos);
     int sz = block->size - block->pos;
 
@@ -1901,7 +1906,6 @@ process_output_block (streamblock_t *block, char *bytes, int bytes_available_siz
         memcpy (bytes, dspbytes, sz);
     }
 
-    decoded_block_t *decoded_block = decoded_blocks_append();
     decoded_block->track = block->track;
     decoded_block->last = block->last;
     decoded_block->first = block->first;
