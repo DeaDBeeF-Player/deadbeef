@@ -120,7 +120,7 @@ on_pltbrowser_row_inserted (GtkTreeModel *tree_model, GtkTreePath *path, GtkTree
     int *indices = gtk_tree_path_get_indices (path);
     int idx = *indices;
     if (idx > plt->last_selected) {
-        idx--;
+        idx--; // this is necessary, because in this case the rows will shift "up".
     }
     if (idx == plt->last_selected) {
         return;
@@ -129,7 +129,7 @@ on_pltbrowser_row_inserted (GtkTreeModel *tree_model, GtkTreePath *path, GtkTree
     deadbeef->plt_move (plt->last_selected, idx);
     plt->last_selected = idx;
     deadbeef->plt_set_curr_idx (idx);
-    deadbeef->sendmessage (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_POSITION, 0);
 }
 
 static gboolean

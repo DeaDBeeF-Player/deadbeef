@@ -705,6 +705,10 @@ plt_move (int from, int to) {
     if (from == to) {
         return;
     }
+    if (from >= _playlists_count || to >= _playlists_count) {
+        fprintf (stderr, "plt_move: attempt to move playlist to/from out of bounds index; from=%d, to=%d, count=%d\n", from, to, _playlists_count);
+        return;
+    }
     LOCK;
     playlist_t *p = _playlists_head;
 
