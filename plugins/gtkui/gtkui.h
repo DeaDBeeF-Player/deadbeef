@@ -30,6 +30,10 @@
 #include "../../config.h"
 #endif
 
+#if GTK_CHECK_VERSION(4,0,0)
+#include "gtk4compat.h"
+#endif
+
 #include "../../deadbeef.h"
 
 #if GTK_CHECK_VERSION(3,0,0)

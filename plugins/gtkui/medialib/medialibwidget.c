@@ -474,7 +474,9 @@ _treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_d
         return FALSE;
     }
 
-    if (event->type != GDK_BUTTON_PRESS || (event->button != 3 && event->button != 2)) {
+    int button = gdk_button_event_get_button(event);
+    GType type = gdk_button_event_get_type();
+    if (type != GDK_BUTTON_PRESS || (button != 3 && button != 2)) {
         return FALSE;
     }
 
@@ -499,12 +501,12 @@ _treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_d
     _collect_selected_tracks (model, selection, tracks, 0);
 
     // context menu
-    if (event->button == 3) {
+    if (button == 3) {
         _trkproperties_delegate.user_data = mlv;
         list_context_menu_with_track_list (tracks, count, &_trkproperties_delegate);
     }
     // append to playlist
-    else if (event->button == 2 && count > 0) {
+    else if (button == 2 && count > 0) {
         ddb_playlist_t *curr_plt = _get_target_playlist ();
         if (curr_plt != NULL) {
             deadbeef->plt_set_curr (curr_plt);

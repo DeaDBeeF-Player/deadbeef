@@ -428,11 +428,12 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
-    if (event->keyval == GDK_Escape) {
+    guint keyval = gdk_key_event_get_keycode(event);
+    if (keyval == GDK_Escape) {
         gtk_widget_hide (searchwin);
         return TRUE;
     }
-    if (event->keyval == GDK_Return || event->keyval == GDK_ISO_Enter || event->keyval == GDK_KP_Enter) {
+    if (keyval == GDK_Return || keyval == GDK_ISO_Enter || keyval == GDK_KP_Enter) {
         return on_mainwin_key_press_event (widget, event, user_data);
     }
     return FALSE;

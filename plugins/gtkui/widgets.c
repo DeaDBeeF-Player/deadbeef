@@ -924,7 +924,7 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
 
     g_signal_connect ((gpointer) menu, "deactivate", G_CALLBACK (w_menu_deactivate), user_data);
     gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
-    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gdk_event_get_time(event));
     return TRUE;
 }
 
@@ -1733,7 +1733,7 @@ on_tab_popup_menu (GtkWidget *widget, gpointer user_data)
             w);
 
     gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
-    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gdk_event_get_time(event));
 }
 
 static void
@@ -1832,6 +1832,9 @@ on_tabs_button_press_event (GtkWidget      *notebook,
     GtkWidget     *label_box;
     GtkAllocation  alloc;
 
+    int button = gdk_button_event_get_button(event);
+    GType type = gdk_button_event_get_type();
+
     int event_x, event_y;
     if (!get_event_coordinates_in_widget (notebook, event, &event_x, &event_y)) {
         // clicked outside the tabstrip (e.g. in one of its children)
@@ -1852,19 +1855,19 @@ on_tabs_button_press_event (GtkWidget      *notebook,
     }
     w->clicked_page = page_num;
 
-    if (event->type == GDK_BUTTON_PRESS) {
+    if (type == GDK_BUTTON_PRESS) {
         /* leave if no tab could be found */
         if (page == NULL) {
             return FALSE;
         }
 
-        if (event->button == 2) {
+        if (button == 2) {
             /* check if we should close the tab */
             if (design_mode) {
                 tabs_remove_tab (w, page_num);
             }
         }
-        else if (event->button == 3) {
+        else if (button == 3) {
             if (!design_mode) {
                 /* update the current tab before we show the menu */
                 gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), page_num);
@@ -1875,8 +1878,8 @@ on_tabs_button_press_event (GtkWidget      *notebook,
             }
         }
     }
-    else if (event->type == GDK_2BUTTON_PRESS) {
-        if (event->button == 1 && page == NULL && design_mode) {
+    else if (type == GDK_2BUTTON_PRESS) {
+        if (button == 1 && page == NULL && design_mode) {
             // open new tab
             tabs_add_tab (w);
         }
@@ -4168,13 +4171,13 @@ on_volumebar_evbox_button_press_event (GtkWidget      *widget,
                             GdkEventButton *event,
                             gpointer   user_data)
 {
-    if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
+    if (type == GDK_BUTTON_PRESS && button == 3) {
         GtkWidget *menu;
 
         menu = gtk_menu_new ();
         w_volumebar_initmenu (user_data, menu);
         gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gdk_event_get_time(event));
         return TRUE;
     }
     return FALSE;

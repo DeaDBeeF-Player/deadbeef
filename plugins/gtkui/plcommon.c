@@ -55,7 +55,7 @@
 #define SUBGROUP_DELIMITER "|||"
 
 #if !GTK_CHECK_VERSION(3,22,0)
-#define gtk_menu_popup_at_pointer(menu,trigger_event) gtk_menu_popup(menu, NULL, NULL, NULL, NULL, 3, gtk_get_current_event_time())
+#define gtk_menu_popup_at_pointer(menu,trigger_event) gtk_menu_popup(menu, NULL, NULL, NULL, NULL, 3, gdk_event_get_time(event))
 #endif
 
 typedef struct {

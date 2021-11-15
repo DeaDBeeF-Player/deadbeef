@@ -3021,7 +3021,9 @@ ddb_listview_header_button_release_event         (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    if (event->button == 1) {
+    int button = gdk_button_event_get_button(event);
+    GType type = gdk_button_event_get_type();
+    if (button == 1) {
         if (ps->header_sizing != -1) {
             ps->binding->columns_changed (ps);
             ddb_listview_list_update_total_width (ps, total_columns_width(ps), ps->list_width);
@@ -3090,14 +3092,14 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
     gtk_widget_grab_focus (widget);
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     if (TEST_LEFT_CLICK (event)) {
-        ddb_listview_list_mouse1_pressed (ps, event->state, event->x, event->y, event->type);
+        ddb_listview_list_mouse1_pressed (ps, event->state, event->x, event->y, type);
     }
     else if (TEST_RIGHT_CLICK(event)) {
         // get item under cursor
         DdbListviewPickContext pick_ctx;
         ddb_listview_list_pickpoint (ps, event->x, event->y + ps->scrollpos, &pick_ctx);
 
-        ddb_listview_click_selection (ps, event->x, event->y, &pick_ctx, 0, event->button);
+        ddb_listview_click_selection (ps, event->x, event->y, &pick_ctx, 0, button);
 
         int cursor = pick_ctx.item_idx;
         int group_clicked = (pick_ctx.type == PICK_ALBUM_ART
@@ -3128,7 +3130,7 @@ ddb_listview_list_button_release_event       (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    if (event->button == 1) {
+    if (button == 1) {
         ddb_listview_list_mouse1_released (ps, event->state, event->x, event->y, event->time);
     }
     return FALSE;

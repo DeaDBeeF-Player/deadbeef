@@ -133,15 +133,16 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
     if (trkproperties_block_keyhandler) {
         return FALSE;
     }
-    if (event->keyval == GDK_Escape) {
+    guint keyval = gdk_key_event_get_keycode(event);
+    if (keyval == GDK_Escape) {
         on_trackproperties_delete_event (trackproperties, NULL, NULL);
         return TRUE;
     }
-    else if (event->keyval == GDK_Delete) {
+    else if (keyval == GDK_Delete) {
         on_trkproperties_remove_activate (NULL, NULL);
         return TRUE;
     }
-    else if (event->keyval == GDK_Insert) {
+    else if (keyval == GDK_Insert) {
         on_trkproperties_add_new_field_activate (NULL, NULL);
         return TRUE;
     }
@@ -687,13 +688,14 @@ on_metalist_button_press_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    if (event->button == 3) {
+    int button = gdk_button_event_get_button(event);
+    if (button == 3) {
         GtkWidget *menu = create_trkproperties_popup_menu ();
         if (numtracks != 1) {
             gtk_widget_set_sensitive (lookup_widget (menu, "trkproperties_edit"), FALSE);
         }
         gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, event->button, gtk_get_current_event_time());
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, button, gdk_event_get_time(event));
     }
     return FALSE;
 }

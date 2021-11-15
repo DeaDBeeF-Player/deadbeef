@@ -290,7 +290,7 @@ show_traymenu_cb (gpointer data) {
     if (!traymenu) {
         traymenu = create_traymenu ();
     }
-    gtk_menu_popup (GTK_MENU (traymenu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+    gtk_menu_popup (GTK_MENU (traymenu), NULL, NULL, NULL, NULL, 0, gdk_event_get_time(event));
     return FALSE;
 }
 
@@ -342,10 +342,12 @@ on_trayicon_button_press_event (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    if (event->button == 1 && event->type == GDK_BUTTON_PRESS) {
+    int button = gdk_button_event_get_button(event);
+    GType type = gdk_button_event_get_type();
+    if (button == 1 && type == GDK_BUTTON_PRESS) {
         mainwin_toggle_visible ();
     }
-    else if (event->button == 2 && event->type == GDK_BUTTON_PRESS) {
+    else if (button == 2 && type == GDK_BUTTON_PRESS) {
         deadbeef->sendmessage (DB_EV_TOGGLE_PAUSE, 0, 0, 0);
     }
     return FALSE;

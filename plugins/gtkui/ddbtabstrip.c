@@ -969,6 +969,8 @@ gboolean
 on_tabstrip_button_press_event(GtkWidget      *widget,
                                GdkEventButton *event)
 {
+    int button = gdk_button_event_get_button(event);
+    GType type = gdk_button_event_get_type();
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
     tab_clicked = get_tab_under_cursor (ts, event->x);
     if (TEST_LEFT_CLICK(event)) {
@@ -980,7 +982,7 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
             GtkAllocation a;
             gtk_widget_get_allocation (widget, &a);
             if (event->x < arrow_widget_width) {
-                if (event->type == GDK_BUTTON_PRESS) {
+                if (type == GDK_BUTTON_PRESS) {
                     tabstrip_scroll_left (ts);
                     ts->scroll_direction = -1;
                     ts->scroll_timer = g_timeout_add (300, tabstrip_scroll_cb, ts);
@@ -988,7 +990,7 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
                 return TRUE;
             }
             else if (event->x >= a.width - arrow_widget_width) {
-                if (event->type == GDK_BUTTON_PRESS) {
+                if (type == GDK_BUTTON_PRESS) {
                     tabstrip_scroll_right (ts);
                     ts->scroll_direction = 1;
                     ts->scroll_timer = g_timeout_add (300, tabstrip_scroll_cb, ts);
@@ -999,7 +1001,7 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
         if (tab_clicked != -1) {
             gtkui_playlist_set_curr (tab_clicked);
 
-            if (event->type == GDK_2BUTTON_PRESS) {
+            if (type == GDK_2BUTTON_PRESS) {
                 ddb_playlist_t *plt = deadbeef->plt_get_curr ();
                 int cur = deadbeef->plt_get_cursor (plt, PL_MAIN);
                 deadbeef->plt_unref (plt);
@@ -1011,7 +1013,7 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
             }
         }
         else {
-            if (event->type == GDK_2BUTTON_PRESS) {
+            if (type == GDK_2BUTTON_PRESS) {
                 // new tab
                 int playlist = gtkui_add_new_playlist ();
                 if (playlist != -1) {
@@ -1047,9 +1049,9 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
     else if (TEST_RIGHT_CLICK(event)) {
         GtkWidget *menu = gtkui_create_pltmenu (tab_clicked);
         gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gdk_event_get_time(event));
     }
-    else if (event->button == 2) {
+    else if (button == 2) {
         if (tab_clicked == -1) {
             // new tab
             int playlist = gtkui_add_new_playlist ();
@@ -1076,7 +1078,7 @@ on_tabstrip_button_release_event         (GtkWidget       *widget,
                                         GdkEventButton  *event)
 {
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
-    if (event->button == 1) {
+    if (button == 1) {
         if (ts->scroll_timer > 0) {
             ts->scroll_direction = 0;
             g_source_remove (ts->scroll_timer);

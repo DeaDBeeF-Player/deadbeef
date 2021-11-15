@@ -332,14 +332,16 @@ ddb_splitter_button_press (GtkWidget      *widget,
 {
     DdbSplitter *splitter = DDB_SPLITTER (widget);
 
+    int button = gdk_button_event_get_button(event);
+    GType type = gdk_button_event_get_type();
     if (event->window == splitter->priv->handle
-           && event->button == 1
-           && event->type == GDK_2BUTTON_PRESS) {
+           && button == 1
+           && type == GDK_2BUTTON_PRESS) {
         ddb_splitter_set_proportion (splitter, 0.5f);
         return TRUE;
     }
     if (!splitter->priv->in_drag &&
-            (event->window == splitter->priv->handle) && (event->button == 1))
+            (event->window == splitter->priv->handle) && (button == 1))
     {
         /* We need a server grab here, not gtk_grab_add(), since
          * we don't want to pass events on to the widget's children */
@@ -465,7 +467,7 @@ ddb_splitter_button_release (GtkWidget      *widget,
 {
     DdbSplitter *splitter = DDB_SPLITTER (widget);
 
-    if (splitter->priv->in_drag && (event->button == 1)) {
+    if (splitter->priv->in_drag && (button == 1)) {
         stop_drag (splitter);
 
         return TRUE;

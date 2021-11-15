@@ -23,6 +23,9 @@
 
 #include <gtk/gtk.h>
 
+#if GTK_CHECK_VERSION(4,0,0)
+#include "gtk4compat.h"
+#endif
 
 void
 on_addbtn_clicked                      (GtkButton       *button,
@@ -953,11 +956,6 @@ on_tagwriter_settings_clicked          (GtkButton       *button,
 gboolean
 on_trackproperties_configure_event     (GtkWidget       *widget,
                                         GdkEventConfigure *event,
-                                        gpointer         user_data);
-
-void
-on_trackproperties_state_changed       (GtkWidget       *widget,
-                                        GtkStateType     state,
                                         gpointer         user_data);
 
 gboolean

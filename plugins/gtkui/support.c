@@ -126,22 +126,6 @@ create_pixbuf                          (const gchar     *filename)
   return pixbuf;
 }
 
-/* This is used to set ATK action descriptions. */
-void
-glade_set_atk_action_description       (AtkAction       *action,
-                                        const gchar     *action_name,
-                                        const gchar     *description)
-{
-  gint n_actions, i;
-
-  n_actions = atk_action_get_n_actions (action);
-  for (i = 0; i < n_actions; i++)
-    {
-      if (!strcmp (atk_action_get_name (action, i), action_name))
-        atk_action_set_description (action, i, description);
-    }
-}
-
 #if GTK_CHECK_VERSION(3,0,0)
 GtkWidget *
 gtk_combo_box_entry_new_text(void) {

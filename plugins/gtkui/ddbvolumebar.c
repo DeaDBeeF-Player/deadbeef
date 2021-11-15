@@ -357,9 +357,11 @@ gboolean
 on_volumebar_button_press_event        (GtkWidget       *widget,
                                         GdkEventButton  *event)
 {
+    int button = gdk_button_event_get_button(event);
+    GType type = gdk_button_event_get_type();
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
-    if (event->button == 1) {
+    if (button == 1) {
         DdbVolumeBarScale scale = DDB_VOLUMEBAR(widget)->priv->scale;
         char s[100];
 
@@ -390,8 +392,9 @@ gboolean
 on_volumebar_button_release_event      (GtkWidget       *widget,
                                         GdkEventButton  *event)
 {
-    if (event->button == 1) {
-//        DDB_VOLUMEBAR (widget)->show_dbs = 0;
+    int button = gdk_button_event_get_button(event);
+    GType type = gdk_button_event_get_type();
+    if (button == 1) {
         gtk_widget_queue_draw (widget);
     }
   return FALSE;

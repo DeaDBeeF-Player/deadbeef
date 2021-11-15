@@ -593,12 +593,13 @@ on_mainwin_button_press_event          (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
+    GType type = gdk_button_event_get_type();
     GtkWidget *statusbar = lookup_widget (mainwin, "statusbar");
     GtkAllocation c;
     gtk_widget_get_allocation (statusbar, &c);
     if (event->x >= c.x && event->x < c.x + c.width
             && event->y >= c.y && event->y < c.y + c.height) {
-        if (event->type == GDK_2BUTTON_PRESS) {
+        if (type == GDK_2BUTTON_PRESS) {
             deadbeef->sendmessage (DB_EV_TRACKFOCUSCURRENT, 0, 0, 0);
         }
     }

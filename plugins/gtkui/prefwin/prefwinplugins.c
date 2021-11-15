@@ -68,8 +68,10 @@ on_pref_pluginlist_button_press_event  (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    if (event->button == 3) {
-        gtk_menu_popup (GTK_MENU (pluginlistmenu), NULL, NULL, NULL, NULL, event->button, gtk_get_current_event_time());
+    int button = gdk_button_event_get_button(event);
+    GType type = gdk_button_event_get_type();
+    if (button == 3) {
+        gtk_menu_popup (GTK_MENU (pluginlistmenu), NULL, NULL, NULL, NULL, button, gdk_event_get_time(event));
         return TRUE;
     }
 

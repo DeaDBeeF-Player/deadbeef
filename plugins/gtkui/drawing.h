@@ -26,6 +26,10 @@
 
 #include <stdint.h>
 
+#if GTK_CHECK_VERSION(4,0,0)
+#include "gtk4compat.h"
+#endif
+
 typedef struct {
     cairo_t *drawable;
     GdkColor clrfg;

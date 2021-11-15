@@ -29,11 +29,22 @@
 #endif
 
 #include <gtk/gtk.h>
-#if GTK_CHECK_VERSION(3,0,0)
+
+#if GTK_CHECK_VERSION(4,0,0)
+#include "gtk4compat.h"
+#endif
+
+
+#if GTK_CHECK_VERSION(4,0,0)
+#include <gdk/gdkkeysyms.h>
+#elif GTK_CHECK_VERSION(3,0,0)
 #include <gdk/gdkkeysyms-compat.h>
-#define gdk_cursor_unref(cursor) g_object_unref(cursor)
 #else
 #include <gdk/gdkkeysyms.h>
+#endif
+
+#if GTK_CHECK_VERSION(3,0,0)
+#define gdk_cursor_unref(cursor) g_object_unref(cursor)
 #endif
 
 /*
@@ -91,11 +102,6 @@ GtkWidget*  create_pixmap              (GtkWidget       *widget,
 
 /* This is used to create the pixbufs used in the interface. */
 GdkPixbuf*  create_pixbuf              (const gchar     *filename);
-
-/* This is used to set ATK action descriptions. */
-void        glade_set_atk_action_description (AtkAction       *action,
-                                              const gchar     *action_name,
-                                              const gchar     *description);
 
 #if GTK_CHECK_VERSION(3,0,0)
 GtkWidget *

@@ -572,12 +572,14 @@ on_pltbrowser_header_clicked (GtkWidget       *widget,
                               GdkEventButton  *event,
                               gpointer         user_data)
 {
+    int button = gdk_button_event_get_button(event);
+    GType type = gdk_button_event_get_type();
     w_pltbrowser_t *w = user_data;
     if (gtkui_plugin->w_get_design_mode ()) {
         return FALSE;
     }
-    if (event->type == GDK_BUTTON_PRESS) {
-        if (event->button == 3) {
+    if (type == GDK_BUTTON_PRESS) {
+        if (button == 3) {
             return on_pltbrowser_header_popup_menu (widget, w);
         }
     }
@@ -740,12 +742,12 @@ on_pltbrowser_button_press_event       (GtkWidget       *widget,
     if (gtkui_plugin->w_get_design_mode ()) {
         return FALSE;
     }
-    if (event->type == GDK_BUTTON_PRESS) {
-        if (event->button == 3) {
+    if (type == GDK_BUTTON_PRESS) {
+        if (button == 3) {
             int row_clicked = get_treeview_row_at_pos (GTK_TREE_VIEW (widget), event->x, event->y);
             GtkWidget *menu = gtkui_plugin->create_pltmenu (row_clicked);
             gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
-            gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, event->button, gtk_get_current_event_time());
+            gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, button, gdk_event_get_time(event));
             return TRUE;
         }
     }
@@ -760,8 +762,8 @@ on_pltbrowser_button_press_end_event         (GtkWidget       *widget,
     if (gtkui_plugin->w_get_design_mode ()) {
         return FALSE;
     }
-    if (event->type == GDK_BUTTON_PRESS) {
-        if (event->button == 2) {
+    if (type == GDK_BUTTON_PRESS) {
+        if (button == 2) {
             int row_clicked = get_treeview_row_at_pos (GTK_TREE_VIEW (widget), event->x, event->y);
             if (row_clicked == -1) {
                 // new tab
@@ -780,8 +782,8 @@ on_pltbrowser_button_press_end_event         (GtkWidget       *widget,
             }
         }
     }
-    else if (event->type == GDK_2BUTTON_PRESS) {
-        if (event->button == 1) {
+    else if (type == GDK_2BUTTON_PRESS) {
+        if (button == 1) {
             int row_clicked = get_treeview_row_at_pos (GTK_TREE_VIEW (widget), event->x, event->y);
             if (row_clicked == -1) {
                 // new tab
@@ -803,7 +805,7 @@ on_pltbrowser_popup_menu (GtkWidget *widget, gpointer user_data) {
         int plt_idx = row;
         GtkWidget *menu = gtkui_plugin->create_pltmenu (plt_idx);
         gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gdk_event_get_time(event));
         return TRUE;
     }
     return FALSE;

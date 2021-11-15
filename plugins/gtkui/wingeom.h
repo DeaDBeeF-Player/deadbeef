@@ -24,6 +24,12 @@
 #ifndef __WINGEOM_H
 #define __WINGEOM_H
 
+#include <gtk/gtk.h>
+
+#if GTK_CHECK_VERSION(4,0,0)
+#include "gtk4compat.h"
+#endif
+
 void
 wingeom_save (GtkWidget *widget, const char *name);
 
