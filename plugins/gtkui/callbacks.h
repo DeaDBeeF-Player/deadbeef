@@ -1457,3 +1457,13 @@ void
 on_only_show_plugins_with_configuration1_activate
                                         (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_use_visualization_base_color_toggled
+                                        (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_visualization_custom_color_button_color_set
+                                        (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);

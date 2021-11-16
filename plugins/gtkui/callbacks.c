@@ -829,3 +829,21 @@ on_copy_plugin_report_menuitem_activate
 
 }
 
+
+void
+on_use_visualization_base_color_toggled
+                                        (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+
+}
+
+
+void
+on_visualization_custom_color_button_color_set
+                                        (GtkColorButton  *colorbutton,
+                                        gpointer         user_data)
+{
+
+}
+

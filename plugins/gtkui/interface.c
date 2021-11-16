@@ -1712,6 +1712,11 @@ create_prefwin (void)
   GtkWidget *listview_playing_text_italic;
   GtkWidget *listview_selected_text_italic;
   GtkWidget *label75;
+  GtkWidget *vbox57;
+  GtkWidget *hbox151;
+  GtkWidget *use_visualization_base_color;
+  GtkWidget *visualization_custom_color_button;
+  GtkWidget *label175;
   GtkWidget *label100;
   GtkWidget *vbox55;
   GtkWidget *toggle_medialib_on;
@@ -2776,6 +2781,27 @@ create_prefwin (void)
   gtk_widget_show (label75);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook4), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook4), 2), label75);
 
+  vbox57 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox57);
+  gtk_container_add (GTK_CONTAINER (notebook4), vbox57);
+
+  hbox151 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox151);
+  gtk_box_pack_start (GTK_BOX (vbox57), hbox151, FALSE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (hbox151), 12);
+
+  use_visualization_base_color = gtk_check_button_new_with_mnemonic (_("Custom visualization base color"));
+  gtk_widget_show (use_visualization_base_color);
+  gtk_box_pack_start (GTK_BOX (hbox151), use_visualization_base_color, FALSE, FALSE, 0);
+
+  visualization_custom_color_button = gtk_color_button_new ();
+  gtk_widget_show (visualization_custom_color_button);
+  gtk_box_pack_start (GTK_BOX (hbox151), visualization_custom_color_button, FALSE, FALSE, 0);
+
+  label175 = gtk_label_new (_("Visualizations"));
+  gtk_widget_show (label175);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook4), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook4), 3), label175);
+
   label100 = gtk_label_new (_("Appearance"));
   gtk_widget_show (label100);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 4), label100);
@@ -3477,6 +3503,12 @@ create_prefwin (void)
   g_signal_connect ((gpointer) listview_selected_text_italic, "toggled",
                     G_CALLBACK (on_listview_selected_text_italic_toggled),
                     NULL);
+  g_signal_connect ((gpointer) use_visualization_base_color, "toggled",
+                    G_CALLBACK (on_use_visualization_base_color_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) visualization_custom_color_button, "color_set",
+                    G_CALLBACK (on_visualization_custom_color_button_color_set),
+                    NULL);
   g_signal_connect ((gpointer) pref_network_enableproxy, "clicked",
                     G_CALLBACK (on_pref_network_enableproxy_clicked),
                     NULL);
@@ -3745,6 +3777,11 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, listview_playing_text_italic, "listview_playing_text_italic");
   GLADE_HOOKUP_OBJECT (prefwin, listview_selected_text_italic, "listview_selected_text_italic");
   GLADE_HOOKUP_OBJECT (prefwin, label75, "label75");
+  GLADE_HOOKUP_OBJECT (prefwin, vbox57, "vbox57");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox151, "hbox151");
+  GLADE_HOOKUP_OBJECT (prefwin, use_visualization_base_color, "use_visualization_base_color");
+  GLADE_HOOKUP_OBJECT (prefwin, visualization_custom_color_button, "visualization_custom_color_button");
+  GLADE_HOOKUP_OBJECT (prefwin, label175, "label175");
   GLADE_HOOKUP_OBJECT (prefwin, label100, "label100");
   GLADE_HOOKUP_OBJECT (prefwin, vbox55, "vbox55");
   GLADE_HOOKUP_OBJECT (prefwin, toggle_medialib_on, "toggle_medialib_on");
