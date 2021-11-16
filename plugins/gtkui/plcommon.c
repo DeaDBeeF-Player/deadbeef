@@ -601,6 +601,7 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
             }
         }
         GdkColor *color = NULL;
+        GdkColor temp_color;
         if (!gtkui_override_listview_colors ()) {
             if (deadbeef->pl_is_selected (it)) {
                 color = &gtk_widget_get_style (theme_treeview)->text[GTK_STATE_SELECTED];
@@ -615,16 +616,15 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
             }
         }
         else {
-            GdkColor clr;
             if (deadbeef->pl_is_selected (it)) {
-                color = ((void)(gtkui_get_listview_selected_text_color (&clr)), &clr);
+                color = ((void)(gtkui_get_listview_selected_text_color (&temp_color)), &temp_color);
             }
             else if (it && it == playing_track) {
                 if (fg_clr) {
                     color = fg_clr;
                 }
                 else {
-                    color = ((void)(gtkui_get_listview_playing_text_color (&clr)), &clr);
+                    color = ((void)(gtkui_get_listview_playing_text_color (&temp_color)), &temp_color);
                 }
             }
             else {
@@ -632,7 +632,7 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
                     color = fg_clr;
                 }
                 else {
-                    color = ((void)(gtkui_get_listview_text_color (&clr)), &clr);
+                    color = ((void)(gtkui_get_listview_text_color (&temp_color)), &temp_color);
                 }
             }
         }
