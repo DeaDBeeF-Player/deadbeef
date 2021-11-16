@@ -177,6 +177,9 @@ typedef struct {
     ddb_waveformat_t fmt;
     ddb_audio_data_t input_data;
 
+    float peak_color[3];
+    float bar_color[3];
+
     cairo_surface_t *surf;
 } w_spectrum_t;
 
@@ -3048,6 +3051,25 @@ _spectrum_stop (ddb_gtkui_widget_t *w) {
     }
 }
 
+static void
+_spectrum_update_preferences (w_spectrum_t *spectrum) {
+    GdkColor color;
+    gtkui_get_vis_custom_base_color(&color);
+
+    // saturate the peaks slightly
+    spectrum->peak_color[0] = color.red / 65535.f;
+    spectrum->peak_color[1] = color.green / 65535.f;
+    spectrum->peak_color[2] = color.blue / 65535.f;
+
+    spectrum->peak_color[0] += (1.f - spectrum->peak_color[0]) * 0.5f;
+    spectrum->peak_color[1] += (1.f - spectrum->peak_color[1]) * 0.5f;
+    spectrum->peak_color[2] += (1.f - spectrum->peak_color[2]) * 0.5f;
+
+    spectrum->bar_color[0] = color.red / 65535.f;
+    spectrum->bar_color[1] = color.green / 65535.f;
+    spectrum->bar_color[2] = color.blue / 65535.f;
+}
+
 static gboolean
 spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     w_spectrum_t *w = user_data;
@@ -3058,6 +3080,8 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     if (w->input_data.nframes == 0) {
         return FALSE;
     }
+
+    _spectrum_update_preferences (w);
 
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
@@ -3072,7 +3096,7 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
     // bars
     ddb_analyzer_draw_bar_t *bar = w->draw_data.bars;
-    cairo_set_source_rgb(cr, 0, 0.5, 1);
+    cairo_set_source_rgb(cr, w->bar_color[0], w->bar_color[1], w->bar_color[2]);
     for (int i = 0; i < w->draw_data.bar_count; i++, bar++) {
         if (w->analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
             cairo_move_to(cr, bar->xpos, a.height-bar->bar_height);
@@ -3092,7 +3116,7 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
     // peaks
     bar = w->draw_data.bars;
-    cairo_set_source_rgb(cr, 0.65, 0.78, 1);
+    cairo_set_source_rgb(cr, w->peak_color[0], w->peak_color[1], w->peak_color[2]);
     for (int i = 0; i < w->draw_data.bar_count; i++, bar++) {
         cairo_rectangle(cr, bar->xpos, a.height-bar->peak_ypos-1, w->draw_data.bar_width, 1);
     }
