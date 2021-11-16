@@ -14318,10 +14318,10 @@
 			buildRules = (
 			);
 			dependencies = (
-				2D1BEB872435BE46003EFD61 /* PBXTargetDependency */,
-				2DA04EB123B6A4C80070AC01 /* PBXTargetDependency */,
-				2DA04E9823B6A46C0070AC01 /* PBXTargetDependency */,
 				2DE3B8952269F6D200AFF9AE /* PBXTargetDependency */,
+				2DA04E9823B6A46C0070AC01 /* PBXTargetDependency */,
+				2DA04EB123B6A4C80070AC01 /* PBXTargetDependency */,
+				2D1BEB872435BE46003EFD61 /* PBXTargetDependency */,
 				2DE3B86C2269CA4D00AFF9AE /* PBXTargetDependency */,
 				2DE3B7BE2269BC5700AFF9AE /* PBXTargetDependency */,
 				2D48DB842269B731002CACFD /* PBXTargetDependency */,
