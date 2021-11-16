@@ -2886,11 +2886,12 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
     float scale = 1;
 
+    deadbeef->mutex_lock (w->mutex);
     if (w->scope.sample_count != 0) {
         ddb_scope_tick(&w->scope);
         ddb_scope_get_draw_data(&w->scope, (int)(a.width * scale), (int)(a.height * scale), 1, &w->draw_data);
     }
-
+    deadbeef->mutex_unlock (w->mutex);
 
     if (!w->surf || cairo_image_surface_get_width (w->surf) != a.width || cairo_image_surface_get_height (w->surf) != a.height) {
         if (w->surf) {
@@ -2920,9 +2921,6 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
                 minmax++;
             }
         }
-    }
-    else if (a.height > 0) {
-        memset (data + a.height / 2 *stride, 0xff, stride);
     }
     cairo_surface_mark_dirty (w->surf);
     cairo_save (cr);
