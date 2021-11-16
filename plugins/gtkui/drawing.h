@@ -133,6 +133,10 @@ gtkui_bar_override_conf (const char *conf_str);
 
 int
 gtkui_bar_colors_conf (const char *conf_str);
+
+void
+gtkui_get_vis_custom_base_color (GdkColor *clr);
+
 void
 gtkui_get_bar_foreground_color (GdkColor *clr);
 

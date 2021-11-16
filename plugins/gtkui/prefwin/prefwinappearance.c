@@ -69,6 +69,11 @@ prefwin_init_appearance_tab(GtkWidget *_prefwin) {
     gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "listview_group_text_font")), deadbeef->conf_get_str_fast ("gtkui.font.listview_group_text", gtk_style_font));
     gtk_font_button_set_font_name (GTK_FONT_BUTTON (lookup_widget (w, "listview_column_text_font")), deadbeef->conf_get_str_fast ("gtkui.font.listview_column_text", gtk_style_font));
 
+    // visualizations
+    override = deadbeef->conf_get_int ("gtkui.vis.use_custom_base_color", 0);
+    prefwin_set_toggle_button("use_visualization_base_color", override);
+    gtk_widget_set_sensitive (lookup_widget (w, "visualization_custom_color_button"), override);
+
     // colors
     prefwin_init_theme_colors ();
 }
@@ -352,5 +357,23 @@ on_override_tabstrip_colors_toggled    (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
     override_set_helper (togglebutton, "gtkui.override_tabstrip_colors", "tabstrip_colors_group");
+}
+
+
+void
+on_use_visualization_base_color_toggled
+(GtkToggleButton *togglebutton,
+ gpointer         user_data)
+{
+    override_set_helper (togglebutton, "gtkui.vis.use_custom_base_color", "visualization_custom_color_button");
+}
+
+
+void
+on_visualization_custom_color_button_color_set
+(GtkColorButton  *colorbutton,
+ gpointer         user_data)
+{
+    color_set_helper (colorbutton, "gtkui.vis.custom_base_color");
 }
 

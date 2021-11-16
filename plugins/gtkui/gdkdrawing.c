@@ -301,9 +301,12 @@ static GdkColor gtkui_listview_group_text_color;
 static GdkColor gtkui_listview_column_text_color;
 static GdkColor gtkui_listview_cursor_color;
 
+static GdkColor gtkui_visualization_base_color;
+
 static int override_listview_colors = 0;
 static int override_bar_colors = 0;
 static int override_tabstrip_colors = 0;
+static int use_custom_visualization_color = 0;
 
 int
 gtkui_listview_override_conf (const char *conf_str) {
@@ -407,6 +410,7 @@ gtkui_init_theme_colors (void) {
     override_listview_colors= deadbeef->conf_get_int ("gtkui.override_listview_colors", 0);
     override_bar_colors = deadbeef->conf_get_int ("gtkui.override_bar_colors", 0);
     override_tabstrip_colors = deadbeef->conf_get_int ("gtkui.override_tabstrip_colors", 0);
+    use_custom_visualization_color = deadbeef->conf_get_int ("gtkui.vis.use_custom_base_color", 0);
 
     extern GtkWidget *mainwin;
     GtkStyle *style = gtk_widget_get_style (mainwin);
@@ -415,16 +419,37 @@ gtkui_init_theme_colors (void) {
     const char *clr;
     char *font_name = pango_font_description_to_string (style->font_desc);
 
+    // HACK: if gtk says selected color is the same as background -- set it
+    // to a shade of blue
+    int use_hardcoded_accent_color = memcmp (&style->bg[GTK_STATE_NORMAL], &gtkui_bar_foreground_color, sizeof (gtkui_bar_foreground_color));
+
+    GdkColor hardcoded_accent_color = {
+        .red = 0x2b84,
+        .green = 0x7fff,
+        .blue = 0xbae0,
+    };
+
+    if (use_hardcoded_accent_color) {
+        memcpy (&gtkui_visualization_base_color, &hardcoded_accent_color, sizeof (GdkColor));
+    }
+    else {
+        memcpy (&gtkui_visualization_base_color, &style->base[GTK_STATE_SELECTED], sizeof (GdkColor));
+    }
+
+    if (use_custom_visualization_color) {
+        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", gtkui_visualization_base_color.red, gtkui_visualization_base_color.green, gtkui_visualization_base_color.blue);
+        clr = deadbeef->conf_get_str_fast ("gtkui.vis.custom_base_color", color_text);
+        sscanf (clr, "%hd %hd %hd", &gtkui_visualization_base_color.red, &gtkui_visualization_base_color.green, &gtkui_visualization_base_color.blue);
+    }
+
     if (!override_bar_colors) {
-        memcpy (&gtkui_bar_foreground_color, &style->base[GTK_STATE_SELECTED], sizeof (GdkColor));
         memcpy (&gtkui_bar_background_color, &style->text[GTK_STATE_NORMAL], sizeof (GdkColor));
 
-        // HACK: if gtk says selected color is the same as background -- set it
-        // to a shade of blue
-        if (!memcmp (&style->bg[GTK_STATE_NORMAL], &gtkui_bar_foreground_color, sizeof (gtkui_bar_foreground_color))) {
-            gtkui_bar_foreground_color.red = 0x2b84;
-            gtkui_bar_foreground_color.green = 0x7fff;
-            gtkui_bar_foreground_color.blue = 0xbae0;
+        if (use_hardcoded_accent_color) {
+            memcpy (&gtkui_bar_foreground_color, &hardcoded_accent_color, sizeof (GdkColor));
+        }
+        else {
+            memcpy (&gtkui_bar_foreground_color, &style->base[GTK_STATE_SELECTED], sizeof (GdkColor));
         }
     }
     else {
@@ -539,6 +564,11 @@ gtkui_init_theme_colors (void) {
     font_name = NULL;
 
     deadbeef->conf_unlock ();
+}
+
+void
+gtkui_get_vis_custom_base_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_visualization_base_color, sizeof (GdkColor));
 }
 
 void

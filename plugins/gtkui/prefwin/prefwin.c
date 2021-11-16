@@ -84,6 +84,7 @@ prefwin_init_theme_colors (void) {
     gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_group_text")), ((void)(gtkui_get_listview_group_text_color (&clr)), &clr));
     gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_column_text")), ((void)(gtkui_get_listview_column_text_color (&clr)), &clr));
     gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_cursor")), ((void)(gtkui_get_listview_cursor_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "visualization_custom_color_button")), ((void)(gtkui_get_vis_custom_base_color (&clr)), &clr));
 }
 
 void
@@ -170,6 +171,8 @@ _init_prefwin() {
         gtk_notebook_remove_page (GTK_NOTEBOOK (lookup_widget (prefwin, "notebook")), 5);
         PREFWIN_TAB_INDEX_MEDIALIB = -1;
     }
+
+    gtkui_init_theme_colors();
 
     gtk_window_set_transient_for (GTK_WINDOW (w), GTK_WINDOW (mainwin));
 
