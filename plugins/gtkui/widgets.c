@@ -160,6 +160,8 @@ typedef struct {
     ddb_scope_t scope;
     ddb_scope_draw_data_t draw_data;
 
+    uint32_t draw_color;
+
     cairo_surface_t *surf;
 } w_scope_t;
 
@@ -2842,7 +2844,7 @@ scope_wavedata_listener (void *ctx, const ddb_audio_data_t *data) {
 }
 
 static inline void
-_draw_vline (uint8_t *data, int stride, int x0, int y0, int y1) {
+_draw_vline (uint8_t *data, int stride, int x0, int y0, int y1, uint32_t color) {
     if (y0 > y1) {
         int tmp = y0;
         y0 = y1;
@@ -2854,9 +2856,21 @@ _draw_vline (uint8_t *data, int stride, int x0, int y0, int y1) {
     }
     while (y0 <= y1) {
         uint32_t *ptr = (uint32_t*)&data[y0*stride+x0*4];
-        *ptr = 0xffffffff;
+        *ptr = color;
         y0++;
     }
+}
+
+static void
+_scope_update_preferences (w_scope_t *scope) {
+    GdkColor color;
+    gtkui_get_vis_custom_base_color(&color);
+
+    uint8_t red = (color.red & 0xff00) >> 8;
+    uint8_t green = (color.green & 0xff00) >> 8;
+    uint8_t blue = (color.blue & 0xff00) >> 8;
+
+    scope->draw_color = (0xff<<24) | (red<<16) | (green<<8) | blue;
 }
 
 gboolean
@@ -2865,6 +2879,7 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     gtk_widget_get_allocation (widget, &a);
 
     w_scope_t *w = user_data;
+    _scope_update_preferences (w);
 
     float scale = 1;
 
@@ -2898,7 +2913,7 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
             for (int x = 0; x < width; x++) {
                 float ymin = min(a.height-1, max(0, minmax->ymin));
                 float ymax = min(a.height-1, max(0, minmax->ymax));
-                _draw_vline (data, stride, x, ymin, ymax);
+                _draw_vline (data, stride, x, ymin, ymax, w->draw_color);
                 minmax++;
             }
         }
