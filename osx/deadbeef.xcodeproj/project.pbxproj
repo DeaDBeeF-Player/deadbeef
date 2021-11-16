@@ -2128,6 +2128,186 @@
 		2DC4199E1B90540A007E3026 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DC4199D1B90540A007E3026 /* Carbon.framework */; };
 		2DC655752741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC655742741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib */; };
 		2DC655862741955A00583E14 /* ScopePreferencesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC655852741955A00583E14 /* ScopePreferencesViewController.xib */; };
+		2DC6566E2744289C00583E14 /* ddbequalizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B57F2269BB4300AFF9AE /* ddbequalizer.h */; };
+		2DC6566F2744289C00583E14 /* callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5AC2269BB4300AFF9AE /* callbacks.h */; };
+		2DC656702744289C00583E14 /* tfimport.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5882269BB4300AFF9AE /* tfimport.h */; };
+		2DC656712744289C00583E14 /* namedicons.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5BB2269BB4300AFF9AE /* namedicons.h */; };
+		2DC656722744289C00583E14 /* interface.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5C72269BB4300AFF9AE /* interface.h */; };
+		2DC656732744289C00583E14 /* ddbcellrenderertextmultiline.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5D52269BB4300AFF9AE /* ddbcellrenderertextmultiline.h */; };
+		2DC656742744289C00583E14 /* gtkui.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B58A2269BB4300AFF9AE /* gtkui.h */; };
+		2DC656752744289C00583E14 /* clipboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5E72269BB4300AFF9AE /* clipboard.h */; };
+		2DC656762744289C00583E14 /* ddbtabstrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5CE2269BB4300AFF9AE /* ddbtabstrip.h */; };
+		2DC656772744289C00583E14 /* prefwinmisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C1026C836FE0022A8F0 /* prefwinmisc.h */; };
+		2DC656782744289C00583E14 /* trkproperties_shared.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D92D0551CD513AA00CD53F0 /* trkproperties_shared.h */; };
+		2DC656792744289C00583E14 /* widgets.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5B72269BB4300AFF9AE /* widgets.h */; };
+		2DC6567A2744289C00583E14 /* drawing.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B59C2269BB4300AFF9AE /* drawing.h */; };
+		2DC6567B2744289C00583E14 /* deadbeefapp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5A32269BB4300AFF9AE /* deadbeefapp.h */; };
+		2DC6567C2744289C00583E14 /* prefwinsound.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C0826C833570022A8F0 /* prefwinsound.h */; };
+		2DC6567D2744289C00583E14 /* tagwritersettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5E92269BB4300AFF9AE /* tagwritersettings.h */; };
+		2DC6567E2744289C00583E14 /* prefwinappearance.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C1426C837A80022A8F0 /* prefwinappearance.h */; };
+		2DC6567F2744289C00583E14 /* wingeom.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B68E2269BB4300AFF9AE /* wingeom.h */; };
+		2DC656802744289C00583E14 /* pluginconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5FD2269BB4300AFF9AE /* pluginconf.h */; };
+		2DC656812744289C00583E14 /* prefwinplugins.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C1C26C83A010022A8F0 /* prefwinplugins.h */; };
+		2DC656822744289C00583E14 /* gtkui_api.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5D32269BB4300AFF9AE /* gtkui_api.h */; };
+		2DC656832744289C00583E14 /* actions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B59A2269BB4300AFF9AE /* actions.h */; };
+		2DC656842744289C00583E14 /* trkproperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5802269BB4300AFF9AE /* trkproperties.h */; };
+		2DC656852744289C00583E14 /* ddb_splitter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5D22269BB4300AFF9AE /* ddb_splitter.h */; };
+		2DC656862744289C00583E14 /* ddb_splitter_size_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5EE2269BB4300AFF9AE /* ddb_splitter_size_mode.h */; };
+		2DC656872744289C00583E14 /* prefwinnetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C1826C839020022A8F0 /* prefwinnetwork.h */; };
+		2DC656882744289C00583E14 /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B6962269BB4300AFF9AE /* support.h */; };
+		2DC656892744289C00583E14 /* pluginsettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D93DC531AADFEEF003D2D8D /* pluginsettings.h */; };
+		2DC6568A2744289C00583E14 /* ctmapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5CB2269BB4300AFF9AE /* ctmapping.h */; };
+		2DC6568B2744289C00583E14 /* prefwinplayback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C0C26C835E90022A8F0 /* prefwinplayback.h */; };
+		2DC6568C2744289C00583E14 /* prefwinmedialib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C3426C8451A0022A8F0 /* prefwinmedialib.h */; };
+		2DC6568D2744289C00583E14 /* rg.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5F32269BB4300AFF9AE /* rg.h */; };
+		2DC6568E2744289C00583E14 /* deletefromdisk.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAE701725BDDC3300E40154 /* deletefromdisk.h */; };
+		2DC6568F2744289C00583E14 /* plcommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5FB2269BB4300AFF9AE /* plcommon.h */; };
+		2DC656902744289C00583E14 /* progress.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B57A2269BB4300AFF9AE /* progress.h */; };
+		2DC656912744289C00583E14 /* eq.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5D92269BB4300AFF9AE /* eq.h */; };
+		2DC656922744289C00583E14 /* hotkeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5AD2269BB4300AFF9AE /* hotkeys.h */; };
+		2DC656932744289C00583E14 /* search.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B6622269BB4300AFF9AE /* search.h */; };
+		2DC656942744289C00583E14 /* coverart.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5EC2269BB4300AFF9AE /* coverart.h */; };
+		2DC656952744289C00583E14 /* gtkui_deletefromdisk.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA62BA326F3C8A800ED449A /* gtkui_deletefromdisk.h */; };
+		2DC656962744289C00583E14 /* mainplaylist.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B59E2269BB4300AFF9AE /* mainplaylist.h */; };
+		2DC656972744289C00583E14 /* ddblistview.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5D62269BB4300AFF9AE /* ddblistview.h */; };
+		2DC656982744289C00583E14 /* actionhandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5972269BB4300AFF9AE /* actionhandlers.h */; };
+		2DC656992744289C00583E14 /* ddbseekbar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5F12269BB4300AFF9AE /* ddbseekbar.h */; };
+		2DC6569A2744289C00583E14 /* ddbvolumebar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5B42269BB4300AFF9AE /* ddbvolumebar.h */; };
+		2DC6569B2744289C00583E14 /* dspconfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5F62269BB4300AFF9AE /* dspconfig.h */; };
+		2DC6569D2744289C00583E14 /* prefwinappearance.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1526C837A80022A8F0 /* prefwinappearance.c */; };
+		2DC6569E2744289C00583E14 /* rg.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5B52269BB4300AFF9AE /* rg.c */; };
+		2DC6569F2744289C00583E14 /* utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B49E81837EC49003E6066 /* utf8.c */; };
+		2DC656A02744289C00583E14 /* gtkui_deletefromdisk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA62BA426F3C8A800ED449A /* gtkui_deletefromdisk.c */; };
+		2DC656A12744289C00583E14 /* fileman.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5ED2269BB4300AFF9AE /* fileman.c */; };
+		2DC656A22744289C00583E14 /* prefwinsound.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C0926C833570022A8F0 /* prefwinsound.c */; };
+		2DC656A32744289C00583E14 /* coverart.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B58B2269BB4300AFF9AE /* coverart.c */; };
+		2DC656A42744289C00583E14 /* eq.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5782269BB4300AFF9AE /* eq.c */; };
+		2DC656A52744289C00583E14 /* deadbeefapp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5FA2269BB4300AFF9AE /* deadbeefapp.c */; };
+		2DC656A62744289C00583E14 /* interface.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5872269BB4300AFF9AE /* interface.c */; };
+		2DC656A72744289C00583E14 /* namedicons.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B6912269BB4300AFF9AE /* namedicons.c */; };
+		2DC656A82744289C00583E14 /* prefwinplugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1D26C83A010022A8F0 /* prefwinplugins.c */; };
+		2DC656A92744289C00583E14 /* eqpreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBA1BE23E203B9000E4135 /* eqpreset.c */; };
+		2DC656AA2744289C00583E14 /* trkproperties_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */; };
+		2DC656AB2744289C00583E14 /* prefwin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5A42269BB4300AFF9AE /* prefwin.c */; };
+		2DC656AC2744289C00583E14 /* ddbseekbar.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5AF2269BB4300AFF9AE /* ddbseekbar.c */; };
+		2DC656AD2744289C00583E14 /* medialibwidget.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCCCF7D26C43D080034F4BB /* medialibwidget.c */; };
+		2DC656AE2744289C00583E14 /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5B82269BB4300AFF9AE /* support.c */; };
+		2DC656AF2744289C00583E14 /* ddbtabstrip.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5812269BB4300AFF9AE /* ddbtabstrip.c */; };
+		2DC656B02744289C00583E14 /* prefwinmedialib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C3526C8451A0022A8F0 /* prefwinmedialib.c */; };
+		2DC656B12744289C00583E14 /* clipboard.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B59B2269BB4300AFF9AE /* clipboard.c */; };
+		2DC656B22744289C00583E14 /* prefwinmisc.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1126C836FE0022A8F0 /* prefwinmisc.c */; };
+		2DC656B32744289C00583E14 /* gdkdrawing.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5D72269BB4300AFF9AE /* gdkdrawing.c */; };
+		2DC656B42744289C00583E14 /* prefwinplayback.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C0D26C835E90022A8F0 /* prefwinplayback.c */; };
+		2DC656B52744289C00583E14 /* medialibmanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE55ACD26C5A47F008F33FF /* medialibmanager.c */; };
+		2DC656B62744289C00583E14 /* plcommon.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5A12269BB4300AFF9AE /* plcommon.c */; };
+		2DC656B72744289C00583E14 /* actions.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5E52269BB4300AFF9AE /* actions.c */; };
+		2DC656B82744289C00583E14 /* hotkeys.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5F72269BB4300AFF9AE /* hotkeys.c */; };
+		2DC656B92744289C00583E14 /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5F92269BB4300AFF9AE /* callbacks.c */; };
+		2DC656BA2744289C00583E14 /* pltmenu.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5822269BB4300AFF9AE /* pltmenu.c */; };
+		2DC656BB2744289C00583E14 /* ddbcellrenderertextmultiline.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B57E2269BB4300AFF9AE /* ddbcellrenderertextmultiline.c */; };
+		2DC656BC2744289C00583E14 /* wingeom.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5C02269BB4300AFF9AE /* wingeom.c */; };
+		2DC656BD2744289C00583E14 /* tagwritersettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5942269BB4300AFF9AE /* tagwritersettings.c */; };
+		2DC656BE2744289C00583E14 /* gtkui.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5CA2269BB4300AFF9AE /* gtkui.c */; };
+		2DC656BF2744289C00583E14 /* scope.c in Sources */ = {isa = PBXBuildFile; fileRef = 0D56856B272197B30026F700 /* scope.c */; };
+		2DC656C02744289C00583E14 /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD39ED826AD8D1600C5846D /* analyzer.c */; };
+		2DC656C12744289C00583E14 /* ddblistview.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B57D2269BB4300AFF9AE /* ddblistview.c */; };
+		2DC656C22744289C00583E14 /* deletefromdisk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DAE701825BDDC3300E40154 /* deletefromdisk.c */; };
+		2DC656C32744289C00583E14 /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D93DC521AADFEEF003D2D8D /* pluginsettings.c */; };
+		2DC656C42744289C00583E14 /* search.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5C22269BB4300AFF9AE /* search.c */; };
+		2DC656C52744289C00583E14 /* ddbequalizer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5CF2269BB4300AFF9AE /* ddbequalizer.c */; };
+		2DC656C62744289C00583E14 /* ddb_splitter_size_mode.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B58E2269BB4300AFF9AE /* ddb_splitter_size_mode.c */; };
+		2DC656C72744289C00583E14 /* ddbvolumebar.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5F52269BB4300AFF9AE /* ddbvolumebar.c */; };
+		2DC656C82744289C00583E14 /* actionhandlers.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5E32269BB4300AFF9AE /* actionhandlers.c */; };
+		2DC656C92744289C00583E14 /* ddb_splitter.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5842269BB4300AFF9AE /* ddb_splitter.c */; };
+		2DC656CA2744289C00583E14 /* tfimport.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5C62269BB4300AFF9AE /* tfimport.c */; };
+		2DC656CB2744289C00583E14 /* mainplaylist.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5DE2269BB4300AFF9AE /* mainplaylist.c */; };
+		2DC656CC2744289C00583E14 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
+		2DC656CD2744289C00583E14 /* progress.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5DC2269BB4300AFF9AE /* progress.c */; };
+		2DC656CE2744289C00583E14 /* dspconfig.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5B32269BB4300AFF9AE /* dspconfig.c */; };
+		2DC656CF2744289C00583E14 /* widgets.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B6952269BB4300AFF9AE /* widgets.c */; };
+		2DC656D02744289C00583E14 /* pluginconf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5A72269BB4300AFF9AE /* pluginconf.c */; };
+		2DC656D12744289C00583E14 /* trkproperties.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5CD2269BB4300AFF9AE /* trkproperties.c */; };
+		2DC656D22744289C00583E14 /* ctmapping.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5892269BB4300AFF9AE /* ctmapping.c */; };
+		2DC656D32744289C00583E14 /* prefwinnetwork.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1926C839020022A8F0 /* prefwinnetwork.c */; };
+		2DC656D42744289C00583E14 /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DBCB720240ADCC10012F178 /* tftintutil.c */; };
+		2DC656D62744289C00583E14 /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
+		2DC65734274428F200583E14 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
+		2DC65735274428F200583E14 /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47481837EC47003E6066 /* plugins.c */; };
+		2DC65736274428F200583E14 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
+		2DC65738274428F200583E14 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6E2CF926AC157A008FCD4B /* Accelerate.framework */; };
+		2DC65739274428F200583E14 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D66DBA01F6181C400BFF76B /* AudioToolbox.framework */; };
+		2DC6573A274428F200583E14 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DC4199D1B90540A007E3026 /* Carbon.framework */; };
+		2DC6573B274428F200583E14 /* libddbcore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */; };
+		2DC6573C274428F200583E14 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51631837F60A003E6066 /* CoreAudio.framework */; };
+		2DC6573D274428F200583E14 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51671837F655003E6066 /* AudioUnit.framework */; };
+		2DC6573E274428F200583E14 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
+		2DC65740274428F200583E14 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BE51838EAAB00A98C62 /* Images.xcassets */; };
+		2DC65741274428F200583E14 /* convpresets in Resources */ = {isa = PBXBuildFile; fileRef = 2DF622B81B335DF400C70C7D /* convpresets */; };
+		2DC65742274428F200583E14 /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
+		2DC65744274428F200583E14 /* dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DC96E6E1E4CC9670093CFD3 /* dsp.h */; };
+		2DC65745274428F200583E14 /* deadbeef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B3EDF1837EC44003E6066 /* deadbeef.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2DC65746274428F200583E14 /* streamreader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D62C0C61E4C9ACA005F9482 /* streamreader.h */; };
+		2DC65747274428F200583E14 /* u8_uc_map.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */; };
+		2DC65748274428F200583E14 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
+		2DC65749274428F200583E14 /* playqueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D713FFC1A5D7D5900EFF139 /* playqueue.h */; };
+		2DC6574A274428F200583E14 /* sort.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D642EAE1AE9152E00FC1F7B /* sort.h */; };
+		2DC6574C274428F200583E14 /* ddb_gui_GTK2.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DC656DA2744289C00583E14 /* ddb_gui_GTK2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6574D274428F200583E14 /* libwavpacklib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA5A93925D0330600947C19 /* libwavpacklib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6574E274428F200583E14 /* ddb_soundtouch.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D00F23F2434DE4E000FC130 /* ddb_soundtouch.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6574F274428F200583E14 /* shellexec.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA04E8123B6A4320070AC01 /* shellexec.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65750274428F200583E14 /* shellexecui_gtk3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA04E9D23B6A4960070AC01 /* shellexecui_gtk3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65751274428F200583E14 /* pltbrowser_gtk3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE3B8742269F68B00AFF9AE /* pltbrowser_gtk3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65752274428F200583E14 /* hotkeys.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65754274428F200583E14 /* libvorbislib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65755274428F200583E14 /* libopuslib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D9C5B051FDEBACC00D83CEF /* libopuslib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65756274428F200583E14 /* libflaclib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65757274428F200583E14 /* supereq.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DF16CB01DCB62D9007D7F05 /* supereq.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65758274428F200583E14 /* ddb_mono2stereo.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65759274428F200583E14 /* rg_scanner.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6575A274428F200583E14 /* artwork.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D621F831CD92C9000EB6D22 /* artwork.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6575B274428F200583E14 /* adplug.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D652FCB1CE79E8500163808 /* adplug.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6575C274428F200583E14 /* ffmpeg.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6575D274428F200583E14 /* psf.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DFD50951C9715B800961D19 /* psf.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6575E274428F200583E14 /* mms.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 07765E2E1C28559600F5F4BC /* mms.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6575F274428F200583E14 /* ddb_shn.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 07765D6F1C279B7D00F5F4BC /* ddb_shn.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65760274428F200583E14 /* dca.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 070220AA1C275D3900FC9AF9 /* dca.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65761274428F200583E14 /* musepack.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 07021FE91C27551D00FC9AF9 /* musepack.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65762274428F200583E14 /* tta.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 07021F891C2745E900FC9AF9 /* tta.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65763274428F200583E14 /* wma.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 07021F3A1C2734F100FC9AF9 /* wma.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65764274428F200583E14 /* vfs_zip.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D4458D91C04F1C000230939 /* vfs_zip.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65765274428F200583E14 /* wavpack.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65766274428F200583E14 /* vtx.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D11D3B91B9DC67100C7C731 /* vtx.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65767274428F200583E14 /* sndfile.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D05A8291B4BE59D004C913D /* sndfile.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65768274428F200583E14 /* vorbis.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D88E9ED1B2AF6640072FD43 /* vorbis.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65769274428F200583E14 /* converter.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D23511B1B138ECB00A62936 /* converter.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6576A274428F200583E14 /* in_sc68.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6576B274428F200583E14 /* mp3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6576C274428F200583E14 /* lastfm.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D5D21401A4033B0001D5A79 /* lastfm.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6576D274428F200583E14 /* alac.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D91773F1A0E8966004BC222 /* alac.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6576E274428F200583E14 /* m3u.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DCB281419E86162008E9DF6 /* m3u.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6576F274428F200583E14 /* vfs_curl.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA24B4B19E724C200E34920 /* vfs_curl.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65770274428F200583E14 /* sid.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D22F75519E1384B009C631E /* sid.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65771274428F200583E14 /* ddb_dumb.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D44E66E19B7530A00F780FC /* ddb_dumb.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65772274428F200583E14 /* gme.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65773274428F200583E14 /* dsp_libsrc.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DB96A8019ABB47C00E318A8 /* dsp_libsrc.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65774274428F200583E14 /* flac.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32FA6219A646C0000FFDE0 /* flac.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65775274428F200583E14 /* ffap.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32F9EA19A63441000FFDE0 /* ffap.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65776274428F200583E14 /* aac.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D28F0411C283BE3004A6E7B /* aac.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65777274428F200583E14 /* opus.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D9C5AEF1FDEBAAE00D83CEF /* opus.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65778274428F200583E14 /* libogglib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC65779274428F200583E14 /* libopusfile.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D9C629E1FDEC51000D83CEF /* libopusfile.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6577A274428F200583E14 /* liboggedit.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6577C274428F200583E14 /* Replay in Copy SC68 replays */ = {isa = PBXBuildFile; fileRef = 2DE1B36A24A8A5F20070CD7C /* Replay */; };
+		2DC6577E274428F200583E14 /* buffering_16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DD81C3325152D86008C716C /* buffering_16.png */; };
+		2DC6577F274428F200583E14 /* play_16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DD81C2E25152D86008C716C /* play_16.png */; };
+		2DC65780274428F200583E14 /* pause_16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DD81C2F25152D86008C716C /* pause_16.png */; };
+		2DC65781274428F200583E14 /* noartwork.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DD81C3125152D86008C716C /* noartwork.png */; };
+		2DC65783274428F200583E14 /* COPYING.LGPLv2.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DCB18F92515F9AB0054BD06 /* COPYING.LGPLv2.1 */; };
+		2DC65784274428F200583E14 /* translators.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DCB18B82515F98E0054BD06 /* translators.txt */; };
+		2DC65785274428F200583E14 /* about.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DCB18372515F95C0054BD06 /* about.txt */; };
+		2DC65786274428F200583E14 /* ChangeLog in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DCB197B2515F9D90054BD06 /* ChangeLog */; };
+		2DC65787274428F200583E14 /* help.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DCB18362515F9530054BD06 /* help.txt */; };
+		2DC65788274428F200583E14 /* COPYING.GPLv2 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DCB18F82515F9AB0054BD06 /* COPYING.GPLv2 */; };
 		2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC80A8E1A9222F800C9397F /* TrackProperties.xib */; };
 		2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
@@ -3429,6 +3609,293 @@
 			remoteGlobalIDString = 2DA84F4524F5876A003507A2;
 			remoteInfo = jansson;
 		};
+		2DC656E0274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DC6566C2744289C00583E14;
+			remoteInfo = ddb_gui_GTK2;
+		};
+		2DC656E2274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D00F23E2434DE4E000FC130;
+			remoteInfo = ddb_soundtouch;
+		};
+		2DC656E4274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DA04E9C23B6A4960070AC01;
+			remoteInfo = shellexecui_gtk3;
+		};
+		2DC656E6274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DA04E8023B6A4320070AC01;
+			remoteInfo = shellexec;
+		};
+		2DC656E8274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DE3B8732269F68B00AFF9AE;
+			remoteInfo = pltbrowser;
+		};
+		2DC656EA274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DE3B82F2269C9FB00AFF9AE;
+			remoteInfo = hotkeys;
+		};
+		2DC656EE274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DF16CAF1DCB62D9007D7F05;
+			remoteInfo = supereq;
+		};
+		2DC656F0274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D1DC0951DCB39EC00441A08;
+			remoteInfo = ddb_mono2stereo;
+		};
+		2DC656F2274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D27AED31D9D86ED00842D76;
+			remoteInfo = rg_scanner;
+		};
+		2DC656F4274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D621F821CD92C9000EB6D22;
+			remoteInfo = artwork;
+		};
+		2DC656F6274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D652FCA1CE79E8500163808;
+			remoteInfo = adplug;
+		};
+		2DC656F8274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D026D881CAC5BBF00E27961;
+			remoteInfo = ffmpeg;
+		};
+		2DC656FA274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DFD50941C9715B800961D19;
+			remoteInfo = psf;
+		};
+		2DC656FC274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07765E221C28559600F5F4BC;
+			remoteInfo = mms;
+		};
+		2DC656FE274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D28F0401C283BE3004A6E7B;
+			remoteInfo = aac;
+		};
+		2DC65700274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07765D631C279B7D00F5F4BC;
+			remoteInfo = shn;
+		};
+		2DC65702274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0702208E1C275D3900FC9AF9;
+			remoteInfo = dca;
+		};
+		2DC65704274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07021FD91C27551D00FC9AF9;
+			remoteInfo = musepack;
+		};
+		2DC65706274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07021F791C2745E900FC9AF9;
+			remoteInfo = tta;
+		};
+		2DC65708274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07021F2F1C2734F100FC9AF9;
+			remoteInfo = wma;
+		};
+		2DC6570A274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D4458D81C04F1C000230939;
+			remoteInfo = vfs_zip;
+		};
+		2DC6570C274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DE92F2E1BAFFB4F00F37154;
+			remoteInfo = wavpack;
+		};
+		2DC6570E274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D11D3B81B9DC67100C7C731;
+			remoteInfo = vtx;
+		};
+		2DC65710274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D05A8281B4BE59D004C913D;
+			remoteInfo = sndfile;
+		};
+		2DC65712274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D23511A1B138ECB00A62936;
+			remoteInfo = converter;
+		};
+		2DC65714274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DF930431AB816DC0030C0CA;
+			remoteInfo = wildmidi;
+		};
+		2DC65716274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D01D7C91AB2216900BCD3C4;
+			remoteInfo = ddbcore;
+		};
+		2DC65718274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DA0ABE01AA71055007EDD43;
+			remoteInfo = in_sc68;
+		};
+		2DC6571A274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D5D213F1A4033B0001D5A79;
+			remoteInfo = lastfm;
+		};
+		2DC6571C274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D9177371A0E8966004BC222;
+			remoteInfo = alac;
+		};
+		2DC6571E274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DCB281319E86162008E9DF6;
+			remoteInfo = m3u;
+		};
+		2DC65720274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DA24B4A19E724C200E34920;
+			remoteInfo = vfs_curl;
+		};
+		2DC65722274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D22F75419E1384B009C631E;
+			remoteInfo = sid;
+		};
+		2DC65724274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4D44E66D19B7530A00F780FC;
+			remoteInfo = dumb;
+		};
+		2DC65726274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D2A135919B647CF00AD1EB7;
+			remoteInfo = gme;
+		};
+		2DC65728274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DB96A7F19ABB47C00E318A8;
+			remoteInfo = dsp_libsrc;
+		};
+		2DC6572A274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4D32FA6119A646C0000FFDE0;
+			remoteInfo = flac;
+		};
+		2DC6572C274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4D32FA4F19A64577000FFDE0;
+			remoteInfo = mp3;
+		};
+		2DC6572E274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4D32F9E919A63441000FFDE0;
+			remoteInfo = ffap;
+		};
+		2DC65730274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D88E9EC1B2AF6640072FD43;
+			remoteInfo = vorbis;
+		};
+		2DC65732274428F200583E14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4D9C5AEE1FDEBAAE00D83CEF;
+			remoteInfo = opus;
+		};
 		2DC8263C24A7432700DB756B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -3648,6 +4115,101 @@
 				2D71F1B624AE7A1A00E753D3 /* mp4p.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DC6574B274428F200583E14 /* Copy Plugins */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				2DC6574C274428F200583E14 /* ddb_gui_GTK2.dylib in Copy Plugins */,
+				2DC6574D274428F200583E14 /* libwavpacklib.dylib in Copy Plugins */,
+				2DC6574E274428F200583E14 /* ddb_soundtouch.dylib in Copy Plugins */,
+				2DC6574F274428F200583E14 /* shellexec.dylib in Copy Plugins */,
+				2DC65750274428F200583E14 /* shellexecui_gtk3.dylib in Copy Plugins */,
+				2DC65751274428F200583E14 /* pltbrowser_gtk3.dylib in Copy Plugins */,
+				2DC65752274428F200583E14 /* hotkeys.dylib in Copy Plugins */,
+				2DC65754274428F200583E14 /* libvorbislib.dylib in Copy Plugins */,
+				2DC65755274428F200583E14 /* libopuslib.dylib in Copy Plugins */,
+				2DC65756274428F200583E14 /* libflaclib.dylib in Copy Plugins */,
+				2DC65757274428F200583E14 /* supereq.dylib in Copy Plugins */,
+				2DC65758274428F200583E14 /* ddb_mono2stereo.dylib in Copy Plugins */,
+				2DC65759274428F200583E14 /* rg_scanner.dylib in Copy Plugins */,
+				2DC6575A274428F200583E14 /* artwork.dylib in Copy Plugins */,
+				2DC6575B274428F200583E14 /* adplug.dylib in Copy Plugins */,
+				2DC6575C274428F200583E14 /* ffmpeg.dylib in Copy Plugins */,
+				2DC6575D274428F200583E14 /* psf.dylib in Copy Plugins */,
+				2DC6575E274428F200583E14 /* mms.dylib in Copy Plugins */,
+				2DC6575F274428F200583E14 /* ddb_shn.dylib in Copy Plugins */,
+				2DC65760274428F200583E14 /* dca.dylib in Copy Plugins */,
+				2DC65761274428F200583E14 /* musepack.dylib in Copy Plugins */,
+				2DC65762274428F200583E14 /* tta.dylib in Copy Plugins */,
+				2DC65763274428F200583E14 /* wma.dylib in Copy Plugins */,
+				2DC65764274428F200583E14 /* vfs_zip.dylib in Copy Plugins */,
+				2DC65765274428F200583E14 /* wavpack.dylib in Copy Plugins */,
+				2DC65766274428F200583E14 /* vtx.dylib in Copy Plugins */,
+				2DC65767274428F200583E14 /* sndfile.dylib in Copy Plugins */,
+				2DC65768274428F200583E14 /* vorbis.dylib in Copy Plugins */,
+				2DC65769274428F200583E14 /* converter.dylib in Copy Plugins */,
+				2DC6576A274428F200583E14 /* in_sc68.dylib in Copy Plugins */,
+				2DC6576B274428F200583E14 /* mp3.dylib in Copy Plugins */,
+				2DC6576C274428F200583E14 /* lastfm.dylib in Copy Plugins */,
+				2DC6576D274428F200583E14 /* alac.dylib in Copy Plugins */,
+				2DC6576E274428F200583E14 /* m3u.dylib in Copy Plugins */,
+				2DC6576F274428F200583E14 /* vfs_curl.dylib in Copy Plugins */,
+				2DC65770274428F200583E14 /* sid.dylib in Copy Plugins */,
+				2DC65771274428F200583E14 /* ddb_dumb.dylib in Copy Plugins */,
+				2DC65772274428F200583E14 /* gme.dylib in Copy Plugins */,
+				2DC65773274428F200583E14 /* dsp_libsrc.dylib in Copy Plugins */,
+				2DC65774274428F200583E14 /* flac.dylib in Copy Plugins */,
+				2DC65775274428F200583E14 /* ffap.dylib in Copy Plugins */,
+				2DC65776274428F200583E14 /* aac.dylib in Copy Plugins */,
+				2DC65777274428F200583E14 /* opus.dylib in Copy Plugins */,
+				2DC65778274428F200583E14 /* libogglib.dylib in Copy Plugins */,
+				2DC65779274428F200583E14 /* libopusfile.dylib in Copy Plugins */,
+				2DC6577A274428F200583E14 /* liboggedit.dylib in Copy Plugins */,
+			);
+			name = "Copy Plugins";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DC6577B274428F200583E14 /* Copy SC68 replays */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = data68;
+			dstSubfolderSpec = 7;
+			files = (
+				2DC6577C274428F200583E14 /* Replay in Copy SC68 replays */,
+			);
+			name = "Copy SC68 replays";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DC6577D274428F200583E14 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = pixmaps;
+			dstSubfolderSpec = 7;
+			files = (
+				2DC6577E274428F200583E14 /* buffering_16.png in CopyFiles */,
+				2DC6577F274428F200583E14 /* play_16.png in CopyFiles */,
+				2DC65780274428F200583E14 /* pause_16.png in CopyFiles */,
+				2DC65781274428F200583E14 /* noartwork.png in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DC65782274428F200583E14 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = doc;
+			dstSubfolderSpec = 7;
+			files = (
+				2DC65783274428F200583E14 /* COPYING.LGPLv2.1 in CopyFiles */,
+				2DC65784274428F200583E14 /* translators.txt in CopyFiles */,
+				2DC65785274428F200583E14 /* about.txt in CopyFiles */,
+				2DC65786274428F200583E14 /* ChangeLog in CopyFiles */,
+				2DC65787274428F200583E14 /* help.txt in CopyFiles */,
+				2DC65788274428F200583E14 /* COPYING.GPLv2 in CopyFiles */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2DCB17692515F8150054BD06 /* CopyFiles */ = {
@@ -5961,6 +6523,10 @@
 		2DC4199D1B90540A007E3026 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		2DC655742741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SpectrumAnalyzerPreferencesViewController.xib; sourceTree = "<group>"; };
 		2DC655852741955A00583E14 /* ScopePreferencesViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScopePreferencesViewController.xib; sourceTree = "<group>"; };
+		2DC6565C2744287000583E14 /* gtk2.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = gtk2.xcconfig; sourceTree = "<group>"; };
+		2DC656DA2744289C00583E14 /* ddb_gui_GTK2.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ddb_gui_GTK2.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DC6578C274428F200583E14 /* DeaDBeeF GTK2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DeaDBeeF GTK2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DC6578D274428F300583E14 /* DeaDBeeF GTK2.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "DeaDBeeF GTK2.plist"; path = "/Users/waker/prj/deadbeef/osx/DeaDBeeF GTK2.plist"; sourceTree = "<absolute>"; };
 		2DC80A8E1A9222F800C9397F /* TrackProperties.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackProperties.xib; sourceTree = "<group>"; };
 		2DCB18362515F9530054BD06 /* help.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = help.txt; path = ../../help.txt; sourceTree = "<group>"; };
 		2DCB18372515F95C0054BD06 /* about.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = about.txt; path = ../../about.txt; sourceTree = "<group>"; };
@@ -6977,6 +7543,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DC656D52744289C00583E14 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DC656D62744289C00583E14 /* libjansson.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DC65737274428F200583E14 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DC65738274428F200583E14 /* Accelerate.framework in Frameworks */,
+				2DC65739274428F200583E14 /* AudioToolbox.framework in Frameworks */,
+				2DC6573A274428F200583E14 /* Carbon.framework in Frameworks */,
+				2DC6573B274428F200583E14 /* libddbcore.a in Frameworks */,
+				2DC6573C274428F200583E14 /* CoreAudio.framework in Frameworks */,
+				2DC6573D274428F200583E14 /* AudioUnit.framework in Frameworks */,
+				2DC6573E274428F200583E14 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10059,6 +10647,7 @@
 		2DA9777324C5EC26002405DA /* xcodeconfig */ = {
 			isa = PBXGroup;
 			children = (
+				2DC6565C2744287000583E14 /* gtk2.xcconfig */,
 				2DA9777424C5EC26002405DA /* gtk3.xcconfig */,
 			);
 			path = xcodeconfig;
@@ -10895,6 +11484,7 @@
 				4D1B3E7B18379829003E6066 /* Products */,
 				2D48DC5C2269B732002CACFD /* DeaDBeeF GTK3.plist */,
 				2DDD75EF25E14FC200FA6FE5 /* Recovered References */,
+				2DC6578D274428F300583E14 /* DeaDBeeF GTK2.plist */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 0;
@@ -10968,6 +11558,8 @@
 				2D00F23F2434DE4E000FC130 /* ddb_soundtouch.dylib */,
 				2DA5A34825D01CA500947C19 /* libebur128.a */,
 				2DA5A93925D0330600947C19 /* libwavpacklib.dylib */,
+				2DC656DA2744289C00583E14 /* ddb_gui_GTK2.dylib */,
+				2DC6578C274428F200583E14 /* DeaDBeeF GTK2.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -12745,6 +13337,73 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DC6566D2744289C00583E14 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DC6566E2744289C00583E14 /* ddbequalizer.h in Headers */,
+				2DC6566F2744289C00583E14 /* callbacks.h in Headers */,
+				2DC656702744289C00583E14 /* tfimport.h in Headers */,
+				2DC656712744289C00583E14 /* namedicons.h in Headers */,
+				2DC656722744289C00583E14 /* interface.h in Headers */,
+				2DC656732744289C00583E14 /* ddbcellrenderertextmultiline.h in Headers */,
+				2DC656742744289C00583E14 /* gtkui.h in Headers */,
+				2DC656752744289C00583E14 /* clipboard.h in Headers */,
+				2DC656762744289C00583E14 /* ddbtabstrip.h in Headers */,
+				2DC656772744289C00583E14 /* prefwinmisc.h in Headers */,
+				2DC656782744289C00583E14 /* trkproperties_shared.h in Headers */,
+				2DC656792744289C00583E14 /* widgets.h in Headers */,
+				2DC6567A2744289C00583E14 /* drawing.h in Headers */,
+				2DC6567B2744289C00583E14 /* deadbeefapp.h in Headers */,
+				2DC6567C2744289C00583E14 /* prefwinsound.h in Headers */,
+				2DC6567D2744289C00583E14 /* tagwritersettings.h in Headers */,
+				2DC6567E2744289C00583E14 /* prefwinappearance.h in Headers */,
+				2DC6567F2744289C00583E14 /* wingeom.h in Headers */,
+				2DC656802744289C00583E14 /* pluginconf.h in Headers */,
+				2DC656812744289C00583E14 /* prefwinplugins.h in Headers */,
+				2DC656822744289C00583E14 /* gtkui_api.h in Headers */,
+				2DC656832744289C00583E14 /* actions.h in Headers */,
+				2DC656842744289C00583E14 /* trkproperties.h in Headers */,
+				2DC656852744289C00583E14 /* ddb_splitter.h in Headers */,
+				2DC656862744289C00583E14 /* ddb_splitter_size_mode.h in Headers */,
+				2DC656872744289C00583E14 /* prefwinnetwork.h in Headers */,
+				2DC656882744289C00583E14 /* support.h in Headers */,
+				2DC656892744289C00583E14 /* pluginsettings.h in Headers */,
+				2DC6568A2744289C00583E14 /* ctmapping.h in Headers */,
+				2DC6568B2744289C00583E14 /* prefwinplayback.h in Headers */,
+				2DC6568C2744289C00583E14 /* prefwinmedialib.h in Headers */,
+				2DC6568D2744289C00583E14 /* rg.h in Headers */,
+				2DC6568E2744289C00583E14 /* deletefromdisk.h in Headers */,
+				2DC6568F2744289C00583E14 /* plcommon.h in Headers */,
+				2DC656902744289C00583E14 /* progress.h in Headers */,
+				2DC656912744289C00583E14 /* eq.h in Headers */,
+				2DC656922744289C00583E14 /* hotkeys.h in Headers */,
+				2DC656932744289C00583E14 /* search.h in Headers */,
+				2DC656942744289C00583E14 /* coverart.h in Headers */,
+				2DC656952744289C00583E14 /* gtkui_deletefromdisk.h in Headers */,
+				2DC656962744289C00583E14 /* mainplaylist.h in Headers */,
+				2DC656972744289C00583E14 /* ddblistview.h in Headers */,
+				2DC656982744289C00583E14 /* actionhandlers.h in Headers */,
+				2DC656992744289C00583E14 /* ddbseekbar.h in Headers */,
+				2DC6569A2744289C00583E14 /* ddbvolumebar.h in Headers */,
+				2DC6569B2744289C00583E14 /* dspconfig.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DC65743274428F200583E14 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DC65744274428F200583E14 /* dsp.h in Headers */,
+				2DC65745274428F200583E14 /* deadbeef.h in Headers */,
+				2DC65746274428F200583E14 /* streamreader.h in Headers */,
+				2DC65747274428F200583E14 /* u8_uc_map.h in Headers */,
+				2DC65748274428F200583E14 /* tf.h in Headers */,
+				2DC65749274428F200583E14 /* playqueue.h in Headers */,
+				2DC6574A274428F200583E14 /* sort.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DCB281219E86162008E9DF6 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -14078,6 +14737,86 @@
 			productReference = 2DB96A8A19ABB4C600E318A8 /* libsamplerate.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		2DC6566C2744289C00583E14 /* ddb_gui_GTK2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DC656D72744289C00583E14 /* Build configuration list for PBXNativeTarget "ddb_gui_GTK2" */;
+			buildPhases = (
+				2DC6566D2744289C00583E14 /* Headers */,
+				2DC6569C2744289C00583E14 /* Sources */,
+				2DC656D52744289C00583E14 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ddb_gui_GTK2;
+			productName = gtkui;
+			productReference = 2DC656DA2744289C00583E14 /* ddb_gui_GTK2.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		2DC656DE274428F200583E14 /* DeaDBeeF GTK2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DC65789274428F200583E14 /* Build configuration list for PBXNativeTarget "DeaDBeeF GTK2" */;
+			buildPhases = (
+				2DC65733274428F200583E14 /* Sources */,
+				2DC65737274428F200583E14 /* Frameworks */,
+				2DC6573F274428F200583E14 /* Resources */,
+				2DC65743274428F200583E14 /* Headers */,
+				2DC6574B274428F200583E14 /* Copy Plugins */,
+				2DC6577B274428F200583E14 /* Copy SC68 replays */,
+				2DC6577D274428F200583E14 /* CopyFiles */,
+				2DC65782274428F200583E14 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2DC656DF274428F200583E14 /* PBXTargetDependency */,
+				2DC656E1274428F200583E14 /* PBXTargetDependency */,
+				2DC656E3274428F200583E14 /* PBXTargetDependency */,
+				2DC656E5274428F200583E14 /* PBXTargetDependency */,
+				2DC656E7274428F200583E14 /* PBXTargetDependency */,
+				2DC656E9274428F200583E14 /* PBXTargetDependency */,
+				2DC656ED274428F200583E14 /* PBXTargetDependency */,
+				2DC656EF274428F200583E14 /* PBXTargetDependency */,
+				2DC656F1274428F200583E14 /* PBXTargetDependency */,
+				2DC656F3274428F200583E14 /* PBXTargetDependency */,
+				2DC656F5274428F200583E14 /* PBXTargetDependency */,
+				2DC656F7274428F200583E14 /* PBXTargetDependency */,
+				2DC656F9274428F200583E14 /* PBXTargetDependency */,
+				2DC656FB274428F200583E14 /* PBXTargetDependency */,
+				2DC656FD274428F200583E14 /* PBXTargetDependency */,
+				2DC656FF274428F200583E14 /* PBXTargetDependency */,
+				2DC65701274428F200583E14 /* PBXTargetDependency */,
+				2DC65703274428F200583E14 /* PBXTargetDependency */,
+				2DC65705274428F200583E14 /* PBXTargetDependency */,
+				2DC65707274428F200583E14 /* PBXTargetDependency */,
+				2DC65709274428F200583E14 /* PBXTargetDependency */,
+				2DC6570B274428F200583E14 /* PBXTargetDependency */,
+				2DC6570D274428F200583E14 /* PBXTargetDependency */,
+				2DC6570F274428F200583E14 /* PBXTargetDependency */,
+				2DC65711274428F200583E14 /* PBXTargetDependency */,
+				2DC65713274428F200583E14 /* PBXTargetDependency */,
+				2DC65715274428F200583E14 /* PBXTargetDependency */,
+				2DC65717274428F200583E14 /* PBXTargetDependency */,
+				2DC65719274428F200583E14 /* PBXTargetDependency */,
+				2DC6571B274428F200583E14 /* PBXTargetDependency */,
+				2DC6571D274428F200583E14 /* PBXTargetDependency */,
+				2DC6571F274428F200583E14 /* PBXTargetDependency */,
+				2DC65721274428F200583E14 /* PBXTargetDependency */,
+				2DC65723274428F200583E14 /* PBXTargetDependency */,
+				2DC65725274428F200583E14 /* PBXTargetDependency */,
+				2DC65727274428F200583E14 /* PBXTargetDependency */,
+				2DC65729274428F200583E14 /* PBXTargetDependency */,
+				2DC6572B274428F200583E14 /* PBXTargetDependency */,
+				2DC6572D274428F200583E14 /* PBXTargetDependency */,
+				2DC6572F274428F200583E14 /* PBXTargetDependency */,
+				2DC65731274428F200583E14 /* PBXTargetDependency */,
+			);
+			name = "DeaDBeeF GTK2";
+			productName = deadbeef;
+			productReference = 2DC6578C274428F200583E14 /* DeaDBeeF GTK2.app */;
+			productType = "com.apple.product-type.application";
+		};
 		2DCB281319E86162008E9DF6 /* m3u */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2DCB281719E86162008E9DF6 /* Build configuration list for PBXNativeTarget "m3u" */;
@@ -14573,6 +15312,10 @@
 						CreatedOnToolsVersion = 6.1.1;
 						LastSwiftMigration = "";
 					};
+					2DC6566C2744289C00583E14 = {
+						DevelopmentTeam = F69NGENSKX;
+						ProvisioningStyle = Automatic;
+					};
 					2DCB281319E86162008E9DF6 = {
 						CreatedOnToolsVersion = 6.0.1;
 					};
@@ -14657,6 +15400,7 @@
 			projectRoot = "";
 			targets = (
 				4D1B3E7918379829003E6066 /* DeaDBeeF */,
+				2DC656DE274428F200583E14 /* DeaDBeeF GTK2 */,
 				2D48DB832269B731002CACFD /* DeaDBeeF GTK3 */,
 				2DAA4C071AAF88DE00519559 /* Tests */,
 				2D28F0401C283BE3004A6E7B /* aac */,
@@ -14668,6 +15412,7 @@
 				2DA2499D19E71FEA00E34920 /* curl */,
 				0702208E1C275D3900FC9AF9 /* dca */,
 				2D01D7C91AB2216900BCD3C4 /* ddbcore */,
+				2DC6566C2744289C00583E14 /* ddb_gui_GTK2 */,
 				2DE3B7B82269BC3500AFF9AE /* ddb_gui_GTK3 */,
 				4D44E66D19B7530A00F780FC /* ddb_dumb */,
 				2D1DC0951DCB39EC00441A08 /* ddb_mono2stereo */,
@@ -14879,6 +15624,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DC6573F274428F200583E14 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DC65740274428F200583E14 /* Images.xcassets in Resources */,
+				2DC65741274428F200583E14 /* convpresets in Resources */,
+				2DC65742274428F200583E14 /* deadbeef.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16196,6 +16951,79 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DC6569C2744289C00583E14 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DC6569D2744289C00583E14 /* prefwinappearance.c in Sources */,
+				2DC6569E2744289C00583E14 /* rg.c in Sources */,
+				2DC6569F2744289C00583E14 /* utf8.c in Sources */,
+				2DC656A02744289C00583E14 /* gtkui_deletefromdisk.c in Sources */,
+				2DC656A12744289C00583E14 /* fileman.c in Sources */,
+				2DC656A22744289C00583E14 /* prefwinsound.c in Sources */,
+				2DC656A32744289C00583E14 /* coverart.c in Sources */,
+				2DC656A42744289C00583E14 /* eq.c in Sources */,
+				2DC656A52744289C00583E14 /* deadbeefapp.c in Sources */,
+				2DC656A62744289C00583E14 /* interface.c in Sources */,
+				2DC656A72744289C00583E14 /* namedicons.c in Sources */,
+				2DC656A82744289C00583E14 /* prefwinplugins.c in Sources */,
+				2DC656A92744289C00583E14 /* eqpreset.c in Sources */,
+				2DC656AA2744289C00583E14 /* trkproperties_shared.c in Sources */,
+				2DC656AB2744289C00583E14 /* prefwin.c in Sources */,
+				2DC656AC2744289C00583E14 /* ddbseekbar.c in Sources */,
+				2DC656AD2744289C00583E14 /* medialibwidget.c in Sources */,
+				2DC656AE2744289C00583E14 /* support.c in Sources */,
+				2DC656AF2744289C00583E14 /* ddbtabstrip.c in Sources */,
+				2DC656B02744289C00583E14 /* prefwinmedialib.c in Sources */,
+				2DC656B12744289C00583E14 /* clipboard.c in Sources */,
+				2DC656B22744289C00583E14 /* prefwinmisc.c in Sources */,
+				2DC656B32744289C00583E14 /* gdkdrawing.c in Sources */,
+				2DC656B42744289C00583E14 /* prefwinplayback.c in Sources */,
+				2DC656B52744289C00583E14 /* medialibmanager.c in Sources */,
+				2DC656B62744289C00583E14 /* plcommon.c in Sources */,
+				2DC656B72744289C00583E14 /* actions.c in Sources */,
+				2DC656B82744289C00583E14 /* hotkeys.c in Sources */,
+				2DC656B92744289C00583E14 /* callbacks.c in Sources */,
+				2DC656BA2744289C00583E14 /* pltmenu.c in Sources */,
+				2DC656BB2744289C00583E14 /* ddbcellrenderertextmultiline.c in Sources */,
+				2DC656BC2744289C00583E14 /* wingeom.c in Sources */,
+				2DC656BD2744289C00583E14 /* tagwritersettings.c in Sources */,
+				2DC656BE2744289C00583E14 /* gtkui.c in Sources */,
+				2DC656BF2744289C00583E14 /* scope.c in Sources */,
+				2DC656C02744289C00583E14 /* analyzer.c in Sources */,
+				2DC656C12744289C00583E14 /* ddblistview.c in Sources */,
+				2DC656C22744289C00583E14 /* deletefromdisk.c in Sources */,
+				2DC656C32744289C00583E14 /* pluginsettings.c in Sources */,
+				2DC656C42744289C00583E14 /* search.c in Sources */,
+				2DC656C52744289C00583E14 /* ddbequalizer.c in Sources */,
+				2DC656C62744289C00583E14 /* ddb_splitter_size_mode.c in Sources */,
+				2DC656C72744289C00583E14 /* ddbvolumebar.c in Sources */,
+				2DC656C82744289C00583E14 /* actionhandlers.c in Sources */,
+				2DC656C92744289C00583E14 /* ddb_splitter.c in Sources */,
+				2DC656CA2744289C00583E14 /* tfimport.c in Sources */,
+				2DC656CB2744289C00583E14 /* mainplaylist.c in Sources */,
+				2DC656CC2744289C00583E14 /* parser.c in Sources */,
+				2DC656CD2744289C00583E14 /* progress.c in Sources */,
+				2DC656CE2744289C00583E14 /* dspconfig.c in Sources */,
+				2DC656CF2744289C00583E14 /* widgets.c in Sources */,
+				2DC656D02744289C00583E14 /* pluginconf.c in Sources */,
+				2DC656D12744289C00583E14 /* trkproperties.c in Sources */,
+				2DC656D22744289C00583E14 /* ctmapping.c in Sources */,
+				2DC656D32744289C00583E14 /* prefwinnetwork.c in Sources */,
+				2DC656D42744289C00583E14 /* tftintutil.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DC65733274428F200583E14 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DC65734274428F200583E14 /* main.c in Sources */,
+				2DC65735274428F200583E14 /* plugins.c in Sources */,
+				2DC65736274428F200583E14 /* coreaudio.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DCB281019E86162008E9DF6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -17270,6 +18098,211 @@
 			isa = PBXTargetDependency;
 			name = jansson;
 			targetProxy = 2DBF3D97270885C400023138 /* PBXContainerItemProxy */;
+		};
+		2DC656DF274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DC6566C2744289C00583E14 /* ddb_gui_GTK2 */;
+			targetProxy = 2DC656E0274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC656E1274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D00F23E2434DE4E000FC130 /* ddb_soundtouch */;
+			targetProxy = 2DC656E2274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC656E3274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DA04E9C23B6A4960070AC01 /* shellexecui_gtk3 */;
+			targetProxy = 2DC656E4274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC656E5274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DA04E8023B6A4320070AC01 /* shellexec */;
+			targetProxy = 2DC656E6274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC656E7274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DE3B8732269F68B00AFF9AE /* pltbrowser_gtk3 */;
+			targetProxy = 2DC656E8274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC656E9274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DE3B82F2269C9FB00AFF9AE /* hotkeys */;
+			targetProxy = 2DC656EA274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC656ED274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DF16CAF1DCB62D9007D7F05 /* supereq */;
+			targetProxy = 2DC656EE274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC656EF274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D1DC0951DCB39EC00441A08 /* ddb_mono2stereo */;
+			targetProxy = 2DC656F0274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC656F1274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D27AED31D9D86ED00842D76 /* rg_scanner */;
+			targetProxy = 2DC656F2274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC656F3274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D621F821CD92C9000EB6D22 /* artwork */;
+			targetProxy = 2DC656F4274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC656F5274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D652FCA1CE79E8500163808 /* adplug */;
+			targetProxy = 2DC656F6274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC656F7274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D026D881CAC5BBF00E27961 /* ffmpeg */;
+			targetProxy = 2DC656F8274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC656F9274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DFD50941C9715B800961D19 /* psf */;
+			targetProxy = 2DC656FA274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC656FB274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07765E221C28559600F5F4BC /* mms */;
+			targetProxy = 2DC656FC274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC656FD274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D28F0401C283BE3004A6E7B /* aac */;
+			targetProxy = 2DC656FE274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC656FF274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07765D631C279B7D00F5F4BC /* ddb_shn */;
+			targetProxy = 2DC65700274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC65701274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0702208E1C275D3900FC9AF9 /* dca */;
+			targetProxy = 2DC65702274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC65703274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07021FD91C27551D00FC9AF9 /* musepack */;
+			targetProxy = 2DC65704274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC65705274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07021F791C2745E900FC9AF9 /* tta */;
+			targetProxy = 2DC65706274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC65707274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07021F2F1C2734F100FC9AF9 /* wma */;
+			targetProxy = 2DC65708274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC65709274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D4458D81C04F1C000230939 /* vfs_zip */;
+			targetProxy = 2DC6570A274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC6570B274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DE92F2E1BAFFB4F00F37154 /* wavpack */;
+			targetProxy = 2DC6570C274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC6570D274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D11D3B81B9DC67100C7C731 /* vtx */;
+			targetProxy = 2DC6570E274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC6570F274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D05A8281B4BE59D004C913D /* sndfile */;
+			targetProxy = 2DC65710274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC65711274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D23511A1B138ECB00A62936 /* converter */;
+			targetProxy = 2DC65712274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC65713274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DF930431AB816DC0030C0CA /* wildmidi */;
+			targetProxy = 2DC65714274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC65715274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D01D7C91AB2216900BCD3C4 /* ddbcore */;
+			targetProxy = 2DC65716274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC65717274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DA0ABE01AA71055007EDD43 /* in_sc68 */;
+			targetProxy = 2DC65718274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC65719274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D5D213F1A4033B0001D5A79 /* lastfm */;
+			targetProxy = 2DC6571A274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC6571B274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D9177371A0E8966004BC222 /* alac */;
+			targetProxy = 2DC6571C274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC6571D274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DCB281319E86162008E9DF6 /* m3u */;
+			targetProxy = 2DC6571E274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC6571F274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DA24B4A19E724C200E34920 /* vfs_curl */;
+			targetProxy = 2DC65720274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC65721274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D22F75419E1384B009C631E /* sid */;
+			targetProxy = 2DC65722274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC65723274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4D44E66D19B7530A00F780FC /* ddb_dumb */;
+			targetProxy = 2DC65724274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC65725274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D2A135919B647CF00AD1EB7 /* gme */;
+			targetProxy = 2DC65726274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC65727274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DB96A7F19ABB47C00E318A8 /* dsp_libsrc */;
+			targetProxy = 2DC65728274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC65729274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4D32FA6119A646C0000FFDE0 /* flac */;
+			targetProxy = 2DC6572A274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC6572B274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4D32FA4F19A64577000FFDE0 /* mp3 */;
+			targetProxy = 2DC6572C274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC6572D274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4D32F9E919A63441000FFDE0 /* ffap */;
+			targetProxy = 2DC6572E274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC6572F274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D88E9EC1B2AF6640072FD43 /* vorbis */;
+			targetProxy = 2DC65730274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC65731274428F200583E14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4D9C5AEE1FDEBAAE00D83CEF /* opus */;
+			targetProxy = 2DC65732274428F200583E14 /* PBXContainerItemProxy */;
 		};
 		2DC8263D24A7432700DB756B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -20495,6 +21528,200 @@
 			};
 			name = Release;
 		};
+		2DC656D82744289C00583E14 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DC6565C2744287000583E14 /* gtk2.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = F69NGENSKX;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "VERSION=\\\"devel\\\"";
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"$(GTK2_CFLAGS)",
+					"$(JANSSON_CFLAGS)",
+				);
+				OTHER_LDFLAGS = (
+					"$(GTK2_LDFLAGS)",
+					"$(JANSSON_LDFLAGS)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = NO;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		2DC656D92744289C00583E14 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DC6565C2744287000583E14 /* gtk2.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = F69NGENSKX;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "VERSION=\\\"devel\\\"";
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"$(GTK2_CFLAGS)",
+					"$(JANSSON_CFLAGS)",
+				);
+				OTHER_LDFLAGS = (
+					"$(GTK2_LDFLAGS)",
+					"$(JANSSON_LDFLAGS)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = NO;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		2DC6578A274428F200583E14 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "../plugins/cocoaui/deadbeef-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"HAVE_COREAUDIO=1",
+					"PORTABLE=1",
+					"STATICLINK=1",
+					"PREFIX=\\\"donotuse\\\"",
+					"LIBDIR=\\\"donotuse\\\"",
+					"DOCDIR=\\\"donotuse\\\"",
+					"HAVE_LOG2=1",
+					"OSX_APPBUNDLE=1",
+					"DISABLE_MM_KEY_GRABBER=1",
+				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
+				INFOPLIST_FILE = "DeaDBeeF GTK2.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.deadbeef.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
+				RUN_CLANG_STATIC_ANALYZER = NO;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		2DC6578B274428F200583E14 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "../plugins/cocoaui/deadbeef-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"HAVE_COREAUDIO=1",
+					"PORTABLE=1",
+					"STATICLINK=1",
+					"PREFIX=\\\"donotuse\\\"",
+					"LIBDIR=\\\"donotuse\\\"",
+					"DOCDIR=\\\"donotuse\\\"",
+					"HAVE_LOG2=1",
+					"OSX_APPBUNDLE=1",
+				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
+				INFOPLIST_FILE = "DeaDBeeF GTK2.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.deadbeef.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
+				RUN_CLANG_STATIC_ANALYZER = NO;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 		2DCB281519E86162008E9DF6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -22389,6 +23616,24 @@
 			buildConfigurations = (
 				2DB96A8C19ABB4C600E318A8 /* Debug */,
 				2DB96A8D19ABB4C600E318A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DC656D72744289C00583E14 /* Build configuration list for PBXNativeTarget "ddb_gui_GTK2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DC656D82744289C00583E14 /* Debug */,
+				2DC656D92744289C00583E14 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DC65789274428F200583E14 /* Build configuration list for PBXNativeTarget "DeaDBeeF GTK2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DC6578A274428F200583E14 /* Debug */,
+				2DC6578B274428F200583E14 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
