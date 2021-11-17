@@ -17,8 +17,10 @@ static void *kDistanceBetweenBarsContext = &kDistanceBetweenBarsContext;
 static void *kBarGranularity = &kBarGranularity;
 static void *kUseCustomPeakColor = &kUseCustomPeakColor;
 static void *kUseCustomBarColor = &kUseCustomBarColor;
+static void *kUseCustomBackgroundColor = &kUseCustomBackgroundColor;
 static void *kCustomPeakColor = &kCustomPeakColor;
 static void *kCustomBarColor = &kCustomBarColor;
+static void *kCustomBackgroundColor = &kCustomBackgroundColor;
 
 @interface SpectrumAnalyzerWidget()
 
@@ -41,8 +43,10 @@ static void *kCustomBarColor = &kCustomBarColor;
     [self.settings removeObserver:self forKeyPath:@"barGranularity"];
     [self.settings removeObserver:self forKeyPath:@"useCustomPeakColor"];
     [self.settings removeObserver:self forKeyPath:@"useCustomBarColor"];
+    [self.settings removeObserver:self forKeyPath:@"useCustomBackgroundColor"];
     [self.settings removeObserver:self forKeyPath:@"customPeakColor"];
     [self.settings removeObserver:self forKeyPath:@"customBarColor"];
+    [self.settings removeObserver:self forKeyPath:@"customBackgroundColor"];
 }
 
 - (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
@@ -72,8 +76,10 @@ static void *kCustomBarColor = &kCustomBarColor;
 
     [_settings addObserver:self forKeyPath:@"useCustomPeakColor" options:0 context:kUseCustomPeakColor];
     [_settings addObserver:self forKeyPath:@"useCustomBarColor" options:0 context:kUseCustomBarColor];
+    [_settings addObserver:self forKeyPath:@"useCustomBackgroundColor" options:0 context:kUseCustomBackgroundColor];
     [_settings addObserver:self forKeyPath:@"customPeakColor" options:0 context:kCustomPeakColor];
     [_settings addObserver:self forKeyPath:@"customBarColor" options:0 context:kCustomBarColor];
+    [_settings addObserver:self forKeyPath:@"customBackgroundColor" options:0 context:kCustomBackgroundColor];
 
     self.settings.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
     self.settings.barGranularity = 1;
@@ -102,10 +108,16 @@ static void *kCustomBarColor = &kCustomBarColor;
     } else if (context == kUseCustomBarColor) {
         [self.visualizationView updateAnalyzerSettings:self.settings];
         [self.deps.state layoutDidChange];
+    } else if (context == kUseCustomBackgroundColor) {
+        [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.deps.state layoutDidChange];
     } else if (context == kCustomPeakColor) {
         [self.visualizationView updateAnalyzerSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else if (context == kCustomBarColor) {
+        [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.deps.state layoutDidChange];
+    } else if (context == kCustomBackgroundColor) {
         [self.visualizationView updateAnalyzerSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else {
@@ -132,6 +144,7 @@ static void *kCustomBarColor = &kCustomBarColor;
     d[@"barGranularity"] = @(self.settings.barGranularity);
     d[@"useCustomPeakColor"] = @(self.settings.useCustomPeakColor);
     d[@"useCustomBarColor"] = @(self.settings.useCustomBarColor);
+    d[@"useCustomBackgroundColor"] = @(self.settings.useCustomBackgroundColor);
     NSString *customPeakColor = [VisualizationSettingsUtil.shared stringForColor:self.settings.customPeakColor];
     if (customPeakColor != nil) {
         d[@"customPeakColor"] = customPeakColor;
@@ -140,6 +153,11 @@ static void *kCustomBarColor = &kCustomBarColor;
     NSString *customBarColor = [VisualizationSettingsUtil.shared stringForColor:self.settings.customBarColor];
     if (customBarColor) {
         d[@"customBarColor"] = customBarColor;
+    }
+
+    NSString *customBackgroundColor = [VisualizationSettingsUtil.shared stringForColor:self.settings.customBackgroundColor];
+    if (customBackgroundColor) {
+        d[@"customBackgroundColor"] = customBackgroundColor;
     }
     return d.copy;
 }
@@ -176,6 +194,11 @@ static void *kCustomBarColor = &kCustomBarColor;
         self.settings.useCustomBarColor = useCustomBarColorNumber.boolValue;
     }
 
+    NSNumber *useCustomBackgroundColorNumber = dictionary[@"useCustomBackgroundColor"];
+    if ([useCustomBackgroundColorNumber isKindOfClass:NSNumber.class]) {
+        self.settings.useCustomBackgroundColor = useCustomBackgroundColorNumber.boolValue;
+    }
+
     NSString *customPeakColorString = dictionary[@"customPeakColor"];
     if ([customPeakColorString isKindOfClass:NSString.class]) {
         self.settings.customPeakColor = [VisualizationSettingsUtil.shared colorForString:customPeakColorString];
@@ -184,6 +207,11 @@ static void *kCustomBarColor = &kCustomBarColor;
     NSString *customBarColorString = dictionary[@"customBarColor"];
     if ([customBarColorString isKindOfClass:NSString.class]) {
         self.settings.customBarColor = [VisualizationSettingsUtil.shared colorForString:customBarColorString];
+    }
+
+    NSString *customBackgroundColorString = dictionary[@"customBackgroundColor"];
+    if ([customBackgroundColorString isKindOfClass:NSString.class]) {
+        self.settings.customBackgroundColor = [VisualizationSettingsUtil.shared colorForString:customBackgroundColorString];
     }
 
     return YES;

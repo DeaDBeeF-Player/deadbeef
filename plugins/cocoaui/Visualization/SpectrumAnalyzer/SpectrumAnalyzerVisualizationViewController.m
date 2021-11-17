@@ -50,6 +50,7 @@ extern DB_functions_t *deadbeef;
     SpectrumAnalyzerVisualizationView *view = (SpectrumAnalyzerVisualizationView *)self.view;
 
     view.baseColor = VisualizationSettingsUtil.shared.baseColor;
+    view.backgroundColor = VisualizationSettingsUtil.shared.backgroundColor;
 }
 
 #pragma mark - Actions
@@ -178,6 +179,7 @@ extern DB_functions_t *deadbeef;
         SpectrumAnalyzerVisualizationView *view = (SpectrumAnalyzerVisualizationView *)self.view;
 
         view.baseColor = VisualizationSettingsUtil.shared.baseColor;
+        view.backgroundColor = VisualizationSettingsUtil.shared.backgroundColor;
     }
 }
 

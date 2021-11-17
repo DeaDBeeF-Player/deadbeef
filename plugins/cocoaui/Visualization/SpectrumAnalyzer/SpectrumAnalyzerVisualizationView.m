@@ -7,8 +7,9 @@
 //
 
 #import "SpectrumAnalyzerVisualizationView.h"
-#include "deadbeef.h"
+#import "VisualizationSettingsUtil.h"
 #include "analyzer.h"
+#include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -154,6 +155,17 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     return [NSColor colorWithHue:h saturation:s*0.7 brightness:b*1.1 alpha:1];
 }
 
+- (NSColor *)backgroundColor {
+    if (self.settings.useCustomBackgroundColor) {
+        NSColor *color = self.settings.customBackgroundColor;
+        if (color != nil) {
+            return color;
+        }
+    }
+
+    return VisualizationSettingsUtil.shared.backgroundColor;
+}
+
 - (void)dealloc {
     [self removeObserver:self forKeyPath:kWindowIsVisibleKey];
     if (self.isListening) {
@@ -233,7 +245,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     // for some reason KVO is not triggered when the window becomes hidden
     [self updateVisListening];
 
-    [NSColor.blackColor setFill];
+    [self.backgroundColor setFill];
     NSRectFill(dirtyRect);
 
     if (_input_data.nframes == 0) {

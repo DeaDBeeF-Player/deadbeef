@@ -19,8 +19,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) BOOL useCustomPeakColor;
 @property (nonatomic) BOOL useCustomBarColor;
+@property (nonatomic) BOOL useCustomBackgroundColor;
 @property (nonatomic) NSColor *customPeakColor;
 @property (nonatomic) NSColor *customBarColor;
+@property (nonatomic) NSColor *customBackgroundColor;
 
 @end
 
