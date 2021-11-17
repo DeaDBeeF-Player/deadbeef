@@ -52,6 +52,6 @@ fragment float4 fragmentShader(RasterizerData in [[stage_in]], constant FragPara
     line *= step(index, params.point_count-1);
     line *= step(0, index);
 
-    return params.color * line;
+    return params.color * line + params.backgroundColor * (1.0 - line);
 }
 

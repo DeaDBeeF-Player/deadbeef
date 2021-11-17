@@ -152,11 +152,15 @@
                           atIndex:ScopeVertexInputIndexViewportSize];
 
     NSColor *color = [self.baseColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+    NSColor *backgroundColor = [self.backgroundColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
     CGFloat components[4];
     [color getComponents:components];
+    CGFloat backgroundComponents[4];
+    [backgroundColor getComponents:backgroundComponents];
 
     struct FragParams params;
     params.color = (vector_float4){ (float)components[0], (float)components[1], (float)components[2], 1 };
+    params.backgroundColor = (vector_float4){ (float)backgroundComponents[0], (float)backgroundComponents[1], (float)backgroundComponents[2], 1 };
     params.size.x = vp.x;
     params.size.y = vp.y;
     params.point_count = drawData->point_count;

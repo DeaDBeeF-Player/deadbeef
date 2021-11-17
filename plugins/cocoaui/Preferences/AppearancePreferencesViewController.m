@@ -14,9 +14,11 @@ extern DB_functions_t *deadbeef;
 
 @interface AppearancePreferencesViewController ()
 
-@property (weak) IBOutlet NSButton *overrideVisualizationBaseColorButton;
-@property (weak) IBOutlet NSColorWell *visualizationColorWell;
+@property (weak) IBOutlet NSButton *overrideColorButton;
+@property (weak) IBOutlet NSColorWell *colorWell;
 
+@property (weak) IBOutlet NSButton *overrideBackgroundColorButton;
+@property (weak) IBOutlet NSColorWell *backgroundColorWell;
 
 @end
 
@@ -25,28 +27,45 @@ extern DB_functions_t *deadbeef;
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    int override_vis_color = deadbeef->conf_get_int ("cocoaui.vis.override_base_color", 0);
+    self.colorWell.color = VisualizationSettingsUtil.shared.baseColor;
+    self.backgroundColorWell.color = VisualizationSettingsUtil.shared.backgroundColor;
 
-    self.visualizationColorWell.color = VisualizationSettingsUtil.shared.baseColor;
-
-    [self updateOverrideVisualizationBaseColor:override_vis_color];
+    [self updateOverrideColor:deadbeef->conf_get_int ("cocoaui.vis.override_base_color", 0)];
+    [self updateOverrideBackgroundColor:deadbeef->conf_get_int ("cocoaui.vis.override_background_color", 0)];
 }
 
-- (void)updateOverrideVisualizationBaseColor:(BOOL)enable {
-    self.overrideVisualizationBaseColorButton.state = enable ? NSControlStateValueOn : NSControlStateValueOff;
-    self.visualizationColorWell.enabled = enable;
+- (void)updateOverrideColor:(BOOL)enable {
+    self.overrideColorButton.state = enable ? NSControlStateValueOn : NSControlStateValueOff;
+    self.colorWell.enabled = enable;
 }
 
-- (IBAction)overrideVisualizationBaseColorButtonAction:(NSButton *)sender {
+- (void)updateOverrideBackgroundColor:(BOOL)enable {
+    self.overrideBackgroundColorButton.state = enable ? NSControlStateValueOn : NSControlStateValueOff;
+    self.backgroundColorWell.enabled = enable;
+}
+
+- (IBAction)overrideBaseColorButtonAction:(NSButton *)sender {
     int newValue = sender.state == NSControlStateValueOff ? 0 : 1;
     deadbeef->conf_set_int ("cocoaui.vis.override_base_color", newValue);
-    [self updateOverrideVisualizationBaseColor:newValue];
+    [self updateOverrideColor:newValue];
 
     deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
-- (IBAction)visualizationColorWellAction:(NSColorWell *)sender {
+- (IBAction)colorWellAction:(NSColorWell *)sender {
     VisualizationSettingsUtil.shared.baseColor = sender.color;
+}
+
+- (IBAction)overrideBackgroundColorButtonAction:(NSButton *)sender {
+    int newValue = sender.state == NSControlStateValueOff ? 0 : 1;
+    deadbeef->conf_set_int ("cocoaui.vis.override_background_color", newValue);
+    [self updateOverrideBackgroundColor:newValue];
+
+    deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)backgroundColorWellAction:(NSColorWell *)sender {
+    VisualizationSettingsUtil.shared.backgroundColor = sender.color;
 }
 
 @end

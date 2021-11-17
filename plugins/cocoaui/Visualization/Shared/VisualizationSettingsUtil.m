@@ -27,7 +27,7 @@ extern DB_functions_t *deadbeef;
     CGFloat components[4];
     [color getComponents:components];
 
-    NSString *colorString = [NSString stringWithFormat:@"%0.2lf %0.2lf %0.2f %0.2lf", components[0], components[1], components[2], components[3]];
+    NSString *colorString = [NSString stringWithFormat:@"%0.3lf %0.3lf %0.3f %0.3lf", components[0], components[1], components[2], components[3]];
     return colorString;
 }
 
@@ -86,11 +86,31 @@ extern DB_functions_t *deadbeef;
         return color;
     }
 
-    NSColor *overrideColor = [self colorForKey:key];
+    NSColor *overrideColor = [self colorForKey:@"cocoaui.vis.base_color"];
     if (overrideColor != nil) {
         color = overrideColor;
     }
     return color;
+}
+
+- (NSColor *)backgroundColor {
+    NSString *key = @"cocoaui.vis.override_background_color";
+
+    int override_vis_color = deadbeef->conf_get_int (key.UTF8String, 0);
+    if (!override_vis_color) {
+        return NSColor.blackColor;
+    }
+
+    NSColor *color = NSColor.blackColor;
+    NSColor *overrideColor = [self colorForKey:@"cocoaui.vis.background_color"];
+    if (overrideColor != nil) {
+        color = overrideColor;
+    }
+    return color;
+}
+
+- (void)setBackgroundColor:(NSColor *)color {
+    [self setColor:color forKey:@"cocoaui.vis.background_color"];
 }
 
 - (void)setSpectrumAnalyzerPeakColor:(NSColor *)color {
@@ -98,7 +118,6 @@ extern DB_functions_t *deadbeef;
 }
 
 - (NSColor *)spectrumAnalyzerPeakColor {
-    // FIXME: should return default is override is disabled
     return [self colorForKey:@"cocoaui.vis.spectrum_peak_color"];
 }
 
@@ -107,7 +126,6 @@ extern DB_functions_t *deadbeef;
 }
 
 - (NSColor *)spectrumAnalyzerBarColor {
-    // FIXME: should return default is override is disabled
     return [self colorForKey:@"cocoaui.vis.spectrum_bar_color"];
 }
 

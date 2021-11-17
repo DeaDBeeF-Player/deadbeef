@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)drawableResize:(CGSize)drawableSize;
 
 @property (nonatomic) NSColor *baseColor;
+@property (nonatomic) NSColor *backgroundColor;
 
 @end
 

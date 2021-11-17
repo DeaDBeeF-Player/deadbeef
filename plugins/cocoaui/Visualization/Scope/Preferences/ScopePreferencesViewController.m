@@ -11,7 +11,10 @@
 
 @interface ScopePreferencesViewController ()
 @property (weak) IBOutlet NSButton *useCustomColorButton;
+@property (weak) IBOutlet NSButton *useCustomBackgroundColorButton;
+
 @property (weak) IBOutlet NSColorWell *customColorWell;
+@property (weak) IBOutlet NSColorWell *customBackgroundColorWell;
 
 @end
 
@@ -33,12 +36,21 @@
     if (self.settings.customColor != nil) {
         self.customColorWell.color = self.settings.customColor;
     }
+    if (self.settings.customBackgroundColor != nil) {
+        self.customBackgroundColorWell.color = self.settings.customBackgroundColor;
+    }
     [self updateUseCustomColor:self.settings.useCustomColor];
+    [self updateUseCustomBackgroundColor:self.settings.useCustomBackgroundColor];
 }
 
 - (void)updateUseCustomColor:(BOOL)enabled {
     self.customColorWell.enabled = enabled;
     self.useCustomColorButton.state = enabled ? NSControlStateValueOn : NSControlStateValueOff;
+}
+
+- (void)updateUseCustomBackgroundColor:(BOOL)enabled {
+    self.customBackgroundColorWell.enabled = enabled;
+    self.useCustomBackgroundColorButton.state = enabled ? NSControlStateValueOn : NSControlStateValueOff;
 }
 
 - (IBAction)doneButtonAction:(id)sender {
@@ -55,8 +67,19 @@
     [self updateUseCustomColor:sender.state == NSControlStateValueOn];
 }
 
+- (IBAction)useCustomBackgroundColorAction:(NSButton *)sender {
+    self.settings.useCustomBackgroundColor = sender.state == NSControlStateValueOn;
+    [self updateUseCustomBackgroundColor:sender.state == NSControlStateValueOn];
+}
+
 - (IBAction)customColorWellAction:(NSColorWell *)sender {
     self.settings.customColor = sender.color;
 }
+
+- (IBAction)customBackgroundColorWellAction:(NSColorWell *)sender {
+    self.settings.customBackgroundColor = sender.color;
+}
+
+
 
 @end

@@ -17,6 +17,8 @@ static void *kScaleModeContext = &kScaleModeContext;
 static void *kFragmentDurationContext = &kFragmentDurationContext;
 static void *kUseCustomColorContext = &kUseCustomColorContext;
 static void *kCustomColorContext = &kCustomColorContext;
+static void *kUseCustomBackgroundColorContext = &kUseCustomBackgroundColorContext;
+static void *kCustomBackgroundColorContext = &kCustomBackgroundColorContext;
 
 @interface ScopeWidget()
 
@@ -38,6 +40,8 @@ static void *kCustomColorContext = &kCustomColorContext;
     [self.settings removeObserver:self forKeyPath:@"fragmentDuration"];
     [self.settings removeObserver:self forKeyPath:@"useCustomColor"];
     [self.settings removeObserver:self forKeyPath:@"customColor"];
+    [self.settings removeObserver:self forKeyPath:@"useCustomBackgroundColor"];
+    [self.settings removeObserver:self forKeyPath:@"customBackgroundColor"];
 }
 
 - (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps {
@@ -65,6 +69,8 @@ static void *kCustomColorContext = &kCustomColorContext;
     [_settings addObserver:self forKeyPath:@"fragmentDuration" options:0 context:kFragmentDurationContext];
     [_settings addObserver:self forKeyPath:@"useCustomColor" options:0 context:kUseCustomColorContext];
     [_settings addObserver:self forKeyPath:@"customColor" options:0 context:kCustomColorContext];
+    [_settings addObserver:self forKeyPath:@"useCustomBackgroundColor" options:0 context:kUseCustomBackgroundColorContext];
+    [_settings addObserver:self forKeyPath:@"customBackgroundColor" options:0 context:kCustomBackgroundColorContext];
 
     _visualizationViewController.settings = _settings;
     [_visualizationViewController updateScopeSettings:_settings];
@@ -87,6 +93,12 @@ static void *kCustomColorContext = &kCustomColorContext;
         [self.visualizationViewController updateScopeSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else if (context == kCustomColorContext) {
+        [self.visualizationViewController updateScopeSettings:self.settings];
+        [self.deps.state layoutDidChange];
+    } else if (context == kUseCustomBackgroundColorContext) {
+        [self.visualizationViewController updateScopeSettings:self.settings];
+        [self.deps.state layoutDidChange];
+    } else if (context == kCustomBackgroundColorContext) {
         [self.visualizationViewController updateScopeSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else {
@@ -156,6 +168,12 @@ static void *kCustomColorContext = &kCustomColorContext;
         d[@"customColor"] = customColor;
     }
 
+    d[@"useCustomBackgroundColor"] = @(self.settings.useCustomBackgroundColor);
+    NSString *customBackgroundColor = [VisualizationSettingsUtil.shared stringForColor:self.settings.customBackgroundColor];
+    if (customBackgroundColor != nil) {
+        d[@"customBackgroundColor"] = customBackgroundColor;
+    }
+
     return d.copy;
 }
 
@@ -217,6 +235,16 @@ static void *kCustomColorContext = &kCustomColorContext;
     NSString *customColorString = dictionary[@"customColor"];
     if ([customColorString isKindOfClass:NSString.class]) {
         self.settings.customColor = [VisualizationSettingsUtil.shared colorForString:customColorString];
+    }
+
+    NSNumber *useCustomBackgroundColorNumber = dictionary[@"useCustomBackgroundColor"];
+    if ([useCustomBackgroundColorNumber isKindOfClass:NSNumber.class]) {
+        self.settings.useCustomBackgroundColor = useCustomBackgroundColorNumber.boolValue;
+    }
+
+    NSString *customBackgroundColorString = dictionary[@"customBackgroundColor"];
+    if ([customBackgroundColorString isKindOfClass:NSString.class]) {
+        self.settings.customBackgroundColor = [VisualizationSettingsUtil.shared colorForString:customBackgroundColorString];
     }
 
     return YES;

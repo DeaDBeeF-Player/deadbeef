@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)shared;
 
 @property (nonatomic) NSColor *baseColor;
+@property (nonatomic) NSColor *backgroundColor;
 @property (nonatomic) NSColor *spectrumAnalyzerPeakColor;
 @property (nonatomic) NSColor *spectrumAnalyzerBarColor;
 

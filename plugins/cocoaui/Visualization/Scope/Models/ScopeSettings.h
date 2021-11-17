@@ -34,7 +34,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) ScopeScaleMode scaleMode;
 @property (nonatomic) ScopeFragmentDuration fragmentDuration;
 @property (nonatomic) BOOL useCustomColor;
+@property (nonatomic) BOOL useCustomBackgroundColor;
 @property (nonatomic) NSColor *customColor;
+@property (nonatomic) NSColor *customBackgroundColor;
 
 @end
 

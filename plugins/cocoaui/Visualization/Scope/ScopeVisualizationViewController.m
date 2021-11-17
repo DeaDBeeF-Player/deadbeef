@@ -331,6 +331,16 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
         color = VisualizationSettingsUtil.shared.baseColor;
     }
     _renderer.baseColor = color;
+
+    color = nil;
+    if (self.settings.useCustomBackgroundColor) {
+        color = self.settings.customBackgroundColor;
+    }
+    if (color == nil) {
+        color = VisualizationSettingsUtil.shared.backgroundColor;
+    }
+    _renderer.backgroundColor = color;
+
 }
 
 - (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {

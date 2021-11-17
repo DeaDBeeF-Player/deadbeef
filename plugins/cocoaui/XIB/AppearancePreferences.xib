@@ -8,46 +8,75 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="AppearancePreferencesViewController">
             <connections>
-                <outlet property="overrideVisualizationBaseColorButton" destination="moT-CU-i09" id="V4U-lL-9gC"/>
+                <outlet property="backgroundColorWell" destination="27U-O4-Npe" id="AYY-74-7DK"/>
+                <outlet property="colorWell" destination="h59-z6-4A5" id="dPZ-uj-1Wl"/>
+                <outlet property="overrideBackgroundColorButton" destination="Cum-6W-lIQ" id="67L-AZ-go0"/>
+                <outlet property="overrideColorButton" destination="moT-CU-i09" id="V4U-lL-9gC"/>
                 <outlet property="view" destination="c22-O7-iKe" id="3Yk-qR-xNe"/>
-                <outlet property="visualizationColorWell" destination="h59-z6-4A5" id="dPZ-uj-1Wl"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView translatesAutoresizingMaskIntoConstraints="NO" id="c22-O7-iKe">
-            <rect key="frame" x="0.0" y="0.0" width="348" height="272"/>
+            <rect key="frame" x="0.0" y="0.0" width="357" height="178"/>
             <subviews>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="moT-CU-i09">
-                    <rect key="frame" x="18" y="235" width="218" height="18"/>
+                    <rect key="frame" x="18" y="141" width="261" height="18"/>
                     <buttonCell key="cell" type="check" title="Custom visualization base color" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="uL2-re-5Ur">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="overrideVisualizationBaseColorButtonAction:" target="-2" id="yRY-Wj-4fr"/>
+                        <action selector="overrideBaseColorButtonAction:" target="-2" id="yRY-Wj-4fr"/>
                     </connections>
                 </button>
                 <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="h59-z6-4A5">
-                    <rect key="frame" x="244" y="233" width="84" height="23"/>
+                    <rect key="frame" x="287" y="139" width="50" height="23"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="23" id="0YH-9K-e2R"/>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="qs5-te-MoN"/>
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <action selector="visualizationColorWellAction:" target="-2" id="nfP-vF-lu3"/>
+                        <action selector="colorWellAction:" target="-2" id="nfP-vF-lu3"/>
+                    </connections>
+                </colorWell>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Cum-6W-lIQ">
+                    <rect key="frame" x="18" y="119" width="261" height="18"/>
+                    <buttonCell key="cell" type="check" title="Custom visualization background color" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="a8g-TM-3jH">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="overrideBackgroundColorButtonAction:" target="-2" id="Vb2-4c-AkJ"/>
+                    </connections>
+                </button>
+                <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="27U-O4-Npe">
+                    <rect key="frame" x="287" y="117" width="50" height="23"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="23" id="8PD-3F-D6D"/>
+                    </constraints>
+                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <connections>
+                        <action selector="backgroundColorWellAction:" target="-2" id="tHA-Ra-6UD"/>
                     </connections>
                 </colorWell>
             </subviews>
             <constraints>
+                <constraint firstItem="Cum-6W-lIQ" firstAttribute="top" secondItem="moT-CU-i09" secondAttribute="bottom" constant="6" symbolic="YES" id="1yR-9n-Cp2"/>
+                <constraint firstItem="27U-O4-Npe" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Cum-6W-lIQ" secondAttribute="trailing" constant="8" id="AnT-3g-pNT"/>
+                <constraint firstItem="27U-O4-Npe" firstAttribute="trailing" secondItem="h59-z6-4A5" secondAttribute="trailing" id="DZJ-r6-hkv"/>
+                <constraint firstItem="Cum-6W-lIQ" firstAttribute="trailing" secondItem="moT-CU-i09" secondAttribute="trailing" id="Gbb-9w-qqY"/>
                 <constraint firstItem="moT-CU-i09" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="20" symbolic="YES" id="Kix-bD-TxZ"/>
                 <constraint firstItem="h59-z6-4A5" firstAttribute="leading" secondItem="moT-CU-i09" secondAttribute="trailing" constant="8" id="LwL-JJ-U7h"/>
+                <constraint firstItem="Cum-6W-lIQ" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="20" id="PQA-Dc-R5T"/>
                 <constraint firstItem="h59-z6-4A5" firstAttribute="centerY" secondItem="moT-CU-i09" secondAttribute="centerY" id="cS5-vf-3ve"/>
+                <constraint firstItem="27U-O4-Npe" firstAttribute="leading" secondItem="h59-z6-4A5" secondAttribute="leading" id="gfe-F4-1d1"/>
                 <constraint firstItem="moT-CU-i09" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="20" symbolic="YES" id="kVh-dT-xaD"/>
                 <constraint firstAttribute="trailing" secondItem="h59-z6-4A5" secondAttribute="trailing" constant="20" symbolic="YES" id="tSN-XE-1pz"/>
+                <constraint firstItem="27U-O4-Npe" firstAttribute="centerY" secondItem="Cum-6W-lIQ" secondAttribute="centerY" id="vZj-bH-RJo"/>
             </constraints>
-            <point key="canvasLocation" x="79" y="109"/>
+            <point key="canvasLocation" x="78.5" y="62"/>
         </customView>
     </objects>
 </document>

@@ -24,6 +24,7 @@ typedef struct
 struct FragParams
 {
     vector_float4 color;
+    vector_float4 backgroundColor;
     vector_uint2 size;
     float scale;
     int point_count;
