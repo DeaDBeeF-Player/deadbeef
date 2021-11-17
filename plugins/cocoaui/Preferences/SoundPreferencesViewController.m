@@ -82,6 +82,7 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     DB_output_t *output = deadbeef->get_output ();
 
     self.audioDevices = [NSMutableArray new];
+    [self.audioDevices addObject:@"System Default"];
     _audioDevicesEnabled = output->enum_soundcards ? YES : NO;
 
     if (output->enum_soundcards) {
@@ -91,10 +92,9 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     NSString *conf_name = [[NSString stringWithUTF8String:output->plugin.id] stringByAppendingString:@"_soundcard"];
     char curdev[200];
     deadbeef->conf_get_str ([conf_name UTF8String], "", curdev, sizeof (curdev));
-    _audioDevicesIndex = 1;
-    NSUInteger index = 1;
+    _audioDevicesIndex = 0;
+    NSUInteger index = 0;
     [self.audioDevicesPopupButton removeAllItems];
-    [self.audioDevicesPopupButton addItemWithTitle:@"System Default"];
     for (NSString *dev in self.audioDevices) {
         if (!strcmp ([dev UTF8String], curdev)) {
             _audioDevicesIndex = index;
@@ -102,8 +102,7 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
         index++;
         [self.audioDevicesPopupButton addItemWithTitle:dev];
     }
-    [self willChangeValueForKey:@"audioDevicesIndex"];
-    [self didChangeValueForKey:@"audioDevicesIndex"];
+    [self.audioDevicesPopupButton selectItemAtIndex:_audioDevicesIndex];
 }
 
 - (void)initializeAudioTab {
@@ -130,9 +129,9 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     deadbeef->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
 }
 
-- (void)setAudioDevicesIndex:(NSUInteger)audioDevicesIndex {
-    _audioDevicesIndex = audioDevicesIndex;
-    NSString *title = audioDevicesIndex == 0 ? @"System Default" : self.audioDevices[audioDevicesIndex-1];
+- (IBAction)outputDeviceAction:(NSPopUpButton *)sender {
+    self.audioDevicesIndex = sender.indexOfSelectedItem;
+    NSString *title = self.audioDevices[self.audioDevicesIndex];
     DB_output_t *output = deadbeef->get_output ();
     NSString *dev = [[NSString stringWithUTF8String:output->plugin.id] stringByAppendingString:@"_soundcard"];
     deadbeef->conf_set_str (dev.UTF8String, title.UTF8String);
