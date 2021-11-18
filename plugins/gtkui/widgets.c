@@ -2847,20 +2847,12 @@ scope_wavedata_listener (void *ctx, const ddb_audio_data_t *data) {
 }
 
 static inline void
-_draw_vline (uint8_t *data, int stride, int x0, int y0, int y1, uint32_t color) {
-    if (y0 > y1) {
-        int tmp = y0;
-        y0 = y1;
-        y1 = tmp;
-        y1--;
-    }
-    else if (y0 < y1) {
-        y0++;
-    }
+_draw_vline (uint8_t * restrict data, int stride, int x0, int y0, int y1, uint32_t color) {
+    uint32_t *ptr = (uint32_t*)&data[y0*stride+x0*4];
     while (y0 <= y1) {
-        uint32_t *ptr = (uint32_t*)&data[y0*stride+x0*4];
         *ptr = color;
         y0++;
+        ptr += stride/sizeof(uint32_t);
     }
 }
 
