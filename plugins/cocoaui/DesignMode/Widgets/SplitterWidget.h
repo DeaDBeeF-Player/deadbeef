@@ -11,10 +11,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface HSplitterWidget : WidgetBase<WidgetProtocol>
+@interface HSplitterWidget : WidgetBase
 @end
 
-@interface VSplitterWidget : HSplitterWidget<WidgetProtocol>
+@interface VSplitterWidget : HSplitterWidget
 @end
 
 

@@ -7,12 +7,13 @@
 //
 
 #import "AlbumArtWidget.h"
+#import "DesignModeDeps.h"
 #import "PlaylistWidget.h"
 #import "PlaceholderWidget.h"
 #import "SpectrumAnalyzerWidget.h"
 #import "ScopeWidget.h"
 #import "SplitterWidget.h"
-#import "DesignModeDeps.h"
+#import "TabsWidget.h"
 
 @interface WidgetRegistration : NSObject
 
@@ -82,6 +83,9 @@
     }];
     [self registerType:AlbumArtWidget.widgetType displayName:@"Album Art" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
         return [[AlbumArtWidget alloc] initWithDeps:self.deps];
+    }];
+    [self registerType:TabsWidget.widgetType displayName:@"Tabs" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+        return [[TabsWidget alloc] initWithDeps:self.deps];
     }];
 }
 

@@ -23,5 +23,5 @@
 
 #import "WidgetBase.h"
 
-@interface PlaceholderWidget : WidgetBase<WidgetProtocol>
+@interface PlaceholderWidget : WidgetBase
 @end
