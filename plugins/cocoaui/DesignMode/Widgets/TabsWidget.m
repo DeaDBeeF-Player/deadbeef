@@ -8,13 +8,16 @@
 
 #import "TabsWidget.h"
 #import "PlaceholderWidget.h"
+#import "RenameTabViewController.h"
 
-@interface TabsWidget() <NSMenuDelegate, NSTabViewDelegate>
+@interface TabsWidget() <NSMenuDelegate, NSTabViewDelegate, RenameTabViewControllerDelegate>
 
 @property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
 @property (nonatomic) NSTabView *tabView;
 @property (nonatomic) NSTabViewItem *clickedItem;
+@property (nonatomic) NSPoint clickedPoint;
 @property (nonatomic) NSMutableArray *labels;
+@property (nonatomic) NSPopover *renameTabPopover;
 
 @end
 
@@ -69,6 +72,8 @@
 
 - (void)menuNeedsUpdate:(NSMenu *)menu {
     self.clickedItem = [self tabViewAtPoint:NSEvent.mouseLocation];
+    NSPoint point = [self.tabView.window convertPointFromScreen:NSEvent.mouseLocation];
+    self.clickedPoint = [self.tabView convertPoint:point fromView:nil];
 }
 
 - (NSTabViewItem *)tabViewAtPoint:(NSPoint)point {
@@ -93,6 +98,35 @@
 }
 
 - (void)renameTab:(NSMenuItem *)sender {
+    if (self.renameTabPopover != nil) {
+        [self.renameTabPopover close];
+        self.renameTabPopover = nil;
+    }
+
+    self.renameTabPopover = [NSPopover new];
+    self.renameTabPopover.behavior = NSPopoverBehaviorTransient;
+
+    RenameTabViewController *viewController = [[RenameTabViewController alloc] initWithNibName:@"RenameTabViewController" bundle:nil];
+    viewController.name = self.clickedItem.label;
+    viewController.popover = self.renameTabPopover;
+    viewController.delegate = self;
+
+    self.renameTabPopover.contentViewController = viewController;
+
+    NSRect rect = NSMakeRect(self.clickedPoint.x, self.clickedPoint.y, 1, 1);
+    [self.renameTabPopover showRelativeToRect:rect ofView:self.tabView preferredEdge:NSRectEdgeMaxY];
+}
+
+- (void)renameTabDone:(RenameTabViewController *)renameTabViewController withName:(NSString *)name {
+    NSInteger index = [self.tabView indexOfTabViewItem:self.clickedItem];
+    if (index == NSNotFound) {
+        return;
+    }
+
+    self.clickedItem.label = name;
+    self.labels[index] = name;
+
+    [self.deps.state layoutDidChange];
 }
 
 - (void)removeTab:(NSMenuItem *)sender {

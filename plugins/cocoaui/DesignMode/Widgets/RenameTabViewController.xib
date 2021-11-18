@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="RenameTabViewController">
+            <connections>
+                <outlet property="nameTextField" destination="hEj-SF-GzH" id="KhZ-xg-j6V"/>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="219" height="65"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hEj-SF-GzH">
+                    <rect key="frame" x="8" y="36" width="203" height="21"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="BhO-tY-3Zb">
+                        <font key="font" usesAppearanceFont="YES"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uuB-zM-w9F">
+                    <rect key="frame" x="152" y="1" width="66" height="32"/>
+                    <buttonCell key="cell" type="push" title="Done" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="vWs-cI-wx7">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                    </buttonCell>
+                    <connections>
+                        <action selector="doneAction:" target="-2" id="5iY-dD-ijk"/>
+                    </connections>
+                </button>
+            </subviews>
+            <constraints>
+                <constraint firstItem="hEj-SF-GzH" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" id="QfD-dE-Uqe"/>
+                <constraint firstItem="hEj-SF-GzH" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="8" id="VfS-o5-sON"/>
+                <constraint firstItem="uuB-zM-w9F" firstAttribute="top" secondItem="hEj-SF-GzH" secondAttribute="bottom" constant="8" id="cYg-T4-HEg"/>
+                <constraint firstAttribute="trailing" secondItem="uuB-zM-w9F" secondAttribute="trailing" constant="8" id="e79-9I-G9o"/>
+                <constraint firstAttribute="trailing" secondItem="hEj-SF-GzH" secondAttribute="trailing" constant="8" id="gzr-YB-B4b"/>
+                <constraint firstAttribute="bottom" secondItem="uuB-zM-w9F" secondAttribute="bottom" constant="8" id="poX-GX-dFs"/>
+            </constraints>
+            <point key="canvasLocation" x="8.5" y="14.5"/>
+        </customView>
+    </objects>
+</document>
