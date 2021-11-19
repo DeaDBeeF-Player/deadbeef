@@ -129,6 +129,18 @@
     [self.deps.state layoutDidChange];
 }
 
+- (void)removeTabItemForChild:(id<WidgetProtocol>)child {
+    NSUInteger index = [self.childWidgets indexOfObject:child];
+    if (index == NSNotFound) {
+        return;
+    }
+    NSTabViewItem *item = [self.tabView tabViewItemAtIndex:index];
+    [child.view removeFromSuperview];
+    [self.tabView removeTabViewItem:item];
+    [self.labels removeObjectAtIndex:index];
+    [super removeChild:child];
+}
+
 - (void)removeTab:(NSMenuItem *)sender {
     if (self.clickedItem == nil) {
         return;
@@ -140,7 +152,7 @@
         return;
     }
 
-    [self removeChild:self.childWidgets[index]];
+    [self removeTabItemForChild:self.childWidgets[index]];
 
     [self.deps.state layoutDidChange];
 }
@@ -165,7 +177,7 @@
 
     NSString *label = self.labels[index];
     id<WidgetProtocol> childWidget = self.childWidgets[index];
-    [self removeChild:childWidget];
+    [self removeTabItemForChild:self.childWidgets[index]];
 
     [self.labels insertObject:label atIndex:index-1];
     [self insertChild:childWidget atIndex:index-1];
@@ -188,7 +200,7 @@
 
     NSString *label = self.labels[index];
     id<WidgetProtocol> childWidget = self.childWidgets[index];
-    [self removeChild:childWidget];
+    [self removeTabItemForChild:self.childWidgets[index]];
 
     [self.labels insertObject:label atIndex:index+1];
     [self insertChild:childWidget atIndex:index+1];
@@ -221,15 +233,9 @@
 }
 
 - (void)removeChild:(id<WidgetProtocol>)child {
-    NSUInteger index = [self.childWidgets indexOfObject:child];
-    if (index == NSNotFound) {
-        return;
-    }
-    NSTabViewItem *item = [self.tabView tabViewItemAtIndex:index];
-    [child.view removeFromSuperview];
-    [self.tabView removeTabViewItem:item];
-    [self.labels removeObjectAtIndex:index];
-    [super removeChild:child];
+    // replace child with a placeholder
+    id<WidgetProtocol> placeholder = [self.deps.factory createWidgetWithType:PlaceholderWidget.widgetType];
+    [self replaceChild:child withChild:placeholder];
 }
 
 - (void)replaceChild:(id<WidgetProtocol>)child withChild:(id<WidgetProtocol>)newChild {
@@ -250,6 +256,9 @@
     [item.view.trailingAnchor constraintEqualToAnchor:newChild.view.trailingAnchor].active = YES;
     [item.view.topAnchor constraintEqualToAnchor:newChild.view.topAnchor].active = YES;
     [item.view.bottomAnchor constraintEqualToAnchor:newChild.view.bottomAnchor].active = YES;
+
+    child.parentWidget = nil;
+    newChild.parentWidget = self;
 }
 
 - (void)insertChild:(id<WidgetProtocol>)child atIndex:(NSInteger)index {

@@ -23,8 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,readonly) NSView *view;
 @property (nonatomic,readonly) BOOL canInsert;
 
-- (void)appendChild:(id<WidgetProtocol>)child NS_REQUIRES_SUPER;
-- (void)removeChild:(id<WidgetProtocol>)child NS_REQUIRES_SUPER;
+- (void)appendChild:(id<WidgetProtocol>)child;
+- (void)removeChild:(id<WidgetProtocol>)child;
 - (void)insertChild:(id<WidgetProtocol>)child atIndex:(NSInteger)position;
 - (void)replaceChild:(id<WidgetProtocol>)child withChild:(id<WidgetProtocol>)newChild;
 
