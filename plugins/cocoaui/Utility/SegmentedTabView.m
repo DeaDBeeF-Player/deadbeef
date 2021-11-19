@@ -1,0 +1,104 @@
+//
+//  SegmentedTabView.m
+//  deadbeef
+//
+//  Created by Alexey Yakovenko on 19/11/2021.
+//  Copyright © 2021 Alexey Yakovenko. All rights reserved.
+//
+
+#import "SegmentedTabView.h"
+
+@interface SegmentedTabView()
+
+@property (nonatomic,readwrite) NSSegmentedControl *segmentedControl;
+@property (nonatomic,readwrite) NSTabView *tabView;
+
+@end
+
+
+@implementation SegmentedTabView
+
+
+- (instancetype)initWithFrame:(NSRect)frameRect {
+    self = [super initWithFrame:frameRect];
+    if (self == nil) {
+        return nil;
+    }
+
+    self.tabView = [[NSTabView alloc] initWithFrame:NSZeroRect];
+    self.tabView.tabPosition = NSTabPositionNone;
+    self.tabView.tabViewBorderType = NSTabViewBorderTypeNone;
+    self.segmentedControl = [[NSSegmentedControl alloc] initWithFrame:NSZeroRect];
+
+    self.segmentedControl.action = @selector(segmentedControlAction:);
+    self.segmentedControl.target = self;
+
+    [self addSubview:self.segmentedControl];
+    [self addSubview:self.tabView];
+
+    self.segmentedControl.translatesAutoresizingMaskIntoConstraints = NO;
+    self.tabView.translatesAutoresizingMaskIntoConstraints = NO;
+
+    [self.segmentedControl.leadingAnchor constraintEqualToAnchor:self.leadingAnchor].active = YES;
+    [self.segmentedControl.trailingAnchor constraintEqualToAnchor:self.trailingAnchor].active = YES;
+    [self.segmentedControl.topAnchor constraintEqualToAnchor:self.topAnchor].active = YES;
+
+    [self.tabView.topAnchor constraintEqualToAnchor:self.segmentedControl.bottomAnchor].active = YES;
+    [self.tabView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor].active = YES;
+    [self.tabView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor].active = YES;
+    [self.tabView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor].active = YES;
+
+    return self;
+}
+
+- (void)updateSegmentsFromTabItems {
+    NSInteger count = [self.tabView numberOfTabViewItems];
+    self.segmentedControl.segmentCount = count;
+    for (NSInteger index = 0; index < count; index++) {
+        [self.segmentedControl setLabel:[self.tabView tabViewItemAtIndex:index].label forSegment:index];
+    }
+    NSTabViewItem *selectedItem = self.tabView.selectedTabViewItem;
+    if (selectedItem != nil) {
+        self.segmentedControl.selectedSegment = [self.tabView indexOfTabViewItem:selectedItem];
+    }
+    else {
+        self.segmentedControl.selectedSegment = -1;
+    }
+}
+
+- (void)setLabel:(NSString *)label forSegment:(NSInteger)index {
+    [self.tabView tabViewItemAtIndex:index].label = label;
+    [self.segmentedControl setLabel:[self.tabView tabViewItemAtIndex:index].label forSegment:index];
+}
+
+
+- (void)segmentedControlAction:(NSSegmentedControl *)sender {
+    [self.tabView selectTabViewItemAtIndex:sender.indexOfSelectedItem];
+}
+
+- (void)removeTabViewItem:(NSTabViewItem *)tabViewItem {
+    [self.tabView removeTabViewItem:tabViewItem];
+    [self updateSegmentsFromTabItems];
+}
+
+- (void)addTabViewItem:(NSTabViewItem *)tabViewItem {
+    [self.tabView addTabViewItem:tabViewItem];
+    [self updateSegmentsFromTabItems];
+}
+
+- (void)insertTabViewItem:(NSTabViewItem *)tabViewItem atIndex:(NSInteger)index {
+    [self.tabView insertTabViewItem:tabViewItem atIndex:index];
+    [self updateSegmentsFromTabItems];
+}
+
+- (nullable NSTabViewItem *)tabViewItemAtPoint:(NSPoint)point {
+    point = [self.segmentedControl convertPoint:point fromView:self];
+
+    NSInteger index = (NSInteger)(point.x / self.segmentedControl.bounds.size.width * self.segmentedControl.segmentCount);
+    if (index < [self.tabView numberOfTabViewItems]) {
+        return [self.tabView tabViewItemAtIndex:index];
+    }
+    return nil;
+}
+
+@end

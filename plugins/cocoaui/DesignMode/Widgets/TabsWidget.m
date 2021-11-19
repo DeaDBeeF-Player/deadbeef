@@ -9,10 +9,12 @@
 #import "TabsWidget.h"
 #import "PlaceholderWidget.h"
 #import "RenameTabViewController.h"
+#import "SegmentedTabView.h"
 
 @interface TabsWidget() <NSMenuDelegate, NSTabViewDelegate, RenameTabViewControllerDelegate>
 
 @property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
+@property (nonatomic) SegmentedTabView *segmentedTabView;
 @property (nonatomic) NSTabView *tabView;
 @property (nonatomic) NSTabViewItem *clickedItem;
 @property (nonatomic) NSPoint clickedPoint;
@@ -37,9 +39,12 @@
 
     self.labels = [NSMutableArray new];
 
-    self.tabView = [NSTabView new];
-    [self.topLevelView addSubview:self.tabView];
+    self.segmentedTabView = [[SegmentedTabView alloc] initWithFrame:NSZeroRect];
+    self.tabView = self.segmentedTabView.tabView;
 
+    self.tabView.allowsTruncatedLabels = YES;
+    
+    [self.topLevelView addSubview:self.segmentedTabView];
 
     NSMenu *menu = [NSMenu new];
 
@@ -58,14 +63,14 @@
     moveTabLeftItem.target = self;
     moveTabRightItem.target = self;
 
-    self.tabView.menu = menu;
+    self.segmentedTabView.menu = menu;
 
     // constrain view
-    self.tabView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.tabView.leadingAnchor constraintEqualToAnchor:self.topLevelView.leadingAnchor].active = YES;
-    [self.tabView.trailingAnchor constraintEqualToAnchor:self.topLevelView.trailingAnchor].active = YES;
-    [self.tabView.topAnchor constraintEqualToAnchor:self.topLevelView.topAnchor].active = YES;
-    [self.tabView.bottomAnchor constraintEqualToAnchor:self.topLevelView.bottomAnchor].active = YES;
+    self.segmentedTabView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.segmentedTabView.leadingAnchor constraintEqualToAnchor:self.topLevelView.leadingAnchor].active = YES;
+    [self.segmentedTabView.trailingAnchor constraintEqualToAnchor:self.topLevelView.trailingAnchor].active = YES;
+    [self.segmentedTabView.topAnchor constraintEqualToAnchor:self.topLevelView.topAnchor].active = YES;
+    [self.segmentedTabView.bottomAnchor constraintEqualToAnchor:self.topLevelView.bottomAnchor].active = YES;
 
     return self;
 }
@@ -73,13 +78,13 @@
 - (void)menuNeedsUpdate:(NSMenu *)menu {
     self.clickedItem = [self tabViewAtPoint:NSEvent.mouseLocation];
     NSPoint point = [self.tabView.window convertPointFromScreen:NSEvent.mouseLocation];
-    self.clickedPoint = [self.tabView convertPoint:point fromView:nil];
+    self.clickedPoint = [self.segmentedTabView convertPoint:point fromView:nil];
 }
 
 - (NSTabViewItem *)tabViewAtPoint:(NSPoint)point {
-    point = [self.tabView.window convertPointFromScreen:point];
-    point = [self.tabView convertPoint:point fromView:nil];
-    NSTabViewItem *item = [self.tabView tabViewItemAtPoint:point];
+    point = [self.segmentedTabView.window convertPointFromScreen:point];
+    point = [self.segmentedTabView convertPoint:point fromView:nil];
+    NSTabViewItem *item = [self.segmentedTabView tabViewItemAtPoint:point];
     return item;
 }
 
@@ -114,7 +119,7 @@
     self.renameTabPopover.contentViewController = viewController;
 
     NSRect rect = NSMakeRect(self.clickedPoint.x, self.clickedPoint.y, 1, 1);
-    [self.renameTabPopover showRelativeToRect:rect ofView:self.tabView preferredEdge:NSRectEdgeMaxY];
+    [self.renameTabPopover showRelativeToRect:rect ofView:self.segmentedTabView preferredEdge:NSRectEdgeMaxY];
 }
 
 - (void)renameTabDone:(RenameTabViewController *)renameTabViewController withName:(NSString *)name {
@@ -123,7 +128,7 @@
         return;
     }
 
-    self.clickedItem.label = name;
+    [self.segmentedTabView setLabel:name forSegment:index];
     self.labels[index] = name;
 
     [self.deps.state layoutDidChange];
@@ -136,7 +141,7 @@
     }
     NSTabViewItem *item = [self.tabView tabViewItemAtIndex:index];
     [child.view removeFromSuperview];
-    [self.tabView removeTabViewItem:item];
+    [self.segmentedTabView removeTabViewItem:item];
     [self.labels removeObjectAtIndex:index];
     [super removeChild:child];
 }
@@ -183,7 +188,7 @@
     [self insertChild:childWidget atIndex:index-1];
 
     self.clickedItem = [self.tabView tabViewItemAtIndex:index-1];
-    self.clickedItem.label = self.clickedItem.label;
+    [self.segmentedTabView setLabel:self.clickedItem.label forSegment:index-1];
 
     [self.deps.state layoutDidChange];
 }
@@ -206,7 +211,7 @@
     [self insertChild:childWidget atIndex:index+1];
 
     self.clickedItem = [self.tabView tabViewItemAtIndex:index+1];
-    self.clickedItem.label = self.clickedItem.label;
+    [self.segmentedTabView setLabel:self.clickedItem.label forSegment:index+1];
 
     [self.deps.state layoutDidChange];
 }
@@ -229,7 +234,7 @@
     [item.view.topAnchor constraintEqualToAnchor:child.view.topAnchor].active = YES;
     [item.view.bottomAnchor constraintEqualToAnchor:child.view.bottomAnchor].active = YES;
 
-    [self.tabView addTabViewItem:item];
+    [self.segmentedTabView addTabViewItem:item];
 }
 
 - (void)removeChild:(id<WidgetProtocol>)child {
@@ -274,7 +279,7 @@
     [item.view.topAnchor constraintEqualToAnchor:child.view.topAnchor].active = YES;
     [item.view.bottomAnchor constraintEqualToAnchor:child.view.bottomAnchor].active = YES;
 
-    [self.tabView insertTabViewItem:item atIndex:index];
+    [self.segmentedTabView insertTabViewItem:item atIndex:index];
 }
 
 - (NSDictionary *)serializedSettingsDictionary {
