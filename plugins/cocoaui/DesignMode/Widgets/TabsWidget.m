@@ -159,7 +159,16 @@
 - (void)addNewTab:(NSMenuItem *)sender {
     [self.labels addObject:[NSString stringWithFormat:@"New Tab %d", (int)self.labels.count]];
     id<WidgetProtocol> child = [self.deps.factory createWidgetWithType:PlaceholderWidget.widgetType];
-    [self appendChild:child];
+
+    if (self.clickedItem != nil) {
+        NSInteger index = [self.segmentedTabView indexOfTabViewItem:self.clickedItem];
+        [self insertChild:child atIndex:index+1];
+        [self.segmentedTabView selectTabViewItemAtIndex:index+1];
+    }
+    else {
+        [self appendChild:child];
+        [self.segmentedTabView selectTabViewItemAtIndex:self.childWidgets.count-1];
+    }
 
     [self.deps.state layoutDidChange];
 }

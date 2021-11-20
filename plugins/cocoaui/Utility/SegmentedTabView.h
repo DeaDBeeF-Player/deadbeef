@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSInteger)indexOfTabViewItem:(NSTabViewItem *)tabViewItem;
 - (NSTabViewItem *)tabViewItemAtIndex:(NSInteger)index;
 - (void)setLabel:(NSString *)label forSegment:(NSInteger)index;
+- (void)selectTabViewItemAtIndex:(NSInteger)index;
 
 @end
 

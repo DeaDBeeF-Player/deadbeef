@@ -136,4 +136,9 @@
     self.tabView.tabViewItems = tabViewItems;
 }
 
+- (void)selectTabViewItemAtIndex:(NSInteger)index {
+    [self.tabView selectTabViewItemAtIndex:index];
+    [self updateSegmentsFromTabItems];
+}
+
 @end
