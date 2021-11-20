@@ -45,7 +45,10 @@ extern DB_functions_t *deadbeef;
                 continue;
             }
 
-            int has_addmenu = filter(action);
+            BOOL has_addmenu = YES;
+            if (filter != nil) {
+                has_addmenu = filter(action);
+            }
 
             if (!has_addmenu)
                 continue;
@@ -125,6 +128,126 @@ extern DB_functions_t *deadbeef;
             }
         }
     }
+}
+
+- (BOOL)addContextPluginActionItemsForSelectedTrack:(ddb_playItem_t *)selected selectedCount:(int)selectedCount {
+    DB_plugin_t **plugins = deadbeef->plug_get_list();
+    int i;
+    int added_entries = 0;
+    for (i = 0; plugins[i]; i++)
+    {
+        if (!plugins[i]->get_actions)
+            continue;
+
+        DB_plugin_action_t *actions = plugins[i]->get_actions (selected);
+        DB_plugin_action_t *action;
+
+        int count = 0;
+        for (action = actions; action; action = action->next)
+        {
+            if ((action->flags & DB_ACTION_COMMON) || !((action->callback2 && (action->flags & DB_ACTION_ADD_MENU)) || action->callback) || !(action->flags & (DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK)))
+                continue;
+
+            // create submenus (separated with '/')
+            const char *prev = action->title;
+            while (*prev && *prev == '/') {
+                prev++;
+            }
+
+            NSMenu *popup = NULL;
+
+            for (;;) {
+                const char *slash = strchr (prev, '/');
+                if (slash && *(slash-1) != '\\') {
+                    char name[slash-prev+1];
+                    // replace \/ with /
+                    const char *p = prev;
+                    char *t = name;
+                    while (*p && p < slash) {
+                        if (*p == '\\' && *(p+1) == '/') {
+                            *t++ = '/';
+                            p += 2;
+                        }
+                        else {
+                            *t++ = *p++;
+                        }
+                    }
+                    *t = 0;
+
+                    // add popup
+                    NSMenu *prev_menu = popup ? popup : self;
+
+                    // find menu item with the name
+                    for (NSMenuItem *item in prev_menu.itemArray) {
+                        if ([item.title isEqualToString:[NSString stringWithUTF8String:name]]) {
+                            if (item.menu == nil) {
+                                item.submenu = [NSMenu new];
+                            }
+                            popup = item.submenu;
+                            break;
+                        }
+                    }
+                    if (!popup) {
+                        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:name] action:@selector(pluginAction:) keyEquivalent:@""];
+                        item.submenu = [NSMenu new];
+                        if (prev_menu != self) {
+                            [prev_menu addItem:item];
+                        }
+                        else {
+                            [prev_menu addItem:item];
+                        }
+                        item.target = self;
+                        item.submenu = [NSMenu new];
+                        popup = item.submenu;
+                    }
+                }
+                else {
+                    break;
+                }
+                prev = slash+1;
+            }
+
+
+            count++;
+            added_entries++;
+
+            // replace \/ with /
+            const char *p = popup ? prev : action->title;
+            char title[strlen (p)+1];
+            char *t = title;
+            while (*p) {
+                if (*p == '\\' && *(p+1) == '/') {
+                    *t++ = '/';
+                    p += 2;
+                }
+                else {
+                    *t++ = *p++;
+                }
+            }
+            *t = 0;
+
+            PluginActionMenuItem *actionitem = [[PluginActionMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:title] action:@selector(pluginAction:) keyEquivalent:@""];
+            actionitem.target = self;
+            actionitem.pluginAction = action;
+            actionitem.pluginActionContext = DDB_ACTION_CTX_SELECTION;
+
+            if (popup != nil) {
+                [popup addItem:actionitem];
+            }
+            else {
+                [self addItem:actionitem];
+            }
+            if ((selectedCount > 1 && !(action->flags & DB_ACTION_MULTIPLE_TRACKS)) ||
+                (action->flags & DB_ACTION_DISABLED)) {
+                actionitem.enabled = NO;
+            }
+        }
+        if (count > 0 && deadbeef->conf_get_int ("cocoaui.action_separators", 0)) { // FIXME: UI
+            [self addItem:NSMenuItem.separatorItem];
+        }
+    }
+
+    return added_entries > 0;
 }
 
 @end
