@@ -76,6 +76,7 @@
 
 - (void)segmentedControlAction:(NSSegmentedControl *)sender {
     [self.tabView selectTabViewItemAtIndex:sender.indexOfSelectedItem];
+    [self sendAction:self.action to:self.target];
 }
 
 - (void)removeTabViewItem:(NSTabViewItem *)tabViewItem {
@@ -139,6 +140,10 @@
 - (void)selectTabViewItemAtIndex:(NSInteger)index {
     [self.tabView selectTabViewItemAtIndex:index];
     [self updateSegmentsFromTabItems];
+}
+
+- (NSTabViewItem *)selectedTabViewItem {
+    return self.tabView.selectedTabViewItem;
 }
 
 @end

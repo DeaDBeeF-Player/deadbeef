@@ -19,6 +19,7 @@
 @property (nonatomic) NSPoint clickedPoint;
 @property (nonatomic) NSMutableArray *labels;
 @property (nonatomic) NSPopover *renameTabPopover;
+@property (nonatomic) NSInteger initiallySelectedTabIndex;
 
 @end
 
@@ -34,11 +35,15 @@
         return nil;
     }
 
+    self.initiallySelectedTabIndex = -1;
+
     self.deps = deps;
 
     self.labels = [NSMutableArray new];
 
     self.segmentedTabView = [[SegmentedTabView alloc] initWithFrame:NSZeroRect];
+    self.segmentedTabView.target = self;
+    self.segmentedTabView.action = @selector(segmentedTabViewAction:);
 
     [self.topLevelView addSubview:self.segmentedTabView];
 
@@ -69,6 +74,10 @@
     [self.segmentedTabView.bottomAnchor constraintEqualToAnchor:self.topLevelView.bottomAnchor].active = YES;
 
     return self;
+}
+
+- (void)segmentedTabViewAction:(SegmentedTabView *)sender {
+    [self.deps.state layoutDidChange];
 }
 
 - (void)menuNeedsUpdate:(NSMenu *)menu {
@@ -290,21 +299,39 @@
     for (NSTabViewItem *item in self.segmentedTabView.tabViewItems) {
         [labels addObject:item.label];
     }
+
+    NSInteger selectedTabIndex = -1;
+    NSTabViewItem *selectedItem = self.segmentedTabView.selectedTabViewItem;
+    if (selectedItem != nil) {
+        selectedTabIndex = [self.segmentedTabView indexOfTabViewItem:selectedItem];
+    }
     return @{
-        @"labels": labels.copy
+        @"labels": labels.copy,
+        @"selectedTab": @(selectedTabIndex),
     };
 }
 
 - (BOOL)deserializeFromSettingsDictionary:(NSDictionary *)dictionary {
-    NSObject *labelsObject = dictionary[@"labels"];
-    if ([labelsObject isKindOfClass:NSArray.class]) {
-        self.labels = labelsObject.mutableCopy;
+    NSArray<NSString *> *labels = dictionary[@"labels"];
+    if ([labels isKindOfClass:NSArray.class]) {
+        self.labels = labels.mutableCopy;
     }
     else {
         self.labels = [NSMutableArray new];
     }
 
+    NSNumber *selectedTabNumber = dictionary[@"selectedTab"];
+    if ([selectedTabNumber isKindOfClass:NSNumber.class]) {
+        self.initiallySelectedTabIndex = selectedTabNumber.integerValue;
+    }
+
     return YES;
+}
+
+- (void)didFinishLoading {
+    if (self.initiallySelectedTabIndex != -1) {
+        [self.segmentedTabView selectTabViewItemAtIndex:self.initiallySelectedTabIndex];
+    }
 }
 
 @end

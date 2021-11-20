@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable,nonatomic,readonly) NSArray<NSMenuItem *> *menuItems;
 - (BOOL)makeFirstResponder;
 - (void)cleanup; // Implement this method if it's necessary to call removeObserver etc
+- (void)didFinishLoading;
 
 @end
 

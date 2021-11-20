@@ -104,6 +104,9 @@
     }
 
     [self loadWidget:widget fromDictionary:dictionary];
+    if ([widget respondsToSelector:@selector(didFinishLoading)]) {
+        [widget didFinishLoading];
+    }
 
     return widget;
 }

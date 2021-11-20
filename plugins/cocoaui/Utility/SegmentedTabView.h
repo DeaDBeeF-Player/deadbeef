@@ -11,10 +11,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// Wrap NSTabView and NSSegmentedControl into a single view, and use the segmented control for displaying tabs.
-@interface SegmentedTabView : NSView
+@interface SegmentedTabView : NSControl
 
 @property (readonly) NSInteger numberOfTabViewItems;
 @property (nonatomic) NSArray<__kindof NSTabViewItem *> *tabViewItems;
+@property (nullable, readonly) NSTabViewItem *selectedTabViewItem;
 
 - (void)removeTabViewItem:(NSTabViewItem *)tabViewItem;
 - (void)addTabViewItem:(NSTabViewItem *)tabViewItem;
