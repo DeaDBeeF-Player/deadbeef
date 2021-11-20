@@ -14,9 +14,8 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView id="Hz6-mo-xeY">
+        <customView translatesAutoresizingMaskIntoConstraints="NO" id="Hz6-mo-xeY">
             <rect key="frame" x="0.0" y="0.0" width="480" height="24"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="p1u-sE-X5e" customClass="DdbTabStrip">
                     <rect key="frame" x="0.0" y="0.0" width="447" height="24"/>
@@ -46,18 +45,17 @@
                     </connections>
                 </button>
                 <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="bHS-66-REk">
-                    <rect key="frame" x="0.0" y="-2" width="480" height="4"/>
+                    <rect key="frame" x="0.0" y="-2" width="480" height="5"/>
                 </box>
             </subviews>
             <constraints>
                 <constraint firstItem="Z7i-M8-Zm8" firstAttribute="centerY" secondItem="p1u-sE-X5e" secondAttribute="centerY" id="G8s-Fo-ytN"/>
-                <constraint firstItem="bHS-66-REk" firstAttribute="top" secondItem="p1u-sE-X5e" secondAttribute="bottom" id="Hf4-aQ-36V"/>
+                <constraint firstItem="bHS-66-REk" firstAttribute="top" secondItem="p1u-sE-X5e" secondAttribute="bottom" constant="-1" id="Hf4-aQ-36V"/>
                 <constraint firstItem="p1u-sE-X5e" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="aAu-6o-5OQ"/>
                 <constraint firstAttribute="trailing" secondItem="bHS-66-REk" secondAttribute="trailing" id="anF-1e-TYv"/>
                 <constraint firstAttribute="bottom" secondItem="bHS-66-REk" secondAttribute="bottom" id="duq-AA-mba"/>
                 <constraint firstAttribute="trailing" secondItem="Z7i-M8-Zm8" secondAttribute="trailing" constant="4" id="h8f-rT-d41"/>
                 <constraint firstItem="p1u-sE-X5e" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="je5-uR-olE"/>
-                <constraint firstAttribute="bottom" secondItem="p1u-sE-X5e" secondAttribute="bottom" id="jrp-tr-Rzx"/>
                 <constraint firstItem="bHS-66-REk" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="uaQ-oQ-L7d"/>
                 <constraint firstItem="Z7i-M8-Zm8" firstAttribute="leading" secondItem="p1u-sE-X5e" secondAttribute="trailing" constant="4" id="wzd-uX-eve"/>
             </constraints>
