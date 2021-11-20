@@ -9,6 +9,7 @@
 #import "AlbumArtWidget.h"
 #import "DesignModeDeps.h"
 #import "PlaylistWidget.h"
+#import "PlaylistWithTabsWidget.h"
 #import "PlaceholderWidget.h"
 #import "SpectrumAnalyzerWidget.h"
 #import "ScopeWidget.h"
@@ -69,6 +70,9 @@
     [self registerType:PlaylistWidget.widgetType displayName:@"Playlist" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
         return [[PlaylistWidget alloc] initWithDeps:self.deps];
     }];
+    [self registerType:PlaylistWithTabsWidget.widgetType displayName:@"Playlist With Tabs" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+        return [[PlaylistWithTabsWidget alloc] initWithDeps:self.deps];
+    }];
     [self registerType:VSplitterWidget.widgetType displayName:@"Splitter (top and bottom)" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
         return [[VSplitterWidget alloc] initWithDeps:self.deps];
     }];
@@ -110,7 +114,15 @@
 }
 
 - (NSArray<NSString *> *)types {
-    return [self.registeredWidgets.allKeys sortedArrayUsingSelector:@selector(isEqualToString:)];
+    NSArray<WidgetRegistration *> *regs = self.registeredWidgets.allValues;
+    regs = [regs sortedArrayUsingComparator:^NSComparisonResult(WidgetRegistration * _Nonnull obj1, WidgetRegistration * _Nonnull obj2) {
+        return [obj1.displayName compare:obj2.displayName];
+    }];
+    NSMutableArray *result = [NSMutableArray new];
+    for (WidgetRegistration *reg in regs) {
+        [result addObject:reg.type];
+    }
+    return result;
 }
 
 - (NSString *)displayNameForType:(NSString *)type {

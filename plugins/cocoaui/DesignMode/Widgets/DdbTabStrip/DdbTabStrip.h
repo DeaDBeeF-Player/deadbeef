@@ -21,6 +21,8 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#import <AppKit/AppKit.h>
+
 @interface DdbTabStrip : NSView<NSMenuDelegate>
 
 - (int)clickedTab;

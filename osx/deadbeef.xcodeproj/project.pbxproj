@@ -2317,6 +2317,15 @@
 		2DC657C72748502F00583E14 /* SegmentedTabView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC657C42748502F00583E14 /* SegmentedTabView.h */; };
 		2DC657C82748502F00583E14 /* SegmentedTabView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC657C52748502F00583E14 /* SegmentedTabView.m */; };
 		2DC657C92748502F00583E14 /* SegmentedTabView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC657C52748502F00583E14 /* SegmentedTabView.m */; };
+		2DC657CC2749544000583E14 /* PlaylistWithTabsWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC657CA2749544000583E14 /* PlaylistWithTabsWidget.h */; };
+		2DC657CD2749544000583E14 /* PlaylistWithTabsWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC657CA2749544000583E14 /* PlaylistWithTabsWidget.h */; };
+		2DC657CE2749544000583E14 /* PlaylistWithTabsWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC657CB2749544000583E14 /* PlaylistWithTabsWidget.m */; };
+		2DC657CF2749544000583E14 /* PlaylistWithTabsWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC657CB2749544000583E14 /* PlaylistWithTabsWidget.m */; };
+		2DC657D42749581900583E14 /* DdbTabStripViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC657D12749581900583E14 /* DdbTabStripViewController.h */; };
+		2DC657D52749581900583E14 /* DdbTabStripViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC657D12749581900583E14 /* DdbTabStripViewController.h */; };
+		2DC657D62749581900583E14 /* DdbTabStripViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC657D22749581900583E14 /* DdbTabStripViewController.m */; };
+		2DC657D72749581900583E14 /* DdbTabStripViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC657D22749581900583E14 /* DdbTabStripViewController.m */; };
+		2DC657D82749581900583E14 /* DdbTabStripViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC657D32749581900583E14 /* DdbTabStripViewController.xib */; };
 		2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC80A8E1A9222F800C9397F /* TrackProperties.xib */; };
 		2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
@@ -6543,6 +6552,11 @@
 		2DC657BE2746F67600583E14 /* RenameTabViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RenameTabViewController.xib; sourceTree = "<group>"; };
 		2DC657C42748502F00583E14 /* SegmentedTabView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SegmentedTabView.h; sourceTree = "<group>"; };
 		2DC657C52748502F00583E14 /* SegmentedTabView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SegmentedTabView.m; sourceTree = "<group>"; };
+		2DC657CA2749544000583E14 /* PlaylistWithTabsWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistWithTabsWidget.h; sourceTree = "<group>"; };
+		2DC657CB2749544000583E14 /* PlaylistWithTabsWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistWithTabsWidget.m; sourceTree = "<group>"; };
+		2DC657D12749581900583E14 /* DdbTabStripViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbTabStripViewController.h; sourceTree = "<group>"; };
+		2DC657D22749581900583E14 /* DdbTabStripViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DdbTabStripViewController.m; sourceTree = "<group>"; };
+		2DC657D32749581900583E14 /* DdbTabStripViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DdbTabStripViewController.xib; sourceTree = "<group>"; };
 		2DC80A8E1A9222F800C9397F /* TrackProperties.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackProperties.xib; sourceTree = "<group>"; };
 		2DCB18362515F9530054BD06 /* help.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = help.txt; path = ../../help.txt; sourceTree = "<group>"; };
 		2DCB18372515F95C0054BD06 /* about.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = about.txt; path = ../../about.txt; sourceTree = "<group>"; };
@@ -10971,6 +10985,28 @@
 			path = Visualization;
 			sourceTree = "<group>";
 		};
+		2DC657D0274957FE00583E14 /* RenameTab */ = {
+			isa = PBXGroup;
+			children = (
+				2DC657BC2746F67600583E14 /* RenameTabViewController.h */,
+				2DC657BD2746F67600583E14 /* RenameTabViewController.m */,
+				2DC657BE2746F67600583E14 /* RenameTabViewController.xib */,
+			);
+			path = RenameTab;
+			sourceTree = "<group>";
+		};
+		2DC657D92749607600583E14 /* DdbTabStrip */ = {
+			isa = PBXGroup;
+			children = (
+				2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */,
+				2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */,
+				2DC657D12749581900583E14 /* DdbTabStripViewController.h */,
+				2DC657D22749581900583E14 /* DdbTabStripViewController.m */,
+				2DC657D32749581900583E14 /* DdbTabStripViewController.xib */,
+			);
+			path = DdbTabStrip;
+			sourceTree = "<group>";
+		};
 		2DCB281819E8616E008E9DF6 /* m3u */ = {
 			isa = PBXGroup;
 			children = (
@@ -11247,8 +11283,6 @@
 				2DAD80A02416DBB100EB3075 /* CustomToolbarItem.m */,
 				2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */,
 				2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */,
-				2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */,
-				2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */,
 				2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */,
 				2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */,
 			);
@@ -11371,15 +11405,16 @@
 		2DE5562426075B4200285BF9 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
+				2DC657D92749607600583E14 /* DdbTabStrip */,
+				2DC657D0274957FE00583E14 /* RenameTab */,
 				2DE5562526075B8400285BF9 /* AlbumArtWidget.h */,
 				2DE5562626075B8400285BF9 /* AlbumArtWidget.m */,
 				2DE1D3E419B11539009B5BC6 /* PlaceholderWidget.h */,
 				2DE1D3E519B11539009B5BC6 /* PlaceholderWidget.m */,
 				2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */,
 				2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */,
-				2DC657BC2746F67600583E14 /* RenameTabViewController.h */,
-				2DC657BD2746F67600583E14 /* RenameTabViewController.m */,
-				2DC657BE2746F67600583E14 /* RenameTabViewController.xib */,
+				2DC657CA2749544000583E14 /* PlaylistWithTabsWidget.h */,
+				2DC657CB2749544000583E14 /* PlaylistWithTabsWidget.m */,
 				0D568526271DC35E0026F700 /* ScopeWidget.h */,
 				0D568527271DC35E0026F700 /* ScopeWidget.m */,
 				2D5F05EE25E306BC000A588C /* SpectrumAnalyzerWidget.h */,
@@ -12523,6 +12558,8 @@
 				2D4020901F27BD7200D4EA4F /* cueutil.h in Headers */,
 				2D135EF1226E47AA00BAAE84 /* scriptable_dsp.h in Headers */,
 				2D30D20D25E2A8930023A299 /* WidgetTopLevelView.h in Headers */,
+				2DC657D52749581900583E14 /* DdbTabStripViewController.h in Headers */,
+				2DC657CD2749544000583E14 /* PlaylistWithTabsWidget.h in Headers */,
 				2DDD764425E1506100FA6FE5 /* metadata.h in Headers */,
 				2D9EBB7225E45BAA00255592 /* DesignModeDeps.h in Headers */,
 				2DDD7ABC25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */,
@@ -13775,9 +13812,11 @@
 				2DF55C3F2270FCB9002C44DC /* ScriptableNodeEditorViewController.h in Headers */,
 				2DD39ED926AD8D1600C5846D /* analyzer.h in Headers */,
 				2DDBA26423E5F14A00051320 /* PlaylistHeaderView.h in Headers */,
+				2DC657CC2749544000583E14 /* PlaylistWithTabsWidget.h in Headers */,
 				2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
 				2DA273782406ED4100FB9BE1 /* GuiPreferencesWindowController.h in Headers */,
+				2DC657D42749581900583E14 /* DdbTabStripViewController.h in Headers */,
 				2DCCCF7E26C43D080034F4BB /* medialibwidget.h in Headers */,
 				2DDD789C25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
 				2D98B69E273482F700E655AE /* AAPLView.h in Headers */,
@@ -15684,6 +15723,7 @@
 				2DB05EF9252E4A9D0090635E /* iconAppearanceTemplate.pdf in Resources */,
 				4D2A6CA4183BC29400AC6BF5 /* btnstopTemplate.pdf in Resources */,
 				4D2A6CA1183BC29400AC6BF5 /* btnnextTemplate.pdf in Resources */,
+				2DC657D82749581900583E14 /* DdbTabStripViewController.xib in Resources */,
 				2DB05E77252E3F3E0090635E /* iconPluginsTemplate.pdf in Resources */,
 				2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */,
 				4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */,
@@ -15850,6 +15890,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D0A6B1D23771B3300252E6D /* playmodes.c in Sources */,
+				2DC657CF2749544000583E14 /* PlaylistWithTabsWidget.m in Sources */,
 				2D01D7F21AB223CC00BCD3C4 /* parser.c in Sources */,
 				2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */,
 				2D01D7DD1AB2219C00BCD3C4 /* pltmeta.c in Sources */,
@@ -15901,6 +15942,7 @@
 				2D98B68E272D573700E655AE /* ScopeSettings.m in Sources */,
 				2D5F05F325E306BC000A588C /* SpectrumAnalyzerWidget.m in Sources */,
 				2D40208F1F27BD7200D4EA4F /* cueutil.c in Sources */,
+				2DC657D72749581900583E14 /* DdbTabStripViewController.m in Sources */,
 				2DBCB726240AE28E0012F178 /* tftintutil.c in Sources */,
 				2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */,
 				2DB951C726B0874200602876 /* decodedblock.c in Sources */,
@@ -17266,6 +17308,7 @@
 				2D90EF9A2438A5A600AF6F4B /* ScriptableErrorViewer.m in Sources */,
 				2DDD781825E1578C00FA6FE5 /* SplitterWidget.m in Sources */,
 				2D1A564B1D9FFB10005E5CDD /* ReplayGainScannerController.m in Sources */,
+				2DC657D62749581900583E14 /* DdbTabStripViewController.m in Sources */,
 				2DD3774727404401007AD315 /* AppearancePreferencesViewController.m in Sources */,
 				2DF55C2A2270F415002C44DC /* ScriptableSelectViewController.m in Sources */,
 				2DE1D3E719B11539009B5BC6 /* PlaceholderWidget.m in Sources */,
@@ -17308,6 +17351,7 @@
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
 				2D046F7E25E2B55200F68459 /* MainWindow.m in Sources */,
 				2D747E4124B6580A00BBB987 /* MainWindowSidebarViewController.m in Sources */,
+				2DC657CE2749544000583E14 /* PlaylistWithTabsWidget.m in Sources */,
 				0D56856E27219F3C0026F700 /* analyzer.c in Sources */,
 				2DF55C442270FF7E002C44DC /* ScriptablePropertySheetDataSource.m in Sources */,
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,

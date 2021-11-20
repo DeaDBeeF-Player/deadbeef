@@ -108,7 +108,6 @@ extern DB_functions_t *deadbeef;
         [self.designableContainerView.trailingAnchor constraintEqualToAnchor:self.mainContentViewController.view.trailingAnchor],
     ]];
 
-    self.tabStrip = self.mainContentViewController.tabStrip;
     self.designableContainerView = self.mainContentViewController.designableView;
 #endif
 
@@ -139,19 +138,6 @@ extern DB_functions_t *deadbeef;
     }
     // seekbar value formatter
     self.seekBar.formatter = [TrackPositionFormatter new];
-
-    if (!self.tabStrip.superview) {
-        // add tab strip to the window titlebar
-        NSTitlebarAccessoryViewController* vc = [NSTitlebarAccessoryViewController new];
-
-        vc.view = _tabStrip;
-        vc.fullScreenMinHeight = _tabStrip.bounds.size.height;
-        vc.layoutAttribute = NSLayoutAttributeBottom;
-
-        [self.window addTitlebarAccessoryViewController:vc];
-
-        _tabStrip.frame = NSMakeRect(0,0,NSWidth(_tabStrip.frame),24);
-    }
 
     __weak MainWindowController *weakself = self;
     _updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f repeats:YES block:^(NSTimer * _Nonnull timer) {

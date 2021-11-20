@@ -24,6 +24,8 @@
 #ifndef deadbeef_DdbShared_h
 #define deadbeef_DdbShared_h
 
+#import <Foundation/Foundation.h>
+
 extern NSString * const ddbPlaylistItemsUTIType;
 extern NSString * const ddbMedialibItemUTIType;
 

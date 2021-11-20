@@ -83,7 +83,7 @@ static DesignModeState *_sharedInstance;
 
     if (!layoutWidget) {
         layoutWidget = [self.deps.serializer loadFromDictionary:@{
-            @"type":@"Playlist"
+            @"type":@"PlaylistWithTabs"
         }];
     }
 

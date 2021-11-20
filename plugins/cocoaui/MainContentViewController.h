@@ -13,7 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MainContentViewController : NSViewController
 
-@property (weak) IBOutlet DdbTabStrip *tabStrip;
 @property (weak) IBOutlet NSView *designableView;
 @property (weak) IBOutlet NSView *wrapperView;
 
