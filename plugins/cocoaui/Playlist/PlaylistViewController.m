@@ -419,10 +419,6 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     self.dataModel = [[PlaylistDataModel alloc] initWithIter:self.playlistIter];
     lv.dataModel = self.dataModel;
 
-    self.trackContextMenu = [TrackContextMenu new];
-    self.trackContextMenu.view = self.view;
-    self.trackContextMenu.delegate = self;
-
     self.sortColumn = -1;
 
     [self initContent];
@@ -1428,6 +1424,10 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
     }
 
     deadbeef->pl_unlock ();
+
+    self.trackContextMenu = [TrackContextMenu new];
+    self.trackContextMenu.view = self.view;
+    self.trackContextMenu.delegate = self;
 
     [self.trackContextMenu updateWithTrackList:tracks count:count playlist:plt currentTrack:current currentTrackIdx:current_idx];
     [self.trackContextMenu update:plt];

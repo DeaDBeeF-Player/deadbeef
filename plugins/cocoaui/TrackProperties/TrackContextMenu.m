@@ -9,10 +9,11 @@
 #include <sys/stat.h>
 #include "deadbeef.h"
 #include "deletefromdisk.h"
+#include "rg_scanner.h"
 #import "ConverterWindowController.h"
 #import "NSMenu+ActionItems.h"
+#import "PluginActionMenuItem.h"
 #import "ReplayGainScannerController.h"
-#include "rg_scanner.h"
 #import "TrackContextMenu.h"
 
 extern DB_functions_t *deadbeef;
@@ -36,6 +37,8 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) NSMenuItem *deleteFromDiskItem;
 
+@property (nonatomic) NSMenuItem *pluginActionsSeparatorItem;
+
 @property (nonatomic) NSMenuItem *trackPropertiesItem;
 
 @property (nonatomic) ddbUtilTrackList_t selectedTracksList;
@@ -51,6 +54,31 @@ extern DB_functions_t *deadbeef;
         return nil;
     }
 
+    return self;
+}
+
+- (void)dealloc {
+    if (_deleteFromDiskController) {
+        ddbDeleteFromDiskControllerFree(_deleteFromDiskController);
+        _deleteFromDiskController = NULL;
+    }
+
+    if (_selectedTracksList) {
+        ddbUtilTrackListFree(_selectedTracksList);
+        _selectedTracksList = NULL;
+    }
+
+    if (_playlist) {
+        deadbeef->plt_unref (_playlist);
+        _playlist = NULL;
+    }
+}
+
+- (void)updateMenuItems {
+    self.deleteFromDiskItem.hidden = deadbeef->conf_get_int("cocoaui.hide_remove_from_disk", 0);
+}
+
+- (void)update:(ddb_playlist_t *)playlist {
     self.reloadMetadataItem = [self insertItemWithTitle:@"Reload Metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0];
     self.reloadMetadataItem.target = self;
 
@@ -81,48 +109,23 @@ extern DB_functions_t *deadbeef;
 
     [self addItem:NSMenuItem.separatorItem];
 
-    [self addItem:NSMenuItem.separatorItem];
-
     self.convertItem = [self addItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@""];
     self.convertItem.target = self;
 
     self.deleteFromDiskItem = [self addItemWithTitle:@"Delete from Disk" action:@selector(deleteFromDisk) keyEquivalent:@""];
     self.deleteFromDiskItem.target = self;
 
-    [self addPluginActions];
-
     [self addItem:NSMenuItem.separatorItem];
+
+    if ([self addPluginActionItems]) {
+        [self addItem:NSMenuItem.separatorItem];
+    }
 
     self.trackPropertiesItem = [self addItemWithTitle:@"Track Properties" action:@selector(trackProperties) keyEquivalent:@""];
     self.trackPropertiesItem.target = self;
 
     self.autoenablesItems = NO;
 
-    return self;
-}
-
-- (void)dealloc {
-    if (_deleteFromDiskController) {
-        ddbDeleteFromDiskControllerFree(_deleteFromDiskController);
-        _deleteFromDiskController = NULL;
-    }
-
-    if (_selectedTracksList) {
-        ddbUtilTrackListFree(_selectedTracksList);
-        _selectedTracksList = NULL;
-    }
-
-    if (_playlist) {
-        deadbeef->plt_unref (_playlist);
-        _playlist = NULL;
-    }
-}
-
-- (void)updateMenuItems {
-    self.deleteFromDiskItem.hidden = deadbeef->conf_get_int("cocoaui.hide_remove_from_disk", 0);
-}
-
-- (void)update:(ddb_playlist_t *)playlist {
     [self updateMenuItems];
     self.playlist = playlist;
     if (playlist) {
@@ -142,7 +145,6 @@ extern DB_functions_t *deadbeef;
     self.rgScanAsSingleAlbumItem.enabled = can_be_rg_scanned;
     self.rgScanAsAlbumsItem.enabled = can_be_rg_scanned;
     self.rgRemoveInformationItem.enabled = has_rg_info;
-
 
     self.addToFrontOfQueueItem.enabled = enabled;
     self.addToQueueItem.enabled = enabled;
@@ -317,30 +319,139 @@ extern DB_functions_t *deadbeef;
     [ReplayGainScannerController runScanner:mode forTracks:tracks count:count];
 }
 
-- (void)addPluginActions {
-#if 0 // FIXME: this part of the menu needs to be rebuilt on each menu invocation
-    DB_playItem_t *track = NULL;
-    int selcount = self.selectedCount;
+- (BOOL)addPluginActionItems {
+    int selected_count = ddbUtilTrackListGetTrackCount (self.selectedTracksList);
+    ddb_playItem_t **tracks = ddbUtilTrackListGetTracks (self.selectedTracksList);
 
-    if (selcount == 1) {
-        DB_playItem_t *it = deadbeef->plt_get_first (self.playlist, PL_MAIN);
-        while (it) {
-            if (deadbeef->pl_is_selected (it)) {
-                break;
-            }
-            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+    DB_playItem_t *selected = NULL;
 
-            deadbeef->pl_item_unref (it);
-            it = next;
-        }
-        track = it;
+    if (selected_count > 0) {
+        selected = tracks[0];
     }
 
-    [self addActionItemsForContext:DDB_ACTION_CTX_SELECTION track:track filter:^BOOL(DB_plugin_action_t * _Nonnull action) {
+    DB_plugin_t **plugins = deadbeef->plug_get_list();
+    int i;
+    int added_entries = 0;
+    for (i = 0; plugins[i]; i++)
+    {
+        if (!plugins[i]->get_actions)
+            continue;
 
-        return (selcount==1 && (action->flags&DB_ACTION_SINGLE_TRACK)) || (selcount > 1 && (action->flags&DB_ACTION_MULTIPLE_TRACKS));
-    }];
-#endif
+        DB_plugin_action_t *actions = plugins[i]->get_actions (selected);
+        DB_plugin_action_t *action;
+
+        int count = 0;
+        for (action = actions; action; action = action->next)
+        {
+            if ((action->flags & DB_ACTION_COMMON) || !((action->callback2 && (action->flags & DB_ACTION_ADD_MENU)) || action->callback) || !(action->flags & (DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK)))
+                continue;
+
+            // create submenus (separated with '/')
+            const char *prev = action->title;
+            while (*prev && *prev == '/') {
+                prev++;
+            }
+
+            NSMenu *popup = NULL;
+
+            for (;;) {
+                const char *slash = strchr (prev, '/');
+                if (slash && *(slash-1) != '\\') {
+                    char name[slash-prev+1];
+                    // replace \/ with /
+                    const char *p = prev;
+                    char *t = name;
+                    while (*p && p < slash) {
+                        if (*p == '\\' && *(p+1) == '/') {
+                            *t++ = '/';
+                            p += 2;
+                        }
+                        else {
+                            *t++ = *p++;
+                        }
+                    }
+                    *t = 0;
+
+                    // add popup
+                    NSMenu *prev_menu = popup ? popup : self;
+
+                    // find menu item with the name
+                    for (NSMenuItem *item in prev_menu.itemArray) {
+                        if ([item.title isEqualToString:[NSString stringWithUTF8String:name]]) {
+                            if (item.menu == nil) {
+                                item.submenu = [NSMenu new];
+                            }
+                            popup = item.submenu;
+                            break;
+                        }
+                    }
+                    if (!popup) {
+                        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:name] action:@selector(pluginAction:) keyEquivalent:@""];
+                        item.submenu = [NSMenu new];
+                        if (prev_menu != self) {
+                            [prev_menu addItem:item];
+                        }
+                        else {
+                            [prev_menu addItem:item];
+                        }
+                        item.target = self;
+                        item.submenu = [NSMenu new];
+                        popup = item.submenu;
+                    }
+                }
+                else {
+                    break;
+                }
+                prev = slash+1;
+            }
+
+
+            count++;
+            added_entries++;
+
+            // replace \/ with /
+            const char *p = popup ? prev : action->title;
+            char title[strlen (p)+1];
+            char *t = title;
+            while (*p) {
+                if (*p == '\\' && *(p+1) == '/') {
+                    *t++ = '/';
+                    p += 2;
+                }
+                else {
+                    *t++ = *p++;
+                }
+            }
+            *t = 0;
+
+            PluginActionMenuItem *actionitem = [[PluginActionMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:title] action:@selector(pluginAction:) keyEquivalent:@""];
+            actionitem.target = self;
+            actionitem.pluginAction = action;
+            actionitem.pluginActionContext = DDB_ACTION_CTX_SELECTION;
+
+            if (popup != nil) {
+                [popup addItem:actionitem];
+            }
+            else {
+                [self addItem:actionitem];
+            }
+            if ((selected_count > 1 && !(action->flags & DB_ACTION_MULTIPLE_TRACKS)) ||
+                (action->flags & DB_ACTION_DISABLED)) {
+                actionitem.enabled = NO;
+            }
+        }
+        if (count > 0 && deadbeef->conf_get_int ("cocoaui.action_separators", 0)) { // FIXME: UI
+            [self addItem:NSMenuItem.separatorItem];
+        }
+    }
+
+    return added_entries > 0;
+}
+
+- (void)pluginAction:(PluginActionMenuItem *)sender {
+    if (sender.pluginAction->callback2) {
+        sender.pluginAction->callback2 (sender.pluginAction, sender.pluginActionContext);
+    }
 }
 
 #pragma mark -
