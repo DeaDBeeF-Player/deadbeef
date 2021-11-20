@@ -15,9 +15,7 @@
 
 @end
 
-
 @implementation SegmentedTabView
-
 
 - (instancetype)initWithFrame:(NSRect)frameRect {
     self = [super initWithFrame:frameRect];
@@ -28,7 +26,11 @@
     self.tabView = [[NSTabView alloc] initWithFrame:NSZeroRect];
     self.tabView.tabPosition = NSTabPositionNone;
     self.tabView.tabViewBorderType = NSTabViewBorderTypeNone;
+    self.tabView.allowsTruncatedLabels = YES;
+
     self.segmentedControl = [[NSSegmentedControl alloc] initWithFrame:NSZeroRect];
+    self.segmentedControl.segmentStyle = NSSegmentStyleAutomatic;
+    self.segmentedControl.segmentDistribution = NSSegmentDistributionFillEqually;
 
     self.segmentedControl.action = @selector(segmentedControlAction:);
     self.segmentedControl.target = self;
@@ -94,11 +96,44 @@
 - (nullable NSTabViewItem *)tabViewItemAtPoint:(NSPoint)point {
     point = [self.segmentedControl convertPoint:point fromView:self];
 
-    NSInteger index = (NSInteger)(point.x / self.segmentedControl.bounds.size.width * self.segmentedControl.segmentCount);
-    if (index < [self.tabView numberOfTabViewItems]) {
-        return [self.tabView tabViewItemAtIndex:index];
+    NSInteger count = self.segmentedControl.segmentCount;
+    CGFloat x = 0;
+    for (NSInteger index = 0; index < count; index++) {
+        CGFloat width;
+        if (self.segmentedControl.segmentDistribution == NSSegmentDistributionFillEqually) {
+            width = self.segmentedControl.bounds.size.width / count;
+        }
+        else {
+            // NOTE: this will return 0 for non-equal auto distributed segments
+            width = [self.segmentedControl widthForSegment:index];
+        }
+        x += width;
+        if (x > point.x) {
+            return [self.tabView tabViewItemAtIndex:index];
+        }
     }
+
     return nil;
+}
+
+- (NSInteger)indexOfTabViewItem:(NSTabViewItem *)tabViewItem {
+    return [self.tabView indexOfTabViewItem:tabViewItem];
+}
+
+- (NSTabViewItem *)tabViewItemAtIndex:(NSInteger)index {
+    return [self.tabView tabViewItemAtIndex:index];
+}
+
+- (NSInteger)numberOfTabViewItems {
+    return self.tabView.numberOfTabViewItems;
+}
+
+- (NSArray<__kindof NSTabViewItem *> *)tabViewItems {
+    return self.tabView.tabViewItems;
+}
+
+- (void)setTabViewItems:(NSArray<__kindof NSTabViewItem *> *)tabViewItems {
+    self.tabView.tabViewItems = tabViewItems;
 }
 
 @end

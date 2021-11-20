@@ -15,7 +15,6 @@
 
 @property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
 @property (nonatomic) SegmentedTabView *segmentedTabView;
-@property (nonatomic) NSTabView *tabView;
 @property (nonatomic) NSTabViewItem *clickedItem;
 @property (nonatomic) NSPoint clickedPoint;
 @property (nonatomic) NSMutableArray *labels;
@@ -40,10 +39,7 @@
     self.labels = [NSMutableArray new];
 
     self.segmentedTabView = [[SegmentedTabView alloc] initWithFrame:NSZeroRect];
-    self.tabView = self.segmentedTabView.tabView;
 
-    self.tabView.allowsTruncatedLabels = YES;
-    
     [self.topLevelView addSubview:self.segmentedTabView];
 
     NSMenu *menu = [NSMenu new];
@@ -77,7 +73,7 @@
 
 - (void)menuNeedsUpdate:(NSMenu *)menu {
     self.clickedItem = [self tabViewAtPoint:NSEvent.mouseLocation];
-    NSPoint point = [self.tabView.window convertPointFromScreen:NSEvent.mouseLocation];
+    NSPoint point = [self.segmentedTabView.window convertPointFromScreen:NSEvent.mouseLocation];
     self.clickedPoint = [self.segmentedTabView convertPoint:point fromView:nil];
 }
 
@@ -89,9 +85,7 @@
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
-    NSTabViewItem *item = [self tabViewAtPoint:NSEvent.mouseLocation];
-
-    if (item == nil
+    if (self.clickedItem == nil
         && (menuItem.action == @selector(renameTab:)
             || menuItem.action == @selector(removeTab:)
             || menuItem.action == @selector(moveTabLeft:)
@@ -123,7 +117,7 @@
 }
 
 - (void)renameTabDone:(RenameTabViewController *)renameTabViewController withName:(NSString *)name {
-    NSInteger index = [self.tabView indexOfTabViewItem:self.clickedItem];
+    NSInteger index = [self.segmentedTabView indexOfTabViewItem:self.clickedItem];
     if (index == NSNotFound) {
         return;
     }
@@ -139,7 +133,7 @@
     if (index == NSNotFound) {
         return;
     }
-    NSTabViewItem *item = [self.tabView tabViewItemAtIndex:index];
+    NSTabViewItem *item = [self.segmentedTabView tabViewItemAtIndex:index];
     [child.view removeFromSuperview];
     [self.segmentedTabView removeTabViewItem:item];
     [self.labels removeObjectAtIndex:index];
@@ -152,7 +146,7 @@
     }
 
 
-    NSInteger index = [self.tabView indexOfTabViewItem:self.clickedItem];
+    NSInteger index = [self.segmentedTabView indexOfTabViewItem:self.clickedItem];
     if (index == NSNotFound) {
         return;
     }
@@ -175,7 +169,7 @@
         return;
     }
 
-    NSInteger index = [self.tabView indexOfTabViewItem:self.clickedItem];
+    NSInteger index = [self.segmentedTabView indexOfTabViewItem:self.clickedItem];
     if (index == 0 || index == NSNotFound) {
         return;
     }
@@ -187,7 +181,7 @@
     [self.labels insertObject:label atIndex:index-1];
     [self insertChild:childWidget atIndex:index-1];
 
-    self.clickedItem = [self.tabView tabViewItemAtIndex:index-1];
+    self.clickedItem = [self.segmentedTabView tabViewItemAtIndex:index-1];
     [self.segmentedTabView setLabel:self.clickedItem.label forSegment:index-1];
 
     [self.deps.state layoutDidChange];
@@ -198,8 +192,8 @@
         return;
     }
 
-    NSInteger index = [self.tabView indexOfTabViewItem:self.clickedItem];
-    if (index == NSNotFound || index == self.tabView.numberOfTabViewItems-1) {
+    NSInteger index = [self.segmentedTabView indexOfTabViewItem:self.clickedItem];
+    if (index == NSNotFound || index == self.segmentedTabView.numberOfTabViewItems-1) {
         return;
     }
 
@@ -210,7 +204,7 @@
     [self.labels insertObject:label atIndex:index+1];
     [self insertChild:childWidget atIndex:index+1];
 
-    self.clickedItem = [self.tabView tabViewItemAtIndex:index+1];
+    self.clickedItem = [self.segmentedTabView tabViewItemAtIndex:index+1];
     [self.segmentedTabView setLabel:self.clickedItem.label forSegment:index+1];
 
     [self.deps.state layoutDidChange];
@@ -249,7 +243,7 @@
         return;
     }
 
-    NSTabViewItem *item = [self.tabView tabViewItemAtIndex:index];
+    NSTabViewItem *item = [self.segmentedTabView tabViewItemAtIndex:index];
 
     [child.view removeFromSuperview];
     [item.view addSubview:newChild.view];
@@ -284,7 +278,7 @@
 
 - (NSDictionary *)serializedSettingsDictionary {
     NSMutableArray *labels = [NSMutableArray new];
-    for (NSTabViewItem *item in self.tabView.tabViewItems) {
+    for (NSTabViewItem *item in self.segmentedTabView.tabViewItems) {
         [labels addObject:item.label];
     }
     return @{
