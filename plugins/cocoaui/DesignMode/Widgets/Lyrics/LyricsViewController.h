@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LyricsViewController : NSViewController
 
-@property (nonatomic) ddb_playItem_t *track;
+@property (nonatomic,nullable) ddb_playItem_t *track;
 
 
 @end
