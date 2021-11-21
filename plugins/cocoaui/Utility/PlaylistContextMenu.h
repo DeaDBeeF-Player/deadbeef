@@ -11,10 +11,12 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol RenamePlaylistViewControllerDelegate;
+@protocol DeletePlaylistConfirmationControllerDelegate;
 
 @interface PlaylistContextMenu : NSMenu
 
 @property (nonatomic,weak) id<RenamePlaylistViewControllerDelegate> renamePlaylistDelegate;
+@property (nonatomic,weak) id<DeletePlaylistConfirmationControllerDelegate> deletePlaylistDelegate;
 @property (nonatomic,weak) NSView *parentView;
 @property (nonatomic) NSPoint clickPoint;
 

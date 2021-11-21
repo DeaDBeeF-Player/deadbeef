@@ -23,13 +23,14 @@
 
 #import "DdbTabStrip.h"
 #import "DdbShared.h"
+#import "DeletePlaylistConfirmationController.h"
 #import "PlaylistContextMenu.h"
 #import "RenamePlaylistViewController.h"
 #include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
 
-@interface DdbTabStrip () <RenamePlaylistViewControllerDelegate> {
+@interface DdbTabStrip () <RenamePlaylistViewControllerDelegate,DeletePlaylistConfirmationControllerDelegate> {
     int _dragging;
     int _prepare;
     int _movepos;
@@ -204,19 +205,6 @@ static int close_btn_left_offs = 8;
 
 - (void)windowDidBecomeKey:(id)sender {
     self.needsDisplay = YES;
-}
-
-static NSString *
-plt_get_title_wrapper (int plt) {
-    if (plt == -1) {
-        return @"";
-    }
-    ddb_playlist_t *p = deadbeef->plt_get_for_idx (plt);
-    
-    char buffer[1000];
-    deadbeef->plt_get_title (p, buffer, sizeof (buffer));
-    deadbeef->plt_unref (p);
-    return [NSString stringWithUTF8String:buffer];
 }
 
 - (int)tabWidthForIndex:(int)tab {
@@ -658,7 +646,11 @@ plt_get_title_wrapper (int plt) {
 }
 
 - (void)closePlaylist:(id)sender {
-    cocoaui_remove_playlist (_tab_clicked);
+    DeletePlaylistConfirmationController *controller = [DeletePlaylistConfirmationController new];
+    controller.window = self.window;
+    controller.title = plt_get_title_wrapper (_tab_clicked);
+    controller.delegate = self;
+    [controller run];
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent {
@@ -889,7 +881,18 @@ plt_get_title_wrapper (int plt) {
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     [self scrollToTab:_tab_clicked];
-    deadbeef->plt_unref (plt);
+}
+
+#pragma mark - DeletePlaylistConfirmationControllerDelegate
+
+- (void)deletePlaylistDone:(DeletePlaylistConfirmationController *)controller {
+//            self.playlistConfirmationAlertOpen = NO;
+    deadbeef->plt_remove (self.tab_clicked);
+    int playlist = deadbeef->plt_get_curr_idx ();
+    deadbeef->conf_set_int ("playlist.current", playlist);
+    [self scrollToTab:playlist];
+    self.tab_clicked = -1;
+    self.needsDisplay = YES; // ???
 }
 
 @end

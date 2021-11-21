@@ -10,10 +10,12 @@
 #import "NSMenu+ActionItems.h"
 #import "PlaylistBrowserViewController.h"
 #import "PlaylistContextMenu.h"
+#import "RenamePlaylistViewController.h"
+#import "DeletePlaylistConfirmationController.h"
 
 extern DB_functions_t *deadbeef;
 
-@interface PlaylistBrowserViewController () <NSTableViewDelegate, NSTableViewDataSource, NSMenuDelegate>
+@interface PlaylistBrowserViewController () <NSTableViewDelegate, NSTableViewDataSource, NSMenuDelegate, RenamePlaylistViewControllerDelegate, DeletePlaylistConfirmationControllerDelegate>
 
 @property (weak) IBOutlet NSTableView *tableView;
 
@@ -27,6 +29,7 @@ extern DB_functions_t *deadbeef;
 @property (weak) IBOutlet NSMenuItem *durationMenuItem;
 
 @property (nonatomic) BOOL isReloading;
+@property (nonatomic) NSInteger clickedRow;
 
 @end
 
@@ -56,8 +59,11 @@ extern DB_functions_t *deadbeef;
 - (void)updateTableViewMenu {
     PlaylistContextMenu *menu = (PlaylistContextMenu *)self.tableView.menu;
     menu.parentView = self.tableView;
+    menu.renamePlaylistDelegate = self;
+    menu.deletePlaylistDelegate = self;
     NSPoint coord = [self.tableView.window convertPointFromScreen:NSEvent.mouseLocation];
     menu.clickPoint = [self.tableView convertPoint:coord fromView:nil];
+    self.clickedRow = self.tableView.clickedRow;
     [menu updateWithPlaylistIndex:(int)self.tableView.clickedRow];
 }
 
@@ -270,6 +276,27 @@ extern DB_functions_t *deadbeef;
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
     return deadbeef->plt_get_count();
+}
+
+#pragma mark - RenamePlaylistViewControllerDelegate
+
+- (void)renamePlaylist:(RenamePlaylistViewController *)viewController doneWithName:(NSString *)name {
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx ((int)self.clickedRow);
+    if (plt == NULL) {
+        return;
+    }
+    deadbeef->plt_set_title (plt, [name UTF8String]);
+    deadbeef->plt_save_config (plt);
+    deadbeef->plt_unref (plt);
+}
+
+#pragma mark - DeletePlaylistConfirmationControllerDelegate
+
+- (void)deletePlaylistDone:(DeletePlaylistConfirmationController *)controller {
+    deadbeef->plt_remove ((int)self.clickedRow);
+    int playlist = deadbeef->plt_get_curr_idx ();
+    deadbeef->conf_set_int ("playlist.current", playlist);
+    self.clickedRow = -1;
 }
 
 @end

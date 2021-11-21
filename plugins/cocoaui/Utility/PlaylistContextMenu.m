@@ -8,6 +8,7 @@
 
 #include "deadbeef.h"
 #import "DdbShared.h"
+#import "DeletePlaylistConfirmationController.h"
 #import "NSMenu+ActionItems.h"
 #import "RenamePlaylistViewController.h"
 #import "PlaylistContextMenu.h"
@@ -57,7 +58,11 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)closePlaylist:(id)sender {
-    cocoaui_remove_playlist (self.playlistIndex);
+    DeletePlaylistConfirmationController *controller = [DeletePlaylistConfirmationController new];
+    controller.window = self.parentView.window;
+    controller.title = plt_get_title_wrapper ((int)self.playlistIndex);
+    controller.delegate = self.deletePlaylistDelegate;
+    [controller run];
 }
 
 - (void)renamePlaylistAction:(NSMenuItem *)sender {

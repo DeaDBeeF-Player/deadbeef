@@ -32,9 +32,6 @@ extern NSString * const ddbMedialibItemUTIType;
 int
 cocoaui_add_new_playlist (void);
 
-int
-cocoaui_remove_playlist (int index);
-
 void
 cocoaui_playlist_set_curr (int playlist);
 
@@ -43,5 +40,8 @@ conf_get_nsstr (const char *key, const char *def);
 
 void
 conf_set_nsstr (const char *key, NSString *value);
+
+NSString *
+plt_get_title_wrapper (int plt);
 
 #endif
