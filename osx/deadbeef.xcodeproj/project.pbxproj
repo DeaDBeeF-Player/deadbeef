@@ -2326,6 +2326,15 @@
 		2DC657D62749581900583E14 /* DdbTabStripViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC657D22749581900583E14 /* DdbTabStripViewController.m */; };
 		2DC657D72749581900583E14 /* DdbTabStripViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC657D22749581900583E14 /* DdbTabStripViewController.m */; };
 		2DC657D82749581900583E14 /* DdbTabStripViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC657D32749581900583E14 /* DdbTabStripViewController.xib */; };
+		2DC657E2274A5F6000583E14 /* PlaylistBrowserWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC657E0274A5F6000583E14 /* PlaylistBrowserWidget.h */; };
+		2DC657E3274A5F6000583E14 /* PlaylistBrowserWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC657E0274A5F6000583E14 /* PlaylistBrowserWidget.h */; };
+		2DC657E4274A5F6000583E14 /* PlaylistBrowserWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC657E1274A5F6000583E14 /* PlaylistBrowserWidget.m */; };
+		2DC657E5274A5F6000583E14 /* PlaylistBrowserWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC657E1274A5F6000583E14 /* PlaylistBrowserWidget.m */; };
+		2DC657EA274A605E00583E14 /* PlaylistBrowserViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC657E7274A605E00583E14 /* PlaylistBrowserViewController.h */; };
+		2DC657EB274A605E00583E14 /* PlaylistBrowserViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC657E7274A605E00583E14 /* PlaylistBrowserViewController.h */; };
+		2DC657EC274A605E00583E14 /* PlaylistBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC657E8274A605E00583E14 /* PlaylistBrowserViewController.m */; };
+		2DC657ED274A605E00583E14 /* PlaylistBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC657E8274A605E00583E14 /* PlaylistBrowserViewController.m */; };
+		2DC657EE274A605E00583E14 /* PlaylistBrowserViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC657E9274A605E00583E14 /* PlaylistBrowserViewController.xib */; };
 		2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC80A8E1A9222F800C9397F /* TrackProperties.xib */; };
 		2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
@@ -6557,6 +6566,11 @@
 		2DC657D12749581900583E14 /* DdbTabStripViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbTabStripViewController.h; sourceTree = "<group>"; };
 		2DC657D22749581900583E14 /* DdbTabStripViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DdbTabStripViewController.m; sourceTree = "<group>"; };
 		2DC657D32749581900583E14 /* DdbTabStripViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DdbTabStripViewController.xib; sourceTree = "<group>"; };
+		2DC657E0274A5F6000583E14 /* PlaylistBrowserWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistBrowserWidget.h; sourceTree = "<group>"; };
+		2DC657E1274A5F6000583E14 /* PlaylistBrowserWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistBrowserWidget.m; sourceTree = "<group>"; };
+		2DC657E7274A605E00583E14 /* PlaylistBrowserViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistBrowserViewController.h; sourceTree = "<group>"; };
+		2DC657E8274A605E00583E14 /* PlaylistBrowserViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistBrowserViewController.m; sourceTree = "<group>"; };
+		2DC657E9274A605E00583E14 /* PlaylistBrowserViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlaylistBrowserViewController.xib; sourceTree = "<group>"; };
 		2DC80A8E1A9222F800C9397F /* TrackProperties.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackProperties.xib; sourceTree = "<group>"; };
 		2DCB18362515F9530054BD06 /* help.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = help.txt; path = ../../help.txt; sourceTree = "<group>"; };
 		2DCB18372515F95C0054BD06 /* about.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = about.txt; path = ../../about.txt; sourceTree = "<group>"; };
@@ -11007,6 +11021,16 @@
 			path = DdbTabStrip;
 			sourceTree = "<group>";
 		};
+		2DC657E6274A603A00583E14 /* PlaylistBrowser */ = {
+			isa = PBXGroup;
+			children = (
+				2DC657E7274A605E00583E14 /* PlaylistBrowserViewController.h */,
+				2DC657E8274A605E00583E14 /* PlaylistBrowserViewController.m */,
+				2DC657E9274A605E00583E14 /* PlaylistBrowserViewController.xib */,
+			);
+			path = PlaylistBrowser;
+			sourceTree = "<group>";
+		};
 		2DCB281819E8616E008E9DF6 /* m3u */ = {
 			isa = PBXGroup;
 			children = (
@@ -11406,11 +11430,14 @@
 			isa = PBXGroup;
 			children = (
 				2DC657D92749607600583E14 /* DdbTabStrip */,
+				2DC657E6274A603A00583E14 /* PlaylistBrowser */,
 				2DC657D0274957FE00583E14 /* RenameTab */,
 				2DE5562526075B8400285BF9 /* AlbumArtWidget.h */,
 				2DE5562626075B8400285BF9 /* AlbumArtWidget.m */,
 				2DE1D3E419B11539009B5BC6 /* PlaceholderWidget.h */,
 				2DE1D3E519B11539009B5BC6 /* PlaceholderWidget.m */,
+				2DC657E0274A5F6000583E14 /* PlaylistBrowserWidget.h */,
+				2DC657E1274A5F6000583E14 /* PlaylistBrowserWidget.m */,
 				2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */,
 				2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */,
 				2DC657CA2749544000583E14 /* PlaylistWithTabsWidget.h */,
@@ -12558,6 +12585,7 @@
 				2D4020901F27BD7200D4EA4F /* cueutil.h in Headers */,
 				2D135EF1226E47AA00BAAE84 /* scriptable_dsp.h in Headers */,
 				2D30D20D25E2A8930023A299 /* WidgetTopLevelView.h in Headers */,
+				2DC657EB274A605E00583E14 /* PlaylistBrowserViewController.h in Headers */,
 				2DC657D52749581900583E14 /* DdbTabStripViewController.h in Headers */,
 				2DC657CD2749544000583E14 /* PlaylistWithTabsWidget.h in Headers */,
 				2DDD764425E1506100FA6FE5 /* metadata.h in Headers */,
@@ -12567,6 +12595,7 @@
 				2D448A851D5C5C6500B43F12 /* logger.h in Headers */,
 				2DA8912225FFEB9B0084860D /* PlaylistGroup.h in Headers */,
 				2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */,
+				2DC657E3274A5F6000583E14 /* PlaylistBrowserWidget.h in Headers */,
 				2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */,
 				2DAA402E269AF864006D2754 /* TrackPositionFormatter.h in Headers */,
 				2DAE701925BDDC3300E40154 /* deletefromdisk.h in Headers */,
@@ -13832,6 +13861,7 @@
 				0D568528271DC35E0026F700 /* ScopeWidget.h in Headers */,
 				2D98B69227347C7C00E655AE /* ScopeRenderer.h in Headers */,
 				2D98B698273482BA00E655AE /* AAPLNSView.h in Headers */,
+				2DC657EA274A605E00583E14 /* PlaylistBrowserViewController.h in Headers */,
 				2DA273892406FBD800FB9BE1 /* DspPreferencesViewController.h in Headers */,
 				2DDD778E25E153D000FA6FE5 /* WidgetFactory.h in Headers */,
 				2DAD80A12416DBB100EB3075 /* CustomToolbarItem.h in Headers */,
@@ -13857,6 +13887,7 @@
 				2DA5C2C226A75B840098AF24 /* viz.h in Headers */,
 				2DDF87D924027DA500CA8E91 /* PluginActionMenuItem.h in Headers */,
 				2DBF3D4327086AA900023138 /* MainContentViewController.h in Headers */,
+				2DC657E2274A5F6000583E14 /* PlaylistBrowserWidget.h in Headers */,
 				2DA30E792403292D001BAB8A /* PlaybackPreferencesViewController.h in Headers */,
 				2D9F6534241BE78C00D9D16E /* SeekbarOverlay.h in Headers */,
 				2D3CD9372409A091005875A9 /* PinnedGroupTitleView.h in Headers */,
@@ -15741,6 +15772,7 @@
 				2D828E5419E5679800EE874F /* Search.xib in Resources */,
 				2D3EBD9D1A9379BD00E5E255 /* Preferences.xib in Resources */,
 				2DD3775D27414BD9007AD315 /* ScopePreferencesWindowController.xib in Resources */,
+				2DC657EE274A605E00583E14 /* PlaylistBrowserViewController.xib in Resources */,
 				2DA5E331238DB0C4005832B7 /* EditColumnPanel.xib in Resources */,
 				4DE28473205BE0B20023063E /* HelpViewer.xib in Resources */,
 				2DB05E36252E3CF10090635E /* iconSoundTemplate.pdf in Resources */,
@@ -15889,6 +15921,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DC657ED274A605E00583E14 /* PlaylistBrowserViewController.m in Sources */,
 				2D0A6B1D23771B3300252E6D /* playmodes.c in Sources */,
 				2DC657CF2749544000583E14 /* PlaylistWithTabsWidget.m in Sources */,
 				2D01D7F21AB223CC00BCD3C4 /* parser.c in Sources */,
@@ -15901,6 +15934,7 @@
 				2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */,
 				2D01D7E41AB2219C00BCD3C4 /* utf8.c in Sources */,
 				2D01D7D11AB2219C00BCD3C4 /* playqueue.c in Sources */,
+				2DC657E5274A5F6000583E14 /* PlaylistBrowserWidget.m in Sources */,
 				2D135EFD226E4E1900BAAE84 /* scriptable_encoder.c in Sources */,
 				0D56852B271DC35E0026F700 /* ScopeWidget.m in Sources */,
 				2D01D7DB1AB2219C00BCD3C4 /* playlist.c in Sources */,
@@ -17360,11 +17394,13 @@
 				2DDBA24E23E5E66D00051320 /* PlaylistContentView.m in Sources */,
 				2DF3D08124E70775008D966E /* MediaLibraryCoverQueryData.m in Sources */,
 				2D72047719DF2971000989C6 /* PlaylistViewController.m in Sources */,
+				2DC657EC274A605E00583E14 /* PlaylistBrowserViewController.m in Sources */,
 				2D98B681272B272300E655AE /* ScopeShaders.metal in Sources */,
 				2D54915822B1711E000FE7E3 /* HelpWindowController.m in Sources */,
 				0D56852A271DC35E0026F700 /* ScopeWidget.m in Sources */,
 				2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */,
 				2D986143226C816000BAACB1 /* BrowseButton.m in Sources */,
+				2DC657E4274A5F6000583E14 /* PlaylistBrowserWidget.m in Sources */,
 				2D9EBAAD25E44A0700255592 /* WidgetSerializer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -216,6 +216,7 @@ fill_pltbrowser_rows (gpointer user_data)
             snprintf (totaltime_str, sizeof (totaltime_str), "%d:%02d:%02d", hourtotal, mintotal, sectotal);
         }
         else {
+            // NOTE: localizable because of the "d" suffix for days
             snprintf (totaltime_str, sizeof (totaltime_str), _("%dd %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
         }
 
