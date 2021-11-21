@@ -138,6 +138,17 @@ extern DB_functions_t *deadbeef;
 
 #pragma mark -
 
+- (IBAction)tableViewAction:(id)sender {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    int cur = deadbeef->plt_get_cursor (plt, PL_MAIN);
+    deadbeef->plt_unref (plt);
+
+    if (cur == -1) {
+        cur = 0;
+    }
+    deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, cur, 0);
+}
+
 - (void)menuNeedsUpdate:(NSMenu *)menu {
     if (menu == self.tableView.menu) {
         [self updateTableViewMenu];
@@ -147,12 +158,15 @@ extern DB_functions_t *deadbeef;
 - (IBAction)playingItemAction:(NSMenuItem *)sender {
     self.playingColumn.hidden = !self.playingColumn.isHidden;
 }
+
 - (IBAction)itemsItemAction:(NSMenuItem *)sender {
     self.itemsColumn.hidden = !self.itemsColumn.isHidden;
 }
+
 - (IBAction)durationItemAction:(NSMenuItem *)sender {
     self.durationColumn.hidden = !self.durationColumn.isHidden;
 }
+
 
 #pragma mark - NSMenuDelegate
 
