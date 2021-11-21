@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="LyricsViewController">
+            <connections>
+                <outlet property="textView" destination="GPp-RP-cpY" id="lmW-J6-1fh"/>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" translatesAutoresizingMaskIntoConstraints="NO" id="ULh-uM-5Vd">
+                    <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+                    <clipView key="contentView" drawsBackground="NO" id="KXD-6H-FCh">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" findStyle="bar" allowsCharacterPickerTouchBarItem="NO" textCompletion="NO" id="GPp-RP-cpY">
+                                <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                <size key="minSize" width="480" height="272"/>
+                                <size key="maxSize" width="480" height="10000000"/>
+                                <attributedString key="textStorage">
+                                    <fragment content="Hello Lyrics">
+                                        <attributes>
+                                            <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                            <font key="NSFont" size="12" name="Helvetica"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            </textView>
+                        </subviews>
+                    </clipView>
+                    <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="NOj-d5-msG">
+                        <rect key="frame" x="-100" y="-100" width="225" height="15"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="Iwf-rJ-efF">
+                        <rect key="frame" x="465" y="0.0" width="15" height="272"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                </scrollView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="ULh-uM-5Vd" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="7uI-B3-TBX"/>
+                <constraint firstAttribute="bottom" secondItem="ULh-uM-5Vd" secondAttribute="bottom" id="ItW-1J-rZV"/>
+                <constraint firstItem="ULh-uM-5Vd" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="Xr8-Ca-mvg"/>
+                <constraint firstAttribute="trailing" secondItem="ULh-uM-5Vd" secondAttribute="trailing" id="fwh-m0-fBE"/>
+            </constraints>
+            <point key="canvasLocation" x="139" y="114"/>
+        </customView>
+    </objects>
+</document>

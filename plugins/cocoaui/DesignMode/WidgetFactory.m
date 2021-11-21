@@ -8,6 +8,7 @@
 
 #import "AlbumArtWidget.h"
 #import "DesignModeDeps.h"
+#import "LyricsWidget.h"
 #import "PlaylistBrowserWidget.h"
 #import "PlaylistWidget.h"
 #import "PlaylistWithTabsWidget.h"
@@ -94,6 +95,9 @@
     }];
     [self registerType:PlaylistBrowserWidget.widgetType displayName:@"Playlist Browser" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
         return [[PlaylistBrowserWidget alloc] initWithDeps:self.deps];
+    }];
+    [self registerType:LyricsWidget.widgetType displayName:@"Lyrics" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+        return [[LyricsWidget alloc] initWithDeps:self.deps];
     }];
 }
 

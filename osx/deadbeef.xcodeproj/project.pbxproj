@@ -2352,6 +2352,11 @@
 		2DC6580E274A994100583E14 /* TableViewWithReturnAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC6580B274A994100583E14 /* TableViewWithReturnAction.h */; };
 		2DC6580F274A994100583E14 /* TableViewWithReturnAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6580C274A994100583E14 /* TableViewWithReturnAction.m */; };
 		2DC65810274A994100583E14 /* TableViewWithReturnAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6580C274A994100583E14 /* TableViewWithReturnAction.m */; };
+		2DC65826274AB03800583E14 /* LyricsViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC65821274AB03700583E14 /* LyricsViewController.h */; };
+		2DC65827274AB03800583E14 /* LyricsWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC65822274AB03700583E14 /* LyricsWidget.h */; };
+		2DC65828274AB03800583E14 /* LyricsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC65823274AB03700583E14 /* LyricsViewController.xib */; };
+		2DC65829274AB03800583E14 /* LyricsWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC65824274AB03700583E14 /* LyricsWidget.m */; };
+		2DC6582A274AB03800583E14 /* LyricsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC65825274AB03700583E14 /* LyricsViewController.m */; };
 		2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC80A8E1A9222F800C9397F /* TrackProperties.xib */; };
 		2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
@@ -6597,6 +6602,11 @@
 		2DC65806274A876300583E14 /* DeletePlaylistConfirmationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeletePlaylistConfirmationController.m; sourceTree = "<group>"; };
 		2DC6580B274A994100583E14 /* TableViewWithReturnAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewWithReturnAction.h; sourceTree = "<group>"; };
 		2DC6580C274A994100583E14 /* TableViewWithReturnAction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewWithReturnAction.m; sourceTree = "<group>"; };
+		2DC65821274AB03700583E14 /* LyricsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LyricsViewController.h; sourceTree = "<group>"; };
+		2DC65822274AB03700583E14 /* LyricsWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LyricsWidget.h; sourceTree = "<group>"; };
+		2DC65823274AB03700583E14 /* LyricsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LyricsViewController.xib; sourceTree = "<group>"; };
+		2DC65824274AB03700583E14 /* LyricsWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LyricsWidget.m; sourceTree = "<group>"; };
+		2DC65825274AB03700583E14 /* LyricsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LyricsViewController.m; sourceTree = "<group>"; };
 		2DC80A8E1A9222F800C9397F /* TrackProperties.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackProperties.xib; sourceTree = "<group>"; };
 		2DCB18362515F9530054BD06 /* help.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = help.txt; path = ../../help.txt; sourceTree = "<group>"; };
 		2DCB18372515F95C0054BD06 /* about.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = about.txt; path = ../../about.txt; sourceTree = "<group>"; };
@@ -11070,6 +11080,18 @@
 			path = PlaylistBrowser;
 			sourceTree = "<group>";
 		};
+		2DC65820274AB03700583E14 /* Lyrics */ = {
+			isa = PBXGroup;
+			children = (
+				2DC65821274AB03700583E14 /* LyricsViewController.h */,
+				2DC65822274AB03700583E14 /* LyricsWidget.h */,
+				2DC65823274AB03700583E14 /* LyricsViewController.xib */,
+				2DC65824274AB03700583E14 /* LyricsWidget.m */,
+				2DC65825274AB03700583E14 /* LyricsViewController.m */,
+			);
+			path = Lyrics;
+			sourceTree = "<group>";
+		};
 		2DCB281819E8616E008E9DF6 /* m3u */ = {
 			isa = PBXGroup;
 			children = (
@@ -11468,6 +11490,7 @@
 		2DE5562426075B4200285BF9 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
+				2DC65820274AB03700583E14 /* Lyrics */,
 				2DC657E6274A603A00583E14 /* PlaylistBrowser */,
 				2DC657D0274957FE00583E14 /* Tabs */,
 				2DE5562526075B8400285BF9 /* AlbumArtWidget.h */,
@@ -13969,8 +13992,10 @@
 				2D8EE27424D03601005C5B4B /* MediaLibraryOutlineViewController.h in Headers */,
 				2D713FFE1A5D7D5900EFF139 /* playqueue.h in Headers */,
 				2D747E3B24B64E7600BBB987 /* SidebarSplitViewController.h in Headers */,
+				2DC65826274AB03800583E14 /* LyricsViewController.h in Headers */,
 				2DB951B626B07E7B00602876 /* decodedblock.h in Headers */,
 				2DDD796325E15ED200FA6FE5 /* PlaylistWidget.h in Headers */,
+				2DC65827274AB03800583E14 /* LyricsWidget.h in Headers */,
 				2D0A6B1B237718DA00252E6D /* playmodes.h in Headers */,
 				2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */,
 				2DD3774627404401007AD315 /* AppearancePreferencesViewController.h in Headers */,
@@ -15798,6 +15823,7 @@
 				4D2A6CA4183BC29400AC6BF5 /* btnstopTemplate.pdf in Resources */,
 				4D2A6CA1183BC29400AC6BF5 /* btnnextTemplate.pdf in Resources */,
 				2DC657D82749581900583E14 /* DdbTabStripViewController.xib in Resources */,
+				2DC65828274AB03800583E14 /* LyricsViewController.xib in Resources */,
 				2DB05E77252E3F3E0090635E /* iconPluginsTemplate.pdf in Resources */,
 				2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */,
 				4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */,
@@ -17402,6 +17428,7 @@
 				2DDD779025E153D000FA6FE5 /* WidgetFactory.m in Sources */,
 				2DA30B8023F1C9A3003D22E3 /* PropertySheetContentView.m in Sources */,
 				2D98613F226C814100BAACB1 /* PropertySheetViewController.m in Sources */,
+				2DC65829274AB03800583E14 /* LyricsWidget.m in Sources */,
 				2DC657F3274A7A6900583E14 /* PlaylistContextMenu.m in Sources */,
 				2DD3775227412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.m in Sources */,
 				2DA30E7A2403292D001BAB8A /* PlaybackPreferencesViewController.m in Sources */,
@@ -17426,6 +17453,7 @@
 				2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */,
 				2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */,
 				2D9C0C26238DC2C100CE8C10 /* GroupByCustomWindowController.m in Sources */,
+				2DC6582A274AB03800583E14 /* LyricsViewController.m in Sources */,
 				2D04701625E2D97D00F68459 /* WidgetMenuBuilder.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* SearchViewController.m in Sources */,
 				2D747E3924B64E7600BBB987 /* SidebarSplitViewItem.m in Sources */,
