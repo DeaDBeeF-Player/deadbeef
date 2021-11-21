@@ -31,7 +31,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)update {
-    NSString *lyrics = @"Not available";
+    NSString *lyrics = @"Lyrics Not Available";
     NSString *artist;
     NSString *title;
     if (self.track != NULL) {
