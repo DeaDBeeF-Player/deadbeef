@@ -29,12 +29,17 @@ extern DB_functions_t *deadbeef;
     self.playlistIndex = playlistIndex;
     [self insertItemWithTitle:@"Add New Playlist" action:@selector(addNewPlaylist:) keyEquivalent:@"" atIndex:0].target = self;
     if (playlistIndex != -1) {
-        [self insertItemWithTitle:@"Close Playlist" action:@selector(closePlaylist:) keyEquivalent:@"" atIndex:0].target = self;
+        [self insertItemWithTitle:@"Delete Playlist" action:@selector(closePlaylist:) keyEquivalent:@"" atIndex:0].target = self;
 
         // ignore the warning, the message is sent to 1st responder, which will be the mainwincontroller in this case
         NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:@"Rename Playlist" action:@selector(renamePlaylistAction:) keyEquivalent:@""];
         item.target = self;
         [self insertItem:item atIndex:0];
+
+        [self insertItem:NSMenuItem.separatorItem atIndex:2];
+
+        [self addItem:NSMenuItem.separatorItem];
+
         [self addActionItemsForContext:DDB_ACTION_CTX_PLAYLIST track:NULL filter:^BOOL(DB_plugin_action_t * _Nonnull action) {
 
             if (!(action->flags & DB_ACTION_MULTIPLE_TRACKS)) {
