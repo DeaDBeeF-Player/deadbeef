@@ -23,7 +23,7 @@
         return nil;
     }
 
-    self.tabView = [[NSTabView alloc] initWithFrame:NSZeroRect];
+    self.tabView = [[NSTabView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     self.tabView.tabPosition = NSTabPositionNone;
     self.tabView.tabViewBorderType = NSTabViewBorderTypeNone;
     self.tabView.allowsTruncatedLabels = YES;
