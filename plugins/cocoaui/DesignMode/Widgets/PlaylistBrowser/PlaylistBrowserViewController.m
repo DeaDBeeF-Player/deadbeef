@@ -38,6 +38,9 @@ extern DB_functions_t *deadbeef;
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    [self.tableView setDraggingSourceOperationMask:NSDragOperationMove forLocal:YES];
+    [self.tableView registerForDraggedTypes:@[NSPasteboardTypeString]];
+
     self.tableView.menu = [PlaylistContextMenu new];
     self.tableView.menu.delegate = self;
 
@@ -295,6 +298,28 @@ extern DB_functions_t *deadbeef;
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
     return deadbeef->plt_get_count();
+}
+
+- (id<NSPasteboardWriting>)tableView:(NSTableView *)tableView pasteboardWriterForRow:(NSInteger)row {
+    return [NSString stringWithFormat:@"%d", (int)row];
+}
+
+- (NSDragOperation)tableView:(NSTableView *)tableView validateDrop:(id<NSDraggingInfo>)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)dropOperation {
+    return NSDragOperationMove;
+}
+
+- (BOOL)tableView:(NSTableView *)tableView acceptDrop:(id<NSDraggingInfo>)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)dropOperation {
+
+    int from = [info.draggingPasteboard.pasteboardItems.firstObject stringForType:NSPasteboardTypeString].intValue;
+
+    if (row > from) {
+        row--;
+    }
+    deadbeef->plt_move(from, (int)row);
+    deadbeef->plt_set_curr_idx ((int)row);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_POSITION, 0);
+
+    return YES;
 }
 
 #pragma mark - RenamePlaylistViewControllerDelegate

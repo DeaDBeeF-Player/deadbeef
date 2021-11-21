@@ -800,7 +800,8 @@ static int close_btn_left_offs = 8;
             deadbeef->plt_move (_dragging, inspos);
             _tab_moved = 1;
             _dragging = inspos;
-            deadbeef->conf_set_int ("playlist.current", _dragging);
+            deadbeef->plt_set_curr_idx (_dragging);
+            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_POSITION, 0);
         }
         self.needsDisplay = YES;
     }
