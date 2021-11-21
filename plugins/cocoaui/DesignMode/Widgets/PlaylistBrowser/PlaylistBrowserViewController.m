@@ -7,7 +7,9 @@
 //
 
 #include "deadbeef.h"
+#import "NSMenu+ActionItems.h"
 #import "PlaylistBrowserViewController.h"
+#import "PlaylistContextMenu.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -33,6 +35,9 @@ extern DB_functions_t *deadbeef;
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    self.tableView.menu = [PlaylistContextMenu new];
+    self.tableView.menu.delegate = self;
+
     [self reloadData];
 }
 
@@ -46,6 +51,14 @@ extern DB_functions_t *deadbeef;
     [self.tableView reloadData];
     [self updateSelectedRow];
     self.isReloading = NO;
+}
+
+- (void)updateTableViewMenu {
+    PlaylistContextMenu *menu = (PlaylistContextMenu *)self.tableView.menu;
+    menu.parentView = self.tableView;
+    NSPoint coord = [self.tableView.window convertPointFromScreen:NSEvent.mouseLocation];
+    menu.clickPoint = [self.tableView convertPoint:coord fromView:nil];
+    [menu updateWithPlaylistIndex:(int)self.tableView.clickedRow];
 }
 
 - (void)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
@@ -119,6 +132,24 @@ extern DB_functions_t *deadbeef;
 
 #pragma mark -
 
+- (void)menuNeedsUpdate:(NSMenu *)menu {
+    if (menu == self.tableView.menu) {
+        [self updateTableViewMenu];
+    }
+}
+
+- (IBAction)playingItemAction:(NSMenuItem *)sender {
+    self.playingColumn.hidden = !self.playingColumn.isHidden;
+}
+- (IBAction)itemsItemAction:(NSMenuItem *)sender {
+    self.itemsColumn.hidden = !self.itemsColumn.isHidden;
+}
+- (IBAction)durationItemAction:(NSMenuItem *)sender {
+    self.durationColumn.hidden = !self.durationColumn.isHidden;
+}
+
+#pragma mark - NSMenuDelegate
+
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
     if (menuItem == self.playingMenuItem) {
         menuItem.state = self.playingColumn.isHidden ? NSControlStateValueOff : NSControlStateValueOn;
@@ -130,16 +161,6 @@ extern DB_functions_t *deadbeef;
         menuItem.state = self.durationColumn.isHidden ? NSControlStateValueOff : NSControlStateValueOn;
     }
     return YES;
-}
-
-- (IBAction)playingItemAction:(NSMenuItem *)sender {
-    self.playingColumn.hidden = !self.playingColumn.isHidden;
-}
-- (IBAction)itemsItemAction:(NSMenuItem *)sender {
-    self.itemsColumn.hidden = !self.itemsColumn.isHidden;
-}
-- (IBAction)durationItemAction:(NSMenuItem *)sender {
-    self.durationColumn.hidden = !self.durationColumn.isHidden;
 }
 
 #pragma mark - NSTableViewDelegate

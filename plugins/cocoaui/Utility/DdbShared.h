@@ -32,6 +32,9 @@ extern NSString * const ddbMedialibItemUTIType;
 int
 cocoaui_add_new_playlist (void);
 
+int
+cocoaui_remove_playlist (int index);
+
 void
 cocoaui_playlist_set_curr (int playlist);
 

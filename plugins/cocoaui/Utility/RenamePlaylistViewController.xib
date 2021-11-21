@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="RenamePlaylistViewController">
+            <connections>
+                <outlet property="nameTextField" destination="J0l-So-sSe" id="7JY-X3-2EL"/>
+                <outlet property="view" destination="fc6-AT-TO1" id="J93-ZJ-yVR"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <view id="fc6-AT-TO1">
+            <rect key="frame" x="0.0" y="0.0" width="276" height="65"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uBk-uZ-DKg">
+                    <rect key="frame" x="6" y="39" width="104" height="16"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Rename Playlist:" id="2HQ-5u-jti">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="J0l-So-sSe">
+                    <rect key="frame" x="116" y="36" width="152" height="21"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="D8G-Lt-f6l">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Spx-JY-vcx">
+                    <rect key="frame" x="203" y="1" width="72" height="32"/>
+                    <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="b3W-1o-Jm2">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                    </buttonCell>
+                    <connections>
+                        <action selector="okAction:" target="-2" id="Zid-74-mqG"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="z1Q-TV-CGh">
+                    <rect key="frame" x="127" y="1" width="76" height="32"/>
+                    <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5fE-Tq-iht">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                    </buttonCell>
+                    <connections>
+                        <action selector="cancelAction:" target="-2" id="HVu-VE-N4f"/>
+                    </connections>
+                </button>
+            </subviews>
+            <constraints>
+                <constraint firstItem="Spx-JY-vcx" firstAttribute="top" secondItem="J0l-So-sSe" secondAttribute="bottom" constant="8" id="EH6-PT-N8V"/>
+                <constraint firstItem="J0l-So-sSe" firstAttribute="leading" secondItem="uBk-uZ-DKg" secondAttribute="trailing" constant="8" symbolic="YES" id="Eun-er-Sff"/>
+                <constraint firstItem="z1Q-TV-CGh" firstAttribute="bottom" secondItem="Spx-JY-vcx" secondAttribute="bottom" id="Gqs-hg-0gs"/>
+                <constraint firstItem="uBk-uZ-DKg" firstAttribute="leading" secondItem="fc6-AT-TO1" secondAttribute="leading" constant="8" id="IH7-em-CSz"/>
+                <constraint firstItem="J0l-So-sSe" firstAttribute="top" secondItem="fc6-AT-TO1" secondAttribute="top" constant="8" id="QRV-a1-uig"/>
+                <constraint firstItem="Spx-JY-vcx" firstAttribute="leading" secondItem="z1Q-TV-CGh" secondAttribute="trailing" constant="14" id="U7E-ZU-1ZX"/>
+                <constraint firstAttribute="bottom" secondItem="Spx-JY-vcx" secondAttribute="bottom" constant="8" id="abS-05-zPW"/>
+                <constraint firstItem="J0l-So-sSe" firstAttribute="firstBaseline" secondItem="uBk-uZ-DKg" secondAttribute="firstBaseline" id="eH9-Zc-UUd"/>
+                <constraint firstItem="Spx-JY-vcx" firstAttribute="trailing" secondItem="J0l-So-sSe" secondAttribute="trailing" id="wA3-Xq-Xls"/>
+                <constraint firstAttribute="trailing" secondItem="J0l-So-sSe" secondAttribute="trailing" constant="8" id="wEa-Vd-bsg"/>
+                <constraint firstAttribute="trailing" secondItem="z1Q-TV-CGh" secondAttribute="trailing" constant="80" id="ybq-SG-ABY"/>
+            </constraints>
+            <point key="canvasLocation" x="351" y="231"/>
+        </view>
+    </objects>
+</document>

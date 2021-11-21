@@ -6,10 +6,11 @@
 //  Copyright © 2020 Alexey Yakovenko. All rights reserved.
 //
 
-#import "NSMenu+ActionItems.h"
-#import <AppKit/AppKit.h>
-#import "PluginActionMenuItem.h"
 #include "deadbeef.h"
+#import <AppKit/AppKit.h>
+#import "DdbShared.h"
+#import "NSMenu+ActionItems.h"
+#import "PluginActionMenuItem.h"
 
 extern DB_functions_t *deadbeef;
 

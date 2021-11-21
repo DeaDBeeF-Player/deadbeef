@@ -81,3 +81,35 @@ void
 conf_set_nsstr (const char *key, NSString *value) {
     deadbeef->conf_set_str (key, value.UTF8String);
 }
+
+int
+cocoaui_remove_playlist (int index) {
+//    NSAlert *alert = [NSAlert new];
+//
+//    alert.messageText = @"Removing playlist";
+//    alert.informativeText = [NSString stringWithFormat:@"Do you really want to remove the playlist '%@'?", plt_get_title_wrapper (_tab_clicked)];
+//    [alert addButtonWithTitle:@"No"];
+//    [alert addButtonWithTitle:@"Yes"];
+//#if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101600
+//    if (@available(macOS 10.16, *)) {
+//        alert.buttons[1].hasDestructiveAction = YES;
+//    }
+//#endif
+//
+//    self.playlistConfirmationAlertOpen = YES;
+//
+//    [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+//        self.playlistConfirmationAlertOpen = NO;
+//        if (returnCode == NSAlertFirstButtonReturn) {
+//            self.needsDisplay = YES;
+//            return;
+//        }
+//        deadbeef->plt_remove (self.tab_clicked);
+//        int playlist = deadbeef->plt_get_curr_idx ();
+//        deadbeef->conf_set_int ("playlist.current", playlist);
+//        [self scrollToTab:playlist];
+//        self.tab_clicked = -1;
+//        self.needsDisplay = YES;
+//    }];
+    return 0;
+}

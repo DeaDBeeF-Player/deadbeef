@@ -23,12 +23,13 @@
 
 #import "DdbTabStrip.h"
 #import "DdbShared.h"
-#import "NSMenu+ActionItems.h"
+#import "PlaylistContextMenu.h"
+#import "RenamePlaylistViewController.h"
 #include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
 
-@interface DdbTabStrip () {
+@interface DdbTabStrip () <RenamePlaylistViewControllerDelegate> {
     int _dragging;
     int _prepare;
     int _movepos;
@@ -61,7 +62,6 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) BOOL dragReallyBegan;
 
 @property (nonatomic) int tab_clicked;
-@property (weak) IBOutlet NSTextField *renamePlaylistTitle;
 @property (nonatomic) BOOL needScroll;
 @property (nonatomic) CGFloat scrollPos;
 @property (nonatomic,readonly) int fullWidth;
@@ -658,42 +658,7 @@ plt_get_title_wrapper (int plt) {
 }
 
 - (void)closePlaylist:(id)sender {
-    if (_tab_clicked != -1) {
-        NSAlert *alert = [NSAlert new];
-
-        alert.messageText = @"Removing playlist";
-        alert.informativeText = [NSString stringWithFormat:@"Do you really want to remove the playlist '%@'?", plt_get_title_wrapper (_tab_clicked)];
-        [alert addButtonWithTitle:@"No"];
-        [alert addButtonWithTitle:@"Yes"];
-#if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101600
-        if (@available(macOS 10.16, *)) {
-            alert.buttons[1].hasDestructiveAction = YES;
-        }
-#endif
-
-        self.playlistConfirmationAlertOpen = YES;
-
-        [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-            self.playlistConfirmationAlertOpen = NO;
-            if (returnCode == NSAlertFirstButtonReturn) {
-                self.needsDisplay = YES;
-                return;
-            }
-            deadbeef->plt_remove (self.tab_clicked);
-            int playlist = deadbeef->plt_get_curr_idx ();
-            deadbeef->conf_set_int ("playlist.current", playlist);
-            [self scrollToTab:playlist];
-            self.tab_clicked = -1;
-            self.needsDisplay = YES;
-        }];
-    }
-}
-
-- (void)addNewPlaylist:(id)sender {
-    int playlist = cocoaui_add_new_playlist ();
-    if (playlist != -1) {
-        cocoaui_playlist_set_curr (playlist);
-    }
+    cocoaui_remove_playlist (_tab_clicked);
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent {
@@ -702,31 +667,14 @@ plt_get_title_wrapper (int plt) {
     if ((theEvent.type == NSEventTypeRightMouseDown || theEvent.type == NSEventTypeLeftMouseDown)
         && (theEvent.buttonNumber == 1
             || (theEvent.buttonNumber == 0 && (theEvent.modifierFlags & NSEventModifierFlagControl)))) {
-        NSMenu *menu = [[NSMenu alloc] initWithTitle:@"TabMenu"];
+        PlaylistContextMenu *menu = [[PlaylistContextMenu alloc] initWithTitle:@"TabMenu"];
+        menu.parentView = self;
+        menu.clickPoint = coord;
         menu.delegate = self;
+        menu.renamePlaylistDelegate = self;
         menu.autoenablesItems = YES;
-        [menu insertItemWithTitle:@"Add New Playlist" action:@selector(addNewPlaylist:) keyEquivalent:@"" atIndex:0].target = self;
-        if (_tab_clicked != -1) {
-            [menu insertItemWithTitle:@"Close Playlist" action:@selector(closePlaylist:) keyEquivalent:@"" atIndex:0].target = self;
 
-            // ignore the warning, the message is sent to 1st responder, which will be the mainwincontroller in this case
-            NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:@"Rename Playlist" action:@selector(renamePlaylistAction:) keyEquivalent:@""];
-            item.target = self;
-            [menu insertItem:item atIndex:0];
-            [menu addActionItemsForContext:DDB_ACTION_CTX_PLAYLIST track:NULL filter:^BOOL(DB_plugin_action_t * _Nonnull action) {
-
-                if (!(action->flags & DB_ACTION_MULTIPLE_TRACKS)) {
-                    return NO;
-                }
-
-                if (action->flags & DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST) {
-                    return NO;
-                }
-
-                return YES;
-            }];
-        }
-
+        [menu updateWithPlaylistIndex:_tab_clicked];
         return menu;
     }
     return nil;
@@ -930,29 +878,18 @@ plt_get_title_wrapper (int plt) {
     return _tab_clicked;
 }
 
-- (IBAction)renamePlaylistAction:(id)sender {
-    int clicked = _tab_clicked;
-    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (clicked);
-    int l = deadbeef->plt_get_title (plt, NULL, 0);
-    char buf[l+1];
-    deadbeef->plt_get_title (plt, buf, (int)sizeof buf);
-    self.renamePlaylistTitle.stringValue = [NSString stringWithUTF8String:buf];
-    [self.window beginSheet:self.renamePlaylistWindow completionHandler:^(NSModalResponse returnCode) {
-        if (returnCode == NSModalResponseOK) {
-            deadbeef->plt_set_title (plt, [[self.renamePlaylistTitle stringValue] UTF8String]);
-            deadbeef->plt_save_config (plt);
-            deadbeef->plt_unref (plt);
-            [self scrollToTab:clicked];
-        }
-    }];
-}
+#pragma mark - RenamePlaylistViewControllerDelegate
 
-- (IBAction)renamePlaylistCancelAction:(id)sender {
-    [NSApp endSheet:self.renamePlaylistWindow returnCode:NSModalResponseCancel];
-}
-
-- (IBAction)renamePlaylistOKAction:(id)sender {
-    [NSApp endSheet:self.renamePlaylistWindow returnCode:NSModalResponseOK];
+- (void)renamePlaylist:(RenamePlaylistViewController *)viewController doneWithName:(NSString *)name {
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (_tab_clicked);
+    if (plt == NULL) {
+        return;
+    }
+    deadbeef->plt_set_title (plt, [name UTF8String]);
+    deadbeef->plt_save_config (plt);
+    deadbeef->plt_unref (plt);
+    [self scrollToTab:_tab_clicked];
+    deadbeef->plt_unref (plt);
 }
 
 @end
