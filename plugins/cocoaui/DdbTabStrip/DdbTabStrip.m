@@ -21,12 +21,12 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import "DdbTabStrip.h"
+#include "deadbeef.h"
 #import "DdbShared.h"
+#import "DdbTabStrip.h"
 #import "DeletePlaylistConfirmationController.h"
 #import "PlaylistContextMenu.h"
 #import "RenamePlaylistViewController.h"
-#include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -57,8 +57,6 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSColor *tabBackgroundColorDark;
 @property (nonatomic) NSColor *tabBackgroundColorLight;
 @property (nonatomic,readonly) NSColor *tabBackgroundColor;
-
-@property (nonatomic) BOOL playlistConfirmationAlertOpen;
 
 @property (nonatomic) BOOL dragReallyBegan;
 
@@ -673,7 +671,7 @@ static int close_btn_left_offs = 8;
 }
 
 -(void)otherMouseDown:(NSEvent *)event {
-    if (self.playlistConfirmationAlertOpen) {
+    if (self.window.attachedSheet != nil) {
         return;
     }
 
@@ -886,13 +884,12 @@ static int close_btn_left_offs = 8;
 #pragma mark - DeletePlaylistConfirmationControllerDelegate
 
 - (void)deletePlaylistDone:(DeletePlaylistConfirmationController *)controller {
-//            self.playlistConfirmationAlertOpen = NO;
     deadbeef->plt_remove (self.tab_clicked);
     int playlist = deadbeef->plt_get_curr_idx ();
     deadbeef->conf_set_int ("playlist.current", playlist);
     [self scrollToTab:playlist];
     self.tab_clicked = -1;
-    self.needsDisplay = YES; // ???
+    self.needsDisplay = YES; // NOTE: this was added to redraw after a context menu
 }
 
 @end
