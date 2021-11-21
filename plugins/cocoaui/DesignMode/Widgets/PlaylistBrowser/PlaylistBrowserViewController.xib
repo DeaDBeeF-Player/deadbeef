@@ -26,13 +26,13 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yti-qP-ab5">
-                    <rect key="frame" x="0.0" y="0.0" width="480" height="243"/>
+                    <rect key="frame" x="0.0" y="0.0" width="480" height="214"/>
                     <clipView key="contentView" id="eGm-r3-7k8">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="243"/>
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="214"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" tableStyle="fullWidth" columnReordering="NO" multipleSelection="NO" emptySelection="NO" autosaveName="PlaylistBrowserViewController" rowHeight="19" rowSizeStyle="automatic" headerView="Efo-21-9yh" viewBased="YES" id="ZEl-8j-ZtO" customClass="TableViewWithReturnAction">
-                                <rect key="frame" x="0.0" y="0.0" width="480" height="215"/>
+                                <rect key="frame" x="0.0" y="0.0" width="480" height="186"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <size key="intercellSpacing" width="17" height="0.0"/>
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
