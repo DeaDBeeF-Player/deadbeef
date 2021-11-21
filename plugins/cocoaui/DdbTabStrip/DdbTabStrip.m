@@ -665,6 +665,11 @@ static int close_btn_left_offs = 8;
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent {
     NSPoint coord = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     _tab_clicked = [self tabUnderCursor:coord.x];
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (_tab_clicked);
+    deadbeef->action_set_playlist (plt);
+    if (plt) {
+        deadbeef->plt_unref (plt);
+    }
     if ((theEvent.type == NSEventTypeRightMouseDown || theEvent.type == NSEventTypeLeftMouseDown)
         && (theEvent.buttonNumber == 1
             || (theEvent.buttonNumber == 0 && (theEvent.modifierFlags & NSEventModifierFlagControl)))) {

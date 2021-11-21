@@ -64,6 +64,11 @@ extern DB_functions_t *deadbeef;
     NSPoint coord = [self.tableView.window convertPointFromScreen:NSEvent.mouseLocation];
     menu.clickPoint = [self.tableView convertPoint:coord fromView:nil];
     self.clickedRow = self.tableView.clickedRow;
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx ((int)self.clickedRow);
+    deadbeef->action_set_playlist (plt);
+    if (plt) {
+        deadbeef->plt_unref (plt);
+    }
     [menu updateWithPlaylistIndex:(int)self.tableView.clickedRow];
 }
 
