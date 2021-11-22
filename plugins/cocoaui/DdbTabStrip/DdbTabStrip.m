@@ -523,7 +523,7 @@ static int close_btn_left_offs = 8;
     int tab = deadbeef->plt_get_curr_idx ();
     if (tab > 0) {
         tab--;
-        cocoaui_playlist_set_curr (tab);
+        deadbeef->plt_set_curr_idx (tab);
     }
     [self scrollToTab:tab];
 }
@@ -532,7 +532,7 @@ static int close_btn_left_offs = 8;
     int tab = deadbeef->plt_get_curr_idx ();
     if (tab < deadbeef->plt_get_count ()-1) {
         tab++;
-        cocoaui_playlist_set_curr (tab);
+        deadbeef->plt_set_curr_idx (tab);
     }
     [self scrollToTab:tab];
 }
@@ -605,7 +605,7 @@ static int close_btn_left_offs = 8;
             if ([self handleClickedTabCloseRect]) {
                 return;
             }
-            cocoaui_playlist_set_curr (_tab_clicked);
+            deadbeef->plt_set_curr_idx (_tab_clicked);
 
             if (event.clickCount == 2) {
                 ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -623,7 +623,7 @@ static int close_btn_left_offs = 8;
                 // new tab
                 int playlist = cocoaui_add_new_playlist ();
                 if (playlist != -1) {
-                    cocoaui_playlist_set_curr (playlist);
+                    deadbeef->plt_set_curr_idx (playlist);
                 }
                 return;
             }
@@ -698,7 +698,7 @@ static int close_btn_left_offs = 8;
             // new tab
             int playlist = cocoaui_add_new_playlist ();
             if (playlist != -1) {
-                cocoaui_playlist_set_curr (playlist);
+                deadbeef->plt_set_curr_idx (playlist);
             }
             return;
         }
@@ -856,7 +856,7 @@ static int close_btn_left_offs = 8;
     NSPoint coord = [sender draggingLocation];
     int tabUnderCursor = [self tabUnderCursor: coord.x];
     if (tabUnderCursor != -1) {
-        cocoaui_playlist_set_curr (tabUnderCursor);
+        deadbeef->plt_set_curr_idx (tabUnderCursor);
     }
 
     return NSDragOperationNone;
@@ -902,9 +902,6 @@ static int close_btn_left_offs = 8;
 
 - (void)deletePlaylistDone:(DeletePlaylistConfirmationController *)controller {
     deadbeef->plt_remove (self.tab_clicked);
-    int playlist = deadbeef->plt_get_curr_idx ();
-    deadbeef->conf_set_int ("playlist.current", playlist);
-    [self scrollToTab:playlist];
     self.tab_clicked = -1;
     self.needsDisplay = YES; // NOTE: this was added to redraw after a context menu
 }

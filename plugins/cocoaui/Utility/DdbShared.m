@@ -64,12 +64,6 @@ cocoaui_add_new_playlist (void) {
     return -1;
 }
 
-void
-cocoaui_playlist_set_curr (int playlist) {
-    deadbeef->plt_set_curr_idx (playlist);
-    deadbeef->conf_set_int ("playlist.current", playlist);
-}
-
 NSString *
 conf_get_nsstr (const char *key, const char *def) {
     char value[4096];

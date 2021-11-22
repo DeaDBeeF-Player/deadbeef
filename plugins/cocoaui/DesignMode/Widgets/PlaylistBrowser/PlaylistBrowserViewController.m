@@ -338,8 +338,6 @@ extern DB_functions_t *deadbeef;
 
 - (void)deletePlaylistDone:(DeletePlaylistConfirmationController *)controller {
     deadbeef->plt_remove ((int)self.clickedRow);
-    int playlist = deadbeef->plt_get_curr_idx ();
-    deadbeef->conf_set_int ("playlist.current", playlist);
     self.clickedRow = -1;
 }
 

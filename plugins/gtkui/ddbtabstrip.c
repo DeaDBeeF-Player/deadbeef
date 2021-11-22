@@ -1061,9 +1061,6 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
         else if (deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 1)) {
             if (tab_clicked != -1) {
                 deadbeef->plt_remove (tab_clicked);
-                // force invalidation of playlist cache
-                int playlist = deadbeef->plt_get_curr_idx ();
-                deadbeef->conf_set_int ("playlist.current", playlist);
             }
         }
     }

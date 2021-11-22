@@ -369,7 +369,6 @@ action_next_playlist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx)
     }
 
     deadbeef->plt_set_curr_idx (tab);
-    deadbeef->conf_set_int ("playlist.current", tab);
 
     return 0;
 }
@@ -386,7 +385,6 @@ action_prev_playlist_handler (DB_plugin_action_t *act, ddb_action_context_t ctx)
     }
 
     deadbeef->plt_set_curr_idx (tab);
-    deadbeef->conf_set_int ("playlist.current", tab);
 
     return 0;
 }
@@ -396,7 +394,6 @@ action_playlist1_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 0;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
-        deadbeef->conf_set_int ("playlist.current", pl);
     }
     return 0;
 }
@@ -406,7 +403,6 @@ action_playlist2_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 1;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
-        deadbeef->conf_set_int ("playlist.current", pl);
     }
     return 0;
 }
@@ -416,7 +412,6 @@ action_playlist3_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 2;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
-        deadbeef->conf_set_int ("playlist.current", pl);
     }
     return 0;
 }
@@ -426,7 +421,6 @@ action_playlist4_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 3;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
-        deadbeef->conf_set_int ("playlist.current", pl);
     }
     return 0;
 }
@@ -436,7 +430,6 @@ action_playlist5_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 4;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
-        deadbeef->conf_set_int ("playlist.current", pl);
     }
     return 0;
 }
@@ -446,7 +439,6 @@ action_playlist6_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 5;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
-        deadbeef->conf_set_int ("playlist.current", pl);
     }
     return 0;
 }
@@ -456,7 +448,6 @@ action_playlist7_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 6;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
-        deadbeef->conf_set_int ("playlist.current", pl);
     }
     return 0;
 }
@@ -466,7 +457,6 @@ action_playlist8_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 7;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
-        deadbeef->conf_set_int ("playlist.current", pl);
     }
     return 0;
 }
@@ -476,7 +466,6 @@ action_playlist9_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 8;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
-        deadbeef->conf_set_int ("playlist.current", pl);
     }
     return 0;
 }
@@ -486,7 +475,6 @@ action_playlist10_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     int pl = 9;
     if (pl < deadbeef->plt_get_count ()) {
         deadbeef->plt_set_curr_idx (pl);
-        deadbeef->conf_set_int ("playlist.current", pl);
     }
     return 0;
 }

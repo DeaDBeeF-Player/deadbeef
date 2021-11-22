@@ -152,6 +152,9 @@ typedef struct ddb_fileadd_beginend_listener_s {
 
 static ddb_fileadd_beginend_listener_t *file_add_beginend_listeners;
 
+static void
+_plt_set_curr_int(playlist_t *plt);
+
 void
 pl_reshuffle_all (void) {
     for (playlist_t *plt = _playlists_head; plt; plt = plt->next) {
@@ -525,14 +528,21 @@ plt_remove (int plt) {
     playlist_t *old = _current_playlist;
     _current_playlist = p;
     _current_playlist = old;
-    if (p == _current_playlist) {
+
+
+    playlist_t *new_current_playlist = _current_playlist;
+
+    // deleted the current playlist?
+    if (p == new_current_playlist) {
         if (next) {
-            _current_playlist = next;
+            new_current_playlist = next;
         }
         else {
-            _current_playlist = prev ? prev : _playlists_head;
+            new_current_playlist = prev ? prev : _playlists_head;
         }
     }
+
+    _plt_set_curr_int(new_current_playlist);
 
     plt_unref (p);
     _playlists_count--;
@@ -541,7 +551,6 @@ plt_remove (int plt) {
     plt_gen_conf ();
     conf_save ();
     if (!_plt_loading) {
-        messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
         messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_DELETED, 0);
    }
 }
@@ -570,17 +579,33 @@ plt_find_by_name (const char *name) {
     return NULL;
 }
 
-void
-plt_set_curr (playlist_t *plt) {
-    LOCK;
-    if (plt != _current_playlist) {
-        _current_playlist = plt ? plt : &_dummy_playlist;
-        if (!_plt_loading) {
-            messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
+static void
+_plt_set_curr_int(playlist_t *plt) {
+    int old_index = conf_get_int ("playlist.current", 0);
+
+    playlist_t *new_playlist = plt ? plt : &_dummy_playlist;
+
+    int playlist_switched = new_playlist != _current_playlist;
+
+    _current_playlist = new_playlist;
+
+    int new_index = plt_get_idx(_current_playlist);
+
+    if (!_plt_loading) {
+        if (old_index != new_index) {
             conf_set_int ("playlist.current", plt_get_curr_idx ());
             conf_save ();
         }
+        if (playlist_switched) {
+            messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
+        }
     }
+}
+
+void
+plt_set_curr (playlist_t *plt) {
+    LOCK;
+    _plt_set_curr_int(plt);
     UNLOCK;
 }
 
@@ -592,14 +617,9 @@ plt_set_curr_idx (int plt) {
     for (i = 0; p && p->next && i < plt; i++) {
         p = p->next;
     }
-    if (p != _current_playlist) {
-        _current_playlist = p;
-        if (!_plt_loading) {
-            messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
-            conf_set_int ("playlist.current", plt);
-            conf_save ();
-        }
-    }
+
+    _plt_set_curr_int(p);
+
     UNLOCK;
 }
 

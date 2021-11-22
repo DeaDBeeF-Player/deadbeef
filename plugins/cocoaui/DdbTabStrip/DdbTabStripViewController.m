@@ -24,7 +24,7 @@ extern DB_functions_t *deadbeef;
 - (IBAction)createNewPlaylistAction:(id)sender {
     int playlist = cocoaui_add_new_playlist ();
     if (playlist != -1) {
-        cocoaui_playlist_set_curr (playlist);
+        deadbeef->plt_set_curr_idx (playlist);
     }
 }
 

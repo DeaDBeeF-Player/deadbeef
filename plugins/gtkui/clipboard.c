@@ -266,7 +266,6 @@ clipboard_delete_playlist (ddb_playlist_t *plt)
     int idx = deadbeef->plt_get_idx (plt);
     if (idx != -1) {
         deadbeef->plt_remove (idx);
-        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     }
 }
 

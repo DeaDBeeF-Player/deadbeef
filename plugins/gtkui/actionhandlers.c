@@ -152,7 +152,6 @@ action_new_playlist_handler_cb (void *user_data) {
     int pl = gtkui_add_new_playlist ();
     if (pl != -1) {
         deadbeef->plt_set_curr_idx (pl);
-        deadbeef->conf_set_int ("playlist.current", pl);
     }
     return FALSE;
 }

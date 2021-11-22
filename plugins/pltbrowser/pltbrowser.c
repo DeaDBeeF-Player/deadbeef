@@ -53,13 +53,6 @@ enum
     COL_DURATION,
 };
 
-// copied from gktui.c
-static void
-playlist_set_curr (int playlist) {
-    deadbeef->plt_set_curr_idx (playlist);
-    deadbeef->conf_set_int ("playlist.current", playlist);
-}
-
 // copied from gtkui.c
 static int
 add_new_playlist (void) {
@@ -768,15 +761,13 @@ on_pltbrowser_button_press_end_event         (GtkWidget       *widget,
                 // new tab
                 int playlist = add_new_playlist ();
                 if (playlist != -1) {
-                    playlist_set_curr (playlist);
+                    deadbeef->plt_set_curr_idx (playlist);
                 }
                 return TRUE;
             }
             else if (deadbeef->conf_get_int ("gtkui.pltbrowser.mmb_delete_playlist", 0)) {
                 if (row_clicked != -1) {
                     deadbeef->plt_remove (row_clicked);
-                    int playlist = deadbeef->plt_get_curr_idx ();
-                    deadbeef->conf_set_int ("playlist.current", playlist);
                 }
             }
         }
@@ -788,7 +779,7 @@ on_pltbrowser_button_press_end_event         (GtkWidget       *widget,
                 // new tab
                 int playlist = add_new_playlist ();
                 if (playlist != -1) {
-                    playlist_set_curr (playlist);
+                    deadbeef->plt_set_curr_idx (playlist);
                 }
                 return TRUE;
             }
