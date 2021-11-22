@@ -917,7 +917,7 @@ tabstrip_scroll_left (DdbTabStrip *ts) {
     int tab = deadbeef->plt_get_curr_idx ();
     if (tab > 0) {
         tab--;
-        gtkui_playlist_set_curr (tab);
+        deadbeef->plt_set_curr_idx (tab);
     }
     tabstrip_scroll_to_tab (ts, tab);
 }
@@ -927,7 +927,7 @@ tabstrip_scroll_right (DdbTabStrip *ts) {
     int tab = deadbeef->plt_get_curr_idx ();
     if (tab < deadbeef->plt_get_count ()-1) {
         tab++;
-        gtkui_playlist_set_curr (tab);
+        deadbeef->plt_set_curr_idx (tab);
     }
     tabstrip_scroll_to_tab (ts, tab);
 }
@@ -997,7 +997,7 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
             }
         }
         if (tab_clicked != -1) {
-            gtkui_playlist_set_curr (tab_clicked);
+            deadbeef->plt_set_curr_idx (tab_clicked);
 
             if (event->type == GDK_2BUTTON_PRESS) {
                 ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -1015,7 +1015,7 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
                 // new tab
                 int playlist = gtkui_add_new_playlist ();
                 if (playlist != -1) {
-                    gtkui_playlist_set_curr (playlist);
+                    deadbeef->plt_set_curr_idx (playlist);
                 }
                 return TRUE;
             }
@@ -1054,7 +1054,7 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
             // new tab
             int playlist = gtkui_add_new_playlist ();
             if (playlist != -1) {
-                gtkui_playlist_set_curr (playlist);
+                deadbeef->plt_set_curr_idx (playlist);
             }
             return TRUE;
         }
@@ -1228,7 +1228,7 @@ on_tabstrip_drag_motion_event          (GtkWidget       *widget,
     int tab = get_tab_under_cursor (DDB_TABSTRIP (widget), x);
     int prev = deadbeef->plt_get_curr_idx ();
     if (tab != -1 && tab != prev) {
-        gtkui_playlist_set_curr (tab);
+        deadbeef->plt_set_curr_idx (tab);
     }
 
     GList *targets = gdk_drag_context_list_targets (drag_context);

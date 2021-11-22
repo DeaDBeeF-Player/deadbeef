@@ -352,7 +352,7 @@ clipboard_activate_dest_playlist (const char *pdata, ddb_playlist_t *plt, int ct
             playlist = gtkui_add_new_playlist ();
         }
         if (playlist != -1) {
-            gtkui_playlist_set_curr (playlist);
+            deadbeef->plt_set_curr_idx (playlist);
         }
     }
 }

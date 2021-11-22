@@ -833,12 +833,20 @@ static DB_plugin_action_t action_prev_or_restart = {
     .next = NULL
 };
 
+static DB_plugin_action_t action_duplicate_playlist = {
+    .title = "Duplicate Playlist",
+    .name = "duplicate_playlist",
+    .flags = DB_ACTION_MULTIPLE_TRACKS,
+    .callback2 = action_duplicate_playlist_cb,
+    .next = &action_prev_or_restart
+};
+
 static DB_plugin_action_t action_reload_metadata = {
     .title = "Reload Metadata",
     .name = "reload_metadata",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback2 = action_reload_metadata_handler,
-    .next = &action_prev_or_restart
+    .next = &action_duplicate_playlist
 };
 
 static DB_plugin_action_t action_jump_to_current = {

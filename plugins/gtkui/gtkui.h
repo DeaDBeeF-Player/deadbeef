@@ -128,9 +128,6 @@ gtkui_progress_hide_idle (gpointer data);
 gboolean
 gtkui_set_progress_text_idle (gpointer data);
 
-void
-gtkui_playlist_set_curr (int playlist);
-
 int
 gtkui_rename_playlist_at_index(int plt_idx);
 

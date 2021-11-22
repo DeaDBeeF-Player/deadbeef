@@ -741,75 +741,6 @@ gtkui_add_new_playlist (void) {
     return -1;
 }
 
-void
-gtkui_copy_playlist_int (ddb_playlist_t *src, ddb_playlist_t *dst) {
-    deadbeef->pl_lock ();
-    DB_playItem_t *it = deadbeef->plt_get_first (src, PL_MAIN);
-    DB_playItem_t *after = NULL;
-    while (it) {
-        DB_playItem_t *it_new = deadbeef->pl_item_alloc ();
-        deadbeef->pl_item_copy (it_new, it);
-        deadbeef->plt_insert_item (dst, after, it_new);
-
-        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-        if (after) {
-            deadbeef->pl_item_unref (after);
-        }
-        after = it_new;
-        deadbeef->pl_item_unref (it);
-        it = next;
-    }
-    if (after) {
-        deadbeef->pl_item_unref (after);
-    }
-    deadbeef->pl_unlock ();
-    deadbeef->plt_save_config (dst);
-}
-
-int
-gtkui_copy_playlist (ddb_playlist_t *plt) {
-    char orig_title[100];
-    deadbeef->plt_get_title (plt, orig_title, sizeof (orig_title));
-
-    int cnt = deadbeef->plt_get_count ();
-    int i;
-    int idx = 0;
-    for (;;) {
-        char name[100];
-        if (!idx) {
-            snprintf (name, sizeof (name), _("Copy of %s"), orig_title);
-        }
-        else {
-            snprintf (name, sizeof (name), _("Copy of %s (%d)"), orig_title, idx);
-        }
-        deadbeef->pl_lock ();
-        for (i = 0; i < cnt; i++) {
-            char t[100];
-            ddb_playlist_t *plt = deadbeef->plt_get_for_idx (i);
-            deadbeef->plt_get_title (plt, t, sizeof (t));
-            deadbeef->plt_unref (plt);
-            if (!strcasecmp (t, name)) {
-                break;
-            }
-        }
-        deadbeef->pl_unlock ();
-        if (i == cnt) {
-            int new_plt_idx = deadbeef->plt_add (cnt, name);
-            if (new_plt_idx < 0) {
-                return -1;
-            }
-            ddb_playlist_t *new_plt = deadbeef->plt_get_for_idx (new_plt_idx);
-            if (!new_plt) {
-                return -1;
-            }
-            gtkui_copy_playlist_int(plt, new_plt);
-            return new_plt_idx;
-        }
-        idx++;
-    }
-    return -1;
-}
-
 int
 gtkui_get_gui_refresh_rate () {
     int fps = deadbeef->conf_get_int ("gtkui.refresh_rate", 10);
@@ -1511,12 +1442,6 @@ gtkui_set_progress_text_idle (gpointer data) {
         free (text);
     }
     return FALSE;
-}
-
-void
-gtkui_playlist_set_curr (int playlist) {
-    deadbeef->plt_set_curr_idx (playlist);
-    deadbeef->conf_set_int ("playlist.current", playlist);
 }
 
 void

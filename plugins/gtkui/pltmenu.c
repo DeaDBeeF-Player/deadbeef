@@ -96,21 +96,7 @@ on_add_new_playlist1_activate          (GtkMenuItem     *menuitem,
 {
     int playlist = gtkui_add_new_playlist ();
     if (playlist != -1) {
-        gtkui_playlist_set_curr (playlist);
-    }
-}
-
-static void
-on_copy_playlist1_activate        (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
-    if (plt) {
-        int playlist = gtkui_copy_playlist (plt);
-        if (playlist != -1) {
-            gtkui_playlist_set_curr (playlist);
-        }
-        deadbeef->plt_unref (plt);
+        deadbeef->plt_set_curr_idx (playlist);
     }
 }
 
@@ -368,7 +354,6 @@ gtkui_create_pltmenu (int plt_idx) {
     GtkWidget *rename_playlist1;
     GtkWidget *remove_playlist1;
     GtkWidget *add_new_playlist1;
-    GtkWidget *copy_playlist1;
     GtkWidget *autosort;
     GtkWidget *separator11;
     GtkWidget *cut;
@@ -402,10 +387,6 @@ gtkui_create_pltmenu (int plt_idx) {
     add_new_playlist1 = gtk_menu_item_new_with_mnemonic (_("Add New Playlist"));
     gtk_widget_show (add_new_playlist1);
     gtk_container_add (GTK_CONTAINER (plmenu), add_new_playlist1);
-
-    copy_playlist1 = gtk_menu_item_new_with_mnemonic (_("Duplicate Playlist"));
-    gtk_widget_show (copy_playlist1);
-    gtk_container_add (GTK_CONTAINER (plmenu), copy_playlist1);
 
     int autosort_enabled = 0;
     if (pltmenu_idx >= 0) {
@@ -484,9 +465,6 @@ gtkui_create_pltmenu (int plt_idx) {
             NULL);
     g_signal_connect ((gpointer) autosort, "toggled",
             G_CALLBACK (on_autosort_toggled),
-            NULL);
-    g_signal_connect ((gpointer) copy_playlist1, "activate",
-            G_CALLBACK (on_copy_playlist1_activate),
             NULL);
     g_signal_connect ((gpointer) cut, "activate",
             G_CALLBACK (on_cut_activate),

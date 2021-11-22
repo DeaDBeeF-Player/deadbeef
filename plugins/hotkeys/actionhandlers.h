@@ -138,4 +138,7 @@ action_toggle_mute_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 int
 action_prev_or_restart_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx);
 
+int
+action_duplicate_playlist_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx);
+
 #endif
