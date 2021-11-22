@@ -34,6 +34,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)makeFirstResponder;
 - (void)cleanup; // Implement this method if it's necessary to call removeObserver etc
 - (void)didFinishLoading;
+- (nullable NSDictionary *)serializedRootDictionary;
+- (void)deserializeFromRootDictionary:(nullable NSDictionary *)dictionary;
+@property (nullable,nonatomic,readonly) NSString *displayName;
 
 @end
 

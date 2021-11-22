@@ -8,6 +8,7 @@
 
 #import "AlbumArtWidget.h"
 #import "DesignModeDeps.h"
+#import "HolderWidget.h"
 #import "LyricsWidget.h"
 #import "PlaylistBrowserWidget.h"
 #import "PlaylistWidget.h"
@@ -104,7 +105,7 @@
 - (nullable id<WidgetProtocol>)createWidgetWithType:(NSString *)type {
     WidgetRegistration *widgetRegistration = self.registeredWidgets[type];
     if (widgetRegistration == nil) {
-        return nil;
+        return [[HolderWidget alloc] initWithDeps:self.deps originalTypeName:type];
     }
     return widgetRegistration.instantiatorBlock();
 }

@@ -39,6 +39,10 @@
 }
 
 - (NSDictionary *)saveWidgetToDictionary:(id<WidgetProtocol>)widget {
+    if ([widget respondsToSelector:@selector(serializedRootDictionary)]) {
+        return widget.serializedRootDictionary;
+    }
+
     NSMutableDictionary *widgetDictionary = [NSMutableDictionary new];
     widgetDictionary[@"type"] = widget.widgetType;
     NSDictionary *settings = widget.serializedSettingsDictionary;
@@ -60,34 +64,39 @@
 }
 
 - (BOOL)loadWidget:(id<WidgetProtocol>)widget fromDictionary:(NSDictionary *)dictionary {
-    NSDictionary *settings = dictionary[@"settings"];
-
-    if ([settings isKindOfClass:NSDictionary.class]) {
-        [widget deserializeFromSettingsDictionary:settings];
+    if ([widget respondsToSelector:@selector(deserializeFromRootDictionary:)]) {
+        [widget deserializeFromRootDictionary:dictionary];
     }
+    else {
+        NSDictionary *settings = dictionary[@"settings"];
 
-    NSArray *children = dictionary[@"children"];
-    if (children == nil) {
-        return YES;
-    }
-
-    NSInteger index = 0;
-    for (id child in children) {
-        if (![child isKindOfClass:NSDictionary.class]) {
-            continue;
+        if ([settings isKindOfClass:NSDictionary.class]) {
+            [widget deserializeFromSettingsDictionary:settings];
         }
-        NSDictionary *childDictionary = child;
-        id<WidgetProtocol> childWidget = [self loadFromDictionary:childDictionary];
-        if (childWidget != nil) {
 
-            if ((NSInteger)widget.childWidgets.count > index) {
-                [widget replaceChild:widget.childWidgets[index] withChild:childWidget];
-            }
-            else {
-                [widget appendChild:childWidget];
-            }
+        NSArray *children = dictionary[@"children"];
+        if (children == nil) {
+            return YES;
         }
-        index += 1;
+
+        NSInteger index = 0;
+        for (id child in children) {
+            if (![child isKindOfClass:NSDictionary.class]) {
+                continue;
+            }
+            NSDictionary *childDictionary = child;
+            id<WidgetProtocol> childWidget = [self loadFromDictionary:childDictionary];
+            if (childWidget != nil) {
+
+                if ((NSInteger)widget.childWidgets.count > index) {
+                    [widget replaceChild:widget.childWidgets[index] withChild:childWidget];
+                }
+                else {
+                    [widget appendChild:childWidget];
+                }
+            }
+            index += 1;
+        }
     }
     return YES;
 }

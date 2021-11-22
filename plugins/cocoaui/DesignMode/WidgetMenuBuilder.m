@@ -62,7 +62,12 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
 
     NSString *displayName = [self.deps.factory displayNameForType:widgetType];
     if (displayName == nil) {
-        return nil;
+        if ([widget respondsToSelector:@selector(displayName)]) {
+            displayName = widget.displayName;
+        }
+        if (displayName == nil) {
+            return nil;
+        }
     }
 
     NSMenu *menu = [NSMenu new];
