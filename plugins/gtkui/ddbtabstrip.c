@@ -44,8 +44,9 @@
 G_DEFINE_TYPE (DdbTabStrip, ddb_tabstrip, GTK_TYPE_WIDGET);
 
 extern GtkWidget *theme_button;
-#define arrow_sz 10
+#define arrow_sz (ts->calculated_arrow_width)
 #define arrow_widget_width (arrow_sz+4)
+#define add_playlist_btn_width arrow_widget_width*2
 
 enum {
     INFO_TARGET_URIS, // gtk sets this to 0 by default
@@ -103,7 +104,8 @@ ddb_tabstrip_realize (GtkWidget *widget) {
         attributes.colormap = gtk_widget_get_colormap (widget);
 #endif
         attributes.event_mask = gtk_widget_get_events (widget);
-        attributes.event_mask |= GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_KEY_PRESS_MASK;
+        attributes.event_mask |= GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_KEY_PRESS_MASK |
+            GDK_LEAVE_NOTIFY_MASK;
 
         attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL;
 #if !GTK_CHECK_VERSION(3,0,0)
@@ -241,6 +243,9 @@ ddb_tabstrip_unrealize(GtkWidget *w)
   GTK_WIDGET_CLASS (ddb_tabstrip_parent_class)->unrealize (w);
 }
 
+gboolean
+on_tabstrip_leave_notify_event (GtkWidget *, GdkEventCrossing *);
+
 static void
 ddb_tabstrip_class_init(DdbTabStripClass *class)
 {
@@ -264,6 +269,7 @@ ddb_tabstrip_class_init(DdbTabStripClass *class)
   widget_class->drag_data_received = on_tabstrip_drag_data_received;
   widget_class->drag_leave = on_tabstrip_drag_leave;
   widget_class->key_press_event = on_tabstrip_key_press_event;
+  widget_class->leave_notify_event = on_tabstrip_leave_notify_event;
 }
 
 gboolean
@@ -512,7 +518,7 @@ tabstrip_need_arrows (DdbTabStrip *ts) {
     gtk_widget_get_allocation (widget, &a);
     for (int idx = 0; idx < cnt; idx++) {
         w += ddb_tabstrip_get_tab_width (ts, idx) - tab_overlap_size;
-        if (w >= a.width) {
+        if (w >= a.width-add_playlist_btn_width-tab_overlap_size) {
             return 1;
         }
     }
@@ -530,7 +536,8 @@ tabstrip_scroll_to_tab_int (DdbTabStrip *ts, int tab, int redraw) {
     int cnt = deadbeef->plt_get_count ();
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
-    int boundary = a.width - arrow_widget_width*2 + ts->hscrollpos;
+    int tabarea_width = a.width-add_playlist_btn_width;
+    int boundary = tabarea_width - arrow_widget_width*2 + ts->hscrollpos;
     for (int idx = 0; idx < cnt; idx++) {
         int tab_w = ddb_tabstrip_get_tab_width (ts, idx);
         if (idx == cnt-1) {
@@ -572,13 +579,14 @@ tabstrip_adjust_hscroll (DdbTabStrip *ts) {
             GtkAllocation a;
             gtk_widget_get_allocation (widget, &a);
             int w = 0;
+            int tabarea_width = a.width-add_playlist_btn_width;
             int cnt = deadbeef->plt_get_count ();
             for (int idx = 0; idx < cnt; idx++) {
                 w += ddb_tabstrip_get_tab_width (ts, idx) - tab_overlap_size;
             }
             w += tab_overlap_size + 3;
-            if (ts->hscrollpos > w - (a.width - arrow_widget_width*2)) {
-                ts->hscrollpos = w - (a.width - arrow_widget_width*2);
+            if (ts->hscrollpos > w - (tabarea_width - arrow_widget_width*2)) {
+                ts->hscrollpos = w - (tabarea_width - arrow_widget_width*2);
                 deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
             }
             tabstrip_scroll_to_tab_int (ts, deadbeef->plt_get_curr_idx (), 0);
@@ -796,12 +804,12 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
         }
         if (gtk_widget_is_focus (GTK_WIDGET (ts))) {
 #if GTK_CHECK_VERSION(3,0,0)
-            gtk_render_focus (gtk_widget_get_style_context (widget), cr, x, y, w - ( text_right_padding - 1), 24);
+            gtk_render_focus (gtk_widget_get_style_context (widget), cr, x, y, w - ( text_right_padding - 1), ts->row_height);
 #else
             gdk_gc_set_rgb_fg_color (gc, (gtkui_get_tabstrip_text_color (&clr), &clr));
             gdk_gc_set_line_attributes (gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
             gdk_gc_set_dashes (gc, 0, (gint8[]) {1,1}, 2);
-            gdk_draw_rectangle (backbuf, gc, FALSE, x, y , w - (text_right_padding - 1), 23);
+            gdk_draw_rectangle (backbuf, gc, FALSE, x, y , w - (text_right_padding - 1), ts->row_height-2);
 #endif
         }
         draw_text_custom (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding - 1), 0, DDB_TABSTRIP_FONT, bold, italic, tab_title);
@@ -840,6 +848,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
             x += w - tab_overlap_size;
         }
     }
+    int tabarea_width = a.width - add_playlist_btn_width;
 #if !GTK_CHECK_VERSION(3,0,0)
     if (need_arrows) {
         int sz = widget->allocation.height-3;
@@ -847,8 +856,8 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
         gdk_gc_set_rgb_fg_color (gc, (gtkui_get_tabstrip_mid_color (&clr), &clr));
         gdk_draw_rectangle (backbuf, gc, TRUE, 0, 1, arrow_widget_width, sz);
         gtk_paint_arrow (style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_LEFT, TRUE, 2, sz/2-arrow_sz/2, arrow_sz, arrow_sz);
-        gdk_draw_rectangle (backbuf, gc, TRUE, widget->allocation.width-arrow_widget_width, 1, arrow_widget_width, sz);
-        gtk_paint_arrow (style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_RIGHT, TRUE, widget->allocation.width-arrow_sz-2, 1+sz/2-arrow_sz/2, arrow_sz, arrow_sz);
+        gdk_draw_rectangle (backbuf, gc, TRUE, tabarea_width-arrow_widget_width, 1, arrow_widget_width, sz);
+        gtk_paint_arrow (style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_RIGHT, TRUE, tabarea_width-arrow_sz-2, 1+sz/2-arrow_sz/2, arrow_sz, arrow_sz);
     }
 #else
     if (need_arrows) {
@@ -863,15 +872,46 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
         gtk_paint_arrow (style, gtk_widget_get_window(widget), GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_LEFT, TRUE, 2, sz/2-arrow_sz/2, arrow_sz, arrow_sz);
 #endif
 
-        cairo_rectangle (cr, a.width-arrow_widget_width, 1, arrow_widget_width, sz);
+        cairo_rectangle (cr, tabarea_width-arrow_widget_width, 1, arrow_widget_width, sz);
         cairo_fill (cr);
 #if GTK_CHECK_VERSION(3,0,0)
-        gtk_paint_arrow (style, cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, widget, NULL, GTK_ARROW_RIGHT, TRUE, a.width-arrow_sz-2, 1+sz/2-arrow_sz/2, arrow_sz, arrow_sz);
+        gtk_paint_arrow (style, cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, widget, NULL, GTK_ARROW_RIGHT, TRUE, tabarea_width-arrow_sz-2, 1+sz/2-arrow_sz/2, arrow_sz, arrow_sz);
 #else
         gtk_paint_arrow (style, gtk_widget_get_window(widget), GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_RIGHT, TRUE, a.width-arrow_sz-2, 1+sz/2-arrow_sz/2, arrow_sz, arrow_sz);
 #endif
     }
 #endif
+
+    // Draw add playlist button
+    {
+        int playlist_button_border = 2;
+        int add_playlist_btn_height = a.height-playlist_button_border;
+        int w;
+        if (ts->add_playlistbtn_hover) {
+            gtkui_get_tabstrip_base_color (&clr);
+        } else {
+            gtkui_get_tabstrip_mid_color (&clr);
+        }
+        GdkColor textcolor;
+        gtkui_get_tabstrip_text_color(&textcolor);
+        float fg[3] = {(float)textcolor.red/0xffff, (float)textcolor.green/0xffff, (float)textcolor.blue/0xffff};
+#if !GTK_CHECK_VERSION(3,0,0)
+        gdk_gc_set_rgb_fg_color (gc, &clr);
+        gdk_draw_rectangle (backbuf, gc, TRUE, tabarea_width, 1, add_playlist_btn_width, add_playlist_btn_height);
+
+        draw_set_fg_color (&ts->drawctx, fg);
+        draw_get_text_extents (&ts->drawctx, "+", 1, &w, NULL);
+        draw_text_custom (&ts->drawctx, tabarea_width + (int)(add_playlist_btn_width/2)-(int)(w/2), 3, add_playlist_btn_width, 0, DDB_TABSTRIP_FONT, TRUE, FALSE, "+");
+#else
+        cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.0);
+        cairo_rectangle (cr, tabarea_width, 1, add_playlist_btn_width, add_playlist_btn_height);
+        cairo_fill (cr);
+
+        draw_set_fg_color (&ts->drawctx, fg);
+        draw_get_text_extents (&ts->drawctx, "+", 1, &w, NULL);
+        draw_text_custom (&ts->drawctx, tabarea_width + (int)(add_playlist_btn_width/2)-(int)(w/2) , 3, add_playlist_btn_width, 0, DDB_TABSTRIP_FONT, TRUE, FALSE, "+");
+#endif
+    }
 
     draw_end (&ts->drawctx);
 
@@ -976,9 +1016,9 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
             gtk_widget_grab_focus (widget);
         }
         int need_arrows = tabstrip_need_arrows (ts);
+        GtkAllocation a;
+        gtk_widget_get_allocation (widget, &a);
         if (need_arrows) {
-            GtkAllocation a;
-            gtk_widget_get_allocation (widget, &a);
             if (event->x < arrow_widget_width) {
                 if (event->type == GDK_BUTTON_PRESS) {
                     tabstrip_scroll_left (ts);
@@ -987,7 +1027,7 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
                 }
                 return TRUE;
             }
-            else if (event->x >= a.width - arrow_widget_width) {
+            else if (event->x >= a.width - (arrow_widget_width + add_playlist_btn_width) && event->x < a.width - add_playlist_btn_width) {
                 if (event->type == GDK_BUTTON_PRESS) {
                     tabstrip_scroll_right (ts);
                     ts->scroll_direction = 1;
@@ -996,6 +1036,14 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
                 return TRUE;
             }
         }
+        if (event->x > a.width - add_playlist_btn_width) {
+            int playlist = gtkui_add_new_playlist ();
+            if (playlist != -1) {
+                deadbeef->plt_set_curr_idx (playlist);
+            }
+            return TRUE;
+        }
+
         if (tab_clicked != -1) {
             deadbeef->plt_set_curr_idx (tab_clicked);
 
@@ -1095,8 +1143,12 @@ on_tabstrip_configure_event              (GtkWidget       *widget,
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
     draw_init_font (&ts->drawctx, DDB_TABSTRIP_FONT, 1);
     tabstrip_adjust_hscroll (ts);
-    int height = draw_get_listview_rowheight (&ts->drawctx) + 4;
+    ts->row_height = draw_get_listview_rowheight (&ts->drawctx);
+    int height = ts->row_height + 4;
     ts->calculated_height = height;
+    int w;
+    draw_get_text_extents(&ts->drawctx, ">", 1, &w, NULL);
+    ts->calculated_arrow_width = w;
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
     if (height != a.height) {
@@ -1211,6 +1263,10 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
         else {
             gtk_widget_set_has_tooltip (widget, FALSE);
         }
+        GtkAllocation a;
+        gtk_widget_get_allocation(widget, &a);
+        ts->add_playlistbtn_hover = (ev_x > a.width - add_playlist_btn_width) ? 1 : 0;
+        gtk_widget_queue_draw (widget);
     }
     return FALSE;
 }
@@ -1282,5 +1338,14 @@ on_tabstrip_key_press_event            (GtkWidget    *widget,
         }
         break;
     }
+    return FALSE;
+}
+
+gboolean
+on_tabstrip_leave_notify_event (GtkWidget *widget, GdkEventCrossing *event_crossing)
+{
+    DdbTabStrip *ts = DDB_TABSTRIP (widget);
+    ts->add_playlistbtn_hover = 0;
+    gtk_widget_queue_draw(widget);
     return FALSE;
 }

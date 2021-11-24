@@ -54,6 +54,9 @@ struct _DdbTabStrip {
     int scroll_direction;
     drawctx_t drawctx;
     int calculated_height;
+    int row_height;
+    int calculated_arrow_width;
+    int add_playlistbtn_hover;
 };
 
 struct _DdbTabStripClass {
