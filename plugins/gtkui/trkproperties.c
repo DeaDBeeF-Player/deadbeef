@@ -911,8 +911,8 @@ on_trkproperties_add_new_field_activate
                                         (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
-    if (!gtk_widget_is_focus(GTK_WIDGET (treeview))) {
+    GtkNotebook *notebook = GTK_NOTEBOOK(lookup_widget(trackproperties, "trkproperties_notebook"));
+    if (gtk_notebook_get_current_page(notebook) != 0) {
         return; // do not add field if Metadata tab is not focused
     }
     GtkWidget *dlg = create_entrydialog ();
@@ -922,6 +922,7 @@ on_trkproperties_add_new_field_activate
     GtkWidget *e;
     e = lookup_widget (dlg, "title_label");
     gtk_label_set_text (GTK_LABEL(e), _("Name:"));
+    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
     for (;;) {
         int res = gtk_dialog_run (GTK_DIALOG (dlg));
         if (res == GTK_RESPONSE_OK) {
@@ -1008,10 +1009,12 @@ void
 on_trkproperties_crop_activate         (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
-    if (!gtk_widget_is_focus(GTK_WIDGET (treeview))) {
+    GtkNotebook *notebook = GTK_NOTEBOOK(lookup_widget(trackproperties, "trkproperties_notebook"));
+    if (gtk_notebook_get_current_page(notebook) != 0) {
         return; // do not remove field if Metadata tab is not focused
     }
+
+    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
     GtkTreePath *path;
     gtk_tree_view_get_cursor (treeview, &path, NULL);
     if (!path) {

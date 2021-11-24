@@ -1008,7 +1008,7 @@ GtkWidget*
 create_trackproperties (void)
 {
   GtkWidget *trackproperties;
-  GtkWidget *notebook3;
+  GtkWidget *trkproperties_notebook;
   GtkWidget *vbox16;
   GtkWidget *hbox109;
   GtkWidget *label136;
@@ -1051,13 +1051,13 @@ create_trackproperties (void)
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (trackproperties), TRUE);
   gtk_window_set_skip_pager_hint (GTK_WINDOW (trackproperties), TRUE);
 
-  notebook3 = gtk_notebook_new ();
-  gtk_widget_show (notebook3);
-  gtk_container_add (GTK_CONTAINER (trackproperties), notebook3);
+  trkproperties_notebook = gtk_notebook_new ();
+  gtk_widget_show (trkproperties_notebook);
+  gtk_container_add (GTK_CONTAINER (trackproperties), trkproperties_notebook);
 
   vbox16 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox16);
-  gtk_container_add (GTK_CONTAINER (notebook3), vbox16);
+  gtk_container_add (GTK_CONTAINER (trkproperties_notebook), vbox16);
   gtk_container_set_border_width (GTK_CONTAINER (vbox16), 12);
 
   hbox109 = gtk_hbox_new (FALSE, 8);
@@ -1158,11 +1158,11 @@ create_trackproperties (void)
 
   label64 = gtk_label_new (_("Metadata"));
   gtk_widget_show (label64);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook3), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook3), 0), label64);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (trkproperties_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (trkproperties_notebook), 0), label64);
 
   vbox24 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox24);
-  gtk_container_add (GTK_CONTAINER (notebook3), vbox24);
+  gtk_container_add (GTK_CONTAINER (trkproperties_notebook), vbox24);
   gtk_container_set_border_width (GTK_CONTAINER (vbox24), 12);
 
   scrolledwindow6 = gtk_scrolled_window_new (NULL, NULL);
@@ -1204,7 +1204,7 @@ create_trackproperties (void)
 
   label80 = gtk_label_new (_("Properties"));
   gtk_widget_show (label80);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook3), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook3), 1), label80);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (trkproperties_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (trkproperties_notebook), 1), label80);
 
   g_signal_connect ((gpointer) trackproperties, "key_press_event",
                     G_CALLBACK (on_trackproperties_key_press_event),
@@ -1236,7 +1236,7 @@ create_trackproperties (void)
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (trackproperties, trackproperties, "trackproperties");
-  GLADE_HOOKUP_OBJECT (trackproperties, notebook3, "notebook3");
+  GLADE_HOOKUP_OBJECT (trackproperties, trkproperties_notebook, "trkproperties_notebook");
   GLADE_HOOKUP_OBJECT (trackproperties, vbox16, "vbox16");
   GLADE_HOOKUP_OBJECT (trackproperties, hbox109, "hbox109");
   GLADE_HOOKUP_OBJECT (trackproperties, label136, "label136");
