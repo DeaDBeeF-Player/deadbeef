@@ -117,14 +117,21 @@ extern DB_functions_t *deadbeef;
 
     [self addItem:NSMenuItem.separatorItem];
 
-    int selected_count = ddbUtilTrackListGetTrackCount (self.selectedTracksList);
-    ddb_playItem_t **tracks = ddbUtilTrackListGetTracks (self.selectedTracksList);
+    int selected_count = 0;
+    ddb_playItem_t **tracks = NULL;
+
+    if (self.selectedTracksList != NULL) {
+        ddbUtilTrackListGetTrackCount (self.selectedTracksList);
+        tracks = ddbUtilTrackListGetTracks (self.selectedTracksList);
+    }
 
     DB_playItem_t *selected = NULL;
 
     if (selected_count > 0) {
         selected = tracks[0];
     }
+
+    self.deleteFromDiskItem.enabled = selected_count != 0;
 
     if ([self addContextPluginActionItemsForSelectedTrack:selected selectedCount:selected_count]) {
         [self addItem:NSMenuItem.separatorItem];
