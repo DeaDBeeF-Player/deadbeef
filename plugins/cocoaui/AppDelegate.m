@@ -343,9 +343,10 @@ main_cleanup_and_quit (void);
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
         char str[100];
+        NSArray *sortedFilenames = [filenames sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
         // building single paths string for the deadbeef function, paths must be separated by '\0'
-        NSString *paths =[filenames componentsJoinedByString:@"\0"];
-        add_paths([paths UTF8String], (int)[paths length], 0, str, 100);
+        NSString *paths =[sortedFilenames componentsJoinedByString:@"\0"];
+        add_paths([paths UTF8String], (int)[paths lengthOfBytesUsingEncoding:NSUTF8StringEncoding], 0, str, 100);
     });
 }
 
