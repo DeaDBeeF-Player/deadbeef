@@ -90,11 +90,6 @@ static CoverManager *g_DefaultCoverManager = nil;
     return [NSString stringWithUTF8String:buffer];
 }
 
-typedef struct {
-    void (*real_callback) (NSImage *img, void *user_data);
-    void *real_user_data;
-} cover_callback_info_t;
-
 - (nullable NSImage *)loadImageFromCover:(nonnull ddb_cover_info_t *)cover {
     NSImage *img;
 
@@ -126,8 +121,8 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
             // FIXME: if the img is nil -- CoverManager should still be updated
             if (img != nil) {
                 [cm addCoverForTrack:query->track withImage:img];
-                cover_callback_info_t *info = query->user_data;
-                info->real_callback (img, info->real_user_data);
+                void (^completionBlock)(NSImage *) = (void (^)(NSImage *__strong))CFBridgingRelease(query->user_data);
+                completionBlock(img);
             }
 
             // Free the query -- it's fast, so it's OK to free it on main queue
@@ -153,9 +148,9 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
     [self.cachedCovers setObject:cover forKey:hash];
 }
 
-- (NSImage *)getCoverForTrack:(DB_playItem_t *)track withCallbackWhenReady:(void (*) (NSImage *img, void *user_data))callback withUserDataForCallback:(void *)user_data {
+- (nullable NSImage *)coverForTrack:(nonnull DB_playItem_t *)track completionBlock:(nonnull void (^) (NSImage * img))completionBlock {
     if (!self.artwork_plugin) {
-        callback (nil, user_data);
+        completionBlock(nil);
         return nil;
     }
 
@@ -164,7 +159,7 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
     CachedCover *cover = [self.cachedCovers objectForKey:hash];
     if (cover != nil) {
         if (cover.image == nil) {
-            callback (nil, user_data);
+            completionBlock(nil);
         }
         // Callback is not executed if the image is non-nil, to avoid double drawing.
         // The caller must release user data if the returned image is not nil.
@@ -176,10 +171,7 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
     query->track = track;
     deadbeef->pl_item_ref (track);
 
-    cover_callback_info_t *info = calloc (sizeof (cover_callback_info_t), 1);
-    info->real_callback = callback;
-    info->real_user_data = user_data;
-    query->user_data = info;
+    query->user_data = (void *)CFBridgingRetain(completionBlock);
 
     self.artwork_plugin->cover_get (query, cover_loaded_callback);
 

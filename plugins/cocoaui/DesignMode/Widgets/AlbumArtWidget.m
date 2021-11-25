@@ -86,30 +86,6 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     [self update];
 }
 
-typedef struct {
-    void *widget;
-    ddb_playItem_t *track;
-    CGFloat albumArtSpaceWidth;
-    BOOL ignoreResult;
-} cover_avail_info_t;
-
-static void coverAvailCallback (NSImage *image, void *user_data) {
-    cover_avail_info_t *info = user_data;
-    AlbumArtWidget *widget = (__bridge_transfer AlbumArtWidget *)info->widget;
-
-    if (info->track == widget.track) {
-        if (image != nil) {
-            NSSize desiredSize = [CoverManager.defaultCoverManager artworkDesiredSizeForImageSize:image.size albumArtSpaceWidth:info->albumArtSpaceWidth];
-            widget.imageView.image = [CoverManager.defaultCoverManager createCachedImage:image size:desiredSize];
-        }
-        else {
-            widget.imageView.image = nil;
-        }
-    }
-    deadbeef->pl_item_unref (info->track);
-    free (info);
-}
-
 - (void)update {
     if (self.imageView.frame.size.width == 0 || self.imageView.frame.size.height == 0) {
         return;
@@ -131,20 +107,22 @@ static void coverAvailCallback (NSImage *image, void *user_data) {
             if (it) {
                 self.track = it;
 
-                deadbeef->pl_item_ref (it);
+                CGFloat albumArtSpaceWidth = self.imageView.frame.size.width;
 
-                cover_avail_info_t *info = calloc (sizeof (cover_avail_info_t), 1);
-                info->widget = (__bridge_retained void *)self;
-                info->track = it;
-                info->albumArtSpaceWidth = self.imageView.frame.size.width;
-
-                NSImage *image = [CoverManager.defaultCoverManager getCoverForTrack:it withCallbackWhenReady:coverAvailCallback withUserDataForCallback:info];
+                // FIXME: weak self
+                NSImage *image = [CoverManager.defaultCoverManager coverForTrack:it completionBlock:^(NSImage *img) {
+                    if (img != nil) {
+                        NSSize desiredSize = [CoverManager.defaultCoverManager artworkDesiredSizeForImageSize:img.size albumArtSpaceWidth:albumArtSpaceWidth];
+                        self.imageView.image = [CoverManager.defaultCoverManager createCachedImage:img size:desiredSize];
+                    }
+                    else {
+                        self.imageView.image = nil;
+                    }
+                }];
 
                 if (image != nil) {
-                    NSSize desiredSize = [CoverManager.defaultCoverManager artworkDesiredSizeForImageSize:image.size albumArtSpaceWidth:info->albumArtSpaceWidth];
+                    NSSize desiredSize = [CoverManager.defaultCoverManager artworkDesiredSizeForImageSize:image.size albumArtSpaceWidth:albumArtSpaceWidth];
                     self.imageView.image = [CoverManager.defaultCoverManager createCachedImage:image size:desiredSize];
-                    deadbeef->pl_item_unref (it);
-                    free (info);
                 }
             }
 

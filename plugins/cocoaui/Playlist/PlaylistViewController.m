@@ -878,34 +878,6 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     }
 }
 
-typedef struct {
-    void *ctl; // DdbPlaylistViewController ptr (retain)
-    void *grp;
-    CGFloat albumArtSpaceWidth;
-} cover_avail_info_t;
-
-static void coverAvailCallback (NSImage *img, void *user_data) {
-    cover_avail_info_t *info = user_data;
-    PlaylistViewController *ctl = (__bridge_transfer PlaylistViewController *)info->ctl;
-    PlaylistView *lv = (PlaylistView *)ctl.view;
-
-    PlaylistGroup *grp = (__bridge_transfer PlaylistGroup *)info->grp;
-    if (grp != nil) {
-        if (img != nil) {
-            NSSize desiredSize = [CoverManager.defaultCoverManager artworkDesiredSizeForImageSize:img.size albumArtSpaceWidth:info->albumArtSpaceWidth];
-            grp->cachedImage = [CoverManager.defaultCoverManager createCachedImage:img size:desiredSize];
-        }
-        else {
-            grp->cachedImage = nil;
-        }
-        grp->hasCachedImage = YES;
-    }
-
-    [lv.contentView drawGroup:grp];
-    free (info);
-}
-
-
 - (void)drawAlbumArtForGroup:(PlaylistGroup *)grp
                   inColumn:(DdbListviewCol_t)col
              isPinnedGroup:(BOOL)pinned
@@ -930,20 +902,22 @@ static void coverAvailCallback (NSImage *img, void *user_data) {
         image = grp->cachedImage;
     }
     else {
-        cover_avail_info_t *info = calloc (sizeof (cover_avail_info_t), 1);
-        info->ctl = (__bridge_retained void *)self;
-        info->grp = (__bridge_retained void *)grp;
+        CGFloat albumArtSpaceWidth = art_width;
 
-        info->albumArtSpaceWidth = art_width;
+        image = [CoverManager.defaultCoverManager coverForTrack:it completionBlock:^(NSImage *img) {
+            if (grp != nil) {
+                if (img != nil) {
+                    NSSize desiredSize = [CoverManager.defaultCoverManager artworkDesiredSizeForImageSize:img.size albumArtSpaceWidth:albumArtSpaceWidth];
+                    grp->cachedImage = [CoverManager.defaultCoverManager createCachedImage:img size:desiredSize];
+                }
+                else {
+                    grp->cachedImage = nil;
+                }
+                grp->hasCachedImage = YES;
+            }
 
-        image = [CoverManager.defaultCoverManager getCoverForTrack:it withCallbackWhenReady:coverAvailCallback withUserDataForCallback:info];
-
-        if (image != nil) {
-            // callback will not be called, release and free user data
-            __unused PlaylistViewController *_ctl = (__bridge_transfer PlaylistViewController *)info->ctl;
-            __unused PlaylistGroup *_grp = (__bridge_transfer PlaylistGroup *)info->grp;
-            free (info);
-        }
+            [lv.contentView drawGroup:grp];
+        }];
     }
     if (!image) {
         // FIXME: the problem here is that if the cover is not found (yet) -- it won't draw anything, but the rect is already invalidated, and will come out as background color
