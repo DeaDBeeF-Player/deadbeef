@@ -25,16 +25,18 @@
 
 - (void)viewDidLoad {
     self.splitView.wantsLayer = YES;
-    
+
     NSSplitViewItem* sidebarItem = [SidebarSplitViewItem splitViewItemWithViewController:self.sidebarViewController];
     sidebarItem.canCollapse = YES;
     [self insertSplitViewItem:sidebarItem atIndex:0];
+    sidebarItem.holdingPriority = NSLayoutPriorityDefaultLow+10;
 
     self.bodyViewController = [[MainContentViewController alloc] initWithNibName:@"MainContentViewController" bundle:nil];
 
     NSSplitViewItem* bodyItem = [NSSplitViewItem splitViewItemWithViewController:self.bodyViewController];
     bodyItem.canCollapse = NO;
     [self insertSplitViewItem:bodyItem atIndex:1];
+    bodyItem.holdingPriority = NSLayoutPriorityDefaultLow;
 
 #if 0 // FIXME: broken in Big Sur beta4
 #if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101600

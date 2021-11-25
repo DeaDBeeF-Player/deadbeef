@@ -184,11 +184,14 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     }
 }
 
+#define HOLD_LOW (NSLayoutPriorityDefaultLow+0)
+#define HOLD_HIGH (NSLayoutPriorityDefaultLow+1)
+
 - (HoldingMode)holdingMode {
-    if ([self.splitView holdingPriorityForSubviewAtIndex:0] == NSLayoutPriorityDefaultLow && [self.splitView holdingPriorityForSubviewAtIndex:1] == NSLayoutPriorityDefaultLow) {
+    if ([self.splitView holdingPriorityForSubviewAtIndex:0] == HOLD_LOW && [self.splitView holdingPriorityForSubviewAtIndex:1] == HOLD_LOW) {
         return HoldingModeProportional;
     }
-    else if ([self.splitView holdingPriorityForSubviewAtIndex:0] == (NSLayoutPriorityDefaultLow+1)) {
+    else if ([self.splitView holdingPriorityForSubviewAtIndex:0] == (HOLD_HIGH)) {
         return HoldingModeFirst;
     }
     else {
@@ -199,16 +202,16 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 - (void)setHoldingMode:(HoldingMode)holdingMode {
     switch (holdingMode) {
     case HoldingModeProportional:
-        [self.splitView setHoldingPriority:NSLayoutPriorityDefaultLow forSubviewAtIndex:0];
-        [self.splitView setHoldingPriority:NSLayoutPriorityDefaultLow forSubviewAtIndex:1];
+        [self.splitView setHoldingPriority:HOLD_LOW forSubviewAtIndex:0];
+        [self.splitView setHoldingPriority:HOLD_LOW forSubviewAtIndex:1];
         break;
     case HoldingModeFirst:
-        [self.splitView setHoldingPriority:(NSLayoutPriorityDefaultLow+1) forSubviewAtIndex:0];
-        [self.splitView setHoldingPriority:NSLayoutPriorityDefaultLow forSubviewAtIndex:1];
+        [self.splitView setHoldingPriority:HOLD_HIGH forSubviewAtIndex:0];
+        [self.splitView setHoldingPriority:HOLD_LOW forSubviewAtIndex:1];
         break;
     case HoldingModeSecond:
-        [self.splitView setHoldingPriority:NSLayoutPriorityDefaultLow forSubviewAtIndex:0];
-        [self.splitView setHoldingPriority:(NSLayoutPriorityDefaultLow+1) forSubviewAtIndex:1];
+        [self.splitView setHoldingPriority:HOLD_LOW forSubviewAtIndex:0];
+        [self.splitView setHoldingPriority:HOLD_HIGH forSubviewAtIndex:1];
         break;
     }
 }
