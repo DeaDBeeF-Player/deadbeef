@@ -725,9 +725,7 @@ main_cleanup_and_quit (void);
 - (IBAction)selectionCropAction:(id)sender {
 }
 
-+ (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2
-{
-    [g_appDelegate.mainWindow.tabStrip widgetMessage:_id ctx:ctx p1:p1 p2:p2];
++ (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
     [g_appDelegate.mainWindow.sidebarOutlineViewController.mediaLibraryOutlineViewController  widgetMessage:_id ctx:ctx p1:p1 p2:p2];
 
     if (g_appDelegate) {

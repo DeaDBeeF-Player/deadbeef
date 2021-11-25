@@ -95,7 +95,6 @@ extern DB_functions_t *deadbeef;
 #endif
 
 #if ENABLE_MEDIALIB
-    self.tabStrip = self.splitViewController.bodyViewController.tabStrip;
     self.playlistWithTabsView = self.splitViewController.bodyViewController.wrapperView;
     self.designableContainerView = self.splitViewController.bodyViewController.designableView;
 #else
