@@ -109,20 +109,20 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
                 CGFloat albumArtSpaceWidth = self.imageView.frame.size.width;
 
-                // FIXME: weak self
+                NSImageView *imageView = self.imageView;
                 NSImage *image = [CoverManager.defaultCoverManager coverForTrack:it completionBlock:^(NSImage *img) {
                     if (img != nil) {
                         NSSize desiredSize = [CoverManager.defaultCoverManager artworkDesiredSizeForImageSize:img.size albumArtSpaceWidth:albumArtSpaceWidth];
-                        self.imageView.image = [CoverManager.defaultCoverManager createCachedImage:img size:desiredSize];
+                        imageView.image = [CoverManager.defaultCoverManager createCachedImage:img size:desiredSize];
                     }
                     else {
-                        self.imageView.image = nil;
+                        imageView.image = nil;
                     }
                 }];
 
                 if (image != nil) {
                     NSSize desiredSize = [CoverManager.defaultCoverManager artworkDesiredSizeForImageSize:image.size albumArtSpaceWidth:albumArtSpaceWidth];
-                    self.imageView.image = [CoverManager.defaultCoverManager createCachedImage:image size:desiredSize];
+                    imageView.image = [CoverManager.defaultCoverManager createCachedImage:image size:desiredSize];
                 }
             }
 
