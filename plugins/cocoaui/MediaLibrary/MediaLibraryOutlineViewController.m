@@ -525,7 +525,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
         if (mlItem.numberOfChildren) {
             it = [mlItem childAtIndex:0].playItem;
         }
-        if (!it) {
+        if (item == self.medialibRootItem) {
             view = [outlineView makeViewWithIdentifier:@"TextCell" owner:self];
         }
         else {
