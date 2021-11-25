@@ -15,7 +15,6 @@
 #import "MediaLibrarySelectorCellView.h"
 #import "MediaLibrarySearchCellView.h"
 #import "MediaLibraryItem.h"
-#import "MediaLibraryCoverQueryData.h"
 #import "MediaLibraryOutlineViewController.h"
 #import "MedialibItemDragDropHolder.h"
 #import "TrackContextMenu.h"
@@ -427,8 +426,8 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 #pragma mark - NSOutlineViewDelegate
 
 static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
-    MediaLibraryCoverQueryData *data = (__bridge MediaLibraryCoverQueryData *)(query->user_data);
-    [data.viewController coverGetCallbackWithQuery:query coverInfo:cover error:error];
+    void (^completionBlock)(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error) = (void (^)(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error))CFBridgingRelease(query->user_data);
+    completionBlock(query, cover, error);
 }
 
 - (NSString *)albumArtCacheKeyForTrack:(ddb_playItem_t *)track {
@@ -438,69 +437,78 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     return [NSString stringWithFormat:@"artist:%s;album:%s", artist, album];
 }
 
-- (void)coverGetCallbackWithQuery:(ddb_cover_query_t *)query coverInfo:(ddb_cover_info_t *)cover error:(int)error {
-    MediaLibraryCoverQueryData *data = (__bridge_transfer MediaLibraryCoverQueryData *)(query->user_data);
-    if (!error) {
-        NSImage *image;
-        if (cover->image_filename) {
-            image = [[NSImage alloc] initByReferencingFile:[NSString stringWithUTF8String:cover->image_filename]];
-        }
-        else if (cover->blob) {
-            NSData *blobData = [NSData dataWithBytes:cover->blob length:cover->blob_size];
-            image = [[NSImage alloc] initWithData:blobData];
-        }
-
-        if (image) {
-
-            // resize
-            CGFloat scale;
-            NSSize size = image.size;
-            if (size.width > size.height) {
-                scale = 24/size.width;
-            }
-            else {
-                scale = 24/size.height;
-            }
-            size.width *= scale;
-            size.height *= scale;
-
-            if (size.width >= 1 && size.height >= 1) {
-                NSImage *smallImage = [[NSImage alloc] initWithSize:size];
-                [smallImage lockFocus];
-                [image setSize:size];
-                NSGraphicsContext.currentContext.imageInterpolation = NSImageInterpolationHigh;
-                [image drawAtPoint:NSZeroPoint fromRect:CGRectMake(0, 0, size.width, size.height) operation:NSCompositingOperationCopy fraction:1.0];
-                [smallImage unlockFocus];
-                image = smallImage;
-                NSString *key = [self albumArtCacheKeyForTrack:query->track];
-                self.albumArtCache[key] = image;
-            }
-            else {
-                image = nil;
-            }
-        }
-
-        // NOTE: this would not cause a memory leak, since the artwork plugin keeps track of the covers, and will free them at exit
-        if (self.artworkPlugin != NULL) {
-            self.artworkPlugin->cover_info_release (cover);
-        }
-        cover = NULL;
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            data.item.coverImage = image;
-
-            NSInteger row = [self.outlineView rowForItem:data.item];
-            if (row >= 0) {
-                NSTableCellView *cellView = [[self.outlineView rowViewAtRow:row makeIfNecessary:NO] viewAtColumn:0];
-                if (cellView) {
-                    cellView.imageView.image = image;
-                }
-            }
-        });
+// NOTE: this is running on background thread
+- (NSImage *)getImage:(ddb_cover_query_t *)query coverInfo:(ddb_cover_info_t *)cover error:(int)error {
+    if (error) {
+        deadbeef->pl_item_unref (query->track);
+        free (query);
+        return nil;
     }
 
-    deadbeef->pl_item_unref (query->track);
-    free (query);
+    NSImage *image;
+    if (cover->image_filename) {
+        image = [[NSImage alloc] initByReferencingFile:[NSString stringWithUTF8String:cover->image_filename]];
+    }
+    else if (cover->blob) {
+        NSData *blobData = [NSData dataWithBytes:cover->blob length:cover->blob_size];
+        image = [[NSImage alloc] initWithData:blobData];
+    }
+
+    if (image) {
+
+        // resize
+        CGFloat scale;
+        NSSize size = image.size;
+        if (size.width > size.height) {
+            scale = 24/size.width;
+        }
+        else {
+            scale = 24/size.height;
+        }
+        size.width *= scale;
+        size.height *= scale;
+
+        if (size.width >= 1 && size.height >= 1) {
+            NSImage *smallImage = [[NSImage alloc] initWithSize:size];
+            [smallImage lockFocus];
+            [image setSize:size];
+            NSGraphicsContext.currentContext.imageInterpolation = NSImageInterpolationHigh;
+            [image drawAtPoint:NSZeroPoint fromRect:CGRectMake(0, 0, size.width, size.height) operation:NSCompositingOperationCopy fraction:1.0];
+            [smallImage unlockFocus];
+            image = smallImage;
+            NSString *key = [self albumArtCacheKeyForTrack:query->track];
+            self.albumArtCache[key] = image;
+        }
+        else {
+            image = nil;
+        }
+    }
+
+    // NOTE: this would not cause a memory leak, since the artwork plugin keeps track of the covers, and will free them at exit
+    if (self.artworkPlugin != NULL) {
+        self.artworkPlugin->cover_info_release (cover);
+    }
+    cover = NULL;
+
+    return image;
+}
+
+- (void)updateCoverForCellView:(NSTableCellView *)cellView item:(MediaLibraryItem *)item track:(ddb_playItem_t *)track {
+    void (^completionBlock)(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error) = ^(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error) {
+        NSImage *image = [self getImage:query coverInfo:cover error:error];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            item.coverImage = image;
+            cellView.imageView.image = image;
+        });
+    };
+    ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
+    query->_size = sizeof (ddb_cover_query_t);
+    query->user_data = (void *)CFBridgingRetain(completionBlock);
+    query->flags = DDB_ARTWORK_FLAG_NO_CACHE|DDB_ARTWORK_FLAG_LOAD_BLOB;
+    query->track = track;
+    deadbeef->pl_item_ref (track);
+    self.artworkPlugin->cover_get(query, cover_get_callback);
+
 }
 
 - (nullable NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(nullable NSTableColumn *)tableColumn item:(id)item {
@@ -536,16 +544,13 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
                     else if (self.artworkPlugin != NULL) {
                         view.imageView.image = nil;
                         if (!mlItem.coverObtained) {
-                            ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
-                            query->_size = sizeof (ddb_cover_query_t);
-                            MediaLibraryCoverQueryData *data = [MediaLibraryCoverQueryData new];
-                            data.item = mlItem;
-                            data.viewController = self;
-                            query->user_data = (__bridge_retained void *)(data);
-                            query->flags = DDB_ARTWORK_FLAG_NO_CACHE|DDB_ARTWORK_FLAG_LOAD_BLOB;
-                            query->track = it;
-                            deadbeef->pl_item_ref (it);
-                            self.artworkPlugin->cover_get(query, cover_get_callback);
+                            NSInteger row = [self.outlineView rowForItem:mlItem];
+                            if (row >= 0) {
+                                NSTableCellView *cellView = [[self.outlineView rowViewAtRow:row makeIfNecessary:NO] viewAtColumn:0];
+                                if (cellView) {
+                                    [self updateCoverForCellView:cellView item:mlItem track:it];
+                                }
+                            }
                             mlItem.coverObtained = YES;
                         }
                     }
