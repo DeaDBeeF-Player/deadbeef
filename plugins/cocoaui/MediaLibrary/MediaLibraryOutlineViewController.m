@@ -493,11 +493,17 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     return image;
 }
 
-- (void)updateCoverForCellView:(NSTableCellView *)cellView item:(MediaLibraryItem *)item track:(ddb_playItem_t *)track {
+- (void)updateCoverForItem:(MediaLibraryItem *)item track:(ddb_playItem_t *)track {
     void (^completionBlock)(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error) = ^(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error) {
         NSImage *image = [self getImage:query coverInfo:cover error:error];
         dispatch_async(dispatch_get_main_queue(), ^{
+            NSInteger row = [self.outlineView rowForItem:item];
+            if (row == -1) {
+                return;
+            }
             item.coverImage = image;
+            NSTableRowView *rowView = [self.outlineView rowViewAtRow:row makeIfNecessary:NO];
+            NSTableCellView *cellView = [rowView viewAtColumn:0];
             cellView.imageView.image = image;
         });
     };
@@ -530,6 +536,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
         }
         else {
             view.textField.stringValue = mlItem.stringValue;
+            view.imageView.image = nil;
 
             if (it) {
                 if (mlItem.coverImage) {
@@ -548,7 +555,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
                             if (row >= 0) {
                                 NSTableCellView *cellView = [[self.outlineView rowViewAtRow:row makeIfNecessary:NO] viewAtColumn:0];
                                 if (cellView) {
-                                    [self updateCoverForCellView:cellView item:mlItem track:it];
+                                    [self updateCoverForItem:mlItem track:it];
                                 }
                             }
                             mlItem.coverObtained = YES;
