@@ -884,32 +884,30 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 
     // Draw add playlist button
     {
-        int playlist_button_border = 2;
+        int playlist_button_border = 3;
         int add_playlist_btn_height = a.height-playlist_button_border;
-        int w;
+        GdkColor textcolor;
         if (ts->add_playlistbtn_hover) {
             gtkui_get_tabstrip_base_color (&clr);
+            gtkui_get_tabstrip_selected_text_color (&textcolor);
         } else {
             gtkui_get_tabstrip_mid_color (&clr);
+            gtkui_get_tabstrip_text_color (&textcolor);
         }
-        GdkColor textcolor;
-        gtkui_get_tabstrip_text_color(&textcolor);
         float fg[3] = {(float)textcolor.red/0xffff, (float)textcolor.green/0xffff, (float)textcolor.blue/0xffff};
 #if !GTK_CHECK_VERSION(3,0,0)
         gdk_gc_set_rgb_fg_color (gc, &clr);
         gdk_draw_rectangle (backbuf, gc, TRUE, tabarea_width, 1, add_playlist_btn_width, add_playlist_btn_height);
 
         draw_set_fg_color (&ts->drawctx, fg);
-        draw_get_text_extents (&ts->drawctx, "+", 1, &w, NULL);
-        draw_text_custom (&ts->drawctx, tabarea_width + (int)(add_playlist_btn_width/2)-(int)(w/2), 3, add_playlist_btn_width, 0, DDB_TABSTRIP_FONT, TRUE, FALSE, "+");
+        draw_text_custom (&ts->drawctx, tabarea_width, playlist_button_border, add_playlist_btn_width, 2, DDB_TABSTRIP_FONT, TRUE, FALSE, "+");
 #else
         cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.0);
         cairo_rectangle (cr, tabarea_width, 1, add_playlist_btn_width, add_playlist_btn_height);
         cairo_fill (cr);
 
         draw_set_fg_color (&ts->drawctx, fg);
-        draw_get_text_extents (&ts->drawctx, "+", 1, &w, NULL);
-        draw_text_custom (&ts->drawctx, tabarea_width + (int)(add_playlist_btn_width/2)-(int)(w/2) , 3, add_playlist_btn_width, 0, DDB_TABSTRIP_FONT, TRUE, FALSE, "+");
+        draw_text_custom (&ts->drawctx, tabarea_width, playlist_button_border, add_playlist_btn_width, 2, DDB_TABSTRIP_FONT, TRUE, FALSE, "+");
 #endif
     }
 
