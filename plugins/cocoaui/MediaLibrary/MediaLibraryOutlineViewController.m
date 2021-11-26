@@ -726,6 +726,12 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 
     [self.trackContextMenu updateWithTrackList:tracks count:count playlist:NULL currentTrack:NULL currentTrackIdx:-1];
 
+    ddb_playItem_t *selectedTrack = NULL;
+    if (count != 0) {
+        selectedTrack = tracks[0];
+    }
+    [self.trackContextMenu update:NULL];
+
     free (tracks);
 }
 

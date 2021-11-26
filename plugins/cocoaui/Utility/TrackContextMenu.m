@@ -20,7 +20,6 @@ extern DB_functions_t *deadbeef;
 
 @interface TrackContextMenu()<NSMenuDelegate>
 
-@property (nonatomic,readonly) int selectedCount;
 @property (nonatomic) ddb_playlist_t *playlist;
 
 @property (nonatomic) NSMenuItem *reloadMetadataItem;
@@ -79,6 +78,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)update:(ddb_playlist_t *)playlist {
+    [self removeAllItems];
     self.reloadMetadataItem = [self insertItemWithTitle:@"Reload Metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0];
     self.reloadMetadataItem.target = self;
 
@@ -121,7 +121,7 @@ extern DB_functions_t *deadbeef;
     ddb_playItem_t **tracks = NULL;
 
     if (self.selectedTracksList != NULL) {
-        ddbUtilTrackListGetTrackCount (self.selectedTracksList);
+        selected_count = ddbUtilTrackListGetTrackCount (self.selectedTracksList);
         tracks = ddbUtilTrackListGetTracks (self.selectedTracksList);
     }
 
@@ -143,11 +143,14 @@ extern DB_functions_t *deadbeef;
     self.autoenablesItems = NO;
 
     [self updateMenuItems];
+    if (self.playlist != NULL){
+        deadbeef->plt_unref (self.playlist);
+    }
     self.playlist = playlist;
     if (playlist) {
         deadbeef->plt_ref (playlist);
     }
-    BOOL enabled = self.selectedCount != 0;
+    BOOL enabled = selected_count != 0;
     self.reloadMetadataItem.enabled = enabled;
     self.reloadMetadataItem.target = self;
     BOOL has_rg_info = NO;
@@ -209,10 +212,6 @@ extern DB_functions_t *deadbeef;
 
     *canBeRGScanned = can_be_rg_scanned;
     *hasRGInfo = has_rg_info;
-}
-
-- (int)selectedCount {
-    return deadbeef->plt_getselcount(self.playlist);
 }
 
 - (void)reloadMetadata {

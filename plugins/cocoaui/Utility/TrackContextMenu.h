@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic,weak) NSView *view; // the view to associate with this menu
 
-- (void)update:(ddb_playlist_t *)playlist;
+- (void)update:(ddb_playlist_t * _Nullable)playlist;
 - (void)updateWithTrackList:(ddb_playItem_t * _Nullable * _Nonnull)tracks count:(NSUInteger)count playlist:(ddb_playlist_t * _Nullable)plt currentTrack:(ddb_playItem_t * _Nullable)currentTrack currentTrackIdx:(int)currentTrackIdx;
 
 @end
