@@ -30,12 +30,15 @@
 void
 plmenu_free (void);
 
+// Run context menu for selected items of the specified playlist and iter.
 void
-list_context_menu (int iter);
+list_context_menu (ddb_playlist_t *playlist, int iter);
 
+/// For use cases when playlist is not available, such as medialib
 void
 list_context_menu_with_track_list (ddb_playItem_t **tracks, int count, trkproperties_delegate_t *delegate);
 
+/// For use case when the caller needs more control of the menu, such as Playlist Tab context menu
 void
 trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int selected_count, ddb_action_context_t action_context);
 

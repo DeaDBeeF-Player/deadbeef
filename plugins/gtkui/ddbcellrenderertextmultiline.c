@@ -233,7 +233,7 @@ static void ddb_cell_editable_text_view_finalize (GObject* obj) {
 
 GType ddb_cell_editable_text_view_get_type (void) {
     static volatile gsize ddb_cell_editable_text_view_type_id__volatile = 0;
-    if (g_once_init_enter (&ddb_cell_editable_text_view_type_id__volatile)) {
+    if (g_once_init_enter ((gsize *)(&ddb_cell_editable_text_view_type_id__volatile))) {
         static const GTypeInfo g_define_type_info = { sizeof (DdbCellEditableTextViewClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) ddb_cell_editable_text_view_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (DdbCellEditableTextView), 0, (GInstanceInitFunc) ddb_cell_editable_text_view_instance_init, NULL };
         static const GInterfaceInfo gtk_cell_editable_info = { (GInterfaceInitFunc) ddb_cell_editable_text_view_gtk_cell_editable_interface_init, (GInterfaceFinalizeFunc) NULL, NULL};
         GType ddb_cell_editable_text_view_type_id;
@@ -506,7 +506,7 @@ static void ddb_cell_renderer_text_multiline_finalize (GObject* obj) {
 
 GType ddb_cell_renderer_text_multiline_get_type (void) {
     static volatile gsize ddb_cell_renderer_text_multiline_type_id__volatile = 0;
-    if (g_once_init_enter (&ddb_cell_renderer_text_multiline_type_id__volatile)) {
+    if (g_once_init_enter ((gsize *)(&ddb_cell_renderer_text_multiline_type_id__volatile))) {
         static const GTypeInfo g_define_type_info = { sizeof (DdbCellRendererTextMultilineClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) ddb_cell_renderer_text_multiline_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (DdbCellRendererTextMultiline), 0, (GInstanceInitFunc) ddb_cell_renderer_text_multiline_instance_init, NULL };
         GType ddb_cell_renderer_text_multiline_type_id;
         ddb_cell_renderer_text_multiline_type_id = g_type_register_static (GTK_TYPE_CELL_RENDERER_TEXT, "DdbCellRendererTextMultiline", &g_define_type_info, 0);

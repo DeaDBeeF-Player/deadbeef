@@ -55,6 +55,21 @@ enum {
 };
 
 static void
+plt_get_title_wrapper (int plt, char *buffer, int len) {
+    if (plt == -1) {
+        strcpy (buffer, "");
+        return;
+    }
+    ddb_playlist_t *p = deadbeef->plt_get_for_idx (plt);
+    deadbeef->plt_get_title (p, buffer, len);
+    deadbeef->plt_unref (p);
+    char *end;
+    if (!g_utf8_validate (buffer, -1, (const gchar **)&end)) {
+        *end = 0;
+    }
+}
+
+static void
 ddb_tabstrip_send_configure (DdbTabStrip *darea)
 {
     GtkWidget *widget;
@@ -1351,3 +1366,4 @@ on_tabstrip_leave_notify_event (GtkWidget *widget, GdkEventCrossing *event_cross
     gtk_widget_queue_draw(widget);
     return FALSE;
 }
+

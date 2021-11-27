@@ -578,23 +578,6 @@ on_pltbrowser_header_clicked (GtkWidget       *widget,
     return FALSE;
 }
 
-/*
-static void
-plt_get_title_wrapper (int plt, char *buffer, int len) {
-    if (plt == -1) {
-        strcpy (buffer, "");
-        return;
-    }
-    ddb_playlist_t *p = deadbeef->plt_get_for_idx (plt);
-    deadbeef->plt_get_title (p, buffer, len);
-    deadbeef->plt_unref (p);
-    char *end;
-    if (!g_utf8_validate (buffer, -1, (const gchar **)&end)) {
-        *end = 0;
-    }
-}
-*/
-
 static gboolean
 on_pltbrowser_key_press_event (GtkWidget *widget,
                                GdkEventKey  *event,

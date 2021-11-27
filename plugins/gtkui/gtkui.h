@@ -153,9 +153,6 @@ void
 gtkui_free_pltmenu(void);
 
 void
-plt_get_title_wrapper (int plt, char *buffer, int len);
-
-void
 gtkui_quit (void);
 
 extern int gtkui_hotkey_grabbing;

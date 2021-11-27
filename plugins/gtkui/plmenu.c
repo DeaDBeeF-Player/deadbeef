@@ -38,11 +38,24 @@
 
 extern DB_functions_t *deadbeef;
 
+static ddbUtilTrackList_t _menuPlaylist;
 static ddbUtilTrackList_t _menuTrackList;
+static ddb_action_context_t _menuActionContext;
 static trkproperties_delegate_t _trkproperties_delegate;
 
 static void
 _run_menu (int show_paste);
+
+static void
+_set_playlist (ddb_playlist_t *playlist) {
+    if (_menuPlaylist != NULL) {
+        deadbeef->plt_unref (_menuPlaylist);
+    }
+    _menuPlaylist = playlist;
+    if (_menuPlaylist != NULL) {
+        deadbeef->plt_ref (_menuPlaylist);
+    }
+}
 
 void
 plmenu_free (void) {
@@ -50,6 +63,7 @@ plmenu_free (void) {
         ddbUtilTrackListFree(_menuTrackList);
         _menuTrackList = NULL;
     }
+    _set_playlist(NULL);
 }
 
 static void
@@ -61,20 +75,18 @@ _capture_selected_track_list (void) {
 
     ddb_playItem_t **tracks = NULL;
 
-    ddb_playlist_t *plt = deadbeef->plt_get_curr();
-
     deadbeef->pl_lock ();
 
     ddb_playItem_t *current = deadbeef->streamer_get_playing_track ();
     int current_idx = -1;
 
-    int count = deadbeef->plt_getselcount(plt);
+    int count = deadbeef->plt_getselcount(_menuPlaylist);
     int all_idx = 0;
     int idx = 0;
     if (count) {
         tracks = calloc (sizeof (ddb_playItem_t *), count);
 
-        ddb_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+        ddb_playItem_t *it = deadbeef->plt_get_first (_menuPlaylist, PL_MAIN);
         while (it) {
             ddb_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             if (current != NULL && it == current) {
@@ -94,7 +106,7 @@ _capture_selected_track_list (void) {
 
     deadbeef->pl_unlock ();
 
-    _menuTrackList = ddbUtilTrackListInitWithWithTracks(ddbUtilTrackListAlloc(), plt, DDB_ACTION_CTX_SELECTION, tracks, count, current, current_idx);
+    _menuTrackList = ddbUtilTrackListInitWithWithTracks(ddbUtilTrackListAlloc(), _menuPlaylist, _menuActionContext, tracks, count, current, current_idx);
 
     if (current) {
         deadbeef->pl_item_unref (current);
@@ -106,8 +118,6 @@ _capture_selected_track_list (void) {
     }
 
     free (tracks);
-
-    deadbeef->plt_unref (plt);
 }
 
 static GtkWidget*
@@ -161,33 +171,21 @@ void
 on_cut_activate (GtkMenuItem     *menuitem,
                  gpointer         user_data)
 {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (plt) {
-        clipboard_cut_selection (plt, DDB_ACTION_CTX_SELECTION);
-        deadbeef->plt_unref (plt);
-    }
+    clipboard_cut_selection (_menuPlaylist, _menuActionContext);
 }
 
 void
 on_copy_activate (GtkMenuItem     *menuitem,
                   gpointer         user_data)
 {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (plt) {
-        clipboard_copy_selection (plt, DDB_ACTION_CTX_SELECTION);
-        deadbeef->plt_unref (plt);
-    }
+    clipboard_copy_selection (_menuPlaylist, _menuActionContext);
 }
 
 void
 on_paste_activate (GtkMenuItem     *menuitem,
                    gpointer         user_data)
 {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (plt) {
-        clipboard_paste_selection (plt, DDB_ACTION_CTX_SELECTION);
-        deadbeef->plt_unref (plt);
-    }
+    clipboard_paste_selection (_menuPlaylist, _menuActionContext);
 }
 
 static void
@@ -272,7 +270,7 @@ void
 on_remove1_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    action_remove_from_playlist_handler (NULL, DDB_ACTION_CTX_SELECTION);
+    action_remove_from_playlist_handler (NULL, _menuActionContext);
 }
 
 
@@ -407,7 +405,7 @@ actionitem_activate (GtkMenuItem     *menuitem,
                      DB_plugin_action_t *action)
 {
     if (action->callback2) {
-        action->callback2 (action, DDB_ACTION_CTX_SELECTION);
+        action->callback2 (action, _menuActionContext);
     }
 }
 
@@ -422,6 +420,7 @@ list_context_menu_with_track_list (ddb_playItem_t **tracks, int count, trkproper
         _menuTrackList = NULL;
     }
 
+    _menuActionContext = DDB_ACTION_CTX_SELECTION;
     _menuTrackList = ddbUtilTrackListInitWithWithTracks(ddbUtilTrackListAlloc(), NULL, DDB_ACTION_CTX_SELECTION, tracks, count, NULL, -1);
 
     _trkproperties_delegate.trkproperties_did_update_tracks = delegate->trkproperties_did_update_tracks;
@@ -433,7 +432,9 @@ list_context_menu_with_track_list (ddb_playItem_t **tracks, int count, trkproper
 }
 
 void
-list_context_menu (int iter) {
+list_context_menu (ddb_playlist_t *playlist, int iter) {
+    _menuActionContext = DDB_ACTION_CTX_SELECTION;
+    _set_playlist (playlist);
     _capture_selected_track_list();
 
     _trkproperties_delegate.trkproperties_did_update_tracks = _trkproperties_did_update_tracks;
@@ -445,6 +446,9 @@ list_context_menu (int iter) {
 
 void
 trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int selected_count, ddb_action_context_t action_context) {
+
+    _menuActionContext = action_context;
+
     // remove all items
     GList *children = gtk_container_get_children(GTK_CONTAINER(menu));
     for (GList *item = children; item; item = item->next) {
@@ -486,21 +490,22 @@ trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int sel
     gtk_container_add (GTK_CONTAINER (menu), play_later);
 
     remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove from Playback Queue"));
-    if (selected_count > 0) {
-        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-        int pqlen = deadbeef->playqueue_get_count ();
-        int no_playqueue_items = 1;
-        for (int i = 0; i < pqlen && no_playqueue_items; i++) {
-            DB_playItem_t *pqitem = deadbeef->playqueue_get_item (i);
-            if (deadbeef->pl_get_playlist (pqitem) == plt && deadbeef->pl_is_selected (pqitem)) {
-                no_playqueue_items = 0;
-            }
-            deadbeef->pl_item_unref (pqitem);
-        }
-        if (no_playqueue_items) {
-            gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
-        }
-    }
+    // FIXME: this code is to detect whether any of the selected tracks are in the queue
+//    if (selected_count > 0) {
+//        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+//        int pqlen = deadbeef->playqueue_get_count ();
+//        int no_playqueue_items = 1;
+//        for (int i = 0; i < pqlen && no_playqueue_items; i++) {
+//            DB_playItem_t *pqitem = deadbeef->playqueue_get_item (i);
+//            if (deadbeef->pl_get_playlist (pqitem) == plt && deadbeef->pl_is_selected (pqitem)) {
+//                no_playqueue_items = 0;
+//            }
+//            deadbeef->pl_item_unref (pqitem);
+//        }
+//        if (no_playqueue_items) {
+//            gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
+//        }
+//    }
     gtk_widget_show (remove_from_playback_queue1);
     gtk_container_add (GTK_CONTAINER (menu), remove_from_playback_queue1);
 
@@ -589,8 +594,51 @@ trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int sel
         int count = 0;
         for (action = actions; action; action = action->next)
         {
-            if ((action->flags & DB_ACTION_COMMON) || !((action->callback2 && (action->flags & DB_ACTION_ADD_MENU)) || action->callback) || !(action->flags & (DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK)))
+            if (action->name && !strcmp (action->name, "delete_from_disk") && hide_remove_from_disk) {
                 continue;
+            }
+
+            if (action->flags&DB_ACTION_DISABLED) {
+                continue;
+            }
+
+            if (!((action->callback2 && (action->flags & DB_ACTION_ADD_MENU)) || action->callback)) {
+                continue;
+            }
+
+            if (_menuActionContext == DDB_ACTION_CTX_SELECTION) {
+                if ((action->flags & DB_ACTION_COMMON)
+                    || !(action->flags & (DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK))) {
+                    continue;
+                }
+            }
+
+            if (_menuActionContext == DDB_ACTION_CTX_PLAYLIST) {
+                if (action->flags & DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST) {
+                    continue;
+                }
+                if (action->flags & DB_ACTION_COMMON) {
+                    continue;
+                }
+            }
+            else if (_menuActionContext == DDB_ACTION_CTX_MAIN) {
+                if (!((action->flags & (DB_ACTION_COMMON|DB_ACTION_ADD_MENU)) == (DB_ACTION_COMMON|DB_ACTION_ADD_MENU))) {
+                    continue;
+                }
+                const char *slash_test = action->title;
+                while (NULL != (slash_test = strchr (slash_test, '/'))) {
+                    if (slash_test && slash_test > action->title && *(slash_test-1) == '\\') {
+                        slash_test++;
+                        continue;
+                    }
+                    break;
+                }
+
+                if (slash_test == NULL) {
+                    continue;
+                }
+            }
+
 
             // create submenus (separated with '/')
             const char *prev = action->title;
@@ -759,8 +807,6 @@ _run_menu (int show_paste) {
 
     GtkWidget *menu = gtk_menu_new();
 
-    trk_context_menu_build (menu, selected_track, selected_count, DDB_ACTION_CTX_SELECTION);
+    trk_context_menu_build (menu, selected_track, selected_count, _menuActionContext);
     gtk_menu_popup_at_pointer (GTK_MENU (menu), NULL);
 }
-
-

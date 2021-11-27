@@ -2352,7 +2352,12 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
 gboolean
 ddb_listview_list_popup_menu (GtkWidget *widget, gpointer user_data) {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    ps->binding->list_context_menu (PL_MAIN);
+
+    ddb_playlist_t *playlist = deadbeef->plt_get_curr();
+    if (playlist != NULL) {
+        ps->binding->list_context_menu (playlist, PL_MAIN);
+        deadbeef->plt_unref (playlist);
+    }
     return TRUE;
 }
 
@@ -3098,7 +3103,11 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
         }
         ddb_listview_update_cursor (ps, cursor);
 
-        ps->binding->list_context_menu (PL_MAIN);
+        ddb_playlist_t *playlist = deadbeef->plt_get_curr();
+        if (playlist != NULL) {
+            ps->binding->list_context_menu (playlist, PL_MAIN);
+            deadbeef->plt_unref (playlist);
+        }
     }
     return TRUE;
 }

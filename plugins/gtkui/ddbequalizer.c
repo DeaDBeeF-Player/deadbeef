@@ -841,7 +841,7 @@ static void ddb_equalizer_finalize (GObject* obj) {
 
 GType ddb_equalizer_get_type (void) {
     static volatile gsize ddb_equalizer_type_id__volatile = 0;
-    if (g_once_init_enter (&ddb_equalizer_type_id__volatile)) {
+    if (g_once_init_enter ((gsize *)(&ddb_equalizer_type_id__volatile))) {
         static const GTypeInfo g_define_type_info = { sizeof (DdbEqualizerClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) ddb_equalizer_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (DdbEqualizer), 0, (GInstanceInitFunc) ddb_equalizer_instance_init, NULL };
         GType ddb_equalizer_type_id;
         ddb_equalizer_type_id = g_type_register_static (GTK_TYPE_DRAWING_AREA, "DdbEqualizer", &g_define_type_info, 0);

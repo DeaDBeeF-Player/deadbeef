@@ -225,7 +225,7 @@ static void ddb_seekbar_instance_init (DdbSeekbar * self) {
 
 GType ddb_seekbar_get_type (void) {
 	static volatile gsize ddb_seekbar_type_id__volatile = 0;
-	if (g_once_init_enter (&ddb_seekbar_type_id__volatile)) {
+	if (g_once_init_enter ((gsize *)(&ddb_seekbar_type_id__volatile))) {
 		static const GTypeInfo g_define_type_info = { sizeof (DdbSeekbarClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) ddb_seekbar_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (DdbSeekbar), 0, (GInstanceInitFunc) ddb_seekbar_instance_init, NULL };
 		GType ddb_seekbar_type_id;
 		ddb_seekbar_type_id = g_type_register_static (GTK_TYPE_WIDGET, "DdbSeekbar", &g_define_type_info, 0);

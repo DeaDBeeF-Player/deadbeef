@@ -563,7 +563,7 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
         gtk_dialog_set_default_response (GTK_DIALOG (win), GTK_RESPONSE_OK);
     }
     else {
-        win = gtk_dialog_new_with_buttons (title, GTK_WINDOW (parentwin), GTK_DIALOG_MODAL, NULL);
+        win = gtk_dialog_new_with_buttons (title, GTK_WINDOW (parentwin), GTK_DIALOG_MODAL, NULL, NULL);
         if (buttons & (1<<ddb_button_ok)) {
             gtk_dialog_add_button (GTK_DIALOG (win), GTK_STOCK_OK, GTK_RESPONSE_OK);
         }

@@ -102,7 +102,7 @@ typedef struct {
     void (*col_free_user_data) (void *user_data);
 
     // callbacks
-    void (*list_context_menu) (int plt_iter);
+    void (*list_context_menu) (ddb_playlist_t *playlist, int plt_iter);
     void (*header_context_menu) (DdbListview *listview, int col);
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
     gboolean (*list_handle_keypress) (DdbListview *ps, int keyval, int state, int iter);
