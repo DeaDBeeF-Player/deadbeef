@@ -124,7 +124,7 @@ static NSMutableArray *g_rgControllers;
 }
 
 - (IBAction)progressCancelAction:(id)sender {
-    _abort_flag = 1;
+    [self.window endSheet:self.scanProgressWindow returnCode:NSModalResponseCancel];
 }
 
 - (void)windowWillClose:(NSNotification *)notification {
@@ -143,6 +143,9 @@ static NSMutableArray *g_rgControllers;
     [self.window makeKeyWindow];
 
     [self.window beginSheet:_scanProgressWindow completionHandler:^(NSModalResponse returnCode) {
+        if (returnCode == NSModalResponseCancel) {
+            self.abort_flag = 1;
+        }
     }];
 
     memset (&_rg_settings, 0, sizeof (ddb_rg_scanner_settings_t));
