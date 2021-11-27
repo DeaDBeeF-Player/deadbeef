@@ -86,6 +86,13 @@ extern DB_functions_t *deadbeef;
     self.deleteFromDiskItem.hidden = deadbeef->conf_get_int("cocoaui.hide_remove_from_disk", 0);
 }
 
+- (void)setSelectedTracksList:(ddbUtilTrackList_t)selectedTracksList {
+    if (_selectedTracksList != NULL) {
+        ddbUtilTrackListFree(_selectedTracksList);
+    }
+    _selectedTracksList = selectedTracksList;
+}
+
 - (void)update:(ddb_playlist_t *)playlist actionContext:(ddb_action_context_t)actionContext {
     [self removeAllItems];
 
@@ -195,16 +202,10 @@ extern DB_functions_t *deadbeef;
 
 - (void)updateWithTrackList:(ddb_playItem_t **)tracks count:(NSUInteger)count playlist:(ddb_playlist_t *)plt currentTrack:(ddb_playItem_t *)currentTrack currentTrackIdx:(int)currentTrackIdx {
     [self updateMenuItems];
-    if (_selectedTracksList) {
-        ddbUtilTrackListFree(_selectedTracksList);
-        _selectedTracksList = NULL;
-    }
-    if (_deleteFromDiskController) {
-        ddbDeleteFromDiskControllerFree(_deleteFromDiskController);
-        _deleteFromDiskController = NULL;
-    }
+    self.selectedTracksList = NULL;
+    self.deleteFromDiskController = NULL;
     if (tracks) {
-        _selectedTracksList = ddbUtilTrackListInitWithWithTracks( ddbUtilTrackListAlloc(), plt, DDB_ACTION_CTX_SELECTION, tracks, (unsigned)count, currentTrack, currentTrackIdx);
+        self.selectedTracksList = ddbUtilTrackListInitWithWithTracks( ddbUtilTrackListAlloc(), plt, DDB_ACTION_CTX_SELECTION, tracks, (unsigned)count, currentTrack, currentTrackIdx);
     }
 }
 
@@ -460,6 +461,13 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl, int cancelled) {
     ddbDeleteFromDiskControllerFree(ctl);
     self.deleteFromDiskController = NULL;
     [((id<TrackContextMenuDelegate>)self.delegate) trackContextMenuDidDeleteFiles:self cancelled:cancelled];
+}
+
+- (void)setDeleteFromDiskController:(ddbDeleteFromDiskController_t)deleteFromDiskController {
+    if (_deleteFromDiskController) {
+        ddbDeleteFromDiskControllerFree(_deleteFromDiskController);
+    }
+    _deleteFromDiskController = deleteFromDiskController;
 }
 
 - (void)deleteFromDisk {

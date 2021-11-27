@@ -925,7 +925,6 @@ static const int close_btn_left_offs = 8;
 }
 
 - (void)trackContextMenuShowTrackProperties:(nonnull TrackContextMenu *)trackContextMenu {
-    // FIXME: track properties is not releasing something!
     if (!self.trkProperties) {
         self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
         self.trkProperties.context = DDB_ACTION_CTX_PLAYLIST;

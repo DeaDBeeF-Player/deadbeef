@@ -39,8 +39,10 @@ extern DB_functions_t *deadbeef;
 @implementation PlaylistBrowserViewController
 
 - (void)dealloc {
+    // force cleanup
     [self.trkProperties close];
     self.trkProperties = nil;
+    self.tableView.menu = nil;
 }
 
 - (void)viewDidLoad {
@@ -359,7 +361,6 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)trackContextMenuShowTrackProperties:(nonnull TrackContextMenu *)trackContextMenu {
-    // FIXME: track properties is not releasing something!
     if (!self.trkProperties) {
         self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
         self.trkProperties.context = DDB_ACTION_CTX_PLAYLIST;
