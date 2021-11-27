@@ -443,9 +443,16 @@ list_context_menu (int iter) {
     _run_menu (iter != PL_SEARCH);
 }
 
-static void
-_run_menu (int show_paste) {
-    GtkWidget *playlist_menu;
+void
+trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int selected_count, ddb_action_context_t action_context) {
+    // remove all items
+    GList *children = gtk_container_get_children(GTK_CONTAINER(menu));
+    for (GList *item = children; item; item = item->next) {
+        gtk_container_remove(GTK_CONTAINER(menu), GTK_WIDGET(item));
+    }
+    g_list_free(children);
+
+    // add all items
     GtkWidget *play_later;
     GtkWidget *play_next;
     GtkWidget *remove_from_playback_queue1;
@@ -470,18 +477,13 @@ _run_menu (int show_paste) {
     GtkWidget *set_custom_title;
 #endif
 
-    int selected_count = ddbUtilTrackListGetTrackCount (_menuTrackList);
-    ddb_playItem_t **tracks = ddbUtilTrackListGetTracks(_menuTrackList);
-
-    playlist_menu = gtk_menu_new ();
-
     play_next = gtk_menu_item_new_with_mnemonic (_("Play Next"));
     gtk_widget_show (play_next);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), play_next);
+    gtk_container_add (GTK_CONTAINER (menu), play_next);
 
     play_later = gtk_menu_item_new_with_mnemonic (_("Play Later"));
     gtk_widget_show (play_later);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), play_later);
+    gtk_container_add (GTK_CONTAINER (menu), play_later);
 
     remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove from Playback Queue"));
     if (selected_count > 0) {
@@ -500,20 +502,20 @@ _run_menu (int show_paste) {
         }
     }
     gtk_widget_show (remove_from_playback_queue1);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_playback_queue1);
+    gtk_container_add (GTK_CONTAINER (menu), remove_from_playback_queue1);
 
     reload_metadata = gtk_menu_item_new_with_mnemonic (_("Reload Metadata"));
     gtk_widget_show (reload_metadata);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), reload_metadata);
+    gtk_container_add (GTK_CONTAINER (menu), reload_metadata);
 
     separator = gtk_separator_menu_item_new ();
     gtk_widget_show (separator);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), separator);
+    gtk_container_add (GTK_CONTAINER (menu), separator);
     gtk_widget_set_sensitive (separator, FALSE);
 
     cut = gtk_image_menu_item_new_with_mnemonic (_("Cu_t"));
     gtk_widget_show (cut);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), cut);
+    gtk_container_add (GTK_CONTAINER (menu), cut);
     gtk_widget_add_accelerator (cut, "activate", accel_group, GDK_x, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
     cut_image = gtk_image_new_from_stock ("gtk-cut", GTK_ICON_SIZE_MENU);
@@ -522,7 +524,7 @@ _run_menu (int show_paste) {
 
     copy = gtk_image_menu_item_new_with_mnemonic (_("_Copy"));
     gtk_widget_show (copy);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), copy);
+    gtk_container_add (GTK_CONTAINER (menu), copy);
     gtk_widget_add_accelerator (copy, "activate", accel_group, GDK_c, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
     copy_image = gtk_image_new_from_stock ("gtk-copy", GTK_ICON_SIZE_MENU);
@@ -530,13 +532,14 @@ _run_menu (int show_paste) {
     gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (copy), copy_image);
 
     paste = gtk_image_menu_item_new_with_mnemonic (_("_Paste"));
+    int show_paste = 1; // FIXME
     if (show_paste) {
         gtk_widget_show (paste);
     }
     else {
         gtk_widget_hide (paste);
     }
-    gtk_container_add (GTK_CONTAINER (playlist_menu), paste);
+    gtk_container_add (GTK_CONTAINER (menu), paste);
     gtk_widget_add_accelerator (paste, "activate", accel_group, GDK_v, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
     if (clipboard_is_clipboard_data_available ()) {
@@ -552,31 +555,25 @@ _run_menu (int show_paste) {
 
     separator9 = gtk_separator_menu_item_new ();
     gtk_widget_show (separator9);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), separator9);
+    gtk_container_add (GTK_CONTAINER (menu), separator9);
     gtk_widget_set_sensitive (separator9, FALSE);
 
     remove2 = gtk_menu_item_new_with_mnemonic (_("Remove"));
     gtk_widget_show (remove2);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), remove2);
+    gtk_container_add (GTK_CONTAINER (menu), remove2);
 
     int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
 
     if (!hide_remove_from_disk) {
         remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove from Disk"));
         gtk_widget_show (remove_from_disk);
-        gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_disk);
+        gtk_container_add (GTK_CONTAINER (menu), remove_from_disk);
     }
 
     separator = gtk_separator_menu_item_new ();
     gtk_widget_show (separator);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), separator);
+    gtk_container_add (GTK_CONTAINER (menu), separator);
     gtk_widget_set_sensitive (separator, FALSE);
-
-    DB_playItem_t *selected = NULL;
-
-    if (selected_count > 0) {
-        selected = tracks[0];
-    }
 
     DB_plugin_t **plugins = deadbeef->plug_get_list();
     int i;
@@ -586,7 +583,7 @@ _run_menu (int show_paste) {
         if (!plugins[i]->get_actions)
             continue;
 
-        DB_plugin_action_t *actions = plugins[i]->get_actions (selected);
+        DB_plugin_action_t *actions = plugins[i]->get_actions (selected_track);
         DB_plugin_action_t *action;
 
         int count = 0;
@@ -622,7 +619,7 @@ _run_menu (int show_paste) {
                     *t = 0;
 
                     // add popup
-                    GtkWidget *prev_menu = popup ? popup : playlist_menu;
+                    GtkWidget *prev_menu = popup ? popup : menu;
 
                     popup = GTK_WIDGET (g_object_get_data (G_OBJECT (find_popup (prev_menu)), name));
                     if (!popup) {
@@ -662,7 +659,7 @@ _run_menu (int show_paste) {
 
             actionitem = gtk_menu_item_new_with_mnemonic (_(title));
             gtk_widget_show (actionitem);
-            gtk_container_add (popup ? GTK_CONTAINER (popup) : GTK_CONTAINER (playlist_menu), actionitem);
+            gtk_container_add (popup ? GTK_CONTAINER (popup) : GTK_CONTAINER (menu), actionitem);
 
             g_signal_connect ((gpointer) actionitem, "activate",
                               G_CALLBACK (actionitem_activate),
@@ -676,7 +673,7 @@ _run_menu (int show_paste) {
         {
             separator8 = gtk_separator_menu_item_new ();
             gtk_widget_show (separator8);
-            gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
+            gtk_container_add (GTK_CONTAINER (menu), separator8);
             gtk_widget_set_sensitive (separator8, FALSE);
         }
     }
@@ -684,7 +681,7 @@ _run_menu (int show_paste) {
     {
         separator8 = gtk_separator_menu_item_new ();
         gtk_widget_show (separator8);
-        gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
+        gtk_container_add (GTK_CONTAINER (menu), separator8);
         gtk_widget_set_sensitive (separator8, FALSE);
     }
 
@@ -704,7 +701,7 @@ _run_menu (int show_paste) {
 
     properties1 = gtk_menu_item_new_with_mnemonic (_("Track Properties"));
     gtk_widget_show (properties1);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), properties1);
+    gtk_container_add (GTK_CONTAINER (menu), properties1);
 
     g_signal_connect ((gpointer) play_later, "activate",
                       G_CALLBACK (play_later_activate),
@@ -743,8 +740,27 @@ _run_menu (int show_paste) {
     g_signal_connect ((gpointer) properties1, "activate",
                       G_CALLBACK (properties_activate),
                       NULL);
+}
 
-    gtk_menu_popup_at_pointer (GTK_MENU (playlist_menu), NULL);
+
+static void
+_run_menu (int show_paste) {
+    int selected_count = 0;
+    ddb_playItem_t *selected_track = NULL;
+
+    if (_menuTrackList != NULL) {
+        selected_count = ddbUtilTrackListGetTrackCount (_menuTrackList);
+        if (selected_count != 0) {
+            ddb_playItem_t **tracks = ddbUtilTrackListGetTracks(_menuTrackList);
+            selected_track = tracks[0];
+        }
+
+    }
+
+    GtkWidget *menu = gtk_menu_new();
+
+    trk_context_menu_build (menu, selected_track, selected_count, DDB_ACTION_CTX_SELECTION);
+    gtk_menu_popup_at_pointer (GTK_MENU (menu), NULL);
 }
 
 
