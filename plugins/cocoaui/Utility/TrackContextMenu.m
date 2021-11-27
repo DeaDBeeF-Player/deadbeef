@@ -79,6 +79,17 @@ extern DB_functions_t *deadbeef;
 
 - (void)update:(ddb_playlist_t *)playlist actionContext:(ddb_action_context_t)actionContext {
     [self removeAllItems];
+
+    if (actionContext == DDB_ACTION_CTX_PLAYLIST && playlist == NULL) {
+        return;
+    }
+
+    if (actionContext == DDB_ACTION_CTX_PLAYLIST) {
+        ddbUtilTrackList_t *trackList = ddbUtilTrackListAlloc();
+        ddbUtilTrackListInitWithPlaylist(trackList, playlist, actionContext);
+        self.selectedTracksList = trackList;
+    }
+
     self.reloadMetadataItem = [self insertItemWithTitle:@"Reload Metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0];
     self.reloadMetadataItem.target = self;
 

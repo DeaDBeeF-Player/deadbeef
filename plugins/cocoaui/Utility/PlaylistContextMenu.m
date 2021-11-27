@@ -43,6 +43,8 @@ extern DB_functions_t *deadbeef;
         deadbeef->plt_ref (playlist);
     }
 
+    [self update:playlist actionContext:DDB_ACTION_CTX_PLAYLIST];
+
     [self insertItemWithTitle:@"Add New Playlist" action:@selector(addNewPlaylist:) keyEquivalent:@"" atIndex:0].target = self;
     if (playlist != NULL) {
         [self insertItemWithTitle:@"Delete Playlist" action:@selector(closePlaylist:) keyEquivalent:@"" atIndex:0].target = self;
@@ -55,19 +57,6 @@ extern DB_functions_t *deadbeef;
         [self insertItem:NSMenuItem.separatorItem atIndex:2];
 
         [self addItem:NSMenuItem.separatorItem];
-
-        [self addActionItemsForContext:DDB_ACTION_CTX_PLAYLIST track:NULL filter:^BOOL(DB_plugin_action_t * _Nonnull action) {
-
-            if (!(action->flags & DB_ACTION_MULTIPLE_TRACKS)) {
-                return NO;
-            }
-
-            if (action->flags & DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST) {
-                return NO;
-            }
-
-            return YES;
-        }];
     }
 }
 

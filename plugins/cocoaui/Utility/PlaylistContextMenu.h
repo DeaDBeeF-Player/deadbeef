@@ -7,13 +7,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "TrackContextMenu.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol RenamePlaylistViewControllerDelegate;
 @protocol DeletePlaylistConfirmationControllerDelegate;
 
-@interface PlaylistContextMenu : NSMenu
+@interface PlaylistContextMenu : TrackContextMenu
 
 @property (nonatomic,weak) id<RenamePlaylistViewControllerDelegate> renamePlaylistDelegate;
 @property (nonatomic,weak) id<DeletePlaylistConfirmationControllerDelegate> deletePlaylistDelegate;
