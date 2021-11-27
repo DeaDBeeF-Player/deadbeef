@@ -668,7 +668,7 @@ static int close_btn_left_offs = 8;
     if ((theEvent.type == NSEventTypeRightMouseDown || theEvent.type == NSEventTypeLeftMouseDown)
         && (theEvent.buttonNumber == 1
             || (theEvent.buttonNumber == 0 && (theEvent.modifierFlags & NSEventModifierFlagControl)))) {
-        PlaylistContextMenu *menu = [[PlaylistContextMenu alloc] initWithTitle:@"TabMenu"];
+        PlaylistContextMenu *menu = [[PlaylistContextMenu alloc] initWithView:self];
         menu.parentView = self;
         menu.clickPoint = coord;
         menu.delegate = self;

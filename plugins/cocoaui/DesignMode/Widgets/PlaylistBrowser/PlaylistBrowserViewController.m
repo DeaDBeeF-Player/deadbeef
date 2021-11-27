@@ -41,7 +41,7 @@ extern DB_functions_t *deadbeef;
     [self.tableView setDraggingSourceOperationMask:NSDragOperationMove forLocal:YES];
     [self.tableView registerForDraggedTypes:@[NSPasteboardTypeString]];
 
-    self.tableView.menu = [PlaylistContextMenu new];
+    self.tableView.menu = [[PlaylistContextMenu alloc] initWithView:self.view];
     self.tableView.menu.delegate = self;
 
     [self reloadData];

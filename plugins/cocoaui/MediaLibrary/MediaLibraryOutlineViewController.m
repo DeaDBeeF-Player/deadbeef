@@ -87,8 +87,7 @@ extern DB_functions_t *deadbeef;
     self.artworkPlugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
     self.listenerId = self.medialibPlugin->plugin.add_listener (self.medialibSource, _medialib_listener, (__bridge void *)self);
 
-    self.trackContextMenu = [TrackContextMenu new];
-    self.trackContextMenu.view = self.outlineView;
+    self.trackContextMenu = [[TrackContextMenu alloc] initWithView:self.outlineView];
     self.outlineView.menu = self.trackContextMenu;
     self.outlineView.menu.delegate = self;
 

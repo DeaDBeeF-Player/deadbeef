@@ -23,7 +23,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface TrackContextMenu : NSMenu
 
-@property (nonatomic,weak) NSView *view; // the view to associate with this menu
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithTitle:(NSString *)title NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
+
+- (instancetype)initWithView:(NSView *)view NS_DESIGNATED_INITIALIZER;
 
 - (void)update:(ddb_playlist_t * _Nullable)playlist actionContext:(ddb_action_context_t)actionContext;
 - (void)updateWithTrackList:(ddb_playItem_t * _Nullable * _Nonnull)tracks count:(NSUInteger)count playlist:(ddb_playlist_t * _Nullable)plt currentTrack:(ddb_playItem_t * _Nullable)currentTrack currentTrackIdx:(int)currentTrackIdx;

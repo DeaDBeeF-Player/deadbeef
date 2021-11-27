@@ -20,6 +20,8 @@ extern DB_functions_t *deadbeef;
 
 @interface TrackContextMenu()<NSMenuDelegate>
 
+@property (nonatomic,weak) NSView *view; // the view to associate with this menu
+
 @property (nonatomic) ddb_playlist_t *playlist;
 
 @property (nonatomic) NSMenuItem *reloadMetadataItem;
@@ -47,12 +49,19 @@ extern DB_functions_t *deadbeef;
 
 @implementation TrackContextMenu
 
-- (instancetype)init {
-    self = [super init];
-    if (!self) {
-        return nil;
-    }
+- (instancetype)initWithTitle:(NSString *)title {
+    self = [self initWithView:[NSView new]];
+    return nil;
+}
 
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    self = [self initWithView:[NSView new]];
+    return nil;
+}
+
+- (instancetype)initWithView:(NSView *)view {
+    self = [super initWithTitle:@""];
+    self.view = view;
     return self;
 }
 
@@ -395,13 +404,16 @@ _deleteFile (ddbDeleteFromDiskController_t ctl, const char *uri) {
 static void
 _deleteCompleted (ddbDeleteFromDiskController_t ctl) {
     void *userData = ddbDeleteFromDiskControllerGetUserData(ctl);
-    TrackContextMenu *menu = (__bridge TrackContextMenu *)userData;
+    TrackContextMenu *menu = (TrackContextMenu *)CFBridgingRelease(userData);
 
     [menu deleteCompleted:ctl];
 }
 
 - (void)deleteFromDiskWarningMessage:(ddbDeleteFromDiskController_t)ctl ctx:(ddb_action_context_t)ctx trackCount:(unsigned)trackcount callback:(ddbDeleteFromDiskControllerWarningCallback_t)callback {
-    if (self.view != nil && deadbeef->conf_get_int ("cocoaui.delete_files_confirm", 1)) {
+    if (self.view == nil) {
+        return;
+    }
+    if (deadbeef->conf_get_int ("cocoaui.delete_files_confirm", 1)) {
         NSString *buf;
         NSString *buf2 = deadbeef->conf_get_int ("cocoaui.delete_use_bin", 1) ?
         @" The files will be moved to Recycle Bin.\n\n(This dialog can be turned off in the Preferences)" :
@@ -417,16 +429,16 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl) {
         }
         else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
             int files = trackcount;
-            [NSString stringWithFormat:@"Do you really want to delete all %d files from the current playlist?%@", files, buf2];
+            buf = [NSString stringWithFormat:@"Do you really want to delete all %d files from the current playlist?%@", files, buf2];
         }
         else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-            [NSString stringWithFormat:@"Do you really want to delete the currently playing file?%@", buf2];
+            buf = [NSString stringWithFormat:@"Do you really want to delete the currently playing file?%@", buf2];
         }
 
         NSAlert *alert = [NSAlert new];
         alert.alertStyle = NSAlertStyleWarning;
         alert.messageText = @"Delete files from disk";
-        alert.informativeText = buf;
+        alert.informativeText = buf ?: @"";
         [alert addButtonWithTitle:@"Cancel"];
         [alert addButtonWithTitle:@"Delete"];
 #if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101600
@@ -476,7 +488,7 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl) {
     }
 
     ddbDeleteFromDiskControllerSetShouldSkipDeletedTracks(self.deleteFromDiskController, deadbeef->conf_get_int ("cocoaui.skip_deleted_tracks", 0));
-    ddbDeleteFromDiskControllerSetUserData(self.deleteFromDiskController, (__bridge void *)(self));
+    ddbDeleteFromDiskControllerSetUserData(self.deleteFromDiskController, (void *)CFBridgingRetain(self));
 
     ddbDeleteFromDiskControllerRunWithDelegate(self.deleteFromDiskController, delegate);
 

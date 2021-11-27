@@ -1399,8 +1399,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
     deadbeef->pl_unlock ();
 
-    self.trackContextMenu = [TrackContextMenu new];
-    self.trackContextMenu.view = self.view;
+    self.trackContextMenu = [[TrackContextMenu alloc] initWithView:self.view];
     self.trackContextMenu.delegate = self;
 
     [self.trackContextMenu updateWithTrackList:tracks count:count playlist:plt currentTrack:current currentTrackIdx:current_idx];
