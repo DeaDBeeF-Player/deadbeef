@@ -47,9 +47,12 @@ extern DB_functions_t *deadbeef;
                 continue;
             }
 
+            if (!((action->callback2 && (action->flags & DB_ACTION_ADD_MENU)) || action->callback)) {
+                continue;
+            }
+
             if (actionContext == DDB_ACTION_CTX_SELECTION) {
                 if ((action->flags & DB_ACTION_COMMON)
-                    || !((action->callback2 && (action->flags & DB_ACTION_ADD_MENU)) || action->callback)
                     || !(action->flags & (DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK))) {
                     continue;
                 }
@@ -57,6 +60,9 @@ extern DB_functions_t *deadbeef;
 
             if (actionContext == DDB_ACTION_CTX_PLAYLIST) {
                 if (action->flags & DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST) {
+                    continue;
+                }
+                if (action->flags & DB_ACTION_COMMON) {
                     continue;
                 }
             }

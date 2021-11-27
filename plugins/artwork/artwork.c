@@ -1516,7 +1516,7 @@ artwork_get_actions (DB_playItem_t *it)
         .title = "Refresh Cover Art",
         .name = "invalidate_playitem_cache",
         .callback2 = invalidate_playitem_cache,
-        .flags = DB_ACTION_ADD_MENU | DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS,
+        .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS,
         .next = NULL
     };
 
