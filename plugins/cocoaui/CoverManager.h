@@ -28,8 +28,8 @@
 
 + (nonnull CoverManager *)defaultCoverManager;
 
-- (nullable NSImage *)coverForTrack:(nonnull DB_playItem_t *)track completionBlock:(nonnull void (^) (NSImage *img))completionBlock;
-- (nullable NSImage *)createCachedImage:(NSImage *)image size:(NSSize)size;
+- (nullable NSImage *)coverForTrack:(nonnull DB_playItem_t *)track completionBlock:(nonnull void (^) (NSImage * _Nullable img))completionBlock;
+- (nullable NSImage *)createCachedImage:(NSImage * _Nonnull)image size:(NSSize)size;
 - (NSSize)artworkDesiredSizeForImageSize:(NSSize)imageSize albumArtSpaceWidth:(CGFloat)albumArtSpaceWidth;
 - (void)resetCache;
 

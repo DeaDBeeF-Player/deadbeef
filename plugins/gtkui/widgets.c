@@ -4155,7 +4155,6 @@ w_volumebar_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
     GtkWidget *item;
     GSList *group = NULL;
     w_volumebar_t *widget = (w_volumebar_t *)w;
-    int i;
     DdbVolumeBarScale scale = ddb_volumebar_get_scale (DDB_VOLUMEBAR (widget->volumebar));
     item = gtk_radio_menu_item_new_with_mnemonic (group, _("_dB Scale"));
     group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (item));

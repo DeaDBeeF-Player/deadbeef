@@ -33,7 +33,7 @@ typedef void (*ddbDeleteFromDiskControllerWarningCallback_t)(ddbDeleteFromDiskCo
 typedef struct {
     void (*warningMessageForCtx) (ddbDeleteFromDiskController_t ctl, ddb_action_context_t ctx, unsigned trackcount, ddbDeleteFromDiskControllerWarningCallback_t callback);
     int (*deleteFile) (ddbDeleteFromDiskController_t ctl, const char *uri);
-    void (*completed) (ddbDeleteFromDiskController_t ctl);
+    void (*completed) (ddbDeleteFromDiskController_t ctl, int cancelled);
 } ddbDeleteFromDiskControllerDelegate_t;
 
 ddbDeleteFromDiskController_t ddbDeleteFromDiskControllerAlloc (void);

@@ -31,7 +31,7 @@ struct DB_playItem_s;
 typedef struct {
     void (*trkproperties_did_update_tracks)(void *user_data);
     void (*trkproperties_did_reload_metadata)(void *user_data);
-    void (*trkproperties_did_delete_files)(void *user_data);
+    void (*trkproperties_did_delete_files)(void *user_data, int cancelled);
     void *user_data;
 } trkproperties_delegate_t;
 

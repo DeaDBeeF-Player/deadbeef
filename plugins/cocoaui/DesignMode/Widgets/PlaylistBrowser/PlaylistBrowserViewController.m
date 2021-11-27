@@ -15,7 +15,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface PlaylistBrowserViewController () <NSTableViewDelegate, NSTableViewDataSource, NSMenuDelegate, RenamePlaylistViewControllerDelegate, DeletePlaylistConfirmationControllerDelegate>
+@interface PlaylistBrowserViewController () <NSTableViewDelegate, NSTableViewDataSource, NSMenuDelegate, RenamePlaylistViewControllerDelegate, DeletePlaylistConfirmationControllerDelegate, TrackContextMenuDelegate>
 
 @property (weak) IBOutlet NSTableView *tableView;
 
@@ -339,6 +339,18 @@ extern DB_functions_t *deadbeef;
 - (void)deletePlaylistDone:(DeletePlaylistConfirmationController *)controller {
     deadbeef->plt_remove ((int)self.clickedRow);
     self.clickedRow = -1;
+}
+
+#pragma mark - TrackContextMenuDelegate
+
+
+- (void)trackContextMenuDidDeleteFiles:(nonnull TrackContextMenu *)trackContextMenu cancelled:(BOOL)cancelled {
+}
+
+- (void)trackContextMenuDidReloadMetadata:(nonnull TrackContextMenu *)trackContextMenu {
+}
+
+- (void)trackContextMenuShowTrackProperties:(nonnull TrackContextMenu *)trackContextMenu {
 }
 
 @end

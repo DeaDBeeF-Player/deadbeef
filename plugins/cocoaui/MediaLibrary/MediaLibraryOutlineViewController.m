@@ -659,8 +659,10 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     self.medialibPlugin->plugin.refresh(self.medialibSource);
 }
 
-- (void)trackContextMenuDidDeleteFiles:(TrackContextMenu *)trackContextMenu {
-    self.medialibPlugin->plugin.refresh(self.medialibSource);
+- (void)trackContextMenuDidDeleteFiles:(TrackContextMenu *)trackContextMenu cancelled:(BOOL)cancelled {
+    if (!cancelled) {
+        self.medialibPlugin->plugin.refresh(self.medialibSource);
+    }
 }
 
 #pragma mark - TrackPropertiesWindowControllerDelegate

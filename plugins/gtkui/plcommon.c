@@ -848,9 +848,11 @@ _trkproperties_did_reload_metadata (void *user_data) {
 }
 
 static void
-_trkproperties_did_delete_files (void *user_data) {
-    deadbeef->pl_save_all ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+_trkproperties_did_delete_files (void *user_data, int cancelled) {
+    if (!cancelled) {
+        deadbeef->pl_save_all ();
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    }
 }
 
 static void
@@ -971,12 +973,12 @@ on_set_custom_title_activate (GtkMenuItem *menuitem, gpointer user_data)
 static ddbDeleteFromDiskController_t _deleteCtl;
 
 static void
-_deleteCompleted (ddbDeleteFromDiskController_t ctl) {
+_deleteCompleted (ddbDeleteFromDiskController_t ctl, int cancelled) {
     ddbDeleteFromDiskControllerFree(ctl);
     _deleteCtl = NULL;
 
     if (_trkproperties_delegate.trkproperties_did_delete_files != NULL) {
-        _trkproperties_delegate.trkproperties_did_delete_files(_trkproperties_delegate.user_data);
+        _trkproperties_delegate.trkproperties_did_delete_files(_trkproperties_delegate.user_data, cancelled);
     }
 }
 

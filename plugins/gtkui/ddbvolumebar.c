@@ -329,7 +329,6 @@ on_volumebar_motion_notify_event       (GtkWidget       *widget,
     gtk_widget_get_allocation (widget, &a);
     if (event->state & GDK_BUTTON1_MASK) {
         DdbVolumeBarScale scale = DDB_VOLUMEBAR(widget)->priv->scale;
-        char s[100];
 
         if (scale == DDB_VOLUMEBAR_SCALE_DB) {
             float range = -deadbeef->volume_get_min_db ();
@@ -361,7 +360,6 @@ on_volumebar_button_press_event        (GtkWidget       *widget,
     gtk_widget_get_allocation (widget, &a);
     if (event->button == 1) {
         DdbVolumeBarScale scale = DDB_VOLUMEBAR(widget)->priv->scale;
-        char s[100];
 
         if (scale == DDB_VOLUMEBAR_SCALE_DB) {
             float range = -deadbeef->volume_get_min_db ();

@@ -402,11 +402,11 @@ _deleteFile (ddbDeleteFromDiskController_t ctl, const char *uri) {
 }
 
 static void
-_deleteCompleted (ddbDeleteFromDiskController_t ctl) {
+_deleteCompleted (ddbDeleteFromDiskController_t ctl, int cancelled) {
     void *userData = ddbDeleteFromDiskControllerGetUserData(ctl);
     TrackContextMenu *menu = (TrackContextMenu *)CFBridgingRelease(userData);
 
-    [menu deleteCompleted:ctl];
+    [menu deleteCompleted:ctl cancelled:cancelled ? YES : NO];
 }
 
 - (void)deleteFromDiskWarningMessage:(ddbDeleteFromDiskController_t)ctl ctx:(ddb_action_context_t)ctx trackCount:(unsigned)trackcount callback:(ddbDeleteFromDiskControllerWarningCallback_t)callback {
@@ -456,10 +456,10 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl) {
     }
 }
 
-- (void)deleteCompleted:(ddbDeleteFromDiskController_t)ctl {
+- (void)deleteCompleted:(ddbDeleteFromDiskController_t)ctl cancelled:(BOOL)cancelled {
     ddbDeleteFromDiskControllerFree(ctl);
     self.deleteFromDiskController = NULL;
-    [((id<TrackContextMenuDelegate>)self.delegate) trackContextMenuDidDeleteFiles:self];
+    [((id<TrackContextMenuDelegate>)self.delegate) trackContextMenuDidDeleteFiles:self cancelled:cancelled];
 }
 
 - (void)deleteFromDisk {

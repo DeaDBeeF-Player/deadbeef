@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)trackContextMenuShowTrackProperties:(TrackContextMenu *)trackContextMenu;
 - (void)trackContextMenuDidReloadMetadata:(TrackContextMenu *)trackContextMenu;
-- (void)trackContextMenuDidDeleteFiles:(TrackContextMenu *)trackContextMenu;
+- (void)trackContextMenuDidDeleteFiles:(TrackContextMenu *)trackContextMenu cancelled:(BOOL)cancelled;
 
 @end
 

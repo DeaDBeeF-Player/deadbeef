@@ -1443,9 +1443,11 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
-- (void)trackContextMenuDidDeleteFiles:(TrackContextMenu *)trackContextMenu {
-    deadbeef->pl_save_all ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+- (void)trackContextMenuDidDeleteFiles:(TrackContextMenu *)trackContextMenu cancelled:(BOOL)cancelled {
+    if (!cancelled) {
+        deadbeef->pl_save_all ();
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    }
 }
 
 #pragma mark -

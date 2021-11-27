@@ -244,7 +244,7 @@ _warningCallback (ddbDeleteFromDiskController_t ctl, int shouldCancel) {
     ddbUtilTrackListData_t *trackListData = data->trackList;
 
     if (shouldCancel) {
-        data->delegate.completed(ctl);
+        data->delegate.completed(ctl, shouldCancel);
         return;
     }
 
@@ -276,7 +276,7 @@ _warningCallback (ddbDeleteFromDiskController_t ctl, int shouldCancel) {
     }
 
     deadbeef->pl_unlock ();
-    data->delegate.completed(ctl);
+    data->delegate.completed(ctl, shouldCancel);
 }
 
 

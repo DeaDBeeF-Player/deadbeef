@@ -30,7 +30,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface DdbTabStrip () <RenamePlaylistViewControllerDelegate,DeletePlaylistConfirmationControllerDelegate> {
+@interface DdbTabStrip () <RenamePlaylistViewControllerDelegate,DeletePlaylistConfirmationControllerDelegate,TrackContextMenuDelegate> {
     int _dragging;
     int _prepare;
     int _movepos;
@@ -192,13 +192,13 @@ static int close_btn_left_offs = 8;
     [self registerForDraggedTypes:[NSArray arrayWithObjects:ddbPlaylistItemsUTIType, NSFilenamesPboardType, nil]];
 
     [NSNotificationCenter.defaultCenter addObserver:self
-                                             selector:@selector(windowDidBecomeKey:)
-                                                 name:NSWindowDidBecomeKeyNotification
-                                               object:self.window];
+                                           selector:@selector(windowDidBecomeKey:)
+                                               name:NSWindowDidBecomeKeyNotification
+                                             object:self.window];
     [NSNotificationCenter.defaultCenter addObserver:self
-                                             selector:@selector(windowDidBecomeKey:)
-                                                 name:NSWindowDidResignKeyNotification
-                                               object:self.window];
+                                           selector:@selector(windowDidBecomeKey:)
+                                               name:NSWindowDidResignKeyNotification
+                                             object:self.window];
 }
 
 - (void)windowDidBecomeKey:(id)sender {
@@ -378,14 +378,14 @@ static int close_btn_left_offs = 8;
     [super drawRect:dirtyRect];
     int cnt = deadbeef->plt_get_count ();
     int hscroll = self.scrollPos;
-    
+
     int x = -hscroll;
     int w = 0;
     int tab_selected = deadbeef->plt_get_curr_idx ();
     if (tab_selected == -1) {
         return;
     }
-    
+
     int tab_playing = -1;
     DB_playItem_t *playing = deadbeef->streamer_get_playing_track ();
     if (playing) {
@@ -396,14 +396,14 @@ static int close_btn_left_offs = 8;
         }
         deadbeef->pl_item_unref (playing);
     }
-    
+
     int need_draw_moving = 0;
     int idx;
     int widths[cnt];
     for (idx = 0; idx < cnt; idx++) {
         widths[idx] = [self tabWidthForIndex:idx];
     }
-    
+
     [NSGraphicsContext.currentContext saveGraphicsState];
 
     // draw selected
@@ -904,6 +904,17 @@ static int close_btn_left_offs = 8;
     deadbeef->plt_remove (self.tab_clicked);
     self.tab_clicked = -1;
     self.needsDisplay = YES; // NOTE: this was added to redraw after a context menu
+}
+
+#pragma mark - TrackContextMenuDelegate
+
+- (void)trackContextMenuDidDeleteFiles:(nonnull TrackContextMenu *)trackContextMenu cancelled:(BOOL)cancelled {
+}
+
+- (void)trackContextMenuDidReloadMetadata:(nonnull TrackContextMenu *)trackContextMenu {
+}
+
+- (void)trackContextMenuShowTrackProperties:(nonnull TrackContextMenu *)trackContextMenu {
 }
 
 @end

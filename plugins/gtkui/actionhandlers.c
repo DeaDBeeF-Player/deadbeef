@@ -378,7 +378,7 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, ddb_action_context
 static ddbDeleteFromDiskController_t _deleteCtl;
 
 static void
-_deleteCompleted (ddbDeleteFromDiskController_t ctl) {
+_deleteCompleted (ddbDeleteFromDiskController_t ctl, int cancelled) {
     ddbDeleteFromDiskControllerFree(ctl);
     _deleteCtl = NULL;
 }
