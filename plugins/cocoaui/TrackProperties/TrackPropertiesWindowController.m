@@ -172,8 +172,7 @@ extern DB_functions_t *deadbeef;
     }
 }
 
-- (void)windowDidLoad
-{
+- (void)windowDidLoad {
     [super windowDidLoad];
     self.window.delegate = self;
 
@@ -314,7 +313,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     [self freeTrackList];
 
     if (self.playlist) {
-        [self buildTrackListForCtx:DDB_ACTION_CTX_SELECTION forPlaylist:self.playlist];
+        [self buildTrackListForCtx:self.context forPlaylist:self.playlist];
     }
     else if (self.mediaLibraryItems) {
         NSInteger count = self.mediaLibraryItems.count;

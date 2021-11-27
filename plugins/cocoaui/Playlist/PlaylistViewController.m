@@ -1430,6 +1430,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 - (void)trackContextMenuShowTrackProperties:(TrackContextMenu *)trackContextMenu {
     if (!self.trkProperties) {
         self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
+        self.trkProperties.context = DDB_ACTION_CTX_SELECTION;
         self.trkProperties.delegate = self;
     }
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();

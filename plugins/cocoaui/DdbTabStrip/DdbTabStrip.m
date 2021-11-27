@@ -27,10 +27,21 @@
 #import "DeletePlaylistConfirmationController.h"
 #import "PlaylistContextMenu.h"
 #import "RenamePlaylistViewController.h"
+#import "TrackPropertiesWindowController.h"
 
 extern DB_functions_t *deadbeef;
 
-@interface DdbTabStrip () <RenamePlaylistViewControllerDelegate,DeletePlaylistConfirmationControllerDelegate,TrackContextMenuDelegate> {
+
+static const int text_left_padding = 24;
+static const int text_right_padding = 24;
+static const int tab_overlap_size = 0;
+static const int tabs_left_margin = 0;
+static const int tab_vert_padding = 1;
+static const int min_tab_size = 80;
+static const int max_tab_size = 200;
+static const int close_btn_left_offs = 8;
+
+@interface DdbTabStrip () <RenamePlaylistViewControllerDelegate,DeletePlaylistConfirmationControllerDelegate,TrackContextMenuDelegate,TrackPropertiesWindowControllerDelegate> {
     int _dragging;
     int _prepare;
     int _movepos;
@@ -60,23 +71,21 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) BOOL dragReallyBegan;
 
-@property (nonatomic) int tab_clicked;
+@property (nonatomic) int clickedTabIndex;
 @property (nonatomic) BOOL needScroll;
 @property (nonatomic) CGFloat scrollPos;
 @property (nonatomic,readonly) int fullWidth;
+
+@property (nonatomic) TrackPropertiesWindowController *trkProperties;
 
 @end
 
 @implementation DdbTabStrip
 
-static int text_left_padding = 24;
-static int text_right_padding = 24;
-static int tab_overlap_size = 0;
-static int tabs_left_margin = 0;
-static int tab_vert_padding = 1;
-static int min_tab_size = 80;
-static int max_tab_size = 200;
-static int close_btn_left_offs = 8;
+- (void)dealloc {
+    [self.trkProperties close];
+    self.trkProperties = nil;
+}
 
 - (NSColor *)accentColor {
 #ifdef MAC_OS_X_VERSION_10_14
@@ -179,7 +188,7 @@ static int close_btn_left_offs = 8;
 
 - (void)setup {
     _dragging = -1;
-    self.tab_clicked = -1;
+    self.clickedTabIndex = -1;
     self.autoresizesSubviews = NO;
 
     _lastMouseCoord.x = -100000;
@@ -549,7 +558,7 @@ static int close_btn_left_offs = 8;
 
 -(void)closePointedTab {
     if (_pointedTab != -1) {
-        self.tab_clicked = _pointedTab;
+        self.clickedTabIndex = _pointedTab;
         _pointedTab = -1;
         [self closePlaylist:self];
     }
@@ -575,11 +584,11 @@ static int close_btn_left_offs = 8;
     int hscroll = self.scrollPos;
     int x = -hscroll + tabs_left_margin;
     int idx;
-    for (idx = 0; idx < self.tab_clicked; idx++) {
+    for (idx = 0; idx < self.clickedTabIndex; idx++) {
         int width = [self tabWidthForIndex:idx];
         x += width - tab_overlap_size;
     }
-    int w = [self tabWidthForIndex:_tab_clicked];
+    int w = [self tabWidthForIndex:_clickedTabIndex];
 
     NSRect tabRect = [self tabRectForXPos:x width:w height:self.bounds.size.height];
 
@@ -598,14 +607,14 @@ static int close_btn_left_offs = 8;
 - (void)mouseDown:(NSEvent *)event {
     NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
     _lastMouseCoord = coord;
-    _tab_clicked = [self tabUnderCursor:coord.x];
+    _clickedTabIndex = [self tabUnderCursor:coord.x];
     if (event.type == NSEventTypeLeftMouseDown) {
 
-        if (_tab_clicked != -1) {
+        if (_clickedTabIndex != -1) {
             if ([self handleClickedTabCloseRect]) {
                 return;
             }
-            deadbeef->plt_set_curr_idx (_tab_clicked);
+            deadbeef->plt_set_curr_idx (_clickedTabIndex);
 
             if (event.clickCount == 2) {
                 ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -632,13 +641,13 @@ static int close_btn_left_offs = 8;
 
         // adjust scroll if clicked tab spans border
         if (self.needScroll) {
-            [self scrollToTab:_tab_clicked];
+            [self scrollToTab:_clickedTabIndex];
         }
 
         int hscroll = self.scrollPos;
         int x = -hscroll + tabs_left_margin;
         int idx;
-        for (idx = 0; idx < _tab_clicked; idx++) {
+        for (idx = 0; idx < _clickedTabIndex; idx++) {
             int width = [self tabWidthForIndex:idx];
             x += width - tab_overlap_size;
         }
@@ -646,7 +655,7 @@ static int close_btn_left_offs = 8;
         _dragpt = coord;
         _dragpt.x -= x;
         _prepare = 1;
-        _dragging = _tab_clicked;
+        _dragging = _clickedTabIndex;
         _prev_x = _dragpt.x;
         _tab_moved = 0;
         _movepos = coord.x - _dragpt.x;
@@ -657,14 +666,14 @@ static int close_btn_left_offs = 8;
 - (void)closePlaylist:(id)sender {
     DeletePlaylistConfirmationController *controller = [DeletePlaylistConfirmationController new];
     controller.window = self.window;
-    controller.title = plt_get_title_wrapper (_tab_clicked);
+    controller.title = plt_get_title_wrapper (_clickedTabIndex);
     controller.delegate = self;
     [controller run];
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent {
     NSPoint coord = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    _tab_clicked = [self tabUnderCursor:coord.x];
+    _clickedTabIndex = [self tabUnderCursor:coord.x];
     if ((theEvent.type == NSEventTypeRightMouseDown || theEvent.type == NSEventTypeLeftMouseDown)
         && (theEvent.buttonNumber == 1
             || (theEvent.buttonNumber == 0 && (theEvent.modifierFlags & NSEventModifierFlagControl)))) {
@@ -675,7 +684,7 @@ static int close_btn_left_offs = 8;
         menu.renamePlaylistDelegate = self;
         menu.autoenablesItems = YES;
 
-        ddb_playlist_t *plt = deadbeef->plt_get_for_idx ((int)_tab_clicked);
+        ddb_playlist_t *plt = deadbeef->plt_get_for_idx ((int)_clickedTabIndex);
         deadbeef->action_set_playlist (plt);
         [menu updateWithPlaylist:plt];
         if (plt) {
@@ -692,9 +701,9 @@ static int close_btn_left_offs = 8;
     }
 
     NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
-    _tab_clicked = [self tabUnderCursor:coord.x];
+    _clickedTabIndex = [self tabUnderCursor:coord.x];
     if (event.type == NSEventTypeOtherMouseDown) {
-        if (_tab_clicked == -1) {
+        if (_clickedTabIndex == -1) {
             // new tab
             int playlist = cocoaui_add_new_playlist ();
             if (playlist != -1) {
@@ -703,7 +712,7 @@ static int close_btn_left_offs = 8;
             return;
         }
         else if (deadbeef->conf_get_int ("cocoaui.mmb_delete_playlist", 1)) {
-            if (_tab_clicked != -1) {
+            if (_clickedTabIndex != -1) {
                 [self closePlaylist:self];
             }
         }
@@ -882,31 +891,32 @@ static int close_btn_left_offs = 8;
 }
 
 - (int)clickedTab {
-    return _tab_clicked;
+    return _clickedTabIndex;
 }
 
 #pragma mark - RenamePlaylistViewControllerDelegate
 
 - (void)renamePlaylist:(RenamePlaylistViewController *)viewController doneWithName:(NSString *)name {
-    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (_tab_clicked);
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (_clickedTabIndex);
     if (plt == NULL) {
         return;
     }
     deadbeef->plt_set_title (plt, [name UTF8String]);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
-    [self scrollToTab:_tab_clicked];
+    [self scrollToTab:_clickedTabIndex];
 }
 
 #pragma mark - DeletePlaylistConfirmationControllerDelegate
 
 - (void)deletePlaylistDone:(DeletePlaylistConfirmationController *)controller {
-    deadbeef->plt_remove (self.tab_clicked);
-    self.tab_clicked = -1;
+    deadbeef->plt_remove (self.clickedTabIndex);
+    self.clickedTabIndex = -1;
     self.needsDisplay = YES; // NOTE: this was added to redraw after a context menu
 }
 
 #pragma mark - TrackContextMenuDelegate
+
 
 - (void)trackContextMenuDidDeleteFiles:(nonnull TrackContextMenu *)trackContextMenu cancelled:(BOOL)cancelled {
 }
@@ -915,6 +925,21 @@ static int close_btn_left_offs = 8;
 }
 
 - (void)trackContextMenuShowTrackProperties:(nonnull TrackContextMenu *)trackContextMenu {
+    // FIXME: track properties is not releasing something!
+    if (!self.trkProperties) {
+        self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
+        self.trkProperties.context = DDB_ACTION_CTX_PLAYLIST;
+        self.trkProperties.delegate = self;
+    }
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx ((int)self.clickedTabIndex);
+    self.trkProperties.playlist =  plt;
+    deadbeef->plt_unref (plt);
+    [self.trkProperties showWindow:self];
+}
+
+#pragma mark - TrackPropertiesWindowControllerDelegate
+
+- (void)trackPropertiesWindowControllerDidUpdateTracks:(TrackPropertiesWindowController *)windowController {
 }
 
 @end

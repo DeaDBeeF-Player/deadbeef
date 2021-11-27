@@ -23,7 +23,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "DdbTabStrip.h"
 #import "PlaylistView.h"
 #import "DdbSeekBar.h"
 #import "MainWindowSidebarViewController.h"

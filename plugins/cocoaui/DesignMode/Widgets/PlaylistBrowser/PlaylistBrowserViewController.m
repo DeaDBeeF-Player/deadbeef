@@ -12,10 +12,11 @@
 #import "PlaylistContextMenu.h"
 #import "RenamePlaylistViewController.h"
 #import "DeletePlaylistConfirmationController.h"
+#import "TrackPropertiesWindowController.h"
 
 extern DB_functions_t *deadbeef;
 
-@interface PlaylistBrowserViewController () <NSTableViewDelegate, NSTableViewDataSource, NSMenuDelegate, RenamePlaylistViewControllerDelegate, DeletePlaylistConfirmationControllerDelegate, TrackContextMenuDelegate>
+@interface PlaylistBrowserViewController () <NSTableViewDelegate, NSTableViewDataSource, NSMenuDelegate, RenamePlaylistViewControllerDelegate, DeletePlaylistConfirmationControllerDelegate, TrackContextMenuDelegate, TrackPropertiesWindowControllerDelegate>
 
 @property (weak) IBOutlet NSTableView *tableView;
 
@@ -29,11 +30,18 @@ extern DB_functions_t *deadbeef;
 @property (weak) IBOutlet NSMenuItem *durationMenuItem;
 
 @property (nonatomic) BOOL isReloading;
-@property (nonatomic) NSInteger clickedRow;
+@property (nonatomic) NSInteger clickedRowIndex;
+
+@property (nonatomic) TrackPropertiesWindowController *trkProperties;
 
 @end
 
 @implementation PlaylistBrowserViewController
+
+- (void)dealloc {
+    [self.trkProperties close];
+    self.trkProperties = nil;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -66,8 +74,8 @@ extern DB_functions_t *deadbeef;
     menu.deletePlaylistDelegate = self;
     NSPoint coord = [self.tableView.window convertPointFromScreen:NSEvent.mouseLocation];
     menu.clickPoint = [self.tableView convertPoint:coord fromView:nil];
-    self.clickedRow = self.tableView.clickedRow;
-    ddb_playlist_t *plt = deadbeef->plt_get_for_idx ((int)self.clickedRow);
+    self.clickedRowIndex = self.tableView.clickedRow;
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx ((int)self.clickedRowIndex);
     deadbeef->action_set_playlist (plt);
     [menu updateWithPlaylist:plt];
     if (plt) {
@@ -325,7 +333,7 @@ extern DB_functions_t *deadbeef;
 #pragma mark - RenamePlaylistViewControllerDelegate
 
 - (void)renamePlaylist:(RenamePlaylistViewController *)viewController doneWithName:(NSString *)name {
-    ddb_playlist_t *plt = deadbeef->plt_get_for_idx ((int)self.clickedRow);
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx ((int)self.clickedRowIndex);
     if (plt == NULL) {
         return;
     }
@@ -337,8 +345,8 @@ extern DB_functions_t *deadbeef;
 #pragma mark - DeletePlaylistConfirmationControllerDelegate
 
 - (void)deletePlaylistDone:(DeletePlaylistConfirmationController *)controller {
-    deadbeef->plt_remove ((int)self.clickedRow);
-    self.clickedRow = -1;
+    deadbeef->plt_remove ((int)self.clickedRowIndex);
+    self.clickedRowIndex = -1;
 }
 
 #pragma mark - TrackContextMenuDelegate
@@ -351,6 +359,21 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)trackContextMenuShowTrackProperties:(nonnull TrackContextMenu *)trackContextMenu {
+    // FIXME: track properties is not releasing something!
+    if (!self.trkProperties) {
+        self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
+        self.trkProperties.context = DDB_ACTION_CTX_PLAYLIST;
+        self.trkProperties.delegate = self;
+    }
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx ((int)self.clickedRowIndex);
+    self.trkProperties.playlist =  plt;
+    deadbeef->plt_unref (plt);
+    [self.trkProperties showWindow:self];
+}
+
+#pragma mark - TrackPropertiesWindowControllerDelegate
+
+- (void)trackPropertiesWindowControllerDidUpdateTracks:(TrackPropertiesWindowController *)windowController {
 }
 
 @end

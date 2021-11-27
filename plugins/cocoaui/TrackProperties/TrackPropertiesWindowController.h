@@ -37,6 +37,7 @@
 @property (nonatomic,weak) id<TrackPropertiesWindowControllerDelegate> delegate;
 
 @property (nonatomic) ddb_playlist_t *playlist;
+@property (nonatomic) ddb_action_context_t context;
 @property (nonatomic) NSArray<MediaLibraryItem *> *mediaLibraryItems;
 
 @property (unsafe_unretained) BOOL modified;

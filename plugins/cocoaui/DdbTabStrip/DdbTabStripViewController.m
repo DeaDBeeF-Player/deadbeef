@@ -21,6 +21,11 @@ extern DB_functions_t *deadbeef;
 
 @implementation DdbTabStripViewController
 
+- (void)dealloc {
+    // force-cleanup
+    [self.tabStripView removeFromSuperview];
+}
+
 - (IBAction)createNewPlaylistAction:(id)sender {
     int playlist = cocoaui_add_new_playlist ();
     if (playlist != -1) {
