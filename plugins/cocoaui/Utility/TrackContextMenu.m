@@ -77,7 +77,7 @@ extern DB_functions_t *deadbeef;
     self.deleteFromDiskItem.hidden = deadbeef->conf_get_int("cocoaui.hide_remove_from_disk", 0);
 }
 
-- (void)update:(ddb_playlist_t *)playlist {
+- (void)update:(ddb_playlist_t *)playlist actionContext:(ddb_action_context_t)actionContext {
     [self removeAllItems];
     self.reloadMetadataItem = [self insertItemWithTitle:@"Reload Metadata" action:@selector(reloadMetadata) keyEquivalent:@"" atIndex:0];
     self.reloadMetadataItem.target = self;
@@ -133,7 +133,7 @@ extern DB_functions_t *deadbeef;
 
     self.deleteFromDiskItem.enabled = selected_count != 0;
 
-    if ([self addContextPluginActionItemsForSelectedTrack:selected selectedCount:selected_count]) {
+    if ([self addContextPluginActionItemsForSelectedTrack:selected selectedCount:selected_count actionContext:actionContext]) {
         [self addItem:NSMenuItem.separatorItem];
     }
 

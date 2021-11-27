@@ -131,7 +131,7 @@ extern DB_functions_t *deadbeef;
     }
 }
 
-- (BOOL)addContextPluginActionItemsForSelectedTrack:(ddb_playItem_t *)selected selectedCount:(int)selectedCount {
+- (BOOL)addContextPluginActionItemsForSelectedTrack:(ddb_playItem_t *)selected selectedCount:(int)selectedCount actionContext:(ddb_action_context_t)actionContext {
     DB_plugin_t **plugins = deadbeef->plug_get_list();
     int i;
     int added_entries = 0;
@@ -230,7 +230,7 @@ extern DB_functions_t *deadbeef;
             PluginActionMenuItem *actionitem = [[PluginActionMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:title] action:@selector(pluginAction:) keyEquivalent:@""];
             actionitem.target = self;
             actionitem.pluginAction = action;
-            actionitem.pluginActionContext = DDB_ACTION_CTX_SELECTION;
+            actionitem.pluginActionContext = actionContext;
 
             if (popup != nil) {
                 [popup addItem:actionitem];

@@ -780,25 +780,31 @@ lfm_action_lookup (DB_plugin_action_t *action, ddb_action_context_t ctx) {
     char artist[META_FIELD_SIZE];
     char title[META_FIELD_SIZE];
 
+    ddb_playlist_t *plt = NULL;
     if (ctx == DDB_ACTION_CTX_SELECTION) {
         // find first selected
-        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-        if (plt) {
-            it = deadbeef->plt_get_first (plt, PL_MAIN);
-            while (it) {
-                if (deadbeef->pl_is_selected (it)) {
-                    break;
-                }
-                DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-                deadbeef->pl_item_unref (it);
-                it = next;
-            }
-            deadbeef->plt_unref (plt);
-        }
+        plt = deadbeef->plt_get_curr ();
+    }
+    else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
+        plt = deadbeef->action_get_playlist();
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
         it = deadbeef->streamer_get_playing_track ();
     }
+
+    if (plt) {
+        it = deadbeef->plt_get_first (plt, PL_MAIN);
+        while (it) {
+            if (deadbeef->pl_is_selected (it)) {
+                break;
+            }
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+        deadbeef->plt_unref (plt);
+    }
+
     if (!it) {
         goto out;
     }

@@ -730,7 +730,19 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     if (count != 0) {
         selectedTrack = tracks[0];
     }
-    [self.trackContextMenu update:NULL];
+
+    ddb_playlist_t *plt = deadbeef->plt_alloc("MediaLib Action Playlist");
+
+    ddb_playItem_t *after = NULL;
+    for (int i = 0; i < count; i++) {
+        after = deadbeef->plt_insert_item(plt, after, tracks[i]);
+    }
+    deadbeef->plt_select_all(plt);
+
+    deadbeef->action_set_playlist(plt);
+    [self.trackContextMenu update:plt  actionContext:DDB_ACTION_CTX_PLAYLIST];
+
+    deadbeef->plt_unref(plt);
 
     free (tracks);
 }

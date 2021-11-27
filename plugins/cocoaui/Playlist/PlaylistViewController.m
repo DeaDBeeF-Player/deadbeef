@@ -1404,7 +1404,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     self.trackContextMenu.delegate = self;
 
     [self.trackContextMenu updateWithTrackList:tracks count:count playlist:plt currentTrack:current currentTrackIdx:current_idx];
-    [self.trackContextMenu update:plt];
+    [self.trackContextMenu update:plt actionContext:DDB_ACTION_CTX_SELECTION];
 
     if (current) {
         deadbeef->pl_item_unref (current);
