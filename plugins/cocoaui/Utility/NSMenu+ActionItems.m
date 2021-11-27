@@ -21,120 +21,13 @@ extern DB_functions_t *deadbeef;
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
-- (void)addActionItemsForContext:(ddb_action_context_t)context track:(nullable DB_playItem_t *)track filter:(BOOL(^)(DB_plugin_action_t *action))filter {
-    DB_plugin_t **plugins = deadbeef->plug_get_list();
-    int i;
-
-    int hide_remove_from_disk = deadbeef->conf_get_int ("cocoaui.hide_remove_from_disk", 0);
-
-    for (i = 0; plugins[i]; i++)
-    {
-        if (!plugins[i]->get_actions)
-            continue;
-
-        DB_plugin_action_t *actions = plugins[i]->get_actions (track);
-        DB_plugin_action_t *action = NULL;
-
-        for (action = actions; action; action = action->next)
-        {
-            char *tmp = NULL;
-
-            if (action->name && !strcmp (action->name, "delete_from_disk") && hide_remove_from_disk) {
-                continue;
-            }
-            if (action->flags&DB_ACTION_DISABLED) {
-                continue;
-            }
-
-            BOOL has_addmenu = YES;
-            if (filter != nil) {
-                has_addmenu = filter(action);
-            }
-
-            if (!has_addmenu)
-                continue;
-
-            // 1st check if we have slashes
-            const char *slash_test = action->title;
-            while (NULL != (slash_test = strchr (slash_test, '/'))) {
-                if (slash_test && slash_test > action->title && *(slash_test-1) == '\\') {
-                    slash_test++;
-                    continue;
-                }
-                break;
-            }
-            if (!slash_test && ((action->flags&DB_ACTION_ADD_MENU) && context == DDB_ACTION_CTX_MAIN)) {
-                continue;
-            }
-
-            tmp = strdup (action->title);
-            const char *ptr = tmp;
-
-            const char *prev_title = NULL;
-
-            NSMenu *current = self;
-
-            while (1) {
-                // find unescaped forward slash
-                char *slash = strchr (ptr, '/');
-                if (slash && slash > ptr && *(slash-1) == '\\') {
-                    ptr = slash + 1;
-                    continue;
-                }
-
-                if (!slash) {
-                    PluginActionMenuItem *actionitem = [[PluginActionMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:ptr] action:@selector(pluginAction:) keyEquivalent:@""];
-                    actionitem.pluginAction = action;
-                    actionitem.pluginActionContext = context;
-                    actionitem.target = self;
-
-                    // Special cases for positioning in standard submenus
-                    if (prev_title && !strcmp ("File", prev_title) && context == DDB_ACTION_CTX_MAIN) {
-                        [current insertItem:actionitem atIndex:5];
-                    }
-                    else if (prev_title && !strcmp ("Edit", prev_title) && context == DDB_ACTION_CTX_MAIN) {
-                        [current insertItem:actionitem atIndex:7];
-                    }
-                    else {
-                        [current addItem:actionitem];
-                    }
-
-                    break;
-                }
-                *slash = 0;
-
-                // get submenu
-                NSMenu *previous = current;
-                current = [current itemWithTitle:[NSString stringWithUTF8String:ptr]].submenu;
-                if (!current) {
-                    // create new item with submenu
-                    NSMenuItem *newitem = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:ptr] action:nil keyEquivalent:@""];
-                    newitem.submenu = [[NSMenu alloc] initWithTitle:[NSString stringWithUTF8String:ptr]];
-
-                    // If we add new submenu in main bar, add it before 'Help'
-                    if (NULL == prev_title && context == DDB_ACTION_CTX_MAIN) {
-                        [previous insertItem:newitem atIndex:4];
-                    }
-                    else {
-                        [previous addItem:newitem];
-                    }
-
-                    current = newitem.submenu;
-                }
-                prev_title = ptr;
-                ptr = slash + 1;
-            }
-            if (tmp) {
-                free (tmp);
-            }
-        }
-    }
-}
-
-- (BOOL)addContextPluginActionItemsForSelectedTrack:(ddb_playItem_t *)selected selectedCount:(int)selectedCount actionContext:(ddb_action_context_t)actionContext {
+- (BOOL)addPluginActionItemsForSelectedTrack:(ddb_playItem_t *)selected selectedCount:(int)selectedCount actionContext:(ddb_action_context_t)actionContext {
     DB_plugin_t **plugins = deadbeef->plug_get_list();
     int i;
     int added_entries = 0;
+
+    int hide_remove_from_disk = deadbeef->conf_get_int ("cocoaui.hide_remove_from_disk", 0);
+
     for (i = 0; plugins[i]; i++)
     {
         if (!plugins[i]->get_actions)
@@ -146,14 +39,41 @@ extern DB_functions_t *deadbeef;
         int count = 0;
         for (action = actions; action; action = action->next)
         {
-            if ((action->flags & DB_ACTION_COMMON)
-                || !((action->callback2 && (action->flags & DB_ACTION_ADD_MENU)) || action->callback)
-                || !(action->flags & (DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK))) {
+            if (action->name && !strcmp (action->name, "delete_from_disk") && hide_remove_from_disk) {
                 continue;
+            }
+
+            if (action->flags&DB_ACTION_DISABLED) {
+                continue;
+            }
+
+            if (actionContext == DDB_ACTION_CTX_SELECTION) {
+                if ((action->flags & DB_ACTION_COMMON)
+                    || !((action->callback2 && (action->flags & DB_ACTION_ADD_MENU)) || action->callback)
+                    || !(action->flags & (DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK))) {
+                    continue;
+                }
             }
 
             if (actionContext == DDB_ACTION_CTX_PLAYLIST) {
                 if (action->flags & DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST) {
+                    continue;
+                }
+            }
+            else if (actionContext == DDB_ACTION_CTX_MAIN) {
+                if (!((action->flags & (DB_ACTION_COMMON|DB_ACTION_ADD_MENU)) == (DB_ACTION_COMMON|DB_ACTION_ADD_MENU))) {
+                    continue;
+                }
+                const char *slash_test = action->title;
+                while (NULL != (slash_test = strchr (slash_test, '/'))) {
+                    if (slash_test && slash_test > action->title && *(slash_test-1) == '\\') {
+                        slash_test++;
+                        continue;
+                    }
+                    break;
+                }
+
+                if (slash_test == NULL) {
                     continue;
                 }
             }
@@ -164,65 +84,64 @@ extern DB_functions_t *deadbeef;
                 prev++;
             }
 
-            NSMenu *popup = NULL;
+            NSMenu *lastMenu = self;
 
             for (;;) {
                 const char *slash = strchr (prev, '/');
-                if (slash && *(slash-1) != '\\') {
-                    char name[slash-prev+1];
-                    // replace \/ with /
-                    const char *p = prev;
-                    char *t = name;
-                    while (*p && p < slash) {
-                        if (*p == '\\' && *(p+1) == '/') {
-                            *t++ = '/';
-                            p += 2;
-                        }
-                        else {
-                            *t++ = *p++;
-                        }
+                if (!(slash && *(slash-1) != '\\')) {
+                    break; // found the leaf item
+                }
+                char name[slash-prev+1];
+                // replace \/ with /
+                const char *p = prev;
+                char *t = name;
+                while (*p && p < slash) {
+                    if (*p == '\\' && *(p+1) == '/') {
+                        *t++ = '/';
+                        p += 2;
                     }
-                    *t = 0;
-
-                    // add popup
-                    NSMenu *prev_menu = popup ? popup : self;
-
-                    // find menu item with the name
-                    for (NSMenuItem *item in prev_menu.itemArray) {
-                        if ([item.title isEqualToString:[NSString stringWithUTF8String:name]]) {
-                            if (item.menu == nil) {
-                                item.submenu = [NSMenu new];
-                            }
-                            popup = item.submenu;
-                            break;
-                        }
-                    }
-                    if (!popup) {
-                        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:name] action:@selector(pluginAction:) keyEquivalent:@""];
-                        item.submenu = [NSMenu new];
-                        if (prev_menu != self) {
-                            [prev_menu addItem:item];
-                        }
-                        else {
-                            [prev_menu addItem:item];
-                        }
-                        item.target = self;
-                        item.submenu = [NSMenu new];
-                        popup = item.submenu;
+                    else {
+                        *t++ = *p++;
                     }
                 }
-                else {
-                    break;
+                *t = 0;
+
+                // add popup
+                NSMenu *newMenu;
+
+                // find menu item with the name
+                for (NSMenuItem *item in lastMenu.itemArray) {
+                    if ([item.title isEqualToString:[NSString stringWithUTF8String:name]]) {
+                        if (item.menu == nil) {
+                            item.submenu = [NSMenu new];
+                        }
+                        newMenu = item.submenu;
+                        break;
+                    }
                 }
+
+                // create
+                if (!newMenu) {
+                    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:name] action:@selector(pluginAction:) keyEquivalent:@""];
+                    newMenu = [NSMenu new];
+                    item.submenu = newMenu;
+                    [lastMenu addItem:item];
+                    item.target = self;
+                }
+                lastMenu = newMenu;
                 prev = slash+1;
             }
-
 
             count++;
             added_entries++;
 
+            if (actionContext == DDB_ACTION_CTX_MAIN && lastMenu == nil) {
+                // Don't add leaf items into menubar
+                continue;
+            }
+
             // replace \/ with /
-            const char *p = popup ? prev : action->title;
+            const char *p = lastMenu ? prev : action->title;
             char title[strlen (p)+1];
             char *t = title;
             while (*p) {
@@ -241,8 +160,16 @@ extern DB_functions_t *deadbeef;
             actionitem.pluginAction = action;
             actionitem.pluginActionContext = actionContext;
 
-            if (popup != nil) {
-                [popup addItem:actionitem];
+            if (lastMenu != nil) {
+                if (actionContext == DDB_ACTION_CTX_MAIN && [lastMenu.title isEqualToString:@"File"]) {
+                    [lastMenu insertItem:actionitem atIndex:5];
+                }
+                else if (actionContext == DDB_ACTION_CTX_MAIN && [lastMenu.title isEqualToString:@"Edit"]) {
+                    [lastMenu insertItem:actionitem atIndex:7];
+                }
+                else {
+                    [lastMenu addItem:actionitem];
+                }
             }
             else {
                 [self addItem:actionitem];

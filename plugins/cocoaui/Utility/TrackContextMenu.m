@@ -144,7 +144,7 @@ extern DB_functions_t *deadbeef;
 
     self.deleteFromDiskItem.enabled = selected_count != 0;
 
-    if ([self addContextPluginActionItemsForSelectedTrack:selected selectedCount:selected_count actionContext:actionContext]) {
+    if ([self addPluginActionItemsForSelectedTrack:selected selectedCount:selected_count actionContext:actionContext]) {
         [self addItem:NSMenuItem.separatorItem];
     }
 

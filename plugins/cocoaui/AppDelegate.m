@@ -216,10 +216,8 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 }
 
 - (void)initMainMenu {
-    // add new actions
-    [self.mainMenu addActionItemsForContext:DDB_ACTION_CTX_MAIN track:nil filter:^BOOL(DB_plugin_action_t * _Nonnull action) {
-        return (action->flags & (DB_ACTION_COMMON|DB_ACTION_ADD_MENU)) == (DB_ACTION_COMMON|DB_ACTION_ADD_MENU);
-    }];
+    [self.mainMenu addPluginActionItemsForSelectedTrack:NULL selectedCount:0 actionContext:DDB_ACTION_CTX_MAIN];
+
     self.designModeMenuItem.state = self.designModeState.enabled ? NSControlStateValueOn : NSControlStateValueOff;
 }
 
