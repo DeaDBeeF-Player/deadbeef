@@ -640,22 +640,22 @@ trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int sel
     gtk_container_add (GTK_CONTAINER (menu), play_later);
 
     remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove from Playback Queue"));
-    // FIXME: this code is to detect whether any of the selected tracks are in the queue
-//    if (selected_count > 0) {
-//        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-//        int pqlen = deadbeef->playqueue_get_count ();
-//        int no_playqueue_items = 1;
-//        for (int i = 0; i < pqlen && no_playqueue_items; i++) {
-//            DB_playItem_t *pqitem = deadbeef->playqueue_get_item (i);
-//            if (deadbeef->pl_get_playlist (pqitem) == plt && deadbeef->pl_is_selected (pqitem)) {
-//                no_playqueue_items = 0;
-//            }
-//            deadbeef->pl_item_unref (pqitem);
-//        }
-//        if (no_playqueue_items) {
-//            gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
-//        }
-//    }
+    if (selected_count > 0 && _menuPlaylist != NULL) {
+        int pqlen = deadbeef->playqueue_get_count ();
+        int no_playqueue_items = 1;
+        // NOTE: this can be an extremely slow operation
+        for (int i = 0; i < pqlen && no_playqueue_items; i++) {
+            DB_playItem_t *pqitem = deadbeef->playqueue_get_item (i);
+            if (deadbeef->pl_get_playlist (pqitem) == _menuPlaylist
+                && (_menuActionContext != DDB_ACTION_CTX_SELECTION || deadbeef->pl_is_selected (pqitem))) {
+                no_playqueue_items = 0;
+            }
+            deadbeef->pl_item_unref (pqitem);
+        }
+        if (no_playqueue_items) {
+            gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
+        }
+    }
     gtk_widget_show (remove_from_playback_queue1);
     gtk_container_add (GTK_CONTAINER (menu), remove_from_playback_queue1);
 
