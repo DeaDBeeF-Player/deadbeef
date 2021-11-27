@@ -444,142 +444,9 @@ list_context_menu (ddb_playlist_t *playlist, int iter) {
     _run_menu (iter != PL_SEARCH);
 }
 
-void
-trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int selected_count, ddb_action_context_t action_context) {
-
-    _menuActionContext = action_context;
-
-    // remove all items
-    GList *children = gtk_container_get_children(GTK_CONTAINER(menu));
-    for (GList *item = children; item; item = item->next) {
-        gtk_container_remove(GTK_CONTAINER(menu), GTK_WIDGET(item));
-    }
-    g_list_free(children);
-
-    // add all items
-    GtkWidget *play_later;
-    GtkWidget *play_next;
-    GtkWidget *remove_from_playback_queue1;
-    GtkWidget *separator;
-    GtkWidget *remove2;
-    GtkWidget *remove_from_disk = NULL;
-    GtkWidget *separator8;
-    GtkWidget *cut;
-    GtkWidget *cut_image;
-    GtkWidget *copy;
-    GtkWidget *copy_image;
-    GtkWidget *paste;
-    GtkWidget *paste_image;
-    GtkWidget *separator9;
-    GtkWidget *properties1;
-    GtkWidget *reload_metadata;
-
-    GtkAccelGroup *accel_group = NULL;
-    accel_group = gtk_accel_group_new ();
-
-#ifndef DISABLE_CUSTOM_TITLE
-    GtkWidget *set_custom_title;
-#endif
-
-    play_next = gtk_menu_item_new_with_mnemonic (_("Play Next"));
-    gtk_widget_show (play_next);
-    gtk_container_add (GTK_CONTAINER (menu), play_next);
-
-    play_later = gtk_menu_item_new_with_mnemonic (_("Play Later"));
-    gtk_widget_show (play_later);
-    gtk_container_add (GTK_CONTAINER (menu), play_later);
-
-    remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove from Playback Queue"));
-    // FIXME: this code is to detect whether any of the selected tracks are in the queue
-//    if (selected_count > 0) {
-//        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-//        int pqlen = deadbeef->playqueue_get_count ();
-//        int no_playqueue_items = 1;
-//        for (int i = 0; i < pqlen && no_playqueue_items; i++) {
-//            DB_playItem_t *pqitem = deadbeef->playqueue_get_item (i);
-//            if (deadbeef->pl_get_playlist (pqitem) == plt && deadbeef->pl_is_selected (pqitem)) {
-//                no_playqueue_items = 0;
-//            }
-//            deadbeef->pl_item_unref (pqitem);
-//        }
-//        if (no_playqueue_items) {
-//            gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
-//        }
-//    }
-    gtk_widget_show (remove_from_playback_queue1);
-    gtk_container_add (GTK_CONTAINER (menu), remove_from_playback_queue1);
-
-    reload_metadata = gtk_menu_item_new_with_mnemonic (_("Reload Metadata"));
-    gtk_widget_show (reload_metadata);
-    gtk_container_add (GTK_CONTAINER (menu), reload_metadata);
-
-    separator = gtk_separator_menu_item_new ();
-    gtk_widget_show (separator);
-    gtk_container_add (GTK_CONTAINER (menu), separator);
-    gtk_widget_set_sensitive (separator, FALSE);
-
-    cut = gtk_image_menu_item_new_with_mnemonic (_("Cu_t"));
-    gtk_widget_show (cut);
-    gtk_container_add (GTK_CONTAINER (menu), cut);
-    gtk_widget_add_accelerator (cut, "activate", accel_group, GDK_x, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-    cut_image = gtk_image_new_from_stock ("gtk-cut", GTK_ICON_SIZE_MENU);
-    gtk_widget_show (cut_image);
-    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (cut), cut_image);
-
-    copy = gtk_image_menu_item_new_with_mnemonic (_("_Copy"));
-    gtk_widget_show (copy);
-    gtk_container_add (GTK_CONTAINER (menu), copy);
-    gtk_widget_add_accelerator (copy, "activate", accel_group, GDK_c, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-    copy_image = gtk_image_new_from_stock ("gtk-copy", GTK_ICON_SIZE_MENU);
-    gtk_widget_show (copy_image);
-    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (copy), copy_image);
-
-    paste = gtk_image_menu_item_new_with_mnemonic (_("_Paste"));
-    int show_paste = 1; // FIXME
-    if (show_paste) {
-        gtk_widget_show (paste);
-    }
-    else {
-        gtk_widget_hide (paste);
-    }
-    gtk_container_add (GTK_CONTAINER (menu), paste);
-    gtk_widget_add_accelerator (paste, "activate", accel_group, GDK_v, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-    if (clipboard_is_clipboard_data_available ()) {
-        gtk_widget_set_sensitive (paste, TRUE);
-    }
-    else {
-        gtk_widget_set_sensitive (paste, FALSE);
-    }
-
-    paste_image = gtk_image_new_from_stock ("gtk-paste", GTK_ICON_SIZE_MENU);
-    gtk_widget_show (paste_image);
-    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (paste), paste_image);
-
-    separator9 = gtk_separator_menu_item_new ();
-    gtk_widget_show (separator9);
-    gtk_container_add (GTK_CONTAINER (menu), separator9);
-    gtk_widget_set_sensitive (separator9, FALSE);
-
-    remove2 = gtk_menu_item_new_with_mnemonic (_("Remove"));
-    gtk_widget_show (remove2);
-    gtk_container_add (GTK_CONTAINER (menu), remove2);
-
+int
+trk_menu_add_action_items(GtkWidget *menu, int selected_count, ddb_playItem_t *selected_track) {
     int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
-
-    if (!hide_remove_from_disk) {
-        remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove from Disk"));
-        gtk_widget_show (remove_from_disk);
-        gtk_container_add (GTK_CONTAINER (menu), remove_from_disk);
-    }
-
-    separator = gtk_separator_menu_item_new ();
-    gtk_widget_show (separator);
-    gtk_container_add (GTK_CONTAINER (menu), separator);
-    gtk_widget_set_sensitive (separator, FALSE);
-
     DB_plugin_t **plugins = deadbeef->plug_get_list();
     int i;
     int added_entries = 0;
@@ -719,18 +586,157 @@ trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int sel
         }
         if (count > 0 && deadbeef->conf_get_int ("gtkui.action_separators", 0))
         {
-            separator8 = gtk_separator_menu_item_new ();
-            gtk_widget_show (separator8);
-            gtk_container_add (GTK_CONTAINER (menu), separator8);
-            gtk_widget_set_sensitive (separator8, FALSE);
+            GtkWidget *separator = gtk_separator_menu_item_new ();
+            gtk_widget_show (separator);
+            gtk_container_add (GTK_CONTAINER (menu), separator);
+            gtk_widget_set_sensitive (separator, FALSE);
         }
     }
+    return added_entries;
+}
+
+void
+trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int selected_count, ddb_action_context_t action_context) {
+
+    _menuActionContext = action_context;
+
+    // remove all items
+    GList *children = gtk_container_get_children(GTK_CONTAINER(menu));
+    for (GList *item = children; item; item = item->next) {
+        gtk_container_remove(GTK_CONTAINER(menu), GTK_WIDGET(item));
+    }
+    g_list_free(children);
+
+    // add all items
+    GtkWidget *play_later;
+    GtkWidget *play_next;
+    GtkWidget *remove_from_playback_queue1;
+    GtkWidget *separator;
+    GtkWidget *remove2;
+    GtkWidget *remove_from_disk = NULL;
+    GtkWidget *cut;
+    GtkWidget *cut_image;
+    GtkWidget *copy;
+    GtkWidget *copy_image;
+    GtkWidget *paste;
+    GtkWidget *paste_image;
+    GtkWidget *separator9;
+    GtkWidget *properties1;
+    GtkWidget *reload_metadata;
+
+    GtkAccelGroup *accel_group = NULL;
+    accel_group = gtk_accel_group_new ();
+
+#ifndef DISABLE_CUSTOM_TITLE
+    GtkWidget *set_custom_title;
+#endif
+
+    play_next = gtk_menu_item_new_with_mnemonic (_("Play Next"));
+    gtk_widget_show (play_next);
+    gtk_container_add (GTK_CONTAINER (menu), play_next);
+
+    play_later = gtk_menu_item_new_with_mnemonic (_("Play Later"));
+    gtk_widget_show (play_later);
+    gtk_container_add (GTK_CONTAINER (menu), play_later);
+
+    remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove from Playback Queue"));
+    // FIXME: this code is to detect whether any of the selected tracks are in the queue
+//    if (selected_count > 0) {
+//        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+//        int pqlen = deadbeef->playqueue_get_count ();
+//        int no_playqueue_items = 1;
+//        for (int i = 0; i < pqlen && no_playqueue_items; i++) {
+//            DB_playItem_t *pqitem = deadbeef->playqueue_get_item (i);
+//            if (deadbeef->pl_get_playlist (pqitem) == plt && deadbeef->pl_is_selected (pqitem)) {
+//                no_playqueue_items = 0;
+//            }
+//            deadbeef->pl_item_unref (pqitem);
+//        }
+//        if (no_playqueue_items) {
+//            gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
+//        }
+//    }
+    gtk_widget_show (remove_from_playback_queue1);
+    gtk_container_add (GTK_CONTAINER (menu), remove_from_playback_queue1);
+
+    reload_metadata = gtk_menu_item_new_with_mnemonic (_("Reload Metadata"));
+    gtk_widget_show (reload_metadata);
+    gtk_container_add (GTK_CONTAINER (menu), reload_metadata);
+
+    separator = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator);
+    gtk_container_add (GTK_CONTAINER (menu), separator);
+    gtk_widget_set_sensitive (separator, FALSE);
+
+    cut = gtk_image_menu_item_new_with_mnemonic (_("Cu_t"));
+    gtk_widget_show (cut);
+    gtk_container_add (GTK_CONTAINER (menu), cut);
+    gtk_widget_add_accelerator (cut, "activate", accel_group, GDK_x, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
+    cut_image = gtk_image_new_from_stock ("gtk-cut", GTK_ICON_SIZE_MENU);
+    gtk_widget_show (cut_image);
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (cut), cut_image);
+
+    copy = gtk_image_menu_item_new_with_mnemonic (_("_Copy"));
+    gtk_widget_show (copy);
+    gtk_container_add (GTK_CONTAINER (menu), copy);
+    gtk_widget_add_accelerator (copy, "activate", accel_group, GDK_c, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
+    copy_image = gtk_image_new_from_stock ("gtk-copy", GTK_ICON_SIZE_MENU);
+    gtk_widget_show (copy_image);
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (copy), copy_image);
+
+    paste = gtk_image_menu_item_new_with_mnemonic (_("_Paste"));
+    int show_paste = 1; // FIXME
+    if (show_paste) {
+        gtk_widget_show (paste);
+    }
+    else {
+        gtk_widget_hide (paste);
+    }
+    gtk_container_add (GTK_CONTAINER (menu), paste);
+    gtk_widget_add_accelerator (paste, "activate", accel_group, GDK_v, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
+    if (clipboard_is_clipboard_data_available ()) {
+        gtk_widget_set_sensitive (paste, TRUE);
+    }
+    else {
+        gtk_widget_set_sensitive (paste, FALSE);
+    }
+
+    paste_image = gtk_image_new_from_stock ("gtk-paste", GTK_ICON_SIZE_MENU);
+    gtk_widget_show (paste_image);
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (paste), paste_image);
+
+    separator9 = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator9);
+    gtk_container_add (GTK_CONTAINER (menu), separator9);
+    gtk_widget_set_sensitive (separator9, FALSE);
+
+    remove2 = gtk_menu_item_new_with_mnemonic (_("Remove"));
+    gtk_widget_show (remove2);
+    gtk_container_add (GTK_CONTAINER (menu), remove2);
+
+    int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
+
+    if (!hide_remove_from_disk) {
+        remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove from Disk"));
+        gtk_widget_show (remove_from_disk);
+        gtk_container_add (GTK_CONTAINER (menu), remove_from_disk);
+    }
+
+    separator = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator);
+    gtk_container_add (GTK_CONTAINER (menu), separator);
+    gtk_widget_set_sensitive (separator, FALSE);
+
+    int added_entries = trk_menu_add_action_items(menu, selected_count, selected_track);
     if (added_entries > 0 && !deadbeef->conf_get_int ("gtkui.action_separators", 0))
     {
-        separator8 = gtk_separator_menu_item_new ();
-        gtk_widget_show (separator8);
-        gtk_container_add (GTK_CONTAINER (menu), separator8);
-        gtk_widget_set_sensitive (separator8, FALSE);
+        GtkWidget *separator = gtk_separator_menu_item_new ();
+        gtk_widget_show (separator);
+        gtk_container_add (GTK_CONTAINER (menu), separator);
+        gtk_widget_set_sensitive (separator, FALSE);
     }
 
 #ifndef DISABLE_CUSTOM_TITLE

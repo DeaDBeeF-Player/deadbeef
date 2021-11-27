@@ -27,6 +27,7 @@
 #include "../../deadbeef.h"
 #include "trkproperties.h"
 
+/// This must be called before terminating the app, to ensure global variables are freed.
 void
 plmenu_free (void);
 
@@ -41,5 +42,10 @@ list_context_menu_with_track_list (ddb_playItem_t **tracks, int count, trkproper
 /// For use case when the caller needs more control of the menu, such as Playlist Tab context menu
 void
 trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int selected_count, ddb_action_context_t action_context);
+
+/// Add plugin action items to the existing menu.
+/// @return The number of items added
+int
+trk_menu_add_action_items(GtkWidget *menu, int selected_count, ddb_playItem_t *selected_track);
 
 #endif /* plmenu_h */
