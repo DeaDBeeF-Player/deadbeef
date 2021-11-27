@@ -39,6 +39,7 @@
 #include "search.h"
 #include "ddblistview.h"
 #include "plcommon.h"
+#include "plmenu.h"
 #include "../../deadbeef.h"
 #include "mainplaylist.h"
 
@@ -556,8 +557,8 @@ search_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIt
 }
 
 void
-search_list_context_menu (DdbListview *listview, int iter) {
-    list_context_menu (listview, PL_SEARCH);
+search_list_context_menu (int iter) {
+    list_context_menu (PL_SEARCH);
 }
 
 gboolean

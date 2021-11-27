@@ -15,9 +15,10 @@
 #include "../../medialib/medialib.h"
 #include "../prefwin/prefwin.h"
 #include "../support.h"
+#include "ddblistview.h"
 #include "medialibwidget.h"
 #include "medialibmanager.h"
-#include "plcommon.h"
+#include "plmenu.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -462,10 +463,18 @@ _trkproperties_did_change_tracks (void *user_data) {
     mlv->plugin->plugin.refresh (mlv->source);
 }
 
+static void
+_trkproperties_did_delete_files (void *user_data, int cancelled) {
+    if (!cancelled) {
+        w_medialib_viewer_t *mlv = user_data;
+        mlv->plugin->plugin.refresh (mlv->source);
+    }
+}
+
 static trkproperties_delegate_t _trkproperties_delegate = {
     .trkproperties_did_update_tracks = _trkproperties_did_change_tracks,
     .trkproperties_did_reload_metadata = _trkproperties_did_change_tracks,
-    .trkproperties_did_delete_files = _trkproperties_did_change_tracks,
+    .trkproperties_did_delete_files = _trkproperties_did_delete_files,
 };
 
 gboolean

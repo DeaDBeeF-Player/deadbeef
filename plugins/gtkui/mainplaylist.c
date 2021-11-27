@@ -38,6 +38,7 @@
 #include "trkproperties.h"
 #include "coverart.h"
 #include "plcommon.h"
+#include "plmenu.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)

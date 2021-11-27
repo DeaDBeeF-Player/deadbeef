@@ -63,6 +63,7 @@
 #include "trkproperties.h"
 #include "widgets.h"
 #include "wingeom.h"
+#include "plmenu.h"
 
 #define USE_GTK_APPLICATION 1
 
@@ -1429,6 +1430,7 @@ gtkui_mainwin_free(void) {
 //    draw_free ();
     titlebar_tf_free ();
     gtkui_free_pltmenu ();
+    plmenu_free();
 
     if (logwindow) {
         deadbeef->log_viewer_unregister (logwindow_logger_callback, logwindow);

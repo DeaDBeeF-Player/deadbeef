@@ -1047,6 +1047,10 @@
 		2D565B911A40BCE200CE1F5D /* true.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565B0B1A40BCE200CE1F5D /* true.h */; };
 		2D565B9A1A40C15B00CE1F5D /* libmpg123.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D917E781A4046FE00C3EB44 /* libmpg123.a */; };
 		2D5B51221FF43FC8000AD484 /* liboggedit.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D5C6AD42752B6930073632B /* plmenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5C6AD22752B6930073632B /* plmenu.h */; };
+		2D5C6AD52752B6930073632B /* plmenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5C6AD22752B6930073632B /* plmenu.h */; };
+		2D5C6AD62752B6930073632B /* plmenu.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5C6AD32752B6930073632B /* plmenu.c */; };
+		2D5C6AD72752B6930073632B /* plmenu.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5C6AD32752B6930073632B /* plmenu.c */; };
 		2D5D21461A4033FF001D5A79 /* lastfm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5D21451A4033FF001D5A79 /* lastfm.c */; };
 		2D5D214C1A403428001D5A79 /* lastfm.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D5D21401A4033B0001D5A79 /* lastfm.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D5F05F025E306BC000A588C /* SpectrumAnalyzerWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5F05EE25E306BC000A588C /* SpectrumAnalyzerWidget.h */; };
@@ -5432,6 +5436,8 @@
 		2D565B071A40BCE200CE1F5D /* synths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synths.h; path = "../../osx/deps/mpg123-1.21.0/src/libmpg123/synths.h"; sourceTree = "<group>"; };
 		2D565B091A40BCE200CE1F5D /* tabinit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tabinit.c; path = "../../osx/deps/mpg123-1.21.0/src/libmpg123/tabinit.c"; sourceTree = "<group>"; };
 		2D565B0B1A40BCE200CE1F5D /* true.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = true.h; path = "../../osx/deps/mpg123-1.21.0/src/libmpg123/true.h"; sourceTree = "<group>"; };
+		2D5C6AD22752B6930073632B /* plmenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = plmenu.h; sourceTree = "<group>"; };
+		2D5C6AD32752B6930073632B /* plmenu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = plmenu.c; sourceTree = "<group>"; };
 		2D5D21401A4033B0001D5A79 /* lastfm.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = lastfm.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D5D21451A4033FF001D5A79 /* lastfm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lastfm.c; path = plugins/lastfm/lastfm.c; sourceTree = "<group>"; };
 		2D5D9C5724A7FB0200D632E4 /* libavformat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.dylib; path = deps/ffmpeg/lib/libavformat.dylib; sourceTree = "<group>"; };
@@ -11435,6 +11441,8 @@
 				2DE3B5BB2269BB4300AFF9AE /* namedicons.h */,
 				2DE3B5A12269BB4300AFF9AE /* plcommon.c */,
 				2DE3B5FB2269BB4300AFF9AE /* plcommon.h */,
+				2D5C6AD22752B6930073632B /* plmenu.h */,
+				2D5C6AD32752B6930073632B /* plmenu.c */,
 				2DE3B5822269BB4300AFF9AE /* pltmenu.c */,
 				2DE3B5A72269BB4300AFF9AE /* pluginconf.c */,
 				2DE3B5FD2269BB4300AFF9AE /* pluginconf.h */,
@@ -13533,6 +13541,7 @@
 				2DC656912744289C00583E14 /* eq.h in Headers */,
 				2DC656922744289C00583E14 /* hotkeys.h in Headers */,
 				2DC656932744289C00583E14 /* search.h in Headers */,
+				2D5C6AD42752B6930073632B /* plmenu.h in Headers */,
 				2DC656942744289C00583E14 /* coverart.h in Headers */,
 				2DC656952744289C00583E14 /* gtkui_deletefromdisk.h in Headers */,
 				2DC656962744289C00583E14 /* mainplaylist.h in Headers */,
@@ -13607,6 +13616,7 @@
 				2DE3B7F22269BF3100AFF9AE /* eq.h in Headers */,
 				2DE3B7DB2269BF1700AFF9AE /* hotkeys.h in Headers */,
 				2DE3B8062269BF3100AFF9AE /* search.h in Headers */,
+				2D5C6AD52752B6930073632B /* plmenu.h in Headers */,
 				2DE3B7F92269BF3100AFF9AE /* coverart.h in Headers */,
 				2DA62BA526F3C8A800ED449A /* gtkui_deletefromdisk.h in Headers */,
 				2DE3B7D42269BF1700AFF9AE /* mainplaylist.h in Headers */,
@@ -17137,6 +17147,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DC6569D2744289C00583E14 /* prefwinappearance.c in Sources */,
+				2D5C6AD62752B6930073632B /* plmenu.c in Sources */,
 				2DC6569E2744289C00583E14 /* rg.c in Sources */,
 				2DC6569F2744289C00583E14 /* utf8.c in Sources */,
 				2DC656A02744289C00583E14 /* gtkui_deletefromdisk.c in Sources */,
@@ -17218,6 +17229,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D715C1726C837A80022A8F0 /* prefwinappearance.c in Sources */,
+				2D5C6AD72752B6930073632B /* plmenu.c in Sources */,
 				2DE3B7DF2269BF3100AFF9AE /* rg.c in Sources */,
 				2DE3B81E2269C0EA00AFF9AE /* utf8.c in Sources */,
 				2DA62BA626F3C8A800ED449A /* gtkui_deletefromdisk.c in Sources */,

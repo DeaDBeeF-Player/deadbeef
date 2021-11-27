@@ -47,15 +47,6 @@ pl_common_is_album_art_column (void *user_data);
 void
 pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int min_y, int next_y, int x, int y, int width, int height);
 
-void
-list_context_menu (DdbListview *listview, int iter);
-
-void
-list_context_menu_with_track_list (ddb_playItem_t **tracks, int count, trkproperties_delegate_t *delegate);
-
-void
-list_empty_region_context_menu (DdbListview *listview);
-
 gboolean
 list_handle_keypress (DdbListview *ps, int keyval, int state, int iter);
 
