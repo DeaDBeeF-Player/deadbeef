@@ -2333,7 +2333,6 @@
 		2DC657EA274A605E00583E14 /* PlaylistBrowserViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC657E7274A605E00583E14 /* PlaylistBrowserViewController.h */; };
 		2DC657EB274A605E00583E14 /* PlaylistBrowserViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC657E7274A605E00583E14 /* PlaylistBrowserViewController.h */; };
 		2DC657EC274A605E00583E14 /* PlaylistBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC657E8274A605E00583E14 /* PlaylistBrowserViewController.m */; };
-		2DC657ED274A605E00583E14 /* PlaylistBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC657E8274A605E00583E14 /* PlaylistBrowserViewController.m */; };
 		2DC657EE274A605E00583E14 /* PlaylistBrowserViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC657E9274A605E00583E14 /* PlaylistBrowserViewController.xib */; };
 		2DC657F1274A7A6900583E14 /* PlaylistContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC657EF274A7A6900583E14 /* PlaylistContextMenu.h */; };
 		2DC657F2274A7A6900583E14 /* PlaylistContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC657EF274A7A6900583E14 /* PlaylistContextMenu.h */; };
@@ -15994,7 +15993,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DC657ED274A605E00583E14 /* PlaylistBrowserViewController.m in Sources */,
 				2D0A6B1D23771B3300252E6D /* playmodes.c in Sources */,
 				2DC657CF2749544000583E14 /* PlaylistWithTabsWidget.m in Sources */,
 				2D01D7F21AB223CC00BCD3C4 /* parser.c in Sources */,

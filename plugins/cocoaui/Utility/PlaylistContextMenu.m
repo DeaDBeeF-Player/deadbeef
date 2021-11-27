@@ -17,18 +17,34 @@ extern DB_functions_t *deadbeef;
 
 @interface PlaylistContextMenu()
 
-@property (nonatomic) int playlistIndex;
+@property (nonatomic) ddb_playlist_t *playlist;
 @property (nonatomic) NSPopover *renamePlaylistPopover;
 
 @end
 
 @implementation PlaylistContextMenu
 
-- (void)updateWithPlaylistIndex:(int)playlistIndex {
+- (void)dealloc {
+    if (self.playlist != NULL) {
+        deadbeef->plt_unref (self.playlist);
+        self.playlist = NULL;
+    }
+}
+
+- (void)updateWithPlaylist:(ddb_playlist_t *)playlist {
     [self removeAllItems];
-    self.playlistIndex = playlistIndex;
+
+    if (self.playlist != NULL) {
+        deadbeef->plt_unref (self.playlist);
+        self.playlist = NULL;
+    }
+    self.playlist = playlist;
+    if (playlist != NULL) {
+        deadbeef->plt_ref (playlist);
+    }
+
     [self insertItemWithTitle:@"Add New Playlist" action:@selector(addNewPlaylist:) keyEquivalent:@"" atIndex:0].target = self;
-    if (playlistIndex != -1) {
+    if (playlist != NULL) {
         [self insertItemWithTitle:@"Delete Playlist" action:@selector(closePlaylist:) keyEquivalent:@"" atIndex:0].target = self;
 
         // ignore the warning, the message is sent to 1st responder, which will be the mainwincontroller in this case
@@ -65,7 +81,12 @@ extern DB_functions_t *deadbeef;
 - (void)closePlaylist:(id)sender {
     DeletePlaylistConfirmationController *controller = [DeletePlaylistConfirmationController new];
     controller.window = self.parentView.window;
-    controller.title = plt_get_title_wrapper ((int)self.playlistIndex);
+
+    char buffer[1000];
+    deadbeef->plt_get_title (self.playlist, buffer, sizeof (buffer));
+    NSString *title = [NSString stringWithUTF8String:buffer];
+
+    controller.title = title;
     controller.delegate = self.deletePlaylistDelegate;
     [controller run];
 }
@@ -80,11 +101,9 @@ extern DB_functions_t *deadbeef;
     self.renamePlaylistPopover.behavior = NSPopoverBehaviorTransient;
 
     RenamePlaylistViewController *viewController = [[RenamePlaylistViewController alloc] initWithNibName:@"RenamePlaylistViewController" bundle:nil];
-    int clicked = self.playlistIndex;
-    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (clicked);
-    int l = deadbeef->plt_get_title (plt, NULL, 0);
+    int l = deadbeef->plt_get_title (self.playlist, NULL, 0);
     char buf[l+1];
-    deadbeef->plt_get_title (plt, buf, (int)sizeof buf);
+    deadbeef->plt_get_title (self.playlist, buf, (int)sizeof buf);
     viewController.name = [NSString stringWithUTF8String:buf];
 
     viewController.popover = self.renamePlaylistPopover;

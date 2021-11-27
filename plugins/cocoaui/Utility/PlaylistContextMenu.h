@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,weak) NSView *parentView;
 @property (nonatomic) NSPoint clickPoint;
 
-- (void)updateWithPlaylistIndex:(int)playlistIndex;
+- (void)updateWithPlaylist:(ddb_playlist_t *)playlist;
 
 @end
 

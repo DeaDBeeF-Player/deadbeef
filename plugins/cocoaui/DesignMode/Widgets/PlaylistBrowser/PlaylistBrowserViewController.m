@@ -69,10 +69,10 @@ extern DB_functions_t *deadbeef;
     self.clickedRow = self.tableView.clickedRow;
     ddb_playlist_t *plt = deadbeef->plt_get_for_idx ((int)self.clickedRow);
     deadbeef->action_set_playlist (plt);
+    [menu updateWithPlaylist:plt];
     if (plt) {
         deadbeef->plt_unref (plt);
     }
-    [menu updateWithPlaylistIndex:(int)self.tableView.clickedRow];
 }
 
 - (void)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
