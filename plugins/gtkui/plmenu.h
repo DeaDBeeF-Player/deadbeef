@@ -36,8 +36,4 @@ list_context_menu (int iter);
 void
 list_context_menu_with_track_list (ddb_playItem_t **tracks, int count, trkproperties_delegate_t *delegate);
 
-void
-list_empty_region_context_menu (void);
-
-
 #endif /* plmenu_h */

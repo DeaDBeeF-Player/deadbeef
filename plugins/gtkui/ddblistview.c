@@ -2352,17 +2352,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
 gboolean
 ddb_listview_list_popup_menu (GtkWidget *widget, gpointer user_data) {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    DdbListviewIter it = ps->binding->head ();
-    while (it && !ps->binding->is_selected (it)) {
-        it = next_playitem(ps, it);
-    }
-    if (it) {
-        ps->binding->list_context_menu (PL_MAIN);
-        ps->binding->unref (it);
-    }
-    else if (ps->binding->list_empty_region_context_menu) {
-        ps->binding->list_empty_region_context_menu ();
-    }
+    ps->binding->list_context_menu (PL_MAIN);
     return TRUE;
 }
 
@@ -3108,16 +3098,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
         }
         ddb_listview_update_cursor (ps, cursor);
 
-        if (!ddb_listview_is_empty_region (&pick_ctx)) {
-            DdbListviewIter it = ps->binding->get_for_idx (pick_ctx.item_idx);
-            if (it) {
-                ps->binding->list_context_menu (PL_MAIN);
-                UNREF (it);
-            }
-        }
-        else if (ps->binding->list_empty_region_context_menu) {
-            ps->binding->list_empty_region_context_menu ();
-        }
+        ps->binding->list_context_menu (PL_MAIN);
     }
     return TRUE;
 }

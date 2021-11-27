@@ -604,7 +604,6 @@ static DdbListviewBinding search_binding = {
     .selection_changed = search_selection_changed,
     .header_context_menu = pl_common_header_context_menu,
     .list_context_menu = search_list_context_menu,
-    .list_empty_region_context_menu = NULL,
     .modification_idx = gtkui_get_curr_playlist_mod,
 };
 

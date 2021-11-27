@@ -416,39 +416,6 @@ g_object_set_data_full (G_OBJECT (component), name, \
 g_object_ref (widget), (GDestroyNotify) g_object_unref)
 
 void
-list_empty_region_context_menu (void) {
-    GtkWidget *playlist_menu;
-    GtkWidget *paste;
-    GtkWidget *paste_image;
-    GtkAccelGroup *accel_group = NULL;
-    accel_group = gtk_accel_group_new ();
-
-    playlist_menu = gtk_menu_new ();
-
-    paste = gtk_image_menu_item_new_with_mnemonic (_("_Paste"));
-    gtk_widget_show (paste);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), paste);
-    gtk_widget_add_accelerator (paste, "activate", accel_group, GDK_v, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-    if (clipboard_is_clipboard_data_available ()) {
-        gtk_widget_set_sensitive (paste, TRUE);
-    }
-    else {
-        gtk_widget_set_sensitive (paste, FALSE);
-    }
-
-    paste_image = gtk_image_new_from_stock ("gtk-paste", GTK_ICON_SIZE_MENU);
-    gtk_widget_show (paste_image);
-    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (paste), paste_image);
-
-    g_signal_connect ((gpointer) paste, "activate",
-                      G_CALLBACK (on_paste_activate),
-                      NULL);
-
-    gtk_menu_popup_at_pointer (GTK_MENU (playlist_menu), NULL);
-}
-
-void
 list_context_menu_with_track_list (ddb_playItem_t **tracks, int count, trkproperties_delegate_t *delegate) {
     if (_menuTrackList != NULL) {
         ddbUtilTrackListFree(_menuTrackList);

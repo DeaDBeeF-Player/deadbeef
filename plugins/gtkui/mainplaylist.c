@@ -230,7 +230,6 @@ static DdbListviewBinding main_binding = {
     .selection_changed = main_selection_changed,
     .header_context_menu = pl_common_header_context_menu,
     .list_context_menu = list_context_menu,
-    .list_empty_region_context_menu = list_empty_region_context_menu,
     .vscroll_changed = main_vscroll_changed,
     .modification_idx = gtkui_get_curr_playlist_mod,
 };
