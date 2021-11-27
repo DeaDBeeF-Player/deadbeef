@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include "../../shared/deletefromdisk.h"
 #include "../../strdupa.h"
+#include "actions.h"
 #include "actionhandlers.h"
 #include "clipboard.h"
 #include "gtkui_deletefromdisk.h"
@@ -137,23 +138,6 @@ trk_context_menu_update_with_playlist (ddb_playlist_t *playlist, ddb_action_cont
     _set_playlist(playlist);
     _menuActionContext = action_context;
     _capture_selected_track_list();
-}
-
-static GtkWidget*
-find_popup (GtkWidget *widget)
-{
-    GtkWidget *parent = widget;
-    do {
-        widget = parent;
-        if (GTK_IS_MENU (widget))
-            parent = gtk_menu_get_attach_widget (GTK_MENU (widget));
-        else
-            parent = gtk_widget_get_parent (widget);
-        if (!parent)
-            parent = (GtkWidget*) g_object_get_data (G_OBJECT (widget), "GladeParentKey");
-    } while (parent);
-
-    return widget;
 }
 
 static void
@@ -428,10 +412,6 @@ actionitem_activate (GtkMenuItem     *menuitem,
     }
 }
 
-#define HOOKUP_OBJECT(component,widget,name) \
-g_object_set_data_full (G_OBJECT (component), name, \
-g_object_ref (widget), (GDestroyNotify) g_object_unref)
-
 void
 list_context_menu_with_track_list (ddb_playItem_t **tracks, int count, trkproperties_delegate_t *delegate) {
     if (_menuTrackList != NULL) {
@@ -461,157 +441,6 @@ list_context_menu (ddb_playlist_t *playlist, int iter) {
     _trkproperties_delegate.trkproperties_did_delete_files = _trkproperties_did_delete_files;
     _trkproperties_delegate.user_data = NULL;
     _run_menu (iter != PL_SEARCH);
-}
-
-int
-trk_menu_add_action_items(GtkWidget *menu, int selected_count, ddb_playItem_t *selected_track) {
-    int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
-    DB_plugin_t **plugins = deadbeef->plug_get_list();
-    int i;
-    int added_entries = 0;
-    for (i = 0; plugins[i]; i++)
-    {
-        if (!plugins[i]->get_actions)
-            continue;
-
-        DB_plugin_action_t *actions = plugins[i]->get_actions (selected_track);
-        DB_plugin_action_t *action;
-
-        int count = 0;
-        for (action = actions; action; action = action->next)
-        {
-            if (action->name && !strcmp (action->name, "delete_from_disk") && hide_remove_from_disk) {
-                continue;
-            }
-
-            if (action->flags&DB_ACTION_DISABLED) {
-                continue;
-            }
-
-            if (!((action->callback2 && (action->flags & DB_ACTION_ADD_MENU)) || action->callback)) {
-                continue;
-            }
-
-            if (_menuActionContext == DDB_ACTION_CTX_SELECTION) {
-                if ((action->flags & DB_ACTION_COMMON)
-                    || !(action->flags & (DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK))) {
-                    continue;
-                }
-            }
-
-            if (_menuActionContext == DDB_ACTION_CTX_PLAYLIST) {
-                if (action->flags & DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST) {
-                    continue;
-                }
-                if (action->flags & DB_ACTION_COMMON) {
-                    continue;
-                }
-            }
-            else if (_menuActionContext == DDB_ACTION_CTX_MAIN) {
-                if (!((action->flags & (DB_ACTION_COMMON|DB_ACTION_ADD_MENU)) == (DB_ACTION_COMMON|DB_ACTION_ADD_MENU))) {
-                    continue;
-                }
-                const char *slash_test = action->title;
-                while (NULL != (slash_test = strchr (slash_test, '/'))) {
-                    if (slash_test && slash_test > action->title && *(slash_test-1) == '\\') {
-                        slash_test++;
-                        continue;
-                    }
-                    break;
-                }
-
-                if (slash_test == NULL) {
-                    continue;
-                }
-            }
-
-
-            // create submenus (separated with '/')
-            const char *prev = action->title;
-            while (*prev && *prev == '/') {
-                prev++;
-            }
-
-            GtkWidget *popup = NULL;
-
-            for (;;) {
-                const char *slash = strchr (prev, '/');
-                if (slash && *(slash-1) != '\\') {
-                    char name[slash-prev+1];
-                    // replace \/ with /
-                    const char *p = prev;
-                    char *t = name;
-                    while (*p && p < slash) {
-                        if (*p == '\\' && *(p+1) == '/') {
-                            *t++ = '/';
-                            p += 2;
-                        }
-                        else {
-                            *t++ = *p++;
-                        }
-                    }
-                    *t = 0;
-
-                    // add popup
-                    GtkWidget *prev_menu = popup ? popup : menu;
-
-                    popup = GTK_WIDGET (g_object_get_data (G_OBJECT (find_popup (prev_menu)), name));
-                    if (!popup) {
-                        GtkWidget *item = gtk_image_menu_item_new_with_mnemonic (_(name));
-                        gtk_widget_show (item);
-                        gtk_container_add (GTK_CONTAINER (prev_menu), item);
-                        popup = gtk_menu_new ();
-                        HOOKUP_OBJECT (prev_menu, popup, name);
-                        gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), popup);
-                    }
-                }
-                else {
-                    break;
-                }
-                prev = slash+1;
-            }
-
-
-            count++;
-            added_entries++;
-            GtkWidget *actionitem;
-
-            // replace \/ with /
-            const char *p = popup ? prev : action->title;
-            char title[strlen (p)+1];
-            char *t = title;
-            while (*p) {
-                if (*p == '\\' && *(p+1) == '/') {
-                    *t++ = '/';
-                    p += 2;
-                }
-                else {
-                    *t++ = *p++;
-                }
-            }
-            *t = 0;
-
-            actionitem = gtk_menu_item_new_with_mnemonic (_(title));
-            gtk_widget_show (actionitem);
-            gtk_container_add (popup ? GTK_CONTAINER (popup) : GTK_CONTAINER (menu), actionitem);
-
-            g_signal_connect ((gpointer) actionitem, "activate",
-                              G_CALLBACK (actionitem_activate),
-                              action);
-            if ((selected_count > 1 && !(action->flags & DB_ACTION_MULTIPLE_TRACKS)) ||
-                (action->flags & DB_ACTION_DISABLED)) {
-                gtk_widget_set_sensitive (GTK_WIDGET (actionitem), FALSE);
-            }
-        }
-        if (count > 0 && deadbeef->conf_get_int ("gtkui.action_separators", 0))
-        {
-            GtkWidget *separator = gtk_separator_menu_item_new ();
-            gtk_widget_show (separator);
-            gtk_container_add (GTK_CONTAINER (menu), separator);
-            gtk_widget_set_sensitive (separator, FALSE);
-        }
-    }
-    return added_entries;
 }
 
 void
@@ -762,7 +591,7 @@ trk_context_menu_build (GtkWidget *menu) {
     gtk_container_add (GTK_CONTAINER (menu), separator);
     gtk_widget_set_sensitive (separator, FALSE);
 
-    int added_entries = trk_menu_add_action_items(menu, selected_count, selected_track);
+    int added_entries = menu_add_action_items(menu, selected_count, selected_track, _menuActionContext, actionitem_activate);
     if (added_entries > 0 && !deadbeef->conf_get_int ("gtkui.action_separators", 0))
     {
         GtkWidget *separator = gtk_separator_menu_item_new ();

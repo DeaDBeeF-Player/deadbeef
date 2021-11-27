@@ -27,6 +27,13 @@
 void
 add_mainmenu_actions (void);
 
+typedef void (* menu_action_activate_callback_t) (GtkMenuItem *menuitem, DB_plugin_action_t *action);
+
+/// Add plugin action items to the existing menu.
+/// @return The number of items added
+int
+menu_add_action_items(GtkWidget *menu, int selected_count, ddb_playItem_t *selected_track, ddb_action_context_t action_context, menu_action_activate_callback_t activate_callback);
+
 void
 gtkui_exec_action_14 (DB_plugin_action_t *action, int cursor);
 

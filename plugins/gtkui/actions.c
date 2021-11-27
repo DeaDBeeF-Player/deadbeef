@@ -33,7 +33,7 @@
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
-#define GLADE_HOOKUP_OBJECT(component,widget,name) \
+#define HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
     g_object_ref(G_OBJECT(widget)), (GDestroyNotify) g_object_unref)
 
@@ -53,9 +53,6 @@ static void
 on_actionitem_activate (GtkMenuItem     *menuitem,
                            DB_plugin_action_t *action)
 {
-    // these actions are always in the MAIN context, or they are coming from new
-    // plugins, so we don't have to care about the user data for <=1.4 plugins.
-    // aren't we?..
     gdk_threads_add_idle (menu_action_cb, action);
 }
 
@@ -81,116 +78,194 @@ remove_actions (GtkWidget *widget, void *data) {
     }
 }
 
-void
-add_mainmenu_actions (void)
-{
-    GtkWidget *menubar = lookup_widget (mainwin, "menubar");
-    // remove all plugaction_*** menu items and empty submenus
-    gtk_container_foreach (GTK_CONTAINER (menubar), remove_actions, menubar);
-
-    // add new
+int
+menu_add_action_items(GtkWidget *menu, int selected_count, ddb_playItem_t *selected_track, ddb_action_context_t action_context, menu_action_activate_callback_t activate_callback) {
+    int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
     DB_plugin_t **plugins = deadbeef->plug_get_list();
     int i;
-
+    int added_entries = 0;
     for (i = 0; plugins[i]; i++)
     {
         if (!plugins[i]->get_actions)
             continue;
 
-        DB_plugin_action_t *actions = plugins[i]->get_actions (NULL);
-        DB_plugin_action_t *action = NULL;
+        DB_plugin_action_t *actions = plugins[i]->get_actions (selected_track);
+        DB_plugin_action_t *action;
 
+        int count = 0;
         for (action = actions; action; action = action->next)
         {
-            char *tmp = NULL;
-
-            int has_addmenu = (action->flags & DB_ACTION_COMMON) && ((action->flags & DB_ACTION_ADD_MENU) || (action->callback));
-
-            if (!has_addmenu)
+            if (action->name && !strcmp (action->name, "delete_from_disk") && hide_remove_from_disk) {
                 continue;
+            }
 
-            // 1st check if we have slashes
-            const char *slash = action->title;
-            while (NULL != (slash = strchr (slash, '/'))) {
-                if (slash && slash > action->title && *(slash-1) == '\\') {
-                    slash++;
+            if (action->flags&DB_ACTION_DISABLED) {
+                continue;
+            }
+
+            if (!((action->callback2 && (action->flags & DB_ACTION_ADD_MENU)) || action->callback)) {
+                continue;
+            }
+
+            if (action_context == DDB_ACTION_CTX_SELECTION) {
+                if ((action->flags & DB_ACTION_COMMON)
+                    || !(action->flags & (DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK))) {
                     continue;
                 }
-                break;
-            }
-            if (!slash) {
-                continue;
             }
 
-            char *ptr = tmp = strdup (action->title);
+            if (action_context == DDB_ACTION_CTX_PLAYLIST) {
+                if (action->flags & DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST) {
+                    continue;
+                }
+                if (action->flags & DB_ACTION_COMMON) {
+                    continue;
+                }
+            }
+            else if (action_context == DDB_ACTION_CTX_MAIN) {
+                if (!((action->flags & (DB_ACTION_COMMON|DB_ACTION_ADD_MENU)) == (DB_ACTION_COMMON|DB_ACTION_ADD_MENU))) {
+                    continue;
+                }
+                const char *slash_test = action->title;
+                while (NULL != (slash_test = strchr (slash_test, '/'))) {
+                    if (slash_test && slash_test > action->title && *(slash_test-1) == '\\') {
+                        slash_test++;
+                        continue;
+                    }
+                    break;
+                }
+
+                if (slash_test == NULL) {
+                    continue;
+                }
+            }
+
+
+            // create submenus (separated with '/')
+            const char *prev = action->title;
+            while (*prev && *prev == '/') {
+                prev++;
+            }
 
             char *prev_title = NULL;
 
-            GtkWidget *current = menubar;
+            GtkWidget *current = menu;
             GtkWidget *previous = NULL;
 
-            while (1)
-            {
-                // find unescaped forward slash
-                char *slash = strchr (ptr, '/');
-                if (slash && slash > ptr && *(slash-1) == '\\') {
-                    ptr = slash + 1;
-                    continue;
-                }
-
-                if (!slash)
-                {
-                    GtkWidget *actionitem;
-                    actionitem = gtk_image_menu_item_new_with_mnemonic (_(ptr));
-                    gtk_widget_show (actionitem);
-
-                    /* Here we have special cases for different submenus */
-                    if (prev_title && 0 == strcmp ("File", prev_title))
-                        gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 5);
-                    else if (prev_title && 0 == strcmp ("Edit", prev_title))
-                        gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 7);
-                    else {
-                        gtk_container_add (GTK_CONTAINER (current), actionitem);
+            for (;;) {
+                const char *slash = strchr (prev, '/');
+                char name[slash-prev+1];
+                if (slash && *(slash-1) != '\\') {
+                    // replace \/ with /
+                    const char *p = prev;
+                    char *t = name;
+                    while (*p && p < slash) {
+                        if (*p == '\\' && *(p+1) == '/') {
+                            *t++ = '/';
+                            p += 2;
+                        }
+                        else {
+                            *t++ = *p++;
+                        }
                     }
+                    *t = 0;
 
-                    g_signal_connect ((gpointer) actionitem, "activate",
-                        G_CALLBACK (on_actionitem_activate),
-                        action);
-                    g_object_set_data_full (G_OBJECT (actionitem), "plugaction", strdup (action->name), free);
+                    char menuname [1024];
+
+                    snprintf (menuname, sizeof (menuname), "%s_menu", name);
+
+                    previous = current;
+                    current = (GtkWidget*) g_object_get_data (G_OBJECT (menu), menuname);
+                    if (!current) {
+                        current = (GtkWidget*) g_object_get_data (G_OBJECT (mainwin), menuname);
+                    }
+                    if (!current)
+                    {
+                        GtkWidget *newitem;
+
+                        newitem = gtk_menu_item_new_with_mnemonic (_(name));
+                        gtk_widget_show (newitem);
+
+                        //If we add new submenu in main bar, add it before 'Help'
+                        if (NULL == prev_title)
+                            gtk_menu_shell_insert (GTK_MENU_SHELL (previous), newitem, 4);
+                        else
+                            gtk_container_add (GTK_CONTAINER (previous), newitem);
+
+                        current = gtk_menu_new ();
+                        gtk_menu_item_set_submenu (GTK_MENU_ITEM (newitem), current);
+                        HOOKUP_OBJECT (menu, current, menuname);
+                    }
+                    free (prev_title);
+                    prev_title = strdup (name);
+                }
+                else {
                     break;
                 }
-                *slash = 0;
-                char menuname [1024];
-
-                snprintf (menuname, sizeof (menuname), "%s_menu", ptr);
-
-                previous = current;
-                current = (GtkWidget*) g_object_get_data (G_OBJECT (mainwin), menuname);
-                if (!current)
-                {
-                    GtkWidget *newitem;
-
-                    newitem = gtk_menu_item_new_with_mnemonic (_(ptr));
-                    gtk_widget_show (newitem);
-
-                    //If we add new submenu in main bar, add it before 'Help'
-                    if (NULL == prev_title)
-                        gtk_menu_shell_insert (GTK_MENU_SHELL (previous), newitem, 4);
-                    else
-                        gtk_container_add (GTK_CONTAINER (previous), newitem);
-
-                    current = gtk_menu_new ();
-                    gtk_menu_item_set_submenu (GTK_MENU_ITEM (newitem), current);
-                    GLADE_HOOKUP_OBJECT (mainwin, current, menuname);
-                }
-                prev_title = ptr;
-                ptr = slash + 1;
+                prev = slash+1;
             }
-            if (tmp) {
-                free (tmp);
+
+
+            count++;
+            added_entries++;
+            GtkWidget *actionitem;
+
+            // replace \/ with /
+            const char *p = current ? prev : action->title;
+            char title[strlen (p)+1];
+            char *t = title;
+            while (*p) {
+                if (*p == '\\' && *(p+1) == '/') {
+                    *t++ = '/';
+                    p += 2;
+                }
+                else {
+                    *t++ = *p++;
+                }
+            }
+            *t = 0;
+
+            actionitem = gtk_menu_item_new_with_mnemonic (_(title));
+            gtk_widget_show (actionitem);
+
+            if (action_context == DDB_ACTION_CTX_MAIN && prev_title && 0 == strcmp ("File", prev_title))
+                gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 5);
+            else if (action_context == DDB_ACTION_CTX_MAIN && prev_title && 0 == strcmp ("Edit", prev_title))
+                gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 7);
+            else {
+                gtk_container_add (GTK_CONTAINER (current), actionitem);
+            }
+
+            free(prev_title);
+            prev_title = NULL;
+
+            g_signal_connect ((gpointer) actionitem, "activate",
+                              G_CALLBACK (activate_callback),
+                              action);
+            if ((selected_count > 1 && !(action->flags & DB_ACTION_MULTIPLE_TRACKS)) ||
+                (action->flags & DB_ACTION_DISABLED)) {
+                gtk_widget_set_sensitive (GTK_WIDGET (actionitem), FALSE);
             }
         }
+        if (count > 0 && deadbeef->conf_get_int ("gtkui.action_separators", 0))
+        {
+            GtkWidget *separator = gtk_separator_menu_item_new ();
+            gtk_widget_show (separator);
+            gtk_container_add (GTK_CONTAINER (menu), separator);
+            gtk_widget_set_sensitive (separator, FALSE);
+        }
     }
+    return added_entries;
+}
+
+
+void
+add_mainmenu_actions (void) {
+    GtkWidget *menubar = lookup_widget (mainwin, "menubar");
+    // remove all plugaction_*** menu items and empty submenus
+    gtk_container_foreach (GTK_CONTAINER (menubar), remove_actions, menubar);
+
+    menu_add_action_items(menubar, 0, NULL, DDB_ACTION_CTX_MAIN, on_actionitem_activate);
 }
 
 void

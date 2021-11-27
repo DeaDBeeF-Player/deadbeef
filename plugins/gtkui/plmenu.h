@@ -47,9 +47,4 @@ trk_context_menu_build (GtkWidget *menu);
 void
 trk_context_menu_update_with_playlist (ddb_playlist_t *playlist, ddb_action_context_t action_context);
 
-/// Add plugin action items to the existing menu.
-/// @return The number of items added
-int
-trk_menu_add_action_items(GtkWidget *menu, int selected_count, ddb_playItem_t *selected_track);
-
 #endif /* plmenu_h */
