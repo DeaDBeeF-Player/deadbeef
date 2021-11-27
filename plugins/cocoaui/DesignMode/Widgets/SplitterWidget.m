@@ -102,12 +102,13 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     if (self.splitView.arrangedSubviews[0] == child.view) {
         [self.splitView removeArrangedSubview:child.view];
         [_splitView insertArrangedSubview:pane.view atIndex:0];
+        [super insertChild:pane atIndex:0];
     }
     else {
         [self.splitView removeArrangedSubview:child.view];
         [_splitView insertArrangedSubview:pane.view atIndex:1];
+        [super insertChild:pane atIndex:1];
     }
-    [super appendChild:pane];
     [self updateDividerPositionFromNormalized:normalizedDividerPosition];
 }
 
