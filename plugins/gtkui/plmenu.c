@@ -634,10 +634,12 @@ trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int sel
     play_next = gtk_menu_item_new_with_mnemonic (_("Play Next"));
     gtk_widget_show (play_next);
     gtk_container_add (GTK_CONTAINER (menu), play_next);
+    gtk_widget_set_sensitive(play_next, selected_count != 0);
 
     play_later = gtk_menu_item_new_with_mnemonic (_("Play Later"));
     gtk_widget_show (play_later);
     gtk_container_add (GTK_CONTAINER (menu), play_later);
+    gtk_widget_set_sensitive(play_later, selected_count != 0);
 
     remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove from Playback Queue"));
     if (selected_count > 0 && _menuPlaylist != NULL) {
@@ -656,12 +658,16 @@ trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int sel
             gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
         }
     }
+    else {
+        gtk_widget_set_sensitive(remove_from_playback_queue1, 0);
+    }
     gtk_widget_show (remove_from_playback_queue1);
     gtk_container_add (GTK_CONTAINER (menu), remove_from_playback_queue1);
 
     reload_metadata = gtk_menu_item_new_with_mnemonic (_("Reload Metadata"));
     gtk_widget_show (reload_metadata);
     gtk_container_add (GTK_CONTAINER (menu), reload_metadata);
+    gtk_widget_set_sensitive(reload_metadata, selected_count != 0);
 
     separator = gtk_separator_menu_item_new ();
     gtk_widget_show (separator);
@@ -671,6 +677,7 @@ trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int sel
     cut = gtk_image_menu_item_new_with_mnemonic (_("Cu_t"));
     gtk_widget_show (cut);
     gtk_container_add (GTK_CONTAINER (menu), cut);
+    gtk_widget_set_sensitive(cut, selected_count != 0);
     gtk_widget_add_accelerator (cut, "activate", accel_group, GDK_x, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
     cut_image = gtk_image_new_from_stock ("gtk-cut", GTK_ICON_SIZE_MENU);
@@ -680,6 +687,7 @@ trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int sel
     copy = gtk_image_menu_item_new_with_mnemonic (_("_Copy"));
     gtk_widget_show (copy);
     gtk_container_add (GTK_CONTAINER (menu), copy);
+    gtk_widget_set_sensitive(copy, selected_count != 0);
     gtk_widget_add_accelerator (copy, "activate", accel_group, GDK_c, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
     copy_image = gtk_image_new_from_stock ("gtk-copy", GTK_ICON_SIZE_MENU);
@@ -695,14 +703,8 @@ trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int sel
         gtk_widget_hide (paste);
     }
     gtk_container_add (GTK_CONTAINER (menu), paste);
+    gtk_widget_set_sensitive(paste, clipboard_is_clipboard_data_available());
     gtk_widget_add_accelerator (paste, "activate", accel_group, GDK_v, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-    if (clipboard_is_clipboard_data_available ()) {
-        gtk_widget_set_sensitive (paste, TRUE);
-    }
-    else {
-        gtk_widget_set_sensitive (paste, FALSE);
-    }
 
     paste_image = gtk_image_new_from_stock ("gtk-paste", GTK_ICON_SIZE_MENU);
     gtk_widget_show (paste_image);
@@ -716,6 +718,7 @@ trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int sel
     remove2 = gtk_menu_item_new_with_mnemonic (_("Remove"));
     gtk_widget_show (remove2);
     gtk_container_add (GTK_CONTAINER (menu), remove2);
+    gtk_widget_set_sensitive(remove2, selected_count != 0 && _menuPlaylist != NULL);
 
     int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
 
@@ -723,6 +726,7 @@ trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int sel
         remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove from Disk"));
         gtk_widget_show (remove_from_disk);
         gtk_container_add (GTK_CONTAINER (menu), remove_from_disk);
+        gtk_widget_set_sensitive(remove_from_disk, selected_count != 0);
     }
 
     separator = gtk_separator_menu_item_new ();
@@ -756,6 +760,7 @@ trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int sel
     properties1 = gtk_menu_item_new_with_mnemonic (_("Track Properties"));
     gtk_widget_show (properties1);
     gtk_container_add (GTK_CONTAINER (menu), properties1);
+    gtk_widget_set_sensitive (properties1, selected_count != 0);
 
     g_signal_connect ((gpointer) play_later, "activate",
                       G_CALLBACK (play_later_activate),
