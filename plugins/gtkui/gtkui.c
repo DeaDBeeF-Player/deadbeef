@@ -577,7 +577,7 @@ gtkui_get_curr_playlist_mod (void) {
 }
 
 int
-gtkui_rename_playlist_at_index (int plt_idx) {
+gtkui_rename_playlist (ddb_playlist_t *plt) {
     GtkWidget *dlg = create_entrydialog ();
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
@@ -587,19 +587,26 @@ gtkui_rename_playlist_at_index (int plt_idx) {
     gtk_label_set_text (GTK_LABEL(e), _("Title:"));
     e = lookup_widget (dlg, "title");
     char t[1000];
-    plt_get_title_wrapper (plt_idx, t, sizeof (t));
+    deadbeef->plt_get_title (plt, t, sizeof (t));
     gtk_entry_set_text (GTK_ENTRY (e), t);
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
     if (res == GTK_RESPONSE_OK) {
         const char *text = gtk_entry_get_text (GTK_ENTRY (e));
-        deadbeef->pl_lock ();
-        ddb_playlist_t *p = deadbeef->plt_get_for_idx (plt_idx);
-        deadbeef->plt_set_title (p, text);
-        deadbeef->plt_unref (p);
-        deadbeef->pl_unlock ();
+        deadbeef->plt_set_title (plt, text);
     }
     gtk_widget_destroy (dlg);
     return 0;
+}
+
+int
+gtkui_rename_playlist_at_index (int plt_idx) {
+    int res = -1;
+    ddb_playlist_t *p = deadbeef->plt_get_for_idx (plt_idx);
+    if (p != NULL) {
+        res = gtkui_rename_playlist(p);
+        deadbeef->plt_unref (p);
+    }
+    return res;
 }
 
 void
@@ -1421,6 +1428,7 @@ gtkui_mainwin_free(void) {
     search_destroy ();
 //    draw_free ();
     titlebar_tf_free ();
+    gtkui_free_pltmenu ();
 
     if (logwindow) {
         deadbeef->log_viewer_unregister (logwindow_logger_callback, logwindow);
@@ -2004,6 +2012,17 @@ ddb_gui_GTK3_load (DB_functions_t *api) {
 }
 #endif
 
+static GtkWidget *
+_create_pltmenu (int plt_index) {
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (plt_index);
+    GtkWidget *menu = NULL;
+    if (plt != NULL) {
+        menu = gtkui_create_pltmenu(plt);
+        deadbeef->plt_unref (plt);
+    }
+    return menu;
+}
+
 static const char settings_dlg[] =
     "property \"Ask confirmation to delete files from disk\" checkbox gtkui.delete_files_ask 1;\n"
     "property \"Status icon settings:\" label l;\n"
@@ -2092,7 +2111,7 @@ ddb_gtkui_t plugin = {
     .w_append = w_append,
     .w_replace = w_replace,
     .w_remove = w_remove,
-    .create_pltmenu = gtkui_create_pltmenu,
+    .create_pltmenu = _create_pltmenu,
     .get_cover_art_pixbuf = get_cover_art_callb, // deprecated
     .get_cover_art_primary = get_cover_art_primary,
     .get_cover_art_thumb = get_cover_art_thumb,

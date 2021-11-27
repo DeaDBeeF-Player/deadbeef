@@ -1091,7 +1091,11 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
         tab_moved = 0;
     }
     else if (TEST_RIGHT_CLICK(event)) {
-        GtkWidget *menu = gtkui_create_pltmenu (tab_clicked);
+        ddb_playlist_t *plt = deadbeef->plt_get_for_idx (tab_clicked);
+        GtkWidget *menu = gtkui_create_pltmenu (plt);
+        if (plt != NULL) {
+            deadbeef->plt_unref (plt);
+        }
         gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
         gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
     }

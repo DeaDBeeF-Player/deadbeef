@@ -37,7 +37,25 @@
   g_object_set_data (G_OBJECT (component), name, widget)
 
 // selected playlist for the context menu
-static int pltmenu_idx;
+static ddb_playlist_t *current_playlist;
+
+static void
+pltmenu_set_playlist (ddb_playlist_t *playlist) {
+    if (current_playlist != NULL) {
+        deadbeef->plt_unref (current_playlist);
+        current_playlist = NULL;
+    }
+
+    current_playlist = playlist;
+    if (current_playlist != NULL) {
+        deadbeef->plt_ref (current_playlist);
+    }
+}
+
+void
+gtkui_free_pltmenu (void) {
+    pltmenu_set_playlist(NULL);
+}
 
 void
 plt_get_title_wrapper (int plt, char *buffer, int len) {
@@ -58,8 +76,8 @@ static void
 on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    if (pltmenu_idx != -1) {
-        gtkui_rename_playlist_at_index(pltmenu_idx);
+    if (current_playlist != NULL) {
+        gtkui_rename_playlist(current_playlist);
     }
 }
 
@@ -68,24 +86,29 @@ on_remove_playlist1_activate           (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
 
-    if (pltmenu_idx != -1) {
-        char title[500];
-        ddb_playlist_t *plt = deadbeef->plt_get_for_idx(pltmenu_idx);
-        if (deadbeef->plt_get_first(plt, PL_MAIN) != NULL) {
-            // playlist not empty, confirm first.
-            plt_get_title_wrapper (pltmenu_idx, title, sizeof (title));
-            GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Removing playlist"));
-            gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Do you really want to remove the playlist '%s'?"), title);
-            gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
-            int response = gtk_dialog_run (GTK_DIALOG (dlg));
-            gtk_widget_destroy (dlg);
-            if (response != GTK_RESPONSE_YES) {
-                return;
-            }
-        }
-
-        deadbeef->plt_remove (pltmenu_idx);
+    if (current_playlist == NULL) {
+        return;
     }
+    int idx = deadbeef->plt_get_idx(current_playlist);
+    if (idx == -1) {
+        return;
+    }
+    char title[500];
+    if (deadbeef->plt_get_first(current_playlist, PL_MAIN) != NULL) {
+        // playlist not empty, confirm first.
+        deadbeef->plt_get_title (current_playlist, title, sizeof (title));
+        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Removing playlist"));
+        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Do you really want to remove the playlist '%s'?"), title);
+        gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
+        int response = gtk_dialog_run (GTK_DIALOG (dlg));
+        gtk_widget_destroy (dlg);
+        if (response != GTK_RESPONSE_YES) {
+            return;
+        }
+    }
+
+    deadbeef->plt_remove (idx);
+    pltmenu_set_playlist(NULL);
 }
 
 static void
@@ -102,42 +125,27 @@ static void
 on_autosort_toggled (GtkMenuItem     *menuitem,
                     gpointer         user_data)
 {
-    if (pltmenu_idx < 0) {
+    if (current_playlist == NULL) {
         return;
     }
-    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
-    if (plt) {
-        int enabled = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(menuitem));
-        deadbeef->plt_set_meta_int (plt, "autosort_enabled", enabled);
-        deadbeef->plt_unref (plt);
-    }
+    int enabled = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(menuitem));
+    deadbeef->plt_set_meta_int (current_playlist, "autosort_enabled", enabled);
 }
 
 static void
 on_actionitem_activate (GtkMenuItem     *menuitem,
                            DB_plugin_action_t *action)
 {
+    if (current_playlist == NULL) {
+        return;
+    }
     if (action->callback) {
-        ddb_playlist_t *plt = NULL;
-        if (pltmenu_idx != -1) {
-            plt = deadbeef->plt_get_for_idx (pltmenu_idx);
-        }
-        action->callback (action, plt);
-        if (plt) {
-            deadbeef->plt_unref (plt);
-        }
+        action->callback (action, current_playlist);
     }
     else {
-        ddb_playlist_t *plt = NULL;
-        if (pltmenu_idx != -1) {
-            plt = deadbeef->plt_get_for_idx (pltmenu_idx);
-            if (plt) {
-                deadbeef->action_set_playlist (plt);
-                deadbeef->plt_unref (plt);
-                action->callback2 (action, DDB_ACTION_CTX_PLAYLIST);
-                deadbeef->action_set_playlist (NULL);
-            }
-        }
+        deadbeef->action_set_playlist (current_playlist);
+        action->callback2 (action, DDB_ACTION_CTX_PLAYLIST);
+        deadbeef->action_set_playlist (NULL);
     }
 }
 
@@ -145,39 +153,31 @@ static void
 on_cut_activate (GtkMenuItem     *menuitem,
                     gpointer         user_data)
 {
-    if (pltmenu_idx < 0) {
+    if (current_playlist == NULL) {
         return;
     }
-    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
-    if (plt) {
-        clipboard_cut_selection (plt, DDB_ACTION_CTX_PLAYLIST);
-        deadbeef->plt_unref (plt);
-    }
+    clipboard_cut_selection (current_playlist, DDB_ACTION_CTX_PLAYLIST);
+    deadbeef->plt_unref (current_playlist);
 }
 
 static void
 on_copy_activate (GtkMenuItem     *menuitem,
                     gpointer         user_data)
 {
-    if (pltmenu_idx < 0) {
+    if (current_playlist == NULL) {
         return;
     }
-    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
-    if (plt) {
-        clipboard_copy_selection (plt, DDB_ACTION_CTX_PLAYLIST);
-        deadbeef->plt_unref (plt);
-    }
+    clipboard_copy_selection (current_playlist, DDB_ACTION_CTX_PLAYLIST);
 }
 
 static void
 on_paste_activate (GtkMenuItem     *menuitem,
                     gpointer         user_data)
 {
-    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
-    clipboard_paste_selection (plt, DDB_ACTION_CTX_PLAYLIST);
-    if (plt) {
-        deadbeef->plt_unref (plt);
+    if (current_playlist == NULL) {
+        return;
     }
+    clipboard_paste_selection (current_playlist, DDB_ACTION_CTX_PLAYLIST);
 }
 
 
@@ -215,14 +215,10 @@ add_tab_actions (GtkWidget *menu) {
     int item_count = 0;
     int playqueue_test = 0;
 
-    ddb_playlist_t *plt = NULL;
-    if (pltmenu_idx != -1) {
-        plt = deadbeef->plt_get_for_idx (pltmenu_idx);
-    }
-    if (plt) {
-        item_count = deadbeef->plt_get_item_count (plt, PL_MAIN);
+    if (current_playlist != NULL) {
+        item_count = deadbeef->plt_get_item_count (current_playlist, PL_MAIN);
 
-        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+        DB_playItem_t *it = deadbeef->plt_get_first (current_playlist, PL_MAIN);
         while (it) {
             if (deadbeef->playqueue_test (it) != -1) {
                 playqueue_test = 1;
@@ -233,7 +229,6 @@ add_tab_actions (GtkWidget *menu) {
             deadbeef->pl_item_unref (it);
             it = next;
         }
-        deadbeef->plt_unref (plt);
     }
 
     int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
@@ -347,7 +342,7 @@ add_tab_actions (GtkWidget *menu) {
 }
 
 GtkWidget*
-gtkui_create_pltmenu (int plt_idx) {
+gtkui_create_pltmenu (ddb_playlist_t *playlist) {
     GtkWidget *plmenu;
     GtkWidget *rename_playlist1;
     GtkWidget *remove_playlist1;
@@ -366,17 +361,17 @@ gtkui_create_pltmenu (int plt_idx) {
     accel_group = gtk_accel_group_new ();
 
     plmenu = gtk_menu_new ();
-    pltmenu_idx = plt_idx;
+    pltmenu_set_playlist(playlist);
 
     rename_playlist1 = gtk_menu_item_new_with_mnemonic (_("Rename Playlist"));
-    if (pltmenu_idx == -1) {
+    if (current_playlist == NULL) {
         gtk_widget_set_sensitive (rename_playlist1, FALSE);
     }
     gtk_widget_show (rename_playlist1);
     gtk_container_add (GTK_CONTAINER (plmenu), rename_playlist1);
 
     remove_playlist1 = gtk_menu_item_new_with_mnemonic (_("Remove Playlist"));
-    if (pltmenu_idx == -1) {
+    if (current_playlist == NULL) {
         gtk_widget_set_sensitive (remove_playlist1, FALSE);
     }
     gtk_widget_show (remove_playlist1);
@@ -387,18 +382,14 @@ gtkui_create_pltmenu (int plt_idx) {
     gtk_container_add (GTK_CONTAINER (plmenu), add_new_playlist1);
 
     int autosort_enabled = 0;
-    if (pltmenu_idx >= 0) {
-        ddb_playlist_t *plt = deadbeef->plt_get_for_idx (pltmenu_idx);
-        if (plt) {
-            autosort_enabled = deadbeef->plt_find_meta_int (plt, "autosort_enabled", 0);
-            deadbeef->plt_unref (plt);
-        }
+    if (current_playlist != NULL) {
+        autosort_enabled = deadbeef->plt_find_meta_int (current_playlist, "autosort_enabled", 0);
     }
     autosort = gtk_check_menu_item_new_with_label (_("Enable Autosort"));
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM(autosort), autosort_enabled);
     gtk_widget_show (autosort);
     gtk_container_add (GTK_CONTAINER (plmenu), autosort);
-    if (pltmenu_idx == -1) {
+    if (current_playlist == NULL) {
         gtk_widget_set_sensitive (autosort, FALSE);
     }
     
@@ -411,7 +402,7 @@ gtkui_create_pltmenu (int plt_idx) {
     gtk_widget_show (cut);
     gtk_container_add (GTK_CONTAINER (plmenu), cut);
     gtk_widget_add_accelerator (cut, "activate", accel_group, GDK_x, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    if (pltmenu_idx == -1) {
+    if (current_playlist == NULL) {
         gtk_widget_set_sensitive (cut, FALSE);
     }
 
@@ -423,7 +414,7 @@ gtkui_create_pltmenu (int plt_idx) {
     gtk_widget_show (copy);
     gtk_container_add (GTK_CONTAINER (plmenu), copy);
     gtk_widget_add_accelerator (copy, "activate", accel_group, GDK_c, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    if (pltmenu_idx == -1) {
+    if (current_playlist == NULL) {
         gtk_widget_set_sensitive (copy, FALSE);
     }
 

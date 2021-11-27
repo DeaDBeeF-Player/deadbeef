@@ -129,6 +129,9 @@ gboolean
 gtkui_set_progress_text_idle (gpointer data);
 
 int
+gtkui_rename_playlist (ddb_playlist_t *plt);
+
+int
 gtkui_rename_playlist_at_index(int plt_idx);
 
 int
@@ -144,7 +147,10 @@ void
 on_gtkui_info_window_delete (GtkWidget *widget, GtkTextDirection previous_direction, GtkWidget **pwindow);
 
 GtkWidget*
-gtkui_create_pltmenu (int plt_idx);
+gtkui_create_pltmenu (ddb_playlist_t *plt);
+
+void
+gtkui_free_pltmenu(void);
 
 void
 plt_get_title_wrapper (int plt, char *buffer, int len);
