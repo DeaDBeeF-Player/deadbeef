@@ -41,7 +41,11 @@ list_context_menu_with_track_list (ddb_playItem_t **tracks, int count, trkproper
 
 /// For use case when the caller needs more control of the menu, such as Playlist Tab context menu
 void
-trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int selected_count, ddb_action_context_t action_context);
+trk_context_menu_build (GtkWidget *menu);
+
+/// Call this before the @c trk_context_menu_build to initialize the internal track list
+void
+trk_context_menu_update_with_playlist (ddb_playlist_t *playlist, ddb_action_context_t action_context);
 
 /// Add plugin action items to the existing menu.
 /// @return The number of items added

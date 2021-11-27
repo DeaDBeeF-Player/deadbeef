@@ -77,10 +77,22 @@ _capture_selected_track_list (void) {
 
     deadbeef->pl_lock ();
 
+    int count = 0;
+
+    if (_menuActionContext == DDB_ACTION_CTX_SELECTION) {
+        count = deadbeef->plt_getselcount(_menuPlaylist);
+    }
+    else if (_menuActionContext == DDB_ACTION_CTX_PLAYLIST) {
+        count = deadbeef->plt_get_item_count (_menuPlaylist, PL_MAIN);
+    }
+
+    if (count == 0) {
+        deadbeef->pl_unlock ();
+        return;
+    }
+
     ddb_playItem_t *current = deadbeef->streamer_get_playing_track ();
     int current_idx = -1;
-
-    int count = deadbeef->plt_getselcount(_menuPlaylist);
     int all_idx = 0;
     int idx = 0;
     if (count) {
@@ -92,7 +104,7 @@ _capture_selected_track_list (void) {
             if (current != NULL && it == current) {
                 current_idx = all_idx;
             }
-            if (deadbeef->pl_is_selected (it)) {
+            if (_menuActionContext != DDB_ACTION_CTX_SELECTION || deadbeef->pl_is_selected (it)) {
                 tracks[idx++] = it;
             }
             else {
@@ -118,6 +130,13 @@ _capture_selected_track_list (void) {
     }
 
     free (tracks);
+}
+
+void
+trk_context_menu_update_with_playlist (ddb_playlist_t *playlist, ddb_action_context_t action_context) {
+    _set_playlist(playlist);
+    _menuActionContext = action_context;
+    _capture_selected_track_list();
 }
 
 static GtkWidget*
@@ -596,9 +615,18 @@ trk_menu_add_action_items(GtkWidget *menu, int selected_count, ddb_playItem_t *s
 }
 
 void
-trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int selected_count, ddb_action_context_t action_context) {
+trk_context_menu_build (GtkWidget *menu) {
+    int selected_count = 0;
+    ddb_playItem_t *selected_track = NULL;
 
-    _menuActionContext = action_context;
+    if (_menuTrackList != NULL) {
+        selected_count = ddbUtilTrackListGetTrackCount (_menuTrackList);
+        if (selected_count != 0) {
+            ddb_playItem_t **tracks = ddbUtilTrackListGetTracks(_menuTrackList);
+            selected_track = tracks[0];
+        }
+
+    }
 
     // remove all items
     GList *children = gtk_container_get_children(GTK_CONTAINER(menu));
@@ -804,20 +832,8 @@ trk_context_menu_build (GtkWidget *menu, ddb_playItem_t *selected_track, int sel
 
 static void
 _run_menu (int show_paste) {
-    int selected_count = 0;
-    ddb_playItem_t *selected_track = NULL;
-
-    if (_menuTrackList != NULL) {
-        selected_count = ddbUtilTrackListGetTrackCount (_menuTrackList);
-        if (selected_count != 0) {
-            ddb_playItem_t **tracks = ddbUtilTrackListGetTracks(_menuTrackList);
-            selected_track = tracks[0];
-        }
-
-    }
-
     GtkWidget *menu = gtk_menu_new();
 
-    trk_context_menu_build (menu, selected_track, selected_count, _menuActionContext);
+    trk_context_menu_build (menu);
     gtk_menu_popup_at_pointer (GTK_MENU (menu), NULL);
 }

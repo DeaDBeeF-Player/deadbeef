@@ -41,7 +41,7 @@
 static ddb_playlist_t *current_playlist;
 
 static void
-pltmenu_set_playlist (ddb_playlist_t *playlist) {
+_set_playlist (ddb_playlist_t *playlist) {
     if (current_playlist != NULL) {
         deadbeef->plt_unref (current_playlist);
         current_playlist = NULL;
@@ -55,7 +55,7 @@ pltmenu_set_playlist (ddb_playlist_t *playlist) {
 
 void
 gtkui_free_pltmenu (void) {
-    pltmenu_set_playlist(NULL);
+    _set_playlist(NULL);
 }
 
 static void
@@ -94,7 +94,7 @@ on_remove_playlist1_activate           (GtkMenuItem     *menuitem,
     }
 
     deadbeef->plt_remove (idx);
-    pltmenu_set_playlist(NULL);
+    _set_playlist(NULL);
 }
 
 static void
@@ -130,7 +130,7 @@ gtkui_create_pltmenu (ddb_playlist_t *playlist) {
     GtkAccelGroup *accel_group = NULL;
     accel_group = gtk_accel_group_new ();
 
-    pltmenu_set_playlist(playlist);
+    _set_playlist(playlist);
 
     menu = gtk_menu_new ();
 
@@ -142,7 +142,8 @@ gtkui_create_pltmenu (ddb_playlist_t *playlist) {
             track = deadbeef->plt_get_first (playlist, PL_MAIN);
         }
 
-        trk_context_menu_build(menu, track, selected_count, DDB_ACTION_CTX_PLAYLIST);
+        trk_context_menu_update_with_playlist(playlist, DDB_ACTION_CTX_PLAYLIST);
+        trk_context_menu_build(menu);
 
         if (track != NULL) {
             deadbeef->pl_item_unref (track);
