@@ -386,7 +386,6 @@ plt_autosort (playlist_t *plt) {
     }
 
     plt_save_config (plt);
-    plt_unref (plt);
 
     messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }

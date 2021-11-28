@@ -78,9 +78,9 @@ extern DB_functions_t *deadbeef;
     menu.clickPoint = [self.tableView convertPoint:coord fromView:nil];
     self.clickedRowIndex = self.tableView.clickedRow;
     ddb_playlist_t *plt = deadbeef->plt_get_for_idx ((int)self.clickedRowIndex);
-    deadbeef->action_set_playlist (plt);
-    [menu updateWithPlaylist:plt];
     if (plt) {
+        deadbeef->action_set_playlist (plt);
+        [menu updateWithPlaylist:plt];
         deadbeef->plt_unref (plt);
     }
 }

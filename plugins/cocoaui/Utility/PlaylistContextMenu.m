@@ -26,24 +26,24 @@ extern DB_functions_t *deadbeef;
 @implementation PlaylistContextMenu
 
 - (void)dealloc {
-    if (self.playlist != NULL) {
-        deadbeef->plt_unref (self.playlist);
-        self.playlist = NULL;
+    self.playlist = NULL;
+}
+
+- (void)setPlaylist:(ddb_playlist_t *)playlist {
+    if (_playlist != NULL) {
+        deadbeef->plt_unref (_playlist);
     }
+    _playlist = playlist;
+    if (_playlist != NULL) {
+        deadbeef->plt_ref (_playlist);
+    }
+
 }
 
 - (void)updateWithPlaylist:(ddb_playlist_t *)playlist {
     [self removeAllItems];
 
-    if (self.playlist != NULL) {
-        deadbeef->plt_unref (self.playlist);
-        self.playlist = NULL;
-    }
     self.playlist = playlist;
-    if (playlist != NULL) {
-        deadbeef->plt_ref (playlist);
-    }
-
     [self update:playlist actionContext:DDB_ACTION_CTX_PLAYLIST];
 
     [self insertItemWithTitle:@"Add New Playlist" action:@selector(addNewPlaylist:) keyEquivalent:@"" atIndex:0].target = self;
