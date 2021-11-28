@@ -176,6 +176,9 @@ void                gtk_widget_get_allocation           (GtkWidget *widget,
 
 #endif
 
+#if !GTK_CHECK_VERSION(3,22,0)
+#define gtk_menu_popup_at_pointer(menu,trigger_event) gtk_menu_popup(menu, NULL, NULL, NULL, NULL, 3, gtk_get_current_event_time())
+#endif
 
 #if GTK_CHECK_VERSION(3,2,0)
 #define gtk_vbox_new(homogeneous,spacing) g_object_new(GTK_TYPE_VBOX,"spacing",spacing,"homogeneous",homogeneous?TRUE:FALSE,NULL)
