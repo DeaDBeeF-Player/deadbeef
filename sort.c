@@ -203,6 +203,10 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
     }
     int ascending = order == DDB_SORT_DESCENDING ? 0 : 1;
     plt_set_meta_int (playlist, "autosort_ascending", ascending);
+    if (version != 0) {
+        plt_replace_meta (playlist, "autosort_mode", "tf");
+        plt_replace_meta (playlist, "autosort_tf", format);
+    }
 
     if (format == NULL || id == DB_COLUMN_FILENUMBER || !playlist->head[iter] || !playlist->head[iter]->next[iter]) {
         return;
@@ -220,8 +224,6 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
         pl_sort_tf_bytecode = NULL;
     }
     else {
-        plt_replace_meta (playlist, "autosort_mode", "tf");
-        plt_replace_meta (playlist, "autosort_tf", format);
         pl_sort_format = NULL;
         pl_sort_tf_bytecode = tf_compile (format);
         pl_sort_tf_ctx._size = sizeof (pl_sort_tf_ctx);

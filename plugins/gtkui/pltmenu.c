@@ -175,6 +175,7 @@ gtkui_create_pltmenu (ddb_playlist_t *playlist) {
             autosort_enabled = deadbeef->plt_find_meta_int (current_playlist, "autosort_enabled", 0);
         }
         autosort = gtk_check_menu_item_new_with_label (_("Enable Autosort"));
+        gtk_widget_set_tooltip_text(autosort, _("Re-apply the last sort you chose every time when adding new files to this playlist"));
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM(autosort), autosort_enabled);
         gtk_widget_show (autosort);
         gtk_menu_shell_insert(GTK_MENU_SHELL(menu), autosort, 3);

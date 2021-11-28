@@ -19,6 +19,7 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) ddb_playlist_t *playlist;
 @property (nonatomic) NSPopover *renamePlaylistPopover;
+@property (nonatomic) NSMenuItem *autosortPlaylistItem;
 
 @end
 
@@ -47,16 +48,28 @@ extern DB_functions_t *deadbeef;
 
     [self insertItemWithTitle:@"Add New Playlist" action:@selector(addNewPlaylist:) keyEquivalent:@"" atIndex:0].target = self;
     if (playlist != NULL) {
-        [self insertItemWithTitle:@"Delete Playlist" action:@selector(closePlaylist:) keyEquivalent:@"" atIndex:0].target = self;
+        [self insertItemWithTitle:@"Rename Playlist" action:@selector(renamePlaylistAction:) keyEquivalent:@"" atIndex:0].target = self;
 
-        // ignore the warning, the message is sent to 1st responder, which will be the mainwincontroller in this case
-        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:@"Rename Playlist" action:@selector(renamePlaylistAction:) keyEquivalent:@""];
-        item.target = self;
-        [self insertItem:item atIndex:0];
+        [self insertItemWithTitle:@"Delete Playlist" action:@selector(closePlaylist:) keyEquivalent:@"" atIndex:1].target = self;
 
-        [self insertItem:NSMenuItem.separatorItem atIndex:2];
+        if (playlist != NULL) {
+            self.autosortPlaylistItem = [[NSMenuItem alloc] initWithTitle:@"Enable Autosort" action:@selector(enableAutosortAction:) keyEquivalent:@""];
+            self.autosortPlaylistItem.target = self;
+            self.autosortPlaylistItem.toolTip = @"Re-apply the last sort you chose every time when adding new files to this playlist";
+            [self updateEnableAutosort];
+            [self insertItem:self.autosortPlaylistItem atIndex:2];
+        }
+
+        [self insertItem:NSMenuItem.separatorItem atIndex:3];
 
         [self addItem:NSMenuItem.separatorItem];
+    }
+}
+
+- (void)updateEnableAutosort {
+    if (self.playlist != NULL) {
+        int enabled = deadbeef->plt_find_meta_int(self.playlist, "autosort_enabled", 0);
+        self.autosortPlaylistItem.state = enabled ? NSControlStateValueOn : NSControlStateValueOff;
     }
 }
 
@@ -104,5 +117,9 @@ extern DB_functions_t *deadbeef;
     [self.renamePlaylistPopover showRelativeToRect:rect ofView:self.parentView preferredEdge:NSRectEdgeMaxY];
 }
 
+- (void)enableAutosortAction:(NSMenuItem *)sender {
+    deadbeef->plt_set_meta_int(self.playlist, "autosort_enabled", sender.state == NSControlStateValueOff ? 1 : 0);
+    [self updateEnableAutosort];
+}
 
 @end
