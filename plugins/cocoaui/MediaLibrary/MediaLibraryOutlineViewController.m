@@ -721,7 +721,9 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     if (self.selectedItems.count) {
         tracks = calloc (sizeof (ddb_playItem_t *), self.selectedItems.count);
         for (MediaLibraryItem *item in self.selectedItems) {
-            tracks[count++] = item.playItem;
+            ddb_playItem_t *it = deadbeef->pl_item_alloc();
+            deadbeef->pl_item_copy (it, item.playItem);
+            tracks[count++] = it;
         }
     }
 
@@ -744,6 +746,10 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     [self.trackContextMenu update:plt  actionContext:DDB_ACTION_CTX_PLAYLIST];
 
     deadbeef->plt_unref(plt);
+
+    for (int i = 0; i < count; i++) {
+        deadbeef->pl_item_unref (tracks[i]);
+    }
 
     free (tracks);
 }
