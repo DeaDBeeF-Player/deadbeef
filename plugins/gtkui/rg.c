@@ -472,7 +472,7 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount, int on
     int count = 0;
     DB_playItem_t **tracks = NULL;
 
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    ddb_playlist_t *plt = deadbeef->action_get_playlist ();
     if (!plt) {
         return NULL;
     }
@@ -591,7 +591,7 @@ action_rg_scan_per_file_handler (struct DB_plugin_action_s *action, int ctx) {
         return 0;
     }
 
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    ddb_playlist_t *plt = deadbeef->action_get_playlist ();
     if (plt) {
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
@@ -610,7 +610,7 @@ action_rg_scan_selection_as_albums_handler (struct DB_plugin_action_s *action, d
         return 0;
     }
 
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    ddb_playlist_t *plt = deadbeef->action_get_playlist ();
     if (plt) {
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
@@ -629,7 +629,7 @@ action_rg_scan_selection_as_album_handler (struct DB_plugin_action_s *action, dd
         return 0;
     }
 
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    ddb_playlist_t *plt = deadbeef->action_get_playlist ();
     if (plt) {
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
@@ -675,7 +675,7 @@ action_rg_remove_info_handler (struct DB_plugin_action_s *action, ddb_action_con
         return 0;
     }
 
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    ddb_playlist_t *plt = deadbeef->action_get_playlist ();
     if (plt) {
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
@@ -703,7 +703,7 @@ action_scan_all_tracks_without_rg_handler (struct DB_plugin_action_s *action, dd
     int count = 0;
     DB_playItem_t **tracks = NULL;
 
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    ddb_playlist_t *plt = deadbeef->action_get_playlist ();
     if (!plt) {
         return 0;
     }

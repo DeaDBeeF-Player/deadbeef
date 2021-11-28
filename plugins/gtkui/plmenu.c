@@ -42,6 +42,7 @@ extern DB_functions_t *deadbeef;
 static ddbUtilTrackList_t _menuPlaylist;
 static ddbUtilTrackList_t _menuTrackList;
 static ddb_action_context_t _menuActionContext;
+static int _menuPlaylistIsDynamic; // Hide items like Remove, Cut, Paste
 static trkproperties_delegate_t _trkproperties_delegate;
 
 static void
@@ -56,6 +57,8 @@ _set_playlist (ddb_playlist_t *playlist) {
     if (_menuPlaylist != NULL) {
         deadbeef->plt_ref (_menuPlaylist);
     }
+
+    deadbeef->action_set_playlist(playlist);
 }
 
 void
@@ -136,6 +139,7 @@ _capture_selected_track_list (void) {
 void
 trk_context_menu_update_with_playlist (ddb_playlist_t *playlist, ddb_action_context_t action_context) {
     _set_playlist(playlist);
+    _menuPlaylistIsDynamic = 0;
     _menuActionContext = action_context;
     _capture_selected_track_list();
 }
@@ -413,14 +417,12 @@ actionitem_activate (GtkMenuItem     *menuitem,
 }
 
 void
-list_context_menu_with_track_list (ddb_playItem_t **tracks, int count, trkproperties_delegate_t *delegate) {
-    if (_menuTrackList != NULL) {
-        ddbUtilTrackListFree(_menuTrackList);
-        _menuTrackList = NULL;
-    }
+list_context_menu_with_dynamic_track_list (ddb_playlist_t *playlist, trkproperties_delegate_t *delegate) {
+    _set_playlist(playlist);
+    _menuPlaylistIsDynamic = 1;
+    _menuActionContext = DDB_ACTION_CTX_PLAYLIST;
 
-    _menuActionContext = DDB_ACTION_CTX_SELECTION;
-    _menuTrackList = ddbUtilTrackListInitWithWithTracks(ddbUtilTrackListAlloc(), NULL, DDB_ACTION_CTX_SELECTION, tracks, count, NULL, -1);
+    _capture_selected_track_list();
 
     _trkproperties_delegate.trkproperties_did_update_tracks = delegate->trkproperties_did_update_tracks;
     _trkproperties_delegate.trkproperties_did_reload_metadata = delegate->trkproperties_did_reload_metadata;
@@ -434,6 +436,7 @@ void
 list_context_menu (ddb_playlist_t *playlist, int iter) {
     _menuActionContext = DDB_ACTION_CTX_SELECTION;
     _set_playlist (playlist);
+    _menuPlaylistIsDynamic = 0;
     _capture_selected_track_list();
 
     _trkproperties_delegate.trkproperties_did_update_tracks = _trkproperties_did_update_tracks;
@@ -469,14 +472,7 @@ trk_context_menu_build (GtkWidget *menu) {
     GtkWidget *play_next;
     GtkWidget *remove_from_playback_queue1;
     GtkWidget *separator;
-    GtkWidget *remove2;
     GtkWidget *remove_from_disk = NULL;
-    GtkWidget *cut;
-    GtkWidget *cut_image;
-    GtkWidget *copy;
-    GtkWidget *copy_image;
-    GtkWidget *paste;
-    GtkWidget *paste_image;
     GtkWidget *separator9;
     GtkWidget *properties1;
     GtkWidget *reload_metadata;
@@ -515,9 +511,7 @@ trk_context_menu_build (GtkWidget *menu) {
             gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
         }
     }
-    else {
-        gtk_widget_set_sensitive(remove_from_playback_queue1, 0);
-    }
+
     gtk_widget_show (remove_from_playback_queue1);
     gtk_container_add (GTK_CONTAINER (menu), remove_from_playback_queue1);
 
@@ -531,16 +525,26 @@ trk_context_menu_build (GtkWidget *menu) {
     gtk_container_add (GTK_CONTAINER (menu), separator);
     gtk_widget_set_sensitive (separator, FALSE);
 
-    cut = gtk_image_menu_item_new_with_mnemonic (_("Cu_t"));
-    gtk_widget_show (cut);
-    gtk_container_add (GTK_CONTAINER (menu), cut);
-    gtk_widget_set_sensitive(cut, selected_count != 0);
-    gtk_widget_add_accelerator (cut, "activate", accel_group, GDK_x, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    if (!_menuPlaylistIsDynamic) {
+        GtkWidget *cut;
+        GtkWidget *cut_image;
 
-    cut_image = gtk_image_new_from_stock ("gtk-cut", GTK_ICON_SIZE_MENU);
-    gtk_widget_show (cut_image);
-    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (cut), cut_image);
+        cut = gtk_image_menu_item_new_with_mnemonic (_("Cu_t"));
+        gtk_widget_show (cut);
+        gtk_container_add (GTK_CONTAINER (menu), cut);
+        gtk_widget_set_sensitive(cut, selected_count != 0);
+        gtk_widget_add_accelerator (cut, "activate", accel_group, GDK_x, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
+        cut_image = gtk_image_new_from_stock ("gtk-cut", GTK_ICON_SIZE_MENU);
+        gtk_widget_show (cut_image);
+        gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (cut), cut_image);
+        g_signal_connect ((gpointer) cut, "activate",
+                          G_CALLBACK (on_cut_activate),
+                          NULL);
+    }
+
+    GtkWidget *copy;
+    GtkWidget *copy_image;
     copy = gtk_image_menu_item_new_with_mnemonic (_("_Copy"));
     gtk_widget_show (copy);
     gtk_container_add (GTK_CONTAINER (menu), copy);
@@ -551,31 +555,50 @@ trk_context_menu_build (GtkWidget *menu) {
     gtk_widget_show (copy_image);
     gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (copy), copy_image);
 
-    paste = gtk_image_menu_item_new_with_mnemonic (_("_Paste"));
-    int show_paste = 1; // FIXME
-    if (show_paste) {
-        gtk_widget_show (paste);
-    }
-    else {
-        gtk_widget_hide (paste);
-    }
-    gtk_container_add (GTK_CONTAINER (menu), paste);
-    gtk_widget_set_sensitive(paste, clipboard_is_clipboard_data_available());
-    gtk_widget_add_accelerator (paste, "activate", accel_group, GDK_v, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    g_signal_connect ((gpointer) copy, "activate",
+                      G_CALLBACK (on_copy_activate),
+                      NULL);
 
-    paste_image = gtk_image_new_from_stock ("gtk-paste", GTK_ICON_SIZE_MENU);
-    gtk_widget_show (paste_image);
-    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (paste), paste_image);
+    if (!_menuPlaylistIsDynamic) {
+        GtkWidget *paste;
+        GtkWidget *paste_image;
+        paste = gtk_image_menu_item_new_with_mnemonic (_("_Paste"));
+        int show_paste = 1; // FIXME
+        if (show_paste) {
+            gtk_widget_show (paste);
+        }
+        else {
+            gtk_widget_hide (paste);
+        }
+        gtk_container_add (GTK_CONTAINER (menu), paste);
+        gtk_widget_set_sensitive(paste, clipboard_is_clipboard_data_available());
+        gtk_widget_add_accelerator (paste, "activate", accel_group, GDK_v, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
+        paste_image = gtk_image_new_from_stock ("gtk-paste", GTK_ICON_SIZE_MENU);
+        gtk_widget_show (paste_image);
+        gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (paste), paste_image);
+
+        g_signal_connect ((gpointer) paste, "activate",
+                          G_CALLBACK (on_paste_activate),
+                          NULL);
+    }
 
     separator9 = gtk_separator_menu_item_new ();
     gtk_widget_show (separator9);
     gtk_container_add (GTK_CONTAINER (menu), separator9);
     gtk_widget_set_sensitive (separator9, FALSE);
 
-    remove2 = gtk_menu_item_new_with_mnemonic (_("Remove"));
-    gtk_widget_show (remove2);
-    gtk_container_add (GTK_CONTAINER (menu), remove2);
-    gtk_widget_set_sensitive(remove2, selected_count != 0 && _menuPlaylist != NULL);
+    if (!_menuPlaylistIsDynamic) {
+        GtkWidget *remove2;
+        remove2 = gtk_menu_item_new_with_mnemonic (_("Remove"));
+        gtk_widget_show (remove2);
+        gtk_container_add (GTK_CONTAINER (menu), remove2);
+        gtk_widget_set_sensitive(remove2, selected_count != 0 && _menuPlaylist != NULL);
+
+        g_signal_connect ((gpointer) remove2, "activate",
+                          G_CALLBACK (on_remove2_activate),
+                          NULL);
+    }
 
     int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
 
@@ -630,18 +653,6 @@ trk_context_menu_build (GtkWidget *menu) {
                       NULL);
     g_signal_connect ((gpointer) reload_metadata, "activate",
                       G_CALLBACK (reload_metadata_activate),
-                      NULL);
-    g_signal_connect ((gpointer) cut, "activate",
-                      G_CALLBACK (on_cut_activate),
-                      NULL);
-    g_signal_connect ((gpointer) copy, "activate",
-                      G_CALLBACK (on_copy_activate),
-                      NULL);
-    g_signal_connect ((gpointer) paste, "activate",
-                      G_CALLBACK (on_paste_activate),
-                      NULL);
-    g_signal_connect ((gpointer) remove2, "activate",
-                      G_CALLBACK (on_remove2_activate),
                       NULL);
     if (!hide_remove_from_disk && remove_from_disk != NULL) {
         g_signal_connect ((gpointer) remove_from_disk, "activate",

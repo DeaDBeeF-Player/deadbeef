@@ -322,7 +322,9 @@ _collect_tracks_from_iter (GtkTreeModel *model, GtkTreeIter *iter, ddb_playItem_
 
     if (track) {
         if (tracks != NULL) {
-            tracks[append_position] = track;
+            ddb_playItem_t *it = deadbeef->pl_item_alloc();
+            deadbeef->pl_item_copy(it, track);
+            tracks[append_position] = it;
         }
         return 1;
     }
@@ -425,6 +427,10 @@ _treeview_row_did_activate (GtkTreeView* self, GtkTreePath* path, GtkTreeViewCol
 
         _append_tracks_to_playlist (tracks, count, curr_plt);
 
+        for (int i = 0; i < count; i++) {
+            deadbeef->pl_item_unref (tracks[i]);
+        }
+
         free (tracks);
 
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
@@ -510,7 +516,21 @@ _treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_d
     // context menu
     if (event->button == 3) {
         _trkproperties_delegate.user_data = mlv;
-        list_context_menu_with_track_list (tracks, count, &_trkproperties_delegate);
+
+        ddb_playlist_t *plt = deadbeef->plt_alloc("MediaLib Action Playlist");
+
+        ddb_playItem_t *after = NULL;
+        for (int i = 0; i < count; i++) {
+            after = deadbeef->plt_insert_item(plt, after, tracks[i]);
+        }
+        deadbeef->plt_select_all(plt);
+
+        list_context_menu_with_dynamic_track_list (plt, &_trkproperties_delegate);
+
+        deadbeef->plt_unref(plt);
+
+
+
     }
     // append to playlist
     else if (event->button == 2 && count > 0) {
@@ -520,6 +540,9 @@ _treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_d
             _append_tracks_to_playlist (tracks, count, curr_plt);
             deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
         }
+    }
+    for (int i = 0; i < count; i++) {
+        deadbeef->pl_item_unref (tracks[i]);
     }
     free (tracks);
 
@@ -548,10 +571,6 @@ _drag_data_get (
     }
     ddb_playItem_t **tracks = calloc (count, sizeof (ddb_playItem_t *));
     _collect_selected_tracks (model, selection, tracks, 0);
-
-    for (int i = 0; i < count; i++) {
-        deadbeef->pl_item_ref (tracks[i]);
-    }
 
     GdkAtom type = gtk_selection_data_get_target (selection_data);
     gtk_selection_data_set (selection_data,

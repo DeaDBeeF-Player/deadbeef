@@ -35,9 +35,9 @@ plmenu_free (void);
 void
 list_context_menu (ddb_playlist_t *playlist, int iter);
 
-/// For use cases when playlist is not available, such as medialib
+/// For use cases when track list is dynamic, such as medialib
 void
-list_context_menu_with_track_list (ddb_playItem_t **tracks, int count, trkproperties_delegate_t *delegate);
+list_context_menu_with_dynamic_track_list (ddb_playlist_t *playlist, trkproperties_delegate_t *delegate);
 
 /// For use case when the caller needs more control of the menu, such as Playlist Tab context menu
 void
