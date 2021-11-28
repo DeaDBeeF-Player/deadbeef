@@ -56,7 +56,9 @@ ml_item_state_find (ml_collection_state_t *coll_state, uint64_t row_id, ml_colle
     ml_collection_item_state_t *prev = NULL;
     for (ml_collection_item_state_t *state = coll_state->hash[row_id&(ML_COLLECTION_STATE_HASH_SIZE-1)]; state; prev = state, state = state->next) {
         if (state->row_id == row_id) {
-            *pprev = prev;
+            if (pprev != NULL) {
+                *pprev = prev;
+            }
             return state;
         }
     }
@@ -93,3 +95,13 @@ ml_item_state_update (ml_collection_state_t *coll_state, uint64_t row_id, ml_col
     }
 }
 
+void
+ml_item_state_free (ml_collection_state_t *coll_state) {
+    for (int i = 0; i < ML_COLLECTION_STATE_HASH_SIZE; i++) {
+        for (ml_collection_item_state_t *s = coll_state->hash[i]; s; ) {
+            ml_collection_item_state_t *next = s->next;
+            free (s);
+            s = next;
+        }
+    }
+}

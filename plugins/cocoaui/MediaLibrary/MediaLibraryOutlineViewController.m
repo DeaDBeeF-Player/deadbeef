@@ -156,12 +156,15 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
         [self.outlineView reloadData];
     }
 
-    // restore selected/expanded state
-    NSMutableIndexSet *selectedRowIndexes = [NSMutableIndexSet new];
-    [self.outlineView beginUpdates];
-    [self restoreSelectedExpandedStateForItem:self.medialibRootItem selectedRows:selectedRowIndexes];
-    [self.outlineView selectRowIndexes:selectedRowIndexes byExtendingSelection:NO];
-    [self.outlineView endUpdates];
+    // Restore selected/expanded state
+    // Defer one frame, since the row indexes are unavailable immediately.
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSMutableIndexSet *selectedRowIndexes = [NSMutableIndexSet new];
+        [self.outlineView beginUpdates];
+        [self restoreSelectedExpandedStateForItem:self.medialibRootItem selectedRows:selectedRowIndexes];
+        [self.outlineView selectRowIndexes:selectedRowIndexes byExtendingSelection:NO];
+        [self.outlineView endUpdates];
+    });
 
     self.outlineViewInitialized = YES;
 }

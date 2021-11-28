@@ -74,4 +74,7 @@ ml_item_state_remove(ml_collection_state_t *coll_state, uint64_t row_id);
 void
 ml_item_state_update (ml_collection_state_t *coll_state, uint64_t row_id, ml_collection_item_state_t *state, ml_collection_item_state_t *prev, int selected, int expanded);
 
+void
+ml_item_state_free (ml_collection_state_t *coll_state);
+
 #endif /* medialibstate_h */
