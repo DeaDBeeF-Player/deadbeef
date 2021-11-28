@@ -35,12 +35,18 @@ typedef struct {
     int listener_id;
     GtkTreeIter root_iter;
     ddb_medialib_item_t *item_tree;
+    gint collapse_expand_select_timeout;
+    int is_reloading;
 } w_medialib_viewer_t;
 
 enum {
     COL_TITLE,
     COL_TRACK,
+    COL_ITEM,
 };
+
+static void
+_restore_selected_expanded_state_for_iter (w_medialib_viewer_t *mlv, GtkTreeStore *store, GtkTreeIter *iter);
 
 static int
 _item_comparator (const void *a, const void *b) {
@@ -92,12 +98,15 @@ _add_items (w_medialib_viewer_t *mlv, GtkTreeIter *iter, ddb_medialib_item_t *it
             size_t len = strlen(child_item->text) + 20;
             char *text = malloc (len + 20);
             snprintf (text, len, "%s (%d)", child_item->text, child_item->num_children);
-            gtk_tree_store_set (store, &child, COL_TITLE, text, COL_TRACK, child_item->track, -1);
+            gtk_tree_store_set (store, &child, COL_TITLE, text, -1);
             free (text);
         }
         else {
-            gtk_tree_store_set (store, &child, COL_TITLE, child_item->text, COL_TRACK, child_item->track, -1);
+            gtk_tree_store_set (store, &child, COL_TITLE, child_item->text, -1);
         }
+
+        gtk_tree_store_set(store, &child, COL_TRACK, child_item->track, -1);
+        gtk_tree_store_set(store, &child, COL_ITEM, child_item, -1);
 
         if (child_item->children != NULL) {
             _add_items (mlv, &child, child_item);
@@ -150,6 +159,7 @@ _reload_content (w_medialib_viewer_t *mlv) {
     }
     mlv->item_tree = mlv->plugin->plugin.create_item_tree (mlv->source, mlv->selectors[mlv->active_selector], mlv->search_text);
 
+    mlv->is_reloading = 1;
     // clear
     GtkTreeIter iter;
     GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
@@ -164,6 +174,11 @@ _reload_content (w_medialib_viewer_t *mlv) {
     gtk_tree_path_free (path);
 
     _medialib_state_did_change (mlv);
+
+    // restore selected/expanded state
+    _restore_selected_expanded_state_for_iter (mlv, store, &mlv->root_iter);
+
+    mlv->is_reloading = 0;
 }
 
 static gboolean
@@ -211,6 +226,103 @@ static gboolean _selection_func (
 }
 
 static void
+_save_selection_state_with_iter (w_medialib_viewer_t *mlv, GtkTreeStore *store, GtkTreeIter *iter) {
+    if (mlv->is_reloading) {
+        return;
+    }
+    GtkTreeModel *model = GTK_TREE_MODEL(store);
+
+    GValue value = {0};
+    gtk_tree_model_get_value (model, iter, COL_ITEM, &value);
+    ddb_medialib_item_t *medialibItem = g_value_get_pointer (&value);
+    g_value_unset (&value);
+
+    if (medialibItem != NULL) {
+        GtkTreePath *path = gtk_tree_model_get_path(model, iter);
+        if (path != NULL) {
+            GtkTreeSelection *selection = gtk_tree_view_get_selection (mlv->tree);
+            gboolean selected = gtk_tree_selection_iter_is_selected(selection, iter);
+            gboolean expanded = gtk_tree_view_row_expanded(mlv->tree, path);
+            mlv->plugin->plugin.set_tree_item_selected (mlv->source, medialibItem, selected ? 1 : 0);
+            mlv->plugin->plugin.set_tree_item_expanded (mlv->source, medialibItem, expanded ? 1 : 0);
+        }
+    }
+
+    GtkTreeIter child;
+    if (gtk_tree_model_iter_children (model, &child, iter)) {
+        do {
+            _save_selection_state_with_iter(mlv, store, &child);
+        } while (gtk_tree_model_iter_next (model, &child));
+    }
+}
+
+static void
+_restore_selected_expanded_state_for_iter (w_medialib_viewer_t *mlv, GtkTreeStore *store, GtkTreeIter *iter) {
+    GtkTreeModel *model = GTK_TREE_MODEL(store);
+
+    GValue value = {0};
+    gtk_tree_model_get_value (model, iter, COL_ITEM, &value);
+    ddb_medialib_item_t *medialibItem = g_value_get_pointer (&value);
+    g_value_unset (&value);
+
+    if (medialibItem != NULL) {
+        int selected = mlv->plugin->plugin.is_tree_item_selected (mlv->source, medialibItem);
+        int expanded = mlv->plugin->plugin.is_tree_item_expanded (mlv->source, medialibItem);
+
+        GtkTreePath *path = gtk_tree_model_get_path(model, iter);
+        if (expanded) {
+            gtk_tree_view_expand_row(mlv->tree, path, FALSE);
+        }
+        else {
+            gtk_tree_view_collapse_row(mlv->tree, path);
+        }
+
+        GtkTreeSelection *selection = gtk_tree_view_get_selection (mlv->tree);
+        if (selected) {
+            gtk_tree_selection_select_iter(selection, iter);
+        }
+    }
+
+    GtkTreeIter child;
+    if (gtk_tree_model_iter_children (model, &child, iter)) {
+        do {
+            _restore_selected_expanded_state_for_iter(mlv, store, &child);
+        } while (gtk_tree_model_iter_next (model, &child));
+    }
+}
+
+static gboolean
+_row_collapse_expand_selection_did_change (void *user_data) {
+    w_medialib_viewer_t *mlv = user_data;
+    GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
+    _save_selection_state_with_iter(mlv, store, &mlv->root_iter);
+    mlv->collapse_expand_select_timeout = 0;
+    return FALSE;
+}
+
+static void
+_selection_did_change (GtkTreeSelection* self, w_medialib_viewer_t *mlv) {
+    if (mlv->collapse_expand_select_timeout != 0) {
+        g_source_remove (mlv->collapse_expand_select_timeout);
+    }
+    if (mlv->is_reloading) {
+        return;
+    }
+    mlv->collapse_expand_select_timeout = g_timeout_add(0.05, _row_collapse_expand_selection_did_change, mlv);
+}
+
+static void
+_row_did_collapse_expand (GtkTreeView* self, GtkTreeIter* iter, GtkTreePath* path, w_medialib_viewer_t *mlv) {
+    if (mlv->collapse_expand_select_timeout != 0) {
+        g_source_remove (mlv->collapse_expand_select_timeout);
+    }
+    if (mlv->is_reloading) {
+        return;
+    }
+    mlv->collapse_expand_select_timeout = g_timeout_add(0.05, _row_collapse_expand_selection_did_change, mlv);
+}
+
+static void
 w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
     // observe medialib source
     w_medialib_viewer_t *mlv = (w_medialib_viewer_t *)w;
@@ -234,6 +346,9 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
 
     GtkTreeSelection *selection = gtk_tree_view_get_selection (mlv->tree);
     gtk_tree_selection_set_select_function(selection, _selection_func, mlv, NULL);
+    g_signal_connect(selection, "changed", G_CALLBACK(_selection_did_change), w);
+    g_signal_connect(mlv->tree, "row-collapsed", G_CALLBACK(_row_did_collapse_expand), w);
+    g_signal_connect(mlv->tree, "row-expanded", G_CALLBACK(_row_did_collapse_expand), w);
 
     _reload_content (mlv);
 }
@@ -649,7 +764,12 @@ w_medialib_viewer_create (void) {
 
     gtk_container_add (GTK_CONTAINER (scroll), GTK_WIDGET (w->tree));
 
-    GtkTreeStore *store = gtk_tree_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
+    GtkTreeStore *store = gtk_tree_store_new (
+                                              3,
+                                              G_TYPE_STRING,  // COL_TITLE
+                                              G_TYPE_POINTER, // COL_TRACK
+                                              G_TYPE_POINTER  // COL_ITEM
+                                              );
     gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
 
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
