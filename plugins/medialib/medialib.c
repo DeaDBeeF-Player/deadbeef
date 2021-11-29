@@ -2018,7 +2018,7 @@ ml_refresh (ddb_mediasource_source_t _source) {
                     source->ml_playlist = deadbeef->plt_alloc("medialib");
                 }
                 deadbeef->plt_clear (source->ml_playlist);
-                ml_db_free(&source->db); // TODO: was ml_index -- needs a test
+                ml_db_free(&source->db);
                 free_medialib_paths (conf.medialib_paths, conf.medialib_paths_count);
                 return;
             }
