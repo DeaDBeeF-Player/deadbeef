@@ -79,7 +79,9 @@ _listener (ddb_mediasource_event_type_t _event, void *user_data) {
 
     _listenerId = self.medialibPlugin->plugin.add_listener(self.medialibSource, _listener, (__bridge void *)(self));
 
-    self.enabled = self.medialibPlugin->plugin.get_source_enabled(self.medialibSource);
+    _enabled = self.medialibPlugin->plugin.get_source_enabled(self.medialibSource);
+    [self willChangeValueForKey:@"enabled"];
+    [self didChangeValueForKey:@"enabled"];
 }
 
 - (BOOL)isAvailable {
