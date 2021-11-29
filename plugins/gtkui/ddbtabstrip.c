@@ -1342,10 +1342,10 @@ on_tabstrip_key_press_event            (GtkWidget    *widget,
     switch (event->keyval) {
     case GDK_Left:
         tabstrip_scroll_left(DDB_TABSTRIP(widget));
-        break;
+        return TRUE;
     case GDK_Right:
         tabstrip_scroll_right(DDB_TABSTRIP(widget));
-        break;
+        return TRUE;
     case GDK_F2:
         {
             int idx = deadbeef->plt_get_curr_idx ();
