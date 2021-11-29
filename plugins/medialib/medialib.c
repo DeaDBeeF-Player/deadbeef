@@ -23,6 +23,7 @@
 
 #include "../../deadbeef.h"
 #include <dispatch/dispatch.h>
+#include <CoreServices/CoreServices.h>
 #include <jansson.h>
 #include <limits.h>
 #include "medialib.h"
@@ -1750,6 +1751,43 @@ ml_folder_at_index (ddb_mediasource_source_t _source, int index, char *folder, s
 }
 
 static void
+_FSEventStreamCallback(ConstFSEventStreamRef streamRef, void * __nullable clientCallBackInfo, size_t numEvents, void *eventPaths,  const FSEventStreamEventFlags  * _Nonnull eventFlags, const FSEventStreamEventId * _Nonnull eventIds) {
+    medialib_source_t *source = clientCallBackInfo;
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_OUT_OF_SYNC);
+}
+
+static void
+_watch_fs (medialib_source_t *source) {
+    static FSEventStreamRef eventStream;
+    static FSEventStreamContext context;
+    if (eventStream != NULL) {
+        FSEventStreamStop(eventStream);
+        FSEventStreamUnscheduleFromRunLoop(eventStream, CFRunLoopGetMain(), kCFRunLoopCommonModes);
+        FSEventStreamRelease(eventStream);
+        eventStream = NULL;
+    }
+
+    context.info = source;
+
+    size_t count = json_array_size(source->musicpaths_json);
+    CFMutableArrayRef arrayRef = CFArrayCreateMutable(NULL, count, NULL);
+    for (int i = 0; i < count; i++) {
+        json_t *data = json_array_get (source->musicpaths_json, i);
+        if (json_is_string (data)) {
+            const char *bytes = json_string_value (data);
+            CFStringRef stringRef = CFStringCreateWithBytes(NULL, (const UInt8 *)bytes, strlen(bytes), kCFStringEncodingUTF8, FALSE);
+            CFArrayAppendValue(arrayRef, stringRef);
+        }
+    }
+
+    eventStream = FSEventStreamCreate(NULL, _FSEventStreamCallback, &context, arrayRef, kFSEventStreamEventIdSinceNow, 1.0, kFSEventStreamCreateFlagWatchRoot);
+    CFRelease(arrayRef);
+
+    FSEventStreamScheduleWithRunLoop(eventStream, CFRunLoopGetMain(), kCFRunLoopCommonModes);
+    FSEventStreamStart(eventStream);
+}
+
+static void
 _save_folders_config (medialib_source_t *source) {
     char *dump = json_dumps(source->musicpaths_json, JSON_COMPACT);
     if (dump) {
@@ -1881,6 +1919,8 @@ ml_create_source (const char *source_path) {
         snprintf (plpath, sizeof (plpath), "%s/medialib.dbpl", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG));
         _ml_load_playlist(source, plpath);
     });
+
+    _watch_fs(source);
 
     return (ddb_mediasource_source_t)source;
 }
