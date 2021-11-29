@@ -479,7 +479,7 @@ playItem_t *
 plt_insert_dir2 (int visibility, playlist_t *plt, playItem_t *after, const char *dirname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data);
 
 playItem_t *
-plt_insert_dir3 (int visibility, playlist_t *plt, playItem_t *after, const char *dirname, int *pabort, int (*callback)(ddb_insert_file_result_t result, const char *fname, void *user_data), void *user_data);
+plt_insert_dir3 (int visibility, uint32_t flags, playlist_t *plt, playItem_t *after, const char *dirname, int *pabort, int (*callback)(ddb_insert_file_result_t result, const char *fname, void *user_data), void *user_data);
 
 int
 plt_add_files_begin (playlist_t *plt, int visibility);

@@ -908,7 +908,7 @@ scanner_thread (medialib_source_t *source, ml_scanner_configuration_t conf) {
         printf ("adding dir: %s\n", musicdir);
         // Create a new playlist, by looking back into the existing playlist.
         // The reusable tracks get moved to the new playlist.
-        deadbeef->plt_insert_dir3 (-1, scanner.plt, NULL, musicdir, &source->scanner_terminate, _status_callback, NULL);
+        deadbeef->plt_insert_dir3 (-1, 0, scanner.plt, NULL, musicdir, &source->scanner_terminate, _status_callback, NULL);
     }
     deadbeef->unregister_fileadd_filter (filter_id);
 

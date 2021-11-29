@@ -528,7 +528,7 @@ static DB_functions_t deadbeef_api = {
     .plt_get_tail_item = (ddb_playItem_t * (*) (ddb_playlist_t *p, int iter))plt_get_tail_item,
 
     .plug_get_path_for_plugin_ptr = (const char* (*) (DB_plugin_t *plugin_ptr))plug_get_path_for_plugin_ptr,
-    .plt_insert_dir3 = (ddb_playItem_t *(*) (int visibility, ddb_playlist_t *plt, ddb_playItem_t *after, const char *dirname, int *pabort, int (*callback)(ddb_insert_file_result_t result, const char *fname, void *user_data), void *user_data))plt_insert_dir3,
+    .plt_insert_dir3 = (ddb_playItem_t *(*) (int visibility, uint32_t flags, ddb_playlist_t *plt, ddb_playItem_t *after, const char *dirname, int *pabort, int (*callback)(ddb_insert_file_result_t result, const char *fname, void *user_data), void *user_data))plt_insert_dir3,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

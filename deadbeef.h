@@ -776,6 +776,11 @@ typedef enum {
     DDB_INSERT_FILE_RESULT_NO_FILE_EXTENSION = 6, // File doesn't have an extension
     DDB_INSERT_FILE_RESULT_CUESHEET_ERROR = 7, // Error while loading cuesheet
 } ddb_insert_file_result_t;
+
+typedef enum {
+    DDB_INSERT_FILE_FLAG_FOLLOW_SYMLINKS = 1<<0,
+    DDB_INSERT_FILE_FLAG_ENTER_ARCHIVES = 1<<1,
+} ddb_insert_file_flags_t;
 #endif
 
 // forward decl for plugin struct
@@ -1631,6 +1636,7 @@ typedef struct {
 
     ddb_playItem_t *(*plt_insert_dir3) (
         int visibility,
+        uint32_t flags, // Use flags from the @c ddb_insert_file_flags_t enum
         ddb_playlist_t *plt,
         ddb_playItem_t *after,
         const char *dirname,
