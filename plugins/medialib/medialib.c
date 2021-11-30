@@ -192,8 +192,8 @@ ml_set_tree_item_expanded (ddb_mediasource_source_t _source, ddb_medialib_item_t
 #pragma mark -
 
 #if 0
-static DB_playItem_t *
-ml_find_track (medialib_source_t *source, DB_playItem_t *it) {
+static ddb_playItem_t *
+ml_find_track (medialib_source_t *source, ddb_playItem_t *it) {
     char track_uri[PATH_MAX];
     const char *uri = deadbeef->pl_find_meta (it, ":URI");
 

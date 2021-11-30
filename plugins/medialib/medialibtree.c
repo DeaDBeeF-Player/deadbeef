@@ -125,7 +125,7 @@ get_albums_for_collection_group_by_field (medialib_source_t *source, ml_tree_ite
                 append = 1;
             }
 
-            DB_playItem_t *it = album_coll_item->it;
+            ddb_playItem_t *it = album_coll_item->it;
 
             ml_tree_item_t *libitem = s->coll_item;
 
@@ -217,7 +217,7 @@ get_list_of_tracks_for_album (ml_tree_item_t *libitem, ml_string_t *album, int s
 
     ml_collection_item_t *album_coll_item = album->items;
     for (int j = 0; j < album->items_count; j++, album_coll_item = album_coll_item->next) {
-        DB_playItem_t *it = album_coll_item->it;
+        ddb_playItem_t *it = album_coll_item->it;
         if (selected && !deadbeef->pl_is_selected(it)) {
             continue;
         }

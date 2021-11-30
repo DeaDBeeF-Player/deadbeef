@@ -31,7 +31,7 @@
 typedef struct ml_collection_item_s {
     uint64_t row_id;
 
-    DB_playItem_t *it;
+    ddb_playItem_t *it;
     struct ml_collection_item_s *next; // next item in the same collection (albums, artists, ...)
 } ml_collection_item_t;
 
@@ -130,7 +130,7 @@ void
 ml_free_col (ml_db_t *db, ml_collection_t *coll);
 
 ml_string_t *
-ml_reg_col (ml_db_t *db, ml_collection_t *coll, const char /* nonnull */ *c, DB_playItem_t *it, uint64_t coll_row_id, uint64_t item_row_id);
+ml_reg_col (ml_db_t *db, ml_collection_t *coll, const char /* nonnull */ *c, ddb_playItem_t *it, uint64_t coll_row_id, uint64_t item_row_id);
 
 ml_tree_node_t *
 _tree_node_alloc (ml_db_t *db, uint64_t use_this_row_id);
@@ -142,7 +142,7 @@ void
 _reuse_row_ids (ml_collection_t *coll, const char *coll_name, ddb_playItem_t *item, ml_collection_state_t *state, ml_collection_state_t *saved_state, uint64_t *coll_rowid, uint64_t *item_rowid);
 
 void
-ml_reg_item_in_folder (ml_db_t *db, ml_tree_node_t *node, const char *path, DB_playItem_t *it, uint64_t use_this_row_id);
+ml_reg_item_in_folder (ml_db_t *db, ml_tree_node_t *node, const char *path, ddb_playItem_t *it, uint64_t use_this_row_id);
 
 void
 ml_db_free (ml_db_t *db);

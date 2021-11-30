@@ -106,7 +106,7 @@ _ml_load_playlist (medialib_source_t *source, const char *plpath) {
 
 // Get a copy of medialib folder paths
 static char **
-get_medialib_paths (medialib_source_t *source, size_t *medialib_paths_count) {
+_ml_source_get_music_paths (medialib_source_t *source, size_t *medialib_paths_count) {
     if (!source->musicpaths_json) {
         source->musicpaths_json = _ml_get_music_paths(source);
     }
@@ -288,7 +288,7 @@ ml_refresh (ddb_mediasource_source_t _source) {
 
         __block ml_scanner_configuration_t conf = {0};
         dispatch_sync(source->sync_queue, ^{
-            conf.medialib_paths = get_medialib_paths (source, &conf.medialib_paths_count);
+            conf.medialib_paths = _ml_source_get_music_paths (source, &conf.medialib_paths_count);
             enabled = source->enabled;
             if (!conf.medialib_paths || !source->enabled) {
                 // no paths: early out
@@ -298,7 +298,7 @@ ml_refresh (ddb_mediasource_source_t _source) {
                 }
                 deadbeef->plt_clear (source->ml_playlist);
                 ml_db_free(&source->db);
-                free_medialib_paths (conf.medialib_paths, conf.medialib_paths_count);
+                ml_free_music_paths (conf.medialib_paths, conf.medialib_paths_count);
                 return;
             }
         });

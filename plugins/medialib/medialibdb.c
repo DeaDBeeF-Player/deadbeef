@@ -111,7 +111,7 @@ _tree_node_free (ml_db_t *db, ml_tree_node_t *node) {
 
 /// When it is null, it's expected that the bucket will be added, without any associated tracks
 static ml_string_t *
-hash_add (ml_db_t *db, ml_string_t **hash, const char *val, DB_playItem_t /* nullable */ *it, uint64_t coll_row_id, uint64_t item_row_id) {
+hash_add (ml_db_t *db, ml_string_t **hash, const char *val, ddb_playItem_t /* nullable */ *it, uint64_t coll_row_id, uint64_t item_row_id) {
     uint32_t h = hash_for_ptr ((void *)val);
     ml_string_t *s = hash_find_for_hashkey(hash, val, h);
     ml_string_t *retval = NULL;
@@ -147,7 +147,7 @@ hash_add (ml_db_t *db, ml_string_t **hash, const char *val, DB_playItem_t /* nul
 }
 
 ml_string_t *
-ml_reg_col (ml_db_t *db, ml_collection_t *coll, const char /* nonnull */ *c, DB_playItem_t *it, uint64_t coll_row_id, uint64_t item_row_id) {
+ml_reg_col (ml_db_t *db, ml_collection_t *coll, const char /* nonnull */ *c, ddb_playItem_t *it, uint64_t coll_row_id, uint64_t item_row_id) {
     int need_unref = 0;
     ml_string_t *s = hash_add (db, coll->hash, c, it, coll_row_id, item_row_id);
     if (s) {
@@ -194,7 +194,7 @@ ml_free_col (ml_db_t *db, ml_collection_t *coll) {
 
 // path is relative to root
 void
-ml_reg_item_in_folder (ml_db_t *db, ml_tree_node_t *node, const char *path, DB_playItem_t *it, uint64_t use_this_row_id) {
+ml_reg_item_in_folder (ml_db_t *db, ml_tree_node_t *node, const char *path, ddb_playItem_t *it, uint64_t use_this_row_id) {
     if (*path == 0) {
         // leaf -- add to the node
         ml_collection_item_t *item = _collection_item_alloc (db, use_this_row_id);

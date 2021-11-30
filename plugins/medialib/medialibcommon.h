@@ -30,6 +30,6 @@ void
 ml_notify_listeners (medialib_source_t *source, int event);
 
 void
-free_medialib_paths (char **medialib_paths, size_t medialib_paths_count);
+ml_free_music_paths (char **medialib_paths, size_t medialib_paths_count);
 
 #endif /* medialibcommon_h */

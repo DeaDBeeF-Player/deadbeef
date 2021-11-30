@@ -201,7 +201,7 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
         en->bucket_next = scanner->db.filename_hash[hash];
         scanner->db.filename_hash[hash] = en;
 
-        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        ddb_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         it = next;
     }
 
@@ -467,7 +467,7 @@ scanner_thread (medialib_source_t *source, ml_scanner_configuration_t conf) {
         memcpy (&source->db, &scanner.db, sizeof (ml_db_t));
     });
 
-    free_medialib_paths (conf.medialib_paths, conf.medialib_paths_count);
+    ml_free_music_paths (conf.medialib_paths, conf.medialib_paths_count);
 
     source->_ml_state = DDB_MEDIASOURCE_STATE_IDLE;
     ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE);
