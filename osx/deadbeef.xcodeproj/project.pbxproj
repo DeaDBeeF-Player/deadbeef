@@ -1423,7 +1423,7 @@
 		2D7492871CCFFE7700D3A59E /* TestData in Resources */ = {isa = PBXBuildFile; fileRef = 2D7492861CCFFE7700D3A59E /* TestData */; };
 		2D76DD4B24F6D693000EDA3E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D76DD3B24F6D693000EDA3E /* IOKit.framework */; };
 		2D78C535275583E900F96F9D /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D78C525275583E900F96F9D /* CoreServices.framework */; platformFilter = maccatalyst; };
-		2D78C54927568AC500F96F9D /* medialibfilesystem.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D78C53F27568A1300F96F9D /* medialibfilesystem.c */; };
+		2D78C54927568AC500F96F9D /* medialibfilesystem_mac.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D78C53F27568A1300F96F9D /* medialibfilesystem_mac.c */; };
 		2D78C54A27568AC500F96F9D /* medialibcommon.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D78C54327568A4D00F96F9D /* medialibcommon.c */; };
 		2D78C54B27568AC500F96F9D /* medialib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D887BCD24B1C82A0078392F /* medialib.h */; };
 		2D78C54C27568AC500F96F9D /* medialibsource.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D78C5372756891400F96F9D /* medialibsource.c */; };
@@ -1433,7 +1433,6 @@
 		2D78C55027568AC500F96F9D /* medialibstate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBF3DB0270A0D0200023138 /* medialibstate.h */; };
 		2D78C55127568AC500F96F9D /* medialibdb.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D78C53B2756892300F96F9D /* medialibdb.c */; };
 		2D78C55227568AC500F96F9D /* medialibdb.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D78C53A2756892300F96F9D /* medialibdb.h */; };
-		2D78C55327568B0800F96F9D /* medialibfilesystem.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D78C53F27568A1300F96F9D /* medialibfilesystem.c */; };
 		2D78C55427568B0800F96F9D /* medialibdb.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D78C53B2756892300F96F9D /* medialibdb.c */; };
 		2D78C55527568B0800F96F9D /* medialibsource.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D78C5372756891400F96F9D /* medialibsource.c */; };
 		2D78C55627568B0800F96F9D /* medialibcommon.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D78C54327568A4D00F96F9D /* medialibcommon.c */; };
@@ -1445,6 +1444,7 @@
 		2D78C5622756915900F96F9D /* medialibtree.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D78C55C27568D9600F96F9D /* medialibtree.c */; };
 		2D78C5632756919300F96F9D /* medialib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D887BC724B1C82A0078392F /* medialib.c */; };
 		2D78C5642756919500F96F9D /* medialib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D887BC724B1C82A0078392F /* medialib.c */; };
+		2D78C5682756990B00F96F9D /* medialibfilesystem_stub.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D78C5672756990B00F96F9D /* medialibfilesystem_stub.c */; };
 		2D7C37F81B2C405F0029DE0A /* bitwise.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA141B2AF7F50072FD43 /* bitwise.c */; };
 		2D7C37F91B2C405F0029DE0A /* framing.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA151B2AF7F50072FD43 /* framing.c */; };
 		2D7C37FA1B2C40640029DE0A /* analysis.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA191B2AF8610072FD43 /* analysis.c */; };
@@ -5863,13 +5863,15 @@
 		2D78C53A2756892300F96F9D /* medialibdb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = medialibdb.h; sourceTree = "<group>"; };
 		2D78C53B2756892300F96F9D /* medialibdb.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibdb.c; sourceTree = "<group>"; };
 		2D78C53E27568A1300F96F9D /* medialibfilesystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = medialibfilesystem.h; sourceTree = "<group>"; };
-		2D78C53F27568A1300F96F9D /* medialibfilesystem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibfilesystem.c; sourceTree = "<group>"; };
+		2D78C53F27568A1300F96F9D /* medialibfilesystem_mac.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibfilesystem_mac.c; sourceTree = "<group>"; };
 		2D78C54227568A4D00F96F9D /* medialibcommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = medialibcommon.h; sourceTree = "<group>"; };
 		2D78C54327568A4D00F96F9D /* medialibcommon.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibcommon.c; sourceTree = "<group>"; };
 		2D78C55727568B4A00F96F9D /* medialibscanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = medialibscanner.h; sourceTree = "<group>"; };
 		2D78C55827568B4A00F96F9D /* medialibscanner.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibscanner.c; sourceTree = "<group>"; };
 		2D78C55B27568D9600F96F9D /* medialibtree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = medialibtree.h; sourceTree = "<group>"; };
 		2D78C55C27568D9600F96F9D /* medialibtree.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibtree.c; sourceTree = "<group>"; };
+		2D78C565275698D400F96F9D /* medialibfilesystem_inotify.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibfilesystem_inotify.c; sourceTree = "<group>"; };
+		2D78C5672756990B00F96F9D /* medialibfilesystem_stub.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibfilesystem_stub.c; sourceTree = "<group>"; };
 		2D7C37EC1B2C40520029DE0A /* libogglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libogglib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libvorbislib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7F38021B2858AC00692A7B /* JunklibTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JunklibTests.m; sourceTree = "<group>"; };
@@ -10166,7 +10168,9 @@
 				2D78C54227568A4D00F96F9D /* medialibcommon.h */,
 				2D78C53B2756892300F96F9D /* medialibdb.c */,
 				2D78C53A2756892300F96F9D /* medialibdb.h */,
-				2D78C53F27568A1300F96F9D /* medialibfilesystem.c */,
+				2D78C565275698D400F96F9D /* medialibfilesystem_inotify.c */,
+				2D78C53F27568A1300F96F9D /* medialibfilesystem_mac.c */,
+				2D78C5672756990B00F96F9D /* medialibfilesystem_stub.c */,
 				2D78C53E27568A1300F96F9D /* medialibfilesystem.h */,
 				2D78C55827568B4A00F96F9D /* medialibscanner.c */,
 				2D78C55727568B4A00F96F9D /* medialibscanner.h */,
@@ -16683,7 +16687,7 @@
 				2D78C5642756919500F96F9D /* medialib.c in Sources */,
 				2D78C54C27568AC500F96F9D /* medialibsource.c in Sources */,
 				2D78C54A27568AC500F96F9D /* medialibcommon.c in Sources */,
-				2D78C54927568AC500F96F9D /* medialibfilesystem.c in Sources */,
+				2D78C54927568AC500F96F9D /* medialibfilesystem_mac.c in Sources */,
 				2D78C56127568FFB00F96F9D /* medialibscanner.c in Sources */,
 				2D78C5622756915900F96F9D /* medialibtree.c in Sources */,
 			);
@@ -17278,7 +17282,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DAA405B269B6308006D2754 /* MediaLibTests.m in Sources */,
-				2D78C55327568B0800F96F9D /* medialibfilesystem.c in Sources */,
 				2DA59DD125D00A9A00947C19 /* m3u.c in Sources */,
 				2D78C55427568B0800F96F9D /* medialibdb.c in Sources */,
 				2DA59D9125D00A8E00947C19 /* M3UTests.m in Sources */,
@@ -17294,6 +17297,7 @@
 				2D14E0541E14170E009870E6 /* mp4tagutil.c in Sources */,
 				2D15721623785BD900985E47 /* VfsCurlTests.m in Sources */,
 				4D6CF18B20EB783900811034 /* MP3ParserTests.m in Sources */,
+				2D78C5682756990B00F96F9D /* medialibfilesystem_stub.c in Sources */,
 				2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */,
 				2D0F90C21CCFF094003FA197 /* TaggingTests.m in Sources */,
 				2DA66ECE1EDF501000E20989 /* fakein.c in Sources */,
