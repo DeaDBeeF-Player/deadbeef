@@ -826,7 +826,7 @@ on_copy_plugin_report_menuitem_activate
 
     GtkClipboard *clp = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
     gtk_clipboard_set_text (clp, list->str, -1);
-
+    g_string_free (list, TRUE);
 }
 
 
