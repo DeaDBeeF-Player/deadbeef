@@ -403,9 +403,9 @@ cairo_draw_poly (cairo_t *cr, coord_t *pts, int cnt) {
 
 void
 #if !GTK_CHECK_VERSION(3,0,0)
-ddb_tabstrip_draw_tab (GtkWidget *widget, GdkDrawable *drawable, int idx, int selected, int x, int y, int w, int h) {
+ddb_tabstrip_draw_tab (GtkWidget *widget, GdkDrawable *drawable, int idx, int selected, int x, int y, int w, int h, GtkStyle *style) {
 #else
-ddb_tabstrip_draw_tab (GtkWidget *widget, cairo_t *cr, int idx, int selected, int x, int y, int w, int h) {
+ddb_tabstrip_draw_tab (GtkWidget *widget, cairo_t *cr, int idx, int selected, int x, int y, int w, int h, GtkStyle *style) {
 #endif
     coord_t points_filled[] = {
         { x+2, y + h },
@@ -458,34 +458,44 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, cairo_t *cr, int idx, int selected, in
         }
     }
     deadbeef->pl_unlock ();
+    int theming = !gtkui_override_tabstrip_colors ();
     if (selected) {
         if (fallback) {
-            gtkui_get_tabstrip_base_color (&clr_bg);
+            if (theming) {
+                clr_bg = style->bg[GTK_STATE_NORMAL];
+            } else {
+                gtkui_get_tabstrip_base_color (&clr_bg);
+            }
         }
-#if !GTK_CHECK_VERSION(3,0,0)
-        gdk_gc_set_rgb_fg_color (bg, &clr_bg);
-        gdk_gc_set_rgb_fg_color (outer_frame, (gtkui_get_tabstrip_dark_color (&clr_outer_frame), &clr_outer_frame));
-        gdk_gc_set_rgb_fg_color (inner_frame, (gtkui_get_tabstrip_light_color (&clr_inner_frame), &clr_inner_frame));
-#else
-        gtkui_get_tabstrip_dark_color (&clr_outer_frame);
-        gtkui_get_tabstrip_light_color (&clr_inner_frame);
-#endif
+        if (theming) {
+            clr_outer_frame = style->dark[GTK_STATE_NORMAL];
+            clr_inner_frame = style->light[GTK_STATE_NORMAL];
+        } else {
+            gtkui_get_tabstrip_dark_color (&clr_outer_frame);
+            gtkui_get_tabstrip_light_color (&clr_inner_frame);
+        }
     }
     else {
         if (fallback) {
-            gtkui_get_tabstrip_mid_color (&clr_bg);
+            if (theming) {
+                clr_bg = style->mid[GTK_STATE_NORMAL];
+            } else {
+                gtkui_get_tabstrip_mid_color (&clr_bg);
+            }
         }
-#if !GTK_CHECK_VERSION(3,0,0)
-        gdk_gc_set_rgb_fg_color (bg, &clr_bg);
-
-        gdk_gc_set_rgb_fg_color (outer_frame, (gtkui_get_tabstrip_dark_color (&clr_outer_frame), &clr_outer_frame));
-        gdk_gc_set_rgb_fg_color (inner_frame, (gtkui_get_tabstrip_mid_color (&clr_inner_frame), &clr_inner_frame));
-#else
-        gtkui_get_tabstrip_dark_color (&clr_outer_frame);
-        gtkui_get_tabstrip_mid_color (&clr_inner_frame);
-#endif
+        if (theming) {
+            clr_outer_frame = style->dark[GTK_STATE_NORMAL];
+            clr_inner_frame = style->mid[GTK_STATE_NORMAL];
+        } else {
+            gtkui_get_tabstrip_dark_color (&clr_outer_frame);
+            gtkui_get_tabstrip_mid_color (&clr_inner_frame);
+        }
     }
 #if !GTK_CHECK_VERSION(3,0,0)
+    gdk_gc_set_rgb_fg_color (bg, &clr_bg);
+    gdk_gc_set_rgb_fg_color (outer_frame, &clr_outer_frame);
+    gdk_gc_set_rgb_fg_color (inner_frame, &clr_inner_frame);
+
     gdk_draw_polygon (drawable, bg, TRUE, (GdkPoint*)points_filled, sizeof (points_filled)/sizeof(coord_t));
     gdk_draw_lines (drawable, outer_frame, (GdkPoint*)points_frame1, sizeof (points_frame1)/sizeof(coord_t));
     gdk_draw_lines (drawable, inner_frame, (GdkPoint*)points_frame2, sizeof (points_frame2)/sizeof(coord_t));
@@ -614,7 +624,7 @@ tabstrip_adjust_hscroll (DdbTabStrip *ts) {
 }
 
 void
-set_tab_text_color (DdbTabStrip *ts, int idx, int selected, int playing) {
+set_tab_text_color (DdbTabStrip *ts, int idx, int selected, int playing, GtkStyle *style) {
     if (idx == -1) {
         return;
     }
@@ -645,7 +655,7 @@ set_tab_text_color (DdbTabStrip *ts, int idx, int selected, int playing) {
             }
         }
         else {
-            gtkui_get_tabstrip_text_color (&color);
+            color = style->text[GTK_STATE_NORMAL];
         }
         float fg[3] = {(float)color.red/0xffff, (float)color.green/0xffff, (float)color.blue/0xffff};
         draw_set_fg_color (&ts->drawctx, fg);
@@ -698,26 +708,32 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
         deadbeef->pl_item_unref (playing);
     }
 
-
+    GtkStyle *style = gtk_widget_get_style (widget);
+    GdkColor clr_mid, clr_dark, clr_base;
+    if (theming) {
+        clr_mid = style->mid[GTK_STATE_NORMAL];
+        clr_dark = style->dark[GTK_STATE_NORMAL];
+        clr_base = style->base[GTK_STATE_NORMAL];
+    } else {
+        gtkui_get_tabstrip_mid_color (&clr_mid);
+        gtkui_get_tabstrip_dark_color (&clr_dark);
+        gtkui_get_tabstrip_base_color (&clr_base);
+    }
 #if !GTK_CHECK_VERSION(3,0,0)
     GdkGC *gc = gdk_gc_new (backbuf);
     // fill background
-    GdkColor clr;
-    gdk_gc_set_rgb_fg_color (gc, (gtkui_get_tabstrip_mid_color (&clr), &clr));
+    gdk_gc_set_rgb_fg_color (gc, &clr_mid);
     gdk_draw_rectangle (backbuf, gc, TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
-    gdk_gc_set_rgb_fg_color (gc, (gtkui_get_tabstrip_dark_color (&clr), &clr));
+    gdk_gc_set_rgb_fg_color (gc, &clr_dark);
     gdk_draw_line (backbuf, gc, 0, 0, widget->allocation.width, 0);
 #else
 
     // fill background
-    GdkColor clr;
-    gtkui_get_tabstrip_mid_color (&clr);
-    cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.0);
+    cairo_set_source_rgb (cr, clr_mid.red/65535.f, clr_mid.green/65535.f, clr_mid.blue/65535.0);
     cairo_rectangle (cr, 0, 0, a.width, a.height);
     cairo_fill (cr);
 
-    gtkui_get_tabstrip_dark_color (&clr);
-    cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.0);
+    cairo_set_source_rgb (cr, clr_dark.red/65535.f, clr_dark.green/65535.f, clr_dark.blue/65535.0);
     cairo_move_to (cr, 0, 1);
     cairo_line_to (cr, a.width, 1);
     cairo_stroke (cr);
@@ -754,14 +770,14 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
         area.height = 24;
         if (idx != tab_selected) {
 #if !GTK_CHECK_VERSION(3,0,0)
-            ddb_tabstrip_draw_tab (widget, backbuf, idx, idx == tab_selected, x, y, w, h);
+            ddb_tabstrip_draw_tab (widget, backbuf, idx, idx == tab_selected, x, y, w, h, style);
 #else
-            ddb_tabstrip_draw_tab (widget, cr, idx, idx == tab_selected, x, y, w, h);
+            ddb_tabstrip_draw_tab (widget, cr, idx, idx == tab_selected, x, y, w, h, style);
 #endif
             char tab_title[1000];
             plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
 
-            set_tab_text_color (ts, idx, tab_selected, tab_playing);
+            set_tab_text_color (ts, idx, tab_selected, tab_playing, style);
             int bold = 0;
             int italic = 0;
             if (!theming && idx == tab_playing) {
@@ -772,7 +788,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
         }
         x += w - tab_overlap_size;
     }
-    GtkStyle *style = gtk_widget_get_style (widget);
+
 #if !GTK_CHECK_VERSION(3,0,0)
     gdk_draw_line (backbuf, style->dark_gc[GTK_STATE_NORMAL], 0, widget->allocation.height-2, widget->allocation.width, widget->allocation.height-2);
     gdk_draw_line (backbuf, style->light_gc[GTK_STATE_NORMAL], 0, widget->allocation.height-1, widget->allocation.width, widget->allocation.height-1);
@@ -804,13 +820,13 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
         area.width = w;
         area.height = 24;
 #if !GTK_CHECK_VERSION(3,0,0)
-        ddb_tabstrip_draw_tab (widget, backbuf, idx, 1, x, y, w, h);
+        ddb_tabstrip_draw_tab (widget, backbuf, idx, 1, x, y, w, h, style);
 #else
-        ddb_tabstrip_draw_tab (widget, cr, idx, 1, x, y, w, h);
+        ddb_tabstrip_draw_tab (widget, cr, idx, 1, x, y, w, h, style);
 #endif
         char tab_title[1000];
         plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
-        set_tab_text_color (ts, idx, tab_selected, -1);
+        set_tab_text_color (ts, idx, tab_selected, -1, style);
         int bold = 0;
         int italic = 0;
         if (!theming) {
@@ -821,7 +837,9 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 #if GTK_CHECK_VERSION(3,0,0)
             gtk_render_focus (gtk_widget_get_style_context (widget), cr, x, y, w - ( text_right_padding - 1), ts->row_height);
 #else
-            gdk_gc_set_rgb_fg_color (gc, (gtkui_get_tabstrip_text_color (&clr), &clr));
+            GdkColor clr;
+            gtkui_get_tabstrip_text_color (&clr);
+            gdk_gc_set_rgb_fg_color (gc, &clr);
             gdk_gc_set_line_attributes (gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
             gdk_gc_set_dashes (gc, 0, (gint8[]) {1,1}, 2);
             gdk_draw_rectangle (backbuf, gc, FALSE, x, y , w - (text_right_padding - 1), ts->row_height-2);
@@ -843,13 +861,13 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
                 }
                 if (w > 0) {
 #if !GTK_CHECK_VERSION(3,0,0)
-                    ddb_tabstrip_draw_tab (widget, backbuf, idx, 1, x, y, w, h);
+                    ddb_tabstrip_draw_tab (widget, backbuf, idx, 1, x, y, w, h, style);
 #else
-                    ddb_tabstrip_draw_tab (widget, cr, idx, 1, x, y, w, h);
+                    ddb_tabstrip_draw_tab (widget, cr, idx, 1, x, y, w, h, style);
 #endif
                     char tab_title[1000];
                     plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
-                    set_tab_text_color (ts, idx, tab_selected, -1);
+                    set_tab_text_color (ts, idx, tab_selected, -1, style);
                     int bold = 0;
                     int italic = 0;
                     if (!theming) {
@@ -867,8 +885,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 #if !GTK_CHECK_VERSION(3,0,0)
     if (need_arrows) {
         int sz = widget->allocation.height-3;
-        GdkColor clr;
-        gdk_gc_set_rgb_fg_color (gc, (gtkui_get_tabstrip_mid_color (&clr), &clr));
+        gdk_gc_set_rgb_fg_color (gc, &clr_mid);
         gdk_draw_rectangle (backbuf, gc, TRUE, 0, 1, arrow_widget_width, sz);
         gtk_paint_arrow (style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, NULL, GTK_ARROW_LEFT, TRUE, 2, sz/2-arrow_sz/2, arrow_sz, arrow_sz);
         gdk_draw_rectangle (backbuf, gc, TRUE, tabarea_width-arrow_widget_width, 1, arrow_widget_width, sz);
@@ -877,8 +894,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 #else
     if (need_arrows) {
         int sz = a.height-3;
-        gtkui_get_tabstrip_mid_color (&clr);
-        cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.0);
+        cairo_set_source_rgb (cr, clr_mid.red/65535.f, clr_mid.green/65535.f, clr_mid.blue/65535.0);
         cairo_rectangle (cr, 0, 1, arrow_widget_width, sz);
         cairo_fill (cr);
 #if GTK_CHECK_VERSION(3,0,0)
@@ -901,13 +917,21 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
     {
         int playlist_button_border = 3;
         int add_playlist_btn_height = a.height-playlist_button_border;
-        GdkColor textcolor;
+        GdkColor textcolor, clr;
         if (ts->add_playlistbtn_hover) {
-            gtkui_get_tabstrip_base_color (&clr);
-            gtkui_get_tabstrip_selected_text_color (&textcolor);
+            clr = clr_base;
+            if (theming) {
+                textcolor = style->text[GTK_STATE_NORMAL];
+            } else {
+                gtkui_get_tabstrip_selected_text_color (&textcolor);
+            }
         } else {
-            gtkui_get_tabstrip_mid_color (&clr);
-            gtkui_get_tabstrip_text_color (&textcolor);
+            clr = clr_mid;
+            if (theming) {
+                textcolor = style->text[GTK_STATE_NORMAL];
+            } else {
+                gtkui_get_tabstrip_text_color (&textcolor);
+            }
         }
         float fg[3] = {(float)textcolor.red/0xffff, (float)textcolor.green/0xffff, (float)textcolor.blue/0xffff};
 #if !GTK_CHECK_VERSION(3,0,0)
