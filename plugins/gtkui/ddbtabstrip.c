@@ -937,6 +937,17 @@ static int
 get_tab_under_cursor (DdbTabStrip *ts, int x) {
     int hscroll = ts->hscrollpos;
     int need_arrows = tabstrip_need_arrows (ts);
+
+    GtkAllocation a;
+    int buttons_width = add_playlist_btn_width + (need_arrows ? arrow_widget_width : 0);
+    gtk_widget_get_allocation (GTK_WIDGET(ts), &a);
+    if (x > a.width - buttons_width) {
+        return -1;
+    }
+    if (need_arrows && x < arrow_widget_width) {
+        return -1;
+    }
+
     if (need_arrows) {
         hscroll -= arrow_widget_width;
     }
