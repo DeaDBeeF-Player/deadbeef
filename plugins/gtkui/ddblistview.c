@@ -2505,15 +2505,25 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr, int x1, int x2) {
     draw_begin(&ps->hdrctx, cr);
     int h = a.height;
 
+    GtkStyle *style = gtk_widget_get_style(mainwin);
     // Paint the background for the whole header
     GdkColor gdkfg;
 #if !GTK_HEADERS
-    GdkColor clr;
-    gtkui_get_tabstrip_base_color(&clr);
-    draw_cairo_rectangle(cr, &clr, 0, 0, a.width, h);
-    gtkui_get_tabstrip_dark_color(&clr);
-    draw_cairo_line(cr, &clr, 0, h, a.width, h);
-    gtkui_get_listview_column_text_color(&gdkfg);
+    GdkColor clr_base, clr_dark, clr_light;
+    if (gtkui_override_tabstrip_colors()) {
+        gtkui_get_tabstrip_base_color(&clr_base);
+        gtkui_get_tabstrip_dark_color(&clr_dark);
+        gtkui_get_tabstrip_light_color (&clr_light);
+        gtkui_get_listview_column_text_color(&gdkfg);
+    } else {
+        clr_base = style->bg[GTK_STATE_NORMAL];
+        clr_dark = style->dark[GTK_STATE_NORMAL];
+        clr_light = style->light[GTK_STATE_NORMAL];
+        gdkfg = style->fg[GTK_STATE_NORMAL];
+    }
+
+    draw_cairo_rectangle(cr, &clr_base, 0, 0, a.width, h);
+    draw_cairo_line(cr, &clr_dark, 0, h, a.width, h);
     draw_cairo_line(cr, &gtk_widget_get_style(ps->header)->mid[GTK_STATE_NORMAL], 0, h, a.width, h);
 #else
 #if GTK_CHECK_VERSION(3,0,0)
@@ -2537,11 +2547,8 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr, int x1, int x2) {
 
             // Add a vertical line near the right side of the column width, but not right next to an empty slot
             if (c->width > 0 && ps->header_dragging != idx + 1) {
-                GdkColor clr;
-                gtkui_get_tabstrip_dark_color (&clr);
-                draw_cairo_line(cr, &clr, xx-2, 2, xx-2, h-4);
-                gtkui_get_tabstrip_light_color (&clr);
-                draw_cairo_line(cr, &clr, xx-1, 2, xx-1, h-4);
+                draw_cairo_line(cr, &clr_dark, xx-2, 2, xx-2, h-4);
+                draw_cairo_line(cr, &clr_light, xx-1, 2, xx-1, h-4);
             }
         }
         x = xx;
