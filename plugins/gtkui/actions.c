@@ -239,6 +239,8 @@ menu_add_action_items(GtkWidget *menu, int selected_count, ddb_playItem_t *selec
             free(prev_title);
             prev_title = NULL;
 
+            g_object_set_data (G_OBJECT (actionitem), "plugaction", action);
+
             g_signal_connect ((gpointer) actionitem, "activate",
                               G_CALLBACK (activate_callback),
                               action);
