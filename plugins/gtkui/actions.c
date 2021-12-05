@@ -154,8 +154,8 @@ menu_add_action_items(GtkWidget *menu, int selected_count, ddb_playItem_t *selec
 
             for (;;) {
                 const char *slash = strchr (prev, '/');
-                char name[slash-prev+1];
                 if (slash && *(slash-1) != '\\') {
+                    char name[slash-prev+1];
                     // replace \/ with /
                     const char *p = prev;
                     char *t = name;
