@@ -42,6 +42,7 @@
 
 static ddb_dsp_context_t *chain;
 static GtkWidget *prefwin;
+static GtkWidget *dsp_popup;
 
 static ddb_dsp_context_t *
 dsp_clone (ddb_dsp_context_t *from) {
@@ -117,6 +118,126 @@ dsp_fill_preset_list (GtkWidget *combobox) {
     }
 }
 
+static void
+on_dsp_list_view_sel_changed(GtkTreeSelection *treeselection, gpointer user_data)
+{
+    GtkWidget *configbtn = lookup_widget (prefwin, "dsp_configure_toolbtn");
+    GtkWidget *removebtn = lookup_widget (prefwin, "dsp_remove_toolbtn");
+    GtkWidget *upbtn = lookup_widget (prefwin, "dsp_up_toolbtn");
+    GtkWidget *downbtn = lookup_widget (prefwin, "dsp_down_toolbtn");
+
+    GtkTreeModel *mdl;
+    GtkTreeIter iter;
+
+    gboolean has_selection = gtk_tree_selection_get_selected (treeselection, &mdl, &iter);
+    if (has_selection) {
+        int count = gtk_tree_model_iter_n_children (mdl, NULL);
+        GtkTreePath *path = gtk_tree_model_get_path (mdl, &iter);
+        int *ind = gtk_tree_path_get_indices (path);
+        gtk_widget_set_sensitive (upbtn, *ind > 0);
+        gtk_widget_set_sensitive (downbtn, *ind < count-1);
+    } else {
+        gtk_widget_set_sensitive (upbtn, FALSE);
+        gtk_widget_set_sensitive (downbtn, FALSE);
+    }
+
+    gtk_widget_set_sensitive (configbtn, has_selection);
+    gtk_widget_set_sensitive (removebtn, has_selection);
+}
+
+static void
+update_streamer (void) {
+    deadbeef->streamer_set_dsp_chain (chain);
+}
+
+static int
+listview_get_index (GtkWidget *list) {
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
+    if (!path) {
+        // nothing selected
+        return -1;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    int idx = *indices;
+    g_free (indices);
+    return idx;
+}
+
+static void
+on_dsp_popup_menu_item_activate(GtkMenuItem* self, gpointer user_data)
+{
+    // create new instance of the selected plugin
+    struct DB_dsp_s* dsp = user_data;
+    ddb_dsp_context_t *inst=NULL;
+    if (dsp && dsp->open) {
+        inst = dsp->open();
+    }
+    if (inst) {
+        GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
+        int idx = listview_get_index (list);
+
+        // append to DSP chain at index
+        ddb_dsp_context_t *p = chain;
+        ddb_dsp_context_t *prev = NULL;
+        int i = idx;
+        while (p && i--) {
+            prev = p;
+            p = p->next;
+        }
+        if (p) {
+            if (prev) {
+                inst->next = p->next;
+                prev->next = p;
+                p->next = inst;
+            }
+            else {
+                inst->next = p->next;
+                chain->next = inst;
+            }
+        } else {
+            chain = inst;
+        }
+
+        // reinit list of instances
+        GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(list)));
+        gtk_list_store_clear (mdl);
+        fill_dsp_chain (mdl);
+        // Update cursor to newly inserted item
+        GtkTreePath *path = gtk_tree_path_new_from_indices (idx+1, -1);
+        gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
+        gtk_tree_path_free (path);
+
+        update_streamer ();
+    }
+    else {
+        fprintf (stderr, "prefwin: failed to add DSP plugin to chain\n");
+    }
+}
+
+GtkWidget *make_dsp_popup_menu(void)
+{
+    struct DB_dsp_s **dsp = deadbeef->plug_get_dsp_list ();
+    int i;
+    GtkWidget *menu = gtk_menu_new();
+    for (i = 0; dsp[i]; i++) {
+        GtkWidget *item = gtk_menu_item_new_with_label(dsp[i]->plugin.name);
+        gtk_widget_show (item);
+        g_signal_connect(G_OBJECT (item), "activate",
+            G_CALLBACK (on_dsp_popup_menu_item_activate), (void*)dsp[i]);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+    }
+    return menu;
+}
+
+static void
+on_dsp_popup_hide(GtkWidget* attach_widget, GtkMenu* menu)
+{
+    GtkWidget *togglebtn = lookup_widget (prefwin, "dsp_add_toolbtn");
+    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (togglebtn), FALSE);
+}
+
 void
 dsp_setup_init (GtkWidget *_prefwin) {
     prefwin = _prefwin;
@@ -138,6 +259,8 @@ dsp_setup_init (GtkWidget *_prefwin) {
 
     // fill dsp_listview
     GtkWidget *listview = lookup_widget (prefwin, "dsp_listview");
+    GtkTreeSelection *listview_sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (listview));
+    g_signal_connect ((gpointer)listview_sel, "changed", G_CALLBACK (on_dsp_list_view_sel_changed), NULL);
 
 
     GtkCellRenderer *title_cell = gtk_cell_renderer_text_new ();
@@ -153,6 +276,11 @@ dsp_setup_init (GtkWidget *_prefwin) {
 
     GtkWidget *combobox = lookup_widget (prefwin, "dsp_preset");
     dsp_fill_preset_list (combobox);
+
+    // Make dsp popup menu
+    dsp_popup = make_dsp_popup_menu ();
+    g_signal_connect ((gpointer)dsp_popup, "hide", G_CALLBACK (on_dsp_popup_hide), NULL);
+    gtk_menu_attach_to_widget (GTK_MENU (dsp_popup), prefwin, NULL);
 }
 
 void
@@ -165,95 +293,8 @@ dsp_setup_free (void) {
     prefwin = NULL;
 }
 
-static void
-fill_dsp_plugin_list (GtkListStore *mdl) {
-    struct DB_dsp_s **dsp = deadbeef->plug_get_dsp_list ();
-    int i;
-    for (i = 0; dsp[i]; i++) {
-        GtkTreeIter iter;
-        gtk_list_store_append (mdl, &iter);
-        gtk_list_store_set (mdl, &iter, 0, dsp[i]->plugin.name, -1);
-    }
-}
-
-static void
-update_streamer (void) {
-    deadbeef->streamer_set_dsp_chain (chain);
-}
-
 void
-on_dsp_add_clicked                     (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    GtkWidget *dlg = create_select_dsp_plugin ();
-    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
-    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (prefwin));
-    gtk_window_set_title (GTK_WINDOW (dlg), _("Add plugin to DSP chain"));
-    
-    GtkComboBox *combo;
-    // fill encoder presets
-    combo = GTK_COMBO_BOX (lookup_widget (dlg, "plugin"));
-    GtkListStore *mdl = GTK_LIST_STORE (gtk_combo_box_get_model (combo));
-    fill_dsp_plugin_list (mdl);
-    gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.last_selected_dsp", 0));
-
-    int r = gtk_dialog_run (GTK_DIALOG (dlg));
-    if (r == GTK_RESPONSE_OK) {
-        // create new instance of the selected plugin
-        int idx = gtk_combo_box_get_active (combo);
-        struct DB_dsp_s **dsp = deadbeef->plug_get_dsp_list ();
-        int i;
-        ddb_dsp_context_t *inst = NULL;
-        for (i = 0; dsp[i]; i++) {
-            if (i == idx) {
-                inst = dsp[i]->open ();
-                break;
-            }
-        }
-        if (inst) {
-            // append to DSP chain
-            ddb_dsp_context_t *tail = chain;
-            while (tail && tail->next) {
-                tail = tail->next;
-            }
-            if (tail) {
-                tail->next = inst;
-            }
-            else {
-                chain = inst;
-            }
-
-            // reinit list of instances
-            GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
-            GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(list)));
-            gtk_list_store_clear (mdl);
-            fill_dsp_chain (mdl);
-            update_streamer ();
-        }
-        else {
-            fprintf (stderr, "prefwin: failed to add DSP plugin to chain\n");
-        }
-    }
-    gtk_widget_destroy (dlg);
-}
-
-static int
-listview_get_index (GtkWidget *list) {
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
-    if (!path) {
-        // nothing selected
-        return -1;
-    }
-    int *indices = gtk_tree_path_get_indices (path);
-    int idx = *indices;
-    g_free (indices);
-    return idx;
-}
-
-void
-on_dsp_remove_clicked                  (GtkButton       *button,
+on_dsp_remove_toolbtn_clicked          (GtkToolButton   *toolbutton,
                                         gpointer         user_data)
 {
     GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
@@ -485,3 +526,123 @@ on_dsp_preset_load_clicked             (GtkButton       *button,
     }
 }
 
+void
+on_dsp_toolbtn_up_clicked              (GtkToolButton   *toolbutton,
+                                        gpointer         user_data)
+{
+    GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
+    int idx = listview_get_index (list);
+    if (idx <= 0) {
+        return;
+    }
+
+    if (-1 == swap_items (list, idx-1)) {
+        return;
+    }
+    GtkTreePath *path = gtk_tree_path_new_from_indices (idx-1, -1);
+    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
+    gtk_tree_path_free (path);
+    update_streamer ();
+}
+
+
+void
+on_dsp_toolbtn_down_clicked            (GtkToolButton   *toolbutton,
+                                        gpointer         user_data)
+{
+    GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
+    int idx = listview_get_index (list);
+    if (idx == -1) {
+        return;
+    }
+
+    if (-1 == swap_items (list, idx)) {
+        return;
+    }
+    GtkTreePath *path = gtk_tree_path_new_from_indices (idx+1, -1);
+    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
+    gtk_tree_path_free (path);
+    update_streamer ();
+}
+
+static void
+show_dsp_configure_dlg(void)
+{
+    GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
+    int idx = listview_get_index (list);
+    if (idx == -1) {
+        return;
+    }
+    ddb_dsp_context_t *p = chain;
+    int i = idx;
+    while (p && i--) {
+        p = p->next;
+    }
+    if (!p || !p->plugin->configdialog) {
+        return;
+    }
+    current_dsp_context = p;
+    ddb_dialog_t conf = {
+        .title = p->plugin->plugin.name,
+        .layout = p->plugin->configdialog,
+        .set_param = dsp_ctx_set_param,
+        .get_param = dsp_ctx_get_param,
+    };
+    int response = gtkui_run_dialog (prefwin, &conf, 0, button_cb, NULL);
+    if (response == ddb_button_ok) {
+        update_streamer ();
+    }
+    current_dsp_context = NULL;
+}
+
+void
+on_dsp_configure_toolbtn_clicked       (GtkToolButton   *toolbutton,
+                                        gpointer         user_data)
+{
+    show_dsp_configure_dlg ();
+}
+
+void
+on_dsp_listview_row_activated          (GtkTreeView     *treeview,
+                                        GtkTreePath     *path,
+                                        GtkTreeViewColumn *column,
+                                        gpointer         user_data)
+{
+    show_dsp_configure_dlg ();
+}
+
+#if !GTK_CHECK_VERSION(3,0,0)
+static void
+set_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data)
+{
+  GtkWidget *button = GTK_WIDGET(user_data);
+  GtkAllocation a;
+  gtk_widget_get_allocation(GTK_WIDGET (button), &a);
+
+  GtkRequisition r;
+  gtk_widget_get_requisition(GTK_WIDGET (menu), &r);
+
+  gdk_window_get_origin(gtk_widget_get_window(button), x, y);
+  *x += a.x;
+  *y += a.y - (r.height);
+  *push_in = TRUE;
+}
+#endif
+
+void
+on_dsp_add_toolbtn_toggled             (GtkToggleToolButton *toggletoolbutton,
+                                        gpointer         user_data)
+{
+    if (gtk_toggle_tool_button_get_active(toggletoolbutton)) {
+#if GTK_CHECK_VERSION(3,0,0)
+        gtk_menu_popup_at_widget (GTK_MENU (dsp_popup), GTK_WIDGET (toggletoolbutton), GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_SOUTH_WEST, NULL);
+#else
+
+  gtk_menu_popup(GTK_MENU (dsp_popup),
+                 NULL, NULL,
+                 (GtkMenuPositionFunc) set_position, toggletoolbutton,
+                 0, gtk_get_current_event_time());
+
+#endif
+    }
+}

@@ -897,14 +897,6 @@ on_order_shuffle_albums_activate       (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
 void
-on_dsp_add_clicked                     (GtkButton       *button,
-                                        gpointer         user_data);
-
-void
-on_dsp_remove_clicked                  (GtkButton       *button,
-                                        gpointer         user_data);
-
-void
 on_dsp_configure_clicked               (GtkButton       *button,
                                         gpointer         user_data);
 
@@ -1466,4 +1458,30 @@ on_use_visualization_base_color_toggled
 void
 on_visualization_custom_color_button_color_set
                                         (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_dsp_toolbtn_up_clicked              (GtkToolButton   *toolbutton,
+                                        gpointer         user_data);
+
+void
+on_dsp_toolbtn_down_clicked            (GtkToolButton   *toolbutton,
+                                        gpointer         user_data);
+
+void
+on_dsp_configure_toolbtn_clicked       (GtkToolButton   *toolbutton,
+                                        gpointer         user_data);
+
+void
+on_dsp_listview_row_activated          (GtkTreeView     *treeview,
+                                        GtkTreePath     *path,
+                                        GtkTreeViewColumn *column,
+                                        gpointer         user_data);
+
+void
+on_dsp_remove_toolbtn_clicked          (GtkToolButton   *toolbutton,
+                                        gpointer         user_data);
+
+void
+on_dsp_add_toolbtn_toggled             (GtkToggleToolButton *toggletoolbutton,
                                         gpointer         user_data);

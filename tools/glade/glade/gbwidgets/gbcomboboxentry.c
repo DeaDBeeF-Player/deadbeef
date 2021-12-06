@@ -240,7 +240,7 @@ gb_combo_box_entry_write_source (GtkWidget * widget, GbWidgetWriteSourceData * d
 	    item_end = items_end;
 	  *item_end = '\0';
 
-	  source_add (data, "  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (%s), %s);\n",
+	  source_add (data, "  gtk_combo_box_append_text (GTK_COMBO_BOX (%s), %s);\n",
 		      data->wname,
 		      source_make_string (pos,
 					  data->use_gettext && translatable));
