@@ -2259,8 +2259,6 @@
 		2DC6574D274428F200583E14 /* libwavpacklib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA5A93925D0330600947C19 /* libwavpacklib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DC6574E274428F200583E14 /* ddb_soundtouch.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D00F23F2434DE4E000FC130 /* ddb_soundtouch.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DC6574F274428F200583E14 /* shellexec.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA04E8123B6A4320070AC01 /* shellexec.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DC65750274428F200583E14 /* shellexecui_gtk3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA04E9D23B6A4960070AC01 /* shellexecui_gtk3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DC65751274428F200583E14 /* pltbrowser_gtk3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE3B8742269F68B00AFF9AE /* pltbrowser_gtk3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DC65752274428F200583E14 /* hotkeys.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DC65754274428F200583E14 /* libvorbislib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DC65755274428F200583E14 /* libopuslib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D9C5B051FDEBACC00D83CEF /* libopuslib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -3692,26 +3690,12 @@
 			remoteGlobalIDString = 2D00F23E2434DE4E000FC130;
 			remoteInfo = ddb_soundtouch;
 		};
-		2DC656E4274428F200583E14 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2DA04E9C23B6A4960070AC01;
-			remoteInfo = shellexecui_gtk3;
-		};
 		2DC656E6274428F200583E14 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 2DA04E8023B6A4320070AC01;
 			remoteInfo = shellexec;
-		};
-		2DC656E8274428F200583E14 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2DE3B8732269F68B00AFF9AE;
-			remoteInfo = pltbrowser;
 		};
 		2DC656EA274428F200583E14 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -4203,8 +4187,6 @@
 				2DC6574D274428F200583E14 /* libwavpacklib.dylib in Copy Plugins */,
 				2DC6574E274428F200583E14 /* ddb_soundtouch.dylib in Copy Plugins */,
 				2DC6574F274428F200583E14 /* shellexec.dylib in Copy Plugins */,
-				2DC65750274428F200583E14 /* shellexecui_gtk3.dylib in Copy Plugins */,
-				2DC65751274428F200583E14 /* pltbrowser_gtk3.dylib in Copy Plugins */,
 				2DC65752274428F200583E14 /* hotkeys.dylib in Copy Plugins */,
 				2DC65754274428F200583E14 /* libvorbislib.dylib in Copy Plugins */,
 				2DC65755274428F200583E14 /* libopuslib.dylib in Copy Plugins */,
@@ -15017,9 +14999,7 @@
 			dependencies = (
 				2DC656DF274428F200583E14 /* PBXTargetDependency */,
 				2DC656E1274428F200583E14 /* PBXTargetDependency */,
-				2DC656E3274428F200583E14 /* PBXTargetDependency */,
 				2DC656E5274428F200583E14 /* PBXTargetDependency */,
-				2DC656E7274428F200583E14 /* PBXTargetDependency */,
 				2DC656E9274428F200583E14 /* PBXTargetDependency */,
 				2DC656ED274428F200583E14 /* PBXTargetDependency */,
 				2DC656EF274428F200583E14 /* PBXTargetDependency */,
@@ -18420,20 +18400,10 @@
 			target = 2D00F23E2434DE4E000FC130 /* ddb_soundtouch */;
 			targetProxy = 2DC656E2274428F200583E14 /* PBXContainerItemProxy */;
 		};
-		2DC656E3274428F200583E14 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2DA04E9C23B6A4960070AC01 /* shellexecui_gtk3 */;
-			targetProxy = 2DC656E4274428F200583E14 /* PBXContainerItemProxy */;
-		};
 		2DC656E5274428F200583E14 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2DA04E8023B6A4320070AC01 /* shellexec */;
 			targetProxy = 2DC656E6274428F200583E14 /* PBXContainerItemProxy */;
-		};
-		2DC656E7274428F200583E14 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2DE3B8732269F68B00AFF9AE /* pltbrowser_gtk3 */;
-			targetProxy = 2DC656E8274428F200583E14 /* PBXContainerItemProxy */;
 		};
 		2DC656E9274428F200583E14 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -21981,6 +21951,7 @@
 					"DISABLE_MM_KEY_GRABBER=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -22020,6 +21991,7 @@
 					"OSX_APPBUNDLE=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
