@@ -1584,16 +1584,20 @@ create_prefwin (void)
   GtkWidget *reset_autostopalbum;
   GtkWidget *label39;
   GtkWidget *vbox29;
-  GtkWidget *hbox80;
-  GtkWidget *dsp_add;
-  GtkWidget *dsp_remove;
-  GtkWidget *dsp_configure;
+  GtkWidget *vbox58;
   GtkWidget *hbox81;
   GtkWidget *scrolledwindow7;
   GtkWidget *dsp_listview;
-  GtkWidget *vbox30;
-  GtkWidget *dsp_up;
-  GtkWidget *dsp_down;
+  GtkWidget *dsp_toolbar;
+  GtkIconSize tmp_toolbar_icon_size;
+  GtkWidget *tmp_image;
+  GtkWidget *dsp_add_toolbtn;
+  GtkWidget *dsp_remove_toolbtn;
+  GtkWidget *dsp_up_toolbtn;
+  GtkWidget *dsp_down_toolbtn;
+  GtkWidget *dsp_configure_toolbtn;
+  GtkWidget *separatortoolitem1;
+  GtkWidget *toolitem2;
   GtkWidget *hbox86;
   GtkWidget *label114;
   GtkWidget *dsp_preset;
@@ -1894,12 +1898,12 @@ create_prefwin (void)
   comboboxentry_direct_sr = gtk_combo_box_entry_new_text ();
   gtk_widget_show (comboboxentry_direct_sr);
   gtk_box_pack_start (GTK_BOX (hbox145), comboboxentry_direct_sr, FALSE, FALSE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_direct_sr), "44100");
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_direct_sr), "48000");
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_direct_sr), "88200");
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_direct_sr), "96000");
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_direct_sr), "176400");
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_direct_sr), "192000");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), "44100");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), "48000");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), "88200");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), "96000");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), "176400");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_direct_sr), "192000");
 
   frame16 = gtk_frame_new (NULL);
   gtk_widget_show (frame16);
@@ -1928,12 +1932,12 @@ create_prefwin (void)
   comboboxentry_sr_mult_48 = gtk_combo_box_entry_new_text ();
   gtk_widget_show (comboboxentry_sr_mult_48);
   gtk_box_pack_start (GTK_BOX (hbox147), comboboxentry_sr_mult_48, FALSE, FALSE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_sr_mult_48), "44100");
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_sr_mult_48), "48000");
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_sr_mult_48), "88200");
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_sr_mult_48), "96000");
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_sr_mult_48), "176400");
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_sr_mult_48), "192000");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), "44100");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), "48000");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), "88200");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), "96000");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), "176400");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_48), "192000");
 
   hbox148 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox148);
@@ -1947,12 +1951,12 @@ create_prefwin (void)
   comboboxentry_sr_mult_44 = gtk_combo_box_entry_new_text ();
   gtk_widget_show (comboboxentry_sr_mult_44);
   gtk_box_pack_start (GTK_BOX (hbox148), comboboxentry_sr_mult_44, FALSE, FALSE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_sr_mult_44), "44100");
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_sr_mult_44), "48000");
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_sr_mult_44), "88200");
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_sr_mult_44), "96000");
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_sr_mult_44), "176400");
-  gtk_combo_box_append_text (GTK_COMBO_BOX_TEXT (comboboxentry_sr_mult_44), "192000");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), "44100");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), "48000");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), "88200");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), "96000");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), "176400");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (comboboxentry_sr_mult_44), "192000");
 
   checkbutton_dependent_sr = gtk_check_button_new_with_mnemonic (_("Based on input samplerate"));
   gtk_widget_show (checkbutton_dependent_sr);
@@ -2122,25 +2126,13 @@ create_prefwin (void)
   gtk_container_add (GTK_CONTAINER (notebook), vbox29);
   gtk_container_set_border_width (GTK_CONTAINER (vbox29), 12);
 
-  hbox80 = gtk_hbox_new (TRUE, 8);
-  gtk_widget_show (hbox80);
-  gtk_box_pack_start (GTK_BOX (vbox29), hbox80, FALSE, TRUE, 0);
-
-  dsp_add = gtk_button_new_from_stock ("gtk-add");
-  gtk_widget_show (dsp_add);
-  gtk_box_pack_start (GTK_BOX (hbox80), dsp_add, FALSE, TRUE, 0);
-
-  dsp_remove = gtk_button_new_from_stock ("gtk-remove");
-  gtk_widget_show (dsp_remove);
-  gtk_box_pack_start (GTK_BOX (hbox80), dsp_remove, FALSE, TRUE, 0);
-
-  dsp_configure = gtk_button_new_with_mnemonic (_("Configure"));
-  gtk_widget_show (dsp_configure);
-  gtk_box_pack_start (GTK_BOX (hbox80), dsp_configure, FALSE, TRUE, 0);
+  vbox58 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox58);
+  gtk_box_pack_start (GTK_BOX (vbox29), vbox58, TRUE, TRUE, 0);
 
   hbox81 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox81);
-  gtk_box_pack_start (GTK_BOX (vbox29), hbox81, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox58), hbox81, TRUE, TRUE, 0);
 
   scrolledwindow7 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow7);
@@ -2151,23 +2143,59 @@ create_prefwin (void)
   dsp_listview = gtk_tree_view_new ();
   gtk_widget_show (dsp_listview);
   gtk_container_add (GTK_CONTAINER (scrolledwindow7), dsp_listview);
+  gtk_widget_set_events (dsp_listview, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (dsp_listview), FALSE);
 
-  vbox30 = gtk_vbox_new (FALSE, 8);
-  gtk_widget_show (vbox30);
-  gtk_box_pack_start (GTK_BOX (hbox81), vbox30, FALSE, TRUE, 0);
+  dsp_toolbar = gtk_toolbar_new ();
+  gtk_widget_show (dsp_toolbar);
+  gtk_box_pack_start (GTK_BOX (vbox58), dsp_toolbar, FALSE, FALSE, 0);
+  gtk_toolbar_set_style (GTK_TOOLBAR (dsp_toolbar), GTK_TOOLBAR_BOTH_HORIZ);
+  gtk_toolbar_set_show_arrow (GTK_TOOLBAR (dsp_toolbar), FALSE);
+  tmp_toolbar_icon_size = gtk_toolbar_get_icon_size (GTK_TOOLBAR (dsp_toolbar));
 
-  dsp_up = gtk_button_new_from_stock ("gtk-go-up");
-  gtk_widget_show (dsp_up);
-  gtk_box_pack_start (GTK_BOX (vbox30), dsp_up, FALSE, FALSE, 0);
+  dsp_add_toolbtn = (GtkWidget*) gtk_toggle_tool_button_new ();
+  gtk_tool_button_set_label (GTK_TOOL_BUTTON (dsp_add_toolbtn), _("Add"));
+  tmp_image = gtk_image_new_from_stock ("gtk-add", tmp_toolbar_icon_size);
+  gtk_widget_show (tmp_image);
+  gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (dsp_add_toolbtn), tmp_image);
+  gtk_widget_show (dsp_add_toolbtn);
+  gtk_container_add (GTK_CONTAINER (dsp_toolbar), dsp_add_toolbtn);
 
-  dsp_down = gtk_button_new_from_stock ("gtk-go-down");
-  gtk_widget_show (dsp_down);
-  gtk_box_pack_start (GTK_BOX (vbox30), dsp_down, FALSE, FALSE, 0);
+  tmp_image = gtk_image_new_from_stock ("gtk-remove", tmp_toolbar_icon_size);
+  gtk_widget_show (tmp_image);
+  dsp_remove_toolbtn = (GtkWidget*) gtk_tool_button_new (tmp_image, _("Remove"));
+  gtk_widget_show (dsp_remove_toolbtn);
+  gtk_container_add (GTK_CONTAINER (dsp_toolbar), dsp_remove_toolbtn);
+
+  tmp_image = gtk_image_new_from_stock ("gtk-go-up", tmp_toolbar_icon_size);
+  gtk_widget_show (tmp_image);
+  dsp_up_toolbtn = (GtkWidget*) gtk_tool_button_new (tmp_image, _("Up"));
+  gtk_widget_show (dsp_up_toolbtn);
+  gtk_container_add (GTK_CONTAINER (dsp_toolbar), dsp_up_toolbtn);
+
+  tmp_image = gtk_image_new_from_stock ("gtk-go-down", tmp_toolbar_icon_size);
+  gtk_widget_show (tmp_image);
+  dsp_down_toolbtn = (GtkWidget*) gtk_tool_button_new (tmp_image, _("Down"));
+  gtk_widget_show (dsp_down_toolbtn);
+  gtk_container_add (GTK_CONTAINER (dsp_toolbar), dsp_down_toolbtn);
+
+  dsp_configure_toolbtn = (GtkWidget*) gtk_tool_button_new_from_stock ("gtk-preferences");
+  gtk_widget_show (dsp_configure_toolbtn);
+  gtk_container_add (GTK_CONTAINER (dsp_toolbar), dsp_configure_toolbtn);
+
+  separatortoolitem1 = (GtkWidget*) gtk_separator_tool_item_new ();
+  gtk_widget_show (separatortoolitem1);
+  gtk_tool_item_set_expand (GTK_TOOL_ITEM (separatortoolitem1), TRUE);
+  gtk_container_add (GTK_CONTAINER (dsp_toolbar), separatortoolitem1);
+  gtk_separator_tool_item_set_draw (GTK_SEPARATOR_TOOL_ITEM (separatortoolitem1), FALSE);
+
+  toolitem2 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem2);
+  gtk_container_add (GTK_CONTAINER (dsp_toolbar), toolitem2);
 
   hbox86 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox86);
-  gtk_box_pack_start (GTK_BOX (vbox29), hbox86, FALSE, TRUE, 0);
+  gtk_container_add (GTK_CONTAINER (toolitem2), hbox86);
 
   label114 = gtk_label_new (_("DSP Chain Preset"));
   gtk_widget_show (label114);
@@ -3326,20 +3354,23 @@ create_prefwin (void)
   g_signal_connect ((gpointer) reset_autostopalbum, "toggled",
                     G_CALLBACK (on_reset_autostopalbum_toggled),
                     NULL);
-  g_signal_connect ((gpointer) dsp_add, "clicked",
-                    G_CALLBACK (on_dsp_add_clicked),
+  g_signal_connect ((gpointer) dsp_listview, "row_activated",
+                    G_CALLBACK (on_dsp_listview_row_activated),
                     NULL);
-  g_signal_connect ((gpointer) dsp_remove, "clicked",
-                    G_CALLBACK (on_dsp_remove_clicked),
+  g_signal_connect ((gpointer) dsp_add_toolbtn, "toggled",
+                    G_CALLBACK (on_dsp_add_toolbtn_toggled),
                     NULL);
-  g_signal_connect ((gpointer) dsp_configure, "clicked",
-                    G_CALLBACK (on_dsp_configure_clicked),
+  g_signal_connect ((gpointer) dsp_remove_toolbtn, "clicked",
+                    G_CALLBACK (on_dsp_remove_toolbtn_clicked),
                     NULL);
-  g_signal_connect ((gpointer) dsp_up, "clicked",
-                    G_CALLBACK (on_dsp_up_clicked),
+  g_signal_connect ((gpointer) dsp_up_toolbtn, "clicked",
+                    G_CALLBACK (on_dsp_toolbtn_up_clicked),
                     NULL);
-  g_signal_connect ((gpointer) dsp_down, "clicked",
-                    G_CALLBACK (on_dsp_down_clicked),
+  g_signal_connect ((gpointer) dsp_down_toolbtn, "clicked",
+                    G_CALLBACK (on_dsp_toolbtn_down_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) dsp_configure_toolbtn, "clicked",
+                    G_CALLBACK (on_dsp_configure_toolbtn_clicked),
                     NULL);
   g_signal_connect ((gpointer) dsp_preset, "changed",
                     G_CALLBACK (on_dsp_preset_changed),
@@ -3650,16 +3681,18 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, reset_autostopalbum, "reset_autostopalbum");
   GLADE_HOOKUP_OBJECT (prefwin, label39, "label39");
   GLADE_HOOKUP_OBJECT (prefwin, vbox29, "vbox29");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox80, "hbox80");
-  GLADE_HOOKUP_OBJECT (prefwin, dsp_add, "dsp_add");
-  GLADE_HOOKUP_OBJECT (prefwin, dsp_remove, "dsp_remove");
-  GLADE_HOOKUP_OBJECT (prefwin, dsp_configure, "dsp_configure");
+  GLADE_HOOKUP_OBJECT (prefwin, vbox58, "vbox58");
   GLADE_HOOKUP_OBJECT (prefwin, hbox81, "hbox81");
   GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow7, "scrolledwindow7");
   GLADE_HOOKUP_OBJECT (prefwin, dsp_listview, "dsp_listview");
-  GLADE_HOOKUP_OBJECT (prefwin, vbox30, "vbox30");
-  GLADE_HOOKUP_OBJECT (prefwin, dsp_up, "dsp_up");
-  GLADE_HOOKUP_OBJECT (prefwin, dsp_down, "dsp_down");
+  GLADE_HOOKUP_OBJECT (prefwin, dsp_toolbar, "dsp_toolbar");
+  GLADE_HOOKUP_OBJECT (prefwin, dsp_add_toolbtn, "dsp_add_toolbtn");
+  GLADE_HOOKUP_OBJECT (prefwin, dsp_remove_toolbtn, "dsp_remove_toolbtn");
+  GLADE_HOOKUP_OBJECT (prefwin, dsp_up_toolbtn, "dsp_up_toolbtn");
+  GLADE_HOOKUP_OBJECT (prefwin, dsp_down_toolbtn, "dsp_down_toolbtn");
+  GLADE_HOOKUP_OBJECT (prefwin, dsp_configure_toolbtn, "dsp_configure_toolbtn");
+  GLADE_HOOKUP_OBJECT (prefwin, separatortoolitem1, "separatortoolitem1");
+  GLADE_HOOKUP_OBJECT (prefwin, toolitem2, "toolitem2");
   GLADE_HOOKUP_OBJECT (prefwin, hbox86, "hbox86");
   GLADE_HOOKUP_OBJECT (prefwin, label114, "label114");
   GLADE_HOOKUP_OBJECT (prefwin, dsp_preset, "dsp_preset");
