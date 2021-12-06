@@ -646,7 +646,7 @@ converter_show_cb (void *data) {
 }
 
 static int
-converter_show (DB_plugin_action_t *act, int ctx) {
+converter_show (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     if (converter_active) {
         return -1;
     }

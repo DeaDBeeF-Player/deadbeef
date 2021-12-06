@@ -2567,6 +2567,21 @@
 		2DE5562A26075B8400285BF9 /* AlbumArtWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE5562626075B8400285BF9 /* AlbumArtWidget.m */; };
 		2DE55ACE26C5A47F008F33FF /* medialibmanager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE55ACC26C5A47F008F33FF /* medialibmanager.h */; };
 		2DE55ADF26C5A580008F33FF /* medialibmanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE55ACD26C5A47F008F33FF /* medialibmanager.c */; };
+		2DE77483275E89DF00890350 /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE7747C275E89DD00890350 /* support.h */; };
+		2DE77484275E89DF00890350 /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE7747C275E89DD00890350 /* support.h */; };
+		2DE77485275E89DF00890350 /* convgui.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7747D275E89DD00890350 /* convgui.c */; };
+		2DE77486275E89DF00890350 /* convgui.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7747D275E89DD00890350 /* convgui.c */; };
+		2DE77487275E89DF00890350 /* interface.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7747E275E89DE00890350 /* interface.c */; };
+		2DE77488275E89DF00890350 /* interface.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7747E275E89DE00890350 /* interface.c */; };
+		2DE77489275E89DF00890350 /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7747F275E89DE00890350 /* support.c */; };
+		2DE7748A275E89DF00890350 /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7747F275E89DE00890350 /* support.c */; };
+		2DE7748B275E89DF00890350 /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE77480275E89DE00890350 /* callbacks.c */; };
+		2DE7748C275E89DF00890350 /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE77480275E89DE00890350 /* callbacks.c */; };
+		2DE7748D275E89DF00890350 /* interface.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE77481275E89DE00890350 /* interface.h */; };
+		2DE7748E275E89DF00890350 /* interface.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE77481275E89DE00890350 /* interface.h */; };
+		2DE7748F275E89DF00890350 /* callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE77482275E89DF00890350 /* callbacks.h */; };
+		2DE77490275E89DF00890350 /* callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE77482275E89DF00890350 /* callbacks.h */; };
+		2DE77496275E8AFB00890350 /* converter_gtk3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE77467275E893400890350 /* converter_gtk3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */; };
 		2DE92F561BAFFBEE00F37154 /* wavpack.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DEBA1BF23E203B9000E4135 /* eqpreset.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEBA1BD23E203B9000E4135 /* eqpreset.h */; };
@@ -4013,6 +4028,13 @@
 			remoteGlobalIDString = 2DE3B8732269F68B00AFF9AE;
 			remoteInfo = pltbrowser;
 		};
+		2DE77494275E8AF300890350 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DE77466275E893400890350;
+			remoteInfo = converter_gtk3;
+		};
 		2DE92F541BAFFBE100F37154 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -4373,6 +4395,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				2DE77496275E8AFB00890350 /* converter_gtk3.dylib in Copy Plugins */,
 				2DA5AB0625D033AA00947C19 /* libwavpacklib.dylib in Copy Plugins */,
 				2D1BEB962435BE4E003EFD61 /* ddb_soundtouch.dylib in Copy Plugins */,
 				2DA04EB223B6A4D40070AC01 /* shellexec.dylib in Copy Plugins */,
@@ -6801,6 +6824,14 @@
 		2DE5562626075B8400285BF9 /* AlbumArtWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlbumArtWidget.m; sourceTree = "<group>"; };
 		2DE55ACC26C5A47F008F33FF /* medialibmanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = medialibmanager.h; sourceTree = "<group>"; };
 		2DE55ACD26C5A47F008F33FF /* medialibmanager.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibmanager.c; sourceTree = "<group>"; };
+		2DE77467275E893400890350 /* converter_gtk3.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = converter_gtk3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DE7747C275E89DD00890350 /* support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = support.h; path = plugins/converter/support.h; sourceTree = "<group>"; };
+		2DE7747D275E89DD00890350 /* convgui.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = convgui.c; path = plugins/converter/convgui.c; sourceTree = "<group>"; };
+		2DE7747E275E89DE00890350 /* interface.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = interface.c; path = plugins/converter/interface.c; sourceTree = "<group>"; };
+		2DE7747F275E89DE00890350 /* support.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = support.c; path = plugins/converter/support.c; sourceTree = "<group>"; };
+		2DE77480275E89DE00890350 /* callbacks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = callbacks.c; path = plugins/converter/callbacks.c; sourceTree = "<group>"; };
+		2DE77481275E89DE00890350 /* interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = interface.h; path = plugins/converter/interface.h; sourceTree = "<group>"; };
+		2DE77482275E89DF00890350 /* callbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = callbacks.h; path = plugins/converter/callbacks.h; sourceTree = "<group>"; };
 		2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = bufferingTemplate.pdf; sourceTree = "<group>"; };
 		2DE7A8FA1CA493CE00318A9F /* CuesheetTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CuesheetTests.m; sourceTree = "<group>"; };
 		2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wavpack.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7682,6 +7713,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DD81BAE25152D0D008C716C /* libjansson.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DE77465275E893400890350 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11520,6 +11558,20 @@
 			path = Widgets;
 			sourceTree = "<group>";
 		};
+		2DE7747B275E899F00890350 /* converter_gtk3 */ = {
+			isa = PBXGroup;
+			children = (
+				2DE77480275E89DE00890350 /* callbacks.c */,
+				2DE77482275E89DF00890350 /* callbacks.h */,
+				2DE7747D275E89DD00890350 /* convgui.c */,
+				2DE7747E275E89DE00890350 /* interface.c */,
+				2DE77481275E89DE00890350 /* interface.h */,
+				2DE7747F275E89DE00890350 /* support.c */,
+				2DE7747C275E89DD00890350 /* support.h */,
+			);
+			name = converter_gtk3;
+			sourceTree = "<group>";
+		};
 		2DE92F331BAFFB7700F37154 /* wavpack */ = {
 			isa = PBXGroup;
 			children = (
@@ -11711,6 +11763,7 @@
 				2DA5A93925D0330600947C19 /* libwavpacklib.dylib */,
 				2DC656DA2744289C00583E14 /* ddb_gui_GTK2.dylib */,
 				2DC6578C274428F200583E14 /* DeaDBeeF GTK2.app */,
+				2DE77467275E893400890350 /* converter_gtk3.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -11886,6 +11939,7 @@
 				2D621F941CD92CC000EB6D22 /* artwork */,
 				4DEE38461838E6450022D2B7 /* cocoaui */,
 				2D2351221B138F1700A62936 /* converter */,
+				2DE7747B275E899F00890350 /* converter_gtk3 */,
 				4D1B515C1837F59F003E6066 /* coreaudio */,
 				2DA249A219E71FF100E34920 /* curl */,
 				070220AB1C275D6100FC9AF9 /* dca */,
@@ -13645,6 +13699,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DE77463275E893400890350 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DE7748E275E89DF00890350 /* interface.h in Headers */,
+				2DE77490275E89DF00890350 /* callbacks.h in Headers */,
+				2DE77484275E89DF00890350 /* support.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DE92F2D1BAFFB4F00F37154 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -13915,6 +13979,7 @@
 				2DD39ED926AD8D1600C5846D /* analyzer.h in Headers */,
 				2DDBA26423E5F14A00051320 /* PlaylistHeaderView.h in Headers */,
 				2DC657CC2749544000583E14 /* PlaylistWithTabsWidget.h in Headers */,
+				2DE7748D275E89DF00890350 /* interface.h in Headers */,
 				2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
 				2DA273782406ED4100FB9BE1 /* GuiPreferencesWindowController.h in Headers */,
@@ -13993,6 +14058,7 @@
 				2D8030CD24B261A400539F9F /* MediaLibraryItem.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
 				2D046F7D25E2B55200F68459 /* MainWindow.h in Headers */,
+				2DE77483275E89DF00890350 /* support.h in Headers */,
 				2DA32B1524D6D83C00D96C84 /* MediaLibrarySelectorCellView.h in Headers */,
 				2D98B67F272B272300E655AE /* ScopeShaderTypes.h in Headers */,
 				2D747E4024B6580A00BBB987 /* MainWindowSidebarViewController.h in Headers */,
@@ -14014,6 +14080,7 @@
 				2DC657BF2746F67600583E14 /* RenameTabViewController.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */,
 				2DD3775127412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.h in Headers */,
+				2DE7748F275E89DF00890350 /* callbacks.h in Headers */,
 				2DC657A72746D9E400583E14 /* TabsWidget.h in Headers */,
 				2DD377552741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.h in Headers */,
 				2D9E905124F453960037D323 /* MediaLibraryPreferencesViewController.h in Headers */,
@@ -14495,6 +14562,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DE77495275E8AF300890350 /* PBXTargetDependency */,
 				2DE3B8952269F6D200AFF9AE /* PBXTargetDependency */,
 				2DA04E9823B6A46C0070AC01 /* PBXTargetDependency */,
 				2DA04EB123B6A4C80070AC01 /* PBXTargetDependency */,
@@ -15062,6 +15130,23 @@
 			productReference = 2DE3B8742269F68B00AFF9AE /* pltbrowser_gtk3.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		2DE77466275E893400890350 /* converter_gtk3 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DE77479275E893400890350 /* Build configuration list for PBXNativeTarget "converter_gtk3" */;
+			buildPhases = (
+				2DE77463275E893400890350 /* Headers */,
+				2DE77464275E893400890350 /* Sources */,
+				2DE77465275E893400890350 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = converter_gtk3;
+			productName = converter_gtkui;
+			productReference = 2DE77467275E893400890350 /* converter_gtk3.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		2DE92F2E1BAFFB4F00F37154 /* wavpack */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2DE92F321BAFFB4F00F37154 /* Build configuration list for PBXNativeTarget "wavpack" */;
@@ -15511,6 +15596,10 @@
 						DevelopmentTeam = F69NGENSKX;
 						ProvisioningStyle = Automatic;
 					};
+					2DE77466275E893400890350 = {
+						CreatedOnToolsVersion = 13.1;
+						ProvisioningStyle = Automatic;
+					};
 					2DE92F2E1BAFFB4F00F37154 = {
 						CreatedOnToolsVersion = 6.2;
 					};
@@ -15586,6 +15675,7 @@
 				2D621F821CD92C9000EB6D22 /* artwork */,
 				07021F271C2734D700FC9AF9 /* asflib */,
 				2D23511A1B138ECB00A62936 /* converter */,
+				2DE77466275E893400890350 /* converter_gtk3 */,
 				2DA2499D19E71FEA00E34920 /* curl */,
 				0702208E1C275D3900FC9AF9 /* dca */,
 				2D01D7C91AB2216900BCD3C4 /* ddbcore */,
@@ -17307,6 +17397,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DE77464275E893400890350 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DE7748C275E89DF00890350 /* callbacks.c in Sources */,
+				2DE77486275E89DF00890350 /* convgui.c in Sources */,
+				2DE7748A275E89DF00890350 /* support.c in Sources */,
+				2DE77488275E89DF00890350 /* interface.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DE92F2B1BAFFB4F00F37154 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -17410,12 +17511,14 @@
 				2DDBA26523E5F14A00051320 /* PlaylistHeaderView.m in Sources */,
 				2D046F3A25E2B17700F68459 /* DesignModeEventHandler.m in Sources */,
 				2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */,
+				2DE77489275E89DF00890350 /* support.c in Sources */,
 				2DAA4041269AF880006D2754 /* WeakRefWrapper.m in Sources */,
 				2DBC62D724CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m in Sources */,
 				2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */,
 				2DD3774B27404E11007AD315 /* VisualizationSettingsUtil.m in Sources */,
 				2D98B687272D56F100E655AE /* ScopeVisualizationViewController.m in Sources */,
 				2DDF87DA24027DA500CA8E91 /* PluginActionMenuItem.m in Sources */,
+				2DE77485275E89DF00890350 /* convgui.c in Sources */,
 				2DAD80A22416DBB100EB3075 /* CustomToolbarItem.m in Sources */,
 				2DC65809274A876300583E14 /* DeletePlaylistConfirmationController.m in Sources */,
 				0D56856D272197B30026F700 /* scope.c in Sources */,
@@ -17460,6 +17563,7 @@
 				2DC657C12746F67600583E14 /* RenameTabViewController.m in Sources */,
 				2D9F6535241BE78C00D9D16E /* SeekbarOverlay.m in Sources */,
 				2DEBA1D323E207A3000E4135 /* EqualizerWindowController.m in Sources */,
+				2DE7748B275E89DF00890350 /* callbacks.c in Sources */,
 				2DA8912325FFEB9B0084860D /* PlaylistGroup.m in Sources */,
 				2DD3775C27414BD9007AD315 /* ScopePreferencesWindowController.m in Sources */,
 				2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */,
@@ -17470,6 +17574,7 @@
 				2DC6582A274AB03800583E14 /* LyricsViewController.m in Sources */,
 				2D04701625E2D97D00F68459 /* WidgetMenuBuilder.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* SearchViewController.m in Sources */,
+				2DE77487275E89DF00890350 /* interface.c in Sources */,
 				2D747E3924B64E7600BBB987 /* SidebarSplitViewItem.m in Sources */,
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
 				2DC6583F274C361C00583E14 /* HolderWidget.m in Sources */,
@@ -18549,6 +18654,11 @@
 			isa = PBXTargetDependency;
 			target = 2DE3B8732269F68B00AFF9AE /* pltbrowser_gtk3 */;
 			targetProxy = 2DE3B8942269F6D200AFF9AE /* PBXContainerItemProxy */;
+		};
+		2DE77495275E8AF300890350 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DE77466275E893400890350 /* converter_gtk3 */;
+			targetProxy = 2DE77494275E8AF300890350 /* PBXContainerItemProxy */;
 		};
 		2DE92F551BAFFBE100F37154 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -22279,6 +22389,71 @@
 			};
 			name = Release;
 		};
+		2DE77468275E893400890350 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DA9777424C5EC26002405DA /* gtk3.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "$(GTK3_CFLAGS)";
+				OTHER_LDFLAGS = (
+					"$(GTK3_LDFLAGS)",
+					"$(JANSSON_LDFLAGS)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		2DE77469275E893400890350 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "$(GTK3_CFLAGS)";
+				OTHER_LDFLAGS = (
+					"$(GTK3_LDFLAGS)",
+					"$(JANSSON_LDFLAGS)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 		2DE92F301BAFFB4F00F37154 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -23884,6 +24059,15 @@
 			buildConfigurations = (
 				2DE3B8762269F68C00AFF9AE /* Debug */,
 				2DE3B8772269F68C00AFF9AE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DE77479275E893400890350 /* Build configuration list for PBXNativeTarget "converter_gtk3" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DE77468275E893400890350 /* Debug */,
+				2DE77469275E893400890350 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
