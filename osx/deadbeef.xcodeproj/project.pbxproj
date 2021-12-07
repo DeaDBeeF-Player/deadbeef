@@ -2565,19 +2565,12 @@
 		2DE5562A26075B8400285BF9 /* AlbumArtWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE5562626075B8400285BF9 /* AlbumArtWidget.m */; };
 		2DE55ACE26C5A47F008F33FF /* medialibmanager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE55ACC26C5A47F008F33FF /* medialibmanager.h */; };
 		2DE55ADF26C5A580008F33FF /* medialibmanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE55ACD26C5A47F008F33FF /* medialibmanager.c */; };
-		2DE77483275E89DF00890350 /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE7747C275E89DD00890350 /* support.h */; };
 		2DE77484275E89DF00890350 /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE7747C275E89DD00890350 /* support.h */; };
-		2DE77485275E89DF00890350 /* convgui.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7747D275E89DD00890350 /* convgui.c */; };
 		2DE77486275E89DF00890350 /* convgui.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7747D275E89DD00890350 /* convgui.c */; };
-		2DE77487275E89DF00890350 /* interface.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7747E275E89DE00890350 /* interface.c */; };
 		2DE77488275E89DF00890350 /* interface.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7747E275E89DE00890350 /* interface.c */; };
-		2DE77489275E89DF00890350 /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7747F275E89DE00890350 /* support.c */; };
 		2DE7748A275E89DF00890350 /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7747F275E89DE00890350 /* support.c */; };
-		2DE7748B275E89DF00890350 /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE77480275E89DE00890350 /* callbacks.c */; };
 		2DE7748C275E89DF00890350 /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE77480275E89DE00890350 /* callbacks.c */; };
-		2DE7748D275E89DF00890350 /* interface.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE77481275E89DE00890350 /* interface.h */; };
 		2DE7748E275E89DF00890350 /* interface.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE77481275E89DE00890350 /* interface.h */; };
-		2DE7748F275E89DF00890350 /* callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE77482275E89DF00890350 /* callbacks.h */; };
 		2DE77490275E89DF00890350 /* callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE77482275E89DF00890350 /* callbacks.h */; };
 		2DE77496275E8AFB00890350 /* converter_gtk3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE77467275E893400890350 /* converter_gtk3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */; };
@@ -13961,7 +13954,6 @@
 				2DD39ED926AD8D1600C5846D /* analyzer.h in Headers */,
 				2DDBA26423E5F14A00051320 /* PlaylistHeaderView.h in Headers */,
 				2DC657CC2749544000583E14 /* PlaylistWithTabsWidget.h in Headers */,
-				2DE7748D275E89DF00890350 /* interface.h in Headers */,
 				2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
 				2DA273782406ED4100FB9BE1 /* GuiPreferencesWindowController.h in Headers */,
@@ -14040,7 +14032,6 @@
 				2D8030CD24B261A400539F9F /* MediaLibraryItem.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
 				2D046F7D25E2B55200F68459 /* MainWindow.h in Headers */,
-				2DE77483275E89DF00890350 /* support.h in Headers */,
 				2DA32B1524D6D83C00D96C84 /* MediaLibrarySelectorCellView.h in Headers */,
 				2D98B67F272B272300E655AE /* ScopeShaderTypes.h in Headers */,
 				2D747E4024B6580A00BBB987 /* MainWindowSidebarViewController.h in Headers */,
@@ -14062,7 +14053,6 @@
 				2DC657BF2746F67600583E14 /* RenameTabViewController.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */,
 				2DD3775127412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.h in Headers */,
-				2DE7748F275E89DF00890350 /* callbacks.h in Headers */,
 				2DC657A72746D9E400583E14 /* TabsWidget.h in Headers */,
 				2DD377552741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.h in Headers */,
 				2D9E905124F453960037D323 /* MediaLibraryPreferencesViewController.h in Headers */,
@@ -17491,14 +17481,12 @@
 				2DDBA26523E5F14A00051320 /* PlaylistHeaderView.m in Sources */,
 				2D046F3A25E2B17700F68459 /* DesignModeEventHandler.m in Sources */,
 				2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */,
-				2DE77489275E89DF00890350 /* support.c in Sources */,
 				2DAA4041269AF880006D2754 /* WeakRefWrapper.m in Sources */,
 				2DBC62D724CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m in Sources */,
 				2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */,
 				2DD3774B27404E11007AD315 /* VisualizationSettingsUtil.m in Sources */,
 				2D98B687272D56F100E655AE /* ScopeVisualizationViewController.m in Sources */,
 				2DDF87DA24027DA500CA8E91 /* PluginActionMenuItem.m in Sources */,
-				2DE77485275E89DF00890350 /* convgui.c in Sources */,
 				2DAD80A22416DBB100EB3075 /* CustomToolbarItem.m in Sources */,
 				2DC65809274A876300583E14 /* DeletePlaylistConfirmationController.m in Sources */,
 				0D56856D272197B30026F700 /* scope.c in Sources */,
@@ -17543,7 +17531,6 @@
 				2DC657C12746F67600583E14 /* RenameTabViewController.m in Sources */,
 				2D9F6535241BE78C00D9D16E /* SeekbarOverlay.m in Sources */,
 				2DEBA1D323E207A3000E4135 /* EqualizerWindowController.m in Sources */,
-				2DE7748B275E89DF00890350 /* callbacks.c in Sources */,
 				2DA8912325FFEB9B0084860D /* PlaylistGroup.m in Sources */,
 				2DD3775C27414BD9007AD315 /* ScopePreferencesWindowController.m in Sources */,
 				2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */,
@@ -17554,7 +17541,6 @@
 				2DC6582A274AB03800583E14 /* LyricsViewController.m in Sources */,
 				2D04701625E2D97D00F68459 /* WidgetMenuBuilder.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* SearchViewController.m in Sources */,
-				2DE77487275E89DF00890350 /* interface.c in Sources */,
 				2D747E3924B64E7600BBB987 /* SidebarSplitViewItem.m in Sources */,
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
 				2DC6583F274C361C00583E14 /* HolderWidget.m in Sources */,
