@@ -276,7 +276,8 @@ action_tree_append (const char *title, GtkTreeStore *store, GtkTreeIter *root_it
             if (!found) {
                 gtk_tree_store_append (store, &i, root_iter);
                 gtk_tree_store_set (store, &i, 0, p, 1, NULL, 2, -1, -1);
-                root_iter = &i;
+                memcpy (&newroot, &i, sizeof (GtkTreeIter));
+                root_iter = &newroot;
             }
         }
 
