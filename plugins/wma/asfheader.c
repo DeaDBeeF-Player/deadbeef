@@ -43,8 +43,7 @@
 
 #define SKIP_BYTES(fd,x) {\
     if (x > 0) {\
-        int64_t offs = deadbeef->ftell(fd);\
-        deadbeef->fseek(fd, offs+x, SEEK_CUR);\
+        deadbeef->fseek(fd, x, SEEK_CUR);\
     }\
 }
 
