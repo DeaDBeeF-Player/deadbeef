@@ -2179,7 +2179,9 @@ create_prefwin (void)
   gtk_widget_show (dsp_down_toolbtn);
   gtk_container_add (GTK_CONTAINER (dsp_toolbar), dsp_down_toolbtn);
 
-  dsp_configure_toolbtn = (GtkWidget*) gtk_tool_button_new_from_stock ("gtk-preferences");
+  tmp_image = gtk_image_new_from_stock ("gtk-preferences", tmp_toolbar_icon_size);
+  gtk_widget_show (tmp_image);
+  dsp_configure_toolbtn = (GtkWidget*) gtk_tool_button_new (tmp_image, "");
   gtk_widget_show (dsp_configure_toolbtn);
   gtk_container_add (GTK_CONTAINER (dsp_toolbar), dsp_configure_toolbtn);
 
@@ -2205,7 +2207,7 @@ create_prefwin (void)
   gtk_widget_show (dsp_preset);
   gtk_box_pack_start (GTK_BOX (hbox86), dsp_preset, FALSE, TRUE, 0);
 
-  dsp_preset_save = gtk_button_new_from_stock ("gtk-save");
+  dsp_preset_save = gtk_button_new_with_mnemonic ("_Save");
   gtk_widget_show (dsp_preset_save);
   gtk_box_pack_start (GTK_BOX (hbox86), dsp_preset_save, FALSE, FALSE, 0);
 
@@ -2350,7 +2352,7 @@ create_prefwin (void)
   gtk_widget_show (label164);
   gtk_box_pack_start (GTK_BOX (hbox141), label164, FALSE, FALSE, 0);
 
-  listview_group_spacing_adj = G_OBJECT(gtk_adjustment_new (0, 0, 1000, 1, 10, 10));
+  listview_group_spacing_adj = G_OBJECT(gtk_adjustment_new (0, 0, 1000, 1, 10, 0));
   listview_group_spacing = gtk_spin_button_new (GTK_ADJUSTMENT (listview_group_spacing_adj), 1, 0);
   gtk_widget_show (listview_group_spacing);
   gtk_box_pack_start (GTK_BOX (hbox141), listview_group_spacing, FALSE, TRUE, 0);
