@@ -238,6 +238,32 @@ on_dsp_popup_hide(GtkWidget* attach_widget, GtkMenu* menu)
     gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (togglebtn), FALSE);
 }
 
+#if GTK_CHECK_VERSION(3,0,0)
+static void
+_dsp_use_symbolic_icons(void) {
+    GtkWidget *addbtn = lookup_widget (prefwin, "dsp_add_toolbtn");
+    GtkWidget *configbtn = lookup_widget (prefwin, "dsp_configure_toolbtn");
+    GtkWidget *removebtn = lookup_widget (prefwin, "dsp_remove_toolbtn");
+    GtkWidget *upbtn = lookup_widget (prefwin, "dsp_up_toolbtn");
+    GtkWidget *downbtn = lookup_widget (prefwin, "dsp_down_toolbtn");
+
+    gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (addbtn), NULL);
+    gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON (addbtn), "list-add-symbolic");
+
+    gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (configbtn), NULL);
+    gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON (configbtn), "preferences-system-symbolic");
+
+    gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (removebtn), NULL);
+    gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON (removebtn), "list-remove-symbolic");
+
+    gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (upbtn), NULL);
+    gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON (upbtn), "go-up-symbolic");
+
+    gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (downbtn), NULL);
+    gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON (downbtn), "go-down-symbolic");
+}
+#endif
+
 void
 dsp_setup_init (GtkWidget *_prefwin) {
     prefwin = _prefwin;
@@ -281,6 +307,14 @@ dsp_setup_init (GtkWidget *_prefwin) {
     dsp_popup = make_dsp_popup_menu ();
     g_signal_connect ((gpointer)dsp_popup, "hide", G_CALLBACK (on_dsp_popup_hide), NULL);
     gtk_menu_attach_to_widget (GTK_MENU (dsp_popup), prefwin, NULL);
+
+    // Styling
+    GtkWidget *dsp_toolbar = lookup_widget (prefwin, "dsp_toolbar");
+    gtk_toolbar_set_icon_size (GTK_TOOLBAR (dsp_toolbar), GTK_ICON_SIZE_SMALL_TOOLBAR);
+
+#if GTK_CHECK_VERSION(3,0,0)
+    _dsp_use_symbolic_icons ();
+#endif
 }
 
 void
