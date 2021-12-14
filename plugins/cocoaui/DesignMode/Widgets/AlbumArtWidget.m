@@ -20,6 +20,8 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) ddb_playItem_t *track;
 @property (nonatomic) ddb_artwork_plugin_t *artwork_plugin;
 
+@property (nonatomic) dispatch_block_t throttleBlock;
+
 @end
 
 @implementation AlbumArtWidget
@@ -83,7 +85,14 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 }
 
 - (void)frameDidChange:(NSNotification *)notification {
-    [self update];
+    if (self.throttleBlock != nil) {
+        dispatch_block_cancel(self.throttleBlock);
+    }
+    self.throttleBlock = dispatch_block_create(0, ^{
+        [self update];
+        self.throttleBlock = nil;
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.01 * NSEC_PER_SEC), dispatch_get_main_queue(), self.throttleBlock);
 }
 
 - (void)update {

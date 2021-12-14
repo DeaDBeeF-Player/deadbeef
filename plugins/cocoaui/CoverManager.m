@@ -42,6 +42,10 @@ static CoverManager *g_DefaultCoverManager = nil;
 
 @interface CoverManager()
 
+/// A background serial queue for creating NSImages.
+/// It has to be serial, to load the images in the same order they were requested.
+@property (nonatomic) dispatch_queue_t loaderQueue;
+
 @property (nonatomic) NSCache<NSString *,CachedCover *> *cachedCovers;
 @property (nonatomic) ddb_artwork_plugin_t *artwork_plugin;
 @property (nonatomic,readwrite) NSImage *defaultCover;
@@ -75,6 +79,8 @@ static CoverManager *g_DefaultCoverManager = nil;
     // This however would duplicate the same image, for every track in every album, if the custom grouping is set per file.
     //_name_tf = deadbeef->tf_compile ("b:%album%-a:%artist%-t:%title%");
     _name_tf = deadbeef->tf_compile ("%_path_raw%");
+
+    _loaderQueue = dispatch_queue_create("CoverManagerLoaderQueue", NULL);
     return self;
 }
 
@@ -112,8 +118,8 @@ static CoverManager *g_DefaultCoverManager = nil;
 static void
 cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
     // Load the image on background queue
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        CoverManager *cm = [CoverManager defaultCoverManager];
+    CoverManager *cm = CoverManager.defaultCoverManager;
+    dispatch_async(cm.loaderQueue, ^{
         NSImage *img = [cm loadImageFromCover:cover];
 
         // Update the UI on main queue
