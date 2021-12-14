@@ -1927,7 +1927,6 @@
 		2DAA402E269AF864006D2754 /* TrackPositionFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAA402B269AF864006D2754 /* TrackPositionFormatter.h */; };
 		2DAA4040269AF879006D2754 /* TrackPositionFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA402C269AF864006D2754 /* TrackPositionFormatter.m */; };
 		2DAA4041269AF880006D2754 /* WeakRefWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D3992E025C2038700CFA936 /* WeakRefWrapper.m */; };
-		2DAA405B269B6308006D2754 /* MediaLibTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA405A269B6308006D2754 /* MediaLibTests.m */; };
 		2DAA406B269B6360006D2754 /* medialib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F334243531D7000FC130 /* medialib.c */; };
 		2DAA4070269B63A7006D2754 /* medialib.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; };
 		2DAA4071269B63B5006D2754 /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
@@ -17149,7 +17148,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DAA405B269B6308006D2754 /* MediaLibTests.m in Sources */,
 				2DA59DD125D00A9A00947C19 /* m3u.c in Sources */,
 				2DA59D9125D00A8E00947C19 /* M3UTests.m in Sources */,
 				2D0A6B0B2376E12200252E6D /* TrackSwitchingTests.m in Sources */,
