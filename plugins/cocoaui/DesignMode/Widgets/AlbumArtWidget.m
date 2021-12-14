@@ -92,7 +92,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         [self update];
         self.throttleBlock = nil;
     });
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.01 * NSEC_PER_SEC), dispatch_get_main_queue(), self.throttleBlock);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC/100), dispatch_get_main_queue(), self.throttleBlock);
 }
 
 - (void)update {
