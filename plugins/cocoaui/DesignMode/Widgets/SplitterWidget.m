@@ -180,7 +180,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
         self.normalizedDividerPosition = self.firstPaneSize;
         break;
     case HoldingModeSecond:
-        self.normalizedDividerPosition = self.secondPaneSize;
+        self.normalizedDividerPosition = splitViewSize - self.firstPaneSize;
         break;
     }
 }
