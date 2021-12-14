@@ -99,6 +99,10 @@
 
 - (void)renderToMetalLayer:(nonnull CAMetalLayer*)metalLayer drawData:(ddb_scope_draw_data_t *)drawData scale:(float)scale
 {
+    if (_viewportSize.width == 0 || _viewportSize.height == 0) {
+        return;
+    }
+
     _frameNum++;
 
     // Create a new command buffer for each render pass to the current drawable.
