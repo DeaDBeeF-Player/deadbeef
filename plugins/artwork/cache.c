@@ -24,42 +24,30 @@
 #ifdef HAVE_CONFIG_H
     #include "../../config.h"
 #endif
+#include "../../deadbeef.h"
+#include "artwork_internal.h"
+#include <dirent.h>
+#include <dispatch/dispatch.h>
+#include <libgen.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
-#include <libgen.h>
-#include <dirent.h>
-#include <unistd.h>
-#include <pthread.h>
 #include <sys/stat.h>
-#include <limits.h>
-#include "artwork_internal.h"
-#include "../../deadbeef.h"
+#include <time.h>
+#include <unistd.h>
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
 
 extern DB_functions_t *deadbeef;
 
-static uintptr_t files_mutex;
-static intptr_t tid;
-static uintptr_t thread_mutex;
-static uintptr_t thread_cond;
-static int terminate;
-static int32_t cache_expiry_seconds;
+static dispatch_queue_t sync_queue;
+static dispatch_queue_t worker_queue;
+static int _terminate;
+static int32_t _cache_clean_period;
 
-void cache_lock (void)
-{
-    deadbeef->mutex_lock (files_mutex);
-}
-
-void cache_unlock (void)
-{
-    deadbeef->mutex_unlock (files_mutex);
-}
-
-int make_cache_root_path (char *path, const size_t size)
-{
+int
+make_cache_root_path (char *path, const size_t size) {
     const char *xdg_cache = getenv ("XDG_CACHE_HOME");
     const char *cache_root = xdg_cache ? xdg_cache : getenv ("HOME");
     if (snprintf (path, size, xdg_cache ? "%s/deadbeef/" : "%s/.cache/deadbeef/", cache_root) >= size) {
@@ -70,15 +58,13 @@ int make_cache_root_path (char *path, const size_t size)
 }
 
 static int
-filter_scaled_dirs (const struct dirent *f)
-{
+filter_scaled_dirs (const struct dirent *f) {
     return !strncasecmp (f->d_name, "covers2-", 7);
 }
 
-void remove_cache_item (const char *entry_path, const char *subdir_path, const char *subdir_name, const char *entry_name)
-{
+void
+remove_cache_item (const char *entry_path, const char *subdir_path, const char *subdir_name, const char *entry_name) {
     /* Unlink the expired file, and the artist directory if it is empty */
-    cache_lock ();
     unlink (entry_path);
     rmdir (subdir_path);
 
@@ -88,7 +74,6 @@ void remove_cache_item (const char *entry_path, const char *subdir_path, const c
     struct dirent **scaled_dirs = NULL;
     int scaled_dirs_count = scandir (cache_root_path, &scaled_dirs, filter_scaled_dirs, NULL);
     if (scaled_dirs_count < 0) {
-        cache_unlock ();
         return;
     }
     for (int i = 0; i < scaled_dirs_count; i++) {
@@ -103,18 +88,23 @@ void remove_cache_item (const char *entry_path, const char *subdir_path, const c
         free (scaled_dirs[i]);
     }
     free (scaled_dirs);
-    cache_unlock ();
 }
 
 static int
-path_ok (const size_t dir_length, const char *entry)
-{
+path_ok (const size_t dir_length, const char *entry) {
     return strcmp (entry, ".") && strcmp (entry, "..") && dir_length + strlen (entry) + 1 < PATH_MAX;
 }
 
+static int should_terminate(void) {
+    __block int terminate = 0;
+    dispatch_sync(sync_queue, ^{
+        terminate = _terminate;
+    });
+    return terminate;
+}
+
 static void
-cache_cleaner_thread (void *none)
-{
+cache_cleaner_worker (void) {
     /* Find where it all happens */
     char covers_path[PATH_MAX];
     if (make_cache_root_path (covers_path, PATH_MAX-10)) {
@@ -123,16 +113,14 @@ cache_cleaner_thread (void *none)
     strcat (covers_path, "covers2");
     const size_t covers_path_length = strlen (covers_path);
 
-    deadbeef->mutex_lock (thread_mutex);
-    while (!terminate) {
+    while (!should_terminate()) {
         time_t oldest_mtime = time (NULL);
 
         /* Loop through the artist directories */
         DIR *covers_dir = opendir (covers_path);
         struct dirent *covers_subdir;
-        while (!terminate && covers_dir && (covers_subdir = readdir (covers_dir))) {
-            const int32_t cache_secs = cache_expiry_seconds;
-            deadbeef->mutex_unlock (thread_mutex);
+        while (!should_terminate() && covers_dir && (covers_subdir = readdir (covers_dir))) {
+            const int32_t cache_secs = _cache_clean_period;
             if (cache_secs > 0 && path_ok (covers_path_length, covers_subdir->d_name)) {
                 trace ("Analyse %s for expired files\n", covers_subdir->d_name);
                 const time_t cache_expiry = time (NULL) - cache_secs;
@@ -143,7 +131,7 @@ cache_cleaner_thread (void *none)
                 const size_t subdir_path_length = strlen (subdir_path);
                 DIR *subdir = opendir (subdir_path);
                 struct dirent *entry;
-                while (subdir && (entry = readdir (subdir))) {
+                while (!should_terminate() && subdir && (entry = readdir (subdir))) {
                     if (path_ok (subdir_path_length, entry->d_name)) {
                         char entry_path[PATH_MAX];
                         sprintf (entry_path, "%s/%s", subdir_path, entry->d_name);
@@ -166,87 +154,65 @@ cache_cleaner_thread (void *none)
                 }
             }
             usleep (100000);
-            deadbeef->mutex_lock (thread_mutex);
         }
         if (covers_dir) {
             closedir (covers_dir);
             covers_dir = NULL;
         }
 
-        /* Sleep until just after the oldest file expires */
-        if (cache_expiry_seconds > 0 && !terminate) {
-            struct timespec wake_time = {
-                .tv_sec = time (NULL) + max (60, oldest_mtime - time (NULL) + cache_expiry_seconds),
-                .tv_nsec = 999999
-            };
-            trace ("Cache cleaner sleeping for %d seconds\n", max (60, oldest_mtime - time (NULL) + cache_expiry_seconds));
-            pthread_cond_timedwait ( (pthread_cond_t *)thread_cond, (pthread_mutex_t *)thread_mutex, &wake_time);
+        if (!should_terminate()) {
+            break;
         }
 
-        /* Just go back to sleep if cache expiry is disabled */
-        while (cache_expiry_seconds <= 0 && !terminate) {
-            trace ("Cache cleaner sleeping forever\n");
-            pthread_cond_wait ( (pthread_cond_t *)thread_cond, (pthread_mutex_t *)thread_mutex);
+        __block int32_t cache_clean_period;
+        dispatch_sync(sync_queue, ^{
+            cache_clean_period = _cache_clean_period;
+        });
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, USEC_PER_SEC * cache_clean_period), worker_queue, ^{
+            cache_cleaner_worker ();
+        });
+    }
+}
+
+void
+cache_configchanged (void) {
+    dispatch_sync(sync_queue, ^{
+        const int32_t new_cache_expiry_seconds = deadbeef->conf_get_int ("artwork.cache.period", 48) * 60 * 60;
+        if (new_cache_expiry_seconds != _cache_clean_period) {
+            _cache_clean_period = new_cache_expiry_seconds;
         }
-    }
-    deadbeef->mutex_unlock (thread_mutex);
+    });
 }
 
-void cache_configchanged (void)
-{
-    const int32_t new_cache_expiry_seconds = deadbeef->conf_get_int ("artwork.cache.period", 48) * 60 * 60;
-    if (new_cache_expiry_seconds != cache_expiry_seconds) {
-        deadbeef->mutex_lock (thread_mutex);
-        cache_expiry_seconds = new_cache_expiry_seconds;
-        deadbeef->cond_signal (thread_cond);
-        deadbeef->mutex_unlock (thread_mutex);
-    }
-}
+int
+start_cache_cleaner (void) {
+    _terminate = 0;
 
-void stop_cache_cleaner (void)
-{
-    if (tid) {
-        deadbeef->mutex_lock (thread_mutex);
-        terminate = 1;
-        deadbeef->cond_signal (thread_cond);
-        deadbeef->mutex_unlock (thread_mutex);
-        deadbeef->thread_join (tid);
-        tid = 0;
-        trace ("Cache cleaner thread stopped\n");
-    }
+    sync_queue = dispatch_queue_create("ArtworkCacheSyncQueue", NULL);
+    worker_queue = dispatch_queue_create("ArtworkCacheCleanerQueue", NULL);
 
-    if (thread_mutex) {
-        deadbeef->mutex_free (thread_mutex);
-        thread_mutex = 0;
-    }
+    cache_configchanged();
 
-    if (thread_cond) {
-        deadbeef->cond_free (thread_cond);
-        thread_cond = 0;
-    }
-
-    if (files_mutex) {
-        deadbeef->mutex_free (files_mutex);
-        files_mutex = 0;
-    }
-}
-
-int start_cache_cleaner (void)
-{
-    terminate = 0;
-    cache_expiry_seconds = deadbeef->conf_get_int ("artwork.cache.period", 48) * 60 * 60;
-    files_mutex = deadbeef->mutex_create_nonrecursive ();
-    thread_mutex = deadbeef->mutex_create_nonrecursive ();
-    thread_cond = deadbeef->cond_create ();
-    if (files_mutex && thread_mutex && thread_cond) {
-        tid = deadbeef->thread_start_low_priority (cache_cleaner_thread, NULL);
-        trace ("Cache cleaner thread started\n");
-    }
-
-    if (!tid) {
-        stop_cache_cleaner ();
-        return -1;
-    }
+    dispatch_async(worker_queue, ^{
+        cache_cleaner_worker();
+    });
+    trace ("Cache cleaner started\n");
 
     return 0;
 }
+
+void
+stop_cache_cleaner (void) {
+    dispatch_sync(sync_queue, ^{
+        _terminate = 1;
+    });
+
+    dispatch_release(worker_queue);
+    worker_queue = NULL;
+    dispatch_release(sync_queue);
+    sync_queue = NULL;
+
+    trace ("Cache cleaner stopped\n");
+}
+

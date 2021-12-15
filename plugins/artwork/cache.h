@@ -24,8 +24,6 @@
 #ifndef __ARTWORK_CACHE_H
 #define __ARTWORK_CACHE_H
 
-void cache_lock(void);
-void cache_unlock(void);
 int make_cache_root_path(char *path, const size_t size);
 void remove_cache_item(const char *entry_path, const char *subdir_path, const char *subdir_name, const char *entry_name);
 void cache_configchanged(void);
