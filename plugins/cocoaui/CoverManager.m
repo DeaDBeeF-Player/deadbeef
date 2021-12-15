@@ -48,6 +48,7 @@ static CoverManager *g_DefaultCoverManager = nil;
 
 @property (nonatomic) NSCache<NSString *,CachedCover *> *cachedCovers;
 @property (nonatomic) ddb_artwork_plugin_t *artwork_plugin;
+@property (nonatomic) NSString *defaultCoverPath;
 @property (nonatomic,readwrite) NSImage *defaultCover;
 @property (nonatomic) char *name_tf;
 
@@ -56,6 +57,9 @@ static CoverManager *g_DefaultCoverManager = nil;
 @implementation CoverManager
 
 - (void)dealloc {
+    if (_artwork_plugin) {
+        _artwork_plugin->remove_listener (_artwork_listener, (__bridge void *)(self));
+    }
     deadbeef->tf_free (_name_tf);
     _name_tf = NULL;
 }
@@ -67,10 +71,22 @@ static CoverManager *g_DefaultCoverManager = nil;
     return g_DefaultCoverManager;
 }
 
+static void
+_artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
+    CoverManager *manager = (__bridge CoverManager *)user_data;
+
+    if (event == DDB_ARTWORK_SETTINGS_DID_CHANGE) {
+        [manager settingsDidChange];
+    }
+}
+
 - (CoverManager *)init {
     self = [super init];
     _artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
-    _defaultCover = [NSImage imageNamed:@"noartwork.png"];
+    if (_artwork_plugin == NULL) {
+        return self;
+    }
+    [self updateDefaultCover];
 
     _cachedCovers = [NSCache new];
     _cachedCovers.countLimit = CACHE_SIZE;
@@ -81,7 +97,36 @@ static CoverManager *g_DefaultCoverManager = nil;
     _name_tf = deadbeef->tf_compile ("%_path_raw%");
 
     _loaderQueue = dispatch_queue_create("CoverManagerLoaderQueue", NULL);
+
+    _artwork_plugin->add_listener(_artwork_listener, (__bridge void *)(self));
+
     return self;
+}
+
+- (void)settingsDidChange {
+    [self updateDefaultCover];
+}
+
+- (void)updateDefaultCover {
+    if (_artwork_plugin == NULL) {
+        return;
+    }
+    char path[PATH_MAX];
+    _artwork_plugin->default_image_path(path, sizeof(path));
+
+    NSString *defaultCoverPath = [NSString stringWithUTF8String:path];
+
+    if (![self.defaultCoverPath isEqualToString:defaultCoverPath]) {
+        self.defaultCoverPath = defaultCoverPath;
+        self.defaultCover = [[NSImage alloc] initWithContentsOfFile:defaultCoverPath];
+        if (self.defaultCover == nil) {
+            self.defaultCover = [NSImage imageWithSize:NSMakeSize(1, 1) flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
+                [NSColor.windowBackgroundColor set];
+                NSRectFill(NSMakeRect(0, 0, 1, 1));
+                return YES;
+            }];
+        }
+    }
 }
 
 - (NSString *)hashForTrack:(DB_playItem_t *)track  {

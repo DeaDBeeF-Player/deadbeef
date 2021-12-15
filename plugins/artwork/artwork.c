@@ -1322,6 +1322,15 @@ artwork_remove_listener (ddb_artwork_listener_t listener, void *user_data) {
 }
 
 static void
+artwork_default_image_path (char *path, size_t size) {
+    *path = 0;
+    if (nocover_path != NULL) {
+        strncat (path, nocover_path, size-1);
+    }
+
+}
+
+static void
 get_fetcher_preferences (void) {
     artwork_disable_cache = deadbeef->conf_get_int ("artwork.disable_cache", DEFAULT_DISABLE_CACHE);
     artwork_save_to_music_folders = deadbeef->conf_get_int ("artwork.save_to_music_folders", DEFAULT_SAVE_TO_MUSIC_FOLDERS);
@@ -1364,18 +1373,31 @@ get_fetcher_preferences (void) {
     artwork_enable_wos = deadbeef->conf_get_int ("artwork.enable_wos", 0);
 #endif
     missing_artwork = deadbeef->conf_get_int ("artwork.missing_artwork", 1);
-    if (missing_artwork == 2) {
-        deadbeef->conf_lock ();
+    deadbeef->conf_lock ();
+    if (missing_artwork == 0) {
+        free(nocover_path);
+        nocover_path = NULL;
+    }
+    else if (missing_artwork == 1) {
+        const char *res_dir = deadbeef->get_system_dir(DDB_SYS_DIR_PLUGIN_RESOURCES);
+        char path[PATH_MAX];
+        snprintf (path, sizeof (path), "%s/noartwork.png", res_dir);
+        if (nocover_path == NULL || strcmp(path, nocover_path)) {
+            free(nocover_path);
+            nocover_path = strdup (path);
+        }
+    }
+    else if (missing_artwork == 2) {
         const char *new_nocover_path = deadbeef->conf_get_str_fast ("artwork.nocover_path", NULL);
-        if (!strings_equal (new_nocover_path, nocover_path)) {
+        if (nocover_path == NULL || !strings_equal (new_nocover_path, nocover_path)) {
             char *old_nocover_path = nocover_path;
             nocover_path = new_nocover_path ? strdup (new_nocover_path) : NULL;
             if (old_nocover_path) {
                 free (old_nocover_path);
             }
         }
-        deadbeef->conf_unlock ();
     }
+    deadbeef->conf_unlock ();
 }
 
 static void
@@ -1681,6 +1703,7 @@ ddb_artwork_plugin_t plugin = {
     .cover_info_release = sync_cover_info_release,
     .add_listener = artwork_add_listener,
     .remove_listener = artwork_remove_listener,
+    .default_image_path = artwork_default_image_path,
 };
 
 DB_plugin_t *

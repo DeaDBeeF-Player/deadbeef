@@ -141,6 +141,9 @@ typedef struct {
 
     void
     (*remove_listener) (ddb_artwork_listener_t listener, void *user_data);
+
+    void
+    (*default_image_path) (char *path, size_t size);
 } ddb_artwork_plugin_t;
 
 #endif /*__ARTWORK_H*/
