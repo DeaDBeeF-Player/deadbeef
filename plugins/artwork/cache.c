@@ -98,7 +98,7 @@ path_ok (const size_t dir_length, const char *entry) {
 static int should_terminate(void) {
     __block int terminate = 0;
     dispatch_sync(sync_queue, ^{
-        terminate = _terminate || _file_expiration_time == 0;
+        terminate = (_terminate || _file_expiration_time == 0);
     });
     return terminate;
 }
