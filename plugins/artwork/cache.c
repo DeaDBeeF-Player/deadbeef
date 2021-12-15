@@ -44,7 +44,7 @@ extern DB_functions_t *deadbeef;
 static dispatch_queue_t sync_queue;
 static dispatch_queue_t worker_queue;
 static int _terminate;
-static int32_t _cache_clean_period;
+static int32_t _file_expiration_time; // Seconds since the file creation, until the file expires.
 
 int
 make_cache_root_path (char *path, const size_t size) {
@@ -98,7 +98,7 @@ path_ok (const size_t dir_length, const char *entry) {
 static int should_terminate(void) {
     __block int terminate = 0;
     dispatch_sync(sync_queue, ^{
-        terminate = _terminate;
+        terminate = _terminate || _file_expiration_time == 0;
     });
     return terminate;
 }
@@ -113,74 +113,67 @@ cache_cleaner_worker (void) {
     strcat (covers_path, "covers2");
     const size_t covers_path_length = strlen (covers_path);
 
-    while (!should_terminate()) {
-        time_t oldest_mtime = time (NULL);
+    time_t oldest_mtime = time (NULL);
 
-        /* Loop through the artist directories */
-        DIR *covers_dir = opendir (covers_path);
-        struct dirent *covers_subdir;
-        while (!should_terminate() && covers_dir && (covers_subdir = readdir (covers_dir))) {
-            const int32_t cache_secs = _cache_clean_period;
-            if (cache_secs > 0 && path_ok (covers_path_length, covers_subdir->d_name)) {
-                trace ("Analyse %s for expired files\n", covers_subdir->d_name);
-                const time_t cache_expiry = time (NULL) - cache_secs;
+    /* Loop through the artist directories */
+    DIR *covers_dir = opendir (covers_path);
+    struct dirent *covers_subdir;
+    while (!should_terminate() && covers_dir && (covers_subdir = readdir (covers_dir))) {
+        const int32_t cache_secs = _file_expiration_time;
+        if (cache_secs > 0 && path_ok (covers_path_length, covers_subdir->d_name)) {
+            trace ("Analyse %s for expired files\n", covers_subdir->d_name);
+            const time_t cache_expiry = time (NULL) - cache_secs;
 
-                /* Loop through the image files in this artist directory */
-                char subdir_path[PATH_MAX];
-                sprintf (subdir_path, "%s/%s", covers_path, covers_subdir->d_name);
-                const size_t subdir_path_length = strlen (subdir_path);
-                DIR *subdir = opendir (subdir_path);
-                struct dirent *entry;
-                while (!should_terminate() && subdir && (entry = readdir (subdir))) {
-                    if (path_ok (subdir_path_length, entry->d_name)) {
-                        char entry_path[PATH_MAX];
-                        sprintf (entry_path, "%s/%s", subdir_path, entry->d_name);
+            /* Loop through the image files in this artist directory */
+            char subdir_path[PATH_MAX];
+            sprintf (subdir_path, "%s/%s", covers_path, covers_subdir->d_name);
+            const size_t subdir_path_length = strlen (subdir_path);
+            DIR *subdir = opendir (subdir_path);
+            struct dirent *entry;
+            while (!should_terminate() && subdir && (entry = readdir (subdir))) {
+                if (path_ok (subdir_path_length, entry->d_name)) {
+                    char entry_path[PATH_MAX];
+                    sprintf (entry_path, "%s/%s", subdir_path, entry->d_name);
 
-                        /* Test against the cache expiry time (cache invalidation resets are not handled here) */
-                        struct stat stat_buf;
-                        if (!stat (entry_path, &stat_buf)) {
-                            if (stat_buf.st_mtime <= cache_expiry) {
-                                trace ("%s expired from cache\n", entry_path);
-                                remove_cache_item (entry_path, subdir_path, covers_subdir->d_name, entry->d_name);
-                            }
-                            else if (stat_buf.st_mtime < oldest_mtime) {
-                                oldest_mtime = stat_buf.st_mtime;
-                            }
+                    /* Test against the cache expiry time (cache invalidation resets are not handled here) */
+                    struct stat stat_buf;
+                    if (!stat (entry_path, &stat_buf)) {
+                        if (stat_buf.st_mtime <= cache_expiry) {
+                            trace ("%s expired from cache\n", entry_path);
+                            remove_cache_item (entry_path, subdir_path, covers_subdir->d_name, entry->d_name);
+                        }
+                        else if (stat_buf.st_mtime < oldest_mtime) {
+                            oldest_mtime = stat_buf.st_mtime;
                         }
                     }
                 }
-                if (subdir) {
-                    closedir (subdir);
-                }
             }
-            usleep (100000);
+            if (subdir) {
+                closedir (subdir);
+            }
         }
-        if (covers_dir) {
-            closedir (covers_dir);
-            covers_dir = NULL;
-        }
+        usleep (100000);
+    }
+    if (covers_dir) {
+        closedir (covers_dir);
+        covers_dir = NULL;
+    }
 
-        if (!should_terminate()) {
-            break;
-        }
-
-        __block int32_t cache_clean_period;
-        dispatch_sync(sync_queue, ^{
-            cache_clean_period = _cache_clean_period;
-        });
-
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, USEC_PER_SEC * cache_clean_period), worker_queue, ^{
-            cache_cleaner_worker ();
-        });
+    if (should_terminate()) {
+        return;
     }
 }
 
 void
 cache_configchanged (void) {
     dispatch_sync(sync_queue, ^{
-        const int32_t new_cache_expiry_seconds = deadbeef->conf_get_int ("artwork.cache.period", 48) * 60 * 60;
-        if (new_cache_expiry_seconds != _cache_clean_period) {
-            _cache_clean_period = new_cache_expiry_seconds;
+        int32_t old_expiration_time = _file_expiration_time;
+        _file_expiration_time = deadbeef->conf_get_int ("artwork.cache.expiration_time", 0) * 60 * 60;
+        if (old_expiration_time == 0 && _file_expiration_time != 0) {
+            dispatch_async(worker_queue, ^{
+                cache_cleaner_worker();
+            });
+            trace ("Cache cleaner started\n");
         }
     });
 }
@@ -193,11 +186,6 @@ start_cache_cleaner (void) {
     worker_queue = dispatch_queue_create("ArtworkCacheCleanerQueue", NULL);
 
     cache_configchanged();
-
-    dispatch_async(worker_queue, ^{
-        cache_cleaner_worker();
-    });
-    trace ("Cache cleaner started\n");
 
     return 0;
 }

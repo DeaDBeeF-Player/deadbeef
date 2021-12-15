@@ -1629,15 +1629,8 @@ artwork_plugin_start (void)
 }
 
 static const char settings_dlg[] =
-// on android, cache is always off and music is saved to music folders by default
-#ifndef ANDROID
-    "property \"Disable disk cache\" checkbox artwork.disable_cache 0;\n"
-    "property \"Save downloaded covers to music folders\" checkbox artwork.save_to_music_folders 0;\n"
-#endif
     "property \"Fetch from embedded tags\" checkbox artwork.enable_embedded 1;\n"
     "property \"Fetch from local folder\" checkbox artwork.enable_localfolder 1;\n"
-    "property \"Local file mask\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
-    "property \"Artwork folders\" entry artwork.folders \"" DEFAULT_FOLDERS "\";\n"
 #ifdef USE_VFS_CURL
     "property \"Fetch from Last.fm\" checkbox artwork.enable_lastfm 0;\n"
 #if ENABLE_MUSICBRAINZ
@@ -1655,6 +1648,14 @@ static const char settings_dlg[] =
     "property box hbox[1] height=-1;"
     "property \"When no artwork is found\" select[3] artwork.missing_artwork 1 \"leave blank\" \"use DeaDBeeF default cover\" \"display custom image\";"
     "property \"Custom image path\" file artwork.nocover_path \"\";\n"
+    "property \"Save downloaded covers to music folders\" checkbox artwork.save_to_music_folders 0;\n"
+#endif
+    "property \"Local file mask\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
+    "property \"Artwork folders\" entry artwork.folders \"" DEFAULT_FOLDERS "\";\n"
+// on android, cache is always off and music is saved to music folders by default
+#ifndef ANDROID
+    "property \"Disable disk cache\" checkbox artwork.disable_cache 0;\n"
+    "property \"Cache refresh (hrs)\" spinbtn[0,1000,1] artwork.cache.expiration_time 0;\n"
 #endif
 ;
 
