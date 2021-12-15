@@ -168,7 +168,7 @@ cache_cleaner_worker (void) {
         dispatch_sync(sync_queue, ^{
             cache_clean_period = _cache_clean_period;
         });
-        
+
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, USEC_PER_SEC * cache_clean_period), worker_queue, ^{
             cache_cleaner_worker ();
         });
