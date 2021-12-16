@@ -86,6 +86,8 @@ static int64_t cancellation_idx;
 #define MAX_COVERS_IN_CACHE 20
 static ddb_cover_info_t *cover_cache[MAX_COVERS_IN_CACHE];
 
+#define DEFAULT_SAVE_TO_MUSIC_FOLDERS_FILENAME "cover.jpg"
+
 #ifdef ANDROID
 #define DEFAULT_DISABLE_CACHE 1
 #define DEFAULT_SAVE_TO_MUSIC_FOLDERS 1
@@ -97,6 +99,8 @@ static int artwork_save_to_music_folders = DEFAULT_SAVE_TO_MUSIC_FOLDERS;
 int artwork_disable_cache = DEFAULT_DISABLE_CACHE;
 int artwork_save_to_music_folders = DEFAULT_SAVE_TO_MUSIC_FOLDERS;
 #endif
+
+static char *save_to_music_folders_filename;
 
 static int artwork_enable_embedded;
 static int artwork_enable_local;
@@ -946,14 +950,27 @@ process_query (ddb_cover_info_t *cover) {
                 }
                 size_t len = slash - cover->filepath + 1;
 
-                char covername[] = "cover.jpg";  // FIXME: configurable name
-                char coverpath[len + sizeof (covername)];
-                memcpy (coverpath, cover->filepath, len);
-                memcpy (coverpath + len, covername, sizeof (covername));
+                __block char *covername = NULL;
+                dispatch_sync(sync_queue, ^{
+                    if (save_to_music_folders_filename != NULL) {
+                        covername = strdup(save_to_music_folders_filename);
+                    }
+                });
+                if (covername != NULL) {
+                    size_t covername_len = strlen (covername) + 1;
+                    size_t coverpath_len = len + covername_len;
+                    char *coverpath = malloc(coverpath_len);
+                    memcpy (coverpath, cover->filepath, len);
+                    memcpy (coverpath + len, covername, covername_len);
+                    free (covername);
+                    covername = NULL;
 
-                struct stat stat_struct;
-                if (stat (coverpath, &stat_struct)) {
-                    copy_file(cover->image_filename, coverpath);
+                    struct stat stat_struct;
+                    if (stat (coverpath, &stat_struct)) {
+                        copy_file(cover->image_filename, coverpath);
+                    }
+                    free (coverpath);
+                    coverpath = NULL;
                 }
             }
 
@@ -1332,12 +1349,17 @@ artwork_default_image_path (char *path, size_t size) {
 
 static void
 get_fetcher_preferences (void) {
+    deadbeef->conf_lock ();
     artwork_disable_cache = deadbeef->conf_get_int ("artwork.disable_cache", DEFAULT_DISABLE_CACHE);
     artwork_save_to_music_folders = deadbeef->conf_get_int ("artwork.save_to_music_folders", DEFAULT_SAVE_TO_MUSIC_FOLDERS);
 
+    const char *save_filename = deadbeef->conf_get_str_fast ("artwork.save_to_music_folders_relative_path", DEFAULT_SAVE_TO_MUSIC_FOLDERS_FILENAME);
+
+    free (save_to_music_folders_filename);
+    save_to_music_folders_filename = strdup(save_filename);
+
     artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
     artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
-    deadbeef->conf_lock ();
     const char *new_artwork_filemask = deadbeef->conf_get_str_fast ("artwork.filemask", NULL);
     if (!new_artwork_filemask || !new_artwork_filemask[0]) {
         new_artwork_filemask = DEFAULT_FILEMASK;
@@ -1402,55 +1424,55 @@ get_fetcher_preferences (void) {
 
 static void
 artwork_configchanged (void) {
+    __block int need_clear_queue = 0;
     cache_configchanged ();
+    dispatch_sync (sync_queue, ^{
+        int old_artwork_disable_cache = artwork_disable_cache;
 
-    int old_artwork_disable_cache = artwork_disable_cache;
-
-    int old_artwork_enable_embedded = artwork_enable_embedded;
-    int old_artwork_enable_local = artwork_enable_local;
-    char *old_artwork_filemask = strdup(artwork_filemask ? artwork_filemask : "");
-    char *old_artwork_folders = strdup(artwork_folders ? artwork_folders : "");
+        int old_artwork_enable_embedded = artwork_enable_embedded;
+        int old_artwork_enable_local = artwork_enable_local;
+        char *old_artwork_filemask = strdup(artwork_filemask ? artwork_filemask : "");
+        char *old_artwork_folders = strdup(artwork_folders ? artwork_folders : "");
 #ifdef USE_VFS_CURL
-    int old_artwork_enable_lfm = artwork_enable_lfm;
+        int old_artwork_enable_lfm = artwork_enable_lfm;
 #if ENABLE_MUSICBRAINZ
-    int old_artwork_enable_mb = artwork_enable_mb;
+        int old_artwork_enable_mb = artwork_enable_mb;
 #endif
 #if ENABLE_ALBUMART_ORG
-    int old_artwork_enable_aao = artwork_enable_aao;
+        int old_artwork_enable_aao = artwork_enable_aao;
 #endif
-    int old_artwork_enable_wos = artwork_enable_wos;
+        int old_artwork_enable_wos = artwork_enable_wos;
 #endif
-    int old_missing_artwork = missing_artwork;
-    const char *old_nocover_path = nocover_path;
-//    int old_scale_towards_longer = scale_towards_longer;
+        int old_missing_artwork = missing_artwork;
+        const char *old_nocover_path = nocover_path;
+        //    int old_scale_towards_longer = scale_towards_longer;
 
-    get_fetcher_preferences ();
+        get_fetcher_preferences ();
 
-    int cache_did_reset = 0;
-    if (old_artwork_disable_cache != artwork_disable_cache || old_missing_artwork != missing_artwork || old_nocover_path != nocover_path) {
-        trace ("artwork config changed, invalidating default artwork...\n");
-        default_reset_time = time (NULL);
-        cache_did_reset = 1;
-    }
+        int cache_did_reset = 0;
+        if (old_artwork_disable_cache != artwork_disable_cache || old_missing_artwork != missing_artwork || old_nocover_path != nocover_path) {
+            trace ("artwork config changed, invalidating default artwork...\n");
+            default_reset_time = time (NULL);
+            cache_did_reset = 1;
+        }
 
-    if (old_artwork_enable_embedded != artwork_enable_embedded
-        || old_artwork_enable_local != artwork_enable_local
+        if (old_artwork_enable_embedded != artwork_enable_embedded
+            || old_artwork_enable_local != artwork_enable_local
 #ifdef USE_VFS_CURL
-        || old_artwork_enable_lfm != artwork_enable_lfm
+            || old_artwork_enable_lfm != artwork_enable_lfm
 #if ENABLE_MUSICBRAINZ
-        || old_artwork_enable_mb != artwork_enable_mb
+            || old_artwork_enable_mb != artwork_enable_mb
 #endif
 #if ENABLE_ALBUMART_ORG
-        || old_artwork_enable_aao != artwork_enable_aao
+            || old_artwork_enable_aao != artwork_enable_aao
 #endif
-        || old_artwork_enable_wos != artwork_enable_wos
+            || old_artwork_enable_wos != artwork_enable_wos
 #endif
-        || strcmp(old_artwork_filemask, artwork_filemask)
-        || strcmp(old_artwork_folders, artwork_folders)
-        || cache_did_reset
-        ) {
+            || strcmp(old_artwork_filemask, artwork_filemask)
+            || strcmp(old_artwork_folders, artwork_folders)
+            || cache_did_reset
+            ) {
 
-        dispatch_sync (sync_queue, ^{
             /* All artwork is now (including this second) obsolete */
             deadbeef->conf_set_int64 ("artwork.cache_reset_time", cache_reset_time);
 
@@ -1465,11 +1487,14 @@ artwork_configchanged (void) {
                     listeners[i](DDB_ARTWORK_SETTINGS_DID_CHANGE, listeners_userdata[i], 0, 0);
                 }
             }
-        });
+            need_clear_queue = 1;
+        }
+        free (old_artwork_filemask);
+        free (old_artwork_folders);
+    });
+    if (need_clear_queue) {
         queue_clear();
     }
-    free (old_artwork_filemask);
-    free (old_artwork_folders);
 }
 
 static int
@@ -1553,13 +1578,10 @@ artwork_plugin_stop (void) {
     for (int i = 0; i < FETCH_CONCURRENT_LIMIT; i++) {
         dispatch_semaphore_wait(fetch_semaphore, DISPATCH_TIME_FOREVER);
     }
-    printf ("release fetch\n");
     dispatch_release(fetch_queue);
     fetch_queue = NULL;
-    printf ("release process\n");
     dispatch_release(process_queue);
     process_queue = NULL;
-    printf ("release sync\n");
     dispatch_release(sync_queue);
     sync_queue = NULL;
 
@@ -1567,21 +1589,19 @@ artwork_plugin_stop (void) {
     for (int i = 0; i < FETCH_CONCURRENT_LIMIT; i++) {
         dispatch_semaphore_signal (fetch_semaphore);
     }
-    printf ("release fetch_semaphore\n");
     dispatch_release(fetch_semaphore);
     fetch_semaphore = NULL;
-    printf ("released all\n");
 
     cover_cache_free ();
 
     cover_info_cleanup();
 
-    if (artwork_filemask) {
-        free (artwork_filemask);
-    }
-    if (artwork_folders) {
-        free (artwork_folders);
-    }
+    free (save_to_music_folders_filename);
+    save_to_music_folders_filename = NULL;
+    free (artwork_filemask);
+    artwork_filemask = NULL;
+    free (artwork_folders);
+    artwork_folders = NULL;
 
     if (album_tf) {
         deadbeef->tf_free (album_tf);
@@ -1649,6 +1669,7 @@ static const char settings_dlg[] =
     "property \"When no artwork is found\" select[3] artwork.missing_artwork 1 \"leave blank\" \"use DeaDBeeF default cover\" \"display custom image\";"
     "property \"Custom image path\" file artwork.nocover_path \"\";\n"
     "property \"Save downloaded covers to music folders\" checkbox artwork.save_to_music_folders 0;\n"
+    "property \"Save to file name\" entry artwork.save_to_music_folders_relative_path \"cover.jpg\";\n"
 #endif
     "property \"Local file mask\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
     "property \"Artwork folders\" entry artwork.folders \"" DEFAULT_FOLDERS "\";\n"
