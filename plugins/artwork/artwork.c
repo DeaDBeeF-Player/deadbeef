@@ -834,6 +834,23 @@ _get_marker_path(const char *path) {
     return marker_path;
 }
 
+static void _touch(char *marker_path) {
+    struct stat stat_struct;
+    if (0 != stat (marker_path, &stat_struct)) {
+        FILE *fp = fopen(marker_path,"w+b");
+        if (fp != NULL) {
+            (void)fclose(fp);
+        }
+    }
+    else {
+#ifdef _WIN32
+        (void)_utime(marker_path, NULL);
+#else
+        (void)utimes(marker_path, NULL);
+#endif
+    }
+}
+
 // Behavior:
 // Local cover: path is returned
 // Found in cache: path is returned
@@ -1007,17 +1024,7 @@ process_query (ddb_cover_info_t *cover) {
     }
     else {
         char *marker_path = _get_marker_path(cache_path);
-        struct stat stat_struct;
-        if (0 != stat (marker_path, &stat_struct)) {
-            (void)fclose(fopen(marker_path,"w+b"));
-        }
-        else {
-#ifdef _WIN32
-            (void)_utime(marker_path, NULL);
-#else
-            (void)utimes(marker_path, NULL);
-#endif
-        }
+        _touch(marker_path);
         free (marker_path);
     }
 #endif
