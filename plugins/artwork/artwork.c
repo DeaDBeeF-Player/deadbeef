@@ -44,6 +44,10 @@
 #include <sys/prctl.h>
 #endif
 #include <sys/stat.h>
+#include <sys/time.h>
+#ifdef _WIN32
+#include <sys/utime.h>
+#endif
 #include <unistd.h>
 
 #include "../../deadbeef.h"
@@ -711,7 +715,7 @@ error:
 static int
 web_lookups (const char *cache_path, ddb_cover_info_t *cover) {
     if (!cache_path) {
-        return 0;
+        return -1;
     }
 #if USE_VFS_CURL
     if (artwork_enable_lfm) {
@@ -720,7 +724,7 @@ web_lookups (const char *cache_path, ddb_cover_info_t *cover) {
             return 1;
         }
         if (errno == ECONNABORTED) {
-            return 0;
+            return -1;
         }
     }
 #if ENABLE_MUSICBRAINZ
@@ -731,7 +735,7 @@ web_lookups (const char *cache_path, ddb_cover_info_t *cover) {
             return 1;
         }
         if (errno == ECONNABORTED) {
-            return 0;
+            return -1;
         }
     }
 #endif
@@ -743,7 +747,7 @@ web_lookups (const char *cache_path, ddb_cover_info_t *cover) {
             return 1;
         }
         if (errno == ECONNABORTED) {
-            return 0;
+            return -1;
         }
     }
 #endif
@@ -784,7 +788,6 @@ scandir_plug (const char *vfs_fname)
 }
 
 // might be used from process_query, when cache impl is finalized
-#if 0
 static int
 path_more_recent (const char *fname, const time_t placeholder_mtime)
 {
@@ -817,7 +820,19 @@ recheck_missing_artwork (const char *input_fname, const time_t placeholder_mtime
     free (fname);
     return res;
 }
-#endif
+
+static char *
+_get_marker_path(const char *path) {
+    size_t path_len = strlen (path);
+    size_t marker_path_len = path_len + 8;
+
+    char *marker_path = malloc (marker_path_len);
+
+    memcpy (marker_path, path, path_len);
+    memcpy (marker_path + path_len, ".marker", 8);
+
+    return marker_path;
+}
 
 // Behavior:
 // Local cover: path is returned
@@ -894,88 +909,116 @@ process_query (ddb_cover_info_t *cover) {
     }
 
     // Don't allow downloading from the web without disk cache.
-    // Even if saving to music folders is enabled -- we don't want to flood.
-    // Mainly because we don't know if saving to music folder would succeed,
-    // and whether using local covers is turned on.
+    // Even if saving to music folders is enabled -- we don't want to flood,
+    // e.g. if saving to music folder fails due to readonly FS.
     if (!cache_path) {
         cover->cover_found = 0;
         return;
     }
 
 #ifdef USE_VFS_CURL
-#if 0
-#warning FIXME not needed during development; also this assumes that disk cache is used for everything
-    /* Flood control, don't retry missing artwork for an hour unless something changes */
-    struct stat placeholder_stat;
-    if (!stat (cache_path, &placeholder_stat) && placeholder_stat.st_mtime + 60*60 > time (NULL)) {
-        int recheck = recheck_missing_artwork (filepath, placeholder_stat.st_mtime);
-        if (!recheck) {
-            return 0;
+
+    if (cache_path) {
+        // Flood control, don't retry missing artwork for an hour unless something changes
+        struct stat placeholder_stat;
+
+        char *marker_path = _get_marker_path(cache_path);
+        int res = stat (marker_path, &placeholder_stat);
+        free (marker_path);
+        marker_path = NULL;
+
+        if (!res && placeholder_stat.st_mtime + 60*60 > time (NULL)) {
+            int recheck = recheck_missing_artwork (cover->filepath, placeholder_stat.st_mtime);
+            if (!recheck) {
+                return;
+            }
         }
     }
-#endif
 
     /* Web lookups */
+    int res = -1;
+    // don't attempt to load AY covers from regular music services
     if (artwork_enable_wos && strlen (cover->filepath) > 3 && !strcasecmp (cover->filepath+strlen (cover->filepath)-3, ".ay")) {
         if (!fetch_from_wos (cover->title, cache_path)) {
             cover->image_filename = strdup(cache_path);
             cover->cover_found = 1;
-            return;
+            res = 0;
         }
         if (errno == ECONNABORTED) {
             cover->cover_found = 0;
-            return;
+            res = -1;
         }
     }
-    else { // don't attempt to load ay covers from regular music services
-        int res = web_lookups (cache_path, cover);
-        if (res < 0) {
-            /* Try stripping parenthesised text off the end of the album name */
-            char *p = strpbrk (cover->album, "([");
-            if (p) {
-                *p = '\0';
-                res = web_lookups (cache_path, cover);
-                *p = '(';
+    else {
+        res = web_lookups (cache_path, cover);
+    }
+    if (res < 0) {
+        /* Try stripping parenthesised text off the end of the album name */
+        char *p = strpbrk (cover->album, "([");
+        if (p) {
+            *p = '\0';
+            res = web_lookups (cache_path, cover);
+            *p = '(';
+        }
+    }
+    if (res >= 0) {
+        // Cover obtained, delete the marker if present
+        char *marker_path = _get_marker_path(cache_path);
+        (void)unlink(marker_path);
+        free (marker_path);
+        marker_path = NULL;
+
+        cover->cover_found = res;
+
+        if (res && artwork_save_to_music_folders && cover->image_filename) {
+            // save to the music folder (only if not present)
+            char *slash = strrchr (cover->filepath, '/');
+
+            if (!slash) {
+                return;
+            }
+            size_t len = slash - cover->filepath + 1;
+
+            __block char *covername = NULL;
+            dispatch_sync(sync_queue, ^{
+                if (save_to_music_folders_filename != NULL) {
+                    covername = strdup(save_to_music_folders_filename);
+                }
+            });
+            if (covername != NULL) {
+                size_t covername_len = strlen (covername) + 1;
+                size_t coverpath_len = len + covername_len;
+                char *coverpath = malloc(coverpath_len);
+                memcpy (coverpath, cover->filepath, len);
+                memcpy (coverpath + len, covername, covername_len);
+                free (covername);
+                covername = NULL;
+
+                struct stat stat_struct;
+                if (stat (coverpath, &stat_struct)) {
+                    copy_file(cover->image_filename, coverpath);
+                }
+                free (coverpath);
+                coverpath = NULL;
             }
         }
-        if (res >= 0) {
-            cover->cover_found = res;
 
-            if (res && artwork_save_to_music_folders && cover->image_filename) {
-                // save to the music folder (only if not present)
-                char *slash = strrchr (cover->filepath, '/');
-
-                if (!slash) {
-                    return;
-                }
-                size_t len = slash - cover->filepath + 1;
-
-                __block char *covername = NULL;
-                dispatch_sync(sync_queue, ^{
-                    if (save_to_music_folders_filename != NULL) {
-                        covername = strdup(save_to_music_folders_filename);
-                    }
-                });
-                if (covername != NULL) {
-                    size_t covername_len = strlen (covername) + 1;
-                    size_t coverpath_len = len + covername_len;
-                    char *coverpath = malloc(coverpath_len);
-                    memcpy (coverpath, cover->filepath, len);
-                    memcpy (coverpath + len, covername, covername_len);
-                    free (covername);
-                    covername = NULL;
-
-                    struct stat stat_struct;
-                    if (stat (coverpath, &stat_struct)) {
-                        copy_file(cover->image_filename, coverpath);
-                    }
-                    free (coverpath);
-                    coverpath = NULL;
-                }
-            }
-
-            return;
+        return;
+    }
+    else {
+        char *marker_path = _get_marker_path(cache_path);
+        struct stat stat_struct;
+        if (0 != stat (marker_path, &stat_struct)) {
+            (void)fclose(fopen(marker_path,"w+b"));
         }
+        else {
+#ifdef _WIN32
+            (void)_utime(marker_path, NULL);
+#else
+            (void)utimes(marker_path, NULL);
+#endif
+        }
+        free (marker_path);
     }
 #endif
 
