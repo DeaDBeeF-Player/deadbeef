@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)cleanup;
 
 - (void)drawRow:(int)idx;
-- (void)drawGroup:(PlaylistGroup *)group;
+- (void)drawGroup:(nullable PlaylistGroup *)group;
 
 - (void)setCursor:(int)cursor noscroll:(BOOL)noscroll;
 
@@ -36,6 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSInteger)getScrollFocusGroupAndOffset:(CGFloat *)offset;
 - (CGFloat)groupPositionAtIndex:(NSInteger)index;
 - (nullable PlaylistGroup *)groupForIndex:(NSInteger)index;
+
+- (void)invalidateArtworkCacheForRow:(DdbListviewRow_t)row;
 
 @end
 

@@ -64,7 +64,7 @@ typedef struct ddb_cover_query_s {
                     // By default, it means that the files can be stored in disk cache,
                     // and returned result is always a filename.
 
-    struct DB_playItem_s *track; // The track to load artwork for
+    ddb_playItem_t *track; // The track to load artwork for
 
     char *type; // WIP: front/back/all/..., can be NULL for default (front cover)
 } ddb_cover_query_t;
@@ -114,14 +114,14 @@ typedef void (*ddb_artwork_listener_t) (ddb_artwork_listener_event_t event, void
 typedef struct {
     DB_misc_t plugin;
 
-    /// The `cover_get` function adds the query into an internal queue,
+    /// The @c cover_get function adds the query into an internal queue,
     /// then the queue gets processed on another thread, i.e. asynchronously.
     ///
-    /// When the query is processed, the supplied `callback` is called
-    /// with the results in `ddb_cover_info_t` structure.
+    /// When the query is processed, the supplied @c callback is called
+    /// with the results in @c ddb_cover_info_t structure.
     ///
     /// The callback is guaranteed to be called,
-    /// because the caller is responsible for memory management of the `query` argument.
+    /// because the caller is responsible for memory management of the @c query argument.
     ///
     /// The callback is not executed on the same thread, as cover_get.
     /// Avoid running slow blocking code in the callbacks.
@@ -132,7 +132,7 @@ typedef struct {
     void
     (*reset) (void);
 
-    /// Release the dynamically allocated data pointed by `cover`.
+    /// Release the dynamically allocated data pointed by @c cover.
     void
     (*cover_info_release) (ddb_cover_info_t *cover);
 
@@ -142,6 +142,10 @@ typedef struct {
     void
     (*remove_listener) (ddb_artwork_listener_t listener, void *user_data);
 
+    /// Get the default image path to use when the cover is not available
+    ///
+    /// @c path needs to point to a sufficiently large buffer to contain the result.
+    /// Result can be an empty string.
     void
     (*default_image_path) (char *path, size_t size);
 } ddb_artwork_plugin_t;

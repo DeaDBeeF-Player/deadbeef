@@ -34,8 +34,9 @@ static void
 artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
     AlbumArtWidget *self = (__bridge AlbumArtWidget *)user_data;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [CoverManager.defaultCoverManager resetCache];
-        [self update];
+        if (self.track != NULL && (ddb_playItem_t *)p1 == self.track) {
+            [self throttledUpdate];
+        }
     });
 }
 
@@ -84,7 +85,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     return self;
 }
 
-- (void)frameDidChange:(NSNotification *)notification {
+- (void)throttledUpdate {
     if (self.throttleBlock != nil) {
         dispatch_block_cancel(self.throttleBlock);
     }
@@ -93,6 +94,10 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         self.throttleBlock = nil;
     });
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC/100), dispatch_get_main_queue(), self.throttleBlock);
+}
+
+- (void)frameDidChange:(NSNotification *)notification {
+    [self throttledUpdate];
 }
 
 - (void)update {

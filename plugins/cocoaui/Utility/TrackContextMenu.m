@@ -10,6 +10,7 @@
 #include "deadbeef.h"
 #include "deletefromdisk.h"
 #include "rg_scanner.h"
+#include "artwork.h"
 #import "ConverterWindowController.h"
 #import "NSMenu+ActionItems.h"
 #import "PluginActionMenuItem.h"
@@ -204,7 +205,7 @@ extern DB_functions_t *deadbeef;
     [self updateMenuItems];
     self.selectedTracksList = NULL;
     self.deleteFromDiskController = NULL;
-    if (tracks) {
+    if (tracks != NULL) {
         self.selectedTracksList = ddbUtilTrackListInitWithWithTracks( ddbUtilTrackListAlloc(), plt, DDB_ACTION_CTX_SELECTION, tracks, (unsigned)count, currentTrack, currentTrackIdx);
     }
 }

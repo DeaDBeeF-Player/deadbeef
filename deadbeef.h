@@ -1704,8 +1704,8 @@ enum {
 #endif
 
 #if (DDB_API_LEVEL >= 5)
-    // A menu item should be added to the menu(s), if the item name contains slash symbol(s)
-    // FIXME: the comment is wrong
+    // Add item to the menus.
+    // When constructing the main menu, only add if the action name contains a slash.
     DB_ACTION_ADD_MENU = 1 << 6,
 #endif
 

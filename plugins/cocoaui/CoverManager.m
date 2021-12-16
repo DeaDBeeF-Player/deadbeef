@@ -73,11 +73,13 @@ static CoverManager *g_DefaultCoverManager = nil;
 
 static void
 _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
-    CoverManager *manager = (__bridge CoverManager *)user_data;
+    CoverManager *self = (__bridge CoverManager *)user_data;
 
-    if (event == DDB_ARTWORK_SETTINGS_DID_CHANGE) {
-        [manager settingsDidChange];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (event == DDB_ARTWORK_SETTINGS_DID_CHANGE) {
+            [self settingsDidChangeForTrack:(ddb_playItem_t *)p1];
+        }
+    });
 }
 
 - (CoverManager *)init {
@@ -103,8 +105,15 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
     return self;
 }
 
-- (void)settingsDidChange {
-    [self updateDefaultCover];
+- (void)settingsDidChangeForTrack:(ddb_playItem_t *)track {
+    if (track == NULL) {
+        [self updateDefaultCover];
+        [self resetCache];
+    }
+    else {
+        NSString *hash = [self hashForTrack:track];
+        [self.cachedCovers removeObjectForKey:hash];
+    }
 }
 
 - (void)updateDefaultCover {

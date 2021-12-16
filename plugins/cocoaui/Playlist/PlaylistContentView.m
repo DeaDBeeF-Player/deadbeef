@@ -1446,5 +1446,15 @@ static int grouptitleheight = 22;
     return self.groups[index];
 }
 
+- (void)invalidateArtworkCacheForRow:(DdbListviewRow_t)row {
+    for (PlaylistGroup *group in self.groups) {
+        // It's tricky to calculate which group the row belongs to, so reset cache for everything
+        // It shouldn't hurt much though
+        group->hasCachedImage = NO;
+        group->cachedImage = nil;
+    }
+    self.needsDisplay = YES;
+}
+
 @end
 

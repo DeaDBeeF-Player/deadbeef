@@ -120,10 +120,16 @@ extern DB_functions_t *deadbeef;
 static void
 artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
     PlaylistViewController *self = (__bridge PlaylistViewController *)user_data;
+    ddb_playItem_t *it = (ddb_playItem_t *)p1;
+    if (it != NULL) {
+        deadbeef->pl_item_ref (it);
+    }
     dispatch_async(dispatch_get_main_queue(), ^{
-        [CoverManager.defaultCoverManager resetCache];
         PlaylistView *listview = (PlaylistView *)self.view;
-        listview.contentView.needsDisplay = YES;
+        [listview.contentView invalidateArtworkCacheForRow:(DdbListviewRow_t)it];
+        if (it != NULL) {
+            deadbeef->pl_item_unref (it);
+        }
     });
 }
 

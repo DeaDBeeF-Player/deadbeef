@@ -1106,7 +1106,7 @@ cover_cache_free (void) {
 }
 
 static ddb_cover_info_t *
-cover_cache_find (ddb_cover_info_t * cover) {
+cover_cache_find (ddb_cover_info_t *cover) {
     for (int i = 0; i < MAX_COVERS_IN_CACHE; i++) {
         if (!cover_cache[i]) {
             continue;
@@ -1120,6 +1120,23 @@ cover_cache_find (ddb_cover_info_t * cover) {
     }
 
     return NULL;
+}
+
+static void
+cover_cache_remove (ddb_cover_info_t *cover) {
+    for (int i = 0; i < MAX_COVERS_IN_CACHE; i++) {
+        if (!cover_cache[i]) {
+            continue;
+        }
+
+        ddb_cover_info_t *cached_cover = cover_cache[i];
+
+        if (!strcmp (cover->filepath, cached_cover->filepath)) {
+            cover_info_release(cached_cover);
+            cover_cache[i] = NULL;
+            break;
+        }
+    }
 }
 
 static void
@@ -1258,6 +1275,40 @@ static void callback_and_free_squashed (ddb_cover_info_t *cover, ddb_cover_query
 }
 
 static void
+_setup_tf_once() {
+    dispatch_sync(sync_queue, ^{
+        if (!album_tf) {
+            album_tf = deadbeef->tf_compile ("%album%");
+        }
+        if (!artist_tf) {
+            artist_tf = deadbeef->tf_compile ("%artist%");
+        }
+        if (!title_tf) {
+            title_tf = deadbeef->tf_compile ("%title%");
+        }
+        if (!query_compare_tf) {
+            query_compare_tf = deadbeef->tf_compile ("$if($and(%title%,%artist%,%album%),%track number% - %title% - %artist% - %album%)");
+        }
+    });
+}
+
+static void
+_init_cover_metadata(ddb_cover_info_t *cover, ddb_playItem_t *track) {
+    _setup_tf_once();
+
+    deadbeef->pl_lock ();
+    strncat (cover->filepath, deadbeef->pl_find_meta (track, ":URI"), sizeof(cover->filepath) - strlen(cover->filepath) - 1);
+    deadbeef->pl_unlock ();
+
+    ddb_tf_context_t ctx = {0};
+    ctx._size = sizeof (ddb_tf_context_t);
+    ctx.it = track;
+    deadbeef->tf_eval (&ctx, album_tf, cover->album, sizeof (cover->album));
+    deadbeef->tf_eval (&ctx, artist_tf, cover->artist, sizeof (cover->artist));
+    deadbeef->tf_eval (&ctx, title_tf, cover->title, sizeof (cover->title));
+}
+
+static void
 cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
     __block int cancel_query = 0;
     __block int64_t job_idx = 0;
@@ -1279,30 +1330,7 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         /* Process this query, hopefully writing a file into cache */
         ddb_cover_info_t *cover = sync_cover_info_alloc();
 
-        if (!album_tf) {
-            album_tf = deadbeef->tf_compile ("%album%");
-        }
-        if (!artist_tf) {
-            artist_tf = deadbeef->tf_compile ("%artist%");
-        }
-        if (!title_tf) {
-            title_tf = deadbeef->tf_compile ("%title%");
-        }
-        if (!query_compare_tf) {
-            query_compare_tf = deadbeef->tf_compile ("$if($and(%title%,%artist%,%album%),%track number% - %title% - %artist% - %album%)");
-        }
-
-        deadbeef->pl_lock ();
-        strncat (cover->filepath, deadbeef->pl_find_meta (query->track, ":URI"), sizeof(cover->filepath) - strlen(cover->filepath) - 1);
-        deadbeef->pl_unlock ();
-
-        ddb_tf_context_t ctx = {0};
-        ctx._size = sizeof (ddb_tf_context_t);
-        ctx.it = query->track;
-        deadbeef->tf_eval (&ctx, album_tf, cover->album, sizeof (cover->album));
-        deadbeef->tf_eval (&ctx, artist_tf, cover->artist, sizeof (cover->artist));
-        deadbeef->tf_eval (&ctx, title_tf, cover->title, sizeof (cover->title));
-
+        _init_cover_metadata(cover, query->track);
 
         if (sync_queue == NULL) {
             callback (-1, query, NULL);
@@ -1368,33 +1396,38 @@ artwork_reset (void) {
 
 static void
 artwork_add_listener (ddb_artwork_listener_t listener, void *user_data) {
-    for (int i = 0; i < MAX_LISTENERS; i++) {
-        if (listeners[i] == NULL) {
-            listeners[i] = listener;
-            listeners_userdata[i] = user_data;
-            break;
+    dispatch_sync(sync_queue, ^{
+        for (int i = 0; i < MAX_LISTENERS; i++) {
+            if (listeners[i] == NULL) {
+                listeners[i] = listener;
+                listeners_userdata[i] = user_data;
+                break;
+            }
         }
-    }
+    });
 }
 
 void
 artwork_remove_listener (ddb_artwork_listener_t listener, void *user_data) {
-    for (int i = 0; i < MAX_LISTENERS; i++) {
-        if (listeners[i] == listener) {
-            listeners[i] = NULL;
-            listeners_userdata[i] = NULL;
-            break;
+    dispatch_sync(sync_queue, ^{
+        for (int i = 0; i < MAX_LISTENERS; i++) {
+            if (listeners[i] == listener) {
+                listeners[i] = NULL;
+                listeners_userdata[i] = NULL;
+                break;
+            }
         }
-    }
+    });
 }
 
 static void
 artwork_default_image_path (char *path, size_t size) {
     *path = 0;
-    if (nocover_path != NULL) {
-        strncat (path, nocover_path, size-1);
-    }
-
+    dispatch_sync(sync_queue, ^{
+        if (nocover_path != NULL) {
+            strncat (path, nocover_path, size-1);
+        }
+    });
 }
 
 static void
@@ -1473,6 +1506,28 @@ get_fetcher_preferences (void) {
 }
 
 static void
+_notify_listeners(ddb_artwork_listener_event_t event, DB_playItem_t *it) {
+    __block ddb_artwork_listener_t *callbacks = calloc(MAX_LISTENERS, sizeof (ddb_artwork_listener_t));
+    __block void **userdatas = calloc(MAX_LISTENERS, sizeof (void *));
+    __block int count = 0;
+    dispatch_sync(sync_queue, ^{
+        for (int i = 0; i < MAX_LISTENERS; i++) {
+            if (listeners[i] != NULL) {
+                callbacks[count] = listeners[i];
+                userdatas[count] = listeners_userdata[i];
+                count += 1;
+            }
+        }
+    });
+
+    for (int i = 0; i < count; i++) {
+        listeners[i](event, userdatas[i], (intptr_t)it, 0);
+    }
+    free (callbacks);
+    free (userdatas);
+}
+
+static void
 artwork_configchanged (void) {
     __block int need_clear_queue = 0;
     cache_configchanged ();
@@ -1532,11 +1587,7 @@ artwork_configchanged (void) {
             }
 
             cover_cache_free ();
-            for (int i = 0; i < MAX_LISTENERS; i++) {
-                if (listeners[i] != NULL) {
-                    listeners[i](DDB_ARTWORK_SETTINGS_DID_CHANGE, listeners_userdata[i], 0, 0);
-                }
-            }
+            _notify_listeners(DDB_ARTWORK_SETTINGS_DID_CHANGE, NULL);
             need_clear_queue = 1;
         }
         free (old_artwork_filemask);
@@ -1558,62 +1609,64 @@ artwork_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 }
 
 static int
-invalidate_playitem_cache (DB_plugin_action_t *action, ddb_action_context_t ctx)
-{
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+invalidate_playitem_cache (DB_plugin_action_t *action, ddb_action_context_t ctx) {
+    ddb_playlist_t *plt = deadbeef->action_get_playlist ();
     if (!plt)
         return -1;
 
-    DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
-    while (it) {
-        if (deadbeef->pl_is_selected (it)) {
-            deadbeef->pl_lock ();
-            const char *url = strdupa (deadbeef->pl_find_meta (it, ":URI"));
-            deadbeef->pl_unlock ();
-
-            char album[1000];
-            char artist[1000];
-            ddb_tf_context_t ctx = {0};
-            ctx._size = sizeof (ddb_tf_context_t);
-            ctx.it = it;
-            deadbeef->tf_eval (&ctx, album_tf, album, sizeof (album));
-            deadbeef->tf_eval (&ctx, artist_tf, artist, sizeof (artist));
-            char cache_path[PATH_MAX];
-            if (!make_cache_path (url, album, artist, cache_path, PATH_MAX)) {
-                char subdir_path[PATH_MAX];
-                make_cache_dir_path (artist, subdir_path, PATH_MAX);
-                const char *subdir_name = basename (subdir_path);
-                const char *entry_name = basename (cache_path);
-                trace ("Expire %s from cache\n", cache_path);
-                remove_cache_item (cache_path, subdir_path, subdir_name, entry_name);
-            }
-            deadbeef->pl_unlock ();
-
-            for (int i = 0; i < MAX_LISTENERS; i++) {
-                if (listeners[i] != NULL) {
-                    listeners[i](DDB_ARTWORK_SETTINGS_DID_CHANGE, listeners_userdata[i], (intptr_t)it, 0);
+    dispatch_async(process_queue, ^{
+        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+        while (it) {
+            if (deadbeef->pl_is_selected (it)) {
+                ddb_cover_info_t *cover = sync_cover_info_alloc();
+                _init_cover_metadata(cover, it);
+                ddb_cover_info_t *cached_cover = cover_cache_find (cover);
+                if (cached_cover) {
+                    cover_cache_remove (cover);
                 }
+
+                deadbeef->pl_lock ();
+                char *uri = strdup (deadbeef->pl_find_meta (it, ":URI"));
+                deadbeef->pl_unlock ();
+
+                char cache_path[PATH_MAX];
+                if (!make_cache_path(uri, cover->album, cover->artist, cache_path, sizeof(cache_path))) {
+                    char subdir_path[PATH_MAX];
+                    make_cache_dir_path (cover->artist, subdir_path, PATH_MAX);
+                    const char *subdir_name = basename (subdir_path);
+                    const char *entry_name = basename (cache_path);
+                    trace ("Expire %s from cache\n", cache_path);
+                    remove_cache_item (cache_path, subdir_path, subdir_name, entry_name);
+                }
+
+                free (uri);
+                uri = NULL;
+
+                (void)unlink(cache_path);
+                cover_info_release(cover);
+
+                _notify_listeners(DDB_ARTWORK_SETTINGS_DID_CHANGE, it);
             }
+            deadbeef->pl_item_unref (it);
+            it = deadbeef->pl_get_next (it, PL_MAIN);
         }
-        deadbeef->pl_item_unref (it);
-        it = deadbeef->pl_get_next (it, PL_MAIN);
-    }
-    deadbeef->plt_unref (plt);
+        deadbeef->plt_unref (plt);
+    });
 
     return 0;
 }
 
 static DB_plugin_action_t *
-artwork_get_actions (DB_playItem_t *it)
-{
-    if (!it) // Only currently show for the playitem context menu
-        return NULL;
+artwork_get_actions (DB_playItem_t *it) {
+    if (!it) {
+        return NULL; // Only currently show for the playitem context menu
+    }
 
     static DB_plugin_action_t context_action = {
         .title = "Refresh Cover Art",
         .name = "invalidate_playitem_cache",
         .callback2 = invalidate_playitem_cache,
-        .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS,
+        .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_ADD_MENU,
         .next = NULL
     };
 

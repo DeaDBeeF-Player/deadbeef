@@ -47,6 +47,10 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)setCursor:(int)cursor {
+    int prev_cursor = deadbeef->pl_get_cursor([self playlistIter]);
+    if (prev_cursor == cursor) {
+        return;
+    }
     deadbeef->pl_set_cursor ([self playlistIter], cursor);
     DB_playItem_t *it = deadbeef->pl_get_for_idx (cursor);
     if (it) {
