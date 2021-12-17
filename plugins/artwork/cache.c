@@ -66,26 +66,10 @@ make_cache_root_path (char *path, const size_t size) {
     return 0;
 }
 
-char *
-get_cache_marker_path(const char *path) {
-    size_t path_len = strlen (path);
-    size_t marker_path_len = path_len + 8;
-
-    char *marker_path = malloc (marker_path_len);
-
-    memcpy (marker_path, path, path_len);
-    memcpy (marker_path + path_len, ".marker", 8);
-
-    return marker_path;
-}
-
 void
 remove_cache_item (const char *cache_path) {
-    /* Unlink the expired file, and the artist directory if it is empty */
-    unlink (cache_path);
-    char *marker_path = get_cache_marker_path(cache_path);
-    (void)unlink(marker_path);
-    free (marker_path);
+    // Unlink the expired file, and the artist directory if it is empty
+    (void)unlink (cache_path);
 }
 
 static int
@@ -118,10 +102,6 @@ cache_cleaner_worker (void) {
     }
     struct dirent *entry;
     while (!should_terminate() && (entry = readdir (covers_dir))) {
-        const char *marker = strstr(entry->d_name,".marker");
-        if (marker != NULL && strlen(marker) == 7) {
-            continue; // remove_cache_item will deal with it
-        }
         char entry_path[PATH_MAX];
         sprintf (entry_path, "%s/%s", covers_path, entry->d_name);
         if (path_ok (entry->d_name)) {

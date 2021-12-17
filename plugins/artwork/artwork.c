@@ -689,7 +689,7 @@ _is_path_newer_than_time (const char *fname, const time_t time) {
 
 // returns 1 if enough time passed since the last attemp to find the requested cover
 static int
-recheck_missing_artwork (const char *input_fname, const time_t marker_mtime) {
+recheck_missing_artwork (const char *input_fname, const time_t cache_mtime) {
     int res = 0;
     char *fname = strdup (input_fname);
     /* Check if local files could have new associated artwork */
@@ -698,13 +698,13 @@ recheck_missing_artwork (const char *input_fname, const time_t marker_mtime) {
         const char *real_fname = vfs_fname ? vfs_fname : fname;
 
         /* Recheck artwork if file (track or VFS container) was modified since the last check */
-        if (_is_path_newer_than_time (real_fname, marker_mtime)) {
+        if (_is_path_newer_than_time (real_fname, cache_mtime)) {
             return 1;
         }
 
         /* Recheck local artwork if the directory contents have changed */
         char *dname = strdup (dirname (fname));
-        res = artwork_enable_local && _is_path_newer_than_time (dname, marker_mtime);
+        res = artwork_enable_local && _is_path_newer_than_time (dname, cache_mtime);
         free (dname);
     }
 
@@ -712,19 +712,19 @@ recheck_missing_artwork (const char *input_fname, const time_t marker_mtime) {
     return res;
 }
 
-static void _touch(char *marker_path) {
+static void _touch(char *path) {
     struct stat stat_struct;
-    if (0 != stat (marker_path, &stat_struct)) {
-        FILE *fp = fopen(marker_path,"w+b");
+    if (0 != stat (path, &stat_struct)) {
+        FILE *fp = fopen(path,"w+b");
         if (fp != NULL) {
             (void)fclose(fp);
         }
     }
     else {
 #ifdef _WIN32
-        (void)_utime(marker_path, NULL);
+        (void)_utime(path, NULL);
 #else
-        (void)utimes(marker_path, NULL);
+        (void)utimes(path, NULL);
 #endif
     }
 }
@@ -815,16 +815,17 @@ process_query (ddb_cover_info_t *cover) {
 
     make_cache_path (cover->album, cover->artist, cache_path, sizeof (cache_path));
 
+    struct stat cache_stat;
+    int res = stat (cache_path, &cache_stat);
+    if (!res && cache_stat.st_size != 0) {
+        cover->image_filename = strdup(cache_path);
+        cover->cover_found = 1;
+        return;
+    }
+
     // Flood control, don't retry missing artwork for an hour unless something changes
-    struct stat marker_stat;
-
-    char *marker_path = get_cache_marker_path(cache_path);
-    int res = stat (marker_path, &marker_stat);
-    free (marker_path);
-    marker_path = NULL;
-
-    if (!res && marker_stat.st_mtime + 60*60 > time (NULL)) {
-        int recheck = recheck_missing_artwork (cover->filepath, marker_stat.st_mtime);
+    if (!res && cache_stat.st_mtime + 60*60 > time (NULL)) {
+        int recheck = recheck_missing_artwork (cover->filepath, cache_stat.st_mtime);
         if (!recheck) {
             return;
         }
@@ -858,12 +859,6 @@ process_query (ddb_cover_info_t *cover) {
         }
     }
     if (res >= 0) {
-        // Cover obtained, delete the marker if present
-        char *marker_path = get_cache_marker_path(cache_path);
-        (void)unlink(marker_path);
-        free (marker_path);
-        marker_path = NULL;
-
         cover->cover_found = res;
 
         if (res && artwork_save_to_music_folders && cover->image_filename) {
@@ -901,12 +896,8 @@ process_query (ddb_cover_info_t *cover) {
 
         return;
     }
-    else {
-        char *marker_path = get_cache_marker_path(cache_path);
-        _touch(marker_path);
-        free (marker_path);
-    }
 #endif
+    _touch(cache_path);
 
     cover->cover_found = 0;
 }
