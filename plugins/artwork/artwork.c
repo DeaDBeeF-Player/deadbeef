@@ -787,18 +787,15 @@ scandir_plug (const char *vfs_fname)
     return NULL;
 }
 
-// might be used from process_query, when cache impl is finalized
 static int
-path_more_recent (const char *fname, const time_t placeholder_mtime)
-{
+_is_path_newer_than_time (const char *fname, const time_t time) {
     struct stat stat_buf;
-    return !stat (fname, &stat_buf) && stat_buf.st_mtime > placeholder_mtime;
+    return !stat (fname, &stat_buf) && stat_buf.st_mtime > time;
 }
 
 // returns 1 if enough time passed since the last attemp to find the requested cover
 static int
-recheck_missing_artwork (const char *input_fname, const time_t placeholder_mtime)
-{
+recheck_missing_artwork (const char *input_fname, const time_t marker_mtime) {
     int res = 0;
     char *fname = strdup (input_fname);
     /* Check if local files could have new associated artwork */
@@ -807,13 +804,13 @@ recheck_missing_artwork (const char *input_fname, const time_t placeholder_mtime
         const char *real_fname = vfs_fname ? vfs_fname : fname;
 
         /* Recheck artwork if file (track or VFS container) was modified since the last check */
-        if (path_more_recent (real_fname, placeholder_mtime)) {
+        if (_is_path_newer_than_time (real_fname, marker_mtime)) {
             return 1;
         }
 
         /* Recheck local artwork if the directory contents have changed */
         char *dname = strdup (dirname (fname));
-        res = artwork_enable_local && path_more_recent (dname, placeholder_mtime);
+        res = artwork_enable_local && _is_path_newer_than_time (dname, marker_mtime);
         free (dname);
     }
 
@@ -937,15 +934,15 @@ process_query (ddb_cover_info_t *cover) {
 
     if (cache_path) {
         // Flood control, don't retry missing artwork for an hour unless something changes
-        struct stat placeholder_stat;
+        struct stat marker_stat;
 
         char *marker_path = _get_marker_path(cache_path);
-        int res = stat (marker_path, &placeholder_stat);
+        int res = stat (marker_path, &marker_stat);
         free (marker_path);
         marker_path = NULL;
 
-        if (!res && placeholder_stat.st_mtime + 60*60 > time (NULL)) {
-            int recheck = recheck_missing_artwork (cover->filepath, placeholder_stat.st_mtime);
+        if (!res && marker_stat.st_mtime + 60*60 > time (NULL)) {
+            int recheck = recheck_missing_artwork (cover->filepath, marker_stat.st_mtime);
             if (!recheck) {
                 return;
             }
@@ -1028,9 +1025,6 @@ process_query (ddb_cover_info_t *cover) {
         free (marker_path);
     }
 #endif
-
-    /* Touch placeholder */
-    write_file (cache_path, NULL, 0);
 
     cover->cover_found = 0;
 }
