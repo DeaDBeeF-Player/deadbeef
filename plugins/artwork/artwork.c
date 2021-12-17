@@ -129,6 +129,7 @@ static char *artwork_folders;
 static char *album_tf;
 static char *artist_tf;
 static char *title_tf;
+static char *albumartist_tf;
 static char *query_compare_tf;
 
 // esc_char is needed to prevent using file path separators,
@@ -860,7 +861,7 @@ process_query (ddb_cover_info_t *cover) {
     if (res >= 0) {
         cover->cover_found = res;
 
-        if (res && artwork_save_to_music_folders && cover->image_filename) {
+        if (res && artwork_save_to_music_folders && cover->image_filename && !cover->is_compilation) {
             // save to the music folder (only if not present)
             char *slash = strrchr (cover->filepath, '/');
 
@@ -1152,6 +1153,9 @@ _setup_tf_once() {
         if (!title_tf) {
             title_tf = deadbeef->tf_compile ("%title%");
         }
+        if (!albumartist_tf) {
+            albumartist_tf = deadbeef->tf_compile ("%album artist%");
+        }
         if (!query_compare_tf) {
             query_compare_tf = deadbeef->tf_compile ("$if($and(%title%,%artist%,%album%),%track number% - %title% - %artist% - %album%)");
         }
@@ -1185,6 +1189,12 @@ _init_cover_metadata(ddb_cover_info_t *cover, ddb_playItem_t *track) {
         deadbeef->tf_eval (&ctx, album_tf, cover->album, sizeof (cover->album));
         deadbeef->tf_eval (&ctx, artist_tf, cover->artist, sizeof (cover->artist));
         deadbeef->tf_eval (&ctx, title_tf, cover->title, sizeof (cover->title));
+
+        char albumartist[100];
+        deadbeef->tf_eval (&ctx, albumartist_tf, albumartist, sizeof (albumartist));
+        if (!strcasecmp (albumartist, "Various Artists")) {
+            cover->is_compilation = 1;
+        }
     }
 }
 
@@ -1585,6 +1595,11 @@ artwork_plugin_stop (void) {
     if (title_tf) {
         deadbeef->tf_free (title_tf);
         title_tf = NULL;
+    }
+
+    if (albumartist_tf) {
+        deadbeef->tf_free (albumartist_tf);
+        albumartist_tf = NULL;
     }
 
     if (query_compare_tf) {

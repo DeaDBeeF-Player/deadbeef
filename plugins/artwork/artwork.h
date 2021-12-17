@@ -78,6 +78,8 @@ typedef struct ddb_cover_info_s {
     char album[1000];
     char artist[1000];
     char title[1000];
+    int is_compilation;
+
     int cover_found; // set to 1 if the cover was found
 
     char *type; // A type of image, e.g. "front" or "back" (can be NULL)
