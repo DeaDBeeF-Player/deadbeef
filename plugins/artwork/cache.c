@@ -89,8 +89,8 @@ remove_cache_item (const char *cache_path) {
 }
 
 static int
-path_ok (const size_t dir_length, const char *entry) {
-    return strcmp (entry, ".") && strcmp (entry, "..") && dir_length + strlen (entry) + 1 < PATH_MAX;
+path_ok (const char *entry) {
+    return strcmp (entry, ".") && strcmp (entry, "..");
 }
 
 static int
@@ -126,8 +126,7 @@ cache_cleaner_worker (void) {
         }
         char entry_path[PATH_MAX];
         sprintf (entry_path, "%s/%s", covers_path, entry->d_name);
-        const size_t entry_path_length = strlen (entry_path);
-        if (path_ok (entry_path_length, entry->d_name)) {
+        if (path_ok (entry->d_name)) {
             /* Test against the cache expiry time (cache invalidation resets are not handled here) */
             struct stat stat_buf;
             if (!stat (entry_path, &stat_buf)) {
