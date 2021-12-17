@@ -809,6 +809,20 @@ process_query (ddb_cover_info_t *cover) {
 
 #ifdef USE_VFS_CURL
 
+    // Don't do anything if all web lookups are off
+    if (!artwork_enable_wos
+        && !artwork_enable_lfm
+#if ENABLE_MUSICBRAINZ
+        && !artwork_enable_mb
+#endif
+#if ENABLE_ALBUMART_ORG
+        && !artwork_enable_aao
+#endif
+        ) {
+        cover->cover_found = 0;
+        return;
+    }
+
     char cache_path[PATH_MAX];
 
     make_cache_path (cover->album, cover->artist, cache_path, sizeof (cache_path));
