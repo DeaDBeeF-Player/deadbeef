@@ -117,7 +117,7 @@
             [unalignedFields addObject:currentField];
         }
 
-        CGFloat leadingOffs = 20;
+        CGFloat leadingOffs = 8;
 
         if ([currentField isKindOfClass:NSStackView.class]) {
             leadingOffs = 0;
@@ -337,7 +337,7 @@
                         [lbl.trailingAnchor constraintEqualToAnchor:box.firstLabel.trailingAnchor].active = YES;
                     }
                     else {
-                        CGFloat offs = 20;
+                        CGFloat offs = 8;
                         if (box.isStackView) {
                             offs = 0;
                         }
@@ -665,7 +665,7 @@
                 }
             }
             else {
-                CGFloat leadingOffs = 20;
+                CGFloat leadingOffs = 8;
                 if ([field isKindOfClass:NSStackView.class]) {
                     leadingOffs = 0;
                 }
