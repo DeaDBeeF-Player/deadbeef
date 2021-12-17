@@ -147,9 +147,10 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
 - (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
     switch (_id) {
+    case DB_EV_PLAYLISTSWITCHED:
     case DB_EV_CURSOR_MOVED: {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self update];
+            [self throttledUpdate];
         });
     }
         break;
