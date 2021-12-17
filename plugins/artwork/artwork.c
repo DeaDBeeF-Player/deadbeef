@@ -93,14 +93,10 @@ static ddb_cover_info_t *cover_cache[MAX_COVERS_IN_CACHE];
 #define DEFAULT_SAVE_TO_MUSIC_FOLDERS_FILENAME "cover.jpg"
 
 #ifdef ANDROID
-#define DEFAULT_DISABLE_CACHE 1
 #define DEFAULT_SAVE_TO_MUSIC_FOLDERS 1
-static int artwork_disable_cache = DEFAULT_DISABLE_CACHE;
 static int artwork_save_to_music_folders = DEFAULT_SAVE_TO_MUSIC_FOLDERS;
 #else
-#define DEFAULT_DISABLE_CACHE 0
 #define DEFAULT_SAVE_TO_MUSIC_FOLDERS 0
-int artwork_disable_cache = DEFAULT_DISABLE_CACHE;
 int artwork_save_to_music_folders = DEFAULT_SAVE_TO_MUSIC_FOLDERS;
 #endif
 
@@ -799,14 +795,6 @@ process_query (ddb_cover_info_t *cover) {
         }
     }
 
-    // Don't allow downloading from the web without disk cache.
-    // Even if saving to music folders is enabled -- we don't want to flood,
-    // e.g. if saving to music folder fails due to readonly FS.
-    if (artwork_disable_cache) {
-        cover->cover_found = 0;
-        return;
-    }
-
 #ifdef USE_VFS_CURL
 
     // Don't do anything if all web lookups are off
@@ -1321,7 +1309,6 @@ artwork_default_image_path (char *path, size_t size) {
 static void
 get_fetcher_preferences (void) {
     deadbeef->conf_lock ();
-    artwork_disable_cache = deadbeef->conf_get_int ("artwork.disable_cache", DEFAULT_DISABLE_CACHE);
     artwork_save_to_music_folders = deadbeef->conf_get_int ("artwork.save_to_music_folders", DEFAULT_SAVE_TO_MUSIC_FOLDERS);
 
     const char *save_filename = deadbeef->conf_get_str_fast ("artwork.save_to_music_folders_relative_path", DEFAULT_SAVE_TO_MUSIC_FOLDERS_FILENAME);
@@ -1420,8 +1407,6 @@ artwork_configchanged (void) {
     __block int need_clear_queue = 0;
     cache_configchanged ();
     dispatch_sync (sync_queue, ^{
-        int old_artwork_disable_cache = artwork_disable_cache;
-
         int old_artwork_enable_embedded = artwork_enable_embedded;
         int old_artwork_enable_local = artwork_enable_local;
         char *old_artwork_filemask = strdup(artwork_filemask ? artwork_filemask : "");
@@ -1443,7 +1428,7 @@ artwork_configchanged (void) {
         get_fetcher_preferences ();
 
         int cache_did_reset = 0;
-        if (old_artwork_disable_cache != artwork_disable_cache || old_missing_artwork != missing_artwork || old_nocover_path != nocover_path) {
+        if (old_missing_artwork != missing_artwork || old_nocover_path != nocover_path) {
             trace ("artwork config changed, invalidating default artwork...\n");
             default_reset_time = time (NULL);
             cache_did_reset = 1;
@@ -1655,7 +1640,6 @@ static const char settings_dlg[] =
     "property \"Artwork folders\" entry artwork.folders \"" DEFAULT_FOLDERS "\";\n"
 // on android, cache is always off and music is saved to music folders by default
 #ifndef ANDROID
-    "property \"Disable disk cache\" checkbox artwork.disable_cache 0;\n"
     "property \"Cache refresh (hrs)\" spinbtn[0,1000,1] artwork.cache.expiration_time 0;\n"
 #endif
 ;
