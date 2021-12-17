@@ -139,15 +139,9 @@ static char *query_compare_tf;
 // e.g. to avoid writing arbitrary files using "../../../filename"
 static char
 esc_char (char c) {
-#ifndef WIN32
-    if (c == '/') {
-        return '\\';
+    if (c == '/' || c == '\\') {
+        return '-';
     }
-#else
-    if (c == '\\') {
-        return '_';
-    }
-#endif
     return c;
 }
 
