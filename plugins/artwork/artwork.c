@@ -172,7 +172,7 @@ make_cache_dir_path (const char *artist, char *outpath, int outsize) {
 
     const size_t size_left = outsize - strlen (outpath);
     int path_length;
-    path_length = snprintf (outpath+strlen (outpath), size_left, "covers2/%s/", esc_artist);
+    path_length = snprintf (outpath+strlen (outpath), size_left, "/%s/", esc_artist);
     if (path_length >= size_left) {
         trace ("Cache path truncated at %d bytes\n", (int)size_left);
         return -1;
@@ -1568,7 +1568,6 @@ artwork_configchanged (void) {
             }
 
             cover_cache_free ();
-            _notify_listeners(DDB_ARTWORK_SETTINGS_DID_CHANGE, NULL);
             need_clear_queue = 1;
         }
         free (old_artwork_filemask);
@@ -1577,6 +1576,7 @@ artwork_configchanged (void) {
     if (need_clear_queue) {
         queue_clear();
     }
+    _notify_listeners(DDB_ARTWORK_SETTINGS_DID_CHANGE, NULL);
 }
 
 static int

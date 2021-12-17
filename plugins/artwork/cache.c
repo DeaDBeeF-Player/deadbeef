@@ -25,6 +25,9 @@
     #include "../../config.h"
 #endif
 #include "../../deadbeef.h"
+#ifdef __APPLE__
+#include "applesupport.h"
+#endif
 #include "artwork_internal.h"
 #include <dirent.h>
 #include <dispatch/dispatch.h>
@@ -48,12 +51,18 @@ static int32_t _file_expiration_time; // Seconds since the file creation, until 
 
 int
 make_cache_root_path (char *path, const size_t size) {
+#ifdef __APPLE__
+    apple_get_artwork_cache_path(path, size);
+    size_t remaining_size = size - strlen(path);
+    strncat(path, "/Deadbeef", remaining_size-1);
+#else
     const char *xdg_cache = getenv ("XDG_CACHE_HOME");
     const char *cache_root = xdg_cache ? xdg_cache : getenv ("HOME");
-    if (snprintf (path, size, xdg_cache ? "%s/deadbeef/" : "%s/.cache/deadbeef/", cache_root) >= size) {
+    if (snprintf (path, size, xdg_cache ? "%s/deadbeef/covers2" : "%s/.cache/deadbeef/covers2", cache_root) >= size) {
         trace ("Cache root path truncated at %d bytes\n", (int)size);
         return -1;
     }
+#endif
     return 0;
 }
 
@@ -125,10 +134,9 @@ static void
 cache_cleaner_worker (void) {
     /* Find where it all happens */
     char covers_path[PATH_MAX];
-    if (make_cache_root_path (covers_path, PATH_MAX-10)) {
+    if (make_cache_root_path (covers_path, sizeof (covers_path))) {
         return;
     }
-    strcat (covers_path, "covers2");
     const size_t covers_path_length = strlen (covers_path);
 
     time_t oldest_mtime = time (NULL);

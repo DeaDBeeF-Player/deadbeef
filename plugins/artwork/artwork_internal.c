@@ -197,6 +197,9 @@ copy_file (const char *in, const char *out) {
     }
 
     unlink (tmp_out);
+    if (!err && file_bytes == 0) {
+        return -1;
+    }
     return err;
 }
 
