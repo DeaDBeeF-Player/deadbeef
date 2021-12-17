@@ -807,13 +807,14 @@ process_query (ddb_cover_info_t *cover) {
         && !artwork_enable_aao
 #endif
         ) {
-        cover->cover_found = 0;
         return;
     }
 
     char cache_path[PATH_MAX];
 
-    make_cache_path (cover->album, cover->artist, cache_path, sizeof (cache_path));
+    if (make_cache_path (cover->album, cover->artist, cache_path, sizeof (cache_path)) < 0) {
+        return;
+    }
 
     struct stat cache_stat;
     int res = stat (cache_path, &cache_stat);
@@ -842,7 +843,6 @@ process_query (ddb_cover_info_t *cover) {
             res = 0;
         }
         if (errno == ECONNABORTED) {
-            cover->cover_found = 0;
             res = -1;
         }
     }
@@ -896,10 +896,10 @@ process_query (ddb_cover_info_t *cover) {
 
         return;
     }
+    else {
+        _touch(cache_path);
+    }
 #endif
-    _touch(cache_path);
-
-    cover->cover_found = 0;
 }
 
 static void
@@ -1170,9 +1170,17 @@ _init_cover_metadata(ddb_cover_info_t *cover, ddb_playItem_t *track) {
     ddb_tf_context_t ctx = {0};
     ctx._size = sizeof (ddb_tf_context_t);
     ctx.it = track;
-    deadbeef->tf_eval (&ctx, album_tf, cover->album, sizeof (cover->album));
-    deadbeef->tf_eval (&ctx, artist_tf, cover->artist, sizeof (cover->artist));
-    deadbeef->tf_eval (&ctx, title_tf, cover->title, sizeof (cover->title));
+
+    if (artwork_enable_wos && strlen (cover->filepath) > 3 && !strcasecmp (cover->filepath+strlen (cover->filepath)-3, ".ay")) {
+        strcpy (cover->artist, "AY Music");
+        deadbeef->tf_eval (&ctx, title_tf, cover->album, sizeof (cover->album));
+        strcpy (cover->title, cover->album);
+    }
+    else {
+        deadbeef->tf_eval (&ctx, album_tf, cover->album, sizeof (cover->album));
+        deadbeef->tf_eval (&ctx, artist_tf, cover->artist, sizeof (cover->artist));
+        deadbeef->tf_eval (&ctx, title_tf, cover->title, sizeof (cover->title));
+    }
 }
 
 static void
