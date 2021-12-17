@@ -152,74 +152,30 @@ esc_char (char c) {
 }
 
 static int
-make_cache_dir_path (const char *artist, char *outpath, int outsize) {
-    char esc_artist[NAME_MAX+1];
-    if (artist) {
-        size_t i = 0;
-        while (artist[i] && i < NAME_MAX) {
-            esc_artist[i] = esc_char (artist[i]);
-            i++;
-        }
-        esc_artist[i] = '\0';
-    }
-    else {
-        strcpy (esc_artist, "Unknown artist");
-    }
-
-    if (make_cache_root_path (outpath, outsize) < 0) {
-        return -1;
-    }
-
-    const size_t size_left = outsize - strlen (outpath);
-    int path_length;
-    path_length = snprintf (outpath+strlen (outpath), size_left, "/%s/", esc_artist);
-    if (path_length >= size_left) {
-        trace ("Cache path truncated at %d bytes\n", (int)size_left);
-        return -1;
-    }
-
-    return 0;
-}
-
-static int
-make_cache_path (const char *filepath, const char *album, const char *artist, char *outpath, int outsize) {
+make_cache_path (const char *album, const char *artist, char *outpath, int outsize) {
     outpath[0] = '\0';
 
     if (!album || !*album) {
-        if (filepath) {
-            album = filepath;
-        }
-        else if (artist && *artist) {
-            album = artist;
-        }
-        else {
-            trace ("not possible to get any unique album name\n");
-            return -1;
-        }
+        return -1;
     }
     if (!artist || !*artist) {
-        artist = "Unknown artist";
-    }
-
-    if (make_cache_dir_path (artist, outpath, outsize-NAME_MAX)) {
         return -1;
     }
 
-    int name_size = outsize - (int)strlen (outpath);
-    int max_album_chars = min (NAME_MAX, name_size) - (int)sizeof ("1.jpg.part");
-    if (max_album_chars <= 0) {
-        trace ("Path buffer not long enough for %s and filename\n", outpath);
+    char root_path[PATH_MAX];
+    if (make_cache_root_path (root_path, sizeof(root_path)) < 0) {
         return -1;
     }
 
-    char esc_album[max_album_chars+1];
-    const char *palbum = strlen (album) > max_album_chars ? album+strlen (album)-max_album_chars : album;
-    size_t i = 0;
-    do {
-        esc_album[i] = esc_char (palbum[i]);
-    } while (palbum[i++]);
+    snprintf(outpath, outsize, "%s/%s - %s.jpg", root_path, artist, album);
 
-    sprintf (outpath+strlen (outpath), "%s%s", esc_album, ".jpg");
+    // sanitize
+    char *p = outpath + strlen(root_path) + 1;
+    while (*p) {
+        *p = esc_char (*p);
+        p++;
+    }
+
     return 0;
 }
 
@@ -861,7 +817,7 @@ process_query (ddb_cover_info_t *cover) {
 
     char cache_path[PATH_MAX];
 
-    make_cache_path (cover->filepath, cover->album, cover->artist, cache_path, sizeof (cache_path));
+    make_cache_path (cover->album, cover->artist, cache_path, sizeof (cache_path));
 
     // Flood control, don't retry missing artwork for an hour unless something changes
     struct stat marker_stat;
@@ -1549,22 +1505,11 @@ invalidate_playitem_cache (DB_plugin_action_t *action, ddb_action_context_t ctx)
                     cover_cache_remove (cover);
                 }
 
-                deadbeef->pl_lock ();
-                char *uri = strdup (deadbeef->pl_find_meta (it, ":URI"));
-                deadbeef->pl_unlock ();
-
                 char cache_path[PATH_MAX];
-                if (!make_cache_path(uri, cover->album, cover->artist, cache_path, sizeof(cache_path))) {
-                    char subdir_path[PATH_MAX];
-                    make_cache_dir_path (cover->artist, subdir_path, PATH_MAX);
-                    const char *subdir_name = basename (subdir_path);
-                    const char *entry_name = basename (cache_path);
+                if (!make_cache_path(cover->album, cover->artist, cache_path, sizeof(cache_path))) {
                     trace ("Expire %s from cache\n", cache_path);
-                    remove_cache_item (cache_path, subdir_path, subdir_name, entry_name);
+                    remove_cache_item (cache_path);
                 }
-
-                free (uri);
-                uri = NULL;
 
                 (void)unlink(cache_path);
                 cover_info_release(cover);

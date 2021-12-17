@@ -66,11 +66,6 @@ make_cache_root_path (char *path, const size_t size) {
     return 0;
 }
 
-static int
-filter_scaled_dirs (const struct dirent *f) {
-    return !strncasecmp (f->d_name, "covers2-", 7);
-}
-
 char *
 get_cache_marker_path(const char *path) {
     size_t path_len = strlen (path);
@@ -84,36 +79,13 @@ get_cache_marker_path(const char *path) {
     return marker_path;
 }
 
-
 void
-remove_cache_item (const char *cache_path, const char *subdir_path, const char *subdir_name, const char *entry_name) {
+remove_cache_item (const char *cache_path) {
     /* Unlink the expired file, and the artist directory if it is empty */
     unlink (cache_path);
     char *marker_path = get_cache_marker_path(cache_path);
     (void)unlink(marker_path);
     free (marker_path);
-    rmdir (subdir_path);
-
-    /* Remove any scaled copies of this file, plus parent directories that are now empty */
-    char cache_root_path[PATH_MAX];
-    make_cache_root_path (cache_root_path, PATH_MAX);
-    struct dirent **scaled_dirs = NULL;
-    int scaled_dirs_count = scandir (cache_root_path, &scaled_dirs, filter_scaled_dirs, NULL);
-    if (scaled_dirs_count < 0) {
-        return;
-    }
-    for (int i = 0; i < scaled_dirs_count; i++) {
-        char scaled_entry_path[PATH_MAX];
-        if (snprintf (scaled_entry_path, PATH_MAX, "%s%s/%s/%s", cache_root_path, scaled_dirs[i]->d_name, subdir_name, entry_name) < PATH_MAX) {
-            unlink (scaled_entry_path);
-            char *scaled_entry_dir = strdup (dirname (scaled_entry_path));
-            rmdir (scaled_entry_dir);
-            rmdir (dirname (scaled_entry_dir));
-            free (scaled_entry_dir);
-        }
-        free (scaled_dirs[i]);
-    }
-    free (scaled_dirs);
 }
 
 static int
@@ -170,7 +142,7 @@ cache_cleaner_worker (void) {
                     if (!stat (entry_path, &stat_buf)) {
                         if (stat_buf.st_mtime <= cache_expiry) {
                             trace ("%s expired from cache\n", entry_path);
-                            remove_cache_item (entry_path, subdir_path, covers_subdir->d_name, entry->d_name);
+                            remove_cache_item (entry_path);
                         }
                         else if (stat_buf.st_mtime < oldest_mtime) {
                             oldest_mtime = stat_buf.st_mtime;
