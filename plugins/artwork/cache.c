@@ -54,7 +54,7 @@ make_cache_root_path (char *path, const size_t size) {
 #ifdef __APPLE__
     apple_get_artwork_cache_path(path, size);
     size_t remaining_size = size - strlen(path);
-    strncat(path, "/Deadbeef", remaining_size-1);
+    strncat(path, "/Deadbeef/Covers", remaining_size-1);
 #else
     const char *xdg_cache = getenv ("XDG_CACHE_HOME");
     const char *cache_root = xdg_cache ? xdg_cache : getenv ("HOME");
@@ -109,53 +109,34 @@ cache_cleaner_worker (void) {
     if (make_cache_root_path (covers_path, sizeof (covers_path))) {
         return;
     }
-    const size_t covers_path_length = strlen (covers_path);
 
-    time_t oldest_mtime = time (NULL);
+    const int32_t cache_secs = _file_expiration_time;
+    const time_t cache_expiry = time (NULL) - cache_secs;
 
     /* Loop through the artist directories */
     DIR *covers_dir = opendir (covers_path);
-    struct dirent *covers_subdir;
-    while (!should_terminate() && covers_dir && (covers_subdir = readdir (covers_dir))) {
-        const int32_t cache_secs = _file_expiration_time;
-        if (cache_secs > 0 && path_ok (covers_path_length, covers_subdir->d_name)) {
-            trace ("Analyse %s for expired files\n", covers_subdir->d_name);
-            const time_t cache_expiry = time (NULL) - cache_secs;
-
-            /* Loop through the image files in this artist directory */
-            char subdir_path[PATH_MAX];
-            sprintf (subdir_path, "%s/%s", covers_path, covers_subdir->d_name);
-            const size_t subdir_path_length = strlen (subdir_path);
-            DIR *subdir = opendir (subdir_path);
-            struct dirent *entry;
-            while (!should_terminate() && subdir && (entry = readdir (subdir))) {
-                const char *marker = strstr(entry->d_name,".marker");
-                if (marker != NULL && strlen(marker) == 7) {
-                    continue; // remove_cache_item will deal with it
+    if (covers_dir == NULL) {
+        return;
+    }
+    struct dirent *entry;
+    while (!should_terminate() && (entry = readdir (covers_dir))) {
+        const char *marker = strstr(entry->d_name,".marker");
+        if (marker != NULL && strlen(marker) == 7) {
+            continue; // remove_cache_item will deal with it
+        }
+        char entry_path[PATH_MAX];
+        sprintf (entry_path, "%s/%s", covers_path, entry->d_name);
+        const size_t entry_path_length = strlen (entry_path);
+        if (path_ok (entry_path_length, entry->d_name)) {
+            /* Test against the cache expiry time (cache invalidation resets are not handled here) */
+            struct stat stat_buf;
+            if (!stat (entry_path, &stat_buf)) {
+                if (stat_buf.st_mtime <= cache_expiry) {
+                    trace ("%s expired from cache\n", entry_path);
+                    remove_cache_item (entry_path);
                 }
-                if (path_ok (subdir_path_length, entry->d_name)) {
-                    char entry_path[PATH_MAX];
-                    sprintf (entry_path, "%s/%s", subdir_path, entry->d_name);
-
-                    /* Test against the cache expiry time (cache invalidation resets are not handled here) */
-                    struct stat stat_buf;
-                    if (!stat (entry_path, &stat_buf)) {
-                        if (stat_buf.st_mtime <= cache_expiry) {
-                            trace ("%s expired from cache\n", entry_path);
-                            remove_cache_item (entry_path);
-                        }
-                        else if (stat_buf.st_mtime < oldest_mtime) {
-                            oldest_mtime = stat_buf.st_mtime;
-                        }
-                    }
-                }
-
-            }
-            if (subdir) {
-                closedir (subdir);
             }
         }
-        usleep (100000);
     }
     if (covers_dir) {
         closedir (covers_dir);

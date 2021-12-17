@@ -1635,7 +1635,7 @@ static const char settings_dlg[] =
     "property \"Save to file name\" entry artwork.save_to_music_folders_relative_path \"cover.jpg\";\n"
 #endif
     "property \"Search masks (; separated)\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
-    "property \"Artwork folders (; separated)\" entry artwork.folders \"" DEFAULT_FOLDERS "\";\n"
+    "property \"Search folders (; separated)\" entry artwork.folders \"" DEFAULT_FOLDERS "\";\n"
 // on android, cache is always off and music is saved to music folders by default
 #ifndef ANDROID
     "property \"Cache refresh (hrs)\" spinbtn[0,1000,1] artwork.cache.expiration_time 0;\n"
