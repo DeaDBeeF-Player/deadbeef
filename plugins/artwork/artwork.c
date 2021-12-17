@@ -1624,20 +1624,18 @@ static const char settings_dlg[] =
 #if ENABLE_ALBUMART_ORG
     "property \"Fetch from Albumart.org\" checkbox artwork.enable_albumartorg 0;\n"
 #endif
-    "property \"Fetch from World of Spectrum (AY files only)\" checkbox artwork.enable_wos 0;\n"
+    "property \"Fetch from World of Spectrum (AY files)\" checkbox artwork.enable_wos 0;\n"
+    "property \"Save downloaded files to music folders\" checkbox artwork.save_to_music_folders 0;\n"
 #endif
 // android doesn't display any image when cover is not found, and positioning algorithm is really different,
 // therefore the below options are useless
 #ifndef ANDROID
-    "property box vbox[2] spacing=4 border=8;\n"
-    "property box hbox[1] height=-1;"
     "property \"When no artwork is found\" select[3] artwork.missing_artwork 1 \"leave blank\" \"use DeaDBeeF default cover\" \"display custom image\";"
     "property \"Custom image path\" file artwork.nocover_path \"\";\n"
-    "property \"Save downloaded covers to music folders\" checkbox artwork.save_to_music_folders 0;\n"
     "property \"Save to file name\" entry artwork.save_to_music_folders_relative_path \"cover.jpg\";\n"
 #endif
-    "property \"Local file mask\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
-    "property \"Artwork folders\" entry artwork.folders \"" DEFAULT_FOLDERS "\";\n"
+    "property \"Search masks (; separated)\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
+    "property \"Artwork folders (; separated)\" entry artwork.folders \"" DEFAULT_FOLDERS "\";\n"
 // on android, cache is always off and music is saved to music folders by default
 #ifndef ANDROID
     "property \"Cache refresh (hrs)\" spinbtn[0,1000,1] artwork.cache.expiration_time 0;\n"
