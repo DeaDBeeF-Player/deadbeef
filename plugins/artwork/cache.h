@@ -30,4 +30,8 @@ void cache_configchanged(void);
 void start_cache_cleaner(void);
 void stop_cache_cleaner(void);
 
+/// Path to the marker file, which indicates that the cover was not found, and has the mtime of last query.
+/// The returned path must be freed.
+char *get_cache_marker_path(const char *path);
+
 #endif /*__ARTWORK_CACHE_H*/

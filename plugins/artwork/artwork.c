@@ -818,19 +818,6 @@ recheck_missing_artwork (const char *input_fname, const time_t marker_mtime) {
     return res;
 }
 
-static char *
-_get_marker_path(const char *path) {
-    size_t path_len = strlen (path);
-    size_t marker_path_len = path_len + 8;
-
-    char *marker_path = malloc (marker_path_len);
-
-    memcpy (marker_path, path, path_len);
-    memcpy (marker_path + path_len, ".marker", 8);
-
-    return marker_path;
-}
-
 static void _touch(char *marker_path) {
     struct stat stat_struct;
     if (0 != stat (marker_path, &stat_struct)) {
@@ -936,7 +923,7 @@ process_query (ddb_cover_info_t *cover) {
         // Flood control, don't retry missing artwork for an hour unless something changes
         struct stat marker_stat;
 
-        char *marker_path = _get_marker_path(cache_path);
+        char *marker_path = get_cache_marker_path(cache_path);
         int res = stat (marker_path, &marker_stat);
         free (marker_path);
         marker_path = NULL;
@@ -977,7 +964,7 @@ process_query (ddb_cover_info_t *cover) {
     }
     if (res >= 0) {
         // Cover obtained, delete the marker if present
-        char *marker_path = _get_marker_path(cache_path);
+        char *marker_path = get_cache_marker_path(cache_path);
         (void)unlink(marker_path);
         free (marker_path);
         marker_path = NULL;
@@ -1020,7 +1007,7 @@ process_query (ddb_cover_info_t *cover) {
         return;
     }
     else {
-        char *marker_path = _get_marker_path(cache_path);
+        char *marker_path = get_cache_marker_path(cache_path);
         _touch(marker_path);
         free (marker_path);
     }

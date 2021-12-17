@@ -62,10 +62,27 @@ filter_scaled_dirs (const struct dirent *f) {
     return !strncasecmp (f->d_name, "covers2-", 7);
 }
 
+char *
+get_cache_marker_path(const char *path) {
+    size_t path_len = strlen (path);
+    size_t marker_path_len = path_len + 8;
+
+    char *marker_path = malloc (marker_path_len);
+
+    memcpy (marker_path, path, path_len);
+    memcpy (marker_path + path_len, ".marker", 8);
+
+    return marker_path;
+}
+
+
 void
-remove_cache_item (const char *entry_path, const char *subdir_path, const char *subdir_name, const char *entry_name) {
+remove_cache_item (const char *cache_path, const char *subdir_path, const char *subdir_name, const char *entry_name) {
     /* Unlink the expired file, and the artist directory if it is empty */
-    unlink (entry_path);
+    unlink (cache_path);
+    char *marker_path = get_cache_marker_path(cache_path);
+    (void)unlink(marker_path);
+    free (marker_path);
     rmdir (subdir_path);
 
     /* Remove any scaled copies of this file, plus parent directories that are now empty */
@@ -95,7 +112,8 @@ path_ok (const size_t dir_length, const char *entry) {
     return strcmp (entry, ".") && strcmp (entry, "..") && dir_length + strlen (entry) + 1 < PATH_MAX;
 }
 
-static int should_terminate(void) {
+static int
+should_terminate(void) {
     __block int terminate = 0;
     dispatch_sync(sync_queue, ^{
         terminate = (_terminate || _file_expiration_time == 0);
@@ -131,6 +149,10 @@ cache_cleaner_worker (void) {
             DIR *subdir = opendir (subdir_path);
             struct dirent *entry;
             while (!should_terminate() && subdir && (entry = readdir (subdir))) {
+                const char *marker = strstr(entry->d_name,".marker");
+                if (marker != NULL && strlen(marker) == 7) {
+                    continue; // remove_cache_item will deal with it
+                }
                 if (path_ok (subdir_path_length, entry->d_name)) {
                     char entry_path[PATH_MAX];
                     sprintf (entry_path, "%s/%s", subdir_path, entry->d_name);
@@ -147,6 +169,7 @@ cache_cleaner_worker (void) {
                         }
                     }
                 }
+
             }
             if (subdir) {
                 closedir (subdir);
