@@ -839,8 +839,7 @@ process_query (ddb_cover_info_t *cover) {
     if (artwork_enable_wos && strlen (cover->filepath) > 3 && !strcasecmp (cover->filepath+strlen (cover->filepath)-3, ".ay")) {
         if (!fetch_from_wos (cover->title, cache_path)) {
             cover->image_filename = strdup(cache_path);
-            cover->cover_found = 1;
-            res = 0;
+            res = 1;
         }
         if (errno == ECONNABORTED) {
             res = -1;
