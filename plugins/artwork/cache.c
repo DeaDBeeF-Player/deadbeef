@@ -104,7 +104,6 @@ should_terminate(void) {
 
 static void
 cache_cleaner_worker (void) {
-    /* Find where it all happens */
     char covers_path[PATH_MAX];
     if (make_cache_root_path (covers_path, sizeof (covers_path))) {
         return;
@@ -113,7 +112,6 @@ cache_cleaner_worker (void) {
     const int32_t cache_secs = _file_expiration_time;
     const time_t cache_expiry = time (NULL) - cache_secs;
 
-    /* Loop through the artist directories */
     DIR *covers_dir = opendir (covers_path);
     if (covers_dir == NULL) {
         return;
@@ -127,7 +125,7 @@ cache_cleaner_worker (void) {
         char entry_path[PATH_MAX];
         sprintf (entry_path, "%s/%s", covers_path, entry->d_name);
         if (path_ok (entry->d_name)) {
-            /* Test against the cache expiry time (cache invalidation resets are not handled here) */
+            // Test against the cache expiry time
             struct stat stat_buf;
             if (!stat (entry_path, &stat_buf)) {
                 if (stat_buf.st_mtime <= cache_expiry) {
@@ -140,10 +138,6 @@ cache_cleaner_worker (void) {
     if (covers_dir) {
         closedir (covers_dir);
         covers_dir = NULL;
-    }
-
-    if (should_terminate()) {
-        return;
     }
 }
 
