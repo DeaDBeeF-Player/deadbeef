@@ -12,6 +12,6 @@
 #include "artwork.h"
 
 int
-flac_extract_art (const char *outname, ddb_cover_info_t *cover);
+flac_extract_art (ddb_cover_info_t *cover);
 
 #endif /* artwork_flac_h */

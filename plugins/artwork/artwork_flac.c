@@ -47,7 +47,7 @@ static FLAC__IOCallbacks flac_iocb = {
 };
 
 int
-flac_extract_art (const char *outname, ddb_cover_info_t *cover) {
+flac_extract_art (ddb_cover_info_t *cover) {
     if (!strcasestr (cover->filepath, ".flac") && !strcasestr (cover->filepath, ".oga")) {
         return -1;
     }
@@ -99,20 +99,11 @@ flac_extract_art (const char *outname, ddb_cover_info_t *cover) {
     FLAC__StreamMetadata_Picture *pic = &picture->data.picture;
     if (pic && pic->data_length > 0) {
         trace ("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
-        trace ("will write flac cover art into %s\n", outname);
-        if (!artwork_disable_cache) {
-            if (!write_file (outname, (char *)pic->data, pic->data_length)) {
-                cover->image_filename = strdup (outname);
-                err = 0;
-            }
-        }
-        else {
-            cover->blob = malloc (pic->data_length);
-            memcpy (cover->blob, pic->data, pic->data_length);
-            cover->blob_size = pic->data_length;
-            cover->blob_image_size = pic->data_length;
-            err = 0;
-        }
+        cover->blob = malloc (pic->data_length);
+        memcpy (cover->blob, pic->data, pic->data_length);
+        cover->blob_size = pic->data_length;
+        cover->blob_image_size = pic->data_length;
+        err = 0;
     }
 error:
     if (chain) {

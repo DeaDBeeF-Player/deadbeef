@@ -505,7 +505,7 @@ apev2_artwork (const DB_apev2_frame_t *f)
 
 
 static int
-id3_extract_art (const char *outname, ddb_cover_info_t *cover) {
+id3_extract_art (ddb_cover_info_t *cover) {
     int err = -1;
 
     DB_id3v2_tag_t id3v2_tag;
@@ -525,36 +525,20 @@ id3_extract_art (const char *outname, ddb_cover_info_t *cover) {
                 if (sz <= 0) {
                     continue;
                 }
-                if (!artwork_disable_cache) {
-                    trace ("will write id3v2 APIC (%d bytes) into %s\n", (int)sz, outname);
-                    struct stat stat_struct;
-                    if (!stat (outname, &stat_struct) && S_ISREG (stat_struct.st_mode) && stat_struct.st_size > 0) {
-                        cover->image_filename = strdup (outname);
-                        err = 0;
-                        break;
-                    }
-                    else if (!write_file (outname, (const char *)image_data, sz)) {
-                        cover->image_filename = strdup(outname);
-                        err = 0;
-                        break;
-                    }
+                // steal the frame memory from DB_id3v2_tag_t
+                if (fprev) {
+                    fprev->next = f->next;
                 }
                 else {
-                    // steal the frame memory from DB_id3v2_tag_t
-                    if (fprev) {
-                        fprev->next = f->next;
-                    }
-                    else {
-                        id3v2_tag.frames = f->next;
-                    }
-
-                    cover->blob = (char *)f;
-                    cover->blob_size = f->size;
-                    cover->blob_image_offset = (uint64_t)((char *)image_data - (char *)cover->blob);
-                    cover->blob_image_size = sz;
-                    err = 0;
-                    break;
+                    id3v2_tag.frames = f->next;
                 }
+
+                cover->blob = (char *)f;
+                cover->blob_size = f->size;
+                cover->blob_image_offset = (uint64_t)((char *)image_data - (char *)cover->blob);
+                cover->blob_image_size = sz;
+                err = 0;
+                break;
             }
             fprev = f;
         }
@@ -567,7 +551,7 @@ id3_extract_art (const char *outname, ddb_cover_info_t *cover) {
 }
 
 static int
-apev2_extract_art (const char *outname, ddb_cover_info_t *cover) {
+apev2_extract_art (ddb_cover_info_t *cover) {
     int err = -1;
     DB_apev2_tag_t apev2_tag;
     memset (&apev2_tag, 0, sizeof (apev2_tag));
@@ -581,36 +565,20 @@ apev2_extract_art (const char *outname, ddb_cover_info_t *cover) {
                 if (sz <= 0) {
                     continue;
                 }
-                trace ("will write apev2 cover art (%d bytes) into %s\n", sz, outname);
-                if (!artwork_disable_cache) {
-                    struct stat stat_struct;
-                    if (!stat (outname, &stat_struct) && S_ISREG (stat_struct.st_mode) && stat_struct.st_size > 0) {
-                        cover->image_filename = strdup (outname);
-                        err = 0;
-                        break;
-                    }
-                    else if (!write_file (outname, (const char *)image_data, sz)) {
-                        cover->image_filename = strdup (outname);
-                        err = 0;
-                        break;
-                    }
+                // steal the frame memory from DB_id3v2_tag_t
+                if (fprev) {
+                    fprev->next = f->next;
                 }
                 else {
-                    // steal the frame memory from DB_id3v2_tag_t
-                    if (fprev) {
-                        fprev->next = f->next;
-                    }
-                    else {
-                        apev2_tag.frames = f->next;
-                    }
-
-                    cover->blob = (char *)f;
-                    cover->blob_size = f->size;
-                    cover->blob_image_offset = (uint64_t)((char *)image_data - (char *)cover->blob);
-                    cover->blob_image_size = sz;
-                    err = 0;
-                    break;
+                    apev2_tag.frames = f->next;
                 }
+
+                cover->blob = (char *)f;
+                cover->blob_size = f->size;
+                cover->blob_image_offset = (uint64_t)((char *)image_data - (char *)cover->blob);
+                cover->blob_image_size = sz;
+                err = 0;
+                break;
             }
             fprev = f;
         }
@@ -624,7 +592,7 @@ apev2_extract_art (const char *outname, ddb_cover_info_t *cover) {
 }
 
 static int
-mp4_extract_art (const char *outname, ddb_cover_info_t *cover) {
+mp4_extract_art (ddb_cover_info_t *cover) {
     int ret = -1;
     mp4p_atom_t *mp4file = NULL;
     DB_FILE* fp = NULL;
@@ -670,31 +638,11 @@ mp4_extract_art (const char *outname, ddb_cover_info_t *cover) {
         goto error;
     }
 
-    trace ("will write mp4 cover art (%u bytes) into %s\n", sz, outname);
-    if (!artwork_disable_cache) {
-        struct stat stat_struct;
-        if (!stat (outname, &stat_struct) && S_ISREG (stat_struct.st_mode) && stat_struct.st_size > 0) {
-            ret = 0;
-            cover->image_filename = strdup (outname);
-        }
-        else if (!write_file (outname, (char *)image_blob, sz)) {
-            ret = 0;
-            cover->image_filename = strdup (outname);
-        }
-        else {
-            trace ("Failed to write mp4 cover to file %s\n");
-            goto error;
-        }
-        free (image_blob);
-        image_blob = NULL;
-    }
-    else {
-        cover->blob = (char *)image_blob;
-        image_blob = NULL;
-        cover->blob_size = data->data_size;
-        cover->blob_image_size = data->data_size;
-        ret = 0;
-    }
+    cover->blob = (char *)image_blob;
+    image_blob = NULL;
+    cover->blob_size = data->data_size;
+    cover->blob_image_size = data->data_size;
+    ret = 0;
 
 error:
     if (image_blob) {
@@ -842,14 +790,6 @@ static void _touch(char *marker_path) {
 // Web cover: save_to_local ? save_to_local&return_path : ( !cache_disabled ? save_to_cache&return_path : NOP )
 static void
 process_query (ddb_cover_info_t *cover) {
-    char cache_path_buf[PATH_MAX];
-    char *cache_path = NULL;
-
-    if (!artwork_disable_cache) {
-        cache_path = cache_path_buf;
-        make_cache_path (cover->filepath, cover->album, cover->artist, cache_path, sizeof (cache_path_buf));
-    }
-
     int islocal = deadbeef->is_local_file (cover->filepath);
 
     if (artwork_enable_local && islocal) {
@@ -881,7 +821,7 @@ process_query (ddb_cover_info_t *cover) {
 #ifdef USE_METAFLAC
         // try to load embedded from flac metadata
         trace ("trying to load artwork from Flac tag for %s\n", cover->filepath);
-        if (!flac_extract_art (cache_path, cover)) {
+        if (!flac_extract_art (cover)) {
             cover->cover_found = 1;
             return;
         }
@@ -889,21 +829,21 @@ process_query (ddb_cover_info_t *cover) {
 
         // try to load embedded from id3v2
         trace ("trying to load artwork from id3v2 tag for %s\n", cover->filepath);
-        if (!id3_extract_art (cache_path, cover)) {
+        if (!id3_extract_art (cover)) {
             cover->cover_found = 1;
             return;
         }
 
         // try to load embedded from apev2
         trace ("trying to load artwork from apev2 tag for %s\n", cover->filepath);
-        if (!apev2_extract_art (cache_path, cover)) {
+        if (!apev2_extract_art (cover)) {
             cover->cover_found = 1;
             return;
         }
 
         // try to load embedded from mp4
         trace ("trying to load artwork from mp4 tag for %s\n", cover->filepath);
-        if (!mp4_extract_art (cache_path, cover)) {
+        if (!mp4_extract_art (cover)) {
             cover->cover_found = 1;
             return;
         }
@@ -912,32 +852,35 @@ process_query (ddb_cover_info_t *cover) {
     // Don't allow downloading from the web without disk cache.
     // Even if saving to music folders is enabled -- we don't want to flood,
     // e.g. if saving to music folder fails due to readonly FS.
-    if (!cache_path) {
+    if (artwork_disable_cache) {
         cover->cover_found = 0;
         return;
     }
 
 #ifdef USE_VFS_CURL
 
-    if (cache_path) {
-        // Flood control, don't retry missing artwork for an hour unless something changes
-        struct stat marker_stat;
+    char cache_path[PATH_MAX];
 
-        char *marker_path = get_cache_marker_path(cache_path);
-        int res = stat (marker_path, &marker_stat);
-        free (marker_path);
-        marker_path = NULL;
+    make_cache_path (cover->filepath, cover->album, cover->artist, cache_path, sizeof (cache_path));
 
-        if (!res && marker_stat.st_mtime + 60*60 > time (NULL)) {
-            int recheck = recheck_missing_artwork (cover->filepath, marker_stat.st_mtime);
-            if (!recheck) {
-                return;
-            }
+    // Flood control, don't retry missing artwork for an hour unless something changes
+    struct stat marker_stat;
+
+    char *marker_path = get_cache_marker_path(cache_path);
+    int res = stat (marker_path, &marker_stat);
+    free (marker_path);
+    marker_path = NULL;
+
+    if (!res && marker_stat.st_mtime + 60*60 > time (NULL)) {
+        int recheck = recheck_missing_artwork (cover->filepath, marker_stat.st_mtime);
+        if (!recheck) {
+            return;
         }
     }
 
     /* Web lookups */
-    int res = -1;
+    res = -1;
+
     // don't attempt to load AY covers from regular music services
     if (artwork_enable_wos && strlen (cover->filepath) > 3 && !strcasecmp (cover->filepath+strlen (cover->filepath)-3, ".ay")) {
         if (!fetch_from_wos (cover->title, cache_path)) {
