@@ -1173,6 +1173,12 @@ _init_cover_metadata(ddb_cover_info_t *cover, ddb_playItem_t *track) {
     if (artwork_enable_wos && strlen (cover->filepath) > 3 && !strcasecmp (cover->filepath+strlen (cover->filepath)-3, ".ay")) {
         strcpy (cover->artist, "AY Music");
         deadbeef->tf_eval (&ctx, title_tf, cover->album, sizeof (cover->album));
+        for (char *p = cover->album; *p; p++) {
+            if (p[0] == ' ' && p[1] == '-') {
+                *p = 0;
+                break;
+            }
+        }
         strcpy (cover->title, cover->album);
     }
     else {
