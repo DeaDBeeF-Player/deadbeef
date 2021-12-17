@@ -21,6 +21,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) ddb_artwork_plugin_t *artwork_plugin;
 
 @property (nonatomic) dispatch_block_t throttleBlock;
+@property (nonatomic) NSInteger requestIndex;
 
 @end
 
@@ -124,7 +125,11 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                 CGFloat albumArtSpaceWidth = self.imageView.frame.size.width;
 
                 NSImageView *imageView = self.imageView;
+                NSInteger currentIndex = self.requestIndex++;
                 NSImage *image = [CoverManager.defaultCoverManager coverForTrack:it completionBlock:^(NSImage *img) {
+                    if (currentIndex != self.requestIndex-1) {
+                        return;
+                    }
                     if (img != nil) {
                         NSSize desiredSize = [CoverManager.defaultCoverManager artworkDesiredSizeForImageSize:img.size albumArtSpaceWidth:albumArtSpaceWidth];
                         imageView.image = [CoverManager.defaultCoverManager createCachedImage:img size:desiredSize];
