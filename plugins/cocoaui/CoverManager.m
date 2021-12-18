@@ -174,16 +174,19 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
     // Load the image on background queue
     CoverManager *cm = CoverManager.defaultCoverManager;
     dispatch_async(cm.loaderQueue, ^{
-        NSImage *img = [cm loadImageFromCover:cover];
+        NSImage *img;
+
+        if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
+            img = [cm loadImageFromCover:cover];
+        }
 
         // Update the UI on main queue
         dispatch_async(dispatch_get_main_queue(), ^{
-            // FIXME: if the img is nil -- CoverManager should still be updated
-            if (img != nil) {
+            if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
                 [cm addCoverForTrack:query->track withImage:img];
-                void (^completionBlock)(NSImage *) = (void (^)(NSImage *__strong))CFBridgingRelease(query->user_data);
-                completionBlock(img);
             }
+            void (^completionBlock)(NSImage *) = (void (^)(NSImage *__strong))CFBridgingRelease(query->user_data);
+            completionBlock(img);
 
             // Free the query -- it's fast, so it's OK to free it on main queue
             deadbeef->pl_item_unref (query->track);

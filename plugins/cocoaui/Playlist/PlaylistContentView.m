@@ -463,8 +463,6 @@ static int grouptitleheight = 22;
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
 
-    [self.delegate willDrawContentView];
-
     // we always need to draw the list in the entire visible area,
     // so we get the full size from scrollview, and patch the clip rect
     [NSGraphicsContext saveGraphicsState];

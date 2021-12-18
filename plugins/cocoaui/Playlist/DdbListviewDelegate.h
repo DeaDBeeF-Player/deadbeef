@@ -54,5 +54,4 @@ typedef intptr_t DdbListviewCol_t;
 - (enum ddb_sort_order_t)columnSortOrderAtIndex:(NSUInteger)index;
 
 - (NSString *)rowGroupStr:(DdbListviewRow_t)row;
-- (void)willDrawContentView;
 @end

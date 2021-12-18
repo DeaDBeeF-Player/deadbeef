@@ -48,6 +48,9 @@ enum {
 
     /// Returned artwork can be a blob, i.e. a memory block - that is, entire cover image in memory
     DDB_ARTWORK_FLAG_LOAD_BLOB = (1<<1),
+
+    /// Loading of the cover was cancelled, and result should be ignored
+    DDB_ARTWORK_FLAG_CANCELLED = (1<<2),
 };
 
 /// This structure needs to be passed to cover_get.

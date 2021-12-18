@@ -82,10 +82,6 @@ static dispatch_queue_t process_queue;
 static dispatch_queue_t fetch_queue;
 static dispatch_semaphore_t fetch_semaphore;
 
-enum {
-    DDB_ARTWORK_FLAG_CANCELLED = (1<<16)
-};
-
 // Grouping queries by source id
 static int64_t next_source_id;
 typedef struct query_group_s {
@@ -255,7 +251,7 @@ scan_local_path (const char *local_path, const char *uri, DB_vfs_t *vfsplug, ddb
 
     int err = -1;
 
-    if (files_count > 0) {
+    if (files != NULL) {
         const char *filemask_end = filemask + strlen (filemask);
         char *p;
         while ((p = strrchr (filemask, ';'))) {
@@ -299,18 +295,20 @@ get_case_insensitive_path (const char *local_path, const char *subfolder, DB_vfs
     custom_scandir = vfsplug ? vfsplug->scandir : scandir;
     int files_count = custom_scandir (local_path, &files, NULL, NULL);
     char *ret = NULL;
-    for (int i = 0; i < files_count; i++) {
-        if (!strcasecmp (subfolder, files[i]->d_name)) {
-            size_t l = strlen (local_path) + strlen (files[i]->d_name) + 2;
-            ret = malloc (l);
-            snprintf (ret, l, "%s/%s", local_path, files[i]->d_name);
-            break;
+    if (files != NULL) {
+        for (int i = 0; i < files_count; i++) {
+            if (!strcasecmp (subfolder, files[i]->d_name)) {
+                size_t l = strlen (local_path) + strlen (files[i]->d_name) + 2;
+                ret = malloc (l);
+                snprintf (ret, l, "%s/%s", local_path, files[i]->d_name);
+                break;
+            }
         }
+        for (size_t i = 0; i < files_count; i++) {
+            free (files[i]);
+        }
+        free (files);
     }
-    for (size_t i = 0; i < files_count; i++) {
-        free (files[i]);
-    }
-    free (files);
     return ret;
 }
 
@@ -1008,7 +1006,7 @@ _notify_listeners(ddb_artwork_listener_event_t event, DB_playItem_t *it) {
     });
 
     for (int i = 0; i < count; i++) {
-        listeners[i](event, userdatas[i], (intptr_t)it, 0);
+        callbacks[i](event, userdatas[i], (intptr_t)it, 0);
     }
     free (callbacks);
     free (userdatas);
