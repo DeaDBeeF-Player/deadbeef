@@ -40,7 +40,7 @@
 ///
 /// Another example: `DDB_ARTWORK_FLAG_LOAD_BLOB`
 /// This indicates that both blob and filename must be returned.
-/// However, in some cases filenames are not available, e.g. when loading from tags, with disk cache disabled.
+/// However, in some cases filenames are not available, e.g. when loading from tags.
 /// In this case filename will be set to NULL.
 enum {
     /// Tells that filenames should not be returned
@@ -48,9 +48,6 @@ enum {
 
     /// Returned artwork can be a blob, i.e. a memory block - that is, entire cover image in memory
     DDB_ARTWORK_FLAG_LOAD_BLOB = (1<<1),
-
-    /// Don't allow writing files to disk cache, even if the cache is enabled in the settings
-    DDB_ARTWORK_FLAG_NO_CACHE = (1<<2),
 };
 
 /// This structure needs to be passed to cover_get.

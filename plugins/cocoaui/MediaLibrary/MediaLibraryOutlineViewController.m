@@ -512,7 +512,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
     query->_size = sizeof (ddb_cover_query_t);
     query->user_data = (void *)CFBridgingRetain(completionBlock);
-    query->flags = DDB_ARTWORK_FLAG_NO_CACHE|DDB_ARTWORK_FLAG_LOAD_BLOB;
+    query->flags = DDB_ARTWORK_FLAG_LOAD_BLOB;
     query->track = track;
     deadbeef->pl_item_ref (track);
     self.artworkPlugin->cover_get(query, cover_get_callback);
