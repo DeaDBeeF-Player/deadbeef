@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2016 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2021 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -21,16 +21,33 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import <Foundation/Foundation.h>
-#include "../../deadbeef.h"
+#ifndef covermanager_h
+#define covermanager_h
 
-@interface CoverManager : NSObject
+#include <gtk/gtk.h>
+#include <stdint.h>
+#include "../../../deadbeef.h"
 
-+ (nonnull CoverManager *)defaultCoverManager;
+typedef void *covermanager_t;
 
-- (nullable NSImage *)coverForTrack:(nonnull DB_playItem_t *)track sourceId:(int64_t)sourceId completionBlock:(nonnull void (^) (NSImage * _Nullable img))completionBlock;
-- (nullable NSImage *)coverForTrack:(nonnull DB_playItem_t *)track completionBlock:(nonnull void (^) (NSImage * _Nullable img))completionBlock;
-- (nullable NSImage *)createCachedImage:(NSImage * _Nonnull)image size:(NSSize)size;
-- (NSSize)artworkDesiredSizeForImageSize:(NSSize)imageSize albumArtSpaceWidth:(CGFloat)albumArtSpaceWidth;
+typedef void (*covermanager_completion_func_t)(GtkImage *img, void *user_data);
 
-@end
+covermanager_t
+covermanager_shared(void);
+
+covermanager_t
+covermanager_new(void);
+
+void
+covermanager_free (covermanager_t manager);
+
+GdkPixbuf *
+covermanager_cover_for_track(covermanager_t manager, DB_playItem_t *track, int64_t source_id, covermanager_completion_func_t completion_func, void *user_data);
+
+GdkPixbuf *
+covermanager_create_scaled_image (covermanager_t manager, GdkPixbuf *image, GtkAllocation size);
+
+GtkAllocation
+covermanager_desired_size_for_image_size (covermanager_t manager, GtkAllocation image_size, int album_art_space_width);
+
+#endif /* covermanager_h */

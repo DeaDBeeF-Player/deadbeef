@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2016 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2021 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -21,16 +21,26 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import <Foundation/Foundation.h>
-#include "../../deadbeef.h"
+#ifndef gobjcache_h
+#define gobjcache_h
 
-@interface CoverManager : NSObject
+#include <gtk/gtk.h>
 
-+ (nonnull CoverManager *)defaultCoverManager;
+typedef void *gobj_cache_t;
 
-- (nullable NSImage *)coverForTrack:(nonnull DB_playItem_t *)track sourceId:(int64_t)sourceId completionBlock:(nonnull void (^) (NSImage * _Nullable img))completionBlock;
-- (nullable NSImage *)coverForTrack:(nonnull DB_playItem_t *)track completionBlock:(nonnull void (^) (NSImage * _Nullable img))completionBlock;
-- (nullable NSImage *)createCachedImage:(NSImage * _Nonnull)image size:(NSSize)size;
-- (NSSize)artworkDesiredSizeForImageSize:(NSSize)imageSize albumArtSpaceWidth:(CGFloat)albumArtSpaceWidth;
+gobj_cache_t
+gobj_cache_new (int max_object_count);
 
-@end
+void
+gobj_cache_free (gobj_cache_t cache);
+
+void
+gobj_cache_set (gobj_cache_t cache, const char *key, GObject *obj);
+
+GObject *
+gobj_cache_get (gobj_cache_t cache, const char *key);
+
+void
+gobj_cache_remove (gobj_cache_t cache, const char *key);
+
+#endif /* gobjcache_h */
