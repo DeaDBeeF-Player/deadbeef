@@ -47,8 +47,7 @@ strcopy_escape (char *dst, int d_len, const char *src, size_t n) {
 }
 
 #define WOS_URL "http://worldofspectrum.org//scr2gif?file=pub/sinclair/screens/load/%c/scr/%s.scr"
-int fetch_from_wos (const char *title, const char *dest)
-{
+int fetch_from_wos (const char *title, const char *dest) {
     // extract game title from title
     char t[100];
     char *dash = strstr (title, " -");

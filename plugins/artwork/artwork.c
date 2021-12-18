@@ -201,29 +201,18 @@ make_cache_path (const char *album, const char *artist, char *outpath, int outsi
 }
 
 static int
-strings_equal (const char *s1, const char *s2)
-{
+strings_equal (const char *s1, const char *s2) {
     return (s1 == s2) || (s1 && s2 && !strcasecmp (s1, s2));
 }
 
-static char *filter_custom_mask = NULL;
-
-static int
-filter_custom (const struct dirent *f)
-{
-// FNM_CASEFOLD is not defined on solaris. On other platforms it is.
-// It should be safe to define it as FNM_INGORECASE if it isn't defined.
 #ifndef FNM_CASEFOLD
 #define FNM_CASEFOLD FNM_IGNORECASE
 #endif
-    return !fnmatch (filter_custom_mask, f->d_name, FNM_CASEFOLD);
-}
 
 static int
-vfs_scan_results (struct dirent *entry, const char *container_uri, ddb_cover_info_t *cover)
-{
+vfs_scan_results (struct dirent *entry, const char *container_uri, ddb_cover_info_t *cover, const char *mask) {
     /* VFS container, double check the match in case scandir didn't implement filtering */
-    if (filter_custom (entry)) {
+    if (!fnmatch (mask, entry->d_name, FNM_CASEFOLD)) {
         trace ("found cover %s in %s\n", entry->d_name, container_uri);
         size_t len = strlen (container_uri) + strlen(entry->d_name) + 2;
         cover->image_filename = malloc (len);
@@ -235,54 +224,73 @@ vfs_scan_results (struct dirent *entry, const char *container_uri, ddb_cover_inf
 }
 
 static int
-dir_scan_results (struct dirent **files, int files_count, const char *container, ddb_cover_info_t *cover)
-{
+dir_scan_results (struct dirent *entry, const char *container, ddb_cover_info_t *cover) {
     /* Local file in a directory */
-    for (size_t i = 0; i < files_count; i++) {
-        trace ("found cover %s in local folder\n", files[0]->d_name);
-        size_t len = strlen (container) + strlen(files[i]->d_name) + 2;
-        cover->image_filename = malloc (len);
-        snprintf (cover->image_filename, len, "%s/%s", container, files[i]->d_name);
-        struct stat stat_struct;
-        if (!stat (cover->image_filename, &stat_struct) && S_ISREG (stat_struct.st_mode) && stat_struct.st_size > 0) {
-            return 0;
-        }
-        else {
-            free (cover->image_filename);
-            cover->image_filename = NULL;
-        }
+    trace ("found cover %s in local folder\n", entry->d_name);
+    size_t len = strlen (container) + strlen(entry->d_name) + 2;
+    cover->image_filename = malloc (len);
+    snprintf (cover->image_filename, len, "%s/%s", container, entry->d_name);
+    struct stat stat_struct;
+    if (!stat (cover->image_filename, &stat_struct) && S_ISREG (stat_struct.st_mode) && stat_struct.st_size > 0) {
+        return 0;
+    }
+    else {
+        free (cover->image_filename);
+        cover->image_filename = NULL;
     }
 
     return -1;
 }
 
 static int
-scan_local_path (char *mask, const char *local_path, const char *uri, DB_vfs_t *vfsplug, ddb_cover_info_t *cover)
-{
-    filter_custom_mask = mask;
+scan_local_path (const char *local_path, const char *uri, DB_vfs_t *vfsplug, ddb_cover_info_t *cover) {
     struct dirent **files = NULL;
     int (* custom_scandir)(const char *, struct dirent ***, int (*)(const struct dirent *), int (*)(const struct dirent **, const struct dirent **));
     custom_scandir = vfsplug ? vfsplug->scandir : scandir;
-    int files_count = custom_scandir (local_path, &files, filter_custom, NULL);
+    int files_count = custom_scandir (local_path, &files, NULL, NULL);
+
+    __block char *filemask = NULL;
+
+    dispatch_sync(sync_queue, ^{
+        filemask = strdup (artwork_filemask);
+    });
+
+    int err = -1;
+
     if (files_count > 0) {
-        int err = -1;
-        if (uri) {
-            err = vfs_scan_results (files[0], uri, cover);
+        const char *filemask_end = filemask + strlen (filemask);
+        char *p;
+        while ((p = strrchr (filemask, ';'))) {
+            *p = '\0';
         }
-        else {
-            err = dir_scan_results (files, files_count, local_path, cover);
+
+        for (char *mask = filemask; mask < filemask_end; mask += strlen (mask)+1) {
+            for (int i = 0; i < files_count; i++) {
+                if (!fnmatch (mask, files[i]->d_name, FNM_CASEFOLD)) {
+                    if (uri) {
+                        err = vfs_scan_results (files[i], uri, cover, mask);
+                    }
+                    else {
+                        err = dir_scan_results (files[i], local_path, cover);
+                    }
+                }
+                if (!err) {
+                    break;
+                }
+            }
+            if (!err) {
+                break;
+            }
         }
+        free (filemask);
 
         for (size_t i = 0; i < files_count; i++) {
             free (files[i]);
         }
         free (files);
-
-        return err;
     }
 
-    free (files);
-    return -1;
+    return err;
 }
 
 // FIXME: this returns only one path that matches subfolder. Usually that's enough, but can be improved.
@@ -309,23 +317,14 @@ get_case_insensitive_path (const char *local_path, const char *subfolder, DB_vfs
 }
 
 static int
-local_image_file (const char *local_path, const char *uri, DB_vfs_t *vfsplug, ddb_cover_info_t *cover)
-{
+local_image_file (const char *local_path, const char *uri, DB_vfs_t *vfsplug, ddb_cover_info_t *cover) {
     if (!artwork_filemask) {
         return -1;
     }
 
     char *p;
 
-    char *filemask = strdup (artwork_filemask);
-    strcpy (filemask, artwork_filemask);
-    const char *filemask_end = filemask + strlen (filemask);
-    while ((p = strrchr (filemask, ';'))) {
-        *p = '\0';
-    }
-
     char *folders = strdup (artwork_folders);
-    strcpy (folders, artwork_folders);
     const char *folders_end = folders + strlen (folders);
     while ((p = strrchr (folders, ';'))) {
         *p = '\0';
@@ -344,19 +343,15 @@ local_image_file (const char *local_path, const char *uri, DB_vfs_t *vfsplug, dd
             folder += strlen (folder)+1;
         }
         trace ("scanning %s for artwork\n", path);
-        for (char *mask = filemask; mask < filemask_end; mask += strlen (mask)+1) {
-            if (mask[0] && path && !scan_local_path (mask, path, uri, vfsplug, cover)) {
-                free (filemask);
-                free (folders);
-                free (path);
-                return 0;
-            }
+        if (path && !scan_local_path (path, uri, vfsplug, cover)) {
+            free (folders);
+            free (path);
+            return 0;
         }
         free (path);
     }
 
     trace ("No cover art files in local folder\n");
-    free (filemask);
     free (folders);
     return -1;
 }
@@ -380,8 +375,7 @@ id3v2_skip_str (int enc, const uint8_t *ptr, const uint8_t *end) {
 }
 
 static const uint8_t *
-id3v2_artwork (const DB_id3v2_frame_t *f, int minor_version, int type)
-{
+id3v2_artwork (const DB_id3v2_frame_t *f, int minor_version, int type) {
     if ((minor_version > 2 && strcmp (f->id, "APIC")) || (minor_version == 2 && strcmp (f->id, "PIC"))) {
         return NULL;
     }
@@ -428,8 +422,7 @@ id3v2_artwork (const DB_id3v2_frame_t *f, int minor_version, int type)
 }
 
 static const uint8_t *
-apev2_artwork (const DB_apev2_frame_t *f)
-{
+apev2_artwork (const DB_apev2_frame_t *f) {
     if (strcasecmp (f->key, "cover art (front)")) {
         return NULL;
     }
@@ -655,8 +648,7 @@ web_lookups (const char *cache_path, ddb_cover_info_t *cover) {
 }
 
 static char *
-vfs_path (const char *fname)
-{
+vfs_path (const char *fname) {
     if (fname[0] == '/' || strstr (fname, "file://") == fname) {
         return NULL;
     }
@@ -673,8 +665,7 @@ vfs_path (const char *fname)
 }
 
 static DB_vfs_t *
-scandir_plug (const char *vfs_fname)
-{
+scandir_plug (const char *vfs_fname) {
     DB_vfs_t **vfsplugs = deadbeef->plug_get_vfs_list ();
     for (size_t i = 0; vfsplugs[i]; i++) {
         if (vfsplugs[i]->is_container && vfsplugs[i]->is_container (vfs_fname) && vfsplugs[i]->scandir) {
@@ -1718,8 +1709,7 @@ artwork_plugin_stop (void) {
 }
 
 static int
-artwork_plugin_start (void)
-{
+artwork_plugin_start (void) {
     _get_fetcher_preferences ();
     cache_reset_time = deadbeef->conf_get_int64 ("artwork.cache_reset_time", 0);
 

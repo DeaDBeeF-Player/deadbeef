@@ -33,8 +33,7 @@
    its behavior is altered by the current locale.
    See http://tools.ietf.org/html/rfc3986#section-2.3
 */
-static int Curl_isunreserved(unsigned char in)
-{
+static int Curl_isunreserved(unsigned char in) {
   switch (in) {
     case '0': case '1': case '2': case '3': case '4':
     case '5': case '6': case '7': case '8': case '9':
@@ -56,8 +55,7 @@ static int Curl_isunreserved(unsigned char in)
   return 0;
 }
 
-char *uri_escape(const char *string, int inlength)
-{
+char *uri_escape(const char *string, int inlength) {
   size_t alloc = (inlength?(size_t)inlength:strlen(string))+1;
   char *ns;
   char *testing_ptr = NULL;

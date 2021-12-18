@@ -34,8 +34,7 @@
 #define trace(...)
 
 #define AAO_URL "http://www.albumart.org/index.php?searchk=%s+%s&itempage=1&newsearch=1&searchindex=Music"
-int fetch_from_albumart_org (const char *artist, const char *album, const char *dest)
-{
+int fetch_from_albumart_org (const char *artist, const char *album, const char *dest) {
     if (!artist && !album) {
         return -1;
     }

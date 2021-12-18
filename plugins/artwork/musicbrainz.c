@@ -43,8 +43,7 @@
 #define MB_ART_STRING "\"large\":\""
 
 
-int fetch_from_musicbrainz (const char *artist, const char *album, const char *dest)
-{
+int fetch_from_musicbrainz (const char *artist, const char *album, const char *dest) {
     if (!artist || !album) {
         return -1;
     }
