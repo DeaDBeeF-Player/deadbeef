@@ -854,7 +854,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
 }
 
-- (IBAction)editRemoveAction:(id)sender {
+- (IBAction)delete:(id)sender {
     NSIndexSet *ind = self.metadataTableView.selectedRowIndexes;
 
     [ind enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {

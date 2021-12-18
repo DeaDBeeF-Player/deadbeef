@@ -125,10 +125,6 @@
 @property (unsafe_unretained) IBOutlet NSMenuItem *stopAfterCurrentAlbum;
 - (IBAction)stopAfterCurrentAlbumAction:(id)sender;
 
-- (IBAction)deselectAllAction:(id)sender;
-- (IBAction)invertSelectionAction:(id)sender;
-- (IBAction)selectionCropAction:(id)sender;
-
 // window menu
 - (IBAction)showMainWinAction:(id)sender;
 - (IBAction)showLogWindowAction:(id)sender;

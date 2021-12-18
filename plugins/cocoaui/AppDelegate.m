@@ -600,12 +600,6 @@ main_cleanup_and_quit (void);
     deadbeef->conf_save ();
 }
 
-- (IBAction)delete:(id)sender {
-    deadbeef->pl_delete_selected ();
-    deadbeef->pl_save_current();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-}
-
 - (IBAction)orderLinearAction:(id)sender {
     deadbeef->streamer_set_shuffle (DDB_SHUFFLE_OFF);
 }
@@ -680,47 +674,6 @@ main_cleanup_and_quit (void);
     state = 1 - state;
     deadbeef->conf_set_int ("playlist.stop_after_album", state);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-}
-
-- (void)selectAll:(id)sender {
-    deadbeef->pl_select_all ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
-}
-
-- (IBAction)deselectAllAction:(id)sender {
-    deadbeef->pl_lock ();
-    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-    while (it) {
-        if (deadbeef->pl_is_selected (it)) {
-            deadbeef->pl_set_selected (it, 0);
-        }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-        deadbeef->pl_item_unref (it);
-        it = next;
-    }
-    deadbeef->pl_unlock ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
-}
-
-- (IBAction)invertSelectionAction:(id)sender {
-    deadbeef->pl_lock ();
-    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-    while (it) {
-        if (deadbeef->pl_is_selected (it)) {
-            deadbeef->pl_set_selected (it, 0);
-        }
-        else {
-            deadbeef->pl_set_selected (it, 1);
-        }
-        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-        deadbeef->pl_item_unref (it);
-        it = next;
-    }
-    deadbeef->pl_unlock ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
-}
-
-- (IBAction)selectionCropAction:(id)sender {
 }
 
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
