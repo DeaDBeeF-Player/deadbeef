@@ -936,7 +936,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 }
 
 - (void)willDrawContentView {
-    self.artwork_plugin->cancel_queries_with_source_id(self.sourceId);
+//    self.artwork_plugin->cancel_queries_with_source_id(self.sourceId);
 }
 
 - (void)drawAlbumArtForGroup:(PlaylistGroup *)grp
