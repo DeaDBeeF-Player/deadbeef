@@ -32,12 +32,9 @@ extern DB_functions_t *deadbeef;
 
 @implementation SoundPreferencesViewController
 
-- (instancetype)initWithCoder:(NSCoder *)coder
-{
-    self = [super initWithCoder:coder];
-    if (!self) {
-        return nil;
-    }
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
     NSInteger index = 0;
 
     char curplug[200];
@@ -45,25 +42,20 @@ extern DB_functions_t *deadbeef;
     DB_output_t **o = deadbeef->plug_get_output_list ();
     for (index = 0; o[index]; index++) {
         if (!strcmp (o[index]->plugin.id, curplug)) {
-            _outputPluginsIndex = index;
+            self.outputPluginsIndex = index;
+            break;
         }
     }
 
 
-    _overrideSamplerate = deadbeef->conf_get_int ("streamer.override_samplerate", 0) ? YES : NO;
-    _targetSamplerate = @(deadbeef->conf_get_int ("streamer.samplerate", 44100)).stringValue;
+    self.overrideSamplerate = deadbeef->conf_get_int ("streamer.override_samplerate", 0) ? YES : NO;
+    self.targetSamplerate = @(deadbeef->conf_get_int ("streamer.samplerate", 44100)).stringValue;
 
-    _basedOnInputSamplerate = deadbeef->conf_get_int ("streamer.use_dependent_samplerate", 0) ? YES : NO;
+    self.basedOnInputSamplerate = deadbeef->conf_get_int ("streamer.use_dependent_samplerate", 0) ? YES : NO;
 
-    _samplerateForMultiplesOf48 = @(deadbeef->conf_get_int ("streamer.samplerate_mult_48", 48000)).stringValue;
-    _samplerateForMultiplesOf44 = @(deadbeef->conf_get_int ("streamer.samplerate_mult_44", 44100)).stringValue;
+    self.samplerateForMultiplesOf48 = @(deadbeef->conf_get_int ("streamer.samplerate_mult_48", 48000)).stringValue;
+    self.samplerateForMultiplesOf44 = @(deadbeef->conf_get_int ("streamer.samplerate_mult_44", 44100)).stringValue;
 
-    return self;
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do view setup here.
     [self initializeAudioTab];
 }
 
