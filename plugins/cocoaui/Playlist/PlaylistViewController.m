@@ -77,6 +77,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) PlaylistDataModel *dataModel;
 
 @property (nonatomic) ddb_artwork_plugin_t *artwork_plugin;
+@property (nonatomic) int64_t sourceId;
 
 @end
 
@@ -467,6 +468,8 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 - (void)setup {
     _artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
     _artwork_plugin->add_listener (artwork_listener, (__bridge void *)self);
+
+    self.sourceId = _artwork_plugin->allocate_source_id();
 
     PlaylistView *lv = (PlaylistView *)self.view;
     lv.delegate = self;
@@ -958,7 +961,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     else {
         CGFloat albumArtSpaceWidth = art_width;
 
-        image = [CoverManager.defaultCoverManager coverForTrack:it completionBlock:^(NSImage *img) {
+        image = [CoverManager.defaultCoverManager coverForTrack:it sourceId:self.sourceId completionBlock:^(NSImage *img) {
             if (grp != nil) {
                 if (img != nil) {
                     NSSize desiredSize = [CoverManager.defaultCoverManager artworkDesiredSizeForImageSize:img.size albumArtSpaceWidth:albumArtSpaceWidth];

@@ -208,7 +208,7 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
     [self.cachedCovers setObject:cover forKey:hash];
 }
 
-- (nullable NSImage *)coverForTrack:(nonnull DB_playItem_t *)track completionBlock:(nonnull void (^) (NSImage * img))completionBlock {
+- (nullable NSImage *)coverForTrack:(nonnull DB_playItem_t *)track sourceId:(int64_t)sourceId completionBlock:(nonnull void (^) (NSImage * img))completionBlock {
     if (!self.artwork_plugin) {
         completionBlock(nil);
         return nil;
@@ -230,12 +230,17 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
     query->_size = sizeof (ddb_cover_query_t);
     query->track = track;
     deadbeef->pl_item_ref (track);
+    query->source_id = sourceId;
 
     query->user_data = (void *)CFBridgingRetain(completionBlock);
 
     self.artwork_plugin->cover_get (query, cover_loaded_callback);
 
     return nil;
+}
+
+- (nullable NSImage *)coverForTrack:(nonnull DB_playItem_t *)track completionBlock:(nonnull void (^) (NSImage * img))completionBlock {
+    return [self coverForTrack:track sourceId:0 completionBlock:completionBlock];
 }
 
 - (void)resetCache {

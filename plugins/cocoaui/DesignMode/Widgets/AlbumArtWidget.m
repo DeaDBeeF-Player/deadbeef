@@ -20,6 +20,8 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) ddb_playItem_t *track;
 @property (nonatomic) ddb_artwork_plugin_t *artwork_plugin;
 
+@property (nonatomic) int64_t sourceId;
+
 @property (nonatomic) dispatch_block_t throttleBlock;
 @property (nonatomic) NSInteger requestIndex;
 
@@ -65,6 +67,8 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
     _artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
     _artwork_plugin->add_listener (artwork_listener, (__bridge void *)self);
+
+    self.sourceId = _artwork_plugin->allocate_source_id();
 
     // create view
     self.imageView = [AlbumArtImageView new];
@@ -122,11 +126,13 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             if (it) {
                 self.track = it;
 
+                self.artwork_plugin->cancel_queries_with_source_id(self.sourceId);
+
                 CGFloat albumArtSpaceWidth = self.imageView.frame.size.width;
 
                 NSImageView *imageView = self.imageView;
                 NSInteger currentIndex = self.requestIndex++;
-                NSImage *image = [CoverManager.defaultCoverManager coverForTrack:it completionBlock:^(NSImage *img) {
+                NSImage *image = [CoverManager.defaultCoverManager coverForTrack:it sourceId:self.sourceId completionBlock:^(NSImage *img) {
                     if (currentIndex != self.requestIndex-1) {
                         return;
                     }
