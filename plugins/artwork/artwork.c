@@ -285,36 +285,27 @@ scan_local_path (char *mask, const char *local_path, const char *uri, DB_vfs_t *
     return -1;
 }
 
-static const char *filter_strcasecmp_name = NULL;
-
-static int
-filter_strcasecmp (const struct dirent *f)
-{
-    return !strcasecmp (filter_strcasecmp_name, f->d_name);
-}
-
 // FIXME: this returns only one path that matches subfolder. Usually that's enough, but can be improved.
 static char *
 get_case_insensitive_path (const char *local_path, const char *subfolder, DB_vfs_t *vfsplug) {
-    filter_strcasecmp_name = subfolder;
     struct dirent **files = NULL;
     int (* custom_scandir)(const char *, struct dirent ***, int (*)(const struct dirent *), int (*)(const struct dirent **, const struct dirent **));
     custom_scandir = vfsplug ? vfsplug->scandir : scandir;
-    int files_count = custom_scandir (local_path, &files, filter_strcasecmp, NULL);
-    if (files_count > 0) {
-        size_t l = strlen (local_path) + strlen (files[0]->d_name) + 2;
-        char *ret = malloc (l);
-        snprintf (ret, l, "%s/%s", local_path, files[0]->d_name);
-
-        for (size_t i = 0; i < files_count; i++) {
-            free (files[i]);
+    int files_count = custom_scandir (local_path, &files, NULL, NULL);
+    char *ret = NULL;
+    for (int i = 0; i < files_count; i++) {
+        if (!strcasecmp (subfolder, files[i]->d_name)) {
+            size_t l = strlen (local_path) + strlen (files[i]->d_name) + 2;
+            ret = malloc (l);
+            snprintf (ret, l, "%s/%s", local_path, files[i]->d_name);
+            break;
         }
-        free (files);
-
-        return ret;
+    }
+    for (size_t i = 0; i < files_count; i++) {
+        free (files[i]);
     }
     free (files);
-    return NULL;
+    return ret;
 }
 
 static int
