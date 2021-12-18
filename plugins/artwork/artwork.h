@@ -65,8 +65,6 @@ typedef struct ddb_cover_query_s {
                     // and returned result is always a filename.
 
     ddb_playItem_t *track; // The track to load artwork for
-
-    char *type; // WIP: front/back/all/..., can be NULL for default (front cover)
 } ddb_cover_query_t;
 
 /// This structure is passed to the callback, when the artwork query has been processed.

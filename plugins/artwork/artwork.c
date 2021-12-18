@@ -1037,8 +1037,7 @@ static artwork_query_t *query_tail;
 
 static int
 queries_squashable (ddb_cover_query_t *query1, ddb_cover_query_t *query2) {
-    if (query1->type != query2->type
-        || query1->flags != query2->flags) {
+    if (query1->flags != query2->flags) {
         return 0;
     }
 
