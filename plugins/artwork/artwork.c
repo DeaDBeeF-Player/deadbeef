@@ -1595,8 +1595,8 @@ artwork_configchanged (void) {
     });
     if (need_clear_queue) {
         queue_clear();
+        _notify_listeners(DDB_ARTWORK_SETTINGS_DID_CHANGE, NULL);
     }
-    _notify_listeners(DDB_ARTWORK_SETTINGS_DID_CHANGE, NULL);
 }
 
 static int
