@@ -1,6 +1,6 @@
 /*
-    world of spectrum game cover downloader for the Deadbeef Artwork plugin
-    Copyright (C) 2009-2013 Alexey Yakovenko and other contributors
+    DeaDBeeF -- the music player
+    Copyright (C) 2009-2021 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -20,6 +20,7 @@
 
     3. This notice may not be removed or altered from any source distribution.
 */
+
 #ifndef __WOS_H
 #define __WOS_H
 

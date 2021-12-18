@@ -1,8 +1,6 @@
 /*
-    Album Art plugin for DeaDBeeF
-    Copyright (C) 2009-2017 Alexey Yakovenko <waker@users.sourceforge.net>
-    Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>
-    Copyright (C) 2014-2016 Ian Nartowicz <deadbeef@nartowicz.co.uk>
+    DeaDBeeF -- the music player
+    Copyright (C) 2009-2021 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -1765,10 +1763,8 @@ ddb_artwork_plugin_t plugin = {
     .plugin.plugin.name = "Album Artwork",
     .plugin.plugin.descr = "Loads album artwork from embedded tags, local directories, or internet services",
     .plugin.plugin.copyright =
-        "Album Art plugin for DeaDBeeF\n"
-        "Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>\n"
-        "Copyright (C) 2009-2016 Alexey Yakovenko <waker@users.sourceforge.net>\n"
-        "Copyright (C) 2014-2016 Ian Nartowicz <deadbeef@nartowicz.co.uk>\n"
+        "DeaDBeeF -- the music player\n"
+        "Copyright (C) 2009-2021 Alexey Yakovenko and other contributors\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
         "warranty.  In no event will the authors be held liable for any damages\n"
