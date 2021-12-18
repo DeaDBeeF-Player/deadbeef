@@ -81,7 +81,6 @@
 // menu
 - (IBAction)editValueAction:(id)sender;
 - (IBAction)editInPlaceAction:(id)sender;
-- (IBAction)editRemoveAction:(id)sender;
 - (IBAction)editCropAction:(id)sender;
 - (IBAction)editCapitalizeAction:(id)sender;
 - (IBAction)addNewField:(id)sender;
