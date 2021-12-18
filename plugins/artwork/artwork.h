@@ -44,27 +44,33 @@
 /// In this case filename will be set to NULL.
 enum {
     /// Tells that filenames should not be returned
-    DDB_ARTWORK_FLAG_NO_FILENAME = 0x00000001,
+    DDB_ARTWORK_FLAG_NO_FILENAME = (1<<0),
 
     /// Returned artwork can be a blob, i.e. a memory block - that is, entire cover image in memory
-    DDB_ARTWORK_FLAG_LOAD_BLOB = 0x00000002,
+    DDB_ARTWORK_FLAG_LOAD_BLOB = (1<<1),
 
     /// Don't allow writing files to disk cache, even if the cache is enabled in the settings
-    DDB_ARTWORK_FLAG_NO_CACHE = 0x00000004,
+    DDB_ARTWORK_FLAG_NO_CACHE = (1<<2),
 };
 
 /// This structure needs to be passed to cover_get.
 /// It must remain in memory until the callback is called.
 typedef struct ddb_cover_query_s {
-    uint32_t _size; // Must be set to sizeof(ddb_cover_query_t)
+    /// Must be set to sizeof(ddb_cover_query_t)
+    uint32_t _size;
 
-    void *user_data; // Arbitrary user-defined pointer
+    // Arbitrary user-defined pointer
+    void *user_data;
 
-    uint32_t flags; // DDB_ARTWORK_FLAG_*; When 0 is passed, it will use the global settings.
-                    // By default, it means that the files can be stored in disk cache,
-                    // and returned result is always a filename.
+    /// DDB_ARTWORK_FLAG_*; When 0 is passed, it will use the global settings.
+    /// By default, it means that the files can be stored in disk cache,
+    /// and returned result is always a filename.
+    uint32_t flags;
+    /// The track to load artwork for
+    ddb_playItem_t *track;
 
-    ddb_playItem_t *track; // The track to load artwork for
+    /// A unique ID identifying the source of the query. This allows to cancel all queries for a single source.
+    int64_t source_id;
 } ddb_cover_query_t;
 
 /// This structure is passed to the callback, when the artwork query has been processed.
@@ -148,6 +154,15 @@ typedef struct {
     /// Result can be an empty string.
     void
     (*default_image_path) (char *path, size_t size);
+
+    /// Returns a new unique ID, which can be used to set @c source_id of the queries, and cancel queries in bulk.
+    /// Deallocation is not required, the function will return a new unique value every time.
+    int64_t
+    (*allocate_source_id) (void);
+
+    /// Cancel all queries with the specified source_id
+    void
+    (*cancel_queries_with_source_id) (int64_t source_id);
 } ddb_artwork_plugin_t;
 
 #endif /*__ARTWORK_H*/

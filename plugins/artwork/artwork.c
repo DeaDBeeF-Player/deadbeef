@@ -84,6 +84,36 @@ static dispatch_queue_t process_queue;
 static dispatch_queue_t fetch_queue;
 static dispatch_semaphore_t fetch_semaphore;
 
+enum {
+    DDB_ARTWORK_FLAG_CANCELLED = (1<<16)
+};
+
+// Grouping queries by source id
+static int64_t next_source_id;
+typedef struct query_group_s {
+    ddb_cover_query_t *query;
+    struct query_group_s *next;
+} query_group_item_t;
+
+static query_group_item_t **query_groups; // unique groups
+static int query_groups_count;
+static int query_groups_reserved;
+
+// Squashing queries
+// To handle concurrency correctly, we need to be able to squash the queries
+#define MAX_SQUASHED_QUERIES 50
+typedef struct artwork_query_s {
+    ddb_cover_query_t *queries[MAX_SQUASHED_QUERIES];
+    ddb_cover_callback_t callbacks[MAX_SQUASHED_QUERIES];
+    int query_count;
+    struct artwork_query_s *next;
+} artwork_query_t;
+
+static artwork_query_t *query_head;
+static artwork_query_t *query_tail;
+
+// -
+
 static int64_t last_job_idx;
 static int64_t cancellation_idx;
 
@@ -427,24 +457,6 @@ apev2_artwork (const DB_apev2_frame_t *f)
         trace ("artwork: apev2 cover art frame is too small\n");
         return NULL;
     }
-
-//    uint8_t *ext = strrchr (f->data, '.');
-//    if (!ext || !*++ext) {
-//        trace ("artwork: apev2 cover art name has no extension\n");
-//        return NULL;
-//    }
-
-//    if (strcasecmp (ext, "jpeg") &&
-//        strcasecmp (ext, "jpg") &&
-#ifdef USE_IMLIB2
-//        strcasecmp (ext, "gif") &&
-//        strcasecmp (ext, "tif") &&
-//        strcasecmp (ext, "tiff") &&
-#endif
-//        strcasecmp (ext, "png")) {
-//        trace ("artwork: unsupported file type: %s\n", ext);
-//        return NULL;
-//    }
 
     return data;
 }
@@ -902,36 +914,7 @@ process_query (ddb_cover_info_t *cover) {
 #endif
 }
 
-static void
-queue_clear (void) {
-    dispatch_sync(sync_queue, ^{
-        artwork_abort_all_http_requests();
-        cancellation_idx = last_job_idx++;
-    });
-}
-
-static ddb_cover_info_t *
-sync_cover_info_alloc (void) {
-    __block ddb_cover_info_t *cover = NULL;
-    dispatch_sync(sync_queue, ^{
-        cover = cover_info_alloc();
-    });
-    return cover;
-}
-
-static void
-sync_cover_info_ref (ddb_cover_info_t *cover) {
-    dispatch_sync(sync_queue, ^{
-        cover_info_ref(cover);
-    });
-}
-
-static void
-sync_cover_info_release (ddb_cover_info_t *cover) {
-    dispatch_sync(sync_queue, ^{
-        cover_info_release(cover);
-    });
-}
+#pragma mark - In memory cache
 
 static void
 cover_update_cache (ddb_cover_info_t *cover) {
@@ -1006,34 +989,188 @@ cover_cache_remove (ddb_cover_info_t *cover) {
     }
 }
 
+#pragma mark - Utility
+
 static void
-execute_callback (ddb_cover_callback_t callback, ddb_cover_info_t *cover, ddb_cover_query_t *query) {
+_setup_tf_once() {
+    dispatch_sync(sync_queue, ^{
+        if (!album_tf) {
+            album_tf = deadbeef->tf_compile ("%album%");
+        }
+        if (!artist_tf) {
+            artist_tf = deadbeef->tf_compile ("%artist%");
+        }
+        if (!title_tf) {
+            title_tf = deadbeef->tf_compile ("%title%");
+        }
+        if (!albumartist_tf) {
+            albumartist_tf = deadbeef->tf_compile ("%album artist%");
+        }
+        if (!query_compare_tf) {
+            query_compare_tf = deadbeef->tf_compile ("$if($and(%title%,%artist%,%album%),%track number% - %title% - %artist% - %album%)");
+        }
+    });
+}
+
+static void
+_notify_listeners(ddb_artwork_listener_event_t event, DB_playItem_t *it) {
+    __block ddb_artwork_listener_t *callbacks = calloc(MAX_LISTENERS, sizeof (ddb_artwork_listener_t));
+    __block void **userdatas = calloc(MAX_LISTENERS, sizeof (void *));
+    __block int count = 0;
+    dispatch_sync(sync_queue, ^{
+        for (int i = 0; i < MAX_LISTENERS; i++) {
+            if (listeners[i] != NULL) {
+                callbacks[count] = listeners[i];
+                userdatas[count] = listeners_userdata[i];
+                count += 1;
+            }
+        }
+    });
+
+    for (int i = 0; i < count; i++) {
+        listeners[i](event, userdatas[i], (intptr_t)it, 0);
+    }
+    free (callbacks);
+    free (userdatas);
+}
+
+static ddb_cover_info_t *
+sync_cover_info_alloc (void) {
+    __block ddb_cover_info_t *cover = NULL;
+    dispatch_sync(sync_queue, ^{
+        cover = cover_info_alloc();
+    });
+    return cover;
+}
+
+static void
+sync_cover_info_ref (ddb_cover_info_t *cover) {
+    dispatch_sync(sync_queue, ^{
+        cover_info_ref(cover);
+    });
+}
+
+static void
+sync_cover_info_release (ddb_cover_info_t *cover) {
+    dispatch_sync(sync_queue, ^{
+        cover_info_release(cover);
+    });
+}
+
+static void
+queue_clear (void) {
+    dispatch_sync(sync_queue, ^{
+        artwork_abort_all_http_requests();
+        cancellation_idx = last_job_idx++;
+    });
+}
+
+#pragma mark - Grouping queries by source id
+
+static int registered_count = 0;
+static void
+_groups_register_query (ddb_cover_query_t *query) {
+    // find existing group
+    int group_index = -1;
+    for (int i = 0; i < query_groups_count; i++) {
+        if (query_groups[i] == NULL) {
+            group_index = i;
+        }
+        else if (query_groups[i]->query->source_id == query->source_id) {
+            group_index = i;
+            break;
+        }
+    }
+
+    if (group_index < 0) {
+        group_index = query_groups_count;
+        query_groups_count += 1;
+        if (query_groups_count > query_groups_reserved) {
+            int prev_size = query_groups_reserved;
+            if (query_groups_reserved == 0) {
+                query_groups_reserved = 10;
+            }
+            else {
+                query_groups_reserved *= 2;
+            }
+            query_groups = realloc(query_groups, query_groups_reserved * sizeof (query_group_item_t *));
+            memset (query_groups + prev_size, 0, (query_groups_reserved - prev_size) * sizeof (query_group_item_t *));
+        }
+    }
+
+    query_group_item_t *item = calloc(1, sizeof (query_group_item_t));
+    item->query = query;
+    item->next = query_groups[group_index];
+    query_groups[group_index] = item;
+
+    registered_count++;
+}
+
+static void
+_groups_unregister_query(ddb_cover_query_t *query) {
+    int group_index = -1;
+    for (int i = 0; i < query_groups_count; i++) {
+        if (query_groups[i] != NULL && query_groups[i]->query->source_id == query->source_id) {
+            group_index = i;
+            break;
+        }
+    }
+
+    if (group_index == -1) {
+        trace("_groups_unregister_query: query not registered\n");
+        return;
+    }
+
+    int done = 0;
+    query_group_item_t *prev = NULL;
+    query_group_item_t *group = query_groups[group_index];
+    for (; group; prev = group, group = group->next) {
+        if (group->query == query) {
+            if (prev != NULL) {
+                prev->next = group->next;
+            }
+            else {
+                query_groups[group_index] = group->next;
+            }
+            free (group);
+            done = 1;
+            break;
+        }
+    }
+
+    assert(done);
+
+    registered_count--;
+}
+
+#pragma mark - Ending queries / cleanup / executing callbacks
+
+static void
+_end_query (ddb_cover_query_t *query, ddb_cover_callback_t callback, int error, ddb_cover_info_t *cover) {
+    assert(query);
+    dispatch_sync(sync_queue, ^{
+        _groups_unregister_query(query);
+    });
+    callback (error, query, cover);
+}
+
+static void
+_execute_callback (ddb_cover_callback_t callback, ddb_cover_info_t *cover, ddb_cover_query_t *query) {
     int cover_found = cover->cover_found;
 
     // Make all the callbacks (and free the chain), with data if a file was written
     if (cover_found) {
         trace ("artwork fetcher: cover art file found: %s\n", cover->image_filename);
         sync_cover_info_ref(cover);
-        callback (0, query, cover);
+        _end_query(query, callback, 0, cover);
     }
     else {
         trace ("artwork fetcher: no cover art found\n");
-        callback (-1, query, NULL);
+        _end_query(query, callback, -1, NULL);
     }
 }
 
-// To handle concurrency correctly, we need to be able to squash the queries
-#define MAX_SQUASHED_QUERIES 50
-typedef struct artwork_query_s {
-    ddb_cover_query_t *queries[MAX_SQUASHED_QUERIES];
-    ddb_cover_callback_t callbacks[MAX_SQUASHED_QUERIES];
-    int query_count;
-    struct artwork_query_s *next;
-} artwork_query_t;
-
-static artwork_query_t *query_head;
-static artwork_query_t *query_tail;
-
+#pragma mark - Squashing multiple similar queries into one
 
 static int
 queries_squashable (ddb_cover_query_t *query1, ddb_cover_query_t *query2) {
@@ -1133,32 +1270,11 @@ static void callback_and_free_squashed (ddb_cover_info_t *cover, ddb_cover_query
     // send the result
     if (squashed_queries != NULL) {
         for (int i = 0; i < squashed_queries->query_count; i++) {
-            execute_callback (squashed_queries->callbacks[i], cover, squashed_queries->queries[i]);
+            _execute_callback (squashed_queries->callbacks[i], cover, squashed_queries->queries[i]);
         }
         free (squashed_queries);
     }
     sync_cover_info_release (cover);
-}
-
-static void
-_setup_tf_once() {
-    dispatch_sync(sync_queue, ^{
-        if (!album_tf) {
-            album_tf = deadbeef->tf_compile ("%album%");
-        }
-        if (!artist_tf) {
-            artist_tf = deadbeef->tf_compile ("%artist%");
-        }
-        if (!title_tf) {
-            title_tf = deadbeef->tf_compile ("%title%");
-        }
-        if (!albumartist_tf) {
-            albumartist_tf = deadbeef->tf_compile ("%album artist%");
-        }
-        if (!query_compare_tf) {
-            query_compare_tf = deadbeef->tf_compile ("$if($and(%title%,%artist%,%album%),%track number% - %title% - %artist% - %album%)");
-        }
-    });
 }
 
 static void
@@ -1197,22 +1313,19 @@ _init_cover_metadata(ddb_cover_info_t *cover, ddb_playItem_t *track) {
     }
 }
 
+#pragma mark - API entry points
+
 static void
 cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
-    __block int cancel_query = 0;
     __block int64_t job_idx = 0;
     dispatch_sync(sync_queue, ^{
         job_idx = last_job_idx++;
+        _groups_register_query(query);
     });
-
-    if (cancel_query) {
-        callback(-1, query, NULL);
-        return;
-    }
 
     dispatch_async(process_queue, ^{
         if (!query->track) {
-            callback (-1, query, NULL);
+            _end_query(query, callback, -1, NULL);
             return;
         }
 
@@ -1221,20 +1334,15 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
 
         _init_cover_metadata(cover, query->track);
 
-        if (sync_queue == NULL) {
-            callback (-1, query, NULL);
-            return;
-        }
-
         __block int cancel_job = 0;
         dispatch_sync(sync_queue, ^{
-            if (job_idx < cancellation_idx) {
+            if (job_idx < cancellation_idx || (query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
                 cancel_job = 1;
             }
         });
 
         if (cancel_job) {
-            callback (-1, query, NULL);
+            _end_query(query, callback, -1, NULL);
             return;
         }
 
@@ -1243,7 +1351,7 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         if (cached_cover) {
             cached_cover->timestamp = time(NULL);
             cover = cached_cover;
-            execute_callback (callback, cover, query);
+            _execute_callback (callback, cover, query);
         }
         else {
             // Check if another query for the same thing is already present in the queue, and squash.
@@ -1261,7 +1369,7 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
             });
 
             if (cancel_job) {
-                callback (-1, query, NULL);
+                _end_query(query, callback, -1, NULL);
                 dispatch_semaphore_signal (fetch_semaphore);
                 return;
             }
@@ -1319,8 +1427,37 @@ artwork_default_image_path (char *path, size_t size) {
     });
 }
 
+static int64_t
+artwork_allocate_source_id (void) {
+    __block int64_t retval;
+    dispatch_sync(sync_queue, ^{
+        retval = next_source_id;
+        next_source_id += 1;
+        if (next_source_id < 0) {
+            next_source_id = 1;
+        }
+    });
+    return retval;
+}
+
+/// Cancel all queries with the specified source_id
 static void
-get_fetcher_preferences (void) {
+artwork_cancel_queries_with_source_id (int64_t source_id) {
+    dispatch_sync(sync_queue, ^{
+        for (int i = 0; i < query_groups_count; i++) {
+            query_group_item_t *group = query_groups[i];
+            if (group != NULL && group->query->source_id == source_id) {
+                for (query_group_item_t *item = query_groups[i]; item; item = item->next) {
+                    item->query->flags |= DDB_ARTWORK_FLAG_CANCELLED;
+                }
+                break;
+            }
+        }
+    });
+}
+
+static void
+_get_fetcher_preferences (void) {
     deadbeef->conf_lock ();
     artwork_save_to_music_folders = deadbeef->conf_get_int ("artwork.save_to_music_folders", DEFAULT_SAVE_TO_MUSIC_FOLDERS);
 
@@ -1394,28 +1531,6 @@ get_fetcher_preferences (void) {
 }
 
 static void
-_notify_listeners(ddb_artwork_listener_event_t event, DB_playItem_t *it) {
-    __block ddb_artwork_listener_t *callbacks = calloc(MAX_LISTENERS, sizeof (ddb_artwork_listener_t));
-    __block void **userdatas = calloc(MAX_LISTENERS, sizeof (void *));
-    __block int count = 0;
-    dispatch_sync(sync_queue, ^{
-        for (int i = 0; i < MAX_LISTENERS; i++) {
-            if (listeners[i] != NULL) {
-                callbacks[count] = listeners[i];
-                userdatas[count] = listeners_userdata[i];
-                count += 1;
-            }
-        }
-    });
-
-    for (int i = 0; i < count; i++) {
-        listeners[i](event, userdatas[i], (intptr_t)it, 0);
-    }
-    free (callbacks);
-    free (userdatas);
-}
-
-static void
 artwork_configchanged (void) {
     __block int need_clear_queue = 0;
     cache_configchanged ();
@@ -1438,7 +1553,7 @@ artwork_configchanged (void) {
         const char *old_nocover_path = nocover_path;
         //    int old_scale_towards_longer = scale_towards_longer;
 
-        get_fetcher_preferences ();
+        _get_fetcher_preferences ();
 
         int cache_did_reset = 0;
         if (old_missing_artwork != missing_artwork || old_nocover_path != nocover_path) {
@@ -1614,12 +1729,10 @@ artwork_plugin_stop (void) {
 static int
 artwork_plugin_start (void)
 {
-    get_fetcher_preferences ();
+    _get_fetcher_preferences ();
     cache_reset_time = deadbeef->conf_get_int64 ("artwork.cache_reset_time", 0);
 
-#ifdef USE_IMLIB2
-    imlib_set_cache_size (0);
-#endif
+    next_source_id = 1;
 
     sync_queue = dispatch_queue_create("ArtworkSyncQueue", NULL);
     process_queue = dispatch_queue_create("ArtworkProcessQueue", NULL);
@@ -1706,6 +1819,8 @@ ddb_artwork_plugin_t plugin = {
     .add_listener = artwork_add_listener,
     .remove_listener = artwork_remove_listener,
     .default_image_path = artwork_default_image_path,
+    .allocate_source_id = artwork_allocate_source_id,
+    .cancel_queries_with_source_id = artwork_cancel_queries_with_source_id,
 };
 
 DB_plugin_t *
