@@ -151,6 +151,20 @@ static NSString *kContentTypeMappingChangedNotification = @"ContentTypeMappingCh
     [self initContentTypeMapping];
 }
 
+
+- (IBAction)segmentedControlAction:(NSSegmentedControl *)sender {
+    NSInteger selectedSegment = [sender selectedSegment];
+
+    switch (selectedSegment) {
+    case 0:
+        [self.contentTypeMappingArrayController add:sender];
+        break;
+    case 1:
+        [self.contentTypeMappingArrayController remove:sender];
+        break;
+    }
+}
+
 - (void)initContentTypeMapping {
     [self.contentTypeMappingArrayController setContent:nil];
 

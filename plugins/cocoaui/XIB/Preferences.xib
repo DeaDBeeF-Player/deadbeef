@@ -853,14 +853,23 @@
                                 <rect key="frame" x="10" y="33" width="534" height="264"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
-                                    <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kfO-QJ-hCv">
-                                        <rect key="frame" x="17" y="45" width="500" height="166"/>
+                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Xot-m8-ggx">
+                                        <rect key="frame" x="15" y="219" width="504" height="42"/>
+                                        <textFieldCell key="cell" id="USw-iz-pYK">
+                                            <font key="font" metaFont="label" size="11"/>
+                                            <string key="title">This table defines the binding between network stream content types and DeaDBeeF decoder plugins. For example, mp3 files can have content type "audio/x-mpeg", and need to be decoded by DeaDBeeF's own "stdmpg" plugin, or "ffmpeg" plugin.</string>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <scrollView borderType="line" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kfO-QJ-hCv">
+                                        <rect key="frame" x="17" y="40" width="500" height="171"/>
                                         <clipView key="contentView" id="JU5-t2-anJ">
-                                            <rect key="frame" x="1" y="1" width="498" height="164"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                            <rect key="frame" x="1" y="1" width="498" height="169"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" autosaveColumns="NO" rowSizeStyle="automatic" headerView="dQI-1a-EJU" viewBased="YES" id="Bgl-g5-g9B">
-                                                    <rect key="frame" x="0.0" y="0.0" width="498" height="139"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="498" height="144"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -879,7 +888,7 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView id="oPR-lT-aW9">
-                                                                    <rect key="frame" x="11" y="1" width="121" height="17"/>
+                                                                    <rect key="frame" x="1" y="1" width="121" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f01-xW-vbE">
@@ -914,7 +923,7 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView id="qMd-hB-qUt">
-                                                                    <rect key="frame" x="135" y="1" width="342" height="17"/>
+                                                                    <rect key="frame" x="125" y="1" width="342" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7wV-L3-U1l">
@@ -955,65 +964,61 @@
                                             <rect key="frame" x="224" y="17" width="15" height="102"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
-                                        <tableHeaderView key="headerView" id="dQI-1a-EJU">
+                                        <tableHeaderView key="headerView" wantsLayer="YES" id="dQI-1a-EJU">
                                             <rect key="frame" x="0.0" y="0.0" width="498" height="25"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableHeaderView>
                                     </scrollView>
-                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Xot-m8-ggx">
-                                        <rect key="frame" x="15" y="219" width="504" height="42"/>
-                                        <textFieldCell key="cell" id="USw-iz-pYK">
-                                            <font key="font" metaFont="label" size="11"/>
-                                            <string key="title">This table defines the binding between network stream content types and DeaDBeeF decoder plugins. For example, mp3 files can have content type "audio/x-mpeg", and need to be decoded by DeaDBeeF's own "stdmpg" plugin, or "ffmpeg" plugin.</string>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IdD-Qs-Ai6">
-                                        <rect key="frame" x="379" y="10" width="143" height="32"/>
-                                        <buttonCell key="cell" type="push" title="Reset to defaults" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="tWm-b9-p45">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ucg-CG-ZQ2">
+                                        <rect key="frame" x="17" y="19" width="500" height="23"/>
+                                        <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="uXQ-G3-n4A">
+                                            <behavior key="behavior" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
-                                        <connections>
-                                            <action selector="resetContentTypeMapping:" target="4Qv-4Y-koA" id="tbq-I5-mhy"/>
-                                        </connections>
                                     </button>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="Rhc-vp-Kw3">
-                                        <rect key="frame" x="17" y="19" width="14" height="15"/>
-                                        <buttonCell key="cell" type="inline" bezelStyle="inline" image="NSAddTemplate" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="TCj-vU-Ub0">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="smallSystemBold"/>
-                                        </buttonCell>
+                                    <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vVB-D3-QUd">
+                                        <rect key="frame" x="17" y="19" width="65" height="23"/>
+                                        <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="momentary" id="BeG-CV-BcL">
+                                            <font key="font" metaFont="system"/>
+                                            <segments>
+                                                <segment toolTip="Add" image="NSAddTemplate" width="30"/>
+                                                <segment toolTip="Remove" image="NSRemoveTemplate" width="30" tag="1"/>
+                                            </segments>
+                                        </segmentedCell>
                                         <connections>
-                                            <action selector="add:" target="H3C-fa-Rey" id="Fze-he-oJa"/>
+                                            <action selector="segmentedControlAction:" target="4Qv-4Y-koA" id="4T1-hB-Boa"/>
                                         </connections>
-                                    </button>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="h8R-Co-ePA">
-                                        <rect key="frame" x="39" y="19" width="14" height="15"/>
-                                        <buttonCell key="cell" type="inline" bezelStyle="inline" image="NSRemoveTemplate" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="1Hc-kq-Tg8">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="smallSystemBold"/>
-                                        </buttonCell>
+                                    </segmentedControl>
+                                    <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Yan-dH-Iaq">
+                                        <rect key="frame" x="463" y="19" width="54" height="23"/>
+                                        <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="momentary" id="rcm-Yt-d3Y">
+                                            <font key="font" metaFont="system"/>
+                                            <segments>
+                                                <segment label="Reset" toolTip="Add" width="52"/>
+                                            </segments>
+                                        </segmentedCell>
                                         <connections>
-                                            <action selector="remove:" target="H3C-fa-Rey" id="yfz-eb-khi"/>
+                                            <action selector="resetContentTypeMapping:" target="4Qv-4Y-koA" id="dff-Cu-Ix6"/>
                                         </connections>
-                                    </button>
+                                    </segmentedControl>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="Xot-m8-ggx" firstAttribute="top" secondItem="mx7-S2-itp" secondAttribute="top" constant="3" id="4vp-Nj-kcS"/>
                                     <constraint firstItem="kfO-QJ-hCv" firstAttribute="top" secondItem="Xot-m8-ggx" secondAttribute="bottom" constant="8" id="8sj-Oo-sXY"/>
-                                    <constraint firstItem="h8R-Co-ePA" firstAttribute="firstBaseline" secondItem="IdD-Qs-Ai6" secondAttribute="firstBaseline" id="Fq9-t5-BkD"/>
-                                    <constraint firstItem="IdD-Qs-Ai6" firstAttribute="top" secondItem="kfO-QJ-hCv" secondAttribute="bottom" constant="7" id="Oc3-93-5Zg"/>
-                                    <constraint firstItem="Rhc-vp-Kw3" firstAttribute="leading" secondItem="mx7-S2-itp" secondAttribute="leading" constant="17" id="PJj-AC-8Um"/>
-                                    <constraint firstAttribute="bottom" secondItem="IdD-Qs-Ai6" secondAttribute="bottom" constant="17" id="TYT-nQ-TYZ"/>
-                                    <constraint firstItem="h8R-Co-ePA" firstAttribute="leading" secondItem="Rhc-vp-Kw3" secondAttribute="trailing" constant="8" id="UQu-Xp-NMc"/>
+                                    <constraint firstAttribute="bottom" secondItem="ucg-CG-ZQ2" secondAttribute="bottom" constant="20" id="AzD-jl-8ZV"/>
+                                    <constraint firstItem="Yan-dH-Iaq" firstAttribute="trailing" secondItem="ucg-CG-ZQ2" secondAttribute="trailing" id="DaF-Dx-MxV"/>
+                                    <constraint firstItem="vVB-D3-QUd" firstAttribute="leading" secondItem="ucg-CG-ZQ2" secondAttribute="leading" id="O8L-wj-BUu"/>
+                                    <constraint firstItem="vVB-D3-QUd" firstAttribute="bottom" secondItem="ucg-CG-ZQ2" secondAttribute="bottom" id="QFR-Wl-Jca"/>
                                     <constraint firstItem="Xot-m8-ggx" firstAttribute="trailing" secondItem="kfO-QJ-hCv" secondAttribute="trailing" id="csX-iW-b5h"/>
                                     <constraint firstAttribute="trailing" secondItem="kfO-QJ-hCv" secondAttribute="trailing" constant="17" id="e0G-cA-hs1"/>
                                     <constraint firstItem="Xot-m8-ggx" firstAttribute="leading" secondItem="mx7-S2-itp" secondAttribute="leading" constant="17" id="ecM-sW-YWy"/>
-                                    <constraint firstItem="IdD-Qs-Ai6" firstAttribute="trailing" secondItem="Bgl-g5-g9B" secondAttribute="trailing" id="ejh-3w-qmD"/>
                                     <constraint firstItem="kfO-QJ-hCv" firstAttribute="leading" secondItem="Xot-m8-ggx" secondAttribute="leading" id="gn0-VI-hia"/>
-                                    <constraint firstItem="Rhc-vp-Kw3" firstAttribute="firstBaseline" secondItem="IdD-Qs-Ai6" secondAttribute="firstBaseline" id="xew-lR-Mau"/>
+                                    <constraint firstItem="ucg-CG-ZQ2" firstAttribute="leading" secondItem="kfO-QJ-hCv" secondAttribute="leading" id="hIt-rt-zC9"/>
+                                    <constraint firstItem="ucg-CG-ZQ2" firstAttribute="top" secondItem="kfO-QJ-hCv" secondAttribute="bottom" constant="-1" id="iJJ-Uv-9uZ"/>
+                                    <constraint firstItem="Yan-dH-Iaq" firstAttribute="bottom" secondItem="ucg-CG-ZQ2" secondAttribute="bottom" id="lca-hE-3k1"/>
+                                    <constraint firstItem="Yan-dH-Iaq" firstAttribute="top" secondItem="ucg-CG-ZQ2" secondAttribute="top" id="qVo-m5-Fzc"/>
+                                    <constraint firstItem="vVB-D3-QUd" firstAttribute="top" secondItem="ucg-CG-ZQ2" secondAttribute="top" id="sqq-7M-SDr"/>
+                                    <constraint firstItem="ucg-CG-ZQ2" firstAttribute="trailing" secondItem="kfO-QJ-hCv" secondAttribute="trailing" id="ulS-eL-iTF"/>
                                 </constraints>
                             </view>
                         </tabViewItem>
@@ -1026,7 +1031,7 @@
                 <constraint firstAttribute="bottom" secondItem="oKC-A2-rMr" secondAttribute="bottom" constant="20" id="s0G-i0-mfD"/>
                 <constraint firstAttribute="trailing" secondItem="oKC-A2-rMr" secondAttribute="trailing" constant="20" id="t6c-ah-d7g"/>
             </constraints>
-            <point key="canvasLocation" x="303.5" y="1585"/>
+            <point key="canvasLocation" x="303" y="1585"/>
         </customView>
         <customView identifier="Plugins" id="ZNh-3b-s1L" userLabel="Plugins View">
             <rect key="frame" x="0.0" y="0.0" width="703" height="349"/>
@@ -1165,7 +1170,7 @@
                                         <rect key="frame" x="8" y="8" width="433" height="231"/>
                                         <clipView key="contentView" drawsBackground="NO" id="Lle-Gh-L94">
                                             <rect key="frame" x="1" y="1" width="416" height="229"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="RAU-kc-ZWb">
                                                     <rect key="frame" x="0.0" y="0.0" width="416" height="229"/>
@@ -1238,7 +1243,7 @@
                                         <rect key="frame" x="8" y="8" width="433" height="263"/>
                                         <clipView key="contentView" drawsBackground="NO" id="kGi-v7-aYF">
                                             <rect key="frame" x="1" y="1" width="416" height="261"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="8p1-kz-NZ1">
                                                     <rect key="frame" x="0.0" y="0.0" width="416" height="261"/>
