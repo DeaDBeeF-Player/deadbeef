@@ -1059,6 +1059,7 @@
 		2D5F05F325E306BC000A588C /* SpectrumAnalyzerWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5F05EF25E306BC000A588C /* SpectrumAnalyzerWidget.m */; };
 		2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D60108B1A9CDF06000136AF /* SearchWindowController.h */; };
 		2D60108E1A9CDF06000136AF /* SearchWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D60108C1A9CDF06000136AF /* SearchWindowController.m */; };
+		2D60EA8E276F8D1000C28A44 /* noartwork.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DD81C3125152D86008C716C /* noartwork.png */; };
 		2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */; };
 		2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */; };
 		2D621FCD1CD92CCA00EB6D22 /* artwork.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D621FA91CD92CC500EB6D22 /* artwork.c */; };
@@ -15853,6 +15854,7 @@
 				2DE3B5762269B80900AFF9AE /* Images.xcassets in Resources */,
 				2D48DC2F2269B731002CACFD /* convpresets in Resources */,
 				2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */,
+				2D60EA8E276F8D1000C28A44 /* noartwork.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

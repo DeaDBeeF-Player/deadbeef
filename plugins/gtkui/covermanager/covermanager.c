@@ -81,7 +81,7 @@ _update_default_cover (covermanager_impl_t *impl) {
     char path[PATH_MAX];
     impl->plugin->default_image_path(path, sizeof(path));
 
-    if (strcmp (path, impl->default_cover_path)) {
+    if (impl->default_cover_path == NULL || strcmp (path, impl->default_cover_path)) {
         free (impl->default_cover_path);
         impl->default_cover_path = strdup (path);
 
@@ -212,6 +212,8 @@ covermanager_new(void) {
     if (impl->plugin != NULL) {
         impl->plugin->add_listener(_artwork_listener, impl);
     }
+
+    _update_default_cover(impl);
 
     return impl;
 }

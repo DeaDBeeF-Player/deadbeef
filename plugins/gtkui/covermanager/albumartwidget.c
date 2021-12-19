@@ -36,7 +36,8 @@ extern DB_functions_t *deadbeef;
 typedef struct {
     ddb_gtkui_widget_t base;
     ddb_artwork_plugin_t *plugin;
-    GtkImage *image_widget;
+    GtkWidget *drawing_area;
+    GdkPixbuf *image;
     ddb_playItem_t *track;
     int64_t source_id;
     guint throttle_id;
@@ -62,7 +63,7 @@ _update (w_coverart_t *w) {
     w->throttle_id = 0;
 
     GtkAllocation frame;
-    gtk_widget_get_allocation(GTK_WIDGET(w->image_widget), &frame);
+    gtk_widget_get_allocation(GTK_WIDGET(w->drawing_area), &frame);
 
     if (frame.width == 0 || frame.height == 0) {
         return FALSE;
@@ -74,7 +75,10 @@ _update (w_coverart_t *w) {
     }
     int cursor = deadbeef->pl_get_cursor(PL_MAIN);
     if (cursor == -1) {
-        gtk_image_clear(w->image_widget);
+        if (w->image != NULL) {
+            g_object_unref(w->image);
+            w->image = NULL;
+        }
     }
     else {
         ddb_playlist_t *plt = deadbeef->plt_get_curr();
@@ -102,15 +106,16 @@ _update (w_coverart_t *w) {
                         originalSize.height = gdk_pixbuf_get_height(img);
                         GtkAllocation desired_size = covermanager_desired_size_for_image_size(cm, originalSize, album_art_space_width);
                         GdkPixbuf *scaled_image = covermanager_create_scaled_image(cm, img, desired_size);
-                        gtk_image_set_from_pixbuf(w->image_widget, scaled_image);
-                        if (scaled_image != NULL) {
-                            g_object_unref (scaled_image);
-                        }
+                        w->image = scaled_image;
                         g_object_unref(img);
                     }
                     else {
-                        gtk_image_clear(w->image_widget);
+                        if (w->image != NULL) {
+                            g_object_unref(w->image);
+                            w->image = NULL;
+                        }
                     }
+                    gtk_widget_queue_draw(w->drawing_area);
                 });
 
                 if (image != NULL) {
@@ -120,10 +125,7 @@ _update (w_coverart_t *w) {
                     GtkAllocation desired_size = covermanager_desired_size_for_image_size(cm, originalSize, album_art_space_width);
 
                     GdkPixbuf *scaled_image = covermanager_create_scaled_image(cm, image, desired_size);
-                    gtk_image_set_from_pixbuf(w->image_widget, scaled_image);
-                    if (scaled_image != NULL) {
-                        g_object_unref(scaled_image);
-                    }
+                    w->image = scaled_image;
                     g_object_unref(image);
                 }
             }
@@ -131,6 +133,8 @@ _update (w_coverart_t *w) {
             deadbeef->plt_unref (plt);
         }
     }
+
+    gtk_widget_queue_draw(w->drawing_area);
 
     return FALSE;
 }
@@ -145,7 +149,7 @@ _throttled_update (w_coverart_t *w) {
 }
 
 static gboolean
-_size_did_change (GtkWidget* self, GdkEventConfigure event, w_coverart_t *w) {
+_size_did_change (GtkWidget* self, GdkEventConfigure *event, w_coverart_t *w) {
     _throttled_update(w);
     return FALSE;
 }
@@ -155,6 +159,7 @@ static int
 coverart_message (ddb_gtkui_widget_t *base, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     w_coverart_t *w = (w_coverart_t *)base;
     switch (id) {
+    case DB_EV_PLAYLISTCHANGED:
     case DB_EV_PLAYLISTSWITCHED:
     case DB_EV_CURSOR_MOVED: {
         
@@ -176,6 +181,49 @@ _destroy (ddb_gtkui_widget_t *base) {
     }
 }
 
+static gboolean
+_draw_event (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    w_coverart_t *w = user_data;
+
+    GtkAllocation a;
+    gtk_widget_get_allocation(widget, &a);
+
+    GtkStyleContext *context = gtk_widget_get_style_context(widget);
+    gtk_render_background(context, cr, 0, 0, a.width, a.height);
+
+    if (a.width < 8 || a.height < 8) {
+        return TRUE;
+    }
+
+    if (w->image == NULL) {
+        return TRUE;
+    }
+
+    const int pw = gdk_pixbuf_get_width(w->image);
+    const int ph = gdk_pixbuf_get_height(w->image);
+    cairo_rectangle(cr, 0, 0, a.width, a.height);
+    if (pw > a.width || ph > a.height || (pw < a.width && ph < a.height)) {
+        const double scale = min(a.width/(double)pw, a.height/(double)ph);
+        cairo_translate(cr, (a.width - a.width*scale)/2., (a.height - a.height*scale)/2.);
+        cairo_scale(cr, scale, scale);
+        cairo_pattern_set_filter(cairo_get_source(cr), CAIRO_FILTER_FAST);
+    }
+    gdk_cairo_set_source_pixbuf(cr, w->image, (a.width - pw)/2., (a.height - ph)/2.);
+    cairo_fill(cr);
+
+    return TRUE;
+}
+
+#if !GTK_CHECK_VERSION(3,0,0)
+static gboolean
+_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
+    gboolean res = coverart_draw (widget, cr, user_data);
+    cairo_destroy (cr);
+    return res;
+}
+#endif
+
 ddb_gtkui_widget_t *
 w_coverart_create (void) {
     w_coverart_t *w = malloc (sizeof (w_coverart_t));
@@ -184,13 +232,17 @@ w_coverart_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.message = coverart_message;
     w->base.destroy = _destroy;
-    w->image_widget = GTK_IMAGE(gtk_image_new());
-    gtk_widget_show (GTK_WIDGET(w->image_widget));
-    gtk_container_add (GTK_CONTAINER (w->base.widget), GTK_WIDGET(w->image_widget));
+    w->drawing_area = gtk_drawing_area_new();
+    gtk_widget_show (GTK_WIDGET(w->drawing_area));
+    gtk_container_add (GTK_CONTAINER (w->base.widget), GTK_WIDGET(w->drawing_area));
     w_override_signals (w->base.widget, w);
 
-    g_signal_connect(G_OBJECT(w->image_widget), "configure-event", G_CALLBACK(_size_did_change), w);
-
+    g_signal_connect(G_OBJECT(w->drawing_area), "configure-event", G_CALLBACK(_size_did_change), w);
+#if !GTK_CHECK_VERSION(3,0,0)
+    g_signal_connect_after ((gpointer) w->drawing_area, "expose_event", G_CALLBACK (_expose_event), w);
+#else
+    g_signal_connect_after ((gpointer) w->drawing_area, "draw", G_CALLBACK (_draw_event), w);
+#endif
     w->plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id("artwork2");
     if (w->plugin != NULL) {
         w->source_id = w->plugin->allocate_source_id();
