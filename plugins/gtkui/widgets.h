@@ -110,9 +110,6 @@ ddb_gtkui_widget_t *
 w_selproperties_create (void);
 
 ddb_gtkui_widget_t *
-w_coverart_create (void);
-
-ddb_gtkui_widget_t *
 w_scope_create (void);
 
 ddb_gtkui_widget_t *

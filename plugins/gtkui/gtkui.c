@@ -64,6 +64,7 @@
 #include "widgets.h"
 #include "wingeom.h"
 #include "plmenu.h"
+#include "covermanager/albumartwidget.h"
 
 #define USE_GTK_APPLICATION 1
 

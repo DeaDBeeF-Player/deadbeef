@@ -134,6 +134,7 @@ _load_image_from_cover(covermanager_impl_t *impl, ddb_cover_info_t *cover) {
     if (!img) {
         img = impl->default_cover;
     }
+
     return img;
 }
 
@@ -158,7 +159,7 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
         }
 
         // Update the UI on main queue
-        dispatch_async(dispatch_get_main_queue(), ^{
+        _dispatch_on_main(^{
             if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
                 _add_cover_for_track(impl, query->track, img);
             }

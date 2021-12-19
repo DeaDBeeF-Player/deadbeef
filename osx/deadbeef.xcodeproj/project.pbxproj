@@ -1577,6 +1577,9 @@
 		2D9793E9276E88140062585E /* gobjcache.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9793E7276E88140062585E /* gobjcache.h */; };
 		2D9793ED276E894E0062585E /* gobjcache.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9793E8276E88140062585E /* gobjcache.c */; };
 		2D9793EE276E894F0062585E /* gobjcache.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9793E8276E88140062585E /* gobjcache.c */; };
+		2D9793F1276F6D2B0062585E /* albumartwidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9793EF276F6D2B0062585E /* albumartwidget.h */; };
+		2D9793F3276F6D2F0062585E /* albumartwidget.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9793F0276F6D2B0062585E /* albumartwidget.c */; };
+		2D9793F4276F6D2F0062585E /* albumartwidget.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9793F0276F6D2B0062585E /* albumartwidget.c */; };
 		2D98613E226C814100BAACB1 /* PropertySheetViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98612F226C814000BAACB1 /* PropertySheetViewController.h */; };
 		2D98613F226C814100BAACB1 /* PropertySheetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98613D226C814000BAACB1 /* PropertySheetViewController.m */; };
 		2D986142226C816000BAACB1 /* BrowseButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D986140226C815F00BAACB1 /* BrowseButton.h */; };
@@ -5993,6 +5996,8 @@
 		2D9793E2276E854F0062585E /* covermanager.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = covermanager.c; sourceTree = "<group>"; };
 		2D9793E7276E88140062585E /* gobjcache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gobjcache.h; sourceTree = "<group>"; };
 		2D9793E8276E88140062585E /* gobjcache.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gobjcache.c; sourceTree = "<group>"; };
+		2D9793EF276F6D2B0062585E /* albumartwidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = albumartwidget.h; sourceTree = "<group>"; };
+		2D9793F0276F6D2B0062585E /* albumartwidget.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = albumartwidget.c; sourceTree = "<group>"; };
 		2D98612F226C814000BAACB1 /* PropertySheetViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertySheetViewController.h; sourceTree = "<group>"; };
 		2D98613D226C814000BAACB1 /* PropertySheetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PropertySheetViewController.m; sourceTree = "<group>"; };
 		2D986140226C815F00BAACB1 /* BrowseButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowseButton.h; sourceTree = "<group>"; };
@@ -10445,6 +10450,8 @@
 				2D9793E2276E854F0062585E /* covermanager.c */,
 				2D9793E7276E88140062585E /* gobjcache.h */,
 				2D9793E8276E88140062585E /* gobjcache.c */,
+				2D9793EF276F6D2B0062585E /* albumartwidget.h */,
+				2D9793F0276F6D2B0062585E /* albumartwidget.c */,
 			);
 			path = covermanager;
 			sourceTree = "<group>";
@@ -14038,6 +14045,7 @@
 				2DA30E602402D1B1001BAB8A /* ctmap.h in Headers */,
 				2DEBA1D223E207A3000E4135 /* EqualizerWindowController.h in Headers */,
 				0D56853D271DC6670026F700 /* VisualizationViewController.h in Headers */,
+				2D9793F1276F6D2B0062585E /* albumartwidget.h in Headers */,
 				2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */,
 				2DC657F8274A7C4600583E14 /* RenamePlaylistViewController.h in Headers */,
 				2DD3776027414BF6007AD315 /* ScopePreferencesViewController.h in Headers */,
@@ -17263,6 +17271,7 @@
 				2DC656B42744289C00583E14 /* prefwinplayback.c in Sources */,
 				2DC656B52744289C00583E14 /* medialibmanager.c in Sources */,
 				2DC656B62744289C00583E14 /* plcommon.c in Sources */,
+				2D9793F3276F6D2F0062585E /* albumartwidget.c in Sources */,
 				2DC656B72744289C00583E14 /* actions.c in Sources */,
 				2DC656B82744289C00583E14 /* hotkeys.c in Sources */,
 				2DC656B92744289C00583E14 /* callbacks.c in Sources */,
@@ -17347,6 +17356,7 @@
 				2D715C0F26C835E90022A8F0 /* prefwinplayback.c in Sources */,
 				2DE55ADF26C5A580008F33FF /* medialibmanager.c in Sources */,
 				2DE3B7D52269BF1700AFF9AE /* plcommon.c in Sources */,
+				2D9793F4276F6D2F0062585E /* albumartwidget.c in Sources */,
 				2DE3B7F62269BF3100AFF9AE /* actions.c in Sources */,
 				2DE3B8002269BF3100AFF9AE /* hotkeys.c in Sources */,
 				2DE3B8012269BF3100AFF9AE /* callbacks.c in Sources */,
