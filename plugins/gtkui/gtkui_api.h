@@ -232,7 +232,7 @@ typedef struct {
     GtkWidget* (*create_pltmenu) (int plt_idx);
 
     /// Obsolete: returns NULL
-    GdkPixbuf *(*get_cover_art_pixbuf) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data) DEPRECATED_202;
+    GdkPixbuf *(*get_cover_art_pixbuf) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data);
     /// Obsolete: returns NULL
     GdkPixbuf *(*cover_get_default_pixbuf) (void);
 
