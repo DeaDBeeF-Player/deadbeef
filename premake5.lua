@@ -808,6 +808,7 @@ project "ddb_gui_GTK2"
     "plugins/gtkui/*.c",
     "plugins/gtkui/medialib/*.c",
     "plugins/gtkui/prefwin/*.c",
+    "plugins/gtkui/covermanager/*.c",
     "shared/eqpreset.c",
     "shared/pluginsettings.c",
     "shared/trkproperties_shared.c",

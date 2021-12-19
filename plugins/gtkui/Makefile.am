@@ -47,6 +47,9 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   rg.c rg.h\
 				   medialib/medialibwidget.c medialib/medialibwidget.h\
 				   medialib/medialibmanager.c medialib/medialibmanager.h\
+				   covermanager/covermanager.c covermanager/covermanager.h\
+				   covermanager/gobjcache.c covermanager/gobjcache.h\
+				   covermanager/albumartwidget.c covermanager/albumartwidget.h\
 				   $(SM_SOURCES) $(OSXSRC)
 
 sdkdir = $(pkgincludedir)
