@@ -27,6 +27,7 @@
 #include "albumartwidget.h"
 #include "coverart.h"
 #include "covermanager.h"
+#include <Block.h>
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -46,12 +47,14 @@ static gboolean
 _dispatch_on_main_wrapper (void *context) {
     void (^block)(void) = context;
     block ();
+    Block_release(block);
     return FALSE;
 }
 
 static void
 _dispatch_on_main(void (^block)(void)) {
-    g_idle_add(_dispatch_on_main_wrapper, block);
+    dispatch_block_t copy_block = Block_copy(block);
+    g_idle_add(_dispatch_on_main_wrapper, copy_block);
 }
 
 static gboolean
@@ -99,12 +102,11 @@ _update (w_coverart_t *w) {
                         originalSize.height = gdk_pixbuf_get_height(img);
                         GtkAllocation desired_size = covermanager_desired_size_for_image_size(cm, originalSize, album_art_space_width);
                         GdkPixbuf *scaled_image = covermanager_create_scaled_image(cm, img, desired_size);
+                        gtk_image_set_from_pixbuf(w->image_widget, scaled_image);
                         if (scaled_image != NULL) {
-                            gtk_image_set_from_pixbuf(w->image_widget, scaled_image);
+                            g_object_unref (scaled_image);
                         }
-                        else {
-                            gtk_image_clear(w->image_widget); // FIXME: check what gtk_image_set_from_pixbuf does with NULL arg
-                        }
+                        g_object_unref(img);
                     }
                     else {
                         gtk_image_clear(w->image_widget);
@@ -118,12 +120,11 @@ _update (w_coverart_t *w) {
                     GtkAllocation desired_size = covermanager_desired_size_for_image_size(cm, originalSize, album_art_space_width);
 
                     GdkPixbuf *scaled_image = covermanager_create_scaled_image(cm, image, desired_size);
+                    gtk_image_set_from_pixbuf(w->image_widget, scaled_image);
                     if (scaled_image != NULL) {
-                        gtk_image_set_from_pixbuf(w->image_widget, scaled_image);
+                        g_object_unref(scaled_image);
                     }
-                    else {
-                        gtk_image_clear(w->image_widget);
-                    }
+                    g_object_unref(image);
                 }
             }
 

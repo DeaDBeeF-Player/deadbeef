@@ -50,12 +50,14 @@ static gboolean
 _dispatch_on_main_wrapper (void *context) {
     void (^block)(void) = context;
     block ();
+    Block_release(block);
     return FALSE;
 }
 
 static void
 _dispatch_on_main(void (^block)(void)) {
-    g_idle_add(_dispatch_on_main_wrapper, block);
+    dispatch_block_t copy_block = Block_copy(block);
+    g_idle_add(_dispatch_on_main_wrapper, copy_block);
 }
 
 static char *
@@ -296,7 +298,7 @@ covermanager_create_scaled_image (covermanager_t manager, GdkPixbuf *image, GtkA
     double scale_x = (double)size.width/(double)originalWidth;
     double scale_y = (double)size.height/(double)originalHeight;
 
-    gdk_pixbuf_scale(image, scaled_image, 0, 0, originalWidth, originalHeight, 0, 0, scale_x, scale_y, GDK_INTERP_BILINEAR);
+    gdk_pixbuf_scale(image, scaled_image, 0, 0, size.width, size.height, 0, 0, scale_x, scale_y, GDK_INTERP_BILINEAR);
     return scaled_image;
 }
 
