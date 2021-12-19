@@ -294,6 +294,8 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
         double albumArtSpaceWidth = art_width;
 
         image = covermanager_cover_for_track(cm, it, 0, ^(GdkPixbuf *img) { // img only valid in this block
+            // FIXME By the time this block is executed -- the grp pointer may be invalid.
+            // Need to find group by its head track.
             if (grp != NULL) {
                 if (grp->cachedImage != NULL) {
                     g_object_unref(grp->cachedImage);
@@ -304,11 +306,7 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
                     imageSize.width = gdk_pixbuf_get_width(img);
                     imageSize.height = gdk_pixbuf_get_height(img);
                     GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, imageSize, albumArtSpaceWidth);
-                    grp->cachedImage = covermanager_create_scaled_image(cm, img, desiredSize);
-                    // FIXME: no idea why this retain is necessary.
-                    if (grp->cachedImage != NULL) {
-                        g_object_ref (grp->cachedImage);
-                    }
+                    grp->cachedImage = covermanager_create_scaled_image(cm, img, desiredSize); // retained
                 }
                 grp->hasCachedImage = TRUE;
             }

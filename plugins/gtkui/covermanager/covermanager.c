@@ -85,10 +85,17 @@ _update_default_cover (covermanager_impl_t *impl) {
         free (impl->default_cover_path);
         impl->default_cover_path = strdup (path);
 
+        if (impl->default_cover != NULL) {
+            g_object_unref(impl->default_cover);
+        }
+
         impl->default_cover = gdk_pixbuf_new_from_file(path, NULL);
         if (impl->default_cover == NULL) {
             uint32_t color = 0xffffffff;
             impl->default_cover = gdk_pixbuf_new_from_data((guchar *)&color, GDK_COLORSPACE_RGB, FALSE, 8, 1, 1, 4, NULL, NULL);
+        }
+        if (impl->default_cover) {
+            g_object_ref(impl->default_cover);
         }
     }
 }
@@ -312,6 +319,10 @@ covermanager_create_scaled_image (covermanager_t manager, GdkPixbuf *image, GtkA
     double scale_y = (double)size.height/(double)originalHeight;
 
     gdk_pixbuf_scale(image, scaled_image, 0, 0, size.width, size.height, 0, 0, scale_x, scale_y, GDK_INTERP_BILINEAR);
+
+    // This should not be necessary, but seems like GTK has a bug in there.
+    g_object_ref(scaled_image);
+
     return scaled_image; // retained
 }
 
