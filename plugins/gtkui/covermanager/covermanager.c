@@ -88,9 +88,7 @@ _update_default_cover (covermanager_impl_t *impl) {
         impl->default_cover = gdk_pixbuf_new_from_file(path, NULL);
         if (impl->default_cover == NULL) {
             uint32_t color = 0xffffffff;
-            GBytes *bytes = g_bytes_new(&color, 4);
-            impl->default_cover = gdk_pixbuf_new_from_bytes(bytes, GDK_COLORSPACE_RGB, FALSE, 32, 1, 1, 4);
-            g_bytes_unref(bytes);
+            impl->default_cover = gdk_pixbuf_new_from_data((guchar *)&color, GDK_COLORSPACE_RGB, FALSE, 8, 1, 1, 4, NULL, NULL);
         }
     }
 }
