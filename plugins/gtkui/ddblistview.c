@@ -3365,6 +3365,12 @@ ddb_listview_free_group (DdbListview *listview, DdbListviewGroup *group) {
         if (group->head) {
             listview->binding->unref (group->head);
         }
+
+        if (group->cachedImage) {
+            g_object_unref(group->cachedImage);
+            group->cachedImage = NULL;
+        }
+
         free (group);
         group = next;
     }
@@ -3567,6 +3573,7 @@ ddb_listview_resize_subgroup (DdbListview *listview, DdbListviewGroup *grp, int 
             ddb_listview_resize_subgroup (listview, grp->subgroups, group_depth + 1, min_height, min_no_artwork_height);
         }
         full_height += calc_group_height (listview, grp, group_depth == listview->artwork_subgroup_level ? min_height : min_no_artwork_height, !grp->next);
+        grp->hasCachedImage = FALSE;
         grp = grp->next;
     }
     return full_height;

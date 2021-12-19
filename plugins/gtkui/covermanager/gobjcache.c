@@ -75,6 +75,7 @@ gobj_cache_set (gobj_cache_t restrict cache, const char * restrict key, GObject 
         return;
     }
     gobj_cache_impl_t *impl = cache;
+    g_object_ref(obj);
 
     // find item with that key or empty
     gobj_cache_item_t *reuse = NULL;
@@ -89,7 +90,6 @@ gobj_cache_set (gobj_cache_t restrict cache, const char * restrict key, GObject 
         else if (!strcmp (item->key, key)) {
             item->atime = time(NULL);
             g_object_unref(item->obj);
-            g_object_ref(obj);
             item->obj = obj;
             return;
         }
@@ -113,7 +113,6 @@ gobj_cache_set (gobj_cache_t restrict cache, const char * restrict key, GObject 
 
     reuse->atime = time(NULL);
     reuse->key = strdup(key);
-    g_object_ref(obj);
     reuse->obj = obj;
 }
 

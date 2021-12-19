@@ -283,24 +283,32 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
     DB_playItem_t *it = (DB_playItem_t *)grp->head;
     covermanager_t cm = covermanager_shared();
 
-    GdkPixbuf *image;
+    GdkPixbuf *image = NULL;
     if (grp->hasCachedImage) {
         image = grp->cachedImage;
+        if (image != NULL) {
+            g_object_ref (image);
+        }
     }
     else {
         double albumArtSpaceWidth = art_width;
 
-        image = covermanager_cover_for_track(cm, it, 0, ^(GdkPixbuf *img) {
+        image = covermanager_cover_for_track(cm, it, 0, ^(GdkPixbuf *img) { // img only valid in this block
             if (grp != NULL) {
+                if (grp->cachedImage != NULL) {
+                    g_object_unref(grp->cachedImage);
+                    grp->cachedImage = NULL;
+                }
                 if (img != NULL) {
                     GtkAllocation imageSize = {0};
                     imageSize.width = gdk_pixbuf_get_width(img);
                     imageSize.height = gdk_pixbuf_get_height(img);
                     GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, imageSize, albumArtSpaceWidth);
                     grp->cachedImage = covermanager_create_scaled_image(cm, img, desiredSize);
-                }
-                else {
-                    grp->cachedImage = NULL;
+                    // FIXME: no idea why this retain is necessary.
+                    if (grp->cachedImage != NULL) {
+                        g_object_ref (grp->cachedImage);
+                    }
                 }
                 grp->hasCachedImage = TRUE;
             }
@@ -309,10 +317,12 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
 // FIXME            [lv.contentView drawGroup:grp];
         });
     }
-    if (!image) {
-        // FIXME: the problem here is that if the cover is not found (yet) -- it won't draw anything, but the rect is already invalidated, and will come out as background color
+    if (image == NULL) {
+      // FIXME: the problem here is that if the cover is not found (yet) -- it won't draw anything, but the rect is already invalidated, and will come out as background color
         return;
     }
+
+    // image is retained: release at the end
 
     GtkAllocation drawRect = {0};
 
@@ -335,17 +345,23 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
     if (size.width < size.height) {
         art_x += art_width/2 - desiredSize.width/2;
     }
-    drawRect.x = art_x;
-    drawRect.y = ypos;
-    drawRect.width = desiredSize.width;
-    drawRect.height = desiredSize.height;
 
-    if (!grp->cachedImage) {
+    if (!grp->hasCachedImage) {
+        drawRect.x = art_x;
+        drawRect.y = ypos;
+        drawRect.width = desiredSize.width;
+        drawRect.height = desiredSize.height;
+
+        if (grp->cachedImage != NULL) {
+            g_object_unref(grp->cachedImage);
+        }
         grp->cachedImage = covermanager_create_scaled_image(cm, image, desiredSize);
         grp->hasCachedImage = TRUE;
     }
 
     cover_draw_cairo(grp->cachedImage, art_x, min_y, next_y, art_width, art_height, cr, CAIRO_FILTER_FAST);
+    g_object_unref(image);
+    image = NULL;
 }
 
 #define CHANNEL_BLENDR(CHANNELA,CHANNELB,BLEND) ( \

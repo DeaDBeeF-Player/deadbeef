@@ -128,16 +128,19 @@ _load_image_from_cover(covermanager_impl_t *impl, ddb_cover_info_t *cover) {
         GdkPixbufLoader *loader = gdk_pixbuf_loader_new ();
         gdk_pixbuf_loader_write (loader, (const guchar *)(cover->blob + cover->blob_image_offset), cover->blob_image_size, NULL);
         img = gdk_pixbuf_loader_get_pixbuf (loader);
-        g_object_unref(loader);
+        gdk_pixbuf_loader_close(loader, NULL);
     }
     if (!img && cover && cover->image_filename) {
         img = gdk_pixbuf_new_from_file(cover->image_filename, NULL);
     }
     if (!img) {
         img = impl->default_cover;
+        if (img) {
+            g_object_ref (img);
+        }
     }
 
-    return img;
+    return img; // retained
 }
 
 static void
@@ -154,10 +157,10 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
     covermanager_impl_t *impl = user_data->impl;
     // Load the image on background queue
     dispatch_async(impl->loader_queue, ^{
-        GdkPixbuf *img = NULL;
+        __block GdkPixbuf *img = NULL;
 
         if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
-            img = _load_image_from_cover(impl, cover);
+            img = _load_image_from_cover(impl, cover); // retain
         }
 
         // Update the UI on main queue
@@ -167,6 +170,10 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
             }
             void (^completionBlock)(GdkPixbuf *) = (void (^)(GdkPixbuf *))user_data->completion_block;
             completionBlock(img);
+            if (img != NULL) {
+                g_object_unref(img); // release
+                img = NULL;
+            }
             Block_release(user_data->completion_block);
             free (user_data);
 
@@ -257,7 +264,6 @@ covermanager_cover_for_track(covermanager_t manager, DB_playItem_t *track, int64
     covermanager_impl_t *impl = manager;
 
     if (!impl->plugin) {
-        completion_block(NULL);
         return NULL;
     }
 
@@ -266,13 +272,11 @@ covermanager_cover_for_track(covermanager_t manager, DB_playItem_t *track, int64
     free (key);
     key = NULL;
 
+    // FIXME: need to check whether the cache has NULL object for the key
     if (cover != NULL) {
-        if (cover == NULL) {
-            completion_block(NULL);
-        }
-        // Callback is not executed if the image is non-nil, to avoid double drawing.
+        // completion_block is not executed if the image is non-nil, to avoid double drawing.
         // The caller must release user data if the returned image is not nil.
-        return cover;
+        return cover; // retained
     }
 
     ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
@@ -297,7 +301,8 @@ covermanager_create_scaled_image (covermanager_t manager, GdkPixbuf *image, GtkA
     int originalHeight = gdk_pixbuf_get_height(image);
 
     if (originalWidth <= size.width && originalHeight <= size.height) {
-        return image;
+        g_object_ref(image);
+        return image; // retained
     }
 
     gboolean has_alpha = gdk_pixbuf_get_has_alpha(image);
@@ -309,7 +314,7 @@ covermanager_create_scaled_image (covermanager_t manager, GdkPixbuf *image, GtkA
     double scale_y = (double)size.height/(double)originalHeight;
 
     gdk_pixbuf_scale(image, scaled_image, 0, 0, size.width, size.height, 0, 0, scale_x, scale_y, GDK_INTERP_BILINEAR);
-    return scaled_image;
+    return scaled_image; // retained
 }
 
 GtkAllocation
