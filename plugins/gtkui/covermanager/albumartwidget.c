@@ -25,7 +25,6 @@
 #include "../../../deadbeef.h"
 #include "../../artwork/artwork.h"
 #include "albumartwidget.h"
-#include "coverart.h"
 #include "covermanager.h"
 #include <Block.h>
 

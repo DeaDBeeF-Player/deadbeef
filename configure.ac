@@ -122,7 +122,6 @@ AC_ARG_ENABLE(src,      [AS_HELP_STRING([--enable-src      ], [build libsamplera
 AC_ARG_ENABLE(m3u,      [AS_HELP_STRING([--enable-m3u      ], [build m3u plugin (default: auto)])], [enable_m3u=$enableval], [enable_m3u=yes])
 AC_ARG_ENABLE(vfs-zip,      [AS_HELP_STRING([--enable-vfs-zip      ], [build vfs_zip plugin (default: auto)])], [enable_vfs_zip=$enableval], [enable_vfs_zip=yes])
 AC_ARG_ENABLE(converter,      [AS_HELP_STRING([--enable-converter      ], [build converter plugin (default: auto)])], [enable_converter=$enableval], [enable_converter=yes])
-AC_ARG_ENABLE(artwork-imlib2, [AS_HELP_STRING([--enable-artwork-imlib2      ], [use imlib2 in artwork plugin (default: auto)])], [enable_artwork_imlib2=$enableval], [enable_artwork_imlib2=yes])
 AC_ARG_ENABLE(dumb,      [AS_HELP_STRING([--enable-dumb      ], [build DUMB plugin (default: auto)])], [enable_dumb=$enableval], [enable_dumb=yes])
 AC_ARG_ENABLE(shn,      [AS_HELP_STRING([--enable-shn      ], [build SHN plugin (default: auto)])], [enable_shn=$enableval], [enable_shn=yes])
 AC_ARG_ENABLE(psf,      [AS_HELP_STRING([--enable-psf      ], [build AOSDK-based PSF(,QSF,SSF,DSF) plugin (default: auto)])], [enable_psf=$enableval], [enable_psf=yes])
@@ -640,37 +639,12 @@ AS_IF([test "${enable_shellexecui}" != "no" -a "${enable_shellexec}" != "no"], [
 ])
 
 AS_IF([test "${enable_artwork}" != "no"], [
-    AS_IF([test "${enable_staticlink}" != "no"], [
-        HAVE_JPEG=yes
-        JPEG_DEPS_LIBS="../../$LIB/lib/libjpeg.a"
-        JPEG_DEPS_CFLAGS="-I../../$LIB/include"
-        AC_SUBST(JPEG_DEPS_CFLAGS)
-        AC_SUBST(JPEG_DEPS_LIBS)
-        HAVE_PNG=yes
-        PNG_DEPS_CFLAGS="-I../../$LIB/include/libpng15"
-        PNG_DEPS_LIBS="../../$LIB/lib/libpng.a ../../$LIB/lib/libz.a"
-        AC_SUBST(PNG_DEPS_CFLAGS)
-        AC_SUBST(PNG_DEPS_LIBS)
-        HAVE_IMLIB2=no
-    ], [
-        AS_IF([test "${enable_artwork_imlib2}" != "no"], [
-            PKG_CHECK_MODULES(IMLIB2_DEPS, imlib2, HAVE_IMLIB2=yes, HAVE_IMLIB2=no)
-        ])
-
-        AS_IF([test "${enable_artwork_imlib2}" = "no" -o "${HAVE_IMLIB2}" = "no"], [
-            AC_CHECK_LIB([jpeg], [main], [HAVE_JPEG=yes;JPEG_DEPS_LIBS="-ljpeg";AC_SUBST(JPEG_DEPS_LIBS)])
-            AC_CHECK_LIB([png], [main], [HAVE_PNG=yes;PNG_DEPS_LIBS="-lpng -lz";AC_SUBST(PNG_DEPS_LIBS)])
-        ])
-    ])
-
     AS_IF([test "${enable_artwork_network}" = "yes"], [
         ARTWORK_USE_VFS_CURL=yes
     ])
 
     AS_IF([test "${HAVE_VFS_CURL}" = "yes" -o "${enable_artwork_network}" = "no" ], [
-        AS_IF([test "${HAVE_JPEG}" = "yes" -o "${HAVE_IMLIB2}" = "yes"], [
-            HAVE_ARTWORK=yes
-        ])
+        HAVE_ARTWORK=yes
     ])
 ])
 
@@ -835,7 +809,7 @@ AS_IF([test "${enable_soundtouch}" != "no"], [
     HAVE_SOUNDTOUCH=yes
 ])
 
-PLUGINS_DIRS="plugins/liboggedit plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/opus plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork-legacy plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/rg_scanner plugins/soundtouch"
+PLUGINS_DIRS="plugins/liboggedit plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/opus plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/rg_scanner plugins/soundtouch"
 
 AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
@@ -882,9 +856,6 @@ AM_CONDITIONAL(HAVE_DSP_SRC, test "x$HAVE_DSP_SRC" = "xyes")
 AM_CONDITIONAL(HAVE_M3U, test "x$HAVE_M3U" = "xyes")
 AM_CONDITIONAL(HAVE_VFS_ZIP, test "x$HAVE_VFS_ZIP" = "xyes")
 AM_CONDITIONAL(HAVE_CONVERTER, test "x$HAVE_CONVERTER" = "xyes")
-AM_CONDITIONAL(HAVE_IMLIB2, test "x$HAVE_IMLIB2" = "xyes")
-AM_CONDITIONAL(HAVE_JPEG, test "x$HAVE_JPEG" = "xyes")
-AM_CONDITIONAL(HAVE_PNG, test "x$HAVE_PNG" = "xyes")
 AM_CONDITIONAL(HAVE_YASM, test "x$HAVE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_DUMB, test "x$HAVE_DUMB" = "xyes")
 AM_CONDITIONAL(HAVE_PSF, test "x$HAVE_PSF" = "xyes")
@@ -938,7 +909,7 @@ plugins/ffmpeg/Makefile
 plugins/sid/Makefile
 plugins/oss/Makefile
 plugins/pulse/Makefile
-plugins/artwork-legacy/Makefile
+plugins/artwork/Makefile
 plugins/supereq/Makefile
 plugins/notify/Makefile
 plugins/shellexec/Makefile

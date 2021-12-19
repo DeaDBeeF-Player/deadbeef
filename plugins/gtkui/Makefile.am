@@ -15,7 +15,6 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   ddbtabstrip.c ddbtabstrip.h\
 				   ddbvolumebar.c ddbvolumebar.h\
 				   trkproperties.c trkproperties.h\
-				   coverart.c coverart.h\
 				   plcommon.c plcommon.h\
 				   plmenu.c plmenu.h\
 				   prefwin/prefwin.c prefwin/prefwin.h\

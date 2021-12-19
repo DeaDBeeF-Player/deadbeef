@@ -1100,17 +1100,6 @@ project "musepack_plugin"
   links {"m"}
 end
 
-if option ("plugin-artwork-legacy", "libjpeg libpng zlib flac ogg") then
-project "artwork_plugin"
-  targetname "artwork"
-  files {
-    "plugins/artwork-legacy/*.c",
-    "shared/mp4tagutil.c"
-  }
-  includedirs {"../libmp4ff"}
-  defines {"USE_OGG=1", "USE_VFS_CURL", "USE_METAFLAC", "USE_MP4FF", "USE_TAGGING=1"}
-  links {"jpeg", "png", "z", "FLAC", "ogg", "mp4p"}
-end
 if option ("plugin-artwork", "libjpeg libpng zlib flac ogg") and not is_enabled("plugin-artwork-legacy") then
 project "artwork_plugin"
   targetname "artwork"

@@ -2179,7 +2179,6 @@
 		2DC656912744289C00583E14 /* eq.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5D92269BB4300AFF9AE /* eq.h */; };
 		2DC656922744289C00583E14 /* hotkeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5AD2269BB4300AFF9AE /* hotkeys.h */; };
 		2DC656932744289C00583E14 /* search.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B6622269BB4300AFF9AE /* search.h */; };
-		2DC656942744289C00583E14 /* coverart.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5EC2269BB4300AFF9AE /* coverart.h */; };
 		2DC656952744289C00583E14 /* gtkui_deletefromdisk.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA62BA326F3C8A800ED449A /* gtkui_deletefromdisk.h */; };
 		2DC656962744289C00583E14 /* mainplaylist.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B59E2269BB4300AFF9AE /* mainplaylist.h */; };
 		2DC656972744289C00583E14 /* ddblistview.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5D62269BB4300AFF9AE /* ddblistview.h */; };
@@ -2193,7 +2192,6 @@
 		2DC656A02744289C00583E14 /* gtkui_deletefromdisk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA62BA426F3C8A800ED449A /* gtkui_deletefromdisk.c */; };
 		2DC656A12744289C00583E14 /* fileman.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5ED2269BB4300AFF9AE /* fileman.c */; };
 		2DC656A22744289C00583E14 /* prefwinsound.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C0926C833570022A8F0 /* prefwinsound.c */; };
-		2DC656A32744289C00583E14 /* coverart.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B58B2269BB4300AFF9AE /* coverart.c */; };
 		2DC656A42744289C00583E14 /* eq.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5782269BB4300AFF9AE /* eq.c */; };
 		2DC656A52744289C00583E14 /* deadbeefapp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5FA2269BB4300AFF9AE /* deadbeefapp.c */; };
 		2DC656A62744289C00583E14 /* interface.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5872269BB4300AFF9AE /* interface.c */; };
@@ -2494,7 +2492,6 @@
 		2DE3B7CA2269BF1300AFF9AE /* tfimport.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5882269BB4300AFF9AE /* tfimport.h */; };
 		2DE3B7CB2269BF1300AFF9AE /* ctmapping.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5892269BB4300AFF9AE /* ctmapping.c */; };
 		2DE3B7CC2269BF1300AFF9AE /* gtkui.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B58A2269BB4300AFF9AE /* gtkui.h */; };
-		2DE3B7CD2269BF1700AFF9AE /* coverart.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B58B2269BB4300AFF9AE /* coverart.c */; };
 		2DE3B7CE2269BF1700AFF9AE /* ddb_splitter_size_mode.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B58E2269BB4300AFF9AE /* ddb_splitter_size_mode.c */; };
 		2DE3B7CF2269BF1700AFF9AE /* tagwritersettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5942269BB4300AFF9AE /* tagwritersettings.c */; };
 		2DE3B7D02269BF1700AFF9AE /* actionhandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5972269BB4300AFF9AE /* actionhandlers.h */; };
@@ -2536,7 +2533,6 @@
 		2DE3B7F62269BF3100AFF9AE /* actions.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5E52269BB4300AFF9AE /* actions.c */; };
 		2DE3B7F72269BF3100AFF9AE /* clipboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5E72269BB4300AFF9AE /* clipboard.h */; };
 		2DE3B7F82269BF3100AFF9AE /* tagwritersettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5E92269BB4300AFF9AE /* tagwritersettings.h */; };
-		2DE3B7F92269BF3100AFF9AE /* coverart.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5EC2269BB4300AFF9AE /* coverart.h */; };
 		2DE3B7FA2269BF3100AFF9AE /* fileman.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5ED2269BB4300AFF9AE /* fileman.c */; };
 		2DE3B7FB2269BF3100AFF9AE /* ddb_splitter_size_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5EE2269BB4300AFF9AE /* ddb_splitter_size_mode.h */; };
 		2DE3B7FC2269BF3100AFF9AE /* ddbseekbar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5F12269BB4300AFF9AE /* ddbseekbar.h */; };
@@ -6744,7 +6740,6 @@
 		2DE3B5882269BB4300AFF9AE /* tfimport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tfimport.h; sourceTree = "<group>"; };
 		2DE3B5892269BB4300AFF9AE /* ctmapping.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ctmapping.c; sourceTree = "<group>"; };
 		2DE3B58A2269BB4300AFF9AE /* gtkui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gtkui.h; sourceTree = "<group>"; };
-		2DE3B58B2269BB4300AFF9AE /* coverart.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = coverart.c; sourceTree = "<group>"; };
 		2DE3B58E2269BB4300AFF9AE /* ddb_splitter_size_mode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ddb_splitter_size_mode.c; sourceTree = "<group>"; };
 		2DE3B5942269BB4300AFF9AE /* tagwritersettings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tagwritersettings.c; sourceTree = "<group>"; };
 		2DE3B5972269BB4300AFF9AE /* actionhandlers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = actionhandlers.h; sourceTree = "<group>"; };
@@ -6786,7 +6781,6 @@
 		2DE3B5E52269BB4300AFF9AE /* actions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = actions.c; sourceTree = "<group>"; };
 		2DE3B5E72269BB4300AFF9AE /* clipboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clipboard.h; sourceTree = "<group>"; };
 		2DE3B5E92269BB4300AFF9AE /* tagwritersettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tagwritersettings.h; sourceTree = "<group>"; };
-		2DE3B5EC2269BB4300AFF9AE /* coverart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = coverart.h; sourceTree = "<group>"; };
 		2DE3B5ED2269BB4300AFF9AE /* fileman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fileman.c; sourceTree = "<group>"; };
 		2DE3B5EE2269BB4300AFF9AE /* ddb_splitter_size_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ddb_splitter_size_mode.h; sourceTree = "<group>"; };
 		2DE3B5F12269BB4300AFF9AE /* ddbseekbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ddbseekbar.h; sourceTree = "<group>"; };
@@ -11446,8 +11440,6 @@
 				2DCB197B2515F9D90054BD06 /* ChangeLog */,
 				2DE3B59B2269BB4300AFF9AE /* clipboard.c */,
 				2DE3B5E72269BB4300AFF9AE /* clipboard.h */,
-				2DE3B58B2269BB4300AFF9AE /* coverart.c */,
-				2DE3B5EC2269BB4300AFF9AE /* coverart.h */,
 				2DE3B5892269BB4300AFF9AE /* ctmapping.c */,
 				2DE3B5CB2269BB4300AFF9AE /* ctmapping.h */,
 				2DE3B58E2269BB4300AFF9AE /* ddb_splitter_size_mode.c */,
@@ -13605,7 +13597,6 @@
 				2DC656922744289C00583E14 /* hotkeys.h in Headers */,
 				2DC656932744289C00583E14 /* search.h in Headers */,
 				2D5C6AD42752B6930073632B /* plmenu.h in Headers */,
-				2DC656942744289C00583E14 /* coverart.h in Headers */,
 				2DC656952744289C00583E14 /* gtkui_deletefromdisk.h in Headers */,
 				2DC656962744289C00583E14 /* mainplaylist.h in Headers */,
 				2DC656972744289C00583E14 /* ddblistview.h in Headers */,
@@ -13680,7 +13671,6 @@
 				2DE3B7DB2269BF1700AFF9AE /* hotkeys.h in Headers */,
 				2DE3B8062269BF3100AFF9AE /* search.h in Headers */,
 				2D5C6AD52752B6930073632B /* plmenu.h in Headers */,
-				2DE3B7F92269BF3100AFF9AE /* coverart.h in Headers */,
 				2DA62BA526F3C8A800ED449A /* gtkui_deletefromdisk.h in Headers */,
 				2DE3B7D42269BF1700AFF9AE /* mainplaylist.h in Headers */,
 				2DE3B7F02269BF3100AFF9AE /* ddblistview.h in Headers */,
@@ -17253,7 +17243,6 @@
 				2DC656A12744289C00583E14 /* fileman.c in Sources */,
 				2DC656A22744289C00583E14 /* prefwinsound.c in Sources */,
 				2D9793ED276E894E0062585E /* gobjcache.c in Sources */,
-				2DC656A32744289C00583E14 /* coverart.c in Sources */,
 				2DC656A42744289C00583E14 /* eq.c in Sources */,
 				2DC656A52744289C00583E14 /* deadbeefapp.c in Sources */,
 				2DC656A62744289C00583E14 /* interface.c in Sources */,
@@ -17338,7 +17327,6 @@
 				2DE3B7FA2269BF3100AFF9AE /* fileman.c in Sources */,
 				2D715C0B26C833570022A8F0 /* prefwinsound.c in Sources */,
 				2D9793EE276E894F0062585E /* gobjcache.c in Sources */,
-				2DE3B7CD2269BF1700AFF9AE /* coverart.c in Sources */,
 				2DE3B7C02269BF1300AFF9AE /* eq.c in Sources */,
 				2DE3B8022269BF3100AFF9AE /* deadbeefapp.c in Sources */,
 				2DE3B7C92269BF1300AFF9AE /* interface.c in Sources */,
