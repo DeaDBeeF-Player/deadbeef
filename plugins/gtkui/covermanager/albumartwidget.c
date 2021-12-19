@@ -187,8 +187,12 @@ _draw_event (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     GtkAllocation a;
     gtk_widget_get_allocation(widget, &a);
 
+#if !GTK_CHECK_VERSION(3,0,0)
+    gtk_paint_flat_box(gtk_widget_get_style(widget), gtk_widget_get_window(widget), GTK_STATE_NORMAL, GTK_SHADOW_NONE, &a, widget, NULL, 0, 0, a.width, a.height);
+#else
     GtkStyleContext *context = gtk_widget_get_style_context(widget);
     gtk_render_background(context, cr, 0, 0, a.width, a.height);
+#endif
 
     if (a.width < 8 || a.height < 8) {
         return TRUE;
@@ -217,7 +221,7 @@ _draw_event (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 static gboolean
 _expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
     cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
-    gboolean res = coverart_draw (widget, cr, user_data);
+    gboolean res = _draw_event (widget, cr, user_data);
     cairo_destroy (cr);
     return res;
 }
