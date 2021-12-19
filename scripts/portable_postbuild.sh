@@ -46,7 +46,7 @@ for i in nullout cdda flac alsa mp3 hotkeys vtx \
      supereq gme dumb notify musepack wildmidi \
      tta dca aac mms shn psf shellexec vfs_zip \
      m3u converter pulse dsp_libsrc mono2stereo \
-     wma rg_scanner soundtouch\
+     wma rg_scanner soundtouch artwork\
      ; do
     if [ -f ./plugins/$i/.libs/$i.so ]; then
         cp ./plugins/$i/.libs/$i.so $PLUGDIR/
@@ -58,12 +58,6 @@ for i in nullout cdda flac alsa mp3 hotkeys vtx \
         echo ./plugins/$i/.libs/$i.so not found
     fi
 done
-
-if [ -f ./plugins/artwork-legacy/.libs/artwork.so ]; then
-    cp ./plugins/artwork-legacy/.libs/artwork.so $PLUGDIR/
-else
-    echo ./plugins/artwork-legacy/.libs/artwork.so not found
-fi
 
 if [ -f ./plugins/gtkui/.libs/ddb_gui_GTK2.so ]; then
     cp ./plugins/gtkui/.libs/ddb_gui_GTK2.so $PLUGDIR/
