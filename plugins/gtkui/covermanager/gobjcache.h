@@ -43,4 +43,7 @@ gobj_cache_get (gobj_cache_t cache, const char *key);
 void
 gobj_cache_remove (gobj_cache_t cache, const char *key);
 
+void
+gobj_cache_remove_all (gobj_cache_t cache);
+
 #endif /* gobjcache_h */

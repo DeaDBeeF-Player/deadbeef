@@ -108,8 +108,10 @@ gobj_cache_set (gobj_cache_t restrict cache, const char * restrict key, GObject 
         // evict
         gobj_cache_item_deinit(evict);
         reuse = evict;
+        evict = NULL;
     }
 
+    reuse->atime = time(NULL);
     reuse->key = strdup(key);
     g_object_ref(obj);
     reuse->obj = obj;
@@ -126,6 +128,7 @@ gobj_cache_get (gobj_cache_t cache, const char *key) {
     for (int i = 0; i < impl->count; i++) {
         gobj_cache_item_t *item = &impl->items[i];
         if (item->key != NULL && !strcmp (item->key, key)) {
+            item->atime = time(NULL);
             g_object_ref(item->obj);
             return item->obj;
         }
@@ -147,5 +150,15 @@ gobj_cache_remove (gobj_cache_t cache, const char *key) {
             gobj_cache_item_deinit(item);
             break;
         }
+    }
+}
+
+void
+gobj_cache_remove_all (gobj_cache_t cache) {
+    gobj_cache_impl_t *impl = cache;
+
+    for (int i = 0; i < impl->count; i++) {
+        gobj_cache_item_t *item = &impl->items[i];
+        gobj_cache_item_deinit(item);
     }
 }

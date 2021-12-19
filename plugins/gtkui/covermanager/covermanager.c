@@ -35,6 +35,8 @@ typedef struct {
     gobj_cache_t *cache;
     dispatch_queue_t loader_queue;
     char *name_tf;
+    char *default_cover_path;
+    GdkPixbuf *default_cover;
 }  covermanager_impl_t;
 
 typedef struct {
@@ -56,30 +58,6 @@ _dispatch_on_main(void (^block)(void)) {
     g_idle_add(_dispatch_on_main_wrapper, block);
 }
 
-static void
-_settings_did_change_for_track(covermanager_t manager, ddb_playItem_t *track) {
-    // FIXME:
-//    if (track == NULL) {
-//        [self updateDefaultCover];
-//        [self resetCache];
-//    }
-//    else {
-//        NSString *hash = [self hashForTrack:track];
-//        [self.cachedCovers removeObjectForKey:hash];
-//    }
-}
-
-static void
-_artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
-    covermanager_t manager = user_data;
-
-    _dispatch_on_main(^{
-        if (event == DDB_ARTWORK_SETTINGS_DID_CHANGE) {
-            _settings_did_change_for_track (manager, (ddb_playItem_t *)p1);
-        }
-    });
-}
-
 static char *
 _cache_key_for_track (covermanager_impl_t *impl, ddb_playItem_t *track)  {
     ddb_tf_context_t ctx = {
@@ -93,34 +71,77 @@ _cache_key_for_track (covermanager_impl_t *impl, ddb_playItem_t *track)  {
     return strdup (buffer);
 }
 
+static void
+_update_default_cover (covermanager_impl_t *impl) {
+    if (impl->plugin == NULL) {
+        return;
+    }
+    char path[PATH_MAX];
+    impl->plugin->default_image_path(path, sizeof(path));
+
+    if (strcmp (path, impl->default_cover_path)) {
+        free (impl->default_cover_path);
+        impl->default_cover_path = strdup (path);
+
+        impl->default_cover = gdk_pixbuf_new_from_file(path, NULL);
+        if (impl->default_cover == NULL) {
+            uint32_t color = 0xffffffff;
+            GBytes *bytes = g_bytes_new(&color, 4);
+            impl->default_cover = gdk_pixbuf_new_from_bytes(bytes, GDK_COLORSPACE_RGB, FALSE, 32, 1, 1, 4);
+            g_bytes_unref(bytes);
+        }
+    }
+}
+
+static void
+_settings_did_change_for_track(covermanager_t manager, ddb_playItem_t *track) {
+    covermanager_impl_t *impl = manager;
+    if (track == NULL) {
+        _update_default_cover (impl);
+        gobj_cache_remove_all(impl->cache);
+    }
+    else {
+        char *key = _cache_key_for_track(impl, track);
+        gobj_cache_remove(impl->cache, key);
+        free (key);
+    }
+}
+
+static void
+_artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
+    covermanager_t manager = user_data;
+
+    _dispatch_on_main(^{
+        if (event == DDB_ARTWORK_SETTINGS_DID_CHANGE) {
+            _settings_did_change_for_track (manager, (ddb_playItem_t *)p1);
+        }
+    });
+}
+
 static GdkPixbuf *
-_load_image_from_cover(ddb_cover_info_t *cover) {
+_load_image_from_cover(covermanager_impl_t *impl, ddb_cover_info_t *cover) {
     GdkPixbuf *img = NULL;
 
     if (cover && cover->blob) {
-//        NSData *data = [NSData dataWithBytesNoCopy:cover->blob + cover->blob_image_offset
-//                                            length:cover->blob_image_size
-//                                      freeWhenDone:NO];
-//        img = [[NSImage alloc] initWithData:data];
-//        data = nil;
+        GdkPixbufLoader *loader = gdk_pixbuf_loader_new ();
+        gdk_pixbuf_loader_write (loader, (const guchar *)(cover->blob + cover->blob_image_offset), cover->blob_image_size, NULL);
+        img = gdk_pixbuf_loader_get_pixbuf (loader);
+        g_object_unref(loader);
     }
     if (!img && cover && cover->image_filename) {
-//        img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->image_filename]];
+        img = gdk_pixbuf_new_from_file(cover->image_filename, NULL);
     }
     if (!img) {
-//        img = self.defaultCover;
+        img = impl->default_cover;
     }
     return img;
 }
 
 static void
 _add_cover_for_track(covermanager_impl_t *impl, ddb_playItem_t *track, GdkPixbuf *img) {
-//    NSString *hash = [self hashForTrack:track];
-//
-//    CachedCover *cover = [CachedCover new];
-//    cover.image = img;
-//
-//    [self.cachedCovers setObject:cover forKey:hash];
+    char *key = _cache_key_for_track(impl, track);
+    gobj_cache_set(impl->cache, key, G_OBJECT(img));
+    free (key);
 }
 
 
@@ -133,7 +154,7 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
         GdkPixbuf *img = NULL;
 
         if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
-            img = _load_image_from_cover(cover);
+            img = _load_image_from_cover(impl, cover);
         }
 
         // Update the UI on main queue
@@ -207,6 +228,14 @@ covermanager_free (covermanager_t manager) {
         gobj_cache_free(impl->cache);
         impl->cache = NULL;
     }
+
+    free (impl->default_cover_path);
+    impl->default_cover_path = NULL;
+
+    if (impl->default_cover) {
+        g_object_unref(impl->default_cover);
+    }
+
     free(impl);
 }
 
@@ -220,8 +249,10 @@ covermanager_cover_for_track(covermanager_t manager, DB_playItem_t *track, int64
     }
 
     char *key = _cache_key_for_track(impl, track);
-
     GdkPixbuf *cover = GDK_PIXBUF(gobj_cache_get(impl->cache, key));
+    free (key);
+    key = NULL;
+
     if (cover != NULL) {
         if (cover == NULL) {
             completion_block(NULL);
