@@ -1,4 +1,3 @@
-//
 /*
     DeaDBeeF -- the music player
     Copyright (C) 2009-2021 Alexey Yakovenko and other contributors
@@ -24,8 +23,10 @@
 
 #include <gtk/gtk.h>
 #include "../../../deadbeef.h"
+#include "../../artwork/artwork.h"
 #include "albumartwidget.h"
 #include "coverart.h"
+#include "covermanager.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -33,177 +34,145 @@ extern DB_functions_t *deadbeef;
 
 typedef struct {
     ddb_gtkui_widget_t base;
-    GtkWidget *drawarea;
-    int widget_height;
-    int widget_width;
-    guint load_timeout_id;
+    ddb_artwork_plugin_t *plugin;
+    GtkImage *image_widget;
+    ddb_playItem_t *track;
+    int64_t source_id;
+    guint throttle_id;
+    int64_t request_index;
 } w_coverart_t;
 
 static gboolean
-coverart_invalidate_cb (void *user_data) {
-    gtk_widget_queue_draw(user_data);
+_dispatch_on_main_wrapper (void *context) {
+    void (^block)(void) = context;
+    block ();
     return FALSE;
 }
 
 static void
-coverart_invalidate (void *user_data) {
-    g_idle_add(coverart_invalidate_cb, user_data);
+_dispatch_on_main(void (^block)(void)) {
+    g_idle_add(_dispatch_on_main_wrapper, block);
 }
 
 static gboolean
-coverart_unref_cb (void *user_data) {
-    g_object_unref(user_data);
-    return FALSE;
-}
+_update (w_coverart_t *w) {
+    w->throttle_id = 0;
 
-static void
-coverart_unref (void *user_data) {
-    g_idle_add(coverart_unref_cb, user_data);
-}
+    GtkAllocation frame;
+    gtk_widget_get_allocation(GTK_WIDGET(w->image_widget), &frame);
 
-///// cover art display
-static GdkPixbuf *
-get_cover_art(const int width, const int height, void (*callback)(void *), void *user_data) {
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track();
-    if (!it) {
-        return NULL;
+    if (frame.width == 0 || frame.height == 0) {
+        return FALSE;
     }
 
-    deadbeef->pl_lock();
-    const char *uri = deadbeef->pl_find_meta(it, ":URI");
-    const char *album = deadbeef->pl_find_meta(it, "album");
-    const char *artist = deadbeef->pl_find_meta(it, "artist");
-    if (!album || !*album) {
-        album = deadbeef->pl_find_meta(it, "title");
+    if (w->track != NULL) {
+        deadbeef->pl_item_unref (w->track);
+        w->track = NULL;
     }
-    GdkPixbuf *pixbuf = get_cover_art_primary_by_size(uri, artist, album, width, height, callback, user_data);
-    deadbeef->pl_unlock();
-    deadbeef->pl_item_unref(it);
-    return pixbuf;
-}
-
-static gboolean
-coverart_load (void *user_data) {
-    w_coverart_t *w = user_data;
-    w->load_timeout_id = 0;
-    GdkPixbuf *pixbuf = get_cover_art(w->widget_width, w->widget_height, coverart_invalidate, w->drawarea);
-    if (pixbuf) {
-        coverart_invalidate(w->drawarea);
-        g_object_unref(pixbuf);
-    }
-    return FALSE;
-}
-
-static void
-coverart_draw_cairo (GdkPixbuf *pixbuf, GtkAllocation *a, cairo_t *cr, const int filter) {
-    const int pw = gdk_pixbuf_get_width(pixbuf);
-    const int ph = gdk_pixbuf_get_height(pixbuf);
-    cairo_rectangle(cr, 0, 0, a->width, a->height);
-    if (pw > a->width || ph > a->height || (pw < a->width && ph < a->height)) {
-        const double scale = min(a->width/(double)pw, a->height/(double)ph);
-        cairo_translate(cr, (a->width - a->width*scale)/2., (a->height - a->height*scale)/2.);
-        cairo_scale(cr, scale, scale);
-        cairo_pattern_set_filter(cairo_get_source(cr), filter);
-    }
-    gdk_cairo_set_source_pixbuf(cr, pixbuf, (a->width - pw)/2., (a->height - ph)/2.);
-    cairo_fill(cr);
-}
-
-static void
-coverart_draw_anything (GtkAllocation *a, cairo_t *cr) {
-    GdkPixbuf *pixbuf = get_cover_art(-1, -1, NULL, NULL);
-    if (pixbuf) {
-        coverart_draw_cairo(pixbuf, a, cr, CAIRO_FILTER_FAST);
-        g_object_unref(pixbuf);
-    }
-}
-
-static void
-coverart_draw_exact (GtkAllocation *a, cairo_t *cr, void *user_data) {
-    w_coverart_t *w = user_data;
-    GdkPixbuf *pixbuf = get_cover_art(a->width, a->height, coverart_invalidate, w->drawarea);
-    if (pixbuf) {
-        coverart_draw_cairo(pixbuf, a, cr, CAIRO_FILTER_BEST);
-        g_object_unref(pixbuf);
+    int cursor = deadbeef->pl_get_cursor(PL_MAIN);
+    if (cursor == -1) {
+        gtk_image_clear(w->image_widget);
     }
     else {
-        coverart_draw_anything(a, cr);
-    }
-}
+        ddb_playlist_t *plt = deadbeef->plt_get_curr();
+        if (plt) {
+            ddb_playItem_t *it = deadbeef->plt_get_item_for_idx(plt, cursor, PL_MAIN);
 
-static gboolean
-coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
-    GtkAllocation a;
-    gtk_widget_get_allocation(widget, &a);
-    if (a.width < 8 || a.height < 8) {
-        return TRUE;
-    }
+            if (it) {
+                w->track = it;
 
-    w_coverart_t *w = user_data;
-    if (w->widget_height == a.height && w->widget_width == a.width) {
-        coverart_draw_exact(&a, cr, user_data);
-    }
-    else {
-        coverart_draw_anything(&a, cr);
-        if (w->load_timeout_id) {
-            g_source_remove(w->load_timeout_id);
+                w->plugin->cancel_queries_with_source_id(w->source_id);
+
+                int album_art_space_width = frame.width;
+
+                int64_t currentIndex = w->request_index++;
+
+                covermanager_t *cm = covermanager_shared();
+
+                GdkPixbuf *image = covermanager_cover_for_track(cm, w->track, w->source_id, ^(GdkPixbuf *img) {
+                    if (currentIndex != w->request_index-1) {
+                        return;
+                    }
+                    if (img != NULL) {
+                        GtkAllocation originalSize = {0};
+                        originalSize.width = gdk_pixbuf_get_width(img);
+                        originalSize.height = gdk_pixbuf_get_height(img);
+                        GtkAllocation desired_size = covermanager_desired_size_for_image_size(cm, originalSize, album_art_space_width);
+                        GdkPixbuf *scaled_image = covermanager_create_scaled_image(cm, img, desired_size);
+                        if (scaled_image != NULL) {
+                            gtk_image_set_from_pixbuf(w->image_widget, scaled_image);
+                        }
+                        else {
+                            gtk_image_clear(w->image_widget); // FIXME: check what gtk_image_set_from_pixbuf does with NULL arg
+                        }
+                    }
+                    else {
+                        gtk_image_clear(w->image_widget);
+                    }
+                });
+
+                if (image != NULL) {
+                    GtkAllocation originalSize = {0};
+                    originalSize.width = gdk_pixbuf_get_width(image);
+                    originalSize.height = gdk_pixbuf_get_height(image);
+                    GtkAllocation desired_size = covermanager_desired_size_for_image_size(cm, originalSize, album_art_space_width);
+
+                    GdkPixbuf *scaled_image = covermanager_create_scaled_image(cm, image, desired_size);
+                    if (scaled_image != NULL) {
+                        gtk_image_set_from_pixbuf(w->image_widget, scaled_image);
+                    }
+                    else {
+                        gtk_image_clear(w->image_widget);
+                    }
+                }
+            }
+
+            deadbeef->plt_unref (plt);
         }
-        w->load_timeout_id = g_timeout_add(w->widget_height == -1 ? 100 : 1000, coverart_load, user_data);
-        w->widget_height = a.height;
-        w->widget_width = a.width;
     }
 
-    return TRUE;
+    return FALSE;
 }
 
-#if !GTK_CHECK_VERSION(3,0,0)
-static gboolean
-coverart_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
-    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
-    gboolean res = coverart_draw (widget, cr, user_data);
-    cairo_destroy (cr);
-    return res;
+static void
+_throttled_update (w_coverart_t *w) {
+    if (w->throttle_id != 0) {
+        g_source_remove(w->throttle_id);
+    }
+    w->throttle_id = g_timeout_add(10, G_SOURCE_FUNC(_update), w);
+
 }
-#endif
+
+static gboolean
+_size_did_change (GtkWidget* self, GdkEventConfigure event, w_coverart_t *w) {
+    _throttled_update(w);
+    return FALSE;
+}
+
 
 static int
 coverart_message (ddb_gtkui_widget_t *base, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     w_coverart_t *w = (w_coverart_t *)base;
     switch (id) {
-    case DB_EV_PLAYLIST_REFRESH:
-    case DB_EV_SONGCHANGED:
-        coverart_invalidate(w->drawarea);
-        break;
-    case DB_EV_PLAYLISTCHANGED:
-        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT) {
-            coverart_invalidate(w->drawarea);
-        }
-        break;
-    case DB_EV_TRACKINFOCHANGED:
-        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT) {
-            ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
-            DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
-            if (it == ev->track) {
-                coverart_invalidate(w->drawarea);
-            }
-            if (it) {
-                deadbeef->pl_item_unref (it);
-            }
-        }
+    case DB_EV_PLAYLISTSWITCHED:
+    case DB_EV_CURSOR_MOVED: {
+        
+        _dispatch_on_main(^{
+            _throttled_update(w);
+        });
+    }
         break;
     }
     return 0;
 }
 
-static gboolean
-coverart_destroy_drawarea (GtkWidget *drawarea, gpointer user_data) {
-    w_coverart_t *w = (w_coverart_t *)user_data;
-    if (w->load_timeout_id) {
-        g_source_remove(w->load_timeout_id);
+static void
+_destroy (ddb_gtkui_widget_t *base) {
+    w_coverart_t *w = (w_coverart_t *)base;
+    if (w->track) {
+        deadbeef->pl_item_unref (w->track);
+        w->track = NULL;
     }
-    g_object_ref(drawarea);
-    queue_cover_callback(coverart_unref, drawarea);
-    return FALSE;
 }
 
 ddb_gtkui_widget_t *
@@ -213,19 +182,19 @@ w_coverart_create (void) {
 
     w->base.widget = gtk_event_box_new ();
     w->base.message = coverart_message;
-    w->drawarea = gtk_drawing_area_new ();
-    w->widget_height = -1;
-    w->widget_width = -1;
-    w->load_timeout_id = 0;
-    gtk_widget_show (w->drawarea);
-    gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
-#if !GTK_CHECK_VERSION(3,0,0)
-    g_signal_connect_after ((gpointer) w->drawarea, "expose_event", G_CALLBACK (coverart_expose_event), w);
-#else
-    g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (coverart_draw), w);
-#endif
-    g_signal_connect ((gpointer) w->drawarea, "destroy", G_CALLBACK (coverart_destroy_drawarea), w);
+    w->base.destroy = _destroy;
+    w->image_widget = GTK_IMAGE(gtk_image_new());
+    gtk_widget_show (GTK_WIDGET(w->image_widget));
+    gtk_container_add (GTK_CONTAINER (w->base.widget), GTK_WIDGET(w->image_widget));
     w_override_signals (w->base.widget, w);
+
+    g_signal_connect(G_OBJECT(w->image_widget), "configure-event", G_CALLBACK(_size_did_change), w);
+
+    w->plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id("artwork2");
+    if (w->plugin != NULL) {
+        w->source_id = w->plugin->allocate_source_id();
+    }
+
     return (ddb_gtkui_widget_t *)w;
 }
 

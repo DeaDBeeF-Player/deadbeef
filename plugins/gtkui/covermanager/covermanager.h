@@ -31,7 +31,7 @@
 
 typedef void *covermanager_t;
 
-typedef void (^covermanager_completion_block_t)(GtkImage *img);
+typedef void (^covermanager_completion_block_t)(GdkPixbuf *img);
 
 covermanager_t
 covermanager_shared(void);
