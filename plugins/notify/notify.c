@@ -16,6 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+#include <Block.h>
 #include <dbus/dbus.h>
 #include <dispatch/dispatch.h>
 #include "../../deadbeef.h"
@@ -23,7 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../../gettext.h"
-#include "../artwork-legacy/artwork.h"
+#include "../artwork/artwork.h"
 
 #define E_NOTIFICATION_BUS_NAME "org.freedesktop.Notifications"
 #define E_NOTIFICATION_INTERFACE "org.freedesktop.Notifications"
@@ -31,7 +32,7 @@
 
 static DB_functions_t *deadbeef;
 static DB_misc_t plugin;
-static DB_artwork_plugin_t *artwork_plugin;
+static ddb_artwork_plugin_t *artwork_plugin;
 static dispatch_queue_t queue;
 static DB_playItem_t *last_track = NULL;
 static time_t request_timer = 0;
@@ -46,7 +47,7 @@ static char *tf_title;
 static char *tf_content;
 
 static void
-show_notification (DB_playItem_t *track);
+show_notification (DB_playItem_t *track, char *image_filename);
 
 static void
 notify_send (DBusMessage *msg) {
@@ -155,30 +156,14 @@ esc_xml (const char *cmd, char *esc, int size) {
 }
 
 static void
-cover_avail_callback (const char *fname, const char *artist, const char *album, void *user_data) {
-    if (!fname) {
-        // Give up
-        return;
-    }
-    if (time (NULL) - request_timer >= 4) {
-        return;
-    }
-
-    deadbeef->pl_lock ();
-    ddb_playItem_t *track = last_track;
-    last_track = NULL;
-    deadbeef->pl_unlock ();
-
-    if (track) {
-        dispatch_async (queue, ^{
-            show_notification (track);
-            deadbeef->pl_item_unref (track);
-        });
-    }
+_cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
+    void (^completion_block)(int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) = (void (^)(int error, ddb_cover_query_t *query, ddb_cover_info_t *cover))query->user_data;
+    completion_block(error, query, cover);
+    Block_release(completion_block);
 }
 
 static void
-show_notification (DB_playItem_t *track) {
+show_notification (DB_playItem_t *track, char *image_filename) {
     char title[1024];
     char content[1024];
 
@@ -207,20 +192,37 @@ show_notification (DB_playItem_t *track) {
 
     const char *v_appname = "DeaDBeeF";
     dbus_uint32_t v_id = 0;
-    char *v_iconname = NULL;
-    if (deadbeef->conf_get_int("notify.albumart", 0) && artwork_plugin) {
-        deadbeef->pl_lock ();
-        const char *album = deadbeef->pl_find_meta (track, "album");
-        const char *artist = deadbeef->pl_find_meta (track, "artist");
-        const char *fname = deadbeef->pl_find_meta (track, ":URI");
-        if (!album || !*album) {
-            album = deadbeef->pl_find_meta (track, "title");
-        }
-        v_iconname = artwork_plugin->get_album_art (fname, artist, album, deadbeef->conf_get_int ("notify.albumart_size", 64), cover_avail_callback, NULL);
-        deadbeef->pl_unlock ();
+    char *v_iconname = image_filename;
+    if (!v_iconname && deadbeef->conf_get_int("notify.albumart", 0) && artwork_plugin) {
+
+        ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
+        query->_size = sizeof (ddb_cover_query_t);
+        query->track = track;
+        deadbeef->pl_item_ref (track);
+        query->source_id = 0;
+
+        void (^completion_block)(int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) = ^(int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
+            if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED) && cover->image_filename) {
+                // redisplay notification with the album art
+                char *image_filename = strdup (cover->image_filename);
+                ddb_playItem_t *track = query->track;
+                deadbeef->pl_item_ref (track);
+                dispatch_async (queue, ^{
+                    show_notification (track, image_filename);
+                    free (image_filename);
+                    deadbeef->pl_item_unref (track);
+                });
+            }
+            deadbeef->pl_item_unref (query->track);
+            free (query);
+            artwork_plugin->cover_info_release (cover);
+        };
+
+        query->user_data = (dispatch_block_t)Block_copy(completion_block);
+        artwork_plugin->cover_get (query, _cover_loaded_callback);
     }
     if (!v_iconname) {
-        v_iconname = strdup ("deadbeef");
+        v_iconname = "deadbeef";
     }
     const char *v_summary = title;
     const char *v_body = esc_content;
@@ -245,9 +247,6 @@ show_notification (DB_playItem_t *track) {
     dbus_message_iter_close_container(&iter, &sub);
 
     dbus_message_iter_append_basic(&iter, DBUS_TYPE_INT32, &v_timeout);
-    if (v_iconname) {
-        free (v_iconname);
-    }
 
     notify_send (msg);
 }
@@ -263,7 +262,7 @@ on_songstarted (ddb_event_track_t *ev) {
                 return 0;
             }
             dispatch_async (queue, ^{
-                show_notification (track);
+                show_notification (track, NULL);
                 deadbeef->pl_item_unref (track);
             });
         }
@@ -346,7 +345,7 @@ notify_stop (void) {
 
 static int
 notify_connect (void) {
-    artwork_plugin = (DB_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork");
+    artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
     return 0;
 }
 
