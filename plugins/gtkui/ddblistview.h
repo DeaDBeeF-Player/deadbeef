@@ -295,6 +295,10 @@ ddb_listview_update_cursor (DdbListview *ps, int cursor);
 
 void
 ddb_listview_set_cursor_and_scroll (DdbListview *listview, int cursor);
+
+DdbListviewGroup *
+ddb_listview_get_group_by_head (DdbListview *listview, DdbListviewIter head);
+
 G_END_DECLS
 
 #endif // __DDBLISTVIEW_H

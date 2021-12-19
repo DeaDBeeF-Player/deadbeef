@@ -106,7 +106,6 @@ _update (w_albumart_t *w) {
                         GtkAllocation desired_size = covermanager_desired_size_for_image_size(cm, originalSize, album_art_space_width);
                         GdkPixbuf *scaled_image = covermanager_create_scaled_image(cm, img, desired_size);
                         w->image = scaled_image;
-                        g_object_unref(img);
                     }
                     else {
                         if (w->image != NULL) {

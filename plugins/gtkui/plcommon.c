@@ -281,6 +281,10 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
     }
 
     DB_playItem_t *it = (DB_playItem_t *)grp->head;
+    if (it == NULL) {
+        return;
+    }
+
     covermanager_t cm = covermanager_shared();
 
     GdkPixbuf *image = NULL;
@@ -293,9 +297,10 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
     else {
         double albumArtSpaceWidth = art_width;
 
+        deadbeef->pl_item_ref (it);
         image = covermanager_cover_for_track(cm, it, 0, ^(GdkPixbuf *img) { // img only valid in this block
-            // FIXME By the time this block is executed -- the grp pointer may be invalid.
-            // Need to find group by its head track.
+            DdbListviewGroup *grp = ddb_listview_get_group_by_head(listview, it);
+
             if (grp != NULL) {
                 if (grp->cachedImage != NULL) {
                     g_object_unref(grp->cachedImage);
@@ -310,10 +315,16 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
                 }
                 grp->hasCachedImage = TRUE;
             }
+            deadbeef->pl_item_unref (it);
 
             gtk_widget_queue_draw(GTK_WIDGET(listview));
-// FIXME            [lv.contentView drawGroup:grp];
+// FIXME: redraw only the group rect
+//            [lv.contentView drawGroup:grp];
         });
+        if (image != NULL) { // completion block won't be called
+            deadbeef->pl_item_unref (it);
+            it = NULL;
+        }
     }
     if (image == NULL) {
       // FIXME: the problem here is that if the cover is not found (yet) -- it won't draw anything, but the rect is already invalidated, and will come out as background color

@@ -3711,3 +3711,13 @@ ddb_listview_cancel_autoredraw (DdbListview *listview) {
         listview->tf_redraw_track = NULL;
     }
 }
+
+DdbListviewGroup *
+ddb_listview_get_group_by_head (DdbListview *listview, DdbListviewIter head) {
+    for (DdbListviewGroup *grp = listview->groups; grp != NULL; grp = grp->next) {
+        if (grp->head == head) {
+            return grp;
+        }
+    }
+    return NULL;
+}
