@@ -280,7 +280,6 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
         return;
     }
 
-    // col_info_t *info = user_data; // FIXME
     DB_playItem_t *it = (DB_playItem_t *)grp->head;
     covermanager_t cm = covermanager_shared();
 
@@ -332,14 +331,9 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
     size.height = gdk_pixbuf_get_height(image);
     GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, size, art_width);
 
+    // center horizontally
     if (size.width < size.height) {
-        // FIXME
-//        if (info->alignment == ColumnAlignmentCenter) {
-//            art_x += art_width/2 - desiredSize.width/2;
-//        }
-//        else if (info->alignment == ColumnAlignmentRight) {
-//            art_x += art_width-desiredSize.width;
-//        }
+        art_x += art_width/2 - desiredSize.width/2;
     }
     drawRect.x = art_x;
     drawRect.y = ypos;
@@ -597,7 +591,7 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
     }
 }
 
-// FIXME: duplocate with plmenu.c
+// FIXME: duplicate with plmenu.c
 static GtkWidget*
 find_popup (GtkWidget *widget)
 {

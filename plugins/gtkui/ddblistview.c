@@ -1665,7 +1665,7 @@ ddb_listview_list_render_album_art (DdbListview *ps, cairo_t *cr, DdbListviewGro
         if (ps->binding->is_album_art_column(c->user_data) && x + c->width > clip->x) {
             fill_list_background(ps, cr, x, y, c->width, grp->height-ps->grouptitle_height, clip);
             if (ps->grouptitle_height > 0) {
-                ps->binding->draw_album_art(ps, cr, grp->head, c->user_data, min_y, grp_next_y, x, y, c->width, grp->height-ps->grouptitle_height);
+                ps->binding->draw_album_art(ps, cr, grp, c->user_data, min_y, grp_next_y, x, y, c->width, grp->height-ps->grouptitle_height);
             }
         }
     }
