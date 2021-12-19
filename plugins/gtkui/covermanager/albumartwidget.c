@@ -42,7 +42,7 @@ typedef struct {
     int64_t source_id;
     guint throttle_id;
     int64_t request_index;
-} w_coverart_t;
+} w_albumart_t;
 
 static gboolean
 _dispatch_on_main_wrapper (void *context) {
@@ -59,7 +59,7 @@ _dispatch_on_main(void (^block)(void)) {
 }
 
 static gboolean
-_update (w_coverart_t *w) {
+_update (w_albumart_t *w) {
     w->throttle_id = 0;
 
     GtkAllocation frame;
@@ -140,7 +140,7 @@ _update (w_coverart_t *w) {
 }
 
 static void
-_throttled_update (w_coverart_t *w) {
+_throttled_update (w_albumart_t *w) {
     if (w->throttle_id != 0) {
         g_source_remove(w->throttle_id);
     }
@@ -149,15 +149,15 @@ _throttled_update (w_coverart_t *w) {
 }
 
 static gboolean
-_size_did_change (GtkWidget* self, GdkEventConfigure *event, w_coverart_t *w) {
+_size_did_change (GtkWidget* self, GdkEventConfigure *event, w_albumart_t *w) {
     _throttled_update(w);
     return FALSE;
 }
 
 
 static int
-coverart_message (ddb_gtkui_widget_t *base, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
-    w_coverart_t *w = (w_coverart_t *)base;
+_message (ddb_gtkui_widget_t *base, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    w_albumart_t *w = (w_albumart_t *)base;
     switch (id) {
     case DB_EV_PLAYLISTCHANGED:
     case DB_EV_PLAYLISTSWITCHED:
@@ -174,7 +174,7 @@ coverart_message (ddb_gtkui_widget_t *base, uint32_t id, uintptr_t ctx, uint32_t
 
 static void
 _destroy (ddb_gtkui_widget_t *base) {
-    w_coverart_t *w = (w_coverart_t *)base;
+    w_albumart_t *w = (w_albumart_t *)base;
     if (w->track) {
         deadbeef->pl_item_unref (w->track);
         w->track = NULL;
@@ -183,7 +183,7 @@ _destroy (ddb_gtkui_widget_t *base) {
 
 static gboolean
 _draw_event (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
-    w_coverart_t *w = user_data;
+    w_albumart_t *w = user_data;
 
     GtkAllocation a;
     gtk_widget_get_allocation(widget, &a);
@@ -225,12 +225,12 @@ _expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
 #endif
 
 ddb_gtkui_widget_t *
-w_coverart_create (void) {
-    w_coverart_t *w = malloc (sizeof (w_coverart_t));
-    memset (w, 0, sizeof (w_coverart_t));
+w_albumart_create (void) {
+    w_albumart_t *w = malloc (sizeof (w_albumart_t));
+    memset (w, 0, sizeof (w_albumart_t));
 
     w->base.widget = gtk_event_box_new ();
-    w->base.message = coverart_message;
+    w->base.message = _message;
     w->base.destroy = _destroy;
     w->drawing_area = gtk_drawing_area_new();
     gtk_widget_show (GTK_WIDGET(w->drawing_area));

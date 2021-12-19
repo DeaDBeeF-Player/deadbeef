@@ -29,6 +29,6 @@
 #include "widgets.h"
 
 ddb_gtkui_widget_t *
-w_coverart_create (void);
+w_albumart_create (void);
 
 #endif /* albumartwidget_h */
