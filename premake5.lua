@@ -825,6 +825,7 @@ project "ddb_gui_GTK2"
     "plugins/gtkui",
     "plugins/libparser"
   }
+  buildoptions {"-fblocks"}
   pkgconfig ("gtk+-2.0 jansson")
   links {"libdeletefromdisk", "libtftintutil"}
   defines ("GLIB_DISABLE_DEPRECATION_WARNINGS")
@@ -853,6 +854,7 @@ project "ddb_gui_GTK3"
     "glib-compile-resources --sourcedir=plugins/gtkui --target=plugins/gtkui/gtkui-gresources.c --generate-source plugins/gtkui/gtkui.gresources.xml"
   }
 
+  buildoptions {"-fblocks"}
   pkgconfig("gtk+-3.0 jansson")
   links {"libdeletefromdisk", "libtftintutil"}
   defines ("GLIB_DISABLE_DEPRECATION_WARNINGS")
