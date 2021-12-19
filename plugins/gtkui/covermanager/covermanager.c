@@ -24,7 +24,7 @@
 #include "../../artwork/artwork.h"
 #include "covermanager.h"
 #include "gobjcache.h"
-#include <dispatch/dispatch.h>
+#include <Block.h>
 
 extern DB_functions_t *deadbeef;
 
@@ -33,7 +33,14 @@ extern DB_functions_t *deadbeef;
 typedef struct {
     ddb_artwork_plugin_t *plugin;
     gobj_cache_t *cache;
+    dispatch_queue_t loader_queue;
+    char *name_tf;
 }  covermanager_impl_t;
+
+typedef struct {
+    covermanager_impl_t *impl;
+    dispatch_block_t completion_block;
+} query_userdata_t;
 
 static covermanager_t *_shared;
 
@@ -73,6 +80,86 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
     });
 }
 
+static char *
+_cache_key_for_track (covermanager_impl_t *impl, ddb_playItem_t *track)  {
+    ddb_tf_context_t ctx = {
+        ._size = sizeof (ddb_tf_context_t),
+        .flags = DDB_TF_CONTEXT_NO_DYNAMIC,
+        .it = track,
+    };
+
+    char buffer[PATH_MAX];
+    deadbeef->tf_eval (&ctx, impl->name_tf, buffer, sizeof (buffer));
+    return strdup (buffer);
+}
+
+static GdkPixbuf *
+_load_image_from_cover(ddb_cover_info_t *cover) {
+    GdkPixbuf *img = NULL;
+
+    if (cover && cover->blob) {
+//        NSData *data = [NSData dataWithBytesNoCopy:cover->blob + cover->blob_image_offset
+//                                            length:cover->blob_image_size
+//                                      freeWhenDone:NO];
+//        img = [[NSImage alloc] initWithData:data];
+//        data = nil;
+    }
+    if (!img && cover && cover->image_filename) {
+//        img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->image_filename]];
+    }
+    if (!img) {
+//        img = self.defaultCover;
+    }
+    return img;
+}
+
+static void
+_add_cover_for_track(covermanager_impl_t *impl, ddb_playItem_t *track, GdkPixbuf *img) {
+//    NSString *hash = [self hashForTrack:track];
+//
+//    CachedCover *cover = [CachedCover new];
+//    cover.image = img;
+//
+//    [self.cachedCovers setObject:cover forKey:hash];
+}
+
+
+static void
+_cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
+    query_userdata_t *user_data = query->user_data;
+    covermanager_impl_t *impl = user_data->impl;
+    // Load the image on background queue
+    dispatch_async(impl->loader_queue, ^{
+        GdkPixbuf *img = NULL;
+
+        if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
+            img = _load_image_from_cover(cover);
+        }
+
+        // Update the UI on main queue
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
+                _add_cover_for_track(impl, query->track, img);
+            }
+            void (^completionBlock)(GdkPixbuf *) = (void (^)(GdkPixbuf *))user_data->completion_block;
+            completionBlock(img);
+            Block_release(user_data->completion_block);
+            free (user_data);
+
+            // Free the query -- it's fast, so it's OK to free it on main queue
+            deadbeef->pl_item_unref (query->track);
+            free (query);
+
+            // Release the cover on background queue
+            if (cover != NULL) {
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    impl->plugin->cover_info_release (cover);
+                });
+            }
+
+        });
+    });
+}
 
 covermanager_t
 covermanager_shared(void) {
@@ -85,10 +172,22 @@ covermanager_shared(void) {
 covermanager_t
 covermanager_new(void) {
     covermanager_impl_t *impl = calloc (1, sizeof (covermanager_impl_t));
+
     impl->plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id("artwork2");
+
+    if (impl->plugin == NULL) {
+        return impl;
+    }
+
     impl->cache = gobj_cache_new(CACHE_SIZE);
 
-    impl->plugin->add_listener(_artwork_listener, impl);
+    impl->name_tf = deadbeef->tf_compile ("%_path_raw%");
+
+    impl->loader_queue = dispatch_queue_create("CoverManagerLoaderQueue", NULL);
+
+    if (impl->plugin != NULL) {
+        impl->plugin->add_listener(_artwork_listener, impl);
+    }
 
     return impl;
 }
@@ -96,14 +195,55 @@ covermanager_new(void) {
 void
 covermanager_free (covermanager_t manager) {
     covermanager_impl_t *impl = manager;
-    impl->plugin->remove_listener(_artwork_listener, impl);
-    gobj_cache_free(impl->cache);
-    impl->cache = NULL;
+    if (impl->plugin != NULL) {
+        impl->plugin->remove_listener(_artwork_listener, impl);
+        impl->plugin = NULL;
+    }
+    if (impl->name_tf != NULL) {
+        deadbeef->tf_free (impl->name_tf);
+        impl->name_tf = NULL;
+    }
+    if (impl->cache != NULL) {
+        gobj_cache_free(impl->cache);
+        impl->cache = NULL;
+    }
     free(impl);
 }
 
 GdkPixbuf *
-covermanager_cover_for_track(covermanager_t manager, DB_playItem_t *track, int64_t source_id, covermanager_completion_func_t completion_func, void *user_data) {
+covermanager_cover_for_track(covermanager_t manager, DB_playItem_t *track, int64_t source_id, covermanager_completion_block_t completion_block) {
+    covermanager_impl_t *impl = manager;
+
+    if (!impl->plugin) {
+        completion_block(NULL);
+        return NULL;
+    }
+
+    char *key = _cache_key_for_track(impl, track);
+
+    GdkPixbuf *cover = GDK_PIXBUF(gobj_cache_get(impl->cache, key));
+    if (cover != NULL) {
+        if (cover == NULL) {
+            completion_block(NULL);
+        }
+        // Callback is not executed if the image is non-nil, to avoid double drawing.
+        // The caller must release user data if the returned image is not nil.
+        return cover;
+    }
+
+    ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
+    query->_size = sizeof (ddb_cover_query_t);
+    query->track = track;
+    deadbeef->pl_item_ref (track);
+    query->source_id = source_id;
+
+    query_userdata_t *data = calloc (1, sizeof (query_userdata_t));
+    data->completion_block = (dispatch_block_t)Block_copy(completion_block);
+    data->impl = impl;
+    query->user_data = (void *)data;
+
+    impl->plugin->cover_get (query, _cover_loaded_callback);
+
     return NULL;
 }
 

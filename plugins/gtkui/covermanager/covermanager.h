@@ -26,11 +26,12 @@
 
 #include <gtk/gtk.h>
 #include <stdint.h>
+#include <dispatch/dispatch.h>
 #include "../../../deadbeef.h"
 
 typedef void *covermanager_t;
 
-typedef void (*covermanager_completion_func_t)(GtkImage *img, void *user_data);
+typedef void (^covermanager_completion_block_t)(GtkImage *img);
 
 covermanager_t
 covermanager_shared(void);
@@ -42,7 +43,7 @@ void
 covermanager_free (covermanager_t manager);
 
 GdkPixbuf *
-covermanager_cover_for_track(covermanager_t manager, DB_playItem_t *track, int64_t source_id, covermanager_completion_func_t completion_func, void *user_data);
+covermanager_cover_for_track(covermanager_t manager, DB_playItem_t *track, int64_t source_id, covermanager_completion_block_t completion_block);
 
 GdkPixbuf *
 covermanager_create_scaled_image (covermanager_t manager, GdkPixbuf *image, GtkAllocation size);

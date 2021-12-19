@@ -138,7 +138,7 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
     }
 }
 
-- (NSString *)hashForTrack:(DB_playItem_t *)track  {
+- (NSString *)hashForTrack:(ddb_playItem_t *)track  {
     ddb_tf_context_t ctx = {
         ._size = sizeof (ddb_tf_context_t),
         .flags = DDB_TF_CONTEXT_NO_DYNAMIC,
@@ -153,7 +153,7 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
 - (nullable NSImage *)loadImageFromCover:(nonnull ddb_cover_info_t *)cover {
     NSImage *img;
 
-    if (!img && cover && cover->blob) {
+    if (cover && cover->blob) {
         NSData *data = [NSData dataWithBytesNoCopy:cover->blob + cover->blob_image_offset
                                             length:cover->blob_image_size
                                       freeWhenDone:NO];
@@ -211,7 +211,7 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
     [self.cachedCovers setObject:cover forKey:hash];
 }
 
-- (nullable NSImage *)coverForTrack:(nonnull DB_playItem_t *)track sourceId:(int64_t)sourceId completionBlock:(nonnull void (^) (NSImage * img))completionBlock {
+- (nullable NSImage *)coverForTrack:(nonnull ddb_playItem_t *)track sourceId:(int64_t)sourceId completionBlock:(nonnull void (^) (NSImage * img))completionBlock {
     if (!self.artwork_plugin) {
         completionBlock(nil);
         return nil;
@@ -242,7 +242,7 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
     return nil;
 }
 
-- (nullable NSImage *)coverForTrack:(nonnull DB_playItem_t *)track completionBlock:(nonnull void (^) (NSImage * img))completionBlock {
+- (nullable NSImage *)coverForTrack:(nonnull ddb_playItem_t *)track completionBlock:(nonnull void (^) (NSImage * img))completionBlock {
     return [self coverForTrack:track sourceId:0 completionBlock:completionBlock];
 }
 
