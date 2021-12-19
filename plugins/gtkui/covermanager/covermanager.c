@@ -280,11 +280,40 @@ covermanager_cover_for_track(covermanager_t manager, DB_playItem_t *track, int64
 
 GdkPixbuf *
 covermanager_create_scaled_image (covermanager_t manager, GdkPixbuf *image, GtkAllocation size) {
-    return NULL;
+    int originalWidth = gdk_pixbuf_get_width(image);
+    int originalHeight = gdk_pixbuf_get_height(image);
+
+    if (originalWidth <= size.width && originalHeight <= size.height) {
+        return image;
+    }
+
+    gboolean has_alpha = gdk_pixbuf_get_has_alpha(image);
+    int bits_per_sample = gdk_pixbuf_get_bits_per_sample(image);
+
+    GdkPixbuf *scaled_image = gdk_pixbuf_new(GDK_COLORSPACE_RGB, has_alpha, bits_per_sample, size.width, size.height);
+
+    double scale_x = (double)size.width/(double)originalWidth;
+    double scale_y = (double)size.height/(double)originalHeight;
+
+    gdk_pixbuf_scale(image, scaled_image, 0, 0, originalWidth, originalHeight, 0, 0, scale_x, scale_y, GDK_INTERP_BILINEAR);
+    return scaled_image;
 }
 
 GtkAllocation
 covermanager_desired_size_for_image_size (covermanager_t manager, GtkAllocation image_size, int album_art_space_width) {
-    GtkAllocation a = {0};
-    return a;
+    if (image_size.width >= image_size.height) {
+        double h = (double)image_size.height / ((double)image_size.width / (double)album_art_space_width);
+        GtkAllocation a = {0};
+        a.width = album_art_space_width;
+        a.height = h;
+        return a;
+    }
+    else {
+        double h = album_art_space_width;
+        double w = (double)image_size.width / ((double)image_size.height / h);
+        GtkAllocation a = {0};
+        a.width = w;
+        a.height = h;
+        return a;
+    }
 }
