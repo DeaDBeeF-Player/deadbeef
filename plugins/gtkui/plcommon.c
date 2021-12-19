@@ -34,7 +34,7 @@
 #include "actions.h"
 #include "actionhandlers.h"
 #include "clipboard.h"
-#include "coverart.h"
+#include "covermanager/covermanager.h"
 #include "drawing.h"
 #include "interface.h"
 #include "plcommon.h"
@@ -56,9 +56,6 @@ typedef struct {
     char *sort_format;
     char *bytecode;
     char *sort_bytecode;
-    int cover_size;
-    int new_cover_size;
-    int cover_load_timeout_id;
     DdbListview *listview;
 } col_info_t;
 
@@ -151,11 +148,8 @@ pl_common_free (void)
 
 static col_info_t *
 create_col_info (DdbListview *listview, int id) {
-    col_info_t *info = malloc(sizeof(col_info_t));
-    memset(info, '\0', sizeof(col_info_t));
+    col_info_t *info = calloc(1, sizeof(col_info_t));
     info->id = id;
-    info->cover_size = -1;
-    info->new_cover_size = -1;
     info->listview = listview;
     return info;
 }
@@ -178,10 +172,6 @@ pl_common_free_col_info (void *data) {
     }
     if (info->sort_bytecode) {
         free (info->sort_bytecode);
-    }
-    if (info->cover_load_timeout_id) {
-        g_source_remove(info->cover_load_timeout_id);
-        info->cover_load_timeout_id = 0;
     }
     free (info);
 }
@@ -263,63 +253,6 @@ pl_common_is_album_art_column (void *user_data) {
     return info->id == DB_COLUMN_ALBUM_ART;
 }
 
-static GdkPixbuf *
-get_cover_art (DB_playItem_t *it, int width, int height, void (*callback)(void *), void *user_data) {
-    deadbeef->pl_lock();
-    const char *uri = deadbeef->pl_find_meta(it, ":URI");
-    const char *album = deadbeef->pl_find_meta(it, "album");
-    const char *artist = deadbeef->pl_find_meta(it, "artist");
-    if (!album || !*album) {
-        album = deadbeef->pl_find_meta(it, "title");
-    }
-    GdkPixbuf *pixbuf = get_cover_art_thumb_by_size(uri, artist, album, width, height, callback, user_data);
-    deadbeef->pl_unlock();
-    return pixbuf;
-}
-
-static gboolean
-cover_invalidate_cb (void *user_data) {
-    col_info_t *info = user_data;
-    info->cover_size = info->new_cover_size;
-    ddb_listview_invalidate_album_art_columns(info->listview);
-    return FALSE;
-}
-
-static void
-cover_invalidate (void *user_data) {
-    g_idle_add(cover_invalidate_cb, user_data);
-}
-
-static gboolean
-cover_load (void *user_data) {
-    col_info_t *info = user_data;
-    info->cover_load_timeout_id = 0;
-
-    ddb_listview_groupcheck(info->listview);
-    DdbListviewGroup *group = info->listview->groups;
-    int group_y = 0;
-    while (group && group_y + group->height < info->listview->scrollpos) {
-        group_y += group->height;
-        group = group->next;
-    }
-
-    GtkAllocation a;
-    gtk_widget_get_allocation(info->listview->list, &a);
-    int end_pos = info->listview->scrollpos + a.height;
-    while (group && group_y < end_pos) {
-        GdkPixbuf *pixbuf = get_cover_art(group->head, info->new_cover_size, info->new_cover_size, NULL, NULL);
-        if (pixbuf) {
-            g_object_unref(pixbuf);
-        }
-
-        group_y += group->height;
-        group = group->next;
-    }
-    queue_cover_callback(cover_invalidate, info);
-
-    return FALSE;
-}
-
 static void
 cover_draw_cairo (GdkPixbuf *pixbuf, int x, int min_y, int max_y, int width, int height, cairo_t *cr, int filter) {
     int pw = gdk_pixbuf_get_width(pixbuf);
@@ -339,53 +272,86 @@ cover_draw_cairo (GdkPixbuf *pixbuf, int x, int min_y, int max_y, int width, int
     cairo_restore(cr);
 }
 
-static void
-cover_draw_anything (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr, void *user_data) {
-    GdkPixbuf *pixbuf = get_cover_art(it, -1, -1, NULL, NULL);
-    if (!pixbuf) {
-        pixbuf = get_cover_art(it, width, height, cover_invalidate, user_data);
-    }
-    if (pixbuf) {
-        cover_draw_cairo(pixbuf, x, min_y, max_y, width, height, cr, CAIRO_FILTER_FAST);
-        g_object_unref(pixbuf);
-    }
-}
-
-static void
-cover_draw_exact (DB_playItem_t *it, int x, int min_y, int max_y, int width, int height, cairo_t *cr, void *user_data) {
-    GdkPixbuf *pixbuf = get_cover_art(it, width, height, cover_invalidate, user_data);
-    if (!pixbuf) {
-        pixbuf = get_cover_art(it, -1, -1, NULL, NULL);
-    }
-    if (pixbuf) {
-        cover_draw_cairo(pixbuf, x, min_y, max_y, width, height, cr, CAIRO_FILTER_BEST);
-        g_object_unref(pixbuf);
-    }
-}
-
 void
-pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DB_playItem_t *it, void *user_data, int min_y, int next_y, int x, int y, int width, int height) {
+pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *grp, void *user_data, int min_y, int next_y, int x, int y, int width, int height) {
     int art_width = width - ART_PADDING_HORZ * 2;
     int art_height = height - ART_PADDING_VERT * 2;
-    if (art_width < 8 || art_height < 8 || !it) {
+    if (art_width < 8 || art_height < 8 || !grp->head) {
         return;
     }
 
-    col_info_t *info = user_data;
+    // col_info_t *info = user_data; // FIXME
+    DB_playItem_t *it = (DB_playItem_t *)grp->head;
+    covermanager_t cm = covermanager_shared();
+
+    GdkPixbuf *image;
+    if (grp->hasCachedImage) {
+        image = grp->cachedImage;
+    }
+    else {
+        double albumArtSpaceWidth = art_width;
+
+        image = covermanager_cover_for_track(cm, it, 0, ^(GdkPixbuf *img) {
+            if (grp != NULL) {
+                if (img != NULL) {
+                    GtkAllocation imageSize = {0};
+                    imageSize.width = gdk_pixbuf_get_width(img);
+                    imageSize.height = gdk_pixbuf_get_height(img);
+                    GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, imageSize, albumArtSpaceWidth);
+                    grp->cachedImage = covermanager_create_scaled_image(cm, img, desiredSize);
+                }
+                else {
+                    grp->cachedImage = NULL;
+                }
+                grp->hasCachedImage = TRUE;
+            }
+
+            gtk_widget_queue_draw(GTK_WIDGET(listview));
+// FIXME            [lv.contentView drawGroup:grp];
+        });
+    }
+    if (!image) {
+        // FIXME: the problem here is that if the cover is not found (yet) -- it won't draw anything, but the rect is already invalidated, and will come out as background color
+        return;
+    }
+
+    GtkAllocation drawRect = {0};
 
     int art_x = x + ART_PADDING_HORZ;
     min_y += ART_PADDING_VERT;
-    if (info->cover_size == art_width) {
-        cover_draw_exact(it, art_x, min_y, next_y, art_width, art_height, cr, user_data);
+
+    double max_y = y + height;
+
+    double ypos = min_y;
+    if (min_y + art_width + ART_PADDING_VERT >= max_y) {
+        ypos = max_y - art_width - ART_PADDING_VERT;
     }
-    else {
-        cover_draw_anything(it, art_x, min_y, next_y, art_width, art_height, cr, user_data);
-        if (info->cover_load_timeout_id) {
-            g_source_remove(info->cover_load_timeout_id);
-        }
-        info->cover_load_timeout_id = g_timeout_add(1000, cover_load, user_data);
-        info->new_cover_size = art_width;
+
+    GtkAllocation size = {0};
+    size.width = gdk_pixbuf_get_width(image);
+    size.height = gdk_pixbuf_get_height(image);
+    GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, size, art_width);
+
+    if (size.width < size.height) {
+        // FIXME
+//        if (info->alignment == ColumnAlignmentCenter) {
+//            art_x += art_width/2 - desiredSize.width/2;
+//        }
+//        else if (info->alignment == ColumnAlignmentRight) {
+//            art_x += art_width-desiredSize.width;
+//        }
     }
+    drawRect.x = art_x;
+    drawRect.y = ypos;
+    drawRect.width = desiredSize.width;
+    drawRect.height = desiredSize.height;
+
+    if (!grp->cachedImage) {
+        grp->cachedImage = covermanager_create_scaled_image(cm, image, desiredSize);
+        grp->hasCachedImage = TRUE;
+    }
+
+    cover_draw_cairo(grp->cachedImage, art_x, min_y, next_y, art_width, art_height, cr, CAIRO_FILTER_FAST);
 }
 
 #define CHANNEL_BLENDR(CHANNELA,CHANNELB,BLEND) ( \

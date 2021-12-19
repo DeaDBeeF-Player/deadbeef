@@ -193,6 +193,14 @@ covermanager_shared(void) {
     return _shared;
 }
 
+void
+covermanager_shared_free(void) {
+    if (_shared != NULL) {
+        covermanager_free(_shared);
+        _shared = NULL;
+    }
+}
+
 covermanager_t
 covermanager_new(void) {
     covermanager_impl_t *impl = calloc (1, sizeof (covermanager_impl_t));

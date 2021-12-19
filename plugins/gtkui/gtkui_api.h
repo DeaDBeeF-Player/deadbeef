@@ -231,23 +231,18 @@ typedef struct {
     // appears when right-clicked on playlist tab)
     GtkWidget* (*create_pltmenu) (int plt_idx);
 
-    // return a cover art pixbuf, if available.
-    // if not available, the requested cover will be loaded asyncronously.
-    // the callback will be called when the requested cover is available,
-    // in which case you will need to call the get_cover_art_pixbuf again from
-    // the callback.
-    // get_cover_art_pixbuf is deprecated in API 2.2.
-    // in new code, use get_cover_art_primary to get the large single cover art image,
-    // and get_cover_art_thumb to get one of many smaller cover art images.
+    /// Obsolete: returns NULL
     GdkPixbuf *(*get_cover_art_pixbuf) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data) DEPRECATED_202;
-
-    // get_default_cover_pixbuf returns the default cover art image
+    /// Obsolete: returns NULL
     GdkPixbuf *(*cover_get_default_pixbuf) (void);
 
 #if (DDB_GTKUI_API_LEVEL >= 202)
-    // added in API 2.2 (deadbeef-0.7)
+    /// Obsolete: returns NULL
     GdkPixbuf *(*get_cover_art_primary) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data);
+
+    /// Obsolete: returns NULL
     GdkPixbuf *(*get_cover_art_thumb) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data);
+
     // adds a hook to be called before the main loop starts running, but after
     // the window was created.
     void (*add_window_init_hook) (void (*callback) (void *userdata), void *userdata);

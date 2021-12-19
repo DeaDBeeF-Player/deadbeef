@@ -995,10 +995,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     NSSize size = image.size;
     NSSize desiredSize = [CoverManager.defaultCoverManager artworkDesiredSizeForImageSize:size albumArtSpaceWidth:art_width];
 
-    if (size.width >= size.height) {
-        drawRect = NSMakeRect(art_x, ypos, desiredSize.width, desiredSize.height);
-    }
-    else {
+    if (size.width < size.height) {
         plt_col_info_t *c = &self.columns[(int)col];
         if (c->alignment == ColumnAlignmentCenter) {
             art_x += art_width/2 - desiredSize.width/2;
@@ -1006,8 +1003,8 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         else if (c->alignment == ColumnAlignmentRight) {
             art_x += art_width-desiredSize.width;
         }
-        drawRect = NSMakeRect(art_x, ypos, desiredSize.width, desiredSize.height);
     }
+    drawRect = NSMakeRect(art_x, ypos, desiredSize.width, desiredSize.height);
 
     if (!grp->cachedImage) {
         grp->cachedImage = [CoverManager.defaultCoverManager createCachedImage:image size:desiredSize];

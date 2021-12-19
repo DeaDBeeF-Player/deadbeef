@@ -36,7 +36,6 @@
 #include "support.h"
 #include "drawing.h"
 #include "trkproperties.h"
-#include "coverart.h"
 #include "plcommon.h"
 #include "plmenu.h"
 
@@ -174,7 +173,6 @@ main_columns_changed (DdbListview *listview) {
 
 static void
 main_vscroll_changed (int pos) {
-    coverart_reset_queue ();
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         deadbeef->plt_set_scroll (plt, pos);

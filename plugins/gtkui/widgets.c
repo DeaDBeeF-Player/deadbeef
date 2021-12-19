@@ -34,7 +34,6 @@
 #include "mainplaylist.h"
 #include "../libparser/parser.h"
 #include "trkproperties.h"
-#include "coverart.h"
 #include "namedicons.h"
 #include "hotkeys.h" // for building action treeview
 #include "../../strdupa.h"

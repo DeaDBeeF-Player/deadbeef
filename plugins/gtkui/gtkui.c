@@ -43,7 +43,7 @@
 #include "actions.h"
 #include "callbacks.h"
 #include "clipboard.h"
-#include "coverart.h"
+#include "covermanager/covermanager.h"
 #include "ddbtabstrip.h"
 #include "drawing.h"
 #include "eq.h"
@@ -1375,7 +1375,6 @@ gtkui_mainwin_init(void) {
 
     search_playlist_init (mainwin);
     progress_init ();
-    cover_art_init ();
 
 #ifdef __APPLE__
 #if 0
@@ -1407,7 +1406,7 @@ gtkui_mainwin_free(void) {
     deadbeef->unlisten_file_added (fileadded_listener_id);
     deadbeef->unlisten_file_add_beginend (fileadd_beginend_listener_id);
 
-    cover_art_free ();
+    covermanager_shared_free ();
 
     w_free ();
 
@@ -1613,7 +1612,6 @@ quit_gtk_cb (gpointer nothing) {
 static int
 gtkui_stop (void) {
     trace ("quitting gtk\n");
-    cover_art_disconnect();
     g_idle_add (quit_gtk_cb, NULL);
     return 0;
 }
@@ -2037,6 +2035,30 @@ static const char settings_dlg[] =
     "property \"Disable seekbar overlay text\" checkbox gtkui.disable_seekbar_overlay 0;\n"
 ;
 
+#pragma mark - Obsolete cover art API stubs
+
+GdkPixbuf *
+_get_cover_art_pixbuf (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data) {
+    return NULL;
+}
+
+static GdkPixbuf *
+_cover_get_default_pixbuf (void) {
+    return NULL;
+}
+
+static GdkPixbuf *
+_get_cover_art_primary (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data) {
+    return NULL;
+}
+
+GdkPixbuf *
+_get_cover_art_thumb (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data) {
+    return NULL;
+}
+
+#pragma mark -
+
 // define plugin interface
 ddb_gtkui_t plugin = {
     .gui.plugin.api_vmajor = DB_API_VERSION_MAJOR,
@@ -2115,10 +2137,10 @@ ddb_gtkui_t plugin = {
     .w_replace = w_replace,
     .w_remove = w_remove,
     .create_pltmenu = _create_pltmenu,
-    .get_cover_art_pixbuf = get_cover_art_callb, // deprecated
-    .get_cover_art_primary = get_cover_art_primary,
-    .get_cover_art_thumb = get_cover_art_thumb,
-    .cover_get_default_pixbuf = cover_get_default_pixbuf,
+    .get_cover_art_pixbuf = _get_cover_art_pixbuf,
+    .get_cover_art_primary = _get_cover_art_primary,
+    .get_cover_art_thumb = _get_cover_art_thumb,
+    .cover_get_default_pixbuf = _cover_get_default_pixbuf,
     .add_window_init_hook = add_window_init_hook,
     .mainwin_toggle_visible = mainwin_toggle_visible,
     .show_traymenu = show_traymenu,
