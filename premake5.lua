@@ -827,7 +827,7 @@ project "ddb_gui_GTK2"
   }
   buildoptions {"-fblocks"}
   pkgconfig ("gtk+-2.0 jansson")
-  links {"libdeletefromdisk", "libtftintutil"}
+  links {"libdeletefromdisk", "libtftintutil", "dispatch", "BlocksRuntime"}
   defines ("GLIB_DISABLE_DEPRECATION_WARNINGS")
 end
 
@@ -856,7 +856,7 @@ project "ddb_gui_GTK3"
 
   buildoptions {"-fblocks"}
   pkgconfig("gtk+-3.0 jansson")
-  links {"libdeletefromdisk", "libtftintutil"}
+  links {"libdeletefromdisk", "libtftintutil", "dispatch", "BlocksRuntime"}
   defines ("GLIB_DISABLE_DEPRECATION_WARNINGS")
 end
 
