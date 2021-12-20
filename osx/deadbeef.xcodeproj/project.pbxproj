@@ -1064,6 +1064,10 @@
 		2D60EAC32771119500C28A44 /* playlistrenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D60EAC02771119500C28A44 /* playlistrenderer.h */; };
 		2D60EAC42771119500C28A44 /* playlistrenderer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D60EAC12771119500C28A44 /* playlistrenderer.c */; };
 		2D60EAC52771119500C28A44 /* playlistrenderer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D60EAC12771119500C28A44 /* playlistrenderer.c */; };
+		2D60EAE1277127EE00C28A44 /* ddblistviewheader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D60EADF277127ED00C28A44 /* ddblistviewheader.h */; };
+		2D60EAE2277127EE00C28A44 /* ddblistviewheader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D60EADF277127ED00C28A44 /* ddblistviewheader.h */; };
+		2D60EAE3277127EE00C28A44 /* ddblistviewheader.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D60EAE0277127ED00C28A44 /* ddblistviewheader.c */; };
+		2D60EAE4277127EE00C28A44 /* ddblistviewheader.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D60EAE0277127ED00C28A44 /* ddblistviewheader.c */; };
 		2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */; };
 		2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */; };
 		2D621FCD1CD92CCA00EB6D22 /* artwork.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D621FA91CD92CC500EB6D22 /* artwork.c */; };
@@ -5458,6 +5462,8 @@
 		2D60108C1A9CDF06000136AF /* SearchWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchWindowController.m; sourceTree = "<group>"; };
 		2D60EAC02771119500C28A44 /* playlistrenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = playlistrenderer.h; sourceTree = "<group>"; };
 		2D60EAC12771119500C28A44 /* playlistrenderer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = playlistrenderer.c; sourceTree = "<group>"; };
+		2D60EADF277127ED00C28A44 /* ddblistviewheader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ddblistviewheader.h; sourceTree = "<group>"; };
+		2D60EAE0277127ED00C28A44 /* ddblistviewheader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ddblistviewheader.c; sourceTree = "<group>"; };
 		2D61722F19B7A1BE008D4A26 /* DdbTabStrip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbTabStrip.h; sourceTree = "<group>"; };
 		2D61723019B7A1BE008D4A26 /* DdbTabStrip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbTabStrip.m; sourceTree = "<group>"; };
 		2D621F831CD92C9000EB6D22 /* artwork.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = artwork.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -9432,12 +9438,14 @@
 			children = (
 				2DE3B57D2269BB4300AFF9AE /* ddblistview.c */,
 				2DE3B5D62269BB4300AFF9AE /* ddblistview.h */,
+				2D60EAE0277127ED00C28A44 /* ddblistviewheader.c */,
+				2D60EADF277127ED00C28A44 /* ddblistviewheader.h */,
 				2DE3B5DE2269BB4300AFF9AE /* mainplaylist.c */,
 				2DE3B59E2269BB4300AFF9AE /* mainplaylist.h */,
+				2D60EAC12771119500C28A44 /* playlistrenderer.c */,
+				2D60EAC02771119500C28A44 /* playlistrenderer.h */,
 				2DE3B5A12269BB4300AFF9AE /* plcommon.c */,
 				2DE3B5FB2269BB4300AFF9AE /* plcommon.h */,
-				2D60EAC02771119500C28A44 /* playlistrenderer.h */,
-				2D60EAC12771119500C28A44 /* playlistrenderer.c */,
 			);
 			path = playlist;
 			sourceTree = "<group>";
@@ -13593,6 +13601,7 @@
 				2DC6567D2744289C00583E14 /* tagwritersettings.h in Headers */,
 				2DC6567E2744289C00583E14 /* prefwinappearance.h in Headers */,
 				2DC6567F2744289C00583E14 /* wingeom.h in Headers */,
+				2D60EAE1277127EE00C28A44 /* ddblistviewheader.h in Headers */,
 				2DC656802744289C00583E14 /* pluginconf.h in Headers */,
 				2DC656812744289C00583E14 /* prefwinplugins.h in Headers */,
 				2DC656822744289C00583E14 /* gtkui_api.h in Headers */,
@@ -13668,6 +13677,7 @@
 				2DE3B7F82269BF3100AFF9AE /* tagwritersettings.h in Headers */,
 				2D715C1626C837A80022A8F0 /* prefwinappearance.h in Headers */,
 				2DE3B8082269BF3100AFF9AE /* wingeom.h in Headers */,
+				2D60EAE2277127EE00C28A44 /* ddblistviewheader.h in Headers */,
 				2DE3B8052269BF3100AFF9AE /* pluginconf.h in Headers */,
 				2D715C1E26C83A010022A8F0 /* prefwinplugins.h in Headers */,
 				2DE3B7EE2269BF3100AFF9AE /* gtkui_api.h in Headers */,
@@ -17291,6 +17301,7 @@
 				2D60EAC42771119500C28A44 /* playlistrenderer.c in Sources */,
 				2DC656BE2744289C00583E14 /* gtkui.c in Sources */,
 				2DC656BF2744289C00583E14 /* scope.c in Sources */,
+				2D60EAE3277127EE00C28A44 /* ddblistviewheader.c in Sources */,
 				2DC656C02744289C00583E14 /* analyzer.c in Sources */,
 				2DC656C12744289C00583E14 /* ddblistview.c in Sources */,
 				2DC656C22744289C00583E14 /* deletefromdisk.c in Sources */,
@@ -17376,6 +17387,7 @@
 				2D60EAC52771119500C28A44 /* playlistrenderer.c in Sources */,
 				2DE3B7E82269BF3100AFF9AE /* gtkui.c in Sources */,
 				0D56856F27219F410026F700 /* scope.c in Sources */,
+				2D60EAE4277127EE00C28A44 /* ddblistviewheader.c in Sources */,
 				2D9E9B5226BB1EDE00757C71 /* analyzer.c in Sources */,
 				2DE3B7C22269BF1300AFF9AE /* ddblistview.c in Sources */,
 				2DAE706A25BDE55D00E40154 /* deletefromdisk.c in Sources */,

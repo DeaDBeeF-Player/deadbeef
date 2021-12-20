@@ -605,7 +605,7 @@ ddb_listview_init(DdbListview *listview) {
 }
 
 GtkWidget *
-ddb_listview_new() {
+ddb_listview_new(void) {
     return GTK_WIDGET(g_object_new(ddb_listview_get_type(), NULL));
 }
 
