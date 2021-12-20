@@ -47,6 +47,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define __OPTMATH_H
 
 #include <math.h>
+#include <stdint.h>
 
 #ifdef __SSE2__ // that comes from -msse2
 #define __FORCE_SSE2__
