@@ -36,6 +36,7 @@
 #include <pango/pangocairo.h>
 #include <pango/pango.h>
 #include "support.h"
+#include "ddbequalizer.h"
 
 #define DDB_TYPE_EQUALIZER (ddb_equalizer_get_type ())
 #define DDB_EQUALIZER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), DDB_TYPE_EQUALIZER, DdbEqualizer))
@@ -44,22 +45,10 @@
 #define DDB_IS_EQUALIZER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), DDB_TYPE_EQUALIZER))
 #define DDB_EQUALIZER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), DDB_TYPE_EQUALIZER, DdbEqualizerClass))
 
-typedef struct _DdbEqualizer DdbEqualizer;
-typedef struct _DdbEqualizerClass DdbEqualizerClass;
-typedef struct _DdbEqualizerPrivate DdbEqualizerPrivate;
 #define _gdk_cursor_unref0(var) ((var == NULL) ? NULL : (var = (gdk_cursor_unref (var), NULL)))
 #define _g_free0(var) (var = (g_free (var), NULL))
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 #define _cairo_destroy0(var) ((var == NULL) ? NULL : (var = (cairo_destroy (var), NULL)))
-
-struct _DdbEqualizer {
-    GtkDrawingArea parent_instance;
-    DdbEqualizerPrivate * priv;
-};
-
-struct _DdbEqualizerClass {
-    GtkDrawingAreaClass parent_class;
-};
 
 struct _DdbEqualizerPrivate {
     gdouble* values;

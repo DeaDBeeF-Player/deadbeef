@@ -84,35 +84,35 @@ get_pango_alignment (int align)
 }
 
 void
-draw_begin (drawctx_t *ctx, cairo_t *cr) {
+draw_begin (drawctx_t * const ctx, cairo_t *cr) {
     ctx->drawable = cr;
 }
 
 void
-draw_end (drawctx_t *ctx) {
+draw_end (drawctx_t * const ctx) {
     ctx->drawable = NULL;
 }
 
 void
-draw_set_fg_color (drawctx_t *ctx, float *rgb) {
+draw_set_fg_color (drawctx_t * const ctx, float *rgb) {
     cairo_set_source_rgb (ctx->drawable, rgb[0], rgb[1], rgb[2]);
 }
 
 void
-draw_line (drawctx_t *ctx, float x1, float y1, float x2, float y2) {
+draw_line (drawctx_t * const ctx, float x1, float y1, float x2, float y2) {
     cairo_move_to (ctx->drawable, x1, y1);
     cairo_line_to (ctx->drawable, x2, y2);
     cairo_stroke (ctx->drawable);
 }
 
 void
-draw_rect (drawctx_t *ctx, float x, float y, float w, float h, int fill) {
+draw_rect (drawctx_t * const ctx, float x, float y, float w, float h, int fill) {
     cairo_rectangle (ctx->drawable, x, y, w, h);
     fill ? cairo_fill (ctx->drawable) : cairo_stroke (ctx->drawable);
 }
 
 void
-draw_free (drawctx_t *ctx) {
+draw_free (drawctx_t * const ctx) {
     draw_end (ctx);
     if (ctx->pangoctx) {
         g_object_unref (ctx->pangoctx);
@@ -129,7 +129,7 @@ draw_free (drawctx_t *ctx) {
 }
 
 void
-draw_init_font (drawctx_t *ctx, int type, int reset) {
+draw_init_font (drawctx_t * const ctx, int type, int reset) {
     if (reset || !ctx->pango_ready) {
         if (ctx->pangoctx) {
             g_object_unref (ctx->pangoctx);
@@ -165,7 +165,7 @@ draw_init_font (drawctx_t *ctx, int type, int reset) {
 }
 
 void
-draw_init_font_style (drawctx_t *ctx, int bold, int italic, int type) {
+draw_init_font_style (drawctx_t * const ctx, int bold, int italic, int type) {
     PangoFontDescription *desc_default = ctx->font_style->font_desc;
     if (desc_default != NULL) {
         pango_layout_set_font_description (ctx->pangolayout, desc_default);
@@ -182,13 +182,13 @@ draw_init_font_style (drawctx_t *ctx, int bold, int italic, int type) {
 }
 
 void
-draw_init_font_normal (drawctx_t *ctx) {
+draw_init_font_normal (drawctx_t * const ctx) {
     pango_font_description_set_weight (ctx->font_style->font_desc, ctx->font_weight);
     pango_layout_set_font_description (ctx->pangolayout, ctx->font_style->font_desc);
 }
 
 float
-draw_get_font_size (drawctx_t *ctx) {
+draw_get_font_size (drawctx_t * const ctx) {
     draw_init_font (ctx, 0, 0);
     GdkScreen *screen = gdk_screen_get_default ();
     float dpi = gdk_screen_get_resolution (screen);
@@ -197,7 +197,7 @@ draw_get_font_size (drawctx_t *ctx) {
 }
 
 void
-draw_text (drawctx_t *ctx, float x, float y, int width, int align, const char *text) {
+draw_text (drawctx_t * const ctx, float x, float y, int width, int align, const char *text) {
     draw_init_font (ctx, 0, 0);
     pango_layout_set_width (ctx->pangolayout, width*PANGO_SCALE);
     pango_layout_set_alignment (ctx->pangolayout, get_pango_alignment (align));
@@ -207,7 +207,7 @@ draw_text (drawctx_t *ctx, float x, float y, int width, int align, const char *t
 }
 
 void
-draw_text_custom (drawctx_t *ctx, float x, float y, int width, int align, int type, int bold, int italic, const char *text) {
+draw_text_custom (drawctx_t * const ctx, float x, float y, int width, int align, int type, int bold, int italic, const char *text) {
     draw_init_font (ctx, type, 0);
     if (bold || italic) {
         draw_init_font_style (ctx, bold, italic, type);
@@ -220,7 +220,7 @@ draw_text_custom (drawctx_t *ctx, float x, float y, int width, int align, int ty
 }
 
 void
-draw_text_with_colors (drawctx_t *ctx, float x, float y, int width, int align, const char *text) {
+draw_text_with_colors (drawctx_t * const ctx, float x, float y, int width, int align, const char *text) {
     draw_init_font (ctx, 0, 0);
     pango_layout_set_width (ctx->pangolayout, width*PANGO_SCALE);
     pango_layout_set_alignment (ctx->pangolayout, get_pango_alignment (align));
@@ -231,7 +231,7 @@ draw_text_with_colors (drawctx_t *ctx, float x, float y, int width, int align, c
 }
 
 void
-draw_get_layout_extents (drawctx_t *ctx, int *w, int *h) {
+draw_get_layout_extents (drawctx_t * const ctx, int *w, int *h) {
     PangoRectangle log;
     pango_layout_get_pixel_extents (ctx->pangolayout, NULL, &log);
     if (w) {
@@ -243,7 +243,7 @@ draw_get_layout_extents (drawctx_t *ctx, int *w, int *h) {
 }
 
 void
-draw_get_text_extents (drawctx_t *ctx, const char *text, int len, int *w, int *h) {
+draw_get_text_extents (drawctx_t * const ctx, const char *text, int len, int *w, int *h) {
     draw_init_font (ctx, 0, 0);
     pango_layout_set_width (ctx->pangolayout, -1);
     pango_layout_set_alignment (ctx->pangolayout, PANGO_ALIGN_LEFT);
@@ -252,17 +252,17 @@ draw_get_text_extents (drawctx_t *ctx, const char *text, int len, int *w, int *h
 }
 
 int
-draw_is_ellipsized (drawctx_t *ctx) {
+draw_is_ellipsized (drawctx_t * const ctx) {
     return pango_layout_is_ellipsized (ctx->pangolayout);
 }
 
 const char *
-draw_get_text (drawctx_t *ctx) {
+draw_get_text (drawctx_t * const ctx) {
     return pango_layout_get_text (ctx->pangolayout);
 }
 
 int
-draw_get_listview_rowheight (drawctx_t *ctx) {
+draw_get_listview_rowheight (drawctx_t * const ctx) {
     PangoFontDescription *font_desc = pango_font_description_copy (pango_layout_get_font_description (ctx->pangolayout));
     PangoFontMetrics *metrics = pango_context_get_metrics (ctx->pangoctx,
             font_desc,
@@ -275,7 +275,7 @@ draw_get_listview_rowheight (drawctx_t *ctx) {
 }
 
 void
-drawctx_init (drawctx_t *ctx) {
+drawctx_init (drawctx_t * const ctx) {
     memset (ctx, 0, sizeof (drawctx_t));
     ctx->font_weight = PANGO_WEIGHT_NORMAL;
 }

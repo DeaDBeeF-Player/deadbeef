@@ -111,8 +111,7 @@ find_first_preset_column_type (int type) {
 }
 
 void
-pl_common_init(void)
-{
+pl_common_init(void) {
     play16_pixbuf = create_pixbuf("play_16.png");
     pause16_pixbuf = create_pixbuf("pause_16.png");
     buffering16_pixbuf = create_pixbuf("buffering_16.png");
@@ -133,8 +132,7 @@ pl_common_init(void)
 }
 
 void
-pl_common_free (void)
-{
+pl_common_free (void) {
     if (play16_pixbuf) {
         g_object_unref(play16_pixbuf);
     }
@@ -223,14 +221,7 @@ pl_common_rewrite_column_config (DdbListview *listview, const char *name) {
 static gboolean
 tf_redraw_cb (gpointer user_data) {
     DdbListview *lv = user_data;
-
-    ddb_listview_draw_row (lv, lv->tf_redraw_track_idx, lv->tf_redraw_track);
-    lv->tf_redraw_track_idx = -1;
-    if (lv->tf_redraw_track) {
-        lv->binding->unref (lv->tf_redraw_track);
-        lv->tf_redraw_track = NULL;
-    }
-    lv->tf_redraw_timeout_id = 0;
+    ddb_listview_redraw_tf(lv);
     return FALSE;
 }
 
@@ -484,16 +475,16 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
             deadbeef->tf_eval (&ctx, info->bytecode, text, sizeof (text));
             is_dimmed = ctx.dimmed;
             if (ctx.update > 0) {
-                ddb_listview_cancel_autoredraw (listview);
+                int idx;
+
                 if ((ctx.flags & DDB_TF_CONTEXT_HAS_INDEX) && ctx.iter == PL_MAIN) {
-                    listview->tf_redraw_track_idx = ctx.idx;
+                    idx = ctx.idx;
                 }
                 else {
-                    listview->tf_redraw_track_idx = deadbeef->plt_get_item_idx (ctx.plt, it, ctx.iter);
+                    idx = deadbeef->plt_get_item_idx (ctx.plt, it, ctx.iter);
                 }
-                listview->tf_redraw_timeout_id = g_timeout_add (ctx.update, tf_redraw_cb, listview);
-                listview->tf_redraw_track = it;
-                deadbeef->pl_item_ref (it);
+
+                ddb_listview_schedule_draw_tf(listview, idx, g_timeout_add (ctx.update, tf_redraw_cb, listview), it);
             }
             if (ctx.plt) {
                 deadbeef->plt_unref (ctx.plt);
@@ -545,7 +536,8 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
             }
         }
         float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
-        draw_set_fg_color (&listview->listctx, fg);
+        drawctx_t * const listctx = ddb_listview_get_listctx(listview);
+        draw_set_fg_color (listctx, fg);
 
         int bold = 0;
         int italic = 0;
@@ -598,13 +590,16 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
         if (is_dimmed) {
             char *plainString;
             PangoAttrList *attrs = convert_escapetext_to_pango_attrlist(text, &plainString, fg, bg, highlight);
-            pango_layout_set_attributes (listview->listctx.pangolayout, attrs);
+
+            drawctx_t * const listctx = ddb_listview_get_listctx(listview);
+
+            pango_layout_set_attributes (listctx->pangolayout, attrs);
             pango_attr_list_unref(attrs);
-            draw_text_custom (&listview->listctx, x + 5, y + 3, width-10, align, DDB_LIST_FONT, bold, italic, plainString);
+            draw_text_custom (listctx, x + 5, y + 3, width-10, align, DDB_LIST_FONT, bold, italic, plainString);
             free (plainString);
-            pango_layout_set_attributes (listview->listctx.pangolayout, NULL);
+            pango_layout_set_attributes (listctx->pangolayout, NULL);
         } else {
-            draw_text_custom (&listview->listctx, x + 5, y + 3, width-10, align, DDB_LIST_FONT, bold, italic, text);
+            draw_text_custom (listctx, x + 5, y + 3, width-10, align, DDB_LIST_FONT, bold, italic, text);
         }
 
         cairo_restore(cr);
@@ -616,8 +611,7 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
 
 // FIXME: duplicate with plmenu.c
 static GtkWidget*
-find_popup (GtkWidget *widget)
-{
+find_popup (GtkWidget *widget) {
     GtkWidget *parent = widget;
     do {
         widget = parent;
@@ -667,12 +661,11 @@ strtok_stringdelim_r (char *str, const char *delim,  char **next_start) {
 }
 
 static void
-groups_changed (DdbListview *listview, const char *format)
-{
+groups_changed (DdbListview *listview, const char *format) {
     if (!format) {
         return;
     }
-    DdbListviewGroupFormat *fmt = listview->group_formats;
+    DdbListviewGroupFormat *fmt = ddb_listview_get_group_formats(listview);
     while (fmt) {
         DdbListviewGroupFormat *next_fmt = fmt->next;
         free (fmt->format);
@@ -680,7 +673,9 @@ groups_changed (DdbListview *listview, const char *format)
         free (fmt);
         fmt = next_fmt;
     }
-    listview->group_formats = NULL;
+
+    DdbListviewGroupFormat *group_formats = NULL;
+
     char *esc_format = parser_escape_string (format);
     char quoted_format[strlen (esc_format) + 3];
     snprintf (quoted_format, sizeof (quoted_format), "\"%s\"", esc_format);
@@ -693,10 +688,10 @@ groups_changed (DdbListview *listview, const char *format)
     char *token;
     while ((token = strtok_stringdelim_r(mutable_format, SUBGROUP_DELIMITER, &saveptr)) != NULL) {
         if (strlen(token) > 0) {
-            DdbListviewGroupFormat *new_fmt = calloc(sizeof(DdbListviewGroupFormat), 1);
+            DdbListviewGroupFormat *new_fmt = calloc(1, sizeof(DdbListviewGroupFormat));
             if (!fmt) {
-                listview->group_formats = new_fmt;
-                fmt = listview->group_formats;
+                group_formats = new_fmt;
+                fmt = new_fmt;
             }
             else {
                 fmt->next = new_fmt;
@@ -709,12 +704,14 @@ groups_changed (DdbListview *listview, const char *format)
     free (mutable_format);
 
     // always have at least one
-    if (!listview->group_formats) {
-        listview->group_formats = calloc(sizeof(DdbListviewGroupFormat), 1);
-        fmt = listview->group_formats;
+    if (NULL == group_formats) {
+        group_formats = calloc(1, sizeof(DdbListviewGroupFormat));
+        fmt = group_formats;
         fmt->format = strdup ("");
         fmt->bytecode = deadbeef->tf_compile (fmt->format);
     }
+
+    ddb_listview_set_group_formats (listview, group_formats);
 
     ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_LIST);
 }
@@ -812,32 +809,35 @@ list_handle_keypress (DdbListview *ps, int keyval, int state, int iter) {
 
     if (state & GDK_SHIFT_MASK) {
         if (cursor != prev) {
-            int newscroll = ps->scrollpos;
+            int scrollpos = ddb_listview_get_scroll_pos(ps);
+            int list_height = ddb_listview_get_list_height(ps);
+            int newscroll = scrollpos;
             int cursor_scroll = ddb_listview_get_row_pos (ps, cursor, NULL);
-            if (cursor_scroll < ps->scrollpos) {
+            if (cursor_scroll < scrollpos) {
                 newscroll = cursor_scroll;
             }
-            else if (cursor_scroll >= ps->scrollpos + ps->list_height) {
-                newscroll = cursor_scroll - ps->list_height + 1;
+            else if (cursor_scroll >= scrollpos + list_height) {
+                newscroll = cursor_scroll - list_height + 1;
                 if (newscroll < 0) {
                     newscroll = 0;
                 }
             }
-            if (ps->scrollpos != newscroll) {
+            if (scrollpos != newscroll) {
                 GtkWidget *range = ps->scrollbar;
                 gtk_range_set_value (GTK_RANGE (range), newscroll);
             }
 
             // select all between shift_sel_anchor and deadbeef->pl_get_cursor (ps->iterator)
-            int start = min (cursor, ps->shift_sel_anchor);
-            int end = max (cursor, ps->shift_sel_anchor);
+            int shift_sel_anchor = ddb_listview_get_shift_sel_anchor(ps);
+            int start = min (cursor, shift_sel_anchor);
+            int end = max (cursor, shift_sel_anchor);
 
             ddb_listview_select_range (ps, start, end);
             ddb_listview_update_cursor (ps, cursor);
         }
     }
     else {
-        ps->shift_sel_anchor = cursor;
+        ddb_listview_set_shift_sel_anchor(ps, cursor);
         ddb_listview_set_cursor_and_scroll (ps, cursor);
     }
 
@@ -846,8 +846,7 @@ list_handle_keypress (DdbListview *ps, int keyval, int state, int iter) {
 
 static void
 on_group_by_none_activate              (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
+                                        gpointer         user_data) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         deadbeef->plt_modified (plt);
@@ -858,8 +857,7 @@ on_group_by_none_activate              (GtkMenuItem     *menuitem,
 
 static void
 on_pin_groups_active                   (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
+                                        gpointer         user_data) {
     int old_val = deadbeef->conf_get_int ("playlist.pin.groups", 0);
     deadbeef->conf_set_int ("playlist.pin.groups", old_val ? 0 : 1);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, (uintptr_t)"playlist.pin.groups", 0, 0);
@@ -873,8 +871,7 @@ on_pin_groups_active                   (GtkMenuItem     *menuitem,
 
 static void
 on_group_by_artist_date_album_activate (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
+                                        gpointer         user_data) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         deadbeef->plt_modified (plt);
@@ -885,8 +882,7 @@ on_group_by_artist_date_album_activate (GtkMenuItem     *menuitem,
 
 static void
 on_group_by_artist_activate            (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
+                                        gpointer         user_data) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         deadbeef->plt_modified (plt);
@@ -897,7 +893,7 @@ on_group_by_artist_activate            (GtkMenuItem     *menuitem,
 
 
 static void
-_make_format (char *format, size_t size, DdbListviewGroupFormat *fmt) {
+_make_format (char *format, size_t size, const DdbListviewGroupFormat *fmt) {
     format[0] = 0;
     while (fmt) {
         if (format[0] != 0) {
@@ -910,8 +906,7 @@ _make_format (char *format, size_t size, DdbListviewGroupFormat *fmt) {
 
 static void
 on_group_by_custom_activate            (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
+                                        gpointer         user_data) {
     GtkWidget *dlg = create_groupbydlg ();
 
     DdbListview *listview = get_context_menu_listview (menuitem);
@@ -920,10 +915,10 @@ on_group_by_custom_activate            (GtkMenuItem     *menuitem,
     GtkWidget *entry = lookup_widget (dlg, "format");
     char format[1024];
 
-    _make_format(format, sizeof (format), listview->group_formats);
+    const DdbListviewGroupFormat *group_formats = ddb_listview_get_group_formats (listview);
+    _make_format(format, sizeof (format), group_formats);
 
     gtk_entry_set_text (GTK_ENTRY (entry), format);
-//    gtk_window_set_title (GTK_WINDOW (dlg), "Group by");
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
 
     if (response == GTK_RESPONSE_OK) {
@@ -1094,8 +1089,7 @@ int editcolumn_title_changed = 0;
 
 static void
 on_add_column_activate                 (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
+                                        gpointer         user_data) {
     editcolumn_title_changed = 0;
     GdkColor color;
     gtkui_get_listview_text_color (&color);
@@ -1135,8 +1129,7 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
 
 static void
 on_edit_column_activate                (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
+                                        gpointer         user_data) {
     int active_column = get_context_menu_column (menuitem);
     if (active_column == -1)
         return;
@@ -1215,8 +1208,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
 
 static void
 on_remove_column_activate              (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
+                                        gpointer         user_data) {
     int active_column = get_context_menu_column (menuitem);
     if (active_column == -1)
         return;
@@ -1227,8 +1219,7 @@ on_remove_column_activate              (GtkMenuItem     *menuitem,
 }
 
 static GtkWidget*
-create_headermenu (DdbListview *listview, int column, int groupby)
-{
+create_headermenu (DdbListview *listview, int column, int groupby) {
     GtkWidget *headermenu;
     GtkWidget *add_column;
     GtkWidget *edit_column;
@@ -1357,10 +1348,10 @@ pl_common_add_column_helper (DdbListview *listview, const char *title, int width
 
 int
 pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int size, int index) {
-    if (!listview->group_formats->format || !listview->group_formats->format[0]) {
+    const DdbListviewGroupFormat *fmt = ddb_listview_get_group_formats(listview);
+    if (!fmt->format || !fmt->format[0]) {
         return -1;
     }
-    DdbListviewGroupFormat *fmt = listview->group_formats;
     while (index > 0) {
         index--;
         fmt = fmt->next;
@@ -1395,9 +1386,9 @@ pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int s
 
 void
 pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height, int group_depth) {
-    if (listview->group_formats->format && listview->group_formats->format[0]) {
+    const DdbListviewGroupFormat *fmt = ddb_listview_get_group_formats(listview);
+    if (fmt->format && fmt->format[0]) {
         char str[1024] = "";
-        DdbListviewGroupFormat *fmt = listview->group_formats;
         while (group_depth--) {
             fmt = fmt->next;
         }
@@ -1436,8 +1427,11 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
         else {
             gtkui_get_listview_group_text_color (&clr);
         }
+
+        drawctx_t * const ctx = ddb_listview_get_grpctx(listview);
+
         float rgb[] = {clr.red/65535., clr.green/65535., clr.blue/65535.};
-        draw_set_fg_color (&listview->grpctx, rgb);
+        draw_set_fg_color (ctx, rgb);
 
         int ew;
         int text_width = width-x-10;
@@ -1469,20 +1463,20 @@ pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
                 char *plainString;
 
                 attrs = convert_escapetext_to_pango_attrlist(str, &plainString, rgb, bg, highlight);
-                pango_layout_set_attributes (listview->grpctx.pangolayout, attrs);
+                pango_layout_set_attributes (ctx->pangolayout, attrs);
                 pango_attr_list_unref(attrs);
-                draw_text_custom (&listview->grpctx, x + 5, y + height/2 - draw_get_listview_rowheight (&listview->grpctx)/2 + 3, text_width, 0, DDB_GROUP_FONT, 0, 0, plainString);
+                draw_text_custom (ctx, x + 5, y + height/2 - draw_get_listview_rowheight (ctx)/2 + 3, text_width, 0, DDB_GROUP_FONT, 0, 0, plainString);
                 free (plainString);
-                pango_layout_set_attributes (listview->grpctx.pangolayout, NULL);
+                pango_layout_set_attributes (ctx->pangolayout, NULL);
             } else {
-                draw_text_custom (&listview->grpctx, x + 5, y + height/2 - draw_get_listview_rowheight (&listview->grpctx)/2 + 3, text_width, 0, DDB_GROUP_FONT, 0, 0, str);
+                draw_text_custom (ctx, x + 5, y + height/2 - draw_get_listview_rowheight (ctx)/2 + 3, text_width, 0, DDB_GROUP_FONT, 0, 0, str);
             }
-            draw_get_layout_extents (&listview->grpctx, &ew, NULL);
+            draw_get_layout_extents (ctx, &ew, NULL);
 
             size_t len = strlen (str);
             int line_x = x + 10 + ew + (len ? ew / len / 2 : 0);
             if (line_x+20 < x + width) {
-                draw_line (&listview->grpctx, line_x, y+height/2, x+width, y+height/2);
+                draw_line (ctx, line_x, y+height/2, x+width, y+height/2);
             }
         }
     }
@@ -1514,21 +1508,24 @@ void
 pl_common_set_group_format (DdbListview *listview, const char *format_conf, const char *artwork_level_conf,  const char *subgroup_padding_conf) {
     deadbeef->conf_lock ();
     char *format = strdup (deadbeef->conf_get_str_fast (format_conf, ""));
-    listview->artwork_subgroup_level = deadbeef->conf_get_int (artwork_level_conf, 0);
-    listview->subgroup_title_padding = deadbeef->conf_get_int (subgroup_padding_conf, 10);
+
+    ddb_listview_set_artwork_subgroup_level(listview, deadbeef->conf_get_int (artwork_level_conf, 0));
+    ddb_listview_set_subgroup_title_padding(listview, deadbeef->conf_get_int (subgroup_padding_conf, 10));
+
     deadbeef->conf_unlock ();
     parser_unescape_quoted_string (format);
-    listview->group_formats = NULL;
+
+    DdbListviewGroupFormat *group_formats = NULL;
 
     DdbListviewGroupFormat *fmt = NULL;
     char *saveptr = NULL;
     char *token;
     while ((token = strtok_stringdelim_r(format, SUBGROUP_DELIMITER, &saveptr)) != NULL) {
         if (strlen(token) > 0) {
-            DdbListviewGroupFormat *new_fmt = calloc(sizeof(DdbListviewGroupFormat), 1);
+            DdbListviewGroupFormat *new_fmt = calloc(1, sizeof(DdbListviewGroupFormat));
             if (!fmt) {
-                listview->group_formats = new_fmt;
-                fmt = listview->group_formats;
+                group_formats = new_fmt;
+                fmt = group_formats;
             }
             else {
                 fmt->next = new_fmt;
@@ -1542,10 +1539,12 @@ pl_common_set_group_format (DdbListview *listview, const char *format_conf, cons
     free (format);
 
     // always have at least one
-    if (!listview->group_formats) {
-        listview->group_formats = calloc(sizeof(DdbListviewGroupFormat), 1);
-        fmt = listview->group_formats;
+    if (!group_formats) {
+        group_formats = calloc(1, sizeof(DdbListviewGroupFormat));
+        fmt = group_formats;
         fmt->format = strdup ("");
         fmt->bytecode = deadbeef->tf_compile (fmt->format);
     }
+
+    ddb_listview_set_group_formats(listview, group_formats);
 }

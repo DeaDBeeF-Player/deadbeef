@@ -82,7 +82,7 @@ search_process (DdbListview *listview, ddb_playlist_t *plt) {
     if (row >= deadbeef->pl_getcount (PL_SEARCH)) {
         deadbeef->pl_set_cursor (PL_SEARCH, deadbeef->pl_getcount (PL_SEARCH) - 1);
     }
-    ddb_listview_list_setup (listview, listview->scrollpos);
+    ddb_listview_list_setup (listview, ddb_listview_get_scroll_pos(listview));
     ddb_listview_refresh (listview, DDB_REFRESH_LIST);
 
     char title[1024] = "";

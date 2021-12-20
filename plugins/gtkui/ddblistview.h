@@ -37,14 +37,14 @@
 
 G_BEGIN_DECLS
 
-#define DDB_TYPE_LISTVIEW (ddb_listview_get_type ())
-#define DDB_LISTVIEW(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), DDB_TYPE_LISTVIEW, DdbListview))
-#define DDB_LISTVIEW_CLASS(obj) (G_TYPE_CHECK_CLASS_CAST((obj), DDB_TYPE_LISTVIEW, DdbListviewClass))
-#define DDB_IS_LISTVIEW(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DDB_TYPE_LISTVIEW))
-#define DDB_IS_LISTVIEW_CLASS(obj) (G_TYPE_CHECK_CLASS_TYPE ((obj), DDB_TYPE_LISTVIEW))
-#define DDB_LISTVIEW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), DDB_TYPE_LISTVIEW, DdbListviewClass))
+#define DDB_LISTVIEW_TYPE (ddb_listview_get_type ())
+#define DDB_LISTVIEW(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), DDB_LISTVIEW_TYPE, DdbListview))
+#define DDB_LISTVIEW_CLASS(obj) (G_TYPE_CHECK_CLASS_CAST((obj), DDB_LISTVIEW_TYPE, DdbListviewClass))
+#define DDB_IS_LISTVIEW(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DDB_LISTVIEW_TYPE))
+#define DDB_IS_LISTVIEW_CLASS(obj) (G_TYPE_CHECK_CLASS_TYPE ((obj), DDB_LISTVIEW_TYPE))
 
 typedef struct _DdbListview DdbListview;
+typedef struct _DdbListviewPrivate DdbListviewPrivate;
 typedef struct _DdbListviewClass DdbListviewClass;
 
 typedef void * DdbListviewIter;
@@ -65,7 +65,6 @@ struct _DdbListviewGroup {
 
 typedef int (*minheight_cb_t) (void *user_data, int width);
 typedef struct _DdbListviewGroup DdbListviewGroup;
-//typedef void * DdbListviewColIter;
 
 typedef struct {
     // rows
@@ -143,79 +142,8 @@ struct _DdbListview {
     GtkWidget *scrollbar;
     GtkWidget *hscrollbar;
 
-    int list_width; // width if the list widget as of the last resize
-    int list_height; // heught of the list widget as of the last resize
-    int totalwidth; // width of listview, including any invisible (scrollable) part
-    int fullheight; // total height of all groups
-    const char *title; // unique id, used for config writing, etc
-    int lastpos[2]; // last mouse position (for list widget)
-    // current state
-    int scrollpos;
-    int hscrollpos;
-    int rowheight;
+    DdbListviewPrivate *priv;
 
-    int col_movepos;
-
-    int drag_motion_y;
-
-    int ref_point; // idx of anchor when columns are resized
-    int ref_point_offset; // y pixel-coordinate of anchor relative to view
-
-    // scrolling
-    int scroll_mode; // 0=select, 1=dragndrop
-    int scroll_pointer_x;
-    int scroll_pointer_y;
-    float scroll_direction;
-    int scroll_active;
-    struct timeval tm_prevscroll;
-    float scroll_sleep_time;
-
-    // selection
-    int areaselect; // boolean, whether area selection is active (1), or not (0)
-    int areaselect_x; // x pixel-coordinate of anchor click relative to playlist origin
-    int areaselect_y; // y pixel-coordinate of anchor click relative to playlist origin
-    int dragwait; // set to 1 when mouse was pressed down on already selected track, but not moved since (so we're waiting for dnd to begin)
-    int drag_source_playlist;
-    int shift_sel_anchor;
-
-    // header
-    int header_dragging;
-    int header_sizing;
-    int header_dragpt[2];
-    gdouble prev_header_x;
-    int header_prepare;
-    int col_autoresize;
-    float fwidth;
-    int view_realized;
-
-    struct _DdbListviewColumn *columns;
-    gboolean lock_columns;
-
-    ddb_playlist_t *plt; // current playlist (refcounted), must be unreffed with the group
-    struct _DdbListviewGroup *groups;
-    int artwork_subgroup_level;
-    int subgroup_title_padding;
-    int groups_build_idx; // must be the same as playlist modification idx
-    int grouptitle_height;
-    int calculated_grouptitle_height;
-
-    // previous area selection range
-    int area_selection_start;
-    int area_selection_end;
-
-    GdkCursor *cursor_sz;
-    GdkCursor *cursor_drag;
-
-    // drawing contexts
-    drawctx_t listctx;
-    drawctx_t grpctx;
-    drawctx_t hdrctx;
-
-    DdbListviewGroupFormat *group_formats;
-
-    guint tf_redraw_timeout_id;
-    int tf_redraw_track_idx;
-    DdbListviewIter tf_redraw_track;
 };
 
 struct _DdbListviewClass {
@@ -298,6 +226,45 @@ ddb_listview_set_cursor_and_scroll (DdbListview *listview, int cursor);
 
 DdbListviewGroup *
 ddb_listview_get_group_by_head (DdbListview *listview, DdbListviewIter head);
+
+int
+ddb_listview_get_scroll_pos (DdbListview *listview);
+
+void
+ddb_listview_redraw_tf (DdbListview *listview);
+
+void
+ddb_listview_schedule_draw_tf(DdbListview *listview, int row_idx, guint source_id, DdbListviewIter it);
+
+int
+ddb_listview_get_list_height (DdbListview *listview);
+
+int
+ddb_listview_get_shift_sel_anchor (DdbListview *listview);
+
+void
+ddb_listview_set_shift_sel_anchor(DdbListview *listview, int anchor);
+
+DdbListviewGroupFormat *
+ddb_listview_get_group_formats (DdbListview *listview);
+
+void
+ddb_listview_set_group_formats (DdbListview *listview, DdbListviewGroupFormat *formats);
+
+drawctx_t * const
+ddb_listview_get_listctx(DdbListview *listview);
+
+drawctx_t * const
+ddb_listview_get_grpctx(DdbListview *listview);
+
+drawctx_t * const
+ddb_listview_get_hdrctx(DdbListview *listview);
+
+void
+ddb_listview_set_artwork_subgroup_level(DdbListview *listview, int artwork_subgroup_level);
+
+void
+ddb_listview_set_subgroup_title_padding(DdbListview *listview, int subgroup_title_padding);
 
 G_END_DECLS
 
