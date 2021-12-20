@@ -39,7 +39,7 @@
 #include "interface.h"
 #include "support.h"
 
-#include "ddblistview.h"
+#include "playlist/ddblistview.h"
 #include "ddbtabstrip.h"
 #include "ddbvolumebar.h"
 #include "ddbseekbar.h"
@@ -54,7 +54,7 @@
 #include "../hotkeys/hotkeys.h"
 #include "actionhandlers.h"
 #include "actions.h"
-#include "plcommon.h"
+#include "playlist/plcommon.h"
 
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)

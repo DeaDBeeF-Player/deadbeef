@@ -15,7 +15,7 @@
 #include "../../medialib/medialib.h"
 #include "../prefwin/prefwin.h"
 #include "../support.h"
-#include "ddblistview.h"
+#include "../playlist/ddblistview.h"
 #include "medialibwidget.h"
 #include "medialibmanager.h"
 #include "plmenu.h"

@@ -53,7 +53,7 @@
 #include "interface.h"
 #include "medialib/medialibmanager.h"
 #include "medialib/medialibwidget.h"
-#include "plcommon.h"
+#include "playlist/plcommon.h"
 #include "pluginconf.h"
 #include "prefwin/prefwin.h"
 #include "progress.h"

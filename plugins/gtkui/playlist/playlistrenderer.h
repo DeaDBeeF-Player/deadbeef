@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2015 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2021 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -21,21 +21,18 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef __SEARCH_H
-#define __SEARCH_H
+#ifndef playlistrenderer_h
+#define playlistrenderer_h
 
-#include "playlist/ddblistview.h"
-
-void
-search_start (void);
+#include <gtk/gtk.h>
+#include "ddblistview.h"
 
 void
-search_destroy (void);
-
-int
-search_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
+main_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height, int even);
+void
+main_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height, int group_depth);
 
 void
-search_playlist_init (GtkWidget *widget);
+pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *grp, void *user_data, int min_y, int next_y, int x, int y, int width, int height);
 
-#endif // __SEARCH_H
+#endif /* playlistrenderer_h */

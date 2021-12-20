@@ -30,7 +30,7 @@
 #include "clipboard.h"
 #include "gtkui_deletefromdisk.h"
 #include "interface.h"
-#include "plcommon.h"
+#include "playlist/plcommon.h"
 #include "plmenu.h"
 #include "support.h"
 

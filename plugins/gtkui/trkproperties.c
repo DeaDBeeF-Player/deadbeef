@@ -24,26 +24,26 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
-#include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
-#include <string.h>
-#include <math.h>
 #include <assert.h>
 #include <ctype.h>
-#include "../../gettext.h"
-#include "ddblistview.h"
-#include "trkproperties.h"
-#include "interface.h"
-#include "support.h"
+#include <gdk/gdkkeysyms.h>
+#include <gtk/gtk.h>
+#include <math.h>
+#include <string.h>
 #include "../../deadbeef.h"
-#include "gtkui.h"
-#include "mainplaylist.h"
-#include "search.h"
-#include "ddbcellrenderertextmultiline.h"
-#include "tagwritersettings.h"
-#include "wingeom.h"
-#include "callbacks.h"
+#include "../../gettext.h"
 #include "../../shared/trkproperties_shared.h"
+#include "callbacks.h"
+#include "ddbcellrenderertextmultiline.h"
+#include "gtkui.h"
+#include "interface.h"
+#include "playlist/ddblistview.h"
+#include "playlist/mainplaylist.h"
+#include "search.h"
+#include "support.h"
+#include "tagwritersettings.h"
+#include "trkproperties.h"
+#include "wingeom.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)

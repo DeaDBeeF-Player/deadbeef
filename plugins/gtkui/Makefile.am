@@ -2,55 +2,59 @@ EXTRA_DIST = deadbeef.glade\
 	gtkui.gresources.xml\
 	gtk/menus.ui
 
-GTKUI_SOURCES =    gtkui.c gtkui.h\
-				   gtkui_deletefromdisk.c gtkui_deletefromdisk.h\
-				   callbacks.c interface.c support.c callbacks.h interface.h support.h\
-				   ddblistview.c ddblistview.h\
-				   mainplaylist.c mainplaylist.h\
-				   drawing.h gdkdrawing.c\
-				   progress.c progress.h\
-				   search.c search.h\
-				   fileman.c\
-				   pluginconf.c\
-				   ddbtabstrip.c ddbtabstrip.h\
-				   ddbvolumebar.c ddbvolumebar.h\
-				   trkproperties.c trkproperties.h\
-				   plcommon.c plcommon.h\
-				   plmenu.c plmenu.h\
-				   prefwin/prefwin.c prefwin/prefwin.h\
-				   prefwin/prefwinappearance.c prefwin/prefwinappearance.h\
-				   prefwin/prefwinmedialib.c prefwin/prefwinmedialib.h\
-				   prefwin/prefwinmisc.c prefwin/prefwinmisc.h\
-				   prefwin/prefwinnetwork.c prefwin/prefwinnetwork.h\
-				   prefwin/prefwinplayback.c prefwin/prefwinplayback.h\
-				   prefwin/prefwinplugins.c prefwin/prefwinplugins.h\
-				   prefwin/prefwinsound.c prefwin/prefwinsound.h\
-				   eq.c eq.h\
-				   actions.c actions.h\
-				   dspconfig.c dspconfig.h\
-				   tagwritersettings.c tagwritersettings.h\
-				   wingeom.c wingeom.h\
-				   pluginconf.h\
-				   widgets.c widgets.h\
-				   ddbseekbar.h ddbequalizer.h ddbcellrenderertextmultiline.h\
-				   ddbseekbar.c ddbequalizer.c ddbcellrenderertextmultiline.c\
-                   hotkeys.c hotkeys.h\
-                   actionhandlers.c actionhandlers.h\
-                   pltmenu.c\
-                   ctmapping.c ctmapping.h\
-                   namedicons.c namedicons.h\
-                   tfimport.c tfimport.h\
-                   ddb_splitter.c ddb_splitter.h\
-                   ddb_splitter_size_mode.c ddb_splitter_size_mode.h\
-                   ../../utf8.c\
-                   clipboard.c clipboard.h\
-				   rg.c rg.h\
-				   medialib/medialibwidget.c medialib/medialibwidget.h\
-				   medialib/medialibmanager.c medialib/medialibmanager.h\
-				   covermanager/covermanager.c covermanager/covermanager.h\
-				   covermanager/gobjcache.c covermanager/gobjcache.h\
-				   covermanager/albumartwidget.c covermanager/albumartwidget.h\
-				   $(SM_SOURCES) $(OSXSRC)
+GTKUI_SOURCES = \
+    ../../utf8.c\
+	actions.c actions.h\
+	callbacks.c callbacks.h\
+	support.c support.h\
+	interface.c interface.h\
+	ddbseekbar.c ddbseekbar.h\
+   	ddbcellrenderertextmultiline.c ddbcellrenderertextmultiline.h\
+ 	ddbequalizer.c ddbequalizer.h
+	ddbtabstrip.c ddbtabstrip.h\
+	ddbvolumebar.c ddbvolumebar.h\
+	drawing.h gdkdrawing.c\
+	dspconfig.c dspconfig.h\
+	eq.c eq.h\
+	fileman.c\
+	gtkui.c gtkui.h\
+	gtkui_deletefromdisk.c gtkui_deletefromdisk.h\
+	plmenu.c plmenu.h\
+	pluginconf.c pluginconf.h\
+	progress.c progress.h\
+	rg.c rg.h\
+	search.c search.h\
+	tagwritersettings.c tagwritersettings.h\
+	trkproperties.c trkproperties.h\
+	widgets.c widgets.h\
+	wingeom.c wingeom.h\
+    actionhandlers.c actionhandlers.h\
+    clipboard.c clipboard.h\
+    ctmapping.c ctmapping.h\
+    ddb_splitter.c ddb_splitter.h\
+    ddb_splitter_size_mode.c ddb_splitter_size_mode.h\
+    hotkeys.c hotkeys.h\
+    namedicons.c namedicons.h\
+    pltmenu.c\
+    tfimport.c tfimport.h\
+	medialib/medialibwidget.c medialib/medialibwidget.h\
+	medialib/medialibmanager.c medialib/medialibmanager.h\
+	covermanager/covermanager.c covermanager/covermanager.h\
+	covermanager/gobjcache.c covermanager/gobjcache.h\
+	covermanager/albumartwidget.c covermanager/albumartwidget.h\
+	playlist/ddblistview.c playlist/ddblistview.h\
+	playlist/mainplaylist.c playlist/mainplaylist.h\
+	playlist/playlistrenderer.c playlist/playlistrenderer.h\
+	playlist/plcommon.c playlist/plcommon.h\
+	prefwin/prefwin.c prefwin/prefwin.h\
+	prefwin/prefwinappearance.c prefwin/prefwinappearance.h\
+	prefwin/prefwinmedialib.c prefwin/prefwinmedialib.h\
+	prefwin/prefwinmisc.c prefwin/prefwinmisc.h\
+	prefwin/prefwinnetwork.c prefwin/prefwinnetwork.h\
+	prefwin/prefwinplayback.c prefwin/prefwinplayback.h\
+	prefwin/prefwinplugins.c prefwin/prefwinplugins.h\
+	prefwin/prefwinsound.c prefwin/prefwinsound.h\
+	$(SM_SOURCES) $(OSXSRC)
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = gtkui_api.h

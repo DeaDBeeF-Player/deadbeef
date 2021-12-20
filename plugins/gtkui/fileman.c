@@ -27,7 +27,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "gtkui.h"
-#include "ddblistview.h"
+#include "playlist/ddblistview.h"
 #include "progress.h"
 #include "support.h"
 

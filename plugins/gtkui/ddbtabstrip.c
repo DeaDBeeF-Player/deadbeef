@@ -21,17 +21,17 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <gtk/gtk.h>
-#include <string.h>
 #include <assert.h>
 #include <glib.h>
+#include <gtk/gtk.h>
 #include <stdlib.h>
+#include <string.h>
 #include "ddbtabstrip.h"
 #include "drawing.h"
 #include "gtkui.h"
 #include "interface.h"
+#include "playlist/mainplaylist.h"
 #include "support.h"
-#include "mainplaylist.h"
 
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \

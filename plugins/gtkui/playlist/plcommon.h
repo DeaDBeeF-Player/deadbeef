@@ -38,6 +38,23 @@
 #define COLUMN_FORMAT_CODEC "%codec%"
 #define COLUMN_FORMAT_BITRATE "%bitrate%"
 
+#define ART_PADDING_HORZ 8
+#define ART_PADDING_VERT 0
+
+extern GdkPixbuf *play16_pixbuf;
+extern GdkPixbuf *pause16_pixbuf;
+extern GdkPixbuf *buffering16_pixbuf;
+extern GtkWidget *theme_treeview;
+
+typedef struct {
+    int id;
+    char *format;
+    char *sort_format;
+    char *bytecode;
+    char *sort_bytecode;
+    DdbListview *listview;
+} col_info_t;
+
 int
 pl_common_rewrite_column_config (DdbListview *listview, const char *name);
 
@@ -72,7 +89,7 @@ void
 pl_common_free_col_info (void *data);
 
 int
-pl_common_get_group (DdbListview *listview, DdbListviewIter it, char *str, int size, int index);
+pl_common_get_group_text (DdbListview *listview, DdbListviewIter it, char *str, int size, int index);
 
 void
 pl_common_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int iter, int x, int y, int width, int height, int group_depth);
@@ -88,5 +105,8 @@ pl_common_set_group_format (DdbListview *listview, const char *format_conf, cons
 
 int
 find_first_preset_column_type (int type);
+
+PangoAttrList *
+convert_escapetext_to_pango_attrlist (char *text, char **plainString, float *fg, float *bg, float *highlight);
 
 #endif // __PLCOLUMNS_H

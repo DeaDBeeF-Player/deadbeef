@@ -30,21 +30,20 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "../../deadbeef.h"
 #include "../../gettext.h"
 
 #include "callbacks.h"
-#include "interface.h"
-#include "support.h"
-
-#include "search.h"
-#include "ddblistview.h"
-#include "plcommon.h"
-#include "plmenu.h"
-#include "../../deadbeef.h"
-#include "mainplaylist.h"
-
 #include "gtkui.h"
-
+#include "interface.h"
+#include "playlist/ddblistview.h"
+#include "playlist/mainplaylist.h"
+#include "playlist/playlistrenderer.h"
+#include "playlist/plcommon.h"
+#include "plmenu.h"
+#include "search.h"
+#include "support.h"
 #include "wingeom.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -566,8 +565,7 @@ search_list_handle_keypress (DdbListview *ps, int keyval, int state, int iter) {
     return list_handle_keypress (ps, keyval, state, PL_SEARCH);
 }
 
-static DdbListviewBinding search_binding = {
-    // rows
+static ddb_listview_datasource_t _datasource = {
     .count = search_get_count,
     .sel_count = search_get_sel_count,
 
@@ -581,30 +579,29 @@ static DdbListviewBinding search_binding = {
 
     .get_for_idx = search_get_for_idx,
     .get_idx = search_get_idx,
+    .is_album_art_column = pl_common_is_album_art_column,
+    .modification_idx = gtkui_get_curr_playlist_mod,
+    .get_group_text = pl_common_get_group_text,
+};
 
-    .get_group = pl_common_get_group,
-    .groups_changed = search_groups_changed,
-
-    .drag_n_drop = NULL,
-    .external_drag_n_drop = NULL,
-
+static ddb_listview_renderer_t _renderer = {
     .draw_column_data = search_draw_column_data,
     .draw_album_art = pl_common_draw_album_art,
     .draw_group_title = search_draw_group_title,
+};
 
-    // columns
-    .is_album_art_column = pl_common_is_album_art_column,
+static ddb_listview_delegate_t _delegate = {
+    .groups_changed = search_groups_changed,
+    .drag_n_drop = NULL,
+    .external_drag_n_drop = NULL,
     .col_sort = search_col_sort,
     .columns_changed = search_columns_changed_before_loaded,
     .col_free_user_data = pl_common_free_col_info,
-
-    // callbacks
     .handle_doubleclick = search_handle_doubleclick,
     .list_handle_keypress = search_list_handle_keypress,
     .selection_changed = search_selection_changed,
     .header_context_menu = pl_common_header_context_menu,
     .list_context_menu = search_list_context_menu,
-    .modification_idx = gtkui_get_curr_playlist_mod,
 };
 
 void
@@ -613,11 +610,15 @@ search_playlist_init (GtkWidget *mainwin) {
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
     DdbListview *listview = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
 
-    search_binding.ref = (void (*) (DdbListviewIter))deadbeef->pl_item_ref;
-    search_binding.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
-    search_binding.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;
-    search_binding.select = (void (*) (DdbListviewIter, int))deadbeef->pl_set_selected;
-    ddb_listview_set_binding (listview, &search_binding);
+    _datasource.ref = (void (*) (DdbListviewIter))deadbeef->pl_item_ref;
+    _datasource.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
+    _datasource.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;
+    _datasource.select = (void (*) (DdbListviewIter, int))deadbeef->pl_set_selected;
+    _delegate.columns_changed = search_columns_changed;
+
+    listview->datasource = &_datasource;
+    listview->renderer = &_renderer;
+    listview->delegate = &_delegate;
 
     // create default set of columns
     if (pl_common_load_column_config (listview, "gtkui.columns.search") < 0) {
@@ -626,7 +627,6 @@ search_playlist_init (GtkWidget *mainwin) {
         pl_common_add_column_helper (listview, _("Title"), 150, DB_COLUMN_STANDARD, COLUMN_FORMAT_TITLE, NULL, 0);
         pl_common_add_column_helper (listview, _("Duration"), 50, DB_COLUMN_STANDARD, COLUMN_FORMAT_LENGTH, NULL, 0);
     }
-    search_binding.columns_changed = search_columns_changed;
 
     pl_common_set_group_format (listview, "gtkui.search.group_by_tf", "gtkui.search.group_artwork_level", "gtkui.search.subgroup_title_padding");
     window_title_bytecode = deadbeef->tf_compile (_("Search [(%list_total% results)]"));

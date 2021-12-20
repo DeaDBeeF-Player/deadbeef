@@ -28,7 +28,7 @@
 #include <sys/time.h>
 #include <stdint.h>
 #include "drawing.h"
-#include "../../deadbeef.h"
+#include "../../../deadbeef.h"
 
 // drag and drop targets
 #define TARGET_PLAYLIST_AND_ITEM_INDEXES "DDB_PLAYLIST_AND_ITEM_INDEXES"
@@ -67,7 +67,25 @@ typedef int (*minheight_cb_t) (void *user_data, int width);
 typedef struct _DdbListviewGroup DdbListviewGroup;
 
 typedef struct {
-    // rows
+    void (*drag_n_drop) (DdbListviewIter before, DdbPlaylistHandle playlist_from, uint32_t *indices, int length, int copy);
+    void (*external_drag_n_drop) (DdbListviewIter before, char *mem, int length);
+    void (*tracks_copy_drag_n_drop) (DdbListviewIter before, DdbListviewIter *tracks, int count);
+
+    void (*columns_changed) (DdbListview *listview);
+    void (*col_sort) (int sort_order, void *user_data);
+    void (*col_free_user_data) (void *user_data);
+
+    void (*list_context_menu) (ddb_playlist_t *playlist, int plt_iter);
+    void (*header_context_menu) (DdbListview *listview, int col);
+    void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
+    gboolean (*list_handle_keypress) (DdbListview *ps, int keyval, int state, int iter);
+    void (*selection_changed) (DdbListview *listview, DdbListviewIter it, int idx);
+    void (*groups_changed) (const char *format);
+    void (*vscroll_changed) (int pos);
+    void (*cursor_changed) (int pos);
+} ddb_listview_delegate_t;
+
+typedef struct {
     int (*count) (void);
     int (*sel_count) (void);
 
@@ -88,33 +106,17 @@ typedef struct {
     void (*select) (DdbListviewIter, int sel);
     int (*is_selected) (DdbListviewIter);
 
-    int (*get_group) (DdbListview *listview, DdbListviewIter it, char *str, int size, int index);
+    int (*is_album_art_column) (void *user_data);
 
-    void (*drag_n_drop) (DdbListviewIter before, DdbPlaylistHandle playlist_from, uint32_t *indices, int length, int copy);
-    void (*external_drag_n_drop) (DdbListviewIter before, char *mem, int length);
-    void (*tracks_copy_drag_n_drop) (DdbListviewIter before, DdbListviewIter *tracks, int count);
+    int (*modification_idx) (void);
+    int (*get_group_text) (DdbListview *listview, DdbListviewIter it, char *str, int size, int index);
+} ddb_listview_datasource_t;
 
+typedef struct {
     void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int x, int y, int width, int height, int group_depth);
     void (*draw_album_art) (DdbListview *listview, cairo_t *cr, DdbListviewGroup *grp, void *user_data, int pinned, int next_y, int x, int y, int width, int height);
     void (*draw_column_data) (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height, int even);
-
-    // cols
-    int (*is_album_art_column) (void *user_data);
-    void (*columns_changed) (DdbListview *listview);
-    void (*col_sort) (int sort_order, void *user_data);
-    void (*col_free_user_data) (void *user_data);
-
-    // callbacks
-    void (*list_context_menu) (ddb_playlist_t *playlist, int plt_iter);
-    void (*header_context_menu) (DdbListview *listview, int col);
-    void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
-    gboolean (*list_handle_keypress) (DdbListview *ps, int keyval, int state, int iter);
-    void (*selection_changed) (DdbListview *listview, DdbListviewIter it, int idx);
-    void (*groups_changed) (const char *format);
-    void (*vscroll_changed) (int pos);
-    void (*cursor_changed) (int pos);
-    int (*modification_idx) (void);
-} DdbListviewBinding;
+} ddb_listview_renderer_t;
 
 struct _DdbListviewColumn;
 struct _DdbListviewGroup;
@@ -133,8 +135,9 @@ typedef struct _DdbListviewGroupFormat DdbListviewGroupFormat;
 struct _DdbListview {
     GtkTable parent;
 
-    // interaction with client
-    DdbListviewBinding *binding;
+    ddb_listview_datasource_t *datasource;
+    ddb_listview_delegate_t *delegate;
+    ddb_listview_renderer_t *renderer;
 
     // cached gtk/gdk object pointers
     GtkWidget *list;
@@ -143,7 +146,6 @@ struct _DdbListview {
     GtkWidget *hscrollbar;
 
     DdbListviewPrivate *priv;
-
 };
 
 struct _DdbListviewClass {
@@ -154,8 +156,6 @@ GType ddb_listview_get_type(void);
 
 GtkWidget * ddb_listview_new(void);
 
-void
-ddb_listview_set_binding (DdbListview *listview, DdbListviewBinding *binding);
 void
 ddb_listview_draw_row (DdbListview *listview, int idx, DdbListviewIter iter);
 void

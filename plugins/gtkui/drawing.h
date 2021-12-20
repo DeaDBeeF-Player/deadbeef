@@ -25,6 +25,7 @@
 #define __DRAWING_H
 
 #include <stdint.h>
+#include <gtk/gtk.h>
 
 typedef struct {
     cairo_t *drawable;

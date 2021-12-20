@@ -34,7 +34,7 @@
 #include "../../gettext.h"
 #include "../../shared/deletefromdisk.h"
 #include "callbacks.h"
-#include "ddblistview.h"
+#include "playlist/ddblistview.h"
 #include "gtkui.h"
 #include "gtkui_api.h"
 #include "gtkui_deletefromdisk.h"

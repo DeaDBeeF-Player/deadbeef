@@ -32,7 +32,6 @@
 #include "../../../gettext.h"
 #include "../callbacks.h"
 #include "../ctmapping.h"
-#include "../ddblistview.h"
 #include "../drawing.h"
 #include "../dspconfig.h"
 #include "../eq.h"

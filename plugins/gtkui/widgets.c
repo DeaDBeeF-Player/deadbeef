@@ -21,31 +21,31 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <stdlib.h>
-#include <string.h>
 #include <assert.h>
 #include <math.h>
-#include "gtkui.h"
-#include "interface.h"
-#include "support.h"
-#include "widgets.h"
-#include "ddbtabstrip.h"
-#include "ddblistview.h"
-#include "mainplaylist.h"
-#include "../libparser/parser.h"
-#include "trkproperties.h"
-#include "namedicons.h"
-#include "hotkeys.h" // for building action treeview
-#include "../../strdupa.h"
-#include "../../fastftoi.h"
-#include "actions.h"
-#include "ddbseekbar.h"
-#include "ddbvolumebar.h"
-#include "callbacks.h"
-#include "drawing.h"
-#include "ddb_splitter.h"
+#include <stdlib.h>
+#include <string.h>
 #include "../../analyzer/analyzer.h"
+#include "../../fastftoi.h"
 #include "../../scope/scope.h"
+#include "../../strdupa.h"
+#include "../libparser/parser.h"
+#include "actions.h"
+#include "callbacks.h"
+#include "ddb_splitter.h"
+#include "ddbseekbar.h"
+#include "ddbtabstrip.h"
+#include "ddbvolumebar.h"
+#include "drawing.h"
+#include "gtkui.h"
+#include "hotkeys.h" // for building action treeview
+#include "interface.h"
+#include "namedicons.h"
+#include "playlist/ddblistview.h"
+#include "playlist/mainplaylist.h"
+#include "support.h"
+#include "trkproperties.h"
+#include "widgets.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -2441,6 +2441,7 @@ w_playlist_create (void) {
     w->base.load = w_playlist_load;
     w->base.init = w_playlist_init;
     w->base.initmenu = w_playlist_initmenu;
+
     gtk_widget_show (GTK_WIDGET (w->list));
     main_playlist_init (GTK_WIDGET (w->list));
 
