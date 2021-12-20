@@ -10,7 +10,7 @@ GTKUI_SOURCES = \
 	interface.c interface.h\
 	ddbseekbar.c ddbseekbar.h\
    	ddbcellrenderertextmultiline.c ddbcellrenderertextmultiline.h\
- 	ddbequalizer.c ddbequalizer.h
+ 	ddbequalizer.c ddbequalizer.h\
 	ddbtabstrip.c ddbtabstrip.h\
 	ddbvolumebar.c ddbvolumebar.h\
 	drawing.h gdkdrawing.c\
