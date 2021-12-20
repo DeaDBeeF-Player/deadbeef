@@ -250,8 +250,8 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
     [self.cachedCovers removeAllObjects];
 }
 
-- (NSImage *)createCachedImage:(NSImage *)image size:(NSSize)size {
-    NSSize originalSize = image.size;
+- (NSImage *)createCachedImage:(NSImage *)image size:(CGSize)size {
+    CGSize originalSize = image.size;
     if (originalSize.width <= size.width && originalSize.height <= size.height) {
         return image;
     }
@@ -264,16 +264,10 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
     return cachedImage;
 }
 
-- (NSSize)artworkDesiredSizeForImageSize:(NSSize)imageSize albumArtSpaceWidth:(CGFloat)albumArtSpaceWidth {
-    if (imageSize.width >= imageSize.height) {
-        CGFloat h = imageSize.height / (imageSize.width / albumArtSpaceWidth);
-        return NSMakeSize(albumArtSpaceWidth, h);
-    }
-    else {
-        CGFloat h = albumArtSpaceWidth;
-        CGFloat w = imageSize.width / (imageSize.height / h);
-        return NSMakeSize(w, h);
-    }
+- (CGSize)desiredSizeForImageSize:(CGSize)imageSize availableSize:(CGSize)availableSize {
+    CGFloat scale = MIN(availableSize.width/imageSize.width, availableSize.height/imageSize.height);
+
+    return CGSizeMake(imageSize.width * scale, imageSize.height * scale);
 }
 
 @end

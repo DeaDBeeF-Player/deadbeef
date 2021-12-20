@@ -89,7 +89,9 @@ _update (w_albumart_t *w) {
 
                 w->plugin->cancel_queries_with_source_id(w->source_id);
 
-                int album_art_space_width = frame.width;
+                GtkAllocation availableSize = {0};
+                availableSize.width = frame.width;
+                availableSize.height = frame.height;
 
                 int64_t currentIndex = w->request_index++;
 
@@ -103,7 +105,7 @@ _update (w_albumart_t *w) {
                         GtkAllocation originalSize = {0};
                         originalSize.width = gdk_pixbuf_get_width(img);
                         originalSize.height = gdk_pixbuf_get_height(img);
-                        GtkAllocation desired_size = covermanager_desired_size_for_image_size(cm, originalSize, album_art_space_width);
+                        GtkAllocation desired_size = covermanager_desired_size_for_image_size(cm, originalSize, availableSize);
                         GdkPixbuf *scaled_image = covermanager_create_scaled_image(cm, img, desired_size);
                         w->image = scaled_image;
                     }
@@ -120,7 +122,7 @@ _update (w_albumart_t *w) {
                     GtkAllocation originalSize = {0};
                     originalSize.width = gdk_pixbuf_get_width(image);
                     originalSize.height = gdk_pixbuf_get_height(image);
-                    GtkAllocation desired_size = covermanager_desired_size_for_image_size(cm, originalSize, album_art_space_width);
+                    GtkAllocation desired_size = covermanager_desired_size_for_image_size(cm, originalSize, availableSize);
 
                     GdkPixbuf *scaled_image = covermanager_create_scaled_image(cm, image, desired_size);
                     w->image = scaled_image;

@@ -295,7 +295,9 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
         }
     }
     else {
-        double albumArtSpaceWidth = art_width;
+        GtkAllocation availableSize = {0};
+        availableSize.width = art_width;
+        availableSize.height = art_height;
 
         deadbeef->pl_item_ref (it);
         image = covermanager_cover_for_track(cm, it, 0, ^(GdkPixbuf *img) { // img only valid in this block
@@ -310,7 +312,7 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
                     GtkAllocation imageSize = {0};
                     imageSize.width = gdk_pixbuf_get_width(img);
                     imageSize.height = gdk_pixbuf_get_height(img);
-                    GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, imageSize, albumArtSpaceWidth);
+                    GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, imageSize, availableSize);
                     grp->cachedImage = covermanager_create_scaled_image(cm, img, desiredSize);
                 }
                 grp->hasCachedImage = TRUE;
@@ -347,7 +349,10 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
         GtkAllocation size = {0};
         size.width = gdk_pixbuf_get_width(image);
         size.height = gdk_pixbuf_get_height(image);
-        GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, size, art_width);
+        GtkAllocation availableSize = {0};
+        availableSize.width = art_width;
+        availableSize.height = art_height;
+        GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, size, availableSize);
 
         // center horizontally
         if (size.width < size.height) {

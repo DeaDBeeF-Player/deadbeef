@@ -955,16 +955,15 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
     NSImage *image;
 
+    CGSize availableSize = CGSizeMake(art_width, art_height);
     if (grp->hasCachedImage) {
         image = grp->cachedImage;
     }
     else {
-        CGFloat albumArtSpaceWidth = art_width;
-
         image = [CoverManager.defaultCoverManager coverForTrack:it sourceId:self.sourceId completionBlock:^(NSImage *img) {
             if (grp != nil) {
                 if (img != nil) {
-                    NSSize desiredSize = [CoverManager.defaultCoverManager artworkDesiredSizeForImageSize:img.size albumArtSpaceWidth:albumArtSpaceWidth];
+                    NSSize desiredSize = [CoverManager.defaultCoverManager desiredSizeForImageSize:img.size availableSize:availableSize];
                     grp->cachedImage = [CoverManager.defaultCoverManager createCachedImage:img size:desiredSize];
                 }
                 else {
@@ -993,7 +992,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     }
 
     NSSize size = image.size;
-    NSSize desiredSize = [CoverManager.defaultCoverManager artworkDesiredSizeForImageSize:size albumArtSpaceWidth:art_width];
+    NSSize desiredSize = [CoverManager.defaultCoverManager desiredSizeForImageSize:size availableSize:availableSize];
 
     if (size.width < size.height) {
         plt_col_info_t *c = &self.columns[(int)col];

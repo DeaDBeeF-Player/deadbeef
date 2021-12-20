@@ -128,7 +128,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
                 self.artwork_plugin->cancel_queries_with_source_id(self.sourceId);
 
-                CGFloat albumArtSpaceWidth = self.imageView.frame.size.width;
+                CGSize availableSize = self.imageView.frame.size;
 
                 NSImageView *imageView = self.imageView;
                 NSInteger currentIndex = self.requestIndex++;
@@ -137,7 +137,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                         return;
                     }
                     if (img != nil) {
-                        NSSize desiredSize = [CoverManager.defaultCoverManager artworkDesiredSizeForImageSize:img.size albumArtSpaceWidth:albumArtSpaceWidth];
+                        NSSize desiredSize = [CoverManager.defaultCoverManager desiredSizeForImageSize:img.size availableSize:availableSize];
                         imageView.image = [CoverManager.defaultCoverManager createCachedImage:img size:desiredSize];
                     }
                     else {
@@ -146,7 +146,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                 }];
 
                 if (image != nil) {
-                    NSSize desiredSize = [CoverManager.defaultCoverManager artworkDesiredSizeForImageSize:image.size albumArtSpaceWidth:albumArtSpaceWidth];
+                    NSSize desiredSize = [CoverManager.defaultCoverManager desiredSizeForImageSize:image.size availableSize:availableSize];
                     imageView.image = [CoverManager.defaultCoverManager createCachedImage:image size:desiredSize];
                 }
             }

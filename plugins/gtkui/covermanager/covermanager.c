@@ -26,6 +26,8 @@
 #include "gobjcache.h"
 #include <Block.h>
 
+#define min(x,y) ((x)<(y)?(x):(y))
+
 extern DB_functions_t *deadbeef;
 
 #define CACHE_SIZE 50
@@ -321,27 +323,18 @@ covermanager_create_scaled_image (covermanager_t manager, GdkPixbuf *image, GtkA
 
     gdk_pixbuf_scale(image, scaled_image, 0, 0, size.width, size.height, 0, 0, scale_x, scale_y, GDK_INTERP_BILINEAR);
 
-    // This should not be necessary, but seems like GTK has a bug in there.
     g_object_ref(scaled_image);
 
     return scaled_image;
 }
 
 GtkAllocation
-covermanager_desired_size_for_image_size (covermanager_t manager, GtkAllocation image_size, int album_art_space_width) {
-    if (image_size.width >= image_size.height) {
-        double h = (double)image_size.height / ((double)image_size.width / (double)album_art_space_width);
-        GtkAllocation a = {0};
-        a.width = album_art_space_width;
-        a.height = h;
-        return a;
-    }
-    else {
-        double h = album_art_space_width;
-        double w = (double)image_size.width / ((double)image_size.height / h);
-        GtkAllocation a = {0};
-        a.width = w;
-        a.height = h;
-        return a;
-    }
+covermanager_desired_size_for_image_size (covermanager_t manager, GtkAllocation image_size, GtkAllocation availableSize) {
+    double scale = min((double)availableSize.width/(double)image_size.width, (double)availableSize.height/(double)image_size.height);
+
+    GtkAllocation a = {0};
+    a.width = image_size.width * scale;
+    a.height = image_size.height * scale;
+
+    return a;
 }

@@ -58,8 +58,8 @@ covermanager_cover_for_track(covermanager_t manager, DB_playItem_t *track, int64
 GdkPixbuf *
 covermanager_create_scaled_image (covermanager_t manager, GdkPixbuf *image, GtkAllocation size);
 
-/// Calculate the desired image size for specified width of avaliable space.
+/// Calculate the desired image size for specified available size.
 GtkAllocation
-covermanager_desired_size_for_image_size (covermanager_t manager, GtkAllocation image_size, int album_art_space_width);
+covermanager_desired_size_for_image_size (covermanager_t manager, GtkAllocation image_size, GtkAllocation availableSize);
 
 #endif /* covermanager_h */
