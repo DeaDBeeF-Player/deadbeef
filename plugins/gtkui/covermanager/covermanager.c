@@ -97,7 +97,7 @@ _update_default_cover (covermanager_impl_t *impl) {
             impl->default_cover = gdk_pixbuf_new_from_data((guchar *)&color, GDK_COLORSPACE_RGB, FALSE, 8, 1, 1, 4, NULL, NULL);
         }
         if (impl->default_cover) {
-            g_object_ref(impl->default_cover);
+            g_object_ref_sink(impl->default_cover);
         }
     }
 }
@@ -145,7 +145,7 @@ _load_image_from_cover(covermanager_impl_t *impl, ddb_cover_info_t *cover) {
     }
 
     if (img) {
-        g_object_ref (img);
+        g_object_ref_sink (img);
     }
 
     return img;
@@ -323,7 +323,7 @@ covermanager_create_scaled_image (covermanager_t manager, GdkPixbuf *image, GtkA
 
     gdk_pixbuf_scale(image, scaled_image, 0, 0, size.width, size.height, 0, 0, scale_x, scale_y, GDK_INTERP_BILINEAR);
 
-    g_object_ref(scaled_image);
+    g_object_ref_sink(scaled_image);
 
     return scaled_image;
 }
