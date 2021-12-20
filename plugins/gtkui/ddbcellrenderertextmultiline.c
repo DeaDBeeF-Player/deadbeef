@@ -75,8 +75,8 @@ static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (
                                                                              GdkEvent             *event,
                                                                              GtkWidget            *widget,
                                                                              const gchar          *path,
-                                                                             const GdkRectangle   *background_area,
-                                                                             const GdkRectangle   *cell_area,
+                                                                             GdkRectangle   *background_area,
+                                                                             GdkRectangle   *cell_area,
                                                                              GtkCellRendererState  flags
                                                                              );
 DdbCellRendererTextMultiline* ddb_cell_renderer_text_multiline_new (void);
@@ -372,13 +372,14 @@ ddb_cell_renderer_text_multiline_populate_popup (GtkEntry *entry,
             G_CALLBACK (ddb_cell_renderer_text_multiline_popup_unmap), data);
 }
 
-static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (
+static GtkCellEditable*
+ddb_cell_renderer_text_multiline_real_start_editing (
                                                                              GtkCellRenderer      *cell,
                                                                              GdkEvent             *event,
                                                                              GtkWidget            *widget,
                                                                              const gchar          *path,
-                                                                             const GdkRectangle   *background_area,
-                                                                             const GdkRectangle   *cell_area,
+                                                                             GdkRectangle   *background_area,
+                                                                             GdkRectangle   *cell_area,
                                                                              GtkCellRendererState  flags
                                                                              ) {
     DdbCellRendererTextMultiline * self;

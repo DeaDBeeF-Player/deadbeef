@@ -30,6 +30,8 @@
 #include "drawing.h"
 #include "../../../deadbeef.h"
 
+#define DDB_LISTVIEW_MIN_COLUMN_WIDTH 16
+
 // drag and drop targets
 #define TARGET_PLAYLIST_AND_ITEM_INDEXES "DDB_PLAYLIST_AND_ITEM_INDEXES"
 #define TARGET_URIS "DDB_PLAYLIST_URIS"
@@ -50,7 +52,7 @@ typedef struct _DdbListviewClass DdbListviewClass;
 typedef void * DdbListviewIter;
 typedef void * DdbPlaylistHandle;
 
-struct _DdbListviewGroup {
+typedef struct _DdbListviewGroup {
     DdbListviewIter head;
     struct _DdbListviewGroup *subgroups;
     int32_t height;
@@ -61,10 +63,24 @@ struct _DdbListviewGroup {
     GdkPixbuf *cachedImage;
 
     struct _DdbListviewGroup *next;
-};
+} DdbListviewGroup;
 
 typedef int (*minheight_cb_t) (void *user_data, int width);
-typedef struct _DdbListviewGroup DdbListviewGroup;
+
+typedef struct _DdbListviewColumn {
+    char *title;
+    int width;
+    float fwidth; // only in autoresize mode
+    minheight_cb_t minheight_cb;
+    struct _DdbListviewColumn *next;
+    int color_override;
+    GdkColor color;
+    void *user_data;
+    unsigned align_right : 2; // 0=left, 1=right, 2=center
+    unsigned sort_order : 2; // 0=none, 1=asc, 2=desc
+    unsigned show_tooltip : 1;
+    unsigned is_artwork : 1;
+} DdbListviewColumn;
 
 typedef struct {
     void (*drag_n_drop) (DdbListviewIter before, DdbPlaylistHandle playlist_from, uint32_t *indices, int length, int copy);
@@ -256,9 +272,6 @@ ddb_listview_get_listctx(DdbListview *listview);
 
 drawctx_t * const
 ddb_listview_get_grpctx(DdbListview *listview);
-
-drawctx_t * const
-ddb_listview_get_hdrctx(DdbListview *listview);
 
 void
 ddb_listview_set_artwork_subgroup_level(DdbListview *listview, int artwork_subgroup_level);

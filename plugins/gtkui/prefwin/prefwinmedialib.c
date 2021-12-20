@@ -115,7 +115,7 @@ _remove_did_activate (GtkButton* self, gpointer user_data) {
 static void
 _listener (ddb_mediasource_event_type_t _event, void *user_data) {
     ddb_mediasource_source_t *source = gtkui_medialib_get_source();
-    if (_event < 1000) {
+    if ((int)_event < 1000) {
         switch (_event) {
         case DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE:
             {

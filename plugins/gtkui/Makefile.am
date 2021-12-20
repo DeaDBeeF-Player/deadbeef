@@ -43,6 +43,7 @@ GTKUI_SOURCES = \
 	covermanager/gobjcache.c covermanager/gobjcache.h\
 	covermanager/albumartwidget.c covermanager/albumartwidget.h\
 	playlist/ddblistview.c playlist/ddblistview.h\
+	playlist/ddblistviewheader.c playlist/ddblistviewheader.h\
 	playlist/mainplaylist.c playlist/mainplaylist.h\
 	playlist/playlistrenderer.c playlist/playlistrenderer.h\
 	playlist/plcommon.c playlist/plcommon.h\

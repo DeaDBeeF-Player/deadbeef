@@ -225,7 +225,7 @@ prefwin_run (int tab_index) {
 #if GTK_CHECK_VERSION(2,28,0)
     gtk_window_present_with_time (GTK_WINDOW(prefwin), (guint32)(g_get_monotonic_time() / 1000));
 #else
-    gtk_window_present_with_time (prefwin, GDK_CURRENT_TIME);
+    gtk_window_present_with_time (GTK_WINDOW(prefwin), GDK_CURRENT_TIME);
 #endif
 }
 

@@ -385,6 +385,7 @@ typedef struct {
 #endif
 } coord_t;
 
+#if GTK_CHECK_VERSION(3,0,0)
 static void
 cairo_draw_lines (cairo_t *cr, coord_t *pts, int cnt) {
     cairo_move_to (cr, pts[0].x+1, pts[0].y+1);
@@ -400,6 +401,7 @@ cairo_draw_poly (cairo_t *cr, coord_t *pts, int cnt) {
         cairo_line_to (cr, pts[i].x, pts[i].y);
     }
 }
+#endif
 
 void
 #if !GTK_CHECK_VERSION(3,0,0)

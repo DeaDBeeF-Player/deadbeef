@@ -45,6 +45,7 @@ extern GdkPixbuf *play16_pixbuf;
 extern GdkPixbuf *pause16_pixbuf;
 extern GdkPixbuf *buffering16_pixbuf;
 extern GtkWidget *theme_treeview;
+extern GtkWidget *theme_button;
 
 typedef struct {
     int id;

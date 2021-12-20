@@ -31,15 +31,27 @@ G_BEGIN_DECLS
 #define DDB_LISTVIEW_HEADER_TYPE (ddb_listview_header_get_type ())
 #define DDB_LISTVIEW_HEADER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), DDB_LISTVIEW_HEADER_TYPE, DdbListviewHeader))
 #define DDB_LISTVIEW_HEADER_CLASS(obj) (G_TYPE_CHECK_CLASS_CAST((obj), DDB_LISTVIEW_HEADER_TYPE, DdbListviewHeaderClass))
-#define DDB_IS_LISTVIEW(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DDB_LISTVIEW_HEADER_TYPE))
-#define DDB_IS_LISTVIEW_CLASS(obj) (G_TYPE_CHECK_CLASS_TYPE ((obj), DDB_LISTVIEW_HEADER_TYPE))
+#define DDB_IS_LISTVIEW_HEADER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DDB_LISTVIEW_HEADER_TYPE))
+#define DDB_IS_LISTVIEW_HEADER_CLASS(obj) (G_TYPE_CHECK_CLASS_TYPE ((obj), DDB_LISTVIEW_HEADER_TYPE))
 
 typedef struct _DdbListviewHeader DdbListviewHeader;
 typedef struct _DdbListviewHeaderPrivate DdbListviewHeaderPrivate;
 typedef struct _DdbListviewHeaderClass DdbListviewHeaderClass;
 
+typedef struct {
+    void (*context_menu) (DdbListviewHeader *header, int col);
+    struct _DdbListviewColumn *(*get_columns)(DdbListviewHeader *header);
+    void (*move_column)(DdbListviewHeader *header, DdbListviewColumn *c, int pos);
+    void (*set_column_width)(DdbListviewHeader *header, DdbListviewColumn *c, int width);
+    void (*columns_changed)(DdbListviewHeader *header);
+    int (*get_list_height)(DdbListviewHeader *header);
+    void (*col_sort) (DdbListviewHeader *header, int sort_order, void *user_data);
+    void (*update_scroll_ref_point) (DdbListviewHeader *header);
+}  ddb_listview_header_delegate_t;
+
 struct _DdbListviewHeader {
     GtkDrawingArea parent;
+    ddb_listview_header_delegate_t *delegate;
 };
 
 struct _DdbListviewHeaderClass {
@@ -48,5 +60,19 @@ struct _DdbListviewHeaderClass {
 
 G_END_DECLS
 
+GType
+ddb_listview_header_get_type(void);
+
+GtkWidget *
+ddb_listview_header_new(void);
+
+void
+ddb_listview_header_set_hscrollpos(DdbListviewHeader *header, int hscrollpos);
+
+gboolean
+ddb_listview_header_is_sizing (DdbListviewHeader *header);
+
+void
+ddb_listview_header_update_fonts (DdbListviewHeader *header);
 
 #endif /* ddblistviewheader_h */
