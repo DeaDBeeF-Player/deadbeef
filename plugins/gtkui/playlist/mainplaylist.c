@@ -227,7 +227,7 @@ void
 main_playlist_init (GtkWidget *widget) {
     // make listview widget and bind it to data
     DdbListview *listview = DDB_LISTVIEW(widget);
-    pl_common_set_group_format (listview, "gtkui.playlist.group_by_tf", "gtkui.playlist.group_artwork_level", "gtkui.playlist.subgroup_title_padding");
+
     _datasource.ref = (void (*) (DdbListviewIter))deadbeef->pl_item_ref;
     _datasource.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
     _datasource.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;
@@ -239,6 +239,14 @@ main_playlist_init (GtkWidget *widget) {
     listview->datasource = &_datasource;
     listview->renderer = &_renderer;
     listview->delegate = &_delegate;
+
+    ddb_listview_set_artwork_subgroup_level(listview, deadbeef->conf_get_int ("gtkui.playlist.group_artwork_level", 0));
+    ddb_listview_set_subgroup_title_padding(listview, deadbeef->conf_get_int ("gtkui.playlist.subgroup_title_padding", 10));
+    deadbeef->conf_lock();
+    char *format = strdup(deadbeef->conf_get_str_fast ("gtkui.playlist.group_by_tf", ""));
+    deadbeef->conf_unlock();
+    pl_common_set_group_format (listview, format);
+    free (format);
 
     // create default set of columns
     if (pl_common_load_column_config (listview, "gtkui.columns.playlist") < 0) {

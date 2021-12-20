@@ -628,6 +628,14 @@ search_playlist_init (GtkWidget *mainwin) {
         pl_common_add_column_helper (listview, _("Duration"), 50, DB_COLUMN_STANDARD, COLUMN_FORMAT_LENGTH, NULL, 0);
     }
 
-    pl_common_set_group_format (listview, "gtkui.search.group_by_tf", "gtkui.search.group_artwork_level", "gtkui.search.subgroup_title_padding");
+    ddb_listview_set_artwork_subgroup_level(listview, deadbeef->conf_get_int ("gtkui.search.group_artwork_level", 0));
+    ddb_listview_set_subgroup_title_padding(listview, deadbeef->conf_get_int ("gtkui.search.subgroup_title_padding", 10));
+
+    deadbeef->conf_lock();
+    char *format = strdup(deadbeef->conf_get_str_fast ("gtkui.search.group_by_tf", ""));
+    deadbeef->conf_unlock();
+    pl_common_set_group_format (listview, format);
+    free (format);
+
     window_title_bytecode = deadbeef->tf_compile (_("Search [(%list_total% results)]"));
 }

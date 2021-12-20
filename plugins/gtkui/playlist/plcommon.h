@@ -101,7 +101,7 @@ void
 pl_common_col_sort (int sort_order, int iter, void *user_data);
 
 void
-pl_common_set_group_format (DdbListview *listview, const char *format_conf, const char *artwork_level_conf, const char *subgroup_padding_conf);
+pl_common_set_group_format (DdbListview *listview, const char *format);
 
 int
 find_first_preset_column_type (int type);

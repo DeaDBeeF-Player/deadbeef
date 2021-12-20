@@ -3886,6 +3886,16 @@ ddb_listview_get_group_formats (DdbListview *listview) {
 void
 ddb_listview_set_group_formats (DdbListview *listview, DdbListviewGroupFormat *formats) {
     DdbListviewPrivate *priv = DDB_LISTVIEW_GET_PRIVATE(listview);
+
+    DdbListviewGroupFormat *fmt = priv->group_formats;
+    while (fmt) {
+        DdbListviewGroupFormat *next_fmt = fmt->next;
+        free (fmt->format);
+        free (fmt->bytecode);
+        free (fmt);
+        fmt = next_fmt;
+    }
+
     priv->group_formats = formats;
 }
 

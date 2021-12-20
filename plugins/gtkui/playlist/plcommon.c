@@ -331,62 +331,6 @@ strtok_stringdelim_r (char *str, const char *delim,  char **next_start) {
     return str;
 }
 
-static void
-groups_changed (DdbListview *listview, const char *format) {
-    if (!format) {
-        return;
-    }
-    DdbListviewGroupFormat *fmt = ddb_listview_get_group_formats(listview);
-    while (fmt) {
-        DdbListviewGroupFormat *next_fmt = fmt->next;
-        free (fmt->format);
-        free (fmt->bytecode);
-        free (fmt);
-        fmt = next_fmt;
-    }
-
-    DdbListviewGroupFormat *group_formats = NULL;
-
-    char *esc_format = parser_escape_string (format);
-    char quoted_format[strlen (esc_format) + 3];
-    snprintf (quoted_format, sizeof (quoted_format), "\"%s\"", esc_format);
-    listview->delegate->groups_changed (quoted_format);
-    free (esc_format);
-
-    char *mutable_format = strdup (format);
-    fmt = NULL;
-    char *saveptr = NULL;
-    char *token;
-    while ((token = strtok_stringdelim_r(mutable_format, SUBGROUP_DELIMITER, &saveptr)) != NULL) {
-        if (strlen(token) > 0) {
-            DdbListviewGroupFormat *new_fmt = calloc(1, sizeof(DdbListviewGroupFormat));
-            if (!fmt) {
-                group_formats = new_fmt;
-                fmt = new_fmt;
-            }
-            else {
-                fmt->next = new_fmt;
-                fmt = fmt->next;
-            }
-            fmt->format = strdup (token);
-            fmt->bytecode = deadbeef->tf_compile (fmt->format);
-        }
-    }
-    free (mutable_format);
-
-    // always have at least one
-    if (NULL == group_formats) {
-        group_formats = calloc(1, sizeof(DdbListviewGroupFormat));
-        fmt = group_formats;
-        fmt->format = strdup ("");
-        fmt->bytecode = deadbeef->tf_compile (fmt->format);
-    }
-
-    ddb_listview_set_group_formats (listview, group_formats);
-
-    ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_LIST);
-}
-
 gboolean
 list_handle_keypress (DdbListview *ps, int keyval, int state, int iter) {
     int prev = ps->datasource->cursor ();
@@ -523,7 +467,7 @@ on_group_by_none_activate              (GtkMenuItem     *menuitem,
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
     }
-    groups_changed (get_context_menu_listview (menuitem) , "");
+    pl_common_set_group_format (get_context_menu_listview (menuitem) , "");
 }
 
 static void
@@ -548,7 +492,7 @@ on_group_by_artist_date_album_activate (GtkMenuItem     *menuitem,
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
     }
-    groups_changed (get_context_menu_listview (menuitem), "%album artist% - ['['$year(%date%)']' ]%album%");
+    pl_common_set_group_format (get_context_menu_listview (menuitem), "%album artist% - ['['$year(%date%)']' ]%album%");
 }
 
 static void
@@ -559,7 +503,7 @@ on_group_by_artist_activate            (GtkMenuItem     *menuitem,
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
     }
-    groups_changed (get_context_menu_listview (menuitem), "%artist%");
+    pl_common_set_group_format (get_context_menu_listview (menuitem), "%artist%");
 }
 
 
@@ -599,7 +543,7 @@ on_group_by_custom_activate            (GtkMenuItem     *menuitem,
             deadbeef->plt_modified (plt);
             deadbeef->plt_unref (plt);
         }
-        groups_changed (listview, text);
+        pl_common_set_group_format (listview, text);
     }
     gtk_widget_destroy (dlg);
 }
@@ -1176,18 +1120,11 @@ pl_common_col_sort (int sort_order, int iter, void *user_data) {
 }
 
 void
-pl_common_set_group_format (DdbListview *listview, const char *format_conf, const char *artwork_level_conf,  const char *subgroup_padding_conf) {
-    deadbeef->conf_lock ();
-    char *format = strdup (deadbeef->conf_get_str_fast (format_conf, ""));
-
-    ddb_listview_set_artwork_subgroup_level(listview, deadbeef->conf_get_int (artwork_level_conf, 0));
-    ddb_listview_set_subgroup_title_padding(listview, deadbeef->conf_get_int (subgroup_padding_conf, 10));
-
-    deadbeef->conf_unlock ();
+pl_common_set_group_format (DdbListview *listview, const char *_format) {
+    char *format = strdup (_format);
     parser_unescape_quoted_string (format);
 
     DdbListviewGroupFormat *group_formats = NULL;
-
     DdbListviewGroupFormat *fmt = NULL;
     char *saveptr = NULL;
     char *token;
@@ -1218,4 +1155,5 @@ pl_common_set_group_format (DdbListview *listview, const char *format_conf, cons
     }
 
     ddb_listview_set_group_formats(listview, group_formats);
+    ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_LIST);
 }
