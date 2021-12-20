@@ -311,7 +311,7 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
                     imageSize.width = gdk_pixbuf_get_width(img);
                     imageSize.height = gdk_pixbuf_get_height(img);
                     GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, imageSize, albumArtSpaceWidth);
-                    grp->cachedImage = covermanager_create_scaled_image(cm, img, desiredSize); // retained
+                    grp->cachedImage = covermanager_create_scaled_image(cm, img, desiredSize);
                 }
                 grp->hasCachedImage = TRUE;
             }

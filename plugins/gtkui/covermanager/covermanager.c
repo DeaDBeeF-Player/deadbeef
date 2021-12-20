@@ -140,12 +140,13 @@ _load_image_from_cover(covermanager_impl_t *impl, ddb_cover_info_t *cover) {
     }
     if (!img) {
         img = impl->default_cover;
-        if (img) {
-            g_object_ref (img);
-        }
     }
 
-    return img; // retained
+    if (img) {
+        g_object_ref (img);
+    }
+
+    return img;
 }
 
 static void
@@ -165,7 +166,7 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
         __block GdkPixbuf *img = NULL;
 
         if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
-            img = _load_image_from_cover(impl, cover); // retain
+            img = _load_image_from_cover(impl, cover);
         }
 
         // Update the UI on main queue
@@ -176,7 +177,7 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
             void (^completionBlock)(GdkPixbuf *) = (void (^)(GdkPixbuf *))user_data->completion_block;
             completionBlock(img);
             if (img != NULL) {
-                g_object_unref(img); // release
+                g_object_unref(img);
                 img = NULL;
             }
             Block_release(user_data->completion_block);
@@ -281,7 +282,7 @@ covermanager_cover_for_track(covermanager_t manager, DB_playItem_t *track, int64
     if (cover != NULL) {
         // completion_block is not executed if the image is non-nil, to avoid double drawing.
         // The caller must release user data if the returned image is not nil.
-        return cover; // retained
+        return cover;
     }
 
     ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
@@ -307,7 +308,7 @@ covermanager_create_scaled_image (covermanager_t manager, GdkPixbuf *image, GtkA
 
     if (originalWidth <= size.width && originalHeight <= size.height) {
         g_object_ref(image);
-        return image; // retained
+        return image;
     }
 
     gboolean has_alpha = gdk_pixbuf_get_has_alpha(image);
@@ -323,7 +324,7 @@ covermanager_create_scaled_image (covermanager_t manager, GdkPixbuf *image, GtkA
     // This should not be necessary, but seems like GTK has a bug in there.
     g_object_ref(scaled_image);
 
-    return scaled_image; // retained
+    return scaled_image;
 }
 
 GtkAllocation
