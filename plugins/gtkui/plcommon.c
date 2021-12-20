@@ -333,8 +333,6 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
 
     // image is retained: release at the end
 
-    GtkAllocation drawRect = {0};
-
     int art_x = x + ART_PADDING_HORZ;
     min_y += ART_PADDING_VERT;
 
@@ -345,21 +343,16 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
         ypos = max_y - art_width - ART_PADDING_VERT;
     }
 
-    GtkAllocation size = {0};
-    size.width = gdk_pixbuf_get_width(image);
-    size.height = gdk_pixbuf_get_height(image);
-    GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, size, art_width);
-
-    // center horizontally
-    if (size.width < size.height) {
-        art_x += art_width/2 - desiredSize.width/2;
-    }
-
     if (!grp->hasCachedImage) {
-        drawRect.x = art_x;
-        drawRect.y = ypos;
-        drawRect.width = desiredSize.width;
-        drawRect.height = desiredSize.height;
+        GtkAllocation size = {0};
+        size.width = gdk_pixbuf_get_width(image);
+        size.height = gdk_pixbuf_get_height(image);
+        GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, size, art_width);
+
+        // center horizontally
+        if (size.width < size.height) {
+            art_x += art_width/2 - desiredSize.width/2;
+        }
 
         if (grp->cachedImage != NULL) {
             g_object_unref(grp->cachedImage);
