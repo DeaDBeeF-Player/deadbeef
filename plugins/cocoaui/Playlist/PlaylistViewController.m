@@ -1090,6 +1090,11 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     }
 }
 
+- (void)configChanged {
+    PlaylistView *listview = (PlaylistView *)self.view;
+    [listview.contentView configChanged];
+}
+
 - (int)sendMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
     switch (_id) {
         case DB_EV_SONGCHANGED: {
@@ -1233,8 +1238,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             break;
         case DB_EV_CONFIGCHANGED: {
             dispatch_async(dispatch_get_main_queue(), ^{
-                PlaylistView *listview = (PlaylistView *)self.view;
-                [listview.contentView reloadData];
+                [self configChanged];
             });
         }
             break;

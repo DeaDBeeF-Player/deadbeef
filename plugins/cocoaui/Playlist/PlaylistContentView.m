@@ -1456,5 +1456,9 @@ static int grouptitleheight = 22;
     self.needsDisplay = YES;
 }
 
+- (void)configChanged {
+    // TODO: react to events which require to fully rebuild the playlist view data
+}
+
 @end
 

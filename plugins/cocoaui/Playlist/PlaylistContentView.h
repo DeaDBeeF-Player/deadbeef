@@ -39,6 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)invalidateArtworkCacheForRow:(DdbListviewRow_t)row;
 
+- (void)configChanged;
+
 @end
 
 
