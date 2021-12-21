@@ -38,4 +38,7 @@ search_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 void
 search_playlist_init (GtkWidget *widget);
 
+void
+search_submit_refresh (void);
+
 #endif // __SEARCH_H

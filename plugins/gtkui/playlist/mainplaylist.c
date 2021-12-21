@@ -181,64 +181,43 @@ main_vscroll_changed (int pos) {
     }
 }
 
-static ddb_listview_datasource_t _datasource = {
-    // rows
-    .count = main_get_count,
-    .sel_count = main_get_sel_count,
-
-    .cursor = main_get_cursor,
-    .set_cursor = main_set_cursor,
-
-    .head = main_head,
-    .tail = main_tail,
-    .next = main_next,
-    .prev = main_prev,
-    .is_album_art_column = pl_common_is_album_art_column,
-    .modification_idx = gtkui_get_curr_playlist_mod,
-    .get_group_text = pl_common_get_group_text,
-};
-
-static ddb_listview_renderer_t _renderer = {
-    .draw_column_data = main_draw_column_data,
-    .draw_album_art = pl_common_draw_album_art,
-    .draw_group_title = main_draw_group_title,
-};
-
-static ddb_listview_delegate_t _delegate = {
-    .groups_changed = main_groups_changed,
-
-    .drag_n_drop = main_drag_n_drop,
-    .external_drag_n_drop = main_external_drag_n_drop,
-    .tracks_copy_drag_n_drop = main_tracks_copy_drag_n_drop,
-
-    .col_sort = main_col_sort,
-    .columns_changed = main_columns_changed_before_loaded,
-    .col_free_user_data = pl_common_free_col_info,
-
-    .handle_doubleclick = main_handle_doubleclick,
-    .list_handle_keypress = list_handle_keypress,
-    .selection_changed = main_selection_changed,
-    .header_context_menu = pl_common_header_context_menu,
-    .list_context_menu = list_context_menu,
-    .vscroll_changed = main_vscroll_changed,
-};
-
 void
-main_playlist_init (GtkWidget *widget) {
-    // make listview widget and bind it to data
-    DdbListview *listview = DDB_LISTVIEW(widget);
+main_init_listview_api (DdbListview *listview) {
+    listview->datasource->count = main_get_count;
+    listview->datasource->sel_count = main_get_sel_count;
+    listview->datasource->cursor = main_get_cursor;
+    listview->datasource->set_cursor = main_set_cursor;
+    listview->datasource->head = main_head;
+    listview->datasource->tail = main_tail;
+    listview->datasource->next = main_next;
+    listview->datasource->prev = main_prev;
+    listview->datasource->is_album_art_column = pl_common_is_album_art_column;
+    listview->datasource->modification_idx = gtkui_get_curr_playlist_mod;
+    listview->datasource->get_group_text = pl_common_get_group_text;
+    listview->datasource->ref = (void (*) (DdbListviewIter))deadbeef->pl_item_ref;
+    listview->datasource->unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
+    listview->datasource->is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;
+    listview->datasource->select = (void (*) (DdbListviewIter, int))deadbeef->pl_set_selected;
+    listview->datasource->get_for_idx = (DdbListviewIter)deadbeef->pl_get_for_idx;
+    listview->datasource->get_idx = (int (*) (DdbListviewIter))deadbeef->pl_get_idx_of;
 
-    _datasource.ref = (void (*) (DdbListviewIter))deadbeef->pl_item_ref;
-    _datasource.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
-    _datasource.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;
-    _datasource.select = (void (*) (DdbListviewIter, int))deadbeef->pl_set_selected;
-    _datasource.get_for_idx = (DdbListviewIter)deadbeef->pl_get_for_idx;
-    _datasource.get_idx = (int (*) (DdbListviewIter))deadbeef->pl_get_idx_of;
-    _delegate.columns_changed = main_columns_changed;
-
-    listview->datasource = &_datasource;
-    listview->renderer = &_renderer;
-    listview->delegate = &_delegate;
+    listview->renderer->draw_column_data = main_draw_column_data;
+    listview->renderer->draw_album_art = pl_common_draw_album_art;
+    listview->renderer->draw_group_title = main_draw_group_title;
+    listview->delegate->groups_changed = main_groups_changed;
+    listview->delegate->drag_n_drop = main_drag_n_drop;
+    listview->delegate->external_drag_n_drop = main_external_drag_n_drop;
+    listview->delegate->tracks_copy_drag_n_drop = main_tracks_copy_drag_n_drop;
+    listview->delegate->col_sort = main_col_sort;
+    listview->delegate->columns_changed = main_columns_changed_before_loaded;
+    listview->delegate->col_free_user_data = pl_common_free_col_info;
+    listview->delegate->handle_doubleclick = main_handle_doubleclick;
+    listview->delegate->list_handle_keypress = list_handle_keypress;
+    listview->delegate->selection_changed = main_selection_changed;
+    listview->delegate->header_context_menu = pl_common_header_context_menu;
+    listview->delegate->list_context_menu = list_context_menu;
+    listview->delegate->vscroll_changed = main_vscroll_changed;
+    listview->delegate->columns_changed = main_columns_changed;
 
     ddb_listview_set_artwork_subgroup_level(listview, deadbeef->conf_get_int ("gtkui.playlist.group_artwork_level", 0));
     ddb_listview_set_subgroup_title_padding(listview, deadbeef->conf_get_int ("gtkui.playlist.subgroup_title_padding", 10));

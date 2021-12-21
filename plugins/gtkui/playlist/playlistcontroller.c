@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2015 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2021 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -21,15 +21,35 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef __MAINPLAYLIST_H
-#define __MAINPLAYLIST_H
+#include <stdlib.h>
+#include "mainplaylist.h"
+#include "playlistcontroller.h"
+#include "plcommon.h"
+#include "searchplaylist.h"
 
-#include "ddblistview.h"
+playlist_controller_t *
+playlist_controller_new(DdbListview *listview, gboolean is_search) {
+    playlist_controller_t *ctl = calloc (1, sizeof (playlist_controller_t));
+
+    g_object_ref_sink(listview);
+
+    ctl->listview = listview;
+    ctl->listview->delegate = &ctl->delegate;
+    ctl->listview->datasource = &ctl->datasource;
+    ctl->listview->renderer = &ctl->renderer;
+
+    if (is_search) {
+        search_init_listview_api(listview);
+    }
+    else {
+        main_init_listview_api(listview);
+    }
+
+    return ctl;
+}
 
 void
-main_init_listview_api (DdbListview *widget);
-
-void
-main_drag_n_drop (DdbListviewIter before, DdbPlaylistHandle from_playlist, uint32_t *indices, int length, int copy);
-
-#endif
+playlist_controller_free(playlist_controller_t *ctl) {
+    g_object_unref(ctl->listview);
+    free (ctl);
+}

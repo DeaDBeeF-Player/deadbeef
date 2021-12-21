@@ -44,6 +44,7 @@
 #include "namedicons.h"
 #include "playlist/ddblistview.h"
 #include "playlist/mainplaylist.h"
+#include "playlist/playlistcontroller.h"
 #include "support.h"
 #include "trkproperties.h"
 #include "widgets.h"
@@ -113,7 +114,7 @@ typedef struct {
 
 typedef struct {
     ddb_gtkui_widget_t base;
-    DdbListview *list;
+    playlist_controller_t *controller;
     int hideheaders;
     int width;
 } w_playlist_t;
@@ -2217,13 +2218,13 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
     w_playlist_t *p = (w_playlist_t *)w;
     switch (id) {
     case DB_EV_PAUSED:
-        g_idle_add (paused_cb, p->list);
+        g_idle_add (paused_cb, p->controller->listview);
         break;
     case DB_EV_SONGFINISHED:
     {
         ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
         if (ev->track) {
-            g_idle_add (songfinished_cb, playlist_trackdata(p->list, ev->track));
+            g_idle_add (songfinished_cb, playlist_trackdata(p->controller->listview, ev->track));
         }
         break;
     }
@@ -2231,45 +2232,45 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
     {
         ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
         if (ev->track) {
-            g_idle_add (songstarted_cb, playlist_trackdata(p->list, ev->track));
+            g_idle_add (songstarted_cb, playlist_trackdata(p->controller->listview, ev->track));
         }
         break;
     }
     case DB_EV_TRACKINFOCHANGED:
         if (p1 == DDB_PLAYLIST_CHANGE_CONTENT || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
-            g_idle_add (playlist_sort_reset_cb, p->list);
+            g_idle_add (playlist_sort_reset_cb, p->controller->listview);
         }
         if (p1 == DDB_PLAYLIST_CHANGE_CONTENT || (p1 == DDB_PLAYLIST_CHANGE_SELECTION && p2 != PL_MAIN) || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
             ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
             if (ev->track) {
-                g_idle_add (trackinfochanged_cb, playlist_trackdata(p->list, ev->track));
+                g_idle_add (trackinfochanged_cb, playlist_trackdata(p->controller->listview, ev->track));
             }
         }
         break;
     case DB_EV_PLAYLISTCHANGED:
         if (p1 == DDB_PLAYLIST_CHANGE_CONTENT || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
-            g_idle_add (playlist_sort_reset_cb, p->list);
+            g_idle_add (playlist_sort_reset_cb, p->controller->listview);
         }
         if (p1 == DDB_PLAYLIST_CHANGE_CONTENT ||
-            (p1 == DDB_PLAYLIST_CHANGE_SELECTION && (p2 != PL_MAIN || (DdbListview *)ctx != p->list)) ||
+            (p1 == DDB_PLAYLIST_CHANGE_SELECTION && (p2 != PL_MAIN || (DdbListview *)ctx != p->controller->listview)) ||
             p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
-            g_idle_add (playlist_list_refresh_cb, p->list);
+            g_idle_add (playlist_list_refresh_cb, p->controller->listview);
         }
         break;
     case DB_EV_PLAYLISTSWITCHED:
-        g_idle_add (playlist_setup_cb, p->list);
+        g_idle_add (playlist_setup_cb, p->controller->listview);
         break;
     case DB_EV_FOCUS_SELECTION:
-        g_idle_add (focus_selection_cb, p->list);
+        g_idle_add (focus_selection_cb, p->controller->listview);
         break;
     case DB_EV_TRACKFOCUSCURRENT:
-        g_idle_add (trackfocus_cb, p->list);
+        g_idle_add (trackfocus_cb, p->controller->listview);
         break;
     case DB_EV_CURSOR_MOVED:
         if (p1 != PL_MAIN) {
             ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
             if (ev->track) {
-                g_idle_add (cursor_moved_cb, playlist_trackdata(p->list, ev->track));
+                g_idle_add (cursor_moved_cb, playlist_trackdata(p->controller->listview, ev->track));
             }
         }
         break;
@@ -2277,18 +2278,18 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         if (ctx) {
             char *conf_str = (char *)ctx;
             if (gtkui_listview_override_conf(conf_str) || gtkui_listview_font_conf(conf_str)) {
-                g_idle_add (playlist_config_changed_cb, p->list);
+                g_idle_add (playlist_config_changed_cb, p->controller->listview);
             }
             else if (gtkui_listview_colors_conf(conf_str)) {
-                g_idle_add (playlist_list_refresh_cb, p->list);
-                g_idle_add (playlist_header_refresh_cb, p->list);
+                g_idle_add (playlist_list_refresh_cb, p->controller->listview);
+                g_idle_add (playlist_header_refresh_cb, p->controller->listview);
             }
             else if (gtkui_listview_font_style_conf(conf_str) || !strcmp (conf_str, "playlist.pin.groups") ||
                     !strcmp (conf_str, "playlist.groups.spacing") ) {
-                g_idle_add (playlist_list_refresh_cb, p->list);
+                g_idle_add (playlist_list_refresh_cb, p->controller->listview);
             }
             else if (gtkui_tabstrip_override_conf(conf_str) || gtkui_tabstrip_colors_conf(conf_str)) {
-                g_idle_add (playlist_header_refresh_cb, p->list);
+                g_idle_add (playlist_header_refresh_cb, p->controller->listview);
             }
         }
         break;
@@ -2360,16 +2361,23 @@ static void
 w_playlist_init (ddb_gtkui_widget_t *base) {
     w_playlist_t *w = (w_playlist_t *)base;
 
-    ddb_listview_show_header (w->list, !w->hideheaders);
-    ddb_listview_init_autoresize (w->list, w->width);
-    g_idle_add (playlist_setup_cb, w->list);
+    ddb_listview_show_header (w->controller->listview, !w->hideheaders);
+    ddb_listview_init_autoresize (w->controller->listview, w->width);
+    g_idle_add (playlist_setup_cb, w->controller->listview);
+}
+
+static void
+w_playlist_destroy(ddb_gtkui_widget_t *base) {
+    w_playlist_t *w = (w_playlist_t *)base;
+    playlist_controller_free(w->controller);
+    w->controller = NULL;
 }
 
 static void
 on_playlist_showheaders_toggled (GtkCheckMenuItem *checkmenuitem, gpointer user_data) {
     w_playlist_t *w = user_data;
     w->hideheaders = !gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem));
-    ddb_listview_show_header (DDB_LISTVIEW (w->list), !w->hideheaders);
+    ddb_listview_show_header (DDB_LISTVIEW (w->controller->listview), !w->hideheaders);
 }
 
 static void
@@ -2394,16 +2402,19 @@ w_tabbed_playlist_create (void) {
     w->plt.base.save = w_playlist_save;
     w->plt.base.load = w_playlist_load;
     w->plt.base.init = w_playlist_init;
+    w->plt.base.destroy = w_playlist_destroy;
     w->plt.base.initmenu = w_playlist_initmenu;
     gtk_widget_show (vbox);
 
     GtkWidget *tabstrip = ddb_tabstrip_new ();
     w->tabstrip = DDB_TABSTRIP (tabstrip);
     gtk_widget_show (tabstrip);
-    GtkWidget *list = ddb_listview_new ();
+    DdbListview *listview = DDB_LISTVIEW(ddb_listview_new ());
     gtk_widget_set_size_request (vbox, 250, 100);
-    w->plt.list = (DdbListview *)list;
-    gtk_widget_show (list);
+
+    w->plt.controller = playlist_controller_new(listview, FALSE);
+
+    gtk_widget_show (GTK_WIDGET(listview));
 
     GtkWidget *sepbox = gtk_vbox_new (FALSE, 0);
     gtk_widget_show (sepbox);
@@ -2418,9 +2429,7 @@ w_tabbed_playlist_create (void) {
     gtk_widget_set_can_default (tabstrip, FALSE);
 
     gtk_box_pack_start (GTK_BOX (vbox), sepbox, FALSE, TRUE, 0);
-    gtk_box_pack_start (GTK_BOX (vbox), list, TRUE, TRUE, 0);
-
-    main_playlist_init (list);
+    gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET(listview), TRUE, TRUE, 0);
 
     w_override_signals (w->plt.base.widget, w);
 
@@ -2436,24 +2445,27 @@ w_playlist_create (void) {
     memset (w, 0, sizeof (w_playlist_t));
 
     w->base.widget = gtk_event_box_new ();
-    w->list = DDB_LISTVIEW (ddb_listview_new ());
+    DdbListview *listview = DDB_LISTVIEW (ddb_listview_new ());
+
+    playlist_controller_new(listview, FALSE);
+
     gtk_widget_set_size_request (GTK_WIDGET (w->base.widget), 100, 100);
     w->base.save = w_playlist_save;
     w->base.load = w_playlist_load;
     w->base.init = w_playlist_init;
+    w->base.destroy = w_playlist_destroy;
     w->base.initmenu = w_playlist_initmenu;
 
-    gtk_widget_show (GTK_WIDGET (w->list));
-    main_playlist_init (GTK_WIDGET (w->list));
+    gtk_widget_show (GTK_WIDGET (listview));
 
     if (deadbeef->conf_get_int ("gtkui.headers.visible", 1)) {
-        ddb_listview_show_header (DDB_LISTVIEW (w->list), 1);
+        ddb_listview_show_header (DDB_LISTVIEW (listview), 1);
     }
     else {
-        ddb_listview_show_header (DDB_LISTVIEW (w->list), 0);
+        ddb_listview_show_header (DDB_LISTVIEW (listview), 0);
     }
 
-    gtk_container_add (GTK_CONTAINER (w->base.widget), GTK_WIDGET (w->list));
+    gtk_container_add (GTK_CONTAINER (w->base.widget), GTK_WIDGET (listview));
     w_override_signals (w->base.widget, w);
     w->base.message = w_playlist_message;
     return (ddb_gtkui_widget_t*)w;
