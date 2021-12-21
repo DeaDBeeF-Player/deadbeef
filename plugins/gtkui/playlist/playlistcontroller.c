@@ -24,6 +24,7 @@
 #include <Block.h>
 #include <dispatch/dispatch.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../gtkui.h"
 #include "../../../deadbeef.h"
 #include "../../artwork/artwork.h"
