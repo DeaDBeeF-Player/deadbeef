@@ -45,6 +45,7 @@ GTKUI_SOURCES = \
 	playlist/ddblistview.c playlist/ddblistview.h\
 	playlist/ddblistviewheader.c playlist/ddblistviewheader.h\
 	playlist/mainplaylist.c playlist/mainplaylist.h\
+	playlist/playlistcontroller.c playlist/playlistcontroller.h\
 	playlist/playlistrenderer.c playlist/playlistrenderer.h\
 	playlist/plcommon.c playlist/plcommon.h\
 	prefwin/prefwin.c prefwin/prefwin.h\

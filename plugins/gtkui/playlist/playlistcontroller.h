@@ -26,17 +26,18 @@
 
 #include "ddblistview.h"
 
-typedef struct {
-    DdbListview *listview;
-    ddb_listview_datasource_t datasource;
-    ddb_listview_renderer_t renderer;
-    ddb_listview_delegate_t delegate;
-} playlist_controller_t;
+typedef struct playlist_controller_s playlist_controller_t;
 
 playlist_controller_t *
 playlist_controller_new(DdbListview *listview, gboolean is_search);
 
 void
 playlist_controller_free(playlist_controller_t *ctl);
+
+void
+playlist_controller_init (playlist_controller_t *ctl, gboolean show_headers, int width);
+
+void
+playlist_controller_message (playlist_controller_t *ctl, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 
 #endif /* playlistcontroller_h */
