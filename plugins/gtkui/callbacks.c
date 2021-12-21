@@ -225,7 +225,10 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
             act->callback2 (act, ctx);
             return TRUE;
         }
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         else if (act && act->callback) {
+#pragma GCC diagnostic pop
             gtkui_exec_action_14 (act, -1);
         }
     }

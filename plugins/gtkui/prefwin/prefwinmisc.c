@@ -22,6 +22,7 @@
 */
 
 #include <gtk/gtk.h>
+#include <string.h>
 #include "../gtkui.h"
 #include "../support.h"
 #include "prefwin.h"

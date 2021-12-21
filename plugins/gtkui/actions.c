@@ -40,7 +40,10 @@
 static gboolean
 menu_action_cb (void *ctx) {
     DB_plugin_action_t *action = ctx;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     if (action->callback) {
+#pragma GCC diagnostic pop
         gtkui_exec_action_14 (action, -1);
     }
     else if (action->callback2) {
@@ -103,7 +106,10 @@ menu_add_action_items(GtkWidget *menu, int selected_count, ddb_playItem_t *selec
                 continue;
             }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
             if (!((action->callback2 && (action->flags & DB_ACTION_ADD_MENU)) || action->callback)) {
+#pragma GCC diagnostic pop
                 continue;
             }
 
@@ -273,11 +279,14 @@ add_mainmenu_actions (void) {
 void
 gtkui_exec_action_14 (DB_plugin_action_t *action, int cursor) {
     // Plugin can handle all tracks by itself
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     if (action->flags & DB_ACTION_CAN_MULTIPLE_TRACKS)
     {
         action->callback (action, NULL);
         return;
     }
+#pragma GCC diagnostic pop
 
     // For single-track actions just invoke it with first selected track
     if (!(action->flags & DB_ACTION_MULTIPLE_TRACKS))
@@ -290,7 +299,10 @@ gtkui_exec_action_14 (DB_plugin_action_t *action, int cursor) {
             return;
         }
         DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         action->callback (action, it);
+#pragma GCC diagnostic pop
         deadbeef->pl_item_unref (it);
         return;
     }
@@ -299,7 +311,10 @@ gtkui_exec_action_14 (DB_plugin_action_t *action, int cursor) {
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
         if (deadbeef->pl_is_selected (it)) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
             action->callback (action, it);
+#pragma GCC diagnostic pop
         }
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         deadbeef->pl_item_unref (it);

@@ -22,6 +22,7 @@
 */
 
 #include <assert.h>
+#include <gtk/gtk.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -3433,7 +3434,10 @@ on_button_clicked               (GtkButton       *button,
         DB_plugin_action_t *acts = plugins[i]->get_actions (NULL);
         while (acts) {
             if (!strcmp (acts->name, w->action)) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                 if (acts->callback) {
+#pragma GCC diagnostic pop
                     gtkui_exec_action_14 (acts, -1);
                 }
                 else if (acts->callback2) {

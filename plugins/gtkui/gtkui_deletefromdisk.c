@@ -25,7 +25,9 @@
 #  include <config.h>
 #endif
 #include <gtk/gtk.h>
+#include <string.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #include "../../deadbeef.h"
 #include "../../gettext.h"
 #include "gtkui.h"

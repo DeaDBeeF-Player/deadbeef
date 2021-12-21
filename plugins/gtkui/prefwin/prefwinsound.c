@@ -25,6 +25,8 @@
 #  include <config.h>
 #endif
 #include <gtk/gtk.h>
+#include <string.h>
+#include <stdlib.h>
 #include "../gtkui.h"
 #include "../support.h"
 #include "prefwin.h"

@@ -1377,6 +1377,12 @@ ddb_listview_list_drag_drop                  (GtkWidget       *widget,
 static gchar **
 ddb_listview_build_drag_uri_list (DdbListview *listview) {
     DdbListviewPrivate *priv = DDB_LISTVIEW_GET_PRIVATE(listview);
+
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx(priv->drag_source_playlist);
+    if (plt == NULL) {
+        return NULL;
+    }
+
     deadbeef->pl_lock ();
     int num_selected = deadbeef->plt_get_sel_count (priv->drag_source_playlist);
     if (num_selected < 1) {
@@ -1393,8 +1399,8 @@ ddb_listview_build_drag_uri_list (DdbListview *listview) {
     // copy files more than once
     GHashTable *table = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
-
-    DdbListviewIter it = deadbeef->plt_get_head (priv->drag_source_playlist);
+    DdbListviewIter it = deadbeef->plt_get_head_item (plt, PL_MAIN);
+    deadbeef->plt_unref(plt);
     int idx = 0;
     while (it) {
         if (listview->datasource->is_selected (it)) {
@@ -1464,16 +1470,22 @@ ddb_listview_list_drag_data_get              (GtkWidget       *widget,
         break;
     case INFO_TARGET_PLAYLIST_ITEM_INDEXES:
         {
+            ddb_playlist_t *plt = deadbeef->plt_get_for_idx(priv->drag_source_playlist);
+            if (plt == NULL) {
+                break;
+            }
             // format as "STRING" consisting of array of pointers
-            int nsel = deadbeef->plt_get_sel_count (priv->drag_source_playlist);
+            int nsel = deadbeef->plt_getselcount (plt);
             if (!nsel) {
+                deadbeef->plt_unref(plt);
                 break; // something wrong happened
             }
             uint32_t *ptr = malloc ((nsel+1) * sizeof (uint32_t));
             *ptr = priv->drag_source_playlist;
             int idx = 0;
             int i = 1;
-            DdbListviewIter it = deadbeef->plt_get_head (priv->drag_source_playlist);
+            DdbListviewIter it = deadbeef->plt_get_head_item (plt, PL_MAIN);
+            deadbeef->plt_unref(plt);
             for (; it; idx++) {
                 if (listview->datasource->is_selected (it)) {
                     ptr[i] = idx;

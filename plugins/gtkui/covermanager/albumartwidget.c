@@ -22,7 +22,9 @@
 */
 
 #include <gtk/gtk.h>
+#include <string.h>
 #include "../../../deadbeef.h"
+#include "../support.h"
 #include "../../artwork/artwork.h"
 #include "albumartwidget.h"
 #include "covermanager.h"
@@ -144,7 +146,7 @@ _throttled_update (w_albumart_t *w) {
     if (w->throttle_id != 0) {
         g_source_remove(w->throttle_id);
     }
-    w->throttle_id = g_timeout_add(10, G_SOURCE_FUNC(_update), w);
+    w->throttle_id = g_timeout_add(10, (gboolean(*)(void*))_update, w);
 
 }
 

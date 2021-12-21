@@ -26,6 +26,7 @@
 #endif
 #include <assert.h>
 #include <gtk/gtk.h>
+#include <string.h>
 #include "../support.h"
 #include "../interface.h"
 #include "../ctmapping.h"

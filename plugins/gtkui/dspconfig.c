@@ -645,7 +645,7 @@ on_dsp_listview_row_activated          (GtkTreeView     *treeview,
     show_dsp_configure_dlg ();
 }
 
-#if !GTK_CHECK_VERSION(3,0,0)
+#if !GTK_CHECK_VERSION(3,22,0)
 static void
 set_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data)
 {
@@ -654,7 +654,7 @@ set_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_d
   gtk_widget_get_allocation(GTK_WIDGET (button), &a);
 
   GtkRequisition r;
-  gtk_widget_get_requisition(GTK_WIDGET (menu), &r);
+  gtk_widget_size_request(GTK_WIDGET (menu), &r);
 
   gdk_window_get_origin(gtk_widget_get_window(button), x, y);
   *x += a.x;
@@ -668,7 +668,7 @@ on_dsp_add_toolbtn_toggled             (GtkToggleToolButton *toggletoolbutton,
                                         gpointer         user_data)
 {
     if (gtk_toggle_tool_button_get_active(toggletoolbutton)) {
-#if GTK_CHECK_VERSION(3,0,0)
+#if GTK_CHECK_VERSION(3,22,0)
         gtk_menu_popup_at_widget (GTK_MENU (dsp_popup), GTK_WIDGET (toggletoolbutton), GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_SOUTH_WEST, NULL);
 #else
 

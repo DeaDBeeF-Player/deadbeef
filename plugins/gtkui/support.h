@@ -150,6 +150,9 @@ gchar *gtk_combo_box_text_get_active_text  (GtkComboBoxText *combo_box);
 #define gtk_widget_get_visible(widget) (GTK_WIDGET_VISIBLE(widget))
 #define gtk_widget_get_has_window(widget) (!GTK_WIDGET_NO_WINDOW(widget))
 void gtk_widget_set_window(GtkWidget *widget, GdkWindow *window);
+#define gtk_widget_is_sensitive(widget) GTK_WIDGET_IS_SENSITIVE(widget)
+#define gtk_widget_get_state(widget) GTK_WIDGET_STATE(widget)
+
 #endif
 
 #if !GTK_CHECK_VERSION(2,20,0)

@@ -308,7 +308,7 @@ _selection_did_change (GtkTreeSelection* self, w_medialib_viewer_t *mlv) {
     if (mlv->is_reloading) {
         return;
     }
-    mlv->collapse_expand_select_timeout = g_timeout_add(0.05, _row_collapse_expand_selection_did_change, mlv);
+    mlv->collapse_expand_select_timeout = g_timeout_add(50, _row_collapse_expand_selection_did_change, mlv);
 }
 
 static void
@@ -319,7 +319,7 @@ _row_did_collapse_expand (GtkTreeView* self, GtkTreeIter* iter, GtkTreePath* pat
     if (mlv->is_reloading) {
         return;
     }
-    mlv->collapse_expand_select_timeout = g_timeout_add(0.05, _row_collapse_expand_selection_did_change, mlv);
+    mlv->collapse_expand_select_timeout = g_timeout_add(50, _row_collapse_expand_selection_did_change, mlv);
 }
 
 static void
@@ -468,15 +468,17 @@ _collect_selected_tracks (GtkTreeModel *model, GtkTreeSelection *selection, ddb_
         GtkTreePath *path = (GtkTreePath *)row->data;
         GtkTreeIter iter;
         if (!gtk_tree_model_get_iter (model, &iter, path)) {
+            gtk_tree_path_free (path);
             continue;
         }
 
         int appended_count = _collect_tracks_from_iter (model, &iter, tracks, append_position);
         count += appended_count;
         append_position += appended_count;
+        gtk_tree_path_free (path);
     }
 
-    g_list_free_full (selected_rows, (GDestroyNotify) gtk_tree_path_free);
+    g_list_free(selected_rows);
     return count;
 }
 
