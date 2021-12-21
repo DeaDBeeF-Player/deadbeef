@@ -279,6 +279,9 @@ ddb_listview_set_artwork_subgroup_level(DdbListview *listview, int artwork_subgr
 void
 ddb_listview_set_subgroup_title_padding(DdbListview *listview, int subgroup_title_padding);
 
+void
+ddb_listview_reset_artwork (DdbListview *listview);
+
 G_END_DECLS
 
 #endif // __DDBLISTVIEW_H

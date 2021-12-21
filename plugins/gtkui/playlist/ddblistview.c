@@ -3471,3 +3471,18 @@ ddb_listview_set_subgroup_title_padding(DdbListview *listview, int subgroup_titl
     DdbListviewPrivate *priv = DDB_LISTVIEW_GET_PRIVATE(listview);
     priv->subgroup_title_padding = subgroup_title_padding;
 }
+
+void
+ddb_listview_reset_artwork (DdbListview *listview) {
+    DdbListviewPrivate *priv = DDB_LISTVIEW_GET_PRIVATE(listview);
+
+    for (DdbListviewGroup *grp = priv->groups; grp; grp = grp->next) {
+        grp->hasCachedImage = FALSE;
+        if (grp->cachedImage != NULL) {
+            g_object_unref(grp->cachedImage);
+            grp->cachedImage = NULL;
+        }
+    }
+
+    gtk_widget_queue_draw(GTK_WIDGET(listview));
+}
