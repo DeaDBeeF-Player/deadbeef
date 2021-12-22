@@ -257,6 +257,11 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
         return nil;
     }
 
+    if (self.isTerminating) {
+        completionBlock(nil);
+        return nil;
+    }
+
     NSString *hash = [self hashForTrack:track];
 
     CachedCover *cover = [self.cachedCovers objectForKey:hash];
