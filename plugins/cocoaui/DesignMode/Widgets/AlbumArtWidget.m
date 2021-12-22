@@ -128,7 +128,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
                 self.artwork_plugin->cancel_queries_with_source_id(self.sourceId);
 
-                CGSize availableSize = self.imageView.frame.size;
+                CGSize availableSize = [self.view convertSizeToBacking:self.imageView.frame.size];
 
                 NSImageView *imageView = self.imageView;
                 NSInteger currentIndex = self.requestIndex++;

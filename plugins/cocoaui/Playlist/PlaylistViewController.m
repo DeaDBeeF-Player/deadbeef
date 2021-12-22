@@ -955,7 +955,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
     NSImage *image;
 
-    CGSize availableSize = CGSizeMake(art_width, art_height);
+    CGSize availableSize = [self.view convertSizeToBacking:CGSizeMake(art_width, art_height)];
     if (grp->hasCachedImage) {
         image = grp->cachedImage;
     }
@@ -1003,7 +1003,8 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             art_x += art_width-desiredSize.width;
         }
     }
-    drawRect = NSMakeRect(art_x, ypos, desiredSize.width, desiredSize.height);
+    CGSize drawSize = [self.view convertSizeFromBacking:desiredSize];
+    drawRect = NSMakeRect(art_x, ypos, drawSize.width, drawSize.height);
 
     if (!grp->cachedImage) {
         grp->cachedImage = [CoverManager.shared createCachedImage:image size:desiredSize];
