@@ -1045,7 +1045,6 @@ queue_clear (void) {
 
 #pragma mark - Grouping queries by source id
 
-static int registered_count = 0;
 static void
 _groups_register_query (ddb_cover_query_t *query) {
     // find existing group
@@ -1080,8 +1079,6 @@ _groups_register_query (ddb_cover_query_t *query) {
     item->query = query;
     item->next = query_groups[group_index];
     query_groups[group_index] = item;
-
-    registered_count++;
 }
 
 static void
@@ -1117,8 +1114,6 @@ _groups_unregister_query(ddb_cover_query_t *query) {
     }
 
     assert(done);
-
-    registered_count--;
 }
 
 #pragma mark - Ending queries / cleanup / executing callbacks
@@ -1347,7 +1342,7 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
             });
 
             if (cancel_job) {
-                _end_query(query, callback, -1, NULL);
+                callback_and_free_squashed (cover, query);
                 dispatch_semaphore_signal (fetch_semaphore);
                 return;
             }
