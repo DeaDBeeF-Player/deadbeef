@@ -34,17 +34,18 @@ extern DB_functions_t *deadbeef;
 
 #define CACHE_SIZE 50
 
-typedef struct {
+struct covermanager_s {
     ddb_artwork_plugin_t *plugin;
     gobj_cache_t *cache;
     dispatch_queue_t loader_queue;
     char *name_tf;
     char *default_cover_path;
     GdkPixbuf *default_cover;
-}  covermanager_impl_t;
+    gboolean is_terminating;
+};
 
 typedef struct {
-    covermanager_impl_t *impl;
+    covermanager_t *impl;
     dispatch_block_t completion_block;
 } query_userdata_t;
 
@@ -65,7 +66,7 @@ _dispatch_on_main(void (^block)(void)) {
 }
 
 static char *
-_cache_key_for_track (covermanager_impl_t *impl, ddb_playItem_t *track)  {
+_cache_key_for_track (covermanager_t *impl, ddb_playItem_t *track)  {
     ddb_tf_context_t ctx = {
         ._size = sizeof (ddb_tf_context_t),
         .flags = DDB_TF_CONTEXT_NO_DYNAMIC,
@@ -78,7 +79,7 @@ _cache_key_for_track (covermanager_impl_t *impl, ddb_playItem_t *track)  {
 }
 
 static void
-_update_default_cover (covermanager_impl_t *impl) {
+_update_default_cover (covermanager_t *impl) {
     if (impl->plugin == NULL) {
         return;
     }
@@ -105,8 +106,8 @@ _update_default_cover (covermanager_impl_t *impl) {
 }
 
 static void
-_settings_did_change_for_track(covermanager_t manager, ddb_playItem_t *track) {
-    covermanager_impl_t *impl = manager;
+_settings_did_change_for_track(covermanager_t *manager, ddb_playItem_t *track) {
+    covermanager_t *impl = manager;
     if (track == NULL) {
         _update_default_cover (impl);
         gobj_cache_remove_all(impl->cache);
@@ -120,7 +121,7 @@ _settings_did_change_for_track(covermanager_t manager, ddb_playItem_t *track) {
 
 static void
 _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
-    covermanager_t manager = user_data;
+    covermanager_t *manager = user_data;
 
     _dispatch_on_main(^{
         if (event == DDB_ARTWORK_SETTINGS_DID_CHANGE) {
@@ -130,7 +131,7 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
 }
 
 static GdkPixbuf *
-_load_image_from_cover(covermanager_impl_t *impl, ddb_cover_info_t *cover) {
+_load_image_from_cover(covermanager_t *impl, ddb_cover_info_t *cover) {
     GdkPixbuf *img = NULL;
 
     if (cover && cover->blob) {
@@ -154,19 +155,41 @@ _load_image_from_cover(covermanager_impl_t *impl, ddb_cover_info_t *cover) {
 }
 
 static void
-_add_cover_for_track(covermanager_impl_t *impl, ddb_playItem_t *track, GdkPixbuf *img) {
+_add_cover_for_track(covermanager_t *impl, ddb_playItem_t *track, GdkPixbuf *img) {
     char *key = _cache_key_for_track(impl, track);
     gobj_cache_set(impl->cache, key, G_OBJECT(img));
     free (key);
 }
 
+static void
+_cleanup_query (ddb_cover_query_t *query) {
+    query_userdata_t *user_data = query->user_data;
+    void (^completionBlock)(GdkPixbuf *) = (void (^)(GdkPixbuf *))user_data->completion_block;
+    Block_release(completionBlock);
+    free (user_data);
+
+    // Free the query -- it's fast, so it's OK to free it on main queue
+    deadbeef->pl_item_unref (query->track);
+    free (query);
+}
 
 static void
 _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
     query_userdata_t *user_data = query->user_data;
-    covermanager_impl_t *impl = user_data->impl;
+    covermanager_t *impl = user_data->impl;
+
+    if (impl->is_terminating) {
+        _cleanup_query (query);
+        return;
+    }
+
     // Load the image on background queue
     dispatch_async(impl->loader_queue, ^{
+        if (impl->is_terminating) {
+            _cleanup_query (query);
+            return;
+        }
+
         __block GdkPixbuf *img = NULL;
 
         if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
@@ -175,6 +198,10 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
 
         // Update the UI on main queue
         _dispatch_on_main(^{
+            if (impl->is_terminating) {
+                _cleanup_query (query);
+                return;
+            }
             if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
                 _add_cover_for_track(impl, query->track, img);
             }
@@ -184,7 +211,7 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
                 g_object_unref(img);
                 img = NULL;
             }
-            Block_release(user_data->completion_block);
+            Block_release(completionBlock);
             free (user_data);
 
             // Free the query -- it's fast, so it's OK to free it on main queue
@@ -202,7 +229,7 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
     });
 }
 
-covermanager_t
+covermanager_t *
 covermanager_shared(void) {
     if (_shared == NULL) {
         _shared = covermanager_new ();
@@ -218,9 +245,9 @@ covermanager_shared_free(void) {
     }
 }
 
-covermanager_t
+covermanager_t *
 covermanager_new(void) {
-    covermanager_impl_t *impl = calloc (1, sizeof (covermanager_impl_t));
+    covermanager_t *impl = calloc (1, sizeof (covermanager_t));
 
     impl->plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id("artwork2");
 
@@ -244,8 +271,7 @@ covermanager_new(void) {
 }
 
 void
-covermanager_free (covermanager_t manager) {
-    covermanager_impl_t *impl = manager;
+covermanager_free (covermanager_t *impl) {
     if (impl->plugin != NULL) {
         impl->plugin->remove_listener(_artwork_listener, impl);
         impl->plugin = NULL;
@@ -270,9 +296,7 @@ covermanager_free (covermanager_t manager) {
 }
 
 GdkPixbuf *
-covermanager_cover_for_track(covermanager_t manager, DB_playItem_t *track, int64_t source_id, covermanager_completion_block_t completion_block) {
-    covermanager_impl_t *impl = manager;
-
+covermanager_cover_for_track(covermanager_t *impl, DB_playItem_t *track, int64_t source_id, covermanager_completion_block_t completion_block) {
     if (!impl->plugin) {
         return NULL;
     }
@@ -306,7 +330,7 @@ covermanager_cover_for_track(covermanager_t manager, DB_playItem_t *track, int64
 }
 
 GdkPixbuf *
-covermanager_create_scaled_image (covermanager_t manager, GdkPixbuf *image, GtkAllocation size) {
+covermanager_create_scaled_image (covermanager_t *manager, GdkPixbuf *image, GtkAllocation size) {
     int originalWidth = gdk_pixbuf_get_width(image);
     int originalHeight = gdk_pixbuf_get_height(image);
 
@@ -331,7 +355,7 @@ covermanager_create_scaled_image (covermanager_t manager, GdkPixbuf *image, GtkA
 }
 
 GtkAllocation
-covermanager_desired_size_for_image_size (covermanager_t manager, GtkAllocation image_size, GtkAllocation availableSize) {
+covermanager_desired_size_for_image_size (covermanager_t *manager, GtkAllocation image_size, GtkAllocation availableSize) {
     double scale = min((double)availableSize.width/(double)image_size.width, (double)availableSize.height/(double)image_size.height);
 
     GtkAllocation a = {0};
@@ -339,4 +363,9 @@ covermanager_desired_size_for_image_size (covermanager_t manager, GtkAllocation 
     a.height = image_size.height * scale;
 
     return a;
+}
+
+void
+covermanager_terminate(covermanager_t *manager) {
+    manager->is_terminating = TRUE;
 }

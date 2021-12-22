@@ -277,7 +277,7 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
         return;
     }
 
-    covermanager_t cm = covermanager_shared();
+    covermanager_t *cm = covermanager_shared();
 
     GdkPixbuf *image = NULL;
     if (grp->hasCachedImage) {

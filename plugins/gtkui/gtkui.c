@@ -1406,7 +1406,9 @@ gtkui_mainwin_free(void) {
     deadbeef->unlisten_file_added (fileadded_listener_id);
     deadbeef->unlisten_file_add_beginend (fileadd_beginend_listener_id);
 
-    covermanager_shared_free ();
+    covermanager_terminate(covermanager_shared());
+// FIXME: can't do this, since artwork holds non-refcounted references to it
+//    covermanager_shared_free ();
 
     w_free ();
 

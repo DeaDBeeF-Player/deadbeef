@@ -29,37 +29,40 @@
 #include <dispatch/dispatch.h>
 #include "../../../deadbeef.h"
 
-typedef void *covermanager_t;
+typedef struct covermanager_s covermanager_t;
 
 /// Called by @c covermanager_cover_for_track when the cover is ready.
 /// The @c img argument is not retained, and will be released after the block completes.
 typedef void (^covermanager_completion_block_t)(GdkPixbuf *img);
 
-covermanager_t
+covermanager_t *
 covermanager_shared(void);
 
 void
 covermanager_shared_free(void);
 
-covermanager_t
+covermanager_t *
 covermanager_new(void);
 
 void
-covermanager_free (covermanager_t manager);
+covermanager_free (covermanager_t *manager);
 
 /// Gets the cover from in-memory cache, or initiates asynchronous request to cache it.
 ///
 /// If the cover is immediately available -- it will be returned (retained), and the @c completion_block will not be called.
 /// Otherwise the @c completion_block will be called when the requests completes.
 GdkPixbuf *
-covermanager_cover_for_track(covermanager_t manager, DB_playItem_t *track, int64_t source_id, covermanager_completion_block_t completion_block);
+covermanager_cover_for_track(covermanager_t *manager, DB_playItem_t *track, int64_t source_id, covermanager_completion_block_t completion_block);
 
 /// Create scaled image with specified dimensions. Returns retained object.
 GdkPixbuf *
-covermanager_create_scaled_image (covermanager_t manager, GdkPixbuf *image, GtkAllocation size);
+covermanager_create_scaled_image (covermanager_t *manager, GdkPixbuf *image, GtkAllocation size);
 
 /// Calculate the desired image size for specified available size.
 GtkAllocation
-covermanager_desired_size_for_image_size (covermanager_t manager, GtkAllocation image_size, GtkAllocation availableSize);
+covermanager_desired_size_for_image_size (covermanager_t *manager, GtkAllocation image_size, GtkAllocation availableSize);
+
+void
+covermanager_terminate(covermanager_t *manager);
 
 #endif /* covermanager_h */
