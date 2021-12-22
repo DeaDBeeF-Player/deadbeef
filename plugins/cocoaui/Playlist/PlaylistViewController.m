@@ -960,11 +960,11 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         image = grp->cachedImage;
     }
     else {
-        image = [CoverManager.defaultCoverManager coverForTrack:it sourceId:self.sourceId completionBlock:^(NSImage *img) {
+        image = [CoverManager.shared coverForTrack:it sourceId:self.sourceId completionBlock:^(NSImage *img) {
             if (grp != nil) {
                 if (img != nil) {
-                    NSSize desiredSize = [CoverManager.defaultCoverManager desiredSizeForImageSize:img.size availableSize:availableSize];
-                    grp->cachedImage = [CoverManager.defaultCoverManager createCachedImage:img size:desiredSize];
+                    NSSize desiredSize = [CoverManager.shared desiredSizeForImageSize:img.size availableSize:availableSize];
+                    grp->cachedImage = [CoverManager.shared createCachedImage:img size:desiredSize];
                 }
                 else {
                     grp->cachedImage = nil;
@@ -992,7 +992,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     }
 
     NSSize size = image.size;
-    NSSize desiredSize = [CoverManager.defaultCoverManager desiredSizeForImageSize:size availableSize:availableSize];
+    NSSize desiredSize = [CoverManager.shared desiredSizeForImageSize:size availableSize:availableSize];
 
     if (size.width < size.height) {
         plt_col_info_t *c = &self.columns[(int)col];
@@ -1006,7 +1006,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     drawRect = NSMakeRect(art_x, ypos, desiredSize.width, desiredSize.height);
 
     if (!grp->cachedImage) {
-        grp->cachedImage = [CoverManager.defaultCoverManager createCachedImage:image size:desiredSize];
+        grp->cachedImage = [CoverManager.shared createCachedImage:image size:desiredSize];
         grp->hasCachedImage = YES;
     }
 

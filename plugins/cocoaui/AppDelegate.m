@@ -21,28 +21,26 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import "AppDelegate.h"
-#import "dispatch/dispatch.h"
-#import "DesignModeState.h"
-#import "ReplayGainScannerController.h"
-#import "DdbShared.h"
-#import "NowPlayable.h"
-#import "LogWindowController.h"
-#import "HelpWindowController.h"
-#import "EqualizerWindowController.h"
-#import "NSMenu+ActionItems.h"
-#import "DesignModeDefs.h"
-#include "conf.h"
-#include "streamer.h"
-#include "junklib.h"
+#include <sys/time.h>
 #include "../../common.h"
 #include "../../deadbeef.h"
 #include "../../plugins/artwork/artwork.h"
-#include <sys/time.h>
+#import "AppDelegate.h"
+#import "conf.h"
+#import "CoverManager.h"
+#import "DdbShared.h"
+#import "DesignModeDefs.h"
+#import "DesignModeState.h"
+#import "EqualizerWindowController.h"
+#import "HelpWindowController.h"
+#import "junklib.h"
+#import "LogWindowController.h"
+#import "NowPlayable.h"
+#import "NSMenu+ActionItems.h"
+#import "ReplayGainScannerController.h"
+#import "streamer.h"
 
 extern DB_functions_t *deadbeef;
-
-extern BOOL g_CanQuit;
 
 AppDelegate *g_appDelegate;
 
@@ -240,10 +238,6 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
-    if (g_CanQuit) {
-        return NSTerminateNow;
-    }
-
     if (deadbeef->have_background_jobs ()) {
         NSAlert *alert = [NSAlert new];
         alert.messageText = @"Do you really want to quit now?";
@@ -282,6 +276,7 @@ main_cleanup_and_quit (void);
         [DesignModeState freeSharedInstance];
     }
     self.mediaLibraryManager = nil;
+    [CoverManager freeSharedInstance];
     main_cleanup_and_quit();
 }
 

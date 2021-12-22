@@ -56,19 +56,23 @@ static CoverManager *g_DefaultCoverManager = nil;
 
 @implementation CoverManager
 
++ (CoverManager *)shared {
+    if (!g_DefaultCoverManager) {
+        g_DefaultCoverManager = [CoverManager new];
+    }
+    return g_DefaultCoverManager;
+}
+
++ (void)freeSharedInstance {
+    g_DefaultCoverManager = nil;
+}
+
 - (void)dealloc {
     if (_artwork_plugin) {
         _artwork_plugin->remove_listener (_artwork_listener, (__bridge void *)(self));
     }
     deadbeef->tf_free (_name_tf);
     _name_tf = NULL;
-}
-
-+ (CoverManager *)defaultCoverManager {
-    if (!g_DefaultCoverManager) {
-        g_DefaultCoverManager = [CoverManager new];
-    }
-    return g_DefaultCoverManager;
 }
 
 static void
@@ -172,7 +176,7 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
 static void
 cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
     // Load the image on background queue
-    CoverManager *cm = CoverManager.defaultCoverManager;
+    CoverManager *cm = CoverManager.shared;
     dispatch_async(cm.loaderQueue, ^{
         NSImage *img;
 

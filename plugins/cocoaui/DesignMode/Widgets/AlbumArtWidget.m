@@ -132,13 +132,13 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
                 NSImageView *imageView = self.imageView;
                 NSInteger currentIndex = self.requestIndex++;
-                NSImage *image = [CoverManager.defaultCoverManager coverForTrack:it sourceId:self.sourceId completionBlock:^(NSImage *img) {
+                NSImage *image = [CoverManager.shared coverForTrack:it sourceId:self.sourceId completionBlock:^(NSImage *img) {
                     if (currentIndex != self.requestIndex-1) {
                         return;
                     }
                     if (img != nil) {
-                        NSSize desiredSize = [CoverManager.defaultCoverManager desiredSizeForImageSize:img.size availableSize:availableSize];
-                        imageView.image = [CoverManager.defaultCoverManager createCachedImage:img size:desiredSize];
+                        NSSize desiredSize = [CoverManager.shared desiredSizeForImageSize:img.size availableSize:availableSize];
+                        imageView.image = [CoverManager.shared createCachedImage:img size:desiredSize];
                     }
                     else {
                         imageView.image = nil;
@@ -146,8 +146,8 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                 }];
 
                 if (image != nil) {
-                    NSSize desiredSize = [CoverManager.defaultCoverManager desiredSizeForImageSize:image.size availableSize:availableSize];
-                    imageView.image = [CoverManager.defaultCoverManager createCachedImage:image size:desiredSize];
+                    NSSize desiredSize = [CoverManager.shared desiredSizeForImageSize:image.size availableSize:availableSize];
+                    imageView.image = [CoverManager.shared createCachedImage:image size:desiredSize];
                 }
             }
 
