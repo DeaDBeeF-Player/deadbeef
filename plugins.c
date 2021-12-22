@@ -24,8 +24,10 @@
 
   Alexey Yakovenko waker@users.sourceforge.net
 */
+#include <Block.h>
 #include <ctype.h>
 #include <dirent.h>
+#include <dispatch/dispatch.h>
 #include <dlfcn.h>
 #include <assert.h>
 #include <stdio.h>
@@ -1298,14 +1300,26 @@ plug_disconnect_all (void) {
     }
 }
 
-void
-plug_unload_all (void) {
-    action_set_playlist (NULL);
-    trace ("plug_unload_all\n");
-    plugin_t *p;
-    for (p = plugins; p; p = p->next) {
-        if (p->plugin->stop) {
-            trace ("stopping %s...\n", p->plugin->name);
+static void
+_plug_unload_stop_complete (void);
+
+static int _async_stop_count = 0;
+static void (^_async_stop_completion_block)(void);
+
+static void
+_handle_async_stop (void) {
+    _async_stop_count -= 1;
+    if (_async_stop_count == 0) {
+        _plug_unload_stop_complete();
+    }
+}
+
+static void
+_plug_unload_stop_complete (void) {
+    // Stop the normal plugins with synchronous stop
+    for (plugin_t *p = plugins; p; p = p->next) {
+        if (p->plugin->stop && !(p->plugin->flags & DDB_PLUGIN_FLAG_ASYNC_STOP)) {
+            trace ("Stopping %s...\n", p->plugin->name);
             fflush (stderr);
 #if HAVE_COCOAUI
             if (p->plugin->type == DB_PLUGIN_GUI) {
@@ -1315,7 +1329,7 @@ plug_unload_all (void) {
             p->plugin->stop ();
         }
     }
-    trace ("stopped all plugins\n");
+
     while (plugins) {
         plugin_t *next = plugins->next;
         if (plugins->handle) {
@@ -1341,11 +1355,35 @@ plug_unload_all (void) {
     output_plugin = NULL;
     memset (g_playlist_plugins, 0, sizeof (g_playlist_plugins));
 
-    trace ("all plugins had been unloaded\n");
+    trace ("All plugins had been unloaded\n");
     if (background_jobs_mutex) {
         mutex_free (background_jobs_mutex);
         background_jobs_mutex = 0;
     }
+    _async_stop_completion_block();
+    Block_release(_async_stop_completion_block);
+    _async_stop_completion_block = NULL;
+}
+
+void
+plug_unload_all (void(^completion_block)(void)) {
+    _async_stop_completion_block = Block_copy(completion_block);
+    action_set_playlist (NULL);
+    trace ("plug_unload_all\n");
+    trace ("Waiting for async plugins to finish...\n");
+    _async_stop_count = 1;
+    for (plugin_t *p = plugins; p; p = p->next) {
+        if ((p->plugin->flags & DDB_PLUGIN_FLAG_ASYNC_STOP) && p->plugin->command) {
+            _async_stop_count += 1;
+            if (0 > p->plugin->command(DDB_COMMAND_PLUGIN_ASYNC_STOP, ^{
+                trace ("Stopped %s...\n", p->plugin->name);
+                _handle_async_stop();
+            })) {
+                _async_stop_count -= 1;
+            }
+        }
+    }
+    _handle_async_stop();
 }
 
 void

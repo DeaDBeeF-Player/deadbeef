@@ -1772,6 +1772,21 @@ enum {
     // Tells that the plugin implements ddb_decoder2_t interface
     DDB_PLUGIN_FLAG_IMPLEMENTS_DECODER2 = 4,
 #endif
+
+#if (DDB_API_LEVEL >= 15)
+    DDB_PLUGIN_FLAG_ASYNC_STOP = 8,
+#endif
+};
+#endif
+
+#if (DDB_API_LEVEL >= 15)
+/// Reserved command IDs, usable with @c plugin.command method.
+/// The commands with numbers 1000 and up are reserved for internal use.
+enum {
+    // Stop plugin asynchronously.
+    // The plugin is expected to handle this command, if it has the flag @c DDB_PLUGIN_FLAG_ASYNC_STOP.
+    // The command 2nd argument is a void (^completion_block)(void).
+    DDB_COMMAND_PLUGIN_ASYNC_STOP = 1000,
 };
 #endif
 

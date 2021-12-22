@@ -1637,66 +1637,78 @@ artwork_get_actions (DB_playItem_t *it) {
 }
 
 static int
-artwork_plugin_stop (void) {
+artwork_plugin_stop (void (^completion_block)(void)) {
     queue_clear ();
 
     // lock semaphore
     for (int i = 0; i < FETCH_CONCURRENT_LIMIT; i++) {
         dispatch_semaphore_wait(fetch_semaphore, DISPATCH_TIME_FOREVER);
     }
-    dispatch_release(fetch_queue);
-    fetch_queue = NULL;
-    dispatch_release(process_queue);
-    process_queue = NULL;
-    dispatch_release(sync_queue);
-    sync_queue = NULL;
+    dispatch_async (process_queue, ^{
+        dispatch_release(fetch_queue);
+        fetch_queue = NULL;
+        dispatch_release(process_queue);
+        process_queue = NULL;
+        dispatch_release(sync_queue);
+        sync_queue = NULL;
 
-    // unlock semaphore
-    for (int i = 0; i < FETCH_CONCURRENT_LIMIT; i++) {
-        dispatch_semaphore_signal (fetch_semaphore);
-    }
-    dispatch_release(fetch_semaphore);
-    fetch_semaphore = NULL;
+        // unlock semaphore
+        for (int i = 0; i < FETCH_CONCURRENT_LIMIT; i++) {
+            dispatch_semaphore_signal (fetch_semaphore);
+        }
+        dispatch_release(fetch_semaphore);
+        fetch_semaphore = NULL;
 
-    cover_cache_free ();
+        cover_cache_free ();
 
-    cover_info_cleanup();
+        cover_info_cleanup();
 
-    free (save_to_music_folders_filename);
-    save_to_music_folders_filename = NULL;
-    free (artwork_filemask);
-    artwork_filemask = NULL;
-    free (artwork_folders);
-    artwork_folders = NULL;
+        free (save_to_music_folders_filename);
+        save_to_music_folders_filename = NULL;
+        free (artwork_filemask);
+        artwork_filemask = NULL;
+        free (artwork_folders);
+        artwork_folders = NULL;
 
-    if (album_tf) {
-        deadbeef->tf_free (album_tf);
-        album_tf = NULL;
-    }
+        if (album_tf) {
+            deadbeef->tf_free (album_tf);
+            album_tf = NULL;
+        }
 
-    if (artist_tf) {
-        deadbeef->tf_free (artist_tf);
-        artist_tf = NULL;
-    }
+        if (artist_tf) {
+            deadbeef->tf_free (artist_tf);
+            artist_tf = NULL;
+        }
 
-    if (title_tf) {
-        deadbeef->tf_free (title_tf);
-        title_tf = NULL;
-    }
+        if (title_tf) {
+            deadbeef->tf_free (title_tf);
+            title_tf = NULL;
+        }
 
-    if (albumartist_tf) {
-        deadbeef->tf_free (albumartist_tf);
-        albumartist_tf = NULL;
-    }
+        if (albumartist_tf) {
+            deadbeef->tf_free (albumartist_tf);
+            albumartist_tf = NULL;
+        }
 
-    if (query_compare_tf) {
-        deadbeef->tf_free (query_compare_tf);
-        query_compare_tf = NULL;
-    }
+        if (query_compare_tf) {
+            deadbeef->tf_free (query_compare_tf);
+            query_compare_tf = NULL;
+        }
 
-    stop_cache_cleaner ();
+        stop_cache_cleaner ();
+
+        completion_block();
+    });
 
     return 0;
+}
+
+static int
+_command(int cmd, void (^block)(void)) {
+    if (cmd == DDB_COMMAND_PLUGIN_ASYNC_STOP) {
+        return artwork_plugin_stop(block);
+    }
+    return -1;
 }
 
 static int
@@ -1751,6 +1763,7 @@ ddb_artwork_plugin_t plugin = {
     .plugin.plugin.api_vminor = DB_API_VERSION_MINOR,
     .plugin.plugin.version_major = DDB_ARTWORK_MAJOR_VERSION,
     .plugin.plugin.version_minor = DDB_ARTWORK_MINOR_VERSION,
+    .plugin.plugin.flags = DDB_PLUGIN_FLAG_ASYNC_STOP,
     .plugin.plugin.type = DB_PLUGIN_MISC,
     .plugin.plugin.id = "artwork2",
     .plugin.plugin.name = "Album Artwork",
@@ -1778,8 +1791,9 @@ ddb_artwork_plugin_t plugin = {
         "3. This notice may not be removed or altered from any source distribution.\n"
     ,
     .plugin.plugin.website = "http://deadbeef.sf.net",
+    .plugin.plugin.command = (int(*)(int cmd, ...))_command,
     .plugin.plugin.start = artwork_plugin_start,
-    .plugin.plugin.stop = artwork_plugin_stop,
+    // NOTE: stop is handled asynchronously by the command method with DDB_COMMAND_PLUGIN_ASYNC_STOP type
     .plugin.plugin.configdialog = settings_dlg,
     .plugin.plugin.message = artwork_message,
     .plugin.plugin.get_actions = artwork_get_actions,

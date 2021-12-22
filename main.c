@@ -1018,20 +1018,22 @@ main_cleanup_and_quit (void) {
     // and query configuration in background
     // so unload everything 1st before final cleanup
     plug_disconnect_all ();
-    plug_unload_all ();
+    plug_unload_all (^{
+        // at this point we can simply do exit(0), but let's clean up for debugging
+        pl_free (); // may access conf_*
+        conf_free ();
 
-    // at this point we can simply do exit(0), but let's clean up for debugging
-    pl_free (); // may access conf_*
-    conf_free ();
+        trace ("messagepump_free\n");
+        messagepump_free ();
+        trace ("plug_cleanup\n");
+        plug_cleanup ();
+        trace ("logger_free\n");
 
-    trace ("messagepump_free\n");
-    messagepump_free ();
-    trace ("plug_cleanup\n");
-    plug_cleanup ();
-    trace ("logger_free\n");
+        trace ("hej-hej!\n");
+        ddb_logger_free();
 
-    trace ("hej-hej!\n");
-    ddb_logger_free();
+        exit(0);
+    });
 }
 
 static void
@@ -1475,6 +1477,12 @@ main (int argc, char *argv[]) {
     thread_join (mainloop_tid);
 
     main_cleanup_and_quit ();
+
+    // main_cleanup_and_quit will call "exit" after async jobs finish, which may occur on another thread.
+    // Therefore inifinite wait here.
+    for (;;) {
+        usleep(10000000);
+    }
     return 0;
 }
 

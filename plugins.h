@@ -36,7 +36,7 @@ int
 plug_load_all (void);
 
 void
-plug_unload_all (void);
+plug_unload_all (void(^completion_block)(void));
 
 void
 plug_connect_all (void);
