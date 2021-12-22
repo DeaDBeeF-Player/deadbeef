@@ -277,7 +277,6 @@ main_cleanup_and_quit (void);
         [DesignModeState freeSharedInstance];
     }
     self.mediaLibraryManager = nil;
-    [CoverManager freeSharedInstance];
     main_cleanup_and_quit();
     // main_cleanup_and_quit will call "exit" after async jobs finish, which may occur on another thread.
     // Therefore inifinite wait here.

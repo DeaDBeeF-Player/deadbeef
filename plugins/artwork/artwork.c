@@ -61,6 +61,8 @@
 #include "../../strdupa.h"
 #include "wos.h"
 
+// #define DEBUG_COUNTER 1
+
 #ifndef DISPATCH_QUEUE_CONCURRENT
 #define DISPATCH_QUEUE_CONCURRENT NULL
 #endif
@@ -1118,6 +1120,10 @@ _groups_unregister_query(ddb_cover_query_t *query) {
 
 #pragma mark - Ending queries / cleanup / executing callbacks
 
+#if DEBUG_COUNTER
+static int _queued_jobs_counter = 0;
+#endif
+
 static void
 _end_query (ddb_cover_query_t *query, ddb_cover_callback_t callback, int error, ddb_cover_info_t *cover) {
     assert(query);
@@ -1125,6 +1131,10 @@ _end_query (ddb_cover_query_t *query, ddb_cover_callback_t callback, int error, 
         _groups_unregister_query(query);
     });
     callback (error, query, cover);
+#if DEBUG_COUNTER
+    _queued_jobs_counter -= 1;
+    printf ("*** count %d\n", _queued_jobs_counter);
+#endif
 }
 
 static void
@@ -1290,6 +1300,10 @@ _init_cover_metadata(ddb_cover_info_t *cover, ddb_playItem_t *track) {
 
 static void
 cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
+#if DEBUG_COUNTER
+    _queued_jobs_counter += 1;
+    printf ("*** count %d\n", _queued_jobs_counter);
+#endif
     __block int64_t job_idx = 0;
     dispatch_sync(sync_queue, ^{
         job_idx = last_job_idx++;
@@ -1639,6 +1653,7 @@ artwork_get_actions (DB_playItem_t *it) {
 static int
 artwork_plugin_stop (void (^completion_block)(void)) {
     queue_clear ();
+    stop_cache_cleaner ();
 
     // lock semaphore
     for (int i = 0; i < FETCH_CONCURRENT_LIMIT; i++) {
@@ -1649,8 +1664,6 @@ artwork_plugin_stop (void (^completion_block)(void)) {
         fetch_queue = NULL;
         dispatch_release(process_queue);
         process_queue = NULL;
-        dispatch_release(sync_queue);
-        sync_queue = NULL;
 
         // unlock semaphore
         for (int i = 0; i < FETCH_CONCURRENT_LIMIT; i++) {
@@ -1695,8 +1708,8 @@ artwork_plugin_stop (void (^completion_block)(void)) {
             query_compare_tf = NULL;
         }
 
-        stop_cache_cleaner ();
-
+        dispatch_release(sync_queue);
+        sync_queue = NULL;
         completion_block();
     });
 
