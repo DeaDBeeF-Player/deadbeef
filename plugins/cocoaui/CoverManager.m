@@ -25,6 +25,8 @@
 #include "../../deadbeef.h"
 #include "../../plugins/artwork/artwork.h"
 
+#define DEBUG_COUNTER 0
+
 extern DB_functions_t *deadbeef;
 
 static CoverManager *g_DefaultCoverManager = nil;
@@ -51,6 +53,10 @@ static CoverManager *g_DefaultCoverManager = nil;
 @property (nonatomic) NSString *defaultCoverPath;
 @property (nonatomic,readwrite) NSImage *defaultCover;
 @property (nonatomic) char *name_tf;
+
+#if DEBUG_COUNTER
+@property (atomic) int counter;
+#endif
 
 @end
 
@@ -173,21 +179,46 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
     return img;
 }
 
+- (void)cleanupQuery:(ddb_cover_query_t *)query {
+    // just clean the completion blocks and queries -- the artwork plugin will take care of the covers
+    __unused void (^completionBlock)(NSImage *) = (void (^)(NSImage *__strong))CFBridgingRelease(query->user_data);
+    deadbeef->pl_item_unref (query->track);
+    free (query);
+#if DEBUG_COUNTER
+    self.counter -= 1;
+    NSLog (@"*** counter: %d\n", self.counter);
+#endif
+}
+
 static void
 cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
+    CoverManager *self = CoverManager.shared;
+
+    if (self.isTerminating) {
+        [self cleanupQuery:query];
+        return;
+    }
+
     // Load the image on background queue
-    CoverManager *cm = CoverManager.shared;
-    dispatch_async(cm.loaderQueue, ^{
+    dispatch_async(self.loaderQueue, ^{
+        if (self.isTerminating) {
+            [self cleanupQuery:query];
+            return;
+        }
         NSImage *img;
 
         if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
-            img = [cm loadImageFromCover:cover];
+            img = [self loadImageFromCover:cover];
         }
 
         // Update the UI on main queue
         dispatch_async(dispatch_get_main_queue(), ^{
+            if (self.isTerminating) {
+                [self cleanupQuery:query];
+                return;
+            }
             if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
-                [cm addCoverForTrack:query->track withImage:img];
+                [self addCoverForTrack:query->track withImage:img];
             }
             void (^completionBlock)(NSImage *) = (void (^)(NSImage *__strong))CFBridgingRelease(query->user_data);
             completionBlock(img);
@@ -196,10 +227,15 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
             deadbeef->pl_item_unref (query->track);
             free (query);
 
+#if DEBUG_COUNTER
+            self.counter -= 1;
+            NSLog (@"*** counter: %d\n", self.counter);
+#endif
+
             // Release the cover on background queue
             if (cover != NULL) {
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    cm->_artwork_plugin->cover_info_release (cover);
+                    self->_artwork_plugin->cover_info_release (cover);
                 });
             }
         });
@@ -240,6 +276,11 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
     query->source_id = sourceId;
 
     query->user_data = (void *)CFBridgingRetain(completionBlock);
+
+#if DEBUG_COUNTER
+    self.counter += 1;
+    NSLog (@"*** counter: %d\n", self.counter);
+#endif
 
     self.artwork_plugin->cover_get (query, cover_loaded_callback);
 

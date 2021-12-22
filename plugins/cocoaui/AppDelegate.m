@@ -250,6 +250,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
         }
     }
 
+    CoverManager.shared.isTerminating = YES;
     deadbeef->sendmessage(DB_EV_TERMINATE, 0, 0, 0);
     return NSTerminateLater;
 }
