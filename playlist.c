@@ -189,6 +189,10 @@ pl_free (void) {
 
         //fprintf (stderr, "\033[0;31mplt refc %d\033[37;0m\n", playlists_head->refc);
 
+        if (_playlists_head->refc > 1) {
+            fprintf (stderr, "\033[0;31mWARNING: PLAYLIST %p %s has refc=%d at delete time\033[37;0m\n", _playlists_head, _playlists_head->title, _playlists_head->refc);
+        }
+
         plt_remove (0);
     }
     _plt_loading = 0;
