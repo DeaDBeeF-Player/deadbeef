@@ -59,7 +59,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)updateSelectedRow {
     int curr = deadbeef->plt_get_curr_idx();
-    [self.tableView selectRow:curr byExtendingSelection:NO];
+    [self.tableView selectRowIndexes:[[NSIndexSet alloc] initWithIndex:curr] byExtendingSelection:NO];
 }
 
 - (void)reloadData {
