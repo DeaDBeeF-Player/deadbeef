@@ -166,6 +166,7 @@ typedef struct {
 
     intptr_t mutex;
 
+    gboolean is_listening;
     ddb_analyzer_t analyzer;
     ddb_analyzer_draw_data_t draw_data;
     ddb_waveformat_t fmt;
@@ -2557,7 +2558,6 @@ w_spectrum_draw_cb (void *data) {
     return TRUE;
 }
 
-
 static void
 spectrum_audio_listener (void *ctx, const ddb_audio_data_t *data) {
     w_spectrum_t *w = ctx;
@@ -2575,21 +2575,21 @@ spectrum_audio_listener (void *ctx, const ddb_audio_data_t *data) {
 }
 
 static void
-_spectrum_run (ddb_gtkui_widget_t *w) {
-    w_spectrum_t *s = (w_spectrum_t *)w;
-    if (s->drawtimer > 0) {
-        return;
+_spectrum_update_listening(w_spectrum_t *w) {
+    gboolean is_visible = gtk_widget_get_mapped(w->drawarea);
+    if (w->is_listening && !is_visible) {
+        deadbeef->vis_spectrum_unlisten (w);
+        w->is_listening = FALSE;
     }
-    s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
+    else if (!w->is_listening && is_visible) {
+        deadbeef->vis_spectrum_listen2(w, spectrum_audio_listener);
+        w->is_listening = TRUE;
+    }
 }
 
 static void
-_spectrum_stop (ddb_gtkui_widget_t *w) {
-    w_spectrum_t *s = (w_spectrum_t *)w;
-    if (s->drawtimer > 0) {
-        g_source_remove (s->drawtimer);
-        s->drawtimer = 0;
-    }
+_spectrum_unmap(GtkWidget* self, gpointer user_data) {
+    _spectrum_update_listening(user_data);
 }
 
 static void
@@ -2614,6 +2614,8 @@ _spectrum_update_preferences (w_spectrum_t *spectrum) {
 static gboolean
 spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     w_spectrum_t *w = user_data;
+
+    _spectrum_update_listening (w);
 
     cairo_set_source_rgb (cr, 0, 0, 0);
     cairo_paint (cr);
@@ -2681,36 +2683,7 @@ w_spectrum_init (ddb_gtkui_widget_t *w) {
         g_source_remove (s->drawtimer);
         s->drawtimer = 0;
     }
-    ddb_playback_state_t playback_state = deadbeef->get_output ()->state ();
-
-    if (playback_state == DDB_PLAYBACK_STATE_PLAYING) { 
-        _spectrum_run (w);
-    }
-}
-
-static int
-w_spectrum_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
-    switch (id) {
-    case DB_EV_SONGCHANGED: {
-            ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
-            if (!ev->to) {
-                _spectrum_stop (w);
-            }
-        }
-        break;
-    case DB_EV_SONGSTARTED:
-        _spectrum_run (w);
-        break;
-    case DB_EV_PAUSED:
-        if (p1) {
-            _spectrum_stop (w);
-        }
-        else {
-            _spectrum_run (w);
-        }
-        break;
-    }
-    return 0;
+    s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
 }
 
 ddb_gtkui_widget_t *
@@ -2721,7 +2694,6 @@ w_spectrum_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.init = w_spectrum_init;
     w->base.destroy  = w_spectrum_destroy;
-    w->base.message = w_spectrum_message;
     w->drawarea = gtk_drawing_area_new ();
     gtk_widget_show (w->drawarea);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
@@ -2730,6 +2702,9 @@ w_spectrum_create (void) {
 #else
     g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (spectrum_draw), w);
 #endif
+
+    g_signal_connect((gpointer)w->drawarea, "unmap", G_CALLBACK(_spectrum_unmap), w);
+
     w_override_signals (w->base.widget, w);
 
     w->input_data.fmt = &w->fmt;
@@ -2746,7 +2721,7 @@ w_spectrum_create (void) {
 
     w->mutex = deadbeef->mutex_create ();
 
-    deadbeef->vis_spectrum_listen2 (w, spectrum_audio_listener);
+    _spectrum_update_listening(w);
     return (ddb_gtkui_widget_t *)w;
 }
 
