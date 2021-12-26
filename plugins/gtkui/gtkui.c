@@ -224,6 +224,9 @@ update_songinfo (gpointer unused) {
     if (track) {
         deadbeef->pl_item_unref (track);
     }
+
+    deadbeef->plt_unref (ctx.plt);
+
     return FALSE;
 }
 
