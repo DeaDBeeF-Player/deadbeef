@@ -990,26 +990,10 @@ init_widget_layout (void) {
 
     // load layout
     // config var name is defined in DDB_GTKUI_CONF_LAYOUT
-    // gtkui.layout: 0.6.0 and 0.6.1
     // gtkui.layout.major.minor.point: later versions
 
     char layout[20000];
-    deadbeef->conf_get_str (DDB_GTKUI_CONF_LAYOUT, "-", layout, sizeof (layout));
-    if (!strcmp (layout, "-")) {
-        // upgrade from 0.6.0 to 0.6.2
-        char layout_060[20000];
-        deadbeef->conf_get_str ("gtkui.layout", "-", layout_060, sizeof (layout_060));
-        if (!strcmp (layout_060, "-")) {
-            // new setup
-            strcpy (layout, gtkui_def_layout);
-        }
-        else {
-            // upgrade with top bar
-            snprintf (layout, sizeof (layout), "vbox expand=\"0 1\" fill=\"1 1\" homogeneous=0 {hbox expand=\"0 1 0\" fill=\"1 1 1\" homogeneous=0 {playtb {} seekbar {} volumebar {} } %s }", layout_060);
-            deadbeef->conf_set_str (DDB_GTKUI_CONF_LAYOUT, layout);
-            deadbeef->conf_save ();
-        }
-    }
+    deadbeef->conf_get_str (DDB_GTKUI_CONF_LAYOUT, gtkui_def_layout, layout, sizeof (layout));
 
     ddb_gtkui_widget_t *w = NULL;
     w_create_from_string (layout, &w);
