@@ -29,6 +29,7 @@
 #include <sys/prctl.h>
 #endif
 #include <gtk/gtk.h>
+#include <jansson.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -979,7 +980,137 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
 }
 
-static const char gtkui_def_layout[] = "vbox expand=\"0 1\" fill=\"1 1\" homogeneous=0 {hbox expand=\"0 1 0\" fill=\"1 1 1\" homogeneous=0 {playtb {} seekbar {} volumebar {} } tabbed_playlist hideheaders=0 {} } ";
+static json_t *
+_convert_062_layout_to_json (const char **script) {
+    const char *s = *script;
+
+    json_t *node = NULL;
+    json_t *type = NULL;
+    json_t *params = NULL;
+    json_t *children = NULL;
+
+    char t[MAX_TOKEN];
+    s = gettoken (s, t);
+    if (!s) {
+        goto error;
+    }
+
+    type = json_string(t);
+
+    // load widget params
+    const char *params_begin = s;
+    for (;;) {
+        s = gettoken_ext (s, t, "={}();");
+        if (!s) {
+            goto error;
+        }
+        if (!strcmp (t, "{")) {
+            break;
+        }
+        // match '='
+        char eq[MAX_TOKEN];
+        s = gettoken_ext (s, eq, "={}();");
+        if (!s || strcmp (eq, "=")) {
+            goto error;
+        }
+        s = gettoken_ext (s, eq, "={}();");
+        if (!s) {
+            goto error;
+        }
+    }
+
+    // trim
+    while (*params_begin == ' ') {
+        params_begin++;
+    }
+
+    const char *params_end = s - 1;
+
+    while (params_end > params_begin && *(params_end-1) == ' ') {
+        params_end--;
+    }
+
+    if (params_end > params_begin) {
+        char *params_str = malloc (params_end - params_begin + 1);
+        memcpy (params_str, params_begin, params_end - params_begin);
+        params_str[params_end - params_begin] = 0;
+        params = json_string (params_str);
+        free (params_str);
+    }
+
+    if (strcmp (t, "{")) {
+        goto error;
+    }
+    for (;;) {
+        const char *save = s;
+        s = gettoken (s, t);
+        if (!s) {
+            goto error;
+        }
+
+        if (!strcmp (t, "}")) {
+            break;
+        }
+
+        s = save;
+
+        json_t *child = _convert_062_layout_to_json (&s);
+        if (!child) {
+            goto error;
+        }
+
+        if (children == NULL) {
+            children = json_array();
+        }
+
+        json_array_append(children, child);
+        json_decref(child);
+        child = NULL;
+    }
+
+    node = json_object();
+    json_object_set(node, "type", type);
+    if (params != NULL) {
+        json_object_set(node, "legacy_params", params);
+    }
+    if (children != NULL) {
+        json_object_set(node, "children", children);
+    }
+
+    *script = s;
+
+    json_decref(type);
+    type = NULL;
+    if (params != NULL) {
+        json_decref(params);
+        params = NULL;
+    }
+    if (children != NULL) {
+        json_decref(children);
+        children = NULL;
+    }
+
+    return node;
+
+error:
+    if (node != NULL) {
+        json_delete(node);
+        node = NULL;
+    }
+    if (type != NULL) {
+        json_delete(type);
+        type = NULL;
+    }
+    if (params != NULL) {
+        json_delete(params);
+        params = NULL;
+    }
+    if (children != NULL) {
+        json_delete(children);
+        children = NULL;
+    }
+    return NULL;
+}
 
 static void
 init_widget_layout (void) {
@@ -992,19 +1123,63 @@ init_widget_layout (void) {
     // config var name is defined in DDB_GTKUI_CONF_LAYOUT
     // gtkui.layout.major.minor.point: later versions
 
-    char layout[20000];
-    deadbeef->conf_get_str (DDB_GTKUI_CONF_LAYOUT, gtkui_def_layout, layout, sizeof (layout));
+    static const char *gtkui_def_layout = "{\"type\":\"vbox\",\"legacy_params\":\"expand=\\\"0 1\\\" fill=\\\"1 1\\\" homogeneous=0\",\"children\":[{\"type\":\"hbox\",\"legacy_params\":\"expand=\\\"0 1 0\\\" fill=\\\"1 1 1\\\" homogeneous=0\",\"children\":[{\"type\":\"playtb\"},{\"type\":\"seekbar\"},{\"type\":\"volumebar\",\"legacy_params\":\"scale=0\"}]},{\"type\":\"tabbed_playlist\",\"legacy_params\":\"hideheaders=0\"}]}";
 
-    ddb_gtkui_widget_t *w = NULL;
-    w_create_from_string (layout, &w);
-    if (!w) {
-        ddb_gtkui_widget_t *plt = w_create ("tabbed_playlist");
-        w_append (rootwidget, plt);
-        gtk_widget_show (plt->widget);
+    json_t *layout = NULL;
+
+    char *layout_json = NULL;
+
+    deadbeef->conf_lock();
+    const char *layout_json_conf = deadbeef->conf_get_str_fast(DDB_GTKUI_CONF_LAYOUT, NULL);
+    if (layout_json_conf != NULL) {
+        layout_json = strdup (layout_json_conf);
     }
     else {
-        w_append (rootwidget, w);
+        // migrate from 0.6.2 layout format
+        const char *layout_062 = deadbeef->conf_get_str_fast("gtkui.layout.0.6.2", NULL);
+        if (layout_062 != NULL) {
+            const char *script = layout_062;
+            layout = _convert_062_layout_to_json(&script);
+
+            if (layout != NULL) {
+                char * str = json_dumps(layout, JSON_COMPACT);
+                deadbeef->conf_set_str(DDB_GTKUI_CONF_LAYOUT, str);
+                layout_json = str;
+                deadbeef->conf_save();
+            }
+        }
     }
+    deadbeef->conf_unlock();
+
+    if (layout_json != NULL) {
+        layout = json_loads(layout_json, 0, NULL);
+        free (layout_json);
+        layout_json = NULL;
+    }
+
+    gboolean is_default = FALSE;
+
+    if (layout == NULL) {
+        layout = json_loads(gtkui_def_layout, 0, NULL);
+        is_default = TRUE;
+    }
+
+    ddb_gtkui_widget_t *w = NULL;
+    w_create_from_json (layout, &w);
+    json_delete(layout);
+    layout = NULL;
+
+    if (w == NULL && !is_default) {
+        layout = json_loads(gtkui_def_layout, 0, NULL);
+        w_create_from_json (layout, &w);
+        json_delete(layout);
+        layout = NULL;
+    }
+
+    if (w == NULL) {
+        abort(); // could not recover
+    }
+    w_append (rootwidget, w);
 }
 
 static DB_plugin_t *supereq_plugin;

@@ -82,7 +82,7 @@ typedef void GtkWidget;
 
 #if (DDB_GTKUI_API_LEVEL >= 201)
 // added in API 2.1 (deadbeef-0.6.2)
-#define DDB_GTKUI_CONF_LAYOUT "gtkui.layout.0.6.2"
+#define DDB_GTKUI_CONF_LAYOUT "gtkui.layout.1.9.0"
 #endif
 
 // this flag tells that the widget should be added to h/vboxes with expand=FALSE

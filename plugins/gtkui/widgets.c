@@ -23,6 +23,7 @@
 
 #include <assert.h>
 #include <gtk/gtk.h>
+#include <jansson.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -519,14 +520,31 @@ w_unknown_create (const char *type) {
     return (ddb_gtkui_widget_t *)w;
 }
 
-const char *
-w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
-    char t[MAX_TOKEN];
-    s = gettoken (s, t);
-    if (!s) {
-        return NULL;
+int
+w_create_from_json (json_t *node, ddb_gtkui_widget_t **parent) {
+    json_t *node_type = NULL;
+    json_t *node_legacy_params = NULL;
+    json_t *node_children = NULL;
+    int err = -1;
+
+    node_type = json_object_get(node, "type");
+    if (node_type == NULL || !json_is_string(node_type)) {
+        goto error;
     }
-    char *type = strdupa (t);
+
+    node_legacy_params = json_object_get(node, "legacy_params");
+    if (node_legacy_params != NULL && !json_is_string(node_legacy_params)) {
+        goto error;
+    }
+
+    node_children = json_object_get(node, "children");
+    if (node_children != NULL && !json_is_array(node_children)) {
+        goto error;
+    }
+
+    const char *type = json_string_value(node_type);
+    const char *legacy_params = node_legacy_params ? json_string_value(node_legacy_params) : "";
+
     ddb_gtkui_widget_t *w = w_create (type);
     if (!w) {
         w = w_unknown_create (type);
@@ -540,61 +558,20 @@ w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
 
     // load widget params
     if (w->load) {
-        s = w->load (w, type, s);
-        if (!s) {
-            w_destroy (w);
-            return NULL;
-        }
-    }
-    else {
-        // skip all params (if any)
-        for (;;) {
-            s = gettoken_ext (s, t, "={}();");
-            if (!s) {
-                w_destroy (w);
-                return NULL;
-            }
-            if (!strcmp (t, "{")) {
-                break;
-            }
-            // match '='
-            char eq[MAX_TOKEN];
-            s = gettoken_ext (s, eq, "={}();");
-            if (!s || strcmp (eq, "=")) {
-                w_destroy (w);
-                return NULL;
-            }
-            s = gettoken_ext (s, eq, "={}();");
-            if (!s) {
-                w_destroy (w);
-                return NULL;
-            }
-        }
+        w->load (w, type, legacy_params);
     }
 
-    // we don't need to match '{' here, it's already done above
-    const char *back = s;
-    s = gettoken (s, t);
-    if (!s) {
-        w_destroy (w);
-        return NULL;
-    }
-    for (;;) {
-        if (!strcmp (t, "}")) {
-            break;
+    size_t children_count = json_array_size(node_children);
+    for (int i = 0; i < children_count; i++) {
+        json_t *child = json_array_get(node_children, i);
+
+        if (child == NULL || !json_is_object(child)) {
+            goto error;
         }
 
-        s = w_create_from_string (back, &w);
-        if (!s) {
-            w_destroy (w);
-            return NULL;
-        }
-
-        back = s;
-        s = gettoken (s, t);
-        if (!s) {
-            w_destroy (w);
-            return NULL;
+        int res = w_create_from_json(child, &w);
+        if (res < 0) {
+            goto error;
         }
     }
 
@@ -604,7 +581,12 @@ w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
     else {
         *parent = w;
     }
-    return s;
+
+    err = 0;
+
+error:
+
+    return err;
 }
 
 static ddb_gtkui_widget_t *current_widget;
@@ -643,34 +625,45 @@ w_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
 
 static char paste_buffer[20000];
 
-void
-save_widget_to_string (char *str, int sz, ddb_gtkui_widget_t *w) {
-    // uknown is special case
-    if (!strcmp (w->type, "unknown")) {
-        w->save (w, str, sz);
-        return;
-    }
+static json_t *
+_save_widget_to_json (ddb_gtkui_widget_t *w) {
+    json_t *node = json_object();
 
-    strcat (str, w->type);
+    json_object_set(node, "type", json_string(w->type));
+
     if (w->save) {
-        w->save (w, str, sz);
+        char params[1000] = "";
+        w->save (w, params, sizeof (params));
+        json_object_set(node, "legacy_params", json_string(params));
     }
 
-    strcat (str, " {");
-    for (ddb_gtkui_widget_t *c = w->children; c; c = c->next) {
-        save_widget_to_string (str, sz, c);
+    if (w->children != NULL) {
+        json_t *children = json_array();
+        for (ddb_gtkui_widget_t *c = w->children; c; c = c->next) {
+            json_t *child = _save_widget_to_json(c);
+            json_array_append(children, child);
+        }
+        json_object_set(node, "children", children);
     }
-    strcat (str, "} ");
+
+    return node;
 }
 
 void
 w_save (void) {
-    if (rootwidget == NULL) return;
-    
-    char buf[20000] = "";
-    save_widget_to_string (buf, sizeof (buf), rootwidget->children);
-    deadbeef->conf_set_str (DDB_GTKUI_CONF_LAYOUT, buf);
+    if (rootwidget == NULL) {
+        return;
+    }
+
+    json_t *layout = _save_widget_to_json(rootwidget->children);
+
+    char *layout_str = json_dumps(layout, JSON_COMPACT);
+
+    deadbeef->conf_set_str (DDB_GTKUI_CONF_LAYOUT, layout_str);
     deadbeef->conf_save ();
+
+    free (layout_str);
+    json_delete(layout);
 }
 
 static void
@@ -720,7 +713,13 @@ on_cut_activate (GtkMenuItem *menuitem, gpointer user_data) {
     }
     // save hierarchy to string
     paste_buffer[0] = 0;
-    save_widget_to_string (paste_buffer, sizeof (paste_buffer), ui_widget);
+    json_t *layout = _save_widget_to_json(ui_widget);
+    char *layout_str = json_dumps(layout, JSON_COMPACT);
+    if (strlen(layout_str) < sizeof (paste_buffer)) {
+        strcpy (paste_buffer, layout_str);
+    }
+    free (layout_str);
+    json_delete(layout);
 
     if (parent->replace) {
         parent->replace (parent, ui_widget, w_create ("placeholder"));
@@ -742,7 +741,14 @@ on_copy_activate (GtkMenuItem *menuitem, gpointer user_data) {
     }
     // save hierarchy to string
     paste_buffer[0] = 0;
-    save_widget_to_string (paste_buffer, sizeof (paste_buffer), ui_widget);
+    paste_buffer[0] = 0;
+    json_t *layout = _save_widget_to_json(ui_widget);
+    char *layout_str = json_dumps(layout, JSON_COMPACT);
+    if (strlen(layout_str) < sizeof (paste_buffer)) {
+        strcpy (paste_buffer, layout_str);
+    }
+    free (layout_str);
+    json_delete(layout);
 }
 
 static void
@@ -758,10 +764,15 @@ on_paste_activate (GtkMenuItem *menuitem, gpointer user_data) {
     ui_widget = w;
 
     w = NULL;
-    w_create_from_string (paste_buffer, &w);
-    w_replace (parent, ui_widget, w);
-    w_save ();
-    ui_widget = w;
+
+    json_t *layout = json_loads(paste_buffer, 0, NULL);
+    if (layout != NULL) {
+        w_create_from_json (layout, &w);
+        w_replace (parent, ui_widget, w);
+        w_save ();
+        ui_widget = w;
+        json_delete(layout);
+    }
 }
 
 void
@@ -1621,13 +1632,13 @@ on_move_tab_left_activate (GtkMenuItem *menuitem, gpointer user_data) {
     char *title = NULL;
     for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++) {
         if (i == w->clicked_page) {
-            char buf[20000] = "";
-            save_widget_to_string (buf, sizeof (buf), c);
+            json_t *layout = _save_widget_to_json(c);
             GtkWidget *child = gtk_notebook_get_nth_page (GTK_NOTEBOOK (w->base.widget), i);
             title = strdup (gtk_notebook_get_tab_label_text (GTK_NOTEBOOK (w->base.widget), child));
             w_remove ((ddb_gtkui_widget_t *)w, c);
             w_destroy (c);
-            w_create_from_string (buf, &newchild);
+            w_create_from_json (layout, &newchild);
+            json_delete(layout);
             break;
         }
     }

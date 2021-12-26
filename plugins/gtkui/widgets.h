@@ -26,6 +26,8 @@
 
 #include "gtkui_api.h"
 
+struct json_t;
+
 void
 w_init (void);
 
@@ -59,8 +61,8 @@ w_is_registered (const char *type);
 ddb_gtkui_widget_t *
 w_create (const char *type);
 
-const char *
-w_create_from_string (const char *s, ddb_gtkui_widget_t **parent);
+int
+w_create_from_json (struct json_t *json, ddb_gtkui_widget_t **parent);
 
 void
 w_destroy (ddb_gtkui_widget_t *w);
