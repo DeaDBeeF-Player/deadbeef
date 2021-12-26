@@ -173,6 +173,7 @@ typedef struct {
     ddb_waveformat_t fmt;
     ddb_audio_data_t input_data;
 
+    float grid_color[3];
     float peak_color[3];
     float bar_color[3];
 
@@ -2620,6 +2621,11 @@ _spectrum_update_preferences (w_spectrum_t *spectrum) {
     GdkColor color;
     gtkui_get_vis_custom_base_color(&color);
 
+
+    spectrum->grid_color[0] = 0.5f;
+    spectrum->grid_color[1] = 0.5f;
+    spectrum->grid_color[2] = 0.5f;
+
     // saturate the peaks slightly
     spectrum->peak_color[0] = color.red / 65535.f;
     spectrum->peak_color[1] = color.green / 65535.f;
@@ -2633,6 +2639,56 @@ _spectrum_update_preferences (w_spectrum_t *spectrum) {
     spectrum->bar_color[1] = color.green / 65535.f;
     spectrum->bar_color[2] = color.blue / 65535.f;
 }
+
+static void
+_spectrum_draw_grid(w_spectrum_t *w, cairo_t *cr, GtkAllocation size) {
+    // horz lines, db scale
+    float lower = -floor(w->analyzer.db_lower_bound);
+    for (int db = 10; db < lower; db += 10) {
+        float y = (float)(db / lower) * size.height;
+        if (y >= size.height) {
+            break;
+        }
+
+        cairo_move_to (cr, 0, size.height-y);
+        cairo_line_to (cr, size.width-1, size.height-y);
+    }
+
+    static const double dash[2] = {1, 2};
+    cairo_set_dash(cr, dash, 2, 0);
+    cairo_stroke(cr);
+    cairo_set_dash(cr, NULL, 0, 0);
+
+    // db text
+    cairo_set_font_size(cr, 10);
+
+    for (int db = 10; db < lower; db += 10) {
+        float y = (float)(db / lower) * size.height;
+        if (y >= size.height) {
+            break;
+        }
+
+        char str[20];
+        snprintf (str, sizeof (str), "%d dB", -db);
+
+        cairo_move_to(cr, 0, y + 9);
+        cairo_show_text(cr, str);
+    }
+}
+
+static void
+_spectrum_draw_frequency_labels (w_spectrum_t *w, cairo_t *cr, GtkAllocation size) {
+    // octaves text
+    for (int i = 0; i < w->draw_data.label_freq_count; i++) {
+        if (w->draw_data.label_freq_positions < 0) {
+            continue;
+        }
+
+        cairo_move_to(cr, w->draw_data.label_freq_positions[i], 9);
+        cairo_show_text(cr, w->draw_data.label_freq_texts[i]);
+    }
+}
+
 
 static gboolean
 spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
@@ -2658,7 +2714,9 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         ddb_analyzer_get_draw_data(&w->analyzer, a.width, a.height, &w->draw_data);
     deadbeef->mutex_unlock(w->mutex);
 
-    // TODO: draw grid and labels
+    cairo_set_source_rgb(cr, w->grid_color[0], w->grid_color[1], w->grid_color[2]);
+    _spectrum_draw_grid(w, cr, a);
+    _spectrum_draw_frequency_labels(w, cr, a);
 
     // bars
     ddb_analyzer_draw_bar_t *bar = w->draw_data.bars;
