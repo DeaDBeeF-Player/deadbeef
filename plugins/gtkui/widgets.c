@@ -151,6 +151,7 @@ typedef struct {
 
     intptr_t mutex;
 
+    gboolean is_listening;
     ddb_scope_t scope;
     ddb_scope_draw_data_t draw_data;
 
@@ -2420,12 +2421,31 @@ _scope_update_preferences (w_scope_t *scope) {
     scope->draw_color = (0xff<<24) | (red<<16) | (green<<8) | blue;
 }
 
+static void
+_scope_update_listening(w_scope_t *w) {
+    gboolean is_visible = gtk_widget_get_mapped(w->drawarea);
+    if (w->is_listening && !is_visible) {
+        deadbeef->vis_waveform_unlisten(w);
+        w->is_listening = FALSE;
+    }
+    else if (!w->is_listening && is_visible) {
+        deadbeef->vis_waveform_listen(w, scope_wavedata_listener);
+        w->is_listening = TRUE;
+    }
+}
+
+static void
+_scope_unmap(GtkWidget* self, gpointer user_data) {
+    _scope_update_listening(user_data);
+}
+
 gboolean
 scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
 
     w_scope_t *w = user_data;
+    _scope_update_listening(w);
     _scope_update_preferences (w);
 
     float scale = 1;
@@ -2484,7 +2504,7 @@ scope_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 gboolean
 scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
     cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
-    gboolean res = scope_draw (widget, cr, user_data);
+    gboolean res = scope_draw_cairo (widget, cr, user_data);
     cairo_destroy (cr);
     return res;
 }
@@ -2496,6 +2516,7 @@ w_scope_init (ddb_gtkui_widget_t *w) {
         g_source_remove (s->drawtimer);
         s->drawtimer = 0;
     }
+    _scope_update_listening(s);
     s->drawtimer = g_timeout_add (33, w_scope_draw_cb, w);
 }
 
@@ -2521,8 +2542,10 @@ w_scope_create (void) {
 #else
     g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (scope_draw), w);
 #endif
+
+    g_signal_connect((gpointer)w->drawarea, "unmap", G_CALLBACK(_scope_unmap), w);
+
     w_override_signals (w->base.widget, w);
-    deadbeef->vis_waveform_listen(w, scope_wavedata_listener);
     return (ddb_gtkui_widget_t *)w;
 }
 
