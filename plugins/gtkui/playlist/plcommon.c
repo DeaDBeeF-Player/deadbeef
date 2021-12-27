@@ -103,8 +103,11 @@ find_first_preset_column_type (int type) {
 void
 pl_common_init(void) {
     play16_pixbuf = create_pixbuf("play_16.png");
+    g_object_ref_sink(play16_pixbuf);
     pause16_pixbuf = create_pixbuf("pause_16.png");
+    g_object_ref_sink(pause16_pixbuf);
     buffering16_pixbuf = create_pixbuf("buffering_16.png");
+    g_object_ref_sink(buffering16_pixbuf);
 
     theme_treeview = gtk_tree_view_new();
     gtk_widget_show(theme_treeview);
@@ -125,12 +128,15 @@ void
 pl_common_free (void) {
     if (play16_pixbuf) {
         g_object_unref(play16_pixbuf);
+        play16_pixbuf = NULL;
     }
     if (pause16_pixbuf) {
         g_object_unref(pause16_pixbuf);
+        pause16_pixbuf = NULL;
     }
     if (buffering16_pixbuf) {
         g_object_unref(buffering16_pixbuf);
+        buffering16_pixbuf = NULL;
     }
 }
 
