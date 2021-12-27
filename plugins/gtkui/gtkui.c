@@ -986,8 +986,9 @@ _convert_062_layout_to_json (const char **script) {
 
     json_t *node = NULL;
     json_t *type = NULL;
-    json_t *params = NULL;
+    json_t *legacy_params = NULL;
     json_t *children = NULL;
+    json_t *settings = NULL;
 
     char t[MAX_TOKEN];
     s = gettoken (s, t);
@@ -1007,16 +1008,28 @@ _convert_062_layout_to_json (const char **script) {
         if (!strcmp (t, "{")) {
             break;
         }
+
+        char *key = strdup(t);
+
         // match '='
         char eq[MAX_TOKEN];
         s = gettoken_ext (s, eq, "={}();");
         if (!s || strcmp (eq, "=")) {
+            free(key);
             goto error;
         }
-        s = gettoken_ext (s, eq, "={}();");
+        s = gettoken_ext (s, t, "={}();");
         if (!s) {
+            free(key);
             goto error;
         }
+
+        if (settings == NULL) {
+            settings = json_object();
+        }
+
+        json_object_set (settings, key, json_string(t));
+        free (key);
     }
 
     // trim
@@ -1034,7 +1047,7 @@ _convert_062_layout_to_json (const char **script) {
         char *params_str = malloc (params_end - params_begin + 1);
         memcpy (params_str, params_begin, params_end - params_begin);
         params_str[params_end - params_begin] = 0;
-        params = json_string (params_str);
+        legacy_params = json_string (params_str);
         free (params_str);
     }
 
@@ -1070,8 +1083,11 @@ _convert_062_layout_to_json (const char **script) {
 
     node = json_object();
     json_object_set(node, "type", type);
-    if (params != NULL) {
-        json_object_set(node, "legacy_params", params);
+    if (legacy_params != NULL) {
+        json_object_set(node, "legacy_params", legacy_params);
+    }
+    if (settings != NULL) {
+        json_object_set(node, "settings", settings);
     }
     if (children != NULL) {
         json_object_set(node, "children", children);
@@ -1079,11 +1095,19 @@ _convert_062_layout_to_json (const char **script) {
 
     *script = s;
 
-    json_decref(type);
-    type = NULL;
-    if (params != NULL) {
-        json_decref(params);
-        params = NULL;
+error:
+
+    if (type != NULL) {
+        json_decref(type);
+        type = NULL;
+    }
+    if (legacy_params != NULL) {
+        json_decref(legacy_params);
+        legacy_params = NULL;
+    }
+    if (settings != NULL) {
+        json_decref(settings);
+        settings = NULL;
     }
     if (children != NULL) {
         json_decref(children);
@@ -1091,25 +1115,6 @@ _convert_062_layout_to_json (const char **script) {
     }
 
     return node;
-
-error:
-    if (node != NULL) {
-        json_delete(node);
-        node = NULL;
-    }
-    if (type != NULL) {
-        json_delete(type);
-        type = NULL;
-    }
-    if (params != NULL) {
-        json_delete(params);
-        params = NULL;
-    }
-    if (children != NULL) {
-        json_delete(children);
-        children = NULL;
-    }
-    return NULL;
 }
 
 static void

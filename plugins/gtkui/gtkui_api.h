@@ -124,11 +124,11 @@ typedef struct ddb_gtkui_widget_s {
 
     // save your custom parameters in the string using strncat
     // for example, if you need to write width and height:
-    // strncat (s, "100 200", sz);
+    // strncat (s, "x=100 y=200", sz);
     void (*save) (struct ddb_gtkui_widget_s *w, char *s, int sz) DEPRECATED_205;
 
     // this is to read custom widget parameters, e.g. width and height;
-    // you will be passed a string looking like "100 200 {"
+    // you will be passed a string looking like "x=100 y=200 {"
     // you will need to read params, and return the new pointer, normally it
     // should be pointing to the "{"
     //
