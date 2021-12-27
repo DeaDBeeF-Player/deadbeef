@@ -93,7 +93,9 @@ typedef void GtkWidget;
 #endif
 
 // this flag tells that the widget should be added to h/vboxes with expand=FALSE
-#define DDB_GTKUI_WIDGET_FLAG_NON_EXPANDABLE 0x00000001
+enum {
+    DDB_GTKUI_WIDGET_FLAG_NON_EXPANDABLE = 1<<0,
+};
 
 // widget config string must look like that:
 // type key1=value1 key2=value2... { child widgets }
@@ -176,11 +178,29 @@ typedef struct ddb_gtkui_widget_s {
     struct ddb_gtkui_widget_s *next; // points to next widget in the same container
 } ddb_gtkui_widget_t;
 
+typedef struct {
+    /// Size must be set to the size of this struct
+    size_t _size;
+
+    /// Load settings from a NULL-terminated list of interleaved key and value strings
+    void (*deserialize_from_keyvalues)(ddb_gtkui_widget_t *widget, const char **keyvalues);
+
+    /// Save settings to a NULL-terminated list of interleaved key and value strings.
+    char const **(*serialize_to_keyvalues)(ddb_gtkui_widget_t *widget);
+
+    /// Free the keyvalues list returned by @c serialize_to_keyvalues
+    void (*free_serialized_keyvalues)(ddb_gtkui_widget_t *widget, char const **keyvalues);
+} ddb_gtkui_widget_extended_api_t;
 
 // flags for passing to w_reg_widget
 
-// tell the widget manager, that this widget can only have single instance
-#define DDB_WF_SINGLE_INSTANCE 0x00000001
+enum {
+    /// The widget can only have single instance
+    DDB_WF_SINGLE_INSTANCE = 1<<0,
+    /// This allows to use the ddb_gtkui_widget_extended_api_t API added in GTKUI 2.5.
+    /// Such widget must provide the @c ddb_gtkui_widget_extended_api_t struct immediately after the @c ddb_gtkui_widget_t struct
+    DDB_WF_SUPPORTS_EXTENDED_API = 1<<1,
+};
 
 typedef struct {
     DB_gui_t gui;
@@ -188,12 +208,16 @@ typedef struct {
     // returns main window ptr
     GtkWidget * (*get_mainwin) (void);
 
-    // register new widget type;
-    // type strings are passed at the end of argument list terminated with NULL
-    // for example:
-    // w_reg_widget("My Visualization", 0, my_viz_create, "my_viz_ng", "my_viz", NULL);
-    // this call will register new type "my_viz_ng", with support for another
-    // "my_viz" type string
+    /// Register new widget type.
+    /// @param title Display name of the widget, that will show up in the UI
+    /// @param flags should be a combination of the DDB_WF_* values.
+    /// @param create_func will be called to create the widget.
+    ///
+    /// The remaining arguments are a NULL-terminated list of strings, which determine the valid type names. At list one type name is required. This is the value that will be used for serialization.
+    /// Example:
+    /// w_reg_widget("My Visualization", 0, my_viz_create, "my_viz_ng", "my_viz", NULL);
+    /// this call will register new type "my_viz_ng", with support for another
+    /// "my_viz" type string
     void (*w_reg_widget) (const char *title, uint32_t flags, ddb_gtkui_widget_t *(*create_func) (void), ...);
 
     // unregister existing widget type
@@ -271,6 +295,10 @@ typedef struct {
     void (*copy_selection) (ddb_playlist_t *plt, int ctx);
     void (*cut_selection) (ddb_playlist_t *plt, int ctx);
     void (*paste_selection) (ddb_playlist_t *plt, int ctx);
+#endif
+#if (DDB_GTKUI_API_LEVEL >= 205)
+    /// Get flags passed to @c w_reg_widget for this type.
+    uint32_t (*w_get_type_flags) (const char *type);
 #endif
 } ddb_gtkui_t;
 

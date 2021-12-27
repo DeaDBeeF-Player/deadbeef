@@ -246,15 +246,16 @@ volumebar_draw (GtkWidget *widget, cairo_t *cr) {
     DdbVolumeBarScale scale = DDB_VOLUMEBAR(widget)->priv->scale;
 
     switch (scale) {
-        case DDB_VOLUMEBAR_SCALE_DB:
-            range = -deadbeef->volume_get_min_db ();
-            vol = (range + deadbeef->volume_get_db ()) / range * n;
+    case DDB_VOLUMEBAR_SCALE_LINEAR:
+        vol = (deadbeef->volume_get_amp () ) * n;
         break;
-        case DDB_VOLUMEBAR_SCALE_LINEAR:
-            vol = (deadbeef->volume_get_amp () ) * n;
+    case DDB_VOLUMEBAR_SCALE_CUBIC:
+        vol = (cbrt(deadbeef->volume_get_amp ()) ) * n;
         break;
-        case DDB_VOLUMEBAR_SCALE_CUBIC:
-            vol = (cbrt(deadbeef->volume_get_amp ()) ) * n;
+    case DDB_VOLUMEBAR_SCALE_DB:
+    default:
+        range = -deadbeef->volume_get_min_db ();
+        vol = (range + deadbeef->volume_get_db ()) / range * n;
         break;
     }
 

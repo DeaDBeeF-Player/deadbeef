@@ -63,6 +63,9 @@ w_is_registered (const char *type);
 ddb_gtkui_widget_t *
 w_create (const char *type);
 
+uint32_t
+w_get_type_flags(const char *type);
+
 int
 w_create_from_json (struct json_t *json, ddb_gtkui_widget_t **parent);
 

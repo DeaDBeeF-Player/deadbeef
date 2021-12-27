@@ -42,7 +42,12 @@ typedef struct _DdbVolumeBarClass DdbVolumeBarClass;
 typedef void * DdbVolumeBarIter;
 typedef void * DdbVolumeBarColIter;
 
-typedef enum {DDB_VOLUMEBAR_SCALE_DB, DDB_VOLUMEBAR_SCALE_LINEAR, DDB_VOLUMEBAR_SCALE_CUBIC} DdbVolumeBarScale;
+typedef enum {
+    DDB_VOLUMEBAR_SCALE_DB,
+    DDB_VOLUMEBAR_SCALE_LINEAR,
+    DDB_VOLUMEBAR_SCALE_CUBIC,
+    DDB_VOLUMEBAR_SCALE_COUNT
+} DdbVolumeBarScale;
 
 struct _DdbVolumeBar {
     GtkWidget parent;

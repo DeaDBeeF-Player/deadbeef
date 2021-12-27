@@ -1441,7 +1441,7 @@ gtkui_mainwin_init(void) {
     w_reg_widget (_("Button"), 0, w_button_create, "button", NULL);
     w_reg_widget (_("Seekbar"), 0, w_seekbar_create, "seekbar", NULL);
     w_reg_widget (_("Playback controls"), 0, w_playtb_create, "playtb", NULL);
-    w_reg_widget (_("Volume bar"), 0, w_volumebar_create, "volumebar", NULL);
+    w_reg_widget (_("Volume bar"), DDB_WF_SUPPORTS_EXTENDED_API, w_volumebar_create, "volumebar", NULL);
     w_reg_widget (_("Chiptune voices"), 0, w_ctvoices_create, "ctvoices", NULL);
     w_reg_widget (_("Log viewer"), 0, w_logviewer_create, "logviewer", NULL);
 #if ENABLE_MEDIALIB
@@ -2317,4 +2317,5 @@ ddb_gtkui_t plugin = {
     .copy_selection = clipboard_copy_selection,
     .cut_selection = clipboard_cut_selection,
     .paste_selection = clipboard_paste_selection,
+    .w_get_type_flags = w_get_type_flags,
 };

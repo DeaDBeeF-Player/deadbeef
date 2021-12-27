@@ -219,6 +219,7 @@ typedef struct {
 
 typedef struct {
     ddb_gtkui_widget_t base;
+    ddb_gtkui_widget_extended_api_t exapi;
     GtkWidget *volumebar;
 } w_volumebar_t;
 
@@ -527,7 +528,9 @@ int
 w_create_from_json (json_t *node, ddb_gtkui_widget_t **parent) {
     json_t *node_type = NULL;
     json_t *node_legacy_params = NULL;
+    json_t *node_settings = NULL;
     json_t *node_children = NULL;
+
     int err = -1;
 
     node_type = json_object_get(node, "type");
@@ -537,6 +540,11 @@ w_create_from_json (json_t *node, ddb_gtkui_widget_t **parent) {
 
     node_legacy_params = json_object_get(node, "legacy_params");
     if (node_legacy_params != NULL && !json_is_string(node_legacy_params)) {
+        goto error;
+    }
+
+    node_settings = json_object_get(node, "settings");
+    if (node_settings != NULL && !json_is_object(node_settings)) {
         goto error;
     }
 
@@ -559,8 +567,31 @@ w_create_from_json (json_t *node, ddb_gtkui_widget_t **parent) {
         w_destroy (c);
     }
 
-    // load widget params
-    if (w->load) {
+    uint32_t flags = w_get_type_flags(type);
+
+    if ((flags & DDB_WF_SUPPORTS_EXTENDED_API) && node_settings != NULL) {
+        ddb_gtkui_widget_extended_api_t *api = (ddb_gtkui_widget_extended_api_t *)(w + 1);
+
+        size_t count = json_object_size(node_settings);
+        if (count != 0) {
+            char const ** keyvalues = calloc (count*2+1, sizeof (char *));
+
+            const char *key;
+            json_t *value;
+            int index = 0;
+            json_object_foreach(node_settings, key, value) {
+                keyvalues[index*2+0] = key;
+                keyvalues[index*2+1] = json_string_value(value);
+                index += 1;
+            }
+
+            api->deserialize_from_keyvalues(w, keyvalues);
+
+            free (keyvalues);
+        }
+    }
+    else if (w->load != NULL && legacy_params != NULL) {
+        // load from legacy params
         w->load (w, type, legacy_params);
     }
 
@@ -634,7 +665,24 @@ _save_widget_to_json (ddb_gtkui_widget_t *w) {
 
     json_object_set(node, "type", json_string(w->type));
 
-    if (w->save) {
+    uint32_t flags = w_get_type_flags(w->type);
+
+    if (flags & DDB_WF_SUPPORTS_EXTENDED_API) {
+        ddb_gtkui_widget_extended_api_t *api = (ddb_gtkui_widget_extended_api_t *)(w + 1);
+        char const **keyvalues = api->serialize_to_keyvalues(w);
+
+        if (keyvalues != NULL) {
+            json_t *settings = json_object();
+            for (int i = 0; keyvalues[i]; i += 2) {
+                json_t *value = json_string(keyvalues[i+1]);
+                json_object_set(settings, keyvalues[i], value);
+                json_decref(value);
+            }
+            json_object_set(node, "settings", settings);
+            json_decref(settings);
+        }
+    }
+    else if (w->save) {
         char params[1000] = "";
         w->save (w, params, sizeof (params));
         json_object_set(node, "legacy_params", json_string(params));
@@ -1061,6 +1109,16 @@ w_create (const char *type) {
         }
     }
     return NULL;
+}
+
+uint32_t
+w_get_type_flags(const char *type) {
+    for (w_creator_t *c = w_creators; c; c = c->next) {
+        if (!strcmp (c->type, type)) {
+            return c->flags;
+        }
+    }
+    return 0;
 }
 
 void
@@ -3710,40 +3768,6 @@ w_volumebar_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t
     return 0;
 }
 
-const char *
-w_volumebar_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
-    if (strcmp (type, "volumebar")) {
-        return NULL;
-    }
-
-    w_volumebar_t *vb = (w_volumebar_t *)w;
-
-    int scale=0;
-
-    char key[MAX_TOKEN], val[MAX_TOKEN];
-    for (;;) {
-        get_keyvalue (s,key,val);
-
-        if (!strcmp (key, "scale")) {
-            scale = atoi (val);
-        }
-    }
-
-    ddb_volumebar_set_scale (DDB_VOLUMEBAR (vb->volumebar), (DdbVolumeBarScale)scale);
-
-    return s;
-}
-
-void
-w_volumebar_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
-    w_volumebar_t *vb = (w_volumebar_t *)w;
-    int scale = ddb_volumebar_get_scale (DDB_VOLUMEBAR (vb->volumebar));
-
-    char spos[100];
-    snprintf (spos, sizeof (spos), " scale=%d", scale);
-    strncat (s, spos, sz);
-}
-
 static void
 w_volumebar_dbscale_activate (GtkWidget *item, struct ddb_gtkui_widget_s *w)
 {
@@ -3832,6 +3856,55 @@ on_volumebar_evbox_button_press_event (GtkWidget      *widget,
     return FALSE;
 }
 
+static void
+w_volumebar_deserialize_from_keyvalues(ddb_gtkui_widget_t *base, const char **keyvalues) {
+    w_volumebar_t *vb = (w_volumebar_t *)base;
+    for (int i = 0; keyvalues[i] != NULL; i += 2) {
+        if (!strcmp (keyvalues[i], "scale")) {
+            DdbVolumeBarScale scale = DDB_VOLUMEBAR_SCALE_DB;
+            if (!strcmp (keyvalues[i+1], "linear")) {
+                scale = DDB_VOLUMEBAR_SCALE_LINEAR;
+            }
+            else if (!strcmp (keyvalues[i+1], "cubic")) {
+                scale = DDB_VOLUMEBAR_SCALE_CUBIC;
+            }
+            else {
+                int iscale = atoi(keyvalues[i+1]);
+                if (iscale > 0 && iscale < DDB_VOLUMEBAR_SCALE_COUNT) {
+                    scale = (DdbVolumeBarScale)iscale;
+                }
+            }
+            ddb_volumebar_set_scale (DDB_VOLUMEBAR (vb->volumebar), scale);
+        }
+    }
+}
+
+static char const **
+w_volumebar_serialize_to_keyvalues(ddb_gtkui_widget_t *base) {
+    w_volumebar_t *vb = (w_volumebar_t *)base;
+    DdbVolumeBarScale scale = ddb_volumebar_get_scale (DDB_VOLUMEBAR (vb->volumebar));
+    char const **kv = calloc (3, sizeof (char *));
+    kv[0] = "scale";
+    switch (scale) {
+    case DDB_VOLUMEBAR_SCALE_LINEAR:
+        kv[1] = "linear";
+        break;
+    case DDB_VOLUMEBAR_SCALE_CUBIC:
+        kv[1] = "cubic";
+        break;
+    case DDB_VOLUMEBAR_SCALE_DB:
+    default:
+        kv[1] = "db";
+        break;
+    }
+    return kv;
+}
+
+static void
+w_volumebar_free_serialized_keyvalues(ddb_gtkui_widget_t *w, char const **keyvalues) {
+    free (keyvalues);
+}
+
 ddb_gtkui_widget_t *
 w_volumebar_create (void) {
     w_volumebar_t *w = malloc (sizeof (w_volumebar_t));
@@ -3839,8 +3912,10 @@ w_volumebar_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.message = w_volumebar_message;
     w->base.initmenu = w_volumebar_initmenu;
-    w->base.load = w_volumebar_load;
-    w->base.save = w_volumebar_save;
+    w->exapi.deserialize_from_keyvalues = w_volumebar_deserialize_from_keyvalues;
+    w->exapi.serialize_to_keyvalues = w_volumebar_serialize_to_keyvalues;
+    w->exapi.free_serialized_keyvalues = w_volumebar_free_serialized_keyvalues;
+
     w->volumebar = ddb_volumebar_new ();
 #if GTK_CHECK_VERSION(3,0,0)
     gtk_widget_set_events (GTK_WIDGET (w->base.widget), gtk_widget_get_events (GTK_WIDGET (w->base.widget)) | GDK_SCROLL_MASK);
@@ -4009,3 +4084,4 @@ gboolean
 w_logviewer_is_present(void) {
     return w_logviewer_instancecount > 0;
 }
+
