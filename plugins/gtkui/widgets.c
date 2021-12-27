@@ -150,12 +150,24 @@ typedef struct {
     guint refresh_timeout;
 } w_selproperties_t;
 
+typedef enum {
+    SCOPE_SCALE_AUTO,
+    SCOPE_SCALE_1X,
+    SCOPE_SCALE_2X,
+    SCOPE_SCALE_3X,
+    SCOPE_SCALE_4X,
+} scope_scale_t;
+
 typedef struct {
     ddb_gtkui_widget_t base;
+    ddb_gtkui_widget_extended_api_t exapi;
     GtkWidget *drawarea;
+
     guint drawtimer;
 
     intptr_t mutex;
+
+    scope_scale_t scale;
 
     gboolean is_listening;
     ddb_scope_t scope;
@@ -164,6 +176,23 @@ typedef struct {
     uint32_t draw_color;
 
     cairo_surface_t *surf;
+
+    GtkWidget *menu;
+
+    GtkWidget *mode_multichannel_item;
+    GtkWidget *mode_mono_item;
+
+    GtkWidget *scale_auto_item;
+    GtkWidget *scale_1x_item;
+    GtkWidget *scale_2x_item;
+    GtkWidget *scale_3x_item;
+    GtkWidget *scale_4x_item;
+
+    GtkWidget *fragment_duration_50ms_item;
+    GtkWidget *fragment_duration_100ms_item;
+    GtkWidget *fragment_duration_200ms_item;
+    GtkWidget *fragment_duration_300ms_item;
+    GtkWidget *fragment_duration_500ms_item;
 } w_scope_t;
 
 typedef struct {
@@ -2549,12 +2578,33 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     _scope_update_listening(w);
     _scope_update_preferences (w);
 
-    float scale = 1;
+    float scale_factor;
+    switch (w->scale) {
+    case SCOPE_SCALE_AUTO:
+        scale_factor = 1;
+        break;
+    case SCOPE_SCALE_1X:
+        scale_factor = 1;
+        break;
+    case SCOPE_SCALE_2X:
+        scale_factor = 1/2.f;
+        break;
+    case SCOPE_SCALE_3X:
+        scale_factor = 1/3.f;
+        break;
+    case SCOPE_SCALE_4X:
+        scale_factor = 1/4.f;
+        break;
+    }
+
+    a.width *= scale_factor;
+    a.height *= scale_factor;
 
     deadbeef->mutex_lock (w->mutex);
     if (w->scope.sample_count != 0) {
+
         ddb_scope_tick(&w->scope);
-        ddb_scope_get_draw_data(&w->scope, (int)(a.width * scale), (int)(a.height * scale), 1, &w->draw_data);
+        ddb_scope_get_draw_data(&w->scope, (int)(a.width), (int)(a.height), 1, &w->draw_data);
     }
     deadbeef->mutex_unlock (w->mutex);
 
@@ -2589,9 +2639,10 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     }
     cairo_surface_mark_dirty (w->surf);
     cairo_save (cr);
+    cairo_scale(cr, 1.f/scale_factor, 1.f/scale_factor);
     cairo_set_source_surface (cr, w->surf, 0, 0);
-    cairo_rectangle (cr, 0, 0, a.width, a.height);
-    cairo_fill (cr);
+    cairo_pattern_set_filter(cairo_get_source(cr), CAIRO_FILTER_FAST);
+    cairo_paint(cr);
     cairo_restore (cr);
 
     return FALSE;
@@ -2621,6 +2672,181 @@ w_scope_init (ddb_gtkui_widget_t *w) {
     s->drawtimer = g_timeout_add (33, w_scope_draw_cb, w);
 }
 
+static void
+_scope_menu_update (w_scope_t *s) {
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->mode_mono_item), s->scope.mode == DDB_SCOPE_MONO);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->mode_multichannel_item), s->scope.mode == DDB_SCOPE_MULTICHANNEL);
+
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->fragment_duration_50ms_item),  s->scope.fragment_duration == 50);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->fragment_duration_100ms_item), s->scope.fragment_duration == 100);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->fragment_duration_200ms_item), s->scope.fragment_duration == 200);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->fragment_duration_300ms_item), s->scope.fragment_duration == 300);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->fragment_duration_500ms_item), s->scope.fragment_duration == 500);
+
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->scale_auto_item), s->scale == SCOPE_SCALE_AUTO);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->scale_1x_item),   s->scale == SCOPE_SCALE_1X);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->scale_2x_item),   s->scale == SCOPE_SCALE_2X);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->scale_3x_item),   s->scale == SCOPE_SCALE_3X);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->scale_4x_item),   s->scale == SCOPE_SCALE_4X);
+}
+
+static gboolean
+_scope_button_press (GtkWidget* self, GdkEventButton *event, gpointer user_data) {
+    w_scope_t *s = user_data;
+
+    if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
+        _scope_menu_update(s);
+        gtk_menu_popup_at_pointer (GTK_MENU (s->menu), NULL);
+    }
+    return TRUE;
+}
+
+static void
+_scope_menu_activate (GtkWidget* self, gpointer user_data) {
+    w_scope_t *s = user_data;
+
+    if (self == s->mode_multichannel_item) {
+        s->scope.mode = DDB_SCOPE_MULTICHANNEL;
+    }
+    else if (self == s->mode_mono_item) {
+        s->scope.mode = DDB_SCOPE_MONO;
+    }
+    else if (self == s->scale_auto_item) {
+        s->scale = SCOPE_SCALE_AUTO;
+    }
+    else if (self == s->scale_1x_item) {
+        s->scale = SCOPE_SCALE_1X;
+    }
+    else if (self == s->scale_2x_item) {
+        s->scale = SCOPE_SCALE_2X;
+    }
+    else if (self == s->scale_3x_item) {
+        s->scale = SCOPE_SCALE_3X;
+    }
+    else if (self == s->scale_4x_item) {
+        s->scale = SCOPE_SCALE_4X;
+    }
+    else if (self == s->fragment_duration_50ms_item) {
+        s->scope.fragment_duration = 50;
+    }
+    else if (self == s->fragment_duration_100ms_item) {
+        s->scope.fragment_duration = 100;
+    }
+    else if (self == s->fragment_duration_200ms_item) {
+        s->scope.fragment_duration = 200;
+    }
+    else if (self == s->fragment_duration_300ms_item) {
+        s->scope.fragment_duration = 300;
+    }
+    else if (self == s->fragment_duration_500ms_item) {
+        s->scope.fragment_duration = 500;
+    }
+}
+
+static void
+_scope_deserialize_from_keyvalues (ddb_gtkui_widget_t *widget, const char **keyvalues) {
+    w_scope_t *w = (w_scope_t *)widget;
+    w->scope.mode = DDB_SCOPE_MULTICHANNEL;
+    w->scale = SCOPE_SCALE_AUTO;
+    w->scope.fragment_duration = 300;
+    for (int i = 0; keyvalues[i]; i += 2) {
+        if (!strcmp(keyvalues[i], "renderMode")) {
+            if (!strcmp (keyvalues[i+1], "mono")) {
+                w->scope.mode = DDB_SCOPE_MONO;
+            }
+        }
+        else if (!strcmp (keyvalues[i], "scaleMode")) {
+            if (!strcmp (keyvalues[i+1], "1x")) {
+                w->scale = SCOPE_SCALE_1X;
+            }
+            else if (!strcmp (keyvalues[i+1], "2x")) {
+                w->scale = SCOPE_SCALE_2X;
+            }
+            else if (!strcmp (keyvalues[i+1], "3x")) {
+                w->scale = SCOPE_SCALE_3X;
+            }
+            else if (!strcmp (keyvalues[i+1], "4x")) {
+                w->scale = SCOPE_SCALE_4X;
+            }
+        }
+        else if (!strcmp (keyvalues[i], "fragmentDuration")) {
+            if (!strcmp (keyvalues[i+1], "50")) {
+                w->scope.fragment_duration = 50;
+            }
+            else if (!strcmp (keyvalues[i+1], "100")) {
+                w->scope.fragment_duration = 100;
+            }
+            else if (!strcmp (keyvalues[i+1], "200")) {
+                w->scope.fragment_duration = 200;
+            }
+            else if (!strcmp (keyvalues[i+1], "300")) {
+                w->scope.fragment_duration = 300;
+            }
+            else if (!strcmp (keyvalues[i+1], "500")) {
+                w->scope.fragment_duration = 500;
+            }
+        }
+    }
+}
+
+static char const **
+_scope_serialize_to_keyvalues (ddb_gtkui_widget_t *widget) {
+    w_scope_t *w = (w_scope_t *)widget;
+    char const **keyvalues = calloc (3*2+1, sizeof (char *));
+    keyvalues[0] = "renderMode";
+    switch (w->scope.mode) {
+    case DDB_SCOPE_MONO:
+        keyvalues[1] = "mono";
+        break;
+    case DDB_SCOPE_MULTICHANNEL:
+        keyvalues[1] = "multichannel";
+        break;
+    }
+    keyvalues[2] = "scaleMode";
+    switch (w->scale) {
+    case SCOPE_SCALE_AUTO:
+        keyvalues[3] = "auto";
+        break;
+    case SCOPE_SCALE_1X:
+        keyvalues[3] = "1x";
+        break;
+    case SCOPE_SCALE_2X:
+        keyvalues[3] = "2x";
+        break;
+    case SCOPE_SCALE_3X:
+        keyvalues[3] = "3x";
+        break;
+    case SCOPE_SCALE_4X:
+        keyvalues[3] = "4x";
+        break;
+    }
+    keyvalues[4] = "fragmentDuration";
+    switch (w->scope.fragment_duration) {
+    case 50:
+        keyvalues[5] = "50";
+        break;
+    case 100:
+        keyvalues[5] = "100";
+        break;
+    case 200:
+        keyvalues[5] = "200";
+        break;
+    case 500:
+        keyvalues[5] = "500";
+        break;
+    case 300:
+    default:
+        keyvalues[5] = "300";
+        break;
+    }
+    return keyvalues;
+}
+
+static void
+_scope_free_serialized_keyvalues (ddb_gtkui_widget_t *widget, char const **keyvalues) {
+    free (keyvalues);
+}
+
 ddb_gtkui_widget_t *
 w_scope_create (void) {
     w_scope_t *w = malloc (sizeof (w_scope_t));
@@ -2629,6 +2855,9 @@ w_scope_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.init = w_scope_init;
     w->base.destroy  = w_scope_destroy;
+    w->exapi.deserialize_from_keyvalues = _scope_deserialize_from_keyvalues;
+    w->exapi.serialize_to_keyvalues = _scope_serialize_to_keyvalues;
+    w->exapi.free_serialized_keyvalues = _scope_free_serialized_keyvalues;
     w->drawarea = gtk_drawing_area_new ();
 
     ddb_scope_init(&w->scope);
@@ -2646,7 +2875,96 @@ w_scope_create (void) {
 
     g_signal_connect((gpointer)w->drawarea, "unmap", G_CALLBACK(_scope_unmap), w);
 
+    g_signal_connect ((gpointer)w->base.widget, "button-press-event", G_CALLBACK (_scope_button_press), w);
+
     w_override_signals (w->base.widget, w);
+
+    w->menu = gtk_menu_new();
+
+    GtkWidget *rendering_mode_item = gtk_menu_item_new_with_mnemonic( _("Rendering Mode"));
+    gtk_widget_show(rendering_mode_item);
+    GtkWidget *rendering_mode_menu = gtk_menu_new();
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(rendering_mode_item), rendering_mode_menu);
+
+    w->mode_multichannel_item = gtk_check_menu_item_new_with_mnemonic( _("Multichannel"));
+    gtk_widget_show(w->mode_multichannel_item);
+
+    w->mode_mono_item = gtk_check_menu_item_new_with_mnemonic( _("Mono"));
+    gtk_widget_show(w->mode_mono_item);
+
+    gtk_menu_shell_insert (GTK_MENU_SHELL(rendering_mode_menu), w->mode_multichannel_item, 0);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(rendering_mode_menu), w->mode_mono_item, 1);
+
+    GtkWidget *scale_item = gtk_menu_item_new_with_mnemonic(_("Scale"));
+    gtk_widget_show(scale_item);
+    GtkWidget *scale_menu = gtk_menu_new();
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(scale_item), scale_menu);
+
+    w->scale_auto_item = gtk_check_menu_item_new_with_mnemonic(_("Auto"));
+    gtk_widget_show(w->scale_auto_item);
+    w->scale_1x_item = gtk_check_menu_item_new_with_mnemonic(_("1x"));
+    gtk_widget_show(w->scale_1x_item);
+    w->scale_2x_item = gtk_check_menu_item_new_with_mnemonic(_("2x"));
+    gtk_widget_show(w->scale_2x_item);
+    w->scale_3x_item = gtk_check_menu_item_new_with_mnemonic(_("3x"));
+    gtk_widget_show(w->scale_3x_item);
+    w->scale_4x_item = gtk_check_menu_item_new_with_mnemonic(_("4x"));
+    gtk_widget_show(w->scale_4x_item);
+
+    gtk_menu_shell_insert (GTK_MENU_SHELL(scale_menu), w->scale_auto_item, 0);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(scale_menu), w->scale_1x_item, 1);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(scale_menu), w->scale_2x_item, 2);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(scale_menu), w->scale_3x_item, 3);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(scale_menu), w->scale_4x_item, 4);
+
+    GtkWidget *fragment_duration_item = gtk_menu_item_new_with_mnemonic(_("Fragment Duration"));
+    gtk_widget_show(fragment_duration_item);
+    GtkWidget *fragment_duration_menu = gtk_menu_new();
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(fragment_duration_item), fragment_duration_menu);
+
+    w->fragment_duration_50ms_item = gtk_check_menu_item_new_with_mnemonic(_("50 ms"));
+    gtk_widget_show(w->fragment_duration_50ms_item);
+    w->fragment_duration_100ms_item = gtk_check_menu_item_new_with_mnemonic(_("100 ms"));
+    gtk_widget_show(w->fragment_duration_100ms_item);
+    w->fragment_duration_200ms_item = gtk_check_menu_item_new_with_mnemonic(_("200 ms"));
+    gtk_widget_show(w->fragment_duration_200ms_item);
+    w->fragment_duration_300ms_item = gtk_check_menu_item_new_with_mnemonic(_("300 ms"));
+    gtk_widget_show(w->fragment_duration_300ms_item);
+    w->fragment_duration_500ms_item = gtk_check_menu_item_new_with_mnemonic(_("500 ms"));
+    gtk_widget_show(w->fragment_duration_500ms_item);
+
+    gtk_menu_shell_insert (GTK_MENU_SHELL(fragment_duration_menu), w->fragment_duration_50ms_item, 0);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(fragment_duration_menu), w->fragment_duration_100ms_item, 1);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(fragment_duration_menu), w->fragment_duration_200ms_item, 2);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(fragment_duration_menu), w->fragment_duration_300ms_item, 3);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(fragment_duration_menu), w->fragment_duration_500ms_item, 4);
+
+
+//    GtkWidget *separator_item = gtk_separator_menu_item_new ();
+//    gtk_widget_show(separator_item);
+//
+//    GtkWidget *preferences_item = gtk_menu_item_new_with_mnemonic(_("Preferences"));
+//    gtk_widget_show(preferences_item);
+
+    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), rendering_mode_item, 0);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), scale_item, 1);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), fragment_duration_item, 2);
+//    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), separator_item, 3);
+//    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), preferences_item, 4);
+
+    g_signal_connect((gpointer)w->mode_multichannel_item, "activate", G_CALLBACK(_scope_menu_activate), w);
+    g_signal_connect((gpointer)w->mode_mono_item, "activate", G_CALLBACK(_scope_menu_activate), w);
+    g_signal_connect((gpointer)w->scale_auto_item, "activate", G_CALLBACK(_scope_menu_activate), w);
+    g_signal_connect((gpointer)w->scale_1x_item, "activate", G_CALLBACK(_scope_menu_activate), w);
+    g_signal_connect((gpointer)w->scale_2x_item, "activate", G_CALLBACK(_scope_menu_activate), w);
+    g_signal_connect((gpointer)w->scale_3x_item, "activate", G_CALLBACK(_scope_menu_activate), w);
+    g_signal_connect((gpointer)w->scale_4x_item, "activate", G_CALLBACK(_scope_menu_activate), w);
+    g_signal_connect((gpointer)w->fragment_duration_50ms_item, "activate", G_CALLBACK(_scope_menu_activate), w);
+    g_signal_connect((gpointer)w->fragment_duration_100ms_item, "activate", G_CALLBACK(_scope_menu_activate), w);
+    g_signal_connect((gpointer)w->fragment_duration_200ms_item, "activate", G_CALLBACK(_scope_menu_activate), w);
+    g_signal_connect((gpointer)w->fragment_duration_300ms_item, "activate", G_CALLBACK(_scope_menu_activate), w);
+    g_signal_connect((gpointer)w->fragment_duration_500ms_item, "activate", G_CALLBACK(_scope_menu_activate), w);
+
     return (ddb_gtkui_widget_t *)w;
 }
 
