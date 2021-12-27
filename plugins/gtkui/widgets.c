@@ -22,6 +22,7 @@
 */
 
 #include <assert.h>
+#include <ctype.h>
 #include <gtk/gtk.h>
 #include <jansson.h>
 #include <math.h>
@@ -136,6 +137,7 @@ typedef struct {
 
 typedef struct {
     ddb_gtkui_widget_t base;
+    ddb_gtkui_widget_extended_api_t exapi;
     int clicked_page;
     int active;
     int num_tabs;
@@ -1555,62 +1557,87 @@ w_tabs_destroy (ddb_gtkui_widget_t *w) {
     }
 }
 
-const char *
-w_tabs_load (struct ddb_gtkui_widget_s *widget, const char *type, const char *s) {
-    w_tabs_t *w = (w_tabs_t *)widget;
-    if (strcmp (type, "tabs")) {
-        return NULL;
+
+static gboolean
+_is_tab_title_key (const char *key) {
+    if (strncmp(key, "tab", 3)) {
+        return FALSE;
     }
 
-    char key[MAX_TOKEN], val[MAX_TOKEN];
-    for (;;) {
-        get_keyvalue (s,key,val);
-
-        if (!strcmp (key, "active")) {
-            w->active = atoi (val);
-            continue;
+    key += 3;
+    while (*key) {
+        if (!isdigit(*key)) {
+            return FALSE;
         }
-        if (!strcmp (key, "num_tabs")) {
-            w->num_tabs = atoi (val);
-            w->titles = malloc (w->num_tabs * sizeof (char *));
-            continue;
-        }
-        for (int i = 0; i < w->num_tabs; i++) {
-            char tab_name[100];
-            snprintf (tab_name, sizeof (tab_name), "tab%03d", i);
-            if (!strcmp (key, tab_name)) {
-                w->titles[i] = strdup (val);
-                continue;
-            }
-        }
+        key++;
     }
 
-    return s;
+    return TRUE;
 }
 
-void
-w_tabs_save (struct ddb_gtkui_widget_s *widget, char *s, int sz) {
-    w_tabs_t *w = (w_tabs_t *)widget;
-    int active = gtk_notebook_get_current_page (GTK_NOTEBOOK (w->base.widget));
-    int num_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (w->base.widget));
-    char spos[1000];
-    char *pp = spos;
-    int ss = sizeof (spos);
-    int n;
+static void
+w_tabs_deserialize_from_keyvalues (ddb_gtkui_widget_t *base, char const **keyvalues) {
+    w_tabs_t *w = (w_tabs_t *)base;
 
-    n = snprintf (spos, sizeof (spos), " active=%d num_tabs=%d", active, num_pages);
-    ss -= n;
-    pp += n;
-    for (int i = 0; i < num_pages; i++) {
+    for (int i = 0; keyvalues[i]; i += 2) {
+        if (!strcmp(keyvalues[i], "active")) {
+            w->active = atoi(keyvalues[i+1]);
+        }
+        else if (!strcmp (keyvalues[i], "num_tabs")) {
+            w->num_tabs = atoi (keyvalues[i+1]);
+            w->titles = calloc (w->num_tabs, sizeof (char *));
+        }
+        else if (_is_tab_title_key(keyvalues[i])) {
+            int index = atoi(keyvalues[i]+3);
+            w->titles[index] = strdup (keyvalues[i+1]);
+        }
+    }
+}
+
+static char const **
+w_tabs_serialize_to_keyvalues (ddb_gtkui_widget_t *base) {
+    w_tabs_t *w = (w_tabs_t *)base;
+
+    w->active = gtk_notebook_get_current_page (GTK_NOTEBOOK (w->base.widget));
+    w->num_tabs = gtk_notebook_get_n_pages (GTK_NOTEBOOK (w->base.widget));
+
+    char const **keyvalues = calloc(2 * (2 + w->num_tabs) + 1, sizeof (char *));
+
+    char temp[10];
+
+    keyvalues[0] = "active";
+    snprintf(temp, sizeof(temp), "%d", w->active);
+    keyvalues[1] = strdup(temp);
+    keyvalues[2] = "num_tabs";
+    snprintf(temp, sizeof(temp), "%d", w->num_tabs);
+    keyvalues[3] = strdup(temp);
+
+    for (int i = 0; i < w->num_tabs; i++) {
+        char key[7];
+
         GtkWidget *child = gtk_notebook_get_nth_page (GTK_NOTEBOOK (w->base.widget), i);
         const char *text = gtk_notebook_get_tab_label_text (GTK_NOTEBOOK (w->base.widget), child);
         char *esctext = parser_escape_string (text);
-        n = snprintf (pp, ss, " tab%03d=\"%s\"", i, esctext);
-        free (esctext);
-        ss -= n;
-        pp += n;
+
+        snprintf(key, sizeof (key), "tab%03d", i);
+        keyvalues[4 + i*2 + 0] = strdup(key);
+        keyvalues[4 + i*2 + 1] = esctext;
     }
-    strncat (s, spos, sz);
+    return keyvalues;
+}
+
+
+static void
+w_tabs_free_serialized_keyvalues (ddb_gtkui_widget_t *base, char const **keyvalues) {
+    for (int i = 0; keyvalues[i]; i += 2) {
+        if (i < 4) {
+            free ((char *)keyvalues[i+1]);
+        }
+        else {
+            free ((char *)keyvalues[i]);
+        }
+    }
+    free (keyvalues);
 }
 
 static void
@@ -2000,10 +2027,11 @@ w_tabs_create (void) {
     w->base.remove = w_container_remove;
     w->base.replace = w_tabs_replace;
     w->base.initmenu = w_tabs_initmenu;
-    w->base.save = w_tabs_save;
-    w->base.load = w_tabs_load;
     w->base.init = w_tabs_init;
     w->base.destroy = w_tabs_destroy;
+    w->exapi.serialize_to_keyvalues = w_tabs_serialize_to_keyvalues;
+    w->exapi.deserialize_from_keyvalues = w_tabs_deserialize_from_keyvalues;
+    w->exapi.free_serialized_keyvalues = w_tabs_free_serialized_keyvalues;
 
     ddb_gtkui_widget_t *ph1, *ph2, *ph3;
     ph1 = w_create ("placeholder");
