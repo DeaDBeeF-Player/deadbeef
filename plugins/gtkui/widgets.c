@@ -197,6 +197,7 @@ typedef struct {
 
 typedef struct {
     ddb_gtkui_widget_t base;
+    ddb_gtkui_widget_extended_api_t exapi;
     GtkWidget *drawarea;
     guint drawtimer;
 
@@ -213,6 +214,22 @@ typedef struct {
     float bar_color[3];
 
     cairo_surface_t *surf;
+
+    GtkWidget *menu;
+    GtkWidget *mode_descrete_item;
+    GtkWidget *mode_12_item;
+    GtkWidget *mode_24_item;
+
+    GtkWidget *gap_none_item;
+    GtkWidget *gap_2_item;
+    GtkWidget *gap_3_item;
+    GtkWidget *gap_4_item;
+    GtkWidget *gap_5_item;
+    GtkWidget *gap_6_item;
+    GtkWidget *gap_7_item;
+    GtkWidget *gap_8_item;
+    GtkWidget *gap_9_item;
+    GtkWidget *gap_10_item;
 } w_spectrum_t;
 
 typedef struct {
@@ -3185,14 +3202,153 @@ w_spectrum_init (ddb_gtkui_widget_t *w) {
     s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
 }
 
+static void
+_spectrum_menu_update (w_spectrum_t *s) {
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->mode_descrete_item), s->analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->mode_12_item), s->analyzer.mode == DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS && s->analyzer.octave_bars_step == 2);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->mode_24_item), s->analyzer.mode == DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS && s->analyzer.octave_bars_step == 1);
+
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->gap_none_item), s->analyzer.bar_gap_denominator == 0);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->gap_2_item), s->analyzer.bar_gap_denominator == 2);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->gap_3_item), s->analyzer.bar_gap_denominator == 3);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->gap_4_item), s->analyzer.bar_gap_denominator == 4);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->gap_5_item), s->analyzer.bar_gap_denominator == 5);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->gap_6_item), s->analyzer.bar_gap_denominator == 6);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->gap_7_item), s->analyzer.bar_gap_denominator == 7);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->gap_8_item), s->analyzer.bar_gap_denominator == 8);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->gap_9_item), s->analyzer.bar_gap_denominator == 9);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->gap_10_item), s->analyzer.bar_gap_denominator == 10);
+}
+
+static gboolean
+_spectrum_button_press (GtkWidget* self, GdkEventButton *event, gpointer user_data) {
+    w_spectrum_t *s = user_data;
+
+    if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
+        _spectrum_menu_update(s);
+        gtk_menu_popup_at_pointer (GTK_MENU (s->menu), NULL);
+    }
+    return TRUE;
+}
+
+static void
+_spectrum_menu_activate (GtkWidget* self, gpointer user_data) {
+    w_spectrum_t *s = user_data;
+
+    if (self == s->mode_descrete_item) {
+        s->analyzer.mode = DDB_ANALYZER_MODE_FREQUENCIES;
+        s->analyzer.mode_did_change = 1;
+    }
+    else if (self == s->mode_12_item) {
+        s->analyzer.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
+        s->analyzer.octave_bars_step = 2;
+        s->analyzer.mode_did_change = 1;
+    }
+    else if (self == s->mode_24_item) {
+        s->analyzer.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
+        s->analyzer.octave_bars_step = 1;
+        s->analyzer.mode_did_change = 1;
+    }
+    else if (self == s->gap_none_item) {
+        s->analyzer.bar_gap_denominator = 0;
+    }
+    else if (self == s->gap_2_item) {
+        s->analyzer.bar_gap_denominator = 2;
+    }
+    else if (self == s->gap_3_item) {
+        s->analyzer.bar_gap_denominator = 3;
+    }
+    else if (self == s->gap_4_item) {
+        s->analyzer.bar_gap_denominator = 4;
+    }
+    else if (self == s->gap_5_item) {
+        s->analyzer.bar_gap_denominator = 5;
+    }
+    else if (self == s->gap_6_item) {
+        s->analyzer.bar_gap_denominator = 6;
+    }
+    else if (self == s->gap_7_item) {
+        s->analyzer.bar_gap_denominator = 7;
+    }
+    else if (self == s->gap_8_item) {
+        s->analyzer.bar_gap_denominator = 8;
+    }
+    else if (self == s->gap_9_item) {
+        s->analyzer.bar_gap_denominator = 9;
+    }
+    else if (self == s->gap_10_item) {
+        s->analyzer.bar_gap_denominator = 10;
+    }
+}
+
+static void
+_spectrum_deserialize_from_keyvalues (ddb_gtkui_widget_t *widget, const char **keyvalues) {
+    w_spectrum_t *s = (w_spectrum_t *)widget;
+
+    s->analyzer.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
+    s->analyzer.bar_gap_denominator = 3;
+
+    for (int i = 0; keyvalues[i]; i += 2) {
+        if (!strcmp (keyvalues[i], "renderMode")) {
+            if (!strcmp (keyvalues[i+1], "frequencies")) {
+                s->analyzer.mode = DDB_ANALYZER_MODE_FREQUENCIES;
+            }
+        }
+        else if (!strcmp (keyvalues[i], "distanceBetweenBars")) {
+            s->analyzer.bar_gap_denominator = atoi(keyvalues[i+1]);
+        }
+        else if (!strcmp (keyvalues[i], "barGranularity")) {
+            s->analyzer.octave_bars_step = atoi(keyvalues[i+1]);
+        }
+    }
+}
+
+static char const **
+_spectrum_serialize_to_keyvalues (ddb_gtkui_widget_t *widget) {
+    w_spectrum_t *s = (w_spectrum_t *)widget;
+
+    char const **keyvalues = calloc (7, sizeof (char *));
+
+    keyvalues[0] = "renderMode";
+    switch (s->analyzer.mode) {
+    case DDB_ANALYZER_MODE_FREQUENCIES:
+        keyvalues[1] = "frequencies";
+        break;
+    case DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS:
+        keyvalues[1] = "bands";
+        break;
+    }
+
+    char temp[10];
+
+    keyvalues[2] = "distanceBetweenBars";
+    snprintf (temp, sizeof (temp), "%d", s->analyzer.bar_gap_denominator);
+    keyvalues[3] = strdup(temp);
+
+    keyvalues[4] = "barGranularity";
+    snprintf (temp, sizeof (temp), "%d", s->analyzer.octave_bars_step);
+    keyvalues[5] = strdup(temp);
+
+    return keyvalues;
+}
+
+static void
+_spectrum_free_serialized_keyvalues (ddb_gtkui_widget_t *widget, char const **keyvalues) {
+    free ((char *)keyvalues[3]);
+    free ((char *)keyvalues[5]);
+    free (keyvalues);
+}
+
 ddb_gtkui_widget_t *
 w_spectrum_create (void) {
-    w_spectrum_t *w = malloc (sizeof (w_spectrum_t));
-    memset (w, 0, sizeof (w_spectrum_t));
+    w_spectrum_t *w = calloc (1, sizeof (w_spectrum_t));
 
     w->base.widget = gtk_event_box_new ();
     w->base.init = w_spectrum_init;
     w->base.destroy  = w_spectrum_destroy;
+    w->exapi.deserialize_from_keyvalues = _spectrum_deserialize_from_keyvalues;
+    w->exapi.serialize_to_keyvalues = _spectrum_serialize_to_keyvalues;
+    w->exapi.free_serialized_keyvalues = _spectrum_free_serialized_keyvalues;
     w->drawarea = gtk_drawing_area_new ();
     gtk_widget_show (w->drawarea);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
@@ -3203,8 +3359,101 @@ w_spectrum_create (void) {
 #endif
 
     g_signal_connect((gpointer)w->drawarea, "unmap", G_CALLBACK(_spectrum_unmap), w);
+    g_signal_connect ((gpointer)w->base.widget, "button-press-event", G_CALLBACK (_spectrum_button_press), w);
 
     w_override_signals (w->base.widget, w);
+
+    w->menu = gtk_menu_new();
+
+    GtkWidget *rendering_mode_item = gtk_menu_item_new_with_mnemonic( _("Rendering Mode"));
+    gtk_widget_show(rendering_mode_item);
+    GtkWidget *rendering_mode_menu = gtk_menu_new();
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(rendering_mode_item), rendering_mode_menu);
+
+    w->mode_descrete_item = gtk_check_menu_item_new_with_mnemonic( _("Descrete Frequencies"));
+    gtk_widget_show(w->mode_descrete_item);
+
+    w->mode_12_item = gtk_check_menu_item_new_with_mnemonic( _("1/12 Octave Bands"));
+    gtk_widget_show(w->mode_12_item);
+
+    w->mode_24_item = gtk_check_menu_item_new_with_mnemonic( _("1/24 Octave Bands"));
+    gtk_widget_show(w->mode_24_item);
+
+    gtk_menu_shell_insert (GTK_MENU_SHELL(rendering_mode_menu), w->mode_descrete_item, 0);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(rendering_mode_menu), w->mode_12_item, 1);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(rendering_mode_menu), w->mode_24_item, 1);
+
+    GtkWidget *gap_size_item = gtk_menu_item_new_with_mnemonic(_("Gap Size"));
+    gtk_widget_show(gap_size_item);
+    GtkWidget *gap_size_menu = gtk_menu_new();
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(gap_size_item), gap_size_menu);
+
+    w->gap_none_item = gtk_check_menu_item_new_with_mnemonic(_("None"));
+    gtk_widget_show(w->gap_none_item);
+
+    w->gap_2_item = gtk_check_menu_item_new_with_mnemonic(_("1/2 Bar"));
+    gtk_widget_show(w->gap_2_item);
+
+    w->gap_3_item = gtk_check_menu_item_new_with_mnemonic(_("1/3 Bar"));
+    gtk_widget_show(w->gap_3_item);
+
+    w->gap_4_item = gtk_check_menu_item_new_with_mnemonic(_("1/4 Bar"));
+    gtk_widget_show(w->gap_4_item);
+
+    w->gap_5_item = gtk_check_menu_item_new_with_mnemonic(_("1/5 Bar"));
+    gtk_widget_show(w->gap_5_item);
+
+    w->gap_6_item = gtk_check_menu_item_new_with_mnemonic(_("1/6 Bar"));
+    gtk_widget_show(w->gap_6_item);
+
+    w->gap_7_item = gtk_check_menu_item_new_with_mnemonic(_("1/7 Bar"));
+    gtk_widget_show(w->gap_7_item);
+
+    w->gap_8_item = gtk_check_menu_item_new_with_mnemonic(_("1/8 Bar"));
+    gtk_widget_show(w->gap_8_item);
+
+    w->gap_9_item = gtk_check_menu_item_new_with_mnemonic(_("1/9 Bar"));
+    gtk_widget_show(w->gap_9_item);
+
+    w->gap_10_item = gtk_check_menu_item_new_with_mnemonic(_("1/10 Bar"));
+    gtk_widget_show(w->gap_10_item);
+
+    gtk_menu_shell_insert (GTK_MENU_SHELL(gap_size_menu), w->gap_none_item, 0);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(gap_size_menu), w->gap_2_item, 1);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(gap_size_menu), w->gap_3_item, 2);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(gap_size_menu), w->gap_4_item, 3);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(gap_size_menu), w->gap_5_item, 4);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(gap_size_menu), w->gap_6_item, 5);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(gap_size_menu), w->gap_7_item, 6);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(gap_size_menu), w->gap_8_item, 7);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(gap_size_menu), w->gap_9_item, 8);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(gap_size_menu), w->gap_10_item, 9);
+
+    //    GtkWidget *separator_item = gtk_separator_menu_item_new ();
+    //    gtk_widget_show(separator_item);
+    //
+    //    GtkWidget *preferences_item = gtk_menu_item_new_with_mnemonic(_("Preferences"));
+    //    gtk_widget_show(preferences_item);
+
+    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), rendering_mode_item, 0);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), gap_size_item, 1);
+    //    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), separator_item, 2);
+    //    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), preferences_item, 3);
+
+    g_signal_connect((gpointer)w->mode_descrete_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
+    g_signal_connect((gpointer)w->mode_12_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
+    g_signal_connect((gpointer)w->mode_24_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
+
+    g_signal_connect((gpointer)w->gap_none_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
+    g_signal_connect((gpointer)w->gap_2_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
+    g_signal_connect((gpointer)w->gap_3_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
+    g_signal_connect((gpointer)w->gap_4_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
+    g_signal_connect((gpointer)w->gap_5_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
+    g_signal_connect((gpointer)w->gap_6_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
+    g_signal_connect((gpointer)w->gap_7_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
+    g_signal_connect((gpointer)w->gap_8_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
+    g_signal_connect((gpointer)w->gap_9_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
+    g_signal_connect((gpointer)w->gap_10_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
 
     w->input_data.fmt = &w->fmt;
 
