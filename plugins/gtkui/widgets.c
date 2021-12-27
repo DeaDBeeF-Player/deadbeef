@@ -48,6 +48,9 @@
 #include "playlist/playlistcontroller.h"
 #include "support.h"
 #include "trkproperties.h"
+#ifdef DDB_WARN_DEPRECATED
+#undef DDB_WARN_DEPRECATED
+#endif
 #include "widgets.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }

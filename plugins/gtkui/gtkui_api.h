@@ -50,7 +50,7 @@ typedef void GtkWidget;
 #endif
 
 #define DDB_GTKUI_API_VERSION_MAJOR 2
-#define DDB_GTKUI_API_VERSION_MINOR 3
+#define DDB_GTKUI_API_VERSION_MINOR 5
 
 #define DDB_GTKUI_DEPRECATED(x)
 
@@ -71,7 +71,7 @@ typedef void GtkWidget;
 #endif
 
 #ifndef DDB_GTKUI_API_LEVEL
-#define DDB_GTKUI_API_LEVEL (DDB_GTKUI_API_VERSION_MAJOR * 100 + DB_API_VERSION_MINOR)
+#define DDB_GTKUI_API_LEVEL (DDB_GTKUI_API_VERSION_MAJOR * 100 + DDB_GTKUI_API_VERSION_MINOR)
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_GTKUI_API_LEVEL >= 202)
@@ -80,9 +80,16 @@ typedef void GtkWidget;
 #define DEPRECATED_202
 #endif
 
-#if (DDB_GTKUI_API_LEVEL >= 201)
-// added in API 2.1 (deadbeef-0.6.2)
-#define DDB_GTKUI_CONF_LAYOUT "gtkui.layout.1.9.0"
+#if (DDB_WARN_DEPRECATED && DDB_GTKUI_API_LEVEL >= 204)
+#define DEPRECATED_204 DDB_GTKUI_DEPRECATED("since GTKUI API 2.4")
+#else
+#define DEPRECATED_204
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_GTKUI_API_LEVEL >= 205)
+#define DEPRECATED_205 DDB_GTKUI_DEPRECATED("since GTKUI API 2.5")
+#else
+#define DEPRECATED_205
 #endif
 
 // this flag tells that the widget should be added to h/vboxes with expand=FALSE
@@ -118,7 +125,7 @@ typedef struct ddb_gtkui_widget_s {
     // save your custom parameters in the string using strncat
     // for example, if you need to write width and height:
     // strncat (s, "100 200", sz);
-    void (*save) (struct ddb_gtkui_widget_s *w, char *s, int sz);
+    void (*save) (struct ddb_gtkui_widget_s *w, char *s, int sz) DEPRECATED_205;
 
     // this is to read custom widget parameters, e.g. width and height;
     // you will be passed a string looking like "100 200 {"
@@ -127,7 +134,7 @@ typedef struct ddb_gtkui_widget_s {
     //
     // type string is necessary for backwards compatibility, so that load
     // function knows which type it's loading
-    const char *(*load) (struct ddb_gtkui_widget_s *w, const char *type, const char *s);
+    const char *(*load) (struct ddb_gtkui_widget_s *w, const char *type, const char *s) DEPRECATED_205;
 
     // custom destructor code
     void (*destroy) (struct ddb_gtkui_widget_s *w);

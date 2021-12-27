@@ -26,6 +26,8 @@
 
 #include "gtkui_api.h"
 
+#define DDB_GTKUI_CONF_LAYOUT "gtkui.layout.1.9.0"
+
 struct json_t;
 
 void
