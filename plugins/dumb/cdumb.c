@@ -65,7 +65,7 @@ cdumb_startrenderer (DB_fileinfo_t *_info);
 
 static DB_fileinfo_t *
 cdumb_open (uint32_t hints) {
-    dumb_info_t *info = calloc (sizeof (dumb_info_t), 1);
+    dumb_info_t *info = calloc (1, sizeof (dumb_info_t));
     info->can_loop = hints & DDB_DECODER_HINT_CAN_LOOP;
     return &info->info;
 }
@@ -378,7 +378,7 @@ static DUMBFILE_SYSTEM dumb_vfs;
 
 static void *
 dumb_vfs_open (const char *fname) {
-    ddb_dumb_file_t *f = calloc (sizeof (ddb_dumb_file_t), 1);
+    ddb_dumb_file_t *f = calloc (1, sizeof (ddb_dumb_file_t));
     f->file = deadbeef->fopen (fname);
     return f;
 }

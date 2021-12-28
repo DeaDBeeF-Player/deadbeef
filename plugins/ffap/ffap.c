@@ -670,7 +670,7 @@ ffap_free (DB_fileinfo_t *_info)
 
 static DB_fileinfo_t *
 ffap_open (uint32_t hints) {
-    ape_info_t *info = calloc (sizeof (ape_info_t), 1);
+    ape_info_t *info = calloc (1, sizeof (ape_info_t));
     return &info->info;
 }
 

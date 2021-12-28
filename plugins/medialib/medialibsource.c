@@ -119,7 +119,7 @@ _ml_source_get_music_paths (medialib_source_t *source, size_t *medialib_paths_co
         return NULL;
     }
 
-    medialib_paths = calloc (sizeof (char *), count);
+    medialib_paths = calloc (count, sizeof (char *));
 
     for (int i = 0; i < count; i++) {
         json_t *data = json_array_get (source->musicpaths_json, i);

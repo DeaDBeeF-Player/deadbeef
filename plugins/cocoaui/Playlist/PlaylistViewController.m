@@ -1436,7 +1436,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     int all_idx = 0;
     if (count) {
         NSInteger idx = 0;
-        tracks = calloc (sizeof (ddb_playItem_t *), count);
+        tracks = calloc (count, sizeof (ddb_playItem_t *));
 
         ddb_playItem_t *it = deadbeef->plt_get_first (plt, self.playlistIter);
         while (it) {

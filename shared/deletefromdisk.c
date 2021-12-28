@@ -33,7 +33,7 @@ typedef struct {
 
 ddbUtilTrackList_t
 ddbUtilTrackListAlloc (void) {
-    return calloc (sizeof (ddbUtilTrackListData_t), 1);
+    return calloc (1, sizeof (ddbUtilTrackListData_t));
 }
 
 ddbUtilTrackList_t
@@ -123,7 +123,7 @@ ddbUtilTrackListInitWithWithTracks (ddbUtilTrackList_t trackList, ddb_playlist_t
     data->idx_current_song = currentTrackIdx;
 
     if (tracks) {
-        data->tracklist = calloc (sizeof (ddb_playItem_t *), count);
+        data->tracklist = calloc (count, sizeof (ddb_playItem_t *));
         for (int i = 0; i < count; i++) {
             ddb_playItem_t *track = tracks[i];
             deadbeef->pl_item_ref (track);
@@ -176,7 +176,7 @@ ddb_playlist_t *ddbUtilTrackListGetPlaylist (ddbUtilTrackList_t trackList) {
 #pragma mark - Controller
 
 ddbDeleteFromDiskController_t ddbDeleteFromDiskControllerAlloc (void) {
-    return calloc(sizeof (ddbDeleteFromDiskControllerData_t), 1);
+    return calloc(1, sizeof (ddbDeleteFromDiskControllerData_t));
 }
 
 ddbDeleteFromDiskController_t ddbDeleteFromDiskControllerInitWithPlaylist (ddbDeleteFromDiskController_t ctl, ddb_playlist_t *plt, ddb_action_context_t ctx) {

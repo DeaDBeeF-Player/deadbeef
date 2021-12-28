@@ -69,7 +69,7 @@ typedef struct {
 // allocate codec control structure
 static DB_fileinfo_t *
 wmaplug_open (uint32_t hints) {
-    wmaplug_info_t *info = calloc (sizeof (wmaplug_info_t), 1);
+    wmaplug_info_t *info = calloc (1, sizeof (wmaplug_info_t));
     return &info->info;
 }
 
@@ -80,7 +80,7 @@ wmaplug_open2 (uint32_t hints, DB_playItem_t *it) {
         return NULL;
     }
 
-    wmaplug_info_t *info = calloc (sizeof (wmaplug_info_t), 1);
+    wmaplug_info_t *info = calloc (1, sizeof (wmaplug_info_t));
     info->open2_was_used = 1;
     info->info.file = file;
 

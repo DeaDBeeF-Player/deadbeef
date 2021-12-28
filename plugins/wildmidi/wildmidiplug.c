@@ -54,7 +54,7 @@ typedef struct {
 
 DB_fileinfo_t *
 wmidi_open (uint32_t hints) {
-    wmidi_info_t *info = calloc (sizeof (wmidi_info_t), 1);
+    wmidi_info_t *info = calloc (1, sizeof (wmidi_info_t));
     return &info->info;
 }
 

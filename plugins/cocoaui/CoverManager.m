@@ -274,7 +274,7 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
         return cover.image;
     }
 
-    ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
+    ddb_cover_query_t *query = calloc (1, sizeof (ddb_cover_query_t));
     query->_size = sizeof (ddb_cover_query_t);
     query->track = track;
     deadbeef->pl_item_ref (track);

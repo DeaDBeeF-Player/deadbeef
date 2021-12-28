@@ -201,7 +201,7 @@ ddb_log_viewer_register (void (*callback)(DB_plugin_t *plugin, uint32_t layers, 
         }
     }
 
-    logger_t *logger = calloc (sizeof (logger_t), 1);
+    logger_t *logger = calloc (1, sizeof (logger_t));
     logger->log = callback;
     logger->ctx = ctx;
     logger->next = _loggers;

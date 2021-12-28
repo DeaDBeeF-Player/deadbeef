@@ -67,7 +67,7 @@ typedef struct {
 
 static DB_fileinfo_t *
 cgme_open (uint32_t hint) {
-    gme_fileinfo_t *info = calloc (sizeof (gme_fileinfo_t), 1);
+    gme_fileinfo_t *info = calloc (1, sizeof (gme_fileinfo_t));
     info->can_loop = hint & DDB_DECODER_HINT_CAN_LOOP;
     return &info->info;
 }

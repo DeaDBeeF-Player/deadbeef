@@ -89,7 +89,7 @@ cmp3_seek_stream (DB_fileinfo_t *_info, int sample) {
 
 static DB_fileinfo_t *
 cmp3_open (uint32_t hints) {
-    mp3_info_t *info = calloc (sizeof (mp3_info_t), 1);
+    mp3_info_t *info = calloc (1, sizeof (mp3_info_t));
 
     if (hints & DDB_DECODER_HINT_RAW_SIGNAL) {
         info->raw_signal = 1;

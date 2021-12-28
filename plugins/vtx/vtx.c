@@ -55,7 +55,7 @@ typedef struct {
 
 static DB_fileinfo_t *
 vtx_open (uint32_t hints) {
-    vtx_info_t *info = calloc (sizeof (vtx_info_t), 1);
+    vtx_info_t *info = calloc (1, sizeof (vtx_info_t));
     return &info->info;
 }
 

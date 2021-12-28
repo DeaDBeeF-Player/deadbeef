@@ -100,7 +100,7 @@ _capture_selected_track_list (void) {
     int all_idx = 0;
     int idx = 0;
     if (count) {
-        tracks = calloc (sizeof (ddb_playItem_t *), count);
+        tracks = calloc (count, sizeof (ddb_playItem_t *));
 
         ddb_playItem_t *it = deadbeef->plt_get_first (_menuPlaylist, PL_MAIN);
         while (it) {

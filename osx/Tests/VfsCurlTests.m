@@ -24,7 +24,7 @@ extern DB_functions_t *deadbeef;
     extern DB_plugin_t *vfs_curl_load (DB_functions_t *api);
     vfs_curl_load (deadbeef);
 
-    _file = calloc (sizeof (HTTP_FILE), 1);
+    _file = calloc (1, sizeof (HTTP_FILE));
     _file->track = (DB_playItem_t *)pl_item_alloc ();
 }
 

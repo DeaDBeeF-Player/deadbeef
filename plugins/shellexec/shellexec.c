@@ -93,7 +93,7 @@ shx_callback (Shx_action_t *action, int ctx)
                 DB_playItem_t **items = NULL;
                 int items_count = deadbeef->plt_getselcount (plt);
                 if (0 < items_count) {
-                    items = calloc (sizeof (DB_playItem_t *), items_count);
+                    items = calloc (items_count, sizeof (DB_playItem_t *));
                     if (items) {
                         int n = 0;
                         DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
@@ -129,7 +129,7 @@ shx_callback (Shx_action_t *action, int ctx)
                 DB_playItem_t **items = NULL;
                 int items_count = deadbeef->plt_get_item_count (plt, PL_MAIN);
                 if (0 < items_count) {
-                    items = calloc (sizeof (DB_playItem_t *), items_count);
+                    items = calloc (items_count, sizeof (DB_playItem_t *));
                     if (items) {
                         int n = 0;
                         DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
@@ -272,7 +272,7 @@ shx_get_actions_json (json_t *json) {
             name = "noname";
         }
 
-        Shx_action_t *action = calloc (sizeof (Shx_action_t), 1);
+        Shx_action_t *action = calloc (1, sizeof (Shx_action_t));
 
         action->parent.title = strdup (title);
         action->parent.name = strdup (name);
@@ -330,7 +330,7 @@ shx_get_actions_json (json_t *json) {
 
 Shx_action_t*
 shx_action_add (void) {
-    Shx_action_t *a = calloc (sizeof (Shx_action_t), 1);
+    Shx_action_t *a = calloc (1, sizeof (Shx_action_t));
     a->parent.callback2 = (DB_plugin_action_callback2_t)shx_callback;
     if (!actions) {
         actions = a;

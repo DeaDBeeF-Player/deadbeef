@@ -3858,7 +3858,7 @@ junk_id3v2_add_popm_with_email (DB_id3v2_tag_t *tag, const char *email, uint8_t 
     if (have_playcount) {
         s++;
     }
-    DB_id3v2_frame_t *frame = calloc (sizeof(DB_id3v2_frame_t)+s, 1);
+    DB_id3v2_frame_t *frame = calloc (1, sizeof(DB_id3v2_frame_t)+s);
     strcpy (frame->id, "POPM");
     frame->size = (uint32_t)s;
 

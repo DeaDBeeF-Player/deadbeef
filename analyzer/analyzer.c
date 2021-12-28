@@ -297,7 +297,7 @@ _generate_frequency_bars (ddb_analyzer_t *analyzer) {
 
     if (analyzer->bar_count_max != analyzer->view_width) {
         free (analyzer->bars);
-        analyzer->bars = calloc (sizeof (ddb_analyzer_bar_t), analyzer->view_width);
+        analyzer->bars = calloc (analyzer->view_width, sizeof (ddb_analyzer_bar_t));
         analyzer->bar_count_max = analyzer->view_width;
     }
 
@@ -329,7 +329,7 @@ _generate_octave_note_bars (ddb_analyzer_t *analyzer) {
 
     if (analyzer->bar_count_max != OCTAVES * STEPS) {
         free (analyzer->bars);
-        analyzer->bars = calloc (sizeof (ddb_analyzer_bar_t), OCTAVES * STEPS);
+        analyzer->bars = calloc (OCTAVES * STEPS, sizeof (ddb_analyzer_bar_t));
         analyzer->bar_count_max = OCTAVES * STEPS;
     }
 

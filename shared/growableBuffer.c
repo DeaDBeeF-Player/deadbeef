@@ -13,7 +13,7 @@
 
 growableBuffer_t *
 growableBufferAlloc (void) {
-    return calloc (sizeof (growableBuffer_t), 1);
+    return calloc (1, sizeof (growableBuffer_t));
 }
 
 void

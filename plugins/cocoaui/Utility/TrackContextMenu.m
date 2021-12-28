@@ -316,7 +316,7 @@ extern DB_functions_t *deadbeef;
     ddb_replaygain_settings_t __block s;
     s._size = sizeof (ddb_replaygain_settings_t);
 
-    ddb_playItem_t __block **tracks = calloc (sizeof (ddb_playItem_t *), numtracks);
+    ddb_playItem_t __block **tracks = calloc (numtracks, sizeof (ddb_playItem_t *));
     int __block n = 0;
     [self forEachTrack:^(DB_playItem_t *it) {
         assert (n < numtracks);

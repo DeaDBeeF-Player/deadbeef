@@ -163,7 +163,7 @@ static int grouptitleheight = 22;
 
         for (PlaylistLocalDragDropHolder *holder in draggedItems) {
             NSInteger from_playlist = holder.playlistIdx;
-            uint32_t *indices = calloc (sizeof (uint32_t), holder.itemsIndices.count);
+            uint32_t *indices = calloc (holder.itemsIndices.count, sizeof (uint32_t));
             int i = 0;
             for (NSNumber * number in holder.itemsIndices) {
                 indices[i] = (uint32_t)number.unsignedIntValue;

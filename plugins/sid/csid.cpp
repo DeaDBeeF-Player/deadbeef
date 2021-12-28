@@ -124,9 +124,9 @@ sldb_load()
     }
 
     if (!sldb) {
-        sldb = (sldb_item_t *)calloc (sizeof(sldb_item_t), SLDB_PREALLOC_ITEMS);
+        sldb = (sldb_item_t *)calloc (SLDB_PREALLOC_ITEMS, sizeof(sldb_item_t));
         sldb_allocated_size = SLDB_PREALLOC_ITEMS;
-        sldb_lengths = (uint16_t *)calloc (sizeof (uint16_t), SLDB_PREALLOC_LENGTHS);
+        sldb_lengths = (uint16_t *)calloc (SLDB_PREALLOC_LENGTHS, sizeof (uint16_t));
         sldb_lengths_allocated_size = SLDB_PREALLOC_LENGTHS;
     }
     while (fgets (str, 1024, fp) == str) {
@@ -278,7 +278,7 @@ sldb_find (const uint8_t *digest) {
 
 DB_fileinfo_t *
 csid_open (uint32_t hints) {
-    sid_info_t *info = (sid_info_t *)calloc (sizeof (sid_info_t), 1);
+    sid_info_t *info = (sid_info_t *)calloc (1, sizeof (sid_info_t));
     return &info->info;
 }
 

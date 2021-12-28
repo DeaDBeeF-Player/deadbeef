@@ -512,7 +512,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
             cellView.imageView.image = image;
         });
     };
-    ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
+    ddb_cover_query_t *query = calloc (1, sizeof (ddb_cover_query_t));
     query->_size = sizeof (ddb_cover_query_t);
     query->user_data = (void *)CFBridgingRetain(completionBlock);
     query->flags = DDB_ARTWORK_FLAG_LOAD_BLOB;
@@ -725,7 +725,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     NSInteger count = 0;
 
     if (self.selectedItems.count) {
-        tracks = calloc (sizeof (ddb_playItem_t *), self.selectedItems.count);
+        tracks = calloc (self.selectedItems.count, sizeof (ddb_playItem_t *));
         for (MediaLibraryItem *item in self.selectedItems) {
             ddb_playItem_t *it = deadbeef->pl_item_alloc();
             deadbeef->pl_item_copy (it, item.playItem);

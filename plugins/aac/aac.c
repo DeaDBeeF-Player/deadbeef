@@ -113,7 +113,7 @@ typedef struct {
 // allocate codec control structure
 static DB_fileinfo_t *
 aac_open (uint32_t hints) {
-    aac_info_t *info = calloc (sizeof (aac_info_t), 1);
+    aac_info_t *info = calloc (1, sizeof (aac_info_t));
     return (DB_fileinfo_t *)info;
 }
 

@@ -792,7 +792,7 @@ streamer_play_failed (playItem_t *failed_track) {
         streamer_set_last_played (failed_track);
         // the track has failed to be played,
         // but we want to send it down to streamreader for proper track switching etc.
-        fileinfo_curr = calloc(sizeof (DB_fileinfo_t), 1);
+        fileinfo_curr = calloc(1, sizeof (DB_fileinfo_t));
 
         fileinfo_file_vfs = NULL;
         fileinfo_file_identifier = 0;

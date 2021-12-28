@@ -49,7 +49,7 @@ static const char * exts[] = { "sndh", "snd", "sc68", NULL };
 // allocate codec control structure
 static DB_fileinfo_t *
 in_sc68_open (uint32_t hints) {
-    in_sc68_info_t *info = calloc (sizeof (in_sc68_info_t), 1);
+    in_sc68_info_t *info = calloc (1, sizeof (in_sc68_info_t));
     return &info->info;
 }
 

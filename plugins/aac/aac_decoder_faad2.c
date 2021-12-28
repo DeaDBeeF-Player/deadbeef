@@ -92,7 +92,7 @@ static aacDecoderCallbacks_t aacDecoderCallbacks_FAAD2 = {
 
 aacDecoderHandle_t *
 aacDecoderOpenFAAD2 (void) {
-    faad2Decoder_t *dec = calloc (sizeof (faad2Decoder_t), 1);
+    faad2Decoder_t *dec = calloc (1, sizeof (faad2Decoder_t));
     dec->base.callbacks = &aacDecoderCallbacks_FAAD2;
     dec->dec = NeAACDecOpen();
     return &dec->base;

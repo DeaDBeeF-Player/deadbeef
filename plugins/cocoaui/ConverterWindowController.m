@@ -313,7 +313,7 @@ static NSMutableArray *g_converterControllers;
 
     // store list of tracks
     self.convert_items_count = count;
-    self.convert_items = calloc (sizeof (ddb_playItem_t *), count);
+    self.convert_items = calloc (count, sizeof (ddb_playItem_t *));
 
     for (NSInteger i = 0; i < count; i++) {
         ddb_playItem_t *it = tracks[i];

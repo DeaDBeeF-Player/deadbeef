@@ -83,7 +83,7 @@ typedef struct {
 
 static DB_fileinfo_t *
 ffmpeg_open (uint32_t hints) {
-    ffmpeg_info_t *info = calloc (sizeof (ffmpeg_info_t), 1);
+    ffmpeg_info_t *info = calloc (1, sizeof (ffmpeg_info_t));
     return &info->info;
 }
 

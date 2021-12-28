@@ -71,7 +71,7 @@ shn_config shn_cfg;
 
 DB_fileinfo_t *
 shn_open (uint32_t hints) {
-    shn_fileinfo_t *info = calloc (sizeof (shn_fileinfo_t), 1);
+    shn_fileinfo_t *info = calloc (1, sizeof (shn_fileinfo_t));
     return &info->info;
 }
 

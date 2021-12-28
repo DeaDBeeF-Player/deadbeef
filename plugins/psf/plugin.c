@@ -48,7 +48,7 @@ typedef struct {
 
 static DB_fileinfo_t *
 psfplug_open (uint32_t hints) {
-    psfplug_info_t *info = calloc (sizeof (psfplug_info_t), 1);
+    psfplug_info_t *info = calloc (1, sizeof (psfplug_info_t));
     return &info->info;
 }
 

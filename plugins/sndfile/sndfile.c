@@ -95,7 +95,7 @@ static SF_VIRTUAL_IO vfs = {
 
 static DB_fileinfo_t *
 sndfile_open (uint32_t hints) {
-    sndfile_info_t *info = calloc (sizeof (sndfile_info_t), 1);
+    sndfile_info_t *info = calloc (1, sizeof (sndfile_info_t));
     return &info->info;
 }
 

@@ -124,7 +124,7 @@ static WavpackStreamReader wsr = {
 
 static DB_fileinfo_t *
 wv_open (uint32_t hints) {
-    wvctx_t *info = calloc (sizeof (wvctx_t), 1);
+    wvctx_t *info = calloc (1, sizeof (wvctx_t));
     return &info->info;
 }
 

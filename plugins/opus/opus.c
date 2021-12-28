@@ -98,7 +98,7 @@ opus_file_open(DB_FILE *fp)
 
 static DB_fileinfo_t *
 opusdec_open (uint32_t hints) {
-    opusdec_info_t *info = calloc (sizeof (opusdec_info_t), 1);
+    opusdec_info_t *info = calloc (1, sizeof (opusdec_info_t));
     return &info->info;
 }
 
@@ -113,7 +113,7 @@ opusdec_open2 (uint32_t hints, DB_playItem_t *it) {
         return NULL;
     }
 
-    opusdec_info_t *info = calloc (sizeof (opusdec_info_t), 1);
+    opusdec_info_t *info = calloc (1, sizeof (opusdec_info_t));
 
     info->info.file = fp;
     info->it = it;

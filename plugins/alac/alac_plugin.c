@@ -88,7 +88,7 @@ typedef struct {
 // allocate codec control structure
 DB_fileinfo_t *
 alacplug_open (uint32_t hints) {
-    alacplug_info_t *info = calloc (sizeof (alacplug_info_t), 1);
+    alacplug_info_t *info = calloc (1, sizeof (alacplug_info_t));
     return &info->info;
 }
 
