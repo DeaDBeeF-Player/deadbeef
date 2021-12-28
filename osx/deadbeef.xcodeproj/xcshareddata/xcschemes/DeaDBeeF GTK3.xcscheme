@@ -72,7 +72,7 @@
          <EnvironmentVariable
             key = "XDG_CONFIG_HOME"
             value = "/Users/waker/ddbhome"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </EnvironmentVariable>
          <EnvironmentVariable
             key = "LANG"

@@ -22488,6 +22488,7 @@
 		};
 		2DE77469275E893400890350 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DA9777424C5EC26002405DA /* gtk3.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;

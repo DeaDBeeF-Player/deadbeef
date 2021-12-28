@@ -29,7 +29,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../../analyzer/analyzer.h"
-#include "../../fastftoi.h"
 #include "../../scope/scope.h"
 #include "../../strdupa.h"
 #include "../libparser/parser.h"

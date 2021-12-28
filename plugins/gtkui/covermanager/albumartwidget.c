@@ -61,6 +61,10 @@ _dispatch_on_main(void (^block)(void)) {
 
 static gboolean
 _update (w_albumart_t *w) {
+    if (w->plugin == NULL) {
+        return FALSE;
+    }
+
     w->throttle_id = 0;
 
     GtkAllocation frame;
@@ -143,6 +147,9 @@ _update (w_albumart_t *w) {
 
 static void
 _throttled_update (w_albumart_t *w) {
+    if (w->plugin == NULL) {
+        return;
+    }
     if (w->throttle_id != 0) {
         g_source_remove(w->throttle_id);
     }
@@ -160,6 +167,9 @@ _size_did_change (GtkWidget* self, GdkEventConfigure *event, w_albumart_t *w) {
 static int
 _message (ddb_gtkui_widget_t *base, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     w_albumart_t *w = (w_albumart_t *)base;
+    if (w->plugin == NULL) {
+        return FALSE;
+    }
     switch (id) {
     case DB_EV_PLAYLISTCHANGED:
     case DB_EV_PLAYLISTSWITCHED:
@@ -186,6 +196,9 @@ _destroy (ddb_gtkui_widget_t *base) {
 static gboolean
 _draw_event (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     w_albumart_t *w = user_data;
+    if (w->plugin == NULL) {
+        return FALSE;
+    }
 
     GtkAllocation a;
     gtk_widget_get_allocation(widget, &a);
