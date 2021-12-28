@@ -3503,7 +3503,7 @@ w_spectrum_create (void) {
     w->analyzer.db_lower_bound = -80;
     w->analyzer.peak_hold = 10;
     w->analyzer.view_width = 1000;
-    w->analyzer.fractional_bars = 0;
+    w->analyzer.fractional_bars = 1;
     w->analyzer.octave_bars_step = 2;
     w->analyzer.max_of_stereo_data = 1;
     w->analyzer.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
