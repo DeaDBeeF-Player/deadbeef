@@ -2969,6 +2969,19 @@ w_scope_create (void) {
 //    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), separator_item, 3);
 //    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), preferences_item, 4);
 
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->mode_multichannel_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->mode_mono_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->scale_auto_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->scale_1x_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->scale_2x_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->scale_3x_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->scale_4x_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->fragment_duration_50ms_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->fragment_duration_100ms_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->fragment_duration_200ms_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->fragment_duration_300ms_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->fragment_duration_500ms_item), TRUE);
+
     g_signal_connect((gpointer)w->mode_multichannel_item, "activate", G_CALLBACK(_scope_menu_activate), w);
     g_signal_connect((gpointer)w->mode_mono_item, "activate", G_CALLBACK(_scope_menu_activate), w);
     g_signal_connect((gpointer)w->scale_auto_item, "activate", G_CALLBACK(_scope_menu_activate), w);
@@ -3440,10 +3453,23 @@ w_spectrum_create (void) {
     //    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), separator_item, 2);
     //    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), preferences_item, 3);
 
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->mode_descrete_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->mode_12_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->mode_24_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->gap_none_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->gap_2_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->gap_3_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->gap_4_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->gap_5_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->gap_6_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->gap_7_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->gap_8_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->gap_9_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->gap_10_item), TRUE);
+
     g_signal_connect((gpointer)w->mode_descrete_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
     g_signal_connect((gpointer)w->mode_12_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
     g_signal_connect((gpointer)w->mode_24_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
-
     g_signal_connect((gpointer)w->gap_none_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
     g_signal_connect((gpointer)w->gap_2_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
     g_signal_connect((gpointer)w->gap_3_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);

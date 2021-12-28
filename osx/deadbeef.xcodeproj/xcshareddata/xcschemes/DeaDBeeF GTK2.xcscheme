@@ -50,6 +50,13 @@
             ReferencedContainer = "container:deadbeef.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "XDG_CONFIG_HOME"
+            value = "/Users/waker/ddbhome"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
