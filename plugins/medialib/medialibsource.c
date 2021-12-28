@@ -248,7 +248,7 @@ ml_set_source_enabled (ddb_mediasource_source_t _source, int enabled) {
 }
 
 int
-ml_get_source_enabled (ddb_mediasource_source_t _source) {
+ml_is_source_enabled (ddb_mediasource_source_t _source) {
     medialib_source_t *source = (medialib_source_t *)_source;
     __block int enabled = 0;
     dispatch_sync(source->sync_queue, ^{

@@ -218,7 +218,7 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 
 - (void)updateMedialibStatusForView:(NSTableCellView *)view {
     ddb_mediasource_state_t state = self.medialibPlugin->plugin.scanner_state (self.medialibSource);
-    int enabled = self.medialibPlugin->plugin.get_source_enabled (self.medialibSource);
+    int enabled = self.medialibPlugin->plugin.is_source_enabled (self.medialibSource);
     switch (state) {
     case DDB_MEDIASOURCE_STATE_IDLE:
         view.textField.stringValue = enabled ? @"All Music" : @"Media library is disabled";

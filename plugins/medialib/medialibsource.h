@@ -74,7 +74,7 @@ void
 ml_set_source_enabled (ddb_mediasource_source_t _source, int enabled);
 
 int
-ml_get_source_enabled (ddb_mediasource_source_t _source);
+ml_is_source_enabled (ddb_mediasource_source_t _source);
 
 void
 ml_refresh (ddb_mediasource_source_t _source);

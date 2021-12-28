@@ -45,7 +45,7 @@ _listener (ddb_mediasource_event_type_t _event, void *user_data) {
         case DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE:
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    self.enabled = self.medialibPlugin->plugin.get_source_enabled(self.medialibSource);
+                    self.enabled = self.medialibPlugin->plugin.is_source_enabled(self.medialibSource);
                 });
             }
             break;
@@ -79,7 +79,7 @@ _listener (ddb_mediasource_event_type_t _event, void *user_data) {
 
     _listenerId = self.medialibPlugin->plugin.add_listener(self.medialibSource, _listener, (__bridge void *)(self));
 
-    _enabled = self.medialibPlugin->plugin.get_source_enabled(self.medialibSource);
+    _enabled = self.medialibPlugin->plugin.is_source_enabled(self.medialibSource);
     [self willChangeValueForKey:@"enabled"];
     [self didChangeValueForKey:@"enabled"];
 }

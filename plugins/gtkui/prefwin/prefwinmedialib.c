@@ -120,7 +120,7 @@ _listener (ddb_mediasource_event_type_t _event, void *user_data) {
         case DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE:
             {
                 GtkWidget *enable_button = lookup_widget(prefwin, "toggle_medialib_on");
-                gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(enable_button), medialib_plugin->plugin.get_source_enabled(source));
+                gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(enable_button), medialib_plugin->plugin.is_source_enabled(source));
             }
             break;
         default:
@@ -151,7 +151,7 @@ prefwin_init_medialib (GtkWidget *_prefwin) {
 
     _listener_id = medialib_plugin->plugin.add_listener(source, _listener, prefwin);
 
-    int enabled = medialib_plugin->plugin.get_source_enabled(source);
+    int enabled = medialib_plugin->plugin.is_source_enabled(source);
     GtkWidget *enable_button = lookup_widget(prefwin, "toggle_medialib_on");
     prefwin_set_toggle_button("toggle_medialib_on", enabled);
 

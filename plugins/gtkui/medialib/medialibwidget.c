@@ -120,7 +120,7 @@ static gboolean
 _medialib_state_did_change (void *user_data) {
     w_medialib_viewer_t *mlv = user_data;
     ddb_mediasource_state_t state = mlv->plugin->plugin.scanner_state (mlv->source);
-    int enabled = mlv->plugin->plugin.get_source_enabled (mlv->source);
+    int enabled = mlv->plugin->plugin.is_source_enabled (mlv->source);
     GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
     switch (state) {
     case DDB_MEDIASOURCE_STATE_IDLE:
