@@ -1788,6 +1788,12 @@ enum {
     // The command 2nd argument is a void (^completion_block)(void).
     DDB_COMMAND_PLUGIN_ASYNC_STOP = 1000,
 };
+
+typedef struct ddb_response_s {
+    size_t _size;
+    int (*append)(struct ddb_response_s *response, char *bytes, size_t size);
+} ddb_response_t;
+
 #endif
 
 // base plugin interface
@@ -1834,13 +1840,15 @@ typedef struct DB_plugin_s {
     // in "started" state
     int (*disconnect) (void);
 
-    // exec_cmdline may be called at any moment when user sends commandline to player
-    // can be NULL if plugin doesn't support commandline processing
-    // cmdline is 0-separated list of strings, guaranteed to have 0 at the end
-    // cmdline_size is number of bytes pointed by cmdline
-    // fd is file descriptor, send command output there (f. ex. by using dprintf)
-    // returns 0 on success or error code on failure
-    int (*exec_cmdline) (const char *cmdline, int cmdline_size, int fd);
+    /// Ask the plugin to execute an arbitrary command line
+    ///
+    /// @c exec_cmdline may be called at any moment when user sends commandline to player.
+    /// The method can be NULL if plugin doesn't support commandline processing.
+    /// @param cmdline is 0-separated list of strings, guaranteed to have 0 at the end
+    /// @param cmdline_size is number of bytes pointed by cmdline
+    /// @param response the interface to create a response for the caller
+    /// @return 0 on success or error code on failure
+    int (*exec_cmdline) (const char *cmdline, int cmdline_size, ddb_response_t *response);
 
     // @return linked list of actions for the specified track
     // when it is NULL -- the plugin must return list of all actions

@@ -213,6 +213,26 @@ prepare_command_line (int argc, char *argv[], int *size) {
     return buf;
 }
 
+typedef struct {
+    ddb_response_t base;
+    char *buffer;
+    size_t buffer_size;
+    size_t buffer_capacity;
+} ddb_response_impl_t;
+
+static int
+_append_response(ddb_response_t *response, char *buffer, size_t size) {
+    ddb_response_impl_t *impl = (ddb_response_impl_t *)response;
+    size_t new_size = impl->buffer_size + size;
+    if (new_size > impl->buffer_capacity) {
+        impl->buffer_capacity = new_size + 1000;
+        impl->buffer = realloc (impl->buffer, impl->buffer_capacity);
+    }
+
+    memcpy (impl->buffer + impl->buffer_size, buffer, size);
+    impl->buffer_size = new_size;
+    return 0;
+}
 
 // this function executes server-side commands only
 // must be called only from within server
@@ -399,35 +419,32 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             const char *plugid = parg + strlen("--plugin=");
             DB_plugin_t *p = plug_get_for_id(plugid);
             if (p && p->api_vmajor == 1 && p->api_vminor >= 15 && p->exec_cmdline != NULL) {
-                FILE *fp = tmpfile();
-                if (!fp) {
-                    trace_err ("Creating tmpfile failed: %s\n", strerror(errno));
-                    return -1;
-                }
-                int fd = fileno (fp);
-                size_t plugarg_len = parg_len - strlen(parg) - 1;
-                int ret = p->exec_cmdline(parg + strlen(parg) + 1, (int) plugarg_len, fd);
 
-                off_t out_size = lseek(fd, 0, SEEK_END);
-                // copy plugin output to sendback (if any output produced)
-                if ((out_size > 0) && sendback) {
-                    fflush (fp);
-                    rewind (fp);
-                    sendback[0]='\1';
-                    size_t bytes_read = fread (sendback + 1, 1, sbsize - 2, fp);
-                    if (bytes_read > 0) {
-                        sendback[bytes_read + 1] = '\0';
-                    }
-                    else {
-                        trace_err ("Reading tmpfile failed\n");
-                        return -1;
-                    }
+                ddb_response_impl_t response = {
+                    .base._size = sizeof (ddb_response_t),
+                    .base.append = _append_response,
+                };
+
+                size_t plugarg_len = parg_len - strlen(parg) - 1;
+                int ret = p->exec_cmdline(parg + strlen(parg) + 1, (int) plugarg_len, &response.base);
+
+                off_t out_size = response.buffer_size;
+                if (out_size > sbsize - 2) {
+                    out_size = sbsize - 2;
                 }
-                fclose (fp);
+                // copy plugin output to sendback (if any output produced)
+                if (out_size > 0 && sendback) {
+                    sendback[0]='\1';
+
+                    memcpy (sendback + 1, response.buffer, out_size);
+                    sendback[out_size + 1] = 0;
+                }
                 if (ret) {
                     // TODO have specific error codes sent to client?
                     sendback[0] = '\2';
                 }
+
+                free (response.buffer);
             }
             parg += parg_len + 1;
             continue;
