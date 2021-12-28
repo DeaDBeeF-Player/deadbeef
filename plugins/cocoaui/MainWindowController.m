@@ -323,9 +323,19 @@ static char sb_text[512];
         _titlebar_playing_script = NULL;
     }
 
+    if (_titlebar_playing_subtitle_script) {
+        deadbeef->tf_free (_titlebar_playing_subtitle_script);
+        _titlebar_playing_subtitle_script = NULL;
+    }
+
     if (_titlebar_stopped_script) {
         deadbeef->tf_free (_titlebar_stopped_script);
         _titlebar_stopped_script = NULL;
+    }
+
+    if (_titlebar_stopped_subtitle_script) {
+        deadbeef->tf_free (_titlebar_stopped_subtitle_script);
+        _titlebar_stopped_subtitle_script = NULL;
     }
 
     if (_statusbar_playing_script) {
