@@ -3188,6 +3188,7 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     }
 
     if (w->analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
+        cairo_set_line_width(cr, 1);
         cairo_stroke(cr);
     }
     else {
