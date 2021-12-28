@@ -2589,8 +2589,10 @@ _scope_unmap(GtkWidget* self, gpointer user_data) {
 
 gboolean
 scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
-    GtkAllocation a;
-    gtk_widget_get_allocation (widget, &a);
+    GtkAllocation draw_rect;
+    gtk_widget_get_allocation (widget, &draw_rect);
+
+    GtkAllocation orig_size = draw_rect;
 
     w_scope_t *w = user_data;
     _scope_update_listening(w);
@@ -2615,23 +2617,23 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         break;
     }
 
-    a.width *= scale_factor;
-    a.height *= scale_factor;
+    draw_rect.width *= scale_factor;
+    draw_rect.height *= scale_factor;
 
     deadbeef->mutex_lock (w->mutex);
     if (w->scope.sample_count != 0) {
 
         ddb_scope_tick(&w->scope);
-        ddb_scope_get_draw_data(&w->scope, (int)(a.width), (int)(a.height), 1, &w->draw_data);
+        ddb_scope_get_draw_data(&w->scope, (int)(draw_rect.width), (int)(draw_rect.height), 1, &w->draw_data);
     }
     deadbeef->mutex_unlock (w->mutex);
 
-    if (!w->surf || cairo_image_surface_get_width (w->surf) != a.width || cairo_image_surface_get_height (w->surf) != a.height) {
+    if (!w->surf || cairo_image_surface_get_width (w->surf) != draw_rect.width || cairo_image_surface_get_height (w->surf) != draw_rect.height) {
         if (w->surf) {
             cairo_surface_destroy (w->surf);
             w->surf = NULL;
         }
-        w->surf = cairo_image_surface_create (CAIRO_FORMAT_RGB24, a.width, a.height);
+        w->surf = cairo_image_surface_create (CAIRO_FORMAT_RGB24, draw_rect.width, draw_rect.height);
     }
 
     cairo_surface_flush (w->surf);
@@ -2640,16 +2642,16 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         return FALSE;
     }
     int stride = cairo_image_surface_get_stride (w->surf);
-    memset (data, 0, a.height * stride);
-    if (w->draw_data.point_count != 0 && a.height > 2) {
+    memset (data, 0, draw_rect.height * stride);
+    if (w->draw_data.point_count != 0 && draw_rect.height > 2) {
 
         int width = w->draw_data.point_count;
         ddb_scope_point_t *minmax = w->draw_data.points;
         int channels = w->draw_data.mode == DDB_SCOPE_MONO ? 1 : w->draw_data.channels;
         for (int c = 0; c < channels; c++) {
             for (int x = 0; x < width; x++) {
-                float ymin = min(a.height-1, max(0, minmax->ymin));
-                float ymax = min(a.height-1, max(0, minmax->ymax));
+                float ymin = min(draw_rect.height-1, max(0, minmax->ymin));
+                float ymax = min(draw_rect.height-1, max(0, minmax->ymax));
                 _draw_vline (data, stride, x, ymin, ymax, w->draw_color);
                 minmax++;
             }
@@ -2657,10 +2659,12 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     }
     cairo_surface_mark_dirty (w->surf);
     cairo_save (cr);
-    cairo_scale(cr, 1.f/scale_factor, 1.f/scale_factor);
+
+    cairo_scale(cr, (double)orig_size.width/(double)draw_rect.width, (double)orig_size.height/(double)draw_rect.height);
     cairo_set_source_surface (cr, w->surf, 0, 0);
     cairo_pattern_set_filter(cairo_get_source(cr), CAIRO_FILTER_FAST);
     cairo_paint(cr);
+
     cairo_restore (cr);
 
     return FALSE;
