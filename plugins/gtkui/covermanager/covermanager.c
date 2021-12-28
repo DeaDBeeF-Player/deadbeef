@@ -313,7 +313,7 @@ covermanager_cover_for_track(covermanager_t *impl, DB_playItem_t *track, int64_t
         return cover;
     }
 
-    ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
+    ddb_cover_query_t *query = calloc (1, sizeof (ddb_cover_query_t));
     query->_size = sizeof (ddb_cover_query_t);
     query->track = track;
     deadbeef->pl_item_ref (track);

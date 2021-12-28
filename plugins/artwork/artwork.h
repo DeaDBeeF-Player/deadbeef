@@ -56,7 +56,7 @@ enum {
 /// This structure needs to be passed to cover_get.
 /// It must remain in memory until the callback is called.
 typedef struct ddb_cover_query_s {
-    /// Must be set to sizeof(ddb_cover_query_t)
+    /// Size of this struct
     uint32_t _size;
 
     // Arbitrary user-defined pointer
@@ -76,6 +76,9 @@ typedef struct ddb_cover_query_s {
 /// This structure is passed to the callback, when the artwork query has been processed.
 /// It doesn't need to be freed by the caller
 typedef struct ddb_cover_info_s {
+    /// Size of this struct
+    size_t _size;
+
     // query info
     time_t timestamp; // Last time when the info was used last time
     char filepath[PATH_MAX];
@@ -96,8 +99,6 @@ typedef struct ddb_cover_info_s {
     uint64_t blob_image_size; // size of the image at offset
 
     struct ddb_cover_info_s *next; // The next image in the chain, or NULL
-
-    // FIXME: this struct is inheritable, add padding and size
 } ddb_cover_info_t;
 
 /// The `error` is 0 on success, or negative value on failure.

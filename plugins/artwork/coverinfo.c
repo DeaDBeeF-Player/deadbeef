@@ -42,6 +42,7 @@ ddb_cover_info_t *
 cover_info_alloc (void) {
     cover_info_t *info = calloc(1, sizeof (cover_info_t));
 
+    info->info._size = sizeof (ddb_cover_info_t);
     info->refc = 1;
     info->info.timestamp = time(NULL);
 
