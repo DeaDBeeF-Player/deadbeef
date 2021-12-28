@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -59,13 +59,11 @@
             </view>
             <toolbar key="toolbar" implicitIdentifier="BF18C458-D1D4-4997-A57A-526B66F95A52" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="1DX-Tf-YIx">
                 <allowedToolbarItems>
-                    <toolbarItem implicitItemIdentifier="B7B3A6E3-A418-464C-AAF3-D9D0B5687BBF" label="Custom View" paletteLabel="Custom View" tag="-1" id="OXm-XA-qXT" userLabel="Custom Seekbar" customClass="CustomToolbarItem">
+                    <toolbarItem implicitItemIdentifier="B7B3A6E3-A418-464C-AAF3-D9D0B5687BBF" label="Custom View" paletteLabel="Custom View" tag="-1" sizingBehavior="auto" id="OXm-XA-qXT" userLabel="Custom Seekbar" customClass="CustomToolbarItem">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="163" height="26"/>
-                        <size key="maxSize" width="20000" height="26"/>
                         <customView key="view" id="paF-TY-fCE" userLabel="DdbSeekbar" customClass="DdbSeekBar">
                             <rect key="frame" x="0.0" y="14" width="163" height="26"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                             <connections>
                                 <action selector="seekBarAction:" target="-2" id="9eR-Cc-ac9"/>
                             </connections>
@@ -78,7 +76,7 @@
                         <nil key="toolTip"/>
                         <segmentedControl key="view" verticalHuggingPriority="750" id="Q6A-xH-8bl">
                             <rect key="frame" x="0.0" y="14" width="130" height="24"/>
-                            <autoresizingMask key="autoresizingMask"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                             <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="mDy-zS-nlC">
                                 <font key="font" metaFont="system"/>
                                 <segments>
@@ -94,13 +92,11 @@
                             </connections>
                         </segmentedControl>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="0D19120C-6CE3-44D9-88AF-A6AC3500FF97" label="Custom View" paletteLabel="Custom View" id="icE-Ef-aFl">
+                    <toolbarItem implicitItemIdentifier="0D19120C-6CE3-44D9-88AF-A6AC3500FF97" label="Custom View" paletteLabel="Custom View" sizingBehavior="auto" id="icE-Ef-aFl">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="96" height="21"/>
-                        <size key="maxSize" width="96" height="28"/>
-                        <slider key="view" verticalHuggingPriority="750" id="tGc-Yg-ZUl">
+                        <slider key="view" verticalHuggingPriority="750" id="tGc-Yg-ZUl" customClass="DdbVolumeBar">
                             <rect key="frame" x="0.0" y="14" width="96" height="21"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="S3U-Vh-3xu"/>
                             <connections>
                                 <action selector="volumeBarAction:" target="-2" id="ZOi-d2-5LP"/>

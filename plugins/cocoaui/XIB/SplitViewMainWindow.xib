@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -66,11 +66,9 @@
             </view>
             <toolbar key="toolbar" implicitIdentifier="AC52D12D-4000-4B08-A065-07D723AB5954" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="small" id="HZu-Ne-Wux">
                 <allowedToolbarItems>
-                    <toolbarItem implicitItemIdentifier="B7B3A6E3-A418-464C-AAF3-D9D0B5687BBF" label="Custom View" paletteLabel="Custom View" tag="-1" id="J23-QU-u9D" userLabel="Custom Seekbar" customClass="CustomToolbarItem">
+                    <toolbarItem implicitItemIdentifier="B7B3A6E3-A418-464C-AAF3-D9D0B5687BBF" label="Custom View" paletteLabel="Custom View" tag="-1" sizingBehavior="auto" id="J23-QU-u9D" userLabel="Custom Seekbar" customClass="CustomToolbarItem">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="163" height="26"/>
-                        <size key="maxSize" width="10000" height="26"/>
-                        <customView key="view" id="Cf3-e3-qXV" userLabel="DdbSeekbar" customClass="DdbSeekBar">
+                        <customView key="view" translatesAutoresizingMaskIntoConstraints="NO" id="Cf3-e3-qXV" userLabel="DdbSeekbar" customClass="DdbSeekBar">
                             <rect key="frame" x="0.0" y="14" width="163" height="26"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                             <connections>
@@ -89,21 +87,11 @@
                             <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="aMH-2l-4rG">
                                 <font key="font" metaFont="system"/>
                                 <segments>
-                                    <segment image="btnprevTemplate" imageScaling="proportionallyUpOrDown" width="24">
-                                        <nil key="label"/>
-                                    </segment>
-                                    <segment image="btnplayTemplate" imageScaling="proportionallyUpOrDown" width="24" tag="1">
-                                        <nil key="label"/>
-                                    </segment>
-                                    <segment image="btnpauseTemplate" imageScaling="proportionallyUpOrDown" width="24">
-                                        <nil key="label"/>
-                                    </segment>
-                                    <segment image="btnstopTemplate" imageScaling="proportionallyUpOrDown" width="24">
-                                        <nil key="label"/>
-                                    </segment>
-                                    <segment image="btnnextTemplate" imageScaling="proportionallyUpOrDown" width="24">
-                                        <nil key="label"/>
-                                    </segment>
+                                    <segment image="btnprevTemplate" imageScaling="proportionallyUpOrDown" width="24"/>
+                                    <segment image="btnplayTemplate" imageScaling="proportionallyUpOrDown" width="24" tag="1"/>
+                                    <segment image="btnpauseTemplate" imageScaling="proportionallyUpOrDown" width="24"/>
+                                    <segment image="btnstopTemplate" imageScaling="proportionallyUpOrDown" width="24"/>
+                                    <segment image="btnnextTemplate" imageScaling="proportionallyUpOrDown" width="24"/>
                                 </segments>
                             </segmentedCell>
                             <connections>
@@ -111,11 +99,9 @@
                             </connections>
                         </segmentedControl>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="0D19120C-6CE3-44D9-88AF-A6AC3500FF97" label="Custom View" paletteLabel="Custom View" id="swP-ZR-Qps">
+                    <toolbarItem implicitItemIdentifier="0D19120C-6CE3-44D9-88AF-A6AC3500FF97" label="Custom View" paletteLabel="Custom View" sizingBehavior="auto" id="swP-ZR-Qps">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="96" height="21"/>
-                        <size key="maxSize" width="96" height="21"/>
-                        <slider key="view" verticalHuggingPriority="750" id="GfK-FT-xmA">
+                        <slider key="view" verticalHuggingPriority="750" id="GfK-FT-xmA" customClass="DdbVolumeBar">
                             <rect key="frame" x="0.0" y="14" width="96" height="21"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                             <sliderCell key="cell" controlSize="small" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="upx-Mu-ZBK"/>

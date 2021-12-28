@@ -144,6 +144,18 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 
     NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect:NSZeroRect options:NSTrackingActiveInActiveApp|NSTrackingInVisibleRect|NSTrackingMouseEnteredAndExited owner:self userInfo:nil];
     [self addTrackingArea:trackingArea];
+
+
+    NSLayoutConstraint *minWidthConstraint = [self.widthAnchor constraintGreaterThanOrEqualToConstant:100];
+    minWidthConstraint.priority = NSLayoutPriorityDefaultHigh;
+    NSLayoutConstraint *maxWidthConstraint = [self.widthAnchor constraintLessThanOrEqualToConstant:10000];
+    maxWidthConstraint.priority = NSLayoutPriorityDefaultHigh;
+    [NSLayoutConstraint activateConstraints:@[
+        minWidthConstraint,
+        maxWidthConstraint,
+    ]];
+
+    [self setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh forOrientation:NSLayoutConstraintOrientationHorizontal];
 }
 
 - (void)updateThumbVisibility {
