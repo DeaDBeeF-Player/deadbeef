@@ -890,8 +890,6 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     mp4_init_ddb_file_callbacks (&info.mp4reader);
     mp4 = info.mp4file = mp4p_open(&info.mp4reader);
 
-    // FIXME: error handling doesn't close the file
-
     if (!mp4) {
         return -1; // not mp4
     }
