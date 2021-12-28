@@ -201,7 +201,7 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
     case DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE:
         g_idle_add (_medialib_state_did_change, user_data);
         break;
-    case DDB_MEDIASOURCE_EVENT_SELECTORS_DID_CHANGE:
+    default:
         break;
     }
 }
