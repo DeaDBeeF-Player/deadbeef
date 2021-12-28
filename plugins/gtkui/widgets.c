@@ -2712,6 +2712,9 @@ _scope_menu_update (w_scope_t *s) {
 
 static gboolean
 _scope_button_press (GtkWidget* self, GdkEventButton *event, gpointer user_data) {
+    if (design_mode) {
+        return FALSE;
+    }
     w_scope_t *s = user_data;
 
     if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
@@ -3245,6 +3248,9 @@ _spectrum_menu_update (w_spectrum_t *s) {
 
 static gboolean
 _spectrum_button_press (GtkWidget* self, GdkEventButton *event, gpointer user_data) {
+    if (design_mode) {
+        return FALSE;
+    }
     w_spectrum_t *s = user_data;
 
     if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
