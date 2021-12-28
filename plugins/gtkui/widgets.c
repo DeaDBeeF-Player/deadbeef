@@ -177,6 +177,7 @@ typedef struct {
 
     cairo_surface_t *surf;
 
+    gboolean updating_menu; // suppress menu event handlers
     GtkWidget *menu;
 
     GtkWidget *mode_multichannel_item;
@@ -215,6 +216,7 @@ typedef struct {
 
     cairo_surface_t *surf;
 
+    gboolean updating_menu; // suppress menu event handlers
     GtkWidget *menu;
     GtkWidget *mode_descrete_item;
     GtkWidget *mode_12_item;
@@ -2691,6 +2693,7 @@ w_scope_init (ddb_gtkui_widget_t *w) {
 
 static void
 _scope_menu_update (w_scope_t *s) {
+    s->updating_menu = TRUE;
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->mode_mono_item), s->scope.mode == DDB_SCOPE_MONO);
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->mode_multichannel_item), s->scope.mode == DDB_SCOPE_MULTICHANNEL);
 
@@ -2705,6 +2708,7 @@ _scope_menu_update (w_scope_t *s) {
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->scale_2x_item),   s->scale == SCOPE_SCALE_2X);
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->scale_3x_item),   s->scale == SCOPE_SCALE_3X);
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->scale_4x_item),   s->scale == SCOPE_SCALE_4X);
+    s->updating_menu = FALSE;
 }
 
 static gboolean
@@ -2721,6 +2725,10 @@ _scope_button_press (GtkWidget* self, GdkEventButton *event, gpointer user_data)
 static void
 _scope_menu_activate (GtkWidget* self, gpointer user_data) {
     w_scope_t *s = user_data;
+
+    if (s->updating_menu) {
+        return;
+    }
 
     if (self == s->mode_multichannel_item) {
         s->scope.mode = DDB_SCOPE_MULTICHANNEL;
@@ -3217,6 +3225,7 @@ w_spectrum_init (ddb_gtkui_widget_t *w) {
 
 static void
 _spectrum_menu_update (w_spectrum_t *s) {
+    s->updating_menu = TRUE;
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->mode_descrete_item), s->analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES);
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->mode_12_item), s->analyzer.mode == DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS && s->analyzer.octave_bars_step == 2);
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->mode_24_item), s->analyzer.mode == DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS && s->analyzer.octave_bars_step == 1);
@@ -3231,6 +3240,7 @@ _spectrum_menu_update (w_spectrum_t *s) {
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->gap_8_item), s->analyzer.bar_gap_denominator == 8);
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->gap_9_item), s->analyzer.bar_gap_denominator == 9);
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->gap_10_item), s->analyzer.bar_gap_denominator == 10);
+    s->updating_menu = FALSE;
 }
 
 static gboolean
@@ -3247,6 +3257,10 @@ _spectrum_button_press (GtkWidget* self, GdkEventButton *event, gpointer user_da
 static void
 _spectrum_menu_activate (GtkWidget* self, gpointer user_data) {
     w_spectrum_t *s = user_data;
+
+    if (s->updating_menu) {
+        return;
+    }
 
     if (self == s->mode_descrete_item) {
         s->analyzer.mode = DDB_ANALYZER_MODE_FREQUENCIES;
