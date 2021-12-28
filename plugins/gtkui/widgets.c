@@ -620,23 +620,27 @@ w_create_from_json (json_t *node, ddb_gtkui_widget_t **parent) {
 
     if ((flags & DDB_WF_SUPPORTS_EXTENDED_API) && node_settings != NULL) {
         ddb_gtkui_widget_extended_api_t *api = (ddb_gtkui_widget_extended_api_t *)(w + 1);
+        if (api->_size >= sizeof (ddb_gtkui_widget_extended_api_t)) {
+            size_t count = json_object_size(node_settings);
+            if (count != 0) {
+                char const ** keyvalues = calloc (count*2+1, sizeof (char *));
 
-        size_t count = json_object_size(node_settings);
-        if (count != 0) {
-            char const ** keyvalues = calloc (count*2+1, sizeof (char *));
+                const char *key;
+                json_t *value;
+                int index = 0;
+                json_object_foreach(node_settings, key, value) {
+                    keyvalues[index*2+0] = key;
+                    keyvalues[index*2+1] = json_string_value(value);
+                    index += 1;
+                }
 
-            const char *key;
-            json_t *value;
-            int index = 0;
-            json_object_foreach(node_settings, key, value) {
-                keyvalues[index*2+0] = key;
-                keyvalues[index*2+1] = json_string_value(value);
-                index += 1;
+                api->deserialize_from_keyvalues(w, keyvalues);
+
+                free (keyvalues);
             }
-
-            api->deserialize_from_keyvalues(w, keyvalues);
-
-            free (keyvalues);
+        }
+        else {
+            trace ("widget %s doesn't has unsupported extended api _size=%lld\n", api->_size);
         }
     }
     else if (w->load != NULL && legacy_params != NULL) {
@@ -718,17 +722,22 @@ _save_widget_to_json (ddb_gtkui_widget_t *w) {
 
     if (flags & DDB_WF_SUPPORTS_EXTENDED_API) {
         ddb_gtkui_widget_extended_api_t *api = (ddb_gtkui_widget_extended_api_t *)(w + 1);
-        char const **keyvalues = api->serialize_to_keyvalues(w);
+        if (api->_size >= sizeof (ddb_gtkui_widget_extended_api_t)) {
+            char const **keyvalues = api->serialize_to_keyvalues(w);
 
-        if (keyvalues != NULL) {
-            json_t *settings = json_object();
-            for (int i = 0; keyvalues[i]; i += 2) {
-                json_t *value = json_string(keyvalues[i+1]);
-                json_object_set(settings, keyvalues[i], value);
-                json_decref(value);
+            if (keyvalues != NULL) {
+                json_t *settings = json_object();
+                for (int i = 0; keyvalues[i]; i += 2) {
+                    json_t *value = json_string(keyvalues[i+1]);
+                    json_object_set(settings, keyvalues[i], value);
+                    json_decref(value);
+                }
+                json_object_set(node, "settings", settings);
+                json_decref(settings);
             }
-            json_object_set(node, "settings", settings);
-            json_decref(settings);
+        }
+        else {
+            trace ("widget %s doesn't has unsupported extended api _size=%lld\n", api->_size);
         }
     }
     else if (w->save) {
@@ -2076,6 +2085,7 @@ w_tabs_create (void) {
     w->base.initmenu = w_tabs_initmenu;
     w->base.init = w_tabs_init;
     w->base.destroy = w_tabs_destroy;
+    w->exapi._size = sizeof (ddb_gtkui_widget_extended_api_t);
     w->exapi.serialize_to_keyvalues = w_tabs_serialize_to_keyvalues;
     w->exapi.deserialize_from_keyvalues = w_tabs_deserialize_from_keyvalues;
     w->exapi.free_serialized_keyvalues = w_tabs_free_serialized_keyvalues;
@@ -2886,6 +2896,7 @@ w_scope_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.init = w_scope_init;
     w->base.destroy  = w_scope_destroy;
+    w->exapi._size = sizeof (ddb_gtkui_widget_extended_api_t);
     w->exapi.deserialize_from_keyvalues = _scope_deserialize_from_keyvalues;
     w->exapi.serialize_to_keyvalues = _scope_serialize_to_keyvalues;
     w->exapi.free_serialized_keyvalues = _scope_free_serialized_keyvalues;
@@ -3383,6 +3394,7 @@ w_spectrum_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.init = w_spectrum_init;
     w->base.destroy  = w_spectrum_destroy;
+    w->exapi._size = sizeof (ddb_gtkui_widget_extended_api_t);
     w->exapi.deserialize_from_keyvalues = _spectrum_deserialize_from_keyvalues;
     w->exapi.serialize_to_keyvalues = _spectrum_serialize_to_keyvalues;
     w->exapi.free_serialized_keyvalues = _spectrum_free_serialized_keyvalues;
@@ -4557,6 +4569,7 @@ w_volumebar_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.message = w_volumebar_message;
     w->base.initmenu = w_volumebar_initmenu;
+    w->exapi._size = sizeof (ddb_gtkui_widget_extended_api_t);
     w->exapi.deserialize_from_keyvalues = w_volumebar_deserialize_from_keyvalues;
     w->exapi.serialize_to_keyvalues = w_volumebar_serialize_to_keyvalues;
     w->exapi.free_serialized_keyvalues = w_volumebar_free_serialized_keyvalues;
