@@ -36,8 +36,10 @@
 @property (nonatomic) CALayer *trackPos;
 @property (nonatomic) CALayer *thumb;
 
-@property (nonatomic,copy) NSColor *trackFillColor;
-@property (nonatomic,copy) NSColor *trackInactiveFillColor;
+@property (nonatomic) NSColor *trackFillColor;
+@property (nonatomic) NSColor *trackInactiveFillColor;
+@property (nonatomic) NSColor *trackBorderColor;
+@property (nonatomic) NSColor *trackBorderInactiveColor;
 @property (nonatomic,copy) NSColor *trackPosBackgroundColor;
 @property (nonatomic,copy) NSColor *trackPosInactiveBackgroundColor;
 @property (nonatomic,copy) NSColor *thumbBackgroundColor;
@@ -78,8 +80,6 @@
 }
 
 - (void)initColors {
-    self.trackFillColor = [NSColor.whiteColor shadowWithLevel:0.42];
-    self.trackInactiveFillColor = [NSColor.whiteColor shadowWithLevel:0.2];
 #ifdef MAC_OS_X_VERSION_10_14
     if (@available(macOS 10.14, *)) {
         self.trackPosBackgroundColor = NSColor.controlAccentColor;
@@ -94,6 +94,17 @@
     self.thumbInactiveBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.4];
     self.thumbBorderColor = NSColor.windowBackgroundColor;
     self.thumbInactiveBorderColor = NSColor.windowBackgroundColor;
+
+    if (NSApp.effectiveAppearance == [NSAppearance appearanceNamed:NSAppearanceNameAqua]) {
+        self.trackFillColor = [NSColor colorWithRed:0.874 green:0.878 blue:0.882 alpha:1];
+        self.trackBorderColor = [NSColor colorWithRed:0.824 green:0.827 blue:0.831 alpha:1];
+        self.trackInactiveFillColor = [NSColor colorWithRed:0.843 green:0.847 blue:0.847 alpha:1];
+        self.trackBorderInactiveColor = [NSColor colorWithRed:0.792 green:0.796 blue:0.8 alpha:1];
+    }
+    else {
+        self.trackFillColor = [NSColor colorWithRed:0.270 green:0.275 blue:0.278 alpha:1];
+        self.trackInactiveFillColor = [NSColor colorWithRed:0.216 green:0.220 blue:0.227 alpha:1];
+    }
 }
 
 - (void)setup {
@@ -116,8 +127,9 @@
     self.trackPos = [CALayer new];
     self.thumb = [CALayer new];
 
-    self.track.cornerRadius = 2;
-    self.trackPos.cornerRadius = 2;
+    self.track.cornerRadius = 2.5;
+    self.trackPos.cornerRadius = 2.5;
+    self.track.borderWidth = 1;
 
     self.thumb.borderWidth = 1;
     self.thumb.cornerRadius = 3;
@@ -185,9 +197,17 @@
 - (void)updateTrackColors {
     if (self.isKey) {
         self.track.backgroundColor = self.trackFillColor.CGColor;
+        self.track.borderColor = self.trackBorderColor.CGColor;
     }
     else {
         self.track.backgroundColor = self.trackInactiveFillColor.CGColor;
+        self.track.borderColor = self.trackBorderInactiveColor.CGColor;
+    }
+    if (NSApp.effectiveAppearance == [NSAppearance appearanceNamed:NSAppearanceNameAqua]) {
+        self.track.borderWidth = 1;
+    }
+    else {
+        self.track.borderWidth = 0;
     }
 }
 
@@ -236,7 +256,7 @@
         [CATransaction begin];
         [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
         CGFloat y = NSHeight(self.frame)/2;
-        self.track.frame = NSMakeRect(3, y-1.5, NSWidth(self.frame)-6, 3);
+        self.track.frame = NSMakeRect(3, y-2, NSWidth(self.frame)-6, 4);
         [self layoutThumbLayer];
         [CATransaction commit];
     }
@@ -248,7 +268,7 @@
     if (!self.thumb.hidden) {
         self.thumb.frame = NSMakeRect(x, y-6, 6, 12);
     }
-    self.trackPos.frame = NSMakeRect(3, y-1.5, x, 3);
+    self.trackPos.frame = NSMakeRect(3, y-2, x, 4);
 }
 
 - (void)setPosition:(float)position {
