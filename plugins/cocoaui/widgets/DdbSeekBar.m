@@ -25,8 +25,6 @@
 #import "DdbSeekBar.h"
 #import "SeekbarOverlay.h"
 
-static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
-
 @interface DdbSeekBar() <CALayerDelegate> {
     float _position;
     NSFormatter *_formatter;
@@ -38,8 +36,8 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
 @property (nonatomic) CALayer *trackPos;
 @property (nonatomic) CALayer *thumb;
 
-@property (nonatomic,copy) NSColor *trackBackgroundColor;
-@property (nonatomic,copy) NSColor *trackInactiveBackgroundColor;
+@property (nonatomic,copy) NSColor *trackFillColor;
+@property (nonatomic,copy) NSColor *trackInactiveFillColor;
 @property (nonatomic,copy) NSColor *trackPosBackgroundColor;
 @property (nonatomic,copy) NSColor *trackPosInactiveBackgroundColor;
 @property (nonatomic,copy) NSColor *thumbBackgroundColor;
@@ -74,18 +72,14 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
     return self;
 }
 
-- (void)dealloc {
-    [self removeObserver:self forKeyPath:@"effectiveAppearance"];
-}
-
 - (void)setEnabled:(BOOL)enabled {
     [super setEnabled:enabled];
     [self updateThumbVisibility];
 }
 
 - (void)initColors {
-    self.trackBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.42];
-    self.trackInactiveBackgroundColor = [NSColor.whiteColor shadowWithLevel:0.2];
+    self.trackFillColor = [NSColor.whiteColor shadowWithLevel:0.42];
+    self.trackInactiveFillColor = [NSColor.whiteColor shadowWithLevel:0.2];
 #ifdef MAC_OS_X_VERSION_10_14
     if (@available(macOS 10.14, *)) {
         self.trackPosBackgroundColor = NSColor.controlAccentColor;
@@ -106,8 +100,6 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
     self.wantsLayer = YES;
 
     [self initColors];
-
-    [self addObserver:self forKeyPath:@"effectiveAppearance" options:0 context:kEffectiveAppearanceContext];
 
     _overlay = [SeekbarOverlay new];
     [self addSubview:_overlay];
@@ -182,24 +174,20 @@ static void *kEffectiveAppearanceContext = &kEffectiveAppearanceContext;
     [self updateThumbVisibility];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (context == kEffectiveAppearanceContext) {
-        [self initColors];
-        [self updateTrackColors];
-        [self updateTrackPosColors];
-        [self updateThumbColors];
-    } else {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
+- (void)layout {
+    [super layout];
+    [self initColors];
+    [self updateTrackColors];
+    [self updateTrackPosColors];
+    [self updateThumbColors];
 }
 
 - (void)updateTrackColors {
     if (self.isKey) {
-        self.track.backgroundColor = self.trackBackgroundColor.CGColor;
+        self.track.backgroundColor = self.trackFillColor.CGColor;
     }
     else {
-        self.track.backgroundColor = self.trackInactiveBackgroundColor.CGColor;
+        self.track.backgroundColor = self.trackInactiveFillColor.CGColor;
     }
 }
 
