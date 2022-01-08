@@ -705,7 +705,8 @@ recheck_missing_artwork (const char *input_fname, const time_t cache_mtime) {
     return res;
 }
 
-static void _touch(char *path) {
+static void
+_touch(const char *path) {
     struct stat stat_struct;
     if (0 != stat (path, &stat_struct)) {
         FILE *fp = fopen(path,"w+b");

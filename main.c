@@ -119,6 +119,8 @@ char dbresourcedir[PATH_MAX];
 
 char use_gui_plugin[100];
 
+static int _previous_session_did_crash;
+
 static void
 print_help (void) {
 #ifdef ENABLE_NLS
@@ -968,10 +970,12 @@ restore_resume_state (void) {
         if (plt >= 0 && track >= 0 && pos >= 0) {
             plt_set_curr_idx(plt);
             streamer_set_current_playlist (plt);
-            streamer_yield ();
-            streamer_set_nextsong (track, paused);
-            streamer_yield ();
-            streamer_set_seek (pos);
+            if (!_previous_session_did_crash) {
+                streamer_yield ();
+                streamer_set_nextsong (track, paused);
+                streamer_yield ();
+                streamer_set_seek (pos);
+            }
         }
     }
 }
@@ -988,6 +992,26 @@ plug_get_gui (void) {
     }
     return NULL;
 }
+
+#if !_DEBUG
+static void
+_touch(const char *path) {
+    struct stat stat_struct;
+    if (0 != stat (path, &stat_struct)) {
+        FILE *fp = fopen(path,"w+b");
+        if (fp != NULL) {
+            (void)fclose(fp);
+        }
+    }
+    else {
+#ifdef _WIN32
+        (void)_utime(path, NULL);
+#else
+        (void)utimes(path, NULL);
+#endif
+    }
+}
+#endif
 
 void
 main_cleanup_and_quit (void) {
@@ -1048,6 +1072,10 @@ main_cleanup_and_quit (void) {
 
         trace ("hej-hej!\n");
         ddb_logger_free();
+
+        char crash_marker[PATH_MAX];
+        snprintf (crash_marker, sizeof (crash_marker), "%s/running", dbconfdir);
+        unlink(crash_marker);
 
         exit(0);
     });
@@ -1417,6 +1445,19 @@ main (int argc, char *argv[]) {
         cmdline = NULL;
         return 0;
     }
+
+    char crash_marker[PATH_MAX];
+    snprintf (crash_marker, sizeof (crash_marker), "%s/running", dbconfdir);
+
+#if !_DEBUG
+    struct stat crash_marker_stat = {0};
+    if (!stat(crash_marker, &crash_marker_stat)) {
+        trace_err ("We had a crash. Will not resume the saved session to avoid a crash cycle.\n");
+        _previous_session_did_crash = 1;
+    }
+
+    _touch(crash_marker);
+#endif
 
     pl_init ();
     conf_init ();
