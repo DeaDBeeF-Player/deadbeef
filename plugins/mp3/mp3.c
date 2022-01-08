@@ -213,6 +213,24 @@ cmp3_set_extra_properties (DB_playItem_t *it, mp3info_t *mp3info, int fake) {
 }
 
 static int
+_mp3_parse_and_validate (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int startoffs, int endoffs, int64_t seek_to_sample) {
+    int res = mp3_parse_file(info, flags, fp, fsize, startoffs, endoffs, seek_to_sample);
+    if (res < 0) {
+        return res;
+    }
+
+    if (info->valid_packets == 0) {
+        return -1;
+    }
+
+    if (info->ref_packet.samplerate == 0 || info->ref_packet.nchannels == 0) {
+        return -1;
+    }
+
+    return res;
+}
+
+static int
 cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     mp3_info_t *info = (mp3_info_t *)_info;
 
@@ -255,7 +273,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         if (info->startoffs > 0) {
             trace ("mp3: skipping %d(%xH) bytes of junk\n", info->startoffs, info->endoffs);
         }
-        int res = mp3_parse_file(&info->mp3info, info->mp3flags, info->file, deadbeef->fgetlength(info->file), info->startoffs, info->endoffs, -1);
+        int res = _mp3_parse_and_validate(&info->mp3info, info->mp3flags, info->file, deadbeef->fgetlength(info->file), info->startoffs, info->endoffs, -1);
         if (res < 0) {
             trace ("mp3: cmp3_init: initial mp3_parse_file failed\n");
             return -1;
@@ -283,15 +301,9 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     else {
         info->startoffs = (uint32_t)deadbeef->junk_get_leading_size(info->file);
         deadbeef->pl_add_meta (it, "title", NULL);
-        int res = mp3_parse_file(&info->mp3info, info->mp3flags, info->file, deadbeef->fgetlength(info->file), info->startoffs, 0, -1);
+        int res = _mp3_parse_and_validate(&info->mp3info, info->mp3flags, info->file, deadbeef->fgetlength(info->file), info->startoffs, 0, -1);
         if (res < 0) {
             trace ("mp3: cmp3_init: initial mp3_parse_file failed\n");
-            return -1;
-        }
-
-        // FIXME: this case should cause res=-1 from mp3_parse_file
-        if (info->mp3info.ref_packet.samplerate == 0) {
-            trace ("bad mpeg file: %s\n", deadbeef->pl_find_meta (it, ":URI"));
             return -1;
         }
 
@@ -605,7 +617,7 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         mp3flags = MP3_PARSE_ESTIMATE_DURATION;
     }
 
-    int res = mp3_parse_file(&mp3info, mp3flags, fp, fsize, start, end, -1);
+    int res = _mp3_parse_and_validate(&mp3info, mp3flags, fp, fsize, start, end, -1);
 
     if (res < 0) {
         trace ("mp3: mp3_parse_file returned error\n");
