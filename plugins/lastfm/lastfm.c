@@ -41,15 +41,15 @@ static DB_misc_t plugin;
 static DB_functions_t *deadbeef;
 
 #define LFM_CLIENTID "ddb"
-#define SCROBBLER_URL_LFM "http://post.audioscrobbler.com"
-#define SCROBBLER_URL_LIBRE "http://turtle.libre.fm"
+#define SCROBBLER_URL_LFM "https://post.audioscrobbler.com"
+#define SCROBBLER_URL_LIBRE "https://turtle.libre.fm"
 
 #if defined(__MINGW32__)
-#define LOOKUP_URL_FORMAT "cmd /c start http://www.last.fm/music/%s/_/%s"
+#define LOOKUP_URL_FORMAT "cmd /c start https://www.last.fm/music/%s/_/%s"
 #elif defined(__APPLE__)
-#define LOOKUP_URL_FORMAT "open 'http://www.last.fm/music/%s/_/%s' &"
+#define LOOKUP_URL_FORMAT "open 'https://www.last.fm/music/%s/_/%s' &"
 #else
-#define LOOKUP_URL_FORMAT "xdg-open 'http://www.last.fm/music/%s/_/%s' &"
+#define LOOKUP_URL_FORMAT "xdg-open 'https://www.last.fm/music/%s/_/%s' &"
 #endif
 
 static char lfm_user[100];
