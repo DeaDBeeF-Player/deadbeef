@@ -55,7 +55,8 @@ static GtkCellRenderer *rend_text2;
 static GtkListStore *store;
 static GtkListStore *propstore;
 int trkproperties_modified;
-static DB_playItem_t **tracks;
+static DB_playItem_t **tracks; // This is a copy to act as the model while editing and saving
+static DB_playItem_t **orig_tracks; // This is a reference to the original tracks in the playlist
 static int numtracks;
 static GtkWidget *progressdlg;
 static int progress_aborted;
@@ -66,6 +67,18 @@ static trkproperties_delegate_t *_delegate;
 // Max length of a string displayed in the TableView
 // If a string is longer -- it gets clipped, and appended with " (…)", like with linebreaks
 #define MAX_GUI_FIELD_LEN 500
+
+static void
+_iterate_semicolon_separated_substrings(const char *svalue, void (^completion_block)(const char *item));
+
+static void
+_cleanup_track_list (void);
+
+static void
+_set_metadata_row(GtkListStore *store, GtkTreeIter *iter, const char *key, int is_mult, const char *title, char *value);
+
+static void
+_remove_field(GtkListStore *model, GtkTreeIter *iter, const char *skey);
 
 static char *
 clip_multiline_value (const char *v) {
@@ -112,14 +125,9 @@ on_trackproperties_delete_event        (GtkWidget       *widget,
     gtk_widget_destroy (widget);
     rend_text2 = NULL;
     trackproperties = NULL;
-    if (tracks) {
-        for (int i = 0; i < numtracks; i++) {
-            deadbeef->pl_item_unref (tracks[i]);
-        }
-        free (tracks);
-        tracks = NULL;
-        numtracks = 0;
-    }
+
+    _cleanup_track_list();
+
     return TRUE;
 }
 
@@ -133,17 +141,20 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
     if (trkproperties_block_keyhandler) {
         return FALSE;
     }
+
     if (event->keyval == GDK_Escape) {
         on_trackproperties_delete_event (trackproperties, NULL, NULL);
         return TRUE;
     }
-    else if (event->keyval == GDK_Delete) {
-        on_trkproperties_remove_activate (NULL, NULL);
-        return TRUE;
-    }
-    else if (event->keyval == GDK_Insert) {
-        on_trkproperties_add_new_field_activate (NULL, NULL);
-        return TRUE;
+    else if (gtk_widget_is_focus(lookup_widget (trackproperties, "metalist"))) {
+        if (event->keyval == GDK_Delete) {
+            on_trkproperties_remove_activate (NULL, NULL);
+            return TRUE;
+        }
+        else if (event->keyval == GDK_Insert) {
+            on_trkproperties_add_new_field_activate (NULL, NULL);
+            return TRUE;
+        }
     }
     return FALSE;
 }
@@ -168,14 +179,12 @@ on_closebtn_clicked                    (GtkButton       *button,
 }
 
 static void
-update_meta_iter_with_edited_value (GtkTreeIter *iter, const char *new_text) {
-    char *clipped_val = clip_multiline_value (new_text);
-    if (!clipped_val) {
-        gtk_list_store_set (store, iter, 1, new_text, 3, 0, 4, new_text, -1);
-    }
-    else {
-        gtk_list_store_set (store, iter, 1, clipped_val, 3, 0, 4, new_text, -1);
-        free (clipped_val);
+_apply_field_to_all_tracks (const char *key, const char *new_text) {
+    for (int i = 0; i < numtracks; i++) {
+        deadbeef->pl_delete_meta(tracks[i], key);
+        _iterate_semicolon_separated_substrings(new_text, ^(const char *item) {
+            deadbeef->pl_append_meta(tracks[i], key, item);
+        });
     }
 }
 
@@ -197,10 +206,16 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
         return;
     }
 
-    GValue value = {0,};
-    GValue mult = {0,};
+    GValue title = {};
+    GValue key = {};
+    GValue value = {};
+    GValue mult = {};
+    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 0, &title);
+    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 2, &key);
     gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 4, &value);
     gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 3, &mult);
+    const char *stitle = g_value_get_string (&title);
+    const char *skey = g_value_get_string (&key);
     const char *svalue = g_value_get_string (&value);
     if (!svalue) {
         svalue = "";
@@ -210,52 +225,52 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
     // that's why the change gets applied unconditionally for multivalue case
     int imult = g_value_get_int (&mult);
     if (strcmp (svalue, new_text) || imult) {
-        update_meta_iter_with_edited_value (&iter, new_text);
+        _apply_field_to_all_tracks (skey, new_text);
+        _set_metadata_row(store, &iter, skey, 0, stitle, new_text);
         trkproperties_modified = 1;
     }
 
+    G_IS_VALUE (&title) ? ((void)(g_value_unset (&title)), NULL) : NULL;
+    G_IS_VALUE (&key) ? ((void)(g_value_unset (&key)), NULL) : NULL;
     G_IS_VALUE (&value) ? ((void)(g_value_unset (&value)), NULL) : NULL;
     G_IS_VALUE (&mult) ? ((void)(g_value_unset (&mult)), NULL) : NULL;
     trkproperties_block_keyhandler = 0;
 }
 
+static void
+_set_metadata_row(GtkListStore *store, GtkTreeIter *iter, const char *key, int is_mult, const char *title, char *value) {
+    char *clipped_val = clip_multiline_value (value);
+    char *display_val = clipped_val ?: value;
+    gtk_list_store_set (store, iter, 0, title, 1, display_val, 2, key, 3, is_mult ? 1 : 0, 4, value, -1);
+    free (clipped_val);
+}
+
 void
 add_field (GtkListStore *store, const char *key, const char *title, int is_prop, DB_playItem_t **tracks, int numtracks) {
+    size_t val_len = 5000;
+    char *val = malloc(val_len);
+
     // get value to edit
     const char *mult = is_prop ? "" : _("[Multiple values] ");
-    char val[5000];
     size_t ml = strlen (mult);
     memcpy (val, mult, ml+1);
-    int n = trkproperties_get_field_value (val + ml, (int)(sizeof (val) - ml), key, tracks, numtracks);
+    int n = trkproperties_get_field_value (val + ml, (int)(val_len - ml), key, tracks, numtracks);
 
     GtkTreeIter iter;
     gtk_list_store_append (store, &iter);
     if (!is_prop) {
-        if (n) {
-            char *clipped_val = clip_multiline_value (val);
-            if (!clipped_val) {
-                gtk_list_store_set (store, &iter, 0, title, 1, val, 2, key, 3, n ? 1 : 0, 4, val, -1);
-            }
-            else {
-                gtk_list_store_set (store, &iter, 0, title, 1, clipped_val, 2, key, 3, n ? 1 : 0, 4, val, -1);
-                free (clipped_val);
-            }
+        char *v = val;
+        if (!n) {
+            v += ml;
         }
-        else {
-            char *v = val + ml;
-            char *clipped_val = clip_multiline_value (v);
-            if (!clipped_val) {
-                gtk_list_store_set (store, &iter, 0, title, 1, v,  2, key, 3, n ? 1 : 0, 4, v, -1);
-            }
-            else {
-                gtk_list_store_set (store, &iter, 0, title, 1, clipped_val, 2, key, 3, n ? 1 : 0, 4, v, -1);
-                free (clipped_val);
-            }
-        }
+
+        _set_metadata_row(store, &iter, key, n, title, v);
     }
     else {
         gtk_list_store_set (store, &iter, 0, title, 1, n ? val : val + ml, -1);
     }
+
+    free (val);
 }
 
 void
@@ -301,7 +316,6 @@ trkproperties_fill_metadata (void) {
         return;
     }
     trkproperties_modified = 0;
-    deadbeef->pl_lock ();
 
     trkproperties_fill_meta (store, tracks, numtracks);
     gtk_list_store_clear (propstore);
@@ -331,16 +345,6 @@ trkproperties_fill_metadata (void) {
     if (keys) {
         free (keys);
     }
-
-    deadbeef->pl_unlock ();
-}
-
-void
-meta_value_transform_func (GtkTreeViewColumn *tree_column,
-        GtkCellRenderer *cell,
-        GtkTreeModel *tree_model,
-        GtkTreeIter *iter,
-        gpointer data) {
 }
 
 void
@@ -359,13 +363,11 @@ show_track_properties_dlg_with_current_track_list (void) {
         GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
         rend_text2 = GTK_CELL_RENDERER (ddb_cell_renderer_text_multiline_new ());
         g_object_set (G_OBJECT (rend_text2), "editable", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-        g_signal_connect ((gpointer)rend_text2, "edited",
-                          G_CALLBACK (on_metadata_edited),
-                          store);
-        GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Key"), rend_text, "text", 0, NULL);
-        GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend_text2, "text", 1, NULL);
 
-        //gtk_tree_view_column_set_cell_data_func (col2, rend_text2, meta_value_transform_func, NULL, NULL);
+        g_signal_connect ((gpointer)rend_text2, "edited", G_CALLBACK (on_metadata_edited), store);
+
+        GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Name"), rend_text, "text", 0, NULL);
+        GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend_text2, "text", 1, NULL);
 
         gtk_tree_view_append_column (tree, col1);
         gtk_tree_view_append_column (tree, col2);
@@ -376,7 +378,7 @@ show_track_properties_dlg_with_current_track_list (void) {
         gtk_tree_view_set_model (proptree, GTK_TREE_MODEL (propstore));
         GtkCellRenderer *rend_propkey = gtk_cell_renderer_text_new ();
         GtkCellRenderer *rend_propvalue = gtk_cell_renderer_text_new ();
-        g_object_set (G_OBJECT (rend_propvalue), "editable", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+        g_object_set (G_OBJECT (rend_propvalue), "editable", FALSE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
         col1 = gtk_tree_view_column_new_with_attributes (_("Key"), rend_propkey, "text", 0, NULL);
         col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend_propvalue, "text", 1, NULL);
         gtk_tree_view_append_column (proptree, col1);
@@ -392,15 +394,11 @@ show_track_properties_dlg_with_current_track_list (void) {
     }
 
     if (numtracks == 1) {
-        deadbeef->pl_lock ();
         gtk_entry_set_text (GTK_ENTRY (lookup_widget (trackproperties, "filename")), deadbeef->pl_find_meta_raw (tracks[0], ":URI"));
-        deadbeef->pl_unlock ();
     }
     else {
         gtk_entry_set_text (GTK_ENTRY (lookup_widget (trackproperties, "filename")), _("[Multiple values]"));
     }
-
-    g_object_set (G_OBJECT (rend_text2), "editable", TRUE, NULL);
 
     GtkWidget *widget = trackproperties;
     trkproperties_fill_metadata ();
@@ -411,13 +409,31 @@ show_track_properties_dlg_with_current_track_list (void) {
     gtk_window_present (GTK_WINDOW (widget));
 }
 
+static void
+_cleanup_track_list (void) {
+    for (int i = 0; i < numtracks; i++) {
+        deadbeef->pl_item_unref (orig_tracks[i]);
+    }
+    free (orig_tracks);
+    orig_tracks = NULL;
+    trkproperties_free_track_list (&tracks, &numtracks);
+}
+
 void
 show_track_properties_dlg_with_track_list (ddb_playItem_t **track_list, int count) {
-    trkproperties_free_track_list (&tracks, &numtracks);
+    _cleanup_track_list ();
+
+    if (count == 0) {
+        return;
+    }
+
+    orig_tracks = calloc (count, sizeof (ddb_playItem_t *));
     tracks = calloc (count, sizeof (ddb_playItem_t *));
     for (int i = 0; i < count; i++) {
-        tracks[i] = track_list[i];
-        deadbeef->pl_item_ref (tracks[i]);
+        orig_tracks[i] = track_list[i];
+        deadbeef->pl_item_ref(track_list[i]);
+        tracks[i] = deadbeef->pl_item_alloc();
+        deadbeef->pl_item_copy(tracks[i], track_list[i]);
     }
     numtracks = count;
     show_track_properties_dlg_with_current_track_list();
@@ -426,6 +442,8 @@ show_track_properties_dlg_with_track_list (ddb_playItem_t **track_list, int coun
 
 void
 show_track_properties_dlg (int ctx, ddb_playlist_t *plt) {
+    _cleanup_track_list();
+
     last_ctx = ctx;
     deadbeef->plt_ref (plt);
     if (last_plt) {
@@ -433,9 +451,17 @@ show_track_properties_dlg (int ctx, ddb_playlist_t *plt) {
     }
     last_plt = plt;
 
-    trkproperties_free_track_list (&tracks, &numtracks);
+    trkproperties_build_track_list_for_ctx (plt, ctx, &orig_tracks, &numtracks);
 
-    trkproperties_build_track_list_for_ctx (plt, ctx, &tracks, &numtracks);
+    if (numtracks == 0) {
+        return;
+    }
+
+    tracks = calloc (numtracks, sizeof (ddb_playItem_t *));
+    for (int i = 0; i < numtracks; i++) {
+        tracks[i] = deadbeef->pl_item_alloc();
+        deadbeef->pl_item_copy(tracks[i], orig_tracks[i]);
+    }
 
     show_track_properties_dlg_with_current_track_list();
     _delegate = NULL;
@@ -446,89 +472,27 @@ trkproperties_set_delegate (trkproperties_delegate_t *delegate) {
     _delegate = delegate;
 }
 
-
-static gboolean
-set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
-    GValue mult = {0,};
-    gtk_tree_model_get_value (model, iter, 3, &mult);
-    int smult = g_value_get_int (&mult);
-    if (!smult) {
-        GValue key = {0,}, value = {0,};
-        gtk_tree_model_get_value (model, iter, 2, &key);
-        gtk_tree_model_get_value (model, iter, 4, &value);
-        const char *skey = g_value_get_string (&key);
-        const char *svalue = g_value_get_string (&value);
-
-        int num_values = 1;
-        for (int i = 0; svalue[i]; i++) {
-            if (svalue[i] == ';') {
-                num_values++;
-            }
-        }
-
-        char **values = calloc (num_values, sizeof (char *));
-        const char *p = svalue;
-        const char *e = p;
-        int n = 0;
-        do {
-            while (*e && *e != ';') {
-                e++;
-            }
-
-            // trim
-            const char *rb = p;
-            const char *re = e-1;
-            while (rb <= re) {
-                if ((uint8_t)(*rb) > 0x20) {
-                    break;
-                }
-                rb++;
-            }
-            while (re >= rb) {
-                if ((uint8_t)(*re) > 0x20) {
-                    break;
-                }
-                re--;
-            }
-
-            if (rb <= re) {
-                re++;
-                char *v = malloc (re-rb+1);
-                memcpy (v, rb, re-rb);
-                v[re-rb] = 0;
-                values[n++] = v;
-            }
-
-            if (!*e) {
-                break;
-            }
-            p = ++e;
-        } while (*p);
-
-        for (int i = 0; i < numtracks; i++) {
-            deadbeef->pl_delete_meta (tracks[i], skey);
-            if (*svalue) {
-                for (int k = 0; k < n; k++) {
-                    if (values[k] && *values[k]) {
-                        deadbeef->pl_append_meta (tracks[i], skey, values[k]);
-                    }
-                }
-            }
-        }
-
-        for (int k = 0; k < n; k++) {
-            if (values[k]) {
-                free (values[k]);
-            }
-        }
-        free (values);
-    }
-
-    return FALSE;
-}
-
 static gboolean
 write_finished_cb (void *ctx) {
+    deadbeef->pl_lock ();
+
+    const char **keys = NULL;
+    int nkeys = trkproperties_build_key_list (&keys, 0, orig_tracks, numtracks);
+
+    for (int i = 0 ; i < numtracks; i++) {
+        // Remove all existing affected fields before adding the new ones
+        for (int j = 0; j < nkeys; j++) {
+            deadbeef->pl_delete_meta(orig_tracks[i], keys[j]);
+        }
+
+        // Update the original items
+        deadbeef->pl_item_copy (orig_tracks[i], tracks[i]);
+    }
+
+    free (keys);
+
+    deadbeef->pl_unlock();
+
     gtk_widget_destroy (progressdlg);
     progressdlg = NULL;
     trkproperties_modified = 0;
@@ -548,9 +512,7 @@ static gboolean
 set_progress_cb (void *ctx) {
     DB_playItem_t *track = ctx;
     GtkWidget *progressitem = lookup_widget (progressdlg, "progresstitle");
-    deadbeef->pl_lock ();
     gtk_entry_set_text (GTK_ENTRY (progressitem), deadbeef->pl_find_meta_raw (track, ":URI"));
-    deadbeef->pl_unlock ();
     deadbeef->pl_item_unref (track);
     return FALSE;
 }
@@ -562,14 +524,12 @@ write_meta_worker (void *ctx) {
             break;
         }
         DB_playItem_t *track = tracks[t];
-        deadbeef->pl_lock ();
         const char *dec = deadbeef->pl_find_meta_raw (track, ":DECODER");
         char decoder_id[100];
         if (dec) {
             strncpy (decoder_id, dec, sizeof (decoder_id));
         }
         int match = track && dec;
-        deadbeef->pl_unlock ();
         if (match) {
             int is_subtrack = deadbeef->pl_get_item_flags (track) & DDB_IS_SUBTRACK;
             if (is_subtrack) {
@@ -605,50 +565,13 @@ on_progress_delete_event            (GtkWidget       *widget,
 
 static void
 on_progress_abort                      (GtkButton       *button,
-                                        gpointer         user_data)
-{
+                                        gpointer         user_data) {
     progress_aborted = 1;
 }
 
 void
 on_write_tags_clicked                  (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    deadbeef->pl_lock ();
-    GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
-    GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (tree));
-
-    // delete all metadata properties that are not in the listview
-    for (int i = 0; i < numtracks; i++) {
-        DB_metaInfo_t *meta = deadbeef->pl_get_metadata_head (tracks[i]);
-        while (meta) {
-            DB_metaInfo_t *next = meta->next;
-            if (meta->key[0] != ':' && meta->key[0] != '!' && meta->key[0] != '_') {
-                GtkTreeIter iter;
-                gboolean res = gtk_tree_model_get_iter_first (model, &iter);
-                while (res) {
-                    GValue key = {0,};
-                    gtk_tree_model_get_value (model, &iter, 2, &key);
-                    const char *skey = g_value_get_string (&key);
-
-                    if (!strcasecmp (skey, meta->key)) {
-                        // field found, don't delete
-                        break;
-                    }
-                    res = gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter);
-                }
-                if (!res) {
-                    // field not found, delete
-                    deadbeef->pl_delete_metadata (tracks[i], meta);
-                }
-            }
-            meta = next;
-        }
-    }
-    // put all metainfo into track
-    gtk_tree_model_foreach (model, set_metadata_cb, NULL);
-    deadbeef->pl_unlock ();
-
+                                        gpointer         user_data) {
     if (numtracks > 25) {
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     }
@@ -689,9 +612,6 @@ on_metalist_button_press_event         (GtkWidget       *widget,
 {
     if (event->button == 3) {
         GtkWidget *menu = create_trkproperties_popup_menu ();
-        if (numtracks != 1) {
-            gtk_widget_set_sensitive (lookup_widget (menu, "trkproperties_edit"), FALSE);
-        }
         gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
         gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, event->button, gtk_get_current_event_time());
     }
@@ -724,14 +644,8 @@ on_trackproperties_window_state_event  (GtkWidget       *widget,
     return FALSE;
 }
 
-void
-on_trkproperties_edit_activate          (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    if (numtracks != 1) {
-        return; // TODO: multiple track editing support
-    }
-
+static void
+_edit_field_single_track (void) {
     GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
     GtkTreeSelection *sel = gtk_tree_view_get_selection (treeview);
     int count = gtk_tree_selection_count_selected_rows (sel);
@@ -750,12 +664,16 @@ on_trkproperties_edit_activate          (GtkMenuItem     *menuitem,
 
     GtkTreeIter iter;
     gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, path);
-    GValue key = {0,};
+
+    GValue title = {};
+    GValue key = {};
+    GValue value = {};
+    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 0, &title);
     gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 2, &key);
-    GValue value = {0,};
     gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 4, &value);
     const char *skey = g_value_get_string (&key);
     const char *svalue = g_value_get_string (&value);
+    const char *stitle = g_value_get_string (&title);
 
     char *uppercase_key = strdup (skey);
     for (char *p = uppercase_key; *p; p++) {
@@ -770,7 +688,6 @@ on_trkproperties_edit_activate          (GtkMenuItem     *menuitem,
     gtk_text_buffer_set_text (buffer, svalue, (gint)strlen (svalue));
     gtk_text_view_set_buffer (GTK_TEXT_VIEW (lookup_widget (dlg, "field_value")), buffer);
 
-    g_value_unset (&key);
     g_value_unset (&value);
 
     for (GList *l = lst; l; l = l->next) {
@@ -787,14 +704,328 @@ on_trkproperties_edit_activate          (GtkMenuItem     *menuitem,
 
         char *new_text = gtk_text_buffer_get_text (buffer, &begin, &end, TRUE);
 
-        update_meta_iter_with_edited_value (&iter, new_text);
+        _apply_field_to_all_tracks(skey, new_text);
+        _set_metadata_row(store, &iter, skey, 0, stitle, new_text);
 
         free (new_text);
 
         trkproperties_modified = 1;
     }
+    g_value_unset (&key);
+    g_value_unset (&title);
     g_object_unref (buffer);
     gtk_widget_destroy (dlg);
+}
+
+void
+on_individual_field_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpointer user_data) {
+    GtkListStore *store = GTK_LIST_STORE (user_data);
+    GtkTreePath *treepath = gtk_tree_path_new_from_string (path);
+    GtkTreeIter iter;
+
+    if (!treepath) {
+        return;
+    }
+
+    gboolean valid = gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, treepath);
+    gtk_tree_path_free (treepath);
+
+    if (!valid) {
+        return;
+    }
+
+    GValue value = {};
+    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 4, &value);
+    const char *svalue = g_value_get_string (&value);
+    if (!svalue) {
+        svalue = "";
+    }
+
+    // The multiple values case gets cleared on attempt to edit,
+    // that's why the change gets applied unconditionally for multivalue case
+    if (strcmp (svalue, new_text)) {
+        gtk_list_store_set (store, &iter, 2, new_text, 3, 0, 4, new_text, -1);
+    }
+
+    G_IS_VALUE (&value) ? ((void)(g_value_unset (&value)), NULL) : NULL;
+}
+
+
+static char *
+_semicolon_separated_string_for_meta(DB_metaInfo_t *meta) {
+    if (meta == NULL) {
+        return strdup("");
+    }
+
+    char *field = NULL;
+    size_t valuelen = 0;
+    size_t len = 0;
+    const char *value = meta->value;
+    while (len < meta->valuesize) {
+        size_t metalen = strlen (value);
+        if (metalen == 0) {
+            break;
+        }
+
+        size_t newlen = valuelen + metalen;
+        int add_semicolon = 0;
+        if (field != NULL) {
+            newlen += 2;
+            add_semicolon = 1;
+        }
+
+        field = realloc (field, newlen+1);
+
+        if (add_semicolon) {
+            memcpy (field + valuelen, "; ", 2);
+            valuelen += 2;
+        }
+
+        memcpy (field + valuelen, value, metalen);
+        valuelen = newlen;
+
+        len += metalen + 1;
+        value += metalen + 1;
+    }
+
+    if (field != NULL) {
+        field[valuelen] = 0;
+    }
+    else {
+        field = strdup("");
+    }
+
+    return field;
+}
+
+static char *
+_trim_whitespace(char *p, size_t len) {
+    char *meta = p;
+    while (*meta == ' ') {
+        meta++;
+    }
+    char *tail = p + len - 1;
+    while (tail > p && *tail == ' ') {
+        *tail = 0;
+        tail--;
+    }
+    return meta;
+}
+
+static void
+_iterate_semicolon_separated_substrings(const char *svalue, void (^completion_block)(const char *item)) {
+    while (*svalue) {
+        char *semicolon = strchr(svalue, ';');
+
+        size_t len;
+        if (semicolon == NULL) {
+            len = strlen(svalue);
+        }
+        else {
+            len = semicolon - svalue;
+        }
+
+        char *item = malloc (len + 1);
+        memcpy (item, svalue, len);
+        item[len] = 0;
+
+        char *trimmed_item = _trim_whitespace(item, len);
+
+        if (*trimmed_item) {
+            completion_block(trimmed_item);
+        }
+
+        free (item);
+
+        if (semicolon != NULL) {
+            len += 1;
+        }
+        svalue += len;
+    }
+}
+
+static void
+_edit_field_multiple_tracks (void) {
+    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
+    GtkTreeSelection *sel = gtk_tree_view_get_selection (treeview);
+    int count = gtk_tree_selection_count_selected_rows (sel);
+    if (count != 1) {
+        return; // multiple fields can't be edited at the same time
+    }
+
+    GtkWidget *dlg = create_edit_multiple_tracks_dialog();
+    gtk_widget_set_size_request(dlg, 400, 300);
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (trackproperties));
+    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
+
+    GList *lst = gtk_tree_selection_get_selected_rows (sel, NULL);
+
+    GtkTreePath *path = lst->data;
+
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, path);
+
+
+    GValue title = {};
+    GValue key = {};
+    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 0, &title);
+    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 2, &key);
+
+    const char *stitle = g_value_get_string (&title);
+    const char *skey = g_value_get_string (&key);
+
+    char *uppercase_key = strdup (skey);
+    for (char *p = uppercase_key; *p; p++) {
+        *p = toupper (*p);
+    }
+
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "entry_field_name")), uppercase_key);
+    free (uppercase_key);
+
+    // Initialize the single value tab
+
+    GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
+// The code below would set the text to the sum of values from multiple tracks
+//    GValue value = {};
+//    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 4, &value);
+//    const char *svalue = g_value_get_string (&value);
+//    gtk_text_buffer_set_text (buffer, svalue, (gint)strlen (svalue));
+//    g_value_unset (&value);
+    gtk_text_view_set_buffer (GTK_TEXT_VIEW (lookup_widget (dlg, "textview_single_value")), buffer);
+
+    // Initialize the individual values tab
+
+    GtkListStore *list_store = gtk_list_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING);
+
+    GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (dlg, "treeview_individual_values"));
+    gtk_tree_view_set_model (tree, GTK_TREE_MODEL (list_store));
+
+    GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
+    GtkCellRenderer *rend_text2 = gtk_cell_renderer_text_new();
+    GtkCellRenderer *rend_text3 = GTK_CELL_RENDERER (ddb_cell_renderer_text_multiline_new ());
+
+    g_object_set (G_OBJECT (rend_text3), "editable", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+    g_signal_connect ((gpointer)rend_text3, "edited", G_CALLBACK (on_individual_field_edited), list_store);
+
+    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes ("#", rend_text, "text", 0, NULL);
+    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Item"), rend_text2, "text", 1, NULL);
+    GtkTreeViewColumn *col3 = gtk_tree_view_column_new_with_attributes (_("Field"), rend_text3, "text", 2, NULL);
+
+    gtk_tree_view_column_set_resizable(col2, TRUE);
+    gtk_tree_view_column_set_resizable(col3, TRUE);
+
+    gtk_tree_view_append_column (tree, col1);
+    gtk_tree_view_append_column (tree, col2);
+    gtk_tree_view_append_column (tree, col3);
+
+    char *item_tf = deadbeef->tf_compile ("%title%[ // %track artist%]");
+
+    ddb_tf_context_t ctx;
+    memset (&ctx, 0, sizeof (ctx));
+
+    ctx._size = sizeof (ctx);
+    ctx.plt = NULL;
+    ctx.idx = -1;
+    ctx.id = -1;
+
+    for (int i = 0; i < numtracks; i++) {
+        char item[1000];
+        ctx.it = tracks[i];
+        deadbeef->tf_eval(&ctx, item_tf, item, sizeof (item));
+
+        char idx[10];
+        snprintf (idx, sizeof (idx), "%d", i+1);
+        DB_metaInfo_t *meta = deadbeef->pl_meta_for_key(tracks[i], skey);
+        char *field = _semicolon_separated_string_for_meta(meta);
+
+        GtkTreeIter new_iter;
+        gtk_list_store_append(list_store, &new_iter);
+        gtk_list_store_set (list_store, &new_iter, 0, idx, 1, item, 2, field, 3, 0, 4, field, -1);
+
+        free (field);
+    }
+
+    deadbeef->tf_free (item_tf);
+
+    gint response = gtk_dialog_run (GTK_DIALOG (dlg));
+
+    if (response == GTK_RESPONSE_OK) {
+        GtkWidget *tabs = lookup_widget(dlg, "notebook");
+        gint tab = gtk_notebook_get_current_page(GTK_NOTEBOOK(tabs));
+
+        if (tab == 0) {
+            GtkTextIter begin, end;
+
+            gtk_text_buffer_get_start_iter (buffer, &begin);
+            gtk_text_buffer_get_end_iter (buffer, &end);
+
+            char *new_text = gtk_text_buffer_get_text (buffer, &begin, &end, TRUE);
+
+            _apply_field_to_all_tracks(skey, new_text);
+
+            _set_metadata_row(store, &iter, skey, 0, stitle, new_text);
+
+            free (new_text);
+
+            trkproperties_modified = 1;
+        }
+        else if (tab == 1) {
+            GtkTreeIter curr_item_iter;
+            gtk_tree_model_get_iter_first(GTK_TREE_MODEL(list_store), &curr_item_iter);
+            for (int i = 0; i < numtracks; i++) {
+                GValue value = {};
+                gtk_tree_model_get_value(GTK_TREE_MODEL(list_store), &curr_item_iter, 2, &value);
+                const char *svalue = g_value_get_string (&value);
+
+                deadbeef->pl_delete_meta(tracks[i], skey);
+
+                _iterate_semicolon_separated_substrings(svalue, ^(const char *item){
+                    deadbeef->pl_append_meta(tracks[i], skey, item);
+                });
+
+                g_value_unset (&value);
+
+                gtk_tree_model_iter_next(GTK_TREE_MODEL(list_store), &curr_item_iter);
+            }
+
+            // create new text from tracks
+            size_t val_len = 5000;
+            char *val = malloc(val_len);
+
+            // get value to edit
+            const char *mult = _("[Multiple values] ");
+            size_t ml = strlen (mult);
+            memcpy (val, mult, ml+1);
+            int n = trkproperties_get_field_value (val + ml, (int)(val_len - ml), skey, tracks, numtracks);
+
+            char *display_val = val;
+            if (!n) {
+                display_val += ml;
+            }
+
+            _set_metadata_row(store, &iter, skey, 0, stitle, display_val);
+
+            free (val);
+
+            trkproperties_modified = 1;
+        }
+    }
+
+    g_value_unset (&title);
+    g_value_unset (&key);
+    gtk_widget_destroy (dlg);
+}
+
+void
+on_trkproperties_edit_activate          (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    if (numtracks == 1) {
+        _edit_field_single_track();
+    }
+    else if (numtracks > 1) {
+        _edit_field_multiple_tracks();
+    }
 }
 
 
@@ -822,9 +1053,6 @@ on_trkproperties_remove_activate       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
-    if (!gtk_widget_is_focus(GTK_WIDGET (treeview))) {
-        return; // do not remove field if Metadata tab is not focused
-    }
     GtkTreePath *path;
     GtkTreeViewColumn *col;
     gtk_tree_view_get_cursor (treeview, &path, &col);
@@ -834,25 +1062,20 @@ on_trkproperties_remove_activate       (GtkMenuItem     *menuitem,
 
     GtkTreeIter iter;
     gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, path);
-    GValue value = {0,};
-    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 2, &value);
-    const char *svalue = g_value_get_string (&value);
+    GValue key = {};
+    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 2, &key);
+    const char *skey = g_value_get_string (&key);
 
-    // delete unknown fields completely; otherwise just clear
-    int i = 0;
-    for (; trkproperties_types[i]; i += 2) {
-        if (!strcasecmp (svalue, trkproperties_types[i])) {
-            break;
-        }
+    for (int i = 0; i < numtracks; i++) {
+        deadbeef->pl_delete_meta(tracks[i], skey);
     }
-    if (trkproperties_types[i]) { // known val, clear
-        gtk_list_store_set (store, &iter, 1, "", 3, 0, 4, "", -1);
-    }
-    else {
-        gtk_list_store_remove (store, &iter);
-    }
+
+    _remove_field(store, &iter, skey);
+    g_value_unset (&key);
+
     gtk_tree_view_set_cursor (treeview, path, NULL, FALSE); // restore cursor after deletion
     gtk_tree_path_free (path);
+
     trkproperties_modified = 1;
 }
 
@@ -911,10 +1134,6 @@ on_trkproperties_add_new_field_activate
                                         (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkNotebook *notebook = GTK_NOTEBOOK(lookup_widget(trackproperties, "trkproperties_notebook"));
-    if (gtk_notebook_get_current_page(notebook) != 0) {
-        return; // do not add field if Metadata tab is not focused
-    }
     GtkWidget *dlg = create_entrydialog ();
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (trackproperties));
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
@@ -946,13 +1165,15 @@ on_trkproperties_add_new_field_activate
             int dup = 0;
             gboolean res = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (store), &iter);
             while (res) {
-                GValue value = {0,};
+                GValue value = {0};
                 gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 2, &value);
                 const char *svalue = g_value_get_string (&value);
                 if (!strcasecmp (svalue, text)) {
+                    g_value_unset(&value);
                     dup = 1;
                     break;
                 }
+                g_value_unset(&value);
                 res = gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter);
             }
 
@@ -987,14 +1208,12 @@ on_trkproperties_add_new_field_activate
     gtk_window_present (GTK_WINDOW (trackproperties));
 }
 
-
 void
 on_trkproperties_paste_fields_activate (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
 
 }
-
 
 void
 on_trkproperties_automatically_fill_values_activate
@@ -1004,17 +1223,33 @@ on_trkproperties_automatically_fill_values_activate
 
 }
 
+// predefined keys clear, otherwise remove
+static void
+_remove_field(GtkListStore *model, GtkTreeIter *iter, const char *skey) {
+    GValue title = {};
+    gtk_tree_model_get_value (GTK_TREE_MODEL(model), iter, 0, &title);
+    const char *stitle = g_value_get_string (&title);
+    int cleared = 0;
+    for (int i = 0; trkproperties_types[i] != NULL; i += 2) {
+        if (!strcasecmp (trkproperties_types[i], skey)) {
+            _set_metadata_row(store, iter, skey, 0, stitle, "");
+            cleared = 1;
+            break;
+        }
+    }
+
+    if (!cleared) {
+        gtk_list_store_remove(store, iter);
+    }
+    g_value_unset(&title);
+}
 
 void
 on_trkproperties_crop_activate         (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    GtkNotebook *notebook = GTK_NOTEBOOK(lookup_widget(trackproperties, "trkproperties_notebook"));
-    if (gtk_notebook_get_current_page(notebook) != 0) {
-        return; // do not remove field if Metadata tab is not focused
-    }
-
+                                        gpointer         user_data) {
     GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
+    GtkTreeModel *model = gtk_tree_view_get_model (treeview);
+
     GtkTreePath *path;
     gtk_tree_view_get_cursor (treeview, &path, NULL);
     if (!path) {
@@ -1022,46 +1257,45 @@ on_trkproperties_crop_activate         (GtkMenuItem     *menuitem,
     }
 
     GtkTreeIter iter_curr;
-    gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter_curr, path);
+    gtk_tree_model_get_iter (model, &iter_curr, path);
 
-    GtkTreeModel *model = gtk_tree_view_get_model (treeview);
+    // Create a list of iters to remove
+    GtkTreeIter **iters_to_remove = calloc (gtk_tree_model_iter_n_children(model, NULL), sizeof (GtkTreeIter *));
+    int count = 0;
 
     GtkTreeIter iter;
     gboolean res = gtk_tree_model_get_iter_first (model, &iter);
     while (res) {
         int getnext = 1;
         GtkTreePath *iter_path = gtk_tree_model_get_path (model, &iter);
+
         if (gtk_tree_path_compare (path, iter_path)) {
-            GValue key = {0,};
-            gtk_tree_model_get_value (model, &iter, 2, &key);
-
-            GValue value = {0,};
-            gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 2, &value);
-            const char *svalue = g_value_get_string (&value);
-
-            // delete unknown fields completely; otherwise just clear
-            int i = 0;
-            for (; trkproperties_types[i]; i += 2) {
-                if (!strcasecmp (svalue, trkproperties_types[i])) {
-                    break;
-                }
-            }
-            if (trkproperties_types[i]) { // known val, clear
-                gtk_list_store_set (store, &iter, 1, "", 3, 0, 4, "", -1);
-            }
-            else {
-                gtk_list_store_remove (store, &iter);
-                getnext = 0;
-                if (!gtk_list_store_iter_is_valid (GTK_LIST_STORE (model), &iter)) {
-                    res = 0;
-                }
-            }
+            iters_to_remove[count++] = gtk_tree_iter_copy(&iter);
         }
+
         gtk_tree_path_free (iter_path);
         if (getnext) {
-            res = gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter);
+            res = gtk_tree_model_iter_next (model, &iter);
         }
     }
+
+    // Remove the collected iters
+    for (int i = 0; i < count; i++) {
+        GValue key = {};
+        gtk_tree_model_get_value (model, iters_to_remove[i], 2, &key);
+        const char *skey = g_value_get_string (&key);
+
+        for (int i = 0; i < numtracks; i++) {
+            deadbeef->pl_delete_meta(tracks[i], skey);
+        }
+
+        _remove_field(store, iters_to_remove[i], skey);
+        g_value_unset(&key);
+
+        gtk_tree_iter_free(iters_to_remove[i]);
+    }
+    free (iters_to_remove);
+    iters_to_remove = NULL;
 
     gtk_tree_view_set_cursor (treeview, path, NULL, FALSE); // restore cursor after deletion
     gtk_tree_path_free (path);

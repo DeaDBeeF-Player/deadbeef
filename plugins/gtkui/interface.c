@@ -5719,3 +5719,119 @@ create_plugin_list_popup_menu (void)
   return plugin_list_popup_menu;
 }
 
+GtkWidget*
+create_edit_multiple_tracks_dialog (void)
+{
+  GtkWidget *edit_multiple_tracks_dialog;
+  GtkWidget *dialog_vbox18;
+  GtkWidget *vbox60;
+  GtkWidget *label183;
+  GtkWidget *entry_field_name;
+  GtkWidget *notebook;
+  GtkWidget *scrolledwindow22;
+  GtkWidget *textview_single_value;
+  GtkWidget *label184;
+  GtkWidget *scrolledwindow23;
+  GtkWidget *treeview_individual_values;
+  GtkWidget *label185;
+  GtkWidget *label186;
+  GtkWidget *dialog_action_area17;
+  GtkWidget *cancelbutton13;
+  GtkWidget *okbutton13;
+
+  edit_multiple_tracks_dialog = gtk_dialog_new ();
+  gtk_window_set_title (GTK_WINDOW (edit_multiple_tracks_dialog), _("Edit Multiple Tracks"));
+  gtk_window_set_type_hint (GTK_WINDOW (edit_multiple_tracks_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
+  gtk_dialog_set_has_separator (GTK_DIALOG (edit_multiple_tracks_dialog), FALSE);
+
+  dialog_vbox18 = gtk_dialog_get_content_area (GTK_DIALOG (edit_multiple_tracks_dialog));
+  gtk_widget_show (dialog_vbox18);
+
+  vbox60 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox60);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox18), vbox60, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox60), 12);
+
+  label183 = gtk_label_new (_("Field Name:"));
+  gtk_widget_show (label183);
+  gtk_box_pack_start (GTK_BOX (vbox60), label183, FALSE, TRUE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label183), 0, 0.5);
+
+  entry_field_name = gtk_entry_new ();
+  gtk_widget_show (entry_field_name);
+  gtk_box_pack_start (GTK_BOX (vbox60), entry_field_name, FALSE, FALSE, 0);
+  gtk_widget_set_can_focus(entry_field_name, FALSE);
+  gtk_editable_set_editable (GTK_EDITABLE (entry_field_name), FALSE);
+  gtk_entry_set_invisible_char (GTK_ENTRY (entry_field_name), 9679);
+
+  notebook = gtk_notebook_new ();
+  gtk_widget_show (notebook);
+  gtk_box_pack_start (GTK_BOX (vbox60), notebook, TRUE, TRUE, 0);
+
+  scrolledwindow22 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow22);
+  gtk_container_add (GTK_CONTAINER (notebook), scrolledwindow22);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow22), GTK_SHADOW_IN);
+
+  textview_single_value = gtk_text_view_new ();
+  gtk_widget_show (textview_single_value);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow22), textview_single_value);
+
+  label184 = gtk_label_new (_("Single Value"));
+  gtk_widget_show (label184);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 0), label184);
+
+  scrolledwindow23 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow23);
+  gtk_container_add (GTK_CONTAINER (notebook), scrolledwindow23);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow23), GTK_SHADOW_IN);
+
+  treeview_individual_values = gtk_tree_view_new ();
+  gtk_widget_show (treeview_individual_values);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow23), treeview_individual_values);
+
+  label185 = gtk_label_new (_("Individual Values"));
+  gtk_widget_show (label185);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 1), label185);
+
+  label186 = gtk_label_new (_("Use ; character to separate multiple values."));
+  gtk_widget_show (label186);
+  gtk_box_pack_start (GTK_BOX (vbox60), label186, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label186), 0, 0.5);
+
+  dialog_action_area17 = gtk_dialog_get_action_area (GTK_DIALOG (edit_multiple_tracks_dialog));
+  gtk_widget_show (dialog_action_area17);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area17), GTK_BUTTONBOX_END);
+
+  cancelbutton13 = gtk_button_new_from_stock ("gtk-cancel");
+  gtk_widget_show (cancelbutton13);
+  gtk_dialog_add_action_widget (GTK_DIALOG (edit_multiple_tracks_dialog), cancelbutton13, GTK_RESPONSE_CANCEL);
+  gtk_widget_set_can_default(cancelbutton13, TRUE);
+
+  okbutton13 = gtk_button_new_from_stock ("gtk-ok");
+  gtk_widget_show (okbutton13);
+  gtk_dialog_add_action_widget (GTK_DIALOG (edit_multiple_tracks_dialog), okbutton13, GTK_RESPONSE_OK);
+  gtk_widget_set_can_default(okbutton13, TRUE);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (edit_multiple_tracks_dialog, edit_multiple_tracks_dialog, "edit_multiple_tracks_dialog");
+  GLADE_HOOKUP_OBJECT_NO_REF (edit_multiple_tracks_dialog, dialog_vbox18, "dialog_vbox18");
+  GLADE_HOOKUP_OBJECT (edit_multiple_tracks_dialog, vbox60, "vbox60");
+  GLADE_HOOKUP_OBJECT (edit_multiple_tracks_dialog, label183, "label183");
+  GLADE_HOOKUP_OBJECT (edit_multiple_tracks_dialog, entry_field_name, "entry_field_name");
+  GLADE_HOOKUP_OBJECT (edit_multiple_tracks_dialog, notebook, "notebook");
+  GLADE_HOOKUP_OBJECT (edit_multiple_tracks_dialog, scrolledwindow22, "scrolledwindow22");
+  GLADE_HOOKUP_OBJECT (edit_multiple_tracks_dialog, textview_single_value, "textview_single_value");
+  GLADE_HOOKUP_OBJECT (edit_multiple_tracks_dialog, label184, "label184");
+  GLADE_HOOKUP_OBJECT (edit_multiple_tracks_dialog, scrolledwindow23, "scrolledwindow23");
+  GLADE_HOOKUP_OBJECT (edit_multiple_tracks_dialog, treeview_individual_values, "treeview_individual_values");
+  GLADE_HOOKUP_OBJECT (edit_multiple_tracks_dialog, label185, "label185");
+  GLADE_HOOKUP_OBJECT (edit_multiple_tracks_dialog, label186, "label186");
+  GLADE_HOOKUP_OBJECT_NO_REF (edit_multiple_tracks_dialog, dialog_action_area17, "dialog_action_area17");
+  GLADE_HOOKUP_OBJECT (edit_multiple_tracks_dialog, cancelbutton13, "cancelbutton13");
+  GLADE_HOOKUP_OBJECT (edit_multiple_tracks_dialog, okbutton13, "okbutton13");
+
+  gtk_widget_grab_focus (textview_single_value);
+  return edit_multiple_tracks_dialog;
+}
+

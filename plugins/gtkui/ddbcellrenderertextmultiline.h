@@ -81,7 +81,7 @@ DdbCellEditableTextView* ddb_cell_editable_text_view_new (void);
 DdbCellEditableTextView* ddb_cell_editable_text_view_construct (GType object_type);
 GType ddb_cell_renderer_text_multiline_get_type (void);
 DdbCellRendererTextMultiline* ddb_cell_renderer_text_multiline_new (void);
-DdbCellRendererTextMultiline* ddb_cell_renderer_text_multiline_construct (GType object_type);
+void ddb_cell_renderer_text_multiline_set_columns(DdbCellRendererTextMultiline *self, guint is_mult, guint value);
 
 
 G_END_DECLS
