@@ -644,6 +644,36 @@ on_trackproperties_window_state_event  (GtkWidget       *widget,
     return FALSE;
 }
 
+static void _update_single_value(GtkTextBuffer *buffer, GtkTreeIter *iter, const char *skey, const char *stitle) {
+    GtkTextIter begin, end;
+
+    gtk_text_buffer_get_start_iter (buffer, &begin);
+    gtk_text_buffer_get_end_iter (buffer, &end);
+
+    char *new_text = gtk_text_buffer_get_text (buffer, &begin, &end, TRUE);
+
+    for (int i = 0; i < numtracks; i++) {
+        deadbeef->pl_delete_meta(tracks[i], skey);
+
+        _iterate_semicolon_separated_substrings(new_text, ^(const char *item){
+            deadbeef->pl_append_meta(tracks[i], skey, item);
+        });
+    }
+    free (new_text);
+
+    size_t val_len = 5000;
+    char *val = malloc(val_len);
+
+    // get value to edit
+    trkproperties_get_field_value (val, (int)val_len, skey, tracks, numtracks);
+
+    _set_metadata_row(store, iter, skey, 0, stitle, val);
+
+    free (val);
+
+    trkproperties_modified = 1;
+}
+
 static void
 _edit_field_single_track (void) {
     GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
@@ -697,33 +727,7 @@ _edit_field_single_track (void) {
 
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     if (response == GTK_RESPONSE_OK) {
-        GtkTextIter begin, end;
-
-        gtk_text_buffer_get_start_iter (buffer, &begin);
-        gtk_text_buffer_get_end_iter (buffer, &end);
-
-        char *new_text = gtk_text_buffer_get_text (buffer, &begin, &end, TRUE);
-
-        for (int i = 0; i < numtracks; i++) {
-            deadbeef->pl_delete_meta(tracks[i], skey);
-
-            _iterate_semicolon_separated_substrings(new_text, ^(const char *item){
-                deadbeef->pl_append_meta(tracks[i], skey, item);
-            });
-        }
-        free (new_text);
-
-        size_t val_len = 5000;
-        char *val = malloc(val_len);
-
-        // get value to edit
-        trkproperties_get_field_value (val, (int)val_len, skey, tracks, numtracks);
-
-        _set_metadata_row(store, &iter, skey, 0, stitle, val);
-
-        free (val);
-
-        trkproperties_modified = 1;
+        _update_single_value(buffer, &iter, skey, stitle);
     }
     g_value_unset (&key);
     g_value_unset (&title);
@@ -899,13 +903,20 @@ _edit_field_multiple_tracks (void) {
     // Initialize the single value tab
 
     GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
-// The code below would set the text to the sum of values from multiple tracks
-//    GValue value = {};
-//    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 4, &value);
-//    const char *svalue = g_value_get_string (&value);
-//    gtk_text_buffer_set_text (buffer, svalue, (gint)strlen (svalue));
-//    g_value_unset (&value);
-    gtk_text_view_set_buffer (GTK_TEXT_VIEW (lookup_widget (dlg, "textview_single_value")), buffer);
+
+    // Allow editing the value if it's the same on all tracks
+    GValue mult = {};
+    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 3, &mult);
+    int imult = g_value_get_int (&mult);
+
+    if (!imult) {
+        GValue value = {};
+        gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 4, &value);
+        const char *svalue = g_value_get_string (&value);
+        gtk_text_buffer_set_text (buffer, svalue, (gint)strlen (svalue));
+        g_value_unset (&value);
+        gtk_text_view_set_buffer (GTK_TEXT_VIEW (lookup_widget (dlg, "textview_single_value")), buffer);
+    }
 
     // Initialize the individual values tab
 
@@ -968,33 +979,7 @@ _edit_field_multiple_tracks (void) {
         gint tab = gtk_notebook_get_current_page(GTK_NOTEBOOK(tabs));
 
         if (tab == 0) {
-            GtkTextIter begin, end;
-
-            gtk_text_buffer_get_start_iter (buffer, &begin);
-            gtk_text_buffer_get_end_iter (buffer, &end);
-
-            char *new_text = gtk_text_buffer_get_text (buffer, &begin, &end, TRUE);
-
-            for (int i = 0; i < numtracks; i++) {
-                deadbeef->pl_delete_meta(tracks[i], skey);
-
-                _iterate_semicolon_separated_substrings(new_text, ^(const char *item){
-                    deadbeef->pl_append_meta(tracks[i], skey, item);
-                });
-            }
-            free (new_text);
-
-            size_t val_len = 5000;
-            char *val = malloc(val_len);
-
-            // get value to edit
-            trkproperties_get_field_value (val, (int)val_len, skey, tracks, numtracks);
-
-            _set_metadata_row(store, &iter, skey, 0, stitle, val);
-
-            free (val);
-
-            trkproperties_modified = 1;
+            _update_single_value(buffer, &iter, skey, stitle);
         }
         else if (tab == 1) {
             GtkTreeIter curr_item_iter;
