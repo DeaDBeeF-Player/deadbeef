@@ -389,6 +389,27 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
 }
 
+- (NSString *)fieldValueForIndex:(NSInteger)rowIndex store:(NSMutableArray *)store isMult:(nullable BOOL *)isMult {
+    NSMutableArray<NSString *> *values = store[rowIndex][@"values"];
+    // get uniq values
+    NSArray *uniq = [[NSOrderedSet orderedSetWithArray:values] array];
+    NSInteger n = uniq.count;
+
+    NSString *val = n > 1 ? @"[Multiple Values] " : @"";
+    for (NSUInteger i = 0; i < uniq.count; i++) {
+        val = [val stringByAppendingString:uniq[i]];
+        if (i < uniq.count - 1) {
+            val = [val stringByAppendingString:@"; "];
+        }
+    }
+
+    if (isMult != NULL) {
+        *isMult = n > 1;
+    }
+
+    return val;
+}
+
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
     NSMutableArray *store = [self storeForTableView:aTableView];
     if (!store) {
@@ -400,20 +421,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         return title;
     }
     else if ([[aTableColumn identifier] isEqualToString:@"value"]) {
-        NSMutableArray<NSString *> *values = store[rowIndex][@"values"];
-        // get uniq values
-        NSArray *uniq = [[NSOrderedSet orderedSetWithArray:values] array];
-        NSInteger n = uniq.count;
-
-        NSString *val = n > 1 ? @"[Multiple Values] " : @"";
-        for (NSUInteger i = 0; i < uniq.count; i++) {
-            val = [val stringByAppendingString:uniq[i]];
-            if (i < uniq.count - 1) {
-                val = [val stringByAppendingString:@"; "];
-            }
-        }
-
-        return val;
+        return [self fieldValueForIndex:rowIndex store:store isMult:NULL];
     }
     return nil;
 }
@@ -762,6 +770,16 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     NSInteger idx = ind.firstIndex;
 
     if (self.numtracks != 1) {
+        // Allow editing the previous value, if all tracks have the same
+        BOOL isMult;
+        NSString *value = [self fieldValueForIndex:idx store:self.store isMult:&isMult];
+        if (!isMult) {
+            self.multiValueSingle.string = value;
+        }
+        else {
+            self.multiValueSingle.string = @"";
+        }
+
         NSString *key = self.store[idx][@"key"];
         self.multiValueFieldName.stringValue =  key.uppercaseString;
 
