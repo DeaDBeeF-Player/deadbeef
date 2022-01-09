@@ -5411,6 +5411,7 @@ create_edit_tag_value_dlg (void)
   GtkWidget *label161;
   GtkWidget *scrolledwindow13;
   GtkWidget *field_value;
+  GtkWidget *label187;
   GtkWidget *dialog_action_area16;
   GtkWidget *cancelbutton12;
   GtkWidget *okbutton12;
@@ -5438,6 +5439,7 @@ create_edit_tag_value_dlg (void)
   field_name = gtk_entry_new ();
   gtk_widget_show (field_name);
   gtk_box_pack_start (GTK_BOX (vbox47), field_name, FALSE, FALSE, 0);
+  gtk_widget_set_can_focus(field_name, FALSE);
   gtk_editable_set_editable (GTK_EDITABLE (field_name), FALSE);
   gtk_entry_set_invisible_char (GTK_ENTRY (field_name), 8226);
 
@@ -5454,6 +5456,11 @@ create_edit_tag_value_dlg (void)
   field_value = gtk_text_view_new ();
   gtk_widget_show (field_value);
   gtk_container_add (GTK_CONTAINER (scrolledwindow13), field_value);
+
+  label187 = gtk_label_new (_("Use ; character to separate multiple values."));
+  gtk_widget_show (label187);
+  gtk_box_pack_start (GTK_BOX (vbox47), label187, FALSE, TRUE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label187), 0, 0.5);
 
   dialog_action_area16 = gtk_dialog_get_action_area (GTK_DIALOG (edit_tag_value_dlg));
   gtk_widget_show (dialog_action_area16);
@@ -5478,6 +5485,7 @@ create_edit_tag_value_dlg (void)
   GLADE_HOOKUP_OBJECT (edit_tag_value_dlg, label161, "label161");
   GLADE_HOOKUP_OBJECT (edit_tag_value_dlg, scrolledwindow13, "scrolledwindow13");
   GLADE_HOOKUP_OBJECT (edit_tag_value_dlg, field_value, "field_value");
+  GLADE_HOOKUP_OBJECT (edit_tag_value_dlg, label187, "label187");
   GLADE_HOOKUP_OBJECT_NO_REF (edit_tag_value_dlg, dialog_action_area16, "dialog_action_area16");
   GLADE_HOOKUP_OBJECT (edit_tag_value_dlg, cancelbutton12, "cancelbutton12");
   GLADE_HOOKUP_OBJECT (edit_tag_value_dlg, okbutton12, "okbutton12");

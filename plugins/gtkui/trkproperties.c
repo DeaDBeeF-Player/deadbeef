@@ -704,10 +704,24 @@ _edit_field_single_track (void) {
 
         char *new_text = gtk_text_buffer_get_text (buffer, &begin, &end, TRUE);
 
-        _apply_field_to_all_tracks(skey, new_text);
-        _set_metadata_row(store, &iter, skey, 0, stitle, new_text);
+        for (int i = 0; i < numtracks; i++) {
+            deadbeef->pl_delete_meta(tracks[i], skey);
 
+            _iterate_semicolon_separated_substrings(new_text, ^(const char *item){
+                deadbeef->pl_append_meta(tracks[i], skey, item);
+            });
+        }
         free (new_text);
+
+        size_t val_len = 5000;
+        char *val = malloc(val_len);
+
+        // get value to edit
+        trkproperties_get_field_value (val, (int)val_len, skey, tracks, numtracks);
+
+        _set_metadata_row(store, &iter, skey, 0, stitle, val);
+
+        free (val);
 
         trkproperties_modified = 1;
     }
@@ -961,11 +975,24 @@ _edit_field_multiple_tracks (void) {
 
             char *new_text = gtk_text_buffer_get_text (buffer, &begin, &end, TRUE);
 
-            _apply_field_to_all_tracks(skey, new_text);
+            for (int i = 0; i < numtracks; i++) {
+                deadbeef->pl_delete_meta(tracks[i], skey);
 
-            _set_metadata_row(store, &iter, skey, 0, stitle, new_text);
-
+                _iterate_semicolon_separated_substrings(new_text, ^(const char *item){
+                    deadbeef->pl_append_meta(tracks[i], skey, item);
+                });
+            }
             free (new_text);
+
+            size_t val_len = 5000;
+            char *val = malloc(val_len);
+
+            // get value to edit
+            trkproperties_get_field_value (val, (int)val_len, skey, tracks, numtracks);
+
+            _set_metadata_row(store, &iter, skey, 0, stitle, val);
+
+            free (val);
 
             trkproperties_modified = 1;
         }
