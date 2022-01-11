@@ -1469,17 +1469,13 @@ main (int argc, char *argv[]) {
 
     conf_set_str ("deadbeef_version", VERSION);
 
-    // volume need to be initialized before plugins start
+    // Volume needs to be initialized before the plugins start
 
     int volume_needs_migration = conf_get_str_fast("playback.volume.normalized", NULL) == NULL;
     if (volume_needs_migration) {
         // migrate the volume from dB to normalized / amplitude
         float vol_db = conf_get_float("playback.volume", 0);
-        float vol_normalized = 0;
-        if (vol_db > -50) {
-            vol_normalized = db_to_amp(vol_db);
-        }
-        volume_set_amp (vol_normalized);
+        volume_set_db (vol_db);
     }
     else {
         volume_set_amp (conf_get_float("playback.volume.normalized", 1));
