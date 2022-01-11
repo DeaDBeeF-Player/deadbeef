@@ -13,6 +13,10 @@
                 <outlet property="seekBar" destination="paF-TY-fCE" id="tuP-OX-ekk"/>
                 <outlet property="statusBar" destination="Rek-dI-lyl" id="6Pu-H7-aOK"/>
                 <outlet property="volumeBar" destination="tGc-Yg-ZUl" id="AVa-nf-Q2f"/>
+                <outlet property="volumeCubicScaleItem" destination="RqO-rb-GTs" id="O9s-vG-LfN"/>
+                <outlet property="volumeDbScaleItem" destination="vaA-Q7-Kmh" id="skg-vh-vTg"/>
+                <outlet property="volumeLinearScaleItem" destination="gyo-Vb-nuD" id="YIC-rz-eTN"/>
+                <outlet property="volumeScaleMenu" destination="wkd-iY-aMg" id="Pco-x5-bM3"/>
                 <outlet property="window" destination="zZI-9s-62b" id="Wg1-V2-PJy"/>
             </connections>
         </customObject>
@@ -22,7 +26,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="785" height="287"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2048" height="1127"/>
             <value key="minSize" type="size" width="500" height="200"/>
             <view key="contentView" id="Ds9-lN-DIb">
                 <rect key="frame" x="0.0" y="0.0" width="785" height="287"/>
@@ -63,7 +67,7 @@
                         <nil key="toolTip"/>
                         <customView key="view" id="paF-TY-fCE" userLabel="DdbSeekbar" customClass="DdbSeekBar">
                             <rect key="frame" x="0.0" y="14" width="163" height="26"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <connections>
                                 <action selector="seekBarAction:" target="-2" id="9eR-Cc-ac9"/>
                             </connections>
@@ -76,7 +80,7 @@
                         <nil key="toolTip"/>
                         <segmentedControl key="view" verticalHuggingPriority="750" id="Q6A-xH-8bl">
                             <rect key="frame" x="0.0" y="14" width="130" height="24"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="mDy-zS-nlC">
                                 <font key="font" metaFont="system"/>
                                 <segments>
@@ -95,11 +99,12 @@
                     <toolbarItem implicitItemIdentifier="0D19120C-6CE3-44D9-88AF-A6AC3500FF97" label="Custom View" paletteLabel="Custom View" sizingBehavior="auto" id="icE-Ef-aFl">
                         <nil key="toolTip"/>
                         <slider key="view" verticalHuggingPriority="750" id="tGc-Yg-ZUl" customClass="DdbVolumeBar">
-                            <rect key="frame" x="0.0" y="14" width="96" height="21"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                            <rect key="frame" x="0.0" y="14" width="96" height="28"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="S3U-Vh-3xu"/>
                             <connections>
                                 <action selector="volumeBarAction:" target="-2" id="ZOi-d2-5LP"/>
+                                <outlet property="menu" destination="wkd-iY-aMg" id="7iR-J2-4eR"/>
                             </connections>
                         </slider>
                     </toolbarItem>
@@ -112,6 +117,32 @@
             </toolbar>
             <point key="canvasLocation" x="246.5" y="98.5"/>
         </window>
+        <menu id="wkd-iY-aMg">
+            <items>
+                <menuItem title="dB Scale" id="vaA-Q7-Kmh">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="selectDbScaleAction:" target="-2" id="dO0-Gf-Dnp"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Linear Scale" id="gyo-Vb-nuD">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="selectLinearScaleAction:" target="-2" id="RQr-n1-LaY"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Cubic Scale" id="RqO-rb-GTs">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="selectCubicScaleAction:" target="-2" id="giK-LP-v4D"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <connections>
+                <outlet property="delegate" destination="-2" id="kpZ-vt-ZJp"/>
+            </connections>
+            <point key="canvasLocation" x="-587" y="23"/>
+        </menu>
     </objects>
     <resources>
         <image name="btnnextTemplate" width="75" height="75"/>

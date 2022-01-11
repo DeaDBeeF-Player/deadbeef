@@ -35,7 +35,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface MainWindowController () {
+@interface MainWindowController () <NSMenuDelegate> {
     NSTimer *_updateTimer;
     char *_titlebar_playing_script;
     char *_titlebar_playing_subtitle_script;
@@ -51,6 +51,11 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) MainContentViewController *mainContentViewController;
 
 @property (weak) NSMenuItem *designModeMenuItem;
+
+@property (strong) IBOutlet NSMenu *volumeScaleMenu;
+@property (weak) IBOutlet NSMenuItem *volumeDbScaleItem;
+@property (weak) IBOutlet NSMenuItem *volumeLinearScaleItem;
+@property (weak) IBOutlet NSMenuItem *volumeCubicScaleItem;
 
 @end
 
@@ -267,19 +272,89 @@ static char sb_text[512];
     }
 }
 
-- (IBAction)volumeBarAction:(NSControl *)sender {
-    float range = -deadbeef->volume_get_min_db ();
-    float volume = [(NSSlider*)sender floatValue] / 100.f * range - range;
-    if (volume < -range) {
-        volume = -range;
+- (void)updateVolumeBar {
+    char scale[10];
+    deadbeef->conf_get_str ("playback.volume.scale", "dB", scale, sizeof(scale));
+
+    if (!strcmp (scale, "linear")) {
+        self.volumeBar.floatValue = deadbeef->volume_get_amp () * 100;
     }
-    if (volume > 0) {
-        volume = 0;
+    else if (!strcmp (scale, "cubic")) {
+        self.volumeBar.floatValue = cbrt(deadbeef->volume_get_amp ()) * 100;
+    }
+    else {
+        float range = -deadbeef->volume_get_min_db ();
+        float vol = (deadbeef->volume_get_db () + range) / range * 100;
+        self.volumeBar.floatValue = vol;
     }
 
-    deadbeef->volume_set_db (volume);
-    int db = (int)volume;
-    sender.toolTip = [NSString stringWithFormat:@"%s%ddB", db < 0 ? "" : "+", db];
+    [self updateVolumeBarTooltip];
+}
+
+- (IBAction)volumeBarAction:(NSSlider *)sender {
+    char scale[10];
+    deadbeef->conf_get_str ("playback.volume.scale", "dB", scale, sizeof(scale));
+
+    float value = sender.floatValue / 100.f;
+
+    if (!strcmp (scale, "linear")) {
+        deadbeef->volume_set_amp (value);
+    }
+    else if (!strcmp (scale, "cubic")) {
+        deadbeef->volume_set_amp (value * value * value);
+    }
+    else {
+        float range = -deadbeef->volume_get_min_db ();
+        float volume = value * range - range;
+        if (volume < -range) {
+            volume = -range;
+        }
+        if (volume > 0) {
+            volume = 0;
+        }
+
+        deadbeef->volume_set_db (volume);
+    }
+
+    [self updateVolumeBarTooltip];
+}
+
+- (void)updateVolumeBarTooltip {
+    char scale[10];
+    deadbeef->conf_get_str ("playback.volume.scale", "dB", scale, sizeof(scale));
+
+    if (!strcmp (scale, "linear") || !strcmp (scale, "cubic")) {
+        int percents = (int)(deadbeef->volume_get_amp() * 100);
+        self.volumeBar.toolTip = [NSString stringWithFormat:@"%d%%", percents];
+    }
+    else {
+        int db = (int)deadbeef->volume_get_db();
+        self.volumeBar.toolTip = [NSString stringWithFormat:@"%s%ddB", db < 0 ? "" : "+", db];
+    }
+}
+
+- (IBAction)selectDbScaleAction:(NSMenuItem *)sender {
+    if (sender.state != NSControlStateValueOn) {
+        deadbeef->conf_set_str("playback.volume.scale", "dB");
+        deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+        deadbeef->conf_save();
+    }
+}
+
+- (IBAction)selectLinearScaleAction:(NSMenuItem *)sender {
+    if (sender.state != NSControlStateValueOn) {
+        deadbeef->conf_set_str("playback.volume.scale", "linear");
+        deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+        deadbeef->conf_save();
+    }
+}
+
+- (IBAction)selectCubicScaleAction:(NSMenuItem *)sender {
+    if (sender.state != NSControlStateValueOn) {
+        deadbeef->conf_set_str("playback.volume.scale", "cubic");
+        deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+        deadbeef->conf_save();
+    }
 }
 
 - (IBAction)tbClicked:(id)sender {
@@ -309,12 +384,6 @@ static char sb_text[512];
     if (idx != -1) {
         deadbeef->plt_remove (idx);
     }
-}
-
-- (void)updateVolumeBar {
-    float range = -deadbeef->volume_get_min_db ();
-    float vol = (deadbeef->volume_get_db () + range) / range * 100;
-    [self volumeBar].floatValue = vol;
 }
 
 - (void)freeTitleBarConfig {
@@ -396,6 +465,17 @@ static char sb_text[512];
         NSString *subTitle = [NSString stringWithUTF8String:subtitleBuffer];
 
         self.window.title = [NSString stringWithFormat:@"%@%@%@", subTitle, (titleBuffer[0] && subtitleBuffer[0]) ? @" - " : @"", title];
+    }
+}
+
+- (void)menuNeedsUpdate:(NSMenu *)menu {
+    if (menu == self.volumeScaleMenu) {
+        char scale[10];
+        deadbeef->conf_get_str ("playback.volume.scale", "dB", scale, sizeof(scale));
+
+        self.volumeDbScaleItem.state = !strcmp (scale, "dB") ? NSControlStateValueOn : NSControlStateValueOff;
+        self.volumeLinearScaleItem.state = !strcmp (scale, "linear") ? NSControlStateValueOn : NSControlStateValueOff;
+        self.volumeCubicScaleItem.state = !strcmp (scale, "cubic") ? NSControlStateValueOn : NSControlStateValueOff;
     }
 }
 

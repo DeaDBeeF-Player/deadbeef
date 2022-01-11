@@ -14,6 +14,10 @@
                 <outlet property="splitViewController" destination="xuH-au-Yba" id="31g-bm-90R"/>
                 <outlet property="statusBar" destination="Yc4-pv-Wup" id="K9B-e5-BXc"/>
                 <outlet property="volumeBar" destination="GfK-FT-xmA" id="l7u-hZ-dzR"/>
+                <outlet property="volumeCubicScaleItem" destination="ndN-Hq-xWh" id="UK5-D1-Axa"/>
+                <outlet property="volumeDbScaleItem" destination="90b-Hd-KHk" id="Ji9-3D-Pzf"/>
+                <outlet property="volumeLinearScaleItem" destination="AUl-na-Wxr" id="wqS-MQ-BGf"/>
+                <outlet property="volumeScaleMenu" destination="fpp-H4-DZz" id="DYv-Dz-HGb"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -23,7 +27,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" fullSizeContentView="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="980" height="440"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2048" height="1127"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="980" height="440"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -70,7 +74,7 @@
                         <nil key="toolTip"/>
                         <customView key="view" translatesAutoresizingMaskIntoConstraints="NO" id="Cf3-e3-qXV" userLabel="DdbSeekbar" customClass="DdbSeekBar">
                             <rect key="frame" x="0.0" y="14" width="163" height="26"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <connections>
                                 <action selector="seekBarAction:" target="-2" id="6xm-l3-mAx"/>
                             </connections>
@@ -102,9 +106,13 @@
                     <toolbarItem implicitItemIdentifier="0D19120C-6CE3-44D9-88AF-A6AC3500FF97" label="Custom View" paletteLabel="Custom View" sizingBehavior="auto" id="swP-ZR-Qps">
                         <nil key="toolTip"/>
                         <slider key="view" verticalHuggingPriority="750" id="GfK-FT-xmA" customClass="DdbVolumeBar">
-                            <rect key="frame" x="0.0" y="14" width="96" height="21"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                            <sliderCell key="cell" controlSize="small" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="upx-Mu-ZBK"/>
+                            <rect key="frame" x="0.0" y="14" width="96" height="20"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <sliderCell key="cell" controlSize="small" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="upx-Mu-ZBK">
+                                <connections>
+                                    <outlet property="menu" destination="fpp-H4-DZz" id="JFd-8n-VKc"/>
+                                </connections>
+                            </sliderCell>
                             <connections>
                                 <action selector="volumeBarAction:" target="-2" id="Fc2-nX-JZk"/>
                             </connections>
@@ -136,6 +144,32 @@
             </connections>
         </viewController>
         <viewController id="Fq8-H0-Fvi" userLabel="Detail View Controller"/>
+        <menu id="fpp-H4-DZz">
+            <items>
+                <menuItem title="dB Scale" id="90b-Hd-KHk">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="selectDbScaleAction:" target="-2" id="k8l-ah-vcN"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Linear Scale" id="AUl-na-Wxr">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="selectLinearScaleAction:" target="-2" id="aUn-J0-Lok"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Cubic Scale" id="ndN-Hq-xWh">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="selectCubicScaleAction:" target="-2" id="17x-kk-E1H"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <connections>
+                <outlet property="delegate" destination="-2" id="SUe-so-ciu"/>
+            </connections>
+            <point key="canvasLocation" x="-587" y="23"/>
+        </menu>
         <scrollView autoresizesSubviews="NO" wantsLayer="YES" misplaced="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VJY-8N-XhM" userLabel="Sidebar View">
             <rect key="frame" x="0.0" y="0.0" width="285" height="275"/>
             <clipView key="contentView" wantsLayer="YES" drawsBackground="NO" id="Eiv-XJ-7B1">
