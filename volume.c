@@ -43,10 +43,10 @@ volume_set_db (float dB) {
     if (dB > 0) {
         dB = 0;
     }
-    conf_set_float ("playback.volume", dB);
-    volume_db = dB;
     volume_amp = dB > VOLUME_MIN ? db_to_amp (dB) : 0;
+    volume_db = dB;
     audio_mute = 0;
+    conf_set_float ("playback.volume.normalized", volume_amp);
 }
 
 float
@@ -64,8 +64,16 @@ volume_set_amp (float amp) {
     }
     volume_amp = amp;
     volume_db = amp > 0 ? amp_to_db (amp) : VOLUME_MIN;
-    conf_set_float ("playback.volume", volume_db);
+
+    if (volume_db < VOLUME_MIN) {
+        volume_db = VOLUME_MIN;
+    }
+    else if (volume_db > 0) {
+        volume_db = 0;
+    }
+
     audio_mute = 0;
+    conf_set_float ("playback.volume.normalized", volume_amp);
 }
 
 float

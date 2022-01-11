@@ -1469,7 +1469,21 @@ main (int argc, char *argv[]) {
 
     conf_set_str ("deadbeef_version", VERSION);
 
-    volume_set_db (conf_get_float ("playback.volume", 0)); // volume need to be initialized before plugins start
+    // volume need to be initialized before plugins start
+
+    int volume_needs_migration = conf_get_str_fast("playback.volume.normalized", NULL) == NULL;
+    if (volume_needs_migration) {
+        // migrate the volume from dB to normalized / amplitude
+        float vol_db = conf_get_float("playback.volume", 0);
+        float vol_normalized = 0;
+        if (vol_db > -50) {
+            vol_normalized = db_to_amp(vol_db);
+        }
+        volume_set_amp (vol_normalized);
+    }
+    else {
+        volume_set_amp (conf_get_float("playback.volume.normalized", 1));
+    }
 
     messagepump_init (); // required to push messages while handling commandline
     if (plug_load_all ()) { // required to add files to playlist from commandline
