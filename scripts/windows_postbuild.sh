@@ -30,8 +30,15 @@ for i in po/*.gmo ; do
 done
 cp -uv translation/help.ru.txt  "$1/doc/"
 
+# gdk_pixbuf libs
+for i in $MSYSTEM_PREFIX /usr; do
+	cp -ru $i/lib/gdk-pixbuf-2.0 "$1/lib/" 2>>/dev/null | true
+done
+rm -v "$1"/lib/gdk-pixbuf-2.0/2.10.0/loaders/*.a
+
 # Libraries
-ldd "$1/plugins/"*.dll "$1/deadbeef.exe" | awk 'NF == 4 {print $3}; NF == 2 {print $1}' \
+ldd "$1/plugins/"*.dll "$1/deadbeef.exe" "$1"/lib/gdk-pixbuf-2.0/2.10.0/loaders/*.dll |
+awk 'NF == 4 {print $3}; NF == 2 {print $1}' \
 									 | grep -iv "???" \
 									 | grep -iv "System32" \
 									 | grep -iv "WinSxS" \
@@ -52,11 +59,6 @@ cp -uv xdispatch_ddb/lib/*.dll "$1/"
 # Clean up
 rm -fv "$1"/plugins/*.lib | true
 rm -fv "$1"/*.lib | true
-
-# gdk_pixbuf libs
-for i in /mingw32 /mingw64 /usr; do
-	cp -ru $i/lib/gdk-pixbuf-2.0 "$1/lib/gdk-pixbuf-2.0" 2>>/dev/null | true
-done
 
 # gtk2 theme
 mkdir -pv "$1/lib/gtk-2.0/2.10.0/engines"
