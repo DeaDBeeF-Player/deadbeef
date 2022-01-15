@@ -31,11 +31,12 @@ case "$TRAVIS_OS_NAME" in
     osx)
         echo gem install xcpretty ...
         gem install xcpretty 1> /dev/null 2> /dev/null
+        VERSION=`tr -d '\r' < PORTABLE_VERSION`
+        /usr/libexec/PlistBuddy -c "Set CFBundleShortVersionString $VERSION" plugins/cocoaui/deadbeef-Info.plist
         rev=`git rev-parse --short HEAD`
         /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $rev"  plugins/cocoaui/deadbeef-Info.plist
         xcodebuild "MACOSX_DEPLOYMENT_TARGET=10.13" test -project osx/deadbeef.xcodeproj -scheme deadbeef -configuration Release -quiet | xcpretty ; test ${PIPESTATUS[0]} -eq 0
         xcodebuild "MACOSX_DEPLOYMENT_TARGET=10.13" -project osx/deadbeef.xcodeproj -target DeaDBeeF -configuration Release -quiet | xcpretty ; test ${PIPESTATUS[0]} -eq 0
-        VERSION=`tr -d '\r' < PORTABLE_VERSION`
         cd osx/build/Release
         zip -r deadbeef-$VERSION-osx-x86_64.zip DeaDBeeF.app
         cd ../../..
