@@ -926,6 +926,7 @@ main_cleanup_and_quit (void);
         alert.messageText = @"Use right click menu to replace the UI elements with other elements.";
         alert.showsSuppressionButton = YES;
         alert.suppressionButton.title = @"Do not show this message again";
+        alert.alertStyle = NSAlertStyleInformational;
 
         [alert beginSheetModalForWindow:self.mainWindow.window completionHandler:^(NSModalResponse returnCode) {
             if (alert.suppressionButton.state == NSControlStateValueOn) {
