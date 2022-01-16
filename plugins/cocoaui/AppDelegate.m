@@ -921,6 +921,20 @@ main_cleanup_and_quit (void);
 
 
 - (IBAction)toggleDesignModeAction:(id)sender {
+    if (!self.designModeState.enabled && !deadbeef->conf_get_int("cocoaui.suppress_designmode_help", 0)) {
+        NSAlert *alert = [NSAlert new];
+        alert.messageText = @"Use right click menu to replace the UI elements with other elements.";
+        alert.showsSuppressionButton = YES;
+        alert.suppressionButton.title = @"Do not show this message again";
+
+        [alert beginSheetModalForWindow:self.mainWindow.window completionHandler:^(NSModalResponse returnCode) {
+            if (alert.suppressionButton.state == NSControlStateValueOn) {
+                deadbeef->conf_set_int ("cocoaui.suppress_designmode_help", 1);
+                deadbeef->conf_save ();
+            }
+        }];
+    }
+
     self.designModeState.enabled = !self.designModeState.enabled;
     self.designModeMenuItem.state = self.designModeState.enabled ? NSControlStateValueOn : NSControlStateValueOff;
 }
