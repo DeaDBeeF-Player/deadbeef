@@ -1,3 +1,26 @@
+version 1.9.0
+	Fixed: WMA regression which caused corrupt playback
+	Fixed: Deadlock in ALSA plugin
+	Fixed: Mis-detection of raw AAC files as MP4 files
+	Fixed: Handling empty title formatting scripts
+	Fixed: Memory error when dragging playlist via Playlist Browser
+	Fixed: Keyboard nagivation issues across playlist tabs (Saivert)
+	Fixed: Playlist tabs and playlist customized colors bugs (Saivert)
+	Fixed: Paused state was not persisted correctly after force-quitting
+	Added: Long file seeking support for Opus and FFMPEG
+	Added: HTTPS support for vfs_curl in portable builds, via libmbedtls
+	Added: Design mode for CocoaUI
+	Added: New Scope and Spectrum Analyzer visualizations
+	Added: Visualization appearance preferences pane
+	Added: New album art loader
+	Added: Configurable volume bar scale (dB, linear, cubic) via context menu (Saivert)
+	Added: Title formatting $year(time) function
+	Added: GTK UI for editing a chosen field of multiple selected tracks, in a table interface
+	Added: Creating new playlist via clicking the "+" button in the playlist tab strip (Saivert)
+	Added: Improved DSP preferences GTK UI (Saivert)
+	Added: Improved handling of invalid MP3 files
+	Added: Last.fm scrobbler will use HTTPS by default
+
 version 1.8.8
 	Fixed: A crash and file path issues in PSF plugin (greedysky)
 	Fixed: A crash when reading certain AAC files
