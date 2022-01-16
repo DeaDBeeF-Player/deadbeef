@@ -2029,6 +2029,9 @@
 		2DBC62DA24CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBC62D824CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.h */; };
 		2DBC62DB24CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DBC62D924CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.m */; };
 		2DBCA6962794492D00D7432F /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2DBCA6952794492D00D7432F /* Credits.rtf */; };
+		2DBCA69A27944B2200D7432F /* COPYING.GPLv2 in Resources */ = {isa = PBXBuildFile; fileRef = 2DBCA69827944B2200D7432F /* COPYING.GPLv2 */; };
+		2DBCA69B27944B2200D7432F /* COPYING.LGPLv2.1 in Resources */ = {isa = PBXBuildFile; fileRef = 2DBCA69927944B2200D7432F /* COPYING.LGPLv2.1 */; };
+		2DBCA69D27944BB600D7432F /* ChangeLog in Resources */ = {isa = PBXBuildFile; fileRef = 2DBCA69C27944BB600D7432F /* ChangeLog */; };
 		2DBCB725240AE0BE0012F178 /* tftintutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBCB71F240ADCC10012F178 /* tftintutil.h */; };
 		2DBCB726240AE28E0012F178 /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DBCB720240ADCC10012F178 /* tftintutil.c */; };
 		2DBF129D22DE53D200D59073 /* icy2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D565AB21A40BCE200CE1F5D /* icy2utf8.c */; };
@@ -6503,6 +6506,9 @@
 		2DBC62D824CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumAnalyzerVisualizationView.h; sourceTree = "<group>"; };
 		2DBC62D924CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumAnalyzerVisualizationView.m; sourceTree = "<group>"; };
 		2DBCA6952794492D00D7432F /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = SOURCE_ROOT; };
+		2DBCA69827944B2200D7432F /* COPYING.GPLv2 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.GPLv2; path = ../../COPYING.GPLv2; sourceTree = "<group>"; };
+		2DBCA69927944B2200D7432F /* COPYING.LGPLv2.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; name = COPYING.LGPLv2.1; path = ../../COPYING.LGPLv2.1; sourceTree = "<group>"; };
+		2DBCA69C27944BB600D7432F /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ChangeLog; path = ../../ChangeLog; sourceTree = "<group>"; };
 		2DBCB71F240ADCC10012F178 /* tftintutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tftintutil.h; sourceTree = "<group>"; };
 		2DBCB720240ADCC10012F178 /* tftintutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tftintutil.c; sourceTree = "<group>"; };
 		2DBF3D3F270868D400023138 /* MainContentViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainContentViewController.xib; sourceTree = "<group>"; };
@@ -11180,6 +11186,17 @@
 			path = Visualization;
 			sourceTree = "<group>";
 		};
+		2DBCA69727944B0B00D7432F /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				2DBCA69C27944BB600D7432F /* ChangeLog */,
+				2DBCA6952794492D00D7432F /* Credits.rtf */,
+				2DBCA69827944B2200D7432F /* COPYING.GPLv2 */,
+				2DBCA69927944B2200D7432F /* COPYING.LGPLv2.1 */,
+			);
+			name = Assets;
+			sourceTree = "<group>";
+		};
 		2DC657D0274957FE00583E14 /* Tabs */ = {
 			isa = PBXGroup;
 			children = (
@@ -12595,7 +12612,7 @@
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
-				2DBCA6952794492D00D7432F /* Credits.rtf */,
+				2DBCA69727944B0B00D7432F /* Assets */,
 				2DC657D92749607600583E14 /* DdbTabStrip */,
 				2D30D13625E2A6B40023A299 /* DesignMode */,
 				4D2362B218395D0300C9E818 /* Images */,
@@ -16014,6 +16031,7 @@
 				2DDBDA392436678700C12A75 /* btnduplicateTemplate.pdf in Resources */,
 				2DB05F7B252E4F170090635E /* iconLibraryTemplate.pdf in Resources */,
 				2D8D96B11D1091F900A5C7E6 /* noartwork.png in Resources */,
+				2DBCA69B27944B2200D7432F /* COPYING.LGPLv2.1 in Resources */,
 				2DC655752741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib in Resources */,
 				2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */,
 				4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */,
@@ -16041,6 +16059,7 @@
 				2D17F8461AB3391A00AF2853 /* MainMenu.xib in Resources */,
 				2D11E8B41AA0E3DD00A67A20 /* MainWindow.xib in Resources */,
 				2D9C0C15238DC0E700CE8C10 /* GroupByCustomWindow.xib in Resources */,
+				2DBCA69D27944BB600D7432F /* ChangeLog in Resources */,
 				2DC657FC274A7C4600583E14 /* RenamePlaylistViewController.xib in Resources */,
 				2DB05FFD252E53220090635E /* iconGUISettingsTemplate.pdf in Resources */,
 				2DEBA1D423E207A3000E4135 /* EqualizerWindowController.xib in Resources */,
@@ -16058,6 +16077,7 @@
 				2D651D1A227227FA00375AE2 /* ScriptableNodeEditorView.xib in Resources */,
 				2D1A563A1D9FF9A4005E5CDD /* ReplayGain.xib in Resources */,
 				2D651D07227227A000375AE2 /* ScriptableNodeEditorWindow.xib in Resources */,
+				2DBCA69A27944B2200D7432F /* COPYING.GPLv2 in Resources */,
 				2D651D1C22722AD200375AE2 /* ScriptableSelectView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

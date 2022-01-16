@@ -638,13 +638,22 @@ CA
                             </menuItem>
                             <menuItem title="Changelog" id="nFw-NP-SSj">
                                 <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showChangelog:" target="494" id="HM1-Mc-ary"/>
+                                </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="cno-OZ-V0I"/>
                             <menuItem title="GPLv2" id="ciM-Yy-AMx">
                                 <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showGPL:" target="494" id="RYa-fn-uNR"/>
+                                </connections>
                             </menuItem>
                             <menuItem title="LGPLv2.1" id="jNN-z1-lvK">
                                 <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showLGPL:" target="494" id="daI-9e-Aia"/>
+                                </connections>
                             </menuItem>
                         </items>
                     </menu>

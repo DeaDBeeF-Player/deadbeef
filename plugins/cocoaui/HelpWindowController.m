@@ -13,17 +13,18 @@
 
 @property (unsafe_unretained) IBOutlet NSTextView *textView;
 
-
 @end
 
 @implementation HelpWindowController
 
 - (void)windowDidLoad {
     [super windowDidLoad];
-    
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
 
-    NSURL *path = [[NSBundle mainBundle] URLForResource:@"help-cocoa" withExtension:@"txt"];
+    [self loadContent];
+}
+
+- (void)loadContent {
+    NSURL *path = self.contentURL;
     NSString *content = [NSString stringWithContentsOfFile:[path path] encoding:NSUTF8StringEncoding error:nil];
     if (content) {
 
@@ -36,11 +37,19 @@
         }
 
         [self.textView.textStorage setAttributedString:[[NSAttributedString alloc] initWithString:content attributes:@{
-             NSForegroundColorAttributeName: NSColor.controlTextColor,
-             NSFontAttributeName: font
+            NSForegroundColorAttributeName: NSColor.controlTextColor,
+            NSFontAttributeName: font
 
-         }]];
+        }]];
         self.textView.selectedRange = NSMakeRange(0, 0);
+    }
+}
+
+- (void)setContentURL:(NSURL *)contentURL {
+    _contentURL = contentURL;
+
+    if (self.textView != nil) {
+        [self loadContent];
     }
 }
 

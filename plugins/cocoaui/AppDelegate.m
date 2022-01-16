@@ -879,11 +879,46 @@ main_cleanup_and_quit (void);
     if (!_helpWindow) {
         _helpWindow = [[HelpWindowController alloc] initWithWindowNibName:@"HelpViewer"];
     }
+    _helpWindow.contentURL = [NSBundle.mainBundle URLForResource:@"help-cocoa" withExtension:@"txt"];
 
     if (![_helpWindow.window isVisible]) {
         [_helpWindow showWindow:self];
     }
 }
+
+- (IBAction)showChangelog:(id)sender {
+    if (!_helpWindow) {
+        _helpWindow = [[HelpWindowController alloc] initWithWindowNibName:@"HelpViewer"];
+    }
+    _helpWindow.contentURL = [NSBundle.mainBundle URLForResource:@"ChangeLog" withExtension:@""];
+
+    if (![_helpWindow.window isVisible]) {
+        [_helpWindow showWindow:self];
+    }
+}
+
+- (IBAction)showGPL:(id)sender {
+    if (!_helpWindow) {
+        _helpWindow = [[HelpWindowController alloc] initWithWindowNibName:@"HelpViewer"];
+    }
+    _helpWindow.contentURL = [NSBundle.mainBundle URLForResource:@"COPYING" withExtension:@"GPLv2"];
+
+    if (![_helpWindow.window isVisible]) {
+        [_helpWindow showWindow:self];
+    }
+}
+
+- (IBAction)showLGPL:(id)sender {
+    if (!_helpWindow) {
+        _helpWindow = [[HelpWindowController alloc] initWithWindowNibName:@"HelpViewer"];
+    }
+    _helpWindow.contentURL = [NSBundle.mainBundle URLForResource:@"COPYING.LGPLv2" withExtension:@"1"];
+
+    if (![_helpWindow.window isVisible]) {
+        [_helpWindow showWindow:self];
+    }
+}
+
 
 - (IBAction)toggleDesignModeAction:(id)sender {
     self.designModeState.enabled = !self.designModeState.enabled;
