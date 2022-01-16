@@ -923,7 +923,8 @@ main_cleanup_and_quit (void);
 - (IBAction)toggleDesignModeAction:(id)sender {
     if (!self.designModeState.enabled && !deadbeef->conf_get_int("cocoaui.suppress_designmode_help", 0)) {
         NSAlert *alert = [NSAlert new];
-        alert.messageText = @"Use right click menu to replace the UI elements with other elements.";
+        alert.messageText = @"Design Mode";
+        alert.informativeText = @"Use the right click menu to customize UI elements. Use Splitter and Tabs elements to place multiple elements.";
         alert.showsSuppressionButton = YES;
         alert.suppressionButton.title = @"Do not show this message again";
         alert.alertStyle = NSAlertStyleInformational;
