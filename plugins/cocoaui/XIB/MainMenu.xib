@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -636,6 +636,16 @@ CA
                                     <action selector="showHelp:" target="494" id="sxX-T5-mOw"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Changelog" id="nFw-NP-SSj">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="cno-OZ-V0I"/>
+                            <menuItem title="GPLv2" id="ciM-Yy-AMx">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                            </menuItem>
+                            <menuItem title="LGPLv2.1" id="jNN-z1-lvK">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
@@ -676,7 +686,7 @@ CA
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="167" y="107" width="364" height="93"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2048" height="1127"/>
             <view key="contentView" id="KVu-0k-T7v">
                 <rect key="frame" x="0.0" y="0.0" width="364" height="93"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -735,7 +745,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="163" y="199" width="368" height="68"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2048" height="1127"/>
             <view key="contentView" id="UsQ-WG-CU4">
                 <rect key="frame" x="0.0" y="0.0" width="368" height="68"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -771,7 +781,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="167" y="107" width="327" height="120"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2048" height="1127"/>
             <value key="minSize" type="size" width="327" height="120"/>
             <view key="contentView" id="30A-nz-a9e">
                 <rect key="frame" x="0.0" y="0.0" width="327" height="120"/>

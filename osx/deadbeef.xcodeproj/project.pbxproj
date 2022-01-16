@@ -2028,6 +2028,7 @@
 		2DBC62D724CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DBC62D524CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m */; };
 		2DBC62DA24CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBC62D824CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.h */; };
 		2DBC62DB24CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DBC62D924CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.m */; };
+		2DBCA6962794492D00D7432F /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2DBCA6952794492D00D7432F /* Credits.rtf */; };
 		2DBCB725240AE0BE0012F178 /* tftintutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBCB71F240ADCC10012F178 /* tftintutil.h */; };
 		2DBCB726240AE28E0012F178 /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DBCB720240ADCC10012F178 /* tftintutil.c */; };
 		2DBF129D22DE53D200D59073 /* icy2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D565AB21A40BCE200CE1F5D /* icy2utf8.c */; };
@@ -6501,6 +6502,7 @@
 		2DBC62D524CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumAnalyzerVisualizationViewController.m; sourceTree = "<group>"; };
 		2DBC62D824CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumAnalyzerVisualizationView.h; sourceTree = "<group>"; };
 		2DBC62D924CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumAnalyzerVisualizationView.m; sourceTree = "<group>"; };
+		2DBCA6952794492D00D7432F /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = SOURCE_ROOT; };
 		2DBCB71F240ADCC10012F178 /* tftintutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tftintutil.h; sourceTree = "<group>"; };
 		2DBCB720240ADCC10012F178 /* tftintutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tftintutil.c; sourceTree = "<group>"; };
 		2DBF3D3F270868D400023138 /* MainContentViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainContentViewController.xib; sourceTree = "<group>"; };
@@ -12593,6 +12595,7 @@
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
+				2DBCA6952794492D00D7432F /* Credits.rtf */,
 				2DC657D92749607600583E14 /* DdbTabStrip */,
 				2D30D13625E2A6B40023A299 /* DesignMode */,
 				4D2362B218395D0300C9E818 /* Images */,
@@ -16027,6 +16030,7 @@
 				2DC657D82749581900583E14 /* DdbTabStripViewController.xib in Resources */,
 				2DC65828274AB03800583E14 /* LyricsViewController.xib in Resources */,
 				2DB05E77252E3F3E0090635E /* iconPluginsTemplate.pdf in Resources */,
+				2DBCA6962794492D00D7432F /* Credits.rtf in Resources */,
 				2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */,
 				4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */,
 				2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */,
