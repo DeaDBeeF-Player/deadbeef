@@ -70,8 +70,8 @@ extern "C" {
 // NOTE: deprecation doesn't mean the API is going to be removed, it just means
 // that there's a better replacement in the newer deadbeef versions.
 
-// api version history:
-// 1.15 -- deadbeef-1.9.0 (medialib branch)
+// API version history:
+// 1.15 -- deadbeef-1.9.0
 // 1.14 -- deadbeef-1.8.8
 // 1.12 -- deadbeef-1.8.4
 // 1.11 -- deadbeef-1.8.3
