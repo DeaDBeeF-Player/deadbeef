@@ -2873,12 +2873,12 @@ create_prefwin (void)
   gtk_widget_show (hbox150);
   gtk_box_pack_start (GTK_BOX (vbox56), hbox150, FALSE, TRUE, 0);
 
-  button_medialib_add_folder = gtk_button_new_with_mnemonic (_("+"));
+  button_medialib_add_folder = gtk_button_new_with_mnemonic ("+");
   gtk_widget_show (button_medialib_add_folder);
   gtk_box_pack_start (GTK_BOX (hbox150), button_medialib_add_folder, FALSE, FALSE, 0);
   gtk_widget_set_size_request (button_medialib_add_folder, 38, -1);
 
-  button_medialib_remove_folder = gtk_button_new_with_mnemonic (_("-"));
+  button_medialib_remove_folder = gtk_button_new_with_mnemonic ("-");
   gtk_widget_show (button_medialib_remove_folder);
   gtk_box_pack_start (GTK_BOX (hbox150), button_medialib_remove_folder, FALSE, FALSE, 0);
   gtk_widget_set_size_request (button_medialib_remove_folder, 38, -1);
