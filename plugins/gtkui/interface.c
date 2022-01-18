@@ -2154,7 +2154,7 @@ create_prefwin (void)
   tmp_toolbar_icon_size = gtk_toolbar_get_icon_size (GTK_TOOLBAR (dsp_toolbar));
 
   dsp_add_toolbtn = (GtkWidget*) gtk_toggle_tool_button_new ();
-  gtk_tool_button_set_label (GTK_TOOL_BUTTON (dsp_add_toolbtn), _("Add"));
+  gtk_tool_button_set_label (GTK_TOOL_BUTTON (dsp_add_toolbtn), "");
   tmp_image = gtk_image_new_from_stock ("gtk-add", tmp_toolbar_icon_size);
   gtk_widget_show (tmp_image);
   gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (dsp_add_toolbtn), tmp_image);
@@ -2163,19 +2163,19 @@ create_prefwin (void)
 
   tmp_image = gtk_image_new_from_stock ("gtk-remove", tmp_toolbar_icon_size);
   gtk_widget_show (tmp_image);
-  dsp_remove_toolbtn = (GtkWidget*) gtk_tool_button_new (tmp_image, _("Remove"));
+  dsp_remove_toolbtn = (GtkWidget*) gtk_tool_button_new (tmp_image, "");
   gtk_widget_show (dsp_remove_toolbtn);
   gtk_container_add (GTK_CONTAINER (dsp_toolbar), dsp_remove_toolbtn);
 
   tmp_image = gtk_image_new_from_stock ("gtk-go-up", tmp_toolbar_icon_size);
   gtk_widget_show (tmp_image);
-  dsp_up_toolbtn = (GtkWidget*) gtk_tool_button_new (tmp_image, _("Up"));
+  dsp_up_toolbtn = (GtkWidget*) gtk_tool_button_new (tmp_image, "");
   gtk_widget_show (dsp_up_toolbtn);
   gtk_container_add (GTK_CONTAINER (dsp_toolbar), dsp_up_toolbtn);
 
   tmp_image = gtk_image_new_from_stock ("gtk-go-down", tmp_toolbar_icon_size);
   gtk_widget_show (tmp_image);
-  dsp_down_toolbtn = (GtkWidget*) gtk_tool_button_new (tmp_image, _("Down"));
+  dsp_down_toolbtn = (GtkWidget*) gtk_tool_button_new (tmp_image, "");
   gtk_widget_show (dsp_down_toolbtn);
   gtk_container_add (GTK_CONTAINER (dsp_toolbar), dsp_down_toolbtn);
 

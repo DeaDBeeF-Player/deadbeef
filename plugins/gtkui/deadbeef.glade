@@ -3489,7 +3489,7 @@ Only prevent clipping</property>
 		      <child>
 			<widget class="GtkToggleToolButton" id="dsp_add_toolbtn">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Add</property>
+			  <property name="label" translatable="yes"></property>
 			  <property name="use_underline">True</property>
 			  <property name="stock_id">gtk-add</property>
 			  <property name="visible_horizontal">True</property>
@@ -3507,7 +3507,7 @@ Only prevent clipping</property>
 		      <child>
 			<widget class="GtkToolButton" id="dsp_remove_toolbtn">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Remove</property>
+			  <property name="label" translatable="yes"></property>
 			  <property name="use_underline">True</property>
 			  <property name="stock_id">gtk-remove</property>
 			  <property name="visible_horizontal">True</property>
@@ -3524,7 +3524,7 @@ Only prevent clipping</property>
 		      <child>
 			<widget class="GtkToolButton" id="dsp_up_toolbtn">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Up</property>
+			  <property name="label" translatable="yes"></property>
 			  <property name="use_underline">True</property>
 			  <property name="stock_id">gtk-go-up</property>
 			  <property name="visible_horizontal">True</property>
@@ -3541,7 +3541,7 @@ Only prevent clipping</property>
 		      <child>
 			<widget class="GtkToolButton" id="dsp_down_toolbtn">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Down</property>
+			  <property name="label" translatable="yes"></property>
 			  <property name="use_underline">True</property>
 			  <property name="stock_id">gtk-go-down</property>
 			  <property name="visible_horizontal">True</property>
