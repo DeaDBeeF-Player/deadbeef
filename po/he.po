@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-16 11:52+0100\n"
-"PO-Revision-Date: 2022-01-16 10:53+0000\n"
+"POT-Creation-Date: 2022-01-18 21:34+0100\n"
+"PO-Revision-Date: 2022-01-18 20:35+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Hebrew (http://www.transifex.com/deadbeef-player/deadbeef-player/language/he/)\n"
 "MIME-Version: 1.0\n"
@@ -36,9 +36,9 @@ msgid "DeaDBeeF Translators"
 msgstr "מתרגמי DeaDBeeF"
 
 #: ../plugins/gtkui/callbacks.c:646 ../plugins/gtkui/interface.c:976
-#: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:166
+#: ../plugins/gtkui/deadbeef.glade.h:62 ../translation/plugins.c:163
 #: ../plugins/converter/convgui.c:1781 ../plugins/converter/convgui.c:1789
-#: ../plugins/gtkui/actionhandlers.c:317
+#: ../plugins/gtkui/actionhandlers.c:322
 #, no-c-format
 msgid "Help"
 msgstr "עזרה"
@@ -80,7 +80,7 @@ msgid "Import Foobar2000 Preset"
 msgstr "ייבוא תצורה של Foobar2000"
 
 #. plugins/notify/notify.c
-#: ../plugins/gtkui/eq.c:311 ../translation/plugins.c:393
+#: ../plugins/gtkui/eq.c:311 ../translation/plugins.c:400
 #, no-c-format
 msgid "Enable"
 msgstr "הפעלה"
@@ -145,7 +145,7 @@ msgstr "שינוי שם רשימת ההשמעה"
 msgid "Title:"
 msgstr "כותרת:"
 
-#: ../plugins/gtkui/gtkui.c:733 ../translation/plugins.c:218
+#: ../plugins/gtkui/gtkui.c:733 ../translation/plugins.c:213
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:65
 #, no-c-format
 msgid "New Playlist"
@@ -386,7 +386,7 @@ msgid "Custom"
 msgstr "מותאם אישית"
 
 #: ../plugins/gtkui/interface.c:292 ../plugins/gtkui/interface.c:1825
-#: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:202
+#: ../plugins/gtkui/deadbeef.glade.h:27 ../translation/plugins.c:199
 #, no-c-format
 msgid "Preferences"
 msgstr "העדפות"
@@ -498,13 +498,13 @@ msgid "Search"
 msgstr "חיפוש"
 
 #: ../plugins/gtkui/interface.c:794 ../plugins/gtkui/deadbeef.glade.h:54
-#: ../translation/plugins.c:327
+#: ../translation/plugins.c:334
 #, no-c-format
 msgid "Stop"
 msgstr "עצירה"
 
 #: ../plugins/gtkui/interface.c:802 ../plugins/gtkui/deadbeef.glade.h:55
-#: ../translation/plugins.c:325
+#: ../translation/plugins.c:332
 #, no-c-format
 msgid "Play"
 msgstr "נגינה"
@@ -514,19 +514,19 @@ msgid "Pause"
 msgstr "השהיה"
 
 #: ../plugins/gtkui/interface.c:818 ../plugins/gtkui/deadbeef.glade.h:57
-#: ../translation/plugins.c:329
+#: ../translation/plugins.c:336
 #, no-c-format
 msgid "Previous"
 msgstr "הקודם"
 
 #: ../plugins/gtkui/interface.c:826 ../plugins/gtkui/deadbeef.glade.h:58
-#: ../translation/plugins.c:331
+#: ../translation/plugins.c:338
 #, no-c-format
 msgid "Next"
 msgstr "הבא"
 
 #: ../plugins/gtkui/interface.c:834 ../plugins/gtkui/deadbeef.glade.h:59
-#: ../translation/plugins.c:337
+#: ../translation/plugins.c:344
 #, no-c-format
 msgid "Play Random"
 msgstr "נגינה אקראית"
@@ -536,13 +536,13 @@ msgid "About"
 msgstr "על אודות"
 
 #: ../plugins/gtkui/interface.c:856 ../plugins/gtkui/deadbeef.glade.h:61
-#: ../translation/plugins.c:152
+#: ../translation/plugins.c:149
 #, no-c-format
 msgid "Quit"
 msgstr "יציאה"
 
 #: ../plugins/gtkui/interface.c:1049 ../plugins/gtkui/deadbeef.glade.h:63
-#: ../translation/plugins.c:164
+#: ../translation/plugins.c:161
 #, no-c-format
 msgid "Track Properties"
 msgstr "מאפייני הרצועה"
@@ -683,7 +683,7 @@ msgid "Processing:"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:2022 ../plugins/gtkui/playlist/plcommon.c:894
-#: ../translation/plugins.c:106 ../plugins/gtkui/widgets.c:3440
+#: ../translation/plugins.c:103 ../plugins/gtkui/widgets.c:3440
 #: ../plugins/gtkui/widgets.c:4111
 #, no-c-format
 msgid "None"
@@ -744,7 +744,7 @@ msgid "\"Stop after current album\" option will switch off after triggering"
 msgstr "האפשרות „עצירה לאחר האלבום הנוכחי“ תכבה לאחר הפעלתה"
 
 #: ../plugins/gtkui/interface.c:2120 ../plugins/gtkui/deadbeef.glade.h:112
-#: ../translation/plugins.c:170
+#: ../translation/plugins.c:167
 #, no-c-format
 msgid "Playback"
 msgstr "השמעה"
@@ -831,14 +831,14 @@ msgstr "נגן"
 
 #. plugins/pltbrowser/pltbrowser.c
 #: ../plugins/gtkui/interface.c:2327 ../plugins/gtkui/deadbeef.glade.h:132
-#: ../translation/plugins.c:407
+#: ../translation/plugins.c:414
 #, no-c-format
 msgid "Close playlists with middle mouse button"
 msgstr "סגירת רשימות הנגינה עם לחצן עכבר אמצעי"
 
 #: ../plugins/gtkui/interface.c:2331 ../plugins/gtkui/deadbeef.glade.h:133
-msgid "Hide \"Remove From Disk\" context menu item"
-msgstr "הסרת הפריט „הסרה מהכונן“ מתפריט ההקשר"
+msgid "Hide \"Delete from Disk\" context menu item"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2335 ../plugins/gtkui/deadbeef.glade.h:134
 msgid ""
@@ -1191,6 +1191,8 @@ msgid "Strip APEv2"
 msgstr "הסרת APEv2"
 
 #: ../plugins/gtkui/interface.c:4584 ../plugins/gtkui/deadbeef.glade.h:218
+#: ../translation/plugins.c:504
+#, no-c-format
 msgid "ID3v2 version"
 msgstr "גרסת ID3v2"
 
@@ -1260,7 +1262,7 @@ msgid ""
 msgstr "תיבת דו שיח זו מאפשרת הגדרת כותרת משלך לכל רצועה שהיא. אפשרות זו שימושית להגדרת תזרימים כמו תחנות רדיו. האפשרות להגדרת כותרת משלך קיימת גם בתיבת הדו־שיח „הוספת מיקום“. הכותרת עצמה מופיעה בעמודות המציגים את שדה נתוני העל „אמן“. היא אמורה להיראות בערך כך: „[התאמה אישית] אמן“ אם קיים שדה אמן, או פשוט „התאמה אישית“ בכל מצב אחר."
 
 #: ../plugins/gtkui/interface.c:5356 ../plugins/gtkui/deadbeef.glade.h:233
-#: ../translation/plugins.c:146 ../plugins/shellexecui/interface.c:70
+#: ../translation/plugins.c:143 ../plugins/shellexecui/interface.c:70
 #: ../plugins/shellexecui/shellexec.glade.h:5
 #, no-c-format
 msgid "Edit"
@@ -1473,7 +1475,7 @@ msgid "Really close the window?"
 msgstr "האם באמת לסגור את החלון?"
 
 #. get value to edit
-#: ../plugins/gtkui/trkproperties.c:254 ../plugins/gtkui/trkproperties.c:1008
+#: ../plugins/gtkui/trkproperties.c:254 ../plugins/gtkui/trkproperties.c:994
 msgid "[Multiple values] "
 msgstr "[ערכים מרובים]"
 
@@ -1499,31 +1501,31 @@ msgstr "[ריבוי ערכים]"
 msgid "Writing tags..."
 msgstr "התגיות נכתבות..."
 
-#: ../plugins/gtkui/trkproperties.c:936
+#: ../plugins/gtkui/trkproperties.c:922
 msgid "Item"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:937
+#: ../plugins/gtkui/trkproperties.c:923
 msgid "Field"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:1152
+#: ../plugins/gtkui/trkproperties.c:1138
 msgid "Field name"
 msgstr "שם השדה"
 
-#: ../plugins/gtkui/trkproperties.c:1155
+#: ../plugins/gtkui/trkproperties.c:1141
 msgid "Name:"
 msgstr "שם:"
 
-#: ../plugins/gtkui/trkproperties.c:1168
+#: ../plugins/gtkui/trkproperties.c:1154
 msgid "Field names must not start with : or _"
 msgstr "שמות השדות לא יכולים להתחיל בתווים : או _"
 
-#: ../plugins/gtkui/trkproperties.c:1169 ../plugins/gtkui/trkproperties.c:1210
+#: ../plugins/gtkui/trkproperties.c:1155 ../plugins/gtkui/trkproperties.c:1196
 msgid "Cannot add field"
 msgstr "לא ניתן להוסיף שדה"
 
-#: ../plugins/gtkui/trkproperties.c:1209
+#: ../plugins/gtkui/trkproperties.c:1195
 msgid "Field with such name already exists, please try different name."
 msgstr "שדה בשם זה כבר קיים, נא לנסות שם אחר."
 
@@ -1843,45 +1845,45 @@ msgstr "גודל האוגר המועדף"
 msgid "Preferred period size"
 msgstr "משך הזמן המועדף"
 
-#. plugins/artwork-legacy/artwork.c
+#. plugins/artwork/artwork.c
 #: ../translation/plugins.c:15
 #, no-c-format
-msgid "Refresh cover art"
+msgid "Refresh Cover Art"
 msgstr ""
 
 #: ../translation/plugins.c:17
 #, no-c-format
-msgid "Cache update period (in hours, 0=never)"
-msgstr ""
-
-#: ../translation/plugins.c:19
-#, no-c-format
 msgid "Fetch from embedded tags"
 msgstr "קבלה מתגיות מובנות"
 
-#: ../translation/plugins.c:21
+#: ../translation/plugins.c:19
 #, no-c-format
 msgid "Fetch from local folder"
 msgstr "קבלה מתיקייה מקומית"
 
-#: ../translation/plugins.c:23
+#: ../translation/plugins.c:21
 #, no-c-format
 msgid "Fetch from Last.fm"
 msgstr ""
 
-#: ../translation/plugins.c:25
+#: ../translation/plugins.c:23
 #, no-c-format
 msgid "Fetch from MusicBrainz"
 msgstr ""
 
-#: ../translation/plugins.c:27
+#: ../translation/plugins.c:25
 #, no-c-format
 msgid "Fetch from Albumart.org"
 msgstr ""
 
+#: ../translation/plugins.c:27
+#, no-c-format
+msgid "Fetch from World of Spectrum (AY files)"
+msgstr ""
+
 #: ../translation/plugins.c:29
 #, no-c-format
-msgid "Fetch from World of Spectrum (AY files only)"
+msgid "Save downloaded files to music folders"
 msgstr ""
 
 #: ../translation/plugins.c:31
@@ -1911,996 +1913,1076 @@ msgstr ""
 
 #: ../translation/plugins.c:41
 #, no-c-format
-msgid "Scale artwork towards longer side"
-msgstr "מתיחת העטיפה לעבר הצד הארוך יותר"
-
-#. plugins/artwork/artwork.c
-#: ../translation/plugins.c:44
-#, no-c-format
-msgid "Disable disk cache"
+msgid "Save to file name"
 msgstr ""
 
-#: ../translation/plugins.c:46
+#: ../translation/plugins.c:43
 #, no-c-format
-msgid "Save extracted covers to music folders"
+msgid "Search masks (; separated)"
 msgstr ""
 
-#: ../translation/plugins.c:48
+#: ../translation/plugins.c:45
 #, no-c-format
-msgid "Local file mask"
+msgid "Search folders (; separated)"
 msgstr ""
 
-#: ../translation/plugins.c:50
+#: ../translation/plugins.c:47
 #, no-c-format
-msgid "Artwork folders"
+msgid "Cache refresh (hrs)"
 msgstr ""
 
 #. plugins/cdda/cdda.c
-#: ../translation/plugins.c:53
+#: ../translation/plugins.c:50
 #, no-c-format
 msgid "CD drive to load"
 msgstr ""
 
-#: ../translation/plugins.c:55
+#: ../translation/plugins.c:52
 #, no-c-format
 msgid "Audio CD Drive"
 msgstr ""
 
-#: ../translation/plugins.c:57
+#: ../translation/plugins.c:54
 #, no-c-format
 msgid "File"
 msgstr "קובץ"
 
-#: ../translation/plugins.c:59
+#: ../translation/plugins.c:56
 #, no-c-format
 msgid "Add Audio CD"
 msgstr "הוספת תקליטור שמע"
 
-#: ../translation/plugins.c:61
+#: ../translation/plugins.c:58
 #, no-c-format
 msgid "Use CDDB/FreeDB"
 msgstr "שימוש ב־CDDB/FreeDB"
 
-#: ../translation/plugins.c:63
+#: ../translation/plugins.c:60
 #, no-c-format
 msgid "Prefer CD-Text over CDDB"
 msgstr "העדפת CD-Text על פני CDDB"
 
-#: ../translation/plugins.c:65
+#: ../translation/plugins.c:62
 #, no-c-format
 msgid "CDDB url (e.g. 'freedb.org')"
 msgstr "כתובת ה־CDDB (לדוגמה: 'freedb.org')"
 
-#: ../translation/plugins.c:67
+#: ../translation/plugins.c:64
 #, no-c-format
 msgid "CDDB port number (e.g. '888')"
 msgstr "מס׳ הפתחה של ה־CDDB (לדוגמה: '888')"
 
-#: ../translation/plugins.c:69
+#: ../translation/plugins.c:66
 #, no-c-format
 msgid "Use CDDB protocol"
 msgstr "שימוש בפרוטוקול CDDB"
 
-#: ../translation/plugins.c:71
+#: ../translation/plugins.c:68
 #, no-c-format
 msgid "Enable NRG image support"
 msgstr "הפעלת תמיכה בתמונות NRG"
 
-#: ../translation/plugins.c:73
+#: ../translation/plugins.c:70
 #, no-c-format
 msgid "Drive speed for normal playback"
 msgstr ""
 
-#: ../translation/plugins.c:75 ../plugins/gtkui/widgets.c:2947
+#: ../translation/plugins.c:72 ../plugins/gtkui/widgets.c:2947
 #, no-c-format
 msgid "1x"
 msgstr ""
 
-#: ../translation/plugins.c:77 ../plugins/gtkui/widgets.c:2949
+#: ../translation/plugins.c:74 ../plugins/gtkui/widgets.c:2949
 #, no-c-format
 msgid "2x"
 msgstr ""
 
-#: ../translation/plugins.c:79 ../plugins/gtkui/widgets.c:2953
+#: ../translation/plugins.c:76 ../plugins/gtkui/widgets.c:2953
 #, no-c-format
 msgid "4x"
 msgstr ""
 
-#: ../translation/plugins.c:81
+#: ../translation/plugins.c:78
 #, no-c-format
 msgid "8x"
 msgstr ""
 
-#: ../translation/plugins.c:83
+#: ../translation/plugins.c:80
 #, no-c-format
 msgid "16x"
 msgstr ""
 
-#: ../translation/plugins.c:85
+#: ../translation/plugins.c:82
 #, no-c-format
 msgid "Max"
 msgstr ""
 
-#: ../translation/plugins.c:87
+#: ../translation/plugins.c:84
 #, no-c-format
 msgid "Use cdparanoia error correction when ripping"
 msgstr ""
 
 #. plugins/converter/convgui.c
-#: ../translation/plugins.c:90
+#: ../translation/plugins.c:87
 #, no-c-format
 msgid "Convert"
 msgstr "המרה"
 
 #. plugins/dsp_libsrc/src.c
-#: ../translation/plugins.c:93
+#: ../translation/plugins.c:90
 #, no-c-format
 msgid "Autodetect samplerate from output device"
 msgstr ""
 
-#: ../translation/plugins.c:95
+#: ../translation/plugins.c:92
 #, no-c-format
 msgid "Set samplerate directly"
 msgstr ""
 
-#: ../translation/plugins.c:97
+#: ../translation/plugins.c:94
 #, no-c-format
 msgid "Quality / Algorithm"
 msgstr "איכות / אלגוריתם"
 
 #. plugins/dumb/cdumb.c
-#: ../translation/plugins.c:100
+#: ../translation/plugins.c:97
 #, no-c-format
 msgid "Resampling quality"
 msgstr ""
 
-#: ../translation/plugins.c:102
+#: ../translation/plugins.c:99
 #, no-c-format
 msgid "Internal DUMB volume"
 msgstr ""
 
-#: ../translation/plugins.c:104
+#: ../translation/plugins.c:101
 #, no-c-format
 msgid "Volume ramping"
 msgstr ""
 
-#: ../translation/plugins.c:108
+#: ../translation/plugins.c:105
 #, no-c-format
 msgid "On/Off Only"
 msgstr ""
 
-#: ../translation/plugins.c:110
+#: ../translation/plugins.c:107
 #, no-c-format
 msgid "Full"
 msgstr ""
 
-#: ../translation/plugins.c:112
+#: ../translation/plugins.c:109
 #, no-c-format
 msgid "8-bit output"
 msgstr ""
 
 #. plugins/ffmpeg/ffmpeg.c
-#: ../translation/plugins.c:115
+#: ../translation/plugins.c:112
 #, no-c-format
 msgid "Use all extensions supported by ffmpeg"
 msgstr ""
 
-#: ../translation/plugins.c:117
+#: ../translation/plugins.c:114
 #, no-c-format
 msgid "File Extensions (separate with ';')"
 msgstr "סיומות קבצים (יש להפריד ב־';')"
 
 #. plugins/flac/flac.c
-#: ../translation/plugins.c:120
+#: ../translation/plugins.c:117
 #, no-c-format
 msgid "Ignore bad header errors"
 msgstr ""
 
-#: ../translation/plugins.c:122
+#: ../translation/plugins.c:119
 #, no-c-format
 msgid "Ignore unparsable stream errors"
 msgstr ""
 
 #. plugins/gme/cgme.c
-#: ../translation/plugins.c:125
+#: ../translation/plugins.c:122
 #, no-c-format
 msgid "Max song length (in minutes)"
 msgstr "אורך השיר המרבי (בדקות)"
 
-#: ../translation/plugins.c:127
+#: ../translation/plugins.c:124
 #, no-c-format
 msgid "Fadeout length (seconds)"
 msgstr "משך עמעום (שניות)"
 
-#: ../translation/plugins.c:129
+#: ../translation/plugins.c:126
 #, no-c-format
 msgid "Play loops nr. of times (if available)"
 msgstr "נגינת הלולאה מספר מפעמים (אם ניתן)"
 
-#: ../translation/plugins.c:131
+#: ../translation/plugins.c:128
 #, no-c-format
 msgid "ColecoVision BIOS (for SGC file format)"
 msgstr ""
 
 #. plugins/gtkui/gtkui.c
-#: ../translation/plugins.c:134
+#: ../translation/plugins.c:131
 #, no-c-format
 msgid "ReplayGain"
 msgstr ""
 
-#: ../translation/plugins.c:136
+#: ../translation/plugins.c:133
 #, no-c-format
 msgid "Remove ReplayGain Information"
 msgstr ""
 
-#: ../translation/plugins.c:138
+#: ../translation/plugins.c:135
 #, no-c-format
 msgid "Scan Selection As Albums (By Tags)"
 msgstr ""
 
-#: ../translation/plugins.c:140
+#: ../translation/plugins.c:137
 #, no-c-format
 msgid "Scan Selection As Single Album"
 msgstr ""
 
-#: ../translation/plugins.c:142
+#: ../translation/plugins.c:139
 #, no-c-format
 msgid "Scan Per-file Track Gain"
 msgstr ""
 
-#: ../translation/plugins.c:144
+#: ../translation/plugins.c:141
 #, no-c-format
 msgid "Scan Per-file Track Gain If Not Scanned"
 msgstr ""
 
-#: ../translation/plugins.c:148
+#: ../translation/plugins.c:145
 #, no-c-format
 msgid "Deselect All"
 msgstr ""
 
-#: ../translation/plugins.c:150
+#: ../translation/plugins.c:147
 #, no-c-format
 msgid "Select All"
 msgstr ""
 
-#: ../translation/plugins.c:154
+#: ../translation/plugins.c:151
 #, no-c-format
-msgid "Remove From Disk"
-msgstr "הסרה מהכונן"
+msgid "Delete from Disk"
+msgstr ""
 
-#: ../translation/plugins.c:156
+#: ../translation/plugins.c:153
 #, no-c-format
 msgid "Add Location"
 msgstr ""
 
-#: ../translation/plugins.c:158
+#: ../translation/plugins.c:155
 #, no-c-format
 msgid "Add Folder(s)"
 msgstr ""
 
-#: ../translation/plugins.c:160
+#: ../translation/plugins.c:157
 #, no-c-format
 msgid "Add File(s)"
 msgstr ""
 
-#: ../translation/plugins.c:162
+#: ../translation/plugins.c:159
 #, no-c-format
 msgid "Open File(s)"
 msgstr ""
 
-#: ../translation/plugins.c:168
+#: ../translation/plugins.c:165
 #, no-c-format
 msgid "Show Help Page"
 msgstr "הצגת עמוד עזרה"
 
-#: ../translation/plugins.c:172
+#: ../translation/plugins.c:169
 #, no-c-format
 msgid "Cycle Repeat Mode"
 msgstr ""
 
-#: ../translation/plugins.c:174
+#: ../translation/plugins.c:171
 #, no-c-format
 msgid "Repeat - Off"
 msgstr ""
 
-#: ../translation/plugins.c:176
+#: ../translation/plugins.c:173
 #, no-c-format
 msgid "Repeat - Single Track"
 msgstr ""
 
-#: ../translation/plugins.c:178
+#: ../translation/plugins.c:175
 #, no-c-format
 msgid "Repeat - All"
 msgstr ""
 
-#: ../translation/plugins.c:180
+#: ../translation/plugins.c:177
 #, no-c-format
 msgid "Cycle Shuffle Mode"
 msgstr ""
 
-#: ../translation/plugins.c:182
+#: ../translation/plugins.c:179
 #, no-c-format
 msgid "Shuffle - Random Tracks"
 msgstr ""
 
-#: ../translation/plugins.c:184
+#: ../translation/plugins.c:181
 #, no-c-format
 msgid "Shuffle - Albums"
 msgstr ""
 
-#: ../translation/plugins.c:186
+#: ../translation/plugins.c:183
 #, no-c-format
 msgid "Shuffle - Tracks"
 msgstr ""
 
-#: ../translation/plugins.c:188
+#: ../translation/plugins.c:185
 #, no-c-format
 msgid "Shuffle - Off"
 msgstr ""
 
-#: ../translation/plugins.c:190
+#: ../translation/plugins.c:187
 #, no-c-format
 msgid "Toggle Cursor Follows Playback"
 msgstr ""
 
-#: ../translation/plugins.c:192
+#: ../translation/plugins.c:189
 #, no-c-format
 msgid "Toggle Scroll Follows Playback"
 msgstr ""
 
-#: ../translation/plugins.c:194
+#: ../translation/plugins.c:191
 #, no-c-format
 msgid "View"
 msgstr ""
 
-#: ../translation/plugins.c:196
+#: ../translation/plugins.c:193
 #, no-c-format
 msgid "Show\\/Hide menu"
 msgstr ""
 
-#: ../translation/plugins.c:198
+#: ../translation/plugins.c:195
 #, no-c-format
 msgid "Show\\/Hide statusbar"
 msgstr ""
 
-#: ../translation/plugins.c:200
+#: ../translation/plugins.c:197
 #, no-c-format
 msgid "Toggle Design Mode"
 msgstr ""
 
-#: ../translation/plugins.c:204
+#: ../translation/plugins.c:201
 #, no-c-format
 msgid "Sort Custom"
 msgstr ""
 
-#: ../translation/plugins.c:206
+#: ../translation/plugins.c:203
 #, no-c-format
 msgid "Crop Selected"
 msgstr ""
 
-#: ../translation/plugins.c:208
+#: ../translation/plugins.c:205
 #, no-c-format
-msgid "Remove Track(s) From Playlist"
+msgid "Remove Track(s) from Playlist"
 msgstr ""
 
-#: ../translation/plugins.c:210
+#: ../translation/plugins.c:207
 #, no-c-format
 msgid "Save Playlist"
 msgstr ""
 
-#: ../translation/plugins.c:212 ../plugins/gtkui/actionhandlers.c:504
+#: ../translation/plugins.c:209 ../plugins/gtkui/actionhandlers.c:509
 #, no-c-format
 msgid "Load Playlist"
 msgstr "טעינת רשימת השמעה"
 
-#: ../translation/plugins.c:214
+#: ../translation/plugins.c:211
 #, no-c-format
 msgid "Remove Current Playlist"
 msgstr ""
 
-#: ../translation/plugins.c:216
+#: ../translation/plugins.c:215
 #, no-c-format
 msgid "Rename Current Playlist"
 msgstr ""
 
-#: ../translation/plugins.c:220
+#: ../translation/plugins.c:217
 #, no-c-format
 msgid "Show\\/Hide Equalizer"
 msgstr ""
 
-#: ../translation/plugins.c:222
+#: ../translation/plugins.c:219
 #, no-c-format
 msgid "Hide Equalizer"
 msgstr ""
 
-#: ../translation/plugins.c:224
+#: ../translation/plugins.c:221
 #, no-c-format
 msgid "Show Equalizer"
 msgstr ""
 
-#: ../translation/plugins.c:226
+#: ../translation/plugins.c:223
 #, no-c-format
 msgid "Show\\/Hide Player Window"
 msgstr ""
 
-#: ../translation/plugins.c:228
+#: ../translation/plugins.c:225
 #, no-c-format
 msgid "Hide Player Window"
 msgstr ""
 
-#: ../translation/plugins.c:230
+#: ../translation/plugins.c:227
 #, no-c-format
 msgid "Show Player Window"
 msgstr ""
 
-#: ../translation/plugins.c:232
+#: ../translation/plugins.c:229
 #, no-c-format
 msgid "Find"
 msgstr ""
 
-#: ../translation/plugins.c:234
+#: ../translation/plugins.c:231
 #, no-c-format
 msgid "Show\\/Hide Log window"
 msgstr ""
 
-#: ../translation/plugins.c:236
+#: ../translation/plugins.c:233
 #, no-c-format
 msgid "Ask confirmation to delete files from disk"
 msgstr "בקשת אישור למחיקת קבצים מהכונן"
 
-#: ../translation/plugins.c:238
+#: ../translation/plugins.c:235
+#, no-c-format
+msgid "Status icon settings:"
+msgstr ""
+
+#: ../translation/plugins.c:237
 #, no-c-format
 msgid "Status icon volume control sensitivity"
 msgstr "רגישות בקרת העצמה דרך סמל המצב"
 
-#: ../translation/plugins.c:240
+#: ../translation/plugins.c:239
 #, no-c-format
 msgid "Custom status icon"
 msgstr "סמל מצב מותאם אישית"
 
-#: ../translation/plugins.c:242
+#: ../translation/plugins.c:241
+#, no-c-format
+msgid "Misc:"
+msgstr ""
+
+#: ../translation/plugins.c:243
 #, no-c-format
 msgid "Add separators between plugin context menu items"
 msgstr "הוספת הפרדה בין פריטי תפריט ההקשר של התוסף"
 
-#: ../translation/plugins.c:244
+#: ../translation/plugins.c:245
 #, no-c-format
 msgid "Use unicode chars instead of images for track state"
 msgstr ""
 
-#: ../translation/plugins.c:246
+#: ../translation/plugins.c:247
 #, no-c-format
 msgid "Disable seekbar overlay text"
 msgstr ""
 
 #. plugins/hotkeys/hotkeys.c
-#: ../translation/plugins.c:249
+#: ../translation/plugins.c:250
+#, no-c-format
+msgid "Previous or Restart Current Track"
+msgstr ""
+
+#: ../translation/plugins.c:252
+#, no-c-format
+msgid "Duplicate Playlist"
+msgstr ""
+
+#: ../translation/plugins.c:254
 #, no-c-format
 msgid "Reload Metadata"
 msgstr "טעינת נתוני העל מחדש"
 
-#: ../translation/plugins.c:251
+#: ../translation/plugins.c:256
 #, no-c-format
-msgid "Jump To Currently Playing Track"
+msgid "Jump to Currently Playing Track"
 msgstr ""
 
-#: ../translation/plugins.c:253
+#: ../translation/plugins.c:258
 #, no-c-format
 msgid "Skip to"
 msgstr ""
 
-#: ../translation/plugins.c:255
+#: ../translation/plugins.c:260
 #, no-c-format
-msgid "Previous genre"
+msgid "Previous Genre"
 msgstr ""
 
-#: ../translation/plugins.c:257
+#: ../translation/plugins.c:262
 #, no-c-format
-msgid "Previous composer"
+msgid "Previous Composer"
 msgstr ""
 
-#: ../translation/plugins.c:259
+#: ../translation/plugins.c:264
 #, no-c-format
-msgid "Previous artist"
+msgid "Previous Artist"
 msgstr ""
 
-#: ../translation/plugins.c:261
+#: ../translation/plugins.c:266
 #, no-c-format
-msgid "Previous album"
-msgstr "אלבום קודם"
-
-#: ../translation/plugins.c:263
-#, no-c-format
-msgid "Next genre"
+msgid "Previous Album"
 msgstr ""
 
-#: ../translation/plugins.c:265
+#: ../translation/plugins.c:268
 #, no-c-format
-msgid "Next composer"
+msgid "Next Genre"
 msgstr ""
 
-#: ../translation/plugins.c:267
+#: ../translation/plugins.c:270
 #, no-c-format
-msgid "Next artist"
+msgid "Next Composer"
 msgstr ""
 
-#: ../translation/plugins.c:269
+#: ../translation/plugins.c:272
 #, no-c-format
-msgid "Next album"
-msgstr "אלבום הבא"
+msgid "Next Artist"
+msgstr ""
 
-#: ../translation/plugins.c:271
+#: ../translation/plugins.c:274
+#, no-c-format
+msgid "Next Album"
+msgstr ""
+
+#: ../translation/plugins.c:276
 #, no-c-format
 msgid "Next Playlist"
 msgstr "רשימת השמעה הבאה"
 
-#: ../translation/plugins.c:273
+#: ../translation/plugins.c:278
 #, no-c-format
-msgid "Prev Playlist"
-msgstr "רשימת השמעה קודמת"
+msgid "Previous Playlist"
+msgstr ""
 
-#: ../translation/plugins.c:275
+#: ../translation/plugins.c:280
 #, no-c-format
-msgid "Switch To Playlist 10"
-msgstr "החליף לרשימת השמעה מס' 10"
+msgid "Switch to Playlist 10"
+msgstr ""
 
-#: ../translation/plugins.c:277
+#: ../translation/plugins.c:282
 #, no-c-format
-msgid "Switch To Playlist 9"
-msgstr "החליף לרשימת השמעה מס' 9"
+msgid "Switch to Playlist 9"
+msgstr ""
 
-#: ../translation/plugins.c:279
+#: ../translation/plugins.c:284
 #, no-c-format
-msgid "Switch To Playlist 8"
-msgstr "החליף לרשימת השמעה מס' 8"
+msgid "Switch to Playlist 8"
+msgstr ""
 
-#: ../translation/plugins.c:281
+#: ../translation/plugins.c:286
 #, no-c-format
-msgid "Switch To Playlist 7"
-msgstr "החליף לרשימת השמעה מס' 7"
+msgid "Switch to Playlist 7"
+msgstr ""
 
-#: ../translation/plugins.c:283
+#: ../translation/plugins.c:288
 #, no-c-format
-msgid "Switch To Playlist 6"
-msgstr "החליף לרשימת השמעה מס' 6"
+msgid "Switch to Playlist 6"
+msgstr ""
 
-#: ../translation/plugins.c:285
+#: ../translation/plugins.c:290
 #, no-c-format
-msgid "Switch To Playlist 5"
-msgstr "החליף לרשימת השמעה מס' 5"
+msgid "Switch to Playlist 5"
+msgstr ""
 
-#: ../translation/plugins.c:287
+#: ../translation/plugins.c:292
 #, no-c-format
-msgid "Switch To Playlist 4"
-msgstr "החליף לרשימת השמעה מס' 4"
+msgid "Switch to Playlist 4"
+msgstr ""
 
-#: ../translation/plugins.c:289
+#: ../translation/plugins.c:294
 #, no-c-format
-msgid "Switch To Playlist 3"
-msgstr "החליף לרשימת השמעה מס' 3"
+msgid "Switch to Playlist 3"
+msgstr ""
 
-#: ../translation/plugins.c:291
+#: ../translation/plugins.c:296
 #, no-c-format
-msgid "Switch To Playlist 2"
-msgstr "החליף לרשימת השמעה מס' 2"
+msgid "Switch to Playlist 2"
+msgstr ""
 
-#: ../translation/plugins.c:293
+#: ../translation/plugins.c:298
 #, no-c-format
-msgid "Switch To Playlist 1"
-msgstr "החליף לרשימת השמעה מס' 1"
+msgid "Switch to Playlist 1"
+msgstr ""
 
-#: ../translation/plugins.c:295
+#: ../translation/plugins.c:300
 #, no-c-format
 msgid "Sort Randomize"
 msgstr ""
 
-#: ../translation/plugins.c:297
+#: ../translation/plugins.c:302
 #, no-c-format
-msgid "Sort By Date"
+msgid "Sort by Date"
 msgstr ""
 
-#: ../translation/plugins.c:299
+#: ../translation/plugins.c:304
 #, no-c-format
-msgid "Sort By Artist"
+msgid "Sort by Artist"
 msgstr ""
 
-#: ../translation/plugins.c:301
+#: ../translation/plugins.c:306
 #, no-c-format
-msgid "Sort By Album"
+msgid "Sort by Album"
 msgstr ""
 
-#: ../translation/plugins.c:303
+#: ../translation/plugins.c:308
 #, no-c-format
-msgid "Sort By Track Number"
+msgid "Sort by Track Number"
 msgstr ""
 
-#: ../translation/plugins.c:305
+#: ../translation/plugins.c:310
 #, no-c-format
-msgid "Sort By Title"
+msgid "Sort by Title"
 msgstr ""
 
-#: ../translation/plugins.c:307
+#: ../translation/plugins.c:312
 #, no-c-format
 msgid "Invert Selection"
 msgstr ""
 
-#: ../translation/plugins.c:309
+#: ../translation/plugins.c:314
 #, no-c-format
 msgid "Clear Playlist"
 msgstr ""
 
-#: ../translation/plugins.c:311
+#: ../translation/plugins.c:316
 #, no-c-format
-msgid "Remove From Playback Queue"
-msgstr "הסרה מתור הנגינה"
-
-#: ../translation/plugins.c:313
-#, no-c-format
-msgid "Add To Playback Queue"
-msgstr "הוספה לתור הנגינה"
-
-#: ../translation/plugins.c:315
-#, no-c-format
-msgid "Toggle In Playback Queue"
+msgid "Remove from Playback Queue"
 msgstr ""
 
-#: ../translation/plugins.c:317
+#: ../translation/plugins.c:318
+#, no-c-format
+msgid "Add to Playback Queue"
+msgstr ""
+
+#: ../translation/plugins.c:320
+#, no-c-format
+msgid "Add to Front of Playback Queue"
+msgstr ""
+
+#: ../translation/plugins.c:322
+#, no-c-format
+msgid "Toggle in Playback Queue"
+msgstr ""
+
+#: ../translation/plugins.c:324
 #, no-c-format
 msgid "Move"
 msgstr ""
 
-#: ../translation/plugins.c:319
+#: ../translation/plugins.c:326
 #, no-c-format
 msgid "Move Tracks Down"
 msgstr ""
 
-#: ../translation/plugins.c:321
+#: ../translation/plugins.c:328
 #, no-c-format
 msgid "Move Tracks Up"
 msgstr ""
 
-#: ../translation/plugins.c:323
+#: ../translation/plugins.c:330
 #, no-c-format
 msgid "Toggle Mute"
 msgstr ""
 
-#: ../translation/plugins.c:333
+#: ../translation/plugins.c:340
 #, no-c-format
 msgid "Toggle Pause"
 msgstr ""
 
-#: ../translation/plugins.c:335
+#: ../translation/plugins.c:342
 #, no-c-format
 msgid "Play\\/Pause"
 msgstr ""
 
-#: ../translation/plugins.c:339
+#: ../translation/plugins.c:346
 #, no-c-format
 msgid "Seek 1s Forward"
 msgstr ""
 
-#: ../translation/plugins.c:341
+#: ../translation/plugins.c:348
 #, no-c-format
 msgid "Seek 1s Backward"
 msgstr ""
 
-#: ../translation/plugins.c:343
+#: ../translation/plugins.c:350
 #, no-c-format
 msgid "Seek 5s Forward"
 msgstr ""
 
-#: ../translation/plugins.c:345
+#: ../translation/plugins.c:352
 #, no-c-format
 msgid "Seek 5s Backward"
 msgstr ""
 
-#: ../translation/plugins.c:347
+#: ../translation/plugins.c:354
 #, no-c-format
 msgid "Seek 1% Forward"
 msgstr ""
 
-#: ../translation/plugins.c:349
+#: ../translation/plugins.c:356
 #, no-c-format
 msgid "Seek 1% Backward"
 msgstr ""
 
-#: ../translation/plugins.c:351
+#: ../translation/plugins.c:358
 #, no-c-format
 msgid "Seek 5% Forward"
 msgstr ""
 
-#: ../translation/plugins.c:353
+#: ../translation/plugins.c:360
 #, no-c-format
 msgid "Seek 5% Backward"
 msgstr ""
 
-#: ../translation/plugins.c:355
+#: ../translation/plugins.c:362
 #, no-c-format
 msgid "Volume Up"
 msgstr ""
 
-#: ../translation/plugins.c:357
+#: ../translation/plugins.c:364
 #, no-c-format
 msgid "Volume Down"
 msgstr ""
 
-#: ../translation/plugins.c:359
+#: ../translation/plugins.c:366
 #, no-c-format
 msgid "Toggle Stop After Current Track"
 msgstr ""
 
-#: ../translation/plugins.c:361
+#: ../translation/plugins.c:368
 #, no-c-format
 msgid "Toggle Stop After Current Album"
 msgstr ""
 
 #. plugins/lastfm/lastfm.c
-#: ../translation/plugins.c:364
+#: ../translation/plugins.c:371
 #, no-c-format
-msgid "Lookup On Last.fm"
+msgid "Lookup on Last.fm"
 msgstr ""
 
-#: ../translation/plugins.c:366
+#: ../translation/plugins.c:373
 #, no-c-format
 msgid "Enable scrobbler"
 msgstr "הפעלת Scrobbler"
 
-#: ../translation/plugins.c:368
+#: ../translation/plugins.c:375
 #, no-c-format
 msgid "Disable nowplaying"
 msgstr "נטרול „מתנגן כעת“"
 
-#: ../translation/plugins.c:370
+#: ../translation/plugins.c:377
 #, no-c-format
 msgid "Username"
 msgstr "שם משתמש"
 
-#: ../translation/plugins.c:372
+#: ../translation/plugins.c:379
 #, no-c-format
 msgid "Password"
 msgstr "ססמה"
 
-#: ../translation/plugins.c:374
+#: ../translation/plugins.c:381
 #, no-c-format
 msgid "Scrobble URL"
 msgstr "הכתובת של Scrobble"
 
-#: ../translation/plugins.c:376
+#: ../translation/plugins.c:383
 #, no-c-format
 msgid "Prefer Album Artist over Artist field"
 msgstr "העדפת שדה אמן האלבום על פני אמן"
 
-#: ../translation/plugins.c:378
+#: ../translation/plugins.c:385
 #, no-c-format
 msgid "Send MusicBrainz ID"
 msgstr ""
 
-#: ../translation/plugins.c:380
+#: ../translation/plugins.c:387
 #, no-c-format
 msgid "Submit tracks shorter than 30 seconds (not recommended)"
 msgstr ""
 
 #. plugins/mono2stereo/mono2stereo.c
-#: ../translation/plugins.c:383
+#: ../translation/plugins.c:390
 #, no-c-format
 msgid "Left mix"
 msgstr ""
 
-#: ../translation/plugins.c:385
+#: ../translation/plugins.c:392
 #, no-c-format
 msgid "Right mix"
 msgstr ""
 
 #. plugins/mp3/mp3.c
-#: ../translation/plugins.c:388
+#: ../translation/plugins.c:395
 #, no-c-format
 msgid "Force 16 bit output"
 msgstr ""
 
-#: ../translation/plugins.c:390
+#: ../translation/plugins.c:397
 #, no-c-format
 msgid "Backend"
 msgstr ""
 
-#: ../translation/plugins.c:395
+#: ../translation/plugins.c:402
 #, no-c-format
 msgid "Notification title format"
 msgstr "מבנה כותרת ההתרעה"
 
-#: ../translation/plugins.c:397
+#: ../translation/plugins.c:404
 #, no-c-format
 msgid "Notification content format"
 msgstr "מבנה תוכן ההתרעה"
 
-#: ../translation/plugins.c:399
+#: ../translation/plugins.c:406
 #, no-c-format
 msgid "Show album art"
 msgstr "הצגת עטיפת האלבום"
 
-#: ../translation/plugins.c:401
+#: ../translation/plugins.c:408
 #, no-c-format
 msgid "Album art size (px)"
 msgstr "גודל עטיפת האלבום (פיקסלים)"
 
 #. plugins/oss/oss.c
-#: ../translation/plugins.c:404
+#: ../translation/plugins.c:411
 #, no-c-format
 msgid "Device file"
 msgstr "קובץ ההתקן"
 
-#: ../translation/plugins.c:409
+#: ../translation/plugins.c:416
 #, no-c-format
 msgid "Highlight current playlist"
 msgstr ""
 
-#: ../translation/plugins.c:411
+#: ../translation/plugins.c:418
 #, no-c-format
 msgid "Play on double-click"
 msgstr ""
 
 #. plugins/portaudio/portaudio.c
-#: ../translation/plugins.c:414
+#: ../translation/plugins.c:421
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
 msgstr ""
 
-#: ../translation/plugins.c:416
+#: ../translation/plugins.c:423
 #, no-c-format
 msgid "Device name encoding"
 msgstr ""
 
-#: ../translation/plugins.c:418
+#: ../translation/plugins.c:425
 #, no-c-format
 msgid "ASCII / UTF-8"
 msgstr ""
 
-#: ../translation/plugins.c:420
+#: ../translation/plugins.c:427
 #, no-c-format
 msgid "cp1250"
 msgstr ""
 
-#: ../translation/plugins.c:422
+#: ../translation/plugins.c:429
 #, no-c-format
 msgid "Defined below"
 msgstr ""
 
-#: ../translation/plugins.c:424
+#: ../translation/plugins.c:431
 #, no-c-format
 msgid "Custom device name encoding"
 msgstr ""
 
 #. plugins/pulse/pulse.c
-#: ../translation/plugins.c:427
+#: ../translation/plugins.c:434
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
 msgstr ""
 
 #. plugins/sc68/in_sc68.c
-#: ../translation/plugins.c:430
+#: ../translation/plugins.c:437
 #, no-c-format
 msgid "Default song length (in minutes)"
 msgstr ""
 
-#: ../translation/plugins.c:432
+#: ../translation/plugins.c:439
 #, no-c-format
 msgid "Samplerate"
 msgstr "קצב דגימה"
 
-#: ../translation/plugins.c:434
+#: ../translation/plugins.c:441
 #, no-c-format
 msgid "Skip when shorter than (sec)"
 msgstr ""
 
 #. plugins/shellexecui/shellexecui.c
-#: ../translation/plugins.c:437
+#: ../translation/plugins.c:444
 #, no-c-format
 msgid "Configure Custom Shell Commands"
 msgstr "הגדרת פקודות מעטפת משלך"
 
 #. plugins/shn/shn.c
-#: ../translation/plugins.c:440
+#: ../translation/plugins.c:447
 #, no-c-format
 msgid "Relative seek table path"
 msgstr "נתיב טבלת חיפוש יחסי"
 
-#: ../translation/plugins.c:442
+#: ../translation/plugins.c:449
 #, no-c-format
 msgid "Absolute seek table path"
 msgstr "נתיב טבלת חיפוש מוחלט"
 
-#: ../translation/plugins.c:444
+#: ../translation/plugins.c:451
 #, no-c-format
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr "החלפת בתים של שמע (יש להחליף מצב אם שומעים רעש סטטי)"
 
 #. plugins/sid/plugin.c
-#: ../translation/plugins.c:447
+#: ../translation/plugins.c:454
 #, no-c-format
 msgid "Enable HVSC Songlength DB"
 msgstr "הפעלת מסד נתונים של אורך שירים - HVSC"
 
-#: ../translation/plugins.c:449
+#: ../translation/plugins.c:456
 #, no-c-format
 msgid "Full path to Songlengths.md5/.txt"
 msgstr ""
 
-#: ../translation/plugins.c:451
+#: ../translation/plugins.c:458
 #, no-c-format
 msgid "Bits per sample"
 msgstr ""
 
-#: ../translation/plugins.c:453
+#: ../translation/plugins.c:460
 #, no-c-format
 msgid "Default song length (sec)"
 msgstr "אורך שיר כברירת מחדל (שניות)"
 
-#: ../translation/plugins.c:455
+#: ../translation/plugins.c:462
 #, no-c-format
 msgid "Mono synth"
 msgstr ""
 
 #. plugins/supereq/supereq.c
-#: ../translation/plugins.c:458
+#: ../translation/plugins.c:465
 #, no-c-format
 msgid "Preamp"
 msgstr ""
 
-#: ../translation/plugins.c:460
+#: ../translation/plugins.c:467
 #, no-c-format
 msgid "1.2K"
 msgstr ""
 
-#: ../translation/plugins.c:462
+#: ../translation/plugins.c:469
 #, no-c-format
 msgid "1.8K"
 msgstr ""
 
-#: ../translation/plugins.c:464
+#: ../translation/plugins.c:471
 #, no-c-format
 msgid "2.5K"
 msgstr ""
 
-#: ../translation/plugins.c:466
+#: ../translation/plugins.c:473
 #, no-c-format
 msgid "3.5K"
 msgstr ""
 
-#: ../translation/plugins.c:468
+#: ../translation/plugins.c:475
 #, no-c-format
 msgid "5K"
 msgstr ""
 
-#: ../translation/plugins.c:470
+#: ../translation/plugins.c:477
 #, no-c-format
 msgid "7K"
 msgstr ""
 
-#: ../translation/plugins.c:472
+#: ../translation/plugins.c:479
 #, no-c-format
 msgid "10K"
 msgstr ""
 
-#: ../translation/plugins.c:474
+#: ../translation/plugins.c:481
 #, no-c-format
 msgid "14K"
 msgstr ""
 
-#: ../translation/plugins.c:476
+#: ../translation/plugins.c:483
 #, no-c-format
 msgid "20K"
 msgstr ""
 
 #. plugins/vfs_curl/vfs_curl.c
-#: ../translation/plugins.c:479
+#: ../translation/plugins.c:486
 #, no-c-format
 msgid "Enable logging"
 msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
-#: ../translation/plugins.c:482
+#: ../translation/plugins.c:489
 #, no-c-format
 msgid "Timidity++ bank configuration file"
 msgstr "קובץ מאגר התצורה של Timidity++‎"
+
+#. scriptable/scriptable_encoder.c
+#: ../translation/plugins.c:492
+#, no-c-format
+msgid "File extension"
+msgstr ""
+
+#: ../translation/plugins.c:494
+#, no-c-format
+msgid "Encoder command line"
+msgstr ""
+
+#: ../translation/plugins.c:496
+#, no-c-format
+msgid "Data transfer method"
+msgstr ""
+
+#: ../translation/plugins.c:498
+#, no-c-format
+msgid "Pipe (stdin)"
+msgstr ""
+
+#: ../translation/plugins.c:500
+#, no-c-format
+msgid "Temporary file"
+msgstr ""
+
+#: ../translation/plugins.c:502
+#, no-c-format
+msgid "Source file"
+msgstr ""
+
+#: ../translation/plugins.c:506
+#, no-c-format
+msgid "Write ID3v2 tag"
+msgstr ""
+
+#: ../translation/plugins.c:508
+#, no-c-format
+msgid "Write ID3v1 tag"
+msgstr ""
+
+#: ../translation/plugins.c:510
+#, no-c-format
+msgid "Write APEv2 tag"
+msgstr ""
+
+#: ../translation/plugins.c:512
+#, no-c-format
+msgid "Write FLAC tag"
+msgstr ""
+
+#: ../translation/plugins.c:514
+#, no-c-format
+msgid "Write OggVorbis tag"
+msgstr ""
+
+#: ../translation/plugins.c:516
+#, no-c-format
+msgid "Write MP4 tag"
+msgstr ""
 
 #: ../plugins/converter/convgui.c:91
 #, c-format
@@ -3405,11 +3487,11 @@ msgstr "הוספת קבצים לרשימת הנגינה…"
 msgid "Add folder(s) to playlist..."
 msgstr "הוספת תיקיות לרשימת הנגינה…"
 
-#: ../plugins/gtkui/actionhandlers.c:316
+#: ../plugins/gtkui/actionhandlers.c:321
 msgid "help.txt"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:526
+#: ../plugins/gtkui/actionhandlers.c:531
 msgid "Save Playlist As"
 msgstr "שמירת רשימת ההשמעה בשם"
 
