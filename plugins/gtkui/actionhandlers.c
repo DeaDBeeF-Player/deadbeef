@@ -275,10 +275,13 @@ action_add_location_handler_cb (void *user_data) {
         if (entry) {
             const char *text = gtk_entry_get_text (entry);
             if (text) {
+                char *text_copy = strdup(text);
+                char *trimmed_text = gtkui_trim_whitespace(text_copy, strlen(text_copy));
+
                 ddb_playlist_t *plt = deadbeef->plt_get_curr ();
                 if (!deadbeef->plt_add_files_begin (plt, 0)) {
                     DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
-                    DB_playItem_t *it = deadbeef->plt_insert_file2 (0, plt, tail, text, NULL, NULL, NULL);
+                    DB_playItem_t *it = deadbeef->plt_insert_file2 (0, plt, tail, trimmed_text, NULL, NULL, NULL);
 #ifndef DISABLE_CUSTOM_TITLE
                     if (it && deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
                         deadbeef->pl_replace_meta (it, ":CUSTOM_TITLE", gtk_entry_get_text (GTK_ENTRY (ct)));
@@ -295,6 +298,8 @@ action_add_location_handler_cb (void *user_data) {
                 if (plt) {
                     deadbeef->plt_unref (plt);
                 }
+
+                free (text_copy);
             }
         }
     }

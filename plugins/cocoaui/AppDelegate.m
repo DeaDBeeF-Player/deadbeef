@@ -493,14 +493,14 @@ main_cleanup_and_quit (void);
     _addLocationTextField.stringValue = @"";
     [_mainWindow.window beginSheet:_addLocationPanel completionHandler:^(NSModalResponse returnCode) {
         if (returnCode == NSModalResponseOK) {
-            NSString *text = [self.addLocationTextField stringValue];
+            NSString *text = [self.addLocationTextField.stringValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
             if (!deadbeef->plt_add_files_begin (plt, 0)) {
                 dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
                 dispatch_async(aQueue, ^{
                     DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
-                    deadbeef->plt_insert_file2 (0, plt, tail, [text UTF8String], NULL, NULL, NULL);
+                    deadbeef->plt_insert_file2 (0, plt, tail, text.UTF8String, NULL, NULL, NULL);
                     if (tail) {
                         deadbeef->pl_item_unref (tail);
                     }
