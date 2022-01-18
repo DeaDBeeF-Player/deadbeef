@@ -4186,7 +4186,7 @@ Only prevent clipping</property>
 		    <widget class="GtkCheckButton" id="hide_delete_from_disk">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">Hide &quot;Remove From Disk&quot; context menu item</property>
+		      <property name="label" translatable="yes">Hide &quot;Delete from Disk&quot; context menu item</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <property name="focus_on_click">True</property>

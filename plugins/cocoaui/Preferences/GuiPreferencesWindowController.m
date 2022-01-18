@@ -27,7 +27,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) BOOL hideRemoveFromDisk;
 @property (nonatomic) BOOL namePlaylistFromFolder;
 
-// Delete From Disk
+// Delete from Disk
 @property (nonatomic) BOOL deleteFromDiskUseBin;
 @property (nonatomic) BOOL deleteFromDiskEnableConfirmationDialog;
 @property (nonatomic) BOOL deleteFromDiskSkipDeletedTracks;
