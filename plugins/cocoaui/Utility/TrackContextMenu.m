@@ -460,7 +460,7 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl, int cancelled) {
 
 - (void)deleteCompleted:(ddbDeleteFromDiskController_t)ctl cancelled:(BOOL)cancelled {
     ddbDeleteFromDiskControllerFree(ctl);
-    self.deleteFromDiskController = NULL;
+    _deleteFromDiskController = NULL;
     [((id<TrackContextMenuDelegate>)self.delegate) trackContextMenuDidDeleteFiles:self cancelled:cancelled];
 }
 
