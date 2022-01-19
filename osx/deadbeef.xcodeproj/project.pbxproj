@@ -2427,9 +2427,6 @@
 		2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCF73B21A952F8900495740 /* PreferencesWindowController.h */; };
 		2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DCF73B31A952F8900495740 /* PreferencesWindowController.m */; };
-		2DD376F62739B5DE007AD315 /* libavcodec.58.134.100.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DD376F72739B5DE007AD315 /* libavformat.58.76.100.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DD376F82739B5DE007AD315 /* libavutil.56.70.100.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DD376F92739B5FF007AD315 /* libavcodec.58.134.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */; };
 		2DD376FA2739B601007AD315 /* libavformat.58.76.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */; };
 		2DD376FB2739B603007AD315 /* libavutil.56.70.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */; };
@@ -2511,9 +2508,6 @@
 		2DDFABEE2438F20400E13E85 /* aac_decoder_wrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DDFABEC2438F1FC00E13E85 /* aac_decoder_wrap.c */; };
 		2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */; };
 		2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */; };
-		2DE1B21D24A89E090070CD7C /* libavcodec.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D5D9C5924A7FB0200D632E4 /* libavcodec.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DE1B21E24A89E0B0070CD7C /* libavformat.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D5D9C5724A7FB0200D632E4 /* libavformat.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DE1B21F24A89E0D0070CD7C /* libavutil.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D5D9C5824A7FB0200D632E4 /* libavutil.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DE1B36C24A8A6150070CD7C /* Replay in Copy SC68 replays */ = {isa = PBXBuildFile; fileRef = 2DE1B36A24A8A5F20070CD7C /* Replay */; };
 		2DE1B36F24A8AAD80070CD7C /* libflaclib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */; };
 		2DE1B37224A8B3EB0070CD7C /* Replay in Copy SC68 replays */ = {isa = PBXBuildFile; fileRef = 2DE1B36A24A8A5F20070CD7C /* Replay */; };
@@ -4348,9 +4342,6 @@
 				2DD376FF2739B865007AD315 /* libavcodec.58.dylib in Copy Plugins */,
 				2DD377002739B867007AD315 /* libavformat.58.dylib in Copy Plugins */,
 				2DD377012739B869007AD315 /* libavutil.56.dylib in Copy Plugins */,
-				2DD376F62739B5DE007AD315 /* libavcodec.58.134.100.dylib in Copy Plugins */,
-				2DD376F72739B5DE007AD315 /* libavformat.58.76.100.dylib in Copy Plugins */,
-				2DD376F82739B5DE007AD315 /* libavutil.56.70.100.dylib in Copy Plugins */,
 				2DA5AC1E25D0393C00947C19 /* libwavpacklib.dylib in Copy Plugins */,
 				2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Copy Plugins */,
 				2D00F33124351EDF000FC130 /* ddb_soundtouch.dylib in Copy Plugins */,
@@ -4393,9 +4384,6 @@
 				2D8BA3521E2672BF001D5708 /* libogglib.dylib in Copy Plugins */,
 				4D9BF4001FE134200032B6CF /* libopusfile.dylib in Copy Plugins */,
 				2D5B51221FF43FC8000AD484 /* liboggedit.dylib in Copy Plugins */,
-				2DE1B21D24A89E090070CD7C /* libavcodec.dylib in Copy Plugins */,
-				2DE1B21E24A89E0B0070CD7C /* libavformat.dylib in Copy Plugins */,
-				2DE1B21F24A89E0D0070CD7C /* libavutil.dylib in Copy Plugins */,
 				2DA84F7F24F5892A003507A2 /* libjansson.dylib in Copy Plugins */,
 			);
 			name = "Copy Plugins";
