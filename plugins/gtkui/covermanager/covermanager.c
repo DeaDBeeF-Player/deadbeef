@@ -215,22 +215,44 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
         return;
     }
 
-    // Load the image on background queue
-    dispatch_async(impl->loader_queue, ^{
-        if (impl->is_terminating) {
-            _cleanup_query (query);
+    _dispatch_on_main(^{
+        // Prevent spurious loading of the same image. The load is already scheduled, so we should just wait for it.
+        char *key = _cache_key_for_track(impl, query->track);
+        gboolean should_wait = gobj_cache_get_should_wait(impl->cache, key);
+
+        if (should_wait) {
+            // append to the end of loader queue
+            dispatch_async(impl->loader_queue, ^{
+                _dispatch_on_main(^{
+                    GdkPixbuf *img = GDK_PIXBUF(gobj_cache_get(impl->cache, key));
+                    _callback_and_cleanup (query, cover, img);
+                    free (key);
+                });
+            });
             return;
         }
-
-        __block GdkPixbuf *img = NULL;
-
-        if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
-            img = _load_image_from_cover(impl, cover);
+        else {
+            gobj_cache_set_should_wait(impl->cache, key, TRUE);
+            free (key);
         }
 
-        // Update the UI on main queue
-        _dispatch_on_main(^{
-            _callback_and_cleanup (query, cover, img);
+        // Load the image on background queue
+        dispatch_async(impl->loader_queue, ^{
+            if (impl->is_terminating) {
+                _cleanup_query (query);
+                return;
+            }
+
+            __block GdkPixbuf *img = NULL;
+
+            if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
+                img = _load_image_from_cover(impl, cover);
+            }
+
+            // Update the UI on main queue
+            _dispatch_on_main(^{
+                _callback_and_cleanup (query, cover, img);
+            });
         });
     });
 }

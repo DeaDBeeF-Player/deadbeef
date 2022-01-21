@@ -31,6 +31,7 @@ typedef struct {
     char *key;
     time_t atime;
     GObject *obj;
+    gboolean should_wait;
 } gobj_cache_item_t;
 
 typedef struct {
@@ -70,13 +71,16 @@ gobj_cache_free (gobj_cache_t restrict cache) {
     free (impl);
 }
 
-void
-gobj_cache_set (gobj_cache_t restrict cache, const char * restrict key, GObject *obj) {
-    if (key == NULL || obj == NULL) {
+static void
+_gobj_cache_set_int (gobj_cache_t restrict cache, const char * restrict key, GObject *obj, gboolean should_wait) {
+    if (key == NULL) {
         return;
     }
     gobj_cache_impl_t *impl = cache;
-    g_object_ref(obj);
+
+    if (obj) {
+        g_object_ref(obj);
+    }
 
     // find item with that key or empty
     gobj_cache_item_t *reuse = NULL;
@@ -90,8 +94,11 @@ gobj_cache_set (gobj_cache_t restrict cache, const char * restrict key, GObject 
         }
         else if (!strcmp (item->key, key)) {
             item->atime = time(NULL);
-            g_object_unref(item->obj);
+            if (item->obj) {
+                g_object_unref(item->obj);
+            }
             item->obj = obj;
+            item->should_wait = should_wait;
             return;
         }
 
@@ -115,10 +122,16 @@ gobj_cache_set (gobj_cache_t restrict cache, const char * restrict key, GObject 
     reuse->atime = time(NULL);
     reuse->key = strdup(key);
     reuse->obj = obj;
+    reuse->should_wait = should_wait;
 }
 
-GObject *
-gobj_cache_get (gobj_cache_t cache, const char *key) {
+void
+gobj_cache_set (gobj_cache_t restrict cache, const char * restrict key, GObject *obj) {
+    _gobj_cache_set_int(cache, key, obj, FALSE);
+}
+
+static gobj_cache_item_t *
+_gobj_cache_get_int (gobj_cache_t cache, const char *key) {
     if (key == NULL) {
         return NULL;
     }
@@ -128,12 +141,37 @@ gobj_cache_get (gobj_cache_t cache, const char *key) {
     for (int i = 0; i < impl->count; i++) {
         gobj_cache_item_t *item = &impl->items[i];
         if (item->key != NULL && !strcmp (item->key, key)) {
-            item->atime = time(NULL);
-            g_object_ref(item->obj);
-            return item->obj;
+            return item;
         }
     }
     return NULL;
+}
+
+GObject *
+gobj_cache_get (gobj_cache_t cache, const char *key) {
+    gobj_cache_item_t *item = _gobj_cache_get_int(cache, key);
+    if (!item) {
+        return NULL;
+    }
+    item->atime = time(NULL);
+    if (item->obj) {
+        g_object_ref(item->obj);
+    }
+    return item->obj;
+}
+
+void
+gobj_cache_set_should_wait (gobj_cache_t cache, const char *key, gboolean should_wait) {
+    _gobj_cache_set_int(cache, key, NULL, should_wait);
+}
+
+gboolean
+gobj_cache_get_should_wait (gobj_cache_t cache, const char *key) {
+    gobj_cache_item_t *item = _gobj_cache_get_int(cache, key);
+    if (!item) {
+        return FALSE;
+    }
+    return item->should_wait;
 }
 
 void
