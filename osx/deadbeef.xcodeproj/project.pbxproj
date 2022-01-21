@@ -2451,6 +2451,8 @@
 		2DD39ED926AD8D1600C5846D /* analyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD39ED726AD8D1600C5846D /* analyzer.h */; };
 		2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2DD5262E2062F1DF002609C5 /* help-cocoa.txt */; };
 		2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
+		2DD6C5DD279B278E00CABBE6 /* mp4p.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 2D71F1B124AE799B00E753D3 /* mp4p.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2DD6C5DF279B27B300CABBE6 /* mp4p.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 2D71F1B124AE799B00E753D3 /* mp4p.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */; };
 		2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */; };
 		2DD81B2E25152C32008C716C /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
@@ -4318,6 +4320,28 @@
 				2DCB18782515F96A0054BD06 /* help.txt in CopyFiles */,
 				2DCB18FA2515F9B30054BD06 /* COPYING.GPLv2 in CopyFiles */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DD6C5CD279B277E00CABBE6 /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				2DD6C5DD279B278E00CABBE6 /* mp4p.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DD6C5DE279B27A800CABBE6 /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				2DD6C5DF279B27B300CABBE6 /* mp4p.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2DD81CBA25152DA9008C716C /* CopyFiles */ = {
@@ -14667,6 +14691,7 @@
 				2DE1B37124A8B3A20070CD7C /* Copy SC68 replays */,
 				2DD81CBA25152DA9008C716C /* CopyFiles */,
 				2DCB17692515F8150054BD06 /* CopyFiles */,
+				2DD6C5CD279B277E00CABBE6 /* Copy Frameworks */,
 			);
 			buildRules = (
 			);
@@ -15120,6 +15145,7 @@
 				2DC6577B274428F200583E14 /* Copy SC68 replays */,
 				2DC6577D274428F200583E14 /* CopyFiles */,
 				2DC65782274428F200583E14 /* CopyFiles */,
+				2DD6C5DE279B27A800CABBE6 /* Copy Frameworks */,
 			);
 			buildRules = (
 			);
