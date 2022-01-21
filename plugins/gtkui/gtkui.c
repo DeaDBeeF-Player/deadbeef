@@ -132,14 +132,16 @@ enum {
 static void
 init_widget_layout (void);
 
-void
-gtkpl_free (DdbListview *pl) {
-#if 0
-    if (colhdr_anim.timeline) {
-        timeline_free (colhdr_anim.timeline, 1);
-        colhdr_anim.timeline = 0;
-    }
-#endif
+/// Using this for getting gobject reference count when debugging
+guint
+gtkui_get_gobject_refcount (gpointer ptr) {
+    struct _GObject {
+        GTypeInstance  g_type_instance;
+        guint          ref_count;
+    };
+
+    struct _GObject *gobj = (struct _GObject *)ptr;
+    return gobj->ref_count;
 }
 
 // update status bar and window title

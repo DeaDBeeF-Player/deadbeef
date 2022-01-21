@@ -264,6 +264,22 @@ cover_draw_cairo (GdkPixbuf *pixbuf, int x, int min_y, int max_y, int width, int
     cairo_restore(cr);
 }
 
+static void
+_grp_cache_image (covermanager_t *cm, DdbListviewGroup *grp, GdkPixbuf *img, GtkAllocation availableSize) {
+    if (grp->cachedImage != NULL) {
+        g_object_unref(grp->cachedImage);
+        grp->cachedImage = NULL;
+    }
+    if (img != NULL) {
+        GtkAllocation imageSize = {0};
+        imageSize.width = gdk_pixbuf_get_width(img);
+        imageSize.height = gdk_pixbuf_get_height(img);
+        GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, imageSize, availableSize);
+        grp->cachedImage = covermanager_create_scaled_image(cm, img, desiredSize);
+    }
+    grp->hasCachedImage = TRUE;
+}
+
 void
 pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *grp, void *user_data, int min_y, int next_y, int x, int y, int width, int height) {
     int art_width = width - ART_PADDING_HORZ * 2;
@@ -282,9 +298,8 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
     GdkPixbuf *image = NULL;
     if (grp->hasCachedImage) {
         image = grp->cachedImage;
-        if (image != NULL) {
-            g_object_ref (image);
-        }
+        grp->cachedImage = NULL; // use the result of the previous fetch, then release
+        grp->hasCachedImage = FALSE;
     }
     else {
         GtkAllocation availableSize = {0};
@@ -296,18 +311,7 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
             DdbListviewGroup *grp = ddb_listview_get_group_by_head(listview, it);
 
             if (grp != NULL) {
-                if (grp->cachedImage != NULL) {
-                    g_object_unref(grp->cachedImage);
-                    grp->cachedImage = NULL;
-                }
-                if (img != NULL) {
-                    GtkAllocation imageSize = {0};
-                    imageSize.width = gdk_pixbuf_get_width(img);
-                    imageSize.height = gdk_pixbuf_get_height(img);
-                    GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, imageSize, availableSize);
-                    grp->cachedImage = covermanager_create_scaled_image(cm, img, desiredSize);
-                }
-                grp->hasCachedImage = TRUE;
+                _grp_cache_image (cm, grp, img, availableSize); // guarantee the image is available on next draw
             }
             deadbeef->pl_item_unref (it);
 
@@ -359,6 +363,7 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
     }
 
     cover_draw_cairo(grp->cachedImage, art_x, min_y, next_y, art_width, art_height, cr, CAIRO_FILTER_FAST);
+
     g_object_unref(image);
     image = NULL;
 }

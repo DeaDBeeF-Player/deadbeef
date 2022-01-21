@@ -194,4 +194,7 @@ show_file_chooser (const gchar          *title,
 char *
 gtkui_trim_whitespace(char *p, size_t len);
 
+guint
+gtkui_get_gobject_refcount (gpointer ptr);
+
 #endif

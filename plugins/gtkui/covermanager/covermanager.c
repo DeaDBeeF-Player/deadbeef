@@ -27,6 +27,7 @@
 #include "covermanager.h"
 #include "gobjcache.h"
 #include <Block.h>
+#include "gtkui.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -145,10 +146,7 @@ _load_image_from_cover(covermanager_t *impl, ddb_cover_info_t *cover) {
     }
     if (!img) {
         img = impl->default_cover;
-    }
-
-    if (img) {
-        g_object_ref_sink (img);
+        g_object_ref (img);
     }
 
     return img;
@@ -171,6 +169,40 @@ _cleanup_query (ddb_cover_query_t *query) {
     // Free the query -- it's fast, so it's OK to free it on main queue
     deadbeef->pl_item_unref (query->track);
     free (query);
+}
+
+static void
+_callback_and_cleanup (ddb_cover_query_t *query, ddb_cover_info_t *cover, GdkPixbuf *img) {
+    query_userdata_t *user_data = query->user_data;
+    covermanager_t *impl = user_data->impl;
+
+    if (impl->is_terminating) {
+        _cleanup_query (query);
+        return;
+    }
+
+    if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
+        _add_cover_for_track(impl, query->track, img);
+    }
+    void (^completionBlock)(GdkPixbuf *) = (void (^)(GdkPixbuf *))user_data->completion_block;
+    completionBlock(img);
+    if (img != NULL) {
+        g_object_unref(img);
+        img = NULL;
+    }
+    Block_release(completionBlock);
+    free (user_data);
+
+    // Free the query -- it's fast, so it's OK to free it on main queue
+    deadbeef->pl_item_unref (query->track);
+    free (query);
+
+    // Release the cover on background queue
+    if (cover != NULL) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            impl->plugin->cover_info_release (cover);
+        });
+    }
 }
 
 static void
@@ -198,33 +230,7 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
 
         // Update the UI on main queue
         _dispatch_on_main(^{
-            if (impl->is_terminating) {
-                _cleanup_query (query);
-                return;
-            }
-            if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
-                _add_cover_for_track(impl, query->track, img);
-            }
-            void (^completionBlock)(GdkPixbuf *) = (void (^)(GdkPixbuf *))user_data->completion_block;
-            completionBlock(img);
-            if (img != NULL) {
-                g_object_unref(img);
-                img = NULL;
-            }
-            Block_release(completionBlock);
-            free (user_data);
-
-            // Free the query -- it's fast, so it's OK to free it on main queue
-            deadbeef->pl_item_unref (query->track);
-            free (query);
-
-            // Release the cover on background queue
-            if (cover != NULL) {
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    impl->plugin->cover_info_release (cover);
-                });
-            }
-
+            _callback_and_cleanup (query, cover, img);
         });
     });
 }
