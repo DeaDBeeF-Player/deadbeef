@@ -25,8 +25,8 @@
 #include <string.h>
 #include "../../../deadbeef.h"
 #include "../covermanager/covermanager.h"
+#include "../covermanager/gobjcache.h"
 #include "../drawing.h"
-#include "../gobjcache.h"
 #include "../gtkui.h"
 #include "playlistrenderer.h"
 #include "plcommon.h"
