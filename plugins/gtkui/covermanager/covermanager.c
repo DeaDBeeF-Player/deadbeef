@@ -156,6 +156,7 @@ _load_image_from_cover(covermanager_t *impl, ddb_cover_info_t *cover) {
                 .width = max_image_size,
                 .height = max_image_size,
             };
+            new_size = covermanager_desired_size_for_image_size(impl, size, new_size);
 
             GdkPixbuf *scaled_img = covermanager_create_scaled_image(impl, img, new_size);
             gobj_unref(img);
