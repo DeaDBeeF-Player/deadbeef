@@ -28,6 +28,15 @@
 
 typedef void *gobj_cache_t;
 
+guint
+gobj_get_refc (gpointer ptr);
+
+void
+gobj_ref (gpointer obj);
+
+void
+gobj_unref (gpointer obj);
+
 gobj_cache_t
 gobj_cache_new (int max_object_count);
 

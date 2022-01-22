@@ -28,6 +28,7 @@
 #include "../../artwork/artwork.h"
 #include "albumartwidget.h"
 #include "covermanager.h"
+#include "gobjcache.h"
 #include <Block.h>
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -81,7 +82,7 @@ _update (w_albumart_t *w) {
     int cursor = deadbeef->pl_get_cursor(PL_MAIN);
     if (cursor == -1) {
         if (w->image != NULL) {
-            g_object_unref(w->image);
+            gobj_unref(w->image);
             w->image = NULL;
         }
     }
@@ -117,7 +118,7 @@ _update (w_albumart_t *w) {
                     }
                     else {
                         if (w->image != NULL) {
-                            g_object_unref(w->image);
+                            gobj_unref(w->image);
                             w->image = NULL;
                         }
                     }
@@ -132,7 +133,7 @@ _update (w_albumart_t *w) {
 
                     GdkPixbuf *scaled_image = covermanager_create_scaled_image(cm, image, desired_size);
                     w->image = scaled_image;
-                    g_object_unref(image);
+                    gobj_unref(image);
                 }
             }
 

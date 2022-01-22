@@ -92,16 +92,13 @@ _update_default_cover (covermanager_t *impl) {
         impl->default_cover_path = strdup (path);
 
         if (impl->default_cover != NULL) {
-            g_object_unref(impl->default_cover);
+            gobj_unref(impl->default_cover);
         }
 
         impl->default_cover = gdk_pixbuf_new_from_file(path, NULL);
         if (impl->default_cover == NULL) {
             uint32_t color = 0xffffffff;
             impl->default_cover = gdk_pixbuf_new_from_data((guchar *)&color, GDK_COLORSPACE_RGB, FALSE, 8, 1, 1, 4, NULL, NULL);
-        }
-        if (impl->default_cover) {
-            g_object_ref_sink(impl->default_cover);
         }
     }
 }
@@ -144,9 +141,31 @@ _load_image_from_cover(covermanager_t *impl, ddb_cover_info_t *cover) {
     if (!img && cover && cover->image_filename) {
         img = gdk_pixbuf_new_from_file(cover->image_filename, NULL);
     }
+
+    if (img) {
+        const int max_image_size = 1024; // TODO: needs to be configurable
+
+        // downscale
+        GtkAllocation size = {
+            .width = gdk_pixbuf_get_width(img),
+            .height = gdk_pixbuf_get_height(img),
+        };
+
+        if (size.width > max_image_size || size.height > max_image_size) {
+            GtkAllocation new_size = {
+                .width = max_image_size,
+                .height = max_image_size,
+            };
+
+            GdkPixbuf *scaled_img = covermanager_create_scaled_image(impl, img, new_size);
+            gobj_unref(img);
+            img = scaled_img;
+        }
+    }
+
     if (!img) {
         img = impl->default_cover;
-        g_object_ref (img);
+        gobj_ref (img);
     }
 
     return img;
@@ -187,7 +206,7 @@ _callback_and_cleanup (ddb_cover_query_t *query, ddb_cover_info_t *cover, GdkPix
     void (^completionBlock)(GdkPixbuf *) = (void (^)(GdkPixbuf *))user_data->completion_block;
     completionBlock(img);
     if (img != NULL) {
-        g_object_unref(img);
+        gobj_unref(img);
         img = NULL;
     }
     Block_release(completionBlock);
@@ -317,7 +336,7 @@ covermanager_free (covermanager_t *impl) {
     impl->default_cover_path = NULL;
 
     if (impl->default_cover) {
-        g_object_unref(impl->default_cover);
+        gobj_unref(impl->default_cover);
     }
 
     free(impl);
@@ -363,7 +382,7 @@ covermanager_create_scaled_image (covermanager_t *manager, GdkPixbuf *image, Gtk
     int originalHeight = gdk_pixbuf_get_height(image);
 
     if (originalWidth <= size.width && originalHeight <= size.height) {
-        g_object_ref(image);
+        gobj_ref (image);
         return image;
     }
 
@@ -376,8 +395,6 @@ covermanager_create_scaled_image (covermanager_t *manager, GdkPixbuf *image, Gtk
     double scale_y = (double)size.height/(double)originalHeight;
 
     gdk_pixbuf_scale(image, scaled_image, 0, 0, size.width, size.height, 0, 0, scale_x, scale_y, GDK_INTERP_BILINEAR);
-
-    g_object_ref_sink(scaled_image);
 
     return scaled_image;
 }

@@ -27,6 +27,7 @@
 #include "../covermanager/covermanager.h"
 #include "../drawing.h"
 #include "../gtkui.h"
+#include "gobjcache.h"
 #include "playlistrenderer.h"
 #include "plcommon.h"
 
@@ -267,7 +268,7 @@ cover_draw_cairo (GdkPixbuf *pixbuf, int x, int min_y, int max_y, int width, int
 static void
 _grp_cache_image (covermanager_t *cm, DdbListviewGroup *grp, GdkPixbuf *img, GtkAllocation availableSize) {
     if (grp->cachedImage != NULL) {
-        g_object_unref(grp->cachedImage);
+        gobj_unref(grp->cachedImage);
         grp->cachedImage = NULL;
     }
     if (img != NULL) {
@@ -356,7 +357,7 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
         }
 
         if (grp->cachedImage != NULL) {
-            g_object_unref(grp->cachedImage);
+            gobj_unref(grp->cachedImage);
         }
         grp->cachedImage = covermanager_create_scaled_image(cm, image, desiredSize);
         grp->hasCachedImage = TRUE;
@@ -364,7 +365,7 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
 
     cover_draw_cairo(grp->cachedImage, art_x, min_y, next_y, art_width, art_height, cr, CAIRO_FILTER_FAST);
 
-    g_object_unref(image);
+    gobj_unref(image);
     image = NULL;
 }
 

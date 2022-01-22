@@ -132,18 +132,6 @@ enum {
 static void
 init_widget_layout (void);
 
-/// Using this for getting gobject reference count when debugging
-guint
-gtkui_get_gobject_refcount (gpointer ptr) {
-    struct _GObject {
-        GTypeInstance  g_type_instance;
-        guint          ref_count;
-    };
-
-    struct _GObject *gobj = (struct _GObject *)ptr;
-    return gobj->ref_count;
-}
-
 // update status bar and window title
 static int sb_context_id = -1;
 static char sb_text[512];

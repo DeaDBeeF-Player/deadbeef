@@ -39,11 +39,40 @@ typedef struct {
     int count;
 } gobj_cache_impl_t;
 
+/// Using this for getting gobject reference count when debugging
+guint
+gobj_get_refc (gpointer ptr) {
+    struct _GObject {
+        GTypeInstance  g_type_instance;
+        guint          ref_count;
+    };
+
+    struct _GObject *gobj = (struct _GObject *)ptr;
+    return gobj->ref_count;
+}
+
+void
+gobj_ref (gpointer obj) {
+    assert (G_IS_OBJECT(obj));
+    __unused guint refc = gobj_get_refc (obj);
+    g_object_ref (obj);
+}
+
+void
+gobj_unref (gpointer obj) {
+    assert (G_IS_OBJECT(obj));
+    __unused guint refc = gobj_get_refc (obj);
+    assert (refc >= 1);
+    g_object_unref(obj);
+}
+
 static void
 gobj_cache_item_deinit (gobj_cache_item_t * restrict item) {
     free (item->key);
     item->key = NULL;
-    g_object_unref(item->obj);
+    if (item->obj) {
+        gobj_unref(item->obj);
+    }
     item->obj = NULL;
 }
 
@@ -79,7 +108,7 @@ _gobj_cache_set_int (gobj_cache_t restrict cache, const char * restrict key, GOb
     gobj_cache_impl_t *impl = cache;
 
     if (obj) {
-        g_object_ref(obj);
+        gobj_ref(obj);
     }
 
     // find item with that key or empty
@@ -95,7 +124,7 @@ _gobj_cache_set_int (gobj_cache_t restrict cache, const char * restrict key, GOb
         else if (!strcmp (item->key, key)) {
             item->atime = time(NULL);
             if (item->obj) {
-                g_object_unref(item->obj);
+                gobj_unref(item->obj);
             }
             item->obj = obj;
             item->should_wait = should_wait;
@@ -155,7 +184,7 @@ gobj_cache_get (gobj_cache_t cache, const char *key) {
     }
     item->atime = time(NULL);
     if (item->obj) {
-        g_object_ref(item->obj);
+        gobj_ref(item->obj);
     }
     return item->obj;
 }
