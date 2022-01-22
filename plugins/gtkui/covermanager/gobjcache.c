@@ -60,8 +60,6 @@ gobj_ref (gpointer obj) {
 void
 gobj_unref (gpointer obj) {
     assert (G_IS_OBJECT(obj));
-    __unused guint refc = gobj_get_refc (obj);
-    assert (refc >= 1);
     g_object_unref(obj);
 }
 
