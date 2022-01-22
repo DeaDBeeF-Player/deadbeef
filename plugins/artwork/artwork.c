@@ -1497,7 +1497,7 @@ _get_fetcher_preferences (void) {
         nocover_path = NULL;
     }
     else if (missing_artwork == 1) {
-        const char *res_dir = deadbeef->get_system_dir(DDB_SYS_DIR_PLUGIN_RESOURCES);
+        const char *res_dir = deadbeef->get_system_dir(DDB_SYS_DIR_PIXMAP);
         char path[PATH_MAX];
         snprintf (path, sizeof (path), "%s/noartwork.png", res_dir);
         if (nocover_path == NULL || strcmp(path, nocover_path)) {
