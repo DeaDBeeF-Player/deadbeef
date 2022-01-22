@@ -54,7 +54,6 @@ gobj_get_refc (gpointer ptr) {
 void
 gobj_ref (gpointer obj) {
     assert (G_IS_OBJECT(obj));
-    __unused guint refc = gobj_get_refc (obj);
     g_object_ref (obj);
 }
 
