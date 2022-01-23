@@ -202,7 +202,7 @@ show_notification (DB_playItem_t *track, char *image_filename) {
         query->source_id = 0;
 
         void (^completion_block)(int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) = ^(int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
-            if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED) && cover->image_filename) {
+            if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED) && cover != NULL && cover->image_filename) {
                 // redisplay notification with the album art
                 char *image_filename = strdup (cover->image_filename);
                 ddb_playItem_t *track = query->track;
@@ -215,7 +215,9 @@ show_notification (DB_playItem_t *track, char *image_filename) {
             }
             deadbeef->pl_item_unref (query->track);
             free (query);
-            artwork_plugin->cover_info_release (cover);
+            if (cover != NULL) {
+                artwork_plugin->cover_info_release (cover);
+            }
         };
 
         query->user_data = (dispatch_block_t)Block_copy(completion_block);
