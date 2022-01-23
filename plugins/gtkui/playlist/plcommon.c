@@ -205,12 +205,14 @@ pl_common_rewrite_column_config (DdbListview *listview, const char *name) {
         n -= written;
         if (n <= 0) {
             fprintf (stderr, "Column configuration is too large, doesn't fit in the buffer. Won't be written.\n");
+            free (buffer);
             return -1;
         }
     }
     strcpy (p, "]");
     deadbeef->conf_set_str (name, buffer);
     deadbeef->conf_save ();
+    free (buffer);
     return 0;
 }
 

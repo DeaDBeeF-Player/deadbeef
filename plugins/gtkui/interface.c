@@ -2154,7 +2154,7 @@ create_prefwin (void)
   tmp_toolbar_icon_size = gtk_toolbar_get_icon_size (GTK_TOOLBAR (dsp_toolbar));
 
   dsp_add_toolbtn = (GtkWidget*) gtk_toggle_tool_button_new ();
-  gtk_tool_button_set_label (GTK_TOOL_BUTTON (dsp_add_toolbtn), _("Add"));
+  gtk_tool_button_set_label (GTK_TOOL_BUTTON (dsp_add_toolbtn), "");
   tmp_image = gtk_image_new_from_stock ("gtk-add", tmp_toolbar_icon_size);
   gtk_widget_show (tmp_image);
   gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (dsp_add_toolbtn), tmp_image);
@@ -2163,19 +2163,19 @@ create_prefwin (void)
 
   tmp_image = gtk_image_new_from_stock ("gtk-remove", tmp_toolbar_icon_size);
   gtk_widget_show (tmp_image);
-  dsp_remove_toolbtn = (GtkWidget*) gtk_tool_button_new (tmp_image, _("Remove"));
+  dsp_remove_toolbtn = (GtkWidget*) gtk_tool_button_new (tmp_image, "");
   gtk_widget_show (dsp_remove_toolbtn);
   gtk_container_add (GTK_CONTAINER (dsp_toolbar), dsp_remove_toolbtn);
 
   tmp_image = gtk_image_new_from_stock ("gtk-go-up", tmp_toolbar_icon_size);
   gtk_widget_show (tmp_image);
-  dsp_up_toolbtn = (GtkWidget*) gtk_tool_button_new (tmp_image, _("Up"));
+  dsp_up_toolbtn = (GtkWidget*) gtk_tool_button_new (tmp_image, "");
   gtk_widget_show (dsp_up_toolbtn);
   gtk_container_add (GTK_CONTAINER (dsp_toolbar), dsp_up_toolbtn);
 
   tmp_image = gtk_image_new_from_stock ("gtk-go-down", tmp_toolbar_icon_size);
   gtk_widget_show (tmp_image);
-  dsp_down_toolbtn = (GtkWidget*) gtk_tool_button_new (tmp_image, _("Down"));
+  dsp_down_toolbtn = (GtkWidget*) gtk_tool_button_new (tmp_image, "");
   gtk_widget_show (dsp_down_toolbtn);
   gtk_container_add (GTK_CONTAINER (dsp_toolbar), dsp_down_toolbtn);
 
@@ -2328,7 +2328,7 @@ create_prefwin (void)
   gtk_widget_show (mmb_delete_playlist);
   gtk_box_pack_start (GTK_BOX (vbox44), mmb_delete_playlist, FALSE, FALSE, 0);
 
-  hide_delete_from_disk = gtk_check_button_new_with_mnemonic (_("Hide \"Remove From Disk\" context menu item"));
+  hide_delete_from_disk = gtk_check_button_new_with_mnemonic (_("Hide \"Delete from Disk\" context menu item"));
   gtk_widget_show (hide_delete_from_disk);
   gtk_box_pack_start (GTK_BOX (vbox44), hide_delete_from_disk, FALSE, FALSE, 0);
 
@@ -2873,12 +2873,12 @@ create_prefwin (void)
   gtk_widget_show (hbox150);
   gtk_box_pack_start (GTK_BOX (vbox56), hbox150, FALSE, TRUE, 0);
 
-  button_medialib_add_folder = gtk_button_new_with_mnemonic (_("+"));
+  button_medialib_add_folder = gtk_button_new_with_mnemonic ("+");
   gtk_widget_show (button_medialib_add_folder);
   gtk_box_pack_start (GTK_BOX (hbox150), button_medialib_add_folder, FALSE, FALSE, 0);
   gtk_widget_set_size_request (button_medialib_add_folder, 38, -1);
 
-  button_medialib_remove_folder = gtk_button_new_with_mnemonic (_("-"));
+  button_medialib_remove_folder = gtk_button_new_with_mnemonic ("-");
   gtk_widget_show (button_medialib_remove_folder);
   gtk_box_pack_start (GTK_BOX (hbox150), button_medialib_remove_folder, FALSE, FALSE, 0);
   gtk_widget_set_size_request (button_medialib_remove_folder, 38, -1);

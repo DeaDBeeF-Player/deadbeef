@@ -603,7 +603,7 @@ trk_context_menu_build (GtkWidget *menu) {
     int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
 
     if (!hide_remove_from_disk) {
-        remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove from Disk"));
+        remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Delete from Disk"));
         gtk_widget_show (remove_from_disk);
         gtk_container_add (GTK_CONTAINER (menu), remove_from_disk);
         gtk_widget_set_sensitive(remove_from_disk, selected_count != 0);

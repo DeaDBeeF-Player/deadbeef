@@ -665,3 +665,17 @@ show_file_chooser (const gchar          *title,
     destroy_file_chooser (dlg);
     return lst;
 }
+
+char *
+gtkui_trim_whitespace(char *p, size_t len) {
+    char *meta = p;
+    while (*meta == ' ') {
+        meta++;
+    }
+    char *tail = p + len - 1;
+    while (tail > p && ((uint8_t)*tail) <= 0x20) {
+        *tail = 0;
+        tail--;
+    }
+    return meta;
+}

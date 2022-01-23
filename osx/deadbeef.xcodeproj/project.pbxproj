@@ -2028,6 +2028,10 @@
 		2DBC62D724CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DBC62D524CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m */; };
 		2DBC62DA24CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBC62D824CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.h */; };
 		2DBC62DB24CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DBC62D924CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.m */; };
+		2DBCA6962794492D00D7432F /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2DBCA6952794492D00D7432F /* Credits.rtf */; };
+		2DBCA69A27944B2200D7432F /* COPYING.GPLv2 in Resources */ = {isa = PBXBuildFile; fileRef = 2DBCA69827944B2200D7432F /* COPYING.GPLv2 */; };
+		2DBCA69B27944B2200D7432F /* COPYING.LGPLv2.1 in Resources */ = {isa = PBXBuildFile; fileRef = 2DBCA69927944B2200D7432F /* COPYING.LGPLv2.1 */; };
+		2DBCA69D27944BB600D7432F /* ChangeLog in Resources */ = {isa = PBXBuildFile; fileRef = 2DBCA69C27944BB600D7432F /* ChangeLog */; };
 		2DBCB725240AE0BE0012F178 /* tftintutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBCB71F240ADCC10012F178 /* tftintutil.h */; };
 		2DBCB726240AE28E0012F178 /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DBCB720240ADCC10012F178 /* tftintutil.c */; };
 		2DBF129D22DE53D200D59073 /* icy2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D565AB21A40BCE200CE1F5D /* icy2utf8.c */; };
@@ -2423,9 +2427,6 @@
 		2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCF73B21A952F8900495740 /* PreferencesWindowController.h */; };
 		2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DCF73B31A952F8900495740 /* PreferencesWindowController.m */; };
-		2DD376F62739B5DE007AD315 /* libavcodec.58.134.100.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DD376F72739B5DE007AD315 /* libavformat.58.76.100.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DD376F82739B5DE007AD315 /* libavutil.56.70.100.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DD376F92739B5FF007AD315 /* libavcodec.58.134.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */; };
 		2DD376FA2739B601007AD315 /* libavformat.58.76.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */; };
 		2DD376FB2739B603007AD315 /* libavutil.56.70.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */; };
@@ -2450,6 +2451,8 @@
 		2DD39ED926AD8D1600C5846D /* analyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD39ED726AD8D1600C5846D /* analyzer.h */; };
 		2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2DD5262E2062F1DF002609C5 /* help-cocoa.txt */; };
 		2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
+		2DD6C5DD279B278E00CABBE6 /* mp4p.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 2D71F1B124AE799B00E753D3 /* mp4p.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2DD6C5DF279B27B300CABBE6 /* mp4p.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 2D71F1B124AE799B00E753D3 /* mp4p.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */; };
 		2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */; };
 		2DD81B2E25152C32008C716C /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
@@ -2507,9 +2510,6 @@
 		2DDFABEE2438F20400E13E85 /* aac_decoder_wrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DDFABEC2438F1FC00E13E85 /* aac_decoder_wrap.c */; };
 		2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */; };
 		2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */; };
-		2DE1B21D24A89E090070CD7C /* libavcodec.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D5D9C5924A7FB0200D632E4 /* libavcodec.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DE1B21E24A89E0B0070CD7C /* libavformat.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D5D9C5724A7FB0200D632E4 /* libavformat.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DE1B21F24A89E0D0070CD7C /* libavutil.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D5D9C5824A7FB0200D632E4 /* libavutil.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DE1B36C24A8A6150070CD7C /* Replay in Copy SC68 replays */ = {isa = PBXBuildFile; fileRef = 2DE1B36A24A8A5F20070CD7C /* Replay */; };
 		2DE1B36F24A8AAD80070CD7C /* libflaclib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */; };
 		2DE1B37224A8B3EB0070CD7C /* Replay in Copy SC68 replays */ = {isa = PBXBuildFile; fileRef = 2DE1B36A24A8A5F20070CD7C /* Replay */; };
@@ -4322,6 +4322,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DD6C5CD279B277E00CABBE6 /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				2DD6C5DD279B278E00CABBE6 /* mp4p.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DD6C5DE279B27A800CABBE6 /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				2DD6C5DF279B27B300CABBE6 /* mp4p.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DD81CBA25152DA9008C716C /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4344,9 +4366,6 @@
 				2DD376FF2739B865007AD315 /* libavcodec.58.dylib in Copy Plugins */,
 				2DD377002739B867007AD315 /* libavformat.58.dylib in Copy Plugins */,
 				2DD377012739B869007AD315 /* libavutil.56.dylib in Copy Plugins */,
-				2DD376F62739B5DE007AD315 /* libavcodec.58.134.100.dylib in Copy Plugins */,
-				2DD376F72739B5DE007AD315 /* libavformat.58.76.100.dylib in Copy Plugins */,
-				2DD376F82739B5DE007AD315 /* libavutil.56.70.100.dylib in Copy Plugins */,
 				2DA5AC1E25D0393C00947C19 /* libwavpacklib.dylib in Copy Plugins */,
 				2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Copy Plugins */,
 				2D00F33124351EDF000FC130 /* ddb_soundtouch.dylib in Copy Plugins */,
@@ -4389,9 +4408,6 @@
 				2D8BA3521E2672BF001D5708 /* libogglib.dylib in Copy Plugins */,
 				4D9BF4001FE134200032B6CF /* libopusfile.dylib in Copy Plugins */,
 				2D5B51221FF43FC8000AD484 /* liboggedit.dylib in Copy Plugins */,
-				2DE1B21D24A89E090070CD7C /* libavcodec.dylib in Copy Plugins */,
-				2DE1B21E24A89E0B0070CD7C /* libavformat.dylib in Copy Plugins */,
-				2DE1B21F24A89E0D0070CD7C /* libavutil.dylib in Copy Plugins */,
 				2DA84F7F24F5892A003507A2 /* libjansson.dylib in Copy Plugins */,
 			);
 			name = "Copy Plugins";
@@ -6501,6 +6517,10 @@
 		2DBC62D524CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumAnalyzerVisualizationViewController.m; sourceTree = "<group>"; };
 		2DBC62D824CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumAnalyzerVisualizationView.h; sourceTree = "<group>"; };
 		2DBC62D924CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumAnalyzerVisualizationView.m; sourceTree = "<group>"; };
+		2DBCA6952794492D00D7432F /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = SOURCE_ROOT; };
+		2DBCA69827944B2200D7432F /* COPYING.GPLv2 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.GPLv2; path = ../../COPYING.GPLv2; sourceTree = "<group>"; };
+		2DBCA69927944B2200D7432F /* COPYING.LGPLv2.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; name = COPYING.LGPLv2.1; path = ../../COPYING.LGPLv2.1; sourceTree = "<group>"; };
+		2DBCA69C27944BB600D7432F /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ChangeLog; path = ../../ChangeLog; sourceTree = "<group>"; };
 		2DBCB71F240ADCC10012F178 /* tftintutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tftintutil.h; sourceTree = "<group>"; };
 		2DBCB720240ADCC10012F178 /* tftintutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tftintutil.c; sourceTree = "<group>"; };
 		2DBF3D3F270868D400023138 /* MainContentViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainContentViewController.xib; sourceTree = "<group>"; };
@@ -11178,6 +11198,17 @@
 			path = Visualization;
 			sourceTree = "<group>";
 		};
+		2DBCA69727944B0B00D7432F /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				2DBCA69C27944BB600D7432F /* ChangeLog */,
+				2DBCA6952794492D00D7432F /* Credits.rtf */,
+				2DBCA69827944B2200D7432F /* COPYING.GPLv2 */,
+				2DBCA69927944B2200D7432F /* COPYING.LGPLv2.1 */,
+			);
+			name = Assets;
+			sourceTree = "<group>";
+		};
 		2DC657D0274957FE00583E14 /* Tabs */ = {
 			isa = PBXGroup;
 			children = (
@@ -12593,6 +12624,7 @@
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
+				2DBCA69727944B0B00D7432F /* Assets */,
 				2DC657D92749607600583E14 /* DdbTabStrip */,
 				2D30D13625E2A6B40023A299 /* DesignMode */,
 				4D2362B218395D0300C9E818 /* Images */,
@@ -14659,6 +14691,7 @@
 				2DE1B37124A8B3A20070CD7C /* Copy SC68 replays */,
 				2DD81CBA25152DA9008C716C /* CopyFiles */,
 				2DCB17692515F8150054BD06 /* CopyFiles */,
+				2DD6C5CD279B277E00CABBE6 /* Copy Frameworks */,
 			);
 			buildRules = (
 			);
@@ -15112,6 +15145,7 @@
 				2DC6577B274428F200583E14 /* Copy SC68 replays */,
 				2DC6577D274428F200583E14 /* CopyFiles */,
 				2DC65782274428F200583E14 /* CopyFiles */,
+				2DD6C5DE279B27A800CABBE6 /* Copy Frameworks */,
 			);
 			buildRules = (
 			);
@@ -16011,6 +16045,7 @@
 				2DDBDA392436678700C12A75 /* btnduplicateTemplate.pdf in Resources */,
 				2DB05F7B252E4F170090635E /* iconLibraryTemplate.pdf in Resources */,
 				2D8D96B11D1091F900A5C7E6 /* noartwork.png in Resources */,
+				2DBCA69B27944B2200D7432F /* COPYING.LGPLv2.1 in Resources */,
 				2DC655752741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib in Resources */,
 				2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */,
 				4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */,
@@ -16027,6 +16062,7 @@
 				2DC657D82749581900583E14 /* DdbTabStripViewController.xib in Resources */,
 				2DC65828274AB03800583E14 /* LyricsViewController.xib in Resources */,
 				2DB05E77252E3F3E0090635E /* iconPluginsTemplate.pdf in Resources */,
+				2DBCA6962794492D00D7432F /* Credits.rtf in Resources */,
 				2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */,
 				4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */,
 				2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */,
@@ -16037,6 +16073,7 @@
 				2D17F8461AB3391A00AF2853 /* MainMenu.xib in Resources */,
 				2D11E8B41AA0E3DD00A67A20 /* MainWindow.xib in Resources */,
 				2D9C0C15238DC0E700CE8C10 /* GroupByCustomWindow.xib in Resources */,
+				2DBCA69D27944BB600D7432F /* ChangeLog in Resources */,
 				2DC657FC274A7C4600583E14 /* RenamePlaylistViewController.xib in Resources */,
 				2DB05FFD252E53220090635E /* iconGUISettingsTemplate.pdf in Resources */,
 				2DEBA1D423E207A3000E4135 /* EqualizerWindowController.xib in Resources */,
@@ -16054,6 +16091,7 @@
 				2D651D1A227227FA00375AE2 /* ScriptableNodeEditorView.xib in Resources */,
 				2D1A563A1D9FF9A4005E5CDD /* ReplayGain.xib in Resources */,
 				2D651D07227227A000375AE2 /* ScriptableNodeEditorWindow.xib in Resources */,
+				2DBCA69A27944B2200D7432F /* COPYING.GPLv2 in Resources */,
 				2D651D1C22722AD200375AE2 /* ScriptableSelectView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -20528,6 +20566,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
+				EXCLUDED_ARCHS = arm64;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "../plugins/cocoaui/deadbeef-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -20571,6 +20610,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
+				EXCLUDED_ARCHS = arm64;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "../plugins/cocoaui/deadbeef-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -21374,6 +21414,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = arm64;
 				EXECUTABLE_PREFIX = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -21422,6 +21463,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXCLUDED_ARCHS = arm64;
 				EXECUTABLE_PREFIX = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -22001,6 +22043,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = arm64;
 				EXECUTABLE_PREFIX = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -22064,6 +22107,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXCLUDED_ARCHS = arm64;
 				EXECUTABLE_PREFIX = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -22107,6 +22151,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
+				EXCLUDED_ARCHS = arm64;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "../plugins/cocoaui/deadbeef-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -22151,6 +22196,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
+				EXCLUDED_ARCHS = arm64;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "../plugins/cocoaui/deadbeef-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -22252,6 +22298,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = arm64;
 				EXECUTABLE_PREFIX = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -22316,6 +22363,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXCLUDED_ARCHS = arm64;
 				EXECUTABLE_PREFIX = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -22470,6 +22518,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = arm64;
 				EXECUTABLE_PREFIX = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -22522,6 +22571,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXCLUDED_ARCHS = arm64;
 				EXECUTABLE_PREFIX = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -22557,6 +22607,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				EXCLUDED_ARCHS = arm64;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -22592,6 +22643,7 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				EXCLUDED_ARCHS = arm64;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MACOSX_DEPLOYMENT_TARGET = 12.0;

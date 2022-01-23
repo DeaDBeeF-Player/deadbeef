@@ -3489,7 +3489,7 @@ Only prevent clipping</property>
 		      <child>
 			<widget class="GtkToggleToolButton" id="dsp_add_toolbtn">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Add</property>
+			  <property name="label" translatable="yes"></property>
 			  <property name="use_underline">True</property>
 			  <property name="stock_id">gtk-add</property>
 			  <property name="visible_horizontal">True</property>
@@ -3507,7 +3507,7 @@ Only prevent clipping</property>
 		      <child>
 			<widget class="GtkToolButton" id="dsp_remove_toolbtn">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Remove</property>
+			  <property name="label" translatable="yes"></property>
 			  <property name="use_underline">True</property>
 			  <property name="stock_id">gtk-remove</property>
 			  <property name="visible_horizontal">True</property>
@@ -3524,7 +3524,7 @@ Only prevent clipping</property>
 		      <child>
 			<widget class="GtkToolButton" id="dsp_up_toolbtn">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Up</property>
+			  <property name="label" translatable="yes"></property>
 			  <property name="use_underline">True</property>
 			  <property name="stock_id">gtk-go-up</property>
 			  <property name="visible_horizontal">True</property>
@@ -3541,7 +3541,7 @@ Only prevent clipping</property>
 		      <child>
 			<widget class="GtkToolButton" id="dsp_down_toolbtn">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Down</property>
+			  <property name="label" translatable="yes"></property>
 			  <property name="use_underline">True</property>
 			  <property name="stock_id">gtk-go-down</property>
 			  <property name="visible_horizontal">True</property>
@@ -4186,7 +4186,7 @@ Only prevent clipping</property>
 		    <widget class="GtkCheckButton" id="hide_delete_from_disk">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">Hide &quot;Remove From Disk&quot; context menu item</property>
+		      <property name="label" translatable="yes">Hide &quot;Delete from Disk&quot; context menu item</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <property name="focus_on_click">True</property>
@@ -6178,7 +6178,7 @@ Only prevent clipping</property>
 			  <property name="width_request">38</property>
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">+</property>
+			  <property name="label">+</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
@@ -6195,7 +6195,7 @@ Only prevent clipping</property>
 			  <property name="width_request">38</property>
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">-</property>
+			  <property name="label">-</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>

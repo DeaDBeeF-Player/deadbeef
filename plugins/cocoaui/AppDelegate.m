@@ -493,14 +493,14 @@ main_cleanup_and_quit (void);
     _addLocationTextField.stringValue = @"";
     [_mainWindow.window beginSheet:_addLocationPanel completionHandler:^(NSModalResponse returnCode) {
         if (returnCode == NSModalResponseOK) {
-            NSString *text = [self.addLocationTextField stringValue];
+            NSString *text = [self.addLocationTextField.stringValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
             if (!deadbeef->plt_add_files_begin (plt, 0)) {
                 dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
                 dispatch_async(aQueue, ^{
                     DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
-                    deadbeef->plt_insert_file2 (0, plt, tail, [text UTF8String], NULL, NULL, NULL);
+                    deadbeef->plt_insert_file2 (0, plt, tail, text.UTF8String, NULL, NULL, NULL);
                     if (tail) {
                         deadbeef->pl_item_unref (tail);
                     }
@@ -879,13 +879,64 @@ main_cleanup_and_quit (void);
     if (!_helpWindow) {
         _helpWindow = [[HelpWindowController alloc] initWithWindowNibName:@"HelpViewer"];
     }
+    _helpWindow.contentURL = [NSBundle.mainBundle URLForResource:@"help-cocoa" withExtension:@"txt"];
 
     if (![_helpWindow.window isVisible]) {
         [_helpWindow showWindow:self];
     }
 }
 
+- (IBAction)showChangelog:(id)sender {
+    if (!_helpWindow) {
+        _helpWindow = [[HelpWindowController alloc] initWithWindowNibName:@"HelpViewer"];
+    }
+    _helpWindow.contentURL = [NSBundle.mainBundle URLForResource:@"ChangeLog" withExtension:@""];
+
+    if (![_helpWindow.window isVisible]) {
+        [_helpWindow showWindow:self];
+    }
+}
+
+- (IBAction)showGPL:(id)sender {
+    if (!_helpWindow) {
+        _helpWindow = [[HelpWindowController alloc] initWithWindowNibName:@"HelpViewer"];
+    }
+    _helpWindow.contentURL = [NSBundle.mainBundle URLForResource:@"COPYING" withExtension:@"GPLv2"];
+
+    if (![_helpWindow.window isVisible]) {
+        [_helpWindow showWindow:self];
+    }
+}
+
+- (IBAction)showLGPL:(id)sender {
+    if (!_helpWindow) {
+        _helpWindow = [[HelpWindowController alloc] initWithWindowNibName:@"HelpViewer"];
+    }
+    _helpWindow.contentURL = [NSBundle.mainBundle URLForResource:@"COPYING.LGPLv2" withExtension:@"1"];
+
+    if (![_helpWindow.window isVisible]) {
+        [_helpWindow showWindow:self];
+    }
+}
+
+
 - (IBAction)toggleDesignModeAction:(id)sender {
+    if (!self.designModeState.enabled && !deadbeef->conf_get_int("cocoaui.suppress_designmode_help", 0)) {
+        NSAlert *alert = [NSAlert new];
+        alert.messageText = @"Design Mode";
+        alert.informativeText = @"Use the right click menu to customize UI elements. Use Splitter and Tabs elements to place multiple elements.";
+        alert.showsSuppressionButton = YES;
+        alert.suppressionButton.title = @"Do not show this message again";
+        alert.alertStyle = NSAlertStyleInformational;
+
+        [alert beginSheetModalForWindow:self.mainWindow.window completionHandler:^(NSModalResponse returnCode) {
+            if (alert.suppressionButton.state == NSControlStateValueOn) {
+                deadbeef->conf_set_int ("cocoaui.suppress_designmode_help", 1);
+                deadbeef->conf_save ();
+            }
+        }];
+    }
+
     self.designModeState.enabled = !self.designModeState.enabled;
     self.designModeMenuItem.state = self.designModeState.enabled ? NSControlStateValueOn : NSControlStateValueOff;
 }

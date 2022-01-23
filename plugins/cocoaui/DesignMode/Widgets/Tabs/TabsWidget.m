@@ -102,6 +102,16 @@
         return NO;
     }
 
+    NSInteger index = [self.segmentedTabView indexOfTabViewItem:self.clickedItem];
+
+    if (menuItem.action == @selector(moveTabLeft:) && index < 1) {
+        return NO;
+    }
+
+    if (menuItem.action == @selector(moveTabRight:) && index >= self.segmentedTabView.numberOfTabViewItems-1) {
+        return NO;
+    }
+
     return YES;
 }
 
@@ -192,15 +202,23 @@
         return;
     }
 
+    BOOL wasSelected = [self.segmentedTabView tabViewItemAtIndex:index] == self.segmentedTabView.selectedTabViewItem;
+
     NSString *label = self.labels[index];
     id<WidgetProtocol> childWidget = self.childWidgets[index];
     [self removeTabItemForChild:self.childWidgets[index]];
 
-    [self.labels insertObject:label atIndex:index-1];
-    [self insertChild:childWidget atIndex:index-1];
+    index -= 1;
 
-    self.clickedItem = [self.segmentedTabView tabViewItemAtIndex:index-1];
-    [self.segmentedTabView setLabel:self.clickedItem.label forSegment:index-1];
+    [self.labels insertObject:label atIndex:index];
+    [self insertChild:childWidget atIndex:index];
+
+    self.clickedItem = [self.segmentedTabView tabViewItemAtIndex:index];
+    [self.segmentedTabView setLabel:self.clickedItem.label forSegment:index];
+
+    if (wasSelected) {
+        [self.segmentedTabView selectTabViewItemAtIndex:index];
+    }
 
     [self.deps.state layoutDidChange];
 }
@@ -215,15 +233,23 @@
         return;
     }
 
+    BOOL wasSelected = [self.segmentedTabView tabViewItemAtIndex:index] == self.segmentedTabView.selectedTabViewItem;
+
     NSString *label = self.labels[index];
     id<WidgetProtocol> childWidget = self.childWidgets[index];
     [self removeTabItemForChild:self.childWidgets[index]];
 
-    [self.labels insertObject:label atIndex:index+1];
-    [self insertChild:childWidget atIndex:index+1];
+    index += 1;
 
-    self.clickedItem = [self.segmentedTabView tabViewItemAtIndex:index+1];
-    [self.segmentedTabView setLabel:self.clickedItem.label forSegment:index+1];
+    [self.labels insertObject:label atIndex:index];
+    [self insertChild:childWidget atIndex:index];
+
+    self.clickedItem = [self.segmentedTabView tabViewItemAtIndex:index];
+    [self.segmentedTabView setLabel:self.clickedItem.label forSegment:index];
+
+    if (wasSelected) {
+        [self.segmentedTabView selectTabViewItemAtIndex:index];
+    }
 
     [self.deps.state layoutDidChange];
 }

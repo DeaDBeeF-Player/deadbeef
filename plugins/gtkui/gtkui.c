@@ -132,16 +132,6 @@ enum {
 static void
 init_widget_layout (void);
 
-void
-gtkpl_free (DdbListview *pl) {
-#if 0
-    if (colhdr_anim.timeline) {
-        timeline_free (colhdr_anim.timeline, 1);
-        colhdr_anim.timeline = 0;
-    }
-#endif
-}
-
 // update status bar and window title
 static int sb_context_id = -1;
 static char sb_text[512];
@@ -1855,7 +1845,7 @@ static DB_plugin_action_t action_quit = {
 };
 
 static DB_plugin_action_t action_delete_from_disk = {
-    .title = "Remove From Disk",
+    .title = "Delete from Disk",
     .name = "delete_from_disk",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback2 = action_delete_from_disk_handler,
@@ -2050,7 +2040,7 @@ static DB_plugin_action_t action_crop_selected = {
 };
 
 static DB_plugin_action_t action_remove_from_playlist = {
-    .title = "Edit/Remove Track(s) From Playlist",
+    .title = "Edit/Remove Track(s) from Playlist",
     .name = "remove_from_playlist",
     .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST,
     .callback2 = action_remove_from_playlist_handler,

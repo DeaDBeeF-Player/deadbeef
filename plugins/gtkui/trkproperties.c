@@ -816,20 +816,6 @@ _semicolon_separated_string_for_meta(DB_metaInfo_t *meta) {
     return field;
 }
 
-static char *
-_trim_whitespace(char *p, size_t len) {
-    char *meta = p;
-    while (*meta == ' ') {
-        meta++;
-    }
-    char *tail = p + len - 1;
-    while (tail > p && *tail == ' ') {
-        *tail = 0;
-        tail--;
-    }
-    return meta;
-}
-
 static void
 _iterate_semicolon_separated_substrings(const char *svalue, void (^completion_block)(const char *item)) {
     while (*svalue) {
@@ -847,7 +833,7 @@ _iterate_semicolon_separated_substrings(const char *svalue, void (^completion_bl
         memcpy (item, svalue, len);
         item[len] = 0;
 
-        char *trimmed_item = _trim_whitespace(item, len);
+        char *trimmed_item = gtkui_trim_whitespace(item, len);
 
         if (*trimmed_item) {
             completion_block(trimmed_item);

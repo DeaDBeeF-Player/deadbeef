@@ -190,4 +190,8 @@ GSList *
 show_file_chooser (const gchar          *title,
                    enum GtkuiFileChooserType type,
                    gboolean             select_multiple);
+
+char *
+gtkui_trim_whitespace(char *p, size_t len);
+
 #endif

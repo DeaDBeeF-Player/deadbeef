@@ -22,7 +22,7 @@ If you wish to chat with developers, join us on [Slack](https://deadbeef-slack.h
 
 [Nightly Windows Builds](https://sourceforge.net/projects/deadbeef/files/travis/windows/master/)
 
-[Nightly macOS Builds](https://sourceforge.net/projects/deadbeef/files/travis/osx/master/)
+[Nightly macOS Builds](https://sourceforge.net/projects/deadbeef/files/travis/macOS/master/)
 
 
 ## Building DeaDBeeF from source

@@ -86,8 +86,8 @@ mpc_demux_fill(mpc_demux * d, mpc_uint32_t min_bytes, int flags)
 		mpc_uint32_t bytes_free = DEMUX_BUFFER_SIZE - d->bytes_total;
 
 		if (flags & MPC_BUFFER_SWAP) {
-			bytes2read &= 0xffffffffU << 2;
-			offset = (unread_bytes + 3) & (0xffffffffU << 2);
+			bytes2read &= -(1 << 2);
+			offset = (unread_bytes + 3) & ( -(1 << 2));
 			offset -= unread_bytes;
 		}
 
@@ -140,7 +140,7 @@ mpc_demux_seek(mpc_demux * d, mpc_seek_t fpos, mpc_uint32_t min_bytes) {
 
 	next_pos = fpos >> 3;
 	if (d->si.stream_version == 7)
-		next_pos = ((next_pos - d->si.header_position) & (0xffffffffU << 2)) + d->si.header_position;
+		next_pos = ((next_pos - d->si.header_position) & (-(1 << 2))) + d->si.header_position;
 	bit_offset = (int) (fpos - (next_pos << 3));
 
 	d->r->seek(d->r, (mpc_int32_t) next_pos);
@@ -282,7 +282,7 @@ static void mpc_demux_ST(mpc_demux * d)
 	for (i = 2; i < file_table_size; i++) {
 		int code = mpc_bits_golomb_dec(&r, 12);
 		if (code & 1)
-			code = -(code & (0xffffffffU << 2));
+			code = -(code & (-(1 << 1)));
 		code <<= 2;
 		last[i & 1] = code + 2 * last[(i-1) & 1] - last[i & 1];
 		if ((i & mask) == 0)
