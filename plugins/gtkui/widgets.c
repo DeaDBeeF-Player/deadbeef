@@ -139,6 +139,8 @@ typedef struct {
     ddb_gtkui_widget_extended_api_t exapi;
     int clicked_page;
     int active;
+
+    // These fields are used only during deserialization, and then get freed
     int num_tabs;
     char **titles;
 } w_tabs_t;
@@ -1655,9 +1657,9 @@ w_tabs_serialize_to_keyvalues (ddb_gtkui_widget_t *base) {
     w_tabs_t *w = (w_tabs_t *)base;
 
     w->active = gtk_notebook_get_current_page (GTK_NOTEBOOK (w->base.widget));
-    w->num_tabs = gtk_notebook_get_n_pages (GTK_NOTEBOOK (w->base.widget));
+    int num_tabs = gtk_notebook_get_n_pages (GTK_NOTEBOOK (w->base.widget));
 
-    char const **keyvalues = calloc(2 * (2 + w->num_tabs) + 1, sizeof (char *));
+    char const **keyvalues = calloc(2 * (2 + num_tabs) + 1, sizeof (char *));
 
     char temp[10];
 
@@ -1665,10 +1667,10 @@ w_tabs_serialize_to_keyvalues (ddb_gtkui_widget_t *base) {
     snprintf(temp, sizeof(temp), "%d", w->active);
     keyvalues[1] = strdup(temp);
     keyvalues[2] = "num_tabs";
-    snprintf(temp, sizeof(temp), "%d", w->num_tabs);
+    snprintf(temp, sizeof(temp), "%d", num_tabs);
     keyvalues[3] = strdup(temp);
 
-    for (int i = 0; i < w->num_tabs; i++) {
+    for (int i = 0; i < num_tabs; i++) {
         char key[7];
 
         GtkWidget *child = gtk_notebook_get_nth_page (GTK_NOTEBOOK (w->base.widget), i);
@@ -2069,8 +2071,11 @@ w_tabs_init (ddb_gtkui_widget_t *base) {
                 gtk_misc_set_padding (GTK_MISC (label), 0, 0);
 #endif
             }
+            free (w->titles[page]);
             page++;
         }
+        free (w->titles);
+        w->titles = NULL;
     }
 }
 
