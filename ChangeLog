@@ -7,6 +7,7 @@ version 1.9.0
 	Fixed: Keyboard nagivation issues across playlist tabs (Saivert)
 	Fixed: Playlist tabs and playlist customized colors bugs (Saivert)
 	Fixed: Paused state was not persisted correctly after force-quitting
+	Fixed: Regression which broke musepack seeking
 	Added: Long file seeking support for Opus and FFMPEG
 	Added: HTTPS support for vfs_curl in portable builds, via libmbedtls
 	Added: Design mode for CocoaUI
