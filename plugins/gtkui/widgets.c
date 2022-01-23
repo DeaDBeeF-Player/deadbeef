@@ -292,7 +292,7 @@ typedef struct {
     char *text_to_add;
 } logviewer_addtexts_t;
 
-static int design_mode;
+int design_mode;
 static ddb_gtkui_widget_t *rootwidget;
 
 static const char associated_widget_data_id[] = "uiwidget";
