@@ -32,8 +32,7 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -630,6 +629,12 @@ sndfile_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
     case DB_EV_CONFIGCHANGED:
         sndfile_init_exts ();
+        if (deadbeef->conf_get_int ("sndfile.trace", 0)) {
+            plugin.plugin.flags |= DDB_PLUGIN_FLAG_LOGGING;
+        }
+        else {
+            plugin.plugin.flags &= ~DDB_PLUGIN_FLAG_LOGGING;
+        }
         break;
     }
     return 0;
@@ -652,8 +657,8 @@ sndfile_stop (void) {
 
 static const char settings_dlg[] =
     "property \"File Extensions (separate with ';')\" entry sndfile.extensions \"" DEFAULT_EXTS "\";\n"
+    "property \"Enable logging\" checkbox sndfile.trace 0;\n"
 ;
-
 
 // define plugin interface
 static DB_decoder_t plugin = {
