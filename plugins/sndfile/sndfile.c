@@ -161,7 +161,7 @@ static int
 sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     sndfile_info_t *info = (sndfile_info_t*)_info;
 
-    SF_INFO inf;
+    SF_INFO inf = {0};
     deadbeef->pl_lock ();
     const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
@@ -173,6 +173,7 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     int64_t fsize = deadbeef->fgetlength (fp);
 
     info->file = fp;
+
     info->ctx = sf_open_virtual (&vfs, SFM_READ, &inf, info);
     if (!info->ctx) {
         trace ("sndfile: %s: unsupported file format\n");
@@ -359,17 +360,18 @@ _sndfile_ctx_read_tags (DB_playItem_t *it, SNDFILE *ctx);
 static DB_playItem_t *
 sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("adding file %s\n", fname);
-    SF_INFO inf;
+    SF_INFO inf = {0};
     sndfile_info_t info = {0};
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         trace ("sndfile: failed to open %s\n", fname);
         return NULL;
     }
-    int64_t fsize = deadbeef->fgetlength (fp);
-    trace ("file: %p, size: %lld\n", fp, fsize);
 
     info.file = fp;
+
+    int64_t fsize = deadbeef->fgetlength(fp);
+    trace ("file: %p, size: %lld\n", fp, fsize);
 
     trace ("calling sf_open_virtual\n");
     info.ctx = sf_open_virtual (&vfs, SFM_READ, &inf, &info);

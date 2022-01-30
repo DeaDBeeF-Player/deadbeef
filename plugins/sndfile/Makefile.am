@@ -4,5 +4,5 @@ sndfile_la_SOURCES = sndfile.c
 sndfile_la_LDFLAGS = -module -avoid-version
 
 sndfile_la_LIBADD = $(LDADD) $(SNDFILE_LIBS)
-AM_CFLAGS = $(CFLAGS) $(SNDFILE_CFLAGS) -std=c99
+sndfile_la_CFLAGS = $(CFLAGS) $(SNDFILE_CFLAGS) -std=c99
 endif
