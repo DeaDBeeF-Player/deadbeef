@@ -360,31 +360,28 @@ static DB_playItem_t *
 sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("adding file %s\n", fname);
     SF_INFO inf;
-    sndfile_info_t *info = calloc (sizeof (sndfile_info_t), 1);
+    sndfile_info_t info = {0};
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         trace ("sndfile: failed to open %s\n", fname);
-        free (info);
         return NULL;
     }
     int64_t fsize = deadbeef->fgetlength (fp);
     trace ("file: %p, size: %lld\n", fp, fsize);
 
-    info->file = fp;
+    info.file = fp;
 
     trace ("calling sf_open_virtual\n");
-    info->ctx = sf_open_virtual (&vfs, SFM_READ, &inf, info);
-    if (!info->ctx) {
+    info.ctx = sf_open_virtual (&vfs, SFM_READ, &inf, &info);
+    if (!info.ctx) {
         trace ("sndfile: sf_open failed for %s\n", fname);
         deadbeef->fclose (fp);
-        free (info);
         return NULL;
     }
 
     if (inf.samplerate == 0) {
         trace ("sndfile: invalid samplerate 0 in file %s\n", fname);
         deadbeef->fclose (fp);
-        free (info);
         return NULL;
     }
 
@@ -517,18 +514,16 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, samplerate);
     if (cue) {
         deadbeef->pl_item_unref (it);
-        sf_close (info->ctx);
+        sf_close (info.ctx);
         deadbeef->fclose (fp);
-        free (info);
         return cue;
     }
 
     deadbeef->pl_add_meta (it, "title", NULL);
 
-    _sndfile_ctx_read_tags (it, info->ctx);
-    sf_close (info->ctx);
+    _sndfile_ctx_read_tags (it, info.ctx);
+    sf_close (info.ctx);
     deadbeef->fclose (fp);
-    free (info);
 
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
