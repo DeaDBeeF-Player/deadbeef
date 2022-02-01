@@ -1106,7 +1106,7 @@ project "musepack_plugin"
   links {"m"}
 end
 
-if option ("plugin-artwork", "libjpeg libpng zlib flac ogg") and not is_enabled("plugin-artwork-legacy") then
+if option ("plugin-artwork", "libjpeg libpng zlib flac ogg") then
 project "artwork_plugin"
   targetname "artwork"
   files {
