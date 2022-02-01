@@ -563,6 +563,9 @@ pl_get_shufflerating (playItem_t *it);
 void
 pl_set_shufflerating (playItem_t *it, int rating);
 
+int
+pl_items_from_same_album(playItem_t* a, playItem_t* b);
+
 #ifdef __cplusplus
 }
 #endif

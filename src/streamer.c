@@ -493,32 +493,7 @@ stop_after_album_check (playItem_t *cur, playItem_t *next) {
         return 1;
     }
 
-    const char *cur_album = pl_find_meta_raw (cur, "album");
-    const char *next_album = pl_find_meta_raw (next, "album");
-
-    const char *keys[] = {
-        "band",
-        "album artist",
-        "albumartist",
-        "artist",
-        NULL
-    };
-
-    const char *cur_artist = NULL;
-    const char *next_artist = NULL;
-    for (int i = 0; keys[i]; i++) {
-        if (!cur_artist) {
-            cur_artist = pl_find_meta_raw (cur, keys[i]);
-        }
-        if (!next_artist) {
-            next_artist = pl_find_meta_raw (next, keys[i]);
-        }
-        if (cur_artist && next_artist) {
-            break;
-        }
-    }
-
-    if (cur_artist == next_artist && cur_album == next_album) {
+    if (pl_items_from_same_album(cur, next)) {
         return 0;
     }
 
