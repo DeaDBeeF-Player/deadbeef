@@ -121,9 +121,20 @@ extern DB_functions_t *deadbeef;
 #pragma mark - Responder Chain
 
 - (IBAction)delete:(id)sender {
-    deadbeef->pl_delete_selected ();
-    deadbeef->pl_save_current();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        int cursor = deadbeef->plt_delete_selected (plt);
+        if (cursor != -1) {
+            DB_playItem_t *it = deadbeef->plt_get_item_for_idx (plt, cursor, PL_MAIN);
+            if (it) {
+                deadbeef->pl_set_selected (it, 1);
+                deadbeef->pl_item_unref (it);
+            }
+        }
+        deadbeef->plt_save_config (plt);
+        deadbeef->plt_unref (plt);
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    }
 }
 
 - (IBAction)selectAll:(id)sender {
