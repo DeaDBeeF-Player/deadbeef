@@ -48,6 +48,7 @@
 #include <limits.h>
 #include <errno.h>
 #include <math.h>
+#include "buffered_file_writer.h"
 #include "gettext.h"
 #include "playlist.h"
 #include "plmeta.h"
@@ -1893,22 +1894,26 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
     const char magic[] = "DBPL";
     uint8_t majorver = PLAYLIST_MAJOR_VER;
     uint8_t minorver = PLAYLIST_MINOR_VER;
+    buffered_file_writer_t *writer = NULL;
     FILE *fp = fopen (tempfile, "w+b");
     if (!fp) {
         UNLOCK;
         return -1;
     }
-    if (fwrite (magic, 1, 4, fp) != 4) {
+
+    writer = buffered_file_writer_new(fp, 64*1024);
+
+    if (buffered_file_writer_write(writer, magic, 4) < 0) {
         goto save_fail;
     }
-    if (fwrite (&majorver, 1, 1, fp) != 1) {
+    if (buffered_file_writer_write(writer, &majorver, 1) < 0) {
         goto save_fail;
     }
-    if (fwrite (&minorver, 1, 1, fp) != 1) {
+    if (buffered_file_writer_write(writer, &minorver, 1) < 0) {
         goto save_fail;
     }
     uint32_t cnt = plt->count[PL_MAIN];
-    if (fwrite (&cnt, 1, 4, fp) != 4) {
+    if (buffered_file_writer_write(writer, &cnt, 4) < 0) {
         goto save_fail;
     }
     for (playItem_t *it = plt->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
@@ -1920,41 +1925,41 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
 #if (PLAYLIST_MINOR_VER==2)
         const char *item_uri = pl_find_meta_raw (it, ":URI");
         l = length_to_uint16(strlen (item_uri));
-        if (fwrite (&l, 1, 2, fp) != 2) {
+        if (buffered_file_writer_write(writer, &l, 2) < 0) {
             goto save_fail;
         }
-        if (fwrite (item_uri, 1, l, fp) != l) {
+        if (buffered_file_writer_write(writer, item_uri, l) < 0) {
             goto save_fail;
         }
         const char *decoder_id = pl_find_meta_raw (it, ":DECODER");
         if (decoder_id) {
             ll = length_to_uint8(strlen (decoder_id));
-            if (fwrite (&ll, 1, 1, fp) != 1) {
+            if (buffered_file_writer_write(writer, &ll, 1) < 0) {
                 goto save_fail;
             }
-            if (fwrite (decoder_id, 1, ll, fp) != ll) {
+            if (buffered_file_writer_write(writer, decoder_id, ll) < 0) {
                 goto save_fail;
             }
         }
         else
         {
             ll = 0;
-            if (fwrite (&ll, 1, 1, fp) != 1) {
+            if (buffered_file_writer_write(writer, &ll, 1) < 0) {
                 goto save_fail;
             }
         }
         l = length_to_uint8(pl_find_meta_int (it, ":TRACKNUM", 0));
-        if (fwrite (&l, 1, 2, fp) != 2) {
+        if (buffered_file_writer_write(writer, &l, 2) < 0) {
             goto save_fail;
         }
 #endif
-        if (fwrite (&it->startsample, 1, 4, fp) != 4) {
+        if (buffered_file_writer_write(writer, &it->startsample, 4) < 0) {
             goto save_fail;
         }
-        if (fwrite (&it->endsample, 1, 4, fp) != 4) {
+        if (buffered_file_writer_write(writer, &it->endsample, 4) < 0) {
             goto save_fail;
         }
-        if (fwrite (&it->_duration, 1, 4, fp) != 4) {
+        if (buffered_file_writer_write(writer, &it->_duration, 4) < 0) {
             goto save_fail;
         }
 #if (PLAYLIST_MINOR_VER==2)
@@ -1963,11 +1968,11 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
             filetype = "";
         }
         uint8_t ft = length_to_uint8(strlen (filetype));
-        if (fwrite (&ft, 1, 1, fp) != 1) {
+        if (buffered_file_writer_write(writer, &ft, 1) < 0) {
             goto save_fail;
         }
         if (ft) {
-            if (fwrite (filetype, 1, ft, fp) != ft) {
+            if (buffered_file_writer_write(writer, filetype, ft) < 0) {
                 goto save_fail;
             }
         }
@@ -1975,20 +1980,20 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
         float rg_albumpeak = pl_get_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK);
         float rg_trackgain = pl_get_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN);
         float rg_trackpeak = pl_get_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK);
-        if (fwrite (&rg_albumgain, 1, 4, fp) != 4) {
+        if (buffered_file_writer_write(writer, &rg_albumgain, 4) < 0) {
             goto save_fail;
         }
-        if (fwrite (&rg_albumpeak, 1, 4, fp) != 4) {
+        if (buffered_file_writer_write(writer, &rg_albumpeak, 4) < 0) {
             goto save_fail;
         }
-        if (fwrite (&rg_trackgain, 1, 4, fp) != 4) {
+        if (buffered_file_writer_write(writer, &rg_trackgain, 4) < 0) {
             goto save_fail;
         }
-        if (fwrite (&rg_trackpeak, 1, 4, fp) != 4) {
+        if (buffered_file_writer_write(writer, &rg_trackpeak, 4) < 0) {
             goto save_fail;
         }
 #endif
-        if (fwrite (&it->_flags, 1, 4, fp) != 4) {
+        if (buffered_file_writer_write(writer, &it->_flags, 4) < 0) {
             goto save_fail;
         }
 
@@ -2000,7 +2005,7 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
             }
             nm++;
         }
-        if (fwrite (&nm, 1, 2, fp) != 2) {
+        if (buffered_file_writer_write(writer, &nm, 2) < 0) {
             goto save_fail;
         }
         for (m = it->meta; m; m = m->next) {
@@ -2009,21 +2014,21 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
             }
 
             l = length_to_uint16(strlen (m->key));
-            if (fwrite (&l, 1, 2, fp) != 2) {
+            if (buffered_file_writer_write(writer, &l, 2) < 0) {
                 goto save_fail;
             }
             if (l) {
-                if (fwrite (m->key, 1, l, fp) != l) {
+                if (buffered_file_writer_write(writer, m->key, l) < 0) {
                     goto save_fail;
                 }
             }
             int value_length = max(0, m->valuesize - 1);
             l = length_to_uint16(value_length);
-            if (fwrite (&l, 1, 2, fp) != 2) {
+            if (buffered_file_writer_write(writer, &l, 2) < 0) {
                 goto save_fail;
             }
             if (l) {
-                if (fwrite (m->value, 1, l, fp) != l) {
+                if (buffered_file_writer_write(writer, m->value, l) < 0) {
                     goto save_fail;
                 }
             }
@@ -2036,32 +2041,35 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
     for (m = plt->meta; m; m = m->next) {
         nm++;
     }
-    if (fwrite (&nm, 1, 2, fp) != 2) {
+    if (buffered_file_writer_write(writer, &nm, 2) < 0) {
         goto save_fail;
     }
 
     for (m = plt->meta; m; m = m->next) {
         uint16_t l;
         l = length_to_uint16(strlen (m->key));
-        if (fwrite (&l, 1, 2, fp) != 2) {
+        if (buffered_file_writer_write(writer, &l, 2) < 0) {
             goto save_fail;
         }
         if (l) {
-            if (fwrite (m->key, 1, l, fp) != l) {
+            if (buffered_file_writer_write(writer, m->key, l) < 0) {
                 goto save_fail;
             }
         }
         l = length_to_uint16(strlen (m->value));
-        if (fwrite (&l, 1, 2, fp) != 2) {
+        if (buffered_file_writer_write(writer, &l, 2) < 0) {
             goto save_fail;
         }
         if (l) {
-            if (fwrite (m->value, 1, l, fp) != l) {
+            if (buffered_file_writer_write(writer, m->value, l) < 0) {
                 goto save_fail;
             }
         }
     }
 
+    if (buffered_file_writer_flush(writer) < 0) {
+        goto save_fail;
+    }
     UNLOCK;
     fclose (fp);
     if (rename (tempfile, fname) != 0) {
@@ -2071,6 +2079,9 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
     return 0;
 save_fail:
     UNLOCK;
+    if (writer != NULL) {
+        buffered_file_writer_free(writer);
+    }
     fclose (fp);
     unlink (tempfile);
     return -1;
