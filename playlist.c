@@ -2071,8 +2071,12 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
         goto save_fail;
     }
     buffered_file_writer_free(writer);
+    writer = NULL;
+    if (EOF == fclose (fp)) {
+        fp = NULL;
+        goto save_fail;
+    }
     UNLOCK;
-    fclose (fp);
     if (rename (tempfile, fname) != 0) {
         fprintf (stderr, "playlist rename %s -> %s failed: %s\n", tempfile, fname, strerror (errno));
         return -1;
@@ -2083,7 +2087,9 @@ save_fail:
     if (writer != NULL) {
         buffered_file_writer_free(writer);
     }
-    fclose (fp);
+    if (fp != NULL) {
+        fclose (fp);
+    }
     unlink (tempfile);
     return -1;
 }

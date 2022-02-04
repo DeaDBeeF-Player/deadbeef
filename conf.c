@@ -207,7 +207,11 @@ conf_save (void) {
         goto error;
     }
     buffered_file_writer_free(writer);
-    fclose (fp);
+    writer = NULL;
+    if (EOF == fclose (fp)) {
+        fp = NULL;
+        goto error;
+    }
     int err = rename (tempfile, str);
     if (err != 0) {
         trace_err ("config rename %s -> %s failed: %s\n", tempfile, str, strerror (errno));
@@ -218,10 +222,14 @@ conf_save (void) {
     conf_unlock ();
     return 0;
 error:
-    trace_err ("failed to write to file %s (%s)\n", tempfile, strerror (errno));
-    buffered_file_writer_free(writer);
-    fclose (fp);
     conf_unlock ();
+    trace_err ("failed to write to file %s (%s)\n", tempfile, strerror (errno));
+    if (writer != NULL) {
+        buffered_file_writer_free(writer);
+    }
+    if (fp != NULL) {
+        fclose (fp);
+    }
     return -1;
 }
 
