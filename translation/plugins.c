@@ -460,6 +460,9 @@ _("Bits per sample");
 _("Default song length (sec)");
 // xgettext:no-c-format
 _("Mono synth");
+// plugins/sndfile/sndfile.c
+// xgettext:no-c-format
+_("Enable logging");
 // plugins/supereq/supereq.c
 // xgettext:no-c-format
 _("Preamp");
@@ -481,9 +484,6 @@ _("10K");
 _("14K");
 // xgettext:no-c-format
 _("20K");
-// plugins/vfs_curl/vfs_curl.c
-// xgettext:no-c-format
-_("Enable logging");
 // plugins/wildmidi/wildmidiplug.c
 // xgettext:no-c-format
 _("Timidity++ bank configuration file");

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-18 21:51+0100\n"
+"POT-Creation-Date: 2022-02-04 19:32+0100\n"
 "PO-Revision-Date: 2022-01-18 20:51+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Telugu (http://www.transifex.com/deadbeef-player/deadbeef-player/language/te/)\n"
@@ -99,158 +99,158 @@ msgstr "బ్రాండ్లను సున్నాచేయి"
 msgid "Presets"
 msgstr "ప్రిసెట్లు"
 
-#: ../plugins/gtkui/gtkui.c:161 ../tf.c:2614
+#: ../plugins/gtkui/gtkui.c:151 ../tf.c:2614
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 రోజు %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:164 ../tf.c:2617
+#: ../plugins/gtkui/gtkui.c:154 ../tf.c:2617
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d రోజులు %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:210
+#: ../plugins/gtkui/gtkui.c:200
 msgid "total playtime"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:423 ../plugins/gtkui/gtkui.c:427
+#: ../plugins/gtkui/gtkui.c:413 ../plugins/gtkui/gtkui.c:417
 msgid "Paused"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:423 ../plugins/gtkui/gtkui.c:427
+#: ../plugins/gtkui/gtkui.c:413 ../plugins/gtkui/gtkui.c:417
 msgid "bit"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:423 ../plugins/gtkui/gtkui.c:424
+#: ../plugins/gtkui/gtkui.c:413 ../plugins/gtkui/gtkui.c:414
 msgid "selection playtime"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:424 ../plugins/gtkui/gtkui.c:428
+#: ../plugins/gtkui/gtkui.c:414 ../plugins/gtkui/gtkui.c:418
 msgid "Stopped"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:590 ../plugins/gtkui/pltmenu.c:153
+#: ../plugins/gtkui/gtkui.c:580 ../plugins/gtkui/pltmenu.c:153
 msgid "Rename Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:593 ../plugins/gtkui/interface.c:1335
+#: ../plugins/gtkui/gtkui.c:583 ../plugins/gtkui/interface.c:1335
 #: ../plugins/gtkui/interface.c:3960 ../plugins/gtkui/deadbeef.glade.h:72
 #: ../plugins/converter/interface.c:418
 #: ../plugins/converter/converter.glade.h:25
 #: ../plugins/shellexecui/interface.c:163
-#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1743
+#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1745
 msgid "Title:"
 msgstr "శీర్షిక:"
 
-#: ../plugins/gtkui/gtkui.c:733 ../translation/plugins.c:213
+#: ../plugins/gtkui/gtkui.c:723 ../translation/plugins.c:213
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:65
 #, no-c-format
 msgid "New Playlist"
 msgstr "కొత్త పాటలజాబితా"
 
-#: ../plugins/gtkui/gtkui.c:736 ../plugins/pltbrowser/pltbrowser.c:68
+#: ../plugins/gtkui/gtkui.c:726 ../plugins/pltbrowser/pltbrowser.c:68
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "కొత్త పాటలజాబితా (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1426
+#: ../plugins/gtkui/gtkui.c:1416
 msgid "Playlist with tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1427 ../plugins/gtkui/interface.c:2365
+#: ../plugins/gtkui/gtkui.c:1417 ../plugins/gtkui/interface.c:2365
 #: ../plugins/gtkui/interface.c:2810 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1430
+#: ../plugins/gtkui/gtkui.c:1420
 msgid "Splitter (top and bottom)"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1431
+#: ../plugins/gtkui/gtkui.c:1421
 msgid "Splitter (left and right)"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1433
+#: ../plugins/gtkui/gtkui.c:1423
 msgid "Tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1434
+#: ../plugins/gtkui/gtkui.c:1424
 msgid "Playlist tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1435
+#: ../plugins/gtkui/gtkui.c:1425
 msgid "Selection properties"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1436
+#: ../plugins/gtkui/gtkui.c:1426
 msgid "Album art display"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1437
+#: ../plugins/gtkui/gtkui.c:1427
 msgid "Oscilloscope"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1438
+#: ../plugins/gtkui/gtkui.c:1428
 msgid "Spectrum"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1439
+#: ../plugins/gtkui/gtkui.c:1429
 msgid "HBox"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1440
+#: ../plugins/gtkui/gtkui.c:1430
 msgid "VBox"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1441 ../plugins/gtkui/widgets.c:4014
-#: ../plugins/gtkui/widgets.c:4101
+#: ../plugins/gtkui/gtkui.c:1431 ../plugins/gtkui/widgets.c:4019
+#: ../plugins/gtkui/widgets.c:4106
 msgid "Button"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1442
+#: ../plugins/gtkui/gtkui.c:1432
 msgid "Seekbar"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1443
+#: ../plugins/gtkui/gtkui.c:1433
 msgid "Playback controls"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1444
+#: ../plugins/gtkui/gtkui.c:1434
 msgid "Volume bar"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1445
+#: ../plugins/gtkui/gtkui.c:1435
 msgid "Chiptune voices"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1446
+#: ../plugins/gtkui/gtkui.c:1436
 msgid "Log viewer"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1448
+#: ../plugins/gtkui/gtkui.c:1438
 msgid "Media library viewer"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1659
+#: ../plugins/gtkui/gtkui.c:1649
 msgid "Failed while reading help file"
 msgstr "సహాయక ఫైలును చదువుతుండగా విఫలమైంది"
 
-#: ../plugins/gtkui/gtkui.c:1669
+#: ../plugins/gtkui/gtkui.c:1659
 msgid "Failed to load help file"
 msgstr "సహాయక ఫైల్ లోడుచేయుటలో విఫలమైంది"
 
-#: ../plugins/gtkui/gtkui.c:1682
+#: ../plugins/gtkui/gtkui.c:1672
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks"
 " will be cancelled or interrupted. This may result in data loss."
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1684
+#: ../plugins/gtkui/gtkui.c:1674
 msgid "Do you still want to quit?"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1685 ../plugins/gtkui/prefwin/prefwin.c:140
+#: ../plugins/gtkui/gtkui.c:1675 ../plugins/gtkui/prefwin/prefwin.c:140
 #: ../plugins/gtkui/trkproperties.c:117 ../plugins/converter/convgui.c:1080
 #: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/pltmenu.c:88
 msgid "Warning"
@@ -361,7 +361,7 @@ msgstr "ఆల్బమ్"
 
 #. Track properties dialog
 #: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/playlist/plcommon.c:77
-#: ../plugins/gtkui/playlist/plcommon.c:902
+#: ../plugins/gtkui/playlist/plcommon.c:904
 #: ../plugins/gtkui/deadbeef.glade.h:23 ../translation/extra.c:2
 msgid "Artist"
 msgstr "కళాకారుడు"
@@ -376,7 +376,7 @@ msgid "Random"
 msgstr "యాదృచ్ఛికం"
 
 #: ../plugins/gtkui/interface.c:283 ../plugins/gtkui/playlist/plcommon.c:86
-#: ../plugins/gtkui/playlist/plcommon.c:906
+#: ../plugins/gtkui/playlist/plcommon.c:908
 #: ../plugins/gtkui/deadbeef.glade.h:26
 msgid "Custom"
 msgstr "అనురూపితం"
@@ -678,9 +678,9 @@ msgstr "ట్రాక్"
 msgid "Processing:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2022 ../plugins/gtkui/playlist/plcommon.c:894
-#: ../translation/plugins.c:103 ../plugins/gtkui/widgets.c:3440
-#: ../plugins/gtkui/widgets.c:4111
+#: ../plugins/gtkui/interface.c:2022 ../plugins/gtkui/playlist/plcommon.c:896
+#: ../translation/plugins.c:103 ../plugins/gtkui/widgets.c:3445
+#: ../plugins/gtkui/widgets.c:4116
 #, no-c-format
 msgid "None"
 msgstr "ఏదీకాదు"
@@ -1375,29 +1375,29 @@ msgstr "కొడెక్"
 msgid "Bitrate"
 msgstr ""
 
-#: ../plugins/gtkui/playlist/plcommon.c:720
-#: ../plugins/gtkui/playlist/plcommon.c:859
+#: ../plugins/gtkui/playlist/plcommon.c:722
+#: ../plugins/gtkui/playlist/plcommon.c:861
 msgid "Add column"
 msgstr "నిలువువరుసను జతచేయి"
 
-#: ../plugins/gtkui/playlist/plcommon.c:761
-#: ../plugins/gtkui/playlist/plcommon.c:863
+#: ../plugins/gtkui/playlist/plcommon.c:763
+#: ../plugins/gtkui/playlist/plcommon.c:865
 msgid "Edit column"
 msgstr "నిలువువరుసను సవరించు"
 
-#: ../plugins/gtkui/playlist/plcommon.c:867
+#: ../plugins/gtkui/playlist/plcommon.c:869
 msgid "Remove column"
 msgstr "నిలువువరుసను తొలగించు"
 
-#: ../plugins/gtkui/playlist/plcommon.c:882
+#: ../plugins/gtkui/playlist/plcommon.c:884
 msgid "Pin groups when scrolling"
 msgstr ""
 
-#: ../plugins/gtkui/playlist/plcommon.c:887
+#: ../plugins/gtkui/playlist/plcommon.c:889
 msgid "Group by"
 msgstr ""
 
-#: ../plugins/gtkui/playlist/plcommon.c:898
+#: ../plugins/gtkui/playlist/plcommon.c:900
 msgid "Artist/Date/Album"
 msgstr "కళాకారుడు/తేదీ/ఆల్బమ్"
 
@@ -1457,11 +1457,11 @@ msgid "Name"
 msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:370 ../plugins/gtkui/trkproperties.c:383
-#: ../plugins/gtkui/widgets.c:2507
+#: ../plugins/gtkui/widgets.c:2512
 msgid "Value"
 msgstr "విలువ"
 
-#: ../plugins/gtkui/trkproperties.c:382 ../plugins/gtkui/widgets.c:2505
+#: ../plugins/gtkui/trkproperties.c:382 ../plugins/gtkui/widgets.c:2510
 msgid "Key"
 msgstr "కీ"
 
@@ -1673,23 +1673,23 @@ msgid ""
 "plugins that support commands.\n"
 msgstr ""
 
-#: ../playlist.c:514 ../playlist.c:2498
+#: ../playlist.c:515 ../playlist.c:2509
 msgid "Default"
 msgstr "అప్రమేయం"
 
-#: ../playlist.c:3183 ../plugins/gtkui/widgets.c:2934
+#: ../playlist.c:3194 ../plugins/gtkui/widgets.c:2939
 msgid "Mono"
 msgstr "మోనో"
 
-#: ../playlist.c:3183
+#: ../playlist.c:3194
 msgid "Stereo"
 msgstr "స్టీరియో"
 
-#: ../playlist.c:3701
+#: ../playlist.c:3712
 msgid "Yes"
 msgstr "అవును"
 
-#: ../playlist.c:3701
+#: ../playlist.c:3712
 msgid "No"
 msgstr "కాదు"
 
@@ -1959,17 +1959,17 @@ msgstr ""
 msgid "Drive speed for normal playback"
 msgstr ""
 
-#: ../translation/plugins.c:72 ../plugins/gtkui/widgets.c:2947
+#: ../translation/plugins.c:72 ../plugins/gtkui/widgets.c:2952
 #, no-c-format
 msgid "1x"
 msgstr ""
 
-#: ../translation/plugins.c:74 ../plugins/gtkui/widgets.c:2949
+#: ../translation/plugins.c:74 ../plugins/gtkui/widgets.c:2954
 #, no-c-format
 msgid "2x"
 msgstr ""
 
-#: ../translation/plugins.c:76 ../plugins/gtkui/widgets.c:2953
+#: ../translation/plugins.c:76 ../plugins/gtkui/widgets.c:2958
 #, no-c-format
 msgid "4x"
 msgstr ""
@@ -2832,61 +2832,61 @@ msgstr ""
 msgid "Mono synth"
 msgstr ""
 
-#. plugins/supereq/supereq.c
+#. plugins/sndfile/sndfile.c
 #: ../translation/plugins.c:465
+#, no-c-format
+msgid "Enable logging"
+msgstr ""
+
+#. plugins/supereq/supereq.c
+#: ../translation/plugins.c:468
 #, no-c-format
 msgid "Preamp"
 msgstr ""
 
-#: ../translation/plugins.c:467
+#: ../translation/plugins.c:470
 #, no-c-format
 msgid "1.2K"
 msgstr ""
 
-#: ../translation/plugins.c:469
+#: ../translation/plugins.c:472
 #, no-c-format
 msgid "1.8K"
 msgstr ""
 
-#: ../translation/plugins.c:471
+#: ../translation/plugins.c:474
 #, no-c-format
 msgid "2.5K"
 msgstr ""
 
-#: ../translation/plugins.c:473
+#: ../translation/plugins.c:476
 #, no-c-format
 msgid "3.5K"
 msgstr ""
 
-#: ../translation/plugins.c:475
+#: ../translation/plugins.c:478
 #, no-c-format
 msgid "5K"
 msgstr ""
 
-#: ../translation/plugins.c:477
+#: ../translation/plugins.c:480
 #, no-c-format
 msgid "7K"
 msgstr ""
 
-#: ../translation/plugins.c:479
+#: ../translation/plugins.c:482
 #, no-c-format
 msgid "10K"
 msgstr ""
 
-#: ../translation/plugins.c:481
+#: ../translation/plugins.c:484
 #, no-c-format
 msgid "14K"
 msgstr ""
 
-#: ../translation/plugins.c:483
-#, no-c-format
-msgid "20K"
-msgstr ""
-
-#. plugins/vfs_curl/vfs_curl.c
 #: ../translation/plugins.c:486
 #, no-c-format
-msgid "Enable logging"
+msgid "20K"
 msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
@@ -3425,7 +3425,7 @@ msgstr ""
 msgid "Add Command"
 msgstr ""
 
-#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:969
+#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:971
 msgid "Delete"
 msgstr ""
 
@@ -3496,217 +3496,217 @@ msgstr ""
 msgid "Nothing is selected."
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:537
+#: ../plugins/gtkui/widgets.c:539
 #, c-format
 msgid "Widget \"%s\" is not available"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:943
+#: ../plugins/gtkui/widgets.c:945
 msgid "Replace with..."
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:948
+#: ../plugins/gtkui/widgets.c:950
 msgid "Insert..."
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:976
+#: ../plugins/gtkui/widgets.c:978
 msgid "Cut"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:983
+#: ../plugins/gtkui/widgets.c:985
 msgid "Copy"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:991
+#: ../plugins/gtkui/widgets.c:993
 msgid "Paste"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1040
+#: ../plugins/gtkui/widgets.c:1042
 msgid "Parent"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1158
+#: ../plugins/gtkui/widgets.c:1160
 msgid "Multiple widgets of this type are not supported"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1443
+#: ../plugins/gtkui/widgets.c:1445
 msgid "Proportional Sizing"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1455
+#: ../plugins/gtkui/widgets.c:1457
 msgid "Lock Top Pane Height"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1458
+#: ../plugins/gtkui/widgets.c:1460
 msgid "Lock Left Pane Width"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1471
+#: ../plugins/gtkui/widgets.c:1473
 msgid "Lock Bottom Pane Height"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1474
+#: ../plugins/gtkui/widgets.c:1476
 msgid "Lock Right Pane Width"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1740 ../plugins/gtkui/widgets.c:1855
+#: ../plugins/gtkui/widgets.c:1742 ../plugins/gtkui/widgets.c:1857
 msgid "Rename Tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1862
+#: ../plugins/gtkui/widgets.c:1864
 msgid "Remove Tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1869 ../plugins/gtkui/widgets.c:2048
+#: ../plugins/gtkui/widgets.c:1871 ../plugins/gtkui/widgets.c:2050
 msgid "Add New Tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1878
+#: ../plugins/gtkui/widgets.c:1880
 msgid "Move Tab Left"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1885
+#: ../plugins/gtkui/widgets.c:1887
 msgid "Move Tab Right"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2280 ../plugins/gtkui/widgets.c:2464
+#: ../plugins/gtkui/widgets.c:2285 ../plugins/gtkui/widgets.c:2469
 #: ../plugins/pltbrowser/pltbrowser.c:804
 msgid "Show Column Headers"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2926 ../plugins/gtkui/widgets.c:3417
+#: ../plugins/gtkui/widgets.c:2931 ../plugins/gtkui/widgets.c:3422
 msgid "Rendering Mode"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2931
+#: ../plugins/gtkui/widgets.c:2936
 msgid "Multichannel"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2940
+#: ../plugins/gtkui/widgets.c:2945
 msgid "Scale"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2945
+#: ../plugins/gtkui/widgets.c:2950
 msgid "Auto"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2951
+#: ../plugins/gtkui/widgets.c:2956
 msgid "3x"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2962
+#: ../plugins/gtkui/widgets.c:2967
 msgid "Fragment Duration"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2967
+#: ../plugins/gtkui/widgets.c:2972
 msgid "50 ms"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2969
+#: ../plugins/gtkui/widgets.c:2974
 msgid "100 ms"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2971
+#: ../plugins/gtkui/widgets.c:2976
 msgid "200 ms"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2973
+#: ../plugins/gtkui/widgets.c:2978
 msgid "300 ms"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2975
+#: ../plugins/gtkui/widgets.c:2980
 msgid "500 ms"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3422
+#: ../plugins/gtkui/widgets.c:3427
 msgid "Descrete Frequencies"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3425
+#: ../plugins/gtkui/widgets.c:3430
 msgid "1/12 Octave Bands"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3428
+#: ../plugins/gtkui/widgets.c:3433
 msgid "1/24 Octave Bands"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3435
+#: ../plugins/gtkui/widgets.c:3440
 msgid "Gap Size"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3443
+#: ../plugins/gtkui/widgets.c:3448
 msgid "1/2 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3446
+#: ../plugins/gtkui/widgets.c:3451
 msgid "1/3 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3449
+#: ../plugins/gtkui/widgets.c:3454
 msgid "1/4 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3452
+#: ../plugins/gtkui/widgets.c:3457
 msgid "1/5 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3455
+#: ../plugins/gtkui/widgets.c:3460
 msgid "1/6 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3458
+#: ../plugins/gtkui/widgets.c:3463
 msgid "1/7 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3461
+#: ../plugins/gtkui/widgets.c:3466
 msgid "1/8 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3464
+#: ../plugins/gtkui/widgets.c:3469
 msgid "1/9 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3467
+#: ../plugins/gtkui/widgets.c:3472
 msgid "1/10 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3731
+#: ../plugins/gtkui/widgets.c:3736
 msgid "Expand Box by 1 Item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3736
+#: ../plugins/gtkui/widgets.c:3741
 msgid "Shrink Box by 1 Item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3741
+#: ../plugins/gtkui/widgets.c:3746
 msgid "Homogeneous"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3781
+#: ../plugins/gtkui/widgets.c:3786
 msgid "Expand"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3789
+#: ../plugins/gtkui/widgets.c:3794
 msgid "Fill"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4191
+#: ../plugins/gtkui/widgets.c:4196
 msgid "Configure Button"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4464
+#: ../plugins/gtkui/widgets.c:4469
 msgid "_dB Scale"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4475
+#: ../plugins/gtkui/widgets.c:4480
 msgid "_Linear Scale"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4486
+#: ../plugins/gtkui/widgets.c:4491
 msgid "_Cubic Scale"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4612
+#: ../plugins/gtkui/widgets.c:4617
 msgid "Voices:"
 msgstr ""
 
