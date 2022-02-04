@@ -21,42 +21,43 @@ DISTCLEANFILES = \
 		intltool-update
 
 deadbeef_SOURCES =\
-	main.c common.h deadbeef.h\
-	plugins.c plugins.h moduleconf.h\
+	buffered_file_writer.c buffered_file_writer.h\
+	conf.c  conf.h\
 	cueutil.c cueutil.h playlist.c playlist.h \
+	decodedblock.c decodedblock.h\
+	dsp.c dsp.h\
+	dsppreset.c dsppreset.h\
+	escape.c escape.h\
+	external/wcwidth/wcwidth.c external/wcwidth/wcwidth.h\
+	fastftoi.h\
+	fft.c fft.h\
+	gettext.h\
+	handler.c handler.h\
+	junklib.h junklib.c utf8.c utf8.h\
+	logger.c logger.h\
+	main.c common.h deadbeef.h\
+	md5/md5.c md5/md5.h\
+	messagepump.c messagepump.h\
+	metacache.c metacache.h\
+	playmodes.c playmodes.h\
+	playqueue.c playqueue.h\
 	plmeta.c plmeta.h\
 	pltmeta.c pltmeta.h\
-	streamer.c streamer.h\
-	dsp.c dsp.h\
-	streamreader.c streamreader.h\
+	plugins.c plugins.h moduleconf.h\
 	premix.c premix.h\
-	messagepump.c messagepump.h\
-	conf.c  conf.h\
+	replaygain.c replaygain.h\
+	ringbuf.c ringbuf.h\
+	sort.c sort.h\
+	strdupa.h\
+	streamer.c streamer.h\
+	streamreader.c streamreader.h\
+	tf.c tf.h\
 	threading_pthread.c threading.h\
-	volume.c volume.h\
-	junklib.h junklib.c utf8.c utf8.h\
 	u8_lc_map.h\
 	u8_uc_map.h\
-	fastftoi.h\
 	vfs.c vfs.h vfs_stdio.c\
-	md5/md5.c md5/md5.h\
-	metacache.c metacache.h\
-	gettext.h\
-	ringbuf.c ringbuf.h\
-	dsppreset.c dsppreset.h\
-	replaygain.c replaygain.h\
-	fft.c fft.h\
-	handler.c handler.h\
-	strdupa.h\
-	escape.c escape.h\
-	tf.c tf.h\
-	playqueue.c playqueue.h\
-	sort.c sort.h\
-	logger.c logger.h\
-	external/wcwidth/wcwidth.c external/wcwidth/wcwidth.h\
-	playmodes.c playmodes.h\
 	viz.c viz.h\
-	decodedblock.c decodedblock.h
+	volume.c volume.h
 	
 #	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
 

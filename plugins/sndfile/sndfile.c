@@ -32,8 +32,7 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -162,7 +161,7 @@ static int
 sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     sndfile_info_t *info = (sndfile_info_t*)_info;
 
-    SF_INFO inf;
+    SF_INFO inf = {0};
     deadbeef->pl_lock ();
     const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
@@ -174,9 +173,12 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     int64_t fsize = deadbeef->fgetlength (fp);
 
     info->file = fp;
+
     info->ctx = sf_open_virtual (&vfs, SFM_READ, &inf, info);
     if (!info->ctx) {
         trace ("sndfile: %s: unsupported file format\n");
+        deadbeef->fclose (fp);
+        info->file = NULL;
         return -1;
     }
     _info->plugin = &plugin;
@@ -358,27 +360,30 @@ _sndfile_ctx_read_tags (DB_playItem_t *it, SNDFILE *ctx);
 static DB_playItem_t *
 sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("adding file %s\n", fname);
-    SF_INFO inf;
-    sndfile_info_t info;
-    memset (&info, 0, sizeof (info));
-    info.file = deadbeef->fopen (fname);
-    if (!info.file) {
+    SF_INFO inf = {0};
+    sndfile_info_t info = {0};
+    DB_FILE *fp = deadbeef->fopen (fname);
+    if (!fp) {
         trace ("sndfile: failed to open %s\n", fname);
         return NULL;
     }
-    int64_t fsize = deadbeef->fgetlength (info.file);
-    trace ("file: %p, size: %lld\n", info.file, deadbeef->fgetlength (info.file));
+
+    info.file = fp;
+
+    int64_t fsize = deadbeef->fgetlength(fp);
+    trace ("file: %p, size: %lld\n", fp, fsize);
+
     trace ("calling sf_open_virtual\n");
     info.ctx = sf_open_virtual (&vfs, SFM_READ, &inf, &info);
     if (!info.ctx) {
         trace ("sndfile: sf_open failed for %s\n", fname);
-        deadbeef->fclose (info.file);
+        deadbeef->fclose (fp);
         return NULL;
     }
 
     if (inf.samplerate == 0) {
         trace ("sndfile: invalid samplerate 0 in file %s\n", fname);
-        deadbeef->fclose (info.file);
+        deadbeef->fclose (fp);
         return NULL;
     }
 
@@ -511,6 +516,8 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, samplerate);
     if (cue) {
         deadbeef->pl_item_unref (it);
+        sf_close (info.ctx);
+        deadbeef->fclose (fp);
         return cue;
     }
 
@@ -518,7 +525,7 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     _sndfile_ctx_read_tags (it, info.ctx);
     sf_close (info.ctx);
-    deadbeef->fclose (info.file);
+    deadbeef->fclose (fp);
 
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
@@ -630,6 +637,12 @@ sndfile_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
     case DB_EV_CONFIGCHANGED:
         sndfile_init_exts ();
+        if (deadbeef->conf_get_int ("sndfile.trace", 0)) {
+            plugin.plugin.flags |= DDB_PLUGIN_FLAG_LOGGING;
+        }
+        else {
+            plugin.plugin.flags &= ~DDB_PLUGIN_FLAG_LOGGING;
+        }
         break;
     }
     return 0;
@@ -652,8 +665,8 @@ sndfile_stop (void) {
 
 static const char settings_dlg[] =
     "property \"File Extensions (separate with ';')\" entry sndfile.extensions \"" DEFAULT_EXTS "\";\n"
+    "property \"Enable logging\" checkbox sndfile.trace 0;\n"
 ;
-
 
 // define plugin interface
 static DB_decoder_t plugin = {

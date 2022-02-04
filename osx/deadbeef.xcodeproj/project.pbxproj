@@ -755,6 +755,7 @@
 		2D1BEB962435BE4E003EFD61 /* ddb_soundtouch.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D00F23F2434DE4E000FC130 /* ddb_soundtouch.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D1DC09C1DCB3A1500441A08 /* ddb_mono2stereo.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D1DC09F1DCB3B7500441A08 /* alac_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D1DC09E1DCB3B7500441A08 /* alac_plugin.c */; };
+		2D1E1D9727AD9F07004DEF1D /* buffered_file_writer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D1E1D8527AD9B25004DEF1D /* buffered_file_writer.c */; };
 		2D1E215724F9826C00E2895D /* MedialibItemDragDropHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1E215524F9826C00E2895D /* MedialibItemDragDropHolder.h */; };
 		2D1E215824F9826C00E2895D /* MedialibItemDragDropHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1E215624F9826C00E2895D /* MedialibItemDragDropHolder.m */; };
 		2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */; };
@@ -5254,6 +5255,8 @@
 		2D1A56491D9FFB10005E5CDD /* ReplayGainScannerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayGainScannerController.m; sourceTree = "<group>"; };
 		2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ddb_mono2stereo.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D1DC09E1DCB3B7500441A08 /* alac_plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alac_plugin.c; sourceTree = "<group>"; };
+		2D1E1D8427AD9B25004DEF1D /* buffered_file_writer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = buffered_file_writer.h; sourceTree = "<group>"; };
+		2D1E1D8527AD9B25004DEF1D /* buffered_file_writer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = buffered_file_writer.c; sourceTree = "<group>"; };
 		2D1E215524F9826C00E2895D /* MedialibItemDragDropHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MedialibItemDragDropHolder.h; sourceTree = "<group>"; };
 		2D1E215624F9826C00E2895D /* MedialibItemDragDropHolder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MedialibItemDragDropHolder.m; sourceTree = "<group>"; };
 		2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSImage+Additions.h"; sourceTree = "<group>"; };
@@ -11952,6 +11955,8 @@
 				2DDD764125E1506100FA6FE5 /* metadata */,
 				2D135EE6226E388E00BAAE84 /* scriptable */,
 				2D93DC511AADFEEF003D2D8D /* shared */,
+				2D1E1D8427AD9B25004DEF1D /* buffered_file_writer.h */,
+				2D1E1D8527AD9B25004DEF1D /* buffered_file_writer.c */,
 				2DD9EF0419A5089F00189344 /* cocoautil.h */,
 				2DD9EF0519A5089F00189344 /* cocoautil.m */,
 				4D1B3ECD1837EC44003E6066 /* common.h */,
@@ -16232,6 +16237,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D0A6B1D23771B3300252E6D /* playmodes.c in Sources */,
+				2D1E1D9727AD9F07004DEF1D /* buffered_file_writer.c in Sources */,
 				2DC657CF2749544000583E14 /* PlaylistWithTabsWidget.m in Sources */,
 				2D01D7F21AB223CC00BCD3C4 /* parser.c in Sources */,
 				2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */,

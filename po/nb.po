@@ -3,15 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# heskjestad <cato@heskjestad.xyz>, 2021
+# heskjestad <cato@heskjestad.xyz>, 2021-2022
 # heskjestad <cato@heskjestad.xyz>, 2019-2021
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-18 21:51+0100\n"
-"PO-Revision-Date: 2022-01-18 20:51+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2022-02-04 19:32+0100\n"
+"PO-Revision-Date: 2022-01-21 15:36+0000\n"
+"Last-Translator: heskjestad <cato@heskjestad.xyz>\n"
 "Language-Team: Norwegian Bokmål (http://www.transifex.com/deadbeef-player/deadbeef-player/language/nb/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -101,158 +101,158 @@ msgstr "Nullstill bånd"
 msgid "Presets"
 msgstr "Oppsett"
 
-#: ../plugins/gtkui/gtkui.c:161 ../tf.c:2614
+#: ../plugins/gtkui/gtkui.c:151 ../tf.c:2614
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 dag %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:164 ../tf.c:2617
+#: ../plugins/gtkui/gtkui.c:154 ../tf.c:2617
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d dager %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:210
+#: ../plugins/gtkui/gtkui.c:200
 msgid "total playtime"
 msgstr "total spilletid"
 
-#: ../plugins/gtkui/gtkui.c:423 ../plugins/gtkui/gtkui.c:427
+#: ../plugins/gtkui/gtkui.c:413 ../plugins/gtkui/gtkui.c:417
 msgid "Paused"
 msgstr "Pause"
 
-#: ../plugins/gtkui/gtkui.c:423 ../plugins/gtkui/gtkui.c:427
+#: ../plugins/gtkui/gtkui.c:413 ../plugins/gtkui/gtkui.c:417
 msgid "bit"
 msgstr "bit"
 
-#: ../plugins/gtkui/gtkui.c:423 ../plugins/gtkui/gtkui.c:424
+#: ../plugins/gtkui/gtkui.c:413 ../plugins/gtkui/gtkui.c:414
 msgid "selection playtime"
 msgstr "utvalgt spilletid"
 
-#: ../plugins/gtkui/gtkui.c:424 ../plugins/gtkui/gtkui.c:428
+#: ../plugins/gtkui/gtkui.c:414 ../plugins/gtkui/gtkui.c:418
 msgid "Stopped"
 msgstr "Stoppet"
 
-#: ../plugins/gtkui/gtkui.c:590 ../plugins/gtkui/pltmenu.c:153
+#: ../plugins/gtkui/gtkui.c:580 ../plugins/gtkui/pltmenu.c:153
 msgid "Rename Playlist"
 msgstr "Endre navn på spilleliste"
 
-#: ../plugins/gtkui/gtkui.c:593 ../plugins/gtkui/interface.c:1335
+#: ../plugins/gtkui/gtkui.c:583 ../plugins/gtkui/interface.c:1335
 #: ../plugins/gtkui/interface.c:3960 ../plugins/gtkui/deadbeef.glade.h:72
 #: ../plugins/converter/interface.c:418
 #: ../plugins/converter/converter.glade.h:25
 #: ../plugins/shellexecui/interface.c:163
-#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1743
+#: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/widgets.c:1745
 msgid "Title:"
 msgstr "Tittel: "
 
-#: ../plugins/gtkui/gtkui.c:733 ../translation/plugins.c:213
+#: ../plugins/gtkui/gtkui.c:723 ../translation/plugins.c:213
 #: ../plugins/gtkui/fileman.c:64 ../plugins/pltbrowser/pltbrowser.c:65
 #, no-c-format
 msgid "New Playlist"
 msgstr "Ny spilleliste"
 
-#: ../plugins/gtkui/gtkui.c:736 ../plugins/pltbrowser/pltbrowser.c:68
+#: ../plugins/gtkui/gtkui.c:726 ../plugins/pltbrowser/pltbrowser.c:68
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Ny spilleliste (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1426
+#: ../plugins/gtkui/gtkui.c:1416
 msgid "Playlist with tabs"
 msgstr "Spilleliste med faner"
 
-#: ../plugins/gtkui/gtkui.c:1427 ../plugins/gtkui/interface.c:2365
+#: ../plugins/gtkui/gtkui.c:1417 ../plugins/gtkui/interface.c:2365
 #: ../plugins/gtkui/interface.c:2810 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Playlist"
 msgstr "Spilleliste"
 
-#: ../plugins/gtkui/gtkui.c:1430
+#: ../plugins/gtkui/gtkui.c:1420
 msgid "Splitter (top and bottom)"
 msgstr "Splitter (topp og bunn)"
 
-#: ../plugins/gtkui/gtkui.c:1431
+#: ../plugins/gtkui/gtkui.c:1421
 msgid "Splitter (left and right)"
 msgstr "Splitter (venstre og høyre)"
 
-#: ../plugins/gtkui/gtkui.c:1433
+#: ../plugins/gtkui/gtkui.c:1423
 msgid "Tabs"
 msgstr "Faner"
 
-#: ../plugins/gtkui/gtkui.c:1434
+#: ../plugins/gtkui/gtkui.c:1424
 msgid "Playlist tabs"
 msgstr "Spillelistefaner"
 
-#: ../plugins/gtkui/gtkui.c:1435
+#: ../plugins/gtkui/gtkui.c:1425
 msgid "Selection properties"
 msgstr "Utvalgets egenskaper"
 
-#: ../plugins/gtkui/gtkui.c:1436
+#: ../plugins/gtkui/gtkui.c:1426
 msgid "Album art display"
 msgstr "Visning av albumomslag"
 
-#: ../plugins/gtkui/gtkui.c:1437
+#: ../plugins/gtkui/gtkui.c:1427
 msgid "Oscilloscope"
-msgstr ""
+msgstr "Oscilloskop"
 
-#: ../plugins/gtkui/gtkui.c:1438
+#: ../plugins/gtkui/gtkui.c:1428
 msgid "Spectrum"
 msgstr "Spektrum"
 
-#: ../plugins/gtkui/gtkui.c:1439
+#: ../plugins/gtkui/gtkui.c:1429
 msgid "HBox"
 msgstr "HBoks"
 
-#: ../plugins/gtkui/gtkui.c:1440
+#: ../plugins/gtkui/gtkui.c:1430
 msgid "VBox"
 msgstr "VBoks"
 
-#: ../plugins/gtkui/gtkui.c:1441 ../plugins/gtkui/widgets.c:4014
-#: ../plugins/gtkui/widgets.c:4101
+#: ../plugins/gtkui/gtkui.c:1431 ../plugins/gtkui/widgets.c:4019
+#: ../plugins/gtkui/widgets.c:4106
 msgid "Button"
 msgstr "Knapp"
 
-#: ../plugins/gtkui/gtkui.c:1442
+#: ../plugins/gtkui/gtkui.c:1432
 msgid "Seekbar"
 msgstr "Søkebryter"
 
-#: ../plugins/gtkui/gtkui.c:1443
+#: ../plugins/gtkui/gtkui.c:1433
 msgid "Playback controls"
 msgstr "Avspillingsknapper"
 
-#: ../plugins/gtkui/gtkui.c:1444
+#: ../plugins/gtkui/gtkui.c:1434
 msgid "Volume bar"
 msgstr "Volumkontroll"
 
-#: ../plugins/gtkui/gtkui.c:1445
+#: ../plugins/gtkui/gtkui.c:1435
 msgid "Chiptune voices"
 msgstr "Chiptune-stemmer"
 
-#: ../plugins/gtkui/gtkui.c:1446
+#: ../plugins/gtkui/gtkui.c:1436
 msgid "Log viewer"
 msgstr "Visning av loggmeldinger"
 
-#: ../plugins/gtkui/gtkui.c:1448
+#: ../plugins/gtkui/gtkui.c:1438
 msgid "Media library viewer"
-msgstr ""
+msgstr "Vis mediebibliotek"
 
-#: ../plugins/gtkui/gtkui.c:1659
+#: ../plugins/gtkui/gtkui.c:1649
 msgid "Failed while reading help file"
 msgstr "Klarte ikke å lese hjelpefila"
 
-#: ../plugins/gtkui/gtkui.c:1669
+#: ../plugins/gtkui/gtkui.c:1659
 msgid "Failed to load help file"
 msgstr "Klarte ikke å lese inn hjelpefila"
 
-#: ../plugins/gtkui/gtkui.c:1682
+#: ../plugins/gtkui/gtkui.c:1672
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks"
 " will be cancelled or interrupted. This may result in data loss."
 msgstr "Spilleren kjører oppgaver i bakgrunnen. Dersom du avslutter nå så vil oppgavene avbrytes. Dette kan medføre tap av data."
 
-#: ../plugins/gtkui/gtkui.c:1684
+#: ../plugins/gtkui/gtkui.c:1674
 msgid "Do you still want to quit?"
 msgstr "Vil du fortsatt avslutte?"
 
-#: ../plugins/gtkui/gtkui.c:1685 ../plugins/gtkui/prefwin/prefwin.c:140
+#: ../plugins/gtkui/gtkui.c:1675 ../plugins/gtkui/prefwin/prefwin.c:140
 #: ../plugins/gtkui/trkproperties.c:117 ../plugins/converter/convgui.c:1080
 #: ../plugins/converter/convgui.c:1676 ../plugins/gtkui/pltmenu.c:88
 msgid "Warning"
@@ -363,7 +363,7 @@ msgstr "Album"
 
 #. Track properties dialog
 #: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/playlist/plcommon.c:77
-#: ../plugins/gtkui/playlist/plcommon.c:902
+#: ../plugins/gtkui/playlist/plcommon.c:904
 #: ../plugins/gtkui/deadbeef.glade.h:23 ../translation/extra.c:2
 msgid "Artist"
 msgstr "Artist"
@@ -378,7 +378,7 @@ msgid "Random"
 msgstr "Tilfeldig"
 
 #: ../plugins/gtkui/interface.c:283 ../plugins/gtkui/playlist/plcommon.c:86
-#: ../plugins/gtkui/playlist/plcommon.c:906
+#: ../plugins/gtkui/playlist/plcommon.c:908
 #: ../plugins/gtkui/deadbeef.glade.h:26
 msgid "Custom"
 msgstr "Selvvalgt"
@@ -680,9 +680,9 @@ msgstr "Spor"
 msgid "Processing:"
 msgstr "Behandling: "
 
-#: ../plugins/gtkui/interface.c:2022 ../plugins/gtkui/playlist/plcommon.c:894
-#: ../translation/plugins.c:103 ../plugins/gtkui/widgets.c:3440
-#: ../plugins/gtkui/widgets.c:4111
+#: ../plugins/gtkui/interface.c:2022 ../plugins/gtkui/playlist/plcommon.c:896
+#: ../translation/plugins.c:103 ../plugins/gtkui/widgets.c:3445
+#: ../plugins/gtkui/widgets.c:4116
 #, no-c-format
 msgid "None"
 msgstr "Ingen"
@@ -820,7 +820,7 @@ msgstr "Lukk spillelister med midtre museknapp"
 
 #: ../plugins/gtkui/interface.c:2331 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Hide \"Delete from Disk\" context menu item"
-msgstr ""
+msgstr "Skjul «Slett fra disk» i sprettoppmenyen"
 
 #: ../plugins/gtkui/interface.c:2335 ../plugins/gtkui/deadbeef.glade.h:131
 msgid ""
@@ -960,11 +960,11 @@ msgstr "Overstyr (trevisningen mister GTK-drakten, men tegnes opp raskere)"
 
 #: ../plugins/gtkui/interface.c:2823 ../plugins/gtkui/deadbeef.glade.h:164
 msgid "Custom visualization base color"
-msgstr ""
+msgstr "Selvvalgt basisfarge for visualisering"
 
 #: ../plugins/gtkui/interface.c:2831 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "Visualizations"
-msgstr ""
+msgstr "Visualiseringer"
 
 #: ../plugins/gtkui/interface.c:2835 ../plugins/gtkui/deadbeef.glade.h:166
 msgid "Appearance"
@@ -972,15 +972,15 @@ msgstr "Utseende"
 
 #: ../plugins/gtkui/interface.c:2844 ../plugins/gtkui/deadbeef.glade.h:167
 msgid "Enable media library"
-msgstr ""
+msgstr "Slå på mediebibliotek"
 
 #: ../plugins/gtkui/interface.c:2852 ../plugins/gtkui/deadbeef.glade.h:168
 msgid "Add / remove music folders"
-msgstr ""
+msgstr "Legg til/fjern musikkmapper"
 
 #: ../plugins/gtkui/interface.c:2886 ../plugins/gtkui/deadbeef.glade.h:169
 msgid "Media Library"
-msgstr ""
+msgstr "Mediebibliotek"
 
 #: ../plugins/gtkui/interface.c:2895 ../plugins/gtkui/deadbeef.glade.h:170
 msgid "Enable Proxy Server"
@@ -1265,7 +1265,7 @@ msgstr "Feltverdi: "
 #: ../plugins/gtkui/interface.c:5460 ../plugins/gtkui/interface.c:5805
 #: ../plugins/gtkui/deadbeef.glade.h:234
 msgid "Use ; character to separate multiple values."
-msgstr ""
+msgstr "Tegnet ';' skiller mellom flere verdier."
 
 #: ../plugins/gtkui/interface.c:5509 ../plugins/gtkui/deadbeef.glade.h:235
 msgid "DeaDBeeF Log"
@@ -1311,19 +1311,19 @@ msgstr "Vis kun tillegg med oppsett"
 
 #: ../plugins/gtkui/interface.c:5751 ../plugins/gtkui/deadbeef.glade.h:245
 msgid "Edit Multiple Tracks"
-msgstr ""
+msgstr "Rediger flere spor"
 
 #: ../plugins/gtkui/interface.c:5763 ../plugins/gtkui/deadbeef.glade.h:246
 msgid "Field Name:"
-msgstr ""
+msgstr "Feltnavn:"
 
 #: ../plugins/gtkui/interface.c:5788 ../plugins/gtkui/deadbeef.glade.h:247
 msgid "Single Value"
-msgstr ""
+msgstr "Enkeltverdi"
 
 #: ../plugins/gtkui/interface.c:5801 ../plugins/gtkui/deadbeef.glade.h:248
 msgid "Individual Values"
-msgstr ""
+msgstr "Frittstående verdier"
 
 #: ../plugins/gtkui/playlist/mainplaylist.c:233
 msgid "Artist / Album"
@@ -1377,29 +1377,29 @@ msgstr "Kodek"
 msgid "Bitrate"
 msgstr "Bitrate"
 
-#: ../plugins/gtkui/playlist/plcommon.c:720
-#: ../plugins/gtkui/playlist/plcommon.c:859
+#: ../plugins/gtkui/playlist/plcommon.c:722
+#: ../plugins/gtkui/playlist/plcommon.c:861
 msgid "Add column"
 msgstr "Legg til kolonne"
 
-#: ../plugins/gtkui/playlist/plcommon.c:761
-#: ../plugins/gtkui/playlist/plcommon.c:863
+#: ../plugins/gtkui/playlist/plcommon.c:763
+#: ../plugins/gtkui/playlist/plcommon.c:865
 msgid "Edit column"
 msgstr "Rediger kolonne"
 
-#: ../plugins/gtkui/playlist/plcommon.c:867
+#: ../plugins/gtkui/playlist/plcommon.c:869
 msgid "Remove column"
 msgstr "Fjern kolonne"
 
-#: ../plugins/gtkui/playlist/plcommon.c:882
+#: ../plugins/gtkui/playlist/plcommon.c:884
 msgid "Pin groups when scrolling"
 msgstr "Fest grupper ved rulling"
 
-#: ../plugins/gtkui/playlist/plcommon.c:887
+#: ../plugins/gtkui/playlist/plcommon.c:889
 msgid "Group by"
 msgstr "Gruppere etter"
 
-#: ../plugins/gtkui/playlist/plcommon.c:898
+#: ../plugins/gtkui/playlist/plcommon.c:900
 msgid "Artist/Date/Album"
 msgstr "Artist/dato/album"
 
@@ -1422,7 +1422,7 @@ msgstr "Vil du fortsette uten å lagre?"
 
 #: ../plugins/gtkui/prefwin/prefwinmedialib.c:67
 msgid "Select music folders to add"
-msgstr ""
+msgstr "Velg musikkmapper som skal legges til"
 
 #: ../plugins/gtkui/prefwin/prefwinsound.c:69
 msgid "Default Audio Device"
@@ -1459,11 +1459,11 @@ msgid "Name"
 msgstr "Navn"
 
 #: ../plugins/gtkui/trkproperties.c:370 ../plugins/gtkui/trkproperties.c:383
-#: ../plugins/gtkui/widgets.c:2507
+#: ../plugins/gtkui/widgets.c:2512
 msgid "Value"
 msgstr "Verdi"
 
-#: ../plugins/gtkui/trkproperties.c:382 ../plugins/gtkui/widgets.c:2505
+#: ../plugins/gtkui/trkproperties.c:382 ../plugins/gtkui/widgets.c:2510
 msgid "Key"
 msgstr "Nøkkel"
 
@@ -1477,11 +1477,11 @@ msgstr "Skriver metadata ..."
 
 #: ../plugins/gtkui/trkproperties.c:922
 msgid "Item"
-msgstr ""
+msgstr "Element"
 
 #: ../plugins/gtkui/trkproperties.c:923
 msgid "Field"
-msgstr ""
+msgstr "Felt"
 
 #: ../plugins/gtkui/trkproperties.c:1138
 msgid "Field name"
@@ -1659,39 +1659,39 @@ msgstr "                      Eksempler: --volume 80, --volume +10, --volume -5 
 msgid ""
 "   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to "
 "send commands to deadbeef itself.\n"
-msgstr ""
+msgstr "   --plugin=[PLUG]    Send kommando til valgt tillegg. Velg PLUG=main for å sende kommandoer til selve deadbeef.\n"
 
 #: ../main.c:159
 #, c-format
 msgid ""
 "                      To get plugin specific commands use --plugin=[PLUG] "
 "--help\n"
-msgstr ""
+msgstr "                      Bruk --plugin=[PLUG] --help for å liste ut kommandoer som er spesifikke for tillegget\n"
 
 #: ../main.c:160
 #, c-format
 msgid ""
 "   --plugin-list      List all available plugins including indication for "
 "plugins that support commands.\n"
-msgstr ""
+msgstr "   --plugin-list      Lister ut alle tilgjengelige tillegg og om de støtter kommandoer.\n"
 
-#: ../playlist.c:514 ../playlist.c:2498
+#: ../playlist.c:515 ../playlist.c:2509
 msgid "Default"
 msgstr "Standard"
 
-#: ../playlist.c:3183 ../plugins/gtkui/widgets.c:2934
+#: ../playlist.c:3194 ../plugins/gtkui/widgets.c:2939
 msgid "Mono"
 msgstr "Mono"
 
-#: ../playlist.c:3183
+#: ../playlist.c:3194
 msgid "Stereo"
 msgstr "Stereo"
 
-#: ../playlist.c:3701
+#: ../playlist.c:3712
 msgid "Yes"
 msgstr "Ja"
 
-#: ../playlist.c:3701
+#: ../playlist.c:3712
 msgid "No"
 msgstr "Nei"
 
@@ -1823,7 +1823,7 @@ msgstr "Foretrukket periodestørrelse"
 #: ../translation/plugins.c:15
 #, no-c-format
 msgid "Refresh Cover Art"
-msgstr ""
+msgstr "Oppdater albumomslag"
 
 #: ../translation/plugins.c:17
 #, no-c-format
@@ -1853,12 +1853,12 @@ msgstr "Hent fra Albumart.org"
 #: ../translation/plugins.c:27
 #, no-c-format
 msgid "Fetch from World of Spectrum (AY files)"
-msgstr ""
+msgstr "Hent fra World of Spectrum (AY-filer)"
 
 #: ../translation/plugins.c:29
 #, no-c-format
 msgid "Save downloaded files to music folders"
-msgstr ""
+msgstr "Lagre nedlastede filer til musikkmapper"
 
 #: ../translation/plugins.c:31
 #, no-c-format
@@ -1888,22 +1888,22 @@ msgstr "Sti til selvvalgt bilde"
 #: ../translation/plugins.c:41
 #, no-c-format
 msgid "Save to file name"
-msgstr ""
+msgstr "Lagre til filnavn"
 
 #: ../translation/plugins.c:43
 #, no-c-format
 msgid "Search masks (; separated)"
-msgstr ""
+msgstr "Søkemasker (adskilt med tegnet ';')"
 
 #: ../translation/plugins.c:45
 #, no-c-format
 msgid "Search folders (; separated)"
-msgstr ""
+msgstr "Søkemapper (adskilt med tegnet ';')"
 
 #: ../translation/plugins.c:47
 #, no-c-format
 msgid "Cache refresh (hrs)"
-msgstr ""
+msgstr "Oppdateringsintervall for hurtiglager (timer)"
 
 #. plugins/cdda/cdda.c
 #: ../translation/plugins.c:50
@@ -1961,17 +1961,17 @@ msgstr "Aktiver støtte for NRG-avtrykk"
 msgid "Drive speed for normal playback"
 msgstr "Hastighet for normal avspilling"
 
-#: ../translation/plugins.c:72 ../plugins/gtkui/widgets.c:2947
+#: ../translation/plugins.c:72 ../plugins/gtkui/widgets.c:2952
 #, no-c-format
 msgid "1x"
 msgstr "1x"
 
-#: ../translation/plugins.c:74 ../plugins/gtkui/widgets.c:2949
+#: ../translation/plugins.c:74 ../plugins/gtkui/widgets.c:2954
 #, no-c-format
 msgid "2x"
 msgstr "2x"
 
-#: ../translation/plugins.c:76 ../plugins/gtkui/widgets.c:2953
+#: ../translation/plugins.c:76 ../plugins/gtkui/widgets.c:2958
 #, no-c-format
 msgid "4x"
 msgstr "4x"
@@ -2136,7 +2136,7 @@ msgstr "Velg alle"
 #: ../translation/plugins.c:151
 #, no-c-format
 msgid "Delete from Disk"
-msgstr ""
+msgstr "Slett fra disk"
 
 #: ../translation/plugins.c:153
 #, no-c-format
@@ -2251,7 +2251,7 @@ msgstr "Beskjær utvalgte"
 #: ../translation/plugins.c:205
 #, no-c-format
 msgid "Remove Track(s) from Playlist"
-msgstr ""
+msgstr "Fjern spor fra spilleliste"
 
 #: ../translation/plugins.c:207
 #, no-c-format
@@ -2321,7 +2321,7 @@ msgstr "Bekreft sletting av filer fra disk"
 #: ../translation/plugins.c:235
 #, no-c-format
 msgid "Status icon settings:"
-msgstr ""
+msgstr "Oppsett av statusikon:"
 
 #: ../translation/plugins.c:237
 #, no-c-format
@@ -2336,7 +2336,7 @@ msgstr "Selvvalgt ikon i systemkurven"
 #: ../translation/plugins.c:241
 #, no-c-format
 msgid "Misc:"
-msgstr ""
+msgstr "Diverse:"
 
 #: ../translation/plugins.c:243
 #, no-c-format
@@ -2357,12 +2357,12 @@ msgstr "Deaktiver tekst oppå søkebryteren"
 #: ../translation/plugins.c:250
 #, no-c-format
 msgid "Previous or Restart Current Track"
-msgstr ""
+msgstr "Forrige eller spol tilbake gjeldende spor"
 
 #: ../translation/plugins.c:252
 #, no-c-format
 msgid "Duplicate Playlist"
-msgstr ""
+msgstr "Dupliser spilleliste"
 
 #: ../translation/plugins.c:254
 #, no-c-format
@@ -2372,7 +2372,7 @@ msgstr "Oppdater metadata"
 #: ../translation/plugins.c:256
 #, no-c-format
 msgid "Jump to Currently Playing Track"
-msgstr ""
+msgstr "Hopp til sporet som spiller"
 
 #: ../translation/plugins.c:258
 #, no-c-format
@@ -2382,42 +2382,42 @@ msgstr "Gå til"
 #: ../translation/plugins.c:260
 #, no-c-format
 msgid "Previous Genre"
-msgstr ""
+msgstr "Forrige sjanger"
 
 #: ../translation/plugins.c:262
 #, no-c-format
 msgid "Previous Composer"
-msgstr ""
+msgstr "Forrige komponist"
 
 #: ../translation/plugins.c:264
 #, no-c-format
 msgid "Previous Artist"
-msgstr ""
+msgstr "Forrige artist"
 
 #: ../translation/plugins.c:266
 #, no-c-format
 msgid "Previous Album"
-msgstr ""
+msgstr "Forrige album"
 
 #: ../translation/plugins.c:268
 #, no-c-format
 msgid "Next Genre"
-msgstr ""
+msgstr "Neste sjanger"
 
 #: ../translation/plugins.c:270
 #, no-c-format
 msgid "Next Composer"
-msgstr ""
+msgstr "Neste komponist"
 
 #: ../translation/plugins.c:272
 #, no-c-format
 msgid "Next Artist"
-msgstr ""
+msgstr "Neste artist"
 
 #: ../translation/plugins.c:274
 #, no-c-format
 msgid "Next Album"
-msgstr ""
+msgstr "Neste album"
 
 #: ../translation/plugins.c:276
 #, no-c-format
@@ -2427,57 +2427,57 @@ msgstr "Neste spilleliste"
 #: ../translation/plugins.c:278
 #, no-c-format
 msgid "Previous Playlist"
-msgstr ""
+msgstr "Forrige spilleliste"
 
 #: ../translation/plugins.c:280
 #, no-c-format
 msgid "Switch to Playlist 10"
-msgstr ""
+msgstr "Vis spilleliste 10"
 
 #: ../translation/plugins.c:282
 #, no-c-format
 msgid "Switch to Playlist 9"
-msgstr ""
+msgstr "Vis spilleliste 9"
 
 #: ../translation/plugins.c:284
 #, no-c-format
 msgid "Switch to Playlist 8"
-msgstr ""
+msgstr "Vis spilleliste 8"
 
 #: ../translation/plugins.c:286
 #, no-c-format
 msgid "Switch to Playlist 7"
-msgstr ""
+msgstr "Vis spilleliste 7"
 
 #: ../translation/plugins.c:288
 #, no-c-format
 msgid "Switch to Playlist 6"
-msgstr ""
+msgstr "Vis spilleliste 6"
 
 #: ../translation/plugins.c:290
 #, no-c-format
 msgid "Switch to Playlist 5"
-msgstr ""
+msgstr "Vis spilleliste 5"
 
 #: ../translation/plugins.c:292
 #, no-c-format
 msgid "Switch to Playlist 4"
-msgstr ""
+msgstr "Vis spilleliste 4"
 
 #: ../translation/plugins.c:294
 #, no-c-format
 msgid "Switch to Playlist 3"
-msgstr ""
+msgstr "Vis spilleliste 3"
 
 #: ../translation/plugins.c:296
 #, no-c-format
 msgid "Switch to Playlist 2"
-msgstr ""
+msgstr "Vis spilleliste 2"
 
 #: ../translation/plugins.c:298
 #, no-c-format
 msgid "Switch to Playlist 1"
-msgstr ""
+msgstr "Vis spilleliste 1"
 
 #: ../translation/plugins.c:300
 #, no-c-format
@@ -2487,27 +2487,27 @@ msgstr "Tilfeldig sortering"
 #: ../translation/plugins.c:302
 #, no-c-format
 msgid "Sort by Date"
-msgstr ""
+msgstr "Sorter etter dato"
 
 #: ../translation/plugins.c:304
 #, no-c-format
 msgid "Sort by Artist"
-msgstr ""
+msgstr "Sorter etter artist"
 
 #: ../translation/plugins.c:306
 #, no-c-format
 msgid "Sort by Album"
-msgstr ""
+msgstr "Sorter etter album"
 
 #: ../translation/plugins.c:308
 #, no-c-format
 msgid "Sort by Track Number"
-msgstr ""
+msgstr "Sorter etter spornummer"
 
 #: ../translation/plugins.c:310
 #, no-c-format
 msgid "Sort by Title"
-msgstr ""
+msgstr "Sorter etter tittel"
 
 #: ../translation/plugins.c:312
 #, no-c-format
@@ -2522,22 +2522,22 @@ msgstr "Tøm spilleliste"
 #: ../translation/plugins.c:316
 #, no-c-format
 msgid "Remove from Playback Queue"
-msgstr ""
+msgstr "Fjern fra avspillingskøen"
 
 #: ../translation/plugins.c:318
 #, no-c-format
 msgid "Add to Playback Queue"
-msgstr ""
+msgstr "Legg til i avspillingskøen"
 
 #: ../translation/plugins.c:320
 #, no-c-format
 msgid "Add to Front of Playback Queue"
-msgstr ""
+msgstr "Legg til først i avspillingskøen"
 
 #: ../translation/plugins.c:322
 #, no-c-format
 msgid "Toggle in Playback Queue"
-msgstr ""
+msgstr "Legg til i/fjern fra avspillingskøen "
 
 #: ../translation/plugins.c:324
 #, no-c-format
@@ -2633,7 +2633,7 @@ msgstr "Slå av/på stopping etter dette albumet"
 #: ../translation/plugins.c:371
 #, no-c-format
 msgid "Lookup on Last.fm"
-msgstr ""
+msgstr "Slå opp på Last.fm"
 
 #: ../translation/plugins.c:373
 #, no-c-format
@@ -2834,62 +2834,62 @@ msgstr "Forvalgt låtlengde (sek)"
 msgid "Mono synth"
 msgstr "Monosynt"
 
-#. plugins/supereq/supereq.c
+#. plugins/sndfile/sndfile.c
 #: ../translation/plugins.c:465
+#, no-c-format
+msgid "Enable logging"
+msgstr "Aktiver logging"
+
+#. plugins/supereq/supereq.c
+#: ../translation/plugins.c:468
 #, no-c-format
 msgid "Preamp"
 msgstr "Forforst."
 
-#: ../translation/plugins.c:467
+#: ../translation/plugins.c:470
 #, no-c-format
 msgid "1.2K"
 msgstr "1.2K"
 
-#: ../translation/plugins.c:469
+#: ../translation/plugins.c:472
 #, no-c-format
 msgid "1.8K"
 msgstr "1.8K"
 
-#: ../translation/plugins.c:471
+#: ../translation/plugins.c:474
 #, no-c-format
 msgid "2.5K"
 msgstr "2.5K"
 
-#: ../translation/plugins.c:473
+#: ../translation/plugins.c:476
 #, no-c-format
 msgid "3.5K"
 msgstr "3.5K"
 
-#: ../translation/plugins.c:475
+#: ../translation/plugins.c:478
 #, no-c-format
 msgid "5K"
 msgstr "5K"
 
-#: ../translation/plugins.c:477
+#: ../translation/plugins.c:480
 #, no-c-format
 msgid "7K"
 msgstr "7K"
 
-#: ../translation/plugins.c:479
+#: ../translation/plugins.c:482
 #, no-c-format
 msgid "10K"
 msgstr "10K"
 
-#: ../translation/plugins.c:481
+#: ../translation/plugins.c:484
 #, no-c-format
 msgid "14K"
 msgstr "14K"
 
-#: ../translation/plugins.c:483
+#: ../translation/plugins.c:486
 #, no-c-format
 msgid "20K"
 msgstr "20K"
-
-#. plugins/vfs_curl/vfs_curl.c
-#: ../translation/plugins.c:486
-#, no-c-format
-msgid "Enable logging"
-msgstr "Aktiver logging"
 
 #. plugins/wildmidi/wildmidiplug.c
 #: ../translation/plugins.c:489
@@ -2901,62 +2901,62 @@ msgstr "Timidity++ bankoppsettsfil"
 #: ../translation/plugins.c:492
 #, no-c-format
 msgid "File extension"
-msgstr ""
+msgstr "Filtype"
 
 #: ../translation/plugins.c:494
 #, no-c-format
 msgid "Encoder command line"
-msgstr ""
+msgstr "Konverteringsverktøyets kommandolinjekall"
 
 #: ../translation/plugins.c:496
 #, no-c-format
 msgid "Data transfer method"
-msgstr ""
+msgstr "Metode for dataoverføring"
 
 #: ../translation/plugins.c:498
 #, no-c-format
 msgid "Pipe (stdin)"
-msgstr ""
+msgstr "Rør (stdin)"
 
 #: ../translation/plugins.c:500
 #, no-c-format
 msgid "Temporary file"
-msgstr ""
+msgstr "Midlertidig fil"
 
 #: ../translation/plugins.c:502
 #, no-c-format
 msgid "Source file"
-msgstr ""
+msgstr "Kildefil"
 
 #: ../translation/plugins.c:506
 #, no-c-format
 msgid "Write ID3v2 tag"
-msgstr ""
+msgstr "Skriv ID3v2-metadata"
 
 #: ../translation/plugins.c:508
 #, no-c-format
 msgid "Write ID3v1 tag"
-msgstr ""
+msgstr "Skriv ID3v1-metadata"
 
 #: ../translation/plugins.c:510
 #, no-c-format
 msgid "Write APEv2 tag"
-msgstr ""
+msgstr "Skriv APEv2-metadata"
 
 #: ../translation/plugins.c:512
 #, no-c-format
 msgid "Write FLAC tag"
-msgstr ""
+msgstr "Skriv FLAC-metadata"
 
 #: ../translation/plugins.c:514
 #, no-c-format
 msgid "Write OggVorbis tag"
-msgstr ""
+msgstr "Skriv OggVorbis-metadata"
 
 #: ../translation/plugins.c:516
 #, no-c-format
 msgid "Write MP4 tag"
-msgstr ""
+msgstr "Skriv MP4-metadata"
 
 #: ../plugins/converter/convgui.c:91
 #, c-format
@@ -3427,7 +3427,7 @@ msgstr "<small>Hvis du vil legge til kommandoen i hovedmenyen så sørg for at t
 msgid "Add Command"
 msgstr "Legg til kommando"
 
-#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:969
+#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:971
 msgid "Delete"
 msgstr "Fjerne?"
 
@@ -3498,217 +3498,217 @@ msgstr "Feltene «Innholdstype» og «Programtillegg» kan ikke være tomme, og 
 msgid "Nothing is selected."
 msgstr "Ingenting er valgt."
 
-#: ../plugins/gtkui/widgets.c:537
+#: ../plugins/gtkui/widgets.c:539
 #, c-format
 msgid "Widget \"%s\" is not available"
 msgstr "Skjermelementet «%s» er utilgjengelig"
 
-#: ../plugins/gtkui/widgets.c:943
+#: ../plugins/gtkui/widgets.c:945
 msgid "Replace with..."
 msgstr "Erstatt med ..."
 
-#: ../plugins/gtkui/widgets.c:948
+#: ../plugins/gtkui/widgets.c:950
 msgid "Insert..."
 msgstr "Sett inn ..."
 
-#: ../plugins/gtkui/widgets.c:976
+#: ../plugins/gtkui/widgets.c:978
 msgid "Cut"
 msgstr "Klipp ut"
 
-#: ../plugins/gtkui/widgets.c:983
+#: ../plugins/gtkui/widgets.c:985
 msgid "Copy"
 msgstr "Kopier"
 
-#: ../plugins/gtkui/widgets.c:991
+#: ../plugins/gtkui/widgets.c:993
 msgid "Paste"
 msgstr "Lim inn"
 
-#: ../plugins/gtkui/widgets.c:1040
+#: ../plugins/gtkui/widgets.c:1042
 msgid "Parent"
 msgstr "Forelder"
 
-#: ../plugins/gtkui/widgets.c:1158
+#: ../plugins/gtkui/widgets.c:1160
 msgid "Multiple widgets of this type are not supported"
 msgstr "Dette skjermelementet kan kun brukes én gang"
 
-#: ../plugins/gtkui/widgets.c:1443
+#: ../plugins/gtkui/widgets.c:1445
 msgid "Proportional Sizing"
 msgstr "Behold proporsjoner ved skalering"
 
-#: ../plugins/gtkui/widgets.c:1455
+#: ../plugins/gtkui/widgets.c:1457
 msgid "Lock Top Pane Height"
 msgstr "Lås den øvre rutas høyde"
 
-#: ../plugins/gtkui/widgets.c:1458
+#: ../plugins/gtkui/widgets.c:1460
 msgid "Lock Left Pane Width"
 msgstr "Lås den venstre rutas bredde"
 
-#: ../plugins/gtkui/widgets.c:1471
+#: ../plugins/gtkui/widgets.c:1473
 msgid "Lock Bottom Pane Height"
 msgstr "Lås den nedre rutas høyde"
 
-#: ../plugins/gtkui/widgets.c:1474
+#: ../plugins/gtkui/widgets.c:1476
 msgid "Lock Right Pane Width"
 msgstr "Lås den høyre rutas bredde"
 
-#: ../plugins/gtkui/widgets.c:1740 ../plugins/gtkui/widgets.c:1855
+#: ../plugins/gtkui/widgets.c:1742 ../plugins/gtkui/widgets.c:1857
 msgid "Rename Tab"
 msgstr "Gi fana nytt navn"
 
-#: ../plugins/gtkui/widgets.c:1862
+#: ../plugins/gtkui/widgets.c:1864
 msgid "Remove Tab"
 msgstr "Fjern fane"
 
-#: ../plugins/gtkui/widgets.c:1869 ../plugins/gtkui/widgets.c:2048
+#: ../plugins/gtkui/widgets.c:1871 ../plugins/gtkui/widgets.c:2050
 msgid "Add New Tab"
 msgstr "Legg til fane"
 
-#: ../plugins/gtkui/widgets.c:1878
+#: ../plugins/gtkui/widgets.c:1880
 msgid "Move Tab Left"
 msgstr "Flytt fane til venstre"
 
-#: ../plugins/gtkui/widgets.c:1885
+#: ../plugins/gtkui/widgets.c:1887
 msgid "Move Tab Right"
 msgstr "Flytt fane til høyre"
 
-#: ../plugins/gtkui/widgets.c:2280 ../plugins/gtkui/widgets.c:2464
+#: ../plugins/gtkui/widgets.c:2285 ../plugins/gtkui/widgets.c:2469
 #: ../plugins/pltbrowser/pltbrowser.c:804
 msgid "Show Column Headers"
 msgstr "Vis kolonneoverskrifter"
 
-#: ../plugins/gtkui/widgets.c:2926 ../plugins/gtkui/widgets.c:3417
+#: ../plugins/gtkui/widgets.c:2931 ../plugins/gtkui/widgets.c:3422
 msgid "Rendering Mode"
-msgstr ""
+msgstr "Opptegningsmetode"
 
-#: ../plugins/gtkui/widgets.c:2931
+#: ../plugins/gtkui/widgets.c:2936
 msgid "Multichannel"
-msgstr ""
-
-#: ../plugins/gtkui/widgets.c:2940
-msgid "Scale"
-msgstr ""
+msgstr "Flere kanaler"
 
 #: ../plugins/gtkui/widgets.c:2945
+msgid "Scale"
+msgstr "Skalering"
+
+#: ../plugins/gtkui/widgets.c:2950
 msgid "Auto"
-msgstr ""
+msgstr "Automatisk"
 
-#: ../plugins/gtkui/widgets.c:2951
+#: ../plugins/gtkui/widgets.c:2956
 msgid "3x"
-msgstr ""
-
-#: ../plugins/gtkui/widgets.c:2962
-msgid "Fragment Duration"
-msgstr ""
+msgstr "3x"
 
 #: ../plugins/gtkui/widgets.c:2967
+msgid "Fragment Duration"
+msgstr "Fragmentets varighet"
+
+#: ../plugins/gtkui/widgets.c:2972
 msgid "50 ms"
-msgstr ""
+msgstr "50 ms"
 
-#: ../plugins/gtkui/widgets.c:2969
+#: ../plugins/gtkui/widgets.c:2974
 msgid "100 ms"
-msgstr ""
+msgstr "100 ms"
 
-#: ../plugins/gtkui/widgets.c:2971
+#: ../plugins/gtkui/widgets.c:2976
 msgid "200 ms"
-msgstr ""
+msgstr "200 ms"
 
-#: ../plugins/gtkui/widgets.c:2973
+#: ../plugins/gtkui/widgets.c:2978
 msgid "300 ms"
-msgstr ""
+msgstr "300 ms"
 
-#: ../plugins/gtkui/widgets.c:2975
+#: ../plugins/gtkui/widgets.c:2980
 msgid "500 ms"
-msgstr ""
+msgstr "500 ms"
 
-#: ../plugins/gtkui/widgets.c:3422
+#: ../plugins/gtkui/widgets.c:3427
 msgid "Descrete Frequencies"
-msgstr ""
+msgstr "Diskrete frekvenser"
 
-#: ../plugins/gtkui/widgets.c:3425
+#: ../plugins/gtkui/widgets.c:3430
 msgid "1/12 Octave Bands"
-msgstr ""
+msgstr "1/12 oktavbånd"
 
-#: ../plugins/gtkui/widgets.c:3428
+#: ../plugins/gtkui/widgets.c:3433
 msgid "1/24 Octave Bands"
-msgstr ""
+msgstr "1/24 oktavbånd"
 
-#: ../plugins/gtkui/widgets.c:3435
+#: ../plugins/gtkui/widgets.c:3440
 msgid "Gap Size"
-msgstr ""
+msgstr "Mellomrommets størrelse"
 
-#: ../plugins/gtkui/widgets.c:3443
+#: ../plugins/gtkui/widgets.c:3448
 msgid "1/2 Bar"
-msgstr ""
+msgstr "1/2 takt"
 
-#: ../plugins/gtkui/widgets.c:3446
+#: ../plugins/gtkui/widgets.c:3451
 msgid "1/3 Bar"
-msgstr ""
+msgstr "1/3 takt"
 
-#: ../plugins/gtkui/widgets.c:3449
+#: ../plugins/gtkui/widgets.c:3454
 msgid "1/4 Bar"
-msgstr ""
+msgstr "1/4 takt"
 
-#: ../plugins/gtkui/widgets.c:3452
+#: ../plugins/gtkui/widgets.c:3457
 msgid "1/5 Bar"
-msgstr ""
+msgstr "1/5 takt"
 
-#: ../plugins/gtkui/widgets.c:3455
+#: ../plugins/gtkui/widgets.c:3460
 msgid "1/6 Bar"
-msgstr ""
+msgstr "1/6 takt"
 
-#: ../plugins/gtkui/widgets.c:3458
+#: ../plugins/gtkui/widgets.c:3463
 msgid "1/7 Bar"
-msgstr ""
+msgstr "1/7 takt"
 
-#: ../plugins/gtkui/widgets.c:3461
+#: ../plugins/gtkui/widgets.c:3466
 msgid "1/8 Bar"
-msgstr ""
+msgstr "1/8 takt"
 
-#: ../plugins/gtkui/widgets.c:3464
+#: ../plugins/gtkui/widgets.c:3469
 msgid "1/9 Bar"
-msgstr ""
+msgstr "1/9 takt"
 
-#: ../plugins/gtkui/widgets.c:3467
+#: ../plugins/gtkui/widgets.c:3472
 msgid "1/10 Bar"
-msgstr ""
+msgstr "1/10 takt"
 
-#: ../plugins/gtkui/widgets.c:3731
+#: ../plugins/gtkui/widgets.c:3736
 msgid "Expand Box by 1 Item"
 msgstr "Utvid boksen med 1 element"
 
-#: ../plugins/gtkui/widgets.c:3736
+#: ../plugins/gtkui/widgets.c:3741
 msgid "Shrink Box by 1 Item"
 msgstr "Krymp boksen med 1 element"
 
-#: ../plugins/gtkui/widgets.c:3741
+#: ../plugins/gtkui/widgets.c:3746
 msgid "Homogeneous"
 msgstr "Homogen"
 
-#: ../plugins/gtkui/widgets.c:3781
+#: ../plugins/gtkui/widgets.c:3786
 msgid "Expand"
 msgstr "Utvid"
 
-#: ../plugins/gtkui/widgets.c:3789
+#: ../plugins/gtkui/widgets.c:3794
 msgid "Fill"
 msgstr "Fyll"
 
-#: ../plugins/gtkui/widgets.c:4191
+#: ../plugins/gtkui/widgets.c:4196
 msgid "Configure Button"
 msgstr "Sett opp knapp"
 
-#: ../plugins/gtkui/widgets.c:4464
+#: ../plugins/gtkui/widgets.c:4469
 msgid "_dB Scale"
-msgstr ""
+msgstr "_dB-skala"
 
-#: ../plugins/gtkui/widgets.c:4475
+#: ../plugins/gtkui/widgets.c:4480
 msgid "_Linear Scale"
-msgstr ""
+msgstr "_Lineær skala"
 
-#: ../plugins/gtkui/widgets.c:4486
+#: ../plugins/gtkui/widgets.c:4491
 msgid "_Cubic Scale"
-msgstr ""
+msgstr "_Kubisk skala"
 
-#: ../plugins/gtkui/widgets.c:4612
+#: ../plugins/gtkui/widgets.c:4617
 msgid "Voices:"
 msgstr "Stemmer: "
 
@@ -3737,7 +3737,7 @@ msgstr "Aktiver autosortering"
 msgid ""
 "Re-apply the last sort you chose every time when adding new files to this "
 "playlist"
-msgstr ""
+msgstr "Gjenbruk sist valgte sortering hver gang nye filer legges til denne spillelisten"
 
 #: ../plugins/pltbrowser/pltbrowser.c:170
 msgid " (paused)"
