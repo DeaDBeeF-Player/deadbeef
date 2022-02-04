@@ -55,7 +55,7 @@ buffered_file_writer_write (buffered_file_writer_t *writer, const void *bytes, s
             return -1;
         }
     }
-    if (size > writer->size) {
+    if (size >= writer->size) {
         size_t res = fwrite (bytes, 1, size, writer->fp);
         if (res != size) {
             return -1;
