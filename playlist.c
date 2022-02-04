@@ -2070,6 +2070,7 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
     if (buffered_file_writer_flush(writer) < 0) {
         goto save_fail;
     }
+    buffered_file_writer_free(writer);
     UNLOCK;
     fclose (fp);
     if (rename (tempfile, fname) != 0) {
