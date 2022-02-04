@@ -35,6 +35,7 @@
 #include <unistd.h>
 #include <limits.h>
 #include <sys/stat.h>
+#include "buffered_file_writer.h"
 #include "conf.h"
 #include "threading.h"
 #include "common.h"
@@ -165,8 +166,8 @@ conf_save (void) {
     }
     char tempfile[PATH_MAX];
     char str[PATH_MAX];
-    FILE *fp;
-    int err;
+    FILE *fp = NULL;
+    buffered_file_writer_t *writer = NULL;
 
     if (!changed || !mutex) {
         return 0;
@@ -183,16 +184,31 @@ conf_save (void) {
         conf_unlock ();
         return -1;
     }
+
+    writer = buffered_file_writer_new(fp, 64*1024);
+
     for (DB_conf_item_t *it = conf_items; it; it = it->next) {
+        if (buffered_file_writer_write(writer, it->key, strlen(it->key)) < 0) {
+            goto error;
+        }
+        if (buffered_file_writer_write(writer, " ", 1) < 0)  {
+            goto error;
+        }
+        if (buffered_file_writer_write(writer, it->value, strlen(it->value)) < 0) {
+            goto error;
+        }
+        if (buffered_file_writer_write(writer, "\n", 1) < 0)  {
+            goto error;
+        }
         if (fprintf (fp, "%s %s\n", it->key, it->value) < 0) {
-            trace_err ("failed to write to file %s (%s)\n", tempfile, strerror (errno));
-            fclose (fp);
-            conf_unlock ();
-            return -1;
         }
     }
+    if (buffered_file_writer_flush(writer) < 0) {
+        goto error;
+    }
+    buffered_file_writer_free(writer);
     fclose (fp);
-    err = rename (tempfile, str);
+    int err = rename (tempfile, str);
     if (err != 0) {
         trace_err ("config rename %s -> %s failed: %s\n", tempfile, str, strerror (errno));
     }
@@ -201,6 +217,12 @@ conf_save (void) {
     }
     conf_unlock ();
     return 0;
+error:
+    trace_err ("failed to write to file %s (%s)\n", tempfile, strerror (errno));
+    buffered_file_writer_free(writer);
+    fclose (fp);
+    conf_unlock ();
+    return -1;
 }
 
 void
