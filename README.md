@@ -74,7 +74,7 @@ pacman -S mingw-w64-x86_64-jansson mingw-w64-x86_64-gtk3 mingw-w64-x86_64-gtk2 m
 * Ensure that you are in mingw64 shell (run mingw64.exe) and clone this git
   repository
 * From deadbeef main directory run `premake5 --standard gmake2` using your corresponding path to `premake5.exe`
-* Compile with `make config=debug\_windows` (debug build) or `make config=release\_windows` (stripped/release build)
+* Compile with `make config=debug_windows` (debug build) or `make config=release_windows` (stripped/release build)
 * Find the resulting binaries in `bin/debug` or `bin/release`
 
 #### Other notes
