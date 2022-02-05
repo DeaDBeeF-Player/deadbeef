@@ -149,6 +149,9 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
     }
     memcpy (&block->fmt, &fileinfo->fmt, sizeof (ddb_waveformat_t));
     block->track = track;
+    if (block->track != NULL) {
+        pl_item_ref(block->track);
+    }
 
     if (size > 0) {
         int input_does_rg = fileinfo->plugin->plugin.flags & DDB_PLUGIN_FLAG_REPLAYGAIN;
@@ -187,6 +190,9 @@ streamreader_silence_block (streamblock_t *block, playItem_t *track, DB_fileinfo
 
     memcpy (&block->fmt, &fileinfo->fmt, sizeof (ddb_waveformat_t));
     block->track = track;
+    if (block->track != NULL) {
+        pl_item_ref(block->track);
+    }
     block->is_silent_header = 1;
 
     if (_firstblock) {
@@ -232,6 +238,9 @@ streamreader_get_curr_block (void) {
 static void
 _streamreader_release_block (streamblock_t *block) {
     block->pos = -1;
+    if (block->track != NULL) {
+        pl_item_unref(block->track);
+    }
     block->track = NULL;
     block->queued = 0;
 
@@ -263,7 +272,8 @@ streamreader_reset (void) {
     streamblock_t *b = blocks;
     while (b) {
         b->pos = -1;
-        if (b->track) {
+        if (b->track != NULL) {
+            pl_item_unref(b->track);
             b->track = NULL;
         }
         b->queued = 0;

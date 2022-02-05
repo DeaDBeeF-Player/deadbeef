@@ -61,6 +61,9 @@ decoded_blocks_release (decoded_block_t *b) {
     b->total_bytes = 0;
     b->queued = 0;
     b->playback_time = 0;
+    if (b->track != NULL) {
+        pl_item_unref (b->track);
+    }
     b->track = NULL;
 }
 
