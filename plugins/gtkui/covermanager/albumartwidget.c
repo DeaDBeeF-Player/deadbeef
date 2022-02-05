@@ -333,6 +333,24 @@ _free_serialized_keyvalues(ddb_gtkui_widget_t *w, char const **keyvalues) {
     free (keyvalues);
 }
 
+static void
+_artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
+    w_albumart_t *w = (w_albumart_t *)user_data;
+    if (event == DDB_ARTWORK_SETTINGS_DID_CHANGE) {
+        _dispatch_on_main(^{
+            _throttled_update(w);
+        });
+    }
+}
+
+static void
+_destroy (ddb_gtkui_widget_t *base) {
+    w_albumart_t *w = (w_albumart_t *)base;
+    if (w->plugin != NULL) {
+        w->plugin->remove_listener (_artwork_listener, w);
+    }
+}
+
 ddb_gtkui_widget_t *
 w_albumart_create (void) {
     w_albumart_t *w = malloc (sizeof (w_albumart_t));
@@ -340,6 +358,7 @@ w_albumart_create (void) {
 
     w->base.widget = gtk_event_box_new ();
     w->base.message = _message;
+    w->base.destroy = _destroy;
     w->drawing_area = gtk_drawing_area_new();
     w->exapi._size = sizeof (ddb_gtkui_widget_extended_api_t);
     w->exapi.deserialize_from_keyvalues = _deserialize_from_keyvalues;
@@ -358,6 +377,7 @@ w_albumart_create (void) {
     w->plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id("artwork2");
     if (w->plugin != NULL) {
         w->source_id = w->plugin->allocate_source_id();
+        w->plugin->add_listener(_artwork_listener, w);
     }
 
     g_signal_connect ((gpointer)w->base.widget, "button-press-event", G_CALLBACK (_button_press), w);

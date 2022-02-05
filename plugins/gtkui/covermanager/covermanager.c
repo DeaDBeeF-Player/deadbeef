@@ -96,10 +96,6 @@ _update_default_cover (covermanager_t *impl) {
         }
 
         impl->default_cover = gdk_pixbuf_new_from_file(path, NULL);
-        if (impl->default_cover == NULL) {
-            uint32_t color = 0xffffffff;
-            impl->default_cover = gdk_pixbuf_new_from_data((guchar *)&color, GDK_COLORSPACE_RGB, FALSE, 8, 1, 1, 4, NULL, NULL);
-        }
     }
 }
 
@@ -166,7 +162,9 @@ _load_image_from_cover(covermanager_t *impl, ddb_cover_info_t *cover) {
 
     if (!img) {
         img = impl->default_cover;
-        gobj_ref (img);
+        if (img != NULL) {
+            gobj_ref (img);
+        }
     }
 
     return img;
