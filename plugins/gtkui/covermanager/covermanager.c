@@ -43,6 +43,7 @@ struct covermanager_s {
     char *default_cover_path;
     GdkPixbuf *default_cover;
     gboolean is_terminating;
+    int image_size;
 };
 
 typedef struct {
@@ -102,6 +103,7 @@ _update_default_cover (covermanager_t *impl) {
 static void
 _settings_did_change_for_track(covermanager_t *manager, ddb_playItem_t *track) {
     covermanager_t *impl = manager;
+    impl->image_size = deadbeef->conf_get_int("artwork.image_size", 256);
     if (track == NULL) {
         _update_default_cover (impl);
         gobj_cache_remove_all(impl->cache);
@@ -139,7 +141,7 @@ _load_image_from_cover(covermanager_t *impl, ddb_cover_info_t *cover) {
     }
 
     if (img) {
-        const int max_image_size = 1024; // TODO: needs to be configurable
+        const int max_image_size = impl->image_size;
 
         // downscale
         GtkAllocation size = {
