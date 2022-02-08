@@ -1729,8 +1729,13 @@ artwork_plugin_stop (void (^completion_block)(void)) {
 }
 
 static int
-_command(int cmd, void (^block)(void)) {
+_command(int cmd, ...) {
     if (cmd == DDB_COMMAND_PLUGIN_ASYNC_STOP) {
+        va_list ap;
+        void (^block)(void);
+        va_start(ap, cmd);
+        block = va_arg(ap, void (^)(void));
+        va_end(ap);
         return artwork_plugin_stop(block);
     }
     return -1;
@@ -1817,7 +1822,7 @@ ddb_artwork_plugin_t plugin = {
         "3. This notice may not be removed or altered from any source distribution.\n"
     ,
     .plugin.plugin.website = "http://deadbeef.sf.net",
-    .plugin.plugin.command = (int(*)(int cmd, ...))_command,
+    .plugin.plugin.command = _command,
     .plugin.plugin.start = artwork_plugin_start,
     // NOTE: stop is handled asynchronously by the command method with DDB_COMMAND_PLUGIN_ASYNC_STOP type
     .plugin.plugin.configdialog = settings_dlg,
