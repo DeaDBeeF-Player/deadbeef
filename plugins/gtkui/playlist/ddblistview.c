@@ -389,7 +389,7 @@ static int _header_get_list_height(DdbListviewHeader *header) {
 
 static void _header_col_sort (DdbListviewHeader *header, int sort_order, void *user_data) {
     DdbListview *listview = DDB_LISTVIEW(g_object_get_data(G_OBJECT(header), "owner"));
-    listview->delegate->col_sort (0, user_data);
+    listview->delegate->col_sort (sort_order, user_data);
     gtk_widget_queue_draw (listview->list);
 }
 
