@@ -103,8 +103,8 @@ _update_default_cover (covermanager_t *impl) {
 static void
 _settings_did_change_for_track(covermanager_t *manager, ddb_playItem_t *track) {
     covermanager_t *impl = manager;
-    impl->image_size = deadbeef->conf_get_int("artwork.image_size", 256);
     if (track == NULL) {
+        impl->image_size = deadbeef->conf_get_int("artwork.image_size", 256);
         _update_default_cover (impl);
         gobj_cache_remove_all(impl->cache);
     }
@@ -304,6 +304,8 @@ covermanager_new(void) {
     }
 
     impl->cache = gobj_cache_new(CACHE_SIZE);
+
+    impl->image_size = deadbeef->conf_get_int("artwork.image_size", 256);
 
     impl->name_tf = deadbeef->tf_compile ("%_path_raw%");
 
