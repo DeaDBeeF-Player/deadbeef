@@ -67,6 +67,12 @@ typedef struct _DdbListviewGroup {
 
 typedef int (*minheight_cb_t) (void *user_data, int width);
 
+typedef enum {
+    DdbListviewColumnSortOrderNone,
+    DdbListviewColumnSortOrderAscending,
+    DdbListviewColumnSortOrderDescending
+} DdbListviewColumnSortOrder;
+
 typedef struct _DdbListviewColumn {
     char *title;
     int width;
@@ -76,8 +82,8 @@ typedef struct _DdbListviewColumn {
     int color_override;
     GdkColor color;
     void *user_data;
+    DdbListviewColumnSortOrder sort_order;
     unsigned align_right : 2; // 0=left, 1=right, 2=center
-    unsigned sort_order : 2; // 0=none, 1=asc, 2=desc
     unsigned show_tooltip : 1;
     unsigned is_artwork : 1;
 } DdbListviewColumn;
@@ -88,7 +94,7 @@ typedef struct {
     void (*tracks_copy_drag_n_drop) (DdbListviewIter before, DdbListviewIter *tracks, int count);
 
     void (*columns_changed) (DdbListview *listview);
-    void (*col_sort) (int sort_order, void *user_data);
+    void (*col_sort) (DdbListviewColumnSortOrder sort_order, void *user_data);
     void (*col_free_user_data) (void *user_data);
 
     void (*list_context_menu) (ddb_playlist_t *playlist, int plt_iter);

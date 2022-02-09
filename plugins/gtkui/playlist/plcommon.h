@@ -99,7 +99,7 @@ void
 pl_common_selection_changed (DdbListview *ps, int iter, DB_playItem_t *it);
 
 void
-pl_common_col_sort (int sort_order, int iter, void *user_data);
+pl_common_col_sort (DdbListviewColumnSortOrder sort_order, int iter, void *user_data);
 
 void
 pl_common_set_group_format (DdbListview *listview, const char *format);

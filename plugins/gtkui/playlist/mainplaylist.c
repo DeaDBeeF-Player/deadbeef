@@ -144,7 +144,7 @@ void main_external_drag_n_drop (DdbListviewIter before, char *mem, int length) {
 // columns
 
 static void
-main_col_sort (int sort_order, void *user_data) {
+main_col_sort (DdbListviewColumnSortOrder sort_order, void *user_data) {
     if (sort_order) {
         pl_common_col_sort (sort_order, PL_MAIN, user_data);
     }

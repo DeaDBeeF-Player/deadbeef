@@ -94,8 +94,8 @@ static int search_get_idx (DdbListviewIter it) {
 }
 
 static void
-search_col_sort (int sort_order, void *user_data) {
-    if (sort_order) {
+search_col_sort (DdbListviewColumnSortOrder sort_order, void *user_data) {
+    if (sort_order != DdbListviewColumnSortOrderNone) {
         pl_common_col_sort (sort_order, PL_SEARCH, user_data);
     }
     else {

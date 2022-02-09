@@ -45,7 +45,7 @@ typedef struct {
     void (*set_column_width)(DdbListviewHeader *header, DdbListviewColumn *c, int width);
     void (*columns_changed)(DdbListviewHeader *header);
     int (*get_list_height)(DdbListviewHeader *header);
-    void (*col_sort) (DdbListviewHeader *header, int sort_order, void *user_data);
+    void (*col_sort) (DdbListviewHeader *header, DdbListviewColumnSortOrder sort_order, void *user_data);
     void (*update_scroll_ref_point) (DdbListviewHeader *header);
 }  ddb_listview_header_delegate_t;
 

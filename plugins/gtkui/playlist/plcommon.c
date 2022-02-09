@@ -1119,11 +1119,11 @@ pl_common_selection_changed (DdbListview *ps, int iter, DB_playItem_t *it) {
 }
 
 void
-pl_common_col_sort (int sort_order, int iter, void *user_data) {
+pl_common_col_sort (DdbListviewColumnSortOrder sort_order, int iter, void *user_data) {
     col_info_t *c = (col_info_t*)user_data;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     char *format = (c->sort_format && strlen(c->sort_format)) ? c->sort_format : c->format;
-    deadbeef->plt_sort_v2 (plt, iter, c->id, format, sort_order == 2 ? DDB_SORT_DESCENDING : DDB_SORT_ASCENDING);
+    deadbeef->plt_sort_v2 (plt, iter, c->id, format, sort_order == DdbListviewColumnSortOrderDescending ? DDB_SORT_DESCENDING : DDB_SORT_ASCENDING);
     deadbeef->plt_unref (plt);
 }
 
