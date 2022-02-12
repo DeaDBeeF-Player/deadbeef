@@ -1048,7 +1048,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
     if (priv->scrollpos == -1) {
         return; // too early
     }
-    deadbeef->pl_lock ();
     ddb_listview_groupcheck (listview);
 
     int cursor_index = listview->datasource->cursor();
@@ -1076,7 +1075,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
 
     ddb_listview_list_render_subgroup(listview, cr, clip, priv->groups, 0, -priv->scrollpos, cursor_index, 0, -priv->hscrollpos, subgroup_artwork_offset, subgroup_artwork_width, 0);
 
-    deadbeef->pl_unlock ();
     draw_end (&priv->listctx);
     draw_end (&priv->grpctx);
 }
