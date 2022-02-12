@@ -142,6 +142,7 @@ static int artwork_enable_local;
 #endif
 static int missing_artwork;
 static char *nocover_path;
+static int artwork_image_size;
 
 static time_t cache_reset_time;
 static time_t default_reset_time;
@@ -1491,6 +1492,14 @@ _get_fetcher_preferences (void) {
     artwork_enable_wos = deadbeef->conf_get_int ("artwork.enable_wos", 0);
 #endif
     missing_artwork = deadbeef->conf_get_int ("artwork.missing_artwork", 1);
+    artwork_image_size = deadbeef->conf_get_int("artwork.image_size", 256);
+    if (artwork_image_size < 64) {
+        artwork_image_size = 64;
+    }
+    if (artwork_image_size > 2048) {
+        artwork_image_size = 2048;
+    }
+
     deadbeef->conf_lock ();
     if (missing_artwork == 0) {
         free(nocover_path);
@@ -1539,7 +1548,8 @@ artwork_configchanged (void) {
 #endif
         int old_missing_artwork = missing_artwork;
         const char *old_nocover_path = nocover_path;
-        //    int old_scale_towards_longer = scale_towards_longer;
+
+        int old_image_size = artwork_image_size;
 
         _get_fetcher_preferences ();
 
@@ -1565,6 +1575,7 @@ artwork_configchanged (void) {
             || strcmp(old_artwork_filemask, artwork_filemask)
             || strcmp(old_artwork_folders, artwork_folders)
             || cache_did_reset
+            || old_image_size != artwork_image_size
             ) {
 
             /* All artwork is now (including this second) obsolete */
@@ -1718,8 +1729,13 @@ artwork_plugin_stop (void (^completion_block)(void)) {
 }
 
 static int
-_command(int cmd, void (^block)(void)) {
+_command(int cmd, ...) {
     if (cmd == DDB_COMMAND_PLUGIN_ASYNC_STOP) {
+        va_list ap;
+        void (^block)(void);
+        va_start(ap, cmd);
+        block = va_arg(ap, void (^)(void));
+        va_end(ap);
         return artwork_plugin_stop(block);
     }
     return -1;
@@ -1769,6 +1785,7 @@ static const char settings_dlg[] =
 #ifndef ANDROID
     "property \"Cache refresh (hrs)\" spinbtn[0,1000,1] artwork.cache.expiration_time 0;\n"
 #endif
+    "property \"Image size\" spinbtn[64,2048,1] artwork.image_size 256;\n"
 ;
 
 // define plugin interface
@@ -1805,7 +1822,7 @@ ddb_artwork_plugin_t plugin = {
         "3. This notice may not be removed or altered from any source distribution.\n"
     ,
     .plugin.plugin.website = "http://deadbeef.sf.net",
-    .plugin.plugin.command = (int(*)(int cmd, ...))_command,
+    .plugin.plugin.command = _command,
     .plugin.plugin.start = artwork_plugin_start,
     // NOTE: stop is handled asynchronously by the command method with DDB_COMMAND_PLUGIN_ASYNC_STOP type
     .plugin.plugin.configdialog = settings_dlg,

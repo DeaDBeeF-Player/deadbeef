@@ -43,6 +43,7 @@ struct covermanager_s {
     char *default_cover_path;
     GdkPixbuf *default_cover;
     gboolean is_terminating;
+    int image_size;
 };
 
 typedef struct {
@@ -96,10 +97,6 @@ _update_default_cover (covermanager_t *impl) {
         }
 
         impl->default_cover = gdk_pixbuf_new_from_file(path, NULL);
-        if (impl->default_cover == NULL) {
-            uint32_t color = 0xffffffff;
-            impl->default_cover = gdk_pixbuf_new_from_data((guchar *)&color, GDK_COLORSPACE_RGB, FALSE, 8, 1, 1, 4, NULL, NULL);
-        }
     }
 }
 
@@ -107,6 +104,7 @@ static void
 _settings_did_change_for_track(covermanager_t *manager, ddb_playItem_t *track) {
     covermanager_t *impl = manager;
     if (track == NULL) {
+        impl->image_size = deadbeef->conf_get_int("artwork.image_size", 256);
         _update_default_cover (impl);
         gobj_cache_remove_all(impl->cache);
     }
@@ -143,7 +141,7 @@ _load_image_from_cover(covermanager_t *impl, ddb_cover_info_t *cover) {
     }
 
     if (img) {
-        const int max_image_size = 1024; // TODO: needs to be configurable
+        const int max_image_size = impl->image_size;
 
         // downscale
         GtkAllocation size = {
@@ -166,7 +164,9 @@ _load_image_from_cover(covermanager_t *impl, ddb_cover_info_t *cover) {
 
     if (!img) {
         img = impl->default_cover;
-        gobj_ref (img);
+        if (img != NULL) {
+            gobj_ref (img);
+        }
     }
 
     return img;
@@ -304,6 +304,8 @@ covermanager_new(void) {
     }
 
     impl->cache = gobj_cache_new(CACHE_SIZE);
+
+    impl->image_size = deadbeef->conf_get_int("artwork.image_size", 256);
 
     impl->name_tf = deadbeef->tf_compile ("%_path_raw%");
 

@@ -387,9 +387,9 @@ static int _header_get_list_height(DdbListviewHeader *header) {
     return priv->list_height;
 }
 
-static void _header_col_sort (DdbListviewHeader *header, int sort_order, void *user_data) {
+static void _header_col_sort (DdbListviewHeader *header, DdbListviewColumnSortOrder sort_order, void *user_data) {
     DdbListview *listview = DDB_LISTVIEW(g_object_get_data(G_OBJECT(header), "owner"));
-    listview->delegate->col_sort (0, user_data);
+    listview->delegate->col_sort (sort_order, user_data);
     gtk_widget_queue_draw (listview->list);
 }
 
@@ -1048,7 +1048,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
     if (priv->scrollpos == -1) {
         return; // too early
     }
-    deadbeef->pl_lock ();
     ddb_listview_groupcheck (listview);
 
     int cursor_index = listview->datasource->cursor();
@@ -1076,7 +1075,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, GdkRectangle *clip
 
     ddb_listview_list_render_subgroup(listview, cr, clip, priv->groups, 0, -priv->scrollpos, cursor_index, 0, -priv->hscrollpos, subgroup_artwork_offset, subgroup_artwork_width, 0);
 
-    deadbeef->pl_unlock ();
     draw_end (&priv->listctx);
     draw_end (&priv->grpctx);
 }
@@ -2747,7 +2745,7 @@ ddb_listview_col_sort_update (DdbListview *listview) {
     if (deadbeef->conf_get_int ("gtkui.sticky_sort", 0)) {
         DdbListviewPrivate *priv = DDB_LISTVIEW_GET_PRIVATE(listview);
         for (DdbListviewColumn *c = priv->columns; c; c = c->next) {
-            if (c->sort_order) {
+            if (c->sort_order != DdbListviewColumnSortOrderNone) {
                 listview->delegate->col_sort(c->sort_order, c->user_data);
             }
         }
@@ -2905,7 +2903,7 @@ remove_column (DdbListview *listview, DdbListviewColumn **c_ptr) {
     DdbListviewColumn *c = *c_ptr;
     assert (c);
     DdbListviewColumn *next = c->next;
-    if (c->sort_order) {
+    if (c->sort_order != DdbListviewColumnSortOrderNone) {
         // HACK: do nothing on main playlist, refresh search playlist
         listview->delegate->col_sort (0, c->user_data);
     }
@@ -3308,7 +3306,7 @@ ddb_listview_clear_sort (DdbListview *listview) {
     DdbListviewPrivate *priv = DDB_LISTVIEW_GET_PRIVATE(listview);
     DdbListviewColumn *c;
     for (c = priv->columns; c; c = c->next) {
-        c->sort_order = 0;
+        c->sort_order = DdbListviewColumnSortOrderNone;
     }
     gtk_widget_queue_draw (listview->header);
 }

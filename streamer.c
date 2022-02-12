@@ -1820,6 +1820,9 @@ process_output_block (streamblock_t *block, char *bytes, int bytes_available_siz
         decoded_block_t *decoded_block = decoded_blocks_append();
         if (decoded_block != NULL) {
             decoded_block->track = block->track;
+            if (decoded_block->track != NULL) {
+                pl_item_ref (decoded_block->track);
+            }
             decoded_block->last = block->last;
             decoded_block->first = block->first;
         }
@@ -1907,6 +1910,9 @@ process_output_block (streamblock_t *block, char *bytes, int bytes_available_siz
     }
 
     decoded_block->track = block->track;
+    if (decoded_block->track != NULL) {
+        pl_item_ref (decoded_block->track);
+    }
     decoded_block->last = block->last;
     decoded_block->first = block->first;
     decoded_block->total_bytes = decoded_block->remaining_bytes = sz;

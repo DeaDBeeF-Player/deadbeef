@@ -220,7 +220,7 @@ header_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mod
     DdbListviewColumn *c;
     int col_x = -priv->hscrollpos;
     for (c = header->delegate->get_columns(header); c && col_x + c->width < x; col_x += c->width, c = c->next);
-    if (c && c->show_tooltip && x < col_x + c->width - (c->sort_order ? 14 : 4)) {
+    if (c && c->show_tooltip && x < col_x + c->width - (c->sort_order != DdbListviewColumnSortOrderNone ? 14 : 4)) {
         GtkAllocation a;
         gtk_widget_get_allocation(GTK_WIDGET(header), &a);
         set_tooltip (tooltip, c->title, col_x, 0, c->width - 4, a.height);
@@ -259,13 +259,17 @@ static void
 draw_header_fg(DdbListviewHeader *header, cairo_t *cr, DdbListviewColumn *c, GdkColor *clr, int x, int xx, int h) {
     DdbListviewHeaderPrivate *priv = DDB_LISTVIEW_HEADER_GET_PRIVATE(header);
     int text_width = xx - x - 10;
-    if (c->sort_order) {
+    if (c->sort_order != DdbListviewColumnSortOrderNone) {
         int arrow_sz = 10;
         text_width = max(0, text_width - arrow_sz);
 #if GTK_CHECK_VERSION(3,0,0)
-        gtk_render_arrow(gtk_widget_get_style_context(theme_treeview), cr, c->sort_order*G_PI, xx-arrow_sz-5, h/2-arrow_sz/2, arrow_sz);
+        gdouble angle = 0;
+        if (c->sort_order == DdbListviewColumnSortOrderAscending) {
+            angle = G_PI;
+        }
+        gtk_render_arrow(gtk_widget_get_style_context(theme_treeview), cr, angle, xx-arrow_sz-5, h/2-arrow_sz/2, arrow_sz);
 #else
-        int dir = c->sort_order == 1 ? GTK_ARROW_DOWN : GTK_ARROW_UP;
+        int dir = c->sort_order == DdbListviewColumnSortOrderAscending ? GTK_ARROW_DOWN : GTK_ARROW_UP;
         gtk_paint_arrow(GTK_WIDGET(header)->style, GTK_WIDGET(header)->window, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, GTK_WIDGET(header), NULL, dir, TRUE, xx-arrow_sz-5, h/2-arrow_sz/2, arrow_sz, arrow_sz);
 #endif
     }
@@ -563,10 +567,12 @@ ddb_listview_header_button_release_event         (GtkWidget       *widget,
                     if (c && event->x > x + 1 && event->x < x + c->width - 5) {
                         for (DdbListviewColumn *cc = header->delegate->get_columns(header); cc; cc = cc->next) {
                             if (cc != c) {
-                                cc->sort_order = 0;
+                                cc->sort_order = DdbListviewColumnSortOrderNone;
                             }
                         }
-                        c->sort_order = (c->sort_order + 1) % 3;
+                        c->sort_order = c->sort_order == DdbListviewColumnSortOrderDescending
+                            ? DdbListviewColumnSortOrderAscending
+                            : DdbListviewColumnSortOrderDescending;
                         header->delegate->col_sort (header, c->sort_order, c->user_data);
                         gtk_widget_queue_draw (GTK_WIDGET(header));
                     }
