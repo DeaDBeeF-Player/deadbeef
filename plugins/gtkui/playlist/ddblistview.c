@@ -3191,7 +3191,12 @@ build_groups (DdbListview *listview) {
                     if (i == 0) {
                         full_height += height;
                     }
-                    DdbListviewGroup *new_grp = it ? new_group(listview, it, next_title[0] != 0) : NULL;
+                    DdbListviewGroup *new_grp = NULL;
+                    if (it != NULL) {
+                        // ensure that the top-level groups always have titles
+                        int title_visible = i == 0 || next_title[0] != 0;
+                        new_grp = new_group(listview, it, title_visible);
+                    }
                     if (i == make_new_group_offset) {
                         last_group[i]->next = new_grp;
                     }
