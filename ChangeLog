@@ -9,6 +9,7 @@ version 1.9.0
 	Fixed: Paused state was not persisted correctly after force-quitting
 	Fixed: Regression which broke musepack seeking
 	Fixed: Crash when notification artwork could not be found
+	Fixed: Crash when removing tracks from playlist while they're playing
 	Added: Long file seeking support for Opus and FFMPEG
 	Added: HTTPS support for vfs_curl in portable builds, via libmbedtls
 	Added: Design mode for CocoaUI
