@@ -1162,6 +1162,8 @@ pl_common_set_group_format (DdbListview *listview, const char *_format) {
         fmt->bytecode = deadbeef->tf_compile (fmt->format);
     }
 
+    listview->delegate->groups_changed(_format);
+
     ddb_listview_set_group_formats(listview, group_formats);
     ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_LIST);
 }
