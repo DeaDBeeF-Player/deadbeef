@@ -734,6 +734,28 @@ static void
 process_query (ddb_cover_info_t *cover) {
     int islocal = deadbeef->is_local_file (cover->filepath);
 
+    char cache_path[PATH_MAX];
+
+    if (make_cache_path (cover->album, cover->artist, cache_path, sizeof (cache_path)) < 0) {
+        return;
+    }
+
+    struct stat cache_stat;
+    int res = stat (cache_path, &cache_stat);
+    if (!res && cache_stat.st_size != 0) {
+        cover->image_filename = strdup(cache_path);
+        cover->cover_found = 1;
+        return;
+    }
+
+    // Flood control, don't retry missing artwork for an hour unless something changes
+    if (!res && cache_stat.st_mtime + 60*60 > time (NULL)) {
+        int recheck = recheck_missing_artwork (cover->filepath, cache_stat.st_mtime);
+        if (!recheck) {
+            return;
+        }
+    }
+
     if (artwork_enable_local && islocal) {
         char *fname_copy = strdup (cover->filepath);
         if (fname_copy) {
@@ -743,6 +765,7 @@ process_query (ddb_cover_info_t *cover) {
                 DB_vfs_t *plugin = scandir_plug (vfs_fname);
                 if (plugin && !local_image_file (vfs_fname, fname_copy, plugin, cover)) {
                     free (fname_copy);
+                    copy_file(cover->image_filename, cache_path);
                     cover->cover_found = 1;
                     return;
                 }
@@ -751,6 +774,7 @@ process_query (ddb_cover_info_t *cover) {
             /* Search in file directory */
             if (!local_image_file (dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL, cover)) {
                 free (fname_copy);
+                copy_file(cover->image_filename, cache_path);
                 cover->cover_found = 1;
                 return;
             }
@@ -803,29 +827,8 @@ process_query (ddb_cover_info_t *cover) {
         && !artwork_enable_aao
 #endif
         ) {
+        _touch(cache_path);
         return;
-    }
-
-    char cache_path[PATH_MAX];
-
-    if (make_cache_path (cover->album, cover->artist, cache_path, sizeof (cache_path)) < 0) {
-        return;
-    }
-
-    struct stat cache_stat;
-    int res = stat (cache_path, &cache_stat);
-    if (!res && cache_stat.st_size != 0) {
-        cover->image_filename = strdup(cache_path);
-        cover->cover_found = 1;
-        return;
-    }
-
-    // Flood control, don't retry missing artwork for an hour unless something changes
-    if (!res && cache_stat.st_mtime + 60*60 > time (NULL)) {
-        int recheck = recheck_missing_artwork (cover->filepath, cache_stat.st_mtime);
-        if (!recheck) {
-            return;
-        }
     }
 
     /* Web lookups */
