@@ -166,14 +166,7 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
 - (nullable NSImage *)loadImageFromCover:(nonnull ddb_cover_info_t *)cover {
     NSImage *img;
 
-    if (cover != NULL && cover->blob) {
-        NSData *data = [NSData dataWithBytesNoCopy:cover->blob + cover->blob_image_offset
-                                            length:cover->blob_image_size
-                                      freeWhenDone:NO];
-        img = [[NSImage alloc] initWithData:data];
-        data = nil;
-    }
-    if (img == nil && cover && cover->image_filename) {
+    if (cover && cover->image_filename) {
         img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->image_filename]];
     }
 

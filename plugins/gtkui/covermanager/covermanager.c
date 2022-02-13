@@ -130,12 +130,6 @@ static GdkPixbuf *
 _load_image_from_cover(covermanager_t *impl, ddb_cover_info_t *cover) {
     GdkPixbuf *img = NULL;
 
-    if (cover && cover->blob) {
-        GdkPixbufLoader *loader = gdk_pixbuf_loader_new ();
-        gdk_pixbuf_loader_write (loader, (const guchar *)(cover->blob + cover->blob_image_offset), cover->blob_image_size, NULL);
-        img = gdk_pixbuf_loader_get_pixbuf (loader);
-        gdk_pixbuf_loader_close(loader, NULL);
-    }
     if (!img && cover && cover->image_filename) {
         img = gdk_pixbuf_new_from_file(cover->image_filename, NULL);
     }

@@ -22,77 +22,61 @@
 */
 
 #include "artwork.h"
+#include "artwork_internal.h"
 #include "coverinfo.h"
 #include <assert.h>
 #include <stdlib.h>
 
-typedef struct cover_info_s {
-    ddb_cover_info_t info;
-
-    int refc; // Reference count, to allow sending the same cover to multiple callbacks
-
-    // prev/next in the list of all alive cover_info_t objects
-    struct cover_info_s *prev;
-    struct cover_info_s *next;
-} cover_info_t;
-
-static cover_info_t *cover_info_list;
+static ddb_cover_info_t *cover_info_list;
 
 ddb_cover_info_t *
 cover_info_alloc (void) {
-    cover_info_t *info = calloc(1, sizeof (cover_info_t));
+    ddb_cover_info_t *info = calloc(1, sizeof (ddb_cover_info_t));
 
-    info->info._size = sizeof (ddb_cover_info_t);
-    info->refc = 1;
-    info->info.timestamp = time(NULL);
+    info->priv = calloc(1, sizeof (ddb_cover_info_priv_t));
 
-    info->prev = NULL;
+    info->_size = sizeof (ddb_cover_info_t);
+    info->priv->refc = 1;
+    info->priv->timestamp = time(NULL);
+
+    info->priv->prev = NULL;
 
     if (cover_info_list != NULL) {
-        cover_info_list->prev = info;
+        cover_info_list->priv->prev = info;
     }
 
-    info->next = cover_info_list;
+    info->priv->next = cover_info_list;
     cover_info_list = info;
 
-    return &info->info;
+    return info;
 }
 
 void
 cover_info_ref (ddb_cover_info_t *cover) {
-    cover_info_t *info = (cover_info_t *)cover;
-    info->refc++;
+    cover->priv->refc++;
 }
 
 void
 cover_info_release (ddb_cover_info_t *cover) {
-    cover_info_t *info = (cover_info_t *)cover;
-
-    assert (info->refc > 0);
-    info->refc -= 1;
-    if (info->refc != 0) {
+    assert (cover->priv->refc > 0);
+    cover->priv->refc -= 1;
+    if (cover->priv->refc != 0) {
         return;
     }
-    if (cover->type) {
-        free (cover->type);
-    }
-    if (cover->image_filename) {
-        free (cover->image_filename);
-    }
-    if (cover->blob) {
-        free (cover->blob);
-    }
+    free (cover->image_filename);
+    free (cover->priv->blob);
 
     // remove from list
-    if (info->prev) {
-        info->prev->next = info->next;
+    if (cover->priv->prev) {
+        cover->priv->prev->priv->next = cover->priv->next;
     }
     else {
-        cover_info_list = info->next;
+        cover_info_list = cover->priv->next;
     }
-    if (info->next) {
-        info->next->prev = info->prev;
+    if (cover->priv->next) {
+        cover->priv->next->priv->prev = cover->priv->prev;
     }
+    free (cover->priv);
 
     free (cover);
 }
@@ -100,6 +84,6 @@ cover_info_release (ddb_cover_info_t *cover) {
 void
 cover_info_cleanup (void) {
     while (cover_info_list) {
-        cover_info_release(&cover_info_list->info);
+        cover_info_release(cover_info_list);
     }
 }

@@ -454,13 +454,8 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     if (cover->image_filename) {
         image = [[NSImage alloc] initByReferencingFile:[NSString stringWithUTF8String:cover->image_filename]];
     }
-    else if (cover->blob) {
-        NSData *blobData = [NSData dataWithBytes:cover->blob length:cover->blob_size];
-        image = [[NSImage alloc] initWithData:blobData];
-    }
 
     if (image) {
-
         // resize
         CGFloat scale;
         NSSize size = image.size;
@@ -515,7 +510,6 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     ddb_cover_query_t *query = calloc (1, sizeof (ddb_cover_query_t));
     query->_size = sizeof (ddb_cover_query_t);
     query->user_data = (void *)CFBridgingRetain(completionBlock);
-    query->flags = DDB_ARTWORK_FLAG_LOAD_BLOB;
     query->track = track;
     deadbeef->pl_item_ref (track);
     self.artworkPlugin->cover_get(query, cover_get_callback);
