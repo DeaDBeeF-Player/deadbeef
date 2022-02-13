@@ -138,7 +138,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                     }
                     if (img != nil) {
                         NSSize desiredSize = [CoverManager.shared desiredSizeForImageSize:img.size availableSize:availableSize];
-                        imageView.image = [CoverManager.shared createCachedImage:img size:desiredSize];
+                        imageView.image = [CoverManager.shared createScaledImage:img newSize:desiredSize];
                     }
                     else {
                         imageView.image = nil;
@@ -147,7 +147,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
                 if (image != nil) {
                     NSSize desiredSize = [CoverManager.shared desiredSizeForImageSize:image.size availableSize:availableSize];
-                    imageView.image = [CoverManager.shared createCachedImage:image size:desiredSize];
+                    imageView.image = [CoverManager.shared createScaledImage:image newSize:desiredSize];
                 }
             }
 

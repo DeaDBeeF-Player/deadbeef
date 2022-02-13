@@ -34,7 +34,7 @@
 
 - (nullable NSImage *)coverForTrack:(nonnull DB_playItem_t *)track sourceId:(int64_t)sourceId completionBlock:(nonnull void (^) (NSImage * _Nullable img))completionBlock;
 - (nullable NSImage *)coverForTrack:(nonnull DB_playItem_t *)track completionBlock:(nonnull void (^) (NSImage * _Nullable img))completionBlock;
-- (nullable NSImage *)createCachedImage:(NSImage * _Nonnull)image size:(CGSize)size;
+- (nullable NSImage *)createScaledImage:(NSImage * _Nonnull)image newSize:(CGSize)size;
 - (CGSize)desiredSizeForImageSize:(CGSize)imageSize availableSize:(CGSize)availableSize;
 
 @end

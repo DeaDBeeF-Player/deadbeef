@@ -53,6 +53,7 @@ static CoverManager *g_DefaultCoverManager = nil;
 @property (nonatomic) NSString *defaultCoverPath;
 @property (nonatomic,readwrite) NSImage *defaultCover;
 @property (nonatomic) char *name_tf;
+@property (nonatomic) int imageSize;
 
 #if DEBUG_COUNTER
 @property (atomic) int counter;
@@ -98,6 +99,7 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
     if (_artwork_plugin == NULL) {
         return self;
     }
+    self.imageSize = deadbeef->conf_get_int("artwork.image_size", 256);
     [self updateDefaultCover];
 
     _cachedCovers = [NSCache new];
@@ -117,6 +119,7 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
 
 - (void)settingsDidChangeForTrack:(ddb_playItem_t *)track {
     if (track == NULL) {
+        self.imageSize = deadbeef->conf_get_int("artwork.image_size", 256);
         [self updateDefaultCover];
         [self resetCache];
     }
@@ -163,17 +166,31 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
 - (nullable NSImage *)loadImageFromCover:(nonnull ddb_cover_info_t *)cover {
     NSImage *img;
 
-    if (cover && cover->blob) {
+    if (cover != NULL && cover->blob) {
         NSData *data = [NSData dataWithBytesNoCopy:cover->blob + cover->blob_image_offset
                                             length:cover->blob_image_size
                                       freeWhenDone:NO];
         img = [[NSImage alloc] initWithData:data];
         data = nil;
     }
-    if (!img && cover && cover->image_filename) {
+    if (img == nil && cover && cover->image_filename) {
         img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->image_filename]];
     }
-    if (!img) {
+
+    if (img != nil) {
+        const int max_image_size = self.imageSize;
+
+        CGSize size = img.size;
+        if (size.width > max_image_size
+            || size.height > max_image_size) {
+            CGSize newSize = CGSizeMake(max_image_size, max_image_size);
+            newSize = [self desiredSizeForImageSize:size availableSize:newSize];
+
+            img = [self createScaledImage:img newSize:newSize];
+        }
+    }
+
+    if (img == nil) {
         img = self.defaultCover;
     }
     return img;
@@ -300,16 +317,16 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
     [self.cachedCovers removeAllObjects];
 }
 
-- (NSImage *)createCachedImage:(NSImage *)image size:(CGSize)size {
+- (NSImage *)createScaledImage:(NSImage *)image newSize:(CGSize)newSize {
     CGSize originalSize = image.size;
-    if (originalSize.width <= size.width && originalSize.height <= size.height) {
+    if (originalSize.width <= newSize.width && originalSize.height <= newSize.height) {
         return image;
     }
-    NSImage *cachedImage = [[NSImage alloc] initWithSize:size];
+    NSImage *cachedImage = [[NSImage alloc] initWithSize:newSize];
     [cachedImage lockFocus];
-    cachedImage.size = size;
+    cachedImage.size = newSize;
     NSGraphicsContext.currentContext.imageInterpolation = NSImageInterpolationHigh;
-    [image drawInRect:NSMakeRect(0, 0, size.width, size.height) fromRect:CGRectMake(0, 0, originalSize.width, originalSize.height) operation:NSCompositingOperationCopy fraction:1.0];
+    [image drawInRect:NSMakeRect(0, 0, newSize.width, newSize.height) fromRect:CGRectMake(0, 0, originalSize.width, originalSize.height) operation:NSCompositingOperationCopy fraction:1.0];
     [cachedImage unlockFocus];
     return cachedImage;
 }
