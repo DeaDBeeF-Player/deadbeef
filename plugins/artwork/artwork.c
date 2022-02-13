@@ -750,7 +750,7 @@ process_query (ddb_cover_info_t *cover) {
 
     // Flood control, don't retry missing artwork for an hour unless something changes
     if (!res && cache_stat.st_mtime + 60*60 > time (NULL)) {
-        int recheck = recheck_missing_artwork (cover->filepath, cache_stat.st_mtime);
+        int recheck = cache_stat.st_size == 0 || recheck_missing_artwork (cover->filepath, cache_stat.st_mtime);
         if (!recheck) {
             return;
         }
