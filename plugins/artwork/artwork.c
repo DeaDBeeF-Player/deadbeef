@@ -61,7 +61,8 @@
 #include "../../strdupa.h"
 #include "wos.h"
 
-// #define DEBUG_COUNTER 1
+//#define DEBUG_COUNTER 1
+//#define MEASURE_COVER_GET 1
 
 #ifndef DISPATCH_QUEUE_CONCURRENT
 #define DISPATCH_QUEUE_CONCURRENT NULL
@@ -1312,6 +1313,11 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         _groups_register_query(query);
     });
 
+#if MEASURE_COVER_GET
+    struct timeval tm1;
+    gettimeofday (&tm1, NULL);
+#endif
+
     dispatch_async(process_queue, ^{
         if (!query->track) {
             _end_query(query, callback, -1, NULL);
@@ -1365,6 +1371,14 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
 
             dispatch_async (fetch_queue, ^{
                 process_query (cover);
+
+#if MEASURE_COVER_GET
+                struct timeval tm2;
+                gettimeofday (&tm2, NULL);
+                long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
+                const char *uri = deadbeef->pl_find_meta(query->track, ":URI");
+                printf ("cover_get %s took %d ms\n", uri, (int)ms);
+#endif
 
                 // update queue, and notity the caller
                 callback_and_free_squashed (cover, query);
