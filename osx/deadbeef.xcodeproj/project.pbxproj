@@ -756,6 +756,9 @@
 		2D1DC09C1DCB3A1500441A08 /* ddb_mono2stereo.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D1DC09F1DCB3B7500441A08 /* alac_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D1DC09E1DCB3B7500441A08 /* alac_plugin.c */; };
 		2D1E1D9727AD9F07004DEF1D /* buffered_file_writer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D1E1D8527AD9B25004DEF1D /* buffered_file_writer.c */; };
+		2D1E1DCB27B90051004DEF1D /* libavcodec.58.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FC2739B854007AD315 /* libavcodec.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D1E1DCC27B90051004DEF1D /* libavformat.58.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FE2739B854007AD315 /* libavformat.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D1E1DCD27B90051004DEF1D /* libavutil.56.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FD2739B854007AD315 /* libavutil.56.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D1E215724F9826C00E2895D /* MedialibItemDragDropHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1E215524F9826C00E2895D /* MedialibItemDragDropHolder.h */; };
 		2D1E215824F9826C00E2895D /* MedialibItemDragDropHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1E215624F9826C00E2895D /* MedialibItemDragDropHolder.m */; };
 		2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */; };
@@ -4431,6 +4434,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				2D1E1DCB27B90051004DEF1D /* libavcodec.58.dylib in Copy Plugins */,
+				2D1E1DCC27B90051004DEF1D /* libavformat.58.dylib in Copy Plugins */,
+				2D1E1DCD27B90051004DEF1D /* libavutil.56.dylib in Copy Plugins */,
 				2DE77496275E8AFB00890350 /* converter_gtk3.dylib in Copy Plugins */,
 				2DA5AB0625D033AA00947C19 /* libwavpacklib.dylib in Copy Plugins */,
 				2D1BEB962435BE4E003EFD61 /* ddb_soundtouch.dylib in Copy Plugins */,
