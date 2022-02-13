@@ -726,10 +726,10 @@ _touch(const char *path) {
 }
 
 // Behavior:
-// Local cover: path is returned
-// Found in cache: path is returned
-// Embedded cover: !cache_disabled ? save_to_cash&return_path : return blob
-// Web cover: save_to_local ? save_to_local&return_path : ( !cache_disabled ? save_to_cache&return_path : NOP )
+// Found in cache: сache path is returned
+// Local cover: save to cache & return path
+// Embedded cover: save to cache & return blob
+// Web cover: save_to_local ? save_to_local&return_path : save_to_cache&return_path
 static void
 process_query (ddb_cover_info_t *cover) {
     int islocal = deadbeef->is_local_file (cover->filepath);
@@ -788,6 +788,7 @@ process_query (ddb_cover_info_t *cover) {
         // try to load embedded from flac metadata
         trace ("trying to load artwork from Flac tag for %s\n", cover->filepath);
         if (!flac_extract_art (cover)) {
+            write_file(cache_path, cover->blob + cover->blob_image_offset, cover->blob_image_size);
             cover->cover_found = 1;
             return;
         }
@@ -796,6 +797,7 @@ process_query (ddb_cover_info_t *cover) {
         // try to load embedded from id3v2
         trace ("trying to load artwork from id3v2 tag for %s\n", cover->filepath);
         if (!id3_extract_art (cover)) {
+            write_file(cache_path, cover->blob + cover->blob_image_offset, cover->blob_image_size);
             cover->cover_found = 1;
             return;
         }
@@ -803,6 +805,7 @@ process_query (ddb_cover_info_t *cover) {
         // try to load embedded from apev2
         trace ("trying to load artwork from apev2 tag for %s\n", cover->filepath);
         if (!apev2_extract_art (cover)) {
+            write_file(cache_path, cover->blob + cover->blob_image_offset, cover->blob_image_size);
             cover->cover_found = 1;
             return;
         }
@@ -810,6 +813,7 @@ process_query (ddb_cover_info_t *cover) {
         // try to load embedded from mp4
         trace ("trying to load artwork from mp4 tag for %s\n", cover->filepath);
         if (!mp4_extract_art (cover)) {
+            write_file(cache_path, cover->blob + cover->blob_image_offset, cover->blob_image_size);
             cover->cover_found = 1;
             return;
         }
