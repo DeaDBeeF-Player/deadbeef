@@ -164,11 +164,16 @@ static char *track_cache_filename_tf;
 static char *album_cache_filename_tf;
 static char *simplified_album_cache_filename_tf;
 
-// esc_char is needed to prevent using file path separators,
-// e.g. to avoid writing arbitrary files using "../../../filename"
+// Replace illegal file path characters with "-"
 static char
-esc_char (char c) {
-    if (c == '/' || c == '\\') {
+_fix_illegal_char (char c) {
+#ifdef _WIN32
+    static const char chars[] = "<>:\"/\\|?*";
+#else
+    static const char chars[] = ":/";
+#endif
+
+    if (strchr(chars, c)) {
         return '-';
     }
     return c;
@@ -211,6 +216,14 @@ make_track_cache_path (ddb_playItem_t *it, char *outpath, size_t outsize) {
     }
 
     snprintf (outpath, outsize, "%s/%s.jpg", root_path, cache_fname);
+
+    // sanitize
+    char *p = outpath + strlen(root_path) + 1;
+    while (*p) {
+        *p = _fix_illegal_char (*p);
+        p++;
+    }
+
     return 0;
 }
 
@@ -233,7 +246,7 @@ make_album_cache_path (ddb_playItem_t *it, char *outpath, int outsize) {
     // sanitize
     char *p = outpath + strlen(root_path) + 1;
     while (*p) {
-        *p = esc_char (*p);
+        *p = _fix_illegal_char (*p);
         p++;
     }
 
