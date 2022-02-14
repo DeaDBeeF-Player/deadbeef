@@ -59,9 +59,6 @@ typedef struct _DdbListviewGroup {
     int32_t num_items;
     int group_label_visible;
 
-    gboolean hasCachedImage;
-    GdkPixbuf *cachedImage;
-
     struct _DdbListviewGroup *next;
 } DdbListviewGroup;
 

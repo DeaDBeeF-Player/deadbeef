@@ -3038,11 +3038,6 @@ ddb_listview_free_group (DdbListview *listview, DdbListviewGroup *group) {
             listview->datasource->unref (group->head);
         }
 
-        if (group->cachedImage) {
-            g_object_unref(group->cachedImage);
-            group->cachedImage = NULL;
-        }
-
         free (group);
         group = next;
     }
@@ -3255,7 +3250,6 @@ ddb_listview_resize_subgroup (DdbListview *listview, DdbListviewGroup *grp, int 
             ddb_listview_resize_subgroup (listview, grp->subgroups, group_depth + 1, min_height, min_no_artwork_height);
         }
         full_height += calc_group_height (listview, grp, group_depth == priv->artwork_subgroup_level ? min_height : min_no_artwork_height, !grp->next);
-        grp->hasCachedImage = FALSE;
         grp = grp->next;
     }
     return full_height;
@@ -3489,15 +3483,5 @@ ddb_listview_set_subgroup_title_padding(DdbListview *listview, int subgroup_titl
 
 void
 ddb_listview_reset_artwork (DdbListview *listview) {
-    DdbListviewPrivate *priv = DDB_LISTVIEW_GET_PRIVATE(listview);
-
-    for (DdbListviewGroup *grp = priv->groups; grp; grp = grp->next) {
-        grp->hasCachedImage = FALSE;
-        if (grp->cachedImage != NULL) {
-            g_object_unref(grp->cachedImage);
-            grp->cachedImage = NULL;
-        }
-    }
-
     gtk_widget_queue_draw(GTK_WIDGET(listview));
 }

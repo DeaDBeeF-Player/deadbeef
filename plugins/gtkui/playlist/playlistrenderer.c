@@ -265,22 +265,6 @@ cover_draw_cairo (GdkPixbuf *pixbuf, int x, int min_y, int max_y, int width, int
     cairo_restore(cr);
 }
 
-static void
-_grp_cache_image (covermanager_t *cm, DdbListviewGroup *grp, GdkPixbuf *img, GtkAllocation availableSize) {
-    if (grp->cachedImage != NULL) {
-        gobj_unref(grp->cachedImage);
-        grp->cachedImage = NULL;
-    }
-    if (img != NULL) {
-        GtkAllocation imageSize = {0};
-        imageSize.width = gdk_pixbuf_get_width(img);
-        imageSize.height = gdk_pixbuf_get_height(img);
-        GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, imageSize, availableSize);
-        grp->cachedImage = covermanager_create_scaled_image(cm, img, desiredSize);
-    }
-    grp->hasCachedImage = TRUE;
-}
-
 void
 pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *grp, void *user_data, int min_y, int next_y, int x, int y, int width, int height) {
     int art_width = width - ART_PADDING_HORZ * 2;
@@ -297,33 +281,17 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
     covermanager_t *cm = covermanager_shared();
 
     GdkPixbuf *image = NULL;
-    if (grp->hasCachedImage) {
-        image = grp->cachedImage;
-        grp->cachedImage = NULL; // use the result of the previous fetch, then release
-        grp->hasCachedImage = FALSE;
-    }
-    else {
-        GtkAllocation availableSize = {0};
-        availableSize.width = art_width;
-        availableSize.height = art_height;
 
-        deadbeef->pl_item_ref (it);
-        image = covermanager_cover_for_track(cm, it, 0, ^(GdkPixbuf *img) { // img only valid in this block
-            DdbListviewGroup *grp = ddb_listview_get_group_by_head(listview, it);
+    deadbeef->pl_item_ref (it);
+    image = covermanager_cover_for_track(cm, it, 0, ^(GdkPixbuf *img) { // img only valid in this block
+        deadbeef->pl_item_unref (it);
 
-            if (grp != NULL) {
-                _grp_cache_image (cm, grp, img, availableSize); // guarantee the image is available on next draw
-            }
-            deadbeef->pl_item_unref (it);
-
-            gtk_widget_queue_draw(GTK_WIDGET(listview));
-            // FIXME: redraw only the group rect
-            //            [lv.contentView drawGroup:grp];
-        });
-        if (image != NULL) { // completion block won't be called
-            deadbeef->pl_item_unref (it);
-            it = NULL;
-        }
+        gtk_widget_queue_draw(GTK_WIDGET(listview));
+        // FIXME: redraw only the group rect
+    });
+    if (image != NULL) { // completion block won't be called
+        deadbeef->pl_item_unref (it);
+        it = NULL;
     }
     if (image == NULL) {
         // FIXME: the problem here is that if the cover is not found (yet) -- it won't draw anything, but the rect is already invalidated, and will come out as background color
@@ -342,28 +310,22 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
         ypos = max_y - art_width - ART_PADDING_VERT;
     }
 
-    if (!grp->hasCachedImage) {
-        GtkAllocation size = {0};
-        size.width = gdk_pixbuf_get_width(image);
-        size.height = gdk_pixbuf_get_height(image);
-        GtkAllocation availableSize = {0};
-        availableSize.width = art_width;
-        availableSize.height = art_height;
-        GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, size, availableSize);
+    GtkAllocation size = {0};
+    size.width = gdk_pixbuf_get_width(image);
+    size.height = gdk_pixbuf_get_height(image);
+    GtkAllocation availableSize = {0};
+    availableSize.width = art_width;
+    availableSize.height = art_height;
+    GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, size, availableSize);
 
-        // center horizontally
-        if (size.width < size.height) {
-            art_x += art_width/2 - desiredSize.width/2;
-        }
-
-        if (grp->cachedImage != NULL) {
-            gobj_unref(grp->cachedImage);
-        }
-        grp->cachedImage = covermanager_create_scaled_image(cm, image, desiredSize);
-        grp->hasCachedImage = TRUE;
+    // center horizontally
+    if (size.width < size.height) {
+        art_x += art_width/2 - desiredSize.width/2;
     }
 
-    cover_draw_cairo(grp->cachedImage, art_x, min_y, next_y, art_width, art_height, cr, CAIRO_FILTER_FAST);
+    GdkPixbuf *scaled_image = covermanager_create_scaled_image(cm, image, desiredSize);
+    cover_draw_cairo(scaled_image, art_x, min_y, next_y, art_width, art_height, cr, CAIRO_FILTER_FAST);
+    g_object_unref(scaled_image);
 
     gobj_unref(image);
     image = NULL;
