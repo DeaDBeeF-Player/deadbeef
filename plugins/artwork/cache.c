@@ -25,9 +25,6 @@
     #include "../../config.h"
 #endif
 #include "../../deadbeef.h"
-#ifdef __APPLE__
-#include "applesupport.h"
-#endif
 #include "artwork_internal.h"
 #include <dirent.h>
 #include <dispatch/dispatch.h>
@@ -51,18 +48,17 @@ static int32_t _file_expiration_time; // Seconds since the file creation, until 
 
 int
 make_cache_root_path (char *path, const size_t size) {
+    const char *cache_root_path = deadbeef->get_system_dir(DDB_SYS_DIR_CACHE);
+    size_t res;
 #ifdef __APPLE__
-    apple_get_artwork_cache_path(path, size);
-    size_t remaining_size = size - strlen(path);
-    strncat(path, "/Deadbeef/Covers", remaining_size-1);
+    res = snprintf(path, size, "%s/Deadbeef/Covers", cache_root_path);
 #else
-    const char *xdg_cache = getenv ("XDG_CACHE_HOME");
-    const char *cache_root = xdg_cache ? xdg_cache : getenv ("HOME");
-    if (snprintf (path, size, xdg_cache ? "%s/deadbeef/covers2" : "%s/.cache/deadbeef/covers2", cache_root) >= size) {
-        trace ("Cache root path truncated at %d bytes\n", (int)size);
+    res = snprintf(path, size, "%s/deadbeef/covers2", cache_root_path);
+#endif
+    if (res >= size) {
+        trace ("artwork: cache root path truncated at %d bytes\n", (int)size);
         return -1;
     }
-#endif
     return 0;
 }
 
