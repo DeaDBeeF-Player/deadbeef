@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2021 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2022 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -144,6 +144,7 @@ static int artwork_enable_local;
 static int missing_artwork;
 static char *nocover_path;
 static int artwork_image_size;
+static int simplified_cache;
 
 static time_t cache_reset_time;
 static time_t default_reset_time;
@@ -159,6 +160,9 @@ static char *artist_tf;
 static char *title_tf;
 static char *albumartist_tf;
 static char *query_compare_tf;
+static char *track_cache_filename_tf;
+static char *album_cache_filename_tf;
+static char *simplified_album_cache_filename_tf;
 
 // esc_char is needed to prevent using file path separators,
 // e.g. to avoid writing arbitrary files using "../../../filename"
@@ -171,22 +175,60 @@ esc_char (char c) {
 }
 
 static int
-make_cache_path (const char *album, const char *artist, char *outpath, int outsize) {
-    outpath[0] = '\0';
+make_track_cache_filename (ddb_playItem_t *it, char *outpath, size_t outsize) {
+    ddb_tf_context_t ctx = {
+        ._size = sizeof (ddb_tf_context_t),
+        .it = it,
+        .flags = DDB_TF_CONTEXT_NO_DYNAMIC,
+    };
 
-    if (!album || !*album) {
-        return -1;
-    }
-    if (!artist || !*artist) {
-        return -1;
-    }
+    return deadbeef->tf_eval (&ctx, track_cache_filename_tf, outpath, (int)outsize);
+}
+
+static int
+make_album_cache_filename (ddb_playItem_t *it, char *outpath, size_t outsize) {
+    ddb_tf_context_t ctx = {
+        ._size = sizeof (ddb_tf_context_t),
+        .it = it,
+        .flags = DDB_TF_CONTEXT_NO_DYNAMIC,
+    };
+
+    return deadbeef->tf_eval (&ctx, simplified_cache ? simplified_album_cache_filename_tf : album_cache_filename_tf, outpath, (int)outsize);
+}
+
+static int
+make_track_cache_path (ddb_playItem_t *it, char *outpath, size_t outsize) {
+    outpath[0] = '\0';
 
     char root_path[PATH_MAX];
     if (make_cache_root_path (root_path, sizeof(root_path)) < 0) {
         return -1;
     }
 
-    snprintf(outpath, outsize, "%s/%s - %s.jpg", root_path, artist, album);
+    char cache_fname[PATH_MAX];
+    if (make_track_cache_filename(it, cache_fname, sizeof (cache_fname)) < 0) {
+        return -1;
+    }
+
+    snprintf (outpath, outsize, "%s/%s.jpg", root_path, cache_fname);
+    return 0;
+}
+
+static int
+make_album_cache_path (ddb_playItem_t *it, char *outpath, int outsize) {
+    outpath[0] = '\0';
+
+    char root_path[PATH_MAX];
+    if (make_cache_root_path (root_path, sizeof(root_path)) < 0) {
+        return -1;
+    }
+
+    char cache_fname[PATH_MAX];
+    if (make_album_cache_filename(it, cache_fname, sizeof (cache_fname)) < 0) {
+        return -1;
+    }
+
+    snprintf (outpath, outsize, "%s/%s.jpg", root_path, cache_fname);
 
     // sanitize
     char *p = outpath + strlen(root_path) + 1;
@@ -756,17 +798,28 @@ static void
 process_query (ddb_cover_info_t *cover) {
     int islocal = deadbeef->is_local_file (cover->priv->filepath);
 
-    char cache_path[PATH_MAX];
+    struct stat cache_stat;
 
-    if (make_cache_path (cover->priv->album, cover->priv->artist, cache_path, sizeof (cache_path)) < 0) {
-        return;
+    int res;
+    if (!simplified_cache && cover->priv->track_cache_path[0]) {
+        res = stat (cover->priv->track_cache_path, &cache_stat);
+        if (!res && cache_stat.st_size != 0) {
+            cover->image_filename = strdup(cover->priv->track_cache_path);
+            cover->cover_found = 1;
+            return;
+        }
     }
 
-    struct stat cache_stat;
-    int res = stat (cache_path, &cache_stat);
-    if (!res && cache_stat.st_size != 0) {
-        cover->image_filename = strdup(cache_path);
-        cover->cover_found = 1;
+    if (cover->priv->album_cache_path[0]) {
+        res = stat (cover->priv->album_cache_path, &cache_stat);
+        if (!res && cache_stat.st_size != 0) {
+            cover->image_filename = strdup(cover->priv->album_cache_path);
+            cover->cover_found = 1;
+            return;
+        }
+    }
+    else {
+        trace ("artwork: undefined album cache path\n");
         return;
     }
 
@@ -787,7 +840,7 @@ process_query (ddb_cover_info_t *cover) {
                 DB_vfs_t *plugin = scandir_plug (vfs_fname);
                 if (plugin && !local_image_file (vfs_fname, fname_copy, plugin, cover)) {
                     free (fname_copy);
-                    copy_file(cover->image_filename, cache_path);
+                    copy_file(cover->image_filename, cover->priv->album_cache_path);
                     cover->cover_found = 1;
                     return;
                 }
@@ -796,7 +849,7 @@ process_query (ddb_cover_info_t *cover) {
             /* Search in file directory */
             if (!local_image_file (dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL, cover)) {
                 free (fname_copy);
-                copy_file(cover->image_filename, cache_path);
+                copy_file(cover->image_filename, cover->priv->album_cache_path);
                 cover->cover_found = 1;
                 return;
             }
@@ -810,7 +863,7 @@ process_query (ddb_cover_info_t *cover) {
         // try to load embedded from flac metadata
         trace ("trying to load artwork from Flac tag for %s\n", cover->priv->filepath);
         if (!flac_extract_art (cover)) {
-            _consume_blob (cover, cache_path);
+            _consume_blob (cover, simplified_cache ? cover->priv->album_cache_path : cover->priv->track_cache_path);
             cover->cover_found = 1;
             return;
         }
@@ -819,7 +872,7 @@ process_query (ddb_cover_info_t *cover) {
         // try to load embedded from id3v2
         trace ("trying to load artwork from id3v2 tag for %s\n", cover->priv->filepath);
         if (!id3_extract_art (cover)) {
-            _consume_blob (cover, cache_path);
+            _consume_blob (cover, simplified_cache ? cover->priv->album_cache_path : cover->priv->track_cache_path);
             cover->cover_found = 1;
             return;
         }
@@ -827,7 +880,7 @@ process_query (ddb_cover_info_t *cover) {
         // try to load embedded from apev2
         trace ("trying to load artwork from apev2 tag for %s\n", cover->priv->filepath);
         if (!apev2_extract_art (cover)) {
-            _consume_blob (cover, cache_path);
+            _consume_blob (cover, simplified_cache ? cover->priv->album_cache_path : cover->priv->track_cache_path);
             cover->cover_found = 1;
             return;
         }
@@ -835,7 +888,7 @@ process_query (ddb_cover_info_t *cover) {
         // try to load embedded from mp4
         trace ("trying to load artwork from mp4 tag for %s\n", cover->priv->filepath);
         if (!mp4_extract_art (cover)) {
-            _consume_blob (cover, cache_path);
+            _consume_blob (cover, simplified_cache ? cover->priv->album_cache_path : cover->priv->track_cache_path);
             cover->cover_found = 1;
             return;
         }
@@ -853,7 +906,7 @@ process_query (ddb_cover_info_t *cover) {
         && !artwork_enable_aao
 #endif
         ) {
-        _touch(cache_path);
+        _touch(cover->priv->album_cache_path);
         return;
     }
 
@@ -862,8 +915,8 @@ process_query (ddb_cover_info_t *cover) {
 
     // don't attempt to load AY covers from regular music services
     if (artwork_enable_wos && strlen (cover->priv->filepath) > 3 && !strcasecmp (cover->priv->filepath + strlen (cover->priv->filepath) - 3, ".ay")) {
-        if (!fetch_from_wos (cover->priv->title, cache_path)) {
-            cover->image_filename = strdup(cache_path);
+        if (!fetch_from_wos (cover->priv->title, simplified_cache ? cover->priv->album_cache_path : cover->priv->track_cache_path)) {
+            cover->image_filename = strdup(simplified_cache ? cover->priv->album_cache_path : cover->priv->track_cache_path);
             res = 1;
         }
         if (errno == ECONNABORTED) {
@@ -871,14 +924,14 @@ process_query (ddb_cover_info_t *cover) {
         }
     }
     else {
-        res = web_lookups (cache_path, cover);
+        res = web_lookups (cover->priv->album_cache_path, cover);
     }
     if (res < 0) {
         /* Try stripping parenthesised text off the end of the album name */
         char *p = strpbrk (cover->priv->album, "([");
         if (p) {
             *p = '\0';
-            res = web_lookups (cache_path, cover);
+            res = web_lookups (cover->priv->album_cache_path, cover);
             *p = '(';
         }
     }
@@ -921,7 +974,7 @@ process_query (ddb_cover_info_t *cover) {
         return;
     }
     else {
-        _touch(cache_path);
+        _touch(cover->priv->album_cache_path);
     }
 #endif
 }
@@ -1020,6 +1073,16 @@ _setup_tf_once() {
         }
         if (!query_compare_tf) {
             query_compare_tf = deadbeef->tf_compile ("$if($and(%title%,%artist%,%album%),%track number% - %title% - %artist% - %album%)");
+        }
+        if (!track_cache_filename_tf) {
+            track_cache_filename_tf = deadbeef->tf_compile ("$if2([%album% - %artist% - %title%],[$directory(%path%,2)-]$directory(%path%)-%filename%)");
+        }
+        if (!album_cache_filename_tf) {
+            album_cache_filename_tf = deadbeef->tf_compile("$if2([[$directory(%path%,2)-]$directory(%path%)-%album% - %artist%],[$directory(%path%,2)-]$directory(%path%)-%filename%)");
+        }
+        if (!simplified_album_cache_filename_tf) {
+            // This is to stay compatible with simple (but ambiguous) cache filename scheme
+            simplified_album_cache_filename_tf = deadbeef->tf_compile("$if2([%album% - %artist%],[$directory(%path%,2)-]$directory(%path%)-%filename%)");
         }
     });
 }
@@ -1326,6 +1389,14 @@ _init_cover_metadata(ddb_cover_info_t *cover, ddb_playItem_t *track) {
             cover->priv->is_compilation = 1;
         }
     }
+
+    if (!simplified_cache) {
+        make_album_cache_path(track, cover->priv->album_cache_path, sizeof(cover->priv->album_cache_path));
+        make_track_cache_path(track, cover->priv->track_cache_path, sizeof (cover->priv->track_cache_path));
+    }
+    else {
+        make_album_cache_path(track, cover->priv->album_cache_path, sizeof(cover->priv->album_cache_path));
+    }
 }
 
 #pragma mark - API entry points
@@ -1543,6 +1614,8 @@ _get_fetcher_preferences (void) {
         artwork_image_size = 2048;
     }
 
+    simplified_cache = deadbeef->conf_get_int ("artwork.cache.simplified", 0);
+
     deadbeef->conf_lock ();
     if (missing_artwork == 0) {
         free(nocover_path);
@@ -1593,6 +1666,7 @@ artwork_configchanged (void) {
         const char *old_nocover_path = nocover_path;
 
         int old_image_size = artwork_image_size;
+        int old_simplified_cache = simplified_cache;
 
         _get_fetcher_preferences ();
 
@@ -1619,6 +1693,7 @@ artwork_configchanged (void) {
             || strcmp(old_artwork_folders, artwork_folders)
             || cache_did_reset
             || old_image_size != artwork_image_size
+            || old_simplified_cache != simplified_cache
             ) {
 
             /* All artwork is now (including this second) obsolete */
@@ -1668,13 +1743,15 @@ invalidate_playitem_cache (DB_plugin_action_t *action, ddb_action_context_t ctx)
                     cover_cache_remove (cover);
                 }
 
-                char cache_path[PATH_MAX];
-                if (!make_cache_path(cover->priv->album, cover->priv->artist, cache_path, sizeof(cache_path))) {
-                    trace ("Expire %s from cache\n", cache_path);
-                    remove_cache_item (cache_path);
+                if (cover->priv->album_cache_path[0]) {
+                    remove_cache_item (cover->priv->album_cache_path);
+                    (void)unlink(cover->priv->album_cache_path);
+                }
+                if (cover->priv->track_cache_path[0]) {
+                    remove_cache_item (cover->priv->track_cache_path);
+                    (void)unlink(cover->priv->track_cache_path);
                 }
 
-                (void)unlink(cache_path);
                 cover_info_release(cover);
 
                 _notify_listeners(DDB_ARTWORK_SETTINGS_DID_CHANGE, it);
@@ -1763,6 +1840,21 @@ artwork_plugin_stop (void (^completion_block)(void)) {
             query_compare_tf = NULL;
         }
 
+        if (track_cache_filename_tf) {
+            deadbeef->tf_free (track_cache_filename_tf);
+            track_cache_filename_tf = NULL;
+        }
+
+        if (album_cache_filename_tf) {
+            deadbeef->tf_free (album_cache_filename_tf);
+            album_cache_filename_tf = NULL;
+        }
+
+        if (simplified_album_cache_filename_tf) {
+            deadbeef->tf_free (simplified_album_cache_filename_tf);
+            simplified_album_cache_filename_tf = NULL;
+        }
+
         dispatch_release(sync_queue);
         sync_queue = NULL;
         completion_block();
@@ -1828,6 +1920,7 @@ static const char settings_dlg[] =
 #ifndef ANDROID
     "property \"Cache refresh (hrs)\" spinbtn[0,1000,1] artwork.cache.expiration_time 0;\n"
 #endif
+    "property \"Simplified cache file names\" checkbox artwork.cache.simplified 0;\n"
     "property \"Image size\" spinbtn[64,2048,1] artwork.image_size 256;\n"
 ;
 

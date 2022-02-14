@@ -131,6 +131,7 @@ _load_image_from_cover(covermanager_t *impl, ddb_cover_info_t *cover) {
     GdkPixbuf *img = NULL;
 
     if (!img && cover && cover->image_filename) {
+        // FIXME: this fails to load a PNG, if the file has extension JPG
         img = gdk_pixbuf_new_from_file(cover->image_filename, NULL);
     }
 

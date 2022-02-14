@@ -41,6 +41,9 @@ struct ddb_cover_info_priv_s {
     char title[1000];
     int is_compilation;
 
+    char track_cache_path[PATH_MAX];
+    char album_cache_path[PATH_MAX];
+
     char *blob; // A blob with the image data, or NULL
     uint64_t blob_size; // Size of the blob
     uint64_t blob_image_offset; // offset where the image data starts in the blob
