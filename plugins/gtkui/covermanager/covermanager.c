@@ -388,6 +388,7 @@ covermanager_free (covermanager_t *impl) {
 GdkPixbuf *
 covermanager_cover_for_track(covermanager_t *impl, DB_playItem_t *track, int64_t source_id, covermanager_completion_block_t completion_block) {
     if (!impl->plugin) {
+        completion_block(NULL);
         return NULL;
     }
 
