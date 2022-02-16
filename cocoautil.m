@@ -25,13 +25,13 @@
 #import <Foundation/Foundation.h>
 
 int
-cocoautil_get_resources_path (char *s, int size) {
+cocoautil_get_resources_path (char *s, size_t size) {
     strlcpy (s, NSBundle.mainBundle.resourcePath.UTF8String, size);
     return 0;
 }
 
 int
-cocoautil_get_plugins_path (char *s, int size) {
+cocoautil_get_plugins_path (char *s, size_t size) {
     strlcpy (s, NSBundle.mainBundle.builtInPlugInsPath.UTF8String, size);
     return 0;
 }
@@ -42,7 +42,7 @@ cocoautil_backtrace (void) {
 }
 
 int
-cocoautil_get_library_path (char *s, int size) {
+cocoautil_get_library_path (char *s, size_t size) {
     *s = 0;
 
     NSArray<NSString *> *paths = NSSearchPathForDirectoriesInDomains (NSLibraryDirectory, NSUserDomainMask, YES);
@@ -54,7 +54,7 @@ cocoautil_get_library_path (char *s, int size) {
 }
 
 int
-cocoautil_get_application_support_path (char *s, int size) {
+cocoautil_get_application_support_path (char *s, size_t size) {
     *s = 0;
 
     NSArray<NSString *> *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
@@ -63,4 +63,13 @@ cocoautil_get_application_support_path (char *s, int size) {
     }
     strlcpy (s, paths.firstObject.UTF8String, size);
     return 0;
+}
+
+void
+cocoautil_get_cache_path(char *buffer, size_t size) {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *cacheDirectory = [paths objectAtIndex:0];
+    const char *cacheDirectoryCString = cacheDirectory.UTF8String;
+    *buffer = 0;
+    strncat (buffer, cacheDirectoryCString, size-1);
 }

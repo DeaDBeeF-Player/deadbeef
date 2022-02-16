@@ -24,7 +24,6 @@
 #ifndef __ARTWORK_H
 #define __ARTWORK_H
 
-#include <limits.h>
 #include <stdint.h>
 #include <time.h>
 #include "../../deadbeef.h"
@@ -34,23 +33,9 @@
 
 /// The flags below can be used in the `flags` member of the `ddb_cover_query_t` structure,
 /// and can be OR'ed together.
-///
-/// Example usage: `DDB_ARTWORK_FLAG_NO_FILENAME | DDB_ARTWORK_FLAG_LOAD_BLOB`
-/// This indicates that all results must be loaded into memory, and returned as blob.
-///
-/// Another example: `DDB_ARTWORK_FLAG_LOAD_BLOB`
-/// This indicates that both blob and filename must be returned.
-/// However, in some cases filenames are not available, e.g. when loading from tags.
-/// In this case filename will be set to NULL.
 enum {
-    /// Tells that filenames should not be returned
-    DDB_ARTWORK_FLAG_NO_FILENAME = (1<<0),
-
-    /// Returned artwork can be a blob, i.e. a memory block - that is, entire cover image in memory
-    DDB_ARTWORK_FLAG_LOAD_BLOB = (1<<1),
-
     /// Loading of the cover was cancelled, and result should be ignored
-    DDB_ARTWORK_FLAG_CANCELLED = (1<<2),
+    DDB_ARTWORK_FLAG_CANCELLED = (1<<0),
 };
 
 /// This structure needs to be passed to cover_get.
@@ -62,10 +47,11 @@ typedef struct ddb_cover_query_s {
     // Arbitrary user-defined pointer
     void *user_data;
 
-    /// DDB_ARTWORK_FLAG_*; When 0 is passed, it will use the global settings.
-    /// By default, it means that the files can be stored in disk cache,
-    /// and returned result is always a filename.
+    /// A combination of DDB_ARTWORK_FLAG_* flags
+    /// Pass 0 here.
+    /// The DDB_ARTWORK_FLAG_CANCELLED flag may be added after the query was processed.
     uint32_t flags;
+
     /// The track to load artwork for
     ddb_playItem_t *track;
 
@@ -73,32 +59,19 @@ typedef struct ddb_cover_query_s {
     int64_t source_id;
 } ddb_cover_query_t;
 
+typedef struct ddb_cover_info_priv_s ddb_cover_info_priv_t;
+
 /// This structure is passed to the callback, when the artwork query has been processed.
 /// It doesn't need to be freed by the caller
 typedef struct ddb_cover_info_s {
     /// Size of this struct
     size_t _size;
 
-    // query info
-    time_t timestamp; // Last time when the info was used last time
-    char filepath[PATH_MAX];
-    char album[1000];
-    char artist[1000];
-    char title[1000];
-    int is_compilation;
+    ddb_cover_info_priv_t *priv;
 
     int cover_found; // set to 1 if the cover was found
 
-    char *type; // A type of image, e.g. "front" or "back" (can be NULL)
-
     char *image_filename; // A name of file with the image
-
-    char *blob; // A blob with the image data, or NULL
-    uint64_t blob_size; // Size of the blob
-    uint64_t blob_image_offset; // offset where the image data starts in the blob
-    uint64_t blob_image_size; // size of the image at offset
-
-    struct ddb_cover_info_s *next; // The next image in the chain, or NULL
 } ddb_cover_info_t;
 
 /// The `error` is 0 on success, or negative value on failure.

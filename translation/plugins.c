@@ -45,6 +45,10 @@ _("Search masks (; separated)");
 _("Search folders (; separated)");
 // xgettext:no-c-format
 _("Cache refresh (hrs)");
+// xgettext:no-c-format
+_("Simplified cache file names");
+// xgettext:no-c-format
+_("Image size");
 // plugins/cdda/cdda.c
 // xgettext:no-c-format
 _("CD drive to load");

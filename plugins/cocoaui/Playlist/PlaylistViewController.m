@@ -975,7 +975,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             if (grp != nil) {
                 if (img != nil) {
                     NSSize desiredSize = [CoverManager.shared desiredSizeForImageSize:img.size availableSize:availableSize];
-                    grp->cachedImage = [CoverManager.shared createCachedImage:img size:desiredSize];
+                    grp->cachedImage = [CoverManager.shared createScaledImage:img newSize:desiredSize];
                 }
                 else {
                     grp->cachedImage = nil;
@@ -1018,7 +1018,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     drawRect = NSMakeRect(art_x, ypos, drawSize.width, drawSize.height);
 
     if (!grp->cachedImage) {
-        grp->cachedImage = [CoverManager.shared createCachedImage:image size:desiredSize];
+        grp->cachedImage = [CoverManager.shared createScaledImage:image newSize:desiredSize];
         grp->hasCachedImage = YES;
     }
 

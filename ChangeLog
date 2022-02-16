@@ -11,6 +11,8 @@ version 1.9.0
 	Fixed: Crash when notification artwork could not be found
 	Fixed: Poor performance when saving playlist and configuration files
 	Fixed: sndfile not opening files because of uninitialized memory access bug
+	Fixed: Crash when removing tracks from playlist while they're playing
+	Fixed: Rendering group titles with blank text
 	Added: Long file seeking support for Opus and FFMPEG
 	Added: HTTPS support for vfs_curl in portable builds, via libmbedtls
 	Added: Design mode for CocoaUI

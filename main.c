@@ -1216,6 +1216,9 @@ main (int argc, char *argv[]) {
     }
     mkdir (confdir, 0755);
 
+#if __APPLE__
+    cocoautil_get_cache_path (dbcachedir, sizeof (dbcachedir));
+#else
     // Get cache directory
     if (portable_full) {
         if (snprintf (dbcachedir, sizeof (dbcachedir), "%s/cache", dbconfdir) > (int)sizeof (dbcachedir)) {
@@ -1238,6 +1241,7 @@ main (int argc, char *argv[]) {
             }
         }
     }
+#endif
 
     // Get runtime directory
     const char *xdg_runtime = getenv (RUNTIMEDIR);

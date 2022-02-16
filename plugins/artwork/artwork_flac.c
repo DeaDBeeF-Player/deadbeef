@@ -63,7 +63,7 @@ static FLAC__IOCallbacks flac_iocb = {
 
 int
 flac_extract_art (ddb_cover_info_t *cover) {
-    if (!strcasestr (cover->filepath, ".flac") && !strcasestr (cover->filepath, ".oga")) {
+    if (!strcasestr (cover->priv->filepath, ".flac") && !strcasestr (cover->priv->filepath, ".oga")) {
         return -1;
     }
     int err = -1;
@@ -75,9 +75,9 @@ flac_extract_art (ddb_cover_info_t *cover) {
         return -1;
     }
 
-    file = deadbeef->fopen (cover->filepath);
+    file = deadbeef->fopen (cover->priv->filepath);
     if (!file) {
-        trace ("artwork: failed to open %s\n", cover->filepath);
+        trace ("artwork: failed to open %s\n", cover->priv->filepath);
         goto error;
     }
 
@@ -89,7 +89,7 @@ flac_extract_art (ddb_cover_info_t *cover) {
 #endif
     deadbeef->fclose (file);
     if (!res) {
-        trace ("artwork: failed to read metadata from flac: %s\n", cover->filepath);
+        trace ("artwork: failed to read metadata from flac: %s\n", cover->priv->filepath);
         goto error;
     }
 
@@ -107,17 +107,17 @@ flac_extract_art (ddb_cover_info_t *cover) {
     } while (FLAC__metadata_iterator_next (iterator) && 0 == picture);
 
     if (!picture) {
-        trace ("%s doesn't have an embedded cover\n", cover->filepath);
+        trace ("%s doesn't have an embedded cover\n", cover->priv->filepath);
         goto error;
     }
 
     FLAC__StreamMetadata_Picture *pic = &picture->data.picture;
     if (pic && pic->data_length > 0) {
         trace ("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
-        cover->blob = malloc (pic->data_length);
-        memcpy (cover->blob, pic->data, pic->data_length);
-        cover->blob_size = pic->data_length;
-        cover->blob_image_size = pic->data_length;
+        cover->priv->blob = malloc (pic->data_length);
+        memcpy (cover->priv->blob, pic->data, pic->data_length);
+        cover->priv->blob_size = pic->data_length;
+        cover->priv->blob_image_size = pic->data_length;
         err = 0;
     }
 error:

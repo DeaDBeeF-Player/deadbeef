@@ -756,6 +756,9 @@
 		2D1DC09C1DCB3A1500441A08 /* ddb_mono2stereo.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D1DC09F1DCB3B7500441A08 /* alac_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D1DC09E1DCB3B7500441A08 /* alac_plugin.c */; };
 		2D1E1D9727AD9F07004DEF1D /* buffered_file_writer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D1E1D8527AD9B25004DEF1D /* buffered_file_writer.c */; };
+		2D1E1DCB27B90051004DEF1D /* libavcodec.58.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FC2739B854007AD315 /* libavcodec.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D1E1DCC27B90051004DEF1D /* libavformat.58.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FE2739B854007AD315 /* libavformat.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D1E1DCD27B90051004DEF1D /* libavutil.56.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FD2739B854007AD315 /* libavutil.56.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D1E215724F9826C00E2895D /* MedialibItemDragDropHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1E215524F9826C00E2895D /* MedialibItemDragDropHolder.h */; };
 		2D1E215824F9826C00E2895D /* MedialibItemDragDropHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1E215624F9826C00E2895D /* MedialibItemDragDropHolder.m */; };
 		2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */; };
@@ -2464,7 +2467,6 @@
 		2DD81CFC25152DC3008C716C /* noartwork.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DD81C3125152D86008C716C /* noartwork.png */; };
 		2DD81CFD25152DC5008C716C /* buffering_16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DD81C3325152D86008C716C /* buffering_16.png */; };
 		2DD877A31C370C7100CC94FB /* ferror68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD877A21C370C7100CC94FB /* ferror68.c */; };
-		2DD9AEC1276CB79F00A5806A /* applesupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9AEC0276CB79F00A5806A /* applesupport.m */; };
 		2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDBA24B23E5E66D00051320 /* PlaylistContentView.h */; };
 		2DDBA24E23E5E66D00051320 /* PlaylistContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDBA24C23E5E66D00051320 /* PlaylistContentView.m */; };
 		2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDBA25E23E5EA3800051320 /* PlaylistLocalDragDropHolder.h */; };
@@ -4431,6 +4433,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				2D1E1DCB27B90051004DEF1D /* libavcodec.58.dylib in Copy Plugins */,
+				2D1E1DCC27B90051004DEF1D /* libavformat.58.dylib in Copy Plugins */,
+				2D1E1DCD27B90051004DEF1D /* libavutil.56.dylib in Copy Plugins */,
 				2DE77496275E8AFB00890350 /* converter_gtk3.dylib in Copy Plugins */,
 				2DA5AB0625D033AA00947C19 /* libwavpacklib.dylib in Copy Plugins */,
 				2D1BEB962435BE4E003EFD61 /* ddb_soundtouch.dylib in Copy Plugins */,
@@ -6769,8 +6774,6 @@
 		2DD81C3125152D86008C716C /* noartwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noartwork.png; sourceTree = "<group>"; };
 		2DD81C3325152D86008C716C /* buffering_16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buffering_16.png; sourceTree = "<group>"; };
 		2DD877A21C370C7100CC94FB /* ferror68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ferror68.c; sourceTree = "<group>"; };
-		2DD9AEC0276CB79F00A5806A /* applesupport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = applesupport.m; sourceTree = "<group>"; };
-		2DD9AEC2276CB7AD00A5806A /* applesupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = applesupport.h; sourceTree = "<group>"; };
 		2DD9EF0419A5089F00189344 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoautil.h; sourceTree = "<group>"; };
 		2DD9EF0519A5089F00189344 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoautil.m; sourceTree = "<group>"; };
 		2DDBA24B23E5E66D00051320 /* PlaylistContentView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistContentView.h; sourceTree = "<group>"; };
@@ -9549,8 +9552,6 @@
 			children = (
 				2D621FA51CD92CC500EB6D22 /* albumartorg.c */,
 				2D621FA61CD92CC500EB6D22 /* albumartorg.h */,
-				2DD9AEC2276CB7AD00A5806A /* applesupport.h */,
-				2DD9AEC0276CB79F00A5806A /* applesupport.m */,
 				2DA7C22E251002390080963D /* artwork_flac.c */,
 				2DA7C22D251002390080963D /* artwork_flac.h */,
 				2D621FAE1CD92CC500EB6D22 /* artwork_internal.c */,
@@ -16776,7 +16777,6 @@
 				2D621FD41CD92CCA00EB6D22 /* escape.c in Sources */,
 				2D621FD21CD92CCA00EB6D22 /* cache.c in Sources */,
 				2D621FD01CD92CCA00EB6D22 /* artwork_internal.c in Sources */,
-				2DD9AEC1276CB79F00A5806A /* applesupport.m in Sources */,
 				2D621FDD1CD92CCA00EB6D22 /* wos.c in Sources */,
 				2D621FCD1CD92CCA00EB6D22 /* artwork.c in Sources */,
 				2D5193C824ABBC1600134891 /* mp4tagutil.c in Sources */,
