@@ -126,13 +126,58 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
     });
 }
 
+static char *
+_buffer_from_file (const char *fname, long *psize) {
+    char *buffer = NULL;
+    FILE *fp = fopen (fname, "rb");
+    if (fp == NULL) {
+        return NULL;
+    }
+    if (fseek (fp, 0, SEEK_END) < 0) {
+        goto error;
+    }
+    long size = ftell(fp);
+    if (size <= 0 || size > 4*1024*1024) {
+        goto error; // we don't really want to load ultra-high-res images
+    }
+    rewind(fp);
+
+    buffer = malloc (size);
+    if (buffer == NULL) {
+        goto error;
+    }
+
+    if (fread (buffer, 1, size, fp) != size) {
+        goto error;
+    }
+
+    fclose (fp);
+
+    *psize = size;
+    return buffer;
+
+error:
+    if (fp != NULL) {
+        fclose (fp);
+    }
+    free (buffer);
+    return NULL;
+}
+
 static GdkPixbuf *
 _load_image_from_cover(covermanager_t *impl, ddb_cover_info_t *cover) {
     GdkPixbuf *img = NULL;
 
     if (!img && cover && cover->image_filename) {
-        // FIXME: this fails to load a PNG, if the file has extension JPG
-        img = gdk_pixbuf_new_from_file(cover->image_filename, NULL);
+        long size = 0;
+        char *buf = _buffer_from_file (cover->image_filename, &size);
+        if (buf != NULL) {
+            GdkPixbufLoader *loader = gdk_pixbuf_loader_new ();
+            gdk_pixbuf_loader_write (loader, (const guchar *)buf, size, NULL);
+            img = gdk_pixbuf_loader_get_pixbuf (loader);
+            gdk_pixbuf_loader_close(loader, NULL);
+            free (buf);
+        }
     }
 
     if (img) {
