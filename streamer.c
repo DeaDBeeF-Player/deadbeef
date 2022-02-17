@@ -1645,24 +1645,20 @@ streamer_thread (void *unused) {
             // handle stop after current
             int stop = 0;
             if (block->last) {
-                if (stop_after_current) {
+                next = get_next_track(streaming_track, shuffle, repeat);
+                if (stop_after_current || stop_after_album_check (streaming_track, next)) {
                     stop = 1;
-                }
-                else {
-                    next = get_next_track(streaming_track, shuffle, repeat);
-
-                    if (stop_after_album_check (streaming_track, next)) {
-                        stop = 1;
-                    }
-
-                    if (next) {
-                        pl_item_unref (next);
-                    }
                 }
             }
 
             if (stop) {
                 stream_track (NULL, 0);
+                if (next) {
+                    playlist_t* cur_pl = plt_get_curr();
+                    int cursor = plt_get_item_idx(cur_pl, next, PL_MAIN);
+                    plt_set_cursor(cur_pl, PL_MAIN, cursor);
+                    pl_item_unref (next);
+                }
             }
             else {
                 streamer_next (shuffle, repeat, next);
