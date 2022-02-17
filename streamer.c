@@ -1656,7 +1656,10 @@ streamer_thread (void *unused) {
                 if (next) {
                     playlist_t* cur_pl = plt_get_curr();
                     int cursor = plt_get_item_idx(cur_pl, next, PL_MAIN);
-                    plt_set_cursor(cur_pl, PL_MAIN, cursor);
+                    plt_deselect_all(cur_pl);
+                    pl_set_selected_in_playlist (cur_pl, next, 1);
+                    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
+                    plt_set_cursor (cur_pl, PL_MAIN, cursor);
                     pl_item_unref (next);
                 }
             }
