@@ -1660,11 +1660,14 @@ streamer_thread (void *unused) {
                     pl_set_selected_in_playlist (cur_pl, next, 1);
                     messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
                     plt_set_cursor (cur_pl, PL_MAIN, cursor);
-                    pl_item_unref (next);
+                    plt_unref(cur_pl);
                 }
             }
             else {
                 streamer_next (shuffle, repeat, next);
+            }
+            if (next) {
+                pl_item_unref (next);
             }
         }
 
