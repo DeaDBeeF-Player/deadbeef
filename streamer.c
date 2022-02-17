@@ -1654,9 +1654,9 @@ streamer_thread (void *unused) {
             if (stop) {
                 stream_track (NULL, 0);
                 if (next) {
-                    playlist_t* cur_pl = plt_get_curr();
-                    int cursor = plt_get_item_idx(cur_pl, next, PL_MAIN);
-                    plt_deselect_all(cur_pl);
+                    playlist_t* cur_pl = plt_get_curr ();
+                    int cursor = plt_get_item_idx (cur_pl, next, PL_MAIN);
+                    plt_deselect_all (cur_pl);
                     pl_set_selected_in_playlist (cur_pl, next, 1);
                     messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_SELECTION, 0);
                     plt_set_cursor (cur_pl, PL_MAIN, cursor);
