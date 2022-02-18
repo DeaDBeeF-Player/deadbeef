@@ -54,7 +54,7 @@ jobs:
         path: osx/build/Release/*.zip
   build_windows:
     name: CI for Windows
-    runs-on: windows-2019
+    runs-on: windows-latest
     steps:
     - name: Checkout for Windows
       uses: actions/checkout@v2
