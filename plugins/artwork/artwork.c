@@ -1088,14 +1088,14 @@ _setup_tf_once() {
             query_compare_tf = deadbeef->tf_compile ("$if($and(%title%,%artist%,%album%),%track number% - %title% - %artist% - %album%)");
         }
         if (!track_cache_filename_tf) {
-            track_cache_filename_tf = deadbeef->tf_compile ("$if($and(%album%,%artist%,%title%),%album% - %artist% - %title%,[$directory(%path%,2)-]$directory(%path%)-%filename%)");
+            track_cache_filename_tf = deadbeef->tf_compile ("$if($and(%album%,%artist%,%title%),%album% - %artist% - %title%,[$directory(%path%,2)-][$directory(%path%)-]%filename%)");
         }
         if (!album_cache_filename_tf) {
-            album_cache_filename_tf = deadbeef->tf_compile("$if($and($directory(%path%,2),$directory(%path%),%album%,%artist%),[$directory(%path%,2)-]$directory(%path%)-%album% - %artist%,[$directory(%path%,2)-]$directory(%path%)-%filename%)");
+            album_cache_filename_tf = deadbeef->tf_compile("$if($and(%album%,%artist%),[$directory(%path%,2)-][$directory(%path%)-]%album% - %artist%,[$directory(%path%,2)-][$directory(%path%)-]%filename%)");
         }
         if (!simplified_album_cache_filename_tf) {
             // This is to stay compatible with simple (but ambiguous) cache filename scheme
-            simplified_album_cache_filename_tf = deadbeef->tf_compile("$if($and(%album%,%artist%),%album% - %artist%,[$directory(%path%,2)-]$directory(%path%)-%filename%)");
+            simplified_album_cache_filename_tf = deadbeef->tf_compile("$if($and(%album%,%artist%),%album% - %artist%,[$directory(%path%,2)-][$directory(%path%)-]%filename%)");
         }
     });
 }
