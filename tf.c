@@ -3277,8 +3277,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 code += 4;
                 size -= 4;
 
-                int ignored_bool_out = 0;
-                int res = tf_eval_int (ctx, code, len, out, outlen, &ignored_bool_out, 1);
+                int res = tf_eval_int (ctx, code, len, out, outlen, bool_out, 1);
                 if (res >= 0) {
                     out += res;
                     outlen -= res;
