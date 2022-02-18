@@ -1217,7 +1217,12 @@ main (int argc, char *argv[]) {
     mkdir (confdir, 0755);
 
 #if __APPLE__
-    cocoautil_get_cache_path (dbcachedir, sizeof (dbcachedir));
+    char appcachepath[PATH_MAX];
+    cocoautil_get_cache_path (appcachepath, sizeof (appcachepath));
+    if (snprintf (dbcachedir, sizeof (dbcachedir), "%s/Deadbeef/", appcachepath) > (int)sizeof (dbcachedir)) {
+        trace_err ("fatal: cache path is too long: %s\n", dbcachedir);
+        return -1;
+    }
 #else
     // Get cache directory
     if (portable_full) {
