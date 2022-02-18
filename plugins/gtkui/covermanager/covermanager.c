@@ -30,6 +30,7 @@
 #include "gtkui.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
+#define MAX_ALBUM_ART_FILE_SIZE (10*1024*1024)
 
 extern DB_functions_t *deadbeef;
 
@@ -137,7 +138,7 @@ _buffer_from_file (const char *fname, long *psize) {
         goto error;
     }
     long size = ftell(fp);
-    if (size <= 0 || size > 4*1024*1024) {
+    if (size <= 0 || size > MAX_ALBUM_ART_FILE_SIZE) {
         goto error; // we don't really want to load ultra-high-res images
     }
     rewind(fp);
