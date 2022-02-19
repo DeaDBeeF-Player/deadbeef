@@ -30,12 +30,12 @@
 #include "medialibdb.h"
 #include "medialibscanner.h"
 
-#define trace(...) { deadbeef->log_detailed (&plugin->plugin.plugin, 0, __VA_ARGS__); }
+#define trace(...) { deadbeef->log_detailed (&plugin->plugin, 0, __VA_ARGS__); }
 
 //#define FILTER_PERF 1 // measure / log file add filtering performance
 
 static DB_functions_t *deadbeef;
-static ddb_medialib_plugin_t *plugin;
+static DB_mediasource_t *plugin;
 
 static char *artist_album_id_bc;
 
@@ -496,7 +496,7 @@ error:
 }
 
 void
-ml_scanner_init (ddb_medialib_plugin_t *_plugin, DB_functions_t *_deadbeef) {
+ml_scanner_init (DB_mediasource_t *_plugin, DB_functions_t *_deadbeef) {
     plugin = _plugin;
     deadbeef = _deadbeef;
     artist_album_id_bc = deadbeef->tf_compile ("artist=$if2(%album artist%,Unknown Artist);album=$if2(%album%,Unknown Album)");

@@ -2252,8 +2252,15 @@ typedef void *ddb_mediasource_source_t;
 /// Use the values to specify the selector when calling @c create_item_tree.
 typedef void *ddb_mediasource_list_selector_t;
 
+typedef struct ddb_mediasource_api_s ddb_mediasource_api_t;
+
+/// NOTE: never "subclass" the DB_mediasource_t struct - this is not backwards compatible.
 typedef struct {
     DB_plugin_t plugin;
+
+    /// Get access to the underlying plugin API.
+    /// The returned pointer would have to be cast to the plugin's API structure type.
+    ddb_mediasource_api_t *(*get_extended_api) (void);
 
     const char *(*source_name) (void);
 
@@ -2321,8 +2328,6 @@ typedef struct {
 
     /// Expand/collapse the specified item
     void (*set_tree_item_expanded) (ddb_mediasource_source_t source, ddb_medialib_item_t *item, int expanded);
-
-    // FIXME: add padding / size for extensibility -- this structure is inheritable.
 } DB_mediasource_t;
 
 #endif

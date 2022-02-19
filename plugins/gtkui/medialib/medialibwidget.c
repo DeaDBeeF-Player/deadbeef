@@ -12,7 +12,6 @@
 #include <string.h>
 #include "../../../deadbeef.h"
 #include "../../../gettext.h"
-#include "../../medialib/medialib.h"
 #include "../prefwin/prefwin.h"
 #include "../support.h"
 #include "../playlist/ddblistview.h"
@@ -27,7 +26,7 @@ typedef struct {
     GtkTreeView *tree;
     GtkComboBoxText *selector;
     GtkEntry *search_entry;
-    ddb_medialib_plugin_t *plugin;
+    DB_mediasource_t *plugin;
     ddb_mediasource_source_t source;
     ddb_mediasource_list_selector_t *selectors;
     int active_selector;
@@ -119,8 +118,8 @@ _add_items (w_medialib_viewer_t *mlv, GtkTreeIter *iter, ddb_medialib_item_t *it
 static gboolean
 _medialib_state_did_change (void *user_data) {
     w_medialib_viewer_t *mlv = user_data;
-    ddb_mediasource_state_t state = mlv->plugin->plugin.scanner_state (mlv->source);
-    int enabled = mlv->plugin->plugin.is_source_enabled (mlv->source);
+    ddb_mediasource_state_t state = mlv->plugin->scanner_state (mlv->source);
+    int enabled = mlv->plugin->is_source_enabled (mlv->source);
     GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
     switch (state) {
     case DDB_MEDIASOURCE_STATE_IDLE:
@@ -154,10 +153,10 @@ static void
 _reload_content (w_medialib_viewer_t *mlv) {
     // populate the tree
     if (mlv->item_tree != NULL) {
-        mlv->plugin->plugin.free_item_tree (mlv->source, mlv->item_tree);
+        mlv->plugin->free_item_tree (mlv->source, mlv->item_tree);
         mlv->item_tree = NULL;
     }
-    mlv->item_tree = mlv->plugin->plugin.create_item_tree (mlv->source, mlv->selectors[mlv->active_selector], mlv->search_text);
+    mlv->item_tree = mlv->plugin->create_item_tree (mlv->source, mlv->selectors[mlv->active_selector], mlv->search_text);
 
     mlv->is_reloading = 1;
     // clear
@@ -243,8 +242,8 @@ _save_selection_state_with_iter (w_medialib_viewer_t *mlv, GtkTreeStore *store, 
             GtkTreeSelection *selection = gtk_tree_view_get_selection (mlv->tree);
             gboolean selected = gtk_tree_selection_iter_is_selected(selection, iter);
             gboolean expanded = gtk_tree_view_row_expanded(mlv->tree, path);
-            mlv->plugin->plugin.set_tree_item_selected (mlv->source, medialibItem, selected ? 1 : 0);
-            mlv->plugin->plugin.set_tree_item_expanded (mlv->source, medialibItem, expanded ? 1 : 0);
+            mlv->plugin->set_tree_item_selected (mlv->source, medialibItem, selected ? 1 : 0);
+            mlv->plugin->set_tree_item_expanded (mlv->source, medialibItem, expanded ? 1 : 0);
         }
     }
 
@@ -266,8 +265,8 @@ _restore_selected_expanded_state_for_iter (w_medialib_viewer_t *mlv, GtkTreeStor
     g_value_unset (&value);
 
     if (medialibItem != NULL) {
-        int selected = mlv->plugin->plugin.is_tree_item_selected (mlv->source, medialibItem);
-        int expanded = mlv->plugin->plugin.is_tree_item_expanded (mlv->source, medialibItem);
+        int selected = mlv->plugin->is_tree_item_selected (mlv->source, medialibItem);
+        int expanded = mlv->plugin->is_tree_item_expanded (mlv->source, medialibItem);
 
         GtkTreePath *path = gtk_tree_model_get_path(model, iter);
         if (expanded) {
@@ -326,16 +325,16 @@ static void
 w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
     // observe medialib source
     w_medialib_viewer_t *mlv = (w_medialib_viewer_t *)w;
-    mlv->plugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
+    mlv->plugin = (DB_mediasource_t *)deadbeef->plug_get_for_id ("medialib");
     if (mlv->plugin == NULL) {
         return;
     }
     mlv->source = gtkui_medialib_get_source ();
-    mlv->selectors = mlv->plugin->plugin.get_selectors_list (mlv->source);
-    mlv->listener_id =  mlv->plugin->plugin.add_listener (mlv->source, _medialib_listener, mlv);
+    mlv->selectors = mlv->plugin->get_selectors_list (mlv->source);
+    mlv->listener_id =  mlv->plugin->add_listener (mlv->source, _medialib_listener, mlv);
 
     for (int i = 0; mlv->selectors[i]; i++) {
-        gtk_combo_box_text_append_text (mlv->selector, mlv->plugin->plugin.selector_name (mlv->source, mlv->selectors[i]));
+        gtk_combo_box_text_append_text (mlv->selector, mlv->plugin->selector_name (mlv->source, mlv->selectors[i]));
     }
     gtk_combo_box_set_active (GTK_COMBO_BOX (mlv->selector), 0);
     mlv->active_selector = 0;
@@ -357,14 +356,14 @@ static void
 w_medialib_viewer_destroy (struct ddb_gtkui_widget_s *w) {
     w_medialib_viewer_t *mlv = (w_medialib_viewer_t *)w;
     if (mlv->source != NULL) {
-        mlv->plugin->plugin.remove_listener (mlv->source, mlv->listener_id);
+        mlv->plugin->remove_listener (mlv->source, mlv->listener_id);
     }
     if (mlv->item_tree != NULL) {
-        mlv->plugin->plugin.free_item_tree (mlv->source, mlv->item_tree);
+        mlv->plugin->free_item_tree (mlv->source, mlv->item_tree);
         mlv->item_tree = NULL;
     }
     if (mlv->selectors != NULL) {
-        mlv->plugin->plugin.free_selectors_list (mlv->source, mlv->selectors);
+        mlv->plugin->free_selectors_list (mlv->source, mlv->selectors);
         mlv->selectors = NULL;
     }
     free (mlv->search_text);
@@ -583,14 +582,14 @@ _select_at_position (GtkTreeView *treeview, gint x, gint y) {
 static void
 _trkproperties_did_change_tracks (void *user_data) {
     w_medialib_viewer_t *mlv = user_data;
-    mlv->plugin->plugin.refresh (mlv->source);
+    mlv->plugin->refresh (mlv->source);
 }
 
 static void
 _trkproperties_did_delete_files (void *user_data, int cancelled) {
     if (!cancelled) {
         w_medialib_viewer_t *mlv = user_data;
-        mlv->plugin->plugin.refresh (mlv->source);
+        mlv->plugin->refresh (mlv->source);
     }
 }
 
@@ -711,7 +710,7 @@ w_medialib_viewer_create (void) {
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
 
-    ddb_medialib_plugin_t *plugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
+    DB_mediasource_t *plugin = (DB_mediasource_t *)deadbeef->plug_get_for_id ("medialib");
     if (plugin == NULL) {
         GtkWidget *label = gtk_label_new(_("Media Library plugin is unavailable."));
         gtk_widget_show (label);

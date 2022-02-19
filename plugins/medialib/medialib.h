@@ -33,9 +33,11 @@ typedef enum {
     DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE = 1000,
 } ddb_medialib_mediasource_event_type_t;
 
-typedef struct ddb_medialib_plugin_s {
-    DB_mediasource_t plugin;
-#pragma mark - Configuration
+typedef struct ddb_medialib_plugin_priv_s ddb_medialib_plugin_priv_t;
+
+typedef struct ddb_medialib_plugin_api_s {
+    // Size of this structure
+    int _size;
 
     /// Primarily for debugging and testing, enable or disable reading or writing the database files.
     /// Default is Enabled.
@@ -58,6 +60,6 @@ typedef struct ddb_medialib_plugin_s {
     void (*remove_folder_at_index) (ddb_mediasource_source_t source, int index);
 
     void (*append_folder) (ddb_mediasource_source_t source, const char *folder);
-} ddb_medialib_plugin_t;
+} ddb_medialib_plugin_api_t;
 
 #endif /* medialib_h */
